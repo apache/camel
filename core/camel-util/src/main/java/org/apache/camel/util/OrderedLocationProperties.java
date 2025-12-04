@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.HashMap;
@@ -49,7 +50,11 @@ public final class OrderedLocationProperties extends BaseOrderedProperties {
 
     public void putAll(OrderedLocationProperties other) {
         for (var entry : other.entrySet()) {
-            put(other.getLocation(entry.getKey()), entry.getKey(), entry.getValue(), other.getDefaultValue(entry.getKey()));
+            put(
+                    other.getLocation(entry.getKey()),
+                    entry.getKey(),
+                    entry.getValue(),
+                    other.getDefaultValue(entry.getKey()));
         }
     }
 

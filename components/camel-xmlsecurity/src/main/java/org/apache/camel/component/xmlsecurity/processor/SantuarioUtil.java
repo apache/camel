@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.processor;
 
 import java.lang.reflect.Field;
@@ -25,7 +26,7 @@ import org.apache.xml.security.utils.XMLUtils;
 
 public final class SantuarioUtil {
     private SantuarioUtil() {
-        //Helper class
+        // Helper class
     }
 
     public static void initializeSantuario() {
@@ -41,7 +42,7 @@ public final class SantuarioUtil {
                 wasSet = true;
             }
         } catch (Exception t) {
-            //ignore
+            // ignore
         }
 
         org.apache.xml.security.Init.init();
@@ -52,7 +53,7 @@ public final class SantuarioUtil {
                 f.setAccessible(true);
                 f.set(null, Boolean.TRUE);
             } catch (Exception t) {
-                //ignore
+                // ignore
             }
         }
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.graphql;
 
 import java.io.IOException;
@@ -94,8 +95,8 @@ public class GraphqlProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             URI httpUri = getEndpoint().getHttpUri();
-            String requestBody = buildRequestBody(getQuery(exchange), getEndpoint().getOperationName(),
-                    getVariables(exchange));
+            String requestBody =
+                    buildRequestBody(getQuery(exchange), getEndpoint().getOperationName(), getVariables(exchange));
             try (HttpEntity requestEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON)) {
                 HttpPost httpPost = new HttpPost(httpUri);
                 httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -119,13 +120,15 @@ public class GraphqlProducer extends DefaultAsyncProducer {
                         boolean ok = HttpHelper.isStatusCodeOk(responseCode, OK_STATUS_RANGE);
                         if (ok) {
                             // only populate response for OK response
-                            populateResponse(exchange, httpResponse, getEndpoint().getHeaderFilterStrategy(), responseCode);
+                            populateResponse(
+                                    exchange, httpResponse, getEndpoint().getHeaderFilterStrategy(), responseCode);
                         } else {
                             // also store response code when throwing exception
                             populateResponseCode(exchange.getMessage(), httpResponse, responseCode);
 
                             // operation failed so populate exception to throw
-                            exchange.setException(populateHttpOperationFailedException(exchange, httpResponse, responseCode));
+                            exchange.setException(
+                                    populateHttpOperationFailedException(exchange, httpResponse, responseCode));
                         }
                     }
                     return null;
@@ -142,21 +145,27 @@ public class GraphqlProducer extends DefaultAsyncProducer {
     private void populateRequestHeaders(Exchange exchange, HttpPost httpRequest) {
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
         final TypeConverter tc = exchange.getContext().getTypeConverter();
-        for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
+        for (Map.Entry<String, Object> entry :
+                exchange.getMessage().getHeaders().entrySet()) {
             String key = entry.getKey();
             // we should not add known headers
 
             // skip known headers from graphql
-            boolean skip = getEndpoint().getQueryHeader() != null && key.equalsIgnoreCase(getEndpoint().getQueryHeader())
-                    || getEndpoint().getVariablesHeader() != null && key.equalsIgnoreCase(getEndpoint().getVariablesHeader());
+            boolean skip = getEndpoint().getQueryHeader() != null
+                            && key.equalsIgnoreCase(getEndpoint().getQueryHeader())
+                    || getEndpoint().getVariablesHeader() != null
+                            && key.equalsIgnoreCase(getEndpoint().getVariablesHeader());
             if (skip) {
                 continue;
             }
 
             Object headerValue = entry.getValue();
             if (headerValue != null) {
-                if (headerValue instanceof String || headerValue instanceof Integer || headerValue instanceof Long
-                        || headerValue instanceof Boolean || headerValue instanceof Date) {
+                if (headerValue instanceof String
+                        || headerValue instanceof Integer
+                        || headerValue instanceof Long
+                        || headerValue instanceof Boolean
+                        || headerValue instanceof Date) {
                     // optimise for common types
                     String value = headerValue.toString();
                     if (!strategy.applyFilterToCamelHeaders(key, value, exchange)) {
@@ -168,7 +177,12 @@ public class GraphqlProducer extends DefaultAsyncProducer {
                 // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
                 final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
-                HttpUtil.applyHeader(strategy, exchange, it, tc, key,
+                HttpUtil.applyHeader(
+                        strategy,
+                        exchange,
+                        it,
+                        tc,
+                        key,
                         (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
             }
         }
@@ -199,8 +213,7 @@ public class GraphqlProducer extends DefaultAsyncProducer {
     }
 
     protected Exception populateHttpOperationFailedException(
-            Exchange exchange, ClassicHttpResponse httpResponse, int responseCode)
-            throws IOException, ParseException {
+            Exchange exchange, ClassicHttpResponse httpResponse, int responseCode) throws IOException, ParseException {
         Exception answer;
 
         String statusText = httpResponse.getReasonPhrase() != null ? httpResponse.getReasonPhrase() : null;
@@ -227,8 +240,7 @@ public class GraphqlProducer extends DefaultAsyncProducer {
     }
 
     protected void populateResponse(
-            Exchange exchange, ClassicHttpResponse httpResponse,
-            HeaderFilterStrategy strategy, int responseCode)
+            Exchange exchange, ClassicHttpResponse httpResponse, HeaderFilterStrategy strategy, int responseCode)
             throws IOException, ParseException {
 
         Message answer = exchange.getMessage();

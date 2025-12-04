@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -33,9 +37,6 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  *
  */
@@ -52,8 +53,10 @@ public class DefaultConsumerBridgeErrorHandlerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertEquals("Simulated", cause.getMessage());
     }

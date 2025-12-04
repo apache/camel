@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5.annotation;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,9 +34,6 @@ import org.apache.camel.test.main.junit5.DebuggerCallback;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A test class ensuring that the debug mode is enabled if the test class implements the interface
@@ -74,7 +75,11 @@ class WithDebuggerCallbackTest implements DebuggerCallback {
 
     @Override
     public void debugAfter(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
+            Exchange exchange,
+            Processor processor,
+            ProcessorDefinition<?> definition,
+            String id,
+            String label,
             long timeTaken) {
         counter.incrementAndGet();
     }

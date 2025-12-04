@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
 import java.beans.PropertyVetoException;
@@ -460,14 +461,16 @@ public class Jt400Configuration {
             try {
                 system.setGuiAvailable(guiAvailable);
             } catch (PropertyVetoException e) {
-                LOG.warn("Failed to disable IBM i prompting in the environment running Camel. This exception will be ignored.",
+                LOG.warn(
+                        "Failed to disable IBM i prompting in the environment running Camel. This exception will be ignored.",
                         e);
             }
             return system; // Not null here.
         } catch (ConnectionPoolException e) {
             throw new RuntimeCamelException(
-                    String.format("Unable to obtain an IBM i connection for system name '%s' and user ID '%s'", systemName,
-                            userID),
+                    String.format(
+                            "Unable to obtain an IBM i connection for system name '%s' and user ID '%s'",
+                            systemName, userID),
                     e);
         } catch (PropertyVetoException e) {
             throw new RuntimeCamelException("Unable to set the CSSID to use with " + system, e);
@@ -483,5 +486,4 @@ public class Jt400Configuration {
         ObjectHelper.notNull(connection, "connection", this);
         connectionPool.returnConnectionToPool(connection);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb2;
 
 import java.util.Map;
@@ -30,8 +31,7 @@ public class InfluxDb2Component extends DefaultComponent {
     @Metadata(autowired = true)
     private InfluxDBClient influxDBClient;
 
-    public InfluxDb2Component() {
-    }
+    public InfluxDb2Component() {}
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         InfluxDb2Endpoint endpoint = new InfluxDb2Endpoint(uri, this);

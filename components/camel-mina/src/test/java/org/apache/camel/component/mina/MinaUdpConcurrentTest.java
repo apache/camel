@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import java.net.DatagramPacket;
@@ -28,8 +29,7 @@ public class MinaUdpConcurrentTest extends BaseMinaTest {
 
     protected int messageCount = 3;
 
-    public MinaUdpConcurrentTest() {
-    }
+    public MinaUdpConcurrentTest() {}
 
     @Test
     public void testMinaRoute() throws Exception {

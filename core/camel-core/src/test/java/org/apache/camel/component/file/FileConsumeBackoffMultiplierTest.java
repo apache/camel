@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -53,7 +54,8 @@ public class FileConsumeBackoffMultiplierTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri() + "?initialDelay=0&delay=10&delete=true&backoffMultiplier=4&backoffIdleThreshold=3")
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

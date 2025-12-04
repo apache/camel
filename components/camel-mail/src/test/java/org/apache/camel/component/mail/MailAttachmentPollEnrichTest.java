@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -33,10 +38,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for Camel attachments and Mail attachments.
@@ -113,7 +114,8 @@ public class MailAttachmentPollEnrichTest extends CamelTestSupport {
                             AttachmentMessage attachmentMessage = e.getIn(AttachmentMessage.class);
                             Map<String, DataHandler> attachments = attachmentMessage.getAttachments();
                             assertEquals(1, attachments.size());
-                            assertEquals("logo.jpeg", attachments.keySet().iterator().next());
+                            assertEquals(
+                                    "logo.jpeg", attachments.keySet().iterator().next());
 
                             DataHandler dh = attachments.values().iterator().next();
                             byte[] data = context.getTypeConverter().convertTo(byte[].class, e, dh.getInputStream());

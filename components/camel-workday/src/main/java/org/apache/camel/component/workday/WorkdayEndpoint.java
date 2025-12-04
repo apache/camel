@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.workday;
 
 import java.util.Map;
@@ -33,15 +34,20 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Detect and parse documents using Workday.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true,
-             category = { Category.CLOUD, Category.API, Category.SAAS }, headersClass = WorkdayDefaultProducer.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "workday",
+        title = "Workday",
+        syntax = "workday:entity:path",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.API, Category.SAAS},
+        headersClass = WorkdayDefaultProducer.class)
 public class WorkdayEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private WorkdayConfiguration workdayConfiguration;
 
-    public WorkdayEndpoint() {
-    }
+    public WorkdayEndpoint() {}
 
     public WorkdayEndpoint(String uri, WorkdayComponent component, WorkdayConfiguration configuration) {
         super(uri, component);

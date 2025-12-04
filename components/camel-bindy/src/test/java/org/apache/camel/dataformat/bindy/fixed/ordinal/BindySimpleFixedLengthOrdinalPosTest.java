@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.ordinal;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -32,8 +35,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * This test validates that fixed length records can be defined and processed using ordinal 'pos' values, and lengths
  * declared for each field. Strict position calculations in FixedLength records is not necessary. The records will be
@@ -46,7 +47,8 @@ public class BindySimpleFixedLengthOrdinalPosTest extends CamelTestSupport {
     public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
     public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
 
-    private static final String TEST_RECORD = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     \r\n";
+    private static final String TEST_RECORD =
+            "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     \r\n";
 
     @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
@@ -67,8 +69,8 @@ public class BindySimpleFixedLengthOrdinalPosTest extends CamelTestSupport {
         unmarshallResult.assertIsSatisfied();
 
         // check the model
-        BindySimpleFixedLengthOrdinalPosTest.Order order
-                = (BindySimpleFixedLengthOrdinalPosTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
+        BindySimpleFixedLengthOrdinalPosTest.Order order = (BindySimpleFixedLengthOrdinalPosTest.Order)
+                unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         assertEquals("  Pauline", order.getFirstName());
@@ -95,7 +97,7 @@ public class BindySimpleFixedLengthOrdinalPosTest extends CamelTestSupport {
         order.setComment("Hello");
 
         marshallResult.expectedMessageCount(1);
-        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { TEST_RECORD }));
+        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] {TEST_RECORD}));
         template.sendBody(URI_DIRECT_MARSHALL, order);
         marshallResult.assertIsSatisfied();
     }
@@ -115,12 +117,11 @@ public class BindySimpleFixedLengthOrdinalPosTest extends CamelTestSupport {
                 bindy.setLocale("en");
                 bindy.type(BindyType.Fixed);
 
-                from(URI_DIRECT_MARSHALL)
-                        .marshal(bindy)
-                        .to(URI_MOCK_MARSHALL_RESULT);
+                from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
 
                 from(URI_DIRECT_UNMARSHALL)
-                        .unmarshal().bindy(BindyType.Fixed, BindySimpleFixedLengthOrdinalPosTest.Order.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, BindySimpleFixedLengthOrdinalPosTest.Order.class)
                         .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };
@@ -269,11 +270,11 @@ public class BindySimpleFixedLengthOrdinalPosTest extends CamelTestSupport {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

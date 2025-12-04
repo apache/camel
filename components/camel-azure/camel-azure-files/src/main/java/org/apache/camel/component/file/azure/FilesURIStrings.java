@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 import java.net.URI;
@@ -33,8 +34,7 @@ final class FilesURIStrings {
 
     public static final char QUERY_SEPARATOR = '?';
 
-    private FilesURIStrings() {
-    }
+    private FilesURIStrings() {}
 
     /**
      * Get the base uri part before the options as they can be non URI valid such as the expression using $ chars and
@@ -57,9 +57,9 @@ final class FilesURIStrings {
      * slash '/' and padding '='.
      */
     static String encodeTokenValue(String value) throws URISyntaxException {
-        return URISupport.createQueryString(Collections.singletonMap("x", value)).substring(2)
+        return URISupport.createQueryString(Collections.singletonMap("x", value))
+                .substring(2)
                 .replace("+", "%2B") // sig is base64
                 .replace("%3A", ":"); // se has time separator
     }
-
 }

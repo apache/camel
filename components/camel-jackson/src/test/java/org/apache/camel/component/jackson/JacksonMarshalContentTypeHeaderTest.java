@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +31,6 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
     @Test
@@ -37,7 +38,8 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
         final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
-        Exchange out = template.request("direct:yes", exchange -> exchange.getIn().setBody(in));
+        Exchange out =
+                template.request("direct:yes", exchange -> exchange.getIn().setBody(in));
 
         assertNotNull(out);
         assertTrue(out.hasOut());
@@ -49,7 +51,8 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
         final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
-        Exchange out = template.request("direct:yes2", exchange -> exchange.getIn().setBody(in));
+        Exchange out =
+                template.request("direct:yes2", exchange -> exchange.getIn().setBody(in));
 
         assertNotNull(out);
         assertTrue(out.hasOut());
@@ -61,7 +64,8 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
         final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
-        Exchange out = template.request("direct:no", exchange -> exchange.getIn().setBody(in));
+        Exchange out =
+                template.request("direct:no", exchange -> exchange.getIn().setBody(in));
 
         assertNotNull(out);
         assertTrue(out.hasOut());
@@ -85,5 +89,4 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
             }
         };
     }
-
 }

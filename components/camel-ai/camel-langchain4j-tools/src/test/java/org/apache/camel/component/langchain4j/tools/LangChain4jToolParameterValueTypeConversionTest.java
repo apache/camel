@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools;
 
 import java.util.ArrayList;
@@ -37,7 +38,8 @@ class LangChain4jToolParameterValueTypeConversionTest extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OpenAIMock openAIMock = new OpenAIMock().builder()
+    static OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("A test user message\n")
             .invokeTool("TestTool")
             .withParam("int", 1)
@@ -59,8 +61,8 @@ class LangChain4jToolParameterValueTypeConversionTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        LangChain4jToolsComponent component
-                = context.getComponent(LangChain4jTools.SCHEME, LangChain4jToolsComponent.class);
+        LangChain4jToolsComponent component =
+                context.getComponent(LangChain4jTools.SCHEME, LangChain4jToolsComponent.class);
 
         component.getConfiguration().setChatModel(chatModel);
 
@@ -72,9 +74,7 @@ class LangChain4jToolParameterValueTypeConversionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:test")
-                        .to("langchain4j-tools:test?tags=test")
-                        .log("response is: ${body}");
+                from("direct:test").to("langchain4j-tools:test?tags=test").log("response is: ${body}");
 
                 from("langchain4j-tools:test?tags=test&name=TestTool&description=Test Tool&parameter.int=integer&parameter.intNumeric=number&parameter.long=number&parameter.double=number&parameter.boolean=boolean&parameter.string=string")
                         .setBody(simple("{\"content\": \"fake response\"}"));
@@ -85,8 +85,9 @@ class LangChain4jToolParameterValueTypeConversionTest extends CamelTestSupport {
     @Test
     void parameterValueTypeConversion() {
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new SystemMessage(
-                """
+        messages.add(
+                new SystemMessage(
+                        """
                         You provide the requested information using the functions you hava available. You can invoke the functions to obtain the information you need to complete the answer.
                         """));
         messages.add(new UserMessage("""

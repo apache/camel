@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,10 +44,14 @@ public class DeadLetterChannelSetHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").errorHandler(deadLetterChannel("direct:error"))
+                from("direct:start")
+                        .errorHandler(deadLetterChannel("direct:error"))
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:error").setHeader("foo", constant("123")).setHeader("bar", constant("456")).to("mock:error");
+                from("direct:error")
+                        .setHeader("foo", constant("123"))
+                        .setHeader("bar", constant("456"))
+                        .to("mock:error");
             }
         };
     }

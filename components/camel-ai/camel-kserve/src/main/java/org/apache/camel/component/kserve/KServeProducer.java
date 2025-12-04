@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kserve;
 
 import java.util.Optional;
@@ -43,15 +44,16 @@ public class KServeProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) {
-        GeneratedMessageV3 response = switch (api) {
-            case "infer" -> infer(exchange);
-            case "model/ready" -> modelReady(exchange);
-            case "model/metadata" -> modelMetadata(exchange);
-            case "server/ready" -> serverReady();
-            case "server/live" -> serverLive();
-            case "server/metadata" -> serverMetadata();
-            default -> throw new IllegalArgumentException("Unsupported API: " + api);
-        };
+        GeneratedMessageV3 response =
+                switch (api) {
+                    case "infer" -> infer(exchange);
+                    case "model/ready" -> modelReady(exchange);
+                    case "model/metadata" -> modelMetadata(exchange);
+                    case "server/ready" -> serverReady();
+                    case "server/live" -> serverLive();
+                    case "server/metadata" -> serverMetadata();
+                    default -> throw new IllegalArgumentException("Unsupported API: " + api);
+                };
         exchange.getMessage().setBody(response);
     }
 

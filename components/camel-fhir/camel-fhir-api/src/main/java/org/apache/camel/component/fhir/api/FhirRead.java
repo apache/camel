@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.Map;
@@ -51,10 +52,15 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceById(
-            Class<IBaseResource> resource, IIdType id, String ifVersionMatches,
-            Boolean returnNull, IBaseResource returnResource, Boolean throwError,
+            Class<IBaseResource> resource,
+            IIdType id,
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
             Map<ExtraParameters, Object> extraParameters) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withId(id);
+        IReadExecutable<IBaseResource> readExecutable =
+                client.read().resource(resource).withId(id);
         ExtraParameters.process(extraParameters, readExecutable);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
@@ -71,9 +77,15 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceById(
-            String resourceClass, IIdType id, String ifVersionMatches, Boolean returnNull,
-            IBaseResource returnResource, Boolean throwError, Map<ExtraParameters, Object> extraParameters) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withId(id);
+            String resourceClass,
+            IIdType id,
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
+            Map<ExtraParameters, Object> extraParameters) {
+        IReadExecutable<IBaseResource> readExecutable =
+                client.read().resource(resourceClass).withId(id);
         ExtraParameters.process(extraParameters, readExecutable);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
@@ -91,8 +103,13 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceById(
-            Class<IBaseResource> resource, String stringId, String version, String ifVersionMatches,
-            Boolean returnNull, IBaseResource returnResource, Boolean throwError,
+            Class<IBaseResource> resource,
+            String stringId,
+            String version,
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
             Map<ExtraParameters, Object> extraParameters) {
         IReadTyped<IBaseResource> readTyped = client.read().resource(resource);
         IReadExecutable<IBaseResource> readExecutable = readWithOptionalVersion(stringId, readTyped, version);
@@ -113,8 +130,13 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceById(
-            String resourceClass, String stringId, String ifVersionMatches, String version,
-            Boolean returnNull, IBaseResource returnResource, Boolean throwError,
+            String resourceClass,
+            String stringId,
+            String ifVersionMatches,
+            String version,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
             Map<ExtraParameters, Object> extraParameters) {
         IReadTyped<IBaseResource> resource = client.read().resource(resourceClass);
         IReadExecutable<IBaseResource> readExecutable = readWithOptionalVersion(stringId, resource, version);
@@ -134,10 +156,15 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceById(
-            Class<IBaseResource> resource, Long longId, String ifVersionMatches,
-            Boolean returnNull, IBaseResource returnResource, Boolean throwError,
+            Class<IBaseResource> resource,
+            Long longId,
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
             Map<ExtraParameters, Object> extraParameters) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withId(longId);
+        IReadExecutable<IBaseResource> readExecutable =
+                client.read().resource(resource).withId(longId);
         ExtraParameters.process(extraParameters, readExecutable);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
@@ -154,9 +181,15 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceById(
-            String resourceClass, Long longId, String ifVersionMatches, Boolean returnNull,
-            IBaseResource returnResource, Boolean throwError, Map<ExtraParameters, Object> extraParameters) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withId(longId);
+            String resourceClass,
+            Long longId,
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
+            Map<ExtraParameters, Object> extraParameters) {
+        IReadExecutable<IBaseResource> readExecutable =
+                client.read().resource(resourceClass).withId(longId);
         ExtraParameters.process(extraParameters, readExecutable);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
@@ -173,10 +206,15 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceByUrl(
-            Class<IBaseResource> resource, IIdType iUrl, String ifVersionMatches,
-            Boolean returnNull, IBaseResource returnResource, Boolean throwError,
+            Class<IBaseResource> resource,
+            IIdType iUrl,
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
             Map<ExtraParameters, Object> extraParameters) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withUrl(iUrl);
+        IReadExecutable<IBaseResource> readExecutable =
+                client.read().resource(resource).withUrl(iUrl);
         ExtraParameters.process(extraParameters, readExecutable);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
@@ -193,9 +231,15 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceByUrl(
-            String resourceClass, IIdType iUrl, String ifVersionMatches, Boolean returnNull,
-            IBaseResource returnResource, Boolean throwError, Map<ExtraParameters, Object> extraParameters) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withUrl(iUrl);
+            String resourceClass,
+            IIdType iUrl,
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
+            Map<ExtraParameters, Object> extraParameters) {
+        IReadExecutable<IBaseResource> readExecutable =
+                client.read().resource(resourceClass).withUrl(iUrl);
         ExtraParameters.process(extraParameters, readExecutable);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
@@ -212,10 +256,15 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceByUrl(
-            Class<IBaseResource> resource, String url, String ifVersionMatches,
-            Boolean returnNull, IBaseResource returnResource, Boolean throwError,
+            Class<IBaseResource> resource,
+            String url,
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
             Map<ExtraParameters, Object> extraParameters) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withUrl(url);
+        IReadExecutable<IBaseResource> readExecutable =
+                client.read().resource(resource).withUrl(url);
         ExtraParameters.process(extraParameters, readExecutable);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
@@ -232,16 +281,25 @@ public class FhirRead {
      * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public IBaseResource resourceByUrl(
-            String resourceClass, String url, String ifVersionMatches, Boolean returnNull,
-            IBaseResource returnResource, Boolean throwError, Map<ExtraParameters, Object> extraParameters) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withUrl(url);
+            String resourceClass,
+            String url,
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
+            Map<ExtraParameters, Object> extraParameters) {
+        IReadExecutable<IBaseResource> readExecutable =
+                client.read().resource(resourceClass).withUrl(url);
         ExtraParameters.process(extraParameters, readExecutable);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
     private IBaseResource processOptionalParams(
-            String ifVersionMatches, Boolean returnNull, IBaseResource returnResource,
-            Boolean throwError, IReadExecutable<IBaseResource> readExecutable) {
+            String ifVersionMatches,
+            Boolean returnNull,
+            IBaseResource returnResource,
+            Boolean throwError,
+            IReadExecutable<IBaseResource> readExecutable) {
         if (ifVersionMatches != null) {
             IReadIfNoneMatch<IBaseResource> tiReadIfNoneMatch = readExecutable.ifVersionMatches(ifVersionMatches);
             if (returnNull != null && returnNull) {

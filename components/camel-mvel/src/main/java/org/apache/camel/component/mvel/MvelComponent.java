@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mvel;
 
 import java.util.Map;
@@ -32,13 +33,14 @@ public class MvelComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
+
     @Metadata
     private boolean allowTemplateFromHeader;
+
     @Metadata
     private boolean allowContextMapAll;
 
-    public MvelComponent() {
-    }
+    public MvelComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -97,5 +99,4 @@ public class MvelComponent extends DefaultComponent {
     public void setAllowContextMapAll(boolean allowContextMapAll) {
         this.allowContextMapAll = allowContextMapAll;
     }
-
 }

@@ -68,9 +68,11 @@ public class TypeConverterTransformer extends Transformer {
             }
         } catch (InvalidPayloadException | ClassNotFoundException e) {
             throw new CamelExecutionException(
-                    String.format("Failed to convert body to '%s' content using type conversion for %s",
+                    String.format(
+                            "Failed to convert body to '%s' content using type conversion for %s",
                             getName(), ObjectHelper.name(type)),
-                    message.getExchange(), e);
+                    message.getExchange(),
+                    e);
         }
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.List;
@@ -95,5 +96,4 @@ public interface StartupConditionStrategy extends StaticService {
      * otherwise if a condition is failing then an exception is thrown.
      */
     void checkStartupConditions() throws Exception;
-
 }

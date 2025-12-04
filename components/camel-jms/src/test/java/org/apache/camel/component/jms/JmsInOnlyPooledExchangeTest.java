@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +39,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
@@ -64,8 +65,9 @@ public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
         mock.assertIsSatisfied();
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
-            PooledObjectFactory.Statistics stat
-                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+            PooledObjectFactory.Statistics stat = context.getCamelContextExtension()
+                    .getExchangeFactoryManager()
+                    .getStatistics();
             assertEquals(1, stat.getCreatedCounter());
             assertEquals(0, stat.getAcquiredCounter());
             assertEquals(1, stat.getReleasedCounter());
@@ -84,8 +86,9 @@ public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
         mock.assertIsSatisfied();
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
-            PooledObjectFactory.Statistics stat
-                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+            PooledObjectFactory.Statistics stat = context.getCamelContextExtension()
+                    .getExchangeFactoryManager()
+                    .getStatistics();
             assertEquals(1, stat.getCreatedCounter());
             assertEquals(1, stat.getAcquiredCounter());
             assertEquals(2, stat.getReleasedCounter());
@@ -112,8 +115,7 @@ public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(JMS_QUEUE_NAME)
-                        .to(MOCK_RESULT);
+                from(JMS_QUEUE_NAME).to(MOCK_RESULT);
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -24,8 +27,6 @@ import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Sjms2ToDSendDynamicTest extends Jms2TestSupport {
 
@@ -38,7 +39,9 @@ public class Sjms2ToDSendDynamicTest extends Jms2TestSupport {
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
         // there should only be one sjms2 endpoint
-        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("sjms2:")).count();
+        long count = context.getEndpoints().stream()
+                .filter(e -> e.getEndpointUri().startsWith("sjms2:"))
+                .count();
         assertEquals(1, count, "There should only be 1 sjms2 endpoint");
 
         // and the messages should be in the queues

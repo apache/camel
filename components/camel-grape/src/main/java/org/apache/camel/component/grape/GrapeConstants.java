@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grape;
 
 import org.apache.camel.spi.Metadata;
 
 public final class GrapeConstants {
 
-    @Metadata(description = "The command to be performed by the Grape endpoint.",
-              javaType = "org.apache.camel.component.grape.GrapeCommand", defaultValue = "grab")
+    @Metadata(
+            description = "The command to be performed by the Grape endpoint.",
+            javaType = "org.apache.camel.component.grape.GrapeCommand",
+            defaultValue = "grab")
     public static final String GRAPE_COMMAND = "CamelGrapeCommand";
 
-    private GrapeConstants() {
-    }
-
+    private GrapeConstants() {}
 }

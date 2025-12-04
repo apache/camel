@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,8 +33,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-
-import static org.awaitility.Awaitility.await;
 
 public class CamelAwsXRayTestSupport extends CamelTestSupport {
 

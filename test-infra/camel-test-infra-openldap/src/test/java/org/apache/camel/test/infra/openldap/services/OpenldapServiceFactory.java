@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openldap.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class OpenldapServiceFactory {
-    private OpenldapServiceFactory() {
-
-    }
+    private OpenldapServiceFactory() {}
 
     public static SimpleTestServiceBuilder<OpenldapService> builder() {
         return new SimpleTestServiceBuilder<>("openldap");
@@ -34,9 +33,8 @@ public final class OpenldapServiceFactory {
                 .build();
     }
 
-    public static class OpenldapLocalContainerService extends OpenldapLocalContainerInfraService implements OpenldapService {
-    }
+    public static class OpenldapLocalContainerService extends OpenldapLocalContainerInfraService
+            implements OpenldapService {}
 
-    public static class OpenldapRemoteService extends OpenldapRemoteInfraService implements OpenldapService {
-    }
+    public static class OpenldapRemoteService extends OpenldapRemoteInfraService implements OpenldapService {}
 }

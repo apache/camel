@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.scan;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.annotation.Annotation;
 import java.net.URL;
@@ -28,8 +31,6 @@ import org.apache.camel.spring.scan.c.ScanTargetThree;
 import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
@@ -145,7 +146,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             savedClassLoader = Thread.currentThread().getContextClassLoader();
             // build a mock URLClassLoader
             URL url = getClass().getResource("/package_scan_test.jar");
-            URL urls[] = { new URL("jar:" + url.toString() + "!/") };
+            URL urls[] = {new URL("jar:" + url.toString() + "!/")};
             URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
 
             Thread.currentThread().setContextClassLoader(classLoader);
@@ -171,7 +172,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             savedClassLoader = Thread.currentThread().getContextClassLoader();
             URL url = getClass().getResource("/package+scan+test.jar");
 
-            URL urls[] = { new URL("jar:" + url.toString() + "!/") };
+            URL urls[] = {new URL("jar:" + url.toString() + "!/")};
             URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
 
             Thread.currentThread().setContextClassLoader(classLoader);
@@ -188,5 +189,4 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             Thread.currentThread().setContextClassLoader(savedClassLoader);
         }
     }
-
 }

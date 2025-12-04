@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,19 +32,14 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
 
     @TempDir
     Path lwd;
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/myserver/?password=admin&localWorkDirectory=" + lwd.resolve("lwd")
-               + "&resumeDownload=true&binary=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/myserver/?password=admin&localWorkDirectory="
+                + lwd.resolve("lwd") + "&resumeDownload=true&binary=true";
     }
 
     @Override
@@ -83,5 +84,4 @@ public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
             }
         };
     }
-
 }

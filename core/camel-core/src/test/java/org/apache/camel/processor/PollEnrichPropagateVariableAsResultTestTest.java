@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,17 +50,11 @@ public class PollEnrichPropagateVariableAsResultTestTest extends ContextTestSupp
                         .pollEnrich("seda:slip3", 1000)
                         .to("mock:result");
 
-                from("direct:slip1")
-                        .setVariable("foo1", simple("${body}"))
-                        .to("seda:slip1");
+                from("direct:slip1").setVariable("foo1", simple("${body}")).to("seda:slip1");
 
-                from("direct:slip2")
-                        .setVariable("foo2", simple("${body}"))
-                        .to("seda:slip2");
+                from("direct:slip2").setVariable("foo2", simple("${body}")).to("seda:slip2");
 
-                from("direct:slip3")
-                        .setVariable("foo3", simple("${body}"))
-                        .to("seda:slip3");
+                from("direct:slip3").setVariable("foo3", simple("${body}")).to("seda:slip3");
             }
         };
     }

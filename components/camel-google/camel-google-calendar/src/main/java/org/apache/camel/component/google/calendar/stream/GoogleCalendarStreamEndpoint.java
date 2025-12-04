@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar.stream;
 
 import java.util.Map;
@@ -36,19 +37,23 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Poll for changes in a Google Calendar.
  */
-@UriEndpoint(firstVersion = "2.23.0",
-             scheme = "google-calendar-stream",
-             title = "Google Calendar Stream",
-             syntax = "google-calendar-stream:index",
-             consumerOnly = true,
-             category = { Category.CLOUD }, headersClass = GoogleCalendarStreamConstants.class)
+@UriEndpoint(
+        firstVersion = "2.23.0",
+        scheme = "google-calendar-stream",
+        title = "Google Calendar Stream",
+        syntax = "google-calendar-stream:index",
+        consumerOnly = true,
+        category = {Category.CLOUD},
+        headersClass = GoogleCalendarStreamConstants.class)
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleCalendarStreamConfiguration configuration;
 
-    public GoogleCalendarStreamEndpoint(String uri, GoogleCalendarStreamComponent component,
-                                        GoogleCalendarStreamConfiguration endpointConfiguration) {
+    public GoogleCalendarStreamEndpoint(
+            String uri,
+            GoogleCalendarStreamComponent component,
+            GoogleCalendarStreamConfiguration endpointConfiguration) {
         super(uri, component);
         this.configuration = endpointConfiguration;
     }
@@ -93,8 +98,8 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint implemen
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(
-                ObjectHelper.isNotEmpty(configuration.getCalendarId()) && ObjectHelper.isNotEmpty(configuration.getUser()))) {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getCalendarId())
+                && ObjectHelper.isNotEmpty(configuration.getUser()))) {
             return getServiceProtocol() + ":" + configuration.getUser() + ":" + configuration.getCalendarId();
         }
         return null;

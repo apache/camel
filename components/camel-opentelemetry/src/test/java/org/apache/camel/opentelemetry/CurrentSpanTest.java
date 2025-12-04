@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,10 +54,6 @@ import org.apache.camel.util.StopWatch;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
     CurrentSpanTest() {
         super(new SpanTestData[0]);
@@ -73,10 +74,17 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
     @Test
     void testSync() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar"),
-                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar").setKind(SpanKind.CLIENT)
+            new SpanTestData()
+                    .setLabel("syncmock:result")
+                    .setUri("syncmock://result")
+                    .setOperation("syncmock")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar"),
+            new SpanTestData()
+                    .setLabel("direct:bar")
+                    .setUri("direct://bar")
+                    .setOperation("bar")
+                    .setKind(SpanKind.CLIENT)
         };
 
         // sync pipeline
@@ -91,10 +99,17 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
     @Test
     void testSyncToAsync() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo"),
-                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo").setKind(SpanKind.CLIENT)
+            new SpanTestData()
+                    .setLabel("asyncmock1:result")
+                    .setUri("asyncmock1://result")
+                    .setOperation("asyncmock1")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo"),
+            new SpanTestData()
+                    .setLabel("direct:foo")
+                    .setUri("direct://foo")
+                    .setOperation("foo")
+                    .setKind(SpanKind.CLIENT)
         };
 
         // sync to async pipeline
@@ -103,19 +118,28 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
-
     }
 
     @Test
     void testDirectToDirectToAsync() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:foo2").setUri("direct://foo2").setOperation("foo2"),
-                new SpanTestData().setLabel("direct:foo2").setUri("direct://foo2").setOperation("foo2")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:foo1").setUri("direct://foo1").setOperation("foo1"),
-                new SpanTestData().setLabel("direct:foo1").setUri("direct://foo1").setOperation("foo1").setKind(SpanKind.CLIENT)
+            new SpanTestData()
+                    .setLabel("asyncmock1:result")
+                    .setUri("asyncmock1://result")
+                    .setOperation("asyncmock1")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("direct:foo2").setUri("direct://foo2").setOperation("foo2"),
+            new SpanTestData()
+                    .setLabel("direct:foo2")
+                    .setUri("direct://foo2")
+                    .setOperation("foo2")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("direct:foo1").setUri("direct://foo1").setOperation("foo1"),
+            new SpanTestData()
+                    .setLabel("direct:foo1")
+                    .setUri("direct://foo1")
+                    .setOperation("foo1")
+                    .setKind(SpanKind.CLIENT)
         };
 
         // direct to direct to async pipeline
@@ -124,18 +148,26 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
-
     }
 
     @Test
     void testAsyncToSync() {
         // direct client spans (event spans) are not created, so we saw only two spans in previous tests
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("asyncmock1:start").setUri("asyncmock1://start").setOperation("asyncmock1"),
-                new SpanTestData().setLabel("asyncmock1:start").setUri("asyncmock1://start").setOperation("asyncmock1")
-                        .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("syncmock:result")
+                    .setUri("syncmock://result")
+                    .setOperation("syncmock")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock1:start")
+                    .setUri("asyncmock1://start")
+                    .setOperation("asyncmock1"),
+            new SpanTestData()
+                    .setLabel("asyncmock1:start")
+                    .setUri("asyncmock1://start")
+                    .setOperation("asyncmock1")
+                    .setKind(SpanKind.CLIENT),
         };
 
         // sync pipeline
@@ -149,11 +181,20 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
     @Test
     void testAsyncToAsync() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock2:result").setUri("asyncmock2://result").setOperation("asyncmock2")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("asyncmock2:start").setUri("asyncmock2://start").setOperation("asyncmock2"),
-                new SpanTestData().setLabel("asyncmock2:start").setUri("asyncmock2://start").setOperation("asyncmock2")
-                        .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock2:result")
+                    .setUri("asyncmock2://result")
+                    .setOperation("asyncmock2")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock2:start")
+                    .setUri("asyncmock2://start")
+                    .setOperation("asyncmock2"),
+            new SpanTestData()
+                    .setLabel("asyncmock2:start")
+                    .setUri("asyncmock2://start")
+                    .setOperation("asyncmock2")
+                    .setKind(SpanKind.CLIENT),
         };
 
         // async pipeline
@@ -167,9 +208,15 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
     @Test
     void testAsyncFailure() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock:fail").setUri("asyncmock://fail").setOperation("asyncmock"),
-                new SpanTestData().setLabel("asyncmock:fail").setUri("asyncmock://fail").setOperation("asyncmock")
-                        .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock:fail")
+                    .setUri("asyncmock://fail")
+                    .setOperation("asyncmock"),
+            new SpanTestData()
+                    .setLabel("asyncmock:fail")
+                    .setUri("asyncmock://fail")
+                    .setOperation("asyncmock")
+                    .setKind(SpanKind.CLIENT),
         };
 
         assertThrows(CamelExecutionException.class, () -> template.sendBody("asyncmock:fail", "Hello World"));
@@ -180,21 +227,32 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
 
         assertTrue(spans.get(0).getAttributes().get(AttributeKey.booleanKey("error")));
         assertTrue(spans.get(1).getAttributes().get(AttributeKey.booleanKey("error")));
-
     }
 
     @Test
     void testMulticastAsync() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("asyncmock2:result").setUri("asyncmock2://result").setOperation("asyncmock2")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start"),
-                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start")
-                        .setKind(SpanKind.CLIENT)
+            new SpanTestData()
+                    .setLabel("asyncmock1:result")
+                    .setUri("asyncmock1://result")
+                    .setOperation("asyncmock1")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock2:result")
+                    .setUri("asyncmock2://result")
+                    .setOperation("asyncmock2")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("syncmock:result")
+                    .setUri("syncmock://result")
+                    .setOperation("syncmock")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start"),
+            new SpanTestData()
+                    .setLabel("direct:start")
+                    .setUri("direct://start")
+                    .setOperation("start")
+                    .setKind(SpanKind.CLIENT)
         };
 
         // sync pipeline
@@ -244,18 +302,21 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
                 });
 
                 // multicast pipeline
-                from("direct:start").multicast()
+                from("direct:start")
+                        .multicast()
                         .to("asyncmock1:result")
                         .to("asyncmock2:result")
                         .to("syncmock:result");
 
                 // stress pipeline
-                from("asyncmock3:start").multicast()
+                from("asyncmock3:start")
+                        .multicast()
                         .aggregationStrategy((oldExchange, newExchange) -> {
                             checkCurrentSpan(newExchange);
                             return newExchange;
                         })
-                        .executorService(context.getExecutorServiceManager().newFixedThreadPool(this, "CurrentSpanTest", 10))
+                        .executorService(
+                                context.getExecutorServiceManager().newFixedThreadPool(this, "CurrentSpanTest", 10))
                         .streaming()
                         .delay(10)
                         .to("log:line", "asyncmock1:start")
@@ -272,11 +333,14 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
             ReadableSpan readable = (ReadableSpan) Span.current();
             errorMessage = String.format(
                     "Current span: name - '%s', kind - '%s', ended - `%s', id - '%s-%s', exchange id - '%s-%s', thread - '%s'\n",
-                    readable.getName(), readable.getKind(), readable.hasEnded(),
-                    readable.getSpanContext().getTraceId(), readable.getSpanContext().getSpanId(),
-                    ActiveSpanManager.getSpan(exc).traceId(), ActiveSpanManager.getSpan(exc).spanId(),
+                    readable.getName(),
+                    readable.getKind(),
+                    readable.hasEnded(),
+                    readable.getSpanContext().getTraceId(),
+                    readable.getSpanContext().getSpanId(),
+                    ActiveSpanManager.getSpan(exc).traceId(),
+                    ActiveSpanManager.getSpan(exc).spanId(),
                     Thread.currentThread().getName());
-
         }
 
         Awaitility.await()
@@ -296,8 +360,8 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
     }
 
     private static class AsyncMockEndpoint extends MockEndpoint {
-        private static final Executor DELAYED
-                = CompletableFuture.delayedExecutor(10L, TimeUnit.MILLISECONDS, new ForkJoinPool(3));
+        private static final Executor DELAYED =
+                CompletableFuture.delayedExecutor(10L, TimeUnit.MILLISECONDS, new ForkJoinPool(3));
 
         private Consumer consumer;
         private final String key;
@@ -334,9 +398,7 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
                             fail(e);
                         }
                     }
-                    CompletableFuture.runAsync(() -> {
-                    }, DELAYED)
-                            .thenRun(() -> callback.run());
+                    CompletableFuture.runAsync(() -> {}, DELAYED).thenRun(() -> callback.run());
 
                     return false;
                 }
@@ -381,7 +443,9 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
     }
 
     private static void assertCurrentSpan(Exchange exchange) {
-        assertEquals(Span.current().getSpanContext().getSpanId(), ActiveSpanManager.getSpan(exchange).spanId());
+        assertEquals(
+                Span.current().getSpanContext().getSpanId(),
+                ActiveSpanManager.getSpan(exchange).spanId());
     }
 
     private void awaitInvalidSpanContext() {
@@ -392,5 +456,4 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
                 .pollDelay(0, TimeUnit.MILLISECONDS)
                 .until(() -> !Span.current().getSpanContext().isValid());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -66,14 +67,33 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param onExceptionOccurredProcessor a custom {@link org.apache.camel.Processor} to process the
      *                                     {@link org.apache.camel.Exchange} just after an exception was thrown.
      */
-    public TransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
-                                   Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
-                                   TransactionTemplate transactionTemplate, Predicate retryWhile,
-                                   ScheduledExecutorService executorService,
-                                   LoggingLevel rollbackLoggingLevel, Processor onExceptionOccurredProcessor) {
+    public TransactionErrorHandler(
+            CamelContext camelContext,
+            Processor output,
+            CamelLogger logger,
+            Processor redeliveryProcessor,
+            RedeliveryPolicy redeliveryPolicy,
+            TransactionTemplate transactionTemplate,
+            Predicate retryWhile,
+            ScheduledExecutorService executorService,
+            LoggingLevel rollbackLoggingLevel,
+            Processor onExceptionOccurredProcessor) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, false, false, retryWhile,
-              executorService, null, onExceptionOccurredProcessor);
+        super(
+                camelContext,
+                output,
+                logger,
+                redeliveryProcessor,
+                redeliveryPolicy,
+                null,
+                null,
+                false,
+                false,
+                false,
+                retryWhile,
+                executorService,
+                null,
+                onExceptionOccurredProcessor);
         this.transactionTemplate = transactionTemplate;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
         this.transactionKey = ObjectHelper.getIdentityHashCode(transactionTemplate);
@@ -82,8 +102,16 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     @Override
     public ErrorHandler clone(Processor output) {
         TransactionErrorHandler answer = new TransactionErrorHandler(
-                camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, transactionTemplate, retryWhilePolicy,
-                executorService, rollbackLoggingLevel, onExceptionProcessor);
+                camelContext,
+                output,
+                logger,
+                redeliveryProcessor,
+                redeliveryPolicy,
+                transactionTemplate,
+                retryWhilePolicy,
+                executorService,
+                rollbackLoggingLevel,
+                onExceptionProcessor);
         // shallow clone is okay as we do not mutate these
         if (exceptionPolicies != null) {
             answer.exceptionPolicies = exceptionPolicies;
@@ -103,8 +131,8 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             return "";
         }
         return "TransactionErrorHandler:"
-               + propagationBehaviorToString(transactionTemplate.getPropagationBehavior())
-               + "[" + getOutput() + "]";
+                + propagationBehaviorToString(transactionTemplate.getPropagationBehavior())
+                + "[" + getOutput() + "]";
     }
 
     @Override
@@ -177,13 +205,21 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 // log exception if there was a cause exception so we have the stack trace
                 Exception cause = exchange.getException();
                 if (cause != null) {
-                    LOG.debug("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for "
-                              + "rollbackOnlyLast and caught: {}",
-                            transactionKey, redelivered, ids, cause.getMessage(), cause);
+                    LOG.debug(
+                            "Transaction rollback ({}) redelivered({}) for {} due exchange was marked for "
+                                    + "rollbackOnlyLast and caught: {}",
+                            transactionKey,
+                            redelivered,
+                            ids,
+                            cause.getMessage(),
+                            cause);
                 } else {
-                    LOG.debug("Transaction rollback ({}) redelivered({}) for {} "
-                              + "due exchange was marked for rollbackOnlyLast",
-                            transactionKey, redelivered, ids);
+                    LOG.debug(
+                            "Transaction rollback ({}) redelivered({}) for {} "
+                                    + "due exchange was marked for rollbackOnlyLast",
+                            transactionKey,
+                            redelivered,
+                            ids);
                 }
             }
             // remove caused exception due we was marked as rollback only last
@@ -221,9 +257,11 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                         status.setRollbackOnly();
                     }
 
-                    // throw runtime exception to force rollback (which works best to rollback with Spring transaction manager)
+                    // throw runtime exception to force rollback (which works best to rollback with Spring transaction
+                    // manager)
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Throwing runtime exception to force transaction to rollback on {}",
+                        LOG.trace(
+                                "Throwing runtime exception to force transaction to rollback on {}",
                                 transactionTemplate.getName());
                     }
                     throw rce;
@@ -241,12 +279,14 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param exchange the exchange
      */
     protected void processByErrorHandler(final Exchange exchange) {
-        awaitManager.process(new AsyncProcessorSupport() {
-            @Override
-            public boolean process(Exchange exchange, AsyncCallback callback) {
-                return TransactionErrorHandler.super.process(exchange, callback);
-            }
-        }, exchange);
+        awaitManager.process(
+                new AsyncProcessorSupport() {
+                    @Override
+                    public boolean process(Exchange exchange, AsyncCallback callback) {
+                        return TransactionErrorHandler.super.process(exchange, callback);
+                    }
+                },
+                exchange);
     }
 
     /**
@@ -265,7 +305,8 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         if ("true".equals(redelivered)) {
             // okay its a redelivered message so log at INFO level if rollbackLoggingLevel is INFO or higher
             // this allows people to know that the redelivered message was committed this time
-            if (rollbackLoggingLevel == LoggingLevel.INFO || rollbackLoggingLevel == LoggingLevel.WARN
+            if (rollbackLoggingLevel == LoggingLevel.INFO
+                    || rollbackLoggingLevel == LoggingLevel.WARN
                     || rollbackLoggingLevel == LoggingLevel.ERROR) {
                 LOG.info("Transaction commit ({}) redelivered({}) for {})", transactionKey, redelivered, ids);
                 // return after we have logged
@@ -285,42 +326,77 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             return;
         } else if (rollbackLoggingLevel == LoggingLevel.ERROR && LOG.isErrorEnabled()) {
             if (rollbackOnly) {
-                LOG.error("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
+                LOG.error(
+                        "Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
+                        transactionKey,
+                        redelivered,
+                        ids);
             } else {
-                LOG.error("Transaction rollback ({}) redelivered({}) for {} caught: {}", transactionKey, redelivered, ids,
+                LOG.error(
+                        "Transaction rollback ({}) redelivered({}) for {} caught: {}",
+                        transactionKey,
+                        redelivered,
+                        ids,
                         e.getMessage());
             }
         } else if (rollbackLoggingLevel == LoggingLevel.WARN && LOG.isWarnEnabled()) {
             if (rollbackOnly) {
-                LOG.warn("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
+                LOG.warn(
+                        "Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
+                        transactionKey,
+                        redelivered,
+                        ids);
             } else {
-                LOG.warn("Transaction rollback ({}) redelivered({}) for {} caught: {}", transactionKey, redelivered, ids,
+                LOG.warn(
+                        "Transaction rollback ({}) redelivered({}) for {} caught: {}",
+                        transactionKey,
+                        redelivered,
+                        ids,
                         e.getMessage());
             }
         } else if (rollbackLoggingLevel == LoggingLevel.INFO && LOG.isInfoEnabled()) {
             if (rollbackOnly) {
-                LOG.info("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
+                LOG.info(
+                        "Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
+                        transactionKey,
+                        redelivered,
+                        ids);
             } else {
-                LOG.info("Transaction rollback ({}) redelivered({}) for {} caught: {}", transactionKey, redelivered, ids,
+                LOG.info(
+                        "Transaction rollback ({}) redelivered({}) for {} caught: {}",
+                        transactionKey,
+                        redelivered,
+                        ids,
                         e.getMessage());
             }
         } else if (rollbackLoggingLevel == LoggingLevel.DEBUG && LOG.isDebugEnabled()) {
             if (rollbackOnly) {
-                LOG.debug("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
+                LOG.debug(
+                        "Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
+                        transactionKey,
+                        redelivered,
+                        ids);
             } else {
-                LOG.debug("Transaction rollback ({}) redelivered({}) for {} caught: {}", transactionKey, redelivered, ids,
+                LOG.debug(
+                        "Transaction rollback ({}) redelivered({}) for {} caught: {}",
+                        transactionKey,
+                        redelivered,
+                        ids,
                         e.getMessage());
             }
         } else if (rollbackLoggingLevel == LoggingLevel.TRACE && LOG.isTraceEnabled()) {
             if (rollbackOnly) {
-                LOG.trace("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        transactionKey, redelivered, ids);
+                LOG.trace(
+                        "Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
+                        transactionKey,
+                        redelivered,
+                        ids);
             } else {
-                LOG.trace("Transaction rollback ({}) redelivered({}) for {} caught: {}", transactionKey, redelivered, ids,
+                LOG.trace(
+                        "Transaction rollback ({}) redelivered({}) for {} caught: {}",
+                        transactionKey,
+                        redelivered,
+                        ids,
                         e.getMessage());
             }
         }
@@ -355,5 +431,4 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         }
         return rc;
     }
-
 }

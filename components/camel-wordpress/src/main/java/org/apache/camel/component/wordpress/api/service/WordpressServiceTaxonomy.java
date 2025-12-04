@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service;
 
 import java.util.Map;
@@ -26,5 +27,4 @@ public interface WordpressServiceTaxonomy extends WordpressService {
     Map<String, Taxonomy> list(Context context, String postType);
 
     Taxonomy retrieve(Context context, String taxonomy);
-
 }

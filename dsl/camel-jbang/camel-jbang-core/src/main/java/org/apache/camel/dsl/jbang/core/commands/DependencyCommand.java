@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "dependency",
-                     description = "Displays all Camel dependencies required to run (use dependency --help to see sub commands)")
+@CommandLine.Command(
+        name = "dependency",
+        description = "Displays all Camel dependencies required to run (use dependency --help to see sub commands)")
 public class DependencyCommand extends CamelCommand {
 
     public DependencyCommand(CamelJBangMain main) {
@@ -32,5 +34,4 @@ public class DependencyCommand extends CamelCommand {
         new CommandLine(new DependencyList(getMain())).execute();
         return 0;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import org.slf4j.Logger;
@@ -25,11 +26,11 @@ import org.slf4j.LoggerFactory;
  * Below are some examples how to call a service and what Camel endpoint URI is constructed based on the input:
  *
  * <pre>
- serviceCall("myService") -> http://hostname:port
- serviceCall("myService/foo") -> http://hostname:port/foo
- serviceCall("http:myService/foo") -> http:hostname:port/foo
- serviceCall("myService", "http:myService.host:myService.port/foo") -> http:hostname:port/foo
- serviceCall("myService", "netty:tcp:myService?connectTimeout=1000") -> netty:tcp:hostname:port?connectTimeout=1000
+ * serviceCall("myService") -> http://hostname:port
+ * serviceCall("myService/foo") -> http://hostname:port/foo
+ * serviceCall("http:myService/foo") -> http:hostname:port/foo
+ * serviceCall("myService", "http:myService.host:myService.port/foo") -> http:hostname:port/foo
+ * serviceCall("myService", "netty:tcp:myService?connectTimeout=1000") -> netty:tcp:hostname:port?connectTimeout=1000
  * </pre>
  *
  * @deprecated since 4.7
@@ -38,8 +39,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceCallExpression.class);
 
-    public DefaultServiceCallExpression() {
-    }
+    public DefaultServiceCallExpression() {}
 
     public DefaultServiceCallExpression(String hostHeader, String portHeader) {
         super(hostHeader, portHeader);

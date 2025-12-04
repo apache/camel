@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -22,18 +26,19 @@ import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleProduceDisconnectIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleProduce() throws Exception {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&knownHostsFile="
-                                   + service.getKnownHostsFile(),
-                "Hello World", Exchange.FILE_NAME, "hello.txt");
+                        + service.getKnownHostsFile(),
+                "Hello World",
+                Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = ftpFile("hello.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
@@ -45,8 +50,10 @@ public class SftpSimpleProduceDisconnectIT extends SftpServerTestSupport {
 
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&knownHostsFile="
-                                   + service.getKnownHostsFile(),
-                "Hello World", Exchange.FILE_NAME, "hello1.txt");
+                        + service.getKnownHostsFile(),
+                "Hello World",
+                Exchange.FILE_NAME,
+                "hello1.txt");
 
         file = ftpFile("hello1.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -35,10 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @DisabledOnOs(OS.AIX)
 public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
 
@@ -46,8 +47,8 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
     @Test
     public void testBacklogTracerEventMessage() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on
-                = new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -104,38 +105,40 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
         ToDefinition to4 = (ToDefinition) route.getOutputs().get(1);
         assertEquals("end", to4.getId());
 
-        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[] { to2.getId() }, new String[] { "java.lang.String" });
+        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(
+                on, "dumpTracedMessages", new Object[] {to2.getId()}, new String[] {"java.lang.String"});
 
         assertNotNull(events);
         assertEquals(1, events.size());
 
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals(to2.getId(), event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
-                     + "      <exchangeProperties>\n"
-                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
-                     + "      </exchangeProperties>\n"
-                     + "      <body type=\"java.lang.String\">Hello World</body>\n"
-                     + "    </message>",
+        assertEquals(
+                "    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId()
+                        + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                        + "      <exchangeProperties>\n"
+                        + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                        + "      </exchangeProperties>\n"
+                        + "      <body type=\"java.lang.String\">Hello World</body>\n"
+                        + "    </message>",
                 event1.getMessageAsXml());
 
-        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[] { "camel" }, new String[] { "java.lang.String" });
+        events = (List<BacklogTracerEventMessage>)
+                mbeanServer.invoke(on, "dumpTracedMessages", new Object[] {"camel"}, new String[] {"java.lang.String"});
 
         assertNotNull(events);
         assertEquals(1, events.size());
 
         event1 = events.get(0);
         assertEquals("camel", event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + camelExchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
-                     + "      <exchangeProperties>\n"
-                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
-                     + "      </exchangeProperties>\n"
-                     + "      <body type=\"java.lang.String\">Hello Camel</body>\n"
-                     + "    </message>",
+        assertEquals(
+                "    <message exchangeId=\"" + camelExchanges.get(0).getExchangeId()
+                        + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                        + "      <exchangeProperties>\n"
+                        + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                        + "      </exchangeProperties>\n"
+                        + "      <body type=\"java.lang.String\">Hello Camel</body>\n"
+                        + "    </message>",
                 event1.getMessageAsXml());
     }
 
@@ -151,15 +154,17 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
                         .choice()
                         .when(body().contains("Camel"))
                         .log("A Camel message")
-                        .to("mock:camel").id("camel")
+                        .to("mock:camel")
+                        .id("camel")
                         .otherwise()
                         .log("Some other kind of message")
                         .to("mock:other") // should auto generate id
-                        .to("mock:foo").id("foo")
+                        .to("mock:foo")
+                        .id("foo")
                         .end()
-                        .to("mock:end").id("end");
+                        .to("mock:end")
+                        .id("end");
             }
         };
     }
-
 }

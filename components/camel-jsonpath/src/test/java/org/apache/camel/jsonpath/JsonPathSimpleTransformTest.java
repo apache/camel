@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +24,8 @@ import org.junit.jupiter.api.Test;
 
 public class JsonPathSimpleTransformTest extends CamelTestSupport {
 
-    private static String EXPECTED = """
+    private static String EXPECTED =
+            """
             {
               "roll": 123,
               "years": 42,
@@ -36,7 +38,9 @@ public class JsonPathSimpleTransformTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().simple("""
+                        .transform()
+                        .simple(
+                                """
                                 {
                                   "roll": ${jsonpath($.id)},
                                   "years": ${jsonpath($.age)},
@@ -55,5 +59,4 @@ public class JsonPathSimpleTransformTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

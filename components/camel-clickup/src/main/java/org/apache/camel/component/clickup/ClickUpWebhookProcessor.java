@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup;
 
 import java.io.IOException;
@@ -40,7 +41,8 @@ public class ClickUpWebhookProcessor extends AsyncProcessorSupport {
 
     private String webhookSecret;
 
-    public ClickUpWebhookProcessor(Processor nextProcessor, ClickUpWebhookService clickUpWebhookService, String webhookSecret) {
+    public ClickUpWebhookProcessor(
+            Processor nextProcessor, ClickUpWebhookService clickUpWebhookService, String webhookSecret) {
         this.nextProcessor = AsyncProcessorConverterHelper.convert(nextProcessor);
         this.clickUpWebhookService = clickUpWebhookService;
         this.webhookSecret = webhookSecret;
@@ -84,5 +86,4 @@ public class ClickUpWebhookProcessor extends AsyncProcessorSupport {
     public void setWebhookSecret(String webhookSecret) {
         this.webhookSecret = webhookSecret;
     }
-
 }

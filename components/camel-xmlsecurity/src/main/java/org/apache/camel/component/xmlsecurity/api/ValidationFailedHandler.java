@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 import javax.xml.crypto.dsig.Reference;
@@ -82,5 +83,4 @@ public interface ValidationFailedHandler {
     boolean ignoreCoreValidationFailure() throws Exception; // NOPMD
 
     void end() throws Exception; // NOPMD
-
 }

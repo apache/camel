@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
 
 import java.util.Map;
@@ -45,9 +46,15 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 /**
  * Transform messages using a Thymeleaf template.
  */
-@UriEndpoint(firstVersion = "4.1.0", scheme = "thymeleaf", title = "Thymeleaf", syntax = "thymeleaf:resourceUri",
-             remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
-             headersClass = ThymeleafConstants.class)
+@UriEndpoint(
+        firstVersion = "4.1.0",
+        scheme = "thymeleaf",
+        title = "Thymeleaf",
+        syntax = "thymeleaf:resourceUri",
+        remote = false,
+        producerOnly = true,
+        category = {Category.TRANSFORMATION},
+        headersClass = ThymeleafConstants.class)
 @Metadata(excludeProperties = "contentCache")
 public class ThymeleafEndpoint extends ResourceEndpoint {
 
@@ -55,35 +62,50 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
     private String template;
     private JakartaServletWebApplication jakartaServletWebApplication;
 
-    @UriParam(label = "advanced", defaultValue = "CLASS_LOADER",
-              description = "The type of resolver to be used by the template engine.",
-              javaType = "org.apache.camel.component.thymeleaf.ThymeleafResolverType")
+    @UriParam(
+            label = "advanced",
+            defaultValue = "CLASS_LOADER",
+            description = "The type of resolver to be used by the template engine.",
+            javaType = "org.apache.camel.component.thymeleaf.ThymeleafResolverType")
     private ThymeleafResolverType resolver = ThymeleafResolverType.CLASS_LOADER;
-    @UriParam(description = "The template mode to be applied to templates.", defaultValue = "HTML",
-              enums = "HTML,XML,TEXT,JAVASCRIPT,CSS,RAW")
+
+    @UriParam(
+            description = "The template mode to be applied to templates.",
+            defaultValue = "HTML",
+            enums = "HTML,XML,TEXT,JAVASCRIPT,CSS,RAW")
     private String templateMode;
-    @UriParam(label = "advanced",
-              description = "An optional prefix added to template names to convert them into resource names.")
+
+    @UriParam(
+            label = "advanced",
+            description = "An optional prefix added to template names to convert them into resource names.")
     private String prefix;
-    @UriParam(label = "advanced",
-              description = "An optional suffix added to template names to convert them into resource names.")
+
+    @UriParam(
+            label = "advanced",
+            description = "An optional suffix added to template names to convert them into resource names.")
     private String suffix;
+
     @UriParam(label = "advanced", description = "The character encoding to be used for reading template resources.")
     private String encoding;
-    @UriParam(label = "advanced",
-              description = "The order in which this template will be resolved as part of the resolver chain.")
+
+    @UriParam(
+            label = "advanced",
+            description = "The order in which this template will be resolved as part of the resolver chain.")
     private Integer order;
+
     @UriParam(description = "Whether a template resources will be checked for existence before being returned.")
     private Boolean checkExistence;
+
     @UriParam(description = "The cache Time To Live for templates, expressed in milliseconds.")
     private Long cacheTimeToLive;
+
     @UriParam(description = "Whether templates have to be considered cacheable or not.")
     private Boolean cacheable;
+
     @UriParam
     private boolean allowTemplateFromHeader;
 
-    public ThymeleafEndpoint() {
-    }
+    public ThymeleafEndpoint() {}
 
     public ThymeleafEndpoint(String endpointURI, Component component, String resourceURI) {
         super(endpointURI, component, resourceURI);
@@ -339,8 +361,10 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
             if (newResourceUri != null) {
                 // remove the header so that it is not propagated in the exchange
                 exchange.getIn().removeHeader(ThymeleafConstants.THYMELEAF_RESOURCE_URI);
-                log.debug("{} set to {}, creating new endpoint to handle exchange",
-                        ThymeleafConstants.THYMELEAF_RESOURCE_URI, newResourceUri);
+                log.debug(
+                        "{} set to {}, creating new endpoint to handle exchange",
+                        ThymeleafConstants.THYMELEAF_RESOURCE_URI,
+                        newResourceUri);
                 try (ThymeleafEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri)) {
                     newEndpoint.onExchange(exchange);
                 }
@@ -359,7 +383,8 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
         }
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> dataModel = exchange.getIn().getHeader(ThymeleafConstants.THYMELEAF_VARIABLE_MAP, Map.class);
+        Map<String, Object> dataModel =
+                exchange.getIn().getHeader(ThymeleafConstants.THYMELEAF_VARIABLE_MAP, Map.class);
         if (dataModel == null) {
             dataModel = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
         } else {
@@ -557,5 +582,4 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
 
         return resolver;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.modeline;
 
 import java.util.List;
@@ -42,5 +43,4 @@ public interface ModelineParser {
      * @throws Exception is thrown if error during parsing
      */
     List<CamelContextCustomizer> parse(Resource resource) throws Exception;
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -24,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateInstanceJsonFunctionalTest extends CamelTestSupport {
     private static final String ACCESS_KEY = "replace_this_with_access_key";
@@ -41,11 +42,10 @@ public class CreateInstanceJsonFunctionalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:operation")
-                        .to("hwcloud-dms:createInstance?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + PROJECT_ID +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-dms:createInstance?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + PROJECT_ID + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Operation successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:operation_result");
@@ -68,35 +68,34 @@ public class CreateInstanceJsonFunctionalTest extends CamelTestSupport {
 
         // new Kafka instance options: https://support.huaweicloud.com/en-us/api-kafka/kafka-api-180514002.html
         // new RabbitMQ instance options: https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514002.html
-        String sampleBody = "{" +
-                            "\"name\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"description\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"engine\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"engine_version\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"specification\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"storage_space\":" + "replace_with_instance_information" + "," +
-                            "\"partition_num\":" + "replace_with_instance_information" + "," +
-                            "\"access_user\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"password\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"vpc_id\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"security_group_id\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"subnet_id\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"available_zones\":[\"" + "replace_with_instance_information" + "\"]," +
-                            "\"product_id\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"kafka_manager_user\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"kafka_manager_password\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"maintain_begin\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"maintain_end\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"enable_publicip\":" + "replace_with_instance_information" + "," +
-                            "\"public_bandwidth\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"publicip_id\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"ssl_enable\":" + "replace_with_instance_information" + "," +
-                            "\"retention_policy\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"connector_enable\":" + "replace_with_instance_information" + "," +
-                            "\"enable_auto_topic\":" + "replace_with_instance_information" + "," +
-                            "\"storage_spec_code\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"enterprise_project_id\":\"" + "replace_with_instance_information" + "\"" +
-                            "}";
+        String sampleBody = "{" + "\"name\":\""
+                + "replace_with_instance_information" + "\"," + "\"description\":\""
+                + "replace_with_instance_information" + "\"," + "\"engine\":\""
+                + "replace_with_instance_information" + "\"," + "\"engine_version\":\""
+                + "replace_with_instance_information" + "\"," + "\"specification\":\""
+                + "replace_with_instance_information" + "\"," + "\"storage_space\":"
+                + "replace_with_instance_information" + "," + "\"partition_num\":"
+                + "replace_with_instance_information" + "," + "\"access_user\":\""
+                + "replace_with_instance_information" + "\"," + "\"password\":\""
+                + "replace_with_instance_information" + "\"," + "\"vpc_id\":\""
+                + "replace_with_instance_information" + "\"," + "\"security_group_id\":\""
+                + "replace_with_instance_information" + "\"," + "\"subnet_id\":\""
+                + "replace_with_instance_information" + "\"," + "\"available_zones\":[\""
+                + "replace_with_instance_information" + "\"]," + "\"product_id\":\""
+                + "replace_with_instance_information" + "\"," + "\"kafka_manager_user\":\""
+                + "replace_with_instance_information" + "\"," + "\"kafka_manager_password\":\""
+                + "replace_with_instance_information" + "\"," + "\"maintain_begin\":\""
+                + "replace_with_instance_information" + "\"," + "\"maintain_end\":\""
+                + "replace_with_instance_information" + "\"," + "\"enable_publicip\":"
+                + "replace_with_instance_information" + "," + "\"public_bandwidth\":\""
+                + "replace_with_instance_information" + "\"," + "\"publicip_id\":\""
+                + "replace_with_instance_information" + "\"," + "\"ssl_enable\":"
+                + "replace_with_instance_information" + "," + "\"retention_policy\":\""
+                + "replace_with_instance_information" + "\"," + "\"connector_enable\":"
+                + "replace_with_instance_information" + "," + "\"enable_auto_topic\":"
+                + "replace_with_instance_information" + "," + "\"storage_spec_code\":\""
+                + "replace_with_instance_information" + "\"," + "\"enterprise_project_id\":\""
+                + "replace_with_instance_information" + "\"" + "}";
 
         template.sendBody("direct:operation", sampleBody);
         Exchange responseExchange = mock.getExchanges().get(0);

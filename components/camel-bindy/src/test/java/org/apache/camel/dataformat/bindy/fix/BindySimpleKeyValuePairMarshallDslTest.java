@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fix;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class BindySimpleKeyValuePairMarshallDslTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "1=BE.CHM.00111=CHM0001-0122=448=BE0001245678"
-                            + "54=158=this is a camel - bindy test777=17-02-2011 23:29:59\r\n";
+            + "54=158=this is a camel - bindy test777=17-02-2011 23:29:59\r\n";
 
     @Produce("direct:start")
     private ProducerTemplate template;
@@ -83,10 +84,10 @@ public class BindySimpleKeyValuePairMarshallDslTest {
 
         @Override
         public void configure() {
-            from("direct:start").marshal()
+            from("direct:start")
+                    .marshal()
                     .bindy(BindyType.KeyValue, org.apache.camel.dataformat.bindy.model.fix.simple.Order.class)
                     .to("mock:result");
         }
-
     }
 }

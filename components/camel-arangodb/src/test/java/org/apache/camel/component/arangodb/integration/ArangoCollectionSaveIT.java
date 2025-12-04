@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb.integration;
+
+import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_INSERT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,16 +36,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_INSERT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                                  disabledReason = "Apache CI nodes are too resource constrained for this test"),
-        @DisabledIfSystemProperty(named = "arangodb.tests.disable", matches = "true",
-                                  disabledReason = "Manually disabled tests")
+    @DisabledIfSystemProperty(
+            named = "ci.env.name",
+            matches = ".*",
+            disabledReason = "Apache CI nodes are too resource constrained for this test"),
+    @DisabledIfSystemProperty(
+            named = "arangodb.tests.disable",
+            matches = "true",
+            disabledReason = "Manually disabled tests")
 })
 public class ArangoCollectionSaveIT extends BaseArangoDb {
 
@@ -48,7 +53,8 @@ public class ArangoCollectionSaveIT extends BaseArangoDb {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insert")
-                        .to("arangodb:{{arangodb.testDb}}?documentCollection={{arangodb.testCollection}}&operation=SAVE_DOCUMENT");
+                        .to(
+                                "arangodb:{{arangodb.testDb}}?documentCollection={{arangodb.testCollection}}&operation=SAVE_DOCUMENT");
             }
         };
     }
@@ -59,14 +65,15 @@ public class ArangoCollectionSaveIT extends BaseArangoDb {
         myObject.addAttribute("a", "Foo");
         myObject.addAttribute("b", 42);
 
-        Exchange result = template.request("direct:insert", exchange -> exchange.getMessage().setBody(myObject));
+        Exchange result = template.request(
+                "direct:insert", exchange -> exchange.getMessage().setBody(myObject));
 
         assertTrue(result.getMessage().getBody() instanceof DocumentCreateEntity);
-        DocumentCreateEntity<BaseDocument> docCreated = (DocumentCreateEntity<BaseDocument>) result.getMessage().getBody();
+        DocumentCreateEntity<BaseDocument> docCreated =
+                (DocumentCreateEntity<BaseDocument>) result.getMessage().getBody();
         assertNotNull(docCreated.getKey());
 
-        BaseDocument actualResult = collection.getDocument(docCreated.getKey(),
-                BaseDocument.class);
+        BaseDocument actualResult = collection.getDocument(docCreated.getKey(), BaseDocument.class);
         assertEquals(docCreated.getKey(), actualResult.getKey());
         assertEquals("Foo", actualResult.getAttribute("a"));
         assertEquals(42, actualResult.getAttribute("b"));
@@ -82,12 +89,11 @@ public class ArangoCollectionSaveIT extends BaseArangoDb {
         });
 
         assertTrue(result.getMessage().getBody() instanceof DocumentCreateEntity);
-        DocumentCreateEntity<TestDocumentEntity> docCreated
-                = (DocumentCreateEntity<TestDocumentEntity>) result.getMessage().getBody();
+        DocumentCreateEntity<TestDocumentEntity> docCreated =
+                (DocumentCreateEntity<TestDocumentEntity>) result.getMessage().getBody();
         assertNotNull(docCreated.getKey());
 
-        TestDocumentEntity actualResult = collection.getDocument(docCreated.getKey(),
-                TestDocumentEntity.class);
+        TestDocumentEntity actualResult = collection.getDocument(docCreated.getKey(), TestDocumentEntity.class);
         assertEquals("bar", actualResult.getFoo());
         assertEquals(docCreated.getKey(), actualResult.getKey());
     }
@@ -102,11 +108,11 @@ public class ArangoCollectionSaveIT extends BaseArangoDb {
         });
 
         assertTrue(result.getMessage().getBody() instanceof DocumentCreateEntity);
-        DocumentCreateEntity<TestEntity> docCreated = (DocumentCreateEntity<TestEntity>) result.getMessage().getBody();
+        DocumentCreateEntity<TestEntity> docCreated =
+                (DocumentCreateEntity<TestEntity>) result.getMessage().getBody();
         assertNotNull(docCreated.getKey());
 
-        TestDocumentEntity actualResult = collection.getDocument(docCreated.getKey(),
-                TestDocumentEntity.class);
+        TestDocumentEntity actualResult = collection.getDocument(docCreated.getKey(), TestDocumentEntity.class);
         assertEquals("bar", actualResult.getFoo());
         assertEquals(docCreated.getKey(), actualResult.getKey());
     }
@@ -134,7 +140,6 @@ public class ArangoCollectionSaveIT extends BaseArangoDb {
             assertNotNull(test1Inserted.getRev());
             assertEquals(test1.getFoo(), test1Inserted.getFoo());
             assertEquals(test1.getNumber(), test1Inserted.getNumber());
-
         });
 
         bindVars = Map.of("foo", test2.getFoo());
@@ -147,5 +152,4 @@ public class ArangoCollectionSaveIT extends BaseArangoDb {
             assertEquals(test2.getNumber(), test2Inserted.getNumber());
         });
     }
-
 }

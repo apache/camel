@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.base;
 
 import java.net.URI;
@@ -90,7 +91,8 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             params.remove("httpUri");
             params.remove("httpURI");
             if ("netty-http".equals(getScheme())) {
-                // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
+                // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path
+                // parameter
                 params.remove("path");
             }
         }
@@ -107,7 +109,8 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             query = URISupport.createQueryString(new LinkedHashMap<>(entry.getLenientProperties()));
         }
 
-        if ((path == null || path.isEmpty()) && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_PATH))) {
+        if ((path == null || path.isEmpty())
+                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_PATH))) {
             path = (String) exchange.getIn().getHeader(Exchange.HTTP_PATH);
         }
         if (query == null && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_QUERY))) {
@@ -191,13 +194,13 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
                 }
             }
 
-            return new String[] { host, path, authority };
+            return new String[] {host, path, authority};
         } catch (URISyntaxException e) {
             // ignore
         }
 
         // no context path
-        return new String[] { u, null, null };
+        return new String[] {u, null, null};
     }
 
     private String parseDefaultUri(String u) {
@@ -220,5 +223,4 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         }
         return u;
     }
-
 }

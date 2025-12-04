@@ -31,8 +31,9 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts Azure Storage Files poll response to CloudEvent v1_0 data format. The data type sets
  * Camel specific CloudEvent headers with values extracted from Azure Storage Files poll response.
  */
-@DataTypeTransformer(name = "azure-files:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with Azure Storage Files poll response details")
+@DataTypeTransformer(
+        name = "azure-files:application-cloudevents",
+        description = "Adds CloudEvent headers to the Camel message with Azure Storage Files poll response details")
 public class AzureFilesCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,12 +41,14 @@ public class AzureFilesCloudEventDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.storage.files.poll");
 
         if (message.getHeaders().containsKey(FilesConstants.FILE_HOST)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
+            headers.put(
+                    CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
                     "azure.storage.files." + message.getHeader(FilesConstants.FILE_HOST, String.class));
         }
 

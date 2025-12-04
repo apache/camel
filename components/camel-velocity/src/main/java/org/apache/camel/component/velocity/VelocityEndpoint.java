@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
 
 import java.io.InputStream;
@@ -44,24 +45,32 @@ import org.slf4j.LoggerFactory;
 /**
  * Transform messages using a Velocity template.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri",
-             remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
-             headersClass = VelocityConstants.class)
+@UriEndpoint(
+        firstVersion = "1.2.0",
+        scheme = "velocity",
+        title = "Velocity",
+        syntax = "velocity:resourceUri",
+        remote = false,
+        producerOnly = true,
+        category = {Category.TRANSFORMATION},
+        headersClass = VelocityConstants.class)
 public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;
 
     @UriParam
     private boolean allowTemplateFromHeader;
+
     @UriParam(defaultValue = "true")
     private boolean loaderCache = true;
+
     @UriParam
     private String encoding;
+
     @UriParam
     private String propertiesFile;
 
-    public VelocityEndpoint() {
-    }
+    public VelocityEndpoint() {}
 
     public VelocityEndpoint(String uri, VelocityComponent component, String resourceUri) {
         super(uri, component, resourceUri);
@@ -89,21 +98,23 @@ public class VelocityEndpoint extends ResourceEndpoint {
                 velocityEngine = new VelocityEngine();
 
                 // set the class resolver as a property so we can access it from CamelVelocityClasspathResourceLoader
-                velocityEngine.addProperty("CamelClassResolver", getCamelContext().getClassResolver());
+                velocityEngine.addProperty(
+                        "CamelClassResolver", getCamelContext().getClassResolver());
 
                 // set default properties
                 Properties properties = new Properties();
                 properties.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
                 properties.setProperty(RuntimeConstants.RESOURCE_LOADERS, "file, class");
                 properties.setProperty("resource.loader.class.description", "Camel Velocity Classpath Resource Loader");
-                properties.setProperty("resource.loader.class.class", CamelVelocityClasspathResourceLoader.class.getName());
+                properties.setProperty(
+                        "resource.loader.class.class", CamelVelocityClasspathResourceLoader.class.getName());
                 final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
                 properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
 
                 // load the velocity properties from property file which may overrides the default ones
                 if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
-                    InputStream reader
-                            = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
+                    InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                            getCamelContext(), getPropertiesFile());
                     try {
                         properties.load(reader);
                         log.info("Loaded the velocity configuration file {}", getPropertiesFile());
@@ -196,7 +207,9 @@ public class VelocityEndpoint extends ResourceEndpoint {
             if (newResourceUri != null) {
                 exchange.getIn().removeHeader(VelocityConstants.VELOCITY_RESOURCE_URI);
 
-                log.debug("{} set to {} creating new endpoint to handle exchange", VelocityConstants.VELOCITY_RESOURCE_URI,
+                log.debug(
+                        "{} set to {} creating new endpoint to handle exchange",
+                        VelocityConstants.VELOCITY_RESOURCE_URI,
                         newResourceUri);
                 VelocityEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
                 newEndpoint.onExchange(exchange);
@@ -213,14 +226,19 @@ public class VelocityEndpoint extends ResourceEndpoint {
             // use content from header
             reader = new StringReader(content);
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from header {} for endpoint {}", VelocityConstants.VELOCITY_TEMPLATE,
+                log.debug(
+                        "Velocity content read from header {} for endpoint {}",
+                        VelocityConstants.VELOCITY_TEMPLATE,
                         getEndpointUri());
             }
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(VelocityConstants.VELOCITY_TEMPLATE);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
+                log.debug(
+                        "Velocity content read from resource {} with resourceUri: {} for endpoint {}",
+                        getResourceUri(),
+                        path,
                         getEndpointUri());
             }
             reader = getEncoding() != null
@@ -239,8 +257,8 @@ public class VelocityEndpoint extends ResourceEndpoint {
             Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
             if (allowTemplateFromHeader) {
                 @SuppressWarnings("unchecked")
-                Map<String, Object> supplementalMap
-                        = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
+                Map<String, Object> supplementalMap =
+                        exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
                 if (supplementalMap != null) {
                     variableMap.putAll(supplementalMap);
                 }

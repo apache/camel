@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class UndertowSendDynamicAwareTest extends BaseUndertowTest {
 
     @Test
     public void testDynamicAware() {
-        String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
+        String out =
+                fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
         assertEquals("Drinking beer", out);
 
         out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
@@ -48,16 +50,18 @@ public class UndertowSendDynamicAwareTest extends BaseUndertowTest {
             @Override
             public void configure() {
                 from("direct:moes")
-                        .toD("undertow:http://localhost:{{port}}/moes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD(
+                                "undertow:http://localhost:{{port}}/moes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("direct:joes")
-                        .toD("undertow:http://localhost:{{port}}/joes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD(
+                                "undertow:http://localhost:{{port}}/joes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 // TODO: Fix the double header
                 from("undertow:http://localhost:{{port}}/?matchOnUriPrefix=true")
-                        .transform().simple("Drinking ${header.drink[0]}");
+                        .transform()
+                        .simple("Drinking ${header.drink[0]}");
             }
         };
     }
-
 }

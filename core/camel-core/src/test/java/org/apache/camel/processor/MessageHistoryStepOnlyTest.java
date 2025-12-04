@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -23,9 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MessageHistoryStepOnlyTest extends ContextTestSupport {
 
@@ -61,7 +62,15 @@ public class MessageHistoryStepOnlyTest extends ContextTestSupport {
                 context.setMessageHistory(true);
                 context.getMessageHistoryFactory().setNodePattern("step");
 
-                from("direct:start").step("a").to("log:foo").to("mock:a").end().step("b").to("direct:bar").to("mock:b").end();
+                from("direct:start")
+                        .step("a")
+                        .to("log:foo")
+                        .to("mock:a")
+                        .end()
+                        .step("b")
+                        .to("direct:bar")
+                        .to("mock:b")
+                        .end();
 
                 from("direct:bar").step("bar").to("log:bar").to("mock:bar").end();
             }

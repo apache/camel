@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter.directmessage;
 
 import org.apache.camel.CamelExchangeException;
@@ -59,5 +60,4 @@ public class DirectMessageProducer extends DefaultProducer {
             endpoint.getProperties().getTwitter().v1().directMessages().sendDirectMessage(userStatus.getId(), text);
         }
     }
-
 }

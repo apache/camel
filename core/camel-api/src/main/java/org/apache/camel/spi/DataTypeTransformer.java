@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.lang.annotation.Documented;
@@ -32,7 +33,7 @@ import org.apache.camel.spi.annotations.ServiceFactory;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @ServiceFactory("transformer")
 public @interface DataTypeTransformer {
 
@@ -57,5 +58,4 @@ public @interface DataTypeTransformer {
      * A human-readable description of what this transformer can do.
      */
     String description() default "";
-
 }

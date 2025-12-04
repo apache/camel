@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.cluster;
+
+import static org.apache.camel.util.function.Predicates.negate;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,8 +44,6 @@ import org.infinispan.client.hotrod.event.ClientCacheEntryRemovedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.function.Predicates.negate;
-
 public class InfinispanRemoteClusterView extends InfinispanClusterView {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanRemoteClusterView.class);
 
@@ -54,9 +55,9 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
     private RemoteCache<String, String> cache;
 
     protected InfinispanRemoteClusterView(
-                                          InfinispanRemoteClusterService cluster,
-                                          InfinispanRemoteClusterConfiguration configuration,
-                                          String namespace) {
+            InfinispanRemoteClusterService cluster,
+            InfinispanRemoteClusterConfiguration configuration,
+            String namespace) {
         super(cluster, namespace);
 
         this.configuration = configuration;
@@ -158,9 +159,7 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
 
             this.running.set(true);
             this.executorService = InfinispanUtil.newSingleThreadScheduledExecutor(
-                    getCamelContext(),
-                    this,
-                    getLocalMember().getId());
+                    getCamelContext(), this, getLocalMember().getId());
 
             // register the local member to the inventory
             cache.put(
@@ -172,10 +171,7 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
             cache.addClientListener(this);
 
             executorService.scheduleAtFixedRate(
-                    this::run,
-                    0,
-                    configuration.getLifespan() / 2,
-                    configuration.getLifespanTimeUnit());
+                    this::run, 0, configuration.getLifespan() / 2, configuration.getLifespanTimeUnit());
         }
 
         @Override
@@ -226,7 +222,8 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                     // I'm still the leader, so refresh the key so it does not expire.
                     if (!cache.replaceWithVersion(leaderKey, getClusterService().getId(), version, lifespan)) {
 
-                        LOGGER.debug("Failed to refresh the lock key={}, id={}, version={}", leaderKey, localId, version);
+                        LOGGER.debug(
+                                "Failed to refresh the lock key={}, id={}, version={}", leaderKey, localId, version);
 
                         setLeader(false);
                     } else {
@@ -240,7 +237,11 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                     LOGGER.debug("Try to acquire lock key={}, id={}", leaderKey, localId);
 
                     Object result = cache.withFlags(Flag.FORCE_RETURN_VALUE)
-                            .putIfAbsent(leaderKey, localId, configuration.getLifespan(), configuration.getLifespanTimeUnit());
+                            .putIfAbsent(
+                                    leaderKey,
+                                    localId,
+                                    configuration.getLifespan(),
+                                    configuration.getLifespanTimeUnit());
 
                     if (result == null) {
                         // Acquired the key so I'm the leader.
@@ -267,7 +268,10 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                 }
 
                 // refresh local membership
-                cache.put(getLocalMember().getId(), isLeader() ? "true" : "false", configuration.getLifespan(),
+                cache.put(
+                        getLocalMember().getId(),
+                        isLeader() ? "true" : "false",
+                        configuration.getLifespan(),
                         configuration.getLifespanTimeUnit());
             } finally {
                 lock.unlock();
@@ -280,7 +284,8 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                 return;
             }
 
-            LOGGER.debug("onCacheEntryRemoved id={}, lock-key={}, event-key={}",
+            LOGGER.debug(
+                    "onCacheEntryRemoved id={}, lock-key={}, event-key={}",
                     getLocalMember().getId(),
                     InfinispanClusterService.LEADER_KEY,
                     event.getKey());
@@ -296,7 +301,8 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                 return;
             }
 
-            LOGGER.debug("onCacheEntryExpired id={}, lock-key={}, event-key={}",
+            LOGGER.debug(
+                    "onCacheEntryExpired id={}, lock-key={}, event-key={}",
                     getLocalMember().getId(),
                     InfinispanClusterService.LEADER_KEY,
                     event.getKey());

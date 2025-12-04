@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -33,9 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JdbcRemoveConfirmOrderAggregateTest extends AbstractJdbcAggregationTestSupport {
 
@@ -98,23 +99,23 @@ public class JdbcRemoveConfirmOrderAggregateTest extends AbstractJdbcAggregation
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
         // Wait until the recovery has been run
         await().atMost(500, TimeUnit.MILLISECONDS).until(this::checkCompletedNotPresent);
-        Assertions.assertEquals(1, JdbcRemoveConfirmOrderAggregateTest.completedExchangeCount,
+        Assertions.assertEquals(
+                1,
+                JdbcRemoveConfirmOrderAggregateTest.completedExchangeCount,
                 "There should be only 1 completed aggregation");
     }
 
     private boolean checkCompletedNotPresent() {
-        DataSource datasource = applicationContext.getBean("JdbcRemoveConfirmOrderAggregateTest-dataSourceSlow",
-                DataSource.class);
+        DataSource datasource =
+                applicationContext.getBean("JdbcRemoveConfirmOrderAggregateTest-dataSourceSlow", DataSource.class);
         try {
             Connection connection = datasource.getConnection();
-            ResultSet rs = connection.createStatement()
-                    .executeQuery("SELECT * FROM aggregationRepo1_completed");
+            ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM aggregationRepo1_completed");
             return !rs.next();
         } catch (SQLException e) {
             fail(e);
             return false;
         }
-
     }
 
     @Override
@@ -124,10 +125,15 @@ public class JdbcRemoveConfirmOrderAggregateTest extends AbstractJdbcAggregation
             public void configure() throws Exception {
                 configureJdbcAggregationRepository();
 
-                from("direct:start").
-                threads(2).
-                transacted("required").aggregate(header("id"), new MyAggregationStrategyWithDelay()).completionSize(2).aggregationRepository(repo)
-                    .optimisticLocking().to("mock:result").end();
+                from("direct:start")
+                        .threads(2)
+                        .transacted("required")
+                        .aggregate(header("id"), new MyAggregationStrategyWithDelay())
+                        .completionSize(2)
+                        .aggregationRepository(repo)
+                        .optimisticLocking()
+                        .to("mock:result")
+                        .end();
             }
         };
     }

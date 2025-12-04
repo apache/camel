@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
 
 import java.security.cert.Certificate;
@@ -31,8 +32,7 @@ import org.bouncycastle.operator.OutputEncryptor;
 
 public final class EncryptingUtils {
 
-    private EncryptingUtils() {
-    }
+    private EncryptingUtils() {}
 
     public static CMSEnvelopedDataGenerator createEnvelopDataGenerator(Certificate[] encryptionCertificateChain)
             throws HttpException {
@@ -46,8 +46,8 @@ public final class EncryptingUtils {
 
             CMSEnvelopedDataGenerator cmsEnvelopeDataGenerator = new CMSEnvelopedDataGenerator();
 
-            JceKeyTransRecipientInfoGenerator recipientInfoGenerator
-                    = new JceKeyTransRecipientInfoGenerator(encryptionCertificate);
+            JceKeyTransRecipientInfoGenerator recipientInfoGenerator =
+                    new JceKeyTransRecipientInfoGenerator(encryptionCertificate);
             cmsEnvelopeDataGenerator.addRecipientInfoGenerator(recipientInfoGenerator);
 
             return cmsEnvelopeDataGenerator;

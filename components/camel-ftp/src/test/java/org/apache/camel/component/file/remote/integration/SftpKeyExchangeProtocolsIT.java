@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.util.ArrayList;
@@ -51,18 +52,20 @@ public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
         return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols/?password=admin"
-               + "&noop=true";
+                + "&noop=true";
     }
 
     @Test
     public void testNonExistingKey() {
-        Throwable exception = Assertions.assertThrows(CamelExecutionException.class,
-                () -> template
-                        .sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols?" +
-                                           "password=admin" +
-                                           "&keyExchangeProtocols=nonExistingKeyExchange",
-                                "a", Exchange.FILE_NAME,
-                                "a.txt"));
+        Throwable exception = Assertions.assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(
+                        "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols?"
+                                + "password=admin"
+                                + "&keyExchangeProtocols=nonExistingKeyExchange",
+                        "a",
+                        Exchange.FILE_NAME,
+                        "a.txt"));
 
         final List<String> errorMessages = new ArrayList<>();
         while (exception.getCause() != null) {
@@ -70,7 +73,8 @@ public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
             exception = exception.getCause();
         }
 
-        MatcherAssert.assertThat(errorMessages, Matchers.hasItem(Matchers.containsString("Algorithm negotiation fail")));
+        MatcherAssert.assertThat(
+                errorMessages, Matchers.hasItem(Matchers.containsString("Algorithm negotiation fail")));
     }
 
     @Test
@@ -78,10 +82,11 @@ public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols" +
-                                   "?password=admin" +
-                                   "&keyExchangeProtocols=ecdh-sha2-nistp384",
-                "a", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols" + "?password=admin"
+                        + "&keyExchangeProtocols=ecdh-sha2-nistp384",
+                "a",
+                Exchange.FILE_NAME,
                 "a.txt");
 
         mock.assertIsSatisfied();
@@ -92,10 +97,11 @@ public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols" +
-                                   "?password=admin" +
-                                   "&keyExchangeProtocols=ecdh-sha2-nistp384,diffie-hellman-group-exchange-sha256,nonExistingKey",
-                "a", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols" + "?password=admin"
+                        + "&keyExchangeProtocols=ecdh-sha2-nistp384,diffie-hellman-group-exchange-sha256,nonExistingKey",
+                "a",
+                Exchange.FILE_NAME,
                 "a.txt");
 
         mock.assertIsSatisfied();

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics.routepolicy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * CAMEL-9226 - check metrics are counted correctly in multicast sub-routes
@@ -81,7 +82,6 @@ public class MetricsRoutePolicyMulticastSubRouteTest extends CamelTestSupport {
                 from("direct:bar").routeId("bar").multicast().to("mock:bar1", "mock:bar2");
 
                 from("direct:multicast").routeId("multicast").multicast().to("direct:foo", "direct:bar");
-
             }
         };
     }

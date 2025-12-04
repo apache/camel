@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.List;
@@ -36,19 +37,19 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
         mockWithFailure.assertIsSatisfied();
         List<Exchange> exchanges = mockWithFailure.getExchanges();
         exchanges.stream()
-                .forEach(exchange -> Assertions
-                        .assertEquals(
-                                "This is a test a with startLabel: `Document` endLabel: `Document` and label: `ALabel`",
-                                exchange.getMessage().getHeader("#CustomHeader", String.class)));
+                .forEach(exchange -> Assertions.assertEquals(
+                        "This is a test a with startLabel: `Document` endLabel: `Document` and label: `ALabel`",
+                        exchange.getMessage().getHeader("#CustomHeader", String.class)));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
-            final Map<String, String> body = Map.of("label", "ALabel", "startLabel", "Document", "endLabel", "Document");
-            final String simpleTemplate
-                    = "This is a test a with startLabel: `${body.get('startLabel')}` endLabel: `${body.get('endLabel')}` and label: `${body.get('label')}`";
+            final Map<String, String> body =
+                    Map.of("label", "ALabel", "startLabel", "Document", "endLabel", "Document");
+            final String simpleTemplate =
+                    "This is a test a with startLabel: `${body.get('startLabel')}` endLabel: `${body.get('endLabel')}` and label: `${body.get('label')}`";
 
             @Override
             public void configure() {
@@ -58,18 +59,19 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
                             @Override
                             public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(body);
-                                exchange.getMessage().setHeader("#CustomHeader", resolveTemplate(simpleTemplate, exchange));
+                                exchange.getMessage()
+                                        .setHeader("#CustomHeader", resolveTemplate(simpleTemplate, exchange));
                             }
                         })
                         .to("mock:result");
 
                 from("timer://test-timer4?fixedRate=true&period=10&delay=1")
-
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(body);
-                                exchange.getMessage().setHeader("#CustomHeader", resolveTemplate(simpleTemplate, exchange));
+                                exchange.getMessage()
+                                        .setHeader("#CustomHeader", resolveTemplate(simpleTemplate, exchange));
                             }
                         })
                         .to("mock:result");
@@ -79,12 +81,12 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
                             @Override
                             public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(body);
-                                exchange.getMessage().setHeader("#CustomHeader", resolveTemplate(simpleTemplate, exchange));
+                                exchange.getMessage()
+                                        .setHeader("#CustomHeader", resolveTemplate(simpleTemplate, exchange));
                             }
                         })
                         .to("mock:result");
             }
-
         };
     }
 
@@ -93,5 +95,4 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
         simpleExpression.setExpression(template);
         return simpleExpression.evaluate(exchange, String.class);
     }
-
 }

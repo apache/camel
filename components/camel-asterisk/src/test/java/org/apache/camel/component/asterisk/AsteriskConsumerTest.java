@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.asterisk;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -26,8 +29,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("CAMEL-10321: Set host, username and password test asterisk consumer.")
 public class AsteriskConsumerTest extends CamelTestSupport {
@@ -61,8 +62,10 @@ public class AsteriskConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("asterisk:myVoIP?hostname=" + hostname + "&username=" + username + "&password=" + password).id("route1")
-                        .transform(body().convertToString()).to("mock:result");
+                from("asterisk:myVoIP?hostname=" + hostname + "&username=" + username + "&password=" + password)
+                        .id("route1")
+                        .transform(body().convertToString())
+                        .to("mock:result");
             }
         };
     }

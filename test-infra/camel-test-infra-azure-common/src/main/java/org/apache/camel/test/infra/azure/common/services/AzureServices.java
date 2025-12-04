@@ -21,6 +21,5 @@ public final class AzureServices {
     public static final int BLOB_SERVICE = 10000;
     public static final int QUEUE_SERVICE = 10001;
 
-    private AzureServices() {
-    }
+    private AzureServices() {}
 }

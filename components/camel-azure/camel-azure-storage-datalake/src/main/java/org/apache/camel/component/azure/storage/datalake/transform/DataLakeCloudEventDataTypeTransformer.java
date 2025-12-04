@@ -31,8 +31,9 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts Azure Data Lake consumer response to CloudEvent v1_0 data format. The data type sets
  * Camel specific CloudEvent headers with values extracted from Azure Data Lake consumer response.
  */
-@DataTypeTransformer(name = "azure-storage-datalake:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with Azure Data Lake consumer response details")
+@DataTypeTransformer(
+        name = "azure-storage-datalake:application-cloudevents",
+        description = "Adds CloudEvent headers to the Camel message with Azure Data Lake consumer response details")
 public class DataLakeCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,12 +41,14 @@ public class DataLakeCloudEventDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.storage.datalake.consume");
 
         if (message.getHeaders().containsKey(DataLakeConstants.ARCHIVE_STATUS)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
+            headers.put(
+                    CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
                     "azure.storage.datalake." + message.getHeader(DataLakeConstants.ARCHIVE_STATUS, String.class));
         }
 

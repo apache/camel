@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
 
 import org.apache.camel.CamelContext;
@@ -136,7 +137,8 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
      * @param  mockProducer the mock producer
      * @return              the mock producer
      */
-    protected Producer onInterceptEndpoint(String uri, Endpoint endpoint, Endpoint mockEndpoint, Producer mockProducer) {
+    protected Producer onInterceptEndpoint(
+            String uri, Endpoint endpoint, Endpoint mockEndpoint, Producer mockProducer) {
         return mockProducer;
     }
 
@@ -144,5 +146,4 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
     public String toString() {
         return "InterceptSendToMockEndpointStrategy";
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
@@ -24,9 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("issues") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("issues")})
 public class JmsInOutWithSpringRestartIssueIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -53,5 +54,4 @@ public class JmsInOutWithSpringRestartIssueIT extends AbstractSpringJMSITSupport
         out = producer.requestBody("activemq:queue:JmsInOutWithSpringRestartIssueTest", "Bar");
         assertEquals("Bye Bar", out);
     }
-
 }

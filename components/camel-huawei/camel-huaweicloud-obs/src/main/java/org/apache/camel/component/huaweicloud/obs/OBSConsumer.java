@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
 
 import java.util.ArrayList;
@@ -76,11 +77,13 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
             String bucketLocation = metadata.getLocation();
 
             try {
-                BucketMetadataInfoRequest destinationRequest = new BucketMetadataInfoRequest(endpoint.getDestinationBucket());
+                BucketMetadataInfoRequest destinationRequest =
+                        new BucketMetadataInfoRequest(endpoint.getDestinationBucket());
                 BucketMetadataInfoResult destinationMetadata = obsClient.getBucketMetadata(destinationRequest);
                 String destinationLocation = destinationMetadata.getLocation();
 
-                // destination bucket is already created, so check if its location is the same as the source bucket location
+                // destination bucket is already created, so check if its location is the same as the source bucket
+                // location
                 if (!bucketLocation.equals(destinationLocation)) {
                     throw new IllegalArgumentException(
                             "Destination bucket location must have the same location as the source bucket");
@@ -197,7 +200,8 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
             ObsObject obsObject;
 
             if (objectSummary.getMetadata().getContentType() == null) {
-                // object was from list objects. Since not all object data is included when listing objects, we must retrieve all the data by calling getObject
+                // object was from list objects. Since not all object data is included when listing objects, we must
+                // retrieve all the data by calling getObject
                 obsObject = obsClient.getObject(endpoint.getBucketName(), objectSummary.getObjectKey());
             } else {
                 // object was already retrieved using getObjects

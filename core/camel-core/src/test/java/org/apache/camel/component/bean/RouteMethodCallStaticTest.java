@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,7 +42,12 @@ public class RouteMethodCallStaticTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when().method(MyStaticClass.class, "isCamel").to("mock:camel").otherwise()
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .method(MyStaticClass.class, "isCamel")
+                        .to("mock:camel")
+                        .otherwise()
                         .to("mock:other");
             }
         };

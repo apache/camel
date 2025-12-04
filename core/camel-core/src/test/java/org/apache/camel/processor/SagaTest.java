@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,10 +35,6 @@ import org.apache.camel.model.SagaPropagation;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.InMemorySagaService;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SagaTest extends ContextTestSupport {
 
@@ -70,8 +71,11 @@ public class SagaTest extends ContextTestSupport {
 
     private void buy(int amount, boolean failAtTheEnd, boolean shouldFail) {
         try {
-            context.createFluentProducerTemplate().to("direct:saga").withHeader("amount", amount)
-                    .withHeader("fail", failAtTheEnd).request();
+            context.createFluentProducerTemplate()
+                    .to("direct:saga")
+                    .withHeader("amount", amount)
+                    .withHeader("fail", failAtTheEnd)
+                    .request();
 
             if (shouldFail) {
                 fail("Exception not thrown");
@@ -97,34 +101,61 @@ public class SagaTest extends ContextTestSupport {
                 CamelSagaService sagaService = new InMemorySagaService();
                 context.addService(sagaService);
 
-                from("direct:saga").saga().propagation(SagaPropagation.REQUIRES_NEW).log("Creating a new order")
-                        .to("direct:newOrder").log("Taking the credit")
-                        .to("direct:reserveCredit").log("Finalizing").to("direct:finalize").log("Done!");
+                from("direct:saga")
+                        .saga()
+                        .propagation(SagaPropagation.REQUIRES_NEW)
+                        .log("Creating a new order")
+                        .to("direct:newOrder")
+                        .log("Taking the credit")
+                        .to("direct:reserveCredit")
+                        .log("Finalizing")
+                        .to("direct:finalize")
+                        .log("Done!");
 
                 // Order service
 
-                from("direct:newOrder").saga().propagation(SagaPropagation.MANDATORY).compensation("direct:cancelOrder")
-                        .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
-                        .bean(orderManagerService, "newOrder").log("Order ${body} created");
+                from("direct:newOrder")
+                        .saga()
+                        .propagation(SagaPropagation.MANDATORY)
+                        .compensation("direct:cancelOrder")
+                        .transform()
+                        .header(Exchange.SAGA_LONG_RUNNING_ACTION)
+                        .bean(orderManagerService, "newOrder")
+                        .log("Order ${body} created");
 
-                from("direct:cancelOrder").transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
-                        .bean(orderManagerService, "cancelOrder").log("Order ${body} cancelled");
+                from("direct:cancelOrder")
+                        .transform()
+                        .header(Exchange.SAGA_LONG_RUNNING_ACTION)
+                        .bean(orderManagerService, "cancelOrder")
+                        .log("Order ${body} cancelled");
 
                 // Credit service
 
-                from("direct:reserveCredit").saga().propagation(SagaPropagation.MANDATORY).compensation("direct:refundCredit")
-                        .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
-                        .bean(creditService, "reserveCredit").log("Credit ${header.amount} reserved in action ${body}");
+                from("direct:reserveCredit")
+                        .saga()
+                        .propagation(SagaPropagation.MANDATORY)
+                        .compensation("direct:refundCredit")
+                        .transform()
+                        .header(Exchange.SAGA_LONG_RUNNING_ACTION)
+                        .bean(creditService, "reserveCredit")
+                        .log("Credit ${header.amount} reserved in action ${body}");
 
-                from("direct:refundCredit").transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
-                        .bean(creditService, "refundCredit").log("Credit for action ${body} refunded");
+                from("direct:refundCredit")
+                        .transform()
+                        .header(Exchange.SAGA_LONG_RUNNING_ACTION)
+                        .bean(creditService, "refundCredit")
+                        .log("Credit for action ${body} refunded");
 
                 // Final actions
-                from("direct:finalize").saga().propagation(SagaPropagation.NOT_SUPPORTED).choice()
-                        .when(header("fail").isEqualTo(true)).process(x -> {
+                from("direct:finalize")
+                        .saga()
+                        .propagation(SagaPropagation.NOT_SUPPORTED)
+                        .choice()
+                        .when(header("fail").isEqualTo(true))
+                        .process(x -> {
                             throw new RuntimeException("fail");
-                        }).end();
-
+                        })
+                        .end();
             }
         };
     }

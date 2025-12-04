@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.lambda.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -30,9 +34,6 @@ import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.GetAliasResponse;
 import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class LambdaAliasesIT extends Aws2LambdaBase {
 
@@ -43,23 +44,24 @@ public class LambdaAliasesIT extends Aws2LambdaBase {
         headers.put(Lambda2Constants.HANDLER, "GetHelloWithName.handler");
         headers.put(Lambda2Constants.ROLE, "arn:aws:iam::643534317684:role/lambda-execution-role");
         ClassLoader classLoader = getClass().getClassLoader();
-        InputStream body
-                = classLoader.getResourceAsStream("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip");
-        CreateFunctionResponse functionCreated
-                = template.requestBodyAndHeaders("direct:createFunction", body, headers, CreateFunctionResponse.class);
+        InputStream body = classLoader.getResourceAsStream(
+                "org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip");
+        CreateFunctionResponse functionCreated =
+                template.requestBodyAndHeaders("direct:createFunction", body, headers, CreateFunctionResponse.class);
         assertEquals("GetHelloWithName", functionCreated.functionName());
 
         headers = new HashMap<>();
         headers.put(Lambda2Constants.FUNCTION_ALIAS_NAME, "GetHelloWithNameAlias");
         headers.put(Lambda2Constants.FUNCTION_VERSION, "$LATEST");
-        CreateAliasResponse aliasCreated
-                = template.requestBodyAndHeaders("direct:createAlias", null, headers, CreateAliasResponse.class);
+        CreateAliasResponse aliasCreated =
+                template.requestBodyAndHeaders("direct:createAlias", null, headers, CreateAliasResponse.class);
         assertEquals("GetHelloWithNameAlias", aliasCreated.name());
         assertEquals("$LATEST", aliasCreated.functionVersion());
 
         headers = new HashMap<>();
         headers.put(Lambda2Constants.FUNCTION_ALIAS_NAME, "GetHelloWithNameAlias");
-        GetAliasResponse aliasGot = template.requestBodyAndHeaders("direct:getAlias", null, headers, GetAliasResponse.class);
+        GetAliasResponse aliasGot =
+                template.requestBodyAndHeaders("direct:getAlias", null, headers, GetAliasResponse.class);
         assertEquals("GetHelloWithNameAlias", aliasGot.name());
         assertEquals("$LATEST", aliasGot.functionVersion());
 

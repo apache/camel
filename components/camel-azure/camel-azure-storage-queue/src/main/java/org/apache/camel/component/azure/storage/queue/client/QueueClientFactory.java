@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.client;
 
 import java.util.Locale;
@@ -30,8 +31,7 @@ public final class QueueClientFactory {
 
     private static final String SERVICE_URI_SEGMENT = ".queue.core.windows.net";
 
-    private QueueClientFactory() {
-    }
+    private QueueClientFactory() {}
 
     public static QueueServiceClient createQueueServiceClient(final QueueConfiguration configuration) {
         CredentialType type = configuration.getCredentialType();
@@ -67,6 +67,7 @@ public final class QueueClientFactory {
 
     private static String getAccountName(final QueueConfiguration configuration) {
         return !ObjectHelper.isEmpty(configuration.getCredentials())
-                ? configuration.getCredentials().getAccountName() : configuration.getAccountName();
+                ? configuration.getCredentials().getAccountName()
+                : configuration.getAccountName();
     }
 }

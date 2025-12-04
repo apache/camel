@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm;
 
 public final class CMUtils {
 
-    private CMUtils() {
-    }
+    private CMUtils() {}
 
     public static boolean isGsm0338Encodeable(final String message) {
         return message.matches(CMConstants.GSM_0338_REGEX);
     }
 
     // TODO: Have a look at
-    // https:// github.com/apache/camel/blob/master/components/camel-smpp/src/main/java/org/apache/camel/component/smpp/SmppUtils.java
+    // https://
+    // github.com/apache/camel/blob/master/components/camel-smpp/src/main/java/org/apache/camel/component/smpp/SmppUtils.java
 }

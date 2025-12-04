@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
 
 import org.apache.camel.RuntimeCamelException;
@@ -31,17 +32,23 @@ public class InfinispanEmbeddedConfiguration extends InfinispanConfiguration imp
     @Metadata(autowired = true)
     @UriParam(label = "advanced")
     private Configuration cacheContainerConfiguration;
+
     @Metadata(autowired = true)
     @UriParam(label = "advanced")
     private EmbeddedCacheManager cacheContainer;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean sync = true;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean clusteredListener;
+
     @UriParam(label = "consumer")
     private String eventTypes;
+
     @UriParam(label = "consumer")
     private InfinispanEmbeddedCustomListener customListener;
+
     @UriParam(label = "advanced", javaType = "java.lang.String")
     private Flag[] flags;
 

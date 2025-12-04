@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.fix.withoutsection;
 
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
@@ -98,7 +99,6 @@ public class Order {
     @Override
     public String toString() {
         return Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId + ", 22: " + this.iDSource
-               + ", 48: " + this.securityId + ", 54: " + this.side + ", 58: " + this.text;
+                + ", 48: " + this.securityId + ", 54: " + this.side + ", 58: " + this.text;
     }
-
 }

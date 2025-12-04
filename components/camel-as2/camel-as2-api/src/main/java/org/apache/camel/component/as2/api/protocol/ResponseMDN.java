@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.protocol;
 
 import java.io.IOException;
@@ -74,13 +75,13 @@ public class ResponseMDN implements HttpResponseInterceptor {
     public static final String DISPOSITION_MODIFIER = "Disposition-Modifier";
 
     private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n"
-                                                               + " Message ID: $requestHeaders[\"Message-Id\"]\n"
-                                                               + "  Subject: $requestHeaders[\"Subject\"]\n"
-                                                               + "  Date: $requestHeaders[\"Date\"]\n"
-                                                               + "  From: $requestHeaders[\"AS2-From\"]\n"
-                                                               + "  To: $requestHeaders[\"AS2-To\"]\n"
-                                                               + "  Received on: $responseHeaders[\"Date\"]\n"
-                                                               + " Status: $dispositionType \n";
+            + " Message ID: $requestHeaders[\"Message-Id\"]\n"
+            + "  Subject: $requestHeaders[\"Subject\"]\n"
+            + "  Date: $requestHeaders[\"Date\"]\n"
+            + "  From: $requestHeaders[\"AS2-From\"]\n"
+            + "  To: $requestHeaders[\"AS2-To\"]\n"
+            + "  Received on: $responseHeaders[\"Date\"]\n"
+            + " Status: $dispositionType \n";
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
 
@@ -93,7 +94,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
     private PrivateKey signingPrivateKey;
     private PrivateKey decryptingPrivateKey;
     private Certificate[] validateSigningCertificateChain;
-    private boolean keysAreDynamic = false; // Flag indicating if security keys/certs must be dynamically fetched from the HttpContext
+    private boolean keysAreDynamic =
+            false; // Flag indicating if security keys/certs must be dynamically fetched from the HttpContext
 
     private final Lock lock = new ReentrantLock();
     private VelocityEngine velocityEngine;
@@ -109,9 +111,15 @@ public class ResponseMDN implements HttpResponseInterceptor {
         this.keysAreDynamic = true;
     }
 
-    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm,
-                       Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey,
-                       String mdnMessageTemplate, Certificate[] validateSigningCertificateChain) {
+    public ResponseMDN(
+            String as2Version,
+            String serverFQDN,
+            AS2SignatureAlgorithm signingAlgorithm,
+            Certificate[] signingCertificateChain,
+            PrivateKey signingPrivateKey,
+            PrivateKey decryptingPrivateKey,
+            String mdnMessageTemplate,
+            Certificate[] validateSigningCertificateChain) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
         this.signingAlgorithm = signingAlgorithm;
@@ -129,7 +137,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
     }
 
     @Override
-    public void process(HttpResponse response, EntityDetails entity, HttpContext context) throws HttpException, IOException {
+    public void process(HttpResponse response, EntityDetails entity, HttpContext context)
+            throws HttpException, IOException {
 
         int statusCode = response.getCode();
         if (statusCode < 200 || statusCode >= 300) {
@@ -143,13 +152,15 @@ public class ResponseMDN implements HttpResponseInterceptor {
         if (this.keysAreDynamic) {
             // Dynamically load path-specific security material from the HttpContext,
             // which was populated by AS2ConsumerConfigInterceptor.
-            this.signingAlgorithm = (AS2SignatureAlgorithm) context.getAttribute(AS2ServerConnection.AS2_SIGNING_ALGORITHM);
-            this.signingCertificateChain
-                    = (Certificate[]) context.getAttribute(AS2ServerConnection.AS2_SIGNING_CERTIFICATE_CHAIN);
+            this.signingAlgorithm =
+                    (AS2SignatureAlgorithm) context.getAttribute(AS2ServerConnection.AS2_SIGNING_ALGORITHM);
+            this.signingCertificateChain =
+                    (Certificate[]) context.getAttribute(AS2ServerConnection.AS2_SIGNING_CERTIFICATE_CHAIN);
             this.signingPrivateKey = (PrivateKey) context.getAttribute(AS2ServerConnection.AS2_SIGNING_PRIVATE_KEY);
-            this.decryptingPrivateKey = (PrivateKey) context.getAttribute(AS2ServerConnection.AS2_DECRYPTING_PRIVATE_KEY);
-            this.validateSigningCertificateChain
-                    = (Certificate[]) context.getAttribute(AS2ServerConnection.AS2_VALIDATE_SIGNING_CERTIFICATE_CHAIN);
+            this.decryptingPrivateKey =
+                    (PrivateKey) context.getAttribute(AS2ServerConnection.AS2_DECRYPTING_PRIVATE_KEY);
+            this.validateSigningCertificateChain =
+                    (Certificate[]) context.getAttribute(AS2ServerConnection.AS2_VALIDATE_SIGNING_CERTIFICATE_CHAIN);
         }
 
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
@@ -162,7 +173,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
         LOG.debug("Processing MDN for request: {}", httpEntityEnclosingRequest);
 
-        if (HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.DISPOSITION_NOTIFICATION_TO) == null) {
+        if (HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.DISPOSITION_NOTIFICATION_TO)
+                == null) {
             // no receipt requested by sender
             LOG.debug("MDN not returned: no receipt requested");
             return;
@@ -171,32 +183,69 @@ public class ResponseMDN implements HttpResponseInterceptor {
         // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
         DispositionNotificationMultipartReportEntity multipartReportEntity;
-        if (AS2DispositionType.FAILED
-                .equals(coreContext.getAttribute(DISPOSITION_TYPE, AS2DispositionType.class))) {
+        if (AS2DispositionType.FAILED.equals(coreContext.getAttribute(DISPOSITION_TYPE, AS2DispositionType.class))) {
             // Return a failed Message Disposition Notification Receipt in response body
-            String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
+            String mdnMessage = createMdnDescription(
+                    httpEntityEnclosingRequest,
+                    response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.FAILED, null, null, null, null, null, mdnMessageTemplate);
-            multipartReportEntity = new DispositionNotificationMultipartReportEntity(
-                    httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.FAILED, null, null, null, null, null, StandardCharsets.US_ASCII.name(), boundary, true,
-                    decryptingPrivateKey, mdnMessage, validateSigningCertificateChain);
-        } else {
-            AS2DispositionModifier dispositionModifier
-                    = coreContext.getAttribute(DISPOSITION_MODIFIER, AS2DispositionModifier.class);
-            String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
-                    DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, dispositionModifier, null, null, null, null,
+                    AS2DispositionType.FAILED,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
                     mdnMessageTemplate);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
-                    httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, dispositionModifier, null, null, null, null, StandardCharsets.US_ASCII.name(),
+                    httpEntityEnclosingRequest,
+                    response,
+                    DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.FAILED,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    StandardCharsets.US_ASCII.name(),
                     boundary,
                     true,
-                    decryptingPrivateKey, mdnMessage, validateSigningCertificateChain);
+                    decryptingPrivateKey,
+                    mdnMessage,
+                    validateSigningCertificateChain);
+        } else {
+            AS2DispositionModifier dispositionModifier =
+                    coreContext.getAttribute(DISPOSITION_MODIFIER, AS2DispositionModifier.class);
+            String mdnMessage = createMdnDescription(
+                    httpEntityEnclosingRequest,
+                    response,
+                    DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.PROCESSED,
+                    dispositionModifier,
+                    null,
+                    null,
+                    null,
+                    null,
+                    mdnMessageTemplate);
+            multipartReportEntity = new DispositionNotificationMultipartReportEntity(
+                    httpEntityEnclosingRequest,
+                    response,
+                    DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.PROCESSED,
+                    dispositionModifier,
+                    null,
+                    null,
+                    null,
+                    null,
+                    StandardCharsets.US_ASCII.name(),
+                    boundary,
+                    true,
+                    decryptingPrivateKey,
+                    mdnMessage,
+                    validateSigningCertificateChain);
         }
 
-        String receiptAddress = HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.RECEIPT_DELIVERY_OPTION);
+        String receiptAddress =
+                HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.RECEIPT_DELIVERY_OPTION);
         if (receiptAddress != null) {
             // Asynchronous Delivery
 
@@ -277,18 +326,20 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     // may be created for sync or async MDN messages
     public static AS2SignedDataGenerator createSigningGenerator(
-            HttpRequest request, AS2SignatureAlgorithm signingAlgorithm, Certificate[] signingCertificateChain,
+            HttpRequest request,
+            AS2SignatureAlgorithm signingAlgorithm,
+            Certificate[] signingCertificateChain,
             PrivateKey signingPrivateKey)
             throws HttpException {
-        DispositionNotificationOptions dispositionNotificationOptions
-                = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(
+        DispositionNotificationOptions dispositionNotificationOptions =
+                DispositionNotificationOptionsParser.parseDispositionNotificationOptions(
                         HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS), null);
 
         AS2SignedDataGenerator gen = null;
-        if (dispositionNotificationOptions.getSignedReceiptProtocol() != null && signingCertificateChain != null
+        if (dispositionNotificationOptions.getSignedReceiptProtocol() != null
+                && signingCertificateChain != null
                 && signingPrivateKey != null) {
-            gen = SigningUtils.createSigningGenerator(
-                    signingAlgorithm, signingCertificateChain, signingPrivateKey);
+            gen = SigningUtils.createSigningGenerator(signingAlgorithm, signingCertificateChain, signingPrivateKey);
         }
         return gen;
     }
@@ -299,8 +350,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             throws HttpException {
         multipartReportEntity.setMainBody(false);
         return new MultipartSignedEntity(
-                multipartReportEntity, gen, StandardCharsets.US_ASCII.name(),
-                AS2TransferEncoding.BASE64, false, null);
+                multipartReportEntity, gen, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
     }
 
     private String createMdnDescription(
@@ -370,5 +420,4 @@ public class ResponseMDN implements HttpResponseInterceptor {
             lock.unlock();
         }
     }
-
 }

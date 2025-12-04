@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dns.cloud;
 
 import java.util.Arrays;
@@ -72,8 +73,7 @@ public final class DnsServiceDiscovery extends DefaultServiceDiscovery {
     private Lookup createLookup(String name) {
         try {
             return new Lookup(
-                    String.format("%s.%s.%s", name, configuration.getProto(), configuration.getDomain()),
-                    Type.SRV);
+                    String.format("%s.%s.%s", name, configuration.getProto(), configuration.getDomain()), Type.SRV);
         } catch (TextParseException e) {
             throw new RuntimeCamelException(e);
         }
@@ -92,9 +92,6 @@ public final class DnsServiceDiscovery extends DefaultServiceDiscovery {
         ObjectHelper.ifNotEmpty(srvRecord.getWeight(), val -> meta.put("weight", Integer.toString(val)));
 
         return new DefaultServiceDefinition(
-                serviceName,
-                srvRecord.getTarget().toString(true),
-                srvRecord.getPort(),
-                meta);
+                serviceName, srvRecord.getTarget().toString(true), srvRecord.getPort(), meta);
     }
 }

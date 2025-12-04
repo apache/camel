@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ValidatorWithDirectTest extends ContextTestSupport {
 
@@ -34,8 +35,7 @@ public class ValidatorWithDirectTest extends ContextTestSupport {
         fail.expectedMessageCount(1);
         valid.expectedMessageCount(0);
 
-        assertThrows(Exception.class, () -> template.sendBody("direct:start", wrongBody),
-                "Should throw exception");
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", wrongBody), "Should throw exception");
         assertMockEndpointsSatisfied();
     }
 
@@ -45,8 +45,7 @@ public class ValidatorWithDirectTest extends ContextTestSupport {
             @Override
             public void configure() {
 
-                onException(Exception.class)
-                        .to("mock:fail");
+                onException(Exception.class).to("mock:fail");
 
                 validator()
                         .type("xml:schemaValidator")

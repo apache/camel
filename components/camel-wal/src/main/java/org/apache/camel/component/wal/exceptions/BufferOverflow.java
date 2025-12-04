@@ -17,16 +17,17 @@
 
 package org.apache.camel.component.wal.exceptions;
 
-import java.io.IOException;
-
 import static java.lang.String.format;
+
+import java.io.IOException;
 
 public class BufferOverflow extends IOException {
     private final int remaining;
     private final int requested;
 
     public BufferOverflow(int remaining, int requested) {
-        super(format("There is not enough space on the buffer for an offset entry: %d bytes remaining, %d bytes needed",
+        super(format(
+                "There is not enough space on the buffer for an offset entry: %d bytes remaining, %d bytes needed",
                 remaining, requested));
 
         this.remaining = remaining;

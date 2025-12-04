@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSupport {
 
@@ -48,14 +49,17 @@ public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSup
 
     @Test
     public void testAddConsumer() {
-        Exception e = assertThrows(Exception.class, () -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("seda:foo").routeId("fail").to("mock:fail");
-                }
-            });
-        }, "Should have thrown exception");
+        Exception e = assertThrows(
+                Exception.class,
+                () -> {
+                    context.addRoutes(new RouteBuilder() {
+                        @Override
+                        public void configure() {
+                            from("seda:foo").routeId("fail").to("mock:fail");
+                        }
+                    });
+                },
+                "Should have thrown exception");
 
         FailedToStartRouteException failed = assertIsInstanceOf(FailedToStartRouteException.class, e);
         assertEquals("fail", failed.getRouteId());

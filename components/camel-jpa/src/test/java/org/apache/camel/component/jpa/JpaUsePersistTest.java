@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.security.SecureRandom;
 
@@ -25,9 +29,6 @@ import org.apache.camel.examples.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JpaUsePersistTest extends AbstractJpaMethodTest {
 
@@ -54,8 +55,10 @@ public class JpaUsePersistTest extends AbstractJpaMethodTest {
         order.setProductName("Cheese");
         order.setProductSku("54321");
         order.setQuantity(2);
-        assertIsInstanceOf(PersistenceException.class, assertThrows(CamelExecutionException.class,
-                () -> template.requestBody(endpoint, order)).getCause());
+        assertIsInstanceOf(
+                PersistenceException.class,
+                assertThrows(CamelExecutionException.class, () -> template.requestBody(endpoint, order))
+                        .getCause());
 
         assertEntitiesInDatabase(1, Order.class.getName());
     }
@@ -66,10 +69,11 @@ public class JpaUsePersistTest extends AbstractJpaMethodTest {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 entityManager.joinTransaction();
-                entityManager.createQuery("delete from " + Order.class.getName()).executeUpdate();
+                entityManager
+                        .createQuery("delete from " + Order.class.getName())
+                        .executeUpdate();
                 return null;
             }
         });
     }
-
 }

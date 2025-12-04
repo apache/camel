@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.io.Serializable;
@@ -38,8 +39,9 @@ public final class SObjectTreeResponse implements Serializable {
     private final List<ReferenceId> results;
 
     @JsonCreator
-    public SObjectTreeResponse(@JsonProperty("hasErrors") final boolean hasErrors,
-                               @JsonProperty("results") final List<ReferenceId> results) {
+    public SObjectTreeResponse(
+            @JsonProperty("hasErrors") final boolean hasErrors,
+            @JsonProperty("results") final List<ReferenceId> results) {
         this.hasErrors = hasErrors;
         this.results = Optional.ofNullable(results).orElse(Collections.emptyList());
     }

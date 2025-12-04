@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,24 +37,24 @@ public class RoutesConfigurationTest extends ContextTestSupport {
     @Override
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("direct:start")
-                                .throwException(new IllegalArgumentException("Foo"));
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start").throwException(new IllegalArgumentException("Foo"));
 
-                        from("direct:start2")
-                                .throwException(new IllegalArgumentException("Foo2"));
-                    }
-                },
-                new RouteConfigurationBuilder() {
-                    @Override
-                    public void configuration() {
-                        // global routes configuration
-                        routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
-                    }
+                    from("direct:start2").throwException(new IllegalArgumentException("Foo2"));
                 }
+            },
+            new RouteConfigurationBuilder() {
+                @Override
+                public void configuration() {
+                    // global routes configuration
+                    routeConfiguration()
+                            .onException(Exception.class)
+                            .handled(true)
+                            .to("mock:error");
+                }
+            }
         };
     }
-
 }

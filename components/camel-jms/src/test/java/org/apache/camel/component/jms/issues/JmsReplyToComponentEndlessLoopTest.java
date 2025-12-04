@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,35 +35,25 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JmsReplyToComponentEndlessLoopTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
-    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension(new ContextLifeCycleManager() {
-        @Override
-        public void afterAll(CamelContext context) {
+    public static CamelContextExtension camelContextExtension =
+            new DefaultCamelContextExtension(new ContextLifeCycleManager() {
+                @Override
+                public void afterAll(CamelContext context) {}
 
-        }
+                @Override
+                public void beforeAll(CamelContext context) {}
 
-        @Override
-        public void beforeAll(CamelContext context) {
+                @Override
+                public void afterEach(CamelContext context) {}
 
-        }
+                @Override
+                public void beforeEach(CamelContext context) {}
+            });
 
-        @Override
-        public void afterEach(CamelContext context) {
-
-        }
-
-        @Override
-        public void beforeEach(CamelContext context) {
-
-        }
-    });
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -81,13 +76,12 @@ public class JmsReplyToComponentEndlessLoopTest extends AbstractJMSTest {
 
     @Test
     public void testReplyToInvalid() {
-        Exception ex = assertThrows(FailedToStartRouteException.class, () -> context.start(),
-                "Should have thrown exception");
+        Exception ex =
+                assertThrows(FailedToStartRouteException.class, () -> context.start(), "Should have thrown exception");
 
         IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ex.getCause());
         assertTrue(iae.getMessage()
                 .contains("ReplyTo=JmsReplyToComponentEndlessLoopTest cannot be the same as the destination name"));
-
     }
 
     @Override

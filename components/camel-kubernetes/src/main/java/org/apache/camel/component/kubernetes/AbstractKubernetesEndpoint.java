@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes;
 
 import java.util.concurrent.ExecutorService;
@@ -33,7 +34,8 @@ public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint impleme
 
     private transient KubernetesClient client;
 
-    protected AbstractKubernetesEndpoint(String uri, AbstractKubernetesComponent component, KubernetesConfiguration config) {
+    protected AbstractKubernetesEndpoint(
+            String uri, AbstractKubernetesComponent component, KubernetesConfiguration config) {
         super(uri, component);
         this.configuration = config;
     }
@@ -76,8 +78,9 @@ public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint impleme
     }
 
     public ExecutorService createExecutor(Object source) {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source, "KubernetesConsumer",
-                configuration.getPoolSize());
+        return getCamelContext()
+                .getExecutorServiceManager()
+                .newFixedThreadPool(source, "KubernetesConsumer", configuration.getPoolSize());
     }
 
     public KubernetesClient getKubernetesClient() {
@@ -90,5 +93,4 @@ public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint impleme
     public KubernetesConfiguration getKubernetesConfiguration() {
         return configuration;
     }
-
 }

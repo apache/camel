@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
@@ -22,40 +23,62 @@ import java.util.Stack;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "script", description = "Run Camel integration as shell script for terminal scripting",
-                     sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "script",
+        description = "Run Camel integration as shell script for terminal scripting",
+        sortOptions = false,
+        showDefaultValues = true)
 public class Script extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of file", arity = "1",
-                            paramLabel = "<file>", parameterConsumer = FileConsumer.class)
+    @CommandLine.Parameters(
+            description = "Name of file",
+            arity = "1",
+            paramLabel = "<file>",
+            parameterConsumer = FileConsumer.class)
     Path filePath; // Defined only for file path completion; the field never used
+
     String file;
 
-    @CommandLine.Option(names = { "--max-messages" }, defaultValue = "0",
-                        description = "Max number of messages to process before stopping")
+    @CommandLine.Option(
+            names = {"--max-messages"},
+            defaultValue = "0",
+            description = "Max number of messages to process before stopping")
     int maxMessages;
 
-    @CommandLine.Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
+    @CommandLine.Option(
+            names = {"--max-seconds"},
+            defaultValue = "0",
+            description = "Max seconds to run before stopping")
     int maxSeconds;
 
-    @CommandLine.Option(names = { "--max-idle-seconds" }, defaultValue = "1",
-                        description = "For how long time in seconds Camel can be idle before stopping")
+    @CommandLine.Option(
+            names = {"--max-idle-seconds"},
+            defaultValue = "1",
+            description = "For how long time in seconds Camel can be idle before stopping")
     int maxIdleSeconds;
 
-    @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
-                        description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
+    @CommandLine.Option(
+            names = {"--logging"},
+            defaultValue = "false",
+            description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;
 
-    @CommandLine.Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
-                        defaultValue = "info", description = "Logging level (${COMPLETION-CANDIDATES})")
+    @CommandLine.Option(
+            names = {"--logging-level"},
+            completionCandidates = LoggingLevelCompletionCandidates.class,
+            defaultValue = "info",
+            description = "Logging level (${COMPLETION-CANDIDATES})")
     String loggingLevel;
 
-    @CommandLine.Option(names = { "--properties" },
-                        description = "Load properties file for route placeholders (ex. /path/to/file.properties")
+    @CommandLine.Option(
+            names = {"--properties"},
+            description = "Load properties file for route placeholders (ex. /path/to/file.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)",
-                        arity = "0")
+    @CommandLine.Option(
+            names = {"--prop", "--property"},
+            description = "Additional properties (override existing)",
+            arity = "0")
     String[] property;
 
     public Script(CamelJBangMain main) {
@@ -92,5 +115,4 @@ public class Script extends CamelCommand {
             cmd.file = args.pop();
         }
     }
-
 }

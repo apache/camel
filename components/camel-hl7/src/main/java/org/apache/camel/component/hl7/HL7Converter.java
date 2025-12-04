@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import java.io.IOException;
@@ -71,5 +72,4 @@ public final class HL7Converter {
     public static Message toMessage(byte[] body, Exchange exchange) throws HL7Exception, IOException {
         return DEFAULT_CONTEXT.getGenericParser().parse(IOConverter.toString(body, exchange));
     }
-
 }

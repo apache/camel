@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -54,13 +55,9 @@ public class KameletEipTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("echo")
-                        .from("kamelet:source")
-                        .setBody(body().append(body()));
+                routeTemplate("echo").from("kamelet:source").setBody(body().append(body()));
 
-                from("direct:start")
-                        .kamelet("echo")
-                        .to("mock:result");
+                from("direct:start").kamelet("echo").to("mock:result");
             }
         };
     }

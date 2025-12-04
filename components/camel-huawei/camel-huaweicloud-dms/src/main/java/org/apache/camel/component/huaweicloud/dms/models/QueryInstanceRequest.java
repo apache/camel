@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -43,8 +44,6 @@ public class QueryInstanceRequest {
 
     @Override
     public String toString() {
-        return "QueryInstanceRequest{" +
-               "instanceId='" + instanceId + '\'' +
-               '}';
+        return "QueryInstanceRequest{" + "instanceId='" + instanceId + '\'' + '}';
     }
 }

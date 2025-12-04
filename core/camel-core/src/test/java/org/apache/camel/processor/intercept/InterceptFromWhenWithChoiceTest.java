@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -63,8 +64,15 @@ public class InterceptFromWhenWithChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                interceptFrom().onWhen(simple("${body} contains 'Goofy'")).choice().when(body().contains("Hello"))
-                        .to("mock:hello").otherwise().to("log:foo").to("mock:goofy").end()
+                interceptFrom()
+                        .onWhen(simple("${body} contains 'Goofy'"))
+                        .choice()
+                        .when(body().contains("Hello"))
+                        .to("mock:hello")
+                        .otherwise()
+                        .to("log:foo")
+                        .to("mock:goofy")
+                        .end()
                         .stop();
 
                 from("direct:start").to("mock:foo").to("mock:end");

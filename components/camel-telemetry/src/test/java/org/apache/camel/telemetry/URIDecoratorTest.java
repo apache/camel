@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.telemetry.decorators.AbstractSpanDecorator;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class URIDecoratorTest {
 
@@ -38,5 +39,4 @@ public class URIDecoratorTest {
         assertEquals("", AbstractSpanDecorator.stripSchemeAndOptions("platform-http:/"));
         assertEquals("my-svc/path", AbstractSpanDecorator.stripSchemeAndOptions("http://my-svc/path?q=123"));
     }
-
 }

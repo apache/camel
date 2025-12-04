@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -28,14 +31,13 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class DiscountGatewayIT extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DiscountGatewayIT.class);
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(DiscountGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection()
+            .getApiName(DiscountGatewayApiMethod.class)
+            .getName();
 
     @Disabled
     @Test
@@ -51,8 +53,7 @@ public class DiscountGatewayIT extends AbstractBraintreeTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for all
-                from("direct://ALL")
-                        .to("braintree://" + PATH_PREFIX + "/all");
+                from("direct://ALL").to("braintree://" + PATH_PREFIX + "/all");
             }
         };
     }

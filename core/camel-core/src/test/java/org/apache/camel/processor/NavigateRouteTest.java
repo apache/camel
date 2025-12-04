@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.ConvertBodyProcessor;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for navigating a route (runtime processors, not the model).
@@ -83,9 +84,11 @@ public class NavigateRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").convertBodyTo(String.class).split(body().tokenize(" ")).to("mock:result");
+                from("direct:start")
+                        .convertBodyTo(String.class)
+                        .split(body().tokenize(" "))
+                        .to("mock:result");
             }
         };
     }
-
 }

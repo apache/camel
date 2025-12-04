@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -44,7 +45,5 @@ public interface Expression {
      *
      * @param context the camel context
      */
-    default void init(CamelContext context) {
-    }
-
+    default void init(CamelContext context) {}
 }

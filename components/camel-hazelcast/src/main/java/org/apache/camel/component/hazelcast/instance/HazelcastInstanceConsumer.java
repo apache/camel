@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.instance;
 
 import java.net.InetSocketAddress;
@@ -30,7 +31,8 @@ import org.apache.camel.support.DefaultEndpoint;
 
 public class HazelcastInstanceConsumer extends DefaultConsumer {
 
-    public HazelcastInstanceConsumer(HazelcastInstance hazelcastInstance, DefaultEndpoint endpoint, Processor processor) {
+    public HazelcastInstanceConsumer(
+            HazelcastInstance hazelcastInstance, DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
         hazelcastInstance.getCluster().addMembershipListener(new HazelcastMembershipListener());
@@ -67,14 +69,14 @@ public class HazelcastInstanceConsumer extends DefaultConsumer {
             }
 
             if (exchange.getException() != null) {
-                getExceptionHandler().handleException(
-                        "Error processing exchange for Hazelcast consumer on your Hazelcast cluster.", exchange,
-                        exchange.getException());
+                getExceptionHandler()
+                        .handleException(
+                                "Error processing exchange for Hazelcast consumer on your Hazelcast cluster.",
+                                exchange,
+                                exchange.getException());
             }
 
             releaseExchange(exchange, false);
         }
-
     }
-
 }

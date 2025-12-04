@@ -17,18 +17,18 @@
 
 package org.apache.camel.component.zeebe.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+
 public class MessageResponseTest {
 
-    private static final String MARSHAL_TEST_RESULT_1
-            = "{\"success\":true,\"correlation_key\":\"testKey\",\"message_key\":111}";
-    private static final String MARSHAL_TEST_RESULT_2
-            = "{\"success\":false,\"error_message\":\"Test Error\",\"error_code\":\"TestCode\",\"correlation_key\":\"testKey\",\"message_key\":111}";
+    private static final String MARSHAL_TEST_RESULT_1 =
+            "{\"success\":true,\"correlation_key\":\"testKey\",\"message_key\":111}";
+    private static final String MARSHAL_TEST_RESULT_2 =
+            "{\"success\":false,\"error_message\":\"Test Error\",\"error_code\":\"TestCode\",\"correlation_key\":\"testKey\",\"message_key\":111}";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -52,8 +52,8 @@ public class MessageResponseTest {
 
     @Test
     public void unmarshalTest() {
-        MessageResponse unmarshalledMessage1
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, MessageResponse.class));
+        MessageResponse unmarshalledMessage1 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, MessageResponse.class));
 
         MessageResponse message = new MessageResponse();
         message.setMessageKey(111);
@@ -62,8 +62,8 @@ public class MessageResponseTest {
 
         assertEquals(message, unmarshalledMessage1);
 
-        MessageResponse unmarshalledMessage2
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, MessageResponse.class));
+        MessageResponse unmarshalledMessage2 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, MessageResponse.class));
 
         message.setSuccess(false);
         message.setErrorMessage("Test Error");

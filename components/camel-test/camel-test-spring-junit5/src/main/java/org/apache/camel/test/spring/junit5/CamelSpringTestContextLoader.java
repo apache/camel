@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import java.lang.reflect.Method;
@@ -95,7 +96,9 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         Class<?> testClass = getTestClass();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Loading ApplicationContext for locations [{}].", StringUtils.arrayToCommaDelimitedString(locations));
+            LOG.debug(
+                    "Loading ApplicationContext for locations [{}].",
+                    StringUtils.arrayToCommaDelimitedString(locations));
         }
 
         try {
@@ -145,8 +148,10 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         }
 
         // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
-        CamelAnnotationsHandler.handleRouteCoverageEnable(context, testClass, s -> getTestMethod().getName());
-        CamelAnnotationsHandler.handleRouteDumpEnable(context, testClass, s -> getTestMethod().getName());
+        CamelAnnotationsHandler.handleRouteCoverageEnable(
+                context, testClass, s -> getTestMethod().getName());
+        CamelAnnotationsHandler.handleRouteDumpEnable(
+                context, testClass, s -> getTestMethod().getName());
         CamelAnnotationsHandler.handleProvidesBreakpoint(context, testClass);
         CamelAnnotationsHandler.handleShutdownTimeout(context, testClass);
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
@@ -190,7 +195,8 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         }
 
         if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
-            Class<?>[] excludedClasses = testClass.getAnnotation(ExcludeRoutes.class).value();
+            Class<?>[] excludedClasses =
+                    testClass.getAnnotation(ExcludeRoutes.class).value();
 
             if (excludedClasses.length > 0) {
                 if (LOG.isDebugEnabled()) {
@@ -204,18 +210,18 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 } else {
                     routeExcludingContext = new GenericApplicationContext(parentContext);
                 }
-                routeExcludingContext.registerBeanDefinition("excludingResolver",
-                        new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
+                routeExcludingContext.registerBeanDefinition(
+                        "excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
                 routeExcludingContext.refresh();
 
-                ExcludingPackageScanClassResolver excludingResolver
-                        = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
+                ExcludingPackageScanClassResolver excludingResolver =
+                        routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
                 List<Class<?>> excluded = Arrays.asList(excludedClasses);
                 excludingResolver.setExcludedClasses(new HashSet<>(excluded));
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Not enabling package scanning excluded classes as ExcludeRoutes "
-                              + "annotation was found but no classes were excluded.");
+                            + "annotation was found but no classes were excluded.");
                 }
             }
         }

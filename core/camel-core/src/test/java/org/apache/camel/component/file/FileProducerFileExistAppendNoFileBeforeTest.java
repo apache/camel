@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -43,7 +44,9 @@ public class FileProducerFileExistAppendNoFileBeforeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true&initialDelay=100&delay=10")).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?noop=true&initialDelay=100&delay=10"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

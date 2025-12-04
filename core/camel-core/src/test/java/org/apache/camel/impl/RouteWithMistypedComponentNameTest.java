@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -22,8 +25,6 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Testing for mistyped component name
@@ -33,33 +34,39 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
     @Test
     public void testNoSuchEndpoint() {
         CamelContext context = new DefaultCamelContext();
-        assertThrows(NoSuchEndpointException.class, () -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:hello").to("mock:result");
+        assertThrows(
+                NoSuchEndpointException.class,
+                () -> {
+                    context.addRoutes(new RouteBuilder() {
+                        @Override
+                        public void configure() {
+                            from("direct:hello").to("mock:result");
 
-                    // unknown component
-                    endpoint("mistyped:hello");
-                }
-            });
-        }, "Should have thrown a NoSuchEndpointException");
+                            // unknown component
+                            endpoint("mistyped:hello");
+                        }
+                    });
+                },
+                "Should have thrown a NoSuchEndpointException");
     }
 
     @Test
     public void testNoSuchEndpointType() {
         CamelContext context = new DefaultCamelContext();
 
-        assertThrows(NoSuchEndpointException.class, () -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:hello").to("mock:result");
+        assertThrows(
+                NoSuchEndpointException.class,
+                () -> {
+                    context.addRoutes(new RouteBuilder() {
+                        @Override
+                        public void configure() {
+                            from("direct:hello").to("mock:result");
 
-                    // unknown component
-                    endpoint("mistyped:hello", Endpoint.class);
-                }
-            });
-        }, "Should have thrown a NoSuchEndpointException");
+                            // unknown component
+                            endpoint("mistyped:hello", Endpoint.class);
+                        }
+                    });
+                },
+                "Should have thrown a NoSuchEndpointException");
     }
 }

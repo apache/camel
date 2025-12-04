@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
 
 import java.security.Security;
@@ -32,9 +33,14 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 /**
  * Post Quantum Cryptography Signature and Verification component.
  */
-@UriEndpoint(firstVersion = "4.12.0", scheme = "pqc", title = "PQC Algorithms",
-             syntax = "pqc:label", producerOnly = true, category = { Category.SECURITY },
-             headersClass = PQCConstants.class)
+@UriEndpoint(
+        firstVersion = "4.12.0",
+        scheme = "pqc",
+        title = "PQC Algorithms",
+        syntax = "pqc:label",
+        producerOnly = true,
+        category = {Category.SECURITY},
+        headersClass = PQCConstants.class)
 public class PQCEndpoint extends DefaultEndpoint {
 
     @UriParam

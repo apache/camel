@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.common;
 
 import java.io.IOException;
@@ -40,8 +41,8 @@ public class LocalPropertyResolver {
         try (InputStream inputStream = clazz.getResourceAsStream(CONTAINER_PROPERTIES_FILE_NAME)) {
             properties.load(inputStream);
         } catch (IOException e) {
-            String errorMessage = "Error when reading file " + CONTAINER_PROPERTIES_FILE_NAME
-                                  + " for class " + clazz.getCanonicalName();
+            String errorMessage = "Error when reading file " + CONTAINER_PROPERTIES_FILE_NAME + " for class "
+                    + clazz.getCanonicalName();
             throw new RuntimeException(errorMessage, e);
         }
 
@@ -60,5 +61,4 @@ public class LocalPropertyResolver {
 
         return properties.getProperty(propertyName);
     }
-
 }

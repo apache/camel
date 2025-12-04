@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -28,9 +32,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  *
  */
@@ -39,6 +40,7 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -52,7 +54,8 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        jakarta.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
+        jakarta.jms.Message msg =
+                mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
         assertIsInstanceOf(jakarta.jms.BytesMessage.class, msg);
     }
@@ -66,7 +69,8 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        jakarta.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
+        jakarta.jms.Message msg =
+                mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
         assertIsInstanceOf(jakarta.jms.BytesMessage.class, msg);
     }
@@ -80,7 +84,8 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        jakarta.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
+        jakarta.jms.Message msg =
+                mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
         assertIsInstanceOf(jakarta.jms.TextMessage.class, msg);
     }
@@ -102,11 +107,9 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
                         .setHeader("myHeader", constant("123"))
                         .to("activemq:queue:destQFTTB?jmsMessageType=Bytes");
 
-                from("activemq:queue:text2text?jmsMessageType=Text")
-                        .to("activemq:queue:destQFTTB?jmsMessageType=Text");
+                from("activemq:queue:text2text?jmsMessageType=Text").to("activemq:queue:destQFTTB?jmsMessageType=Text");
 
-                from("activemq:queue:destQFTTB")
-                        .to("mock:bar");
+                from("activemq:queue:destQFTTB").to("mock:bar");
             }
         };
     }

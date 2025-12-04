@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis.consumer;
 
 import org.apache.camel.resume.Cacheable;
@@ -23,8 +24,7 @@ import org.apache.camel.resume.cache.ResumeCache;
 
 public class KinesisResumeStrategyConfiguration extends ResumeStrategyConfiguration {
 
-    private KinesisResumeStrategyConfiguration() {
-    }
+    private KinesisResumeStrategyConfiguration() {}
 
     @Override
     public String resumeStrategyService() {
@@ -36,11 +36,10 @@ public class KinesisResumeStrategyConfiguration extends ResumeStrategyConfigurat
     }
 
     public static class KinesisResumeStrategyConfigurationBuilder
-            implements
-            ResumeStrategyConfigurationBuilder<KinesisResumeStrategyConfigurationBuilder, KinesisResumeStrategyConfiguration> {
+            implements ResumeStrategyConfigurationBuilder<
+                    KinesisResumeStrategyConfigurationBuilder, KinesisResumeStrategyConfiguration> {
 
-        private KinesisResumeStrategyConfigurationBuilder() {
-        }
+        private KinesisResumeStrategyConfigurationBuilder() {}
 
         private Cacheable.FillPolicy fillPolicy = Cacheable.FillPolicy.MAXIMIZING;
         private ResumeCache resumeCache;

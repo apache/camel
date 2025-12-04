@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -41,9 +42,7 @@ public class Camel14624Test extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:test")
-                        .transacted("required")
-                        .to("mock:result");
+                from("direct:test").transacted("required").to("mock:result");
             }
         };
     }
@@ -70,11 +69,9 @@ public class Camel14624Test extends CamelTestSupport {
         }
 
         @Override
-        public void commit(TransactionStatus status) throws TransactionException {
-        }
+        public void commit(TransactionStatus status) throws TransactionException {}
 
         @Override
-        public void rollback(TransactionStatus status) throws TransactionException {
-        }
+        public void rollback(TransactionStatus status) throws TransactionException {}
     }
 }

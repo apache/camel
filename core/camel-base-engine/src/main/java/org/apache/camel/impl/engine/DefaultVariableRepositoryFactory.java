@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Collection;
@@ -36,7 +37,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link VariableRepositoryFactory}.
  */
-public class DefaultVariableRepositoryFactory extends ServiceSupport implements VariableRepositoryFactory, StaticService {
+public class DefaultVariableRepositoryFactory extends ServiceSupport
+        implements VariableRepositoryFactory, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultVariableRepositoryFactory.class);
 
@@ -135,5 +137,4 @@ public class DefaultVariableRepositoryFactory extends ServiceSupport implements 
             });
         }
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Properties;
 
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextDumpRoutesAsYamlTest extends ManagementTestSupport {
@@ -59,7 +60,8 @@ public class ManagedCamelContextDumpRoutesAsYamlTest extends ManagementTestSuppo
 
         ObjectName on = getContextObjectName();
 
-        String yaml = (String) mbeanServer.invoke(on, "dumpRoutesAsYaml", new Object[] { true }, new String[] { "boolean" });
+        String yaml =
+                (String) mbeanServer.invoke(on, "dumpRoutesAsYaml", new Object[] {true}, new String[] {"boolean"});
         assertNotNull(yaml);
         log.info(yaml);
 
@@ -79,8 +81,8 @@ public class ManagedCamelContextDumpRoutesAsYamlTest extends ManagementTestSuppo
 
         ObjectName on = getContextObjectName();
 
-        String yaml = (String) mbeanServer.invoke(on, "dumpRoutesAsYaml", new Object[] { true, true },
-                new String[] { "boolean", "boolean" });
+        String yaml = (String) mbeanServer.invoke(
+                on, "dumpRoutesAsYaml", new Object[] {true, true}, new String[] {"boolean", "boolean"});
         assertNotNull(yaml);
         log.info(yaml);
 
@@ -113,16 +115,15 @@ public class ManagedCamelContextDumpRoutesAsYamlTest extends ManagementTestSuppo
                 Endpoint bar = context.getEndpoint("mock:bar");
                 bindToRegistry("bar", bar);
 
-                from("direct:start").routeId("myRoute")
-                        .log("Got ${body}")
-                        .to("{{result}}");
+                from("direct:start").routeId("myRoute").log("Got ${body}").to("{{result}}");
 
-                from("seda:bar?size=1234&multipleConsumers=true").routeId("myOtherRoute")
-                        .filter().header("bar")
+                from("seda:bar?size=1234&multipleConsumers=true")
+                        .routeId("myOtherRoute")
+                        .filter()
+                        .header("bar")
                         .to("ref:bar")
                         .end();
             }
         };
     }
-
 }

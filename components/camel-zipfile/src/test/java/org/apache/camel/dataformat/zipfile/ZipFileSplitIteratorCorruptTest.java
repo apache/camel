@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
 
 import java.util.Iterator;
@@ -31,7 +32,9 @@ public class ZipFileSplitIteratorCorruptTest extends CamelTestSupport {
     @Test
     public void testZipFileUnmarshal() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:dead")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(RuntimeCamelException.class);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
@@ -50,7 +53,8 @@ public class ZipFileSplitIteratorCorruptTest extends CamelTestSupport {
 
                 from("file://src/test/resources?delay=10&fileName=corrupt.zip&noop=true")
                         .unmarshal(zf)
-                        .split(bodyAs(Iterator.class)).streaming()
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
                         .end();

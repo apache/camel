@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -35,5 +36,4 @@ public interface RouteAware {
      * @return the route, or <tt>null</tt> if no route has been set.
      */
     Route getRoute();
-
 }

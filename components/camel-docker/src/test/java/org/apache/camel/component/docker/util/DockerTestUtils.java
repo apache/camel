@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.util;
 
 import java.util.HashMap;
@@ -25,17 +26,17 @@ import org.apache.camel.component.docker.DockerConstants;
 
 public final class DockerTestUtils {
 
-    private DockerTestUtils() {
+    private DockerTestUtils() {}
 
-    }
-
-    public static Map<String, Object> getDefaultParameters(String host, Integer port, DockerConfiguration dockerConfiguration) {
+    public static Map<String, Object> getDefaultParameters(
+            String host, Integer port, DockerConfiguration dockerConfiguration) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(DockerConstants.DOCKER_HOST, host);
         parameters.put(DockerConstants.DOCKER_PORT, port);
         parameters.put(DockerConstants.DOCKER_EMAIL, dockerConfiguration.getEmail());
         parameters.put(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration.getServerAddress());
-        parameters.put(DockerConstants.DOCKER_MAX_PER_ROUTE_CONNECTIONS, dockerConfiguration.getMaxPerRouteConnections());
+        parameters.put(
+                DockerConstants.DOCKER_MAX_PER_ROUTE_CONNECTIONS, dockerConfiguration.getMaxPerRouteConnections());
         parameters.put(DockerConstants.DOCKER_MAX_TOTAL_CONNECTIONS, dockerConfiguration.getMaxTotalConnections());
         parameters.put(DockerConstants.DOCKER_SECURE, dockerConfiguration.isSecure());
         parameters.put(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration.isTlsVerify());
@@ -45,7 +46,8 @@ public final class DockerTestUtils {
         return parameters;
     }
 
-    public static DockerClientProfile getClientProfile(String host, Integer port, DockerConfiguration dockerConfiguration) {
+    public static DockerClientProfile getClientProfile(
+            String host, Integer port, DockerConfiguration dockerConfiguration) {
         DockerClientProfile clientProfile = new DockerClientProfile();
         clientProfile.setHost(host);
         clientProfile.setPort(port);
@@ -60,5 +62,4 @@ public final class DockerTestUtils {
 
         return clientProfile;
     }
-
 }

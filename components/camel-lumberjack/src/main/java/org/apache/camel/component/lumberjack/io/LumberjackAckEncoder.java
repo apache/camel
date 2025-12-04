@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack.io;
 
 import io.netty.buffer.ByteBuf;
@@ -27,7 +28,10 @@ public class LumberjackAckEncoder extends MessageToByteEncoder<LumberjackAck> {
 
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, LumberjackAck lumberjackAck, ByteBuf byteBuf) {
-        LOG.debug("Window size is {}, Version is {}. Sending ACK", lumberjackAck.getWindowSize(), lumberjackAck.getVersion());
+        LOG.debug(
+                "Window size is {}, Version is {}. Sending ACK",
+                lumberjackAck.getWindowSize(),
+                lumberjackAck.getVersion());
         byteBuf.writeByte(lumberjackAck.getVersion());
         byteBuf.writeByte('A');
         byteBuf.writeInt(lumberjackAck.getWindowSize());

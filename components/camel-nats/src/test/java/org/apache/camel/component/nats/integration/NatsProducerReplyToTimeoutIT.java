@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class NatsProducerReplyToTimeoutIT extends NatsITSupport {
@@ -52,9 +53,7 @@ public class NatsProducerReplyToTimeoutIT extends NatsITSupport {
             public void configure() {
                 from(startUri).to(middleUri).to(resultUri);
 
-                from(middleUri)
-                        .delayer(5000)
-                        .transform(simple("Bye ${body}"));
+                from(middleUri).delayer(5000).transform(simple("Bye ${body}"));
             }
         };
     }

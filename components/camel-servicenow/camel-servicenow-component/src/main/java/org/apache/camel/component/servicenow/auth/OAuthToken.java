@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.auth;
 
 import java.util.concurrent.TimeUnit;
@@ -53,12 +54,8 @@ public class OAuthToken {
 
                 token = OAuthClientUtils.getAccessToken(
                         WebClient.create(configuration.getOauthTokenUrl()),
-                        new Consumer(
-                                configuration.getOauthClientId(),
-                                configuration.getOauthClientSecret()),
-                        new ResourceOwnerGrant(
-                                configuration.getUserName(),
-                                configuration.getPassword()),
+                        new Consumer(configuration.getOauthClientId(), configuration.getOauthClientSecret()),
+                        new ResourceOwnerGrant(configuration.getUserName(), configuration.getPassword()),
                         true);
 
                 LOGGER.debug("OAuth token expires in {}s", token.getExpiresIn());
@@ -77,9 +74,7 @@ public class OAuthToken {
 
                 token = OAuthClientUtils.refreshAccessToken(
                         WebClient.create(configuration.getOauthTokenUrl()),
-                        new Consumer(
-                                configuration.getOauthClientId(),
-                                configuration.getOauthClientSecret()),
+                        new Consumer(configuration.getOauthClientId(), configuration.getOauthClientSecret()),
                         token,
                         null,
                         false);

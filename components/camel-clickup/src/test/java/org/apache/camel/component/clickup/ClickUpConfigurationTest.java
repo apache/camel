@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -24,20 +27,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.clickup.util.ClickUpTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ClickUpConfigurationTest extends ClickUpTestSupport {
 
-    private final static Long WORKSPACE_ID = 12345L;
-    private final static String BASE_URL = "https://mock-api.clickup.com";
-    private final static String AUTHORIZATION_TOKEN = "mock-authorization-token";
-    private final static String WEBHOOK_SECRET = "mock-webhook-secret";
-    private final static Set<String> EVENTS = new HashSet<>(Arrays.asList("taskTimeTrackedUpdated"));
+    private static final Long WORKSPACE_ID = 12345L;
+    private static final String BASE_URL = "https://mock-api.clickup.com";
+    private static final String AUTHORIZATION_TOKEN = "mock-authorization-token";
+    private static final String WEBHOOK_SECRET = "mock-webhook-secret";
+    private static final Set<String> EVENTS = new HashSet<>(Arrays.asList("taskTimeTrackedUpdated"));
 
     @Test
     public void testClickUpConfiguration() {
         ClickUpEndpoint endpoint = (ClickUpEndpoint) context().getEndpoints().stream()
-                .filter(e -> e instanceof ClickUpEndpoint).findAny().get();
+                .filter(e -> e instanceof ClickUpEndpoint)
+                .findAny()
+                .get();
         ClickUpConfiguration config = endpoint.getConfiguration();
 
         assertEquals(WORKSPACE_ID, config.getWorkspaceId());
@@ -52,12 +55,12 @@ public class ClickUpConfigurationTest extends ClickUpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("webhook:clickup:" + WORKSPACE_ID + "?baseUrl=" + BASE_URL + "&authorizationToken=" + AUTHORIZATION_TOKEN
-                     + "&webhookSecret=" + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS)
-                     + "&webhookAutoRegister=false")
+                from("webhook:clickup:" + WORKSPACE_ID + "?baseUrl=" + BASE_URL + "&authorizationToken="
+                                + AUTHORIZATION_TOKEN
+                                + "&webhookSecret=" + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS)
+                                + "&webhookAutoRegister=false")
                         .log("Received: ${body}");
             }
         };
     }
-
 }

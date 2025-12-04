@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,7 +44,9 @@ public class BeanNoCacheTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyCoolBean.class, "doSomething", BeanScope.Prototype).to("mock:result");
+                from("direct:start")
+                        .bean(MyCoolBean.class, "doSomething", BeanScope.Prototype)
+                        .to("mock:result");
             }
         };
     }

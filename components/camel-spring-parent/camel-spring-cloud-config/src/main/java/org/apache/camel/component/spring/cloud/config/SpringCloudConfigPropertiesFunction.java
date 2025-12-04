@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.cloud.config;
 
 import org.apache.camel.CamelContext;
@@ -74,7 +75,8 @@ public class SpringCloudConfigPropertiesFunction extends ServiceSupport
 
         ConfigData configData = new SpringConfigProvider().getConfigData(getCamelContext());
         if (configData == null) {
-            throw new RuntimeCamelException("Cannot retrieve any config data from Spring Config for property " + remainder);
+            throw new RuntimeCamelException(
+                    "Cannot retrieve any config data from Spring Config for property " + remainder);
         }
 
         String result = null;

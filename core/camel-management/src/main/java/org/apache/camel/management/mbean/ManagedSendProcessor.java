@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import javax.management.openmbean.CompositeData;
@@ -43,7 +44,9 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
+        boolean sanitize = strategy.getManagementAgent().getMask() != null
+                ? strategy.getManagementAgent().getMask()
+                : true;
         if (sanitize) {
             destination = URISupport.sanitizeUri(getProcessor().getDestination().getEndpointUri());
         } else {
@@ -101,7 +104,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
             String url = getDestination();
             long hits = getProcessor().getCounter();
 
-            CompositeData data = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
+            CompositeData data = new CompositeDataSupport(ct, new String[] {"url", "hits"}, new Object[] {url, hits});
             answer.put(data);
             return answer;
         } catch (Exception e) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -22,8 +23,10 @@ import org.apache.camel.component.xmpp.XmppConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppRouteMultipleProducersSingleConsumerIT extends XmppBaseIT {
     protected MockEndpoint goodEndpoint;
     protected MockEndpoint badEndpoint;
@@ -52,37 +55,31 @@ public class XmppRouteMultipleProducersSingleConsumerIT extends XmppBaseIT {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:toProducer1")
-                        .to(getProducer1Uri());
+                from("direct:toProducer1").to(getProducer1Uri());
 
-                from("direct:toProducer2")
-                        .to(getProducer2Uri());
+                from("direct:toProducer2").to(getProducer2Uri());
 
-                from(getConsumerUri())
-                        .removeHeader(XmppConstants.TO)
-                        .to(getConsumerUri());
+                from(getConsumerUri()).removeHeader(XmppConstants.TO).to(getConsumerUri());
 
-                from(getProducer1Uri())
-                        .to("mock:good");
+                from(getProducer1Uri()).to("mock:good");
 
-                from(getProducer2Uri())
-                        .to("mock:bad");
+                from(getProducer2Uri()).to("mock:bad");
             }
         };
     }
 
     protected String getProducer1Uri() {
         return "xmpp://localhost:" + getUrl()
-               + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
+                + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getProducer2Uri() {
         return "xmpp://localhost:" + getUrl()
-               + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&user=camel_producer1&password=secret&serviceName=apache.camel";
+                + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&user=camel_producer1&password=secret&serviceName=apache.camel";
     }
 
     protected String getConsumerUri() {
         return "xmpp://localhost:" + getUrl()
-               + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
+                + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 }

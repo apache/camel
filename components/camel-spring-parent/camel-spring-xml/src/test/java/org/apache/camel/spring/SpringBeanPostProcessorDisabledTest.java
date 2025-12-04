@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Produce;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SpringBeanPostProcessorDisabledTest extends SpringTestSupport {
 
@@ -60,7 +61,5 @@ public class SpringBeanPostProcessorDisabledTest extends SpringTestSupport {
             }
             bar.sendBody("Hello " + input);
         }
-
     }
-
 }

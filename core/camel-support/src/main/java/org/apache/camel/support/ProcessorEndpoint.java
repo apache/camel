@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
@@ -36,8 +37,7 @@ import org.apache.camel.Producer;
 public class ProcessorEndpoint extends DefaultPollingEndpoint {
     private Processor processor;
 
-    protected ProcessorEndpoint() {
-    }
+    protected ProcessorEndpoint() {}
 
     public ProcessorEndpoint(String endpointUri, CamelContext context, Processor processor) {
         super(endpointUri, null);
@@ -92,5 +92,4 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
     protected void onExchange(Exchange exchange) throws Exception {
         getProcessor().process(exchange);
     }
-
 }

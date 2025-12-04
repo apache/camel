@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp.internal;
 
 import java.io.IOException;
@@ -47,8 +48,12 @@ public class TcpSocketConsumerRunnable implements Runnable {
     private final Hl7Util hl7Util;
     private final boolean logPhi;
 
-    public TcpSocketConsumerRunnable(MllpTcpServerConsumer consumer, Socket clientSocket, MllpSocketBuffer mllpBuffer,
-                                     Hl7Util hl7Util, boolean logPhi) {
+    public TcpSocketConsumerRunnable(
+            MllpTcpServerConsumer consumer,
+            Socket clientSocket,
+            MllpSocketBuffer mllpBuffer,
+            Hl7Util hl7Util,
+            boolean logPhi) {
         this.consumer = consumer;
         // this.setName(createThreadName(clientSocket));
         this.clientSocket = clientSocket;
@@ -79,7 +84,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
                 this.clientSocket.setTcpNoDelay(consumer.getConfiguration().getTcpNoDelay());
             }
             if (consumer.getConfiguration().hasReceiveBufferSize()) {
-                this.clientSocket.setReceiveBufferSize(consumer.getConfiguration().getReceiveBufferSize());
+                this.clientSocket.setReceiveBufferSize(
+                        consumer.getConfiguration().getReceiveBufferSize());
             }
             if (consumer.getConfiguration().hasSendBufferSize()) {
                 this.clientSocket.setSendBufferSize(consumer.getConfiguration().getSendBufferSize());
@@ -90,7 +96,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
             // Initial Read Timeout
             this.clientSocket.setSoTimeout(consumer.getConfiguration().getReceiveTimeout());
         } catch (IOException initializationException) {
-            throw new IllegalStateException("Failed to initialize " + this.getClass().getSimpleName(), initializationException);
+            throw new IllegalStateException(
+                    "Failed to initialize " + this.getClass().getSimpleName(), initializationException);
         }
 
         if (mllpBuffer == null) {
@@ -121,7 +128,9 @@ public class TcpSocketConsumerRunnable implements Runnable {
         running = true;
         String originalThreadName = Thread.currentThread().getName();
         Thread.currentThread().setName(createThreadName());
-        MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
+        MDC.put(
+                UnitOfWork.MDC_CAMEL_CONTEXT_ID,
+                consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();
         if (route != null) {
@@ -148,16 +157,20 @@ public class TcpSocketConsumerRunnable implements Runnable {
                     if (mllpBuffer.hasCompleteEnvelope()) {
                         hl7MessageBytes = mllpBuffer.toMllpPayload();
                         if (log.isDebugEnabled()) {
-                            log.debug("Received {} byte message {}", hl7MessageBytes.length,
+                            log.debug(
+                                    "Received {} byte message {}",
+                                    hl7MessageBytes.length,
                                     hl7Util.convertToPrintFriendlyString(hl7MessageBytes));
                         }
                         if (mllpBuffer.hasLeadingOutOfBandData()) {
                             // TODO:  Move the conversion utilities to the MllpSocketBuffer to avoid a byte[] copy
-                            log.warn("Ignoring leading out-of-band data: {}",
+                            log.warn(
+                                    "Ignoring leading out-of-band data: {}",
                                     hl7Util.convertToPrintFriendlyString(mllpBuffer.getLeadingOutOfBandData()));
                         }
                         if (mllpBuffer.hasTrailingOutOfBandData()) {
-                            log.warn("Ignoring trailing out-of-band data: {}",
+                            log.warn(
+                                    "Ignoring trailing out-of-band data: {}",
                                     hl7Util.convertToPrintFriendlyString(mllpBuffer.getTrailingOutOfBandData()));
                         }
                         mllpBuffer.reset();
@@ -165,37 +178,47 @@ public class TcpSocketConsumerRunnable implements Runnable {
                         consumer.processMessage(hl7MessageBytes, this);
                     } else if (!mllpBuffer.hasStartOfBlock()) {
                         byte[] payload = mllpBuffer.toByteArray();
-                        log.warn("Ignoring {} byte un-enveloped payload {}", payload.length,
+                        log.warn(
+                                "Ignoring {} byte un-enveloped payload {}",
+                                payload.length,
                                 hl7Util.convertToPrintFriendlyString(payload));
                         mllpBuffer.reset();
                     } else if (!mllpBuffer.isEmpty()) {
                         byte[] payload = mllpBuffer.toByteArray();
-                        log.warn("Partial {} byte payload received {}", payload.length,
+                        log.warn(
+                                "Partial {} byte payload received {}",
+                                payload.length,
                                 hl7Util.convertToPrintFriendlyString(payload));
                     }
                 } catch (SocketTimeoutException timeoutEx) {
                     if (mllpBuffer.isEmpty()) {
                         if (consumer.getConfiguration().hasIdleTimeout()) {
                             long currentTicks = System.currentTimeMillis();
-                            long lastReceivedMessageTicks = consumer.getConsumerRunnables().get(this);
+                            long lastReceivedMessageTicks =
+                                    consumer.getConsumerRunnables().get(this);
                             long idleTime = currentTicks - lastReceivedMessageTicks;
                             if (idleTime >= consumer.getConfiguration().getIdleTimeout()) {
-                                String resetMessage = String.format("Connection idle time %d exceeded idleTimeout %d", idleTime,
-                                        consumer.getConfiguration().getIdleTimeout());
+                                String resetMessage = String.format(
+                                        "Connection idle time %d exceeded idleTimeout %d",
+                                        idleTime, consumer.getConfiguration().getIdleTimeout());
                                 mllpBuffer.resetSocket(clientSocket, resetMessage);
                             }
                         }
                         log.debug("No data received - ignoring timeout");
                     } else {
                         mllpBuffer.resetSocket(clientSocket);
-                        consumer.handleMessageTimeout("Timeout receiving complete message payload",
-                                mllpBuffer.toByteArrayAndReset(), timeoutEx);
+                        consumer.handleMessageTimeout(
+                                "Timeout receiving complete message payload",
+                                mllpBuffer.toByteArrayAndReset(),
+                                timeoutEx);
                     }
                 } catch (MllpSocketException mllpSocketEx) {
                     mllpBuffer.resetSocket(clientSocket);
                     if (!mllpBuffer.isEmpty()) {
-                        consumer.handleMessageException("Exception encountered reading payload",
-                                mllpBuffer.toByteArrayAndReset(), mllpSocketEx);
+                        consumer.handleMessageException(
+                                "Exception encountered reading payload",
+                                mllpBuffer.toByteArrayAndReset(),
+                                mllpSocketEx);
                     } else {
                         log.debug("Ignoring exception encountered checking for data", mllpSocketEx);
                     }

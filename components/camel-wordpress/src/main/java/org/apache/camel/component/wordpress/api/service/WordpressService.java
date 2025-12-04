@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service;
 
 import org.apache.camel.component.wordpress.api.auth.WordpressAuthentication;
@@ -29,5 +30,4 @@ public interface WordpressService {
      * @param authentication
      */
     void setWordpressAuthentication(WordpressAuthentication authentication);
-
 }

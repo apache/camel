@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.graphql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,10 +38,6 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class GraphqlComponentTest extends CamelTestSupport {
 
@@ -60,8 +61,8 @@ public class GraphqlComponentTest extends CamelTestSupport {
 
     private static String readJsonFile(String name) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(objectMapper.readValue(
-                IOHelper.loadText(ObjectHelper.loadResourceAsStream(name)), Object.class));
+        return objectMapper.writeValueAsString(
+                objectMapper.readValue(IOHelper.loadText(ObjectHelper.loadResourceAsStream(name)), Object.class));
     }
 
     @AfterAll
@@ -98,28 +99,28 @@ public class GraphqlComponentTest extends CamelTestSupport {
                         .to("graphql://http://localhost:" + server.getPort() + "/graphql?queryFile=booksQuery.graphql")
                         .to("mock:result");
                 from("direct:start3")
-                        .to("graphql://http://localhost:" + server.getPort()
-                            + "/graphql?queryFile=multipleQueries.graphql&operationName=BookById&variables=#bookByIdQueryVariables")
+                        .to(
+                                "graphql://http://localhost:" + server.getPort()
+                                        + "/graphql?queryFile=multipleQueries.graphql&operationName=BookById&variables=#bookByIdQueryVariables")
                         .to("mock:result");
                 from("direct:start4")
                         .to("graphql://http://localhost:" + server.getPort()
-                            + "/graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
+                                + "/graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
                         .to("mock:result");
                 from("direct:start5")
                         .to("graphql://http://localhost:" + server.getPort()
-                            + "/graphql?query={books{id name}}&variablesHeader=bookByIdQueryVariables")
+                                + "/graphql?query={books{id name}}&variablesHeader=bookByIdQueryVariables")
                         .to("mock:result");
                 from("direct:start6")
-                        .to("graphql://http://localhost:" + server.getPort()
-                            + "/graphql")
+                        .to("graphql://http://localhost:" + server.getPort() + "/graphql")
                         .to("mock:result");
                 from("direct:start7")
                         .setHeader("myQuery", constant("{books{id name}}"))
-                        .to("graphql://http://localhost:" + server.getPort()
-                            + "/graphql?queryHeader=myQuery")
+                        .to("graphql://http://localhost:" + server.getPort() + "/graphql?queryHeader=myQuery")
                         .to("mock:result");
                 from("direct:start8")
-                        .to("graphql://http://localhost:" + server.getPort() + "/graphql?apikey=123456&query={books{id name}}")
+                        .to("graphql://http://localhost:" + server.getPort()
+                                + "/graphql?apikey=123456&query={books{id name}}")
                         .to("mock:result");
                 from("direct:start9")
                         .setHeader("foo", constant("cheese"))
@@ -215,8 +216,9 @@ public class GraphqlComponentTest extends CamelTestSupport {
 
     @Test
     public void checkApiKey() throws Exception {
-        GraphqlEndpoint graphqlEndpoint = (GraphqlEndpoint) template.getCamelContext().getEndpoint(
-                "graphql://http://localhost:" + server.getPort() + "/graphql?apikey=123456&query={books{id name}}");
+        GraphqlEndpoint graphqlEndpoint = (GraphqlEndpoint) template.getCamelContext()
+                .getEndpoint("graphql://http://localhost:" + server.getPort()
+                        + "/graphql?apikey=123456&query={books{id name}}");
         URI httpUri = graphqlEndpoint.getHttpUri();
         assertEquals("apikey=123456", httpUri.getQuery());
 
@@ -255,5 +257,4 @@ public class GraphqlComponentTest extends CamelTestSupport {
 
         result.assertIsSatisfied();
     }
-
 }

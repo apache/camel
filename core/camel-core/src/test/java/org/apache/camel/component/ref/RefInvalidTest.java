@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ref;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -23,8 +26,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RefInvalidTest extends ContextTestSupport {
 
@@ -39,7 +40,9 @@ public class RefInvalidTest extends ContextTestSupport {
 
     @Test
     public void testInvalid() {
-        Exception ex = assertThrows(ResolveEndpointFailedException.class, () -> template.sendBody("ref:xxx", "Hello World"),
+        Exception ex = assertThrows(
+                ResolveEndpointFailedException.class,
+                () -> template.sendBody("ref:xxx", "Hello World"),
                 "Should have thrown an exception");
 
         assertEquals(

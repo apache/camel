@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
 
 import java.io.InputStream;
@@ -38,8 +39,8 @@ public class ExecException extends RuntimeCamelException {
         this.stdout = stdout;
     }
 
-    public ExecException(String message, final InputStream stdout, final InputStream stderr, final int exitValue,
-                         Throwable cause) {
+    public ExecException(
+            String message, final InputStream stdout, final InputStream stderr, final int exitValue, Throwable cause) {
         super(message, cause);
         this.exitValue = exitValue;
         this.stderr = stderr;

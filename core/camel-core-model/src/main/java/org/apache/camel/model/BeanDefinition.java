@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,21 +37,24 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
 
     @XmlTransient
     private Class<?> beanClass;
+
     @XmlTransient
     private Object bean;
 
     @XmlAttribute
     private String ref;
+
     @XmlAttribute
     private String method;
+
     @XmlAttribute
     private String beanType;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
     private String scope;
 
-    public BeanDefinition() {
-    }
+    public BeanDefinition() {}
 
     protected BeanDefinition(BeanDefinition source) {
         super(source);
@@ -188,5 +192,4 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     public void setScope(BeanScope scope) {
         this.scope = scope.name();
     }
-
 }

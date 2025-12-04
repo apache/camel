@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ldap;
 
 import java.util.Map;
@@ -34,8 +35,13 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform searches on LDAP servers.
  */
-@UriEndpoint(firstVersion = "1.5.0", scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true,
-             category = { Category.DATABASE, Category.SECURITY })
+@UriEndpoint(
+        firstVersion = "1.5.0",
+        scheme = "ldap",
+        title = "LDAP",
+        syntax = "ldap:dirContextName",
+        producerOnly = true,
+        category = {Category.DATABASE, Category.SECURITY})
 public class LdapEndpoint extends DefaultEndpoint {
     public static final String SYSTEM_DN = "ou=system";
     public static final String OBJECT_SCOPE = "object";
@@ -45,12 +51,16 @@ public class LdapEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String dirContextName;
+
     @UriParam(defaultValue = SYSTEM_DN)
     private String base = SYSTEM_DN;
+
     @UriParam(defaultValue = SUBTREE_SCOPE, enums = "object,onelevel,subtree")
     private String scope = SUBTREE_SCOPE;
+
     @UriParam
     private Integer pageSize;
+
     @UriParam
     private String returnedAttributes;
 
@@ -140,8 +150,7 @@ public class LdapEndpoint extends DefaultEndpoint {
             return SearchControls.SUBTREE_SCOPE;
         } else {
             throw new IllegalArgumentException(
-                    "Invalid search scope \"" + scope
-                                               + "\" for LdapEndpoint: " + getEndpointUri());
+                    "Invalid search scope \"" + scope + "\" for LdapEndpoint: " + getEndpointUri());
         }
     }
 }

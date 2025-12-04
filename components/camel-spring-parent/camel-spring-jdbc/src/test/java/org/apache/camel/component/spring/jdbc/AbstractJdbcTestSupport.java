@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.jdbc;
 
 import org.apache.camel.BindToRegistry;
@@ -35,7 +36,8 @@ public abstract class AbstractJdbcTestSupport extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
-                .addScript("sql/init.sql").build();
+                .addScript("sql/init.sql")
+                .build();
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache.support;
 
 import java.lang.annotation.ElementType;
@@ -41,8 +42,6 @@ public @interface HazelcastTest {
         }
 
         @Override
-        public void afterAll(ExtensionContext context) {
-        }
-
+        public void afterAll(ExtensionContext context) {}
     }
 }

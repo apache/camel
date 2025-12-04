@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.barcode;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -40,9 +44,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class BarcodeTestBase extends CamelTestSupport {
 
     protected static final String MSG = "This is a testmessage!";
@@ -53,7 +54,8 @@ public class BarcodeTestBase extends CamelTestSupport {
     @EndpointInject("mock:image")
     MockEndpoint image;
 
-    protected void checkImage(MockEndpoint mock, int height, int width, String type, BarcodeFormat format) throws IOException {
+    protected void checkImage(MockEndpoint mock, int height, int width, String type, BarcodeFormat format)
+            throws IOException {
         Exchange ex = mock.getReceivedExchanges().get(0);
         File in = ex.getIn().getBody(File.class);
         FileInputStream fis = new FileInputStream(in);
@@ -81,7 +83,8 @@ public class BarcodeTestBase extends CamelTestSupport {
 
     private void checkFormat(File file, BarcodeFormat format) throws IOException {
         Reader reader = new MultiFormatReader();
-        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(file))));
+        BinaryBitmap bitmap =
+                new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(file))));
         Result result;
         try {
             result = reader.decode(bitmap);

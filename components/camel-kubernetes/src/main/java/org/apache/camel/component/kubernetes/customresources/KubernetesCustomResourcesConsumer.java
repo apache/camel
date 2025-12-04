@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.customresources;
 
 import java.util.concurrent.ExecutorService;
@@ -84,12 +85,14 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
+            if (ObjectHelper.isNotEmpty(
+                    getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 LOG.error("namespace is not specified.");
             }
             String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
             try {
-                getEndpoint().getKubernetesClient()
+                getEndpoint()
+                        .getKubernetesClient()
                         .genericKubernetesResources(getCRDContext(getEndpoint().getKubernetesConfiguration()))
                         .inNamespace(namespace)
                         .watch(new Watcher<>() {
@@ -98,8 +101,10 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
                                 Exchange exchange = createExchange(false);
                                 exchange.getIn().setBody(Serialization.asJson(resource));
                                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION, action);
-                                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_EVENT_TIMESTAMP,
-                                        System.currentTimeMillis());
+                                exchange.getIn()
+                                        .setHeader(
+                                                KubernetesConstants.KUBERNETES_CRD_EVENT_TIMESTAMP,
+                                                System.currentTimeMillis());
                                 try {
                                     processor.process(exchange);
                                 } catch (Exception e) {
@@ -131,19 +136,22 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
     }
 
     private CustomResourceDefinitionContext getCRDContext(KubernetesConfiguration config) {
-        if (ObjectHelper.isEmpty(config.getCrdName()) || ObjectHelper.isEmpty(config.getCrdGroup())
+        if (ObjectHelper.isEmpty(config.getCrdName())
+                || ObjectHelper.isEmpty(config.getCrdGroup())
                 || ObjectHelper.isEmpty(config.getCrdScope())
-                || ObjectHelper.isEmpty(config.getCrdVersion()) || ObjectHelper.isEmpty(config.getCrdPlural())) {
+                || ObjectHelper.isEmpty(config.getCrdVersion())
+                || ObjectHelper.isEmpty(config.getCrdPlural())) {
             LOG.error("one of more of the custom resource definition argument(s) are missing.");
-            throw new IllegalArgumentException("one of more of the custom resource definition argument(s) are missing.");
+            throw new IllegalArgumentException(
+                    "one of more of the custom resource definition argument(s) are missing.");
         }
 
         return new CustomResourceDefinitionContext.Builder()
-                .withName(config.getCrdName())       // example: "githubsources.sources.knative.dev"
-                .withGroup(config.getCrdGroup())     // example: "sources.knative.dev"
-                .withScope(config.getCrdScope())     // example: "Namespaced"
+                .withName(config.getCrdName()) // example: "githubsources.sources.knative.dev"
+                .withGroup(config.getCrdGroup()) // example: "sources.knative.dev"
+                .withScope(config.getCrdScope()) // example: "Namespaced"
                 .withVersion(config.getCrdVersion()) // example: "v1alpha1"
-                .withPlural(config.getCrdPlural())   // example: "githubsources"
+                .withPlural(config.getCrdPlural()) // example: "githubsources"
                 .build();
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml.io;
 
 import java.io.IOException;
@@ -81,8 +82,8 @@ public class XMLWriter {
      * @param encoding      could be null or invalid.
      * @param doctype       could be null.
      */
-    public XMLWriter(Writer writer, String lineIndenter, String lineSeparator,
-                     String encoding, String doctype) throws IOException {
+    public XMLWriter(Writer writer, String lineIndenter, String lineSeparator, String encoding, String doctype)
+            throws IOException {
         this.writer = writer;
         this.lineIndenter = lineIndenter != null ? lineIndenter : "    ";
         this.lineSeparator = validateLineSeparator(lineSeparator);
@@ -161,20 +162,16 @@ public class XMLWriter {
     }
 
     private static String escapeXml(String text) {
-        return text
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
+        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 
     private static String escapeXmlAttribute(String text) {
-        text = escapeXml(text)
-                .replace("\"", "&quot;")
-                .replace("'", "&apos;");
+        text = escapeXml(text).replace("\"", "&quot;").replace("'", "&apos;");
         // Windows
         text = text.replace("\r\n", "&#10;");
         // Non printable characters
-        text = LOWERS.matcher(text).replaceAll(r -> "&#" + Integer.toString(r.group(1).charAt(0)) + ";");
+        text = LOWERS.matcher(text)
+                .replaceAll(r -> "&#" + Integer.toString(r.group(1).charAt(0)) + ";");
         return text;
     }
 

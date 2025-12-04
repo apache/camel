@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
 
 import java.util.HashMap;
@@ -52,11 +53,13 @@ class ShardIteratorHandler {
         }
         // Either return cached ones or get new ones via GetShardIterator requests.
         if (currentShardIterators.isEmpty()) {
-            DescribeStreamResponse streamDescriptionResult
-                    = getClient().describeStream(DescribeStreamRequest.builder().streamArn(streamArn).build());
+            DescribeStreamResponse streamDescriptionResult = getClient()
+                    .describeStream(
+                            DescribeStreamRequest.builder().streamArn(streamArn).build());
             shardTree.populate(streamDescriptionResult.streamDescription().shards());
 
-            StreamIteratorType streamIteratorType = getEndpoint().getConfiguration().getStreamIteratorType();
+            StreamIteratorType streamIteratorType =
+                    getEndpoint().getConfiguration().getStreamIteratorType();
             currentShardIterators = getCurrentShardIterators(streamIteratorType);
         } else {
             Map<String, String> childShardIterators = new HashMap<>();
@@ -86,7 +89,8 @@ class ShardIteratorHandler {
     }
 
     String requestFreshShardIterator(String shardId, String lastSeenSequenceNumber) {
-        String shardIterator = getShardIterator(shardId, ShardIteratorType.AFTER_SEQUENCE_NUMBER, lastSeenSequenceNumber);
+        String shardIterator =
+                getShardIterator(shardId, ShardIteratorType.AFTER_SEQUENCE_NUMBER, lastSeenSequenceNumber);
         currentShardIterators.put(shardId, shardIterator);
         return shardIterator;
     }
@@ -96,8 +100,10 @@ class ShardIteratorHandler {
     }
 
     private String getStreamArn() {
-        ListStreamsResponse streamsListResult = getClient().listStreams(
-                ListStreamsRequest.builder().tableName(getEndpoint().getConfiguration().getTableName()).build());
+        ListStreamsResponse streamsListResult = getClient()
+                .listStreams(ListStreamsRequest.builder()
+                        .tableName(getEndpoint().getConfiguration().getTableName())
+                        .build());
         if (streamsListResult.streams().isEmpty()) {
             throw new IllegalArgumentException(
                     "There is no stream associated with table configured. Please create one.");
@@ -131,7 +137,8 @@ class ShardIteratorHandler {
         return getShardIterator(shardId, shardIteratorType, null);
     }
 
-    private String getShardIterator(String shardId, ShardIteratorType shardIteratorType, String lastSeenSequenceNumber) {
+    private String getShardIterator(
+            String shardId, ShardIteratorType shardIteratorType, String lastSeenSequenceNumber) {
         GetShardIteratorRequest request = GetShardIteratorRequest.builder()
                 .streamArn(streamArn)
                 .shardId(shardId)

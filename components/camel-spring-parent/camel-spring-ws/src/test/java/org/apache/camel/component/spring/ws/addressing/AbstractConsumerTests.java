@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.addressing;
 
 import java.net.URI;
@@ -152,5 +153,4 @@ public abstract class AbstractConsumerTests extends AbstractWSATests {
         }
         Assertions.assertThat(channelOut().getAction()).isEqualTo(new URI("http://customURIFaultAction"));
     }
-
 }

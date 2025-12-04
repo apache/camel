@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,9 +27,7 @@ public class MyNewLineConstRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
         from("timer:foo")
-                .toD("file:output?fileExist=" + EXISTS
-                     + "&chmod=" + (MOD + 6 + 1)
-                     + "&allowNullBody=true")
+                .toD("file:output?fileExist=" + EXISTS + "&chmod=" + (MOD + 6 + 1) + "&allowNullBody=true")
                 .to("log:b");
     }
 }

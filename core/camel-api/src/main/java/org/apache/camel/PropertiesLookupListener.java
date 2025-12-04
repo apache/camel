@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -31,5 +32,4 @@ public interface PropertiesLookupListener {
      * @param source       optional source containing the properties
      */
     void onLookup(String name, String value, String defaultValue, String source);
-
 }

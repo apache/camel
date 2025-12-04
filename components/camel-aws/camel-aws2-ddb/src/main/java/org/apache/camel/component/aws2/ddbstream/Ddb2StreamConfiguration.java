@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
 
 import org.apache.camel.RuntimeCamelException;
@@ -33,59 +34,91 @@ public class Ddb2StreamConfiguration implements Cloneable {
 
     @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
     private String accessKey;
+
     @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
     private String secretKey;
 
-    @UriParam(label = "security", secret = true,
-              description = "Amazon AWS Session Token used when the user needs to assume a IAM role")
+    @UriParam(
+            label = "security",
+            secret = true,
+            description = "Amazon AWS Session Token used when the user needs to assume a IAM role")
     private String sessionToken;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
-              description = "The region in which DDBStreams client needs to work")
+
+    @UriParam(
+            enums =
+                    "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
+            description = "The region in which DDBStreams client needs to work")
     private String region;
 
-    @UriParam(label = "consumer,advanced", description = "Amazon DynamoDB client to use for all requests for this endpoint")
+    @UriParam(
+            label = "consumer,advanced",
+            description = "Amazon DynamoDB client to use for all requests for this endpoint")
     @Metadata(autowired = true)
     private DynamoDbStreamsClient amazonDynamoDbStreamsClient;
 
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll")
     private int maxResultsPerRequest = 100;
 
-    @UriParam(label = "consumer",
-              description = "Defines where in the DynamoDB stream"
-                            + " to start getting records. Note that using FROM_START can cause a"
-                            + " significant delay before the stream has caught up to real-time.",
-              defaultValue = "FROM_LATEST")
+    @UriParam(
+            label = "consumer",
+            description = "Defines where in the DynamoDB stream"
+                    + " to start getting records. Note that using FROM_START can cause a"
+                    + " significant delay before the stream has caught up to real-time.",
+            defaultValue = "FROM_LATEST")
     private StreamIteratorType streamIteratorType = StreamIteratorType.FROM_LATEST;
 
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
-              description = "To define a proxy protocol when instantiating the DDBStreams client")
+    @UriParam(
+            label = "proxy",
+            enums = "HTTP,HTTPS",
+            defaultValue = "HTTPS",
+            description = "To define a proxy protocol when instantiating the DDBStreams client")
     private Protocol proxyProtocol = Protocol.HTTPS;
+
     @UriParam(label = "proxy", description = "To define a proxy host when instantiating the DDBStreams client")
     private String proxyHost;
+
     @UriParam(label = "proxy", description = "To define a proxy port when instantiating the DDBStreams client")
     private Integer proxyPort;
-    @UriParam(label = "security", description = "If we want to trust all certificates in case of overriding the endpoint")
+
+    @UriParam(
+            label = "security",
+            description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false",
-              description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option")
+
+    @UriParam(
+            defaultValue = "false",
+            description =
+                    "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option")
     private boolean overrideEndpoint;
-    @UriParam(description = " Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
+
+    @UriParam(
+            description =
+                    " Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
-    @UriParam(label = "security",
-              description = "Set whether the DynamoDB Streams client should expect to load credentials through a default credentials provider or to expect"
+
+    @UriParam(
+            label = "security",
+            description =
+                    "Set whether the DynamoDB Streams client should expect to load credentials through a default credentials provider or to expect"
                             + " static credentials to be passed in.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(label = "security",
-              description = "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider.")
+
+    @UriParam(
+            label = "security",
+            description =
+                    "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider.")
     private boolean useProfileCredentialsProvider;
 
-    @UriParam(label = "security",
-              description = "Set whether the DDB Streams client should expect to use Session Credentials. This is useful in situation in which the user"
-                            +
-                            " needs to assume a IAM role for doing operations in DDB.")
+    @UriParam(
+            label = "security",
+            description =
+                    "Set whether the DDB Streams client should expect to use Session Credentials. This is useful in situation in which the user"
+                            + " needs to assume a IAM role for doing operations in DDB.")
     private boolean useSessionCredentials;
-    @UriParam(label = "security",
-              description = "If using a profile credentials provider this parameter will set the profile name.")
+
+    @UriParam(
+            label = "security",
+            description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
 
     public DynamoDbStreamsClient getAmazonDynamoDbStreamsClient() {

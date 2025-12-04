@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 import java.util.Iterator;
@@ -34,8 +35,7 @@ public final class TraitsBuilder {
     private ServiceBuilder service;
     private ServiceBindingBuilder serviceBinding;
 
-    private TraitsBuilder() {
-    }
+    private TraitsBuilder() {}
 
     public static TraitsBuilder traits() {
         return new TraitsBuilder();
@@ -70,7 +70,6 @@ public final class TraitsBuilder {
             if (key != null) {
                 this.addons.remove(key);
             }
-
         }
         return this;
     }
@@ -87,7 +86,6 @@ public final class TraitsBuilder {
                     }
                 }
             }
-
         }
         return this;
     }

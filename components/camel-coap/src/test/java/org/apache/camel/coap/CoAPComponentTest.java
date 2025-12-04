@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -26,8 +29,6 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CoAPComponentTest extends CoAPTestSupport {
 
@@ -48,8 +49,8 @@ public class CoAPComponentTest extends CoAPTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
-                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(
+                CoAPConstants.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sender.sendBody("Camel CoAP");
         MockEndpoint.assertIsSatisfied(context);
@@ -60,8 +61,8 @@ public class CoAPComponentTest extends CoAPTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
-                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(
+                CoAPConstants.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         tcpSender.sendBody("Camel CoAP");
         MockEndpoint.assertIsSatisfied(context);
@@ -72,16 +73,22 @@ public class CoAPComponentTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("coap://localhost:%d/TestResource", PORT).convertBodyTo(String.class).transform(body().prepend("Hello "));
-
-                fromF("coap+tcp://localhost:%d/TestResource", TCP_PORT).convertBodyTo(String.class)
+                fromF("coap://localhost:%d/TestResource", PORT)
+                        .convertBodyTo(String.class)
                         .transform(body().prepend("Hello "));
 
-                from("direct:start").toF("coap://localhost:%d/TestResource", PORT).to("mock:result");
+                fromF("coap+tcp://localhost:%d/TestResource", TCP_PORT)
+                        .convertBodyTo(String.class)
+                        .transform(body().prepend("Hello "));
 
-                from("direct:starttcp").toF("coap+tcp://localhost:%d/TestResource", TCP_PORT).to("mock:result");
+                from("direct:start")
+                        .toF("coap://localhost:%d/TestResource", PORT)
+                        .to("mock:result");
+
+                from("direct:starttcp")
+                        .toF("coap+tcp://localhost:%d/TestResource", TCP_PORT)
+                        .to("mock:result");
             }
         };
     }
-
 }

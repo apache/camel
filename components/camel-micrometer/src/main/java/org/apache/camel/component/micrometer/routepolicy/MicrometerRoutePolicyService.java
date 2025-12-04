@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -27,5 +28,4 @@ import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
  */
 @ManagedResource(description = "MicrometerRoutePolicy")
 public final class MicrometerRoutePolicyService extends AbstractMicrometerService
-        implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
-}
+        implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {}

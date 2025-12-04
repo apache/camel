@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import java.io.StringReader;
@@ -44,7 +45,8 @@ public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultT
                         JAXBContext context = JAXBContext.newInstance("org.apache.camel.wsdl_first.types");
                         QName faultCode = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");
                         SoapFault fault = new SoapFault("Get the null value of person name", faultCode);
-                        Element details = StaxUtils.read(new StringReader(DETAILS)).getDocumentElement();
+                        Element details =
+                                StaxUtils.read(new StringReader(DETAILS)).getDocumentElement();
                         UnknownPersonFault unknowPersonFault = new UnknownPersonFault();
                         unknowPersonFault.setPersonId("");
                         context.createMarshaller().marshal(unknowPersonFault, details);
@@ -52,9 +54,7 @@ public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultT
                         exchange.getMessage().setBody(fault);
                     }
                 });
-
             }
         };
     }
-
 }

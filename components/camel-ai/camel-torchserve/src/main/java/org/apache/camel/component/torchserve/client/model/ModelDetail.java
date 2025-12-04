@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.model;
 
 import java.util.ArrayList;
@@ -33,8 +34,7 @@ public class ModelDetail extends Model {
     private Metrics metrics = null;
     private JobQueueStatus jobQueueStatus = null;
 
-    public ModelDetail() {
-    }
+    public ModelDetail() {}
 
     public static ModelDetail from(DescribeModel200ResponseInner src) {
         ModelDetail model = new ModelDetail();
@@ -126,18 +126,17 @@ public class ModelDetail extends Model {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {\n" +
-               "    modelName: " + modelName + "\n" +
-               "    modelVersion: " + modelVersion + "\n" +
-               "    modelUrl: " + modelUrl + "\n" +
-               "    minWorkers: " + minWorkers + "\n" +
-               "    maxWorkers: " + maxWorkers + "\n" +
-               "    batchSize: " + batchSize + "\n" +
-               "    maxBatchDelay: " + maxBatchDelay + "\n" +
-               "    status: " + status + "\n" +
-               "    workers: " + workers + "\n" +
-               "    metrics: " + metrics + "\n" +
-               "    jobQueueStatus: " + jobQueueStatus + "\n" +
-               "}";
+        return getClass().getSimpleName() + " {\n" + "    modelName: "
+                + modelName + "\n" + "    modelVersion: "
+                + modelVersion + "\n" + "    modelUrl: "
+                + modelUrl + "\n" + "    minWorkers: "
+                + minWorkers + "\n" + "    maxWorkers: "
+                + maxWorkers + "\n" + "    batchSize: "
+                + batchSize + "\n" + "    maxBatchDelay: "
+                + maxBatchDelay + "\n" + "    status: "
+                + status + "\n" + "    workers: "
+                + workers + "\n" + "    metrics: "
+                + metrics + "\n" + "    jobQueueStatus: "
+                + jobQueueStatus + "\n" + "}";
     }
 }

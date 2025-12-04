@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis.bean;
 
 import org.apache.camel.CamelExecutionException;
@@ -30,12 +31,13 @@ public class MyBatisBeanWrongMethodTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exception ex = Assertions.assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:start", null));
+        Exception ex =
+                Assertions.assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", null));
 
-        Assertions.assertTrue(
-                ex.getCause().getMessage().contains("Method with name: wrongMethodThatDoesNotExists not found on bean: " +
-                                                    "org.apache.ibatis.binding.MapperProxy"));
+        Assertions.assertTrue(ex.getCause()
+                .getMessage()
+                .contains("Method with name: wrongMethodThatDoesNotExists not found on bean: "
+                        + "org.apache.ibatis.binding.MapperProxy"));
     }
 
     @Override
@@ -49,5 +51,4 @@ public class MyBatisBeanWrongMethodTest extends CamelTestSupport {
             }
         };
     }
-
 }

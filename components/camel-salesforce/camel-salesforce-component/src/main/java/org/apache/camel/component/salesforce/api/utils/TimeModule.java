@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
+
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -30,17 +33,18 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 
-import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
-
 public class TimeModule extends SimpleModule {
 
-    private static final LocalDateDeserializer LOCAL_DATE_DESERIALIZER = new LocalDateDeserializer(DateTimeFormatter.ISO_DATE);
+    private static final LocalDateDeserializer LOCAL_DATE_DESERIALIZER =
+            new LocalDateDeserializer(DateTimeFormatter.ISO_DATE);
 
-    private static final LocalDateSerializer LOCAL_DATE_SERIALIZER = new LocalDateSerializer(DateTimeFormatter.ISO_DATE);
+    private static final LocalDateSerializer LOCAL_DATE_SERIALIZER =
+            new LocalDateSerializer(DateTimeFormatter.ISO_DATE);
 
     private static final long serialVersionUID = 1L;
 
-    private static final ZonedDateTimeSerializer ZONED_DATE_TIME_SERIALIZER = new ZonedDateTimeSerializer(ISO_OFFSET_DATE_TIME);
+    private static final ZonedDateTimeSerializer ZONED_DATE_TIME_SERIALIZER =
+            new ZonedDateTimeSerializer(ISO_OFFSET_DATE_TIME);
 
     private final JavaTimeModule delegate = new JavaTimeModule();
 
@@ -69,5 +73,4 @@ public class TimeModule extends SimpleModule {
         delegate.setupModule(context);
         super.setupModule(context);
     }
-
 }

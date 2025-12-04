@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.CountDownLatch;
@@ -41,12 +42,13 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
     private final String urlTimeout = "activemq:JmsInOnlyDisableTimeToLiveTest.in?timeToLive=2000";
-    private final String urlTimeToLiveDisabled
-            = "activemq:JmsInOnlyDisableTimeToLiveTest.in?timeToLive=2000&disableTimeToLive=true";
+    private final String urlTimeToLiveDisabled =
+            "activemq:JmsInOnlyDisableTimeToLiveTest.in?timeToLive=2000&disableTimeToLive=true";
     private CountDownLatch messageWasExpiredCountDownLatch = new CountDownLatch(2);
 
     @Test
@@ -106,16 +108,11 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:timeout")
-                        .to(urlTimeout)
-                        .to("mock:result");
+                from("direct:timeout").to(urlTimeout).to("mock:result");
 
-                from("direct:disable")
-                        .to(urlTimeToLiveDisabled)
-                        .to("mock:result");
+                from("direct:disable").to(urlTimeToLiveDisabled).to("mock:result");
 
-                from("activemq:JmsInOnlyDisableTimeToLiveTest.out")
-                        .to("mock:end");
+                from("activemq:JmsInOnlyDisableTimeToLiveTest.out").to("mock:end");
             }
         };
     }
@@ -131,5 +128,4 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
         template = camelContextExtension.getProducerTemplate();
         consumer = camelContextExtension.getConsumerTemplate();
     }
-
 }

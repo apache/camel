@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,9 +33,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for delete mail runs as an onCompletion.
@@ -50,8 +51,8 @@ public class MailCommitOnCompletionTest extends CamelTestSupport {
         assertEquals(5, mailbox.getMessageCount());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hi Message 0\r\n", "Hi Message 1\r\n", "Hi Message 2\r\n", "Hi Message 3\r\n",
-                "Hi Message 4\r\n");
+        mock.expectedBodiesReceived(
+                "Hi Message 0\r\n", "Hi Message 1\r\n", "Hi Message 2\r\n", "Hi Message 3\r\n", "Hi Message 4\r\n");
 
         mock.assertIsSatisfied();
 

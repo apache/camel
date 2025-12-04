@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.cache;
 
 import java.util.concurrent.TimeUnit;
@@ -75,9 +76,13 @@ public class MetricsStatsCounter implements StatsCounter {
     @Override
     public CacheStats snapshot() {
         return CacheStats.of(
-                hitCount.getCount(), missCount.getCount(), loadSuccessCount.getCount(), loadFailureCount.getCount(),
+                hitCount.getCount(),
+                missCount.getCount(),
+                loadSuccessCount.getCount(),
+                loadFailureCount.getCount(),
                 totalLoadTime.getCount(),
-                evictionCount.getCount(), evictionWeight.getCount());
+                evictionCount.getCount(),
+                evictionWeight.getCount());
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
@@ -41,7 +42,6 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws Exception {
 
         switch (determineOperation(exchange)) {
-
             case list:
                 getSnapshots(exchange);
                 break;
@@ -55,27 +55,33 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
-
     }
 
     private void getSnapshots(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        DigitalOceanSnapshotTypes type = exchange.getIn().getHeader(DigitalOceanHeaders.TYPE, DigitalOceanSnapshotTypes.class);
+        DigitalOceanSnapshotTypes type =
+                exchange.getIn().getHeader(DigitalOceanHeaders.TYPE, DigitalOceanSnapshotTypes.class);
         Snapshots snapshots;
 
         if (ObjectHelper.isNotEmpty(type)) {
             if (type == DigitalOceanSnapshotTypes.droplet) {
-                snapshots = getEndpoint().getDigitalOceanClient().getAllDropletSnapshots(configuration.getPage(),
-                        configuration.getPerPage());
+                snapshots = getEndpoint()
+                        .getDigitalOceanClient()
+                        .getAllDropletSnapshots(configuration.getPage(), configuration.getPerPage());
             } else {
-                snapshots = getEndpoint().getDigitalOceanClient().getAllVolumeSnapshots(configuration.getPage(),
-                        configuration.getPerPage());
+                snapshots = getEndpoint()
+                        .getDigitalOceanClient()
+                        .getAllVolumeSnapshots(configuration.getPage(), configuration.getPerPage());
             }
         } else {
-            snapshots = getEndpoint().getDigitalOceanClient().getAvailableSnapshots(configuration.getPage(),
-                    configuration.getPerPage());
+            snapshots = getEndpoint()
+                    .getDigitalOceanClient()
+                    .getAvailableSnapshots(configuration.getPage(), configuration.getPerPage());
         }
 
-        LOG.trace("All Snapshots : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+        LOG.trace(
+                "All Snapshots : page {} / {} per page [{}] ",
+                configuration.getPage(),
+                configuration.getPerPage(),
                 snapshots.getSnapshots());
         exchange.getMessage().setBody(snapshots.getSnapshots());
     }
@@ -90,7 +96,6 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
         Snapshot snapshot = getEndpoint().getDigitalOceanClient().getSnaphotInfo(snapshotId);
         LOG.trace("Snapshot [{}] ", snapshot);
         exchange.getMessage().setBody(snapshot);
-
     }
 
     private void deleteSnapshot(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -103,7 +108,5 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
         Delete delete = getEndpoint().getDigitalOceanClient().deleteSnapshot(snapshotId);
         LOG.trace("Delete Snapshot [{}] ", delete);
         exchange.getMessage().setBody(delete);
-
     }
-
 }

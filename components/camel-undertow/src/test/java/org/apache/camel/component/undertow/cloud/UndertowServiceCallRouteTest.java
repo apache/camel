@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.cloud;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
@@ -27,9 +31,6 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowServiceCallRouteTest extends CamelTestSupport {
     private final int port1 = AvailablePortFinder.getNextAvailable();
@@ -91,10 +92,8 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
                         .servers("myService@localhost:" + port2)
                         .endParent();
 
-                from("undertow:http://localhost:" + port1)
-                        .transform().constant("8081");
-                from("undertow:http://localhost:" + port2)
-                        .transform().constant("8082");
+                from("undertow:http://localhost:" + port1).transform().constant("8081");
+                from("undertow:http://localhost:" + port2).transform().constant("8082");
             }
         };
     }

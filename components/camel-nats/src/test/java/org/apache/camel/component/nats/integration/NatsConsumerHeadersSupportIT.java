@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats.integration;
 
 import java.io.IOException;
@@ -54,7 +55,9 @@ class NatsConsumerHeadersSupportIT extends NatsITSupport {
         this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_1, HEADER_VALUE_1);
         this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_2, secondHeaders);
 
-        final Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
+        final Options options = new Options.Builder()
+                .server("nats://" + service.getServiceAddress())
+                .build();
         final Connection connection = Nats.connect(options);
 
         final Headers headers = new Headers();
@@ -70,7 +73,6 @@ class NatsConsumerHeadersSupportIT extends NatsITSupport {
         connection.publish(message);
 
         this.mockResultEndpoint.assertIsSatisfied();
-
     }
 
     @Override
@@ -82,5 +84,4 @@ class NatsConsumerHeadersSupportIT extends NatsITSupport {
             }
         };
     }
-
 }

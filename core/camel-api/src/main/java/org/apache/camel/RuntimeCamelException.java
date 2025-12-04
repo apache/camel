@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.io.Serial;
@@ -24,8 +25,7 @@ import java.io.Serial;
 public class RuntimeCamelException extends RuntimeException {
     private static final @Serial long serialVersionUID = 8046489554418284257L;
 
-    public RuntimeCamelException() {
-    }
+    public RuntimeCamelException() {}
 
     public RuntimeCamelException(String message) {
         super(message);

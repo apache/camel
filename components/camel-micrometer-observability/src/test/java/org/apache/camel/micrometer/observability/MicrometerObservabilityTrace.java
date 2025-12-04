@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
 
 import java.util.ArrayList;
@@ -49,5 +50,4 @@ public class MicrometerObservabilityTrace {
     public String toString() {
         return "Trace Id: " + traceId + " " + spans;
     }
-
 }

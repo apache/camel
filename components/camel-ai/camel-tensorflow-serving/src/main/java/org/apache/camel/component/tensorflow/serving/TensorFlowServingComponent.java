@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tensorflow.serving;
 
 import java.util.Map;
@@ -39,8 +40,8 @@ public class TensorFlowServingComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        TensorFlowServingConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new TensorFlowServingConfiguration();
+        TensorFlowServingConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new TensorFlowServingConfiguration();
         Endpoint endpoint = new TensorFlowServingEndpoint(uri, this, remaining, configuration);
         setProperties(endpoint, parameters);
         return endpoint;

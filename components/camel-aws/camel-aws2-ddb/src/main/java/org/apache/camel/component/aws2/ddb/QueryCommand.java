@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import java.util.Collection;
@@ -35,39 +36,53 @@ public class QueryCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        QueryRequest.Builder query = QueryRequest.builder().tableName(determineTableName())
-                .attributesToGet(determineAttributeNames()).consistentRead(determineConsistentRead())
-                .keyConditions(determineKeyConditions()).exclusiveStartKey(determineExclusiveStartKey())
-                .limit(determineLimit()).scanIndexForward(determineScanIndexForward());
+        QueryRequest.Builder query = QueryRequest.builder()
+                .tableName(determineTableName())
+                .attributesToGet(determineAttributeNames())
+                .consistentRead(determineConsistentRead())
+                .keyConditions(determineKeyConditions())
+                .exclusiveStartKey(determineExclusiveStartKey())
+                .limit(determineLimit())
+                .scanIndexForward(determineScanIndexForward());
 
         // Check if we have set an Index Name
         if (exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class) != null) {
             query.indexName(exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class));
         }
 
-        //skip adding attribute-to-get from 'CamelAwsDdbAttributeNames' if the header is null or empty list.
-        if (exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTE_NAMES) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTE_NAMES, Collection.class).isEmpty()) {
+        // skip adding attribute-to-get from 'CamelAwsDdbAttributeNames' if the header is null or empty list.
+        if (exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTE_NAMES) != null
+                && !exchange.getIn()
+                        .getHeader(Ddb2Constants.ATTRIBUTE_NAMES, Collection.class)
+                        .isEmpty()) {
             query.attributesToGet(determineAttributeNames());
         }
 
-        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION, String.class).isEmpty()) {
+        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION) != null
+                && !exchange.getIn()
+                        .getHeader(Ddb2Constants.FILTER_EXPRESSION, String.class)
+                        .isEmpty()) {
             query.filterExpression(determineFilterExpression());
         }
 
-        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.class).isEmpty()) {
+        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES) != null
+                && !exchange.getIn()
+                        .getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.class)
+                        .isEmpty()) {
             query.expressionAttributeNames(determineFilterExpressionAttributeNames());
         }
 
-        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class).isEmpty()) {
+        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES) != null
+                && !exchange.getIn()
+                        .getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class)
+                        .isEmpty()) {
             query.expressionAttributeValues(determineFilterExpressionAttributeValues());
         }
 
-        if (exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION, Map.class).isEmpty()) {
+        if (exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION) != null
+                && !exchange.getIn()
+                        .getHeader(Ddb2Constants.PROJECT_EXPRESSION, Map.class)
+                        .isEmpty()) {
             query.projectionExpression(determineProjectExpression());
         }
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -22,8 +25,6 @@ import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class KafkaAutowireTest {
 
@@ -44,7 +45,5 @@ public class KafkaAutowireTest {
         assertSame(clientFactory, endpoint.getKafkaClientFactory());
     }
 
-    static final class TestKafkaClientFactory extends DefaultKafkaClientFactory {
-
-    }
+    static final class TestKafkaClientFactory extends DefaultKafkaClientFactory {}
 }

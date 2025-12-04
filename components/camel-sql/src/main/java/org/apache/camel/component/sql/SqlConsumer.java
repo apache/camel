@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -43,8 +46,6 @@ import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
-
 public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqlConsumer.class);
@@ -72,13 +73,16 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         private Exchange exchange;
         private Object data;
 
-        private DataHolder() {
-        }
+        private DataHolder() {}
     }
 
-    public SqlConsumer(DefaultSqlEndpoint endpoint, Processor processor, JdbcTemplate jdbcTemplate, String query,
-                       SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
-                       SqlProcessingStrategy sqlProcessingStrategy) {
+    public SqlConsumer(
+            DefaultSqlEndpoint endpoint,
+            Processor processor,
+            JdbcTemplate jdbcTemplate,
+            String query,
+            SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
+            SqlProcessingStrategy sqlProcessingStrategy) {
         super(endpoint, processor);
         this.jdbcTemplate = jdbcTemplate;
         this.namedJdbcTemplate = null;
@@ -86,12 +90,18 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         this.parameterSource = null;
         this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
         this.sqlProcessingStrategy = sqlProcessingStrategy;
-        this.exchangeFactory = endpoint.getCamelContext().getCamelContextExtension().getExchangeFactory();
+        this.exchangeFactory =
+                endpoint.getCamelContext().getCamelContextExtension().getExchangeFactory();
     }
 
-    public SqlConsumer(DefaultSqlEndpoint endpoint, Processor processor, NamedParameterJdbcTemplate namedJdbcTemplate,
-                       String query, SqlParameterSource parameterSource,
-                       SqlPrepareStatementStrategy sqlPrepareStatementStrategy, SqlProcessingStrategy sqlProcessingStrategy) {
+    public SqlConsumer(
+            DefaultSqlEndpoint endpoint,
+            Processor processor,
+            NamedParameterJdbcTemplate namedJdbcTemplate,
+            String query,
+            SqlParameterSource parameterSource,
+            SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
+            SqlProcessingStrategy sqlProcessingStrategy) {
         super(endpoint, processor);
         this.jdbcTemplate = null;
         this.namedJdbcTemplate = namedJdbcTemplate;
@@ -99,7 +109,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         this.parameterSource = parameterSource;
         this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
         this.sqlProcessingStrategy = sqlProcessingStrategy;
-        this.exchangeFactory = endpoint.getCamelContext().getCamelContextExtension().getExchangeFactory();
+        this.exchangeFactory =
+                endpoint.getCamelContext().getCamelContextExtension().getExchangeFactory();
     }
 
     @Override
@@ -112,7 +123,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         super.doInit();
 
         if (ResourceHelper.isClasspathUri(query)) {
-            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            String placeholder =
+                    getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
             resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
         }
     }
@@ -122,7 +134,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         super.doStart();
 
         if (!ResourceHelper.isClasspathUri(query)) {
-            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            String placeholder =
+                    getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
             resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
         }
     }
@@ -134,8 +147,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
 
         final Exchange dummy = exchangeFactory.create(getEndpoint(), true);
-        final String preparedQuery
-                = sqlPrepareStatementStrategy.prepareQuery(resolvedQuery, getEndpoint().isAllowNamedParameters(), dummy);
+        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(
+                resolvedQuery, getEndpoint().isAllowNamedParameters(), dummy);
 
         LOG.trace("poll: {}", preparedQuery);
         final PreparedStatementCallback<Integer> callback = new PreparedStatementCallback<Integer>() {
@@ -147,12 +160,14 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
                 Queue<DataHolder> answer = new LinkedList<>();
 
-                int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
+                int expected = parametersCount > 0
+                        ? parametersCount
+                        : ps.getParameterMetaData().getParameterCount();
 
                 // only populate if really needed
                 if (alwaysPopulateStatement || expected > 0) {
-                    Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(resolvedQuery, preparedQuery, expected,
-                            dummy, null);
+                    Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(
+                            resolvedQuery, preparedQuery, expected, dummy, null);
                     sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                 }
 
@@ -256,7 +271,9 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         int total = exchanges.size();
 
         if (maxMessagesPerPoll > 0 && total == maxMessagesPerPoll) {
-            LOG.debug("Maximum messages to poll is {} and there were exactly {} messages in this poll.", maxMessagesPerPoll,
+            LOG.debug(
+                    "Maximum messages to poll is {} and there were exactly {} messages in this poll.",
+                    maxMessagesPerPoll,
                     total);
         }
 
@@ -300,15 +317,16 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                 if (data != null && sql != null) {
                     int updateCount;
                     if (namedJdbcTemplate != null && sqlProcessingStrategy instanceof SqlNamedProcessingStrategy) {
-                        SqlNamedProcessingStrategy namedProcessingStrategy = (SqlNamedProcessingStrategy) sqlProcessingStrategy;
-                        updateCount = namedProcessingStrategy.commit(getEndpoint(), exchange, data, namedJdbcTemplate,
-                                parameterSource, sql);
+                        SqlNamedProcessingStrategy namedProcessingStrategy =
+                                (SqlNamedProcessingStrategy) sqlProcessingStrategy;
+                        updateCount = namedProcessingStrategy.commit(
+                                getEndpoint(), exchange, data, namedJdbcTemplate, parameterSource, sql);
                     } else {
                         updateCount = sqlProcessingStrategy.commit(getEndpoint(), exchange, data, jdbcTemplate, sql);
                     }
                     if (expectedUpdateCount > -1 && updateCount != expectedUpdateCount) {
                         String msg = "Expected update count " + expectedUpdateCount + " but was " + updateCount
-                                     + " executing query: " + sql;
+                                + " executing query: " + sql;
                         throw new SQLException(msg);
                     }
                 }
@@ -327,12 +345,13 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             if (onConsumeBatchComplete != null) {
                 int updateCount;
                 if (namedJdbcTemplate != null && sqlProcessingStrategy instanceof SqlNamedProcessingStrategy) {
-                    SqlNamedProcessingStrategy namedProcessingStrategy = (SqlNamedProcessingStrategy) sqlProcessingStrategy;
-                    updateCount = namedProcessingStrategy.commitBatchComplete(getEndpoint(), namedJdbcTemplate, parameterSource,
-                            onConsumeBatchComplete);
+                    SqlNamedProcessingStrategy namedProcessingStrategy =
+                            (SqlNamedProcessingStrategy) sqlProcessingStrategy;
+                    updateCount = namedProcessingStrategy.commitBatchComplete(
+                            getEndpoint(), namedJdbcTemplate, parameterSource, onConsumeBatchComplete);
                 } else {
-                    updateCount
-                            = sqlProcessingStrategy.commitBatchComplete(getEndpoint(), jdbcTemplate, onConsumeBatchComplete);
+                    updateCount = sqlProcessingStrategy.commitBatchComplete(
+                            getEndpoint(), jdbcTemplate, onConsumeBatchComplete);
                 }
                 LOG.debug("onConsumeBatchComplete update count {}", updateCount);
             }

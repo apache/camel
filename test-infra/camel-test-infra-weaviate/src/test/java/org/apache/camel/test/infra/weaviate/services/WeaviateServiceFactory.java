@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.weaviate.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class WeaviateServiceFactory {
-    private WeaviateServiceFactory() {
-
-    }
+    private WeaviateServiceFactory() {}
 
     public static class SingletonWeaviateService extends SingletonService<WeaviateService> implements WeaviateService {
 
@@ -63,9 +62,8 @@ public final class WeaviateServiceFactory {
                 .build();
     }
 
-    public static class WeaviateLocalContainerService extends WeaviateLocalContainerInfraService implements WeaviateService {
-    }
+    public static class WeaviateLocalContainerService extends WeaviateLocalContainerInfraService
+            implements WeaviateService {}
 
-    public static class WeaviateRemoteService extends WeaviateRemoteInfraService implements WeaviateService {
-    }
+    public static class WeaviateRemoteService extends WeaviateRemoteInfraService implements WeaviateService {}
 }

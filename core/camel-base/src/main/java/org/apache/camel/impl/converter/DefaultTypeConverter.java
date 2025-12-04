@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.CamelContext;
@@ -39,13 +40,20 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
     private volatile boolean loadTypeConvertersDone;
     private final boolean loadTypeConverters;
 
-    public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector,
-                                boolean loadTypeConverters, boolean statisticsEnabled) {
+    public DefaultTypeConverter(
+            PackageScanClassResolver resolver,
+            Injector injector,
+            boolean loadTypeConverters,
+            boolean statisticsEnabled) {
         this(null, resolver, injector, loadTypeConverters, statisticsEnabled);
     }
 
-    public DefaultTypeConverter(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector,
-                                boolean loadTypeConverters, boolean statisticsEnabled) {
+    public DefaultTypeConverter(
+            CamelContext camelContext,
+            PackageScanClassResolver resolver,
+            Injector injector,
+            boolean loadTypeConverters,
+            boolean statisticsEnabled) {
         super(camelContext, resolver, injector, statisticsEnabled);
         this.loadTypeConverters = loadTypeConverters;
     }
@@ -111,7 +119,8 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
      * Creates the {@link TypeConverterLoader} to use for scanning for type converters such as from the classpath.
      */
     protected TypeConverterLoader createScanTypeConverterLoader() {
-        String basePackages = camelContext != null ? camelContext.getCamelContextExtension().getBasePackageScan() : null;
+        String basePackages =
+                camelContext != null ? camelContext.getCamelContextExtension().getBasePackageScan() : null;
         return new AnnotationTypeConverterLoader(resolver, basePackages);
     }
 }

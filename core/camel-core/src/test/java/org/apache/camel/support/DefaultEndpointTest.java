@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultEndpointTest extends ContextTestSupport {
 
@@ -35,8 +36,10 @@ public class DefaultEndpointTest extends ContextTestSupport {
         assertSanitizedUriUnchanged("irc://irc.codehaus.org/camel");
         assertSanitizedUriUnchanged("direct:foo?bar=123&cheese=yes");
         assertSanitizedUriUnchanged("https://issues.apache.org/activemq/secure/AddComment!default.jspa?id=33239");
-        assertEquals("ftp://host.mysite.com/records?passiveMode=true&user=xxxxxx&password=xxxxxx",
-                URISupport.sanitizeUri("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=superSecret"));
+        assertEquals(
+                "ftp://host.mysite.com/records?passiveMode=true&user=xxxxxx&password=xxxxxx",
+                URISupport.sanitizeUri(
+                        "ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=superSecret"));
         assertEquals(
                 "sftp://host.mysite.com/records?user=xxxxxx&privateKeyFile=xxxxxx&privateKeyFilePassphrase=xxxxxx&knownHostsFile=hosts.list",
                 URISupport.sanitizeUri(

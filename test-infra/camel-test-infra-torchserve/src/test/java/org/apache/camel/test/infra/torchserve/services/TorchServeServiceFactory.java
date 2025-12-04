@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.torchserve.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class TorchServeServiceFactory {
-    private TorchServeServiceFactory() {
-    }
+    private TorchServeServiceFactory() {}
 
     public static SimpleTestServiceBuilder<TorchServeService> builder() {
         return new SimpleTestServiceBuilder<>("torchserve");
@@ -34,9 +34,7 @@ public final class TorchServeServiceFactory {
     }
 
     public static class TorchServeLocalContainerService extends TorchServeLocalContainerInfraService
-            implements TorchServeService {
-    }
+            implements TorchServeService {}
 
-    public static class TorchServeRemoteService extends TorchServeRemoteInfraService implements TorchServeService {
-    }
+    public static class TorchServeRemoteService extends TorchServeRemoteInfraService implements TorchServeService {}
 }

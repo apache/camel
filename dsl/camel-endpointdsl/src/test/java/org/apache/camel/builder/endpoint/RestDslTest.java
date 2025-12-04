@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.CamelContext;
@@ -47,15 +48,12 @@ public class RestDslTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/api")
-                    .get("name").to(direct("username").advanced().lazyStartProducer(true));
+                rest("/api").get("name").to(direct("username").advanced().lazyStartProducer(true));
 
-                from(direct("username"))
-                        .setBody(constant("scott"));
+                from(direct("username")).setBody(constant("scott"));
             }
         });
 
         context.stop();
     }
-
 }

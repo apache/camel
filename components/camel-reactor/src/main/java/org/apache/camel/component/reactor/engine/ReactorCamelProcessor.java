@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactor.engine;
 
 import java.io.Closeable;
@@ -60,8 +61,7 @@ final class ReactorCamelProcessor implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
-    }
+    public void close() throws IOException {}
 
     Publisher<Exchange> getPublisher() {
         return publisher;
@@ -79,14 +79,16 @@ final class ReactorCamelProcessor implements Closeable {
             if (this.camelProducer != producer) { // this condition is always true
                 detach();
 
-                ReactiveStreamsBackpressureStrategy strategy = producer.getEndpoint().getBackpressureStrategy();
+                ReactiveStreamsBackpressureStrategy strategy =
+                        producer.getEndpoint().getBackpressureStrategy();
                 Flux<Exchange> flux = Flux.create(camelSink::set, FluxSink.OverflowStrategy.IGNORE);
 
                 if (ObjectHelper.equal(strategy, ReactiveStreamsBackpressureStrategy.OLDEST)) {
                     // signal item emitted for non-dropped items only
                     flux = flux.onBackpressureDrop(this::onBackPressure).handle(this::onItemEmitted);
                 } else if (ObjectHelper.equal(strategy, ReactiveStreamsBackpressureStrategy.LATEST)) {
-                    // Since there is no callback for dropped elements on backpressure "latest", item emission is signaled before dropping
+                    // Since there is no callback for dropped elements on backpressure "latest", item emission is
+                    // signaled before dropping
                     // No exception is reported back to the exchanges
                     flux = flux.handle(this::onItemEmitted).onBackpressureLatest();
                 } else {
@@ -134,7 +136,6 @@ final class ReactorCamelProcessor implements Closeable {
 
     private void onBackPressure(Exchange exchange) {
         ReactiveStreamsHelper.invokeDispatchCallback(
-                exchange,
-                new ReactiveStreamsDiscardedException("Discarded by back pressure strategy", exchange, name));
+                exchange, new ReactiveStreamsDiscardedException("Discarded by back pressure strategy", exchange, name));
     }
 }

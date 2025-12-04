@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class MyBatisComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced", autowired = true)
     private volatile SqlSessionFactory sqlSessionFactory;
+
     @Metadata(defaultValue = "SqlMapConfig.xml", supportFileReference = true)
     private String configurationUri = "SqlMapConfig.xml";
 
@@ -50,7 +52,8 @@ public class MyBatisComponent extends HealthCheckComponent {
         try {
             if (sqlSessionFactory == null) {
                 ObjectHelper.notNull(configurationUri, "configurationUri", this);
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationUri);
+                InputStream is =
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationUri);
                 try {
                     sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);
                 } finally {
@@ -86,5 +89,4 @@ public class MyBatisComponent extends HealthCheckComponent {
     public void setConfigurationUri(String configurationUri) {
         this.configurationUri = configurationUri;
     }
-
 }

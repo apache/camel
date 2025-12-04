@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kserve.it;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -30,8 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kserve.KServeConstants;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class KServeEndpointIT extends KServeITSupport {
 
     private static final String TEST_MODEL = "simple";
@@ -43,7 +44,8 @@ class KServeEndpointIT extends KServeITSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived()
                 .body(GrpcPredictV2.ModelInferResponse.class)
-                .simple("${body.rawOutputContentsCount").isEqualTo(2);
+                .simple("${body.rawOutputContentsCount")
+                .isEqualTo(2);
 
         var request = createInferRequest();
         template.sendBody("direct:infer", request);
@@ -61,7 +63,8 @@ class KServeEndpointIT extends KServeITSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived()
                 .body(GrpcPredictV2.ModelInferResponse.class)
-                .simple("${body.rawOutputContentsCount").isEqualTo(2);
+                .simple("${body.rawOutputContentsCount")
+                .isEqualTo(2);
 
         var request = createInferRequest();
         template.sendBody("direct:infer_version", request);
@@ -79,7 +82,8 @@ class KServeEndpointIT extends KServeITSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived()
                 .body(GrpcPredictV2.ModelInferResponse.class)
-                .simple("${body.rawOutputContentsCount").isEqualTo(2);
+                .simple("${body.rawOutputContentsCount")
+                .isEqualTo(2);
 
         var request = createInferRequest();
         template.send("direct:infer_headers", e -> {
@@ -99,17 +103,24 @@ class KServeEndpointIT extends KServeITSupport {
         var ints0 = IntStream.range(1, 17).boxed().collect(Collectors.toList());
         var content0 = GrpcPredictV2.InferTensorContents.newBuilder().addAllIntContents(ints0);
         var input0 = GrpcPredictV2.ModelInferRequest.InferInputTensor.newBuilder()
-                .setName("INPUT0").setDatatype("INT32").addShape(1).addShape(16)
+                .setName("INPUT0")
+                .setDatatype("INT32")
+                .addShape(1)
+                .addShape(16)
                 .setContents(content0);
 
         var ints1 = IntStream.range(0, 16).boxed().collect(Collectors.toList());
         var content1 = GrpcPredictV2.InferTensorContents.newBuilder().addAllIntContents(ints1);
         var input1 = GrpcPredictV2.ModelInferRequest.InferInputTensor.newBuilder()
-                .setName("INPUT1").setDatatype("INT32").addShape(1).addShape(16)
+                .setName("INPUT1")
+                .setDatatype("INT32")
+                .addShape(1)
+                .addShape(16)
                 .setContents(content1);
 
         return GrpcPredictV2.ModelInferRequest.newBuilder()
-                .addInputs(0, input0).addInputs(1, input1)
+                .addInputs(0, input0)
+                .addInputs(1, input1)
                 .build();
     }
 
@@ -123,7 +134,8 @@ class KServeEndpointIT extends KServeITSupport {
     }
 
     private List<Integer> toList(ByteString content) {
-        var buffer = content.asReadOnlyByteBuffer().order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
+        var buffer =
+                content.asReadOnlyByteBuffer().order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
         var list = new ArrayList<Integer>(buffer.remaining());
         while (buffer.hasRemaining()) {
             list.add(buffer.get());
@@ -137,7 +149,8 @@ class KServeEndpointIT extends KServeITSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived()
                 .body(GrpcPredictV2.ModelReadyResponse.class)
-                .simple("${body.ready}").isEqualTo("true");
+                .simple("${body.ready}")
+                .isEqualTo("true");
 
         template.sendBody("direct:model-ready", null);
 
@@ -151,7 +164,8 @@ class KServeEndpointIT extends KServeITSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived()
                 .body(GrpcPredictV2.ModelReadyResponse.class)
-                .simple("${body.ready}").isEqualTo("true");
+                .simple("${body.ready}")
+                .isEqualTo("true");
 
         template.sendBody("direct:model-ready_version", null);
 
@@ -165,7 +179,8 @@ class KServeEndpointIT extends KServeITSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived()
                 .body(GrpcPredictV2.ModelReadyResponse.class)
-                .simple("${body.ready}").isEqualTo("true");
+                .simple("${body.ready}")
+                .isEqualTo("true");
 
         template.send("direct:model-ready_headers", e -> {
             e.getMessage().setHeader(KServeConstants.MODEL_NAME, TEST_MODEL);
@@ -227,7 +242,8 @@ class KServeEndpointIT extends KServeITSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived()
                 .body(GrpcPredictV2.ServerReadyResponse.class)
-                .simple("${body.ready}").isEqualTo("true");
+                .simple("${body.ready}")
+                .isEqualTo("true");
 
         template.sendBody("direct:server-ready", null);
 
@@ -241,7 +257,8 @@ class KServeEndpointIT extends KServeITSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived()
                 .body(GrpcPredictV2.ServerLiveResponse.class)
-                .simple("${body.live}").isEqualTo("true");
+                .simple("${body.live}")
+                .isEqualTo("true");
 
         template.sendBody("direct:server-live", null);
 
@@ -276,18 +293,14 @@ class KServeEndpointIT extends KServeITSupport {
                 from("direct:infer_version")
                         .toF("kserve:infer?modelName=%s&modelVersion=%s", TEST_MODEL, TEST_MODEL_VERSION)
                         .to("mock:result");
-                from("direct:infer_headers")
-                        .to("kserve:infer")
-                        .to("mock:result");
+                from("direct:infer_headers").to("kserve:infer").to("mock:result");
                 from("direct:model-ready")
                         .toF("kserve:model/ready?modelName=%s", TEST_MODEL)
                         .to("mock:result");
                 from("direct:model-ready_version")
                         .toF("kserve:model/ready?modelName=%s&modelVersion=%s", TEST_MODEL, TEST_MODEL_VERSION)
                         .to("mock:result");
-                from("direct:model-ready_headers")
-                        .to("kserve:model/ready")
-                        .to("mock:result");
+                from("direct:model-ready_headers").to("kserve:model/ready").to("mock:result");
                 from("direct:model-metadata")
                         .toF("kserve:model/metadata?modelName=%s", TEST_MODEL)
                         .to("mock:result");
@@ -297,15 +310,9 @@ class KServeEndpointIT extends KServeITSupport {
                 from("direct:model-metadata_headers")
                         .to("kserve:model/metadata")
                         .to("mock:result");
-                from("direct:server-ready")
-                        .toF("kserve:server/ready")
-                        .to("mock:result");
-                from("direct:server-live")
-                        .toF("kserve:server/live")
-                        .to("mock:result");
-                from("direct:server-metadata")
-                        .toF("kserve:server/metadata")
-                        .to("mock:result");
+                from("direct:server-ready").toF("kserve:server/ready").to("mock:result");
+                from("direct:server-live").toF("kserve:server/live").to("mock:result");
+                from("direct:server-metadata").toF("kserve:server/metadata").to("mock:result");
             }
         };
     }

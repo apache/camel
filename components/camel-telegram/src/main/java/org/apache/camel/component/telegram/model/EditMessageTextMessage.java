@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -55,8 +56,14 @@ public class EditMessageTextMessage extends OutgoingMessage {
      * @param disableWebPagePreview Disables link previews for links in this message.
      * @param replyMarkup           An inline keyboard that appears right next to the message it belongs to.
      */
-    public EditMessageTextMessage(String chatId, Integer messageId, String inlineMessageId, String text,
-                                  String parseMode, Boolean disableWebPagePreview, InlineKeyboardMarkup replyMarkup) {
+    public EditMessageTextMessage(
+            String chatId,
+            Integer messageId,
+            String inlineMessageId,
+            String text,
+            String parseMode,
+            Boolean disableWebPagePreview,
+            InlineKeyboardMarkup replyMarkup) {
         this.chatId = chatId;
         this.messageId = messageId;
         this.inlineMessageId = inlineMessageId;
@@ -103,8 +110,7 @@ public class EditMessageTextMessage extends OutgoingMessage {
         private Boolean disableWebPagePreview;
         private InlineKeyboardMarkup replyMarkup;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder messageId(Integer messageId) {
             this.messageId = messageId;

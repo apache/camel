@@ -14,22 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.cli.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class CliServiceFactory {
-    private CliServiceFactory() {
-
-    }
+    private CliServiceFactory() {}
 
     public static SimpleTestServiceBuilder<CliService> builder() {
         return new SimpleTestServiceBuilder<>(CliLocalContainerService.CONTAINER_NAME);
     }
 
     public static CliService createService() {
-        return builder()
-                .addLocalMapping(CliLocalContainerService::new)
-                .build();
+        return builder().addLocalMapping(CliLocalContainerService::new).build();
     }
 }

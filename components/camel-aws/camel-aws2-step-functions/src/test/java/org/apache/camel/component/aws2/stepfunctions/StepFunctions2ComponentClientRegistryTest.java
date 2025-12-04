@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.stepfunctions;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.stepfunctions;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class StepFunctions2ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -31,7 +32,8 @@ public class StepFunctions2ComponentClientRegistryTest extends CamelTestSupport 
         AmazonStepFunctionsClientMock clientMock = new AmazonStepFunctionsClientMock();
         context.getRegistry().bind("amazonSfnClient", clientMock);
         StepFunctions2Component component = context.getComponent("aws2-step-functions", StepFunctions2Component.class);
-        StepFunctions2Endpoint endpoint = (StepFunctions2Endpoint) component.createEndpoint("aws2-step-functions://TestDomain");
+        StepFunctions2Endpoint endpoint =
+                (StepFunctions2Endpoint) component.createEndpoint("aws2-step-functions://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getAwsSfnClient());
     }
@@ -51,8 +53,8 @@ public class StepFunctions2ComponentClientRegistryTest extends CamelTestSupport 
         AmazonStepFunctionsClientMock clientMock = new AmazonStepFunctionsClientMock();
         context.getRegistry().bind("awsSfnClient", clientMock);
         StepFunctions2Component component = context.getComponent("aws2-step-functions", StepFunctions2Component.class);
-        StepFunctions2Endpoint endpoint = (StepFunctions2Endpoint) component
-                .createEndpoint("aws2-step-functions://TestDomain?accessKey=xxx&secretKey=yyy");
+        StepFunctions2Endpoint endpoint = (StepFunctions2Endpoint)
+                component.createEndpoint("aws2-step-functions://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getAwsSfnClient());
     }

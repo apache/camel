@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +47,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
@@ -115,7 +116,9 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
+        assertEquals(
+                SmppMessageType.DeliveryReceipt.toString(),
+                resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SmppConstants.ID));
         assertEquals(1, resultExchange.getIn().getHeader(SmppConstants.SUBMITTED));
@@ -137,10 +140,11 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer" +
-                            "&messageReceiverRouteId=testMessageReceiverRouteId");
+                        .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer"
+                                + "&messageReceiverRouteId=testMessageReceiverRouteId");
 
-                from("direct:messageReceiver").id("testMessageReceiverRouteId")
+                from("direct:messageReceiver")
+                        .id("testMessageReceiverRouteId")
                         .choice()
                         .when(simple("${header.CamelSmppSourceAddr} == '555'"))
                         .to("mock:garbage") // SMPPServerSimulator.run send a test message, ignore it

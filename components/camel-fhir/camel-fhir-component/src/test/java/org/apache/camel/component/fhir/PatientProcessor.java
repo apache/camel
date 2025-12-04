@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
 
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
@@ -31,7 +32,7 @@ public class PatientProcessor implements Processor {
     @Override
     public void process(Exchange exchange) {
         ORU_R01 msg = exchange.getIn().getBody(ORU_R01.class);
-        //map to Patient
+        // map to Patient
         Patient patient = getPatient(msg);
         exchange.getIn().setBody(patient);
     }
@@ -42,11 +43,16 @@ public class PatientProcessor implements Processor {
     private Patient getPatient(ORU_R01 msg) {
         Patient patient = new Patient();
         final PID pid = msg.getPATIENT_RESULT().getPATIENT().getPID();
-        String surname = pid.getPatientName()[0].getFamilyName().getFn1_Surname().getValue();
+        String surname =
+                pid.getPatientName()[0].getFamilyName().getFn1_Surname().getValue();
         String name = pid.getPatientName()[0].getGivenName().getValue();
-        String patientId = msg.getPATIENT_RESULT().getPATIENT().getPID().getPatientID().getCx1_ID().getValue();
-        patient.addName()
-                .addGiven(name);
+        String patientId = msg.getPATIENT_RESULT()
+                .getPATIENT()
+                .getPID()
+                .getPatientID()
+                .getCx1_ID()
+                .getValue();
+        patient.addName().addGiven(name);
         patient.getNameFirstRep().setFamily(surname);
         patient.setId(patientId);
         return patient;

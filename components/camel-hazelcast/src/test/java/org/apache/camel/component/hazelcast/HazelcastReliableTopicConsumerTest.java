@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.UUID;
@@ -31,13 +39,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSupport {
 
     @Mock
@@ -48,7 +49,7 @@ public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSuppor
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String> getReliableTopic("foo")).thenReturn(reliableTopic);
+        when(hazelcastInstance.<String>getReliableTopic("foo")).thenReturn(reliableTopic);
         when(reliableTopic.addMessageListener(any())).thenReturn(UUID.randomUUID());
     }
 
@@ -78,10 +79,12 @@ public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%sfoo?reliable=true", HazelcastConstants.TOPIC_PREFIX)).log("object...")
+                from(String.format("hazelcast-%sfoo?reliable=true", HazelcastConstants.TOPIC_PREFIX))
+                        .log("object...")
                         .choice()
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.RECEIVED))
-                        .log("...received").to("mock:received")
+                        .log("...received")
+                        .to("mock:received")
                         .otherwise()
                         .log("fail!");
             }
@@ -94,5 +97,4 @@ public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSuppor
         assertNull(headers.get(HazelcastConstants.OBJECT_ID));
         assertNotNull(headers.get(HazelcastConstants.LISTENER_TIME));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import java.nio.file.Path;
@@ -43,13 +44,17 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
         other.expectedMessageCount(1);
         other.message(0).body(String.class).contains("Bye World");
 
-        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory),
+        template.sendBodyAndHeader(
+                TestSupport.fileUri(testDirectory),
                 "<mail from=\"davsclaus@apache.org\"><subject>Hey</subject><body>Hello World!</body></mail>",
-                Exchange.FILE_NAME, "claus.xml");
+                Exchange.FILE_NAME,
+                "claus.xml");
 
-        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory),
+        template.sendBodyAndHeader(
+                TestSupport.fileUri(testDirectory),
                 "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
-                Exchange.FILE_NAME, "janstey.xml");
+                Exchange.FILE_NAME,
+                "janstey.xml");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -61,7 +66,8 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
             public void configure() {
                 from(TestSupport.fileUri(testDirectory))
                         .choice()
-                        .when().xquery("/mail/@from = 'davsclaus@apache.org'")
+                        .when()
+                        .xquery("/mail/@from = 'davsclaus@apache.org'")
                         .convertBodyTo(String.class)
                         .to("mock:davsclaus")
                         .otherwise()

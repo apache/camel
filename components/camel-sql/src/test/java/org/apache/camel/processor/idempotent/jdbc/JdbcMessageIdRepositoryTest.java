@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -33,13 +38,10 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
-    protected static final String SELECT_ALL_STRING = "SELECT messageId FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
+    protected static final String SELECT_ALL_STRING =
+            "SELECT messageId FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
     protected static final String CLEAR_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
@@ -86,15 +88,14 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         RouteBuilder interceptor = new RouteBuilder(context) {
             @Override
             public void configure() {
-                interceptSendToEndpoint("mock:result")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                String id = exchange.getIn().getHeader("messageId", String.class);
-                                if (id.equals("2")) {
-                                    throw new IllegalArgumentException("Damn I cannot handle id 2");
-                                }
-                            }
-                        });
+                interceptSendToEndpoint("mock:result").process(new Processor() {
+                    public void process(Exchange exchange) {
+                        String id = exchange.getIn().getHeader("messageId", String.class);
+                        if (id.equals("2")) {
+                            throw new IllegalArgumentException("Damn I cannot handle id 2");
+                        }
+                    }
+                });
             }
         };
         RouteDefinition routeDefinition = context.getRouteDefinition("JdbcMessageIdRepositoryTest");

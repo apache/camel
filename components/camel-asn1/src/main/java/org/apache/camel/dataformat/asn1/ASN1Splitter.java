@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.asn1;
 
 import java.io.InputStream;
@@ -35,5 +36,4 @@ public class ASN1Splitter implements Expression {
         Object result = evaluate(exchange);
         return exchange.getContext().getTypeConverter().convertTo(type, exchange, result);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,11 +32,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@DisabledOnOs(value = { OS.LINUX },
-              architectures = { "s390x" },
-              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@DisabledOnOs(
+        value = {OS.LINUX},
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class LumberjackComponentTest extends CamelTestSupport {
     private static int port;
 
@@ -70,7 +72,8 @@ public class LumberjackComponentTest extends CamelTestSupport {
         // And the first map should contains valid data (we're assuming it's also valid for the other ones)
         Map first = mock.getExchanges().get(0).getIn().getBody(Map.class);
         assertEquals("log", first.get("input_type"));
-        assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
+        assertEquals(
+                "/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
                 first.get("source"));
 
         // And we should have replied with 2 acknowledgments for each window frame

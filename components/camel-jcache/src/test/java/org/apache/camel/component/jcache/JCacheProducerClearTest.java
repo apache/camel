@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +26,6 @@ import javax.cache.Cache;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class JCacheProducerClearTest extends JCacheComponentTestSupport {
 
@@ -46,8 +47,7 @@ public class JCacheProducerClearTest extends JCacheComponentTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:clear")
-                        .to("jcache://test-cache");
+                from("direct:clear").to("jcache://test-cache");
             }
         };
     }

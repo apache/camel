@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
 
 public final class SpringRabbitMQHelper {
 
-    private SpringRabbitMQHelper() {
-    }
+    private SpringRabbitMQHelper() {}
 
     public static boolean isDefaultExchange(String exchangeName) {
-        return exchangeName == null || exchangeName.isEmpty()
+        return exchangeName == null
+                || exchangeName.isEmpty()
                 || exchangeName.equalsIgnoreCase(SpringRabbitMQConstants.DEFAULT_EXCHANGE_NAME);
     }
 }

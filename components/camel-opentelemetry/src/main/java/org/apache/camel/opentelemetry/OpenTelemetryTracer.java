@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
@@ -61,7 +62,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         this.tracer = tracer;
     }
 
-    @ManagedAttribute(description = "A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name")
+    @ManagedAttribute(
+            description =
+                    "A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name")
     public String getInstrumentationName() {
         return instrumentationName;
     }
@@ -74,7 +77,8 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         this.instrumentationName = instrumentationName;
     }
 
-    @ManagedAttribute(description = "Setting this to true will create new OpenTelemetry Spans for each Camel Processors")
+    @ManagedAttribute(
+            description = "Setting this to true will create new OpenTelemetry Spans for each Camel Processors")
     public boolean isTraceProcessors() {
         return traceProcessors;
     }
@@ -130,8 +134,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             // GlobalOpenTelemetry.get() is always NotNull, falls back to OpenTelemetry.noop()
             tracer = GlobalOpenTelemetry.get().getTracer(instrumentationName);
         }
-        if (traceProcessors && (getTracingStrategy() == null
-                || getTracingStrategy().getClass().isAssignableFrom(NoopTracingStrategy.class))) {
+        if (traceProcessors
+                && (getTracingStrategy() == null
+                        || getTracingStrategy().getClass().isAssignableFrom(NoopTracingStrategy.class))) {
             OpenTelemetryTracingStrategy tracingStrategy = new OpenTelemetryTracingStrategy(this);
             tracingStrategy.setPropagateContext(true);
             setTracingStrategy(tracingStrategy);
@@ -154,7 +159,10 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     @Override
     protected SpanAdapter startSendingEventSpan(
-            String operationName, org.apache.camel.tracing.SpanKind kind, SpanAdapter parent, Exchange exchange,
+            String operationName,
+            org.apache.camel.tracing.SpanKind kind,
+            SpanAdapter parent,
+            Exchange exchange,
             InjectAdapter injectAdapter) {
         Baggage baggage = null;
         SpanBuilder builder = tracer.spanBuilder(operationName).setSpanKind(mapToSpanKind(kind));
@@ -172,7 +180,10 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     @Override
     protected SpanAdapter startExchangeBeginSpan(
-            Exchange exchange, SpanDecorator sd, String operationName, org.apache.camel.tracing.SpanKind kind,
+            Exchange exchange,
+            SpanDecorator sd,
+            String operationName,
+            org.apache.camel.tracing.SpanKind kind,
             SpanAdapter parent) {
         SpanBuilder builder = tracer.spanBuilder(operationName);
         Baggage baggage;
@@ -182,8 +193,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             baggage = spanFromExchange.getBaggage();
         } else {
             ExtractAdapter adapter = sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding);
-            Context ctx = getContextPropagators().getTextMapPropagator().extract(Context.current(), adapter,
-                    new OpenTelemetryGetter(adapter));
+            Context ctx = getContextPropagators()
+                    .getTextMapPropagator()
+                    .extract(Context.current(), adapter, new OpenTelemetryGetter(adapter));
             Span span = Span.fromContext(ctx);
             baggage = Baggage.fromContext(ctx);
             if (span != null && span.getSpanContext().isValid()) {

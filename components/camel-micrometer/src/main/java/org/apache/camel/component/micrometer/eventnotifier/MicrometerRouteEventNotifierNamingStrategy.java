@@ -14,15 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.eventnotifier;
-
-import java.util.function.Predicate;
-
-import io.micrometer.core.instrument.Meter;
-import io.micrometer.core.instrument.Tags;
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.micrometer.MicrometerUtils;
-import org.apache.camel.spi.CamelEvent.RouteEvent;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_ADDED;
@@ -32,10 +25,17 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TY
 import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
 import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_ROUTE;
 
+import java.util.function.Predicate;
+
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.Tags;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.micrometer.MicrometerUtils;
+import org.apache.camel.spi.CamelEvent.RouteEvent;
+
 public interface MicrometerRouteEventNotifierNamingStrategy {
 
-    Predicate<Meter.Id> EVENT_NOTIFIERS
-            = id -> KIND_ROUTE.equals(id.getTag(KIND));
+    Predicate<Meter.Id> EVENT_NOTIFIERS = id -> KIND_ROUTE.equals(id.getTag(KIND));
 
     /**
      * Default naming strategy that uses micrometer naming convention.

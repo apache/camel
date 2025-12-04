@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.xml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -30,10 +35,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class XmlWithPrefixParseTreeTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlWithPrefixParseTreeTest.class);
@@ -43,14 +44,16 @@ public class XmlWithPrefixParseTreeTest {
 
     @Test
     void testXmlTree() throws Exception {
-        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/mycamel-withNamespacePrefix.xml");
+        InputStream is =
+                new FileInputStream("src/test/resources/org/apache/camel/parser/xml/mycamel-withNamespacePrefix.xml");
         String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/mycamel-withNamespacePrefix.xml";
         String baseDir = "src/test/resources";
         List<CamelNodeDetails> list = XmlRouteParser.parseXmlRouteTree(is, baseDir, fqn);
 
         assertEquals(1, list.size());
         CamelNodeDetails details = list.get(0);
-        assertEquals("src/test/resources/org/apache/camel/camel/parser/xml/mycamel-withNamespacePrefix.xml",
+        assertEquals(
+                "src/test/resources/org/apache/camel/camel/parser/xml/mycamel-withNamespacePrefix.xml",
                 details.getFileName());
         assertEquals("myRoute", details.getRouteId());
         assertNull(details.getMethodName());
@@ -66,18 +69,16 @@ public class XmlWithPrefixParseTreeTest {
 
     @Test
     void testXmlTreeWithEmptyRoute() throws Exception {
-        String textTotest
-                = "<camel:camelContext id=\"camel\" xmlns=\"http://camel.apache.org/schema/spring\" xmlns:camel=\"http://camel.apache.org/schema/spring\">\r\n"
-                  +
-                  "    <camel:route id=\"a route\">\r\n" +
-                  "    </camel:route>\r\n" +
-                  "</camel:camelContext>\n";
+        String textTotest =
+                "<camel:camelContext id=\"camel\" xmlns=\"http://camel.apache.org/schema/spring\" xmlns:camel=\"http://camel.apache.org/schema/spring\">\r\n"
+                        + "    <camel:route id=\"a route\">\r\n"
+                        + "    </camel:route>\r\n"
+                        + "</camel:camelContext>\n";
         File camelFile = new File(tempDir, "testXmlTreeWithEmptyRoute-withNamespacePrefix.xml");
         Files.copy(new ByteArrayInputStream(textTotest.getBytes()), camelFile.toPath());
-        List<CamelNodeDetails> list = XmlRouteParser.parseXmlRouteTree(new ByteArrayInputStream(textTotest.getBytes()), "",
-                camelFile.getAbsolutePath());
+        List<CamelNodeDetails> list = XmlRouteParser.parseXmlRouteTree(
+                new ByteArrayInputStream(textTotest.getBytes()), "", camelFile.getAbsolutePath());
 
         assertEquals(0, list.size());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.operations;
 
 import com.azure.cosmos.models.IndexingPolicy;
@@ -83,22 +84,18 @@ public final class CosmosDbOperationsBuilder {
         }
 
         // otherwise just return the operation without creating a database if it is not existing
-        return CosmosDbClientOperations.withClient(clientWrapper)
-                .getDatabaseOperations(databaseName);
+        return CosmosDbClientOperations.withClient(clientWrapper).getDatabaseOperations(databaseName);
     }
 
     public CosmosDbContainerOperations buildContainerOperations() {
         // if we enabled this flag, we create a container first before running the operation
         if (createContainerIfNotExist) {
             return buildDatabaseOperations()
-                    .createContainerIfNotExistAndGetContainerOperations(containerName,
-                            containerPartitionKeyPath,
-                            throughputProperties,
-                            indexingPolicy);
+                    .createContainerIfNotExistAndGetContainerOperations(
+                            containerName, containerPartitionKeyPath, throughputProperties, indexingPolicy);
         }
 
         // otherwise just return the operation without creating a container if it is not existing
-        return buildDatabaseOperations()
-                .getContainerOperations(containerName);
+        return buildDatabaseOperations().getContainerOperations(containerName);
     }
 }

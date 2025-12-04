@@ -24,5 +24,4 @@ abstract class KnativeBaseTrait extends BaseTrait {
     public KnativeBaseTrait(String id, int order) {
         super(id, order);
     }
-
 }

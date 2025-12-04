@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.util;
 
 import java.io.IOException;
@@ -53,14 +54,14 @@ public class TelegramTestSupport extends CamelTestSupport {
      */
     public OutgoingTextMessage withInlineKeyboardContainingTwoRows(OutgoingTextMessage message) {
 
-        InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
-                .text("Option One - I").build();
+        InlineKeyboardButton buttonOptionOneI =
+                InlineKeyboardButton.builder().text("Option One - I").build();
 
-        InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
-                .text("Option One - II").build();
+        InlineKeyboardButton buttonOptionOneII =
+                InlineKeyboardButton.builder().text("Option One - II").build();
 
-        InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
-                .text("Option Two - I").build();
+        InlineKeyboardButton buttonOptionTwoI =
+                InlineKeyboardButton.builder().text("Option Two - I").build();
 
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .keyboard()
@@ -120,5 +121,4 @@ public class TelegramTestSupport extends CamelTestSupport {
     protected TelegramMockRoutes createMockRoutes() {
         throw new UnsupportedOperationException();
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.EVENT_TYPE_ATTRIBUTE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ATTRIBUTE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ROUTE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,13 +49,6 @@ import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.EVENT_TYPE_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ROUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
 
 /**
  * A {@link org.apache.camel.spi.RoutePolicy} to plugin and use OpenTelemetry metrics for gathering route utilization
@@ -149,25 +150,24 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
     @Override
     public void onStart(Route route) {
         // create statistics holder
-        statisticsMap.computeIfAbsent(route,
-                it -> {
-                    boolean skip = !configuration.isRouteEnabled();
-                    // skip routes that should not be included
-                    if (!skip) {
-                        skip = (it.isCreatedByKamelet() && !registerKamelets)
-                                || (it.isCreatedByRouteTemplate() && !registerTemplates);
-                    }
-                    if (!skip && configuration.getExcludePattern() != null) {
-                        String[] patterns = configuration.getExcludePattern().split(",");
-                        skip = PatternHelper.matchPatterns(route.getRouteId(), patterns);
-                    }
-                    LOG.debug("Capturing metrics for route: {} -> {}", route.getRouteId(), skip);
-                    if (skip) {
-                        return null;
-                    }
-                    return new MetricsStatistics(
-                            meter, it.getCamelContext(), it, getNamingStrategy(), configuration, timeUnit, longTaskTimeUnit);
-                });
+        statisticsMap.computeIfAbsent(route, it -> {
+            boolean skip = !configuration.isRouteEnabled();
+            // skip routes that should not be included
+            if (!skip) {
+                skip = (it.isCreatedByKamelet() && !registerKamelets)
+                        || (it.isCreatedByRouteTemplate() && !registerTemplates);
+            }
+            if (!skip && configuration.getExcludePattern() != null) {
+                String[] patterns = configuration.getExcludePattern().split(",");
+                skip = PatternHelper.matchPatterns(route.getRouteId(), patterns);
+            }
+            LOG.debug("Capturing metrics for route: {} -> {}", route.getRouteId(), skip);
+            if (skip) {
+                return null;
+            }
+            return new MetricsStatistics(
+                    meter, it.getCamelContext(), it, getNamingStrategy(), configuration, timeUnit, longTaskTimeUnit);
+        });
     }
 
     @Override
@@ -180,8 +180,7 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
         if (contextStatistic != null) {
             contextStatistic.onExchangeBegin(exchange);
         }
-        Optional.ofNullable(statisticsMap.get(route))
-                .ifPresent(statistics -> statistics.onExchangeBegin(exchange));
+        Optional.ofNullable(statisticsMap.get(route)).ifPresent(statistics -> statistics.onExchangeBegin(exchange));
     }
 
     @Override
@@ -189,8 +188,7 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
         if (contextStatistic != null) {
             contextStatistic.onExchangeDone(exchange);
         }
-        Optional.ofNullable(statisticsMap.get(route))
-                .ifPresent(statistics -> statistics.onExchangeDone(exchange));
+        Optional.ofNullable(statisticsMap.get(route)).ifPresent(statistics -> statistics.onExchangeDone(exchange));
     }
 
     static class MetricsStatistics implements RouteMetric {
@@ -216,10 +214,14 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
         private LongCounter failuresHandled;
         private OpenTelemetryLongTaskTimer longTaskTimer;
 
-        MetricsStatistics(Meter meter, CamelContext camelContext, Route route,
-                          OpenTelemetryRoutePolicyNamingStrategy namingStrategy,
-                          OpenTelemetryRoutePolicyConfiguration configuration,
-                          TimeUnit timeUnit, TimeUnit longTaskTimeUnit) {
+        MetricsStatistics(
+                Meter meter,
+                CamelContext camelContext,
+                Route route,
+                OpenTelemetryRoutePolicyNamingStrategy namingStrategy,
+                OpenTelemetryRoutePolicyConfiguration configuration,
+                TimeUnit timeUnit,
+                TimeUnit longTaskTimeUnit) {
 
             this.configuration = ObjectHelper.notNull(configuration, "OpenTelemetryRoutePolicyConfiguration", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "OpenTelemetryRoutePolicyNamingStrategy", this);
@@ -231,14 +233,17 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
             this.attributes = Attributes.of(
                     AttributeKey.stringKey(CAMEL_CONTEXT_ATTRIBUTE),
                     route != null ? route.getCamelContext().getName() : camelContext.getName(),
-                    AttributeKey.stringKey(KIND_ATTRIBUTE), KIND_ROUTE,
-                    AttributeKey.stringKey(ROUTE_ID_ATTRIBUTE), route != null ? route.getId() : "",
-                    AttributeKey.stringKey(EVENT_TYPE_ATTRIBUTE), route != null ? "route" : "context");
-            this.timer = meter
-                    .histogramBuilder(namingStrategy.getName(route))
+                    AttributeKey.stringKey(KIND_ATTRIBUTE),
+                    KIND_ROUTE,
+                    AttributeKey.stringKey(ROUTE_ID_ATTRIBUTE),
+                    route != null ? route.getId() : "",
+                    AttributeKey.stringKey(EVENT_TYPE_ATTRIBUTE),
+                    route != null ? "route" : "context");
+            this.timer = meter.histogramBuilder(namingStrategy.getName(route))
                     .setDescription(route != null ? "Route performance metrics" : "CamelContext performance metrics")
                     .setUnit(timeUnit.name().toLowerCase())
-                    .ofLongs().build();
+                    .ofLongs()
+                    .build();
 
             if (configuration.isAdditionalCounters()) {
                 initAdditionalCounters();
@@ -247,27 +252,25 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
 
         private void initAdditionalCounters() {
             if (configuration.isExchangesSucceeded()) {
-                this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route),
-                        "Number of successfully completed exchanges");
+                this.exchangesSucceeded = createCounter(
+                        namingStrategy.getExchangesSucceededName(route), "Number of successfully completed exchanges");
             }
             if (configuration.isExchangesFailed()) {
-                this.exchangesFailed
-                        = createCounter(namingStrategy.getExchangesFailedName(route),
-                                "Number of failed exchanges");
+                this.exchangesFailed =
+                        createCounter(namingStrategy.getExchangesFailedName(route), "Number of failed exchanges");
             }
             if (configuration.isExchangesTotal()) {
-                this.exchangesTotal
-                        = createCounter(namingStrategy.getExchangesTotalName(route),
-                                "Total number of processed exchanges");
+                this.exchangesTotal = createCounter(
+                        namingStrategy.getExchangesTotalName(route), "Total number of processed exchanges");
             }
             if (configuration.isExternalRedeliveries()) {
-                this.externalRedeliveries = createCounter(namingStrategy.getExternalRedeliveriesName(route),
+                this.externalRedeliveries = createCounter(
+                        namingStrategy.getExternalRedeliveriesName(route),
                         "Number of external initiated redeliveries (such as from JMS broker)");
             }
             if (configuration.isFailuresHandled()) {
-                this.failuresHandled
-                        = createCounter(namingStrategy.getFailuresHandledName(route),
-                                "Number of failures handled");
+                this.failuresHandled =
+                        createCounter(namingStrategy.getFailuresHandledName(route), "Number of failures handled");
             }
             if (configuration.isLongTask()) {
                 longTaskTimer = new OpenTelemetryLongTaskTimer(
@@ -334,8 +337,7 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
         }
 
         private LongCounter createCounter(String meterName, String description) {
-            return meter.counterBuilder(meterName)
-                    .setDescription(description).build();
+            return meter.counterBuilder(meterName).setDescription(description).build();
         }
     }
 }

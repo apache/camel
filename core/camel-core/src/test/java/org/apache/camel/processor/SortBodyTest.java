@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SortBodyTest extends ContextTestSupport {
 
     @Test
@@ -32,7 +33,7 @@ public class SortBodyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", new String[] { "Hadrian", "William", "Claus" });
+        template.sendBody("direct:start", new String[] {"Hadrian", "William", "Claus"});
 
         assertMockEndpointsSatisfied();
 
@@ -52,5 +53,4 @@ public class SortBodyTest extends ContextTestSupport {
             }
         };
     }
-
 }

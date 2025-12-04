@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,11 +45,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Verify that the authorization header is added to the Async AS2 MDN request sent by the server for Basic Auth.
  */
@@ -56,31 +57,31 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
     private static final int RECEIPT_SERVER_PORT = AvailablePortFinder.getNextAvailable();
     private static final int JETTY_PORT = AvailablePortFinder.getNextAvailable();
     private static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
-                                              + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
-                                              + "BGM+380+342459+9'\n"
-                                              + "DTM+3:20060515:102'\n"
-                                              + "RFF+ON:521052'\n"
-                                              + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
-                                              + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
-                                              + "CUX+1:USD'\n"
-                                              + "LIN+1++157870:IN'\n"
-                                              + "IMD+F++:::WIDGET'\n"
-                                              + "QTY+47:1020:EA'\n"
-                                              + "ALI+US'\n"
-                                              + "MOA+203:1202.58'\n"
-                                              + "PRI+INV:1.179'\n"
-                                              + "LIN+2++157871:IN'\n"
-                                              + "IMD+F++:::DIFFERENT WIDGET'\n"
-                                              + "QTY+47:20:EA'\n"
-                                              + "ALI+JP'\n"
-                                              + "MOA+203:410'\n"
-                                              + "PRI+INV:20.5'\n"
-                                              + "UNS+S'\n"
-                                              + "MOA+39:2137.58'\n"
-                                              + "ALC+C+ABG'\n"
-                                              + "MOA+8:525'\n"
-                                              + "UNT+23+00000000000117'\n"
-                                              + "UNZ+1+00000000000778'\n";
+            + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
+            + "BGM+380+342459+9'\n"
+            + "DTM+3:20060515:102'\n"
+            + "RFF+ON:521052'\n"
+            + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
+            + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
+            + "CUX+1:USD'\n"
+            + "LIN+1++157870:IN'\n"
+            + "IMD+F++:::WIDGET'\n"
+            + "QTY+47:1020:EA'\n"
+            + "ALI+US'\n"
+            + "MOA+203:1202.58'\n"
+            + "PRI+INV:1.179'\n"
+            + "LIN+2++157871:IN'\n"
+            + "IMD+F++:::DIFFERENT WIDGET'\n"
+            + "QTY+47:20:EA'\n"
+            + "ALI+JP'\n"
+            + "MOA+203:410'\n"
+            + "PRI+INV:20.5'\n"
+            + "UNS+S'\n"
+            + "MOA+39:2137.58'\n"
+            + "ALC+C+ABG'\n"
+            + "MOA+8:525'\n"
+            + "UNT+23+00000000000117'\n"
+            + "UNZ+1+00000000000778'\n";
 
     private static AS2ServerConnection serverConnection;
 
@@ -98,8 +99,8 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
 
     @Test
     public void asyncMdnHasBasicAuthHeader() throws Exception {
-        requestBodyAndHeaders("direct://SEND", EDI_MESSAGE,
-                getAS2Headers("http://localhost:" + JETTY_PORT + "/handle-receipts"));
+        requestBodyAndHeaders(
+                "direct://SEND", EDI_MESSAGE, getAS2Headers("http://localhost:" + JETTY_PORT + "/handle-receipts"));
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvRcptMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -110,7 +111,9 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
     // regression
     @Test
     public void asyncMdnHasExpectedParts() throws Exception {
-        requestBodyAndHeaders("direct://SEND", EDI_MESSAGE,
+        requestBodyAndHeaders(
+                "direct://SEND",
+                EDI_MESSAGE,
                 getAS2Headers("http://localhost:" + RECEIPT_SERVER_PORT + "/handle-receipts"));
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvRcptMsgs2");
@@ -126,15 +129,19 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
         assertNotNull(message);
         assertTrue(message.getBody() instanceof DispositionNotificationMultipartReportEntity);
 
-        DispositionNotificationMultipartReportEntity mdn = (DispositionNotificationMultipartReportEntity) message.getBody();
+        DispositionNotificationMultipartReportEntity mdn =
+                (DispositionNotificationMultipartReportEntity) message.getBody();
         assertEquals(2, mdn.getPartCount(), "Unexpected number of body parts in report");
 
         MimeEntity reportPartOne = mdn.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
+        assertEquals(
+                ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII)
+                        .toString(),
                 reportPartOne.getContentType());
 
         MimeEntity reportPartTwo = mdn.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+        assertEquals(
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
                 reportPartTwo.getContentType());
     }
 
@@ -161,7 +168,8 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
                     HttpMessage message = exchange.getIn(HttpMessage.class);
 
                     assertNotNull(message.getHeader("Authorization"));
-                    String encoded = Base64.getEncoder().encodeToString((MDN_USER_NAME + ":" + MDN_PASSWORD).getBytes());
+                    String encoded =
+                            Base64.getEncoder().encodeToString((MDN_USER_NAME + ":" + MDN_PASSWORD).getBytes());
                     assertEquals("Basic " + encoded, message.getHeader("Authorization"));
                 };
 
@@ -172,8 +180,9 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
                         .process(proc)
                         .to("mock:as2RcvRcptMsgs");
 
-                fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT)
+                fromF(
+                                "as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
+                                RECEIPT_SERVER_PORT)
                         .to("mock:as2RcvRcptMsgs2");
             }
         };
@@ -182,12 +191,21 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
     // AS2 server adds Authorization header to MDN returned asynchronously
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
-                "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", 8889, AS2SignatureAlgorithm.SHA256WITHRSA,
-                null, null, null,
-                "TBD", null, null,
+                "1.1",
+                "AS2ClientManagerIntegrationTest Server",
+                "server.example.com",
+                8889,
+                AS2SignatureAlgorithm.SHA256WITHRSA,
+                null,
+                null,
+                null,
+                "TBD",
+                null,
+                null,
                 // server authorization config
-                MDN_USER_NAME, MDN_PASSWORD, MDN_ACCESS_TOKEN);
+                MDN_USER_NAME,
+                MDN_PASSWORD,
+                MDN_ACCESS_TOKEN);
         serverConnection.listen("/", new AS2AsyncMDNServerManagerIT.RequestHandler());
     }
 }

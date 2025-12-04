@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flatpack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,10 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Unit test to verify that splitRows=false option works with XML Conversion.
  */
@@ -44,7 +45,7 @@ public class XMLNoSplitRowsTest {
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedFirstName = { "JOHN", "JIMMY", "JANE", "FRED" };
+    protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
 
     @Test
     public void testHeaderAndTrailer() throws Exception {
@@ -59,7 +60,8 @@ public class XMLNoSplitRowsTest {
         assertEquals("Dataset", docElement.getTagName());
 
         // assert header
-        Element header = (Element) docElement.getElementsByTagName("DatasetHeader").item(0);
+        Element header =
+                (Element) docElement.getElementsByTagName("DatasetHeader").item(0);
         NodeList headerNodes = header.getElementsByTagName("Column");
         for (int i = 0; i < headerNodes.getLength(); i++) {
             Element column = (Element) headerNodes.item(i);
@@ -90,7 +92,8 @@ public class XMLNoSplitRowsTest {
         }
 
         // assert trailer
-        Element trailer = (Element) docElement.getElementsByTagName("DatasetTrailer").item(0);
+        Element trailer =
+                (Element) docElement.getElementsByTagName("DatasetTrailer").item(0);
         NodeList trailerNodes = trailer.getElementsByTagName("Column");
         for (int i = 0; i < trailerNodes.getLength(); i++) {
             Element column = (Element) trailerNodes.item(i);
@@ -103,5 +106,4 @@ public class XMLNoSplitRowsTest {
             }
         }
     }
-
 }

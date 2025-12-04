@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -36,10 +41,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for Camel attachments and Mail attachments.
@@ -85,7 +86,8 @@ public class MailAttachmentsUmlautIssueTest extends CamelTestSupport {
         assertEquals("Hello World", out.getIn().getBody(String.class));
 
         // attachment
-        Map<String, DataHandler> attachments = out.getIn(AttachmentMessage.class).getAttachments();
+        Map<String, DataHandler> attachments =
+                out.getIn(AttachmentMessage.class).getAttachments();
         assertNotNull(attachments, "Should have attachments");
         assertEquals(1, attachments.size());
 
@@ -93,7 +95,9 @@ public class MailAttachmentsUmlautIssueTest extends CamelTestSupport {
         assertNotNull(handler, "The " + name + " should be there");
 
         String nameURLEncoded = URLEncoder.encode(name, Charset.defaultCharset().name());
-        assertTrue(handler.getContentType().endsWith(nameURLEncoded), "Handler content type should end with URL-encoded name");
+        assertTrue(
+                handler.getContentType().endsWith(nameURLEncoded),
+                "Handler content type should end with URL-encoded name");
 
         assertEquals(name, handler.getName(), "Handler name should be the file name");
 
@@ -104,7 +108,8 @@ public class MailAttachmentsUmlautIssueTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:result");
+                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }

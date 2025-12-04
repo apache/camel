@@ -14,18 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.crypto;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.converter.crypto;
 
 import static org.apache.camel.converter.crypto.HexUtils.byteArrayToHexString;
 import static org.apache.camel.converter.crypto.HexUtils.hexToByteArray;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
+
 public class HexUtilsTest {
 
-    byte[] array = { (byte) 0x01, (byte) 0x23, (byte) 0x45, (byte) 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF };
+    byte[] array = {
+        (byte) 0x01, (byte) 0x23, (byte) 0x45, (byte) 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF
+    };
 
     @Test
     void testByteArrayToHex() {
@@ -55,8 +58,6 @@ public class HexUtilsTest {
             } else {
                 assertEquals(hexString, byteArrayToHexString(hexToByteArray(hexString)));
             }
-
         }
     }
-
 }

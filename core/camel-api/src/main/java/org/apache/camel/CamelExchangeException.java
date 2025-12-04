@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.io.Serial;
@@ -68,10 +69,12 @@ public class CamelExchangeException extends CamelException {
             if (!sb.isEmpty()) {
                 sb.append(". ");
             }
-            sb.append("Caused by: [").append(cause.getClass().getName()).append(" - ")
-                    .append(cause.getMessage()).append(']');
+            sb.append("Caused by: [")
+                    .append(cause.getClass().getName())
+                    .append(" - ")
+                    .append(cause.getMessage())
+                    .append(']');
         }
         return sb.toString().trim();
     }
-
 }

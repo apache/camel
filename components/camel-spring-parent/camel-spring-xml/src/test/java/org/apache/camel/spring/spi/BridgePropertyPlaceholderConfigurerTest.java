@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,7 +28,8 @@ public class BridgePropertyPlaceholderConfigurerTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurer.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurer.xml");
     }
 
     @Test
@@ -45,5 +47,4 @@ public class BridgePropertyPlaceholderConfigurerTest extends SpringTestSupport {
         template.sendBody("direct:start2", "Test");
         result.assertIsSatisfied();
     }
-
 }

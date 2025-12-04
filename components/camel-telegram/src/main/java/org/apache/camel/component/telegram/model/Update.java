@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -43,8 +44,7 @@ public class Update implements Serializable {
     @JsonProperty("inline_query")
     private IncomingInlineQuery inlineQuery;
 
-    public Update() {
-    }
+    public Update() {}
 
     public Long getUpdateId() {
         return updateId;

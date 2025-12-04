@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.operations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -41,17 +46,14 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class StitchProducerOperationsTest extends CamelTestSupport {
 
     @Test
     void testIfCreateIfStitchMessagesSet() {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("test_table");
-        configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "integer").build());
+        configuration.setStitchSchema(
+                StitchSchema.builder().addKeyword("field_1", "integer").build());
         configuration.setKeyNames("field_1,field_2");
 
         final StitchMessage message = StitchMessage.builder()
@@ -64,25 +66,36 @@ class StitchProducerOperationsTest extends CamelTestSupport {
 
         final StitchProducerOperations operations = new StitchProducerOperations(new TestClient(), configuration);
 
-        assertEquals("{\"table_name\":\"test_table\",\"schema\":{\"field_1\":\"integer\"},\"messages\":[{\"action\":\"upsert\","
-                     + "\"sequence\":0,\"data\":{\"field_1\":\"data\"}}],\"key_names\":[\"field_1\",\"field_2\"]}",
-                JsonUtils.convertMapToJson(operations.createStitchRequestBody(exchange.getMessage()).toMap()));
+        assertEquals(
+                "{\"table_name\":\"test_table\",\"schema\":{\"field_1\":\"integer\"},\"messages\":[{\"action\":\"upsert\","
+                        + "\"sequence\":0,\"data\":{\"field_1\":\"data\"}}],\"key_names\":[\"field_1\",\"field_2\"]}",
+                JsonUtils.convertMapToJson(operations
+                        .createStitchRequestBody(exchange.getMessage())
+                        .toMap()));
 
         final StitchMessage message1 = StitchMessage.builder()
                 .withData("field_1", "test_2")
                 .withSequence(0)
                 .build();
 
-        exchange.getMessage().setHeader(StitchConstants.SCHEMA,
-                StitchSchema.builder().addKeyword("field_1", "integer").addKeyword("field_2", "string").build());
+        exchange.getMessage()
+                .setHeader(
+                        StitchConstants.SCHEMA,
+                        StitchSchema.builder()
+                                .addKeyword("field_1", "integer")
+                                .addKeyword("field_2", "string")
+                                .build());
         exchange.getMessage().setHeader(StitchConstants.TABLE_NAME, "test_table_2");
         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1,field_2");
 
         exchange.getMessage().setBody(message1);
 
-        assertEquals("{\"table_name\":\"test_table_2\",\"schema\":{\"field_1\":\"integer\",\"field_2\":\"string\"},"
-                     + "\"messages\":[{\"action\":\"upsert\",\"sequence\":0,\"data\":{\"field_1\":\"test_2\"}}],\"key_names\":[\"field_1\",\"field_2\"]}",
-                JsonUtils.convertMapToJson(operations.createStitchRequestBody(exchange.getMessage()).toMap()));
+        assertEquals(
+                "{\"table_name\":\"test_table_2\",\"schema\":{\"field_1\":\"integer\",\"field_2\":\"string\"},"
+                        + "\"messages\":[{\"action\":\"upsert\",\"sequence\":0,\"data\":{\"field_1\":\"test_2\"}}],\"key_names\":[\"field_1\",\"field_2\"]}",
+                JsonUtils.convertMapToJson(operations
+                        .createStitchRequestBody(exchange.getMessage())
+                        .toMap()));
     }
 
     @Test
@@ -97,7 +110,8 @@ class StitchProducerOperationsTest extends CamelTestSupport {
 
         final StitchRequestBody requestBody = StitchRequestBody.builder()
                 .addMessage(message1)
-                .withSchema(StitchSchema.builder().addKeyword("field_1", "integer").build())
+                .withSchema(
+                        StitchSchema.builder().addKeyword("field_1", "integer").build())
                 .withTableName("table_1")
                 .withKeyNames(Collections.singleton("field_1"))
                 .build();
@@ -107,9 +121,12 @@ class StitchProducerOperationsTest extends CamelTestSupport {
 
         final StitchProducerOperations operations = new StitchProducerOperations(new TestClient(), configuration);
 
-        assertEquals("{\"table_name\":\"table_2\",\"schema\":{\"field_1\":\"integer\"},\"messages\":"
-                     + "[{\"action\":\"upsert\",\"sequence\":0,\"data\":{\"field_1\":\"test_2\"}}],\"key_names\":[\"field_1\"]}",
-                JsonUtils.convertMapToJson(operations.createStitchRequestBody(exchange.getMessage()).toMap()));
+        assertEquals(
+                "{\"table_name\":\"table_2\",\"schema\":{\"field_1\":\"integer\"},\"messages\":"
+                        + "[{\"action\":\"upsert\",\"sequence\":0,\"data\":{\"field_1\":\"test_2\"}}],\"key_names\":[\"field_1\"]}",
+                JsonUtils.convertMapToJson(operations
+                        .createStitchRequestBody(exchange.getMessage())
+                        .toMap()));
     }
 
     @Test
@@ -129,8 +146,7 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         final Map<String, Object> data = new LinkedHashMap<>();
         data.put(StitchRequestBody.TABLE_NAME, "my_table");
         data.put(StitchRequestBody.SCHEMA, Collections.singletonMap("properties", properties));
-        data.put(StitchRequestBody.MESSAGES,
-                Collections.singletonList(message));
+        data.put(StitchRequestBody.MESSAGES, Collections.singletonList(message));
         data.put(StitchRequestBody.KEY_NAMES, Collections.singletonList("test_key"));
 
         final Exchange exchange = new DefaultExchange(context);
@@ -138,13 +154,14 @@ class StitchProducerOperationsTest extends CamelTestSupport {
 
         final StitchProducerOperations operations = new StitchProducerOperations(new TestClient(), configuration);
 
-        final String createdJson
-                = JsonUtils.convertMapToJson(operations.createStitchRequestBody(exchange.getMessage()).toMap());
+        final String createdJson = JsonUtils.convertMapToJson(
+                operations.createStitchRequestBody(exchange.getMessage()).toMap());
 
-        assertEquals("{\"table_name\":\"my_table\",\"schema\":{\"properties\":{\"id\":{\"type\":\"integer\"},"
-                     + "\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"integer\"},\"has_magic\""
-                     + ":{\"type\":\"boolean\"}}},\"messages\":[{\"action\":\"upsert\",\"sequence\":1,"
-                     + "\"data\":{\"id\":2}}],\"key_names\":[\"test_key\"]}",
+        assertEquals(
+                "{\"table_name\":\"my_table\",\"schema\":{\"properties\":{\"id\":{\"type\":\"integer\"},"
+                        + "\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"integer\"},\"has_magic\""
+                        + ":{\"type\":\"boolean\"}}},\"messages\":[{\"action\":\"upsert\",\"sequence\":1,"
+                        + "\"data\":{\"id\":2}}],\"key_names\":[\"test_key\"]}",
                 createdJson);
     }
 
@@ -152,7 +169,8 @@ class StitchProducerOperationsTest extends CamelTestSupport {
     void testIfCreateFromIterable() {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("table_1");
-        configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
+        configuration.setStitchSchema(
+                StitchSchema.builder().addKeyword("field_1", "string").build());
         configuration.setKeyNames("field_1");
 
         final StitchMessage stitchMessage1 = StitchMessage.builder()
@@ -168,7 +186,8 @@ class StitchProducerOperationsTest extends CamelTestSupport {
 
         final StitchRequestBody stitchMessage2RequestBody = StitchRequestBody.builder()
                 .addMessage(stitchMessage2)
-                .withSchema(StitchSchema.builder().addKeyword("field_1", "integer").build())
+                .withSchema(
+                        StitchSchema.builder().addKeyword("field_1", "integer").build())
                 .withTableName("table_1")
                 .withKeyNames(Collections.singleton("field_1"))
                 .build();
@@ -205,14 +224,14 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setBody(inputMessages);
 
-        final String createdJson
-                = JsonUtils.convertMapToJson(operations.createStitchRequestBody(exchange.getMessage()).toMap());
+        final String createdJson = JsonUtils.convertMapToJson(
+                operations.createStitchRequestBody(exchange.getMessage()).toMap());
 
         assertEquals(
                 "{\"table_name\":\"table_1\",\"schema\":{\"field_1\":\"string\"},\"messages\":[{\"action\":\"upsert\",\"sequence\":1,\"data\":{\"field_1\":\"stitchMessage1\"}},"
-                     + "{\"action\":\"upsert\",\"sequence\":2,\"data\":{\"field_1\":\"stitchMessage2-1\",\"field_2\":\"stitchMessage2-2\"}},{\"action\":\"upsert\",\"sequence\":3,\"data\":{\"field_1\":"
-                     + "\"stitchMessage3\"}},{\"action\":\"upsert\",\"sequence\":4,\"data\":{\"field_1\":\"stitchMessage4\"}},{\"action\":\"upsert\",\"sequence\":5,\"data\":{\"field_1\":\"stitchMessage5\"}}],"
-                     + "\"key_names\":[\"field_1\"]}",
+                        + "{\"action\":\"upsert\",\"sequence\":2,\"data\":{\"field_1\":\"stitchMessage2-1\",\"field_2\":\"stitchMessage2-2\"}},{\"action\":\"upsert\",\"sequence\":3,\"data\":{\"field_1\":"
+                        + "\"stitchMessage3\"}},{\"action\":\"upsert\",\"sequence\":4,\"data\":{\"field_1\":\"stitchMessage4\"}},{\"action\":\"upsert\",\"sequence\":5,\"data\":{\"field_1\":\"stitchMessage5\"}}],"
+                        + "\"key_names\":[\"field_1\"]}",
                 createdJson);
     }
 
@@ -220,7 +239,8 @@ class StitchProducerOperationsTest extends CamelTestSupport {
     void testNormalSend() {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("table_1");
-        configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
+        configuration.setStitchSchema(
+                StitchSchema.builder().addKeyword("field_1", "string").build());
         configuration.setKeyNames("field_1");
 
         final StitchMessage message = StitchMessage.builder()
@@ -234,17 +254,18 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         final StitchProducerOperations operations = new StitchProducerOperations(new TestClient(), configuration);
         final AtomicBoolean done = new AtomicBoolean(false);
 
-        operations.sendEvents(exchange.getMessage(), response -> {
-            assertEquals(200, response.getHttpStatusCode());
-            assertEquals("OK", response.getStatus());
-            assertEquals("All good!", response.getMessage());
-            assertEquals(Collections.singletonMap("header-1", "test"), response.getHeaders());
-            done.set(true);
-        }, doneSync -> {
-        });
+        operations.sendEvents(
+                exchange.getMessage(),
+                response -> {
+                    assertEquals(200, response.getHttpStatusCode());
+                    assertEquals("OK", response.getStatus());
+                    assertEquals("All good!", response.getMessage());
+                    assertEquals(Collections.singletonMap("header-1", "test"), response.getHeaders());
+                    done.set(true);
+                },
+                doneSync -> {});
 
-        Awaitility
-                .await()
+        Awaitility.await()
                 .atMost(1, TimeUnit.SECONDS)
                 .pollInterval(10, TimeUnit.MILLISECONDS)
                 .untilTrue(done);
@@ -254,7 +275,8 @@ class StitchProducerOperationsTest extends CamelTestSupport {
     void testErrorHandle() {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("table_1");
-        configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
+        configuration.setStitchSchema(
+                StitchSchema.builder().addKeyword("field_1", "string").build());
         configuration.setKeyNames("field_1");
 
         final StitchMessage message = StitchMessage.builder()
@@ -267,27 +289,27 @@ class StitchProducerOperationsTest extends CamelTestSupport {
 
         final StitchProducerOperations operations = new StitchProducerOperations(new TestErrorClient(), configuration);
 
-        operations.sendEvents(exchange.getMessage(), response -> {
-        }, doneSync -> {
-        });
+        operations.sendEvents(exchange.getMessage(), response -> {}, doneSync -> {});
 
         assertNotNull(exchange.getException());
         assertTrue(exchange.getException() instanceof StitchException);
         assertNotNull(((StitchException) exchange.getException()).getResponse());
-        assertEquals(400, ((StitchException) exchange.getException()).getResponse().getHttpStatusCode());
-        assertEquals("Error", ((StitchException) exchange.getException()).getResponse().getStatus());
-        assertEquals("Not good!", ((StitchException) exchange.getException()).getResponse().getMessage());
+        assertEquals(
+                400, ((StitchException) exchange.getException()).getResponse().getHttpStatusCode());
+        assertEquals(
+                "Error",
+                ((StitchException) exchange.getException()).getResponse().getStatus());
+        assertEquals(
+                "Not good!",
+                ((StitchException) exchange.getException()).getResponse().getMessage());
     }
 
     static class TestClient implements StitchClient {
 
         @Override
         public Mono<StitchResponse> batch(StitchRequestBody requestBody) {
-            final StitchResponse response = new StitchResponse(
-                    200,
-                    Collections.singletonMap("header-1", "test"),
-                    "OK",
-                    "All good!");
+            final StitchResponse response =
+                    new StitchResponse(200, Collections.singletonMap("header-1", "test"), "OK", "All good!");
 
             return Mono.just(response);
         }
@@ -302,11 +324,8 @@ class StitchProducerOperationsTest extends CamelTestSupport {
 
         @Override
         public Mono<StitchResponse> batch(StitchRequestBody requestBody) {
-            final StitchResponse response = new StitchResponse(
-                    400,
-                    Collections.singletonMap("header-1", "test"),
-                    "Error",
-                    "Not good!");
+            final StitchResponse response =
+                    new StitchResponse(400, Collections.singletonMap("header-1", "test"), "Error", "Not good!");
 
             final StitchException exception = new StitchException(response);
 

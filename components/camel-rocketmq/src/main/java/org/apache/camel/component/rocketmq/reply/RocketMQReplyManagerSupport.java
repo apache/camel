@@ -91,7 +91,9 @@ public class RocketMQReplyManagerSupport extends ServiceSupport implements Reply
 
     public void onMessage(MessageExt messageExt) {
         String messageKey = Arrays.stream(messageExt.getKeys().split(MessageConst.KEY_SEPARATOR))
-                .filter(s -> s.startsWith(RocketMQProducer.GENERATE_MESSAGE_KEY_PREFIX)).findFirst().orElse(null);
+                .filter(s -> s.startsWith(RocketMQProducer.GENERATE_MESSAGE_KEY_PREFIX))
+                .findFirst()
+                .orElse(null);
         if (messageKey == null) {
             log.warn("Ignoring message with no messageKey: {}", messageExt);
             return;
@@ -131,8 +133,13 @@ public class RocketMQReplyManagerSupport extends ServiceSupport implements Reply
 
     @Override
     public String registerReply(
-            ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String messageKey, long requestTimeout) {
-        RocketMQReplyHandler handler = new RocketMQReplyHandler(replyManager, exchange, callback, messageKey, requestTimeout);
+            ReplyManager replyManager,
+            Exchange exchange,
+            AsyncCallback callback,
+            String messageKey,
+            long requestTimeout) {
+        RocketMQReplyHandler handler =
+                new RocketMQReplyHandler(replyManager, exchange, callback, messageKey, requestTimeout);
         ReplyHandler result = timeoutMap.putIfAbsent(messageKey, handler, requestTimeout);
         if (result != null) {
             String logMessage = String.format("The messageKey [%s] is not unique.", messageKey);
@@ -155,12 +162,16 @@ public class RocketMQReplyManagerSupport extends ServiceSupport implements Reply
             Exchange exchange = holder.getExchange();
             if (holder.isTimeout()) {
                 if (log.isWarnEnabled()) {
-                    log.warn("Timeout occurred after {} millis waiting for reply message with messageKey [{}] on topic {}." +
-                             " Setting ExchangeTimedOutException on {} and continue routing.",
-                            holder.getTimeout(), holder.getMessageKey(), replyToTopic, ExchangeHelper.logIds(exchange));
+                    log.warn(
+                            "Timeout occurred after {} millis waiting for reply message with messageKey [{}] on topic {}."
+                                    + " Setting ExchangeTimedOutException on {} and continue routing.",
+                            holder.getTimeout(),
+                            holder.getMessageKey(),
+                            replyToTopic,
+                            ExchangeHelper.logIds(exchange));
                 }
                 String msg = "reply message with messageKey: " + holder.getMessageKey() + " not received on topic: "
-                             + replyToTopic;
+                        + replyToTopic;
                 exchange.setException(new ExchangeTimedOutException(exchange, holder.getTimeout(), msg));
             } else {
                 processReceivedReply(holder);
@@ -192,8 +203,10 @@ public class RocketMQReplyManagerSupport extends ServiceSupport implements Reply
             timeoutMap.remove(messageKey);
             handler.onReply(messageKey, messageExt);
         } else {
-            log.warn("Reply received for unknown messageKey [{}]. The message will be ignored: {}", messageKey, messageExt);
+            log.warn(
+                    "Reply received for unknown messageKey [{}]. The message will be ignored: {}",
+                    messageKey,
+                    messageExt);
         }
     }
-
 }

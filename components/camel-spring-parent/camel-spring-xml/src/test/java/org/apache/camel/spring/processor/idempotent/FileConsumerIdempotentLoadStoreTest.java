@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.idempotent;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Writer;
 import java.nio.file.Files;
@@ -29,17 +33,14 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
     private IdempotentRepository repo;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/idempotent/FileConsumerIdempotentLoadStoreTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/idempotent/FileConsumerIdempotentLoadStoreTest.xml");
     }
 
     @Override
@@ -69,11 +70,12 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
         // wait for the exchange to be done, as it only append to idempotent repo after success
         oneExchangeDone.matchesWaitTime();
 
-        String name = FileUtil.normalizePath(testFile("report.txt").toAbsolutePath().toString());
+        String name =
+                FileUtil.normalizePath(testFile("report.txt").toAbsolutePath().toString());
         assertTrue(repo.contains(name), "Should contain file: " + name);
 
-        String name2 = FileUtil.normalizePath(testFile("report2.txt").toAbsolutePath().toString());
+        String name2 =
+                FileUtil.normalizePath(testFile("report2.txt").toAbsolutePath().toString());
         assertTrue(repo.contains(name2), "Should contain file: " + name2);
     }
-
 }

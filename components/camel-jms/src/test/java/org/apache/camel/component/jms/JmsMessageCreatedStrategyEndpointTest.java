@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.JMSException;
@@ -39,6 +40,7 @@ public class JmsMessageCreatedStrategyEndpointTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -55,7 +57,8 @@ public class JmsMessageCreatedStrategyEndpointTest extends AbstractJMSTest {
 
         // must remember to use this on the producer side as its in use when
         // sending
-        template.sendBody("activemq:queue:JmsMessageCreatedStrategyEndpointTest?messageCreatedStrategy=#myStrategy",
+        template.sendBody(
+                "activemq:queue:JmsMessageCreatedStrategyEndpointTest?messageCreatedStrategy=#myStrategy",
                 "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);

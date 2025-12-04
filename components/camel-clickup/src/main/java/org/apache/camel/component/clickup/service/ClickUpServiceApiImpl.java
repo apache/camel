@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.service;
 
 import java.io.IOException;
@@ -85,9 +86,8 @@ public class ClickUpServiceApiImpl implements ClickUpService {
                 case WEBHOOK_CREATION_ERROR_WEBHOOK_ALREADY_EXISTS:
                     throw new WebhookAlreadyExistsException();
                 default:
-                    throw new RuntimeException(
-                            "The error " + result.getErrorCode() + " has occurred during the webhook registration: "
-                                               + result.getError());
+                    throw new RuntimeException("The error " + result.getErrorCode()
+                            + " has occurred during the webhook registration: " + result.getError());
             }
         }
 

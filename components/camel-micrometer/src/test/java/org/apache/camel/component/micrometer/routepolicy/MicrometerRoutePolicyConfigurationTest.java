@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -23,8 +26,6 @@ import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MicrometerRoutePolicyConfigurationTest extends AbstractMicrometerRoutePolicyTest {
 
@@ -38,8 +39,8 @@ public class MicrometerRoutePolicyConfigurationTest extends AbstractMicrometerRo
         policyConfiguration.setExchangesTotal(false);
         policyConfiguration.setExternalRedeliveries(false);
         policyConfiguration.setFailuresHandled(false);
-        policyConfiguration.setTimerInitiator(builder -> builder.tags("firstTag", "hello", "secondTag", "world")
-                .description("Test Description"));
+        policyConfiguration.setTimerInitiator(builder ->
+                builder.tags("firstTag", "hello", "secondTag", "world").description("Test Description"));
         policyConfiguration.setLongTask(true);
         policyConfiguration.setLongTaskInitiator(builder -> builder.description("Test long task"));
         factory.setPolicyConfiguration(policyConfiguration);
@@ -58,12 +59,11 @@ public class MicrometerRoutePolicyConfigurationTest extends AbstractMicrometerRo
 
     @Test
     public void testConfigurationPolicy() throws Exception {
-        template.request("direct:foo", x -> {
-        });
+        template.request("direct:foo", x -> {});
         List<Meter> meters = meterRegistry.getMeters();
         assertEquals(3, meters.size(), "additional counters does not disable");
-        Timer timer = (Timer) meters.stream().filter(it -> it instanceof Timer)
-                .findFirst().orElse(null);
+        Timer timer = (Timer)
+                meters.stream().filter(it -> it instanceof Timer).findFirst().orElse(null);
 
         assertNotNull(timer, "timer is null");
         Meter.Id id = timer.getId();
@@ -71,11 +71,12 @@ public class MicrometerRoutePolicyConfigurationTest extends AbstractMicrometerRo
         assertEquals("hello", id.getTag("firstTag"), "firstTag not setted");
         assertEquals("world", id.getTag("secondTag"), "secondTag not setted");
 
-        LongTaskTimer longTaskTimer = (LongTaskTimer) meters.stream().filter(it -> it instanceof LongTaskTimer)
-                .findFirst().orElse(null);
+        LongTaskTimer longTaskTimer = (LongTaskTimer) meters.stream()
+                .filter(it -> it instanceof LongTaskTimer)
+                .findFirst()
+                .orElse(null);
         assertNotNull(longTaskTimer, "LongTaskTimer is null");
         id = longTaskTimer.getId();
         assertEquals("Test long task", id.getDescription(), "incorrect long task description");
     }
-
 }

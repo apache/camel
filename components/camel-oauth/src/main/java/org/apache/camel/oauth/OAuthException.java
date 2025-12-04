@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oauth;
 
 public class OAuthException extends RuntimeException {
@@ -29,5 +30,4 @@ public class OAuthException extends RuntimeException {
     public OAuthException(String msg, Throwable cause) {
         super(msg, cause);
     }
-
 }

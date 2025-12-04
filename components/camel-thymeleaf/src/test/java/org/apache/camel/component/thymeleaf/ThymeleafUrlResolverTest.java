@@ -14,16 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.thymeleaf;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.UrlTemplateResolver;
+package org.apache.camel.component.thymeleaf;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
@@ -34,6 +26,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.UrlTemplateResolver;
 
 @WireMockTest(httpPort = 9843)
 public class ThymeleafUrlResolverTest extends ThymeleafAbstractBaseTest {
@@ -56,7 +57,8 @@ public class ThymeleafUrlResolverTest extends ThymeleafAbstractBaseTest {
                 "thymeleaf:dontcare?allowTemplateFromHeader=true&allowContextMapAll=true&resolver=URL",
                 ThymeleafEndpoint.class);
 
-        assertAll("properties",
+        assertAll(
+                "properties",
                 () -> assertNotNull(thymeleafEndpoint),
                 () -> assertTrue(thymeleafEndpoint.isAllowContextMapAll()),
                 () -> assertNull(thymeleafEndpoint.getCacheable()),
@@ -71,12 +73,16 @@ public class ThymeleafUrlResolverTest extends ThymeleafAbstractBaseTest {
                 () -> assertNotNull(thymeleafEndpoint.getTemplateEngine()),
                 () -> assertNull(thymeleafEndpoint.getTemplateMode()));
 
-        assertEquals(1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
-        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream().findFirst().get();
+        assertEquals(
+                1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
+        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream()
+                .findFirst()
+                .get();
         assertTrue(resolver instanceof UrlTemplateResolver);
 
         UrlTemplateResolver templateResolver = (UrlTemplateResolver) resolver;
-        assertAll("templateResolver",
+        assertAll(
+                "templateResolver",
                 () -> assertTrue(templateResolver.isCacheable()),
                 () -> assertNull(templateResolver.getCacheTTLMs()),
                 () -> assertNull(templateResolver.getCharacterEncoding()),
@@ -106,5 +112,4 @@ public class ThymeleafUrlResolverTest extends ThymeleafAbstractBaseTest {
                 </span>
                 """;
     }
-
 }

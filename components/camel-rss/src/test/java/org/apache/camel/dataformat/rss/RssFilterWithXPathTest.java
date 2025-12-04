@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.rss;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,10 +29,13 @@ public class RssFilterWithXPathTest extends RssFilterTest {
                 // START SNIPPET: ex
                 // only entries with Camel in the title will get through the filter
                 from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
-                        .marshal().rss().filter().xpath("//item/title[contains(.,'Camel')]").to("mock:result");
+                        .marshal()
+                        .rss()
+                        .filter()
+                        .xpath("//item/title[contains(.,'Camel')]")
+                        .to("mock:result");
                 // END SNIPPET: ex
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -76,10 +77,13 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy())
-                        .aggregationRepository(sharedAggregationRepository).optimisticLocking()
+                from("direct:start")
+                        .aggregate(header("id"), new UseLatestAggregationStrategy())
+                        .aggregationRepository(sharedAggregationRepository)
+                        .optimisticLocking()
                         // trigger completion every 5th second
-                        .completionInterval(getName().equals("testCamelContext1Wins") ? 5000 : 10000).to("mock:result");
+                        .completionInterval(getName().equals("testCamelContext1Wins") ? 5000 : 10000)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
@@ -91,10 +95,13 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy())
-                        .aggregationRepository(sharedAggregationRepository).optimisticLocking()
+                from("direct:start")
+                        .aggregate(header("id"), new UseLatestAggregationStrategy())
+                        .aggregationRepository(sharedAggregationRepository)
+                        .optimisticLocking()
                         // trigger completion every 5th second
-                        .completionInterval(getName().equals("testCamelContext1Wins") ? 10000 : 5000).to("mock:result");
+                        .completionInterval(getName().equals("testCamelContext1Wins") ? 10000 : 5000)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

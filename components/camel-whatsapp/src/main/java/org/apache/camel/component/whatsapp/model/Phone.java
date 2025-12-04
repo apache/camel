@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,11 +26,11 @@ public class Phone {
      * Standard Values: CELL, MAIN, IPHONE, HOME, WORK
      */
     private String type;
+
     @JsonProperty("wa_id")
     private String waId;
 
-    public Phone() {
-    }
+    public Phone() {}
 
     public String getPhone() {
         return phone;
@@ -54,5 +55,4 @@ public class Phone {
     public void setWaId(String waId) {
         this.waId = waId;
     }
-
 }

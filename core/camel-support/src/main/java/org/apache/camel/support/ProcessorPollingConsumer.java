@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -66,7 +67,8 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport implements 
     public Exchange receive() {
         // must be started
         if (!isRunAllowed() || !isStarted()) {
-            throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
+            throw new RejectedExecutionException(
+                    this + " is not started, but in state: " + getStatus().name());
         }
 
         Exchange exchange = getEndpoint().createExchange();
@@ -92,5 +94,4 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport implements 
     public boolean isSingleton() {
         return true;
     }
-
 }

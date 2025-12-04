@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.ByteArrayInputStream;
@@ -45,8 +46,14 @@ public class StreamCachingXPathRouteTest extends ContextTestSupport {
             public void configure() {
                 context.setStreamCaching(true);
 
-                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo"))
-                        .to("mock:dutch", "mock:german").otherwise().to("mock:french");
+                from("direct:a")
+                        .choice()
+                        .when(xpath("//hello"))
+                        .to("mock:english")
+                        .when(xpath("//hallo"))
+                        .to("mock:dutch", "mock:german")
+                        .otherwise()
+                        .to("mock:french");
             }
         };
     }

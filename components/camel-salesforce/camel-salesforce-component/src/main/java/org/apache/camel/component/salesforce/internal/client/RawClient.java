@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
@@ -35,7 +36,11 @@ public interface RawClient {
      * @param callback callback instance that will be invoked when the HTTP call returns
      */
     void makeRequest(
-            String method, String path, PayloadFormat format, InputStream body, Map<String, List<String>> headers,
+            String method,
+            String path,
+            PayloadFormat format,
+            InputStream body,
+            Map<String, List<String>> headers,
             ResponseCallback callback);
 
     interface ResponseCallback {

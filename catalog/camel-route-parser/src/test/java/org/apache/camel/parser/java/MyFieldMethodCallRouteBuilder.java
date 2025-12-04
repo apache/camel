@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 public class MyFieldMethodCallRouteBuilder extends MyBasePortRouteBuilder {
@@ -27,7 +28,7 @@ public class MyFieldMethodCallRouteBuilder extends MyBasePortRouteBuilder {
                 .to("netty-http:http://0.0.0.0:" + port2 + "/bar");
         from("netty-http:http://0.0.0.0:" + port2 + "/bar")
                 .to("mock:input2")
-                .transform().constant("Bye World");
+                .transform()
+                .constant("Bye World");
     }
-
 }

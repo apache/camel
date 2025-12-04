@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
@@ -35,8 +38,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PQCSignatureNoAutowiredSignatureTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
@@ -48,15 +49,16 @@ public class PQCSignatureNoAutowiredSignatureTest extends CamelTestSupport {
     @Produce("direct:sign")
     protected ProducerTemplate templateSign;
 
-    public PQCSignatureNoAutowiredSignatureTest() throws NoSuchAlgorithmException {
-    }
+    public PQCSignatureNoAutowiredSignatureTest() throws NoSuchAlgorithmException {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA").to("mock:sign")
+                from("direct:sign")
+                        .to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA")
+                        .to("mock:sign")
                         .to("pqc:verify?operation=verify&signatureAlgorithm=MLDSA")
                         .to("mock:verify");
             }
@@ -79,9 +81,10 @@ public class PQCSignatureNoAutowiredSignatureTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Keypair")
-    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
-                PQCSignatureAlgorithms.MLDSA.getBcProvider());
+    public KeyPair setKeyPair()
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.MLDSA.getAlgorithm(), PQCSignatureAlgorithms.MLDSA.getBcProvider());
         kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;

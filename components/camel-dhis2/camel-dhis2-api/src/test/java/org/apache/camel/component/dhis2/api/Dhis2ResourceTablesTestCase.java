@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2.api;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,9 +35,6 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class Dhis2ResourceTablesTestCase {
@@ -60,9 +61,7 @@ public class Dhis2ResourceTablesTestCase {
             }
 
             @Override
-            public void close() {
-
-            }
+            public void close() {}
 
             @Override
             public String getUrl() {
@@ -75,7 +74,11 @@ public class Dhis2ResourceTablesTestCase {
     @Timeout(5)
     public void testAnalyticsDoesNotBlockGivenAsyncIsTrue() {
         Dhis2ResourceTables dhis2ResourceTables = new Dhis2ResourceTables(dhis2Client);
-        dhis2ResourceTables.analytics(ThreadLocalRandom.current().nextBoolean(), ThreadLocalRandom.current().nextBoolean(),
-                ThreadLocalRandom.current().nextInt(), ThreadLocalRandom.current().nextInt(), true);
+        dhis2ResourceTables.analytics(
+                ThreadLocalRandom.current().nextBoolean(),
+                ThreadLocalRandom.current().nextBoolean(),
+                ThreadLocalRandom.current().nextInt(),
+                ThreadLocalRandom.current().nextInt(),
+                true);
     }
 }

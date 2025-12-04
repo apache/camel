@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import java.sql.PreparedStatement;
@@ -48,7 +49,8 @@ public interface SqlPrepareStatementStrategy {
      * @return                the iterator
      * @throws SQLException   is thrown if error creating the iterator
      */
-    Iterator<?> createPopulateIterator(String query, String preparedQuery, int expectedParams, Exchange exchange, Object value)
+    Iterator<?> createPopulateIterator(
+            String query, String preparedQuery, int expectedParams, Exchange exchange, Object value)
             throws SQLException;
 
     /**
@@ -60,5 +62,4 @@ public interface SqlPrepareStatementStrategy {
      * @throws SQLException   is thrown if error populating parameters
      */
     void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException;
-
 }

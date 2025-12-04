@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PutObjectStringFunctionalTest extends CamelTestSupport {
 
@@ -41,11 +42,10 @@ public class PutObjectStringFunctionalTest extends CamelTestSupport {
                         .setProperty(OBSProperties.BUCKET_NAME, constant("reji-abc"))
                         .setProperty(OBSProperties.OBJECT_NAME, constant("test_string_file.txt"))
                         .setProperty(OBSProperties.BUCKET_LOCATION, constant("cn-north-1"))
-                        .to("hwcloud-obs:putObject?" +
-                            "accessKey=" + ACCESS_KEY +
-                            "&secretKey=" + SECRET_KEY +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-obs:putObject?" + "accessKey="
+                                + ACCESS_KEY + "&secretKey="
+                                + SECRET_KEY + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Put object successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:put_object_result");

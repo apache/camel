@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.ContextEvents;
@@ -26,14 +27,15 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 public class JmsTopicDurableSharedIT extends AbstractPersistentJMSTest {
 
     private static final String TEST_DESTINATION_NAME = "activemq:topic:in.only.topic.shared.durable.test";
 
     @BeforeEach
     void waitForArtemisToFinishCreatingConsumers() {
-        Awaitility.await().until(() -> context.getClock().get(ContextEvents.START).elapsed() > 1000);
+        Awaitility.await()
+                .until(() -> context.getClock().get(ContextEvents.START).elapsed() > 1000);
     }
 
     @Test
@@ -57,18 +59,16 @@ public class JmsTopicDurableSharedIT extends AbstractPersistentJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to(TEST_DESTINATION_NAME);
+                from("direct:start").to(TEST_DESTINATION_NAME);
 
-                from(TEST_DESTINATION_NAME)
-                        .to("log:test.log.1?showBody=true", "mock:result");
+                from(TEST_DESTINATION_NAME).to("log:test.log.1?showBody=true", "mock:result");
 
                 from(TEST_DESTINATION_NAME
-                     + "?subscriptionName=durableSharedTest&subscriptionShared=true&subscriptionDurable=true")
+                                + "?subscriptionName=durableSharedTest&subscriptionShared=true&subscriptionDurable=true")
                         .to("log:test.log.2?showBody=true", "mock:result2");
 
                 from(TEST_DESTINATION_NAME
-                     + "?subscriptionName=durableSharedTest&subscriptionShared=true&subscriptionDurable=true")
+                                + "?subscriptionName=durableSharedTest&subscriptionShared=true&subscriptionDurable=true")
                         .to("log:test.log.3?showBody=true", "mock:result2");
             }
         };

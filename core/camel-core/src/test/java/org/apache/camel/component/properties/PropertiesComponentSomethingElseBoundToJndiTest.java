@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTestSupport {
 
@@ -58,5 +59,4 @@ public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTest
         jndi.bind("properties", this);
         return jndi;
     }
-
 }

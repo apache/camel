@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 import java.util.Map;
@@ -58,8 +59,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     /**
      * Default constructor.
      */
-    public SimpleLanguage() {
-    }
+    public SimpleLanguage() {}
 
     /**
      * Special purpose for {@link SimpleNoFileLanguage}
@@ -94,15 +94,23 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     public void stop() {
         if (cachePredicate instanceof LRUCache<String, Predicate> cache) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Clearing simple language predicate cache[size={}, hits={}, misses={}, evicted={}]",
-                        cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
+                LOG.debug(
+                        "Clearing simple language predicate cache[size={}, hits={}, misses={}, evicted={}]",
+                        cache.size(),
+                        cache.getHits(),
+                        cache.getMisses(),
+                        cache.getEvicted());
             }
             cachePredicate.clear();
         }
         if (cacheExpression instanceof LRUCache<String, Expression> cache) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Clearing simple language expression cache[size={}, hits={}, misses={}, evicted={}]",
-                        cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
+                LOG.debug(
+                        "Clearing simple language expression cache[size={}, hits={}, misses={}, evicted={}]",
+                        cache.size(),
+                        cache.getHits(),
+                        cache.getMisses(),
+                        cache.getEvicted());
             }
             cacheExpression.clear();
         }
@@ -130,8 +138,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             }
 
             // using the expression cache here with the predicate parser is okay
-            SimplePredicateParser parser
-                    = new SimplePredicateParser(getCamelContext(), expression, allowEscape, skipFileFunctions, cacheExpression);
+            SimplePredicateParser parser = new SimplePredicateParser(
+                    getCamelContext(), expression, allowEscape, skipFileFunctions, cacheExpression);
             answer = parser.parsePredicate();
 
             if (cachePredicate != null && answer != null) {
@@ -189,9 +197,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             }
 
             // only parse if there are simple functions
-            SimpleExpressionParser parser
-                    = new SimpleExpressionParser(
-                            getCamelContext(), expression, allowEscape, skipFileFunctions, cacheExpression);
+            SimpleExpressionParser parser = new SimpleExpressionParser(
+                    getCamelContext(), expression, allowEscape, skipFileFunctions, cacheExpression);
             answer = parser.parseExpression();
 
             if (cacheExpression != null && answer != null) {

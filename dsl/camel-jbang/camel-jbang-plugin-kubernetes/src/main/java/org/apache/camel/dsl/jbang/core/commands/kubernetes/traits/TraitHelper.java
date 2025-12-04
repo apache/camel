@@ -51,7 +51,7 @@ import org.apache.camel.util.StringHelper;
 public final class TraitHelper {
 
     private TraitHelper() {
-        //prevent instantiation of utility class.
+        // prevent instantiation of utility class.
     }
 
     /**
@@ -75,7 +75,7 @@ public final class TraitHelper {
             if (!traitExpression.contains(".")) {
                 continue;
             }
-            //traitName.key=value
+            // traitName.key=value
             final String[] trait = traitExpression.split("\\.", 2);
             final String[] traitConfig = trait[1].split("=", 2);
             if (traitConfig == null || traitConfig.length < 2) {
@@ -106,7 +106,8 @@ public final class TraitHelper {
                             Map<String, String> traitValueList = (Map<String, String>) traitValue;
                             values.putAll(traitValueList);
                         } else {
-                            final String[] traitValueConfig = traitValue.toString().split("=", 2);
+                            final String[] traitValueConfig =
+                                    traitValue.toString().split("=", 2);
                             values.put(traitValueConfig[0], traitValueConfig[1]);
                         }
                     } else if (traitValue instanceof List) {
@@ -115,14 +116,17 @@ public final class TraitHelper {
                         config.put(traitKey, traitValueList);
                     } else if (traitValue instanceof Map) {
                         Map<String, String> traitValueMap = (Map<String, String>) traitValue;
-                        final String[] existingValueConfig = existingValue.toString().split("=", 2);
+                        final String[] existingValueConfig =
+                                existingValue.toString().split("=", 2);
                         traitValueMap.put(existingValueConfig[0], existingValueConfig[1]);
                         config.put(traitKey, traitValueMap);
                     } else {
                         if (traitKey.endsWith("annotations")) {
                             Map<String, String> map = new LinkedHashMap<>();
-                            final String[] traitValueConfig = traitValue.toString().split("=", 2);
-                            final String[] existingValueConfig = existingValue.toString().split("=", 2);
+                            final String[] traitValueConfig =
+                                    traitValue.toString().split("=", 2);
+                            final String[] existingValueConfig =
+                                    existingValue.toString().split("=", 2);
                             map.put(traitValueConfig[0], traitValueConfig[1]);
                             map.put(existingValueConfig[0], existingValueConfig[1]);
                             config.put(traitKey, map);
@@ -143,13 +147,19 @@ public final class TraitHelper {
         Traits traitModel = KubernetesHelper.json().convertValue(traitConfigMap, Traits.class);
 
         // Handle leftover traits as addons
-        Set<?> knownTraits = KubernetesHelper.json().convertValue(traitModel, Map.class).keySet();
+        Set<?> knownTraits =
+                KubernetesHelper.json().convertValue(traitModel, Map.class).keySet();
         if (knownTraits.size() < traitConfigMap.size()) {
             traitModel.setAddons(new HashMap<>());
             for (Map.Entry<String, Map<String, Object>> traitConfig : traitConfigMap.entrySet()) {
                 if (!knownTraits.contains(traitConfig.getKey())) {
-                    traitModel.getAddons().put(traitConfig.getKey(),
-                            new AddonsBuilder().withAdditionalProperties(traitConfig.getValue()).build());
+                    traitModel
+                            .getAddons()
+                            .put(
+                                    traitConfig.getKey(),
+                                    new AddonsBuilder()
+                                            .withAdditionalProperties(traitConfig.getValue())
+                                            .build());
                 }
             }
         }
@@ -163,8 +173,7 @@ public final class TraitHelper {
      *
      */
     private static Object resolveTraitValue(String traitKey, String value) {
-        if (traitKey.equalsIgnoreCase("enabled") ||
-                traitKey.equalsIgnoreCase("verbose")) {
+        if (traitKey.equalsIgnoreCase("enabled") || traitKey.equalsIgnoreCase("verbose")) {
             return Boolean.valueOf(value);
         }
 
@@ -206,7 +215,8 @@ public final class TraitHelper {
         if (connects == null || connects.length == 0) {
             return;
         }
-        ServiceBinding serviceBindingTrait = Optional.ofNullable(traitsSpec.getServiceBinding()).orElseGet(ServiceBinding::new);
+        ServiceBinding serviceBindingTrait =
+                Optional.ofNullable(traitsSpec.getServiceBinding()).orElseGet(ServiceBinding::new);
         if (serviceBindingTrait.getServices() == null) {
             serviceBindingTrait.setServices(new ArrayList<>());
         }
@@ -218,7 +228,8 @@ public final class TraitHelper {
         if (envVars == null || envVars.length == 0) {
             return;
         }
-        Environment environmentTrait = Optional.ofNullable(traitsSpec.getEnvironment()).orElseGet(Environment::new);
+        Environment environmentTrait =
+                Optional.ofNullable(traitsSpec.getEnvironment()).orElseGet(Environment::new);
         if (environmentTrait.getVars() == null) {
             environmentTrait.setVars(new ArrayList<>());
         }
@@ -284,8 +295,13 @@ public final class TraitHelper {
     }
 
     public static void configureContainerImage(
-            Traits traitsSpec, String image, String imageRegistry, String imageGroup,
-            String imageName, String version, List<String> buildProperties) {
+            Traits traitsSpec,
+            String image,
+            String imageRegistry,
+            String imageGroup,
+            String imageName,
+            String version,
+            List<String> buildProperties) {
         String imageToUse;
         if (image != null) {
             imageToUse = image;
@@ -305,7 +321,8 @@ public final class TraitHelper {
         buildProperties.add("jkube.image.name=%s".formatted(imageToUse));
         buildProperties.add("jkube.container-image.name=%s".formatted(imageToUse));
 
-        Container containerTrait = Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
+        Container containerTrait =
+                Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
 
         if (containerTrait.getImagePullPolicy() != null) {
             var imagePullPolicy = containerTrait.getImagePullPolicy().getValue();
@@ -369,7 +386,7 @@ public final class TraitHelper {
             Stream<String> propertyTraits = properties.entrySet().stream()
                     .filter(property -> property.getKey().toString().startsWith("camel.jbang.trait"))
                     .map(property -> StringHelper.after(property.getKey().toString(), "camel.jbang.trait.") + "="
-                                     + properties.get(property.getKey()).toString());
+                            + properties.get(property.getKey()).toString());
             return propertyTraits.collect(Collectors.toSet()).toArray(String[]::new);
         }
         return new String[0];

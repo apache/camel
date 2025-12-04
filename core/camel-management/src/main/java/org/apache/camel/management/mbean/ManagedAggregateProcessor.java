@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Set;
@@ -27,7 +28,8 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 @ManagedResource(description = "Managed AggregateProcessor")
 public class ManagedAggregateProcessor extends ManagedProcessor implements ManagedAggregateProcessorMBean {
 
-    public ManagedAggregateProcessor(CamelContext context, AggregateProcessor processor, AggregateDefinition definition) {
+    public ManagedAggregateProcessor(
+            CamelContext context, AggregateProcessor processor, AggregateDefinition definition) {
         super(context, processor, definition);
     }
 
@@ -44,7 +46,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     @Override
     public String getCorrelationExpressionLanguage() {
         if (getDefinition().getCorrelationExpression() != null) {
-            return getDefinition().getCorrelationExpression().getExpressionType().getLanguage();
+            return getDefinition()
+                    .getCorrelationExpression()
+                    .getExpressionType()
+                    .getLanguage();
         } else {
             return null;
         }
@@ -53,7 +58,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     @Override
     public String getCorrelationExpression() {
         if (getDefinition().getCorrelationExpression() != null) {
-            return getDefinition().getCorrelationExpression().getExpressionType().getExpression();
+            return getDefinition()
+                    .getCorrelationExpression()
+                    .getExpressionType()
+                    .getExpression();
         } else {
             return null;
         }
@@ -67,7 +75,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     @Override
     public String getCompletionTimeoutLanguage() {
         if (getDefinition().getCompletionTimeoutExpression() != null) {
-            return getDefinition().getCompletionTimeoutExpression().getExpressionType().getLanguage();
+            return getDefinition()
+                    .getCompletionTimeoutExpression()
+                    .getExpressionType()
+                    .getLanguage();
         } else {
             return null;
         }
@@ -76,7 +87,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     @Override
     public String getCompletionTimeoutExpression() {
         if (getDefinition().getCompletionTimeoutExpression() != null) {
-            return getDefinition().getCompletionTimeoutExpression().getExpressionType().getExpression();
+            return getDefinition()
+                    .getCompletionTimeoutExpression()
+                    .getExpressionType()
+                    .getExpression();
         } else {
             return null;
         }
@@ -100,7 +114,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     @Override
     public String getCompletionSizeExpressionLanguage() {
         if (getDefinition().getCompletionSizeExpression() != null) {
-            return getDefinition().getCompletionSizeExpression().getExpressionType().getLanguage();
+            return getDefinition()
+                    .getCompletionSizeExpression()
+                    .getExpressionType()
+                    .getLanguage();
         } else {
             return null;
         }
@@ -109,7 +126,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     @Override
     public String getCompletionSizeExpression() {
         if (getDefinition().getCompletionSizeExpression() != null) {
-            return getDefinition().getCompletionSizeExpression().getExpressionType().getExpression();
+            return getDefinition()
+                    .getCompletionSizeExpression()
+                    .getExpressionType()
+                    .getExpression();
         } else {
             return null;
         }

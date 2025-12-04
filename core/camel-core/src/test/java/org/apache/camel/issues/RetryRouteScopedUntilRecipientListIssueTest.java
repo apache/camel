@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,9 +39,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupport {
 
@@ -254,7 +255,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:start").onException(Exception.class).redeliveryDelay(0).retryWhile(method("myRetryBean")).end()
+                from("seda:start")
+                        .onException(Exception.class)
+                        .redeliveryDelay(0)
+                        .retryWhile(method("myRetryBean"))
+                        .end()
                         .recipientList(header("recipientListHeader"))
                         .to("mock:result");
 
@@ -268,7 +273,8 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         // using bean binding we can bind the information from the exchange to
         // the types we have in our method signature
         public boolean retry(
-                @Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body,
+                @Header(Exchange.REDELIVERY_COUNTER) Integer counter,
+                @Body String body,
                 @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked.incrementAndGet();
@@ -278,5 +284,4 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
             return counter < 3;
         }
     }
-
 }

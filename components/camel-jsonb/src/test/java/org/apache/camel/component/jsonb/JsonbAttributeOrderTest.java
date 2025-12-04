@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
@@ -25,12 +28,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JsonbAttributeOrderTest extends CamelTestSupport {
 
-    final String expectedJson
-            = "{\"bg\":123.123,\"bool\":true,\"doubleNumber\":123.123,\"floatNumber\":123.0,\"intNumber\":123,\"longNumber\":123}";
+    final String expectedJson =
+            "{\"bg\":123.123,\"bool\":true,\"doubleNumber\":123.123,\"floatNumber\":123.0,\"intNumber\":123,\"longNumber\":123}";
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
@@ -70,5 +71,4 @@ public class JsonbAttributeOrderTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -27,33 +28,44 @@ import org.apache.camel.spi.UriParams;
 public class CaffeineConfiguration implements Cloneable {
     @UriParam(defaultValue = "true")
     private boolean createCacheIfNotExist = true;
+
     @UriParam(enums = "GET,GET_ALL,PUT,PUT_ALL,INVALIDATE,INVALIDATE_ALL,CLEANUP,AS_MAP")
     private String action;
+
     @UriParam
     private String key;
+
     @UriParam(label = "advanced")
     private String valueType;
+
     @UriParam
     private Integer initialCapacity;
+
     @UriParam
     private Integer maximumSize;
+
     @UriParam(defaultValue = "SIZE_BASED")
     private EvictionType evictionType = EvictionType.SIZE_BASED;
+
     @UriParam(defaultValue = "300")
     private int expireAfterAccessTime = 300;
+
     @UriParam(defaultValue = "300")
     private int expireAfterWriteTime = 300;
+
     @UriParam(label = "advanced")
     private RemovalListener removalListener;
+
     @UriParam(label = "advanced")
     private boolean statsEnabled;
+
     @UriParam(label = "advanced")
     private StatsCounter statsCounter;
+
     @UriParam(label = "advanced")
     private CacheLoader cacheLoader;
 
-    public CaffeineConfiguration() {
-    }
+    public CaffeineConfiguration() {}
 
     public boolean isCreateCacheIfNotExist() {
         return createCacheIfNotExist;

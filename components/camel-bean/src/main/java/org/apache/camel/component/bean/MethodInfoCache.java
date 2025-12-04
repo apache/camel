@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.Method;
@@ -39,7 +40,8 @@ public class MethodInfoCache {
         this(camelContext, createClassCache(classCacheSize), createMethodCache(methodCacheSize));
     }
 
-    public MethodInfoCache(CamelContext camelContext, Map<Class<?>, BeanInfo> classCache, Map<Method, MethodInfo> methodCache) {
+    public MethodInfoCache(
+            CamelContext camelContext, Map<Class<?>, BeanInfo> classCache, Map<Method, MethodInfo> methodCache) {
         this.camelContext = camelContext;
         this.classCache = classCache;
         this.methodCache = methodCache;

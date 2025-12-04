@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kserve;
 
 import inference.GRPCInferenceServiceGrpc;
@@ -31,17 +32,23 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-@UriEndpoint(firstVersion = "4.10.0", scheme = "kserve", title = "KServe",
-             syntax = "kserve:api", producerOnly = true,
-             category = { Category.AI }, headersClass = KServeConstants.class)
+@UriEndpoint(
+        firstVersion = "4.10.0",
+        scheme = "kserve",
+        title = "KServe",
+        syntax = "kserve:api",
+        producerOnly = true,
+        category = {Category.AI},
+        headersClass = KServeConstants.class)
 public class KServeEndpoint extends DefaultEndpoint {
 
     /**
      * The KServe API spec: <a href=
      * "https://github.com/kserve/open-inference-protocol/blob/main/specification/protocol/inference_grpc.md">open-inference-protocol/specification/protocol/inference_grpc.md</a>
      */
-    @UriPath(enums = "infer,model/ready,model/metadata,server/ready,server/live,server/metadata",
-             description = "The KServe API")
+    @UriPath(
+            enums = "infer,model/ready,model/metadata,server/ready,server/live,server/metadata",
+            description = "The KServe API")
     @Metadata(required = true)
     private final String api;
 
@@ -51,8 +58,7 @@ public class KServeEndpoint extends DefaultEndpoint {
     private ManagedChannel channel;
     private GRPCInferenceServiceGrpc.GRPCInferenceServiceBlockingStub inferenceService;
 
-    public KServeEndpoint(String uri, KServeComponent component, String path,
-                          KServeConfiguration configuration) {
+    public KServeEndpoint(String uri, KServeComponent component, String path, KServeConfiguration configuration) {
         super(uri, component);
         this.api = path;
         this.configuration = configuration;

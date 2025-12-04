@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestUriPrefixTest extends FromRestGetTest {
 
@@ -39,7 +40,8 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
         assertEquals("/hello", rest.getVerbs().get(0).getPath());
         assertEquals("/bye", rest.getVerbs().get(1).getPath());
         assertEquals("/hi", rest.getVerbs().get(2).getPath());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
+        ToDefinition to =
+                assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(1).getTo());
         assertEquals("direct:bye", to.getUri());
@@ -64,8 +66,14 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
                 restConfiguration().host("localhost");
                 // we have logic to clean up those paths so there is only one /
                 // between the paths
-                rest("/say/").get("/hello").to("direct:hello").get("/bye").consumes("application/json").to("direct:bye")
-                        .post("/hi").to("mock:update");
+                rest("/say/")
+                        .get("/hello")
+                        .to("direct:hello")
+                        .get("/bye")
+                        .consumes("application/json")
+                        .to("direct:bye")
+                        .post("/hi")
+                        .to("mock:update");
 
                 from("direct:hello").transform().constant("Hello World");
 

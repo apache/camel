@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.dataformat;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.DataFormatException;
@@ -30,15 +36,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
 
-    private static final String INPUT
-            = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
+    private static final String INPUT =
+            "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
 
     private MockEndpoint mockEndpoint;
     private final FhirContext fhirContext = FhirContext.forR4();
@@ -70,7 +71,9 @@ public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
         Patient patient = (Patient) exchange.getIn().getBody();
         assertEquals(1, patient.getExtension().size());
         assertNull(patient.getExtension().get(0).getUrl());
-        assertEquals("2011-01-02T11:13:15", patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());
+        assertEquals(
+                "2011-01-02T11:13:15",
+                patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());
     }
 
     @Override
@@ -104,7 +107,6 @@ public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
                 fhirJsonDataFormat.setParserErrorHandler(parserErrorHandler);
                 return fhirJsonDataFormat;
             }
-
         };
     }
 }

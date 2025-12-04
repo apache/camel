@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
@@ -29,8 +30,6 @@ public class KameletReifier extends ProcessorReifier<KameletDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        throw new IllegalStateException(
-                "Cannot find camel-kamelet on the classpath.");
+        throw new IllegalStateException("Cannot find camel-kamelet on the classpath.");
     }
-
 }

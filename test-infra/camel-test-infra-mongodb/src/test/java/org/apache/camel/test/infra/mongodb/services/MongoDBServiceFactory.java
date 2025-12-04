@@ -37,9 +37,7 @@ public final class MongoDBServiceFactory {
         }
     }
 
-    private MongoDBServiceFactory() {
-
-    }
+    private MongoDBServiceFactory() {}
 
     public static SimpleTestServiceBuilder<MongoDBService> builder() {
         return new SimpleTestServiceBuilder<>("mongodb");
@@ -58,6 +56,7 @@ public final class MongoDBServiceFactory {
 
     private static class SingletonServiceHolder {
         static final MongoDBService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<MongoDBService> instance = builder();
             instance.addLocalMapping(() -> new SingletonMongoDBService(new MongoDBLocalContainerService(), "mongo-db"))
@@ -67,6 +66,5 @@ public final class MongoDBServiceFactory {
         }
     }
 
-    public static class MongoDBRemoteService extends MongoDBRemoteInfraService implements MongoDBService {
-    }
+    public static class MongoDBRemoteService extends MongoDBRemoteInfraService implements MongoDBService {}
 }

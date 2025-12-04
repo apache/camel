@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentChangedReadLockTest extends FileIdempotentReadLockTest {
 
@@ -30,7 +31,7 @@ public class FileIdempotentChangedReadLockTest extends FileIdempotentReadLockTes
             @Override
             public void configure() {
                 from(fileUri(
-                        "?initialDelay=0&delay=10&readLockCheckInterval=100&readLock=idempotent-changed&idempotentRepository=#myRepo"))
+                                "?initialDelay=0&delay=10&readLockCheckInterval=100&readLock=idempotent-changed&idempotentRepository=#myRepo"))
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
@@ -38,7 +39,8 @@ public class FileIdempotentChangedReadLockTest extends FileIdempotentReadLockTes
                                 int size = myRepo.getCacheSize();
                                 assertTrue(size == 1 || size == 2);
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

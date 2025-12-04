@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring;
 
 import java.util.Map;
@@ -26,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class SpringJmsRoutingSlipInOutIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -47,7 +48,8 @@ public class SpringJmsRoutingSlipInOutIT extends AbstractSpringJMSITSupport {
     public static final class MyBean {
 
         public void createSlip(@Headers Map<String, Object> headers) {
-            headers.put("mySlip",
+            headers.put(
+                    "mySlip",
                     "activemq:queue:SpringJmsRoutingSlipInOutTest.a,activemq:queue:SpringJmsRoutingSlipInOutTest.b");
         }
 
@@ -67,5 +69,4 @@ public class SpringJmsRoutingSlipInOutIT extends AbstractSpringJMSITSupport {
             return "Result-" + body;
         }
     }
-
 }

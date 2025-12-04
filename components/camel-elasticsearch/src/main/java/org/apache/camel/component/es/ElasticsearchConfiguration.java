@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es;
 
 import java.util.List;
@@ -35,43 +36,62 @@ public class ElasticsearchConfiguration {
     @UriPath
     @Metadata(required = true)
     private String clusterName;
+
     @UriParam
     private ElasticsearchOperation operation;
+
     @UriParam
     private Integer size;
+
     @UriParam
     private Integer from;
+
     @UriParam
     private String indexName;
+
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
     private int waitForActiveShards = ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
+
     @UriParam
     private String hostAddresses;
+
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT;
+
     @UriParam(defaultValue = "" + ElasticsearchConstants.MAX_RETRY_TIMEOUT)
     private int maxRetryTimeout = ElasticsearchConstants.MAX_RETRY_TIMEOUT;
+
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
+
     @UriParam(defaultValue = "false")
     private boolean enableDocumentOnlyMode;
+
     @UriParam
     private boolean disconnect;
+
     @UriParam(label = "security")
     private boolean enableSSL;
+
     @UriParam(label = "security")
     @Metadata(supportFileReference = true)
     private String certificatePath;
+
     @UriParam
     private boolean useScroll;
+
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS)
     private int scrollKeepAliveMs = ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS;
+
     @UriParam(label = "advanced")
     private boolean enableSniffer;
+
     @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
+
     @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
+
     @UriParam(label = "advanced", defaultValue = "ObjectNode")
     private Class<?> documentClass = ObjectNode.class;
 

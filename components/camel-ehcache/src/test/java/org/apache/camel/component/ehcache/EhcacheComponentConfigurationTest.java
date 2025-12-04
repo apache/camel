@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Component;
@@ -32,9 +36,6 @@ import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     @EndpointInject("ehcache:myCache")
     private EhcacheEndpoint endpoint;
@@ -44,8 +45,9 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
         EhcacheComponent component = new EhcacheComponent();
         component.getConfiguration().setKeyType("java.lang.String");
         component.getConfiguration().setValueType("java.lang.String");
-        component.getConfiguration().setCacheManager(
-                CacheManagerBuilder.newCacheManagerBuilder()
+        component
+                .getConfiguration()
+                .setCacheManager(CacheManagerBuilder.newCacheManagerBuilder()
                         .withCache(
                                 "myCache",
                                 CacheConfigurationBuilder.newCacheConfigurationBuilder(
@@ -66,7 +68,10 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     @Test
     void testCacheManager() throws Exception {
         assertEquals(
-                context().getRegistry().lookupByNameAndType("ehcache", EhcacheComponent.class).getCacheManager(),
+                context()
+                        .getRegistry()
+                        .lookupByNameAndType("ehcache", EhcacheComponent.class)
+                        .getCacheManager(),
                 endpoint.getManager().getCacheManager());
 
         Cache<String, String> cache = endpoint.getManager().getCache("myCache", String.class, String.class);
@@ -91,8 +96,7 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:ehcache")
-                        .to(endpoint);
+                from("direct:ehcache").to(endpoint);
             }
         };
     }

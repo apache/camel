@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.neutron;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +43,6 @@ import org.openstack4j.api.networking.NetworkService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class NetworkProducerTest extends NeutronProducerTestSupport {
@@ -137,7 +138,8 @@ public class NetworkProducerTest extends NeutronProducerTestSupport {
         return Builders.network()
                 .name("name")
                 .tenantId("tenantID")
-                .networkType(NetworkType.LOCAL).build();
+                .networkType(NetworkType.LOCAL)
+                .build();
     }
 
     private void assertEqualsNetwork(Network old, Network newNetwork) {

@@ -28,15 +28,13 @@ public class DispatchRouterContainer extends GenericContainer<DispatchRouterCont
     public DispatchRouterContainer() {
         super(IMAGE_NAME);
 
-        withExposedPorts(DEFAULT_AMQP_PORT)
-                .waitingFor(Wait.forListeningPort());
+        withExposedPorts(DEFAULT_AMQP_PORT).waitingFor(Wait.forListeningPort());
     }
 
     public DispatchRouterContainer(String imageName, int amqpPort) {
         super(imageName);
 
-        withExposedPorts(amqpPort)
-                .waitingFor(Wait.forListeningPort());
+        withExposedPorts(amqpPort).waitingFor(Wait.forListeningPort());
     }
 
     public DispatchRouterContainer(String imageName) {

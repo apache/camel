@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs.integration;
 
 import org.apache.camel.EndpointInject;
@@ -56,7 +57,8 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
         });
 
         MockEndpoint.assertIsSatisfied(context);
-        Assertions.assertEquals(13, result.getExchanges().get(0).getMessage().getHeaders().size());
+        Assertions.assertEquals(
+                13, result.getExchanges().get(0).getMessage().getHeaders().size());
     }
 
     @Override
@@ -65,11 +67,14 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").startupOrder(2)
-                        .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName()).to("mock:result");
+                from("direct:start")
+                        .startupOrder(2)
+                        .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName())
+                        .to("mock:result");
 
                 fromF("aws2-sqs://%s?deleteAfterRead=true&autoCreateQueue=true", sharedNameGenerator.getName())
-                        .startupOrder(1).log("${body}");
+                        .startupOrder(1)
+                        .log("${body}");
             }
         };
     }

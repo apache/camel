@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github;
 
 import java.util.Map;
@@ -62,5 +63,4 @@ public class GitHubComponent extends HealthCheckComponent {
     public void setOauthToken(String oauthToken) {
         this.oauthToken = oauthToken;
     }
-
 }

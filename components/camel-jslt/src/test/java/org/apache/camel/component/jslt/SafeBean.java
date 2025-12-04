@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import java.io.Serializable;
@@ -25,5 +26,4 @@ public class SafeBean implements Serializable {
     public String getSafe() {
         return "safe";
     }
-
 }

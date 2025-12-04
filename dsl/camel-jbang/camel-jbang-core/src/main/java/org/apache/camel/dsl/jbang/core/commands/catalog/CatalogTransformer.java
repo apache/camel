@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.util.ArrayList;
@@ -23,9 +24,11 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.TransformerModel;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "transformer",
-                     description = "List data type transformers from the Camel Catalog", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "transformer",
+        description = "List data type transformers from the Camel Catalog",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CatalogTransformer extends CatalogBaseCommand {
 
     public CatalogTransformer(CamelJBangMain main) {
@@ -54,5 +57,4 @@ public class CatalogTransformer extends CatalogBaseCommand {
         }
         return rows;
     }
-
 }

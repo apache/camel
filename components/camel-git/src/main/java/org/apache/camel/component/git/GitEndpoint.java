@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git;
 
 import org.apache.camel.Category;
@@ -34,8 +35,13 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Perform operations on git repositories.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", category = { Category.FILE },
-             headersClass = GitConstants.class)
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = "git",
+        title = "Git",
+        syntax = "git:localPath",
+        category = {Category.FILE},
+        headersClass = GitConstants.class)
 public class GitEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
@@ -45,9 +51,11 @@ public class GitEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private String branchName;
 
-    @UriParam(label = "producer",
-              description = "Name of target branch in merge operation. If not supplied will try to use init.defaultBranch git configs. If not configured will use default value",
-              defaultValue = "master")
+    @UriParam(
+            label = "producer",
+            description =
+                    "Name of target branch in merge operation. If not supplied will try to use init.defaultBranch git configs. If not configured will use default value",
+            defaultValue = "master")
     private String targetBranchName;
 
     @UriParam(label = "producer")
@@ -73,8 +81,10 @@ public class GitEndpoint extends ScheduledPollEndpoint {
     @Metadata(label = "producer")
     private boolean allowEmpty = true;
 
-    @UriParam(label = "producer",
-              enums = "add,cherryPick,clean,clone,commit,commitAll,createBranch,createTag,deleteBranch,deleteTag,gc,init,log,pull,push,remoteAdd,remoteList,remove,showBranches,showTags,status")
+    @UriParam(
+            label = "producer",
+            enums =
+                    "add,cherryPick,clean,clone,commit,commitAll,createBranch,createTag,deleteBranch,deleteTag,gc,init,log,pull,push,remoteAdd,remoteList,remove,showBranches,showTags,status")
     private String operation;
 
     @UriParam(description = "A String with path to a .gitconfig file", label = "advanced")

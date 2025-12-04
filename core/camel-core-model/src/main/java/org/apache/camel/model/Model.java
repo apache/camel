@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.Collection;
@@ -228,7 +229,8 @@ public interface Model {
      * @return                 the id of the route added (for example when an id was auto assigned)
      * @throws Exception       is thrown if error creating and adding the new route
      */
-    String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
+    String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception;
 
     /**
      * Adds a new route from a given route template
@@ -242,8 +244,7 @@ public interface Model {
      * @throws Exception       is thrown if error creating and adding the new route
      */
     String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId, String group,
-            Map<String, Object> parameters)
+            String routeId, String routeTemplateId, String prefixId, String group, Map<String, Object> parameters)
             throws Exception;
 
     /**
@@ -258,7 +259,10 @@ public interface Model {
      * @throws Exception            is thrown if error creating and adding the new route
      */
     String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId, String group,
+            String routeId,
+            String routeTemplateId,
+            String prefixId,
+            String group,
             RouteTemplateContext routeTemplateContext)
             throws Exception;
 
@@ -276,8 +280,12 @@ public interface Model {
      * @throws Exception         is thrown if error creating and adding the new route
      */
     String addRouteFromKamelet(
-            String routeId, String routeTemplateId, String prefixId, String group,
-            String parentRouteId, String parentProcessorId,
+            String routeId,
+            String routeTemplateId,
+            String prefixId,
+            String group,
+            String parentRouteId,
+            String parentProcessorId,
             Map<String, Object> parameters)
             throws Exception;
 
@@ -295,8 +303,7 @@ public interface Model {
      * @param  templatedRouteDefinitions the templated route definitions to add as a route (mandatory)
      * @throws Exception                 is thrown if error creating and adding the new route
      */
-    default void addRouteFromTemplatedRoutes(
-            Collection<TemplatedRouteDefinition> templatedRouteDefinitions)
+    default void addRouteFromTemplatedRoutes(Collection<TemplatedRouteDefinition> templatedRouteDefinitions)
             throws Exception {
         ObjectHelper.notNull(templatedRouteDefinitions, "templatedRouteDefinitions");
         for (TemplatedRouteDefinition templatedRouteDefinition : templatedRouteDefinitions) {
@@ -526,5 +533,4 @@ public interface Model {
      * Gets the custom beans
      */
     List<BeanFactoryDefinition<?>> getCustomBeans();
-
 }

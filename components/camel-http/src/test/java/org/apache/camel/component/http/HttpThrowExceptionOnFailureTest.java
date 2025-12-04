@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Map;
 
@@ -27,12 +34,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -42,10 +43,13 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .register("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
 
         baseUrl = "http://localhost:" + localServer.getLocalPort();
@@ -60,8 +64,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
     @Test
     public void httpGetWhichReturnsHttp501() {
-        Exchange exchange = template.request(baseUrl + "/XXX?throwExceptionOnFailure=false", exchange1 -> {
-        });
+        Exchange exchange = template.request(baseUrl + "/XXX?throwExceptionOnFailure=false", exchange1 -> {});
 
         assertNotNull(exchange);
 
@@ -95,9 +98,8 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
     @Test
     public void httpGetWhichReturnsHttp501WithIgnoreResponseBody() {
-        Exchange exchange
-                = template.request(baseUrl + "/XXX?throwExceptionOnFailure=false&ignoreResponseBody=true", exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                baseUrl + "/XXX?throwExceptionOnFailure=false&ignoreResponseBody=true", exchange1 -> {});
 
         assertNotNull(exchange);
 
@@ -112,13 +114,12 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
     @Test
     public void httpGetWhichReturnsHttp501ShouldThrowAnExceptionWithIgnoreResponseBody() {
-        Exchange reply = template.request(baseUrl + "/XXX?throwExceptionOnFailure=true&ignoreResponseBody=true", exchange -> {
-        });
+        Exchange reply =
+                template.request(baseUrl + "/XXX?throwExceptionOnFailure=true&ignoreResponseBody=true", exchange -> {});
 
         Exception e = reply.getException();
         assertNotNull(e, "Should have thrown an exception");
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e);
         assertEquals(501, cause.getStatusCode());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
 
 import org.apache.camel.impl.DefaultCamelContext;
@@ -28,8 +29,8 @@ public class XmlSpringBeansLoadTest {
     public void testLoadRoutesBuilderFromXml() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             // load spring XML <beans> with embedded <camelContext>
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/springBeans.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/springBeans.xml");
 
             Assertions.assertDoesNotThrow(() -> {
                 // should be able to parse the file and not fail (camel-jbang supports creating spring beans)
@@ -37,5 +38,4 @@ public class XmlSpringBeansLoadTest {
             });
         }
     }
-
 }

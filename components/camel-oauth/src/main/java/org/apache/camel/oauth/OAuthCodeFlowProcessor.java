@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oauth;
+
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
+import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
-import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
 
 public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
 

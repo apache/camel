@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.HashMap;
@@ -50,8 +51,12 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
     private final String originalCamelContextId;
     private final String originalTransactionKey;
 
-    public MDCUnitOfWork(Exchange exchange, InflightRepository inflightRepository,
-                         String pattern, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+    public MDCUnitOfWork(
+            Exchange exchange,
+            InflightRepository inflightRepository,
+            String pattern,
+            boolean allowUseOriginalMessage,
+            boolean useBreadcrumb) {
         super(exchange, LOG, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
         this.pattern = pattern;
 
@@ -218,7 +223,8 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
         // clear custom patterns
         if (pattern != null) {
 
-            // only clear if the UoW is the parent UoW (split, multicast and other EIPs create child exchanges with their own UoW)
+            // only clear if the UoW is the parent UoW (split, multicast and other EIPs create child exchanges with
+            // their own UoW)
             if (exchange != null) {
                 String cid = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
                 if (cid != null && !cid.equals(exchange.getExchangeId())) {
@@ -368,5 +374,4 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
             return delegate.toString();
         }
     }
-
 }

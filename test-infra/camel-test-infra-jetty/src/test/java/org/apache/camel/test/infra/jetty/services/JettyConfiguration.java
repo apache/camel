@@ -244,8 +244,7 @@ public class JettyConfiguration {
 
             for (var userInfo : userInfoList) {
                 // In order: data1 == username, data2 == password
-                us.addUser(userInfo.getKey(), Credential.getCredential(userInfo.getValue()), new String[] { "user" });
-
+                us.addUser(userInfo.getKey(), Credential.getCredential(userInfo.getValue()), new String[] {"user"});
             }
 
             l.setName(realm);
@@ -280,7 +279,8 @@ public class JettyConfiguration {
             contextHandler.setContextPath(super.getContextPath());
 
             for (ServletConfiguration servletConfiguration : servletConfigurations) {
-                contextHandler.addServlet(servletConfiguration.buildServletHolder(), servletConfiguration.getPathSpec());
+                contextHandler.addServlet(
+                        servletConfiguration.buildServletHolder(), servletConfiguration.getPathSpec());
             }
 
             if (customizer != null) {
@@ -291,7 +291,8 @@ public class JettyConfiguration {
         }
     }
 
-    public static class HandlerCollectionConfiguration extends AbstractContextHandlerConfiguration<ContextHandlerCollection> {
+    public static class HandlerCollectionConfiguration
+            extends AbstractContextHandlerConfiguration<ContextHandlerCollection> {
         private final ContextHandlerCollection handlers = new ContextHandlerCollection();
 
         public HandlerCollectionConfiguration(String contextPath) {
@@ -330,7 +331,8 @@ public class JettyConfiguration {
             contextHandler.setAttribute(contextHandler.getClass().getName(), contextHandler);
 
             for (ServletConfiguration servletConfiguration : super.servletConfigurations) {
-                contextHandler.addServlet(servletConfiguration.buildServletHolder(), servletConfiguration.getPathSpec());
+                contextHandler.addServlet(
+                        servletConfiguration.buildServletHolder(), servletConfiguration.getPathSpec());
             }
 
             if (customizer != null) {

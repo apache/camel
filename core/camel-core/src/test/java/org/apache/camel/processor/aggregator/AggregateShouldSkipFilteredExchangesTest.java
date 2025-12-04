@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -52,10 +53,14 @@ public class AggregateShouldSkipFilteredExchangesTest extends ContextTestSupport
             public void configure() {
                 Predicate goodWord = body().contains("World");
 
-                from("direct:start").filter(goodWord).to("mock:filtered").aggregate(header("id"), new MyAggregationStrategy())
-                        .completionTimeout(1000).to("mock:result").end()
+                from("direct:start")
+                        .filter(goodWord)
+                        .to("mock:filtered")
+                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .completionTimeout(1000)
+                        .to("mock:result")
+                        .end()
                         .end();
-
             }
         };
     }
@@ -74,6 +79,5 @@ public class AggregateShouldSkipFilteredExchangesTest extends ContextTestSupport
             oldExchange.getIn().setBody(body);
             return oldExchange;
         }
-
     }
 }

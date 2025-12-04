@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.util.Locale;
@@ -21,17 +22,18 @@ import java.util.Locale;
 public final class AS2DispositionModifier {
 
     public static final AS2DispositionModifier ERROR = new AS2DispositionModifier("error");
-    public static final AS2DispositionModifier ERROR_AUTHENTICATION_FAILED
-            = new AS2DispositionModifier("error: authentication-failed");
-    public static final AS2DispositionModifier ERROR_DECOMPRESSION_FAILED
-            = new AS2DispositionModifier("error: decompression-failed");
-    public static final AS2DispositionModifier ERROR_DECRYPTION_FAILED = new AS2DispositionModifier("error: decryption-failed");
-    public static final AS2DispositionModifier ERROR_INSUFFICIENT_MESSAGE_SECURITY
-            = new AS2DispositionModifier("error: insufficient-message-security");
-    public static final AS2DispositionModifier ERROR_INTEGRITY_CHECK_FAILED
-            = new AS2DispositionModifier("error: integrity-check-failed");
-    public static final AS2DispositionModifier ERROR_UNEXPECTED_PROCESSING_ERROR
-            = new AS2DispositionModifier("error: unexpected-processing-error");
+    public static final AS2DispositionModifier ERROR_AUTHENTICATION_FAILED =
+            new AS2DispositionModifier("error: authentication-failed");
+    public static final AS2DispositionModifier ERROR_DECOMPRESSION_FAILED =
+            new AS2DispositionModifier("error: decompression-failed");
+    public static final AS2DispositionModifier ERROR_DECRYPTION_FAILED =
+            new AS2DispositionModifier("error: decryption-failed");
+    public static final AS2DispositionModifier ERROR_INSUFFICIENT_MESSAGE_SECURITY =
+            new AS2DispositionModifier("error: insufficient-message-security");
+    public static final AS2DispositionModifier ERROR_INTEGRITY_CHECK_FAILED =
+            new AS2DispositionModifier("error: integrity-check-failed");
+    public static final AS2DispositionModifier ERROR_UNEXPECTED_PROCESSING_ERROR =
+            new AS2DispositionModifier("error: unexpected-processing-error");
     public static final AS2DispositionModifier WARNING = new AS2DispositionModifier("warning");
 
     private String modifier;
@@ -95,5 +97,4 @@ public final class AS2DispositionModifier {
                 return null;
         }
     }
-
 }

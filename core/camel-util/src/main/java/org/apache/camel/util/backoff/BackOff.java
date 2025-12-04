@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.backoff;
 
 import java.time.Duration;
@@ -41,8 +42,13 @@ public final class BackOff {
         this(DEFAULT_DELAY, MAX_DURATION, MAX_DURATION, Long.MAX_VALUE, DEFAULT_MULTIPLIER, true);
     }
 
-    public BackOff(Duration delay, Duration maxDelay, Duration maxElapsedTime, Long maxAttempts, Double multiplier,
-                   boolean removeOnComplete) {
+    public BackOff(
+            Duration delay,
+            Duration maxDelay,
+            Duration maxElapsedTime,
+            Long maxAttempts,
+            Double multiplier,
+            boolean removeOnComplete) {
         this.delay = ObjectHelper.supplyIfEmpty(delay, () -> DEFAULT_DELAY);
         this.maxDelay = ObjectHelper.supplyIfEmpty(maxDelay, () -> MAX_DURATION);
         this.maxElapsedTime = ObjectHelper.supplyIfEmpty(maxElapsedTime, () -> MAX_DURATION);

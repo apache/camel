@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar;
 
 import java.util.Map;
@@ -38,9 +39,14 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Perform various operations on a Google Calendar.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "google-calendar", title = "Google Calendar",
-             syntax = "google-calendar:apiName/methodName", apiSyntax = "apiName/methodName",
-             consumerPrefix = "consumer", category = { Category.API, Category.CLOUD })
+@UriEndpoint(
+        firstVersion = "2.15.0",
+        scheme = "google-calendar",
+        title = "Google Calendar",
+        syntax = "google-calendar:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        consumerPrefix = "consumer",
+        category = {Category.API, Category.CLOUD})
 public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration>
         implements EndpointServiceLocation {
 
@@ -49,11 +55,19 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
 
     private Object apiProxy;
 
-    public GoogleCalendarEndpoint(String uri, GoogleCalendarComponent component,
-                                  GoogleCalendarApiName apiName, String methodName,
-                                  GoogleCalendarConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, GoogleCalendarApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public GoogleCalendarEndpoint(
+            String uri,
+            GoogleCalendarComponent component,
+            GoogleCalendarApiName apiName,
+            String methodName,
+            GoogleCalendarConfiguration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                GoogleCalendarApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -146,5 +160,4 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
         }
         return null;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,9 +31,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBSpringAggregateTest extends CamelSpringTestSupport {
 
     @Override
@@ -71,5 +72,4 @@ public class LevelDBSpringAggregateTest extends CamelSpringTestSupport {
             return oldExchange;
         }
     }
-
 }

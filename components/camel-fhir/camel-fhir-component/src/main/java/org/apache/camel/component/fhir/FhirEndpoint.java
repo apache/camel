@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
 
 import java.util.EnumMap;
@@ -52,10 +53,15 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "fhir", title = "FHIR", syntax = "fhir:apiName/methodName",
-             apiSyntax = "apiName/methodName",
-             category = { Category.API })
-public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration> implements EndpointServiceLocation {
+@UriEndpoint(
+        firstVersion = "2.23.0",
+        scheme = "fhir",
+        title = "FHIR",
+        syntax = "fhir:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        category = {Category.API})
+public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration>
+        implements EndpointServiceLocation {
 
     private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";
 
@@ -64,9 +70,19 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
     @UriParam
     private FhirConfiguration configuration;
 
-    public FhirEndpoint(String uri, FhirComponent component,
-                        FhirApiName apiName, String methodName, FhirConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, FhirApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+    public FhirEndpoint(
+            String uri,
+            FhirComponent component,
+            FhirApiName apiName,
+            String methodName,
+            FhirConfiguration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                FhirApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -173,7 +189,6 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
             }
         }
         properties.put(EXTRA_PARAMETERS_PROPERTY, extraProperties);
-
     }
 
     public IGenericClient getClient() {

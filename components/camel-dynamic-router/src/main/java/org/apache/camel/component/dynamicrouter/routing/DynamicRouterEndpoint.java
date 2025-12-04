@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.routing;
+
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FIRST_VERSION;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PROCESSOR_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PRODUCER_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.SYNTAX;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.TITLE;
 
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -36,25 +45,18 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FIRST_VERSION;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PROCESSOR_FACTORY_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PRODUCER_FACTORY_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.SYNTAX;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.TITLE;
-
 /**
  * The Dynamic Router component routes exchanges to recipients, and the recipients (and their rules) may change at
  * runtime.
  */
-@UriEndpoint(firstVersion = FIRST_VERSION,
-             scheme = COMPONENT_SCHEME_ROUTING,
-             title = TITLE,
-             syntax = SYNTAX,
-             producerOnly = true,
-             remote = false,
-             category = { Category.MESSAGING, Category.CORE })
+@UriEndpoint(
+        firstVersion = FIRST_VERSION,
+        scheme = COMPONENT_SCHEME_ROUTING,
+        title = TITLE,
+        syntax = SYNTAX,
+        producerOnly = true,
+        remote = false,
+        category = {Category.MESSAGING, Category.CORE})
 public class DynamicRouterEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterEndpoint.class);
@@ -106,12 +108,14 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
      * @param recipientListSupplier    creates the {@link RecipientList}
      * @param filterService            the {@link DynamicRouterFilterService}
      */
-    public DynamicRouterEndpoint(final String uri, final DynamicRouterComponent component,
-                                 final DynamicRouterConfiguration configuration,
-                                 final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
-                                 final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
-                                 final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier,
-                                 final DynamicRouterFilterService filterService) {
+    public DynamicRouterEndpoint(
+            final String uri,
+            final DynamicRouterComponent component,
+            final DynamicRouterConfiguration configuration,
+            final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
+            final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
+            final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier,
+            final DynamicRouterFilterService filterService) {
         super(uri, component);
         this.channel = configuration.getChannel();
         this.configuration = configuration;
@@ -131,9 +135,11 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
      * @param configuration the {@link DynamicRouterConfiguration}
      * @param filterService the {@link DynamicRouterFilterService}
      */
-    public DynamicRouterEndpoint(final String uri, final DynamicRouterComponent component,
-                                 final DynamicRouterConfiguration configuration,
-                                 final DynamicRouterFilterService filterService) {
+    public DynamicRouterEndpoint(
+            final String uri,
+            final DynamicRouterComponent component,
+            final DynamicRouterConfiguration configuration,
+            final DynamicRouterFilterService filterService) {
         super(uri, component);
         this.processorFactorySupplier = PROCESSOR_FACTORY_SUPPLIER;
         this.producerFactorySupplier = PRODUCER_FACTORY_SUPPLIER;
@@ -160,7 +166,8 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
         super.doInit();
         DynamicRouterComponent component = getDynamicRouterComponent();
         CamelContext camelContext = getCamelContext();
-        DynamicRouterProcessor processor = processorFactorySupplier.get()
+        DynamicRouterProcessor processor = processorFactorySupplier
+                .get()
                 .getInstance(camelContext, configuration, filterService, recipientListSupplier);
         component.addRoutingProcessor(configuration.getChannel(), processor);
     }
@@ -231,8 +238,13 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
                 final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier,
                 final DynamicRouterFilterService filterService) {
             return new DynamicRouterEndpoint(
-                    uri, component, configuration, processorFactorySupplier, producerFactorySupplier,
-                    recipientListSupplier, filterService);
+                    uri,
+                    component,
+                    configuration,
+                    processorFactorySupplier,
+                    producerFactorySupplier,
+                    recipientListSupplier,
+                    filterService);
         }
 
         /**

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import com.hierynomus.smbj.SMBClient;
@@ -50,8 +51,8 @@ public abstract class SmbServerTestSupport extends CamelTestSupport {
         try (SMBClient smbClient = new SMBClient()) {
             int port = Integer.parseInt(service.address().split(":")[1]);
             try (Connection connection = smbClient.connect("localhost", port)) {
-                AuthenticationContext ac
-                        = new AuthenticationContext(service.userName(), service.password().toCharArray(), null);
+                AuthenticationContext ac = new AuthenticationContext(
+                        service.userName(), service.password().toCharArray(), null);
                 Session session = connection.authenticate(ac);
 
                 try (DiskShare share = (DiskShare) session.connectShare(service.shareName())) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.AggregationStrategy;
@@ -39,7 +40,11 @@ public class MulticastSingleAggregateIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").multicast(new SumAggregateBean()).to("direct:foo").end().to("mock:a");
+                from("direct:a")
+                        .multicast(new SumAggregateBean())
+                        .to("direct:foo")
+                        .end()
+                        .to("mock:a");
 
                 from("direct:foo").bean(IncreaseOne.class);
             }
@@ -71,5 +76,4 @@ public class MulticastSingleAggregateIssueTest extends ContextTestSupport {
             return newExchange;
         }
     }
-
 }

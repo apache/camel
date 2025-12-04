@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import java.io.Serializable;
@@ -48,9 +49,7 @@ public abstract class Publishable implements Serializable {
 
     private String slug;
 
-    public Publishable() {
-
-    }
+    public Publishable() {}
 
     public Integer getId() {
         return id;
@@ -112,5 +111,4 @@ public abstract class Publishable implements Serializable {
     public String toString() {
         return this.slug;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,8 @@ import org.apache.camel.support.processor.ConvertHeaderProcessor;
 @ManagedResource(description = "Managed ConvertHeader")
 public class ManagedConvertHeader extends ManagedProcessor implements ManagedConvertHeaderMBean {
 
-    public ManagedConvertHeader(CamelContext context, ConvertHeaderProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedConvertHeader(
+            CamelContext context, ConvertHeaderProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
 

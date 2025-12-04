@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle.concurrent;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,8 +51,14 @@ public class ThrottlerAsyncDelayedCallerRunsTest extends ContextTestSupport {
                 builder.maxQueueSize(2);
                 context.getExecutorServiceManager().registerThreadPoolProfile(builder.build());
 
-                from("seda:start").throttle(1).concurrentRequestsMode().delay(100).asyncDelayed().executorService("myThrottler")
-                        .callerRunsWhenRejected(true).to("mock:result");
+                from("seda:start")
+                        .throttle(1)
+                        .concurrentRequestsMode()
+                        .delay(100)
+                        .asyncDelayed()
+                        .executorService("myThrottler")
+                        .callerRunsWhenRejected(true)
+                        .to("mock:result");
             }
         };
     }

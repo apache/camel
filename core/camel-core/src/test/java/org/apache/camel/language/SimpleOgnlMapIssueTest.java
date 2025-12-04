@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import java.util.HashMap;
@@ -57,8 +58,13 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when().simple("${body.property['foo']} == 'King Kong'").to("mock:king")
-                        .otherwise().to("mock:other");
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .simple("${body.property['foo']} == 'King Kong'")
+                        .to("mock:king")
+                        .otherwise()
+                        .to("mock:other");
             }
         };
     }

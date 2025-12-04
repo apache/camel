@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,11 +50,17 @@ public class DeadLetterChannelFailureRouteIdTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("direct:dead"));
 
-                from("direct:foo").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
+                from("direct:foo")
+                        .routeId("foo")
+                        .to("mock:foo")
+                        .to("direct:bar")
+                        .to("mock:result");
 
                 from("direct:bar").routeId("bar").to("mock:bar").throwException(new IllegalArgumentException("Forced"));
 
-                from("direct:dead").log("Failed at route ${exchangeProperty.CamelFailureRouteId}").to("mock:dead");
+                from("direct:dead")
+                        .log("Failed at route ${exchangeProperty.CamelFailureRouteId}")
+                        .to("mock:dead");
             }
         };
     }

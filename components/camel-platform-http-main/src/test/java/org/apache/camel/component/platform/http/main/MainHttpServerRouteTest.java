@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class MainHttpServerRouteTest {
 
     private static final int port = AvailablePortFinder.getNextAvailable();
@@ -44,8 +45,7 @@ class MainHttpServerRouteTest {
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/hello")
-                        .setBody(constant("Hello, Camel!"));
+                from("platform-http:/hello").setBody(constant("Hello, Camel!"));
             }
         });
 
@@ -72,8 +72,8 @@ class MainHttpServerRouteTest {
                 .uri(URI.create("http://localhost:" + port + "/hello"))
                 .build();
 
-        HttpResponse<String> response = HttpClient.newBuilder().build()
-                .send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response =
+                HttpClient.newBuilder().build().send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
         assertEquals("Hello, Camel!", response.body());

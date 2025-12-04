@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
 
 import org.apache.camel.spi.Metadata;
@@ -35,19 +36,26 @@ public class RedisConfiguration {
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath
     @Metadata(required = true)
     private Integer port;
+
     @UriParam(defaultValue = "SET")
     private Command command = Command.SET;
+
     @UriParam
     private String channels;
+
     @UriParam
     private RedisTemplate<?, ?> redisTemplate;
+
     @UriParam(label = "consumer,advanced")
     private RedisMessageListenerContainer listenerContainer;
+
     @UriParam
     private RedisConnectionFactory connectionFactory;
+
     @UriParam
     private RedisSerializer<?> serializer;
 

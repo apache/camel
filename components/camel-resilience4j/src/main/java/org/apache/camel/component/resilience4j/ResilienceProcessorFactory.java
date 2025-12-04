@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.Processor;
@@ -34,5 +35,4 @@ public class ResilienceProcessorFactory extends TypedProcessorFactory<CircuitBre
     public Processor doCreateProcessor(Route route, CircuitBreakerDefinition definition) throws Exception {
         return new ResilienceReifier(route, definition).createProcessor();
     }
-
 }

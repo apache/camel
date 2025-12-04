@@ -14,16 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pdf;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A0;
 import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A1;
@@ -33,6 +25,15 @@ import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A4;
 import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A5;
 import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A6;
 import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_LETTER;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 /**
  * Handles pdf component configuration values.
@@ -55,23 +56,33 @@ public class PdfConfiguration {
     @UriPath(description = "Operation type")
     @Metadata(required = true)
     private PdfOperation operation;
+
     @UriParam(defaultValue = "20")
     private int marginTop = 20;
+
     @UriParam(defaultValue = "20")
     private int marginBottom = 20;
+
     @UriParam(defaultValue = "20")
     private int marginLeft = 20;
+
     @UriParam(defaultValue = "40")
     private int marginRight = 40;
+
     @UriParam(defaultValue = "14")
     private float fontSize = 14;
+
     @UriParam(defaultValue = "A4", enums = "LETTER,LEGAL,A0,A1,A2,A3,A4,A5,A6")
     private String pageSize = PAGE_SIZE_A4;
-    @UriParam(defaultValue = "HELVETICA", enums = "COURIER,COURIER_BOLD,COURIER_OBLIQUE,COURIER_BOLD_OBLIQUE,"
-                                                  + "HELVETICA,HELVETICA_BOLD,HELVETICA_OBLIQUE,HELVETICA_BOLD_OBLIQUE,"
-                                                  + "TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,"
-                                                  + "SYMBOL,ZAPF_DINGBATS")
+
+    @UriParam(
+            defaultValue = "HELVETICA",
+            enums = "COURIER,COURIER_BOLD,COURIER_OBLIQUE,COURIER_BOLD_OBLIQUE,"
+                    + "HELVETICA,HELVETICA_BOLD,HELVETICA_OBLIQUE,HELVETICA_BOLD_OBLIQUE,"
+                    + "TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,"
+                    + "SYMBOL,ZAPF_DINGBATS")
     private String font = "HELVETICA";
+
     @UriParam(defaultValue = "lineTermination")
     private TextProcessingFactory textProcessingFactory = TextProcessingFactory.lineTermination;
 

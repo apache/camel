@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.queue;
 
 import org.apache.camel.spi.UriParam;
@@ -27,8 +28,10 @@ public class HazelcastQueueConfiguration {
 
     @UriParam(label = "consumer", defaultValue = "10000")
     private long pollingTimeout = 10000L;
+
     @UriParam(label = "consumer", defaultValue = "Listen")
     private HazelcastQueueConsumerMode queueConsumerMode = HazelcastQueueConsumerMode.LISTEN;
+
     @UriParam(label = "consumer", defaultValue = "1")
     private int poolSize = 1;
 

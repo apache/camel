@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,25 +46,38 @@ import org.slf4j.LoggerFactory;
  * It works by allowing you to create DataSet instances both as a source of messages and as a way to assert that the
  * data set is received. Camel will use the throughput logger when sending dataset's.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "dataset", title = "Dataset", syntax = "dataset:name",
-             remote = false, category = { Category.CORE, Category.TESTING }, lenientProperties = true,
-             headersClass = DataSetConstants.class)
+@UriEndpoint(
+        firstVersion = "1.3.0",
+        scheme = "dataset",
+        title = "Dataset",
+        syntax = "dataset:name",
+        remote = false,
+        category = {Category.CORE, Category.TESTING},
+        lenientProperties = true,
+        headersClass = DataSetConstants.class)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
+
     @UriPath(name = "name", description = "Name of DataSet to lookup in the registry")
     @Metadata(required = true)
     private volatile DataSet dataSet;
+
     @UriParam(label = "consumer", defaultValue = "0")
     private int minRate;
+
     @UriParam(label = "consumer", defaultValue = "3", javaType = "java.time.Duration")
     private long produceDelay = 3;
+
     @UriParam(label = "producer", defaultValue = "0", javaType = "java.time.Duration")
     private long consumeDelay;
+
     @UriParam(label = "consumer", defaultValue = "0")
     private long preloadSize;
+
     @UriParam(label = "consumer", defaultValue = "1000", javaType = "java.time.Duration")
     private long initialDelay = 1000;
+
     @UriParam(enums = "strict,lenient,off", defaultValue = "lenient")
     private String dataSetIndex = "lenient";
 
@@ -82,9 +96,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
         if (!ObjectHelper.equal(expected, actual)) {
-            throw new AssertionError(
-                    description + " does not match. Expected: " + expected + " but was: " + actual + " on " + exchange
-                                     + " with headers: " + exchange.getIn().getHeaders());
+            throw new AssertionError(description + " does not match. Expected: " + expected + " but was: " + actual
+                    + " on " + exchange + " with headers: " + exchange.getIn().getHeaders());
         }
     }
 
@@ -149,7 +162,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public DataSet getDataSet() {
         return dataSet;
@@ -232,9 +245,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
                 this.dataSetIndex = dataSetIndex;
                 break;
             default:
-                throw new IllegalArgumentException(
-                        "Invalid value specified for the dataSetIndex URI parameter:" + dataSetIndex
-                                                   + "Supported values are strict, lenient and off ");
+                throw new IllegalArgumentException("Invalid value specified for the dataSetIndex URI parameter:"
+                        + dataSetIndex + "Supported values are strict, lenient and off ");
         }
     }
 
@@ -243,7 +255,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     protected void performAssertions(Exchange actual, Exchange copy) throws Exception {
@@ -254,8 +266,11 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         // now let's assert that they are the same
         if (log.isDebugEnabled()) {
             if (copy.getIn().getHeader(DataSetConstants.DATASET_INDEX) != null) {
-                log.debug("Received message: {} (DataSet index={}) = {}",
-                        index, copy.getIn().getHeader(DataSetConstants.DATASET_INDEX, Integer.class), copy);
+                log.debug(
+                        "Received message: {} (DataSet index={}) = {}",
+                        index,
+                        copy.getIn().getHeader(DataSetConstants.DATASET_INDEX, Integer.class),
+                        copy);
             } else {
                 log.debug("Received message: {} = {}", index, copy);
             }
@@ -273,7 +288,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
             case "off":
                 break;
             case "strict":
-                long actualCounter = ExchangeHelper.getMandatoryHeader(actual, DataSetConstants.DATASET_INDEX, Long.class);
+                long actualCounter =
+                        ExchangeHelper.getMandatoryHeader(actual, DataSetConstants.DATASET_INDEX, Long.class);
                 assertEquals("Header: " + DataSetConstants.DATASET_INDEX, index, actualCounter, actual);
                 break;
             case "lenient":
@@ -296,7 +312,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         // must sanitize uri to avoid logging sensitive information
         String uri = URISupport.sanitizeUri(getEndpointUri());
         CamelLogger logger = new CamelLogger(uri);
-        ThroughputLogger answer = new ThroughputLogger(logger, (int) this.getDataSet().getReportCount());
+        ThroughputLogger answer =
+                new ThroughputLogger(logger, (int) this.getDataSet().getReportCount());
         answer.setAction("Received");
         return answer;
     }
@@ -311,5 +328,4 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
         log.debug("{} expecting {} messages", this, getExpectedCount());
     }
-
 }

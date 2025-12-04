@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.joinHeaderAndSource;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 import java.io.File;
 import java.io.IOError;
@@ -44,9 +48,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.build.BuildContext;
-
-import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.joinHeaderAndSource;
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Prepares camel-kamelet-main
@@ -177,5 +178,4 @@ public class PrepareKameletMainMojo extends AbstractMojo {
             buildContext.refresh(file.toFile());
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant;
 
 import io.grpc.ManagedChannel;
@@ -36,16 +37,13 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform operations on the Qdrant Vector Database.
  */
 @UriEndpoint(
-             firstVersion = "4.5.0",
-             scheme = Qdrant.SCHEME,
-             title = "Qdrant",
-             syntax = "qdrant:collection",
-             producerOnly = true,
-             category = {
-                     Category.DATABASE,
-                     Category.AI
-             },
-             headersClass = Qdrant.Headers.class)
+        firstVersion = "4.5.0",
+        scheme = Qdrant.SCHEME,
+        title = "Qdrant",
+        syntax = "qdrant:collection",
+        producerOnly = true,
+        category = {Category.DATABASE, Category.AI},
+        headersClass = Qdrant.Headers.class)
 public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)
@@ -59,10 +57,7 @@ public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLo
     private volatile QdrantClient client;
 
     public QdrantEndpoint(
-                          String endpointUri,
-                          Component component,
-                          String collection,
-                          QdrantConfiguration configuration) {
+            String endpointUri, Component component, String collection, QdrantConfiguration configuration) {
 
         super(endpointUri, component);
 
@@ -147,7 +142,8 @@ public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLo
     }
 
     private ManagedChannel createChannel() {
-        ManagedChannelBuilder<?> builder = ManagedChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
+        ManagedChannelBuilder<?> builder =
+                ManagedChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
 
         if (configuration.isTls()) {
             builder.useTransportSecurity();

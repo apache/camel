@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
@@ -62,5 +63,4 @@ public class StopProcessor extends BaseProcessorSupport implements IdAware, Rout
     public void setRouteId(String routeId) {
         this.routeId = routeId;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAULT_LOGIN_URL;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -61,8 +64,6 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAULT_LOGIN_URL;
-
 /**
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
@@ -98,131 +99,171 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
     private static final String SALESFORCE_EVENTBUS_PACKAGE = "com.sforce.eventbus";
 
-    @Metadata(description = "All authentication configuration in one nested bean, all properties set there can be set"
-                            + " directly on the component as well",
-              label = "common,security")
+    @Metadata(
+            description = "All authentication configuration in one nested bean, all properties set there can be set"
+                    + " directly on the component as well",
+            label = "common,security")
     private SalesforceLoginConfig loginConfig;
 
-    @Metadata(description = "URL of the Salesforce instance used after authentication, by default received from"
-                            + " Salesforce on successful authentication",
-              label = "common,security")
+    @Metadata(
+            description = "URL of the Salesforce instance used after authentication, by default received from"
+                    + " Salesforce on successful authentication",
+            label = "common,security")
     private String instanceUrl;
 
     // allow fine grained login as well
-    @Metadata(description = "URL of the Salesforce instance used for authentication, by default set to "
-                            + DEFAULT_LOGIN_URL,
-              label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = true)
+    @Metadata(
+            description =
+                    "URL of the Salesforce instance used for authentication, by default set to " + DEFAULT_LOGIN_URL,
+            label = "common,security",
+            defaultValue = DEFAULT_LOGIN_URL,
+            required = true)
     private String loginUrl;
 
-    @Metadata(description = "OAuth Consumer Key of the connected app configured in the Salesforce instance setup."
+    @Metadata(
+            description =
+                    "OAuth Consumer Key of the connected app configured in the Salesforce instance setup."
                             + " Typically a connected app needs to be configured but one can be provided by installing a package.",
-              label = "common,security", required = true)
+            label = "common,security",
+            required = true)
     private String clientId;
 
-    @Metadata(description = "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup.",
-              label = "common,security", secret = true)
+    @Metadata(
+            description = "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup.",
+            label = "common,security",
+            secret = true)
     private String clientSecret;
 
-    @Metadata(description = "Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web"
-                            + " application and configure a callback URL to receive the refresh token, or configure using the builtin"
-                            + " callback at https://login.salesforce.com/services/oauth2/success or "
-                            + " https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the"
-                            + " end of the flow. Note that in development organizations Salesforce allows hosting the callback web "
-                            + " application at localhost.",
-              label = "common,security", secret = true)
+    @Metadata(
+            description = "Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web"
+                    + " application and configure a callback URL to receive the refresh token, or configure using the builtin"
+                    + " callback at https://login.salesforce.com/services/oauth2/success or "
+                    + " https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the"
+                    + " end of the flow. Note that in development organizations Salesforce allows hosting the callback web "
+                    + " application at localhost.",
+            label = "common,security",
+            secret = true)
     private String refreshToken;
 
-    @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with"
+    @Metadata(
+            description =
+                    "Username used in OAuth flow to gain access to access token. It's easy to get started with"
                             + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows.",
-              label = "common,security")
+            label = "common,security")
     private String userName;
 
-    @Metadata(description = "Password used in OAuth flow to gain access to access token. It's easy to get started with"
-                            + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows."
-                            + " Make sure that you append security token to the end of the password if using one.",
-              label = "common,security", secret = true)
+    @Metadata(
+            description = "Password used in OAuth flow to gain access to access token. It's easy to get started with"
+                    + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows."
+                    + " Make sure that you append security token to the end of the password if using one.",
+            label = "common,security",
+            secret = true)
     private String password;
 
-    @Metadata(description = "KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry"
+    @Metadata(
+            description =
+                    "KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry"
                             + " with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be"
                             + " a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app.",
-              label = "common,security")
+            label = "common,security")
     private KeyStoreParameters keystore;
 
-    @Metadata(description = "Value to use for the Audience claim (aud) when using OAuth JWT flow. If not set, the login URL will be used, which is"
+    @Metadata(
+            description =
+                    "Value to use for the Audience claim (aud) when using OAuth JWT flow. If not set, the login URL will be used, which is"
                             + " appropriate in most cases.",
-              label = "common,security")
+            label = "common,security")
     private String jwtAudience;
 
-    @Metadata(description = "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN, CLIENT_CREDENTIALS, or JWT."
+    @Metadata(
+            description =
+                    "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN, CLIENT_CREDENTIALS, or JWT."
                             + " Salesforce component can auto-determine the authentication method to use from the properties set, set this "
                             + " property to eliminate any ambiguity.",
-              label = "common,security", enums = "USERNAME_PASSWORD,REFRESH_TOKEN,CLIENT_CREDENTIALS,JWT")
+            label = "common,security",
+            enums = "USERNAME_PASSWORD,REFRESH_TOKEN,CLIENT_CREDENTIALS,JWT")
     private AuthenticationType authenticationType;
 
-    @Metadata(description = "If set to true prevents the component from authenticating to Salesforce with the start of"
-                            + " the component. You would generally set this to the (default) false and authenticate early and be immediately"
-                            + " aware of any authentication issues. Lazy login is not supported by salesforce consumers.",
-              defaultValue = "false", label = "common,security")
+    @Metadata(
+            description = "If set to true prevents the component from authenticating to Salesforce with the start of"
+                    + " the component. You would generally set this to the (default) false and authenticate early and be immediately"
+                    + " aware of any authentication issues. Lazy login is not supported by salesforce consumers.",
+            defaultValue = "false",
+            label = "common,security")
     private boolean lazyLogin;
 
-    @Metadata(description = "Pub/Sub host",
-              defaultValue = "api.pubsub.salesforce.com", label = "common,security")
+    @Metadata(description = "Pub/Sub host", defaultValue = "api.pubsub.salesforce.com", label = "common,security")
     private String pubSubHost = "api.pubsub.salesforce.com";
 
-    @Metadata(description = "Pub/Sub port",
-              defaultValue = "7443", label = "common,security")
+    @Metadata(description = "Pub/Sub port", defaultValue = "7443", label = "common,security")
     private int pubSubPort = 7443;
 
-    @Metadata(description = "Allow the Pub/Sub API client to use the proxy detected by java.net.ProxySelector. If false then"
+    @Metadata(
+            description =
+                    "Allow the Pub/Sub API client to use the proxy detected by java.net.ProxySelector. If false then"
                             + " no proxy server will be used.",
-              defaultValue = "true", label = "common,proxy")
+            defaultValue = "true",
+            label = "common,proxy")
     private boolean pubsubAllowUseSystemProxy = true;
 
-    @Metadata(description = "Global endpoint configuration - use to set values that are common to all endpoints",
-              label = "common,advanced")
+    @Metadata(
+            description = "Global endpoint configuration - use to set values that are common to all endpoints",
+            label = "common,advanced")
     private SalesforceEndpointConfig config;
 
-    @Metadata(description = "Timeout used by the HttpClient when waiting for response from the Salesforce server.",
-              label = "common", defaultValue = "" + IDLE_TIMEOUT)
+    @Metadata(
+            description = "Timeout used by the HttpClient when waiting for response from the Salesforce server.",
+            label = "common",
+            defaultValue = "" + IDLE_TIMEOUT)
     private long httpClientIdleTimeout = IDLE_TIMEOUT;
 
-    @Metadata(description = "Connection timeout used by the HttpClient when connecting to the Salesforce server.",
-              label = "common", defaultValue = "" + CONNECTION_TIMEOUT)
+    @Metadata(
+            description = "Connection timeout used by the HttpClient when connecting to the Salesforce server.",
+            label = "common",
+            defaultValue = "" + CONNECTION_TIMEOUT)
     private long httpClientConnectionTimeout = CONNECTION_TIMEOUT;
 
-    @Metadata(description = "Timeout value for HTTP requests.",
-              label = "common", defaultValue = "" + REQUEST_TIMEOUT)
+    @Metadata(description = "Timeout value for HTTP requests.", label = "common", defaultValue = "" + REQUEST_TIMEOUT)
     private long httpRequestTimeout = REQUEST_TIMEOUT;
 
     @Metadata(description = "Max content length of an HTTP response.", label = "common")
     private Integer httpMaxContentLength;
 
-    @Metadata(description = "HTTP request buffer size. May need to be increased for large SOQL" +
-                            " queries.",
-              label = "common", defaultValue = "" + REQUEST_BUFFER_SIZE)
+    @Metadata(
+            description = "HTTP request buffer size. May need to be increased for large SOQL" + " queries.",
+            label = "common",
+            defaultValue = "" + REQUEST_BUFFER_SIZE)
     private Integer httpRequestBufferSize;
 
-    @Metadata(description = "Used to set any properties that can be configured on the underlying HTTP client. Have a"
-                            + " look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options.",
-              label = "common,advanced")
+    @Metadata(
+            description = "Used to set any properties that can be configured on the underlying HTTP client. Have a"
+                    + " look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options.",
+            label = "common,advanced")
     private Map<String, Object> httpClientProperties;
 
-    @Metadata(description = "Size of the thread pool used to handle HTTP responses.",
-              label = "common,advanced", defaultValue = "10")
+    @Metadata(
+            description = "Size of the thread pool used to handle HTTP responses.",
+            label = "common,advanced",
+            defaultValue = "10")
     private int workerPoolSize = 10;
-    @Metadata(description = "Maximum size of the thread pool used to handle HTTP responses.",
-              label = "common,advanced", defaultValue = "20")
+
+    @Metadata(
+            description = "Maximum size of the thread pool used to handle HTTP responses.",
+            label = "common,advanced",
+            defaultValue = "20")
     private int workerPoolMaxSize = 20;
 
-    @Metadata(description = "Used to set any properties that can be configured on the LongPollingTransport used by the"
-                            + " BayeuxClient (CometD) used by the streaming api",
-              label = "common,advanced")
+    @Metadata(
+            description = "Used to set any properties that can be configured on the LongPollingTransport used by the"
+                    + " BayeuxClient (CometD) used by the streaming api",
+            label = "common,advanced")
     private Map<String, Object> longPollingTransportProperties;
 
-    @Metadata(description = "SSL parameters to use, see SSLContextParameters class for all available options.",
-              label = "common,security")
+    @Metadata(
+            description = "SSL parameters to use, see SSLContextParameters class for all available options.",
+            label = "common,security")
     private SSLContextParameters sslContextParameters;
+
     @Metadata(description = "Enable usage of global SSL context parameters", label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
@@ -233,66 +274,96 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     @Metadata(description = "Port number of the HTTP proxy server to use.", label = "common,proxy")
     private Integer httpProxyPort;
 
-    @Metadata(description = "If set to true the configures the HTTP proxy to use as a SOCKS4 proxy.", defaultValue = "false",
-              label = "common,proxy")
+    @Metadata(
+            description = "If set to true the configures the HTTP proxy to use as a SOCKS4 proxy.",
+            defaultValue = "false",
+            label = "common,proxy")
     private boolean httpProxySocks4;
 
-    @Metadata(description = "If set to false disables the use of TLS when accessing the HTTP proxy.", defaultValue = "true",
-              label = "common,proxy,security")
+    @Metadata(
+            description = "If set to false disables the use of TLS when accessing the HTTP proxy.",
+            defaultValue = "true",
+            label = "common,proxy,security")
     private boolean httpProxySecure = true;
 
     @Metadata(description = "A list of addresses for which HTTP proxy server should be used.", label = "common,proxy")
     private Set<String> httpProxyIncludedAddresses;
 
-    @Metadata(description = "A list of addresses for which HTTP proxy server should not be used.", label = "common,proxy")
+    @Metadata(
+            description = "A list of addresses for which HTTP proxy server should not be used.",
+            label = "common,proxy")
     private Set<String> httpProxyExcludedAddresses;
 
     // Proxy basic authentication
-    @Metadata(description = "Username to use to authenticate against the HTTP proxy server.", label = "common,proxy,security")
+    @Metadata(
+            description = "Username to use to authenticate against the HTTP proxy server.",
+            label = "common,proxy,security")
     private String httpProxyUsername;
 
-    @Metadata(description = "Password to use to authenticate against the HTTP proxy server.", label = "common,proxy,security",
-              secret = true)
+    @Metadata(
+            description = "Password to use to authenticate against the HTTP proxy server.",
+            label = "common,proxy,security",
+            secret = true)
     private String httpProxyPassword;
 
-    @Metadata(description = "Used in authentication against the HTTP proxy server, needs to match the URI of the proxy"
-                            + " server in order for the httpProxyUsername and httpProxyPassword to be used for authentication.",
-              label = "common,proxy,security")
+    @Metadata(
+            description = "Used in authentication against the HTTP proxy server, needs to match the URI of the proxy"
+                    + " server in order for the httpProxyUsername and httpProxyPassword to be used for authentication.",
+            label = "common,proxy,security")
     private String httpProxyAuthUri;
 
-    @Metadata(description = "Realm of the proxy server, used in preemptive Basic/Digest authentication methods against"
-                            + " the HTTP proxy server.",
-              label = "common,proxy,security")
+    @Metadata(
+            description = "Realm of the proxy server, used in preemptive Basic/Digest authentication methods against"
+                    + " the HTTP proxy server.",
+            label = "common,proxy,security")
     private String httpProxyRealm;
 
-    @Metadata(description = "If set to true Digest authentication will be used when authenticating to the HTTP proxy,"
-                            + " otherwise Basic authorization method will be used",
-              defaultValue = "false", label = "common,proxy,security")
+    @Metadata(
+            description = "If set to true Digest authentication will be used when authenticating to the HTTP proxy,"
+                    + " otherwise Basic authorization method will be used",
+            defaultValue = "false",
+            label = "common,proxy,security")
     private boolean httpProxyUseDigestAuth;
 
-    @Metadata(description = "In what packages are the generated DTO classes. Typically the classes would be generated"
-                            + " using camel-salesforce-maven-plugin. "
-                            + " Set it if using the generated DTOs to gain the benefit of using short "
-                            + " SObject names in parameters/header values. Multiple packages can be separated by comma.",
-              javaType = "java.lang.String", label = "common")
+    @Metadata(
+            description = "In what packages are the generated DTO classes. Typically the classes would be generated"
+                    + " using camel-salesforce-maven-plugin. "
+                    + " Set it if using the generated DTOs to gain the benefit of using short "
+                    + " SObject names in parameters/header values. Multiple packages can be separated by comma.",
+            javaType = "java.lang.String",
+            label = "common")
     private String packages;
 
     @Deprecated
-    @Metadata(description = "Timeout in seconds to validate when a custom pubSubReplayId has been configured, when starting the Camel Salesforce consumer.",
-              defaultValue = "30", label = "consumer,advanced")
+    @Metadata(
+            description =
+                    "Timeout in seconds to validate when a custom pubSubReplayId has been configured, when starting the Camel Salesforce consumer.",
+            defaultValue = "30",
+            label = "consumer,advanced")
     private int initialReplyIdTimeout = 30;
 
-    @Metadata(label = "consumer,advanced",
-              description = "Use thread pool for processing received Salesforce events, for example to process events in parallel.")
+    @Metadata(
+            label = "consumer,advanced",
+            description =
+                    "Use thread pool for processing received Salesforce events, for example to process events in parallel.")
     private boolean consumerWorkerPoolEnabled;
-    @Metadata(label = "consumer,advanced",
-              description = "To use a custom thread pool for processing received Salesforce events, for example to process events in parallel.")
+
+    @Metadata(
+            label = "consumer,advanced",
+            description =
+                    "To use a custom thread pool for processing received Salesforce events, for example to process events in parallel.")
     private ExecutorService consumerWorkerPoolExecutorService;
-    @Metadata(label = "consumer,advanced", description = "Core thread pool size size for consumer worker pool.",
-              defaultValue = "10")
+
+    @Metadata(
+            label = "consumer,advanced",
+            description = "Core thread pool size size for consumer worker pool.",
+            defaultValue = "10")
     private int consumerWorkerPoolSize = 10;
-    @Metadata(label = "consumer,advanced", description = "Maximum thread pool size size for consumer worker pool.",
-              defaultValue = "20")
+
+    @Metadata(
+            label = "consumer,advanced",
+            description = "Maximum thread pool size size for consumer worker pool.",
+            defaultValue = "20")
     private int consumerWorkerPoolMaxSize = 20;
 
     // component state
@@ -404,7 +475,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-
     }
 
     @Override
@@ -442,7 +512,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
                 final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
                 sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
-                httpClient = createHttpClient(this, sslContextFactory, getCamelContext(), workerPoolSize, workerPoolMaxSize);
+                httpClient =
+                        createHttpClient(this, sslContextFactory, getCamelContext(), workerPoolSize, workerPoolMaxSize);
             }
             if (config != null) {
                 config.setHttpClient(httpClient);
@@ -477,7 +548,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             LOG.info("Found {} generated classes in packages: {}", classMap.size(), packages);
         } else {
             // use an empty map to avoid NPEs later
-            LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
+            LOG.warn(
+                    "Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
             classMap = new HashMap<>(0);
         }
 
@@ -571,7 +643,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public String getClientSecret() {
         return clientSecret;
-
     }
 
     public void setClientSecret(String clientSecret) {
@@ -917,7 +988,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     RestClient createRestClient(final Map<String, Object> properties) throws Exception {
-        final SalesforceEndpointConfig modifiedConfig = Optional.ofNullable(config).map(SalesforceEndpointConfig::copy)
+        final SalesforceEndpointConfig modifiedConfig = Optional.ofNullable(config)
+                .map(SalesforceEndpointConfig::copy)
                 .orElseGet(() -> new SalesforceEndpointConfig());
         final CamelContext camelContext = getCamelContext();
 
@@ -926,7 +998,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         return createRestClientFor(modifiedConfig);
     }
 
-    static RestClient createRestClient(final CamelContext camelContext, final Map<String, Object> properties) throws Exception {
+    static RestClient createRestClient(final CamelContext camelContext, final Map<String, Object> properties)
+            throws Exception {
 
         final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
         // let's work with a copy so original properties are intact
@@ -936,19 +1009,20 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         // let's work with a copy so original properties are intact
         PropertyBindingSupport.bindProperties(camelContext, loginConfig, new HashMap<>(properties));
 
-        final SSLContextParameters sslContextParameters
-                = Optional.ofNullable(camelContext.getSSLContextParameters()).orElseGet(() -> new SSLContextParameters());
+        final SSLContextParameters sslContextParameters =
+                Optional.ofNullable(camelContext.getSSLContextParameters()).orElseGet(() -> new SSLContextParameters());
         // let's work with a copy so original properties are intact
         PropertyBindingSupport.bindProperties(camelContext, sslContextParameters, new HashMap<>(properties));
 
         final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
         sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
 
-        final SalesforceHttpClient httpClient
-                = createHttpClient("SalesforceComponent", sslContextFactory, camelContext, 10, 20);
+        final SalesforceHttpClient httpClient =
+                createHttpClient("SalesforceComponent", sslContextFactory, camelContext, 10, 20);
         setupHttpClient(httpClient, camelContext, properties);
 
-        final SalesforceSession session = new SalesforceSession(camelContext, httpClient, httpClient.getTimeout(), loginConfig);
+        final SalesforceSession session =
+                new SalesforceSession(camelContext, httpClient, httpClient.getTimeout(), loginConfig);
         httpClient.setSession(session);
 
         return new DefaultRestClient(httpClient, config.getApiVersion(), session, loginConfig);
@@ -959,13 +1033,17 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     static SalesforceHttpClient createHttpClient(
-            Object source, final SslContextFactory.Client sslContextFactory, final CamelContext context, int workerPoolSize,
+            Object source,
+            final SslContextFactory.Client sslContextFactory,
+            final CamelContext context,
+            int workerPoolSize,
             int workerPoolMaxSize) {
         SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(
-                context, context.getExecutorServiceManager().newThreadPool(source, "SalesforceHttpClient", workerPoolSize,
-                        workerPoolMaxSize),
+                context,
+                context.getExecutorServiceManager()
+                        .newThreadPool(source, "SalesforceHttpClient", workerPoolSize, workerPoolMaxSize),
                 sslContextFactory);
         // default settings, use httpClientProperties to set other
         // properties
@@ -976,7 +1054,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     static SalesforceHttpClient setupHttpClient(
-            final SalesforceHttpClient httpClient, final CamelContext camelContext,
+            final SalesforceHttpClient httpClient,
+            final CamelContext camelContext,
             final Map<String, Object> httpClientProperties)
             throws Exception {
 
@@ -988,34 +1067,38 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final TypeConverter typeConverter = camelContext.getTypeConverter();
         PropertyBindingSupport.bindProperties(camelContext, httpClient, new HashMap<>(httpClientProperties));
 
-        final Long httpConnectionTimeout
-                = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_CONNECTION_TIMEOUT));
+        final Long httpConnectionTimeout =
+                typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_CONNECTION_TIMEOUT));
         final Long httpIdleTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_IDLE_TIMEOUT));
-        final Long httpRequestTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_REQUEST_TIMEOUT));
-        final Integer maxContentLength
-                = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_MAX_CONTENT_LENGTH));
-        Integer requestBufferSize
-                = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_REQUEST_BUFFER_SIZE));
+        final Long httpRequestTimeout =
+                typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_REQUEST_TIMEOUT));
+        final Integer maxContentLength =
+                typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_MAX_CONTENT_LENGTH));
+        Integer requestBufferSize =
+                typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_REQUEST_BUFFER_SIZE));
         if (requestBufferSize == null) {
             requestBufferSize = REQUEST_BUFFER_SIZE;
         }
 
         final String httpProxyHost = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_HOST));
         final Integer httpProxyPort = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_PROXY_PORT));
-        final boolean isHttpProxySocks4
-                = typeConverter.convertTo(boolean.class, httpClientProperties.get(HTTP_PROXY_IS_SOCKS4));
-        final boolean isHttpProxySecure
-                = typeConverter.convertTo(boolean.class, httpClientProperties.get(HTTP_PROXY_IS_SECURE));
+        final boolean isHttpProxySocks4 =
+                typeConverter.convertTo(boolean.class, httpClientProperties.get(HTTP_PROXY_IS_SOCKS4));
+        final boolean isHttpProxySecure =
+                typeConverter.convertTo(boolean.class, httpClientProperties.get(HTTP_PROXY_IS_SECURE));
         @SuppressWarnings("unchecked")
         final Set<String> httpProxyIncludedAddresses = (Set<String>) httpClientProperties.get(HTTP_PROXY_INCLUDE);
         @SuppressWarnings("unchecked")
         final Set<String> httpProxyExcludedAddresses = (Set<String>) httpClientProperties.get(HTTP_PROXY_EXCLUDE);
-        final String httpProxyUsername = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_USERNAME));
-        final String httpProxyPassword = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_PASSWORD));
-        final String httpProxyAuthUri = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_AUTH_URI));
+        final String httpProxyUsername =
+                typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_USERNAME));
+        final String httpProxyPassword =
+                typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_PASSWORD));
+        final String httpProxyAuthUri =
+                typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_AUTH_URI));
         final String httpProxyRealm = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_REALM));
-        final boolean httpProxyUseDigestAuth
-                = typeConverter.convertTo(boolean.class, httpClientProperties.get(HTTP_PROXY_USE_DIGEST_AUTH));
+        final boolean httpProxyUseDigestAuth =
+                typeConverter.convertTo(boolean.class, httpClientProperties.get(HTTP_PROXY_USE_DIGEST_AUTH));
 
         // set HTTP timeout settings
         if (httpIdleTimeout != null) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
 
 import java.util.Queue;
@@ -38,25 +39,27 @@ public class OpenTelemetryLongTaskTimer {
     private final ObservableLongUpDownCounter longTasksDuration;
     private final Queue<LongTask> activeTasks = new ConcurrentLinkedQueue<>();
 
-    public OpenTelemetryLongTaskTimer(Route route, Meter meter, Attributes attributes,
-                                      OpenTelemetryRoutePolicyConfiguration configuration,
-                                      OpenTelemetryRoutePolicyNamingStrategy namingStrategy, TimeUnit longTaskTimeUnit) {
+    public OpenTelemetryLongTaskTimer(
+            Route route,
+            Meter meter,
+            Attributes attributes,
+            OpenTelemetryRoutePolicyConfiguration configuration,
+            OpenTelemetryRoutePolicyNamingStrategy namingStrategy,
+            TimeUnit longTaskTimeUnit) {
 
-        this.longTasksActive = meter
-                .upDownCounterBuilder(namingStrategy.getLongTasksActiveName(route))
-                .setDescription(route != null ? "Route active long task metric" : "CamelContext active long task metric")
-                .buildWithCallback(
-                        observableMeasurement -> {
-                            observableMeasurement.record(activeTasks.size(), attributes);
-                        });
+        this.longTasksActive = meter.upDownCounterBuilder(namingStrategy.getLongTasksActiveName(route))
+                .setDescription(
+                        route != null ? "Route active long task metric" : "CamelContext active long task metric")
+                .buildWithCallback(observableMeasurement -> {
+                    observableMeasurement.record(activeTasks.size(), attributes);
+                });
 
-        this.longTasksDuration = meter
-                .upDownCounterBuilder(namingStrategy.getLongTasksDurationName(route))
-                .setDescription(route != null ? "Route long task duration metric" : "CamelContext long task duration metric")
+        this.longTasksDuration = meter.upDownCounterBuilder(namingStrategy.getLongTasksDurationName(route))
+                .setDescription(
+                        route != null ? "Route long task duration metric" : "CamelContext long task duration metric")
                 .setUnit(longTaskTimeUnit.name().toLowerCase())
-                .buildWithCallback(
-                        observableMeasurement -> observableMeasurement.record(
-                                allLongTaskDuration(longTaskTimeUnit), attributes));
+                .buildWithCallback(observableMeasurement ->
+                        observableMeasurement.record(allLongTaskDuration(longTaskTimeUnit), attributes));
     }
 
     public void remove() {

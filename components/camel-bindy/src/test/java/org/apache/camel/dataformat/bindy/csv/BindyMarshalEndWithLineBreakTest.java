@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -73,12 +74,14 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:withoutlb")
-                        .marshal().bindy(BindyType.Csv, MyCsvRecord2.class)
+                        .marshal()
+                        .bindy(BindyType.Csv, MyCsvRecord2.class)
                         .to("log:after.unmarshal")
                         .to("mock:result");
 
                 from("direct:withlb")
-                        .marshal().bindy(BindyType.Csv, MyCsvRecord.class)
+                        .marshal()
+                        .bindy(BindyType.Csv, MyCsvRecord.class)
                         .to("log:after.marshal")
                         .to("mock:result");
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.vectorstore;
 
 import java.util.ArrayList;
@@ -124,8 +125,8 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                     documents.add(new Document((String) body));
                 } else {
                     throw new IllegalArgumentException(
-                            "Message body must be a Document, List<Document>, String, List<String>, " +
-                                                       "float[], or List<float[]>, or embeddings must be present in headers");
+                            "Message body must be a Document, List<Document>, String, List<String>, "
+                                    + "float[], or List<float[]>, or embeddings must be present in headers");
                 }
             }
         }
@@ -135,9 +136,7 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
         message.setHeader(SpringAiVectorStoreHeaders.DOCUMENTS_ADDED, documents.size());
 
         // Set document IDs header
-        List<String> documentIds = documents.stream()
-                .map(Document::getId)
-                .toList();
+        List<String> documentIds = documents.stream().map(Document::getId).toList();
         message.setHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, documentIds);
     }
 
@@ -184,8 +183,8 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                 // Delete by filter is not directly supported in the base VectorStore interface
                 // It would require implementation-specific handling
                 throw new UnsupportedOperationException(
-                        "Delete by filter expression is not supported by all vector stores. " +
-                                                        "Please use document IDs instead.");
+                        "Delete by filter expression is not supported by all vector stores. "
+                                + "Please use document IDs instead.");
             } else {
                 throw new IllegalArgumentException(
                         "Either document IDs or filter expression must be provided for DELETE operation");
@@ -218,10 +217,8 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                 String.class);
 
         // Build search request
-        SearchRequest.Builder builder = SearchRequest.builder()
-                .query(query)
-                .topK(topK)
-                .similarityThreshold(similarityThreshold);
+        SearchRequest.Builder builder =
+                SearchRequest.builder().query(query).topK(topK).similarityThreshold(similarityThreshold);
 
         if (filterExpression != null && !filterExpression.isEmpty()) {
             builder.filterExpression(filterExpression);
@@ -236,9 +233,8 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
         message.setHeader(SpringAiVectorStoreHeaders.SIMILAR_DOCUMENTS, similarDocuments);
 
         // Set document IDs header
-        List<String> documentIds = similarDocuments.stream()
-                .map(Document::getId)
-                .toList();
+        List<String> documentIds =
+                similarDocuments.stream().map(Document::getId).toList();
         message.setHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, documentIds);
 
         message.setBody(similarDocuments);

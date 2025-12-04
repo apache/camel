@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.msk;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.msk.client.MSK2ClientFactory;
 import org.apache.camel.component.aws2.msk.client.MSK2InternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientOptimizedImpl;
 import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MSK2ClientFactoryTest {
 

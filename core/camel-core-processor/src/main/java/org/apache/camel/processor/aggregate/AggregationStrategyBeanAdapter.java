@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 import java.lang.reflect.Method;
@@ -36,7 +37,8 @@ import org.apache.camel.support.service.ServiceSupport;
  * This allows end users to use POJOs for the aggregation logic, instead of having to implement the Camel API
  * {@link AggregationStrategy}.
  */
-public final class AggregationStrategyBeanAdapter extends ServiceSupport implements AggregationStrategy, CamelContextAware {
+public final class AggregationStrategyBeanAdapter extends ServiceSupport
+        implements AggregationStrategy, CamelContextAware {
 
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     private CamelContext camelContext;
@@ -178,7 +180,8 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
         }
 
         // must not be the groovy meta class and lookup methods
-        if (method.getName().equals("getMetaClass") || method.getName().equals("setMetaClass")
+        if (method.getName().equals("getMetaClass")
+                || method.getName().equals("setMetaClass")
                 || method.getName().equals("$getLookup")) {
             return false;
         }
@@ -218,8 +221,8 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
                     if (found == null) {
                         found = method;
                     } else {
-                        throw new IllegalArgumentException(
-                                "The bean " + type + " has 2 or more methods and no explicit method name was configured.");
+                        throw new IllegalArgumentException("The bean " + type
+                                + " has 2 or more methods and no explicit method name was configured.");
                     }
                 }
             }

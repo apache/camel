@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.xml.pretty;
 
 import java.io.ByteArrayInputStream;
@@ -28,8 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public final class XmlPrettyPrinter {
 
-    private XmlPrettyPrinter() {
-    }
+    private XmlPrettyPrinter() {}
 
     @FunctionalInterface
     public interface ColorPrintElement {
@@ -91,7 +91,8 @@ public final class XmlPrettyPrinter {
         }
     }
 
-    private static String doParse(String xml, int blanks, boolean declaration, ColorPrintElement color) throws Exception {
+    private static String doParse(String xml, int blanks, boolean declaration, ColorPrintElement color)
+            throws Exception {
         SAXParser parser;
         final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -132,7 +133,8 @@ public final class XmlPrettyPrinter {
             }
 
             @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            public void startElement(String uri, String localName, String qName, Attributes attributes)
+                    throws SAXException {
                 inElement = true;
                 sb.append(XmlPrettyPrinter.padString(indent, blanks));
 
@@ -154,7 +156,12 @@ public final class XmlPrettyPrinter {
                         String v = color.color(ColorPrintElement.ATTRIBUTE_VALUE, attributes.getValue(i));
                         String eq = color.color(ColorPrintElement.ATTRIBUTE_EQUAL, "=");
                         String quote = color.color(ColorPrintElement.ATTRIBUTE_QUOTE, "\"");
-                        lb.append(" ").append(k).append(eq).append(quote).append(v).append(quote);
+                        lb.append(" ")
+                                .append(k)
+                                .append(eq)
+                                .append(quote)
+                                .append(v)
+                                .append(quote);
                     }
                     sb.append(lb);
                     value = color.color(ColorPrintElement.ELEMENT, ">");
@@ -200,5 +207,4 @@ public final class XmlPrettyPrinter {
         parser.parse(new ByteArrayInputStream(xml.getBytes()), handler);
         return sb.toString();
     }
-
 }

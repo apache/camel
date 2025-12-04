@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
 
 import com.lmax.disruptor.BlockingWaitStrategy;
@@ -62,7 +63,8 @@ public enum DisruptorWaitStrategy {
      */
     Yielding(YieldingWaitStrategy.class);
 
-    //    TODO PhasedBackoffWaitStrategy constructor requires parameters, unlike the other strategies. We leave it out for now
+    //    TODO PhasedBackoffWaitStrategy constructor requires parameters, unlike the other strategies. We leave it out
+    // for now
     //    /**
     //     * Phased wait strategy for waiting {@link EventProcessor}s on a barrier.<p/>
     //     *
@@ -72,7 +74,8 @@ public enum DisruptorWaitStrategy {
     //     */
     //    PHASED_BACKOFF(PhasedBackoffWaitStrategy.class),
 
-    //    TODO TimeoutBlockingWaitStrategy constructor requires parameters, unlike the other strategies. We leave it out for now
+    //    TODO TimeoutBlockingWaitStrategy constructor requires parameters, unlike the other strategies. We leave it out
+    // for now
     //    /**
     //     * TODO, wait for documentation from LMAX
     //     */

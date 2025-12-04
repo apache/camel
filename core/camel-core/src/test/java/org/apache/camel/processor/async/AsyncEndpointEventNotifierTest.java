@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -28,9 +32,6 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
 
@@ -85,9 +86,11 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").to("mock:before").to("async:bye:camel?delay=250").to("mock:result");
+                from("direct:start")
+                        .to("mock:before")
+                        .to("async:bye:camel?delay=250")
+                        .to("mock:result");
             }
         };
     }
-
 }

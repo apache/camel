@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,8 +39,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Exchange messages with JGroups clusters.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName",
-             category = { Category.CLUSTERING, Category.MESSAGING }, headersClass = JGroupsConstants.class)
+@UriEndpoint(
+        firstVersion = "2.13.0",
+        scheme = "jgroups",
+        title = "JGroups",
+        syntax = "jgroups:clusterName",
+        category = {Category.CLUSTERING, Category.MESSAGING},
+        headersClass = JGroupsConstants.class)
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
@@ -51,13 +57,20 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String clusterName;
+
     @UriParam
     private String channelProperties;
+
     @UriParam(label = "consumer")
     private boolean enableViewMessages;
 
-    public JGroupsEndpoint(String endpointUri, Component component, JChannel channel, String clusterName,
-                           String channelProperties, boolean enableViewMessages) {
+    public JGroupsEndpoint(
+            String endpointUri,
+            Component component,
+            JChannel channel,
+            String clusterName,
+            String channelProperties,
+            boolean enableViewMessages) {
         super(endpointUri, component);
         this.channel = channel;
         this.clusterName = clusterName;
@@ -191,5 +204,4 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     public void setEnableViewMessages(boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;
     }
-
 }

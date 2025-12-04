@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.function.Supplier;
@@ -86,7 +87,8 @@ public interface Registry extends BeanRepository {
      * @param  destroyMethod         optional destroy method (invoked at unbind or stopping Camel)
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
-    void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod) throws RuntimeCamelException;
+    void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod)
+            throws RuntimeCamelException;
 
     /**
      * Binds the bean (via a supplier) to the repository (if possible).
@@ -155,5 +157,4 @@ public interface Registry extends BeanRepository {
     default Object wrap(Object value) {
         return value;
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.security;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -40,19 +45,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 @CamelSpringTest
-@ContextConfiguration(locations = { "camel-context.xml" })
-@EnabledIf(value = "org.apache.camel.itest.security.GreeterClientTest#isPortAvailable",
-           disabledReason = "This test uses a fixed port that may not be available on certain hosts")
+@ContextConfiguration(locations = {"camel-context.xml"})
+@EnabledIf(
+        value = "org.apache.camel.itest.security.GreeterClientTest#isPortAvailable",
+        disabledReason = "This test uses a fixed port that may not be available on certain hosts")
 public class GreeterClientTest {
     private static final java.net.URL WSDL_LOC;
+
     static {
         WSDL_LOC = GreeterClientTest.class.getClassLoader().getResource("wsdl/hello_world.wsdl");
     }
+
     private static final QName SERVICE_QNAME = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
 
     private static final QName PORT_QNAME = new QName("http://apache.org/hello_world_soap_http", "SoapOverHttp");
@@ -104,8 +108,9 @@ public class GreeterClientTest {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             assertTrue(ex instanceof SOAPFaultException, "Get a wrong type exception.");
-            assertTrue(msg.startsWith("The security token could not be authenticated or authorized")
-                    || msg.startsWith("A security error was encountered when verifying the messag"),
+            assertTrue(
+                    msg.startsWith("The security token could not be authenticated or authorized")
+                            || msg.startsWith("A security error was encountered when verifying the messag"),
                     "Get a wrong exception message: " + msg);
         }
     }
@@ -118,11 +123,13 @@ public class GreeterClientTest {
             fail("should fail");
         } catch (Exception ex) {
             assertTrue(ex instanceof SOAPFaultException, "Get a wrong type exception.");
-            assertTrue(ex.getMessage().startsWith("Cannot access the processor which has been protected."),
+            assertTrue(
+                    ex.getMessage().startsWith("Cannot access the processor which has been protected."),
                     "Get a wrong exception message");
             assertTrue(
-                    ex.getMessage().endsWith(
-                            "Caused by: [org.springframework.security.authorization.AuthorizationDeniedException - Access Denied]"),
+                    ex.getMessage()
+                            .endsWith(
+                                    "Caused by: [org.springframework.security.authorization.AuthorizationDeniedException - Access Denied]"),
                     "Get a wrong exception message");
         }
     }

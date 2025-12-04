@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase;
+
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_GET;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_PUT;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_TTL;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -30,13 +38,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_GET;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_PUT;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_TTL;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
 
 /**
  * Couchbase producer generates various type of operations. PUT, GET, and DELETE are currently supported
@@ -97,7 +98,8 @@ public class CouchbaseProducer extends DefaultProducer {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Unsupported persistTo parameter. Supported values are 0 to 4. Currently provided: " + persistTo);
+                        "Unsupported persistTo parameter. Supported values are 0 to 4. Currently provided: "
+                                + persistTo);
         }
 
         switch (replicateTo) {
@@ -115,19 +117,22 @@ public class CouchbaseProducer extends DefaultProducer {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Unsupported replicateTo parameter. Supported values are 0 to 3. Currently provided: " + replicateTo);
+                        "Unsupported replicateTo parameter. Supported values are 0 to 3. Currently provided: "
+                                + replicateTo);
         }
-
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
-        String id = (headers.containsKey(HEADER_ID)) ? exchange.getIn().getHeader(HEADER_ID, String.class) : endpoint.getId();
+        String id = (headers.containsKey(HEADER_ID))
+                ? exchange.getIn().getHeader(HEADER_ID, String.class)
+                : endpoint.getId();
 
         int ttl = (headers.containsKey(HEADER_TTL))
-                ? Integer.parseInt(exchange.getIn().getHeader(HEADER_TTL, String.class)) : DEFAULT_TTL;
+                ? Integer.parseInt(exchange.getIn().getHeader(HEADER_TTL, String.class))
+                : DEFAULT_TTL;
 
         if (endpoint.isAutoStartIdForInserts()) {
             id = Long.toString(startId.getAndIncrement());
@@ -138,17 +143,18 @@ public class CouchbaseProducer extends DefaultProducer {
         if (endpoint.getOperation().equals(COUCHBASE_PUT)) {
             LOG.trace("Type of operation: PUT");
             Object obj = exchange.getIn().getBody();
-            Boolean result = CouchbaseCollectionOperation.setDocument(collection, id, ttl, obj, persistTo, replicateTo,
-                    writeQueryTimeout, producerRetryPause);
+            Boolean result = CouchbaseCollectionOperation.setDocument(
+                    collection, id, ttl, obj, persistTo, replicateTo, writeQueryTimeout, producerRetryPause);
             exchange.getMessage().setBody(result);
         } else if (endpoint.getOperation().equals(COUCHBASE_GET)) {
             LOG.trace("Type of operation: GET");
-            GetResult result = CouchbaseCollectionOperation.getDocument(collection, id, queryTimeout, producerRetryPause);
+            GetResult result =
+                    CouchbaseCollectionOperation.getDocument(collection, id, queryTimeout, producerRetryPause);
             exchange.getMessage().setBody(result);
         } else if (endpoint.getOperation().equals(COUCHBASE_DELETE)) {
             LOG.trace("Type of operation: DELETE");
-            MutationResult result
-                    = CouchbaseCollectionOperation.removeDocument(collection, id, writeQueryTimeout, producerRetryPause);
+            MutationResult result =
+                    CouchbaseCollectionOperation.removeDocument(collection, id, writeQueryTimeout, producerRetryPause);
             exchange.getMessage().setBody(result.toString());
         }
         // cleanup the cache headers
@@ -162,5 +168,4 @@ public class CouchbaseProducer extends DefaultProducer {
             client.core().shutdown();
         }
     }
-
 }

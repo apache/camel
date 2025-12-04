@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,12 +37,12 @@ public class SpringFaultToleranceRouteOkTest extends CamelSpringTestSupport {
     @Test
     public void testFaultTolerance() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
 
         template.sendBody("direct:start", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

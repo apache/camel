@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro.processors;
 
 import org.apache.camel.Exchange;
@@ -47,5 +48,4 @@ public class ReflectionInOnlyProcessor implements Processor {
     public void setTestReflection(TestReflection testReflection) {
         this.testReflection = testReflection;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -30,9 +34,6 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Isolated("Depends on precise timing that may be hard to achieve if the system is under pressure")
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
@@ -63,8 +64,7 @@ public class DefaultTimeoutMapTest {
         map.put("A", 123, 50);
         assertEquals(1, map.size());
 
-        await().atMost(Duration.ofSeconds(2))
-                .untilAsserted(() -> assertEquals(0, map.size()));
+        await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> assertEquals(0, map.size()));
 
         map.stop();
     }
@@ -121,8 +121,7 @@ public class DefaultTimeoutMapTest {
         assertEquals(1, map.size());
 
         // should have been timed out now
-        await().atMost(Duration.ofSeconds(2))
-                .untilAsserted(() -> assertEquals(0, map.size()));
+        await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> assertEquals(0, map.size()));
 
         assertSame(e, map.getExecutor());
 
@@ -152,11 +151,10 @@ public class DefaultTimeoutMapTest {
         // is not expired
         map.put("F", 6, 800);
 
-        await().atMost(Duration.ofSeconds(2))
-                .untilAsserted(() -> {
-                    assertFalse(keys.isEmpty());
-                    assertEquals("D", keys.get(0));
-                });
+        await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
+            assertFalse(keys.isEmpty());
+            assertEquals("D", keys.get(0));
+        });
 
         assertEquals(4, values.get(0).intValue());
         assertEquals("B", keys.get(1));
@@ -186,8 +184,7 @@ public class DefaultTimeoutMapTest {
         map.put("A", 1, 50);
 
         // should not timeout as the scheduler doesn't run
-        await().atMost(Duration.ofSeconds(1))
-                .untilAsserted(() -> assertEquals(1, map.size()));
+        await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> assertEquals(1, map.size()));
 
         // start
         map.start();
@@ -197,5 +194,4 @@ public class DefaultTimeoutMapTest {
 
         map.stop();
     }
-
 }

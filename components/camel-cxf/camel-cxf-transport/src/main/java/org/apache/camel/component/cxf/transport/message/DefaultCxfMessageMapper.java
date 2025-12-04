@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport.message;
 
 import java.security.Principal;
@@ -38,10 +39,10 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
 
     @Override
     public Message createCxfMessageFromCamelExchange(
-            Exchange camelExchange,
-            HeaderFilterStrategy headerFilterStrategy) {
+            Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy) {
 
-        org.apache.cxf.message.Message answer = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, camelExchange, false);
+        org.apache.cxf.message.Message answer =
+                CxfMessageHelper.getCxfInMessage(headerFilterStrategy, camelExchange, false);
 
         org.apache.camel.Message camelMessage = camelExchange.getIn();
         String requestContentType = getRequestContentType(camelMessage);
@@ -76,7 +77,13 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
 
         LOG.trace(
                 "Processing {}, requestContentType = {}, acceptContentTypes = {}, encoding = {}, path = {}, basePath = {}, verb = {}",
-                camelExchange, requestContentType, acceptContentTypes, enc, path, basePath, verb);
+                camelExchange,
+                requestContentType,
+                acceptContentTypes,
+                enc,
+                path,
+                basePath,
+                verb);
 
         return answer;
     }
@@ -92,14 +99,11 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
             public boolean isUserInRole(String role) {
                 return request.isUserInRole(role);
             }
-
         });
     }
 
     @Override
-    public void propagateResponseHeadersToCamel(
-            Message cxfMessage, Exchange exchange,
-            HeaderFilterStrategy strategy) {
+    public void propagateResponseHeadersToCamel(Message cxfMessage, Exchange exchange, HeaderFilterStrategy strategy) {
 
         LOG.trace("Propagating response headers from CXF message {}", cxfMessage);
 
@@ -128,8 +132,7 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
         Object value = cxfMessage.get(key);
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
             camelHeaders.put(Exchange.HTTP_RESPONSE_CODE, value);
-            LOG.trace("Populate header from CXF header={} value={} as {}",
-                    key, value, Exchange.HTTP_RESPONSE_CODE);
+            LOG.trace("Populate header from CXF header={} value={} as {}", key, value, Exchange.HTTP_RESPONSE_CODE);
         }
 
         // propagate HTTP CONTENT_TYPE
@@ -183,5 +186,4 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
         // return default
         return "*/*";
     }
-
 }

@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(inheritLocations = false)
-public class SpringConsumerTemplateOutOfCamelContextTest extends SpringConsumerTemplateTest {
-
-}
+public class SpringConsumerTemplateOutOfCamelContextTest extends SpringConsumerTemplateTest {}

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weaviate;
 
 import org.apache.camel.spi.Metadata;
 
 public class WeaviateVectorDbHeaders {
-    @Metadata(description = "The action to be performed.", javaType = "String",
-              enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE,QUERY,QUERY_BY_ID")
+    @Metadata(
+            description = "The action to be performed.",
+            javaType = "String",
+            enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE,QUERY,QUERY_BY_ID")
     public static final String ACTION = "CamelWeaviateAction";
 
     @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
@@ -68,5 +70,4 @@ public class WeaviateVectorDbHeaders {
 
     @Metadata(description = "Key Value for Insert/Upsert operation", javaType = "String")
     public static final String KEY_VALUE = "CamelWeaviateKeyValue";
-
 }

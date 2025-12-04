@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.util.ArrayList;
@@ -61,13 +62,16 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         }
 
         Processor processor = camelContext.getProcessor(id);
-        ProcessorDefinition<?> def
-                = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
+        ProcessorDefinition<?> def = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
+                .getProcessorDefinition(id);
 
         // processor may be null if its anonymous inner class or as lambda
         if (def != null) {
             try {
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
+                ObjectName on = getManagementStrategy()
+                        .getManagementObjectNameStrategy()
                         .getObjectNameForProcessor(camelContext, processor, def);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
             } catch (MalformedObjectNameException e) {
@@ -86,13 +90,16 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         }
 
         Processor processor = camelContext.getProcessor(id);
-        ProcessorDefinition<?> def
-                = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
+        ProcessorDefinition<?> def = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
+                .getProcessorDefinition(id);
 
         // processor may be null if its anonymous inner class or as lambda
         if (def != null) {
             try {
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
+                ObjectName on = getManagementStrategy()
+                        .getManagementObjectNameStrategy()
                         .getObjectNameForStep(camelContext, processor, def);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
             } catch (MalformedObjectNameException e) {
@@ -113,7 +120,9 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         Route route = camelContext.getRoute(routeId);
         if (route != null) {
             try {
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
+                ObjectName on = getManagementStrategy()
+                        .getManagementObjectNameStrategy()
+                        .getObjectNameForRoute(route);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
             } catch (MalformedObjectNameException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -138,7 +147,8 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
 
         if (group != null && !camelContext.getRoutesByGroup(group).isEmpty()) {
             try {
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
+                ObjectName on = getManagementStrategy()
+                        .getManagementObjectNameStrategy()
                         .getObjectNameForRouteGroup(camelContext, group);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteGroupMBean.class);
             } catch (MalformedObjectNameException e) {
@@ -160,9 +170,11 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         for (Route route : camelContext.getRoutes()) {
             if (groupId == null || groupId.equals(route.getGroup())) {
                 try {
-                    ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
-                    ManagedRouteMBean mr
-                            = getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+                    ObjectName on = getManagementStrategy()
+                            .getManagementObjectNameStrategy()
+                            .getObjectNameForRoute(route);
+                    ManagedRouteMBean mr =
+                            getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
                     answer.add(mr);
                 } catch (MalformedObjectNameException e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -183,8 +195,9 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         if (route != null) {
             try {
                 Consumer consumer = route.getConsumer();
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForConsumer(camelContext,
-                        consumer);
+                ObjectName on = getManagementStrategy()
+                        .getManagementObjectNameStrategy()
+                        .getObjectNameForConsumer(camelContext, consumer);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
             } catch (MalformedObjectNameException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -206,12 +219,12 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         }
 
         try {
-            ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
+            ObjectName on = getManagementStrategy()
+                    .getManagementObjectNameStrategy()
                     .getObjectNameForCamelContext(camelContext);
             return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedCamelContextMBean.class);
         } catch (MalformedObjectNameException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.backoff;
 
 import java.util.ArrayList;
@@ -46,8 +47,11 @@ public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     private long nextAttemptTime;
     private Throwable cause;
 
-    public BackOffTimerTask(BackOffTimer timer, BackOff backOff, ScheduledExecutorService scheduler,
-                            ThrowingFunction<BackOffTimer.Task, Boolean, Exception> function) {
+    public BackOffTimerTask(
+            BackOffTimer timer,
+            BackOff backOff,
+            ScheduledExecutorService scheduler,
+            ThrowingFunction<BackOffTimer.Task, Boolean, Exception> function) {
         this.timer = timer;
         this.backOff = backOff;
         this.scheduler = scheduler;
@@ -262,14 +266,14 @@ public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     @Override
     public String toString() {
         return "BackOffTimerTask["
-               + "name=" + timer.getName()
-               + ", status=" + status
-               + ", currentAttempts=" + currentAttempts
-               + ", currentDelay=" + currentDelay
-               + ", currentElapsedTime=" + currentElapsedTime
-               + ", firstAttemptTime=" + firstAttemptTime
-               + ", lastAttemptTime=" + lastAttemptTime
-               + ", nextAttemptTime=" + nextAttemptTime
-               + ']';
+                + "name=" + timer.getName()
+                + ", status=" + status
+                + ", currentAttempts=" + currentAttempts
+                + ", currentDelay=" + currentDelay
+                + ", currentElapsedTime=" + currentElapsedTime
+                + ", firstAttemptTime=" + firstAttemptTime
+                + ", lastAttemptTime=" + lastAttemptTime
+                + ", nextAttemptTime=" + nextAttemptTime
+                + ']';
     }
 }

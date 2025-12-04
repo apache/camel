@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -69,18 +70,19 @@ public class SplunkProducerManualTest extends SplunkTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:stream")
-                        .to("splunk://stream?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX
-                            + "&sourceType=StreamSourceType&source=StreamSource")
+                        .to("splunk://stream?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index="
+                                + INDEX + "&sourceType=StreamSourceType&source=StreamSource")
                         .to("mock:stream-result");
 
                 from("direct:submit")
-                        .to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX
-                            + "&sourceType=testSource&source=test")
+                        .to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index="
+                                + INDEX + "&sourceType=testSource&source=test")
                         .to("mock:submitresult");
 
-                from("direct:tcp").to("splunk://tcp?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD
-                                      + "&tcpReceiverPort=" + TCP_RECIEVER_PORT + "&index=" + INDEX
-                                      + "&sourceType=testSource&source=test")
+                from("direct:tcp")
+                        .to("splunk://tcp?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD
+                                + "&tcpReceiverPort=" + TCP_RECIEVER_PORT + "&index=" + INDEX
+                                + "&sourceType=testSource&source=test")
                         .to("mock:tcpresult");
             }
         };

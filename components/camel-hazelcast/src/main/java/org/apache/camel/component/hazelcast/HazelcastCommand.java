@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
 
 public enum HazelcastCommand {
-
     map,
     multimap,
     queue,
@@ -29,5 +29,4 @@ public enum HazelcastCommand {
     list,
     replicatedmap,
     ringbuffer
-
 }

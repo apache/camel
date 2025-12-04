@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.handlers;
 
 import java.net.SocketAddress;
@@ -49,7 +50,8 @@ public class ServerResponseFutureListener implements ChannelFutureListener {
     public void operationComplete(ChannelFuture future) throws Exception {
         // if it was not a success then thrown an exception
         if (!future.isSuccess()) {
-            Exception e = new CamelExchangeException("Cannot write response to " + remoteAddress, exchange, future.cause());
+            Exception e =
+                    new CamelExchangeException("Cannot write response to " + remoteAddress, exchange, future.cause());
             consumer.getExceptionHandler().handleException(e);
         }
 

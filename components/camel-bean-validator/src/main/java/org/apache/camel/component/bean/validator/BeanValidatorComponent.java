@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
 
 import java.util.Map;
@@ -38,19 +39,23 @@ public class BeanValidatorComponent extends DefaultComponent {
 
     @Metadata
     private boolean ignoreXmlConfiguration;
+
     @Metadata(label = "advanced")
     private ValidationProviderResolver validationProviderResolver;
+
     @Metadata(label = "advanced")
     private MessageInterpolator messageInterpolator;
+
     @Metadata(label = "advanced")
     private TraversableResolver traversableResolver;
+
     @Metadata(label = "advanced")
     private ConstraintValidatorFactory constraintValidatorFactory;
+
     @Metadata(label = "advanced", autowired = true)
     private ValidatorFactory validatorFactory;
 
-    public BeanValidatorComponent() {
-    }
+    public BeanValidatorComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

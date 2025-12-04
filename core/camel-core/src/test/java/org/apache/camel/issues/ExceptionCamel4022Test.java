@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExceptionCamel4022Test extends ContextTestSupport {
 
@@ -36,8 +37,8 @@ public class ExceptionCamel4022Test extends ContextTestSupport {
         getMockEndpoint("mock:onexception").expectedMessageCount(0);
         getMockEndpoint("mock:dlc").expectedMessageCount(0);
 
-        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:start", "<body/>"),
-                "Should throw an exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.sendBody("direct:start", "<body/>"), "Should throw an exception");
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Damn Again", cause.getMessage());
@@ -67,15 +68,20 @@ public class ExceptionCamel4022Test extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dlc").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // onException that does NOT handle the exception
-                onException(Exception.class).logStackTrace(false).process(new MyExceptionThrower("Damn Again"))
+                onException(Exception.class)
+                        .logStackTrace(false)
+                        .process(new MyExceptionThrower("Damn Again"))
                         .to("mock:onexception");
 
                 // route
                 from("direct:start").to("mock:a").to("direct:intermediate").to("mock:result2");
 
                 // 2nd route
-                from("direct:intermediate").to("mock:b").setBody(constant("<some-value/>"))
-                        .process(new MyExceptionThrower("Damn")).to("mock:intermediate");
+                from("direct:intermediate")
+                        .to("mock:b")
+                        .setBody(constant("<some-value/>"))
+                        .process(new MyExceptionThrower("Damn"))
+                        .to("mock:intermediate");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -30,8 +31,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BasicAuthDefinition extends RestSecurityDefinition {
 
-    public BasicAuthDefinition() {
-    }
+    public BasicAuthDefinition() {}
 
     public BasicAuthDefinition(RestDefinition rest) {
         super(rest);

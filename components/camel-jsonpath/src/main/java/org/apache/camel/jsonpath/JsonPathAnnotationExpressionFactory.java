@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.lang.annotation.Annotation;
@@ -29,8 +30,10 @@ public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpres
 
     @Override
     public Expression createExpression(
-            CamelContext camelContext, Annotation annotation,
-            LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+            CamelContext camelContext,
+            Annotation annotation,
+            LanguageAnnotation languageAnnotation,
+            Class<?> expressionReturnType) {
 
         String expression = getExpressionFromAnnotation(annotation);
         JsonPathExpression answer = new JsonPathExpression(expression);
@@ -77,5 +80,4 @@ public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpres
         }
         return answer;
     }
-
 }

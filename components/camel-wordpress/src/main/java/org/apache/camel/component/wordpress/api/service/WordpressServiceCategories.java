@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service;
 
 import org.apache.camel.component.wordpress.api.model.Category;
 import org.apache.camel.component.wordpress.api.model.CategorySearchCriteria;
 
-public interface WordpressServiceCategories extends WordpressCrudService<Category, CategorySearchCriteria> {
-
-}
+public interface WordpressServiceCategories extends WordpressCrudService<Category, CategorySearchCriteria> {}

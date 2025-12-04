@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 public class FromFtpSimpleNoEndpointPathRelativeMoveToAbsoluteNotStepwiseIT
@@ -22,7 +23,6 @@ public class FromFtpSimpleNoEndpointPathRelativeMoveToAbsoluteNotStepwiseIT
     @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}?password=admin&recursive=true&binary=false"
-               + "&move=/.done&initialDelay=2500&delay=5000&stepwise=false";
+                + "&move=/.done&initialDelay=2500&delay=5000&stepwise=false";
     }
-
 }

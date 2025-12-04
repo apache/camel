@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group.internal;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,10 +37,6 @@ import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ZooKeeperGroupTest {
 
@@ -55,9 +56,9 @@ public class ZooKeeperGroupTest {
                 .connectString("localhost:" + port)
                 .retryPolicy(new RetryOneTime(1))
                 .build();
-        //curator.start();
+        // curator.start();
         group = new ZooKeeperGroup<>(curator, PATH, NodeState.class);
-        //group.start();
+        // group.start();
         // Starting curator and group is not necessary for the current tests.
     }
 
@@ -72,7 +73,9 @@ public class ZooKeeperGroupTest {
     private static void putChildData(ZooKeeperGroup<NodeState> group, String path, String container) throws Exception {
         NodeState node = new NodeState("test", container);
         ByteArrayOutputStream data = new ByteArrayOutputStream();
-        new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).writeValue(data, node);
+        new ObjectMapper()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .writeValue(data, node);
         ChildData<NodeState> child = new ChildData<>(path, new Stat(), data.toByteArray(), node);
         group.putCurrentData(path, child);
     }
@@ -225,5 +228,4 @@ public class ZooKeeperGroupTest {
         assertThat(slaves.get(0).getContainer(), equalTo("container1"));
         assertThat(slaves.get(1).getContainer(), equalTo("container3"));
     }
-
 }

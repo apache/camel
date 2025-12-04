@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml.in;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("Run manually to check how the MX parser works")
 public class ParserTest {
@@ -46,8 +47,8 @@ public class ParserTest {
             xpp.getNamespace("prefix"); // to check - implementation is weird
             int nsc = xpp.getNamespaceCount(xpp.getDepth());
             if (nsc > 0) {
-                xpp.getNamespacePrefix(0/*pos*/);
-                xpp.getNamespaceUri(0/*pos*/);
+                xpp.getNamespacePrefix(0 /*pos*/);
+                xpp.getNamespaceUri(0 /*pos*/);
             }
             xpp.getText(); // check handling for non START/END_TAG
             xpp.getTextCharacters(new int[2]); // check handling for non START/END_TAG
@@ -68,10 +69,11 @@ public class ParserTest {
                         LOG.debug(" - attributes:");
                         for (int i = 0; i < ac; i++) {
                             LOG.debug("    - " + xpp.getAttributeName(i)
-                                      + (xpp.getAttributePrefix(i) == null
-                                              ? "" : " (prefix: " + xpp.getAttributePrefix(i) + ")")
-                                      + ": " + xpp.getAttributeValue(i)
-                                      + ", ns: " + xpp.getAttributeNamespace(i));
+                                    + (xpp.getAttributePrefix(i) == null
+                                            ? ""
+                                            : " (prefix: " + xpp.getAttributePrefix(i) + ")")
+                                    + ": " + xpp.getAttributeValue(i)
+                                    + ", ns: " + xpp.getAttributeNamespace(i));
                         }
                     }
                     if ("e1".equals(xpp.getName())) {
@@ -108,21 +110,18 @@ public class ParserTest {
                 case MXParser.IGNORABLE_WHITESPACE -> {
                     xpp.isWhitespace(); // always true
                 }
-                case MXParser.PROCESSING_INSTRUCTION -> {
-                }
-                case MXParser.COMMENT -> {
-                }
-                case MXParser.DOCDECL -> {
-                }
-                default -> {
-                }
+                case MXParser.PROCESSING_INSTRUCTION -> {}
+                case MXParser.COMMENT -> {}
+                case MXParser.DOCDECL -> {}
+                default -> {}
             }
             eventType = xpp.next();
         }
     }
 
     private static MXParser getMxParser() throws IOException, XmlPullParserException {
-        String xml = """
+        String xml =
+                """
                 <?xml version='1.0'?>
                 <c:root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="uri:camel" xmlns="uri:camel-beans">
                     <c:e1 a="value-1" b:a="value-2" xmlns:c="uri:cxf" xmlns:b="uri:b" />
@@ -155,5 +154,4 @@ public class ParserTest {
             }
         }
     }
-
 }

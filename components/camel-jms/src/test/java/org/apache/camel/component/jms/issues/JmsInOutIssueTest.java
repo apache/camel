@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.Future;
 
@@ -32,13 +35,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JmsInOutIssueTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -60,14 +62,16 @@ public class JmsInOutIssueTest extends AbstractJMSTest {
 
     @Test
     public void testInOutWithAsyncRequestBody() throws Exception {
-        Future<String> reply = template.asyncRequestBody("activemq:queue:inJmsInOutIssueTest", "Hello World", String.class);
+        Future<String> reply =
+                template.asyncRequestBody("activemq:queue:inJmsInOutIssueTest", "Hello World", String.class);
         assertEquals("Bye World", reply.get());
     }
 
     @Test
     public void testInOutWithSendExchange() {
-        Exchange out = template.send("activemq:queue:inJmsInOutIssueTest", ExchangePattern.InOut,
-                exchange -> exchange.getIn().setBody("Hello World"));
+        Exchange out =
+                template.send("activemq:queue:inJmsInOutIssueTest", ExchangePattern.InOut, exchange -> exchange.getIn()
+                        .setBody("Hello World"));
 
         assertEquals("Bye World", out.getMessage().getBody());
     }
@@ -91,7 +95,8 @@ public class JmsInOutIssueTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:inJmsInOutIssueTest").process(exchange -> exchange.getMessage().setBody("Bye World"));
+                from("activemq:queue:inJmsInOutIssueTest")
+                        .process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

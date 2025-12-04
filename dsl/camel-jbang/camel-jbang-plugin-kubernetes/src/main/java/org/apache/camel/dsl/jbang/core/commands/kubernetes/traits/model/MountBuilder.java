@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 import java.util.List;
@@ -27,8 +28,7 @@ public final class MountBuilder {
     private Boolean scanKameletsImplicitLabelSecrets;
     private List<String> volumes;
 
-    private MountBuilder() {
-    }
+    private MountBuilder() {}
 
     public static MountBuilder mount() {
         return new MountBuilder();

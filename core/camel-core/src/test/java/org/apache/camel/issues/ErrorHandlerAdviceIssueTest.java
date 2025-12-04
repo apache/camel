@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,7 +35,8 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         AdviceWith.adviceWith(foo, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
-                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint()
+                interceptSendToEndpoint("seda:*")
+                        .skipSendToOriginalEndpoint()
                         .throwException(new IllegalAccessException("Forced"));
             }
         });
@@ -63,17 +65,22 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("direct:error").maximumRedeliveries(2).redeliveryDelay(0));
+                errorHandler(
+                        deadLetterChannel("direct:error").maximumRedeliveries(2).redeliveryDelay(0));
 
-                from("direct:error").routeId("error").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("mock:error")
+                from("direct:error")
+                        .routeId("error")
+                        .errorHandler(deadLetterChannel("log:dead?level=ERROR"))
+                        .to("mock:error")
                         .to("file:error");
 
-                from("timer://someTimer?delay=15000&fixedRate=true&period=5000").routeId("timer").to("log:level=INFO");
+                from("timer://someTimer?delay=15000&fixedRate=true&period=5000")
+                        .routeId("timer")
+                        .to("log:level=INFO");
 
                 from("direct:start").routeId("foo").to("seda:foo");
 
                 from("seda:foo").to("mock:foo");
-
             }
         };
     }

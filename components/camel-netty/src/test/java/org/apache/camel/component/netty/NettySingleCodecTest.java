@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.concurrent.TimeUnit;
@@ -41,7 +42,6 @@ public class NettySingleCodecTest extends BaseNettyTest {
         sendBody("direct:single-codec", poem);
         mock.await(1, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
-
     }
 
     @Override
@@ -50,7 +50,8 @@ public class NettySingleCodecTest extends BaseNettyTest {
             public void configure() {
                 from("direct:single-codec").to("netty:tcp://localhost:{{port}}?encoders=#encoder&sync=false");
 
-                from("netty:tcp://localhost:{{port}}?decoders=#decoder&sync=false").to("mock:single-codec");
+                from("netty:tcp://localhost:{{port}}?decoders=#decoder&sync=false")
+                        .to("mock:single-codec");
             }
         };
     }

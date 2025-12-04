@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
 
 import org.apache.camel.AsyncProducer;
@@ -43,8 +44,8 @@ public class EmptyProducerCache extends DefaultProducerCache {
         try {
             InternalProcessorFactory pf = PluginHelper.getInternalProcessorFactory(getCamelContext());
             answer = pf.createAsyncProducer(endpoint);
-            boolean startingRoutes
-                    = ecc.getCamelContextExtension().isSetupRoutes() || ecc.getRouteController().isStartingRoutes();
+            boolean startingRoutes = ecc.getCamelContextExtension().isSetupRoutes()
+                    || ecc.getRouteController().isStartingRoutes();
             if (startingRoutes && answer.isSingleton()) {
                 // if we are currently starting a route, then add as service and enlist in JMX
                 // - but do not enlist non-singletons in JMX
@@ -75,5 +76,4 @@ public class EmptyProducerCache extends DefaultProducerCache {
     public String toString() {
         return "EmptyProducerCache for source: " + source;
     }
-
 }

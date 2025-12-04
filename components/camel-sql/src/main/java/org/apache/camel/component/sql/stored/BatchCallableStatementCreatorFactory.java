@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
 
 import java.sql.CallableStatement;
@@ -52,9 +53,9 @@ public class BatchCallableStatementCreatorFactory {
     }
 
     private String formatSql() {
-        return "{call " + this.template.getProcedureName() + "(" + repeatParameter(this.template.getParameterList()
-                .size())
-               + ")}";
+        return "{call " + this.template.getProcedureName() + "("
+                + repeatParameter(this.template.getParameterList().size())
+                + ")}";
     }
 
     private String repeatParameter(int size) {

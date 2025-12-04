@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.dfdl;
 
 import java.io.IOException;
@@ -78,10 +79,12 @@ public class DfdlDataFormat extends ServiceSupport implements DataFormat, CamelC
         super.doInit();
         ProcessorFactory processorFactory;
         Resource schemaResource = ResourceHelper.resolveMandatoryResource(getCamelContext(), getSchemaUri());
-        if (getRootElement() != null && !getRootElement().isEmpty() &&
-                getRootNamespace() != null && !getRootNamespace().isEmpty()) {
-            processorFactory
-                    = Daffodil.compiler().compileSource(schemaResource.getURI(), getRootElement(), getRootNamespace());
+        if (getRootElement() != null
+                && !getRootElement().isEmpty()
+                && getRootNamespace() != null
+                && !getRootNamespace().isEmpty()) {
+            processorFactory =
+                    Daffodil.compiler().compileSource(schemaResource.getURI(), getRootElement(), getRootNamespace());
         } else {
             processorFactory = Daffodil.compiler().compileSource(schemaResource.getURI());
         }

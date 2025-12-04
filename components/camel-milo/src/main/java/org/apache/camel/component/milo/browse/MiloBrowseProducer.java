@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.browse;
+
+import static org.apache.camel.component.milo.MiloConstants.HEADER_NODE_IDS;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,8 +38,6 @@ import org.eclipse.milo.opcua.stack.core.types.structured.BrowseResult;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.milo.MiloConstants.HEADER_NODE_IDS;
 
 public class MiloBrowseProducer extends DefaultAsyncProducer {
 
@@ -81,8 +82,8 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
 
         if (message.getHeaders().containsKey(HEADER_NODE_IDS)) {
 
-            final List<?> nodes
-                    = message.getHeader(HEADER_NODE_IDS, Collections.singletonList(getEndpoint().getNode()), List.class);
+            final List<?> nodes = message.getHeader(
+                    HEADER_NODE_IDS, Collections.singletonList(getEndpoint().getNode()), List.class);
             message.removeHeader(HEADER_NODE_IDS);
             if (null == nodes) {
 
@@ -104,11 +105,15 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
         final boolean subTypes = endpoint.isIncludeSubTypes() || endpoint.isRecursive();
 
         final CompletableFuture<?> future = this.connection
-                .browse(expandedNodeIds, endpoint.getDirection(), endpoint.getNodeClassMask(), depth, endpoint.getFilter(),
-                        subTypes, endpoint.getMaxNodeIdsPerRequest())
-
+                .browse(
+                        expandedNodeIds,
+                        endpoint.getDirection(),
+                        endpoint.getNodeClassMask(),
+                        depth,
+                        endpoint.getFilter(),
+                        subTypes,
+                        endpoint.getMaxNodeIdsPerRequest())
                 .thenApply(browseResults -> {
-
                     final List<String> expandedNodes = browseResults.values().stream()
                             .map(BrowseResult::getReferences)
                             .flatMap(Stream::of)
@@ -123,9 +128,7 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
 
                     return browseResults;
                 })
-
                 .whenComplete((actual, error) -> {
-
                     final String expandedNodeIdsString = expandedNodeIds.stream()
                             .map(ExpandedNodeId::toParseableString)
                             .collect(Collectors.joining(", "));
@@ -145,5 +148,4 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
 
         return false;
     }
-
 }

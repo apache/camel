@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,38 +54,34 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class AS2MessageTestBase {
 
     protected static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
-                                                + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
-                                                + "BGM+380+342459+9'\n"
-                                                + "DTM+3:20060515:102'\n"
-                                                + "RFF+ON:521052'\n"
-                                                + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
-                                                + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
-                                                + "CUX+1:USD'\n"
-                                                + "LIN+1++157870:IN'\n"
-                                                + "IMD+F++:::WIDGET'\n"
-                                                + "QTY+47:1020:EA'\n"
-                                                + "ALI+US'\n"
-                                                + "MOA+203:1202.58'\n"
-                                                + "PRI+INV:1.179'\n"
-                                                + "LIN+2++157871:IN'\n"
-                                                + "IMD+F++:::DIFFERENT WIDGET'\n"
-                                                + "QTY+47:20:EA'\n"
-                                                + "ALI+JP'\n"
-                                                + "MOA+203:410'\n"
-                                                + "PRI+INV:20.5'\n"
-                                                + "UNS+S'\n"
-                                                + "MOA+39:2137.58'\n"
-                                                + "ALC+C+ABG'\n"
-                                                + "MOA+8:525'\n"
-                                                + "UNT+23+00000000000117'\n"
-                                                + "UNZ+1+00000000000778'";
+            + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
+            + "BGM+380+342459+9'\n"
+            + "DTM+3:20060515:102'\n"
+            + "RFF+ON:521052'\n"
+            + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
+            + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
+            + "CUX+1:USD'\n"
+            + "LIN+1++157870:IN'\n"
+            + "IMD+F++:::WIDGET'\n"
+            + "QTY+47:1020:EA'\n"
+            + "ALI+US'\n"
+            + "MOA+203:1202.58'\n"
+            + "PRI+INV:1.179'\n"
+            + "LIN+2++157871:IN'\n"
+            + "IMD+F++:::DIFFERENT WIDGET'\n"
+            + "QTY+47:20:EA'\n"
+            + "ALI+JP'\n"
+            + "MOA+203:410'\n"
+            + "PRI+INV:20.5'\n"
+            + "UNS+S'\n"
+            + "MOA+39:2137.58'\n"
+            + "ALC+C+ABG'\n"
+            + "MOA+8:525'\n"
+            + "UNT+23+00000000000117'\n"
+            + "UNZ+1+00000000000778'";
 
     protected static final String METHOD = "POST";
     protected static final String TARGET_HOST = "localhost";
@@ -101,8 +102,8 @@ public class AS2MessageTestBase {
     protected static final String SERVER_FQDN = "server.example.org";
     protected static final String REPORTING_UA = "Server Responding with MDN";
     protected static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
-    protected static final String DISPOSITION_NOTIFICATION_OPTIONS
-            = "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
+    protected static final String DISPOSITION_NOTIFICATION_OPTIONS =
+            "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
     protected static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     protected static final String MDN_MESSAGE_TEMPLATE = "TBD";
     protected static final HttpDateGenerator DATE_GENERATOR = HttpDateGenerator.INSTANCE;
@@ -147,8 +148,9 @@ public class AS2MessageTestBase {
         // initialize as2-lib keystore file
         KeyStore ks = KeyStore.getInstance(EKeyStoreType.PKCS12.getID());
         ks.load(null, "test".toCharArray());
-        ks.setKeyEntry("openas2a_alias", issueKP.getPrivate(), "test".toCharArray(), new X509Certificate[] { issueCert });
-        ks.setKeyEntry("openas2b_alias", signingKP.getPrivate(), "test".toCharArray(), new X509Certificate[] { signingCert });
+        ks.setKeyEntry("openas2a_alias", issueKP.getPrivate(), "test".toCharArray(), new X509Certificate[] {issueCert});
+        ks.setKeyEntry(
+                "openas2b_alias", signingKP.getPrivate(), "test".toCharArray(), new X509Certificate[] {signingCert});
         keystoreFile = Files.createTempFile("camel-as2", "keystore-p12").toFile();
         keystoreFile.deleteOnExit();
         ks.store(new FileOutputStream(keystoreFile), "test".toCharArray());
@@ -159,7 +161,8 @@ public class AS2MessageTestBase {
         decryptingKP = signingKP;
     }
 
-    protected void binaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) throws IOException {
+    protected void binaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress)
+            throws IOException {
         // test with as2-lib because Camel AS2 client doesn't support binary content transfer encoding at the moment
         // inspired from https://github.com/phax/as2-lib/wiki/Submodule-as2%E2%80%90lib#as2-client
 
@@ -183,7 +186,8 @@ public class AS2MessageTestBase {
         aRequest.setContentType(AS2MediaType.APPLICATION_EDIFACT);
 
         // reproduce https://issues.apache.org/jira/projects/CAMEL/issues/CAMEL-15111
-        aSettings.setEncryptAndSign(encrypt ? ECryptoAlgorithmCrypt.CRYPT_AES128_GCM : null,
+        aSettings.setEncryptAndSign(
+                encrypt ? ECryptoAlgorithmCrypt.CRYPT_AES128_GCM : null,
                 sign ? ECryptoAlgorithmSign.DIGEST_SHA_512 : null);
         if (compress) {
             aSettings.setCompress(ECompressionType.ZLIB, false);
@@ -229,8 +233,8 @@ public class AS2MessageTestBase {
         aRequest.setContentType(AS2MediaType.APPLICATION_EDIFACT);
 
         // reproduce https://issues.apache.org/jira/browse/CAMEL-18842
-        aSettings.setEncryptAndSign(encrypt ? ECryptoAlgorithmCrypt.CRYPT_AES128_GCM : null,
-                ECryptoAlgorithmSign.DIGEST_SHA_512);
+        aSettings.setEncryptAndSign(
+                encrypt ? ECryptoAlgorithmCrypt.CRYPT_AES128_GCM : null, ECryptoAlgorithmSign.DIGEST_SHA_512);
         aSettings.setCompress(ECompressionType.ZLIB, compressBeforeSign);
         aRequest.setContentTransferEncoding(EContentTransferEncoding.BINARY);
 
@@ -251,9 +255,17 @@ public class AS2MessageTestBase {
 
     protected AS2ClientManager createDefaultClientManager() throws IOException {
         AS2ClientConnection clientConnection = new AS2ClientConnection(
-                AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT, HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE,
-                HTTP_CONNECTION_POOL_TTL, null, null);
+                AS2_VERSION,
+                USER_AGENT,
+                CLIENT_FQDN,
+                TARGET_HOST,
+                TARGET_PORT,
+                HTTP_SOCKET_TIMEOUT,
+                HTTP_CONNECTION_TIMEOUT,
+                HTTP_CONNECTION_POOL_SIZE,
+                HTTP_CONNECTION_POOL_TTL,
+                null,
+                null);
         return new AS2ClientManager(clientConnection);
     }
 }

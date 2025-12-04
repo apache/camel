@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -29,8 +32,6 @@ import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class S3ListObjectsOperationIT extends Aws2S3Base {
 
@@ -110,7 +111,6 @@ public class S3ListObjectsOperationIT extends Aws2S3Base {
                 from("direct:listObjects").to(awsEndpoint);
 
                 from("direct:deleteBucket").to(awsEndpoint).to("mock:result");
-
             }
         };
     }

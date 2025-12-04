@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -25,11 +31,6 @@ import io.micrometer.core.instrument.Meter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest {
 
@@ -61,14 +62,16 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
         List<Meter> meters = meterRegistry.getMeters();
         assertEquals(14, meters.size());
 
-        String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerRoutePolicyService",
+        String name = String.format(
+                "org.apache.camel:context=%s,type=services,name=MicrometerRoutePolicyService",
                 context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
         String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
 
-        assertFalse(json.contains("\"name\" : \"test\""));  // the MicrometerRoutePolicy does NOT display producer metrics
+        assertFalse(
+                json.contains("\"name\" : \"test\"")); // the MicrometerRoutePolicy does NOT display producer metrics
         assertTrue(json.contains("\"routeId\" : \"bar\""));
         assertTrue(json.contains("\"routeId\" : \"foo\""));
     }
@@ -78,12 +81,9 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo")
-                        .to("micrometer:counter:test")
-                        .to("mock:result");
+                from("seda:foo").routeId("foo").to("micrometer:counter:test").to("mock:result");
 
-                from("seda:bar").routeId("bar")
-                        .to("mock:result");
+                from("seda:bar").routeId("bar").to("mock:result");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge.localstack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eventbridge.model.DescribeRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EventbridgeDescribeRuleIT extends Aws2EventbridgeBase {
 
@@ -58,7 +59,9 @@ public class EventbridgeDescribeRuleIT extends Aws2EventbridgeBase {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                Target target = Target.builder()
+                        .id("sqs-queue")
+                        .arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
                 targets.add(target);
@@ -74,8 +77,18 @@ public class EventbridgeDescribeRuleIT extends Aws2EventbridgeBase {
             }
         });
         MockEndpoint.assertIsSatisfied(context);
-        assertNotNull(result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).eventPattern());
-        assertEquals("firstrule", result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).name());
+        assertNotNull(result.getExchanges()
+                .get(0)
+                .getMessage()
+                .getBody(DescribeRuleResponse.class)
+                .eventPattern());
+        assertEquals(
+                "firstrule",
+                result.getExchanges()
+                        .get(0)
+                        .getMessage()
+                        .getBody(DescribeRuleResponse.class)
+                        .name());
     }
 
     @Override
@@ -83,8 +96,8 @@ public class EventbridgeDescribeRuleIT extends Aws2EventbridgeBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint
-                        = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
+                String awsEndpoint =
+                        "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
                 String describeRule = "aws2-eventbridge://default?operation=describeRule";
                 from("direct:evs").to(awsEndpoint);

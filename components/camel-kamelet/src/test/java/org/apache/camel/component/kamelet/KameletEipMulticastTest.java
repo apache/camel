@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.Exchange;
@@ -38,20 +39,17 @@ public class KameletEipMulticastTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("echo")
-                        .from("kamelet:source")
-                        .setBody(body().append(body()));
+                routeTemplate("echo").from("kamelet:source").setBody(body().append(body()));
 
-                routeTemplate("reverse")
-                        .from("kamelet:source")
-                        .setBody(this::reverse);
+                routeTemplate("reverse").from("kamelet:source").setBody(this::reverse);
 
-                from("direct:start").routeId("start")
-                    .multicast()
+                from("direct:start")
+                        .routeId("start")
+                        .multicast()
                         .kamelet("echo")
                         .kamelet("reverse") // this becomes output on previous kamelet
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
 
             private Object reverse(Exchange exchange) {
@@ -69,7 +67,8 @@ public class KameletEipMulticastTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         RouteDefinition rd = context.getRouteDefinition("start");
-        MulticastDefinition md = ProcessorDefinitionHelper.findFirstTypeInOutputs(rd.getOutputs(), MulticastDefinition.class);
+        MulticastDefinition md =
+                ProcessorDefinitionHelper.findFirstTypeInOutputs(rd.getOutputs(), MulticastDefinition.class);
         Assertions.assertEquals(1, md.getOutputs().size());
     }
 
@@ -78,18 +77,17 @@ public class KameletEipMulticastTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("echo")
-                        .from("kamelet:source")
-                        .setBody(body().append(body()));
+                routeTemplate("echo").from("kamelet:source").setBody(body().append(body()));
 
-                routeTemplate("reverse")
-                        .from("kamelet:source")
-                        .setBody(this::reverse);
+                routeTemplate("reverse").from("kamelet:source").setBody(this::reverse);
 
-                from("direct:start").routeId("start")
-                    .multicast()
-                        .kamelet("echo").end()
-                        .kamelet("reverse").end()
+                from("direct:start")
+                        .routeId("start")
+                        .multicast()
+                        .kamelet("echo")
+                        .end()
+                        .kamelet("reverse")
+                        .end()
                         .end()
                         .to("mock:result");
             }
@@ -110,8 +108,8 @@ public class KameletEipMulticastTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         RouteDefinition rd = context.getRouteDefinition("start");
-        MulticastDefinition md = ProcessorDefinitionHelper.findFirstTypeInOutputs(rd.getOutputs(), MulticastDefinition.class);
+        MulticastDefinition md =
+                ProcessorDefinitionHelper.findFirstTypeInOutputs(rd.getOutputs(), MulticastDefinition.class);
         Assertions.assertEquals(2, md.getOutputs().size());
     }
-
 }

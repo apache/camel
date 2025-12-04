@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.producer;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
@@ -25,15 +29,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class QueueProducerTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "test.foo.QueueProducerTest";
 
-    public QueueProducerTest() {
-    }
+    public QueueProducerTest() {}
 
     @Override
     protected boolean useJmx() {
@@ -63,18 +63,15 @@ public class QueueProducerTest extends JmsTestSupport {
 
         mock.assertIsSatisfied();
         mc.close();
-
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("sjms:queue:" + TEST_DESTINATION_NAME);
+                from("direct:start").to("sjms:queue:" + TEST_DESTINATION_NAME);
 
-                from("direct:finish")
-                        .to("log:test.log.1?showBody=true", "mock:result");
+                from("direct:finish").to("log:test.log.1?showBody=true", "mock:result");
             }
         };
     }

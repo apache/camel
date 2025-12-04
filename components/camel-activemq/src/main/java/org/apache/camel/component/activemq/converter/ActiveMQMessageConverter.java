@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq.converter;
 
 import java.io.Serializable;
@@ -82,7 +83,6 @@ public class ActiveMQMessageConverter {
         } else {
             return new ActiveMQMessage();
         }
-
     }
 
     // Properties

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static java.util.Collections.unmodifiableMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,8 +67,6 @@ import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesResponse;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 
-import static java.util.Collections.unmodifiableMap;
-
 public class AmazonSQSClientMock implements SqsClient {
     private static final String DEFAULT_QUEUE_URL = "https://queue.amazonaws.com/queue/camel-836";
 
@@ -77,8 +78,8 @@ public class AmazonSQSClientMock implements SqsClient {
     // received requests
     private final Queue<ListQueuesRequest> listQueuesRequests = new ConcurrentLinkedQueue<>();
     private final Queue<SendMessageRequest> sendMessageRequests = new ConcurrentLinkedQueue<>();
-    private final Queue<ChangeMessageVisibilityBatchRequest> changeMessageVisibilityBatchRequests
-            = new ConcurrentLinkedQueue<>();
+    private final Queue<ChangeMessageVisibilityBatchRequest> changeMessageVisibilityBatchRequests =
+            new ConcurrentLinkedQueue<>();
     private final Queue<ReceiveMessageRequest> receiveRequests = new ConcurrentLinkedQueue<>();
     private final Queue<CreateQueueRequest> createQueueRequets = new ConcurrentLinkedQueue<>();
     private final Queue<GetQueueUrlRequest> queueUrlRequests = new ConcurrentLinkedQueue<>();
@@ -113,8 +114,9 @@ public class AmazonSQSClientMock implements SqsClient {
         listQueuesRequests.offer(request);
 
         ListQueuesResponse.Builder result = ListQueuesResponse.builder();
-        result.queueUrls(
-                Optional.ofNullable(queueName).map(it -> List.of("/" + it)).orElseGet(() -> List.of("/queue1", "/queue2")));
+        result.queueUrls(Optional.ofNullable(queueName)
+                .map(it -> List.of("/" + it))
+                .orElseGet(() -> List.of("/queue1", "/queue2")));
         return result.build();
     }
 
@@ -143,11 +145,13 @@ public class AmazonSQSClientMock implements SqsClient {
         message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
         message.receiptHandle(
                 "0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5zC9+4QMqJZ0DJ3gVOmjI2Gh/oFnb0IeJqy5Zc8kH4JX7GVpfjcEDjaAPSeOkXQZRcaBqt"
-                              + "4lOtyfj0kcclVV/zS7aenhfhX5Ixfgz/rHhsJwtCPPvTAdgQFGYrqaHly+etJiawiNPVc=");
+                        + "4lOtyfj0kcclVV/zS7aenhfhX5Ixfgz/rHhsJwtCPPvTAdgQFGYrqaHly+etJiawiNPVc=");
         addMessage(message.build());
 
-        return SendMessageResponse.builder().messageId("f6fb6f99-5eb2-4be4-9b15-144774141458")
-                .md5OfMessageBody("6a1559560f67c5e7a7d5d838bf0272ee").build();
+        return SendMessageResponse.builder()
+                .messageId("f6fb6f99-5eb2-4be4-9b15-144774141458")
+                .md5OfMessageBody("6a1559560f67c5e7a7d5d838bf0272ee")
+                .build();
     }
 
     @Override
@@ -155,7 +159,8 @@ public class AmazonSQSClientMock implements SqsClient {
         receiveRequests.offer(receiveMessageRequest);
 
         Optional.ofNullable(receiveRequestHandler).ifPresent(it -> it.accept(receiveMessageRequest));
-        int maxNumberOfMessages = Optional.ofNullable(receiveMessageRequest.maxNumberOfMessages()).orElse(1);
+        int maxNumberOfMessages =
+                Optional.ofNullable(receiveMessageRequest.maxNumberOfMessages()).orElse(1);
         ReceiveMessageResponse.Builder result = ReceiveMessageResponse.builder();
         Collection<Message> resultMessages = new ArrayList<>();
         while (resultMessages.size() < maxNumberOfMessages && !messages.isEmpty()) {
@@ -206,7 +211,9 @@ public class AmazonSQSClientMock implements SqsClient {
         purgeQueueRequests.offer(purgeQueueRequest);
 
         if (purgeQueueRequest.queueUrl() == null) {
-            throw SqsException.builder().message("Queue name must be specified.").build();
+            throw SqsException.builder()
+                    .message("Queue name must be specified.")
+                    .build();
         }
         return PurgeQueueResponse.builder().build();
     }
@@ -217,7 +224,9 @@ public class AmazonSQSClientMock implements SqsClient {
         deleteQueueRequests.offer(deleteQueueRequest);
 
         if (deleteQueueRequest.queueUrl() == null) {
-            throw SqsException.builder().message("Queue name must be specified.").build();
+            throw SqsException.builder()
+                    .message("Queue name must be specified.")
+                    .build();
         }
         return DeleteQueueResponse.builder().build();
     }
@@ -230,7 +239,8 @@ public class AmazonSQSClientMock implements SqsClient {
             if (!queueAttributes.containsKey(setQueueAttributesRequest.queueUrl())) {
                 queueAttributes.put(setQueueAttributesRequest.queueUrl(), new HashMap<>());
             }
-            for (final Map.Entry<String, String> entry : setQueueAttributesRequest.attributesAsStrings().entrySet()) {
+            for (final Map.Entry<String, String> entry :
+                    setQueueAttributesRequest.attributesAsStrings().entrySet()) {
                 queueAttributes.get(setQueueAttributesRequest.queueUrl()).put(entry.getKey(), entry.getValue());
             }
         }
@@ -248,8 +258,10 @@ public class AmazonSQSClientMock implements SqsClient {
         this.changeMessageVisibilityBatchRequests.offer(changeMessageVisibilityBatchRequest);
 
         // mark all as success
-        List<ChangeMessageVisibilityBatchResultEntry> successful
-                = changeMessageVisibilityBatchRequest.entries().stream().map(this::successVisibilityExtension).toList();
+        List<ChangeMessageVisibilityBatchResultEntry> successful =
+                changeMessageVisibilityBatchRequest.entries().stream()
+                        .map(this::successVisibilityExtension)
+                        .toList();
 
         // setting empty collections to null to support hasSuccessful which
         // perform null check rather than isEmpty checks
@@ -257,10 +269,13 @@ public class AmazonSQSClientMock implements SqsClient {
             successful = null;
         }
 
-        return ChangeMessageVisibilityBatchResponse.builder().successful(successful).build();
+        return ChangeMessageVisibilityBatchResponse.builder()
+                .successful(successful)
+                .build();
     }
 
-    private ChangeMessageVisibilityBatchResultEntry successVisibilityExtension(ChangeMessageVisibilityBatchRequestEntry r) {
+    private ChangeMessageVisibilityBatchResultEntry successVisibilityExtension(
+            ChangeMessageVisibilityBatchRequestEntry r) {
         return ChangeMessageVisibilityBatchResultEntry.builder().id(r.id()).build();
     }
 

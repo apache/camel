@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -23,10 +28,6 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.test.spring.junit5.EnableRouteCoverage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableRouteCoverage
 public class CamelSpringRouteProcessorDumpRouteCoverageTest extends CamelSpringPlainTest {
@@ -40,7 +41,9 @@ public class CamelSpringRouteProcessorDumpRouteCoverageTest extends CamelSpringP
     @Test
     public void testJmx() {
         // JMX is enabled with route coverage
-        assertEquals(JmxManagementStrategy.class, camelContext.getManagementStrategy().getClass());
+        assertEquals(
+                JmxManagementStrategy.class,
+                camelContext.getManagementStrategy().getClass());
     }
 
     @Test
@@ -53,5 +56,4 @@ public class CamelSpringRouteProcessorDumpRouteCoverageTest extends CamelSpringP
         assertNotNull(names);
         assertTrue(names.length > 0);
     }
-
 }

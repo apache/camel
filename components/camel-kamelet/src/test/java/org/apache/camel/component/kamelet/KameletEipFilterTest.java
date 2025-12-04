@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -48,13 +49,12 @@ public class KameletEipFilterTest extends CamelTestSupport {
             public void configure() {
                 routeTemplate("filter")
                         .from("kamelet:source")
-                        .filter().simple("${body} range '5..10'")
+                        .filter()
+                        .simple("${body} range '5..10'")
                         .to("log:filter")
                         .to("kamelet:sink");
 
-                from("direct:start")
-                        .kamelet("filter")
-                        .to("mock:result");
+                from("direct:start").kamelet("filter").to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
@@ -55,8 +56,13 @@ public class OnExceptionGlobalAndDLCErrorHandlerIssueTest extends ContextTestSup
 
                 onException(Exception.class).handled(true).to("mock:global");
 
-                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).handled(true).to("mock:local")
-                        .end().to("mock:bar")
+                from("direct:bar")
+                        .routeId("bar")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:local")
+                        .end()
+                        .to("mock:bar")
                         .throwException(new IllegalArgumentException("Damn"));
 
                 from("direct:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));

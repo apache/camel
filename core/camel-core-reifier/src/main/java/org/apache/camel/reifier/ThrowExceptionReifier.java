@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
@@ -40,13 +41,13 @@ public class ThrowExceptionReifier extends ProcessorReifier<ThrowExceptionDefini
             exceptionClass = parse(Class.class, definition.getExceptionType());
         }
         if (exception == null && exceptionClass == null) {
-            throw new IllegalArgumentException("exception/ref or exceptionClass/exceptionType must be configured on: " + this);
+            throw new IllegalArgumentException(
+                    "exception/ref or exceptionClass/exceptionType must be configured on: " + this);
         }
 
-        ThrowExceptionProcessor answer
-                = new ThrowExceptionProcessor(exception, exceptionClass, parseString(definition.getMessage()));
+        ThrowExceptionProcessor answer =
+                new ThrowExceptionProcessor(exception, exceptionClass, parseString(definition.getMessage()));
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }
-
 }

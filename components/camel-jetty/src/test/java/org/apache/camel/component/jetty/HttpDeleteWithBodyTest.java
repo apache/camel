@@ -14,30 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpDeleteWithBodyTest extends BaseJettyTest {
 
     @Test
     public void testHttpDeleteWithBodyFalseTest() {
         byte[] data = "World".getBytes();
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/test", data, Exchange.HTTP_METHOD, "DELETE",
-                String.class);
+        String out = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/test", data, Exchange.HTTP_METHOD, "DELETE", String.class);
         assertEquals("Bye ", out);
     }
 
     @Test
     public void testHttpDeleteWithBodyTrueTest() {
         byte[] data = "World".getBytes();
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/test?deleteWithBody=true", data,
-                Exchange.HTTP_METHOD, "DELETE", String.class);
+        String out = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/test?deleteWithBody=true",
+                data,
+                Exchange.HTTP_METHOD,
+                "DELETE",
+                String.class);
         assertEquals("Bye World", out);
     }
 
@@ -46,15 +51,16 @@ public class HttpDeleteWithBodyTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
-                        assertEquals("DELETE", method);
-                    }
-                }).transform(simple("Bye ${body}"));
+                from("jetty://http://localhost:{{port}}/test")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
+                                assertEquals("DELETE", method);
+                            }
+                        })
+                        .transform(simple("Bye ${body}"));
             }
         };
     }
-
 }

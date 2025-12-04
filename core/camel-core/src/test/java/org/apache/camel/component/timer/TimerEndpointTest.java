@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
 
 import java.util.Timer;
@@ -83,5 +84,4 @@ public class TimerEndpointTest extends ContextTestSupport {
 
         Assertions.assertThrows(RuntimeCamelException.class, te::createProducer, "Should have thrown an exception");
     }
-
 }

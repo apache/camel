@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.Exchange;
@@ -25,8 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 public class GenericFileExpressionRenamer<T> implements GenericFileRenamer<T> {
     private Expression expression;
 
-    public GenericFileExpressionRenamer() {
-    }
+    public GenericFileExpressionRenamer() {}
 
     public GenericFileExpressionRenamer(Expression expression) {
         this.expression = expression;

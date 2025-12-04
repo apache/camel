@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -39,45 +40,52 @@ public class ListEndpoint extends ProcessWatchCommand {
 
     public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {
 
-        public PidNameAgeTotalCompletionCandidates() {
-        }
+        public PidNameAgeTotalCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("pid", "name", "age", "total").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeTotalCompletionCandidates.class,
-                        description = "Sort by pid, name, age or total", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeTotalCompletionCandidates.class,
+            description = "Sort by pid, name, age or total",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter endpoints by limiting to the given number of rows")
+    @CommandLine.Option(
+            names = {"--limit"},
+            description = "Filter endpoints by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter endpoints by URI")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter endpoints by URI")
     String filter;
 
-    @CommandLine.Option(names = { "--filter-direction" },
-                        description = "Filter by direction (in or out)")
+    @CommandLine.Option(
+            names = {"--filter-direction"},
+            description = "Filter by direction (in or out)")
     String filterDirection;
 
-    @CommandLine.Option(names = { "--filter-total" },
-                        description = "Filter endpoints that must be higher than the given usage")
+    @CommandLine.Option(
+            names = {"--filter-total"},
+            description = "Filter endpoints that must be higher than the given usage")
     long filterTotal;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @CommandLine.Option(
+            names = {"--short-uri"},
+            description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @CommandLine.Option(
+            names = {"--wide-uri"},
+            description = "List endpoint URI in full details")
     boolean wideUri;
 
     public ListEndpoint(CamelJBangMain main) {
@@ -94,61 +102,59 @@ public class ListEndpoint extends ProcessWatchCommand {
         }
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        JsonObject jo = (JsonObject) root.get("endpoints");
-                        if (context != null && jo != null) {
-                            JsonArray array = (JsonArray) jo.get("endpoints");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
-                                Row row = new Row();
-                                row.name = context.getString("name");
-                                if ("CamelJBang".equals(row.name)) {
-                                    row.name = ProcessHelper.extractName(root, ph);
-                                }
-                                row.pid = Long.toString(ph.pid());
-                                row.endpoint = o.getString("uri");
-                                row.stub = o.getBooleanOrDefault("stub", false);
-                                row.remote = o.getBooleanOrDefault("remote", true);
-                                row.direction = o.getString("direction");
-                                row.total = o.getString("hits");
-                                row.uptime = extractSince(ph);
-                                row.age = TimeUtils.printSince(row.uptime);
-                                boolean add = true;
-                                if (filterTotal > 0 && (row.total == null || Long.parseLong(row.total) < filterTotal)) {
-                                    add = false;
-                                }
-                                if (filterDirection != null && !filterDirection.equals(row.direction)) {
-                                    add = false;
-                                }
-                                if (filter != null) {
-                                    String f = filter;
-                                    boolean negate = filter.startsWith("-");
-                                    if (negate) {
-                                        f = f.substring(1);
-                                    }
-                                    boolean match = PatternHelper.matchPattern(row.endpoint, f);
-                                    if (negate) {
-                                        match = !match;
-                                    }
-                                    if (!match) {
-                                        add = false;
-                                    }
-                                }
-                                if (limit > 0 && rows.size() >= limit) {
-                                    add = false;
-                                }
-                                if (add) {
-                                    rows.add(row);
-                                }
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            if (root != null) {
+                JsonObject context = (JsonObject) root.get("context");
+                JsonObject jo = (JsonObject) root.get("endpoints");
+                if (context != null && jo != null) {
+                    JsonArray array = (JsonArray) jo.get("endpoints");
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject o = (JsonObject) array.get(i);
+                        Row row = new Row();
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = ProcessHelper.extractName(root, ph);
+                        }
+                        row.pid = Long.toString(ph.pid());
+                        row.endpoint = o.getString("uri");
+                        row.stub = o.getBooleanOrDefault("stub", false);
+                        row.remote = o.getBooleanOrDefault("remote", true);
+                        row.direction = o.getString("direction");
+                        row.total = o.getString("hits");
+                        row.uptime = extractSince(ph);
+                        row.age = TimeUtils.printSince(row.uptime);
+                        boolean add = true;
+                        if (filterTotal > 0 && (row.total == null || Long.parseLong(row.total) < filterTotal)) {
+                            add = false;
+                        }
+                        if (filterDirection != null && !filterDirection.equals(row.direction)) {
+                            add = false;
+                        }
+                        if (filter != null) {
+                            String f = filter;
+                            boolean negate = filter.startsWith("-");
+                            if (negate) {
+                                f = f.substring(1);
+                            }
+                            boolean match = PatternHelper.matchPattern(row.endpoint, f);
+                            if (negate) {
+                                match = !match;
+                            }
+                            if (!match) {
+                                add = false;
                             }
                         }
+                        if (limit > 0 && rows.size() >= limit) {
+                            add = false;
+                        }
+                        if (add) {
+                            rows.add(row);
+                        }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -161,21 +167,46 @@ public class ListEndpoint extends ProcessWatchCommand {
     }
 
     protected void printTable(List<Row> rows) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("DIR").with(r -> r.direction),
-                new Column().header("TOTAL").with(r -> r.total),
-                new Column().header("STUB").dataAlign(HorizontalAlign.CENTER).with(r -> r.stub ? "x" : ""),
-                new Column().header("REMOTE").dataAlign(HorizontalAlign.CENTER).with(r -> r.remote ? "x" : ""),
-                new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getUri),
-                new Column().header("URI").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(140, OverflowBehaviour.NEWLINE)
-                        .with(this::getUri))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("PID")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.pid),
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column()
+                                        .header("AGE")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.age),
+                                new Column().header("DIR").with(r -> r.direction),
+                                new Column().header("TOTAL").with(r -> r.total),
+                                new Column()
+                                        .header("STUB")
+                                        .dataAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.stub ? "x" : ""),
+                                new Column()
+                                        .header("REMOTE")
+                                        .dataAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.remote ? "x" : ""),
+                                new Column()
+                                        .header("URI")
+                                        .visible(!wideUri)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getUri),
+                                new Column()
+                                        .header("URI")
+                                        .visible(wideUri)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                        .with(this::getUri))));
     }
 
     private String getUri(Row r) {
@@ -221,5 +252,4 @@ public class ListEndpoint extends ProcessWatchCommand {
         boolean stub;
         boolean remote;
     }
-
 }

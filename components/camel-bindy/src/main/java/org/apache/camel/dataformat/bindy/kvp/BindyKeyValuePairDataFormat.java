@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.kvp;
 
 import java.io.BufferedReader;
@@ -52,8 +53,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairDataFormat.class);
 
-    public BindyKeyValuePairDataFormat() {
-    }
+    public BindyKeyValuePairDataFormat() {}
 
     public BindyKeyValuePairDataFormat(Class<?> type) {
         super(type);
@@ -106,8 +106,8 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         // Use a Stream to stream a file across
         try (Stream<String> lines = new BufferedReader(in).lines()) {
             // Retrieve the pair separator defined to split the record
-            org.apache.camel.util.ObjectHelper.notNull(factory.getPairSeparator(),
-                    "The pair separator property of the annotation @Message");
+            org.apache.camel.util.ObjectHelper.notNull(
+                    factory.getPairSeparator(), "The pair separator property of the annotation @Message");
             String separator = factory.getPairSeparator();
             AtomicInteger count = new AtomicInteger();
 
@@ -133,8 +133,12 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
     }
 
     private void consumeFile(
-            BindyKeyValuePairFactory factory, List<Map<String, Object>> models, Map<String, List<Object>> lists,
-            String separator, AtomicInteger count, String line) {
+            BindyKeyValuePairFactory factory,
+            List<Map<String, Object>> models,
+            Map<String, List<Object>> lists,
+            String separator,
+            AtomicInteger count,
+            String line) {
         try {
             // Trim the line coming in to remove any trailing whitespace
             String trimmedLine = line.trim();

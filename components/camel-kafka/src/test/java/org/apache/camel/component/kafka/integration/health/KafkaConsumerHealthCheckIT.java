@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration.health;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Map;
@@ -50,20 +56,19 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @Timeout(30)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisabledIfSystemProperty(named = "kafka.instance.type", matches = "local-strimzi-container",
-                          disabledReason = "Test infra Kafka runs the Strimzi containers in a way that conflicts with multiple concurrent images")
-@Tags({ @Tag("health") })
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64", "s390x" },
-             disabledReason = "This test does not run reliably on ppc64le")
+@DisabledIfSystemProperty(
+        named = "kafka.instance.type",
+        matches = "local-strimzi-container",
+        disabledReason =
+                "Test infra Kafka runs the Strimzi containers in a way that conflicts with multiple concurrent images")
+@Tags({@Tag("health")})
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS},
+        architectures = {"amd64", "aarch64", "s390x"},
+        disabledReason = "This test does not run reliably on ppc64le")
 public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
     public static final String TOPIC = "test-health";
     public static final String SKIPPED_HEADER_KEY = "CamelSkippedHeader";
@@ -81,13 +86,16 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
             @Override
             public void configure() {
                 String from = "kafka:" + TOPIC + "?brokers=" + service.getBootstrapServers()
-                              + "&groupId=KafkaConsumerHealthCheckIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                              + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                              + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
+                        + "&groupId=KafkaConsumerHealthCheckIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                        + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                        + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
 
                 from(from)
-                        .process(exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
-                        .routeId("test-health-it").to(KafkaTestUtil.MOCK_RESULT);
+                        .process(exchange -> LOG.trace(
+                                "Captured on the processor: {}",
+                                exchange.getMessage().getBody()))
+                        .routeId("test-health-it")
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
@@ -127,7 +135,8 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
     public void testIO() throws InterruptedException {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
-        to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
+        to.expectedHeaderValuesReceivedInAnyOrder(
+                KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
         to.expectedHeaderReceived(PROPAGATED_CUSTOM_HEADER, PROPAGATED_HEADER_VALUE);
 
         Properties props = KafkaTestUtil.getDefaultProperties(service);
@@ -142,8 +151,11 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
         }
 
         to.assertIsSatisfied(3000);
-        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
-                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
+        assertEquals(
+                5,
+                MockConsumerInterceptor.recordsCaptured.stream()
+                        .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false))
+                        .count());
 
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertFalse(headers.containsKey(SKIPPED_HEADER_KEY), "Should not receive skipped header");
@@ -178,8 +190,9 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             Assertions.assertTrue(res2.size() > 0);
-            Optional<HealthCheck.Result> down
-                    = res2.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
+            Optional<HealthCheck.Result> down = res2.stream()
+                    .filter(r -> r.getState().equals(HealthCheck.State.DOWN))
+                    .findFirst();
             Assertions.assertTrue(down.isPresent());
             String msg = down.get().getMessage().get();
             Assertions.assertTrue(msg.contains("KafkaConsumer is not ready"));
@@ -188,5 +201,4 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
             Assertions.assertEquals("test-health-it", map.get("route.id"));
         });
     }
-
 }

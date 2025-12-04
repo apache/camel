@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpsTest extends BaseEndpointDslTest {
 
@@ -39,8 +40,7 @@ public class HttpsTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                HttpEndpointBuilderFactory.HttpEndpointBuilder builder
-                        = https("mysecurehost.com/foo");
+                HttpEndpointBuilderFactory.HttpEndpointBuilder builder = https("mysecurehost.com/foo");
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 HttpEndpoint he = assertIsInstanceOf(HttpEndpoint.class, endpoint);
@@ -50,5 +50,4 @@ public class HttpsTest extends BaseEndpointDslTest {
 
         context.stop();
     }
-
 }

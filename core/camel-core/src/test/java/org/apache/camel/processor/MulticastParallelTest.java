@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -23,8 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MulticastParallelTest extends ContextTestSupport {
 
@@ -61,19 +62,25 @@ public class MulticastParallelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").multicast(new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
+                from("direct:start")
+                        .multicast(new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
 
-                        String body = oldExchange.getIn().getBody(String.class);
-                        oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
-                        return oldExchange;
-                    }
-                }).parallelProcessing().to("direct:a", "direct:b")
+                                String body = oldExchange.getIn().getBody(String.class);
+                                oldExchange
+                                        .getIn()
+                                        .setBody(body + newExchange.getIn().getBody(String.class));
+                                return oldExchange;
+                            }
+                        })
+                        .parallelProcessing()
+                        .to("direct:a", "direct:b")
                         // use end to indicate end of multicast route
-                        .end().to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from("direct:a").delay(100).setBody(constant("A"));
 

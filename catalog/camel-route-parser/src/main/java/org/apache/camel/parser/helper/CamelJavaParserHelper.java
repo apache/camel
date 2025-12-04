@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.helper;
 
 import java.util.ArrayList;
@@ -65,7 +66,10 @@ public final class CamelJavaParserHelper {
     public static MethodSource<JavaClassSource> findConfigureMethod(JavaClassSource clazz) {
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
         // must be public void configure()
-        if (method != null && method.isPublic() && method.getParameters().isEmpty() && method.getReturnType().isType("void")) {
+        if (method != null
+                && method.isPublic()
+                && method.getParameters().isEmpty()
+                && method.getReturnType().isType("void")) {
             return method;
         }
 
@@ -86,8 +90,10 @@ public final class CamelJavaParserHelper {
         if (methods != null) {
             for (MethodSource<JavaClassSource> method : methods) {
                 if (method.isPublic()
-                        && (method.getParameters() == null || method.getParameters().isEmpty())
-                        && (method.getReturnType() == null || method.getReturnType().isType("void"))) {
+                        && (method.getParameters() == null
+                                || method.getParameters().isEmpty())
+                        && (method.getReturnType() == null
+                                || method.getReturnType().isType("void"))) {
                     // maybe the method contains an inlined createRouteBuilder usually from an unit test method
                     MethodSource<JavaClassSource> builder = findConfigureMethodInCreateRouteBuilder(clazz, method);
                     if (builder != null) {
@@ -102,7 +108,9 @@ public final class CamelJavaParserHelper {
 
     private static MethodSource<JavaClassSource> findCreateRouteBuilderMethod(JavaClassSource clazz) {
         MethodSource<JavaClassSource> method = clazz.getMethod("createRouteBuilder");
-        if (method != null && (method.isPublic() || method.isProtected()) && method.getParameters().isEmpty()) {
+        if (method != null
+                && (method.isPublic() || method.isProtected())
+                && method.getParameters().isEmpty()) {
             return method;
         }
         return null;
@@ -178,8 +186,12 @@ public final class CamelJavaParserHelper {
     }
 
     private static List<ParserResult> doParseCamelUris(
-            MethodSource<JavaClassSource> method, boolean consumers, boolean producers,
-            boolean strings, boolean fields, boolean routeIdsOnly) {
+            MethodSource<JavaClassSource> method,
+            boolean consumers,
+            boolean producers,
+            boolean strings,
+            boolean fields,
+            boolean routeIdsOnly) {
 
         List<ParserResult> answer = new ArrayList<>();
 
@@ -193,7 +205,15 @@ public final class CamelJavaParserHelper {
                         Expression exp = es.getExpression();
 
                         List<ParserResult> uris = new ArrayList<>();
-                        parseExpression(method.getOrigin(), block, exp, uris, consumers, producers, strings, fields,
+                        parseExpression(
+                                method.getOrigin(),
+                                block,
+                                exp,
+                                uris,
+                                consumers,
+                                producers,
+                                strings,
+                                fields,
                                 routeIdsOnly);
                         if (!uris.isEmpty()) {
                             // reverse the order as we will grab them from last->first
@@ -209,8 +229,15 @@ public final class CamelJavaParserHelper {
     }
 
     private static void parseExpression(
-            JavaClassSource clazz, Block block, Expression exp, List<ParserResult> uris,
-            boolean consumers, boolean producers, boolean strings, boolean fields, boolean routeIdsOnly) {
+            JavaClassSource clazz,
+            Block block,
+            Expression exp,
+            List<ParserResult> uris,
+            boolean consumers,
+            boolean producers,
+            boolean strings,
+            boolean fields,
+            boolean routeIdsOnly) {
         if (exp == null) {
             return;
         }
@@ -223,8 +250,15 @@ public final class CamelJavaParserHelper {
     }
 
     private static void doParseCamelUris(
-            JavaClassSource clazz, Block block, MethodInvocation mi, List<ParserResult> uris,
-            boolean consumers, boolean producers, boolean strings, boolean fields, boolean routeIdsOnly) {
+            JavaClassSource clazz,
+            Block block,
+            MethodInvocation mi,
+            List<ParserResult> uris,
+            boolean consumers,
+            boolean producers,
+            boolean strings,
+            boolean fields,
+            boolean routeIdsOnly) {
         String name = mi.getName().getIdentifier();
 
         if (routeIdsOnly) {
@@ -243,7 +277,10 @@ public final class CamelJavaParserHelper {
                     iterateOverArguments(clazz, block, uris, strings, fields, args, name);
                 }
             }
-            if ("fromF".equals(name) || "interceptFrom".equals(name) || "pollEnrich".equals(name) || "poll".equals(name)) {
+            if ("fromF".equals(name)
+                    || "interceptFrom".equals(name)
+                    || "pollEnrich".equals(name)
+                    || "poll".equals(name)) {
                 parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
             }
         }
@@ -279,7 +316,12 @@ public final class CamelJavaParserHelper {
     }
 
     private static void parseFirstArgument(
-            JavaClassSource clazz, Block block, MethodInvocation mi, List<ParserResult> uris, boolean strings, boolean fields,
+            JavaClassSource clazz,
+            Block block,
+            MethodInvocation mi,
+            List<ParserResult> uris,
+            boolean strings,
+            boolean fields,
             String name) {
         List<?> args = mi.arguments();
         // the first argument is where the uri is
@@ -289,7 +331,12 @@ public final class CamelJavaParserHelper {
     }
 
     private static void parseFirstArgument(
-            JavaClassSource clazz, Block block, List<ParserResult> uris, boolean strings, boolean fields, List<?> args,
+            JavaClassSource clazz,
+            Block block,
+            List<ParserResult> uris,
+            boolean strings,
+            boolean fields,
+            List<?> args,
             String name) {
         Object arg = args.get(0);
         if (isValidArgument(arg)) {
@@ -298,7 +345,12 @@ public final class CamelJavaParserHelper {
     }
 
     private static void iterateOverArguments(
-            JavaClassSource clazz, Block block, List<ParserResult> uris, boolean strings, boolean fields, List<?> args,
+            JavaClassSource clazz,
+            Block block,
+            List<ParserResult> uris,
+            boolean strings,
+            boolean fields,
+            List<?> args,
             String name) {
         for (Object arg : args) {
             if (isValidArgument(arg)) {
@@ -323,7 +375,12 @@ public final class CamelJavaParserHelper {
     }
 
     private static void extractEndpointUriFromArgument(
-            String node, JavaClassSource clazz, Block block, List<ParserResult> uris, Object arg, boolean strings,
+            String node,
+            JavaClassSource clazz,
+            Block block,
+            List<ParserResult> uris,
+            Object arg,
+            boolean strings,
             boolean fields) {
         if (strings) {
             String uri = getLiteralValue(clazz, block, (Expression) arg);
@@ -386,7 +443,8 @@ public final class CamelJavaParserHelper {
         return ParserCommon.evalExpression(exp);
     }
 
-    public static List<ParserResult> parseCamelLanguageExpressions(MethodSource<JavaClassSource> method, String language) {
+    public static List<ParserResult> parseCamelLanguageExpressions(
+            MethodSource<JavaClassSource> method, String language) {
         List<ParserResult> answer = new ArrayList<>();
 
         MethodDeclaration md = (MethodDeclaration) method.getInternal();
@@ -412,7 +470,12 @@ public final class CamelJavaParserHelper {
     }
 
     private static void parseExpression(
-            String node, JavaClassSource clazz, Block block, Expression exp, List<ParserResult> expressions, String language) {
+            String node,
+            JavaClassSource clazz,
+            Block block,
+            Expression exp,
+            List<ParserResult> expressions,
+            String language) {
         if (exp == null) {
             return;
         }
@@ -425,7 +488,11 @@ public final class CamelJavaParserHelper {
     }
 
     private static void doParseCamelLanguage(
-            String node, JavaClassSource clazz, Block block, MethodInvocation mi, List<ParserResult> expressions,
+            String node,
+            JavaClassSource clazz,
+            Block block,
+            MethodInvocation mi,
+            List<ParserResult> expressions,
             String language) {
         String name = mi.getName().getIdentifier();
 
@@ -507,7 +574,8 @@ public final class CamelJavaParserHelper {
             return textBlock.getLiteralValue();
         }
 
-        // if it's a method invocation then add a dummy value assuming the method invocation will return a valid response
+        // if it's a method invocation then add a dummy value assuming the method invocation will return a valid
+        // response
         if (expression instanceof MethodInvocation methodInvocation) {
             String name = methodInvocation.getName().getIdentifier();
             return "{{" + name + "}}";
@@ -540,7 +608,8 @@ public final class CamelJavaParserHelper {
                 // is the field an org.apache.camel.Endpoint type?
                 return endpointTypeCheck(clazz, block, field);
             } else {
-                // we could not find the field in this class/method, so its maybe from some other super class, so insert a dummy value
+                // we could not find the field in this class/method, so its maybe from some other super class, so insert
+                // a dummy value
                 final String fieldName = ((SimpleName) expression).getIdentifier();
                 return "{{" + fieldName + "}}";
             }
@@ -610,7 +679,8 @@ public final class CamelJavaParserHelper {
             VariableDeclarationFragment vdf = (VariableDeclarationFragment) field.getInternal();
             expression = vdf.getInitializer();
             if (expression == null) {
-                // it's a field which has no initializer, then add a dummy value assuming the field will be initialized at runtime
+                // it's a field which has no initializer, then add a dummy value assuming the field will be initialized
+                // at runtime
                 return "{{" + field.getName() + "}}";
             } else {
                 return getLiteralValue(clazz, block, expression);
@@ -618,5 +688,4 @@ public final class CamelJavaParserHelper {
         }
         return null;
     }
-
 }

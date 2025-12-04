@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Collection;
@@ -139,8 +140,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             values = inflight.values().stream();
         } else {
             // only if route match
-            values = inflight.values().stream()
-                    .filter(e -> fromRouteId.equals(e.getFromRouteId()));
+            values = inflight.values().stream().filter(e -> fromRouteId.equals(e.getFromRouteId()));
         }
 
         if (sortByLongestDuration) {
@@ -176,17 +176,18 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             values = inflight.values().stream();
         } else {
             // only if route match
-            values = inflight.values().stream()
-                    .filter(e -> fromRouteId.equals(e.getFromRouteId()));
+            values = inflight.values().stream().filter(e -> fromRouteId.equals(e.getFromRouteId()));
         }
 
         // sort by duration and grab the first
         Exchange first = values.sorted((e1, e2) -> {
-            long d1 = getExchangeDuration(e1);
-            long d2 = getExchangeDuration(e2);
-            // need the biggest number first
-            return -1 * Long.compare(d1, d2);
-        }).findFirst().orElse(null);
+                    long d1 = getExchangeDuration(e1);
+                    long d2 = getExchangeDuration(e2);
+                    // need the biggest number first
+                    return -1 * Long.compare(d1, d2);
+                })
+                .findFirst()
+                .orElse(null);
 
         if (first != null) {
             return new InflightExchangeEntry(first);
@@ -279,5 +280,4 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             return "InflightExchangeEntry[exchangeId=" + exchange.getExchangeId() + "]";
         }
     }
-
 }

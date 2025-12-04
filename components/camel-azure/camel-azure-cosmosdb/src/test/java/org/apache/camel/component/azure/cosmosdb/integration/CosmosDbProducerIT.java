@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,15 +41,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
-        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
+    @EnabledIfSystemProperty(
+            named = "endpoint",
+            matches = ".*",
+            disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
+    @EnabledIfSystemProperty(
+            named = "accessKey",
+            matches = ".*",
+            disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
 })
 public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     @EndpointInject
@@ -52,22 +57,24 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
     private String resultName = "mock:result";
 
     @AfterEach
     void removeAllDatabases() {
         // delete all databases being used in the test after each test
-        client.readAllDatabases()
-                .toIterable()
-                .forEach(cosmosDatabaseProperties -> client.getDatabase(cosmosDatabaseProperties.getId()).delete()
-                        .block());
+        client.readAllDatabases().toIterable().forEach(cosmosDatabaseProperties -> client.getDatabase(
+                        cosmosDatabaseProperties.getId())
+                .delete()
+                .block());
     }
 
     @Test
     void testListDatabases() throws InterruptedException {
 
         // create bunch of databases
-        final String prefixDatabaseNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String prefixDatabaseNames =
+                RandomStringUtils.randomAlphabetic(10).toLowerCase();
         final int expectedSize = 5;
 
         for (int i = 0; i < expectedSize; i++) {
@@ -76,17 +83,16 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
 
         result.expectedMessageCount(1);
 
-        template.send("direct:listDatabases", exchange -> {
-        });
+        template.send("direct:listDatabases", exchange -> {});
 
         result.assertIsSatisfied(1000);
 
         // check the names of the databases
-        final List<CosmosDatabaseProperties> returnedDatabases = result.getExchanges().get(0).getMessage().getBody(List.class);
+        final List<CosmosDatabaseProperties> returnedDatabases =
+                result.getExchanges().get(0).getMessage().getBody(List.class);
 
-        final List<String> returnedDatabasesAsString = returnedDatabases
-                .stream().map(CosmosDatabaseProperties::getId)
-                .toList();
+        final List<String> returnedDatabasesAsString =
+                returnedDatabases.stream().map(CosmosDatabaseProperties::getId).toList();
 
         assertEquals(5, returnedDatabasesAsString.size());
 
@@ -102,8 +108,8 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
         // test create database
         result.expectedMessageCount(1);
 
-        template.send("direct:createDatabase",
-                exchange -> exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseNames));
+        template.send("direct:createDatabase", exchange -> exchange.getIn()
+                .setHeader(CosmosDbConstants.DATABASE_NAME, databaseNames));
 
         result.assertIsSatisfied(1000);
 
@@ -118,8 +124,8 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
         // test delete database
         result.reset();
 
-        template.send("direct:deleteDatabase",
-                exchange -> exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseNames));
+        template.send("direct:deleteDatabase", exchange -> exchange.getIn()
+                .setHeader(CosmosDbConstants.DATABASE_NAME, databaseNames));
 
         result.expectedMessageCount(1);
 
@@ -194,14 +200,16 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     void testReplaceDatabaseThroughput() throws InterruptedException {
         final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
-        client.createDatabaseIfNotExists(databaseName, ThroughputProperties.createManualThroughput(500)).block();
+        client.createDatabaseIfNotExists(databaseName, ThroughputProperties.createManualThroughput(500))
+                .block();
 
         result.expectedMessageCount(1);
 
         template.send("direct:replaceDatabaseThroughput", exchange -> {
             exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseName);
-            exchange.getIn().setHeader(CosmosDbConstants.THROUGHPUT_PROPERTIES,
-                    ThroughputProperties.createManualThroughput(700));
+            exchange.getIn()
+                    .setHeader(
+                            CosmosDbConstants.THROUGHPUT_PROPERTIES, ThroughputProperties.createManualThroughput(700));
         });
 
         result.assertIsSatisfied(1000);
@@ -216,14 +224,17 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     @Test
     void testQueryContainers() throws InterruptedException {
         // create bunch of containers to test
-        final String prefixContainerNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String prefixContainerNames =
+                RandomStringUtils.randomAlphabetic(10).toLowerCase();
         final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
         final int expectedSize = 5;
 
         client.createDatabaseIfNotExists(databaseName).block();
 
         for (int i = 0; i < expectedSize; i++) {
-            client.getDatabase(databaseName).createContainer(prefixContainerNames + i, "/path").block();
+            client.getDatabase(databaseName)
+                    .createContainer(prefixContainerNames + i, "/path")
+                    .block();
         }
 
         result.expectedMessageCount(1);
@@ -238,8 +249,8 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
 
         result.assertIsSatisfied(1000);
 
-        final List<CosmosContainerProperties> returnedContainers
-                = result.getExchanges().get(0).getMessage().getBody(List.class);
+        final List<CosmosContainerProperties> returnedContainers =
+                result.getExchanges().get(0).getMessage().getBody(List.class);
 
         assertNotNull(returnedContainers);
         assertEquals(1, returnedContainers.size());
@@ -328,8 +339,14 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
         result.reset();
 
         // we make sure we only have two items in this container (one create and one upserted)
-        assertEquals(2, client.getDatabase(databaseName).getContainer(containerName)
-                .readAllItems(new PartitionKey("test-1"), Object.class).collectList().block().size());
+        assertEquals(
+                2,
+                client.getDatabase(databaseName)
+                        .getContainer(containerName)
+                        .readAllItems(new PartitionKey("test-1"), Object.class)
+                        .collectList()
+                        .block()
+                        .size());
 
         // test delete
         result.expectedMessageCount(1);
@@ -365,8 +382,14 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
         assertTrue(response.getHeader(CosmosDbConstants.STATUS_CODE, Integer.class) < 300);
 
         // we make sure we no items
-        assertEquals(0, client.getDatabase(databaseName).getContainer(containerName)
-                .readAllItems(new PartitionKey("test-1"), Object.class).collectList().block().size());
+        assertEquals(
+                0,
+                client.getDatabase(databaseName)
+                        .getContainer(containerName)
+                        .readAllItems(new PartitionKey("test-1"), Object.class)
+                        .collectList()
+                        .block()
+                        .size());
     }
 
     @Test
@@ -394,12 +417,20 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
         item3.put("field2", "super super awesome!");
 
         client.createDatabaseIfNotExists(databaseName).block();
-        client.getDatabase(databaseName).createContainerIfNotExists(containerName, "/partition").block();
-        client.getDatabase(databaseName).getContainer(containerName).createItem(item1, new PartitionKey("test-1"), null)
+        client.getDatabase(databaseName)
+                .createContainerIfNotExists(containerName, "/partition")
                 .block();
-        client.getDatabase(databaseName).getContainer(containerName).createItem(item2, new PartitionKey("test-1"), null)
+        client.getDatabase(databaseName)
+                .getContainer(containerName)
+                .createItem(item1, new PartitionKey("test-1"), null)
                 .block();
-        client.getDatabase(databaseName).getContainer(containerName).createItem(item3, new PartitionKey("test-2"), null)
+        client.getDatabase(databaseName)
+                .getContainer(containerName)
+                .createItem(item2, new PartitionKey("test-1"), null)
+                .block();
+        client.getDatabase(databaseName)
+                .getContainer(containerName)
+                .createItem(item3, new PartitionKey("test-2"), null)
                 .block();
 
         final String query = "SELECT c.id,c.field2,c.field1 from c where c.id = 'test-id-2'";
@@ -412,8 +443,7 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
             exchange.getIn().setHeader(CosmosDbConstants.QUERY, query);
         });
 
-        final List returnedResults
-                = result.getExchanges().get(0).getMessage().getBody(List.class);
+        final List returnedResults = result.getExchanges().get(0).getMessage().getBody(List.class);
 
         assertEquals(1, returnedResults.size());
 
@@ -433,20 +463,42 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:listDatabases").to("azure-cosmosdb://?operation=listDatabases").to(resultName);
-                from("direct:createDatabase").to("azure-cosmosdb://?operation=createDatabase").to(resultName);
-                from("direct:deleteDatabase").to("azure-cosmosdb://?operation=deleteDatabase").to(resultName);
-                from("direct:createContainer").to("azure-cosmosdb://?operation=createContainer")
+                from("direct:listDatabases")
+                        .to("azure-cosmosdb://?operation=listDatabases")
                         .to(resultName);
-                from("direct:replaceDatabaseThroughput").to("azure-cosmosdb://?operation=replaceDatabaseThroughput")
+                from("direct:createDatabase")
+                        .to("azure-cosmosdb://?operation=createDatabase")
                         .to(resultName);
-                from("direct:queryContainers").to("azure-cosmosdb://?operation=queryContainers").to(resultName);
-                from("direct:deleteContainer").to("azure-cosmosdb://?operation=deleteContainer").to(resultName);
-                from("direct:createItem").to("azure-cosmosdb://?operation=createItem").to(resultName);
-                from("direct:upsertItem").to("azure-cosmosdb://?operation=upsertItem").to(resultName);
-                from("direct:replaceItem").to("azure-cosmosdb://?operation=replaceItem").to(resultName);
-                from("direct:deleteItem").to("azure-cosmosdb://?operation=deleteItem").to(resultName);
-                from("direct:queryItems").to("azure-cosmosdb://?operation=queryItems").to(resultName);
+                from("direct:deleteDatabase")
+                        .to("azure-cosmosdb://?operation=deleteDatabase")
+                        .to(resultName);
+                from("direct:createContainer")
+                        .to("azure-cosmosdb://?operation=createContainer")
+                        .to(resultName);
+                from("direct:replaceDatabaseThroughput")
+                        .to("azure-cosmosdb://?operation=replaceDatabaseThroughput")
+                        .to(resultName);
+                from("direct:queryContainers")
+                        .to("azure-cosmosdb://?operation=queryContainers")
+                        .to(resultName);
+                from("direct:deleteContainer")
+                        .to("azure-cosmosdb://?operation=deleteContainer")
+                        .to(resultName);
+                from("direct:createItem")
+                        .to("azure-cosmosdb://?operation=createItem")
+                        .to(resultName);
+                from("direct:upsertItem")
+                        .to("azure-cosmosdb://?operation=upsertItem")
+                        .to(resultName);
+                from("direct:replaceItem")
+                        .to("azure-cosmosdb://?operation=replaceItem")
+                        .to(resultName);
+                from("direct:deleteItem")
+                        .to("azure-cosmosdb://?operation=deleteItem")
+                        .to(resultName);
+                from("direct:queryItems")
+                        .to("azure-cosmosdb://?operation=queryItems")
+                        .to(resultName);
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Start Container Request headers are applied properly
@@ -50,7 +51,6 @@ public class StartContainerCmdHeaderTest extends BaseDockerHeaderTest<StartConta
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).startContainerCmd(containerId);
-
     }
 
     @Override
@@ -62,5 +62,4 @@ public class StartContainerCmdHeaderTest extends BaseDockerHeaderTest<StartConta
     protected DockerOperation getOperation() {
         return DockerOperation.START_CONTAINER;
     }
-
 }

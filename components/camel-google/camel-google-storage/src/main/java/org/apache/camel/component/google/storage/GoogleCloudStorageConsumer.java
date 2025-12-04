@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage;
 
 import java.io.File;
@@ -68,11 +69,13 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Bucket [{}] already exists", bucket.getName());
                 return;
             } else {
-                LOG.trace("Destination Bucket [{}] doesn't exist yet", getConfiguration().getDestinationBucket());
+                LOG.trace(
+                        "Destination Bucket [{}] doesn't exist yet",
+                        getConfiguration().getDestinationBucket());
                 if (getConfiguration().isAutoCreateBucket()) {
                     // creates the new bucket because it doesn't exist yet
-                    GoogleCloudStorageEndpoint.createNewBucket(getConfiguration().getDestinationBucket(), getConfiguration(),
-                            getStorageClient());
+                    GoogleCloudStorageEndpoint.createNewBucket(
+                            getConfiguration().getDestinationBucket(), getConfiguration(), getStorageClient());
                 }
             }
         }
@@ -102,7 +105,8 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
             if (ObjectHelper.isEmpty(getConfiguration().getPrefix())) {
                 page = getStorageClient().list(bucketName);
             } else {
-                Storage.BlobListOption option = Storage.BlobListOption.prefix(getConfiguration().getPrefix());
+                Storage.BlobListOption option =
+                        Storage.BlobListOption.prefix(getConfiguration().getPrefix());
                 page = getStorageClient().list(bucketName, option);
             }
 
@@ -226,7 +230,10 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
                 String bucketName = exchange.getIn().getHeader(GoogleCloudStorageConstants.BUCKET_NAME, String.class);
                 String key = exchange.getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class);
 
-                LOG.trace("Moving object from bucket {} with key {} to bucket {}...", bucketName, key,
+                LOG.trace(
+                        "Moving object from bucket {} with key {} to bucket {}...",
+                        bucketName,
+                        key,
                         getConfiguration().getDestinationBucket());
 
                 BlobId sourceBlobId = BlobId.of(bucketName, key);
@@ -234,8 +241,12 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
                 CopyRequest request = CopyRequest.of(sourceBlobId, targetBlobId);
                 CopyWriter copyWriter = getStorageClient().copy(request);
 
-                LOG.trace("Moved object from bucket {} with key {} to bucketName {} -> {}", bucketName, key,
-                        getConfiguration().getDestinationBucket(), copyWriter.getResult());
+                LOG.trace(
+                        "Moved object from bucket {} with key {} to bucketName {} -> {}",
+                        bucketName,
+                        key,
+                        getConfiguration().getDestinationBucket(),
+                        copyWriter.getResult());
             }
             if (getConfiguration().isDeleteAfterRead()) {
                 String bucketName = exchange.getIn().getHeader(GoogleCloudStorageConstants.BUCKET_NAME, String.class);
@@ -248,8 +259,9 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Deleted object from bucket {} with key {}, result={}", bucketName, key, b);
             }
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error occurred during moving or deleting object. This exception is ignored.",
-                    exchange, e);
+            getExceptionHandler()
+                    .handleException(
+                            "Error occurred during moving or deleting object. This exception is ignored.", exchange, e);
         }
     }
 
@@ -286,7 +298,10 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
     public Exchange createExchange(ExchangePattern pattern, Blob blob, String key) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Getting object with key [{}] from bucket [{}]...", key, getConfiguration().getBucketName());
+            LOG.trace(
+                    "Getting object with key [{}] from bucket [{}]...",
+                    key,
+                    getConfiguration().getBucketName());
             LOG.trace("Got object [{}]", blob);
         }
 
@@ -298,7 +313,8 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
             // download as file
             if (getConfiguration().getDownloadFileName() != null) {
                 // create a dummy exchange as Exchange is needed for expression evaluation
-                String result = evaluateFileExpression(exchange, getConfiguration().getDownloadFileName(), blob.getName());
+                String result =
+                        evaluateFileExpression(exchange, getConfiguration().getDownloadFileName(), blob.getName());
                 if (result != null) {
                     File file = new File(result);
                     blob.downloadTo(file.toPath());
@@ -322,8 +338,9 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         }
 
         message.setHeader(GoogleCloudStorageConstants.OBJECT_NAME, key);
-        message.setHeader(GoogleCloudStorageConstants.BUCKET_NAME, getConfiguration().getBucketName());
-        //OTHER METADATA
+        message.setHeader(
+                GoogleCloudStorageConstants.BUCKET_NAME, getConfiguration().getBucketName());
+        // OTHER METADATA
         message.setHeader(GoogleCloudStorageConstants.CACHE_CONTROL, blob.getCacheControl());
         message.setHeader(GoogleCloudStorageConstants.METADATA_COMPONENT_COUNT, blob.getComponentCount());
         message.setHeader(GoogleCloudStorageConstants.CONTENT_DISPOSITION, blob.getContentDisposition());
@@ -365,5 +382,4 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         }
         return result;
     }
-
 }

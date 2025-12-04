@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test based on user forum problem - CAMEL-1463.
@@ -47,13 +48,20 @@ public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(noErrorHandler());
 
-                from("direct:start").choice().when(header("foo").isEqualTo("bar")).to("direct:end").otherwise().end();
+                from("direct:start")
+                        .choice()
+                        .when(header("foo").isEqualTo("bar"))
+                        .to("direct:end")
+                        .otherwise()
+                        .end();
 
-                from("direct:end").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("Hello World", exchange.getIn().getBody(String.class));
-                    }
-                }).to("mock:result");
+                from("direct:end")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("Hello World", exchange.getIn().getBody(String.class));
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

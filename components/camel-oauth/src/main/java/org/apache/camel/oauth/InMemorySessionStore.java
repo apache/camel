@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oauth;
+
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_COOKIE;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_SESSION_ID;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,9 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_COOKIE;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_SESSION_ID;
 
 public class InMemorySessionStore implements OAuthSessionStore {
 
@@ -90,9 +91,7 @@ public class InMemorySessionStore implements OAuthSessionStore {
         var cookieMap = Arrays.stream(value.split(";"))
                 .map(String::trim)
                 .map(s -> s.split("=", 2))
-                .collect(Collectors.toMap(
-                        arr -> arr[0],
-                        arr -> arr.length > 1 ? arr[1] : ""));
+                .collect(Collectors.toMap(arr -> arr[0], arr -> arr.length > 1 ? arr[1] : ""));
 
         return cookieMap;
     }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.keycloak.admin.client.Keycloak;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class KeycloakComponentTest extends CamelTestSupport {
 
@@ -32,7 +33,8 @@ public class KeycloakComponentTest extends CamelTestSupport {
 
         context.getRegistry().bind("keycloakClient", keycloakClient);
 
-        KeycloakEndpoint endpoint = (KeycloakEndpoint) context.getEndpoint("keycloak:test?keycloakClient=#keycloakClient");
+        KeycloakEndpoint endpoint =
+                (KeycloakEndpoint) context.getEndpoint("keycloak:test?keycloakClient=#keycloakClient");
 
         assertNotNull(endpoint);
         assertEquals("test", endpoint.getConfiguration().getLabel());
@@ -71,8 +73,8 @@ public class KeycloakComponentTest extends CamelTestSupport {
 
         context.getRegistry().bind("keycloakClient", keycloakClient);
 
-        KeycloakEndpoint endpoint = (KeycloakEndpoint) context.getEndpoint(
-                "keycloak:test?keycloakClient=#keycloakClient&operation=createUser");
+        KeycloakEndpoint endpoint = (KeycloakEndpoint)
+                context.getEndpoint("keycloak:test?keycloakClient=#keycloakClient&operation=createUser");
 
         assertNotNull(endpoint);
         assertEquals(KeycloakOperations.createUser, endpoint.getConfiguration().getOperation());

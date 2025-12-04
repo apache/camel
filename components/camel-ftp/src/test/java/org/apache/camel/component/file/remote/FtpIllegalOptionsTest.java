@@ -14,27 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FtpIllegalOptionsTest extends CamelTestSupport {
 
     @Test
     public void testIllegalOptionsFileEndpoint() {
         Endpoint fileEndpoint = context.getEndpoint("file://target?move=../done/${file:name}&delete=true");
-        assertThrows(IllegalArgumentException.class, () -> fileEndpoint.createConsumer(exchange -> {
-        }));
+        assertThrows(IllegalArgumentException.class, () -> fileEndpoint.createConsumer(exchange -> {}));
     }
 
     @Test
     public void testIllegalOptionsFtpEndpoint() {
         Endpoint ftpEndpoint = context.getEndpoint("ftp://target?move=../done/${file:name}&delete=true");
-        assertThrows(IllegalArgumentException.class, () -> ftpEndpoint.createConsumer(exchange -> {
-        }));
+        assertThrows(IllegalArgumentException.class, () -> ftpEndpoint.createConsumer(exchange -> {}));
     }
 }

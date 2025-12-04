@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ecs;
 
 import org.apache.camel.Category;
@@ -32,9 +33,14 @@ import software.amazon.awssdk.services.ecs.EcsClient;
 /**
  * Manage AWS ECS cluster instances.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ecs", title = "AWS Elastic Container Service (ECS)",
-             syntax = "aws2-ecs:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
-             headersClass = ECS2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-ecs",
+        title = "AWS Elastic Container Service (ECS)",
+        syntax = "aws2-ecs:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = ECS2Constants.class)
 public class ECS2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private EcsClient ecsClient;
@@ -67,7 +73,8 @@ public class ECS2Endpoint extends ScheduledPollEndpoint implements EndpointServi
         super.doStart();
 
         ecsClient = configuration.getEcsClient() != null
-                ? configuration.getEcsClient() : ECS2ClientFactory.getEcsClient(configuration).getEcsClient();
+                ? configuration.getEcsClient()
+                : ECS2ClientFactory.getEcsClient(configuration).getEcsClient();
     }
 
     @Override

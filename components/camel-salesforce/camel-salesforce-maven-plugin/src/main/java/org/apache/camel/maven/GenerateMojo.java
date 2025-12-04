@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -46,8 +47,9 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     /**
      * Location of generated DTO files, defaults to target/generated-sources/camel-salesforce.
      */
-    @Parameter(property = "camelSalesforce.outputDirectory",
-               defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
+    @Parameter(
+            property = "camelSalesforce.outputDirectory",
+            defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
     File outputDirectory;
 
     /**
@@ -148,7 +150,10 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     }
 
     public void processDescription(
-            File pkgDir, SObjectDescription description, GenerateExecution.GeneratorUtility utility, Set<String> sObjectNames)
+            File pkgDir,
+            SObjectDescription description,
+            GenerateExecution.GeneratorUtility utility,
+            Set<String> sObjectNames)
             throws Exception {
         execution.processDescription(pkgDir, description, utility, sObjectNames);
     }

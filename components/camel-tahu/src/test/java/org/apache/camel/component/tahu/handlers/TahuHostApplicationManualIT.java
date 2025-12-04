@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu.handlers;
 
 import java.time.Instant;
@@ -47,7 +48,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Disabled("Manual test for underlying TahuHostApplication implementation complies with Sparkplug B TCK for Host Applications")
+@Disabled(
+        "Manual test for underlying TahuHostApplication implementation complies with Sparkplug B TCK for Host Applications")
 @SuppressWarnings("unused")
 public class TahuHostApplicationManualIT {
 
@@ -81,8 +83,12 @@ public class TahuHostApplicationManualIT {
     public static void beforeAll() throws Exception {
         mqttServerDefinitions.add(new MqttServerDefinition(
                 new MqttServerName(MQTT_SERVER_NAME_1),
-                new MqttClientId(MQTT_CLIENT_ID_1, false), new MqttServerUrl(MQTT_SERVER_URL_1), USERNAME_1,
-                PASSWORD_1, KEEP_ALIVE_TIMEOUT, null));
+                new MqttClientId(MQTT_CLIENT_ID_1, false),
+                new MqttServerUrl(MQTT_SERVER_URL_1),
+                USERNAME_1,
+                PASSWORD_1,
+                KEEP_ALIVE_TIMEOUT,
+                null));
     }
 
     @BeforeEach
@@ -144,15 +150,19 @@ public class TahuHostApplicationManualIT {
         }
 
         spTckService.spTckResultMockEndpoint.assertIsSatisfied();
-
     }
 
     private void initiateTckTest(String testParams) throws Exception {
         spTckService.initiateTckTest(testParams);
     }
 
-    private static final List<MessageType> HANDLED_MESSAGE_TYPES = List.of(MessageType.NBIRTH, MessageType.NDATA,
-            MessageType.NDEATH, MessageType.DBIRTH, MessageType.DDATA, MessageType.DDEATH);
+    private static final List<MessageType> HANDLED_MESSAGE_TYPES = List.of(
+            MessageType.NBIRTH,
+            MessageType.NDATA,
+            MessageType.NDEATH,
+            MessageType.DBIRTH,
+            MessageType.DDATA,
+            MessageType.DDEATH);
 
     void onMessageConsumer(EdgeNodeDescriptor edgeNodeDescriptor, org.eclipse.tahu.message.model.Message tahuMessage) {
         try {
@@ -161,29 +171,25 @@ public class TahuHostApplicationManualIT {
 
             if (HANDLED_MESSAGE_TYPES.contains(topic.getType())) {
 
-                if (payload.getTimestamp() != null) {
-                }
+                if (payload.getTimestamp() != null) {}
 
-                if (payload.getSeq() != null) {
-                }
+                if (payload.getSeq() != null) {}
 
-                if (payload.getUuid() != null) {
-                }
+                if (payload.getUuid() != null) {}
 
-                if (payload.getBody() != null) {
-                }
+                if (payload.getBody() != null) {}
 
                 Map<String, Object> payloadMetrics = payload.getMetrics().stream()
-                        .map(m -> new Object[] { TahuConstants.METRIC_HEADER_PREFIX + m.getName(), m })
+                        .map(m -> new Object[] {TahuConstants.METRIC_HEADER_PREFIX + m.getName(), m})
                         .collect(Collectors.toMap(arr -> (String) arr[0], arr -> arr[1]));
 
-                if (!payloadMetrics.isEmpty()) {
-                }
+                if (!payloadMetrics.isEmpty()) {}
 
             } else {
                 LOG.warn(
                         "TahuHostAppConsumer onMessageConsumer: Unknown Message Type {} from {} - ignoring",
-                        topic.getType(), edgeNodeDescriptor);
+                        topic.getType(),
+                        edgeNodeDescriptor);
             }
 
         } catch (Exception e) {
@@ -191,7 +197,5 @@ public class TahuHostApplicationManualIT {
         }
     }
 
-    void onMetricConsumer(EdgeNodeDescriptor edgeNodeDescriptor, Metric metric) {
-    }
-
+    void onMetricConsumer(EdgeNodeDescriptor edgeNodeDescriptor, Metric metric) {}
 }

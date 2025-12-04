@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
+
+import org.xmlunit.assertj3.XmlAssert;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.xmlunit.assertj3.XmlAssert;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XsltSaxonJsonBodyTest extends CamelTestSupport {
 
-    private static final String JSON_INPUT = """
+    private static final String JSON_INPUT =
+            """
             {
                 "name": "John Doe",
                 "age": 30,
@@ -58,7 +61,8 @@ public class XsltSaxonJsonBodyTest extends CamelTestSupport {
         Exchange exchange = list.get(0);
         Document res = exchange.getIn().getBody(Document.class);
 
-        String expected = """
+        String expected =
+                """
                 <Person>
                     <Name>John Doe</Name>
                     <Age>30</Age>

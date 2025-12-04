@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
 
 import java.util.Map;
@@ -79,5 +80,4 @@ public class PahoMqtt5Component extends DefaultComponent {
     public void setClient(MqttClient client) {
         this.client = client;
     }
-
 }

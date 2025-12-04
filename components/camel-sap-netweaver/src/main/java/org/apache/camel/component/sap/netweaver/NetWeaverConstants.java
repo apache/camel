@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sap.netweaver;
 
 import org.apache.camel.Exchange;
@@ -21,16 +22,19 @@ import org.apache.camel.spi.Metadata;
 
 public final class NetWeaverConstants {
 
-    @Metadata(description = "The command to execute in\n" +
-                            "http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data\n" +
-                            "Service] format.",
-              javaType = "String", required = true)
+    @Metadata(
+            description = "The command to execute in\n"
+                    + "http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data\n"
+                    + "Service] format.",
+            javaType = "String",
+            required = true)
     public static final String COMMAND = "CamelNetWeaverCommand";
+
     @Metadata(description = "The http path.", javaType = "String")
     public static final String HTTP_PATH = Exchange.HTTP_PATH;
+
     @Metadata(description = "The media type.", javaType = "String")
     public static final String ACCEPT = "Accept";
 
-    private NetWeaverConstants() {
-    }
+    private NetWeaverConstants() {}
 }

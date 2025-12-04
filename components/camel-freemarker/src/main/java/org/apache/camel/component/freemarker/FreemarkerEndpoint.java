@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.freemarker;
 
 import java.io.InputStreamReader;
@@ -37,22 +38,30 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Transform messages using FreeMarker templates.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri",
-             remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
-             headersClass = FreemarkerConstants.class)
+@UriEndpoint(
+        firstVersion = "2.10.0",
+        scheme = "freemarker",
+        title = "Freemarker",
+        syntax = "freemarker:resourceUri",
+        remote = false,
+        producerOnly = true,
+        category = {Category.TRANSFORMATION},
+        headersClass = FreemarkerConstants.class)
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")
     private boolean allowTemplateFromHeader;
+
     @UriParam
     private String encoding;
+
     @UriParam
     private int templateUpdateDelay;
+
     @UriParam
     private Configuration configuration;
 
-    public FreemarkerEndpoint() {
-    }
+    public FreemarkerEndpoint() {}
 
     public FreemarkerEndpoint(String uri, Component component, String resourceUri) {
         super(uri, component, resourceUri);
@@ -138,11 +147,14 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         ObjectHelper.notNull(path, "resourceUri");
 
         if (allowTemplateFromHeader) {
-            String newResourceUri = exchange.getIn().getHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI, String.class);
+            String newResourceUri =
+                    exchange.getIn().getHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI, String.class);
             if (newResourceUri != null) {
                 exchange.getIn().removeHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI);
 
-                log.debug("{} set to {} creating new endpoint to handle exchange", FreemarkerConstants.FREEMARKER_RESOURCE_URI,
+                log.debug(
+                        "{} set to {} creating new endpoint to handle exchange",
+                        FreemarkerConstants.FREEMARKER_RESOURCE_URI,
                         newResourceUri);
                 FreemarkerEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
                 newEndpoint.onExchange(exchange);
@@ -177,8 +189,10 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         }
 
         if (reader != null) {
-            log.debug("Freemarker is evaluating template read from header {} using context: {}",
-                    FreemarkerConstants.FREEMARKER_TEMPLATE, dataModel);
+            log.debug(
+                    "Freemarker is evaluating template read from header {} using context: {}",
+                    FreemarkerConstants.FREEMARKER_TEMPLATE,
+                    dataModel);
             template = new Template("temp", reader, new Configuration(Configuration.VERSION_2_3_34));
         } else {
             log.debug("Freemarker is evaluating {} using context: {}", path, dataModel);

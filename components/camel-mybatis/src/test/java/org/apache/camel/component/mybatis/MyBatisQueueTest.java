@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisQueueTest extends MyBatisTestSupport {
 
@@ -57,14 +58,15 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
         account2.setLastName("Hale");
         account2.setEmailAddress("TryGuessingSkipper@gmail.com");
 
-        template.sendBody("direct:start", new Account[] { account1, account2 });
+        template.sendBody("direct:start", new Account[] {account1, account2});
 
         MockEndpoint.assertIsSatisfied(context);
 
         // need a delay here on slower machines
-        List<?> body = await()
-                .atMost(1, TimeUnit.SECONDS)
-                .until(() -> template.requestBody("mybatis:selectProcessedAccounts?statementType=SelectList", null, List.class),
+        List<?> body = await().atMost(1, TimeUnit.SECONDS)
+                .until(
+                        () -> template.requestBody(
+                                "mybatis:selectProcessedAccounts?statementType=SelectList", null, List.class),
                         Matchers.notNullValue());
 
         // now lets poll that the account has been inserted
@@ -83,7 +85,8 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("mybatis:selectUnprocessedAccounts?onConsume=consumeAccount").to("mock:results");
+                from("mybatis:selectUnprocessedAccounts?onConsume=consumeAccount")
+                        .to("mock:results");
                 // END SNIPPET: e1
 
                 from("direct:start").to("mybatis:insertAccount?statementType=Insert");

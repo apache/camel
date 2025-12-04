@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stub;
 
 import java.util.concurrent.BlockingQueue;
@@ -36,20 +37,30 @@ import org.apache.camel.spi.UriEndpoint;
  * front of a typical URI with query arguments will usually fail. Stub won't though, as it basically ignores all query
  * parameters to let you quickly stub out one or more endpoints in your route temporarily.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "stub", title = "Stub", syntax = "stub:name",
-             remote = false, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+@UriEndpoint(
+        firstVersion = "2.10.0",
+        scheme = "stub",
+        title = "Stub",
+        syntax = "stub:name",
+        remote = false,
+        category = {Category.CORE, Category.TESTING},
+        lenientProperties = true)
 public class StubEndpoint extends SedaEndpoint {
 
     public StubEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
         super(endpointUri, component, queue);
     }
 
-    public StubEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
+    public StubEndpoint(
+            String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
         super(endpointUri, component, queue, concurrentConsumers);
     }
 
-    public StubEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory,
-                        int concurrentConsumers) {
+    public StubEndpoint(
+            String endpointUri,
+            Component component,
+            BlockingQueueFactory<Exchange> queueFactory,
+            int concurrentConsumers) {
         super(endpointUri, component, queueFactory, concurrentConsumers);
     }
 
@@ -66,6 +77,11 @@ public class StubEndpoint extends SedaEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return new StubProducer(
-                this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), isDiscardWhenFull(), getOfferTimeout());
+                this,
+                getWaitForTaskToComplete(),
+                getTimeout(),
+                isBlockWhenFull(),
+                isDiscardWhenFull(),
+                getOfferTimeout());
     }
 }

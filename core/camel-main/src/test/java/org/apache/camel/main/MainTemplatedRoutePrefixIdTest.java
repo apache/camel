@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.LogProcessor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MainTemplatedRoutePrefixIdTest {
 
@@ -38,9 +39,11 @@ class MainTemplatedRoutePrefixIdTest {
                         .from("direct:{{foo}}")
                         .choice()
                         .when(header("foo"))
-                        .log("${body}").id("myLog")
+                        .log("${body}")
+                        .id("myLog")
                         .otherwise()
-                        .to("mock:{{bar}}").id("end");
+                        .to("mock:{{bar}}")
+                        .id("end");
 
                 templatedRoute("myTemplate")
                         .routeId("my-route")
@@ -73,5 +76,4 @@ class MainTemplatedRoutePrefixIdTest {
 
         main.stop();
     }
-
 }

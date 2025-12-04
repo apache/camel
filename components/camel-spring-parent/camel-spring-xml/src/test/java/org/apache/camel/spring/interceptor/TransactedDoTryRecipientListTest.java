@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactedDoTryRecipientListTest extends TransactionClientDataSourceSupport {
 
@@ -40,12 +41,10 @@ public class TransactedDoTryRecipientListTest extends TransactionClientDataSourc
                 from("direct:start")
                         .transacted()
                         .doTry()
-                            .recipientList(constant("direct:a"))
+                        .recipientList(constant("direct:a"))
                         .endDoTry();
 
-                from("direct:a")
-                        .delay(1)
-                        .transform(constant("Hi !!!"));
+                from("direct:a").delay(1).transform(constant("Hi !!!"));
             }
         };
     }

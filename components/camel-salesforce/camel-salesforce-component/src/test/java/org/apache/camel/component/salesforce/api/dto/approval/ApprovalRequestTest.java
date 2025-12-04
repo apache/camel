@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.approval;
+
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.CombinableMatcher.both;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 
@@ -23,12 +30,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.CombinableMatcher.both;
-import static org.hamcrest.core.IsNot.not;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApprovalRequestTest {
 
@@ -44,7 +45,6 @@ public class ApprovalRequestTest {
         sampleRequest.setContextActorId("005D00000015rZy");
         sampleRequest.setProcessDefinitionNameOrId("PTO_Request_Process");
         sampleRequest.setSkipEntryCriteria(true);
-
     }
 
     @Test
@@ -61,13 +61,17 @@ public class ApprovalRequestTest {
 
         final ApprovalRequest combined = request.applyTemplate(template);
 
-        assertThat("Combined approval request should be a new instance", combined,
+        assertThat(
+                "Combined approval request should be a new instance",
+                combined,
                 both(not(sameInstance(request))).and(not(sameInstance(template))));
 
         assertEquals(request.getActionType(), combined.getActionType(), "Action type should not be overwritten");
         assertEquals(request.getComments(), combined.getComments(), "Comment should not be overwritten");
         assertEquals(request.getContextId(), combined.getContextId(), "Context id should not be overwritten");
-        assertEquals(template.getNextApproverIds(), combined.getNextApproverIds(),
+        assertEquals(
+                template.getNextApproverIds(),
+                combined.getNextApproverIds(),
                 "Next approver id should be taken from template");
     }
 
@@ -77,9 +81,10 @@ public class ApprovalRequestTest {
 
         final String json = mapper.writerFor(ApprovalRequest.class).writeValueAsString(sampleRequest);
 
-        assertEquals("{\"actionType\":\"Submit\",\"contextActorId\":\"005D00000015rZy\",\"contextId\":\"001D000000I8mIm\""
-                     + ",\"comments\":\"this is a test\",\"nextApproverIds\":[\"005D00000015rY9\"],"
-                     + "\"processDefinitionNameOrId\":\"PTO_Request_Process\",\"skipEntryCriteria\":true}",
+        assertEquals(
+                "{\"actionType\":\"Submit\",\"contextActorId\":\"005D00000015rZy\",\"contextId\":\"001D000000I8mIm\""
+                        + ",\"comments\":\"this is a test\",\"nextApproverIds\":[\"005D00000015rY9\"],"
+                        + "\"processDefinitionNameOrId\":\"PTO_Request_Process\",\"skipEntryCriteria\":true}",
                 json,
                 "ApprovalRequest should serialize as JSON from Salesforce examples");
     }
@@ -92,5 +97,4 @@ public class ApprovalRequestTest {
 
         assertThat("For null templates applyTemplate should return same object", appliedTo, sameInstance(request));
     }
-
 }

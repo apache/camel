@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.intercept.InterceptSimpleRouteWhenStopTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringInterceptSimpleRouteWhenStopTest extends InterceptSimpleRouteWhenStopTest {
 
@@ -30,7 +31,7 @@ public class SpringInterceptSimpleRouteWhenStopTest extends InterceptSimpleRoute
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringInterceptSimpleRouteWhenStopTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/SpringInterceptSimpleRouteWhenStopTest.xml");
     }
-
 }

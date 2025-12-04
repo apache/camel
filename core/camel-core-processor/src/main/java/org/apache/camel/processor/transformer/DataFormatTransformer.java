@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.transformer;
 
 import org.apache.camel.CamelContext;
@@ -40,8 +41,7 @@ public class DataFormatTransformer extends Transformer {
     private DataFormat dataFormat;
     private String transformerString;
 
-    public DataFormatTransformer() {
-    }
+    public DataFormatTransformer() {}
 
     public DataFormatTransformer(CamelContext context) {
         setCamelContext(context);
@@ -60,7 +60,8 @@ public class DataFormatTransformer extends Transformer {
         CamelContext context = exchange.getContext();
 
         // Unmarshaling into Java Object
-        if ((DataType.isAnyType(to) || to.isJavaType()) && (from.equals(getFrom()) || from.getScheme().equals(getName()))) {
+        if ((DataType.isAnyType(to) || to.isJavaType())
+                && (from.equals(getFrom()) || from.getScheme().equals(getName()))) {
             LOG.debug("Unmarshaling with: {}", dataFormat);
             Object answer = dataFormat.unmarshal(exchange, message.getBody());
             if (!DataType.isAnyType(to) && to.getName() != null) {
@@ -107,7 +108,8 @@ public class DataFormatTransformer extends Transformer {
     @Override
     public String toString() {
         if (transformerString == null) {
-            transformerString = String.format("DataFormatTransformer[name='%s', from='%s', to='%s', dataFormat='%s']",
+            transformerString = String.format(
+                    "DataFormatTransformer[name='%s', from='%s', to='%s', dataFormat='%s']",
                     getName(), getFrom(), getTo(), dataFormat);
         }
         return transformerString;

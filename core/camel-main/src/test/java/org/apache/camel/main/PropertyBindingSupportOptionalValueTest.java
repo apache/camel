@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
@@ -24,8 +27,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -55,7 +56,8 @@ public class PropertyBindingSupportOptionalValueTest {
                 .withProperty("bars[0]", "#class:" + MySecondBar.class.getName())
                 .withProperty("bars[0].names[0]", "{{?barOne:John}}")
                 .withProperty("bars[0].names[1]", "{{?barTwo}}")
-                .withRemoveParameters(false).bind();
+                .withRemoveParameters(false)
+                .bind();
 
         assertEquals(1, target.getBars().size());
         assertEquals(2, target.getBars().get(0).getNames().size());
@@ -68,7 +70,8 @@ public class PropertyBindingSupportOptionalValueTest {
                 .withTarget(target)
                 .withProperty("bars[0].names[0]", "{{?unknown:John}}")
                 .withProperty("bars[0].names[1]", "{{?unknown}}")
-                .withRemoveParameters(false).bind();
+                .withRemoveParameters(false)
+                .bind();
 
         assertEquals(1, target.getBars().size());
         assertEquals(2, target.getBars().get(0).getNames().size());
@@ -82,5 +85,4 @@ public class PropertyBindingSupportOptionalValueTest {
 
         context.stop();
     }
-
 }

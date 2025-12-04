@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,10 +31,11 @@ public class JsonPathChoicePrimitiveTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                            .when().jsonpath("$[?(@.counter>0)]")
-                                .to("mock:positive")
-                            .otherwise()
-                                .to("mock:zero")
+                        .when()
+                        .jsonpath("$[?(@.counter>0)]")
+                        .to("mock:positive")
+                        .otherwise()
+                        .to("mock:zero")
                         .end();
             }
         };
@@ -50,5 +52,4 @@ public class JsonPathChoicePrimitiveTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

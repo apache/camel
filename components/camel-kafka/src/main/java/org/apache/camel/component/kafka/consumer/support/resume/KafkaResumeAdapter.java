@@ -70,7 +70,8 @@ public class KafkaResumeAdapter implements ResumeAdapter, Deserializable, Cachea
                 }
 
             } else {
-                LOG.warn("Unable to deserialize key '{}' because it has in invalid format and it will be discarded",
+                LOG.warn(
+                        "Unable to deserialize key '{}' because it has in invalid format and it will be discarded",
                         key);
             }
         } else {

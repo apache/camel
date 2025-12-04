@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.config;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws.config.client.AWSConfigClientFactory;
 import org.apache.camel.component.aws.config.client.AWSConfigInternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws.config.client.impl.AWSConfigClientIAMOptim
 import org.apache.camel.component.aws.config.client.impl.AWSConfigClientSessionTokenImpl;
 import org.apache.camel.component.aws.config.client.impl.AWSConfigClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AWSConfigClientFactoryTest {
 

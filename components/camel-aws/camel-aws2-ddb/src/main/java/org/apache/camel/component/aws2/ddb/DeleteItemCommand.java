@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Exchange;
@@ -29,9 +30,12 @@ public class DeleteItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        DeleteItemResponse result = ddbClient.deleteItem(DeleteItemRequest.builder().tableName(determineTableName())
-                .key(determineKey()).returnValues(determineReturnValues())
-                .expected(determineUpdateCondition()).build());
+        DeleteItemResponse result = ddbClient.deleteItem(DeleteItemRequest.builder()
+                .tableName(determineTableName())
+                .key(determineKey())
+                .returnValues(determineReturnValues())
+                .expected(determineUpdateCondition())
+                .build());
 
         addAttributesToResult(result.attributes());
     }

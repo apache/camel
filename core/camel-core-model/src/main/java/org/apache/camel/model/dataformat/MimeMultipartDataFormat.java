@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,14 +38,18 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "mixed")
     private String multipartSubType = "mixed";
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String multipartWithoutAttachment;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String headersInline;
+
     @XmlAttribute
     private String includeHeaders;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String binaryContent;

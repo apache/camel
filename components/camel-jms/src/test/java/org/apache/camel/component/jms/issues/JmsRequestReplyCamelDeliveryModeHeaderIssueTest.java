@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.CamelContext;
@@ -36,6 +37,7 @@ public class JmsRequestReplyCamelDeliveryModeHeaderIssueTest extends AbstractJMS
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
 
@@ -48,7 +50,8 @@ public class JmsRequestReplyCamelDeliveryModeHeaderIssueTest extends AbstractJMS
         Assertions.assertNotNull(out);
         Assertions.assertEquals("Camel", out.getMessage().getBody());
         Assertions.assertEquals(1, out.getMessage().getHeaders().size());
-        Assertions.assertEquals("cheese", out.getMessage().getHeaders().get(JmsConstants.JMS_DESTINATION_NAME_PRODUCED));
+        Assertions.assertEquals(
+                "cheese", out.getMessage().getHeaders().get(JmsConstants.JMS_DESTINATION_NAME_PRODUCED));
         Assertions.assertNull(out.getMessage().getHeaders().get(JmsConstants.JMS_DELIVERY_MODE));
     }
 
@@ -61,7 +64,8 @@ public class JmsRequestReplyCamelDeliveryModeHeaderIssueTest extends AbstractJMS
         Assertions.assertNotNull(out);
         Assertions.assertEquals("Hello World", out.getMessage().getBody());
         Assertions.assertEquals(16, out.getMessage().getHeaders().size());
-        Assertions.assertEquals("cheese", out.getMessage().getHeaders().get(JmsConstants.JMS_DESTINATION_NAME_PRODUCED));
+        Assertions.assertEquals(
+                "cheese", out.getMessage().getHeaders().get(JmsConstants.JMS_DESTINATION_NAME_PRODUCED));
         Assertions.assertNull(out.getMessage().getHeaders().get(JmsConstants.JMS_DELIVERY_MODE));
     }
 
@@ -86,8 +90,7 @@ public class JmsRequestReplyCamelDeliveryModeHeaderIssueTest extends AbstractJMS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:cheese")
-                        .setBody().simple("Hello ${body}");
+                from("activemq:cheese").setBody().simple("Hello ${body}");
             }
         };
     }

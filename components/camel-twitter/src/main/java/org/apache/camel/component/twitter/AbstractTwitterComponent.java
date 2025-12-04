@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
 
 import java.util.Map;
@@ -29,18 +30,25 @@ import org.apache.camel.support.HealthCheckComponent;
 public abstract class AbstractTwitterComponent extends HealthCheckComponent {
     @Metadata(label = "security", secret = true)
     private String consumerKey;
+
     @Metadata(label = "security", secret = true)
     private String consumerSecret;
+
     @Metadata(label = "security", secret = true)
     private String accessToken;
+
     @Metadata(label = "security", secret = true)
     private String accessTokenSecret;
+
     @Metadata(label = "proxy")
     private String httpProxyHost;
+
     @Metadata(label = "proxy")
     private String httpProxyUser;
+
     @Metadata(label = "proxy")
     private String httpProxyPassword;
+
     @Metadata(label = "proxy")
     private Integer httpProxyPort;
 
@@ -165,5 +173,4 @@ public abstract class AbstractTwitterComponent extends HealthCheckComponent {
     public Integer getHttpProxyPort() {
         return httpProxyPort;
     }
-
 }

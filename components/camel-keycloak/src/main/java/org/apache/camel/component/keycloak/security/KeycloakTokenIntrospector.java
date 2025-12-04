@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
 
 import java.io.IOException;
@@ -63,10 +64,18 @@ public class KeycloakTokenIntrospector {
      * @param cacheTtlSeconds cache time-to-live in seconds
      */
     public KeycloakTokenIntrospector(
-                                     String serverUrl, String realm, String clientId, String clientSecret,
-                                     boolean cacheEnabled, long cacheTtlSeconds) {
-        this(serverUrl, realm, clientId, clientSecret,
-             cacheEnabled ? TokenCacheFactory.createCache(cacheTtlSeconds) : null);
+            String serverUrl,
+            String realm,
+            String clientId,
+            String clientSecret,
+            boolean cacheEnabled,
+            long cacheTtlSeconds) {
+        this(
+                serverUrl,
+                realm,
+                clientId,
+                clientSecret,
+                cacheEnabled ? TokenCacheFactory.createCache(cacheTtlSeconds) : null);
     }
 
     /**
@@ -82,10 +91,20 @@ public class KeycloakTokenIntrospector {
      * @param recordStats     whether to record cache statistics (only for CAFFEINE type)
      */
     public KeycloakTokenIntrospector(
-                                     String serverUrl, String realm, String clientId, String clientSecret,
-                                     TokenCacheType cacheType, long cacheTtlSeconds, long maxCacheSize, boolean recordStats) {
-        this(serverUrl, realm, clientId, clientSecret,
-             TokenCacheFactory.createCache(cacheType, cacheTtlSeconds, maxCacheSize, recordStats));
+            String serverUrl,
+            String realm,
+            String clientId,
+            String clientSecret,
+            TokenCacheType cacheType,
+            long cacheTtlSeconds,
+            long maxCacheSize,
+            boolean recordStats) {
+        this(
+                serverUrl,
+                realm,
+                clientId,
+                clientSecret,
+                TokenCacheFactory.createCache(cacheType, cacheTtlSeconds, maxCacheSize, recordStats));
     }
 
     /**
@@ -98,8 +117,7 @@ public class KeycloakTokenIntrospector {
      * @param cache        the cache implementation to use (null to disable caching)
      */
     public KeycloakTokenIntrospector(
-                                     String serverUrl, String realm, String clientId, String clientSecret,
-                                     TokenCache cache) {
+            String serverUrl, String realm, String clientId, String clientSecret, TokenCache cache) {
         this.serverUrl = serverUrl;
         this.realm = realm;
         this.clientId = clientId;
@@ -130,8 +148,8 @@ public class KeycloakTokenIntrospector {
         }
 
         // Build introspection endpoint URL
-        String introspectionUrl = String.format("%s/realms/%s/protocol/openid-connect/token/introspect",
-                serverUrl, realm);
+        String introspectionUrl =
+                String.format("%s/realms/%s/protocol/openid-connect/token/introspect", serverUrl, realm);
 
         LOG.debug("Introspecting token at: {}", introspectionUrl);
 
@@ -167,8 +185,7 @@ public class KeycloakTokenIntrospector {
         }
     }
 
-    private IntrospectionResult parseIntrospectionResponse(ClassicHttpResponse response)
-            throws IOException {
+    private IntrospectionResult parseIntrospectionResponse(ClassicHttpResponse response) throws IOException {
         try {
             int statusCode = response.getCode();
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
 
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
@@ -28,7 +29,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  * classes as I was unable to fully tear down and isolate the test cases, I'm not sure why, but as soon as we know the
  * Transaction classes can be joined into one.
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class XMLQueueToQueueTransactionIT extends AbstractTransactionIT {
 
     @Override

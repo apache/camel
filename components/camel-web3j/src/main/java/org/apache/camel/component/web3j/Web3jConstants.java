@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.web3j;
 
 import org.apache.camel.spi.Metadata;
@@ -28,9 +29,13 @@ public interface Web3jConstants {
     String ETH_COINBASE = "ETH_COINBASE";
     String ETH_SYNCING = "ETH_SYNCING";
     String ETH_MINING = "ETH_MINING";
-    @Metadata(label = "producer", description = "A hexadecimal string representation (32 bytes) of the hash rate.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "A hexadecimal string representation (32 bytes) of the hash rate.",
+            javaType = "String")
     String ETH_HASHRATE = "ETH_HASHRATE";
+
     String ETH_GAS_PRICE = "ETH_GAS_PRICE";
     String ETH_ACCOUNTS = "ETH_ACCOUNTS";
     String ETH_BLOCK_NUMBER = "ETH_BLOCK_NUMBER";
@@ -99,6 +104,7 @@ public interface Web3jConstants {
 
     @Metadata(label = "producer", description = "The id", javaType = "Long")
     String ID = "ID";
+
     String OPERATION = "OPERATION";
     String TRANSACTION = "TRANSACTION";
     /**
@@ -107,64 +113,113 @@ public interface Web3jConstants {
      */
     @Metadata(label = "producer", javaType = "String")
     String AT_BLOCK = "AT_BLOCK";
+
     @Metadata(label = "producer", description = "Contract address.", javaType = "String")
     String ADDRESS = "ADDRESS";
+
     @Metadata(label = "producer", description = "Contract address or a list of addresses.", javaType = "List<String>")
     String ADDRESSES = "ADDRESSES";
+
     @Metadata(label = "producer", description = "The address the transaction is send from", javaType = "String")
     String FROM_ADDRESS = "FROM_ADDRESS";
+
     @Metadata(label = "producer", description = "The address the transaction is directed to", javaType = "String")
     String TO_ADDRESS = "TO_ADDRESS";
+
     @Metadata(label = "producer", description = "The transaction index position withing a block.", javaType = "String")
     String POSITION = "POSITION";
+
     @Metadata(label = "producer", description = "Hash of the block where this transaction was in.", javaType = "String")
     String BLOCK_HASH = "BLOCK_HASH";
-    @Metadata(label = "producer", description = "The information about a transaction requested by transaction hash.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "The information about a transaction requested by transaction hash.",
+            javaType = "String")
     String TRANSACTION_HASH = "TRANSACTION_HASH";
-    @Metadata(label = "producer", description = "Message to sign by calculating an Ethereum specific signature.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "Message to sign by calculating an Ethereum specific signature.",
+            javaType = "String")
     String SHA3_HASH_OF_DATA_TO_SIGN = "SHA3_HASH_OF_DATA_TO_SIGN";
-    @Metadata(label = "producer",
-              description = "The signed transaction data for a new message call transaction or a contract creation for signed transactions.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description =
+                    "The signed transaction data for a new message call transaction or a contract creation for signed transactions.",
+            javaType = "String")
     String SIGNED_TRANSACTION_DATA = "SIGNED_TRANSACTION_DATA";
-    @Metadata(label = "producer",
-              description = "If true it returns the full transaction objects, if false only the hashes of the transactions.",
-              javaType = "Boolean")
+
+    @Metadata(
+            label = "producer",
+            description =
+                    "If true it returns the full transaction objects, if false only the hashes of the transactions.",
+            javaType = "Boolean")
     String FULL_TRANSACTION_OBJECTS = "FULL_TRANSACTION_OBJECTS";
-    @Metadata(label = "producer", description = "The transactions/uncle index position in the block.", javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "The transactions/uncle index position in the block.",
+            javaType = "String")
     String INDEX = "INDEX";
+
     @Metadata(label = "producer", description = "The source code to compile.", javaType = "String")
     String SOURCE_CODE = "SOURCE_CODE";
+
     @Metadata(label = "producer", description = "The filter id to use.", javaType = "java.math.BigInteger")
     String FILTER_ID = "FILTER_ID";
+
     @Metadata(label = "producer", description = "The local database name.", javaType = "String")
     String DATABASE_NAME = "DATABASE_NAME";
+
     @Metadata(label = "producer", description = "The key name in the database.", javaType = "String")
     String KEY_NAME = "KEY_NAME";
-    @Metadata(label = "producer", description = "The nonce found (64 bits) used for submitting a proof-of-work solution.",
-              javaType = "java.math.BigInteger")
+
+    @Metadata(
+            label = "producer",
+            description = "The nonce found (64 bits) used for submitting a proof-of-work solution.",
+            javaType = "java.math.BigInteger")
     String NONCE = "NONCE";
-    @Metadata(label = "producer",
-              description = "The header's pow-hash (256 bits) used for submitting a proof-of-work solution.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "The header's pow-hash (256 bits) used for submitting a proof-of-work solution.",
+            javaType = "String")
     String HEADER_POW_HASH = "HEADER_POW_HASH";
-    @Metadata(label = "producer", description = "The mix digest (256 bits) used for submitting a proof-of-work solution.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "The mix digest (256 bits) used for submitting a proof-of-work solution.",
+            javaType = "String")
     String MIX_DIGEST = "MIX_DIGEST";
-    @Metadata(label = "producer", description = "A random hexadecimal(32 bytes) ID identifying the client.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "A random hexadecimal(32 bytes) ID identifying the client.",
+            javaType = "String")
     String CLIENT_ID = "CLIENT_ID";
+
     @Metadata(label = "producer", description = "Gas price used for each paid gas.", javaType = "java.math.BigInteger")
     String GAS_PRICE = "GAS_PRICE";
-    @Metadata(label = "producer", description = "The maximum gas allowed in this block.", javaType = "java.math.BigInteger")
+
+    @Metadata(
+            label = "producer",
+            description = "The maximum gas allowed in this block.",
+            javaType = "java.math.BigInteger")
     String GAS_LIMIT = "GAS_LIMIT";
-    @Metadata(label = "producer", description = "The value sent within a transaction.", javaType = "java.math.BigInteger")
+
+    @Metadata(
+            label = "producer",
+            description = "The value sent within a transaction.",
+            javaType = "java.math.BigInteger")
     String VALUE = "VALUE";
-    @Metadata(label = "producer",
-              description = "The compiled code of a contract OR the hash of the invoked method signature and encoded parameters.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description =
+                    "The compiled code of a contract OR the hash of the invoked method signature and encoded parameters.",
+            javaType = "String")
     String DATA = "DATA";
     /**
      * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined
@@ -178,31 +233,44 @@ public interface Web3jConstants {
      */
     @Metadata(label = "producer", javaType = "String")
     String TO_BLOCK = "TO_BLOCK";
-    @Metadata(label = "producer", description = "Topics are order-dependent. Each topic can also be a list of topics. " +
-                                                "Specify multiple topics separated by comma.",
-              javaType = "List<String>")
+
+    @Metadata(
+            label = "producer",
+            description = "Topics are order-dependent. Each topic can also be a list of topics. "
+                    + "Specify multiple topics separated by comma.",
+            javaType = "List<String>")
     String TOPICS = "TOPICS";
+
     @Metadata(label = "producer", description = "The priority of a whisper message.", javaType = "java.math.BigInteger")
     String PRIORITY = "PRIORITY";
-    @Metadata(label = "producer", description = "The time to live in seconds of a whisper message.",
-              javaType = "java.math.BigInteger")
+
+    @Metadata(
+            label = "producer",
+            description = "The time to live in seconds of a whisper message.",
+            javaType = "java.math.BigInteger")
     String TTL = "TTL";
-    @Metadata(label = "producer", description = "A transaction privateFor nodes with public keys in a Quorum network",
-              javaType = "List<String>")
+
+    @Metadata(
+            label = "producer",
+            description = "A transaction privateFor nodes with public keys in a Quorum network",
+            javaType = "List<String>")
     String PRIVATE_FOR = "PRIVATE_FOR";
-    @Metadata(label = "producer", description = "A transaction privateFrom",
-              javaType = "String")
+
+    @Metadata(label = "producer", description = "A transaction privateFrom", javaType = "String")
     String PRIVATE_FROM = "PRIVATE_FROM";
 
     @Metadata(label = "producer", description = "The error code", javaType = "int")
     String ERROR_CODE = "ERROR_CODE";
+
     @Metadata(label = "producer", description = "The error data", javaType = "String")
     String ERROR_DATA = "ERROR_DATA";
+
     @Metadata(label = "producer", description = "The error message", javaType = "String")
     String ERROR_MESSAGE = "ERROR_MESSAGE";
 
     @Metadata(label = "consumer", description = "The status of the operation", javaType = "String")
     String HEADER_STATUS = "status";
+
     @Metadata(label = "consumer", description = "The operation", javaType = "String")
     String HEADER_OPERATION = "operation";
 }

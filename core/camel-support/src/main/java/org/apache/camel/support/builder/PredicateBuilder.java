@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.builder;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,8 +33,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.ObjectHelper;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A helper class for working with predicates
@@ -227,7 +228,8 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.typeCoerceEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue, true);
+                return ObjectHelper.typeCoerceEquals(
+                        exchange.getContext().getTypeConverter(), leftValue, rightValue, true);
             }
 
             protected String getOperationText() {
@@ -248,7 +250,8 @@ public class PredicateBuilder {
                     return true;
                 }
 
-                return ObjectHelper.typeCoerceNotEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
+                return ObjectHelper.typeCoerceNotEquals(
+                        exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }
 
             protected String getOperationText() {
@@ -269,7 +272,8 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue) < 0;
+                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue)
+                        < 0;
             }
 
             protected String getOperationText() {
@@ -290,7 +294,8 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue) <= 0;
+                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue)
+                        <= 0;
             }
 
             protected String getOperationText() {
@@ -311,7 +316,8 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue) > 0;
+                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue)
+                        > 0;
             }
 
             protected String getOperationText() {
@@ -332,7 +338,8 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue) >= 0;
+                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue)
+                        >= 0;
             }
 
             protected String getOperationText() {
@@ -353,7 +360,8 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.typeCoerceContains(exchange.getContext().getTypeConverter(), leftValue, rightValue, false);
+                return ObjectHelper.typeCoerceContains(
+                        exchange.getContext().getTypeConverter(), leftValue, rightValue, false);
             }
 
             protected String getOperationText() {
@@ -374,7 +382,8 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.typeCoerceContains(exchange.getContext().getTypeConverter(), leftValue, rightValue, true);
+                return ObjectHelper.typeCoerceContains(
+                        exchange.getContext().getTypeConverter(), leftValue, rightValue, true);
             }
 
             protected String getOperationText() {
@@ -412,7 +421,8 @@ public class PredicateBuilder {
                     return true;
                 }
                 // TODO leftValue is null, is it expected?
-                return ObjectHelper.typeCoerceNotEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
+                return ObjectHelper.typeCoerceNotEquals(
+                        exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }
 
             protected String getOperationText() {
@@ -604,5 +614,4 @@ public class PredicateBuilder {
             }
         };
     }
-
 }

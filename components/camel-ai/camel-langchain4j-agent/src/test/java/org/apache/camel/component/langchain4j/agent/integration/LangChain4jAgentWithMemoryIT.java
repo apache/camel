@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -36,11 +42,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
-import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
 
@@ -54,9 +55,8 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
     private PersistentChatMemoryStore store;
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA =
+            ModelHelper.hasEnvironmentConfiguration() ? null : OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -88,23 +88,16 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(2);
 
         String firstResponse = template.requestBodyAndHeader(
-                "direct:agent-with-memory",
-                "My name is " + USER_NAME,
-                MEMORY_ID, MEMORY_ID_SESSION_1,
-                String.class);
+                "direct:agent-with-memory", "My name is " + USER_NAME, MEMORY_ID, MEMORY_ID_SESSION_1, String.class);
 
         String secondResponse = template.requestBodyAndHeader(
-                "direct:agent-with-memory",
-                "What is my name?",
-                MEMORY_ID, MEMORY_ID_SESSION_1,
-                String.class);
+                "direct:agent-with-memory", "What is my name?", MEMORY_ID, MEMORY_ID_SESSION_1, String.class);
 
         mockEndpoint.assertIsSatisfied();
 
         assertNotNull(firstResponse, "First AI response should not be null");
         assertNotNull(secondResponse, "Second AI response should not be null");
-        assertTrue(secondResponse.contains(USER_NAME),
-                "Agent should remember the user's name: " + secondResponse);
+        assertTrue(secondResponse.contains(USER_NAME), "Agent should remember the user's name: " + secondResponse);
     }
 
     @Test
@@ -113,29 +106,28 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(3);
 
         template.requestBodyAndHeader(
-                "direct:agent-with-memory",
-                "My name is " + USER_NAME,
-                MEMORY_ID, MEMORY_ID_SESSION_1,
-                String.class);
+                "direct:agent-with-memory", "My name is " + USER_NAME, MEMORY_ID, MEMORY_ID_SESSION_1, String.class);
 
         template.requestBodyAndHeader(
                 "direct:agent-with-memory",
                 "My favorite color is " + USER_FAVORITE_COLOR,
-                MEMORY_ID, MEMORY_ID_SESSION_1,
+                MEMORY_ID,
+                MEMORY_ID_SESSION_1,
                 String.class);
 
         String finalResponse = template.requestBodyAndHeader(
                 "direct:agent-with-memory",
                 "Tell me about myself - what's my name and favorite color?",
-                MEMORY_ID, MEMORY_ID_SESSION_1,
+                MEMORY_ID,
+                MEMORY_ID_SESSION_1,
                 String.class);
 
         mockEndpoint.assertIsSatisfied();
 
         assertNotNull(finalResponse, "Final AI response should not be null");
-        assertTrue(finalResponse.contains(USER_NAME),
-                "Agent should remember the user's name: " + finalResponse);
-        assertTrue(finalResponse.contains(USER_FAVORITE_COLOR),
+        assertTrue(finalResponse.contains(USER_NAME), "Agent should remember the user's name: " + finalResponse);
+        assertTrue(
+                finalResponse.contains(USER_FAVORITE_COLOR),
                 "Agent should remember the user's favorite color: " + finalResponse);
     }
 
@@ -145,33 +137,24 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(3);
 
         template.requestBodyAndHeader(
-                "direct:agent-with-memory",
-                "My name is " + USER_NAME,
-                MEMORY_ID, MEMORY_ID_SESSION_1,
-                String.class);
+                "direct:agent-with-memory", "My name is " + USER_NAME, MEMORY_ID, MEMORY_ID_SESSION_1, String.class);
 
         String session2Response = template.requestBodyAndHeader(
-                "direct:agent-with-memory",
-                "What is my name?",
-                MEMORY_ID, MEMORY_ID_SESSION_2,
-                String.class);
+                "direct:agent-with-memory", "What is my name?", MEMORY_ID, MEMORY_ID_SESSION_2, String.class);
 
         String session1Response = template.requestBodyAndHeader(
-                "direct:agent-with-memory",
-                "What is my name?",
-                MEMORY_ID, MEMORY_ID_SESSION_1,
-                String.class);
+                "direct:agent-with-memory", "What is my name?", MEMORY_ID, MEMORY_ID_SESSION_1, String.class);
 
         mockEndpoint.assertIsSatisfied();
 
         assertNotNull(session1Response, "Session 1 response should not be null");
         assertNotNull(session2Response, "Session 2 response should not be null");
 
-        assertTrue(session1Response.contains(USER_NAME),
-                "Session 1 should remember the name: " + session1Response);
-        assertTrue(!session2Response.contains(USER_NAME) ||
-                session2Response.toLowerCase().contains("don't know") ||
-                session2Response.toLowerCase().contains("not sure"),
+        assertTrue(session1Response.contains(USER_NAME), "Session 1 should remember the name: " + session1Response);
+        assertTrue(
+                !session2Response.contains(USER_NAME)
+                        || session2Response.toLowerCase().contains("don't know")
+                        || session2Response.toLowerCase().contains("not sure"),
                 "Session 2 should not know the name from session 1: " + session2Response);
     }
 
@@ -184,21 +167,25 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
                 "direct:agent-with-memory-system",
                 "My favorite programming language is Java",
                 Map.of(
-                        MEMORY_ID, MEMORY_ID_SESSION_1,
-                        SYSTEM_MESSAGE, "You are a helpful coding assistant. Always be enthusiastic about programming."),
+                        MEMORY_ID,
+                        MEMORY_ID_SESSION_1,
+                        SYSTEM_MESSAGE,
+                        "You are a helpful coding assistant. Always be enthusiastic about programming."),
                 String.class);
 
         String secondResponse = template.requestBodyAndHeader(
                 "direct:agent-with-memory-system",
                 "What programming language do I like?",
-                MEMORY_ID, MEMORY_ID_SESSION_1,
+                MEMORY_ID,
+                MEMORY_ID_SESSION_1,
                 String.class);
 
         mockEndpoint.assertIsSatisfied();
 
         assertNotNull(firstResponse, "First response should not be null");
         assertNotNull(secondResponse, "Second response should not be null");
-        assertTrue(secondResponse.contains("Java"),
+        assertTrue(
+                secondResponse.contains("Java"),
                 "Agent should remember the programming language preference: " + secondResponse);
     }
 
@@ -226,9 +213,7 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
                 from("direct:agent-with-memory-system")
                         .to("langchain4j-agent:test-memory-agent?agent=#agentWithMemory")
                         .to("mock:memory-response");
-
             }
         };
     }
-
 }

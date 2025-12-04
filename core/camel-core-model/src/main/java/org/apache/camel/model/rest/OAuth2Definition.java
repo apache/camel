@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
@@ -37,18 +38,21 @@ public class OAuth2Definition extends RestSecurityDefinition {
 
     @XmlAttribute
     private String authorizationUrl;
+
     @XmlAttribute
     private String tokenUrl;
+
     @XmlAttribute
     private String refreshUrl;
+
     @XmlAttribute
     @Metadata(enums = "implicit,password,application,clientCredentials,accessCode,authorizationCode")
     private String flow;
+
     @XmlElement(name = "scopes")
     private List<RestPropertyDefinition> scopes = new ArrayList<>();
 
-    public OAuth2Definition() {
-    }
+    public OAuth2Definition() {}
 
     public OAuth2Definition(RestDefinition rest) {
         super(rest);
@@ -167,5 +171,4 @@ public class OAuth2Definition extends RestSecurityDefinition {
     public RestSecuritiesDefinition end() {
         return rest.getSecurityDefinitions();
     }
-
 }

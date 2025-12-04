@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
 
 import java.sql.CallableStatement;
@@ -64,25 +65,31 @@ public class CallableStatementWrapper implements StatementWrapper {
 
         final Iterator<Map<String, ?>> params = batchItems.iterator();
 
-        return factory.getJdbcTemplate().execute(new CallableStatementCreator() {
-            @Override
-            public CallableStatement createCallableStatement(Connection connection) throws SQLException {
-                return batchFactory.newCallableStatementCreator(params.next()).createCallableStatement(connection);
+        return factory.getJdbcTemplate()
+                .execute(
+                        new CallableStatementCreator() {
+                            @Override
+                            public CallableStatement createCallableStatement(Connection connection)
+                                    throws SQLException {
+                                return batchFactory
+                                        .newCallableStatementCreator(params.next())
+                                        .createCallableStatement(connection);
+                            }
+                        },
+                        new CallableStatementCallback<int[]>() {
+                            @Override
+                            public int[] doInCallableStatement(CallableStatement callableStatement)
+                                    throws SQLException, DataAccessException {
+                                // add first item to batch
+                                callableStatement.addBatch();
 
-            }
-        }, new CallableStatementCallback<int[]>() {
-            @Override
-            public int[] doInCallableStatement(CallableStatement callableStatement) throws SQLException, DataAccessException {
-                //add first item to batch
-                callableStatement.addBatch();
-
-                while (params.hasNext()) {
-                    batchFactory.addParameter(callableStatement, params.next());
-                    callableStatement.addBatch();
-                }
-                return callableStatement.executeBatch();
-            }
-        });
+                                while (params.hasNext()) {
+                                    batchFactory.addParameter(callableStatement, params.next());
+                                    callableStatement.addBatch();
+                                }
+                                return callableStatement.executeBatch();
+                            }
+                        });
     }
 
     @Override
@@ -98,7 +105,7 @@ public class CallableStatementWrapper implements StatementWrapper {
     @Override
     public void populateStatement(Object value, Exchange exchange) throws SQLException {
         this.result = this.factory.getTemplateStoredProcedure(this.template).execute(exchange, value);
-        //Spring sets #update-result-1
+        // Spring sets #update-result-1
         this.updateCount = (Integer) this.result.get("#update-count-1");
     }
 
@@ -110,7 +117,7 @@ public class CallableStatementWrapper implements StatementWrapper {
         }
 
         Map<String, Object> batchValues = new HashMap<>();
-        //only IN-parameters supported by template
+        // only IN-parameters supported by template
         for (Object param : this.batchFactory.getTemplate().getParameterList()) {
             InParameter inputParameter = (InParameter) param;
             Object paramValue = inputParameter.getValueExtractor().eval(exchange, value);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.BindToRegistry;
@@ -54,9 +55,7 @@ public class KameletLocalBeanTypeTest extends CamelTestSupport {
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");
 
-                from("direct:bar")
-                        .kamelet("whereTo")
-                        .to("mock:result");
+                from("direct:bar").kamelet("whereTo").to("mock:result");
             }
         };
     }
@@ -73,5 +72,4 @@ public class KameletLocalBeanTypeTest extends CamelTestSupport {
             return "Hi " + name + " we are going to " + bar;
         }
     }
-
 }

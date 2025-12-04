@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
 
 import java.security.GeneralSecurityException;
@@ -66,7 +67,9 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
         LOG.trace("Configuring client-side SSLContext parameters on SSLContext [{}]...", context);
         if (this.getSessionTimeout() != null) {
-            LOG.info("Configuring client-side SSLContext session timeout on SSLContext [{}] to [{}].", context,
+            LOG.info(
+                    "Configuring client-side SSLContext session timeout on SSLContext [{}] to [{}].",
+                    context,
                     this.getSessionTimeout());
             this.configureSessionContext(context.getClientSessionContext(), this.getSessionTimeout());
         }

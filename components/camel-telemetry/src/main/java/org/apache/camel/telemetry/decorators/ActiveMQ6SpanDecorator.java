@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 public class ActiveMQ6SpanDecorator extends JmsSpanDecorator {
@@ -27,5 +28,4 @@ public class ActiveMQ6SpanDecorator extends JmsSpanDecorator {
     public String getComponentClassName() {
         return "org.apache.camel.component.activemq6.ActiveMQComponent";
     }
-
 }

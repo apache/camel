@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
 
 import com.obs.services.HttpProxyConfiguration;
@@ -36,22 +37,28 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To provide stable, secure, efficient, and easy-to-use cloud storage service on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-obs", title = "Huawei Object Storage Service (OBS)",
-             syntax = "hwcloud-obs:operation",
-             category = { Category.CLOUD }, headersClass = OBSHeaders.class)
+@UriEndpoint(
+        firstVersion = "3.12.0",
+        scheme = "hwcloud-obs",
+        title = "Huawei Object Storage Service (OBS)",
+        syntax = "hwcloud-obs:operation",
+        category = {Category.CLOUD},
+        headersClass = OBSHeaders.class)
 public class OBSEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "OBS service region. This is lower precedence than endpoint based configuration",
-              displayName = "Service region")
+    @UriParam(
+            description = "OBS service region. This is lower precedence than endpoint based configuration",
+            displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "OBS url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Endpoint url")
+    @UriParam(
+            description = "OBS url. Carries higher precedence than region parameter based client initialization",
+            displayName = "Endpoint url")
     @Metadata(required = false)
     private String endpoint;
 
@@ -67,27 +74,43 @@ public class OBSEndpoint extends ScheduledPollEndpoint {
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true, label = "proxy")
+    @UriParam(
+            description = "Proxy authentication password",
+            displayName = "Proxy password",
+            secret = true,
+            label = "proxy")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", defaultValue = "false",
-              label = "security")
+    @UriParam(
+            description = "Ignore SSL verification",
+            displayName = "SSL Verification Ignored",
+            defaultValue = "false",
+            label = "security")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true, label = "security")
+    @UriParam(
+            description = "Configuration object for cloud service authentication",
+            displayName = "Service Configuration",
+            secret = true,
+            label = "security")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", secret = true,
-              label = "security")
+    @UriParam(
+            description = "Access key for the cloud user",
+            displayName = "API access key (AK)",
+            secret = true,
+            label = "security")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true,
-              label = "security")
+    @UriParam(
+            description = "Secret key for the cloud user",
+            displayName = "API secret key (SK)",
+            secret = true,
+            label = "security")
     @Metadata(required = true)
     private String secretKey;
 
@@ -99,54 +122,78 @@ public class OBSEndpoint extends ScheduledPollEndpoint {
     @Metadata(required = false)
     private String objectName;
 
-    @UriParam(description = "Location of bucket when creating a new bucket", displayName = "Bucket Location",
-              label = "producer")
+    @UriParam(
+            description = "Location of bucket when creating a new bucket",
+            displayName = "Bucket Location",
+            label = "producer")
     @Metadata(required = false)
     private String bucketLocation;
 
     private ObsClient obsClient;
 
-    @UriParam(description = "Determines whether objects should be moved to a different bucket after they have been retrieved. The destinationBucket option must also be set for this option to work.",
-              displayName = "Move After Read", defaultValue = "false", label = "consumer")
+    @UriParam(
+            description =
+                    "Determines whether objects should be moved to a different bucket after they have been retrieved. The destinationBucket option must also be set for this option to work.",
+            displayName = "Move After Read",
+            defaultValue = "false",
+            label = "consumer")
     @Metadata(required = false)
     private boolean moveAfterRead;
 
-    @UriParam(description = "Name of destination bucket where objects will be moved when moveAfterRead is set to true",
-              displayName = "Destination Bucket", label = "consumer")
+    @UriParam(
+            description = "Name of destination bucket where objects will be moved when moveAfterRead is set to true",
+            displayName = "Destination Bucket",
+            label = "consumer")
     @Metadata(required = false)
     private String destinationBucket;
 
-    @UriParam(description = "Get the object from the bucket with the given file name", displayName = "File Name",
-              label = "consumer")
+    @UriParam(
+            description = "Get the object from the bucket with the given file name",
+            displayName = "File Name",
+            label = "consumer")
     @Metadata(required = false)
     private String fileName;
 
-    @UriParam(description = "The object name prefix used for filtering objects to be listed", displayName = "Prefix",
-              label = "consumer")
+    @UriParam(
+            description = "The object name prefix used for filtering objects to be listed",
+            displayName = "Prefix",
+            label = "consumer")
     @Metadata(required = false)
     private String prefix;
 
-    @UriParam(description = "The character used for grouping object names", displayName = "Delimiter", label = "consumer")
+    @UriParam(
+            description = "The character used for grouping object names",
+            displayName = "Delimiter",
+            label = "consumer")
     @Metadata(required = false)
     private String delimiter;
 
-    @UriParam(description = "If true, objects in folders will be consumed. Otherwise, they will be ignored and no Exchanges will be created for them",
-              displayName = "Include Folders", defaultValue = "true", label = "consumer")
+    @UriParam(
+            description =
+                    "If true, objects in folders will be consumed. Otherwise, they will be ignored and no Exchanges will be created for them",
+            displayName = "Include Folders",
+            defaultValue = "true",
+            label = "consumer")
     @Metadata(required = false)
     private boolean includeFolders = true;
 
-    @UriParam(description = "Determines if objects should be deleted after it has been retrieved",
-              displayName = "Delete after read", defaultValue = "false", label = "consumer")
+    @UriParam(
+            description = "Determines if objects should be deleted after it has been retrieved",
+            displayName = "Delete after read",
+            defaultValue = "false",
+            label = "consumer")
     @Metadata(required = false)
     private boolean deleteAfterRead;
 
-    @UriParam(description = "The maximum number of messages to poll at each polling", displayName = "Maximum messages per poll",
-              defaultValue = "10", label = "consumer")
+    @UriParam(
+            description = "The maximum number of messages to poll at each polling",
+            displayName = "Maximum messages per poll",
+            defaultValue = "10",
+            label = "consumer")
     @Metadata(required = false)
     private int maxMessagesPerPoll = 10;
 
-    public OBSEndpoint() {
-    }
+    public OBSEndpoint() {}
 
     public OBSEndpoint(String uri, String operation, OBSComponent component) {
         super(uri, component);
@@ -377,8 +424,7 @@ public class OBSEndpoint extends ScheduledPollEndpoint {
         }
 
         // setup proxy information (if needed)
-        if (ObjectHelper.isNotEmpty(getProxyHost())
-                && ObjectHelper.isNotEmpty(getProxyPort())) {
+        if (ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort())) {
             HttpProxyConfiguration httpConfig = new HttpProxyConfiguration();
             httpConfig.setProxyAddr(getProxyHost());
             httpConfig.setProxyPort(getProxyPort());
@@ -395,13 +441,10 @@ public class OBSEndpoint extends ScheduledPollEndpoint {
         // setup ignore ssl verification
         obsConfiguration.setValidateCertificate(!isIgnoreSslVerification());
 
-        // setup AK/SK credential information. AK/SK provided through ServiceKeys overrides the AK/SK passed through the endpoint
-        String auth = getServiceKeys() != null
-                ? getServiceKeys().getAccessKey()
-                : getAccessKey();
-        String secret = getServiceKeys() != null
-                ? getServiceKeys().getSecretKey()
-                : getSecretKey();
+        // setup AK/SK credential information. AK/SK provided through ServiceKeys overrides the AK/SK passed through the
+        // endpoint
+        String auth = getServiceKeys() != null ? getServiceKeys().getAccessKey() : getAccessKey();
+        String secret = getServiceKeys() != null ? getServiceKeys().getSecretKey() : getSecretKey();
 
         return new ObsClient(auth, secret, obsConfiguration);
     }

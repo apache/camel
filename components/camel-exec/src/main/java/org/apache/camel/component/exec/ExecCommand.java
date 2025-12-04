@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -26,8 +29,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.LoggingLevel;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Value object that describes the command to be executed.
@@ -78,8 +79,16 @@ public class ExecCommand implements Serializable {
 
     private final boolean useStderrOnEmptyStdout;
 
-    public ExecCommand(String executable, List<String> args, String workingDir, Long timeout, Set<Integer> exitValues,
-                       InputStream input, File outFile, boolean useStderrOnEmptyStdout, LoggingLevel commandLogLevel) {
+    public ExecCommand(
+            String executable,
+            List<String> args,
+            String workingDir,
+            Long timeout,
+            Set<Integer> exitValues,
+            InputStream input,
+            File outFile,
+            boolean useStderrOnEmptyStdout,
+            LoggingLevel commandLogLevel) {
         notNull(executable, "command executable");
         this.executable = executable;
         this.exitValues = exitValues;
@@ -132,16 +141,14 @@ public class ExecCommand implements Serializable {
     public String toString() {
         String dirToPrint = workingDir == null ? "null" : workingDir;
         String outFileToPrint = outFile == null ? "null" : outFile.getPath();
-        String exitValuesString = exitValues.stream().map(Object::toString)
-                .collect(Collectors.joining(","));
+        String exitValuesString = exitValues.stream().map(Object::toString).collect(Collectors.joining(","));
         return "ExecCommand [args=" + args + ", executable=" + executable + ", timeout=" + timeout
-               + ", exitValues=" + exitValuesString + ", outFile="
-               + outFileToPrint + ", workingDir=" + dirToPrint + ", commandLogLevel=" + commandLogLevel
-               + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + "]";
+                + ", exitValues=" + exitValuesString + ", outFile="
+                + outFileToPrint + ", workingDir=" + dirToPrint + ", commandLogLevel=" + commandLogLevel
+                + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + "]";
     }
 
     private <T> List<T> unmodifiableOrEmptyList(List<T> list) {
         return Collections.unmodifiableList(list == null ? new ArrayList<T>() : list);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -26,9 +30,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class TwoManagedNamePatternTest extends TestSupport {
@@ -51,7 +52,8 @@ public class TwoManagedNamePatternTest extends TestSupport {
         camel1.start();
         camel2.start();
 
-        MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=aaa-foo,type=context,name=\"foo\"");
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
@@ -77,5 +79,4 @@ public class TwoManagedNamePatternTest extends TestSupport {
         }
         super.tearDown();
     }
-
 }

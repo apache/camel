@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.jaxb.definition;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +27,6 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
 
@@ -68,13 +69,14 @@ public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
 
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("first").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("second").name());
 
         template.sendBody("direct:one", "Hello Cheese");
         template.sendBody("direct:two", "Hello Cake");
 
         assertMockEndpointsSatisfied();
     }
-
 }

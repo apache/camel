@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
@@ -27,16 +28,14 @@ public class DelayValidationHandler extends BasicValidationHandler {
 
     protected final int delay;
 
-    public DelayValidationHandler(String expectedMethod, String expectedQuery,
-                                  Object expectedContent, String responseContent, int delay) {
+    public DelayValidationHandler(
+            String expectedMethod, String expectedQuery, Object expectedContent, String responseContent, int delay) {
         super(expectedMethod, expectedQuery, expectedContent, responseContent);
         this.delay = delay;
     }
 
     @Override
-    public void handle(
-            final ClassicHttpRequest request, final ClassicHttpResponse response,
-            final HttpContext context)
+    public void handle(final ClassicHttpRequest request, final ClassicHttpResponse response, final HttpContext context)
             throws HttpException, IOException {
         try {
             Thread.sleep(delay);

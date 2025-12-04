@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kudu;
 
 import org.apache.camel.spi.Metadata;
@@ -21,15 +22,18 @@ import org.apache.camel.spi.Metadata;
 public final class KuduConstants {
     @Metadata(description = "The schema", javaType = "org.apache.kudu.Schema")
     public static final String CAMEL_KUDU_SCHEMA = "CamelKuduSchema";
+
     @Metadata(description = "The create table options", javaType = "org.apache.kudu.client.CreateTableOptions")
     public static final String CAMEL_KUDU_TABLE_OPTIONS = "CamelKuduTableOptions";
+
     @Metadata(description = "The projected column names for scan operation", javaType = "java.util.List<String>")
     public static final String CAMEL_KUDU_SCAN_COLUMN_NAMES = "CamelKuduScanColumnNames";
+
     @Metadata(description = "The predicate for scan operation", javaType = "org.apache.kudu.client.KuduPredicate")
     public static final String CAMEL_KUDU_SCAN_PREDICATE = "CamelKuduScanPredicate";
+
     @Metadata(description = "The limit on the number of rows for scan operation", javaType = "long")
     public static final String CAMEL_KUDU_SCAN_LIMIT = "CamelKuduScanLimit";
 
-    private KuduConstants() {
-    }
+    private KuduConstants() {}
 }

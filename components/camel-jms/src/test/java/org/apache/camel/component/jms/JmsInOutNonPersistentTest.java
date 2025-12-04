@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.jms.DeliveryMode;
 
@@ -30,13 +33,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JmsInOutNonPersistentTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -44,8 +46,8 @@ public class JmsInOutNonPersistentTest extends AbstractJMSTest {
     @Test
     public void testInOutNonPersistent() throws Exception {
         getMockEndpoint("mock:JmsInOutNonPersistentTest.foo").expectedBodiesReceived("World");
-        getMockEndpoint("mock:JmsInOutNonPersistentTest.foo").expectedHeaderReceived("JMSDeliveryMode",
-                DeliveryMode.NON_PERSISTENT);
+        getMockEndpoint("mock:JmsInOutNonPersistentTest.foo")
+                .expectedHeaderReceived("JMSDeliveryMode", DeliveryMode.NON_PERSISTENT);
         getMockEndpoint("mock:done").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedHeaderReceived("JMSDeliveryMode", DeliveryMode.NON_PERSISTENT);
 
@@ -66,7 +68,8 @@ public class JmsInOutNonPersistentTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:JmsInOutNonPersistentTest.foo?replyTo=queue:JmsInOutNonPersistentTest.bar&deliveryPersistent=false")
+                        .to(
+                                "activemq:queue:JmsInOutNonPersistentTest.foo?replyTo=queue:JmsInOutNonPersistentTest.bar&deliveryPersistent=false")
                         .to("log:done?showAll=true", "mock:done");
 
                 from("activemq:queue:JmsInOutNonPersistentTest.foo?replyToDeliveryPersistent=false&preserveMessageQos=true")

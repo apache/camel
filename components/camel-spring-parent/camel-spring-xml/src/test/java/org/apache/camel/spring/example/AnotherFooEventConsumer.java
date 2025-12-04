@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.example;
 
 import org.apache.camel.Consume;
@@ -29,5 +30,4 @@ public class AnotherFooEventConsumer {
     public void doSomething(String body) {
         destination.sendBody("another" + body);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
@@ -25,14 +28,13 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class PaymentMethodNonceGatewayIT extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentMethodNonceGatewayIT.class);
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(PaymentMethodNonceGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection()
+            .getApiName(PaymentMethodNonceGatewayApiMethod.class)
+            .getName();
 
     // TODO provide parameter values for create
     @Disabled
@@ -61,11 +63,9 @@ public class PaymentMethodNonceGatewayIT extends AbstractBraintreeTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for create
-                from("direct://CREATE")
-                        .to("braintree://" + PATH_PREFIX + "/create?inBody=paymentMethodToken");
+                from("direct://CREATE").to("braintree://" + PATH_PREFIX + "/create?inBody=paymentMethodToken");
                 // test route for find
-                from("direct://FIND")
-                        .to("braintree://" + PATH_PREFIX + "/find?inBody=paymentMethodNonce");
+                from("direct://FIND").to("braintree://" + PATH_PREFIX + "/find?inBody=paymentMethodNonce");
             }
         };
     }

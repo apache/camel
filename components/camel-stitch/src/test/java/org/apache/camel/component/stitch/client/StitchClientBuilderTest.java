@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stitch.client;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.stitch.client;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 class StitchClientBuilderTest {
 
@@ -38,8 +39,7 @@ class StitchClientBuilderTest {
 
     @Test
     void shouldCreateTheClient() {
-        final StitchClient stitchClient = StitchClientBuilder
-                .builder()
+        final StitchClient stitchClient = StitchClientBuilder.builder()
                 .withToken("testtoken")
                 .withRegion(StitchRegion.EUROPE)
                 .build();

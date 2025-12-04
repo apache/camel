@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.Exchange;
@@ -27,15 +28,15 @@ public class RouteBuilderCxfTracer extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("cxf:http://localhost:9000/PersonService/"
-             + "?serviceClass=org.apache.camel.non_wrapper.Person"
-             + "&serviceName={http://camel.apache.org/non-wrapper}PersonService"
-             + "&portName={http://camel.apache.org/non-wrapper}soap"
-             + "&dataFormat=POJO")
-                .process(new BeforeProcessor()).to("direct:something").process(new AfterProcessor());
+                        + "?serviceClass=org.apache.camel.non_wrapper.Person"
+                        + "&serviceName={http://camel.apache.org/non-wrapper}PersonService"
+                        + "&portName={http://camel.apache.org/non-wrapper}soap"
+                        + "&dataFormat=POJO")
+                .process(new BeforeProcessor())
+                .to("direct:something")
+                .process(new AfterProcessor());
 
-        from("direct:something")
-                .process(new DoSomethingProcessor())
-                .process(new DoNothingProcessor());
+        from("direct:something").process(new DoSomethingProcessor()).process(new DoNothingProcessor());
     }
 
     private static class DoSomethingProcessor implements Processor {

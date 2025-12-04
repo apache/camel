@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Partial operations test.
@@ -47,8 +48,9 @@ public class SpringDataFormatPartialTest extends CamelSpringTestSupport {
         template.sendBody("direct:marshal", bean);
         mock.assertIsSatisfied();
 
-        //To make sure there is no XML declaration.
-        assertFalse(mock.getExchanges().get(0).getIn().getBody(String.class).startsWith("<?xml version="),
+        // To make sure there is no XML declaration.
+        assertFalse(
+                mock.getExchanges().get(0).getIn().getBody(String.class).startsWith("<?xml version="),
                 "There should have no XML declaration.");
     }
 
@@ -72,5 +74,4 @@ public class SpringDataFormatPartialTest extends CamelSpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/example/springDataFormatPartial.xml");
     }
-
 }

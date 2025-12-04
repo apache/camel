@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scheduler;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class TwoSchedulerTest extends ContextTestSupport {
 
@@ -32,8 +33,16 @@ public class TwoSchedulerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should use same thread as they share the same scheduler
-        String tn1 = getMockEndpoint("mock:a").getReceivedExchanges().get(0).getMessage().getHeader("tn", String.class);
-        String tn2 = getMockEndpoint("mock:b").getReceivedExchanges().get(0).getMessage().getHeader("tn", String.class);
+        String tn1 = getMockEndpoint("mock:a")
+                .getReceivedExchanges()
+                .get(0)
+                .getMessage()
+                .getHeader("tn", String.class);
+        String tn2 = getMockEndpoint("mock:b")
+                .getReceivedExchanges()
+                .get(0)
+                .getMessage()
+                .getHeader("tn", String.class);
         assertSame(tn1, tn2);
     }
 
@@ -51,5 +60,4 @@ public class TwoSchedulerTest extends ContextTestSupport {
             }
         };
     }
-
 }

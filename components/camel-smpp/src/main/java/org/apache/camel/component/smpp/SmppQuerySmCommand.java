@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import org.apache.camel.Exchange;
@@ -36,8 +37,10 @@ public class SmppQuerySmCommand extends AbstractSmppCommand {
         QuerySm querySm = createQuerySm(exchange);
 
         if (log.isDebugEnabled()) {
-            log.debug("Querying for a short message for exchange id '{}' and message id '{}'...",
-                    exchange.getExchangeId(), querySm.getMessageId());
+            log.debug(
+                    "Querying for a short message for exchange id '{}' and message id '{}'...",
+                    exchange.getExchangeId(),
+                    querySm.getMessageId());
         }
 
         QuerySmResult querySmResult;
@@ -52,15 +55,18 @@ public class SmppQuerySmCommand extends AbstractSmppCommand {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Query for a short message for exchange id '{}' and message id '{}'",
-                    exchange.getExchangeId(), querySm.getMessageId());
+            log.debug(
+                    "Query for a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(),
+                    querySm.getMessageId());
         }
 
         Message message = ExchangeHelper.getResultMessage(exchange);
         message.setHeader(SmppConstants.ID, querySm.getMessageId());
         message.setHeader(SmppConstants.ERROR, querySmResult.getErrorCode());
         message.setHeader(SmppConstants.FINAL_DATE, SmppUtils.string2Date(querySmResult.getFinalDate()));
-        message.setHeader(SmppConstants.MESSAGE_STATE, querySmResult.getMessageState().name());
+        message.setHeader(
+                SmppConstants.MESSAGE_STATE, querySmResult.getMessageState().name());
     }
 
     protected QuerySm createQuerySm(Exchange exchange) {

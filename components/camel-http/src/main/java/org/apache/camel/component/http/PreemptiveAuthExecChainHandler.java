@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.io.IOException;
@@ -44,10 +45,7 @@ public class PreemptiveAuthExecChainHandler implements ExecChainHandler {
     }
 
     @Override
-    public ClassicHttpResponse execute(
-            ClassicHttpRequest request,
-            ExecChain.Scope scope,
-            ExecChain chain)
+    public ClassicHttpResponse execute(ClassicHttpRequest request, ExecChain.Scope scope, ExecChain chain)
             throws IOException, HttpException {
 
         HttpClientContext context = scope.clientContext;
@@ -58,8 +56,12 @@ public class PreemptiveAuthExecChainHandler implements ExecChainHandler {
             HttpHost httpHost = scope.route.getTargetHost();
             Credentials credentials = credentialsProvider.getCredentials(new AuthScope(httpHost), context);
             if (credentials == null) {
-                credentials = HttpCredentialsHelper.getCredentials(endpoint.getAuthMethod(), endpoint.getAuthUsername(),
-                        endpoint.getAuthPassword(), endpoint.getAuthHost(), endpoint.getAuthHost(),
+                credentials = HttpCredentialsHelper.getCredentials(
+                        endpoint.getAuthMethod(),
+                        endpoint.getAuthUsername(),
+                        endpoint.getAuthPassword(),
+                        endpoint.getAuthHost(),
+                        endpoint.getAuthHost(),
                         endpoint.getAuthBearerToken());
             }
             if (credentials == null) {

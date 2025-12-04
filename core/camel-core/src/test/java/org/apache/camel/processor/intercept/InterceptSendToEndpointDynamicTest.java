@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -86,9 +87,14 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 // intercept sending to, either ./foo or ./bar directory
-                interceptSendToEndpoint("^file:.*(foo|bar)$").skipSendToOriginalEndpoint().to("mock:detour");
+                interceptSendToEndpoint("^file:.*(foo|bar)$")
+                        .skipSendToOriginalEndpoint()
+                        .to("mock:detour");
 
-                from("direct:first").to(fileUri("foo")).to(fileUri("bar")).to(fileUri("cheese"))
+                from("direct:first")
+                        .to(fileUri("foo"))
+                        .to(fileUri("bar"))
+                        .to(fileUri("cheese"))
                         .to("mock:result");
                 // END SNIPPET: e1
             }
@@ -111,15 +117,17 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
             public void configure() {
                 interceptSendToEndpoint("file:*").to("mock:detour");
 
-                from("direct:first").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // we use a dynamic endpoint URI that Camel does not
-                        // know beforehand
-                        // but it should still be intercepted as we intercept
-                        // all file endpoints
-                        template.sendBodyAndHeader(fileUri("foo"), "Hello Foo", Exchange.FILE_NAME, "foo.txt");
-                    }
-                }).to("mock:result");
+                from("direct:first")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // we use a dynamic endpoint URI that Camel does not
+                                // know beforehand
+                                // but it should still be intercepted as we intercept
+                                // all file endpoints
+                                template.sendBodyAndHeader(fileUri("foo"), "Hello Foo", Exchange.FILE_NAME, "foo.txt");
+                            }
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -132,5 +140,4 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

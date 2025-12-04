@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
@@ -89,12 +90,17 @@ public class Resequencer extends BaseProcessorSupport implements Navigate<Proces
         this(camelContext, processor, createSet(expression, false, false), expression);
     }
 
-    public Resequencer(CamelContext camelContext, Processor processor, Expression expression,
-                       boolean allowDuplicates, boolean reverse) {
+    public Resequencer(
+            CamelContext camelContext,
+            Processor processor,
+            Expression expression,
+            boolean allowDuplicates,
+            boolean reverse) {
         this(camelContext, processor, createSet(expression, allowDuplicates, reverse), expression);
     }
 
-    public Resequencer(CamelContext camelContext, Processor processor, Set<Exchange> collection, Expression expression) {
+    public Resequencer(
+            CamelContext camelContext, Processor processor, Set<Exchange> collection, Expression expression) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(collection, "collection");
@@ -265,7 +271,7 @@ public class Resequencer extends BaseProcessorSupport implements Navigate<Proces
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected static Set<Exchange> createSet(Expression expression, boolean allowDuplicates, boolean reverse) {
         return createSet(new ExpressionComparator(expression), allowDuplicates, reverse);
@@ -319,8 +325,9 @@ public class Resequencer extends BaseProcessorSupport implements Navigate<Proces
 
     protected void postProcess(Exchange exchange) {
         if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing aggregated exchange: " + exchange, exchange,
-                    exchange.getException());
+            getExceptionHandler()
+                    .handleException(
+                            "Error processing aggregated exchange: " + exchange, exchange, exchange.getException());
         }
     }
 
@@ -375,7 +382,8 @@ public class Resequencer extends BaseProcessorSupport implements Navigate<Proces
                 if (isIgnoreInvalidExchanges()) {
                     LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
                 } else {
-                    throw new CamelExchangeException("Exchange is not valid to be used by the BatchProcessor", exchange);
+                    throw new CamelExchangeException(
+                            "Exchange is not valid to be used by the BatchProcessor", exchange);
                 }
             } else {
                 // exchange is valid so enqueue the exchange
@@ -449,11 +457,14 @@ public class Resequencer extends BaseProcessorSupport implements Navigate<Proces
                 do {
                     try {
                         if (!exchangeEnqueued.get()) {
-                            LOG.trace("Waiting for new exchange to arrive or batchTimeout to occur after {} ms.", batchTimeout);
+                            LOG.trace(
+                                    "Waiting for new exchange to arrive or batchTimeout to occur after {} ms.",
+                                    batchTimeout);
                             exchangeEnqueuedCondition.await(batchTimeout, TimeUnit.MILLISECONDS);
                         }
 
-                        // if the completion predicate was triggered then there is an exchange id which denotes when to complete
+                        // if the completion predicate was triggered then there is an exchange id which denotes when to
+                        // complete
                         String id = null;
                         if (!completionPredicateMatched.isEmpty()) {
                             id = completionPredicateMatched.poll();
@@ -567,5 +578,4 @@ public class Resequencer extends BaseProcessorSupport implements Navigate<Proces
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import java.util.ArrayList;
@@ -113,5 +114,4 @@ public class SpanTestData {
         Collections.addAll(this.children, children);
         return this;
     }
-
 }

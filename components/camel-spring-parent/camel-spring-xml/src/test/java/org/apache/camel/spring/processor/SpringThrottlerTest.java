@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.throttle.concurrent.ConcurrentRequestsThrottlerTest;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SpringThrottlerTest extends ConcurrentRequestsThrottlerTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/throttler.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/throttler.xml");
     }
 
     public static class IncrementProcessor implements Processor {

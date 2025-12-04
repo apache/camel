@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jdbc;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Timestamp;
 import java.util.concurrent.TimeUnit;
@@ -29,10 +34,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class JdbcOrphanLockAwareIdempotentRepositoryTest {
@@ -50,7 +51,8 @@ public class JdbcOrphanLockAwareIdempotentRepositoryTest {
                 .addScript("classpath:sql/idempotentWithOrphanLockRemoval.sql")
                 .generateUniqueName(true)
                 .build();
-        jdbcMessageIdRepository = new JdbcOrphanLockAwareIdempotentRepository(dataSource, APP_NAME, new DefaultCamelContext());
+        jdbcMessageIdRepository =
+                new JdbcOrphanLockAwareIdempotentRepository(dataSource, APP_NAME, new DefaultCamelContext());
         jdbcMessageIdRepository.setLockMaxAgeMillis(3000_00L);
         jdbcMessageIdRepository.setLockKeepAliveIntervalMillis(3000L);
         jdbcMessageIdRepository.doInit();
@@ -78,8 +80,11 @@ public class JdbcOrphanLockAwareIdempotentRepositoryTest {
         assertTrue(jdbcMessageIdRepository.contains("FILE_4"));
         JdbcTemplate template = new JdbcTemplate(dataSource);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis() - 5 * 60 * 1000L);
-        template.update("UPDATE CAMEL_MESSAGEPROCESSED SET createdAT = ? WHERE processorName = ? AND messageId = ?", timestamp,
-                APP_NAME, "FILE_4");
+        template.update(
+                "UPDATE CAMEL_MESSAGEPROCESSED SET createdAT = ? WHERE processorName = ? AND messageId = ?",
+                timestamp,
+                APP_NAME,
+                "FILE_4");
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> !jdbcMessageIdRepository.contains("FILE_4"));
         jdbcMessageIdRepository.keepAlive();
@@ -89,18 +94,20 @@ public class JdbcOrphanLockAwareIdempotentRepositoryTest {
     @Test
     public void testInsertQueryDelete() {
         assertFalse(jdbcMessageIdRepository.contains("FILE_5"));
-        assertFalse(jdbcMessageIdRepository.getProcessorNameMessageIdSet()
+        assertFalse(jdbcMessageIdRepository
+                .getProcessorNameMessageIdSet()
                 .contains(new ProcessorNameAndMessageId(APP_NAME, "FILE_5")));
 
         jdbcMessageIdRepository.add("FILE_5");
 
-        assertTrue(jdbcMessageIdRepository.getProcessorNameMessageIdSet()
+        assertTrue(jdbcMessageIdRepository
+                .getProcessorNameMessageIdSet()
                 .contains(new ProcessorNameAndMessageId(APP_NAME, "FILE_5")));
         assertTrue(jdbcMessageIdRepository.contains("FILE_5"));
         jdbcMessageIdRepository.remove("FILE_5");
         assertFalse(jdbcMessageIdRepository.contains("FILE_5"));
-        assertFalse(jdbcMessageIdRepository.getProcessorNameMessageIdSet()
+        assertFalse(jdbcMessageIdRepository
+                .getProcessorNameMessageIdSet()
                 .contains(new ProcessorNameAndMessageId(APP_NAME, "FILE_5")));
     }
-
 }

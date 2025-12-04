@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite;
+
+import static org.awaitility.Awaitility.await;
 
 import java.io.Serializable;
 import java.util.List;
@@ -35,8 +38,6 @@ import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class IgniteMessagingTest extends AbstractIgniteTest implements Serializable {
 
@@ -75,10 +76,10 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         List<Object> messages2 = Lists.newArrayList();
         setupMessageListener(TOPIC2, messages2);
 
-        template.requestBodyAndHeader("ignite-messaging:" + TOPIC1, 1, IgniteConstants.IGNITE_MESSAGING_TOPIC, "TOPIC2");
+        template.requestBodyAndHeader(
+                "ignite-messaging:" + TOPIC1, 1, IgniteConstants.IGNITE_MESSAGING_TOPIC, "TOPIC2");
 
-        await().atMost(1, TimeUnit.SECONDS)
-                .until(() -> messages1.size(), Matchers.equalTo(0));
+        await().atMost(1, TimeUnit.SECONDS).until(() -> messages1.size(), Matchers.equalTo(0));
 
         Assertions.assertThat(messages2.size()).isEqualTo(1);
     }
@@ -124,8 +125,8 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
     @Test
     public void testConsumerManyMessages() throws Exception {
         List<Object> messages = Lists.newArrayList();
-        Consumer consumer
-                = context.getEndpoint("ignite-messaging:" + TOPIC1).createConsumer(storeBodyInListProcessor(messages));
+        Consumer consumer =
+                context.getEndpoint("ignite-messaging:" + TOPIC1).createConsumer(storeBodyInListProcessor(messages));
         consumer.start();
 
         Set<Integer> messagesToSend = ContiguousSet.create(Range.closedOpen(0, 100), DiscreteDomain.integers());
@@ -166,5 +167,4 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
             }
         };
     }
-
 }

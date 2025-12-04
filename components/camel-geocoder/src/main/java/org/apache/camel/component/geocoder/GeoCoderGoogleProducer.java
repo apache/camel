@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.geocoder;
 
 import java.util.Locale;
@@ -72,7 +73,8 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
                 LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
 
                 LOG.debug("Geocode for lat/lng {}", latlng);
-                GeocodingResult[] results = GeocodingApi.reverseGeocode(context, latLng).await();
+                GeocodingResult[] results =
+                        GeocodingApi.reverseGeocode(context, latLng).await();
 
                 LOG.debug("Geocode response {}", results);
 
@@ -88,7 +90,8 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
                 } else {
 
                     LOG.debug("Geocode for address {}", address);
-                    GeocodingResult[] results = GeocodingApi.geocode(context, address).await();
+                    GeocodingResult[] results =
+                            GeocodingApi.geocode(context, address).await();
                     LOG.debug("Geocode response {}", results);
 
                     if (results != null) {
@@ -128,7 +131,8 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
 
         // address - reverse geocode
         LOG.debug("Geocode - reverse geocode for location {}", resLatlng);
-        GeocodingResult[] results = GeocodingApi.reverseGeocode(context, result.location).await();
+        GeocodingResult[] results =
+                GeocodingApi.reverseGeocode(context, result.location).await();
 
         LOG.debug("Geocode response {}", results);
 

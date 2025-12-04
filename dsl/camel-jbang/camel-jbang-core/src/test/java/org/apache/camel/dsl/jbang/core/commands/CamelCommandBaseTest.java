@@ -28,5 +28,4 @@ public class CamelCommandBaseTest {
     public void setup() throws Exception {
         printer = new StringPrinter();
     }
-
 }

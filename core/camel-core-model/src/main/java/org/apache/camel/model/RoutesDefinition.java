@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.apache.camel.model.RouteDefinitionHelper.getRouteConfigurationDefinitionConsumer;
+import static org.apache.camel.model.RouteDefinitionHelper.routesByIdOrPattern;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,9 +45,6 @@ import org.apache.camel.util.OrderedLocationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.model.RouteDefinitionHelper.getRouteConfigurationDefinitionConsumer;
-import static org.apache.camel.model.RouteDefinitionHelper.routesByIdOrPattern;
-
 /**
  * A series of Camel routes
  */
@@ -57,26 +58,32 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
     @XmlTransient
     private List<InterceptDefinition> intercepts = new ArrayList<>();
+
     @XmlTransient
     private List<InterceptFromDefinition> interceptFroms = new ArrayList<>();
+
     @XmlTransient
     private List<InterceptSendToEndpointDefinition> interceptSendTos = new ArrayList<>();
+
     @XmlTransient
     private List<OnExceptionDefinition> onExceptions = new ArrayList<>();
+
     @XmlTransient
     private List<OnCompletionDefinition> onCompletions = new ArrayList<>();
+
     @XmlTransient
     private CamelContext camelContext;
+
     @XmlTransient
     private ErrorHandlerFactory errorHandlerFactory;
+
     @XmlTransient
     private Resource resource;
 
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<>();
 
-    public RoutesDefinition() {
-    }
+    public RoutesDefinition() {}
 
     @Override
     public String toString() {
@@ -287,19 +294,21 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         List<InterceptSendToEndpointDefinition> ito = new ArrayList<>(interceptSendTos);
         List<OnCompletionDefinition> oc = new ArrayList<>(onCompletions);
         if (getCamelContext() != null) {
-            List<RouteConfigurationDefinition> globalConfigurations
-                    = ((ModelCamelContext) getCamelContext()).getRouteConfigurationDefinitions();
+            List<RouteConfigurationDefinition> globalConfigurations =
+                    ((ModelCamelContext) getCamelContext()).getRouteConfigurationDefinitions();
             if (globalConfigurations != null) {
                 String[] ids;
                 if (route.getRouteConfigurationId() != null) {
                     // if the RouteConfigurationId was configured with property placeholder it should be resolved first
                     // and include properties sources from the template parameters
-                    if (route.getTemplateParameters() != null && route.getRouteConfigurationId().startsWith("{{")) {
+                    if (route.getTemplateParameters() != null
+                            && route.getRouteConfigurationId().startsWith("{{")) {
                         OrderedLocationProperties props = new OrderedLocationProperties();
                         props.putAll("TemplateProperties", new HashMap<>(route.getTemplateParameters()));
                         camelContext.getPropertiesComponent().setLocalProperties(props);
                         try {
-                            ids = camelContext.getCamelContextExtension()
+                            ids = camelContext
+                                    .getCamelContextExtension()
                                     .resolvePropertyPlaceholders(route.getRouteConfigurationId(), true)
                                     .split(",");
                         } finally {
@@ -309,15 +318,17 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
                         ids = route.getRouteConfigurationId().split(",");
                     }
                 } else {
-                    ids = new String[] { "*" };
+                    ids = new String[] {"*"};
                 }
 
                 // if there are multiple ids configured then we should apply in that same order
                 for (String id : ids) {
                     // sort according to ordered
-                    globalConfigurations.stream().sorted(OrderedComparator.get())
+                    globalConfigurations.stream()
+                            .sorted(OrderedComparator.get())
                             .filter(routesByIdOrPattern(route, id))
-                            .forEach(getRouteConfigurationDefinitionConsumer(route, gcErrorHandler, oe, icp, ifrom, ito, oc));
+                            .forEach(getRouteConfigurationDefinitionConsumer(
+                                    route, gcErrorHandler, oe, icp, ifrom, ito, oc));
                 }
 
                 // set error handler before prepare
@@ -339,7 +350,9 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         RouteDefinitionHelper.prepareRoute(getCamelContext(), route, ehd, oe, icp, ifrom, ito, oc);
 
         if (LOG.isDebugEnabled() && route.getAppliedRouteConfigurationIds() != null) {
-            LOG.debug("Route: {} is using route configurations ids: {}", route.getId(),
+            LOG.debug(
+                    "Route: {} is using route configurations ids: {}",
+                    route.getId(),
                     route.getAppliedRouteConfigurationIds());
         }
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -34,8 +37,6 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
     @TempDir
     Path testDirectory;
@@ -43,9 +44,9 @@ public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
     @Test
     public void testIsoAndCharacterFiltering() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
-        //Data containing characters ÆØÅæøå that differ in utf-8 and iso + a spouting whale
+        // Data containing characters ÆØÅæøå that differ in utf-8 and iso + a spouting whale
         String name = "\u00c6\u00d8\u00C5\u00e6\u00f8\u00e5\uD83D\uDC33\uFFFD";
-        String expected = "\u00c6\u00d8\u00C5\u00e6\u00f8\u00e5  \uFFFD"; //Spouting whale has become spaces
+        String expected = "\u00c6\u00d8\u00C5\u00e6\u00f8\u00e5  \uFFFD"; // Spouting whale has become spaces
         order.setName(name);
         order.setAmount(123.45);
         order.setPrice(2.22);
@@ -58,7 +59,8 @@ public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
 
         JAXBContext jaxbContext = JAXBContext.newInstance("org.apache.camel.example");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        InputStream inputStream = new FileInputStream(testDirectory.resolve("output.xml").toFile());
+        InputStream inputStream =
+                new FileInputStream(testDirectory.resolve("output.xml").toFile());
         Reader reader = new InputStreamReader(inputStream, StandardCharsets.ISO_8859_1);
         PurchaseOrder obj = (PurchaseOrder) unmarshaller.unmarshal(reader);
         assertEquals(expected, obj.getName());
@@ -79,5 +81,4 @@ public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
             }
         };
     }
-
 }

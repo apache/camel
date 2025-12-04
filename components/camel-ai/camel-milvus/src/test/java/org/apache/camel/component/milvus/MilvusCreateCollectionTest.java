@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.milvus;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.milvus.grpc.DataType;
 import io.milvus.param.collection.CreateCollectionParam;
 import io.milvus.param.collection.FieldType;
@@ -24,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class MilvusCreateCollectionTest extends MilvusTestSupport {
 
@@ -63,9 +63,9 @@ public class MilvusCreateCollectionTest extends MilvusTestSupport {
                 .addFieldType(fieldType3)
                 .build();
 
-        Exchange result = fluentTemplate.to("milvus:createCollection")
-                .withBody(
-                        createCollectionReq)
+        Exchange result = fluentTemplate
+                .to("milvus:createCollection")
+                .withBody(createCollectionReq)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
+
+import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
 import java.lang.reflect.Method;
 
@@ -26,8 +29,6 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
 public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> extends ProcessorReifier<T> {
 
@@ -73,7 +74,8 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
         // still no policy found then try lookup the platform transaction
         // manager and use it as policy
         if (answer == null && type == TransactedPolicy.class) {
-            Class<?> tmClazz = camelContext.getClassResolver()
+            Class<?> tmClazz = camelContext
+                    .getClassResolver()
                     .resolveClass("org.springframework.transaction.PlatformTransactionManager");
             if (tmClazz != null) {
                 // see if we can find the platform transaction manager in the
@@ -92,19 +94,22 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
                 // use reflection as performance is no a concern during
                 // route building
                 LOG.debug("One instance of PlatformTransactionManager found in registry: {}", transactionManager);
-                Class<?> txClazz = camelContext.getClassResolver()
+                Class<?> txClazz = camelContext
+                        .getClassResolver()
                         .resolveClass("org.apache.camel.spring.spi.SpringTransactionPolicy");
                 if (txClazz != null) {
-                    LOG.debug("Creating a new temporary SpringTransactionPolicy using the PlatformTransactionManager: {}",
+                    LOG.debug(
+                            "Creating a new temporary SpringTransactionPolicy using the PlatformTransactionManager: {}",
                             transactionManager);
-                    TransactedPolicy txPolicy
-                            = org.apache.camel.support.ObjectHelper.newInstance(txClazz, TransactedPolicy.class);
+                    TransactedPolicy txPolicy =
+                            org.apache.camel.support.ObjectHelper.newInstance(txClazz, TransactedPolicy.class);
                     Method method;
                     try {
                         method = txClazz.getMethod("setTransactionManager", tmClazz);
                     } catch (NoSuchMethodException e) {
                         throw new RuntimeCamelException(
-                                "Cannot get method setTransactionManager(PlatformTransactionManager) on class: " + txClazz);
+                                "Cannot get method setTransactionManager(PlatformTransactionManager) on class: "
+                                        + txClazz);
                     }
                     org.apache.camel.support.ObjectHelper.invokeMethod(method, txPolicy, transactionManager);
                     return txPolicy;

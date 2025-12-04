@@ -23,7 +23,5 @@ public final class JettyProperties {
      */
     public static final String JETTY_ADDRESS = "jetty.address";
 
-    private JettyProperties() {
-
-    }
+    private JettyProperties() {}
 }

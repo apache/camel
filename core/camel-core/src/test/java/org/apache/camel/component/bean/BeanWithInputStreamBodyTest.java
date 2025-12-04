@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.io.ByteArrayInputStream;
@@ -120,7 +121,9 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("bean:myBean?method=doSomething(${body})").to("mock:result");
+                from("direct:start")
+                        .to("bean:myBean?method=doSomething(${body})")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -143,6 +146,5 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
             }
             return "There is " + byteCount + " bytes";
         }
-
     }
 }

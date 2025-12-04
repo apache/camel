@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
 
 import java.util.concurrent.TimeUnit;
@@ -36,9 +37,14 @@ public class TimerAsyncTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=10").id("timer").threads(threads, threads).maxQueueSize(1)
+                from("timer://foo?fixedRate=true&delay=0&period=10")
+                        .id("timer")
+                        .threads(threads, threads)
+                        .maxQueueSize(1)
                         .rejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns)
-                        .to("log:task").to("mock:task").process(new Processor() {
+                        .to("log:task")
+                        .to("mock:task")
+                        .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // simulate long task
                                 TimeUnit.MILLISECONDS.sleep(50);

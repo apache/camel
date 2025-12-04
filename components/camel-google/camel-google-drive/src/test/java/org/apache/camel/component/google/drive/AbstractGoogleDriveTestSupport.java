@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
 
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         Properties properties = loadProperties();
 
         return !properties.getProperty("clientId", "").isEmpty()
-                && !properties.getProperty("clientSecret").isEmpty()
+                        && !properties.getProperty("clientSecret").isEmpty()
                 || !properties.getProperty("serviceAccountKey", "").isEmpty();
     }
 

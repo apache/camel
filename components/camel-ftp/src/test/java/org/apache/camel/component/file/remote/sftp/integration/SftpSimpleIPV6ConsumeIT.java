@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
 
 import org.apache.camel.Exchange;
@@ -24,7 +25,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
 @Disabled
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleIPV6ConsumeIT extends SftpServerTestSupport {
 
     @Test
@@ -50,8 +53,10 @@ public class SftpSimpleIPV6ConsumeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://[::1]:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true" +
-                     "&knownHostsFile=" + service.getKnownHostsFile()).routeId("foo").noAutoStartup()
+                                + "?username=admin&password=admin&delay=10000&disconnect=true" + "&knownHostsFile="
+                                + service.getKnownHostsFile())
+                        .routeId("foo")
+                        .noAutoStartup()
                         .to("mock:result");
             }
         };

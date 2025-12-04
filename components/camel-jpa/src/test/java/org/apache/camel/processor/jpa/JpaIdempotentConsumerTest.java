@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,13 +40,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
-import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JpaIdempotentConsumerTest extends AbstractJpaTest {
-    protected static final String SELECT_ALL_STRING
-            = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
+    protected static final String SELECT_ALL_STRING =
+            "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected Endpoint startEndpoint;
@@ -82,9 +83,11 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
             @Override
             public void configure() {
                 // START SNIPPET: idempotent
-                from("direct:start").idempotentConsumer(
-                        header("messageId"),
-                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(
+                                header("messageId"),
+                                jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME))
+                        .to("mock:result");
                 // END SNIPPET: idempotent
             }
         });
@@ -122,18 +125,24 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         context.addRoutes(new SpringRouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(0)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false));
 
-                from("direct:start").idempotentConsumer(
-                        header("messageId"),
-                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)).process(new Processor() {
+                from("direct:start")
+                        .idempotentConsumer(
+                                header("messageId"),
+                                jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME))
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damn I cannot handle id 2");
                                 }
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -185,5 +194,4 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     protected String selectAllString() {
         return SELECT_ALL_STRING;
     }
-
 }

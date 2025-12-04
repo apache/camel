@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.io.Closeable;
@@ -50,12 +51,10 @@ public class SendDevConsole extends AbstractDevConsole {
     private ProducerTemplate producer;
     private ConsumerTemplate consumer;
 
-    @Metadata(defaultValue = "32768",
-              description = "Maximum size of the message body to include in the dump")
+    @Metadata(defaultValue = "32768", description = "Maximum size of the message body to include in the dump")
     private int bodyMaxChars = 32 * 1024;
 
-    @Metadata(defaultValue = "20000", label = "advanced",
-              description = "Timeout when using poll mode")
+    @Metadata(defaultValue = "20000", label = "advanced", description = "Timeout when using poll mode")
     private int pollTimeout = 20000;
 
     /**
@@ -173,9 +172,8 @@ public class SendDevConsole extends AbstractDevConsole {
         if (out != null && (poll || "InOut".equals(exchangePattern))) {
             sb.append("\n    Response Message:\n\n");
             int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
-            String json
-                    = MessageHelper.dumpAsJSon(out.getMessage(), true, true, true, 2, true, true, true,
-                            maxChars, true);
+            String json =
+                    MessageHelper.dumpAsJSon(out.getMessage(), true, true, true, 2, true, true, true, maxChars, true);
             sb.append(json);
             sb.append("\n");
         }
@@ -236,15 +234,22 @@ public class SendDevConsole extends AbstractDevConsole {
             root.put("exchangeId", out.getExchangeId());
             int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
             // avoid double wrap
-            root.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true,
-                    maxChars).getMap("message"));
+            root.put(
+                    "message",
+                    MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true, maxChars)
+                            .getMap("message"));
         }
 
         return root;
     }
 
     private Exchange findToTarget(
-            Endpoint target, boolean poll, int timeout, String exchangePattern, String body, Map<String, Object> options)
+            Endpoint target,
+            boolean poll,
+            int timeout,
+            String exchangePattern,
+            String body,
+            Map<String, Object> options)
             throws Exception {
         Exchange out = null;
         if (target != null) {
@@ -259,8 +264,7 @@ public class SendDevConsole extends AbstractDevConsole {
                     if (!inputHeaders.isEmpty()) {
                         exchange.getMessage().setHeaders(inputHeaders);
                     }
-                    exchange.setPattern(
-                            "InOut".equals(mep) ? ExchangePattern.InOut : ExchangePattern.InOnly);
+                    exchange.setPattern("InOut".equals(mep) ? ExchangePattern.InOut : ExchangePattern.InOnly);
                 });
             }
             if (inputBody instanceof Closeable c) {
@@ -331,9 +335,12 @@ public class SendDevConsole extends AbstractDevConsole {
     }
 
     private static boolean isCustomHeader(String key) {
-        return !BODY.equals(key) && !BODY_MAX_CHARS.equals(key) && !POLL.equals(key) && !POLL_TIMEOUT.equals(key)
-                && !EXCHANGE_PATTERN.equals(key) && !ENDPOINT.equals(key)
+        return !BODY.equals(key)
+                && !BODY_MAX_CHARS.equals(key)
+                && !POLL.equals(key)
+                && !POLL_TIMEOUT.equals(key)
+                && !EXCHANGE_PATTERN.equals(key)
+                && !ENDPOINT.equals(key)
                 && !"CamelHttpPath".equals(key); // do not include ourself /q/dev/send
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +29,6 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
 
 public class JettyEventNotifierTest extends BaseJettyTest {
 
@@ -42,15 +43,16 @@ public class JettyEventNotifierTest extends BaseJettyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("jetty:http://0.0.0.0:{{port}}/camel/ok").routeId("jetty")
-                            .setBody().constant("Bye World");
+                    from("jetty:http://0.0.0.0:{{port}}/camel/ok")
+                            .routeId("jetty")
+                            .setBody()
+                            .constant("Bye World");
                 }
             });
 
             context.start();
 
-            given()
-                    .port(getPort())
+            given().port(getPort())
                     .body("Hello World")
                     .post("/camel/ok")
                     .then()
@@ -74,15 +76,15 @@ public class JettyEventNotifierTest extends BaseJettyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("jetty:http://0.0.0.0:{{port}}/camel/fail").routeId("jetty")
+                    from("jetty:http://0.0.0.0:{{port}}/camel/fail")
+                            .routeId("jetty")
                             .throwException(new IllegalArgumentException("Forced error"));
                 }
             });
 
             context.start();
 
-            given()
-                    .port(getPort())
+            given().port(getPort())
                     .body("Hello World")
                     .post("/camel/fail")
                     .then()
@@ -106,5 +108,4 @@ public class JettyEventNotifierTest extends BaseJettyTest {
             }
         }
     }
-
 }

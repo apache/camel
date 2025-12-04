@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +35,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CsvTest extends CamelTestSupport {
 
@@ -70,7 +71,8 @@ public class CsvTest extends CamelTestSupport {
         if (verbose) {
             for (Exchange exchange : exchanges) {
                 Object body = exchange.getIn().getBody();
-                LOG.info("received message {} of class {}", body, body.getClass().getName());
+                LOG.info(
+                        "received message {} of class {}", body, body.getClass().getName());
             }
         }
         List<Map> results = new ArrayList<>();
@@ -103,9 +105,8 @@ public class CsvTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 // setup beanio data format using the mapping file, loaded from the classpath
-                DataFormat format = new BeanIODataFormat(
-                        "org/apache/camel/dataformat/beanio/csv/mappings.xml",
-                        "stream1");
+                DataFormat format =
+                        new BeanIODataFormat("org/apache/camel/dataformat/beanio/csv/mappings.xml", "stream1");
 
                 // a route which uses the bean io data format to format a CSV data
                 // to java objects
@@ -116,9 +117,7 @@ public class CsvTest extends CamelTestSupport {
                         .to("mock:beanio-unmarshal");
 
                 // convert list of java objects back to flat format
-                from("direct:marshal")
-                        .marshal(format)
-                        .to("mock:beanio-marshal");
+                from("direct:marshal").marshal(format).to("mock:beanio-marshal");
                 // END SNIPPET: e1
             }
         };

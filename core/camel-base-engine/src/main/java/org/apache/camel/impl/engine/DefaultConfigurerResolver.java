@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
@@ -44,11 +45,12 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         }
 
         @Override
-        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        public boolean configure(
+                CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             if (target instanceof CamelContext contextTarget) {
                 if (!contextConfigurer.configure(camelContext, contextTarget, name, value, ignoreCase)) {
-                    return extensionConfigurer.configure(camelContext, contextTarget.getCamelContextExtension(), name, value,
-                            ignoreCase);
+                    return extensionConfigurer.configure(
+                            camelContext, contextTarget.getCamelContextExtension(), name, value, ignoreCase);
                 }
             }
 
@@ -60,8 +62,7 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
 
     protected FactoryFinder factoryFinder;
 
-    public DefaultConfigurerResolver() {
-    }
+    public DefaultConfigurerResolver() {}
 
     public DefaultConfigurerResolver(FactoryFinder factoryFinder) {
         this.factoryFinder = factoryFinder;
@@ -111,8 +112,12 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
 
     private PropertyConfigurer createPropertyConfigurer(String name, CamelContext context, Class<?> type) {
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found configurer: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(),
-                    name);
+            getLog().debug(
+                            "Found configurer: {} via type: {} via: {}{}",
+                            name,
+                            type.getName(),
+                            factoryFinder.getResourcePath(),
+                            name);
         }
 
         // create the component
@@ -127,8 +132,12 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
     private PropertyConfigurer createPropertyConfigurerForContext(
             String name, CamelContext context, Class<?> type, Class<?> extensionType) {
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found configurer: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(),
-                    name);
+            getLog().debug(
+                            "Found configurer: {} via type: {} via: {}{}",
+                            name,
+                            type.getName(),
+                            factoryFinder.getResourcePath(),
+                            name);
         }
 
         var contextConfigurer = (PropertyConfigurer) context.getInjector().newInstance(type, false);

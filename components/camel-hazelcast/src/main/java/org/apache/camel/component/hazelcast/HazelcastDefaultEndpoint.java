@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.cluster.Member;
@@ -34,15 +35,20 @@ import org.apache.camel.support.DefaultEndpoint;
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     protected HazelcastCommand command;
+
     @UriPath
     @Metadata(required = true)
     protected String cacheName;
+
     @UriParam
     protected HazelcastInstance hazelcastInstance;
+
     @UriParam
     protected String hazelcastInstanceName;
+
     @UriParam
     private HazelcastOperation defaultOperation;
+
     @UriParam
     @Metadata(supportFileReference = true)
     private String hazelcastConfigUri;
@@ -51,8 +57,8 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint implement
         this(hazelcastInstance, endpointUri, component, null);
     }
 
-    protected HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
-                                       String cacheName) {
+    protected HazelcastDefaultEndpoint(
+            HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
         super(endpointUri, component);
         this.cacheName = cacheName;
         this.hazelcastInstance = hazelcastInstance;

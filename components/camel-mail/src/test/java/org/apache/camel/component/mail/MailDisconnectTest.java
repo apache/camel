@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.util.concurrent.CountDownLatch;
@@ -63,7 +64,7 @@ public class MailDisconnectTest extends CamelTestSupport {
     public void testDisconnect() throws Exception {
         if (!latch.await(2500, TimeUnit.MILLISECONDS)) {
             Assertions.fail("Not all messages were received as expected: " + (expectedCount - latch.getCount())
-                            + " message(s) missing");
+                    + " message(s) missing");
         }
 
         MockEndpoint.assertIsSatisfied(context);

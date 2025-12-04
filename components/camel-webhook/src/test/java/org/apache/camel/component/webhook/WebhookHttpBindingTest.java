@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 
@@ -26,29 +30,31 @@ import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class WebhookHttpBindingTest extends WebhookTestBase {
 
     @Test
     public void testWrapper() {
-        String result = template.requestBody("netty-http:http://localhost:" + port
-                                             + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"),
-                "", String.class);
+        String result = template.requestBody(
+                "netty-http:http://localhost:" + port + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"),
+                "",
+                String.class);
         assertEquals("msg: webhook", result);
 
-        result = template.requestBodyAndHeader("netty-http:http://localhost:" + port
-                                               + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"),
-                "", Exchange.HTTP_METHOD, "PUT", String.class);
+        result = template.requestBodyAndHeader(
+                "netty-http:http://localhost:" + port + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"),
+                "",
+                Exchange.HTTP_METHOD,
+                "PUT",
+                String.class);
         assertEquals("msg: webhook", result);
     }
 
     @Test
     public void testGetError() {
-        assertThrows(CamelExecutionException.class,
-                () -> template.requestBodyAndHeader("netty-http:http://localhost:" + port, "",
-                        Exchange.HTTP_METHOD, "GET", String.class));
+        assertThrows(
+                CamelExecutionException.class,
+                () -> template.requestBodyAndHeader(
+                        "netty-http:http://localhost:" + port, "", Exchange.HTTP_METHOD, "GET", String.class));
     }
 
     @Override
@@ -68,13 +74,9 @@ public class WebhookHttpBindingTest extends WebhookTestBase {
             @Override
             public void configure() {
 
-                restConfiguration()
-                        .host("0.0.0.0")
-                        .port(port);
+                restConfiguration().host("0.0.0.0").port(port);
 
-                from("webhook:wb-delegate://xx")
-                        .transform(body().prepend("msg: "));
-
+                from("webhook:wb-delegate://xx").transform(body().prepend("msg: "));
             }
         };
     }

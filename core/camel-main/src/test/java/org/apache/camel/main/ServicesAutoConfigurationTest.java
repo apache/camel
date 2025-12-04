@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.Properties;
 
 import org.apache.camel.component.seda.SedaComponent;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ServicesAutoConfigurationTest {
     @Test
@@ -64,7 +65,8 @@ public class ServicesAutoConfigurationTest {
     }
 
     @Test
-    public void testComponentAutoConfiguredWhenGlobalAutoConfigurationIsDisabledButComponentAutoConfigurationIsEnabled() {
+    public void
+            testComponentAutoConfiguredWhenGlobalAutoConfigurationIsDisabledButComponentAutoConfigurationIsEnabled() {
         Properties properties = new Properties();
         properties.put("camel.component.enabled", "false");
         properties.put("camel.component.seda.enabled", "true");
@@ -84,7 +86,8 @@ public class ServicesAutoConfigurationTest {
     }
 
     @Test
-    public void testComponentAutoConfiguredWhenGlobalAutoConfigurationIsEnabledButComponentAutoConfigurationIsDisabled() {
+    public void
+            testComponentAutoConfiguredWhenGlobalAutoConfigurationIsEnabledButComponentAutoConfigurationIsDisabled() {
         Properties properties = new Properties();
         properties.put("camel.component.enabled", "true");
         properties.put("camel.component.seda.enabled", "false");

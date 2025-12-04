@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.sqlserver;
 
 import java.util.Map;
@@ -29,23 +30,29 @@ import org.apache.camel.spi.UriParam;
 /**
  * Capture changes from an SQL Server database.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-sqlserver", title = "Debezium SQL Server Connector",
-             syntax = "debezium-sqlserver:name", category = { Category.DATABASE }, consumerOnly = true,
-             headersClass = DebeziumConstants.class)
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "debezium-sqlserver",
+        title = "Debezium SQL Server Connector",
+        syntax = "debezium-sqlserver:name",
+        category = {Category.DATABASE},
+        consumerOnly = true,
+        headersClass = DebeziumConstants.class)
 public final class DebeziumSqlserverEndpoint extends DebeziumEndpoint<SqlServerConnectorEmbeddedDebeziumConfiguration>
         implements EndpointServiceLocation {
 
     @UriParam
     private SqlServerConnectorEmbeddedDebeziumConfiguration configuration;
 
-    public DebeziumSqlserverEndpoint(final String uri, final DebeziumSqlserverComponent component,
-                                     final SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
+    public DebeziumSqlserverEndpoint(
+            final String uri,
+            final DebeziumSqlserverComponent component,
+            final SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
-    public DebeziumSqlserverEndpoint() {
-    }
+    public DebeziumSqlserverEndpoint() {}
 
     @Override
     public String getServiceUrl() {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.deployments;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_DEPLOYMENTS;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,17 +28,20 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_DEPLOYMENTS;
-
 /**
  * Perform operations on Kubernetes Deployments and get notified on Deployment changes.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_DEPLOYMENTS, title = "Kubernetes Deployments",
-             syntax = "kubernetes-deployments:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
-             headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.20.0",
+        scheme = SCHEME_DEPLOYMENTS,
+        title = "Kubernetes Deployments",
+        syntax = "kubernetes-deployments:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesDeploymentsEndpoint(String uri, KubernetesDeploymentsComponent component, KubernetesConfiguration config) {
+    public KubernetesDeploymentsEndpoint(
+            String uri, KubernetesDeploymentsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -50,5 +56,4 @@ public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
         configureConsumer(consumer);
         return consumer;
     }
-
 }

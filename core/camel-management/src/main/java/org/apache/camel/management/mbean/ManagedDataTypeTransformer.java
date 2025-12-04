@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,8 @@ import org.apache.camel.model.TransformDataTypeDefinition;
 @ManagedResource(description = "Managed Data Type Transformer")
 public class ManagedDataTypeTransformer extends ManagedProcessor implements ManagedDataTypeTransformMBean {
 
-    public ManagedDataTypeTransformer(CamelContext context, Processor processor, TransformDataTypeDefinition definition) {
+    public ManagedDataTypeTransformer(
+            CamelContext context, Processor processor, TransformDataTypeDefinition definition) {
         super(context, processor, definition);
     }
 

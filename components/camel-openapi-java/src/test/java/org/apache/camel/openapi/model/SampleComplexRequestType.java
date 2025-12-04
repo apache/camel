@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.model;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SampleComplexRequestType extends GenericComplexRequestType<CustomData> {
     @JsonProperty(required = true)
     private String requestField1;
+
     private String requestField2;
     private List<String> listOfStrings;
     private String[] arrayOfString;

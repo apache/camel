@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.common;
 
 import java.io.IOException;
@@ -39,10 +40,10 @@ public class AbstractSslEndpointConfigurer extends AbstractTLSClientParameterCon
         httpConduit.setTlsClientParameters(tlsClientParameters);
     }
 
-    private SSLSocketFactory tryToGetSSLSocketFactory(SSLContextParameters sslContextParameters, CamelContext camelContext) {
+    private SSLSocketFactory tryToGetSSLSocketFactory(
+            SSLContextParameters sslContextParameters, CamelContext camelContext) {
         try {
-            return sslContextParameters.createSSLContext(camelContext)
-                    .getSocketFactory();
+            return sslContextParameters.createSSLContext(camelContext).getSocketFactory();
         } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException("Setting SSL failed", e);
         }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.Executors;
 
@@ -28,8 +31,6 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
 
@@ -77,7 +78,8 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
         Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("spring-rabbitmq:foo?queues=myqueue&routingKey=mykey", 100, String.class);
+            String body =
+                    consumer.receiveBody("spring-rabbitmq:foo?queues=myqueue&routingKey=mykey", 100, String.class);
             assertNull(body, "Should be null");
 
             template.sendBody("spring-rabbitmq:foo?routingKey=mykey2", "Hello Claus");
@@ -99,7 +101,8 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
         Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("spring-rabbitmq:foo?queues=myqueue&routingKey=mykey", 3000, String.class);
+            String body =
+                    consumer.receiveBody("spring-rabbitmq:foo?queues=myqueue&routingKey=mykey", 3000, String.class);
             template.sendBody("spring-rabbitmq:foo?routingKey=mykey2", body + " Claus");
         });
 
@@ -118,10 +121,10 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
             public void configure() throws Exception {
                 from("direct:start").log("Sending ${body} to myqueue").to("spring-rabbitmq:foo?routingKey=mykey");
 
-                from("spring-rabbitmq:foo?queues=myqueue2&routingKey=mykey2").log("Received ${body} from myqueue2")
+                from("spring-rabbitmq:foo?queues=myqueue2&routingKey=mykey2")
+                        .log("Received ${body} from myqueue2")
                         .to("mock:result");
             }
         };
     }
-
 }

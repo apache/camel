@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
 
 public class A1Record extends Record {
     Double currentPrice;
 
-    public A1Record() {
-    }
+    public A1Record() {}
 
     public A1Record(String sedol, String source, Double currentPrice) {
         super(sedol, source);
@@ -48,7 +48,9 @@ public class A1Record extends Record {
             return true;
         } else {
             A1Record record = (A1Record) obj;
-            return super.equals(record) && this.currentPrice.doubleValue() == record.getCurrentPrice().doubleValue();
+            return super.equals(record)
+                    && this.currentPrice.doubleValue()
+                            == record.getCurrentPrice().doubleValue();
         }
     }
 

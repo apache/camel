@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.routing;
 
 import org.apache.camel.AsyncCallback;
@@ -46,13 +47,17 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
      * @param endpoint  the {@link DynamicRouterEndpoint}
      * @param component the {@link DynamicRouterComponent}
      */
-    public DynamicRouterProducer(final DynamicRouterEndpoint endpoint, DynamicRouterComponent component,
-                                 final DynamicRouterConfiguration configuration) {
+    public DynamicRouterProducer(
+            final DynamicRouterEndpoint endpoint,
+            DynamicRouterComponent component,
+            final DynamicRouterConfiguration configuration) {
         super(endpoint);
         this.component = component;
         this.configuration = configuration;
-        LOG.debug("Created producer for endpoint '{}', channel '{}'",
-                endpoint.getEndpointUri(), configuration.getChannel());
+        LOG.debug(
+                "Created producer for endpoint '{}', channel '{}'",
+                endpoint.getEndpointUri(),
+                configuration.getChannel());
     }
 
     /**
@@ -63,8 +68,7 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
-        component.getRoutingProcessor(configuration.getChannel())
-                .process(exchange);
+        component.getRoutingProcessor(configuration.getChannel()).process(exchange);
     }
 
     /**

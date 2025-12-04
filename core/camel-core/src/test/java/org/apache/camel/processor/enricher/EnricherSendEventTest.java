@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,8 +34,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EnricherSendEventTest extends ContextTestSupport {
     private final MyEventNotifier en = new MyEventNotifier();
@@ -76,7 +77,8 @@ public class EnricherSendEventTest extends ContextTestSupport {
                 from("direct:start1")
                         // using the async utility component to ensure that the
                         // async routing engine kicks in
-                        .enrich("async:out?reply=Reply").to("mock:result");
+                        .enrich("async:out?reply=Reply")
+                        .to("mock:result");
 
                 from("direct:start2").enrich("direct:result").to("mock:result");
 
@@ -100,5 +102,4 @@ public class EnricherSendEventTest extends ContextTestSupport {
             }
         }
     }
-
 }

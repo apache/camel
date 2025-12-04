@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.web.search;
 
 import java.util.List;
@@ -83,7 +84,8 @@ public class LangChain4jWebSearchProducer extends DefaultProducer {
      * @param exchange                the Apache Camel Exchange object
      * @param maxResults              maxResults
      */
-    private void computeResponse(List<WebSearchOrganicResult> webSearchOrganicResults, Exchange exchange, Integer maxResults) {
+    private void computeResponse(
+            List<WebSearchOrganicResult> webSearchOrganicResults, Exchange exchange, Integer maxResults) {
         // Check if the input list is null or empty and handle it gracefully
         if (webSearchOrganicResults == null || webSearchOrganicResults.isEmpty()) {
             exchange.getIn().setBody(null);
@@ -94,17 +96,21 @@ public class LangChain4jWebSearchProducer extends DefaultProducer {
         if (maxResults == 1) {
             switch (getEndpoint().getConfiguration().getResultType()) {
                 case LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT -> exchange.getIn().setBody(webSearchOrganicResults.get(0));
-                case CONTENT -> exchange.getIn().setBody(webSearchOrganicResults.get(0).content());
-                case SNIPPET -> exchange.getIn().setBody(webSearchOrganicResults.get(0).snippet());
+                case CONTENT -> exchange.getIn()
+                        .setBody(webSearchOrganicResults.get(0).content());
+                case SNIPPET -> exchange.getIn()
+                        .setBody(webSearchOrganicResults.get(0).snippet());
             }
         } else { // return a List of Objects as a response
             switch (getEndpoint().getConfiguration().getResultType()) {
                 case LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT -> exchange.getIn().setBody(webSearchOrganicResults);
                 case CONTENT -> exchange.getIn()
-                        .setBody(webSearchOrganicResults.stream().map(WebSearchOrganicResult::content)
+                        .setBody(webSearchOrganicResults.stream()
+                                .map(WebSearchOrganicResult::content)
                                 .collect(Collectors.toList()));
                 case SNIPPET -> exchange.getIn()
-                        .setBody(webSearchOrganicResults.stream().map(WebSearchOrganicResult::snippet)
+                        .setBody(webSearchOrganicResults.stream()
+                                .map(WebSearchOrganicResult::snippet)
                                 .collect(Collectors.toList()));
             }
         }

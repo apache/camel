@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.model.Message;
@@ -38,8 +39,7 @@ class HL7MLLPEncoder implements ProtocolEncoder {
     }
 
     @Override
-    public void dispose(IoSession session) throws Exception {
-    }
+    public void dispose(IoSession session) throws Exception {}
 
     @Override
     public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
@@ -58,9 +58,8 @@ class HL7MLLPEncoder implements ProtocolEncoder {
         } else if (message instanceof byte[]) {
             body = (byte[]) message;
         } else {
-            throw new IllegalArgumentException(
-                    "The message to encode is not a supported type: "
-                                               + message.getClass().getCanonicalName());
+            throw new IllegalArgumentException("The message to encode is not a supported type: "
+                    + message.getClass().getCanonicalName());
         }
 
         // put the data into the byte buffer
@@ -75,5 +74,4 @@ class HL7MLLPEncoder implements ProtocolEncoder {
         LOG.debug("Encoded HL7 from {} to byte stream", message.getClass().getCanonicalName());
         out.write(buf);
     }
-
 }

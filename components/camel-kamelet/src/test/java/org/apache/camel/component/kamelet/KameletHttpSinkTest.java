@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -44,7 +45,8 @@ public class KameletHttpSinkTest extends CamelTestSupport {
                         .removeHeaders("*")
                         .to("{{url}}");
 
-                from("direct:start").routeId("test")
+                from("direct:start")
+                        .routeId("test")
                         .errorHandler(deadLetterChannel("mock:dead"))
                         .kamelet("myhttp?url=https://webhook.unknownhost.sitessss/")
                         .log("${body}");

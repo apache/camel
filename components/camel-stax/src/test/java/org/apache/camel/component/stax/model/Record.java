@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -22,7 +23,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "record", propOrder = { "key", "value" })
+@XmlType(
+        name = "record",
+        propOrder = {"key", "value"})
 public class Record {
     @XmlAttribute(required = true)
     protected String key;

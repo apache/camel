@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -32,13 +35,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -55,7 +57,8 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends Abstrac
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        template.send("direct:start", exchange -> exchange.getIn().setBody(new SerializableRequestDto("Restless Camel")));
+        template.send(
+                "direct:start", exchange -> exchange.getIn().setBody(new SerializableRequestDto("Restless Camel")));
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -67,14 +70,19 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends Abstrac
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(ExchangePattern.InOut,
+                        .to(
+                                ExchangePattern.InOut,
                                 "activemq:JmsInOutTransferExchangeInflightRepositoryFlushTest.responseGenerator?transferExchange=true&requestTimeout=5000")
                         .to("mock:result");
 
                 from("activemq:JmsInOutTransferExchangeInflightRepositoryFlushTest.responseGenerator?transferExchange=true")
                         .process(exchange -> {
                             // there are 2 inflight (one for both routes)
-                            assertEquals(2, exchange.getContext().getInflightRepository().size());
+                            assertEquals(
+                                    2,
+                                    exchange.getContext()
+                                            .getInflightRepository()
+                                            .size());
                             exchange.getIn().setBody(new SerializableResponseDto(true));
                         });
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pgevent;
 
 import java.sql.PreparedStatement;
@@ -67,7 +68,9 @@ public class PgEventConsumer extends DefaultConsumer {
             shutdownWorkerPool = true;
         }
         // used for re-connecting to the database
-        reconnectPool = getEndpoint().getCamelContext().getExecutorServiceManager()
+        reconnectPool = getEndpoint()
+                .getCamelContext()
+                .getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, "PgEventReconnect");
         reconnectTask = Tasks.backgroundTask()
                 .withScheduledExecutor(reconnectPool)
@@ -109,8 +112,8 @@ public class PgEventConsumer extends DefaultConsumer {
                         try {
                             initConnection();
                         } catch (Exception e) {
-                            String message
-                                    = "Failed to connect attempt #" + reconnectTask.iteration() + " due to: " + e.getMessage();
+                            String message = "Failed to connect attempt #" + reconnectTask.iteration() + " due to: "
+                                    + e.getMessage();
                             getExceptionHandler().handleException(message, e);
                             // make the task runner aware of the exception (will retry)
                             throw new TaskRunFailureException(message, e);
@@ -167,10 +170,10 @@ public class PgEventConsumer extends DefaultConsumer {
                         exchange.setException(e);
                     }
                     if (exchange.getException() != null) {
-                        String cause
-                                = "Unable to process incoming notification from PostgreSQL: processId='" + processId
-                                  + "', channel='"
-                                  + channel + "', payload='" + payload + "'";
+                        String cause =
+                                "Unable to process incoming notification from PostgreSQL: processId='" + processId
+                                        + "', channel='"
+                                        + channel + "', payload='" + payload + "'";
                         getExceptionHandler().handleException(cause, exchange.getException());
                     }
                     releaseExchange(exchange, false);
@@ -185,5 +188,4 @@ public class PgEventConsumer extends DefaultConsumer {
             reconnect();
         }
     }
-
 }

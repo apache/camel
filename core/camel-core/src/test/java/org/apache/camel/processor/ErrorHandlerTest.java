@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -59,7 +60,10 @@ public class ErrorHandlerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0))
+                from("direct:start")
+                        .errorHandler(deadLetterChannel("mock:error")
+                                .maximumRedeliveries(1)
+                                .redeliveryDelay(0))
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
@@ -68,7 +72,8 @@ public class ErrorHandlerTest extends ContextTestSupport {
                                 }
                                 exchange.getIn().setBody("Bye World");
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

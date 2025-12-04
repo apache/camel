@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.io.Reader;
@@ -73,7 +74,8 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to build {@link Route} instances in a
  * {@link CamelContext} for smart routing.
  */
-public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, ModelRoutesBuilder, Ordered, ResourceAware {
+public abstract class RouteBuilder extends BuilderSupport
+        implements RoutesBuilder, ModelRoutesBuilder, Ordered, ResourceAware {
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     private Resource resource;
@@ -224,8 +226,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         T obj = getContext().getRegistry().findSingleByType(type);
         // try component / dataformat / language
         if (obj == null && Component.class.isAssignableFrom(type)) {
-            org.apache.camel.spi.annotations.Component ann
-                    = type.getAnnotation(org.apache.camel.spi.annotations.Component.class);
+            org.apache.camel.spi.annotations.Component ann =
+                    type.getAnnotation(org.apache.camel.spi.annotations.Component.class);
             if (ann != null) {
                 String name = ann.value();
                 // just grab first scheme name if the component has scheme alias (eg http,https)
@@ -235,16 +237,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 // do not auto-start component as we need to configure it first
                 obj = (T) getCamelContext().getComponent(name, true, false);
             }
-            if (obj != null && !type.getName().equals("org.apache.camel.component.stub.StubComponent")
-                    && "org.apache.camel.component.stub.StubComponent".equals(obj.getClass().getName())) {
+            if (obj != null
+                    && !type.getName().equals("org.apache.camel.component.stub.StubComponent")
+                    && "org.apache.camel.component.stub.StubComponent"
+                            .equals(obj.getClass().getName())) {
                 // if we run in stub mode then we can't apply the configuration as we stubbed the actual component
                 obj = null;
             }
         }
         if (obj == null && DataFormat.class.isAssignableFrom(type)) {
             // it's maybe a dataformat
-            org.apache.camel.spi.annotations.Dataformat ann
-                    = type.getAnnotation(org.apache.camel.spi.annotations.Dataformat.class);
+            org.apache.camel.spi.annotations.Dataformat ann =
+                    type.getAnnotation(org.apache.camel.spi.annotations.Dataformat.class);
             if (ann != null) {
                 String name = ann.value();
                 obj = (T) getCamelContext().resolveDataFormat(name);
@@ -252,8 +256,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
         if (obj == null && Language.class.isAssignableFrom(type)) {
             // it's maybe a dataformat
-            org.apache.camel.spi.annotations.Language ann
-                    = type.getAnnotation(org.apache.camel.spi.annotations.Language.class);
+            org.apache.camel.spi.annotations.Language ann =
+                    type.getAnnotation(org.apache.camel.spi.annotations.Language.class);
             if (ann != null) {
                 String name = ann.value();
                 obj = (T) getCamelContext().resolveLanguage(name);
@@ -286,8 +290,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (obj == null && Component.class.isAssignableFrom(type)) {
             // do not auto-start component as we need to configure it first
             obj = (T) getCamelContext().getComponent(name, true, false);
-            if (obj != null && !"stub".equals(name)
-                    && "org.apache.camel.component.stub.StubComponent".equals(obj.getClass().getName())) {
+            if (obj != null
+                    && !"stub".equals(name)
+                    && "org.apache.camel.component.stub.StubComponent"
+                            .equals(obj.getClass().getName())) {
                 // if we run in stub mode then we can't apply the configuration as we stubbed the actual component
                 obj = null;
             }
@@ -322,7 +328,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public void bindToRegistry(String id, Class<?> type, Object bean) {
         getContext().getRegistry().bind(id, type, bean);
-
     }
 
     /**
@@ -680,7 +685,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public InterceptSendToEndpointDefinition interceptSendToEndpoint(String uri) {
         if (!getRouteCollection().getRoutes().isEmpty()) {
-            throw new IllegalArgumentException("interceptSendToEndpoint must be defined before any routes in the RouteBuilder");
+            throw new IllegalArgumentException(
+                    "interceptSendToEndpoint must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
         if (resource != null) {
@@ -930,8 +936,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected void initializeCamelContext(CamelContext camelContext) {
         // Set the CamelContext ErrorHandler here
         if (camelContext.getCamelContextExtension().getErrorHandlerFactory() != null) {
-            setErrorHandlerFactory(
-                    camelContext.getCamelContextExtension().getErrorHandlerFactory());
+            setErrorHandlerFactory(camelContext.getCamelContextExtension().getErrorHandlerFactory());
         }
         // inject camel context on collections
         getRouteCollection().setCamelContext(camelContext);
@@ -946,7 +951,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     private void populateTemplatedRoutes(CamelContext camelContext) throws Exception {
         getTemplatedRouteCollection().setCamelContext(camelContext);
-        camelContext.getCamelContextExtension().getContextPlugin(Model.class)
+        camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
                 .addRouteFromTemplatedRoutes(getTemplatedRouteCollection().getTemplatedRoutes());
     }
 
@@ -965,7 +972,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected void populateRouteTemplates() throws Exception {
         CamelContext camelContext = notNullCamelContext();
         getRouteTemplateCollection().setCamelContext(camelContext);
-        camelContext.getCamelContextExtension().getContextPlugin(Model.class)
+        camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
                 .addRouteTemplateDefinitions(getRouteTemplateCollection().getRouteTemplates());
     }
 
@@ -975,7 +984,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (resource != null) {
             getRouteCollection().setResource(resource);
         }
-        camelContext.getCamelContextExtension().getContextPlugin(Model.class)
+        camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
                 .addRouteDefinitions(getRouteCollection().getRoutes());
     }
 
@@ -990,7 +1001,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             camelContext.getRouteController().stopRoute(route.getRouteId());
             camelContext.removeRoute(route.getRouteId());
         }
-        camelContext.getCamelContextExtension().getContextPlugin(Model.class)
+        camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
                 .addRouteDefinitions(getRouteCollection().getRoutes());
     }
 
@@ -1005,8 +1018,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // cannot add rests as routes yet as we need to initialize this
         // specially
-        camelContext.getCamelContextExtension().getContextPlugin(Model.class).addRestDefinitions(getRestCollection().getRests(),
-                false);
+        camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
+                .addRestDefinitions(getRestCollection().getRests(), false);
 
         // convert rests api-doc into routes so they are routes for runtime
         RestConfiguration config = camelContext.getRestConfiguration();
@@ -1018,7 +1033,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             // so we check all existing routes if they have rest-api route
             // already added
             boolean hasRestApi = false;
-            for (RouteDefinition route : camelContext.getCamelContextExtension().getContextPlugin(Model.class)
+            for (RouteDefinition route : camelContext
+                    .getCamelContextExtension()
+                    .getContextPlugin(Model.class)
                     .getRouteDefinitions()) {
                 FromDefinition from = route.getInput();
                 if (from.getEndpointUri() != null && from.getEndpointUri().startsWith("rest-api:")) {
@@ -1034,8 +1051,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // add rest as routes and have them prepared as well via
         // routeCollection.route method
-        getRestCollection().getRests()
-                .forEach(rest -> rest.asRouteDefinition(getContext()).forEach(route -> getRouteCollection().route(route)));
+        getRestCollection().getRests().forEach(rest -> rest.asRouteDefinition(getContext())
+                .forEach(route -> getRouteCollection().route(route)));
     }
 
     protected void populateTransformers() {

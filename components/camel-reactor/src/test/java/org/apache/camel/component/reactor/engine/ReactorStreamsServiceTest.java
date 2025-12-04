@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactor.engine;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,11 +44,6 @@ import org.reactivestreams.Publisher;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport {
 
     // ************************************************
@@ -65,8 +66,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     public void testFromStreamDirect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:reactive")
-                        .to("reactive-streams:numbers");
+                from("direct:reactive").to("reactive-streams:numbers");
             }
         });
 
@@ -118,8 +118,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:reactive")
-                        .to("reactive-streams:direct");
+                from("direct:reactive").to("reactive-streams:direct");
             }
         });
 
@@ -146,7 +145,8 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
             @Override
             public void configure() {
                 from("timer:tick?period=50&includeMetadata=true")
-                        .setBody().header(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:tick");
             }
         });
@@ -206,26 +206,19 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:source")
-                        .to("direct:stream")
-                        .setBody()
-                        .simple("after stream: ${body}");
+                from("direct:source").to("direct:stream").setBody().simple("after stream: ${body}");
             }
         });
 
-        crs.process("direct:stream",
-                publisher -> Flux.from(publisher)
-                        .map(e -> {
-                            int i = e.getIn().getBody(Integer.class);
-                            e.getMessage().setBody(-i);
+        crs.process("direct:stream", publisher -> Flux.from(publisher).map(e -> {
+            int i = e.getIn().getBody(Integer.class);
+            e.getMessage().setBody(-i);
 
-                            return e;
-                        }));
+            return e;
+        }));
 
         for (int i = 1; i <= 3; i++) {
-            assertEquals(
-                    "after stream: " + (-i),
-                    template.requestBody("direct:source", i, String.class));
+            assertEquals("after stream: " + (-i), template.requestBody("direct:source", i, String.class));
         }
     }
 
@@ -235,21 +228,15 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:source")
-                        .to("direct:stream")
-                        .setBody()
-                        .simple("after stream: ${body}");
+                from("direct:source").to("direct:stream").setBody().simple("after stream: ${body}");
             }
         });
 
-        crs.process("direct:stream",
-                Integer.class,
-                publisher -> Flux.from(publisher).map(Math::negateExact));
+        crs.process("direct:stream", Integer.class, publisher -> Flux.from(publisher)
+                .map(Math::negateExact));
 
         for (int i = 1; i <= 3; i++) {
-            assertEquals(
-                    "after stream: " + (-i),
-                    template.requestBody("direct:source", i, String.class));
+            assertEquals("after stream: " + (-i), template.requestBody("direct:source", i, String.class));
         }
     }
 
@@ -261,8 +248,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     public void testToStream() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("reactive-streams:reactive")
-                        .setBody().constant("123");
+                from("reactive-streams:reactive").setBody().constant("123");
             }
         });
 
@@ -363,13 +349,11 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:reactor")
-                        .to("mock:result");
+                from("direct:reactor").to("mock:result");
             }
         });
 
-        Flux.just(1, 2, 3)
-                .subscribe(crs.subscriber("direct:reactor", Integer.class));
+        Flux.just(1, 2, 3).subscribe(crs.subscriber("direct:reactor", Integer.class));
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
@@ -390,14 +374,11 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:one")
-                        .to("reactive-streams:stream");
-                from("direct:two")
-                        .to("reactive-streams:stream");
+                from("direct:one").to("reactive-streams:stream");
+                from("direct:two").to("reactive-streams:stream");
             }
         });
 
-        assertThrows(FailedToStartRouteException.class,
-                () -> context.start());
+        assertThrows(FailedToStartRouteException.class, () -> context.start());
     }
 }

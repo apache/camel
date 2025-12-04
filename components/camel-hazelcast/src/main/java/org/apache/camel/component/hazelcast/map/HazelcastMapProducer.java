@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.map;
 
 import java.util.Collection;
@@ -74,7 +75,6 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
 
         final HazelcastOperation operation = lookupOperation(exchange);
         switch (operation) {
-
             case PUT:
                 if (ObjectHelper.isEmpty(ttl) && ObjectHelper.isEmpty(ttlUnit)) {
                     this.put(oid, exchange);
@@ -140,9 +140,9 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(
-                        String.format("The value '%s' is not allowed for parameter '%s' on the MAP cache.", operation,
-                                HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(String.format(
+                        "The value '%s' is not allowed for parameter '%s' on the MAP cache.",
+                        operation, HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

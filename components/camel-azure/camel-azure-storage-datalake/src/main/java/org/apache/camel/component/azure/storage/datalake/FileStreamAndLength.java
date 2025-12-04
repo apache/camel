@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.io.BufferedInputStream;
@@ -36,7 +37,8 @@ public final class FileStreamAndLength {
     }
 
     @SuppressWarnings("rawtypes")
-    public static FileStreamAndLength createFileStreamAndLengthFromExchangeBody(final Exchange exchange) throws IOException {
+    public static FileStreamAndLength createFileStreamAndLengthFromExchangeBody(final Exchange exchange)
+            throws IOException {
         Object body = exchange.getIn().getBody();
 
         if (body instanceof WrappedFile) {
@@ -51,15 +53,16 @@ public final class FileStreamAndLength {
         }
 
         if (body instanceof File) {
-            return new FileStreamAndLength(new BufferedInputStream(new FileInputStream((File) body)), ((File) body).length());
+            return new FileStreamAndLength(
+                    new BufferedInputStream(new FileInputStream((File) body)), ((File) body).length());
         }
 
         if (body instanceof byte[]) {
             return new FileStreamAndLength(new ByteArrayInputStream((byte[]) body), ((byte[]) body).length);
         }
 
-        final InputStream inputStream
-                = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
+        final InputStream inputStream =
+                exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
 
         if (inputStream == null) {
             throw new IllegalArgumentException("Unsupported file type");

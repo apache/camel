@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,9 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
 
@@ -96,18 +97,26 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").routeId("foo").routePolicy(policy).to("mock:before").to("log:before")
+                from("direct:start")
+                        .routeId("foo")
+                        .routePolicy(policy)
+                        .to("mock:before")
+                        .to("log:before")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
-                        }).to("async:bye:camel").process(new Processor() {
+                        })
+                        .to("async:bye:camel")
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
-                        }).to("log:after").to("mock:after").to("mock:result");
+                        })
+                        .to("log:after")
+                        .to("mock:after")
+                        .to("mock:result");
             }
         };
     }
-
 }

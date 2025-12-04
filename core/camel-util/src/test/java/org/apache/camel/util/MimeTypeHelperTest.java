@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
 
 class MimeTypeHelperTest {
 
@@ -28,7 +29,8 @@ class MimeTypeHelperTest {
         assertNull(MimeTypeHelper.sanitizeMimeType(null));
         assertEquals("application/json", MimeTypeHelper.sanitizeMimeType("application/json"));
         assertEquals("application/xslt+xml", MimeTypeHelper.sanitizeMimeType("application/xslt xml"));
-        assertEquals("application/xslt+xml,application/xml",
+        assertEquals(
+                "application/xslt+xml,application/xml",
                 MimeTypeHelper.sanitizeMimeType("application/xslt xml , application/xml"));
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.util.ArrayList;
@@ -90,8 +91,10 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Sent short message for exchange id '{}' and received message ids '{}'",
-                    exchange.getExchangeId(), messageIDs);
+            log.debug(
+                    "Sent short message for exchange id '{}' and received message ids '{}'",
+                    exchange.getExchangeId(),
+                    messageIDs);
         }
 
         Message message = ExchangeHelper.getResultMessage(exchange);
@@ -110,7 +113,8 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
             template.setEsmClass(esmClass.value());
         } else if (segments.length > 1) {
             // multipart message
-            template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
+            template.setEsmClass(
+                    new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
         }
 
         SubmitSm[] submitSms = new SubmitSm[segments.length];
@@ -139,7 +143,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         submitSms[submitSms.length - 1].setRegisteredDelivery(specifiedDeliveryFlag);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     protected SubmitSm createSubmitSmTemplate(Exchange exchange) {
         Message in = exchange.getIn();
         SubmitSm submitSm = new SubmitSm();

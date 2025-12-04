@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sqs;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.sqs;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SqsComponentClientRegistryTest extends CamelTestSupport {
 
@@ -51,7 +52,8 @@ public class SqsComponentClientRegistryTest extends CamelTestSupport {
         AmazonSQSClientMock awsSQSClient = new AmazonSQSClientMock();
         context.getRegistry().bind("awsSQSClient", awsSQSClient);
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        Sqs2Endpoint endpoint = (Sqs2Endpoint) component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy");
+        Sqs2Endpoint endpoint =
+                (Sqs2Endpoint) component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy");
 
         assertSame(awsSQSClient, endpoint.getConfiguration().getAmazonSQSClient());
     }

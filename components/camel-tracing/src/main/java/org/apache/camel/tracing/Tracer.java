@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing;
 
 import java.util.HashMap;
@@ -49,8 +50,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Tracer extends ServiceSupport implements CamelTracingService, RoutePolicyFactory, StaticService {
     protected static final Map<String, SpanDecorator> DECORATORS = new HashMap<>();
-    static final AutoCloseable NOOP_CLOSEABLE = () -> {
-    };
+    static final AutoCloseable NOOP_CLOSEABLE = () -> {};
     private static final Logger LOG = LoggerFactory.getLogger(Tracer.class);
 
     static {
@@ -148,8 +148,9 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
      */
     public void init(CamelContext camelContext) {
         if (hasOtherTracerType(camelContext)) {
-            LOG.warn("Could not add {} tracer type. Another tracer type, {}, was already registered. " +
-                     "Make sure to include only one tracing dependency type.",
+            LOG.warn(
+                    "Could not add {} tracer type. Another tracer type, {}, was already registered. "
+                            + "Make sure to include only one tracing dependency type.",
                     this.getClass(),
                     camelContext.hasService(Tracer.class).getClass());
             return;
@@ -191,11 +192,10 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         ServiceHelper.startService(eventNotifier);
 
         if (Boolean.TRUE.equals(camelContext.isUseMDCLogging())) {
-            LOG.warn("Initialized tracing component to put trace_id and span_id into MDC. " +
-                     "This is a deprecated feature and may disappear in the future. " +
-                     "You should replace it with the specific MDC instrumentation provided by your tracing/telemetry SDK instead. "
-                     +
-                     "See the tracing component documentation to learn more about it.");
+            LOG.warn("Initialized tracing component to put trace_id and span_id into MDC. "
+                    + "This is a deprecated feature and may disappear in the future. "
+                    + "You should replace it with the specific MDC instrumentation provided by your tracing/telemetry SDK instead. "
+                    + "See the tracing component documentation to learn more about it.");
         }
     }
 
@@ -215,7 +215,9 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
             Component comp = de.getComponent();
             String fqn = comp.getClass().getName();
             // lookup via FQN
-            sd = DECORATORS.values().stream().filter(d -> fqn.equals(d.getComponentClassName())).findFirst()
+            sd = DECORATORS.values().stream()
+                    .filter(d -> fqn.equals(d.getComponentClassName()))
+                    .findFirst()
                     .orElse(null);
         }
         if (sd == null) {
@@ -271,9 +273,14 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                     }
 
                     SpanAdapter parent = ActiveSpanManager.getSpan(ese.getExchange());
-                    InjectAdapter injectAdapter = sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding);
-                    SpanAdapter span = startSendingEventSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint()),
-                            sd.getInitiatorSpanKind(), parent, ese.getExchange(), injectAdapter);
+                    InjectAdapter injectAdapter =
+                            sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding);
+                    SpanAdapter span = startSendingEventSpan(
+                            sd.getOperationName(ese.getExchange(), ese.getEndpoint()),
+                            sd.getInitiatorSpanKind(),
+                            parent,
+                            ese.getExchange(),
+                            injectAdapter);
                     sd.pre(span, ese.getExchange(), ese.getEndpoint());
                     inject(span, injectAdapter);
                     ActiveSpanManager.activate(ese.getExchange(), span);
@@ -311,8 +318,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         }
 
         private boolean shouldExclude(SpanDecorator sd, Exchange exchange, Endpoint endpoint) {
-            return !sd.newSpan()
-                    || isExcluded(exchange, endpoint);
+            return !sd.newSpan() || isExcluded(exchange, endpoint);
         }
     }
 
@@ -326,8 +332,12 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                 SpanAdapter parent = ActiveSpanManager.getSpan(exchange);
                 SpanAdapter span;
-                span = startExchangeBeginSpan(exchange, sd, sd.getOperationName(exchange, route.getEndpoint()),
-                        sd.getReceiverSpanKind(), parent);
+                span = startExchangeBeginSpan(
+                        exchange,
+                        sd,
+                        sd.getOperationName(exchange, route.getEndpoint()),
+                        sd.getReceiverSpanKind(),
+                        parent);
                 sd.pre(span, exchange, route.getEndpoint());
                 ActiveSpanManager.activate(exchange, span);
                 if (LOG.isDebugEnabled()) {

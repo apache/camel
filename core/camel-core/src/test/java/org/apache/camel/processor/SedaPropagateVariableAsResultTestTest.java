@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,17 +46,11 @@ public class SedaPropagateVariableAsResultTestTest extends ContextTestSupport {
                         .to("seda:slip3")
                         .to("mock:result");
 
-                from("seda:slip1")
-                        .transform(body().append("B"))
-                        .setVariable("foo1", simple("${body}"));
+                from("seda:slip1").transform(body().append("B")).setVariable("foo1", simple("${body}"));
 
-                from("seda:slip2")
-                        .transform(body().append("C"))
-                        .setVariable("foo2", simple("${body}"));
+                from("seda:slip2").transform(body().append("C")).setVariable("foo2", simple("${body}"));
 
-                from("seda:slip3")
-                        .transform(body().append("D"))
-                        .setVariable("foo3", simple("${body}"));
+                from("seda:slip3").transform(body().append("D")).setVariable("foo3", simple("${body}"));
             }
         };
     }

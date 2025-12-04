@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 public abstract class HazelcastSedaRecoverableConsumerTest extends HazelcastCamelTestSupport {
 
@@ -43,9 +44,7 @@ public abstract class HazelcastSedaRecoverableConsumerTest extends HazelcastCame
 
     @Test
     public void testRecovery() throws InterruptedException {
-        when(queue.poll(any(Long.class), any(TimeUnit.class)))
-                .thenReturn("bar")
-                .thenReturn(null);
+        when(queue.poll(any(Long.class), any(TimeUnit.class))).thenReturn("bar").thenReturn(null);
 
         when(tqueue.poll(any(Long.class), any(TimeUnit.class)))
                 .thenReturn("bar")
@@ -70,5 +69,4 @@ public abstract class HazelcastSedaRecoverableConsumerTest extends HazelcastCame
     public final void stopContext() throws Exception {
         context.stop();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import java.io.File;
@@ -62,9 +63,7 @@ public class SmbStreamDownloadFileIT extends SmbServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getSmbUrl()).streamCache("false")
-                        .to("mock:input")
-                        .to("file:target/deleteme");
+                from(getSmbUrl()).streamCache("false").to("mock:input").to("file:target/deleteme");
             }
         };
     }

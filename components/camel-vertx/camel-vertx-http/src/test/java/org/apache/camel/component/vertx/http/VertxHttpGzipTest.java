@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import io.undertow.io.IoCallback;
@@ -37,13 +38,14 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
     @Test
     public void testCompressedResponse() {
         // Invoke the endpoint without compression support to get the raw gzipped response
-        String result = template.requestBodyAndHeader(getProducerUri(), null, "Accept-Encoding", "gzip,deflate", String.class);
+        String result =
+                template.requestBodyAndHeader(getProducerUri(), null, "Accept-Encoding", "gzip,deflate", String.class);
         // Result is compressed so the length should be less than the original message
         Assertions.assertTrue(result.length() < message.length());
 
         // Invoke the endpoint with compression support to get the raw gzipped response
-        result = template.requestBodyAndHeader(getProducerUri() + "?useCompression=true", null, "Accept-Encoding",
-                "gzip,deflate", String.class);
+        result = template.requestBodyAndHeader(
+                getProducerUri() + "?useCompression=true", null, "Accept-Encoding", "gzip,deflate", String.class);
         // Result length should match the original message
         Assertions.assertEquals(message.length(), result.length());
     }
@@ -55,8 +57,7 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
             public void configure() {
                 getContext().getRegistry().bind("gzip", createGzipHandler());
 
-                from(getTestServerUri() + "?handlers=gzip")
-                        .to("log:end");
+                from(getTestServerUri() + "?handlers=gzip").to("log:end");
             }
         };
     }
@@ -68,9 +69,9 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
         }
         message = builder.toString();
 
-        HttpHandler handler = new EncodingHandler(
-                new ContentEncodingRepository()
-                        .addEncodingHandler("gzip", new GzipEncodingProvider(), 50, Predicates.parse("max-content-size[5]")))
+        HttpHandler handler = new EncodingHandler(new ContentEncodingRepository()
+                        .addEncodingHandler(
+                                "gzip", new GzipEncodingProvider(), 50, Predicates.parse("max-content-size[5]")))
                 .setNext(new HttpHandler() {
                     @Override
                     public void handleRequest(final HttpServerExchange exchange) {
@@ -86,8 +87,7 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
             }
 
             @Override
-            public void setNext(HttpHandler nextHandler) {
-            }
+            public void setNext(HttpHandler nextHandler) {}
         };
     }
 }

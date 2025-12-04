@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -33,8 +34,9 @@ public class GeneratePubSubMojo extends AbstractSalesforceMojo {
     @Parameter(property = "camelSalesforce.pubSubPort", required = true, defaultValue = "7443")
     Integer pubSubPort;
 
-    @Parameter(property = "camelSalesforce.pubSubOutputDirectory",
-               defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
+    @Parameter(
+            property = "camelSalesforce.pubSubOutputDirectory",
+            defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
     File outputDirectory;
 
     @Parameter

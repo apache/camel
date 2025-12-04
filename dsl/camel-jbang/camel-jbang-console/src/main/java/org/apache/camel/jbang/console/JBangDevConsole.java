@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jbang.console;
 
 import java.util.Map;
@@ -22,7 +23,11 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "jbang", group = "camel-jbang", displayName = "Camel JBang", description = "Information about Camel JBang")
+@DevConsole(
+        name = "jbang",
+        group = "camel-jbang",
+        displayName = "Camel JBang",
+        description = "Information about Camel JBang")
 public class JBangDevConsole extends AbstractDevConsole {
 
     public JBangDevConsole() {

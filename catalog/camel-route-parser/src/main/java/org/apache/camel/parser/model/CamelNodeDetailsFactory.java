@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.model;
 
 public final class CamelNodeDetailsFactory {
 
     private int order;
 
-    private CamelNodeDetailsFactory() {
-    }
+    private CamelNodeDetailsFactory() {}
 
     public static CamelNodeDetailsFactory newInstance() {
         return new CamelNodeDetailsFactory();

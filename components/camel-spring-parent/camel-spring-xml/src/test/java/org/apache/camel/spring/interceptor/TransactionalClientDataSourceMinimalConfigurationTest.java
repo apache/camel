@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.sql.DataSource;
 
@@ -25,10 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Easier transaction configuration as we only setup Spring TX stuff.
@@ -70,11 +71,12 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
+            assertEquals(
+                    "We don't have Donkeys, only Camels",
+                    e.getCause().getCause().getMessage());
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(1, count, "Number of books");
     }
-
 }

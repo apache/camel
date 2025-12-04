@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
+
+import static org.apache.camel.builder.PredicateBuilder.constant;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_PREDICATE_CLASS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
@@ -30,13 +38,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.builder.PredicateBuilder.constant;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_PREDICATE_CLASS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterControlServiceTest {
@@ -85,8 +86,8 @@ class DynamicRouterControlServiceTest {
         String trueExpression = "true";
         Language language = context.resolveLanguage(expressionLanguage);
         Predicate expectedPredicate = language.createPredicate(trueExpression);
-        Predicate actualPredicate = DynamicRouterControlService
-                .obtainPredicateFromExpression(context, trueExpression, expressionLanguage);
+        Predicate actualPredicate =
+                DynamicRouterControlService.obtainPredicateFromExpression(context, trueExpression, expressionLanguage);
         assertEquals(expectedPredicate, actualPredicate);
     }
 
@@ -100,7 +101,8 @@ class DynamicRouterControlServiceTest {
     @Test
     void obtainPredicateFromInstanceWhenNotPredicateInstance() {
         String expectedPredicate = "thisMightHurt";
-        Exception ex = assertThrows(IllegalArgumentException.class,
+        Exception ex = assertThrows(
+                IllegalArgumentException.class,
                 () -> DynamicRouterControlService.obtainPredicateFromInstance(expectedPredicate));
         assertEquals(ERROR_PREDICATE_CLASS, ex.getMessage());
     }
@@ -108,46 +110,65 @@ class DynamicRouterControlServiceTest {
     @Test
     void obtainPredicateFromExpressionWithError() {
         String expression = "not a valid expression";
-        assertThrows(IllegalArgumentException.class,
-                () -> DynamicRouterControlService.obtainPredicateFromExpression(context, expression, expressionLanguage));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> DynamicRouterControlService.obtainPredicateFromExpression(
+                        context, expression, expressionLanguage));
     }
 
     @Test
     void subscribeWithPredicateExpression() {
-        service.subscribeWithPredicateExpression(subscribeChannel, subscriptionId, destinationUri, priority,
-                predicateExpression, expressionLanguage, false);
+        service.subscribeWithPredicateExpression(
+                subscribeChannel,
+                subscriptionId,
+                destinationUri,
+                priority,
+                predicateExpression,
+                expressionLanguage,
+                false);
         Mockito.verify(filterService, Mockito.times(1))
                 .addFilterForChannel(
-                        eq(subscriptionId), eq(priority), any(Predicate.class),
-                        eq(destinationUri), eq(subscribeChannel), eq(false));
+                        eq(subscriptionId),
+                        eq(priority),
+                        any(Predicate.class),
+                        eq(destinationUri),
+                        eq(subscribeChannel),
+                        eq(false));
     }
 
     @Test
     void subscribeWithPredicateBean() {
         context.getRegistry().bind(predicateBeanName, Predicate.class, predicateInstance);
-        service.subscribeWithPredicateBean(subscribeChannel, subscriptionId, destinationUri, priority,
-                predicateBeanName, false);
+        service.subscribeWithPredicateBean(
+                subscribeChannel, subscriptionId, destinationUri, priority, predicateBeanName, false);
         Mockito.verify(filterService, Mockito.times(1))
                 .addFilterForChannel(
-                        eq(subscriptionId), eq(priority), any(Predicate.class),
-                        eq(destinationUri), eq(subscribeChannel), eq(false));
+                        eq(subscriptionId),
+                        eq(priority),
+                        any(Predicate.class),
+                        eq(destinationUri),
+                        eq(subscribeChannel),
+                        eq(false));
     }
 
     @Test
     void subscribeWithPredicateInstance() {
-        service.subscribeWithPredicateInstance(subscribeChannel, subscriptionId, destinationUri, priority,
-                predicateInstance, false);
+        service.subscribeWithPredicateInstance(
+                subscribeChannel, subscriptionId, destinationUri, priority, predicateInstance, false);
         Mockito.verify(filterService, Mockito.times(1))
                 .addFilterForChannel(
-                        eq(subscriptionId), eq(priority), any(Predicate.class),
-                        eq(destinationUri), eq(subscribeChannel), eq(false));
+                        eq(subscriptionId),
+                        eq(priority),
+                        any(Predicate.class),
+                        eq(destinationUri),
+                        eq(subscribeChannel),
+                        eq(false));
     }
 
     @Test
     void removeSubscription() {
         service.removeSubscription(subscribeChannel, subscriptionId);
-        Mockito.verify(filterService, Mockito.times(1))
-                .removeFilterById(subscriptionId, subscribeChannel);
+        Mockito.verify(filterService, Mockito.times(1)).removeFilterById(subscriptionId, subscribeChannel);
     }
 
     @Test

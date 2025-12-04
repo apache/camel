@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr;
 
 import java.time.Duration;
@@ -35,98 +36,168 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DaprConfiguration implements Cloneable {
 
-    @UriPath(label = "producer", enums = "invokeService, state, pubSub, invokeBinding, secret, configuration, lock, workflow")
+    @UriPath(
+            label = "producer",
+            enums = "invokeService, state, pubSub, invokeBinding, secret, configuration, lock, workflow")
     @Metadata(required = true)
     private DaprOperation operation;
+
     @UriParam(label = "common", description = "The Dapr Client")
     @Metadata(autowired = true)
     private DaprClient client;
+
     @UriParam(label = "common", description = "The Dapr Preview Client")
     @Metadata(autowired = true)
     private DaprPreviewClient previewClient;
+
     @UriParam(label = "producer", description = "The Dapr Workflow Client")
     @Metadata(autowired = true)
     private DaprWorkflowClient workflowClient;
-    @UriParam(label = "producer", description = "Target service to invoke. Can be a Dapr App ID, a named HTTPEndpoint, "
-                                                +
-                                                "or a FQDN/public URL")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Target service to invoke. Can be a Dapr App ID, a named HTTPEndpoint, " + "or a FQDN/public URL")
     private String serviceToInvoke;
+
     @UriParam(label = "producer", description = "The name of the method or route to invoke on the target service")
     private String methodToInvoke;
+
     @UriParam(label = "producer", description = "The HTTP verb to use for invoking the method", defaultValue = "POST")
     private String verb = "POST";
-    @UriParam(label = "producer",
-              description = "HTTP method to use when invoking the service. Accepts verbs like GET, POST, PUT, DELETE, etc. "
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "HTTP method to use when invoking the service. Accepts verbs like GET, POST, PUT, DELETE, etc. "
                             + "Creates a minimal HttpExtension with no headers or query params. Takes precedence over verb")
     @Metadata(autowired = true)
     private HttpExtension httpExtension;
-    @UriParam(label = "producer", enums = "save, saveBulk, get, getBulk, delete, executeTransaction", defaultValue = "get",
-              description = "The state operation to perform on the state store. Required for DaprOperation.state operation")
+
+    @UriParam(
+            label = "producer",
+            enums = "save, saveBulk, get, getBulk, delete, executeTransaction",
+            defaultValue = "get",
+            description =
+                    "The state operation to perform on the state store. Required for DaprOperation.state operation")
     private StateOperation stateOperation = StateOperation.get;
-    @UriParam(label = "producer",
-              description = "The name of the Dapr state store to interact with, defined in statestore.yaml config")
+
+    @UriParam(
+            label = "producer",
+            description = "The name of the Dapr state store to interact with, defined in statestore.yaml config")
     private String stateStore;
-    @UriParam(label = "producer",
-              description = "The name of the Dapr secret store to interact with, defined in local-secret-store.yaml config")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "The name of the Dapr secret store to interact with, defined in local-secret-store.yaml config")
     private String secretStore;
-    @UriParam(label = "common",
-              description = "The name of the Dapr configuration store to interact with, defined in statestore.yaml config")
+
+    @UriParam(
+            label = "common",
+            description =
+                    "The name of the Dapr configuration store to interact with, defined in statestore.yaml config")
     private String configStore;
-    @UriParam(label = "producer",
-              description = "The key used to identify the state/secret object within the specified state/secret store")
+
+    @UriParam(
+            label = "producer",
+            description = "The key used to identify the state/secret object within the specified state/secret store")
     private String key;
-    @UriParam(label = "producer", description = "The eTag for optimistic concurrency during state save or delete operations")
+
+    @UriParam(
+            label = "producer",
+            description = "The eTag for optimistic concurrency during state save or delete operations")
     private String eTag;
-    @UriParam(label = "producer", description = "Concurrency mode to use with state operations",
-              enums = "FIRST_WRITE, LAST_WRITE")
+
+    @UriParam(
+            label = "producer",
+            description = "Concurrency mode to use with state operations",
+            enums = "FIRST_WRITE, LAST_WRITE")
     private Concurrency concurrency;
-    @UriParam(label = "producer", description = "Consistency level to use with state operations", enums = "EVENTUAL, STRONG")
+
+    @UriParam(
+            label = "producer",
+            description = "Consistency level to use with state operations",
+            enums = "EVENTUAL, STRONG")
     private Consistency consistency;
-    @UriParam(label = "common", description = "The name of the Dapr Pub/Sub component to use. This identifies which underlying "
-                                              + "messaging system Dapr will interact with for publishing or subscribing to events.")
+
+    @UriParam(
+            label = "common",
+            description = "The name of the Dapr Pub/Sub component to use. This identifies which underlying "
+                    + "messaging system Dapr will interact with for publishing or subscribing to events.")
     private String pubSubName;
-    @UriParam(label = "common", description = "The name of the topic to subscribe to. The topic must exist in the Pub/Sub "
-                                              + "component configured under the given pubsubName.")
+
+    @UriParam(
+            label = "common",
+            description = "The name of the topic to subscribe to. The topic must exist in the Pub/Sub "
+                    + "component configured under the given pubsubName.")
     private String topic;
+
     @UriParam(label = "common", description = "The contentType for the Pub/Sub component to use.")
     private String contentType;
+
     @UriParam(label = "producer", description = "The name of the Dapr binding to invoke")
     private String bindingName;
+
     @UriParam(label = "producer", description = "The operation to perform on the binding")
     private String bindingOperation;
+
     @UriParam(label = "common", description = "List of keys for configuration operation")
     private String configKeys;
-    @UriParam(label = "producer", enums = "tryLock, unlock", defaultValue = "tryLock",
-              description = "The lock operation to perform on the store. Required for DaprOperation.lock operation")
+
+    @UriParam(
+            label = "producer",
+            enums = "tryLock, unlock",
+            defaultValue = "tryLock",
+            description = "The lock operation to perform on the store. Required for DaprOperation.lock operation")
     private LockOperation lockOperation = LockOperation.tryLock;
+
     @UriParam(label = "producer", description = "The lock store name")
     private String storeName;
+
     @UriParam(label = "producer", description = "The resource Id for the lock")
     private String resourceId;
+
     @UriParam(label = "producer", description = "The lock owner identifier for the lock")
     private String lockOwner;
+
     @UriParam(label = "producer", description = "The expiry time in seconds for the lock")
     private Integer expiryInSeconds;
-    @UriParam(label = "producer",
-              enums = "scheduleNew, terminate, purge, suspend, resume, state, waitForInstanceStart, waitForInstanceCompletion, raiseEvent",
-              defaultValue = "scheduleNew",
-              description = "The workflow operation to perform. Required for DaprOperation.workflow operation")
+
+    @UriParam(
+            label = "producer",
+            enums =
+                    "scheduleNew, terminate, purge, suspend, resume, state, waitForInstanceStart, waitForInstanceCompletion, raiseEvent",
+            defaultValue = "scheduleNew",
+            description = "The workflow operation to perform. Required for DaprOperation.workflow operation")
     private WorkflowOperation workflowOperation = WorkflowOperation.scheduleNew;
+
     @UriParam(label = "producer", description = "The FQCN of the class which implements io.dapr.workflows.Workflow")
     private String workflowClass;
+
     @UriParam(label = "producer", description = "The version of the workflow to start")
     private String workflowVersion;
+
     @UriParam(label = "producer", description = "The instance ID of the workflow")
     private String workflowInstanceId;
+
     @UriParam(label = "producer", description = "The start time of the new workflow")
     private Instant workflowStartTime;
+
     @UriParam(label = "producer", description = "Reason for suspending/resuming the workflow instance")
     private String reason;
-    @UriParam(label = "producer",
-              description = "Set true to fetch the workflow instance's inputs, outputs, and custom status, or false to omit")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Set true to fetch the workflow instance's inputs, outputs, and custom status, or false to omit")
     private boolean getWorkflowIO;
-    @UriParam(label = "producer", description = "The amount of time to wait for the workflow instance to start/complete")
+
+    @UriParam(
+            label = "producer",
+            description = "The amount of time to wait for the workflow instance to start/complete")
     private Duration timeout;
+
     @UriParam(label = "producer", description = "The name of the event. Event names are case-insensitive")
     private String eventName;
 

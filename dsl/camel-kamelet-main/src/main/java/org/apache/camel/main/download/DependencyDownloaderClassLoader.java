@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.File;
@@ -43,6 +44,8 @@ public class DependencyDownloaderClassLoader extends URLClassLoader {
     }
 
     public List<String> getDownloaded() {
-        return Arrays.stream(getURLs()).map(u -> FileUtil.stripPath(u.getFile())).collect(Collectors.toList());
+        return Arrays.stream(getURLs())
+                .map(u -> FileUtil.stripPath(u.getFile()))
+                .collect(Collectors.toList());
     }
 }

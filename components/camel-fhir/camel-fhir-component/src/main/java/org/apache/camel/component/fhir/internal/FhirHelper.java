@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.internal;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -108,9 +109,10 @@ public final class FhirHelper {
         if (ObjectHelper.isNotEmpty(camelProxyHost) && ObjectHelper.isNotEmpty(camelProxyPort)) {
             LOG.warn(
                     "CamelContext global options [http.proxyHost,http.proxyPort] detected."
-                     + " Using global option configuration is deprecated. Instead configure this on the component."
-                     + " Using http proxy host: {} port: {}",
-                    camelProxyHost, camelProxyPort);
+                            + " Using global option configuration is deprecated. Instead configure this on the component."
+                            + " Using http proxy host: {} port: {}",
+                    camelProxyHost,
+                    camelProxyPort);
             restfulClientFactory.setProxy(camelProxyHost, Integer.parseInt(camelProxyPort));
         }
         if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort)) {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.gson;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -22,14 +25,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class GsonJsonDataFormatTest extends GsonMarshalTest {
 
     @Test
     public void testUnmarshalMap() {
-        Map<?, ?> unmarshalled = template.requestBody("direct:json",
-                "{\"pointsOfSale\":{\"pointOfSale\":{\"prodcut\":\"newpad\"}}}", Map.class);
+        Map<?, ?> unmarshalled = template.requestBody(
+                "direct:json", "{\"pointsOfSale\":{\"pointOfSale\":{\"prodcut\":\"newpad\"}}}", Map.class);
         Map<?, ?> map1 = (Map<?, ?>) unmarshalled.get("pointsOfSale");
         Map<?, ?> map2 = (Map<?, ?>) map1.get("pointOfSale");
         assertEquals("newpad", map2.get("prodcut"), "Don't get the right value");
@@ -44,11 +45,13 @@ public class GsonJsonDataFormatTest extends GsonMarshalTest {
                 from("direct:back").unmarshal().json(JsonLibrary.Gson).to("mock:reverse");
 
                 from("direct:inPojo").marshal().json(JsonLibrary.Gson);
-                from("direct:backPojo").unmarshal().json(JsonLibrary.Gson, TestPojo.class).to("mock:reversePojo");
+                from("direct:backPojo")
+                        .unmarshal()
+                        .json(JsonLibrary.Gson, TestPojo.class)
+                        .to("mock:reversePojo");
 
                 from("direct:json").unmarshal().json(JsonLibrary.Gson, Map.class);
             }
         };
     }
-
 }

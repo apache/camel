@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -32,9 +36,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DelegateEndpointQuartzTest extends CamelTestSupport {
 
@@ -84,7 +85,6 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
             Endpoint childEndpoint = context.getEndpoint(childUri);
             return new MyEndpoint(uri, childEndpoint);
         }
-
     }
 
     class MyEndpoint extends DefaultEndpoint implements DelegateEndpoint {
@@ -119,7 +119,5 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
         protected String createEndpointUri() {
             return "my:" + childEndpoint.getEndpointUri();
         }
-
     }
-
 }

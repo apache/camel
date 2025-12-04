@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.*;
 
@@ -29,8 +32,6 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PQCSignatureFalconNoAutowiredTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
@@ -42,15 +43,16 @@ public class PQCSignatureFalconNoAutowiredTest extends CamelTestSupport {
     @Produce("direct:sign")
     protected ProducerTemplate templateSign;
 
-    public PQCSignatureFalconNoAutowiredTest() throws NoSuchAlgorithmException {
-    }
+    public PQCSignatureFalconNoAutowiredTest() throws NoSuchAlgorithmException {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=FALCON").to("mock:sign")
+                from("direct:sign")
+                        .to("pqc:sign?operation=sign&signatureAlgorithm=FALCON")
+                        .to("mock:sign")
                         .to("pqc:verify?operation=verify&signatureAlgorithm=FALCON")
                         .to("mock:verify");
             }

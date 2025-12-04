@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets;
 
 import java.util.Collection;
@@ -37,24 +38,32 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
     @UriPath
     @Metadata(required = true)
     private GoogleSheetsApiName apiName;
+
     @UriPath(enums = "create,get,update,append,batchUpdate,clear")
     @Metadata(required = true)
     private String methodName;
+
     @UriParam
     private String clientId;
+
     @UriParam(label = "security", secret = true)
     private String clientSecret;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "security", secret = true)
     private String refreshToken;
+
     @UriParam
     private String applicationName;
+
     @UriParam
     private String scopes;
     /* Service account */
     @UriParam(label = "security")
     private String serviceAccountKey;
+
     @UriParam
     private String delegate;
 

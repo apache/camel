@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.client;
 
 import java.io.InputStream;
@@ -75,54 +76,95 @@ public class DataLakeFileClientWrapper {
     }
 
     public FileReadResponse downloadWithResponse(
-            final OutputStream outputStream, final FileRange fileRange, final DownloadRetryOptions downloadRetryOptions,
-            final DataLakeRequestConditions requestConditions, final boolean rangeGetContentMd5, final Duration timeout) {
-        return client.readWithResponse(outputStream, fileRange, downloadRetryOptions, requestConditions, rangeGetContentMd5,
-                timeout, Context.NONE);
-    }
-
-    public Response<PathProperties> downloadToFileWithResponse(
-            final String filePath, final FileRange fileRange, final ParallelTransferOptions parallelTransferOptions,
-            final DownloadRetryOptions downloadRetryOptions, final DataLakeRequestConditions requestConditions,
-            final boolean rangeGetContentMd5, final Set<OpenOption> openOptions, final Duration timeout) {
-        return client.readToFileWithResponse(filePath, fileRange, parallelTransferOptions, downloadRetryOptions,
+            final OutputStream outputStream,
+            final FileRange fileRange,
+            final DownloadRetryOptions downloadRetryOptions,
+            final DataLakeRequestConditions requestConditions,
+            final boolean rangeGetContentMd5,
+            final Duration timeout) {
+        return client.readWithResponse(
+                outputStream,
+                fileRange,
+                downloadRetryOptions,
                 requestConditions,
-                rangeGetContentMd5, openOptions, timeout, Context.NONE);
-    }
-
-    public Response<PathInfo> createWithResponse(
-            final String permissions, final String umask, final PathHttpHeaders headers, final Map<String, String> metadata,
-            final DataLakeRequestConditions requestConditions, final Duration timeout) {
-        return client.createWithResponse(permissions, umask, headers, metadata, requestConditions, timeout, Context.NONE);
-    }
-
-    public Response<PathInfo> flushWithResponse(
-            final long position, final Boolean retainUncommitedData, final Boolean close, final PathHttpHeaders headers,
-            final DataLakeRequestConditions requestConditions, final Duration timeout) {
-        return client.flushWithResponse(position, retainUncommitedData, close, headers, requestConditions, timeout,
+                rangeGetContentMd5,
+                timeout,
                 Context.NONE);
     }
 
+    public Response<PathProperties> downloadToFileWithResponse(
+            final String filePath,
+            final FileRange fileRange,
+            final ParallelTransferOptions parallelTransferOptions,
+            final DownloadRetryOptions downloadRetryOptions,
+            final DataLakeRequestConditions requestConditions,
+            final boolean rangeGetContentMd5,
+            final Set<OpenOption> openOptions,
+            final Duration timeout) {
+        return client.readToFileWithResponse(
+                filePath,
+                fileRange,
+                parallelTransferOptions,
+                downloadRetryOptions,
+                requestConditions,
+                rangeGetContentMd5,
+                openOptions,
+                timeout,
+                Context.NONE);
+    }
+
+    public Response<PathInfo> createWithResponse(
+            final String permissions,
+            final String umask,
+            final PathHttpHeaders headers,
+            final Map<String, String> metadata,
+            final DataLakeRequestConditions requestConditions,
+            final Duration timeout) {
+        return client.createWithResponse(
+                permissions, umask, headers, metadata, requestConditions, timeout, Context.NONE);
+    }
+
+    public Response<PathInfo> flushWithResponse(
+            final long position,
+            final Boolean retainUncommitedData,
+            final Boolean close,
+            final PathHttpHeaders headers,
+            final DataLakeRequestConditions requestConditions,
+            final Duration timeout) {
+        return client.flushWithResponse(
+                position, retainUncommitedData, close, headers, requestConditions, timeout, Context.NONE);
+    }
+
     public Response<Void> appendWithResponse(
-            final InputStream stream, final Long fileOffset, final Long length,
-            final Duration timeout, final DataLakeFileAppendOptions options) {
+            final InputStream stream,
+            final Long fileOffset,
+            final Long length,
+            final Duration timeout,
+            final DataLakeFileAppendOptions options) {
         return client.appendWithResponse(stream, fileOffset, length, options, timeout, Context.NONE);
     }
 
-    public Response<PathInfo> uploadWithResponse(final FileParallelUploadOptions uploadOptions, final Duration timeout) {
+    public Response<PathInfo> uploadWithResponse(
+            final FileParallelUploadOptions uploadOptions, final Duration timeout) {
         return client.uploadWithResponse(uploadOptions, timeout, Context.NONE);
     }
 
     public Response<DataLakeFileClient> renameWithResponse(
-            final String destFileSystem, final String destPath, final DataLakeRequestConditions sourceAccessConditions,
-            final DataLakeRequestConditions destAccessConditions, final Duration timeout) {
-        return client.renameWithResponse(destFileSystem, destPath, sourceAccessConditions, destAccessConditions, timeout,
-                Context.NONE);
+            final String destFileSystem,
+            final String destPath,
+            final DataLakeRequestConditions sourceAccessConditions,
+            final DataLakeRequestConditions destAccessConditions,
+            final Duration timeout) {
+        return client.renameWithResponse(
+                destFileSystem, destPath, sourceAccessConditions, destAccessConditions, timeout, Context.NONE);
     }
 
     public void uploadFromFile(
-            final String filePath, final ParallelTransferOptions parallelTransferOptions, final PathHttpHeaders headers,
-            final Map<String, String> metadata, final DataLakeRequestConditions requestConditions,
+            final String filePath,
+            final ParallelTransferOptions parallelTransferOptions,
+            final PathHttpHeaders headers,
+            final Map<String, String> metadata,
+            final DataLakeRequestConditions requestConditions,
             final Duration timeout) {
         client.uploadFromFile(filePath, parallelTransferOptions, headers, metadata, requestConditions, timeout);
     }
@@ -130,5 +172,4 @@ public class DataLakeFileClientWrapper {
     public String generateSas(final DataLakeServiceSasSignatureValues dataLakeServiceSasSignatureValues) {
         return client.generateSas(dataLakeServiceSasSignatureValues);
     }
-
 }

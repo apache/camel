@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.discovery;
 
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
@@ -32,9 +33,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform document understanding and search using IBM Watson Discovery
  */
-@UriEndpoint(firstVersion = "4.16.0", scheme = "ibm-watson-discovery", title = "IBM Watson Discovery",
-             syntax = "ibm-watson-discovery:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
-             headersClass = WatsonDiscoveryConstants.class)
+@UriEndpoint(
+        firstVersion = "4.16.0",
+        scheme = "ibm-watson-discovery",
+        title = "IBM Watson Discovery",
+        syntax = "ibm-watson-discovery:label",
+        producerOnly = true,
+        category = {Category.AI, Category.CLOUD},
+        headersClass = WatsonDiscoveryConstants.class)
 public class WatsonDiscoveryEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Logical name")
@@ -46,7 +52,8 @@ public class WatsonDiscoveryEndpoint extends DefaultEndpoint implements Endpoint
 
     private Discovery discoveryClient;
 
-    public WatsonDiscoveryEndpoint(String uri, WatsonDiscoveryComponent component, WatsonDiscoveryConfiguration configuration) {
+    public WatsonDiscoveryEndpoint(
+            String uri, WatsonDiscoveryComponent component, WatsonDiscoveryConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

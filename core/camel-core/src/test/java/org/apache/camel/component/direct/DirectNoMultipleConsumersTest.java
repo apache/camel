@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.direct;
 
 import org.apache.camel.*;
@@ -40,7 +41,9 @@ public class DirectNoMultipleConsumersTest extends TestSupport {
             }
         });
 
-        Assertions.assertThrows(FailedToStartRouteException.class, () -> container.start(),
+        Assertions.assertThrows(
+                FailedToStartRouteException.class,
+                () -> container.start(),
                 "Should have thrown an FailedToStartRouteException");
 
         container.stop();

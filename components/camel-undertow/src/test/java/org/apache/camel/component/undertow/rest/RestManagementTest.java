@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -24,8 +27,6 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestManagementTest extends BaseUndertowTest {
 
@@ -47,7 +48,8 @@ public class RestManagementTest extends BaseUndertowTest {
         assertEquals(6, s.size(), "Could not find 8 endpoints: " + s);
 
         // there should be 3 rest endpoints
-        long count = s.stream().filter(p -> p.getCanonicalName().contains("rest")).count();
+        long count =
+                s.stream().filter(p -> p.getCanonicalName().contains("rest")).count();
         assertEquals(3, count, "There should be 3 rest endpoints");
     }
 
@@ -58,15 +60,17 @@ public class RestManagementTest extends BaseUndertowTest {
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 rest("/say")
-                    .get("/hello").to("direct:hello")
-                    .get("/bye").consumes("application/json").to("direct:bye")
-                    .post("/bye").to("mock:update");
+                        .get("/hello")
+                        .to("direct:hello")
+                        .get("/bye")
+                        .consumes("application/json")
+                        .to("direct:bye")
+                        .post("/bye")
+                        .to("mock:update");
 
-                from("direct:hello")
-                        .transform().constant("Hello World");
+                from("direct:hello").transform().constant("Hello World");
 
-                from("direct:bye")
-                        .transform().constant("Bye World");
+                from("direct:bye").transform().constant("Bye World");
             }
         };
     }

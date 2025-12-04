@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
 
 import org.apache.camel.ai.CamelLangchain4jAttributes;
@@ -38,7 +39,8 @@ public class LangChain4jEmbeddingsHeaders {
     @Metadata(description = "A dense vector embedding of a text", javaType = "float[]")
     public static final String VECTOR = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR;
 
-    @Metadata(description = "A TextSegment representation of the vector embedding input text",
-              javaType = " dev.langchain4j.data.segment.TextSegment")
+    @Metadata(
+            description = "A TextSegment representation of the vector embedding input text",
+            javaType = " dev.langchain4j.data.segment.TextSegment")
     public static final String TEXT_SEGMENT = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_TEXT_SEGMENT;
 }

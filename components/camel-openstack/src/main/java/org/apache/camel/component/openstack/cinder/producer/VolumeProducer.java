@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.cinder.producer;
 
 import java.util.List;
@@ -76,8 +77,8 @@ public class VolumeProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Volume ID");
         final Volume out = os.blockStorage().volumes().get(id);
         msg.setBody(out);
@@ -95,8 +96,8 @@ public class VolumeProducer extends AbstractOpenstackProducer {
 
     private void doUpdate(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
         final Volume vol = messageToVolume(msg);
         StringHelper.notEmpty(id, "Cinder Volume ID");
         StringHelper.notEmpty(vol.getDescription(), "Cinder Volume Description");
@@ -107,8 +108,8 @@ public class VolumeProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Cinder Volume ID");
         final ActionResponse out = os.blockStorage().volumes().delete(id);
         checkFailure(out, exchange, "Delete volume " + id);

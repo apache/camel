@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,8 +26,9 @@ public class PollEnricherFileMaxMessagesPerPollTest extends ContextTestSupport {
 
     @Test
     public void testPollEnrichMaxMessagesPerPollInvalid() throws Exception {
-        getMockEndpoint("mock:dead").expectedBodiesReceived(
-                "The option maxMessagesPerPoll is not supported for polling consumer (such as when using poll or pollEnrich EIP)");
+        getMockEndpoint("mock:dead")
+                .expectedBodiesReceived(
+                        "The option maxMessagesPerPoll is not supported for polling consumer (such as when using poll or pollEnrich EIP)");
 
         assertMockEndpointsSatisfied();
     }

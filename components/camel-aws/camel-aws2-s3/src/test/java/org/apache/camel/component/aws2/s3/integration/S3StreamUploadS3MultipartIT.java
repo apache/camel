@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -31,8 +34,6 @@ import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class S3StreamUploadS3MultipartIT extends Aws2S3Base {
 
@@ -69,7 +70,8 @@ public class S3StreamUploadS3MultipartIT extends Aws2S3Base {
         // expect 1 file
         assertEquals(1, resp.size());
         // file size: 5,242,880 bytes
-        assertEquals(10 * Files.size(Paths.get("src/test/resources/empty.bin")),
+        assertEquals(
+                10 * Files.size(Paths.get("src/test/resources/empty.bin")),
                 resp.stream().mapToLong(S3Object::size).sum());
     }
 
@@ -78,24 +80,24 @@ public class S3StreamUploadS3MultipartIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint1
-                        = String.format("aws2-s3://%s?autoCreateBucket=true" +
-                                        "&streamingUploadMode=true" +
-                                        "&keyName=fileTest.txt" +
-                                        "&batchMessageNumber=10" +
-                                        "&batchSize=1000000000" +
-                                        "&namingStrategy=random" +
-                                        "&multiPartUpload=true" +
-                                        "&bufferSize=0" +
-                                        "&partSize=10000000",
-                                name.get());
-
-                from("direct:stream1").process(exchange -> {
-                }).to(awsEndpoint1).process(exchange -> {
-                }).to("mock:result");
-
-                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true",
+                String awsEndpoint1 = String.format(
+                        "aws2-s3://%s?autoCreateBucket=true" + "&streamingUploadMode=true"
+                                + "&keyName=fileTest.txt"
+                                + "&batchMessageNumber=10"
+                                + "&batchSize=1000000000"
+                                + "&namingStrategy=random"
+                                + "&multiPartUpload=true"
+                                + "&bufferSize=0"
+                                + "&partSize=10000000",
                         name.get());
+
+                from("direct:stream1")
+                        .process(exchange -> {})
+                        .to(awsEndpoint1)
+                        .process(exchange -> {})
+                        .to("mock:result");
+
+                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true", name.get());
 
                 from("direct:listObjects").to(awsEndpoint);
             }

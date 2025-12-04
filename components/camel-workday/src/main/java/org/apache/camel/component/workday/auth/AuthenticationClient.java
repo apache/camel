@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.workday.auth;
 
 import java.io.IOException;
@@ -24,5 +25,4 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 public interface AuthenticationClient {
 
     void configure(CloseableHttpClient httpClient, HttpUriRequest request) throws IOException;
-
 }

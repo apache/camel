@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -39,17 +45,13 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerZlibCompressionTest.class);
 
     private static TServerSocket serverTransport;
     private static TServer server;
-    @SuppressWarnings({ "rawtypes" })
+
+    @SuppressWarnings({"rawtypes"})
     private static Calculator.Processor processor;
 
     private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
@@ -58,7 +60,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
 
     @BeforeAll
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
 
@@ -89,7 +91,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void testCalculateMethodInvocation() {
         LOG.info("Thrift calculate method sync test start");
 
@@ -120,11 +122,13 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:thrift-zlib-calculate")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
-                            + "/org.apache.camel.component.thrift.generated.Calculator?method=calculate&compressionType=ZLIB&synchronous=true");
+                        .to(
+                                "thrift://localhost:" + THRIFT_TEST_PORT
+                                        + "/org.apache.camel.component.thrift.generated.Calculator?method=calculate&compressionType=ZLIB&synchronous=true");
                 from("direct:thrift-zlib-ping")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
-                            + "/org.apache.camel.component.thrift.generated.Calculator?method=ping&compressionType=ZLIB&synchronous=true");
+                        .to(
+                                "thrift://localhost:" + THRIFT_TEST_PORT
+                                        + "/org.apache.camel.component.thrift.generated.Calculator?method=ping&compressionType=ZLIB&synchronous=true");
             }
         };
     }

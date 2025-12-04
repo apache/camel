@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.cache;
 
 import java.security.SecureRandom;
@@ -37,13 +38,22 @@ import org.slf4j.LoggerFactory;
 public class CaffeineCacheTestSupport extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CaffeineCacheTestSupport.class);
+
     @BindToRegistry("cache")
     private Cache cache = Caffeine.newBuilder().recordStats().build();
+
     @BindToRegistry("cacheRl")
-    private Cache cacheRl = Caffeine.newBuilder().recordStats().removalListener(new DummyRemovalListener()).build();
+    private Cache cacheRl = Caffeine.newBuilder()
+            .recordStats()
+            .removalListener(new DummyRemovalListener())
+            .build();
+
     private MetricRegistry mRegistry = new MetricRegistry();
+
     @BindToRegistry("cacheSc")
-    private Cache cacheSc = Caffeine.newBuilder().recordStats(() -> new MetricsStatsCounter(mRegistry)).build();
+    private Cache cacheSc = Caffeine.newBuilder()
+            .recordStats(() -> new MetricsStatsCounter(mRegistry))
+            .build();
 
     protected Cache getTestCache() {
         return cache;
@@ -86,8 +96,10 @@ public class CaffeineCacheTestSupport extends CamelTestSupport {
     }
 
     protected static Map<String, String> generateRandomMapOfString(int size) {
-        return IntStream.range(0, size).boxed()
-                .collect(Collectors.toMap(i -> i + "-" + generateRandomString(), i -> i + "-" + generateRandomString()));
+        return IntStream.range(0, size)
+                .boxed()
+                .collect(
+                        Collectors.toMap(i -> i + "-" + generateRandomString(), i -> i + "-" + generateRandomString()));
     }
 
     static class DummyRemovalListener implements RemovalListener<Object, Object> {
@@ -96,6 +108,5 @@ public class CaffeineCacheTestSupport extends CamelTestSupport {
         public void onRemoval(Object key, Object value, RemovalCause cause) {
             LOG.info("Key {} was removed ({})%n", key, cause);
         }
-
     }
 }

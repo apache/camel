@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
 
 import java.nio.ByteBuffer;
@@ -27,8 +28,7 @@ import software.amazon.awssdk.services.kinesis.model.Record;
 @Converter(generateLoader = true, ignoreOnLoadError = true)
 public final class RecordStringConverter {
 
-    private RecordStringConverter() {
-    }
+    private RecordStringConverter() {}
 
     @Converter
     public static String toString(Record dataRecord) {
@@ -44,5 +44,4 @@ public final class RecordStringConverter {
             return new String(bytes, charset);
         }
     }
-
 }

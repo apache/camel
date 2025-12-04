@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.time.Duration;
@@ -28,8 +29,7 @@ public final class TimeUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimeUtils.class);
 
-    private TimeUtils() {
-    }
+    private TimeUtils() {}
 
     public static boolean isPositive(Duration dur) {
         return dur.getSeconds() > 0 || dur.getNano() != 0;
@@ -285,5 +285,4 @@ public final class TimeUtils {
     public static long elapsedMillisSince(long start) {
         return System.currentTimeMillis() - start;
     }
-
 }

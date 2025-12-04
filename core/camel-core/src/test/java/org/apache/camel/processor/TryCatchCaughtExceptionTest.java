@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -52,16 +53,25 @@ public class TryCatchCaughtExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry().to("mock:a").to("bean:myBean?method=doSomething").doCatch(Exception.class)
+                from("direct:start")
+                        .doTry()
+                        .to("mock:a")
+                        .to("bean:myBean?method=doSomething")
+                        .doCatch(Exception.class)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                assertEquals("bean://myBean?method=doSomething",
+                                assertEquals(
+                                        "bean://myBean?method=doSomething",
                                         exchange.getProperty(Exchange.FAILURE_ENDPOINT));
-                                assertEquals("Forced",
-                                        exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
+                                assertEquals(
+                                        "Forced",
+                                        exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class)
+                                                .getMessage());
                             }
-                        }).end().to("mock:result");
+                        })
+                        .end()
+                        .to("mock:result");
             }
         };
     }

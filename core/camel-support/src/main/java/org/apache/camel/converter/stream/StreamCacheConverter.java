@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.stream;
 
 import java.io.ByteArrayInputStream;
@@ -38,8 +39,7 @@ public final class StreamCacheConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private StreamCacheConverter() {
-    }
+    private StreamCacheConverter() {}
 
     @Converter(order = 1)
     public static StreamCache convertToStreamCache(ByteArrayInputStream stream, Exchange exchange) throws IOException {
@@ -79,5 +79,4 @@ public final class StreamCacheConverter {
         byte[] array = convertToByteArray(cache, exchange);
         return ByteBuffer.wrap(array);
     }
-
 }

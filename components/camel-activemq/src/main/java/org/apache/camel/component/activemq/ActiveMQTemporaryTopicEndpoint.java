@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq;
 
 import org.apache.camel.component.jms.JmsComponent;
@@ -22,8 +23,8 @@ import org.apache.camel.component.jms.JmsTemporaryTopicEndpoint;
 
 public class ActiveMQTemporaryTopicEndpoint extends JmsTemporaryTopicEndpoint {
 
-    public ActiveMQTemporaryTopicEndpoint(String uri, JmsComponent component, String destination,
-                                          JmsConfiguration configuration) {
+    public ActiveMQTemporaryTopicEndpoint(
+            String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
         super(uri, component, destination, configuration);
     }
 

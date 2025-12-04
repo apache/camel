@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scp;
 
 import java.net.URI;
@@ -31,25 +32,33 @@ public class ScpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
     public static final String DEFAULT_MOD = "664";
+
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
+
     @UriParam(label = "security", secret = true)
     @Metadata(supportFileReference = true)
     private String knownHostsFile;
+
     @UriParam(label = "security", secret = true)
     private String privateKeyFile;
+
     @UriParam(label = "security", secret = true)
     private byte[] privateKeyBytes;
+
     @UriParam(label = "security", secret = true)
     private String privateKeyFilePassphrase;
+
     @UriParam(enums = "no,yes", defaultValue = "no")
     private String strictHostKeyChecking = "no";
+
     @UriParam(defaultValue = DEFAULT_MOD)
     private String chmod = DEFAULT_MOD;
     // comma separated list of ciphers.
     // null means default jsch list will be used
     @UriParam(label = "security,advanced")
     private String ciphers;
+
     @UriParam(label = "security", secret = true)
     private String preferredAuthentications;
 
@@ -185,5 +194,4 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     public String getPreferredAuthentications() {
         return preferredAuthentications;
     }
-
 }

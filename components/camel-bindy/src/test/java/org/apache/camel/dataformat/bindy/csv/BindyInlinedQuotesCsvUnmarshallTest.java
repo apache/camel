@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -26,8 +29,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -62,14 +63,12 @@ public class BindyInlinedQuotesCsvUnmarshallTest {
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat
-                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
+        BindyCsvDataFormat camelDataFormat =
+                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
 
         @Override
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
-
     }
-
 }

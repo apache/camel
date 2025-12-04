@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -79,13 +80,16 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
             public void configure() {
 
                 from(fileUri("depth?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
 
                 from(fileUri("depth2?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=99"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
 
                 from(fileUri("depth3?initialDelay=0&delay=10&recursive=true&minDepth=1&maxDepth=1"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

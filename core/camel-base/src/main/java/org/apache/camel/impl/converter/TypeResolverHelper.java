@@ -40,9 +40,7 @@ import org.apache.camel.spi.TypeConvertible;
  *
  */
 final class TypeResolverHelper {
-    private TypeResolverHelper() {
-
-    }
+    private TypeResolverHelper() {}
 
     /**
      * Lookup the type converter in the registry (given a type to convert to and a type to convert from, along with a
@@ -80,13 +78,13 @@ final class TypeResolverHelper {
         // only do these tests as fallback and only on the target type
         if (!typeConvertible.getFrom().equals(Object.class)) {
 
-            final TypeConverter assignableConverter
-                    = tryAssignableFrom(typeConvertible, converters);
+            final TypeConverter assignableConverter = tryAssignableFrom(typeConvertible, converters);
             if (assignableConverter != null) {
                 return assignableConverter;
             }
 
-            final TypeConverter objConverter = converters.get(new TypeConvertible<>(Object.class, typeConvertible.getTo()));
+            final TypeConverter objConverter =
+                    converters.get(new TypeConvertible<>(Object.class, typeConvertible.getTo()));
             if (objConverter != null) {
                 return objConverter;
             }
@@ -111,9 +109,9 @@ final class TypeResolverHelper {
             TypeConvertible<?, ?> typeConvertible, Map<TypeConvertible<?, ?>, TypeConverter> converters) {
 
         /*
-         Let's try classes derived from this toType: basically it traverses the entries looking for assignable types
-         matching both the "from type" and the "to type" which are NOT Object (we usually try this later).
-         */
+        Let's try classes derived from this toType: basically it traverses the entries looking for assignable types
+        matching both the "from type" and the "to type" which are NOT Object (we usually try this later).
+        */
         for (var entry : converters.entrySet()) {
             final TypeConvertible<?, ?> key = entry.getKey();
             if (key.isAssignableMatch(typeConvertible)) {
@@ -141,7 +139,6 @@ final class TypeResolverHelper {
             if (entry.getKey().matches(typeConvertible)) {
                 return entry.getValue();
             }
-
         }
 
         return null;
@@ -161,10 +158,8 @@ final class TypeResolverHelper {
             if (entry.getKey().matchesPrimitive(typeConvertible)) {
                 return entry.getValue();
             }
-
         }
 
         return null;
     }
-
 }

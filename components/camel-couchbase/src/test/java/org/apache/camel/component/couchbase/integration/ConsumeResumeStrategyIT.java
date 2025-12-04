@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase.integration;
+
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_RESUME_ACTION;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -34,12 +38,11 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_RESUME_ACTION;
-import static org.awaitility.Awaitility.await;
-
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Too resource intensive for most systems to run reliably")
-@Tags({ @Tag("couchbase-71") })
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Too resource intensive for most systems to run reliably")
+@Tags({@Tag("couchbase-71")})
 public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
     static class TestCouchbaseResumeAdapter implements ResumeActionAware {
         volatile boolean setResumeActionCalled;
@@ -58,7 +61,8 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
         }
     }
 
-    private final TransientResumeStrategy resumeStrategy = new TransientResumeStrategy(new TestCouchbaseResumeAdapter());
+    private final TransientResumeStrategy resumeStrategy =
+            new TransientResumeStrategy(new TestCouchbaseResumeAdapter());
 
     @BeforeEach
     public void addToBucket() {
@@ -78,11 +82,11 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
         await().atMost(30, TimeUnit.SECONDS).until(() -> adapter != null);
 
         await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assertions.assertTrue(adapter.setResumeActionCalled,
-                        "The setBucket method should have been called"));
+                .untilAsserted(() -> Assertions.assertTrue(
+                        adapter.setResumeActionCalled, "The setBucket method should have been called"));
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assertions.assertTrue(adapter.resumeActionNotNull,
-                        "The input bucket should not have been null"));
+                .untilAsserted(() -> Assertions.assertTrue(
+                        adapter.resumeActionNotNull, "The input bucket should not have been null"));
         await().atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(
                         () -> Assertions.assertTrue(adapter.resumeCalled, "The resume method should have been called"));
@@ -100,14 +104,18 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
             public void configure() {
                 bindToRegistry(COUCHBASE_RESUME_ACTION, (ResumeAction) (key, value) -> true);
 
-                from(String.format("%s&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName, bucketName))
-                        .resumable().resumeStrategy(resumeStrategy)
-                        .setHeader(Exchange.OFFSET,
-                                constant(Resumables.of("key", ThreadLocalRandom.current().nextInt(1, 1000))))
+                from(String.format(
+                                "%s&designDocumentName=%s&viewName=%s&limit=10",
+                                getConnectionUri(), bucketName, bucketName))
+                        .resumable()
+                        .resumeStrategy(resumeStrategy)
+                        .setHeader(
+                                Exchange.OFFSET,
+                                constant(Resumables.of(
+                                        "key", ThreadLocalRandom.current().nextInt(1, 1000))))
                         .log("message received")
                         .to("mock:result");
             }
         };
-
     }
 }

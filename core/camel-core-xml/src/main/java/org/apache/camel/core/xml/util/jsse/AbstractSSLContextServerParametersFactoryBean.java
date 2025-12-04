@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml.util.jsse;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -30,8 +31,9 @@ public abstract class AbstractSSLContextServerParametersFactoryBean
         extends AbstractBaseSSLContextParametersFactoryBean<SSLContextServerParameters> {
 
     @XmlAttribute
-    @Metadata(description = "The configuration options for server-side client-authentication requirements.",
-              enums = "NONE,WANT,REQUIRE")
+    @Metadata(
+            description = "The configuration options for server-side client-authentication requirements.",
+            enums = "NONE,WANT,REQUIRE")
     protected String clientAuthentication;
 
     public String getClientAuthentication() {

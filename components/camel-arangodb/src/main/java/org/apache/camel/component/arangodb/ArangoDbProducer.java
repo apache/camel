@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb;
+
+import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY_BIND_PARAMETERS;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY_OPTIONS;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_DELETE;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_INSERT;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_UPDATE;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -40,15 +50,6 @@ import org.apache.camel.support.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY_BIND_PARAMETERS;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY_OPTIONS;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_DELETE;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_INSERT;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_UPDATE;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
-
 public class ArangoDbProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArangoDbProducer.class);
@@ -56,6 +57,7 @@ public class ArangoDbProducer extends DefaultProducer {
 
     private final ArangoDbEndpoint endpoint;
     private final Map<ArangoDbOperation, Processor> operations = new EnumMap<>(ArangoDbOperation.class);
+
     {
         bind(ArangoDbOperation.SAVE_DOCUMENT, saveDocument());
         bind(ArangoDbOperation.FIND_DOCUMENT_BY_KEY, findDocumentByKey());
@@ -307,7 +309,8 @@ public class ArangoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> aqlQuery() {
         return exchange -> {
             try {
-                ArangoDatabase database = endpoint.getArangoDB().db(endpoint.getConfiguration().getDatabase());
+                ArangoDatabase database =
+                        endpoint.getArangoDB().db(endpoint.getConfiguration().getDatabase());
 
                 // AQL query
                 String query = (String) exchange.getMessage().getHeader(AQL_QUERY);
@@ -316,11 +319,12 @@ public class ArangoDbProducer extends DefaultProducer {
                 }
 
                 // parameters to bind :: can be null if nothing to bind
-                Map<String, Object> bindParameters
-                        = exchange.getMessage().getHeader(AQL_QUERY_BIND_PARAMETERS, Map.class);
+                Map<String, Object> bindParameters =
+                        exchange.getMessage().getHeader(AQL_QUERY_BIND_PARAMETERS, Map.class);
 
                 // options (advanced) :: can be null
-                AqlQueryOptions queryOptions = (AqlQueryOptions) exchange.getMessage().getHeader(AQL_QUERY_OPTIONS);
+                AqlQueryOptions queryOptions =
+                        (AqlQueryOptions) exchange.getMessage().getHeader(AQL_QUERY_OPTIONS);
 
                 // Class Type for cursor in return :: by default BaseDocument
                 Class<?> resultClassType = (Class<?>) exchange.getIn().getHeader(RESULT_CLASS_TYPE);
@@ -379,5 +383,4 @@ public class ArangoDbProducer extends DefaultProducer {
         // return edge collection collection
         return calculateGraph().edgeCollection(edgeCollection);
     }
-
 }

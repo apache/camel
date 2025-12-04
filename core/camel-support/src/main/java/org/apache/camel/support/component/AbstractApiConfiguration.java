@@ -14,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import org.apache.camel.spi.UriParam;
 
 public class AbstractApiConfiguration {
 
-    @UriParam(label = "consumer", defaultValue = "true",
-              description = "When consumer return an array or collection this will generate one exchange per element, and their routes will be executed once for each exchange."
+    @UriParam(
+            label = "consumer",
+            defaultValue = "true",
+            description =
+                    "When consumer return an array or collection this will generate one exchange per element, and their routes will be executed once for each exchange."
                             + " Set this value to false to use a single exchange for the entire list or array.")
     private boolean splitResult;
 
@@ -32,5 +36,4 @@ public class AbstractApiConfiguration {
     public void setSplitResult(boolean splitResult) {
         this.splitResult = splitResult;
     }
-
 }

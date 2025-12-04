@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -48,9 +49,6 @@ public class Test {
     @Override
     public String toString() {
 
-        return "Test{" +
-               "clazz='" + clazz + '\'' +
-               ", method='" + method + '\'' +
-               '}';
+        return "Test{" + "clazz='" + clazz + '\'' + ", method='" + method + '\'' + '}';
     }
 }

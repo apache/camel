@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.job;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +37,6 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesJobProducer extends DefaultProducer {
 
@@ -61,7 +62,6 @@ public class KubernetesJobProducer extends DefaultProducer {
         }
 
         switch (operation) {
-
             case KubernetesOperations.LIST_JOB:
                 doList(exchange);
                 break;
@@ -96,9 +96,21 @@ public class KubernetesJobProducer extends DefaultProducer {
         JobList jobList;
 
         if (ObjectHelper.isEmpty(namespace)) {
-            jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().inAnyNamespace().list();
+            jobList = getEndpoint()
+                    .getKubernetesClient()
+                    .batch()
+                    .v1()
+                    .jobs()
+                    .inAnyNamespace()
+                    .list();
         } else {
-            jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespace).list();
+            jobList = getEndpoint()
+                    .getKubernetesClient()
+                    .batch()
+                    .v1()
+                    .jobs()
+                    .inNamespace(namespace)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, jobList.getItems());
@@ -115,9 +127,23 @@ public class KubernetesJobProducer extends DefaultProducer {
         }
 
         if (ObjectHelper.isEmpty(namespace)) {
-            jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().inAnyNamespace().withLabels(labels).list();
+            jobList = getEndpoint()
+                    .getKubernetesClient()
+                    .batch()
+                    .v1()
+                    .jobs()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         } else {
-            jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespace).withLabels(labels).list();
+            jobList = getEndpoint()
+                    .getKubernetesClient()
+                    .batch()
+                    .v1()
+                    .jobs()
+                    .inNamespace(namespace)
+                    .withLabels(labels)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, jobList.getItems());
@@ -134,7 +160,14 @@ public class KubernetesJobProducer extends DefaultProducer {
             LOG.error("Get a specific job require specify a namespace name");
             throw new IllegalArgumentException("Get a specific job require specify a namespace name");
         }
-        Job job = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).withName(jobName).get();
+        Job job = getEndpoint()
+                .getKubernetesClient()
+                .batch()
+                .v1()
+                .jobs()
+                .inNamespace(namespaceName)
+                .withName(jobName)
+                .get();
 
         prepareOutboundMessage(exchange, job);
     }
@@ -151,11 +184,12 @@ public class KubernetesJobProducer extends DefaultProducer {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         JobSpec jobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, JobSpec.class);
-        HashMap<String, String> annotations
-                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_ANNOTATIONS, HashMap.class);
+        HashMap<String, String> annotations =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_ANNOTATIONS, HashMap.class);
         if (ObjectHelper.isEmpty(jobName)) {
             LOG.error("{} a specific job require specify a job name", operationName);
-            throw new IllegalArgumentException(String.format("%s a specific job require specify a job name", operationName));
+            throw new IllegalArgumentException(
+                    String.format("%s a specific job require specify a job name", operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("{} a specific job require specify a namespace name", operationName);
@@ -170,15 +204,28 @@ public class KubernetesJobProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
         JobBuilder jobCreatingBuilder = new JobBuilder();
         if (ObjectHelper.isEmpty(annotations)) {
-            jobCreatingBuilder.withNewMetadata().withName(jobName).withLabels(labels).endMetadata()
+            jobCreatingBuilder
+                    .withNewMetadata()
+                    .withName(jobName)
+                    .withLabels(labels)
+                    .endMetadata()
                     .withSpec(jobSpec);
         } else {
-            jobCreatingBuilder.withNewMetadata().withName(jobName).withLabels(labels).withAnnotations(annotations).endMetadata()
+            jobCreatingBuilder
+                    .withNewMetadata()
+                    .withName(jobName)
+                    .withLabels(labels)
+                    .withAnnotations(annotations)
+                    .endMetadata()
                     .withSpec(jobSpec);
         }
-        Job job = operation.apply(
-                getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName)
-                        .resource(jobCreatingBuilder.build()));
+        Job job = operation.apply(getEndpoint()
+                .getKubernetesClient()
+                .batch()
+                .v1()
+                .jobs()
+                .inNamespace(namespaceName)
+                .resource(jobCreatingBuilder.build()));
 
         prepareOutboundMessage(exchange, job);
     }
@@ -195,7 +242,14 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific job require specify a namespace name");
         }
 
-        getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).withName(jobName).delete();
+        getEndpoint()
+                .getKubernetesClient()
+                .batch()
+                .v1()
+                .jobs()
+                .inNamespace(namespaceName)
+                .withName(jobName)
+                .delete();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getMessage(), true);
     }

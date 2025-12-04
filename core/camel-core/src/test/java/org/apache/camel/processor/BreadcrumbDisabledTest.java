@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class BreadcrumbDisabledTest extends MDCTest {
 
@@ -33,17 +34,25 @@ public class BreadcrumbDisabledTest extends MDCTest {
                 context.setUseMDCLogging(false);
                 context.setUseBreadcrumb(false);
 
-                from("direct:a").routeId("route-a").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertNull(exchange.getIn().getHeader("breadcrumbId"), "Should not have breadcrumb");
-                    }
-                }).to("log:foo").to("direct:b");
+                from("direct:a")
+                        .routeId("route-a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertNull(exchange.getIn().getHeader("breadcrumbId"), "Should not have breadcrumb");
+                            }
+                        })
+                        .to("log:foo")
+                        .to("direct:b");
 
-                from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertNull(exchange.getIn().getHeader("breadcrumbId"), "Should not have breadcrumb");
-                    }
-                }).to("log:bar").to("mock:result");
+                from("direct:b")
+                        .routeId("route-b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertNull(exchange.getIn().getHeader("breadcrumbId"), "Should not have breadcrumb");
+                            }
+                        })
+                        .to("log:bar")
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec.impl;
 
 import org.apache.camel.component.exec.ExecCommand;
@@ -40,7 +41,7 @@ public class ProvokeExceptionExecCommandExecutor extends DefaultExecCommandExecu
 
         @Override
         public boolean isFailure(int exitValue) {
-            //provoke ExecuteException
+            // provoke ExecuteException
             return true;
         }
     }

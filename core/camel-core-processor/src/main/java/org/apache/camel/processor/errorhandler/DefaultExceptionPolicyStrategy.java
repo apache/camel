@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
 
 import java.util.Iterator;
@@ -116,10 +117,13 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     private boolean findMatchedExceptionPolicy(
             Iterable<ExceptionPolicyKey> exceptionPolicies,
-            Exchange exchange, Throwable exception,
+            Exchange exchange,
+            Throwable exception,
             Map<Integer, ExceptionPolicyKey> candidates) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Finding best suited exception policy for thrown exception {}", exception.getClass().getName());
+            LOG.trace(
+                    "Finding best suited exception policy for thrown exception {}",
+                    exception.getClass().getName());
         }
 
         // the goal is to find the exception with the same/closet inheritance level as the target exception being thrown
@@ -140,7 +144,8 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                 String route = ExchangeHelper.getRouteId(exchange);
                 if (route != null && !route.equals(typeRoute)) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("The type is scoped for route: {} however Exchange is at route: {}", typeRoute, route);
+                        LOG.trace(
+                                "The type is scoped for route: {} however Exchange is at route: {}", typeRoute, route);
                     }
                     continue;
                 }
@@ -182,8 +187,11 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                 // we have an existing candidate already which we should prefer to use
                 // for example we check route scope before context scope (preferring route scopes)
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Existing candidate {} takes precedence over{} at level {}",
-                            candidates.get(candidateDiff), candidate, candidateDiff);
+                    LOG.trace(
+                            "Existing candidate {} takes precedence over{} at level {}",
+                            candidates.get(candidateDiff),
+                            candidate,
+                            candidateDiff);
                 }
             }
         }

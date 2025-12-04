@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.saxon;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -41,7 +42,8 @@ public class XQueryResourceTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().xquery("resource:classpath:myxquery.txt", String.class)
+                        .transform()
+                        .xquery("resource:classpath:myxquery.txt", String.class)
                         .to("mock:result");
             }
         };

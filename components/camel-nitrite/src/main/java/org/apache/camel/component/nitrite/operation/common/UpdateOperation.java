@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite.operation.common;
 
 import org.apache.camel.Exchange;
@@ -31,13 +32,13 @@ public class UpdateOperation extends AbstractPayloadAwareOperation implements Co
         super(payload);
     }
 
-    public UpdateOperation() {
-    }
+    public UpdateOperation() {}
 
     @Override
     protected void execute(Exchange exchange, NitriteEndpoint endpoint) throws Exception {
-        exchange.getMessage().setHeader(
-                NitriteConstants.WRITE_RESULT,
-                endpoint.getNitriteCollection().update(getPayload(exchange, endpoint), false));
+        exchange.getMessage()
+                .setHeader(
+                        NitriteConstants.WRITE_RESULT,
+                        endpoint.getNitriteCollection().update(getPayload(exchange, endpoint), false));
     }
 }

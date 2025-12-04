@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -34,20 +35,28 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform caching operations using Caffeine Cache.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-cache", title = "Caffeine Cache",
-             remote = false, syntax = "caffeine-cache:cacheName", category = { Category.CACHE, Category.CLUSTERING },
-             producerOnly = true, headersClass = CaffeineConstants.class)
+@UriEndpoint(
+        firstVersion = "2.20.0",
+        scheme = "caffeine-cache",
+        title = "Caffeine Cache",
+        remote = false,
+        syntax = "caffeine-cache:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        producerOnly = true,
+        headersClass = CaffeineConstants.class)
 public class CaffeineCacheEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Cache name")
     @Metadata(required = true)
     private final String cacheName;
+
     @UriParam
     private final CaffeineConfiguration configuration;
 
     private volatile Cache<?, ?> cache;
 
-    public CaffeineCacheEndpoint(String uri, Component component, String cacheName, CaffeineConfiguration configuration) {
+    public CaffeineCacheEndpoint(
+            String uri, Component component, String cacheName, CaffeineConfiguration configuration) {
         super(uri, component);
         this.cacheName = cacheName;
         this.configuration = configuration;

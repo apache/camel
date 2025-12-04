@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scp;
+
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
@@ -110,10 +111,9 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        String uri
-                = getScpUri()
-                  + "?username=admin&privateKeyFile=src/test/resources/camel-key.priv.pem&privateKeyFilePassphrase=password&knownHostsFile="
-                  + getKnownHostsFile();
+        String uri = getScpUri()
+                + "?username=admin&privateKeyFile=src/test/resources/camel-key.priv.pem&privateKeyFilePassphrase=password&knownHostsFile="
+                + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -126,10 +126,9 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        String uri
-                = getScpUri()
-                  + "?username=admin&privateKeyFile=classpath:camel-key.priv.pem&privateKeyFilePassphrase=password&knownHostsFile="
-                  + getKnownHostsFile();
+        String uri = getScpUri()
+                + "?username=admin&privateKeyFile=classpath:camel-key.priv.pem&privateKeyFilePassphrase=password&knownHostsFile="
+                + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -142,8 +141,9 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        String uri = getScpUri() + "?username=admin&privateKeyBytes=#privKey&privateKeyFilePassphrase=password&knownHostsFile="
-                     + getKnownHostsFile();
+        String uri = getScpUri()
+                + "?username=admin&privateKeyBytes=#privKey&privateKeyFilePassphrase=password&knownHostsFile="
+                + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
         MockEndpoint.assertIsSatisfied(context);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.direct;
 
 import org.apache.camel.Category;
@@ -32,8 +33,13 @@ import org.apache.camel.util.StringHelper;
  *
  * This endpoint can be used to connect existing routes in the same CamelContext.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "direct", title = "Direct", syntax = "direct:name",
-             remote = false, category = { Category.CORE, Category.MESSAGING })
+@UriEndpoint(
+        firstVersion = "1.0.0",
+        scheme = "direct",
+        title = "Direct",
+        syntax = "direct:name",
+        remote = false,
+        category = {Category.CORE, Category.MESSAGING})
 public class DirectEndpoint extends DefaultEndpoint {
 
     private final DirectComponent component;
@@ -42,13 +48,16 @@ public class DirectEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of direct endpoint")
     @Metadata(required = true)
     private String name;
+
     @UriParam(label = "advanced")
     private boolean synchronous;
 
     @UriParam(label = "producer", defaultValue = "true")
     private boolean block = true;
+
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean failIfNoConsumers = true;
 
@@ -132,5 +141,4 @@ public class DirectEndpoint extends DefaultEndpoint {
     public void setFailIfNoConsumers(boolean failIfNoConsumers) {
         this.failIfNoConsumers = failIfNoConsumers;
     }
-
 }

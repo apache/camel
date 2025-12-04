@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.it;
 
 import java.util.concurrent.TimeUnit;
@@ -24,7 +25,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@EnabledIfSystemProperty(named = "docker.hostname", matches = ".*", disabledReason = "Requires a running docker environment")
+@EnabledIfSystemProperty(
+        named = "docker.hostname",
+        matches = ".*",
+        disabledReason = "Requires a running docker environment")
 public class DockerNettyCmdExecFactoryTest extends DockerITTestSupport {
 
     @Test
@@ -42,7 +46,8 @@ public class DockerNettyCmdExecFactoryTest extends DockerITTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                        .toF("docker://version?host={{docker.hostname}}&port={{docker.port}}&cmdExecFactory=%s",
+                        .toF(
+                                "docker://version?host={{docker.hostname}}&port={{docker.port}}&cmdExecFactory=%s",
                                 NettyDockerCmdExecFactory.class.getName())
                         .log("${body}")
                         .to("mock:result");

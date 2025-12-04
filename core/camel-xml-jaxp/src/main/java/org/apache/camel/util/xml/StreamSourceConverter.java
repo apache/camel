@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.xml;
+
+import static org.apache.camel.converter.stream.StreamCacheConverter.convertToByteArray;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -26,8 +29,6 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 
-import static org.apache.camel.converter.stream.StreamCacheConverter.convertToByteArray;
-
 /**
  * A set of {@link Converter} methods for wrapping stream-based messages in a {@link StreamCache} implementation to
  * ensure message re-readability (eg multicasting, retrying)
@@ -38,12 +39,11 @@ public final class StreamSourceConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private StreamSourceConverter() {
-    }
+    private StreamSourceConverter() {}
 
     @Converter(order = 1)
     public static StreamCache convertToStreamCache(BytesSource source) {
-        //no need to do stream caching for a BytesSource
+        // no need to do stream caching for a BytesSource
         return null;
     }
 
@@ -63,5 +63,4 @@ public final class StreamSourceConverter {
         byte[] data = convertToByteArray(cache, exchange);
         return new BytesSource(data);
     }
-
 }

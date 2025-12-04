@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats.integration;
 
 import io.nats.client.Connection;
@@ -32,7 +33,9 @@ public class NatsConsumerLoadIT extends NatsITSupport {
     @Test
     public void testLoadConsumer() throws Exception {
         mockResultEndpoint.setExpectedMessageCount(10000);
-        Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
+        Options options = new Options.Builder()
+                .server("nats://" + service.getServiceAddress())
+                .build();
         Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 10000; i++) {
@@ -51,5 +54,4 @@ public class NatsConsumerLoadIT extends NatsITSupport {
             }
         };
     }
-
 }

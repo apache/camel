@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Properties;
 
@@ -32,18 +37,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.mockito.ArgumentMatchers.any;
-
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class KafkaProducerMultipleMessagesInTransactionWithLoopTest extends CamelTestSupport {
 
     @EndpointInject("mock:done")
     protected MockEndpoint doneEndpoint;
 
-    private MockProducer<String, String> mockProducer
-            = new MockProducer<>(true, new StringSerializer(), new StringSerializer());
+    private MockProducer<String, String> mockProducer =
+            new MockProducer<>(true, new StringSerializer(), new StringSerializer());
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -87,15 +88,17 @@ public class KafkaProducerMultipleMessagesInTransactionWithLoopTest extends Came
         Exception exceptionCaught = null;
         int throwExceptionOnIndex = 4;
         try {
-            template.sendBodyAndHeader("direct:loop", throwExceptionOnIndex + 1, "ThrowExceptionOnIndex",
-                    throwExceptionOnIndex);
+            template.sendBodyAndHeader(
+                    "direct:loop", throwExceptionOnIndex + 1, "ThrowExceptionOnIndex", throwExceptionOnIndex);
         } catch (CamelExecutionException e) {
             exceptionCaught = e;
         }
 
         assertInstanceOf(CamelExecutionException.class, exceptionCaught);
         assertInstanceOf(RuntimeException.class, exceptionCaught.getCause());
-        assertEquals("Failing with Index: " + throwExceptionOnIndex, exceptionCaught.getCause().getMessage());
+        assertEquals(
+                "Failing with Index: " + throwExceptionOnIndex,
+                exceptionCaught.getCause().getMessage());
 
         assertEquals(0, mockProducer.history().size());
         assertEquals(0, mockProducer.commitCount());
@@ -109,26 +112,33 @@ public class KafkaProducerMultipleMessagesInTransactionWithLoopTest extends Came
             public void configure() throws Exception {
                 from("direct:loop")
                         .id("loop")
-                        .setVariable("ThrowExceptionOnIndex",
+                        .setVariable(
+                                "ThrowExceptionOnIndex",
                                 header("ThrowExceptionOnIndex").convertTo(Integer.class))
                         .loop(body().convertTo(Integer.class))
-                        .choice().when(exchange -> {
-                            Integer throwExceptionOnIndex = exchange.getVariable("ThrowExceptionOnIndex", Integer.class);
+                        .choice()
+                        .when(exchange -> {
+                            Integer throwExceptionOnIndex =
+                                    exchange.getVariable("ThrowExceptionOnIndex", Integer.class);
                             Integer camelLoopIndex = exchange.getProperty("CamelLoopIndex", Integer.class);
 
                             if (null != throwExceptionOnIndex && throwExceptionOnIndex.equals(camelLoopIndex)) {
                                 return true;
                             } else {
-                                log.info("***** Sending message to Kafka from Loop exchange with id '{}' and UnitOfWork: {}",
-                                        exchange.getExchangeId(), exchange.getUnitOfWork().hashCode());
+                                log.info(
+                                        "***** Sending message to Kafka from Loop exchange with id '{}' and UnitOfWork: {}",
+                                        exchange.getExchangeId(),
+                                        exchange.getUnitOfWork().hashCode());
 
                                 return false;
                             }
                         })
-                        .throwException(RuntimeException.class, "Failing with Index: ${exchangeProperty.CamelLoopIndex}")
+                        .throwException(
+                                RuntimeException.class, "Failing with Index: ${exchangeProperty.CamelLoopIndex}")
                         .otherwise()
                         .setBody(simple("test ${exchangeProperty.CamelLoopIndex}"))
-                        .to("kafka:loop?additional-properties[transactional.id]=1234&additional-properties[enable.idempotence]=true&additional-properties[retries]=5")
+                        .to(
+                                "kafka:loop?additional-properties[transactional.id]=1234&additional-properties[enable.idempotence]=true&additional-properties[retries]=5")
                         .end() // .choice
                         .end() // .loop
                         .to("mock:done");

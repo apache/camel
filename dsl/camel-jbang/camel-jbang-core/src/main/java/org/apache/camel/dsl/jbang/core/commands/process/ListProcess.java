@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
+
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,25 +39,29 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
-
 @Command(name = "ps", description = "List running Camel integrations", sortOptions = false, showDefaultValues = true)
 public class ListProcess extends ProcessWatchCommand {
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--remote" },
-                        description = "Break down counters into remote/total pairs")
+    @CommandLine.Option(
+            names = {"--remote"},
+            description = "Break down counters into remote/total pairs")
     boolean remote;
 
-    @CommandLine.Option(names = { "--pid" },
-                        description = "List only pid in the output")
+    @CommandLine.Option(
+            names = {"--pid"},
+            description = "List only pid in the output")
     boolean pid;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @CommandLine.Option(
+            names = {"--json"},
+            description = "Output in JSON Format")
     boolean jsonOutput;
 
     public ListProcess(CamelJBangMain main) {
@@ -65,60 +72,58 @@ public class ListProcess extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids("*");
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        Row row = new Row();
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.ago = TimeUtils.printSince(row.uptime);
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.state = context.getInteger("phase");
-                        JsonObject hc = (JsonObject) root.get("healthChecks");
-                        boolean rdy = hc != null && hc.getBoolean("ready");
-                        if (rdy) {
-                            row.ready = "1/1";
-                        } else {
-                            row.ready = "0/1";
-                        }
-                        Map<String, ?> stats = context.getMap("statistics");
-                        if (stats != null) {
-                            row.total = stats.get("exchangesTotal").toString();
-                            Object num = stats.get("remoteExchangesTotal");
-                            if (num != null) {
-                                row.totalRemote = num.toString();
-                            }
-                            row.failed = stats.get("exchangesFailed").toString();
-                            num = stats.get("remoteExchangesFailed");
-                            if (num != null) {
-                                row.failedRemote = num.toString();
-                            }
-                            row.inflight = stats.get("exchangesInflight").toString();
-                            num = stats.get("remoteExchangesInflight");
-                            if (num != null) {
-                                row.inflightRemote = num.toString();
-                            }
-                            stats = (Map<String, ?>) stats.get("reload");
-                            if (stats != null) {
-                                stats = (Map<String, ?>) stats.get("lastError");
-                            }
-                            if (stats != null) {
-                                row.reloadError = (String) stats.get("message");
-                            }
-                        }
-
-                        rows.add(row);
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            if (root != null) {
+                Row row = new Row();
+                row.pid = Long.toString(ph.pid());
+                row.uptime = extractSince(ph);
+                row.ago = TimeUtils.printSince(row.uptime);
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.state = context.getInteger("phase");
+                JsonObject hc = (JsonObject) root.get("healthChecks");
+                boolean rdy = hc != null && hc.getBoolean("ready");
+                if (rdy) {
+                    row.ready = "1/1";
+                } else {
+                    row.ready = "0/1";
+                }
+                Map<String, ?> stats = context.getMap("statistics");
+                if (stats != null) {
+                    row.total = stats.get("exchangesTotal").toString();
+                    Object num = stats.get("remoteExchangesTotal");
+                    if (num != null) {
+                        row.totalRemote = num.toString();
                     }
-                });
+                    row.failed = stats.get("exchangesFailed").toString();
+                    num = stats.get("remoteExchangesFailed");
+                    if (num != null) {
+                        row.failedRemote = num.toString();
+                    }
+                    row.inflight = stats.get("exchangesInflight").toString();
+                    num = stats.get("remoteExchangesInflight");
+                    if (num != null) {
+                        row.inflightRemote = num.toString();
+                    }
+                    stats = (Map<String, ?>) stats.get("reload");
+                    if (stats != null) {
+                        stats = (Map<String, ?>) stats.get("lastError");
+                    }
+                    if (stats != null) {
+                        row.reloadError = (String) stats.get("message");
+                    }
+                }
+
+                rows.add(row);
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -127,39 +132,64 @@ public class ListProcess extends ProcessWatchCommand {
         if (!rows.isEmpty()) {
             if (pid) {
                 if (jsonOutput) {
-                    printer().println(
-                            Jsoner.serialize(
+                    printer()
+                            .println(Jsoner.serialize(
                                     rows.stream().map(row -> row.pid).collect(Collectors.toList())));
                 } else {
                     rows.forEach(r -> printer().println(r.pid));
                 }
             } else {
                 if (jsonOutput) {
-                    printer().println(
-                            Jsoner.serialize(
-                                    rows.stream()
-                                            .map(row -> new ListProcessDTO(
-                                                    row.pid, row.name, row.ready, getStatus(row), row.ago, row.total,
-                                                    row.failed, row.inflight))
-                                            .map(ListProcessDTO::toMap)
-                                            .collect(Collectors.toList())));
+                    printer()
+                            .println(Jsoner.serialize(rows.stream()
+                                    .map(row -> new ListProcessDTO(
+                                            row.pid,
+                                            row.name,
+                                            row.ready,
+                                            getStatus(row),
+                                            row.ago,
+                                            row.total,
+                                            row.failed,
+                                            row.inflight))
+                                    .map(ListProcessDTO::toMap)
+                                    .collect(Collectors.toList())));
                 } else {
-                    printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                            new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                            new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                                    .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                    .with(r -> r.name),
-                            new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
-                            new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                                    .with(this::getStatus),
-                            new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                            new Column().header("TOTAL").with(this::getTotal),
-                            new Column().header("FAIL").with(this::getFailed),
-                            new Column().header("INFLIGHT").with(this::getInflight),
-                            new Column().header("") // empty header as we only show info when there is an error
-                                    .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                                    .maxWidth(70, OverflowBehaviour.NEWLINE)
-                                    .with(this::getDescription))));
+                    printer()
+                            .println(AsciiTable.getTable(
+                                    AsciiTable.NO_BORDERS,
+                                    rows,
+                                    Arrays.asList(
+                                            new Column()
+                                                    .header("PID")
+                                                    .headerAlign(HorizontalAlign.CENTER)
+                                                    .with(r -> r.pid),
+                                            new Column()
+                                                    .header("NAME")
+                                                    .dataAlign(HorizontalAlign.LEFT)
+                                                    .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                                    .with(r -> r.name),
+                                            new Column()
+                                                    .header("READY")
+                                                    .dataAlign(HorizontalAlign.CENTER)
+                                                    .with(r -> r.ready),
+                                            new Column()
+                                                    .header("STATUS")
+                                                    .headerAlign(HorizontalAlign.CENTER)
+                                                    .with(this::getStatus),
+                                            new Column()
+                                                    .header("AGE")
+                                                    .headerAlign(HorizontalAlign.CENTER)
+                                                    .with(r -> r.ago),
+                                            new Column().header("TOTAL").with(this::getTotal),
+                                            new Column().header("FAIL").with(this::getFailed),
+                                            new Column().header("INFLIGHT").with(this::getInflight),
+                                            new Column()
+                                                    .header("") // empty header as we only show info when there is an
+                                                    // error
+                                                    .headerAlign(HorizontalAlign.LEFT)
+                                                    .dataAlign(HorizontalAlign.LEFT)
+                                                    .maxWidth(70, OverflowBehaviour.NEWLINE)
+                                                    .with(this::getDescription))));
                 }
             }
         }
@@ -236,5 +266,4 @@ public class ListProcess extends ProcessWatchCommand {
         String inflightRemote;
         String reloadError;
     }
-
 }

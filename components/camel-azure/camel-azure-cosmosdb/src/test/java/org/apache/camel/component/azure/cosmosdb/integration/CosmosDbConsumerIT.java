@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,24 +33,29 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
-        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
+    @EnabledIfSystemProperty(
+            named = "endpoint",
+            matches = ".*",
+            disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
+    @EnabledIfSystemProperty(
+            named = "accessKey",
+            matches = ".*",
+            disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
 })
 class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
 
-    private static final String DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String DATABASE_NAME =
+            RandomStringUtils.randomAlphabetic(10).toLowerCase();
     private String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
     private String leaseDatabaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
     @BeforeEach
     void createDatabaseContainerAndItems() {
         client.createDatabaseIfNotExists(DATABASE_NAME).block();
-        client.getDatabase(DATABASE_NAME).createContainerIfNotExists(containerName, "/partition", null).block();
+        client.getDatabase(DATABASE_NAME)
+                .createContainerIfNotExists(containerName, "/partition", null)
+                .block();
     }
 
     @Test
@@ -77,9 +85,13 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
         item3.put("field1", 6654);
         item3.put("field2", "super super awesome!");
 
-        client.getDatabase(DATABASE_NAME).getContainer(containerName).createItem(item1, new PartitionKey("test-1"), null)
+        client.getDatabase(DATABASE_NAME)
+                .getContainer(containerName)
+                .createItem(item1, new PartitionKey("test-1"), null)
                 .block();
-        client.getDatabase(DATABASE_NAME).getContainer(containerName).createItem(item2, new PartitionKey("test-1"), null)
+        client.getDatabase(DATABASE_NAME)
+                .getContainer(containerName)
+                .createItem(item2, new PartitionKey("test-1"), null)
                 .block();
 
         // start testing
@@ -88,23 +100,25 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
 
         mockEndpoint.assertIsSatisfied(1000);
 
-        final List returnedResults
-                = mockEndpoint.getExchanges().get(0).getMessage().getBody(List.class);
+        final List returnedResults =
+                mockEndpoint.getExchanges().get(0).getMessage().getBody(List.class);
 
         assertEquals(2, returnedResults.size());
 
         mockEndpoint.reset();
 
         // we send one more record
-        client.getDatabase(DATABASE_NAME).getContainer(containerName).createItem(item3, new PartitionKey("test-2"), null)
+        client.getDatabase(DATABASE_NAME)
+                .getContainer(containerName)
+                .createItem(item3, new PartitionKey("test-2"), null)
                 .block();
 
         mockEndpoint.expectedMessageCount(1);
 
         mockEndpoint.assertIsSatisfied(1000);
 
-        final List<Map> returnedResults2
-                = mockEndpoint.getExchanges().get(0).getMessage().getBody(List.class);
+        final List<Map> returnedResults2 =
+                mockEndpoint.getExchanges().get(0).getMessage().getBody(List.class);
 
         assertEquals(1, returnedResults2.size());
         assertEquals("test-id-3", returnedResults2.get(0).get("id"));
@@ -113,10 +127,10 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
     @AfterEach
     void removeAllDatabases() {
         // delete all databases being used in the test after each test
-        client.readAllDatabases()
-                .toIterable()
-                .forEach(cosmosDatabaseProperties -> client.getDatabase(cosmosDatabaseProperties.getId()).delete()
-                        .block());
+        client.readAllDatabases().toIterable().forEach(cosmosDatabaseProperties -> client.getDatabase(
+                        cosmosDatabaseProperties.getId())
+                .delete()
+                .block());
     }
 
     @Override
@@ -125,8 +139,8 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
             @Override
             public void configure() {
                 from(String.format(
-                        "azure-cosmosdb://%s/%s?leaseDatabaseName=%s&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true",
-                        DATABASE_NAME, containerName, leaseDatabaseName))
+                                "azure-cosmosdb://%s/%s?leaseDatabaseName=%s&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true",
+                                DATABASE_NAME, containerName, leaseDatabaseName))
                         .routeId("readEventsRoute")
                         .to("mock:readEvents")
                         .setAutoStartup("false");

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
+
+import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WSS_PORT;
+import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WS_PORT;
+import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.ORIGIN_HTTP_HEADER_NAME;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -45,13 +50,14 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WSS_PORT;
-import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WS_PORT;
-import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.ORIGIN_HTTP_HEADER_NAME;
-
-@UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
-             syntax = "vertx-websocket:host:port/path", category = { Category.HTTP, Category.NETWORKING },
-             headersClass = VertxWebsocketConstants.class, lenientProperties = true)
+@UriEndpoint(
+        firstVersion = "3.5.0",
+        scheme = "vertx-websocket",
+        title = "Vert.x WebSocket",
+        syntax = "vertx-websocket:host:port/path",
+        category = {Category.HTTP, Category.NETWORKING},
+        headersClass = VertxWebsocketConstants.class,
+        lenientProperties = true)
 public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketEndpoint.class);
@@ -62,7 +68,8 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
     private HttpClient client;
     private WebSocket webSocket;
 
-    public VertxWebsocketEndpoint(String uri, VertxWebsocketComponent component, VertxWebsocketConfiguration configuration) {
+    public VertxWebsocketEndpoint(
+            String uri, VertxWebsocketComponent component, VertxWebsocketConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -185,7 +192,8 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         if (websocketURI.getPort() > 0) {
             connectOptions.setPort(websocketURI.getPort());
         } else {
-            connectOptions.setPort(connectOptions.isSsl() ? DEFAULT_VERTX_CLIENT_WSS_PORT : DEFAULT_VERTX_CLIENT_WS_PORT);
+            connectOptions.setPort(
+                    connectOptions.isSsl() ? DEFAULT_VERTX_CLIENT_WSS_PORT : DEFAULT_VERTX_CLIENT_WS_PORT);
         }
 
         String subProtocols = configuration.getClientSubProtocols();
@@ -201,7 +209,8 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         }
 
         if (ObjectHelper.isNotEmpty(configuration.getHandshakeHeaders())) {
-            configuration.getHandshakeHeaders()
+            configuration
+                    .getHandshakeHeaders()
                     .forEach((headerName, headerValue) -> connectOptions.addHeader(headerName, headerValue.toString()));
         }
 
@@ -219,7 +228,8 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = getVertxHostRegistry();
         for (VertxWebsocketHost host : registry.values()) {
             VertxWebsocketPeer peer = host.getConnectedPeer(connectionKey);
-            if (peer != null && host.isManagedHost(getConfiguration().getWebsocketURI().getHost())
+            if (peer != null
+                    && host.isManagedHost(getConfiguration().getWebsocketURI().getHost())
                     && host.isManagedPort(getConfiguration().getWebsocketURI().getPort())) {
                 return peer.getWebSocket();
             }
@@ -231,11 +241,11 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
      * Finds all WebSockets associated with a host matching this endpoint configured port and resource path
      */
     protected Map<String, ServerWebSocket> findPeersForHostPort() {
-        return getVertxHostRegistry()
-                .values()
-                .stream()
-                .filter(host -> host.isManagedHost(getConfiguration().getWebsocketURI().getHost()))
-                .filter(host -> host.isManagedPort(getConfiguration().getWebsocketURI().getPort()))
+        return getVertxHostRegistry().values().stream()
+                .filter(host ->
+                        host.isManagedHost(getConfiguration().getWebsocketURI().getHost()))
+                .filter(host ->
+                        host.isManagedPort(getConfiguration().getWebsocketURI().getPort()))
                 .flatMap(host -> host.getConnectedPeers().stream())
                 .filter(connectedPeer -> {
                     String producerPath = getConfiguration().getWebsocketURI().getPath();

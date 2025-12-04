@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
@@ -126,5 +127,4 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
         TransactionTemplate template = new TransactionTemplate(transactionManager);
         return transactionErrorHandler(template);
     }
-
 }

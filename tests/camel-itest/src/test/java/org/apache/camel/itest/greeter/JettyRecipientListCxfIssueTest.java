@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.greeter;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -27,9 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyRecipientListCxfIssueTest.class);
@@ -37,9 +38,10 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
     private static int port1 = AvailablePortFinder.getNextAvailable();
     private static int port2 = AvailablePortFinder.getNextAvailable();
     private static int port3 = AvailablePortFinder.getNextAvailable();
+
     static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("RecipientListCxfTest.port1", Integer.toString(port1));
         System.setProperty("RecipientListCxfTest.port2", Integer.toString(port2));
         System.setProperty("RecipientListCxfTest.port3", Integer.toString(port3));
@@ -52,7 +54,8 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
 
     @Test
     void testJettyRecipientListCxf() {
-        final String request = context().getTypeConverter().convertTo(String.class, new File("src/test/resources/greetMe.xml"));
+        final String request =
+                context().getTypeConverter().convertTo(String.class, new File("src/test/resources/greetMe.xml"));
         assertNotNull(request);
 
         // send a message to jetty
@@ -71,5 +74,4 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
         assertNotNull(body);
         assertTrue(body.contains("Bye Camel"), "Should have Bye Camel");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.postgres.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -27,14 +28,14 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = PostgresInfraService.class,
-              description = "Postgres SQL Database",
-              serviceAlias = { "postgres" })
+@InfraService(
+        service = PostgresInfraService.class,
+        description = "Postgres SQL Database",
+        serviceAlias = {"postgres"})
 public class PostgresLocalContainerInfraService implements PostgresInfraService, ContainerService<PostgreSQLContainer> {
 
-    public static final String DEFAULT_POSTGRES_CONTAINER
-            = LocalPropertyResolver.getProperty(PostgresLocalContainerInfraService.class,
-                    PostgresProperties.POSTGRES_CONTAINER);
+    public static final String DEFAULT_POSTGRES_CONTAINER = LocalPropertyResolver.getProperty(
+            PostgresLocalContainerInfraService.class, PostgresProperties.POSTGRES_CONTAINER);
     private static final Logger LOG = LoggerFactory.getLogger(PostgresLocalContainerInfraService.class);
     private final PostgreSQLContainer container;
 
@@ -57,8 +58,7 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
     protected PostgreSQLContainer initContainer(String imageName) {
         class TestInfraPostgreSQLContainer extends PostgreSQLContainer {
             public TestInfraPostgreSQLContainer(boolean fixedPort) {
-                super(DockerImageName.parse(imageName)
-                        .asCompatibleSubstituteFor("postgres"));
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("postgres"));
 
                 if (fixedPort) {
                     addFixedExposedPort(5432, 5432);

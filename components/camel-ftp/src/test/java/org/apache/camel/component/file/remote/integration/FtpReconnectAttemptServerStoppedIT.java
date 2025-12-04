@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -28,7 +29,7 @@ public class FtpReconnectAttemptServerStoppedIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/reconnect?password=admin&maximumReconnectAttempts=5&reconnectDelay=1000&delete=true";
+                + "/reconnect?password=admin&maximumReconnectAttempts=5&reconnectDelay=1000&delete=true";
     }
 
     @Test
@@ -40,8 +41,7 @@ public class FtpReconnectAttemptServerStoppedIT extends FtpServerTestSupport {
         Awaitility.await().until(() -> service.countConnections() == 0);
 
         // put a file in the folder (do not use ftp as we then will connect)
-        template.sendBodyAndHeader("file:{{ftp.root.dir}}/reconnect", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader("file:{{ftp.root.dir}}/reconnect", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

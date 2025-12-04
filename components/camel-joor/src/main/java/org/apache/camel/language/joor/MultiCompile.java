@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
+
+import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -52,8 +55,6 @@ import org.joor.ReflectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
-
 /**
  * Until jOOR supports multi-file compilation, then we have the compiler at Apache Camel. See:
  * https://github.com/jOOQ/jOOR/pull/119
@@ -62,8 +63,7 @@ public final class MultiCompile {
 
     private static final Logger LOG = LoggerFactory.getLogger(MultiCompile.class);
 
-    private MultiCompile() {
-    }
+    private MultiCompile() {}
 
     /**
      * Compiles multiple files as one unit
@@ -89,7 +89,9 @@ public final class MultiCompile {
         List<CharSequenceJavaFileObject> files = new ArrayList<>();
 
         Lookup lookup = MethodHandles.lookup();
-        ClassLoader cl = unit.getClassLoader() != null ? unit.getClassLoader() : lookup.lookupClass().getClassLoader();
+        ClassLoader cl = unit.getClassLoader() != null
+                ? unit.getClassLoader()
+                : lookup.lookupClass().getClassLoader();
         unit.getInput().forEach((cn, code) -> {
             try {
                 Class<?> clazz = cl.loadClass(cn);
@@ -159,7 +161,8 @@ public final class MultiCompile {
                 } else {
                     // grab detailed error so we can see compilation errors
                     StringJoiner sj = new StringJoiner("\n");
-                    dc.getDiagnostics().stream().filter(d -> Diagnostic.Kind.ERROR.equals(d.getKind()))
+                    dc.getDiagnostics().stream()
+                            .filter(d -> Diagnostic.Kind.ERROR.equals(d.getKind()))
                             .forEach(d -> sj.add(d.toString()));
                     throw new ReflectException("Compilation error:\n" + sj + "\n" + out);
                 }
@@ -177,43 +180,45 @@ public final class MultiCompile {
 
                 // If the compiled class is in the same package as the caller class, then
                 // we can use the private-access Lookup of the caller class
-                if (caller != null && className.startsWith(caller.getPackageName() + ".")
-                        && Character.isUpperCase(className.charAt(caller.getPackageName().length() + 1))) {
+                if (caller != null
+                        && className.startsWith(caller.getPackageName() + ".")
+                        && Character.isUpperCase(
+                                className.charAt(caller.getPackageName().length() + 1))) {
                     // [#74] This heuristic is necessary to prevent classes in subpackages of the caller to be loaded
                     //       this way, as subpackages cannot access private content in super packages.
                     //       The heuristic will work only with classes that follow standard naming conventions.
                     //       A better implementation is difficult at this point.
                     Lookup privateLookup = MethodHandles.privateLookupIn(caller, lookup);
                     final Map<String, byte[]> byteCodes = new HashMap<>();
-                    Class<?> clazz = fileManager.loadAndReturnMainClass(className,
-                            (name, bytes) -> {
-                                Class<?> loaded = privateLookup.defineClass(bytes);
-                                if (loaded != null) {
-                                    byteCodes.put(name, bytes);
-                                }
-                                return loaded;
-                            });
+                    Class<?> clazz = fileManager.loadAndReturnMainClass(className, (name, bytes) -> {
+                        Class<?> loaded = privateLookup.defineClass(bytes);
+                        if (loaded != null) {
+                            byteCodes.put(name, bytes);
+                        }
+                        return loaded;
+                    });
                     if (clazz != null) {
                         result.addResult(className, clazz, byteCodes.get(className));
                     }
-                    // we may have compiled additional classes that the className is using, so add these as result as well
+                    // we may have compiled additional classes that the className is using, so add these as result as
+                    // well
                     byteCodes.forEach((cn, bc) -> result.addResult(cn, null, bc));
                 } else {
                     // Otherwise, use an arbitrary class loader. This approach doesn't allow for
                     // loading private-access interfaces in the compiled class's type hierarchy
                     final Map<String, byte[]> byteCodes = new HashMap<>();
-                    Class<?> clazz = fileManager.loadAndReturnMainClass(className,
-                            (name, bytes) -> {
-                                Class<?> loaded = c.loadClass(name);
-                                if (loaded != null) {
-                                    byteCodes.put(name, bytes);
-                                }
-                                return loaded;
-                            });
+                    Class<?> clazz = fileManager.loadAndReturnMainClass(className, (name, bytes) -> {
+                        Class<?> loaded = c.loadClass(name);
+                        if (loaded != null) {
+                            byteCodes.put(name, bytes);
+                        }
+                        return loaded;
+                    });
                     if (clazz != null) {
                         result.addResult(className, clazz, byteCodes.get(className));
                     }
-                    // we may have compiled additional classes that the className is using, so add these as result as well
+                    // we may have compiled additional classes that the className is using, so add these as result as
+                    // well
                     byteCodes.forEach((cn, bc) -> result.addResult(cn, null, bc));
                 }
             }
@@ -227,12 +232,8 @@ public final class MultiCompile {
     }
 
     private static Class<?> findCompiledClassViaIndex(int index) {
-        StackWalker.StackFrame sf = StackWalker
-                .getInstance(RETAIN_CLASS_REFERENCE)
-                .walk(s -> s
-                        .skip(index)
-                        .findFirst()
-                        .orElse(null));
+        StackWalker.StackFrame sf = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
+                .walk(s -> s.skip(index).findFirst().orElse(null));
         return sf != null ? sf.getDeclaringClass() : null;
     }
 
@@ -270,10 +271,7 @@ public final class MultiCompile {
 
         @Override
         public JavaFileObject getJavaFileForOutput(
-                Location location,
-                String className,
-                JavaFileObject.Kind kind,
-                FileObject sibling) {
+                Location location, String className, JavaFileObject.Kind kind, FileObject sibling) {
             JavaFileObject result = new JavaFileObject(className, kind);
             fileObjectMap.put(className, result);
             return result;
@@ -370,5 +368,4 @@ public final class MultiCompile {
     private static void cleanupWaste() {
         FileUtil.deleteFile(new File("jakarta.inject.Named"));
     }
-
 }

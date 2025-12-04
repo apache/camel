@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttpTransferExceptionTest extends BaseNettyTest {
 
@@ -32,8 +33,8 @@ public class NettyHttpTransferExceptionTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
         try {
-            template.requestBody("netty-http:http://localhost:{{port}}/foo?transferException=true", "Hello World",
-                    String.class);
+            template.requestBody(
+                    "netty-http:http://localhost:{{port}}/foo?transferException=true", "Hello World", String.class);
             fail("Should have failed");
         } catch (CamelExecutionException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
@@ -54,5 +55,4 @@ public class NettyHttpTransferExceptionTest extends BaseNettyTest {
             }
         };
     }
-
 }

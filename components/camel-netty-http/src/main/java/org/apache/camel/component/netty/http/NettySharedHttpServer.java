@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelContext;
@@ -70,5 +71,4 @@ public interface NettySharedHttpServer extends Service {
      * Number of consumers using this shared Netty HTTP server.
      */
     int getConsumersSize();
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.support.PluginHelper;
@@ -22,8 +25,6 @@ import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
 
@@ -34,9 +35,8 @@ public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
 
     @Test
     public void testSetAcceptableSchema() throws Exception {
-        DefaultPackageScanClassResolver resolver
-                = (DefaultPackageScanClassResolver) PluginHelper.getPackageScanClassResolver(context);
+        DefaultPackageScanClassResolver resolver =
+                (DefaultPackageScanClassResolver) PluginHelper.getPackageScanClassResolver(context);
         assertNotNull(resolver);
     }
-
 }

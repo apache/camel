@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.univocity;
 
 import java.io.Writer;
@@ -30,8 +31,8 @@ import org.apache.camel.spi.annotations.Dataformat;
  */
 @Dataformat("univocityCsv")
 public class UniVocityCsvDataFormat
-        extends
-        AbstractUniVocityDataFormat<CsvFormat, CsvWriterSettings, CsvWriter, CsvParserSettings, CsvParser, UniVocityCsvDataFormat> {
+        extends AbstractUniVocityDataFormat<
+                CsvFormat, CsvWriterSettings, CsvWriter, CsvParserSettings, CsvParser, UniVocityCsvDataFormat> {
 
     private Boolean quoteAllFields;
     private Character quote;

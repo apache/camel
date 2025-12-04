@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -22,7 +23,6 @@ public class MySimpleToFRoute extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("direct:start")
-                .toF("log:a?level=%s", "info");
+        from("direct:start").toF("log:a?level=%s", "info");
     }
 }

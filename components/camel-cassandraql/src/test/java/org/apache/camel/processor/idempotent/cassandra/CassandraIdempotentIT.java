@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.cassandra;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -47,13 +48,16 @@ public class CassandraIdempotentIT extends BaseCassandra {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:input").idempotentConsumer(header("idempotentId"), idempotentRepository).to("mock:output");
+                from("direct:input")
+                        .idempotentConsumer(header("idempotentId"), idempotentRepository)
+                        .to("mock:output");
             }
         };
     }
 
     private void send(String idempotentId, String body) {
-        camelContextExtension.getProducerTemplate()
+        camelContextExtension
+                .getProducerTemplate()
                 .sendBodyAndHeader("direct:input", body, "idempotentId", idempotentId);
     }
 
@@ -71,6 +75,5 @@ public class CassandraIdempotentIT extends BaseCassandra {
         send("1", "A");
         // Then
         mockOutput.assertIsSatisfied();
-
     }
 }

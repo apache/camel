@@ -48,7 +48,8 @@ public class Lambda2ProducerHealthCheck extends AbstractHealthCheck {
         }
         try {
             LambdaClient lambda2Client = lambda2Endpoint.getAwsLambdaClient();
-            lambda2Client.listFunctions(ListFunctionsRequest.builder().maxItems(1).build());
+            lambda2Client.listFunctions(
+                    ListFunctionsRequest.builder().maxItems(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -67,5 +68,4 @@ public class Lambda2ProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

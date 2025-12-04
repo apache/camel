@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -32,16 +37,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  *
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Unreliable on virtual machines")
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x")
 public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSupport {
 
     private static final String BODY_STRING = "message body";
@@ -76,16 +78,15 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
         final Processor processor1 = new Processor() {
             public void process(Exchange exchange) {
                 try {
-                    // sleep for one second so that the stream cache is built after the main exchange has finished due to timeout on the multicast
+                    // sleep for one second so that the stream cache is built after the main exchange has finished due
+                    // to timeout on the multicast
                     Thread.sleep(1000L);
                 } catch (InterruptedException e) {
                     throw new IllegalStateException("Unexpected exception", e);
                 }
                 Message in = exchange.getIn();
                 // use FilterInputStream to trigger streamcaching
-                in.setBody(new FilterInputStream(new ByteArrayInputStream(BODY)) {
-
-                });
+                in.setBody(new FilterInputStream(new ByteArrayInputStream(BODY)) {});
             }
         };
 
@@ -94,7 +95,8 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
                 // create first the OutputStreamCache and then sleep
                 CachedOutputStream outputStream = new CachedOutputStream(exchange);
                 try {
-                    // sleep for one second so that the write to the CachedOutputStream happens after the main exchange has finished due to timeout on the multicast
+                    // sleep for one second so that the write to the CachedOutputStream happens after the main exchange
+                    // has finished due to timeout on the multicast
                     Thread.sleep(1000L);
                 } catch (InterruptedException e) {
                     throw new IllegalStateException("Unexpected exception", e);
@@ -109,7 +111,8 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 // enable stream caching
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy()
+                        .setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().setEnabled(true);
                 context.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(false);

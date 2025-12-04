@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.Map;
@@ -29,7 +30,7 @@ public class MainHelperTest {
 
     @Test
     public void testAddComponentEnvVariables() {
-        Map<String, String> env = MainHelper.filterEnvVariables(new String[] { "CAMEL_COMPONENT_" });
+        Map<String, String> env = MainHelper.filterEnvVariables(new String[] {"CAMEL_COMPONENT_"});
         env.put("CAMEL_COMPONENT_AWS2_S3_ACCESS_KEY", "mysecretkey");
         Properties prop = new OrderedProperties();
         helper.addComponentEnvVariables(env, prop, false);
@@ -41,7 +42,7 @@ public class MainHelperTest {
 
     @Test
     public void testAddDataFormatEnvVariables() {
-        Map<String, String> env = MainHelper.filterEnvVariables(new String[] { "CAMEL_DATAFORMAT_" });
+        Map<String, String> env = MainHelper.filterEnvVariables(new String[] {"CAMEL_DATAFORMAT_"});
         env.put("CAMEL_DATAFORMAT_BASE64_LINE_LENGTH", "64");
         env.put("CAMEL_DATAFORMAT_JACKSONXML_PRETTYPRINT", "true");
         Properties prop = new OrderedProperties();
@@ -55,7 +56,7 @@ public class MainHelperTest {
 
     @Test
     public void testAddLanguageEnvVariables() {
-        Map<String, String> env = MainHelper.filterEnvVariables(new String[] { "CAMEL_LANGUAGE_" });
+        Map<String, String> env = MainHelper.filterEnvVariables(new String[] {"CAMEL_LANGUAGE_"});
         env.put("CAMEL_LANGUAGE_JOOR_PRE_COMPILE", "false");
         Properties prop = new OrderedProperties();
         helper.addLanguageEnvVariables(env, prop, false);
@@ -67,7 +68,7 @@ public class MainHelperTest {
 
     @Test
     public void testAddCustomComponentEnvVariables() {
-        Map<String, String> env = MainHelper.filterEnvVariables(new String[] { "CAMEL_COMPONENT_" });
+        Map<String, String> env = MainHelper.filterEnvVariables(new String[] {"CAMEL_COMPONENT_"});
         env.put("CAMEL_COMPONENT_AWS2_S3_ACCESS_KEY", "mysecretkey");
         env.put("CAMEL_COMPONENT_FOO_VERBOSE", "true");
         env.put("CAMEL_COMPONENT_FOO_PRETTY_PRINT", "false");
@@ -86,5 +87,4 @@ public class MainHelperTest {
         Assertions.assertEquals("true", prop.getProperty("camel.component.foo.verbose"));
         Assertions.assertEquals("false", prop.getProperty("camel.component.foo.pretty-print"));
     }
-
 }

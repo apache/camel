@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
@@ -25,20 +26,28 @@ public class CyberArkVaultConfiguration extends VaultConfiguration {
 
     @Metadata
     private String url;
+
     @Metadata
     private String account;
+
     @Metadata(secret = true)
     private String username;
+
     @Metadata(secret = true)
     private String password;
+
     @Metadata(secret = true)
     private String apiKey;
+
     @Metadata
     private String authToken;
+
     @Metadata
     private boolean verifySsl = true;
+
     @Metadata
     private String certificatePath;
+
     @Metadata
     private String secrets;
 

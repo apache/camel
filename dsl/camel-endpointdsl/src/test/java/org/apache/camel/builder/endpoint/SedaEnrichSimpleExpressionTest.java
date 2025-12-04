@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,11 +28,11 @@ public class SedaEnrichSimpleExpressionTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).enrich(seda("${exchangeProperty.whereTo}").advanced().offerTimeout(1000))
+                from(direct("start"))
+                        .enrich(seda("${exchangeProperty.whereTo}").advanced().offerTimeout(1000))
                         .to("mock:result");
 
-                from("seda:cheese")
-                        .transform().constant("Hello World");
+                from("seda:cheese").transform().constant("Hello World");
             }
         };
     }

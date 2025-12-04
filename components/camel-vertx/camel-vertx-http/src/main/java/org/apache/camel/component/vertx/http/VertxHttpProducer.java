@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_FORM_URLENCODED;
+import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -42,9 +46,6 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.URISupport;
-
-import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_FORM_URLENCODED;
-import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
 
 public class VertxHttpProducer extends DefaultAsyncProducer {
 
@@ -106,8 +107,8 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                                 if (type == null) {
                                     type = "application/octet-stream"; // default binary
                                 }
-                                MultipartForm form
-                                        = MultipartForm.create().binaryFileUpload(multipartName, file.getName(), buf, type);
+                                MultipartForm form = MultipartForm.create()
+                                        .binaryFileUpload(multipartName, file.getName(), buf, type);
                                 request.sendMultipartForm(form, resultHandler);
                             } else {
                                 request.sendBuffer(buf, resultHandler);
@@ -131,7 +132,8 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                     if (CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
                         if (!getComponent().isAllowJavaSerializedObject()) {
                             throw new CamelExchangeException(
-                                    "Content-type " + CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
+                                    "Content-type " + CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed",
+                                    exchange);
                         }
                         // Send a serialized Java object message body
                         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

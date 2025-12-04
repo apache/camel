@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tika;
 
 import java.io.File;
@@ -29,5 +30,4 @@ public class TikaEmptyConfig extends TikaConfig {
     public TikaEmptyConfig() throws TikaException, IOException, SAXException {
         super(new File("src/test/resources/tika-empty.xml"));
     }
-
 }

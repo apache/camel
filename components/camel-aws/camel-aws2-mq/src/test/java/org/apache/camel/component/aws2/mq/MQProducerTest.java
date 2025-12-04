@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.mq;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +41,6 @@ import software.amazon.awssdk.services.mq.model.ListBrokersRequest;
 import software.amazon.awssdk.services.mq.model.ListBrokersResponse;
 import software.amazon.awssdk.services.mq.model.UpdateBrokerResponse;
 import software.amazon.awssdk.services.mq.model.User;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MQProducerTest extends CamelTestSupport {
 
@@ -65,7 +66,9 @@ public class MQProducerTest extends CamelTestSupport {
         ListBrokersResponse resultGet = (ListBrokersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.brokerSummaries().size());
         assertEquals("mybroker", resultGet.brokerSummaries().get(0).brokerName());
-        assertEquals(BrokerState.RUNNING.toString(), resultGet.brokerSummaries().get(0).brokerState().toString());
+        assertEquals(
+                BrokerState.RUNNING.toString(),
+                resultGet.brokerSummaries().get(0).brokerState().toString());
     }
 
     @Test
@@ -76,7 +79,8 @@ public class MQProducerTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.listBrokers);
-                exchange.getIn().setBody(ListBrokersRequest.builder().maxResults(10).build());
+                exchange.getIn()
+                        .setBody(ListBrokersRequest.builder().maxResults(10).build());
             }
         });
 
@@ -85,7 +89,9 @@ public class MQProducerTest extends CamelTestSupport {
         ListBrokersResponse resultGet = (ListBrokersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.brokerSummaries().size());
         assertEquals("mybroker", resultGet.brokerSummaries().get(0).brokerName());
-        assertEquals(BrokerState.RUNNING.toString(), resultGet.brokerSummaries().get(0).brokerState().toString());
+        assertEquals(
+                BrokerState.RUNNING.toString(),
+                resultGet.brokerSummaries().get(0).brokerState().toString());
     }
 
     @Test
@@ -189,7 +195,8 @@ public class MQProducerTest extends CamelTestSupport {
         });
 
         MockEndpoint.assertIsSatisfied(context);
-        DescribeBrokerResponse resultGet = (DescribeBrokerResponse) exchange.getIn().getBody();
+        DescribeBrokerResponse resultGet =
+                (DescribeBrokerResponse) exchange.getIn().getBody();
         assertEquals("1", resultGet.brokerId());
     }
 
@@ -198,20 +205,26 @@ public class MQProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:listBrokers").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers")
+                from("direct:listBrokers")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers")
                         .to("mock:result");
                 from("direct:listBrokersPojo")
                         .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers&pojoRequest=true")
                         .to("mock:result");
-                from("direct:createBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker")
+                from("direct:createBroker")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker")
                         .to("mock:result");
-                from("direct:deleteBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker")
+                from("direct:deleteBroker")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker")
                         .to("mock:result");
-                from("direct:rebootBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker")
+                from("direct:rebootBroker")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker")
                         .to("mock:result");
-                from("direct:updateBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=updateBroker")
+                from("direct:updateBroker")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=updateBroker")
                         .to("mock:result");
-                from("direct:describeBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=describeBroker")
+                from("direct:describeBroker")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=describeBroker")
                         .to("mock:result");
             }
         };

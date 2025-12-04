@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import java.util.Map;
@@ -33,8 +34,7 @@ import org.apache.camel.util.URISupport;
 @org.apache.camel.spi.annotations.Component("dataset-test")
 public class DataSetTestComponent extends MockComponent {
 
-    public DataSetTestComponent() {
-    }
+    public DataSetTestComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -52,5 +52,4 @@ public class DataSetTestComponent extends MockComponent {
         answer.setExpectedMessageEndpoint(endpoint);
         return answer;
     }
-
 }

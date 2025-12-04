@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
 
 import java.nio.charset.Charset;
@@ -34,8 +35,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Read from system-in and write to system-out and system-err streams.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind",
-             category = { Category.FILE, Category.CORE }, headersClass = StreamConstants.class)
+@UriEndpoint(
+        firstVersion = "1.3.0",
+        scheme = "stream",
+        title = "Stream",
+        syntax = "stream:kind",
+        category = {Category.FILE, Category.CORE},
+        headersClass = StreamConstants.class)
 public class StreamEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
@@ -45,42 +51,61 @@ public class StreamEndpoint extends DefaultEndpoint {
     @UriPath(enums = "in,out,err,header,file,http")
     @Metadata(required = true)
     private String kind;
+
     @UriParam
     private String fileName;
+
     @UriParam(label = "consumer")
     private String httpUrl;
+
     @UriParam(label = "consumer")
     private String httpHeaders;
+
     @UriParam(label = "consumer")
     private boolean scanStream;
+
     @UriParam(label = "consumer")
     private boolean retry;
+
     @UriParam(label = "consumer")
     private boolean fileWatcher;
+
     @UriParam(label = "producer")
     private boolean closeOnDone;
+
     @UriParam(label = "consumer")
     private long scanStreamDelay;
+
     @UriParam(label = "producer")
     private long delay;
+
     @UriParam
     private String encoding;
+
     @UriParam(label = "consumer")
     private String promptMessage;
+
     @UriParam(label = "consumer")
     private long promptDelay;
+
     @UriParam(label = "consumer", defaultValue = "2000")
     private long initialPromptDelay = 2000;
+
     @UriParam(label = "consumer")
     private int groupLines;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean readLine = true;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean appendNewLine = true;
+
     @UriParam(label = "producer")
     private int autoCloseCount;
+
     @UriParam(label = "consumer")
     private GroupStrategy groupStrategy = new DefaultGroupStrategy();
+
     @UriParam(label = "advanced")
     private int readTimeout;
 
@@ -104,7 +129,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public String getKind() {
         return kind;
@@ -346,7 +371,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     // Implementations
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     protected void doStart() throws Exception {

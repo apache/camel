@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -28,11 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpClientRouteTest extends BaseJettyTest {
 
@@ -54,8 +55,8 @@ public class HttpClientRouteTest extends BaseJettyTest {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");
 
-        template.requestBodyAndHeader(uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
-                "application/xml");
+        template.requestBodyAndHeader(
+                uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -115,12 +116,19 @@ public class HttpClientRouteTest extends BaseJettyTest {
                     }
                 };
 
-                from("direct:start").to("http://localhost:" + port1 + "/hello").process(clientProc).convertBodyTo(String.class)
+                from("direct:start")
+                        .to("http://localhost:" + port1 + "/hello")
+                        .process(clientProc)
+                        .convertBodyTo(String.class)
                         .to("mock:a");
                 from("direct:start2").to("http://localhost:" + port2 + "/hello").to("mock:a");
-                from("direct:start3").to("http://localhost:" + port2 + "/Query%20/test?myQuery=%40%20query").to("mock:a");
-                from("direct:start4").setHeader(Exchange.HTTP_QUERY, simple("id=${body}"))
-                        .to("http://localhost:" + port2 + "/querystring").to("mock:a");
+                from("direct:start3")
+                        .to("http://localhost:" + port2 + "/Query%20/test?myQuery=%40%20query")
+                        .to("mock:a");
+                from("direct:start4")
+                        .setHeader(Exchange.HTTP_QUERY, simple("id=${body}"))
+                        .to("http://localhost:" + port2 + "/querystring")
+                        .to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) {
@@ -128,7 +136,9 @@ public class HttpClientRouteTest extends BaseJettyTest {
                         exchange.getMessage().setBody(bis);
                     }
                 };
-                from("jetty:http://localhost:" + port1 + "/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED)
+                from("jetty:http://localhost:" + port1 + "/hello")
+                        .process(proc)
+                        .setHeader(Exchange.HTTP_CHUNKED)
                         .constant(false);
 
                 from("jetty:http://localhost:" + port2 + "/hello?chunked=false").process(proc);
@@ -151,5 +161,4 @@ public class HttpClientRouteTest extends BaseJettyTest {
             }
         };
     }
-
 }

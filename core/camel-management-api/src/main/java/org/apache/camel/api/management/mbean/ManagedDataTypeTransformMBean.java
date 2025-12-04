@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -23,7 +24,8 @@ public interface ManagedDataTypeTransformMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Data type used as defined input for the message transformation")
     String getFromType();
 
-    @ManagedAttribute(description = "Data type representing the defined outcome of a data type transformation (the new message body to use)")
+    @ManagedAttribute(
+            description =
+                    "Data type representing the defined outcome of a data type transformation (the new message body to use)")
     String getToType();
-
 }

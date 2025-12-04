@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,8 +33,7 @@ public class InsertField implements Processor {
     /**
      * Default constructor.
      */
-    public InsertField() {
-    }
+    public InsertField() {}
 
     /**
      * Constructor using fields.
@@ -55,7 +55,10 @@ public class InsertField implements Processor {
 
         String resolvedValue;
         if (LanguageSupport.hasSimpleFunction(value)) {
-            resolvedValue = ex.getContext().resolveLanguage("simple").createExpression(value).evaluate(ex, String.class);
+            resolvedValue = ex.getContext()
+                    .resolveLanguage("simple")
+                    .createExpression(value)
+                    .evaluate(ex, String.class);
         } else {
             resolvedValue = value;
         }

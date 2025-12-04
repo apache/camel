@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
 
 import java.io.ByteArrayOutputStream;
@@ -55,8 +56,7 @@ public final class EntityUtils {
 
     private static final AtomicLong partNumber = new AtomicLong();
 
-    private EntityUtils() {
-    }
+    private EntityUtils() {}
 
     /**
      * Generated a unique value for a Multipart boundary string.
@@ -71,7 +71,11 @@ public final class EntityUtils {
     public static String createBoundaryValue() {
         // TODO: ensure boundary string is limited to 70 characters or less.
         StringBuilder s = new StringBuilder();
-        s.append("----=_Part_").append(partNumber.incrementAndGet()).append("_").append(s.hashCode()).append(".")
+        s.append("----=_Part_")
+                .append(partNumber.incrementAndGet())
+                .append("_")
+                .append(s.hashCode())
+                .append(".")
                 .append(System.currentTimeMillis());
         return s.toString();
     }
@@ -183,7 +187,10 @@ public final class EntityUtils {
     }
 
     public static ApplicationEntity createEDIEntity(
-            byte[] ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody,
+            byte[] ediMessage,
+            ContentType ediMessageContentType,
+            String contentTransferEncoding,
+            boolean isMainBody,
             String filename)
             throws CamelException {
         ObjectHelper.notNull(ediMessage, "EDI Message");
@@ -198,13 +205,13 @@ public final class EntityUtils {
             case AS2MediaType.APPLICATION_EDI_X12:
                 return new ApplicationEDIX12Entity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             case AS2MediaType.APPLICATION_EDI_CONSENT:
-                return new ApplicationEDIConsentEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
+                return new ApplicationEDIConsentEntity(
+                        ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             case AS2MediaType.APPLICATION_XML:
                 return new ApplicationXMLEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             default:
                 throw new CamelException("Invalid EDI entity mime type: " + ediMessageContentType.getMimeType());
         }
-
     }
 
     public static byte[] getContent(HttpEntity entity) {
@@ -258,9 +265,7 @@ public final class EntityUtils {
     }
 
     public static byte[] decodeTransferEncodingOfBodyPartContent(
-            String bodyPartContent,
-            ContentType contentType,
-            String bodyPartTransferEncoding)
+            String bodyPartContent, ContentType contentType, String bodyPartTransferEncoding)
             throws CamelException, DecoderException {
         ObjectHelper.notNull(bodyPartContent, "bodyPartContent");
         Charset contentCharset = contentType.getCharset();
@@ -268,7 +273,6 @@ public final class EntityUtils {
             contentCharset = StandardCharsets.US_ASCII;
         }
         return decode(bodyPartContent.getBytes(contentCharset), bodyPartTransferEncoding);
-
     }
 
     public static void printEntity(PrintStream out, HttpEntity entity) throws IOException {
@@ -277,10 +281,9 @@ public final class EntityUtils {
 
     public static String printEntity(HttpEntity entity) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             PrintStream ps = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
+                PrintStream ps = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
             printEntity(ps, entity);
             return baos.toString(StandardCharsets.UTF_8);
         }
     }
-
 }

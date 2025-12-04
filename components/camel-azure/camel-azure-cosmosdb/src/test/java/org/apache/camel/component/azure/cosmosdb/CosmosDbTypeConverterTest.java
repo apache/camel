@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.cosmosdb;
 
-import com.azure.cosmos.models.PartitionKey;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.azure.cosmosdb;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.azure.cosmos.models.PartitionKey;
+import org.junit.jupiter.api.Test;
 
 class CosmosDbTypeConverterTest {
 
@@ -34,5 +35,4 @@ class CosmosDbTypeConverterTest {
         // in empty case
         assertNull(CosmosDbTypeConverter.toPartitionKey(""));
     }
-
 }

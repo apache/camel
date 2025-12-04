@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weaviate.it;
 
 import org.junit.jupiter.api.*;
@@ -24,8 +25,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 // mvn -Dweaviate.apikey=YOURAPIKEY -Dweaviate.host=YOURHOST -Dweaviate.scheme=https verify
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "weaviate.apikey", matches = ".*", disabledReason = "weaviate API Key not provided"),
+    @EnabledIfSystemProperty(
+            named = "weaviate.apikey",
+            matches = ".*",
+            disabledReason = "weaviate API Key not provided"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class WeaviateComponentIT extends WeaviateContainerIT {
-}
+public class WeaviateComponentIT extends WeaviateContainerIT {}

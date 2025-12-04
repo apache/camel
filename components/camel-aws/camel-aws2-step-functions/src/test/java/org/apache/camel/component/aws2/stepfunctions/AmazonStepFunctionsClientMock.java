@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.stepfunctions;
 
 import java.util.ArrayList;
@@ -25,8 +26,7 @@ import software.amazon.awssdk.services.sfn.model.*;
 
 public class AmazonStepFunctionsClientMock implements SfnClient {
 
-    public AmazonStepFunctionsClientMock() {
-    }
+    public AmazonStepFunctionsClientMock() {}
 
     @Override
     public CreateActivityResponse createActivity(CreateActivityRequest createActivityRequest) {
@@ -95,7 +95,9 @@ public class AmazonStepFunctionsClientMock implements SfnClient {
     public ListActivitiesResponse listActivities(ListActivitiesRequest listActivitiesRequest) {
         ListActivitiesResponse.Builder result = ListActivitiesResponse.builder();
         List<ActivityListItem> activityListItems = new ArrayList<>();
-        activityListItems.add(ActivityListItem.builder().activityArn("aws:sfn-activity::test:arn").build());
+        activityListItems.add(ActivityListItem.builder()
+                .activityArn("aws:sfn-activity::test:arn")
+                .build());
         result.activities(activityListItems);
         return result.build();
     }
@@ -104,7 +106,9 @@ public class AmazonStepFunctionsClientMock implements SfnClient {
     public ListExecutionsResponse listExecutions(ListExecutionsRequest listExecutionsRequest) {
         ListExecutionsResponse.Builder result = ListExecutionsResponse.builder();
         List<ExecutionListItem> executionListItems = new ArrayList<>();
-        executionListItems.add(ExecutionListItem.builder().executionArn("aws:sfn-execution::test-arn").build());
+        executionListItems.add(ExecutionListItem.builder()
+                .executionArn("aws:sfn-execution::test-arn")
+                .build());
         result.executions(executionListItems);
         return result.build();
     }
@@ -113,7 +117,9 @@ public class AmazonStepFunctionsClientMock implements SfnClient {
     public ListStateMachinesResponse listStateMachines(ListStateMachinesRequest listStateMachinesRequest) {
         ListStateMachinesResponse.Builder result = ListStateMachinesResponse.builder();
         List<StateMachineListItem> stateMachineListItems = new ArrayList<>();
-        stateMachineListItems.add(StateMachineListItem.builder().stateMachineArn("aws:sfn-state-machine::test-arn").build());
+        stateMachineListItems.add(StateMachineListItem.builder()
+                .stateMachineArn("aws:sfn-state-machine::test-arn")
+                .build());
         result.stateMachines(stateMachineListItems);
         return result.build();
     }
@@ -152,7 +158,5 @@ public class AmazonStepFunctionsClientMock implements SfnClient {
     }
 
     @Override
-    public void close() {
-
-    }
+    public void close() {}
 }

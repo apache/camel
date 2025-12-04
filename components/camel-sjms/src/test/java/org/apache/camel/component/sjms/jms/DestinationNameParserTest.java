@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.jms;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.sjms.jms;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 public class DestinationNameParserTest {
 
@@ -34,13 +35,13 @@ public class DestinationNameParserTest {
 
     @Test
     public void testIsTopicNullDestinationName() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DestinationNameParser.isTopic(null));
+        assertThrows(IllegalArgumentException.class, () -> DestinationNameParser.isTopic(null));
     }
 
     @Test
     public void testGetShortName() {
-        assertEquals("foo.DestinationNameParserTest",
+        assertEquals(
+                "foo.DestinationNameParserTest",
                 DestinationNameParser.getShortName("topic:foo.DestinationNameParserTest"));
         assertFalse(DestinationNameParser.isTopic("queue:bar.DestinationNameParserTest"), "bar");
         assertFalse(DestinationNameParser.isTopic("bar"), "bar");
@@ -48,8 +49,6 @@ public class DestinationNameParserTest {
 
     @Test
     public void testGetShortNameNullDestinationName() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DestinationNameParser.getShortName(null));
+        assertThrows(IllegalArgumentException.class, () -> DestinationNameParser.getShortName(null));
     }
-
 }

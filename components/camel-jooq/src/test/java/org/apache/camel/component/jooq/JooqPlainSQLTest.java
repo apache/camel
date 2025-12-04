@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jooq;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,10 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
 import org.jooq.Result;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JooqPlainSQLTest extends BaseJooqTest {
 
@@ -42,21 +43,21 @@ public class JooqPlainSQLTest extends BaseJooqTest {
 
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
             // Select
-            Result res
-                    = (Result) producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
+            Result res = (Result)
+                    producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
             assertEquals(1, res.size());
             assertEquals(bookStoreRecord, res.get(0));
         });
 
         // Delete
-        Result actual
-                = (Result) producerTemplate.sendBody(context.getEndpoint("direct:deleteSQL"), ExchangePattern.InOut, null);
+        Result actual = (Result)
+                producerTemplate.sendBody(context.getEndpoint("direct:deleteSQL"), ExchangePattern.InOut, null);
         assertNull(actual);
 
         // Select
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
-            Result res
-                    = (Result) producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
+            Result res = (Result)
+                    producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
             assertEquals(0, res.size());
         });
     }
@@ -72,18 +73,18 @@ public class JooqPlainSQLTest extends BaseJooqTest {
             @Override
             public void configure() {
                 // Book store
-                from("direct:insert")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
+                from("direct:insert").to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
 
                 // Producer SQL query select
                 from("direct:selectSQL")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch&query=select * from book_store x where x.name = 'test'");
+                        .to(
+                                "jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch&query=select * from book_store x where x.name = 'test'");
 
                 // Producer SQL query delete
                 from("direct:deleteSQL")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute&query=delete from book_store x where x.name = 'test'");
+                        .to(
+                                "jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute&query=delete from book_store x where x.name = 'test'");
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb.localstack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,8 +29,6 @@ import org.apache.camel.component.aws2.ddb.Ddb2Operations;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AWS2UpdateTableByIdRuleIT extends Aws2DDBBase {
 
@@ -56,10 +57,11 @@ public class AWS2UpdateTableByIdRuleIT extends Aws2DDBBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(
-                        "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
-                                        + "&keyScalarType=" + ScalarAttributeType.S
-                                        + "&readCapacity=1&writeCapacity=1");
+                from("direct:start")
+                        .to("aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType="
+                                + KeyType.HASH
+                                + "&keyScalarType=" + ScalarAttributeType.S
+                                + "&readCapacity=1&writeCapacity=1");
             }
         };
     }

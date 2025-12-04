@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
 
 import org.apache.camel.BindToRegistry;
@@ -31,21 +32,27 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and
+// -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+    @EnabledIfSystemProperty(
+            named = "aws.manual.access.key",
+            matches = ".*",
+            disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(
+            named = "aws.manual.secret.key",
+            matches = ".*",
+            disabledReason = "Secret key not provided")
 })
 public class S3UploadWithSSES3IT extends CamelTestSupport {
     private static final String ACCESS_KEY = System.getProperty("aws.manual.access.key");
     private static final String SECRET_KEY = System.getProperty("aws.manual.secret.key");
 
     @BindToRegistry("amazonS3Client")
-    S3Client client
-            = S3Client.builder()
-                    .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
-                    .region(Region.EU_CENTRAL_1).build();
+    S3Client client = S3Client.builder()
+            .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
+            .region(Region.EU_CENTRAL_1)
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -71,7 +78,6 @@ public class S3UploadWithSSES3IT extends CamelTestSupport {
                 String awsEndpoint = "aws2-s3://test-ss3-s3?useSSES3=true";
 
                 from("direct:putObject").to(awsEndpoint);
-
             }
         };
     }

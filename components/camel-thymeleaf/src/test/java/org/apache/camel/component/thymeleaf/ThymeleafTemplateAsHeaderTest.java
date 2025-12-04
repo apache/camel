@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -46,10 +47,10 @@ public class ThymeleafTemplateAsHeaderTest extends ThymeleafAbstractBaseTest {
 
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to("thymeleaf:dontcare?allowTemplateFromHeader=true&templateMode=HTML&allowContextMapAll=true&resolver=DEFAULT")
+                        .to(
+                                "thymeleaf:dontcare?allowTemplateFromHeader=true&templateMode=HTML&allowContextMapAll=true&resolver=DEFAULT")
                         .to(MOCK_RESULT);
             }
         };
     }
-
 }

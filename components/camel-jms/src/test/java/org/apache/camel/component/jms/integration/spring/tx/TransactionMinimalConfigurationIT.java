@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
 
 import org.apache.camel.Exchange;
@@ -27,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * To demonstrate transacted with minimal configuration.
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class TransactionMinimalConfigurationIT extends AbstractSpringJMSITSupport {
 
     @Override

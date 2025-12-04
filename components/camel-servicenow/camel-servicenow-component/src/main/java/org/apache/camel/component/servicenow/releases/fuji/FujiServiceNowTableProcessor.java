@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.releases.fuji;
 
 import jakarta.ws.rs.HttpMethod;
@@ -34,8 +35,13 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
 
     @Override
     protected void doProcess(
-            Exchange exchange, Class<?> requestModel, Class<?> responseModel, String apiVersion, String action,
-            String tableName, String sysId)
+            Exchange exchange,
+            Class<?> requestModel,
+            Class<?> responseModel,
+            String apiVersion,
+            String action,
+            String tableName,
+            String sysId)
             throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
@@ -61,8 +67,7 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * https://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
     private Response retrieveRecord(
-            Message in, Class<?> responseModel, String apiVersion, String tableName, String sysId)
-            throws Exception {
+            Message in, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
         return ObjectHelper.isEmpty(sysId)
                 ? client.reset()
                         .types(MediaType.APPLICATION_JSON_TYPE)
@@ -122,7 +127,12 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * https://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
     private Response modifyRecord(
-            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId)
+            Message in,
+            Class<?> requestModel,
+            Class<?> responseModel,
+            String apiVersion,
+            String tableName,
+            String sysId)
             throws Exception {
         validateBody(in, requestModel);
         return client.reset()
@@ -146,8 +156,7 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * DELETE
      * https://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
-    private Response deleteRecord(
-            Class<?> responseModel, String apiVersion, String tableName, String sysId)
+    private Response deleteRecord(Class<?> responseModel, String apiVersion, String tableName, String sysId)
             throws Exception {
         return client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
@@ -165,7 +174,12 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * http://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
     private Response updateRecord(
-            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId)
+            Message in,
+            Class<?> requestModel,
+            Class<?> responseModel,
+            String apiVersion,
+            String tableName,
+            String sysId)
             throws Exception {
         validateBody(in, requestModel);
         return client.reset()

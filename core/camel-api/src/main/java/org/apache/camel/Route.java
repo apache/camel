@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.util.Collection;
@@ -435,5 +436,4 @@ public interface Route extends RuntimeConfiguration {
      * Sets the consumer listener for the route
      */
     void setConsumerListener(ConsumerListener<?, ?> consumerListener);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.consumer;
 
 import org.apache.camel.Processor;
@@ -28,7 +29,8 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
     protected final DropboxEndpoint endpoint;
     protected final DropboxConfiguration configuration;
 
-    protected DropboxScheduledPollConsumer(DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
+    protected DropboxScheduledPollConsumer(
+            DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.configuration = configuration;
@@ -44,7 +46,7 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
     @Override
     protected void doStart() throws Exception {
         if (configuration.getClient() == null) {
-            //create dropbox client
+            // create dropbox client
             configuration.createClient();
 
             LOG.debug("Consumer Dropbox client created");

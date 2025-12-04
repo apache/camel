@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import java.nio.charset.CharacterCodingException;
@@ -64,7 +65,9 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                     // Save the current buffer pointers and reset them to surround the identifier message
                     int currentPosition = in.position();
                     int currentLimit = in.limit();
-                    LOG.debug("Message ends at position {} with length {}", previousPosition,
+                    LOG.debug(
+                            "Message ends at position {} with length {}",
+                            previousPosition,
                             previousPosition - state.start() + 1);
                     in.position(state.start());
                     in.limit(currentPosition);
@@ -72,9 +75,10 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
 
                     // Now create string or byte[] from this part of the buffer and restore the buffer pointers
                     try {
-                        out.write(config.isProduceString()
-                                ? parseMessageToString(in.slice(), charsetDecoder(session))
-                                : parseMessageToByteArray(in.slice()));
+                        out.write(
+                                config.isProduceString()
+                                        ? parseMessageToString(in.slice(), charsetDecoder(session))
+                                        : parseMessageToByteArray(in.slice()));
                         messageDecoded = true;
                     } finally {
                         LOG.debug("Resetting to position {} and limit to {}", currentPosition, currentLimit);
@@ -160,7 +164,8 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         synchronized (session) {
             CharsetDecoder decoder = (CharsetDecoder) session.getAttribute(CHARSET_DECODER);
             if (decoder == null) {
-                decoder = config.getCharset().newDecoder()
+                decoder = config.getCharset()
+                        .newDecoder()
                         .onMalformedInput(config.getMalformedInputErrorAction())
                         .onUnmappableCharacter(config.getUnmappableCharacterErrorAction());
                 session.setAttribute(CHARSET_DECODER, decoder);

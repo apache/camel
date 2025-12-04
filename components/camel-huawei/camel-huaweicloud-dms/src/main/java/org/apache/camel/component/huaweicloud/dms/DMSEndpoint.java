@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
 
 import java.util.Collection;
@@ -37,9 +38,13 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-dms", title = "Huawei Distributed Message Service (DMS)",
-             syntax = "hwcloud-dms:operation",
-             category = { Category.CLOUD }, producerOnly = true)
+@UriEndpoint(
+        firstVersion = "3.12.0",
+        scheme = "hwcloud-dms",
+        title = "Huawei Distributed Message Service (DMS)",
+        syntax = "hwcloud-dms:operation",
+        category = {Category.CLOUD},
+        producerOnly = true)
 public class DMSEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
@@ -50,8 +55,10 @@ public class DMSEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "DMS url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Service endpoint", secret = false)
+    @UriParam(
+            description = "DMS url. Carries higher precedence than region parameter based client initialization",
+            displayName = "Service endpoint",
+            secret = false)
     @Metadata(required = false)
     private String endpoint;
 
@@ -79,8 +86,10 @@ public class DMSEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true)
+    @UriParam(
+            description = "Configuration object for cloud service authentication",
+            displayName = "Service Configuration",
+            secret = true)
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
@@ -92,49 +101,64 @@ public class DMSEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String secretKey;
 
-    @UriParam(description = "The message engine. Either kafka or rabbitmq. If the parameter is not specified, all instances will be queried",
-              displayName = "Engine type",
-              enums = "kafka,rabbitmq")
+    @UriParam(
+            description =
+                    "The message engine. Either kafka or rabbitmq. If the parameter is not specified, all instances will be queried",
+            displayName = "Engine type",
+            enums = "kafka,rabbitmq")
     @Metadata(required = false)
     private String engine;
 
-    @UriParam(description = "The id of the instance. This option is mandatory when deleting or querying an instance",
-              displayName = "Instance id")
+    @UriParam(
+            description = "The id of the instance. This option is mandatory when deleting or querying an instance",
+            displayName = "Instance id")
     @Metadata(required = false)
     private String instanceId;
 
-    @UriParam(description = "The name of the instance for creating and updating an instance. This option is mandatory when creating an instance",
-              displayName = "Name")
+    @UriParam(
+            description =
+                    "The name of the instance for creating and updating an instance. This option is mandatory when creating an instance",
+            displayName = "Name")
     @Metadata(required = false)
     private String name;
 
-    @UriParam(description = "The version of the message engine. This option is mandatory when creating an instance.",
-              displayName = "Engine version")
+    @UriParam(
+            description = "The version of the message engine. This option is mandatory when creating an instance.",
+            displayName = "Engine version")
     @Metadata(required = false)
     private String engineVersion;
 
-    @UriParam(description = "The baseline bandwidth of a Kafka instance. This option is mandatory when creating a Kafka instance.",
-              displayName = "Engine version")
+    @UriParam(
+            description =
+                    "The baseline bandwidth of a Kafka instance. This option is mandatory when creating a Kafka instance.",
+            displayName = "Engine version")
     @Metadata(required = false)
     private String specification;
 
-    @UriParam(description = "The message storage space. This option is mandatory when creating an instance.",
-              displayName = "Storage space")
+    @UriParam(
+            description = "The message storage space. This option is mandatory when creating an instance.",
+            displayName = "Storage space")
     @Metadata(required = false)
     private int storageSpace;
 
-    @UriParam(description = "The maximum number of partitions in a Kafka instance. This option is mandatory when creating a Kafka instance.",
-              displayName = "Partition Number")
+    @UriParam(
+            description =
+                    "The maximum number of partitions in a Kafka instance. This option is mandatory when creating a Kafka instance.",
+            displayName = "Partition Number")
     @Metadata(required = false)
     private int partitionNum;
 
-    @UriParam(description = "The username of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance.",
-              displayName = "Access user")
+    @UriParam(
+            description =
+                    "The username of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance.",
+            displayName = "Access user")
     @Metadata(required = false)
     private String accessUser;
 
-    @UriParam(description = "The password of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance.",
-              displayName = "Password")
+    @UriParam(
+            description =
+                    "The password of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance.",
+            displayName = "Password")
     @Metadata(required = false)
     private String password;
 
@@ -142,43 +166,55 @@ public class DMSEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String vpcId;
 
-    @UriParam(description = "The security group which the instance belongs to. This option is mandatory when creating an instance.",
-              displayName = "Security group ID")
+    @UriParam(
+            description =
+                    "The security group which the instance belongs to. This option is mandatory when creating an instance.",
+            displayName = "Security group ID")
     @Metadata(required = false)
     private String securityGroupId;
 
-    @UriParam(description = "The subnet ID. This option is mandatory when creating an instance.", displayName = "Subnet ID")
+    @UriParam(
+            description = "The subnet ID. This option is mandatory when creating an instance.",
+            displayName = "Subnet ID")
     @Metadata(required = false)
     private String subnetId;
 
-    @UriParam(description = "A comma separated String of Availability Zones. This option is mandatory when creating an instance and it cannot be an empty array.",
-              displayName = "Available zones")
+    @UriParam(
+            description =
+                    "A comma separated String of Availability Zones. This option is mandatory when creating an instance and it cannot be an empty array.",
+            displayName = "Available zones")
     @Metadata(required = false)
     private String availableZones;
 
-    @UriParam(description = "The product ID. This option is mandatory when creating an instance.", displayName = "Product ID")
+    @UriParam(
+            description = "The product ID. This option is mandatory when creating an instance.",
+            displayName = "Product ID")
     @Metadata(required = false)
     private String productId;
 
-    @UriParam(description = "The username for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance.",
-              displayName = "Kafka manager username")
+    @UriParam(
+            description =
+                    "The username for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance.",
+            displayName = "Kafka manager username")
     @Metadata(required = false)
     private String kafkaManagerUser;
 
-    @UriParam(description = "The password for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance.",
-              displayName = "Kafka manager password")
+    @UriParam(
+            description =
+                    "The password for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance.",
+            displayName = "Kafka manager password")
     @Metadata(required = false)
     private String kafkaManagerPassword;
 
-    @UriParam(description = "The storage I/O specification. This option is mandatory when creating an instance.",
-              displayName = "Storage specification code")
+    @UriParam(
+            description = "The storage I/O specification. This option is mandatory when creating an instance.",
+            displayName = "Storage specification code")
     @Metadata(required = false)
     private String storageSpecCode;
 
     private DmsClient dmsClient;
 
-    public DMSEndpoint() {
-    }
+    public DMSEndpoint() {}
 
     public DMSEndpoint(String uri, String operation, DMSComponent component) {
         super(uri, component);
@@ -454,23 +490,18 @@ public class DMSEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
         }
 
-        // setup AK/SK credential information. AK/SK provided through ServiceKeys overrides the AK/SK passed through the endpoint
+        // setup AK/SK credential information. AK/SK provided through ServiceKeys overrides the AK/SK passed through the
+        // endpoint
         BasicCredentials auth = new BasicCredentials()
-                .withAk(getServiceKeys() != null
-                        ? getServiceKeys().getAccessKey()
-                        : getAccessKey())
-                .withSk(getServiceKeys() != null
-                        ? getServiceKeys().getSecretKey()
-                        : getSecretKey())
+                .withAk(getServiceKeys() != null ? getServiceKeys().getAccessKey() : getAccessKey())
+                .withSk(getServiceKeys() != null ? getServiceKeys().getSecretKey() : getSecretKey())
                 .withProjectId(getProjectId());
 
         // setup http information (including proxy information if provided)
         HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig();
         httpConfig.withIgnoreSSLVerification(isIgnoreSslVerification());
-        if (ObjectHelper.isNotEmpty(getProxyHost())
-                && ObjectHelper.isNotEmpty(getProxyPort())) {
-            httpConfig.withProxyHost(getProxyHost())
-                    .withProxyPort(getProxyPort());
+        if (ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort())) {
+            httpConfig.withProxyHost(getProxyHost()).withProxyPort(getProxyPort());
 
             if (ObjectHelper.isNotEmpty(getProxyUser())) {
                 httpConfig.withProxyUsername(getProxyUser());

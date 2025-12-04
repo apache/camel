@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.propagation;
+
+import static org.apache.camel.telemetry.propagation.CamelJMSHeadersSpanContextPropagationInjector.JMS_DASH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +26,6 @@ import java.util.Map;
 import org.apache.camel.telemetry.SpanContextPropagationInjector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.telemetry.propagation.CamelJMSHeadersSpanContextPropagationInjector.JMS_DASH;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelMessagingHeadersInjectAdapterTest {
 
@@ -51,5 +52,4 @@ public class CamelMessagingHeadersInjectAdapterTest {
         adapter.put("-key-1-", "value1");
         assertEquals("value1", map.get(JMS_DASH + "key" + JMS_DASH + "1" + JMS_DASH));
     }
-
 }

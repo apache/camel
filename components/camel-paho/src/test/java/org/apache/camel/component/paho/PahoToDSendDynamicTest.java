@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
@@ -26,13 +29,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class PahoToDSendDynamicTest extends PahoTestSupport {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
@@ -43,7 +45,8 @@ public class PahoToDSendDynamicTest extends PahoTestSupport {
 
         // there should only be one paho endpoint
         long count = getCamelContextExtension().getContext().getEndpoints().stream()
-                .filter(e -> e.getEndpointUri().startsWith("paho:")).count();
+                .filter(e -> e.getEndpointUri().startsWith("paho:"))
+                .count();
         assertEquals(1, count, "There should only be 1 paho endpoint");
 
         // and the messages should be in the queues

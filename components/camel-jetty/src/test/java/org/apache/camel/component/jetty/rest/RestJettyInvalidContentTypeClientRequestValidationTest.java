@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -25,19 +30,15 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class RestJettyInvalidContentTypeClientRequestValidationTest extends BaseJettyTest {
 
     @Test
     public void testJettyInvalidContentType() {
-        FluentProducerTemplate requestTemplate
-                = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json; charset=utf-8")
-                        .withHeader(Exchange.HTTP_METHOD, "post")
-                        .withBody("{\"name\": \"Donald\"}")
-                        .to("http://localhost:" + getPort() + "/users/123/update");
+        FluentProducerTemplate requestTemplate = fluentTemplate
+                .withHeader(Exchange.CONTENT_TYPE, "application/json; charset=utf-8")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody("{\"name\": \"Donald\"}")
+                .to("http://localhost:" + getPort() + "/users/123/update");
 
         Exception ex = assertThrows(CamelExecutionException.class, () -> requestTemplate.request(String.class));
 
@@ -52,18 +53,22 @@ public class RestJettyInvalidContentTypeClientRequestValidationTest extends Base
             @Override
             public void configure() {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
                         .bindingMode(RestBindingMode.json)
                         // turn on client request validation
                         .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("{id}/update")
-                        .consumes("text/json").produces("application/json")
+                rest("/users/")
+                        .post("{id}/update")
+                        .consumes("text/json")
+                        .produces("application/json")
                         .to("direct:update");
                 from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }
-
 }

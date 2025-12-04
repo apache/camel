@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer.support.classic;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
@@ -27,8 +28,7 @@ final class AssignmentAdapterHelper {
     private static final NoOpPartitionAssignmentAdapter NO_OP_ASSIGNMENT_ADAPTER = new NoOpPartitionAssignmentAdapter();
     private static final Logger LOG = LoggerFactory.getLogger(AssignmentAdapterHelper.class);
 
-    private AssignmentAdapterHelper() {
-    }
+    private AssignmentAdapterHelper() {}
 
     public static PartitionAssignmentAdapter resolveBuiltinResumeAdapters(KafkaConfiguration configuration) {
         LOG.debug("No resume strategy was provided ... checking for built-ins ...");

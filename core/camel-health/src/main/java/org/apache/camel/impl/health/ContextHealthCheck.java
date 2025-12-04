@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
 
 import java.util.Map;
@@ -64,9 +65,8 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
                 case Initializing:
                 case Initialized:
                 case Starting:
-                    builder.message(
-                            "Camel Context '" + name + "' is starting. Status: '" + status + "', Phase: '" + phase
-                                    + "'. Please wait...");
+                    builder.message("Camel Context '" + name + "' is starting. Status: '" + status + "', Phase: '"
+                            + phase + "'. Please wait...");
                     builder.down();
                     break;
                 case Started:
@@ -76,8 +76,8 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
                 case Stopped:
                 case Suspending:
                 case Suspended:
-                    builder.message("Camel Context '" + name + "' is shutting down. Status: '" + status + "', Phase: '" + phase
-                                    + "'. Please check the debug log");
+                    builder.message("Camel Context '" + name + "' is shutting down. Status: '" + status + "', Phase: '"
+                            + phase + "'. Please check the debug log");
                     builder.down();
                     break;
                 default:

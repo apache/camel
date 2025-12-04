@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.cache;
 
 import java.util.Map;
@@ -30,14 +31,15 @@ public class CaffeineSendDynamicAwareOffTest extends CaffeineCacheTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("VALUE_1");
 
-        template.sendBodyAndHeaders("direct:start", "Hello World",
-                Map.of("action1", "PUT", "action2", "GET", "myKey", "foobar"));
+        template.sendBodyAndHeaders(
+                "direct:start", "Hello World", Map.of("action1", "PUT", "action2", "GET", "myKey", "foobar"));
 
         MockEndpoint.assertIsSatisfied(context);
 
         // there are 2 caffeine endpoints
         int count = (int) context.getEndpoints().stream()
-                .filter(e -> e.getEndpointUri().startsWith("caffeine-cache")).count();
+                .filter(e -> e.getEndpointUri().startsWith("caffeine-cache"))
+                .count();
         Assertions.assertEquals(2, count);
     }
 
@@ -48,10 +50,12 @@ public class CaffeineSendDynamicAwareOffTest extends CaffeineCacheTestSupport {
                 // turn optimization off
                 from("direct://start")
                         .setBody(constant("VALUE_1"))
-                        .toD().allowOptimisedComponents(false)
+                        .toD()
+                        .allowOptimisedComponents(false)
                         .uri("caffeine-cache://mycache?action=${header.action1}&key=${header.myKey}")
                         .setBody(constant("VALUE_2"))
-                        .toD().allowOptimisedComponents(false)
+                        .toD()
+                        .allowOptimisedComponents(false)
                         .uri("caffeine-cache://mycache?key=${header.myKey}&action=${header.action2}")
                         .to("mock:result");
             }

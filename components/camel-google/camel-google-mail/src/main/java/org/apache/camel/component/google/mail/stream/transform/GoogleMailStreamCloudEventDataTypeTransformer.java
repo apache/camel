@@ -31,8 +31,9 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts Google Mail Stream consumer response to CloudEvent v1_0 data format. The data type
  * sets Camel specific CloudEvent headers with values extracted from Google Mail Stream consumer response.
  */
-@DataTypeTransformer(name = "google-mail-stream:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with Google Mail Stream consumer response details")
+@DataTypeTransformer(
+        name = "google-mail-stream:application-cloudevents",
+        description = "Adds CloudEvent headers to the Camel message with Google Mail Stream consumer response details")
 public class GoogleMailStreamCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,16 +41,19 @@ public class GoogleMailStreamCloudEventDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.google.mail.stream.consume");
 
         if (message.getHeaders().containsKey(GoogleMailStreamConstants.MAIL_FROM)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
+            headers.put(
+                    CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
                     "google.mail.stream." + message.getHeader(GoogleMailStreamConstants.MAIL_FROM, String.class));
         }
 
-        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT,
+        headers.put(
+                CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT,
                 message.getHeader(GoogleMailStreamConstants.MAIL_SUBJECT, String.class));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);

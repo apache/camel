@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EnricherRefBeanTypeTest extends ContextTestSupport {
 
@@ -62,7 +63,9 @@ public class EnricherRefBeanTypeTest extends ContextTestSupport {
             public void configure() {
                 cool.setCamelContext(context);
 
-                from("direct:start").enrich().simple("ref:cool")
+                from("direct:start")
+                        .enrich()
+                        .simple("ref:cool")
                         .aggregationStrategy("#type:org.apache.camel.AggregationStrategy");
             }
         };

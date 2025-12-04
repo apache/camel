@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -22,17 +23,18 @@ public class MySedaRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("timer:hello?period={{timer.period}}").routeId("hello").routeGroup("hello-group")
-                .transform().method("myBean", "saySomething")
+        from("timer:hello?period={{timer.period}}")
+                .routeId("hello")
+                .routeGroup("hello-group")
+                .transform()
+                .method("myBean", "saySomething")
                 .filter(simple("${body} contains 'foo'"))
-                    .to("seda:bar")
+                .to("seda:bar")
                 .end()
                 .to("stream:out");
 
-        from("seda:foo")
-                .to("log:foo");
+        from("seda:foo").to("log:foo");
 
-        from("seda:bar")
-                .to("log:bar");
+        from("seda:bar").to("log:bar");
     }
 }

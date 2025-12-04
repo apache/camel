@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,8 +38,7 @@ public class SetPropertyDefinition extends ExpressionNode {
     @XmlAttribute(required = true)
     private String name;
 
-    public SetPropertyDefinition() {
-    }
+    public SetPropertyDefinition() {}
 
     protected SetPropertyDefinition(SetPropertyDefinition source) {
         super(source);
@@ -102,5 +102,4 @@ public class SetPropertyDefinition extends ExpressionNode {
     public String getName() {
         return name;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.apache.camel.dataformat.csv.TestUtils.LS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,9 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.dataformat.csv.TestUtils.LS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
@@ -57,8 +58,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         for (int i = 0; i < EXPECTED_COUNT; ++i) {
-            List<String> body = result.getReceivedExchanges().get(i)
-                    .getIn().getBody(List.class);
+            List<String> body = result.getReceivedExchanges().get(i).getIn().getBody(List.class);
             assertEquals(2, body.size());
             assertEquals(String.valueOf(i), body.get(0));
             assertEquals(String.format("%d%s%d", i, LS, i), body.get(1));
@@ -76,8 +76,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         for (int i = 0; i < EXPECTED_COUNT; ++i) {
-            List<String> body = result.getReceivedExchanges().get(i)
-                    .getIn().getBody(List.class);
+            List<String> body = result.getReceivedExchanges().get(i).getIn().getBody(List.class);
             assertEquals(2, body.size());
             assertEquals(String.valueOf(i), body.get(0));
             assertEquals(String.format("%d%s%d", i, LS, i), body.get(1));
@@ -95,7 +94,6 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
             // Use this to find out how camel close the FileInputStream
             super.close();
         }
-
     }
 
     @Override
@@ -103,14 +101,9 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                CsvDataFormat csv = new CsvDataFormat()
-                        .setLazyLoad(true)
-                        .setDelimiter('|');
+                CsvDataFormat csv = new CsvDataFormat().setLazyLoad(true).setDelimiter('|');
 
-                from("direct:start")
-                        .unmarshal(csv)
-                        .split(body())
-                        .to("mock:result");
+                from("direct:start").unmarshal(csv).split(body()).to("mock:result");
             }
         };
     }

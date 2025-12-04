@@ -14,13 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pinecone;
 
 import org.apache.camel.spi.Metadata;
 
 public class PineconeVectorDbHeaders {
-    @Metadata(description = "The action to be performed.", javaType = "String",
-              enums = "CREATE_COLLECTION,CREATE_SERVERLESS_INDEX,CREATE_POD_INDEX,FETCH,UPSERT,DELETE_INDEX,DELETE_COLLECTION,QUERY,QUERY_BY_ID,UPDATE,DELETE_BY_ID")
+    @Metadata(
+            description = "The action to be performed.",
+            javaType = "String",
+            enums =
+                    "CREATE_COLLECTION,CREATE_SERVERLESS_INDEX,CREATE_POD_INDEX,FETCH,UPSERT,DELETE_INDEX,DELETE_COLLECTION,QUERY,QUERY_BY_ID,UPDATE,DELETE_BY_ID")
     public static final String ACTION = "CamelPineconeAction";
 
     @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
@@ -70,5 +74,4 @@ public class PineconeVectorDbHeaders {
 
     @Metadata(description = "Query Include Metadata", javaType = "com.google.protobuf.Struct")
     public static final String QUERY_INCLUDE_METADATA = "CamelPineconeQueryIncludeMetadata";
-
 }

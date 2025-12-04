@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.Consumer;
@@ -41,5 +42,4 @@ public class DefaultPollingConsumerPollStrategy extends ServiceSupport implement
         // we do not want to retry
         return false;
     }
-
 }

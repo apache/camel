@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,12 +29,14 @@ public class JdbcGeneratedKeysTest extends AbstractJdbcGeneratedKeysTest {
 
     @Test
     public void testRetrieveGeneratedKeysWithStringGeneratedColumns() throws Exception {
-        super.testRetrieveGeneratedKeysWithStringGeneratedColumns("insert into tableWithAutoIncr (content) values ('value2')");
+        super.testRetrieveGeneratedKeysWithStringGeneratedColumns(
+                "insert into tableWithAutoIncr (content) values ('value2')");
     }
 
     @Test
     public void testRetrieveGeneratedKeysWithIntGeneratedColumns() throws Exception {
-        super.testRetrieveGeneratedKeysWithIntGeneratedColumns("insert into tableWithAutoIncr (content) values ('value2')");
+        super.testRetrieveGeneratedKeysWithIntGeneratedColumns(
+                "insert into tableWithAutoIncr (content) values ('value2')");
     }
 
     @Test
@@ -53,5 +56,4 @@ public class JdbcGeneratedKeysTest extends AbstractJdbcGeneratedKeysTest {
             // END SNIPPET: route
         };
     }
-
 }

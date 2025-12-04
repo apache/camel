@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.cloud;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RoutesBuilder;
@@ -24,9 +28,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpServiceCallRouteTest extends CamelTestSupport {
 
@@ -73,10 +74,8 @@ public class NettyHttpServiceCallRouteTest extends CamelTestSupport {
                         .servers("myService@localhost:" + port2)
                         .endParent();
 
-                from("netty-http:http://localhost:" + port1)
-                        .transform().constant("8081");
-                from("netty-http:http://localhost:" + port2)
-                        .transform().constant("8082");
+                from("netty-http:http://localhost:" + port1).transform().constant("8081");
+                from("netty-http:http://localhost:" + port2).transform().constant("8082");
             }
         };
     }

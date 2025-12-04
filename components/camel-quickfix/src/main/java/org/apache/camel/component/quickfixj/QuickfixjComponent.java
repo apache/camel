@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
 
 import java.util.Collections;
@@ -49,17 +50,20 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
 
     @Metadata(label = "advanced")
     private MessageStoreFactory messageStoreFactory;
+
     @Metadata(label = "advanced")
     private LogFactory logFactory;
+
     @Metadata(label = "advanced")
     private MessageFactory messageFactory;
+
     @Metadata
     private boolean lazyCreateEngines;
+
     @Metadata(defaultValue = "true")
     private boolean eagerStopEngines = true;
 
-    public QuickfixjComponent() {
-    }
+    public QuickfixjComponent() {}
 
     public QuickfixjComponent(CamelContext context) {
         super(context);
@@ -86,13 +90,17 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                     } else {
                         settings = QuickfixjEngine.loadSettings(getCamelContext(), remaining);
                     }
-                    Boolean lazyCreateEngineForEndpoint
-                            = super.getAndRemoveParameter(parameters, PARAMETER_LAZY_CREATE_ENGINE, Boolean.TYPE);
+                    Boolean lazyCreateEngineForEndpoint =
+                            super.getAndRemoveParameter(parameters, PARAMETER_LAZY_CREATE_ENGINE, Boolean.TYPE);
                     if (lazyCreateEngineForEndpoint == null) {
                         lazyCreateEngineForEndpoint = isLazyCreateEngines();
                     }
                     engine = new QuickfixjEngine(
-                            uri, settings, messageStoreFactory, logFactory, messageFactory,
+                            uri,
+                            settings,
+                            messageStoreFactory,
+                            logFactory,
+                            messageFactory,
                             lazyCreateEngineForEndpoint);
 
                     // only start engine if CamelContext is already started, otherwise the engines gets started

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.Message;
 
@@ -23,8 +26,6 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for CAMEL-1249
@@ -63,5 +64,4 @@ public class MailUsingOwnComponentTest extends CamelTestSupport {
         Message msg = box.get(0);
         assertEquals(davsclaus.getEmail(), msg.getRecipients(Message.RecipientType.TO)[0].toString());
     }
-
 }

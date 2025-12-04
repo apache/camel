@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty12;
 
 import java.io.IOException;
@@ -48,8 +49,7 @@ import org.slf4j.LoggerFactory;
 final class AttachmentHttpBinding extends DefaultHttpBinding {
     private static final Logger LOG = LoggerFactory.getLogger(AttachmentHttpBinding.class);
 
-    AttachmentHttpBinding() {
-    }
+    AttachmentHttpBinding() {}
 
     @Override
     protected void populateAttachments(HttpServletRequest request, Message message) {
@@ -72,11 +72,11 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                     Object value = am.getAttachment(name);
                     Map<String, Object> headers = message.getHeaders();
                     if (getHeaderFilterStrategy() != null
-                            && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())
+                            && !getHeaderFilterStrategy()
+                                    .applyFilterToExternalHeaders(name, value, message.getExchange())
                             && name != null) {
                         HttpHelper.appendHeader(headers, name, value);
                     }
-
                 }
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot populate attachments", e);
@@ -92,7 +92,8 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         // remove Content-Encoding from request
         // TODO in Jetty 12, HttpFields cannot be removed
         //        if (request instanceof ServletApiRequest) {
-        //            Iterator<HttpField> httpFieldIterator = ((ServletApiRequest) request).getRequest().getHeaders().iterator();
+        //            Iterator<HttpField> httpFieldIterator = ((ServletApiRequest)
+        // request).getRequest().getHeaders().iterator();
         //            while (httpFieldIterator.hasNext()) {
         //                HttpField httpField = httpFieldIterator.next();
         //                if (httpField.is(Exchange.CONTENT_ENCODING)) {
@@ -116,7 +117,8 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                         value = HttpHelper.sanitizeLog(request.getParameter(name));
                     }
                     if (getHeaderFilterStrategy() != null
-                            && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                            && !getHeaderFilterStrategy()
+                                    .applyFilterToExternalHeaders(name, value, message.getExchange())) {
                         HttpHelper.appendHeader(headers, name, value);
                     }
                     continue;
@@ -134,8 +136,8 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                         // use http helper to extract parameter value as it may contain multiple values
                         Object extracted = HttpHelper.extractHttpParameterValue(value);
                         if (getHeaderFilterStrategy() != null
-                                && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, extracted,
-                                        message.getExchange())) {
+                                && !getHeaderFilterStrategy()
+                                        .applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
                             HttpHelper.appendHeader(headers, name, value);
                         }
                     }
@@ -146,7 +148,9 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
             // when multipart filter is disabled. This is expected behavior when
             // enableMultipartFilter=false is used, so we silently skip parameter processing
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to populate request parameters, likely due to multipart parsing failure: {}", e.getMessage());
+                LOG.debug(
+                        "Failed to populate request parameters, likely due to multipart parsing failure: {}",
+                        e.getMessage());
             }
         }
     }

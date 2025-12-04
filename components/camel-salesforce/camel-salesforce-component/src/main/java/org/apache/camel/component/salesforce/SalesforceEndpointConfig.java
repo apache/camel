@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.util.Collections;
@@ -133,99 +134,143 @@ public class SalesforceEndpointConfig implements Cloneable {
     // Rest API properties
     @UriParam
     private PayloadFormat format = PayloadFormat.JSON;
+
     @UriParam
     private boolean rawPayload;
+
     @UriParam(displayName = "SObject Name")
     private String sObjectName;
+
     @UriParam(displayName = "SObject Id")
     private String sObjectId;
+
     @UriParam(displayName = "SObject Fields")
     private String sObjectFields;
+
     @UriParam(displayName = "SObject Id Name")
     private String sObjectIdName;
+
     @UriParam(displayName = "SObject Id Value")
     private String sObjectIdValue;
+
     @UriParam(displayName = "SObject Blob Field Name")
     private String sObjectBlobFieldName;
+
     @UriParam(displayName = "SObject Class")
     private String sObjectClass;
+
     @UriParam(displayName = "SObject Query")
     private String sObjectQuery;
+
     @UriParam(displayName = "Stream query result", defaultValue = "false")
     private Boolean streamQueryResult = false;
+
     @UriParam(displayName = "SObject Search")
     private String sObjectSearch;
+
     @UriParam
     private String apexMethod;
+
     @UriParam(displayName = "Event Name", label = "producer")
     private String eventName;
+
     @UriParam(displayName = "Event Schema Format", label = "producer")
     private EventSchemaFormatEnum eventSchemaFormat;
+
     @UriParam(displayName = "Event Schema Id", label = "producer")
     private String eventSchemaId;
+
     @UriParam(label = "producer")
     private String compositeMethod;
-    @UriParam(label = "producer", defaultValue = "false", description = "Composite API option to indicate" +
-                                                                        " to rollback all records if any are not successful.")
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "false",
+            description = "Composite API option to indicate" + " to rollback all records if any are not successful.")
     private boolean allOrNone;
+
     @UriParam(label = "producer")
     private String apexUrl;
+
     @UriParam
     private Map<String, Object> apexQueryParams;
 
     // Bulk API properties
     @UriParam
     private ContentType contentType;
+
     @UriParam
     private String jobId;
+
     @UriParam
     private String batchId;
+
     @UriParam
     private String resultId;
+
     @UriParam
     private String queryLocator;
+
     @UriParam
     private String locator;
+
     @UriParam(javaType = "java.lang.Integer")
     private Integer maxRecords;
+
     @UriParam
     private Boolean pkChunking;
+
     @UriParam
     private Integer pkChunkingChunkSize;
+
     @UriParam
     private String pkChunkingParent;
+
     @UriParam
     private String pkChunkingStartRow;
 
     // Streaming API properties
     @UriParam
     private boolean updateTopic;
+
     @UriParam
     private NotifyForFieldsEnum notifyForFields;
+
     @UriParam
     private NotifyForOperationsEnum notifyForOperations;
+
     @UriParam
     private Boolean notifyForOperationCreate;
+
     @UriParam
     private Boolean notifyForOperationUpdate;
+
     @UriParam
     private Boolean notifyForOperationDelete;
+
     @UriParam
     private Boolean notifyForOperationUndelete;
 
     // Pub/Sub API properties
-    @UriParam(label = "consumer", defaultValue = "100",
-              description = "Max number of events to receive in a batch from the Pub/Sub API.")
+    @UriParam(
+            label = "consumer",
+            defaultValue = "100",
+            description = "Max number of events to receive in a batch from the Pub/Sub API.")
     private int pubSubBatchSize = 100;
 
-    @UriParam(label = "consumer", defaultValue = "AVRO",
-              description = "How to deserialize events consume from the Pub/Sub API. AVRO will try a " +
-                            "SpecificRecord subclass if found, otherwise GenericRecord.",
-              enums = "AVRO,SPECIFIC_RECORD,GENERIC_RECORD,POJO,JSON")
+    @UriParam(
+            label = "consumer",
+            defaultValue = "AVRO",
+            description = "How to deserialize events consume from the Pub/Sub API. AVRO will try a "
+                    + "SpecificRecord subclass if found, otherwise GenericRecord.",
+            enums = "AVRO,SPECIFIC_RECORD,GENERIC_RECORD,POJO,JSON")
     private PubSubDeserializeType pubSubDeserializeType = PubSubDeserializeType.AVRO;
 
-    @UriParam(label = "consumer", description = "Replay preset for Pub/Sub API.", defaultValue = "LATEST",
-              enums = "LATEST,EARLIEST,CUSTOM")
+    @UriParam(
+            label = "consumer",
+            description = "Replay preset for Pub/Sub API.",
+            defaultValue = "LATEST",
+            enums = "LATEST,EARLIEST,CUSTOM")
     private ReplayPreset replayPreset = ReplayPreset.LATEST;
 
     @UriParam(label = "consumer", description = "Fully qualified class name to deserialize Pub/Sub API event to.")
@@ -234,20 +279,25 @@ public class SalesforceEndpointConfig implements Cloneable {
     // Analytics API properties
     @UriParam
     private String reportId;
+
     @UriParam
     private Boolean includeDetails;
+
     @UriParam
     private ReportMetadata reportMetadata;
+
     @UriParam
     private String instanceId;
 
     // Streaming API properties
-    @UriParam(description = "Default replayId setting if no value is found in initialReplayIdMap",
-              defaultValue = "" + REPLAY_FROM_TIP)
+    @UriParam(
+            description = "Default replayId setting if no value is found in initialReplayIdMap",
+            defaultValue = "" + REPLAY_FROM_TIP)
     private Long defaultReplayId = REPLAY_FROM_TIP;
 
-    @UriParam(description = "ReplayId to fall back to after an Invalid Replay Id response",
-              defaultValue = "" + REPLAY_FROM_TIP)
+    @UriParam(
+            description = "ReplayId to fall back to after an Invalid Replay Id response",
+            defaultValue = "" + REPLAY_FROM_TIP)
     private Long fallBackReplayId = REPLAY_FROM_TIP;
 
     @UriParam
@@ -259,10 +309,13 @@ public class SalesforceEndpointConfig implements Cloneable {
     // RAW operation properties
     @UriParam(label = "producer")
     private String rawPath;
+
     @UriParam(label = "producer")
     private String rawMethod;
+
     @UriParam(label = "producer")
     private String rawQueryParameters;
+
     @UriParam(label = "producer")
     private String rawHttpHeaders;
 
@@ -288,11 +341,13 @@ public class SalesforceEndpointConfig implements Cloneable {
     @UriParam(defaultValue = "EXCEPTION")
     private NotFoundBehaviour notFoundBehaviour = NotFoundBehaviour.EXCEPTION;
 
-    @UriParam(label = "consumer",
-              description = "Whether the pub/sub consumer needs to fallback to the latest replay id when the provided id is not valid. "
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Whether the pub/sub consumer needs to fallback to the latest replay id when the provided id is not valid. "
                             + "If set to false, the component will keep retrying; in order to treat this as an exception you can "
                             + "use BridgeExceptionHandlerToErrorHandler and handle the exception in the route.",
-              defaultValue = "false")
+            defaultValue = "false")
     private boolean fallbackToLatestReplayId;
 
     public SalesforceEndpointConfig copy() {
@@ -1255,5 +1310,4 @@ public class SalesforceEndpointConfig implements Cloneable {
     public void setFallbackToLatestReplayId(boolean fallbackToLatestReplayId) {
         this.fallbackToLatestReplayId = fallbackToLatestReplayId;
     }
-
 }

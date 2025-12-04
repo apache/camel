@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SecretsManagerComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         SecretsManagerComponent component = context.getComponent("aws-secrets-manager", SecretsManagerComponent.class);
-        SecretsManagerEndpoint endpoint = (SecretsManagerEndpoint) component
-                .createEndpoint("aws-secrets-manager://test?accessKey=xxx&secretKey=yyy&region=eu-west-1");
+        SecretsManagerEndpoint endpoint = (SecretsManagerEndpoint)
+                component.createEndpoint("aws-secrets-manager://test?accessKey=xxx&secretKey=yyy&region=eu-west-1");
 
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());

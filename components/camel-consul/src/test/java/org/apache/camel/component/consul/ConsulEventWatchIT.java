@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import java.util.List;
@@ -51,7 +52,8 @@ public class ConsulEventWatchIT extends ConsulTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("consul:event?key=%s&blockSeconds=1", key)
-                        .to("log:org.apache.camel.component.consul?level=INFO&showAll=true").to("mock:event-watch");
+                        .to("log:org.apache.camel.component.consul?level=INFO&showAll=true")
+                        .to("mock:event-watch");
             }
         };
     }

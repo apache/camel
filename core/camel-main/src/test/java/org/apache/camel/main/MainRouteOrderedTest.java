@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainRouteOrderedTest {
 
@@ -44,8 +45,7 @@ public class MainRouteOrderedTest {
     public static class FooRouteBuilder extends RouteBuilder {
         @Override
         public void configure() {
-            from("direct:foo").routeId("foo")
-                    .to("mock:foo");
+            from("direct:foo").routeId("foo").to("mock:foo");
         }
 
         @Override
@@ -57,8 +57,7 @@ public class MainRouteOrderedTest {
     public static class BarRouteBuilder extends RouteBuilder {
         @Override
         public void configure() {
-            from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+            from("direct:bar").routeId("bar").to("mock:bar");
         }
 
         @Override

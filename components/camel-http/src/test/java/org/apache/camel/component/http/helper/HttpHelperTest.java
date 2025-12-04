@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.helper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,11 +37,6 @@ import org.apache.camel.http.common.HttpMethods;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpHelperTest {
 
@@ -97,7 +98,8 @@ public class HttpHelperTest {
     }
 
     @Test
-    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithSubPathAndOneSlashOnly() throws URISyntaxException {
+    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithSubPathAndOneSlashOnly()
+            throws URISyntaxException {
         String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", "/somePath/"),
                 createHttpEndpoint(true, "http://camel.apache.org/"));

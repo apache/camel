@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -60,10 +61,17 @@ public class CBRWithRecipientListTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(body().contains("Camel")).recipientList(header("foo")).end()
+                from("direct:start")
+                        .choice()
+                        .when(body().contains("Camel"))
+                        .recipientList(header("foo"))
+                        .end()
                         .when(body().contains("Donkey"))
                         // we can do either end() or endChoice()
-                        .recipientList(header("bar")).endChoice().otherwise().to("mock:result");
+                        .recipientList(header("bar"))
+                        .endChoice()
+                        .otherwise()
+                        .to("mock:result");
             }
         };
     }

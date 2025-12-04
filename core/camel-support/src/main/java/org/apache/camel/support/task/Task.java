@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.task;
 
 import java.time.Duration;
@@ -85,5 +86,4 @@ public interface Task {
      * The task failed for some un-expected exception
      */
     Throwable getException();
-
 }

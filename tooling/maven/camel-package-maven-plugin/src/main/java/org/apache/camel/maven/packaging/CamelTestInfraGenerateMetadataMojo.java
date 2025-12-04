@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -53,12 +54,16 @@ import org.jboss.jandex.DotName;
  *
  * The JSON can be used to retrieve the test-infra information and run the services (via Camel JBang for example)
  */
-@Mojo(name = "test-infra-generate-metadata", threadSafe = true,
-      requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(
+        name = "test-infra-generate-metadata",
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
 
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
+
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File generatedResourcesOutputDir;
 
@@ -73,7 +78,8 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         Set<InfrastructureServiceModel> models = new LinkedHashSet<>();
 
-        for (AnnotationInstance ai : PackagePluginUtils.readJandexIndexQuietly(project).getAnnotations(INFRA_SERVICE)) {
+        for (AnnotationInstance ai :
+                PackagePluginUtils.readJandexIndexQuietly(project).getAnnotations(INFRA_SERVICE)) {
 
             InfrastructureServiceModel infrastructureServiceModel = new InfrastructureServiceModel();
             String targetClass = ai.target().toString();
@@ -84,8 +90,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
                 // Search for target class in the project transitive artifacts to retrieve maven coordinates
                 for (Artifact artifact : project.getArtifacts()) {
                     if (classExistsInJarFile(
-                            targetClass.substring(targetClass.lastIndexOf(".") + 1),
-                            artifact.getFile())) {
+                            targetClass.substring(targetClass.lastIndexOf(".") + 1), artifact.getFile())) {
                         infrastructureServiceModel.setVersion(artifact.getVersion());
                         infrastructureServiceModel.setGroupId(artifact.getGroupId());
                         infrastructureServiceModel.setArtifactId(artifact.getArtifactId());
@@ -119,9 +124,8 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
                 generatedResourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
             }
 
-            FileUtil.updateFile(generatedResourcesOutputDir.toPath()
-                    .resolve("META-INF")
-                    .resolve("metadata.json"), modelsAsJson);
+            FileUtil.updateFile(
+                    generatedResourcesOutputDir.toPath().resolve("META-INF").resolve("metadata.json"), modelsAsJson);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

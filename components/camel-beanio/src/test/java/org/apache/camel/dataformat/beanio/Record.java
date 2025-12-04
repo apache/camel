@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
 
 public abstract class Record {
     String sedol;
     String source;
 
-    public Record() {
-    }
+    public Record() {}
 
     public Record(String sedol, String source) {
         this.sedol = sedol;

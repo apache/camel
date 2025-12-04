@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,13 +26,14 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class NotifyBuilderExactlyDoneSplitterWhereSentToIssueTest extends ContextTestSupport {
 
     @Test
     public void testReceiveTiAnalyticsArrayOfJsonEvents() {
-        NotifyBuilder notifier = new NotifyBuilder(context).wereSentTo("stub:direct:somewhere").whenExactlyDone(7).create();
+        NotifyBuilder notifier = new NotifyBuilder(context)
+                .wereSentTo("stub:direct:somewhere")
+                .whenExactlyDone(7)
+                .create();
 
         template.sendBody("direct:split", "A,B,C,D,E,F,G");
 
@@ -41,7 +45,11 @@ public class NotifyBuilderExactlyDoneSplitterWhereSentToIssueTest extends Contex
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:split").split(body()).parallelProcessing().log("Received: ${body}").to("stub:direct:somewhere");
+                from("direct:split")
+                        .split(body())
+                        .parallelProcessing()
+                        .log("Received: ${body}")
+                        .to("stub:direct:somewhere");
             }
         };
     }

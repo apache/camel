@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
@@ -113,7 +114,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 if (dataField != null) {
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Position defined in the class: {}, position: {}, Field: {}", cl.getName(), dataField.pos(),
+                        LOG.debug(
+                                "Position defined in the class: {}, position: {}, Field: {}",
+                                cl.getName(),
+                                dataField.pos(),
                                 dataField);
                     }
 
@@ -135,7 +139,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     }
                     linkFields.add(field);
                 }
-
             }
 
             if (!linkFields.isEmpty()) {
@@ -149,7 +152,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 LOG.debug("Number of mandatory fields: {}", numberMandatoryFields);
                 LOG.debug("Total: {}", totalFields);
             }
-
         }
     }
 
@@ -157,11 +159,13 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     // as we provide the content of the record and
     // we don't split it as this is the case for a CSV record
     @Override
-    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception {
+    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line)
+            throws Exception {
         // noop
     }
 
-    public void bind(CamelContext camelContext, String recordStr, Map<String, Object> model, int line) throws Exception {
+    public void bind(CamelContext camelContext, String recordStr, Map<String, Object> model, int line)
+            throws Exception {
 
         int pos = 1;
         int counterMandatoryFields = 0;
@@ -200,8 +204,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             }
             if (offset - 1 <= -1) {
                 throw new IllegalArgumentException(
-                        "Offset/Position of the field " + dataField.toString()
-                                                   + " cannot be negative");
+                        "Offset/Position of the field " + dataField.toString() + " cannot be negative");
             }
 
             // skip ahead if the expected position is greater than the offset
@@ -235,7 +238,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
             if (dataField.trim()) {
                 token = trim(token, dataField, paddingChar);
-                //token = token.trim();
+                // token = token.trim();
             }
 
             // Check mandatory field
@@ -248,8 +251,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 // This is not possible for mandatory fields
                 if (token.isEmpty()) {
                     throw new IllegalArgumentException(
-                            "The mandatory field defined at the position " + pos
-                                                       + " is empty for the line: " + line);
+                            "The mandatory field defined at the position " + pos + " is empty for the line: " + line);
                 }
             }
 
@@ -262,10 +264,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             }
 
             // Create format object to format the field
-            FormattingOptions formattingOptions = ConverterUtils.convert(dataField,
-                    field.getType(),
-                    field.getAnnotation(BindyConverter.class),
-                    getLocale());
+            FormattingOptions formattingOptions = ConverterUtils.convert(
+                    dataField, field.getType(), field.getAnnotation(BindyConverter.class), getLocale());
             Format<?> format = formatFactory.getFormat(formattingOptions);
 
             // field object to be set
@@ -281,10 +281,12 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 try {
                     value = format.parse(token);
                 } catch (FormatException ie) {
-                    throw new IllegalArgumentException(ie.getMessage() + ", position: " + offset + ", line: " + line, ie);
+                    throw new IllegalArgumentException(
+                            ie.getMessage() + ", position: " + offset + ", line: " + line, ie);
                 } catch (Exception e) {
                     throw new IllegalArgumentException(
-                            "Parsing error detected for field defined at the position/offset: " + offset + ", line: " + line,
+                            "Parsing error detected for field defined at the position/offset: " + offset + ", line: "
+                                    + line,
                             e);
                 }
             } else {
@@ -294,14 +296,20 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             if (value != null && !dataField.method().isEmpty()) {
                 Class<?> clazz;
                 if (dataField.method().contains(".")) {
-                    clazz = camelContext.getClassResolver()
-                            .resolveMandatoryClass(dataField.method().substring(0, dataField.method().lastIndexOf('.')));
+                    clazz = camelContext
+                            .getClassResolver()
+                            .resolveMandatoryClass(dataField
+                                    .method()
+                                    .substring(0, dataField.method().lastIndexOf('.')));
                 } else {
                     clazz = field.getType();
                 }
 
-                String methodName = dataField.method().substring(dataField.method().lastIndexOf('.') + 1,
-                        dataField.method().length());
+                String methodName = dataField
+                        .method()
+                        .substring(
+                                dataField.method().lastIndexOf('.') + 1,
+                                dataField.method().length());
 
                 Method m = ReflectionHelper.findMethod(clazz, methodName, field.getType());
                 if (m != null) {
@@ -320,11 +328,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             field.set(modelField, value);
 
             ++pos;
-
         }
 
         // check for unmapped non-whitespace data at the end of the line
-        if (offset <= unicodeHelper.length() && !(unicodeHelper.substring(offset - 1, unicodeHelper.length())).isBlank()
+        if (offset <= unicodeHelper.length()
+                && !(unicodeHelper.substring(offset - 1, unicodeHelper.length())).isBlank()
                 && !isIgnoreTrailingChars()) {
             throw new IllegalArgumentException(
                     "Unexpected / unmapped characters found at the end of the fixed-length record at line : " + line);
@@ -339,7 +347,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         if (counterMandatoryFields < numberMandatoryFields) {
             throw new IllegalArgumentException("Some mandatory fields are missing, line: " + line);
         }
-
     }
 
     private String trim(String token, DataField dataField, char paddingChar) {
@@ -398,7 +405,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     // Generate Fixed Length table
                     // containing the positions of the fields
                     generateFixedLengthPositionMap(clazz, obj, results);
-
                 }
             }
         }
@@ -438,10 +444,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 if (obj != null) {
 
                     // Create format
-                    FormattingOptions formattingOptions = ConverterUtils.convert(datafield,
-                            field.getType(),
-                            field.getAnnotation(BindyConverter.class),
-                            getLocale());
+                    FormattingOptions formattingOptions = ConverterUtils.convert(
+                            datafield, field.getType(), field.getAnnotation(BindyConverter.class), getLocale());
                     Format<?> format = formatFactory.getFormat(formattingOptions);
 
                     // Get field value
@@ -468,9 +472,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     }
 
                     if (fieldLength <= 0 && datafield.delimiter().isEmpty() && datafield.lengthPos() == 0) {
-                        throw new IllegalArgumentException(
-                                "Either a delimiter value or length for the field: "
-                                                           + field.getName() + " is mandatory.");
+                        throw new IllegalArgumentException("Either a delimiter value or length for the field: "
+                                + field.getName() + " is mandatory.");
                     }
 
                     if (!datafield.delimiter().isEmpty()) {
@@ -504,9 +507,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                                 temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
                                 temp.append(result);
                             } else {
-                                throw new IllegalArgumentException(
-                                        "Alignment for the field: " + field.getName()
-                                                                   + " must be equal to R for RIGHT or L for LEFT or B for trimming both ends");
+                                throw new IllegalArgumentException("Alignment for the field: " + field.getName()
+                                        + " must be equal to R for RIGHT or L for LEFT or B for trimming both ends");
                             }
 
                             result = temp.toString();
@@ -517,17 +519,19 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                             if (datafield.clip()) {
                                 result = result.substring(0, fieldLength);
                             } else {
-                                throw new IllegalArgumentException(
-                                        "Length for the " + field.getName()
-                                                                   + " must not be larger than allowed, was: " + result.length()
-                                                                   + ", allowed: " + fieldLength);
+                                throw new IllegalArgumentException("Length for the " + field.getName()
+                                        + " must not be larger than allowed, was: " + result.length()
+                                        + ", allowed: " + fieldLength);
                             }
                         }
                     }
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", value,
-                                datafield.pos(), result);
+                        LOG.debug(
+                                "Value to be formatted: {}, position: {}, and its formatted value: {}",
+                                value,
+                                datafield.pos(),
+                                result);
                     }
 
                 } else {
@@ -545,11 +549,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     List<String> list = results.get(key);
                     list.add(result);
                 }
-
             }
-
         }
-
     }
 
     private String generatePaddingChars(char pad, int lengthField, int lengthString) {
@@ -640,7 +641,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             throw new java.lang.IllegalArgumentException(
                     "skipHeader and/or skipFooter can not be configured on a record where 'isHeader=true' or 'isFooter=true'");
         }
-
     }
 
     /**
@@ -737,5 +737,4 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     public boolean isCountGrapheme() {
         return countGrapheme;
     }
-
 }

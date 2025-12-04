@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import java.util.ArrayList;
@@ -66,11 +67,11 @@ public class KameletConcurrencyIssueTest extends CamelTestSupport {
                         .from("kamelet:source")
                         .routeId("spamRoute")
                         .toD("kamelet:spamRoute2?numberAgain={{number}}&differentValueAgain={{differentValue}}&time="
-                             + System.currentTimeMillis() % 1000)
+                                + System.currentTimeMillis() % 1000)
                         .toD("kamelet:spamRoute2?numberAgain={{number}}&differentValueAgain=5&time="
-                             + System.currentTimeMillis() % 1000)
+                                + System.currentTimeMillis() % 1000)
                         .toD("kamelet:spamRoute2?numberAgain={{number}}&differentValueAgain=10&time="
-                             + System.currentTimeMillis() % 1000);
+                                + System.currentTimeMillis() % 1000);
 
                 routeTemplate("spamRoute2")
                         .templateParameter("numberAgain")

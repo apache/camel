@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +32,6 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UpdateItemCommandTest {
 
@@ -56,13 +57,19 @@ public class UpdateItemCommandTest {
 
         Map<String, AttributeValueUpdate> attributeMap = new HashMap<>();
         AttributeValueUpdate attributeValue = AttributeValueUpdate.builder()
-                .value(AttributeValue.builder().s("new value").build()).action(AttributeAction.ADD).build();
+                .value(AttributeValue.builder().s("new value").build())
+                .action(AttributeAction.ADD)
+                .build();
         attributeMap.put("name", attributeValue);
         exchange.getIn().setHeader(Ddb2Constants.UPDATE_VALUES, attributeMap);
 
         Map<String, ExpectedAttributeValue> expectedAttributeValueMap = new HashMap<>();
-        expectedAttributeValueMap.put("name", ExpectedAttributeValue.builder()
-                .attributeValueList(AttributeValue.builder().s("expected value").build()).build());
+        expectedAttributeValueMap.put(
+                "name",
+                ExpectedAttributeValue.builder()
+                        .attributeValueList(
+                                AttributeValue.builder().s("expected value").build())
+                        .build());
         exchange.getIn().setHeader(Ddb2Constants.UPDATE_CONDITION, expectedAttributeValueMap);
         exchange.getIn().setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD");
 
@@ -73,7 +80,8 @@ public class UpdateItemCommandTest {
         assertEquals(key, ddbClient.updateItemRequest.key());
         assertEquals(expectedAttributeValueMap, ddbClient.updateItemRequest.expected());
         assertEquals(ReturnValue.ALL_OLD, ddbClient.updateItemRequest.returnValues());
-        assertEquals(AttributeValue.builder().s("attrValue").build(),
+        assertEquals(
+                AttributeValue.builder().s("attrValue").build(),
                 exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

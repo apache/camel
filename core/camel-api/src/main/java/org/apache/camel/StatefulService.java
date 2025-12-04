@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -70,5 +71,4 @@ public interface StatefulService extends SuspendableService, ShutdownableService
      * @return <tt>true</tt> if the service should continue to run.
      */
     boolean isRunAllowed();
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -29,10 +34,6 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ErrorHandlerTest extends TestSupport {
 
@@ -127,7 +128,8 @@ public class ErrorHandlerTest extends TestSupport {
                 // configures dead letter channel to use seda queue for errors
                 // and use at most 2 redelveries
                 // and exponential backoff
-                errorHandler(deadLetterChannel("seda:errors").maximumRedeliveries(2).useExponentialBackOff());
+                errorHandler(
+                        deadLetterChannel("seda:errors").maximumRedeliveries(2).useExponentialBackOff());
 
                 // here is our route
                 from("seda:a").to("seda:b");
@@ -146,7 +148,8 @@ public class ErrorHandlerTest extends TestSupport {
             Channel channel = unwrapChannel(processor);
 
             assertNotNull(channel, "The channel should not be null");
-            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
+            DeadLetterChannel deadLetterChannel =
+                    assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
             assertEquals(2, redeliveryPolicy.getMaximumRedeliveries(), "getMaximumRedeliveries()");
@@ -160,7 +163,9 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e5
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").errorHandler(deadLetterChannel("log:FOO.BAR")).filter(body().isInstanceOf(String.class))
+                from("seda:a")
+                        .errorHandler(deadLetterChannel("log:FOO.BAR"))
+                        .filter(body().isInstanceOf(String.class))
                         .to("seda:b");
             }
         };
@@ -179,5 +184,4 @@ public class ErrorHandlerTest extends TestSupport {
             assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
         }
     }
-
 }

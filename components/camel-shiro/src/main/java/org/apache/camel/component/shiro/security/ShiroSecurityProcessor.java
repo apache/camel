@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.shiro.security;
 
 import org.apache.camel.AsyncCallback;
@@ -74,7 +75,8 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
 
             // store the token as header, either as base64 or as the object as-is
             if (policy.isBase64()) {
-                ByteSource bytes = ShiroSecurityHelper.encrypt(token, policy.getPassPhrase(), policy.getCipherService());
+                ByteSource bytes =
+                        ShiroSecurityHelper.encrypt(token, policy.getPassPhrase(), policy.getCipherService());
                 String base64 = bytes.toBase64();
                 exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, base64);
             } else {
@@ -85,7 +87,8 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
             exchange.getIn().removeHeader(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD);
         }
 
-        Object token = ExchangeHelper.getMandatoryHeader(exchange, ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, Object.class);
+        Object token =
+                ExchangeHelper.getMandatoryHeader(exchange, ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, Object.class);
 
         // we support the token in a number of ways
         if (token instanceof ShiroSecurityToken) {
@@ -107,11 +110,12 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         } else {
             throw new CamelExchangeException(
                     "Shiro security header " + ShiroSecurityConstants.SHIRO_SECURITY_TOKEN + " is unsupported type: "
-                                             + ObjectHelper.classCanonicalName(token),
+                            + ObjectHelper.classCanonicalName(token),
                     exchange);
         }
 
-        ByteSourceBroker decryptedToken = policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());
+        ByteSourceBroker decryptedToken =
+                policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());
         ShiroSecurityToken securityToken = ShiroSecurityHelper.deserialize(decryptedToken.getClonedBytes());
 
         Subject currentUser = SecurityUtils.getSubject();
@@ -135,7 +139,8 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         LOG.trace("Authenticated: {}, same Username: {}", authenticated, sameUser);
 
         if (!authenticated || !sameUser) {
-            UsernamePasswordToken token = new UsernamePasswordToken(securityToken.getUsername(), securityToken.getPassword());
+            UsernamePasswordToken token =
+                    new UsernamePasswordToken(securityToken.getUsername(), securityToken.getPassword());
             if (policy.isAlwaysReauthenticate()) {
                 token.setRememberMe(false);
             } else {
@@ -177,18 +182,17 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
             }
         } else {
             LOG.trace("Valid Permissions or Roles List not specified for ShiroSecurityPolicy. "
-                      + "No authorization checks will be performed for current user.");
+                    + "No authorization checks will be performed for current user.");
             authorized = true;
         }
 
         if (!authorized) {
             throw new CamelAuthorizationException(
                     "Authorization Failed. Subject's role set does "
-                                                  + "not have the necessary roles or permissions to perform further processing.",
+                            + "not have the necessary roles or permissions to perform further processing.",
                     exchange);
         }
 
         LOG.debug("Current user {} is successfully authorized.", currentUser.getPrincipal());
     }
-
 }

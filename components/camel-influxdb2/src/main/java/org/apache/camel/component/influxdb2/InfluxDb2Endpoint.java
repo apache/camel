@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb2;
 
 import java.util.List;
@@ -42,46 +43,59 @@ import org.slf4j.LoggerFactory;
  * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a> v2, a time series
  * database.
  */
-@UriEndpoint(firstVersion = "3.20.0", scheme = "influxdb2", title = "InfluxDB2",
-             syntax = "influxdb2:connectionBean", category = { Category.DATABASE },
-             producerOnly = true, headersClass = InfluxDb2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.20.0",
+        scheme = "influxdb2",
+        title = "InfluxDB2",
+        syntax = "influxdb2:connectionBean",
+        category = {Category.DATABASE},
+        producerOnly = true,
+        headersClass = InfluxDb2Constants.class)
 public class InfluxDb2Endpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDb2Endpoint.class);
 
     private InfluxDBClient influxDBClient;
 
     @UriPath
-    @Metadata(required = true,
-              description = "Connection to the Influx database, of class com.influxdb.client.InfluxDBClient.class.")
+    @Metadata(
+            required = true,
+            description = "Connection to the Influx database, of class com.influxdb.client.InfluxDBClient.class.")
     private String connectionBean;
+
     @UriParam
     @Metadata(required = true, description = "The name of the organization where the time series will be stored.")
     private String org;
+
     @UriParam
     @Metadata(required = true, description = "The name of the bucket where the time series will be stored.")
     private String bucket;
-    @UriParam(defaultValue = "default", description = "Define the retention policy to the data created by the endpoint.")
+
+    @UriParam(
+            defaultValue = "default",
+            description = "Define the retention policy to the data created by the endpoint.")
     private String retentionPolicy = "default";
 
     @UriParam(defaultValue = "INSERT", description = "Define if this operation is an insert of ping.")
     private Operation operation = Operation.INSERT;
-    @UriParam(defaultValue = "true", description = "Define if we want to auto create the organization if it's not present.")
+
+    @UriParam(
+            defaultValue = "true",
+            description = "Define if we want to auto create the organization if it's not present.")
     private boolean autoCreateOrg = true;
 
     @UriParam(defaultValue = "true", description = "Define if we want to auto create the bucket if it's not present.")
     private boolean autoCreateBucket = true;
 
-    @UriParam(defaultValue = "ms",
-              description = "The format or precision of time series timestamps.")
+    @UriParam(defaultValue = "ms", description = "The format or precision of time series timestamps.")
     private WritePrecision writePrecision = WritePrecision.MS;
+
     private String orgID;
 
     public InfluxDb2Endpoint(String uri, InfluxDb2Component component) {
         super(uri, component);
     }
 
-    public InfluxDb2Endpoint() {
-    }
+    public InfluxDb2Endpoint() {}
 
     public InfluxDBClient getInfluxDBClient() {
         return influxDBClient;
@@ -184,10 +198,14 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
         organizationsQuery.setOrg(org);
         boolean exists = false;
         try {
-            List<Organization> organizations = getInfluxDBClient().getOrganizationsApi().findOrganizations(organizationsQuery);
+            List<Organization> organizations =
+                    getInfluxDBClient().getOrganizationsApi().findOrganizations(organizationsQuery);
             if (organizations.stream().anyMatch(o -> o.getName().equals(org))) {
                 exists = true;
-                organization = organizations.stream().filter(o -> o.getName().equals(org)).findFirst().get();
+                organization = organizations.stream()
+                        .filter(o -> o.getName().equals(org))
+                        .findFirst()
+                        .get();
             }
         } catch (NotFoundException ex) {
             exists = false;

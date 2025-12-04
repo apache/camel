@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.api;
 
 import org.apache.camel.CamelContext;
@@ -27,12 +28,11 @@ import org.apache.camel.util.ObjectHelper;
  * It allows to retrieve the {@link CamelReactiveStreamsService} to access Camel streams.
  */
 public final class CamelReactiveStreams {
-    private CamelReactiveStreams() {
-    }
+    private CamelReactiveStreams() {}
 
     public static CamelReactiveStreamsService get(CamelContext context) {
-        ReactiveStreamsComponent component
-                = context.getComponent(ReactiveStreamsConstants.SCHEME, ReactiveStreamsComponent.class);
+        ReactiveStreamsComponent component =
+                context.getComponent(ReactiveStreamsConstants.SCHEME, ReactiveStreamsComponent.class);
 
         return ObjectHelper.notNull(component.getReactiveStreamsService(), "ReactiveStreamsService");
     }

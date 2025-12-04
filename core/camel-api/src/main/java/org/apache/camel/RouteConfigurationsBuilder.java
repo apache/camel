@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -36,5 +37,4 @@ public interface RouteConfigurationsBuilder {
      * @throws Exception is thrown if initialization of route configurations failed
      */
     void updateRouteConfigurationsToCamelContext(CamelContext context) throws Exception;
-
 }

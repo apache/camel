@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.integration;
 
 import com.google.pubsub.v1.DeadLetterPolicy;
@@ -81,13 +82,9 @@ public class DeadLetterIT extends PubsubTestSupport {
                         })
                         .to(outputPubsubTopic);
 
-                from(outputPubsubSubscription)
-                        .routeId("output")
-                        .to(outputMock);
+                from(outputPubsubSubscription).routeId("output").to(outputMock);
 
-                from(deadLetterPubsubSubscription)
-                        .routeId("dead-letter")
-                        .to(deadLetterMock);
+                from(deadLetterPubsubSubscription).routeId("dead-letter").to(deadLetterMock);
             }
         };
     }
@@ -97,21 +94,27 @@ public class DeadLetterIT extends PubsubTestSupport {
         TopicName projectInputTopicName = TopicName.of(PROJECT_ID, INPUT_TOPIC_NAME);
         TopicName projectOutputTopicName = TopicName.of(PROJECT_ID, OUTPUT_TOPIC_NAME);
         TopicName projectDeadLetterTopicName = TopicName.of(PROJECT_ID, DEAD_LETTER_TOPIC_NAME);
-        ProjectSubscriptionName projectInputSubscriptionName = ProjectSubscriptionName.of(PROJECT_ID, INPUT_SUBSCRIPTION_NAME);
-        ProjectSubscriptionName projectOutputSubscriptionName
-                = ProjectSubscriptionName.of(PROJECT_ID, OUTPUT_SUBSCRIPTION_NAME);
-        ProjectSubscriptionName projectDeadLetterSubscriptionName
-                = ProjectSubscriptionName.of(PROJECT_ID, DEAD_LETTER_SUBSCRIPTION_NAME);
+        ProjectSubscriptionName projectInputSubscriptionName =
+                ProjectSubscriptionName.of(PROJECT_ID, INPUT_SUBSCRIPTION_NAME);
+        ProjectSubscriptionName projectOutputSubscriptionName =
+                ProjectSubscriptionName.of(PROJECT_ID, OUTPUT_SUBSCRIPTION_NAME);
+        ProjectSubscriptionName projectDeadLetterSubscriptionName =
+                ProjectSubscriptionName.of(PROJECT_ID, DEAD_LETTER_SUBSCRIPTION_NAME);
 
-        Topic inputTopic = Topic.newBuilder().setName(projectInputTopicName.toString()).build();
-        Topic outputTopic = Topic.newBuilder().setName(projectOutputTopicName.toString()).build();
-        Topic deadLetterTopic = Topic.newBuilder().setName(projectDeadLetterTopicName.toString()).build();
+        Topic inputTopic =
+                Topic.newBuilder().setName(projectInputTopicName.toString()).build();
+        Topic outputTopic =
+                Topic.newBuilder().setName(projectOutputTopicName.toString()).build();
+        Topic deadLetterTopic = Topic.newBuilder()
+                .setName(projectDeadLetterTopicName.toString())
+                .build();
         Subscription inputSubscription = Subscription.newBuilder()
                 .setName(projectInputSubscriptionName.toString())
                 .setTopic(inputTopic.getName())
                 .setDeadLetterPolicy(DeadLetterPolicy.newBuilder()
                         .setDeadLetterTopic(deadLetterTopic.getName())
-                        .setMaxDeliveryAttempts(5).build())
+                        .setMaxDeliveryAttempts(5)
+                        .build())
                 .build();
         Subscription deadLetterSubscription = Subscription.newBuilder()
                 .setName(projectDeadLetterSubscriptionName.toString())

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.browse;
+
+import static org.apache.camel.component.milo.MiloConstants.SCHEME_BROWSE;
 
 import java.util.Objects;
 
@@ -38,13 +41,17 @@ import org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.milo.MiloConstants.SCHEME_BROWSE;
-
 /**
  * Connect to OPC UA servers using the binary protocol for browsing the node tree.
  */
-@UriEndpoint(firstVersion = "3.15.0", scheme = SCHEME_BROWSE, syntax = "milo-browse:endpointUri", title = "OPC UA Browser",
-             category = { Category.IOT }, producerOnly = true, headersClass = MiloConstants.class)
+@UriEndpoint(
+        firstVersion = "3.15.0",
+        scheme = SCHEME_BROWSE,
+        syntax = "milo-browse:endpointUri",
+        title = "OPC UA Browser",
+        category = {Category.IOT},
+        producerOnly = true,
+        headersClass = MiloConstants.class)
 public class MiloBrowseEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MiloBrowseEndpoint.class);
@@ -67,9 +74,11 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
     /**
      * The direction to browse (forward, inverse, ...)
      */
-    @UriParam(defaultValue = "Forward",
-              enums = "Forward,Inverse,Both",
-              defaultValueNote = "The direction to browse; see org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection")
+    @UriParam(
+            defaultValue = "Forward",
+            enums = "Forward,Inverse,Both",
+            defaultValueNote =
+                    "The direction to browse; see org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection")
     private BrowseDirection direction = BrowseDirection.Forward;
 
     /**
@@ -81,23 +90,27 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
     /**
      * The mask indicating the node classes of interest in browsing
      */
-    @UriParam(defaultValue = "Variable,Object,DataType",
-              defaultValueNote = "Comma-separated node class list; see org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass")
+    @UriParam(
+            defaultValue = "Variable,Object,DataType",
+            defaultValueNote =
+                    "Comma-separated node class list; see org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass")
     private String nodeClasses = NodeClass.Variable + "," + NodeClass.Object + "," + NodeClass.DataType;
 
-    private int nodeClassMask = NodeClass.Variable.getValue() | NodeClass.Object.getValue() | NodeClass.DataType.getValue();
+    private int nodeClassMask =
+            NodeClass.Variable.getValue() | NodeClass.Object.getValue() | NodeClass.DataType.getValue();
 
     /**
      * Whether to browse recursively into sub-types, ignores includeSubTypes setting as it's implied to be set to true
      */
-    @UriParam(defaultValue = "false",
-              defaultValueNote = "Whether to recursively browse sub-types: true|false")
+    @UriParam(defaultValue = "false", defaultValueNote = "Whether to recursively browse sub-types: true|false")
     private boolean recursive;
 
     /**
      * When browsing recursively into sub-types, what's the maximum search depth for diving into the tree
      */
-    @UriParam(defaultValue = "3", defaultValueNote = "Maximum depth for browsing recursively (only if recursive = true)")
+    @UriParam(
+            defaultValue = "3",
+            defaultValueNote = "Maximum depth for browsing recursively (only if recursive = true)")
     private int depth = 3;
 
     /**
@@ -109,8 +122,10 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
     /**
      * The maximum number node ids requested per server call
      */
-    @UriParam(defaultValue = "10",
-              defaultValueNote = "Maximum number of node ids requested per browse call (applies to browsing sub-types only; only if recursive = true)")
+    @UriParam(
+            defaultValue = "10",
+            defaultValueNote =
+                    "Maximum number of node ids requested per browse call (applies to browsing sub-types only; only if recursive = true)")
     private int maxNodeIdsPerRequest = 10;
 
     /**
@@ -119,8 +134,11 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
     @UriParam
     private MiloClientConfiguration configuration;
 
-    public MiloBrowseEndpoint(final String uri, final MiloBrowseComponent component, final String endpointUri,
-                              final MiloClientConnectionManager connectionManager) {
+    public MiloBrowseEndpoint(
+            final String uri,
+            final MiloBrowseComponent component,
+            final String endpointUri,
+            final MiloClientConnectionManager connectionManager) {
         super(uri, component);
 
         Objects.requireNonNull(component);

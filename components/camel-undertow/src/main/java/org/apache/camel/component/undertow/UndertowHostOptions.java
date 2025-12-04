@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import org.apache.camel.spi.Metadata;
@@ -25,17 +26,20 @@ public final class UndertowHostOptions {
 
     @Metadata(description = "The number of worker threads to use in a Undertow host.")
     private Integer workerThreads;
+
     @Metadata(description = "The number of io threads to use in a Undertow host.")
     private Integer ioThreads;
+
     @Metadata(description = "The buffer size of the Undertow host.")
     private Integer bufferSize;
+
     @Metadata(description = "Set if the Undertow host should use direct buffers.")
     private Boolean directBuffers;
+
     @Metadata(description = "Set if the Undertow host should use http2 protocol.")
     private Boolean http2Enabled;
 
-    public UndertowHostOptions() {
-    }
+    public UndertowHostOptions() {}
 
     public Integer getWorkerThreads() {
         return workerThreads;
@@ -76,5 +80,4 @@ public final class UndertowHostOptions {
     public void setHttp2Enabled(Boolean http2Enabled) {
         this.http2Enabled = http2Enabled;
     }
-
 }

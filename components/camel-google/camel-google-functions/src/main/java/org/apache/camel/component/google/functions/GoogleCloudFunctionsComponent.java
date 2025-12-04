@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.functions;
 
 import java.util.Map;
@@ -30,8 +31,7 @@ public class GoogleCloudFunctionsComponent extends DefaultComponent {
     @Metadata
     private GoogleCloudFunctionsConfiguration configuration = new GoogleCloudFunctionsConfiguration();
 
-    public GoogleCloudFunctionsComponent() {
-    }
+    public GoogleCloudFunctionsComponent() {}
 
     public GoogleCloudFunctionsComponent(CamelContext context) {
         super(context);
@@ -41,8 +41,8 @@ public class GoogleCloudFunctionsComponent extends DefaultComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Function name must be specified.");
         }
-        final GoogleCloudFunctionsConfiguration configurationCopy
-                = this.configuration != null ? this.configuration.copy() : new GoogleCloudFunctionsConfiguration();
+        final GoogleCloudFunctionsConfiguration configurationCopy =
+                this.configuration != null ? this.configuration.copy() : new GoogleCloudFunctionsConfiguration();
         configurationCopy.setFunctionName(remaining);
 
         Endpoint endpoint = new GoogleCloudFunctionsEndpoint(uri, this, configurationCopy);

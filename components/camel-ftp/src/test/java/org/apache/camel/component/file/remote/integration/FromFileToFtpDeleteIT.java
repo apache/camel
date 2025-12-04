@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 
@@ -25,10 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFileToFtpDeleteIT extends FtpServerTestSupport {
     @TempDir
@@ -45,8 +46,8 @@ public class FromFileToFtpDeleteIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory, "delete"), "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader(
+                TestSupport.fileUri(testDirectory, "delete"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime());
@@ -62,7 +63,9 @@ public class FromFileToFtpDeleteIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(TestSupport.fileUri(testDirectory, "delete?delete=true")).to(getFtpUrl()).to("mock:result");
+                from(TestSupport.fileUri(testDirectory, "delete?delete=true"))
+                        .to(getFtpUrl())
+                        .to("mock:result");
             }
         };
     }

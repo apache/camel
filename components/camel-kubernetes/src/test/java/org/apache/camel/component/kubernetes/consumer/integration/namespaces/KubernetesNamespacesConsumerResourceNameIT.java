@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.consumer.integration.namespaces;
 
 import java.util.List;
@@ -28,9 +29,12 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 public class KubernetesNamespacesConsumerResourceNameIT extends KubernetesConsumerTestSupport {
     @Test
@@ -47,7 +51,8 @@ public class KubernetesNamespacesConsumerResourceNameIT extends KubernetesConsum
     public void cleanup() {
         List.of(WATCH_RESOURCE_NAME, "ns1").forEach(ns -> {
             CLIENT.namespaces().withName(ns).delete();
-            Awaitility.await().atMost(10, TimeUnit.SECONDS)
+            Awaitility.await()
+                    .atMost(10, TimeUnit.SECONDS)
                     .until(() -> CLIENT.namespaces().withName(ns).get() == null);
         });
     }
@@ -57,9 +62,9 @@ public class KubernetesNamespacesConsumerResourceNameIT extends KubernetesConsum
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("kubernetes-namespaces://%s?oauthToken=%s&resourceName=%s&namespace=%s", host, authToken,
-                        WATCH_RESOURCE_NAME,
-                        ns2)
+                fromF(
+                                "kubernetes-namespaces://%s?oauthToken=%s&resourceName=%s&namespace=%s",
+                                host, authToken, WATCH_RESOURCE_NAME, ns2)
                         .process(new KubernetesProcessor())
                         .to(result);
             }

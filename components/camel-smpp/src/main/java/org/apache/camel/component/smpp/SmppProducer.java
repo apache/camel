@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.apache.camel.component.smpp.SmppUtils.createExecutor;
+import static org.apache.camel.component.smpp.SmppUtils.isServiceStopping;
+import static org.apache.camel.component.smpp.SmppUtils.isSessionClosed;
+import static org.apache.camel.component.smpp.SmppUtils.newReconnectTask;
+import static org.apache.camel.component.smpp.SmppUtils.shutdownReconnectService;
 
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,12 +45,6 @@ import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.smpp.SmppUtils.createExecutor;
-import static org.apache.camel.component.smpp.SmppUtils.isServiceStopping;
-import static org.apache.camel.component.smpp.SmppUtils.isSessionClosed;
-import static org.apache.camel.component.smpp.SmppUtils.newReconnectTask;
-import static org.apache.camel.component.smpp.SmppUtils.shutdownReconnectService;
 
 /**
  * An implementation of @{link Producer} which use the SMPP protocol
@@ -72,8 +73,10 @@ public class SmppProducer extends DefaultProducer {
             }
 
             if (newState.equals(SessionState.UNBOUND) || newState.equals(SessionState.CLOSED)) {
-                LOG.warn(newState.equals(SessionState.UNBOUND)
-                        ? "Session to {} was unbound - trying to reconnect" : "Lost connection to: {} - trying to reconnect...",
+                LOG.warn(
+                        newState.equals(SessionState.UNBOUND)
+                                ? "Session to {} was unbound - trying to reconnect"
+                                : "Lost connection to: {} - trying to reconnect...",
                         getEndpoint().getConnectionString());
                 closeSession();
                 reconnect();
@@ -94,9 +97,11 @@ public class SmppProducer extends DefaultProducer {
                 }
             } else {
                 // TODO Update once baseline is Java 21
-                //                LOG.warn("Thread {} could not acquire a lock for creating the session during producer start",
+                //                LOG.warn("Thread {} could not acquire a lock for creating the session during producer
+                // start",
                 //                        Thread.currentThread().threadId());
-                LOG.warn("Thread {} could not acquire a lock for creating the session during producer start",
+                LOG.warn(
+                        "Thread {} could not acquire a lock for creating the session during producer start",
                         Thread.currentThread().getId());
             }
         }
@@ -113,9 +118,8 @@ public class SmppProducer extends DefaultProducer {
         session.addSessionStateListener(internalSessionStateListener);
         BindType bindType = BindType.BIND_TX;
         if (ObjectHelper.isNotEmpty(this.configuration.getMessageReceiverRouteId())) {
-            session.setMessageReceiverListener(new MessageReceiverListenerImpl(
-                    getEndpoint(),
-                    this.configuration.getMessageReceiverRouteId()));
+            session.setMessageReceiverListener(
+                    new MessageReceiverListenerImpl(getEndpoint(), this.configuration.getMessageReceiverRouteId()));
             bindType = BindType.BIND_TRX;
         }
         session.connectAndBind(
@@ -143,11 +147,9 @@ public class SmppProducer extends DefaultProducer {
      */
     SMPPSession createSMPPSession() {
         return new SMPPSession(
-                new SynchronizedPDUSender(
-                        new DefaultPDUSender(
-                                new DefaultComposer())),
-                new DefaultPDUReader(), SmppConnectionFactory
-                        .getInstance(configuration));
+                new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())),
+                new DefaultPDUReader(),
+                SmppConnectionFactory.getInstance(configuration));
     }
 
     @Override
@@ -173,9 +175,11 @@ public class SmppProducer extends DefaultProducer {
                     }
                 } else {
                     // TODO Update once baseline is Java 21
-                    //                    LOG.warn("Thread {} could not acquire a lock for creating the session during lazy initialization",
+                    //                    LOG.warn("Thread {} could not acquire a lock for creating the session during
+                    // lazy initialization",
                     //                            Thread.currentThread().threadId());
-                    LOG.warn("Thread {} could not acquire a lock for creating the session during lazy initialization",
+                    LOG.warn(
+                            "Thread {} could not acquire a lock for creating the session during lazy initialization",
                             Thread.currentThread().getId());
                 }
             }
@@ -183,7 +187,8 @@ public class SmppProducer extends DefaultProducer {
 
         // only possible by trying to reconnect
         if (this.session == null) {
-            throw new IOException("Lost connection to " + getEndpoint().getConnectionString() + " and yet not reconnected");
+            throw new IOException(
+                    "Lost connection to " + getEndpoint().getConnectionString() + " and yet not reconnected");
         }
 
         SmppCommand command = getEndpoint().getBinding().createSmppCommand(session, exchange);
@@ -213,9 +218,12 @@ public class SmppProducer extends DefaultProducer {
 
     private void reconnect() {
         if (connectLock.tryLock()) {
-            BlockingTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME,
+            BlockingTask task = newReconnectTask(
+                    reconnectService,
+                    RECONNECT_TASK_NAME,
                     configuration.getInitialReconnectDelay(),
-                    configuration.getReconnectDelay(), configuration.getMaxReconnect());
+                    configuration.getReconnectDelay(),
+                    configuration.getMaxReconnect());
 
             try {
                 task.run(getEndpoint().getCamelContext(), this::doReconnect);
@@ -224,9 +232,11 @@ public class SmppProducer extends DefaultProducer {
             }
         } else {
             // TODO Update once baseline is Java 21
-            //            LOG.warn("Thread {} could not acquire a lock for creating the session during producer reconnection",
+            //            LOG.warn("Thread {} could not acquire a lock for creating the session during producer
+            // reconnection",
             //                    Thread.currentThread().threadId());
-            LOG.warn("Thread {} could not acquire a lock for creating the session during producer reconnection",
+            LOG.warn(
+                    "Thread {} could not acquire a lock for creating the session during producer reconnection",
                     Thread.currentThread().getId());
         }
     }

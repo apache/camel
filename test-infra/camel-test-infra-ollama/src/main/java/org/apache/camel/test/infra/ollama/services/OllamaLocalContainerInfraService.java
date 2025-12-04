@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ollama.services;
 
 import java.io.IOException;
@@ -34,9 +35,10 @@ import org.testcontainers.containers.BindMode;
 import org.testcontainers.ollama.OllamaContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = OllamaInfraService.class,
-              description = "Build and run LLMs with Ollama",
-              serviceAlias = { "ollama" })
+@InfraService(
+        service = OllamaInfraService.class,
+        description = "Build and run LLMs with Ollama",
+        serviceAlias = {"ollama"})
 public class OllamaLocalContainerInfraService implements OllamaInfraService, ContainerService<OllamaContainer> {
     private static class DefaultServiceConfiguration implements OllamaServiceConfiguration {
 
@@ -53,8 +55,8 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
 
     private static final Logger LOG = LoggerFactory.getLogger(OllamaLocalContainerInfraService.class);
 
-    public static final String CONTAINER_NAME = LocalPropertyResolver.getProperty(
-            OllamaLocalContainerInfraService.class, OllamaProperties.CONTAINER);
+    public static final String CONTAINER_NAME =
+            LocalPropertyResolver.getProperty(OllamaLocalContainerInfraService.class, OllamaProperties.CONTAINER);
 
     private final OllamaContainer container;
     private final OllamaServiceConfiguration configuration;
@@ -72,8 +74,7 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
     protected OllamaContainer initContainer() {
         class TestInfraOllamaContainer extends OllamaContainer {
             public TestInfraOllamaContainer(boolean fixedPort) {
-                super(DockerImageName.parse(CONTAINER_NAME)
-                        .asCompatibleSubstituteFor("ollama/ollama"));
+                super(DockerImageName.parse(CONTAINER_NAME).asCompatibleSubstituteFor("ollama/ollama"));
 
                 // Add file system bind for Ollama data persistence
                 String homeDir = System.getenv("HOME");
@@ -95,11 +96,9 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
                 if ("enabled".equalsIgnoreCase(enableGpu)) {
                     LOG.info("Enabling GPU support for Ollama container");
                     withCreateContainerCmdModifier(cmd -> cmd.getHostConfig()
-                            .withDeviceRequests(
-                                    Arrays.asList(
-                                            new DeviceRequest()
-                                                    .withCount(-1) // -1 means all GPUs
-                                                    .withCapabilities(Arrays.asList(Arrays.asList("gpu"))))));
+                            .withDeviceRequests(Arrays.asList(new DeviceRequest()
+                                    .withCount(-1) // -1 means all GPUs
+                                    .withCapabilities(Arrays.asList(Arrays.asList("gpu"))))));
                 } else {
                     LOG.info("GPU support disabled");
                 }

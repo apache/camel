@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -45,6 +46,7 @@ public class TransformWithExpressionTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/transformWithExpressionContext.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/transformWithExpressionContext.xml");
     }
 }

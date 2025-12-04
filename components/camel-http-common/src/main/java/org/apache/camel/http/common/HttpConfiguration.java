@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.io.Serializable;
@@ -23,63 +24,90 @@ import org.apache.camel.spi.Metadata;
 public class HttpConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Metadata(label = "producer,security",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, or NTLM. (NTLM is deprecated)")
+    @Metadata(
+            label = "producer,security",
+            description =
+                    "Authentication methods allowed to use as a comma separated list of values Basic, or NTLM. (NTLM is deprecated)")
     private String authMethod;
+
     @Metadata(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
+
     @Metadata(label = "producer,security", secret = true, description = "Authentication password")
     private String authPassword;
+
     @Metadata(label = "producer,security", secret = true, description = "Authentication bearer token")
     private String authBearerToken;
+
     @Metadata(label = "producer,security", secret = true, description = "OAuth2 client id")
     private String oauth2ClientId;
+
     @Metadata(label = "producer,security", secret = true, description = "OAuth2 client secret")
     private String oauth2ClientSecret;
+
     @Metadata(label = "producer,security", description = "OAuth2 token endpoint")
     private String oauth2TokenEndpoint;
+
     @Metadata(label = "producer,security", description = "OAuth2 scope")
     private String oauth2Scope;
+
     @Metadata(label = "producer,security", description = "OAuth2 Resource Indicator")
     private String oauth2ResourceIndicator;
-    @Metadata(label = "producer,security",
-              description = "Whether to cache OAuth2 client tokens.")
+
+    @Metadata(label = "producer,security", description = "Whether to cache OAuth2 client tokens.")
     private boolean oauth2CacheTokens;
-    @Metadata(label = "producer,security", defaultValue = "3600",
-              description = "Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain 'expires_in' field.")
+
+    @Metadata(
+            label = "producer,security",
+            defaultValue = "3600",
+            description =
+                    "Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain 'expires_in' field.")
     private long oauth2CachedTokensDefaultExpirySeconds = 3600L;
-    @Metadata(label = "producer,security", defaultValue = "5",
-              description = "Amount of time which is deducted from OAuth2 tokens expiry time to compensate for the time it takes OAuth2 Token Endpoint to send the token over http, in seconds. "
-                            +
-                            "Set this parameter to high value if you OAuth2 Token Endpoint answers slowly or you tokens expire quickly. "
-                            +
-                            "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
+
+    @Metadata(
+            label = "producer,security",
+            defaultValue = "5",
+            description =
+                    "Amount of time which is deducted from OAuth2 tokens expiry time to compensate for the time it takes OAuth2 Token Endpoint to send the token over http, in seconds. "
+                            + "Set this parameter to high value if you OAuth2 Token Endpoint answers slowly or you tokens expire quickly. "
+                            + "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
     private long oauth2CachedTokensExpirationMarginSeconds = 5;
-    @Metadata(label = "producer,security",
-              description = "Whether to use OAuth2 body authentication.")
+
+    @Metadata(label = "producer,security", description = "Whether to use OAuth2 body authentication.")
     private boolean oauth2BodyAuthentication;
+
     @Metadata(label = "producer,security", description = "Authentication domain to use with NTLM")
     @Deprecated
     private String authDomain;
+
     @Metadata(label = "producer,security", description = "Authentication host to use with NTLM")
     @Deprecated
     private String authHost;
+
     @Metadata(label = "producer,proxy", description = "Proxy hostname to use")
     private String proxyHost;
+
     @Metadata(label = "producer,proxy", description = "Proxy port to use")
     private int proxyPort;
+
     @Metadata(label = "producer,proxy", enums = "http,https", description = "Authentication scheme to use")
     private String proxyAuthScheme;
+
     @Metadata(label = "producer,proxy", enums = "Basic,Bearer,NTLM", description = "Proxy authentication method to use")
     private String proxyAuthMethod;
+
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
     private String proxyAuthUsername;
+
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication password")
     private String proxyAuthPassword;
+
     @Metadata(label = "producer,proxy", description = "Proxy authentication host")
     private String proxyAuthHost;
+
     @Metadata(label = "producer,proxy", description = "Proxy authentication port")
     private int proxyAuthPort;
+
     @Metadata(label = "producer,proxy", description = "Proxy authentication domain to use with NTLM")
     @Deprecated
     private String proxyAuthDomain;

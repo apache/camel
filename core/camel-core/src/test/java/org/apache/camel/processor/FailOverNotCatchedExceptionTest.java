@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -27,9 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
 
@@ -59,7 +60,9 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
                         // to failover over any kind of exception we can just omit
                         // the exception
                         // in the failOver DSL
-                        .loadBalance().failover(IOException.class).to("direct:x", "direct:y", "direct:z");
+                        .loadBalance()
+                        .failover(IOException.class)
+                        .to("direct:x", "direct:y", "direct:z");
                 // END SNIPPET: e1
 
                 from("direct:x").to("mock:x").process(new Processor() {
@@ -99,5 +102,4 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

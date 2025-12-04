@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -31,9 +35,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CronScheduledRoutePolicyTest {
 
@@ -55,27 +56,19 @@ public class CronScheduledRoutePolicyTest {
                     CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                     policy.setRouteStartTime("*/3 * * * * ?");
 
-                    from("direct:start1")
-                            .routeId("test1")
-                            .routePolicy(policy)
-                            .to("mock:success1");
+                    from("direct:start1").routeId("test1").routePolicy(policy).to("mock:success1");
 
-                    from("direct:start2")
-                            .routeId("test2")
-                            .routePolicy(policy)
-                            .to("mock:success2");
+                    from("direct:start2").routeId("test2").routePolicy(policy).to("mock:success2");
                 }
             });
             context.start();
             context.getRouteController().stopRoute("test1", 1000, TimeUnit.MILLISECONDS);
             context.getRouteController().stopRoute("test2", 1000, TimeUnit.MILLISECONDS);
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(
-                            () -> {
-                                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test1"));
-                                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test2"));
-                            });
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test1"));
+                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test2"));
+            });
             template.sendBody("direct:start1", "Ready or not, Here, I come");
             template.sendBody("direct:start2", "Ready or not, Here, I come");
 
@@ -98,25 +91,17 @@ public class CronScheduledRoutePolicyTest {
                     policy.setRouteStopGracePeriod(0);
                     policy.setTimeUnit(TimeUnit.MILLISECONDS);
 
-                    from("direct:start1")
-                            .routeId("test1")
-                            .routePolicy(policy)
-                            .to("mock:unreachable");
+                    from("direct:start1").routeId("test1").routePolicy(policy).to("mock:unreachable");
 
-                    from("direct:start2")
-                            .routeId("test2")
-                            .routePolicy(policy)
-                            .to("mock:unreachable");
+                    from("direct:start2").routeId("test2").routePolicy(policy).to("mock:unreachable");
                 }
             });
             context.start();
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(
-                            () -> {
-                                assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test1"));
-                                assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test2"));
-                            });
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test1"));
+                assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test2"));
+            });
         }
     }
 
@@ -136,18 +121,16 @@ public class CronScheduledRoutePolicyTest {
                     CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                     policy.setRouteStartTime("*/3 * * * * ?");
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:success");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:success");
                 }
             });
             context.start();
             context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(
-                            () -> assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test")));
+            Awaitility.await()
+                    .atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertSame(
+                            ServiceStatus.Started, context.getRouteController().getRouteStatus("test")));
             template.sendBody("direct:start", "Ready or not, Here, I come");
 
             context.getComponent("quartz", QuartzComponent.class).stop();
@@ -169,17 +152,15 @@ public class CronScheduledRoutePolicyTest {
                     policy.setRouteStopGracePeriod(0);
                     policy.setTimeUnit(TimeUnit.MILLISECONDS);
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:unreachable");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:unreachable");
                 }
             });
             context.start();
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(
-                            () -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
+            Awaitility.await()
+                    .atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertSame(
+                            ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
         }
     }
 
@@ -266,9 +247,10 @@ public class CronScheduledRoutePolicyTest {
             });
             context.start();
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(
-                            () -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
+            Awaitility.await()
+                    .atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertSame(
+                            ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
             assertTrue(myPolicy.isStart(), "Should have called onStart");
             assertTrue(myPolicy.isStop(), "Should have called onStop");
         }
@@ -286,22 +268,18 @@ public class CronScheduledRoutePolicyTest {
                     CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                     policy.setRouteSuspendTime("*/3 * * * * ?");
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:unreachable");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:unreachable");
                 }
             });
             context.start();
 
             // when suspending its only the consumer that suspends
             // there is a ticket to improve this
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(() -> {
-                        Consumer consumer = context.getRoute("test").getConsumer();
-                        SuspendableService ss = (SuspendableService) consumer;
-                        assertTrue(ss.isSuspended(), "Consumer should be suspended");
-                    });
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                Consumer consumer = context.getRoute("test").getConsumer();
+                SuspendableService ss = (SuspendableService) consumer;
+                assertTrue(ss.isSuspended(), "Consumer should be suspended");
+            });
         }
     }
 
@@ -320,10 +298,7 @@ public class CronScheduledRoutePolicyTest {
                     CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                     policy.setRouteResumeTime("*/3 * * * * ?");
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:success");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:success");
                 }
             });
             context.start();
@@ -336,5 +311,4 @@ public class CronScheduledRoutePolicyTest {
             success.assertIsSatisfied();
         }
     }
-
 }

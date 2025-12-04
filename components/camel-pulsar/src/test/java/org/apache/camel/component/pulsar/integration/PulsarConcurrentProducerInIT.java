@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.ExecutorService;
@@ -41,8 +42,8 @@ public class PulsarConcurrentProducerInIT extends PulsarITSupport {
     private ProducerTemplate producerTemplate;
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=3&subscriptionType=Shared"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=5"
-                    + "&consumerNamePrefix=camel-consumer" + "&producerName=" + PRODUCER)
+            + "&subscriptionName=camel-subscription&consumerQueueSize=5"
+            + "&consumerNamePrefix=camel-consumer" + "&producerName=" + PRODUCER)
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -71,7 +72,11 @@ public class PulsarConcurrentProducerInIT extends PulsarITSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     @Test

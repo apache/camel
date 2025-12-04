@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kserve;
 
 import org.apache.camel.spi.Metadata;
@@ -28,5 +29,4 @@ public interface KServeConstants {
 
     @Metadata(description = "The version of the model used for inference.", javaType = "String")
     String MODEL_VERSION = "CamelKServeModelVersion";
-
 }

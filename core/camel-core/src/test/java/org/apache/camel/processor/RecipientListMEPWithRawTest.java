@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,7 +39,9 @@ public class RecipientListMEPWithRawTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").recipientList().constant("seda:foo?exchangePattern=InOut&blockWhenFull=RAW(true)")
+                from("direct:start")
+                        .recipientList()
+                        .constant("seda:foo?exchangePattern=InOut&blockWhenFull=RAW(true)")
                         .to("mock:result");
 
                 from("seda:foo").to("mock:foo").transform().constant("Bye World");

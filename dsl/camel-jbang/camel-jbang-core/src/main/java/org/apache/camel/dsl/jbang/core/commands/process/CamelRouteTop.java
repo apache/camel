@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.Arrays;
@@ -26,8 +27,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine.Command;
 
-@Command(name = "route", description = "Top performing routes",
-         sortOptions = false, showDefaultValues = true)
+@Command(name = "route", description = "Top performing routes", sortOptions = false, showDefaultValues = true)
 public class CamelRouteTop extends CamelRouteStatus {
 
     public CamelRouteTop(CamelJBangMain main) {
@@ -36,32 +36,62 @@ public class CamelRouteTop extends CamelRouteStatus {
 
     @Override
     protected void printTable(List<Row> rows, boolean remoteVisible) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("GROUP").visible(showGroup).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getGroup),
-                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getId),
-                new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getFrom),
-                new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
-                        .dataAlign(HorizontalAlign.CENTER)
-                        .with(this::getRemote),
-                new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                        .with(r -> r.state),
-                new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("LOAD").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
-                        .with(this::getLoad),
-                new Column().header("TOTAL").with(this::getTotal),
-                new Column().header("FAIL").with(this::getFailed),
-                new Column().header("INFLIGHT").with(this::getInflight),
-                new Column().header("MEAN").with(r -> r.mean),
-                new Column().header("MIN").with(r -> r.min),
-                new Column().header("MAX").with(r -> r.max),
-                new Column().header("SINCE-LAST").with(this::getSinceLast))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("PID")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.pid),
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column()
+                                        .header("GROUP")
+                                        .visible(showGroup)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getGroup),
+                                new Column()
+                                        .header("ID")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getId),
+                                new Column()
+                                        .header("FROM")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getFrom),
+                                new Column()
+                                        .header("REMOTE")
+                                        .visible(remoteVisible)
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .dataAlign(HorizontalAlign.CENTER)
+                                        .with(this::getRemote),
+                                new Column()
+                                        .header("STATUS")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.state),
+                                new Column()
+                                        .header("AGE")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.age),
+                                new Column()
+                                        .header("LOAD")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .dataAlign(HorizontalAlign.CENTER)
+                                        .with(this::getLoad),
+                                new Column().header("TOTAL").with(this::getTotal),
+                                new Column().header("FAIL").with(this::getFailed),
+                                new Column().header("INFLIGHT").with(this::getInflight),
+                                new Column().header("MEAN").with(r -> r.mean),
+                                new Column().header("MIN").with(r -> r.min),
+                                new Column().header("MAX").with(r -> r.max),
+                                new Column().header("SINCE-LAST").with(this::getSinceLast))));
     }
 
     private String getLoad(Row r) {
@@ -103,5 +133,4 @@ public class CamelRouteTop extends CamelRouteStatus {
         }
         return answer;
     }
-
 }

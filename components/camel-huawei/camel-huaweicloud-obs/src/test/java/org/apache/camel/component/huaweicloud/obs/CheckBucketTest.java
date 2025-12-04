@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.obs.services.ObsClient;
 import org.apache.camel.BindToRegistry;
@@ -27,8 +30,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CheckBucketTest extends CamelTestSupport {
 
     TestConfiguration testConfiguration = new TestConfiguration();
@@ -37,22 +38,20 @@ public class CheckBucketTest extends CamelTestSupport {
     ObsClient mockClient = Mockito.mock(ObsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:check_bucket")
-                        .to("hwcloud-obs:checkBucketExists?" +
-                            "accessKey=" + testConfiguration.getProperty("accessKey") +
-                            "&secretKey=" + testConfiguration.getProperty("secretKey") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&bucketName=" + testConfiguration.getProperty("bucketName") +
-                            "&ignoreSslVerification=true" +
-                            "&obsClient=#obsClient")
+                        .to("hwcloud-obs:checkBucketExists?" + "accessKey="
+                                + testConfiguration.getProperty("accessKey") + "&secretKey="
+                                + testConfiguration.getProperty("secretKey") + "&region="
+                                + testConfiguration.getProperty("region") + "&bucketName="
+                                + testConfiguration.getProperty("bucketName") + "&ignoreSslVerification=true"
+                                + "&obsClient=#obsClient")
                         .log("Check bucket exists successful")
                         .to("mock:check_bucket_result");
             }

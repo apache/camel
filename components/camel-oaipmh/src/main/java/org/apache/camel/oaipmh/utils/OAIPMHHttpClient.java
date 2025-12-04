@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh.utils;
 
 import java.io.IOException;
@@ -52,7 +53,13 @@ public class OAIPMHHttpClient {
     private boolean ignoreSSLWarnings;
 
     public String doRequest(
-            URI baseURI, String verb, String set, String from, String until, String metadataPrefix, String token,
+            URI baseURI,
+            String verb,
+            String set,
+            String from,
+            String until,
+            String metadataPrefix,
+            String token,
             String identifier)
             throws IOException, URISyntaxException {
 
@@ -106,7 +113,6 @@ public class OAIPMHHttpClient {
                         throw new ClientProtocolException("Unexpected response status: " + status);
                     }
                 }
-
             };
             String responseBody = httpclient.execute(httpget, responseHandler);
 
@@ -121,8 +127,7 @@ public class OAIPMHHttpClient {
             try {
                 SSLContextBuilder builder = new SSLContextBuilder();
                 builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-                SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                        builder.build());
+                SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
                 RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
                 registryBuilder.register("https", sslsf);
                 return HttpClients.custom()
@@ -143,5 +148,4 @@ public class OAIPMHHttpClient {
     public void setIgnoreSSLWarnings(boolean ignoreSSLWarnings) {
         this.ignoreSSLWarnings = ignoreSSLWarnings;
     }
-
 }

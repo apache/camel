@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.HashMap;
@@ -45,9 +46,12 @@ public class AggregateExpressionTimeoutFallbackTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
                         // if no timeout header it will fallback to the 2000 seconds
-                        .completionTimeout(header("timeout")).completionTimeout(2000).to("mock:aggregated");
+                        .completionTimeout(header("timeout"))
+                        .completionTimeout(2000)
+                        .to("mock:aggregated");
             }
         };
     }

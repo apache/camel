@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
@@ -53,11 +54,15 @@ public class OAuth2ScopeRequestHandler implements HttpRequestHandler {
             throws HttpException, IOException {
         String requestBody = EntityUtils.toString(request.getEntity());
         WWWFormCodec.parse(requestBody, StandardCharsets.UTF_8).stream()
-                .filter(pair -> pair.getName().equals("scope") && pair.getValue().equals(scope))
-                .findAny().orElseThrow(() -> new HttpException("Invalid or missing scope"));
+                .filter(pair ->
+                        pair.getName().equals("scope") && pair.getValue().equals(scope))
+                .findAny()
+                .orElseThrow(() -> new HttpException("Invalid or missing scope"));
 
-        if (request.getHeader(HttpHeaders.AUTHORIZATION) == null || !request.getHeader(HttpHeaders.AUTHORIZATION).getValue()
-                .equals(HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret)))
+        if (request.getHeader(HttpHeaders.AUTHORIZATION) == null
+                || !request.getHeader(HttpHeaders.AUTHORIZATION)
+                        .getValue()
+                        .equals(HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret)))
             throw new HttpException("Invalid credentials");
 
         Map<String, String> responseEntity = new HashMap<>();
@@ -65,5 +70,4 @@ public class OAuth2ScopeRequestHandler implements HttpRequestHandler {
 
         response.setEntity(new StringEntity(Jsoner.serialize(responseEntity), ContentType.APPLICATION_JSON));
     }
-
 }

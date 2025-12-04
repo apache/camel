@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
 
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CamelExceptionsTest extends ContextTestSupport {
 
@@ -40,8 +41,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         Expression exp = ExpressionBuilder.constantExpression("foo");
         Exchange exchange = new DefaultExchange(context);
 
-        ExpressionEvaluationException e
-                = new ExpressionEvaluationException(exp, exchange, new IllegalArgumentException("Damn"));
+        ExpressionEvaluationException e =
+                new ExpressionEvaluationException(exp, exchange, new IllegalArgumentException("Damn"));
         assertSame(exchange, e.getExchange());
         assertSame(exp, e.getExpression());
         assertNotNull(e.getCause());
@@ -50,7 +51,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
     @Test
     public void testFailedToCreateConsumerException() {
         Endpoint endpoint = context.getEndpoint("seda:foo");
-        FailedToCreateConsumerException e = new FailedToCreateConsumerException(endpoint, new IllegalArgumentException("Damn"));
+        FailedToCreateConsumerException e =
+                new FailedToCreateConsumerException(endpoint, new IllegalArgumentException("Damn"));
 
         assertEquals(endpoint.getEndpointUri(), e.getUri());
         assertNotNull(e.getCause());
@@ -59,7 +61,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
     @Test
     public void testFailedToCreateProducerException() {
         Endpoint endpoint = context.getEndpoint("seda:foo");
-        FailedToCreateProducerException e = new FailedToCreateProducerException(endpoint, new IllegalArgumentException("Damn"));
+        FailedToCreateProducerException e =
+                new FailedToCreateProducerException(endpoint, new IllegalArgumentException("Damn"));
 
         assertEquals(endpoint.getEndpointUri(), e.getUri());
         assertNotNull(e.getCause());
@@ -73,7 +76,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertSame(exchange, e.getExchange());
         assertEquals(Integer.class, e.getType());
 
-        InvalidPayloadRuntimeException e2 = new InvalidPayloadRuntimeException(exchange, Integer.class, exchange.getIn());
+        InvalidPayloadRuntimeException e2 =
+                new InvalidPayloadRuntimeException(exchange, Integer.class, exchange.getIn());
         assertSame(exchange, e2.getExchange());
         assertEquals(Integer.class, e2.getType());
 
@@ -121,7 +125,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNotNull(e.getMessage());
         assertSame(exchange, e.getExchange());
 
-        RollbackExchangeException e2 = new RollbackExchangeException("Forced", exchange, new IllegalAccessException("Damn"));
+        RollbackExchangeException e2 =
+                new RollbackExchangeException("Forced", exchange, new IllegalAccessException("Damn"));
         assertNotNull(e2.getMessage());
         assertSame(exchange, e2.getExchange());
     }
@@ -159,7 +164,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertSame(exchange, e.getExchange());
         assertNull(e.getCause());
 
-        CamelExecutionException e2 = new CamelExecutionException("Forced", exchange, new IllegalArgumentException("Damn"));
+        CamelExecutionException e2 =
+                new CamelExecutionException("Forced", exchange, new IllegalArgumentException("Damn"));
         assertNotNull(e2.getMessage());
         assertSame(exchange, e2.getExchange());
         assertNotNull(e2.getCause());
@@ -231,8 +237,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertEquals(ExchangePattern.InOnly, ExchangePattern.asEnum("InOnly"));
         assertEquals(ExchangePattern.InOut, ExchangePattern.asEnum("InOut"));
 
-        assertThrows(IllegalArgumentException.class, () -> ExchangePattern.asEnum("foo"),
-                "Should have thrown an exception");
+        assertThrows(
+                IllegalArgumentException.class, () -> ExchangePattern.asEnum("foo"), "Should have thrown an exception");
     }
 
     @Test
@@ -304,8 +310,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
 
     @Test
     public void testFailedToStartRouteException() {
-        FailedToStartRouteException e
-                = new FailedToStartRouteException("myRoute", "Forced error", new IllegalArgumentException("Forced"));
+        FailedToStartRouteException e =
+                new FailedToStartRouteException("myRoute", "Forced error", new IllegalArgumentException("Forced"));
         assertNotNull(e.getMessage());
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
     }
@@ -328,5 +334,4 @@ public class CamelExceptionsTest extends ContextTestSupport {
         ResolveEndpointFailedException e = new ResolveEndpointFailedException("foo:bar");
         assertEquals("foo:bar", e.getUri());
     }
-
 }

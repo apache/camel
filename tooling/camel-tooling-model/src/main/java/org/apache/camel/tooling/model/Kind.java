@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.io.IOException;
@@ -52,5 +53,4 @@ public enum Kind implements Jsonable {
     public void toJson(final Writer writable) throws IOException {
         writable.write(Jsoner.serialize(name()));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group;
 
 import java.util.concurrent.Callable;
@@ -26,10 +27,7 @@ public class DefaultGroupFactoryStrategy implements ManagedGroupFactoryStrategy 
 
     @Override
     public ManagedGroupFactory createGroupFactory(
-            CuratorFramework curator,
-            ClassLoader loader,
-            CamelContext camelContext,
-            Callable<CuratorFramework> factory)
+            CuratorFramework curator, ClassLoader loader, CamelContext camelContext, Callable<CuratorFramework> factory)
             throws Exception {
 
         if (curator != null) {
@@ -38,5 +36,4 @@ public class DefaultGroupFactoryStrategy implements ManagedGroupFactoryStrategy 
             return new DefaultManagedGroupFactory(factory.call(), true);
         }
     }
-
 }

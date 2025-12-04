@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx.error;
 
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
@@ -23,7 +24,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class JMSTransactionRollbackIT extends AbstractSpringJMSITSupport {
 
     @Override

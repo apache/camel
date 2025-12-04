@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 /**
@@ -35,5 +36,4 @@ public enum AuthenticationScheme {
      * API Key authentication via custom header
      */
     API_KEY
-
 }

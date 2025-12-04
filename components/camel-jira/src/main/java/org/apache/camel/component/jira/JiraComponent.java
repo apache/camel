@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira;
 
 import java.util.Map;
@@ -58,5 +59,4 @@ public class JiraComponent extends HealthCheckComponent {
     public void setConfiguration(JiraConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq6;
 
 import org.apache.camel.component.jms.JmsComponent;
@@ -23,13 +24,17 @@ import org.apache.camel.component.jms.QueueBrowseStrategy;
 
 public class ActiveMQTemporaryQueueEndpoint extends JmsTemporaryQueueEndpoint {
 
-    public ActiveMQTemporaryQueueEndpoint(String uri, JmsComponent component, String destination,
-                                          JmsConfiguration configuration) {
+    public ActiveMQTemporaryQueueEndpoint(
+            String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
         super(uri, component, destination, configuration);
     }
 
-    public ActiveMQTemporaryQueueEndpoint(String uri, JmsComponent component, String destination,
-                                          JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
+    public ActiveMQTemporaryQueueEndpoint(
+            String uri,
+            JmsComponent component,
+            String destination,
+            JmsConfiguration configuration,
+            QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, configuration, queueBrowseStrategy);
     }
 

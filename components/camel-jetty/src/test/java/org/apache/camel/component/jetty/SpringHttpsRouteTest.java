@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 import java.util.List;
@@ -43,13 +49,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "/org/apache/camel/component/jetty/jetty-https.xml" })
+@ContextConfiguration(locations = {"/org/apache/camel/component/jetty/jetty-https.xml"})
 @ResourceLock(BaseJettyTest.SSL_SYSPROPS)
 @Isolated
 public class SpringHttpsRouteTest {
@@ -104,7 +105,8 @@ public class SpringHttpsRouteTest {
         mockEndpoint.reset();
         mockEndpoint.expectedBodiesReceived(expectedBody);
 
-        template.sendBodyAndHeader("https://localhost:" + port + "/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader(
+                "https://localhost:" + port + "/test", expectedBody, "Content-Type", "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -125,7 +127,8 @@ public class SpringHttpsRouteTest {
     public void testEndpointWithoutHttps() {
         mockEndpoint.reset();
         try {
-            template.sendBodyAndHeader("http://localhost:" + port + "/test", expectedBody, "Content-Type", "application/xml");
+            template.sendBodyAndHeader(
+                    "http://localhost:" + port + "/test", expectedBody, "Content-Type", "application/xml");
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }

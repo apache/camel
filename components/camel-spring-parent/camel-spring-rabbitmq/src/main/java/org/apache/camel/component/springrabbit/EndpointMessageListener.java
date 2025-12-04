@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
+
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -37,8 +40,6 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
-
 public class EndpointMessageListener implements ChannelAwareMessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
@@ -51,7 +52,8 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
     private boolean async;
     private final Lock lock = new ReentrantLock();
 
-    public EndpointMessageListener(SpringRabbitMQConsumer consumer, SpringRabbitMQEndpoint endpoint, Processor processor) {
+    public EndpointMessageListener(
+            SpringRabbitMQConsumer consumer, SpringRabbitMQEndpoint endpoint, Processor processor) {
         this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
@@ -102,15 +104,16 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
         LOG.debug("{} consumer received RabbitMQ message: {}", endpoint, message);
         RuntimeCamelException rce;
         try {
-            final Address replyDestination
-                    = message.getMessageProperties() != null ? message.getMessageProperties().getReplyToAddress() : null;
+            final Address replyDestination = message.getMessageProperties() != null
+                    ? message.getMessageProperties().getReplyToAddress()
+                    : null;
             final boolean sendReply = !isDisableReplyTo() && replyDestination != null;
             final Exchange exchange = createExchange(message, channel, replyDestination);
 
             // process the exchange either asynchronously or synchronous
             LOG.trace("onMessage.process START");
-            AsyncCallback callback
-                    = new EndpointMessageListenerAsyncCallback(message, exchange, endpoint, sendReply, replyDestination);
+            AsyncCallback callback =
+                    new EndpointMessageListenerAsyncCallback(message, exchange, endpoint, sendReply, replyDestination);
 
             // async is by default false, which mean we by default will process the exchange synchronously
             // to keep backwards compatible, as well ensure this consumer will pickup messages in order
@@ -168,8 +171,8 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
         Object body = endpoint.getMessageConverter().fromMessage(message);
         exchange.getMessage().setBody(body);
 
-        Map<String, Object> headers
-                = endpoint.getMessagePropertiesConverter().fromMessageProperties(message.getMessageProperties(), exchange);
+        Map<String, Object> headers = endpoint.getMessagePropertiesConverter()
+                .fromMessageProperties(message.getMessageProperties(), exchange);
         if (!headers.isEmpty()) {
             exchange.getMessage().setHeaders(headers);
         }
@@ -195,8 +198,12 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
         private final boolean sendReply;
         private final Address replyDestination;
 
-        private EndpointMessageListenerAsyncCallback(Message message, Exchange exchange, SpringRabbitMQEndpoint endpoint,
-                                                     boolean sendReply, Address replyDestination) {
+        private EndpointMessageListenerAsyncCallback(
+                Message message,
+                Exchange exchange,
+                SpringRabbitMQEndpoint endpoint,
+                boolean sendReply,
+                Address replyDestination) {
             this.message = message;
             this.exchange = exchange;
             this.endpoint = endpoint;
@@ -264,7 +271,8 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
             }
         }
 
-        private void sendReply(Address replyDestination, Message message, Exchange exchange, org.apache.camel.Message out) {
+        private void sendReply(
+                Address replyDestination, Message message, Exchange exchange, org.apache.camel.Message out) {
             if (replyDestination == null) {
                 LOG.debug("Cannot send reply message as there is no reply-to for: {}", out);
                 return;
@@ -288,5 +296,4 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
             getTemplate().send(replyDestination.getExchangeName(), replyDestination.getRoutingKey(), msg);
         }
     }
-
 }

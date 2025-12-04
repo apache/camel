@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
@@ -33,36 +37,32 @@ import org.ehcache.config.units.MemoryUnit;
 import org.ehcache.core.Ehcache;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class EhcacheConfigurationTest extends CamelTestSupport {
     @EndpointInject("ehcache:globalConfig")
     EhcacheEndpoint globalConfig;
+
     @EndpointInject("ehcache:customConfig")
     EhcacheEndpoint customConfig;
 
     @BindToRegistry("ehcache")
     public Component createEhcacheComponent() {
         EhcacheComponent component = new EhcacheComponent();
-        component.setCacheConfiguration(
-                CacheConfigurationBuilder.newCacheConfigurationBuilder(
+        component.setCacheConfiguration(CacheConfigurationBuilder.newCacheConfigurationBuilder(
                         String.class,
                         String.class,
                         ResourcePoolsBuilder.newResourcePoolsBuilder()
                                 .heap(100, EntryUnit.ENTRIES)
                                 .offheap(1, MemoryUnit.MB))
-                        .build());
-        component.setCachesConfigurations(
-                Collections.singletonMap(
-                        "customConfig",
-                        CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                .build());
+        component.setCachesConfigurations(Collections.singletonMap(
+                "customConfig",
+                CacheConfigurationBuilder.newCacheConfigurationBuilder(
                                 String.class,
                                 String.class,
                                 ResourcePoolsBuilder.newResourcePoolsBuilder()
                                         .heap(200, EntryUnit.ENTRIES)
                                         .offheap(2, MemoryUnit.MB))
-                                .build()));
+                        .build()));
 
         return component;
     }
@@ -73,25 +73,49 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
 
     @Test
     void testComponentConfiguration() throws Exception {
-        Cache<String, String> globalConfigCache
-                = globalConfig.getManager().getCache("globalConfig", String.class, String.class);
-        Cache<String, String> customConfigCache
-                = customConfig.getManager().getCache("customConfig", String.class, String.class);
+        Cache<String, String> globalConfigCache =
+                globalConfig.getManager().getCache("globalConfig", String.class, String.class);
+        Cache<String, String> customConfigCache =
+                customConfig.getManager().getCache("customConfig", String.class, String.class);
 
         assertTrue(globalConfigCache instanceof Ehcache);
         assertTrue(customConfigCache instanceof Ehcache);
 
         CacheRuntimeConfiguration<String, String> gc = globalConfigCache.getRuntimeConfiguration();
-        assertEquals(100, gc.getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getSize());
-        assertEquals(EntryUnit.ENTRIES, gc.getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getUnit());
-        assertEquals(1, gc.getResourcePools().getPoolForResource(ResourceType.Core.OFFHEAP).getSize());
-        assertEquals(MemoryUnit.MB, gc.getResourcePools().getPoolForResource(ResourceType.Core.OFFHEAP).getUnit());
+        assertEquals(
+                100,
+                gc.getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getSize());
+        assertEquals(
+                EntryUnit.ENTRIES,
+                gc.getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getUnit());
+        assertEquals(
+                1,
+                gc.getResourcePools()
+                        .getPoolForResource(ResourceType.Core.OFFHEAP)
+                        .getSize());
+        assertEquals(
+                MemoryUnit.MB,
+                gc.getResourcePools()
+                        .getPoolForResource(ResourceType.Core.OFFHEAP)
+                        .getUnit());
 
         CacheRuntimeConfiguration<String, String> cc = customConfigCache.getRuntimeConfiguration();
-        assertEquals(200, cc.getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getSize());
-        assertEquals(EntryUnit.ENTRIES, cc.getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getUnit());
-        assertEquals(2, cc.getResourcePools().getPoolForResource(ResourceType.Core.OFFHEAP).getSize());
-        assertEquals(MemoryUnit.MB, cc.getResourcePools().getPoolForResource(ResourceType.Core.OFFHEAP).getUnit());
+        assertEquals(
+                200,
+                cc.getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getSize());
+        assertEquals(
+                EntryUnit.ENTRIES,
+                cc.getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getUnit());
+        assertEquals(
+                2,
+                cc.getResourcePools()
+                        .getPoolForResource(ResourceType.Core.OFFHEAP)
+                        .getSize());
+        assertEquals(
+                MemoryUnit.MB,
+                cc.getResourcePools()
+                        .getPoolForResource(ResourceType.Core.OFFHEAP)
+                        .getUnit());
     }
 
     // ****************************
@@ -102,9 +126,7 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:ehcache")
-                        .to(globalConfig)
-                        .to(customConfig);
+                from("direct:ehcache").to(globalConfig).to(customConfig);
             }
         };
     }

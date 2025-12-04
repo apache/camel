@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2;
 
 import org.apache.camel.component.sjms.SjmsSendDynamicAware;
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("sjms2")
-public class Sjms2SendDynamicAware extends SjmsSendDynamicAware {
-
-}
+public class Sjms2SendDynamicAware extends SjmsSendDynamicAware {}

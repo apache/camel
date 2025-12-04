@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.consumer;
 
 import com.github.dockerjava.api.async.ResultCallback;
@@ -44,7 +45,6 @@ public class DockerEventsConsumer extends DefaultConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.component = (DockerComponent) endpoint.getComponent();
-
     }
 
     @Override
@@ -57,8 +57,8 @@ public class DockerEventsConsumer extends DefaultConsumer {
      */
     private long processInitialEvent() {
         long currentTime = System.currentTimeMillis();
-        Long initialRange
-                = DockerHelper.getProperty(DockerConstants.DOCKER_INITIAL_RANGE, endpoint.getConfiguration(), null, Long.class);
+        Long initialRange = DockerHelper.getProperty(
+                DockerConstants.DOCKER_INITIAL_RANGE, endpoint.getConfiguration(), null, Long.class);
         if (initialRange != null) {
             currentTime = currentTime - initialRange;
         }
@@ -68,7 +68,8 @@ public class DockerEventsConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        this.eventsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).eventsCmd()
+        this.eventsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null)
+                .eventsCmd()
                 .withSince(String.valueOf(processInitialEvent()));
         this.eventsCmd.exec(new EventsCallback());
 

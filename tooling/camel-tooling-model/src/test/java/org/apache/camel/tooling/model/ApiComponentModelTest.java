@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.io.BufferedReader;
@@ -40,13 +41,19 @@ public class ApiComponentModelTest {
         Assertions.assertTrue(model.isApi());
         Assertions.assertEquals("apiName/methodName", model.getApiSyntax());
         Assertions.assertEquals(56, model.getApiOptions().size());
-        ApiModel am = model.getApiOptions().stream().filter(a -> a.getName().equals("call")).findFirst().orElse(null);
+        ApiModel am = model.getApiOptions().stream()
+                .filter(a -> a.getName().equals("call"))
+                .findFirst()
+                .orElse(null);
         Assertions.assertNotNull(am);
         Assertions.assertEquals("call", am.getName());
         Assertions.assertEquals("", am.getDescription());
         Assertions.assertEquals(5, am.getAliases().size());
         Assertions.assertEquals("^creator$=create", am.getAliases().get(0));
-        ApiMethodModel amm = am.getMethods().stream().filter(a -> a.getName().equals("creator")).findFirst().orElse(null);
+        ApiMethodModel amm = am.getMethods().stream()
+                .filter(a -> a.getName().equals("creator"))
+                .findFirst()
+                .orElse(null);
         Assertions.assertNotNull(amm);
         Assertions.assertEquals("creator", amm.getName());
         Assertions.assertEquals("Create a CallCreator to execute create", amm.getDescription());
@@ -58,12 +65,14 @@ public class ApiComponentModelTest {
         Assertions.assertEquals(BigDecimal.valueOf(42), md.get("number"));
         Assertions.assertEquals(Boolean.TRUE, md.get("boolean"));
         Assertions.assertEquals(Arrays.asList("bar", "baz"), md.get("list"));
-        Assertions.assertEquals(new LinkedHashMap<String, Object>() {
-            {
-                put("k1", "v1");
-                put("k2", "v2");
-            }
-        }, md.get("map"));
+        Assertions.assertEquals(
+                new LinkedHashMap<String, Object>() {
+                    {
+                        put("k1", "v1");
+                        put("k2", "v2");
+                    }
+                },
+                md.get("map"));
 
         String serialized = JsonMapper.createParameterJsonSchema(model);
         ComponentModel reloadedModel = JsonMapper.generateComponentModel(serialized);
@@ -97,5 +106,4 @@ public class ApiComponentModelTest {
             in.close();
         }
     }
-
 }

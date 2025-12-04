@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cluster;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusteredRoutePolicyLeaderChangeTest extends ContextTestSupport {
 
@@ -64,8 +65,7 @@ public class ClusteredRoutePolicyLeaderChangeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo").routePolicy(policy)
-                        .to("mock:foo");
+                from("seda:foo").routeId("foo").routePolicy(policy).to("mock:foo");
             }
         };
     }

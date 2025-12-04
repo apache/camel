@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.NeutronConstants;
@@ -24,24 +31,22 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.State;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenstackNeutronNetworkTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-neutron://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + NeutronConstants.NEUTRON_NETWORK_SUBSYSTEM;
+    private static final String URI_FORMAT =
+            "openstack-neutron://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + NeutronConstants.NEUTRON_NETWORK_SUBSYSTEM;
 
     private static final String NETWORK_NAME = "net1";
     private static final String NETWORK_ID = "4e8e5957-649f-477b-9e5b-f1f75b21c03c";
 
     @Test
     void createShouldSucceed() {
-        Network in = Builders.network().name(NETWORK_NAME).isRouterExternal(true).adminStateUp(true).build();
+        Network in = Builders.network()
+                .name(NETWORK_NAME)
+                .isRouterExternal(true)
+                .adminStateUp(true)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.CREATE);
         Network out = template.requestBody(uri, in, Network.class);
@@ -73,7 +78,8 @@ public class OpenstackNeutronNetworkTest extends OpenstackWiremockTestSupport {
         assertEquals(NETWORK_NAME, networks[0].getName());
         assertNotNull(networks[0].getSubnets());
         assertEquals(1, networks[0].getSubnets().size());
-        assertEquals("0c4faf33-8c23-4dc9-8bf5-30dd1ab452f9", networks[0].getSubnets().get(0));
+        assertEquals(
+                "0c4faf33-8c23-4dc9-8bf5-30dd1ab452f9", networks[0].getSubnets().get(0));
         assertEquals("73f6f1ac-5e58-4801-88c3-7e12c6ddfb39", networks[0].getId());
         assertEquals(NetworkType.VXLAN, networks[0].getNetworkType());
     }

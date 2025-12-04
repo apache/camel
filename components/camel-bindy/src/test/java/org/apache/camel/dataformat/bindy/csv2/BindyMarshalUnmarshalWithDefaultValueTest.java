@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,8 +25,6 @@ import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -33,8 +34,8 @@ public class BindyMarshalUnmarshalWithDefaultValueTest extends CamelTestSupport 
     @Test
     public void testBindyMarshalWithDefaultValue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultMarshal");
-        mock.expectedBodiesReceived(
-                "\"123\",\"Wednesday, November 9, 2011\",\"North Pole\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+        mock.expectedBodiesReceived("\"123\",\"Wednesday, November 9, 2011\",\"North Pole\""
+                + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         WeatherModel model = new WeatherModel();
         model.setId(123);
@@ -49,7 +50,8 @@ public class BindyMarshalUnmarshalWithDefaultValueTest extends CamelTestSupport 
     public void testBindyUnmarshalWithDefaultValue() {
         MockEndpoint mock = getMockEndpoint("mock:resultUnmarshal");
 
-        String request = "\"123\",\"Wednesday, November 9, 2011\",\"\"" + ConverterUtils.getStringCarriageReturn("WINDOWS");
+        String request =
+                "\"123\",\"Wednesday, November 9, 2011\",\"\"" + ConverterUtils.getStringCarriageReturn("WINDOWS");
         template.sendBody("direct:unmarshal", request);
         WeatherModel answer = mock.getReceivedExchanges().get(0).getIn().getBody(WeatherModel.class);
         assertEquals(123, answer.getId());
@@ -63,10 +65,12 @@ public class BindyMarshalUnmarshalWithDefaultValueTest extends CamelTestSupport 
             @Override
             public void configure() {
                 from("direct:marshal")
-                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .marshal()
+                        .bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
                         .to("mock:resultMarshal");
                 from("direct:unmarshal")
-                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .unmarshal()
+                        .bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
                         .to("mock:resultUnmarshal");
             }
         };

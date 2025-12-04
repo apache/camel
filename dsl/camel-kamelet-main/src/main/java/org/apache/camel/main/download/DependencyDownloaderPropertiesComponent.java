@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.InputStream;
@@ -44,9 +45,8 @@ public class DependencyDownloaderPropertiesComponent extends ServiceSupport impl
     private final boolean silent;
     private Properties properties;
 
-    public DependencyDownloaderPropertiesComponent(CamelContext camelContext,
-                                                   KnownDependenciesResolver knownDependenciesResolver,
-                                                   boolean silent) {
+    public DependencyDownloaderPropertiesComponent(
+            CamelContext camelContext, KnownDependenciesResolver knownDependenciesResolver, boolean silent) {
         this.camelContext = camelContext;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.knownDependenciesResolver = knownDependenciesResolver;
@@ -130,5 +130,4 @@ public class DependencyDownloaderPropertiesComponent extends ServiceSupport impl
             }
         }
     }
-
 }

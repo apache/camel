@@ -31,7 +31,5 @@ public interface FileOffsetResumeAdapter {
      *
      * @param genericFile a generic file instance
      */
-    default void setResumePayload(GenericFile<File> genericFile) {
-
-    }
+    default void setResumePayload(GenericFile<File> genericFile) {}
 }

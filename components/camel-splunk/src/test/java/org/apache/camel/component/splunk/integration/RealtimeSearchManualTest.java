@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -23,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("run manually since it requires a running local splunk server")
 public class RealtimeSearchManualTest extends SplunkTest {
@@ -49,13 +50,14 @@ public class RealtimeSearchManualTest extends SplunkTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:submit")
-                        .to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX
-                            + "&sourceType=testSource&source=test")
+                        .to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index="
+                                + INDEX + "&sourceType=testSource&source=test")
                         .to("mock:submit-result");
 
                 from("splunk://realtime?delay=5000&username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD
-                     + "&initEarliestTime=rt-10s&search=search index=" + INDEX
-                     + " sourcetype=testSource").to("mock:search-saved");
+                                + "&initEarliestTime=rt-10s&search=search index=" + INDEX
+                                + " sourcetype=testSource")
+                        .to("mock:search-saved");
             }
         };
     }

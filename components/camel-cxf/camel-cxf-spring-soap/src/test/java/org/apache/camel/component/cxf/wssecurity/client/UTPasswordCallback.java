@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.wssecurity.client;
 
 import java.io.IOException;
@@ -42,7 +43,8 @@ public class UTPasswordCallback implements CallbackHandler {
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (Callback callback : callbacks) {
             try {
-                String id = (String) callback.getClass().getMethod("getIdentifier").invoke(callback);
+                String id =
+                        (String) callback.getClass().getMethod("getIdentifier").invoke(callback);
                 String pass = passwords.get(id);
                 if (pass != null) {
                     callback.getClass().getMethod("setPassword", String.class).invoke(callback, pass);

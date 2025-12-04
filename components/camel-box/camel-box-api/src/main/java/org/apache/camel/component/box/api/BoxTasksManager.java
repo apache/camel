@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 import java.util.Date;
 import java.util.List;
@@ -28,8 +31,6 @@ import com.box.sdk.BoxUser;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to manage Box tasks.
@@ -68,8 +69,7 @@ public class BoxTasksManager {
             return file.getTasks();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -92,8 +92,7 @@ public class BoxTasksManager {
             BoxFile fileToAddTaskOn = new BoxFile(boxConnection, fileId);
             return fileToAddTaskOn.addTask(action, message, dueAt).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -109,8 +108,7 @@ public class BoxTasksManager {
             BoxTask task = new BoxTask(boxConnection, taskId);
             task.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -129,8 +127,7 @@ public class BoxTasksManager {
 
             return task.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -152,8 +149,7 @@ public class BoxTasksManager {
 
             return task;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -173,8 +169,7 @@ public class BoxTasksManager {
             return file.getAssignments();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -186,7 +181,7 @@ public class BoxTasksManager {
      * @return          The assigned task.
      */
     @SuppressWarnings("unused") // compiler for some reason thinks 'if (assignTo
-                               // == null)' clause is dead code.
+    // == null)' clause is dead code.
     public BoxTask addAssignmentToTask(String taskId, BoxUser assignTo) {
         try {
             BoxHelper.notNull(taskId, BoxHelper.TASK_ID);
@@ -199,8 +194,7 @@ public class BoxTasksManager {
 
             return task;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -219,8 +213,7 @@ public class BoxTasksManager {
 
             return taskAssignment.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -273,8 +266,7 @@ public class BoxTasksManager {
             BoxTaskAssignment taskAssignment = new BoxTaskAssignment(boxConnection, taskAssignmentId);
             taskAssignment.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 }

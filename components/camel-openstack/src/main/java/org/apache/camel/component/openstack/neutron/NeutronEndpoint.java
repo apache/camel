@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.neutron;
+
+import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_NEUTRON;
 
 import org.apache.camel.Category;
 import org.apache.camel.Producer;
@@ -29,22 +32,27 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
-import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_NEUTRON;
-
 /**
  * Access OpenStack Neutron for network services.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_NEUTRON, title = "OpenStack Neutron",
-             syntax = "openstack-neutron:host", category = { Category.CONTAINER }, producerOnly = true,
-             headersClass = NeutronConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = SCHEME_NEUTRON,
+        title = "OpenStack Neutron",
+        syntax = "openstack-neutron:host",
+        category = {Category.CONTAINER},
+        producerOnly = true,
+        headersClass = NeutronConstants.class)
 public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "networks,subnets,ports,routers")
     @Metadata(required = true)
     String subsystem;
+
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriParam(defaultValue = "default")
     private String domain = "default";
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SimpleJms2ComponentTest extends CamelTestSupport {
 
@@ -41,8 +42,7 @@ public class SimpleJms2ComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                ActiveMQConnectionFactory connectionFactory
-                        = new ActiveMQConnectionFactory(service.serviceAddress());
+                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
                 Sjms2Component component = new Sjms2Component();
                 component.setConnectionFactory(connectionFactory);
                 getContext().addComponent("sjms2", component);

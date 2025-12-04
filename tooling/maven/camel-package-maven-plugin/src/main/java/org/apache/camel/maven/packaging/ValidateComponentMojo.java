@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -117,11 +118,11 @@ public class ValidateComponentMojo extends AbstractGeneratorMojo {
                     }
                     if (!detail.getMissingComponentDocumentation().isEmpty()) {
                         getLog().warn("Missing component documentation for the following options:"
-                                      + Strings.indentCollection("\n\t", detail.getMissingComponentDocumentation()));
+                                + Strings.indentCollection("\n\t", detail.getMissingComponentDocumentation()));
                     }
                     if (!detail.getMissingEndpointDocumentation().isEmpty()) {
                         getLog().warn("Missing endpoint documentation for the following options:"
-                                      + Strings.indentCollection("\n\t", detail.getMissingEndpointDocumentation()));
+                                + Strings.indentCollection("\n\t", detail.getMissingEndpointDocumentation()));
                     }
                 }
             }
@@ -133,5 +134,4 @@ public class ValidateComponentMojo extends AbstractGeneratorMojo {
             }
         }
     }
-
 }

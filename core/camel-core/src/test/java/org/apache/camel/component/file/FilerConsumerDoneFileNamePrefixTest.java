@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.concurrent.TimeUnit;
@@ -59,9 +60,9 @@ public class FilerConsumerDoneFileNamePrefixTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?doneFileName=done-${file:name}&initialDelay=0&delay=10")).to("mock:result");
+                from(fileUri("?doneFileName=done-${file:name}&initialDelay=0&delay=10"))
+                        .to("mock:result");
             }
         };
     }
-
 }

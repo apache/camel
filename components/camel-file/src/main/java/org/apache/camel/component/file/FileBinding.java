@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -60,8 +61,8 @@ public class FileBinding implements GenericFileBinding<File> {
     public void loadContent(Exchange exchange, GenericFile<?> file) throws IOException {
         if (content == null) {
             // use converter to convert the content into memory as byte array
-            Object data = GenericFileConverter.convertTo(byte[].class, exchange, file,
-                    exchange.getContext().getTypeConverterRegistry());
+            Object data = GenericFileConverter.convertTo(
+                    byte[].class, exchange, file, exchange.getContext().getTypeConverterRegistry());
             if (data != null) {
                 content = (byte[]) data;
             }

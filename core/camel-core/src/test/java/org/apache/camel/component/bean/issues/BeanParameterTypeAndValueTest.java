@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -57,16 +58,15 @@ public class BeanParameterTypeAndValueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:bean")
-                        .bean(Math.class, "abs(int.class -123)")
-                        .to("mock:result");
+                from("direct:bean").bean(Math.class, "abs(int.class -123)").to("mock:result");
 
                 from("direct:bean2")
                         .bean("type:java.lang.Math", "abs(int.class -44)")
                         .to("mock:result");
 
                 from("direct:simple")
-                        .setBody().simple("${bean:type:java.lang.Math?method=abs(int.class -7)}")
+                        .setBody()
+                        .simple("${bean:type:java.lang.Math?method=abs(int.class -7)}")
                         .to("mock:result");
             }
         };

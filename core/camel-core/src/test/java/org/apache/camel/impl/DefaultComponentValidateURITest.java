@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for URI validation when creating an endpoint
@@ -37,20 +38,25 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
 
     @Test
     public void testUnknownParameter() {
-        assertThrows(ResolveEndpointFailedException.class,
+        assertThrows(
+                ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("timer://foo?delay=250&unknown=1&period=500"),
                 "Should have thrown ResolveEndpointFailedException");
     }
 
     @Test
     public void testDoubleAmpersand() {
-        assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("timer://foo?delay=250&&period=500"),
+        assertThrows(
+                ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("timer://foo?delay=250&&period=500"),
                 "Should have thrown ResolveEndpointFailedException");
     }
 
     @Test
     public void testTrailingAmpersand() {
-        assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("timer://foo?delay=250&period=500&"),
+        assertThrows(
+                ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("timer://foo?delay=250&period=500&"),
                 "Should have thrown ResolveEndpointFailedException");
     }
 
@@ -67,5 +73,4 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
         endpint = context.getEndpoint("file://foo2?delay=1000&initialDelay=5000&useFixedDelay=false");
         assertNotNull(endpint);
     }
-
 }

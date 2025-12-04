@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,15 +31,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfRecipientListTest extends CamelSpringTestSupport {
 
     private static int port1 = AvailablePortFinder.getNextAvailable();
     private static int port2 = AvailablePortFinder.getNextAvailable();
+
     static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("CxfRecipientListTest.port1", Integer.toString(port1));
         System.setProperty("CxfRecipientListTest.port2", Integer.toString(port2));
     }

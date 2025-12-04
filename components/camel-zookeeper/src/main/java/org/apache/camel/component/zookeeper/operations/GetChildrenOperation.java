@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
+
+import static java.lang.String.format;
 
 import java.util.List;
 
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
-
-import static java.lang.String.format;
 
 /**
  * <code>GetChildrenOperation</code> is a basic ZooKeeper operation used to retrieve the list of children belonging to a

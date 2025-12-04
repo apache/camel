@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.concurrent.TimeUnit;
@@ -27,8 +28,7 @@ public class JdbcSpringAggregateTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return newAppContext(
-                "JdbcSpringDataSource.xml", "JdbcSpringAggregateTest.xml");
+        return newAppContext("JdbcSpringDataSource.xml", "JdbcSpringAggregateTest.xml");
     }
 
     @Test

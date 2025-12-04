@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge.integration;
 
 import java.util.ArrayList;
@@ -37,21 +38,27 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and
+// -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+    @EnabledIfSystemProperty(
+            named = "aws.manual.access.key",
+            matches = ".*",
+            disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(
+            named = "aws.manual.secret.key",
+            matches = ".*",
+            disabledReason = "Secret key not provided")
 })
 public class EventbridgePutRuleManualIT extends CamelTestSupport {
     private static String accessKey = System.getProperty("aws.manual.access.key");
     private static String secretKey = System.getProperty("aws.manual.secret.key");
 
     @BindToRegistry("eventbridge-client")
-    EventBridgeClient client
-            = EventBridgeClient.builder()
-                    .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create(accessKey, secretKey)))
-                    .region(Region.EU_WEST_1).build();
+    EventBridgeClient client = EventBridgeClient.builder()
+            .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
+            .region(Region.EU_WEST_1)
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -80,7 +87,9 @@ public class EventbridgePutRuleManualIT extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                Target target = Target.builder()
+                        .id("sqs-queue")
+                        .arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
                 targets.add(target);
@@ -88,7 +97,6 @@ public class EventbridgePutRuleManualIT extends CamelTestSupport {
             }
         });
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Override
@@ -96,8 +104,8 @@ public class EventbridgePutRuleManualIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint
-                        = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
+                String awsEndpoint =
+                        "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
                 from("direct:evs").to(awsEndpoint).log("${body}").to("mock:result");
                 from("direct:evs-targets").to(target).log("${body}").to("mock:result1");

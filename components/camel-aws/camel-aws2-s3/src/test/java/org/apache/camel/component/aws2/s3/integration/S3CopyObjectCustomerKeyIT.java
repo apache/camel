@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static software.amazon.awssdk.services.s3.model.ServerSideEncryption.AES256;
 
 import java.io.InputStream;
 import java.security.SecureRandom;
@@ -36,10 +41,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.utils.Md5Utils;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-import static software.amazon.awssdk.services.s3.model.ServerSideEncryption.AES256;
 
 @Disabled("Broken test")
 public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
@@ -124,11 +125,13 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true&useCustomerKey=true&customerKeyId=RAW(" + b64Key
-                                     + ")&customerKeyMD5=RAW(" + b64KeyMd5 + ")&customerAlgorithm=" + AES256.name();
+                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true&useCustomerKey=true&customerKeyId=RAW("
+                        + b64Key + ")&customerKeyMD5=RAW(" + b64KeyMd5 + ")&customerAlgorithm=" + AES256.name();
                 String awsEndpoint1 = "aws2-s3://mycamel1?autoCreateBucket=true&pojoRequest=true";
                 String awsEndpoint2 = "aws2-s3://mycamel1?autoCreateBucket=true";
-                from("direct:putObject").setHeader(AWS2S3Constants.KEY, constant("test.txt")).setBody(constant("Test"))
+                from("direct:putObject")
+                        .setHeader(AWS2S3Constants.KEY, constant("test.txt"))
+                        .setBody(constant("Test"))
                         .to(awsEndpoint);
 
                 from("direct:copyObject").to(awsEndpoint);
@@ -136,7 +139,6 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
                 from("direct:listObject").to(awsEndpoint2);
 
                 from("direct:getObject").to(awsEndpoint1).to("mock:result");
-
             }
         };
     }
@@ -152,5 +154,4 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
             return null;
         }
     }
-
 }

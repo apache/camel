@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git.producer;
 
 import java.io.File;
@@ -96,7 +97,6 @@ public class GitProducer extends DefaultProducer {
         }
 
         switch (operation) {
-
             case GitOperation.CLONE_OPERATION:
                 doClone(operation);
                 break;
@@ -206,25 +206,35 @@ public class GitProducer extends DefaultProducer {
         try {
             File localRepo = new File(endpoint.getLocalPath(), "");
             if (!localRepo.exists()) {
-                if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
-                    UsernamePasswordCredentialsProvider credentials
-                            = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                if (ObjectHelper.isNotEmpty(endpoint.getUsername())
+                        && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
+                    UsernamePasswordCredentialsProvider credentials =
+                            new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
                     if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
-                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath())
+                        result = Git.cloneRepository()
+                                .setCredentialsProvider(credentials)
+                                .setURI(endpoint.getRemotePath())
                                 .setDirectory(new File(endpoint.getLocalPath(), ""))
                                 .call();
                     } else {
-                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath())
+                        result = Git.cloneRepository()
+                                .setCredentialsProvider(credentials)
+                                .setURI(endpoint.getRemotePath())
                                 .setDirectory(new File(endpoint.getLocalPath(), ""))
-                                .setBranch(endpoint.getBranchName()).call();
+                                .setBranch(endpoint.getBranchName())
+                                .call();
                     }
                 } else {
                     if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
-                        result = Git.cloneRepository().setURI(endpoint.getRemotePath())
-                                .setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                        result = Git.cloneRepository()
+                                .setURI(endpoint.getRemotePath())
+                                .setDirectory(new File(endpoint.getLocalPath(), ""))
+                                .call();
                     } else {
-                        result = Git.cloneRepository().setURI(endpoint.getRemotePath())
-                                .setDirectory(new File(endpoint.getLocalPath(), "")).setBranch(endpoint.getBranchName())
+                        result = Git.cloneRepository()
+                                .setURI(endpoint.getRemotePath())
+                                .setDirectory(new File(endpoint.getLocalPath(), ""))
+                                .setBranch(endpoint.getBranchName())
                                 .call();
                     }
                 }
@@ -247,9 +257,15 @@ public class GitProducer extends DefaultProducer {
         }
         try {
             if (ObjectHelper.isEmpty(endpoint.getTagName())) {
-                git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(true)
+                        .setName(endpoint.getBranchName())
+                        .call();
             } else {
-                git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName())
+                git.checkout()
+                        .setCreateBranch(true)
+                        .setName(endpoint.getBranchName())
+                        .setStartPoint(endpoint.getTagName())
                         .call();
             }
         } catch (GitAPIException e) {
@@ -264,7 +280,10 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Local path must specified to execute " + operation);
         }
         try {
-            result = Git.init().setDirectory(new File(endpoint.getLocalPath(), "")).setBare(false).call();
+            result = Git.init()
+                    .setDirectory(new File(endpoint.getLocalPath(), ""))
+                    .setBare(false)
+                    .call();
         } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
@@ -284,7 +303,10 @@ public class GitProducer extends DefaultProducer {
         }
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             git.add().addFilepattern(fileName).call();
         } catch (GitAPIException e) {
@@ -302,7 +324,10 @@ public class GitProducer extends DefaultProducer {
         }
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             git.rm().addFilepattern(fileName).call();
         } catch (GitAPIException e) {
@@ -332,10 +357,17 @@ public class GitProducer extends DefaultProducer {
 
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
-                git.commit().setAllowEmpty(allowEmpty).setCommitter(username, email).setMessage(commitMessage).call();
+                git.commit()
+                        .setAllowEmpty(allowEmpty)
+                        .setCommitter(username, email)
+                        .setMessage(commitMessage)
+                        .call();
             } else {
                 git.commit().setAllowEmpty(allowEmpty).setMessage(commitMessage).call();
             }
@@ -366,13 +398,24 @@ public class GitProducer extends DefaultProducer {
 
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
-                git.commit().setAllowEmpty(allowEmpty).setAll(true).setCommitter(username, email).setMessage(commitMessage)
+                git.commit()
+                        .setAllowEmpty(allowEmpty)
+                        .setAll(true)
+                        .setCommitter(username, email)
+                        .setMessage(commitMessage)
                         .call();
             } else {
-                git.commit().setAllowEmpty(allowEmpty).setAll(true).setMessage(commitMessage).call();
+                git.commit()
+                        .setAllowEmpty(allowEmpty)
+                        .setAll(true)
+                        .setMessage(commitMessage)
+                        .call();
             }
         } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
@@ -408,7 +451,10 @@ public class GitProducer extends DefaultProducer {
         Status status = null;
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             status = git.status().call();
         } catch (GitAPIException e) {
@@ -422,7 +468,10 @@ public class GitProducer extends DefaultProducer {
         Iterable<RevCommit> revCommit = null;
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             revCommit = git.log().call();
         } catch (GitAPIException e) {
@@ -439,12 +488,18 @@ public class GitProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Remote name must be specified to execute " + operation);
             }
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
-                UsernamePasswordCredentialsProvider credentials
-                        = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
-                result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName()).call();
+                UsernamePasswordCredentialsProvider credentials =
+                        new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                result = git.push()
+                        .setCredentialsProvider(credentials)
+                        .setRemote(endpoint.getRemoteName())
+                        .call();
             } else {
                 result = git.push().setRemote(endpoint.getRemoteName()).call();
             }
@@ -465,12 +520,18 @@ public class GitProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Tag Name must be specified to execute " + operation);
             }
             if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
-                UsernamePasswordCredentialsProvider credentials
-                        = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
-                result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName())
-                        .add(Constants.R_TAGS + endpoint.getTagName()).call();
+                UsernamePasswordCredentialsProvider credentials =
+                        new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                result = git.push()
+                        .setCredentialsProvider(credentials)
+                        .setRemote(endpoint.getRemoteName())
+                        .add(Constants.R_TAGS + endpoint.getTagName())
+                        .call();
             } else {
-                result = git.push().setRemote(endpoint.getRemoteName()).add(Constants.R_TAGS + endpoint.getTagName()).call();
+                result = git.push()
+                        .setRemote(endpoint.getRemoteName())
+                        .add(Constants.R_TAGS + endpoint.getTagName())
+                        .call();
             }
         } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
@@ -486,12 +547,18 @@ public class GitProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Remote name must be specified to execute " + operation);
             }
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
-                UsernamePasswordCredentialsProvider credentials
-                        = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
-                result = git.pull().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName()).call();
+                UsernamePasswordCredentialsProvider credentials =
+                        new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                result = git.pull()
+                        .setCredentialsProvider(credentials)
+                        .setRemote(endpoint.getRemoteName())
+                        .call();
             } else {
                 result = git.pull().setRemote(endpoint.getRemoteName()).call();
             }
@@ -502,7 +569,8 @@ public class GitProducer extends DefaultProducer {
         updateExchange(exchange, result);
     }
 
-    protected void doMerge(Exchange exchange, String operation) throws ConfigInvalidException, GitAPIException, IOException {
+    protected void doMerge(Exchange exchange, String operation)
+            throws ConfigInvalidException, GitAPIException, IOException {
         MergeResult result = null;
         ObjectId mergeBase;
         try {
@@ -511,7 +579,11 @@ public class GitProducer extends DefaultProducer {
             }
             mergeBase = git.getRepository().resolve(endpoint.getBranchName());
             git.checkout().setName(defineTargetBranchName()).call();
-            result = git.merge().include(mergeBase).setFastForward(FastForwardMode.FF).setCommit(true).call();
+            result = git.merge()
+                    .include(mergeBase)
+                    .setFastForward(FastForwardMode.FF)
+                    .setCommit(true)
+                    .call();
         } catch (ConfigInvalidException | GitAPIException | IOException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
@@ -524,8 +596,9 @@ public class GitProducer extends DefaultProducer {
             return endpoint.getTargetBranchName();
         }
 
-        String defaultBranch = SystemReader.getInstance().getUserConfig().getString(ConfigConstants.CONFIG_INIT_SECTION, null,
-                ConfigConstants.CONFIG_KEY_DEFAULT_BRANCH);
+        String defaultBranch = SystemReader.getInstance()
+                .getUserConfig()
+                .getString(ConfigConstants.CONFIG_INIT_SECTION, null, ConfigConstants.CONFIG_KEY_DEFAULT_BRANCH);
 
         return ObjectHelper.isNotEmpty(defaultBranch) ? defaultBranch : "master";
     }
@@ -590,7 +663,10 @@ public class GitProducer extends DefaultProducer {
             RevCommit commit = walk.parseCommit(id);
             walk.dispose();
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             result = git.cherryPick().include(commit).call();
         } catch (GitAPIException | IOException e) {
@@ -604,7 +680,10 @@ public class GitProducer extends DefaultProducer {
         Set<String> result = null;
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
-                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+                git.checkout()
+                        .setCreateBranch(false)
+                        .setName(endpoint.getBranchName())
+                        .call();
             }
             result = git.clean().setCleanDirectories(true).call();
         } catch (GitAPIException e) {

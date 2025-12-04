@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class KafkaConsumerRebalanceIT extends BaseKafkaTestSupport {
     private static final String TOPIC = "offset-rebalance";
 
@@ -43,8 +44,10 @@ public class KafkaConsumerRebalanceIT extends BaseKafkaTestSupport {
     public void offsetGetStateMustHaveBeenCalledTwice() throws Exception {
         boolean offsetGetStateCalled = messagesLatch.await(30000, TimeUnit.MILLISECONDS);
         // The getState should most likely be called during the partition assignment
-        assertTrue(offsetGetStateCalled, "StateRepository.getState should have been called for topic " + TOPIC
-                                         + ". Remaining count : " + messagesLatch.getCount());
+        assertTrue(
+                offsetGetStateCalled,
+                "StateRepository.getState should have been called for topic " + TOPIC + ". Remaining count : "
+                        + messagesLatch.getCount());
     }
 
     @AfterEach
@@ -58,8 +61,9 @@ public class KafkaConsumerRebalanceIT extends BaseKafkaTestSupport {
             @Override
             public void configure() {
                 from("kafka:" + TOPIC + "?groupId=" + TOPIC + "_GROUP" + "&autoCommitIntervalMs=1000"
-                     + "&autoOffsetReset=latest" + "&consumersCount=1"
-                     + "&offsetRepository=#offset").routeId("consumer-rebalance-route")
+                                + "&autoOffsetReset=latest" + "&consumersCount=1"
+                                + "&offsetRepository=#offset")
+                        .routeId("consumer-rebalance-route")
                         .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
@@ -74,12 +78,10 @@ public class KafkaConsumerRebalanceIT extends BaseKafkaTestSupport {
         }
 
         @Override
-        public void start() {
-        }
+        public void start() {}
 
         @Override
-        public void stop() {
-        }
+        public void stop() {}
 
         @Override
         public String getState(String key) {
@@ -93,7 +95,6 @@ public class KafkaConsumerRebalanceIT extends BaseKafkaTestSupport {
         }
 
         @Override
-        public void setState(String key, String value) {
-        }
+        public void setState(String key, String value) {}
     }
 }

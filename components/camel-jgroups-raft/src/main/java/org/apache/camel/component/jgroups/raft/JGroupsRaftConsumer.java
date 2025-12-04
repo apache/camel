@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft;
 
 import org.apache.camel.Processor;
@@ -34,8 +35,8 @@ public class JGroupsRaftConsumer extends DefaultConsumer {
     private final CamelRoleChangeListener roleListener;
     private final JGroupsRaftEndpoint endpoint;
 
-    public JGroupsRaftConsumer(JGroupsRaftEndpoint endpoint, Processor processor, String clusterName,
-                               boolean enableRoleChangeEvents) {
+    public JGroupsRaftConsumer(
+            JGroupsRaftEndpoint endpoint, Processor processor, String clusterName, boolean enableRoleChangeEvents) {
         super(endpoint, processor);
 
         this.endpoint = endpoint;

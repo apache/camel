@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
+
+import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,8 +27,6 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ObjectMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE;
 
 public class JGroupsConsumerTest extends CamelTestSupport {
 
@@ -97,5 +98,4 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         // Then
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

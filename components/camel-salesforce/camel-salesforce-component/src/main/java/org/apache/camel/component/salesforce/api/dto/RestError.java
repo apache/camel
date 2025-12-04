@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto;
 
 import java.util.List;
@@ -28,8 +29,7 @@ public class RestError extends AbstractDTOBase {
     private List<String> fields;
 
     // default ctor for unmarshalling
-    public RestError() {
-    }
+    public RestError() {}
 
     public RestError(String errorCode, String message, List<String> fields) {
         this(errorCode, message);
@@ -82,7 +82,8 @@ public class RestError extends AbstractDTOBase {
 
         final RestError other = (RestError) obj;
 
-        return Objects.equals(errorCode, other.errorCode) && Objects.equals(message, other.message)
+        return Objects.equals(errorCode, other.errorCode)
+                && Objects.equals(message, other.message)
                 && Objects.equals(fields, other.fields);
     }
 
@@ -95,5 +96,4 @@ public class RestError extends AbstractDTOBase {
         result = prime * result + ((message == null) ? 0 : message.hashCode());
         return result;
     }
-
 }

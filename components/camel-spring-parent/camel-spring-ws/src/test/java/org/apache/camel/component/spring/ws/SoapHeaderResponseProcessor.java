@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
 
 import org.apache.camel.Exchange;
@@ -29,5 +30,4 @@ public class SoapHeaderResponseProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         exchange.setMessage(exchange.getIn());
     }
-
 }

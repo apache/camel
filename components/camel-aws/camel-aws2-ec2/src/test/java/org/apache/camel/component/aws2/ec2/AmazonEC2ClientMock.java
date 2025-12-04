@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ec2;
 
 import java.util.ArrayList;
@@ -109,7 +110,6 @@ public class AmazonEC2ClientMock implements Ec2Client {
             throw ase;
         }
         return result.build();
-
     }
 
     @Override
@@ -241,29 +241,34 @@ public class AmazonEC2ClientMock implements Ec2Client {
     }
 
     @Override
-    public DescribeInstanceStatusResponse describeInstanceStatus(DescribeInstanceStatusRequest describeInstanceStatusRequest) {
+    public DescribeInstanceStatusResponse describeInstanceStatus(
+            DescribeInstanceStatusRequest describeInstanceStatusRequest) {
         DescribeInstanceStatusResponse.Builder result = DescribeInstanceStatusResponse.builder();
         Collection<InstanceStatus> instanceStatuses = new ArrayList<>();
         if (describeInstanceStatusRequest.instanceIds().isEmpty()) {
             InstanceStatus.Builder status = InstanceStatus.builder();
             status.instanceId("test-1");
-            status.instanceState(InstanceState.builder().name(InstanceStateName.RUNNING).build());
+            status.instanceState(
+                    InstanceState.builder().name(InstanceStateName.RUNNING).build());
             instanceStatuses.add(status.build());
             InstanceStatus.Builder status1 = InstanceStatus.builder();
             status1.instanceId("test-2");
-            status1.instanceState(InstanceState.builder().name(InstanceStateName.STOPPED).build());
+            status1.instanceState(
+                    InstanceState.builder().name(InstanceStateName.STOPPED).build());
             instanceStatuses.add(status1.build());
         } else {
             if (describeInstanceStatusRequest.instanceIds().contains("test-1")) {
                 InstanceStatus.Builder status = InstanceStatus.builder();
                 status.instanceId("test-1");
-                status.instanceState(InstanceState.builder().name(InstanceStateName.RUNNING).build());
+                status.instanceState(
+                        InstanceState.builder().name(InstanceStateName.RUNNING).build());
                 instanceStatuses.add(status.build());
             }
             if (describeInstanceStatusRequest.instanceIds().contains("test-2")) {
                 InstanceStatus.Builder status1 = InstanceStatus.builder();
                 status1.instanceId("test-2");
-                status1.instanceState(InstanceState.builder().name(InstanceStateName.STOPPED).build());
+                status1.instanceState(
+                        InstanceState.builder().name(InstanceStateName.STOPPED).build());
                 instanceStatuses.add(status1.build());
             }
         }
@@ -337,6 +342,5 @@ public class AmazonEC2ClientMock implements Ec2Client {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 }

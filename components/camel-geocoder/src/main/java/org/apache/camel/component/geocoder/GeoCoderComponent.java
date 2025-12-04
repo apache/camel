@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.geocoder;
 
 import java.util.Map;
@@ -33,8 +34,7 @@ public class GeoCoderComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private GeoApiContext geoApiContext;
 
-    public GeoCoderComponent() {
-    }
+    public GeoCoderComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -48,7 +48,8 @@ public class GeoCoderComponent extends DefaultComponent {
             String latlng = remaining.substring(7);
             endpoint.setLatlng(latlng);
         } else {
-            throw new IllegalArgumentException("URI context path should be either address: or latlng:, was: " + remaining);
+            throw new IllegalArgumentException(
+                    "URI context path should be either address: or latlng:, was: " + remaining);
         }
 
         setProperties(endpoint, parameters);

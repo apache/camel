@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms;
 
-import jakarta.jms.Connection;
-import jakarta.jms.Session;
+package org.apache.camel.component.sjms;
 
 import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
 import static org.apache.camel.component.sjms.SjmsHelper.closeSession;
+
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
 
 public interface SessionCallback {
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.Collections;
@@ -42,9 +43,11 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     @XmlAttribute
     @Metadata(defaultValue = ",")
     private String uriDelimiter;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoints;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String cacheSize;
@@ -237,5 +240,4 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         setCacheSize(cacheSize);
         return this;
     }
-
 }

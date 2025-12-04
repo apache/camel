@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.errorhandler;
 
 import org.apache.camel.ErrorHandlerFactory;
@@ -37,8 +38,9 @@ public class LegacyErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandl
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
         ErrorHandlerFactory handler = lookupErrorHandler(route);
-        return ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route, handler,
-                processor);
+        return ((ModelCamelContext) camelContext)
+                .getModelReifierFactory()
+                .createErrorHandler(route, handler, processor);
     }
 
     private ErrorHandlerFactory lookupErrorHandler(Route route) {
@@ -47,5 +49,4 @@ public class LegacyErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandl
         route.addErrorHandlerFactoryReference(definition, handler);
         return handler;
     }
-
 }

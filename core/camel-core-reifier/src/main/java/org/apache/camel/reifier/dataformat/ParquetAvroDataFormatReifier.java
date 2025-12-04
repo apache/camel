@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -34,5 +35,4 @@ public class ParquetAvroDataFormatReifier extends DataFormatReifier<ParquetAvroD
         properties.put("lazyLoad", definition.getLazyLoad());
         properties.put("compressionCodecName", definition.getCompressionCodecName());
     }
-
 }

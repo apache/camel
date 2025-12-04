@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import java.util.Collection;
@@ -85,7 +86,8 @@ public abstract class AbstractDdbCommand {
     }
 
     protected Boolean determineConsistentRead() {
-        return exchange.getIn().getHeader(Ddb2Constants.CONSISTENT_READ, configuration.isConsistentRead(), Boolean.class);
+        return exchange.getIn()
+                .getHeader(Ddb2Constants.CONSISTENT_READ, configuration.isConsistentRead(), Boolean.class);
     }
 
     @SuppressWarnings("unchecked")

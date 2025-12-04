@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -29,10 +34,6 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
 
     @Test
@@ -42,8 +43,8 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        Object answer = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/new", body,
-                Exchange.CONTENT_TYPE, "application/json");
+        Object answer = template.requestBodyAndHeader(
+                "http://localhost:" + getPort() + "/users/new", body, Exchange.CONTENT_TYPE, "application/json");
         assertNotNull(answer);
         BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream) answer));
         String line;
@@ -69,7 +70,11 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.off);
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.off);
 
                 JsonDataFormat jsondf = new JsonDataFormat();
                 jsondf.setLibrary(JsonLibrary.Jackson);
@@ -79,14 +84,17 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
                 transformer().fromType(UserPojoEx.class).toType("json").withDataFormat(jsondf);
                 rest("/users/")
                         // REST binding does nothing
-                        .post("new").to("direct:new");
+                        .post("new")
+                        .to("direct:new");
                 from("direct:new")
                         // contract advice converts between JSON and UserPojoEx directly
-                        .inputType(UserPojoEx.class).outputType("json").process(ex -> {
+                        .inputType(UserPojoEx.class)
+                        .outputType("json")
+                        .process(ex -> {
                             ex.getIn().getBody(UserPojoEx.class).setActive(true);
-                        }).to("mock:input");
+                        })
+                        .to("mock:input");
             }
         };
     }
-
 }

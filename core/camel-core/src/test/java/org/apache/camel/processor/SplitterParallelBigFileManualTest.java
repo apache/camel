@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.OutputStream;
@@ -68,11 +69,14 @@ public class SplitterParallelBigFileManualTest extends ContextTestSupport {
                 // lower max pool to 10 for less number of concurrent threads
                 // context.getExecutorServiceStrategy().getDefaultThreadPoolProfile().setMaxPoolSize(10);
 
-                from(fileUri("?initialDelay=0&delay=10")).split(body().tokenize(LS)).streaming()
-                        .parallelProcessing().to("log:split?groupSize=1000").end()
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .split(body().tokenize(LS))
+                        .streaming()
+                        .parallelProcessing()
+                        .to("log:split?groupSize=1000")
+                        .end()
                         .log("Done splitting ${file:name}");
             }
         };
     }
-
 }

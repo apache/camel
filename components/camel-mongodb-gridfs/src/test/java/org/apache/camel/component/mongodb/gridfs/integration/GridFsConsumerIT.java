@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.gridfs.integration;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_FILENAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,12 +36,6 @@ import org.apache.camel.component.mongodb.gridfs.GridFsConstants;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_FILENAME;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class GridFsConsumerIT extends AbstractMongoDbITSupport {
 
     @Override
@@ -44,20 +45,27 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
                 from("direct:create")
                         .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
                 from("direct:create-a")
-                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-a");
+                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket()
+                                + "-a");
                 from("direct:create-pts")
-                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-pts");
+                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket()
+                                + "-pts");
 
-                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()).convertBodyTo(String.class)
+                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket())
+                        .convertBodyTo(String.class)
                         .to("mock:test");
-                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-a&queryStrategy=FileAttribute")
-                        .convertBodyTo(String.class).to("mock:test");
                 from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()
-                     + "-pts&queryStrategy=PersistentTimestamp")
-                        .convertBodyTo(String.class).to("mock:test");
+                                + "-a&queryStrategy=FileAttribute")
+                        .convertBodyTo(String.class)
+                        .to("mock:test");
+                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()
+                                + "-pts&queryStrategy=PersistentTimestamp")
+                        .convertBodyTo(String.class)
+                        .to("mock:test");
                 from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=customFileFilterTest&queryStrategy=TimeStampAndFileAttribute&query="
-                     + String.format("{'%s': '%s'}", GRIDFS_FILE_KEY_FILENAME, FILE_NAME))
-                        .convertBodyTo(String.class).to("mock:test");
+                                + String.format("{'%s': '%s'}", GRIDFS_FILE_KEY_FILENAME, FILE_NAME))
+                        .convertBodyTo(String.class)
+                        .to("mock:test");
             }
         };
     }
@@ -99,11 +107,15 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
         mock.assertIsSatisfied();
 
         template.requestBodyAndHeader(
-                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=customFileFilterTest", null,
-                GridFsConstants.GRIDFS_OBJECT_ID, objectId);
+                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=customFileFilterTest",
+                null,
+                GridFsConstants.GRIDFS_OBJECT_ID,
+                objectId);
 
         Integer count = template.requestBodyAndHeaders(
-                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=customFileFilterTest", null, headers,
+                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=customFileFilterTest",
+                null,
+                headers,
                 Integer.class);
         assertEquals(0, count);
     }
@@ -114,7 +126,8 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
         mock.expectedHeaderReceived(GridFsConstants.GRIDFS_METADATA, "{\"contentType\": \"text/plain\"}");
 
         Map<String, Object> headers = new HashMap<>();
-        assertFalse(gridfs.find(eq(GRIDFS_FILE_KEY_FILENAME, FILE_NAME)).cursor().hasNext());
+        assertFalse(
+                gridfs.find(eq(GRIDFS_FILE_KEY_FILENAME, FILE_NAME)).cursor().hasNext());
 
         headers.put(Exchange.FILE_NAME, FILE_NAME);
         headers.put(Exchange.CONTENT_TYPE, "text/plain");

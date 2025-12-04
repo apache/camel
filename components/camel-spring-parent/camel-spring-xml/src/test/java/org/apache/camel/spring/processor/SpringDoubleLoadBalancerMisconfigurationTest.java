@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
@@ -37,8 +38,10 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
         } catch (Exception e) {
             FailedToCreateRouteException fe = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             IllegalArgumentException ie = assertIsInstanceOf(IllegalArgumentException.class, fe.getCause());
-            assertTrue(ie.getMessage().startsWith(
-                    "Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
+            assertTrue(
+                    ie.getMessage()
+                            .startsWith(
+                                    "Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
         }
     }
 
@@ -49,6 +52,7 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/DoubleLoadBalancerMisconfigurationTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/DoubleLoadBalancerMisconfigurationTest.xml");
     }
 }

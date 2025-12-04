@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContainerWideInterceptorTest extends TestSupport {
 
@@ -39,7 +40,8 @@ public class ContainerWideInterceptorTest extends TestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        ac = new ClassPathXmlApplicationContext("/org/apache/camel/spring/interceptor/ContainerWideInterceptorTest.xml");
+        ac = new ClassPathXmlApplicationContext(
+                "/org/apache/camel/spring/interceptor/ContainerWideInterceptorTest.xml");
         camel1 = ac.getBean("camel1", CamelContext.class);
         camel2 = ac.getBean("camel2", CamelContext.class);
         myInterceptor = ac.getBean("myInterceptor", ContainerWideInterceptor.class);
@@ -90,5 +92,4 @@ public class ContainerWideInterceptorTest extends TestSupport {
         int delta = myInterceptor.getCount() - start;
         assertEquals(2, delta, "Should have been counted +2");
     }
-
 }

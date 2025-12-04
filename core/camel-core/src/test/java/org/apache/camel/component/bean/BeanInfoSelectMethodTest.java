@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
@@ -24,8 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class BeanInfoSelectMethodTest extends ContextTestSupport {
 
@@ -60,9 +61,13 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").logStackTrace(false).maximumRedeliveries(3));
+                errorHandler(
+                        deadLetterChannel("mock:error").logStackTrace(false).maximumRedeliveries(3));
 
-                onException(Exception.class).handled(true).bean("foo", "handleFailure").to("mock:result");
+                onException(Exception.class)
+                        .handled(true)
+                        .bean("foo", "handleFailure")
+                        .to("mock:result");
 
                 from("direct:a").bean("foo").to("mock:result");
 

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,12 +32,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventDrivenPollingConsumerCopyTest extends ContextTestSupport {
 
@@ -43,7 +44,8 @@ public class EventDrivenPollingConsumerCopyTest extends ContextTestSupport {
 
     @Test
     public void testCopy() throws Exception {
-        PollingConsumer pc = context.getEndpoint("direct:foo?pollingConsumerCopy=true").createPollingConsumer();
+        PollingConsumer pc =
+                context.getEndpoint("direct:foo?pollingConsumerCopy=true").createPollingConsumer();
         pc.start();
 
         context.addRoutes(new RouteBuilder() {
@@ -96,5 +98,4 @@ public class EventDrivenPollingConsumerCopyTest extends ContextTestSupport {
         pc.stop();
         context.stop();
     }
-
 }

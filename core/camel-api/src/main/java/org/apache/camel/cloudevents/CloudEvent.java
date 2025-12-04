@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cloudevents;
 
 import java.time.ZonedDateTime;
@@ -60,9 +61,7 @@ public interface CloudEvent {
      * Find attribute by id.
      */
     default Optional<Attribute> attribute(String id) {
-        return attributes().stream()
-                .filter(a -> Objects.equals(id, a.id()))
-                .findFirst();
+        return attributes().stream().filter(a -> Objects.equals(id, a.id())).findFirst();
     }
 
     /**

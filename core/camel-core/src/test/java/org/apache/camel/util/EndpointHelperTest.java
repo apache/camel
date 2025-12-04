@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +35,6 @@ import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.support.EndpointHelper;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class EndpointHelperTest extends ContextTestSupport {
 
@@ -64,11 +65,14 @@ public class EndpointHelperTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Bye World");
 
         final List<String> bodies = new ArrayList<>();
-        EndpointHelper.pollEndpoint(context.getEndpoint("seda:foo"), new Processor() {
-            public void process(Exchange exchange) {
-                bodies.add(exchange.getIn().getBody(String.class));
-            }
-        }, 10);
+        EndpointHelper.pollEndpoint(
+                context.getEndpoint("seda:foo"),
+                new Processor() {
+                    public void process(Exchange exchange) {
+                        bodies.add(exchange.getIn().getBody(String.class));
+                    }
+                },
+                10);
 
         assertEquals(2, bodies.size());
         assertEquals("Hello World", bodies.get(0));
@@ -132,7 +136,8 @@ public class EndpointHelperTest extends ContextTestSupport {
             EndpointHelper.resolveReferenceParameter(context, "misbar", Integer.class, true);
             fail();
         } catch (NoSuchBeanException ex) {
-            assertEquals("No bean could be found in the registry for: misbar of type: java.lang.Integer", ex.getMessage());
+            assertEquals(
+                    "No bean could be found in the registry for: misbar of type: java.lang.Integer", ex.getMessage());
         }
     }
 
@@ -156,11 +161,14 @@ public class EndpointHelperTest extends ContextTestSupport {
         MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUri), is(true));
         MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUriShuffled), is(true));
         MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUri), is(true));
-        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUriShuffled), is(true));
-        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUriShuffled), is(false));
+        MatcherAssert.assertThat(
+                EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUriShuffled), is(true));
+        MatcherAssert.assertThat(
+                EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUriShuffled), is(false));
         MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUri), is(false));
         MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, notMatchingEndpointUri), is(false));
-        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, notMatchingEndpointUri), is(false));
+        MatcherAssert.assertThat(
+                EndpointHelper.matchEndpoint(null, endpointUriShuffled, notMatchingEndpointUri), is(false));
     }
 
     @Test
@@ -199,8 +207,8 @@ public class EndpointHelperTest extends ContextTestSupport {
 
         context.getRegistry().bind("foobar", myPolicy);
 
-        AuthorizationPolicy policy = EndpointHelper.resolveReferenceParameter(context,
-                "#type:org.apache.camel.spi.AuthorizationPolicy", AuthorizationPolicy.class);
+        AuthorizationPolicy policy = EndpointHelper.resolveReferenceParameter(
+                context, "#type:org.apache.camel.spi.AuthorizationPolicy", AuthorizationPolicy.class);
         assertNotNull(policy);
         assertSame(myPolicy, policy);
     }
@@ -208,8 +216,8 @@ public class EndpointHelperTest extends ContextTestSupport {
     @Test
     public void testResolveByTypeNoBean() {
         try {
-            EndpointHelper.resolveReferenceParameter(context, "#type:org.apache.camel.spi.AuthorizationPolicy",
-                    AuthorizationPolicy.class);
+            EndpointHelper.resolveReferenceParameter(
+                    context, "#type:org.apache.camel.spi.AuthorizationPolicy", AuthorizationPolicy.class);
             fail("Should throw exception");
         } catch (NoSuchBeanException e) {
             // expected
@@ -246,12 +254,11 @@ public class EndpointHelperTest extends ContextTestSupport {
 
         // when there are 2 instances of the same time, then we cannot decide
         try {
-            EndpointHelper.resolveReferenceParameter(context, "#type:org.apache.camel.spi.AuthorizationPolicy",
-                    AuthorizationPolicy.class);
+            EndpointHelper.resolveReferenceParameter(
+                    context, "#type:org.apache.camel.spi.AuthorizationPolicy", AuthorizationPolicy.class);
             fail("Should throw exception");
         } catch (NoSuchBeanException e) {
             // expected
         }
     }
-
 }

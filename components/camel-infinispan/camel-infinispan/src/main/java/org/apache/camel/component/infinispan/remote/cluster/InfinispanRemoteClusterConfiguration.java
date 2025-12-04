@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.cluster;
 
 import java.util.Map;
@@ -23,8 +24,7 @@ import org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguratio
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 
-public class InfinispanRemoteClusterConfiguration
-        extends InfinispanClusterConfiguration<InfinispanRemoteConfiguration>
+public class InfinispanRemoteClusterConfiguration extends InfinispanClusterConfiguration<InfinispanRemoteConfiguration>
         implements Cloneable {
 
     public InfinispanRemoteClusterConfiguration() {

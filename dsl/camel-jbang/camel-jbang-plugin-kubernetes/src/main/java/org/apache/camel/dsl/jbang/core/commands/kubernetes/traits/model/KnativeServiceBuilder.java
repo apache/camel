@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 import java.util.Map;
@@ -31,8 +32,7 @@ public final class KnativeServiceBuilder {
     private Long timeoutSeconds;
     private KnativeService.Visibility visibility;
 
-    private KnativeServiceBuilder() {
-    }
+    private KnativeServiceBuilder() {}
 
     public static KnativeServiceBuilder knativeService() {
         return new KnativeServiceBuilder();

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kms.localstack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
 import software.amazon.awssdk.services.kms.model.KeyState;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KmsDescribeKeyIT extends Aws2KmsBase {
 
@@ -50,7 +51,8 @@ public class KmsDescribeKeyIT extends Aws2KmsBase {
             }
         });
 
-        String keyId = ex.getMessage().getBody(CreateKeyResponse.class).keyMetadata().keyId();
+        String keyId =
+                ex.getMessage().getBody(CreateKeyResponse.class).keyMetadata().keyId();
 
         template.send("direct:describeKey", new Processor() {
 
@@ -63,8 +65,14 @@ public class KmsDescribeKeyIT extends Aws2KmsBase {
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
-        assertEquals(KeyState.ENABLED,
-                result.getExchanges().get(0).getIn().getBody(DescribeKeyResponse.class).keyMetadata().keyState());
+        assertEquals(
+                KeyState.ENABLED,
+                result.getExchanges()
+                        .get(0)
+                        .getIn()
+                        .getBody(DescribeKeyResponse.class)
+                        .keyMetadata()
+                        .keyState());
     }
 
     @Override
@@ -72,10 +80,8 @@ public class KmsDescribeKeyIT extends Aws2KmsBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint
-                        = "aws2-kms://default?operation=createKey";
-                String describeKey
-                        = "aws2-kms://default?operation=describeKey";
+                String awsEndpoint = "aws2-kms://default?operation=createKey";
+                String describeKey = "aws2-kms://default?operation=describeKey";
                 from("direct:createKey").to(awsEndpoint);
                 from("direct:describeKey").to(describeKey).to("mock:result");
             }

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stringtemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringTemplateViaHeaderTest extends CamelTestSupport {
 
@@ -29,13 +30,11 @@ public class StringTemplateViaHeaderTest extends CamelTestSupport {
     public void testByHeaderTemplate() {
         Exchange response = template.request("direct:b", exchange -> {
             exchange.getIn().setHeader("name", "Sheldon");
-            exchange.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_TEMPLATE,
-                    "Hi <headers.name>.");
+            exchange.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_TEMPLATE, "Hi <headers.name>.");
         });
 
         assertEquals("Hi Sheldon.", response.getMessage().getBody());
-        assertEquals("dummy",
-                response.getMessage().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
+        assertEquals("dummy", response.getMessage().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
         assertEquals("Sheldon", response.getMessage().getHeader("name"));
     }
 
@@ -44,13 +43,18 @@ public class StringTemplateViaHeaderTest extends CamelTestSupport {
         Exchange response = template.request("direct:a", exchange -> {
             exchange.getIn().setBody("Monday");
             exchange.getIn().setHeader("name", "Christian");
-            exchange.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI,
-                    "org/apache/camel/component/stringtemplate/template.tm");
+            exchange.getIn()
+                    .setHeader(
+                            StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI,
+                            "org/apache/camel/component/stringtemplate/template.tm");
             exchange.setProperty("item", "7");
         });
 
-        assertEquals("Dear Christian. You ordered item 7 on Monday.", response.getMessage().getBody());
-        assertEquals("org/apache/camel/component/stringtemplate/template.tm",
+        assertEquals(
+                "Dear Christian. You ordered item 7 on Monday.",
+                response.getMessage().getBody());
+        assertEquals(
+                "org/apache/camel/component/stringtemplate/template.tm",
                 response.getMessage().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
         assertEquals("Christian", response.getMessage().getHeader("name"));
     }
@@ -59,10 +63,8 @@ public class StringTemplateViaHeaderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").to(
-                        "string-template:dummy?allowTemplateFromHeader=true&allowContextMapAll=true");
-                from("direct:b").to(
-                        "string-template:dummy?allowTemplateFromHeader=true");
+                from("direct:a").to("string-template:dummy?allowTemplateFromHeader=true&allowContextMapAll=true");
+                from("direct:b").to("string-template:dummy?allowTemplateFromHeader=true");
             }
         };
     }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Map;
 
@@ -26,12 +31,10 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
-                              disabledReason = "Service now instance was not provided")
+@EnabledIfEnvironmentVariable(
+        named = "SERVICENOW_INSTANCE",
+        matches = ".*",
+        disabledReason = "Service now instance was not provided")
 public class ServiceNowMetaDataExtensionIT extends ServiceNowITSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowMetaDataExtensionIT.class);
 
@@ -62,10 +65,10 @@ public class ServiceNowMetaDataExtensionIT extends ServiceNowITSupport {
         parameters.put("objectType", "table");
         parameters.put("objectName", "incident");
         parameters.put("metaType", "definition");
-        //parameters.put("object.sys_user.fields", "first_name,last_name");
-        //parameters.put("object.incident.fields", "caller_id,severity,resolved_at,sys_id");
-        //parameters.put("object.incident.fields", "^sys_.*$");
-        //parameters.put("object.task.fields", "");
+        // parameters.put("object.sys_user.fields", "first_name,last_name");
+        // parameters.put("object.incident.fields", "caller_id,severity,resolved_at,sys_id");
+        // parameters.put("object.incident.fields", "^sys_.*$");
+        // parameters.put("object.task.fields", "");
 
         MetaDataExtension.MetaData result = getExtension().meta(parameters).orElseThrow(RuntimeException::new);
 
@@ -77,12 +80,13 @@ public class ServiceNowMetaDataExtensionIT extends ServiceNowITSupport {
         assertNotNull(result.getPayload(JsonNode.class));
         assertNotNull(result.getPayload(JsonNode.class).get("properties"));
         assertNotNull(result.getPayload(JsonNode.class).get("$schema"));
-        assertEquals("http://json-schema.org/schema#", result.getPayload(JsonNode.class).get("$schema").asText());
+        assertEquals(
+                "http://json-schema.org/schema#",
+                result.getPayload(JsonNode.class).get("$schema").asText());
         assertNotNull(result.getPayload(JsonNode.class).get("id"));
         assertNotNull(result.getPayload(JsonNode.class).get("type"));
 
-        LOGGER.debug(
-                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
+        LOGGER.debug(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
     }
 
     @Test
@@ -90,18 +94,17 @@ public class ServiceNowMetaDataExtensionIT extends ServiceNowITSupport {
         Map<String, Object> parameters = getParameters();
         parameters.put("objectType", "import");
         parameters.put("metaType", "list");
-        //parameters.put("object.sys_user.fields", "first_name,last_name");
-        //parameters.put("object.incident.fields", "caller_id,severity,resolved_at,sys_id");
-        //parameters.put("object.incident.fields", "^sys_.*$");
-        //parameters.put("object.task.fields", "");
+        // parameters.put("object.sys_user.fields", "first_name,last_name");
+        // parameters.put("object.incident.fields", "caller_id,severity,resolved_at,sys_id");
+        // parameters.put("object.incident.fields", "^sys_.*$");
+        // parameters.put("object.task.fields", "");
 
         MetaDataExtension.MetaData result = getExtension().meta(parameters).orElseThrow(RuntimeException::new);
 
         assertEquals("application/json", result.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE));
         assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
 
-        LOGGER.debug(
-                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
+        LOGGER.debug(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
     }
 
     @Test
@@ -111,7 +114,6 @@ public class ServiceNowMetaDataExtensionIT extends ServiceNowITSupport {
         parameters.put("objectName", "incident");
 
         final MetaDataExtension extension = getExtension();
-        assertThrows(UnsupportedOperationException.class,
-                () -> extension.meta(parameters));
+        assertThrows(UnsupportedOperationException.class, () -> extension.meta(parameters));
     }
 }

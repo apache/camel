@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -26,8 +29,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.IdAware;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleProcessorIdAwareTest extends ContextTestSupport {
 
@@ -74,8 +75,18 @@ public class SimpleProcessorIdAwareTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo").choice().when(header("bar")).to("log:bar").id("bar").otherwise()
-                        .to("mock:result").id("result").end().to("log:baz").id("baz");
+                from("direct:start")
+                        .routeId("foo")
+                        .choice()
+                        .when(header("bar"))
+                        .to("log:bar")
+                        .id("bar")
+                        .otherwise()
+                        .to("mock:result")
+                        .id("result")
+                        .end()
+                        .to("log:baz")
+                        .id("baz");
             }
         };
     }

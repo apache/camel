@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security;
 
 import java.util.concurrent.locks.Lock;
@@ -58,8 +59,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType
     private final Lock lock = new ReentrantLock();
 
     @Override
-    public void beforeWrap(Route route, NamedNode definition) {
-    }
+    public void beforeWrap(Route route, NamedNode definition) {}
 
     @Override
     public Processor wrap(Route route, Processor processor) {
@@ -82,8 +82,8 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType
                 this.authorizationManager.verify(() -> authentication, exchange);
             } catch (AccessDeniedException accessDeniedException) {
                 exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, getId());
-                AuthorizationDeniedEvent<Exchange> event = new AuthorizationDeniedEvent<>(
-                        () -> authentication, exchange, decision);
+                AuthorizationDeniedEvent<Exchange> event =
+                        new AuthorizationDeniedEvent<>(() -> authentication, exchange, decision);
                 publishEvent(event);
                 throw accessDeniedException;
             }
@@ -122,7 +122,6 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType
             beforeProcess(exchange);
             processNext(exchange);
         }
-
     }
 
     @Override

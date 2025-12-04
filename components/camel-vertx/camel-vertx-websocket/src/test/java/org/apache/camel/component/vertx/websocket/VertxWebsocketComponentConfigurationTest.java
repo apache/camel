@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 
@@ -28,12 +35,6 @@ import io.vertx.core.metrics.impl.DummyVertxMetrics;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxWebsocketComponentConfigurationTest {
 
@@ -101,7 +102,8 @@ public class VertxWebsocketComponentConfigurationTest {
             context.addComponent("vertx-websocket", component);
             context.start();
 
-            VertxWebsocketEndpoint endpoint = context.getEndpoint("vertx-websocket:/test", VertxWebsocketEndpoint.class);
+            VertxWebsocketEndpoint endpoint =
+                    context.getEndpoint("vertx-websocket:/test", VertxWebsocketEndpoint.class);
             URI websocketURI = endpoint.getConfiguration().getWebsocketURI();
             assertEquals(defaultHostName, websocketURI.getHost());
         }
@@ -117,8 +119,8 @@ public class VertxWebsocketComponentConfigurationTest {
             context.addComponent("vertx-websocket", component);
             context.start();
 
-            VertxWebsocketEndpoint endpoint
-                    = context.getEndpoint("vertx-websocket:foo.bar.com/test", VertxWebsocketEndpoint.class);
+            VertxWebsocketEndpoint endpoint =
+                    context.getEndpoint("vertx-websocket:foo.bar.com/test", VertxWebsocketEndpoint.class);
             URI websocketURI = endpoint.getConfiguration().getWebsocketURI();
             assertEquals(defaultPort, websocketURI.getPort());
         }
@@ -131,8 +133,8 @@ public class VertxWebsocketComponentConfigurationTest {
             context.addComponent("vertx-websocket", component);
             context.start();
 
-            VertxWebsocketEndpoint endpoint
-                    = context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
+            VertxWebsocketEndpoint endpoint =
+                    context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
             WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
             assertTrue(connectOptions.getAllowOriginHeader());
         }
@@ -146,8 +148,8 @@ public class VertxWebsocketComponentConfigurationTest {
             context.addComponent("vertx-websocket", component);
             context.start();
 
-            VertxWebsocketEndpoint endpoint
-                    = context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
+            VertxWebsocketEndpoint endpoint =
+                    context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
             WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
             assertFalse(connectOptions.getAllowOriginHeader());
         }
@@ -162,8 +164,8 @@ public class VertxWebsocketComponentConfigurationTest {
             context.addComponent("vertx-websocket", component);
             context.start();
 
-            VertxWebsocketEndpoint endpoint
-                    = context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
+            VertxWebsocketEndpoint endpoint =
+                    context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
 
             WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
             MultiMap headers = connectOptions.getHeaders();

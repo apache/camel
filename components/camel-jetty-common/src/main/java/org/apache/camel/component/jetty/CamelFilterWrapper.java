@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import java.io.File;
@@ -61,22 +62,20 @@ public class CamelFilterWrapper implements Filter {
     public void init(FilterConfig config) throws ServletException {
         Object o = config.getServletContext().getAttribute("jakarta.servlet.context.tempdir");
         if (o == null) {
-            //when run in embedded mode, Jetty 8 will forget to set this property,
-            //but the MultiPartFilter requires it (will NPE if not set) so we'll
-            //go ahead and set it to the default tmp dir on the system.
+            // when run in embedded mode, Jetty 8 will forget to set this property,
+            // but the MultiPartFilter requires it (will NPE if not set) so we'll
+            // go ahead and set it to the default tmp dir on the system.
             try {
                 File file = Files.createTempFile("camel", "").toFile();
                 boolean result = file.delete();
                 if (!result) {
                     LOG.error("failed to delete {}", file);
                 }
-                config.getServletContext().setAttribute("jakarta.servlet.context.tempdir",
-                        file.getParentFile());
+                config.getServletContext().setAttribute("jakarta.servlet.context.tempdir", file.getParentFile());
             } catch (IOException e) {
-                //ignore
+                // ignore
             }
         }
         wrapped.init(config);
     }
-
 }

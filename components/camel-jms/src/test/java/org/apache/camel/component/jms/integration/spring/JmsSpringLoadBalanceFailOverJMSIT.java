@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Tag;
@@ -23,12 +26,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Integration test for Camel load-balancer fail-over with JMS
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class JmsSpringLoadBalanceFailOverJMSIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -48,5 +49,4 @@ public class JmsSpringLoadBalanceFailOverJMSIT extends AbstractSpringJMSITSuppor
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

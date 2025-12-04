@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
 
 import org.apache.camel.component.as2.api.AS2CompressionAlgorithm;
@@ -22,8 +23,7 @@ import org.bouncycastle.operator.OutputCompressor;
 
 public final class CompressionUtils {
 
-    private CompressionUtils() {
-    }
+    private CompressionUtils() {}
 
     public static CMSCompressedDataGenerator createCompressedDataGenerator() {
         return new CMSCompressedDataGenerator();
@@ -32,5 +32,4 @@ public final class CompressionUtils {
     public static OutputCompressor createCompressor(AS2CompressionAlgorithm compressionAlgorithm) {
         return compressionAlgorithm.getOutputCompressor();
     }
-
 }

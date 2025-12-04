@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.converter;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -33,9 +37,6 @@ import org.apache.camel.processor.converter.custom.MyBean;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ConvertBodyTest extends ContextTestSupport {
 
@@ -65,7 +66,10 @@ public class ConvertBodyTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         // do not propagate charset to avoid side effects with double conversion
         // etc
-        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isNull();
+        getMockEndpoint("mock:foo")
+                .message(0)
+                .exchangeProperty(Exchange.CHARSET_NAME)
+                .isNull();
 
         template.sendBody("direct:foo", "Hello World");
 
@@ -83,10 +87,15 @@ public class ConvertBodyTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         // do not propagate charset to avoid side effects with double conversion
         // etc
-        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isEqualTo("UTF-8");
+        getMockEndpoint("mock:foo")
+                .message(0)
+                .exchangeProperty(Exchange.CHARSET_NAME)
+                .isEqualTo("UTF-8");
 
-        Exchange srcExchange = ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8")
-                .withBody("Hello World").build();
+        Exchange srcExchange = ExchangeBuilder.anExchange(context)
+                .withProperty(Exchange.CHARSET_NAME, "UTF-8")
+                .withBody("Hello World")
+                .build();
 
         template.send("direct:foo", srcExchange);
 
@@ -225,5 +234,4 @@ public class ConvertBodyTest extends ContextTestSupport {
             }
         };
     }
-
 }

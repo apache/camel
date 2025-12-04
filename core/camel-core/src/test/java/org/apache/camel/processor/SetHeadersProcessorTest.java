@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Map;
@@ -31,8 +32,7 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     public static class HeaderBean {
         final Map<String, String> map = new java.util.LinkedHashMap<>();
 
-        public HeaderBean() {
-        }
+        public HeaderBean() {}
 
         Map<String, String> getHeaders(String body) {
             map.clear();
@@ -92,7 +92,9 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     public void testUseMapOf() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:startMap").setHeaders(Map.of("foo", "ABC", "bar", "XYZ")).to("mock:result");
+                from("direct:startMap")
+                        .setHeaders(Map.of("foo", "ABC", "bar", "XYZ"))
+                        .to("mock:result");
             }
         });
         expected.message(0).header("foo").isEqualTo("ABC");
@@ -122,15 +124,21 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeaders("foo", simple("${body}"),
-                        "bar", simple("${header.bar1}")).to("mock:result");
-                from("direct:startDepHeader").setHeaders("foo", simple("${body}"),
-                        "bar", simple("${header.foo} > 10", Boolean.class)).to("mock:result");
-                from("direct:startConstant").setHeaders("foo", constant("ABC"),
-                        "bar", constant("XYZ")).to("mock:result");
-                from("direct:startXpath").setHeaders("age", xpath("/person/@age"),
-                        "name", xpath("/person/@name")).to("mock:result");
-                from("direct:startMethod").setHeaders("mapTest", method(HeaderBean.class, "getHeaders")).to("mock:result");
+                from("direct:start")
+                        .setHeaders("foo", simple("${body}"), "bar", simple("${header.bar1}"))
+                        .to("mock:result");
+                from("direct:startDepHeader")
+                        .setHeaders("foo", simple("${body}"), "bar", simple("${header.foo} > 10", Boolean.class))
+                        .to("mock:result");
+                from("direct:startConstant")
+                        .setHeaders("foo", constant("ABC"), "bar", constant("XYZ"))
+                        .to("mock:result");
+                from("direct:startXpath")
+                        .setHeaders("age", xpath("/person/@age"), "name", xpath("/person/@name"))
+                        .to("mock:result");
+                from("direct:startMethod")
+                        .setHeaders("mapTest", method(HeaderBean.class, "getHeaders"))
+                        .to("mock:result");
             }
         };
     }

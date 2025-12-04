@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +30,8 @@ public class MailSortTermUriConfigTest extends MailSortTermTest {
             public void configure() {
                 context.setAutoStartup(false);
 
-                from(bill.uriPrefix(Protocol.imap) + "&searchTerm=#searchTerm&sortTerm=date").to("mock:resultAscending");
+                from(bill.uriPrefix(Protocol.imap) + "&searchTerm=#searchTerm&sortTerm=date")
+                        .to("mock:resultAscending");
             }
         };
     }

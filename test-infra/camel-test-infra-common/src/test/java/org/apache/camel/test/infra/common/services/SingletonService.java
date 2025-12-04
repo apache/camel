@@ -83,9 +83,7 @@ public class SingletonService<T extends InfrastructureService>
     }
 
     @Override
-    public final void close() {
-
-    }
+    public final void close() {}
 
     protected T getService() {
         return service;

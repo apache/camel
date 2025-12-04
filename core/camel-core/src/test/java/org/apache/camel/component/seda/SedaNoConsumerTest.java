@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,9 +28,6 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SedaNoConsumerTest extends ContextTestSupport {
 
@@ -45,7 +46,8 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         });
 
         context.start();
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).waitTime(2000).create();
+        NotifyBuilder notify =
+                new NotifyBuilder(context).whenDone(1).waitTime(2000).create();
 
         // no problem for in only as we do not expect a reply
         template.sendBody("direct:start", "Hello World");
@@ -64,8 +66,10 @@ public class SedaNoConsumerTest extends ContextTestSupport {
 
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody("direct:start", "Hello World"), "Should throw an exception");
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.requestBody("direct:start", "Hello World"),
+                "Should throw an exception");
         assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
     }
 
@@ -80,8 +84,10 @@ public class SedaNoConsumerTest extends ContextTestSupport {
 
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:start", "Hello World"), "Should throw an exception");
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"),
+                "Should throw an exception");
         assertIsInstanceOf(SedaConsumerNotAvailableException.class, e.getCause());
     }
 
@@ -103,7 +109,6 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
-
     }
 
     @Test
@@ -126,8 +131,10 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         context.getRouteController().stopRoute("stopThisRoute");
         TimeUnit.MILLISECONDS.sleep(100);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("seda:foo?failIfNoConsumers=true", "Hello World"), "Should throw an exception");
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBody("seda:foo?failIfNoConsumers=true", "Hello World"),
+                "Should throw an exception");
         assertIsInstanceOf(SedaConsumerNotAvailableException.class, e.getCause());
     }
 
@@ -149,7 +156,5 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         template.sendBody("direct:in", "Hello World");
 
         assertMockEndpointsSatisfied();
-
     }
-
 }

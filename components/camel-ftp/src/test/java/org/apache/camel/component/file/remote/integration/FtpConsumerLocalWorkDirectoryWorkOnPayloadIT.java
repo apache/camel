@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -27,15 +28,15 @@ public class FtpConsumerLocalWorkDirectoryWorkOnPayloadIT extends FtpConsumerLoc
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // alter the body by setting it to a String type
-                        exchange.getIn().setBody("Hello World");
-
-                    }
-                }).to("mock:result", TestSupport.fileUri(testDirectory, "out"));
+                from(getFtpUrl())
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // alter the body by setting it to a String type
+                                exchange.getIn().setBody("Hello World");
+                            }
+                        })
+                        .to("mock:result", TestSupport.fileUri(testDirectory, "out"));
             }
         };
     }
-
 }

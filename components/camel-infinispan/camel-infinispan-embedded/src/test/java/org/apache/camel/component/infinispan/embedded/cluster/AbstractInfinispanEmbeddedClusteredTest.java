@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded.cluster;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +34,13 @@ import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 abstract class AbstractInfinispanEmbeddedClusteredTest {
     @Timeout(value = 1, unit = TimeUnit.MINUTES)
     @Test
     public void test() throws Exception {
         final Logger logger = LoggerFactory.getLogger(getClass());
-        final List<String> clients = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
+        final List<String> clients =
+                IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
         final List<String> results = new ArrayList<>();
         final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(clients.size() * 2);
         final CountDownLatch latch = new CountDownLatch(clients.size());

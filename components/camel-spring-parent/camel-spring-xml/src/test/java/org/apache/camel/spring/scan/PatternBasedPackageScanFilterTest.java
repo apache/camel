@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.scan;
 
 import java.io.File;
@@ -129,12 +130,18 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
 
         filter = new PatternBasedPackageScanFilter();
         addExcludePatterns("java.io.File");
-        validateMatchingSetContains(List.class, ArrayList.class, LinkedList.class, JarFile.class, FileInputStream.class,
+        validateMatchingSetContains(
+                List.class,
+                ArrayList.class,
+                LinkedList.class,
+                JarFile.class,
+                FileInputStream.class,
                 RandomAccessFile.class);
 
         filter = new PatternBasedPackageScanFilter();
         addExcludePatterns("java.io.File*");
-        validateMatchingSetContains(List.class, ArrayList.class, LinkedList.class, JarFile.class, RandomAccessFile.class);
+        validateMatchingSetContains(
+                List.class, ArrayList.class, LinkedList.class, JarFile.class, RandomAccessFile.class);
 
         filter = new PatternBasedPackageScanFilter();
         addExcludePatterns("java.io.*File*");

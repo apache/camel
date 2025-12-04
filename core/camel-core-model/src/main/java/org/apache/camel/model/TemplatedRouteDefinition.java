@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -41,28 +42,34 @@ import org.apache.camel.spi.ResourceAware;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "templatedRoute")
-@XmlType(propOrder = { "parameters", "beans" })
+@XmlType(propOrder = {"parameters", "beans"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TemplatedRouteDefinition implements CamelContextAware, ResourceAware {
 
     @XmlTransient
     private CamelContext camelContext;
+
     @XmlTransient
     private Resource resource;
 
     @XmlAttribute(required = true)
     private String routeTemplateRef;
+
     @XmlAttribute
     private String routeId;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String prefixId;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String group;
+
     @XmlElement(name = "parameter")
     @Metadata(description = "Adds an input parameter of the template to build the route")
     private List<TemplatedRouteParameterDefinition> parameters;
+
     @XmlElement(name = "bean")
     @Metadata(description = "Adds a local bean as input of the template to build the route")
     private List<BeanFactoryDefinition<TemplatedRouteDefinition>> beans;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics.spi;
 
 import java.util.concurrent.ExecutorService;
@@ -65,5 +66,4 @@ public class InstrumentedThreadPoolFactory implements ThreadPoolFactory {
         return new InstrumentedScheduledExecutorService(
                 threadPoolFactory.newScheduledThreadPool(profile, threadFactory), metricRegistry, profile.getId());
     }
-
 }

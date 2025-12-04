@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns;
 
 import java.util.Map;
@@ -58,7 +59,8 @@ public class Sns2Component extends HealthCheckComponent {
 
         Map<String, Object> nonTransientParameters = getNonTransientParameters(parameters);
 
-        Sns2Configuration epConfiguration = this.configuration != null ? this.configuration.copy() : new Sns2Configuration();
+        Sns2Configuration epConfiguration =
+                this.configuration != null ? this.configuration.copy() : new Sns2Configuration();
 
         if (remaining.startsWith("arn:")) {
             parseRemaining(epConfiguration, remaining);
@@ -70,7 +72,8 @@ public class Sns2Component extends HealthCheckComponent {
         Sns2Endpoint endpoint = new Sns2Endpoint(uri, this, epConfiguration);
         setProperties(endpoint, nonTransientParameters);
 
-        if (!epConfiguration.isUseDefaultCredentialsProvider() && !epConfiguration.isUseProfileCredentialsProvider()
+        if (!epConfiguration.isUseDefaultCredentialsProvider()
+                && !epConfiguration.isUseProfileCredentialsProvider()
                 && !epConfiguration.isUseSessionCredentials()
                 && epConfiguration.getAmazonSNSClient() == null
                 && (epConfiguration.getAccessKey() == null || epConfiguration.getSecretKey() == null)) {
@@ -82,24 +85,26 @@ public class Sns2Component extends HealthCheckComponent {
     }
 
     /*
-     This method, along with getTransientParameters, getNonTransientParameters and validateParameters handle transient
-     parameters. Transient parameters, in this sense, means temporary parameters passed to the URI, that should
-     no be directly set on the endpoint because they apply to a different lifecycle in the component/endpoint creation.
-     For example, the "configuration" parameter is used to set a different Component/Endpoint configuration class other
-     than the one provided by Camel. Because the configuration object is required to configure these objects, it must
-     be used earlier in the life cycle ... and not later as part of the transport setup. Therefore, transient.
-     */
+    This method, along with getTransientParameters, getNonTransientParameters and validateParameters handle transient
+    parameters. Transient parameters, in this sense, means temporary parameters passed to the URI, that should
+    no be directly set on the endpoint because they apply to a different lifecycle in the component/endpoint creation.
+    For example, the "configuration" parameter is used to set a different Component/Endpoint configuration class other
+    than the one provided by Camel. Because the configuration object is required to configure these objects, it must
+    be used earlier in the life cycle ... and not later as part of the transport setup. Therefore, transient.
+    */
     private boolean containsTransientParameters(Map<String, Object> parameters) {
         return parameters.containsKey("configuration");
     }
 
     private Map<String, Object> getNonTransientParameters(Map<String, Object> parameters) {
-        return parameters.entrySet().stream().filter(k -> !k.getKey().equals("configuration"))
+        return parameters.entrySet().stream()
+                .filter(k -> !k.getKey().equals("configuration"))
                 .collect(Collectors.toMap(k -> k.getKey(), k -> k.getValue()));
     }
 
     private Map<String, Object> getTransientParameters(Map<String, Object> parameters) {
-        return parameters.entrySet().stream().filter(k -> k.getKey().equals("configuration"))
+        return parameters.entrySet().stream()
+                .filter(k -> k.getKey().equals("configuration"))
                 .collect(Collectors.toMap(k -> k.getKey(), k -> k.getValue()));
     }
 
@@ -129,5 +134,4 @@ public class Sns2Component extends HealthCheckComponent {
     public void setConfiguration(Sns2Configuration configuration) {
         this.configuration = configuration;
     }
-
 }

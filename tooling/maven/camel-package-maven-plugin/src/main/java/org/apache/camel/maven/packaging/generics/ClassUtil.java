@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.generics;
 
 import java.lang.reflect.Array;
@@ -71,7 +72,6 @@ public final class ClassUtil {
 
     public static Class<?> getPrimitiveWrapper(Class<?> clazz) {
         return PRIMITIVE_TO_WRAPPERS_MAP.get(clazz);
-
     }
 
     /**
@@ -142,7 +142,8 @@ public final class ClassUtil {
         } else if (type instanceof Class) {
             return (Class<?>) type;
         } else if (type instanceof GenericArrayType arrayType) {
-            return Array.newInstance(getClazz(arrayType.getGenericComponentType()), 0).getClass();
+            return Array.newInstance(getClazz(arrayType.getGenericComponentType()), 0)
+                    .getClass();
         } else if (type instanceof WildcardType wildcardType) {
             Type[] bounds = wildcardType.getUpperBounds();
             if (bounds.length > 1) {
@@ -155,7 +156,8 @@ public final class ClassUtil {
             }
         } else if (type instanceof TypeVariable<?> typeVariable) {
             if (typeVariable.getBounds().length > 1) {
-                throw new IllegalArgumentException("Illegal use of type variable with more than one bound: " + typeVariable);
+                throw new IllegalArgumentException(
+                        "Illegal use of type variable with more than one bound: " + typeVariable);
             } else {
                 Type[] bounds = typeVariable.getBounds();
                 if (bounds.length == 0) {
@@ -208,5 +210,4 @@ public final class ClassUtil {
                 .map(annotation -> annotation.annotationType().getName())
                 .anyMatch(fqAnnotationName::equals);
     }
-
 }

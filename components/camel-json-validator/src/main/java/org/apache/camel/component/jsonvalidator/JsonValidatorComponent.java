@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonvalidator;
 
 import java.util.Map;
@@ -33,8 +34,10 @@ public class JsonValidatorComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
+
     @Metadata(defaultValue = "true")
     private boolean useDefaultObjectMapper = true;
+
     @Metadata(label = "advanced")
     private String objectMapper;
 

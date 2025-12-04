@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,9 +30,13 @@ public class ResequenceBatchIgnoreInvalidExchangesTest extends ResequenceStreamI
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").resequence(header("seqno")).batch().timeout(250)
+                from("direct:start")
+                        .resequence(header("seqno"))
+                        .batch()
+                        .timeout(250)
                         // ignore invalid exchanges (they are discarded)
-                        .ignoreInvalidExchanges().to("mock:result");
+                        .ignoreInvalidExchanges()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

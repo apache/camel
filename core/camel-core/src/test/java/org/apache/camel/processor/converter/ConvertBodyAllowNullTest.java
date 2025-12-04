@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.converter;
 
 import org.apache.camel.ContextTestSupport;
@@ -143,7 +144,11 @@ public class ConvertBodyAllowNullTest extends ContextTestSupport {
         result.expectedMessageCount(1);
         result.message(0).variable("foo").isNull();
 
-        fluentTemplate.withVariable("foo", Float.NaN).withBody("Hello World").to("direct:var-optional").send();
+        fluentTemplate
+                .withVariable("foo", Float.NaN)
+                .withBody("Hello World")
+                .to("direct:var-optional")
+                .send();
 
         assertMockEndpointsSatisfied();
     }
@@ -154,7 +159,11 @@ public class ConvertBodyAllowNullTest extends ContextTestSupport {
         result.expectedMessageCount(1);
         result.message(0).variable("foo").isNull();
 
-        fluentTemplate.withVariable("foo", Float.NaN).withBody("Hello World").to("direct:var-mandatory").send();
+        fluentTemplate
+                .withVariable("foo", Float.NaN)
+                .withBody("Hello World")
+                .to("direct:var-mandatory")
+                .send();
 
         assertMockEndpointsSatisfied();
     }
@@ -168,16 +177,25 @@ public class ConvertBodyAllowNullTest extends ContextTestSupport {
                 from("direct:optional").convertBodyTo(Integer.class, false).to("mock:result");
                 from("direct:mandatory").convertBodyTo(Integer.class).to("mock:result");
 
-                from("direct:header-optional").convertHeaderTo("foo", Integer.class, false).to("mock:result");
-                from("direct:header-mandatory").convertHeaderTo("foo", Integer.class).to("mock:result");
+                from("direct:header-optional")
+                        .convertHeaderTo("foo", Integer.class, false)
+                        .to("mock:result");
+                from("direct:header-mandatory")
+                        .convertHeaderTo("foo", Integer.class)
+                        .to("mock:result");
 
-                from("direct:var-optional").convertVariableTo("foo", Integer.class, false).to("mock:result");
-                from("direct:var-mandatory").convertVariableTo("foo", Integer.class).to("mock:result");
+                from("direct:var-optional")
+                        .convertVariableTo("foo", Integer.class, false)
+                        .to("mock:result");
+                from("direct:var-mandatory")
+                        .convertVariableTo("foo", Integer.class)
+                        .to("mock:result");
 
-                from("direct:custom-optional").convertBodyTo(MyBean.class, false).to("mock:result");
+                from("direct:custom-optional")
+                        .convertBodyTo(MyBean.class, false)
+                        .to("mock:result");
                 from("direct:custom-mandatory").convertBodyTo(MyBean.class).to("mock:result");
             }
         };
     }
-
 }

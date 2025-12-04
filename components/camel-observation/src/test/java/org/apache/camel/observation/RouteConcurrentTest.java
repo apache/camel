@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,23 +29,33 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 class RouteConcurrentTest extends CamelMicrometerObservationTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("seda:foo server").setUri("seda://foo").setOperation("foo")
-                    .setKind(SpanKind.CLIENT),
-            new SpanTestData().setLabel("seda:bar server").setUri("seda://bar").setOperation("bar")
-                    .setParentId(2)
-                    .setKind(SpanKind.CLIENT),
-            new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo")
-                    .setKind(SpanKind.SERVER)
-                    .setParentId(0),
-            new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5").setOperation("bar")
-                    .setKind(SpanKind.SERVER)
-                    .setParentId(1),
+        new SpanTestData()
+                .setLabel("seda:foo server")
+                .setUri("seda://foo")
+                .setOperation("foo")
+                .setKind(SpanKind.CLIENT),
+        new SpanTestData()
+                .setLabel("seda:bar server")
+                .setUri("seda://bar")
+                .setOperation("bar")
+                .setParentId(2)
+                .setKind(SpanKind.CLIENT),
+        new SpanTestData()
+                .setLabel("seda:foo server")
+                .setUri("seda://foo?concurrentConsumers=5")
+                .setOperation("foo")
+                .setKind(SpanKind.SERVER)
+                .setParentId(0),
+        new SpanTestData()
+                .setLabel("seda:bar server")
+                .setUri("seda://bar?concurrentConsumers=5")
+                .setOperation("bar")
+                .setKind(SpanKind.SERVER)
+                .setParentId(1),
     };
 
     RouteConcurrentTest() {
@@ -78,12 +91,14 @@ class RouteConcurrentTest extends CamelMicrometerObservationTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?concurrentConsumers=5").routeId("foo")
+                from("seda:foo?concurrentConsumers=5")
+                        .routeId("foo")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"))
                         .to("seda:bar");
 
-                from("seda:bar?concurrentConsumers=5").routeId("bar")
+                from("seda:bar?concurrentConsumers=5")
+                        .routeId("bar")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(0,500)}"));
             }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 
@@ -22,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XQueryStripWhitespaceTest extends CamelTestSupport {
 
@@ -60,7 +61,7 @@ public class XQueryStripWhitespaceTest extends CamelTestSupport {
         // replace double spaces to make equals easier
         result = result.replaceAll("\\s{2,}", " ");
 
-        assertEquals(" 01 2010-10-04 John Doe This is a test report server is down someone@somewhere.com 12345678 ", result);
+        assertEquals(
+                " 01 2010-10-04 John Doe This is a test report server is down someone@somewhere.com 12345678 ", result);
     }
-
 }

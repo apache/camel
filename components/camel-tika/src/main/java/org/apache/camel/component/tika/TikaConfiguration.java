@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tika;
 
 import java.nio.charset.Charset;
@@ -31,12 +32,16 @@ public class TikaConfiguration {
     @UriPath(description = "Operation type")
     @Metadata(required = true)
     private TikaOperation operation;
+
     @UriParam(defaultValue = "xml")
     private TikaParseOutputFormat tikaParseOutputFormat = TikaParseOutputFormat.xml;
+
     @UriParam(description = "Tika Parse Output Encoding")
     private String tikaParseOutputEncoding = Charset.defaultCharset().name();
+
     @UriParam(label = "advanced", description = "Tika Config")
     private TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
+
     @UriParam(label = "advanced", description = "Tika Config Url")
     private String tikaConfigUri;
 

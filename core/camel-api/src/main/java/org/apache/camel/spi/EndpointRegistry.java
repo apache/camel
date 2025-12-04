@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Collection;
@@ -98,5 +99,4 @@ public interface EndpointRegistry extends Map<NormalizedEndpointUri, Endpoint>, 
      * Gets a read-only map of the endpoints currently in the registry.
      */
     Map<String, Endpoint> getReadOnlyMap();
-
 }

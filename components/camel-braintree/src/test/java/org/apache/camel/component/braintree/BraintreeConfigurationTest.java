@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,9 +26,6 @@ import java.util.logging.Logger;
 import com.braintreegateway.BraintreeGateway;
 import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BraintreeConfigurationTest {
 
@@ -58,5 +59,4 @@ public class BraintreeConfigurationTest {
         configuration.setPrivateKey("dummy-private-key");
         return configuration;
     }
-
 }

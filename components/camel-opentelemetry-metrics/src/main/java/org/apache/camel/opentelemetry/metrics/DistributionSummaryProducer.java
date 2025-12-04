@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_HISTOGRAM_VALUE;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,8 +27,6 @@ import io.opentelemetry.api.metrics.LongHistogram;
 import io.opentelemetry.api.metrics.LongHistogramBuilder;
 import io.opentelemetry.api.metrics.Meter;
 import org.apache.camel.Exchange;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_HISTOGRAM_VALUE;
 
 public class DistributionSummaryProducer extends AbstractOpenTelemetryProducer<LongHistogram> {
 
@@ -57,9 +58,7 @@ public class DistributionSummaryProducer extends AbstractOpenTelemetryProducer<L
     }
 
     @Override
-    protected void doProcess(
-            Exchange exchange, String metricsName, LongHistogram summary,
-            Attributes attributes) {
+    protected void doProcess(Exchange exchange, String metricsName, LongHistogram summary, Attributes attributes) {
         Long value = simple(exchange, getEndpoint().getValue(), Long.class);
         Long finalValue = getLongHeader(exchange.getIn(), HEADER_HISTOGRAM_VALUE, value);
 

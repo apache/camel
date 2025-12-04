@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.helper;
 
 import java.io.InputStream;
@@ -196,9 +197,10 @@ public final class CamelXmlHelper {
     }
 
     private static Document loadCamelXmlFileAsDom(InputStream resourceInputStream) {
-        // must enforce the namespace to be http://camel.apache.org/schema/spring which is what the camel-core JAXB model uses
-        return XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests",
-                "http://camel.apache.org/schema/spring");
+        // must enforce the namespace to be http://camel.apache.org/schema/spring which is what the camel-core JAXB
+        // model uses
+        return XmlLineNumberParser.parseXml(
+                resourceInputStream, "camelContext,routes,rests", "http://camel.apache.org/schema/spring");
     }
 
     private static Node findCamelNodeInDocument(Document root, String key) {
@@ -231,7 +233,7 @@ public final class CamelXmlHelper {
                 }
             }
         }
-        //FIXME : selectedNode is always null
+        // FIXME : selectedNode is always null
         return selectedNode;
     }
 
@@ -289,5 +291,4 @@ public final class CamelXmlHelper {
     private static boolean isNodeName(String name, Node node) {
         return name.equals(node.getLocalName()) || name.equals(node.getNodeName());
     }
-
 }

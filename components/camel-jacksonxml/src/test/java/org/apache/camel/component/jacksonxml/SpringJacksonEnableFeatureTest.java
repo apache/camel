@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringJacksonEnableFeatureTest extends CamelSpringTestSupport {
 
@@ -32,12 +33,14 @@ public class SpringJacksonEnableFeatureTest extends CamelSpringTestSupport {
         Object marshalled = template.requestBody("direct:in", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         // we enable the wrap root type feature so we should have TestPojoView
-        assertEquals("<TestPojoView><age>30</age><height>190</height><weight>70</weight></TestPojoView>", marshalledAsString);
+        assertEquals(
+                "<TestPojoView><age>30</age><height>190</height><weight>70</weight></TestPojoView>",
+                marshalledAsString);
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jacksonxml/SpringJacksonEnableFeatureTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jacksonxml/SpringJacksonEnableFeatureTest.xml");
     }
-
 }

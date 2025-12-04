@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.agent;
 
 import org.apache.camel.Exchange;
@@ -69,10 +70,15 @@ public class BedrockAgentIngestionJobConsumer extends ScheduledPollConsumer {
     protected Exchange createExchange(GetIngestionJobResponse response) {
         Exchange exchange = createExchange(true);
         exchange.getMessage().setBody(response.ingestionJob());
-        exchange.getMessage().setHeader(BedrockAgentConstants.INGESTION_JOB_STATUS, response.ingestionJob().status());
+        exchange.getMessage()
+                .setHeader(
+                        BedrockAgentConstants.INGESTION_JOB_STATUS,
+                        response.ingestionJob().status());
         if (response.ingestionJob().hasFailureReasons()) {
-            exchange.getMessage().setHeader(BedrockAgentConstants.INGESTION_JOB_FAILURE_REASONS,
-                    response.ingestionJob().failureReasons());
+            exchange.getMessage()
+                    .setHeader(
+                            BedrockAgentConstants.INGESTION_JOB_FAILURE_REASONS,
+                            response.ingestionJob().failureReasons());
         }
         return exchange;
     }

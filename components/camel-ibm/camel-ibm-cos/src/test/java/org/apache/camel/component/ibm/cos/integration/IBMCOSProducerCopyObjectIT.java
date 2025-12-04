@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 
@@ -30,18 +33,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Integration test for copyObject operation.
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.apiKey", matches = ".*",
-                                 disabledReason = "IBM COS API Key not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.serviceInstanceId", matches = ".*",
-                                 disabledReason = "IBM COS Service Instance ID not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.endpointUrl", matches = ".*",
-                                 disabledReason = "IBM COS Endpoint URL not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.apiKey",
+            matches = ".*",
+            disabledReason = "IBM COS API Key not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.serviceInstanceId",
+            matches = ".*",
+            disabledReason = "IBM COS Service Instance ID not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.endpointUrl",
+            matches = ".*",
+            disabledReason = "IBM COS Endpoint URL not provided")
 })
 public class IBMCOSProducerCopyObjectIT extends IBMCOSTestSupport {
 
@@ -96,12 +103,9 @@ public class IBMCOSProducerCopyObjectIT extends IBMCOSTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:putObject")
-                        .to(buildEndpointUri("putObject"));
+                from("direct:putObject").to(buildEndpointUri("putObject"));
 
-                from("direct:copyObject")
-                        .to(buildEndpointUri("copyObject"))
-                        .to("mock:result");
+                from("direct:copyObject").to(buildEndpointUri("copyObject")).to("mock:result");
             }
         };
     }

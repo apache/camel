@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mina;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 /**
  * To test timeout.
@@ -29,8 +30,9 @@ public class MinaExchangeDefaultTimeOutTest extends BaseMinaTest {
 
     @Test
     public void testDefaultTimeOut() {
-        String result = (String) assertDoesNotThrow(() -> template
-                .requestBody(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()), "Hello World"),
+        String result = (String) assertDoesNotThrow(
+                () -> template.requestBody(
+                        String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()), "Hello World"),
                 "Should not get a RuntimeCamelException");
         assertEquals("Okay I will be faster in the future", result);
     }
@@ -40,12 +42,13 @@ public class MinaExchangeDefaultTimeOutTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()).process(e -> {
-                    assertEquals("Hello World", e.getIn().getBody(String.class));
-                    // just be a little bit slow
-                    Thread.sleep(250);
-                    e.getMessage().setBody("Okay I will be faster in the future");
-                });
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort())
+                        .process(e -> {
+                            assertEquals("Hello World", e.getIn().getBody(String.class));
+                            // just be a little bit slow
+                            Thread.sleep(250);
+                            e.getMessage().setBody("Okay I will be faster in the future");
+                        });
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.io.BufferedOutputStream;
@@ -38,13 +39,14 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyConsumerClientModeReconnectTest.class);
 
-    private static final byte[] LENGTH_HEADER = { 0x00, 0x00, 0x40, 0x00 }; // 16384 bytes
+    private static final byte[] LENGTH_HEADER = {0x00, 0x00, 0x40, 0x00}; // 16384 bytes
 
     private Processor processor = new P();
     private int port;
 
     @BindToRegistry("length-decoder")
-    private ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+    private ChannelHandlerFactory decoder =
+            ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
     @Test
     public void unsharableCodecsConflictsTest() throws Exception {
@@ -82,7 +84,9 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
             public void configure() {
                 port = getPort();
 
-                from("netty:tcp://localhost:{{port}}?decoders=#length-decoder&sync=false").process(processor).to("mock:result");
+                from("netty:tcp://localhost:{{port}}?decoders=#length-decoder&sync=false")
+                        .process(processor)
+                        .to("mock:result");
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class EnricherTest extends ContextTestSupport {
 
@@ -110,13 +111,19 @@ public class EnricherTest extends ContextTestSupport {
                 // InOnly routes
                 // -------------------------------------------------------------
 
-                from("direct:enricher-test-1").enrich("direct:enricher-constant-resource", aggregationStrategy).to("mock:mock");
+                from("direct:enricher-test-1")
+                        .enrich("direct:enricher-constant-resource", aggregationStrategy)
+                        .to("mock:mock");
 
-                from("direct:enricher-test-3").enrich("direct:enricher-fault-resource", aggregationStrategy).to("mock:mock");
+                from("direct:enricher-test-3")
+                        .enrich("direct:enricher-fault-resource", aggregationStrategy)
+                        .to("mock:mock");
 
-                from("direct:enricher-test-4").errorHandler(noErrorHandler()) // avoid
+                from("direct:enricher-test-4")
+                        .errorHandler(noErrorHandler()) // avoid
                         // re-deliveries
-                        .enrich("direct:enricher-error-resource", aggregationStrategy).to("mock:mock");
+                        .enrich("direct:enricher-error-resource", aggregationStrategy)
+                        .to("mock:mock");
 
                 // -------------------------------------------------------------
                 // InOut routes
@@ -126,7 +133,8 @@ public class EnricherTest extends ContextTestSupport {
 
                 from("direct:enricher-test-7").enrich("direct:enricher-fault-resource", aggregationStrategy);
 
-                from("direct:enricher-test-8").errorHandler(noErrorHandler()) // avoid
+                from("direct:enricher-test-8")
+                        .errorHandler(noErrorHandler()) // avoid
                         // re-deliveries
                         .enrich("direct:enricher-error-resource", aggregationStrategy);
 
@@ -136,9 +144,10 @@ public class EnricherTest extends ContextTestSupport {
 
                 from("direct:enricher-constant-resource").transform().constant("blah");
 
-                from("direct:enricher-error-resource").errorHandler(noErrorHandler()).process(new FailureProcessor());
+                from("direct:enricher-error-resource")
+                        .errorHandler(noErrorHandler())
+                        .process(new FailureProcessor());
             }
         };
     }
-
 }

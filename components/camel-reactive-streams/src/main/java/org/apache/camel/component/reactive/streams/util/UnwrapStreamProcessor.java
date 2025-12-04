@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.util;
 
 import java.util.LinkedList;
@@ -88,7 +89,6 @@ public class UnwrapStreamProcessor extends AsyncProcessorSupport {
                         exchange.getMessage().setBody(body);
                     }
                 }
-
             });
 
             return false;
@@ -97,5 +97,4 @@ public class UnwrapStreamProcessor extends AsyncProcessorSupport {
         callback.done(true);
         return true;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -32,14 +35,13 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
     public static final class MyComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+                throws Exception {
             Endpoint answer = new MyEndpoint(uri, this);
             setProperties(answer, parameters);
             return answer;
@@ -122,8 +124,11 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<String> lines
-                = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        List<String> lines = (List<String>) getMockEndpoint("mock:result")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getHeader("lines");
         assertEquals(2, lines.size());
         assertEquals("abc", lines.get(0));
         assertEquals("def", lines.get(1));
@@ -137,8 +142,11 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<String> lines
-                = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        List<String> lines = (List<String>) getMockEndpoint("mock:result")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getHeader("lines");
         assertEquals(2, lines.size());
         assertEquals("++abc++", lines.get(0));
         assertEquals("++def++", lines.get(1));
@@ -185,17 +193,27 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("mycomponent", new MyComponent());
 
-                from("direct:start").to("mycomponent:foo?username=scott&password=RAW(++%%w?rd))").to("mock:result");
+                from("direct:start")
+                        .to("mycomponent:foo?username=scott&password=RAW(++%%w?rd))")
+                        .to("mock:result");
 
                 from("direct:lines").to("mycomponent:foo?lines=abc&lines=def").to("mock:result");
 
-                from("direct:rawlines").to("mycomponent:foo?lines=RAW(++abc++)&lines=RAW(++def++)").to("mock:result");
+                from("direct:rawlines")
+                        .to("mycomponent:foo?lines=RAW(++abc++)&lines=RAW(++def++)")
+                        .to("mock:result");
 
-                from("direct:plus").to("mycomponent:foo?password=foo)+bar&username=scott").to("mock:result");
+                from("direct:plus")
+                        .to("mycomponent:foo?password=foo)+bar&username=scott")
+                        .to("mock:result");
 
-                from("direct:ok").to("mycomponent:foo?password=RAW(foo)+bar)&username=scott").to("mock:result");
+                from("direct:ok")
+                        .to("mycomponent:foo?password=RAW(foo)+bar)&username=scott")
+                        .to("mock:result");
 
-                from("direct:okDynamic").toD("mycomponent:foo?password=RAW{foo)+bar}&username=scott").to("mock:result");
+                from("direct:okDynamic")
+                        .toD("mycomponent:foo?password=RAW{foo)+bar}&username=scott")
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.properties;
 
 import java.io.IOException;
@@ -40,9 +41,12 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport {
@@ -55,10 +59,8 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .transform().simple("Hello ${body} we are at {{configmap:myconfig/bar.txt}}");
-                from("direct:binary")
-                        .transform().simple("File saved to {{configmap-binary:myconfig/binary.dat}}");
+                from("direct:start").transform().simple("Hello ${body} we are at {{configmap:myconfig/bar.txt}}");
+                from("direct:binary").transform().simple("File saved to {{configmap-binary:myconfig/binary.dat}}");
             }
         };
     }
@@ -74,10 +76,14 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
         context.getRegistry().bind("KubernetesClient", client);
 
         Map<String, String> data = Map.of("bar.txt", "Moes Bar");
-        Map<String, String> binData = Map.of("binary.dat",
-                Base64.getEncoder().encodeToString(readExampleBinaryFile()));
-        ConfigMap cm = new ConfigMapBuilder().editOrNewMetadata().withName("myconfig").endMetadata().withData(data)
-                .withBinaryData(binData).build();
+        Map<String, String> binData = Map.of("binary.dat", Base64.getEncoder().encodeToString(readExampleBinaryFile()));
+        ConfigMap cm = new ConfigMapBuilder()
+                .editOrNewMetadata()
+                .withName("myconfig")
+                .endMetadata()
+                .withData(data)
+                .withBinaryData(binData)
+                .build();
         this.cm = client.resource(cm).serverSideApply();
 
         return context;
@@ -107,8 +113,7 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
         String out = template.requestBody("direct:binary", null, String.class);
         Assertions.assertTrue(out.matches("File saved to .*binary.dat"));
         Path filePath = Path.of(out.substring("File saved to ".length()));
-        Assertions.assertArrayEquals(readExampleBinaryFile(),
-                Files.readAllBytes(filePath));
+        Assertions.assertArrayEquals(readExampleBinaryFile(), Files.readAllBytes(filePath));
         Files.deleteIfExists(filePath);
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.converter;
 
 import java.io.ByteArrayInputStream;
@@ -138,8 +139,7 @@ public final class JacksonTypeConverters {
     @Converter
     public Map<String, Object> toMap(JsonNode node, Exchange exchange) throws Exception {
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
-        return mapper.convertValue(node, new TypeReference<>() {
-        });
+        return mapper.convertValue(node, new TypeReference<>() {});
     }
 
     @Converter
@@ -212,7 +212,8 @@ public final class JacksonTypeConverters {
     }
 
     @Converter(fallback = true)
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws Exception {
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry)
+            throws Exception {
 
         // only do this if enabled (disabled by default)
         if (!init && exchange != null) {
@@ -294,9 +295,12 @@ public final class JacksonTypeConverters {
      */
     private static boolean isNotPojoType(Class<?> type) {
         boolean isString = String.class.isAssignableFrom(type);
-        boolean isNumber = Number.class.isAssignableFrom(type) || int.class.isAssignableFrom(type)
-                || long.class.isAssignableFrom(type) || short.class.isAssignableFrom(type)
-                || char.class.isAssignableFrom(type) || float.class.isAssignableFrom(type)
+        boolean isNumber = Number.class.isAssignableFrom(type)
+                || int.class.isAssignableFrom(type)
+                || long.class.isAssignableFrom(type)
+                || short.class.isAssignableFrom(type)
+                || char.class.isAssignableFrom(type)
+                || float.class.isAssignableFrom(type)
                 || double.class.isAssignableFrom(type);
         return isString || isNumber;
     }
@@ -314,8 +318,8 @@ public final class JacksonTypeConverters {
                     ObjectMapper mapper = new ObjectMapper();
                     if (moduleClassNames != null) {
                         for (Object o : ObjectHelper.createIterable(moduleClassNames)) {
-                            Class<Module> type
-                                    = camelContext.getClassResolver().resolveMandatoryClass(o.toString(), Module.class);
+                            Class<Module> type =
+                                    camelContext.getClassResolver().resolveMandatoryClass(o.toString(), Module.class);
                             Module module = camelContext.getInjector().newInstance(type);
 
                             LOG.debug("Registering module: {} -> {}", o, module);
@@ -332,5 +336,4 @@ public final class JacksonTypeConverters {
 
         return defaultMapper;
     }
-
 }

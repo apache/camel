@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.roaster;
 
 import java.util.List;
@@ -108,8 +109,7 @@ public class StatementFieldSource<O extends JavaSource<O>> implements FieldSourc
     }
 
     @Override
-    public void removeAllAnnotations() {
-    }
+    public void removeAllAnnotations() {}
 
     @Override
     public FieldSource<O> removeAnnotation(Annotation annotation) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.annotation;
 
 import java.lang.annotation.Documented;
@@ -24,7 +25,6 @@ import java.lang.annotation.RetentionPolicy;
  * This annotation allows to link classes together in the model. This release version 1.0 only supports one-to-one
  * relation
  */
-
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Link {
@@ -35,5 +35,4 @@ public @interface Link {
      * @return LinkType
      */
     LinkType linkType() default LinkType.OneToOne;
-
 }

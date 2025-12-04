@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.queue;
+
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_QUEUE;
 
 import java.util.Map;
 
@@ -34,16 +37,19 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.ignite.IgniteQueue;
 import org.apache.ignite.configuration.CollectionConfiguration;
 
-import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_QUEUE;
-
 /**
  * Interact with <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Queue data structures</a>.
  *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_QUEUE, title = "Ignite Queues", syntax = "ignite-queue:name",
-             category = { Category.CACHE, Category.CLUSTERING, Category.MESSAGING }, producerOnly = true,
-             headersClass = IgniteConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_QUEUE,
+        title = "Ignite Queues",
+        syntax = "ignite-queue:name",
+        category = {Category.CACHE, Category.CLUSTERING, Category.MESSAGING},
+        producerOnly = true,
+        headersClass = IgniteConstants.class)
 public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
@@ -62,8 +68,11 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private IgniteQueueOperation operation;
 
-    public IgniteQueueEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
-                               IgniteQueueComponent igniteComponent) {
+    public IgniteQueueEndpoint(
+            String endpointUri,
+            String remaining,
+            Map<String, Object> parameters,
+            IgniteQueueComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         name = remaining;
 
@@ -161,5 +170,4 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
     public void setTimeoutMillis(Long timeoutMillis) {
         this.timeoutMillis = timeoutMillis;
     }
-
 }

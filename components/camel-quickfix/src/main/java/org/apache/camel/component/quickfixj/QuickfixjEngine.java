@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
 
 import java.io.InputStream;
@@ -113,28 +114,40 @@ public class QuickfixjEngine extends ServiceSupport {
         this(camelContext, uri, settingsResourceName, null, null, null);
     }
 
-    public QuickfixjEngine(CamelContext camelContext, String uri, String settingsResourceName,
-                           MessageStoreFactory messageStoreFactoryOverride,
-                           LogFactory sessionLogFactoryOverride,
-                           MessageFactory messageFactoryOverride) throws Exception {
-        this(uri, loadSettings(camelContext, settingsResourceName), messageStoreFactoryOverride,
-             sessionLogFactoryOverride,
-             messageFactoryOverride);
+    public QuickfixjEngine(
+            CamelContext camelContext,
+            String uri,
+            String settingsResourceName,
+            MessageStoreFactory messageStoreFactoryOverride,
+            LogFactory sessionLogFactoryOverride,
+            MessageFactory messageFactoryOverride)
+            throws Exception {
+        this(
+                uri,
+                loadSettings(camelContext, settingsResourceName),
+                messageStoreFactoryOverride,
+                sessionLogFactoryOverride,
+                messageFactoryOverride);
     }
 
-    public QuickfixjEngine(String uri, SessionSettings settings,
-                           MessageStoreFactory messageStoreFactoryOverride,
-                           LogFactory sessionLogFactoryOverride,
-                           MessageFactory messageFactoryOverride) throws Exception {
-        this(uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride,
-             false);
+    public QuickfixjEngine(
+            String uri,
+            SessionSettings settings,
+            MessageStoreFactory messageStoreFactoryOverride,
+            LogFactory sessionLogFactoryOverride,
+            MessageFactory messageFactoryOverride)
+            throws Exception {
+        this(uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride, false);
     }
 
-    public QuickfixjEngine(String uri, SessionSettings settings,
-                           MessageStoreFactory messageStoreFactoryOverride,
-                           LogFactory sessionLogFactoryOverride,
-                           MessageFactory messageFactoryOverride,
-                           boolean lazy) throws Exception {
+    public QuickfixjEngine(
+            String uri,
+            SessionSettings settings,
+            MessageStoreFactory messageStoreFactoryOverride,
+            LogFactory sessionLogFactoryOverride,
+            MessageFactory messageFactoryOverride,
+            boolean lazy)
+            throws Exception {
         addEventListener(messageCorrelator);
 
         this.uri = URISupport.sanitizeUri(uri);
@@ -169,9 +182,7 @@ public class QuickfixjEngine extends ServiceSupport {
      * Initializes the engine on demand. May be called immediately in constructor or when needed. If initializing later,
      * it should be started afterwards.
      */
-    void initializeEngine()
-            throws ConfigError,
-            FieldConvertError, JMException {
+    void initializeEngine() throws ConfigError, FieldConvertError, JMException {
 
         LOG.debug("Initializing QuickFIX/J Engine: {}", uri);
 
@@ -218,15 +229,25 @@ public class QuickfixjEngine extends ServiceSupport {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             if (isConnectorRole(settings, SessionFactory.ACCEPTOR_CONNECTION_TYPE)) {
-                acceptor = createAcceptor(new Dispatcher(), settings, messageStoreFactory,
-                        sessionLogFactory, messageFactory, threadModel);
+                acceptor = createAcceptor(
+                        new Dispatcher(),
+                        settings,
+                        messageStoreFactory,
+                        sessionLogFactory,
+                        messageFactory,
+                        threadModel);
             } else {
                 acceptor = null;
             }
 
             if (isConnectorRole(settings, SessionFactory.INITIATOR_CONNECTION_TYPE)) {
-                initiator = createInitiator(new Dispatcher(), settings, messageStoreFactory,
-                        sessionLogFactory, messageFactory, threadModel);
+                initiator = createInitiator(
+                        new Dispatcher(),
+                        settings,
+                        messageStoreFactory,
+                        sessionLogFactory,
+                        messageFactory,
+                        threadModel);
             } else {
                 initiator = null;
             }
@@ -242,8 +263,10 @@ public class QuickfixjEngine extends ServiceSupport {
         initialized.set(true);
     }
 
-    protected static SessionSettings loadSettings(CamelContext camelContext, String settingsResourceName) throws Exception {
-        InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, settingsResourceName);
+    protected static SessionSettings loadSettings(CamelContext camelContext, String settingsResourceName)
+            throws Exception {
+        InputStream inputStream =
+                ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, settingsResourceName);
         return new SessionSettings(inputStream);
     }
 
@@ -297,9 +320,12 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     private Initiator createInitiator(
-            Application application, SessionSettings settings,
-            MessageStoreFactory messageStoreFactory, LogFactory sessionLogFactory,
-            MessageFactory messageFactory, ThreadModel threadModel)
+            Application application,
+            SessionSettings settings,
+            MessageStoreFactory messageStoreFactory,
+            LogFactory sessionLogFactory,
+            MessageFactory messageFactory,
+            ThreadModel threadModel)
             throws ConfigError {
 
         Initiator initiator;
@@ -307,7 +333,8 @@ public class QuickfixjEngine extends ServiceSupport {
             initiator = new ThreadedSocketInitiator(
                     application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
         } else if (threadModel == ThreadModel.ThreadPerConnector) {
-            initiator = new SocketInitiator(application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
+            initiator =
+                    new SocketInitiator(application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
         } else {
             throw new ConfigError("Unknown thread mode: " + threadModel);
         }
@@ -315,9 +342,12 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     private Acceptor createAcceptor(
-            Application application, SessionSettings settings,
-            MessageStoreFactory messageStoreFactory, LogFactory sessionLogFactory,
-            MessageFactory messageFactory, ThreadModel threadModel)
+            Application application,
+            SessionSettings settings,
+            MessageStoreFactory messageStoreFactory,
+            LogFactory sessionLogFactory,
+            MessageFactory messageFactory,
+            ThreadModel threadModel)
             throws ConfigError {
 
         Acceptor acceptor;
@@ -325,7 +355,8 @@ public class QuickfixjEngine extends ServiceSupport {
             acceptor = new ThreadedSocketAcceptor(
                     application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
         } else if (threadModel == ThreadModel.ThreadPerConnector) {
-            acceptor = new SocketAcceptor(application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
+            acceptor =
+                    new SocketAcceptor(application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
         } else {
             throw new ConfigError("Unknown thread mode: " + threadModel);
         }
@@ -346,7 +377,9 @@ public class QuickfixjEngine extends ServiceSupport {
         } else {
             messageStoreFactory = new MemoryStoreFactory();
         }
-        LOG.info("Inferring message store factory: {}", messageStoreFactory.getClass().getName());
+        LOG.info(
+                "Inferring message store factory: {}",
+                messageStoreFactory.getClass().getName());
         return messageStoreFactory;
     }
 
@@ -363,7 +396,8 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     private void isJdbcStore(SessionSettings settings, Set<MessageStoreFactory> impliedMessageStoreFactories) {
-        if (settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER) || settings.isSetting(JdbcSetting.SETTING_JDBC_DS_NAME)) {
+        if (settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER)
+                || settings.isSetting(JdbcSetting.SETTING_JDBC_DS_NAME)) {
             impliedMessageStoreFactories.add(new JdbcStoreFactory(settings));
         }
     }
@@ -403,7 +437,8 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     private void isJdbcLog(SessionSettings settings, Set<LogFactory> impliedLogFactories) {
-        if ((settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER) || settings.isSetting(JdbcSetting.SETTING_JDBC_DS_NAME))
+        if ((settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER)
+                        || settings.isSetting(JdbcSetting.SETTING_JDBC_DS_NAME))
                 && settings.isSetting(JdbcSetting.SETTING_LOG_EVENT_TABLE)) {
             impliedLogFactories.add(new JdbcLogFactory(settings));
         }

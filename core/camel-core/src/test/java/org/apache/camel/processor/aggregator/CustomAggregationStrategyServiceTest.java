@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
 
@@ -57,7 +58,11 @@ public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(strategy).header("id").completionSize(3).to("mock:result");
+                from("direct:start")
+                        .aggregate(strategy)
+                        .header("id")
+                        .completionSize(3)
+                        .to("mock:result");
             }
         };
     }
@@ -84,5 +89,4 @@ public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
             start = false;
         }
     }
-
 }

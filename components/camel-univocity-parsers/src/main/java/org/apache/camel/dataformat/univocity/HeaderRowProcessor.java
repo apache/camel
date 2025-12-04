@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.univocity;
 
 import com.univocity.parsers.common.ParsingContext;
@@ -23,7 +24,7 @@ import com.univocity.parsers.common.processor.RowProcessor;
  * This class is used by the unmarshaller in order to retrieve the headers.
  */
 final class HeaderRowProcessor implements RowProcessor {
-    private final static ThreadLocal<String[]> headers = new ThreadLocal<>();
+    private static final ThreadLocal<String[]> headers = new ThreadLocal<>();
 
     /**
      * Called when the processing starts, it clears the headers

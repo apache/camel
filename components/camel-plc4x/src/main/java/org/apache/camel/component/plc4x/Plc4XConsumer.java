@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
 
 import java.util.Collections;
@@ -105,50 +106,56 @@ public class Plc4XConsumer extends DefaultConsumer {
             return;
         }
 
-        future = executorService.schedule(() -> request.execute().thenAccept(response -> {
-            try {
-                Exchange exchange = plc4XEndpoint.createExchange();
-                Map<String, Object> rsp = new HashMap<>();
-                for (String field : response.getTagNames()) {
-                    rsp.put(field, response.getObject(field));
-                }
-                exchange.getIn().setBody(rsp);
-                getProcessor().process(exchange);
-            } catch (Exception e) {
-                getExceptionHandler().handleException(e);
-            }
-        }), 500, TimeUnit.MILLISECONDS);
+        future = executorService.schedule(
+                () -> request.execute().thenAccept(response -> {
+                    try {
+                        Exchange exchange = plc4XEndpoint.createExchange();
+                        Map<String, Object> rsp = new HashMap<>();
+                        for (String field : response.getTagNames()) {
+                            rsp.put(field, response.getObject(field));
+                        }
+                        exchange.getIn().setBody(rsp);
+                        getProcessor().process(exchange);
+                    } catch (Exception e) {
+                        getExceptionHandler().handleException(e);
+                    }
+                }),
+                500,
+                TimeUnit.MILLISECONDS);
     }
 
     private void startTriggered() throws ScraperException {
         ScraperConfiguration configuration = getScraperConfig(tags);
         TriggerCollector collector = new TriggerCollectorImpl(plc4XEndpoint.getPlcDriverManager());
 
-        TriggeredScraperImpl scraper = new TriggeredScraperImpl(configuration, (job, alias, response) -> {
-            try {
-                plc4XEndpoint.reconnectIfNeeded();
+        TriggeredScraperImpl scraper = new TriggeredScraperImpl(
+                configuration,
+                (job, alias, response) -> {
+                    try {
+                        plc4XEndpoint.reconnectIfNeeded();
 
-                Exchange exchange = plc4XEndpoint.createExchange();
-                exchange.getIn().setBody(response);
-                getProcessor().process(exchange);
-            } catch (PlcConnectionException e) {
-                if (LOGGER.isTraceEnabled()) {
-                    LOGGER.warn("Unable to reconnect, skipping request", e);
-                } else {
-                    LOGGER.warn("Unable to reconnect, skipping request");
-                }
-            } catch (Exception e) {
-                getExceptionHandler().handleException(e);
-            }
-        }, collector);
+                        Exchange exchange = plc4XEndpoint.createExchange();
+                        exchange.getIn().setBody(response);
+                        getProcessor().process(exchange);
+                    } catch (PlcConnectionException e) {
+                        if (LOGGER.isTraceEnabled()) {
+                            LOGGER.warn("Unable to reconnect, skipping request", e);
+                        } else {
+                            LOGGER.warn("Unable to reconnect, skipping request");
+                        }
+                    } catch (Exception e) {
+                        getExceptionHandler().handleException(e);
+                    }
+                },
+                collector);
         scraper.start();
         collector.start();
     }
 
     private ScraperConfigurationTriggeredImpl getScraperConfig(Map<String, String> tagList) {
         String config = "(TRIGGER_VAR," + plc4XEndpoint.getPeriod() + ",(" + plc4XEndpoint.getTrigger() + ")==(true))";
-        List<JobConfigurationImpl> job = Collections.singletonList(
-                new JobConfigurationImpl("PLC4X-Camel", config, 0, Collections.singletonList(Constants.PLC_NAME), tagList));
+        List<JobConfigurationImpl> job = Collections.singletonList(new JobConfigurationImpl(
+                "PLC4X-Camel", config, 0, Collections.singletonList(Constants.PLC_NAME), tagList));
         Map<String, String> source = Collections.singletonMap(Constants.PLC_NAME, plc4XEndpoint.getUri());
         return new ScraperConfigurationTriggeredImpl(source, job);
     }
@@ -161,5 +168,4 @@ public class Plc4XConsumer extends DefaultConsumer {
         }
         super.doStop();
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,8 +43,6 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.jms.core.JmsTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test using a fixed replyTo specified on the JMS endpoint
  */
@@ -50,6 +51,7 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -106,7 +108,8 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends AbstractJMSTest {
                 from("activemq:queue:JmsJMSReplyToEndpointUsingInOutTest")
                         .process(exchange -> exchange.getMessage().setBody("What's your name"))
                         // use in out to get a reply as well
-                        .to(ExchangePattern.InOut,
+                        .to(
+                                ExchangePattern.InOut,
                                 "activemq:queue:JmsJMSReplyToEndpointUsingInOutTest.namedRequestor?replyTo=queue:JmsJMSReplyToEndpointUsingInOutTest.namedReplyQueue")
                         // and send the reply to our mock for validation
                         .to("mock:result");

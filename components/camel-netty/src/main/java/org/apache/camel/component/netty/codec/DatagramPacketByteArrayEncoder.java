@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.codec;
 
 import java.net.InetSocketAddress;
@@ -29,7 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ChannelHandler.Sharable
-public class DatagramPacketByteArrayEncoder extends MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
+public class DatagramPacketByteArrayEncoder
+        extends MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketByteArrayEncoder.class);
 
@@ -41,12 +43,11 @@ public class DatagramPacketByteArrayEncoder extends MessageToMessageEncoder<Addr
         if (msg.content() instanceof byte[]) {
             delegateEncoder.encode(ctx, (byte[]) msg.content(), out);
             ByteBuf buf = (ByteBuf) out.remove(out.size() - 1);
-            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop
-                    = new DefaultAddressedEnvelope<>(buf.retain(), msg.recipient(), msg.sender());
+            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
+                    new DefaultAddressedEnvelope<>(buf.retain(), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         } else {
             LOG.debug("Ignoring message content as it is not a byte[] instance.");
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Files;
@@ -34,15 +35,20 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "startup-recorder",
-                     description = "Display startup recording", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "startup-recorder",
+        description = "Display startup recording",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelStartupRecorderAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = DurationTypeCompletionCandidates.class,
-                        description = "Sort by duration, or type")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = DurationTypeCompletionCandidates.class,
+            description = "Sort by duration, or type")
     String sort;
 
     private volatile long pid;
@@ -59,8 +65,9 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -100,12 +107,24 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("DURATION").dataAlign(HorizontalAlign.RIGHT).with(this::getDuration),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("STEP (END)").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(80, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getStep))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("DURATION")
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getDuration),
+                                    new Column()
+                                            .header("TYPE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.type),
+                                    new Column()
+                                            .header("STEP (END)")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(80, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(this::getStep))));
         }
 
         // delete output file after use
@@ -163,14 +182,11 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
 
     public static class DurationTypeCompletionCandidates implements Iterable<String> {
 
-        public DurationTypeCompletionCandidates() {
-        }
+        public DurationTypeCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("duration", "type").iterator();
         }
-
     }
-
 }

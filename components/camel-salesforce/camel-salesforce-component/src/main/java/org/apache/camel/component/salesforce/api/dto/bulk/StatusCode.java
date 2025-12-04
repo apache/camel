@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import jakarta.xml.bind.annotation.XmlEnum;
@@ -210,7 +211,6 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(name = "StatusCode")
 @XmlEnum
 public enum StatusCode {
-
     ALL_OR_NONE_OPERATION_ROLLED_BACK,
     ALREADY_IN_PROCESS,
     ASSIGNEE_TYPE_REQUIRED,
@@ -392,5 +392,4 @@ public enum StatusCode {
     public static StatusCode fromValue(String v) {
         return valueOf(v);
     }
-
 }

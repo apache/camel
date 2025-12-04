@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -51,7 +52,9 @@ public class SplitTokenizerGroupTest extends ContextTestSupport {
 
                 from("direct:a").split().tokenize(",", 2).to("mock:split");
 
-                from("direct:b").split(bodyAs(String.class).tokenize(",", 2, true)).to("mock:split");
+                from("direct:b")
+                        .split(bodyAs(String.class).tokenize(",", 2, true))
+                        .to("mock:split");
             }
         };
     }

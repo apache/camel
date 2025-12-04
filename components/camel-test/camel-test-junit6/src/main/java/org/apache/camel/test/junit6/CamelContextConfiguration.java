@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6;
 
 import java.util.HashMap;
@@ -262,8 +263,7 @@ public class CamelContextConfiguration {
      *
      * @param camelContextSupplier A supplier for the Camel context
      */
-    public CamelContextConfiguration withCamelContextSupplier(
-            CamelContextSupplier camelContextSupplier) {
+    public CamelContextConfiguration withCamelContextSupplier(CamelContextSupplier camelContextSupplier) {
         this.camelContextSupplier = camelContextSupplier;
         return this;
     }
@@ -277,8 +277,7 @@ public class CamelContextConfiguration {
      * <p>
      * Do not use it for binding beans to the registry.
      */
-    public CamelContextConfiguration withRegistryBinder(
-            RegistryBinder registryBinder) {
+    public CamelContextConfiguration withRegistryBinder(RegistryBinder registryBinder) {
         this.registryBinder = registryBinder;
         return this;
     }
@@ -319,8 +318,7 @@ public class CamelContextConfiguration {
     /**
      * A supplier that classes can use to create a {@link RouteBuilder} to define the routes for testing
      */
-    protected CamelContextConfiguration withRoutesSupplier(
-            RoutesSupplier routesSupplier) {
+    protected CamelContextConfiguration withRoutesSupplier(RoutesSupplier routesSupplier) {
         this.routesSupplier = routesSupplier;
         return this;
     }
@@ -348,8 +346,7 @@ public class CamelContextConfiguration {
      *
      * @param postProcessor the post-test processor to use
      */
-    protected CamelContextConfiguration withPostProcessor(
-            PostProcessor postProcessor) {
+    protected CamelContextConfiguration withPostProcessor(PostProcessor postProcessor) {
         this.postProcessor = postProcessor;
         return this;
     }

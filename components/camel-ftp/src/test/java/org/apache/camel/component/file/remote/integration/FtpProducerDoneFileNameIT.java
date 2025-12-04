@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -22,10 +27,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
 
@@ -46,8 +47,8 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
 
     @Test
     public void testProducerPrefixDoneFileName() {
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = service.ftpFile("done/hello.txt").toFile();
         assertTrue(file.exists(), "File should exists");
@@ -58,8 +59,8 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
 
     @Test
     public void testProducerExtDoneFileName() {
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = service.ftpFile("done/hello.txt").toFile();
         assertTrue(file.exists(), "File should exists");
@@ -70,8 +71,8 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
 
     @Test
     public void testProducerReplaceExtDoneFileName() {
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = service.ftpFile("done/hello.txt").toFile();
         assertTrue(file.exists(), "File should exists");
@@ -84,11 +85,12 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
     public void testProducerInvalidDoneFileName() {
         String uri = getFtpUrl() + "&doneFileName=${file:parent}/foo";
 
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
 
-        ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class,
-                ex.getCause());
+        ExpressionIllegalSyntaxException cause =
+                assertIsInstanceOf(ExpressionIllegalSyntaxException.class, ex.getCause());
 
         assertTrue(cause.getMessage().endsWith("Cannot resolve reminder: ${file:parent}/foo"), cause.getMessage());
     }
@@ -96,11 +98,11 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
     @Test
     public void testProducerEmptyDoneFileName() {
         String uri = getFtpUrl() + "&doneFileName=";
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, ex.getCause());
         assertTrue(cause.getMessage().startsWith("doneFileName must be specified and not empty"), cause.getMessage());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.io.IOException;
@@ -66,5 +67,4 @@ class AvailablePortFinder {
             throw new IllegalStateException("Cannot find free port", e);
         }
     }
-
 }

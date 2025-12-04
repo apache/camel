@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cyberark.vault;
 
 import org.apache.camel.Endpoint;
@@ -39,8 +40,8 @@ public class CyberArkVaultProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         // Determine operation: Header > URI parameter
-        CyberArkVaultOperations operation = exchange.getMessage().getHeader(
-                CyberArkVaultConstants.OPERATION, CyberArkVaultOperations.class);
+        CyberArkVaultOperations operation =
+                exchange.getMessage().getHeader(CyberArkVaultConstants.OPERATION, CyberArkVaultOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -54,7 +55,7 @@ public class CyberArkVaultProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(secretId)) {
             throw new IllegalArgumentException(
                     "Secret ID must be specified either as a URI parameter (secretId=...) or as a message header ("
-                                               + CyberArkVaultConstants.SECRET_ID + ")");
+                            + CyberArkVaultConstants.SECRET_ID + ")");
         }
 
         ConjurClient client = getEndpoint().getConjurClient();
@@ -80,7 +81,7 @@ public class CyberArkVaultProducer extends DefaultProducer {
                 if (ObjectHelper.isEmpty(secretValueToCreate)) {
                     throw new IllegalArgumentException(
                             "Secret value must be specified either as message body or as a message header ("
-                                                       + CyberArkVaultConstants.SECRET_VALUE + ")");
+                                    + CyberArkVaultConstants.SECRET_VALUE + ")");
                 }
                 LOG.trace("Creating/updating secret in CyberArk Conjur with id: {}", secretId);
                 client.createSecret(secretId, secretValueToCreate);

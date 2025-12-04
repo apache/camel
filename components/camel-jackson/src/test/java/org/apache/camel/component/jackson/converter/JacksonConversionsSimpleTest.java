@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +30,6 @@ import org.apache.camel.component.jackson.JacksonConstants;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JacksonConversionsSimpleTest extends CamelTestSupport {
 
@@ -60,14 +61,16 @@ public class JacksonConversionsSimpleTest extends CamelTestSupport {
     public void shouldNotConvertMapToNumber() {
         Exchange exchange = new DefaultExchange(context);
 
-        Object convertedObject = context.getTypeConverter().convertTo(Long.class, exchange, new HashMap<String, String>());
+        Object convertedObject =
+                context.getTypeConverter().convertTo(Long.class, exchange, new HashMap<String, String>());
         assertNull(convertedObject);
     }
 
     @Test
     public void shouldNotConvertMapToPrimitive() {
         Exchange exchange = new DefaultExchange(context);
-        Object convertedObject = context.getTypeConverter().convertTo(long.class, exchange, new HashMap<String, String>());
+        Object convertedObject =
+                context.getTypeConverter().convertTo(long.class, exchange, new HashMap<String, String>());
 
         assertNull(convertedObject);
     }
@@ -80,5 +83,4 @@ public class JacksonConversionsSimpleTest extends CamelTestSupport {
 
         assertEquals(ExchangePattern.InOnly, convertedObject);
     }
-
 }

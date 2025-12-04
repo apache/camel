@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
 
 import org.apache.camel.CamelContext;
@@ -33,21 +34,19 @@ public class ReloadFailingRouteTest {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        String invalidRoute = "<route id=\"test\">\n" +
-                              "    <from uri=\"seda:xml\"/>\n" +
-                              "    <log message=\"Some valid message\"/>\n" +
-                              "\t<setHeader name=\"SomeHeader\">\n" +
-                              "\t\t<toosimple>XYZ</toosimple>\n" +
-                              "\t</setHeader>\n" +
-                              "</route>";
+        String invalidRoute = "<route id=\"test\">\n" + "    <from uri=\"seda:xml\"/>\n"
+                + "    <log message=\"Some valid message\"/>\n"
+                + "\t<setHeader name=\"SomeHeader\">\n"
+                + "\t\t<toosimple>XYZ</toosimple>\n"
+                + "\t</setHeader>\n"
+                + "</route>";
 
-        String validRoute = "<route id=\"test\">\n" +
-                            "    <from uri=\"seda:xml\"/>\n" +
-                            "    <log message=\"Some valid message\"/>\n" +
-                            "\t<setHeader name=\"SomeHeader\">\n" +
-                            "\t\t<simple>XYZ</simple>\n" +
-                            "\t</setHeader>\n" +
-                            "</route>";
+        String validRoute = "<route id=\"test\">\n" + "    <from uri=\"seda:xml\"/>\n"
+                + "    <log message=\"Some valid message\"/>\n"
+                + "\t<setHeader name=\"SomeHeader\">\n"
+                + "\t\t<simple>XYZ</simple>\n"
+                + "\t</setHeader>\n"
+                + "</route>";
 
         Resource invalidResource = ResourceHelper.fromString("dummy.xml", invalidRoute);
         Resource validResource = ResourceHelper.fromString("dummy.xml", validRoute);

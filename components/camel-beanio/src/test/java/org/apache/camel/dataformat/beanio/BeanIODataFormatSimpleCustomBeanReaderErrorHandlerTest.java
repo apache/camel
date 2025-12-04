@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,19 +29,17 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends CamelTestSupport {
 
     // START SNIPPET: e2
     private static final String FIXED_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
-                                             + "Jane,Doe,Architect,80000,01152008" + Constants.LS
-                                             + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
+            + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+            + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
     // END SNIPPET: e2
 
     private static final String FIXED_FAIL_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
-                                                  + "Jane,Doe,Architect,80000,01152008" + Constants.LS
-                                                  + "Jon,Anderson,Manager,XXX,03182007" + Constants.LS;
+            + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+            + "Jon,Anderson,Manager,XXX,03182007" + Constants.LS;
 
     @Test
     void testMarshal() throws Exception {
@@ -77,7 +78,13 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
 
         mock.assertIsSatisfied();
 
-        assertEquals("employee", mock.getReceivedExchanges().get(2).getIn().getBody(MyErrorDto.class).getRecord());
+        assertEquals(
+                "employee",
+                mock.getReceivedExchanges()
+                        .get(2)
+                        .getIn()
+                        .getBody(MyErrorDto.class)
+                        .getRecord());
     }
 
     @Override
@@ -87,9 +94,8 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
             public void configure() {
                 // START SNIPPET: e1
                 // setup beanio data format using the mapping file, loaded from the classpath
-                BeanIODataFormat format = new BeanIODataFormat(
-                        "org/apache/camel/dataformat/beanio/mappings.xml",
-                        "employeeFile");
+                BeanIODataFormat format =
+                        new BeanIODataFormat("org/apache/camel/dataformat/beanio/mappings.xml", "employeeFile");
 
                 // use our custom error handler
                 format.setBeanReaderErrorHandlerType(MyErrorHandler.class);
@@ -103,9 +109,7 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
                         .to("mock:beanio-unmarshal");
 
                 // convert list of java objects back to flat format
-                from("direct:marshal")
-                        .marshal(format)
-                        .to("mock:beanio-marshal");
+                from("direct:marshal").marshal(format).to("mock:beanio-marshal");
                 // END SNIPPET: e1
             }
         };
@@ -138,5 +142,4 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
         employees.add(three);
         return employees;
     }
-
 }

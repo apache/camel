@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +34,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PredicateBuilderConcurrentTest extends ContextTestSupport {
 
@@ -83,5 +84,4 @@ public class PredicateBuilderConcurrentTest extends ContextTestSupport {
 
         pool.shutdownNow();
     }
-
 }

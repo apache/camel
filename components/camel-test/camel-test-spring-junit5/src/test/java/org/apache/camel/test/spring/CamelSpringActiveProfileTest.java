@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
 
 import org.apache.camel.CamelContext;
@@ -52,6 +53,5 @@ public class CamelSpringActiveProfileTest {
         start.sendBody("World");
         mock.assertIsSatisfied();
     }
-
 }
 // END SNIPPET: e1

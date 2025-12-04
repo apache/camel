@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -50,12 +51,12 @@ public class SshComponentKnownHostEdDSATest extends SshComponentTestSupport {
                 onException(Exception.class).handled(true).to("mock:error");
 
                 from("ssh://smx:smx@localhost:" + port
-                     + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_eddsa&failOnUnknownHost=true")
+                                + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_eddsa&failOnUnknownHost=true")
                         .to("mock:result");
 
                 from("direct:ssh")
                         .to("ssh://smx:smx@localhost:" + port
-                            + "?timeout=3000&knownHostsResource=classpath:known_hosts_eddsa&failOnUnknownHost=true")
+                                + "?timeout=3000&knownHostsResource=classpath:known_hosts_eddsa&failOnUnknownHost=true")
                         .to("mock:password");
             }
         };

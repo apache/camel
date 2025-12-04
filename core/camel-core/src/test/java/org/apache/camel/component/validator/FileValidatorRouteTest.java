@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -41,16 +42,17 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(),
-                "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                fileUri(),
+                "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>",
+                Exchange.FILE_NAME,
                 "valid.xml");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
         // should be able to delete the file
         oneExchangeDone.matchesWaitTime();
-        assertTrue(FileUtil.deleteFile(testFile("valid.xml").toFile()),
-                "Should be able to delete the file");
+        assertTrue(FileUtil.deleteFile(testFile("valid.xml").toFile()), "Should be able to delete the file");
     }
 
     @Test
@@ -58,15 +60,17 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(),
-                "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>", Exchange.FILE_NAME, "invalid.xml");
+        template.sendBodyAndHeader(
+                fileUri(),
+                "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>",
+                Exchange.FILE_NAME,
+                "invalid.xml");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
         // should be able to delete the file
         oneExchangeDone.matchesWaitTime();
-        assertTrue(FileUtil.deleteFile(testFile("invalid.xml").toFile()),
-                "Should be able to delete the file");
+        assertTrue(FileUtil.deleteFile(testFile("invalid.xml").toFile()), "Should be able to delete the file");
     }
 
     @Override
@@ -83,11 +87,16 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true")).doTry()
-                        .to("validator:org/apache/camel/component/validator/schema.xsd").to("mock:valid")
-                        .doCatch(ValidationException.class).to("mock:invalid").doFinally().to("mock:finally").end();
+                from(fileUri("?noop=true"))
+                        .doTry()
+                        .to("validator:org/apache/camel/component/validator/schema.xsd")
+                        .to("mock:valid")
+                        .doCatch(ValidationException.class)
+                        .to("mock:invalid")
+                        .doFinally()
+                        .to("mock:finally")
+                        .end();
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.CamelContext;
@@ -29,8 +30,7 @@ public final class ReactiveStreamsConverter implements CamelContextAware {
 
     private CamelContext camelContext;
 
-    public ReactiveStreamsConverter() {
-    }
+    public ReactiveStreamsConverter() {}
 
     @Converter(fallback = true)
     public Object convertToPublisher(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {

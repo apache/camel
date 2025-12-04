@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.master;
 
 import java.util.Map;
@@ -40,10 +41,13 @@ public class MasterComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private CamelClusterService service;
+
     @Metadata(label = "advanced")
     private CamelClusterService.Selector serviceSelector;
+
     @Metadata(label = "advanced")
     private long backOffDelay = 5000;
+
     @Metadata(label = "advanced")
     private int backOffMaxAttempts = 10;
 
@@ -71,12 +75,7 @@ public class MasterComponent extends DefaultComponent {
             delegateUri = delegateUri + "?" + uri.substring(uri.indexOf('?') + 1);
         }
 
-        return new MasterEndpoint(
-                uri,
-                this,
-                service,
-                namespace,
-                delegateUri);
+        return new MasterEndpoint(uri, this, service, namespace, delegateUri);
     }
 
     @Override
@@ -142,8 +141,8 @@ public class MasterComponent extends DefaultComponent {
         ObjectHelper.notNull(context, "Camel Context");
 
         if (service == null) {
-            service = ClusterServiceHelper.lookupService(context, serviceSelector).orElseThrow(
-                    () -> new IllegalStateException("No cluster service found"));
+            service = ClusterServiceHelper.lookupService(context, serviceSelector)
+                    .orElseThrow(() -> new IllegalStateException("No cluster service found"));
         }
     }
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -27,63 +32,45 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class XmlMainRestsTest {
 
     @Test
     public void testMainRestsCollector() {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/xml/camel-rests.xml",
-                null);
+        doTestMain("org/apache/camel/main/xml/camel-rests.xml", null);
     }
 
     @Test
     public void testMainRestsCollectorScan() {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/xml/camel-res*.xml",
-                null);
+        doTestMain("org/apache/camel/main/xml/camel-res*.xml", null);
     }
 
     @Test
     public void testMainRestsCollectorScanWildcardDirClasspathPath() {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/**/camel-res*.xml",
-                null);
+        doTestMain("org/apache/camel/main/**/camel-res*.xml", null);
     }
 
     @Test
     public void testMainRestsCollectorScanClasspathPrefix() {
         // will load XML from target/classes when testing
-        doTestMain(
-                "classpath:org/apache/camel/main/xml/camel-res*.xml",
-                null);
+        doTestMain("classpath:org/apache/camel/main/xml/camel-res*.xml", null);
     }
 
     @Test
     public void testMainRestsCollectorScanInDir() {
-        doTestMain(
-                "file:src/test/resources/org/apache/camel/main/xml/camel-res*.xml",
-                null);
+        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-res*.xml", null);
     }
 
     @Test
     public void testMainRestsCollectorScanWildcardDirFilePath() {
-        doTestMain(
-                "file:src/test/resources/**/camel-res*.xml",
-                null);
+        doTestMain("file:src/test/resources/**/camel-res*.xml", null);
     }
 
     @Test
     public void testMainRestsCollectorFile() {
-        doTestMain(
-                "file:src/test/resources/org/apache/camel/main/xml/camel-rests.xml,",
-                null);
+        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-rests.xml,", null);
     }
 
     protected void doTestMain(String includes, String excludes) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools;
 
 import java.util.ArrayList;
@@ -37,13 +38,12 @@ public class LangChain4jToolNoToolsExistTest extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OpenAIMock openAIMock = new OpenAIMock().builder()
+    static OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("How can you help? DO NOT CALL TOOLS.\n")
             .assertRequest(request -> {
                 // The tools should not be included in the request
-                Assertions.assertThat(request).doesNotContain(
-                        "QueryUserDatabaseByNumber",
-                        "DoesNotDoAnything,Really");
+                Assertions.assertThat(request).doesNotContain("QueryUserDatabaseByNumber", "DoesNotDoAnything,Really");
             })
             .replyWith("No tool is invoked")
             .build();
@@ -59,8 +59,8 @@ public class LangChain4jToolNoToolsExistTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        LangChain4jToolsComponent component
-                = context.getComponent(LangChain4jTools.SCHEME, LangChain4jToolsComponent.class);
+        LangChain4jToolsComponent component =
+                context.getComponent(LangChain4jTools.SCHEME, LangChain4jToolsComponent.class);
 
         component.getConfiguration().setChatModel(chatModel);
 
@@ -71,9 +71,7 @@ public class LangChain4jToolNoToolsExistTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:test")
-                        .to("langchain4j-tools:test1?tags=other")
-                        .log("response is: ${body}");
+                from("direct:test").to("langchain4j-tools:test1?tags=other").log("response is: ${body}");
 
                 from("langchain4j-tools:test1?tags=user&description=Query user database by number&parameter.number=integer")
                         .setBody(simple("{\"name\": \"pippo\"}"));
@@ -85,7 +83,6 @@ public class LangChain4jToolNoToolsExistTest extends CamelTestSupport {
                         .log("there is no tool to be called for the request: ${body}")
                         .setBody(constant("There was no tool to be called"))
                         .to("mock:noResponse");
-
             }
         };
     }
@@ -93,8 +90,9 @@ public class LangChain4jToolNoToolsExistTest extends CamelTestSupport {
     @Test
     public void testSimpleInvocation() throws InterruptedException {
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new SystemMessage(
-                """
+        messages.add(
+                new SystemMessage(
+                        """
                         Your job is to help me test my code. When asked to call a tool you do not call anything.
                         """));
         messages.add(new UserMessage("""
@@ -104,7 +102,7 @@ public class LangChain4jToolNoToolsExistTest extends CamelTestSupport {
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
         Assertions.assertThat(message).isNotNull();
-        Assertions.assertThat(message.getMessage().getHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER)).isEqualTo(Boolean.TRUE);
-
+        Assertions.assertThat(message.getMessage().getHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER))
+                .isEqualTo(Boolean.TRUE);
     }
 }

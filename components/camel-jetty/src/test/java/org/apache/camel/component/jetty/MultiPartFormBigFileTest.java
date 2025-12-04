@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,10 +41,6 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class MultiPartFormBigFileTest extends BaseJettyTest {
 
     @TempDir
@@ -47,8 +48,8 @@ class MultiPartFormBigFileTest extends BaseJettyTest {
 
     private HttpEntity createMultipartRequestEntityWithBigFile() {
         return MultipartEntityBuilder.create()
-                .addTextBody("comment", "A binary file of some kind").build();
-
+                .addTextBody("comment", "A binary file of some kind")
+                .build();
     }
 
     @Test
@@ -56,7 +57,7 @@ class MultiPartFormBigFileTest extends BaseJettyTest {
         HttpPost post = new HttpPost("http://localhost:" + getPort() + "/test");
         post.setEntity(createMultipartRequestEntityWithBigFile());
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(post)) {
+                CloseableHttpResponse response = client.execute(post)) {
             int status = response.getCode();
 
             assertEquals(200, status, "Get a wrong response status");
@@ -71,8 +72,9 @@ class MultiPartFormBigFileTest extends BaseJettyTest {
         return new RouteBuilder() {
             public void configure() {
 
-                fromF("jetty://http://localhost:{{port}}/test?filesLocation=%s&fileSizeThreshold=1",
-                        tempDir.getAbsolutePath())
+                fromF(
+                                "jetty://http://localhost:{{port}}/test?filesLocation=%s&fileSizeThreshold=1",
+                                tempDir.getAbsolutePath())
                         .process(new Processor() {
 
                             public void process(Exchange exchange) {
@@ -94,7 +96,6 @@ class MultiPartFormBigFileTest extends BaseJettyTest {
                                     throw new RuntimeException(ex);
                                 }
                             }
-
                         });
             }
         };

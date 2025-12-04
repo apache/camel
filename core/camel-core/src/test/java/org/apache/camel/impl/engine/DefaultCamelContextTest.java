@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -41,14 +50,6 @@ import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultCamelContextTest extends TestSupport {
 
@@ -135,8 +136,8 @@ public class DefaultCamelContextTest extends TestSupport {
     @Test
     public void testGetEndPointByTypeUnknown() {
         DefaultCamelContext camelContext = new DefaultCamelContext();
-        NoSuchEndpointException e = assertThrows(NoSuchEndpointException.class,
-                () -> camelContext.getEndpoint("xxx", Endpoint.class));
+        NoSuchEndpointException e =
+                assertThrows(NoSuchEndpointException.class, () -> camelContext.getEndpoint("xxx", Endpoint.class));
 
         assertEquals(
                 "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
@@ -177,7 +178,8 @@ public class DefaultCamelContextTest extends TestSupport {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
 
-        NoSuchEndpointException e = assertThrows(NoSuchEndpointException.class,
+        NoSuchEndpointException e = assertThrows(
+                NoSuchEndpointException.class,
                 () -> ctx.getEndpoint("xxx:foo"),
                 "Should have thrown a ResolveEndpointFailedException");
 
@@ -189,7 +191,8 @@ public class DefaultCamelContextTest extends TestSupport {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
 
-        assertThrows(NoSuchEndpointException.class,
+        assertThrows(
+                NoSuchEndpointException.class,
                 () -> CamelContextHelper.getMandatoryEndpoint(ctx, "unknownname"),
                 "Should have thrown a NoSuchEndpointException");
     }
@@ -255,10 +258,13 @@ public class DefaultCamelContextTest extends TestSupport {
         LogComponent log = ctx.getComponent("log", LogComponent.class);
         assertNotNull(log);
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            ctx.addComponent("direct", new DirectComponent());
-            ctx.getComponent("log", DirectComponent.class);
-        }, "Should have thrown exception");
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    ctx.addComponent("direct", new DirectComponent());
+                    ctx.getComponent("log", DirectComponent.class);
+                },
+                "Should have thrown exception");
     }
 
     @Test
@@ -273,8 +279,7 @@ public class DefaultCamelContextTest extends TestSupport {
         EndpointRegistry map = ctx.getEndpointRegistry();
         assertEquals(1, map.size());
 
-        assertThrows(ResolveEndpointFailedException.class, () -> ctx.hasEndpoint(null),
-                "Should have thrown exception");
+        assertThrows(ResolveEndpointFailedException.class, () -> ctx.hasEndpoint(null), "Should have thrown exception");
     }
 
     @Test
@@ -457,7 +462,6 @@ public class DefaultCamelContextTest extends TestSupport {
             }
             assertNotNull(oldEndpoint);
         }
-
     }
 
     private static class MyService extends ServiceSupport implements CamelContextAware {
@@ -474,5 +478,4 @@ public class DefaultCamelContextTest extends TestSupport {
             this.camelContext = camelContext;
         }
     }
-
 }

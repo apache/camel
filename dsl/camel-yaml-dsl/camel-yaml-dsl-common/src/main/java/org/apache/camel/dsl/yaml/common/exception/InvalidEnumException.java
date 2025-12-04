@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common.exception;
 
 import java.util.Optional;
@@ -24,8 +25,10 @@ import org.snakeyaml.engine.v2.nodes.Node;
 public class InvalidEnumException extends MarkedYamlEngineException {
 
     public InvalidEnumException(Node node, Class<?> type, String value) {
-        super(null, Optional.empty(), "Enum: " + type + " does not have any constant with value: " + value,
-              node.getStartMark());
+        super(
+                null,
+                Optional.empty(),
+                "Enum: " + type + " does not have any constant with value: " + value,
+                node.getStartMark());
     }
-
 }

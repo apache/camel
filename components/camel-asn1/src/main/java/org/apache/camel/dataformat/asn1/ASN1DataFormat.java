@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.asn1;
 
 import java.io.ByteArrayInputStream;
@@ -69,7 +70,8 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
                 berOut = new ByteArrayInputStream(ObjectHelper.cast(byte[].class, body));
             }
         } else {
-            byte[] byteInput = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, graph);
+            byte[] byteInput =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, graph);
             berOut = new ByteArrayInputStream(byteInput);
         }
         try {
@@ -84,7 +86,8 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     private void encodeGenericTypeObject(Exchange exchange, OutputStream stream) throws Exception {
         Class<?>[] paramOut = new Class<?>[1];
         paramOut[0] = OutputStream.class;
-        try (ReverseByteArrayOutputStream berOut = new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true)) {
+        try (ReverseByteArrayOutputStream berOut =
+                new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true)) {
             Method encodeMethod = exchange.getIn().getBody().getClass().getDeclaredMethod("encode", paramOut);
             encodeMethod.invoke(exchange.getIn().getBody(), berOut);
             stream.write(berOut.getArray());
@@ -92,7 +95,7 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         if (usingIterator) {
             if (unmarshalType != null) {
@@ -103,7 +106,7 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
             ASN1Primitive asn1Record;
             byte[] asn1Bytes;
             try (ASN1InputStream ais = new ASN1InputStream(stream);
-                 ByteArrayOutputStream asn1Out = new ByteArrayOutputStream();) {
+                    ByteArrayOutputStream asn1Out = new ByteArrayOutputStream(); ) {
                 while (ais.available() > 0) {
                     asn1Record = ais.readObject();
                     asn1Out.write(asn1Record.getEncoded());
@@ -129,5 +132,4 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
-
 }

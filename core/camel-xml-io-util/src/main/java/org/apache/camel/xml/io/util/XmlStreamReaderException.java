@@ -15,23 +15,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2004 Sun Microsystems, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
 package org.apache.camel.xml.io.util;
 
 import java.io.IOException;
@@ -66,8 +49,12 @@ public class XmlStreamReaderException extends IOException {
      * @param xmlEnc      XML prolog encoding.
      * @param is          the unconsumed InputStream.
      */
-    public XmlStreamReaderException(final String msg, final String bomEnc, final String xmlGuessEnc, final String xmlEnc,
-                                    final InputStream is) {
+    public XmlStreamReaderException(
+            final String msg,
+            final String bomEnc,
+            final String xmlGuessEnc,
+            final String xmlEnc,
+            final InputStream is) {
         this(msg, null, null, bomEnc, xmlGuessEnc, xmlEnc, is);
     }
 
@@ -85,9 +72,14 @@ public class XmlStreamReaderException extends IOException {
      * @param xmlEnc      XML prolog encoding.
      * @param is          the unconsumed InputStream.
      */
-    public XmlStreamReaderException(final String msg, final String ctMime, final String ctEnc, final String bomEnc,
-                                    final String xmlGuessEnc, final String xmlEnc,
-                                    final InputStream is) {
+    public XmlStreamReaderException(
+            final String msg,
+            final String ctMime,
+            final String ctEnc,
+            final String bomEnc,
+            final String xmlGuessEnc,
+            final String xmlEnc,
+            final InputStream is) {
         super(msg);
         contentTypeMime = ctMime;
         contentTypeEncoding = ctEnc;

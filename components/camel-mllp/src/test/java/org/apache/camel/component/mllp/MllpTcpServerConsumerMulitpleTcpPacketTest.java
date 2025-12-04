@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,8 +35,6 @@ import org.apache.camel.test.mllp.PassthroughProcessor;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport {
     @RegisterExtension
@@ -66,18 +67,16 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
             @Override
             public void configure() {
 
-                onCompletion()
-                        .log(LoggingLevel.INFO, routeId, "Test route complete");
+                onCompletion().log(LoggingLevel.INFO, routeId, "Test route complete");
 
-                fromF("mllp://%s:%d",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort())
+                fromF("mllp://%s:%d", mllpClient.getMllpHost(), mllpClient.getMllpPort())
                         .routeId(routeId)
                         .process(new PassthroughProcessor("Before send to result"))
                         .to(result)
-                        .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval,
-                                groupActiveOnly)
+                        .toF(
+                                "log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b",
+                                routeId, groupInterval, groupActiveOnly)
                         .log(LoggingLevel.DEBUG, routeId, "Test route received message");
-
             }
         };
     }
@@ -94,8 +93,8 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
 
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
-        assertThat("Should be acknowledgment for message 1", acknowledgement,
-                CoreMatchers.containsString("MSA|AA|00001"));
+        assertThat(
+                "Should be acknowledgment for message 1", acknowledgement, CoreMatchers.containsString("MSA|AA|00001"));
     }
 
     @Test
@@ -111,11 +110,12 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
             result.message(i - 1).body().isEqualTo(testMessage);
             mllpClient.sendFramedDataInMultiplePackets(testMessage, (byte) '\r');
             String acknowledgement = mllpClient.receiveFramedData();
-            assertThat("Should be acknowledgment for message " + i, acknowledgement,
+            assertThat(
+                    "Should be acknowledgment for message " + i,
+                    acknowledgement,
                     CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
         }
 
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
-
 }

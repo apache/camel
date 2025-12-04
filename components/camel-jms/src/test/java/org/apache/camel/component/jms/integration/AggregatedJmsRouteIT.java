@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -34,13 +37,12 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class AggregatedJmsRouteIT extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(AggregatedJmsRouteIT.class);
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -92,26 +94,36 @@ public class AggregatedJmsRouteIT extends AbstractJMSTest {
             public void configure() {
                 from(timeOutEndpointUri).to("jms:queue:AggregatedJmsRouteTestQueueB");
 
-                from("jms:queue:AggregatedJmsRouteTestQueueB").aggregate(header("cheese"), (oldExchange, newExchange) -> {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        LOG.error("aggregation delay sleep interrupted", e);
-                        fail("aggregation delay sleep interrupted");
-                    }
-                    return newExchange;
-                }).completionTimeout(2000L).to("mock:result");
+                from("jms:queue:AggregatedJmsRouteTestQueueB")
+                        .aggregate(header("cheese"), (oldExchange, newExchange) -> {
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                LOG.error("aggregation delay sleep interrupted", e);
+                                fail("aggregation delay sleep interrupted");
+                            }
+                            return newExchange;
+                        })
+                        .completionTimeout(2000L)
+                        .to("mock:result");
 
-                from(multicastEndpointUri).to("jms:queue:AggregatedJmsRouteTestQueuePoint1",
-                        "jms:queue:AggregatedJmsRouteTestQueuePoint2", "jms:queue:AggregatedJmsRouteTestQueuePoint3");
-                from("jms:queue:AggregatedJmsRouteTestQueuePoint1").process(new MyProcessor())
+                from(multicastEndpointUri)
+                        .to(
+                                "jms:queue:AggregatedJmsRouteTestQueuePoint1",
+                                "jms:queue:AggregatedJmsRouteTestQueuePoint2",
+                                "jms:queue:AggregatedJmsRouteTestQueuePoint3");
+                from("jms:queue:AggregatedJmsRouteTestQueuePoint1")
+                        .process(new MyProcessor())
                         .to("jms:queue:AggregatedJmsRouteTestQueueReply");
-                from("jms:queue:AggregatedJmsRouteTestQueuePoint2").process(new MyProcessor())
+                from("jms:queue:AggregatedJmsRouteTestQueuePoint2")
+                        .process(new MyProcessor())
                         .to("jms:queue:AggregatedJmsRouteTestQueueReply");
-                from("jms:queue:AggregatedJmsRouteTestQueuePoint3").process(new MyProcessor())
+                from("jms:queue:AggregatedJmsRouteTestQueuePoint3")
+                        .process(new MyProcessor())
                         .to("jms:queue:AggregatedJmsRouteTestQueueReply");
                 from("jms:queue:AggregatedJmsRouteTestQueueReply")
-                        .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionSize(3)
+                        .aggregate(header("cheese"), new UseLatestAggregationStrategy())
+                        .completionSize(3)
                         .to("mock:reply");
             }
         };
@@ -135,6 +147,5 @@ public class AggregatedJmsRouteIT extends AbstractJMSTest {
         public void process(Exchange exchange) {
             LOG.info("get the exchange here {}", exchange);
         }
-
     }
 }

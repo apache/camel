@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.spanLastRecord.SpanLastRecord;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
 
@@ -35,8 +36,9 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        //final List<Map<?, SpanLastRecord>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
-        //final SpanLastRecord order = rows.get(0).get(SpanLastRecord.class.getName());
+        // final List<Map<?, SpanLastRecord>> rows =
+        // CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
+        // final SpanLastRecord order = rows.get(0).get(SpanLastRecord.class.getName());
 
         final SpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(SpanLastRecord.class);
 
@@ -68,9 +70,7 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
             public void configure() {
                 final BindyCsvDataFormat bindy = new BindyCsvDataFormat(SpanLastRecord.class);
 
-                from("direct:unmarshal")
-                        .unmarshal(bindy)
-                        .to("mock:unmarshal");
+                from("direct:unmarshal").unmarshal(bindy).to("mock:unmarshal");
             }
         };
     }

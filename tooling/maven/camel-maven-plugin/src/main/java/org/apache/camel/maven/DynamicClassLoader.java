@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.net.URL;
@@ -36,5 +37,4 @@ class DynamicClassLoader extends URLClassLoader {
         // no parent classloader as we only want to load from the given URLs
         return new DynamicClassLoader(urls, null);
     }
-
 }

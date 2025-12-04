@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsublite;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -25,11 +31,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class GooglePubsubLiteConsumerTest extends CamelTestSupport {
 
@@ -76,7 +77,8 @@ public class GooglePubsubLiteConsumerTest extends CamelTestSupport {
                 from("direct:start")
                         .process(exchange -> {
                             // simulate some processing here.
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

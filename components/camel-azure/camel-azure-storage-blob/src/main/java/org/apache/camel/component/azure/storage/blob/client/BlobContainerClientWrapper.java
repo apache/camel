@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.client;
 
 import java.time.Duration;
@@ -39,11 +40,13 @@ public class BlobContainerClientWrapper {
 
     public HttpHeaders createContainer(
             final Map<String, String> metadata, final PublicAccessType publicAccessType, final Duration timeout) {
-        return client.createWithResponse(metadata, publicAccessType, timeout, Context.NONE).getHeaders();
+        return client.createWithResponse(metadata, publicAccessType, timeout, Context.NONE)
+                .getHeaders();
     }
 
     public HttpHeaders deleteContainer(final BlobRequestConditions blobRequestConditions, final Duration timeout) {
-        return client.deleteWithResponse(blobRequestConditions, timeout, Context.NONE).getHeaders();
+        return client.deleteWithResponse(blobRequestConditions, timeout, Context.NONE)
+                .getHeaders();
     }
 
     public List<BlobItem> listBlobs(final ListBlobsOptions listBlobsOptions, final Duration timeout) {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,8 +30,6 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class NettyHttpMethodRestrictTest extends BaseNettyTest {
 
     private String getUrl() {
@@ -40,7 +41,7 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
         HttpPost httpPost = new HttpPost(getUrl());
         httpPost.setEntity(new StringEntity("This is a test"));
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(httpPost)) {
+                CloseableHttpResponse response = client.execute(httpPost)) {
             assertEquals(200, response.getCode(), "Get a wrong response status");
 
             String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
@@ -52,7 +53,7 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
     public void testImproperHttpMethod() throws Exception {
         HttpGet httpGet = new HttpGet(getUrl());
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(httpGet)) {
+                CloseableHttpResponse response = client.execute(httpGet)) {
             assertEquals(405, response.getCode(), "Get a wrong response status");
         }
     }
@@ -61,13 +62,13 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty-http:http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(exchange -> {
-                    Message in = exchange.getIn();
-                    String request = in.getBody(String.class);
-                    exchange.getMessage().setBody(request + " response");
-                });
+                from("netty-http:http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST")
+                        .process(exchange -> {
+                            Message in = exchange.getIn();
+                            String request = in.getBody(String.class);
+                            exchange.getMessage().setBody(request + " response");
+                        });
             }
         };
     }
-
 }

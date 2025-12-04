@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,10 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanWithMethodHeaderTest extends ContextTestSupport {
 
@@ -54,7 +55,8 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     @Test
     public void testFail() {
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:fail", "Hello World"),
                 "Should throw an exception");
 
@@ -66,7 +68,8 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     @Test
     public void testMethodNotExists() {
 
-        Exception e = assertThrows(Exception.class,
+        Exception e = assertThrows(
+                Exception.class,
                 () -> {
                     context.addRoutes(new RouteBuilder() {
                         @Override
@@ -74,7 +77,8 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                             from("direct:typo").bean("myBean", "ups").to("mock:result");
                         }
                     });
-                }, "Should throw an exception");
+                },
+                "Should throw an exception");
 
         MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
         assertEquals("ups", mnfe.getMethodName());
@@ -85,7 +89,8 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     public void testMethodNotExistsOnInstance() {
         final MyBean myBean = new MyBean();
 
-        Exception e = assertThrows(Exception.class,
+        Exception e = assertThrows(
+                Exception.class,
                 () -> {
                     context.addRoutes(new RouteBuilder() {
                         @Override
@@ -93,7 +98,8 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                             from("direct:typo").bean(myBean, "ups").to("mock:result");
                         }
                     });
-                }, "Should throw an exception");
+                },
+                "Should throw an exception");
 
         MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
         assertEquals("ups", mnfe.getMethodName());
@@ -132,5 +138,4 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
             return "echo " + s;
         }
     }
-
 }

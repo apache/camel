@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.component.jms.support.PurchaseOrder;
@@ -26,5 +27,4 @@ public class JmsRouteWithObjectMessageTest extends JmsRouteTest {
     public void testSendAndReceiveMessage() throws Exception {
         assertSendAndReceiveBody(new PurchaseOrder("Beer", 10));
     }
-
 }

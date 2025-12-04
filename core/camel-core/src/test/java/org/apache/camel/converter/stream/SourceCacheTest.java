@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.xml.SourceCache;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SourceCacheTest extends ContextTestSupport {
 
@@ -41,5 +42,4 @@ public class SourceCacheTest extends ContextTestSupport {
         s = context.getTypeConverter().convertTo(String.class, cache);
         assertEquals("<foo>bar</foo>", s);
     }
-
 }

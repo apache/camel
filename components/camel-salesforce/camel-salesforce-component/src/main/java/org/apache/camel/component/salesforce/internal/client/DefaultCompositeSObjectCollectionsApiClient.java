@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.ByteArrayInputStream;
@@ -49,11 +50,13 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
     private final ObjectMapper mapper;
 
-    public DefaultCompositeSObjectCollectionsApiClient(final SalesforceEndpointConfig configuration,
-                                                       final String version, final SalesforceSession session,
-                                                       final SalesforceHttpClient httpClient,
-                                                       final SalesforceLoginConfig loginConfig)
-                                                                                                throws SalesforceException {
+    public DefaultCompositeSObjectCollectionsApiClient(
+            final SalesforceEndpointConfig configuration,
+            final String version,
+            final SalesforceSession session,
+            final SalesforceHttpClient httpClient,
+            final SalesforceLoginConfig loginConfig)
+            throws SalesforceException {
         super(version, session, httpClient, loginConfig);
 
         if (configuration.getObjectMapper() != null) {
@@ -65,8 +68,10 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
     @Override
     public <T> void submitRetrieveCompositeCollections(
-            final RetrieveSObjectCollectionsDto retrieveDto, final Map<String, List<String>> headers,
-            final ResponseCallback<List<T>> callback, final String sObjectName,
+            final RetrieveSObjectCollectionsDto retrieveDto,
+            final Map<String, List<String>> headers,
+            final ResponseCallback<List<T>> callback,
+            final String sObjectName,
             Class<T> sobjectType)
             throws SalesforceException {
 
@@ -90,7 +95,8 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
     @Override
     public void createCompositeCollections(
-            SObjectCollection collection, Map<String, List<String>> headers,
+            SObjectCollection collection,
+            Map<String, List<String>> headers,
             ResponseCallback<List<SaveSObjectResult>> callback)
             throws SalesforceException {
         createUpdateCompositeCollections(collection, headers, callback, "POST");
@@ -98,15 +104,18 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
     @Override
     public void updateCompositeCollections(
-            SObjectCollection collection, Map<String, List<String>> headers,
+            SObjectCollection collection,
+            Map<String, List<String>> headers,
             ResponseCallback<List<SaveSObjectResult>> callback)
             throws SalesforceException {
         createUpdateCompositeCollections(collection, headers, callback, "PATCH");
     }
 
     private void createUpdateCompositeCollections(
-            SObjectCollection collection, Map<String, List<String>> headers,
-            ResponseCallback<List<SaveSObjectResult>> callback, String method)
+            SObjectCollection collection,
+            Map<String, List<String>> headers,
+            ResponseCallback<List<SaveSObjectResult>> callback,
+            String method)
             throws SalesforceException {
 
         String url = versionUrl() + "composite/sobjects";
@@ -129,8 +138,10 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
     @Override
     public void upsertCompositeCollections(
-            final SObjectCollection collection, final Map<String, List<String>> headers,
-            final ResponseCallback<List<UpsertSObjectResult>> callback, final String sObjectName,
+            final SObjectCollection collection,
+            final Map<String, List<String>> headers,
+            final ResponseCallback<List<UpsertSObjectResult>> callback,
+            final String sObjectName,
             final String externalIdFieldName)
             throws SalesforceException {
 
@@ -159,7 +170,9 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
     @Override
     public void submitDeleteCompositeCollections(
-            List<String> ids, Boolean allOrNone, final Map<String, List<String>> headers,
+            List<String> ids,
+            Boolean allOrNone,
+            final Map<String, List<String>> headers,
             final ResponseCallback<List<DeleteSObjectResult>> callback) {
 
         String url = versionUrl() + "composite/sobjects";
@@ -210,8 +223,7 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         return mapper.writerFor(type);
     }
 
-    private Request.Content serialize(final Object body)
-            throws SalesforceException {
+    private Request.Content serialize(final Object body) throws SalesforceException {
         return new InputStreamRequestContent(toJson(body));
     }
 
@@ -230,8 +242,7 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         return new ByteArrayInputStream(jsonBytes);
     }
 
-    private <T> Optional<List<T>> tryToReadListResponse(
-            final Class<T> expectedType, final InputStream responseStream) {
+    private <T> Optional<List<T>> tryToReadListResponse(final Class<T> expectedType, final InputStream responseStream) {
         if (responseStream == null) {
             return Optional.empty();
         }

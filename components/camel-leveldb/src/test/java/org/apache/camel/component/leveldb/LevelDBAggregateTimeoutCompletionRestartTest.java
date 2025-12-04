@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,10 +26,7 @@ import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBAggregateTimeoutCompletionRestartTest extends LevelDBTestSupport {
 
     @Override
@@ -66,7 +67,8 @@ public class LevelDBAggregateTimeoutCompletionRestartTest extends LevelDBTestSup
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
                         // use our created leveldb repo as aggregation repository
-                        .completionTimeout(3000).aggregationRepository(getRepo())
+                        .completionTimeout(3000)
+                        .aggregationRepository(getRepo())
                         .to("mock:aggregated");
             }
         };

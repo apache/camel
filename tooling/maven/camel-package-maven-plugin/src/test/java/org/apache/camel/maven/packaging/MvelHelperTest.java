@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.util.stream.Stream;
 
@@ -22,9 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class MvelHelperTest {
 
@@ -52,7 +53,8 @@ public class MvelHelperTest {
     }
 
     static Stream<Arguments> urlEscapeCases() {
-        return Stream.of(arguments("http", "http"),
+        return Stream.of(
+                arguments("http", "http"),
                 arguments("http://example.com", "\\http://example.com"),
                 arguments("some http://example.com here", "some \\http://example.com here"),
                 arguments("https://example.com", "\\https://example.com"),

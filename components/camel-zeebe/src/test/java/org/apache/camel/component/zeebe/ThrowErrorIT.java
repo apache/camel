@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.zeebe;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,11 +30,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIfSystemProperty(named = "zeebe.test.integration.enable", matches = "true",
-                         disabledReason = "Requires locally installed test system")
+@EnabledIfSystemProperty(
+        named = "zeebe.test.integration.enable",
+        matches = "true",
+        disabledReason = "Requires locally installed test system")
 public class ThrowErrorIT extends CamelTestSupport {
 
     protected ZeebeComponent component;
@@ -84,9 +86,7 @@ public class ThrowErrorIT extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:throwError")
-                        .to("zeebe://throwError")
-                        .to("mock:throwError");
+                from("direct:throwError").to("zeebe://throwError").to("mock:throwError");
 
                 from("direct:throwError_JSON")
                         .to("zeebe://throwError?formatJSON=true")

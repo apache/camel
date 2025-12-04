@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.watch;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -29,8 +32,6 @@ import org.apache.camel.component.file.watch.constants.FileEventEnum;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileWatchComponentTest extends FileWatchComponentTestBase {
 
@@ -69,9 +70,16 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         watchDeleteOrModify.setAssertPeriod(1000);
         watchDeleteOrModify.assertIsSatisfied();
 
-        assertFileEvent(newFile.getName(), FileEventEnum.CREATE, watchAll.getExchanges().get(0));
-        assertFileEvent(newFile.getName(), FileEventEnum.CREATE, watchCreate.getExchanges().get(0));
-        assertFileEvent(newFile.getName(), FileEventEnum.CREATE, watchDeleteOrCreate.getExchanges().get(0));
+        assertFileEvent(
+                newFile.getName(), FileEventEnum.CREATE, watchAll.getExchanges().get(0));
+        assertFileEvent(
+                newFile.getName(),
+                FileEventEnum.CREATE,
+                watchCreate.getExchanges().get(0));
+        assertFileEvent(
+                newFile.getName(),
+                FileEventEnum.CREATE,
+                watchDeleteOrCreate.getExchanges().get(0));
     }
 
     @Test
@@ -128,8 +136,9 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     public void testCreateBatch() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watchAll");
         mock.expectedMessageCount(10);
-        mock.expectedMessagesMatches(exchange -> exchange.getIn()
-                .getHeader(FileWatchConstants.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
+        mock.expectedMessagesMatches(
+                exchange -> exchange.getIn().getHeader(FileWatchConstants.EVENT_TYPE_HEADER, FileEventEnum.class)
+                        == FileEventEnum.CREATE);
 
         for (int i = 0; i < 10; i++) {
             createFile(testPath(), String.valueOf(i));
@@ -142,9 +151,7 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("file-watch://%s", testPath())
-                        .routeId("watchAll")
-                        .to("mock:watchAll");
+                fromF("file-watch://%s", testPath()).routeId("watchAll").to("mock:watchAll");
 
                 fromF("file-watch://%s?events=CREATE&antInclude=*.txt", testPath())
                         .routeId("onlyTxtInRoot")
@@ -158,17 +165,13 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
                         .routeId("onlyTxtAnywhere")
                         .to("mock:onlyTxtAnywhere");
 
-                fromF("file-watch://%s?events=CREATE", testPath())
-                        .to("mock:watchCreate");
+                fromF("file-watch://%s?events=CREATE", testPath()).to("mock:watchCreate");
 
-                fromF("file-watch://%s?events=MODIFY", testPath())
-                        .to("mock:watchModify");
+                fromF("file-watch://%s?events=MODIFY", testPath()).to("mock:watchModify");
 
-                fromF("file-watch://%s?events=DELETE,CREATE", testPath())
-                        .to("mock:watchDeleteOrCreate");
+                fromF("file-watch://%s?events=DELETE,CREATE", testPath()).to("mock:watchDeleteOrCreate");
 
-                fromF("file-watch://%s?events=DELETE,MODIFY", testPath())
-                        .to("mock:watchDeleteOrModify");
+                fromF("file-watch://%s?events=DELETE,MODIFY", testPath()).to("mock:watchDeleteOrModify");
             }
         };
     }

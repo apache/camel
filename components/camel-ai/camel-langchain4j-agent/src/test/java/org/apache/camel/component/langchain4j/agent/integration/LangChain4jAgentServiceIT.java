@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
@@ -28,13 +32,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentServiceIT extends AbstractRAGIT {
 
-    private static final String USER_DATABASE = """
+    private static final String USER_DATABASE =
+            """
             {"id": "123", "name": "John Smith", "membership": "Gold", "rentals": 15, "preferredVehicle": "SUV"}
             """;
 
@@ -63,32 +65,31 @@ public class LangChain4jAgentServiceIT extends AbstractRAGIT {
                         }
                         """);
 
-        String response = template.requestBody(
-                "direct:complete-agent-no-memory",
-                request,
-                String.class);
+        String response = template.requestBody("direct:complete-agent-no-memory", request, String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
 
         // check tools
-        assertTrue(response.contains("John Smith") || response.contains("Gold"),
+        assertTrue(
+                response.contains("John Smith") || response.contains("Gold"),
                 "Response should contain user information from tools");
 
         // check RAG
         assertTrue(
-                response.contains("21") || response.contains("age") || response.contains("license")
+                response.contains("21")
+                        || response.contains("age")
+                        || response.contains("license")
                         || response.contains("credit"),
                 "Response should contain rental policy information from RAG");
 
         // Check guardrails
-        assertTrue(TestSuccessInputGuardrail.wasValidated(),
-                "Input guardrail should have been called");
-        assertTrue(TestJsonOutputGuardrail.wasValidated(),
-                "JSON output guardrail should have been called");
+        assertTrue(TestSuccessInputGuardrail.wasValidated(), "Input guardrail should have been called");
+        assertTrue(TestJsonOutputGuardrail.wasValidated(), "JSON output guardrail should have been called");
 
         assertTrue(response.trim().startsWith("{"), "Response should be JSON format");
-        assertTrue(response.contains("userInfo") || response.contains("policies") || response.contains("summary"),
+        assertTrue(
+                response.contains("userInfo") || response.contains("policies") || response.contains("summary"),
                 "Response should contain JSON structure");
     }
 
@@ -98,8 +99,10 @@ public class LangChain4jAgentServiceIT extends AbstractRAGIT {
         AgentConfiguration configuration = new AgentConfiguration()
                 .withChatModel(chatModel)
                 .withRetrievalAugmentor(retrievalAugmentor)
-                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
-                .withOutputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
+                .withInputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
 
         Agent completeAgent = new AgentWithoutMemory(configuration);
 
@@ -117,7 +120,8 @@ public class LangChain4jAgentServiceIT extends AbstractRAGIT {
                         .setBody(constant(USER_DATABASE));
 
                 from("langchain4j-tools:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
-                        .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
+                        .setBody(constant(
+                                "{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
             }
         };
     }

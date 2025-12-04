@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import jakarta.servlet.Filter;
@@ -27,5 +28,4 @@ public class CamelMultipartFilter extends CamelFilterWrapper {
     public CamelMultipartFilter(Filter wrapped) {
         super(wrapped);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms.constants;
 
 /**
@@ -26,6 +27,5 @@ public final class DMSOperations {
     public static final String QUERY_INSTANCE = "queryInstance";
     public static final String UPDATE_INSTANCE = "updateInstance";
 
-    private DMSOperations() {
-    }
+    private DMSOperations() {}
 }

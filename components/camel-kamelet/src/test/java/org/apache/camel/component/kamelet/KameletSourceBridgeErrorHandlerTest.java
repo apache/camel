@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -35,9 +39,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class KameletSourceBridgeErrorHandlerTest extends CamelTestSupport {
 
     protected final CountDownLatch latch = new CountDownLatch(1);
@@ -51,8 +52,10 @@ public class KameletSourceBridgeErrorHandlerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertEquals("Simulated", cause.getMessage());
     }
@@ -64,14 +67,11 @@ public class KameletSourceBridgeErrorHandlerTest extends CamelTestSupport {
             public void configure() {
                 getContext().addComponent("my", new MyComponent());
 
-                routeTemplate("foo")
-                        .from("my:foo")
-                        .to("mock:foo");
+                routeTemplate("foo").from("my:foo").to("mock:foo");
 
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("kamelet:foo?bridgeErrorHandler=true").routeId("start")
-                        .to("mock:result");
+                from("kamelet:foo?bridgeErrorHandler=true").routeId("start").to("mock:result");
             }
         };
     }

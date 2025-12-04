@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jte;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JteDataModelTest extends CamelTestSupport {
 
@@ -52,8 +53,7 @@ public class JteDataModelTest extends CamelTestSupport {
                 jte.setWorkDir("target/jte-classes");
 
                 // START SNIPPET: example
-                from("direct:a").to(
-                        "jte:org/apache/camel/component/jte/custom.jte?allowTemplateFromHeader=true");
+                from("direct:a").to("jte:org/apache/camel/component/jte/custom.jte?allowTemplateFromHeader=true");
                 // END SNIPPET: example
             }
         };

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
+import static org.apache.camel.util.StringHelper.notEmpty;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -31,9 +35,6 @@ import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBas
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.utils.UrlUtils;
 import org.apache.camel.component.salesforce.api.utils.Version;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
-import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * Builder for Composite API batch request. Composite API is available from Salesforce API version 34.0 onwards its a
@@ -214,13 +215,14 @@ public final class SObjectBatch implements Serializable {
      * @param  fields   to return
      * @return          this batch builder
      */
-    public SObjectBatch addGetRelated(final String type, final String id, final String relation, final String... fields) {
+    public SObjectBatch addGetRelated(
+            final String type, final String id, final String relation, final String... fields) {
         version.requireAtLeast(36, 0);
 
         final String fieldsParameter = composeFieldsParameter(fields);
 
-        addBatchRequest(
-                new BatchRequest(Method.GET, rowBaseUrl(type, id) + "/" + notEmpty(relation, "relation") + fieldsParameter));
+        addBatchRequest(new BatchRequest(
+                Method.GET, rowBaseUrl(type, id) + "/" + notEmpty(relation, "relation") + fieldsParameter));
 
         return this;
     }
@@ -267,7 +269,8 @@ public final class SObjectBatch implements Serializable {
      * @return              this batch builder
      */
     public SObjectBatch addSearch(final String searchString) {
-        addBatchRequest(new BatchRequest(Method.GET, apiPrefix + "/search/?q=" + notEmpty(searchString, "searchString")));
+        addBatchRequest(
+                new BatchRequest(Method.GET, apiPrefix + "/search/?q=" + notEmpty(searchString, "searchString")));
 
         return this;
     }
@@ -350,18 +353,20 @@ public final class SObjectBatch implements Serializable {
      */
     public Class[] objectTypes() {
 
-        return Stream
-                .concat(Stream.of(SObjectBatch.class, BatchRequest.class),
-                        batchRequests.stream().map(BatchRequest::getRichInput).filter(Objects::nonNull)
+        return Stream.concat(
+                        Stream.of(SObjectBatch.class, BatchRequest.class),
+                        batchRequests.stream()
+                                .map(BatchRequest::getRichInput)
+                                .filter(Objects::nonNull)
                                 .map(Object::getClass))
-                .distinct().toArray(Class[]::new);
+                .distinct()
+                .toArray(Class[]::new);
     }
 
     void addBatchRequest(final BatchRequest batchRequest) {
         if (batchRequests.size() >= MAX_BATCH) {
-            throw new IllegalArgumentException(
-                    "You can add up to " + MAX_BATCH
-                                               + " requests in a single batch. Split your requests across multiple batches.");
+            throw new IllegalArgumentException("You can add up to " + MAX_BATCH
+                    + " requests in a single batch. Split your requests across multiple batches.");
         }
         batchRequests.add(batchRequest);
     }
@@ -372,8 +377,8 @@ public final class SObjectBatch implements Serializable {
 
     String rowBaseUrl(final String type, final String fieldName, final String fieldValue) {
         try {
-            return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/" + notEmpty(fieldName, "fieldName") + "/"
-                   + UrlUtils.encodePath(notEmpty(fieldValue, "fieldValue"));
+            return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/"
+                    + notEmpty(fieldName, "fieldName") + "/" + UrlUtils.encodePath(notEmpty(fieldValue, "fieldValue"));
         } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.security;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -26,12 +29,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CXFMessageProcessor implements Processor {
     static final String RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                                   + "<soap:Body><greetMeResponse xmlns=\"http://apache.org/hello_world_soap_http/types\">"
-                                   + "<responseType> Hello CXF</responseType></greetMeResponse></soap:Body></soap:Envelope>";
+            + "<soap:Body><greetMeResponse xmlns=\"http://apache.org/hello_world_soap_http/types\">"
+            + "<responseType> Hello CXF</responseType></greetMeResponse></soap:Body></soap:Envelope>";
 
     @Override
     public void process(Exchange exchange) throws Exception {

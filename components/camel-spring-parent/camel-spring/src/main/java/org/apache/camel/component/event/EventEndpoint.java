@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.event;
+
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
@@ -32,13 +35,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
-
 /**
  * Listen for Spring Application Events.
  */
-@UriEndpoint(firstVersion = "1.4.0", scheme = "spring-event", title = "Spring Event", syntax = "spring-event:name",
-             remote = false, category = { Category.MESSAGING })
+@UriEndpoint(
+        firstVersion = "1.4.0",
+        scheme = "spring-event",
+        title = "Spring Event",
+        syntax = "spring-event:name",
+        remote = false,
+        category = {Category.MESSAGING})
 public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;

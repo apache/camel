@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb.integration;
+
+import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentUpdateEntity;
@@ -24,14 +28,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
-import static org.junit.jupiter.api.Assertions.*;
-
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                                  disabledReason = "Apache CI nodes are too resource constrained for this test"),
-        @DisabledIfSystemProperty(named = "arangodb.tests.disable", matches = "true",
-                                  disabledReason = "Manually disabled tests")
+    @DisabledIfSystemProperty(
+            named = "ci.env.name",
+            matches = ".*",
+            disabledReason = "Apache CI nodes are too resource constrained for this test"),
+    @DisabledIfSystemProperty(
+            named = "arangodb.tests.disable",
+            matches = "true",
+            disabledReason = "Manually disabled tests")
 })
 public class ArangoCollectionUpdateIT extends BaseArangoDb {
 
@@ -40,7 +45,8 @@ public class ArangoCollectionUpdateIT extends BaseArangoDb {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:update")
-                        .to("arangodb:{{arangodb.testDb}}?documentCollection={{arangodb.testCollection}}&operation=UPDATE_DOCUMENT");
+                        .to(
+                                "arangodb:{{arangodb.testDb}}?documentCollection={{arangodb.testCollection}}&operation=UPDATE_DOCUMENT");
             }
         };
     }
@@ -62,14 +68,13 @@ public class ArangoCollectionUpdateIT extends BaseArangoDb {
         });
 
         assertTrue(result.getMessage().getBody() instanceof DocumentUpdateEntity);
-        DocumentUpdateEntity<BaseDocument> docUpdated = (DocumentUpdateEntity<BaseDocument>) result.getMessage().getBody();
+        DocumentUpdateEntity<BaseDocument> docUpdated =
+                (DocumentUpdateEntity<BaseDocument>) result.getMessage().getBody();
         assertEquals(myObject.getKey(), docUpdated.getKey());
 
-        BaseDocument actualResult = collection.getDocument(docUpdated.getKey(),
-                BaseDocument.class);
+        BaseDocument actualResult = collection.getDocument(docUpdated.getKey(), BaseDocument.class);
         assertEquals(myObject.getKey(), actualResult.getKey());
         assertEquals("hello", actualResult.getAttribute("foo"));
         assertEquals(42, actualResult.getAttribute("gg"));
     }
-
 }

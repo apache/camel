@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -23,7 +24,8 @@ import org.apache.camel.api.management.mbean.ManagedThrottlingInflightRoutePolic
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 
 @ManagedResource(description = "Managed ThrottlingInflightRoutePolicy")
-public class ManagedThrottlingInflightRoutePolicy extends ManagedService implements ManagedThrottlingInflightRoutePolicyMBean {
+public class ManagedThrottlingInflightRoutePolicy extends ManagedService
+        implements ManagedThrottlingInflightRoutePolicyMBean {
     private final ThrottlingInflightRoutePolicy policy;
 
     public ManagedThrottlingInflightRoutePolicy(CamelContext context, ThrottlingInflightRoutePolicy policy) {
@@ -76,5 +78,4 @@ public class ManagedThrottlingInflightRoutePolicy extends ManagedService impleme
         getPolicy().setLoggingLevel(level);
         getPolicy().getLogger().setLevel(level);
     }
-
 }

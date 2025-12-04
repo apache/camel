@@ -30,8 +30,10 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts Azure CosmosDB Change Feed processor response to CloudEvent v1_0 data format. The data
  * type sets Camel specific CloudEvent headers with values extracted from Azure CosmosDB Change Feed processor response.
  */
-@DataTypeTransformer(name = "azure-cosmosdb:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with Azure CosmosDB Change Feed processor response details")
+@DataTypeTransformer(
+        name = "azure-cosmosdb:application-cloudevents",
+        description =
+                "Adds CloudEvent headers to the Camel message with Azure CosmosDB Change Feed processor response details")
 public class CosmosDbCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -39,12 +41,12 @@ public class CosmosDbCloudEventDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.cosmosdb.changes");
 
-        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                "org.apache.camel.event.azure.cosmosdb.changefeed");
+        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "org.apache.camel.event.azure.cosmosdb.changefeed");
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, "org.apache.camel.event.azure.cosmosdb.changefeed");
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));

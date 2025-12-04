@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsublite;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +27,6 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GooglePubsubLiteComponentTest extends CamelTestSupport {
 
@@ -57,10 +58,12 @@ public class GooglePubsubLiteComponentTest extends CamelTestSupport {
         String remaining = "123456789012:europe-west3";
         Map<String, Object> parameters = new HashMap<>();
 
-        Exception exception = assertThrows(IllegalArgumentException.class,
+        Exception exception = assertThrows(
+                IllegalArgumentException.class,
                 () -> googlePubsubLiteComponent.createEndpoint(uri, remaining, parameters));
 
-        String expectedMessage = "Google PubSub Lite Endpoint format \"projectId:location:destinationName[:subscriptionName]\"";
+        String expectedMessage =
+                "Google PubSub Lite Endpoint format \"projectId:location:destinationName[:subscriptionName]\"";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }

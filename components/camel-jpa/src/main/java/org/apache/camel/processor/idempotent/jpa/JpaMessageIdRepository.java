@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jpa;
+
+import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -37,17 +40,14 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
-
 @ManagedResource(description = "JPA based message id repository")
 public class JpaMessageIdRepository extends ServiceSupport implements IdempotentRepository {
-    protected static final String QUERY_STRING
-            = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
-    protected static final String QUERY_CLEAR_STRING
-            = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
+    protected static final String QUERY_STRING =
+            "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
+    protected static final String QUERY_CLEAR_STRING =
+            "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
 
-    private static final String SOMETHING_WENT_WRONG
-            = "Something went wrong trying to add message to repository %s";
+    private static final String SOMETHING_WENT_WRONG = "Something went wrong trying to add message to repository %s";
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaMessageIdRepository.class);
 
@@ -61,8 +61,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         this(entityManagerFactory, createDefaultTransactionStrategy(entityManagerFactory), processorName);
     }
 
-    public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, TransactionStrategy transactionStrategy,
-                                  String processorName) {
+    public JpaMessageIdRepository(
+            EntityManagerFactory entityManagerFactory, TransactionStrategy transactionStrategy, String processorName) {
         this.entityManagerFactory = entityManagerFactory;
         this.processorName = processorName;
         this.transactionStrategy = transactionStrategy;
@@ -89,8 +89,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     @Override
     public boolean add(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager
-                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+        final EntityManager entityManager =
+                getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
         // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
         transactionStrategy.executeInTransaction(() -> {
@@ -138,8 +138,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     @Override
     public boolean contains(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager
-                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+        final EntityManager entityManager =
+                getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
@@ -180,8 +180,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     @Override
     public boolean remove(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager
-                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+        final EntityManager entityManager =
+                getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         Boolean[] rc = new Boolean[1];
         transactionStrategy.executeInTransaction(() -> {
@@ -231,7 +231,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);
+        final EntityManager entityManager =
+                getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);
 
         transactionStrategy.executeInTransaction(() -> {
             if (isJoinTransaction()) {
@@ -310,5 +311,4 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     protected void doStop() throws Exception {
         // noop
     }
-
 }

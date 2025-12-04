@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
 import java.net.URISyntaxException;
@@ -41,9 +42,13 @@ import org.apache.camel.util.URISupport;
  * Exchanges messages with an IBM i system using data queues, message queues, or program call. IBM i is the replacement
  * for AS/400 and iSeries servers.
  */
-@UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400",
-             syntax = "jt400:userID:password@systemName/QSYS.LIB/objectPath.type", category = { Category.MESSAGING },
-             headersClass = Jt400Constants.class)
+@UriEndpoint(
+        firstVersion = "1.5.0",
+        scheme = "jt400",
+        title = "JT400",
+        syntax = "jt400:userID:password@systemName/QSYS.LIB/objectPath.type",
+        category = {Category.MESSAGING},
+        headersClass = Jt400Constants.class)
 public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     public static final String KEY = Jt400Constants.KEY;
@@ -64,8 +69,8 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     /**
      * Creates a new IBM i data queue endpoint using the specified connection pool.
      */
-    protected Jt400Endpoint(String endpointUri, Jt400Component component,
-                            AS400ConnectionPool connectionPool) throws CamelException {
+    protected Jt400Endpoint(String endpointUri, Jt400Component component, AS400ConnectionPool connectionPool)
+            throws CamelException {
         super(endpointUri, component);
         ObjectHelper.notNull(connectionPool, "connectionPool");
         try {
@@ -315,5 +320,4 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     public boolean isMultipleConsumersSupported() {
         return true;
     }
-
 }

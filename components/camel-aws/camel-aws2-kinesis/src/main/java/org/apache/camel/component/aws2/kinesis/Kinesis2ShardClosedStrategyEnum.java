@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
 
 public enum Kinesis2ShardClosedStrategyEnum {
-
     ignore,
     fail,
     silent

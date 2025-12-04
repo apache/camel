@@ -14,7 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack.io;
+
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_COMPRESS_HEADER_LENGTH;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_DATA_HEADER_LENGTH;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_HEADER_LENGTH;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_JSON_HEADER_LENGTH;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_WINDOW_HEADER_LENGTH;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.INT_LENGTH;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_COMPRESS;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_DATA;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_JSON;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_WINDOW;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V1;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V2;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,19 +46,6 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_COMPRESS_HEADER_LENGTH;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_DATA_HEADER_LENGTH;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_HEADER_LENGTH;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_JSON_HEADER_LENGTH;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_WINDOW_HEADER_LENGTH;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.INT_LENGTH;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_COMPRESS;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_DATA;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_JSON;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_WINDOW;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V1;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V2;
 
 /**
  * Decode lumberjack protocol frames. Support protocol V1 and V2 and frame types D, J, W and C.<br/>
@@ -67,7 +68,8 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        // mark the reader index to be able to start decoding from the same position if there is not enough data to finish the frame decoding
+        // mark the reader index to be able to start decoding from the same position if there is not enough data to
+        // finish the frame decoding
         in.markReaderIndex();
 
         boolean frameDecoded = false;
@@ -103,7 +105,8 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
             }
         } finally {
             if (!frameDecoded) {
-                LOG.debug("Not enough data to decode a complete frame, retry when more data is available. Reader index was {}",
+                LOG.debug(
+                        "Not enough data to decode a complete frame, retry when more data is available. Reader index was {}",
                         in.readerIndex());
                 in.resetReaderIndex();
             }
@@ -192,9 +195,8 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
         // inspired from logstash-input-beats : https://github.com/logstash-plugins/logstash-input-beats
         Inflater inflater = new Inflater();
         ByteBuf decompressed = ctx.alloc().buffer(compressedPayloadLength);
-        try (
-             ByteBufOutputStream buffOutput = new ByteBufOutputStream(decompressed);
-             InflaterOutputStream inflaterStream = new InflaterOutputStream(buffOutput, inflater)) {
+        try (ByteBufOutputStream buffOutput = new ByteBufOutputStream(decompressed);
+                InflaterOutputStream inflaterStream = new InflaterOutputStream(buffOutput, inflater)) {
             in.readBytes(inflaterStream, compressedPayloadLength);
         } finally {
             inflater.end();

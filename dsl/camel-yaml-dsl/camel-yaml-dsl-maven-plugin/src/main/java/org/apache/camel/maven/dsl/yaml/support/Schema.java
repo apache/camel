@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.dsl.yaml.support;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
@@ -24,17 +25,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class Schema {
     @JsonProperty
-    @JsonAlias({ "dataformat", "language", "other", "model" })
+    @JsonAlias({"dataformat", "language", "other", "model"})
     public ObjectNode meta;
+
     @JsonProperty
     public ObjectNode properties;
+
     @JsonIgnore
     public ObjectNode exchangeProperties;
+
     @JsonProperty
     public ObjectNode functions;
 
-    public Schema() {
-    }
+    public Schema() {}
 
     public Schema(ObjectNode meta, ObjectNode properties) {
         this.meta = meta;

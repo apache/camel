@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.io.BufferedInputStream;
@@ -100,5 +101,4 @@ public class SkipLastByteInputStream extends BufferedInputStream {
     public void reset() {
         throw new UnsupportedOperationException();
     }
-
 }

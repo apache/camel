@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import java.io.BufferedWriter;
@@ -37,7 +38,7 @@ public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
     private static final String CXT = PORT + CONTEXT;
 
     private String cxfRsEndpointUri = "cxf://http://localhost:" + CXT + "/rest?synchronous=" + isSynchronous()
-                                      + "&serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider&dataFormat=PAYLOAD";
+            + "&serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider&dataFormat=PAYLOAD";
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -62,12 +63,9 @@ public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
                                 }
 
                                 @Override
-                                public void onFailure(Exchange exchange) {
-
-                                }
+                                public void onFailure(Exchange exchange) {}
                             });
                         });
-
             }
         };
     }
@@ -93,11 +91,9 @@ public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
         telnetClient.disconnect();
         mock.assertIsSatisfied();
         onComplete.assertIsSatisfied();
-
     }
 
     protected boolean isSynchronous() {
         return false;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentReadLockTest extends ContextTestSupport {
 
@@ -77,7 +78,8 @@ public class FileIdempotentReadLockTest extends ContextTestSupport {
                                 int size = myRepo.getCacheSize();
                                 assertTrue(size == 1 || size == 2);
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.List;
@@ -29,9 +33,6 @@ import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
 
@@ -54,14 +55,20 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
 
         // Send 10 messages for first window
         for (int i = 0; i < 10; i++) {
-            template.sendBodyAndHeader("direct:timestampGroupingBasic", "Message from window 1: " + i,
-                    Exchange.MESSAGE_TIMESTAMP, baseTime1 + (i * 10000)); // spread within window
+            template.sendBodyAndHeader(
+                    "direct:timestampGroupingBasic",
+                    "Message from window 1: " + i,
+                    Exchange.MESSAGE_TIMESTAMP,
+                    baseTime1 + (i * 10000)); // spread within window
         }
 
         // Send 10 messages for second window
         for (int i = 0; i < 10; i++) {
-            template.sendBodyAndHeader("direct:timestampGroupingBasic", "Message from window 2: " + i,
-                    Exchange.MESSAGE_TIMESTAMP, baseTime2 + (i * 10000)); // spread within window
+            template.sendBodyAndHeader(
+                    "direct:timestampGroupingBasic",
+                    "Message from window 2: " + i,
+                    Exchange.MESSAGE_TIMESTAMP,
+                    baseTime2 + (i * 10000)); // spread within window
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -103,8 +110,11 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
         long baseTime = 1704096000000L; // 2024-01-01 08:00:00 UTC
 
         for (int i = 0; i < 15; i++) {
-            template.sendBodyAndHeader("direct:timestampGrouping", "Message with string timestamp: " + i,
-                    Exchange.MESSAGE_TIMESTAMP, String.valueOf(baseTime + (i * 10000)));
+            template.sendBodyAndHeader(
+                    "direct:timestampGrouping",
+                    "Message with string timestamp: " + i,
+                    Exchange.MESSAGE_TIMESTAMP,
+                    String.valueOf(baseTime + (i * 10000)));
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -155,8 +165,11 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
 
         for (int i = 0; i < 12; i++) {
             Date messageDate = new Date(baseTime + (i * 30000)); // 30 seconds apart
-            template.sendBodyAndHeader("direct:timestampGrouping", "Message with Date timestamp: " + i,
-                    Exchange.MESSAGE_TIMESTAMP, messageDate);
+            template.sendBodyAndHeader(
+                    "direct:timestampGrouping",
+                    "Message with Date timestamp: " + i,
+                    Exchange.MESSAGE_TIMESTAMP,
+                    messageDate);
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -185,9 +198,11 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
         for (int window = 0; window < 6; window++) {
             for (int msg = 0; msg < 5; msg++) {
                 long timestamp = baseTime + (window * 300000) + (msg * 10000); // 5-minute windows
-                template.sendBodyAndHeader("direct:timestampGroupingLargeSpan",
+                template.sendBodyAndHeader(
+                        "direct:timestampGroupingLargeSpan",
                         String.format("Window %d, Message %d", window, msg),
-                        Exchange.MESSAGE_TIMESTAMP, timestamp);
+                        Exchange.MESSAGE_TIMESTAMP,
+                        timestamp);
             }
         }
 
@@ -207,7 +222,8 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
         // Verify all files have timestamp-based naming pattern
         for (S3Object s3Object : resp) {
             String key = s3Object.key();
-            assertTrue(key.matches("largeSpanTest_\\d{8}_\\d{4}_\\d{4}-\\d{4}\\.txt"),
+            assertTrue(
+                    key.matches("largeSpanTest_\\d{8}_\\d{4}_\\d{4}-\\d{4}\\.txt"),
                     "File should have timestamp-based name pattern: " + key);
         }
     }
@@ -224,9 +240,11 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
         for (int window = 0; window < 4; window++) {
             for (int msg = 0; msg < 5; msg++) {
                 long timestamp = baseTime + (window * 60000) + (msg * 5000); // 1-minute windows
-                template.sendBodyAndHeader("direct:timestampGroupingCustomWindow",
+                template.sendBodyAndHeader(
+                        "direct:timestampGroupingCustomWindow",
                         String.format("1min Window %d, Message %d", window, msg),
-                        Exchange.MESSAGE_TIMESTAMP, timestamp);
+                        Exchange.MESSAGE_TIMESTAMP,
+                        timestamp);
             }
         }
 
@@ -253,9 +271,11 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
         long baseTime = 1704096000000L; // 2024-01-01 08:00:00 UTC
 
         for (int i = 0; i < 8; i++) {
-            template.sendBodyAndHeader("direct:timestampGroupingCustomHeader",
+            template.sendBodyAndHeader(
+                    "direct:timestampGroupingCustomHeader",
                     "Message with custom header: " + i,
-                    "MyCustomTimestamp", baseTime + (i * 30000));
+                    "MyCustomTimestamp",
+                    baseTime + (i * 30000));
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -288,9 +308,11 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
         for (int window = 0; window < 2; window++) {
             for (int msg = 0; msg < 3; msg++) {
                 long timestamp = baseTime + (window * 300000) + (msg * 10000);
-                template.sendBodyAndHeader("direct:timestampGroupingMultipart",
+                template.sendBodyAndHeader(
+                        "direct:timestampGroupingMultipart",
                         largeContent.toString() + " Window: " + window + ", Message: " + msg,
-                        Exchange.MESSAGE_TIMESTAMP, timestamp);
+                        Exchange.MESSAGE_TIMESTAMP,
+                        timestamp);
             }
         }
 
@@ -321,8 +343,8 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
                 // Route for basic timestamp grouping test
                 String basicTestEndpoint = String.format(
                         "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=basicTest.txt"
-                                                         + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
-                                                         + "&timestampHeaderName=CamelMessageTimestamp",
+                                + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
+                                + "&timestampHeaderName=CamelMessageTimestamp",
                         name.get());
 
                 from("direct:timestampGroupingBasic").to(basicTestEndpoint).to("mock:result");
@@ -330,8 +352,8 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
                 // Route for large span test
                 String largeSpanEndpoint = String.format(
                         "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=largeSpanTest.txt"
-                                                         + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
-                                                         + "&timestampHeaderName=CamelMessageTimestamp",
+                                + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
+                                + "&timestampHeaderName=CamelMessageTimestamp",
                         name.get());
 
                 from("direct:timestampGroupingLargeSpan").to(largeSpanEndpoint).to("mock:result");
@@ -339,8 +361,8 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
                 // Route for timestamp grouping with 5-minute windows (other tests)
                 String timestampGroupingEndpoint = String.format(
                         "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=timestampTest.txt"
-                                                                 + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
-                                                                 + "&timestampHeaderName=CamelMessageTimestamp",
+                                + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
+                                + "&timestampHeaderName=CamelMessageTimestamp",
                         name.get());
 
                 from("direct:timestampGrouping").to(timestampGroupingEndpoint).to("mock:result");
@@ -348,26 +370,30 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
                 // Route for timestamp grouping with custom 1-minute windows
                 String customWindowEndpoint = String.format(
                         "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=customWindowTest.txt"
-                                                            + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=60000"
-                                                            + "&timestampHeaderName=CamelMessageTimestamp",
+                                + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=60000"
+                                + "&timestampHeaderName=CamelMessageTimestamp",
                         name.get());
 
-                from("direct:timestampGroupingCustomWindow").to(customWindowEndpoint).to("mock:result");
+                from("direct:timestampGroupingCustomWindow")
+                        .to(customWindowEndpoint)
+                        .to("mock:result");
 
                 // Route for timestamp grouping with custom header name
                 String customHeaderEndpoint = String.format(
                         "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=customHeaderTest.txt"
-                                                            + "&batchMessageNumber=4&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
-                                                            + "&timestampHeaderName=MyCustomTimestamp",
+                                + "&batchMessageNumber=4&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
+                                + "&timestampHeaderName=MyCustomTimestamp",
                         name.get());
 
-                from("direct:timestampGroupingCustomHeader").to(customHeaderEndpoint).to("mock:result");
+                from("direct:timestampGroupingCustomHeader")
+                        .to(customHeaderEndpoint)
+                        .to("mock:result");
 
                 // Route for timestamp grouping with multipart upload
                 String multipartEndpoint = String.format(
                         "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=multipartTest.txt"
-                                                         + "&batchMessageNumber=3&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
-                                                         + "&timestampHeaderName=CamelMessageTimestamp&multiPartUpload=true&partSize=5242880",
+                                + "&batchMessageNumber=3&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
+                                + "&timestampHeaderName=CamelMessageTimestamp&multiPartUpload=true&partSize=5242880",
                         name.get());
 
                 from("direct:timestampGroupingMultipart").to(multipartEndpoint).to("mock:result");

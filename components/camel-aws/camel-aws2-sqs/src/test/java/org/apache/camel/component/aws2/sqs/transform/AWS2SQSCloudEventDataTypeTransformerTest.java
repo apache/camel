@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.sqs.transform;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -30,8 +32,6 @@ import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AWS2SQSCloudEventDataTypeTransformerTest {
 
@@ -50,7 +50,8 @@ public class AWS2SQSCloudEventDataTypeTransformerTest {
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertTrue(exchange.getMessage().getHeaders().containsKey(Sqs2Constants.RECEIPT_HANDLE));
-        assertEquals("org.apache.camel.event.aws.sqs.receiveMessage",
+        assertEquals(
+                "org.apache.camel.event.aws.sqs.receiveMessage",
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
         assertEquals("1234", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
         assertEquals("aws.sqs.queue.myQueue", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
@@ -58,10 +59,10 @@ public class AWS2SQSCloudEventDataTypeTransformerTest {
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
+        Transformer transformer = camelContext
+                .getTransformerRegistry()
                 .resolveTransformer(new TransformerKey("aws2-sqs:application-cloudevents"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(AWS2SQSCloudEventDataTypeTransformer.class, transformer.getClass());
-
     }
 }

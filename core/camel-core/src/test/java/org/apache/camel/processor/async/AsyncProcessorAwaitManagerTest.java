@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
 
@@ -26,14 +30,12 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
 
     @Test
     public void testAsyncAwait() throws Exception {
-        final AsyncProcessorAwaitManager asyncProcessorAwaitManager = PluginHelper.getAsyncProcessorAwaitManager(context);
+        final AsyncProcessorAwaitManager asyncProcessorAwaitManager =
+                PluginHelper.getAsyncProcessorAwaitManager(context);
         asyncProcessorAwaitManager.getStatistics().setStatisticsEnabled(true);
 
         assertEquals(0, asyncProcessorAwaitManager.size());
@@ -48,10 +50,8 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(0, asyncProcessorAwaitManager.size());
-        assertEquals(1,
-                asyncProcessorAwaitManager.getStatistics().getThreadsBlocked());
-        assertEquals(0, asyncProcessorAwaitManager.getStatistics()
-                .getThreadsInterrupted());
+        assertEquals(1, asyncProcessorAwaitManager.getStatistics().getThreadsBlocked());
+        assertEquals(0, asyncProcessorAwaitManager.getStatistics().getThreadsInterrupted());
     }
 
     @Override
@@ -61,27 +61,38 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").routeId("myRoute").to("mock:before").to("async:bye:camel").id("myAsync").to("mock:after")
+                from("direct:start")
+                        .routeId("myRoute")
+                        .to("mock:before")
+                        .to("async:bye:camel")
+                        .id("myAsync")
+                        .to("mock:after")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                int size = PluginHelper.getAsyncProcessorAwaitManager(context).size();
+                                int size = PluginHelper.getAsyncProcessorAwaitManager(context)
+                                        .size();
                                 log.info("async inflight: {}", size);
                                 assertEquals(1, size);
 
-                                Collection<AsyncProcessorAwaitManager.AwaitThread> threads
-                                        = PluginHelper.getAsyncProcessorAwaitManager(context).browse();
-                                AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
+                                Collection<AsyncProcessorAwaitManager.AwaitThread> threads =
+                                        PluginHelper.getAsyncProcessorAwaitManager(context)
+                                                .browse();
+                                AsyncProcessorAwaitManager.AwaitThread thread =
+                                        threads.iterator().next();
 
                                 long wait = thread.getWaitDuration();
-                                log.info("Thread {} has waited for {} msec.", thread.getBlockedThread().getName(), wait);
+                                log.info(
+                                        "Thread {} has waited for {} msec.",
+                                        thread.getBlockedThread().getName(),
+                                        wait);
 
                                 assertEquals("myRoute", thread.getRouteId());
                                 assertThat(thread.getNodeId()).matches("process[0-9]+");
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

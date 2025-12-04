@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,9 +37,15 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalBodyTes
 
                 onException(Exception.class).useOriginalBody().handled(true).to("mock:b");
 
-                from("direct:start").setBody(constant("Changed body")).setHeader("foo", constant("bar")).multicast()
-                        .shareUnitOfWork().stopOnException().to("direct:a")
-                        .to("direct:b").end();
+                from("direct:start")
+                        .setBody(constant("Changed body"))
+                        .setHeader("foo", constant("bar"))
+                        .multicast()
+                        .shareUnitOfWork()
+                        .stopOnException()
+                        .to("direct:a")
+                        .to("direct:b")
+                        .end();
 
                 from("direct:a").to("mock:a");
 
@@ -62,5 +69,4 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalBodyTes
 
         assertMockEndpointsSatisfied();
     }
-
 }

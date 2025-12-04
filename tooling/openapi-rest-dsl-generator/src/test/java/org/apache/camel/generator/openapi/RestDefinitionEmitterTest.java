@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,8 +30,6 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class RestDefinitionEmitterTest {
     @Test
     public void shouldGenerateObjects() throws IOException {
@@ -38,8 +39,8 @@ public class RestDefinitionEmitterTest {
 
             emitter.emit("rest");
             emitter.emit("put", "/pet");
-            emitter.emit("consumes", new Object[] { new String[] { "application/json", "application/xml" } });
-            emitter.emit("produces", new Object[] { new String[] { "application/xml", "application/json" } });
+            emitter.emit("consumes", new Object[] {new String[] {"application/json", "application/xml"}});
+            emitter.emit("produces", new Object[] {new String[] {"application/xml", "application/json"}});
             emitter.emit("param");
             emitter.emit("name", "body");
             emitter.emit("type", RestParamType.body);

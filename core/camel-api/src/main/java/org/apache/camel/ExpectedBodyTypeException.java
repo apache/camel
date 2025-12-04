@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -26,7 +27,7 @@ public class ExpectedBodyTypeException extends RuntimeCamelException {
 
     public ExpectedBodyTypeException(Exchange exchange, Class<?> expectedBodyType) {
         super("Could not extract IN message body as type: " + expectedBodyType + " body is: "
-              + exchange.getIn().getBody());
+                + exchange.getIn().getBody());
         this.exchange = exchange;
         this.expectedBodyType = expectedBodyType;
     }

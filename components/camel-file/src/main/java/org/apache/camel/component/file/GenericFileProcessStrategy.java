@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
@@ -43,7 +44,11 @@ public interface GenericFileProcessStrategy<T> {
      * @return            true if the file can be processed (such as if a file lock could be obtained)
      * @throws Exception  can be thrown in case of errors
      */
-    boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+    boolean begin(
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception;
 
     /**
@@ -56,7 +61,11 @@ public interface GenericFileProcessStrategy<T> {
      * @param  file       the file
      * @throws Exception  can be thrown in case of errors
      */
-    void abort(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+    void abort(
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception;
 
     /**
@@ -68,7 +77,11 @@ public interface GenericFileProcessStrategy<T> {
      * @param  file       the file
      * @throws Exception  can be thrown in case of errors
      */
-    void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+    void commit(
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception;
 
     /**
@@ -80,7 +93,10 @@ public interface GenericFileProcessStrategy<T> {
      * @param  file       the file
      * @throws Exception  can be thrown in case of errors
      */
-    void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+    void rollback(
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception;
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointSedaInOnlyTest extends ContextTestSupport {
 
@@ -66,24 +67,33 @@ public class AsyncEndpointSedaInOnlyTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).to("async:bye:camel").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("seda:foo");
+                from("direct:start")
+                        .to("mock:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("async:bye:camel")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("seda:foo");
 
-                from("seda:foo").to("mock:after").to("log:after").delay(1000).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        route += "B";
-                        sedaThreadName = Thread.currentThread().getName();
-                    }
-                }).to("mock:result");
+                from("seda:foo")
+                        .to("mock:after")
+                        .to("log:after")
+                        .delay(1000)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                route += "B";
+                                sedaThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

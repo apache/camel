@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.Set;
@@ -27,8 +28,7 @@ public final class ParameterMappingStrategyHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParameterMappingStrategyHelper.class);
 
-    private ParameterMappingStrategyHelper() {
-    }
+    private ParameterMappingStrategyHelper() {}
 
     public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
         ParameterMappingStrategy answer;
@@ -41,7 +41,8 @@ public final class ParameterMappingStrategyHelper {
         } else if (set.size() > 1) {
             LOG.warn(
                     "Found {} beans of type {} in registry. Only one custom instance is supported. Will use DefaultParameterMappingStrategy.",
-                    set.size(), ParameterMappingStrategy.class.getName());
+                    set.size(),
+                    ParameterMappingStrategy.class.getName());
             answer = DefaultParameterMappingStrategy.INSTANCE;
         } else {
             // no then use the default one
@@ -50,5 +51,4 @@ public final class ParameterMappingStrategyHelper {
 
         return answer;
     }
-
 }

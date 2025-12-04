@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.Exchange;
@@ -71,13 +72,12 @@ public class KameletEnrichTest extends CamelTestSupport {
                 routeTemplate("broker")
                         .templateParameter("queue")
                         .from("kamelet:source")
-                        .enrich().simple("mock:{{queue}}");
+                        .enrich()
+                        .simple("mock:{{queue}}");
 
-                from("direct:foo")
-                        .kamelet("broker?queue=foo");
+                from("direct:foo").kamelet("broker?queue=foo");
 
-                from("direct:bar")
-                        .kamelet("broker?queue=bar");
+                from("direct:bar").kamelet("broker?queue=bar");
             }
         };
     }

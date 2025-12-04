@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sap.netweaver;
 
 import java.util.Map;
@@ -33,23 +34,33 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send requests to SAP NetWeaver Gateway using HTTP.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url",
-             producerOnly = true, category = { Category.SAAS },
-             headersClass = NetWeaverConstants.class)
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = "sap-netweaver",
+        title = "SAP NetWeaver",
+        syntax = "sap-netweaver:url",
+        producerOnly = true,
+        category = {Category.SAAS},
+        headersClass = NetWeaverConstants.class)
 public class NetWeaverEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
     private String url;
+
     @UriParam(defaultValue = "true")
     private boolean json = true;
+
     @UriParam(defaultValue = "true")
     private boolean jsonAsMap = true;
+
     @UriParam(defaultValue = "true")
     private boolean flatternMap = true;
+
     @UriParam
     @Metadata(required = true, secret = true)
     private String username;
+
     @UriParam
     @Metadata(required = true, secret = true)
     private String password;

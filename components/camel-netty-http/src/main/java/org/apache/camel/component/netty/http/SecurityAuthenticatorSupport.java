@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.security.Principal;
@@ -37,8 +38,7 @@ public abstract class SecurityAuthenticatorSupport implements SecurityAuthentica
     private String name;
     private String roleClassNames;
 
-    protected SecurityAuthenticatorSupport() {
-    }
+    protected SecurityAuthenticatorSupport() {}
 
     @Override
     public void setName(String name) {

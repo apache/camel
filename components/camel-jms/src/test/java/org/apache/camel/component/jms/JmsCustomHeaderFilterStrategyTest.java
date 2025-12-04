@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import java.util.HashMap;
@@ -39,6 +40,7 @@ public class JmsCustomHeaderFilterStrategyTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -79,7 +81,8 @@ public class JmsCustomHeaderFilterStrategyTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsCustomHeaderFilterStrategyTest?eagerLoadingOfProperties=true").to("mock:result");
+                from("activemq:queue:JmsCustomHeaderFilterStrategyTest?eagerLoadingOfProperties=true")
+                        .to("mock:result");
             }
         };
     }
@@ -108,5 +111,4 @@ public class JmsCustomHeaderFilterStrategyTest extends AbstractJMSTest {
             return s.equals("skipme");
         }
     }
-
 }

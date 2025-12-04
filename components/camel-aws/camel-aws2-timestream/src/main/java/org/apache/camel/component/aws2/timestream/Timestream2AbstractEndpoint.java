@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream;
 
 import org.apache.camel.*;
@@ -21,10 +22,14 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
-@UriEndpoint(firstVersion = "4.1.0", scheme = "aws2-timestream", title = "AWS Timestream",
-             syntax = "aws2-timestream:clientType:label",
-             producerOnly = true, category = { Category.CLOUD, Category.DATABASE },
-             headersClass = Timestream2Constants.class)
+@UriEndpoint(
+        firstVersion = "4.1.0",
+        scheme = "aws2-timestream",
+        title = "AWS Timestream",
+        syntax = "aws2-timestream:clientType:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.DATABASE},
+        headersClass = Timestream2Constants.class)
 public abstract class Timestream2AbstractEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -43,5 +48,4 @@ public abstract class Timestream2AbstractEndpoint extends DefaultEndpoint {
     public Timestream2Configuration getConfiguration() {
         return configuration;
     }
-
 }

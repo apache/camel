@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -36,18 +40,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
 public class LoggingInterceptorInMessageModeTest {
     protected static int port1 = CXFTestSupport.getPort1();
     protected static int port2 = CXFTestSupport.getPort2();
 
-    protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/LoggingInterceptorInMessageModeTest/router";
-    protected static final String SERVICE_ADDRESS
-            = "http://localhost:" + port2 + "/LoggingInterceptorInMessageModeTest/helloworld";
+    protected static final String ROUTER_ADDRESS =
+            "http://localhost:" + port1 + "/LoggingInterceptorInMessageModeTest/router";
+    protected static final String SERVICE_ADDRESS =
+            "http://localhost:" + port2 + "/LoggingInterceptorInMessageModeTest/helloworld";
 
     static Server server;
 
@@ -56,7 +58,7 @@ public class LoggingInterceptorInMessageModeTest {
 
     @BeforeAll
     public static void startService() {
-        //start a service
+        // start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 
         svrBean.setAddress(SERVICE_ADDRESS);
@@ -100,7 +102,7 @@ public class LoggingInterceptorInMessageModeTest {
 
         String result = client.echo("hello world");
         assertEquals("echo hello world", result, "we should get the right answer from router");
-        //assertTrue(writer.getString().indexOf("hello world") > 0);
+        // assertTrue(writer.getString().indexOf("hello world") > 0);
 
     }
 
@@ -119,5 +121,4 @@ public class LoggingInterceptorInMessageModeTest {
             return ((StringWriter) out).toString();
         }
     }
-
 }

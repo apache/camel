@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.IOException;
@@ -32,8 +33,13 @@ import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 
 public class AsNestedPropertyDeserializer extends AsPropertyTypeDeserializer {
 
-    public AsNestedPropertyDeserializer(JavaType bt, TypeIdResolver idRes, String typePropertyName, boolean typeIdVisible,
-                                        JavaType defaultImpl, JsonTypeInfo.As inclusion) {
+    public AsNestedPropertyDeserializer(
+            JavaType bt,
+            TypeIdResolver idRes,
+            String typePropertyName,
+            boolean typeIdVisible,
+            JavaType defaultImpl,
+            JsonTypeInfo.As inclusion) {
         super(bt, idRes, typePropertyName, typeIdVisible, defaultImpl, inclusion);
     }
 
@@ -53,8 +59,7 @@ public class AsNestedPropertyDeserializer extends AsPropertyTypeDeserializer {
         for (String property : _typePropertyName.split("\\.")) {
             JsonNode nestedProperty = node.get(property);
             if (nestedProperty == null) {
-                ctxt.reportInputMismatch(_property,
-                        "Nested property not found in JSON: " + _typePropertyName);
+                ctxt.reportInputMismatch(_property, "Nested property not found in JSON: " + _typePropertyName);
                 return null;
             }
             node = nestedProperty;

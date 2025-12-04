@@ -14,22 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.support.jndi.ExampleBean;
-import org.apache.camel.util.AnotherExampleBean;
-import org.apache.camel.util.OtherExampleBean;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.impl.engine.IntrospectionSupport.findSetterMethodsOrderedByParameterType;
 import static org.apache.camel.impl.engine.IntrospectionSupport.getProperties;
@@ -46,6 +32,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.support.jndi.ExampleBean;
+import org.apache.camel.util.AnotherExampleBean;
+import org.apache.camel.util.OtherExampleBean;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for IntrospectionSupport
@@ -139,8 +140,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
-    public static class MyOtherBuilderBean extends MyBuilderBean {
-    }
+    public static class MyOtherBuilderBean extends MyBuilderBean {}
 
     public static class MyOtherOtherBuilderBean extends MyOtherBuilderBean {
 
@@ -419,7 +419,8 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Method name = getPropertyGetter(ExampleBean.class, "name");
         assertEquals("getName", name.getName());
 
-        NoSuchMethodException e = assertThrows(NoSuchMethodException.class,
+        NoSuchMethodException e = assertThrows(
+                NoSuchMethodException.class,
                 () -> getPropertyGetter(ExampleBean.class, "xxx"),
                 "Should have thrown exception");
 
@@ -431,7 +432,8 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Method name = getPropertySetter(ExampleBean.class, "name");
         assertEquals("setName", name.getName());
 
-        NoSuchMethodException e = assertThrows(NoSuchMethodException.class,
+        NoSuchMethodException e = assertThrows(
+                NoSuchMethodException.class,
                 () -> getPropertySetter(ExampleBean.class, "xxx"),
                 "Should have thrown exception");
 
@@ -516,8 +518,8 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
     public void testFindSetterMethodsOrderedByParameterType() {
-        List<Method> setters = findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean",
-                false, false, false);
+        List<Method> setters =
+                findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean", false, false, false);
 
         assertNotNull(setters);
         assertEquals(2, setters.size());

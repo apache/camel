@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.nio.file.Path;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
  * Unit test to test keepLastModified option.
@@ -50,7 +51,9 @@ public class FromFtpKeepLastModifiedIT extends FtpServerTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).delay(3000).to(TestSupport.fileUri(testDirectory, "?keepLastModified=true"), "mock:result");
+                from(getFtpUrl())
+                        .delay(3000)
+                        .to(TestSupport.fileUri(testDirectory, "?keepLastModified=true"), "mock:result");
             }
         });
         context.start();
@@ -73,7 +76,9 @@ public class FromFtpKeepLastModifiedIT extends FtpServerTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).delay(3000).to(TestSupport.fileUri(testDirectory, "?keepLastModified=false"), "mock:result");
+                from(getFtpUrl())
+                        .delay(3000)
+                        .to(TestSupport.fileUri(testDirectory, "?keepLastModified=false"), "mock:result");
             }
         });
         context.start();

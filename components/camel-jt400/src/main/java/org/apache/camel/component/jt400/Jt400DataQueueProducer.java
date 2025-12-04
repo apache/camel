@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.BaseDataQueue;
@@ -71,10 +72,13 @@ public class Jt400DataQueueProducer extends DefaultProducer {
 
     private void process(KeyedDataQueue queue, Exchange exchange) throws Exception {
         if (endpoint.getFormat() == Jt400Configuration.Format.binary) {
-            queue.write(exchange.getIn().getHeader(Jt400Endpoint.KEY, byte[].class), exchange.getIn().getBody(byte[].class));
+            queue.write(
+                    exchange.getIn().getHeader(Jt400Endpoint.KEY, byte[].class),
+                    exchange.getIn().getBody(byte[].class));
         } else {
-            queue.write(exchange.getIn().getHeader(Jt400Endpoint.KEY, String.class), exchange.getIn().getBody(String.class));
+            queue.write(
+                    exchange.getIn().getHeader(Jt400Endpoint.KEY, String.class),
+                    exchange.getIn().getBody(String.class));
         }
     }
-
 }

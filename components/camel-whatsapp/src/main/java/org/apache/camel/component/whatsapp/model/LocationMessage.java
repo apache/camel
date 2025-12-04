@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 public class LocationMessage {
@@ -23,8 +24,7 @@ public class LocationMessage {
     private String name;
     private String address;
 
-    public LocationMessage() {
-    }
+    public LocationMessage() {}
 
     public String getLongitude() {
         return longitude;

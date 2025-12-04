@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -32,8 +35,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
     private static SoapDataFormat soapjaxbModel;
@@ -74,8 +75,9 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
         byte[] body = result.getIn().getBody(byte[].class);
         InputStream stream = new ByteArrayInputStream(body);
         SOAPMessage request = MessageFactory.newInstance().createMessage(null, stream);
-        assertTrue(null != request.getSOAPHeader()
-                && request.getSOAPHeader().extractAllHeaderElements().hasNext(),
+        assertTrue(
+                null != request.getSOAPHeader()
+                        && request.getSOAPHeader().extractAllHeaderElements().hasNext(),
                 "Expected headers");
     }
 
@@ -91,7 +93,10 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").unmarshal(soapjaxbModel).marshal(soapjaxbModel).to("mock:end");
+                from("direct:start")
+                        .unmarshal(soapjaxbModel)
+                        .marshal(soapjaxbModel)
+                        .to("mock:end");
             }
         };
     }

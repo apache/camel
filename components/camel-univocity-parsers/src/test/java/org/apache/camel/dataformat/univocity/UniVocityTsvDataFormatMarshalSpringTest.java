@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.univocity;
+
+import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
+import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
@@ -24,11 +30,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
-import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This class tests the marshalling of {@link org.apache.camel.dataformat.univocity.UniVocityTsvDataFormat} using the
@@ -43,14 +44,15 @@ public final class UniVocityTsvDataFormatMarshalSpringTest extends CamelSpringTe
      */
     @Test
     public void shouldMarshalWithDefaultConfiguration() throws Exception {
-        template.sendBody("direct:default", Arrays.asList(
-                asMap("A", "1", "B", "2", "C", "3"),
-                asMap("A", "one", "B", "two", "C", "three")));
+        template.sendBody(
+                "direct:default",
+                Arrays.asList(asMap("A", "1", "B", "2", "C", "3"), asMap("A", "one", "B", "two", "C", "three")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        String body = assertIsInstanceOf(String.class, result.getExchanges().get(0).getIn().getBody());
+        String body = assertIsInstanceOf(
+                String.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(join("1\t2\t3", "one\ttwo\tthree"), body);
     }
 
@@ -64,7 +66,8 @@ public final class UniVocityTsvDataFormatMarshalSpringTest extends CamelSpringTe
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        String body = assertIsInstanceOf(String.class, result.getExchanges().get(0).getIn().getBody());
+        String body = assertIsInstanceOf(
+                String.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(join("1\t2\t3"), body);
     }
 
@@ -73,14 +76,15 @@ public final class UniVocityTsvDataFormatMarshalSpringTest extends CamelSpringTe
      */
     @Test
     public void shouldMarshalAndAddNewColumns() throws Exception {
-        template.sendBody("direct:default", Arrays.asList(
-                asMap("A", "1", "B", "2"),
-                asMap("C", "three", "A", "one", "B", "two")));
+        template.sendBody(
+                "direct:default",
+                Arrays.asList(asMap("A", "1", "B", "2"), asMap("C", "three", "A", "one", "B", "two")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        String body = assertIsInstanceOf(String.class, result.getExchanges().get(0).getIn().getBody());
+        String body = assertIsInstanceOf(
+                String.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(join("1\t2", "one\ttwo\tthree"), body);
     }
 
@@ -89,14 +93,15 @@ public final class UniVocityTsvDataFormatMarshalSpringTest extends CamelSpringTe
      */
     @Test
     public void shouldMarshalWithSpecificHeaders() throws Exception {
-        template.sendBody("direct:header", Arrays.asList(
-                asMap("A", "1", "B", "2", "C", "3"),
-                asMap("A", "one", "B", "two", "C", "three")));
+        template.sendBody(
+                "direct:header",
+                Arrays.asList(asMap("A", "1", "B", "2", "C", "3"), asMap("A", "one", "B", "two", "C", "three")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        String body = assertIsInstanceOf(String.class, result.getExchanges().get(0).getIn().getBody());
+        String body = assertIsInstanceOf(
+                String.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(join("1\t3", "one\tthree"), body);
     }
 
@@ -105,14 +110,15 @@ public final class UniVocityTsvDataFormatMarshalSpringTest extends CamelSpringTe
      */
     @Test
     public void shouldMarshalUsingAdvancedConfiguration() throws Exception {
-        template.sendBody("direct:advanced", Arrays.asList(
-                asMap("A", null, "B", "", "C", "_"),
-                asMap("A", "one", "B", "two", "C", "three")));
+        template.sendBody(
+                "direct:advanced",
+                Arrays.asList(asMap("A", null, "B", "", "C", "_"), asMap("A", "one", "B", "two", "C", "three")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        String body = assertIsInstanceOf(String.class, result.getExchanges().get(0).getIn().getBody());
+        String body = assertIsInstanceOf(
+                String.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(join("N/A\tempty\t_", "one\ttwo\tthree"), body);
     }
 

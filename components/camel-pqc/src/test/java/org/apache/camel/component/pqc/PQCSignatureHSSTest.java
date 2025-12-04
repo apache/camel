@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
@@ -39,8 +42,6 @@ import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PQCSignatureHSSTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
@@ -52,15 +53,17 @@ public class PQCSignatureHSSTest extends CamelTestSupport {
     @Produce("direct:sign")
     protected ProducerTemplate templateSign;
 
-    public PQCSignatureHSSTest() throws NoSuchAlgorithmException {
-    }
+    public PQCSignatureHSSTest() throws NoSuchAlgorithmException {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+                from("direct:sign")
+                        .to("pqc:sign?operation=sign")
+                        .to("mock:sign")
+                        .to("pqc:verify?operation=verify")
                         .to("mock:verify");
             }
         };
@@ -82,12 +85,13 @@ public class PQCSignatureHSSTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Keypair")
-    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.HSS.getAlgorithm(),
-                PQCSignatureAlgorithms.HSS.getBcProvider());
+    public KeyPair setKeyPair()
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.HSS.getAlgorithm(), PQCSignatureAlgorithms.HSS.getBcProvider());
         LMSKeyGenParameterSpec[] lmsSpecs = new LMSKeyGenParameterSpec[] {
-                new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2),
-                new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2)
+            new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2),
+            new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2)
         };
         kpGen.initialize(new LMSHSSKeyGenParameterSpec(lmsSpecs));
         KeyPair kp = kpGen.generateKeyPair();
@@ -96,8 +100,8 @@ public class PQCSignatureHSSTest extends CamelTestSupport {
 
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
-        Signature hssSig
-                = Signature.getInstance(PQCSignatureAlgorithms.HSS.getAlgorithm(), PQCSignatureAlgorithms.HSS.getBcProvider());
+        Signature hssSig = Signature.getInstance(
+                PQCSignatureAlgorithms.HSS.getAlgorithm(), PQCSignatureAlgorithms.HSS.getBcProvider());
         return hssSig;
     }
 }

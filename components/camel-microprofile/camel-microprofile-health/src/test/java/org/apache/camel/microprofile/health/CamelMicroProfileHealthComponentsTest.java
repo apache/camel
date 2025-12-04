@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.microprofile.health;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
@@ -28,8 +31,6 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelMicroProfileHealthComponentsTest extends CamelMicroProfileHealthTestSupport {
 
@@ -49,7 +50,8 @@ public class CamelMicroProfileHealthComponentsTest extends CamelMicroProfileHeal
 
     @Test
     public void testCamelComponentRepositoryUpStatus() {
-        context.getComponent("my", CamelMicroProfileHealthTestHelper.MyComponent.class).setState(HealthCheck.State.UP);
+        context.getComponent("my", CamelMicroProfileHealthTestHelper.MyComponent.class)
+                .setState(HealthCheck.State.UP);
 
         SmallRyeHealth health = reporter.getHealth();
 
@@ -63,7 +65,8 @@ public class CamelMicroProfileHealthComponentsTest extends CamelMicroProfileHeal
 
     @Test
     public void testCamelComponentRepositoryDownStatus() {
-        context.getComponent("my", CamelMicroProfileHealthTestHelper.MyComponent.class).setState(HealthCheck.State.DOWN);
+        context.getComponent("my", CamelMicroProfileHealthTestHelper.MyComponent.class)
+                .setState(HealthCheck.State.DOWN);
 
         SmallRyeHealth health = reporter.getHealth();
 
@@ -80,8 +83,7 @@ public class CamelMicroProfileHealthComponentsTest extends CamelMicroProfileHeal
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("my:start").routeId("healthyRoute")
-                        .setBody(constant("Hello Camel MicroProfile Health"));
+                from("my:start").routeId("healthyRoute").setBody(constant("Hello Camel MicroProfile Health"));
             }
         };
     }

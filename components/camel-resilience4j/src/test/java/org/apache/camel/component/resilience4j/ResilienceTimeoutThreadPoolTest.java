@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -28,13 +36,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Resilience using timeout and custom thread pool with Java DSL
@@ -66,9 +67,8 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
     public void testSlow() {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
-        Exception exception = assertThrows(Exception.class,
-                () -> template.requestBody("direct:start", "slow"),
-                "Should fail due to timeout");
+        Exception exception = assertThrows(
+                Exception.class, () -> template.requestBody("direct:start", "slow"), "Should fail due to timeout");
         assertIsInstanceOf(TimeoutException.class, exception.getCause());
 
         ThreadPoolExecutor pte = context().getRegistry().lookupByNameAndType("myThreadPool", ThreadPoolExecutor.class);
@@ -90,9 +90,8 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
         // triggers an exception
         for (int i = 0; i < 10; i++) {
             log.info(">>> test run {} <<<", i);
-            Exception exception = assertThrows(Exception.class,
-                    () -> template.requestBody("direct:start", "slow"),
-                    "Should fail due to timeout");
+            Exception exception = assertThrows(
+                    Exception.class, () -> template.requestBody("direct:start", "slow"), "Should fail due to timeout");
             assertIsInstanceOf(TimeoutException.class, exception.getCause());
         }
     }
@@ -102,24 +101,36 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").circuitBreaker()
+                from("direct:start")
+                        .circuitBreaker()
                         // enable and use 2 second timeout
-                        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000)
-                        .timeoutExecutorService("myThreadPool").end()
-                        .log("Resilience processing start: ${threadName}").toD("direct:${body}")
-                        .log("Resilience processing end: ${threadName}").end().log("After Resilience ${body}");
+                        .resilience4jConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .timeoutExecutorService("myThreadPool")
+                        .end()
+                        .log("Resilience processing start: ${threadName}")
+                        .toD("direct:${body}")
+                        .log("Resilience processing end: ${threadName}")
+                        .end()
+                        .log("After Resilience ${body}");
 
                 from("direct:fast")
                         // this is a fast route and takes 1 second to respond
-                        .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response")
+                        .log("Fast processing start: ${threadName}")
+                        .delay(1000)
+                        .transform()
+                        .constant("Fast response")
                         .log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
                         // this is a slow route and takes 3 second to respond
-                        .log("Slow processing start: ${threadName}").delay(3000).transform().constant("Slow response")
+                        .log("Slow processing start: ${threadName}")
+                        .delay(3000)
+                        .transform()
+                        .constant("Slow response")
                         .log("Slow processing end: ${threadName}");
             }
         };
     }
-
 }

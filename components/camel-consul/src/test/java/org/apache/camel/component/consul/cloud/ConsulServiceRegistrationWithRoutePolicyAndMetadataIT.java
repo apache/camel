@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cloud;
 
 import org.apache.camel.RoutesBuilder;
@@ -27,10 +28,12 @@ public class ConsulServiceRegistrationWithRoutePolicyAndMetadataIT extends Consu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT).routeId(SERVICE_ID)
+                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
+                        .routeId(SERVICE_ID)
                         .routeProperty(ServiceDefinition.SERVICE_META_ID, SERVICE_ID)
                         .routeProperty(ServiceDefinition.SERVICE_META_NAME, SERVICE_NAME)
-                        .routePolicy(new ServiceRegistrationRoutePolicy()).noAutoStartup()
+                        .routePolicy(new ServiceRegistrationRoutePolicy())
+                        .noAutoStartup()
                         .to("log:service-registry?level=INFO");
             }
         };

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -22,8 +25,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
 
@@ -73,5 +74,4 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
             }
         };
     }
-
 }

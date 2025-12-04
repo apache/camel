@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mllp;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mllp;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the class.
@@ -36,7 +37,8 @@ public class MllpCommitRejectAcknowledgementExceptionTest extends MllpExceptionT
      */
     @Test
     public void testConstructorOne() {
-        instance = new MllpCommitRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
+        instance = new MllpCommitRejectAcknowledgementException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpCommitRejectAcknowledgementException.EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -65,7 +67,8 @@ public class MllpCommitRejectAcknowledgementExceptionTest extends MllpExceptionT
      */
     @Test
     public void testGetAcknowledgmentType() {
-        instance = new MllpCommitRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
+        instance = new MllpCommitRejectAcknowledgementException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertEquals("CR", instance.getAcknowledgmentType());
     }

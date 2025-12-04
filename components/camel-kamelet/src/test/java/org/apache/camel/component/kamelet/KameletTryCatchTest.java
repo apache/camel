@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -46,11 +47,12 @@ public class KameletTryCatchTest extends CamelTestSupport {
 
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").routeId("test")
+                from("direct:start")
+                        .routeId("test")
                         .doTry()
-                            .to("kamelet:echo?prefix=a")
+                        .to("kamelet:echo?prefix=a")
                         .doCatch(Exception.class)
-                            .to("mock:catch")
+                        .to("mock:catch")
                         .end()
                         .log("${body}");
             }

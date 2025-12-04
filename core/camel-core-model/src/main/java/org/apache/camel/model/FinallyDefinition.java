@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -34,8 +35,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
 
-    public FinallyDefinition() {
-    }
+    public FinallyDefinition() {}
 
     protected FinallyDefinition(FinallyDefinition source) {
         super(source);

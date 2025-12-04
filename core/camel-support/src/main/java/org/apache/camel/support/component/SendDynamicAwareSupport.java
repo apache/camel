@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.util.LinkedHashMap;
@@ -67,7 +68,8 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
     protected void doInit() throws Exception {
         if (knownProperties == null || knownPrefixes == null) {
             // optimize to eager load the list of known properties/prefixes
-            EndpointUriFactory factory = getCamelContext().getCamelContextExtension().getEndpointUriFactory(getScheme());
+            EndpointUriFactory factory =
+                    getCamelContext().getCamelContextExtension().getEndpointUriFactory(getScheme());
             if (factory == null) {
                 throw new IllegalStateException("Cannot find EndpointUriFactory for component: " + getScheme());
             }
@@ -140,5 +142,4 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
         String query = URISupport.createQueryString(properties, false);
         return StringHelper.before(uri, "?", uri) + "?" + query;
     }
-
 }

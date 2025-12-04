@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.config;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,15 +35,19 @@ public class BatchResequencerConfig extends ResequencerConfig {
     @XmlAttribute
     @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
     private String batchSize;
+
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String batchTimeout;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowDuplicates;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String reverse;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidExchanges;

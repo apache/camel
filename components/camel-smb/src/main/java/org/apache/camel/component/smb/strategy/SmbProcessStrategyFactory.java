@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb.strategy;
 
 import java.util.Map;
@@ -48,46 +49,52 @@ public class SmbProcessStrategyFactory implements GenericFileProcessStrategyFact
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
         if (isDelete) {
-            GenericFileDeleteProcessStrategy<FileIdBothDirectoryInformation> strategy
-                    = new GenericFileDeleteProcessStrategy<>();
+            GenericFileDeleteProcessStrategy<FileIdBothDirectoryInformation> strategy =
+                    new GenericFileDeleteProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer = new GenericFileExpressionRenamer<>();
+                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer =
+                        new GenericFileExpressionRenamer<>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             if (moveFailedExpression != null) {
-                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer = new GenericFileExpressionRenamer<>();
+                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer =
+                        new GenericFileExpressionRenamer<>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             return strategy;
         } else if (isMove || isNoop) {
-            GenericFileRenameProcessStrategy<FileIdBothDirectoryInformation> strategy
-                    = new GenericFileRenameProcessStrategy<>();
+            GenericFileRenameProcessStrategy<FileIdBothDirectoryInformation> strategy =
+                    new GenericFileRenameProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (!isNoop && moveExpression != null) {
                 // move on commit is only possible if not noop
-                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer = new GenericFileExpressionRenamer<>();
+                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer =
+                        new GenericFileExpressionRenamer<>();
                 renamer.setExpression(moveExpression);
                 strategy.setCommitRenamer(renamer);
             }
             // both move and noop supports pre move
             if (moveFailedExpression != null) {
-                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer = new GenericFileExpressionRenamer<>();
+                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer =
+                        new GenericFileExpressionRenamer<>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             // both move and noop supports pre move
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer = new GenericFileExpressionRenamer<>();
+                GenericFileExpressionRenamer<FileIdBothDirectoryInformation> renamer =
+                        new GenericFileExpressionRenamer<>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             return strategy;
         } else {
             // default strategy will do nothing
-            GenericFileNoOpProcessStrategy<FileIdBothDirectoryInformation> strategy = new GenericFileNoOpProcessStrategy<>();
+            GenericFileNoOpProcessStrategy<FileIdBothDirectoryInformation> strategy =
+                    new GenericFileNoOpProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             return strategy;
         }
@@ -96,9 +103,9 @@ public class SmbProcessStrategyFactory implements GenericFileProcessStrategyFact
     @SuppressWarnings("unchecked")
     private static GenericFileExclusiveReadLockStrategy<FileIdBothDirectoryInformation> getExclusiveReadLockStrategy(
             Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<FileIdBothDirectoryInformation> strategy
-                = (GenericFileExclusiveReadLockStrategy<FileIdBothDirectoryInformation>) params
-                        .get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy<FileIdBothDirectoryInformation> strategy =
+                (GenericFileExclusiveReadLockStrategy<FileIdBothDirectoryInformation>)
+                        params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
@@ -109,8 +116,8 @@ public class SmbProcessStrategyFactory implements GenericFileProcessStrategyFact
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
-                GenericFileRenameExclusiveReadLockStrategy<FileIdBothDirectoryInformation> readLockStrategy
-                        = new GenericFileRenameExclusiveReadLockStrategy<>();
+                GenericFileRenameExclusiveReadLockStrategy<FileIdBothDirectoryInformation> readLockStrategy =
+                        new GenericFileRenameExclusiveReadLockStrategy<>();
                 StrategyUtil.setup(readLockStrategy, params);
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {

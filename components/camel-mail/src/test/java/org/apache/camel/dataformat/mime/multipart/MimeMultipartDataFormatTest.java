@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.mime.multipart;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,13 +47,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMultipartDataFormatTest extends CamelTestSupport {
     private Exchange exchange;
@@ -226,7 +227,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     @Test
     public void roundtripWithBinaryAttachments() throws IOException {
         String attContentType = "application/binary";
-        byte[] attText = { 0, 1, 2, 3, 4, 5, 6, 7 };
+        byte[] attText = {0, 1, 2, 3, 4, 5, 6, 7};
         String attFileName = "Attachment File Name";
         in.setBody("Body text");
         DataSource ds = new ByteArrayDataSource(attText, attContentType);
@@ -249,11 +250,11 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     @Test
     public void roundtripWithBinaryMultipleAttachments() throws IOException {
         String attContentType1 = "application/binary";
-        byte[] attText1 = { 0, 1, 2, 3, 4, 5, 6, 7 };
+        byte[] attText1 = {0, 1, 2, 3, 4, 5, 6, 7};
         String attFileName1 = "Attachment File Name 1";
 
         String attContentType2 = "application/binary";
-        byte[] attText2 = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+        byte[] attText2 = {0, 1, 2, 3, 4, 5, 6, 7, 8};
         String attFileName2 = "Attachment File Name 2";
 
         in.setBody("Body text");
@@ -290,13 +291,12 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         ByteArrayOutputStream os2 = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is2, os2);
         assertArrayEquals(attText2, os2.toByteArray());
-
     }
 
     @Test
     public void roundtripWithBinaryAttachmentsAndBinaryContent() throws IOException {
         String attContentType = "application/binary";
-        byte[] attText = { 0, 1, 2, 3, 4, 5, 6, 7 };
+        byte[] attText = {0, 1, 2, 3, 4, 5, 6, 7};
         String attFileName = "Attachment File Name";
         in.setBody("Body text");
         DataSource ds = new ByteArrayDataSource(attText, attContentType);
@@ -496,10 +496,25 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         String bodyStr = intermediate.getMessage().getBody(String.class);
         assertNotNull(bodyStr);
         assertTrue(bodyStr.startsWith("25"));
-        assertEquals(1, intermediate.getMessage(AttachmentMessage.class).getAttachmentNames().size());
-        assertTrue(intermediate.getMessage(AttachmentMessage.class).getAttachmentNames().iterator().next().contains(matcher));
-        Attachment att = intermediate.getMessage(AttachmentMessage.class)
-                .getAttachmentObject(intermediate.getMessage(AttachmentMessage.class).getAttachmentNames().iterator().next());
+        assertEquals(
+                1,
+                intermediate
+                        .getMessage(AttachmentMessage.class)
+                        .getAttachmentNames()
+                        .size());
+        assertTrue(intermediate
+                .getMessage(AttachmentMessage.class)
+                .getAttachmentNames()
+                .iterator()
+                .next()
+                .contains(matcher));
+        Attachment att = intermediate
+                .getMessage(AttachmentMessage.class)
+                .getAttachmentObject(intermediate
+                        .getMessage(AttachmentMessage.class)
+                        .getAttachmentNames()
+                        .iterator()
+                        .next());
         DataHandler dh = att.getDataHandler();
         assertNotNull(dh);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -540,18 +555,39 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:roundtrip").marshal().mimeMultipart().to("log:mime?showHeaders=true").unmarshal().mimeMultipart();
-                from("direct:roundtripmultipart").marshal().mimeMultipart(true, false, false).to("log:mime?showHeaders=true")
-                        .unmarshal().mimeMultipart();
-                from("direct:roundtripinlineheaders").marshal().mimeMultipart(false, true, false)
-                        .to("log:mime?showHeaders=true").unmarshal().mimeMultipart(false, true, false);
-                from("direct:roundtripbinarycontent").marshal().mimeMultipart(false, false, true)
-                        .to("log:mime?showHeaders=true").to("dataformat:mimeMultipart:unmarshal");
+                from("direct:roundtrip")
+                        .marshal()
+                        .mimeMultipart()
+                        .to("log:mime?showHeaders=true")
+                        .unmarshal()
+                        .mimeMultipart();
+                from("direct:roundtripmultipart")
+                        .marshal()
+                        .mimeMultipart(true, false, false)
+                        .to("log:mime?showHeaders=true")
+                        .unmarshal()
+                        .mimeMultipart();
+                from("direct:roundtripinlineheaders")
+                        .marshal()
+                        .mimeMultipart(false, true, false)
+                        .to("log:mime?showHeaders=true")
+                        .unmarshal()
+                        .mimeMultipart(false, true, false);
+                from("direct:roundtripbinarycontent")
+                        .marshal()
+                        .mimeMultipart(false, false, true)
+                        .to("log:mime?showHeaders=true")
+                        .to("dataformat:mimeMultipart:unmarshal");
                 from("direct:marshalonlyrelated").marshal().mimeMultipart("related");
                 from("direct:marshalonlymixed").marshal().mimeMultipart();
-                from("direct:marshalonlyinlineheaders").marshal().mimeMultipart("mixed", false, true, "(included|x-.*)", false);
+                from("direct:marshalonlyinlineheaders")
+                        .marshal()
+                        .mimeMultipart("mixed", false, true, "(included|x-.*)", false);
                 from("direct:unmarshalonly").unmarshal().mimeMultipart(false, false, false);
-                from("direct:unmarshalonlyinlineheaders").streamCaching().unmarshal().mimeMultipart(false, true, false);
+                from("direct:unmarshalonlyinlineheaders")
+                        .streamCaching()
+                        .unmarshal()
+                        .mimeMultipart(false, true, false);
             }
         };
     }
@@ -569,7 +605,5 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
             readCounts++;
             return super.getInputStream();
         }
-
     }
-
 }

@@ -29,8 +29,7 @@ import java.util.stream.Collectors;
 public class Records {
     private List<Record> records = new ArrayList<>();
 
-    public Records() {
-    }
+    public Records() {}
 
     private Records(List<Record> records) {
         this.records = records;

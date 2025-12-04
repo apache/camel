@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.stepfunctions;
 
 import org.apache.camel.spi.Metadata;
@@ -32,8 +33,9 @@ public interface StepFunctions2Constants {
     @Metadata(description = "Determines whether a Standard or Express state machine is created", javaType = "String")
     String STATE_MACHINE_TYPE = "CamelAwsStepFunctionsStateMachineType";
 
-    @Metadata(description = "The Amazon Resource Name (ARN) of the IAM role to use for this state machine.",
-              javaType = "String")
+    @Metadata(
+            description = "The Amazon Resource Name (ARN) of the IAM role to use for this state machine.",
+            javaType = "String")
     String STATE_MACHINE_ROLE_ARN = "CamelAwsStepFunctionsStateMachineRoleArn";
 
     @Metadata(description = "The Amazon Resource Name (ARN) of state machine.", javaType = "String")
@@ -66,8 +68,9 @@ public interface StepFunctions2Constants {
     @Metadata(description = "The limit number of results while listing execution history", javaType = "Integer")
     String EXECUTION_HISTORY_MAX_RESULTS = "CamelAwsStepFunctionsExecutionHistoryMaxResults";
 
-    @Metadata(description = "You can select whether execution data (input or output of a history event) is returned.",
-              javaType = "Boolean")
+    @Metadata(
+            description = "You can select whether execution data (input or output of a history event) is returned.",
+            javaType = "Boolean")
     String EXECUTION_HISTORY_INCLUDE_EXECUTION_DATA = "CamelAwsStepFunctionsExecutionHistoryIncludeExecutionData";
 
     @Metadata(description = "Lists events in descending order of their timeStamp.", javaType = "Boolean")
@@ -75,5 +78,4 @@ public interface StepFunctions2Constants {
 
     @Metadata(description = "The limit number of results while listing executions", javaType = "Integer")
     String EXECUTIONS_MAX_RESULTS = "CamelAwsStepFunctionsExecutionMaxResults";
-
 }

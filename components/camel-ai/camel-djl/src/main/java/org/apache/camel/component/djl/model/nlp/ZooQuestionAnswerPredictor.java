@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl.model.nlp;
 
 import java.io.IOException;
@@ -38,8 +39,8 @@ public class ZooQuestionAnswerPredictor extends AbstractPredictor {
 
     private final ZooModel<QAInput, String> model;
 
-    public ZooQuestionAnswerPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException,
-                                                            IOException {
+    public ZooQuestionAnswerPredictor(DJLEndpoint endpoint)
+            throws ModelNotFoundException, MalformedModelException, IOException {
         super(endpoint);
 
         Criteria.Builder<QAInput, String> builder = Criteria.builder()

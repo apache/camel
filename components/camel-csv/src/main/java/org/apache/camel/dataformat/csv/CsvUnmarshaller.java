@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
 
 import java.io.Closeable;
@@ -88,7 +89,7 @@ abstract class CsvUnmarshaller {
         }
     }
 
-    //region Implementations
+    // region Implementations
 
     /**
      * This class reads all the CSV into one big list.
@@ -103,11 +104,11 @@ abstract class CsvUnmarshaller {
             Reader reader = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange, body);
             if (reader == null) {
                 // fallback to input stream
-                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                InputStream is =
+                        exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                 reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
             }
-            CSVParser parser
-                    = new CSVParser(reader, format);
+            CSVParser parser = new CSVParser(reader, format);
             try {
                 if (dataFormat.isCaptureHeaderRecord()) {
                     exchange.getMessage().setHeader(CsvConstants.HEADER_RECORD, parser.getHeaderNames());
@@ -142,7 +143,8 @@ abstract class CsvUnmarshaller {
             Reader reader = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange, body);
             if (reader == null) {
                 // fallback to input stream
-                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                InputStream is =
+                        exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                 reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
             }
             try {
@@ -196,5 +198,5 @@ abstract class CsvUnmarshaller {
             }
         }
     }
-    //endregion
+    // endregion
 }

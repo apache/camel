@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -30,8 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyEnableJmxTest extends BaseJettyTest {
 
@@ -58,7 +59,6 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     public void doPreSetup() throws Exception {
         testConfigurationBuilder.withEnableJMX();
         releaseMBeanServers();
-
     }
 
     @Override
@@ -131,16 +131,28 @@ public class JettyEnableJmxTest extends BaseJettyTest {
                 serverUri2 = "http://localhost:" + port3 + "/myservice?enableJmx=false";
                 serverUri3 = "http://localhost:" + port4 + "/myservice?enableJmx=false";
 
-                from("jetty:" + serverUri0).routeId("route0").setBody().simple("<html><body>${in.header.x}</body></html>")
+                from("jetty:" + serverUri0)
+                        .routeId("route0")
+                        .setBody()
+                        .simple("<html><body>${in.header.x}</body></html>")
                         .to("mock:result");
 
-                from("jetty:" + serverUri1).routeId("route1").setBody().simple("<html><body>${in.header.x}</body></html>")
+                from("jetty:" + serverUri1)
+                        .routeId("route1")
+                        .setBody()
+                        .simple("<html><body>${in.header.x}</body></html>")
                         .to("mock:result");
 
-                from("jetty:" + serverUri2).routeId("route2").setBody().simple("<html><body>${in.header.x}</body></html>")
+                from("jetty:" + serverUri2)
+                        .routeId("route2")
+                        .setBody()
+                        .simple("<html><body>${in.header.x}</body></html>")
                         .to("mock:result");
 
-                from("jetty:" + serverUri3).routeId("route3").setBody().simple("<html><body>${in.header.x}</body></html>")
+                from("jetty:" + serverUri3)
+                        .routeId("route3")
+                        .setBody()
+                        .simple("<html><body>${in.header.x}</body></html>")
                         .to("mock:result");
             }
         };

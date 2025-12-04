@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnExceptionRedeliveryPlaceholderTest extends ContextTestSupport {
 
@@ -47,10 +48,16 @@ public class OnExceptionRedeliveryPlaceholderTest extends ContextTestSupport {
                 context.getPropertiesComponent().addInitialProperty("myFac", "1");
 
                 from("direct:start")
-                        .onException(Exception.class).maximumRedeliveryDelay(1).maximumRedeliveries("{{myCount}}")
-                        .collisionAvoidanceFactor("{{myFac}}").onRedelivery(e -> {
+                        .onException(Exception.class)
+                        .maximumRedeliveryDelay(1)
+                        .maximumRedeliveries("{{myCount}}")
+                        .collisionAvoidanceFactor("{{myFac}}")
+                        .onRedelivery(e -> {
                             counter += e.getMessage().getHeader(Exchange.REDELIVERY_COUNTER);
-                        }).handled(true).to("mock:error").end()
+                        })
+                        .handled(true)
+                        .to("mock:error")
+                        .end()
                         .throwException(new IllegalArgumentException("Forced"));
             }
         };

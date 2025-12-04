@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay3Test extends ContextTestSupport {
 
@@ -52,17 +53,27 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay3Test extends Con
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
+                errorHandler(defaultErrorHandler()
+                        .maximumRedeliveries(5)
+                        .redeliveryDelay(100)
+                        .asyncDelayedRedelivery());
 
-                from("seda:start").to("log:before").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).to("async:bye:camel?failFirstAttempts=2").to("log:after").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("mock:result");
+                from("seda:start")
+                        .to("log:before")
+                        .to("mock:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("async:bye:camel?failFirstAttempts=2")
+                        .to("log:after")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

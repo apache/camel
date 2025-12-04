@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
 
 import java.io.IOException;
@@ -29,9 +30,7 @@ import org.apache.camel.component.knative.spi.KnativeSinkBinding;
 import org.apache.camel.util.ObjectHelper;
 
 public class KnativeSupport {
-    private KnativeSupport() {
-
-    }
+    private KnativeSupport() {}
 
     public static KnativeResource asResource(CamelContext camelContext, KnativeSinkBinding binding) {
         final String kSinkUrl = camelContext.resolvePropertyPlaceholders("{{k.sink:}}");
@@ -56,10 +55,9 @@ public class KnativeSupport {
         if (ObjectHelper.isNotEmpty(kCeOverride)) {
             try (Reader reader = new StringReader(kCeOverride)) {
                 // assume K_CE_OVERRIDES is defined as simple key/val json
-                Knative.MAPPER.readValue(
-                        reader,
-                        new TypeReference<HashMap<String, String>>() {
-                        }).forEach(resource::addCeOverride);
+                Knative.MAPPER
+                        .readValue(reader, new TypeReference<HashMap<String, String>>() {})
+                        .forEach(resource::addCeOverride);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

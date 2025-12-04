@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.approval;
 
 import java.io.IOException;
@@ -39,8 +40,7 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
 
     public static final class ApprovalResultDeserializer extends JsonDeserializer<ApprovalResult> {
 
-        private static final TypeReference<List<Result>> RESULTS_TYPE = new TypeReference<>() {
-        };
+        private static final TypeReference<List<Result>> RESULTS_TYPE = new TypeReference<>() {};
 
         @Override
         public ApprovalResult deserialize(final JsonParser parser, final DeserializationContext context)
@@ -49,7 +49,6 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
 
             return new ApprovalResult(results);
         }
-
     }
 
     public static final class Result implements Serializable {
@@ -72,11 +71,14 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
         private final boolean success;
 
         @JsonCreator
-        Result(@JsonProperty("actorIds") final List<String> actorIds, @JsonProperty("entityId") final String entityId,
-               @JsonProperty("errors") final List<RestError> errors, @JsonProperty("instanceId") final String instanceId,
-               @JsonProperty("instanceStatus") final String instanceStatus,
-               @JsonProperty("newWorkitemIds") final List<String> newWorkitemIds,
-               @JsonProperty("success") final boolean success) {
+        Result(
+                @JsonProperty("actorIds") final List<String> actorIds,
+                @JsonProperty("entityId") final String entityId,
+                @JsonProperty("errors") final List<RestError> errors,
+                @JsonProperty("instanceId") final String instanceId,
+                @JsonProperty("instanceStatus") final String instanceStatus,
+                @JsonProperty("newWorkitemIds") final List<String> newWorkitemIds,
+                @JsonProperty("success") final boolean success) {
             this.actorIds = actorIds;
             this.entityId = entityId;
             this.errors = errors;
@@ -113,7 +115,6 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
         public boolean isSuccess() {
             return success;
         }
-
     }
 
     @Serial

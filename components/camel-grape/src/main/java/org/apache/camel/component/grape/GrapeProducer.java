@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grape;
 
 import java.util.LinkedHashMap;
@@ -31,7 +32,8 @@ public class GrapeProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) {
-        GrapeCommand command = exchange.getIn().getHeader(GrapeConstants.GRAPE_COMMAND, GrapeCommand.grab, GrapeCommand.class);
+        GrapeCommand command =
+                exchange.getIn().getHeader(GrapeConstants.GRAPE_COMMAND, GrapeCommand.grab, GrapeCommand.class);
         switch (command) {
             case grab:
                 ClassLoader classLoader = exchange.getContext().getApplicationContextClassLoader();
@@ -47,20 +49,24 @@ public class GrapeProducer extends DefaultProducer {
                     Grape.grab(map);
                     getEndpoint().getComponent().getPatchesRepository().install(rawCoordinates);
                 } catch (IllegalArgumentException ex) {
-                    MavenCoordinates coordinates
-                            = MavenCoordinates.parseMavenCoordinates(getEndpoint().getDefaultCoordinates());
+                    MavenCoordinates coordinates =
+                            MavenCoordinates.parseMavenCoordinates(getEndpoint().getDefaultCoordinates());
                     map.put("classLoader", classLoader);
                     map.put("group", coordinates.getGroupId());
                     map.put("module", coordinates.getArtifactId());
                     map.put("version", coordinates.getVersion());
                     map.put("classifier", coordinates.getClassifier());
                     Grape.grab(map);
-                    getEndpoint().getComponent().getPatchesRepository().install(getEndpoint().getDefaultCoordinates());
+                    getEndpoint()
+                            .getComponent()
+                            .getPatchesRepository()
+                            .install(getEndpoint().getDefaultCoordinates());
                 }
                 break;
 
             case listPatches:
-                List<String> patches = getEndpoint().getComponent().getPatchesRepository().listPatches();
+                List<String> patches =
+                        getEndpoint().getComponent().getPatchesRepository().listPatches();
                 exchange.getIn().setBody(patches);
                 break;
 
@@ -77,5 +83,4 @@ public class GrapeProducer extends DefaultProducer {
     public GrapeEndpoint getEndpoint() {
         return (GrapeEndpoint) super.getEndpoint();
     }
-
 }

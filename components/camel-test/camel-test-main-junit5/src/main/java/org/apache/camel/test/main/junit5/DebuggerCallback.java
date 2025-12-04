@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5;
 
 import org.apache.camel.Exchange;
@@ -39,6 +40,10 @@ public interface DebuggerCallback {
      * Single step debugs and Camel invokes this method after processing the given processor
      */
     void debugAfter(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
+            Exchange exchange,
+            Processor processor,
+            ProcessorDefinition<?> definition,
+            String id,
+            String label,
             long timeTaken);
 }

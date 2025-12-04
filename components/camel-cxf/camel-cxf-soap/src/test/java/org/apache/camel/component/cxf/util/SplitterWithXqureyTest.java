@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.w3c.dom.Element;
 
@@ -28,24 +31,22 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SplitterWithXqureyTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitterWithXqureyTest.class);
 
     private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
-                                    + "xmlns:two=\"http://camel.apache.org/schema/two\">"
-                                    + "<person><name>Willem</name></person> "
-                                    + "<other><two:test name=\"123\">One</two:test></other>"
-                                    + "<other><two:test name=\"456\">Two</two:test></other>"
-                                    + "<other><test>Three</test></other>"
-                                    + "<other><test>Foure</test></other></workflow>";
+            + "xmlns:two=\"http://camel.apache.org/schema/two\">"
+            + "<person><name>Willem</name></person> "
+            + "<other><two:test name=\"123\">One</two:test></other>"
+            + "<other><two:test name=\"456\">Two</two:test></other>"
+            + "<other><test>Three</test></other>"
+            + "<other><test>Foure</test></other></workflow>";
     private static String[] verifyStrings = new String[] {
-            "<other xmlns=\"http://camel.apache.org/schema/one\" xmlns:two=\"http://camel.apache.org/schema/two\"><two:test name=\"123\">One</two:test></other>",
-            "<other xmlns=\"http://camel.apache.org/schema/one\" xmlns:two=\"http://camel.apache.org/schema/two\"><two:test name=\"456\">Two</two:test></other>",
-            "<other xmlns=\"http://camel.apache.org/schema/one\"><test>Three</test></other>",
-            "<other xmlns=\"http://camel.apache.org/schema/one\"><test>Foure</test></other>"
+        "<other xmlns=\"http://camel.apache.org/schema/one\" xmlns:two=\"http://camel.apache.org/schema/two\"><two:test name=\"123\">One</two:test></other>",
+        "<other xmlns=\"http://camel.apache.org/schema/one\" xmlns:two=\"http://camel.apache.org/schema/two\"><two:test name=\"456\">Two</two:test></other>",
+        "<other xmlns=\"http://camel.apache.org/schema/one\"><test>Three</test></other>",
+        "<other xmlns=\"http://camel.apache.org/schema/one\"><test>Foure</test></other>"
     };
 
     @Override
@@ -56,7 +57,9 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
                 Namespaces namespaces = new Namespaces("one", "http://camel.apache.org/schema/one");
                 from("direct:endpoint").split().xpath("//one:other", namespaces).to("mock:result");
 
-                from("direct:toString").split().xpath("//one:other", namespaces)
+                from("direct:toString")
+                        .split()
+                        .xpath("//one:other", namespaces)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 Element element = (Element) exchange.getIn().getBody();
@@ -101,5 +104,4 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
             i++;
         }
     }
-
 }

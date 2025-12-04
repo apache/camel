@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twilio;
 
 import java.lang.reflect.Method;
@@ -43,10 +44,15 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Interact with Twilio REST APIs using Twilio Java SDK.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "twilio", title = "Twilio", syntax = "twilio:apiName/methodName",
-             apiSyntax = "apiName/methodName",
-             category = { Category.API, Category.MESSAGING, Category.CLOUD })
-public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioConfiguration> implements EndpointServiceLocation {
+@UriEndpoint(
+        firstVersion = "2.20.0",
+        scheme = "twilio",
+        title = "Twilio",
+        syntax = "twilio:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        category = {Category.API, Category.MESSAGING, Category.CLOUD})
+public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioConfiguration>
+        implements EndpointServiceLocation {
 
     protected static final Map<String, String> EXECUTOR_METHOD_MAP;
 
@@ -65,10 +71,19 @@ public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioCon
     @UriParam
     private TwilioConfiguration configuration;
 
-    public TwilioEndpoint(String uri, TwilioComponent component, TwilioApiName apiName, String methodName,
-                          TwilioConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, TwilioApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public TwilioEndpoint(
+            String uri,
+            TwilioComponent component,
+            TwilioApiName apiName,
+            String methodName,
+            TwilioConfiguration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                TwilioApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.component = component;
         this.configuration = endpointConfiguration;
     }

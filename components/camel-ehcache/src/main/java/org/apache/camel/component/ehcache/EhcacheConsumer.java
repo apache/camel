@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
 
 import org.apache.camel.Exchange;
@@ -29,8 +30,8 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     private final String cacheName;
     private Cache cache;
 
-    public EhcacheConsumer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration,
-                           Processor processor) {
+    public EhcacheConsumer(
+            EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration, Processor processor) {
         super(endpoint, processor);
         this.configuration = configuration;
         this.cacheName = cacheName;
@@ -55,11 +56,13 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
         }
         this.cache = getEndpoint().getManager().getCache(cacheName, kt, vt);
 
-        this.cache.getRuntimeConfiguration().registerCacheEventListener(
-                this,
-                configuration.getEventOrdering(),
-                configuration.getEventFiring(),
-                configuration.getEventTypesSet());
+        this.cache
+                .getRuntimeConfiguration()
+                .registerCacheEventListener(
+                        this,
+                        configuration.getEventOrdering(),
+                        configuration.getEventFiring(),
+                        configuration.getEventTypesSet());
     }
 
     @Override

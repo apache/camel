@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.mockito.Mockito.*;
 
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
@@ -22,11 +28,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.mockito.Mockito.*;
 
 public class Plc4XEndpointTest {
 
@@ -62,5 +63,4 @@ public class Plc4XEndpointTest {
         doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
         sut.doStop();
     }
-
 }

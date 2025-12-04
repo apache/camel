@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.protobuf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.FailedToCreateRouteException;
@@ -24,10 +29,6 @@ import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ProtobufMarshalAndUnmarshalTest extends CamelTestSupport {
 
@@ -52,7 +53,10 @@ public class ProtobufMarshalAndUnmarshalTest extends CamelTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:unmarshalC").unmarshal().protobuf(new CamelException("wrong instance")).to("mock:reverse");
+                    from("direct:unmarshalC")
+                            .unmarshal()
+                            .protobuf(new CamelException("wrong instance"))
+                            .to("mock:reverse");
                 }
             });
             fail("Expect the exception here");
@@ -62,7 +66,10 @@ public class ProtobufMarshalAndUnmarshalTest extends CamelTestSupport {
     }
 
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
-        AddressBookProtos.Person input = AddressBookProtos.Person.newBuilder().setName("Martin").setId(1234).build();
+        AddressBookProtos.Person input = AddressBookProtos.Person.newBuilder()
+                .setName("Martin")
+                .setId(1234)
+                .build();
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
@@ -90,12 +97,16 @@ public class ProtobufMarshalAndUnmarshalTest extends CamelTestSupport {
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
                 from("direct:marshal").marshal().protobuf();
-                from("direct:unmarshalA").unmarshal()
-                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
+                from("direct:unmarshalA")
+                        .unmarshal()
+                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person")
+                        .to("mock:reverse");
 
-                from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
+                from("direct:unmarshalB")
+                        .unmarshal()
+                        .protobuf(Person.getDefaultInstance())
+                        .to("mock:reverse");
             }
         };
     }
-
 }

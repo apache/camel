@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.w3c.dom.Document;
@@ -31,7 +32,7 @@ public class XPathToFileTest extends ContextTestSupport {
         mock.expectedMessageCount(2);
 
         String xml = "<foo><person id=\"1\">Claus<country>SE</country></person>"
-                     + "<person id=\"2\">Jonathan<country>CA</country></person></foo>";
+                + "<person id=\"2\">Jonathan<country>CA</country></person></foo>";
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);
 
         template.sendBody("direct:start", doc);
@@ -47,7 +48,9 @@ public class XPathToFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(xpath("/foo/person")).log("${bodyAs(String)}")
+                from("direct:start")
+                        .split(xpath("/foo/person"))
+                        .log("${bodyAs(String)}")
                         .to(fileUri("?fileName=xpath-${exchangeProperty.CamelSplitIndex}.xml"))
                         .to("mock:result");
             }

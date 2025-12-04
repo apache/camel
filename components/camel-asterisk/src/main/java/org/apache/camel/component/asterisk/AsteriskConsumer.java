@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.asterisk;
 
 import org.apache.camel.Exchange;
@@ -32,7 +33,8 @@ public class AsteriskConsumer extends DefaultConsumer {
     public AsteriskConsumer(AsteriskEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
-        this.connection = new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword());
+        this.connection =
+                new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword());
         this.listener = new EventListener();
     }
 
@@ -62,7 +64,9 @@ public class AsteriskConsumer extends DefaultConsumer {
         public void onManagerEvent(ManagerEvent event) {
             Exchange exchange = createExchange(false);
             try {
-                exchange.getIn().setHeader(AsteriskConstants.EVENT_NAME, event.getClass().getSimpleName());
+                exchange.getIn()
+                        .setHeader(
+                                AsteriskConstants.EVENT_NAME, event.getClass().getSimpleName());
                 exchange.getIn().setBody(event);
                 getProcessor().process(exchange);
             } catch (Exception e) {

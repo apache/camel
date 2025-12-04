@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.lucene;
 
 import org.apache.camel.Exchange;
@@ -60,27 +61,40 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
             public void configure() {
 
                 try {
-                    from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Rodney Dangerfield"))
-                            .process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20)).to("direct:next");
+                    from("direct:start")
+                            .setHeader(LuceneConstants.HEADER_QUERY, constant("Rodney Dangerfield"))
+                            .process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20))
+                            .to("direct:next");
                 } catch (Exception e) {
                     LOG.warn("Unhandled exception: {}", e.getMessage(), e);
                 }
 
-                from("direct:next").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        Hits hits = exchange.getIn().getBody(Hits.class);
-                        printResults(hits);
-                    }
+                from("direct:next")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                Hits hits = exchange.getIn().getBody(Hits.class);
+                                printResults(hits);
+                            }
 
-                    private void printResults(Hits hits) {
-                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
-                        for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                            LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
-                            LOG.debug("Hit {}  Score: {}", i, hits.getHit().get(i).getScore());
-                            LOG.debug("Hit {}  Data: {}", i, hits.getHit().get(i).getData());
-                        }
-                    }
-                }).to("mock:searchResult");
+                            private void printResults(Hits hits) {
+                                LOG.debug("Number of hits: {}", hits.getNumberOfHits());
+                                for (int i = 0; i < hits.getNumberOfHits(); i++) {
+                                    LOG.debug(
+                                            "Hit {} Index Location: {}",
+                                            i,
+                                            hits.getHit().get(i).getHitLocation());
+                                    LOG.debug(
+                                            "Hit {}  Score: {}",
+                                            i,
+                                            hits.getHit().get(i).getScore());
+                                    LOG.debug(
+                                            "Hit {}  Data: {}",
+                                            i,
+                                            hits.getHit().get(i).getData());
+                                }
+                            }
+                        })
+                        .to("mock:searchResult");
             }
         });
         context.start();
@@ -102,30 +116,41 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
             public void configure() {
 
                 try {
-                    from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Carl*"))
+                    from("direct:start")
+                            .setHeader(LuceneConstants.HEADER_QUERY, constant("Carl*"))
                             .process(new LuceneQueryProcessor("target/simpleindexDir", analyzer, null, 20))
                             .to("direct:next");
                 } catch (Exception e) {
                     LOG.warn("Unhandled exception: {}", e.getMessage(), e);
                 }
 
-                from("direct:next").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        Hits hits = exchange.getIn().getBody(Hits.class);
-                        printResults(hits);
-                    }
+                from("direct:next")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                Hits hits = exchange.getIn().getBody(Hits.class);
+                                printResults(hits);
+                            }
 
-                    private void printResults(Hits hits) {
-                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
-                        for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                            LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
-                            LOG.debug("Hit {}  Score: {}", i, hits.getHit().get(i).getScore());
-                            LOG.debug("Hit {}  Data: {}", i, hits.getHit().get(i).getData());
-                        }
-                    }
-                }).to("mock:searchResult");
+                            private void printResults(Hits hits) {
+                                LOG.debug("Number of hits: {}", hits.getNumberOfHits());
+                                for (int i = 0; i < hits.getNumberOfHits(); i++) {
+                                    LOG.debug(
+                                            "Hit {} Index Location: {}",
+                                            i,
+                                            hits.getHit().get(i).getHitLocation());
+                                    LOG.debug(
+                                            "Hit {}  Score: {}",
+                                            i,
+                                            hits.getHit().get(i).getScore());
+                                    LOG.debug(
+                                            "Hit {}  Data: {}",
+                                            i,
+                                            hits.getHit().get(i).getData());
+                                }
+                            }
+                        })
+                        .to("mock:searchResult");
             }
-
         });
         context.start();
         LOG.debug("------------Beginning Wildcard + Simple Analyzer Phrase Searcher Test---------------");

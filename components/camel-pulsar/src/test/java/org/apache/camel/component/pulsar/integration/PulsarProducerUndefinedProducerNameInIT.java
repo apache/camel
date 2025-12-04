@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -41,11 +42,11 @@ public class PulsarProducerUndefinedProducerNameInIT extends PulsarITSupport {
     private ProducerTemplate producerTemplate2;
 
     @EndpointInject("pulsar:" + TOPIC_URI
-                    + "?numberOfConsumers=1"
-                    + "&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription"
-                    + "&consumerQueueSize=1"
-                    + "&consumerName=camel-consumer")
+            + "?numberOfConsumers=1"
+            + "&subscriptionType=Exclusive"
+            + "&subscriptionName=camel-subscription"
+            + "&consumerQueueSize=1"
+            + "&consumerName=camel-consumer")
     private Endpoint pulsarEndpoint1;
 
     @EndpointInject("pulsar:" + TOPIC_URI)

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.apache.camel.util.LocationHelper.locationSummary;
 
 import java.util.Map;
 
@@ -25,10 +28,10 @@ import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-import static org.apache.camel.util.LocationHelper.locationSummary;
-
-@DevConsole(name = "main-configuration", displayName = "Main Configuration",
-            description = "Display Camel startup configuration")
+@DevConsole(
+        name = "main-configuration",
+        displayName = "Main Configuration",
+        description = "Display Camel startup configuration")
 public class MainConfigurationDevConsole extends AbstractDevConsole {
 
     private final OrderedLocationProperties startupConfiguration = new OrderedLocationProperties();
@@ -114,5 +117,4 @@ public class MainConfigurationDevConsole extends AbstractDevConsole {
         }
         return "initial".equals(loc) || "override".equals(loc);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxp;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,8 +40,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class StaxConverterTest extends ContextTestSupport {
 
     private static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
@@ -46,22 +47,20 @@ public class StaxConverterTest extends ContextTestSupport {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     private static final String TEST_XML = "<test>Test Message with umlaut \u00E4\u00F6\u00FC</test>"; // umlauts
-                                                                                                      // have
-                                                                                                      // different
-                                                                                                      // encoding
-                                                                                                      // in
-                                                                                                      // UTF-8
-                                                                                                      // and
-                                                                                                      // ISO-8859-1
-                                                                                                      // (Latin1)
+    // have
+    // different
+    // encoding
+    // in
+    // UTF-8
+    // and
+    // ISO-8859-1
+    // (Latin1)
 
-    private static final String TEST_XML_WITH_XML_HEADER_ISO_8859_1
-            = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" + TEST_XML;
+    private static final String TEST_XML_WITH_XML_HEADER_ISO_8859_1 =
+            "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" + TEST_XML;
 
-    private static final ByteArrayInputStream TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM
-            = new ByteArrayInputStream(
-                    TEST_XML_WITH_XML_HEADER_ISO_8859_1
-                            .getBytes(ISO_8859_1));
+    private static final ByteArrayInputStream TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM =
+            new ByteArrayInputStream(TEST_XML_WITH_XML_HEADER_ISO_8859_1.getBytes(ISO_8859_1));
 
     private static final String TEST_XML_WITH_XML_HEADER = "<?xml version=\"1.0\"?>" + TEST_XML;
 
@@ -91,8 +90,8 @@ public class StaxConverterTest extends ContextTestSupport {
         ByteArrayOutputStream output = null;
         try {
             // enter text encoded with Latin1
-            reader = context.getTypeConverter().mandatoryConvertTo(XMLEventReader.class,
-                    TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM);
+            reader = context.getTypeConverter()
+                    .mandatoryConvertTo(XMLEventReader.class, TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM);
 
             output = new ByteArrayOutputStream();
             // ensure UTF-8 encoding
@@ -130,8 +129,9 @@ public class StaxConverterTest extends ContextTestSupport {
         ByteArrayOutputStream output = null;
         try {
             // enter text encoded with Latin1
-            reader = context.getTypeConverter().mandatoryConvertTo(XMLStreamReader.class,
-                    TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM);
+            reader = context.getTypeConverter()
+                    .mandatoryConvertTo(
+                            XMLStreamReader.class, TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM);
 
             output = new ByteArrayOutputStream();
             // ensure UTF-8 encoding
@@ -189,7 +189,7 @@ public class StaxConverterTest extends ContextTestSupport {
             StringReader expected = new StringReader(TEST_XML_7000);
             char[] tmp1 = new char[512];
             char[] tmp2 = new char[512];
-            for (;;) {
+            for (; ; ) {
                 int n1 = 0;
                 int n2 = 0;
                 try {
@@ -227,7 +227,7 @@ public class StaxConverterTest extends ContextTestSupport {
             InputStream expected = new ByteArrayInputStream(TEST_XML_7000.getBytes(StandardCharsets.UTF_8));
             byte[] tmp1 = new byte[512];
             byte[] tmp2 = new byte[512];
-            for (;;) {
+            for (; ; ) {
                 int n1 = 0;
                 int n2 = 0;
                 try {

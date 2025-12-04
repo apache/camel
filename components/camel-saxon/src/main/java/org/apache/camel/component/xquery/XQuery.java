@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import java.lang.annotation.Documented;
@@ -31,7 +32,7 @@ import org.apache.camel.support.language.NamespacePrefix;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "xquery", factory = XQueryAnnotationExpressionFactory.class)
 public @interface XQuery {
 
@@ -40,8 +41,8 @@ public @interface XQuery {
     boolean stripsAllWhiteSpace() default true;
 
     NamespacePrefix[] namespaces() default {
-            @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
-            @NamespacePrefix(prefix = "xsd", uri = "http://www.w3.org/2001/XMLSchema")
+        @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
+        @NamespacePrefix(prefix = "xsd", uri = "http://www.w3.org/2001/XMLSchema")
     };
 
     /**
@@ -55,5 +56,4 @@ public @interface XQuery {
      * message body.
      */
     String source() default "";
-
 }

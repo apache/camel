@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,8 +28,8 @@ import org.junit.jupiter.api.Test;
  * Unit test for Mail using @ in username option
  */
 public class MailUsernameWithAtSignTest extends CamelTestSupport {
-    private static final MailboxUser jamesAtSign
-            = Mailbox.getOrCreateUser("jamesAtSign@localhost", "jamesAtSign@localhost", "secret");
+    private static final MailboxUser jamesAtSign =
+            Mailbox.getOrCreateUser("jamesAtSign@localhost", "jamesAtSign@localhost", "secret");
 
     @Test
     public void testMailUsingAtSignInUsername() throws Exception {
@@ -47,11 +48,13 @@ public class MailUsernameWithAtSignTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").to("smtp://localhost:" + Mailbox.getPort(Protocol.smtp)
-                                    + "?username=jamesAtSign@localhost&password=secret");
+                from("direct:a")
+                        .to("smtp://localhost:" + Mailbox.getPort(Protocol.smtp)
+                                + "?username=jamesAtSign@localhost&password=secret");
 
-                from("pop3://localhost:" + Mailbox.getPort(Protocol.pop3) + "?username=" + jamesAtSign.getEmail() + "&password="
-                     + jamesAtSign.getPassword() + "&initialDelay=100&delay=100").to("mock:result");
+                from("pop3://localhost:" + Mailbox.getPort(Protocol.pop3) + "?username=" + jamesAtSign.getEmail()
+                                + "&password=" + jamesAtSign.getPassword() + "&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }

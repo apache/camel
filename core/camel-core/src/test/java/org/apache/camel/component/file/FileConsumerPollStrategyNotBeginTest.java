@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,8 +31,6 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for poll strategy
@@ -50,7 +51,8 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10")).convertBodyTo(String.class)
+                from(fileUri("?pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
@@ -68,7 +70,8 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
         oneExchangeDone.matchesWaitTime();
 
         // the poll strategy commit is executed after the exchange is done
-        Awaitility.await().pollDelay(100, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .pollDelay(100, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertTrue(event.startsWith("beginbegincommit")));
     }
 
@@ -95,5 +98,4 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
             return false;
         }
     }
-
 }

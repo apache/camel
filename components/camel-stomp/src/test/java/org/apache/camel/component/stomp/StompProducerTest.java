@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
+
+import static org.fusesource.stomp.client.Constants.DESTINATION;
+import static org.fusesource.stomp.client.Constants.ID;
+import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -31,12 +38,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.fusesource.stomp.client.Constants.DESTINATION;
-import static org.fusesource.stomp.client.Constants.ID;
-import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Starting with Artmis 2.43, test can be played only one by one")
 public class StompProducerTest extends StompBaseTest {
@@ -66,7 +67,10 @@ public class StompProducerTest extends StompBaseTest {
                     try {
                         StompFrame frame = subscribeConnection.receive();
                         assertTrue(frame.contentAsString().startsWith("test message "));
-                        assertTrue(frame.getHeader(new AsciiBuffer(HEADER)).ascii().toString().startsWith(HEADER_VALUE));
+                        assertTrue(frame.getHeader(new AsciiBuffer(HEADER))
+                                .ascii()
+                                .toString()
+                                .startsWith(HEADER_VALUE));
                         latch.countDown();
                     } catch (Exception e) {
                         LOG.warn("Unhandled exception receiving STOMP data: {}", e.getMessage(), e);
@@ -98,5 +102,4 @@ public class StompProducerTest extends StompBaseTest {
             }
         };
     }
-
 }

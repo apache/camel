@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MyServiceProxyTest extends ContextTestSupport {
 
@@ -39,9 +40,8 @@ public class MyServiceProxyTest extends ContextTestSupport {
     public void testKaboom() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
 
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> myService.method("Kaboom"),
-                "Should have thrown exception");
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class, () -> myService.method("Kaboom"), "Should have thrown exception");
 
         assertEquals("Damn", e.getMessage());
     }
@@ -50,7 +50,8 @@ public class MyServiceProxyTest extends ContextTestSupport {
     public void testCheckedException() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
 
-        MyApplicationException e = assertThrows(MyApplicationException.class,
+        MyApplicationException e = assertThrows(
+                MyApplicationException.class,
                 () -> myService.method("Tiger in Action"),
                 "Should have thrown exception");
 
@@ -62,7 +63,8 @@ public class MyServiceProxyTest extends ContextTestSupport {
     public void testNestedRuntimeCheckedException() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
 
-        MyApplicationException e = assertThrows(MyApplicationException.class,
+        MyApplicationException e = assertThrows(
+                MyApplicationException.class,
                 () -> myService.method("Donkey in Action"),
                 "Should have thrown exception");
 
@@ -74,7 +76,8 @@ public class MyServiceProxyTest extends ContextTestSupport {
     public void testNestedCheckedCheckedException() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
 
-        MyApplicationException e = assertThrows(MyApplicationException.class,
+        MyApplicationException e = assertThrows(
+                MyApplicationException.class,
                 () -> myService.method("Elephant in Action"),
                 "Should have thrown exception");
 
@@ -98,13 +101,17 @@ public class MyServiceProxyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(body().isEqualTo("Tiger in Action"))
+                from("direct:start")
+                        .choice()
+                        .when(body().isEqualTo("Tiger in Action"))
                         .throwException(new MyApplicationException("No tigers", 9))
                         .when(body().isEqualTo("Donkey in Action"))
                         .throwException(new RuntimeCamelException(new MyApplicationException("No donkeys", 8)))
                         .when(body().isEqualTo("Elephant in Action"))
                         .throwException(new MyCustomException("Damn", new MyApplicationException("No elephants", 7)))
-                        .when(body().isEqualTo("Kaboom")).throwException(new IllegalArgumentException("Damn")).otherwise()
+                        .when(body().isEqualTo("Kaboom"))
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .otherwise()
                         .transform(constant("Camel in Action"));
 
                 from("direct:request").process(new Processor() {
@@ -118,10 +125,8 @@ public class MyServiceProxyTest extends ContextTestSupport {
                         // we need to setup the body as a response
                         exchange.getMessage().setBody(response);
                     }
-
                 });
             }
         };
     }
-
 }

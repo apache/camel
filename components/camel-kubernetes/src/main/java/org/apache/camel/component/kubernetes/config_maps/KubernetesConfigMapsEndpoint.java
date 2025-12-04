@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.config_maps;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CONFIG_MAPS;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,17 +28,20 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CONFIG_MAPS;
-
 /**
  * Perform operations on Kubernetes ConfigMaps and get notified on ConfigMaps changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_CONFIG_MAPS, title = "Kubernetes ConfigMap",
-             syntax = "kubernetes-config-maps:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_CONFIG_MAPS,
+        title = "Kubernetes ConfigMap",
+        syntax = "kubernetes-config-maps:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesConfigMapsEndpoint(String uri, KubernetesConfigMapsComponent component, KubernetesConfiguration config) {
+    public KubernetesConfigMapsEndpoint(
+            String uri, KubernetesConfigMapsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -49,7 +55,5 @@ public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
         Consumer consumer = new KubernetesConfigMapsConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-
     }
-
 }

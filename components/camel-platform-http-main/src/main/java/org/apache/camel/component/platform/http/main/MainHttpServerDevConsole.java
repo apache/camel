@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main;
 
 import java.util.Map;
@@ -46,7 +47,8 @@ public class MainHttpServerDevConsole extends AbstractDevConsole {
             }
             sb.append(String.format("\n    File Upload Enabled: %b", server.isFileUploadEnabled()));
             sb.append(String.format("\n    File Upload Dir: %s", server.getFileUploadDirectory()));
-            sb.append(String.format("\n    Use Global SSL ContextParameters: %s", server.isUseGlobalSslContextParameters()));
+            sb.append(String.format(
+                    "\n    Use Global SSL ContextParameters: %s", server.isUseGlobalSslContextParameters()));
         }
 
         return sb.toString();

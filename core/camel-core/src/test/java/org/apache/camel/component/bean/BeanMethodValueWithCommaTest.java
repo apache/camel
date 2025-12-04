@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -76,11 +77,17 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
             public void configure() {
                 from("direct:single").to("bean:foo?method=bar(${body}, 'a,b')").to("mock:result");
 
-                from("direct:double").to("bean:foo?method=bar(${body}, \"c,d\")").to("mock:result");
+                from("direct:double")
+                        .to("bean:foo?method=bar(${body}, \"c,d\")")
+                        .to("mock:result");
 
-                from("direct:header").to("bean:foo?method=bar(${body}, ${header.myHeader})").to("mock:result");
+                from("direct:header")
+                        .to("bean:foo?method=bar(${body}, ${header.myHeader})")
+                        .to("mock:result");
 
-                from("direct:cron").to("bean:foo?method=bar(${body.id}, ${body.cron})").to("mock:result");
+                from("direct:cron")
+                        .to("bean:foo?method=bar(${body.id}, ${body.cron})")
+                        .to("mock:result");
             }
         };
     }
@@ -110,5 +117,4 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
             return cron;
         }
     }
-
 }

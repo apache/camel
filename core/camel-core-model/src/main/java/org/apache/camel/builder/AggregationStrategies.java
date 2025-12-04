@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.AggregationStrategy;
@@ -30,8 +31,7 @@ import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
  */
 public final class AggregationStrategies {
 
-    private AggregationStrategies() {
-    }
+    private AggregationStrategies() {}
 
     /**
      * Creates a {@link FlexibleAggregationStrategy} pivoting around a particular type, e.g. it casts all
@@ -156,5 +156,4 @@ public final class AggregationStrategies {
     public static StringAggregationStrategy string(String delimiter) {
         return string().delimiter(delimiter);
     }
-
 }

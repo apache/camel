@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ import org.apache.camel.Exchange;
 public final class NettyConverter {
 
     private NettyConverter() {
-        //Utility Class
+        // Utility Class
     }
 
     @Converter
@@ -130,5 +131,4 @@ public final class NettyConverter {
         InputStream is = toInputStream(buffer, exchange);
         return exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, is);
     }
-
 }

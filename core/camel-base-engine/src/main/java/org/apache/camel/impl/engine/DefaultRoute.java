@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
@@ -103,7 +104,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
     // camel-core-model
     @Deprecated(since = "3.17.0")
     private ErrorHandlerFactory errorHandlerFactory;
-    // camel-core-model: must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
+    // camel-core-model: must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist
+    // EIPs
     private final ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
 
     private final Endpoint endpoint;
@@ -117,9 +119,14 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private Processor processor;
     private Consumer consumer;
 
-    public DefaultRoute(CamelContext camelContext, NamedNode route, String routeId,
-                        String routeDescription, String routeNote,
-                        Endpoint endpoint, Resource resource) {
+    public DefaultRoute(
+            CamelContext camelContext,
+            NamedNode route,
+            String routeId,
+            String routeDescription,
+            String routeNote,
+            Endpoint endpoint,
+            Resource resource) {
         this.camelContext = camelContext;
         this.route = route;
         this.routeId = routeId;

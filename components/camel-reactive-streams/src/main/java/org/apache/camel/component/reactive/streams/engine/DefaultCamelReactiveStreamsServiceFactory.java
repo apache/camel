@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.engine;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,8 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsServi
 
 public class DefaultCamelReactiveStreamsServiceFactory implements CamelReactiveStreamsServiceFactory {
     @Override
-    public CamelReactiveStreamsService newInstance(CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
+    public CamelReactiveStreamsService newInstance(
+            CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
         return new DefaultCamelReactiveStreamsService(context, configuration);
     }
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.operations.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -45,9 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnabledIfSystemProperty(named = "token", matches = ".*", disabledReason = "Stitch token was not provided")
 class StitchProducerOperationsIT extends CamelTestSupport {
 
@@ -67,12 +68,12 @@ class StitchProducerOperationsIT extends CamelTestSupport {
     void testIfSendIfStitchMessagesSet() {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("test_table");
-        configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
+        configuration.setStitchSchema(
+                StitchSchema.builder().addKeyword("field_1", "string").build());
         configuration.setKeyNames("field_1");
 
-        final StitchMessage message = StitchMessage.builder()
-                .withData("field_1", "data")
-                .build();
+        final StitchMessage message =
+                StitchMessage.builder().withData("field_1", "data").build();
 
         final Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setBody(message);
@@ -87,20 +88,20 @@ class StitchProducerOperationsIT extends CamelTestSupport {
     void testIfSendFromIterable() {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("table_1");
-        configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
+        configuration.setStitchSchema(
+                StitchSchema.builder().addKeyword("field_1", "string").build());
         configuration.setKeyNames("field_1");
 
-        final StitchMessage stitchMessage1 = StitchMessage.builder()
-                .withData("field_1", "stitchMessage1")
-                .build();
+        final StitchMessage stitchMessage1 =
+                StitchMessage.builder().withData("field_1", "stitchMessage1").build();
 
-        final StitchMessage stitchMessage2 = StitchMessage.builder()
-                .withData("field_1", "stitchMessage2-1")
-                .build();
+        final StitchMessage stitchMessage2 =
+                StitchMessage.builder().withData("field_1", "stitchMessage2-1").build();
 
         final StitchRequestBody stitchMessage2RequestBody = StitchRequestBody.builder()
                 .addMessage(stitchMessage2)
-                .withSchema(StitchSchema.builder().addKeyword("field_1", "integer").build())
+                .withSchema(
+                        StitchSchema.builder().addKeyword("field_1", "integer").build())
                 .withTableName("table_1")
                 .withKeyNames(Collections.singleton("field_1"))
                 .build();
@@ -108,16 +109,14 @@ class StitchProducerOperationsIT extends CamelTestSupport {
         final Map<String, Object> stitchMessage3 = new LinkedHashMap<>();
         stitchMessage3.put(StitchMessage.DATA, Collections.singletonMap("field_1", "stitchMessage3"));
 
-        final StitchMessage stitchMessage4 = StitchMessage.builder()
-                .withData("field_1", "stitchMessage4")
-                .build();
+        final StitchMessage stitchMessage4 =
+                StitchMessage.builder().withData("field_1", "stitchMessage4").build();
 
         final Exchange stitchMessage4Exchange = new DefaultExchange(context);
         stitchMessage4Exchange.getMessage().setBody(stitchMessage4);
 
-        final StitchMessage stitchMessage5 = StitchMessage.builder()
-                .withData("field_1", "stitchMessage5")
-                .build();
+        final StitchMessage stitchMessage5 =
+                StitchMessage.builder().withData("field_1", "stitchMessage5").build();
 
         final Message stitchMessage5Message = new DefaultExchange(context).getMessage();
         stitchMessage5Message.setBody(stitchMessage5);
@@ -136,13 +135,13 @@ class StitchProducerOperationsIT extends CamelTestSupport {
             assertNotNull(response);
             assertTrue(response.getHttpStatusCode() == 200 || response.getHttpStatusCode() == 201);
         });
-
     }
 
     private void sendEventAndAssert(
             final Message message, final StitchConfiguration configuration, final Consumer<StitchResponse> fn) {
         try {
-            final StitchResponse response = sendEventMono(message, configuration).block();
+            final StitchResponse response =
+                    sendEventMono(message, configuration).block();
             fn.accept(response);
         } catch (StitchException exception) {
             LOG.error(exception.getMessage());

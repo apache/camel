@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonb;
 
 import java.io.InputStream;
@@ -41,7 +42,9 @@ import org.apache.camel.support.service.ServiceSupport;
  * Marshal POJOs to JSON and back using JSON-B.
  */
 @Dataformat("jsonb")
-@Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyNamingStrategy,skipNull")
+@Metadata(
+        includeProperties =
+                "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyNamingStrategy,skipNull")
 public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
     private CamelContext camelContext;
     private Jsonb objectMapper;
@@ -204,7 +207,8 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
                 return objectMapper.fromJson(r, customType);
             } else {
                 // fallback to input stream
-                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                InputStream is =
+                        exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                 return objectMapper.fromJson(is, customType);
             }
         } else {
@@ -214,7 +218,8 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
                 return objectMapper.fromJson(r, expectedType);
             } else {
                 // fallback to input stream
-                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                InputStream is =
+                        exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                 return objectMapper.fromJson(is, expectedType);
             }
         }

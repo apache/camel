@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import java.util.HashMap;
@@ -42,43 +43,58 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
     @XmlTransient
     private KeyStoreParameters keyStoreParameters;
+
     @XmlTransient
     private Map<String, String> namespaces;
 
     @XmlAttribute
-    @Metadata(defaultValue = "AES-256-GCM",
-              enums = "TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256")
+    @Metadata(
+            defaultValue = "AES-256-GCM",
+            enums =
+                    "TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256")
     private String xmlCipherAlgorithm;
+
     @XmlAttribute
     @Metadata(secret = true)
     private String passPhrase;
+
     @XmlAttribute
     @Metadata(label = "advanced", secret = true)
     private byte[] passPhraseByte;
+
     @XmlAttribute
     private String secureTag;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String secureTagContents;
+
     @XmlAttribute
     @Metadata(defaultValue = "RSA_OAEP", enums = "RSA_v1dot5,RSA_OAEP,RSA_OAEP_11")
     private String keyCipherAlgorithm;
+
     @XmlAttribute
     private String recipientKeyAlias;
+
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.support.jsse.KeyStoreParameters")
     private String keyOrTrustStoreParameters;
+
     @XmlAttribute
     private String keyPassword;
+
     @XmlAttribute
     @Metadata(defaultValue = "SHA1", enums = "SHA1,SHA256,SHA512")
     private String digestAlgorithm;
+
     @XmlAttribute
     @Metadata(defaultValue = "MGF1_SHA1", enums = "MGF1_SHA1,MGF1_SHA256,MGF1_SHA512")
     private String mgfAlgorithm;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String addKeyValueForEncryptedKey;
+
     @XmlAttribute(name = "namespace")
     @Metadata(javaType = "java.util.Map")
     private String namespaceRef;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.helper;
 
 import java.io.InputStream;
@@ -63,8 +64,7 @@ public final class XmlLineNumberParser {
     public static final String LINE_NUMBER_END = "lineNumberEnd";
     public static final String COLUMN_NUMBER_END = "colNumberEnd";
 
-    private XmlLineNumberParser() {
-    }
+    private XmlLineNumberParser() {}
 
     /**
      * Parses the XML.
@@ -133,7 +133,11 @@ public final class XmlLineNumberParser {
     }
 
     private static DefaultHandler getDefaultHandler(
-            String rootNames, String forceNamespace, Document doc, ArrayDeque<Element> elementStack, StringBuilder textBuffer) {
+            String rootNames,
+            String forceNamespace,
+            Document doc,
+            ArrayDeque<Element> elementStack,
+            StringBuilder textBuffer) {
         return new DefaultHandler() {
             private Locator locator;
             private boolean found;
@@ -142,7 +146,9 @@ public final class XmlLineNumberParser {
 
             @Override
             public void setDocumentLocator(final Locator locator) {
-                this.locator = locator; // Save the locator, so that it can be used later for line tracking when traversing nodes.
+                this.locator =
+                        locator; // Save the locator, so that it can be used later for line tracking when traversing
+                // nodes.
                 this.found = rootNames == null;
             }
 
@@ -270,5 +276,4 @@ public final class XmlLineNumberParser {
             }
         };
     }
-
 }

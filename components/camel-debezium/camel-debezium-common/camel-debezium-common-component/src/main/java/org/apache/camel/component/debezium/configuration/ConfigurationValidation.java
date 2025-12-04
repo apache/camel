@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.configuration;
 
 import org.apache.camel.util.ObjectHelper;
@@ -45,5 +46,4 @@ public final class ConfigurationValidation {
     public String getReason() {
         return reason;
     }
-
 }

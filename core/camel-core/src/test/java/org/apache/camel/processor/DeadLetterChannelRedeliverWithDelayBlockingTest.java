@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.Callable;
@@ -79,17 +80,22 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(250).maximumRedeliveries(3).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .redeliveryDelay(250)
+                        .maximumRedeliveries(3)
+                        .logStackTrace(false));
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Message 1".equals(body) && counter++ < 2) {
-                            throw new IllegalArgumentException("Damn");
-                        }
-                        exchange.getIn().setHeader("foo", "bar");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Message 1".equals(body) && counter++ < 2) {
+                                    throw new IllegalArgumentException("Damn");
+                                }
+                                exchange.getIn().setHeader("foo", "bar");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.wsrm;
 
 import java.io.IOException;
@@ -93,7 +94,6 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
                     throw new Fault(e);
                 }
             }
-
         });
     }
 
@@ -108,7 +108,9 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
         @Override
         protected void onFirstWrite() throws IOException {
             if (LOG.isDebugEnabled()) {
-                Long nr = RMContextUtils.retrieveRMProperties(outMessage, true).getSequence().getMessageNumber();
+                Long nr = RMContextUtils.retrieveRMProperties(outMessage, true)
+                        .getSequence()
+                        .getMessageNumber();
                 LOG.debug("Losing message {}", nr);
             }
             wrappedStream = new DummyOutputStream();

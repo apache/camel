@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.web3j;
 
 import java.util.List;
@@ -44,8 +45,13 @@ import org.web3j.quorum.Quorum;
 /**
  * Interact with Ethereum nodes using web3j client API.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j Ethereum Blockchain", syntax = "web3j:nodeAddress",
-             category = { Category.BLOCKCHAIN }, headersClass = Web3jConstants.class)
+@UriEndpoint(
+        firstVersion = "2.22.0",
+        scheme = "web3j",
+        title = "Web3j Ethereum Blockchain",
+        syntax = "web3j:nodeAddress",
+        category = {Category.BLOCKCHAIN},
+        headersClass = Web3jConstants.class)
 public class Web3jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 
@@ -137,7 +143,10 @@ public class Web3jEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     }
 
     public static EthFilter buildEthFilter(
-            DefaultBlockParameter fromBlock, DefaultBlockParameter toBlock, List<String> addresses, List<String> topics) {
+            DefaultBlockParameter fromBlock,
+            DefaultBlockParameter toBlock,
+            List<String> addresses,
+            List<String> topics) {
         EthFilter filter = new EthFilter(fromBlock, toBlock, addresses);
         addTopics(filter, topics);
         return filter;
@@ -160,5 +169,4 @@ public class Web3jEndpoint extends DefaultEndpoint implements EndpointServiceLoc
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.BindToRegistry;
@@ -38,8 +39,8 @@ public class FileToFtpsWithFtpClientConfigRefIT extends FtpsServerExplicitSSLWit
 
     private String getFtpUrl(boolean in) {
         return "ftps://admin@localhost:{{ftp.server.port}}/tmp2/camel?password=admin&initialDelay=2000&ftpClient=#ftpsClient"
-               + (in ? "In" : "")
-               + "&disableSecureDataChannelDefaults=true&delete=true";
+                + (in ? "In" : "")
+                + "&disableSecureDataChannelDefaults=true&delete=true";
     }
 
     @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mllp;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mllp;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the class.
@@ -79,7 +80,8 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorFour() {
-        instance = new MllpAcknowledgementTimeoutException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
+        instance = new MllpAcknowledgementTimeoutException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementTimeoutException.EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -93,7 +95,8 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorFive() {
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
+        instance =
+                new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -122,7 +125,8 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorSeven() {
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
+        instance = new MllpAcknowledgementTimeoutException(
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -159,8 +163,8 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
                 ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, new byte[0], CAUSE, LOG_PHI_TRUE);
         assertNull(instance.getHl7Acknowledgement());
 
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
+        instance = new MllpAcknowledgementTimeoutException(
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
         assertNull(instance.getHl7Acknowledgement());
     }
-
 }

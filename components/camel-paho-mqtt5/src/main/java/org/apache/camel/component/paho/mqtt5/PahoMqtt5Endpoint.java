@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
 
 import java.util.HashMap;
@@ -41,21 +42,28 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 /**
  * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
  */
-@UriEndpoint(firstVersion = "3.8.0", scheme = "paho-mqtt5", title = "Paho MQTT 5",
-             category = { Category.MESSAGING, Category.IOT },
-             syntax = "paho-mqtt5:topic", headersClass = PahoMqtt5Constants.class)
+@UriEndpoint(
+        firstVersion = "3.8.0",
+        scheme = "paho-mqtt5",
+        title = "Paho MQTT 5",
+        category = {Category.MESSAGING, Category.IOT},
+        syntax = "paho-mqtt5:topic",
+        headersClass = PahoMqtt5Constants.class)
 public class PahoMqtt5Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     // Configuration members
     @UriPath(description = "Name of the topic")
     @Metadata(required = true)
     private final String topic;
+
     @UriParam
     private final PahoMqtt5Configuration configuration;
+
     @UriParam(label = "advanced")
     private volatile MqttClient client;
 
-    public PahoMqtt5Endpoint(String uri, String topic, PahoMqtt5Component component, PahoMqtt5Configuration configuration) {
+    public PahoMqtt5Endpoint(
+            String uri, String topic, PahoMqtt5Component component, PahoMqtt5Configuration configuration) {
         super(uri, component);
         this.topic = topic;
         this.configuration = configuration;

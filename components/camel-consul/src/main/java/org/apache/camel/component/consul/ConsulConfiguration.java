@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import org.apache.camel.RuntimeCamelException;
@@ -28,15 +29,17 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private Consul consulClient;
+
     @UriParam
     private String key;
+
     @UriParam(label = "producer", enums = "CHECKS,SERVICES,AGENT,REGISTER,DEREGISTER")
     private String action;
+
     @UriParam
     private boolean valueAsString;
 
-    public ConsulConfiguration() {
-    }
+    public ConsulConfiguration() {}
 
     public String getAction() {
         return action;

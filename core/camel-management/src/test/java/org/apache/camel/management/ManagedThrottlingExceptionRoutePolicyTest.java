@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,10 +39,6 @@ import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSupport {
@@ -67,8 +68,8 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         assertTrue(policy.startsWith("ThrottlingExceptionRoutePolicy"));
 
         // get the RoutePolicy
-        String mbeanName
-                = String.format("org.apache.camel:context=" + context.getManagementName() + ",name=%s,type=services", policy);
+        String mbeanName = String.format(
+                "org.apache.camel:context=" + context.getManagementName() + ",name=%s,type=services", policy);
         set = mbeanServer.queryNames(new ObjectName(mbeanName), null);
         assertEquals(1, set.size());
         on = set.iterator().next();
@@ -78,8 +79,8 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         String myType = (String) mbeanServer.getAttribute(on, "ServiceType");
         assertEquals("ThrottlingExceptionRoutePolicy", myType);
 
-        ManagedThrottlingExceptionRoutePolicyMBean proxy
-                = JMX.newMBeanProxy(mbeanServer, on, ManagedThrottlingExceptionRoutePolicyMBean.class);
+        ManagedThrottlingExceptionRoutePolicyMBean proxy =
+                JMX.newMBeanProxy(mbeanServer, on, ManagedThrottlingExceptionRoutePolicyMBean.class);
         assertNotNull(proxy);
 
         // state should be closed w/ no failures
@@ -149,14 +150,14 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
     @Override
     protected RouteBuilder createRouteBuilder() {
         ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(
-                10, 1000, 5000,
-                List.of(IOException.class, UnsupportedOperationException.class));
+                10, 1000, 5000, List.of(IOException.class, UnsupportedOperationException.class));
         policy.setHalfOpenHandler(new DummyHandler());
 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("testRoute")
+                from("direct:start")
+                        .routeId("testRoute")
                         .routePolicy(policy)
                         .to("log:foo")
                         .process(new BoomProcess())
@@ -173,7 +174,6 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
             Thread.sleep(50);
             throw new IOException("boom!");
         }
-
     }
 
     static class DummyHandler implements ThrottlingExceptionHalfOpenHandler {
@@ -182,6 +182,5 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         public boolean isReadyToBeClosed() {
             return false;
         }
-
     }
 }

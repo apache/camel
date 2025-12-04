@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,61 +28,63 @@ public class RouteConfigurationOnExceptionTest extends ContextTestSupport {
     @Override
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        routeTemplate("route-template")
-                                .from("direct:start-template")
-                                .routeConfigurationId("my-error-handler")
-                                .throwException(RuntimeException.class, "Expected Error");
-                    }
-                },
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        routeTemplate("route-template-parameter")
-                                .templateParameter("configuration-id")
-                                .templateParameter("route-id")
-                                .from("direct:start-template-parameter")
-                                .routeId("{{route-id}}")
-                                .routeConfigurationId("{{configuration-id}}")
-                                .throwException(RuntimeException.class, "Expected Error");
-                    }
-                },
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        TemplatedRouteBuilder.builder(context, "route-template")
-                                .routeId("my-test-file-route")
-                                .add();
-                    }
-                },
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        TemplatedRouteBuilder.builder(context, "route-template-parameter")
-                                .routeId("my-test-file-route-parameter")
-                                .parameter("configuration-id", "my-error-handler")
-                                .parameter("route-id", "custom-route-id")
-                                .add();
-                    }
-                },
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("direct:start-normal")
-                                .routeConfigurationId("my-error-handler")
-                                .throwException(RuntimeException.class, "Expected Error");
-                    }
-                },
-                new RouteConfigurationBuilder() {
-                    @Override
-                    public void configuration() {
-                        routeConfiguration("my-error-handler").onException(Exception.class).handled(true)
-                                .transform(constant("Error Received"))
-                                .to("mock:result");
-                    }
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("route-template")
+                            .from("direct:start-template")
+                            .routeConfigurationId("my-error-handler")
+                            .throwException(RuntimeException.class, "Expected Error");
                 }
+            },
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("route-template-parameter")
+                            .templateParameter("configuration-id")
+                            .templateParameter("route-id")
+                            .from("direct:start-template-parameter")
+                            .routeId("{{route-id}}")
+                            .routeConfigurationId("{{configuration-id}}")
+                            .throwException(RuntimeException.class, "Expected Error");
+                }
+            },
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    TemplatedRouteBuilder.builder(context, "route-template")
+                            .routeId("my-test-file-route")
+                            .add();
+                }
+            },
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    TemplatedRouteBuilder.builder(context, "route-template-parameter")
+                            .routeId("my-test-file-route-parameter")
+                            .parameter("configuration-id", "my-error-handler")
+                            .parameter("route-id", "custom-route-id")
+                            .add();
+                }
+            },
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start-normal")
+                            .routeConfigurationId("my-error-handler")
+                            .throwException(RuntimeException.class, "Expected Error");
+                }
+            },
+            new RouteConfigurationBuilder() {
+                @Override
+                public void configuration() {
+                    routeConfiguration("my-error-handler")
+                            .onException(Exception.class)
+                            .handled(true)
+                            .transform(constant("Error Received"))
+                            .to("mock:result");
+                }
+            }
         };
     }
 

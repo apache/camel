@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import org.apache.camel.dsl.jbang.it.support.InVersion;
@@ -29,8 +30,7 @@ public class VersionCommandITCase extends JBangTestSupport {
     @Test
     @DisabledIfSystemProperty(named = CliProperties.FORCE_RUN_VERSION, matches = ".+")
     public void versionCommandTest() {
-        Assertions.assertThat(execute("version").trim())
-                .contains("Camel JBang version: " + version());
+        Assertions.assertThat(execute("version").trim()).contains("Camel JBang version: " + version());
         execute("version set 3.20.2");
         Assertions.assertThat(execute("version").trim())
                 .contains("Camel JBang version: " + version())
@@ -55,33 +55,28 @@ public class VersionCommandITCase extends JBangTestSupport {
 
     @Test
     public void versionListCommandTest() {
-        Assertions.assertThatNoException()
-                .isThrownBy(() -> execute("version list"));
+        Assertions.assertThatNoException().isThrownBy(() -> execute("version list"));
     }
 
     @Test
     public void versionListWithSBCommandTest() {
-        Assertions.assertThatNoException()
-                .isThrownBy(() -> execute("version list --runtime=spring-boot"));
+        Assertions.assertThatNoException().isThrownBy(() -> execute("version list --runtime=spring-boot"));
     }
 
     @Test
     public void runVersionListWithQuarkusCommandTest() {
-        Assertions.assertThatNoException()
-                .isThrownBy(() -> execute("version list --runtime=quarkus"));
+        Assertions.assertThatNoException().isThrownBy(() -> execute("version list --runtime=quarkus"));
     }
 
     @Test
     @InVersion(from = "4.00.00")
     public void versionListFromVersionTest() {
-        Assertions.assertThat(execute("version list --from-version=3.20.1"))
-                .doesNotContain("3.19.0");
+        Assertions.assertThat(execute("version list --from-version=3.20.1")).doesNotContain("3.19.0");
     }
 
     @Test
     @InVersion(to = "3.21.00")
     public void versionListMinimumVersionTest() {
-        Assertions.assertThat(execute("version list --minimum-version=3.20.1"))
-                .doesNotContain("3.19.0");
+        Assertions.assertThat(execute("version list --minimum-version=3.20.1")).doesNotContain("3.19.0");
     }
 }

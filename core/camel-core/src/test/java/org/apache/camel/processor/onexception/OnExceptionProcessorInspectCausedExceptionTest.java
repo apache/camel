@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for using a processor to peek the caused exception
@@ -56,7 +57,9 @@ public class OnExceptionProcessorInspectCausedExceptionTest extends ContextTestS
                 // here we register exception cause for MyFunctionException
                 // when this exception occur we want it to be processed by our
                 // processor
-                onException(MyFunctionalException.class).process(new MyFunctionFailureHandler()).stop();
+                onException(MyFunctionalException.class)
+                        .process(new MyFunctionFailureHandler())
+                        .stop();
                 // END SNIPPET: e1
 
                 from("direct:start").process(new Processor() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.lang.reflect.Method;
@@ -70,11 +71,13 @@ public class KnownKameletRoutesBuilderLoader extends KameletRoutesBuilderLoader 
     private List<String> findKameletNames() {
         try {
             MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
-            if (!downloader.alreadyOnClasspath("org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion)) {
+            if (!downloader.alreadyOnClasspath(
+                    "org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion)) {
                 downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion);
             }
             // create an instance of the catalog and invoke its getKameletsName method
-            Class<?> clazz = getCamelContext().getClassResolver()
+            Class<?> clazz = getCamelContext()
+                    .getClassResolver()
                     .resolveClass("org.apache.camel.kamelets.catalog.KameletsCatalog");
             if (clazz != null) {
                 Object catalog = getCamelContext().getInjector().newInstance(clazz);

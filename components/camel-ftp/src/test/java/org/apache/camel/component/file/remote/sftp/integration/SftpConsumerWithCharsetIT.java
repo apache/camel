@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,22 +32,21 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpConsumerWithCharsetIT extends SftpServerTestSupport {
 
-    private static final String SAMPLE_FILE_NAME
-            = String.format("sample-%s.txt", SftpConsumerWithCharsetIT.class.getSimpleName());
+    private static final String SAMPLE_FILE_NAME =
+            String.format("sample-%s.txt", SftpConsumerWithCharsetIT.class.getSimpleName());
     private static final String SAMPLE_FILE_CHARSET = "iso-8859-1";
     private static final String SAMPLE_FILE_PAYLOAD = "\u00e6\u00f8\u00e5 \u00a9"; // danish
-                                                                                  // ae
-                                                                                  // oe
-                                                                                  // aa
-                                                                                  // and
-                                                                                  // (c)
-                                                                                  // sign
+    // ae
+    // oe
+    // aa
+    // and
+    // (c)
+    // sign
 
     @Test
     public void testConsumeWithCharset() throws Exception {
@@ -73,9 +76,11 @@ public class SftpConsumerWithCharsetIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&charset="
-                     + SAMPLE_FILE_CHARSET + "&knownHostsFile="
-                     + service.getKnownHostsFile()).routeId("foo").noAutoStartup()
+                                + "?username=admin&password=admin&charset="
+                                + SAMPLE_FILE_CHARSET + "&knownHostsFile="
+                                + service.getKnownHostsFile())
+                        .routeId("foo")
+                        .noAutoStartup()
                         .to("mock:result");
             }
         };

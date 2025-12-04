@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * No catch blocks but handle all should work
@@ -80,9 +81,17 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // use dead letter channel that supports redeliveries
-                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
+                        .logStackTrace(false));
 
-                from("direct:start").doTry().process(validator).to("mock:valid").doFinally().to("mock:all");
+                from("direct:start")
+                        .doTry()
+                        .process(validator)
+                        .to("mock:valid")
+                        .doFinally()
+                        .to("mock:all");
             }
         };
     }

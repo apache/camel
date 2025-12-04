@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr.converter;
 
 import java.io.File;
@@ -51,8 +52,7 @@ public final class SolrRequestConverter {
 
     public static final String DEFAULT_UPDATE_REQUEST_HANDLER = "/update";
 
-    private SolrRequestConverter() {
-    }
+    private SolrRequestConverter() {}
 
     @Converter
     public static SolrPing createSolrPing(Object body, Exchange exchange) {
@@ -75,16 +75,18 @@ public final class SolrRequestConverter {
             }
             solrQuery = new SolrQuery(queryString);
         }
-        SolrProducer.ActionContext ctx
-                = exchange.getProperty(SolrConstants.PROPERTY_ACTION_CONTEXT, SolrProducer.ActionContext.class);
+        SolrProducer.ActionContext ctx =
+                exchange.getProperty(SolrConstants.PROPERTY_ACTION_CONTEXT, SolrProducer.ActionContext.class);
         SolrConfiguration configuration = ctx.configuration();
 
         // Set size parameter and from parameter for search
-        Integer from = exchange.getMessage().getHeader(SolrConstants.PARAM_FROM, configuration.getFrom(), Integer.class);
+        Integer from =
+                exchange.getMessage().getHeader(SolrConstants.PARAM_FROM, configuration.getFrom(), Integer.class);
         if (from != null) {
             solrQuery.setStart(from);
         }
-        Integer size = exchange.getMessage().getHeader(SolrConstants.PARAM_SIZE, configuration.getSize(), Integer.class);
+        Integer size =
+                exchange.getMessage().getHeader(SolrConstants.PARAM_SIZE, configuration.getSize(), Integer.class);
         if (size != null) {
             solrQuery.setRows(size);
         }
@@ -130,8 +132,8 @@ public final class SolrRequestConverter {
     @Converter
     public static ContentStreamUpdateRequest createContentStreamUpdateRequest(Object body, Exchange exchange)
             throws NoTypeConversionAvailableException {
-        SolrProducer.ActionContext ctx
-                = exchange.getProperty(SolrConstants.PROPERTY_ACTION_CONTEXT, SolrProducer.ActionContext.class);
+        SolrProducer.ActionContext ctx =
+                exchange.getProperty(SolrConstants.PROPERTY_ACTION_CONTEXT, SolrProducer.ActionContext.class);
         String contentType = ctx.exchange().getMessage().getHeader(SolrConstants.PARAM_CONTENT_TYPE, String.class);
         ContentStreamUpdateRequest streamUpdateRequest = createNewContentStreamUpdateRequest(ctx);
         if (body instanceof WrappedFile<?> wrappedFile) {
@@ -160,17 +162,17 @@ public final class SolrRequestConverter {
     }
 
     private static UpdateRequest createNewUpdateRequest(SolrProducer.ActionContext ctx) {
-        UpdateRequest updateRequest = ctx.requestHandler() != null
-                ? new UpdateRequest(ctx.requestHandler())
-                : new UpdateRequest();
+        UpdateRequest updateRequest =
+                ctx.requestHandler() != null ? new UpdateRequest(ctx.requestHandler()) : new UpdateRequest();
         updateRequest.setParams(ctx.solrParams());
         return updateRequest;
     }
 
     @Converter
-    public static UpdateRequest createUpdateRequest(Object body, Exchange exchange) throws NoTypeConversionAvailableException {
-        SolrProducer.ActionContext ctx
-                = exchange.getProperty(SolrConstants.PROPERTY_ACTION_CONTEXT, SolrProducer.ActionContext.class);
+    public static UpdateRequest createUpdateRequest(Object body, Exchange exchange)
+            throws NoTypeConversionAvailableException {
+        SolrProducer.ActionContext ctx =
+                exchange.getProperty(SolrConstants.PROPERTY_ACTION_CONTEXT, SolrProducer.ActionContext.class);
         switch (ctx.operation()) {
             case DELETE -> {
                 return createUpdateRequestForDelete(body, exchange, ctx);
@@ -183,15 +185,17 @@ public final class SolrRequestConverter {
         }
     }
 
-    private static UpdateRequest createUpdateRequestForDelete(Object body, Exchange exchange, SolrProducer.ActionContext ctx) {
+    private static UpdateRequest createUpdateRequestForDelete(
+            Object body, Exchange exchange, SolrProducer.ActionContext ctx) {
         UpdateRequest updateRequest = createNewUpdateRequest(ctx);
-        boolean deleteByQuery = ctx.exchange().getMessage()
-                .getHeader(SolrConstants.PARAM_DELETE_BY_QUERY, ctx.configuration().isDeleteByQuery(), Boolean.class);
+        boolean deleteByQuery = ctx.exchange()
+                .getMessage()
+                .getHeader(
+                        SolrConstants.PARAM_DELETE_BY_QUERY, ctx.configuration().isDeleteByQuery(), Boolean.class);
         // for now, keep old operation supported until deprecation
         deleteByQuery = deleteByQuery
-                || SolrConstants.OPERATION_DELETE_BY_QUERY
-                        .equalsIgnoreCase(exchange.getMessage()
-                                .getHeader(SolrConstants.PARAM_OPERATION, "", String.class));
+                || SolrConstants.OPERATION_DELETE_BY_QUERY.equalsIgnoreCase(
+                        exchange.getMessage().getHeader(SolrConstants.PARAM_OPERATION, "", String.class));
         if (deleteByQuery) {
             if (SolrUtils.isCollectionOfType(body, String.class)) {
                 updateRequest.setDeleteQuery(SolrUtils.convertToList((Collection<String>) body));
@@ -206,8 +210,8 @@ public final class SolrRequestConverter {
         return updateRequest.deleteById(String.valueOf(body));
     }
 
-    private static UpdateRequest createUpdateRequestForInsert(Object body, Exchange exchange, SolrProducer.ActionContext ctx)
-            throws NoTypeConversionAvailableException {
+    private static UpdateRequest createUpdateRequestForInsert(
+            Object body, Exchange exchange, SolrProducer.ActionContext ctx) throws NoTypeConversionAvailableException {
         UpdateRequest updateRequest = createNewUpdateRequest(ctx);
         // SolrInputDocument
         if (body instanceof SolrInputDocument solrInputDocument) {
@@ -221,12 +225,13 @@ public final class SolrRequestConverter {
         }
         // Collection<Map>
         if (SolrUtils.isCollectionOfType(body, Map.class)) {
-            Optional<Collection<SolrInputDocument>> docs
-                    = getOptionalCollectionOfSolrInputDocument((Collection<Map<?, ?>>) body, exchange);
+            Optional<Collection<SolrInputDocument>> docs =
+                    getOptionalCollectionOfSolrInputDocument((Collection<Map<?, ?>>) body, exchange);
             docs.ifPresent(updateRequest::add);
             return updateRequest;
         }
-        // Map: gather solr fields from body and merge with solr fields from headers (gathered from SolrField.xxx headers)
+        // Map: gather solr fields from body and merge with solr fields from headers (gathered from SolrField.xxx
+        // headers)
         //      The header solr fields have priority
         Map<String, Object> map = new LinkedHashMap<>(getMapFromBody(body));
         map.putAll(getMapFromHeaderSolrFields(exchange));
@@ -260,7 +265,7 @@ public final class SolrRequestConverter {
 
     private static void appendAddCommandToXML(SolrProducer.ActionContext ctx, String bodyAsString, String contentType) {
         if ((contentType.startsWith(ContentStreamBase.TEXT_XML)
-                || contentType.startsWith(ContentStreamBase.APPLICATION_XML))
+                        || contentType.startsWith(ContentStreamBase.APPLICATION_XML))
                 && !(bodyAsString.startsWith("<add"))) {
             ctx.exchange().getMessage().setBody("<add>" + bodyAsString + "</add>");
         }
@@ -268,11 +273,9 @@ public final class SolrRequestConverter {
 
     private static Map<String, Object> getMapFromBody(Object body) {
         if (body instanceof Map) {
-            return ((Map<?, ?>) body).entrySet().stream()
-                    .collect(
-                            Collectors.toMap(
-                                    entry -> String.valueOf(entry.getKey()),
-                                    Map.Entry::getValue));
+            return ((Map<?, ?>) body)
+                    .entrySet().stream()
+                            .collect(Collectors.toMap(entry -> String.valueOf(entry.getKey()), Map.Entry::getValue));
         }
         return Collections.emptyMap();
     }
@@ -280,10 +283,9 @@ public final class SolrRequestConverter {
     private static Map<String, Object> getMapFromHeaderSolrFields(Exchange exchange) {
         return exchange.getMessage().getHeaders().entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(SolrConstants.HEADER_FIELD_PREFIX))
-                .collect(
-                        Collectors.toMap(
-                                entry -> entry.getKey().substring(SolrConstants.HEADER_FIELD_PREFIX.length()),
-                                Map.Entry::getValue));
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().substring(SolrConstants.HEADER_FIELD_PREFIX.length()),
+                        Map.Entry::getValue));
     }
 
     private static Optional<Collection<SolrInputDocument>> getOptionalCollectionOfSolrInputDocument(
@@ -305,5 +307,4 @@ public final class SolrRequestConverter {
         }
         return Optional.empty();
     }
-
 }

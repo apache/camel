@@ -26,9 +26,7 @@ import org.apache.camel.test.infra.azure.common.AzureConfigs;
 
 public final class AzureStorageBlobClientUtils {
 
-    private AzureStorageBlobClientUtils() {
-
-    }
+    private AzureStorageBlobClientUtils() {}
 
     public static BlobServiceClient getClient() {
         String instanceType = System.getProperty("azure.instance.type");
@@ -55,7 +53,9 @@ public final class AzureStorageBlobClientUtils {
         return new BlobServiceClientBuilder()
                 .endpoint(endpoint)
                 .credential(credential)
-                .httpLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS).setPrettyPrintBody(true))
+                .httpLogOptions(new HttpLogOptions()
+                        .setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS)
+                        .setPrettyPrintBody(true))
                 .buildClient();
     }
 }

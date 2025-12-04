@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.proxy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -24,8 +27,6 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyChuckedFalseTest extends BaseJettyTest {
 
@@ -37,7 +38,6 @@ public class JettyChuckedFalseTest extends BaseJettyTest {
                 // we do nothing here, so http producer will send a GET method
                 // request
             }
-
         });
         Message out = exchange.getMessage();
         // make sure we have the content-length header
@@ -70,5 +70,4 @@ public class JettyChuckedFalseTest extends BaseJettyTest {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.nova;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
@@ -27,33 +28,43 @@ public final class NovaConstants extends OpenstackConstants {
     @Metadata(label = "flavor server", description = "ID of the flavor.", javaType = "String")
     public static final String FLAVOR_ID = "FlavorId";
 
-    //flavor
+    // flavor
     @Metadata(label = "flavor", description = "Size of RAM.", javaType = "Integer")
     public static final String RAM = "RAM";
+
     @Metadata(label = "flavor", description = "The number of flavor VCPU.", javaType = "Integer")
     public static final String VCPU = "VCPU";
+
     @Metadata(label = "flavor", description = "Size of disk.", javaType = "Integer")
     public static final String DISK = "disk";
+
     @Metadata(label = "flavor", description = "Size of swap.", javaType = "Integer")
     public static final String SWAP = "swap";
+
     @Metadata(label = "flavor", description = "Rxtx Factor.", javaType = "Integer")
     public static final String RXTXFACTOR = "rxtxFactor";
 
-    //server
+    // server
     @Metadata(label = "server", description = "Admin password of the new server.", javaType = "String")
     public static final String ADMIN_PASSWORD = "AdminPassword";
+
     @Metadata(label = "server", description = "The Image ID.", javaType = "String")
     public static final String IMAGE_ID = "ImageId";
+
     @Metadata(label = "server", description = "The Keypair name.", javaType = "String")
     public static final String KEYPAIR_NAME = "KeypairName";
+
     @Metadata(label = "server", description = "The list of networks (by id).", javaType = "List<String>")
     public static final String NETWORK = "NetworkId";
 
-    //server
+    // server
     public static final String CREATE_SNAPSHOT = "createSnapshot";
-    @Metadata(label = "server", description = "An action to perform.", javaType = "org.openstack4j.model.compute.Action")
+
+    @Metadata(
+            label = "server",
+            description = "An action to perform.",
+            javaType = "org.openstack4j.model.compute.Action")
     public static final String ACTION = "action";
 
-    private NovaConstants() {
-    }
+    private NovaConstants() {}
 }

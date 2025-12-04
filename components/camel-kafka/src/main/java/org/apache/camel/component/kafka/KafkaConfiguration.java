@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 import java.util.HashMap;
@@ -63,30 +64,42 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriPath(label = "common")
     @Metadata(required = true)
     private String topic;
+
     @UriParam(label = "common")
     private String brokers;
+
     @UriParam(label = "common")
     private String clientId;
-    @UriParam(label = "common",
-              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+
+    @UriParam(
+            label = "common",
+            description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new KafkaHeaderFilterStrategy();
+
     @UriParam(label = "common", defaultValue = "100")
     private Integer retryBackoffMs = 100;
+
     @UriParam(label = "common", defaultValue = "1000")
     private Integer retryBackoffMaxMs = 1000;
 
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean preValidateHostAndPort = true;
+
     @UriParam(label = "consumer")
     private boolean topicIsPattern;
+
     @UriParam(label = "consumer")
     private String groupId;
+
     @UriParam(label = "consumer")
     private String groupInstanceId;
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int consumersCount = 1;
-    @UriParam(label = "consumer", description = "To use a custom KafkaHeaderDeserializer to deserialize kafka headers values")
+
+    @UriParam(
+            label = "consumer",
+            description = "To use a custom KafkaHeaderDeserializer to deserialize kafka headers values")
     private KafkaHeaderDeserializer headerDeserializer = new DefaultKafkaHeaderDeserializer();
 
     // interceptor.classes
@@ -114,10 +127,13 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // session.timeout.ms
     @UriParam(label = "consumer", defaultValue = "45000")
     private Integer sessionTimeoutMs = 45000;
+
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer maxPollRecords;
+
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long pollTimeoutMs = 5000L;
+
     @UriParam(label = "consumer", javaType = "java.time.Duration")
     private Integer maxPollIntervalMs;
     // auto.offset.reset1
@@ -138,22 +154,29 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // fetch.max.wait.ms
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer fetchWaitMaxMs = 500;
+
     @UriParam(label = "consumer")
     private SeekPolicy seekTo;
 
     // Consumer configuration properties
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean autoCommitEnable = true;
+
     @UriParam(label = "consumer")
     private boolean allowManualCommit;
+
     @UriParam(label = "consumer")
     private boolean breakOnFirstError;
+
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
+
     @UriParam(label = "consumer", defaultValue = "ERROR_HANDLER")
     private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
+
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long commitTimeoutMs = 5000L;
+
     @UriParam(label = "consumer,advanced", defaultValue = "read_uncommitted", enums = "read_uncommitted,read_committed")
     private String isolationLevel;
 
@@ -166,25 +189,32 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     @UriParam(label = "producer")
     private ExecutorService workerPool;
+
     @UriParam(label = "producer", defaultValue = "10")
     private Integer workerPoolCoreSize = 10;
+
     @UriParam(label = "producer", defaultValue = "20")
     private Integer workerPoolMaxSize = 20;
 
     // Async producer config
     @UriParam(label = "producer", defaultValue = "10000")
     private Integer queueBufferingMaxMessages = 10000;
+
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
     private String valueSerializer = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
+
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
     private String keySerializer = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
 
     @UriParam(label = "producer")
     private String key;
+
     @UriParam(label = "producer")
     private Integer partitionKey;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean useIterator = true;
+
     @UriParam(label = "producer", enums = "all,-1,0,1", defaultValue = "all")
     private String requestRequiredAcks = "all";
     // buffer.memory
@@ -226,6 +256,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // send.buffer.bytes
     @UriParam(label = "producer", defaultValue = "131072")
     private Integer sendBufferBytes = 131072;
+
     @UriParam(label = "producer,advanced")
     private boolean recordMetadata;
     // max.in.flight.requests.per.connection
@@ -250,7 +281,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // reconnect.backoff.ms
     @UriParam(label = "producer", defaultValue = "true")
     private boolean enableIdempotence = true;
-    @UriParam(label = "producer", description = "To use a custom KafkaHeaderSerializer to serialize kafka headers values")
+
+    @UriParam(
+            label = "producer",
+            description = "To use a custom KafkaHeaderSerializer to serialize kafka headers values")
     private KafkaHeaderSerializer headerSerializer = new DefaultKafkaHeaderSerializer();
 
     // reconnect.backoff.max.ms
@@ -329,9 +363,11 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // sasl.kerberos.ticket.renew.window.factor
     @UriParam(label = "common,security", defaultValue = "0.8")
     private Double kerberosRenewWindowFactor = SaslConfigs.DEFAULT_KERBEROS_TICKET_RENEW_WINDOW_FACTOR;
+
     @UriParam(label = "common,security", defaultValue = "DEFAULT")
     // sasl.kerberos.principal.to.local.rules
     private String kerberosPrincipalToLocalRules;
+
     @UriParam(label = "common,security", secret = true)
     // sasl.jaas.config
     private String saslJaasConfig;
@@ -339,17 +375,21 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // Schema registry only options
     @UriParam(label = "schema")
     private String schemaRegistryURL;
+
     @UriParam(label = "schema,consumer")
     private boolean specificAvroReader;
 
     // Additional properties
     @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
     private Map<String, Object> additionalProperties = new HashMap<>();
+
     @UriParam(label = "common", defaultValue = "30000")
     private int shutdownTimeout = 30000;
 
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+    @UriParam(
+            defaultValue = "false",
+            label = "advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
     @UriParam(label = "common,security")
@@ -357,6 +397,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     @UriParam(label = "consumer")
     private boolean batching;
+
     @UriParam(label = "consumer")
     private Integer batchingIntervalMs;
 
@@ -366,8 +407,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "false")
     private boolean transacted;
 
-    public KafkaConfiguration() {
-    }
+    public KafkaConfiguration() {}
 
     /**
      * Returns a copy of this configuration
@@ -439,17 +479,22 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private void applySaslConfiguration(Properties props) {
         addPropertyIfNotEmpty(props, SaslConfigs.SASL_KERBEROS_SERVICE_NAME, getSaslKerberosServiceName());
         addPropertyIfNotEmpty(props, SaslConfigs.SASL_KERBEROS_KINIT_CMD, getKerberosInitCmd());
-        addPropertyIfNotEmpty(props, SaslConfigs.SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN, getKerberosBeforeReloginMinTime());
+        addPropertyIfNotEmpty(
+                props, SaslConfigs.SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN, getKerberosBeforeReloginMinTime());
         addPropertyIfNotEmpty(props, SaslConfigs.SASL_KERBEROS_TICKET_RENEW_JITTER, getKerberosRenewJitter());
-        addPropertyIfNotEmpty(props, SaslConfigs.SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR, getKerberosRenewWindowFactor());
-        addPropertyIfNotEmpty(props, BrokerSecurityConfigs.SASL_KERBEROS_PRINCIPAL_TO_LOCAL_RULES_CONFIG,
+        addPropertyIfNotEmpty(
+                props, SaslConfigs.SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR, getKerberosRenewWindowFactor());
+        addPropertyIfNotEmpty(
+                props,
+                BrokerSecurityConfigs.SASL_KERBEROS_PRINCIPAL_TO_LOCAL_RULES_CONFIG,
                 getKerberosPrincipalToLocalRules());
         addPropertyIfNotEmpty(props, SaslConfigs.SASL_MECHANISM, getSaslMechanism());
         addPropertyIfNotEmpty(props, SaslConfigs.SASL_JAAS_CONFIG, getSaslJaasConfig());
     }
 
     private void applyProducerSslConfiguration(Properties props) {
-        if (securityProtocol.equals(SecurityProtocol.SSL.name()) || securityProtocol.equals(SecurityProtocol.SASL_SSL.name())) {
+        if (securityProtocol.equals(SecurityProtocol.SSL.name())
+                || securityProtocol.equals(SecurityProtocol.SASL_SSL.name())) {
             addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getSecurityProtocol());
             addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getSslKeystoreLocation());
@@ -532,7 +577,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     private void applySslConsumerConfigurationFromOptions(Properties props) {
-        if (securityProtocol.equals(SecurityProtocol.SSL.name()) || securityProtocol.equals(SecurityProtocol.SASL_SSL.name())) {
+        if (securityProtocol.equals(SecurityProtocol.SSL.name())
+                || securityProtocol.equals(SecurityProtocol.SASL_SSL.name())) {
             addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getSslKeystoreLocation());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getSslKeystorePassword());
@@ -571,8 +617,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
         SecureSocketProtocolsParameters secureSocketProtocols = sslContextParameters.getSecureSocketProtocols();
         if (secureSocketProtocols != null) {
-            addCommaSeparatedList(props, SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG,
-                    secureSocketProtocols.getSecureSocketProtocol());
+            addCommaSeparatedList(
+                    props, SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, secureSocketProtocols.getSecureSocketProtocol());
         }
 
         KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
@@ -2056,5 +2102,4 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     public void setTransactionalId(String transactionalId) {
         this.transactionalId = transactionalId;
     }
-
 }

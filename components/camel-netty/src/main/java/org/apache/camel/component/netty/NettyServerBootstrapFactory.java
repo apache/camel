@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.concurrent.ThreadFactory;
@@ -39,7 +40,8 @@ public interface NettyServerBootstrapFactory extends SuspendableService {
      * @param pipelineFactory the channel initializer which set up the channel handler pipeline
      */
     void init(
-            CamelContext camelContext, NettyServerBootstrapConfiguration configuration,
+            CamelContext camelContext,
+            NettyServerBootstrapConfiguration configuration,
             ChannelInitializer<Channel> pipelineFactory);
 
     /**
@@ -50,7 +52,8 @@ public interface NettyServerBootstrapFactory extends SuspendableService {
      * @param pipelineFactory the channel initializer which set up the channel handler pipeline
      */
     void init(
-            ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration,
+            ThreadFactory threadFactory,
+            NettyServerBootstrapConfiguration configuration,
             ChannelInitializer<Channel> pipelineFactory);
 
     /**
@@ -72,5 +75,4 @@ public interface NettyServerBootstrapFactory extends SuspendableService {
      * When a {@link NettyConsumer} is removed and no longer using this bootstrap factory.
      */
     void removeConsumer(NettyConsumer consumer);
-
 }

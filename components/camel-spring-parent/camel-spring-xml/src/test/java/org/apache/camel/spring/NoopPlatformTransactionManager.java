@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.springframework.transaction.PlatformTransactionManager;
@@ -84,7 +85,5 @@ public class NoopPlatformTransactionManager implements PlatformTransactionManage
         public void releaseSavepoint(Object savepoint) throws TransactionException {
             // empty
         }
-
     }
-
 }

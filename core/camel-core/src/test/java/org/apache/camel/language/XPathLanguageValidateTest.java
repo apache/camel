@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.assertj.core.api.Assertions.fail;
 
 import javax.xml.xpath.XPathExpressionException;
 
@@ -25,8 +28,6 @@ import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.spi.Language;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.fail;
 
 public class XPathLanguageValidateTest extends ContextTestSupport {
 
@@ -64,5 +65,4 @@ public class XPathLanguageValidateTest extends ContextTestSupport {
         Assertions.assertFalse(r.isSuccess());
         Assertions.assertTrue(r.getError().startsWith("javax.xml.xpath.XPathExpressionException"));
     }
-
 }

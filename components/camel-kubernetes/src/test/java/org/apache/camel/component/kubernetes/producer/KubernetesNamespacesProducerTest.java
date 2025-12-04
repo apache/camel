@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -34,9 +38,6 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnableKubernetesMockClient
 public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
@@ -50,8 +51,18 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
     @Test
     void listTest() {
-        server.expect().withPath("/api/v1/namespaces")
-                .andReturn(200, new NamespaceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/api/v1/namespaces")
+                .andReturn(
+                        200,
+                        new NamespaceListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
         List<?> result = template.requestBody("direct:list", "", List.class);
         assertEquals(3, result.size());
@@ -61,22 +72,32 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     void getNamespace() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("test");
-        server.expect().withPath("/api/v1/namespaces/test").andReturn(200, new NamespaceBuilder().withMetadata(meta).build())
+        server.expect()
+                .withPath("/api/v1/namespaces/test")
+                .andReturn(200, new NamespaceBuilder().withMetadata(meta).build())
                 .once();
-        Exchange ex = template.request("direct:getNs",
-                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+        Exchange ex = template.request("direct:getNs", exchange -> exchange.getIn()
+                .setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
 
         Namespace ns = ex.getMessage().getBody(Namespace.class);
 
         assertEquals("test", ns.getMetadata().getName());
-
     }
 
     @Test
     void createNamespace() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
-        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).endMetadata().build();
-        server.expect().post().withPath("/api/v1/namespaces").andReturn(200, ns1).once();
+        Namespace ns1 = new NamespaceBuilder()
+                .withNewMetadata()
+                .withName("ns1")
+                .withLabels(labels)
+                .endMetadata()
+                .build();
+        server.expect()
+                .post()
+                .withPath("/api/v1/namespaces")
+                .andReturn(200, ns1)
+                .once();
 
         Exchange ex = template.request("direct:createNamespace", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
@@ -93,9 +114,18 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     void createNamespaceWithAnnotations() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         Map<String, String> annotations = Map.of("my.annotation.key", "my.annotation.value");
-        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).withAnnotations(annotations)
-                .endMetadata().build();
-        server.expect().post().withPath("/api/v1/namespaces").andReturn(200, ns1).once();
+        Namespace ns1 = new NamespaceBuilder()
+                .withNewMetadata()
+                .withName("ns1")
+                .withLabels(labels)
+                .withAnnotations(annotations)
+                .endMetadata()
+                .build();
+        server.expect()
+                .post()
+                .withPath("/api/v1/namespaces")
+                .andReturn(200, ns1)
+                .once();
 
         Exchange ex = template.request("direct:createNamespace", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
@@ -113,10 +143,28 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     @Test
     void updateNamespace() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
-        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).endMetadata().build();
-        server.expect().get().withPath("/api/v1/namespaces/ns1")
-                .andReturn(200, new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build()).once();
-        server.expect().put().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
+        Namespace ns1 = new NamespaceBuilder()
+                .withNewMetadata()
+                .withName("ns1")
+                .withLabels(labels)
+                .endMetadata()
+                .build();
+        server.expect()
+                .get()
+                .withPath("/api/v1/namespaces/ns1")
+                .andReturn(
+                        200,
+                        new NamespaceBuilder()
+                                .withNewMetadata()
+                                .withName("ns1")
+                                .endMetadata()
+                                .build())
+                .once();
+        server.expect()
+                .put()
+                .withPath("/api/v1/namespaces/ns1")
+                .andReturn(200, ns1)
+                .once();
 
         Exchange ex = template.request("direct:updateNamespace", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
@@ -131,11 +179,15 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
     @Test
     void deleteNamespace() {
-        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build();
+        Namespace ns1 = new NamespaceBuilder()
+                .withNewMetadata()
+                .withName("ns1")
+                .endMetadata()
+                .build();
         server.expect().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
 
-        Exchange ex = template.request("direct:deleteNamespace",
-                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1"));
+        Exchange ex = template.request("direct:deleteNamespace", exchange -> exchange.getIn()
+                .setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1"));
 
         boolean nsDeleted = ex.getMessage().getBody(Boolean.class);
 
@@ -147,8 +199,10 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:list").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces");
-                from("direct:getNs").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=getNamespace");
+                from("direct:list")
+                        .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces");
+                from("direct:getNs")
+                        .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=getNamespace");
                 from("direct:createNamespace")
                         .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=createNamespace");
                 from("direct:updateNamespace")

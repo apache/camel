@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.neutron;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +42,6 @@ import org.openstack4j.api.Builders;
 import org.openstack4j.api.networking.PortService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.Port;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class PortProducerTest extends NeutronProducerTestSupport {
@@ -160,7 +161,8 @@ public class PortProducerTest extends NeutronProducerTestSupport {
                 .tenantId("tenantID")
                 .networkId("netId")
                 .deviceId("devID")
-                .macAddress("mac").build();
+                .macAddress("mac")
+                .build();
     }
 
     private void assertEqualsPort(Port old, Port newPort) {

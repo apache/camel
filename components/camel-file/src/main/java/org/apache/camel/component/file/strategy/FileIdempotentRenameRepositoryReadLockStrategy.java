@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
@@ -60,7 +61,8 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     @Override
-    public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
+    public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint)
+            throws Exception {
         this.endpoint = endpoint;
         LOG.info("Using FileIdempotentRepositoryReadLockStrategy: {} on endpoint: {}", idempotentRepository, endpoint);
 
@@ -68,8 +70,8 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+    public boolean acquireExclusiveReadLock(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // in clustered mode then another node may have processed the file so we
         // must check here again if the file exists
         File path = file.getFile();
@@ -105,15 +107,13 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
 
     @Override
     public void releaseExclusiveReadLockOnAbort(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         rename.releaseExclusiveReadLockOnAbort(operations, file, exchange);
     }
 
     @Override
     public void releaseExclusiveReadLockOnRollback(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(exchange, file);
         if (removeOnRollback) {
             idempotentRepository.remove(exchange, key);
@@ -127,8 +127,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
 
     @Override
     public void releaseExclusiveReadLockOnCommit(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(exchange, file);
         if (removeOnCommit) {
             idempotentRepository.remove(exchange, key);
@@ -251,5 +250,4 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     protected void doStop() throws Exception {
         // noop
     }
-
 }

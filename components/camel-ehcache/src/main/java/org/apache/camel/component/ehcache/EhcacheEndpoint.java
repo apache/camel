@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
 
 import org.apache.camel.Category;
@@ -30,18 +31,24 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * Perform caching operations using <a href="http://www.ehcache.org">Ehcache</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "ehcache", title = "Ehcache", syntax = "ehcache:cacheName",
-             category = { Category.CACHE, Category.CLUSTERING }, headersClass = EhcacheConstants.class)
+@UriEndpoint(
+        firstVersion = "2.18.0",
+        scheme = "ehcache",
+        title = "Ehcache",
+        syntax = "ehcache:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = EhcacheConstants.class)
 public class EhcacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
     @Metadata(required = true)
     private final String cacheName;
+
     @UriParam
     private final EhcacheConfiguration configuration;
+
     private EhcacheManager cacheManager;
 
-    EhcacheEndpoint(String uri, EhcacheComponent component, String cacheName,
-                    EhcacheConfiguration configuration) {
+    EhcacheEndpoint(String uri, EhcacheComponent component, String cacheName, EhcacheConfiguration configuration) {
         super(uri, component);
         this.cacheName = cacheName;
         this.configuration = configuration;
@@ -93,5 +100,4 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     EhcacheConfiguration getConfiguration() {
         return configuration;
     }
-
 }

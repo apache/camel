@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
+
+import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
 
 import java.util.Map;
 
@@ -25,8 +28,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 
-import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
-
 /**
  * Azure Blob Storage component using azure java sdk v12.x
  */
@@ -35,8 +36,7 @@ public class BlobComponent extends HealthCheckComponent {
     @Metadata
     private BlobConfiguration configuration = new BlobConfiguration();
 
-    public BlobComponent() {
-    }
+    public BlobComponent() {}
 
     public BlobComponent(final CamelContext camelContext) {
         super(camelContext);
@@ -49,7 +49,8 @@ public class BlobComponent extends HealthCheckComponent {
             throw new IllegalArgumentException("At least the account name must be specified.");
         }
 
-        final BlobConfiguration config = this.configuration != null ? this.configuration.copy() : new BlobConfiguration();
+        final BlobConfiguration config =
+                this.configuration != null ? this.configuration.copy() : new BlobConfiguration();
 
         final String[] parts = remaining.split("/");
 
@@ -98,9 +99,11 @@ public class BlobComponent extends HealthCheckComponent {
 
     private void validateConfigurations(final BlobConfiguration configuration) {
         if (configuration.getServiceClient() == null) {
-            if (SHARED_KEY_CREDENTIAL.equals(configuration.getCredentialType()) && configuration.getCredentials() == null) {
+            if (SHARED_KEY_CREDENTIAL.equals(configuration.getCredentialType())
+                    && configuration.getCredentials() == null) {
                 throw new IllegalArgumentException("When using shared key credential, credentials must be provided.");
-            } else if (SHARED_ACCOUNT_KEY.equals(configuration.getCredentialType()) && configuration.getAccessKey() == null) {
+            } else if (SHARED_ACCOUNT_KEY.equals(configuration.getCredentialType())
+                    && configuration.getAccessKey() == null) {
                 throw new IllegalArgumentException("When using shared account key, access key must be provided.");
             } else if (AZURE_SAS.equals(configuration.getCredentialType()) && configuration.getSasToken() == null) {
                 throw new IllegalArgumentException("When using Azure SAS, SAS Token must be provided.");
@@ -111,18 +114,19 @@ public class BlobComponent extends HealthCheckComponent {
     }
 
     private void validateAzureIdentityCredentials(final BlobConfiguration configuration) {
-        boolean hasClientId = configuration.getAzureClientId() != null && !configuration.getAzureClientId().trim().isEmpty();
-        boolean hasClientSecret
-                = configuration.getAzureClientSecret() != null && !configuration.getAzureClientSecret().trim().isEmpty();
-        boolean hasTenantId = configuration.getAzureTenantId() != null && !configuration.getAzureTenantId().trim().isEmpty();
+        boolean hasClientId = configuration.getAzureClientId() != null
+                && !configuration.getAzureClientId().trim().isEmpty();
+        boolean hasClientSecret = configuration.getAzureClientSecret() != null
+                && !configuration.getAzureClientSecret().trim().isEmpty();
+        boolean hasTenantId = configuration.getAzureTenantId() != null
+                && !configuration.getAzureTenantId().trim().isEmpty();
 
         // If any client credentials are provided, all three must be provided
-        if ((hasClientId || hasClientSecret || hasTenantId) &&
-                !(hasClientId && hasClientSecret && hasTenantId)) {
+        if ((hasClientId || hasClientSecret || hasTenantId) && !(hasClientId && hasClientSecret && hasTenantId)) {
             throw new IllegalArgumentException(
-                    "When using AZURE_IDENTITY with client credentials, all three parameters are required: " +
-                                               "azureClientId, azureClientSecret, and azureTenantId. " +
-                                               "Alternatively, omit all three to use environment variables or other credential sources.");
+                    "When using AZURE_IDENTITY with client credentials, all three parameters are required: "
+                            + "azureClientId, azureClientSecret, and azureTenantId. "
+                            + "Alternatively, omit all three to use environment variables or other credential sources.");
         }
     }
 }

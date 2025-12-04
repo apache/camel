@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
@@ -41,10 +42,21 @@ public class WordpressServiceTagsAdapter extends AbstractWordpressCrudServiceAda
     @Override
     public List<Tag> list(TagSearchCriteria criteria) {
         Objects.requireNonNull(criteria, "The search criteria must be defined");
-        return this.getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(),
-                criteria.getSearch(), criteria.getExclude(), criteria.getInclude(),
-                criteria.getOffset(), criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getPostId(),
-                criteria.getSlug());
+        return this.getSpi()
+                .list(
+                        this.getApiVersion(),
+                        criteria.getContext(),
+                        criteria.getPage(),
+                        criteria.getPerPage(),
+                        criteria.getSearch(),
+                        criteria.getExclude(),
+                        criteria.getInclude(),
+                        criteria.getOffset(),
+                        criteria.getOrder(),
+                        criteria.getOrderBy(),
+                        criteria.isHideEmpty(),
+                        criteria.getPostId(),
+                        criteria.getSlug());
     }
     // @formatter:on
 
@@ -67,5 +79,4 @@ public class WordpressServiceTagsAdapter extends AbstractWordpressCrudServiceAda
     protected Tag doRetrieve(Integer entityID, Context context) {
         return getSpi().retrieve(getApiVersion(), entityID, context);
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,13 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
@@ -57,7 +58,8 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         assertFalse(load);
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
+        ObjectName on =
+                getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.asyncSendBody("direct:start", "Hello World");
@@ -87,7 +89,8 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
+        ObjectName on =
+                getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -107,5 +110,4 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
             assertTrue(Double.parseDouble(load15.replace(',', '.')) >= 0);
         });
     }
-
 }

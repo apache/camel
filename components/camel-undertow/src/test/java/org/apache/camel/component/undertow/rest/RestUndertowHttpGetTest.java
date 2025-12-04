@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestUndertowHttpGetTest extends BaseUndertowTest {
 
@@ -39,17 +40,13 @@ public class RestUndertowHttpGetTest extends BaseUndertowTest {
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic").to("direct:basic");
+                rest("/users/").get("{id}/basic").to("direct:basic");
 
-                from("direct:basic")
-                        .to("mock:input")
-                        .process(exchange -> {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getMessage().setBody(id + ";Donald Duck");
-                        });
+                from("direct:basic").to("mock:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Donald Duck");
+                });
             }
         };
     }
-
 }

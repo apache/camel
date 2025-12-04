@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointIdempotentConsumerTest extends ContextTestSupport {
 
@@ -61,18 +62,25 @@ public class AsyncEndpointIdempotentConsumerTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).idempotentConsumer(header("myId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                        .to("async:bye:camel").process(new Processor() {
+                from("direct:start")
+                        .to("mock:before")
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .idempotentConsumer(header("myId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .to("async:bye:camel")
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
-                        }).to("log:after").to("mock:after").to("mock:result");
+                        })
+                        .to("log:after")
+                        .to("mock:after")
+                        .to("mock:result");
             }
         };
     }
-
 }

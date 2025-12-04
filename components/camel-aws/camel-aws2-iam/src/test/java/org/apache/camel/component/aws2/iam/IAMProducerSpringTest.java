@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -39,9 +43,6 @@ import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupResponse;
 import software.amazon.awssdk.services.iam.model.StatusType;
 import software.amazon.awssdk.services.iam.model.UpdateAccessKeyResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")
@@ -60,7 +61,8 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListAccessKeysResponse resultGet = (ListAccessKeysResponse) exchange.getIn().getBody();
+        ListAccessKeysResponse resultGet =
+                (ListAccessKeysResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.accessKeyMetadata().size());
         assertEquals("1", resultGet.accessKeyMetadata().get(0).accessKeyId());
     }
@@ -91,7 +93,8 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
-                exchange.getIn().setBody(CreateUserRequest.builder().userName("test").build());
+                exchange.getIn()
+                        .setBody(CreateUserRequest.builder().userName("test").build());
             }
         });
 
@@ -151,7 +154,8 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse) exchange.getIn().getBody();
+        CreateAccessKeyResponse resultGet =
+                (CreateAccessKeyResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.accessKey().accessKeyId());
         assertEquals("testSecret", resultGet.accessKey().secretAccessKey());
     }
@@ -171,7 +175,8 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DeleteAccessKeyResponse resultGet = (DeleteAccessKeyResponse) exchange.getIn().getBody();
+        DeleteAccessKeyResponse resultGet =
+                (DeleteAccessKeyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -208,7 +213,8 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        UpdateAccessKeyResponse resultGet = (UpdateAccessKeyResponse) exchange.getIn().getBody();
+        UpdateAccessKeyResponse resultGet =
+                (UpdateAccessKeyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -282,7 +288,8 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        AddUserToGroupResponse resultGet = (AddUserToGroupResponse) exchange.getIn().getBody();
+        AddUserToGroupResponse resultGet =
+                (AddUserToGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -300,12 +307,14 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        RemoveUserFromGroupResponse resultGet = (RemoveUserFromGroupResponse) exchange.getIn().getBody();
+        RemoveUserFromGroupResponse resultGet =
+                (RemoveUserFromGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/iam/IAMComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/iam/IAMComponentSpringTest-context.xml");
     }
 }

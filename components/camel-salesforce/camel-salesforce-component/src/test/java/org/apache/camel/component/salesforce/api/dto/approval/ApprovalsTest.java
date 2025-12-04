@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.approval;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,29 +33,33 @@ import org.apache.camel.component.salesforce.api.dto.approval.Approvals.Info;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class ApprovalsTest {
 
     @Test
     public void shouldDeserialize() throws JsonProcessingException, IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Object read = mapper.readerFor(Approvals.class).readValue("{\n" + //
-                                                                        "  \"approvals\" : {\n" + //
-                                                                        "   \"Account\" : [ {\n" + //
-                                                                        "     \"description\" : null,\n" + //
-                                                                        "     \"id\" : \"04aD00000008Py9\",\n" + //
-                                                                        "     \"name\" : \"Account Approval Process\",\n" + //
-                                                                        "     \"object\" : \"Account\",\n" + //
-                                                                        "     \"sortOrder\" : 1\n" + //
-                                                                        "   } ]\n" + //
-                                                                        "  }\n" + //
-                                                                        "}");
+        final Object read = mapper.readerFor(Approvals.class)
+                .readValue("{\n" + //
+                        "  \"approvals\" : {\n"
+                        + //
+                        "   \"Account\" : [ {\n"
+                        + //
+                        "     \"description\" : null,\n"
+                        + //
+                        "     \"id\" : \"04aD00000008Py9\",\n"
+                        + //
+                        "     \"name\" : \"Account Approval Process\",\n"
+                        + //
+                        "     \"object\" : \"Account\",\n"
+                        + //
+                        "     \"sortOrder\" : 1\n"
+                        + //
+                        "   } ]\n"
+                        + //
+                        "  }\n"
+                        + //
+                        "}");
 
         assertThat("Should deserialize Approvals", read, instanceOf(Approvals.class));
 
@@ -66,7 +77,9 @@ public class ApprovalsTest {
 
         assertNull(accountInfo.getDescription(), "Deserialized `Account` approval should have null description");
         assertEquals("04aD00000008Py9", accountInfo.getId(), "Deserialized `Account` approval should have defined id");
-        assertEquals("Account Approval Process", accountInfo.getName(),
+        assertEquals(
+                "Account Approval Process",
+                accountInfo.getName(),
                 "Deserialized `Account` approval should have defined name");
         assertEquals("Account", accountInfo.getObject(), "Deserialized `Account` approval should have defined object");
         assertEquals(1, accountInfo.getSortOrder(), "Deserialized `Account` approval should have defined sortOrder");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.concurrent.TimeUnit;
@@ -122,5 +123,4 @@ public class ThreadPoolProfileConfigurationProperties {
     public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
     }
-
 }

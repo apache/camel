@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,8 +28,13 @@ public class RegExPredicateIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").choice().when(bodyAs(String.class).regex("^0.*$")).to("mock:result").otherwise()
-                        .to("mock:other").end();
+                from("direct:a")
+                        .choice()
+                        .when(bodyAs(String.class).regex("^0.*$"))
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other")
+                        .end();
             }
         };
     }

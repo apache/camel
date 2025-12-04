@@ -37,7 +37,8 @@ public class AsyncCommitManager extends AbstractCommitManager {
     private final OffsetCache offsetCache = new OffsetCache();
     private final StateRepository<String, String> offsetRepository;
 
-    public AsyncCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
+    public AsyncCommitManager(
+            Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         super(consumer, kafkaConsumer, threadId, printableTopic);
 
         this.consumer = consumer;
@@ -68,8 +69,8 @@ public class AsyncCommitManager extends AbstractCommitManager {
             LOG.debug("Auto commitAsync on stop {} from topic {}", threadId, partition.topic());
         }
 
-        final Map<TopicPartition, OffsetAndMetadata> topicPartitionOffsetAndMetadataMap
-                = Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1));
+        final Map<TopicPartition, OffsetAndMetadata> topicPartitionOffsetAndMetadataMap =
+                Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1));
         consumer.commitAsync(topicPartitionOffsetAndMetadataMap, this::postCommitCallback);
     }
 
@@ -77,7 +78,8 @@ public class AsyncCommitManager extends AbstractCommitManager {
     public KafkaManualCommit getManualCommit(
             Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> consumerRecord) {
 
-        KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
+        KafkaManualCommitFactory manualCommitFactory =
+                kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
         if (manualCommitFactory == null) {
             manualCommitFactory = new DefaultKafkaManualAsyncCommitFactory();
         }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2;
 
 import java.util.Map;
@@ -31,11 +32,10 @@ import org.junit.jupiter.api.TestInstance;
 abstract class AbstractDhis2TestSupport extends CamelTestSupport {
 
     @Override
-    protected CamelContext createCamelContext()
-            throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
 
-        String baseApiUrl = "http://" + Environment.getDhis2Container().getHost() + ":" + Environment.getDhis2Container()
-                .getFirstMappedPort() + "/api";
+        String baseApiUrl = "http://" + Environment.getDhis2Container().getHost() + ":"
+                + Environment.getDhis2Container().getFirstMappedPort() + "/api";
         String username = "admin";
         String password = "district";
 
@@ -64,8 +64,7 @@ abstract class AbstractDhis2TestSupport extends CamelTestSupport {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T requestBody(String endpoint, Object body)
-            throws CamelExecutionException {
+    protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
         return (T) template().requestBody(endpoint, body);
     }
 }

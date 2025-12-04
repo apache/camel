@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,7 +41,12 @@ public class LoopOnPrepareTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .loop(3).onPrepare(new MyPrepare()).transform(body().append("B")).to("mock:loop").end().to("mock:result");
+                        .loop(3)
+                        .onPrepare(new MyPrepare())
+                        .transform(body().append("B"))
+                        .to("mock:loop")
+                        .end()
+                        .to("mock:result");
             }
         };
     }

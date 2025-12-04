@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -26,7 +27,8 @@ public interface ManagedClaimCheckMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Claim check id")
     String getKey();
 
-    @ManagedAttribute(description = "Specified a filter to control what data gets merging data back from the claim check repository")
+    @ManagedAttribute(
+            description =
+                    "Specified a filter to control what data gets merging data back from the claim check repository")
     String getFilter();
-
 }

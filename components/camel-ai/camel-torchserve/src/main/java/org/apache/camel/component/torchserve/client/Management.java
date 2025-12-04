@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client;
 
 import java.util.List;
@@ -91,5 +92,4 @@ public interface Management {
      * Not supported yet.
      */
     Object token(String type) throws ApiException;
-
 }

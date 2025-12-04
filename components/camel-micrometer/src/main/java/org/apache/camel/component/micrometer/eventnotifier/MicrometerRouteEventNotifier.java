@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.eventnotifier;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -36,7 +37,8 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
     private Gauge gaugeAdded;
     private Gauge gaugeRunning;
     private Gauge gaugeReloaded;
-    private MicrometerRouteEventNotifierNamingStrategy namingStrategy = MicrometerRouteEventNotifierNamingStrategy.DEFAULT;
+    private MicrometerRouteEventNotifierNamingStrategy namingStrategy =
+            MicrometerRouteEventNotifierNamingStrategy.DEFAULT;
     boolean registerKamelets;
     boolean registerTemplates = true;
 
@@ -73,7 +75,8 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
                 .baseUnit("routes")
                 .tags(namingStrategy.getTags(getCamelContext()))
                 .register(getMeterRegistry());
-        gaugeReloaded = Gauge.builder(namingStrategy.getRouteReloadedName(), routesReloaded, value -> (double) value.get())
+        gaugeReloaded = Gauge.builder(
+                        namingStrategy.getRouteReloadedName(), routesReloaded, value -> (double) value.get())
                 .baseUnit("routes")
                 .tags(namingStrategy.getTags(getCamelContext()))
                 .register(getMeterRegistry());

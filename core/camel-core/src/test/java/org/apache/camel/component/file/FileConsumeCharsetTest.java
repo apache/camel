@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.nio.file.Files;
 import java.util.UUID;
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 /**
  *
  */
@@ -38,8 +39,8 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        template.sendBodyAndHeader(fileUri("?charset=UTF-8"), "Hello World \u4f60\u597d", Exchange.FILE_NAME,
-                TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                fileUri("?charset=UTF-8"), "Hello World \u4f60\u597d", Exchange.FILE_NAME, TEST_FILE_NAME);
     }
 
     @Test
@@ -60,9 +61,9 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&fileName=" + TEST_FILE_NAME + "&delete=true&charset=UTF-8"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
-
 }

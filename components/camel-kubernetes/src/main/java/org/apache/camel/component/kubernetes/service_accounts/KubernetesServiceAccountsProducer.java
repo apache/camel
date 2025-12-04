@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.service_accounts;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -34,8 +37,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
-
 public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesServiceAccountsProducer.class);
@@ -54,7 +55,6 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
-
             case KubernetesOperations.LIST_SERVICE_ACCOUNTS:
                 doList(exchange);
                 break;
@@ -89,9 +89,17 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         ServiceAccountList saList;
 
         if (ObjectHelper.isEmpty(namespace)) {
-            saList = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace().list();
+            saList = getEndpoint()
+                    .getKubernetesClient()
+                    .serviceAccounts()
+                    .inAnyNamespace()
+                    .list();
         } else {
-            saList = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespace).list();
+            saList = getEndpoint()
+                    .getKubernetesClient()
+                    .serviceAccounts()
+                    .inNamespace(namespace)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, saList.getItems());
@@ -99,8 +107,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
     protected void doListServiceAccountsByLabels(Exchange exchange) {
         String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        Map<String, String> labels
-                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
         ServiceAccountList saList;
 
         if (ObjectHelper.isEmpty(labels)) {
@@ -109,9 +117,19 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         }
 
         if (ObjectHelper.isEmpty(namespace)) {
-            saList = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace().withLabels(labels).list();
+            saList = getEndpoint()
+                    .getKubernetesClient()
+                    .serviceAccounts()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         } else {
-            saList = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespace).withLabels(labels).list();
+            saList = getEndpoint()
+                    .getKubernetesClient()
+                    .serviceAccounts()
+                    .inNamespace(namespace)
+                    .withLabels(labels)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, saList.getItems());
@@ -128,8 +146,12 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             LOG.error("Get a specific Service Account require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Service Account require specify a namespace name");
         }
-        ServiceAccount sa
-                = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).get();
+        ServiceAccount sa = getEndpoint()
+                .getKubernetesClient()
+                .serviceAccounts()
+                .inNamespace(namespaceName)
+                .withName(saName)
+                .get();
 
         prepareOutboundMessage(exchange, sa);
     }
@@ -145,8 +167,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
     private void doCreateOrUpdateServiceAccount(
             Exchange exchange, String operationName, Function<Resource<ServiceAccount>, ServiceAccount> operation) {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        ServiceAccount saToCreate
-                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, ServiceAccount.class);
+        ServiceAccount saToCreate =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, ServiceAccount.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("{} a specific Service Account require specify a namespace name", operationName);
             throw new IllegalArgumentException(
@@ -154,10 +176,13 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         }
         if (ObjectHelper.isEmpty(saToCreate)) {
             LOG.error("{} a specific Service Account require specify a Service Account bean", operationName);
-            throw new IllegalArgumentException(
-                    String.format("%s a specific Service Account require specify a Service Account bean", operationName));
+            throw new IllegalArgumentException(String.format(
+                    "%s a specific Service Account require specify a Service Account bean", operationName));
         }
-        ServiceAccount sa = operation.apply(getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName)
+        ServiceAccount sa = operation.apply(getEndpoint()
+                .getKubernetesClient()
+                .serviceAccounts()
+                .inNamespace(namespaceName)
                 .resource(saToCreate));
 
         prepareOutboundMessage(exchange, sa);
@@ -168,15 +193,20 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(saName)) {
             LOG.error("Delete a specific Service Account require specify a Service Account name");
-            throw new IllegalArgumentException("Delete a specific Service Account require specify a Service Account name");
+            throw new IllegalArgumentException(
+                    "Delete a specific Service Account require specify a Service Account name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Delete a specific Service Account require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific Service Account require specify a namespace name");
         }
 
-        List<StatusDetails> statusDetails
-                = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).delete();
+        List<StatusDetails> statusDetails = getEndpoint()
+                .getKubernetesClient()
+                .serviceAccounts()
+                .inNamespace(namespaceName)
+                .withName(saName)
+                .delete();
         boolean saDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, saDeleted);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax;
 
 import java.util.LinkedHashMap;
@@ -105,8 +106,9 @@ public class StaxStreamXMLReader implements XMLReader {
         int elementDepth = 0;
         int eventType = reader.getEventType();
         while (true) {
-            if (eventType != XMLStreamConstants.START_DOCUMENT && eventType != XMLStreamConstants.END_DOCUMENT &&
-                    !documentStarted) {
+            if (eventType != XMLStreamConstants.START_DOCUMENT
+                    && eventType != XMLStreamConstants.END_DOCUMENT
+                    && !documentStarted) {
                 handleStartDocument();
                 documentStarted = true;
             }
@@ -219,8 +221,9 @@ public class StaxStreamXMLReader implements XMLReader {
                         startPrefixMapping(prefix, namespace);
                     }
                 }
-                getContentHandler().startElement(qName.getNamespaceURI(), qName.getLocalPart(), toQualifiedName(qName),
-                        getAttributes());
+                getContentHandler()
+                        .startElement(
+                                qName.getNamespaceURI(), qName.getLocalPart(), toQualifiedName(qName), getAttributes());
             } else {
                 getContentHandler().startElement("", "", toQualifiedName(qName), getAttributes());
             }
@@ -311,8 +314,12 @@ public class StaxStreamXMLReader implements XMLReader {
             if (type == null) {
                 type = "CDATA";
             }
-            attributes.addAttribute(namespace, reader.getAttributeLocalName(i),
-                    toQualifiedName(reader.getAttributeName(i)), type, reader.getAttributeValue(i));
+            attributes.addAttribute(
+                    namespace,
+                    reader.getAttributeLocalName(i),
+                    toQualifiedName(reader.getAttributeName(i)),
+                    type,
+                    reader.getAttributeValue(i));
         }
         if (hasNamespacePrefixesFeature()) {
             for (int i = 0; i < reader.getNamespaceCount(); i++) {

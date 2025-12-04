@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.query;
 
 import java.util.ArrayList;
@@ -24,8 +25,7 @@ import software.amazon.awssdk.services.timestreamquery.model.*;
 
 public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
 
-    public AmazonTimestreamQueryClientMock() {
-    }
+    public AmazonTimestreamQueryClientMock() {}
 
     @Override
     public DescribeEndpointsResponse describeEndpoints(DescribeEndpointsRequest describeEndpointsRequest) {
@@ -59,7 +59,8 @@ public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
     }
 
     @Override
-    public DescribeScheduledQueryResponse describeScheduledQuery(DescribeScheduledQueryRequest describeScheduledQueryRequest) {
+    public DescribeScheduledQueryResponse describeScheduledQuery(
+            DescribeScheduledQueryRequest describeScheduledQueryRequest) {
         DescribeScheduledQueryResponse.Builder result = DescribeScheduledQueryResponse.builder();
         ScheduledQueryDescription.Builder description = ScheduledQueryDescription.builder();
         description.arn("aws-timestream:test:scheduled-query:arn");
@@ -68,7 +69,8 @@ public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
     }
 
     @Override
-    public ExecuteScheduledQueryResponse executeScheduledQuery(ExecuteScheduledQueryRequest executeScheduledQueryRequest) {
+    public ExecuteScheduledQueryResponse executeScheduledQuery(
+            ExecuteScheduledQueryRequest executeScheduledQueryRequest) {
         ExecuteScheduledQueryResponse.Builder result = ExecuteScheduledQueryResponse.builder();
         return result.build();
     }
@@ -110,7 +112,5 @@ public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
     }
 
     @Override
-    public void close() {
-
-    }
+    public void close() {}
 }

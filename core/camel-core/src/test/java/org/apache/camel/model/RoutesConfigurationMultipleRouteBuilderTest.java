@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,15 +41,13 @@ public class RoutesConfigurationMultipleRouteBuilderTest extends ContextTestSupp
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Foo"));
+                from("direct:start").throwException(new IllegalArgumentException("Foo"));
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start2")
-                        .throwException(new IllegalArgumentException("Foo2"));
+                from("direct:start2").throwException(new IllegalArgumentException("Foo2"));
             }
         });
 
@@ -61,5 +60,4 @@ public class RoutesConfigurationMultipleRouteBuilderTest extends ContextTestSupp
 
         assertMockEndpointsSatisfied();
     }
-
 }

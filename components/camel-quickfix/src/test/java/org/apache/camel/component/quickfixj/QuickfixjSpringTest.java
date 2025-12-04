@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Properties;
 
@@ -31,22 +36,19 @@ import quickfix.SessionSettings;
 import quickfix.field.MsgType;
 import quickfix.fix42.NewOrderSingle;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class QuickfixjSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/quickfixj/QuickfixjSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quickfixj/QuickfixjSpringTest-context.xml");
     }
 
     @Test
     public void configureInSpring() throws Exception {
         SessionID sessionID = new SessionID("FIX.4.2:INITIATOR->ACCEPTOR");
-        QuickfixjConfiguration configuration
-                = context.getRegistry().lookupByNameAndType("quickfixjConfiguration", QuickfixjConfiguration.class);
+        QuickfixjConfiguration configuration =
+                context.getRegistry().lookupByNameAndType("quickfixjConfiguration", QuickfixjConfiguration.class);
 
         SessionSettings springSessionSettings = configuration.createSessionSettings();
         Properties sessionProperties = springSessionSettings.getSessionProperties(sessionID, true);
@@ -61,7 +63,8 @@ public class QuickfixjSpringTest extends CamelSpringTestSupport {
 
         QuickfixjComponent lazyComponent = context.getComponent("lazyQuickfix", QuickfixjComponent.class);
         assertThat(lazyComponent.isLazyCreateEngines(), is(true));
-        QuickfixjEngine lazyEngine = lazyComponent.getEngines().values().iterator().next();
+        QuickfixjEngine lazyEngine =
+                lazyComponent.getEngines().values().iterator().next();
         assertThat(lazyEngine.isInitialized(), is(false));
 
         assertThat(engine.getMessageFactory(), is(instanceOf(CustomMessageFactory.class)));

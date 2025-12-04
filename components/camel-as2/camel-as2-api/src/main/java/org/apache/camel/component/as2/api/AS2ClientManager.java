@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
+
+import static org.apache.camel.component.as2.api.entity.ApplicationEntity.CONTENT_DISPOSITION_PATTERN;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,8 +49,6 @@ import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.operator.OutputCompressor;
 import org.bouncycastle.operator.OutputEncryptor;
 import org.slf4j.helpers.MessageFormatter;
-
-import static org.apache.camel.component.as2.api.entity.ApplicationEntity.CONTENT_DISPOSITION_PATTERN;
 
 /**
  * Sends EDI Messages over HTTP
@@ -82,7 +83,8 @@ public class AS2ClientManager {
     /**
      * The HTTP Context Attribute indicating the EDI message transfer encoding to be sent.
      */
-    public static final String EDI_MESSAGE_TRANSFER_ENCODING = CAMEL_AS2_CLIENT_PREFIX + "edi-message-transfer-encoding";
+    public static final String EDI_MESSAGE_TRANSFER_ENCODING =
+            CAMEL_AS2_CLIENT_PREFIX + "edi-message-transfer-encoding";
 
     /**
      * The HTTP Context Attribute containing the HTTP request message transporting the EDI message
@@ -166,7 +168,8 @@ public class AS2ClientManager {
      * The HTTP Context Attribute containing the list of names of the requested MIC algorithms to be used by the
      * receiving system to construct a message disposition notification.
      */
-    public static final String SIGNED_RECEIPT_MIC_ALGORITHMS = CAMEL_AS2_CLIENT_PREFIX + "signed-receipt-mic-algorithms";
+    public static final String SIGNED_RECEIPT_MIC_ALGORITHMS =
+            CAMEL_AS2_CLIENT_PREFIX + "signed-receipt-mic-algorithms";
 
     public static final String RECEIPT_DELIVERY_OPTION = CAMEL_AS2_CLIENT_PREFIX + "Receipt-Delivery-Option";
 
@@ -282,15 +285,12 @@ public class AS2ClientManager {
             if (ediMessage instanceof InputStream isMsg) {
                 msgBytes = isMsg.readAllBytes();
             } else if (ediMessage instanceof String strMsg) {
-                msgBytes = strMsg.getBytes(ct.getCharset() == null
-                        ? StandardCharsets.US_ASCII : ct.getCharset());
+                msgBytes = strMsg.getBytes(ct.getCharset() == null ? StandardCharsets.US_ASCII : ct.getCharset());
             } else {
-                throw new IllegalArgumentException(
-                        "Message type not supported. Must be InputStream or String");
+                throw new IllegalArgumentException("Message type not supported. Must be InputStream or String");
             }
-            applicationEntity
-                    = EntityUtils.createEDIEntity(msgBytes, ct, ediMessageTransferEncoding, false,
-                            attachedFileName);
+            applicationEntity =
+                    EntityUtils.createEDIEntity(msgBytes, ct, ediMessageTransferEncoding, false, attachedFileName);
         } catch (Exception e) {
             throw new HttpException("Failed to create EDI message entity", e);
         }
@@ -300,8 +300,10 @@ public class AS2ClientManager {
             case PLAIN: {
                 plain(applicationEntity, request);
                 if (attachedFileName != null && !attachedFileName.isEmpty()) {
-                    request.setHeader(AS2Header.CONTENT_DISPOSITION,
-                            MessageFormatter.format(CONTENT_DISPOSITION_PATTERN, attachedFileName).getMessage());
+                    request.setHeader(
+                            AS2Header.CONTENT_DISPOSITION,
+                            MessageFormatter.format(CONTENT_DISPOSITION_PATTERN, attachedFileName)
+                                    .getMessage());
                 }
                 break;
             }
@@ -350,7 +352,8 @@ public class AS2ClientManager {
         return httpContext;
     }
 
-    private HttpResponse sendRequest(HttpCoreContext httpContext, BasicClassicHttpRequest request) throws HttpException {
+    private HttpResponse sendRequest(HttpCoreContext httpContext, BasicClassicHttpRequest request)
+            throws HttpException {
         HttpResponse response;
         try {
             httpContext.setAttribute(AS2_CONNECTION, as2ClientConnection);
@@ -377,23 +380,26 @@ public class AS2ClientManager {
         // Create Compressed Entity containing the EDI Entity
         CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
         OutputCompressor compressor = createCompressor(httpContext);
-        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
-                = new ApplicationPkcs7MimeCompressedDataEntity(
+        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity =
+                new ApplicationPkcs7MimeCompressedDataEntity(
                         applicationEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, false);
 
         // Create Multipart Signed Entity containing the Compressed Entity
         AS2SignedDataGenerator signingGenerator = createSigningGenerator(httpContext);
         MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
-                pkcs7MimeCompressedDataEntity, signingGenerator,
-                StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
+                pkcs7MimeCompressedDataEntity,
+                signingGenerator,
+                StandardCharsets.US_ASCII.name(),
+                AS2TransferEncoding.BASE64,
+                false,
+                null);
 
         // Create Enveloped Entity containing th Signed Entity
         CMSEnvelopedDataGenerator envelopedDataGenerator = createEncryptingGenerator(httpContext);
         OutputEncryptor encryptor = createEncryptor(httpContext);
-        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity
-                = new ApplicationPkcs7MimeEnvelopedDataEntity(
-                        multipartSignedEntity, envelopedDataGenerator, encryptor, AS2TransferEncoding.BASE64,
-                        true);
+        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity =
+                new ApplicationPkcs7MimeEnvelopedDataEntity(
+                        multipartSignedEntity, envelopedDataGenerator, encryptor, AS2TransferEncoding.BASE64, true);
 
         // Add Enveloped Entity to main body of request
         EntityUtils.setMessageEntity(request, pkcs7MimeEnvelopedDataEntity);
@@ -406,22 +412,29 @@ public class AS2ClientManager {
         // Create Multipart Signed Entity containing EDI Entity
         AS2SignedDataGenerator signingGenerator = createSigningGenerator(httpContext);
         MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
-                applicationEntity, signingGenerator,
-                StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
+                applicationEntity,
+                signingGenerator,
+                StandardCharsets.US_ASCII.name(),
+                AS2TransferEncoding.BASE64,
+                false,
+                null);
 
         // Create Compressed Entity containing Multipart Signed Entity
         CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
         OutputCompressor compressor = createCompressor(httpContext);
-        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
-                = new ApplicationPkcs7MimeCompressedDataEntity(
+        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity =
+                new ApplicationPkcs7MimeCompressedDataEntity(
                         multipartSignedEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, false);
 
         // Create Enveloped Entity containing Compressed Entity
         CMSEnvelopedDataGenerator envelopedDataGenerator = createEncryptingGenerator(httpContext);
         OutputEncryptor encryptor = createEncryptor(httpContext);
-        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity
-                = new ApplicationPkcs7MimeEnvelopedDataEntity(
-                        pkcs7MimeCompressedDataEntity, envelopedDataGenerator, encryptor, AS2TransferEncoding.BASE64,
+        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity =
+                new ApplicationPkcs7MimeEnvelopedDataEntity(
+                        pkcs7MimeCompressedDataEntity,
+                        envelopedDataGenerator,
+                        encryptor,
+                        AS2TransferEncoding.BASE64,
                         true);
 
         // Add Enveloped Entity to main body of request
@@ -434,16 +447,19 @@ public class AS2ClientManager {
         // Create Compressed Entity containing EDI Entity
         CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
         OutputCompressor compressor = createCompressor(httpContext);
-        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
-                = new ApplicationPkcs7MimeCompressedDataEntity(
+        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity =
+                new ApplicationPkcs7MimeCompressedDataEntity(
                         applicationEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, false);
 
         // Create Enveloped Entity containing Compressed Entity
         CMSEnvelopedDataGenerator envelopedDataGenerator = createEncryptingGenerator(httpContext);
         OutputEncryptor encryptor = createEncryptor(httpContext);
-        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity
-                = new ApplicationPkcs7MimeEnvelopedDataEntity(
-                        pkcs7MimeCompressedDataEntity, envelopedDataGenerator, encryptor, AS2TransferEncoding.BASE64,
+        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity =
+                new ApplicationPkcs7MimeEnvelopedDataEntity(
+                        pkcs7MimeCompressedDataEntity,
+                        envelopedDataGenerator,
+                        encryptor,
+                        AS2TransferEncoding.BASE64,
                         true);
 
         // Add Enveloped Entity to main body of request
@@ -457,15 +473,19 @@ public class AS2ClientManager {
         // Create Compressed Entity containing the EDI Entity
         CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
         OutputCompressor compressor = createCompressor(httpContext);
-        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
-                = new ApplicationPkcs7MimeCompressedDataEntity(
+        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity =
+                new ApplicationPkcs7MimeCompressedDataEntity(
                         applicationEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, false);
 
         // Create Multipart Signed Entity containing the Compressed Entity
         AS2SignedDataGenerator signingGenerator = createSigningGenerator(httpContext);
         MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                 pkcs7MimeCompressedDataEntity,
-                signingGenerator, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, true, null);
+                signingGenerator,
+                StandardCharsets.US_ASCII.name(),
+                AS2TransferEncoding.BASE64,
+                true,
+                null);
 
         // Add Compressed Entity to main body of request.
         EntityUtils.setMessageEntity(request, multipartSignedEntity);
@@ -478,13 +498,17 @@ public class AS2ClientManager {
         AS2SignedDataGenerator signingGenerator = createSigningGenerator(httpContext);
         MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                 applicationEntity,
-                signingGenerator, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
+                signingGenerator,
+                StandardCharsets.US_ASCII.name(),
+                AS2TransferEncoding.BASE64,
+                false,
+                null);
 
         // Create Compressed Entity containing Multipart Signed Entity
         CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
         OutputCompressor compressor = createCompressor(httpContext);
-        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
-                = new ApplicationPkcs7MimeCompressedDataEntity(
+        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity =
+                new ApplicationPkcs7MimeCompressedDataEntity(
                         multipartSignedEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, true);
 
         // Add Compressed Entity to main body of request.
@@ -497,8 +521,8 @@ public class AS2ClientManager {
         // Create Compressed Entity containing EDI Entity
         CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
         OutputCompressor compressor = createCompressor(httpContext);
-        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
-                = new ApplicationPkcs7MimeCompressedDataEntity(
+        ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity =
+                new ApplicationPkcs7MimeCompressedDataEntity(
                         applicationEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, true);
 
         // Add Compressed Entity to main body of request.
@@ -512,13 +536,17 @@ public class AS2ClientManager {
         AS2SignedDataGenerator signingGenrator = createSigningGenerator(httpContext);
         MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                 applicationEntity,
-                signingGenrator, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
+                signingGenrator,
+                StandardCharsets.US_ASCII.name(),
+                AS2TransferEncoding.BASE64,
+                false,
+                null);
 
         // Create Enveloped Entity containing Multipart Signed Entity
         CMSEnvelopedDataGenerator envelopedDataGenerator = createEncryptingGenerator(httpContext);
         OutputEncryptor encryptor = createEncryptor(httpContext);
-        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity
-                = new ApplicationPkcs7MimeEnvelopedDataEntity(
+        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity =
+                new ApplicationPkcs7MimeEnvelopedDataEntity(
                         multipartSignedEntity, envelopedDataGenerator, encryptor, AS2TransferEncoding.BASE64, true);
 
         // Add Multipart Enveloped Entity to main body of request.
@@ -528,12 +556,13 @@ public class AS2ClientManager {
     /**
      * Create Enveloped Entity containing EDI Entity
      */
-    private void encrypted(HttpCoreContext httpContext, ApplicationEntity applicationEntity, BasicClassicHttpRequest request)
+    private void encrypted(
+            HttpCoreContext httpContext, ApplicationEntity applicationEntity, BasicClassicHttpRequest request)
             throws HttpException {
         CMSEnvelopedDataGenerator envelopedDataGenerator = createEncryptingGenerator(httpContext);
         OutputEncryptor encryptor = createEncryptor(httpContext);
-        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity
-                = new ApplicationPkcs7MimeEnvelopedDataEntity(
+        ApplicationPkcs7MimeEnvelopedDataEntity pkcs7MimeEnvelopedDataEntity =
+                new ApplicationPkcs7MimeEnvelopedDataEntity(
                         applicationEntity, envelopedDataGenerator, encryptor, AS2TransferEncoding.BASE64, true);
 
         // Add Multipart Enveloped Entity to main body of request.
@@ -541,12 +570,17 @@ public class AS2ClientManager {
     }
 
     // Create Multipart Signed Entity containing EDI Entity
-    private void signed(HttpCoreContext httpContext, ApplicationEntity applicationEntity, BasicClassicHttpRequest request)
+    private void signed(
+            HttpCoreContext httpContext, ApplicationEntity applicationEntity, BasicClassicHttpRequest request)
             throws HttpException {
         AS2SignedDataGenerator signingGenerator = createSigningGenerator(httpContext);
         MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
-                applicationEntity, signingGenerator,
-                StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, true, null);
+                applicationEntity,
+                signingGenerator,
+                StandardCharsets.US_ASCII.name(),
+                AS2TransferEncoding.BASE64,
+                true,
+                null);
 
         // Add Multipart Signed Entity to main body of request.
         EntityUtils.setMessageEntity(request, multipartSignedEntity);
@@ -560,7 +594,8 @@ public class AS2ClientManager {
 
     public AS2SignedDataGenerator createSigningGenerator(HttpCoreContext httpContext) throws HttpException {
 
-        AS2SignatureAlgorithm signatureAlgorithm = httpContext.getAttribute(SIGNING_ALGORITHM, AS2SignatureAlgorithm.class);
+        AS2SignatureAlgorithm signatureAlgorithm =
+                httpContext.getAttribute(SIGNING_ALGORITHM, AS2SignatureAlgorithm.class);
         if (signatureAlgorithm == null) {
             throw new HttpException("Signing algorithm missing");
         }
@@ -576,7 +611,6 @@ public class AS2ClientManager {
         }
 
         return SigningUtils.createSigningGenerator(signatureAlgorithm, certificateChain, privateKey);
-
     }
 
     public CMSEnvelopedDataGenerator createEncryptingGenerator(HttpCoreContext httpContext) throws HttpException {
@@ -587,7 +621,6 @@ public class AS2ClientManager {
         }
 
         return EncryptingUtils.createEnvelopDataGenerator(certificateChain);
-
     }
 
     public CMSCompressedDataGenerator createCompressorGenerator() {
@@ -596,8 +629,8 @@ public class AS2ClientManager {
 
     public OutputEncryptor createEncryptor(HttpCoreContext httpContext) throws HttpException {
 
-        AS2EncryptionAlgorithm encryptionAlgorithm
-                = httpContext.getAttribute(ENCRYPTING_ALGORITHM, AS2EncryptionAlgorithm.class);
+        AS2EncryptionAlgorithm encryptionAlgorithm =
+                httpContext.getAttribute(ENCRYPTING_ALGORITHM, AS2EncryptionAlgorithm.class);
         if (encryptionAlgorithm == null) {
             throw new HttpException("Encrypting algorithm missing");
         }
@@ -606,13 +639,12 @@ public class AS2ClientManager {
     }
 
     public OutputCompressor createCompressor(HttpCoreContext httpContext) throws HttpException {
-        AS2CompressionAlgorithm compressionAlgorithm
-                = httpContext.getAttribute(COMPRESSION_ALGORITHM, AS2CompressionAlgorithm.class);
+        AS2CompressionAlgorithm compressionAlgorithm =
+                httpContext.getAttribute(COMPRESSION_ALGORITHM, AS2CompressionAlgorithm.class);
         if (compressionAlgorithm == null) {
             throw new HttpException("Compression algorithm missing");
         }
 
         return CompressionUtils.createCompressor(compressionAlgorithm);
     }
-
 }

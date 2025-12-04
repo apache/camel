@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -23,8 +26,6 @@ import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class ConsumerTemplateAutoRegisterTest extends SpringRunWithTestSupport {
@@ -38,7 +39,8 @@ public class ConsumerTemplateAutoRegisterTest extends SpringRunWithTestSupport {
     @Test
     public void testHasTemplate() {
         assertNotNull(template, "Should have injected a consumer template");
-        assertNotNull(((DefaultConsumerTemplate) template).getCamelContext(), "The template context should not be null");
+        assertNotNull(
+                ((DefaultConsumerTemplate) template).getCamelContext(), "The template context should not be null");
 
         ConsumerTemplate lookup = context.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
         assertNotNull(lookup, "Should lookup consumer template");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
 
 import io.grpc.Metadata;
@@ -30,10 +31,8 @@ public class GrpcMockServerInterceptor implements ServerInterceptor {
 
     @Override
     public <ReqT, RespT> Listener<ReqT> interceptCall(
-            ServerCall<ReqT, RespT> call, Metadata headers,
-            ServerCallHandler<ReqT, RespT> next) {
+            ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
         LOG.info("Grpc Server Interceptor intercepted server call, forwarding now.");
         return next.startCall(call, headers);
     }
-
 }

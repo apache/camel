@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.set;
+
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_SET;
 
 import java.util.Map;
 
@@ -32,15 +35,19 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.ignite.configuration.CollectionConfiguration;
 
-import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_SET;
-
 /**
  * Interact with <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Set data structures</a>.
  *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SET, title = "Ignite Sets", syntax = "ignite-set:name",
-             category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_SET,
+        title = "Ignite Sets",
+        syntax = "ignite-set:name",
+        category = {Category.CACHE, Category.CLUSTERING},
+        producerOnly = true,
+        headersClass = IgniteConstants.class)
 public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
@@ -53,8 +60,8 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private IgniteSetOperation operation;
 
-    public IgniteSetEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
-                             IgniteSetComponent igniteComponent) {
+    public IgniteSetEndpoint(
+            String endpointUri, String remaining, Map<String, Object> parameters, IgniteSetComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         name = remaining;
 
@@ -120,5 +127,4 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
     public void setOperation(IgniteSetOperation operation) {
         this.operation = operation;
     }
-
 }

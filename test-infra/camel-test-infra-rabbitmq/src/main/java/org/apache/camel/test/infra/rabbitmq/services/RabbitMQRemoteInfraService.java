@@ -66,9 +66,7 @@ public class RabbitMQRemoteInfraService implements RabbitMQInfraService {
     }
 
     @Override
-    public void shutdown() {
-
-    }
+    public void shutdown() {}
 
     @Override
     public String managementUsername() {

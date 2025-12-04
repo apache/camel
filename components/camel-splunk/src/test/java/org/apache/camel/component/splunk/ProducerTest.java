@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -39,12 +46,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ProducerTest extends SplunkMockTestSupport {
@@ -131,7 +132,7 @@ public class ProducerTest extends SplunkMockTestSupport {
             Producer tcpProducer = tcpEndpoint.createProducer();
 
             DataWriter dw = ((SplunkProducer) tcpProducer).getDataWriter();
-            //connection is created to socket localhost:-1, which has to fail
+            // connection is created to socket localhost:-1, which has to fail
             Assertions.assertThrows(Exception.class, () -> dw.start());
         } finally {
             tcpEndpoint.getConfiguration().setTcpReceiverLocalPort(null);
@@ -146,7 +147,7 @@ public class ProducerTest extends SplunkMockTestSupport {
             Producer tcpProducer = tcpEndpoint.createProducer();
 
             DataWriter dw = ((SplunkProducer) tcpProducer).getDataWriter();
-            //connection is created to socket foo:2222, which has to fail
+            // connection is created to socket foo:2222, which has to fail
             Assertions.assertThrows(RuntimeException.class, () -> dw.start());
         } finally {
             tcpEndpoint.getConfiguration().setHost(host);
@@ -155,24 +156,25 @@ public class ProducerTest extends SplunkMockTestSupport {
 
     @Test
     public void testBodyWithoutRawOption() {
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:tcp", "foobar"));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:tcp", "foobar"));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:stream").to(
-                        "splunk://stream?username=foo&password=bar&index=myindex&sourceType=StreamSourceType&source=StreamSource")
+                from("direct:stream")
+                        .to(
+                                "splunk://stream?username=foo&password=bar&index=myindex&sourceType=StreamSourceType&source=StreamSource")
                         .to("mock:stream-result");
 
                 from("direct:submit")
                         .to("splunk://submit?username=foo&password=bar&index=myindex&sourceType=testSource&source=test")
                         .to("mock:submitresult");
 
-                from("direct:tcp").to(
-                        "splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test")
+                from("direct:tcp")
+                        .to(
+                                "splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test")
                         .to("mock:tcpresult");
             }
         };

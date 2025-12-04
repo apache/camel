@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -32,8 +35,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SamplingThrottlerTest extends ContextTestSupport {
 
@@ -166,11 +167,16 @@ public class SamplingThrottlerTest extends ContextTestSupport {
 
                 from("direct:sample-configured").sample("1000").to("mock:result");
 
-                from("direct:sample-configured-via-dsl").sample(Duration.of(1, ChronoUnit.SECONDS)).to("mock:result");
+                from("direct:sample-configured-via-dsl")
+                        .sample(Duration.of(1, ChronoUnit.SECONDS))
+                        .to("mock:result");
 
                 from("direct:sample-messageFrequency").sample(10).to("mock:result");
 
-                from("direct:sample-messageFrequency-via-dsl").sample().sampleMessageFrequency(5).to("mock:result");
+                from("direct:sample-messageFrequency-via-dsl")
+                        .sample()
+                        .sampleMessageFrequency(5)
+                        .to("mock:result");
 
                 // END SNIPPET: e1
             }

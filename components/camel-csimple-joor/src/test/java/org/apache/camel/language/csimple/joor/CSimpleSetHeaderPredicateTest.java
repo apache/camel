@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple.joor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -56,13 +57,19 @@ public class CSimpleSetHeaderPredicateTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("bar").csimple("${header.foo} == 'Camel'", boolean.class).to("mock:result");
+                from("direct:start")
+                        .setHeader("bar")
+                        .csimple("${header.foo} == 'Camel'", boolean.class)
+                        .to("mock:result");
 
-                from("direct:other").setHeader("param1", constant("hello")).log("param1 = ${header.param1}").setHeader("param2")
-                        .csimple("${header.param1} == 'hello'", Boolean.class).log("param2 = ${header.param2}")
+                from("direct:other")
+                        .setHeader("param1", constant("hello"))
+                        .log("param1 = ${header.param1}")
+                        .setHeader("param2")
+                        .csimple("${header.param1} == 'hello'", Boolean.class)
+                        .log("param2 = ${header.param2}")
                         .to("mock:other");
             }
         };
     }
-
 }

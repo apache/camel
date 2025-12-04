@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
 
 import org.apache.camel.CamelContext;
@@ -247,7 +248,6 @@ public class DefaultEventFactory implements EventFactory {
             answer.setTimestamp(System.currentTimeMillis());
         }
         return answer;
-
     }
 
     @Override
@@ -257,7 +257,6 @@ public class DefaultEventFactory implements EventFactory {
             answer.setTimestamp(System.currentTimeMillis());
         }
         return answer;
-
     }
 
     @Override
@@ -267,7 +266,6 @@ public class DefaultEventFactory implements EventFactory {
             answer.setTimestamp(System.currentTimeMillis());
         }
         return answer;
-
     }
 
     @Override
@@ -323,8 +321,7 @@ public class DefaultEventFactory implements EventFactory {
 
     @Override
     public CamelEvent createExchangeFailureHandledEvent(
-            Exchange exchange, Processor failureHandler,
-            boolean deadLetterChannel, String deadLetterUri) {
+            Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
         if (handler instanceof DelegateProcessor delegateProcessor) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.common;
 
 import org.apache.camel.Component;
@@ -53,7 +54,7 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
 
     protected OSClient createClient() {
 
-        //client should reAuthenticate itself when token expires
+        // client should reAuthenticate itself when token expires
         if (V2.equals(getApiVersion())) {
             return createV2Client();
         }
@@ -67,8 +68,7 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
     }
 
     private OSClient.OSClientV3 createV3Client() {
-        IOSClientBuilder.V3 builder = OSFactory.builderV3()
-                .endpoint(getHost());
+        IOSClientBuilder.V3 builder = OSFactory.builderV3().endpoint(getHost());
 
         builder.credentials(getUsername(), getPassword(), Identifier.byName(getDomain()));
 
@@ -84,8 +84,7 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
     }
 
     private OSClient.OSClientV2 createV2Client() {
-        IOSClientBuilder.V2 builder = OSFactory.builderV2()
-                .endpoint(getHost());
+        IOSClientBuilder.V2 builder = OSFactory.builderV2().endpoint(getHost());
 
         builder.credentials(getUsername(), getPassword());
 

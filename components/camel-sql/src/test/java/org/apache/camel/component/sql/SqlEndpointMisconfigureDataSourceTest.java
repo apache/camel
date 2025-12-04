@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.PropertyBindingException;
@@ -24,10 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SqlEndpointMisconfigureDataSourceTest extends CamelTestSupport {
 
@@ -40,14 +41,12 @@ public class SqlEndpointMisconfigureDataSourceTest extends CamelTestSupport {
         RouteBuilder rb = new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("sql:foo?dataSource=myDataSource")
-                        .to("mock:result");
+                from("direct:start").to("sql:foo?dataSource=myDataSource").to("mock:result");
             }
         };
 
-        FailedToCreateRouteException e = assertThrows(FailedToCreateRouteException.class, () -> context.addRoutes(rb),
-                "Should throw exception");
+        FailedToCreateRouteException e =
+                assertThrows(FailedToCreateRouteException.class, () -> context.addRoutes(rb), "Should throw exception");
 
         PropertyBindingException pbe = (PropertyBindingException) e.getCause().getCause();
         assertEquals("dataSource", pbe.getPropertyName());
@@ -60,22 +59,19 @@ public class SqlEndpointMisconfigureDataSourceTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("sql:foo?dataSource=#myDataSource")
-                        .to("mock:result");
+                from("direct:start").to("sql:foo?dataSource=#myDataSource").to("mock:result");
             }
         });
         assertDoesNotThrow(() -> context.start());
     }
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -85,5 +81,4 @@ public class SqlEndpointMisconfigureDataSourceTest extends CamelTestSupport {
             db.shutdown();
         }
     }
-
 }

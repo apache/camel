@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -29,9 +33,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Push Image Request headers are applied properly
@@ -67,7 +68,6 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
 
         Mockito.verify(dockerClient, Mockito.times(1)).pushImageCmd(name);
         Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
-
     }
 
     @Override
@@ -95,7 +95,5 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         clientProfile.setServerAddress(serverAddress);
 
         return clientProfile;
-
     }
-
 }

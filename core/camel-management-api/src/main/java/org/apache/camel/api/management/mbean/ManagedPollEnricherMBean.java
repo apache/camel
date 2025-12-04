@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -21,13 +22,16 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedPollEnricherMBean extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
+public interface ManagedPollEnricherMBean
+        extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
 
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
 
-    @ManagedAttribute(description = "Expression that computes the endpoint uri to use as the resource endpoint to poll enrich from",
-                      mask = true)
+    @ManagedAttribute(
+            description =
+                    "Expression that computes the endpoint uri to use as the resource endpoint to poll enrich from",
+            mask = true)
     String getExpression();
 
     @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
@@ -36,13 +40,17 @@ public interface ManagedPollEnricherMBean extends ManagedProcessorMBean, Managed
     @ManagedAttribute(description = "Timeout in millis when polling from the external service")
     Long getTimeout();
 
-    @ManagedAttribute(description = "Sets the maximum size used by the ConsumerCache which is used to cache and reuse consumers")
+    @ManagedAttribute(
+            description = "Sets the maximum size used by the ConsumerCache which is used to cache and reuse consumers")
     Integer getCacheSize();
 
-    @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a consumer with that endpoint")
+    @ManagedAttribute(
+            description = "Ignore the invalidate endpoint exception when try to create a consumer with that endpoint")
     Boolean isIgnoreInvalidEndpoint();
 
-    @ManagedAttribute(description = "Whether to aggregate when there was an exception thrown during calling the resource endpoint")
+    @ManagedAttribute(
+            description =
+                    "Whether to aggregate when there was an exception thrown during calling the resource endpoint")
     Boolean isAggregateOnException();
 
     @ManagedAttribute(description = "Whether to allow components to optimise poll if they are PollDynamicAware")
@@ -54,5 +62,4 @@ public interface ManagedPollEnricherMBean extends ManagedProcessorMBean, Managed
     @Override
     @ManagedOperation(description = "Statistics of the endpoints that has been poll enriched from")
     TabularData extendedInformation();
-
 }

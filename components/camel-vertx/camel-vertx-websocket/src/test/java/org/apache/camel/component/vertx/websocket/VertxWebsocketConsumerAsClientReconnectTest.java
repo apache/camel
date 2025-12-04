@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.ConnectException;
@@ -69,7 +70,8 @@ public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketT
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/echo", port).routeId("server")
+                fromF("vertx-websocket:localhost:%d/echo", port)
+                        .routeId("server")
                         .log("Server consumer: Received message: ${body}")
                         .toF("vertx-websocket:localhost:%d/echo?sendToAll=true", port);
 

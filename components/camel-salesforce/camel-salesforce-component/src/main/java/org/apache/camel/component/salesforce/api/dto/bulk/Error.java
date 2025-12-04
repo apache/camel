@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -43,11 +44,14 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Error", propOrder = { "exceptionCode", "exceptionMessage" })
+@XmlType(
+        name = "Error",
+        propOrder = {"exceptionCode", "exceptionMessage"})
 public class Error {
 
     @XmlElement(required = true)
     protected String exceptionCode;
+
     @XmlElement(required = true)
     protected String exceptionMessage;
 
@@ -86,5 +90,4 @@ public class Error {
     public void setExceptionMessage(String value) {
         this.exceptionMessage = value;
     }
-
 }

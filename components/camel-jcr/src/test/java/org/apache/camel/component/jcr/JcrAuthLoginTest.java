@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -23,9 +27,6 @@ import javax.jcr.SimpleCredentials;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JcrAuthLoginTest extends JcrAuthTestBase {
 
@@ -36,8 +37,7 @@ public class JcrAuthLoginTest extends JcrAuthTestBase {
         assertNotNull(out);
         String uuid = out.getMessage().getBody(String.class);
         assertNotNull("Out body was null; expected JCR node UUID", uuid);
-        Session session = getRepository().login(
-                new SimpleCredentials("admin", "admin".toCharArray()));
+        Session session = getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
         try {
             Node node = session.getNodeByIdentifier(uuid);
             assertNotNull(node);
@@ -55,12 +55,10 @@ public class JcrAuthLoginTest extends JcrAuthTestBase {
             @Override
             public void configure() {
                 // START SNIPPET: jcr
-                from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
-                        constant("node")).setHeader("my.contents.property",
-                                body())
-                        .to(
-                                "jcr://test:quatloos@repository"
-                            + BASE_REPO_PATH);
+                from("direct:a")
+                        .setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
+                        .setHeader("my.contents.property", body())
+                        .to("jcr://test:quatloos@repository" + BASE_REPO_PATH);
                 // END SNIPPET: jcr
             }
         };

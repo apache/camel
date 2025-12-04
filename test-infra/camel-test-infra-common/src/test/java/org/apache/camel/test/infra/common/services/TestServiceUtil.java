@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
 public final class TestServiceUtil {
     private static final Logger LOG = LoggerFactory.getLogger(TestServiceUtil.class);
 
-    private TestServiceUtil() {
-
-    }
+    private TestServiceUtil() {}
 
     /**
      * Try to initialize the service, logging failures if they happen
@@ -73,10 +71,15 @@ public final class TestServiceUtil {
         final Object testInstance = extensionContext.getTestInstance().orElse(null);
 
         if (testInstance != null) {
-            LOG.error("Failed to initialize service {} for test {} on ({})", service.getClass().getSimpleName(),
-                    extensionContext.getDisplayName(), testInstance.getClass().getName());
+            LOG.error(
+                    "Failed to initialize service {} for test {} on ({})",
+                    service.getClass().getSimpleName(),
+                    extensionContext.getDisplayName(),
+                    testInstance.getClass().getName());
         } else {
-            LOG.error("Failed to initialize service {} for test {}", service.getClass().getSimpleName(),
+            LOG.error(
+                    "Failed to initialize service {} for test {}",
+                    service.getClass().getSimpleName(),
                     extensionContext.getDisplayName());
         }
 

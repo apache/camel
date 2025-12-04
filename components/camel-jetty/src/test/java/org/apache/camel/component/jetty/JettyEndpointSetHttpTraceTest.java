@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
@@ -25,8 +28,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
 
@@ -42,7 +43,7 @@ public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
         HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOff + "/myservice");
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(trace)) {
+                CloseableHttpResponse response = client.execute(trace)) {
 
             // TRACE shouldn't be allowed by default
             assertEquals(405, response.getCode());
@@ -70,7 +71,8 @@ public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
             @Override
             public void configure() {
                 from("jetty:http://localhost:" + portTraceOff + "/myservice").to("log:foo");
-                from("jetty:http://localhost:" + portTraceOn + "/myservice?traceEnabled=true").to("log:bar");
+                from("jetty:http://localhost:" + portTraceOn + "/myservice?traceEnabled=true")
+                        .to("log:bar");
             }
         };
     }

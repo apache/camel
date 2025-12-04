@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp.artemis;
+
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_SET_TOPIC_PREFIX;
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,10 +38,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_SET_TOPIC_PREFIX;
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
 public class AMQPEmbeddedBrokerTest {
 
@@ -88,12 +89,9 @@ public class AMQPEmbeddedBrokerTest {
     private static RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:send-topic")
-                        .to("amqp-customized:topic:topic.ping");
+                from("direct:send-topic").to("amqp-customized:topic:topic.ping");
 
-                from("amqp-customized:topic:topic.ping")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqp-customized:topic:topic.ping").to("log:routing").to("mock:result");
             }
         };
     }

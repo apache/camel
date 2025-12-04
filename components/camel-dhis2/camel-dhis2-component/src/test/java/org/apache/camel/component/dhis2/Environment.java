@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2;
 
 import java.time.Duration;
@@ -48,35 +49,35 @@ public final class Environment {
 
     private static final GenericContainer<?> DHIS2_CONTAINER;
 
-    private Environment() {
-
-    }
+    private Environment() {}
 
     static {
         POSTGRESQL_CONTAINER = new PostgreSQLContainer(
-                DockerImageName.parse("postgis/postgis:12-3.2-alpine").asCompatibleSubstituteFor("postgres"))
+                        DockerImageName.parse("postgis/postgis:12-3.2-alpine").asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("dhis2")
                 .withNetworkAliases("db")
                 .withUsername("dhis")
-                .withPassword("dhis").withNetwork(NETWORK);
+                .withPassword("dhis")
+                .withNetwork(NETWORK);
 
         POSTGRESQL_CONTAINER.start();
 
-        DHIS2_CONTAINER = new GenericContainer<>(
-                "dhis2/core:2.40.2.1")
+        DHIS2_CONTAINER = new GenericContainer<>("dhis2/core:2.40.2.1")
                 .dependsOn(POSTGRESQL_CONTAINER)
                 .withClasspathResourceMapping("dhis.conf", "/opt/dhis2/dhis.conf", BindMode.READ_WRITE)
-                .withNetwork(NETWORK).withExposedPorts(8080)
-                .waitingFor(
-                        new HttpWaitStrategy().forStatusCode(200).withStartupTimeout(Duration.ofSeconds(360)))
+                .withNetwork(NETWORK)
+                .withExposedPorts(8080)
+                .waitingFor(new HttpWaitStrategy().forStatusCode(200).withStartupTimeout(Duration.ofSeconds(360)))
                 .withEnv("WAIT_FOR_DB_CONTAINER", "db" + ":" + 5432 + " -t 0");
 
         DHIS2_CONTAINER.start();
 
         DHIS2_CLIENT = Dhis2ClientBuilder.newClient(
-                "http://" + Environment.getDhis2Container().getHost() + ":" + Environment.getDhis2Container()
-                        .getFirstMappedPort() + "/api",
-                "admin", "district").build();
+                        "http://" + Environment.getDhis2Container().getHost() + ":"
+                                + Environment.getDhis2Container().getFirstMappedPort() + "/api",
+                        "admin",
+                        "district")
+                .build();
 
         createOrgUnit("EvilCorp");
         ORG_UNIT_ID_UNDER_TEST = createOrgUnit("Acme");
@@ -88,39 +89,47 @@ public final class Environment {
     private static String createPersonalAccessToken() {
         return DHIS2_CLIENT
                 .post("apiToken")
-                .withResource(
-                        new ApiToken()
-                                .withAttributes(
-                                        List.of(
-                                                Map.of(
-                                                        "type",
-                                                        "MethodAllowedList",
-                                                        "allowedMethods",
-                                                        List.of("GET", "POST", "PUT", "PATCH", "DELETE"))))
-                                .withExpire(Long.MAX_VALUE))
+                .withResource(new ApiToken()
+                        .withAttributes(List.of(Map.of(
+                                "type",
+                                "MethodAllowedList",
+                                "allowedMethods",
+                                List.of("GET", "POST", "PUT", "PATCH", "DELETE"))))
+                        .withExpire(Long.MAX_VALUE))
                 .transfer()
                 .returnAs(WebMessage.class)
                 .getResponse()
-                .get().get("key");
+                .get()
+                .get("key");
     }
 
     private static String createOrgUnit(String name) {
-        OrganisationUnit organisationUnit = new OrganisationUnit().withName(name).withShortName(name)
-                .withOpeningDate(new Date());
+        OrganisationUnit organisationUnit =
+                new OrganisationUnit().withName(name).withShortName(name).withOpeningDate(new Date());
 
-        return DHIS2_CLIENT.post("organisationUnits").withResource(organisationUnit)
+        return DHIS2_CLIENT
+                .post("organisationUnits")
+                .withResource(organisationUnit)
                 .transfer()
-                .returnAs(WebMessage.class).getResponse().get().get("uid");
+                .returnAs(WebMessage.class)
+                .getResponse()
+                .get()
+                .get("uid");
     }
 
     private static void createOrgUnitLevel() {
-        OrganisationUnitLevel organisationUnitLevel = new OrganisationUnitLevel().withName("Level 1")
-                .with("level", 1);
-        DHIS2_CLIENT.post("filledOrganisationUnitLevels").withResource(organisationUnitLevel).transfer();
+        OrganisationUnitLevel organisationUnitLevel =
+                new OrganisationUnitLevel().withName("Level 1").with("level", 1);
+        DHIS2_CLIENT
+                .post("filledOrganisationUnitLevels")
+                .withResource(organisationUnitLevel)
+                .transfer();
     }
 
     private static void addOrgUnitToUser(String orgUnitId) {
-        DHIS2_CLIENT.post("users/M5zQapPyTZI/organisationUnits/{organisationUnitId}", orgUnitId).transfer();
+        DHIS2_CLIENT
+                .post("users/M5zQapPyTZI/organisationUnits/{organisationUnitId}", orgUnitId)
+                .transfer();
     }
 
     public static GenericContainer<?> getDhis2Container() {

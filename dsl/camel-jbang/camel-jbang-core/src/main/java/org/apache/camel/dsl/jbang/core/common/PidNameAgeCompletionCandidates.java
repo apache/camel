@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.Iterator;
@@ -21,12 +22,10 @@ import java.util.List;
 
 public class PidNameAgeCompletionCandidates implements Iterable<String> {
 
-    public PidNameAgeCompletionCandidates() {
-    }
+    public PidNameAgeCompletionCandidates() {}
 
     @Override
     public Iterator<String> iterator() {
         return List.of("pid", "name", "age").iterator();
     }
-
 }

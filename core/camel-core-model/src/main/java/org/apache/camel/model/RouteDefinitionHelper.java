@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -44,19 +47,16 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
-import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
-
 /**
  * Helper for {@link RouteDefinition}
  * <p/>
  * Utility methods to help preparing {@link RouteDefinition} before they are added to
  * {@link org.apache.camel.CamelContext}.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 public final class RouteDefinitionHelper {
 
-    private RouteDefinitionHelper() {
-    }
+    private RouteDefinitionHelper() {}
 
     /**
      * Gather all the endpoint uri's the route is using from the EIPs that has a static endpoint defined.
@@ -82,7 +82,10 @@ public final class RouteDefinitionHelper {
      * @return                the endpoints uris
      */
     public static Set<String> gatherAllEndpointUris(
-            CamelContext camelContext, RouteDefinition route, boolean includeInput, boolean includeOutputs,
+            CamelContext camelContext,
+            RouteDefinition route,
+            boolean includeInput,
+            boolean includeOutputs,
             boolean includeDynamic) {
         Set<String> answer = new LinkedHashSet<>();
 
@@ -94,8 +97,8 @@ public final class RouteDefinitionHelper {
         }
 
         if (includeOutputs) {
-            Collection<EndpointRequiredDefinition> col
-                    = filterTypeInOutputs(route.getOutputs(), EndpointRequiredDefinition.class);
+            Collection<EndpointRequiredDefinition> col =
+                    filterTypeInOutputs(route.getOutputs(), EndpointRequiredDefinition.class);
             for (EndpointRequiredDefinition erd : col) {
                 String uri = normalizeUri(erd.getEndpointUri());
                 if (uri != null) {
@@ -103,7 +106,8 @@ public final class RouteDefinitionHelper {
                 }
             }
             if (includeDynamic && camelContext.getRuntimeEndpointRegistry() != null) {
-                List<String> endpoints = camelContext.getRuntimeEndpointRegistry().getEndpointsPerRoute(route.getId(), false);
+                List<String> endpoints =
+                        camelContext.getRuntimeEndpointRegistry().getEndpointsPerRoute(route.getId(), false);
                 for (String uri : endpoints) {
                     if (uri != null) {
                         answer.add(uri);
@@ -153,7 +157,8 @@ public final class RouteDefinitionHelper {
             } else {
                 RestDefinition rest = route.getRestDefinition();
                 if (rest != null && route.isRest()) {
-                    VerbDefinition verb = findVerbDefinition(context, rest, route.getInput().getEndpointUri());
+                    VerbDefinition verb =
+                            findVerbDefinition(context, rest, route.getInput().getEndpointUri());
                     if (verb != null) {
                         String id = context.resolvePropertyPlaceholders(verb.getId());
                         if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
@@ -279,11 +284,11 @@ public final class RouteDefinitionHelper {
         List<String> targetIds = new ArrayList<>();
         ProcessorDefinitionHelper.gatherAllNodeIds(target, targetIds, true, false);
         // are there any duplicates processor ids in the target route
-        List<String> duplicates = targetIds.stream().collect(Collectors.groupingBy(Function.identity()))
-                .entrySet().stream()
-                .filter(e -> e.getValue().size() > 1)
-                .map(Map.Entry::getKey)
-                .toList();
+        List<String> duplicates =
+                targetIds.stream().collect(Collectors.groupingBy(Function.identity())).entrySet().stream()
+                        .filter(e -> e.getValue().size() > 1)
+                        .map(Map.Entry::getKey)
+                        .toList();
         if (!duplicates.isEmpty()) {
             return duplicates.get(0);
         }
@@ -362,7 +367,8 @@ public final class RouteDefinitionHelper {
      * @param onCompletions                      optional list onCompletions
      */
     public static void prepareRoute(
-            CamelContext context, RouteDefinition route,
+            CamelContext context,
+            RouteDefinition route,
             ErrorHandlerDefinition errorHandler,
             List<OnExceptionDefinition> onExceptions,
             List<InterceptDefinition> intercepts,
@@ -370,7 +376,13 @@ public final class RouteDefinitionHelper {
             List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
             List<OnCompletionDefinition> onCompletions) {
 
-        prepareRouteImp(context, route, errorHandler, onExceptions, intercepts, interceptFromDefinitions,
+        prepareRouteImp(
+                context,
+                route,
+                errorHandler,
+                onExceptions,
+                intercepts,
+                interceptFromDefinitions,
                 interceptSendToEndpointDefinitions,
                 onCompletions);
     }
@@ -390,7 +402,8 @@ public final class RouteDefinitionHelper {
      * @param onCompletions                      optional list onCompletions
      */
     private static void prepareRouteImp(
-            CamelContext context, RouteDefinition route,
+            CamelContext context,
+            RouteDefinition route,
             ErrorHandlerDefinition errorHandler,
             List<OnExceptionDefinition> onExceptions,
             List<InterceptDefinition> intercepts,
@@ -418,7 +431,13 @@ public final class RouteDefinitionHelper {
         // validate top-level violations
         validateTopLevel(route.getOutputs());
         // then interceptors
-        initInterceptors(context, route, abstracts, upper, intercepts, interceptFromDefinitions,
+        initInterceptors(
+                context,
+                route,
+                abstracts,
+                upper,
+                intercepts,
+                interceptFromDefinitions,
                 interceptSendToEndpointDefinitions);
         // then on completion
         initOnCompletions(abstracts, upper, onCompletions);
@@ -469,10 +488,11 @@ public final class RouteDefinitionHelper {
             // validate that top-level is only added on the route (eg top level)
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(child);
             boolean parentIsRoute = child.getParent() == route;
-            boolean parentIsAlreadyTop = child.getParent() == null || child.getParent().isTopLevelOnly();
+            boolean parentIsAlreadyTop =
+                    child.getParent() == null || child.getParent().isTopLevelOnly();
             if (child.isTopLevelOnly() && !(parentIsRoute || parentIsAlreadyTop)) {
-                throw new IllegalArgumentException(
-                        "The output must be added as top-level on the route. Try moving " + child + " to the top of route.");
+                throw new IllegalArgumentException("The output must be added as top-level on the route. Try moving "
+                        + child + " to the top of route.");
             }
             if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
                 validateTopLevel(child.getOutputs());
@@ -485,7 +505,9 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initParentAndErrorHandlerBuilder(
-            CamelContext context, RouteDefinition route, ErrorHandlerDefinition errorHandler,
+            CamelContext context,
+            RouteDefinition route,
+            ErrorHandlerDefinition errorHandler,
             List<OnExceptionDefinition> onExceptions) {
 
         if (errorHandler != null) {
@@ -515,7 +537,8 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initOnExceptions(
-            List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
+            List<ProcessorDefinition<?>> abstracts,
+            List<ProcessorDefinition<?>> upper,
             List<OnExceptionDefinition> onExceptions) {
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
@@ -552,9 +575,12 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initInterceptors(
-            CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
+            CamelContext context,
+            RouteDefinition route,
+            List<ProcessorDefinition<?>> abstracts,
             List<ProcessorDefinition<?>> upper,
-            List<InterceptDefinition> intercepts, List<InterceptFromDefinition> interceptFromDefinitions,
+            List<InterceptDefinition> intercepts,
+            List<InterceptFromDefinition> interceptFromDefinitions,
             List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
         // move the abstracts interceptors into the dedicated list
@@ -577,11 +603,14 @@ public final class RouteDefinitionHelper {
             }
         }
 
-        doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
+        doInitInterceptors(
+                context, route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
     }
 
     private static void doInitInterceptors(
-            CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> upper,
+            CamelContext context,
+            RouteDefinition route,
+            List<ProcessorDefinition<?>> upper,
             List<InterceptDefinition> intercepts,
             List<InterceptFromDefinition> interceptFromDefinitions,
             List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
@@ -628,15 +657,18 @@ public final class RouteDefinitionHelper {
                         if (uri != null && uri.startsWith("ref:")) {
                             // its a ref: so lookup the endpoint to get its url
                             String ref = uri.substring(4);
-                            uri = CamelContextHelper.getMandatoryEndpoint(context, ref).getEndpointUri();
+                            uri = CamelContextHelper.getMandatoryEndpoint(context, ref)
+                                    .getEndpointUri();
                         }
                     }
 
                     // the route input uri can have property placeholders, so set them
                     // as local properties on PropertiesComponent to have them resolved
                     Properties properties = null;
-                    if (route.getTemplateParameters() != null && !route.getTemplateParameters().isEmpty()) {
-                        properties = context.getTypeConverter().tryConvertTo(Properties.class, route.getTemplateParameters());
+                    if (route.getTemplateParameters() != null
+                            && !route.getTemplateParameters().isEmpty()) {
+                        properties = context.getTypeConverter()
+                                .tryConvertTo(Properties.class, route.getTemplateParameters());
                     }
                     try {
                         if (properties != null) {
@@ -680,7 +712,8 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initOnCompletions(
-            List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
+            List<ProcessorDefinition<?>> abstracts,
+            List<ProcessorDefinition<?>> upper,
             List<OnCompletionDefinition> onCompletions) {
         List<OnCompletionDefinition> completions = new ArrayList<>();
 
@@ -810,8 +843,7 @@ public final class RouteDefinitionHelper {
         return route;
     }
 
-    public static Predicate<RouteConfigurationDefinition> routesByIdOrPattern(
-            RouteDefinition route, String id) {
+    public static Predicate<RouteConfigurationDefinition> routesByIdOrPattern(RouteDefinition route, String id) {
         return g -> {
             if (route.getRouteConfigurationId() != null) {
                 // if the route has a route configuration assigned then use pattern matching
@@ -824,8 +856,12 @@ public final class RouteDefinitionHelper {
     }
 
     public static Consumer<RouteConfigurationDefinition> getRouteConfigurationDefinitionConsumer(
-            RouteDefinition route, AtomicReference<ErrorHandlerDefinition> gcErrorHandler, List<OnExceptionDefinition> oe,
-            List<InterceptDefinition> icp, List<InterceptFromDefinition> ifrom, List<InterceptSendToEndpointDefinition> ito,
+            RouteDefinition route,
+            AtomicReference<ErrorHandlerDefinition> gcErrorHandler,
+            List<OnExceptionDefinition> oe,
+            List<InterceptDefinition> icp,
+            List<InterceptFromDefinition> ifrom,
+            List<InterceptSendToEndpointDefinition> ito,
             List<OnCompletionDefinition> oc) {
         return g -> {
             // there can only be one global error handler, so override previous, meaning

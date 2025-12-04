@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.wasm;
 
 import java.util.HashMap;
@@ -27,8 +28,7 @@ import org.apache.camel.Exchange;
 public final class WasmSupport {
     public static final ObjectMapper MAPPER = JsonMapper.builder().build();
 
-    private WasmSupport() {
-    }
+    private WasmSupport() {}
 
     public static byte[] serialize(Exchange exchange) throws Exception {
         Wrapper env = new Wrapper();
@@ -41,7 +41,7 @@ public final class WasmSupport {
         return MAPPER.writeValueAsBytes(env);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void deserialize(byte[] in, Exchange out) throws Exception {
         // cleanup
         out.getMessage().getHeaders().clear();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
 
 import java.util.Arrays;
@@ -31,12 +32,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("mongodb")
 public class MongoDbComponent extends DefaultComponent {
 
-    public static final Set<MongoDbOperation> WRITE_OPERATIONS = EnumSet.copyOf(
-            Arrays.asList(
-                    MongoDbOperation.insert,
-                    MongoDbOperation.save,
-                    MongoDbOperation.update,
-                    MongoDbOperation.remove));
+    public static final Set<MongoDbOperation> WRITE_OPERATIONS = EnumSet.copyOf(Arrays.asList(
+            MongoDbOperation.insert, MongoDbOperation.save, MongoDbOperation.update, MongoDbOperation.remove));
 
     @Metadata(autowired = true)
     private MongoClient mongoConnection;

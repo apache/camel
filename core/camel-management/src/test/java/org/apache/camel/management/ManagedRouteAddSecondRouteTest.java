@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.
@@ -70,5 +71,4 @@ public class ManagedRouteAddSecondRouteTest extends ManagementTestSupport {
         state = (String) mbeanServer.getAttribute(route2, "State");
         assertEquals(ServiceStatus.Started.name(), state, "Should be started");
     }
-
 }

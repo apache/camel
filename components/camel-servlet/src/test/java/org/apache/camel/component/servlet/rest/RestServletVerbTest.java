@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestServletVerbTest extends ServletCamelRouterTestSupport {
 
@@ -55,8 +56,7 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/users",
-                new ByteArrayInputStream(body.getBytes()), "application/json");
+                contextUrl + "/services/users", new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
@@ -74,8 +74,7 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "PUT");
 
         WebRequest req = new PutMethodWebRequest(
-                contextUrl + "/services/users/1",
-                new ByteArrayInputStream(body.getBytes()), "application/json");
+                contextUrl + "/services/users/1", new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
@@ -107,21 +106,23 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("servlet")
-                        .endpointProperty("eagerCheckContentAvailable", "true");
+                restConfiguration().component("servlet").endpointProperty("eagerCheckContentAvailable", "true");
 
-                rest()
-                        .get("/users").to("direct:users")
-                        .get("/users/{id}").to("direct:id")
-                        .put("/users/{id}").to("mock:update")
-                        .post("/users").to("mock:create")
-                        .delete("/users/{id}").to("mock:delete");
+                rest().get("/users")
+                        .to("direct:users")
+                        .get("/users/{id}")
+                        .to("direct:id")
+                        .put("/users/{id}")
+                        .to("mock:update")
+                        .post("/users")
+                        .to("mock:create")
+                        .delete("/users/{id}")
+                        .to("mock:delete");
 
                 from("direct:users")
                         .transform()
                         .constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]");
-                from("direct:id")
-                        .transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }");
+                from("direct:id").transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }");
             }
         };
     }

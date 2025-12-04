@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.util.Arrays;
@@ -104,5 +105,4 @@ public class HashHelper {
     public String toString() {
         return hasher.hash().toString();
     }
-
 }

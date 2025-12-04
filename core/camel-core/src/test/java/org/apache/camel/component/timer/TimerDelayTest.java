@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,7 +38,6 @@ public class TimerDelayTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("timer://foo?delay=10&period=10").to("mock:result");
-
             }
         };
     }

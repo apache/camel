@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ses;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -26,9 +30,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SesComponentSpringTest extends CamelSpringTestSupport {
 
@@ -92,8 +93,10 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(Ses2Constants.FROM, "anotherFrom@example.com");
                 exchange.getIn().setHeader(Ses2Constants.TO, "anotherTo1@example.com, anotherTo2@example.com");
                 exchange.getIn().setHeader(Ses2Constants.RETURN_PATH, "anotherBounce@example.com");
-                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES,
-                        "anotherReplyTo1@example.com, anotherReplyTo2@example.com");
+                exchange.getIn()
+                        .setHeader(
+                                Ses2Constants.REPLY_TO_ADDRESSES,
+                                "anotherReplyTo1@example.com, anotherReplyTo2@example.com");
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "anotherSubject");
             }
         });
@@ -115,7 +118,8 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/ses/SESComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/ses/SESComponentSpringTest-context.xml");
     }
 
     private String getBody(SendEmailRequest sendEmailRequest) {

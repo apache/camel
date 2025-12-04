@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 /**
@@ -85,9 +86,21 @@ public final class DoclingMetadataFields {
      * Array of all standard metadata field names (lowercase versions) for checking.
      */
     public static final String[] STANDARD_FIELDS = {
-            TITLE, AUTHOR, CREATOR, PRODUCER, SUBJECT, KEYWORDS, LANGUAGE, FORMAT,
-            CREATION_DATE, CREATION_DATE_CAMEL, CREATED,
-            MODIFICATION_DATE, MODIFICATION_DATE_CAMEL, MODIFIED, MOD_DATE
+        TITLE,
+        AUTHOR,
+        CREATOR,
+        PRODUCER,
+        SUBJECT,
+        KEYWORDS,
+        LANGUAGE,
+        FORMAT,
+        CREATION_DATE,
+        CREATION_DATE_CAMEL,
+        CREATED,
+        MODIFICATION_DATE,
+        MODIFICATION_DATE_CAMEL,
+        MODIFIED,
+        MOD_DATE
     };
 
     /**
@@ -101,14 +114,22 @@ public final class DoclingMetadataFields {
             return false;
         }
         String lower = fieldName.toLowerCase();
-        return lower.equals(TITLE) || lower.equals(AUTHOR) || lower.equals(CREATOR) || lower.equals(PRODUCER)
-                || lower.equals(SUBJECT) || lower.equals(KEYWORDS) || lower.equals(LANGUAGE) || lower.equals(FORMAT)
-                || lower.contains("creation") || lower.contains("modification") || lower.contains("date")
-                || lower.contains("created") || lower.contains("modified");
+        return lower.equals(TITLE)
+                || lower.equals(AUTHOR)
+                || lower.equals(CREATOR)
+                || lower.equals(PRODUCER)
+                || lower.equals(SUBJECT)
+                || lower.equals(KEYWORDS)
+                || lower.equals(LANGUAGE)
+                || lower.equals(FORMAT)
+                || lower.contains("creation")
+                || lower.contains("modification")
+                || lower.contains("date")
+                || lower.contains("created")
+                || lower.contains("modified");
     }
 
     private DoclingMetadataFields() {
         // Utility class - no instances
     }
-
 }

@@ -22,6 +22,4 @@ import org.apache.camel.resume.ResumeStrategy;
 /**
  * Base interface for resume strategies that publish the offsets to a Kafka topic
  */
-public interface KafkaResumeStrategy extends ResumeStrategy {
-
-}
+public interface KafkaResumeStrategy extends ResumeStrategy {}

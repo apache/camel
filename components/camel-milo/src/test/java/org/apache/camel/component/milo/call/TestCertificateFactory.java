@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.call;
 
 import java.security.KeyPair;
@@ -70,7 +71,7 @@ public class TestCertificateFactory extends RsaSha256CertificateFactory {
                 .addDnsName("localhost");
 
         try {
-            return new X509Certificate[] { builder.build() };
+            return new X509Certificate[] {builder.build()};
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spring.SpringCamelContext;
@@ -23,8 +26,6 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringCamelContextCustomDefaultThreadPoolProfileTest extends SpringTestSupport {
 
@@ -36,7 +37,11 @@ public class SpringCamelContextCustomDefaultThreadPoolProfileTest extends Spring
 
     @Test
     public void testDefaultThreadPoolProfile() throws Exception {
-        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext context = applicationContext
+                .getBeansOfType(SpringCamelContext.class)
+                .values()
+                .iterator()
+                .next();
 
         ThreadPoolProfile profile = context.getExecutorServiceManager().getDefaultThreadPoolProfile();
         assertEquals(5, profile.getPoolSize().intValue());
@@ -46,5 +51,4 @@ public class SpringCamelContextCustomDefaultThreadPoolProfileTest extends Spring
         assertEquals(true, profile.getAllowCoreThreadTimeOut().booleanValue());
         assertEquals(ThreadPoolRejectedPolicy.Abort, profile.getRejectedPolicy());
     }
-
 }

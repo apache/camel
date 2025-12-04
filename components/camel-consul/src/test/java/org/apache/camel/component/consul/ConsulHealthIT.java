@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -35,13 +38,11 @@ import org.kiwiproject.consul.model.agent.ImmutableRegistration;
 import org.kiwiproject.consul.model.agent.Registration;
 import org.kiwiproject.consul.model.health.ServiceHealth;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ConsulHealthIT extends CamelTestSupport {
     /*
-     NOTE: this one is not registered as extension because it requires a different lifecycle. It
-     needs to be started much earlier than usual, so in this test we take care of handling it.
-     */
+    NOTE: this one is not registered as extension because it requires a different lifecycle. It
+    needs to be started much earlier than usual, so in this test we take care of handling it.
+    */
     private ConsulService consulService = ConsulServiceFactory.createService();
 
     private AgentClient client;
@@ -71,11 +72,19 @@ public class ConsulHealthIT extends CamelTestSupport {
 
         this.service = UUID.randomUUID().toString();
         this.client = getConsul().agentClient();
-        this.registrations = Arrays
-                .asList(ImmutableRegistration.builder().id(UUID.randomUUID().toString()).name(this.service).address("127.0.0.1")
-                        .port(random.nextInt(10000)).build(),
-                        ImmutableRegistration.builder().id(UUID.randomUUID().toString()).name(this.service).address("127.0.0.1")
-                                .port(random.nextInt(10000)).build());
+        this.registrations = Arrays.asList(
+                ImmutableRegistration.builder()
+                        .id(UUID.randomUUID().toString())
+                        .name(this.service)
+                        .address("127.0.0.1")
+                        .port(random.nextInt(10000))
+                        .build(),
+                ImmutableRegistration.builder()
+                        .id(UUID.randomUUID().toString())
+                        .name(this.service)
+                        .address("127.0.0.1")
+                        .port(random.nextInt(10000))
+                        .build());
 
         this.registrations.forEach(client::register);
     }
@@ -93,20 +102,25 @@ public class ConsulHealthIT extends CamelTestSupport {
 
     @Test
     public void testServiceInstance() {
-        List<ServiceHealth> ref = getConsul().healthClient().getAllServiceInstances(this.service).getResponse();
-        List<ServiceHealth> res
-                = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulHealthActions.SERVICE_INSTANCES)
-                        .withHeader(ConsulConstants.CONSUL_SERVICE, this.service).to("direct:consul").request(List.class);
+        List<ServiceHealth> ref =
+                getConsul().healthClient().getAllServiceInstances(this.service).getResponse();
+        List<ServiceHealth> res = fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulHealthActions.SERVICE_INSTANCES)
+                .withHeader(ConsulConstants.CONSUL_SERVICE, this.service)
+                .to("direct:consul")
+                .request(List.class);
 
         Assertions.assertEquals(2, ref.size());
         Assertions.assertEquals(2, res.size());
         Assertions.assertEquals(ref, res);
 
         assertTrue(registrations.stream()
-                .anyMatch(r -> r.getPort().isPresent() && r.getPort().get() == res.get(0).getService().getPort()
+                .anyMatch(r -> r.getPort().isPresent()
+                        && r.getPort().get() == res.get(0).getService().getPort()
                         && r.getId().equalsIgnoreCase(res.get(0).getService().getId())));
         assertTrue(registrations.stream()
-                .anyMatch(r -> r.getPort().isPresent() && r.getPort().get() == res.get(1).getService().getPort()
+                .anyMatch(r -> r.getPort().isPresent()
+                        && r.getPort().get() == res.get(1).getService().getPort()
                         && r.getId().equalsIgnoreCase(res.get(1).getService().getId())));
     }
 

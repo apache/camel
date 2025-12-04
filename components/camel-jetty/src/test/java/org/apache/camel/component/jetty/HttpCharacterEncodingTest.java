@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpCharacterEncodingTest extends BaseJettyTest {
 
@@ -33,7 +34,6 @@ public class HttpCharacterEncodingTest extends BaseJettyTest {
                 exchange.getIn().setBody("Hello World Thai Elephant \u0E08");
                 exchange.getIn().setHeader("Content-Type", "text/html; charset=utf-8");
             }
-
         });
         // convert the response to a String
         String body = exchange.getMessage().getBody(String.class);
@@ -63,5 +63,4 @@ public class HttpCharacterEncodingTest extends BaseJettyTest {
             exchange.getMessage().setBody("Response message is Thai Elephant \u0E08");
         }
     }
-
 }

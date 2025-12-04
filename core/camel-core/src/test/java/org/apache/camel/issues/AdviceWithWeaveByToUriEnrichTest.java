@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -70,12 +71,10 @@ public class AdviceWithWeaveByToUriEnrichTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .enrich("direct:bar").to("mock:result");
+                from("direct:start").enrich("direct:bar").to("mock:result");
 
                 from("direct:bar").to("mock:bar").setBody().constant("Hello Bar");
             }
         };
     }
-
 }

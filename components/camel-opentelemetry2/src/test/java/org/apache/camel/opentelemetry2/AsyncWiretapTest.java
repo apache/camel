@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,11 +36,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * WiretappedRouteTest tests the execution of a new spin off component which would create a new exchange, for example,
@@ -72,7 +73,6 @@ public class AsyncWiretapTest extends OpenTelemetryTracerTestSupport {
         for (OtelTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(OtelTrace trace, String expectedBody) {
@@ -96,59 +96,84 @@ public class AsyncWiretapTest extends OpenTelemetryTracerTestSupport {
         assertTrue(wiretapMock.hasEnded());
 
         // Validate same trace
-        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), wiretapDirectTo.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), wiretapDirectFrom.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), wiretapLog.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), wiretapMock.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                direct.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                wiretapDirectTo.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                wiretapDirectFrom.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                wiretapLog.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                wiretapMock.getSpanContext().getTraceId());
 
         // Validate different Exchange ID
-        assertNotEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertNotEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 direct.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 log.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 wiretapDirectFrom.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 wiretapLog.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 wiretapMock.getAttributes().get(AttributeKey.stringKey("exchangeId")));
 
         // Validate hierarchy
         assertFalse(testProducer.getParentSpanContext().isValid());
-        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), wiretapDirectTo.getParentSpanContext().getSpanId());
-        assertEquals(wiretapDirectTo.getSpanContext().getSpanId(), wiretapDirectFrom.getParentSpanContext().getSpanId());
-        assertEquals(wiretapDirectFrom.getSpanContext().getSpanId(), wiretapLog.getParentSpanContext().getSpanId());
-        assertEquals(wiretapDirectFrom.getSpanContext().getSpanId(), wiretapMock.getParentSpanContext().getSpanId());
+        assertEquals(
+                testProducer.getSpanContext().getSpanId(),
+                direct.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(),
+                wiretapDirectTo.getParentSpanContext().getSpanId());
+        assertEquals(
+                wiretapDirectTo.getSpanContext().getSpanId(),
+                wiretapDirectFrom.getParentSpanContext().getSpanId());
+        assertEquals(
+                wiretapDirectFrom.getSpanContext().getSpanId(),
+                wiretapLog.getParentSpanContext().getSpanId());
+        assertEquals(
+                wiretapDirectFrom.getSpanContext().getSpanId(),
+                wiretapMock.getParentSpanContext().getSpanId());
 
         // Validate message logging
-        assertEquals("A direct message", direct.getEvents().get(0).getAttributes().get(
-                AttributeKey.stringKey("message")));
-        assertEquals("A tapped message", wiretapDirectFrom.getEvents().get(0).getAttributes().get(
-                AttributeKey.stringKey("message")));
+        assertEquals(
+                "A direct message", direct.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
+        assertEquals(
+                "A tapped message",
+                wiretapDirectFrom.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         if (expectedBody == null) {
             assertEquals(
                     "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    log.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    log.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
             assertEquals(
                     "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    wiretapLog.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    wiretapLog.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         } else {
             assertEquals(
                     "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    log.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    log.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
             assertEquals(
                     "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    wiretapLog.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    wiretapLog.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         }
     }
 

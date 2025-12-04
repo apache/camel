@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -23,13 +26,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class DisruptorTimeoutDisabledTest extends CamelTestSupport {
     @Test
     void testDisruptorNoTimeout() throws Exception {
-        final Future<String> out = template
-                .asyncRequestBody("disruptor:foo?timeout=0", "World", String.class);
+        final Future<String> out = template.asyncRequestBody("disruptor:foo?timeout=0", "World", String.class);
         // use 5 sec failsafe in case something hangs
         assertEquals("Bye World", out.get(5, TimeUnit.SECONDS));
     }
@@ -39,7 +39,10 @@ public class DisruptorTimeoutDisabledTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor:foo").to("mock:before").delay(500).transform(body().prepend("Bye "))
+                from("disruptor:foo")
+                        .to("mock:before")
+                        .delay(500)
+                        .transform(body().prepend("Bye "))
                         .to("mock:result");
             }
         };

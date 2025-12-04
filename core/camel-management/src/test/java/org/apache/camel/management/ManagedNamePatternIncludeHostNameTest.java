@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -26,8 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport {
 
@@ -35,8 +36,8 @@ public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         ServiceHelper.initService(context.getManagementStrategy());
-        DefaultManagementObjectNameStrategy naming
-                = (DefaultManagementObjectNameStrategy) context.getManagementStrategy().getManagementObjectNameStrategy();
+        DefaultManagementObjectNameStrategy naming = (DefaultManagementObjectNameStrategy)
+                context.getManagementStrategy().getManagementObjectNameStrategy();
         naming.setHostName("localhost");
         context.getManagementStrategy().getManagementAgent().setIncludeHostName(true);
         context.getManagementNameStrategy().setNamePattern("cool-#name#");
@@ -49,9 +50,8 @@ public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport
 
         assertTrue(context.getManagementName().startsWith("cool"));
 
-        ObjectName on = ObjectName.getInstance(
-                "org.apache.camel:context=localhost/" + context.getManagementName() + ",type=context,name=\""
-                                               + context.getName() + "\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + context.getManagementName()
+                + ",type=context,name=\"" + context.getName() + "\"");
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
     }
 

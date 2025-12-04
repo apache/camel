@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.google.storage.transform;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -31,13 +33,12 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class GoogleStorageCloudEventDataTypeTransformerTest {
 
     private final DefaultCamelContext camelContext = new DefaultCamelContext();
 
-    private final GoogleStorageCloudEventDataTypeTransformer transformer = new GoogleStorageCloudEventDataTypeTransformer();
+    private final GoogleStorageCloudEventDataTypeTransformer transformer =
+            new GoogleStorageCloudEventDataTypeTransformer();
 
     @Test
     void shouldMapToCloudEvent() throws Exception {
@@ -50,18 +51,20 @@ class GoogleStorageCloudEventDataTypeTransformerTest {
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertTrue(exchange.getMessage().getHeaders().containsKey(GoogleCloudStorageConstants.OBJECT_NAME));
-        assertEquals("org.apache.camel.event.google.storage.downloadTo",
+        assertEquals(
+                "org.apache.camel.event.google.storage.downloadTo",
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
         assertEquals("test1", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
-        assertEquals("google.storage.bucket.myBucket", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+        assertEquals(
+                "google.storage.bucket.myBucket", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
     }
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
+        Transformer transformer = camelContext
+                .getTransformerRegistry()
                 .resolveTransformer(new TransformerKey("google-storage:application-cloudevents"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(GoogleStorageCloudEventDataTypeTransformer.class, transformer.getClass());
     }
-
 }

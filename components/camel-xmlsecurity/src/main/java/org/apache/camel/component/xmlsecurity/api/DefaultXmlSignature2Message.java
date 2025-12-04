@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 import java.io.ByteArrayOutputStream;
@@ -163,9 +164,9 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         } else if (OUTPUT_NODE_SEARCH_TYPE_XPATH.equals(input.getOutputNodeSearchType())) {
             node = getOutputNodeViaXPath(input);
         } else {
-            throw new XmlSignatureException(
-                    String.format("Wrong configuration: The output node search type %s is not supported.",
-                            input.getOutputNodeSearchType()));
+            throw new XmlSignatureException(String.format(
+                    "Wrong configuration: The output node search type %s is not supported.",
+                    input.getOutputNodeSearchType()));
         }
 
         LOG.debug("Output node with local name {} and namespace {} found", node.getLocalName(), node.getNamespaceURI());
@@ -185,7 +186,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
             throws Exception {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        XmlSignatureHelper.transformToOutputStream(node, os, omitXmlDeclaration(output, input), input.getOutputXmlEncoding());
+        XmlSignatureHelper.transformToOutputStream(
+                node, os, omitXmlDeclaration(output, input), input.getOutputXmlEncoding());
         output.setBody(os.toByteArray());
         if (input.getOutputXmlEncoding() != null) {
             output.setHeader(XmlSignatureConstants.CHARSET_NAME, input.getOutputXmlEncoding());
@@ -199,27 +201,25 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         XPathExpression expr = XmlSignatureHelper.getXPathExpression(xpathFilter);
         NodeList nodes = (NodeList) expr.evaluate(input.getMessageBodyDocument(), XPathConstants.NODESET);
         if (nodes == null || nodes.getLength() == 0) {
-            throw new XmlSignatureException(
-                    String.format(
-                            "Cannot extract root node for the output document from the XML signature document. No node found for XPATH %s as specified in the output node search.",
-                            xpathFilter.getXPath()));
+            throw new XmlSignatureException(String.format(
+                    "Cannot extract root node for the output document from the XML signature document. No node found for XPATH %s as specified in the output node search.",
+                    xpathFilter.getXPath()));
         }
         if (nodes.getLength() > 1) {
-            throw new XmlSignatureException(
-                    String.format(
-                            "Cannot extract root node for the output document from the XML signature document. XPATH %s as specified in the output node search results into more than one child.",
-                            xpathFilter.getXPath()));
-
+            throw new XmlSignatureException(String.format(
+                    "Cannot extract root node for the output document from the XML signature document. XPATH %s as specified in the output node search results into more than one child.",
+                    xpathFilter.getXPath()));
         }
         Node result = nodes.item(0);
-        if (Node.ELEMENT_NODE == result.getNodeType() || Node.TEXT_NODE == result.getNodeType()
+        if (Node.ELEMENT_NODE == result.getNodeType()
+                || Node.TEXT_NODE == result.getNodeType()
                 || Node.DOCUMENT_NODE == result.getNodeType()) {
             return result;
         }
-        throw new XmlSignatureException(
-                String.format("Cannot extract root node for the output document from the XML signature document. "
-                              + "XPATH %s as specified in the output node search results into a node which has the wrong type.",
-                        xpathFilter.getXPath()));
+        throw new XmlSignatureException(String.format(
+                "Cannot extract root node for the output document from the XML signature document. "
+                        + "XPATH %s as specified in the output node search results into a node which has the wrong type.",
+                xpathFilter.getXPath()));
     }
 
     protected Node getOutputElementViaLocalNameAndNamespace(Input input) throws Exception {
@@ -230,19 +230,17 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
             // namespace
             int index = search.indexOf('}');
             if (index < 1) {
-                throw new XmlSignatureException(
-                        String.format(
-                                "Wrong configuration: Value %s for the output node search %s has wrong format. "
-                                      + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
-                                search, input.getOutputNodeSearchType()));
+                throw new XmlSignatureException(String.format(
+                        "Wrong configuration: Value %s for the output node search %s has wrong format. "
+                                + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
+                        search, input.getOutputNodeSearchType()));
             }
             namespace = search.substring(1, index);
             if (search.length() < index + 1) {
-                throw new XmlSignatureException(
-                        String.format(
-                                "Wrong configuration: Value %s for the output node search %s has wrong format. "
-                                      + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
-                                search, input.getOutputNodeSearchType()));
+                throw new XmlSignatureException(String.format(
+                        "Wrong configuration: Value %s for the output node search %s has wrong format. "
+                                + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
+                        search, input.getOutputNodeSearchType()));
             }
             localName = search.substring(index + 1);
         } else {
@@ -251,16 +249,14 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         }
         NodeList nodeList = input.getMessageBodyDocument().getElementsByTagNameNS(namespace, localName);
         if (nodeList.getLength() == 0) {
-            throw new XmlSignatureException(
-                    String.format(
-                            "Cannot extract root element for the output document from the XML signature document. Element with local name %s and namespace %s does not exist.",
-                            namespace, localName));
+            throw new XmlSignatureException(String.format(
+                    "Cannot extract root element for the output document from the XML signature document. Element with local name %s and namespace %s does not exist.",
+                    namespace, localName));
         }
         if (nodeList.getLength() > 1) {
-            throw new XmlSignatureException(
-                    String.format(
-                            "Cannot extract root element for the output document from the XML signature document. More than one element found with local name %s and namespace %s.",
-                            namespace, localName));
+            throw new XmlSignatureException(String.format(
+                    "Cannot extract root element for the output document from the XML signature document. More than one element found with local name %s and namespace %s.",
+                    namespace, localName));
         }
         return nodeList.item(0);
     }
@@ -275,31 +271,28 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
     protected void checkSearchValueOfType(Class<?> cl, Input input) throws Exception {
         if (!cl.isAssignableFrom(input.getOutputNodeSearch().getClass())) {
-            throw new XMLSignatureException(
-                    String.format(
-                            "Wrong configuration: Search value is of class %s, the output node search %s requires class %s.",
-                            input
-                                    .getOutputNodeSearch().getClass().getName(),
-                            input.getOutputNodeSearchType(), cl.getName()));
+            throw new XMLSignatureException(String.format(
+                    "Wrong configuration: Search value is of class %s, the output node search %s requires class %s.",
+                    input.getOutputNodeSearch().getClass().getName(), input.getOutputNodeSearchType(), cl.getName()));
         }
-
     }
 
     protected void checkStringSarchValueNotEmpty(String searchValue, String outputNodeSearchType) throws Exception {
         if (searchValue.isEmpty()) {
-            throw new XMLSignatureException(
-                    String.format("Wrong configuration: Value for output node search %s is empty.",
-                            outputNodeSearchType));
+            throw new XMLSignatureException(String.format(
+                    "Wrong configuration: Value for output node search %s is empty.", outputNodeSearchType));
         }
     }
 
     protected void checkSearchValueNotNull(Input input) throws Exception {
-        LOG.debug("Searching for output element with search value '{}' and sarch type {}", input.getOutputNodeSearch(),
+        LOG.debug(
+                "Searching for output element with search value '{}' and sarch type {}",
+                input.getOutputNodeSearch(),
                 input.getOutputNodeSearchType());
         if (input.getOutputNodeSearch() == null) {
-            throw new XMLSignatureException(
-                    String.format("Wrong configuration: Value is missing for output node search %s.",
-                            input.getOutputNodeSearchType()));
+            throw new XMLSignatureException(String.format(
+                    "Wrong configuration: Value is missing for output node search %s.",
+                    input.getOutputNodeSearchType()));
         }
     }
 
@@ -350,7 +343,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     protected Boolean omitXmlDeclaration(Message message, Input input) {
-        Boolean omitXmlDeclaration = message.getHeader(XmlSignatureConstants.HEADER_OMIT_XML_DECLARATION, Boolean.class);
+        Boolean omitXmlDeclaration =
+                message.getHeader(XmlSignatureConstants.HEADER_OMIT_XML_DECLARATION, Boolean.class);
         if (omitXmlDeclaration == null) {
             omitXmlDeclaration = input.omitXmlDeclaration();
         }
@@ -392,8 +386,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      * @return                    dom structure
      * @throws Exception          if an error occurs
      */
-    protected DOMStructure getDomStructureForMessageBody(List<Reference> relevantReferences, List<XMLObject> relevantObjects)
-            throws Exception {
+    protected DOMStructure getDomStructureForMessageBody(
+            List<Reference> relevantReferences, List<XMLObject> relevantObjects) throws Exception {
 
         List<XMLObject> referencedObjects = getReferencedSameDocumentObjects(relevantReferences, relevantObjects);
 
@@ -411,10 +405,9 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                     sb.append(", ");
                 }
             }
-            throw new XmlSignatureException(
-                    String.format(
-                            "Unsupported XML signature document: More than one content objects found. Object IDs: %s",
-                            sb.toString()));
+            throw new XmlSignatureException(String.format(
+                    "Unsupported XML signature document: More than one content objects found. Object IDs: %s",
+                    sb.toString()));
         }
 
         @SuppressWarnings("unchecked")

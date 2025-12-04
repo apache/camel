@@ -67,5 +67,4 @@ public class ECS2ProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

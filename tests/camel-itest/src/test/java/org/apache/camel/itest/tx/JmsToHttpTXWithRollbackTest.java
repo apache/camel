@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.tx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
@@ -24,8 +27,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test will look for the spring .xml file with the same class name but postfixed with -config.xml as filename.
@@ -66,5 +67,4 @@ public class JmsToHttpTXWithRollbackTest {
         // assert the mock is correct
         mock.assertIsSatisfied();
     }
-
 }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for system message functionality.
@@ -32,8 +33,10 @@ public class SpringAiChatSystemMessageIT extends OllamaTestSupport {
     public void testSystemMessageInfluencesResponse() {
         var exchange = template().request("direct:chat", e -> {
             e.getIn().setBody("What should I do today?");
-            e.getIn().setHeader(SpringAiChatConstants.SYSTEM_MESSAGE,
-                    "You are a fitness coach. Always recommend physical activities.");
+            e.getIn()
+                    .setHeader(
+                            SpringAiChatConstants.SYSTEM_MESSAGE,
+                            "You are a fitness coach. Always recommend physical activities.");
         });
 
         String response = exchange.getMessage().getBody(String.class);
@@ -45,8 +48,10 @@ public class SpringAiChatSystemMessageIT extends OllamaTestSupport {
     public void testSystemMessageWithSpecificFormat() {
         var exchange = template().request("direct:chat", e -> {
             e.getIn().setBody("What is 5 + 3?");
-            e.getIn().setHeader(SpringAiChatConstants.SYSTEM_MESSAGE,
-                    "You are a math teacher. Always explain your answer step by step.");
+            e.getIn()
+                    .setHeader(
+                            SpringAiChatConstants.SYSTEM_MESSAGE,
+                            "You are a math teacher. Always explain your answer step by step.");
         });
 
         String response = exchange.getMessage().getBody(String.class);
@@ -58,8 +63,10 @@ public class SpringAiChatSystemMessageIT extends OllamaTestSupport {
     public void testSystemMessageAsExpert() {
         var exchange = template().request("direct:chat", e -> {
             e.getIn().setBody("Tell me about integration patterns in one sentence.");
-            e.getIn().setHeader(SpringAiChatConstants.SYSTEM_MESSAGE,
-                    "You are an expert in Enterprise Integration Patterns and Apache Camel.");
+            e.getIn()
+                    .setHeader(
+                            SpringAiChatConstants.SYSTEM_MESSAGE,
+                            "You are an expert in Enterprise Integration Patterns and Apache Camel.");
         });
 
         String response = exchange.getMessage().getBody(String.class);
@@ -69,8 +76,7 @@ public class SpringAiChatSystemMessageIT extends OllamaTestSupport {
 
     @Test
     public void testWithoutSystemMessage() {
-        String response = template().requestBody("direct:chat",
-                "Say hello in one word.", String.class);
+        String response = template().requestBody("direct:chat", "Say hello in one word.", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response.toLowerCase()).containsAnyOf("hello", "hi");
@@ -83,8 +89,7 @@ public class SpringAiChatSystemMessageIT extends OllamaTestSupport {
             public void configure() throws Exception {
                 bindChatModel(this.getCamelContext());
 
-                from("direct:chat")
-                        .to("spring-ai-chat:test?chatModel=#chatModel");
+                from("direct:chat").to("spring-ai-chat:test?chatModel=#chatModel");
             }
         };
     }

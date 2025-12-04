@@ -45,7 +45,6 @@ public class EntryInfo {
         public TransactionLog.LayerInfo getLayerInfo() {
             return layerInfo;
         }
-
     }
 
     /**

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -71,8 +72,15 @@ public class ChoicePredicateSimpleHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when().simple("${in.header.Action} == 'AAE'").to("mock:aae").when()
-                        .simple("${in.header.Action} == 'PCA'").to("mock:pca").otherwise()
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .simple("${in.header.Action} == 'AAE'")
+                        .to("mock:aae")
+                        .when()
+                        .simple("${in.header.Action} == 'PCA'")
+                        .to("mock:pca")
+                        .otherwise()
                         .to("mock:error");
             }
         };

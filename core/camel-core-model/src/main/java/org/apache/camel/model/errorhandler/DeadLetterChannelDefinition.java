@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,12 +37,12 @@ public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
 
     @XmlAttribute(required = true)
     private String deadLetterUri;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String deadLetterHandleNewException;
 
-    public DeadLetterChannelDefinition() {
-    }
+    public DeadLetterChannelDefinition() {}
 
     public DeadLetterChannelDefinition(DeadLetterChannelDefinition source) {
         super(source);
@@ -145,5 +146,4 @@ public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
         setDeadLetterHandleNewException(handleNewException ? "true" : "false");
         return this;
     }
-
 }

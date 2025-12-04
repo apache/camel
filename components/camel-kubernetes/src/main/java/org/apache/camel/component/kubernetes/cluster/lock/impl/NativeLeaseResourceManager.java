@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.lock.impl;
 
 import java.time.ZonedDateTime;
@@ -30,14 +31,16 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
 
     @Override
     public LeaderInfo decodeLeaderInfo(Lease lease, Set<String> members, String group) {
-        return new LeaderInfo(group, getLeader(lease), getLocalTimestamp(lease), members, getLeaseDurationSeconds(lease));
+        return new LeaderInfo(
+                group, getLeader(lease), getLocalTimestamp(lease), members, getLeaseDurationSeconds(lease));
     }
 
     @Override
     public Lease fetchLeaseResource(KubernetesClient client, String namespace, String name, String group) {
         return client.leases()
                 .inNamespace(namespace)
-                .withName(leaseResourceName(name, group)).get();
+                .withName(leaseResourceName(name, group))
+                .get();
     }
 
     @Override
@@ -46,7 +49,8 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
         return client.leases()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
                 .resource(updatedLease)
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion())
+                .update();
     }
 
     @Override
@@ -55,12 +59,14 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
         return client.leases()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
                 .resource(updatedLease)
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion())
+                .update();
     }
 
     @Override
     public Lease refreshLeaseRenewTime(KubernetesClient client, Lease leaseResource, int minUpdateIntervalSeconds) {
-        ZonedDateTime lastRenew = leaseResource.getSpec() != null ? leaseResource.getSpec().getRenewTime() : null;
+        ZonedDateTime lastRenew =
+                leaseResource.getSpec() != null ? leaseResource.getSpec().getRenewTime() : null;
         if (lastRenew == null || lastRenew.plusSeconds(minUpdateIntervalSeconds).isBefore(ZonedDateTime.now())) {
             Lease updatedLease = new LeaseBuilder(leaseResource)
                     .editOrNewSpec()
@@ -70,15 +76,18 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
             return client.leases()
                     .inNamespace(leaseResource.getMetadata().getNamespace())
                     .resource(updatedLease)
-                    .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
+                    .lockResourceVersion(leaseResource.getMetadata().getResourceVersion())
+                    .update();
         }
         return leaseResource;
     }
 
     @Override
-    public Lease createNewLeaseResource(KubernetesClient client, String namespace, String prefix, LeaderInfo leaderInfo) {
+    public Lease createNewLeaseResource(
+            KubernetesClient client, String namespace, String prefix, LeaderInfo leaderInfo) {
         ZonedDateTime now = ZonedDateTime.now();
-        Lease newLease = new LeaseBuilder().withNewMetadata()
+        Lease newLease = new LeaseBuilder()
+                .withNewMetadata()
                 .withName(leaseResourceName(prefix, leaderInfo.getGroupName()))
                 .addToLabels("provider", "camel")
                 .endMetadata()
@@ -90,10 +99,7 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
                 .endSpec()
                 .build();
 
-        return client.leases()
-                .inNamespace(namespace)
-                .resource(newLease)
-                .create();
+        return client.leases().inNamespace(namespace).resource(newLease).create();
     }
 
     private static Lease getLeaseWithNewLeader(Lease lease, LeaderInfo leaderInfo) {
@@ -114,7 +120,8 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
     }
 
     private static Lease getLeaseWithoutLeader(Lease lease) {
-        return new LeaseBuilder(lease).editOrNewSpec()
+        return new LeaseBuilder(lease)
+                .editOrNewSpec()
                 .withHolderIdentity(null)
                 .withAcquireTime(null)
                 .withRenewTime(null)

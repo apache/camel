@@ -17,6 +17,10 @@
 
 package org.apache.camel.component.cloudevents.transformer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -30,10 +34,6 @@ import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CloudEventHttpDataTypeTransformerTest {
 
@@ -55,18 +55,41 @@ class CloudEventHttpDataTypeTransformerTest {
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
         assertTrue(exchange.getMessage().hasHeaders());
-        assertEquals(exchange.getExchangeId(),
-                exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID).http()));
-        assertEquals(cloudEvent.version(),
-                exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_VERSION).http()));
-        assertEquals("org.apache.camel.event.test",
-                exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).http()));
-        assertEquals("test1.txt",
-                exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT).http()));
-        assertEquals("org.apache.camel.test",
-                exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE).http()));
-        assertTrue(exchange.getMessage().getHeaders()
-                .containsKey(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME).http()));
+        assertEquals(
+                exchange.getExchangeId(),
+                exchange.getMessage()
+                        .getHeader(cloudEvent
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID)
+                                .http()));
+        assertEquals(
+                cloudEvent.version(),
+                exchange.getMessage()
+                        .getHeader(cloudEvent
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_VERSION)
+                                .http()));
+        assertEquals(
+                "org.apache.camel.event.test",
+                exchange.getMessage()
+                        .getHeader(cloudEvent
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE)
+                                .http()));
+        assertEquals(
+                "test1.txt",
+                exchange.getMessage()
+                        .getHeader(cloudEvent
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT)
+                                .http()));
+        assertEquals(
+                "org.apache.camel.test",
+                exchange.getMessage()
+                        .getHeader(cloudEvent
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)
+                                .http()));
+        assertTrue(exchange.getMessage()
+                .getHeaders()
+                .containsKey(cloudEvent
+                        .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME)
+                        .http()));
         assertEquals("text/plain", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
         assertEquals("Test1", exchange.getMessage().getBody(String.class));
 
@@ -85,25 +108,48 @@ class CloudEventHttpDataTypeTransformerTest {
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
         assertTrue(exchange.getMessage().hasHeaders());
-        assertEquals(exchange.getExchangeId(),
-                exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID).http()));
-        assertEquals(cloudEvent.version(),
-                exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_VERSION).http()));
-        assertEquals(CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_TYPE,
-                exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).http()));
-        assertNull(exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT).http()));
-        assertEquals(CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_SOURCE,
-                exchange.getMessage().getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE).http()));
-        assertTrue(exchange.getMessage().getHeaders()
-                .containsKey(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME).http()));
+        assertEquals(
+                exchange.getExchangeId(),
+                exchange.getMessage()
+                        .getHeader(cloudEvent
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID)
+                                .http()));
+        assertEquals(
+                cloudEvent.version(),
+                exchange.getMessage()
+                        .getHeader(cloudEvent
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_VERSION)
+                                .http()));
+        assertEquals(
+                CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_TYPE,
+                exchange.getMessage()
+                        .getHeader(cloudEvent
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE)
+                                .http()));
+        assertNull(exchange.getMessage()
+                .getHeader(cloudEvent
+                        .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT)
+                        .http()));
+        assertEquals(
+                CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_SOURCE,
+                exchange.getMessage()
+                        .getHeader(cloudEvent
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)
+                                .http()));
+        assertTrue(exchange.getMessage()
+                .getHeaders()
+                .containsKey(cloudEvent
+                        .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME)
+                        .http()));
         assertEquals("application/json", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
         assertEquals("{}", exchange.getMessage().getBody(String.class));
     }
 
     @Test
     public void shouldLookupTransformer() throws Exception {
-        Transformer transformer
-                = camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("http:application-cloudevents"));
+        Transformer transformer = camelContext
+                .getTransformerRegistry()
+                .resolveTransformer(new TransformerKey("http:application-cloudevents"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(CloudEventHttpDataTypeTransformer.class, transformer.getClass());
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.TimeUnit;
@@ -193,5 +194,4 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     public void setExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
-
 }

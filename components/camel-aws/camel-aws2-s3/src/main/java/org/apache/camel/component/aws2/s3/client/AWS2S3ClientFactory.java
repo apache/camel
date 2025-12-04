@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.client;
 
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientStandardImpl;
  */
 public final class AWS2S3ClientFactory {
 
-    private AWS2S3ClientFactory() {
-    }
+    private AWS2S3ClientFactory() {}
 
     /**
      * Return the correct aws s3 client (based on remote vs local).

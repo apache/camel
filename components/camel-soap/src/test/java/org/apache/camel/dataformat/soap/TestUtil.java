@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
 
 import java.io.BufferedReader;
@@ -24,8 +25,7 @@ import java.io.InputStreamReader;
 import org.apache.camel.util.IOHelper;
 
 public final class TestUtil {
-    private TestUtil() {
-    }
+    private TestUtil() {}
 
     public static String readStream(InputStream is) throws IOException {
         try {
@@ -51,5 +51,4 @@ public final class TestUtil {
             is.close();
         }
     }
-
 }

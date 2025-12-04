@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.examples.MultiSteps;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Apache CI is hanging on this test")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Apache CI is hanging on this test")
 public class JpaWithNativeQueryWithResultClassTest extends JpaWithNamedQueryTest {
 
     /**
@@ -54,6 +54,6 @@ public class JpaWithNativeQueryWithResultClassTest extends JpaWithNamedQueryTest
     @Override
     protected String getEndpointUri() {
         return "jpa://" + MultiSteps.class.getName()
-               + "?resultClass=org.apache.camel.examples.MultiSteps&nativeQuery=select * from MultiSteps where step = 1";
+                + "?resultClass=org.apache.camel.examples.MultiSteps&nativeQuery=select * from MultiSteps where step = 1";
     }
 }

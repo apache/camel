@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FaultToleranceRouteFallbackViaNetworkTest extends CamelTestSupport {
 
@@ -38,7 +39,8 @@ public class FaultToleranceRouteFallbackViaNetworkTest extends CamelTestSupport 
 
         RuntimeCamelException exception = assertThrows(RuntimeCamelException.class, () -> context.start());
         assertIsInstanceOf(UnsupportedOperationException.class, exception.getCause());
-        assertEquals("camel-microprofile-fault-tolerance does not support onFallbackViaNetwork",
+        assertEquals(
+                "camel-microprofile-fault-tolerance does not support onFallbackViaNetwork",
                 exception.getCause().getMessage());
     }
 
@@ -47,11 +49,17 @@ public class FaultToleranceRouteFallbackViaNetworkTest extends CamelTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("log:start").circuitBreaker().throwException(new IllegalArgumentException("Forced"))
-                        .onFallbackViaNetwork().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start")
+                        .to("log:start")
+                        .circuitBreaker()
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .onFallbackViaNetwork()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }
-
 }

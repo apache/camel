@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.nio.Buffer;
 
 public final class BufferCaster {
 
-    private BufferCaster() {
-    }
+    private BufferCaster() {}
 
     /**
      * Without this cast, when the code compiled by Java 9+ is executed on Java 8, it will throw
@@ -33,5 +33,4 @@ public final class BufferCaster {
     public static <T extends Buffer> Buffer cast(T byteBuffer) {
         return (Buffer) byteBuffer;
     }
-
 }

@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.oauth;
 
-import org.apache.camel.Exchange;
+package org.apache.camel.oauth;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_LOGOUT_REDIRECT_URI;
 import static org.apache.camel.oauth.OAuthProperties.getProperty;
+
+import org.apache.camel.Exchange;
 
 public class OAuthLogoutProcessor extends AbstractOAuthProcessor {
 
@@ -29,16 +30,13 @@ public class OAuthLogoutProcessor extends AbstractOAuthProcessor {
         var msg = exchange.getMessage();
 
         findOAuth(context).ifPresent(oauth -> {
-
             var maybeSession = oauth.getSession(exchange);
             maybeSession.flatMap(OAuthSession::removeUserProfile).ifPresent(user -> {
-
                 var postLogoutUrl = getProperty(exchange.getContext(), CAMEL_OAUTH_LOGOUT_REDIRECT_URI)
                         .orElse(null);
 
-                var params = new OAuthLogoutParams()
-                        .setRedirectUri(postLogoutUrl)
-                        .setUser(user);
+                var params =
+                        new OAuthLogoutParams().setRedirectUri(postLogoutUrl).setUser(user);
 
                 var logoutUrl = oauth.buildLogoutRequestUrl(params);
 

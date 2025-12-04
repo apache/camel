@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.util;
 
 import java.io.IOException;
@@ -56,7 +57,8 @@ public final class TestKeystore {
     public static KeyStore getKeyStore() throws GeneralSecurityException, IOException {
 
         KeyStore ks = KeyStore.getInstance("JKS");
-        InputStream is = TestKeystore.class.getClassLoader()
+        InputStream is = TestKeystore.class
+                .getClassLoader()
                 .getResourceAsStream("org/apache/camel/component/xmlsecurity/keystore.jks");
         ks.load(is, null);
 

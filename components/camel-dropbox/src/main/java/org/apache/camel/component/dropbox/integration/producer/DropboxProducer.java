@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
 
 import org.apache.camel.component.dropbox.DropboxConfiguration;
@@ -38,7 +39,7 @@ public abstract class DropboxProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         if (configuration.getClient() == null) {
-            //create dropbox client
+            // create dropbox client
             configuration.createClient();
 
             LOG.debug("Producer Dropbox client created");

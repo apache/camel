@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MulticastParallelFailureEndpointTest extends ContextTestSupport {
 
@@ -70,13 +71,24 @@ public class MulticastParallelFailureEndpointTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry().to("direct:run").doCatch(IllegalArgumentException.class)
+                from("direct:start")
+                        .doTry()
+                        .to("direct:run")
+                        .doCatch(IllegalArgumentException.class)
                         // ignore
-                        .end().to("mock:result");
+                        .end()
+                        .to("mock:result");
 
-                from("direct:run").multicast().parallelProcessing().to("direct:a", "direct:b").end().to("mock:run");
+                from("direct:run")
+                        .multicast()
+                        .parallelProcessing()
+                        .to("direct:a", "direct:b")
+                        .end()
+                        .to("mock:run");
 
-                from("direct:a").throwException(new IllegalArgumentException("Oops...")).to("mock:a");
+                from("direct:a")
+                        .throwException(new IllegalArgumentException("Oops..."))
+                        .to("mock:a");
                 from("direct:b").setBody(constant("Bye World")).to("mock:b");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.text.SimpleDateFormat;
@@ -42,8 +43,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testProducerFileNameHeaderNotEvaluated() {
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME,
-                "$simple{myfile-${id}}.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "$simple{myfile-${id}}.txt");
         assertFileExists(testFile("$simple{myfile-${id}}.txt"));
     }
 
@@ -56,7 +56,10 @@ public class FileProducerExpressionTest extends ContextTestSupport {
 
     @Test
     public void testProducerDateByHeader() {
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                fileUri(),
+                "Hello World",
+                Exchange.FILE_NAME,
                 context.resolveLanguage("simple").createExpression("myfile-${date:now:yyyyMMdd}.txt"));
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -82,8 +85,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
 
     @Test
     public void testProducerSimpleWithHeaderByExpression() {
-        template.sendBodyAndHeader(fileUri("?fileName=myfile-${in.header.foo}.txt"), "Hello World", "foo",
-                "abc");
+        template.sendBodyAndHeader(fileUri("?fileName=myfile-${in.header.foo}.txt"), "Hello World", "foo", "abc");
 
         assertFileExists(testFile("myfile-abc.txt"));
     }
@@ -94,8 +96,8 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader(fileUri("?fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt"),
-                "Hello World", "birthday", date);
+        template.sendBodyAndHeader(
+                fileUri("?fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt"), "Hello World", "birthday", date);
 
         assertFileExists(testFile("mybirthday-19740420.txt"));
     }

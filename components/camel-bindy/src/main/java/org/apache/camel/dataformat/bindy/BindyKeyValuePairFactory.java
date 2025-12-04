@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
@@ -76,7 +77,6 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         // Initialize key value pair parameter(s)
         initMessageParameters();
-
     }
 
     @Override
@@ -90,7 +90,10 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 KeyValuePairField keyValuePairField = field.getAnnotation(KeyValuePairField.class);
                 if (keyValuePairField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key declared in the class : {}, key : {}, Field : {}", cl.getName(), keyValuePairField.tag(),
+                        LOG.debug(
+                                "Key declared in the class : {}, key : {}, Field : {}",
+                                cl.getName(),
+                                keyValuePairField.tag(),
                                 keyValuePairField);
                     }
                     keyValuePairFields.put(keyValuePairField.tag(), keyValuePairField);
@@ -110,12 +113,12 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             if (!linkFields.isEmpty()) {
                 annotatedLinkFields.put(cl.getName(), linkFields);
             }
-
         }
     }
 
     @Override
-    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception {
+    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line)
+            throws Exception {
 
         // Map to hold the model @OneToMany classes while binding
         Map<String, List<Object>> lists = new HashMap<>();
@@ -123,8 +126,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         bind(data, model, line, lists);
     }
 
-    public void bind(
-            List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists)
+    public void bind(List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists)
             throws Exception {
 
         Map<Integer, List<String>> results = new HashMap<>();
@@ -163,7 +165,6 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     list.add(value);
                 }
             }
-
         }
 
         // Iterate over the model
@@ -175,10 +176,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                 // Generate model from key value map
                 generateModelFromKeyValueMap(clazz, obj, results, line, lists);
-
             }
         }
-
     }
 
     private void generateModelFromKeyValueMap(
@@ -211,7 +210,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                         // Check mandatory field
                         if (keyValuePairField.required()) {
-                            throw new IllegalArgumentException("The mandatory key/tag : " + key + " has not been defined !");
+                            throw new IllegalArgumentException(
+                                    "The mandatory key/tag : " + key + " has not been defined !");
                         }
 
                         Object result = getDefaultValueForPrimitive(field.getType());
@@ -219,8 +219,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         try {
                             field.set(obj, result);
                         } catch (Exception e) {
-                            throw new IllegalArgumentException(
-                                    "Setting of field " + field + " failed for object : " + obj + " and result : " + result);
+                            throw new IllegalArgumentException("Setting of field " + field + " failed for object : "
+                                    + obj + " and result : " + result);
                         }
 
                     } else {
@@ -247,9 +247,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                             try {
                                 field.set(obj, result);
                             } catch (Exception e) {
-                                throw new IllegalArgumentException(
-                                        "Setting of field " + field + " failed for object : " + obj + " and result : "
-                                                                   + result);
+                                throw new IllegalArgumentException("Setting of field " + field + " failed for object : "
+                                        + obj + " and result : " + result);
                             }
 
                             // Add object created to the list
@@ -266,11 +265,9 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                             obj = null;
 
                         } else {
-                            throw new IllegalArgumentException(
-                                    "The list of values is empty for the following key : " + key + " defined in the class : "
-                                                               + clazz.getName());
+                            throw new IllegalArgumentException("The list of values is empty for the following key : "
+                                    + key + " defined in the class : " + clazz.getName());
                         }
-
                     } // end of test if obj != null
 
                 } else {
@@ -287,7 +284,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                             if (value != null) {
 
                                 // Create format object to format the field
-                                FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
+                                FormattingOptions formattingOptions = ConverterUtils.convert(
+                                        keyValuePairField,
                                         field.getType(),
                                         field.getAnnotation(BindyConverter.class),
                                         getLocale());
@@ -304,9 +302,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                             try {
                                 field.set(obj, result);
                             } catch (Exception e) {
-                                throw new IllegalArgumentException(
-                                        "Setting of field " + field + " failed for object : " + obj + " and result : "
-                                                                   + result);
+                                throw new IllegalArgumentException("Setting of field " + field + " failed for object : "
+                                        + obj + " and result : " + result);
                             }
 
                         } else {
@@ -329,7 +326,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                     value = values.get(i);
 
                                     // Create format object to format the field
-                                    FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
+                                    FormattingOptions formattingOptions = ConverterUtils.convert(
+                                            keyValuePairField,
                                             field.getType(),
                                             field.getAnnotation(BindyConverter.class),
                                             getLocale());
@@ -347,9 +345,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                             field.set(obj, getDefaultValueForPrimitive(field.getType()));
                                         }
                                     } catch (Exception e) {
-                                        throw new IllegalArgumentException(
-                                                "Setting of field " + field + " failed for object: " + obj + " and result: "
-                                                                           + result);
+                                        throw new IllegalArgumentException("Setting of field " + field
+                                                + " failed for object: " + obj + " and result: " + result);
                                     }
 
                                     // Add object created to the list
@@ -363,13 +360,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                                     // Reset obj to null
                                     obj = null;
-
                                 }
 
                             } else {
-                                throw new IllegalArgumentException(
-                                        "The list of values is empty for the following key: " + key + " defined in the class: "
-                                                                   + clazz.getName());
+                                throw new IllegalArgumentException("The list of values is empty for the following key: "
+                                        + key + " defined in the class: " + clazz.getName());
                             }
                         }
 
@@ -381,8 +376,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         try {
                             field.set(obj, result);
                         } catch (Exception e) {
-                            throw new IllegalArgumentException(
-                                    "Setting of field " + field + " failed for object: " + obj + " and result: " + result);
+                            throw new IllegalArgumentException("Setting of field " + field + " failed for object: "
+                                    + obj + " and result: " + result);
                         }
                     }
                 }
@@ -416,11 +411,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 } else {
                     throw new IllegalArgumentException("No target class has been defined in @OneToMany annotation");
                 }
-
             }
-
         }
-
     }
 
     /**
@@ -440,7 +432,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         Map<Integer, String> positions = new TreeMap<>();
 
         // Check if separator exists
-        ObjectHelper.notNull(this.pairSeparator,
+        ObjectHelper.notNull(
+                this.pairSeparator,
                 "The pair separator has not been instantiated or property not defined in the @Message annotation");
 
         char separator = ConverterUtils.getCharDelimiter(this.getPairSeparator());
@@ -460,15 +453,16 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             field.setAccessible(true);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Tag: {}, Field type: {}, class: {}", keyValuePairField.tag(), field.getType(),
+                LOG.debug(
+                        "Tag: {}, Field type: {}, class: {}",
+                        keyValuePairField.tag(),
+                        field.getType(),
                         field.getDeclaringClass().getName());
             }
 
             // Create format
-            FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
-                    field.getType(),
-                    field.getAnnotation(BindyConverter.class),
-                    getLocale());
+            FormattingOptions formattingOptions = ConverterUtils.convert(
+                    keyValuePairField, field.getType(), field.getAnnotation(BindyConverter.class), getLocale());
             Format<Object> format = (Format<Object>) formatFactory.getFormat(formattingOptions);
 
             // Get object to be formatted
@@ -510,8 +504,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + valueFormatted;
 
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Value to be formatted: {}, for the tag: {}, and its formatted value: {}", keyValue,
-                                    keyValuePairField.tag(), valueFormatted);
+                            LOG.debug(
+                                    "Value to be formatted: {}, for the tag: {}, and its formatted value: {}",
+                                    keyValue,
+                                    keyValuePairField.tag(),
+                                    valueFormatted);
                         }
 
                         // Add the content to the TreeMap according to the
@@ -538,14 +535,19 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         }
 
                         // Create the key value string
-                        String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + valueFormatted + separator;
+                        String value =
+                                keyValuePairField.tag() + this.getKeyValuePairSeparator() + valueFormatted + separator;
 
                         // Add content to the stringBuilder
                         builder.append(value);
 
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Value added: {}{}{}{}", keyValuePairField.tag(), this.getKeyValuePairSeparator(),
-                                    valueFormatted, separator);
+                            LOG.debug(
+                                    "Value added: {}{}{}{}",
+                                    keyValuePairField.tag(),
+                                    this.getKeyValuePairSeparator(),
+                                    valueFormatted,
+                                    separator);
                         }
                     }
                 }
@@ -585,11 +587,9 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 throw new IllegalArgumentException(
                         "Parsing error detected for field defined at the tag: " + tag + ", line: " + line, e);
             }
-
         }
 
         return obj;
-
     }
 
     /**
@@ -629,13 +629,14 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                 if (message != null) {
                     // Get Pair Separator parameter
-                    ObjectHelper.notNull(message.pairSeparator(),
-                            "No Pair Separator has been defined in the @Message annotation");
+                    ObjectHelper.notNull(
+                            message.pairSeparator(), "No Pair Separator has been defined in the @Message annotation");
                     pairSeparator = message.pairSeparator();
                     LOG.debug("Pair Separator defined for the message: {}", pairSeparator);
 
                     // Get KeyValuePair Separator parameter
-                    ObjectHelper.notNull(message.keyValuePairSeparator(),
+                    ObjectHelper.notNull(
+                            message.keyValuePairSeparator(),
                             "No Key Value Pair Separator has been defined in the @Message annotation");
                     keyValuePairSeparator = message.keyValuePairSeparator();
                     LOG.debug("Key Value Pair Separator defined for the message: {}", keyValuePairSeparator);
@@ -659,5 +660,4 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             }
         }
     }
-
 }

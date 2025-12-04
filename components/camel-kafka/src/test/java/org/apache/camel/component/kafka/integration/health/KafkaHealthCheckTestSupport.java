@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 
 abstract class KafkaHealthCheckTestSupport implements ConfigurableRoute, ConfigurableContext {
     protected static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerUnresolvableHealthCheckIT.class);
+
     @Order(1)
     @RegisterExtension
     protected static KafkaService service = KafkaServiceFactory.createService();
@@ -52,9 +53,12 @@ abstract class KafkaHealthCheckTestSupport implements ConfigurableRoute, Configu
     @Order(2)
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+
     protected org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+
     @EndpointInject("mock:result")
     protected MockEndpoint to;
+
     protected boolean serviceShutdown = false;
 
     @BeforeAll

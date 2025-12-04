@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -30,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractThrottler extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, Throttler {
+public abstract class AbstractThrottler extends BaseProcessorSupport
+        implements Traceable, IdAware, RouteIdAware, Throttler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractThrottler.class);
 
@@ -48,9 +50,13 @@ public abstract class AbstractThrottler extends BaseProcessorSupport implements 
     protected boolean callerRunsWhenRejected = true;
     protected Expression maxRequestsExpression;
 
-    AbstractThrottler(final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor,
-                      final CamelContext camelContext, final boolean rejectExecution, Expression correlation,
-                      final Expression maxRequestsExpression) {
+    AbstractThrottler(
+            final ScheduledExecutorService asyncExecutor,
+            final boolean shutdownAsyncExecutor,
+            final CamelContext camelContext,
+            final boolean rejectExecution,
+            Expression correlation,
+            final Expression maxRequestsExpression) {
         this.asyncExecutor = asyncExecutor;
         this.shutdownAsyncExecutor = shutdownAsyncExecutor;
         this.camelContext = camelContext;
@@ -64,8 +70,9 @@ public abstract class AbstractThrottler extends BaseProcessorSupport implements 
         // determine if we can still run, or the camel context is forcing a shutdown
         boolean forceShutdown = exchange.getContext().getShutdownStrategy().isForceShutdown();
         if (forceShutdown) {
-            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
-                         + exchange;
+            String msg =
+                    "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
+                            + exchange;
             LOG.debug(msg);
             exchange.setException(new RejectedExecutionException(msg, e));
         } else {

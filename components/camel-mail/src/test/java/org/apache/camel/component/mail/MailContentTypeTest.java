@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for contentType option.
@@ -73,8 +74,10 @@ public class MailContentTypeTest extends CamelTestSupport {
         Mailbox box = claus.getInbox();
         Message msg = box.get(0);
         assertTrue(msg.getContentType().startsWith("multipart/alternative"));
-        assertEquals("Hello World", ((MimeMultipart) msg.getContent()).getBodyPart(0).getContent());
-        assertEquals("<html><body><h1>Hello</h1>World</body></html>",
+        assertEquals(
+                "Hello World", ((MimeMultipart) msg.getContent()).getBodyPart(0).getContent());
+        assertEquals(
+                "<html><body><h1>Hello</h1>World</body></html>",
                 ((MimeMultipart) msg.getContent()).getBodyPart(1).getContent());
     }
 
@@ -88,5 +91,4 @@ public class MailContentTypeTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends ContextTestSupport {
 
@@ -54,8 +55,7 @@ public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends C
         long miss = reg.getStatistics().getMissCounter();
         assertEquals(0, (int) miss);
 
-        assertThrows(Exception.class, () -> template.sendBody("direct:start", "foo"),
-                "Should have thrown exception");
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "foo"), "Should have thrown exception");
 
         // should now have a failed
         failed = reg.getStatistics().getFailedCounter();
@@ -81,5 +81,4 @@ public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends C
             }
         };
     }
-
 }

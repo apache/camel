@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepEventNotifierTest extends ContextTestSupport {
 
@@ -47,10 +48,14 @@ public class StepEventNotifierTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(4, notifier.getEvents().size());
-        assertIsInstanceOf(CamelEvent.StepStartedEvent.class, notifier.getEvents().get(0));
-        assertIsInstanceOf(CamelEvent.StepCompletedEvent.class, notifier.getEvents().get(1));
-        assertIsInstanceOf(CamelEvent.StepStartedEvent.class, notifier.getEvents().get(2));
-        assertIsInstanceOf(CamelEvent.StepCompletedEvent.class, notifier.getEvents().get(3));
+        assertIsInstanceOf(
+                CamelEvent.StepStartedEvent.class, notifier.getEvents().get(0));
+        assertIsInstanceOf(
+                CamelEvent.StepCompletedEvent.class, notifier.getEvents().get(1));
+        assertIsInstanceOf(
+                CamelEvent.StepStartedEvent.class, notifier.getEvents().get(2));
+        assertIsInstanceOf(
+                CamelEvent.StepCompletedEvent.class, notifier.getEvents().get(3));
         assertEquals("foo", ((CamelEvent.StepEvent) notifier.getEvents().get(0)).getStepId());
         assertEquals("foo", ((CamelEvent.StepEvent) notifier.getEvents().get(1)).getStepId());
         assertEquals("bar", ((CamelEvent.StepEvent) notifier.getEvents().get(2)).getStepId());
@@ -62,8 +67,16 @@ public class StepEventNotifierTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").step("foo").to("log:foo").to("mock:foo").end().step("bar").to("log:bar").to("mock:bar")
-                        .end().to("mock:result");
+                from("direct:start")
+                        .step("foo")
+                        .to("log:foo")
+                        .to("mock:foo")
+                        .end()
+                        .step("bar")
+                        .to("log:bar")
+                        .to("mock:bar")
+                        .end()
+                        .to("mock:result");
             }
         };
     }

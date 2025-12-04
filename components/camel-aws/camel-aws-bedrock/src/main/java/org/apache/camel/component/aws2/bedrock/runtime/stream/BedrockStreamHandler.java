@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
 import java.util.List;
@@ -44,12 +45,10 @@ public final class BedrockStreamHandler {
      * @return          the response handler
      */
     public static InvokeModelWithResponseStreamResponseHandler createCompleteHandler(
-            String modelId,
-            StreamMetadata metadata,
-            StringBuilder fullText) {
+            String modelId, StreamMetadata metadata, StringBuilder fullText) {
 
         StreamResponseParser parser = StreamParserFactory.getParser(modelId);
-        int[] chunkCount = { 0 };
+        int[] chunkCount = {0};
 
         return InvokeModelWithResponseStreamResponseHandler.builder()
                 .subscriber(InvokeModelWithResponseStreamResponseHandler.Visitor.builder()
@@ -96,13 +95,10 @@ public final class BedrockStreamHandler {
      * @return               the response handler
      */
     public static InvokeModelWithResponseStreamResponseHandler createChunksHandler(
-            String modelId,
-            StreamMetadata metadata,
-            List<String> chunks,
-            Consumer<String> chunkConsumer) {
+            String modelId, StreamMetadata metadata, List<String> chunks, Consumer<String> chunkConsumer) {
 
         StreamResponseParser parser = StreamParserFactory.getParser(modelId);
-        int[] chunkCount = { 0 };
+        int[] chunkCount = {0};
 
         return InvokeModelWithResponseStreamResponseHandler.builder()
                 .subscriber(InvokeModelWithResponseStreamResponseHandler.Visitor.builder()

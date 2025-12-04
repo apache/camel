@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -54,14 +55,16 @@ public class KameletLocalBeanInitDestroyTest extends CamelTestSupport {
             @Override
             public void configure() {
                 routeTemplate("whereTo")
-                        .templateBean("myBar").typeClass(MyBar.class).initMethod("startupMe").destroyMethod("destroyMe").end()
+                        .templateBean("myBar")
+                        .typeClass(MyBar.class)
+                        .initMethod("startupMe")
+                        .destroyMethod("destroyMe")
+                        .end()
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");
 
-                from("direct:start")
-                        .kamelet("whereTo")
-                        .to("mock:result");
+                from("direct:start").kamelet("whereTo").to("mock:result");
             }
         };
     }

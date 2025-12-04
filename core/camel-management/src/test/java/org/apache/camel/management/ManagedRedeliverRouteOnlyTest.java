@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
@@ -59,12 +60,17 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
+                context.getManagementStrategy()
+                        .getManagementAgent()
+                        .setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
 
-                onException(Exception.class).handled(true)
+                onException(Exception.class)
+                        .handled(true)
                         .redeliveryDelay(0)
-                        .maximumRedeliveries(4).logStackTrace(false)
-                        .setBody().constant("Error");
+                        .maximumRedeliveries(4)
+                        .logStackTrace(false)
+                        .setBody()
+                        .constant("Error");
 
                 from("direct:start")
                         .to("mock:foo")
@@ -72,7 +78,8 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
                             log.info("Invoking me");
 
                             throw new IllegalArgumentException("Damn");
-                        }).id("myprocessor");
+                        })
+                        .id("myprocessor");
             }
         };
     }

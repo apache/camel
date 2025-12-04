@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.Collection;
@@ -21,8 +22,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public final class StreamUtils {
-    private StreamUtils() {
-    }
+    private StreamUtils() {}
 
     /**
      * Creates a stream on the given collection if it is not null

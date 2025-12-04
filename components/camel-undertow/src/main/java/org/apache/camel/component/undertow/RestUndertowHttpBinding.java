@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.apache.camel.http.base.HttpHelper.evalPlaceholders;
 
 import java.util.Map;
 
 import io.undertow.server.HttpServerExchange;
 import org.apache.camel.Exchange;
 
-import static org.apache.camel.http.base.HttpHelper.evalPlaceholders;
-
 public class RestUndertowHttpBinding extends DefaultUndertowHttpBinding {
 
-    public RestUndertowHttpBinding() {
-    }
+    public RestUndertowHttpBinding() {}
 
     public RestUndertowHttpBinding(boolean useStreaming) {
         super(useStreaming);

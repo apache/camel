@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5.annotation;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
@@ -23,8 +26,6 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.common.MyMainClass;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A test class ensuring that JMX can be enabled.

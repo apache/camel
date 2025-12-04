@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -40,19 +44,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link BoxTasksManager} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxTasksManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxTasksManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxTasksManagerApiMethod.class).getName();
+            .getApiName(BoxTasksManagerApiMethod.class)
+            .getName();
     private static final String CAMEL_TEST_FILE = "/CamelTestFile.txt";
     private static final String CAMEL_TEST_FILE_NAME = "CamelTestFile.txt";
     private static final String CAMEL_TEST_MESSAGE = "Camel Test Message";
@@ -61,7 +64,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     private BoxTask testTask;
 
     @Disabled
-    //needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
+    // needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
     @Test
     public void testAddAssignmentToTask() {
         com.box.sdk.BoxTask result = null;
@@ -163,12 +166,12 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     }
 
     @Disabled
-    //needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
+    // needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
     @Test
     public void testGetTaskAssignments() {
         // using String message body for single parameter "taskId"
 
-        //add assignment to task -> to be able to search for assignments
+        // add assignment to task -> to be able to search for assignments
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.taskId", testTask.getID());
@@ -242,7 +245,6 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
 
                 // test route for updateTaskInfo
                 from("direct://UPDATETASKINFO").to("box://" + PATH_PREFIX + "/updateTaskInfo");
-
             }
         };
     }

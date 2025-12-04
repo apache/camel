@@ -32,24 +32,34 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Requires too much network resources")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 @EnabledIf("isDockerAvailable")
 class KubernetesCommandTest extends KubernetesBaseTest {
 
     @Test
     public void shouldResolvePlugin() {
-        FactoryFinder factoryFinder
-                = new DefaultFactoryFinder(new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
-        Assertions.assertTrue(factoryFinder.newInstance("camel-jbang-plugin-kubernetes").isPresent());
+        FactoryFinder factoryFinder = new DefaultFactoryFinder(
+                new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
+        Assertions.assertTrue(
+                factoryFinder.newInstance("camel-jbang-plugin-kubernetes").isPresent());
     }
 
     @Test
     public void shouldPrintKubernetesManifest() {
-        CamelJBangMain.run(createMain(), "kubernetes", "run", "classpath:route.yaml",
-                "--disable-auto=true", "--image-group", "camel-test", "--output", "yaml");
+        CamelJBangMain.run(
+                createMain(),
+                "kubernetes",
+                "run",
+                "classpath:route.yaml",
+                "--disable-auto=true",
+                "--image-group",
+                "camel-test",
+                "--output",
+                "yaml");
 
-        List<HasMetadata> resources = kubernetesClient.load(getKubernetesManifestAsStream(printer.getOutput())).items();
+        List<HasMetadata> resources = kubernetesClient
+                .load(getKubernetesManifestAsStream(printer.getOutput()))
+                .items();
         Assertions.assertEquals(2, resources.size());
 
         Deployment deployment = resources.stream()
@@ -60,23 +70,46 @@ class KubernetesCommandTest extends KubernetesBaseTest {
 
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Assertions.assertEquals(
+                1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.KUBERNETES_LABEL_NAME));
-        Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
+        Assertions.assertEquals(
+                "route",
+                deployment
+                        .getSpec()
+                        .getTemplate()
+                        .getSpec()
+                        .getContainers()
+                        .get(0)
+                        .getName());
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("jkube", matchLabels.get(BaseTrait.KUBERNETES_LABEL_MANAGED_BY));
-        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
-        Assertions.assertEquals("IfNotPresent",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
+        Assertions.assertEquals(
+                "camel-test/route:1.0-SNAPSHOT",
+                deployment
+                        .getSpec()
+                        .getTemplate()
+                        .getSpec()
+                        .getContainers()
+                        .get(0)
+                        .getImage());
+        Assertions.assertEquals(
+                "IfNotPresent",
+                deployment
+                        .getSpec()
+                        .getTemplate()
+                        .getSpec()
+                        .getContainers()
+                        .get(0)
+                        .getImagePullPolicy());
     }
 
     private CamelJBangMain createMain() {
         return new CamelJBangMain() {
             @Override
             public void quit(int exitCode) {
-                Assertions.assertEquals(0, exitCode,
-                        "Main finished with exit code %d:%n%s".formatted(exitCode, printer.getOutput()));
+                Assertions.assertEquals(
+                        0, exitCode, "Main finished with exit code %d:%n%s".formatted(exitCode, printer.getOutput()));
             }
         }.withPrinter(printer);
     }

@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5.annotation;
 
 /**
  * The test class ensuring that an existing bean can be replaced with a bean created from a method in a parent class.
  */
-class ReplaceBeanFromMethodInheritanceTest extends ReplaceBeanFromMethodTest {
-
-}
+class ReplaceBeanFromMethodInheritanceTest extends ReplaceBeanFromMethodTest {}

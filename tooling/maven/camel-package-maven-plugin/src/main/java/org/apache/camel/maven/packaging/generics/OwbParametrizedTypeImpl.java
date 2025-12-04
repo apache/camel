@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.generics;
 
 import java.lang.reflect.ParameterizedType;
@@ -75,7 +76,9 @@ public class OwbParametrizedTypeImpl implements ParameterizedType {
      */
     @Override
     public int hashCode() {
-        return Arrays.hashCode(types) ^ (owner == null ? 0 : owner.hashCode()) ^ (rawType == null ? 0 : rawType.hashCode());
+        return Arrays.hashCode(types)
+                ^ (owner == null ? 0 : owner.hashCode())
+                ^ (rawType == null ? 0 : rawType.hashCode());
     }
 
     /*
@@ -96,7 +99,6 @@ public class OwbParametrizedTypeImpl implements ParameterizedType {
         } else {
             return false;
         }
-
     }
 
     @Override

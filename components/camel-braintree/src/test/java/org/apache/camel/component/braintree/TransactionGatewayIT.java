@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -37,15 +41,13 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionGatewayIT.class);
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(TransactionGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection()
+            .getApiName(TransactionGatewayApiMethod.class)
+            .getName();
 
     private BraintreeGateway gateway;
     private final List<String> transactionIds;
@@ -126,19 +128,23 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
                 null,
                 new BraintreeHeaderBuilder()
                         .add("id", createResult.getTarget().getId())
-                        .add("cloneRequest", new TransactionCloneRequest()
-                                .amount(new BigDecimal("99.00"))
-                                .options()
-                                .submitForSettlement(true)
-                                .done())
+                        .add(
+                                "cloneRequest",
+                                new TransactionCloneRequest()
+                                        .amount(new BigDecimal("99.00"))
+                                        .options()
+                                        .submitForSettlement(true)
+                                        .done())
                         .build(),
                 Result.class);
 
         assertNotNull(cloneResult, "clone result");
         assertTrue(cloneResult.isSuccess());
 
-        LOG.info("Clone Transaction done - clonedId={}, id={}",
-                createResult.getTarget().getId(), cloneResult.getTarget().getId());
+        LOG.info(
+                "Clone Transaction done - clonedId={}, id={}",
+                createResult.getTarget().getId(),
+                cloneResult.getTarget().getId());
 
         this.transactionIds.add(cloneResult.getTarget().getId());
     }
@@ -165,7 +171,8 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
         this.transactionIds.add(createResult.getTarget().getId());
 
         // using String message body for single parameter "id"
-        final Transaction result = requestBody("direct://FIND", createResult.getTarget().getId());
+        final Transaction result =
+                requestBody("direct://FIND", createResult.getTarget().getId());
 
         assertNotNull(result, "find result");
         LOG.info("Transaction found - id={}", result.getId());
@@ -193,12 +200,12 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
         this.transactionIds.add(createResult.getTarget().getId());
 
         final Result<Transaction> result = requestBody(
-                "direct://SUBMITFORSETTLEMENT_WITH_ID",
-                createResult.getTarget().getId(),
-                Result.class);
+                "direct://SUBMITFORSETTLEMENT_WITH_ID", createResult.getTarget().getId(), Result.class);
 
         assertNotNull(result, "Submit For Settlement result");
-        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
+        LOG.debug(
+                "Transaction submitted for settlement - id={}",
+                result.getTarget().getId());
     }
 
     @Test
@@ -232,7 +239,9 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
                 Result.class);
 
         assertNotNull(result, "Submit For Settlement result");
-        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
+        LOG.debug(
+                "Transaction submitted for settlement - id={}",
+                result.getTarget().getId());
     }
 
     @Test
@@ -261,13 +270,14 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
                 null,
                 new BraintreeHeaderBuilder()
                         .add("id", createResult.getTarget().getId())
-                        .add("request", new TransactionRequest()
-                                .amount(new BigDecimal("100.00")))
+                        .add("request", new TransactionRequest().amount(new BigDecimal("100.00")))
                         .build(),
                 Result.class);
 
         assertNotNull(result, "Submit For Settlement result");
-        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
+        LOG.debug(
+                "Transaction submitted for settlement - id={}",
+                result.getTarget().getId());
     }
 
     @Test
@@ -294,14 +304,13 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
         assertNotNull(settleResult, "settle result");
         assertTrue(settleResult.isSuccess());
 
-        final Result<Transaction> result = requestBody(
-                "direct://REFUND_WITH_ID",
-                createId,
-                Result.class);
+        final Result<Transaction> result = requestBody("direct://REFUND_WITH_ID", createId, Result.class);
 
         assertNotNull(result, "Request Refund result");
         assertTrue(result.isSuccess());
-        LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
+        LOG.info(String.format(
+                "Refund id(%s) created for transaction id(%s)",
+                result.getTarget().getId(), createId));
     }
 
     @Test
@@ -339,7 +348,9 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
 
         assertNotNull(result, "Request Refund result");
         assertTrue(result.isSuccess());
-        LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
+        LOG.info(String.format(
+                "Refund id(%s) created for transaction id(%s)",
+                result.getTarget().getId(), createId));
     }
 
     @Test
@@ -371,14 +382,15 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
                 null,
                 new BraintreeHeaderBuilder()
                         .add("id", createId)
-                        .add("refundRequest", new TransactionRefundRequest()
-                                .amount(new BigDecimal("100.00")))
+                        .add("refundRequest", new TransactionRefundRequest().amount(new BigDecimal("100.00")))
                         .build(),
                 Result.class);
 
         assertNotNull(result, "Request Refund result");
         assertTrue(result.isSuccess());
-        LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
+        LOG.info(String.format(
+                "Refund id(%s) created for transaction id(%s)",
+                result.getTarget().getId(), createId));
     }
 
     // *************************************************************************
@@ -450,7 +462,8 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
         // parameter type is java.math.BigDecimal
         headers.put("CamelBraintree.amount", null);
 
-        final com.braintreegateway.Result result = requestBodyAndHeaders("direct://SUBMITFORPARTIALSETTLEMENT", null, headers);
+        final com.braintreegateway.Result result =
+                requestBodyAndHeaders("direct://SUBMITFORPARTIALSETTLEMENT", null, headers);
 
         assertNotNull(result, "submitForPartialSettlement result");
         LOG.debug("submitForPartialSettlement: {}", result);
@@ -476,35 +489,25 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for cancelRelease
-                from("direct://CANCELRELEASE")
-                        .to("braintree://" + PATH_PREFIX + "/cancelRelease?inBody=id");
+                from("direct://CANCELRELEASE").to("braintree://" + PATH_PREFIX + "/cancelRelease?inBody=id");
                 // test route for cloneTransaction
-                from("direct://CLONETRANSACTION")
-                        .to("braintree://" + PATH_PREFIX + "/cloneTransaction");
+                from("direct://CLONETRANSACTION").to("braintree://" + PATH_PREFIX + "/cloneTransaction");
                 // test route for credit
-                from("direct://CREDIT")
-                        .to("braintree://" + PATH_PREFIX + "/credit?inBody=request");
+                from("direct://CREDIT").to("braintree://" + PATH_PREFIX + "/credit?inBody=request");
                 // test route for find
-                from("direct://FIND")
-                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                from("direct://FIND").to("braintree://" + PATH_PREFIX + "/find?inBody=id");
                 // test route for holdInEscrow
-                from("direct://HOLDINESCROW")
-                        .to("braintree://" + PATH_PREFIX + "/holdInEscrow?inBody=id");
+                from("direct://HOLDINESCROW").to("braintree://" + PATH_PREFIX + "/holdInEscrow?inBody=id");
                 // test route for refund
-                from("direct://REFUND")
-                        .to("braintree://" + PATH_PREFIX + "/refund");
+                from("direct://REFUND").to("braintree://" + PATH_PREFIX + "/refund");
                 // test route for refund
-                from("direct://REFUND_WITH_ID")
-                        .to("braintree://" + PATH_PREFIX + "/refund?inBody=id");
+                from("direct://REFUND_WITH_ID").to("braintree://" + PATH_PREFIX + "/refund?inBody=id");
                 // test route for releaseFromEscrow
-                from("direct://RELEASEFROMESCROW")
-                        .to("braintree://" + PATH_PREFIX + "/releaseFromEscrow?inBody=id");
+                from("direct://RELEASEFROMESCROW").to("braintree://" + PATH_PREFIX + "/releaseFromEscrow?inBody=id");
                 // test route for sale
-                from("direct://SALE")
-                        .to("braintree://" + PATH_PREFIX + "/sale?inBody=request");
+                from("direct://SALE").to("braintree://" + PATH_PREFIX + "/sale?inBody=request");
                 // test route for search
-                from("direct://SEARCH")
-                        .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
+                from("direct://SEARCH").to("braintree://" + PATH_PREFIX + "/search?inBody=query");
                 // test route for submitForPartialSettlement
                 from("direct://SUBMITFORPARTIALSETTLEMENT")
                         .to("braintree://" + PATH_PREFIX + "/submitForPartialSettlement");
@@ -518,8 +521,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
                 from("direct://SUBMITFORSETTLEMENT_WITH_REQUEST")
                         .to("braintree://" + PATH_PREFIX + "/submitForSettlement");
                 // test route for voidTransaction
-                from("direct://VOIDTRANSACTION")
-                        .to("braintree://" + PATH_PREFIX + "/voidTransaction?inBody=id");
+                from("direct://VOIDTRANSACTION").to("braintree://" + PATH_PREFIX + "/voidTransaction?inBody=id");
             }
         };
     }

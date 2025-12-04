@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +31,10 @@ public class JqExpressionBodyFnTest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                var jq = expression().jq(". + [{\"array\": body()}]").source("mydata").end();
+                var jq = expression()
+                        .jq(". + [{\"array\": body()}]")
+                        .source("mydata")
+                        .end();
 
                 from("direct:start")
                         .setVariable("mydata", simple("${body}"))
@@ -42,8 +46,7 @@ public class JqExpressionBodyFnTest extends JqTestSupport {
 
     @Test
     public void testExpression() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
 
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arr = mapper.createArrayNode();

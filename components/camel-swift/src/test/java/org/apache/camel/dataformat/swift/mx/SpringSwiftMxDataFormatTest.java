@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.swift.mx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -34,11 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * The unit test for {@link SwiftMxDataFormat} testing the XML DSL.
  */
@@ -49,9 +50,8 @@ class SpringSwiftMxDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:unmarshal");
         mockEndpoint.expectedMessageCount(1);
 
-        Object result
-                = template.requestBody("direct:unmarshal",
-                        Files.readAllBytes(Paths.get("src/test/resources/mx/message1.xml")));
+        Object result = template.requestBody(
+                "direct:unmarshal", Files.readAllBytes(Paths.get("src/test/resources/mx/message1.xml")));
         assertNotNull(result);
         assertInstanceOf(MxCamt04800103.class, result);
         mockEndpoint.assertIsSatisfied();
@@ -62,9 +62,8 @@ class SpringSwiftMxDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:unmarshalFull");
         mockEndpoint.expectedMessageCount(1);
 
-        Object result
-                = template.requestBody("direct:unmarshalFull",
-                        Files.readAllBytes(Paths.get("src/test/resources/mx/message3.xml")));
+        Object result = template.requestBody(
+                "direct:unmarshalFull", Files.readAllBytes(Paths.get("src/test/resources/mx/message3.xml")));
         assertNotNull(result);
         assertInstanceOf(MxXsys01100102.class, result);
         mockEndpoint.assertIsSatisfied();
@@ -75,9 +74,9 @@ class SpringSwiftMxDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:marshal");
         mockEndpoint.expectedMessageCount(1);
 
-        MxPacs00800107 message = MxPacs00800107.parse(Files.readString(Paths.get("src/test/resources/mx/message2.xml")));
-        Object result
-                = template.requestBody("direct:marshal", message);
+        MxPacs00800107 message =
+                MxPacs00800107.parse(Files.readString(Paths.get("src/test/resources/mx/message2.xml")));
+        Object result = template.requestBody("direct:marshal", message);
         assertNotNull(result);
         assertInstanceOf(InputStream.class, result);
         MxPacs00800107 actual = MxPacs00800107.parse(IOUtils.toString((InputStream) result, StandardCharsets.UTF_8));
@@ -90,14 +89,15 @@ class SpringSwiftMxDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:marshalJson");
         mockEndpoint.expectedMessageCount(1);
 
-        MxPacs00800107 message = MxPacs00800107.parse(Files.readString(Paths.get("src/test/resources/mx/message2.xml")));
-        Object result
-                = template.requestBody("direct:marshalJson", message);
+        MxPacs00800107 message =
+                MxPacs00800107.parse(Files.readString(Paths.get("src/test/resources/mx/message2.xml")));
+        Object result = template.requestBody("direct:marshalJson", message);
         assertNotNull(result);
         assertInstanceOf(InputStream.class, result);
 
         ObjectMapper mapper = new ObjectMapper();
-        assertEquals(mapper.readTree(Files.readString(Paths.get("src/test/resources/mx/message2.json"))),
+        assertEquals(
+                mapper.readTree(Files.readString(Paths.get("src/test/resources/mx/message2.json"))),
                 mapper.readTree((InputStream) result));
         mockEndpoint.assertIsSatisfied();
     }
@@ -107,15 +107,17 @@ class SpringSwiftMxDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:marshalFull");
         mockEndpoint.expectedMessageCount(1);
 
-        MxPacs00800107 message = MxPacs00800107.parse(Files.readString(Paths.get("src/test/resources/mx/message2.xml")));
-        Object result
-                = template.requestBody("direct:marshalFull", message);
+        MxPacs00800107 message =
+                MxPacs00800107.parse(Files.readString(Paths.get("src/test/resources/mx/message2.xml")));
+        Object result = template.requestBody("direct:marshalFull", message);
         assertNotNull(result);
         assertInstanceOf(InputStream.class, result);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream) result, StandardCharsets.UTF_8));
         String line = reader.readLine();
-        assertFalse(line.contains("<?xml"), String.format("Should not start with the xml header, the first line was %s", line));
+        assertFalse(
+                line.contains("<?xml"),
+                String.format("Should not start with the xml header, the first line was %s", line));
         mockEndpoint.assertIsSatisfied();
     }
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift.local;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.InetAddress;
 
@@ -37,8 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * TBD
  */
@@ -58,24 +59,27 @@ public class ThriftThreadPoolServerTest extends CamelTestSupport {
     private static TTransport clientTransport;
     private static TServer server;
     private static TProtocol protocol;
-    @SuppressWarnings({ "rawtypes" })
+
+    @SuppressWarnings({"rawtypes"})
     private static Calculator.Processor processor;
 
     @BeforeEach
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
 
         TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters();
 
         sslParams.setKeyStore(KEY_STORE_PATH, SECURITY_STORE_PASSWORD);
-        serverTransport = TSSLTransportFactory.getServerSocket(THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT,
-                InetAddress.getByName("localhost"), sslParams);
+        serverTransport = TSSLTransportFactory.getServerSocket(
+                THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT, InetAddress.getByName("localhost"), sslParams);
         ThriftThreadPoolServer.Args args = new ThriftThreadPoolServer.Args(serverTransport);
 
         args.processor(processor);
-        args.executorService(this.context().getExecutorServiceManager().newThreadPool(this, "test-server-invoker", 1, 10));
-        args.startThreadPool(this.context().getExecutorServiceManager().newSingleThreadExecutor(this, "test-start-thread"));
+        args.executorService(
+                this.context().getExecutorServiceManager().newThreadPool(this, "test-server-invoker", 1, 10));
+        args.startThreadPool(
+                this.context().getExecutorServiceManager().newSingleThreadExecutor(this, "test-start-thread"));
         args.context(this.context());
 
         server = new ThriftThreadPoolServer(args);

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.pojo.SayService;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OptionalPropertyPlaceholderBeanTest extends ContextTestSupport {
 
@@ -36,7 +37,9 @@ public class OptionalPropertyPlaceholderBeanTest extends ContextTestSupport {
         SayService say = new SayService();
         assertEquals("Hello", say.getMessage());
 
-        PropertyBindingSupport.build().withTarget(say).withProperty("message", "{{?cool.name}}")
+        PropertyBindingSupport.build()
+                .withTarget(say)
+                .withProperty("message", "{{?cool.name}}")
                 .withCamelContext(context)
                 .bind();
         assertEquals("Camel", say.getMessage());
@@ -47,7 +50,9 @@ public class OptionalPropertyPlaceholderBeanTest extends ContextTestSupport {
         SayService say = new SayService();
         assertEquals("Hello", say.getMessage());
 
-        PropertyBindingSupport.build().withTarget(say).withProperty("message", "{{?unknown}}")
+        PropertyBindingSupport.build()
+                .withTarget(say)
+                .withProperty("message", "{{?unknown}}")
                 .withCamelContext(context)
                 .bind();
         assertEquals("Hello", say.getMessage());
@@ -58,7 +63,9 @@ public class OptionalPropertyPlaceholderBeanTest extends ContextTestSupport {
         SayService say = new SayService();
         assertEquals("Hello", say.getMessage());
 
-        PropertyBindingSupport.build().withTarget(say).withProperty("message", "{{?unknown:Bye}}")
+        PropertyBindingSupport.build()
+                .withTarget(say)
+                .withProperty("message", "{{?unknown:Bye}}")
                 .withCamelContext(context)
                 .bind();
         assertEquals("Bye", say.getMessage());
@@ -67,8 +74,8 @@ public class OptionalPropertyPlaceholderBeanTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
-
 }

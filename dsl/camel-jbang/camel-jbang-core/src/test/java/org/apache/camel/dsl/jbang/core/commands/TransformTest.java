@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class TransformTest {
 
@@ -52,15 +53,14 @@ class TransformTest {
     public void shouldTransformToYaml() throws Exception {
         Path outPath = workingDir.resolve("transform.yaml");
 
-        String[] args = new String[] { "--output=" + outPath.toString() };
-        TransformRoute command = createCommand(new String[] { "src/test/resources/transform.xml" }, args);
+        String[] args = new String[] {"--output=" + outPath.toString()};
+        TransformRoute command = createCommand(new String[] {"src/test/resources/transform.xml"}, args);
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
         Assertions.assertTrue(Files.exists(outPath));
         String data = Files.readString(outPath);
-        String expected
-                = IOHelper.stripLineComments(Paths.get("src/test/resources/transform-out.yaml"), "#", true);
+        String expected = IOHelper.stripLineComments(Paths.get("src/test/resources/transform-out.yaml"), "#", true);
         Assertions.assertEquals(expected, data);
     }
 
@@ -68,15 +68,14 @@ class TransformTest {
     public void shouldTransformBlueprintToYaml() throws Exception {
         Path outPath = workingDir.resolve("blueprint.yaml");
 
-        String[] args = new String[] { "--output=" + outPath.toString() };
-        TransformRoute command = createCommand(new String[] { "src/test/resources/blueprint.xml" }, args);
+        String[] args = new String[] {"--output=" + outPath.toString()};
+        TransformRoute command = createCommand(new String[] {"src/test/resources/blueprint.xml"}, args);
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
         Assertions.assertTrue(Files.exists(outPath));
         String data = Files.readString(outPath);
-        String expected
-                = IOHelper.stripLineComments(Paths.get("src/test/resources/blueprint-out.yaml"), "#", true);
+        String expected = IOHelper.stripLineComments(Paths.get("src/test/resources/blueprint-out.yaml"), "#", true);
         assertThat(data).isEqualToIgnoringNewLines(expected);
     }
 
@@ -90,5 +89,4 @@ class TransformTest {
         command.files = Arrays.asList(files);
         return command;
     }
-
 }

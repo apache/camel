@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl;
 
 import java.util.List;
@@ -32,8 +33,7 @@ import org.apache.camel.RuntimeCamelException;
  */
 public class ImageNetUtil {
 
-    public ImageNetUtil() {
-    }
+    public ImageNetUtil() {}
 
     public void extractClassName(Exchange exchange) {
         Classifications body = exchange.getMessage().getBody(Classifications.class);
@@ -48,10 +48,12 @@ public class ImageNetUtil {
         if (word == null) {
             throw new RuntimeCamelException("Word not found: " + className);
         }
-        PointerTargetNodeList hypernyms = PointerUtils.getDirectHypernyms(word.getSenses().get(0));
+        PointerTargetNodeList hypernyms =
+                PointerUtils.getDirectHypernyms(word.getSenses().get(0));
         String hypernym = hypernyms.stream()
                 .map(h -> h.getSynset().getWords().get(0).getLemma())
-                .findFirst().orElse(className);
+                .findFirst()
+                .orElse(className);
         exchange.getMessage().setBody(List.of(className, hypernym));
     }
 }

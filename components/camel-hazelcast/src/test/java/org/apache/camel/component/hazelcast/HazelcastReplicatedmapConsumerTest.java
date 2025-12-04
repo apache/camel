@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -31,9 +35,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
@@ -80,8 +81,9 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:evicted");
         out.expectedMessageCount(1);
         map.put("4711", "my-foo", 100, TimeUnit.MILLISECONDS);
-        Awaitility.await().atMost(30000, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await()
+                .atMost(30000, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Test
@@ -99,13 +101,20 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%srm", HazelcastConstants.REPLICATEDMAP_PREFIX)).log("object...").choice()
-                        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED)).log("...added")
+                from(String.format("hazelcast-%srm", HazelcastConstants.REPLICATEDMAP_PREFIX))
+                        .log("object...")
+                        .choice()
+                        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
+                        .log("...added")
                         .to("mock:added")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.EVICTED))
-                        .log("...evicted").to("mock:evicted")
+                        .log("...evicted")
+                        .to("mock:evicted")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED))
-                        .log("...removed").to("mock:removed").otherwise().log("fail!");
+                        .log("...removed")
+                        .to("mock:removed")
+                        .otherwise()
+                        .log("fail!");
             }
         };
     }
@@ -116,5 +125,4 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
         assertEquals("4711", headers.get(HazelcastConstants.OBJECT_ID));
         assertNotNull(headers.get(HazelcastConstants.LISTENER_TIME));
     }
-
 }

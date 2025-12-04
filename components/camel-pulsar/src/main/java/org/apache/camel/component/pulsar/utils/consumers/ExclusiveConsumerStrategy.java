@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.utils.consumers;
 
 import java.util.Collection;
@@ -37,7 +38,9 @@ public class ExclusiveConsumerStrategy implements ConsumerCreationStrategy {
     public Collection<Consumer<byte[]>> create(final PulsarEndpoint pulsarEndpoint) throws Exception {
         String consumerName = pulsarEndpoint.getPulsarConfiguration().getConsumerName();
 
-        ConsumerBuilder<byte[]> builder = CommonCreationStrategyImpl.getBuilder(consumerName, pulsarEndpoint, pulsarConsumer);
-        return Collections.singletonList(builder.subscriptionType(SubscriptionType.Exclusive).subscribe());
+        ConsumerBuilder<byte[]> builder =
+                CommonCreationStrategyImpl.getBuilder(consumerName, pulsarEndpoint, pulsarConsumer);
+        return Collections.singletonList(
+                builder.subscriptionType(SubscriptionType.Exclusive).subscribe());
     }
 }

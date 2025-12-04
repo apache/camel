@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp.internal;
 
 import java.io.IOException;
@@ -62,7 +63,9 @@ public class TcpServerBindThread extends Thread {
      */
     @Override
     public void run() {
-        MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
+        MDC.put(
+                UnitOfWork.MDC_CAMEL_CONTEXT_ID,
+                consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();
         if (route != null) {
@@ -78,7 +81,8 @@ public class TcpServerBindThread extends Thread {
             ServerSocket serverSocket;
             if (sslContextParameters != null) {
                 log.debug("Initializing SSLContextParameters");
-                SSLContext sslContext = sslContextParameters.createSSLContext(consumer.getEndpoint().getCamelContext());
+                SSLContext sslContext = sslContextParameters.createSSLContext(
+                        consumer.getEndpoint().getCamelContext());
                 SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
                 serverSocket = sslServerSocketFactory.createServerSocket();
             } else {
@@ -100,8 +104,10 @@ public class TcpServerBindThread extends Thread {
     private void doAccept(ServerSocket serverSocket, InetSocketAddress socketAddress) {
         BlockingTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(consumer.getConfiguration().getBindTimeout()))
-                        .withInterval(Duration.ofMillis(consumer.getConfiguration().getBindRetryInterval()))
+                        .withMaxDuration(
+                                Duration.ofMillis(consumer.getConfiguration().getBindTimeout()))
+                        .withInterval(
+                                Duration.ofMillis(consumer.getConfiguration().getBindRetryInterval()))
                         .build())
                 .withName("mllp-tcp-server-accept")
                 .build();
@@ -109,7 +115,9 @@ public class TcpServerBindThread extends Thread {
         if (task.run(consumer.getEndpoint().getCamelContext(), () -> doBind(serverSocket, socketAddress))) {
             consumer.startAcceptThread(serverSocket);
         } else {
-            log.error("Failed to bind to address {} within timeout {}", socketAddress,
+            log.error(
+                    "Failed to bind to address {} within timeout {}",
+                    socketAddress,
                     consumer.getConfiguration().getBindTimeout());
         }
     }
@@ -123,7 +131,9 @@ public class TcpServerBindThread extends Thread {
             }
             return true;
         } catch (IOException e) {
-            log.warn("Failed to bind to address {} - retrying in {} milliseconds", socketAddress,
+            log.warn(
+                    "Failed to bind to address {} - retrying in {} milliseconds",
+                    socketAddress,
                     consumer.getConfiguration().getBindRetryInterval());
 
             return false;
@@ -146,9 +156,9 @@ public class TcpServerBindThread extends Thread {
         if (null == consumer.getEndpoint().getHostname()) {
             socketAddress = new InetSocketAddress(consumer.getEndpoint().getPort());
         } else {
-            socketAddress = new InetSocketAddress(consumer.getEndpoint().getHostname(), consumer.getEndpoint().getPort());
+            socketAddress = new InetSocketAddress(
+                    consumer.getEndpoint().getHostname(), consumer.getEndpoint().getPort());
         }
         return socketAddress;
     }
-
 }

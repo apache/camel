@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.consumer.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
@@ -42,29 +47,27 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
 
     private static final KubernetesClient CLIENT = new KubernetesClientBuilder().build();
-    private static final String CRD_SOURCE_STRING = "{\n" +
-                                                    "  \"apiVersion\": \"camel.apache.org/v1\",\n" +
-                                                    "  \"kind\": \"CamelTest\",\n" +
-                                                    "  \"metadata\": {\n" +
-                                                    "    \"name\": \"camel-crd-itest\"\n" +
-                                                    "  },\n" +
-                                                    "  \"spec\": {\n" +
-                                                    "    \"message\": \"Apache Camel Rocks!\"\n" +
-                                                    "  }\n" +
-                                                    "}";
+    private static final String CRD_SOURCE_STRING = "{\n" + "  \"apiVersion\": \"camel.apache.org/v1\",\n"
+            + "  \"kind\": \"CamelTest\",\n"
+            + "  \"metadata\": {\n"
+            + "    \"name\": \"camel-crd-itest\"\n"
+            + "  },\n"
+            + "  \"spec\": {\n"
+            + "    \"message\": \"Apache Camel Rocks!\"\n"
+            + "  }\n"
+            + "}";
     private static CustomResourceDefinition crd;
 
     @EndpointInject("mock:result")
@@ -73,7 +76,9 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
     @BeforeAll
     public static void beforeAll() {
         crd = new CustomResourceDefinitionBuilder()
-                .withNewMetadata().withName("cameltests.camel.apache.org").endMetadata()
+                .withNewMetadata()
+                .withName("cameltests.camel.apache.org")
+                .endMetadata()
                 .withNewSpec()
                 .withGroup("camel.apache.org")
                 .addAllToVersions(Collections.singletonList(new CustomResourceDefinitionVersionBuilder()
@@ -83,12 +88,16 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
                         .withNewSchema()
                         .withNewOpenAPIV3Schema()
                         .withType("object")
-                        .addToProperties("spec", new JSONSchemaPropsBuilder()
-                                .withType("object")
-                                .addToProperties("message", new JSONSchemaPropsBuilder()
-                                        .withType("string")
+                        .addToProperties(
+                                "spec",
+                                new JSONSchemaPropsBuilder()
+                                        .withType("object")
+                                        .addToProperties(
+                                                "message",
+                                                new JSONSchemaPropsBuilder()
+                                                        .withType("string")
+                                                        .build())
                                         .build())
-                                .build())
                         .endOpenAPIV3Schema()
                         .endSchema()
                         .build()))
@@ -115,8 +124,8 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
     @Test
     @Order(1)
     void createCustomResource() throws Exception {
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION,
-                Watcher.Action.ADDED);
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(
+                KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION, Watcher.Action.ADDED);
         Exchange ex = template.request("direct:createCustomResource", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, CRD_SOURCE_STRING);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "camel-crd-itest");
@@ -138,8 +147,8 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
     @Order(2)
     void deleteCustomResource() throws Exception {
         mockResultEndpoint.reset();
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION,
-                Watcher.Action.ADDED, Watcher.Action.DELETED);
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(
+                KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION, Watcher.Action.ADDED, Watcher.Action.DELETED);
 
         Exchange ex = template.request("direct:deleteCustomResource", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "camel-crd-itest");
@@ -164,13 +173,19 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
             @Override
             public void configure() {
                 from("direct:createCustomResource")
-                        .toF("kubernetes-custom-resources://%s/?oauthToken=%s&operation=createCustomResource", host, authToken);
+                        .toF(
+                                "kubernetes-custom-resources://%s/?oauthToken=%s&operation=createCustomResource",
+                                host, authToken);
                 from("direct:deleteCustomResource")
-                        .toF("kubernetes-custom-resources://%s/?oauthToken=%s&operation=deleteCustomResource", host, authToken);
-                fromF("kubernetes-custom-resources://%s/?oauthToken=%s&namespace=default" +
-                      "&crdName=cameltests.camel.apache.org&crdGroup=camel.apache.org&crdScope=Namespaced&crdVersion=v1&crdPlural=cameltests",
-                        host, authToken)
-                        .process(new KubernetesProcessor()).to(mockResultEndpoint);
+                        .toF(
+                                "kubernetes-custom-resources://%s/?oauthToken=%s&operation=deleteCustomResource",
+                                host, authToken);
+                fromF(
+                                "kubernetes-custom-resources://%s/?oauthToken=%s&namespace=default"
+                                        + "&crdName=cameltests.camel.apache.org&crdGroup=camel.apache.org&crdScope=Namespaced&crdVersion=v1&crdPlural=cameltests",
+                                host, authToken)
+                        .process(new KubernetesProcessor())
+                        .to(mockResultEndpoint);
             }
         };
     }
@@ -181,7 +196,9 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
             Message in = exchange.getIn();
             String json = exchange.getIn().getBody(String.class);
 
-            log.info("Got event with custom resource instance: {} and action {}", json,
+            log.info(
+                    "Got event with custom resource instance: {} and action {}",
+                    json,
                     in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.spi.AutoMockInterceptStrategy;
@@ -31,8 +32,7 @@ public class DefaultAutoMockInterceptStrategy implements AutoMockInterceptStrate
         this.skip = skip;
     }
 
-    public DefaultAutoMockInterceptStrategy() {
-    }
+    public DefaultAutoMockInterceptStrategy() {}
 
     @Override
     public String getPattern() {

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -28,9 +32,6 @@ import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3StreamUploadTimestampNamingStrategyIT extends Aws2S3Base {
 
@@ -82,7 +83,8 @@ public class S3StreamUploadTimestampNamingStrategyIT extends Aws2S3Base {
                 String timestampStr = key.substring("fileTest-".length(), key.length() - ".txt".length());
                 try {
                     long timestamp = Long.parseLong(timestampStr);
-                    assertTrue(timestamp >= beforeUpload && timestamp <= afterUpload,
+                    assertTrue(
+                            timestamp >= beforeUpload && timestamp <= afterUpload,
                             "Timestamp " + timestamp + " should be between " + beforeUpload + " and " + afterUpload);
                 } catch (NumberFormatException e) {
                     // This shouldn't happen with timestamp naming strategy
@@ -100,15 +102,13 @@ public class S3StreamUploadTimestampNamingStrategyIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint1
-                        = String.format(
-                                "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=timestamp",
-                                name.get());
+                String awsEndpoint1 = String.format(
+                        "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=timestamp",
+                        name.get());
 
                 from("direct:stream1").to(awsEndpoint1).to("mock:result");
 
-                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true",
-                        name.get());
+                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true", name.get());
 
                 from("direct:listObjects").to(awsEndpoint);
             }

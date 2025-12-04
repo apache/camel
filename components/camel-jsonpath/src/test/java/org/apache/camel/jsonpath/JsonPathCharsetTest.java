@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class JsonPathCharsetTest extends CamelTestSupport {
 
     @Override
@@ -37,7 +38,10 @@ public class JsonPathCharsetTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").transform().jsonpath("$.store.book[*].title").to("mock:authors");
+                from("direct:start")
+                        .transform()
+                        .jsonpath("$.store.book[*].title")
+                        .to("mock:authors");
             }
         };
     }
@@ -94,8 +98,10 @@ public class JsonPathCharsetTest extends CamelTestSupport {
 
         URL url = new URL("file:src/test/resources/germanbooks-iso-8859-1.json");
         assertNotNull(url);
-        sendBody("direct:start", url,
-                Collections.<String, Object> singletonMap(JsonPathConstants.HEADER_JSON_ENCODING, "ISO-8859-1"));
+        sendBody(
+                "direct:start",
+                url,
+                Collections.<String, Object>singletonMap(JsonPathConstants.HEADER_JSON_ENCODING, "ISO-8859-1"));
 
         check("Joseph und seine Brüder", "Götzendämmerung");
     }
@@ -107,10 +113,13 @@ public class JsonPathCharsetTest extends CamelTestSupport {
     private void check(String title1, String title2) throws InterruptedException {
         MockEndpoint.assertIsSatisfied(context);
 
-        List<?> authors = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> authors = getMockEndpoint("mock:authors")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(List.class);
 
         assertEquals(title1, authors.get(0));
         assertEquals(title2, authors.get(1));
     }
-
 }

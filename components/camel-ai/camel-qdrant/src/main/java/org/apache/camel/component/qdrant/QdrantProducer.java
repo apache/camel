@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant;
+
+import static io.qdrant.client.QueryFactory.nearest;
+import static io.qdrant.client.WithPayloadSelectorFactory.enable;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -38,9 +42,6 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
-
-import static io.qdrant.client.QueryFactory.nearest;
-import static io.qdrant.client.WithPayloadSelectorFactory.enable;
 
 public class QdrantProducer extends DefaultAsyncProducer {
 
@@ -112,7 +113,7 @@ public class QdrantProducer extends DefaultAsyncProducer {
     //
     // ***************************************
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private boolean upsert(Exchange exchange, AsyncCallback callback) throws Exception {
         final String collection = getEndpoint().getCollection();
         final Message in = exchange.getMessage();
@@ -124,24 +125,23 @@ public class QdrantProducer extends DefaultAsyncProducer {
                 .setWait(true)
                 .build();
 
-        call(
-                this.client.upsertAsync(value),
-                (r, t) -> {
-                    if (t != null) {
-                        exchange.setException(new QdrantActionException(QdrantAction.UPSERT, t));
-                    } else {
-                        in.setHeader(Qdrant.Headers.OPERATION_ID, r.getOperationId());
-                        in.setHeader(Qdrant.Headers.OPERATION_STATUS, r.getStatus().name());
-                        in.setHeader(Qdrant.Headers.OPERATION_STATUS_VALUE, r.getStatus().getNumber());
-                    }
+        call(this.client.upsertAsync(value), (r, t) -> {
+            if (t != null) {
+                exchange.setException(new QdrantActionException(QdrantAction.UPSERT, t));
+            } else {
+                in.setHeader(Qdrant.Headers.OPERATION_ID, r.getOperationId());
+                in.setHeader(Qdrant.Headers.OPERATION_STATUS, r.getStatus().name());
+                in.setHeader(
+                        Qdrant.Headers.OPERATION_STATUS_VALUE, r.getStatus().getNumber());
+            }
 
-                    callback.done(false);
-                });
+            callback.done(false);
+        });
 
         return false;
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private boolean retrieve(Exchange exchange, AsyncCallback callback) throws Exception {
         final String collection = getEndpoint().getCollection();
         final Message in = exchange.getMessage();
@@ -152,16 +152,10 @@ public class QdrantProducer extends DefaultAsyncProducer {
                         collection,
                         ids,
                         WithPayloadSelectorFactory.enable(in.getHeader(
-                                Qdrant.Headers.INCLUDE_PAYLOAD,
-                                Qdrant.Headers.DEFAULT_INCLUDE_PAYLOAD,
-                                boolean.class)),
+                                Qdrant.Headers.INCLUDE_PAYLOAD, Qdrant.Headers.DEFAULT_INCLUDE_PAYLOAD, boolean.class)),
                         WithVectorsSelectorFactory.enable(in.getHeader(
-                                Qdrant.Headers.INCLUDE_VECTORS,
-                                Qdrant.Headers.DEFAULT_INCLUDE_VECTORS,
-                                boolean.class)),
-                        in.getHeader(
-                                Qdrant.Headers.READ_CONSISTENCY,
-                                Points.ReadConsistency.class)),
+                                Qdrant.Headers.INCLUDE_VECTORS, Qdrant.Headers.DEFAULT_INCLUDE_VECTORS, boolean.class)),
+                        in.getHeader(Qdrant.Headers.READ_CONSISTENCY, Points.ReadConsistency.class)),
                 (r, t) -> {
                     if (t != null) {
                         exchange.setException(new QdrantActionException(QdrantAction.RETRIEVE, t));
@@ -180,18 +174,15 @@ public class QdrantProducer extends DefaultAsyncProducer {
         final String collection = getEndpoint().getCollection();
         final Message in = exchange.getMessage();
 
-        call(
-                this.client.getCollectionInfoAsync(collection),
+        call(this.client.getCollectionInfoAsync(collection), (r, t) -> {
+            if (t != null) {
+                exchange.setException(new QdrantActionException(QdrantAction.COLLECTION_INFO, t));
+            } else {
+                in.setBody(r);
+            }
 
-                (r, t) -> {
-                    if (t != null) {
-                        exchange.setException(new QdrantActionException(QdrantAction.COLLECTION_INFO, t));
-                    } else {
-                        in.setBody(r);
-                    }
-
-                    callback.done(false);
-                });
+            callback.done(false);
+        });
 
         return false;
     }
@@ -207,19 +198,18 @@ public class QdrantProducer extends DefaultAsyncProducer {
                 .setWait(true)
                 .build();
 
-        call(
-                this.client.deleteAsync(value),
-                (r, t) -> {
-                    if (t != null) {
-                        exchange.setException(new QdrantActionException(QdrantAction.DELETE, t));
-                    } else {
-                        in.setHeader(Qdrant.Headers.OPERATION_ID, r.getOperationId());
-                        in.setHeader(Qdrant.Headers.OPERATION_STATUS, r.getStatus().name());
-                        in.setHeader(Qdrant.Headers.OPERATION_STATUS_VALUE, r.getStatus().getNumber());
-                    }
+        call(this.client.deleteAsync(value), (r, t) -> {
+            if (t != null) {
+                exchange.setException(new QdrantActionException(QdrantAction.DELETE, t));
+            } else {
+                in.setHeader(Qdrant.Headers.OPERATION_ID, r.getOperationId());
+                in.setHeader(Qdrant.Headers.OPERATION_STATUS, r.getStatus().name());
+                in.setHeader(
+                        Qdrant.Headers.OPERATION_STATUS_VALUE, r.getStatus().getNumber());
+            }
 
-                    callback.done(false);
-                });
+            callback.done(false);
+        });
 
         return false;
     }
@@ -229,15 +219,13 @@ public class QdrantProducer extends DefaultAsyncProducer {
         final VectorParams body = in.getMandatoryBody(VectorParams.class);
         final String collection = getEndpoint().getCollection();
 
-        call(
-                this.client.createCollectionAsync(collection, body),
-                (r, t) -> {
-                    if (t != null) {
-                        exchange.setException(new QdrantActionException(QdrantAction.CREATE_COLLECTION, t));
-                    }
+        call(this.client.createCollectionAsync(collection, body), (r, t) -> {
+            if (t != null) {
+                exchange.setException(new QdrantActionException(QdrantAction.CREATE_COLLECTION, t));
+            }
 
-                    callback.done(false);
-                });
+            callback.done(false);
+        });
 
         return false;
     }
@@ -245,15 +233,13 @@ public class QdrantProducer extends DefaultAsyncProducer {
     private boolean deleteCollection(Exchange exchange, AsyncCallback callback) {
         final String collection = getEndpoint().getCollection();
 
-        call(
-                this.client.deleteCollectionAsync(collection),
-                (r, t) -> {
-                    if (t != null) {
-                        exchange.setException(new QdrantActionException(QdrantAction.DELETE_COLLECTION, t));
-                    }
+        call(this.client.deleteCollectionAsync(collection), (r, t) -> {
+            if (t != null) {
+                exchange.setException(new QdrantActionException(QdrantAction.DELETE_COLLECTION, t));
+            }
 
-                    callback.done(false);
-                });
+            callback.done(false);
+        });
 
         return false;
     }
@@ -282,30 +268,24 @@ public class QdrantProducer extends DefaultAsyncProducer {
                 .setQuery(nearest(vectors))
                 .setLimit(maxResults)
                 .setWithVectors(WithVectorsSelectorFactory.enable(in.getHeader(
-                        Qdrant.Headers.INCLUDE_VECTORS,
-                        Qdrant.Headers.DEFAULT_INCLUDE_VECTORS,
-                        boolean.class)))
+                        Qdrant.Headers.INCLUDE_VECTORS, Qdrant.Headers.DEFAULT_INCLUDE_VECTORS, boolean.class)))
                 .setWithPayload(enable(in.getHeader(
-                        Qdrant.Headers.INCLUDE_PAYLOAD,
-                        Qdrant.Headers.DEFAULT_INCLUDE_PAYLOAD,
-                        boolean.class)));
+                        Qdrant.Headers.INCLUDE_PAYLOAD, Qdrant.Headers.DEFAULT_INCLUDE_PAYLOAD, boolean.class)));
 
         if (filter != null) {
             queryRequestBuilder.setFilter(filter);
         }
 
-        call(
-                this.client.queryAsync(queryRequestBuilder.build(), timeout),
-                (r, t) -> {
-                    if (t != null) {
-                        exchange.setException(new QdrantActionException(QdrantAction.SIMILARITY_SEARCH, t));
-                    } else {
-                        in.setBody(new ArrayList<>(r));
-                        in.setHeader(Qdrant.Headers.SIZE, r.size());
-                    }
+        call(this.client.queryAsync(queryRequestBuilder.build(), timeout), (r, t) -> {
+            if (t != null) {
+                exchange.setException(new QdrantActionException(QdrantAction.SIMILARITY_SEARCH, t));
+            } else {
+                in.setBody(new ArrayList<>(r));
+                in.setHeader(Qdrant.Headers.SIZE, r.size());
+            }
 
-                    callback.done(false);
-                });
+            callback.done(false);
+        });
 
         return false;
     }

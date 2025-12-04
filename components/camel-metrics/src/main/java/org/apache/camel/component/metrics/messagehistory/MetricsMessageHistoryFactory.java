@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics.messagehistory;
 
 import java.util.concurrent.TimeUnit;
@@ -173,7 +174,8 @@ public class MetricsMessageHistoryFactory extends ServiceSupport
     }
 
     private String createName(String type, String routeId, String id) {
-        String name = camelContext.getManagementName() != null ? camelContext.getManagementName() : camelContext.getName();
+        String name =
+                camelContext.getManagementName() != null ? camelContext.getManagementName() : camelContext.getName();
 
         String answer = namePattern;
         answer = answer.replaceFirst("##name##", name);
@@ -208,5 +210,4 @@ public class MetricsMessageHistoryFactory extends ServiceSupport
 
         ObjectHelper.notNull(metricsRegistry, "metricsRegistry", this);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.lifecycle;
 
 import java.io.ByteArrayInputStream;
@@ -91,8 +92,8 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
      * @param cloud         Whether Vault is deployed on HashiCorp Cloud Platform
      * @param namespace     Namespace for HCP Vault (required if cloud is true)
      */
-    public HashicorpVaultKeyLifecycleManager(VaultTemplate vaultTemplate, String secretsEngine, String keyPrefix,
-                                             boolean cloud, String namespace) {
+    public HashicorpVaultKeyLifecycleManager(
+            VaultTemplate vaultTemplate, String secretsEngine, String keyPrefix, boolean cloud, String namespace) {
         this.vaultTemplate = vaultTemplate;
         this.secretsEngine = secretsEngine != null ? secretsEngine : "secret";
         this.keyPrefix = keyPrefix != null ? keyPrefix : "pqc/keys";
@@ -101,7 +102,10 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
 
         LOG.info(
                 "Initialized HashicorpVaultKeyLifecycleManager with secretsEngine: {}, keyPrefix: {}, cloud: {}, namespace: {}",
-                this.secretsEngine, this.keyPrefix, this.cloud, this.namespace);
+                this.secretsEngine,
+                this.keyPrefix,
+                this.cloud,
+                this.namespace);
 
         try {
             loadExistingKeys();
@@ -132,8 +136,8 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
      * @param secretsEngine KV secrets engine name
      * @param keyPrefix     Prefix for key paths in Vault
      */
-    public HashicorpVaultKeyLifecycleManager(String host, int port, String scheme, String token, String secretsEngine,
-                                             String keyPrefix) {
+    public HashicorpVaultKeyLifecycleManager(
+            String host, int port, String scheme, String token, String secretsEngine, String keyPrefix) {
         this(host, port, scheme, token, secretsEngine, keyPrefix, false, null);
     }
 
@@ -149,8 +153,15 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
      * @param cloud         Whether Vault is deployed on HashiCorp Cloud Platform
      * @param namespace     Namespace for HCP Vault (required if cloud is true)
      */
-    public HashicorpVaultKeyLifecycleManager(String host, int port, String scheme, String token, String secretsEngine,
-                                             String keyPrefix, boolean cloud, String namespace) {
+    public HashicorpVaultKeyLifecycleManager(
+            String host,
+            int port,
+            String scheme,
+            String token,
+            String secretsEngine,
+            String keyPrefix,
+            boolean cloud,
+            String namespace) {
         this.secretsEngine = secretsEngine != null ? secretsEngine : "secret";
         this.keyPrefix = keyPrefix != null ? keyPrefix : "pqc/keys";
         this.cloud = cloud;
@@ -167,7 +178,13 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
 
         LOG.info(
                 "Initialized HashicorpVaultKeyLifecycleManager with Vault at: {}://{}:{}, secretsEngine: {}, keyPrefix: {}, cloud: {}, namespace: {}",
-                scheme, host, port, this.secretsEngine, this.keyPrefix, this.cloud, this.namespace);
+                scheme,
+                host,
+                port,
+                this.secretsEngine,
+                this.keyPrefix,
+                this.cloud,
+                this.namespace);
 
         try {
             loadExistingKeys();
@@ -279,8 +296,8 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKeyBytes);
         String metadataBase64 = serializeMetadata(metadata);
 
-        VaultKeyValueOperations keyValue = vaultTemplate.opsForKeyValue(secretsEngine,
-                VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
+        VaultKeyValueOperations keyValue =
+                vaultTemplate.opsForKeyValue(secretsEngine, VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
 
         // Store private key separately (strict ACL recommended in production)
         Map<String, Object> privateKeyData = new HashMap<>();
@@ -354,10 +371,10 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyBase64);
 
         // Use KeyFormatConverter to reconstruct keys from standard formats
-        PrivateKey privateKey = KeyFormatConverter.importPrivateKey(privateKeyBytes,
-                KeyLifecycleManager.KeyFormat.DER, getAlgorithmName(algorithm));
-        PublicKey publicKey = KeyFormatConverter.importPublicKey(publicKeyBytes,
-                KeyLifecycleManager.KeyFormat.DER, getAlgorithmName(algorithm));
+        PrivateKey privateKey = KeyFormatConverter.importPrivateKey(
+                privateKeyBytes, KeyLifecycleManager.KeyFormat.DER, getAlgorithmName(algorithm));
+        PublicKey publicKey = KeyFormatConverter.importPublicKey(
+                publicKeyBytes, KeyLifecycleManager.KeyFormat.DER, getAlgorithmName(algorithm));
 
         KeyPair keyPair = new KeyPair(publicKey, privateKey);
 
@@ -409,8 +426,8 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
 
     @Override
     public void deleteKey(String keyId) throws Exception {
-        VaultKeyValueOperations keyValue = vaultTemplate.opsForKeyValue(secretsEngine,
-                VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
+        VaultKeyValueOperations keyValue =
+                vaultTemplate.opsForKeyValue(secretsEngine, VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
 
         // Delete private key, public key, and metadata separately
         keyValue.delete(getKeyPath(keyId) + "/private");
@@ -485,8 +502,8 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         KeyMetadata metadata = getKeyMetadata(keyId);
         if (metadata != null) {
             metadata.setStatus(KeyMetadata.KeyStatus.REVOKED);
-            metadata.setDescription((metadata.getDescription() != null ? metadata.getDescription() + "; " : "")
-                                    + "Revoked: " + reason);
+            metadata.setDescription(
+                    (metadata.getDescription() != null ? metadata.getDescription() + "; " : "") + "Revoked: " + reason);
             updateKeyMetadata(keyId, metadata);
             LOG.info("Revoked key in Vault: {} - {}", keyId, reason);
         }
@@ -606,8 +623,7 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
                     return org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec.sha2_128s;
                 case "XMSS":
                     return new org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec(
-                            10,
-                            org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec.SHA256);
+                            10, org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec.SHA256);
                 case "XMSSMT":
                     return org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
                 case "LMS":

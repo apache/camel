@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.TimeUnit;
@@ -28,12 +29,10 @@ public class NoLock implements Lock {
     public static final Lock INSTANCE = new NoLock();
 
     @Override
-    public void lock() {
-    }
+    public void lock() {}
 
     @Override
-    public void lockInterruptibly() {
-    }
+    public void lockInterruptibly() {}
 
     @Override
     public boolean tryLock() {
@@ -46,8 +45,7 @@ public class NoLock implements Lock {
     }
 
     @Override
-    public void unlock() {
-    }
+    public void unlock() {}
 
     @Override
     public Condition newCondition() {

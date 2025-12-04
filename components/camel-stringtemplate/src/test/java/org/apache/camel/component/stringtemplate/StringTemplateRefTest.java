@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stringtemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringTemplateRefTest extends CamelTestSupport {
 
@@ -39,7 +40,9 @@ public class StringTemplateRefTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Hello Christian. You ordered item 8 on Tuesday.", exchange.getMessage().getBody());
+        assertEquals(
+                "Hello Christian. You ordered item 8 on Tuesday.",
+                exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
@@ -49,8 +52,7 @@ public class StringTemplateRefTest extends CamelTestSupport {
             public void configure() {
                 context.getRegistry().bind("mytemp", TEMP);
 
-                from("direct:a").to(
-                        "string-template:ref:mytemp?allowContextMapAll=true");
+                from("direct:a").to("string-template:ref:mytemp?allowContextMapAll=true");
             }
         };
     }

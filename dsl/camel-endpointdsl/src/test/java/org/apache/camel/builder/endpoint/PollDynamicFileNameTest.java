@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class PollDynamicFileNameTest extends BaseEndpointDslTest {
 
@@ -57,5 +58,4 @@ public class PollDynamicFileNameTest extends BaseEndpointDslTest {
             }
         };
     }
-
 }

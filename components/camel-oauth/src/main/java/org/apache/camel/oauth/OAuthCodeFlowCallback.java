@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oauth;
+
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
+import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
 
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
-import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
 
 public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
 
@@ -52,9 +53,8 @@ public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
         // Exchange the authorization code for access/refresh/id tokens
         //
         String redirectUri = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_REDIRECT_URI);
-        var userProfile = oauth.authenticate(new AuthCodeCredentials()
-                .setRedirectUri(redirectUri)
-                .setCode(authCode));
+        var userProfile = oauth.authenticate(
+                new AuthCodeCredentials().setRedirectUri(redirectUri).setCode(authCode));
 
         session.putUserProfile(userProfile);
         log.info("Authenticated {}", userProfile.subject());

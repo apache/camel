@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
@@ -29,18 +30,20 @@ public class ProxyAuthenticationValidationHandler extends BasicValidationHandler
     protected final String user;
     protected final String password;
 
-    public ProxyAuthenticationValidationHandler(String expectedMethod,
-                                                String expectedQuery, Object expectedContent,
-                                                String responseContent, String user, String password) {
+    public ProxyAuthenticationValidationHandler(
+            String expectedMethod,
+            String expectedQuery,
+            Object expectedContent,
+            String responseContent,
+            String user,
+            String password) {
         super(expectedMethod, expectedQuery, expectedContent, responseContent);
         this.user = user;
         this.password = password;
     }
 
     @Override
-    public void handle(
-            final ClassicHttpRequest request, final ClassicHttpResponse response,
-            final HttpContext context)
+    public void handle(final ClassicHttpRequest request, final ClassicHttpResponse response, final HttpContext context)
             throws HttpException, IOException {
 
         if (!getExpectedCredential().equals(context.getAttribute("proxy-creds"))) {
@@ -54,5 +57,4 @@ public class ProxyAuthenticationValidationHandler extends BasicValidationHandler
     private String getExpectedCredential() {
         return user + ":" + password;
     }
-
 }

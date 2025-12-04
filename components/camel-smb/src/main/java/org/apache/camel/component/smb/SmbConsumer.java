@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import java.util.Arrays;
@@ -55,9 +56,11 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     protected transient boolean autoCreatedDone;
     protected transient boolean autoCreateWarning;
 
-    public SmbConsumer(SmbEndpoint endpoint, Processor processor,
-                       GenericFileOperations<FileIdBothDirectoryInformation> fileOperations,
-                       GenericFileProcessStrategy<FileIdBothDirectoryInformation> processStrategy) {
+    public SmbConsumer(
+            SmbEndpoint endpoint,
+            Processor processor,
+            GenericFileOperations<FileIdBothDirectoryInformation> fileOperations,
+            GenericFileProcessStrategy<FileIdBothDirectoryInformation> processStrategy) {
         super(endpoint, processor, fileOperations, processStrategy);
         this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
@@ -97,8 +100,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
             String fullFilePath = file.getFileName();
             if (!path.isEmpty()) {
-                fullFilePath
-                        = path + (path.endsWith("/") ? "" : "/") + file.getFileName();
+                fullFilePath = path + (path.endsWith("/") ? "" : "/") + file.getFileName();
             }
 
             if (handleSmbEntries(dynamic, fullFilePath, fileList, depth, files, file)) {
@@ -115,8 +117,11 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
     private boolean handleSmbEntries(
             Exchange dynamic,
-            String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
-            FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
+            String fullFilePath,
+            List<GenericFile<FileIdBothDirectoryInformation>> fileList,
+            int depth,
+            FileIdBothDirectoryInformation[] files,
+            FileIdBothDirectoryInformation file) {
 
         if (isDirectory(file)) {
             LOG.trace("SmbFile[name={}, dir=true]", file.getFileName());
@@ -130,15 +135,25 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
     private boolean handleDirectory(
             Exchange dynamic,
-            String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
-            FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
+            String fullFilePath,
+            List<GenericFile<FileIdBothDirectoryInformation>> fileList,
+            int depth,
+            FileIdBothDirectoryInformation[] files,
+            FileIdBothDirectoryInformation file) {
 
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
             SmbFile smbFile = asGenericFile(fullFilePath, file, getEndpoint().getCharset());
-            Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
+            Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier =
+                    Suppliers.memorize(() -> smbFile);
             Supplier<String> relativePath = smbFile::getRelativeFilePath;
-            if (isValidFile(dynamic, genericFileSupplier, file.getFileName(),
-                    smbFile.getAbsoluteFilePath(), relativePath, true, files)) {
+            if (isValidFile(
+                    dynamic,
+                    genericFileSupplier,
+                    file.getFileName(),
+                    smbFile.getAbsoluteFilePath(),
+                    relativePath,
+                    true,
+                    files)) {
                 // recursive scan and add the sub files and folders
                 boolean canPollMore = pollDirectory(dynamic, fullFilePath, fileList, depth);
                 return !canPollMore;
@@ -149,16 +164,26 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
     private void handleFile(
             Exchange dynamic,
-            String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
-            FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
+            String fullFilePath,
+            List<GenericFile<FileIdBothDirectoryInformation>> fileList,
+            int depth,
+            FileIdBothDirectoryInformation[] files,
+            FileIdBothDirectoryInformation file) {
 
         if (depth >= endpoint.getMinDepth()) {
             SmbFile smbFile = asGenericFile(fullFilePath, file, getEndpoint().getCharset());
-            Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
+            Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier =
+                    Suppliers.memorize(() -> smbFile);
             Supplier<String> relativePath = smbFile::getRelativeFilePath;
 
-            if (isValidFile(dynamic, genericFileSupplier, file.getFileName(),
-                    smbFile.getAbsoluteFilePath(), relativePath, false, files)) {
+            if (isValidFile(
+                    dynamic,
+                    genericFileSupplier,
+                    file.getFileName(),
+                    smbFile.getAbsoluteFilePath(),
+                    relativePath,
+                    false,
+                    files)) {
                 fileList.add(smbFile);
             }
         }
@@ -191,7 +216,8 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
     @Override
     protected boolean isMatched(
-            Supplier<GenericFile<FileIdBothDirectoryInformation>> file, String doneFileName,
+            Supplier<GenericFile<FileIdBothDirectoryInformation>> file,
+            String doneFileName,
             FileIdBothDirectoryInformation[] files) {
 
         String onlyName = FileUtil.stripPath(doneFileName);
@@ -284,8 +310,11 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
             }
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
-                        remoteServer(), e.getMessage(), e);
+                LOG.debug(
+                        "Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(),
+                        e.getMessage(),
+                        e);
             }
         }
     }
@@ -340,7 +369,8 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     }
 
     private SmbFile asGenericFile(String path, FileIdBothDirectoryInformation file, String charset) {
-        SmbFile genericFile = new SmbFile(getOperations(), configuration.isDownload(), configuration.isStreamDownload());
+        SmbFile genericFile =
+                new SmbFile(getOperations(), configuration.isDownload(), configuration.isStreamDownload());
         genericFile.setHostname(configuration.getHostname());
         genericFile.setFile(file);
         genericFile.setEndpointPath(endpointPath);
@@ -383,7 +413,8 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
                     LOG.warn(
-                            "Error auto creating directory: " + dir + " due " + e.getMessage() + ". This exception is ignored.",
+                            "Error auto creating directory: " + dir + " due " + e.getMessage()
+                                    + ". This exception is ignored.",
                             e);
                 }
             } else if (configuration.isStartingDirectoryMustExist() && hasStartingDirectory()) {

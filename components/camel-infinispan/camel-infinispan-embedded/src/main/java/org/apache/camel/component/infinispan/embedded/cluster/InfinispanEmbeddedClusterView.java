@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded.cluster;
+
+import static org.apache.camel.util.function.Predicates.negate;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,8 +42,6 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.function.Predicates.negate;
-
 public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanEmbeddedClusterView.class);
 
@@ -52,9 +53,9 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
     private Cache<String, String> cache;
 
     protected InfinispanEmbeddedClusterView(
-                                            InfinispanEmbeddedClusterService cluster,
-                                            InfinispanEmbeddedClusterConfiguration configuration,
-                                            String namespace) {
+            InfinispanEmbeddedClusterService cluster,
+            InfinispanEmbeddedClusterConfiguration configuration,
+            String namespace) {
         super(cluster, namespace);
 
         this.configuration = configuration;
@@ -150,9 +151,7 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
 
             this.running.set(true);
             this.executorService = InfinispanUtil.newSingleThreadScheduledExecutor(
-                    getCamelContext(),
-                    this,
-                    getLocalMember().getId());
+                    getCamelContext(), this, getLocalMember().getId());
 
             // register the local member to the inventory
             cache.put(
@@ -164,10 +163,7 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
             cache.addListener(this);
 
             executorService.scheduleAtFixedRate(
-                    this::run,
-                    0,
-                    configuration.getLifespan() / 2,
-                    configuration.getLifespanTimeUnit());
+                    this::run, 0, configuration.getLifespan() / 2, configuration.getLifespanTimeUnit());
         }
 
         @Override
@@ -183,7 +179,8 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
             getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
 
             if (cache != null) {
-                cache.remove(InfinispanClusterService.LEADER_KEY, getClusterService().getId());
+                cache.remove(
+                        InfinispanClusterService.LEADER_KEY, getClusterService().getId());
 
                 LOGGER.info("Removing local member, key={}", getLocalMember().getId());
                 cache.remove(getLocalMember().getId());
@@ -212,8 +209,12 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
                     LOGGER.debug("Lock refresh key={}, id{}", leaderKey, localId);
 
                     // I'm still the leader, so refresh the key so it does not expire.
-                    if (!cache.replace(InfinispanClusterService.LEADER_KEY, getClusterService().getId(),
-                            getClusterService().getId(), configuration.getLifespan(), configuration.getLifespanTimeUnit())) {
+                    if (!cache.replace(
+                            InfinispanClusterService.LEADER_KEY,
+                            getClusterService().getId(),
+                            getClusterService().getId(),
+                            configuration.getLifespan(),
+                            configuration.getLifespanTimeUnit())) {
 
                         LOGGER.debug("Failed to refresh the lock key={}, id={}", leaderKey, localId);
 
@@ -224,8 +225,11 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
                 if (!isLeader()) {
                     LOGGER.debug("Try to acquire lock key={}, id={}", leaderKey, localId);
 
-                    Object result = cache.putIfAbsent(InfinispanClusterService.LEADER_KEY, getClusterService().getId(),
-                            configuration.getLifespan(), configuration.getLifespanTimeUnit());
+                    Object result = cache.putIfAbsent(
+                            InfinispanClusterService.LEADER_KEY,
+                            getClusterService().getId(),
+                            configuration.getLifespan(),
+                            configuration.getLifespanTimeUnit());
                     if (result == null) {
                         LOGGER.debug("Lock acquired key={}, id={}", leaderKey, localId);
                         // Acquired the key so I'm the leader.
@@ -242,7 +246,10 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
                 }
 
                 // refresh local membership
-                cache.put(getLocalMember().getId(), isLeader() ? "true" : "false", configuration.getLifespan(),
+                cache.put(
+                        getLocalMember().getId(),
+                        isLeader() ? "true" : "false",
+                        configuration.getLifespan(),
                         configuration.getLifespanTimeUnit());
             } finally {
                 lock.unlock();
@@ -255,7 +262,8 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
                 return;
             }
 
-            LOGGER.debug("onCacheEntryRemoved id={}, lock-key={}, event-key={}",
+            LOGGER.debug(
+                    "onCacheEntryRemoved id={}, lock-key={}, event-key={}",
                     getLocalMember().getId(),
                     InfinispanClusterService.LEADER_KEY,
                     event.getKey());
@@ -271,7 +279,8 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
                 return;
             }
 
-            LOGGER.debug("onCacheEntryExpired id={}, lock-key={}, event-key={}",
+            LOGGER.debug(
+                    "onCacheEntryExpired id={}, lock-key={}, event-key={}",
                     getLocalMember().getId(),
                     InfinispanClusterService.LEADER_KEY,
                     event.getKey());

@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar.utils.consumers;
 
-import org.apache.camel.component.pulsar.PulsarConsumer;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.pulsar.utils.consumers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
+import org.apache.camel.component.pulsar.PulsarConsumer;
+import org.junit.jupiter.api.Test;
+
 public class ConsumerCreationStrategyFactoryTest {
 
     @Test
     public void givenPulsarConsumerIsNullwhenICreateFactoryverifyIllegalArgumentExceptionIsThrown() {
-        assertThrows(IllegalArgumentException.class,
-                () -> ConsumerCreationStrategyFactory.create(null));
+        assertThrows(IllegalArgumentException.class, () -> ConsumerCreationStrategyFactory.create(null));
     }
 
     @Test

@@ -14,14 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.web3j.integration;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.web3j.integration;
 
 import static org.apache.camel.component.web3j.Web3jConstants.ETH_BLOCK_NUMBER;
 import static org.apache.camel.component.web3j.Web3jConstants.NET_VERSION;
@@ -32,6 +26,13 @@ import static org.apache.camel.component.web3j.Web3jConstants.WEB3_SHA3;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 @Disabled("Requires a local node or registration at Infura")
 public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
@@ -81,8 +82,7 @@ public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("web3j://" + getUrl() + OPERATION.toLowerCase() + "=" + TRANSACTION);
+                from("direct:start").to("web3j://" + getUrl() + OPERATION.toLowerCase() + "=" + TRANSACTION);
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.master;
 
 import java.time.Duration;
@@ -84,7 +85,9 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
         super.doInit();
 
         // used for re-connecting to the database
-        leaderPool = getEndpoint().getCamelContext().getExecutorServiceManager()
+        leaderPool = getEndpoint()
+                .getCamelContext()
+                .getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, "Leadership");
     }
 
@@ -92,7 +95,10 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     protected void doStart() throws Exception {
         super.doStart();
 
-        LOG.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(),
+        LOG.debug(
+                "Using ClusterService instance {} (id={}, type={})",
+                clusterService,
+                clusterService.getId(),
                 clusterService.getClass().getName());
 
         view = clusterService.getView(masterEndpoint.getNamespace());
@@ -143,7 +149,8 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
         return Tasks.backgroundTask()
                 .withScheduledExecutor(leaderPool)
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withInterval(Duration.ofMillis(masterEndpoint.getComponent().getBackOffDelay()))
+                        .withInterval(
+                                Duration.ofMillis(masterEndpoint.getComponent().getBackOffDelay()))
                         .withInitialDelay(Duration.ofSeconds(1))
                         .withMaxIterations(masterEndpoint.getComponent().getBackOffMaxAttempts())
                         .build())
@@ -167,7 +174,10 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                 if (!isRunAllowed()) {
                     return false;
                 }
-                LOG.info("Leadership taken. Attempt #{} to start consumer: {}", leaderTask.iteration(), delegatedEndpoint);
+                LOG.info(
+                        "Leadership taken. Attempt #{} to start consumer: {}",
+                        leaderTask.iteration(),
+                        delegatedEndpoint);
 
                 Exception cause = null;
                 try {
@@ -178,9 +188,8 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                         }
                         if (delegatedConsumer instanceof ResumeAware resumeAwareConsumer && resumeStrategy != null) {
                             LOG.debug("Setting up the resume adapter for the resume strategy in consumer");
-                            ResumeAdapter resumeAdapter
-                                    = AdapterHelper.eval(clusterService.getCamelContext(), resumeAwareConsumer,
-                                            resumeStrategy);
+                            ResumeAdapter resumeAdapter = AdapterHelper.eval(
+                                    clusterService.getCamelContext(), resumeAwareConsumer, resumeStrategy);
                             resumeStrategy.setAdapter(resumeAdapter);
 
                             LOG.debug("Setting up the resume strategy for consumer");
@@ -195,13 +204,15 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
 
                 if (cause != null) {
                     String message = "Leadership taken. Attempt #" + leaderTask.iteration()
-                                     + " failed to start consumer due to: " + cause.getMessage();
+                            + " failed to start consumer due to: " + cause.getMessage();
                     getExceptionHandler().handleException(message, cause);
                     // make the task runner aware of the exception (will retry)
                     throw new TaskRunFailureException(message, cause);
                 }
 
-                LOG.info("Leadership taken. Attempt #{} success. Consumer started: {}", leaderTask.iteration(),
+                LOG.info(
+                        "Leadership taken. Attempt #{} success. Consumer started: {}",
+                        leaderTask.iteration(),
                         delegatedEndpoint);
                 return false; // no more attempts
             });
@@ -247,7 +258,8 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                     onLeadershipLost();
                 } catch (Exception e) {
                     getExceptionHandler()
-                            .handleException("Error stopping consumer while loosing leadership. This exception is ignored.", e);
+                            .handleException(
+                                    "Error stopping consumer while loosing leadership. This exception is ignored.", e);
                 }
             }
         }

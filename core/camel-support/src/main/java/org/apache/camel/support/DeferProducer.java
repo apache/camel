@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.CompletableFuture;
@@ -74,7 +75,8 @@ public class DeferProducer extends ServiceSupport implements Producer, AsyncProc
 
     @Override
     public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                new AsyncCallbackToCompletableFutureAdapter<>(exchange);
         process(exchange, callback);
         return callback.getFuture();
     }
@@ -121,5 +123,4 @@ public class DeferProducer extends ServiceSupport implements Producer, AsyncProc
             return "DelegateProducer[" + endpoint + "]";
         }
     }
-
 }

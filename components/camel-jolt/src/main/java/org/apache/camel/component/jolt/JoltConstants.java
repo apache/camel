@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jolt;
 
 import org.apache.camel.spi.Metadata;
@@ -25,6 +26,7 @@ public final class JoltConstants {
 
     @Metadata(description = "The resource URI", javaType = "String")
     public static final String JOLT_RESOURCE_URI = "CamelJoltResourceUri";
+
     @Metadata(description = "The context", javaType = "Map<String, Object>")
     public static final String JOLT_CONTEXT = "CamelJoltContext";
 

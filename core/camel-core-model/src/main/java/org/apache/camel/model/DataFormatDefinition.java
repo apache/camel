@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -32,17 +33,19 @@ import org.apache.camel.spi.ResourceAware;
 @Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatDefinition extends IdentifiedType implements CopyableDefinition<DataFormatDefinition>, ResourceAware {
+public class DataFormatDefinition extends IdentifiedType
+        implements CopyableDefinition<DataFormatDefinition>, ResourceAware {
 
     @XmlTransient
     private DataFormat dataFormat;
+
     @XmlTransient
     private String dataFormatName;
+
     @XmlTransient
     private Resource resource;
 
-    public DataFormatDefinition() {
-    }
+    public DataFormatDefinition() {}
 
     public DataFormatDefinition(DataFormatDefinition source) {
         this.dataFormat = source.dataFormat;
@@ -94,5 +97,4 @@ public class DataFormatDefinition extends IdentifiedType implements CopyableDefi
         }
         return name;
     }
-
 }

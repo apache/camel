@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -28,8 +31,6 @@ import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SharedMicrometerRoutePolicyTest extends CamelTestSupport {
 
     protected MeterRegistry meterRegistry = new SimpleMeterRegistry();
@@ -38,14 +39,10 @@ public class SharedMicrometerRoutePolicyTest extends CamelTestSupport {
 
     @Test
     public void testSharedPolicy() throws Exception {
-        template.request("direct:foo", x -> {
-        });
-        template.request("direct:bar", x -> {
-        });
+        template.request("direct:foo", x -> {});
+        template.request("direct:bar", x -> {});
         List<Meter> meters = meterRegistry.getMeters();
-        long timers = meters.stream()
-                .filter(it -> it instanceof Timer)
-                .count();
+        long timers = meters.stream().filter(it -> it instanceof Timer).count();
         assertEquals(2L, timers, "timers count incorrect");
     }
 
@@ -59,11 +56,9 @@ public class SharedMicrometerRoutePolicyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo").routePolicy(singletonPolicy)
-                        .to("mock:result");
+                from("direct:foo").routeId("foo").routePolicy(singletonPolicy).to("mock:result");
 
-                from("direct:bar").routeId("bar").routePolicy(singletonPolicy)
-                        .to("mock:result");
+                from("direct:bar").routeId("bar").routePolicy(singletonPolicy).to("mock:result");
             }
         };
     }

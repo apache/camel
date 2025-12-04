@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonvalidator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidatorRouteTest extends CamelTestSupport {
 
@@ -43,8 +44,7 @@ public class ValidatorRouteTest extends CamelTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "{ \"name\": \"Joe Doe\", \"id\": 1, \"price\": 12.5 }");
+        template.sendBody("direct:start", "{ \"name\": \"Joe Doe\", \"id\": 1, \"price\": 12.5 }");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -54,7 +54,8 @@ public class ValidatorRouteTest extends CamelTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:startHeaders",
+        template.sendBodyAndHeader(
+                "direct:startHeaders",
                 null,
                 "headerToValidate",
                 "{ \"name\": \"Joe Doe\", \"id\": 1, \"price\": 12.5 }");
@@ -67,8 +68,7 @@ public class ValidatorRouteTest extends CamelTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "{ \"name\": \"Joe Doe\", \"id\": \"ABC123\", \"price\": 12.5 }");
+        template.sendBody("direct:start", "{ \"name\": \"Joe Doe\", \"id\": \"ABC123\", \"price\": 12.5 }");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -78,7 +78,8 @@ public class ValidatorRouteTest extends CamelTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:startHeaders",
+        template.sendBodyAndHeader(
+                "direct:startHeaders",
                 null,
                 "headerToValidate",
                 "{ \"name\": \"Joe Doe\", \"id\": \"ABC123\", \"price\": 12.5 }");
@@ -119,8 +120,7 @@ public class ValidatorRouteTest extends CamelTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "{ \"name\": \"Joe Doe\", \"id\": \"ABC123\", \"price\": 12.5 }".getBytes());
+        template.sendBody("direct:start", "{ \"name\": \"Joe Doe\", \"id\": \"ABC123\", \"price\": 12.5 }".getBytes());
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -130,7 +130,8 @@ public class ValidatorRouteTest extends CamelTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:startHeaders",
+        template.sendBodyAndHeader(
+                "direct:startHeaders",
                 null,
                 "headerToValidate",
                 "{ \"name\": \"Joe Doe\", \"id\": \"ABC123\", \"price\": 12.5 }".getBytes());
@@ -155,7 +156,8 @@ public class ValidatorRouteTest extends CamelTestSupport {
 
                 from("direct:startHeaders")
                         .doTry()
-                        .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json?headerName=headerToValidate")
+                        .to(
+                                "json-validator:org/apache/camel/component/jsonvalidator/schema.json?headerName=headerToValidate")
                         .to("mock:valid")
                         .doCatch(ValidationException.class)
                         .to("mock:invalid")
@@ -164,11 +166,13 @@ public class ValidatorRouteTest extends CamelTestSupport {
                         .end();
 
                 from("direct:startNoHeaderException")
-                        .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json?headerName=headerToValidate")
+                        .to(
+                                "json-validator:org/apache/camel/component/jsonvalidator/schema.json?headerName=headerToValidate")
                         .to("mock:valid");
 
                 from("direct:startNullHeaderNoFail")
-                        .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json?headerName=headerToValidate&failOnNullHeader=false")
+                        .to(
+                                "json-validator:org/apache/camel/component/jsonvalidator/schema.json?headerName=headerToValidate&failOnNullHeader=false")
                         .to("mock:valid");
             }
         };

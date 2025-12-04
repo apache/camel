@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,12 +34,14 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersClaimCheckTest ext
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true)
+                onException(Exception.class)
+                        .handled(true)
                         // merge the message with the original message body but keep
                         // any existing headers
                         // (we could also use Push/Pop operation instead, then
                         // without using the "myOriginalBody" key)
-                        .claimCheck(ClaimCheckOperation.Get, "myOriginalBody", "body").to("mock:b");
+                        .claimCheck(ClaimCheckOperation.Get, "myOriginalBody", "body")
+                        .to("mock:b");
 
                 from("direct:start")
                         // we want to preserve the real original message body and
@@ -46,9 +49,14 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersClaimCheckTest ext
                         // set later during routing
                         // (we could also use Push/Pop operation instead, then
                         // without using the "myOriginalBody" key)
-                        .claimCheck(ClaimCheckOperation.Set, "myOriginalBody").setBody(constant("Changed body"))
-                        .setHeader("foo", constant("bar")).multicast().stopOnException()
-                        .to("direct:a").to("direct:b").end();
+                        .claimCheck(ClaimCheckOperation.Set, "myOriginalBody")
+                        .setBody(constant("Changed body"))
+                        .setHeader("foo", constant("bar"))
+                        .multicast()
+                        .stopOnException()
+                        .to("direct:a")
+                        .to("direct:b")
+                        .end();
 
                 from("direct:a").to("mock:a");
 
@@ -72,5 +80,4 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersClaimCheckTest ext
 
         assertMockEndpointsSatisfied();
     }
-
 }

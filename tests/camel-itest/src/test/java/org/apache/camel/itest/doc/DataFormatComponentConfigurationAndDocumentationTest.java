@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.doc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,10 +34,6 @@ import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnabledIfSystemProperty(named = "enable.documentation.itests", matches = "true")
 public class DataFormatComponentConfigurationAndDocumentationTest extends CamelTestSupport {
@@ -51,8 +52,8 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             DataFormatModel model = JsonMapper.generateDataFormatModel(json);
             assertEquals("flatpack", model.getName());
 
-            Map<String, DataFormatOptionModel> options
-                    = model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
+            Map<String, DataFormatOptionModel> options =
+                    model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
 
             assertEquals(10, options.size());
             BaseOptionModel found = options.get("textQualifier");
@@ -64,7 +65,9 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             assertEquals("java.lang.String", found.getJavaType());
             assertFalse(found.isDeprecated());
             assertFalse(found.isSecret());
-            assertEquals("If the text is qualified with a character. Uses quote character by default.", found.getDescription());
+            assertEquals(
+                    "If the text is qualified with a character. Uses quote character by default.",
+                    found.getDescription());
         }
     }
 
@@ -77,8 +80,8 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             DataFormatModel model = JsonMapper.generateDataFormatModel(json);
             assertEquals("univocity-tsv", model.getName());
 
-            Map<String, DataFormatOptionModel> options
-                    = model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
+            Map<String, DataFormatOptionModel> options =
+                    model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
 
             assertEquals(16, options.size());
             BaseOptionModel found = options.get("escapeChar");
@@ -94,5 +97,4 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             assertEquals("The escape character.", found.getDescription());
         }
     }
-
 }

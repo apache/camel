@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -36,8 +37,7 @@ public interface RestClientRequestValidator {
      * @param statusCode to use a specific HTTP status code for this validation error
      * @param body       to use a specific message body for this validation error
      */
-    record ValidationError(int statusCode, String body) {
-    }
+    record ValidationError(int statusCode, String body) {}
 
     /**
      * Validation context to use during validation
@@ -50,13 +50,14 @@ public interface RestClientRequestValidator {
      * @param requiredQueryParameters names of HTTP query parameters that are required
      * @param requiredHeaders         names of HTTP headers parameters that are required
      */
-    record ValidationContext(String consumes, String produces,
+    record ValidationContext(
+            String consumes,
+            String produces,
             boolean requiredBody,
             Map<String, String> queryDefaultValues,
             Map<String, String> queryAllowedValues,
             Set<String> requiredQueryParameters,
-            Set<String> requiredHeaders) {
-    }
+            Set<String> requiredHeaders) {}
 
     /**
      * Validates the incoming client request
@@ -66,5 +67,4 @@ public interface RestClientRequestValidator {
      * @return                   the validation error, or <tt>null</tt> if success
      */
     ValidationError validate(Exchange exchange, ValidationContext validationContent);
-
 }

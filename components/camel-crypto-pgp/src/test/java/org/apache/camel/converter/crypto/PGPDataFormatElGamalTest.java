@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 import org.junit.jupiter.api.Disabled;
@@ -29,5 +30,4 @@ public class PGPDataFormatElGamalTest extends PGPDataFormatTest {
     protected String getKeyFileNameSec() {
         return "org/apache/camel/component/crypto/secring-ElGamal.gpg";
     }
-
 }

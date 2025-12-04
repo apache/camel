@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
 
 import java.util.Arrays;
@@ -63,11 +64,14 @@ public class ServiceBusConsumer extends DefaultConsumer {
         if (client == null) {
             // create client as per sessions
             if (Boolean.FALSE.equals(getConfiguration().isSessionEnabled())) {
-                client = getEndpoint().getServiceBusClientFactory().createServiceBusProcessorClient(getConfiguration(),
-                        this::processMessage, this::processError);
+                client = getEndpoint()
+                        .getServiceBusClientFactory()
+                        .createServiceBusProcessorClient(getConfiguration(), this::processMessage, this::processError);
             } else {
-                client = getEndpoint().getServiceBusClientFactory().createServiceBusSessionProcessorClient(getConfiguration(),
-                        this::processMessage, this::processError);
+                client = getEndpoint()
+                        .getServiceBusClientFactory()
+                        .createServiceBusSessionProcessorClient(
+                                getConfiguration(), this::processMessage, this::processError);
             }
         }
 
@@ -90,8 +94,11 @@ public class ServiceBusConsumer extends DefaultConsumer {
 
         // log exception if an exception occurred and was not handled
         if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error from Service Bus: " + errorContext.getErrorSource(), exchange,
-                    exchange.getException());
+            getExceptionHandler()
+                    .handleException(
+                            "Error from Service Bus: " + errorContext.getErrorSource(),
+                            exchange,
+                            exchange.getException());
         }
     }
 
@@ -133,7 +140,8 @@ public class ServiceBusConsumer extends DefaultConsumer {
         message.setHeader(ServiceBusConstants.CONTENT_TYPE, receivedMessage.getContentType());
         message.setHeader(ServiceBusConstants.MESSAGE_ID, receivedMessage.getMessageId());
         message.setHeader(ServiceBusConstants.CORRELATION_ID, receivedMessage.getCorrelationId());
-        message.setHeader(ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION, receivedMessage.getDeadLetterErrorDescription());
+        message.setHeader(
+                ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION, receivedMessage.getDeadLetterErrorDescription());
         message.setHeader(ServiceBusConstants.DEAD_LETTER_REASON, receivedMessage.getDeadLetterReason());
         message.setHeader(ServiceBusConstants.DEAD_LETTER_SOURCE, receivedMessage.getDeadLetterSource());
         message.setHeader(ServiceBusConstants.DELIVERY_COUNT, receivedMessage.getDeliveryCount());
@@ -155,9 +163,11 @@ public class ServiceBusConsumer extends DefaultConsumer {
 
         // propagate headers
         final HeaderFilterStrategy headerFilterStrategy = getConfiguration().getHeaderFilterStrategy();
-        message.getHeaders().putAll(receivedMessage.getApplicationProperties().entrySet().stream()
-                .filter(entry -> !headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+        message.getHeaders()
+                .putAll(receivedMessage.getApplicationProperties().entrySet().stream()
+                        .filter(entry -> !headerFilterStrategy.applyFilterToExternalHeaders(
+                                entry.getKey(), entry.getValue(), exchange))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
         return exchange;
     }
@@ -185,12 +195,13 @@ public class ServiceBusConsumer extends DefaultConsumer {
             }
 
             if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
-                if (getConfiguration().isEnableDeadLettering() && (ObjectHelper.isEmpty(getConfiguration().getSubQueue())
-                        || ObjectHelper.equal(getConfiguration().getSubQueue(), SubQueue.NONE))) {
+                if (getConfiguration().isEnableDeadLettering()
+                        && (ObjectHelper.isEmpty(getConfiguration().getSubQueue())
+                                || ObjectHelper.equal(getConfiguration().getSubQueue(), SubQueue.NONE))) {
                     DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
                     if (cause != null) {
-                        deadLetterOptions
-                                .setDeadLetterReason(String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
+                        deadLetterOptions.setDeadLetterReason(
+                                String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
                         deadLetterOptions.setDeadLetterErrorDescription(Arrays.stream(cause.getStackTrace())
                                 .map(StackTraceElement::toString)
                                 .collect(Collectors.joining("\n")));

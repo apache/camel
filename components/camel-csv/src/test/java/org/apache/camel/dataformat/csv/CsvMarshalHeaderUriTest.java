@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
 
 import org.apache.camel.RoutesBuilder;
@@ -29,13 +30,13 @@ public class CsvMarshalHeaderUriTest extends CsvMarshalHeaderTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String uri
-                        = String.format("file:%s?charset=utf-8&fileExist=Append", outputFile.getParentFile().getAbsolutePath());
+                String uri = String.format(
+                        "file:%s?charset=utf-8&fileExist=Append",
+                        outputFile.getParentFile().getAbsolutePath());
                 from("direct:start")
                         .to("dataformat:csv:marshal?header=first_name,last_name&trim=true&ignoreSurroundingSpaces=true")
                         .to(uri);
             }
         };
     }
-
 }

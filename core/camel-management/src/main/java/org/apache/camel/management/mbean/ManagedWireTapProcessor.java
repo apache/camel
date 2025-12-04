@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Map;
@@ -41,14 +42,17 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
     private String uri;
     private boolean sanitize;
 
-    public ManagedWireTapProcessor(CamelContext context, WireTapProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedWireTapProcessor(
+            CamelContext context, WireTapProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
 
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
+        sanitize = strategy.getManagementAgent().getMask() != null
+                ? strategy.getManagementAgent().getMask()
+                : true;
         if (sanitize) {
             uri = URISupport.sanitizeUri(getProcessor().getUri());
         } else {
@@ -128,8 +132,8 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
                         hits = 0L;
                     }
 
-                    CompositeData data
-                            = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
+                    CompositeData data =
+                            new CompositeDataSupport(ct, new String[] {"url", "hits"}, new Object[] {url, hits});
                     answer.put(data);
                 }
             }
@@ -138,5 +142,4 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

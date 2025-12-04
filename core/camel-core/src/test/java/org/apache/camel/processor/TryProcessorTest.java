@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
@@ -27,8 +30,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for try .. handle routing (CAMEL-564).
@@ -69,19 +70,42 @@ public class TryProcessorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:processor").doTry().process(new ProcessorFail()).to("mock:result").doCatch(CamelException.class)
-                        .process(new ProcessorHandle()).doFinally()
-                        .to("mock:finally").end().to("mock:last");
-
-                from("direct:expression").doTry().setBody(new ProcessorFail()).to("mock:result").doCatch(CamelException.class)
-                        .process(new ProcessorHandle()).doFinally()
-                        .to("mock:finally").end().to("mock:last");
-
-                from("direct:predicate").doTry().to("direct:sub-predicate").doCatch(CamelException.class)
-                        .process(new ProcessorHandle()).doFinally().to("mock:finally").end()
+                from("direct:processor")
+                        .doTry()
+                        .process(new ProcessorFail())
+                        .to("mock:result")
+                        .doCatch(CamelException.class)
+                        .process(new ProcessorHandle())
+                        .doFinally()
+                        .to("mock:finally")
+                        .end()
                         .to("mock:last");
 
-                from("direct:sub-predicate").errorHandler(noErrorHandler()).filter(new ProcessorFail()).to("mock:result");
+                from("direct:expression")
+                        .doTry()
+                        .setBody(new ProcessorFail())
+                        .to("mock:result")
+                        .doCatch(CamelException.class)
+                        .process(new ProcessorHandle())
+                        .doFinally()
+                        .to("mock:finally")
+                        .end()
+                        .to("mock:last");
+
+                from("direct:predicate")
+                        .doTry()
+                        .to("direct:sub-predicate")
+                        .doCatch(CamelException.class)
+                        .process(new ProcessorHandle())
+                        .doFinally()
+                        .to("mock:finally")
+                        .end()
+                        .to("mock:last");
+
+                from("direct:sub-predicate")
+                        .errorHandler(noErrorHandler())
+                        .filter(new ProcessorFail())
+                        .to("mock:result");
             }
         };
     }
@@ -103,8 +127,7 @@ public class TryProcessorTest extends ContextTestSupport {
         }
 
         @Override
-        public void init(CamelContext context) {
-        }
+        public void init(CamelContext context) {}
     }
 
     private class ProcessorHandle implements Processor {
@@ -124,5 +147,4 @@ public class TryProcessorTest extends ContextTestSupport {
             assertEquals("Force to fail", cause.getMessage());
         }
     }
-
 }

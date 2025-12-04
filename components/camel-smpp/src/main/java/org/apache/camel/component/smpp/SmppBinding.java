@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.io.UnsupportedEncodingException;
@@ -164,14 +165,11 @@ public class SmppBinding {
                     } else if (optPara instanceof OctetString) {
                         optParams.put(valueOfTag.toString(), ((OctetString) optPara).getValueAsString());
                     } else if (optPara instanceof OptionalParameter.Byte) {
-                        optParams.put(valueOfTag.toString(),
-                                ((OptionalParameter.Byte) optPara).getValue());
+                        optParams.put(valueOfTag.toString(), ((OptionalParameter.Byte) optPara).getValue());
                     } else if (optPara instanceof OptionalParameter.Short) {
-                        optParams.put(valueOfTag.toString(),
-                                ((OptionalParameter.Short) optPara).getValue());
+                        optParams.put(valueOfTag.toString(), ((OptionalParameter.Short) optPara).getValue());
                     } else if (optPara instanceof OptionalParameter.Int) {
-                        optParams.put(valueOfTag.toString(),
-                                ((OptionalParameter.Int) optPara).getValue());
+                        optParams.put(valueOfTag.toString(), ((OptionalParameter.Int) optPara).getValue());
                     } else if (optPara instanceof Null) {
                         optParams.put(valueOfTag.toString(), null);
                     }
@@ -193,14 +191,11 @@ public class SmppBinding {
             } else if (optPara instanceof OctetString) {
                 optParams.put(optPara.tag, ((OctetString) optPara).getValue());
             } else if (optPara instanceof OptionalParameter.Byte) {
-                optParams.put(optPara.tag,
-                        ((OptionalParameter.Byte) optPara).getValue());
+                optParams.put(optPara.tag, ((OptionalParameter.Byte) optPara).getValue());
             } else if (optPara instanceof OptionalParameter.Short) {
-                optParams.put(optPara.tag,
-                        ((OptionalParameter.Short) optPara).getValue());
+                optParams.put(optPara.tag, ((OptionalParameter.Short) optPara).getValue());
             } else if (optPara instanceof OptionalParameter.Int) {
-                optParams.put(optPara.tag,
-                        ((OptionalParameter.Int) optPara).getValue());
+                optParams.put(optPara.tag, ((OptionalParameter.Int) optPara).getValue());
             } else if (optPara instanceof Null) {
                 optParams.put(optPara.tag, null);
             }

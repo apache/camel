@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
 
 import java.net.URI;
@@ -31,11 +32,11 @@ import org.apache.camel.util.URISupport;
 @Component("atom")
 public class AtomComponent extends FeedComponent {
 
-    public AtomComponent() {
-    }
+    public AtomComponent() {}
 
     @Override
-    protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         return new AtomEndpoint(uri, this, null);
     }
 
@@ -60,5 +61,4 @@ public class AtomComponent extends FeedComponent {
 
         atom.setFeedUri(feedUri);
     }
-
 }

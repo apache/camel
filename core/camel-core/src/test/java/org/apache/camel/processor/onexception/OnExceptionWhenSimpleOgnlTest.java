@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,7 +42,9 @@ public class OnExceptionWhenSimpleOgnlTest extends ContextTestSupport {
             public void configure() {
                 onException(MyException.class)
                         // OGNL on the exception function in the simple language
-                        .onWhen(simple("${exception.info.state} == 3")).handled(true).to("mock:three");
+                        .onWhen(simple("${exception.info.state} == 3"))
+                        .handled(true)
+                        .to("mock:three");
 
                 from("direct:start").throwException(new MyException(3));
             }

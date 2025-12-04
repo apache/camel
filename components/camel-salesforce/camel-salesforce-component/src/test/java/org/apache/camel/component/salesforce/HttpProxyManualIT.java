@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHENTICATE;
+import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHORIZATION;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -42,11 +48,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHENTICATE;
-import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHORIZATION;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test HTTP proxy configuration for Salesforce component.
  */
@@ -69,7 +70,8 @@ public class HttpProxyManualIT extends AbstractSalesforceTestBase {
 
     @Parameters
     public static Iterable<Consumer<SalesforceComponent>> methods() {
-        return Arrays.asList(HttpProxyManualIT::configureProxyViaComponentProperties,
+        return Arrays.asList(
+                HttpProxyManualIT::configureProxyViaComponentProperties,
                 HttpProxyManualIT::configureProxyViaClientPropertiesMap);
     }
 
@@ -106,9 +108,10 @@ public class HttpProxyManualIT extends AbstractSalesforceTestBase {
         connector.setHost(HTTP_PROXY_HOST);
         server.addConnector(connector);
 
-        final String authenticationString
-                = "Basic " + Base64.getEncoder().encodeToString(
-                        (HTTP_PROXY_USER_NAME + ":" + HTTP_PROXY_PASSWORD).getBytes(StandardCharsets.ISO_8859_1));
+        final String authenticationString = "Basic "
+                + Base64.getEncoder()
+                        .encodeToString((HTTP_PROXY_USER_NAME + ":" + HTTP_PROXY_PASSWORD)
+                                .getBytes(StandardCharsets.ISO_8859_1));
 
         ConnectHandler connectHandler = new ConnectHandler() {
             @Override
@@ -118,8 +121,8 @@ public class HttpProxyManualIT extends AbstractSalesforceTestBase {
                 if (!authenticationString.equals(header)) {
                     LOG.warn("Missing header {}", PROXY_AUTHORIZATION);
                     // ask for authentication header
-                    response.getHeaders().add(PROXY_AUTHENTICATE.toString(),
-                            String.format("Basic realm=\"%s\"", HTTP_PROXY_REALM));
+                    response.getHeaders()
+                            .add(PROXY_AUTHENTICATE.toString(), String.format("Basic realm=\"%s\"", HTTP_PROXY_REALM));
                     return false;
                 }
                 LOG.info("Request contains required header {}", PROXY_AUTHORIZATION);
@@ -170,7 +173,6 @@ public class HttpProxyManualIT extends AbstractSalesforceTestBase {
 
                 // allow overriding format per endpoint
                 from("direct:getVersionsXml").to("salesforce:getVersions?format=XML");
-
             }
         };
     }
@@ -192,8 +194,8 @@ public class HttpProxyManualIT extends AbstractSalesforceTestBase {
         properties.put(SalesforceComponent.HTTP_PROXY_IS_SECURE, false);
         properties.put(SalesforceComponent.HTTP_PROXY_USERNAME, HTTP_PROXY_USER_NAME);
         properties.put(SalesforceComponent.HTTP_PROXY_PASSWORD, HTTP_PROXY_PASSWORD);
-        properties.put(SalesforceComponent.HTTP_PROXY_AUTH_URI, String.format("http://%s:%s", HTTP_PROXY_HOST, httpProxyPort));
+        properties.put(
+                SalesforceComponent.HTTP_PROXY_AUTH_URI, String.format("http://%s:%s", HTTP_PROXY_HOST, httpProxyPort));
         properties.put(SalesforceComponent.HTTP_PROXY_REALM, HTTP_PROXY_REALM);
     }
-
 }

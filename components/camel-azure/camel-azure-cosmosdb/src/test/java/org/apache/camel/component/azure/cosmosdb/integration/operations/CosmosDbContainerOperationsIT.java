@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.integration.operations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -45,21 +51,22 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
-        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
+    @EnabledIfSystemProperty(
+            named = "endpoint",
+            matches = ".*",
+            disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
+    @EnabledIfSystemProperty(
+            named = "accessKey",
+            matches = ".*",
+            disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbContainerOperationsIT {
-    private static final String DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-    private static final String LEASE_DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String DATABASE_NAME =
+            RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String LEASE_DATABASE_NAME =
+            RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
     private CosmosAsyncClientWrapper clientWrapper;
     private CosmosDbContainerOperations containerOperations;
@@ -126,9 +133,15 @@ class CosmosDbContainerOperationsIT {
         // assert all out written data
         assertEquals(2, itemsPartitions1.count().block());
         assertEquals(1, itemsPartitions2.count().block());
-        assertTrue(itemsPartitions1.any(item -> item.get("id").toString().equals("test-id-1")).block());
-        assertTrue(itemsPartitions1.any(item -> item.get("id").toString().equals("test-id-2")).block());
-        assertTrue(itemsPartitions2.any(item -> item.get("id").toString().equals("test-id-3")).block());
+        assertTrue(itemsPartitions1
+                .any(item -> item.get("id").toString().equals("test-id-1"))
+                .block());
+        assertTrue(itemsPartitions1
+                .any(item -> item.get("id").toString().equals("test-id-2"))
+                .block());
+        assertTrue(itemsPartitions2
+                .any(item -> item.get("id").toString().equals("test-id-3"))
+                .block());
     }
 
     @Test
@@ -170,7 +183,9 @@ class CosmosDbContainerOperationsIT {
         upsertItem.put("field2", "upsert!");
 
         // upsert should create our record if it is not existing
-        containerOperations.upsertItem(originalItem, new PartitionKey("test-1"), null).block();
+        containerOperations
+                .upsertItem(originalItem, new PartitionKey("test-1"), null)
+                .block();
 
         // should only have one item
         assertEquals(1, readAllItems("test-1").count().block());
@@ -178,7 +193,9 @@ class CosmosDbContainerOperationsIT {
         assertEquals("awesome!", readItem("test-id-1", "test-1").getItem().get("field2"));
 
         // upsert
-        containerOperations.upsertItem(upsertItem, new PartitionKey("test-1"), null).block();
+        containerOperations
+                .upsertItem(upsertItem, new PartitionKey("test-1"), null)
+                .block();
 
         // should only have one item
         assertEquals(1, readAllItems("test-1").count().block());
@@ -218,13 +235,17 @@ class CosmosDbContainerOperationsIT {
         originalItem.put("field1", 12234);
         originalItem.put("field2", "awesome!");
 
-        containerOperations.createItem(originalItem, new PartitionKey("test-1"), null).block();
+        containerOperations
+                .createItem(originalItem, new PartitionKey("test-1"), null)
+                .block();
 
         assertEquals(1, readAllItems("test-1").count().block());
         assertNotNull(readItem("test-id-1", "test-1").getItem());
 
         // now delete
-        containerOperations.deleteItem("test-id-1", new PartitionKey("test-1"), null).block();
+        containerOperations
+                .deleteItem("test-id-1", new PartitionKey("test-1"), null)
+                .block();
 
         assertEquals(0, readAllItems("test-1").count().block());
     }
@@ -244,12 +265,17 @@ class CosmosDbContainerOperationsIT {
         replacedItem.put("field2", "replace!");
 
         // expect an error to replace non existing item
-        assertThrows(Exception.class,
-                () -> containerOperations.replaceItem(originalItem, "test-id-1", new PartitionKey("test-1"), null).block());
+        assertThrows(Exception.class, () -> containerOperations
+                .replaceItem(originalItem, "test-id-1", new PartitionKey("test-1"), null)
+                .block());
 
         // try again
-        containerOperations.createItem(originalItem, new PartitionKey("test-1"), null).block();
-        containerOperations.replaceItem(replacedItem, "test-id-1", new PartitionKey("test-1"), null).block();
+        containerOperations
+                .createItem(originalItem, new PartitionKey("test-1"), null)
+                .block();
+        containerOperations
+                .replaceItem(replacedItem, "test-id-1", new PartitionKey("test-1"), null)
+                .block();
 
         // should only have one item
         assertEquals(1, readAllItems("test-1").count().block());
@@ -283,10 +309,12 @@ class CosmosDbContainerOperationsIT {
 
         final String query = "SELECT c.id,c.field2 from c where c.id = 'test-id-2'";
 
-        assertEquals(1, containerOperations.queryItems(query, null, Map.class).count().block());
+        assertEquals(
+                1,
+                containerOperations.queryItems(query, null, Map.class).count().block());
 
-        final Map actualItem = containerOperations.queryItems(query, null, Map.class)
-                .blockFirst();
+        final Map actualItem =
+                containerOperations.queryItems(query, null, Map.class).blockFirst();
 
         // should only have two keys
         assertEquals(2, actualItem.keySet().stream().count());
@@ -314,8 +342,8 @@ class CosmosDbContainerOperationsIT {
             latch.done();
         };
 
-        final ChangeFeedProcessor changeFeedProcessorMono
-                = containerOperations.captureEventsWithChangeFeed(leaseContainer, "my-host", onEvent, null);
+        final ChangeFeedProcessor changeFeedProcessorMono =
+                containerOperations.captureEventsWithChangeFeed(leaseContainer, "my-host", onEvent, null);
 
         // start our events processor
         changeFeedProcessorMono.start().block();
@@ -343,7 +371,9 @@ class CosmosDbContainerOperationsIT {
     }
 
     private CosmosItemResponse<Map> readItem(final String itemId, final String partitionKey) {
-        return containerOperations.readItem(itemId, new PartitionKey(partitionKey), null, Map.class).block();
+        return containerOperations
+                .readItem(itemId, new PartitionKey(partitionKey), null, Map.class)
+                .block();
     }
 
     private Flux<Map> readAllItems(final String partitionKey) {

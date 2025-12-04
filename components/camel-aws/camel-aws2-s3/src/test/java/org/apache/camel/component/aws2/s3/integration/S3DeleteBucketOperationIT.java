@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
 
 import org.apache.camel.EndpointInject;
@@ -68,7 +69,6 @@ public class S3DeleteBucketOperationIT extends Aws2S3Base {
                 from("direct:listBucket").to(awsEndpoint);
 
                 from("direct:deleteBucket").to(awsEndpoint).to("mock:result");
-
             }
         };
     }

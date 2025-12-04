@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.integration;
 
 import java.nio.charset.Charset;
@@ -70,9 +71,8 @@ public class RabbitMQProducerAutoDeclareIT extends RabbitMQITSupport {
                 .setMessageId("123")
                 .setHeader("bar", "baz")
                 .build();
-        Message body = MessageBuilder.withBody("foo".getBytes())
-                .andProperties(props)
-                .build();
+        Message body =
+                MessageBuilder.withBody("foo".getBytes()).andProperties(props).build();
 
         template.sendBody("direct:start", body);
 
@@ -86,12 +86,20 @@ public class RabbitMQProducerAutoDeclareIT extends RabbitMQITSupport {
     public void testProducerWithMessageProperties() throws Exception {
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
 
-        template.sendBodyAndHeaders("direct:start", "<price>123</price>",
-                Map.of(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT,
-                        SpringRabbitMQConstants.TYPE, "price",
-                        SpringRabbitMQConstants.CONTENT_TYPE, "application/xml",
-                        SpringRabbitMQConstants.MESSAGE_ID, "0fe9c142-f9c1-426f-9237-f5a4c988a8ae",
-                        SpringRabbitMQConstants.PRIORITY, 1));
+        template.sendBodyAndHeaders(
+                "direct:start",
+                "<price>123</price>",
+                Map.of(
+                        SpringRabbitMQConstants.DELIVERY_MODE,
+                        MessageDeliveryMode.PERSISTENT,
+                        SpringRabbitMQConstants.TYPE,
+                        "price",
+                        SpringRabbitMQConstants.CONTENT_TYPE,
+                        "application/xml",
+                        SpringRabbitMQConstants.MESSAGE_ID,
+                        "0fe9c142-f9c1-426f-9237-f5a4c988a8ae",
+                        SpringRabbitMQConstants.PRIORITY,
+                        1));
 
         AmqpTemplate template = new RabbitTemplate(cf);
         Message out = template.receive("myqueue");
@@ -115,7 +123,8 @@ public class RabbitMQProducerAutoDeclareIT extends RabbitMQITSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo?autoDeclareProducer=true&routingKey=foo.bar.#&queues=myqueue&exchangeType=topic");
+                        .to(
+                                "spring-rabbitmq:foo?autoDeclareProducer=true&routingKey=foo.bar.#&queues=myqueue&exchangeType=topic");
             }
         };
     }

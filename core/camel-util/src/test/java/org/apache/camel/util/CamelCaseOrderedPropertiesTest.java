@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Iterator;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelCaseOrderedPropertiesTest {
 
@@ -76,5 +77,4 @@ public class CamelCaseOrderedPropertiesTest {
         assertEquals("500", prop.getProperty("camel.component.seda.queueSize", "MyDefault"));
         assertEquals("1234", prop.getProperty("camel.component.direct.timeout", "MyDefault"));
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -31,10 +36,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
 
@@ -64,7 +65,9 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
             assertTrue(b1);
             boolean b = e.getCause().getCause().getCause() instanceof RuntimeException;
             assertTrue(b);
-            assertEquals("Bang! Unhandled exception", e.getCause().getCause().getCause().getMessage());
+            assertEquals(
+                    "Bang! Unhandled exception",
+                    e.getCause().getCause().getCause().getMessage());
             mock.assertIsSatisfied();
             return;
         }
@@ -86,7 +89,8 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").to("mock:pickedUp")
+                from("direct:in")
+                        .to("mock:pickedUp")
                         // using the async utility component to ensure that the
                         // async routing engine kicks in
                         .enrich("async:out?reply=Reply", new AggregationStrategy() {
@@ -95,9 +99,7 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
                                 throw new RuntimeException("Bang! Unhandled exception");
                             }
                         });
-
             }
         };
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.oauth;
+
+import static org.apache.camel.test.oauth.KeycloakAdmin.AdminParams;
+import static org.apache.camel.test.oauth.KeycloakAdmin.ClientParams;
+import static org.apache.camel.test.oauth.KeycloakAdmin.RealmParams;
+import static org.apache.camel.test.oauth.KeycloakAdmin.UserParams;
 
 import jakarta.servlet.ServletException;
 
@@ -24,11 +30,6 @@ import io.undertow.server.handlers.PathHandler;
 import io.undertow.servlet.Servlets;
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.junit.jupiter.api.Assumptions;
-
-import static org.apache.camel.test.oauth.KeycloakAdmin.AdminParams;
-import static org.apache.camel.test.oauth.KeycloakAdmin.ClientParams;
-import static org.apache.camel.test.oauth.KeycloakAdmin.RealmParams;
-import static org.apache.camel.test.oauth.KeycloakAdmin.UserParams;
 
 abstract class AbstractKeycloakTest {
 
@@ -84,12 +85,16 @@ abstract class AbstractKeycloakTest {
                 .setContextPath("/")
                 .setDeploymentName("CamelServlet")
                 .setClassLoader(OAuthClientCredentialsServletTest.class.getClassLoader())
-                .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class).addMapping("/*"));
+                .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class)
+                        .addMapping("/*"));
 
         var manager = Servlets.newContainer().addDeployment(deploymentInfo);
         manager.deploy();
 
         PathHandler path = Handlers.path(Handlers.redirect("/")).addPrefixPath("/", manager.start());
-        return Undertow.builder().addHttpListener(port, "0.0.0.0").setHandler(path).build();
+        return Undertow.builder()
+                .addHttpListener(port, "0.0.0.0")
+                .setHandler(path)
+                .build();
     }
 }

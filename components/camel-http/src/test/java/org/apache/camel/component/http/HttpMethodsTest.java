@@ -14,17 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
-
-import java.util.Map;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.hc.core5.http.HttpStatus;
-import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
-import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.DELETE;
 import static org.apache.camel.component.http.HttpMethods.GET;
@@ -39,6 +30,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.component.http.handler.BasicValidationHandler;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.junit.jupiter.api.Test;
+
 public class HttpMethodsTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -48,13 +49,15 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/get", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
                 .register("/patch", new BasicValidationHandler(PATCH.name(), null, null, getExpectedContent()))
-                .register("/patch1",
-                        new BasicValidationHandler(PATCH.name(), null, "rocks camel?", getExpectedContent()))
+                .register(
+                        "/patch1", new BasicValidationHandler(PATCH.name(), null, "rocks camel?", getExpectedContent()))
                 .register("/post", new BasicValidationHandler(POST.name(), null, null, getExpectedContent()))
                 .register("/post1", new BasicValidationHandler(POST.name(), null, "rocks camel?", getExpectedContent()))
                 .register("/put", new BasicValidationHandler(PUT.name(), null, null, getExpectedContent()))
@@ -62,7 +65,8 @@ public class HttpMethodsTest extends BaseHttpTest {
                 .register("/options", new BasicValidationHandler(OPTIONS.name(), null, null, getExpectedContent()))
                 .register("/delete", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent()))
                 .register("/delete1", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent()))
-                .register("/head", new BasicValidationHandler(HEAD.name(), null, null, getExpectedContent())).create();
+                .register("/head", new BasicValidationHandler(HEAD.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
 
         baseUrl = "http://localhost:" + localServer.getLocalPort();
@@ -79,8 +83,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpGet() {
 
-        Exchange exchange = template.request(baseUrl + "/get", exchange1 -> {
-        });
+        Exchange exchange = template.request(baseUrl + "/get", exchange1 -> {});
 
         assertExchange(exchange);
     }
@@ -88,7 +91,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpGetWithUriParam() {
 
-        Exchange exchange = template.request(baseUrl + "/get?httpMethod=GET",
+        Exchange exchange = template.request(
+                baseUrl + "/get?httpMethod=GET",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "POST"));
 
         assertExchange(exchange);
@@ -97,7 +101,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPatch() {
 
-        Exchange exchange = template.request(baseUrl + "/patch?throwExceptionOnFailure=false",
+        Exchange exchange = template.request(
+                baseUrl + "/patch?throwExceptionOnFailure=false",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PATCH"));
 
         assertNotNull(exchange);
@@ -115,7 +120,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPatchWithBody() {
 
-        Exchange exchange = template.request(baseUrl + "/patch1?throwExceptionOnFailure=false",
+        Exchange exchange = template.request(
+                baseUrl + "/patch1?throwExceptionOnFailure=false",
                 exchange1 -> exchange1.getIn().setBody("rocks camel?"));
 
         assertNotNull(exchange);
@@ -131,8 +137,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPost() {
 
-        Exchange exchange
-                = template.request(baseUrl + "/post", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "POST"));
+        Exchange exchange = template.request(
+                baseUrl + "/post", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "POST"));
 
         assertExchange(exchange);
     }
@@ -140,7 +146,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPostWithBody() {
 
-        Exchange exchange = template.request(baseUrl + "/post1", exchange1 -> exchange1.getIn().setBody("rocks camel?"));
+        Exchange exchange = template.request(
+                baseUrl + "/post1", exchange1 -> exchange1.getIn().setBody("rocks camel?"));
 
         assertExchange(exchange);
     }
@@ -148,8 +155,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPut() {
 
-        Exchange exchange
-                = template.request(baseUrl + "/put", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PUT"));
+        Exchange exchange = template.request(
+                baseUrl + "/put", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PUT"));
 
         assertExchange(exchange);
     }
@@ -157,8 +164,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpTrace() {
 
-        Exchange exchange
-                = template.request(baseUrl + "/trace", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "TRACE"));
+        Exchange exchange = template.request(
+                baseUrl + "/trace", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "TRACE"));
 
         assertExchange(exchange);
     }
@@ -166,8 +173,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpOptions() {
 
-        Exchange exchange = template.request(baseUrl + "/options",
-                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
+        Exchange exchange = template.request(
+                baseUrl + "/options", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
         assertExchange(exchange);
     }
@@ -175,8 +182,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpDelete() {
 
-        Exchange exchange = template.request(baseUrl + "/delete",
-                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE"));
+        Exchange exchange = template.request(
+                baseUrl + "/delete", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE"));
 
         assertExchange(exchange);
     }
@@ -210,8 +217,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpHead() {
 
-        Exchange exchange
-                = template.request(baseUrl + "/head", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "HEAD"));
+        Exchange exchange = template.request(
+                baseUrl + "/head", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "HEAD"));
 
         assertNotNull(exchange);
 
@@ -220,5 +227,4 @@ public class HttpMethodsTest extends BaseHttpTest {
         assertHeaders(out.getHeaders());
         assertNull(out.getBody(String.class));
     }
-
 }

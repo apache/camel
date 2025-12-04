@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
 
 import java.util.Map;
@@ -33,8 +34,7 @@ import org.apache.camel.spi.Metadata;
  */
 public final class DynamicRouterControlConstants {
 
-    private DynamicRouterControlConstants() {
-    }
+    private DynamicRouterControlConstants() {}
 
     /**
      * The camel version where the dynamic router control channel endpoint was introduced.
@@ -59,7 +59,8 @@ public final class DynamicRouterControlConstants {
     /**
      * Function to determine if the control channel URI should be optimized.
      */
-    public static final java.util.function.Predicate<String> SHOULD_OPTIMIZE = uri -> OPTIMIZE_MATCHER.apply(uri).find();
+    public static final java.util.function.Predicate<String> SHOULD_OPTIMIZE =
+            uri -> OPTIMIZE_MATCHER.apply(uri).find();
 
     /**
      * Convenient constant for the control channel URI.
@@ -110,14 +111,14 @@ public final class DynamicRouterControlConstants {
      * Error string when the message body is assumed to contain a {@link Predicate}, but the body's class is not
      * resolvable to {@link Predicate}.
      */
-    public static final String ERROR_PREDICATE_CLASS = "To supply a predicate in the message body, the body's class " +
-                                                       "must be resolvable to " + Predicate.class.getCanonicalName();
+    public static final String ERROR_PREDICATE_CLASS = "To supply a predicate in the message body, the body's class "
+            + "must be resolvable to " + Predicate.class.getCanonicalName();
 
     /**
      * Error when the specified expression language and the predicate expression cannot produce a predicate.
      */
-    public static final String ERROR_INVALID_PREDICATE_EXPRESSION
-            = "Language '%s' and predicate expression '%s' could not create a valid predicate";
+    public static final String ERROR_INVALID_PREDICATE_EXPRESSION =
+            "Language '%s' and predicate expression '%s' could not create a valid predicate";
 
     /**
      * Error when a predicate bean cannot be found.
@@ -173,50 +174,47 @@ public final class DynamicRouterControlConstants {
     /**
      * Header name for the subscribe channel.
      */
-    @Metadata(description = "The Dynamic Router channel that the subscriber is subscribing on.",
-              javaType = "String")
+    @Metadata(description = "The Dynamic Router channel that the subscriber is subscribing on.", javaType = "String")
     public static final String CONTROL_SUBSCRIBE_CHANNEL = "CamelDynamicRouterSubscribeChannel";
 
     /**
      * Header name for the subscription ID.
      */
-    @Metadata(description = "The subscription ID.",
-              javaType = "String")
+    @Metadata(description = "The subscription ID.", javaType = "String")
     public static final String CONTROL_SUBSCRIPTION_ID = "CamelDynamicRouterSubscriptionId";
 
     /**
      * Header name for the destination URI.
      */
-    @Metadata(description = "The URI on which the routing participant wants to receive matching exchanges.",
-              javaType = "String")
+    @Metadata(
+            description = "The URI on which the routing participant wants to receive matching exchanges.",
+            javaType = "String")
     public static final String CONTROL_DESTINATION_URI = "CamelDynamicRouterDestinationUri";
 
     /**
      * Header name for the routing priority.
      */
-    @Metadata(description = "The priority of this subscription",
-              javaType = "String")
+    @Metadata(description = "The priority of this subscription", javaType = "String")
     public static final String CONTROL_PRIORITY = "CamelDynamicRouterPriority";
 
     /**
      * Header name for the predicate.
      */
-    @Metadata(description = "The predicate to evaluate exchanges for this subscription",
-              javaType = "String")
+    @Metadata(description = "The predicate to evaluate exchanges for this subscription", javaType = "String")
     public static final String CONTROL_PREDICATE = "CamelDynamicRouterPredicate";
 
     /**
      * Header name for the predicate bean reference.
      */
-    @Metadata(description = "The name of the bean in the registry that identifies the subscription predicate.",
-              javaType = "String")
+    @Metadata(
+            description = "The name of the bean in the registry that identifies the subscription predicate.",
+            javaType = "String")
     public static final String CONTROL_PREDICATE_BEAN = "CamelDynamicRouterPredicateBean";
 
     /**
      * Header name for the predicate expression language.
      */
-    @Metadata(description = "The language for the predicate when supplied as a string.",
-              javaType = "String")
+    @Metadata(description = "The language for the predicate when supplied as a string.", javaType = "String")
     public static final String CONTROL_EXPRESSION_LANGUAGE = "CamelDynamicRouterExpressionLanguage";
 
     /**
@@ -235,18 +233,18 @@ public final class DynamicRouterControlConstants {
     /**
      * The supplier for the control endpoint factory.
      */
-    public static final Supplier<DynamicRouterControlEndpointFactory> CONTROL_ENDPOINT_FACTORY_SUPPLIER
-            = DynamicRouterControlEndpointFactory::new;
+    public static final Supplier<DynamicRouterControlEndpointFactory> CONTROL_ENDPOINT_FACTORY_SUPPLIER =
+            DynamicRouterControlEndpointFactory::new;
 
     /**
      * The supplier for the producer factory.
      */
-    public static final Supplier<DynamicRouterControlProducerFactory> CONTROL_PRODUCER_FACTORY_SUPPLIER
-            = DynamicRouterControlProducerFactory::new;
+    public static final Supplier<DynamicRouterControlProducerFactory> CONTROL_PRODUCER_FACTORY_SUPPLIER =
+            DynamicRouterControlProducerFactory::new;
 
     /**
      * The supplier for the control service factory.
      */
-    public static final Supplier<DynamicRouterControlServiceFactory> CONTROL_SERVICE_FACTORY_SUPPLIER
-            = DynamicRouterControlServiceFactory::new;
+    public static final Supplier<DynamicRouterControlServiceFactory> CONTROL_SERVICE_FACTORY_SUPPLIER =
+            DynamicRouterControlServiceFactory::new;
 }

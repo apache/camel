@@ -26,9 +26,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 
-@InfraService(service = KafkaInfraService.class,
-              description = "Apache Kafka, Distributed event streaming platform",
-              serviceAlias = "kafka", serviceImplementationAlias = "strimzi")
+@InfraService(
+        service = KafkaInfraService.class,
+        description = "Apache Kafka, Distributed event streaming platform",
+        serviceAlias = "kafka",
+        serviceImplementationAlias = "strimzi")
 public class StrimziInfraService implements KafkaInfraService, ContainerService<StrimziContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(StrimziInfraService.class);
 
@@ -36,8 +38,7 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
     private final StrimziContainer strimziContainer;
 
     public StrimziInfraService() {
-        this("zookeeper-" + TestUtils.randomWithRange(1, 100),
-             "strimzi-" + TestUtils.randomWithRange(1, 100));
+        this("zookeeper-" + TestUtils.randomWithRange(1, 100), "strimzi-" + TestUtils.randomWithRange(1, 100));
     }
 
     public StrimziInfraService(String zookeeperInstanceName, String strimziInstanceName) {
@@ -56,9 +57,11 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
         this.strimziContainer = strimziContainer;
     }
 
-    protected StrimziContainer initStrimziContainer(Network network, String instanceName, String zookeeperInstanceName) {
+    protected StrimziContainer initStrimziContainer(
+            Network network, String instanceName, String zookeeperInstanceName) {
         class TestInfraStrimziContainer extends StrimziContainer {
-            public TestInfraStrimziContainer(Network network, String name, String zookeeperInstanceName, boolean fixedPort) {
+            public TestInfraStrimziContainer(
+                    Network network, String name, String zookeeperInstanceName, boolean fixedPort) {
                 super(network, name, zookeeperInstanceName);
 
                 if (fixedPort) {
@@ -82,7 +85,8 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
             }
         }
 
-        return new TestInfraZookeeperContainer(network, instanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        return new TestInfraZookeeperContainer(
+                network, instanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     protected Integer getKafkaPort() {

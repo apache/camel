@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn;
 
 import com.huaweicloud.sdk.smn.v2.region.SmnRegion;
@@ -28,8 +29,7 @@ import org.slf4j.LoggerFactory;
 public final class SimpleNotificationUtils {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleNotificationUtils.class.getName());
 
-    private SimpleNotificationUtils() {
-    }
+    private SimpleNotificationUtils() {}
 
     /**
      * resolves endpoint url for the given region

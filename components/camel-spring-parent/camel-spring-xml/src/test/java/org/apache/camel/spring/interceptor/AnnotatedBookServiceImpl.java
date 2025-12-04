@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import javax.sql.DataSource;
@@ -42,7 +43,8 @@ public class AnnotatedBookServiceImpl implements AnnotatedBookStore {
     public void orderBook(String title) throws Exception {
         Transactional tx = this.getClass().getAnnotation(Transactional.class);
         if (tx == null) {
-            throw new IllegalStateException("Spring annotation-driven should have instrumented this class as @Transactional");
+            throw new IllegalStateException(
+                    "Spring annotation-driven should have instrumented this class as @Transactional");
         }
         if (!"REQUIRED".equals(tx.propagation().name())) {
             throw new IllegalStateException("Should be REQUIRED propagation");

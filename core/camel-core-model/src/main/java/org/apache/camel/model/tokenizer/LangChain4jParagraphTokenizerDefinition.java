@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.tokenizer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -26,13 +27,15 @@ import org.apache.camel.spi.Metadata;
 /**
  * Camel AI: Tokenizer for splitting by paragraphs.
  */
-@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with paragraph splitter")
+@Metadata(
+        firstVersion = "4.8.0",
+        label = "eip,transformation,ai",
+        title = "LangChain4J Tokenizer with paragraph splitter")
 @XmlRootElement(name = "langChain4jParagraphTokenizer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LangChain4jParagraphTokenizerDefinition extends LangChain4jTokenizerDefinition {
 
-    public LangChain4jParagraphTokenizerDefinition() {
-    }
+    public LangChain4jParagraphTokenizerDefinition() {}
 
     public LangChain4jParagraphTokenizerDefinition(LangChain4jTokenizerDefinition source) {
         super(source);

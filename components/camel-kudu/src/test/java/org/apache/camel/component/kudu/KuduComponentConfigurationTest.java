@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kudu;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.kudu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class KuduComponentConfigurationTest extends CamelTestSupport {
 
@@ -32,8 +33,8 @@ public class KuduComponentConfigurationTest extends CamelTestSupport {
         KuduOperations operation = KuduOperations.SCAN;
 
         KuduComponent component = new KuduComponent(this.context());
-        KuduEndpoint endpoint = (KuduEndpoint) component
-                .createEndpoint("kudu:" + host + ":" + port + "/" + tableName + "?operation=" + operation);
+        KuduEndpoint endpoint = (KuduEndpoint)
+                component.createEndpoint("kudu:" + host + ":" + port + "/" + tableName + "?operation=" + operation);
 
         assertEquals(host, endpoint.getHost(), "Host was not correctly detected. ");
         assertEquals(port, endpoint.getPort(), "Port was not correctly detected. ");
@@ -44,7 +45,6 @@ public class KuduComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void wrongUrl() {
         KuduComponent component = new KuduComponent(this.context());
-        assertThrows(Exception.class,
-                () -> component.createEndpoint("wrong url"));
+        assertThrows(Exception.class, () -> component.createEndpoint("wrong url"));
     }
 }

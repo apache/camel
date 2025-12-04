@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,10 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class SecretsManagerProducerListSecretsLocalstackIT extends AwsSecretsManagerBaseTest {
@@ -69,8 +70,7 @@ public class SecretsManagerProducerListSecretsLocalstackIT extends AwsSecretsMan
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret");
+                from("direct:createSecret").to("aws-secrets-manager://test?operation=createSecret");
 
                 from("direct:listSecrets")
                         .to("aws-secrets-manager://test?operation=listSecrets")

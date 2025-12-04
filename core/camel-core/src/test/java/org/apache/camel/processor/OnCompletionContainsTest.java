@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -62,43 +63,44 @@ public class OnCompletionContainsTest extends ContextTestSupport {
             public void configure() {
                 onCompletion().to("mock:sync");
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        SynchronizationAdapter adapter = new SimpleSynchronizationAdapter("mock:sync", "A");
-                        exchange.getExchangeExtension().addOnCompletion(adapter);
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                SynchronizationAdapter adapter = new SimpleSynchronizationAdapter("mock:sync", "A");
+                                exchange.getExchangeExtension().addOnCompletion(adapter);
 
-                        // should not add the adapter again as we already have
-                        // it
-                        if (!exchange.getExchangeExtension().containsOnCompletion(adapter)) {
-                            exchange.getExchangeExtension().addOnCompletion(adapter);
-                        }
+                                // should not add the adapter again as we already have
+                                // it
+                                if (!exchange.getExchangeExtension().containsOnCompletion(adapter)) {
+                                    exchange.getExchangeExtension().addOnCompletion(adapter);
+                                }
 
-                        adapter = new SimpleSynchronizationAdapter("mock:sync", "B");
-                        exchange.getExchangeExtension().addOnCompletion(adapter);
+                                adapter = new SimpleSynchronizationAdapter("mock:sync", "B");
+                                exchange.getExchangeExtension().addOnCompletion(adapter);
 
-                        // now add the B again as we want to test that this also
-                        // work
-                        if (exchange.getExchangeExtension().containsOnCompletion(adapter)) {
-                            exchange.getExchangeExtension().addOnCompletion(adapter);
-                        }
+                                // now add the B again as we want to test that this also
+                                // work
+                                if (exchange.getExchangeExtension().containsOnCompletion(adapter)) {
+                                    exchange.getExchangeExtension().addOnCompletion(adapter);
+                                }
 
-                        // add a C that is no a SimpleSynchronizationAdapter
-                        // class
-                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                            @Override
-                            public void onDone(Exchange exchange) {
-                                template.sendBody("mock:sync", "C");
+                                // add a C that is no a SimpleSynchronizationAdapter
+                                // class
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                    @Override
+                                    public void onDone(Exchange exchange) {
+                                        template.sendBody("mock:sync", "C");
+                                    }
+
+                                    @Override
+                                    public String toString() {
+                                        return "C";
+                                    }
+                                });
                             }
-
-                            @Override
-                            public String toString() {
-                                return "C";
-                            }
-                        });
-                    }
-                }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

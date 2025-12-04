@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,8 +31,6 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends CamelTestSupport {
 
@@ -49,8 +50,8 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
     public void testMarshallCsvRecordFieldContainingMultiEscapedQuoteChar() throws Exception {
 
         mockEndPointMarshal1.expectedMessageCount(1);
-        mockEndPointMarshal1
-                .expectedBodiesReceived("\"123\",\"\"\"foo\"\"\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+        mockEndPointMarshal1.expectedBodiesReceived(
+                "\"123\",\"\"\"foo\"\"\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         BindyCsvRowFormat75191 body = new BindyCsvRowFormat75191();
         body.setFirstField("123");
@@ -60,8 +61,8 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
 
         MockEndpoint.assertIsSatisfied(context);
 
-        BindyCsvRowFormat75191 model
-                = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat75191.class);
+        BindyCsvRowFormat75191 model =
+                mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat75191.class);
 
         assertEquals("123", model.getFirstField());
         assertEquals("\"foo\"", model.getSecondField());
@@ -72,7 +73,8 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
     public void testMarshallCsvRecordFieldContainingMultiNonEscapedQuoteChar() throws Exception {
 
         mockEndPointMarshal2.expectedMessageCount(1);
-        mockEndPointMarshal2.expectedBodiesReceived("'123','''foo''','10'" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+        mockEndPointMarshal2.expectedBodiesReceived(
+                "'123','''foo''','10'" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         BindyCsvRowFormat75192 body = new BindyCsvRowFormat75192();
         body.setFirstField("123");
@@ -82,8 +84,8 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
 
         MockEndpoint.assertIsSatisfied(context);
 
-        BindyCsvRowFormat75192 model
-                = mockEndPointUnMarshal2.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat75192.class);
+        BindyCsvRowFormat75192 model =
+                mockEndPointUnMarshal2.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat75192.class);
 
         assertEquals("123", model.getFirstField());
         assertEquals("''foo''", model.getSecondField());
@@ -102,9 +104,7 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
                         .to("mock:resultMarshal1")
                         .to("direct:middle1");
 
-                from("direct:middle1")
-                        .unmarshal(camelDataFormat1)
-                        .to("mock:resultUnMarshal1");
+                from("direct:middle1").unmarshal(camelDataFormat1).to("mock:resultUnMarshal1");
 
                 BindyCsvDataFormat camelDataFormat2 = new BindyCsvDataFormat(BindyCsvRowFormat75192.class);
 
@@ -113,14 +113,12 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
                         .to("mock:resultMarshal2")
                         .to("direct:middle2");
 
-                from("direct:middle2")
-                        .unmarshal(camelDataFormat2)
-                        .to("mock:resultUnMarshal2");
+                from("direct:middle2").unmarshal(camelDataFormat2).to("mock:resultUnMarshal2");
             }
         };
     }
 
-    //from https://issues.apache.org/jira/browse/CAMEL-7519
+    // from https://issues.apache.org/jira/browse/CAMEL-7519
     @CsvRecord(separator = ",", quote = "\"", quoting = true, quotingEscaped = false)
     public static class BindyCsvRowFormat75191 implements Serializable {
         private static final long serialVersionUID = 1L;

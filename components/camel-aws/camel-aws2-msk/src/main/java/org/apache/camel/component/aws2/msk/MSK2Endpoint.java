@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.msk;
 
 import org.apache.camel.Category;
@@ -32,9 +33,14 @@ import software.amazon.awssdk.services.kafka.KafkaClient;
 /**
  * Manage AWS MSK instances.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-msk", title = "AWS Managed Streaming for Apache Kafka (MSK)",
-             syntax = "aws2-msk:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
-             headersClass = MSK2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-msk",
+        title = "AWS Managed Streaming for Apache Kafka (MSK)",
+        syntax = "aws2-msk:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = MSK2Constants.class)
 public class MSK2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private KafkaClient mskClient;

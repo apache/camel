@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,21 +35,24 @@ public class OptimisticLockRetryPolicyDefinition {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String maximumRetries;
+
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration", defaultValue = "50")
     private String retryDelay;
+
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration", defaultValue = "1000")
     private String maximumRetryDelay;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String exponentialBackOff;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String randomBackOff;
 
-    public OptimisticLockRetryPolicyDefinition() {
-    }
+    public OptimisticLockRetryPolicyDefinition() {}
 
     protected OptimisticLockRetryPolicyDefinition(OptimisticLockRetryPolicyDefinition source) {
         this.maximumRetries = source.maximumRetries;

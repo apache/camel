@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
@@ -25,9 +26,11 @@ import org.apache.camel.Exchange;
  */
 public class ConstantStaticTypeBeanHolder extends ConstantTypeBeanHolder {
 
-    public ConstantStaticTypeBeanHolder(Class<?> type, CamelContext context,
-                                        ParameterMappingStrategy parameterMappingStrategy,
-                                        BeanComponent beanComponent) {
+    public ConstantStaticTypeBeanHolder(
+            Class<?> type,
+            CamelContext context,
+            ParameterMappingStrategy parameterMappingStrategy,
+            BeanComponent beanComponent) {
         super(type, context, parameterMappingStrategy, beanComponent);
     }
 

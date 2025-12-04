@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.zookeeper.services;
 
 import org.apache.camel.test.infra.common.services.ContainerTestService;
@@ -33,9 +34,7 @@ public final class ZooKeeperServiceFactory {
         }
     }
 
-    private ZooKeeperServiceFactory() {
-
-    }
+    private ZooKeeperServiceFactory() {}
 
     public static SimpleTestServiceBuilder<ZooKeeperService> builder() {
         return new SimpleTestServiceBuilder<>("zookeeper");
@@ -50,8 +49,6 @@ public final class ZooKeeperServiceFactory {
 }
 
 class ZooKeeperLocalContainerService extends ZooKeeperLocalContainerInfraService
-        implements ZooKeeperService, ContainerTestService {
-}
+        implements ZooKeeperService, ContainerTestService {}
 
-class ZooKeeperRemoteService extends ZooKeeperRemoteInfraService implements ZooKeeperService {
-}
+class ZooKeeperRemoteService extends ZooKeeperRemoteInfraService implements ZooKeeperService {}

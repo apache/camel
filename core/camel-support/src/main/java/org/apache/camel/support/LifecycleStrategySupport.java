@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.Collection;
@@ -234,8 +235,12 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
 
     @Override
     public void onThreadPoolAdd(
-            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-            String sourceId, String routeId, String threadPoolProfileId) {
+            CamelContext camelContext,
+            ThreadPoolExecutor threadPool,
+            String id,
+            String sourceId,
+            String routeId,
+            String threadPoolProfileId) {
         // noop
     }
 
@@ -263,7 +268,11 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
                             if (hit) {
                                 LOG.info(
                                         "Autowired property: {} on {}: {} as exactly one instance of type: {} ({}) found in the registry",
-                                        option, kind, name, type.getName(), value.getClass().getName());
+                                        option,
+                                        kind,
+                                        name,
+                                        type.getName(),
+                                        value.getClass().getName());
                             }
                         }
                     }

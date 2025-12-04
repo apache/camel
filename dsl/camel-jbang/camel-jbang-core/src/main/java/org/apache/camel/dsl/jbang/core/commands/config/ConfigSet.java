@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.config;
 
 import java.io.IOException;
@@ -24,14 +25,19 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "set",
-                     description = "Set user configuration value", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "set",
+        description = "Set user configuration value",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ConfigSet extends CamelCommand {
 
     @CommandLine.Parameters(description = "Configuration parameter (ex. key=value)", arity = "1")
     String configuration;
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(
+            names = {"--global"},
+            description = "Use global or local configuration")
     boolean global = true;
 
     public ConfigSet(CamelJBangMain main) {
@@ -51,12 +57,14 @@ public class ConfigSet extends CamelCommand {
             return 1;
         }
 
-        CommandLineHelper.loadProperties(properties -> {
-            String key = StringHelper.before(configuration, "=").trim();
-            String value = StringHelper.after(configuration, "=").trim();
-            properties.put(key, value);
-            CommandLineHelper.storeProperties(properties, printer(), local);
-        }, local);
+        CommandLineHelper.loadProperties(
+                properties -> {
+                    String key = StringHelper.before(configuration, "=").trim();
+                    String value = StringHelper.after(configuration, "=").trim();
+                    properties.put(key, value);
+                    CommandLineHelper.storeProperties(properties, printer(), local);
+                },
+                local);
 
         return 0;
     }

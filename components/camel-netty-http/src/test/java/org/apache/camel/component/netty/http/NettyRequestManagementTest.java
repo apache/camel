@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests https://issues.apache.org/jira/browse/CAMEL-10409
@@ -45,8 +46,7 @@ public class NettyRequestManagementTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
-                        .transform(body().prepend("Bye "));
+                from("netty-http:http://0.0.0.0:{{port}}/foo").transform(body().prepend("Bye "));
 
                 from("direct:start")
                         .to("netty-http:http://localhost:{{port}}/foo?synchronous=true")

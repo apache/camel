@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,8 @@ import org.apache.camel.support.processor.PredicateValidatingProcessor;
 @ManagedResource(description = "Managed Validate")
 public class ManagedValidate extends ManagedProcessor implements ManagedValidateMBean {
 
-    public ManagedValidate(CamelContext context, PredicateValidatingProcessor processor, ValidateDefinition definition) {
+    public ManagedValidate(
+            CamelContext context, PredicateValidatingProcessor processor, ValidateDefinition definition) {
         super(context, processor, definition);
     }
 
@@ -43,5 +45,4 @@ public class ManagedValidate extends ManagedProcessor implements ManagedValidate
     public String getPredicate() {
         return getDefinition().getExpression().getExpression();
     }
-
 }

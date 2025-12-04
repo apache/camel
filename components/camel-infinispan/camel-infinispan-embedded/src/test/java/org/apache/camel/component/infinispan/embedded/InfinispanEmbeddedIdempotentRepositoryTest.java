@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.function.Supplier;
@@ -71,9 +72,7 @@ public class InfinispanEmbeddedIdempotentRepositoryTest extends InfinispanEmbedd
             @Override
             public void configure() {
                 from("direct:start")
-                        .idempotentConsumer(
-                                header("MessageID"),
-                                getIdempotentRepository())
+                        .idempotentConsumer(header("MessageID"), getIdempotentRepository())
                         .skipDuplicate(true)
                         .to("mock:result");
             }

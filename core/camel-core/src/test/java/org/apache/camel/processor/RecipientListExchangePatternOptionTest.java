@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,7 +26,9 @@ public class RecipientListExchangePatternOptionTest extends SendExchangePatternO
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").recipientList(constant("stub:foo?exchangePattern=InOnly")).to("mock:result");
+                from("direct:start")
+                        .recipientList(constant("stub:foo?exchangePattern=InOnly"))
+                        .to("mock:result");
 
                 from("stub:foo").to("mock:stub");
             }

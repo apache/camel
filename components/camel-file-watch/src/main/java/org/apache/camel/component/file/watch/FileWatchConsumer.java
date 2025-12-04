@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.watch;
 
 import java.io.File;
@@ -101,7 +102,8 @@ public class FileWatchConsumer extends DefaultConsumer {
                 .listener(new FileWatchDirectoryChangeListener());
 
         if (!System.getProperty("os.name").toLowerCase().contains("mac")) {
-            // If not macOS, use FileSystem WatchService. io.methvin.watcher uses by default WatchService associated to default FileSystem.
+            // If not macOS, use FileSystem WatchService. io.methvin.watcher uses by default WatchService associated to
+            // default FileSystem.
             // We need per FileSystem WatchService, to allow monitoring on machine with multiple file systems.
             // Keep default for macOS
             watcherBuilder.watchService(this.baseDirectory.getFileSystem().newWatchService());
@@ -114,9 +116,13 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         this.watcher = watcherBuilder.build();
 
-        watchDirExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
+        watchDirExecutorService = getEndpoint()
+                .getCamelContext()
+                .getExecutorServiceManager()
                 .newFixedThreadPool(this, "CamelFileWatchService", getEndpoint().getPollThreads());
-        pollExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
+        pollExecutorService = getEndpoint()
+                .getCamelContext()
+                .getExecutorServiceManager()
                 .newFixedThreadPool(this, "CamelFileWatchPoll", getEndpoint().getConcurrentConsumers());
 
         for (int i = 0; i < getEndpoint().getPollThreads(); i++) {
@@ -156,11 +162,15 @@ public class FileWatchConsumer extends DefaultConsumer {
         File file = event.getEventPath().toFile();
         Message message = exchange.getIn();
         message.setBody(file);
-        message.setHeader(FileWatchConstants.EVENT_TYPE_HEADER, event.getEventType().name());
-        message.setHeader(FileWatchConstants.FILE_NAME_ONLY, event.getEventPath().getFileName().toString());
+        message.setHeader(
+                FileWatchConstants.EVENT_TYPE_HEADER, event.getEventType().name());
+        message.setHeader(
+                FileWatchConstants.FILE_NAME_ONLY,
+                event.getEventPath().getFileName().toString());
         message.setHeader(FileWatchConstants.FILE_ABSOLUTE, true);
 
-        final String absolutePath = PathUtils.normalizeToString(event.getEventPath().toAbsolutePath());
+        final String absolutePath =
+                PathUtils.normalizeToString(event.getEventPath().toAbsolutePath());
         message.setHeader(FileWatchConstants.FILE_ABSOLUTE_PATH, absolutePath);
         message.setHeader(FileWatchConstants.FILE_PATH, absolutePath);
 
@@ -169,7 +179,8 @@ public class FileWatchConsumer extends DefaultConsumer {
         message.setHeader(FileWatchConstants.FILE_RELATIVE_PATH, relativePath);
         message.setHeader(FileWatchConstants.FILE_NAME_CONSUMED, relativePath);
 
-        message.setHeader(FileWatchConstants.FILE_PARENT,
+        message.setHeader(
+                FileWatchConstants.FILE_PARENT,
                 PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
         message.setHeader(FileWatchConstants.FILE_LAST_MODIFIED, event.getEventDate());
         message.setHeader(Exchange.MESSAGE_TIMESTAMP, event.getEventDate());
@@ -190,8 +201,11 @@ public class FileWatchConsumer extends DefaultConsumer {
                     return false;
                 }
             } catch (IOException e) {
-                LOG.warn(String.format("Exception occurred during executing filter. Filtering file %s out.",
-                        fileEvent.getEventPath()), e);
+                LOG.warn(
+                        String.format(
+                                "Exception occurred during executing filter. Filtering file %s out.",
+                                fileEvent.getEventPath()),
+                        e);
                 return false;
             }
         }
@@ -203,8 +217,9 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         return antPathMatcher.match(
                 getEndpoint().getAntInclude(),
-                PathUtils.normalizeToString(baseDirectory.relativize(fileEvent.getEventPath())) // match against relativized path
-        );
+                PathUtils.normalizeToString(
+                        baseDirectory.relativize(fileEvent.getEventPath())) // match against relativized path
+                );
     }
 
     @Override

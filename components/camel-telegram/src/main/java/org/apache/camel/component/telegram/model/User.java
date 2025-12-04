@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -42,8 +43,7 @@ public class User implements Serializable {
     @JsonProperty("is_bot")
     private boolean isBot;
 
-    public User() {
-    }
+    public User() {}
 
     public Long getId() {
         return id;

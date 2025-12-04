@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.neo4j;
 
 import org.apache.camel.Category;
@@ -36,30 +37,26 @@ import org.neo4j.driver.GraphDatabase;
 /**
  * Perform operations on the Neo4j Graph Database
  */
-@UriEndpoint(firstVersion = "4.10.0",
-             scheme = Neo4jConstants.SCHEME,
-             title = "Neo4j",
-             syntax = "neo4j:name",
-             producerOnly = true,
-             category = {
-                     Category.DATABASE,
-                     Category.AI
-             },
-             headersClass = Neo4jHeaders.class)
+@UriEndpoint(
+        firstVersion = "4.10.0",
+        scheme = Neo4jConstants.SCHEME,
+        title = "Neo4j",
+        syntax = "neo4j:name",
+        producerOnly = true,
+        category = {Category.DATABASE, Category.AI},
+        headersClass = Neo4jHeaders.class)
 public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)
     @UriPath(description = "The database name")
     private final String name;
+
     @UriParam
     private Neo4jConfiguration configuration;
 
     private volatile Driver driver;
 
-    public Neo4jEndpoint(String endpointUri,
-                         Component component,
-                         String name,
-                         Neo4jConfiguration configuration) {
+    public Neo4jEndpoint(String endpointUri, Component component, String name, Neo4jConfiguration configuration) {
         super(endpointUri, component);
         this.name = name;
         this.configuration = configuration;
@@ -115,7 +112,6 @@ public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLoc
             lock.unlock();
         }
         return this.driver;
-
     }
 
     private Driver createDriver() {
@@ -145,7 +141,9 @@ public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLoc
         // Case Basic Authentication
         if (this.configuration.getUsername() != null && this.configuration.getPassword() != null) {
             if (this.configuration.getRealm() != null) {
-                return AuthTokens.basic(this.configuration.getUsername(), this.configuration.getPassword(),
+                return AuthTokens.basic(
+                        this.configuration.getUsername(),
+                        this.configuration.getPassword(),
                         this.configuration.getRealm());
             }
             return AuthTokens.basic(this.configuration.getUsername(), this.configuration.getPassword());

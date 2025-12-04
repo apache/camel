@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class HttpHelperTest {
 
     @Test
     public void testSanitizeLog() {
-        String values[] = { "This is ok", "Bad stuff \nhere\n", "Another bad \rthing here" };
-        String expectedValues[] = { "This is ok", "Bad stuff _here_", "Another bad _thing here" };
+        String values[] = {"This is ok", "Bad stuff \nhere\n", "Another bad \rthing here"};
+        String expectedValues[] = {"This is ok", "Bad stuff _here_", "Another bad _thing here"};
 
         String sanitized[] = HttpHelper.sanitizeLog(values);
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
 
 import java.util.concurrent.CountDownLatch;
@@ -70,11 +71,14 @@ abstract class MongoAbstractConsumerThread implements Runnable {
                     doRun();
                 } catch (Exception e) {
                     if (keepRunning) {
-                        log.warn("Exception from consuming from MongoDB caused by {}. Will try again on next poll.",
+                        log.warn(
+                                "Exception from consuming from MongoDB caused by {}. Will try again on next poll.",
                                 e.getMessage());
                     } else {
-                        log.warn("Exception from consuming from MongoDB caused by {}. ConsumerThread will be stopped.",
-                                e.getMessage(), e);
+                        log.warn(
+                                "Exception from consuming from MongoDB caused by {}. ConsumerThread will be stopped.",
+                                e.getMessage(),
+                                e);
                     }
                 }
                 // regenerate the cursor, if reading failed for some reason
@@ -102,7 +106,8 @@ abstract class MongoAbstractConsumerThread implements Runnable {
 
     protected void stop() throws Exception {
         if (log.isInfoEnabled()) {
-            log.info("Stopping MongoDB Tailable Cursor consumer, bound to collection: {}",
+            log.info(
+                    "Stopping MongoDB Tailable Cursor consumer, bound to collection: {}",
                     String.format("db: %s, col: %s", endpoint.getDatabase(), endpoint.getCollection()));
         }
 
@@ -113,7 +118,8 @@ abstract class MongoAbstractConsumerThread implements Runnable {
         awaitStopped();
 
         if (log.isInfoEnabled()) {
-            log.info("Stopped MongoDB Tailable Cursor consumer, bound to collection: {}",
+            log.info(
+                    "Stopped MongoDB Tailable Cursor consumer, bound to collection: {}",
                     String.format("db: %s, col: %s", endpoint.getDatabase(), endpoint.getCollection()));
         }
     }

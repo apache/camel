@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.integration.sql;
 
 import java.util.HashMap;
@@ -33,8 +34,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
-           disabledReason = "Credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
+        disabledReason = "Credentials were not provided")
 public class SqlQueryIT extends BigQueryITSupport {
     private static final String TABLE_ID = "test_sql_table";
 
@@ -42,7 +44,7 @@ public class SqlQueryIT extends BigQueryITSupport {
     private Endpoint directIn;
 
     @EndpointInject("google-bigquery-sql:{{project.id}}: insert into {{bigquery.datasetId}}." + TABLE_ID
-                    + "(col1, col2) values (@col1, @col2)")
+            + "(col1, col2) values (@col1, @col2)")
     private Endpoint bigqueryEndpoint;
 
     @EndpointInject("mock:sendResult")
@@ -60,10 +62,7 @@ public class SqlQueryIT extends BigQueryITSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(directIn)
-                        .routeId("InsertRow")
-                        .to(bigqueryEndpoint)
-                        .to(sendResult);
+                from(directIn).routeId("InsertRow").to(bigqueryEndpoint).to(sendResult);
             }
         };
     }
@@ -86,5 +85,4 @@ public class SqlQueryIT extends BigQueryITSupport {
 
         assertRowExist(TABLE_ID, object);
     }
-
 }

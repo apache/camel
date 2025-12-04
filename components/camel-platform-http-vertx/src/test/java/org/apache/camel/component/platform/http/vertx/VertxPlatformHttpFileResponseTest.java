@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 import java.io.File;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformHttpFileResponseTest {
 
@@ -36,20 +37,14 @@ public class VertxPlatformHttpFileResponseTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/file")
-                            .setBody(constant(file));
+                    from("platform-http:/file").setBody(constant(file));
                 }
             });
 
             context.start();
 
             String requestBody = "Give me a file";
-            given()
-                    .body(requestBody)
-                    .get("/file")
-                    .then()
-                    .statusCode(200)
-                    .body(is("Hello World from this file"));
+            given().body(requestBody).get("/file").then().statusCode(200).body(is("Hello World from this file"));
         } finally {
             context.stop();
         }
@@ -71,15 +66,9 @@ public class VertxPlatformHttpFileResponseTest {
             context.start();
 
             String requestBody = "Give me a file";
-            given()
-                    .body(requestBody)
-                    .get("/file")
-                    .then()
-                    .statusCode(200)
-                    .body(is("Hello World from this file"));
+            given().body(requestBody).get("/file").then().statusCode(200).body(is("Hello World from this file"));
         } finally {
             context.stop();
         }
     }
-
 }

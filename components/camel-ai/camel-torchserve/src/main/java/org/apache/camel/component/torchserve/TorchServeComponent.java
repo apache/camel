@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve;
 
 import java.util.Map;
@@ -39,8 +40,8 @@ public class TorchServeComponent extends HealthCheckComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        TorchServeConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new TorchServeConfiguration();
+        TorchServeConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new TorchServeConfiguration();
         Endpoint endpoint = new TorchServeEndpoint(uri, this, remaining, configuration);
         setProperties(endpoint, parameters);
         return endpoint;

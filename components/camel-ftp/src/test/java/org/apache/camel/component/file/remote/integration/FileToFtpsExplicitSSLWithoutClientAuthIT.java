@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,8 +31,8 @@ public class FileToFtpsExplicitSSLWithoutClientAuthIT extends FtpsServerExplicit
 
     protected String getFtpUrl() {
         return "ftps://admin@localhost:{{ftp.server.port}}"
-               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true"
-               + "&securityProtocol=SSLv3&implicit=false";
+                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true"
+                + "&securityProtocol=SSLv3&implicit=false";
     }
 
     @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")

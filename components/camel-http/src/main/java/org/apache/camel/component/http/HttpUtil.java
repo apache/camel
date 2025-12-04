@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.util.Optional;
@@ -22,8 +23,7 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpResponse;
 
 public final class HttpUtil {
-    private HttpUtil() {
-    }
+    private HttpUtil() {}
 
     public static Optional<Header> responseHeader(HttpResponse response, String headerName) {
         return Optional.ofNullable(response.getFirstHeader(headerName));

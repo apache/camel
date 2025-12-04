@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 public class AvroComponentException extends Exception {
 
     private static final long serialVersionUID = 8915917806189741165L;
 
-    public AvroComponentException() {
-    }
+    public AvroComponentException() {}
 
     public AvroComponentException(String message, Throwable cause) {
         super(message, cause);
@@ -34,5 +34,4 @@ public class AvroComponentException extends Exception {
     public AvroComponentException(Throwable cause) {
         super(cause);
     }
-
 }

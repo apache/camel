@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIf("org.apache.camel.component.dropbox.integration.DropboxTestSupport#hasCredentials")
 class DropboxProducerGetFolderIT extends DropboxTestSupport {
@@ -63,9 +64,11 @@ class DropboxProducerGetFolderIT extends DropboxTestSupport {
         template.sendBody(endpoint, null);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.message(0).header(DropboxResultHeader.DOWNLOADED_FILES.name())
+        mock.message(0)
+                .header(DropboxResultHeader.DOWNLOADED_FILES.name())
                 .contains(String.format("%s/%s", workdir, FILE_NAME1));
-        mock.message(0).header(DropboxResultHeader.DOWNLOADED_FILES.name())
+        mock.message(0)
+                .header(DropboxResultHeader.DOWNLOADED_FILES.name())
                 .contains(String.format("%s/%s", workdir, FILE_NAME2));
         mock.assertIsSatisfied();
 
@@ -80,32 +83,29 @@ class DropboxProducerGetFolderIT extends DropboxTestSupport {
             public void configure() {
                 from("direct:start")
                         .noStreamCaching()
-                        .to("dropbox://get?accessToken={{accessToken}}" +
-                            "&expireIn={{expireIn}}" +
-                            "&refreshToken={{refreshToken}}" +
-                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
-                            "&remotePath=" + workdir)
+                        .to("dropbox://get?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                + "&refreshToken={{refreshToken}}"
+                                + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}"
+                                + "&remotePath="
+                                + workdir)
                         .to("mock:result");
 
                 from("direct:start2")
                         .noStreamCaching()
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
-                        .to("dropbox://get?accessToken={{accessToken}}" +
-                            "&expireIn={{expireIn}}" +
-                            "&refreshToken={{refreshToken}}" +
-                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}")
+                        .to("dropbox://get?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                + "&refreshToken={{refreshToken}}"
+                                + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}")
                         .to("mock:result");
 
                 from("direct:start3")
                         .noStreamCaching()
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
-                        .to("dropbox://get?accessToken={{accessToken}}" +
-                            "&expireIn={{expireIn}}" +
-                            "&refreshToken={{refreshToken}}" +
-                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
-                            "&remotePath=/aWrongPath")
+                        .to("dropbox://get?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                + "&refreshToken={{refreshToken}}"
+                                + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}"
+                                + "&remotePath=/aWrongPath")
                         .to("mock:result");
-
             }
         };
     }

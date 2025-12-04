@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import static org.apache.camel.util.URISupport.sanitizeUri;
@@ -28,13 +29,12 @@ public class NoSuchEndpointException extends RuntimeCamelException {
 
     public NoSuchEndpointException(String uri) {
         super("No endpoint could be found for: " + sanitizeUri(uri)
-              + ", please check your classpath contains the needed Camel component jar.");
+                + ", please check your classpath contains the needed Camel component jar.");
         this.uri = sanitizeUri(uri);
     }
 
     public NoSuchEndpointException(String uri, String resolveMethod) {
-        super("No endpoint could be found for: " + sanitizeUri(uri)
-              + ", please " + resolveMethod);
+        super("No endpoint could be found for: " + sanitizeUri(uri) + ", please " + resolveMethod);
         this.uri = sanitizeUri(uri);
     }
 

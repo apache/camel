@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.awaitility.Awaitility.await;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,8 +28,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.awaitility.Awaitility.await;
-
 /**
  *
  */
@@ -36,15 +37,14 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
 
         jdbcTemplate = new JdbcTemplate(db);
-
     }
 
     @Override
@@ -76,7 +76,8 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
                 // even if we transform the exchange we can still do onConsume as we have the original data at
                 // the point when onConsume is executed
                 from("sql:select * from projects order by id?initialDelay=0&delay=50&consumer.onConsume=delete from projects where id = :#id")
-                        .transform().simple("The project is ${body[project]}")
+                        .transform()
+                        .simple("The project is ${body[project]}")
                         .to("mock:result");
             }
         };

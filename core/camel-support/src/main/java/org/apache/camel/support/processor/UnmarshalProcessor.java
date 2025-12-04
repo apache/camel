@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.io.InputStream;
@@ -92,9 +93,8 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
             if (result instanceof Exchange) {
                 if (result != exchange) {
                     // it's not allowed to return another exchange other than the one provided to dataFormat
-                    throw new RuntimeCamelException(
-                            "The returned exchange " + result + " is not the same as " + exchange
-                                                    + " provided to the DataFormat");
+                    throw new RuntimeCamelException("The returned exchange " + result + " is not the same as "
+                            + exchange + " provided to the DataFormat");
                 }
             } else if (result instanceof Message msg) {
                 // result should be stored in variable instead of message body
@@ -102,7 +102,8 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
                     Object value = msg.getBody();
                     ExchangeHelper.setVariable(exchange, variableReceive, value);
                 } else {
-                    // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
+                    // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound
+                    // payload
                     exchange.setOut(msg);
                 }
             } else {
@@ -211,5 +212,4 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
         ServiceHelper.stopService(dataFormat);
         getCamelContext().removeService(dataFormat);
     }
-
 }

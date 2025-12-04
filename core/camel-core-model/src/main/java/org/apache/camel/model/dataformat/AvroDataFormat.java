@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,66 +37,91 @@ public class AvroDataFormat extends DataFormatDefinition {
 
     @XmlTransient
     private Class<?> unmarshalType;
+
     @XmlTransient
     private Class<?> jsonView;
+
     @XmlTransient
     private Class<?> collectionType;
+
     @XmlTransient
     private Object schema;
 
     @XmlAttribute
     private String instanceClassName;
+
     @XmlAttribute
     @Metadata(defaultValue = "avroJackson")
     private AvroLibrary library = AvroLibrary.Jackson;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String objectMapper;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String useDefaultObjectMapper;
+
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
+
     @XmlAttribute(name = "jsonView")
     private String jsonViewTypeName;
+
     @XmlAttribute
     private String include;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowJmsType;
+
     @XmlAttribute(name = "collectionType")
     @Metadata(label = "advanced")
     private String collectionTypeName;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String useList;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String moduleClassNames;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String moduleRefs;
+
     @XmlAttribute
     private String enableFeatures;
+
     @XmlAttribute
     private String disableFeatures;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowUnmarshallType;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String timezone;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String autoDiscoverObjectMapper;
+
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether the data format should set the Content-Type header with the type from the data format."
+    @Metadata(
+            javaType = "java.lang.Boolean",
+            defaultValue = "true",
+            description =
+                    "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.component.jackson.SchemaResolver")
     private String schemaResolver;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String autoDiscoverSchemaResolver;

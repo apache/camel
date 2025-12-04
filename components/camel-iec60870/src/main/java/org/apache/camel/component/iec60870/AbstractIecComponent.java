@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870;
+
+import static java.util.Objects.requireNonNull;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -28,8 +31,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.eclipse.neoscada.protocol.iec60870.ProtocolOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> extends DefaultComponent {
 
@@ -46,8 +47,8 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
         this.defaultConnectionOptions = defaultConnectionOptions;
     }
 
-    protected AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions,
-                                   final CamelContext context) {
+    protected AbstractIecComponent(
+            final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions, final CamelContext context) {
         super(context);
         this.connectionOptionsClazz = connectionOptionsClazz;
         this.defaultConnectionOptions = defaultConnectionOptions;
@@ -90,8 +91,9 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
                 return this.connectionOptionsClazz.cast(connectionOptions);
             } catch (final ClassCastException e) {
                 throw new IllegalArgumentException(
-                        String.format("'%s' must by of type %s", Constants.PARAM_CONNECTION_OPTIONS,
-                                ClientOptions.class.getName()),
+                        String.format(
+                                "'%s' must by of type %s",
+                                Constants.PARAM_CONNECTION_OPTIONS, ClientOptions.class.getName()),
                         e);
             }
         }
@@ -159,7 +161,8 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
         final Object connectionId = parameters.get("connectionId");
 
-        return new ConnectionId(uri.getHost(), uri.getPort(), connectionId instanceof String ? (String) connectionId : null);
+        return new ConnectionId(
+                uri.getHost(), uri.getPort(), connectionId instanceof String ? (String) connectionId : null);
     }
 
     private static ObjectAddress parseAddress(final String fullUri) {
@@ -170,5 +173,4 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
         return ObjectAddress.valueOf(path);
     }
-
 }

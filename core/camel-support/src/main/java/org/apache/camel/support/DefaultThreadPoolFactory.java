@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.BlockingQueue;
@@ -41,7 +42,8 @@ import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
  */
-public class DefaultThreadPoolFactory extends ServiceSupport implements CamelContextAware, ThreadPoolFactory, StaticService {
+public class DefaultThreadPoolFactory extends ServiceSupport
+        implements CamelContextAware, ThreadPoolFactory, StaticService {
 
     private CamelContext camelContext;
 
@@ -64,7 +66,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
     public ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory factory) {
         // allow core thread timeout is default true if not configured
         boolean allow = profile.getAllowCoreThreadTimeOut() != null ? profile.getAllowCoreThreadTimeOut() : true;
-        return newThreadPool(profile.getPoolSize(),
+        return newThreadPool(
+                profile.getPoolSize(),
                 profile.getMaxPoolSize(),
                 profile.getKeepAliveTime(),
                 profile.getTimeUnit(),
@@ -75,9 +78,14 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
     }
 
     public ExecutorService newThreadPool(
-            int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+            int corePoolSize,
+            int maxPoolSize,
+            long keepAliveTime,
+            TimeUnit timeUnit,
+            int maxQueueSize,
             boolean allowCoreThreadTimeOut,
-            RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+            RejectedExecutionHandler rejectedExecutionHandler,
+            ThreadFactory threadFactory)
             throws IllegalArgumentException {
 
         // the core pool size must be 0 or higher
@@ -106,8 +114,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             workQueue = new LinkedBlockingQueue<>(maxQueueSize);
         }
 
-        ThreadPoolExecutor answer
-                = new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
+        ThreadPoolExecutor answer =
+                new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
         answer.setThreadFactory(threadFactory);
         answer.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
         if (rejectedExecutionHandler == null) {
@@ -124,8 +132,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
         }
 
-        ScheduledThreadPoolExecutor answer
-                = new RejectableScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+        ScheduledThreadPoolExecutor answer = new RejectableScheduledThreadPoolExecutor(
+                profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
         answer.setRemoveOnCancelPolicy(true);
 
         // need to wrap the thread pool in a sized to guard against the problem that the
@@ -137,5 +145,4 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             return answer;
         }
     }
-
 }

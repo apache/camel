@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RollbackTest extends ContextTestSupport {
 
@@ -76,8 +77,14 @@ public class RollbackTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(body().isNotEqualTo("ok")).to("mock:rollback").rollback("That do not work")
-                        .otherwise().to("mock:result").end();
+                from("direct:start")
+                        .choice()
+                        .when(body().isNotEqualTo("ok"))
+                        .to("mock:rollback")
+                        .rollback("That do not work")
+                        .otherwise()
+                        .to("mock:result")
+                        .end();
             }
         };
     }

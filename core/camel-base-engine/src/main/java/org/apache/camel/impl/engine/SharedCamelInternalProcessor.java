@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Objects;
@@ -83,25 +84,28 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
      * Synchronous API
      */
     public void process(Exchange exchange, AsyncProcessor processor, Processor resultProcessor) {
-        awaitManager.process(new AsyncProcessor() {
-            @Override
-            public boolean process(Exchange exchange, AsyncCallback callback) {
-                return SharedCamelInternalProcessor.this.process(exchange, callback, processor, resultProcessor);
-            }
+        awaitManager.process(
+                new AsyncProcessor() {
+                    @Override
+                    public boolean process(Exchange exchange, AsyncCallback callback) {
+                        return SharedCamelInternalProcessor.this.process(
+                                exchange, callback, processor, resultProcessor);
+                    }
 
-            @Override
-            public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-                AsyncCallbackToCompletableFutureAdapter<Exchange> callback
-                        = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
-                process(exchange, callback);
-                return callback.getFuture();
-            }
+                    @Override
+                    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+                        AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                                new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+                        process(exchange, callback);
+                        return callback.getFuture();
+                    }
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                throw new IllegalStateException();
-            }
-        }, exchange);
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalStateException();
+                    }
+                },
+                exchange);
     }
 
     /**
@@ -143,7 +147,8 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
     private static boolean processNonTransacted(Exchange exchange, AsyncProcessor processor, AsyncCallback callback) {
         final UnitOfWork uow = exchange.getUnitOfWork();
 
-        // do uow before processing and if a value is returned then the uow wants to be processed after in the same thread
+        // do uow before processing and if a value is returned then the uow wants to be processed after in the same
+        // thread
         AsyncCallback async = callback;
         boolean beforeAndAfter = uow.isBeforeAfterProcess();
         if (beforeAndAfter) {
@@ -162,9 +167,11 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
+            LOG.trace(
+                    "Exchange processed and is continued routed {} for exchangeId: {} -> {}",
                     sync ? "synchronously" : "asynchronously",
-                    exchange.getExchangeId(), exchange);
+                    exchange.getExchangeId(),
+                    exchange);
         }
         return sync;
     }
@@ -173,11 +180,15 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         // must be synchronized for transacted exchanges
         if (LOG.isTraceEnabled()) {
             if (exchange.isTransacted()) {
-                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}",
-                        exchange.getExchangeId(), exchange);
+                LOG.trace(
+                        "Transacted Exchange must be routed synchronously for exchangeId: {} -> {}",
+                        exchange.getExchangeId(),
+                        exchange);
             } else {
-                LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}",
-                        exchange.getExchangeId(), exchange);
+                LOG.trace(
+                        "Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}",
+                        exchange.getExchangeId(),
+                        exchange);
             }
         }
         try {
@@ -242,8 +253,9 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
 
         if (shutdownStrategy.isForceShutdown()) {
             if (LOG.isDebugEnabled() || exchange.getException() == null) {
-                String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
-                             + exchange;
+                String msg =
+                        "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
+                                + exchange;
                 LOG.debug(msg);
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException(msg));
@@ -255,5 +267,4 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         // yes we can continue
         return true;
     }
-
 }

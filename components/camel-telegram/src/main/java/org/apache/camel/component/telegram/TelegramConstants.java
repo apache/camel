@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import org.apache.camel.Exchange;
@@ -24,34 +25,38 @@ import org.apache.camel.spi.Metadata;
  */
 public final class TelegramConstants {
 
-    @Metadata(label = "producer", description = "This header is used by the producer endpoint in order to\n" +
-                                                "resolve the chat id that will receive the message. The recipient chat id can be\n"
-                                                +
-                                                "placed (in order of priority) in message body, in the `CamelTelegramChatId` header\n"
-                                                +
-                                                "or in the endpoint configuration (`chatId` option).\n" +
-                                                "This header is also present in all incoming messages.",
-              javaType = "Object")
+    @Metadata(
+            label = "producer",
+            description = "This header is used by the producer endpoint in order to\n"
+                    + "resolve the chat id that will receive the message. The recipient chat id can be\n"
+                    + "placed (in order of priority) in message body, in the `CamelTelegramChatId` header\n"
+                    + "or in the endpoint configuration (`chatId` option).\n"
+                    + "This header is also present in all incoming messages.",
+            javaType = "Object")
     public static final String TELEGRAM_CHAT_ID = "CamelTelegramChatId";
-    @Metadata(description = "This header is used to identify the media type when\n" +
-                            "the outgoing message is composed of pure binary data. Possible values are strings or enum values\n"
-                            +
-                            "belonging to the `org.apache.camel.component.telegram.TelegramMediaType` enumeration.",
-              javaType = "org.apache.camel.component.telegram.TelegramMediaType or String")
+
+    @Metadata(
+            description = "This header is used to identify the media type when\n"
+                    + "the outgoing message is composed of pure binary data. Possible values are strings or enum values\n"
+                    + "belonging to the `org.apache.camel.component.telegram.TelegramMediaType` enumeration.",
+            javaType = "org.apache.camel.component.telegram.TelegramMediaType or String")
     public static final String TELEGRAM_MEDIA_TYPE = "CamelTelegramMediaType";
-    @Metadata(description = "This header is used to provide a caption or title\n" +
-                            "for outgoing binary messages.",
-              javaType = "String")
+
+    @Metadata(
+            description = "This header is used to provide a caption or title\n" + "for outgoing binary messages.",
+            javaType = "String")
     public static final String TELEGRAM_MEDIA_TITLE_CAPTION = "CamelTelegramMediaTitleCaption";
+
     @Metadata(description = "The reply markup.", javaType = "org.apache.camel.component.telegram.model.ReplyMarkup")
     public static final String TELEGRAM_MEDIA_MARKUP = "CamelTelegramMediaMarkup";
-    @Metadata(description = "This header is used to format text messages using HTML or Markdown",
-              javaType = "org.apache.camel.component.telegram.TelegramParseMode")
+
+    @Metadata(
+            description = "This header is used to format text messages using HTML or Markdown",
+            javaType = "org.apache.camel.component.telegram.TelegramParseMode")
     public static final String TELEGRAM_PARSE_MODE = "CamelTelegramParseMode";
+
     @Metadata(description = "The message timestamp.", javaType = "long")
     public static final String MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
-    private TelegramConstants() {
-    }
-
+    private TelegramConstants() {}
 }

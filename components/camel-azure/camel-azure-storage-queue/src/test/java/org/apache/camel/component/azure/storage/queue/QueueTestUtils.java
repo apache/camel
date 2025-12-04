@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.camel.test.junit5.TestSupport;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 public final class QueueTestUtils {
 
-    private QueueTestUtils() {
-    }
+    private QueueTestUtils() {}
 
     public static Properties loadAzurePropertiesFile() throws IOException {
         return TestSupport.loadExternalProperties(QueueTestUtils.class, "azure_key.properties");
@@ -35,12 +35,12 @@ public final class QueueTestUtils {
     public static Properties loadAzureAccessFromJvmEnv() {
         final Properties properties = new Properties();
         if (System.getProperty("accountName") == null || System.getProperty("accessKey") == null) {
-            fail("Make sure to supply azure accessKey or accountName, e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey");
+            fail(
+                    "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey");
         }
         properties.setProperty("account_name", System.getProperty("accountName"));
         properties.setProperty("access_key", System.getProperty("accessKey"));
 
         return properties;
     }
-
 }

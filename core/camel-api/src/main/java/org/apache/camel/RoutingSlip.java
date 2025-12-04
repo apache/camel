@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.lang.annotation.Documented;
@@ -40,7 +41,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface RoutingSlip {
 
     /**
@@ -70,5 +71,4 @@ public @interface RoutingSlip {
      * reduce memory usage to avoid storing too many non-frequent used producers.
      */
     int cacheSize() default 0;
-
 }

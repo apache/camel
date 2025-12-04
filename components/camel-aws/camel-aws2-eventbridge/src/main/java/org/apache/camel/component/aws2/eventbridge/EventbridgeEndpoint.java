@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge;
 
 import java.util.Map;
@@ -32,11 +33,14 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 /**
  * Send events to AWS Eventbridge cluster instances.
  */
-@UriEndpoint(firstVersion = "3.6.0", scheme = "aws2-eventbridge", title = "AWS Eventbridge",
-             syntax = "aws2-eventbridge://eventbusNameOrArn", producerOnly = true, category = {
-                     Category.CLOUD,
-                     Category.MANAGEMENT },
-             headersClass = EventbridgeConstants.class)
+@UriEndpoint(
+        firstVersion = "3.6.0",
+        scheme = "aws2-eventbridge",
+        title = "AWS Eventbridge",
+        syntax = "aws2-eventbridge://eventbusNameOrArn",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = EventbridgeConstants.class)
 public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private EventBridgeClient eventbridgeClient;
@@ -44,6 +48,7 @@ public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServ
     @UriPath(description = "Event bus name or ARN")
     @Metadata(required = true)
     private String eventbusNameOrArn; // to support component docs
+
     @UriParam
     private EventbridgeConfiguration configuration;
 

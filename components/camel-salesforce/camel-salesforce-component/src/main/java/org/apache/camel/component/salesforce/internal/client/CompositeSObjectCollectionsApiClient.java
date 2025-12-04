@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.util.List;
@@ -35,27 +36,36 @@ public interface CompositeSObjectCollectionsApiClient {
     }
 
     <T> void submitRetrieveCompositeCollections(
-            RetrieveSObjectCollectionsDto retrieveDto, Map<String, List<String>> headers,
-            ResponseCallback<List<T>> callback, String sObjectName,
+            RetrieveSObjectCollectionsDto retrieveDto,
+            Map<String, List<String>> headers,
+            ResponseCallback<List<T>> callback,
+            String sObjectName,
             Class<T> returnType)
             throws SalesforceException;
 
     void createCompositeCollections(
-            SObjectCollection collection, Map<String, List<String>> headers,
+            SObjectCollection collection,
+            Map<String, List<String>> headers,
             ResponseCallback<List<SaveSObjectResult>> callback)
             throws SalesforceException;
 
     void updateCompositeCollections(
-            SObjectCollection collection, Map<String, List<String>> headers,
+            SObjectCollection collection,
+            Map<String, List<String>> headers,
             ResponseCallback<List<SaveSObjectResult>> callback)
             throws SalesforceException;
 
     void upsertCompositeCollections(
-            SObjectCollection collection, Map<String, List<String>> headers,
-            ResponseCallback<List<UpsertSObjectResult>> callback, String sObjectName, String externalIdFieldName)
+            SObjectCollection collection,
+            Map<String, List<String>> headers,
+            ResponseCallback<List<UpsertSObjectResult>> callback,
+            String sObjectName,
+            String externalIdFieldName)
             throws SalesforceException;
 
     void submitDeleteCompositeCollections(
-            List<String> ids, Boolean allOrNone, Map<String, List<String>> headers,
+            List<String> ids,
+            Boolean allOrNone,
+            Map<String, List<String>> headers,
             ResponseCallback<List<DeleteSObjectResult>> callback);
 }

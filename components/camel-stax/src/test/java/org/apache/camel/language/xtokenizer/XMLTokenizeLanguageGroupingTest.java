@@ -14,25 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
+
+import org.xmlunit.assertj3.XmlAssert;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.xmlunit.assertj3.XmlAssert;
 
 public class XMLTokenizeLanguageGroupingTest extends CamelTestSupport {
 
     @Test
     public void testSendClosedTagMessageToTokenize() throws Exception {
         String expected = "<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\"></c:child>"
-                          + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child></group>";
+                + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child></group>";
 
-        template
-                .sendBody("direct:start",
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'></c:child></c:parent>");
+        template.sendBody(
+                "direct:start",
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'></c:child></c:parent>");
 
         verify(expected);
     }
@@ -40,12 +42,13 @@ public class XMLTokenizeLanguageGroupingTest extends CamelTestSupport {
     @Test
     public void testSendClosedTagWithLineBreaksMessageToTokenize() throws Exception {
         String expected = "<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\">\n</c:child>"
-                          + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\">\n</c:child></group>";
+                + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\">\n</c:child></group>";
 
-        template.sendBody("direct:start",
+        template.sendBody(
+                "direct:start",
                 "<?xml version='1.0' encoding='UTF-8'?>\n" + "<c:parent xmlns:c='urn:c'>\n"
-                                          + "<c:child some_attr='a' anotherAttr='a'>\n" + "</c:child>\n"
-                                          + "<c:child some_attr='b' anotherAttr='b'>\n" + "</c:child>\n" + "</c:parent>");
+                        + "<c:child some_attr='a' anotherAttr='a'>\n" + "</c:child>\n"
+                        + "<c:child some_attr='b' anotherAttr='b'>\n" + "</c:child>\n" + "</c:parent>");
 
         verify(expected);
     }
@@ -53,11 +56,11 @@ public class XMLTokenizeLanguageGroupingTest extends CamelTestSupport {
     @Test
     public void testSendSelfClosingTagMessageToTokenize() throws Exception {
         String expected = "<group><c:child some_attr='a' anotherAttr='a'  xmlns:c=\"urn:c\"/>"
-                          + "<c:child some_attr='b' anotherAttr='b'  xmlns:c=\"urn:c\"/></group>";
+                + "<c:child some_attr='b' anotherAttr='b'  xmlns:c=\"urn:c\"/></group>";
 
-        template
-                .sendBody("direct:start",
-                        "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a' /><c:child some_attr='b' anotherAttr='b' /></c:parent>");
+        template.sendBody(
+                "direct:start",
+                "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a' /><c:child some_attr='b' anotherAttr='b' /></c:parent>");
 
         verify(expected);
     }
@@ -65,40 +68,42 @@ public class XMLTokenizeLanguageGroupingTest extends CamelTestSupport {
     @Test
     public void testSendMixedClosingTagMessageToTokenize() throws Exception {
         String[] expected = new String[] {
-                "<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\">ha</c:child>"
-                                           + "<c:child some_attr='b' anotherAttr='b'  xmlns:c=\"urn:c\"/></group>",
-                "<group><c:child some_attr='c' xmlns:c=\"urn:c\"></c:child></group>" };
+            "<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\">ha</c:child>"
+                    + "<c:child some_attr='b' anotherAttr='b'  xmlns:c=\"urn:c\"/></group>",
+            "<group><c:child some_attr='c' xmlns:c=\"urn:c\"></c:child></group>"
+        };
 
         template.sendBody(
                 "direct:start",
                 "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child>"
-                                + "<c:child some_attr='b' anotherAttr='b' /><c:child some_attr='c'></c:child></c:parent>");
+                        + "<c:child some_attr='b' anotherAttr='b' /><c:child some_attr='c'></c:child></c:parent>");
 
         verify(expected);
     }
 
     @Test
     public void testSendMixedClosingTagInsideMessageToTokenize() throws Exception {
-        String expected
-                = "<group><c:child name='child1' xmlns:c=\"urn:c\"><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child>"
-                  + "<c:child name='child2' xmlns:c=\"urn:c\"><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></group>";
+        String expected =
+                "<group><c:child name='child1' xmlns:c=\"urn:c\"><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child>"
+                        + "<c:child name='child2' xmlns:c=\"urn:c\"><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></group>";
 
         template.sendBody(
                 "direct:start",
                 "<c:parent xmlns:c='urn:c'><c:child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></c:child>"
-                                + "<c:child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></c:parent>");
+                        + "<c:child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></c:child></c:parent>");
 
         verify(expected);
     }
 
     @Test
     public void testSendNamespacedChildMessageToTokenize() throws Exception {
-        String expected
-                = "<group><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child><c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></group>";
+        String expected =
+                "<group><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child><c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></group>";
 
-        template.sendBody("direct:start",
+        template.sendBody(
+                "direct:start",
                 "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child>"
-                                          + "<c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>");
+                        + "<c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>");
 
         verify(expected);
     }
@@ -106,25 +111,26 @@ public class XMLTokenizeLanguageGroupingTest extends CamelTestSupport {
     @Test
     public void testSendNamespacedParentMessageToTokenize() throws Exception {
         String expected = "<group><c:child some_attr='a' anotherAttr='a' xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>"
-                          + "<c:child some_attr='b' anotherAttr='b' xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/></group>";
+                + "<c:child some_attr='b' anotherAttr='b' xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/></group>";
 
-        template.sendBody("direct:start",
+        template.sendBody(
+                "direct:start",
                 "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='a' anotherAttr='a'></c:child>"
-                                          + "<c:child some_attr='b' anotherAttr='b'/></c:parent>");
+                        + "<c:child some_attr='b' anotherAttr='b'/></c:parent>");
 
         verify(expected);
     }
 
     @Test
     public void testSendMoreParentsMessageToTokenize() throws Exception {
-        String expected
-                = "<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>"
-                  + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/></group>";
+        String expected =
+                "<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>"
+                        + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/></group>";
 
-        template
-                .sendBody("direct:start",
-                        "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                          + "<c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'/></c:parent></grandparent></g:greatgrandparent>");
+        template.sendBody(
+                "direct:start",
+                "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                        + "<c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'/></c:parent></grandparent></g:greatgrandparent>");
 
         verify(expected);
     }
@@ -136,7 +142,11 @@ public class XMLTokenizeLanguageGroupingTest extends CamelTestSupport {
 
         int i = 0;
         for (String target : expected) {
-            String body = getMockEndpoint("mock:result").getReceivedExchanges().get(i).getMessage().getBody(String.class);
+            String body = getMockEndpoint("mock:result")
+                    .getReceivedExchanges()
+                    .get(i)
+                    .getMessage()
+                    .getBody(String.class);
             XmlAssert.assertThat(body).and(target).areIdentical();
             i++;
         }
@@ -148,7 +158,11 @@ public class XMLTokenizeLanguageGroupingTest extends CamelTestSupport {
             Namespaces ns = new Namespaces("C", "urn:c");
 
             public void configure() {
-                from("direct:start").split().xtokenize("//C:child", 'i', ns, 2).to("mock:result").end();
+                from("direct:start")
+                        .split()
+                        .xtokenize("//C:child", 'i', ns, 2)
+                        .to("mock:result")
+                        .end();
             }
         };
     }

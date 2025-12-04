@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlProducerWhereIssueTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
@@ -38,7 +39,8 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -76,7 +78,8 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query")
-                        .to("sql:select count(*) rowcount, license from projects where id=:#lowId or id=2 or id=3 group by license")
+                        .to(
+                                "sql:select count(*) rowcount, license from projects where id=:#lowId or id=2 or id=3 group by license")
                         .to("log:query")
                         .to("mock:query");
             }

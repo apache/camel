@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.flatpack;
 
 import java.io.IOException;
@@ -123,7 +124,8 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
             reader = new StringReader(s);
         } else {
             // fallback to input stream
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            InputStream is =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
             reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
         }
 
@@ -137,7 +139,7 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public String getDefinition() {
         return definition;
@@ -210,11 +212,12 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected Parser createParser(Exchange exchange, Reader bodyReader) throws IOException {
         if (isFixed()) {
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
+            InputStream is =
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
             InputStreamReader reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
             Parser parser = getParserFactory().newFixedLengthParser(reader, bodyReader);
             if (allowShortLines) {
@@ -230,10 +233,11 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
             if (ObjectHelper.isEmpty(getDefinition())) {
                 return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
             } else {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
+                InputStream is =
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
                 InputStreamReader reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
-                Parser parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier,
-                        ignoreFirstRecord);
+                Parser parser = getParserFactory()
+                        .newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
                 if (allowShortLines) {
                     parser.setHandlingShortLines(true);
                     parser.setIgnoreParseWarnings(true);
@@ -247,9 +251,11 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
         }
     }
 
-    private Writer createWriter(Exchange exchange, Map<String, Object> firstRow, OutputStream stream) throws IOException {
+    private Writer createWriter(Exchange exchange, Map<String, Object> firstRow, OutputStream stream)
+            throws IOException {
         if (isFixed()) {
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
+            InputStream is =
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
             InputStreamReader reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
             FixedWriterFactory factory = new FixedWriterFactory(reader);
             return factory.createWriter(new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange)));
@@ -262,12 +268,12 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
                 }
                 return factory.createWriter(new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange)));
             } else {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
+                InputStream is =
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
                 InputStreamReader reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
                 DelimiterWriterFactory factory = new DelimiterWriterFactory(reader, delimiter, textQualifier);
                 return factory.createWriter(new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange)));
             }
         }
     }
-
 }

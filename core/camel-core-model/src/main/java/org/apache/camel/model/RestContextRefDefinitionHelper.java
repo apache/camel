@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -28,8 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public final class RestContextRefDefinitionHelper {
 
-    private RestContextRefDefinitionHelper() {
-    }
+    private RestContextRefDefinitionHelper() {}
 
     /**
      * Lookup the rests from the {@link org.apache.camel.model.RestContextRefDefinition}.
@@ -49,5 +49,4 @@ public final class RestContextRefDefinitionHelper {
         }
         return answer;
     }
-
 }

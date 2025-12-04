@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
 import java.util.Optional;
@@ -47,49 +48,50 @@ public class JolokiaTrait extends BaseTrait {
     public void apply(Traits traitConfig, TraitContext context) {
         Jolokia jolokiaTrait = Optional.ofNullable(traitConfig.getJolokia()).orElseGet(Jolokia::new);
 
-        context.doWithDeployments(
-                d -> d.editSpec()
-                        .editTemplate()
-                        .editSpec()
-                        .editFirstContainer()
-                        .addNewPort()
-                        .withName(Optional.ofNullable(jolokiaTrait.getContainerPortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME))
-                        .withContainerPort(Optional.ofNullable(jolokiaTrait.getContainerPort()).map(Long::intValue)
-                                .orElse(DEFAULT_JOLOKIA_PORT))
-                        .withProtocol(DEFAULT_JOLOKIA_PORT_PROTOCOL)
-                        .endPort()
-                        .endContainer()
-                        .endSpec()
-                        .endTemplate()
-                        .endSpec());
-        context.doWithKnativeServices(
-                s -> s.editSpec()
-                        .editTemplate()
-                        .editSpec()
-                        .editFirstContainer()
-                        .addNewPort()
-                        .withName(Optional.ofNullable(jolokiaTrait.getContainerPortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME))
-                        .withContainerPort(Optional.ofNullable(jolokiaTrait.getContainerPort()).map(Long::intValue)
-                                .orElse(DEFAULT_JOLOKIA_PORT))
-                        .withProtocol(DEFAULT_JOLOKIA_PORT_PROTOCOL)
-                        .endPort()
-                        .endContainer()
-                        .endSpec()
-                        .endTemplate()
-                        .endSpec());
+        context.doWithDeployments(d -> d.editSpec()
+                .editTemplate()
+                .editSpec()
+                .editFirstContainer()
+                .addNewPort()
+                .withName(
+                        Optional.ofNullable(jolokiaTrait.getContainerPortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME))
+                .withContainerPort(Optional.ofNullable(jolokiaTrait.getContainerPort())
+                        .map(Long::intValue)
+                        .orElse(DEFAULT_JOLOKIA_PORT))
+                .withProtocol(DEFAULT_JOLOKIA_PORT_PROTOCOL)
+                .endPort()
+                .endContainer()
+                .endSpec()
+                .endTemplate()
+                .endSpec());
+        context.doWithKnativeServices(s -> s.editSpec()
+                .editTemplate()
+                .editSpec()
+                .editFirstContainer()
+                .addNewPort()
+                .withName(
+                        Optional.ofNullable(jolokiaTrait.getContainerPortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME))
+                .withContainerPort(Optional.ofNullable(jolokiaTrait.getContainerPort())
+                        .map(Long::intValue)
+                        .orElse(DEFAULT_JOLOKIA_PORT))
+                .withProtocol(DEFAULT_JOLOKIA_PORT_PROTOCOL)
+                .endPort()
+                .endContainer()
+                .endSpec()
+                .endTemplate()
+                .endSpec());
         if (Boolean.TRUE.equals(jolokiaTrait.getExpose())) {
-            context.doWithServices(
-                    s -> s.editSpec()
-                            .addNewPort()
-                            .withName(Optional.ofNullable(jolokiaTrait.getServicePortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME))
-                            .withPort(Optional.ofNullable(jolokiaTrait.getServicePort()).map(Long::intValue)
-                                    .orElse(DEFAULT_JOLOKIA_PORT))
-                            .withTargetPort(new IntOrString(
-                                    Optional.ofNullable(jolokiaTrait.getContainerPortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME)))
-                            .endPort()
-                            .endSpec());
-
+            context.doWithServices(s -> s.editSpec()
+                    .addNewPort()
+                    .withName(Optional.ofNullable(jolokiaTrait.getServicePortName())
+                            .orElse(DEFAULT_JOLOKIA_PORT_NAME))
+                    .withPort(Optional.ofNullable(jolokiaTrait.getServicePort())
+                            .map(Long::intValue)
+                            .orElse(DEFAULT_JOLOKIA_PORT))
+                    .withTargetPort(new IntOrString(Optional.ofNullable(jolokiaTrait.getContainerPortName())
+                            .orElse(DEFAULT_JOLOKIA_PORT_NAME)))
+                    .endPort()
+                    .endSpec());
         }
     }
-
 }

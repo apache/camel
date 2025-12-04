@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
 
 import java.util.HashMap;
@@ -42,44 +43,45 @@ public class DisruptorComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "" + DEFAULT_BUFFER_SIZE)
     private int bufferSize = -1;
+
     @Metadata(label = "consumer", defaultValue = "1")
     private int defaultConcurrentConsumers = 1;
+
     @Metadata(label = "consumer")
     private boolean defaultMultipleConsumers;
+
     @Metadata(label = "producer", defaultValue = "Multi")
     private DisruptorProducerType defaultProducerType = DisruptorProducerType.Multi;
+
     @Metadata(label = "consumer", defaultValue = "Blocking")
     private DisruptorWaitStrategy defaultWaitStrategy = DisruptorWaitStrategy.Blocking;
+
     @Metadata(label = "producer", defaultValue = "true")
     private boolean defaultBlockWhenFull = true;
 
-    //synchronized access guarded by this
+    // synchronized access guarded by this
     private final Map<String, DisruptorReference> disruptors = new HashMap<>();
 
-    public DisruptorComponent() {
-    }
+    public DisruptorComponent() {}
 
     @Override
-    protected Endpoint createEndpoint(
-            final String uri, final String remaining,
-            final Map<String, Object> parameters)
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
             throws Exception {
 
-        final int concurrentConsumers
-                = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, defaultConcurrentConsumers);
-        final boolean limitConcurrentConsumers
-                = getAndRemoveParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
+        final int concurrentConsumers =
+                getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, defaultConcurrentConsumers);
+        final boolean limitConcurrentConsumers =
+                getAndRemoveParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
 
         if (limitConcurrentConsumers && concurrentConsumers > MAX_CONCURRENT_CONSUMERS) {
             throw new IllegalArgumentException(
                     "The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
-                                               + MAX_CONCURRENT_CONSUMERS + " was " + concurrentConsumers);
+                            + MAX_CONCURRENT_CONSUMERS + " was " + concurrentConsumers);
         }
 
         if (concurrentConsumers < 0) {
             throw new IllegalArgumentException(
-                    "concurrentConsumers found to be " + concurrentConsumers
-                                               + ", must be greater than 0");
+                    "concurrentConsumers found to be " + concurrentConsumers + ", must be greater than 0");
         }
 
         int size = 0;
@@ -93,15 +95,16 @@ public class DisruptorComponent extends DefaultComponent {
         // Check if the pollTimeout argument is set (maybe the case if the Disruptor component is used as drop-in
         // replacement for the SEDA component).
         if (parameters.containsKey("pollTimeout")) {
-            throw new IllegalArgumentException("The 'pollTimeout' argument is not supported by the Disruptor component");
+            throw new IllegalArgumentException(
+                    "The 'pollTimeout' argument is not supported by the Disruptor component");
         }
 
-        DisruptorWaitStrategy waitStrategy
-                = getAndRemoveParameter(parameters, "waitStrategy", DisruptorWaitStrategy.class, defaultWaitStrategy);
-        DisruptorProducerType producerType
-                = getAndRemoveParameter(parameters, "producerType", DisruptorProducerType.class, defaultProducerType);
-        boolean multipleConsumers
-                = getAndRemoveParameter(parameters, "multipleConsumers", boolean.class, defaultMultipleConsumers);
+        DisruptorWaitStrategy waitStrategy =
+                getAndRemoveParameter(parameters, "waitStrategy", DisruptorWaitStrategy.class, defaultWaitStrategy);
+        DisruptorProducerType producerType =
+                getAndRemoveParameter(parameters, "producerType", DisruptorProducerType.class, defaultProducerType);
+        boolean multipleConsumers =
+                getAndRemoveParameter(parameters, "multipleConsumers", boolean.class, defaultMultipleConsumers);
         boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", boolean.class, defaultBlockWhenFull);
 
         DisruptorReference disruptorReference = getOrCreateDisruptor(uri, remaining, size, producerType, waitStrategy);
@@ -117,7 +120,9 @@ public class DisruptorComponent extends DefaultComponent {
     }
 
     private DisruptorReference getOrCreateDisruptor(
-            final String uri, final String name, final int size,
+            final String uri,
+            final String name,
+            final int size,
             final DisruptorProducerType producerType,
             final DisruptorWaitStrategy waitStrategy)
             throws Exception {
@@ -141,12 +146,12 @@ public class DisruptorComponent extends DefaultComponent {
                 ref = new DisruptorReference(this, uri, name, sizeToUse, producerType, waitStrategy);
                 getDisruptors().put(key, ref);
             } else {
-                //if size was explicitly requested, the size to use should match the retrieved DisruptorReference
+                // if size was explicitly requested, the size to use should match the retrieved DisruptorReference
                 if (size != 0 && ref.getBufferSize() != sizeToUse) {
                     // there is already a queue, so make sure the size matches
                     throw new IllegalArgumentException(
-                            "Cannot use existing queue " + key + " as the existing queue size "
-                                                       + ref.getBufferSize() + " does not match given queue size " + sizeToUse);
+                            "Cannot use existing queue " + key + " as the existing queue size " + ref.getBufferSize()
+                                    + " does not match given queue size " + sizeToUse);
                 }
                 LOGGER.debug("Reusing disruptor {} for key {}", ref, key);
             }
@@ -264,7 +269,7 @@ public class DisruptorComponent extends DefaultComponent {
         DisruptorReference disruptorReference = getDisruptors().get(disruptorKey);
 
         if (disruptorReference.getEndpointCount() == 0) {
-            //the last disruptor has been removed, we can delete the disruptor
+            // the last disruptor has been removed, we can delete the disruptor
             getDisruptors().remove(disruptorKey);
         }
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import java.nio.file.Files;
@@ -61,7 +62,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
             @Override
             public void configure() {
                 from(fileUri(
-                        "in?initialDelay=500&delay=10&readLock=changed&readLockMinAge=1000&readLockCheckInterval=10000&readLockTimeout=20000"))
+                                "in?initialDelay=500&delay=10&readLock=changed&readLockMinAge=1000&readLockCheckInterval=10000&readLockTimeout=20000"))
                         .to(fileUri("out"), "mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fastjson;
 
 import java.io.*;
@@ -92,7 +93,8 @@ public class FastjsonDataFormat extends ServiceSupport
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        int len = JSON.writeJSONString(stream,
+        int len = JSON.writeJSONString(
+                stream,
                 config.getCharset(),
                 graph,
                 config.getSerializeConfig(),
@@ -129,7 +131,8 @@ public class FastjsonDataFormat extends ServiceSupport
             }
         } else {
             // fallback to input stream
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            InputStream is =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
             if (unmarshalGenericType == null) {
                 return JSON.parseObject(is, config.getCharset(), unmarshalType, config.getFeatures());
             } else {
@@ -238,5 +241,4 @@ public class FastjsonDataFormat extends ServiceSupport
     public FastJsonConfig getConfig() {
         return this.config;
     }
-
 }

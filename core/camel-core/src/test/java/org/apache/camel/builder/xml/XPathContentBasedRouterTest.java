@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,8 +45,14 @@ public class XPathContentBasedRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo"))
-                        .to("mock:dutch", "mock:german").otherwise().to("mock:french");
+                from("direct:a")
+                        .choice()
+                        .when(xpath("//hello"))
+                        .to("mock:english")
+                        .when(xpath("//hallo"))
+                        .to("mock:dutch", "mock:german")
+                        .otherwise()
+                        .to("mock:french");
             }
         };
     }

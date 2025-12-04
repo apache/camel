@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.hivemq.common;
 
 public final class HiveMQProperties {
@@ -30,8 +31,8 @@ public final class HiveMQProperties {
 
     public static final String HIVEMQ_TEST_SERVICE_NAME = "hivemq";
     public static final String HIVEMQ_PROPERTY_NAME_FORMAT = "%s.instance.type";
-    public static final String HIVEMQ_INSTANCE_TYPE = String.format(HIVEMQ_PROPERTY_NAME_FORMAT, HIVEMQ_TEST_SERVICE_NAME);
+    public static final String HIVEMQ_INSTANCE_TYPE =
+            String.format(HIVEMQ_PROPERTY_NAME_FORMAT, HIVEMQ_TEST_SERVICE_NAME);
 
-    private HiveMQProperties() {
-    }
+    private HiveMQProperties() {}
 }

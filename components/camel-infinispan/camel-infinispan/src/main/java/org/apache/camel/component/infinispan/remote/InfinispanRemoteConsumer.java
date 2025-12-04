@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import java.util.HashSet;
@@ -44,11 +45,11 @@ public class InfinispanRemoteConsumer
     private Service handler;
 
     public InfinispanRemoteConsumer(
-                                    InfinispanEndpoint endpoint,
-                                    Processor processor,
-                                    String cacheName,
-                                    InfinispanRemoteManager manager,
-                                    InfinispanRemoteConfiguration configuration) {
+            InfinispanEndpoint endpoint,
+            Processor processor,
+            String cacheName,
+            InfinispanRemoteManager manager,
+            InfinispanRemoteConfiguration configuration) {
 
         super(endpoint, processor, cacheName, manager, configuration);
     }
@@ -150,11 +151,12 @@ public class InfinispanRemoteConsumer
                 try {
                     cache.removeClientListener(listener);
                 } catch (RemoteCacheManagerNotStartedException e) {
-                    LOG.debug("Cannot remote the listener because the cache manager is not started: {}", e.getMessage(), e);
+                    LOG.debug(
+                            "Cannot remote the listener because the cache manager is not started: {}",
+                            e.getMessage(),
+                            e);
                 }
             }
-
         }
-
     }
 }

@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
-
-import java.util.List;
-
-import org.apache.camel.tooling.model.MainModel;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import org.apache.camel.tooling.model.MainModel;
+import org.junit.jupiter.api.Test;
 
 public class PrepareCamelMainMojoTest {
 
@@ -44,7 +45,8 @@ public class PrepareCamelMainMojoTest {
         assertEquals("shutdownTimeout", list.get(4).getName());
         assertEquals("int", list.get(4).getJavaType());
         assertEquals(300, list.get(4).getDefaultValue());
-        assertEquals("Timeout in seconds to graceful shutdown Camel.", list.get(4).getDescription());
+        assertEquals(
+                "Timeout in seconds to graceful shutdown Camel.", list.get(4).getDescription());
 
         assertEquals("tracing", list.get(25).getName());
         assertEquals("boolean", list.get(25).getJavaType());

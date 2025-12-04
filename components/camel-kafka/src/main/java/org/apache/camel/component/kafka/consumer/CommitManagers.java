@@ -26,8 +26,7 @@ import org.slf4j.LoggerFactory;
 public final class CommitManagers {
     private static final Logger LOG = LoggerFactory.getLogger(CommitManagers.class);
 
-    private CommitManagers() {
-    }
+    private CommitManagers() {}
 
     public static CommitManager createCommitManager(
             Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
@@ -35,7 +34,8 @@ public final class CommitManagers {
 
         if (configuration.isAllowManualCommit()) {
             LOG.debug("Allowing manual commit management");
-            KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
+            KafkaManualCommitFactory manualCommitFactory =
+                    kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
             if (manualCommitFactory instanceof DefaultKafkaManualAsyncCommitFactory) {
                 LOG.debug("Using an async commit manager for manual commit management");
                 return new AsyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);

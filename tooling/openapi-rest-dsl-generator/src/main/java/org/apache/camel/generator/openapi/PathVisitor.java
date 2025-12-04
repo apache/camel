@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -27,8 +28,12 @@ class PathVisitor<T> {
     private final OperationFilter filter;
     private final String dtoPackageName;
 
-    PathVisitor(final String basePath, final CodeEmitter<T> emitter, final OperationFilter filter,
-                final DestinationGenerator destinationGenerator, final String dtoPackageName) {
+    PathVisitor(
+            final String basePath,
+            final CodeEmitter<T> emitter,
+            final OperationFilter filter,
+            final DestinationGenerator destinationGenerator,
+            final String dtoPackageName) {
         this.emitter = emitter;
         this.filter = filter;
         this.destinationGenerator = destinationGenerator;
@@ -42,9 +47,8 @@ class PathVisitor<T> {
     }
 
     void visit(final OpenAPI openAPI, final String path, final PathItem definition) {
-        final OperationVisitor<T> restDslOperation
-                = new OperationVisitor<>(openAPI, emitter, filter, path, destinationGenerator, dtoPackageName);
+        final OperationVisitor<T> restDslOperation =
+                new OperationVisitor<>(openAPI, emitter, filter, path, destinationGenerator, dtoPackageName);
         definition.readOperationsMap().forEach((method, op) -> restDslOperation.visit(method, op, definition));
     }
-
 }

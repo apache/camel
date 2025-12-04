@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.codec;
 
 import java.net.InetSocketAddress;
@@ -58,12 +59,11 @@ public class DatagramPacketStringDecoder extends MessageToMessageDecoder<Address
             throws Exception {
         if (msg.content() instanceof ByteBuf) {
             ByteBuf payload = (ByteBuf) msg.content();
-            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop
-                    = new DefaultAddressedEnvelope<>(payload.toString(charset), msg.recipient(), msg.sender());
+            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
+                    new DefaultAddressedEnvelope<>(payload.toString(charset), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         } else {
             LOG.debug("Ignoring message content as it is not an io.netty.buffer.ByteBuf instance.");
         }
     }
-
 }

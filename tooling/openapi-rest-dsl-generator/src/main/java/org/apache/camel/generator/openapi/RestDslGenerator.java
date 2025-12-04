@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.io.File;
 import java.net.URI;
@@ -31,8 +34,6 @@ import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Source code and {@link RestsDefinition} generator that generates Camel REST DSL implementations from OpenAPI
@@ -149,14 +150,14 @@ public abstract class RestDslGenerator<G> {
     DestinationGenerator destinationGenerator() {
         if (destinationGenerator == null) {
             destinationGenerator = destinationToSyntax != null
-                    ? new DefaultDestinationGenerator(destinationToSyntax) : new DefaultDestinationGenerator();
+                    ? new DefaultDestinationGenerator(destinationToSyntax)
+                    : new DefaultDestinationGenerator();
         }
         return destinationGenerator;
     }
 
     public static String determineBasePathFrom(final String parameter, final OpenAPI document) {
-        return parameter != null
-                ? determineBasePathFrom(parameter) : determineBasePathFrom(document);
+        return parameter != null ? determineBasePathFrom(parameter) : determineBasePathFrom(document);
     }
 
     public static String determineBasePathFrom(final String parameter) {
@@ -208,12 +209,14 @@ public abstract class RestDslGenerator<G> {
     }
 
     public static String resolveVariablesIn(final String url, final Server server) {
-        final Map<String, ServerVariable> variables = Objects.requireNonNull(server, "server").getVariables();
+        final Map<String, ServerVariable> variables =
+                Objects.requireNonNull(server, "server").getVariables();
         String withoutPlaceholders = url;
         if (variables != null) {
             for (Map.Entry<String, ServerVariable> entry : variables.entrySet()) {
                 final String name = "{" + entry.getKey() + "}";
-                withoutPlaceholders = withoutPlaceholders.replace(name, entry.getValue().getDefault());
+                withoutPlaceholders =
+                        withoutPlaceholders.replace(name, entry.getValue().getDefault());
             }
         }
         return withoutPlaceholders;

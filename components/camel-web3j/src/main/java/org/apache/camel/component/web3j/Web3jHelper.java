@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.web3j;
 
 import java.math.BigInteger;
@@ -23,8 +24,7 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 
 public final class Web3jHelper {
 
-    private Web3jHelper() {
-    }
+    private Web3jHelper() {}
 
     public static DefaultBlockParameter toDefaultBlockParameter(String block) {
         DefaultBlockParameter defaultBlockParameter = null;
@@ -42,5 +42,4 @@ public final class Web3jHelper {
 
         return defaultBlockParameter;
     }
-
 }

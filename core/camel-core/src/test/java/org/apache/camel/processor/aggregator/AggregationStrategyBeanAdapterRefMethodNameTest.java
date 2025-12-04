@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -46,8 +47,12 @@ public class AggregationStrategyBeanAdapterRefMethodNameTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(constant(true)).aggregationStrategy("myAppender")
-                        .aggregationStrategyMethodName("append").completionSize(3).to("mock:result");
+                from("direct:start")
+                        .aggregate(constant(true))
+                        .aggregationStrategy("myAppender")
+                        .aggregationStrategyMethodName("append")
+                        .completionSize(3)
+                        .to("mock:result");
             }
         };
     }
@@ -65,6 +70,5 @@ public class AggregationStrategyBeanAdapterRefMethodNameTest extends ContextTest
         public String foo(String foo, String bar) {
             return "foobar";
         }
-
     }
 }

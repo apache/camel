@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettySuspendResumeTest extends BaseNettyTest {
 
@@ -29,7 +30,8 @@ public class NettySuspendResumeTest extends BaseNettyTest {
     public void testSuspendResume() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Camel", "Again");
 
-        String out = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "Camel", String.class);
+        String out =
+                template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
         context.getRouteController().suspendRoute("foo");
@@ -54,12 +56,12 @@ public class NettySuspendResumeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?sync=true").routeId("foo")
+                from("netty:tcp://localhost:{{port}}?sync=true")
+                        .routeId("foo")
                         .to("log:result")
                         .to("mock:result")
                         .transform(body().prepend("Bye "));
             }
         };
     }
-
 }

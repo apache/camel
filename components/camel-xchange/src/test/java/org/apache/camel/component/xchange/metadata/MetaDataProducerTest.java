@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xchange.metadata;
+
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -27,11 +33,6 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
 
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @Disabled("See CAMEL-19751 before enabling")
 public class MetaDataProducerTest extends XChangeTestSupport {
 
@@ -41,17 +42,13 @@ public class MetaDataProducerTest extends XChangeTestSupport {
             @Override
             public void configure() {
 
-                from("direct:currencies")
-                        .to("xchange:binance?service=metadata&method=currencies");
+                from("direct:currencies").to("xchange:binance?service=metadata&method=currencies");
 
-                from("direct:currencyMetaData")
-                        .to("xchange:binance?service=metadata&method=currencyMetaData");
+                from("direct:currencyMetaData").to("xchange:binance?service=metadata&method=currencyMetaData");
 
-                from("direct:currencyPairs")
-                        .to("xchange:binance?service=metadata&method=currencyPairs");
+                from("direct:currencyPairs").to("xchange:binance?service=metadata&method=currencyPairs");
 
-                from("direct:currencyPairMetaData")
-                        .to("xchange:binance?service=metadata&method=currencyPairMetaData");
+                from("direct:currencyPairMetaData").to("xchange:binance?service=metadata&method=currencyPairMetaData");
             }
         };
     }
@@ -68,11 +65,12 @@ public class MetaDataProducerTest extends XChangeTestSupport {
     @Test
     void testCurrencyMetaData() {
 
-        CurrencyMetaData metadata = template.requestBody("direct:currencyMetaData", Currency.ETH, CurrencyMetaData.class);
+        CurrencyMetaData metadata =
+                template.requestBody("direct:currencyMetaData", Currency.ETH, CurrencyMetaData.class);
         assertNotNull(metadata, "CurrencyMetaData not null");
 
-        metadata = template.requestBodyAndHeader("direct:currencyMetaData", null, HEADER_CURRENCY, Currency.ETH,
-                CurrencyMetaData.class);
+        metadata = template.requestBodyAndHeader(
+                "direct:currencyMetaData", null, HEADER_CURRENCY, Currency.ETH, CurrencyMetaData.class);
         assertNotNull(metadata, "CurrencyMetaData not null");
     }
 
@@ -88,12 +86,16 @@ public class MetaDataProducerTest extends XChangeTestSupport {
     @Test
     void testCurrencyPairMetaData() {
 
-        InstrumentMetaData metadata
-                = template.requestBody("direct:currencyPairMetaData", CurrencyPair.EOS_ETH, InstrumentMetaData.class);
+        InstrumentMetaData metadata =
+                template.requestBody("direct:currencyPairMetaData", CurrencyPair.EOS_ETH, InstrumentMetaData.class);
         assertNotNull(metadata, "CurrencyPairMetaData not null");
 
-        metadata = template.requestBodyAndHeader("direct:currencyPairMetaData", null, HEADER_CURRENCY_PAIR,
-                CurrencyPair.EOS_ETH, InstrumentMetaData.class);
+        metadata = template.requestBodyAndHeader(
+                "direct:currencyPairMetaData",
+                null,
+                HEADER_CURRENCY_PAIR,
+                CurrencyPair.EOS_ETH,
+                InstrumentMetaData.class);
         assertNotNull(metadata, "CurrencyPairMetaData not null");
     }
 }

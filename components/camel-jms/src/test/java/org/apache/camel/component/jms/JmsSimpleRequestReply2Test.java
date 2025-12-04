@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * A simple request / reply test
  */
@@ -39,6 +40,7 @@ public class JmsSimpleRequestReply2Test extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -78,8 +80,7 @@ public class JmsSimpleRequestReply2Test extends AbstractJMSTest {
                         .to(ExchangePattern.InOut, "activemq:queue:JmsSimpleRequestReply2Test")
                         .to("mock:result");
 
-                from("activemq:queue:JmsSimpleRequestReply2Test")
-                        .transform(body().prepend("Hello "));
+                from("activemq:queue:JmsSimpleRequestReply2Test").transform(body().prepend("Hello "));
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ibmmq.common;
 
 public class IbmMQProperties {
@@ -25,7 +26,5 @@ public class IbmMQProperties {
     public static final String DEFAULT_QMGR_NAME = "QM1";
     public static final String DEFAULT_CHANNEL = "DEV.APP.SVRCONN";
 
-    private IbmMQProperties() {
-
-    }
+    private IbmMQProperties() {}
 }

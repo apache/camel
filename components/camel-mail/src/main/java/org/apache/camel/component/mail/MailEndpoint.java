@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
 
 import java.util.Map;
 
@@ -35,42 +39,56 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.eclipse.angus.mail.imap.SortTerm;
 
-import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
-import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
-
 /**
  * Send and receive emails using imap, pop3 and smtp protocols.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
-             syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
-             category = { Category.MAIL }, headersClass = MailConstants.class)
+@UriEndpoint(
+        firstVersion = "1.0.0",
+        scheme = "imap,imaps,pop3,pop3s,smtp,smtps",
+        title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
+        syntax = "imap:host:port",
+        alternativeSyntax = "imap:username:password@host:port",
+        category = {Category.MAIL},
+        headersClass = MailConstants.class)
 public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
-    @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration",
-              label = "consumer,scheduler",
-              description = "Milliseconds before the next poll.")
+    @UriParam(
+            defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY,
+            javaType = "java.time.Duration",
+            label = "consumer,scheduler",
+            description = "Milliseconds before the next poll.")
     private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;
 
     @UriParam
     private MailConfiguration configuration;
+
     @UriParam(label = "advanced")
     private MailBinding binding;
+
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new MailHeaderFilterStrategy();
+
     @UriParam(label = "advanced")
     private ContentTypeResolver contentTypeResolver;
+
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
+
     @UriParam(label = "consumer,filter", prefix = "searchTerm.", multiValue = true)
     private SearchTerm searchTerm;
+
     @UriParam(label = "consumer,sort")
     private SortTerm[] sortTerm;
+
     @UriParam(label = "consumer,advanced")
     private MailBoxPostProcessAction postProcessAction;
+
     @UriParam(label = "consumer,filter")
     private IdempotentRepository idempotentRepository;
+
     @UriParam(label = "consumer,filter", defaultValue = "true")
     private boolean idempotentRepositoryRemoveOnCommit = true;
+
     @UriParam(label = "consumer,advanced")
     private MailUidGenerator mailUidGenerator = new DefaultMailUidGenerator();
 
@@ -134,9 +152,8 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.getProtocol().startsWith("smtp")) {
-            throw new IllegalArgumentException(
-                    "Protocol " + configuration.getProtocol()
-                                               + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
+            throw new IllegalArgumentException("Protocol " + configuration.getProtocol()
+                    + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
         }
 
         // must use java mail sender impl as we need to get hold of a mail session
@@ -169,14 +186,22 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     public MailBinding getBinding() {
         if (binding == null) {
             boolean decode = getConfiguration() != null && getConfiguration().isDecodeFilename();
-            boolean mapMailMessage = getConfiguration() != null && getConfiguration().isMapMailMessage();
-            boolean failDuplicate = getConfiguration() != null && getConfiguration().isFailOnDuplicateFileAttachment();
+            boolean mapMailMessage =
+                    getConfiguration() != null && getConfiguration().isMapMailMessage();
+            boolean failDuplicate =
+                    getConfiguration() != null && getConfiguration().isFailOnDuplicateFileAttachment();
             String generateMissingAttachmentNames = getConfiguration() != null
-                    ? getConfiguration().getGenerateMissingAttachmentNames() : MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+                    ? getConfiguration().getGenerateMissingAttachmentNames()
+                    : MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
             String handleDuplicateAttachmentNames = getConfiguration() != null
-                    ? getConfiguration().getHandleDuplicateAttachmentNames() : MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
+                    ? getConfiguration().getHandleDuplicateAttachmentNames()
+                    : MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
             binding = new MailBinding(
-                    headerFilterStrategy, contentTypeResolver, decode, mapMailMessage, failDuplicate,
+                    headerFilterStrategy,
+                    contentTypeResolver,
+                    decode,
+                    mapMailMessage,
+                    failDuplicate,
                     generateMissingAttachmentNames,
                     handleDuplicateAttachmentNames);
         }

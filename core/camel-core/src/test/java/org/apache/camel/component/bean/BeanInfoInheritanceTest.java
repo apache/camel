@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for overridden methods in an inheritance.
@@ -34,12 +35,14 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request());
 
-        assertDoesNotThrow(() -> {
-            MethodInvocation mi = beanInfo.createInvocation(null, exchange);
-            assertNotNull(mi);
-            assertEquals("process", mi.getMethod().getName());
-            assertEquals("Y", mi.getMethod().getDeclaringClass().getSimpleName());
-        }, "This should not be ambiguous!");
+        assertDoesNotThrow(
+                () -> {
+                    MethodInvocation mi = beanInfo.createInvocation(null, exchange);
+                    assertNotNull(mi);
+                    assertEquals("process", mi.getMethod().getName());
+                    assertEquals("Y", mi.getMethod().getDeclaringClass().getSimpleName());
+                },
+                "This should not be ambiguous!");
     }
 
     @Test
@@ -49,12 +52,14 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request());
 
-        assertDoesNotThrow(() -> {
-            MethodInvocation mi = beanInfo.createInvocation(null, exchange);
-            assertNotNull(mi);
-            assertEquals("process", mi.getMethod().getName());
-            assertEquals("A", mi.getMethod().getDeclaringClass().getSimpleName());
-        }, "This should not be ambiguous!");
+        assertDoesNotThrow(
+                () -> {
+                    MethodInvocation mi = beanInfo.createInvocation(null, exchange);
+                    assertNotNull(mi);
+                    assertEquals("process", mi.getMethod().getName());
+                    assertEquals("A", mi.getMethod().getDeclaringClass().getSimpleName());
+                },
+                "This should not be ambiguous!");
     }
 
     @Test
@@ -64,7 +69,9 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request());
 
-        assertThrows(AmbiguousMethodCallException.class, () -> beanInfo.createInvocation(null, exchange),
+        assertThrows(
+                AmbiguousMethodCallException.class,
+                () -> beanInfo.createInvocation(null, exchange),
                 "This should be ambiguous!");
     }
 
@@ -113,5 +120,4 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
             return 0;
         }
     }
-
 }

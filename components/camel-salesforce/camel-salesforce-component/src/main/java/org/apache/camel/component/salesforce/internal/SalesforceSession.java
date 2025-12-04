@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal;
 
 import java.io.IOException;
@@ -66,8 +67,8 @@ public class SalesforceSession extends ServiceSupport {
 
     private static final int JWT_CLAIM_WINDOW = 270; // 4.5 min
 
-    private static final String JWT_HEADER
-            = Base64.getUrlEncoder().encodeToString("{\"alg\":\"RS256\"}".getBytes(StandardCharsets.UTF_8));
+    private static final String JWT_HEADER =
+            Base64.getUrlEncoder().encodeToString("{\"alg\":\"RS256\"}".getBytes(StandardCharsets.UTF_8));
 
     private static final String OAUTH2_REVOKE_PATH = "/services/oauth2/revoke?token=";
     private static final String OAUTH2_TOKEN_PATH = "/services/oauth2/token";
@@ -91,8 +92,8 @@ public class SalesforceSession extends ServiceSupport {
     private final AtomicBoolean loggingIn = new AtomicBoolean();
     private CountDownLatch latch = new CountDownLatch(1);
 
-    public SalesforceSession(CamelContext camelContext, SalesforceHttpClient httpClient, long timeout,
-                             SalesforceLoginConfig config) {
+    public SalesforceSession(
+            CamelContext camelContext, SalesforceHttpClient httpClient, long timeout, SalesforceLoginConfig config) {
         this.camelContext = camelContext;
         // validate parameters
         ObjectHelper.notNull(httpClient, "httpClient");
@@ -130,7 +131,7 @@ public class SalesforceSession extends ServiceSupport {
         long backoff = 0;
 
         try {
-            for (;;) {
+            for (; ; ) {
                 try {
                     if (isStoppingOrStopped()) {
                         return;
@@ -188,7 +189,8 @@ public class SalesforceSession extends ServiceSupport {
                 } catch (TimeoutException e) {
                     throw new SalesforceException("Login request timeout: " + e.getMessage(), e);
                 } catch (ExecutionException e) {
-                    throw new SalesforceException("Unexpected login error: " + e.getCause().getMessage(), e.getCause());
+                    throw new SalesforceException(
+                            "Unexpected login error: " + e.getCause().getMessage(), e.getCause());
                 }
             }
             return accessToken;
@@ -250,12 +252,19 @@ public class SalesforceSession extends ServiceSupport {
         final long utcPlusWindow = Clock.systemUTC().millis() / 1000 + JWT_CLAIM_WINDOW;
         final String audience = config.getJwtAudience() != null ? config.getJwtAudience() : config.getLoginUrl();
 
-        final StringBuilder claim = new StringBuilder().append("{\"iss\":\"").append(config.getClientId())
-                .append("\",\"sub\":\"").append(config.getUserName())
-                .append("\",\"aud\":\"").append(audience).append("\",\"exp\":\"").append(utcPlusWindow)
+        final StringBuilder claim = new StringBuilder()
+                .append("{\"iss\":\"")
+                .append(config.getClientId())
+                .append("\",\"sub\":\"")
+                .append(config.getUserName())
+                .append("\",\"aud\":\"")
+                .append(audience)
+                .append("\",\"exp\":\"")
+                .append(utcPlusWindow)
                 .append("\"}");
 
-        final StringBuilder token = new StringBuilder(JWT_HEADER).append('.')
+        final StringBuilder token = new StringBuilder(JWT_HEADER)
+                .append('.')
                 .append(Base64.getUrlEncoder().encodeToString(claim.toString().getBytes(StandardCharsets.UTF_8)));
 
         final KeyStoreParameters keyStoreParameters = config.getKeystore();
@@ -272,14 +281,14 @@ public class SalesforceSession extends ServiceSupport {
                     if (alias == null) {
                         alias = tmp;
                     } else {
-                        throw new IllegalArgumentException(
-                                "The given keystore `" + keyStoreParameters.getResource()
-                                                           + "` contains more than one key entry, expecting only one");
+                        throw new IllegalArgumentException("The given keystore `" + keyStoreParameters.getResource()
+                                + "` contains more than one key entry, expecting only one");
                     }
                 }
             }
 
-            PrivateKey key = (PrivateKey) keystore.getKey(alias, keyStoreParameters.getPassword().toCharArray());
+            PrivateKey key = (PrivateKey)
+                    keystore.getKey(alias, keyStoreParameters.getPassword().toCharArray());
 
             Signature signature = Signature.getInstance(JWT_SIGNATURE_ALGORITHM);
             signature.initSign(key);
@@ -305,8 +314,7 @@ public class SalesforceSession extends ServiceSupport {
      * Parses login response, allows SalesforceSecurityHandler to parse a login request for a failed authentication
      * conversation.
      */
-    public void parseLoginResponse(ContentResponse loginResponse, String responseContent)
-            throws SalesforceException {
+    public void parseLoginResponse(ContentResponse loginResponse, String responseContent) throws SalesforceException {
         lock.lock();
         try {
             final int responseStatus = loginResponse.getStatus();
@@ -342,15 +350,16 @@ public class SalesforceSession extends ServiceSupport {
                     // parse the response to get error
                     final LoginError error = objectMapper.readValue(responseContent, LoginError.class);
                     final String errorCode = error.getError();
-                    final String msg = String.format("Login error code:[%s] description:[%s]", error.getError(),
-                            error.getErrorDescription());
+                    final String msg = String.format(
+                            "Login error code:[%s] description:[%s]", error.getError(), error.getErrorDescription());
                     final List<RestError> errors = new ArrayList<>();
                     errors.add(new RestError(errorCode, msg));
                     throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
 
                 default:
                     throw new SalesforceException(
-                            String.format("Login error status:[%s] reason:[%s]", responseStatus, loginResponse.getReason()),
+                            String.format(
+                                    "Login error status:[%s] reason:[%s]", responseStatus, loginResponse.getReason()),
                             responseStatus);
             }
         } catch (IOException e) {
@@ -369,8 +378,8 @@ public class SalesforceSession extends ServiceSupport {
             }
 
             try {
-                String logoutUrl
-                        = (instanceUrl == null ? config.getLoginUrl() : instanceUrl) + OAUTH2_REVOKE_PATH + accessToken;
+                String logoutUrl =
+                        (instanceUrl == null ? config.getLoginUrl() : instanceUrl) + OAUTH2_REVOKE_PATH + accessToken;
                 final Request logoutGet = httpClient.newRequest(logoutUrl).timeout(timeout, TimeUnit.MILLISECONDS);
                 final ContentResponse logoutResponse = logoutGet.send();
 
@@ -379,7 +388,8 @@ public class SalesforceSession extends ServiceSupport {
                 if (statusCode == HttpStatus.OK_200) {
                     LOG.debug("Logout successful");
                 } else {
-                    LOG.debug("Failed to revoke OAuth token. This is expected if the token is invalid or already expired");
+                    LOG.debug(
+                            "Failed to revoke OAuth token. This is expected if the token is invalid or already expired");
                 }
 
             } catch (InterruptedException e) {

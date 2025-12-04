@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 
@@ -26,11 +31,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBGetNotFoundTest extends LevelDBTestSupport {
 
     private LevelDBFile levelDBFile;
@@ -84,5 +85,4 @@ public class LevelDBGetNotFoundTest extends LevelDBTestSupport {
         Exchange out2 = repo.get(context, exchange2.getExchangeId());
         assertNull(out2, "Should not find exchange");
     }
-
 }

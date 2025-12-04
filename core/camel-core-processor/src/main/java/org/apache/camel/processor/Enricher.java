@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 import java.util.Map;
 
@@ -36,8 +39,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
-
-import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 /**
  * A content enricher that enriches input data by first obtaining additional data from a <i>resource</i> represented by
@@ -223,8 +224,8 @@ public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAw
                         if (aggregatedExchange != null) {
                             if (ExchangeHelper.shouldSetVariableResult(aggregatedExchange, variableReceive)) {
                                 // result should be stored in variable instead of message body
-                                ExchangeHelper.setVariableFromMessageBodyAndHeaders(aggregatedExchange, variableReceive,
-                                        aggregatedExchange.getMessage());
+                                ExchangeHelper.setVariableFromMessageBodyAndHeaders(
+                                        aggregatedExchange, variableReceive, aggregatedExchange.getMessage());
                                 aggregatedExchange.getMessage().setBody(originalBody);
                                 aggregatedExchange.getMessage().setHeaders(originalHeaders);
                             }
@@ -237,7 +238,8 @@ public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAw
                         }
                     } catch (Exception e) {
                         // if the aggregationStrategy threw an exception, set it on the original exchange
-                        exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
+                        exchange.setException(
+                                new CamelExchangeException("Error occurred during aggregation", exchange, e));
                     }
                 }
 
@@ -297,8 +299,10 @@ public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAw
         this.sendDynamicProcessor.setVariableSend(variableSend);
 
         // create a per processor exchange factory
-        this.processorExchangeFactory = getCamelContext().getCamelContextExtension()
-                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory = getCamelContext()
+                .getCamelContextExtension()
+                .getProcessorExchangeFactory()
+                .newProcessorExchangeFactory(this);
         this.processorExchangeFactory.setRouteId(getRouteId());
         this.processorExchangeFactory.setId(getId());
 
@@ -342,7 +346,5 @@ public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAw
             }
             return oldExchange;
         }
-
     }
-
 }

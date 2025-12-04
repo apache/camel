@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,8 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class ExportTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
@@ -79,8 +80,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldGenerateProject(RuntimeType rt) throws Exception {
         LOG.info("shouldGenerateProject {}", rt);
-        Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"classpath:route.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -100,8 +105,13 @@ class ExportTest {
         if (rt == RuntimeType.quarkus) {
             return;
         }
-        Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
-                "--gav=examples:route:1.0.0", "--camel-version=4.8.3", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"classpath:route.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--camel-version=4.8.3",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -122,7 +132,8 @@ class ExportTest {
                     });
         } else if (rt == RuntimeType.springBoot) {
             assertThat(model.getDependencyManagement().getDependencies())
-                    .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.8.3")
+                    .as(
+                            "Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.8.3")
                     .anySatisfy(dep -> {
                         assertThat(dep.getGroupId()).isEqualTo("org.apache.camel.springboot");
                         assertThat(dep.getArtifactId()).isEqualTo("camel-spring-boot-bom");
@@ -136,8 +147,13 @@ class ExportTest {
     public void shouldGenerateProjectWithBuildProperties(RuntimeType rt) throws Exception {
         LOG.info("shouldGenerateProjectWithBuildProperties {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar", "target/test-classes/route.yaml");
+        CommandLine.populateCommand(
+                command,
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()),
+                "--build-property=foo=bar",
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -154,11 +170,17 @@ class ExportTest {
     public void testShouldGenerateProjectMultivalue(RuntimeType rt) throws Exception {
         LOG.info("testShouldGenerateProjectMultivalue {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--dep=foo:bar:1.0,jupiter:rocks:2.0",
+        CommandLine.populateCommand(
+                command,
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()),
+                "--dep=foo:bar:1.0,jupiter:rocks:2.0",
                 // it's important for the --build-property to be the last parameter to test a previous
                 // export error when this property had arity=*
-                "--build-property=foo=bar", "--build-property=camel=rocks", "target/test-classes/route.yaml");
+                "--build-property=foo=bar",
+                "--build-property=camel=rocks",
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -168,16 +190,22 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
         Assertions.assertEquals("rocks", model.getProperties().getProperty("camel"));
         Assertions.assertEquals("bar", model.getProperties().getProperty("foo"));
-        Assertions.assertTrue(containsDependency(model.getDependencies(), "foo", "bar", "1.0"),
+        Assertions.assertTrue(
+                containsDependency(model.getDependencies(), "foo", "bar", "1.0"),
                 "Generated pom doesn't contain foo:bar:1.0 dependency");
-        Assertions.assertTrue(containsDependency(model.getDependencies(), "jupiter", "rocks", "2.0"),
+        Assertions.assertTrue(
+                containsDependency(model.getDependencies(), "jupiter", "rocks", "2.0"),
                 "Generated pom doesn't contain jupiter:rocks:2.0 dependency");
         command.printConfigurationValues("export command");
     }
 
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+        CommandLine.populateCommand(
+                command,
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet",
                 "--runtime=%s".formatted(rt.runtime()));
         if (args != null) {
             CommandLine.populateCommand(command, args);
@@ -190,8 +218,13 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportLazyBean(RuntimeType rt) throws Exception {
         LOG.info("shouldExportLazyBean {}", rt);
-        Export command = createCommand(rt, new String[] { "classpath:route.yaml", "file:src/test/resources/LazyFoo.java" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--lazy-bean=true");
+        Export command = createCommand(
+                rt,
+                new String[] {"classpath:route.yaml", "file:src/test/resources/LazyFoo.java"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet",
+                "--lazy-bean=true");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -205,9 +238,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportCustomKamelet(RuntimeType rt) throws Exception {
         LOG.info("shouldExportCustomKamelet {}", rt);
-        Export command = createCommand(rt,
-                new String[] { "src/test/resources/route.yaml", "src/test/resources/user-source.kamelet.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/route.yaml", "src/test/resources/user-source.kamelet.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -217,35 +253,36 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-http", null));
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-sql", null));
-            Assertions
-                    .assertFalse(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertFalse(
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-http-starter", null));
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-sql-starter", null));
-            Assertions
-                    .assertFalse(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-http-starter", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-sql-starter", null));
+            Assertions.assertFalse(
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         } else if (rt == RuntimeType.quarkus) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-http", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-http", null));
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-sql", null));
-            Assertions
-                    .assertFalse(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertFalse(
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         }
 
-        File f = workingDir.toPath().resolve("src/main/resources/kamelets/user-source.kamelet.yaml").toFile();
+        File f = workingDir
+                .toPath()
+                .resolve("src/main/resources/kamelets/user-source.kamelet.yaml")
+                .toFile();
         Assertions.assertTrue(f.isFile());
         Assertions.assertTrue(f.exists());
         f = workingDir.toPath().resolve("src/main/resources/camel/route.yaml").toFile();
@@ -257,8 +294,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportOfficialKamelet(RuntimeType rt) throws Exception {
         LOG.info("shouldExportOfficialKamelet {}", rt);
-        Export command = createCommand(rt, new String[] { "src/test/resources/counter.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/counter.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -282,20 +323,21 @@ class ExportTest {
                         assertThat(dep.getArtifactId()).isEqualTo("camel-kamelets");
                     });
         } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
             Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
-            Assertions
-                    .assertTrue(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
             Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
-            Assertions
-                    .assertTrue(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         }
 
-        File f = workingDir.toPath().resolve("src/main/resources/camel/counter.yaml").toFile();
+        File f = workingDir
+                .toPath()
+                .resolve("src/main/resources/camel/counter.yaml")
+                .toFile();
         Assertions.assertTrue(f.isFile());
         Assertions.assertTrue(f.exists());
     }
@@ -304,9 +346,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportSecret(RuntimeType rt) throws Exception {
         LOG.info("shouldExportSecret {}", rt);
-        Export command = createCommand(rt,
-                new String[] { "src/test/resources/k8s-secret.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/k8s-secret.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -316,14 +361,14 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kubernetes", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-kubernetes", null));
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kubernetes-starter",
-                            null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-kubernetes-starter", null));
         } else if (rt == RuntimeType.quarkus) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kubernetes", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kubernetes", null));
         }
     }
 
@@ -331,9 +376,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportPipeOfficialAndCustomKamelet(RuntimeType rt) throws Exception {
         LOG.info("shouldExportPipeOfficialAndCustomKamelet {}", rt);
-        Export command = createCommand(rt,
-                new String[] { "src/test/resources/mypipe.yaml", "src/test/resources/mytimer.kamelet.yaml" },
-                "--gav=examples:pipe:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/mypipe.yaml", "src/test/resources/mytimer.kamelet.yaml"},
+                "--gav=examples:pipe:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -343,30 +391,31 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
-            Assertions
-                    .assertTrue(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-timer", null));
         } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
             Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
-            Assertions
-                    .assertTrue(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-timer-starter", null));
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-timer-starter", null));
         } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
             Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
-            Assertions
-                    .assertTrue(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-timer", null));
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-timer", null));
         }
 
-        File f = workingDir.toPath().resolve("src/main/resources/kamelets/mytimer.kamelet.yaml").toFile();
+        File f = workingDir
+                .toPath()
+                .resolve("src/main/resources/kamelets/mytimer.kamelet.yaml")
+                .toFile();
         Assertions.assertTrue(f.isFile());
         Assertions.assertTrue(f.exists());
         f = workingDir.toPath().resolve("src/main/resources/camel/mypipe.yaml").toFile();
@@ -408,8 +457,12 @@ class ExportTest {
     public void shouldGenerateContent(RuntimeType rt) throws Exception {
         LOG.info("shouldGenerateContent {}", rt);
         // We need a real file as we want to test the generated content
-        Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/route.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -421,7 +474,8 @@ class ExportTest {
         Assertions.assertTrue(appProperties.exists(), "Missing application properties");
         assertApplicationPropertiesContent(rt, appProperties);
         // Camel routes
-        Assertions.assertTrue(new File(workingDir + "/src/main/resources/camel", "route.yaml").exists(),
+        Assertions.assertTrue(
+                new File(workingDir + "/src/main/resources/camel", "route.yaml").exists(),
                 "Missing camel route in resources");
         // Dockerfile
         Assertions.assertTrue(new File(workingDir + "/src/main/docker", "Dockerfile").exists(), "Missing Dockerfile");
@@ -434,13 +488,16 @@ class ExportTest {
         try (FileInputStream fis = new FileInputStream(appProps)) {
             String content = IOHelper.loadText(fis);
             if (rt == RuntimeType.quarkus) {
-                Assertions.assertFalse(content.contains("quarkus.native.resources.includes=camel/route.yaml"),
+                Assertions.assertFalse(
+                        content.contains("quarkus.native.resources.includes=camel/route.yaml"),
                         "should not contain quarkus.native.resources.includes property, was " + content);
             }
-            Assertions.assertFalse(content.contains("camel.main.routes-include-pattern"),
+            Assertions.assertFalse(
+                    content.contains("camel.main.routes-include-pattern"),
                     "should not contain camel.main.routes-include-pattern property, was " + content);
             if (rt == RuntimeType.springBoot) {
-                Assertions.assertTrue(content.contains("camel.main.run-controller=true"),
+                Assertions.assertTrue(
+                        content.contains("camel.main.run-controller=true"),
                         "should contain camel.main.run-controller property, was " + content);
             }
         }
@@ -450,8 +507,13 @@ class ExportTest {
     public void olderQuarkusVersion() throws Exception {
         LOG.info("olderQuarkusVersion");
         // We need a real file as we want to test the generated content
-        Export command = createCommand(RuntimeType.quarkus, new String[] { "src/test/resources/route.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--quarkus-version=3.21.0");
+        Export command = createCommand(
+                RuntimeType.quarkus,
+                new String[] {"src/test/resources/route.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet",
+                "--quarkus-version=3.21.0");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -459,7 +521,8 @@ class ExportTest {
         // Application properties
         File appProperties = new File(workingDir + "/src/main/resources", "application.properties");
         String content = IOHelper.loadText(new FileInputStream(appProperties));
-        Assertions.assertTrue(content.contains("quarkus.native.resources.includes=camel/route.yaml"),
+        Assertions.assertTrue(
+                content.contains("quarkus.native.resources.includes=camel/route.yaml"),
                 "should contain quarkus.native.resources.includes property, was " + content);
     }
 
@@ -468,8 +531,12 @@ class ExportTest {
     public void shouldGenerateJavaContent(RuntimeType rt) throws Exception {
         LOG.info("shouldGenerateJavaContent {}", rt);
         // We need a real file as we want to test the generated content
-        Export command = createCommand(rt, new String[] { "src/test/resources/Hey.java" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/Hey.java"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -481,7 +548,8 @@ class ExportTest {
         Assertions.assertTrue(appProperties.exists(), "Missing application properties");
         assertApplicationPropertiesContentJava(rt, appProperties, "examples.route");
         // Camel routes
-        Assertions.assertTrue(new File(workingDir + "/src/main/java/examples/route", "Hey.java").exists(),
+        Assertions.assertTrue(
+                new File(workingDir + "/src/main/java/examples/route", "Hey.java").exists(),
                 "Missing camel route in java package");
         // Dockerfile
         Assertions.assertTrue(new File(workingDir + "/src/main/docker", "Dockerfile").exists(), "Missing Dockerfile");
@@ -493,8 +561,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportActiveMQ(RuntimeType rt) throws Exception {
         LOG.info("shouldExportActiveMQ {}", rt);
-        Export command = createCommand(rt, new String[] { "src/test/resources/ActiveMQRoute.java" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/ActiveMQRoute.java"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -504,17 +576,18 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-activemq", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-activemq", null));
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.messaginghub", "pooled-jms", null));
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-activemq-starter", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-activemq-starter", null));
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.messaginghub", "pooled-jms", null));
         } else if (rt == RuntimeType.quarkus) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-activemq", null));
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "io.quarkiverse.messaginghub", "quarkus-pooled-jms", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-activemq", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "io.quarkiverse.messaginghub", "quarkus-pooled-jms", null));
         }
     }
 
@@ -522,8 +595,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportKafka(RuntimeType rt) throws Exception {
         LOG.info("shouldExportKafka {}", rt);
-        Export command = createCommand(rt, new String[] { "src/test/resources/MyKafkaRepo.java" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/MyKafkaRepo.java"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -535,12 +612,11 @@ class ExportTest {
         if (rt == RuntimeType.main) {
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kafka", null));
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kafka-starter",
-                            null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-kafka-starter", null));
         } else if (rt == RuntimeType.quarkus) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kafka", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kafka", null));
         }
     }
 
@@ -548,9 +624,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportSecretBean(RuntimeType rt) throws Exception {
         LOG.info("shouldExportSecretBean {}", rt);
-        Export command = createCommand(rt,
-                new String[] { "src/test/resources/k8s-secret-bean.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/k8s-secret-bean.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -560,26 +639,29 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kubernetes", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-kubernetes", null));
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kubernetes-starter",
-                            null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-kubernetes-starter", null));
         } else if (rt == RuntimeType.quarkus) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kubernetes", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kubernetes", null));
         }
     }
 
     // Each runtime may have a different logic
-    public void assertApplicationPropertiesContentJava(RuntimeType rt, File appProps, String appPackage) throws Exception {
+    public void assertApplicationPropertiesContentJava(RuntimeType rt, File appProps, String appPackage)
+            throws Exception {
         try (FileInputStream fis = new FileInputStream(appProps)) {
             String content = IOHelper.loadText(fis);
             if (rt == RuntimeType.main) {
-                Assertions.assertTrue(content.contains("camel.main.basePackageScan=" + appPackage),
+                Assertions.assertTrue(
+                        content.contains("camel.main.basePackageScan=" + appPackage),
                         "should contain camel.main.basePackageScan property, but was " + content);
             } else {
-                Assertions.assertFalse(content.contains("camel.main.basePackageScan"),
+                Assertions.assertFalse(
+                        content.contains("camel.main.basePackageScan"),
                         "should not contain camel.main.basePackageScan property, but was " + content);
             }
         }
@@ -590,10 +672,17 @@ class ExportTest {
     public void shouldExportUserProperty(RuntimeType rt) throws Exception {
         LOG.info("shouldExportUserProperty {}", rt);
         // We need a real file as we want to test the generated content
-        Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/route.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet",
                 // there was a bug where properties starting with camel.main were duplicated in application.properties
-                "--property", "hello=world", "--property", "camel.main.foo=bar");
+                "--property",
+                "hello=world",
+                "--property",
+                "camel.main.foo=bar");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -625,9 +714,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportGroovy(RuntimeType rt) throws Exception {
         LOG.info("shouldExportGroovy {}", rt);
-        Export command = createCommand(rt,
-                new String[] { "src/test/resources/groovy-demo.camel.yaml", "src/test/resources/demo.groovy" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/groovy-demo.camel.yaml", "src/test/resources/demo.groovy"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -637,16 +729,20 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-groovy", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-groovy", null));
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-groovy-starter", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-groovy-starter", null));
         } else if (rt == RuntimeType.quarkus) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-groovy", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-groovy", null));
         }
 
-        File f = workingDir.toPath().resolve("src/main/resources/camel-groovy/demo.groovy").toFile();
+        File f = workingDir
+                .toPath()
+                .resolve("src/main/resources/camel-groovy/demo.groovy")
+                .toFile();
         Assertions.assertTrue(f.isFile());
         Assertions.assertTrue(f.exists());
     }
@@ -656,8 +752,13 @@ class ExportTest {
     public void shouldExportObserve(RuntimeType rt) throws Exception {
         LOG.info("shouldExportObserve {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--observe=true", "target/test-classes/route.yaml");
+        CommandLine.populateCommand(
+                command,
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()),
+                "--observe=true",
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -667,16 +768,17 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-observability-services", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel", "camel-observability-services", null));
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot",
-                            "camel-observability-services-starter", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(),
+                    "org.apache.camel.springboot",
+                    "camel-observability-services-starter",
+                    null));
         } else if (rt == RuntimeType.quarkus) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus",
-                            "camel-quarkus-observability-services", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-observability-services", null));
         }
     }
 
@@ -685,8 +787,12 @@ class ExportTest {
     public void shouldExportFromDir(RuntimeType rt) throws Exception {
         LOG.info("shouldExportFromDir {}", rt);
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "src/test/resources/myapp");
+        CommandLine.populateCommand(
+                command,
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()),
+                "src/test/resources/myapp");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -695,7 +801,10 @@ class ExportTest {
         Assertions.assertEquals("route", model.getArtifactId());
         Assertions.assertEquals("1.0.0", model.getVersion());
 
-        File f = workingDir.toPath().resolve("src/main/resources/application.properties").toFile();
+        File f = workingDir
+                .toPath()
+                .resolve("src/main/resources/application.properties")
+                .toFile();
         Assertions.assertTrue(f.isFile());
         Assertions.assertTrue(f.exists());
         f = workingDir.toPath().resolve("src/main/resources/camel/hello.yaml").toFile();
@@ -703,16 +812,13 @@ class ExportTest {
         Assertions.assertTrue(f.exists());
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-timer", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-timer", null));
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot",
-                            "camel-timer-starter", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-timer-starter", null));
         } else if (rt == RuntimeType.quarkus) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus",
-                            "camel-quarkus-timer", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-timer", null));
         }
     }
 
@@ -720,9 +826,12 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportToDWithCustomKamelet(RuntimeType rt) throws Exception {
         LOG.info("shouldExportToDWithCustomKamelet {}", rt);
-        Export command = createCommand(rt,
-                new String[] { "src/test/resources/toDroute.yaml", "src/test/resources/cheese-sink.kamelet.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/toDroute.yaml", "src/test/resources/cheese-sink.kamelet.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -733,32 +842,36 @@ class ExportTest {
 
         if (rt == RuntimeType.main) {
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-log", null));
-            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
-            Assertions
-                    .assertFalse(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
+            Assertions.assertFalse(
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-log-starter", null));
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
-            Assertions
-                    .assertFalse(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-log-starter", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
+            Assertions.assertFalse(
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         } else if (rt == RuntimeType.quarkus) {
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-log", null));
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
-            Assertions
-                    .assertFalse(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(containsDependency(
+                    model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
+            Assertions.assertFalse(
+                    containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         }
 
-        File f = workingDir.toPath().resolve("src/main/resources/kamelets/cheese-sink.kamelet.yaml").toFile();
+        File f = workingDir
+                .toPath()
+                .resolve("src/main/resources/kamelets/cheese-sink.kamelet.yaml")
+                .toFile();
         Assertions.assertTrue(f.isFile());
         Assertions.assertTrue(f.exists());
-        f = workingDir.toPath().resolve("src/main/resources/camel/toDroute.yaml").toFile();
+        f = workingDir
+                .toPath()
+                .resolve("src/main/resources/camel/toDroute.yaml")
+                .toFile();
         Assertions.assertTrue(f.isFile());
         Assertions.assertTrue(f.exists());
     }
@@ -767,14 +880,19 @@ class ExportTest {
     @SetSystemProperty(key = CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, value = "4.10.0")
     public void shouldOverrideSpringBootVersionFromSystemProperty() throws Exception {
         LOG.info("shouldOverrideSpringBootVersionFromSystemProperty");
-        Export command = createCommand(RuntimeType.springBoot, new String[] { "classpath:route.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                RuntimeType.springBoot,
+                new String[] {"classpath:route.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
         Model model = readMavenModel();
         assertThat(model.getDependencyManagement().getDependencies())
-                .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.10.0")
+                .as(
+                        "Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.10.0")
                 .anySatisfy(dep -> {
                     assertThat(dep.getGroupId()).isEqualTo("org.apache.camel.springboot");
                     assertThat(dep.getArtifactId()).isEqualTo("camel-spring-boot-bom");
@@ -787,14 +905,18 @@ class ExportTest {
     public void shouldOverrideQuarkusVersionFromSystemProperty() throws Exception {
         LOG.info("shouldOverrideQuarkusVersionFromSystemProperty");
 
-        Export command = createCommand(RuntimeType.quarkus, new String[] { "classpath:route.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Export command = createCommand(
+                RuntimeType.quarkus,
+                new String[] {"classpath:route.yaml"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
 
         Model model = readMavenModel();
-        assertThat(model.getProperties()).containsEntry("quarkus.platform.version",
-                System.getProperty(CamelJBangConstants.QUARKUS_VERSION));
+        assertThat(model.getProperties())
+                .containsEntry("quarkus.platform.version", System.getProperty(CamelJBangConstants.QUARKUS_VERSION));
     }
 }

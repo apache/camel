@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.stub.tcp;
 
 import java.io.IOException;
@@ -176,5 +177,4 @@ public class SocketStub extends Socket {
     public synchronized void setSoTimeout(int timeout) {
         this.timeout = timeout;
     }
-
 }

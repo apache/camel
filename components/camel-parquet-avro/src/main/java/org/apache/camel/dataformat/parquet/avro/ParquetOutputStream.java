@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.parquet.avro;
 
 import java.io.BufferedOutputStream;
@@ -51,12 +52,14 @@ public class ParquetOutputStream implements OutputFile {
             @Override
             public void flush() throws IOException {
                 out.flush();
-            };
+            }
+            ;
 
             @Override
             public void close() throws IOException {
                 out.close();
-            };
+            }
+            ;
 
             @Override
             public void write(int b) throws IOException {

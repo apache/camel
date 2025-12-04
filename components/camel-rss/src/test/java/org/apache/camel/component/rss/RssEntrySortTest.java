@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rss;
 
 import java.util.Date;
@@ -57,8 +58,10 @@ public class RssEntrySortTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=50").to("mock:sorted");
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=false&delay=50").to("mock:unsorted");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=50")
+                        .to("mock:sorted");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=false&delay=50")
+                        .to("mock:unsorted");
             }
         };
     }

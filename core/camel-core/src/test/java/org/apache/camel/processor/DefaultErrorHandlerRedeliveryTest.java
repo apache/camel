@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to verify that redelivery counters is working as expected.
@@ -81,7 +82,8 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(2))
+                from("direct:start")
+                        .errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(2))
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 counter++;
@@ -96,7 +98,8 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
                     }
                 });
 
-                from("direct:one").errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(1))
+                from("direct:one")
+                        .errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(1))
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 counter++;
@@ -106,5 +109,4 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
             }
         };
     }
-
 }

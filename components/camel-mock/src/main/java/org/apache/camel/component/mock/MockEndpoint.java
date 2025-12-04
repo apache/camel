@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
 
 import java.io.File;
@@ -93,8 +94,15 @@ import org.slf4j.LoggerFactory;
  * {@link #expectedBodiesReceived(java.util.List)} or {@link #expectedHeaderReceived(String, Object)} then the latter
  * overrides the number of expected messages based on the number of values provided in the bodies/headers.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true,
-             remote = false, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+@UriEndpoint(
+        firstVersion = "1.0.0",
+        scheme = "mock",
+        title = "Mock",
+        syntax = "mock:name",
+        producerOnly = true,
+        remote = false,
+        category = {Category.CORE, Category.TESTING},
+        lenientProperties = true)
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, NotifyBuilderMatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
@@ -123,32 +131,55 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     @UriPath(description = "Name of mock endpoint")
     @Metadata(required = true)
     private String name;
-    @UriParam(label = "producer", defaultValue = "-1",
-              description = " Specifies the expected number of message exchanges that should be received by this mock."
-                            + " Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when"
-                            + " the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are"
-                            + " still no messages arrived; for that use the assertPeriod option."
-                            + " If you want to assert that exactly nth message arrives to this mock, then see also the"
-                            + " assertPeriod option for further details.")
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "-1",
+            description = " Specifies the expected number of message exchanges that should be received by this mock."
+                    + " Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when"
+                    + " the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are"
+                    + " still no messages arrived; for that use the assertPeriod option."
+                    + " If you want to assert that exactly nth message arrives to this mock, then see also the"
+                    + " assertPeriod option for further details.")
     private int expectedCount;
-    @UriParam(label = "producer,advanced", javaType = "java.time.Duration",
-              description = "Allows a sleep to be specified to wait to check that this mock really is empty when expectedMessageCount(int) is called with zero value")
+
+    @UriParam(
+            label = "producer,advanced",
+            javaType = "java.time.Duration",
+            description =
+                    "Allows a sleep to be specified to wait to check that this mock really is empty when expectedMessageCount(int) is called with zero value")
     private long sleepForEmptyTest;
-    @UriParam(label = "producer,advanced", javaType = "java.time.Duration",
-              description = "Sets the maximum amount of time the assertIsSatisfied() will wait on a latch until it is satisfied")
+
+    @UriParam(
+            label = "producer,advanced",
+            javaType = "java.time.Duration",
+            description =
+                    "Sets the maximum amount of time the assertIsSatisfied() will wait on a latch until it is satisfied")
     private long resultWaitTime;
-    @UriParam(label = "producer,advanced", javaType = "java.time.Duration",
-              description = "Sets the minimum expected amount of time the assertIsSatisfied() will wait on a latch until it is satisfied")
+
+    @UriParam(
+            label = "producer,advanced",
+            javaType = "java.time.Duration",
+            description =
+                    "Sets the minimum expected amount of time the assertIsSatisfied() will wait on a latch until it is satisfied")
     private long resultMinimumWaitTime;
-    @UriParam(label = "producer", javaType = "java.time.Duration",
-              description = "Sets a grace period after which the mock will re-assert to ensure the preliminary assertion is still valid."
+
+    @UriParam(
+            label = "producer",
+            javaType = "java.time.Duration",
+            description =
+                    "Sets a grace period after which the mock will re-assert to ensure the preliminary assertion is still valid."
                             + " This is used, for example, to assert that exactly a number of messages arrive. For example, if the"
                             + " expected count was set to 5, then the assertion is satisfied when five or more messages arrive. To ensure that"
                             + " exactly 5 messages arrive, then you would need to wait a little period to ensure no further message arrives. This"
                             + " is what you can use this method for. By default, this period is disabled.")
     private long assertPeriod;
-    @UriParam(label = "producer,advanced", defaultValue = "-1",
-              description = "Specifies to only retain the first nth number of received Exchanges."
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "-1",
+            description =
+                    "Specifies to only retain the first nth number of received Exchanges."
                             + " This is used when testing with big data, to reduce memory consumption by not storing copies of every"
                             + " Exchange this mock endpoint receives."
                             + " Important: When using this limitation, then the getReceivedCounter() will still return the actual"
@@ -159,8 +190,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                             + " expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received."
                             + " You can configure both retainFirst and retainLast options, to limit both the first and last received.")
     private int retainFirst;
-    @UriParam(label = "producer,advanced", defaultValue = "-1",
-              description = "Specifies to only retain the last nth number of received Exchanges."
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "-1",
+            description =
+                    "Specifies to only retain the last nth number of received Exchanges."
                             + " This is used when testing with big data, to reduce memory consumption by not storing copies of every"
                             + " Exchange this mock endpoint receives."
                             + " Important: When using this limitation, then the getReceivedCounter() will still return the actual"
@@ -171,24 +206,39 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                             + " expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received."
                             + " You can configure both retainFirst and retainLast options, to limit both the first and last received.")
     private int retainLast;
-    @UriParam(label = "producer,advanced",
-              description = "A number that is used to turn on throughput logging based on groups of the size.")
+
+    @UriParam(
+            label = "producer,advanced",
+            description = "A number that is used to turn on throughput logging based on groups of the size.")
     private int reportGroup;
-    @UriParam(label = "producer,advanced",
-              description = "To turn on logging when the mock receives an incoming message."
-                            + " This will log only one time at INFO level for the incoming message. For more detailed logging, then set the"
-                            + " logger to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class.")
+
+    @UriParam(
+            label = "producer,advanced",
+            description = "To turn on logging when the mock receives an incoming message."
+                    + " This will log only one time at INFO level for the incoming message. For more detailed logging, then set the"
+                    + " logger to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class.")
     private boolean log;
-    @UriParam(label = "producer,advanced", defaultValue = "true",
-              description = "Sets whether assertIsSatisfied() should fail fast at the first detected failed expectation while it may"
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "true",
+            description =
+                    "Sets whether assertIsSatisfied() should fail fast at the first detected failed expectation while it may"
                             + " otherwise wait for all expected messages to arrive before performing expectations verifications."
                             + " Is by default true. Set to false to use behavior as in Camel 2.x.")
     private boolean failFast = true;
-    @UriParam(label = "producer,advanced", defaultValue = "true",
-              description = "Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint.")
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "true",
+            description =
+                    "Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint.")
     private boolean copyOnExchange = true;
-    @UriParam(label = "advanced", defaultValue = "100",
-              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+
+    @UriParam(
+            label = "advanced",
+            defaultValue = "100",
+            description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
     private int browseLimit = 100;
 
     public MockEndpoint() {
@@ -221,9 +271,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         long left = unit.toMillis(timeout);
         for (MockEndpoint endpoint : endpoints) {
             if (!endpoint.await(left, TimeUnit.MILLISECONDS)) {
-                throw new AssertionError(
-                        "Timeout waiting for endpoints to receive enough messages. " + endpoint.getEndpointUri()
-                                         + " timed out.");
+                throw new AssertionError("Timeout waiting for endpoints to receive enough messages. "
+                        + endpoint.getEndpointUri() + " timed out.");
             }
             left = left - watch.taken();
             if (left <= 0) {
@@ -232,7 +281,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
-    public static void assertIsSatisfied(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
+    public static void assertIsSatisfied(long timeout, TimeUnit unit, MockEndpoint... endpoints)
+            throws InterruptedException {
         assertWait(timeout, unit, endpoints);
         for (MockEndpoint endpoint : endpoints) {
             endpoint.assertIsSatisfied();
@@ -271,7 +321,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @param timeout timeout
      * @param unit    time unit
      */
-    public static void assertIsSatisfied(CamelContext context, long timeout, TimeUnit unit) throws InterruptedException {
+    public static void assertIsSatisfied(CamelContext context, long timeout, TimeUnit unit)
+            throws InterruptedException {
         ObjectHelper.notNull(context, "camelContext");
         ObjectHelper.notNull(unit, "unit");
         Collection<Endpoint> endpoints = context.getEndpoints();
@@ -483,7 +534,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     protected void doAssertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         if (expectedCount == 0) {
             if (timeoutForEmptyEndpoints > 0) {
-                LOG.debug("Sleeping for: {} millis to check there really are no messages received", timeoutForEmptyEndpoints);
+                LOG.debug(
+                        "Sleeping for: {} millis to check there really are no messages received",
+                        timeoutForEmptyEndpoints);
                 Thread.sleep(timeoutForEmptyEndpoints);
             }
             assertEquals("Received message count", expectedCount, getReceivedCounter());
@@ -504,7 +557,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         if (expectedMinimumCount >= 0) {
             int receivedCounter = getReceivedCounter();
-            assertTrue("Received message count " + receivedCounter + ", expected at least " + expectedMinimumCount,
+            assertTrue(
+                    "Received message count " + receivedCounter + ", expected at least " + expectedMinimumCount,
                     expectedMinimumCount <= receivedCounter);
         }
 
@@ -579,7 +633,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 // did not throw expected error... fail!
                 fail(e);
             }
-
         }
         if (failed) {
             // fail() throws the AssertionError to indicate the test failed.
@@ -666,7 +719,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             expectedMinimumMessageCount(1);
         }
         if (expectedHeaderValues == null) {
-            HeadersMapFactory factory = getCamelContext().getCamelContextExtension().getHeadersMapFactory();
+            HeadersMapFactory factory =
+                    getCamelContext().getCamelContextExtension().getHeadersMapFactory();
             if (factory != null) {
                 expectedHeaderValues = factory.newMap();
             } else {
@@ -730,9 +784,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             }
 
             // should be empty, as we should find all the values
-            assertTrue("Expected " + values.size() + " headers with key[" + name + "], received "
-                       + (values.size() - actualHeaderValues.size())
-                       + " headers. Expected header values: " + actualHeaderValues,
+            assertTrue(
+                    "Expected " + values.size() + " headers with key[" + name + "], received "
+                            + (values.size() - actualHeaderValues.size())
+                            + " headers. Expected header values: " + actualHeaderValues,
                     actualHeaderValues.isEmpty());
         });
     }
@@ -818,9 +873,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             }
 
             // should be empty, as we should find all the values
-            assertTrue("Expected " + values.size() + " variables with key[" + name + "], received "
-                       + (values.size() - actualVariableValues.size())
-                       + " variables. Expected variable values: " + actualVariableValues,
+            assertTrue(
+                    "Expected " + values.size() + " variables with key[" + name + "], received "
+                            + (values.size() - actualVariableValues.size())
+                            + " variables. Expected variable values: " + actualVariableValues,
                     actualVariableValues.isEmpty());
         });
     }
@@ -906,9 +962,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             }
 
             // should be empty, as we should find all the values
-            assertTrue("Expected " + values.size() + " properties with key[" + name + "], received "
-                       + (values.size() - actualPropertyValues.size())
-                       + " properties. Expected property values: " + actualPropertyValues,
+            assertTrue(
+                    "Expected " + values.size() + " properties with key[" + name + "], received "
+                            + (values.size() - actualPropertyValues.size())
+                            + " properties. Expected property values: " + actualPropertyValues,
                     actualPropertyValues.isEmpty());
         });
     }
@@ -970,7 +1027,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         if (expectedValue != null) {
             String from = actualValue.getClass().getName();
             String to = expectedValue.getClass().getName();
-            actualValue = getCamelContext().getTypeConverter().convertTo(expectedValue.getClass(), exchange, actualValue);
+            actualValue =
+                    getCamelContext().getTypeConverter().convertTo(expectedValue.getClass(), exchange, actualValue);
             assertTrue("There is no type conversion possible from " + from + " to " + to, actualValue != null);
         }
         return actualValue;
@@ -1061,7 +1119,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 getReceivedExchange(i);
 
                 Object expectedBody = expectedBodyValues.get(i);
-                assertTrue("Message with body " + expectedBody + " was expected but not found in " + actualBodyValuesSet,
+                assertTrue(
+                        "Message with body " + expectedBody + " was expected but not found in " + actualBodyValuesSet,
                         actualBodyValuesSet.remove(expectedBody));
             }
         });
@@ -1290,7 +1349,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         Exchange e1 = map.get(key);
         if (e1 != null) {
             fail("Duplicate message found on message " + i + " has value: " + key + " for expression: " + expression
-                 + ". Exchanges: " + e1 + " and " + e2);
+                    + ". Exchanges: " + e1 + " and " + e2);
         } else {
             map.put(key, e2);
         }
@@ -1358,17 +1417,19 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             int result = comparator.compare(e1, e2);
             if (result == 0) {
                 fail("Messages not " + type + ". Messages" + prev + " and " + index + " are equal with value: "
-                     + expression.evaluate(e1, Object.class) + " for expression: " + expression + ". Exchanges: " + e1 + " and "
-                     + e2);
+                        + expression.evaluate(e1, Object.class) + " for expression: " + expression + ". Exchanges: "
+                        + e1 + " and "
+                        + e2);
             } else {
                 if (!ascending) {
                     result = result * -1;
                 }
                 if (result > 0) {
-                    fail("Messages not " + type + ". Message " + prev + " has value: " + expression.evaluate(e1, Object.class)
-                         + " and message " + index + " has value: " + expression.evaluate(e2, Object.class)
-                         + " for expression: "
-                         + expression + ". Exchanges: " + e1 + " and " + e2);
+                    fail("Messages not " + type + ". Message " + prev + " has value: "
+                            + expression.evaluate(e1, Object.class)
+                            + " and message " + index + " has value: " + expression.evaluate(e2, Object.class)
+                            + " for expression: "
+                            + expression + ". Exchanges: " + e1 + " and " + e2);
                 }
             }
         }
@@ -1834,8 +1895,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         // and then increment counter after adding received exchange
         final int receivedCounter = counter.incrementAndGet();
 
-        Processor processor = processors.get(receivedCounter) != null
-                ? processors.get(receivedCounter) : defaultProcessor;
+        Processor processor =
+                processors.get(receivedCounter) != null ? processors.get(receivedCounter) : defaultProcessor;
 
         if (processor != null) {
             tryProcessing(exchange, processor);
@@ -1855,7 +1916,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     private static String buildLogMessage(String endpontUri, AtomicInteger counter, Exchange copy, Object actualBody) {
         String msg = endpontUri + " >>>> " + counter + " : " + copy
-                     + (actualBody != null ? " with body: " + actualBody : "null body");
+                + (actualBody != null ? " with body: " + actualBody : "null body");
         if (copy.getIn().hasHeaders()) {
             msg += " and headers:" + copy.getIn().getHeaders();
         }
@@ -1881,7 +1942,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     private void assertExpectedHeaderValues(Message in) {
         if (actualHeaderValues == null) {
-            HeadersMapFactory factory = getCamelContext().getCamelContextExtension().getHeadersMapFactory();
+            HeadersMapFactory factory =
+                    getCamelContext().getCamelContextExtension().getHeadersMapFactory();
             if (factory != null) {
                 actualHeaderValues = factory.newMap();
             } else {
@@ -1969,8 +2031,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         LOG.debug("Took {} millis to complete latch", delta);
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {
-            fail("Expected minimum " + resultMinimumWaitTime
-                 + " millis waiting on the result, but was faster with " + delta + " millis.");
+            fail("Expected minimum " + resultMinimumWaitTime + " millis waiting on the result, but was faster with "
+                    + delta + " millis.");
         }
     }
 
@@ -2101,7 +2163,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
                 // we accept that an expectedValue of null also means that the header may be absent
                 if (expectedValue != null) {
-                    assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
+                    assertTrue(
+                            "Exchange " + i + " has no headers",
+                            exchange.getIn().hasHeaders());
                     boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
                     assertTrue("No header with name " + key + " found for message: " + i, hasKey);
                 }

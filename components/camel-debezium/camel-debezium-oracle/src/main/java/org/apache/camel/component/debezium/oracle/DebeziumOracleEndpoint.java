@@ -30,23 +30,29 @@ import org.apache.camel.spi.UriParam;
 /**
  * Capture changes from an Oracle database.
  */
-@UriEndpoint(firstVersion = "3.17.0", scheme = "debezium-oracle", title = "Debezium Oracle Connector",
-             syntax = "debezium-oracle:name", category = { Category.DATABASE }, consumerOnly = true,
-             headersClass = DebeziumConstants.class)
+@UriEndpoint(
+        firstVersion = "3.17.0",
+        scheme = "debezium-oracle",
+        title = "Debezium Oracle Connector",
+        syntax = "debezium-oracle:name",
+        category = {Category.DATABASE},
+        consumerOnly = true,
+        headersClass = DebeziumConstants.class)
 public final class DebeziumOracleEndpoint extends DebeziumEndpoint<OracleConnectorEmbeddedDebeziumConfiguration>
         implements EndpointServiceLocation {
 
     @UriParam
     private OracleConnectorEmbeddedDebeziumConfiguration configuration;
 
-    public DebeziumOracleEndpoint(final String uri, final DebeziumOracleComponent component,
-                                  final OracleConnectorEmbeddedDebeziumConfiguration configuration) {
+    public DebeziumOracleEndpoint(
+            final String uri,
+            final DebeziumOracleComponent component,
+            final OracleConnectorEmbeddedDebeziumConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
-    public DebeziumOracleEndpoint() {
-    }
+    public DebeziumOracleEndpoint() {}
 
     @Override
     public String getServiceUrl() {

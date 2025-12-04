@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks.routing;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Properties;
 
@@ -37,11 +43,6 @@ import org.smooks.engine.lifecycle.PostConstructLifecyclePhase;
 import org.smooks.engine.lookup.LifecycleManagerLookup;
 import org.smooks.engine.resource.config.DefaultResourceConfig;
 import org.smooks.testkit.MockApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link BeanRouter}.
@@ -67,8 +68,8 @@ public class BeanRouterTest extends CamelTestSupport {
     @Test
     public void testVisitAfterWithMissingBeanInSmookBeanContext() throws SmooksException {
         when(beanContext.getBean(BEAN_ID)).thenReturn(null);
-        assertThrows(SmooksException.class,
-                () -> createBeanRouter(BEAN_ID, END_POINT_URI).visitAfter(null, smooksExecutionContext));
+        assertThrows(SmooksException.class, () -> createBeanRouter(BEAN_ID, END_POINT_URI)
+                .visitAfter(null, smooksExecutionContext));
     }
 
     @Test
@@ -84,9 +85,14 @@ public class BeanRouterTest extends CamelTestSupport {
         executionContext.getBeanContext().addBean(BEAN_ID, myBean);
 
         // Force an END event
-        executionContext.getBeanContext().notifyObservers(new DefaultBeanContextLifecycleEvent(
-                executionContext,
-                null, BeanLifecycle.END_FRAGMENT, executionContext.getBeanContext().getBeanId(BEAN_ID), myBean));
+        executionContext
+                .getBeanContext()
+                .notifyObservers(new DefaultBeanContextLifecycleEvent(
+                        executionContext,
+                        null,
+                        BeanLifecycle.END_FRAGMENT,
+                        executionContext.getBeanContext().getBeanId(BEAN_ID),
+                        myBean));
 
         endpoint.assertIsSatisfied();
     }
@@ -104,13 +110,22 @@ public class BeanRouterTest extends CamelTestSupport {
         executionContext.getBeanContext().addBean(BEAN_ID, myBean);
 
         // Force an END event
-        executionContext.getBeanContext().notifyObservers(new DefaultBeanContextLifecycleEvent(
-                executionContext,
-                null, BeanLifecycle.END_FRAGMENT, executionContext.getBeanContext().getBeanId(BEAN_ID), myBean));
+        executionContext
+                .getBeanContext()
+                .notifyObservers(new DefaultBeanContextLifecycleEvent(
+                        executionContext,
+                        null,
+                        BeanLifecycle.END_FRAGMENT,
+                        executionContext.getBeanContext().getBeanId(BEAN_ID),
+                        myBean));
 
         endpoint.assertIsSatisfied();
-        assertNotNull(endpoint.getReceivedExchanges().get(0).getMessage()
-                .getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class).getBeanContext().getBean(BEAN_ID));
+        assertNotNull(endpoint.getReceivedExchanges()
+                .get(0)
+                .getMessage()
+                .getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class)
+                .getBeanContext()
+                .getBean(BEAN_ID));
     }
 
     @BeforeEach
@@ -162,12 +177,15 @@ public class BeanRouterTest extends CamelTestSupport {
 
         MockApplicationContext appContext = new MockApplicationContext();
         appContext.getRegistry().registerObject(CamelContext.class, context);
-        appContext.getRegistry().lookup(new LifecycleManagerLookup()).applyPhase(beanRouter,
-                new PostConstructLifecyclePhase(new Scope(appContext.getRegistry(), resourceConfig, beanId)));
+        appContext
+                .getRegistry()
+                .lookup(new LifecycleManagerLookup())
+                .applyPhase(
+                        beanRouter,
+                        new PostConstructLifecyclePhase(new Scope(appContext.getRegistry(), resourceConfig, beanId)));
 
         return beanRouter;
     }
 
-    public record MyBean(String name) {
-    }
+    public record MyBean(String name) {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
 
 import java.net.UnknownHostException;
@@ -62,8 +63,7 @@ public class WebhookConfiguration implements Cloneable {
     @UriParam(defaultValue = "true")
     private boolean webhookAutoRegister = true;
 
-    public WebhookConfiguration() {
-    }
+    public WebhookConfiguration() {}
 
     public String getWebhookComponentName() {
         return webhookComponentName;
@@ -165,7 +165,8 @@ public class WebhookConfiguration implements Cloneable {
         if (ObjectHelper.isEmpty(host)) {
             if (restConfiguration.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                 host = "0.0.0.0";
-            } else if (restConfiguration.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            } else if (restConfiguration.getHostNameResolver()
+                    == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
             } else if (restConfiguration.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();

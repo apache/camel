@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates List Image Request headers are parsed properly
@@ -49,7 +50,6 @@ public class ListImagesCmdHeaderTest extends BaseDockerHeaderTest<ListImagesCmd>
 
         Mockito.verify(dockerClient, Mockito.times(1)).listImagesCmd();
         Mockito.verify(mockObject, Mockito.times(1)).withShowAll(eq(showAll));
-
     }
 
     @Override
@@ -61,5 +61,4 @@ public class ListImagesCmdHeaderTest extends BaseDockerHeaderTest<ListImagesCmd>
     protected DockerOperation getOperation() {
         return DockerOperation.LIST_IMAGES;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.lang.management.ManagementFactory;
@@ -79,8 +80,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.Default;
     private ManagementMBeansLevel mBeansLevel = ManagementMBeansLevel.Default;
 
-    public DefaultManagementAgent() {
-    }
+    public DefaultManagementAgent() {}
 
     public DefaultManagementAgent(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -99,8 +99,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             values.put(JmxSystemPropertyKeys.MBEAN_DOMAIN, mBeanObjectDomainName);
         }
         if (System.getProperty(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID) != null) {
-            onlyRegisterProcessorWithCustomId
-                    = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
+            onlyRegisterProcessorWithCustomId =
+                    Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
             values.put(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID, onlyRegisterProcessorWithCustomId);
         }
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null) {
@@ -116,11 +116,13 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             values.put(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES, registerNewRoutes);
         }
         if (System.getProperty(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_TEMPLATE) != null) {
-            registerRoutesCreateByTemplate = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_TEMPLATE);
+            registerRoutesCreateByTemplate =
+                    Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_TEMPLATE);
             values.put(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_TEMPLATE, registerRoutesCreateByTemplate);
         }
         if (System.getProperty(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_KAMELET) != null) {
-            registerRoutesCreateByKamelet = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_KAMELET);
+            registerRoutesCreateByKamelet =
+                    Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_KAMELET);
             values.put(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_KAMELET, registerRoutesCreateByKamelet);
         }
         if (System.getProperty(JmxSystemPropertyKeys.MASK) != null) {
@@ -136,12 +138,16 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             values.put(JmxSystemPropertyKeys.LOAD_STATISTICS_ENABLED, loadStatisticsEnabled);
         }
         if (System.getProperty(JmxSystemPropertyKeys.ENDPOINT_RUNTIME_STATISTICS_ENABLED) != null) {
-            endpointRuntimeStatisticsEnabled = Boolean.getBoolean(JmxSystemPropertyKeys.ENDPOINT_RUNTIME_STATISTICS_ENABLED);
+            endpointRuntimeStatisticsEnabled =
+                    Boolean.getBoolean(JmxSystemPropertyKeys.ENDPOINT_RUNTIME_STATISTICS_ENABLED);
             values.put(JmxSystemPropertyKeys.ENDPOINT_RUNTIME_STATISTICS_ENABLED, endpointRuntimeStatisticsEnabled);
         }
         if (System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL) != null) {
-            statisticsLevel = camelContext.getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class,
-                    System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL));
+            statisticsLevel = camelContext
+                    .getTypeConverter()
+                    .mandatoryConvertTo(
+                            ManagementStatisticsLevel.class,
+                            System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL));
             values.put(JmxSystemPropertyKeys.STATISTICS_LEVEL, statisticsLevel);
         }
         if (System.getProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN) != null) {
@@ -385,8 +391,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             return false;
         }
         ObjectName on = mbeansRegistered.get(name);
-        return on != null && server.isRegistered(on)
-                || server.isRegistered(name);
+        return on != null && server.isRegistered(on) || server.isRegistered(name);
     }
 
     @Override
@@ -443,15 +448,15 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             }
         }
         if (caught > 0) {
-            LOG.warn("{} exceptions caught while unregistering MBeans during stop operation. See INFO log for details.",
+            LOG.warn(
+                    "{} exceptions caught while unregistering MBeans during stop operation. See INFO log for details.",
                     caught);
         }
 
         ServiceHelper.stopService(assembler);
     }
 
-    private void registerMBeanWithServer(Object obj, ObjectName name, boolean forceRegistration)
-            throws JMException {
+    private void registerMBeanWithServer(Object obj, ObjectName name, boolean forceRegistration) throws JMException {
 
         // have we already registered the bean, there can be shared instances in the camel routes
         boolean exists = isRegistered(name);
@@ -505,5 +510,4 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         // create a mbean server with the given default domain name
         return MBeanServerFactory.createMBeanServer(mBeanServerDefaultDomain);
     }
-
 }

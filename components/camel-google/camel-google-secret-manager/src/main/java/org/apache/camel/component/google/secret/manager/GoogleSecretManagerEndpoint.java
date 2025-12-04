@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.secret.manager;
 
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
@@ -33,13 +34,18 @@ import org.apache.camel.util.ObjectHelper;
  *
  * Google Secret Manager Endpoint.
  */
-@UriEndpoint(firstVersion = "3.16.0", scheme = "google-secret-manager", title = "Google Secret Manager",
-             syntax = "google-secret-manager:project", category = {
-                     Category.CLOUD },
-             producerOnly = true, headersClass = GoogleSecretManagerConstants.class)
-@Metadata(annotations = {
-        "vault=google-secret-manager",
-})
+@UriEndpoint(
+        firstVersion = "3.16.0",
+        scheme = "google-secret-manager",
+        title = "Google Secret Manager",
+        syntax = "google-secret-manager:project",
+        category = {Category.CLOUD},
+        producerOnly = true,
+        headersClass = GoogleSecretManagerConstants.class)
+@Metadata(
+        annotations = {
+            "vault=google-secret-manager",
+        })
 public class GoogleSecretManagerEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -47,8 +53,8 @@ public class GoogleSecretManagerEndpoint extends DefaultEndpoint implements Endp
 
     private SecretManagerServiceClient secretManagerServiceClient;
 
-    public GoogleSecretManagerEndpoint(String uri, GoogleSecretManagerComponent component,
-                                       GoogleSecretManagerConfiguration configuration) {
+    public GoogleSecretManagerEndpoint(
+            String uri, GoogleSecretManagerComponent component, GoogleSecretManagerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -97,8 +103,8 @@ public class GoogleSecretManagerEndpoint extends DefaultEndpoint implements Endp
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(
-                ObjectHelper.isNotEmpty(configuration.getProject()) && ObjectHelper.isNotEmpty(configuration.getClient()))) {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getProject())
+                && ObjectHelper.isNotEmpty(configuration.getClient()))) {
             return getServiceProtocol() + ":" + configuration.getProject() + ":" + configuration.getClient();
         }
         return null;
@@ -108,5 +114,4 @@ public class GoogleSecretManagerEndpoint extends DefaultEndpoint implements Endp
     public String getServiceProtocol() {
         return "secrets-manager";
     }
-
 }

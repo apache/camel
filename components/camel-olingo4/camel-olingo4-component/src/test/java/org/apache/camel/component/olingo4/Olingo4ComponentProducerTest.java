@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,12 +49,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link org.apache.camel.component.olingo4.api.Olingo4App} APIs.
  */
@@ -56,11 +57,10 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
 
     private static final Logger LOG = LoggerFactory.getLogger(Olingo4ComponentProducerTest.class);
 
-    private static final String TEST_CREATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n"
-                                                   + "  \"LastName\": \"Black\"\n" + "}";
-    private static final String TEST_UPDATE_JSON
-            = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n" + "  \"MiddleName\": \"Black\",\n"
-              + "  \"LastName\": \"Black\"\n" + "}";
+    private static final String TEST_CREATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n"
+            + "  \"FirstName\": \"Lewis\",\n" + "  \"LastName\": \"Black\"\n" + "}";
+    private static final String TEST_UPDATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n"
+            + "  \"FirstName\": \"Lewis\",\n" + "  \"MiddleName\": \"Black\",\n" + "  \"LastName\": \"Black\"\n" + "}";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -82,8 +82,8 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
         assertEquals(1, metadata.getSchemas().size());
 
         // Read service document object
-        final ClientServiceDocument document
-                = (ClientServiceDocument) requestBodyAndHeaders("direct:readdocument", null, headers);
+        final ClientServiceDocument document =
+                (ClientServiceDocument) requestBodyAndHeaders("direct:readdocument", null, headers);
 
         assertNotNull(document);
         assertTrue(document.getEntitySets().size() > 1);
@@ -98,35 +98,46 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
         final Long count = (Long) requestBodyAndHeaders("direct:readcount", null, headers);
         assertEquals(20, count.intValue());
 
-        final ClientPrimitiveValue value = (ClientPrimitiveValue) requestBodyAndHeaders("direct:readvalue", null, headers);
+        final ClientPrimitiveValue value =
+                (ClientPrimitiveValue) requestBodyAndHeaders("direct:readvalue", null, headers);
         LOG.info("Client value \"{}\" has type {}", value, value.getTypeName());
         assertEquals("Male", value.asPrimitive().toString());
 
-        final ClientPrimitiveValue singleProperty
-                = (ClientPrimitiveValue) requestBodyAndHeaders("direct:readsingleprop", null, headers);
+        final ClientPrimitiveValue singleProperty =
+                (ClientPrimitiveValue) requestBodyAndHeaders("direct:readsingleprop", null, headers);
         assertTrue(singleProperty.isPrimitive());
         assertEquals("San Francisco International Airport", singleProperty.toString());
 
-        final ClientComplexValue complexProperty
-                = (ClientComplexValue) requestBodyAndHeaders("direct:readcomplexprop", null, headers);
+        final ClientComplexValue complexProperty =
+                (ClientComplexValue) requestBodyAndHeaders("direct:readcomplexprop", null, headers);
         assertTrue(complexProperty.isComplex());
-        assertEquals("San Francisco", complexProperty.get("City").getComplexValue().get("Name").getValue().toString());
+        assertEquals(
+                "San Francisco",
+                complexProperty
+                        .get("City")
+                        .getComplexValue()
+                        .get("Name")
+                        .getValue()
+                        .toString());
 
-        final ClientCollectionValue<?> collectionProperty
-                = (ClientCollectionValue<?>) requestBodyAndHeaders("direct:readcollectionprop", null, headers);
+        final ClientCollectionValue<?> collectionProperty =
+                (ClientCollectionValue<?>) requestBodyAndHeaders("direct:readcollectionprop", null, headers);
         assertTrue(collectionProperty.isCollection());
         assertEquals(1, collectionProperty.size());
         Iterator<?> propIter = collectionProperty.iterator();
         Object propValueObj = propIter.next();
         assertIsInstanceOf(ClientComplexValue.class, propValueObj);
         ClientComplexValue propValue = (ClientComplexValue) propValueObj;
-        assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
+        assertEquals(
+                "Boise",
+                propValue.get("City").getComplexValue().get("Name").getValue().toString());
 
         final ClientEntity entity = (ClientEntity) requestBodyAndHeaders("direct:readentitybyid", null, headers);
         assertNotNull(entity);
         assertEquals("Russell", entity.getProperty("FirstName").getValue().toString());
 
-        final ClientEntity unbFuncReturn = (ClientEntity) requestBodyAndHeaders("direct:callunboundfunction", null, headers);
+        final ClientEntity unbFuncReturn =
+                (ClientEntity) requestBodyAndHeaders("direct:callunboundfunction", null, headers);
         assertNotNull(unbFuncReturn);
 
         // should be reflection free
@@ -155,8 +166,10 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
         assertEquals("", entity.getProperty("MiddleName").getValue().toString());
 
         // update
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
 
         HttpStatusCode status = requestBody("direct:update-entity", clientEntity);
         assertNotNull(status, "Update status");
@@ -220,10 +233,14 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
     @Test
     public void testBoundActionRequest() {
         final ClientEntity clientEntity = objFactory.newEntity(null);
-        clientEntity.getProperties().add(
-                objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
 
         final HttpStatusCode status = requestBody("direct:bound-action-people", clientEntity);
         assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
@@ -240,8 +257,8 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
 
-        Map<String, String> responseHttpHeaders = (Map<String, String>) mockEndpoint.getExchanges().get(0).getIn()
-                .getHeader("CamelOlingo4.responseHttpHeaders");
+        Map<String, String> responseHttpHeaders = (Map<String, String>)
+                mockEndpoint.getExchanges().get(0).getIn().getHeader("CamelOlingo4.responseHttpHeaders");
         assertEquals(responseHttpHeaders.get("ETag"), entity.getETag());
 
         Map<String, String> endpointHttpHeaders = new HashMap<>();
@@ -377,16 +394,18 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
 
                 from("direct:delete-with-etag").to("olingo4://delete/Airlines('AA')");
 
-                from("direct:read-people-nofilterseen").to("olingo4://read/" + PEOPLE).to("mock:producer-noalreadyseen");
+                from("direct:read-people-nofilterseen")
+                        .to("olingo4://read/" + PEOPLE)
+                        .to("mock:producer-noalreadyseen");
 
-                from("direct:read-people-filterseen").to("olingo4://read/" + PEOPLE + "?filterAlreadySeen=true")
+                from("direct:read-people-filterseen")
+                        .to("olingo4://read/" + PEOPLE + "?filterAlreadySeen=true")
                         .to("mock:producer-alreadyseen");
 
                 // test routes action's
                 from("direct:unbound-action-ResetDataSource").to("olingo4://action/ResetDataSource");
 
-                from("direct:bound-action-people").to(
-                        "olingo4://action/" + TEST_PEOPLE + "/Trippin.ShareTrip");
+                from("direct:bound-action-people").to("olingo4://action/" + TEST_PEOPLE + "/Trippin.ShareTrip");
             }
         };
     }

@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service;
 
 import org.apache.camel.component.wordpress.api.model.Comment;
 import org.apache.camel.component.wordpress.api.model.CommentSearchCriteria;
 
-public interface WordpressServiceComments extends WordpressCrudService<Comment, CommentSearchCriteria> {
-
-}
+public interface WordpressServiceComments extends WordpressCrudService<Comment, CommentSearchCriteria> {}

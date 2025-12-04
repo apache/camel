@@ -57,14 +57,16 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
         // one of Knative traits needs to be explicitly enabled
         boolean enabled = false;
         if (traitConfig.getKnativeService() != null) {
-            enabled = Optional.ofNullable(traitConfig.getKnativeService().getEnabled()).orElse(false);
+            enabled = Optional.ofNullable(traitConfig.getKnativeService().getEnabled())
+                    .orElse(false);
         }
         return enabled && TraitHelper.exposesHttpService(context, true);
     }
 
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
-        KnativeService serviceTrait = Optional.ofNullable(traitConfig.getKnativeService()).orElseGet(KnativeService::new);
+        KnativeService serviceTrait =
+                Optional.ofNullable(traitConfig.getKnativeService()).orElseGet(KnativeService::new);
 
         Map<String, String> serviceAnnotations = new HashMap<>();
         // Set Knative rollout
@@ -78,20 +80,26 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
 
         Map<String, String> revisionAnnotations = new HashMap<>();
         // Set Knative auto-scaling
-        if (serviceTrait.get_class() != null && ObjectHelper.isNotEmpty(serviceTrait.get_class().getValue())) {
-            revisionAnnotations.put(knativeServingClassAnnotation, serviceTrait.get_class().getValue());
+        if (serviceTrait.get_class() != null
+                && ObjectHelper.isNotEmpty(serviceTrait.get_class().getValue())) {
+            revisionAnnotations.put(
+                    knativeServingClassAnnotation, serviceTrait.get_class().getValue());
         }
         if (ObjectHelper.isNotEmpty(serviceTrait.getAutoscalingMetric())) {
             revisionAnnotations.put(knativeServingMetricAnnotation, serviceTrait.getAutoscalingMetric());
         }
         if (serviceTrait.getAutoscalingTarget() != null) {
-            revisionAnnotations.put(knativeServingTargetAnnotation, serviceTrait.getAutoscalingTarget().toString());
+            revisionAnnotations.put(
+                    knativeServingTargetAnnotation,
+                    serviceTrait.getAutoscalingTarget().toString());
         }
         if (serviceTrait.getMinScale() != null && serviceTrait.getMinScale() > 0) {
-            revisionAnnotations.put(knativeServingMinScaleAnnotation, serviceTrait.getMinScale().toString());
+            revisionAnnotations.put(
+                    knativeServingMinScaleAnnotation, serviceTrait.getMinScale().toString());
         }
         if (serviceTrait.getMaxScale() != null && serviceTrait.getMaxScale() > 0) {
-            revisionAnnotations.put(knativeServingMaxScaleAnnotation, serviceTrait.getMaxScale().toString());
+            revisionAnnotations.put(
+                    knativeServingMaxScaleAnnotation, serviceTrait.getMaxScale().toString());
         }
 
         Map<String, String> serviceLabels = new HashMap<>();
@@ -105,12 +113,15 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
 
         // Make sure the Eventing webhook will select the source resource, in order to inject the sink information.
         // This is necessary for Knative environments, that are configured with SINK_BINDING_SELECTION_MODE=inclusion.
-        // - https://knative.dev/v1.3-docs/eventing/custom-event-source/sinkbinding/create-a-sinkbinding/#optional-choose-sinkbinding-namespace-selection-behavior
+        // -
+        // https://knative.dev/v1.3-docs/eventing/custom-event-source/sinkbinding/create-a-sinkbinding/#optional-choose-sinkbinding-namespace-selection-behavior
         // - https://github.com/knative/operator/blob/release-1.2/docs/configuration.md#specsinkbindingselectionmode
         serviceLabels.put("bindings.knative.dev/include", "true");
 
-        if (serviceTrait.getVisibility() != null && ObjectHelper.isNotEmpty(serviceTrait.getVisibility().getValue())) {
-            serviceLabels.put(knativeServingVisibilityLabel, serviceTrait.getVisibility().getValue());
+        if (serviceTrait.getVisibility() != null
+                && ObjectHelper.isNotEmpty(serviceTrait.getVisibility().getValue())) {
+            serviceLabels.put(
+                    knativeServingVisibilityLabel, serviceTrait.getVisibility().getValue());
         }
 
         ServiceBuilder service = new ServiceBuilder()
@@ -128,14 +139,17 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
                 .endTemplate()
                 .endSpec();
 
-        Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
-        Optional.ofNullable(containerTrait.getImagePullSecrets()).orElseGet(List::of).forEach(sec -> service.editSpec()
-                .editOrNewTemplate()
-                .editOrNewSpec()
-                .addNewImagePullSecret(sec)
-                .endSpec()
-                .endTemplate()
-                .endSpec());
+        Container containerTrait =
+                Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
+        Optional.ofNullable(containerTrait.getImagePullSecrets())
+                .orElseGet(List::of)
+                .forEach(sec -> service.editSpec()
+                        .editOrNewTemplate()
+                        .editOrNewSpec()
+                        .addNewImagePullSecret(sec)
+                        .endSpec()
+                        .endTemplate()
+                        .endSpec());
 
         if (serviceTrait.getTimeoutSeconds() != null && serviceTrait.getTimeoutSeconds() > 0) {
             service.editSpec()
@@ -159,5 +173,4 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
 
         context.add(service);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -26,9 +30,6 @@ import org.apache.camel.component.aws.secretsmanager.SecretsManagerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SecretsManagerBatchGetSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
@@ -73,7 +74,12 @@ public class SecretsManagerBatchGetSecretProducerLocalstackIT extends AwsSecrets
         assertEquals(2, secrets.size());
         assertEquals("Secret 2", secrets.get(0));
         assertEquals("Secret 1", secrets.get(1));
-        assertEquals(2, exchangeFinal.getMessage().getHeader(SecretsManagerConstants.SECRET_VERSION_IDS, List.class).size());
+        assertEquals(
+                2,
+                exchangeFinal
+                        .getMessage()
+                        .getHeader(SecretsManagerConstants.SECRET_VERSION_IDS, List.class)
+                        .size());
     }
 
     @Override
@@ -81,8 +87,7 @@ public class SecretsManagerBatchGetSecretProducerLocalstackIT extends AwsSecrets
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret");
+                from("direct:createSecret").to("aws-secrets-manager://test?operation=createSecret");
 
                 from("direct:batchGetSecret")
                         .to("aws-secrets-manager://test?operation=batchGetSecret")

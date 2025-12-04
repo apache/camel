@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.shiro.security;
 
 import java.util.ArrayList;
@@ -87,13 +88,14 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
         this.setAlwaysReauthenticate(alwaysReauthenticate);
     }
 
-    public ShiroSecurityPolicy(String iniResourcePath, byte[] passPhrase, boolean alwaysReauthenticate,
-                               List<Permission> permissionsList) {
+    public ShiroSecurityPolicy(
+            String iniResourcePath, byte[] passPhrase, boolean alwaysReauthenticate, List<Permission> permissionsList) {
         this(iniResourcePath, passPhrase, alwaysReauthenticate);
         this.setPermissionsList(permissionsList);
     }
 
-    public ShiroSecurityPolicy(Ini ini, byte[] passPhrase, boolean alwaysReauthenticate, List<Permission> permissionsList) {
+    public ShiroSecurityPolicy(
+            Ini ini, byte[] passPhrase, boolean alwaysReauthenticate, List<Permission> permissionsList) {
         this(ini, passPhrase, alwaysReauthenticate);
         this.setPermissionsList(permissionsList);
     }

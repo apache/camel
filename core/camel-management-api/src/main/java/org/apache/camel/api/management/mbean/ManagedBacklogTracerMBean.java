@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import java.util.List;
@@ -72,10 +73,14 @@ public interface ManagedBacklogTracerMBean {
     @ManagedAttribute(description = "Number of traced messages in the backlog")
     long getQueueSize();
 
-    @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
+    @ManagedAttribute(
+            description =
+                    "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
     int getBodyMaxChars();
 
-    @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
+    @ManagedAttribute(
+            description =
+                    "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
     void setBodyMaxChars(int bodyMaxChars);
 
     @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
@@ -137,5 +142,4 @@ public interface ManagedBacklogTracerMBean {
 
     @ManagedOperation(description = "Clears the backlog")
     void clear();
-
 }

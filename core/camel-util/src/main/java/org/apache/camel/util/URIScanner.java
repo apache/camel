@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.apache.camel.util.URISupport.RAW_TOKEN_END;
+import static org.apache.camel.util.URISupport.RAW_TOKEN_PREFIX;
+import static org.apache.camel.util.URISupport.RAW_TOKEN_START;
 
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -24,10 +29,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.camel.util.URISupport.RAW_TOKEN_END;
-import static org.apache.camel.util.URISupport.RAW_TOKEN_PREFIX;
-import static org.apache.camel.util.URISupport.RAW_TOKEN_START;
 
 /**
  * RAW syntax aware URI scanner that provides various URI manipulations.
@@ -212,8 +213,7 @@ class URIScanner {
     }
 
     private static int scanRawToEnd(
-            String str, int start, String tokenStart, char tokenEnd,
-            List<Pair<Integer>> answer) {
+            String str, int start, String tokenStart, char tokenEnd, List<Pair<Integer>> answer) {
         // we search the first end bracket to close the RAW token
         // as opposed to parsing query, this doesn't allow the occurrences of end brackets
         // inbetween because this may be used on the host/path parts of URI
@@ -267,5 +267,4 @@ class URIScanner {
 
         return input;
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
@@ -24,18 +29,14 @@ import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SjmsEndpointConnectionSettingsTest extends CamelTestSupport {
-    private final ActiveMQConnectionFactory connectionFactory
-            = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+    private final ActiveMQConnectionFactory connectionFactory =
+            new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
 
     @Test
     public void testConnectionFactory() {
-        Endpoint endpoint
-                = context.getEndpoint("sjms:queue:test.SjmsEndpointConnectionSettingsTest?connectionFactory=#activemq");
+        Endpoint endpoint =
+                context.getEndpoint("sjms:queue:test.SjmsEndpointConnectionSettingsTest?connectionFactory=#activemq");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint qe = (SjmsEndpoint) endpoint;

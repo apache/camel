@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.transformer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,12 +34,12 @@ public class LoadTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
     private String packageScan;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String defaults;
 
-    public LoadTransformerDefinition() {
-    }
+    public LoadTransformerDefinition() {}
 
     protected LoadTransformerDefinition(LoadTransformerDefinition source) {
         super(source);
@@ -72,5 +73,4 @@ public class LoadTransformerDefinition extends TransformerDefinition {
     public void setPackageScan(String packageScan) {
         this.packageScan = packageScan;
     }
-
 }

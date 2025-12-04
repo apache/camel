@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.scan;
 
 import java.lang.annotation.Annotation;
@@ -34,7 +35,8 @@ public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
         this(annotations, false);
     }
 
-    public AnnotatedWithAnyPackageScanFilter(Set<Class<? extends Annotation>> annotations, boolean checkMetaAnnotations) {
+    public AnnotatedWithAnyPackageScanFilter(
+            Set<Class<? extends Annotation>> annotations, boolean checkMetaAnnotations) {
         this.annotations = annotations;
         this.checkMetaAnnotations = checkMetaAnnotations;
     }

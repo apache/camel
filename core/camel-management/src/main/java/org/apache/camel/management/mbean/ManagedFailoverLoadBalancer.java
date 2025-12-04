@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Iterator;
@@ -42,7 +43,8 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
 
     private String exceptions;
 
-    public ManagedFailoverLoadBalancer(CamelContext context, FailOverLoadBalancer processor, LoadBalanceDefinition definition) {
+    public ManagedFailoverLoadBalancer(
+            CamelContext context, FailOverLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
     }
 
@@ -136,9 +138,7 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
 
                 CompositeType ct = CamelOpenMBeanTypes.loadbalancerExceptionsCompositeType();
                 CompositeData data = new CompositeDataSupport(
-                        ct,
-                        new String[] { "exception", "failures" },
-                        new Object[] { name, counter });
+                        ct, new String[] {"exception", "failures"}, new Object[] {name, counter});
                 answer.put(data);
             }
             if (empty) {
@@ -148,9 +148,7 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
 
                 CompositeType ct = CamelOpenMBeanTypes.loadbalancerExceptionsCompositeType();
                 CompositeData data = new CompositeDataSupport(
-                        ct,
-                        new String[] { "exception", "failures" },
-                        new Object[] { name, counter });
+                        ct, new String[] {"exception", "failures"}, new Object[] {name, counter});
                 answer.put(data);
             }
 
@@ -159,5 +157,4 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

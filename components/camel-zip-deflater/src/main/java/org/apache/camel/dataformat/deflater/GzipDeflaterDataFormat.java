@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.deflater;
 
 import java.io.InputStream;
@@ -42,7 +43,8 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
+        InputStream is =
+                exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
         GzipCompressorOutputStream zipOutput = new GzipCompressorOutputStream(stream);
         try {

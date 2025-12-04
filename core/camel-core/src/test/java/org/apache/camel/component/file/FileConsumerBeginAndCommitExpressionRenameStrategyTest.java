@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -28,14 +32,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test for the FileRenameStrategy using preMoveExpression and expression options
  */
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends ContextTestSupport {
 
     @Test
@@ -56,8 +58,10 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     public void testIllegalOptions() {
         Endpoint ep = context.getEndpoint(fileUri("?move=../done/${file:name}&delete=true"));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> ep.createConsumer(exchange -> {
-        }), "Should have thrown an exception");
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> ep.createConsumer(exchange -> {}),
+                "Should have thrown an exception");
     }
 
     @Override
@@ -65,19 +69,19 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri(
-                        "reports?preMove=../inprogress/${file:name.noext}.bak&move=../done/${file:name}&initialDelay=0&delay=10"))
+                                "reports?preMove=../inprogress/${file:name.noext}.bak&move=../done/${file:name}&initialDelay=0&delay=10"))
                         .autoStartup(false)
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) {
-                                GenericFile<File> file
-                                        = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+                                GenericFile<File> file =
+                                        (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
                                 assertNotNull(file);
                                 assertTrue(file.getRelativeFilePath().contains("inprogress"));
                             }
-                        }).to("mock:report");
+                        })
+                        .to("mock:report");
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,13 +34,14 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
-
 /**
  * Copy test-infra metadata.json into the catalog
  */
-@Mojo(name = "update-test-infra-metadata", threadSafe = true,
-      requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(
+        name = "update-test-infra-metadata",
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class UpdateTestInfraMetadataMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/")

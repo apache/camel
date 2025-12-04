@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -29,5 +30,4 @@ public class ListServiceITCase extends JBangTestSupport {
         checkLogContains("http://0.0.0.0:8080/hello");
         checkCommandOutputs("get service", "platform-http");
     }
-
 }

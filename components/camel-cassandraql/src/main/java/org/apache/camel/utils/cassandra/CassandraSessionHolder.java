@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.utils.cassandra;
 
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -29,7 +30,7 @@ public class CassandraSessionHolder {
     /**
      * Keyspace name
      */
-    //private String keyspace; // this field is reported unused
+    // private String keyspace; // this field is reported unused
     /**
      * Indicates whether Session is externally managed
      */
@@ -40,8 +41,7 @@ public class CassandraSessionHolder {
         this.managedSession = false;
     }
 
-    public void start() {
-    }
+    public void start() {}
 
     public void stop() {
         if (!managedSession) {

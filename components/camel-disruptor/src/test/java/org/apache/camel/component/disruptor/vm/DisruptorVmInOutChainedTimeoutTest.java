@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
@@ -38,8 +39,7 @@ public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             // the chained vm caused the timeout
-            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
-                    e.getCause());
+            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
             assertEquals(200, cause.getTimeout());
         }
 
@@ -53,10 +53,7 @@ public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor-vm:b")
-                        .to("mock:b")
-                        .delay(500)
-                        .transform().constant("Bye World");
+                from("disruptor-vm:b").to("mock:b").delay(500).transform().constant("Bye World");
             }
         };
     }

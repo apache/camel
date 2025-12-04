@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,16 +39,20 @@ public class TraceInterceptorTest extends ContextTestSupport {
                 // enable tracing
                 getContext().setTracing(true);
 
-                from("direct:start").routeId("foo").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // do nothing
-                    }
+                from("direct:start")
+                        .routeId("foo")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // do nothing
+                            }
 
-                    @Override
-                    public String toString() {
-                        return "MyProcessor";
-                    }
-                }).to("mock:foo").to("direct:bar");
+                            @Override
+                            public String toString() {
+                                return "MyProcessor";
+                            }
+                        })
+                        .to("mock:foo")
+                        .to("direct:bar");
 
                 from("direct:bar").routeId("bar").to("mock:bar");
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.model;
 
 public final class RouteCoverageNode {
@@ -109,11 +110,11 @@ public final class RouteCoverageNode {
     @Override
     public String toString() {
         return "RouteCoverageNode["
-               + "lineNumber=" + lineNumber
-               + ", count=" + count
-               + ", name='" + name + '\''
-               + ", level=" + level
-               + ", className='" + className + '\''
-               + ']';
+                + "lineNumber=" + lineNumber
+                + ", count=" + count
+                + ", name='" + name + '\''
+                + ", level=" + level
+                + ", className='" + className + '\''
+                + ']';
     }
 }

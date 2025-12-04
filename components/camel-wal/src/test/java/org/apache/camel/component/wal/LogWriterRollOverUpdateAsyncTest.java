@@ -30,10 +30,12 @@ public class LogWriterRollOverUpdateAsyncTest extends LogWriterRollOverUpdateAsy
     protected void asyncGenerate() {
         try {
             LOG.trace("Generating ...");
-            generateDataFilePredictable(e -> {
-                LOG.debug("Putting into the queue: {}", e);
-                entryInfos.add(e);
-            }, logWriter);
+            generateDataFilePredictable(
+                    e -> {
+                        LOG.debug("Putting into the queue: {}", e);
+                        entryInfos.add(e);
+                    },
+                    logWriter);
             LOG.trace("Done generating records");
         } catch (IOException e) {
             LOG.error("Failed to generate records: {}", e.getMessage(), e);
@@ -51,5 +53,4 @@ public class LogWriterRollOverUpdateAsyncTest extends LogWriterRollOverUpdateAsy
     void testReadWriteUpdateRecordsWithRollOver() throws IOException, InterruptedException {
         runTest((int) RECORD_COUNT + 1);
     }
-
 }

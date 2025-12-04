@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
  * Marks the {@link Endpoint} as support asynchronous non-blocking routing in its consumer and producer.
  */
-public interface AsyncEndpoint extends Endpoint {
-
-}
+public interface AsyncEndpoint extends Endpoint {}

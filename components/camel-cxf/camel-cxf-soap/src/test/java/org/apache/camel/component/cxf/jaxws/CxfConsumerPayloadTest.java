@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,34 +35,35 @@ import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
 
-    protected static final String ECHO_RESPONSE
-            = "<ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-              + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
-              + "</ns1:echoResponse>";
-    protected static final String ECHO_BOOLEAN_RESPONSE
-            = "<ns1:echoBooleanResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-              + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">true</return>"
-              + "</ns1:echoBooleanResponse>";
+    protected static final String ECHO_RESPONSE =
+            "<ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                    + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
+                    + "</ns1:echoResponse>";
+    protected static final String ECHO_BOOLEAN_RESPONSE =
+            "<ns1:echoBooleanResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                    + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">true</return>"
+                    + "</ns1:echoBooleanResponse>";
     protected static final String ECHO_REQUEST = "<ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                                 + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
-    protected static final String ECHO_BOOLEAN_REQUEST
-            = "<ns1:echoBoolean xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-              + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">true</arg0></ns1:echoBoolean>";
+            + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
+    protected static final String ECHO_BOOLEAN_REQUEST =
+            "<ns1:echoBoolean xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                    + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">true</arg0></ns1:echoBoolean>";
 
     protected static final String ELEMENT_NAMESPACE = "http://jaxws.cxf.component.camel.apache.org/";
 
     protected void checkRequest(String expect, String request) {
-        //REVIST use a more reliable comparison to tolerate some namespaces being added to the root element
+        // REVIST use a more reliable comparison to tolerate some namespaces being added to the root element
         if (expect.equals("ECHO_REQUEST")) {
-            assertTrue(request.startsWith(ECHO_REQUEST.substring(0, 66))
-                    && request.endsWith(ECHO_REQUEST.substring(67)), "Get a wrong request");
+            assertTrue(
+                    request.startsWith(ECHO_REQUEST.substring(0, 66)) && request.endsWith(ECHO_REQUEST.substring(67)),
+                    "Get a wrong request");
         } else {
-            assertTrue(request.startsWith(ECHO_BOOLEAN_REQUEST.substring(0, 73))
-                    && request.endsWith(ECHO_BOOLEAN_REQUEST.substring(74)), "Get a wrong request");
+            assertTrue(
+                    request.startsWith(ECHO_BOOLEAN_REQUEST.substring(0, 73))
+                            && request.endsWith(ECHO_BOOLEAN_REQUEST.substring(74)),
+                    "Get a wrong request");
         }
     }
 

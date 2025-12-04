@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chunk;
 
 import org.apache.camel.spi.Metadata;
@@ -26,7 +27,9 @@ public final class ChunkConstants {
     /**
      * Header containing a Chunk template location
      */
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint configured.", javaType = "String")
+    @Metadata(
+            description = "A URI for the template resource to use instead of the endpoint configured.",
+            javaType = "String")
     public static final String CHUNK_RESOURCE_URI = "ChunkResourceUri";
 
     /**
@@ -48,5 +51,4 @@ public final class ChunkConstants {
     private ChunkConstants() {
         // Utility class
     }
-
 }

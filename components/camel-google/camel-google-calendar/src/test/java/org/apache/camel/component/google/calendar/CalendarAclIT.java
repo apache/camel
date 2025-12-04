@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarAclApiMethod;
@@ -24,23 +27,24 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$Acl} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
-           disabledReason = "Google Calendar credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
+        disabledReason = "Google Calendar credentials were not provided")
 public class CalendarAclIT extends AbstractGoogleCalendarTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CalendarAclIT.class);
-    private static final String PATH_PREFIX
-            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarAclApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection()
+            .getApiName(CalendarAclApiMethod.class)
+            .getName();
 
     @Test
     public void testList() {
         // using String message body for single parameter "calendarId"
-        final com.google.api.services.calendar.model.Acl result = requestBody("direct://LIST", getCalendar().getId());
+        final com.google.api.services.calendar.model.Acl result =
+                requestBody("direct://LIST", getCalendar().getId());
 
         // should have at least one rule (reader, owner, etc.) for the calendar
         // or we wouldn't be able to view it!
@@ -73,7 +77,6 @@ public class CalendarAclIT extends AbstractGoogleCalendarTestSupport {
 
                 // test route for watch
                 from("direct://WATCH").to("google-calendar://" + PATH_PREFIX + "/watch");
-
             }
         };
     }

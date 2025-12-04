@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
 
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.junit.jupiter.api.Test;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 /**
  * Unit testing for using a MinaProducer that it can shutdown properly (CAMEL-395)
@@ -42,7 +43,8 @@ public class MinaProducerShutdownMockTest extends BaseMinaTest {
         SocketConnector mockConnector = mock(SocketConnector.class);
 
         // normal camel code to get a producer
-        Endpoint endpoint = context.getEndpoint(String.format("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort()));
+        Endpoint endpoint =
+                context.getEndpoint(String.format("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort()));
         Exchange exchange = endpoint.createExchange();
         Producer producer = endpoint.createProducer();
         producer.start();
@@ -74,7 +76,8 @@ public class MinaProducerShutdownMockTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort()).to("mock:result");
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort())
+                        .to("mock:result");
             }
         };
     }

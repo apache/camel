@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2;
 
 import org.apache.camel.component.dhis2.internal.Dhis2ApiName;
@@ -36,8 +37,11 @@ public class Dhis2Configuration {
     @UriParam(description = "Password of the DHIS2 username", secret = true, label = "security")
     private String password;
 
-    @UriParam(description = "Personal access token to authenticate with DHIS2. This option is mutually exclusive to username and password",
-              secret = true, label = "security")
+    @UriParam(
+            description =
+                    "Personal access token to authenticate with DHIS2. This option is mutually exclusive to username and password",
+            secret = true,
+            label = "security")
     private String personalAccessToken;
 
     @UriPath(description = "API operation (e.g., get)")
@@ -48,8 +52,10 @@ public class Dhis2Configuration {
     @Metadata(required = true)
     private String methodName;
 
-    @UriParam(label = "advanced",
-              description = "References a user-defined org.hisp.dhis.integration.sdk.api.Dhis2Client. This option is mutually exclusive to the baseApiUrl, username, password, and personalAccessToken options")
+    @UriParam(
+            label = "advanced",
+            description =
+                    "References a user-defined org.hisp.dhis.integration.sdk.api.Dhis2Client. This option is mutually exclusive to the baseApiUrl, username, password, and personalAccessToken options")
     private Dhis2Client client;
 
     public String getBaseApiUrl() {

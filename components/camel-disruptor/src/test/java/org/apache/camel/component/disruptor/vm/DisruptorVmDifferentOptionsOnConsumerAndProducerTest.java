@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DisruptorVmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestSupport {
 
@@ -42,8 +43,7 @@ public class DisruptorVmDifferentOptionsOnConsumerAndProducerTest extends Abstra
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor-vm:foo?concurrentConsumers=5")
-                        .to("mock:result");
+                from("disruptor-vm:foo?concurrentConsumers=5").to("mock:result");
             }
         };
     }
@@ -53,8 +53,7 @@ public class DisruptorVmDifferentOptionsOnConsumerAndProducerTest extends Abstra
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("disruptor-vm:foo");
+                from("direct:start").to("disruptor-vm:foo");
             }
         };
     }

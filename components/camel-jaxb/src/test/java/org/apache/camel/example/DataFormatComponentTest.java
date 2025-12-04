@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,15 +25,18 @@ public class DataFormatComponentTest extends DataFormatTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("dataformat:jaxb:marshal?contextPath=org.apache.camel.example").to("direct:marshalled");
+                from("direct:start")
+                        .to("dataformat:jaxb:marshal?contextPath=org.apache.camel.example")
+                        .to("direct:marshalled");
 
-                from("direct:marshalled").to("dataformat:jaxb:unmarshal?contextPath=org.apache.camel.example")
+                from("direct:marshalled")
+                        .to("dataformat:jaxb:unmarshal?contextPath=org.apache.camel.example")
                         .to("mock:result");
 
-                from("direct:prettyPrint").to("dataformat:jaxb:marshal?contextPath=org.apache.camel.foo.bar&prettyPrint=true")
+                from("direct:prettyPrint")
+                        .to("dataformat:jaxb:marshal?contextPath=org.apache.camel.foo.bar&prettyPrint=true")
                         .to("mock:result");
             }
         };
     }
-
 }

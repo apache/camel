@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcProducerOutputTypeSelectOneOutputClassTest extends AbstractJdbcTestSupport {
 
@@ -37,8 +38,8 @@ public class JdbcProducerOutputTypeSelectOneOutputClassTest extends AbstractJdbc
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CustomerModel model = assertIsInstanceOf(CustomerModel.class,
-                mock.getReceivedExchanges().get(0).getIn().getBody(CustomerModel.class));
+        CustomerModel model = assertIsInstanceOf(
+                CustomerModel.class, mock.getReceivedExchanges().get(0).getIn().getBody(CustomerModel.class));
         assertEquals("cust1", model.getId());
         assertEquals("jstrachan", model.getName());
     }
@@ -48,7 +49,8 @@ public class JdbcProducerOutputTypeSelectOneOutputClassTest extends AbstractJdbc
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("jdbc:testdb?outputType=SelectOne&outputClass=org.apache.camel.component.jdbc.CustomerModel")
+                        .to(
+                                "jdbc:testdb?outputType=SelectOne&outputClass=org.apache.camel.component.jdbc.CustomerModel")
                         .to("mock:result");
             }
         };

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.mtom;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -40,10 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  */
@@ -57,14 +58,15 @@ public class CxfMtomPOJOProducerTest {
 
     @Autowired
     protected CamelContext context;
+
     private Endpoint endpoint;
 
     @BeforeEach
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:" + port + "/CxfMtomPOJOProducerTest/jaxws-mtom/hello", getImpl());
+        endpoint =
+                Endpoint.publish("http://localhost:" + port + "/CxfMtomPOJOProducerTest/jaxws-mtom/hello", getImpl());
         SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
         binding.setMTOMEnabled(true);
-
     }
 
     @AfterEach
@@ -88,13 +90,13 @@ public class CxfMtomPOJOProducerTest {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new Object[] { photo, image });
-
+                exchange.getIn().setBody(new Object[] {photo, image});
             }
-
         });
 
-        assertEquals(2, exchange.getMessage(AttachmentMessage.class).getAttachments().size(),
+        assertEquals(
+                2,
+                exchange.getMessage(AttachmentMessage.class).getAttachments().size(),
                 "The attachement size should be 2");
 
         Object[] result = exchange.getMessage().getBody(Object[].class);
@@ -106,7 +108,6 @@ public class CxfMtomPOJOProducerTest {
             assertEquals(560, ((BufferedImage) image1.value).getWidth());
             assertEquals(300, ((BufferedImage) image1.value).getHeight());
         }
-
     }
 
     private Image getImage(String name) throws Exception {
@@ -116,5 +117,4 @@ public class CxfMtomPOJOProducerTest {
     protected Object getImpl() {
         return new HelloImpl();
     }
-
 }

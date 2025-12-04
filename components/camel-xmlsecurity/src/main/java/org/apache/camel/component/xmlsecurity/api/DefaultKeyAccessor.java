@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 import java.security.KeyStore;
@@ -41,9 +42,7 @@ public class DefaultKeyAccessor extends DefaultKeySelector implements KeyAccesso
 
     private String provider;
 
-    public DefaultKeyAccessor() {
-
-    }
+    public DefaultKeyAccessor() {}
 
     public String getProvider() {
         return provider;
@@ -70,7 +69,8 @@ public class DefaultKeyAccessor extends DefaultKeySelector implements KeyAccesso
             return null;
         }
         X509Data x509D = kif.newX509Data(Arrays.asList(chain));
-        return kif.newKeyInfo(Collections.singletonList(x509D), "_" + UUID.randomUUID().toString());
+        return kif.newKeyInfo(
+                Collections.singletonList(x509D), "_" + UUID.randomUUID().toString());
     }
 
     private X509Certificate[] getCertificateChain() throws Exception {
@@ -94,5 +94,4 @@ public class DefaultKeyAccessor extends DefaultKeySelector implements KeyAccesso
         }
         return certList.toArray(new X509Certificate[certList.size()]);
     }
-
 }

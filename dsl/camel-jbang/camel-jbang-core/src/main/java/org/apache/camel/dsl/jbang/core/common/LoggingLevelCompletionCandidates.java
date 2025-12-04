@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.Iterator;
@@ -21,8 +22,7 @@ import java.util.List;
 
 public class LoggingLevelCompletionCandidates implements Iterable<String> {
 
-    public LoggingLevelCompletionCandidates() {
-    }
+    public LoggingLevelCompletionCandidates() {}
 
     @Override
     public Iterator<String> iterator() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.io.LineNumberReader;
@@ -186,7 +187,8 @@ public class DebugDevConsole extends AbstractDevConsole {
             // go to next and wait for debugger to suspend again
             watch.restart();
             backlog.stepBreakpoint();
-            while (backlog.isSingleStepMode() && backlog.getSuspendedBreakpointNodeIds().isEmpty()) {
+            while (backlog.isSingleStepMode()
+                    && backlog.getSuspendedBreakpointNodeIds().isEmpty()) {
                 if (watch.taken() > 10000) {
                     return false;
                 }
@@ -325,7 +327,9 @@ public class DebugDevConsole extends AbstractDevConsole {
                 if (h.getNode().getLineNumber() != -1) {
                     jo.put("line", h.getNode().getLineNumber());
                 }
-                String t = ConsoleHelper.loadSourceLine(getCamelContext(), h.getNode().getLocation(),
+                String t = ConsoleHelper.loadSourceLine(
+                        getCamelContext(),
+                        h.getNode().getLocation(),
                         h.getNode().getLineNumber());
                 if (t != null) {
                     jo.put("code", Jsoner.escape(t));

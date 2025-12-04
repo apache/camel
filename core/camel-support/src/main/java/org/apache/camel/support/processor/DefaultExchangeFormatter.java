@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.Map;
@@ -51,61 +52,104 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     @UriParam(label = "formatting", description = "Show route ID.")
     private boolean showRouteId;
+
     @UriParam(label = "formatting", description = "Show route Group.")
     private boolean showRouteGroup;
+
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
-    @UriParam(label = "formatting",
-              description = "Shows the Message Exchange Pattern (or MEP for short).")
+
+    @UriParam(label = "formatting", description = "Shows the Message Exchange Pattern (or MEP for short).")
     private boolean showExchangePattern;
+
     @UriParam(label = "formatting", description = "Show the exchange properties (only custom).")
     private boolean showProperties;
+
     @UriParam(label = "formatting", description = "Show all the exchange properties (both internal and custom).")
     private boolean showAllProperties;
+
     @UriParam(label = "formatting", description = "Show the variables.")
     private boolean showVariables;
+
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
-    @UriParam(label = "formatting", defaultValue = "true",
-              description = "Whether to skip line separators when logging the message body."
+
+    @UriParam(
+            label = "formatting",
+            defaultValue = "true",
+            description =
+                    "Whether to skip line separators when logging the message body."
                             + " This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
     private boolean skipBodyLineSeparator = true;
+
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the message body.")
     private boolean showBody = true;
+
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the body Java type.")
     private boolean showBodyType = true;
-    @UriParam(label = "formatting",
-              description = "If the exchange has an exception, show the exception message (no stacktrace)")
+
+    @UriParam(
+            label = "formatting",
+            description = "If the exchange has an exception, show the exception message (no stacktrace)")
     private boolean showException;
-    @UriParam(label = "formatting",
-              description = "f the exchange has a caught exception, show the exception message (no stack trace)."
+
+    @UriParam(
+            label = "formatting",
+            description =
+                    "f the exchange has a caught exception, show the exception message (no stack trace)."
                             + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT) and for instance a doCatch can catch exceptions.")
     private boolean showCaughtException;
-    @UriParam(label = "formatting",
-              description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
+
+    @UriParam(
+            label = "formatting",
+            description =
+                    "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
     private boolean showStackTrace;
-    @UriParam(label = "formatting",
-              description = "Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used)")
+
+    @UriParam(
+            label = "formatting",
+            description =
+                    "Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used)")
     private boolean showAll;
+
     @UriParam(label = "formatting", description = "If enabled then each information is outputted on a newline.")
     private boolean multiline;
-    @UriParam(label = "formatting",
-              description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
+
+    @UriParam(
+            label = "formatting",
+            description =
+                    "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
     private boolean showFuture;
-    @UriParam(label = "formatting", defaultValue = "true",
-              description = "Whether Camel should show cached stream bodies or not (org.apache.camel.StreamCache).")
+
+    @UriParam(
+            label = "formatting",
+            defaultValue = "true",
+            description = "Whether Camel should show cached stream bodies or not (org.apache.camel.StreamCache).")
     private boolean showCachedStreams = true;
-    @UriParam(label = "formatting",
-              description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then "
+
+    @UriParam(
+            label = "formatting",
+            description =
+                    "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then "
                             + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
     private boolean showStreams;
+
     @UriParam(label = "formatting", description = "If enabled Camel will output files")
     private boolean showFiles;
-    @UriParam(label = "formatting", defaultValue = "10000", description = "Limits the number of characters logged per line.")
+
+    @UriParam(
+            label = "formatting",
+            defaultValue = "10000",
+            description = "Limits the number of characters logged per line.")
     private int maxChars = 10000;
-    @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default",
-              description = "Sets the outputs style to use.")
+
+    @UriParam(
+            label = "formatting",
+            enums = "Default,Tab,Fixed",
+            defaultValue = "Default",
+            description = "Sets the outputs style to use.")
     private OutputStyle style = OutputStyle.Default;
+
     @UriParam(defaultValue = "false", description = "If enabled only the body will be printed out")
     private boolean plain;
 
@@ -265,7 +309,6 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (sb.length() > 1 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
                 sb.replace(0, 2, "");
             }
-
         }
         sb.insert(0, "Exchange[");
         sb.append("]");
@@ -539,7 +582,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected String getBodyAsString(Message message) {
         if (message.getBody() instanceof Future) {
             if (!isShowFuture()) {
@@ -548,8 +591,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
         }
 
-        return MessageHelper.extractBodyForLogging(message, null, isShowCachedStreams(), isShowStreams(), isShowFiles(),
-                getMaxChars(message));
+        return MessageHelper.extractBodyForLogging(
+                message, null, isShowCachedStreams(), isShowStreams(), isShowFiles(), getMaxChars(message));
     }
 
     private int getMaxChars(Message message) {
@@ -578,5 +621,4 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
         }
         return answer;
     }
-
 }

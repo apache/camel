@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -37,42 +38,51 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "onCompletion")
-@XmlType(propOrder = { "onWhen", "outputs" })
+@XmlType(propOrder = {"onWhen", "outputs"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition>
         implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
 
     @XmlTransient
     private ExecutorService executorServiceBean;
+
     @XmlTransient
     private boolean routeScoped = true;
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
-              enums = "AfterConsumer,BeforeConsumer")
+    @Metadata(
+            label = "advanced",
+            javaType = "org.apache.camel.model.OnCompletionMode",
+            defaultValue = "AfterConsumer",
+            enums = "AfterConsumer,BeforeConsumer")
     private String mode;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String onCompleteOnly;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String onFailureOnly;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelProcessing;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
+
     @XmlAttribute(name = "useOriginalMessage")
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useOriginalMessage;
+
     @Metadata(description = "To use an expression to only trigger routing this completion steps in specific situations")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;
 
-    public OnCompletionDefinition() {
-    }
+    public OnCompletionDefinition() {}
 
     protected OnCompletionDefinition(OnCompletionDefinition source) {
         super(source);
@@ -141,8 +151,10 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * @param definition the parent definition that is the route
      */
     public void removeAllOnCompletionDefinition(ProcessorDefinition<?> definition) {
-        definition.getOutputs().removeIf(out -> out instanceof OnCompletionDefinition &&
-                !((OnCompletionDefinition) out).isRouteScoped());
+        definition
+                .getOutputs()
+                .removeIf(out ->
+                        out instanceof OnCompletionDefinition && !((OnCompletionDefinition) out).isRouteScoped());
     }
 
     @Override
@@ -188,7 +200,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         boolean isOnFailureOnly = Boolean.toString(true).equals(onFailureOnly);
         if (isOnFailureOnly) {
             throw new IllegalArgumentException(
-                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: "
+                            + this);
         }
         // must define return type as OutputDefinition and not this type to
         // avoid end user being able
@@ -207,7 +220,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         boolean isOnCompleteOnly = Boolean.toString(true).equals(onCompleteOnly);
         if (isOnCompleteOnly) {
             throw new IllegalArgumentException(
-                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: "
+                            + this);
         }
         // must define return type as OutputDefinition and not this type to
         // avoid end user being able

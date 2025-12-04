@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 import java.io.File;
 
@@ -26,8 +29,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
-
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 /**
  * Updates camel-main with the known component, data-format, and language names.
@@ -78,5 +79,4 @@ public class UpdateMainHelper extends AbstractGeneratorMojo {
             throw new MojoExecutionException("Error updating camel-main", e);
         }
     }
-
 }

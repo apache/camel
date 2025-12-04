@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Map;
@@ -24,10 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JsonPathSplitTest extends CamelTestSupport {
 
     @Override
@@ -36,7 +37,8 @@ public class JsonPathSplitTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .split().jsonpath("$.store.book[*]")
+                        .split()
+                        .jsonpath("$.store.book[*]")
                         .to("mock:authors")
                         .convertBodyTo(String.class);
 
@@ -44,9 +46,7 @@ public class JsonPathSplitTest extends CamelTestSupport {
                         .split(jsonpath("text.div", String.class), "false")
                         .to("mock:result-1");
 
-                from("direct:start-2")
-                        .split(jsonpath("text.div", String.class))
-                        .to("mock:result-2");
+                from("direct:start-2").split(jsonpath("text.div", String.class)).to("mock:result-2");
 
                 from("direct:start-3")
                         .split(jsonpath("text.div", String.class), "#")
@@ -64,11 +64,19 @@ public class JsonPathSplitTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Map row = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(Map.class);
+        Map row = getMockEndpoint("mock:authors")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(Map.class);
         assertEquals("Nigel Rees", row.get("author"));
         assertEquals(Double.valueOf("8.95"), row.get("price"));
 
-        row = getMockEndpoint("mock:authors").getReceivedExchanges().get(1).getIn().getBody(Map.class);
+        row = getMockEndpoint("mock:authors")
+                .getReceivedExchanges()
+                .get(1)
+                .getIn()
+                .getBody(Map.class);
         assertEquals("Evelyn Waugh", row.get("author"));
         assertEquals(Double.valueOf("12.99"), row.get("price"));
 
@@ -111,5 +119,4 @@ public class JsonPathSplitTest extends CamelTestSupport {
         template.sendBody("direct:start-3", json);
         m.assertIsSatisfied();
     }
-
 }

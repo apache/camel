@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.maven;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.util.List;
@@ -25,12 +32,6 @@ import org.apache.camel.catalog.DefaultRuntimeProvider;
 import org.apache.camel.catalog.impl.CatalogHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Cannot run on CI servers so run manually")
 public class MavenVersionManagerManualTest {
@@ -100,8 +101,10 @@ public class MavenVersionManagerManualTest {
         boolean loaded = catalog.loadVersion(version);
         assertTrue(loaded);
 
-        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(),
-                catalog.getRuntimeProvider().getProviderArtifactId(), version);
+        loaded = catalog.loadRuntimeProviderVersion(
+                catalog.getRuntimeProvider().getProviderGroupId(),
+                catalog.getRuntimeProvider().getProviderArtifactId(),
+                version);
         assertTrue(loaded);
 
         assertEquals(version, catalog.getLoadedVersion());
@@ -125,8 +128,10 @@ public class MavenVersionManagerManualTest {
         boolean loaded = catalog.loadVersion(version);
         assertTrue(loaded);
 
-        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(),
-                catalog.getRuntimeProvider().getProviderArtifactId(), version);
+        loaded = catalog.loadRuntimeProviderVersion(
+                catalog.getRuntimeProvider().getProviderGroupId(),
+                catalog.getRuntimeProvider().getProviderArtifactId(),
+                version);
         assertTrue(loaded);
 
         assertEquals(version, catalog.getLoadedVersion());
@@ -149,5 +154,4 @@ public class MavenVersionManagerManualTest {
         boolean loaded = manager.loadVersion("2.99");
         assertFalse(loaded);
     }
-
 }

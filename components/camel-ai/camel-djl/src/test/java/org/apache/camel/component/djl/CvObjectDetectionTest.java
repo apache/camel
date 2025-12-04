@@ -48,5 +48,4 @@ public class CvObjectDetectionTest extends CamelTestSupport {
             }
         };
     }
-
 }

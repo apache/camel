@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client;
+
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Serializable;
 
@@ -28,12 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Testing different ways to specify node IDs
@@ -53,7 +54,8 @@ public class NodeIdTest extends AbstractMiloServerTest {
     @Test
     public void testFull1() {
         final String s = String.format("nsu=%s;s=%s", MiloServerComponent.DEFAULT_NAMESPACE_URI, "item-1");
-        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")",
+        testUri(
+                "milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")",
                 MiloServerComponent.DEFAULT_NAMESPACE_URI,
                 "item-1");
     }
@@ -61,35 +63,49 @@ public class NodeIdTest extends AbstractMiloServerTest {
     @Test
     public void testFull2() {
         final String s = String.format("ns=%s;s=%s", 1, "item-1");
-        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")", ushort(1), "item-1");
+        testUri(
+                "milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")",
+                ushort(1),
+                "item-1");
     }
 
     @Test
     public void testFull3() {
         final String s = String.format("ns=%s;i=%s", 1, 2);
-        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")", ushort(1), uint(2));
+        testUri(
+                "milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")",
+                ushort(1),
+                uint(2));
     }
 
     @Test
     public void testFull1NonRaw() {
         final String s = String.format("ns=%s;i=%s", 1, 2);
-        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node="
-                + UrlEscapers.urlFormParameterEscaper().escape(s), ushort(1), uint(2));
+        testUri(
+                "milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node="
+                        + UrlEscapers.urlFormParameterEscaper().escape(s),
+                ushort(1),
+                uint(2));
     }
 
     @Test
     public void testDocURL() {
-        testUri("milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)", "http://foo.bar",
+        testUri(
+                "milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)",
+                "http://foo.bar",
                 "foo/bar");
     }
 
     @Test
     public void testMixed() {
         // This must fail since "node" is incomplete
-        assertThrows(ResolveEndpointFailedException.class,
-                () -> testUri("milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri="
-                              + MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                        null, null));
+        assertThrows(
+                ResolveEndpointFailedException.class,
+                () -> testUri(
+                        "milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri="
+                                + MiloServerComponent.DEFAULT_NAMESPACE_URI,
+                        null,
+                        null));
     }
 
     private void testUri(final String uri, final Serializable namespace, final Serializable partialNodeId) {
@@ -106,5 +122,4 @@ public class NodeIdTest extends AbstractMiloServerTest {
         assertEquals(namespace, en.getNamespaceUri() == null ? en.getNamespaceIndex() : en.getNamespaceUri());
         assertEquals(partialNodeId, en.getIdentifier());
     }
-
 }

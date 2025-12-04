@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AggregateCompletionOnlyTwoTest extends ContextTestSupport {
 
@@ -59,8 +60,11 @@ class AggregateCompletionOnlyTwoTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(repo)
-                        .completionSize(2).to("mock:aggregated");
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(repo)
+                        .completionSize(2)
+                        .to("mock:aggregated");
             }
         };
     }

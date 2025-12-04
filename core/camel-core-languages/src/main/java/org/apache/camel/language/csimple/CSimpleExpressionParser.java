@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple;
 
 import org.apache.camel.CamelContext;
@@ -33,5 +34,4 @@ public class CSimpleExpressionParser {
         SimpleExpressionParser parser = new SimpleExpressionParser(camelContext, expression, true, null);
         return parser.parseCode();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite;
 
 import java.util.Map;
@@ -59,19 +60,20 @@ public class NitriteComponent extends DefaultComponent {
         });
         endpoint.setNitriteDatabase(nitriteDatabase);
 
-        PersistentCollection nitriteCollection = collectionCache.computeIfAbsent(new CollectionCacheKey(endpoint), key -> {
-            if (key.collection != null) {
-                return key.database.getCollection(key.collection);
-            } else {
-                if (key.repositoryName != null) {
-                    return key.database.getRepository(key.repositoryName, key.repositoryClass);
-                } else if (key.repositoryClass != null) {
-                    return key.database.getRepository(key.repositoryClass);
-                } else {
-                    throw new IllegalArgumentException("Required one of option: collection or repositoryClass");
-                }
-            }
-        });
+        PersistentCollection nitriteCollection =
+                collectionCache.computeIfAbsent(new CollectionCacheKey(endpoint), key -> {
+                    if (key.collection != null) {
+                        return key.database.getCollection(key.collection);
+                    } else {
+                        if (key.repositoryName != null) {
+                            return key.database.getRepository(key.repositoryName, key.repositoryClass);
+                        } else if (key.repositoryClass != null) {
+                            return key.database.getRepository(key.repositoryClass);
+                        } else {
+                            throw new IllegalArgumentException("Required one of option: collection or repositoryClass");
+                        }
+                    }
+                });
         endpoint.setNitriteCollection(nitriteCollection);
 
         return endpoint;

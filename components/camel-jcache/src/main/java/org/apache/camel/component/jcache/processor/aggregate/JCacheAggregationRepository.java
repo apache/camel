@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache.processor.aggregate;
 
 import java.util.Collections;
@@ -39,9 +40,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Metadata(label = "bean",
-          description = "Aggregation repository that uses JCache to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
+@Metadata(
+        label = "bean",
+        description = "Aggregation repository that uses JCache to store exchanges.",
+        annotations = {"interfaceName=org.apache.camel.spi.AggregationRepository"})
 @Configurer(metadataOnly = true)
 public class JCacheAggregationRepository extends ServiceSupport
         implements CamelContextAware, OptimisticLockingAggregationRepository {
@@ -54,10 +56,14 @@ public class JCacheAggregationRepository extends ServiceSupport
 
     @Metadata(description = "Configuration for JCache")
     private JCacheConfiguration configuration;
+
     @Metadata(description = "Whether optimistic locking is in use")
     private boolean optimistic;
-    @Metadata(label = "advanced",
-              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
     public JCacheAggregationRepository() {
@@ -121,7 +127,8 @@ public class JCacheAggregationRepository extends ServiceSupport
             throw new UnsupportedOperationException();
         }
 
-        LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
+        LOG.trace(
+                "Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             DefaultExchangeHolder oldHolder = cache.getAndPut(key, newHolder);
@@ -168,14 +175,20 @@ public class JCacheAggregationRepository extends ServiceSupport
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         if (optimistic) {
-            LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Removing an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(),
+                    key);
             if (!cache.remove(key, holder)) {
                 LOG.error(
                         "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
                         key);
                 throw new OptimisticLockingException();
             }
-            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Removed an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(),
+                    key);
         } else {
             cache.remove(key);
         }

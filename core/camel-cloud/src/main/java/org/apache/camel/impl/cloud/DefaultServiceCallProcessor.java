@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.Map;
@@ -64,9 +65,14 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     private Expression servicePathExp;
     private Expression serviceSchemeExp;
 
-    public DefaultServiceCallProcessor(CamelContext camelContext, String name, String scheme, String uri,
-                                       ExchangePattern exchangePattern,
-                                       ServiceLoadBalancer loadBalancer, Expression expression) {
+    public DefaultServiceCallProcessor(
+            CamelContext camelContext,
+            String name,
+            String scheme,
+            String uri,
+            ExchangePattern exchangePattern,
+            ServiceLoadBalancer loadBalancer,
+            Expression expression) {
 
         this.uri = uri;
         this.exchangePattern = exchangePattern;
@@ -144,8 +150,8 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         ObjectHelper.notNull(expression, "expression");
         ObjectHelper.notNull(loadBalancer, "load balancer");
 
-        Processor send = processorFactory.createProcessor(camelContext,
-                "SendDynamicProcessor", new Object[] { uri, expression, exchangePattern });
+        Processor send = processorFactory.createProcessor(
+                camelContext, "SendDynamicProcessor", new Object[] {uri, expression, exchangePattern});
         processor = AsyncProcessorConverterHelper.convert(send);
 
         // optimize and build expressions that are static ahead of time
@@ -180,7 +186,8 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         final String serviceName = serviceNameExp.evaluate(exchange, String.class);
         final String serviceUri = serviceUriExp != null ? serviceUriExp.evaluate(exchange, String.class) : null;
         final String servicePath = servicePathExp != null ? servicePathExp.evaluate(exchange, String.class) : null;
-        final String serviceScheme = serviceSchemeExp != null ? serviceSchemeExp.evaluate(exchange, String.class) : null;
+        final String serviceScheme =
+                serviceSchemeExp != null ? serviceSchemeExp.evaluate(exchange, String.class) : null;
 
         message.setHeader(ServiceCallConstants.SERVICE_CALL_URI, serviceUri);
         message.setHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, servicePath);
@@ -212,16 +219,19 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
 
         // If context path is not set on service call definition, reuse the one from
         // ServiceDefinition, if any
-        message.getHeaders().compute(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH,
-                (k, v) -> v == null ? meta.get(ServiceDefinition.SERVICE_META_PATH) : v);
+        message.getHeaders()
+                .compute(
+                        ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH,
+                        (k, v) -> v == null ? meta.get(ServiceDefinition.SERVICE_META_PATH) : v);
 
         // If port is not set on service call definition, reuse the one from
         // ServiceDefinition, if any
-        message.getHeaders().compute(ServiceCallConstants.SERVICE_PORT,
-                (k, v) -> v == null ? meta.get(ServiceDefinition.SERVICE_META_PORT) : v);
+        message.getHeaders()
+                .compute(
+                        ServiceCallConstants.SERVICE_PORT,
+                        (k, v) -> v == null ? meta.get(ServiceDefinition.SERVICE_META_PORT) : v);
 
         // use the dynamic send processor to call the service
         return processor.process(exchange, callback);
     }
-
 }

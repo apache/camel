@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,9 +41,12 @@ public class InterceptSendToEndpointNormalizePatternTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                interceptSendToEndpoint("stub:foo?privateKeyFile=/user/.ssh.id_rsa").to("mock:intercept");
+                interceptSendToEndpoint("stub:foo?privateKeyFile=/user/.ssh.id_rsa")
+                        .to("mock:intercept");
 
-                from("direct:start").to("stub:foo?privateKeyFile=/user/.ssh.id_rsa").to("mock:result");
+                from("direct:start")
+                        .to("stub:foo?privateKeyFile=/user/.ssh.id_rsa")
+                        .to("mock:result");
             }
         };
     }

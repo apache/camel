@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.spring;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class MainVetoTest {
 
@@ -37,11 +38,6 @@ public class MainVetoTest {
 
             // should complete normally due veto
             assertEquals(99, main.getExitCode());
-
-        }
-
-        );
-
+        });
     }
-
 }

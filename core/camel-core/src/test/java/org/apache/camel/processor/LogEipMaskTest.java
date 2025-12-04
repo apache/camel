@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,8 +27,6 @@ import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LogEipMaskTest {
 
@@ -78,9 +79,12 @@ public class LogEipMaskTest {
             @Override
             public void configure() {
                 from("direct:foo").routeId("foo").log("Got ${body}").to("mock:foo");
-                from("direct:noMask").routeId("noMask").logMask("false").log("Got ${body}").to("mock:noMask");
+                from("direct:noMask")
+                        .routeId("noMask")
+                        .logMask("false")
+                        .log("Got ${body}")
+                        .to("mock:noMask");
             }
         };
     }
-
 }

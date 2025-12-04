@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,8 +42,7 @@ public class FileConsumerIncludeExtTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&includeExt=txt,dat"))
-                        .to("mock:txt");
+                from(fileUri("?initialDelay=0&delay=10&includeExt=txt,dat")).to("mock:txt");
             }
         };
     }

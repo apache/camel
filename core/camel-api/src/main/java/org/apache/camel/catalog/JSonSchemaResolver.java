@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 /**
@@ -103,5 +104,4 @@ public interface JSonSchemaResolver {
      * @return      model details in JSon
      */
     String getPojoBeanJSonSchema(String name);
-
 }

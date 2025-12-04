@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
 
 import jakarta.xml.bind.annotation.XmlEnum;
@@ -32,7 +33,6 @@ import org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder;
 @XmlType
 @XmlEnum
 public enum SpringErrorHandlerType {
-
     DefaultErrorHandler,
     DeadLetterChannel,
     NoErrorHandler,
@@ -57,5 +57,4 @@ public enum SpringErrorHandlerType {
                 throw new IllegalArgumentException("Unknown error handler: " + this);
         }
     }
-
 }

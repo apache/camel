@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -36,14 +40,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JmsMessageTypeTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -146,7 +148,8 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
+        assertEquals(
+                "Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
 
     @Test
@@ -160,7 +163,8 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
+        assertEquals(
+                "Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
 
     @Test
@@ -177,7 +181,8 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
+        assertEquals(
+                "Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
 
     @Test
@@ -192,7 +197,9 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals("James", mock.getExchanges().get(0).getIn().getBody(MyFooBean.class).getName());
+        assertEquals(
+                "James",
+                mock.getExchanges().get(0).getIn().getBody(MyFooBean.class).getName());
     }
 
     @Test
@@ -207,7 +214,9 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals("James", mock.getExchanges().get(0).getIn().getBody(MyFooBean.class).getName());
+        assertEquals(
+                "James",
+                mock.getExchanges().get(0).getIn().getBody(MyFooBean.class).getName());
     }
 
     @Override
@@ -244,8 +253,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         private static final long serialVersionUID = 1L;
         private String name;
 
-        private MyFooBean() {
-        }
+        private MyFooBean() {}
 
         private MyFooBean(String name) {
             this.name = name;

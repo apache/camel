@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.ReflectionHelper.doWithMethods;
+import static org.apache.camel.tooling.util.Strings.between;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -48,9 +52,6 @@ import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
-
-import static org.apache.camel.tooling.util.ReflectionHelper.doWithMethods;
-import static org.apache.camel.tooling.util.Strings.between;
 
 /**
  * Abstract class for configurer generator.
@@ -113,7 +114,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
     }
 
-    protected void doExecute(File sourcesOutputDir, File resourcesOutputDir, List<String> classes, boolean testClasspathOnly)
+    protected void doExecute(
+            File sourcesOutputDir, File resourcesOutputDir, List<String> classes, boolean testClasspathOnly)
             throws MojoExecutionException {
         if ("pom".equals(project.getPackaging())) {
             return;
@@ -143,11 +145,14 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 List<AnnotationInstance> annotations = index.getAnnotations(CONFIGURER);
                 annotations.stream()
                         .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS)
-                        .filter(annotation -> annotation.target().asClass().nestingType() == ClassInfo.NestingType.TOP_LEVEL)
+                        .filter(annotation ->
+                                annotation.target().asClass().nestingType() == ClassInfo.NestingType.TOP_LEVEL)
                         .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
                         .forEach(annotation -> {
-                            String currentClass = annotation.target().asClass().name().toString();
-                            addToSets(annotation, bootstrapAndExtendedSet, currentClass, bootstrapSet, extendedSet, set);
+                            String currentClass =
+                                    annotation.target().asClass().name().toString();
+                            addToSets(
+                                    annotation, bootstrapAndExtendedSet, currentClass, bootstrapSet, extendedSet, set);
                         });
             }
         }
@@ -183,8 +188,12 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     }
 
     private void addToSets(
-            AnnotationInstance annotation, Set<String> bootstrapAndExtendedSet, String currentClass, Set<String> bootstrapSet,
-            Set<String> extendedSet, Set<String> set) {
+            AnnotationInstance annotation,
+            Set<String> bootstrapAndExtendedSet,
+            String currentClass,
+            Set<String> bootstrapSet,
+            Set<String> extendedSet,
+            Set<String> set) {
         boolean bootstrap = asBooleanDefaultFalse(annotation, "bootstrap");
         boolean extended = asBooleanDefaultFalse(annotation, "extended");
         if (bootstrap && extended) {
@@ -199,7 +208,12 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     }
 
     private void processClass(
-            Index index, String fqn, File sourcesOutputDir, boolean extended, boolean bootstrap, File resourcesOutputDir)
+            Index index,
+            String fqn,
+            File sourcesOutputDir,
+            boolean extended,
+            boolean bootstrap,
+            File resourcesOutputDir)
             throws MojoExecutionException {
         try {
             String targetFqn = fqn;
@@ -227,14 +241,18 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             getLog().debug("Project Dependencies will be included.");
 
             if (testClasspathOnly) {
-                URL testClasses = new File(project.getBuild().getTestOutputDirectory()).toURI().toURL();
+                URL testClasses = new File(project.getBuild().getTestOutputDirectory())
+                        .toURI()
+                        .toURL();
 
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Adding to classpath : " + testClasses);
                 }
                 path.add(testClasses);
             } else {
-                URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
+                URL mainClasses = new File(project.getBuild().getOutputDirectory())
+                        .toURI()
+                        .toURL();
 
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Adding to classpath : " + mainClasses);
@@ -251,7 +269,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             for (Artifact classPathElement : dependencies) {
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                                   + " to classpath");
+                            + " to classpath");
                 }
 
                 File file = classPathElement.getFile();
@@ -292,18 +310,24 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 return;
             }
 
-            boolean setter = m.getName().length() >= 4 && m.getName().startsWith("set")
+            boolean setter = m.getName().length() >= 4
+                    && m.getName().startsWith("set")
                     && Character.isUpperCase(m.getName().charAt(3));
             setter &= Modifier.isPublic(m.getModifiers()) && m.getParameterCount() == 1;
             setter &= filterSetter(m);
-            boolean builder = allowBuilderPattern && m.getName().length() >= 5 && m.getName().startsWith("with")
+            boolean builder = allowBuilderPattern
+                    && m.getName().length() >= 5
+                    && m.getName().startsWith("with")
                     && Character.isUpperCase(m.getName().charAt(4));
             builder &= Modifier.isPublic(m.getModifiers()) && m.getParameterCount() == 1;
             builder &= filterSetter(m);
             if (setter || builder) {
-                String getter = "get" + (builder
-                        ? Character.toUpperCase(m.getName().charAt(4)) + m.getName().substring(5)
-                        : Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(4));
+                String getter = "get"
+                        + (builder
+                                ? Character.toUpperCase(m.getName().charAt(4))
+                                        + m.getName().substring(5)
+                                : Character.toUpperCase(m.getName().charAt(3))
+                                        + m.getName().substring(4));
                 Class<?> type = m.getParameterTypes()[0];
                 if (boolean.class == type || Boolean.class == type) {
                     try {
@@ -317,10 +341,13 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
                 ConfigurerOption option = null;
                 String t = builder
-                        ? Character.toLowerCase(m.getName().charAt(4)) + m.getName().substring(4 + 1)
-                        : Character.toLowerCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
+                        ? Character.toLowerCase(m.getName().charAt(4))
+                                + m.getName().substring(4 + 1)
+                        : Character.toLowerCase(m.getName().charAt(3))
+                                + m.getName().substring(3 + 1);
                 Field field = ReflectionHelper.findField(clazz, t);
-                // check via the field whether to be included or not if we should only include fields marked up with @Metadata
+                // check via the field whether to be included or not if we should only include fields marked up with
+                // @Metadata
                 if (metadataOnly && field != null && !field.isAnnotationPresent(Metadata.class)) {
                     return;
                 }
@@ -385,13 +412,20 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     }
 
     private void generateConfigurer(
-            String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir, boolean extended, boolean bootstrap) {
+            String fqn,
+            String targetFqn,
+            List<ConfigurerOption> options,
+            File outputDir,
+            boolean extended,
+            boolean bootstrap) {
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
         String cn = targetFqn.substring(pos + 1) + "Configurer";
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
 
-        options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).toList();
+        options = options.stream()
+                .sorted(Comparator.comparing(BaseOptionModel::getName))
+                .toList();
 
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("generatorClass", getClass().getName());
@@ -424,9 +458,15 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
         StringBuilder w = new StringBuilder(256);
         w.append("# ").append(GENERATED_MSG).append("\n");
-        w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
+        w.append("class=")
+                .append(pn)
+                .append(".")
+                .append(en)
+                .append("Configurer")
+                .append("\n");
         String fileName = "META-INF/services/org/apache/camel/configurer/" + fqn;
-        boolean updated = updateResource(buildContext, resourcesOutputDir.toPath().resolve(fileName), w.toString());
+        boolean updated =
+                updateResource(buildContext, resourcesOutputDir.toPath().resolve(fileName), w.toString());
         if (updated) {
             getLog().info("Updated " + fileName);
         }
@@ -447,5 +487,4 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
         return false;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam.client;
 
 import org.apache.camel.component.aws2.iam.IAM2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientStandardImpl;
  */
 public final class IAM2ClientFactory {
 
-    private IAM2ClientFactory() {
-    }
+    private IAM2ClientFactory() {}
 
     /**
      * Return the correct AWS IAM client (based on remote vs local).

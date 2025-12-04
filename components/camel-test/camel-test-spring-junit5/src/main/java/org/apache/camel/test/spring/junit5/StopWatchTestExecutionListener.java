@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import org.apache.camel.util.StopWatch;
@@ -62,12 +63,14 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
             Logger log = LoggerFactory.getLogger(testContext.getTestClass());
 
             log.info("********************************************************************************");
-            log.info("Testing done: {} ({})", testContext.getTestMethod().getName(), testContext.getTestClass().getName());
+            log.info(
+                    "Testing done: {} ({})",
+                    testContext.getTestMethod().getName(),
+                    testContext.getTestClass().getName());
             log.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
             log.info("********************************************************************************");
 
             threadStopWatch.remove();
         }
     }
-
 }

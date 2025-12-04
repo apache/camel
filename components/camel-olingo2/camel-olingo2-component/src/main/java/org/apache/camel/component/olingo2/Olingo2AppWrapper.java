@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2;
 
 import java.util.Map;
@@ -92,7 +93,9 @@ public class Olingo2AppWrapper {
                             if (ex instanceof RuntimeCamelException) {
                                 throw (RuntimeCamelException) ex;
                             } else {
-                                final String message = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
+                                final String message = ex.getMessage() != null
+                                        ? ex.getMessage()
+                                        : ex.getClass().getName();
                                 throw new RuntimeCamelException("Error reading EDM: " + message, ex);
                             }
                         }

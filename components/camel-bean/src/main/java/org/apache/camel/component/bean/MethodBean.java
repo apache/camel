@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.io.Serializable;
@@ -29,8 +30,7 @@ public class MethodBean implements Serializable {
     private Class<?> type;
     private Class<?>[] parameterTypes;
 
-    public MethodBean() {
-    }
+    public MethodBean() {}
 
     public MethodBean(Method method) {
         this.name = method.getName();

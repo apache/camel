@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc;
 
 import java.util.Map;
@@ -34,18 +35,21 @@ import org.slf4j.LoggerFactory;
 /**
  * Send and receive messages to/from and IRC chat.
  */
-@UriEndpoint(firstVersion = "1.1.0",
-             scheme = "irc",
-             title = "IRC",
-             syntax = "irc:hostname:port",
-             alternativeSyntax = "irc:username:password@hostname:port",
-             category = { Category.CHAT }, headersClass = IrcConstants.class)
+@UriEndpoint(
+        firstVersion = "1.1.0",
+        scheme = "irc",
+        title = "IRC",
+        syntax = "irc:hostname:port",
+        alternativeSyntax = "irc:username:password@hostname:port",
+        category = {Category.CHAT},
+        headersClass = IrcConstants.class)
 public class IrcEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
 
     @UriParam
     private IrcConfiguration configuration;
+
     private IrcBinding binding;
     private IrcComponent component;
 
@@ -157,7 +161,10 @@ public class IrcEndpoint extends DefaultEndpoint implements EndpointServiceLocat
 
         if (ObjectHelper.isNotEmpty(key)) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Joining: {} using {} with secret key", channel, connection.getClass().getName());
+                LOG.debug(
+                        "Joining: {} using {} with secret key",
+                        channel,
+                        connection.getClass().getName());
             }
             connection.doJoin(chn, key);
         } else {

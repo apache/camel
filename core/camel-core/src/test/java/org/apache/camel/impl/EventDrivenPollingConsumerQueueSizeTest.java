@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Map;
 
@@ -34,11 +40,6 @@ import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport {
 
@@ -71,7 +72,9 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
 
         assertEquals(10, edpc.getQueueSize());
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.sendBody(uri, "Message 10"),
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBody(uri, "Message 10"),
                 "Should have thrown exception");
 
         assertIsInstanceOf(IllegalStateException.class, e.getCause());

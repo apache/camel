@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 import java.util.Collection;
 
@@ -26,8 +29,6 @@ import com.box.sdk.BoxFolder;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to manage Box collaborations.
@@ -64,8 +65,7 @@ public class BoxCollaborationsManager {
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             return folder.getCollaborations();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -79,18 +79,17 @@ public class BoxCollaborationsManager {
      * @return              The new collaboration.
      */
     public BoxCollaboration addFolderCollaboration(
-            String folderId, BoxCollaborator collaborator,
-            BoxCollaboration.Role role) {
+            String folderId, BoxCollaborator collaborator, BoxCollaboration.Role role) {
         try {
             BoxHelper.notNull(folderId, BoxHelper.FOLDER_ID);
             BoxHelper.notNull(collaborator, BoxHelper.COLLABORATOR);
-            LOG.debug("Creating  collaborations for folder(id={}) with collaborator({})", folderId, collaborator.getID());
+            LOG.debug(
+                    "Creating  collaborations for folder(id={}) with collaborator({})", folderId, collaborator.getID());
             BoxHelper.notNull(role, BoxHelper.ROLE);
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             return folder.collaborate(collaborator, role).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -114,8 +113,7 @@ public class BoxCollaborationsManager {
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             return folder.collaborate(email, role).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -134,8 +132,7 @@ public class BoxCollaborationsManager {
 
             return collaboration.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -156,8 +153,7 @@ public class BoxCollaborationsManager {
             collaboration.updateInfo(info);
             return collaboration;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -173,8 +169,7 @@ public class BoxCollaborationsManager {
             BoxCollaboration collaboration = new BoxCollaboration(boxConnection, collaborationId);
             collaboration.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -187,9 +182,7 @@ public class BoxCollaborationsManager {
         try {
             return BoxCollaboration.getPendingCollaborations(boxConnection);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
-
 }

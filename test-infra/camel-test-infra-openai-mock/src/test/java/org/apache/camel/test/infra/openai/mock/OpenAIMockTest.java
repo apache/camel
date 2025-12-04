@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openai.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -27,12 +30,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class OpenAIMockTest {
 
     @RegisterExtension
-    public OpenAIMock openAIMock = new OpenAIMock().builder()
+    public OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("any sentence")
             .invokeTool("toolName")
             .withParam("param1", "value1")
@@ -48,8 +50,7 @@ public class OpenAIMockTest {
             .withParam("p3", "v3")
             .end()
             .when("custom response")
-            .thenRespondWith(
-                    (request, input) -> "Custom response for: " + input)
+            .thenRespondWith((request, input) -> "Custom response for: " + input)
             .end()
             .when("assert request")
             .assertRequest(request -> {
@@ -64,8 +65,8 @@ public class OpenAIMockTest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"any sentence\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"any sentence\"}]}"))
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -87,7 +88,9 @@ public class OpenAIMockTest {
         JsonNode toolCall = toolCalls.get(0);
         assertEquals("function", toolCall.path("type").asText());
         assertEquals("toolName", toolCall.path("function").path("name").asText());
-        assertEquals("{\"param1\":\"value1\"}", toolCall.path("function").path("arguments").asText());
+        assertEquals(
+                "{\"param1\":\"value1\"}",
+                toolCall.path("function").path("arguments").asText());
     }
 
     @Test
@@ -96,8 +99,8 @@ public class OpenAIMockTest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"another sentence\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"another sentence\"}]}"))
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -121,8 +124,8 @@ public class OpenAIMockTest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"multiple tools\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"multiple tools\"}]}"))
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -144,12 +147,15 @@ public class OpenAIMockTest {
         JsonNode toolCall1 = toolCalls.get(0);
         assertEquals("function", toolCall1.path("type").asText());
         assertEquals("tool1", toolCall1.path("function").path("name").asText());
-        assertEquals("{\"p1\":\"v1\"}", toolCall1.path("function").path("arguments").asText());
+        assertEquals(
+                "{\"p1\":\"v1\"}", toolCall1.path("function").path("arguments").asText());
 
         JsonNode toolCall2 = toolCalls.get(1);
         assertEquals("function", toolCall2.path("type").asText());
         assertEquals("tool2", toolCall2.path("function").path("name").asText());
-        assertEquals("{\"p2\":\"v2\",\"p3\":\"v3\"}", toolCall2.path("function").path("arguments").asText());
+        assertEquals(
+                "{\"p2\":\"v2\",\"p3\":\"v3\"}",
+                toolCall2.path("function").path("arguments").asText());
     }
 
     @Test
@@ -158,8 +164,8 @@ public class OpenAIMockTest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"custom response\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"custom response\"}]}"))
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -174,8 +180,8 @@ public class OpenAIMockTest {
         HttpRequest request1 = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"any sentence\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"any sentence\"}]}"))
                 .build();
 
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
@@ -198,7 +204,9 @@ public class OpenAIMockTest {
         String toolCallId = toolCall.path("id").asText();
         assertEquals("function", toolCall.path("type").asText());
         assertEquals("toolName", toolCall.path("function").path("name").asText());
-        assertEquals("{\"param1\":\"value1\"}", toolCall.path("function").path("arguments").asText());
+        assertEquals(
+                "{\"param1\":\"value1\"}",
+                toolCall.path("function").path("arguments").asText());
 
         // Second request with tool result
         String secondRequestBody = String.format(

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cluster;
 
 import java.util.Collection;
@@ -91,8 +92,8 @@ public interface CamelClusterService extends Service, CamelContextAware, IdAware
             return clazz.cast(this);
         }
 
-        throw new IllegalArgumentException(
-                "Unable to unwrap this CamelClusterService type (" + getClass() + ") to the required type (" + clazz + ")");
+        throw new IllegalArgumentException("Unable to unwrap this CamelClusterService type (" + getClass()
+                + ") to the required type (" + clazz + ")");
     }
 
     @FunctionalInterface

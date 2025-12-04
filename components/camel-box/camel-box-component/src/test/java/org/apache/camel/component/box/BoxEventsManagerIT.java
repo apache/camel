@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.util.List;
@@ -33,21 +37,20 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link BoxEventsManager} APIs. TODO Move the file to src/test/java, populate parameter values, and
  * remove @Ignore annotations. The class source won't be generated again if the generator MOJO finds it under
  * src/test/java.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxEventsManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxEventsManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxEventsManagerApiMethod.class).getName();
+            .getApiName(BoxEventsManagerApiMethod.class)
+            .getName();
     private static final String CAMEL_TEST_FILE = "/CamelTestFile.txt";
     private static final String CAMEL_TEST_FILE_NAME = "CamelTestFile.txt";
 
@@ -79,14 +82,13 @@ public class BoxEventsManagerIT extends AbstractBoxITSupport {
 
                 // test route for events
                 from("box://" + PATH_PREFIX + "/listen?startingPosition=0").to("mock:boxEvents");
-
             }
         };
     }
 
     public BoxAPIConnection getConnection() {
-        BoxEndpoint endpoint = (BoxEndpoint) context()
-                .getEndpoint("box://" + PATH_PREFIX + "/listen?startingPosition=0");
+        BoxEndpoint endpoint =
+                (BoxEndpoint) context().getEndpoint("box://" + PATH_PREFIX + "/listen?startingPosition=0");
         return endpoint.getBoxConnection();
     }
 

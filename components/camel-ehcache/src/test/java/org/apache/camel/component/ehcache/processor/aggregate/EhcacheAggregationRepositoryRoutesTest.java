@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache.processor.aggregate;
 
 import java.util.stream.IntStream;
@@ -46,8 +47,7 @@ public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
         mock.expectedMessageCount(VALUES.length);
         mock.expectedBodiesReceived(SUM);
 
-        IntStream.of(VALUES).forEach(
-                i -> producer.sendBodyAndHeader(i, CORRELATOR, CORRELATOR));
+        IntStream.of(VALUES).forEach(i -> producer.sendBodyAndHeader(i, CORRELATOR, CORRELATOR));
 
         mock.assertIsSatisfied();
     }
@@ -77,7 +77,8 @@ public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
                         .aggregationRepository(createAggregateRepository())
                         .aggregationStrategy(EhcacheAggregationRepositoryRoutesTest.this::aggregate)
                         .completionSize(VALUES.length)
-                        .to("log:org.apache.camel.component.ehcache.processor.aggregate?level=INFO&showAll=true&multiline=true")
+                        .to(
+                                "log:org.apache.camel.component.ehcache.processor.aggregate?level=INFO&showAll=true&multiline=true")
                         .to(ENDPOINT_MOCK);
             }
         };

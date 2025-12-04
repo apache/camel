@@ -36,9 +36,7 @@ import org.slf4j.LoggerFactory;
 public final class SplitterUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SplitterUtil.class);
 
-    private SplitterUtil() {
-
-    }
+    private SplitterUtil() {}
 
     public static DocumentSplitter byName(String name, LangChain4JConfiguration configuration) {
         assert name != null : "The splitter name must be provided";
@@ -95,10 +93,8 @@ public final class SplitterUtil {
             return new QwenTokenCountEstimator(qwenConfiguration.getApiKey(), qwenConfiguration.getModelName());
         }
 
-        throw new RuntimeCamelException(
-                "Invalid configuration type for the QwenTokenCountEstimator: "
-                                        + configuration.getClass().getSimpleName() +
-                                        ". Use LangChain4JQwenConfiguration");
+        throw new RuntimeCamelException("Invalid configuration type for the QwenTokenCountEstimator: "
+                + configuration.getClass().getSimpleName() + ". Use LangChain4JQwenConfiguration");
     }
 
     public static String[] split(DocumentSplitter splitter, String body) {
@@ -118,6 +114,7 @@ public final class SplitterUtil {
             return dl.split(body);
         }
 
-        throw new RuntimeCamelException("Unsupported splitter type: " + splitter.getClass().getSimpleName());
+        throw new RuntimeCamelException(
+                "Unsupported splitter type: " + splitter.getClass().getSimpleName());
     }
 }

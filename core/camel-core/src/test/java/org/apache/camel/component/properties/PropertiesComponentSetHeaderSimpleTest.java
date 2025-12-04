@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
@@ -35,7 +36,8 @@ public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
         return context;
     }
 
@@ -44,7 +46,10 @@ public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("foo").simple("{{cheese.server}}/${header.app}").to("mock:result");
+                from("direct:start")
+                        .setHeader("foo")
+                        .simple("{{cheese.server}}/${header.app}")
+                        .to("mock:result");
             }
         };
     }

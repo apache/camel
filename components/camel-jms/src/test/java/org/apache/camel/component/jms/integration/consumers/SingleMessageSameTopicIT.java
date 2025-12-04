@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.consumers;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractPersistentJMSTest;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
@@ -106,11 +107,9 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:topic:SingleMessageSameTopicIT").routeId("a")
-                        .to("log:a", "mock:a");
+                from("activemq:topic:SingleMessageSameTopicIT").routeId("a").to("log:a", "mock:a");
 
-                from("activemq:topic:SingleMessageSameTopicIT").routeId("b")
-                        .to("log:b", "mock:b");
+                from("activemq:topic:SingleMessageSameTopicIT").routeId("b").to("log:b", "mock:b");
             }
         };
     }

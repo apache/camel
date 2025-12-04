@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulkv2;
 
 public enum ColumnDelimiterEnum {
-
     BACKQUOTE("backquote"),
     CARET("caret"),
     COMMA("comma"),

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml.handler;
 
 import org.apache.camel.Exchange;
@@ -30,5 +31,4 @@ public class MyErrorProcessor implements Processor {
     public String toString() {
         return "MyErrorProcessor";
     }
-
 }

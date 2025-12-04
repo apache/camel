@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xchange;
 
 import org.apache.camel.CamelContext;
@@ -22,8 +23,7 @@ import org.knowm.xchange.Exchange;
 
 public final class XChangeHelper {
 
-    private XChangeHelper() {
-    }
+    private XChangeHelper() {}
 
     public static Class<? extends Exchange> loadXChangeClass(CamelContext camelContext, String name) {
         String firstUpper = StringHelper.capitalize(name);

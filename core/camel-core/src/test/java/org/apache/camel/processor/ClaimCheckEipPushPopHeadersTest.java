@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,10 +43,16 @@ public class ClaimCheckEipPushPopHeadersTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World")
-                        .setHeader("foo", constant(456)).to("mock:b")
+                from("direct:start")
+                        .to("mock:a")
+                        .claimCheck(ClaimCheckOperation.Push)
+                        .transform()
+                        .constant("Bye World")
+                        .setHeader("foo", constant(456))
+                        .to("mock:b")
                         // only merge in the message headers
-                        .claimCheck(ClaimCheckOperation.Pop, null, "headers").to("mock:c");
+                        .claimCheck(ClaimCheckOperation.Pop, null, "headers")
+                        .to("mock:c");
             }
         };
     }

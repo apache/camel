@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,8 +34,6 @@ import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.MessageHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link MessageHelper}
@@ -184,8 +185,9 @@ public class MessageHelperTest {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsXml(message);
-        assertTrue(out.contains(
-                "<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"),
+        assertTrue(
+                out.contains(
+                        "<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"),
                 "Should contain body");
         assertTrue(out.contains(message.getExchange().getExchangeId()), "Should contain exchangeId");
 
@@ -205,9 +207,10 @@ public class MessageHelperTest {
 
         String out = MessageHelper.dumpAsXml(message, false);
 
-        assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">"
-                     + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
+        assertEquals(
+                "<message exchangeId=\"" + message.getExchange().getExchangeId()
+                        + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">"
+                        + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
                 out);
 
         context.stop();
@@ -226,9 +229,10 @@ public class MessageHelperTest {
 
         String out = MessageHelper.dumpAsXml(message, false, 2);
 
-        assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId()
-                     + "\" exchangePattern=\"InOut\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">"
-                     + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>",
+        assertEquals(
+                "  <message exchangeId=\"" + message.getExchange().getExchangeId()
+                        + "\" exchangePattern=\"InOut\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">"
+                        + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>",
                 out);
 
         context.stop();
@@ -299,5 +303,4 @@ public class MessageHelperTest {
         assertNotNull(out);
         assertTrue(out.contains("Hello World"));
     }
-
 }

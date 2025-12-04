@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 import javax.cache.Cache;
@@ -108,9 +109,12 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jcache://test-cache?filteredEvents=UPDATED,REMOVED,EXPIRED").to("mock:created");
-                from("jcache://test-cache?filteredEvents=CREATED,REMOVED,EXPIRED").to("mock:updated");
-                from("jcache://test-cache?filteredEvents=CREATED,UPDATED,EXPIRED").to("mock:removed");
+                from("jcache://test-cache?filteredEvents=UPDATED,REMOVED,EXPIRED")
+                        .to("mock:created");
+                from("jcache://test-cache?filteredEvents=CREATED,REMOVED,EXPIRED")
+                        .to("mock:updated");
+                from("jcache://test-cache?filteredEvents=CREATED,UPDATED,EXPIRED")
+                        .to("mock:removed");
                 from("jcache://test-cache?eventFilters=#myFilter").to("mock:my-filter");
             }
         };

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactedRecipientListThreadStuckTest extends TransactionClientDataSourceSupport {
 
@@ -49,12 +50,8 @@ public class TransactedRecipientListThreadStuckTest extends TransactionClientDat
                         .log("End ${threadName}")
                         .to("mock:result");
 
-                from("direct:foo")
-                    .delay(1)
-                        .transform().simple("Bye ${body}")
-                    .end();
+                from("direct:foo").delay(1).transform().simple("Bye ${body}").end();
             }
         };
     }
-
 }

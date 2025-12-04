@@ -20,8 +20,5 @@ package org.apache.camel.test.infra.messaging.common;
 public final class MessagingProperties {
     public static final String MESSAGING_BROKER_ADDRESS = "messaging.broker.address";
 
-    private MessagingProperties() {
-
-    }
-
+    private MessagingProperties() {}
 }

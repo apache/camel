@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.app;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -28,5 +29,4 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "camel")
-public class ApplicationDefinition extends BeansDefinition {
-}
+public class ApplicationDefinition extends BeansDefinition {}

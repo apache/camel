@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dfdl;
 
 import java.io.ByteArrayOutputStream;
@@ -44,8 +45,13 @@ import org.apache.daffodil.japi.io.InputSourceDataInputStream;
 /**
  * Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).
  */
-@UriEndpoint(firstVersion = "4.11.0", scheme = "dfdl", title = "DFDL", syntax = "dfdl:schemaUri", producerOnly = true,
-             category = { Category.TRANSFORMATION })
+@UriEndpoint(
+        firstVersion = "4.11.0",
+        scheme = "dfdl",
+        title = "DFDL",
+        syntax = "dfdl:schemaUri",
+        producerOnly = true,
+        category = {Category.TRANSFORMATION})
 public class DfdlEndpoint extends ProcessorEndpoint {
 
     @UriPath
@@ -56,8 +62,11 @@ public class DfdlEndpoint extends ProcessorEndpoint {
     @Metadata(defaultValue = "PARSE", description = "Transform direction. Either PARSE or UNPARSE")
     private ParseDirection parseDirection;
 
-    @UriParam(description = "The root element name of the schema to use. If not specified, the first root element in the schema will be used.",
-              label = "advanced", defaultValue = "")
+    @UriParam(
+            description =
+                    "The root element name of the schema to use. If not specified, the first root element in the schema will be used.",
+            label = "advanced",
+            defaultValue = "")
     private String rootElement = "";
 
     @UriParam(description = "The root namespace of the schema to use.", label = "advanced", defaultValue = "")
@@ -75,10 +84,12 @@ public class DfdlEndpoint extends ProcessorEndpoint {
         super.doInit();
         ProcessorFactory processorFactory;
         Resource schemaResource = ResourceHelper.resolveMandatoryResource(getCamelContext(), getSchemaUri());
-        if (getRootElement() != null && !getRootElement().isEmpty() &&
-                getRootNamespace() != null && !getRootNamespace().isEmpty()) {
-            processorFactory
-                    = Daffodil.compiler().compileSource(schemaResource.getURI(), getRootElement(), getRootNamespace());
+        if (getRootElement() != null
+                && !getRootElement().isEmpty()
+                && getRootNamespace() != null
+                && !getRootNamespace().isEmpty()) {
+            processorFactory =
+                    Daffodil.compiler().compileSource(schemaResource.getURI(), getRootElement(), getRootNamespace());
         } else {
             processorFactory = Daffodil.compiler().compileSource(schemaResource.getURI());
         }

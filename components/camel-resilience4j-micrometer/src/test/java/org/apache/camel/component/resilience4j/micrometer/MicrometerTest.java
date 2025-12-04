@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j.micrometer;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -63,7 +64,8 @@ public class MicrometerTest extends CamelTestSupport {
 
     private void test(String endPointUri) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_STATE, "CLOSED");
 
@@ -77,17 +79,34 @@ public class MicrometerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").circuitBreaker().to("direct:foo").to("log:foo").onFallback().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start")
+                        .circuitBreaker()
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
-                from("direct:start.with.timeout.enabled").circuitBreaker().resilience4jConfiguration()
-                        .timeoutEnabled(true).timeoutDuration(2000).end()
-                        .to("direct:foo").to("log:foo").onFallback().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start.with.timeout.enabled")
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .end()
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.Exchange;
@@ -26,29 +27,38 @@ public class MethodNotFoundException extends RuntimeExchangeException {
     private final String methodName;
 
     public MethodNotFoundException(Exchange exchange, Object pojo, String methodName) {
-        super("Method with name: " + methodName + " not found on bean: " + pojo + " of type: " + ObjectHelper.className(pojo),
-              exchange);
+        super(
+                "Method with name: " + methodName + " not found on bean: " + pojo + " of type: "
+                        + ObjectHelper.className(pojo),
+                exchange);
         this.methodName = methodName;
         this.bean = pojo;
     }
 
     public MethodNotFoundException(Exchange exchange, Object pojo, String methodName, String postfix) {
-        super("Method with name: " + methodName + " " + postfix + " not found on bean: " + pojo + " of type: "
-              + ObjectHelper.className(pojo), exchange);
+        super(
+                "Method with name: " + methodName + " " + postfix + " not found on bean: " + pojo + " of type: "
+                        + ObjectHelper.className(pojo),
+                exchange);
         this.methodName = methodName;
         this.bean = pojo;
     }
 
     public MethodNotFoundException(Exchange exchange, Class<?> type, String methodName, boolean isStaticMethod) {
-        super((isStaticMethod ? "Static method" : "Method") + " with name: " + methodName + " not found on class: "
-              + ObjectHelper.name(type), exchange);
+        super(
+                (isStaticMethod ? "Static method" : "Method") + " with name: " + methodName + " not found on class: "
+                        + ObjectHelper.name(type),
+                exchange);
         this.methodName = methodName;
         this.bean = null;
     }
 
     public MethodNotFoundException(Object pojo, String methodName, Throwable cause) {
-        super("Method with name: " + methodName + " not found on bean: " + pojo + " of type:" + ObjectHelper.className(pojo),
-              null, cause);
+        super(
+                "Method with name: " + methodName + " not found on bean: " + pojo + " of type:"
+                        + ObjectHelper.className(pojo),
+                null,
+                cause);
         this.methodName = methodName;
         this.bean = pojo;
     }

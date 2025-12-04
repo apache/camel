@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.time.OffsetDateTime;
@@ -31,7 +32,8 @@ public class BlobChangeFeedOperations {
     private final BlobChangefeedClient client;
     private final BlobConfigurationOptionsProxy configurationOptionsProxy;
 
-    public BlobChangeFeedOperations(BlobChangefeedClient client, BlobConfigurationOptionsProxy configurationOptionsProxy) {
+    public BlobChangeFeedOperations(
+            BlobChangefeedClient client, BlobConfigurationOptionsProxy configurationOptionsProxy) {
         ObjectHelper.notNull(client, "client cannot be null");
 
         this.client = client;
@@ -59,5 +61,4 @@ public class BlobChangeFeedOperations {
 
         return client.getEvents(startTime, endTime, context).stream().toList();
     }
-
 }

@@ -31,9 +31,7 @@ import org.slf4j.LoggerFactory;
 final class IOUtil {
     private static final Logger LOG = LoggerFactory.getLogger(IOUtil.class);
 
-    private IOUtil() {
-
-    }
+    private IOUtil() {}
 
     /**
      * Writes to the channel at a given position, clearing the source after completion
@@ -88,7 +86,12 @@ final class IOUtil {
      * @throws BufferOverflow if the buffer is too small for the entry
      */
     static void serialize(ByteBuffer buffer, LogEntry entry) throws BufferOverflow {
-        serialize(buffer, entry.getEntryState().getCode(), entry.getKeyMetadata(), entry.getKey(), entry.getValueMetadata(),
+        serialize(
+                buffer,
+                entry.getEntryState().getCode(),
+                entry.getKeyMetadata(),
+                entry.getKey(),
+                entry.getValueMetadata(),
                 entry.getValue());
     }
 
@@ -106,8 +109,8 @@ final class IOUtil {
     static void serialize(
             ByteBuffer buffer, int entryState, int keyMetadata, byte[] key, int valueMetadata, byte[] value)
             throws BufferOverflow {
-        checkBufferCapacity(buffer,
-                Integer.BYTES + Integer.BYTES + key.length + Integer.BYTES + Integer.BYTES + value.length);
+        checkBufferCapacity(
+                buffer, Integer.BYTES + Integer.BYTES + key.length + Integer.BYTES + Integer.BYTES + value.length);
 
         buffer.putInt(entryState);
         buffer.putInt(keyMetadata);
@@ -123,8 +126,10 @@ final class IOUtil {
 
         if (remaining < requestedSize) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("There is not enough space on the buffer for an offset entry: {} bytes remaining, {} bytes needed",
-                        remaining, requestedSize);
+                LOG.trace(
+                        "There is not enough space on the buffer for an offset entry: {} bytes remaining, {} bytes needed",
+                        remaining,
+                        requestedSize);
             }
 
             throw new BufferOverflow(remaining, requestedSize);

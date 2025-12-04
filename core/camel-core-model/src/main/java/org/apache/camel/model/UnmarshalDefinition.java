@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -79,62 +80,65 @@ import org.apache.camel.spi.Metadata;
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> implements DataFormatDefinitionAware {
 
     @XmlElements({
-            @XmlElement(name = "asn1", type = ASN1DataFormat.class),
-            @XmlElement(name = "avro", type = AvroDataFormat.class),
-            @XmlElement(name = "barcode", type = BarcodeDataFormat.class),
-            @XmlElement(name = "base64", type = Base64DataFormat.class),
-            @XmlElement(name = "beanio", type = BeanioDataFormat.class),
-            @XmlElement(name = "bindy", type = BindyDataFormat.class),
-            @XmlElement(name = "cbor", type = CBORDataFormat.class),
-            @XmlElement(name = "crypto", type = CryptoDataFormat.class),
-            @XmlElement(name = "csv", type = CsvDataFormat.class),
-            @XmlElement(name = "custom", type = CustomDataFormat.class),
-            @XmlElement(name = "dfdl", type = DfdlDataFormat.class),
-            @XmlElement(name = "fhirJson", type = FhirJsonDataFormat.class),
-            @XmlElement(name = "fhirXml", type = FhirXmlDataFormat.class),
-            @XmlElement(name = "flatpack", type = FlatpackDataFormat.class),
-            @XmlElement(name = "fory", type = ForyDataFormat.class),
-            @XmlElement(name = "grok", type = GrokDataFormat.class),
-            @XmlElement(name = "groovyXml", type = GroovyXmlDataFormat.class),
-            @XmlElement(name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
-            @XmlElement(name = "hl7", type = HL7DataFormat.class),
-            @XmlElement(name = "ical", type = IcalDataFormat.class),
-            @XmlElement(name = "iso8583", type = Iso8583DataFormat.class),
-            @XmlElement(name = "jacksonXml", type = JacksonXMLDataFormat.class),
-            @XmlElement(name = "jaxb", type = JaxbDataFormat.class),
-            @XmlElement(name = "json", type = JsonDataFormat.class),
-            @XmlElement(name = "jsonApi", type = JsonApiDataFormat.class),
-            @XmlElement(name = "lzf", type = LZFDataFormat.class),
-            @XmlElement(name = "mimeMultipart", type = MimeMultipartDataFormat.class),
-            @XmlElement(name = "parquetAvro", type = ParquetAvroDataFormat.class),
-            @XmlElement(name = "protobuf", type = ProtobufDataFormat.class),
-            @XmlElement(name = "rss", type = RssDataFormat.class),
-            @XmlElement(name = "smooks", type = SmooksDataFormat.class),
-            @XmlElement(name = "soap", type = SoapDataFormat.class),
-            @XmlElement(name = "swiftMt", type = SwiftMtDataFormat.class),
-            @XmlElement(name = "swiftMx", type = SwiftMxDataFormat.class),
-            @XmlElement(name = "syslog", type = SyslogDataFormat.class),
-            @XmlElement(name = "tarFile", type = TarFileDataFormat.class),
-            @XmlElement(name = "thrift", type = ThriftDataFormat.class),
-            @XmlElement(name = "univocityCsv", type = UniVocityCsvDataFormat.class),
-            @XmlElement(name = "univocityFixed", type = UniVocityFixedDataFormat.class),
-            @XmlElement(name = "univocityTsv", type = UniVocityTsvDataFormat.class),
-            @XmlElement(name = "xmlSecurity", type = XMLSecurityDataFormat.class),
-            @XmlElement(name = "pgp", type = PGPDataFormat.class),
-            @XmlElement(name = "yaml", type = YAMLDataFormat.class),
-            @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
-            @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
+        @XmlElement(name = "asn1", type = ASN1DataFormat.class),
+        @XmlElement(name = "avro", type = AvroDataFormat.class),
+        @XmlElement(name = "barcode", type = BarcodeDataFormat.class),
+        @XmlElement(name = "base64", type = Base64DataFormat.class),
+        @XmlElement(name = "beanio", type = BeanioDataFormat.class),
+        @XmlElement(name = "bindy", type = BindyDataFormat.class),
+        @XmlElement(name = "cbor", type = CBORDataFormat.class),
+        @XmlElement(name = "crypto", type = CryptoDataFormat.class),
+        @XmlElement(name = "csv", type = CsvDataFormat.class),
+        @XmlElement(name = "custom", type = CustomDataFormat.class),
+        @XmlElement(name = "dfdl", type = DfdlDataFormat.class),
+        @XmlElement(name = "fhirJson", type = FhirJsonDataFormat.class),
+        @XmlElement(name = "fhirXml", type = FhirXmlDataFormat.class),
+        @XmlElement(name = "flatpack", type = FlatpackDataFormat.class),
+        @XmlElement(name = "fory", type = ForyDataFormat.class),
+        @XmlElement(name = "grok", type = GrokDataFormat.class),
+        @XmlElement(name = "groovyXml", type = GroovyXmlDataFormat.class),
+        @XmlElement(name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
+        @XmlElement(name = "hl7", type = HL7DataFormat.class),
+        @XmlElement(name = "ical", type = IcalDataFormat.class),
+        @XmlElement(name = "iso8583", type = Iso8583DataFormat.class),
+        @XmlElement(name = "jacksonXml", type = JacksonXMLDataFormat.class),
+        @XmlElement(name = "jaxb", type = JaxbDataFormat.class),
+        @XmlElement(name = "json", type = JsonDataFormat.class),
+        @XmlElement(name = "jsonApi", type = JsonApiDataFormat.class),
+        @XmlElement(name = "lzf", type = LZFDataFormat.class),
+        @XmlElement(name = "mimeMultipart", type = MimeMultipartDataFormat.class),
+        @XmlElement(name = "parquetAvro", type = ParquetAvroDataFormat.class),
+        @XmlElement(name = "protobuf", type = ProtobufDataFormat.class),
+        @XmlElement(name = "rss", type = RssDataFormat.class),
+        @XmlElement(name = "smooks", type = SmooksDataFormat.class),
+        @XmlElement(name = "soap", type = SoapDataFormat.class),
+        @XmlElement(name = "swiftMt", type = SwiftMtDataFormat.class),
+        @XmlElement(name = "swiftMx", type = SwiftMxDataFormat.class),
+        @XmlElement(name = "syslog", type = SyslogDataFormat.class),
+        @XmlElement(name = "tarFile", type = TarFileDataFormat.class),
+        @XmlElement(name = "thrift", type = ThriftDataFormat.class),
+        @XmlElement(name = "univocityCsv", type = UniVocityCsvDataFormat.class),
+        @XmlElement(name = "univocityFixed", type = UniVocityFixedDataFormat.class),
+        @XmlElement(name = "univocityTsv", type = UniVocityTsvDataFormat.class),
+        @XmlElement(name = "xmlSecurity", type = XMLSecurityDataFormat.class),
+        @XmlElement(name = "pgp", type = PGPDataFormat.class),
+        @XmlElement(name = "yaml", type = YAMLDataFormat.class),
+        @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
+        @XmlElement(name = "zipFile", type = ZipFileDataFormat.class)
+    })
     private DataFormatDefinition dataFormatType;
+
     @XmlAttribute
     private String variableSend;
+
     @XmlAttribute
     private String variableReceive;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String allowNullBody;
 
-    public UnmarshalDefinition() {
-    }
+    public UnmarshalDefinition() {}
 
     protected UnmarshalDefinition(UnmarshalDefinition source) {
         super(source);

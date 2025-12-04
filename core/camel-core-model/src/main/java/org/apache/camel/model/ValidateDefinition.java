@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -45,8 +46,7 @@ public class ValidateDefinition extends ExpressionNode {
     @Metadata(label = "advanced", javaType = "org.apache.camel.spi.PredicateExceptionFactory")
     private String predicateExceptionFactory;
 
-    public ValidateDefinition() {
-    }
+    public ValidateDefinition() {}
 
     protected ValidateDefinition(ValidateDefinition source) {
         super(source);
@@ -131,5 +131,4 @@ public class ValidateDefinition extends ExpressionNode {
         this.predicateExceptionFactory = ref;
         return this;
     }
-
 }

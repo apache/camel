@@ -14,13 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.openstack.it;
 
-import org.apache.camel.component.openstack.common.OpenstackConstants;
-import org.apache.camel.component.openstack.keystone.KeystoneConstants;
-import org.junit.jupiter.api.Test;
-import org.openstack4j.api.Builders;
-import org.openstack4j.model.identity.v3.Domain;
+package org.apache.camel.component.openstack.it;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,11 +23,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.apache.camel.component.openstack.common.OpenstackConstants;
+import org.apache.camel.component.openstack.keystone.KeystoneConstants;
+import org.junit.jupiter.api.Test;
+import org.openstack4j.api.Builders;
+import org.openstack4j.model.identity.v3.Domain;
+
 public class OpenstackKeystoneDomainTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-keystone://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + KeystoneConstants.DOMAINS;
+    private static final String URI_FORMAT =
+            "openstack-keystone://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + KeystoneConstants.DOMAINS;
 
     private static final String DOMAIN_NAME = "Domain_CRUD";
     private static final String DOMAIN_ID = "98c110ae41c249189c9d5c25d8377b65";
@@ -41,7 +42,11 @@ public class OpenstackKeystoneDomainTest extends OpenstackWiremockTestSupport {
 
     @Test
     void createShouldSucceed() {
-        Domain in = Builders.domain().name(DOMAIN_NAME).description(DOMAIN_DESCRIPTION).enabled(true).build();
+        Domain in = Builders.domain()
+                .name(DOMAIN_NAME)
+                .description(DOMAIN_DESCRIPTION)
+                .enabled(true)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.CREATE);
         Domain out = template.requestBody(uri, in, Domain.class);
@@ -77,7 +82,11 @@ public class OpenstackKeystoneDomainTest extends OpenstackWiremockTestSupport {
 
     @Test
     void updateShouldSucceed() {
-        Domain in = Builders.domain().name(DOMAIN_NAME).description(DOMAIN_DESCRIPTION_UPDATED).id(DOMAIN_ID).build();
+        Domain in = Builders.domain()
+                .name(DOMAIN_NAME)
+                .description(DOMAIN_DESCRIPTION_UPDATED)
+                .id(DOMAIN_ID)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.UPDATE);
         Domain out = template.requestBody(uri, in, Domain.class);

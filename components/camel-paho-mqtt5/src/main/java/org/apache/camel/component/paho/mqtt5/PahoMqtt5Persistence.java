@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
 
 public enum PahoMqtt5Persistence {
-
     FILE,
     MEMORY
-
 }

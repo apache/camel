@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,18 +31,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link BoxSearchManager} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxSearchManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxSearchManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxSearchManagerApiMethod.class).getName();
+            .getApiName(BoxSearchManagerApiMethod.class)
+            .getName();
 
     /**
      * There is a delay 5-10 mins between upload of file and being searchable (probably to update some search indexes,
@@ -73,5 +76,4 @@ public class BoxSearchManagerIT extends AbstractBoxITSupport {
             }
         };
     }
-
 }

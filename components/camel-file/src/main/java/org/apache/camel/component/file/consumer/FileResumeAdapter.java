@@ -22,6 +22,4 @@ import org.apache.camel.resume.ResumeAdapter;
 /**
  * Defines resume adapter for consumers of the file component.
  */
-public interface FileResumeAdapter extends ResumeAdapter {
-
-}
+public interface FileResumeAdapter extends ResumeAdapter {}

@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "infra",
-                     description = "List and Run external services for testing and prototyping")
+@CommandLine.Command(name = "infra", description = "List and Run external services for testing and prototyping")
 public class InfraCommand extends InfraBaseCommand {
 
     public InfraCommand(CamelJBangMain main) {

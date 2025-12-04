@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.validator;
+
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,8 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 public class ValidatorSchemaImportTest extends CamelTestSupport {
 
@@ -55,7 +56,8 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
+        template.sendBody(
+                "direct:start",
                 "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
         assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
@@ -71,18 +73,23 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
         this.context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry()
-                        .to("validator:org/apache/camel/component/validator/dotslash/child.xsd").to("mock:valid")
-                        .doCatch(ValidationException.class).to("mock:invalid").doFinally().to("mock:finally")
+                from("direct:start")
+                        .doTry()
+                        .to("validator:org/apache/camel/component/validator/dotslash/child.xsd")
+                        .to("mock:valid")
+                        .doCatch(ValidationException.class)
+                        .to("mock:invalid")
+                        .doFinally()
+                        .to("mock:finally")
                         .end();
             }
         });
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template
-                .sendBody("direct:start",
-                        "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
+        template.sendBody(
+                "direct:start",
+                "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
         assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -97,18 +104,23 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
         this.context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry()
+                from("direct:start")
+                        .doTry()
                         .to("validator:org/apache/camel/component/validator/doubleslash/child.xsd")
-                        .to("mock:valid").doCatch(ValidationException.class).to("mock:invalid").doFinally()
-                        .to("mock:finally").end();
+                        .to("mock:valid")
+                        .doCatch(ValidationException.class)
+                        .to("mock:invalid")
+                        .doFinally()
+                        .to("mock:finally")
+                        .end();
             }
         });
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template
-                .sendBody("direct:start",
-                        "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
+        template.sendBody(
+                "direct:start",
+                "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
         assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -137,7 +149,8 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
+        template.sendBody(
+                "direct:start",
                 "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
         assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);

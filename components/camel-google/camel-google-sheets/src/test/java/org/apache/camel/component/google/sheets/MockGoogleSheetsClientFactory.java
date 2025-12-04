@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets;
 
 import java.util.Collection;
@@ -35,26 +36,36 @@ public class MockGoogleSheetsClientFactory implements GoogleSheetsClientFactory 
     private final HttpTransport transport;
 
     public MockGoogleSheetsClientFactory(MockLowLevelHttpResponse lowLevelHttpResponse) {
-        transport = new MockHttpTransport.Builder().setLowLevelHttpResponse(lowLevelHttpResponse).build();
+        transport = new MockHttpTransport.Builder()
+                .setLowLevelHttpResponse(lowLevelHttpResponse)
+                .build();
     }
 
     @Override
     public Sheets makeClient(
-            CamelContext camelContext, String serviceAccountKey, Collection<String> scopes,
-            String applicationName, String delegate) {
+            CamelContext camelContext,
+            String serviceAccountKey,
+            Collection<String> scopes,
+            String applicationName,
+            String delegate) {
         return makeClient();
     }
 
     @Override
     public Sheets makeClient(
-            String clientId, String clientSecret, Collection<String> scopes, String applicationName,
-            String refreshToken, String accessToken) {
+            String clientId,
+            String clientSecret,
+            Collection<String> scopes,
+            String applicationName,
+            String refreshToken,
+            String accessToken) {
         return makeClient();
     }
 
     private Sheets makeClient() {
         Credential credential = new MockGoogleCredential.Builder().build();
-        return new Sheets.Builder(transport, JSON_FACTORY, credential).setApplicationName("mock").build();
+        return new Sheets.Builder(transport, JSON_FACTORY, credential)
+                .setApplicationName("mock")
+                .build();
     }
-
 }

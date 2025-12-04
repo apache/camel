@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -28,13 +31,13 @@ import org.apache.camel.util.IOHelper;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HandlerTest extends BaseJettyTest {
     @BindToRegistry("statisticsHandler1")
     private final StatisticsHandler statisticsHandler1 = new StatisticsHandler();
+
     @BindToRegistry("statisticsHandler2")
     private final StatisticsHandler statisticsHandler2 = new StatisticsHandler();
+
     @BindToRegistry("statisticsHandler3")
     private final StatisticsHandler statisticsHandler3 = new StatisticsHandler();
 
@@ -96,11 +99,12 @@ public class HandlerTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:" + port1 + "/?handlers=#statisticsHandler1").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        exchange.getMessage().setBody(htmlResponse);
-                    }
-                });
+                from("jetty:http://localhost:" + port1 + "/?handlers=#statisticsHandler1")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getMessage().setBody(htmlResponse);
+                            }
+                        });
 
                 from("jetty:http://localhost:" + port2 + "/?handlers=#statisticsHandler2,#statisticsHandler3")
                         .process(new Processor() {

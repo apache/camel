@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ecs;
 
 import org.apache.camel.Endpoint;
@@ -90,7 +91,8 @@ public class ECS2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (ecsProducerToString == null) {
-            ecsProducerToString = "ECSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            ecsProducerToString =
+                    "ECSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return ecsProducerToString;
     }
@@ -109,7 +111,9 @@ public class ECS2Producer extends DefaultProducer {
                     ListClustersRequest request = (ListClustersRequest) payload;
                     result = ecsClient.listClusters(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Clusters command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -126,7 +130,9 @@ public class ECS2Producer extends DefaultProducer {
                 ListClustersRequest request = builder.build();
                 result = ecsClient.listClusters(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Clusters command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -143,7 +149,9 @@ public class ECS2Producer extends DefaultProducer {
                     CreateClusterRequest request = (CreateClusterRequest) payload;
                     result = ecsClient.createCluster(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Cluster command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -160,7 +168,9 @@ public class ECS2Producer extends DefaultProducer {
                 CreateClusterRequest request = builder.build();
                 result = ecsClient.createCluster(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Cluster command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -177,7 +187,9 @@ public class ECS2Producer extends DefaultProducer {
                     DescribeClustersRequest request = (DescribeClustersRequest) payload;
                     result = ecsClient.describeClusters(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Clusters command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -194,7 +206,9 @@ public class ECS2Producer extends DefaultProducer {
                 DescribeClustersRequest request = builder.build();
                 result = ecsClient.describeClusters(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Clusters command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -211,7 +225,9 @@ public class ECS2Producer extends DefaultProducer {
                     DeleteClusterRequest request = (DeleteClusterRequest) payload;
                     result = ecsClient.deleteCluster(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Cluster command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -230,7 +246,9 @@ public class ECS2Producer extends DefaultProducer {
                 DeleteClusterRequest request = builder.build();
                 result = ecsClient.deleteCluster(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Cluster command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -246,9 +264,7 @@ public class ECS2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -265,5 +281,4 @@ public class ECS2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

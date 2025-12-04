@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -29,8 +32,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanInfoTest {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
@@ -53,10 +54,14 @@ public class BeanInfoTest {
         List<MethodInfo> operations = info.getMethods();
         assertEquals(2, operations.size());
 
-        long size = operations.stream().filter(m -> m.getMethod().getName().equals("inOnlyMethod")).count();
+        long size = operations.stream()
+                .filter(m -> m.getMethod().getName().equals("inOnlyMethod"))
+                .count();
         assertEquals(1, size);
 
-        size = operations.stream().filter(m -> m.getMethod().getName().equals("inOutMethod")).count();
+        size = operations.stream()
+                .filter(m -> m.getMethod().getName().equals("inOutMethod"))
+                .count();
         assertEquals(1, size);
     }
 
@@ -105,7 +110,8 @@ public class BeanInfoTest {
     }
 
     @Test
-    public void testMethodPatternUsingClassAnnotationsOnBaseInterfaceAndOverloadingMethodOnDerivedInterface() throws Exception {
+    public void testMethodPatternUsingClassAnnotationsOnBaseInterfaceAndOverloadingMethodOnDerivedInterface()
+            throws Exception {
         BeanInfo info = createBeanInfo(OverloadOnInterface.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
@@ -183,20 +189,17 @@ public class BeanInfoTest {
     public static class OverloadOnMethod implements MyOneWayInterface {
 
         @Override
-        public void inOnlyMethod() {
-        }
+        public void inOnlyMethod() {}
     }
 
     public static class OverloadOnBaseClass extends OverloadOnMethod {
-        public void robustInOnlyMethod() {
-        }
+        public void robustInOnlyMethod() {}
     }
 
     public static class OverloadOnInterface implements MyOneWayInterfaceWithOverloadedMethod {
 
         @Override
-        public void inOnlyMethod() {
-        }
+        public void inOnlyMethod() {}
 
         @Override
         public Object inOutMethod() {
@@ -208,8 +211,7 @@ public class BeanInfoTest {
         String method();
     }
 
-    public interface ILevel1Interface extends ILevel2Interface {
-    }
+    public interface ILevel1Interface extends ILevel2Interface {}
 
     static class PackagePrivateClassImplementingLevel2InterfaceMethod implements ILevel1Interface {
         @Override
@@ -229,7 +231,5 @@ public class BeanInfoTest {
     }
 
     public static class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod
-            implements IMethodInterface {
-    }
-
+            implements IMethodInterface {}
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -39,7 +40,8 @@ public class ContextScopedOnExceptionNotHandledErrorHandlerRefIssueTwoRoutesTest
         getMockEndpoint("mock:handled").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Hello World"),
                 "Should have thrown exception");
 
@@ -74,7 +76,10 @@ public class ContextScopedOnExceptionNotHandledErrorHandlerRefIssueTwoRoutesTest
             public void configure() {
                 errorHandler("myDLC");
 
-                onException(IllegalArgumentException.class).handled(false).to("mock:handled").end();
+                onException(IllegalArgumentException.class)
+                        .handled(false)
+                        .to("mock:handled")
+                        .end();
 
                 from("direct:foo").to("mock:foo").throwException(new IOException("Damn IO"));
 

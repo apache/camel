@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -28,9 +32,6 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
@@ -76,7 +77,9 @@ public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .loadBalance().custom("myBalancer").id("mysend")
+                        .loadBalance()
+                        .custom("myBalancer")
+                        .id("mysend")
                         .to("mock:foo", "mock:bar");
             }
         };
@@ -102,5 +105,4 @@ public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
             return true;
         }
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.tx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -28,10 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test will look for the spring .xml file with the same class name but postfixed with -config.xml as filename.
@@ -60,8 +61,8 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
     void test404() {
         // use requestBody to force a InOut message exchange pattern ( = request/reply)
         // will send and wait for a response
-        Object out = template.requestBodyAndHeader(data,
-                "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "unknown");
+        Object out = template.requestBodyAndHeader(
+                data, "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "unknown");
 
         // compare response
         assertEquals(noAccess, out);
@@ -75,8 +76,8 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
         // use requestBody to force a InOut message exchange pattern ( = request/reply)
         // will send and wait for a response
         try {
-            template.requestBodyAndHeader(data,
-                    "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "guest");
+            template.requestBodyAndHeader(
+                    data, "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "guest");
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should timeout");
@@ -89,11 +90,10 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
     void testOK() {
         // use requestBody to force a InOut message exchange pattern ( = request/reply)
         // will send and wait for a response
-        Object out = template.requestBodyAndHeader(data,
-                "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "Claus");
+        Object out = template.requestBodyAndHeader(
+                data, "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "Claus");
 
         // compare response
         assertEquals(ok, out);
     }
-
 }

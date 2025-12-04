@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import jakarta.xml.ws.Endpoint;
@@ -27,8 +28,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRouterTest {
     protected static Endpoint endpoint;
-    protected static String serverAddress = "http://localhost:" + getPort1()
-                                            + "/CxfGreeterMessageCamelHttpRouterTest/SoapContext/SoapPort";
+    protected static String serverAddress =
+            "http://localhost:" + getPort1() + "/CxfGreeterMessageCamelHttpRouterTest/SoapContext/SoapPort";
 
     @AfterAll
     public static void stopService() {
@@ -40,8 +41,8 @@ public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRoute
     @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + getPort1()
-                         + "/CxfGreeterMessageCamelHttpRouterTest/SoapContext/SoapPort";
+        String address =
+                "http://localhost:" + getPort1() + "/CxfGreeterMessageCamelHttpRouterTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);
     }
 
@@ -59,7 +60,7 @@ public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRoute
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointWithCamelHttpBeans.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/GreeterEndpointWithCamelHttpBeans.xml");
     }
-
 }

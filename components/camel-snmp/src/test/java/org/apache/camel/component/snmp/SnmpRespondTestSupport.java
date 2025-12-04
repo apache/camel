@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snmp;
 
 import java.io.IOException;
@@ -68,21 +69,23 @@ public class SnmpRespondTestSupport extends SnmpTestSupport {
             TestCommandResponder responder = new TestCommandResponder(snmpResponder);
             snmpResponder.addCommandResponder(responder);
 
-            SecurityModels respSecModels = new SecurityModels() {
-            };
+            SecurityModels respSecModels = new SecurityModels() {};
 
             CounterSupport.getInstance().addCounterListener(new DefaultCounterListener());
             MPv3 mpv3CR = (MPv3) snmpResponder.getMessageDispatcher().getMessageProcessingModel(MPv3.ID);
             mpv3CR.setLocalEngineID(MPv3.createLocalEngineID(new OctetString("responder")));
-            respSecModels.addSecurityModel(new USM(
-                    SecurityProtocols.getInstance(),
-                    new OctetString(mpv3CR.getLocalEngineID()), 0));
+            respSecModels.addSecurityModel(
+                    new USM(SecurityProtocols.getInstance(), new OctetString(mpv3CR.getLocalEngineID()), 0));
             mpv3CR.setSecurityModels(respSecModels);
 
-            snmpResponder.getUSM().addUser(
-                    new UsmUser(
-                            new OctetString(SECURITY_NAME), AuthSHA.ID, new OctetString("changeit"),
-                            AuthSHA.ID, new OctetString("changeit")));
+            snmpResponder
+                    .getUSM()
+                    .addUser(new UsmUser(
+                            new OctetString(SECURITY_NAME),
+                            AuthSHA.ID,
+                            new OctetString("changeit"),
+                            AuthSHA.ID,
+                            new OctetString("changeit")));
 
             snmpResponder.listen();
         } catch (Exception e) {
@@ -93,12 +96,12 @@ public class SnmpRespondTestSupport extends SnmpTestSupport {
     }
 
     @AfterAll
-    public void afterAll(/*ExtensionContext context*/) {
+    public void afterAll(/*ExtensionContext context*/ ) {
         if (snmpResponder != null) {
             try {
                 snmpResponder.close();
             } catch (IOException e) {
-                //nothing
+                // nothing
             }
         }
     }
@@ -121,10 +124,11 @@ public class SnmpRespondTestSupport extends SnmpTestSupport {
             } else {
                 vbs = new Vector<>(0);
             }
-            String key = vbs.stream().sequential().map(vb -> vb.getOid().toString()).collect(Collectors.joining(","));
+            String key =
+                    vbs.stream().sequential().map(vb -> vb.getOid().toString()).collect(Collectors.joining(","));
 
             int version;
-            //differ snmp versions
+            // differ snmp versions
             if (pdu instanceof PDUv1) {
                 version = SnmpConstants.version1;
                 key = "v1_" + key;
@@ -141,11 +145,17 @@ public class SnmpRespondTestSupport extends SnmpTestSupport {
                 PDU response = makeResponse(pdu, ++numberOfSent, version, vbs);
                 if (response != null) {
                     response.setRequestID(pdu.getRequestID());
-                    commandResponder.getMessageDispatcher().returnResponsePdu(
-                            event.getMessageProcessingModel(), event.getSecurityModel(),
-                            event.getSecurityName(), event.getSecurityLevel(),
-                            response, event.getMaxSizeResponsePDU(),
-                            event.getStateReference(), new StatusInformation());
+                    commandResponder
+                            .getMessageDispatcher()
+                            .returnResponsePdu(
+                                    event.getMessageProcessingModel(),
+                                    event.getSecurityModel(),
+                                    event.getSecurityName(),
+                                    event.getSecurityLevel(),
+                                    response,
+                                    event.getMaxSizeResponsePDU(),
+                                    event.getStateReference(),
+                                    new StatusInformation());
                 }
             } catch (MessageException e) {
                 Assertions.assertNull(e);
@@ -170,24 +180,24 @@ public class SnmpRespondTestSupport extends SnmpTestSupport {
         }
 
         private VariableBinding generateResponseBinding(int counter, int version, OID oid) {
-            //real responses
-            //1.3.6.1.2.1.2.2.1.2 -> 1.3.6.1.2.1.2.2.1.2.1 = ether1
+            // real responses
+            // 1.3.6.1.2.1.2.2.1.2 -> 1.3.6.1.2.1.2.2.1.2.1 = ether1
             if ("1.3.6.1.2.1.2.2.1.2".equals(oid.toString())) {
                 return new VariableBinding(new OID("1.3.6.1.2.1.2.2.1.2.1"), new OctetString("ether1"));
             }
-            //1.3.6.1.2.1.2.2.1.2.1 -> 1.3.6.1.2.1.2.2.1.2.2 = ether2
+            // 1.3.6.1.2.1.2.2.1.2.1 -> 1.3.6.1.2.1.2.2.1.2.2 = ether2
             if ("1.3.6.1.2.1.2.2.1.2.1".equals(oid.toString())) {
                 return new VariableBinding(new OID("1.3.6.1.2.1.2.2.1.2.2"), new OctetString("ether2"));
             }
-            //1.3.6.1.2.1.2.2.1.2.2 -> 1.3.6.1.2.1.2.2.1.2.3 = ether3
+            // 1.3.6.1.2.1.2.2.1.2.2 -> 1.3.6.1.2.1.2.2.1.2.3 = ether3
             if ("1.3.6.1.2.1.2.2.1.2.2".equals(oid.toString())) {
                 return new VariableBinding(new OID("1.3.6.1.2.1.2.2.1.2.3"), new OctetString("ether3"));
             }
-            //1.3.6.1.2.1.2.2.1.2.3 -> 1.3.6.1.2.1.2.2.1.2.4 = ether4
+            // 1.3.6.1.2.1.2.2.1.2.3 -> 1.3.6.1.2.1.2.2.1.2.4 = ether4
             if ("1.3.6.1.2.1.2.2.1.2.3".equals(oid.toString())) {
                 return new VariableBinding(new OID("1.3.6.1.2.1.2.2.1.2.4"), new OctetString("ether4"));
             }
-            //1.3.6.1.2.1.2.2.1.2.4 -> 1.3.6.1.2.1.2.2.1.3.1 = 6
+            // 1.3.6.1.2.1.2.2.1.2.4 -> 1.3.6.1.2.1.2.2.1.3.1 = 6
             if ("1.3.6.1.2.1.2.2.1.2.4".equals(oid.toString())) {
                 return new VariableBinding(new OID("1.3.6.1.2.1.2.2.1.3.1"), new OctetString("6"));
             }

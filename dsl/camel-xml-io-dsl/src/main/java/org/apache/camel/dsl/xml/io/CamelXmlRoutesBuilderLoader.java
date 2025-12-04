@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
 
 import org.apache.camel.api.management.ManagedResource;
@@ -28,5 +29,4 @@ public class CamelXmlRoutesBuilderLoader extends XmlRoutesBuilderLoader {
     public CamelXmlRoutesBuilderLoader() {
         super(EXTENSION);
     }
-
 }

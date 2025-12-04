@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -57,9 +58,11 @@ public class CustomAggregationStrategyTest extends ContextTestSupport {
                 from("direct:start")
                         // aggregated by header id and use our own strategy how to
                         // aggregate
-                        .aggregate(new MyAggregationStrategy()).header("id")
+                        .aggregate(new MyAggregationStrategy())
+                        .header("id")
                         // wait for 1 seconds to aggregate
-                        .completionTimeout(1000L).to("mock:result");
+                        .completionTimeout(1000L)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

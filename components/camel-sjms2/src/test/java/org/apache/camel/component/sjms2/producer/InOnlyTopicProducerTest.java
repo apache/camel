@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2.producer;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Message;
@@ -29,17 +33,14 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InOnlyTopicProducerTest extends Jms2TestSupport {
 
     private static final String TEST_DESTINATION_NAME = "test.foo.topic";
+
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 
-    public InOnlyTopicProducerTest() {
-    }
+    public InOnlyTopicProducerTest() {}
 
     @Test
     public void testInOnlyTopicProducerProducer() throws Exception {
@@ -64,7 +65,6 @@ public class InOnlyTopicProducerTest extends Jms2TestSupport {
 
         mock.assertIsSatisfied();
         mc.close();
-
     }
 
     /**
@@ -76,11 +76,9 @@ public class InOnlyTopicProducerTest extends Jms2TestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("sjms2:topic:" + TEST_DESTINATION_NAME);
+                from("direct:start").to("sjms2:topic:" + TEST_DESTINATION_NAME);
 
-                from("direct:finish")
-                        .to("log:test.log.1?showBody=true", "mock:result");
+                from("direct:finish").to("log:test.log.1?showBody=true", "mock:result");
             }
         };
     }

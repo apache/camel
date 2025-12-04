@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -51,9 +55,6 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Base test-class for classic Spring application such as standalone, web applications. Do <tt>not</tt> use this class
@@ -116,8 +117,8 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             if (context.isActive()) {
                 throw new IllegalStateException(
                         "Cannot active profiles: " + Arrays.asList(profiles) + " on active Spring application context: "
-                                                + context
-                                                + ". The code in your createApplicationContext() method should be adjusted to create the application context with refresh = false as parameter");
+                                + context
+                                + ". The code in your createApplicationContext() method should be adjusted to create the application context with refresh = false as parameter");
             }
             LOG.info("Spring activating profiles: {}", Arrays.asList(profiles));
             context.getEnvironment().setActiveProfiles(profiles);
@@ -170,12 +171,12 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
      */
     protected ApplicationContext getRouteExcludingApplicationContext() {
         GenericApplicationContext routeExcludingContext = new GenericApplicationContext();
-        routeExcludingContext.registerBeanDefinition("excludingResolver",
-                new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
+        routeExcludingContext.registerBeanDefinition(
+                "excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
         routeExcludingContext.refresh();
 
-        ExcludingPackageScanClassResolver excludingResolver
-                = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
+        ExcludingPackageScanClassResolver excludingResolver =
+                routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = Arrays.asList(excludeRoutes());
         excludingResolver.setExcludedClasses(new HashSet<>(excluded));
 
@@ -189,7 +190,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
      */
     protected Class<?>[] excludeRoutes() {
         Class<?> excludedRoute = excludeRoute();
-        return excludedRoute != null ? new Class[] { excludedRoute } : new Class[0];
+        return excludedRoute != null ? new Class[] {excludedRoute} : new Class[0];
     }
 
     /**
@@ -209,7 +210,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             return type.cast(value);
         } else {
             fail("Spring bean <" + name + "> is not an instanceof " + type.getName() + " but is of type "
-                 + ObjectHelper.className(value));
+                    + ObjectHelper.className(value));
             return null;
         }
     }
@@ -263,11 +264,13 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         return newAppContext(configLocation, clazz, props);
     }
 
-    public static MyXmlApplicationContext newAppContext(String configLocation, Class<?> clazz, Map<String, String> props) {
+    public static MyXmlApplicationContext newAppContext(
+            String configLocation, Class<?> clazz, Map<String, String> props) {
         return new MyXmlApplicationContext(configLocation, clazz, props);
     }
 
-    public static MyXmlApplicationContext newAppContext(String[] configLocations, Class<?> clazz, Map<String, String> props) {
+    public static MyXmlApplicationContext newAppContext(
+            String[] configLocations, Class<?> clazz, Map<String, String> props) {
         return new MyXmlApplicationContext(configLocations, clazz, props);
     }
 
@@ -275,7 +278,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         private final Resource[] configResources;
 
         public MyXmlApplicationContext(String configLocation, Class<?> clazz, Map<String, String> properties) {
-            this(new String[] { configLocation }, clazz, properties);
+            this(new String[] {configLocation}, clazz, properties);
         }
 
         public MyXmlApplicationContext(String[] configLocations, Class<?> clazz, Map<String, String> properties) {
@@ -311,7 +314,8 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         public InputStream getInputStream() throws IOException {
             if (!properties.isEmpty()) {
                 final String before = readBefore();
-                String p = properties.keySet().stream().map(Pattern::quote)
+                String p = properties.keySet().stream()
+                        .map(Pattern::quote)
                         .collect(Collectors.joining("|", Pattern.quote("{{") + "(", ")" + Pattern.quote("}}")));
                 Matcher m = Pattern.compile(p).matcher(before);
                 StringBuilder sb = new StringBuilder(before.length());

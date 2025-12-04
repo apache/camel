@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,11 +36,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OpenTelemetryTracerTest extends OpenTelemetryTracerTestSupport {
 
@@ -73,7 +74,6 @@ public class OpenTelemetryTracerTest extends OpenTelemetryTracerTestSupport {
         for (OtelTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(OtelTrace trace, String expectedBody) {
@@ -89,13 +89,18 @@ public class OpenTelemetryTracerTest extends OpenTelemetryTracerTestSupport {
         assertTrue(log.hasEnded());
 
         // Validate same trace
-        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                direct.getSpanContext().getTraceId());
         assertEquals(direct.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
 
         // Validate hierarchy
         assertFalse(testProducer.getParentSpanContext().isValid());
-        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
+        assertEquals(
+                testProducer.getSpanContext().getSpanId(),
+                direct.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
 
         // Validate operations
         assertEquals(Op.EVENT_SENT.toString(), testProducer.getAttributes().get(AttributeKey.stringKey("op")));
@@ -112,7 +117,6 @@ public class OpenTelemetryTracerTest extends OpenTelemetryTracerTestSupport {
                     "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
                     log.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         }
-
     }
 
     @Override
@@ -120,12 +124,8 @@ public class OpenTelemetryTracerTest extends OpenTelemetryTracerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("log:info");
+                from("direct:start").routeId("start").log("A message").to("log:info");
             }
         };
     }
-
 }

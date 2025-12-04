@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import javax.xml.transform.ErrorListener;
@@ -74,5 +75,4 @@ public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener
     public void warning(TransformerException exception) throws TransformerException {
         exchange.setProperty(Exchange.XSLT_WARNING, exception);
     }
-
 }

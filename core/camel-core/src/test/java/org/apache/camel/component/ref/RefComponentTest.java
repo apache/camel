@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ref;
 
 import org.apache.camel.Component;
@@ -55,5 +56,4 @@ public class RefComponentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

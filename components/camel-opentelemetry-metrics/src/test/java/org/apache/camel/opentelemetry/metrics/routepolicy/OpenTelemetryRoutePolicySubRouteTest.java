@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -23,11 +29,6 @@ import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OpenTelemetryRoutePolicySubRouteTest extends AbstractOpenTelemetryRoutePolicyTest {
 
@@ -69,12 +70,9 @@ public class OpenTelemetryRoutePolicySubRouteTest extends AbstractOpenTelemetryR
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .to("direct:bar")
-                        .to("mock:foo");
+                from("direct:foo").routeId("foo").to("direct:bar").to("mock:foo");
 
-                from("direct:bar").routeId("bar")
-                        .to("mock:bar");
+                from("direct:bar").routeId("bar").to("mock:bar");
             }
         };
     }

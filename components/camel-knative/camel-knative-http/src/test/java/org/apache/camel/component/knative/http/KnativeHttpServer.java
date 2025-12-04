@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
 
 import java.util.concurrent.BlockingQueue;
@@ -83,7 +84,8 @@ public class KnativeHttpServer extends ServiceSupport {
         this(context, host, AvailablePortFinder.getNextAvailable(), path, handler);
     }
 
-    public KnativeHttpServer(CamelContext context, String host, int port, String path, Handler<RoutingContext> handler) {
+    public KnativeHttpServer(
+            CamelContext context, String host, int port, String path, Handler<RoutingContext> handler) {
         this.context = context;
         this.host = host;
         this.port = port;
@@ -119,7 +121,8 @@ public class KnativeHttpServer extends ServiceSupport {
         this.vertx = Vertx.vertx();
         this.server = vertx.createHttpServer(getServerOptions());
         this.router = Router.router(vertx);
-        this.router.route(path)
+        this.router
+                .route(path)
                 .handler(event -> {
                     event.request().resume();
                     BodyHandler.create().handle(event);
@@ -135,55 +138,21 @@ public class KnativeHttpServer extends ServiceSupport {
                 .handler(handler);
 
         CompletableFuture.runAsync(
-                () -> {
-                    CountDownLatch latch = new CountDownLatch(1);
-                    server.requestHandler(router).listen(port, host, result -> {
-                        try {
-                            if (result.failed()) {
-                                LOGGER.warn("Failed to start Vert.x HttpServer on {}:{}, reason: {}",
-                                        host,
-                                        port,
-                                        result.cause().getMessage());
-
-                                throw new RuntimeException(result.cause());
-                            }
-
-                            LOGGER.info("Vert.x HttpServer started on {}:{}", host, port);
-                        } finally {
-                            latch.countDown();
-                        }
-                    });
-
-                    try {
-                        latch.await();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                },
-                executor).toCompletableFuture().join();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        try {
-            if (server != null) {
-                CompletableFuture.runAsync(
                         () -> {
                             CountDownLatch latch = new CountDownLatch(1);
-
-                            // remove the platform-http component
-                            context.removeComponent(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
-
-                            server.close(result -> {
+                            server.requestHandler(router).listen(port, host, result -> {
                                 try {
                                     if (result.failed()) {
-                                        LOGGER.warn("Failed to close Vert.x HttpServer reason: {}",
+                                        LOGGER.warn(
+                                                "Failed to start Vert.x HttpServer on {}:{}, reason: {}",
+                                                host,
+                                                port,
                                                 result.cause().getMessage());
 
                                         throw new RuntimeException(result.cause());
                                     }
 
-                                    LOGGER.info("Vert.x HttpServer stopped");
+                                    LOGGER.info("Vert.x HttpServer started on {}:{}", host, port);
                                 } finally {
                                     latch.countDown();
                                 }
@@ -195,38 +164,78 @@ public class KnativeHttpServer extends ServiceSupport {
                                 throw new RuntimeException(e);
                             }
                         },
-                        executor).toCompletableFuture().join();
+                        executor)
+                .toCompletableFuture()
+                .join();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        try {
+            if (server != null) {
+                CompletableFuture.runAsync(
+                                () -> {
+                                    CountDownLatch latch = new CountDownLatch(1);
+
+                                    // remove the platform-http component
+                                    context.removeComponent(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
+
+                                    server.close(result -> {
+                                        try {
+                                            if (result.failed()) {
+                                                LOGGER.warn(
+                                                        "Failed to close Vert.x HttpServer reason: {}",
+                                                        result.cause().getMessage());
+
+                                                throw new RuntimeException(result.cause());
+                                            }
+
+                                            LOGGER.info("Vert.x HttpServer stopped");
+                                        } finally {
+                                            latch.countDown();
+                                        }
+                                    });
+
+                                    try {
+                                        latch.await();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                },
+                                executor)
+                        .toCompletableFuture()
+                        .join();
             }
         } finally {
             this.server = null;
         }
 
         if (vertx != null) {
-            Future<?> future = executor.submit(
-                    () -> {
-                        CountDownLatch latch = new CountDownLatch(1);
+            Future<?> future = executor.submit(() -> {
+                CountDownLatch latch = new CountDownLatch(1);
 
-                        vertx.close(result -> {
-                            try {
-                                if (result.failed()) {
-                                    LOGGER.warn("Failed to close Vert.x reason: {}",
-                                            result.cause().getMessage());
+                vertx.close(result -> {
+                    try {
+                        if (result.failed()) {
+                            LOGGER.warn(
+                                    "Failed to close Vert.x reason: {}",
+                                    result.cause().getMessage());
 
-                                    throw new RuntimeException(result.cause());
-                                }
-
-                                LOGGER.info("Vert.x stopped");
-                            } finally {
-                                latch.countDown();
-                            }
-                        });
-
-                        try {
-                            latch.await();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            throw new RuntimeException(result.cause());
                         }
-                    });
+
+                        LOGGER.info("Vert.x stopped");
+                    } finally {
+                        latch.countDown();
+                    }
+                });
+
+                try {
+                    latch.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
 
             try {
                 future.get();

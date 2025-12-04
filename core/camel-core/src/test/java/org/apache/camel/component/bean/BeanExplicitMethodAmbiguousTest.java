@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 
@@ -23,9 +27,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
 
@@ -38,9 +39,8 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
 
     @Test
     public void testBeanExplicitMethodAmbiguous() {
-        Exception e = assertThrows(Exception.class,
-                () -> template.requestBody("direct:hello", "Camel"),
-                "Should thrown an exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.requestBody("direct:hello", "Camel"), "Should thrown an exception");
 
         AmbiguousMethodCallException cause = assertIsInstanceOf(AmbiguousMethodCallException.class, e.getCause());
         assertEquals(2, cause.getMethods().size());

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -34,11 +37,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
-                         disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
-                                          + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
+@EnabledIfSystemProperty(
+        named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME,
+        matches = ".*",
+        disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
+                + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
 public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     private static final String DIRECT_SEND_TO_QUEUE_URI = "direct:sendToQueue";
     private static final String DIRECT_SEND_TO_TOPIC_URI = "direct:sendToTopic";
@@ -78,14 +81,12 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(DIRECT_SEND_TO_QUEUE_URI)
-                        .to("azure-servicebus:" + QUEUE_NAME);
+                from(DIRECT_SEND_TO_QUEUE_URI).to("azure-servicebus:" + QUEUE_NAME);
 
                 from(DIRECT_SEND_TO_SESSION_QUEUE_URI)
                         .to("azure-servicebus:" + QUEUE_WITH_SESSIONS_NAME + "?sessionId=123");
 
-                from(DIRECT_SEND_TO_TOPIC_URI)
-                        .to("azure-servicebus:" + TOPIC_NAME + "?serviceBusType=topic");
+                from(DIRECT_SEND_TO_TOPIC_URI).to("azure-servicebus:" + TOPIC_NAME + "?serviceBusType=topic");
 
                 from(DIRECT_SEND_TO_TOPIC_SESSION_URI)
                         .to("azure-servicebus:" + TOPIC_WITH_SESSIONS_NAME + "?serviceBusType=topic&sessionId=123");
@@ -95,7 +96,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
 
                 from(DIRECT_SEND_SCHEDULED_URI_WITH_SESSIONS)
                         .to("azure-servicebus:" + QUEUE_WITH_SESSIONS_NAME
-                            + "?producerOperation=scheduleMessages&sessionId=123");
+                                + "?producerOperation=scheduleMessages&sessionId=123");
             }
         };
     }
@@ -188,7 +189,9 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
             for (int i = 0; i < 5; i++) {
                 String message = "message-" + i;
                 Map<String, Object> headers = new HashMap<>(PROPAGATED_HEADERS);
-                headers.put(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(1));
+                headers.put(
+                        ServiceBusConstants.SCHEDULED_ENQUEUE_TIME,
+                        OffsetDateTime.now().plusSeconds(1));
                 producerTemplate.sendBodyAndHeaders(DIRECT_SEND_SCHEDULED_URI, message, headers);
             }
 
@@ -219,7 +222,9 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
 
             producerTemplate.send(DIRECT_SEND_SCHEDULED_URI, exchange -> {
                 Map<String, Object> headers = new HashMap<>(PROPAGATED_HEADERS);
-                headers.put(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(1));
+                headers.put(
+                        ServiceBusConstants.SCHEDULED_ENQUEUE_TIME,
+                        OffsetDateTime.now().plusSeconds(1));
                 exchange.getIn().setHeaders(headers);
                 exchange.getIn().setBody(messageBatch);
             });
@@ -239,8 +244,8 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     }
 
     /*
-        Tests for entities with session support
-     */
+       Tests for entities with session support
+    */
 
     @Test
     void camelSendsMessageToServiceBusSessionEnabledQueue() throws InterruptedException {
@@ -322,7 +327,9 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
             for (int i = 0; i < 5; i++) {
                 String message = "message-" + i;
                 Map<String, Object> headers = new HashMap<>(PROPAGATED_HEADERS);
-                headers.put(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(1));
+                headers.put(
+                        ServiceBusConstants.SCHEDULED_ENQUEUE_TIME,
+                        OffsetDateTime.now().plusSeconds(1));
                 producerTemplate.sendBodyAndHeaders(DIRECT_SEND_SCHEDULED_URI_WITH_SESSIONS, message, headers);
             }
 
@@ -353,7 +360,9 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
 
             producerTemplate.send(DIRECT_SEND_SCHEDULED_URI_WITH_SESSIONS, exchange -> {
                 Map<String, Object> headers = new HashMap<>(PROPAGATED_HEADERS);
-                headers.put(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(1));
+                headers.put(
+                        ServiceBusConstants.SCHEDULED_ENQUEUE_TIME,
+                        OffsetDateTime.now().plusSeconds(1));
                 exchange.getIn().setHeaders(headers);
                 exchange.getIn().setBody(messageBatch);
             });

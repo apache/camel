@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
+
+import static org.mockito.ArgumentMatchers.isA;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,8 +40,6 @@ import quickfix.field.MsgType;
 import quickfix.field.SenderCompID;
 import quickfix.field.TargetCompID;
 import quickfix.fix42.Email;
-
-import static org.mockito.ArgumentMatchers.isA;
 
 public class QuickfixjProducerTest {
     private Exchange mockExchange;
@@ -116,13 +117,12 @@ public class QuickfixjProducerTest {
     @Test
     public void processInOutExchangeSuccess() throws Exception {
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        SessionID responseSessionID
-                = new SessionID(sessionID.getBeginString(), sessionID.getTargetCompID(), sessionID.getSenderCompID());
-        Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY)).thenReturn(
-                new MessagePredicate(responseSessionID, MsgType.EMAIL));
-        Mockito.when(mockExchange.getProperty(
-                QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
-                1000L, Long.class)).thenReturn(5000L);
+        SessionID responseSessionID =
+                new SessionID(sessionID.getBeginString(), sessionID.getTargetCompID(), sessionID.getSenderCompID());
+        Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY))
+                .thenReturn(new MessagePredicate(responseSessionID, MsgType.EMAIL));
+        Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_TIMEOUT_KEY, 1000L, Long.class))
+                .thenReturn(5000L);
 
         org.apache.camel.Message mockOutboundCamelMessage = Mockito.mock(org.apache.camel.Message.class);
         Mockito.when(mockExchange.getMessage()).thenReturn(mockOutboundCamelMessage);
@@ -134,19 +134,28 @@ public class QuickfixjProducerTest {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
         Mockito.doAnswer((Answer<Boolean>) invocation -> {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID,
-                                outboundFixMessage);
-                    } catch (Exception e) {
-                        throw new RuntimeCamelException(e);
-                    }
-                }
-            }, 10);
-            return true;
-        }).when(mockSession).send(isA(Message.class));
+                    new Timer()
+                            .schedule(
+                                    new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                quickfixjEngine
+                                                        .getMessageCorrelator()
+                                                        .onEvent(
+                                                                QuickfixjEventCategory.AppMessageReceived,
+                                                                sessionID,
+                                                                outboundFixMessage);
+                                            } catch (Exception e) {
+                                                throw new RuntimeCamelException(e);
+                                            }
+                                        }
+                                    },
+                                    10);
+                    return true;
+                })
+                .when(mockSession)
+                .send(isA(Message.class));
 
         producer.process(mockExchange);
 
@@ -159,11 +168,10 @@ public class QuickfixjProducerTest {
     @Test
     public void processInOutExchangeSendUnsuccessful() throws Exception {
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY)).thenReturn(
-                new MessagePredicate(sessionID, MsgType.EMAIL));
-        Mockito.when(mockExchange.getProperty(
-                QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
-                1000L, Long.class)).thenReturn(5000L);
+        Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY))
+                .thenReturn(new MessagePredicate(sessionID, MsgType.EMAIL));
+        Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_TIMEOUT_KEY, 1000L, Long.class))
+                .thenReturn(5000L);
 
         org.apache.camel.Message mockOutboundCamelMessage = Mockito.mock(org.apache.camel.Message.class);
         Mockito.when(mockExchange.getMessage()).thenReturn(mockOutboundCamelMessage);
@@ -175,19 +183,28 @@ public class QuickfixjProducerTest {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
         Mockito.doAnswer((Answer<Boolean>) invocation -> {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID,
-                                outboundFixMessage);
-                    } catch (Exception e) {
-                        throw new RuntimeCamelException(e);
-                    }
-                }
-            }, 10);
-            return false;
-        }).when(mockSession).send(isA(Message.class));
+                    new Timer()
+                            .schedule(
+                                    new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                quickfixjEngine
+                                                        .getMessageCorrelator()
+                                                        .onEvent(
+                                                                QuickfixjEventCategory.AppMessageReceived,
+                                                                sessionID,
+                                                                outboundFixMessage);
+                                            } catch (Exception e) {
+                                                throw new RuntimeCamelException(e);
+                                            }
+                                        }
+                                    },
+                                    10);
+                    return false;
+                })
+                .when(mockSession)
+                .send(isA(Message.class));
 
         producer.process(mockExchange);
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
 
 import java.io.File;
@@ -49,20 +50,26 @@ public class SAXSourceLogBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").streamCaching()
+                from("direct:start")
+                        .streamCaching()
                         // attach a SaxSource to body
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 byte[] data = exchange.getIn().getBody(byte[].class);
-                                InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, data);
-                                XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+                                InputStream is =
+                                        exchange.getContext().getTypeConverter().convertTo(InputStream.class, data);
+                                XMLReader xmlReader = SAXParserFactory.newInstance()
+                                        .newSAXParser()
+                                        .getXMLReader();
                                 exchange.getIn().setBody(new SAXSource(xmlReader, new InputSource(is)));
                             }
                         })
                         // The ${body} will toString the body and print it, so we
                         // need to enable stream caching
-                        .log(LoggingLevel.WARN, "${body}").to("xslt-saxon:xslt/common/staff_template.xsl").to("log:result")
+                        .log(LoggingLevel.WARN, "${body}")
+                        .to("xslt-saxon:xslt/common/staff_template.xsl")
+                        .to("log:result")
                         .to("mock:result");
             }
         };

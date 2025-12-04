@@ -59,7 +59,8 @@ public class ExclusiveReadLockCheck {
             boolean match;
             if (fastExistsCheck) {
                 // uses the absolute file path as well
-                match = f.getName().equals(file.getAbsoluteFilePath()) || f.getName().equals(file.getFileNameOnly());
+                match = f.getName().equals(file.getAbsoluteFilePath())
+                        || f.getName().equals(file.getFileNameOnly());
             } else {
                 match = f.getName().equals(file.getFileNameOnly());
             }
@@ -130,7 +131,8 @@ public class ExclusiveReadLockCheck {
 
     private boolean isReadLockAcquired(
             long lastModified, long length, long newLastModified, long newLength, long newOlderThan) {
-        return newLength >= minLength && (minAge == 0 && newLastModified == lastModified && newLength == length
-                || minAge != 0 && newLastModified < newOlderThan);
+        return newLength >= minLength
+                && (minAge == 0 && newLastModified == lastModified && newLength == length
+                        || minAge != 0 && newLastModified < newOlderThan);
     }
 }

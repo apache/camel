@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.net.URI;
@@ -66,28 +67,36 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
     private CamelContext camelContext;
 
-    @Metadata(label = "advanced", defaultValue = "true",
-              description = "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired)"
+    @Metadata(
+            label = "advanced",
+            defaultValue = "true",
+            description =
+                    "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired)"
                             + " by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component."
                             + " This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc.")
     private boolean autowiredEnabled = true;
-    @Metadata(label = "consumer",
-              description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while"
+
+    @Metadata(
+            label = "consumer",
+            description =
+                    "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while"
                             + " the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
                             + " Important: This is only possible if the 3rd party component allows Camel to be alerted if an exception was thrown. Some components handle this internally only,"
                             + " and therefore bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd party component"
                             + " and make this possible for future releases."
                             + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private boolean bridgeErrorHandler;
-    @Metadata(label = "producer",
-              description = "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
+
+    @Metadata(
+            label = "producer",
+            description =
+                    "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
                             + " in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then"
                             + " the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed"
                             + " then creating and starting the producer may take a little time and prolong the total processing time of the processing.")
     private boolean lazyStartProducer;
 
-    public DefaultComponent() {
-    }
+    public DefaultComponent() {}
 
     public DefaultComponent(CamelContext context) {
         this.camelContext = context;
@@ -142,26 +151,35 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         validateURI(uri, path, parameters);
         if (LOG.isTraceEnabled()) {
             // at trace level its okay to have parameters logged, that may contain passwords
-            LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri),
-                    URISupport.sanitizePath(path), parameters);
+            LOG.trace(
+                    "Creating endpoint uri=[{}], path=[{}], parameters=[{}]",
+                    URISupport.sanitizeUri(uri),
+                    URISupport.sanitizePath(path),
+                    parameters);
         } else if (LOG.isDebugEnabled()) {
             // but at debug level only output sanitized uris
-            LOG.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
+            LOG.debug(
+                    "Creating endpoint uri=[{}], path=[{}]",
+                    URISupport.sanitizeUri(uri),
+                    URISupport.sanitizePath(path));
         }
 
-        boolean bridge = bridgeErrorHandler || getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler();
+        boolean bridge = bridgeErrorHandler
+                || getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler();
         Boolean bool = getAndRemoveParameter(parameters, "bridgeErrorHandler", Boolean.class);
         if (bool != null) {
             bridge = bool;
         }
-        boolean lazy = lazyStartProducer || getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer();
+        boolean lazy = lazyStartProducer
+                || getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer();
         bool = getAndRemoveParameter(parameters, "lazyStartProducer", Boolean.class);
         if (bool != null) {
             lazy = bool;
         }
         // camel context can turn off autowire globally unless there is a uri parameter
         boolean autowire = camelContext.isAutowiredEnabled()
-                && (autowiredEnabled || getCamelContext().getGlobalEndpointConfiguration().isAutowiredEnabled());
+                && (autowiredEnabled
+                        || getCamelContext().getGlobalEndpointConfiguration().isAutowiredEnabled());
         bool = getAndRemoveParameter(parameters, "autowiredEnabled", Boolean.class);
         if (bool != null) {
             autowire = bool;
@@ -299,10 +317,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
         if (!param.isEmpty()) {
             throw new ResolveEndpointFailedException(
-                    uri, "There are " + param.size()
-                         + " parameters that couldn't be set on the endpoint."
-                         + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                         + " Unknown parameters=[" + param + "]");
+                    uri,
+                    "There are " + param.size()
+                            + " parameters that couldn't be set on the endpoint."
+                            + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                            + " Unknown parameters=[" + param + "]");
         }
     }
 
@@ -321,16 +340,18 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // we should skip the RAW part
             if (!m.find()) {
                 throw new ResolveEndpointFailedException(
-                        uri, "Invalid uri syntax: Double && marker found. "
-                             + "Check the uri and remove the duplicate & marker.");
+                        uri,
+                        "Invalid uri syntax: Double && marker found. "
+                                + "Check the uri and remove the duplicate & marker.");
             }
         }
 
         // if we have a trailing & then that is invalid as well
         if (uri.endsWith("&")) {
             throw new ResolveEndpointFailedException(
-                    uri, "Invalid uri syntax: Trailing & marker found. "
-                         + "Check the uri and remove the trailing & marker.");
+                    uri,
+                    "Invalid uri syntax: Trailing & marker found. "
+                            + "Check the uri and remove the trailing & marker.");
         }
     }
 
@@ -365,8 +386,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     @Override
     protected void doBuild() throws Exception {
         if (defaultName == null) {
-            org.apache.camel.spi.annotations.Component ann
-                    = ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
+            org.apache.camel.spi.annotations.Component ann =
+                    ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
             if (ann != null) {
                 String name = ann.value();
                 // just grab first scheme name if the component has scheme alias (eg http,https)
@@ -438,7 +459,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param bean         the bean
      * @param parameters   properties to set
      */
-    protected void setProperties(CamelContext camelContext, Object bean, Map<String, Object> parameters) throws Exception {
+    protected void setProperties(CamelContext camelContext, Object bean, Map<String, Object> parameters)
+            throws Exception {
         if (parameters == null || parameters.isEmpty()) {
             return;
         }
@@ -454,7 +476,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             configurer = null;
         }
         // use configurer and ignore case as end users may type an option name with mixed case
-        PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true).bind(camelContext, bean, parameters);
+        PropertyBindingSupport.build()
+                .withConfigurer(configurer)
+                .withIgnoreCase(true)
+                .bind(camelContext, bean, parameters);
     }
 
     @Override
@@ -595,7 +620,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @return                          the referenced object or the default value.
      * @throws IllegalArgumentException if referenced object was not found in registry.
      */
-    public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
+    public <T> T resolveAndRemoveReferenceParameter(
+            Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         // the parameter may be the the type already (such as from endpoint-dsl)
         Object value = parameters.remove(key);
         if (value instanceof String str) {

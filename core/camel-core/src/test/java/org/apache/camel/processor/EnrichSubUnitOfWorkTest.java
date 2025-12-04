@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -68,9 +69,15 @@ public class EnrichSubUnitOfWorkTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .useOriginalMessage()
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0));
 
-                from("direct:start").to("mock:start").process(new MyPreProcessor()).enrich("direct:b", null, false, true)
+                from("direct:start")
+                        .to("mock:start")
+                        .process(new MyPreProcessor())
+                        .enrich("direct:b", null, false, true)
                         .to("mock:result");
 
                 from("direct:b").process(new MyProcessor()).to("mock:b");
@@ -103,5 +110,4 @@ public class EnrichSubUnitOfWorkTest extends ContextTestSupport {
             }
         }
     }
-
 }

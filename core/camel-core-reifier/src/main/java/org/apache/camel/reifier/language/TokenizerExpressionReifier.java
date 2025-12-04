@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
@@ -47,5 +48,4 @@ public class TokenizerExpressionReifier extends SingleInputTypedExpressionReifie
         properties[10] = parseBoolean(definition.getSkipFirst());
         return properties;
     }
-
 }

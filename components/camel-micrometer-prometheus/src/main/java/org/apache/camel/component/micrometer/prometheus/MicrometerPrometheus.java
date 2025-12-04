@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.prometheus;
 
 import java.io.Closeable;
@@ -86,28 +87,40 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
     @Metadata(defaultValue = "default", enums = "default,legacy")
     private String namingStrategy;
+
     @Metadata(defaultValue = "true")
     private boolean enableRoutePolicy = true;
+
     @Metadata(defaultValue = "all", enums = "all,route,context")
     private String routePolicyLevel = "all";
+
     @Metadata(defaultValue = "false")
     private boolean enableMessageHistory;
+
     @Metadata(defaultValue = "true")
     private boolean enableExchangeEventNotifier = true;
+
     @Metadata(defaultValue = "true")
     private boolean baseEndpointURIExchangeEventNotifier = true;
+
     @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
+
     @Metadata(defaultValue = "false")
     private boolean enableInstrumentedThreadPoolFactory;
+
     @Metadata(defaultValue = "true")
     private boolean clearOnReload = true;
+
     @Metadata(defaultValue = "false")
     private boolean skipCamelInfo = false;
+
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
+
     @Metadata
     private String binders;
+
     @Metadata(defaultValue = "/observe/metrics")
     private String path = "/observe/metrics";
 
@@ -286,16 +299,16 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
         if (meterRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            MeterRegistry found = MicrometerUtils.getMeterRegistryFromCamelRegistry(camelRegistry,
-                    MicrometerConstants.METRICS_REGISTRY_NAME);
+            MeterRegistry found = MicrometerUtils.getMeterRegistryFromCamelRegistry(
+                    camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
             if (found == null) {
                 found = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
                 // enlist in registry so it can be reused
                 camelRegistry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, found);
             }
             if (!(found instanceof PrometheusMeterRegistry)) {
-                throw new IllegalArgumentException(
-                        "Existing MeterRegistry: " + found.getClass().getName() + " is not a PrometheusMeterRegistry type.");
+                throw new IllegalArgumentException("Existing MeterRegistry: "
+                        + found.getClass().getName() + " is not a PrometheusMeterRegistry type.");
             }
             meterRegistry = (PrometheusMeterRegistry) found;
         }
@@ -333,11 +346,11 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             notifier.setSkipCamelInfo(isSkipCamelInfo());
             notifier.setBaseEndpointURI(isBaseEndpointURIExchangeEventNotifier());
             if ("legacy".equalsIgnoreCase(namingStrategy)) {
-                notifier.setNamingStrategy(
-                        new MicrometerExchangeEventNotifierNamingStrategyLegacy(isBaseEndpointURIExchangeEventNotifier()));
+                notifier.setNamingStrategy(new MicrometerExchangeEventNotifierNamingStrategyLegacy(
+                        isBaseEndpointURIExchangeEventNotifier()));
             } else {
-                notifier.setNamingStrategy(
-                        new MicrometerExchangeEventNotifierNamingStrategyDefault(isBaseEndpointURIExchangeEventNotifier()));
+                notifier.setNamingStrategy(new MicrometerExchangeEventNotifierNamingStrategyDefault(
+                        isBaseEndpointURIExchangeEventNotifier()));
             }
             notifier.setMeterRegistry(meterRegistry);
             managementStrategy.addEventNotifier(notifier);
@@ -367,8 +380,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
         if (isEnableInstrumentedThreadPoolFactory()) {
             InstrumentedThreadPoolFactory instrumentedThreadPoolFactory = new InstrumentedThreadPoolFactory(
-                    meterRegistry,
-                    camelContext.getExecutorServiceManager().getThreadPoolFactory());
+                    meterRegistry, camelContext.getExecutorServiceManager().getThreadPoolFactory());
             camelContext.getExecutorServiceManager().setThreadPoolFactory(instrumentedThreadPoolFactory);
         }
 
@@ -389,7 +401,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
                         if (re.getIndex() >= re.getTotal()) {
                             LOG.info("Resetting Micrometer Registry after reloading routes");
 
-                            // remove all meters (not counters) that are from Camel and associated routes via routeId as tag
+                            // remove all meters (not counters) that are from Camel and associated routes via routeId as
+                            // tag
                             List<Meter> toRemove = new ArrayList<>();
                             for (Meter m : meterRegistry.getMeters()) {
                                 String n = m.getId().getName();
@@ -424,8 +437,10 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             router = server.getRouter();
             if (router != null) {
                 setupHttpScraper(router);
-                LOG.info("MicrometerPrometheus enabled with HTTP scraping on management port {} on path {}",
-                        server.getPort(), path);
+                LOG.info(
+                        "MicrometerPrometheus enabled with HTTP scraping on management port {} on path {}",
+                        server.getPort(),
+                        path);
                 enabled = true;
             }
         }
@@ -466,8 +481,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         Route metrics = router.route(path);
         metrics.method(HttpMethod.GET);
 
-        final String format
-                = "0.0.4".equals(textFormatVersion) ? CONTENT_TYPE_004 : CONTENT_TYPE_100;
+        final String format = "0.0.4".equals(textFormatVersion) ? CONTENT_TYPE_004 : CONTENT_TYPE_100;
         metrics.produces(format);
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
@@ -489,7 +503,6 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         // use blocking handler as the task can take longer time to complete
         metrics.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpManagementEndpoint(path, "GET",
-                null, format, null);
+        platformHttpComponent.addHttpManagementEndpoint(path, "GET", null, format, null);
     }
 }

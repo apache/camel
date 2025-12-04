@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,11 +43,19 @@ public class ClaimCheckEipGetAndRemoveSetTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Set, "foo").transform().constant("Bye World")
+                from("direct:start")
+                        .to("mock:a")
+                        .claimCheck(ClaimCheckOperation.Set, "foo")
+                        .transform()
+                        .constant("Bye World")
                         .to("mock:b")
-                        .claimCheck(ClaimCheckOperation.GetAndRemove, "foo").to("mock:c").transform().constant("Hi World")
+                        .claimCheck(ClaimCheckOperation.GetAndRemove, "foo")
+                        .to("mock:c")
+                        .transform()
+                        .constant("Hi World")
                         .to("mock:d")
-                        .claimCheck(ClaimCheckOperation.GetAndRemove, "foo").to("mock:e");
+                        .claimCheck(ClaimCheckOperation.GetAndRemove, "foo")
+                        .to("mock:e");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.util.ArrayList;
@@ -49,13 +50,13 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
     private final List<Object> managed = new ArrayList<>();
     private int counter;
 
-    public JmxManagementStrategy() {
-    }
+    public JmxManagementStrategy() {}
 
     public JmxManagementStrategy(CamelContext context, ManagementAgent managementAgent) {
         super(context, managementAgent);
         // add JMX capable CamelContext as extension
-        context.getCamelContextExtension().addContextPlugin(ManagedCamelContext.class, new ManagedCamelContextImpl(context));
+        context.getCamelContextExtension()
+                .addContextPlugin(ManagedCamelContext.class, new ManagedCamelContextImpl(context));
     }
 
     @Override
@@ -142,5 +143,4 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
     protected ManagementObjectStrategy createManagementObjectStrategy() {
         return new DefaultManagementObjectStrategy();
     }
-
 }

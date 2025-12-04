@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import java.io.IOException;
@@ -35,44 +36,56 @@ import org.kiwiproject.consul.option.ConsistencyMode;
 public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam
     private String url;
+
     @UriParam(label = "advanced")
     private String datacenter;
+
     @UriParam(label = "advanced")
     private String nearNode;
+
     @UriParam(label = "advanced")
     private String nodeMeta;
+
     @UriParam(label = "advanced", defaultValue = "DEFAULT", enums = "DEFAULT,STALE,CONSISTENT")
     private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
+
     @UriParam(javaType = "java.lang.String")
     private String tags;
 
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "security", secret = true)
     private String aclToken;
+
     @UriParam(label = "security", secret = true)
     private String userName;
+
     @UriParam(label = "security", secret = true)
     private String password;
 
     @UriParam
     private Duration connectTimeout;
+
     @UriParam
     private Duration readTimeout;
+
     @UriParam
     private Duration writeTimeout;
+
     @UriParam(defaultValue = "true")
     private boolean pingInstance = true;
 
     @UriParam(label = "consumer,watch", defaultValue = "10")
     private Integer blockSeconds = 10;
+
     @UriParam(label = "consumer,watch", defaultValue = "0")
     private BigInteger firstIndex = BigInteger.valueOf(0L);
+
     @UriParam(label = "consumer,watch", defaultValue = "false")
     private boolean recursive;
 
-    protected ConsulClientConfiguration() {
-    }
+    protected ConsulClientConfiguration() {}
 
     public String getUrl() {
         return url;

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,20 +32,19 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Labels} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
-           disabledReason = "Google Mail credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
+        disabledReason = "Google Mail credentials were not provided")
 public class GmailUsersLabelsIT extends AbstractGoogleMailTestSupport {
 
     private static final String CAMEL_TEST_LABEL = "CamelTestLabel";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersLabelsIT.class);
-    private static final String PATH_PREFIX
-            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersLabelsApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection()
+            .getApiName(GmailUsersLabelsApiMethod.class)
+            .getName();
 
     @Test
     public void testLabels() {
@@ -53,7 +56,9 @@ public class GmailUsersLabelsIT extends AbstractGoogleMailTestSupport {
             Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelGoogleMail.userId", CURRENT_USERID);
-            Label label = new Label().setName(CAMEL_TEST_LABEL).setMessageListVisibility("show")
+            Label label = new Label()
+                    .setName(CAMEL_TEST_LABEL)
+                    .setMessageListVisibility("show")
                     .setLabelListVisibility("labelShow");
             // parameter type is com.google.api.services.gmail.model.Label
             headers.put("CamelGoogleMail.content", label);
@@ -114,7 +119,6 @@ public class GmailUsersLabelsIT extends AbstractGoogleMailTestSupport {
 
                 // test route for update
                 from("direct://UPDATE").to("google-mail://" + PATH_PREFIX + "/update");
-
             }
         };
     }

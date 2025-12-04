@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.microprofile.health;
 
 import java.lang.reflect.Field;
@@ -51,19 +52,18 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
     @Override
     public void doPostTearDown() {
         // Hack to clean up all registered checks
-        Stream.of(HealthType.LIVENESS, HealthType.READINESS)
-                .forEach(type -> {
-                    HealthRegistryImpl registry = (HealthRegistryImpl) HealthRegistries.getRegistry(type);
-                    try {
-                        Field field = registry.getClass().getDeclaredField("checks");
-                        field.setAccessible(true);
-                        Map<String, Uni<HealthCheckResponse>> checks
-                                = (Map<String, Uni<HealthCheckResponse>>) field.get(registry);
-                        checks.clear();
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        Stream.of(HealthType.LIVENESS, HealthType.READINESS).forEach(type -> {
+            HealthRegistryImpl registry = (HealthRegistryImpl) HealthRegistries.getRegistry(type);
+            try {
+                Field field = registry.getClass().getDeclaredField("checks");
+                field.setAccessible(true);
+                Map<String, Uni<HealthCheckResponse>> checks =
+                        (Map<String, Uni<HealthCheckResponse>>) field.get(registry);
+                checks.clear();
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -75,16 +75,12 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
     }
 
     protected void assertHealthCheckOutput(
-            String expectedName,
-            HealthCheckResponse.Status expectedState,
-            JsonObject healthObject) {
+            String expectedName, HealthCheckResponse.Status expectedState, JsonObject healthObject) {
         CamelMicroProfileHealthTestHelper.assertHealthCheckOutput(expectedName, expectedState, healthObject);
     }
 
     protected void assertHealthCheckOutput(
-            String expectedName,
-            HealthCheckResponse.Status expectedState,
-            JsonArray healthObjects) {
+            String expectedName, HealthCheckResponse.Status expectedState, JsonArray healthObjects) {
         CamelMicroProfileHealthTestHelper.assertHealthCheckOutput(expectedName, expectedState, healthObjects);
     }
 
@@ -94,8 +90,8 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
             JsonObject healthObject,
             Consumer<JsonObject> dataObjectAssertions) {
 
-        CamelMicroProfileHealthTestHelper.assertHealthCheckOutput(expectedName, expectedState, healthObject,
-                dataObjectAssertions);
+        CamelMicroProfileHealthTestHelper.assertHealthCheckOutput(
+                expectedName, expectedState, healthObject, dataObjectAssertions);
     }
 
     protected void assertHealthCheckOutput(
@@ -104,8 +100,8 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
             JsonArray healthObjects,
             Consumer<JsonObject> dataObjectAssertions) {
 
-        CamelMicroProfileHealthTestHelper.assertHealthCheckOutput(expectedName, expectedState, healthObjects,
-                dataObjectAssertions);
+        CamelMicroProfileHealthTestHelper.assertHealthCheckOutput(
+                expectedName, expectedState, healthObjects, dataObjectAssertions);
     }
 
     protected JsonObject getHealthJson(SmallRyeHealth health) {
@@ -137,7 +133,8 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
         return livenessCheck;
     }
 
-    protected HealthCheck createReadinessCheck(String id, boolean enabled, Consumer<HealthCheckResultBuilder> consumer) {
+    protected HealthCheck createReadinessCheck(
+            String id, boolean enabled, Consumer<HealthCheckResultBuilder> consumer) {
         HealthCheck readinessCheck = new AbstractHealthCheck(id) {
             @Override
             protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
@@ -157,5 +154,4 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
         readinessCheck.setEnabled(enabled);
         return readinessCheck;
     }
-
 }

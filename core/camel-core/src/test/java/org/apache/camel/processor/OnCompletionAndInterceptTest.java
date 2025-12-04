@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionAndInterceptTest extends ContextTestSupport {
 
@@ -69,9 +70,14 @@ public class OnCompletionAndInterceptTest extends ContextTestSupport {
             public void configure() {
                 intercept().to("mock:intercept");
 
-                from("direct:start").onCompletion().to("log:sync").to("mock:sync")
+                from("direct:start")
+                        .onCompletion()
+                        .to("log:sync")
+                        .to("mock:sync")
                         // must use end to denote the end of the onCompletion route
-                        .end().process(new MyProcessor()).to("mock:result");
+                        .end()
+                        .process(new MyProcessor())
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
@@ -79,8 +85,7 @@ public class OnCompletionAndInterceptTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
-        public MyProcessor() {
-        }
+        public MyProcessor() {}
 
         @Override
         public void process(Exchange exchange) {

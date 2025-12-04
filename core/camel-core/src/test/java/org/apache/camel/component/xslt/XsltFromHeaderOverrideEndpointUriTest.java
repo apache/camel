@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -25,10 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
 
     @Test
@@ -36,9 +37,11 @@ public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start",
+        template.sendBodyAndHeader(
+                "direct:start",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
-                XsltConstants.XSLT_RESOURCE_URI, "org/apache/camel/component/xslt/transform_to_foo.xsl");
+                XsltConstants.XSLT_RESOURCE_URI,
+                "org/apache/camel/component/xslt/transform_to_foo.xsl");
 
         assertMockEndpointsSatisfied();
 
@@ -79,5 +82,4 @@ public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
         context.getRegistry().bind("testBean", new TestBean());
         return context;
     }
-
 }

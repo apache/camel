@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.consul.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -26,9 +27,10 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = ConsulInfraService.class,
-              description = "Consul is a service networking solution",
-              serviceAlias = { "consul" })
+@InfraService(
+        service = ConsulInfraService.class,
+        description = "Consul is a service networking solution",
+        serviceAlias = {"consul"})
 public class ConsulLocalContainerInfraService implements ConsulInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "consul";
 
@@ -38,8 +40,7 @@ public class ConsulLocalContainerInfraService implements ConsulInfraService, Con
 
     public ConsulLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
-                ConsulLocalContainerInfraService.class,
-                ConsulProperties.CONSUL_CONTAINER));
+                ConsulLocalContainerInfraService.class, ConsulProperties.CONSUL_CONTAINER));
     }
 
     public ConsulLocalContainerInfraService(String containerName) {

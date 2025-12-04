@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,10 +33,10 @@ public class ValidatorRootPathTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(1);
         invalidEndpoint.expectedMessageCount(0);
 
-        template
-                .sendBody("direct:rootPath",
-                        "<report xmlns='http://foo.com/report' xmlns:rb='http://foo.com/report-base'><author><rb:name>Knuth</rb:name></author><content><rb:chapter><rb:subject></rb:subject>"
-                                             + "<rb:abstract></rb:abstract><rb:body></rb:body></rb:chapter></content></report>");
+        template.sendBody(
+                "direct:rootPath",
+                "<report xmlns='http://foo.com/report' xmlns:rb='http://foo.com/report-base'><author><rb:name>Knuth</rb:name></author><content><rb:chapter><rb:subject></rb:subject>"
+                        + "<rb:abstract></rb:abstract><rb:body></rb:body></rb:chapter></content></report>");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
     }
@@ -58,5 +59,4 @@ public class ValidatorRootPathTest extends ContextTestSupport {
             }
         };
     }
-
 }

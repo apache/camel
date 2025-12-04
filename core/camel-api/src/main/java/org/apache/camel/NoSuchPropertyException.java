@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -31,8 +32,10 @@ public class NoSuchPropertyException extends CamelExchangeException {
     }
 
     public NoSuchPropertyException(Exchange exchange, String propertyName, Class<?> type) {
-        super("No '" + propertyName + "' exchange property available" + (type != null ? " of type: " + type.getName() : "")
-              + reason(exchange, propertyName), exchange);
+        super(
+                "No '" + propertyName + "' exchange property available"
+                        + (type != null ? " of type: " + type.getName() : "") + reason(exchange, propertyName),
+                exchange);
         this.propertyName = propertyName;
         this.type = type;
     }

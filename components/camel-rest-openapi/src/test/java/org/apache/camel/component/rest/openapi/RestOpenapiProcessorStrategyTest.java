@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.CamelContext;
@@ -25,9 +29,6 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 class RestOpenapiProcessorStrategyTest extends ManagedCamelTestSupport {
 
@@ -43,11 +44,12 @@ class RestOpenapiProcessorStrategyTest extends ManagedCamelTestSupport {
         RestOpenapiProcessorStrategy restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
         ((DefaultRestOpenapiProcessorStrategy) restOpenapiProcessorStrategy).setCamelContext(camelContext);
         restOpenapiProcessorStrategy.setMissingOperation("fail");
-        Exception ex = assertThrows(IllegalArgumentException.class,
-                () -> restOpenapiProcessorStrategy.validateOpenApi(getOpenApi(), null, mock(PlatformHttpConsumerAware.class)));
+        Exception ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> restOpenapiProcessorStrategy.validateOpenApi(
+                        getOpenApi(), null, mock(PlatformHttpConsumerAware.class)));
         assertTrue(ex.getMessage().contains("direct:GENOPID_GET.users"));
         assertTrue(ex.getMessage().contains("direct:GENOPID_GET.user._id_"));
-
     }
 
     private OpenAPI getOpenApi() {
@@ -72,5 +74,4 @@ class RestOpenapiProcessorStrategyTest extends ManagedCamelTestSupport {
         camelContext.addComponent("platform-http", httpCmpn);
         return camelContext;
     }
-
 }

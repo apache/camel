@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
 
 import org.apache.camel.Category;
@@ -29,8 +30,13 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 /**
  * Poll the weather information from Open Weather Map.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name",
-             category = { Category.API }, headersClass = WeatherConstants.class)
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = "weather",
+        title = "Weather",
+        syntax = "weather:name",
+        category = {Category.API},
+        headersClass = WeatherConstants.class)
 public class WeatherEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -87,5 +93,4 @@ public class WeatherEndpoint extends DefaultPollingEndpoint implements EndpointS
             client.close();
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,8 +27,6 @@ public class MyMethodCallRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("timer:foo")
-                .to("file:output?fileExist=" + whatToDoWhenExists())
-                .to("log:b");
+        from("timer:foo").to("file:output?fileExist=" + whatToDoWhenExists()).to("log:b");
     }
 }

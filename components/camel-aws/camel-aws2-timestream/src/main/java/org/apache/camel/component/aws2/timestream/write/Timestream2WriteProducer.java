@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.write;
 
 import java.util.List;
@@ -79,8 +80,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
     }
 
     private Timestream2Operations determineOperation(Exchange exchange) throws InvalidPayloadException {
-        Timestream2Operations operation
-                = exchange.getIn().getHeader(Timestream2Constants.OPERATION, Timestream2Operations.class);
+        Timestream2Operations operation =
+                exchange.getIn().getHeader(Timestream2Constants.OPERATION, Timestream2Operations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -94,8 +95,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (timestreamWriteProducerToString == null) {
-            timestreamWriteProducerToString
-                    = "TimestreamWriteProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            timestreamWriteProducerToString = "TimestreamWriteProducer["
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return timestreamWriteProducerToString;
     }
@@ -114,7 +115,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.describeEndpoints(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Endpoints command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Endpoints command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -127,7 +130,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.describeEndpoints(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Endpoints command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Endpoints command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -144,7 +149,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.createBatchLoadTask(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Batch Load Task command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -169,18 +176,18 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 builder.recordVersion(recordVersion);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.DATA_MODEL_CONFIGURATION))) {
-                DataModelConfiguration config = exchange.getIn().getHeader(Timestream2Constants.DATA_MODEL_CONFIGURATION,
-                        DataModelConfiguration.class);
+                DataModelConfiguration config = exchange.getIn()
+                        .getHeader(Timestream2Constants.DATA_MODEL_CONFIGURATION, DataModelConfiguration.class);
                 builder.dataModelConfiguration(config);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.DATA_SOURCE_CONFIGURATION))) {
-                DataSourceConfiguration config = exchange.getIn().getHeader(Timestream2Constants.DATA_SOURCE_CONFIGURATION,
-                        DataSourceConfiguration.class);
+                DataSourceConfiguration config = exchange.getIn()
+                        .getHeader(Timestream2Constants.DATA_SOURCE_CONFIGURATION, DataSourceConfiguration.class);
                 builder.dataSourceConfiguration(config);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.REPORT_CONFIGURATION))) {
-                ReportConfiguration config
-                        = exchange.getIn().getHeader(Timestream2Constants.REPORT_CONFIGURATION, ReportConfiguration.class);
+                ReportConfiguration config = exchange.getIn()
+                        .getHeader(Timestream2Constants.REPORT_CONFIGURATION, ReportConfiguration.class);
                 builder.reportConfiguration(config);
             }
 
@@ -188,7 +195,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.createBatchLoadTask(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Batch Load Task command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -205,7 +214,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.describeBatchLoadTask(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Batch Load Task command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -222,7 +233,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.describeBatchLoadTask(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Batch Load Task command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -239,7 +252,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.resumeBatchLoadTask(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Resume Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Resume Batch Load Task command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -256,7 +271,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.resumeBatchLoadTask(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Resume Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Resume Batch Load Task command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -273,7 +290,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.listBatchLoadTasks(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Batch Load Tasks command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Batch Load Tasks command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -294,7 +313,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.listBatchLoadTasks(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Batch Load Tasks command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Batch Load Tasks command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -302,7 +323,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void createDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void createDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CreateDatabaseRequest request) {
@@ -310,7 +332,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.createDatabase(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Database command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -331,7 +355,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.createDatabase(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Database command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -339,7 +365,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void deleteDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void deleteDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DeleteDatabaseRequest request) {
@@ -347,7 +374,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.deleteDatabase(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Database command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -364,7 +393,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.deleteDatabase(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Database command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -381,7 +412,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.describeDatabase(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Database command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -398,7 +431,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.describeDatabase(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Database command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -406,7 +441,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void updateDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void updateDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof UpdateDatabaseRequest request) {
@@ -414,7 +450,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.updateDatabase(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Update Database command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -435,7 +473,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.updateDatabase(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Update Database command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -443,7 +483,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void listDatabases(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void listDatabases(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListDatabasesRequest request) {
@@ -451,7 +492,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.listDatabases(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Databases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Databases command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -468,7 +511,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.listDatabases(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Databases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Databases command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -476,7 +521,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void createTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void createTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CreateTableRequest request) {
@@ -484,7 +530,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.createTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Table command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -505,13 +553,16 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 builder.schema(schema);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.RETENTION_PROPERTIES))) {
-                RetentionProperties properties
-                        = exchange.getIn().getHeader(Timestream2Constants.RETENTION_PROPERTIES, RetentionProperties.class);
+                RetentionProperties properties = exchange.getIn()
+                        .getHeader(Timestream2Constants.RETENTION_PROPERTIES, RetentionProperties.class);
                 builder.retentionProperties(properties);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.MAGNETIC_STORE_WRITE_PROPERTIES))) {
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(Timestream2Constants.MAGNETIC_STORE_WRITE_PROPERTIES))) {
                 MagneticStoreWriteProperties properties = exchange.getIn()
-                        .getHeader(Timestream2Constants.MAGNETIC_STORE_WRITE_PROPERTIES, MagneticStoreWriteProperties.class);
+                        .getHeader(
+                                Timestream2Constants.MAGNETIC_STORE_WRITE_PROPERTIES,
+                                MagneticStoreWriteProperties.class);
                 builder.magneticStoreWriteProperties(properties);
             }
 
@@ -519,7 +570,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.createTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Table command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -527,7 +580,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void deleteTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void deleteTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DeleteTableRequest request) {
@@ -535,7 +589,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.deleteTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Table command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -556,7 +612,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.deleteTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Table command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -564,7 +622,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void describeTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void describeTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DescribeTableRequest request) {
@@ -572,7 +631,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.describeTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Table command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -593,7 +654,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.describeTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Table command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -601,7 +664,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void updateTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void updateTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof UpdateTableRequest request) {
@@ -609,7 +673,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.updateTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Update Table command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -630,13 +696,16 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 builder.schema(schema);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.RETENTION_PROPERTIES))) {
-                RetentionProperties properties
-                        = exchange.getIn().getHeader(Timestream2Constants.RETENTION_PROPERTIES, RetentionProperties.class);
+                RetentionProperties properties = exchange.getIn()
+                        .getHeader(Timestream2Constants.RETENTION_PROPERTIES, RetentionProperties.class);
                 builder.retentionProperties(properties);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.MAGNETIC_STORE_WRITE_PROPERTIES))) {
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(Timestream2Constants.MAGNETIC_STORE_WRITE_PROPERTIES))) {
                 MagneticStoreWriteProperties properties = exchange.getIn()
-                        .getHeader(Timestream2Constants.MAGNETIC_STORE_WRITE_PROPERTIES, MagneticStoreWriteProperties.class);
+                        .getHeader(
+                                Timestream2Constants.MAGNETIC_STORE_WRITE_PROPERTIES,
+                                MagneticStoreWriteProperties.class);
                 builder.magneticStoreWriteProperties(properties);
             }
 
@@ -644,7 +713,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.updateTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Update Table command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -652,7 +723,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void listTables(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void listTables(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListTablesRequest request) {
@@ -660,7 +732,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.listTables(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Tables command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Tables command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -681,7 +755,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.listTables(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Tables command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Tables command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -689,7 +765,8 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void writeRecords(TimestreamWriteClient timestreamWriteClient, Exchange exchange) throws InvalidPayloadException {
+    private void writeRecords(TimestreamWriteClient timestreamWriteClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof WriteRecordsRequest request) {
@@ -697,7 +774,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.writeRecords(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Write Records command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Write Records command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -726,7 +805,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.writeRecords(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Write Records command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Write Records command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -742,9 +823,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -761,5 +840,4 @@ public class Timestream2WriteProducer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

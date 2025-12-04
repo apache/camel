@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grape;
 
 import java.util.List;
@@ -25,5 +26,4 @@ public interface PatchesRepository {
     List<String> listPatches();
 
     void clear();
-
 }

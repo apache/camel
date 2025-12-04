@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import java.util.Map;
@@ -62,5 +63,4 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
         String cluster = stripSchemeAndOptions(endpoint);
         span.setTag(ELASTICSEARCH_CLUSTER_TAG, cluster);
     }
-
 }

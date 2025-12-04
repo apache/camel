@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.InputStream;
@@ -51,15 +52,17 @@ public class WebsocketProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
-        //TODO support binary data
+        // TODO support binary data
         Object message = in.getBody();
         if (message == null) {
             LOG.debug("Ignoring a null message");
             return;
         }
 
-        if (!(message instanceof String || message instanceof byte[]
-                || message instanceof Reader || message instanceof InputStream)) {
+        if (!(message instanceof String
+                || message instanceof byte[]
+                || message instanceof Reader
+                || message instanceof InputStream)) {
             // fallback to use String
             if (LOG.isInfoEnabled()) {
                 LOG.info("Using String for unexpected message type {}", message.getClass());
@@ -78,7 +81,7 @@ public class WebsocketProducer extends DefaultProducer {
         LOG.debug("Sending to {}", message);
         if (getEndpoint().isSendToAll()) {
             LOG.debug("Sending to all -> {}", message);
-            //TODO consider using atmosphere's broadcast or a more configurable async send
+            // TODO consider using atmosphere's broadcast or a more configurable async send
             for (final WebSocket websocket : getEndpoint().getWebSocketStore().getAllWebSockets()) {
                 sendMessage(websocket, message);
             }
@@ -132,11 +135,12 @@ public class WebsocketProducer extends DefaultProducer {
     private WebSocket getWebSocket(final String connectionKey, final List<String> notValidConnectionKeys) {
         WebSocket websocket;
         if (connectionKey == null) {
-            throw new IllegalArgumentException("Failed to send message to single connection; connection key is not set.");
+            throw new IllegalArgumentException(
+                    "Failed to send message to single connection; connection key is not set.");
         } else {
             websocket = getEndpoint().getWebSocketStore().getWebSocket(connectionKey);
             if (websocket == null) {
-                //collect for call back to handle not sent message(s) to guaranty delivery
+                // collect for call back to handle not sent message(s) to guaranty delivery
                 notValidConnectionKeys.add(connectionKey);
                 LOG.debug("Failed to send message to single connection; connetion key is not valid. {}", connectionKey);
             }

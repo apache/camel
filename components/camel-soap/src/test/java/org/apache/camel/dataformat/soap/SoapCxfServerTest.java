@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -31,10 +36,6 @@ import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Checks for interoperability between a CXF server that is attached using the Camel transport for CXF and a dynamic
@@ -80,5 +81,4 @@ public class SoapCxfServerTest extends RouteBuilder {
                 .to("direct:cxfEndpoint") //
                 .unmarshal(soapDataFormat);
     }
-
 }

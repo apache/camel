@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqsProducerDelayedQueueuTest extends CamelTestSupport {
 
@@ -44,14 +45,14 @@ public class SqsProducerDelayedQueueuTest extends CamelTestSupport {
         mock.setVerifyQueueUrl(true);
         result.expectedMessageCount(1);
 
-        //should fail, because queue3 is not registered in client
+        // should fail, because queue3 is not registered in client
         template.send("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hi from sqs 1");
             }
         });
-        //adding queue3 later (delayed)
+        // adding queue3 later (delayed)
         mock.setQueueName("queue3");
 
         template.send("direct:start", new Processor() {
@@ -71,8 +72,7 @@ public class SqsProducerDelayedQueueuTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("aws2-sqs://queue3")
-                        .to("mock:result");
+                from("direct:start").to("aws2-sqs://queue3").to("mock:result");
             }
         };
     }

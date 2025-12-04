@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,11 +49,10 @@ import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 
-import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
-
-@Metadata(label = "bean",
-          description = "Logs HTTP requests and responses for the camel-http component.",
-          annotations = { "interfaceName=org.apache.camel.component.http.HttpActivityListener" })
+@Metadata(
+        label = "bean",
+        description = "Logs HTTP requests and responses for the camel-http component.",
+        annotations = {"interfaceName=org.apache.camel.component.http.HttpActivityListener"})
 @Configurer(metadataOnly = true)
 public class LoggingHttpActivityListener extends ServiceSupport implements CamelContextAware, HttpActivityListener {
 
@@ -59,36 +61,56 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
 
     @Metadata(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
+
     @Metadata(defaultValue = "true", description = "Show route ID")
     private boolean showRouteId = true;
+
     @Metadata(defaultValue = "true", description = "Show route Group")
     private boolean showRouteGroup = true;
+
     @Metadata(defaultValue = "true", description = "Show the unique exchange ID")
     private boolean showExchangeId = true;
+
     @Metadata(defaultValue = "true", description = "Show the HTTP body")
     private boolean showBody = true;
+
     @Metadata(defaultValue = "true", label = "formatting", description = "Show the HTTP headers")
     private boolean showHeaders = true;
-    @Metadata(defaultValue = "true",
-              description = "Whether to show HTTP body that are streaming based. Beware that Camel will have to read the content into memory to print to log, and will re-create the HttpEntity stored on the request/response object. If you have large payloads then this can impact performance.")
+
+    @Metadata(
+            defaultValue = "true",
+            description =
+                    "Whether to show HTTP body that are streaming based. Beware that Camel will have to read the content into memory to print to log, and will re-create the HttpEntity stored on the request/response object. If you have large payloads then this can impact performance.")
     private boolean showStreams = true;
-    @Metadata(defaultValue = "false",
-              description = "Whether to show HTTP body that are binary based (uses content-type to determine whether binary)")
+
+    @Metadata(
+            defaultValue = "false",
+            description =
+                    "Whether to show HTTP body that are binary based (uses content-type to determine whether binary)")
     private boolean showBinary;
+
     @Metadata(defaultValue = "50000", description = "Limits the number of characters logged from the HTTP body")
     private int maxChars = 50000;
+
     @Metadata(description = "If true, mask sensitive information like password or passphrase in the log")
     private Boolean logMask;
-    @Metadata(defaultValue = "true", description = "If enabled then each information is outputted as separate LOG events")
+
+    @Metadata(
+            defaultValue = "true",
+            description = "If enabled then each information is outputted as separate LOG events")
     private boolean multiline;
-    @Metadata(defaultValue = "true",
-              description = "If enabled then the source location of where the log endpoint is used in Camel routes, would be used as logger name, instead"
+
+    @Metadata(
+            defaultValue = "true",
+            description =
+                    "If enabled then the source location of where the log endpoint is used in Camel routes, would be used as logger name, instead"
                             + " of the given name. However, if the source location is disabled or not possible to resolve then the existing logger name will be used.")
     private boolean sourceLocationLoggerName = true;
 
     @Override
     protected void doInit() throws Exception {
-        maskingFormatter = getCamelContext().getRegistry()
+        maskingFormatter = getCamelContext()
+                .getRegistry()
                 .lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
         if (maskingFormatter == null) {
             maskingFormatter = new DefaultMaskingFormatter();
@@ -96,7 +118,8 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
     }
 
     @Override
-    public void onRequestSubmitted(Object source, Exchange exchange, HttpHost host, HttpRequest request, HttpEntity entity) {
+    public void onRequestSubmitted(
+            Object source, Exchange exchange, HttpHost host, HttpRequest request, HttpEntity entity) {
         CamelLogger logger = getLogger(source, exchange);
         if (logger.shouldLog()) {
             onActivity(logger, exchange, host, request, null, entity, -1);
@@ -113,7 +136,12 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
     }
 
     protected void onActivity(
-            CamelLogger logger, Exchange exchange, HttpHost host, HttpRequest request, HttpResponse response, HttpEntity entity,
+            CamelLogger logger,
+            Exchange exchange,
+            HttpHost host,
+            HttpRequest request,
+            HttpResponse response,
+            HttpEntity entity,
             long elapsed) {
         final StringJoiner top = new StringJoiner("");
         final List<String> lines = new ArrayList<>();
@@ -149,8 +177,8 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
         if (request != null) {
             lines.add(String.format("%s %s %s", request.getMethod(), request.getPath(), protocol));
         } else {
-            lines.add(String.format("%s %s %s", response.getVersion().toString(), response.getCode(),
-                    response.getReasonPhrase()));
+            lines.add(String.format(
+                    "%s %s %s", response.getVersion().toString(), response.getCode(), response.getReasonPhrase()));
         }
         if (showHeaders) {
             Header[] headers = request != null ? request.getHeaders() : response.getHeaders();
@@ -196,7 +224,7 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
                             }
                             if (data.length() > maxChars) {
                                 data = data.substring(0, maxChars) + " ... [Body clipped after " + maxChars
-                                       + " chars, total length is " + data.length() + "]";
+                                        + " chars, total length is " + data.length() + "]";
                             }
                             lines.add(getValue(false, data));
                             if (!e.isRepeatable()) {
@@ -235,7 +263,10 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
      */
     protected boolean isBinaryData(ContentType ct) {
         String t = ct.getMimeType();
-        if (t.contains("text") || t.contains("xml") || t.contains("json") || t.contains("multipart")
+        if (t.contains("text")
+                || t.contains("xml")
+                || t.contains("json")
+                || t.contains("multipart")
                 || t.contains("x-www-form-urlencoded")) {
             return false;
         }

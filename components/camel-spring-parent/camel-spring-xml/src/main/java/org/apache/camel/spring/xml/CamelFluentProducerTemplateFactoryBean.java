@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -40,8 +41,7 @@ import org.springframework.context.ApplicationContextAware;
 @XmlRootElement(name = "fluentTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelFluentProducerTemplateFactoryBean extends AbstractCamelFluentProducerTemplateFactoryBean
-        implements FactoryBean<FluentProducerTemplate>, InitializingBean, DisposableBean,
-        ApplicationContextAware {
+        implements FactoryBean<FluentProducerTemplate>, InitializingBean, DisposableBean, ApplicationContextAware {
 
     @XmlTransient
     private ApplicationContext applicationContext;
@@ -55,5 +55,4 @@ public class CamelFluentProducerTemplateFactoryBean extends AbstractCamelFluentP
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-
 }

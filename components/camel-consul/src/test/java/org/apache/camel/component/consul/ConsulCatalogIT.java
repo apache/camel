@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import java.util.List;
@@ -30,8 +31,10 @@ public class ConsulCatalogIT extends ConsulTestSupport {
     @Test
     public void testListDatacenters() {
         List<String> ref = getConsul().catalogClient().getDatacenters();
-        List<String> res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_DATACENTERS)
-                .to("direct:consul").request(List.class);
+        List<String> res = fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_DATACENTERS)
+                .to("direct:consul")
+                .request(List.class);
 
         Assertions.assertFalse(ref.isEmpty());
         Assertions.assertFalse(res.isEmpty());
@@ -41,8 +44,10 @@ public class ConsulCatalogIT extends ConsulTestSupport {
     @Test
     public void testListNodes() {
         List<Node> ref = getConsul().catalogClient().getNodes().getResponse();
-        List<Node> res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_NODES)
-                .to("direct:consul").request(List.class);
+        List<Node> res = fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_NODES)
+                .to("direct:consul")
+                .request(List.class);
 
         Assertions.assertFalse(ref.isEmpty());
         Assertions.assertFalse(res.isEmpty());
@@ -51,10 +56,12 @@ public class ConsulCatalogIT extends ConsulTestSupport {
 
     @Test
     public void testListServices() {
-        Map<String, List<String>> ref = getConsul().catalogClient().getServices().getResponse();
-        Map<String, List<String>> res
-                = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_SERVICES)
-                        .to("direct:consul").request(Map.class);
+        Map<String, List<String>> ref =
+                getConsul().catalogClient().getServices().getResponse();
+        Map<String, List<String>> res = fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_SERVICES)
+                .to("direct:consul")
+                .request(Map.class);
 
         Assertions.assertFalse(ref.isEmpty());
         Assertions.assertFalse(res.isEmpty());

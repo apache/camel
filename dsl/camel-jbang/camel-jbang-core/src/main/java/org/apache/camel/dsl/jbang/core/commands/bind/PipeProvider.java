@@ -17,6 +17,10 @@
 
 package org.apache.camel.dsl.jbang.core.commands.bind;
 
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringSet;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -38,10 +42,6 @@ import org.snakeyaml.engine.v2.parser.Parser;
 import org.snakeyaml.engine.v2.parser.ParserImpl;
 import org.snakeyaml.engine.v2.scanner.StreamReader;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringSet;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
-
 /**
  * Binding to Kamelets as Kubernetes object references. Automatically resolves Kamelet from catalog and reads required
  * properties. Adds required properties as placeholder to the object reference when not set already by the user.
@@ -56,10 +56,14 @@ public class PipeProvider extends ObjectReferenceBindingProvider {
 
     @Override
     public String getEndpoint(
-            EndpointType type, String uriExpression, Map<String, Object> endpointProperties, TemplateProvider templateProvider)
+            EndpointType type,
+            String uriExpression,
+            Map<String, Object> endpointProperties,
+            TemplateProvider templateProvider)
             throws Exception {
         if (uriExpression.startsWith(prefix)) {
-            return super.getEndpoint(type, StringHelper.after(uriExpression, prefix), endpointProperties, templateProvider);
+            return super.getEndpoint(
+                    type, StringHelper.after(uriExpression, prefix), endpointProperties, templateProvider);
         }
 
         return super.getEndpoint(type, uriExpression, endpointProperties, templateProvider);
@@ -69,8 +73,8 @@ public class PipeProvider extends ObjectReferenceBindingProvider {
     protected Map<String, Object> getEndpointUriProperties(
             EndpointType type, String objectName, String uriExpression, Map<String, Object> endpointProperties)
             throws Exception {
-        return kameletProperties(objectName,
-                super.getEndpointUriProperties(type, objectName, uriExpression, endpointProperties));
+        return kameletProperties(
+                objectName, super.getEndpointUriProperties(type, objectName, uriExpression, endpointProperties));
     }
 
     /**
@@ -83,7 +87,8 @@ public class PipeProvider extends ObjectReferenceBindingProvider {
      * @return
      * @throws Exception
      */
-    protected Map<String, Object> kameletProperties(String kamelet, Map<String, Object> userProperties) throws Exception {
+    protected Map<String, Object> kameletProperties(String kamelet, Map<String, Object> userProperties)
+            throws Exception {
         Map<String, Object> endpointProperties = new HashMap<>();
         InputStream is;
         String loc;
@@ -102,8 +107,7 @@ public class PipeProvider extends ObjectReferenceBindingProvider {
         } else {
             resolver = new GitHubResourceResolver();
             try {
-                res = resolver.resolve(
-                        "github:apache:camel-kamelets:main:kamelets/" + kamelet + ".kamelet.yaml");
+                res = resolver.resolve("github:apache:camel-kamelets:main:kamelets/" + kamelet + ".kamelet.yaml");
             } finally {
                 resolver.close();
             }
@@ -124,7 +128,8 @@ public class PipeProvider extends ObjectReferenceBindingProvider {
                         for (String req : required) {
                             if (!userProperties.containsKey(req)) {
                                 String type = asText(nodeAt(root, "/spec/definition/properties/" + req + "/type"));
-                                String example = asText(nodeAt(root, "/spec/definition/properties/" + req + "/example"));
+                                String example =
+                                        asText(nodeAt(root, "/spec/definition/properties/" + req + "/example"));
                                 StringBuilder vb = new StringBuilder();
                                 if (example != null) {
                                     if ("string".equals(type)) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
 
 import java.util.LinkedHashMap;
@@ -32,6 +33,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
 
     // optimize to use a shared instance
     protected static final DefaultExchangeFormatter DEFAULT_EXCHANGE_FORMATTER = new DefaultExchangeFormatter();
+
     static {
         DEFAULT_EXCHANGE_FORMATTER.setShowExchangeId(true);
         DEFAULT_EXCHANGE_FORMATTER.setMultiline(true);
@@ -92,5 +94,4 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
      * Clones the current error handler and changes the output
      */
     public abstract ErrorHandler clone(Processor output);
-
 }

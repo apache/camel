@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -25,7 +26,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public abstract class InfinispanTestSupport extends CamelTestSupport {
-    private static final String TEST_CACHE = "mycache" + ThreadLocalRandom.current().nextInt(1, 100);
+    private static final String TEST_CACHE =
+            "mycache" + ThreadLocalRandom.current().nextInt(1, 100);
 
     protected BasicCache<Object, Object> getCache() {
         return getCache(getCacheName());

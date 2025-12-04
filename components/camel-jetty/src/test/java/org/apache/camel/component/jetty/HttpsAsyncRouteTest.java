@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -40,13 +48,6 @@ import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @ResourceLock(SSL_SYSPROPS)
 @DisabledOnOs(OS.WINDOWS)
@@ -121,7 +122,8 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     public void testEndpointWithoutHttps() {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         try {
-            template.sendBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
+            template.sendBodyAndHeader(
+                    "http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }
@@ -156,9 +158,15 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     @Override
     protected void invokeHttpEndpoint() {
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type",
+        template.sendBodyAndHeader(
+                getHttpProducerScheme() + "localhost:" + port1 + "/test",
+                expectedBody,
+                "Content-Type",
                 "application/xml");
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type",
+        template.sendBodyAndHeader(
+                getHttpProducerScheme() + "localhost:" + port2 + "/test",
+                expectedBody,
+                "Content-Type",
                 "application/xml");
     }
 
@@ -172,16 +180,19 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
                 componentJetty.setKeystore("file://" + keyStoreUrl.toURI().getPath());
 
-                from("jetty:https://localhost:" + port1 + "/test?async=true&useContinuation=false").to("mock:a");
+                from("jetty:https://localhost:" + port1 + "/test?async=true&useContinuation=false")
+                        .to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:https://localhost:" + port1 + "/hello?async=true&useContinuation=false").process(proc);
+                from("jetty:https://localhost:" + port1 + "/hello?async=true&useContinuation=false")
+                        .process(proc);
 
-                from("jetty:https://localhost:" + port2 + "/test?async=true&useContinuation=false").to("mock:b");
+                from("jetty:https://localhost:" + port2 + "/test?async=true&useContinuation=false")
+                        .to("mock:b");
             }
         };
     }

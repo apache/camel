@@ -17,9 +17,9 @@
 
 package org.apache.camel.spi;
 
-import java.util.Objects;
-
 import static org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType;
+
+import java.util.Objects;
 
 /**
  * Holds a type convertible pair. That is, consider 2 types defined as F and T, it defines that F can be converted to T.
@@ -155,7 +155,6 @@ public final class TypeConvertible<F, T> {
      * @param  thatTo   The class instance that defines the source "to" type (that is: Class&lt;F&gt;.class)
      * @return          true if the types match directly or false otherwise
      */
-
     private static boolean directMatch(Class<?> thisFrom, Class<?> thisTo, Class<?> thatFrom, Class<?> thatTo) {
         if (Objects.equals(thisFrom, thatFrom)) {
             return Objects.equals(thisTo, thatTo);
@@ -211,9 +210,6 @@ public final class TypeConvertible<F, T> {
 
     @Override
     public String toString() {
-        return "TypeConvertible{" +
-               "from=" + from +
-               ", to=" + to +
-               '}';
+        return "TypeConvertible{" + "from=" + from + ", to=" + to + '}';
     }
 }

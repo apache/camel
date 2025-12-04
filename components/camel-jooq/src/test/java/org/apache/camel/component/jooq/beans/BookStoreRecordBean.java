@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jooq.beans;
+
+import static org.apache.camel.component.jooq.db.Tables.BOOK_STORE;
 
 import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
 import org.jooq.Query;
 import org.jooq.ResultQuery;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
-
-import static org.apache.camel.component.jooq.db.Tables.BOOK_STORE;
 
 @Component
 public class BookStoreRecordBean {

@@ -27,9 +27,7 @@ import org.apache.camel.test.infra.azure.common.AzureConfigs;
 
 public final class AzureStorageClientUtils {
 
-    private AzureStorageClientUtils() {
-
-    }
+    private AzureStorageClientUtils() {}
 
     public static QueueServiceClient getClient() {
         String instanceType = System.getProperty("azure.instance.type");
@@ -56,7 +54,9 @@ public final class AzureStorageClientUtils {
         return new QueueServiceClientBuilder()
                 .endpoint(endpoint)
                 .credential(credential)
-                .httpLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS).setPrettyPrintBody(true))
+                .httpLogOptions(new HttpLogOptions()
+                        .setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS)
+                        .setPrettyPrintBody(true))
                 .serviceVersion(QueueServiceVersion.V2019_12_12)
                 .buildClient();
     }

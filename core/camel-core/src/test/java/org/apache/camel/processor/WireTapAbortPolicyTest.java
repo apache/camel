@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -33,13 +36,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Wire tap unit test
  */
-@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
-                          disabledReason = "Tasks are not rejected when using Virtual Threads")
+@DisabledIfSystemProperty(
+        named = "camel.threads.virtual.enabled",
+        matches = "true",
+        disabledReason = "Tasks are not rejected when using Virtual Threads")
 @Isolated
 public class WireTapAbortPolicyTest extends ContextTestSupport {
 
@@ -103,9 +106,12 @@ public class WireTapAbortPolicyTest extends ContextTestSupport {
                         .rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
                         .build();
 
-                from("direct:start").to("log:foo")
+                from("direct:start")
+                        .to("log:foo")
                         // pass in the custom pool to the wireTap DSL
-                        .wireTap("direct:tap").executorService(pool).to("mock:result");
+                        .wireTap("direct:tap")
+                        .executorService(pool)
+                        .to("mock:result");
                 // END SNIPPET: e1
 
                 from("direct:tap")

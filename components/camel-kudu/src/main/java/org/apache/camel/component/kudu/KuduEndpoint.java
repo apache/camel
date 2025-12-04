@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kudu;
 
 import java.util.regex.Matcher;
@@ -37,11 +38,14 @@ import org.slf4j.LoggerFactory;
  * Interact with <a href="https://kudu.apache.org/">Apache Kudu</a>, a free and open source column-oriented data store
  * of the Apache Hadoop ecosystem.
  */
-@UriEndpoint(firstVersion = "3.0",
-             scheme = "kudu",
-             title = "Kudu", syntax = "kudu:host:port/tableName",
-             category = { Category.DATABASE, Category.IOT, Category.CLOUD }, producerOnly = true,
-             headersClass = KuduConstants.class)
+@UriEndpoint(
+        firstVersion = "3.0",
+        scheme = "kudu",
+        title = "Kudu",
+        syntax = "kudu:host:port/tableName",
+        category = {Category.DATABASE, Category.IOT, Category.CLOUD},
+        producerOnly = true,
+        headersClass = KuduConstants.class)
 public class KuduEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);
@@ -90,7 +94,7 @@ public class KuduEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     protected void doStart() throws Exception {
         LOG.trace("Connection: {}, {}", getHost(), getPort());
 
-        //To facilitate tests, if the client is already created, do not recreate.
+        // To facilitate tests, if the client is already created, do not recreate.
         if (this.getKuduClient() == null) {
             setKuduClient(new KuduClient.KuduClientBuilder(getHost() + ":" + getPort()).build());
         }

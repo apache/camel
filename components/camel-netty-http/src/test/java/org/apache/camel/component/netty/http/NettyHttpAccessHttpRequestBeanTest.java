@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 
@@ -22,8 +25,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpAccessHttpRequestBeanTest extends BaseNettyTest {
 
@@ -44,7 +45,8 @@ public class NettyHttpAccessHttpRequestBeanTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
-                        .transform().method(NettyHttpAccessHttpRequestBeanTest.class, "myTransformer");
+                        .transform()
+                        .method(NettyHttpAccessHttpRequestBeanTest.class, "myTransformer");
             }
         };
     }
@@ -55,5 +57,4 @@ public class NettyHttpAccessHttpRequestBeanTest extends BaseNettyTest {
         request.content().release();
         return "Bye " + in;
     }
-
 }

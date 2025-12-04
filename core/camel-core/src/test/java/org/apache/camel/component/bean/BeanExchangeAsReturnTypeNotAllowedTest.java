@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to demonstrate that bean invocation must no return Exchange.
@@ -36,7 +37,8 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
                 () -> template.sendBody("direct:in", "Hello World"),
                 "Should have thrown IllegalStateException");
 
@@ -66,5 +68,4 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
             return exchange;
         }
     }
-
 }

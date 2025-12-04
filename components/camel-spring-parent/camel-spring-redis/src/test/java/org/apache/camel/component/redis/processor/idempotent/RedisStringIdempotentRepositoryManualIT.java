@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis.processor.idempotent;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.annotation.Resource;
 
@@ -30,10 +35,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("requires online connection")
 public class RedisStringIdempotentRepositoryManualIT extends CamelTestSupport {
@@ -66,13 +67,13 @@ public class RedisStringIdempotentRepositoryManualIT extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        idempotentRepository = new SpringRedisStringIdempotentRepository(
-                redisTemplate,
-                "redis-idempotent-repository");
+        idempotentRepository = new SpringRedisStringIdempotentRepository(redisTemplate, "redis-idempotent-repository");
         RouteBuilder rb = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").idempotentConsumer(body(), idempotentRepository).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(body(), idempotentRepository)
+                        .to("mock:result");
             }
         };
         return rb;
@@ -99,7 +100,6 @@ public class RedisStringIdempotentRepositoryManualIT extends CamelTestSupport {
         assertTrue(idempotentRepository.contains("xyz"));
         assertFalse(idempotentRepository.contains("mustNotContain"));
         mockResult.assertIsSatisfied();
-
     }
 
     @Test

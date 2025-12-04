@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import java.io.InputStream;
@@ -40,8 +41,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Query and/or transform XML payloads using XQuery and Saxon.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri",
-             remote = false, category = { Category.TRANSFORMATION })
+@UriEndpoint(
+        firstVersion = "1.0.0",
+        scheme = "xquery",
+        title = "XQuery",
+        syntax = "xquery:resourceUri",
+        remote = false,
+        category = {Category.TRANSFORMATION})
 public class XQueryEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);
@@ -51,28 +57,40 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     @UriPath
     @Metadata(required = true)
     private String resourceUri;
+
     @UriParam(label = "advanced")
     private Configuration configuration;
+
     @UriParam(label = "advanced")
     private Map<String, Object> configurationProperties = new HashMap<>();
+
     @UriParam(label = "advanced")
     private StaticQueryContext staticQueryContext;
+
     @UriParam(label = "advanced")
     private Map<String, Object> parameters = new HashMap<>();
+
     @UriParam
     private Map<String, String> namespacePrefixes = new HashMap<>();
+
     @UriParam(defaultValue = "DOM")
     private ResultFormat resultsFormat = ResultFormat.DOM;
+
     @UriParam(label = "advanced")
     private Properties properties = new Properties();
+
     @UriParam
     private Class<?> resultType;
+
     @UriParam(defaultValue = "true")
     private boolean stripsAllWhiteSpace = true;
+
     @UriParam(label = "advanced")
     private ModuleURIResolver moduleURIResolver;
+
     @UriParam
     private boolean allowStAX;
+
     @UriParam
     private String source;
 

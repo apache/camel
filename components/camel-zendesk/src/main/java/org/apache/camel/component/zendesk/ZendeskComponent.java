@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zendesk;
 
 import org.apache.camel.CamelContext;
@@ -33,14 +34,19 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     @Metadata
     private String serverUrl;
+
     @Metadata(label = "security", secret = true)
     private String username;
+
     @Metadata(label = "security", secret = true)
     private String oauthToken;
+
     @Metadata(label = "security", secret = true)
     private String token;
+
     @Metadata(label = "security", secret = true)
     private String password;
+
     @Metadata(label = "advanced")
     private Zendesk zendesk;
 
@@ -159,10 +165,10 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     @Override
     protected Endpoint createEndpoint(
-            String uri, String methodName, ZendeskApiName apiName,
-            ZendeskConfiguration endpointConfiguration) {
+            String uri, String methodName, ZendeskApiName apiName, ZendeskConfiguration endpointConfiguration) {
 
-        endpointConfiguration.setMethodName(getCamelContext().getTypeConverter().convertTo(ZendeskApiMethod.class, methodName));
+        endpointConfiguration.setMethodName(
+                getCamelContext().getTypeConverter().convertTo(ZendeskApiMethod.class, methodName));
 
         if (endpointConfiguration.getServerUrl() == null) {
             endpointConfiguration.setServerUrl(serverUrl);
@@ -194,5 +200,4 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
         IOHelper.close(zendesk);
         super.doStop();
     }
-
 }

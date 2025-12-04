@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Arrays;
@@ -41,27 +42,32 @@ public class FhirDataFormatReifier<T extends FhirDataformat> extends DataFormatR
         properties.put("preferTypesNames", definition.getPreferTypes());
         properties.put("parserOptions", asRef(definition.getParserOptions()));
         properties.put("parserErrorHandler", asRef(definition.getParserErrorHandler()));
-        properties.put("encodeElementsAppliesToChildResourcesOnly", definition.getEncodeElementsAppliesToChildResourcesOnly());
+        properties.put(
+                "encodeElementsAppliesToChildResourcesOnly", definition.getEncodeElementsAppliesToChildResourcesOnly());
         properties.put("omitResourceId", definition.getOmitResourceId());
         properties.put("prettyPrint", definition.getPrettyPrint());
         properties.put("suppressNarratives", definition.getSuppressNarratives());
         properties.put("summaryMode", definition.getSummaryMode());
-        properties.put("overrideResourceIdWithBundleEntryFullUrl", definition.getOverrideResourceIdWithBundleEntryFullUrl());
+        properties.put(
+                "overrideResourceIdWithBundleEntryFullUrl", definition.getOverrideResourceIdWithBundleEntryFullUrl());
         properties.put("stripVersionsFromReferences", definition.getStripVersionsFromReferences());
         // convert string to list/set for the following options
         if (definition.getDontStripVersionsFromReferencesAtPaths() != null) {
-            List<String> list = Arrays.stream(definition.getDontStripVersionsFromReferencesAtPaths().split(","))
+            List<String> list = Arrays.stream(definition
+                            .getDontStripVersionsFromReferencesAtPaths()
+                            .split(","))
                     .toList();
             properties.put("dontStripVersionsFromReferencesAtPaths", list);
         }
         if (definition.getDontEncodeElements() != null) {
-            Set<String> set = Arrays.stream(definition.getDontEncodeElements().split(",")).collect(Collectors.toSet());
+            Set<String> set =
+                    Arrays.stream(definition.getDontEncodeElements().split(",")).collect(Collectors.toSet());
             properties.put("dontEncodeElements", set);
         }
         if (definition.getEncodeElements() != null) {
-            Set<String> set = Arrays.stream(definition.getEncodeElements().split(",")).collect(Collectors.toSet());
+            Set<String> set =
+                    Arrays.stream(definition.getEncodeElements().split(",")).collect(Collectors.toSet());
             properties.put("encodeElements", set);
         }
     }
-
 }

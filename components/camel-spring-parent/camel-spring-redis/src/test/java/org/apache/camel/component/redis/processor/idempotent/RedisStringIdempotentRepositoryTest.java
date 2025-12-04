@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis.processor.idempotent;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 
@@ -28,10 +33,6 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @MockitoSettings
 public class RedisStringIdempotentRepositoryTest {
 
@@ -41,12 +42,16 @@ public class RedisStringIdempotentRepositoryTest {
 
     @Mock
     private RedisTemplate<String, String> redisTemplate;
+
     @Mock
     private RedisConnectionFactory redisConnectionFactory;
+
     @Mock
     private RedisConnection redisConnection;
+
     @Mock
     private RedisOperations<String, String> redisOperations;
+
     @Mock
     private ValueOperations<String, String> valueOperations;
 
@@ -84,5 +89,4 @@ public class RedisStringIdempotentRepositoryTest {
         String processorNameNoExpiry = idempotentRepositoryNoExpiry.getRepositoryName();
         assertEquals(REPOSITORY_NOEXPIRY, processorNameNoExpiry);
     }
-
 }

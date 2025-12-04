@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -32,9 +36,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -54,8 +55,10 @@ public class DefaultConsumerBridgeErrorHandlerOnExceptionTest extends ContextTes
 
         assertMockEndpointsSatisfied();
 
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertEquals("Simulated", cause.getMessage());
     }
@@ -70,7 +73,11 @@ public class DefaultConsumerBridgeErrorHandlerOnExceptionTest extends ContextTes
                 getContext().addComponent("my", new MyComponent());
 
                 // configure on exception
-                onException(Exception.class).handled(true).to("mock:a").to("direct:error").to("mock:dead");
+                onException(Exception.class)
+                        .handled(true)
+                        .to("mock:a")
+                        .to("direct:error")
+                        .to("mock:dead");
 
                 // configure the consumer to bridge with the Camel error
                 // handler,

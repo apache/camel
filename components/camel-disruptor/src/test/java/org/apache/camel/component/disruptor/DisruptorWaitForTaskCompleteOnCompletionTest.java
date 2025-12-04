@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -24,10 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorWaitForTaskCompleteOnCompletionTest extends CamelTestSupport {
 
@@ -58,29 +59,36 @@ public class DisruptorWaitForTaskCompleteOnCompletionTest extends CamelTestSuppo
             public void configure() {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start").process(new Processor() {
-                    @Override
-                    public void process(final Exchange exchange) {
-                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                from("direct:start")
+                        .process(new Processor() {
                             @Override
-                            public void onDone(final Exchange exchange) {
-                                done += "A";
+                            public void process(final Exchange exchange) {
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                    @Override
+                                    public void onDone(final Exchange exchange) {
+                                        done += "A";
+                                    }
+                                });
                             }
-                        });
-                    }
-                }).to("disruptor:foo?waitForTaskToComplete=Always").process(new Processor() {
-                    @Override
-                    public void process(final Exchange exchange) {
-                        done += "B";
-                    }
-                }).to("mock:result");
+                        })
+                        .to("disruptor:foo?waitForTaskToComplete=Always")
+                        .process(new Processor() {
+                            @Override
+                            public void process(final Exchange exchange) {
+                                done += "B";
+                            }
+                        })
+                        .to("mock:result");
 
-                from("disruptor:foo").errorHandler(noErrorHandler()).process(new Processor() {
-                    @Override
-                    public void process(final Exchange exchange) {
-                        done = done + "C";
-                    }
-                }).throwException(new IllegalArgumentException("Forced"));
+                from("disruptor:foo")
+                        .errorHandler(noErrorHandler())
+                        .process(new Processor() {
+                            @Override
+                            public void process(final Exchange exchange) {
+                                done = done + "C";
+                            }
+                        })
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

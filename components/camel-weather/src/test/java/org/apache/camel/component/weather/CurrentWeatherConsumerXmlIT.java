@@ -14,15 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
+
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-
-@EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
-                         disabledReason = "Disabled to avoid hitting API limits")
+@EnabledIfSystemProperty(
+        named = "enable.weather.tests",
+        matches = "true",
+        disabledReason = "Disabled to avoid hitting API limits")
 public class CurrentWeatherConsumerXmlIT extends BaseWeatherConsumerIT {
 
     @Override
@@ -38,9 +41,9 @@ public class CurrentWeatherConsumerXmlIT extends BaseWeatherConsumerIT {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("weather:foo?mode=XML&appid=9162755b2efa555823cfe0451d7fff38&ids=2747373").to("mock:result");
+                from("weather:foo?mode=XML&appid=9162755b2efa555823cfe0451d7fff38&ids=2747373")
+                        .to("mock:result");
             }
         };
     }
-
 }

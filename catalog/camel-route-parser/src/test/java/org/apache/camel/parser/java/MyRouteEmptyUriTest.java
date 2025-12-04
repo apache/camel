@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled // on purpose to ignore
 public class MyRouteEmptyUriTest extends CamelTestSupport {
@@ -36,8 +37,7 @@ public class MyRouteEmptyUriTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo")
-                        .to(""); // is empty on purpose
+                from("direct:foo").to(""); // is empty on purpose
             }
         };
     }

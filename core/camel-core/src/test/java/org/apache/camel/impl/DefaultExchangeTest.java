@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -32,15 +42,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultExchangeTest extends ExchangeTestSupport {
 
@@ -64,19 +65,23 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         assertEquals("<hello id='m123'>world!</hello>", exchange.getIn().getBody());
 
-        assertThrows(TypeConversionException.class, () -> assertNull(exchange.getIn().getBody(Integer.class)),
+        assertThrows(
+                TypeConversionException.class,
+                () -> assertNull(exchange.getIn().getBody(Integer.class)),
                 "Should have thrown a TypeConversionException");
 
         assertEquals("<hello id='m123'>world!</hello>", exchange.getIn().getMandatoryBody());
 
-        assertThrows(InvalidPayloadException.class, () -> exchange.getIn().getMandatoryBody(Integer.class),
+        assertThrows(
+                InvalidPayloadException.class,
+                () -> exchange.getIn().getMandatoryBody(Integer.class),
                 "Should have thrown an InvalidPayloadException");
     }
 
     @Test
     public void testExceptionAsType() {
-        exchange.setException(
-                RuntimeCamelException.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
+        exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(
+                new ConnectException("Cannot connect to remote server")));
 
         ConnectException ce = exchange.getException(ConnectException.class);
         assertNotNull(ce);
@@ -390,7 +395,8 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         Exchange destExchange = sourceExchange.copy();
         Message destIn = destExchange.getIn();
 
-        assertEquals(sourceIn.getClass(), destIn.getClass(), "Dest message should be of the same type as source message");
+        assertEquals(
+                sourceIn.getClass(), destIn.getClass(), "Dest message should be of the same type as source message");
     }
 
     @Test
@@ -405,25 +411,19 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         assertThat(copy.getProperty(SAFE_PROPERTY)).isNotSameAs(property);
         assertThat(copy.getProperty(UNSAFE_PROPERTY)).isSameAs(unsafeProperty);
-
     }
 
     private static final class SafeProperty implements SafeCopyProperty {
 
-        private SafeProperty() {
-
-        }
+        private SafeProperty() {}
 
         @Override
         public SafeProperty safeCopy() {
             return new SafeProperty();
         }
-
     }
 
-    private static class UnsafeProperty {
-
-    }
+    private static class UnsafeProperty {}
 
     public static class MyMessage extends DefaultMessage {
         public MyMessage(CamelContext camelContext) {
@@ -435,5 +435,4 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
             return new MyMessage(getCamelContext());
         }
     }
-
 }

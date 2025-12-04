@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.eventnotifier;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Set;
 
@@ -25,9 +29,6 @@ import io.micrometer.core.instrument.Statistic;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MicrometerExchangeEventNotifierStaticTest extends MicrometerExchangeEventNotifierDynamicTest {
 
@@ -62,12 +63,13 @@ public class MicrometerExchangeEventNotifierStaticTest extends MicrometerExchang
             assertEquals(7, mr.getMeters().size());
             int counter = 0;
             for (Meter m : mr.getMeters()) {
-                if (m.getId().getName().equals(MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME) &&
-                        m.getId().getTag("endpointName").equals("my://component")) {
+                if (m.getId().getName().equals(MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME)
+                        && m.getId().getTag("endpointName").equals("my://component")) {
                     counter++;
                     Measurement entry = null;
                     for (Measurement me : m.measure()) {
-                        if (Statistic.COUNT.equals(Statistic.valueOf(me.getStatistic().name()))) {
+                        if (Statistic.COUNT.equals(
+                                Statistic.valueOf(me.getStatistic().name()))) {
                             entry = me;
                         }
                     }
@@ -78,5 +80,4 @@ public class MicrometerExchangeEventNotifierStaticTest extends MicrometerExchang
             assertEquals(1, counter, "Only one measure should be present for 'my://component' endpoint.");
         }
     }
-
 }

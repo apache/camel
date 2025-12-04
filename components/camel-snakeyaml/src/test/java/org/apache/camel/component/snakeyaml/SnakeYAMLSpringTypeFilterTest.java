@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snakeyaml;
 
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
@@ -46,6 +47,7 @@ public class SnakeYAMLSpringTypeFilterTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/snakeyaml/SnakeYAMLSpringTypeFilterTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/snakeyaml/SnakeYAMLSpringTypeFilterTest.xml");
     }
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for Camel loadbalancer failover with JMS
@@ -63,7 +64,8 @@ public class JmsLoadBalanceFailOverIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .loadBalance().failover()
+                        .loadBalance()
+                        .failover()
                         .to("jms:queue:fooJmsLoadBalanceFailoverTest?transferException=true")
                         .to("jms:queue:barJmsLoadBalanceFailoverTest?transferException=true")
                         .end()
@@ -75,7 +77,8 @@ public class JmsLoadBalanceFailOverIT extends CamelTestSupport {
 
                 from("jms:queue:barJmsLoadBalanceFailoverTest?transferException=true")
                         .to("mock:bar")
-                        .transform().simple("Bye World");
+                        .transform()
+                        .simple("Bye World");
             }
         };
     }
@@ -89,5 +92,4 @@ public class JmsLoadBalanceFailOverIT extends CamelTestSupport {
 
         return camelContext;
     }
-
 }

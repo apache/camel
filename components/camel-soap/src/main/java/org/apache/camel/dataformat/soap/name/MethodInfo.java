@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap.name;
 
 import java.util.HashMap;
@@ -53,11 +54,10 @@ public final class MethodInfo {
             if (inTypeMap.containsKey(typeInfo.getTypeName())
                     && !typeInfo.getTypeName().equals("jakarta.xml.ws.Holder")
                     && !inTypeMap.get(typeInfo.getTypeName()).getElName().equals(typeInfo.getElName())) {
-                throw new RuntimeCamelException(
-                        "Ambiguous QName mapping. The type [ "
-                                                + typeInfo.getTypeName()
-                                                + " ] is already mapped to a QName in this method."
-                                                + " This is not supported.");
+                throw new RuntimeCamelException("Ambiguous QName mapping. The type [ "
+                        + typeInfo.getTypeName()
+                        + " ] is already mapped to a QName in this method."
+                        + " This is not supported.");
             }
             inTypeMap.put(typeInfo.getTypeName(), typeInfo);
         }
@@ -82,5 +82,4 @@ public final class MethodInfo {
     public TypeInfo getIn(String typeName) {
         return this.inTypeMap.get(typeName);
     }
-
 }

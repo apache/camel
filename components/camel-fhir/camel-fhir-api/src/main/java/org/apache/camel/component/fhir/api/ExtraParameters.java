@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.List;
@@ -103,7 +104,8 @@ public enum ExtraParameters {
         return headerName;
     }
 
-    static <T extends IClientExecutable<?, ?>> void process(Map<ExtraParameters, Object> extraParameters, T clientExecutable) {
+    static <T extends IClientExecutable<?, ?>> void process(
+            Map<ExtraParameters, Object> extraParameters, T clientExecutable) {
         if (extraParameters == null) {
             return;
         }
@@ -122,8 +124,8 @@ public enum ExtraParameters {
                     }
                     break;
                 case CACHE_CONTROL_DIRECTIVE:
-                    CacheControlDirective cacheControlDirective
-                            = (CacheControlDirective) extraParameters.get(CACHE_CONTROL_DIRECTIVE);
+                    CacheControlDirective cacheControlDirective =
+                            (CacheControlDirective) extraParameters.get(CACHE_CONTROL_DIRECTIVE);
                     clientExecutable.cacheControl(cacheControlDirective);
                     break;
                 case SUBSET_ELEMENTS:
@@ -135,13 +137,13 @@ public enum ExtraParameters {
                     clientExecutable.encoded(encodingEnum);
                     break;
                 case PREFER_RESPONSE_TYPE:
-                    Class<? extends IBaseResource> type
-                            = (Class<? extends IBaseResource>) extraParameters.get(PREFER_RESPONSE_TYPE);
+                    Class<? extends IBaseResource> type =
+                            (Class<? extends IBaseResource>) extraParameters.get(PREFER_RESPONSE_TYPE);
                     clientExecutable.preferResponseType(type);
                     break;
                 case PREFER_RESPONSE_TYPES:
-                    List<Class<? extends IBaseResource>> types
-                            = (List<Class<? extends IBaseResource>>) extraParameters.get(PREFER_RESPONSE_TYPES);
+                    List<Class<? extends IBaseResource>> types =
+                            (List<Class<? extends IBaseResource>>) extraParameters.get(PREFER_RESPONSE_TYPES);
                     clientExecutable.preferResponseTypes(types);
                     break;
                 case PRETTY_PRINT:

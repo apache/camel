@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.CamelContext;
@@ -42,8 +43,7 @@ public class TracingStandbyNoRouteTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:bye")
-                        .to("mock:bye");
+                from("direct:bye").to("mock:bye");
             }
         });
 
@@ -58,5 +58,4 @@ public class TracingStandbyNoRouteTest extends ContextTestSupport {
         template.sendBody("direct:bye", "Hello Tracer");
         assertMockEndpointsSatisfied();
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 
@@ -28,10 +33,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -44,13 +45,16 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/myapp", (request, response, context) -> {
                     response.setEntity(new StringEntity("OK", StandardCharsets.US_ASCII));
                     response.setCode(HttpStatus.SC_OK);
-                }).create();
+                })
+                .create();
         localServer.start();
     }
 
@@ -90,7 +94,8 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
         // should be in JMX too
         MBeanServer mbeanServer = getMBeanServer();
         String id = context.getManagementName();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + id + ",type=endpoints,name=\"" + uri + "\"");
+        ObjectName on =
+                ObjectName.getInstance("org.apache.camel:context=" + id + ",type=endpoints,name=\"" + uri + "\"");
         assertTrue(mbeanServer.isRegistered(on));
 
         max = (int) mbeanServer.getAttribute(on, "ClientConnectionsPoolStatsMax");
@@ -106,5 +111,4 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
-
 }

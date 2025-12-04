@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.awt.*;
@@ -36,17 +37,23 @@ public class Hawtio extends CamelCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name;
 
-    @CommandLine.Option(names = { "--version" },
-                        description = "Version of the Hawtio web console", defaultValue = "4.6.0")
+    @CommandLine.Option(
+            names = {"--version"},
+            description = "Version of the Hawtio web console",
+            defaultValue = "4.6.0")
     String version = "4.6.0";
 
     // use port 8888 as 8080 is too commonly used
-    @CommandLine.Option(names = { "--port" },
-                        description = "Port number to use for Hawtio web console (port 8888 by default)", defaultValue = "8888")
+    @CommandLine.Option(
+            names = {"--port"},
+            description = "Port number to use for Hawtio web console (port 8888 by default)",
+            defaultValue = "8888")
     int port = 8888;
 
-    @CommandLine.Option(names = { "--openUrl" },
-                        description = "To automatic open Hawtio web console in the web browser", defaultValue = "true")
+    @CommandLine.Option(
+            names = {"--openUrl"},
+            description = "To automatic open Hawtio web console in the web browser",
+            defaultValue = "true")
     boolean openUrl = true;
 
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
@@ -157,5 +164,4 @@ public class Hawtio extends CamelCommand {
         Thread task = new Thread(shutdownLatch::countDown);
         Runtime.getRuntime().addShutdownHook(task);
     }
-
 }

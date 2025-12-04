@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.util.Map;
@@ -43,8 +44,8 @@ public class SecretsManagerComponent extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SecretsManagerConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new SecretsManagerConfiguration();
+        SecretsManagerConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new SecretsManagerConfiguration();
         SecretsManagerEndpoint endpoint = new SecretsManagerEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

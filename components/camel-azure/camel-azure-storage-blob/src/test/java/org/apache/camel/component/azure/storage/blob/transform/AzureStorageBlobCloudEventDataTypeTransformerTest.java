@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.azure.storage.blob.transform;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -31,14 +33,12 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class AzureStorageBlobCloudEventDataTypeTransformerTest {
 
     private final DefaultCamelContext camelContext = new DefaultCamelContext();
 
-    private final AzureStorageBlobCloudEventDataTypeTransformer transformer
-            = new AzureStorageBlobCloudEventDataTypeTransformer();
+    private final AzureStorageBlobCloudEventDataTypeTransformer transformer =
+            new AzureStorageBlobCloudEventDataTypeTransformer();
 
     @Test
     void shouldMapToCloudEvent() throws Exception {
@@ -51,7 +51,8 @@ public class AzureStorageBlobCloudEventDataTypeTransformerTest {
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertTrue(exchange.getMessage().getHeaders().containsKey(BlobConstants.BLOB_NAME));
-        assertEquals("org.apache.camel.event.azure.storage.blob.getBlob",
+        assertEquals(
+                "org.apache.camel.event.azure.storage.blob.getBlob",
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
         assertEquals("myBlob", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
         assertEquals("azure.storage.blob.eTag", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
@@ -59,7 +60,8 @@ public class AzureStorageBlobCloudEventDataTypeTransformerTest {
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
+        Transformer transformer = camelContext
+                .getTransformerRegistry()
                 .resolveTransformer(new TransformerKey("azure-storage-blob:application-cloudevents"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(AzureStorageBlobCloudEventDataTypeTransformer.class, transformer.getClass());

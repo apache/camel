@@ -41,8 +41,9 @@ class JsonSchemaResolverTest {
 
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
 
-        JsonNode schema
-                = Json.mapper().readerFor(JsonNode.class).readValue(this.getClass().getResourceAsStream("person.schema.json"));
+        JsonNode schema = Json.mapper()
+                .readerFor(JsonNode.class)
+                .readValue(this.getClass().getResourceAsStream("person.schema.json"));
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, schema);
         exchange.getMessage().setBody(person);
 
@@ -60,7 +61,8 @@ class JsonSchemaResolverTest {
 
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
 
-        String schemaString = new String(this.getClass().getResourceAsStream("person.schema.json").readAllBytes());
+        String schemaString = new String(
+                this.getClass().getResourceAsStream("person.schema.json").readAllBytes());
         exchange.setProperty(SchemaHelper.SCHEMA, schemaString);
         exchange.getMessage().setBody(person);
 
@@ -68,7 +70,9 @@ class JsonSchemaResolverTest {
         schemaResolver.process(exchange);
 
         Assertions.assertNotNull(exchange.getProperty(SchemaHelper.CONTENT_SCHEMA));
-        Assertions.assertEquals(ObjectNode.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
+        Assertions.assertEquals(
+                ObjectNode.class,
+                exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
         Assertions.assertEquals(SchemaType.JSON.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
         Assertions.assertEquals(Person.class.getName(), exchange.getProperty(SchemaHelper.CONTENT_CLASS));
     }
@@ -84,7 +88,9 @@ class JsonSchemaResolverTest {
         schemaResolver.process(exchange);
 
         Assertions.assertNotNull(exchange.getProperty(SchemaHelper.CONTENT_SCHEMA));
-        Assertions.assertEquals(ObjectNode.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
+        Assertions.assertEquals(
+                ObjectNode.class,
+                exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
         Assertions.assertEquals(SchemaType.JSON.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
         Assertions.assertEquals(Person.class.getName(), exchange.getProperty(SchemaHelper.CONTENT_CLASS));
     }

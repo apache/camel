@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.List;
@@ -40,5 +41,4 @@ public interface ModelToStructureDumper {
      * @return         the output in textual structure
      */
     List<ModelDumpLine> dumpStructure(CamelContext context, Route route, boolean brief) throws Exception;
-
 }

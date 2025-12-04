@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -37,12 +38,13 @@ public class DataFormatServiceCustomRefTest extends DataFormatServiceTest {
                 from("direct:a")
                         // myCustomDataFormat refers to the data format from the
                         // Registry
-                        .marshal().custom("myCustomDataFormat").to("mock:a");
+                        .marshal()
+                        .custom("myCustomDataFormat")
+                        .to("mock:a");
 
                 from("direct:b").unmarshal().custom("myCustomDataFormat").to("mock:b");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

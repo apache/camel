@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.integration;
+
+import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_KEY_CREDENTIAL;
 
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.common.StorageSharedKeyCredential;
@@ -30,8 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_KEY_CREDENTIAL;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Base extends CamelTestSupport {
@@ -79,10 +80,10 @@ public class Base extends CamelTestSupport {
         configuration = new BlobConfiguration();
         configuration.setCredentialType(SHARED_KEY_CREDENTIAL);
         configuration.setCredentials(new StorageSharedKeyCredential(
-                service.azureCredentials().accountName(), service.azureCredentials().accountKey()));
+                service.azureCredentials().accountName(),
+                service.azureCredentials().accountKey()));
         configuration.setContainerName(containerName);
 
         serviceClient = AzureStorageBlobClientUtils.getClient();
     }
-
 }

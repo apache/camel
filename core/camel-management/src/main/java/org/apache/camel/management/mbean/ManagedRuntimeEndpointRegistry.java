@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.List;
@@ -48,7 +49,9 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
+        sanitize = strategy.getManagementAgent().getMask() != null
+                ? strategy.getManagementAgent().getMask()
+                : true;
     }
 
     @Override
@@ -113,8 +116,9 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
                 long hits = stat.getHits();
 
                 CompositeData data = new CompositeDataSupport(
-                        ct, new String[] { "index", "url", "routeId", "direction", "static", "dynamic", "hits" },
-                        new Object[] { index, url, routeId, direction, isStatic, isDynamic, hits });
+                        ct,
+                        new String[] {"index", "url", "routeId", "direction", "static", "dynamic", "hits"},
+                        new Object[] {index, url, routeId, direction, isStatic, isDynamic, hits});
                 answer.put(data);
 
                 // use a counter as the single index in the TabularData as we do not want a multi-value index

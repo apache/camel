@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
@@ -30,20 +31,24 @@ import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "load",
-                     description = "Loads new source files into an existing Camel", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "load",
+        description = "Loads new source files into an existing Camel",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelLoadAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Source file(s) to load")
+    @CommandLine.Option(
+            names = {"--source"},
+            description = "Source file(s) to load")
     List<String> source;
 
-    @CommandLine.Option(names = { "--restart" },
-                        description = "To force restart all routes after loading source files")
+    @CommandLine.Option(
+            names = {"--restart"},
+            description = "To force restart all routes after loading source files")
     boolean restart;
 
     public CamelLoadAction(CamelJBangMain main) {
@@ -61,8 +66,9 @@ public class CamelLoadAction extends ActionBaseCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
         long pid = pids.get(0);
@@ -145,5 +151,4 @@ public class CamelLoadAction extends ActionBaseCommand {
         }
         return null;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,11 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class FileHeaderTest extends BaseEndpointDslTest {
     @TempDir
     static Path testDirectory;
+
     private static String fileName = "hello.txt";
     private static String outputDir = "target/files";
 
@@ -45,10 +47,10 @@ class FileHeaderTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").setHeader(file().fileName(), constant(fileName))
+                from("direct:a")
+                        .setHeader(file().fileName(), constant(fileName))
                         .to("file:" + outputDir);
             }
         };
     }
-
 }

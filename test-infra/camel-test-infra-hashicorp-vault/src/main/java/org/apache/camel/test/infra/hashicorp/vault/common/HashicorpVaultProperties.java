@@ -25,7 +25,5 @@ public final class HashicorpVaultProperties {
     public static final String HASHICORP_VAULT_TOKEN = "hashicorp.vault.token";
     public static final int DEFAULT_SERVICE_PORT = 8200;
 
-    private HashicorpVaultProperties() {
-
-    }
+    private HashicorpVaultProperties() {}
 }

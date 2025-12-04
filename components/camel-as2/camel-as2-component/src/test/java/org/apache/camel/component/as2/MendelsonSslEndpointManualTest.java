@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import java.util.Properties;
@@ -52,17 +53,18 @@ public class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
 
     @BeforeAll
     public static void setupTest() {
-        TestSupport.loadExternalPropertiesQuietly(props, MendelsonSslEndpointManualTest.class.getClassLoader(),
-                "test-server.properties");
+        TestSupport.loadExternalPropertiesQuietly(
+                props, MendelsonSslEndpointManualTest.class.getClassLoader(), "test-server.properties");
 
         // NoopHostnameVerifier needed since we connect to non-localhost remote AS2 server
         hostnameVerifier = new NoopHostnameVerifier();
         mendelsonCertLoader = new MendelsonCertLoader();
-        mendelsonCertLoader.setupCertificateChain(props.getProperty("mendelson.certificate.path"),
+        mendelsonCertLoader.setupCertificateChain(
+                props.getProperty("mendelson.certificate.path"),
                 props.getProperty("mendelson.keystore.path"),
                 props.getProperty("mendelson.keystore.password"));
-        mendelsonCertLoader.setupSslContext(props.getProperty("mendelson.keystore.path"),
-                props.getProperty("mendelson.keystore.password"));
+        mendelsonCertLoader.setupSslContext(
+                props.getProperty("mendelson.keystore.path"), props.getProperty("mendelson.keystore.password"));
     }
 
     @Test
@@ -101,22 +103,20 @@ public class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
         as2Component.setConfiguration(endpointConfiguration);
         as2Component.start();
 
-        AS2Endpoint endpoint = (AS2Endpoint) as2Component
-                .createEndpoint("as2://client/send?targetHostName=" + props.getProperty("as2.remote.host") +
-                                "&targetPortNumber=" + props.getProperty("as2.remote.port") +
-                                "&inBody=ediMessage" +
-                                "&requestUri=" + props.getProperty("as2.remote.uri") +
-                                "&ediMessageContentType=" + props.getProperty("as2.content.type") +
-                                "&signingAlgorithm=" + props.getProperty("as2.signing.algorithm"));
+        AS2Endpoint endpoint = (AS2Endpoint) as2Component.createEndpoint(
+                "as2://client/send?targetHostName=" + props.getProperty("as2.remote.host") + "&targetPortNumber="
+                        + props.getProperty("as2.remote.port") + "&inBody=ediMessage"
+                        + "&requestUri="
+                        + props.getProperty("as2.remote.uri") + "&ediMessageContentType="
+                        + props.getProperty("as2.content.type") + "&signingAlgorithm="
+                        + props.getProperty("as2.signing.algorithm"));
 
-        Exchange out
-                = camelContext.createProducerTemplate().request(endpoint,
-                        exchange -> exchange.getIn().setBody(props.getProperty("as2.edi.message")));
+        Exchange out = camelContext.createProducerTemplate().request(endpoint, exchange -> exchange.getIn()
+                .setBody(props.getProperty("as2.edi.message")));
         Throwable cause = out.getException();
         Assertions.assertNull(cause);
-        LOG.debug(
-                "Sending done. If you used Mendelson settings for connection, " +
-                  "you can check your message in http://testas2.mendelson-e-c.com:8080/webas2/ " +
-                  "Login guest, password guest");
+        LOG.debug("Sending done. If you used Mendelson settings for connection, "
+                + "you can check your message in http://testas2.mendelson-e-c.com:8080/webas2/ "
+                + "Login guest, password guest");
     }
 }

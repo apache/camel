@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.postprocessor;
 
 import org.apache.camel.Endpoint;
@@ -37,5 +38,4 @@ public class MyRouteBuilderWithAutowiredPojo extends RouteBuilder {
     public TestPojo getPojo() {
         return this.pojo;
     }
-
 }

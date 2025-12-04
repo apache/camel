@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,9 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ListBucketsFunctionalTest extends CamelTestSupport {
 
@@ -36,11 +37,10 @@ public class ListBucketsFunctionalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:list_buckets")
-                        .to("hwcloud-obs:listBuckets?" +
-                            "accessKey=" + ACCESS_KEY +
-                            "&secretKey=" + SECRET_KEY +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-obs:listBuckets?" + "accessKey="
+                                + ACCESS_KEY + "&secretKey="
+                                + SECRET_KEY + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("List buckets successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:list_buckets_result");

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
+
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_GAUGE_SUBJECT;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_GAUGE_SUBJECT;
 
 public class GaugeProducer extends AbstractMetricsProducer {
 
@@ -38,7 +39,8 @@ public class GaugeProducer extends AbstractMetricsProducer {
             }
         } else {
             if (endpoint.getSubject() != null) {
-                endpoint.getRegistry().register(endpoint.getMetricsName(), new CamelMetricsGauge(endpoint.getSubject()));
+                endpoint.getRegistry()
+                        .register(endpoint.getMetricsName(), new CamelMetricsGauge(endpoint.getSubject()));
             } else {
                 LOG.info("No subject found for Gauge \"{}\". Ignoring...", endpoint.getMetricsName());
             }

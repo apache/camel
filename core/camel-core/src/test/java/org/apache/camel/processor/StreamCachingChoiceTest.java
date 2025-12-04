@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.File;
@@ -47,20 +48,24 @@ public class StreamCachingChoiceTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                            .when().simple("${body} contains 'Paris'")
-                                .to("mock:paris")
-                            .when().simple("${body} contains 'London'")
-                                .to("mock:london")
-                            .otherwise()
-                                .to("mock:other")
+                        .when()
+                        .simple("${body} contains 'Paris'")
+                        .to("mock:paris")
+                        .when()
+                        .simple("${body} contains 'London'")
+                        .to("mock:london")
+                        .otherwise()
+                        .to("mock:other")
                         .end()
                         .choice()
-                            .when().simple("${body} contains 'Paris'")
-                                .to("mock:paris")
-                            .when().simple("${body} contains 'Madrid'")
-                                .to("mock:madrid")
-                            .otherwise()
-                                .to("mock:other")
+                        .when()
+                        .simple("${body} contains 'Paris'")
+                        .to("mock:paris")
+                        .when()
+                        .simple("${body} contains 'Madrid'")
+                        .to("mock:madrid")
+                        .otherwise()
+                        .to("mock:other")
                         .end();
             }
         };

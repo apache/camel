@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -39,19 +42,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Test that all thread pools are removed when adding and removing a route dynamically. This test manipulates the thread
  * pools, so it's not a good candidate for running in parallel.
  */
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 @Timeout(60)
 public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -76,7 +78,8 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsAddAndRemoveRouteManagementTest.in").routeId("myNewRoute")
+                from("activemq:queue:JmsAddAndRemoveRouteManagementTest.in")
+                        .routeId("myNewRoute")
                         .to("activemq:queue:JmsAddAndRemoveRouteManagementTest.foo");
             }
         });

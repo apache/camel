@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity;
 
 import java.util.Map;
@@ -31,20 +32,17 @@ public class XmlSignerComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private XmlSignerConfiguration signerConfiguration;
 
-    public XmlSignerComponent() {
-    }
+    public XmlSignerComponent() {}
 
     public XmlSignerComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected Endpoint createEndpoint(
-            String uri, String remaining,
-            Map<String, Object> parameters)
-            throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        XmlSignerConfiguration config = signerConfiguration != null ? signerConfiguration.copy() : new XmlSignerConfiguration();
+        XmlSignerConfiguration config =
+                signerConfiguration != null ? signerConfiguration.copy() : new XmlSignerConfiguration();
         XmlSignerEndpoint endpoint = new XmlSignerEndpoint(uri, this, config);
         endpoint.setName(remaining);
         setProperties(endpoint, parameters);
@@ -64,5 +62,4 @@ public class XmlSignerComponent extends DefaultComponent {
     public void setSignerConfiguration(XmlSignerConfiguration signerConfiguration) {
         this.signerConfiguration = signerConfiguration;
     }
-
 }

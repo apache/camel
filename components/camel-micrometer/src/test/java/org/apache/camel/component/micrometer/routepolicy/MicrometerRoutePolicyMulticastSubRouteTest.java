@@ -14,17 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
-
-import java.util.List;
-
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Gauge;
-import io.micrometer.core.instrument.Meter;
-import io.micrometer.core.instrument.Timer;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.APP_INFO_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME;
@@ -35,6 +26,16 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.List;
+
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.Timer;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
 /**
  * CAMEL-9226 - check metrics are counted correctly in multicast sub-routes
@@ -76,7 +77,10 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
                     } else {
                         expectedCount = count;
                     }
-                    assertEquals(expectedCount, counter.count(), 0.01D,
+                    assertEquals(
+                            expectedCount,
+                            counter.count(),
+                            0.01D,
                             "Counter " + counter.getId() + " should have count of " + count);
                     break;
                 }
@@ -89,20 +93,26 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
                     } else {
                         expectedCount = 0;
                     }
-                    assertEquals(expectedCount, counter.count(), 0.01D,
+                    assertEquals(
+                            expectedCount,
+                            counter.count(),
+                            0.01D,
                             "Counter " + counter.getId() + " should have count of " + 0);
                     break;
                 }
                 case DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME: {
                     Counter counter = (Counter) meter;
-                    assertEquals(count, counter.count(), 0.01D,
+                    assertEquals(
+                            count,
+                            counter.count(),
+                            0.01D,
                             "Counter " + counter.getId() + " should have count of " + count);
                     break;
                 }
                 case DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME: {
                     Counter counter = (Counter) meter;
-                    assertEquals(0, counter.count(), 0.01D,
-                            "Counter " + counter.getId() + " should have count of " + count);
+                    assertEquals(
+                            0, counter.count(), 0.01D, "Counter " + counter.getId() + " should have count of " + count);
                     break;
                 }
                 case DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME: {
@@ -114,7 +124,10 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
                     } else {
                         expectedCount = 0;
                     }
-                    assertEquals(expectedCount, counter.count(), 0.01D,
+                    assertEquals(
+                            expectedCount,
+                            counter.count(),
+                            0.01D,
                             "Counter " + counter.getId() + " should have count of " + count);
                     break;
                 }
@@ -135,19 +148,22 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalStateException.class)
-                        .handled(true);
+                onException(IllegalStateException.class).handled(true);
 
                 from("direct:foo").routeId("foo").to("mock:foo");
 
                 from("direct:bar").routeId("bar").multicast().to("mock:bar1", "mock:bar2");
 
-                from("direct:multicast").routeId("multicast").multicast().to("direct:foo", "direct:bar",
-                        "direct:failureHandled");
+                from("direct:multicast")
+                        .routeId("multicast")
+                        .multicast()
+                        .to("direct:foo", "direct:bar", "direct:failureHandled");
 
                 from("direct:failure").routeId("failure").throwException(new Exception("forced"));
 
-                from("direct:failureHandled").routeId("failureHandled").throwException(new IllegalStateException("forced"));
+                from("direct:failureHandled")
+                        .routeId("failureHandled")
+                        .throwException(new IllegalStateException("forced"));
             }
         };
     }

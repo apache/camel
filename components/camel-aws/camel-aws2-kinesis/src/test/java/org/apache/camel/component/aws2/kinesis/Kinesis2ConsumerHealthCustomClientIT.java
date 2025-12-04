@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -38,8 +41,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.awaitility.Awaitility.await;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -105,6 +106,5 @@ public class Kinesis2ConsumerHealthCustomClientIT extends CamelTestSupport {
 
             Assertions.assertTrue(down, "liveness check");
         });
-
     }
 }

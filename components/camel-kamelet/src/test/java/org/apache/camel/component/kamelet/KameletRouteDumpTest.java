@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
 
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class KameletRouteDumpTest extends CamelTestSupport {
 
@@ -37,8 +38,8 @@ public class KameletRouteDumpTest extends CamelTestSupport {
     public void canProduceToKamelet() {
         String body = UUID.randomUUID().toString();
 
-        assertThat(
-                fluentTemplate.toF("direct:templateEmbedded", body).request(String.class)).isEqualTo("test");
+        assertThat(fluentTemplate.toF("direct:templateEmbedded", body).request(String.class))
+                .isEqualTo("test");
     }
 
     // **********************************************
@@ -55,10 +56,12 @@ public class KameletRouteDumpTest extends CamelTestSupport {
                 routeTemplate("setBody")
                         .templateParameter("bodyValue")
                         .from("kamelet:source")
-                        .setBody().constant("{{bodyValue}}")
+                        .setBody()
+                        .constant("{{bodyValue}}")
                         .to("kamelet:sink");
 
-                from("direct:templateEmbedded").id("test")
+                from("direct:templateEmbedded")
+                        .id("test")
                         .kamelet("setBody?bodyValue=test")
                         .to("log:TEST?showAll=true&multiline=true");
             }

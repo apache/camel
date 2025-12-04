@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import ca.uhn.hl7v2.model.Message;
@@ -25,7 +26,8 @@ import org.apache.camel.model.language.Hl7TerserExpression;
 /**
  * Ensures that the "hl7terser" language is compliant with the single input / typed language expectations.
  */
-class Hl7TerserLanguageTest extends AbstractSingleInputTypedLanguageTest<Hl7TerserExpression.Builder, Hl7TerserExpression> {
+class Hl7TerserLanguageTest
+        extends AbstractSingleInputTypedLanguageTest<Hl7TerserExpression.Builder, Hl7TerserExpression> {
 
     private static final String PATIENT_ID = "1";
 

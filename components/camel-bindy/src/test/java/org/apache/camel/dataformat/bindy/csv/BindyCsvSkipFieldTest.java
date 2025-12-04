@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import org.apache.camel.EndpointInject;
@@ -38,7 +39,8 @@ public class BindyCsvSkipFieldTest {
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
 
-    private static String input = "VOA,12 abc street,Skip Street,Melbourne,VIC,3000,Australia,Skip dummy1,end of record";
+    private static String input =
+            "VOA,12 abc street,Skip Street,Melbourne,VIC,3000,Australia,Skip dummy1,end of record";
 
     @Produce(URI_DIRECT_START)
     private ProducerTemplate template;
@@ -60,11 +62,13 @@ public class BindyCsvSkipFieldTest {
 
         @Override
         public void configure() {
-            from(URI_DIRECT_START).unmarshal(camelDataFormat)
+            from(URI_DIRECT_START)
+                    .unmarshal(camelDataFormat)
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) {
-                            CsvSkipField csvSkipField = (CsvSkipField) exchange.getIn().getBody();
+                            CsvSkipField csvSkipField =
+                                    (CsvSkipField) exchange.getIn().getBody();
                             ObjectHelper.equal("VOA", csvSkipField.getAttention());
                             ObjectHelper.equal("12 abc street", csvSkipField.getAddressLine1());
                             ObjectHelper.equal("Melbourne", csvSkipField.getCity());
@@ -74,12 +78,10 @@ public class BindyCsvSkipFieldTest {
                             ObjectHelper.equal("end of record", csvSkipField.getDummy2());
                         }
                     })
-
                     .marshal(camelDataFormat)
                     .convertBodyTo(String.class)
                     .to(URI_MOCK_RESULT);
         }
-
     }
 
     @CsvRecord(separator = ",", skipField = true)
@@ -163,9 +165,10 @@ public class BindyCsvSkipFieldTest {
 
         @Override
         public String toString() {
-            return "Record [attention=" + getAttention() + ", addressLine1=" + getAddressLine1() + ", " + "city=" + getCity()
-                   + ", state=" + getState() + ", zip=" + getZip() + ", country="
-                   + getCountry() + ", dummy2=" + getDummy2() + "]";
+            return "Record [attention=" + getAttention() + ", addressLine1=" + getAddressLine1() + ", " + "city="
+                    + getCity()
+                    + ", state=" + getState() + ", zip=" + getZip() + ", country="
+                    + getCountry() + ", dummy2=" + getDummy2() + "]";
         }
     }
 }

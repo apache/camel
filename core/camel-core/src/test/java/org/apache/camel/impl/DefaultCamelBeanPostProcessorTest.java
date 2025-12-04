@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consume;
@@ -25,8 +28,6 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
 
@@ -69,8 +70,10 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
 
         private String fooEndpoint;
         private String barEndpoint;
+
         @Produce
         private ProducerTemplate bar;
+
         @BindToRegistry("myCoolBean")
         private final MySerialBean myBean = new MySerialBean();
 

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -26,11 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResilienceRouteRejectedTest extends CamelTestSupport {
 
@@ -62,7 +63,8 @@ public class ResilienceRouteRejectedTest extends CamelTestSupport {
         Exception e = out.getException();
         CallNotPermittedException ce = assertInstanceOf(CallNotPermittedException.class, e);
         assertEquals("myResilienceWithThrowException", ce.getCausingCircuitBreakerName());
-        assertEquals("CircuitBreaker 'myResilienceWithThrowException' is FORCED_OPEN and does not permit further calls",
+        assertEquals(
+                "CircuitBreaker 'myResilienceWithThrowException' is FORCED_OPEN and does not permit further calls",
                 ce.getMessage());
         assertEquals("FORCED_OPEN", out.getProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE));
     }
@@ -75,8 +77,8 @@ public class ResilienceRouteRejectedTest extends CamelTestSupport {
         // context name
         String name = context.getManagementName();
 
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"" + circuitBreakerName + "\"");
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=" + name + ",type=processors,name=\"" + circuitBreakerName + "\"");
 
         // force it into open state
         mbeanServer.invoke(on, "transitionToForcedOpenState", null, null);
@@ -100,22 +102,42 @@ public class ResilienceRouteRejectedTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").circuitBreaker().id("myResilience").to("direct:foo").to("log:foo").end().to("log:result")
+                from("direct:start")
+                        .circuitBreaker()
+                        .id("myResilience")
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .end()
+                        .to("log:result")
                         .to("mock:result");
 
-                from("direct:start.with.timeout.enabled").circuitBreaker().resilience4jConfiguration()
-                        .timeoutEnabled(true).timeoutDuration(2000).end()
-                        .id("myResilienceWithTimeout").to("direct:foo").to("log:foo").end().to("log:result")
+                from("direct:start.with.timeout.enabled")
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .end()
+                        .id("myResilienceWithTimeout")
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .end()
+                        .to("log:result")
                         .to("mock:result");
 
                 from("direct:start-throw-exception")
-                        .circuitBreaker().resilience4jConfiguration().throwExceptionWhenHalfOpenOrOpenState(true).end()
-                        .id("myResilienceWithThrowException").to("direct:foo").to("log:foo").end().to("log:result")
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .throwExceptionWhenHalfOpenOrOpenState(true)
+                        .end()
+                        .id("myResilienceWithThrowException")
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .end()
+                        .to("log:result")
                         .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
         };
     }
-
 }

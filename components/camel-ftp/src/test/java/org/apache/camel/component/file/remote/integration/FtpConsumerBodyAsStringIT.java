@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -23,9 +27,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FtpConsumerBodyAsStringIT extends FtpServerTestSupport {
 
@@ -65,13 +66,15 @@ public class FtpConsumerBodyAsStringIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        assertNotNull(body);
-                        assertEquals("Hello World", body);
-                    }
-                }).to("mock:result");
+                from(getFtpUrl())
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                assertNotNull(body);
+                                assertEquals("Hello World", body);
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

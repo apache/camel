@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eks;
 
 import org.apache.camel.Endpoint;
@@ -89,7 +90,8 @@ public class EKS2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (eksProducerToString == null) {
-            eksProducerToString = "EKSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            eksProducerToString =
+                    "EKSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return eksProducerToString;
     }
@@ -107,7 +109,9 @@ public class EKS2Producer extends DefaultProducer {
                 try {
                     result = eksClient.listClusters((ListClustersRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Clusters command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -123,7 +127,9 @@ public class EKS2Producer extends DefaultProducer {
             try {
                 result = eksClient.listClusters(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Clusters command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -139,7 +145,9 @@ public class EKS2Producer extends DefaultProducer {
                 try {
                     result = eksClient.createCluster((CreateClusterRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Cluster command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -156,14 +164,17 @@ public class EKS2Producer extends DefaultProducer {
                 builder.roleArn(roleArn);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EKS2Constants.VPC_CONFIG))) {
-                VpcConfigRequest vpcConfig = exchange.getIn().getHeader(EKS2Constants.VPC_CONFIG, VpcConfigRequest.class);
+                VpcConfigRequest vpcConfig =
+                        exchange.getIn().getHeader(EKS2Constants.VPC_CONFIG, VpcConfigRequest.class);
                 builder.resourcesVpcConfig(vpcConfig);
             }
             CreateClusterResponse result;
             try {
                 result = eksClient.createCluster(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Cluster command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -179,7 +190,9 @@ public class EKS2Producer extends DefaultProducer {
                 try {
                     result = eksClient.describeCluster((DescribeClusterRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Cluster command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -197,7 +210,9 @@ public class EKS2Producer extends DefaultProducer {
             try {
                 result = eksClient.describeCluster(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Cluster command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -213,7 +228,9 @@ public class EKS2Producer extends DefaultProducer {
                 try {
                     result = eksClient.deleteCluster((DeleteClusterRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Cluster command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -231,7 +248,9 @@ public class EKS2Producer extends DefaultProducer {
             try {
                 result = eksClient.deleteCluster(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Cluster command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -247,9 +266,7 @@ public class EKS2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -266,5 +283,4 @@ public class EKS2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

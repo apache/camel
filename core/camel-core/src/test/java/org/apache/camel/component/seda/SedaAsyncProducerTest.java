@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.Future;
 
@@ -27,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The new Async API version of doing async routing based on the old AsyncProcessor API In the old
@@ -89,14 +90,16 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(noErrorHandler());
 
-                from("direct:start").delay(100).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        route = route + "process";
-                        // set the response
-                        exchange.getMessage().setBody("Bye World");
-                    }
-                }).to("mock:result");
-
+                from("direct:start")
+                        .delay(100)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                route = route + "process";
+                                // set the response
+                                exchange.getMessage().setBody("Bye World");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

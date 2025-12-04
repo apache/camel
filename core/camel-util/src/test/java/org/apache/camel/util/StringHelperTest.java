@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.apache.camel.util.StringHelper.*;
+import static org.apache.camel.util.StringHelper.dashToCamelCase;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Iterator;
 import java.util.List;
@@ -22,11 +28,6 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.StringHelper.*;
-import static org.apache.camel.util.StringHelper.dashToCamelCase;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class StringHelperTest {
 
@@ -122,15 +123,13 @@ public class StringHelperTest {
         assertEquals("available_phoneNumberCountry", dashToCamelCase("available_phone-number-country"));
         assertEquals("available_phone_number_country", dashToCamelCase("available_phone_number_country"));
         assertEquals("enableCors", dashToCamelCase("enable-cors"));
-
     }
 
     @Test
     public void testDashToCamelCaseSkipQuotedOrKeyed() {
         String line = "camel.component.rabbitmq.args[queue.x-queue-type]";
         // no preserve
-        assertEquals("camel.component.rabbitmq.args[queue.xQueueType]",
-                dashToCamelCase(line));
+        assertEquals("camel.component.rabbitmq.args[queue.xQueueType]", dashToCamelCase(line));
 
         // preserved
         assertEquals(line, dashToCamelCase(line, true));
@@ -502,8 +501,10 @@ public class StringHelperTest {
         assertEquals("foo bar", StringHelper.between("Hello ${foo bar} how are you", "${", "}"));
         assertNull(StringHelper.between("Hello ${foo bar} how are you", "'", "'"));
 
-        assertTrue(StringHelper.between("begin:mykey:end", "begin:", ":end", "mykey"::equals).orElse(false));
-        assertFalse(StringHelper.between("begin:ignore:end", "begin:", ":end", "mykey"::equals).orElse(false));
+        assertTrue(StringHelper.between("begin:mykey:end", "begin:", ":end", "mykey"::equals)
+                .orElse(false));
+        assertFalse(StringHelper.between("begin:ignore:end", "begin:", ":end", "mykey"::equals)
+                .orElse(false));
     }
 
     @Test
@@ -515,8 +516,10 @@ public class StringHelperTest {
         assertEquals("bar", StringHelper.betweenOuterPair("foo(bar)baz123", '(', ')'));
         assertEquals("'bar', 'baz()123', 123", StringHelper.betweenOuterPair("foo('bar', 'baz()123', 123)", '(', ')'));
 
-        assertTrue(StringHelper.betweenOuterPair("foo(bar)baz123", '(', ')', "bar"::equals).orElse(false));
-        assertFalse(StringHelper.betweenOuterPair("foo[bar)baz123", '(', ')', "bar"::equals).orElse(false));
+        assertTrue(StringHelper.betweenOuterPair("foo(bar)baz123", '(', ')', "bar"::equals)
+                .orElse(false));
+        assertFalse(StringHelper.betweenOuterPair("foo[bar)baz123", '(', ')', "bar"::equals)
+                .orElse(false));
     }
 
     @Test
@@ -529,7 +532,10 @@ public class StringHelperTest {
 
     @Test
     public void testNormalizeClassName() {
-        assertEquals("my.package-info", StringHelper.normalizeClassName("my.package-info"), "Should get the right class name");
+        assertEquals(
+                "my.package-info",
+                StringHelper.normalizeClassName("my.package-info"),
+                "Should get the right class name");
         assertEquals("Integer[]", StringHelper.normalizeClassName("Integer[] \r"), "Should get the right class name");
         assertEquals("Hello_World", StringHelper.normalizeClassName("Hello_World"), "Should get the right class name");
         assertEquals("", StringHelper.normalizeClassName("////"), "Should get the right class name");

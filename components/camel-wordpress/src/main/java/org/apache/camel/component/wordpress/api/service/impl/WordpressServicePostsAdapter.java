@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
@@ -35,7 +36,8 @@ import org.slf4j.LoggerFactory;
  *
  * @since 0.0.1
  */
-public class WordpressServicePostsAdapter extends AbstractWordpressCrudServiceAdapter<PostsSPI, Post, PostSearchCriteria>
+public class WordpressServicePostsAdapter
+        extends AbstractWordpressCrudServiceAdapter<PostsSPI, Post, PostSearchCriteria>
         implements WordpressServicePosts {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressServicePostsAdapter.class);
@@ -53,12 +55,28 @@ public class WordpressServicePostsAdapter extends AbstractWordpressCrudServiceAd
     public List<Post> list(PostSearchCriteria criteria) {
         LOGGER.debug("Calling list posts: searchCriteria {}", criteria);
         Objects.requireNonNull(criteria, "Please provide a search criteria");
-        return getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(),
-                criteria.getSearch(), criteria.getAfter(), criteria.getAuthor(),
-                criteria.getAuthorExclude(), criteria.getBefore(), criteria.getExclude(), criteria.getInclude(),
-                criteria.getOffset(), criteria.getOrder(), criteria.getOrderBy(),
-                criteria.getSlug(), criteria.getStatus(), criteria.getCategories(), criteria.getCategoriesExclude(),
-                criteria.getTags(), criteria.getTagsExclude(), criteria.getStick());
+        return getSpi().list(
+                        this.getApiVersion(),
+                        criteria.getContext(),
+                        criteria.getPage(),
+                        criteria.getPerPage(),
+                        criteria.getSearch(),
+                        criteria.getAfter(),
+                        criteria.getAuthor(),
+                        criteria.getAuthorExclude(),
+                        criteria.getBefore(),
+                        criteria.getExclude(),
+                        criteria.getInclude(),
+                        criteria.getOffset(),
+                        criteria.getOrder(),
+                        criteria.getOrderBy(),
+                        criteria.getSlug(),
+                        criteria.getStatus(),
+                        criteria.getCategories(),
+                        criteria.getCategoriesExclude(),
+                        criteria.getTags(),
+                        criteria.getTagsExclude(),
+                        criteria.getStick());
     }
 
     @Override
@@ -100,5 +118,4 @@ public class WordpressServicePostsAdapter extends AbstractWordpressCrudServiceAd
     protected Post doUpdate(Integer id, Post object) {
         return getSpi().update(getApiVersion(), id, object);
     }
-
 }

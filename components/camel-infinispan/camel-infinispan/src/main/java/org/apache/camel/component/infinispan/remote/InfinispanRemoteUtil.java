@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import org.apache.camel.Message;
@@ -29,11 +30,11 @@ import org.infinispan.commons.api.query.Query;
 
 public final class InfinispanRemoteUtil extends InfinispanUtil {
 
-    protected InfinispanRemoteUtil() {
-    }
+    protected InfinispanRemoteUtil() {}
 
     @SuppressWarnings("unchecked")
-    public static <K, V> RemoteCache<K, V> getCacheWithFlags(InfinispanRemoteManager manager, String cacheName, Flag... flags) {
+    public static <K, V> RemoteCache<K, V> getCacheWithFlags(
+            InfinispanRemoteManager manager, String cacheName, Flag... flags) {
         final RemoteCache<K, V> cache = manager.getCache(cacheName, RemoteCache.class);
 
         return flags == null || flags.length == 0 ? cache : cache.withFlags(flags);
@@ -42,7 +43,8 @@ public final class InfinispanRemoteUtil extends InfinispanUtil {
     public static Query<?> buildQuery(
             InfinispanRemoteConfiguration configuration, RemoteCache<Object, Object> cache, Message message) {
 
-        InfinispanQueryBuilder builder = message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
+        InfinispanQueryBuilder builder =
+                message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
         if (builder == null) {
             builder = configuration.getQueryBuilder();
         }

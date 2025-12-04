@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.constants;
 
 public final class FunctionGraphProperties {
@@ -23,6 +24,5 @@ public final class FunctionGraphProperties {
     public static final String XCFFLOGTYPE = "CamelHwCloudFgXCffLogType";
     public static final String XCFFLOGS = "CamelHwCloudFgXCffLogs";
 
-    private FunctionGraphProperties() {
-    }
+    private FunctionGraphProperties() {}
 }

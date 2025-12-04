@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,23 +37,30 @@ public class BeanioDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = true)
     private String mapping;
+
     @XmlAttribute(required = true)
     private String streamName;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreUnidentifiedRecords;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreUnexpectedRecords;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidRecords;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String encoding;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String beanReaderErrorHandlerType;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String unmarshalSingleObject;
@@ -310,5 +318,4 @@ public class BeanioDataFormat extends DataFormatDefinition {
             return new BeanioDataFormat(this);
         }
     }
-
 }

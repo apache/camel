@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.nio.file.Files;
@@ -26,14 +27,19 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "stop", description = "Shuts down running Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "stop",
+        description = "Shuts down running Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class StopProcess extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration(s)", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--kill" },
-                        description = "To force killing the process (SIGKILL)")
+    @CommandLine.Option(
+            names = {"--kill"},
+            description = "To force killing the process (SIGKILL)")
     boolean kill;
 
     public StopProcess(CamelJBangMain main) {
@@ -64,5 +70,4 @@ public class StopProcess extends ProcessBaseCommand {
 
         return 0;
     }
-
 }

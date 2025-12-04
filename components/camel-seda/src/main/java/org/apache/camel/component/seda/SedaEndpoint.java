@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import java.util.ArrayList;
@@ -54,9 +55,15 @@ import org.slf4j.LoggerFactory;
  * Asynchronously call another endpoint from any Camel Context in the same JVM.
  */
 @ManagedResource(description = "Managed SedaEndpoint")
-@UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name",
-             remote = false, category = { Category.CORE, Category.MESSAGING })
-public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
+@UriEndpoint(
+        firstVersion = "1.1.0",
+        scheme = "seda",
+        title = "SEDA",
+        syntax = "seda:name",
+        remote = false,
+        category = {Category.CORE, Category.MESSAGING})
+public class SedaEndpoint extends DefaultEndpoint
+        implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
 
@@ -69,67 +76,113 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @UriPath(description = "Name of queue")
     @Metadata(required = true)
     private String name;
+
     @UriParam(label = "advanced", description = "Define the queue instance which will be used by the endpoint")
     private BlockingQueue<Exchange> queue;
-    @UriParam(defaultValue = "" + SedaConstants.QUEUE_SIZE,
-              description = "The maximum capacity of the SEDA queue (i.e., the number of messages it can hold). Will by default use the"
+
+    @UriParam(
+            defaultValue = "" + SedaConstants.QUEUE_SIZE,
+            description =
+                    "The maximum capacity of the SEDA queue (i.e., the number of messages it can hold). Will by default use the"
                             + " queueSize set on the SEDA component.")
     private int size = SedaConstants.QUEUE_SIZE;
-    @UriParam(label = "advanced", defaultValue = "100",
-              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+
+    @UriParam(
+            label = "advanced",
+            defaultValue = "100",
+            description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
     private int browseLimit = 100;
 
-    @UriParam(label = "consumer", defaultValue = "1",
-              description = "Number of concurrent threads processing exchanges.")
+    @UriParam(
+            label = "consumer",
+            defaultValue = "1",
+            description = "Number of concurrent threads processing exchanges.")
     private int concurrentConsumers = 1;
-    @UriParam(label = "consumer,advanced", defaultValue = "true",
-              description = "Whether to limit the number of concurrentConsumers to the maximum of 500. By default, an exception will be thrown"
+
+    @UriParam(
+            label = "consumer,advanced",
+            defaultValue = "true",
+            description =
+                    "Whether to limit the number of concurrentConsumers to the maximum of 500. By default, an exception will be thrown"
                             + " if an endpoint is configured with a greater number. You can disable that check by turning this option off.")
     private boolean limitConcurrentConsumers = true;
-    @UriParam(label = "consumer,advanced",
-              description = "Specifies whether multiple consumers are allowed. If enabled, you can use SEDA for Publish-Subscribe messaging."
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Specifies whether multiple consumers are allowed. If enabled, you can use SEDA for Publish-Subscribe messaging."
                             + " That is, you can send a message to the SEDA queue and have each consumer receive a copy of the message. When"
                             + " enabled, this option should be specified on every consumer endpoint.")
     private boolean multipleConsumers;
-    @UriParam(label = "consumer,advanced",
-              description = "Whether to purge the task queue when stopping the consumer/route. This allows to stop faster, as any pending"
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Whether to purge the task queue when stopping the consumer/route. This allows to stop faster, as any pending"
                             + " messages on the queue is discarded.")
     private boolean purgeWhenStopping;
-    @UriParam(label = "consumer,advanced", defaultValue = "1000",
-              description = "The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is"
+
+    @UriParam(
+            label = "consumer,advanced",
+            defaultValue = "1000",
+            description =
+                    "The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is"
                             + " allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.")
     private int pollTimeout = 1000;
 
-    @UriParam(label = "producer", defaultValue = "IfReplyExpected",
-              description = "Option to specify whether the caller should wait for the async task to complete or not before continuing. The"
+    @UriParam(
+            label = "producer",
+            defaultValue = "IfReplyExpected",
+            description =
+                    "Option to specify whether the caller should wait for the async task to complete or not before continuing. The"
                             + " following three options are supported: Always, Never or IfReplyExpected. The first two values are"
                             + " self-explanatory. The last value, IfReplyExpected, will only wait if the message is Request Reply based. The"
                             + " default option is IfReplyExpected.")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration",
-              description = "Timeout before a SEDA producer will stop waiting for an asynchronous task to complete. You can"
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "30000",
+            javaType = "java.time.Duration",
+            description =
+                    "Timeout before a SEDA producer will stop waiting for an asynchronous task to complete. You can"
                             + " disable timeout by using 0 or a negative value.")
     private long timeout = 30000;
-    @UriParam(label = "producer,advanced", javaType = "java.time.Duration",
-              description = "Offer timeout can be added to the block case when queue is full. You can disable timeout by"
-                            + " using 0 or a negative value.")
+
+    @UriParam(
+            label = "producer,advanced",
+            javaType = "java.time.Duration",
+            description = "Offer timeout can be added to the block case when queue is full. You can disable timeout by"
+                    + " using 0 or a negative value.")
     private long offerTimeout;
-    @UriParam(label = "producer,advanced",
-              description = "Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer"
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer"
                             + " exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the"
                             + " calling thread will instead block and wait until the message can be accepted.")
     private boolean blockWhenFull;
-    @UriParam(label = "producer,advanced",
-              description = "Whether a thread that sends messages to a full SEDA queue will be discarded. By default, an exception will be"
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "Whether a thread that sends messages to a full SEDA queue will be discarded. By default, an exception will be"
                             + " thrown stating that the queue is full. By enabling this option, the calling thread will give up sending and"
                             + " continue, meaning that the message was not sent to the SEDA queue.")
     private boolean discardWhenFull;
-    @UriParam(label = "producer,advanced",
-              description = "Whether the producer should fail by throwing an exception, when sending to a queue with no active consumers."
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "Whether the producer should fail by throwing an exception, when sending to a queue with no active consumers."
                             + " Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time.")
     private boolean failIfNoConsumers;
-    @UriParam(label = "producer,advanced",
-              description = "Whether the producer should discard the message (do not add the message to the queue), when sending to a queue"
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "Whether the producer should discard the message (do not add the message to the queue), when sending to a queue"
                             + " with no active consumers. Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time.")
     private boolean discardIfNoConsumers;
 
@@ -144,7 +197,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         this(endpointUri, component, queue, 1);
     }
 
-    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
+    public SedaEndpoint(
+            String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
         this(endpointUri, component, concurrentConsumers);
         this.queue = queue;
         if (queue != null) {
@@ -154,8 +208,11 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         getComponent().registerQueue(this, queue);
     }
 
-    public SedaEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory,
-                        int concurrentConsumers) {
+    public SedaEndpoint(
+            String endpointUri,
+            Component component,
+            BlockingQueueFactory<Exchange> queueFactory,
+            int concurrentConsumers) {
         this(endpointUri, component, concurrentConsumers);
         this.queueFactory = queueFactory;
     }
@@ -178,8 +235,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @Override
     public Producer createProducer() throws Exception {
         return new SedaProducer(
-                this, getWaitForTaskToComplete(), getTimeout(),
-                isBlockWhenFull(), isDiscardWhenFull(), getOfferTimeout());
+                this,
+                getWaitForTaskToComplete(),
+                getTimeout(),
+                isBlockWhenFull(),
+                isDiscardWhenFull(),
+                getOfferTimeout());
     }
 
     @Override
@@ -192,8 +253,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 // there is already a multiple consumers, so make sure they matches
                 throw new IllegalArgumentException(
                         "Cannot use existing queue " + key + " as the existing queue multiple consumers "
-                                                   + ref.getMultipleConsumers() + " does not match given multiple consumers "
-                                                   + multipleConsumers);
+                                + ref.getMultipleConsumers() + " does not match given multiple consumers "
+                                + multipleConsumers);
             }
         }
 
@@ -222,11 +283,17 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 // can use the already existing queue referenced from the component
                 if (getComponent() != null) {
                     // use null to indicate default size (= use what the existing queue has been configured with)
-                    Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
-                    QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
+                    Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE)
+                            ? null
+                            : getSize();
+                    QueueReference ref =
+                            getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
                     queue = ref.getQueue();
                     String key = getComponent().getQueueKey(getEndpointUri());
-                    LOG.debug("Endpoint {} is using shared queue: {} with size: {}", this, key,
+                    LOG.debug(
+                            "Endpoint {} is using shared queue: {} with size: {}",
+                            this,
+                            key,
                             ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE);
                     // and set the size we are using
                     if (ref.getSize() != null) {
@@ -307,8 +374,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             if (size >= 1) {
                 if (multicastExecutor == null) {
                     // create multicast executor as we need it when we have more than 1 processor
-                    multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this,
-                            URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
+                    multicastExecutor = getCamelContext()
+                            .getExecutorServiceManager()
+                            .newDefaultThreadPool(this, URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
                 }
                 // create list of consumers to multicast to
                 List<Processor> processors = new ArrayList<>(size);
@@ -319,8 +387,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 multicastStarted = false;
 
                 consumerMulticastProcessor = (AsyncProcessor) PluginHelper.getProcessorFactory(getCamelContext())
-                        .createProcessor(getCamelContext(), "MulticastProcessor",
-                                new Object[] { processors, multicastExecutor, false });
+                        .createProcessor(getCamelContext(), "MulticastProcessor", new Object[] {
+                            processors, multicastExecutor, false
+                        });
             }
         } finally {
             lock.unlock();
@@ -607,9 +676,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         super.doInit();
 
         if (discardWhenFull && blockWhenFull) {
-            throw new IllegalArgumentException(
-                    "Cannot enable both discardWhenFull=true and blockWhenFull=true."
-                                               + " You can only either discard or block when full.");
+            throw new IllegalArgumentException("Cannot enable both discardWhenFull=true and blockWhenFull=true."
+                    + " You can only either discard or block when full.");
         }
     }
 
@@ -667,5 +735,4 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         queue = null;
         ref = null;
     }
-
 }

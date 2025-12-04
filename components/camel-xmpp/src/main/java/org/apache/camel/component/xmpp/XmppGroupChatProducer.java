@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import java.io.IOException;
@@ -122,7 +123,8 @@ public class XmppGroupChatProducer extends DefaultProducer {
                     throw new RuntimeCamelException(
                             "Could not connect to XMPP server:  " + endpoint.getConnectionDescription(), e);
                 } else {
-                    LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.",
+                    LOG.warn(
+                            "Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.",
                             e.getMessage());
                 }
             }
@@ -144,9 +146,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
                 String roomPassword = endpoint.getRoomPassword();
                 MultiUserChatManager chatManager = MultiUserChatManager.getInstanceFor(connection);
                 chat = chatManager.getMultiUserChat(JidCreate.entityBareFrom(room));
-                MucEnterConfiguration.Builder mucc
-                        = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
-                                .requestNoHistory();
+                MucEnterConfiguration.Builder mucc = chat.getEnterConfigurationBuilder(
+                                Resourcepart.from(endpoint.getNickname()))
+                        .requestNoHistory();
                 if (roomPassword != null) {
                     mucc.withPassword(roomPassword);
                 }
@@ -180,5 +182,4 @@ public class XmppGroupChatProducer extends DefaultProducer {
     public String getRoom() {
         return room;
     }
-
 }

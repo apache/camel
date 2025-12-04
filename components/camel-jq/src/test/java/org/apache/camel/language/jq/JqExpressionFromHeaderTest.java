@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -28,7 +29,11 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                var jq = expression().jq().expression(".foo").source("header:Content").end();
+                var jq = expression()
+                        .jq()
+                        .expression(".foo")
+                        .source("header:Content")
+                        .end();
 
                 from("direct:start")
                         .doTry()
@@ -36,19 +41,17 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
                         .to("mock:result")
                         .doCatch(NoSuchHeaderException.class)
                         .to("mock:fail");
-
             }
         };
     }
 
     @Test
     public void testExpressionFromHeader() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(new TextNode("bar"));
-        getMockEndpoint("mock:fail")
-                .expectedMessageCount(0);
+        getMockEndpoint("mock:result").expectedBodiesReceived(new TextNode("bar"));
+        getMockEndpoint("mock:fail").expectedMessageCount(0);
 
-        fluentTemplate.to("direct:start")
+        fluentTemplate
+                .to("direct:start")
                 .withProcessor(e -> {
                     e.getMessage().setHeader("Content", node("foo", "bar"));
                 })
@@ -59,12 +62,11 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
 
     @Test
     public void testExpressionFromHeaderFail() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedMessageCount(0);
-        getMockEndpoint("mock:fail")
-                .expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:fail").expectedMessageCount(1);
 
-        fluentTemplate.to("direct:start")
+        fluentTemplate
+                .to("direct:start")
                 .withProcessor(e -> {
                     e.getMessage().setBody(node("foo", "bar"));
                 })

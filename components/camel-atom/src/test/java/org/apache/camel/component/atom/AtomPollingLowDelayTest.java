@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -41,7 +42,8 @@ public class AtomPollingLowDelayTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=100&initialDelay=0").to("mock:result");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=100&initialDelay=0")
+                        .to("mock:result");
             }
         };
     }

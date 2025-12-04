@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb.integration;
+
+import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.VertexEntity;
@@ -25,17 +32,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                                  disabledReason = "Apache CI nodes are too resource constrained for this test"),
-        @DisabledIfSystemProperty(named = "arangodb.tests.disable", matches = "true",
-                                  disabledReason = "Manually disabled tests")
+    @DisabledIfSystemProperty(
+            named = "ci.env.name",
+            matches = ".*",
+            disabledReason = "Apache CI nodes are too resource constrained for this test"),
+    @DisabledIfSystemProperty(
+            named = "arangodb.tests.disable",
+            matches = "true",
+            disabledReason = "Manually disabled tests")
 })
 public class ArangoGraphVertexIT extends BaseGraph {
 
@@ -44,13 +49,17 @@ public class ArangoGraphVertexIT extends BaseGraph {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insert")
-                        .to("arangodb:{{arangodb.testDb}}?graph={{arangodb.testGraph}}&vertexCollection={{arangodb.testVertexCollection}}&operation=SAVE_VERTEX");
+                        .to(
+                                "arangodb:{{arangodb.testDb}}?graph={{arangodb.testGraph}}&vertexCollection={{arangodb.testVertexCollection}}&operation=SAVE_VERTEX");
                 from("direct:update")
-                        .to("arangodb:{{arangodb.testDb}}?graph={{arangodb.testGraph}}&vertexCollection={{arangodb.testVertexCollection}}&operation=UPDATE_VERTEX");
+                        .to(
+                                "arangodb:{{arangodb.testDb}}?graph={{arangodb.testGraph}}&vertexCollection={{arangodb.testVertexCollection}}&operation=UPDATE_VERTEX");
                 from("direct:delete")
-                        .to("arangodb:{{arangodb.testDb}}?graph={{arangodb.testGraph}}&vertexCollection={{arangodb.testVertexCollection}}&operation=DELETE_VERTEX");
+                        .to(
+                                "arangodb:{{arangodb.testDb}}?graph={{arangodb.testGraph}}&vertexCollection={{arangodb.testVertexCollection}}&operation=DELETE_VERTEX");
                 from("direct:findDocByKey")
-                        .to("arangodb:{{arangodb.testDb}}?graph={{arangodb.testGraph}}&vertexCollection={{arangodb.testVertexCollection}}&operation=FIND_VERTEX_BY_KEY");
+                        .to(
+                                "arangodb:{{arangodb.testDb}}?graph={{arangodb.testGraph}}&vertexCollection={{arangodb.testVertexCollection}}&operation=FIND_VERTEX_BY_KEY");
             }
         };
     }
@@ -61,14 +70,14 @@ public class ArangoGraphVertexIT extends BaseGraph {
         myObject.addAttribute("a", "Foo");
         myObject.addAttribute("b", 42);
 
-        Exchange result = template.request("direct:insert", exchange -> exchange.getMessage().setBody(myObject));
+        Exchange result = template.request(
+                "direct:insert", exchange -> exchange.getMessage().setBody(myObject));
 
         assertTrue(result.getMessage().getBody() instanceof VertexEntity);
         VertexEntity vertexCreated = (VertexEntity) result.getMessage().getBody();
         assertNotNull(vertexCreated.getKey());
 
-        BaseDocument actualResult = vertexCollection.getVertex(vertexCreated.getKey(),
-                BaseDocument.class);
+        BaseDocument actualResult = vertexCollection.getVertex(vertexCreated.getKey(), BaseDocument.class);
         assertEquals(vertexCreated.getKey(), actualResult.getKey());
         assertEquals("Foo", actualResult.getAttribute("a"));
         assertEquals(42, actualResult.getAttribute("b"));
@@ -96,8 +105,7 @@ public class ArangoGraphVertexIT extends BaseGraph {
         VertexUpdateEntity docUpdated = (VertexUpdateEntity) result.getMessage().getBody();
         assertEquals(myObject.getKey(), docUpdated.getKey());
 
-        BaseDocument actualResult = vertexCollection.getVertex(docUpdated.getKey(),
-                BaseDocument.class);
+        BaseDocument actualResult = vertexCollection.getVertex(docUpdated.getKey(), BaseDocument.class);
         assertEquals(objectToUpdate.getKey(), actualResult.getKey());
         assertEquals("hello", actualResult.getAttribute("foo"));
         assertEquals(42, actualResult.getAttribute("gg"));
@@ -123,7 +131,8 @@ public class ArangoGraphVertexIT extends BaseGraph {
         myObject.addAttribute("foo", "bar");
         VertexEntity entity = vertexCollection.insertVertex(myObject);
 
-        Exchange result = template.request("direct:findDocByKey", exchange -> exchange.getMessage().setBody(entity.getKey()));
+        Exchange result = template.request(
+                "direct:findDocByKey", exchange -> exchange.getMessage().setBody(entity.getKey()));
 
         assertTrue(result.getMessage().getBody() instanceof BaseDocument);
         BaseDocument docResult = (BaseDocument) result.getMessage().getBody();

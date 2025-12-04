@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxp;
 
 import java.io.IOException;
@@ -106,7 +107,8 @@ public class XMLReaderPool {
                 // reset XMLReader to its initial state
                 for (Map.Entry<String, Boolean> feature : initFeatures.entrySet()) {
                     try {
-                        xmlReader.setFeature(feature.getKey(), feature.getValue().booleanValue());
+                        xmlReader.setFeature(
+                                feature.getKey(), feature.getValue().booleanValue());
                     } catch (Exception e) {
                         // ignore
                     }

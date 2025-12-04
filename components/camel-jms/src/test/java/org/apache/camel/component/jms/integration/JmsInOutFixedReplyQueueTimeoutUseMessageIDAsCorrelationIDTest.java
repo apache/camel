@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import java.time.Duration;
@@ -24,7 +25,7 @@ import org.apache.camel.component.jms.JmsInOutFixedReplyQueueTimeoutTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest extends JmsInOutFixedReplyQueueTimeoutTest {
 
     @Override
@@ -33,18 +34,22 @@ public class JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest exten
             public void configure() {
                 from("direct:JmsInOutFixedReplyQueueTimeoutTest")
                         .routeId("route-1")
-                        .to(ExchangePattern.InOut,
+                        .to(
+                                ExchangePattern.InOut,
                                 "activemq:queue:JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest?replyTo=queue:JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTestReply&useMessageIDAsCorrelationID=true&requestTimeout=2000")
                         .to("mock:result");
 
                 from("activemq:queue:JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest")
                         .routeId("route-2")
-                        .choice().when(body().isEqualTo("World"))
+                        .choice()
+                        .when(body().isEqualTo("World"))
                         .log("Sleeping for 4 sec to force a timeout")
-                        .delay(Duration.ofSeconds(4).toMillis()).endChoice().end()
-                        .transform(body().prepend("Bye ")).to("log:reply");
+                        .delay(Duration.ofSeconds(4).toMillis())
+                        .endChoice()
+                        .end()
+                        .transform(body().prepend("Bye "))
+                        .to("log:reply");
             }
         };
     }
-
 }

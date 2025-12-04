@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 import org.apache.camel.CamelContext;
@@ -44,7 +45,8 @@ public class AvroNettySpringConsumerTest extends AvroNettyConsumerTest {
     protected CamelContext createCamelContext() throws Exception {
         String xmlPath = "org/apache/camel/component/avro/netty-consumer/";
 
-        applicationContext = new ClassPathXmlApplicationContext(xmlPath + "base.xml", xmlPath + getRouteType().name() + ".xml");
+        applicationContext = new ClassPathXmlApplicationContext(
+                xmlPath + "base.xml", xmlPath + getRouteType().name() + ".xml");
 
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }

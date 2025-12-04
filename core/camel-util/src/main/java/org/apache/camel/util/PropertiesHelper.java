@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.Iterator;
@@ -24,14 +25,14 @@ import java.util.Properties;
 
 public final class PropertiesHelper {
 
-    private PropertiesHelper() {
-    }
+    private PropertiesHelper() {}
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
         return extractProperties(properties, optionPrefix, true);
     }
 
-    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
+    public static Map<String, Object> extractProperties(
+            Map<String, Object> properties, String optionPrefix, boolean remove) {
         if (properties == null) {
             return new LinkedHashMap<>(0);
         }
@@ -39,10 +40,11 @@ public final class PropertiesHelper {
         return doExtractProperties(properties, optionPrefix, remove);
     }
 
-    static Map<String, Object> doExtractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
+    static Map<String, Object> doExtractProperties(
+            Map<String, Object> properties, String optionPrefix, boolean remove) {
         Map<String, Object> rc = new LinkedHashMap<>(properties.size());
 
-        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<String, Object> entry = it.next();
             String name = entry.getKey();
             if (name.startsWith(optionPrefix)) {
@@ -83,9 +85,7 @@ public final class PropertiesHelper {
 
         Properties answer = new Properties();
         for (int i = 0; i < properties.length; i += 2) {
-            answer.setProperty(
-                    Objects.requireNonNull(properties[i]),
-                    Objects.requireNonNull(properties[i + 1]));
+            answer.setProperty(Objects.requireNonNull(properties[i]), Objects.requireNonNull(properties[i + 1]));
         }
 
         return answer;
@@ -97,5 +97,4 @@ public final class PropertiesHelper {
 
         return answer;
     }
-
 }

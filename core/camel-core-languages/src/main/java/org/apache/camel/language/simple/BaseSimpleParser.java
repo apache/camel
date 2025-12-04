@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 import java.util.ArrayDeque;
@@ -138,7 +139,8 @@ public abstract class BaseSimpleParser {
                 // end block is just an abstract mode, so we should not add it
                 if (stack.isEmpty()) {
                     throw new SimpleParserException(
-                            token.getToken().getType().getType() + " has no matching start token", token.getToken().getIndex());
+                            token.getToken().getType().getType() + " has no matching start token",
+                            token.getToken().getIndex());
                 }
 
                 Block top = stack.pop();
@@ -160,7 +162,8 @@ public abstract class BaseSimpleParser {
         if (block != null) {
             if (!block.acceptAndAddNode(token)) {
                 throw new SimpleParserException(
-                        block.getToken().getType() + " cannot accept " + token.getToken().getType(),
+                        block.getToken().getType() + " cannot accept "
+                                + token.getToken().getType(),
                         token.getToken().getIndex());
             }
         } else {
@@ -190,7 +193,8 @@ public abstract class BaseSimpleParser {
                 SimpleNode previous = stack.isEmpty() ? null : stack.pop();
                 if (previous == null) {
                     throw new SimpleParserException(
-                            "Unary operator " + operator + " has no left hand side token", token.getToken().getIndex());
+                            "Unary operator " + operator + " has no left hand side token",
+                            token.getToken().getIndex());
                 } else {
                     token.acceptLeft(previous);
                 }
@@ -255,5 +259,4 @@ public abstract class BaseSimpleParser {
             nextToken();
         }
     }
-
 }

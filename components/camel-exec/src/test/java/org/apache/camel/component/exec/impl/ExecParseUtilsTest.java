@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec.impl;
+
+import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSpaceSeparatedTokens;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSpaceSeparatedTokens;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for {@link ExecParseUtils}
@@ -85,5 +86,4 @@ public class ExecParseUtilsTest {
         assertEquals("-e", args.get(1));
         assertEquals("puts \"Hello, world!\"", args.get(2));
     }
-
 }

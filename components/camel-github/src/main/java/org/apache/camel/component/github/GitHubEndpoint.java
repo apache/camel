@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github;
 
 import org.apache.camel.Category;
@@ -61,33 +62,48 @@ import org.apache.camel.util.StringHelper;
  * polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not
  * publicly accessible where a webhook would fail
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName",
-             category = { Category.FILE, Category.CLOUD, Category.API }, headersClass = GitHubConstants.class)
+@UriEndpoint(
+        firstVersion = "2.15.0",
+        scheme = "github",
+        title = "GitHub",
+        syntax = "github:type/branchName",
+        category = {Category.FILE, Category.CLOUD, Category.API},
+        headersClass = GitHubConstants.class)
 public class GitHubEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
     private GitHubType type;
+
     @UriPath(label = "consumer")
     private String branchName;
+
     @UriParam(label = "consumer", defaultValue = "last")
     private String startingSha = "last";
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean commitMessageAsBody = true;
+
     @UriParam(label = "security", secret = true)
     private String oauthToken;
+
     @UriParam
     @Metadata(required = true)
     private String repoOwner;
+
     @UriParam
     @Metadata(required = true)
     private String repoName;
+
     @UriParam(label = "producer", enums = "error,failure,pending,success")
     private String state;
+
     @UriParam(label = "producer")
     private String targetUrl;
+
     @UriParam(label = "producer")
     private String encoding;
+
     @UriParam(label = "consumer,advanced")
     private GitHubEventFetchStrategy eventFetchStrategy;
 

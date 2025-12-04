@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.PutSecretValueResponse;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class SecretsManagerPutSecretValueProducerLocalstackIT extends AwsSecretsManagerBaseTest {
@@ -60,7 +61,8 @@ public class SecretsManagerPutSecretValueProducerLocalstackIT extends AwsSecrets
         });
         Assertions.assertNotNull(exchange);
 
-        PutSecretValueResponse resultUpdate = (PutSecretValueResponse) exchange.getIn().getBody();
+        PutSecretValueResponse resultUpdate =
+                (PutSecretValueResponse) exchange.getIn().getBody();
         assertTrue(resultUpdate.sdkHttpResponse().isSuccessful());
         assertEquals("TestSecret10", resultUpdate.name());
 
@@ -81,11 +83,9 @@ public class SecretsManagerPutSecretValueProducerLocalstackIT extends AwsSecrets
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret");
+                from("direct:createSecret").to("aws-secrets-manager://test?operation=createSecret");
 
-                from("direct:putSecretValue")
-                        .to("aws-secrets-manager://test?operation=putSecretValue");
+                from("direct:putSecretValue").to("aws-secrets-manager://test?operation=putSecretValue");
 
                 from("direct:getSecret")
                         .to("aws-secrets-manager://test?operation=getSecret")

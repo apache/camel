@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +28,6 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
 
@@ -62,5 +63,4 @@ public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
             assertTrue(iae.getMessage().endsWith("Unknown parameters=[{doesNotExist=2000}]"));
         }
     }
-
 }

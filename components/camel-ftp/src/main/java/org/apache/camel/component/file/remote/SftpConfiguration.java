@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.net.URI;
@@ -34,60 +35,85 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     @UriParam(label = "security", secret = true)
     private String knownHostsFile;
+
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
+
     @UriParam(label = "security", defaultValue = "false")
     private boolean autoCreateKnownHostsFile;
+
     @UriParam(label = "security", secret = true)
     @Metadata(supportFileReference = true)
     private String knownHostsUri;
+
     @UriParam(label = "security", secret = true)
     private byte[] knownHosts;
+
     @UriParam(label = "security", secret = true)
     private String privateKeyFile;
+
     @UriParam(label = "security", secret = true)
     @Metadata(supportFileReference = true)
     private String privateKeyUri;
+
     @UriParam(label = "security", secret = true)
     private byte[] privateKey;
+
     @UriParam(label = "security", secret = true)
     private String privateKeyPassphrase;
+
     @UriParam(label = "security", secret = true)
     private KeyPair keyPair;
+
     @UriParam(defaultValue = "no", enums = "no,yes", label = "security")
     private String strictHostKeyChecking = "no";
+
     @UriParam(label = "advanced")
     private int serverAliveInterval;
+
     @UriParam(defaultValue = "1", label = "advanced")
     private int serverAliveCountMax = 1;
+
     @UriParam(label = "producer,advanced")
     private String chmod;
     // comma separated list of ciphers.
     // null means default jsch list will be used
     @UriParam(label = "security")
     private String ciphers;
+
     @UriParam(label = "advanced")
     private int compression;
+
     @UriParam(label = "security")
     private String preferredAuthentications;
+
     @UriParam(defaultValue = "WARN", enums = "DEBUG,INFO,WARN,ERROR")
     private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
+
     @UriParam(label = "advanced")
     private Integer bulkRequests;
+
     @UriParam(label = "advanced")
     private String bindAddress;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean existDirCheckUsingLs = true;
+
     @UriParam(label = "security")
     private String keyExchangeProtocols;
+
     @UriParam(label = "producer,advanced")
     private String chmodDirectory;
+
     @UriParam(label = "security")
     private String serverHostKeys;
+
     @UriParam(label = "security")
     private String publicKeyAcceptedAlgorithms;
+
     @UriParam(label = "advanced")
     private String filenameEncoding;
+
     @UriParam(label = "advanced", defaultValue = "DEBUG")
     private LoggingLevel serverMessageLoggingLevel = LoggingLevel.DEBUG;
 

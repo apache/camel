@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import org.apache.camel.ErrorHandlerFactory;
@@ -33,5 +34,4 @@ public interface ErrorHandlerRefProperties extends ErrorHandlerFactory {
     boolean isSupportTransacted();
 
     void setSupportTransacted(boolean supportTransacted);
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,11 +42,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Tests how the correlation between request and reply is done
  */
@@ -48,6 +49,7 @@ public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final String REPLY_BODY = "Bye World";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -62,18 +64,21 @@ public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
-            Message in = exchange.getIn();
-            in.setBody("Hello World");
-            in.setHeader("JMSCorrelationID", "testRequestReplyCorrelationByGivenCorrelationId");
-        });
+        Exchange out =
+                template.send("jms:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
+                    Message in = exchange.getIn();
+                    in.setBody("Hello World");
+                    in.setHeader("JMSCorrelationID", "testRequestReplyCorrelationByGivenCorrelationId");
+                });
 
         result.assertIsSatisfied();
 
         assertNotNull(out);
 
         assertEquals(REPLY_BODY, out.getMessage().getBody(String.class));
-        assertEquals("testRequestReplyCorrelationByGivenCorrelationId", out.getMessage().getHeader("JMSCorrelationID"));
+        assertEquals(
+                "testRequestReplyCorrelationByGivenCorrelationId",
+                out.getMessage().getHeader("JMSCorrelationID"));
     }
 
     /**
@@ -96,17 +101,17 @@ public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
         // Added use the notify to make sure the message is processed, so we get the exception later
         notify.matches(1, TimeUnit.SECONDS);
 
-        Exchange out = template.send("jms:queue:JmsRequestReplyCorrelationTest.helloDelay", ExchangePattern.InOut, exchange -> {
-            Message in = exchange.getIn();
-            in.setBody("Hello World");
-            in.setHeader("JMSCorrelationID", "b");
-        });
+        Exchange out = template.send(
+                "jms:queue:JmsRequestReplyCorrelationTest.helloDelay", ExchangePattern.InOut, exchange -> {
+                    Message in = exchange.getIn();
+                    in.setBody("Hello World");
+                    in.setHeader("JMSCorrelationID", "b");
+                });
 
         result.assertIsSatisfied();
 
         assertNotNull(out.getException(), "We are expecting the exception here!");
         assertTrue(out.getException() instanceof IllegalArgumentException, "Get a wrong exception");
-
     }
 
     /**
@@ -119,10 +124,11 @@ public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
-            Message in = exchange.getIn();
-            in.setBody("Hello World");
-        });
+        Exchange out =
+                template.send("jms:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
+                    Message in = exchange.getIn();
+                    in.setBody("Hello World");
+                });
 
         result.assertIsSatisfied();
 
@@ -144,11 +150,12 @@ public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
-            Message in = exchange.getIn();
-            in.setBody("Hello World");
-            in.setHeader("JMSCorrelationID", "");
-        });
+        Exchange out =
+                template.send("jms:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
+                    Message in = exchange.getIn();
+                    in.setBody("Hello World");
+                    in.setHeader("JMSCorrelationID", "");
+                });
 
         assertNotNull(out);
         result.assertIsSatisfied();
@@ -169,10 +176,11 @@ public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms2:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
-            Message in = exchange.getIn();
-            in.setBody("Hello World");
-        });
+        Exchange out =
+                template.send("jms2:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
+                    Message in = exchange.getIn();
+                    in.setBody("Hello World");
+                });
 
         result.assertIsSatisfied();
 
@@ -196,11 +204,12 @@ public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms2:queue:JmsRequestReplyCorrelationTest.hello2", ExchangePattern.InOut, exchange -> {
-            Message in = exchange.getIn();
-            in.setBody("Hello World");
-            in.setHeader("JMSCorrelationID", "a");
-        });
+        Exchange out =
+                template.send("jms2:queue:JmsRequestReplyCorrelationTest.hello2", ExchangePattern.InOut, exchange -> {
+                    Message in = exchange.getIn();
+                    in.setBody("Hello World");
+                    in.setHeader("JMSCorrelationID", "a");
+                });
 
         result.assertIsSatisfied();
 
@@ -221,11 +230,12 @@ public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms2:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
-            Message in = exchange.getIn();
-            in.setBody("Hello World");
-            in.setHeader("JMSCorrelationID", "a");
-        });
+        Exchange out =
+                template.send("jms2:queue:JmsRequestReplyCorrelationTest.hello", ExchangePattern.InOut, exchange -> {
+                    Message in = exchange.getIn();
+                    in.setBody("Hello World");
+                    in.setHeader("JMSCorrelationID", "a");
+                });
 
         result.assertIsSatisfied();
 
@@ -258,20 +268,28 @@ public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jms:queue:JmsRequestReplyCorrelationTest.hello").process(exchange -> {
-                    exchange.getMessage().setBody(REPLY_BODY);
-                    assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
-                }).to("mock:result");
+                from("jms:queue:JmsRequestReplyCorrelationTest.hello")
+                        .process(exchange -> {
+                            exchange.getMessage().setBody(REPLY_BODY);
+                            assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
+                        })
+                        .to("mock:result");
 
-                from("jms2:queue:JmsRequestReplyCorrelationTest.hello2").process(exchange -> {
-                    exchange.getIn().setBody(REPLY_BODY);
-                    assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
-                }).to("mock:result");
+                from("jms2:queue:JmsRequestReplyCorrelationTest.hello2")
+                        .process(exchange -> {
+                            exchange.getIn().setBody(REPLY_BODY);
+                            assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
+                        })
+                        .to("mock:result");
 
-                from("jms:queue:JmsRequestReplyCorrelationTest.helloDelay").delay().constant(2000).process(exchange -> {
-                    exchange.getIn().setBody(REPLY_BODY);
-                    assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
-                }).to("mock:result");
+                from("jms:queue:JmsRequestReplyCorrelationTest.helloDelay")
+                        .delay()
+                        .constant(2000)
+                        .process(exchange -> {
+                            exchange.getIn().setBody(REPLY_BODY);
+                            assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
+                        })
+                        .to("mock:result");
             }
         };
     }

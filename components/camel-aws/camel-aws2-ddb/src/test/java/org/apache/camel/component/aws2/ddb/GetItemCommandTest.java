@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,8 +30,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetItemCommandTest {
     private GetItemCommand command;
@@ -61,7 +62,8 @@ public class GetItemCommandTest {
         assertEquals(attrNames, ddbClient.getItemRequest.attributesToGet());
         assertEquals(true, ddbClient.getItemRequest.consistentRead());
         assertEquals(key, ddbClient.getItemRequest.key());
-        assertEquals(AttributeValue.builder().s("attrValue").build(),
+        assertEquals(
+                AttributeValue.builder().s("attrValue").build(),
                 exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

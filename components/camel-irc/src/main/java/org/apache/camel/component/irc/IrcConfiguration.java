@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc;
 
 import java.net.URI;
@@ -44,66 +45,90 @@ public class IrcConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String hostname;
+
     @UriPath
     private int port;
-    private int[] ports = { 6667, 6668, 6669 };
+
+    private int[] ports = {6667, 6668, 6669};
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "common")
     private String nickname;
+
     @UriParam(label = "common")
     private String channels;
+
     @UriParam(label = "common")
     private String keys;
+
     @UriParam(label = "common")
     private String realname;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security")
     private SSLTrustManager trustManager = new SSLDefaultTrustManager();
+
     @UriParam(defaultValue = "true")
     @Deprecated
     private boolean persistent = true;
+
     @UriParam(defaultValue = "true", label = "advanced")
     private boolean colors = true;
+
     @UriParam(defaultValue = "true", label = "filter")
     private boolean onNick = true;
+
     @UriParam(defaultValue = "true", label = "filter")
     private boolean onQuit = true;
+
     @UriParam(defaultValue = "true", label = "filter")
     private boolean onJoin = true;
+
     @UriParam(defaultValue = "true", label = "filter")
     private boolean onKick = true;
+
     @UriParam(defaultValue = "true", label = "filter")
     private boolean onMode = true;
+
     @UriParam(defaultValue = "true", label = "filter")
     private boolean onPart = true;
+
     @UriParam(label = "filter")
     private boolean onReply;
+
     @UriParam(defaultValue = "true", label = "filter")
     private boolean onTopic = true;
+
     @UriParam(defaultValue = "true", label = "filter")
     private boolean onPrivmsg = true;
+
     @UriParam(defaultValue = "true")
     private boolean autoRejoin = true;
+
     @UriParam(label = "common")
     private boolean namesOnJoin;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "security", secret = true)
     private String nickPassword;
+
     @UriParam(defaultValue = "5000")
     private long commandTimeout = 5000L;
 
-    public IrcConfiguration() {
-    }
+    public IrcConfiguration() {}
 
     public IrcConfiguration(String hostname, String nickname, String displayname, String channels) {
         this(hostname, null, null, nickname, displayname, channels);
     }
 
-    public IrcConfiguration(String hostname, String username, String password, String nickname, String displayname,
-                            String channels) {
+    public IrcConfiguration(
+            String hostname, String username, String password, String nickname, String displayname, String channels) {
         this.channels = channels;
         this.hostname = hostname;
         this.username = username;
@@ -169,7 +194,7 @@ public class IrcConfiguration implements Cloneable {
         }
 
         if (uri.getPort() != -1) {
-            setPorts(new int[] { uri.getPort() });
+            setPorts(new int[] {uri.getPort()});
             setPort(uri.getPort());
         }
 
@@ -181,7 +206,9 @@ public class IrcConfiguration implements Cloneable {
 
         String path = uri.getPath();
         if (path != null && !path.isEmpty()) {
-            LOG.warn("Channel {} should not be specified in the URI path. Use an @channel query parameter instead.", path);
+            LOG.warn(
+                    "Channel {} should not be specified in the URI path. Use an @channel query parameter instead.",
+                    path);
         }
     }
 
@@ -531,7 +558,7 @@ public class IrcConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username
-               + "]";
+                + "]";
     }
 
     private static IrcChannel createChannel(String channelInfo) {
@@ -540,7 +567,7 @@ public class IrcConfiguration implements Cloneable {
     }
 
     public static String sanitize(String uri) {
-        //symbol # has to be encoded. otherwise value after '#' won't be propagated into parameters
+        // symbol # has to be encoded. otherwise value after '#' won't be propagated into parameters
         return uri.replace("#", "%23");
     }
 }

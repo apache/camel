@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
 
 import org.w3c.dom.Document;
@@ -49,7 +50,9 @@ public class XPathTransformRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(XPathTransformRouteTest.class, "replaceMe").to("log:result", "mock:result");
+                from("direct:start")
+                        .bean(XPathTransformRouteTest.class, "replaceMe")
+                        .to("log:result", "mock:result");
             }
         };
     }

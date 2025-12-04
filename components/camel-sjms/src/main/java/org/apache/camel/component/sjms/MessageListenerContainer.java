@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import jakarta.jms.ConnectionFactory;
@@ -29,5 +30,4 @@ public interface MessageListenerContainer extends Service, AfterPropertiesConfig
     void setMessageListener(SessionMessageListener messageListener);
 
     void setExceptionListener(ExceptionListener exceptionListener);
-
 }

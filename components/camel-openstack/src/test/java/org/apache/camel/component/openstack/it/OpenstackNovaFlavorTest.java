@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.NovaConstants;
@@ -22,24 +28,28 @@ import org.junit.jupiter.api.Test;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.compute.Flavor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenstackNovaFlavorTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-nova://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + NovaConstants.NOVA_SUBSYSTEM_FLAVORS;
+    private static final String URI_FORMAT =
+            "openstack-nova://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + NovaConstants.NOVA_SUBSYSTEM_FLAVORS;
 
     private static final String FLAVOR_ID = "1";
     private static final String FLAVOR_NAME = "m1.tiny";
 
     @Test
     void createShouldSucceed() {
-        Flavor in = Builders.flavor().name("safe_to_delete_flavor").vcpus(1).disk(2).isPublic(true).rxtxFactor(2.0f)
-                .ephemeral(1).ram(128).id("delete_1").swap(1).build();
+        Flavor in = Builders.flavor()
+                .name("safe_to_delete_flavor")
+                .vcpus(1)
+                .disk(2)
+                .isPublic(true)
+                .rxtxFactor(2.0f)
+                .ephemeral(1)
+                .ram(128)
+                .id("delete_1")
+                .swap(1)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.CREATE);
         Flavor out = template.requestBody(uri, in, Flavor.class);
@@ -80,5 +90,4 @@ public class OpenstackNovaFlavorTest extends OpenstackWiremockTestSupport {
         assertNotNull(flavors);
         assertEquals(2, flavors.length);
     }
-
 }

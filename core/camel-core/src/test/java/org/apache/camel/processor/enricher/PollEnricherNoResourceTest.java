@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
 
 import org.apache.camel.ContextTestSupport;
@@ -65,13 +66,15 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").pollEnrich("seda:foo", 1000)
+                from("direct:a")
+                        .pollEnrich("seda:foo", 1000)
                         .process(e -> {
                             Assertions.assertEquals("seda://foo", e.getProperty(Exchange.TO_ENDPOINT));
                         })
                         .to("mock:result");
 
-                from("direct:b").pollEnrich("seda:bar")
+                from("direct:b")
+                        .pollEnrich("seda:bar")
                         .process(e -> {
                             Assertions.assertEquals("seda://bar", e.getProperty(Exchange.TO_ENDPOINT));
                         })
@@ -79,5 +82,4 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.http;
 
 import java.util.concurrent.TimeUnit;
@@ -40,8 +41,8 @@ public class HttpTestServer {
     private HttpServer httpServer;
 
     static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("HttpTestServer.Port", Integer.toString(PORT));
     }
 

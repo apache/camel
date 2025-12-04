@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
 
 import java.util.List;
@@ -25,7 +26,8 @@ public class SpanTestSupport {
     protected static MockSpanAdapter getSpan(List<Span> trace, String uri, Op op) {
         for (Span span : trace) {
             MockSpanAdapter mockSpanAdapter = (MockSpanAdapter) span;
-            if (mockSpanAdapter.getTag("camel.uri") != null && mockSpanAdapter.getTag("camel.uri").equals(uri)) {
+            if (mockSpanAdapter.getTag("camel.uri") != null
+                    && mockSpanAdapter.getTag("camel.uri").equals(uri)) {
                 if (mockSpanAdapter.getTag(TagConstants.OP).equals(op.toString())) {
                     return mockSpanAdapter;
                 }
@@ -33,5 +35,4 @@ public class SpanTestSupport {
         }
         throw new IllegalArgumentException("Trying to get a non existing span!");
     }
-
 }

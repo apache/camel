@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -22,17 +23,34 @@ public class AnnotatedRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:okay").transacted()
-                .onCompletion().onCompleteOnly().to("mock:ok").end()
-                .onCompletion().onFailureOnly().to("mock:fail").end()
-                .setBody(constant("Tiger in Action")).bean("bookService")
-                .setBody(constant("Elephant in Action")).bean("bookService");
+        from("direct:okay")
+                .transacted()
+                .onCompletion()
+                .onCompleteOnly()
+                .to("mock:ok")
+                .end()
+                .onCompletion()
+                .onFailureOnly()
+                .to("mock:fail")
+                .end()
+                .setBody(constant("Tiger in Action"))
+                .bean("bookService")
+                .setBody(constant("Elephant in Action"))
+                .bean("bookService");
 
-        from("direct:fail").transacted()
-                .onCompletion().onCompleteOnly().to("mock:ok").end()
-                .onCompletion().onFailureOnly().to("mock:fail").end()
-                .setBody(constant("Tiger in Action")).bean("bookService")
-                .setBody(constant("Donkey in Action")).bean("bookService");
+        from("direct:fail")
+                .transacted()
+                .onCompletion()
+                .onCompleteOnly()
+                .to("mock:ok")
+                .end()
+                .onCompletion()
+                .onFailureOnly()
+                .to("mock:fail")
+                .end()
+                .setBody(constant("Tiger in Action"))
+                .bean("bookService")
+                .setBody(constant("Donkey in Action"))
+                .bean("bookService");
     }
-
 }

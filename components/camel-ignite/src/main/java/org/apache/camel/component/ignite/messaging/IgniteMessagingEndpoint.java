@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.messaging;
+
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_MESSAGING;
 
 import java.util.Map;
 
@@ -32,15 +35,18 @@ import org.apache.camel.spi.UriPath;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteMessaging;
 
-import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_MESSAGING;
-
 /**
  * Send and receive messages from an <a href="https://apacheignite.readme.io/docs/messaging">Ignite topic</a>.
  *
  * This endpoint supports producers (to send messages) and consumers (to receive messages).
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_MESSAGING, title = "Ignite Messaging",
-             syntax = "ignite-messaging:topic", category = { Category.MESSAGING }, headersClass = IgniteConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_MESSAGING,
+        title = "Ignite Messaging",
+        syntax = "ignite-messaging:topic",
+        category = {Category.MESSAGING},
+        headersClass = IgniteConstants.class)
 public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
@@ -56,8 +62,11 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private Long timeout;
 
-    public IgniteMessagingEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
-                                   IgniteMessagingComponent igniteComponent) {
+    public IgniteMessagingEndpoint(
+            String endpointUri,
+            String remaining,
+            Map<String, Object> parameters,
+            IgniteMessagingComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         topic = remaining;
     }
@@ -96,7 +105,8 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
     private IgniteMessaging createIgniteMessaging() {
         Ignite ignite = ignite();
         return clusterGroupExpression == null
-                ? ignite.message() : ignite.message(clusterGroupExpression.getClusterGroup(ignite));
+                ? ignite.message()
+                : ignite.message(clusterGroupExpression.getClusterGroup(ignite));
     }
 
     /**
@@ -154,5 +164,4 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
     public void setSendMode(IgniteMessagingSendMode sendMode) {
         this.sendMode = sendMode;
     }
-
 }

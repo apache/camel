@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint x;
@@ -78,7 +79,10 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
             public void configure() {
 
                 // START SNIPPET: example
-                from("direct:start").loadBalance().weighted(true, "2, 1, 3", ",").to("mock:x", "mock:y", "mock:z");
+                from("direct:start")
+                        .loadBalance()
+                        .weighted(true, "2, 1, 3", ",")
+                        .to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
@@ -126,7 +130,8 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            IllegalArgumentException iae = assertIsInstanceOf(
+                    IllegalArgumentException.class, e.getCause().getCause());
             assertEquals("Loadbalacing with 3 should match number of distributions 2", iae.getMessage());
         }
     }
@@ -146,5 +151,4 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
     private String createTestMessage(int counter) {
         return "<message>" + counter + "</message>";
     }
-
 }

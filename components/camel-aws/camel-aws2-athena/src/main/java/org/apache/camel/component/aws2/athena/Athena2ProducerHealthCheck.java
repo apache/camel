@@ -40,7 +40,8 @@ public class Athena2ProducerHealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         try {
             if (ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getRegion())) {
-                if (!AthenaClient.serviceMetadata().regions()
+                if (!AthenaClient.serviceMetadata()
+                        .regions()
                         .contains(Region.of(athena2Endpoint.getConfiguration().getRegion()))) {
                     builder.message("The service is not supported in this region");
                     builder.down();
@@ -48,7 +49,8 @@ public class Athena2ProducerHealthCheck extends AbstractHealthCheck {
                 }
             }
             AthenaClient client = athena2Endpoint.getAthenaClient();
-            client.listQueryExecutions(ListQueryExecutionsRequest.builder().maxResults(1).build());
+            client.listQueryExecutions(
+                    ListQueryExecutionsRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -68,5 +70,4 @@ public class Athena2ProducerHealthCheck extends AbstractHealthCheck {
 
         builder.up();
     }
-
 }

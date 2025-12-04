@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.producer.support;
 
 import java.util.List;
@@ -36,13 +37,17 @@ public class PropagatedHeadersProvider {
     // only set if batchWithIndividualHeaders is disabled (which is the default behaviour)
     private final List<Header> propagatedHeaders;
 
-    public PropagatedHeadersProvider(KafkaProducer kafkaProducer, KafkaConfiguration configuration, Exchange parentExchange,
-                                     Message parentMessage) {
+    public PropagatedHeadersProvider(
+            KafkaProducer kafkaProducer,
+            KafkaConfiguration configuration,
+            Exchange parentExchange,
+            Message parentMessage) {
         this.kafkaProducer = kafkaProducer;
         this.parentExchange = parentExchange;
         this.parentMessage = parentMessage;
 
-        // extracting headers which need to be propagated: instant eval for common headers, lazy eval for individual headers
+        // extracting headers which need to be propagated: instant eval for common headers, lazy eval for individual
+        // headers
         propagatedHeaders = configuration.isBatchWithIndividualHeaders() ? null : getDefaultHeaders();
     }
 
@@ -65,5 +70,4 @@ public class PropagatedHeadersProvider {
             return kafkaProducer.getPropagatedHeaders(childExchange, childMessage);
         }
     }
-
 }

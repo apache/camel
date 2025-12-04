@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite;
 
 import org.apache.camel.Component;
@@ -86,5 +87,4 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint implements 
     public void setTreatCollectionsAsCacheObjects(boolean treatCollectionsAsCacheObjects) {
         this.treatCollectionsAsCacheObjects = treatCollectionsAsCacheObjects;
     }
-
 }

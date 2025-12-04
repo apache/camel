@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Iterator;
@@ -204,7 +205,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         ExecutorService executorService = threadPoolFactory.newThreadPool(profile, threadFactory);
         onThreadPoolCreated(executorService, source, profile.getId());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new ThreadPool for source: {} with name: {}. -> {}", source, sanitizedName, executorService);
+            LOG.debug(
+                    "Created new ThreadPool for source: {} with name: {}. -> {}",
+                    source,
+                    sanitizedName,
+                    executorService);
         }
 
         return executorService;
@@ -226,11 +231,13 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     @Override
     public ExecutorService newCachedThreadPool(Object source, String name) {
         String sanitizedName = URISupport.sanitizeUri(name);
-        ExecutorService answer = threadPoolFactory.newCachedThreadPool(createThreadFactory(source, sanitizedName, true));
+        ExecutorService answer =
+                threadPoolFactory.newCachedThreadPool(createThreadFactory(source, sanitizedName, true));
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new CachedThreadPool for source: {} with name: {}. -> {}", source, sanitizedName, answer);
+            LOG.debug(
+                    "Created new CachedThreadPool for source: {} with name: {}. -> {}", source, sanitizedName, answer);
         }
         return answer;
     }
@@ -259,12 +266,16 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name, ThreadPoolProfile profile) {
         String sanitizedName = URISupport.sanitizeUri(name);
         profile.addDefaults(getDefaultThreadPoolProfile());
-        ScheduledExecutorService answer
-                = threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(source, sanitizedName, true));
+        ScheduledExecutorService answer =
+                threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(source, sanitizedName, true));
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new ScheduledThreadPool for source: {} with name: {} -> {}", source, sanitizedName, answer);
+            LOG.debug(
+                    "Created new ScheduledThreadPool for source: {} with name: {} -> {}",
+                    source,
+                    sanitizedName,
+                    answer);
         }
         return answer;
     }
@@ -309,14 +320,18 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
         boolean warned = false;
 
-        // shutting down a thread pool is a 2 step process. First we try graceful, and if that fails, then we go more aggressively
+        // shutting down a thread pool is a 2 step process. First we try graceful, and if that fails, then we go more
+        // aggressively
         // and try shutting down again. In both cases we wait at most the given shutdown timeout value given
-        // (total wait could then be 2 x shutdownAwaitTermination, but when we shutdown the 2nd time we are aggressive and thus
+        // (total wait could then be 2 x shutdownAwaitTermination, but when we shutdown the 2nd time we are aggressive
+        // and thus
         // we ought to shutdown much faster)
         if (!executorService.isShutdown()) {
             StopWatch watch = new StopWatch();
 
-            LOG.trace("Shutdown of ExecutorService: {} with await termination: {} millis", executorService,
+            LOG.trace(
+                    "Shutdown of ExecutorService: {} with await termination: {} millis",
+                    executorService,
                     shutdownAwaitTermination);
             executorService.shutdown();
 
@@ -324,7 +339,8 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
                 try {
                     if (!awaitTermination(executorService, shutdownAwaitTermination)) {
                         warned = true;
-                        LOG.warn("Forcing shutdown of ExecutorService: {} due first await termination elapsed.",
+                        LOG.warn(
+                                "Forcing shutdown of ExecutorService: {} due first await termination elapsed.",
                                 executorService);
                         executorService.shutdownNow();
                         // we are now shutting down aggressively, so wait to see if we can completely shutdown or not
@@ -343,14 +359,21 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
                 }
             }
 
-            // if we logged at WARN level, then report at INFO level when we are complete so the end user can see this in the log
+            // if we logged at WARN level, then report at INFO level when we are complete so the end user can see this
+            // in the log
             if (warned) {
-                LOG.info("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
-                        executorService, executorService.isShutdown(), executorService.isTerminated(),
+                LOG.info(
+                        "Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
+                        executorService,
+                        executorService.isShutdown(),
+                        executorService.isTerminated(),
                         TimeUtils.printDuration(watch.taken(), true));
             } else if (LOG.isDebugEnabled()) {
-                LOG.debug("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
-                        executorService, executorService.isShutdown(), executorService.isTerminated(),
+                LOG.debug(
+                        "Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
+                        executorService,
+                        executorService.isShutdown(),
+                        executorService.isTerminated(),
                         TimeUtils.printDuration(watch.taken(), true));
             }
         }
@@ -394,8 +417,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
             answer = executorService.shutdownNow();
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {}.",
-                        executorService, executorService.isShutdown(), executorService.isTerminated());
+                LOG.trace(
+                        "Shutdown of ExecutorService: {} is shutdown: {} and terminated: {}.",
+                        executorService,
+                        executorService.isShutdown(),
+                        executorService.isTerminated());
             }
         }
 
@@ -415,7 +441,9 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
             if (executorService.awaitTermination(interval, TimeUnit.MILLISECONDS)) {
                 done = true;
             } else {
-                LOG.info("Waited {} for ExecutorService: {} to terminate...", TimeUtils.printDuration(watch.taken(), true),
+                LOG.info(
+                        "Waited {} for ExecutorService: {} to terminate...",
+                        TimeUtils.printDuration(watch.taken(), true),
                         executorService);
                 // recalculate interval
                 interval = Math.min(2000, shutdownAwaitTermination - watch.taken());
@@ -446,10 +474,10 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         // discover thread pool factory
         if (threadPoolFactory == null) {
             threadPoolFactory = ResolverHelper.resolveService(
-                    camelContext,
-                    camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
-                    ThreadPoolFactory.FACTORY,
-                    ThreadPoolFactory.class)
+                            camelContext,
+                            camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                            ThreadPoolFactory.FACTORY,
+                            ThreadPoolFactory.class)
                     .orElseGet(DefaultThreadPoolFactory::new);
         }
         CamelContextAware.trySetCamelContext(threadPoolFactory, camelContext);
@@ -457,10 +485,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
         // discover custom thread factory listener via Camel factory finder
         ResolverHelper.resolveService(
-                camelContext,
-                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
-                ThreadFactoryListener.FACTORY,
-                ThreadFactoryListener.class).ifPresent(this::addThreadFactoryListener);
+                        camelContext,
+                        camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                        ThreadFactoryListener.FACTORY,
+                        ThreadFactoryListener.class)
+                .ifPresent(this::addThreadFactoryListener);
     }
 
     @Override
@@ -476,7 +505,8 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         }
 
         // enrich threads for MDC logging
-        boolean usedMDCLogging = getCamelContext().isUseMDCLogging() != null && getCamelContext().isUseMDCLogging();
+        boolean usedMDCLogging =
+                getCamelContext().isUseMDCLogging() != null && getCamelContext().isUseMDCLogging();
         if (usedMDCLogging) {
             threadFactoryListeners.add(new MDCThreadFactoryListener());
         }
@@ -492,8 +522,10 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         // of CamelContext itself.
         Set<ExecutorService> forced = new LinkedHashSet<>();
         if (!executorServices.isEmpty()) {
-            // at first give a bit of time to shutdown nicely as the thread pool is most likely in the process of being shutdown also
-            LOG.debug("Giving time for {} ExecutorService's to shutdown properly (acting as fail-safe)",
+            // at first give a bit of time to shutdown nicely as the thread pool is most likely in the process of being
+            // shutdown also
+            LOG.debug(
+                    "Giving time for {} ExecutorService's to shutdown properly (acting as fail-safe)",
                     executorServices.size());
             for (ExecutorService executorService : executorServices) {
                 try {
@@ -504,15 +536,18 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
                     }
                 } catch (Exception e) {
                     // only log if something goes wrong as we want to shutdown them all
-                    LOG.warn("Error occurred during shutdown of ExecutorService: {}. This exception will be ignored.",
-                            executorService, e);
+                    LOG.warn(
+                            "Error occurred during shutdown of ExecutorService: {}. This exception will be ignored.",
+                            executorService,
+                            e);
                 }
             }
         }
 
         // log the thread pools which was forced to shutdown so it may help the user to identify a problem of his
         if (!forced.isEmpty()) {
-            LOG.warn("Forced shutdown of {} ExecutorService's which has not been shutdown properly (acting as fail-safe)",
+            LOG.warn(
+                    "Forced shutdown of {} ExecutorService's which has not been shutdown properly (acting as fail-safe)",
                     forced.size());
             for (ExecutorService executorService : forced) {
                 LOG.warn("  forced -> {}", executorService);
@@ -569,8 +604,10 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
                 id = source.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(source) + ")";
             }
         } else {
-            // no source, so fallback and use the simple class name from thread pool and its hashcode identity so its unique
-            id = executorService.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(executorService) + ")";
+            // no source, so fallback and use the simple class name from thread pool and its hashcode identity so its
+            // unique
+            id = executorService.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(executorService)
+                    + ")";
         }
 
         // id is mandatory
@@ -605,5 +642,4 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         }
         return factory;
     }
-
 }

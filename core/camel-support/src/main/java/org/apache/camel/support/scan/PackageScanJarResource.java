@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.scan;
 
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class PackageScanJarResource extends ResourceSupport {
     public PackageScanJarResource(String scheme, URL url, String location) {
         super(scheme, url.getFile() + FileUtil.stripPath(location));
         this.url = url;
-        this.uc = new URLClassLoader(new URL[] { url });
+        this.uc = new URLClassLoader(new URL[] {url});
     }
 
     @Override
@@ -63,5 +64,4 @@ public class PackageScanJarResource extends ResourceSupport {
         String loc = StringHelper.afterLast(getLocation(), "!");
         return uc.getResourceAsStream(loc);
     }
-
 }

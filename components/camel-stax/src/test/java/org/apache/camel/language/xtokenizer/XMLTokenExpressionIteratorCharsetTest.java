@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -32,21 +35,19 @@ import javax.xml.stream.XMLStreamException;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  *
  */
 public class XMLTokenExpressionIteratorCharsetTest {
     private static final String DATA_TEMPLATE = "<?xml version=\"1.0\" encoding=\"{0}\"?>"
-                                                + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
-                                                + "    <statement>we l\u00f3ve iso-latin</statement>"
-                                                + "    <statement>we h\u00e4te unicode</statement>"
-                                                + "</Statements>";
+            + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
+            + "    <statement>we l\u00f3ve iso-latin</statement>"
+            + "    <statement>we h\u00e4te unicode</statement>"
+            + "</Statements>";
 
     private static final String[] RESULTS = {
-            "<statement xmlns=\"http://www.apache.org/xml/test\">we l\u00f3ve iso-latin</statement>",
-            "<statement xmlns=\"http://www.apache.org/xml/test\">we h\u00e4te unicode</statement>"
+        "<statement xmlns=\"http://www.apache.org/xml/test\">we l\u00f3ve iso-latin</statement>",
+        "<statement xmlns=\"http://www.apache.org/xml/test\">we h\u00e4te unicode</statement>"
     };
 
     private static final String DATA_STRING = MessageFormat.format(DATA_TEMPLATE, "utf-8");
@@ -59,7 +60,7 @@ public class XMLTokenExpressionIteratorCharsetTest {
         try {
             return MessageFormat.format(template, charset).getBytes(charset);
         } catch (UnsupportedEncodingException e) {
-            //ignore
+            // ignore
         }
         return null;
     }
@@ -100,7 +101,5 @@ public class XMLTokenExpressionIteratorCharsetTest {
         for (int i = 0; i < RESULTS.length; i++) {
             assertEquals(RESULTS[i], results.get(i), "mismatch [" + i + "]");
         }
-
     }
-
 }

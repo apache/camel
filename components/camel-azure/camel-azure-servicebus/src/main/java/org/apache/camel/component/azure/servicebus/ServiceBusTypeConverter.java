@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
 
 import com.azure.core.util.BinaryData;
@@ -23,8 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 @Converter(generateLoader = true)
 public final class ServiceBusTypeConverter {
 
-    private ServiceBusTypeConverter() {
-    }
+    private ServiceBusTypeConverter() {}
 
     @Converter(allowNull = true)
     public static String toString(final BinaryData binaryData) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonata;
 
 import java.util.HashMap;
@@ -34,14 +35,15 @@ class JsonataJacksonOutputTest extends CamelTestSupport {
 
     @Test
     void testFirstSampleJsonata() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jsonata/firstSample/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jsonata/firstSample/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
-        sendBody("direct://start",
+        sendBody(
+                "direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jsonata/firstSample/input.json"));
 
@@ -62,7 +64,8 @@ class JsonataJacksonOutputTest extends CamelTestSupport {
             public void configure() {
                 from("direct://start")
                         .process(processor)
-                        .to("jsonata:org/apache/camel/component/jsonata/firstSample/expressions.spec?inputType=JsonString&outputType=Jackson")
+                        .to(
+                                "jsonata:org/apache/camel/component/jsonata/firstSample/expressions.spec?inputType=JsonString&outputType=Jackson")
                         .to("mock:result");
             }
         };

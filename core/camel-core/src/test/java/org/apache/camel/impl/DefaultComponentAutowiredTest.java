@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import java.net.ContentHandler;
@@ -48,7 +49,8 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
         MyComponent my = context.getComponent("mycomponent", MyComponent.class);
         Assertions.assertNotNull(my);
 
-        ContentHandlerFactory chf = (ContentHandlerFactory) context.getRegistry().lookupByName("chf");
+        ContentHandlerFactory chf =
+                (ContentHandlerFactory) context.getRegistry().lookupByName("chf");
         Assertions.assertNotNull(chf);
 
         Assertions.assertSame(chf, my.getContentHandlerFactory());
@@ -91,11 +93,12 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
 
         @Override
         public String[] getAutowiredNames() {
-            return new String[] { "contentHandlerFactory" };
+            return new String[] {"contentHandlerFactory"};
         }
 
         @Override
-        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        public boolean configure(
+                CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             if ("contentHandlerFactory".equals(name)) {
                 MyComponent comp = (MyComponent) target;
                 comp.setContentHandlerFactory((ContentHandlerFactory) value);
@@ -127,5 +130,4 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
             return null;
         }
     }
-
 }

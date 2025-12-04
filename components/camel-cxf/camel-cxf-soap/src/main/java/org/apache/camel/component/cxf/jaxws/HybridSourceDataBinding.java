@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import javax.xml.stream.XMLStreamReader;
@@ -39,8 +40,7 @@ import org.apache.cxf.service.model.MessagePartInfo;
  * de/serialization without requiring users to provide a WSDL.
  */
 public class HybridSourceDataBinding extends JAXBDataBinding {
-    public HybridSourceDataBinding() {
-    }
+    public HybridSourceDataBinding() {}
 
     @SuppressWarnings("unchecked")
     @Override
@@ -56,7 +56,7 @@ public class HybridSourceDataBinding extends JAXBDataBinding {
 
     @Override
     public Class<?>[] getSupportedReaderFormats() {
-        return new Class[] { XMLStreamReader.class, Node.class };
+        return new Class[] {XMLStreamReader.class, Node.class};
     }
 
     @SuppressWarnings("unchecked")
@@ -72,7 +72,6 @@ public class HybridSourceDataBinding extends JAXBDataBinding {
                     }
                     super.write(obj, part, output);
                 }
-
             };
         } else if (cls == Node.class) {
             return (DataWriter<T>) new NodeDataWriter();
@@ -83,7 +82,6 @@ public class HybridSourceDataBinding extends JAXBDataBinding {
 
     @Override
     public Class<?>[] getSupportedWriterFormats() {
-        return new Class[] { XMLStreamWriter.class, Node.class };
+        return new Class[] {XMLStreamWriter.class, Node.class};
     }
-
 }

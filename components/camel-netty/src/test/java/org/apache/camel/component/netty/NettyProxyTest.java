@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -38,7 +39,8 @@ public class NettyProxyTest extends BaseNettyTest {
         getMockEndpoint("mock:proxy").expectedBodiesReceived("Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
 
-        Object body = template.requestBody("netty:tcp://localhost:" + port.getPort() + "?sync=true&textline=true", "Camel\n");
+        Object body =
+                template.requestBody("netty:tcp://localhost:" + port.getPort() + "?sync=true&textline=true", "Camel\n");
         assertEquals("Bye Camel", body);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -56,7 +58,8 @@ public class NettyProxyTest extends BaseNettyTest {
 
                 fromF("netty:tcp://localhost:%s?sync=true&textline=true", port2.getPort())
                         .to("mock:proxy")
-                        .transform().simple("Bye ${body}\n");
+                        .transform()
+                        .simple("Bye ${body}\n");
             }
         };
     }

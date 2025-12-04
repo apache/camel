@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.parquet.avro;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -27,16 +30,11 @@ import org.apache.parquet.ParquetReadOptions;
 import org.apache.parquet.hadoop.ParquetFileReader;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ParquetAvroDataFormatWithoutUnmarshalTypeTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMapWithoutUnmarshalType() throws Exception {
-        List<Pojo> in = List.of(
-                new Pojo(1, "airport"),
-                new Pojo(2, "penguin"),
-                new Pojo(3, "verb"));
+        List<Pojo> in = List.of(new Pojo(1, "airport"), new Pojo(2, "penguin"), new Pojo(3, "verb"));
         MockEndpoint unmarshalMock = getMockEndpoint("mock:unmarshalled");
         unmarshalMock.expectedMessageCount(1);
 
@@ -47,7 +45,8 @@ public class ParquetAvroDataFormatWithoutUnmarshalTypeTest extends CamelTestSupp
         unmarshalMock.assertIsSatisfied();
         marshalMock.assertIsSatisfied();
 
-        List<GenericRecord> records = unmarshalMock.getExchanges().get(0).getMessage().getBody(List.class);
+        List<GenericRecord> records =
+                unmarshalMock.getExchanges().get(0).getMessage().getBody(List.class);
         assertEquals(in.size(), records.size());
         for (int i = 0; i < records.size(); i++) {
             GenericRecord record = GenericRecord.class.cast(records.get(i));
@@ -57,7 +56,8 @@ public class ParquetAvroDataFormatWithoutUnmarshalTypeTest extends CamelTestSupp
 
         byte[] marshalled = marshalMock.getExchanges().get(0).getIn().getBody(byte[].class);
         ParquetInputStream inputStream = new ParquetInputStream(new DefaultUuidGenerator().generateUuid(), marshalled);
-        try (ParquetFileReader reader = new ParquetFileReader(inputStream, ParquetReadOptions.builder().build())) {
+        try (ParquetFileReader reader =
+                new ParquetFileReader(inputStream, ParquetReadOptions.builder().build())) {
             assertEquals(in.size(), reader.getRecordCount());
         }
     }
@@ -76,8 +76,10 @@ public class ParquetAvroDataFormatWithoutUnmarshalTypeTest extends CamelTestSupp
                 // Then we ensure that data can be unmarshalled and marshalled again with Avro's GenericRecord
                 ParquetAvroDataFormat formatWithoutUnmarshalType = new ParquetAvroDataFormat();
                 from("direct:marshalled")
-                        .unmarshal(formatWithoutUnmarshalType).to("mock:unmarshalled")
-                        .marshal(formatWithoutUnmarshalType).to("mock:marshalled");
+                        .unmarshal(formatWithoutUnmarshalType)
+                        .to("mock:unmarshalled")
+                        .marshal(formatWithoutUnmarshalType)
+                        .to("mock:marshalled");
             }
         };
     }

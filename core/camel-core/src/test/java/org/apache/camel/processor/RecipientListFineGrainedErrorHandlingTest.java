@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelExchangeException;
@@ -24,9 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSupport {
 
@@ -70,9 +71,15 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(3).end().to("mock:a")
+                from("direct:start")
+                        .onException(Exception.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
+                        .end()
+                        .to("mock:a")
                         .recipientList(header("foo"))
-                        .aggregationStrategy(new MyAggregationStrategy()).parallelProcessing();
+                        .aggregationStrategy(new MyAggregationStrategy())
+                        .parallelProcessing();
             }
         });
         context.start();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,7 +44,8 @@ public class FileConsumerAbsolutePathWithAbsoluteMoveTest extends ContextTestSup
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&move=" + testDirectory() + "/done/${file:onlyname}"))
-                        .convertBodyTo(String.class).to("mock:report");
+                        .convertBodyTo(String.class)
+                        .to("mock:report");
             }
         };
     }

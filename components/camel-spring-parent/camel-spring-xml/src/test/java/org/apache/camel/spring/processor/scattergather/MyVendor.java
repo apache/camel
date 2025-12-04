@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.scattergather;
 
 import org.apache.camel.Exchange;
@@ -21,7 +22,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.language.xpath.XPath;
 
-//START SNIPPET: e1
+// START SNIPPET: e1
 public class MyVendor {
     private int beerPrice;
 
@@ -41,4 +42,4 @@ public class MyVendor {
         }
     }
 }
-//END SNIPPET: e1
+// END SNIPPET: e1

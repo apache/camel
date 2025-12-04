@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +27,8 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerDirectoriesNotMatchedIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/dirnotmatched/?password=admin" + "&recursive=true&include=^.*txt$";
+        return "ftp://admin@localhost:{{ftp.server.port}}/dirnotmatched/?password=admin"
+                + "&recursive=true&include=^.*txt$";
     }
 
     @Override

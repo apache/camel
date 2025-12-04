@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
 
 import org.apache.camel.Exchange;
@@ -32,7 +33,7 @@ public class FromSftpRecursiveNotStepwiseNoBasePathIT extends BaseServerTestSupp
 
     protected String getSftpUrl() {
         return "sftp://admin@localhost:{{ftp.server.port}}?password=admin&initialDelay=3000&stepwise=false"
-               + "&recursive=true&knownHostsFile=" + service.getKnownHostsFile();
+                + "&recursive=true&knownHostsFile=" + service.getKnownHostsFile();
     }
 
     @BeforeEach

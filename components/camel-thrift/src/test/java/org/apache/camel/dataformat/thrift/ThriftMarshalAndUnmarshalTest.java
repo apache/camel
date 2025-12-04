@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.thrift;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.FailedToCreateRouteException;
@@ -24,10 +29,6 @@ import org.apache.camel.dataformat.thrift.generated.Operation;
 import org.apache.camel.dataformat.thrift.generated.Work;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThriftMarshalAndUnmarshalTest extends CamelTestSupport {
     private static final String WORK_TEST_COMMENT = "This is a test thrift data";
@@ -56,7 +57,10 @@ public class ThriftMarshalAndUnmarshalTest extends CamelTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:unmarshalC").unmarshal().thrift(new CamelException("wrong instance")).to("mock:reverse");
+                    from("direct:unmarshalC")
+                            .unmarshal()
+                            .thrift(new CamelException("wrong instance"))
+                            .to("mock:reverse");
                 }
             });
             fail("Expect the exception here");
@@ -101,12 +105,13 @@ public class ThriftMarshalAndUnmarshalTest extends CamelTestSupport {
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
                 from("direct:marshal").marshal().thrift();
-                from("direct:unmarshalA").unmarshal().thrift("org.apache.camel.dataformat.thrift.generated.Work")
+                from("direct:unmarshalA")
+                        .unmarshal()
+                        .thrift("org.apache.camel.dataformat.thrift.generated.Work")
                         .to("mock:reverse");
 
                 from("direct:unmarshalB").unmarshal().thrift(new Work()).to("mock:reverse");
             }
         };
     }
-
 }

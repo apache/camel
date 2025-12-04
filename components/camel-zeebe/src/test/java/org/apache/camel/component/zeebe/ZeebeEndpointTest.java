@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.zeebe;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -24,25 +26,25 @@ import org.apache.camel.component.zeebe.internal.OperationName;
 import org.apache.camel.spi.UriPath;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-
 public class ZeebeEndpointTest {
 
     @Test
-    public void allOperationValuesShouldBeListedInOperationNameUriPath() throws NoSuchFieldException, SecurityException {
+    public void allOperationValuesShouldBeListedInOperationNameUriPath()
+            throws NoSuchFieldException, SecurityException {
         UriPath uriPath = ZeebeEndpoint.class.getDeclaredField("operationName").getAnnotation(UriPath.class);
 
         String[] operationNamesInAnnotation = uriPath.enums().split(",");
         Arrays.sort(operationNamesInAnnotation);
 
-        String[] operationNamesInEnum
-                = Arrays.stream(OperationName.values()).map(OperationName::value).toArray(length -> new String[length]);
+        String[] operationNamesInEnum =
+                Arrays.stream(OperationName.values()).map(OperationName::value).toArray(length -> new String[length]);
         Arrays.sort(operationNamesInEnum);
 
-        assertArrayEquals(operationNamesInEnum, operationNamesInAnnotation,
+        assertArrayEquals(
+                operationNamesInEnum,
+                operationNamesInAnnotation,
                 "All operation values, the String value returned from OperationName::value, must be defined in the @UriPath "
-                                                                            + "enum parameter of the operationName field in ZeebeEndpoint, set the enums parameter to:\n"
-                                                                            + Arrays.stream(operationNamesInEnum)
-                                                                                    .collect(Collectors.joining(",")));
+                        + "enum parameter of the operationName field in ZeebeEndpoint, set the enums parameter to:\n"
+                        + Arrays.stream(operationNamesInEnum).collect(Collectors.joining(",")));
     }
 }

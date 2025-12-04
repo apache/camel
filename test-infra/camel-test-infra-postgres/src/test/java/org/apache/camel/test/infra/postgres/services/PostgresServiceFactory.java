@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.postgres.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class PostgresServiceFactory {
 
-    private PostgresServiceFactory() {
-    }
+    private PostgresServiceFactory() {}
 
     public static SimpleTestServiceBuilder<PostgresService> builder() {
         return new SimpleTestServiceBuilder<>("postgres");
     }
 
     public static PostgresService createService() {
-        return builder().addLocalMapping(PostgresLocalContainerService::new)
+        return builder()
+                .addLocalMapping(PostgresLocalContainerService::new)
                 .addRemoteMapping(PostgresRemoteService::new)
                 .build();
     }
 
-    public static class PostgresRemoteService extends PostgresRemoteInfraService implements PostgresService {
-    }
+    public static class PostgresRemoteService extends PostgresRemoteInfraService implements PostgresService {}
 }

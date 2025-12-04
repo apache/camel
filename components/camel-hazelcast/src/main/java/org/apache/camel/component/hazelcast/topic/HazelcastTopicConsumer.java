@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.topic;
 
 import java.util.UUID;
@@ -31,8 +32,12 @@ public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
 
     private UUID listener;
 
-    public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName,
-                                  boolean reliable) {
+    public HazelcastTopicConsumer(
+            HazelcastInstance hazelcastInstance,
+            Endpoint endpoint,
+            Processor processor,
+            String cacheName,
+            boolean reliable) {
         super(hazelcastInstance, endpoint, processor, cacheName);
         if (!reliable) {
             topic = hazelcastInstance.getTopic(cacheName);

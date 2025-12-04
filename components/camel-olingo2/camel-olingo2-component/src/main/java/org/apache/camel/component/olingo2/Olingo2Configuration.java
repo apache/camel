@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2;
 
 import java.util.Map;
@@ -46,33 +47,47 @@ public class Olingo2Configuration {
     @UriPath
     @Metadata(required = true)
     private Olingo2ApiName apiName;
+
     @UriPath
     @Metadata(required = true)
     private String methodName;
+
     @UriParam
     private String serviceUri;
+
     @UriParam(defaultValue = "application/json;charset=utf-8")
     private String contentType = DEFAULT_CONTENT_TYPE;
+
     @UriParam
     private Map<String, String> httpHeaders;
+
     @UriParam
     private EntityProviderReadProperties entityProviderReadProperties;
+
     @UriParam
     private EntityProviderWriteProperties entityProviderWriteProperties;
+
     @UriParam(defaultValue = "" + DEFAULT_TIMEOUT)
     private int connectTimeout = DEFAULT_TIMEOUT;
+
     @UriParam(defaultValue = "" + DEFAULT_TIMEOUT)
     private int socketTimeout = DEFAULT_TIMEOUT;
+
     @UriParam
     private HttpHost proxy;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "advanced")
     private HttpAsyncClientBuilder httpAsyncClientBuilder;
+
     @UriParam(label = "advanced")
     private HttpClientBuilder httpClientBuilder;
+
     @UriParam
     private boolean filterAlreadySeen;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean splitResult = true;
 
@@ -255,39 +270,58 @@ public class Olingo2Configuration {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(serviceUri).append(contentType)
-                .append(httpHeaders).append(connectTimeout)
-                .append(socketTimeout).append(proxy)
-                .append(entityProviderReadProperties).append(entityProviderWriteProperties)
-                .append(filterAlreadySeen).append(splitResult)
-                .append(sslContextParameters).append(httpAsyncClientBuilder).append(httpClientBuilder).hashCode();
+        return new HashCodeBuilder()
+                .append(serviceUri)
+                .append(contentType)
+                .append(httpHeaders)
+                .append(connectTimeout)
+                .append(socketTimeout)
+                .append(proxy)
+                .append(entityProviderReadProperties)
+                .append(entityProviderWriteProperties)
+                .append(filterAlreadySeen)
+                .append(splitResult)
+                .append(sslContextParameters)
+                .append(httpAsyncClientBuilder)
+                .append(httpClientBuilder)
+                .hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Olingo2Configuration) {
             Olingo2Configuration other = (Olingo2Configuration) obj;
-            return connectTimeout == other.connectTimeout && filterAlreadySeen == other.filterAlreadySeen
-                    && splitResult == other.splitResult && socketTimeout == other.socketTimeout && serviceUri == null
+            return connectTimeout == other.connectTimeout
+                            && filterAlreadySeen == other.filterAlreadySeen
+                            && splitResult == other.splitResult
+                            && socketTimeout == other.socketTimeout
+                            && serviceUri == null
                     ? other.serviceUri == null
                     : serviceUri.equals(other.serviceUri) && contentType == null
                             ? other.contentType == null
-                    : contentType.equals(other.contentType) && httpHeaders == null
-                            ? other.httpHeaders == null
-                    : httpHeaders.equals(other.httpHeaders) && entityProviderReadProperties == null
-                            ? other.entityProviderReadProperties == null
-                    : entityProviderReadProperties.equals(other.entityProviderReadProperties) && proxy == null
-                            ? other.proxy == null
-                    : proxy.equals(other.proxy) && entityProviderWriteProperties == null
-                            ? other.entityProviderWriteProperties == null
-                    : entityProviderWriteProperties.equals(other.entityProviderWriteProperties)
-                            && sslContextParameters == null
-                            ? other.sslContextParameters == null
-                    : sslContextParameters.equals(other.sslContextParameters) && httpAsyncClientBuilder == null
-                            ? other.httpAsyncClientBuilder == null
-                    : httpAsyncClientBuilder.equals(other.httpAsyncClientBuilder) && httpClientBuilder == null
-                            ? other.httpClientBuilder == null
-                    : httpClientBuilder.equals(other.httpClientBuilder);
+                            : contentType.equals(other.contentType) && httpHeaders == null
+                                    ? other.httpHeaders == null
+                                    : httpHeaders.equals(other.httpHeaders) && entityProviderReadProperties == null
+                                            ? other.entityProviderReadProperties == null
+                                            : entityProviderReadProperties.equals(other.entityProviderReadProperties)
+                                                            && proxy == null
+                                                    ? other.proxy == null
+                                                    : proxy.equals(other.proxy) && entityProviderWriteProperties == null
+                                                            ? other.entityProviderWriteProperties == null
+                                                            : entityProviderWriteProperties.equals(
+                                                                                    other.entityProviderWriteProperties)
+                                                                            && sslContextParameters == null
+                                                                    ? other.sslContextParameters == null
+                                                                    : sslContextParameters.equals(
+                                                                                            other.sslContextParameters)
+                                                                                    && httpAsyncClientBuilder == null
+                                                                            ? other.httpAsyncClientBuilder == null
+                                                                            : httpAsyncClientBuilder.equals(
+                                                                                                    other.httpAsyncClientBuilder)
+                                                                                            && httpClientBuilder == null
+                                                                                    ? other.httpClientBuilder == null
+                                                                                    : httpClientBuilder.equals(
+                                                                                            other.httpClientBuilder);
         }
         return false;
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -31,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * NOTE: had to split into separate test classes as I was unable to fully tear down and isolate the test cases, I'm not
  * sure why, but as soon as we know the Transaction classes can be joined into one.
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class QueueToProcessorTransactionIT extends AbstractTransactionIT {
 
     @Test
@@ -42,9 +43,12 @@ public class QueueToProcessorTransactionIT extends AbstractTransactionIT {
 
             @Override
             public void configure() {
-                Policy required = context().getRegistry().lookupByNameAndType("PROPAGATION_REQUIRED_POLICY",
-                        SpringTransactionPolicy.class);
-                from("activemq:queue:AbstractTransactionTest").policy(required).process(new ConditionalExceptionProcessor());
+                Policy required = context()
+                        .getRegistry()
+                        .lookupByNameAndType("PROPAGATION_REQUIRED_POLICY", SpringTransactionPolicy.class);
+                from("activemq:queue:AbstractTransactionTest")
+                        .policy(required)
+                        .process(new ConditionalExceptionProcessor());
             }
         });
 

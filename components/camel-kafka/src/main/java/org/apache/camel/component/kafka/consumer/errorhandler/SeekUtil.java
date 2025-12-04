@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
 final class SeekUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SeekUtil.class);
 
-    private SeekUtil() {
-
-    }
+    private SeekUtil() {}
 
     public static void seekToNextOffset(Consumer<?, ?> consumer, long partitionLastOffset) {
         boolean logged = false;
@@ -41,7 +39,9 @@ final class SeekUtil {
                 if (LOG.isInfoEnabled()) {
                     LOG.info(
                             "Consumer seeking to next offset {} to continue polling next message from topic {} on partition {}",
-                            next, tp.topic(), tp.partition());
+                            next,
+                            tp.topic(),
+                            tp.partition());
                 }
 
                 consumer.seek(tp, next);
@@ -53,7 +53,8 @@ final class SeekUtil {
                     LOG.info(
                             "Consumer seeking to next offset {} to continue polling next message from topic {} on partition {}",
                             next,
-                            tp.topic(), tp.partition());
+                            tp.topic(),
+                            tp.partition());
                     logged = true;
                 }
                 consumer.seek(tp, next);

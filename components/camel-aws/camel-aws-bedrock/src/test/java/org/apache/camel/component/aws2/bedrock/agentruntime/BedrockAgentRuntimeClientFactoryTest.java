@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.agentruntime;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.bedrock.agentruntime.client.BedrockAgentRuntimeClientFactory;
 import org.apache.camel.component.aws2.bedrock.agentruntime.client.BedrockAgentRuntimeInternalClient;
@@ -24,15 +27,13 @@ import org.apache.camel.component.aws2.bedrock.agentruntime.client.impl.BedrockA
 import org.apache.camel.component.aws2.bedrock.agentruntime.client.impl.BedrockAgentRuntimeClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class BedrockAgentRuntimeClientFactoryTest {
 
     @Test
     public void getStandardBedrockAgentRuntimeClientDefault() {
         BedrockAgentRuntimeConfiguration bedrockConfiguration = new BedrockAgentRuntimeConfiguration();
-        BedrockAgentRuntimeInternalClient bedrockClient
-                = BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
+        BedrockAgentRuntimeInternalClient bedrockClient =
+                BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
         assertTrue(bedrockClient instanceof BedrockAgentRuntimeClientStandardImpl);
     }
 
@@ -40,8 +41,8 @@ public class BedrockAgentRuntimeClientFactoryTest {
     public void getStandardDefaultBedrockAgentRuntimeClient() {
         BedrockAgentRuntimeConfiguration bedrockConfiguration = new BedrockAgentRuntimeConfiguration();
         bedrockConfiguration.setUseDefaultCredentialsProvider(false);
-        BedrockAgentRuntimeInternalClient bedrockClient
-                = BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
+        BedrockAgentRuntimeInternalClient bedrockClient =
+                BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
         assertTrue(bedrockClient instanceof BedrockAgentRuntimeClientStandardImpl);
     }
 
@@ -49,8 +50,8 @@ public class BedrockAgentRuntimeClientFactoryTest {
     public void getIAMOptimizedBedrockAgentRuntimeClient() {
         BedrockAgentRuntimeConfiguration bedrockConfiguration = new BedrockAgentRuntimeConfiguration();
         bedrockConfiguration.setUseDefaultCredentialsProvider(true);
-        BedrockAgentRuntimeInternalClient bedrockClient
-                = BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
+        BedrockAgentRuntimeInternalClient bedrockClient =
+                BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
         assertTrue(bedrockClient instanceof BedrockAgentRuntimeClientIAMOptimizedImpl);
     }
 
@@ -58,8 +59,8 @@ public class BedrockAgentRuntimeClientFactoryTest {
     public void getSessionTokenBedrockAgentRuntimeClient() {
         BedrockAgentRuntimeConfiguration bedrockConfiguration = new BedrockAgentRuntimeConfiguration();
         bedrockConfiguration.setUseSessionCredentials(true);
-        BedrockAgentRuntimeInternalClient bedrockClient
-                = BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
+        BedrockAgentRuntimeInternalClient bedrockClient =
+                BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
         assertTrue(bedrockClient instanceof BedrockAgentRuntimeClientSessionTokenImpl);
     }
 
@@ -67,8 +68,8 @@ public class BedrockAgentRuntimeClientFactoryTest {
     public void getProfileBedrockAgentRuntimeClient() {
         BedrockAgentRuntimeConfiguration bedrockConfiguration = new BedrockAgentRuntimeConfiguration();
         bedrockConfiguration.setUseProfileCredentialsProvider(true);
-        BedrockAgentRuntimeInternalClient bedrockClient
-                = BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
+        BedrockAgentRuntimeInternalClient bedrockClient =
+                BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(bedrockConfiguration);
         assertTrue(bedrockClient instanceof BedrockAgentRuntimeClientIAMProfileOptimizedImpl);
     }
 }

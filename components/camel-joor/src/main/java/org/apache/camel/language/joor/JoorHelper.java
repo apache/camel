@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import java.util.Optional;
@@ -26,8 +27,7 @@ import org.apache.camel.Message;
  */
 public final class JoorHelper {
 
-    private JoorHelper() {
-    }
+    private JoorHelper() {}
 
     public static <T> T bodyAs(Message message, Class<T> type) {
         return message.getBody(type);
@@ -60,5 +60,4 @@ public final class JoorHelper {
     public static <T> Optional<T> optionalExchangePropertyAs(Exchange exchange, String name, Class<T> type) {
         return Optional.ofNullable(exchange.getProperty(name, type));
     }
-
 }

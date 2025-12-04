@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
 
 import java.util.LinkedHashMap;
@@ -70,7 +71,8 @@ public class ChildEip {
 
         if (value instanceof Map) {
             try {
-                String childJson = objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(value);
+                String childJson =
+                        objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(value);
                 EipAttribute eipAttribute = objectMapper().readValue(childJson, EipAttribute.class);
                 eipAttributeMap.put(key, eipAttribute);
             } catch (JsonProcessingException e) {
@@ -84,9 +86,6 @@ public class ChildEip {
     @Override
     public String toString() {
 
-        return "ChildEip{" +
-               "id='" + id + '\'' +
-               ", eipAttributes=" + eipAttributeMap +
-               '}';
+        return "ChildEip{" + "id='" + id + '\'' + ", eipAttributes=" + eipAttributeMap + '}';
     }
 }

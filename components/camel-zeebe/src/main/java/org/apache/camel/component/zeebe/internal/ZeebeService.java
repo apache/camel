@@ -142,8 +142,8 @@ public class ZeebeService {
 
         try {
             GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
-            GatewayOuterClass.CancelProcessInstanceResponse cancelProcessInstanceResponse
-                    = stub.cancelProcessInstance(GatewayOuterClass.CancelProcessInstanceRequest.newBuilder()
+            GatewayOuterClass.CancelProcessInstanceResponse cancelProcessInstanceResponse =
+                    stub.cancelProcessInstance(GatewayOuterClass.CancelProcessInstanceRequest.newBuilder()
                             .setProcessInstanceKey(processMessage.getProcessInstanceKey())
                             .build());
 
@@ -170,8 +170,8 @@ public class ZeebeService {
                 resultMessage.setErrorMessage("Correlation Key is missing!");
                 return resultMessage;
             }
-            GatewayOuterClass.PublishMessageRequest.Builder builder = GatewayOuterClass.PublishMessageRequest.newBuilder()
-                    .setCorrelationKey(message.getCorrelationKey());
+            GatewayOuterClass.PublishMessageRequest.Builder builder =
+                    GatewayOuterClass.PublishMessageRequest.newBuilder().setCorrelationKey(message.getCorrelationKey());
             if (message.getTimeToLive() >= 0) {
                 builder = builder.setTimeToLive(message.getTimeToLive());
             }
@@ -205,8 +205,8 @@ public class ZeebeService {
 
         try {
             GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
-            GatewayOuterClass.CompleteJobRequest.Builder builder = GatewayOuterClass.CompleteJobRequest.newBuilder()
-                    .setJobKey(message.getJobKey());
+            GatewayOuterClass.CompleteJobRequest.Builder builder =
+                    GatewayOuterClass.CompleteJobRequest.newBuilder().setJobKey(message.getJobKey());
             if (!message.getVariables().isEmpty()) {
                 builder = builder.setVariables(objectMapper.writeValueAsString(message.getVariables()));
             }
@@ -233,8 +233,8 @@ public class ZeebeService {
 
         try {
             GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
-            GatewayOuterClass.FailJobRequest.Builder builder = GatewayOuterClass.FailJobRequest.newBuilder()
-                    .setJobKey(message.getJobKey());
+            GatewayOuterClass.FailJobRequest.Builder builder =
+                    GatewayOuterClass.FailJobRequest.newBuilder().setJobKey(message.getJobKey());
             builder = builder.setRetries(message.getRetries());
             builder = builder.setErrorMessage(message.getFailMessage());
             GatewayOuterClass.FailJobRequest request = builder.build();
@@ -256,8 +256,8 @@ public class ZeebeService {
 
         try {
             GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
-            GatewayOuterClass.UpdateJobRetriesRequest.Builder builder = GatewayOuterClass.UpdateJobRetriesRequest.newBuilder()
-                    .setJobKey(message.getJobKey());
+            GatewayOuterClass.UpdateJobRetriesRequest.Builder builder =
+                    GatewayOuterClass.UpdateJobRetriesRequest.newBuilder().setJobKey(message.getJobKey());
             builder = builder.setRetries(message.getRetries());
             GatewayOuterClass.UpdateJobRetriesRequest request = builder.build();
             GatewayOuterClass.UpdateJobRetriesResponse updateJobRetriesResponse = stub.updateJobRetries(request);
@@ -278,8 +278,8 @@ public class ZeebeService {
 
         try {
             GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
-            GatewayOuterClass.ThrowErrorRequest.Builder builder = GatewayOuterClass.ThrowErrorRequest.newBuilder()
-                    .setJobKey(message.getJobKey());
+            GatewayOuterClass.ThrowErrorRequest.Builder builder =
+                    GatewayOuterClass.ThrowErrorRequest.newBuilder().setJobKey(message.getJobKey());
             builder = builder.setErrorMessage(message.getErrorMessage());
             builder = builder.setErrorCode(message.getErrorCode());
             GatewayOuterClass.ThrowErrorRequest request = builder.build();
@@ -305,17 +305,17 @@ public class ZeebeService {
                     .setName(message.getName())
                     .setContent(ByteString.copyFrom(message.getContent()))
                     .build();
-            GatewayOuterClass.DeployResourceRequest.Builder builder = GatewayOuterClass.DeployResourceRequest.newBuilder()
-                    .addResources(resource);
+            GatewayOuterClass.DeployResourceRequest.Builder builder =
+                    GatewayOuterClass.DeployResourceRequest.newBuilder().addResources(resource);
             GatewayOuterClass.DeployResourceRequest request = builder.build();
             GatewayOuterClass.DeployResourceResponse deploymentResourceResponse = stub.deployResource(request);
 
             int deploymentsCount = deploymentResourceResponse.getDeploymentsCount();
             if (deploymentsCount != 1) {
-                LOG.error(String.format("Cannot deploy resource %s. Incorrect number of deployments returned.",
-                        message.getName()));
-                resultMessage.setErrorMessage(String
-                        .format("Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
+                LOG.error(String.format(
+                        "Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
+                resultMessage.setErrorMessage(String.format(
+                        "Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
                 resultMessage.setErrorCode("UNKNOWN ERROR");
                 resultMessage.setSuccess(false);
                 return resultMessage;
@@ -324,16 +324,19 @@ public class ZeebeService {
             switch (deployment.getMetadataCase()) {
                 case PROCESS:
                     resultMessage = new ProcessDeploymentResponse();
-                    ((ProcessDeploymentResponse) resultMessage).setBpmnProcessId(deployment.getProcess().getBpmnProcessId());
-                    ((ProcessDeploymentResponse) resultMessage).setResourceName(deployment.getProcess().getResourceName());
+                    ((ProcessDeploymentResponse) resultMessage)
+                            .setBpmnProcessId(deployment.getProcess().getBpmnProcessId());
+                    ((ProcessDeploymentResponse) resultMessage)
+                            .setResourceName(deployment.getProcess().getResourceName());
                     ((ProcessDeploymentResponse) resultMessage)
                             .setProcessDefinitionKey(deployment.getProcess().getProcessDefinitionKey());
-                    ((ProcessDeploymentResponse) resultMessage).setVersion(deployment.getProcess().getVersion());
+                    ((ProcessDeploymentResponse) resultMessage)
+                            .setVersion(deployment.getProcess().getVersion());
                     break;
                 default:
                     LOG.error(String.format("Unknown Metadata Case %s.", message.getName()));
-                    resultMessage.setErrorMessage(String
-                            .format("Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
+                    resultMessage.setErrorMessage(String.format(
+                            "Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
                     resultMessage.setErrorCode("UNKNOWN ERROR");
                     resultMessage.setSuccess(false);
                     return resultMessage;
@@ -351,6 +354,11 @@ public class ZeebeService {
     }
 
     public JobWorker registerJobHandler(JobHandler handler, String jobType, int timeout) {
-        return zeebeClient.newWorker().jobType(jobType).handler(handler).timeout(Duration.ofSeconds(timeout)).open();
+        return zeebeClient
+                .newWorker()
+                .jobType(jobType)
+                .handler(handler)
+                .timeout(Duration.ofSeconds(timeout))
+                .open();
     }
 }

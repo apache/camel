@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonapi;
 
 import com.github.jasminb.jsonapi.annotations.Id;
@@ -26,6 +27,7 @@ import com.github.jasminb.jsonapi.annotations.Type;
 public class MyAuthor {
     @Id
     private String authorId;
+
     private String firstName;
     private String lastName;
 
@@ -52,5 +54,4 @@ public class MyAuthor {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
 }

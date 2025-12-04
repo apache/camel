@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
 
 import jakarta.activation.DataHandler;
@@ -27,8 +28,7 @@ public final class AttachmentConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private AttachmentConverter() {
-    }
+    private AttachmentConverter() {}
 
     @Converter
     public static AttachmentMessage toAttachmentMessage(final Message message) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventgrid;
 
 import java.util.Map;
@@ -38,8 +39,7 @@ public class EventGridComponent extends DefaultComponent {
     @Metadata
     private EventGridConfiguration configuration = new EventGridConfiguration();
 
-    public EventGridComponent() {
-    }
+    public EventGridComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -91,7 +91,8 @@ public class EventGridComponent extends DefaultComponent {
                 throw new IllegalArgumentException("Topic endpoint must be specified.");
             }
 
-            if (!isAccessKeySet(configuration) && !isTokenCredentialSet(configuration)
+            if (!isAccessKeySet(configuration)
+                    && !isTokenCredentialSet(configuration)
                     && !isAzureIdentitySet(configuration)) {
                 throw new IllegalArgumentException(
                         "Azure EventGrid AccessKey, AzureKeyCredential, TokenCredential or Azure Identity must be specified.");

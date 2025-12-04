@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.pulsar.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class PulsarServiceFactory {
-    private PulsarServiceFactory() {
-
-    }
+    private PulsarServiceFactory() {}
 
     public static class SingletonPulsarService extends SingletonService<PulsarService> implements PulsarService {
 
@@ -58,9 +57,7 @@ public final class PulsarServiceFactory {
                 .build();
     }
 
-    public static class PulsarLocalContainerService extends PulsarLocalContainerInfraService implements PulsarService {
-    }
+    public static class PulsarLocalContainerService extends PulsarLocalContainerInfraService implements PulsarService {}
 
-    public static class PulsarRemoteService extends PulsarRemoteInfraService implements PulsarService {
-    }
+    public static class PulsarRemoteService extends PulsarRemoteInfraService implements PulsarService {}
 }

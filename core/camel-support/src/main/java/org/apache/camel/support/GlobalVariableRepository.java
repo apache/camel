@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.Map;
@@ -29,5 +30,4 @@ public final class GlobalVariableRepository extends AbstractVariableRepository {
     public String getId() {
         return "global";
     }
-
 }

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class NettyHttpComponentWithConfigurationTest extends CamelTestSupport {
 
@@ -35,8 +36,8 @@ public class NettyHttpComponentWithConfigurationTest extends CamelTestSupport {
         assertSame(cfg, comp.getConfiguration());
 
         NettyHttpEndpoint e1 = (NettyHttpEndpoint) comp.createEndpoint("netty-http://http://localhost:4455");
-        NettyHttpEndpoint e2
-                = (NettyHttpEndpoint) comp.createEndpoint("netty-http://http://localhost:5566?sync=false&needClientAuth=true");
+        NettyHttpEndpoint e2 = (NettyHttpEndpoint)
+                comp.createEndpoint("netty-http://http://localhost:5566?sync=false&needClientAuth=true");
 
         // should not be same
         assertNotSame(e1, e2);
@@ -59,9 +60,13 @@ public class NettyHttpComponentWithConfigurationTest extends CamelTestSupport {
         assertEquals(4096, e1.getConfiguration().getMaxInitialLineLength());
         assertEquals(8192, e1.getConfiguration().getMaxChunkSize());
 
-        assertEquals(e1.getConfiguration().getMaxHeaderSize(), e2.getConfiguration().getMaxHeaderSize());
-        assertEquals(e1.getConfiguration().getMaxInitialLineLength(), e2.getConfiguration().getMaxInitialLineLength());
-        assertEquals(e1.getConfiguration().getMaxChunkSize(), e2.getConfiguration().getMaxChunkSize());
+        assertEquals(
+                e1.getConfiguration().getMaxHeaderSize(), e2.getConfiguration().getMaxHeaderSize());
+        assertEquals(
+                e1.getConfiguration().getMaxInitialLineLength(),
+                e2.getConfiguration().getMaxInitialLineLength());
+        assertEquals(
+                e1.getConfiguration().getMaxChunkSize(), e2.getConfiguration().getMaxChunkSize());
     }
 
     @Test
@@ -77,5 +82,4 @@ public class NettyHttpComponentWithConfigurationTest extends CamelTestSupport {
         assertEquals(2048, e1.getConfiguration().getMaxInitialLineLength());
         assertEquals(4096, e1.getConfiguration().getMaxChunkSize());
     }
-
 }

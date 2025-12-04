@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 import java.util.ArrayList;
@@ -57,19 +58,19 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
         return "wrong";
     }
 
-    //setup wrong algorithm
+    // setup wrong algorithm
     @Override
     protected int getAlgorithm() {
         return -5;
     }
 
-    //setup wrong hash algorithm
+    // setup wrong hash algorithm
     @Override
     protected int getHashAlgorithm() {
         return -5;
     }
 
-    //setup wrong compression algorithm
+    // setup wrong compression algorithm
     @Override
     protected int getCompressionAlgorithm() {
         return -5;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -59,8 +60,12 @@ public class IsMockEndpointsFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("input")).choice().when(bodyAs(String.class).contains("Camel")).to("file:target/messages/camel")
-                        .otherwise().to("file:target/messages/others");
+                from(fileUri("input"))
+                        .choice()
+                        .when(bodyAs(String.class).contains("Camel"))
+                        .to("file:target/messages/camel")
+                        .otherwise()
+                        .to("file:target/messages/others");
             }
         };
     }

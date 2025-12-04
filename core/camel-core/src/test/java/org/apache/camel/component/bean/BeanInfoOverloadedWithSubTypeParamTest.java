@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanInfoOverloadedWithSubTypeParamTest extends ContextTestSupport {
 
@@ -32,16 +33,12 @@ public class BeanInfoOverloadedWithSubTypeParamTest extends ContextTestSupport {
     @SuppressWarnings("Unused")
     static class Bean {
 
-        public void doSomething(RequestB request) {
-        }
+        public void doSomething(RequestB request) {}
 
-        public void doSomething(RequestC request) {
-        }
+        public void doSomething(RequestC request) {}
     }
 
-    static class RequestB {
-    }
+    static class RequestB {}
 
-    static class RequestC extends RequestB {
-    }
+    static class RequestC extends RequestB {}
 }

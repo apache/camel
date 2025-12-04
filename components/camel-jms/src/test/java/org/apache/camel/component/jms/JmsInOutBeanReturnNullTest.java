@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.Serializable;
 
@@ -33,16 +39,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 @Timeout(30)
 public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -69,8 +71,8 @@ public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
 
     @Test
     public void testReturnNullExchange() {
-        Exchange reply
-                = template.request("activemq:queue:JmsInOutBeanReturnNullTest", exchange -> exchange.getIn().setBody("foo"));
+        Exchange reply = template.request("activemq:queue:JmsInOutBeanReturnNullTest", exchange -> exchange.getIn()
+                .setBody("foo"));
         assertNotNull(reply);
         assertNotEquals("foo", reply.getMessage().getBody(), "There shouldn't be an out message");
         Message out = reply.getMessage();
@@ -98,8 +100,7 @@ public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsInOutBeanReturnNullTest")
-                        .bean(JmsInOutBeanReturnNullTest.class, "doSomething");
+                from("activemq:queue:JmsInOutBeanReturnNullTest").bean(JmsInOutBeanReturnNullTest.class, "doSomething");
             }
         };
     }

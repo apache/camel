@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.js;
+
+import static org.graalvm.polyglot.Source.newBuilder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExpressionSupport;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
-
-import static org.graalvm.polyglot.Source.newBuilder;
 
 public class JavaScriptExpression extends ExpressionSupport {
 
@@ -58,7 +59,8 @@ public class JavaScriptExpression extends ExpressionSupport {
             b.putMember("body", exchange.getMessage().getBody());
 
             Source source = newBuilder("js", expressionString, "Unnamed")
-                    .mimeType("application/javascript+module").buildLiteral();
+                    .mimeType("application/javascript+module")
+                    .buildLiteral();
             Value o = cx.eval(source);
             Object answer = o != null ? o.as(Object.class) : null;
             if (type == Object.class) {
@@ -76,5 +78,4 @@ public class JavaScriptExpression extends ExpressionSupport {
     public String toString() {
         return "JavaScript[" + expressionString + "]";
     }
-
 }

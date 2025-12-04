@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileNotFoundException;
 
@@ -26,8 +29,6 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -41,8 +42,11 @@ public class XsltFileNotFoundTest extends TestSupport {
         context.addRoutes(builder);
         RuntimeCamelException exception = assertThrows(RuntimeCamelException.class, context::start);
 
-        assertIsInstanceOf(TransformerException.class, exception.getCause().getCause().getCause());
-        assertIsInstanceOf(FileNotFoundException.class, exception.getCause().getCause().getCause().getCause());
+        assertIsInstanceOf(
+                TransformerException.class, exception.getCause().getCause().getCause());
+        assertIsInstanceOf(
+                FileNotFoundException.class,
+                exception.getCause().getCause().getCause().getCause());
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -52,5 +56,4 @@ public class XsltFileNotFoundTest extends TestSupport {
             }
         };
     }
-
 }

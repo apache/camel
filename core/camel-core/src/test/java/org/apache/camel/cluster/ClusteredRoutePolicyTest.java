@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cluster;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +32,6 @@ import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusteredRoutePolicyTest extends ContextTestSupport {
 
@@ -90,8 +91,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:bar").routeId("bar").routePolicy(policy)
-                        .to("mock:bar");
+                from("seda:bar").routeId("bar").routePolicy(policy).to("mock:bar");
             }
         });
 
@@ -120,8 +120,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:bar").routeId("bar").routePolicy(policy)
-                        .to("mock:bar");
+                from("seda:bar").routeId("bar").routePolicy(policy).to("mock:bar");
             }
         });
 
@@ -146,9 +145,11 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo").routePolicy(policy)
-                        .to("mock:foo");
-                from("seda:baz").autoStartup(false).routeId("baz").routePolicy(policy)
+                from("seda:foo").routeId("foo").routePolicy(policy).to("mock:foo");
+                from("seda:baz")
+                        .autoStartup(false)
+                        .routeId("baz")
+                        .routePolicy(policy)
                         .to("mock:baz");
             }
         };

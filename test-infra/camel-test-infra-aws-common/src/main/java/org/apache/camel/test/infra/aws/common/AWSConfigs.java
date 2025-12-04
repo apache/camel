@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.aws.common;
 
 public final class AWSConfigs {
@@ -23,6 +24,5 @@ public final class AWSConfigs {
     public static final String AMAZON_AWS_HOST = "aws.host";
     public static final String PROTOCOL = "aws.protocol";
 
-    private AWSConfigs() {
-    }
+    private AWSConfigs() {}
 }

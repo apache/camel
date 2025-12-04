@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.query;
 
 import org.apache.camel.*;
@@ -51,7 +52,8 @@ public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint implem
         super.doStart();
         awsTimestreamQueryClient = getConfiguration().getAwsTimestreamQueryClient() != null
                 ? getConfiguration().getAwsTimestreamQueryClient()
-                : Timestream2ClientFactory.getTimestreamClient(getConfiguration()).getTimestreamQueryClient();
+                : Timestream2ClientFactory.getTimestreamClient(getConfiguration())
+                        .getTimestreamQueryClient();
     }
 
     @Override
@@ -85,5 +87,4 @@ public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint implem
     public String getServiceProtocol() {
         return "timestream-query";
     }
-
 }

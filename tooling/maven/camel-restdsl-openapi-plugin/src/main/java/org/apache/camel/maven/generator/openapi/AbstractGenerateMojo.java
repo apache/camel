@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.generator.openapi;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.goal;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,21 +60,11 @@ import org.twdata.maven.mojoexecutor.MojoExecutor;
 import org.yaml.snakeyaml.inspector.TagInspector;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.goal;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
-
 abstract class AbstractGenerateMojo extends AbstractMojo {
 
     // this list should be in priority order
-    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[] {
-            "platform-http", "servlet", "jetty", "undertow", "netty-http", "coap" };
+    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS =
+            new String[] {"platform-http", "servlet", "jetty", "undertow", "netty-http", "coap"};
 
     @Parameter
     String apiContextPath;
@@ -137,47 +138,50 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         final URL outputDirectory;
         try {
-            outputDirectory = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
+            outputDirectory =
+                    new File(project.getBuild().getOutputDirectory()).toURI().toURL();
         } catch (final MalformedURLException e) {
             throw new IllegalStateException(e);
         }
-        final URL[] withOutput = new URL[] { outputDirectory };
+        final URL[] withOutput = new URL[] {outputDirectory};
 
         try (URLClassLoader classLoader = new URLClassLoader(withOutput, contextClassLoader)) {
-            @SuppressWarnings({ "unchecked", "rawtypes" })
+            @SuppressWarnings({"unchecked", "rawtypes"})
             final Class<DestinationGenerator> tmp = (Class) classLoader.loadClass(destinationGenerator);
 
             if (!DestinationGenerator.class.isAssignableFrom(tmp)) {
-                throw new MojoExecutionException(
-                        "The given destinationGenerator class (" + destinationGenerator
-                                                 + ") does not implement " + DestinationGenerator.class.getName()
-                                                 + " interface.");
+                throw new MojoExecutionException("The given destinationGenerator class (" + destinationGenerator
+                        + ") does not implement " + DestinationGenerator.class.getName()
+                        + " interface.");
             }
 
             destinationGeneratorClass = tmp;
         } catch (final ClassNotFoundException | IOException e) {
             throw new MojoExecutionException(
                     "The given destinationGenerator class (" + destinationGenerator
-                                             + ") cannot be loaded, make sure that it is present in the COMPILE classpath scope of the project",
+                            + ") cannot be loaded, make sure that it is present in the COMPILE classpath scope of the project",
                     e);
         }
 
         final DestinationGenerator destinationGeneratorObject;
         try {
-            destinationGeneratorObject = destinationGeneratorClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            destinationGeneratorObject =
+                    destinationGeneratorClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException
+                | IllegalAccessException
+                | NoSuchMethodException
+                | InvocationTargetException e) {
             throw new MojoExecutionException(
                     "The given destinationGenerator class (" + destinationGenerator
-                                             + ") cannot be instantiated, make sure that it is declared as public and that all dependencies are present on the COMPILE classpath scope of the project",
+                            + ") cannot be instantiated, make sure that it is declared as public and that all dependencies are present on the COMPILE classpath scope of the project",
                     e);
         }
         return destinationGeneratorObject;
     }
 
     void generateDto(final String language) throws MojoExecutionException {
-        getLog().info(
-                "Generating DTO classes using io.swagger.codegen.v3:swagger-codegen-maven-plugin:"
-                      + swaggerCodegenMavenPluginVersion);
+        getLog().info("Generating DTO classes using io.swagger.codegen.v3:swagger-codegen-maven-plugin:"
+                + swaggerCodegenMavenPluginVersion);
 
         // swagger-codegen-maven-plugin documentation and its supported options
         // https://github.com/swagger-api/swagger-codegen/tree/3.0.0/modules/swagger-codegen-maven-plugin
@@ -213,7 +217,8 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
          */
         configOptions.put("hideGenerationTimestamp", "true");
         elements.add(new MojoExecutor.Element(
-                "configOptions", configOptions.entrySet().stream()
+                "configOptions",
+                configOptions.entrySet().stream()
                         .map(e -> new MojoExecutor.Element(e.getKey(), e.getValue()))
                         .toArray(MojoExecutor.Element[]::new)));
 
@@ -223,18 +228,16 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
                         artifactId("swagger-codegen-maven-plugin"),
                         version(swaggerCodegenMavenPluginVersion)),
                 goal("generate"),
-                configuration(
-                        elements.toArray(new MojoExecutor.Element[0])),
-                executionEnvironment(
-                        mavenProject,
-                        mavenSession,
-                        pluginManager));
+                configuration(elements.toArray(new MojoExecutor.Element[0])),
+                executionEnvironment(mavenProject, mavenSession, pluginManager));
     }
 
     protected String detectCamelVersionFromClasspath() {
-        return mavenProject.getDependencies().stream().filter(
-                d -> "org.apache.camel".equals(d.getGroupId()) && ObjectHelper.isNotEmpty(d.getVersion()))
-                .findFirst().map(Dependency::getVersion).orElse(null);
+        return mavenProject.getDependencies().stream()
+                .filter(d -> "org.apache.camel".equals(d.getGroupId()) && ObjectHelper.isNotEmpty(d.getVersion()))
+                .findFirst()
+                .map(Dependency::getVersion)
+                .orElse(null);
     }
 
     protected String detectRestComponentFromClasspath() {
@@ -242,7 +245,8 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             if ("org.apache.camel".equals(dep.getGroupId()) || "org.apache.camel.springboot".equals(dep.getGroupId())) {
                 final String aid = dep.getArtifactId();
                 final Optional<String> comp = Arrays.stream(DEFAULT_REST_CONSUMER_COMPONENTS)
-                        .filter(c -> aid.startsWith("camel-" + c)).findFirst();
+                        .filter(c -> aid.startsWith("camel-" + c))
+                        .findFirst();
                 if (comp.isPresent()) {
                     return comp.get();
                 }
@@ -320,8 +324,8 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             }
 
             String dep = "\n\t\t<dependency>"
-                         + "\n\t\t\t<groupId>" + gid + "</groupId>"
-                         + "\n\t\t\t<artifactId>" + aid + "</artifactId>";
+                    + "\n\t\t\t<groupId>" + gid + "</groupId>"
+                    + "\n\t\t\t<artifactId>" + aid + "</artifactId>";
             String ver = detectCamelVersionFromClasspath();
             if (ver != null) {
                 dep += "\n\t\t\t<version>" + ver + "</version>";
@@ -350,7 +354,8 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             for (String part : parts) {
                 String[] kvPair = part.split(":");
                 if (kvPair.length == 2) {
-                    auths.put(URLDecoder.decode(kvPair[0], StandardCharsets.UTF_8),
+                    auths.put(
+                            URLDecoder.decode(kvPair[0], StandardCharsets.UTF_8),
                             URLDecoder.decode(kvPair[1], StandardCharsets.UTF_8));
                 }
             }

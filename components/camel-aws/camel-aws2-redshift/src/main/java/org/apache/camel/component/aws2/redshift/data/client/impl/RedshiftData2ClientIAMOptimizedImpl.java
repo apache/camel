@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data.client.impl;
 
 import java.net.URI;
@@ -45,7 +46,8 @@ public class RedshiftData2ClientIAMOptimizedImpl implements RedshiftData2Interna
      * Constructor that uses the config file.
      */
     public RedshiftData2ClientIAMOptimizedImpl(RedshiftData2Configuration configuration) {
-        LOG.trace("Creating an AWS RedshiftData client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
+        LOG.trace(
+                "Creating an AWS RedshiftData client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
         this.configuration = configuration;
     }
 
@@ -60,10 +62,11 @@ public class RedshiftData2ClientIAMOptimizedImpl implements RedshiftData2Interna
         RedshiftDataClientBuilder clientBuilder = RedshiftDataClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost())
+                && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
+                    + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
@@ -75,12 +78,10 @@ public class RedshiftData2ClientIAMOptimizedImpl implements RedshiftData2Interna
             clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
         }
         if (configuration.isTrustAllCertificates()) {
-            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
-                    .builder()
-                    .put(
-                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE)
-                    .build());
+            SdkHttpClient ahc = ApacheHttpClient.builder()
+                    .buildWithDefaults(AttributeMap.builder()
+                            .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE)
+                            .build());
             clientBuilder.httpClient(ahc);
         }
         client = clientBuilder.build();

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +32,6 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
 
@@ -94,7 +95,5 @@ public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
 
         @Produce("mock:result")
         FooService hello;
-
     }
-
 }

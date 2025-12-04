@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.apache.camel.openapi.BeanConfig.DEFAULT_MEDIA_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -32,15 +38,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.openapi.BeanConfig.DEFAULT_MEDIA_TYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestOpenApiDefaultProducesConsumesTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final String[] OPENAPI_VERSIONS = { "3.1", "3.0" };
+    private static final String[] OPENAPI_VERSIONS = {"3.1", "3.0"};
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @ParameterizedTest
@@ -68,8 +69,8 @@ public class RestOpenApiDefaultProducesConsumesTest {
         });
 
         RestConfiguration restConfiguration = context.getRestConfiguration();
-        RestOpenApiProcessor processor
-                = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        RestOpenApiProcessor processor =
+                new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
         processor.setCamelContext(context);
         processor.start();
         Exchange exchange = new DefaultExchange(context);
@@ -94,18 +95,15 @@ public class RestOpenApiDefaultProducesConsumesTest {
                         .apiProperty("openapi.version", openApiVersion)
                         .apiProperty("api.default.produces", "application/xml");
 
-                rest("/api")
-                        .post("/test")
-                        .outType(String.class)
-                        .to("direct:api");
+                rest("/api").post("/test").outType(String.class).to("direct:api");
 
                 from("direct:api").setBody().constant("Hello World");
             }
         });
 
         RestConfiguration restConfiguration = context.getRestConfiguration();
-        RestOpenApiProcessor processor
-                = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        RestOpenApiProcessor processor =
+                new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
         processor.setCamelContext(context);
         processor.start();
         Exchange exchange = new DefaultExchange(context);
@@ -143,8 +141,8 @@ public class RestOpenApiDefaultProducesConsumesTest {
         });
 
         RestConfiguration restConfiguration = context.getRestConfiguration();
-        RestOpenApiProcessor processor
-                = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        RestOpenApiProcessor processor =
+                new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
         processor.setCamelContext(context);
         processor.start();
         Exchange exchange = new DefaultExchange(context);
@@ -193,8 +191,8 @@ public class RestOpenApiDefaultProducesConsumesTest {
         });
 
         RestConfiguration restConfiguration = context.getRestConfiguration();
-        RestOpenApiProcessor processor
-                = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        RestOpenApiProcessor processor =
+                new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
         processor.setCamelContext(context);
         processor.start();
         Exchange exchange = new DefaultExchange(context);
@@ -243,8 +241,8 @@ public class RestOpenApiDefaultProducesConsumesTest {
         });
 
         RestConfiguration restConfiguration = context.getRestConfiguration();
-        RestOpenApiProcessor processor
-                = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        RestOpenApiProcessor processor =
+                new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
         processor.setCamelContext(context);
         processor.start();
         Exchange exchange = new DefaultExchange(context);

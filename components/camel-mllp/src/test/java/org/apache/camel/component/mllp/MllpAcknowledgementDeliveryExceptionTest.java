@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mllp;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mllp;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the class.
@@ -49,7 +50,8 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
      */
     @Test
     public void testConstructorTwo() {
-        instance = new MllpAcknowledgementDeliveryException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
+        instance = new MllpAcknowledgementDeliveryException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));

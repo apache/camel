@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.call;
 
 import java.util.HashMap;
@@ -56,8 +57,8 @@ public class MockCamelNamespace extends ManagedNamespaceWithLifecycle {
 
     private final Map<String, CamelServerItem> itemMap = new HashMap<>();
 
-    public MockCamelNamespace(final OpcUaServer server,
-                              Function<UaMethodNode, AbstractMethodInvocationHandler> callMethodCreator) {
+    public MockCamelNamespace(
+            final OpcUaServer server, Function<UaMethodNode, AbstractMethodInvocationHandler> callMethodCreator) {
         super(server, URI);
 
         this.subscriptionModel = new SubscriptionModel(server, this);
@@ -91,11 +92,8 @@ public class MockCamelNamespace extends ManagedNamespaceWithLifecycle {
 
         // register reference to structure
 
-        folder.addReference(new Reference(
-                folder.getNodeId(),
-                Identifiers.Organizes,
-                Identifiers.ObjectsFolder.expanded(),
-                false));
+        folder.addReference(
+                new Reference(folder.getNodeId(), Identifiers.Organizes, Identifiers.ObjectsFolder.expanded(), false));
 
         addCallMethod(folder);
     }
@@ -105,8 +103,7 @@ public class MockCamelNamespace extends ManagedNamespaceWithLifecycle {
                 .setNodeId(new NodeId(getNamespaceIndex(), CALL_ID))
                 .setBrowseName(newQualifiedName("call"))
                 .setDisplayName(new LocalizedText(null, "call"))
-                .setDescription(
-                        LocalizedText.english("Returns the \"out-\"+entry parameter"))
+                .setDescription(LocalizedText.english("Returns the \"out-\"+entry parameter"))
                 .build();
 
         AbstractMethodInvocationHandler callMethod = callMethodCreator.apply(methodNode);

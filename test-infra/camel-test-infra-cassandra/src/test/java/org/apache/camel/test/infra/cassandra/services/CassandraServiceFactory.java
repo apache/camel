@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.cassandra.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class CassandraServiceFactory {
-    private CassandraServiceFactory() {
-
-    }
+    private CassandraServiceFactory() {}
 
     public static SimpleTestServiceBuilder<CassandraService> builder() {
         return new SimpleTestServiceBuilder<>("cassandra");
@@ -29,9 +28,7 @@ public final class CassandraServiceFactory {
 
     public static CassandraService createLocalService(String initScript) {
         CassandraLocalContainerService service = new CassandraLocalContainerService();
-        service.getContainer()
-                .withInitScript(initScript)
-                .withNetworkAliases("cassandra");
+        service.getContainer().withInitScript(initScript).withNetworkAliases("cassandra");
 
         return service;
     }
@@ -43,6 +40,5 @@ public final class CassandraServiceFactory {
                 .build();
     }
 
-    public static class RemoteCassandraService extends RemoteCassandraInfraService implements CassandraService {
-    }
+    public static class RemoteCassandraService extends RemoteCassandraInfraService implements CassandraService {}
 }

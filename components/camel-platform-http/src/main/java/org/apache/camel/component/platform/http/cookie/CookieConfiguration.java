@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.cookie;
 
 import org.apache.camel.spi.Configurer;
@@ -31,24 +32,34 @@ public class CookieConfiguration {
     public static final boolean DEFAULT_SECURE_FLAG = false;
     public static final boolean DEFAULT_HTTP_ONLY_FLAG = false;
     public static final CookieSameSite DEFAULT_SAME_SITE = CookieSameSite.LAX;
+
     @UriParam(defaultValue = "/")
     private String cookiePath = DEFAULT_PATH;
+
     @UriParam
     private String cookieDomain;
+
     @UriParam
     private Long cookieMaxAge;
+
     @UriParam(defaultValue = "false")
     private boolean cookieSecure = DEFAULT_SECURE_FLAG;
+
     @UriParam(defaultValue = "false")
     private boolean cookieHttpOnly = DEFAULT_HTTP_ONLY_FLAG;
+
     @UriParam(defaultValue = "Lax")
     private CookieSameSite cookieSameSite = DEFAULT_SAME_SITE;
 
-    public CookieConfiguration() {
-    }
+    public CookieConfiguration() {}
 
-    public CookieConfiguration(String cookiePath, String cookieDomain, Long cookieMaxAge,
-                               boolean cookieSecure, boolean cookieHttpOnly, CookieSameSite cookieSameSite) {
+    public CookieConfiguration(
+            String cookiePath,
+            String cookieDomain,
+            Long cookieMaxAge,
+            boolean cookieSecure,
+            boolean cookieHttpOnly,
+            CookieSameSite cookieSameSite) {
         this.cookiePath = cookiePath;
         this.cookieDomain = cookieDomain;
         this.cookieMaxAge = cookieMaxAge;
@@ -131,9 +142,7 @@ public class CookieConfiguration {
         private boolean httpOnly = DEFAULT_HTTP_ONLY_FLAG;
         private CookieSameSite sameSite = DEFAULT_SAME_SITE;
 
-        public Builder() {
-
-        }
+        public Builder() {}
 
         /**
          * Sets the URL path that must exist in the requested URL in order to send the Cookie.

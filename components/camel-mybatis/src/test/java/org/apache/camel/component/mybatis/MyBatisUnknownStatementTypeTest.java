@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mybatis;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mybatis;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class MyBatisUnknownStatementTypeTest extends CamelTestSupport {
 
@@ -39,10 +40,10 @@ public class MyBatisUnknownStatementTypeTest extends CamelTestSupport {
                 from("direct:start").to("mybatis:selectAllAccounts");
             }
         });
-        Exception e = assertThrows(Exception.class,
-                () -> context.start());
+        Exception e = assertThrows(Exception.class, () -> context.start());
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-        assertEquals("statementType must be specified on: mybatis://selectAllAccounts", e.getCause().getCause().getMessage());
+        assertEquals(
+                "statementType must be specified on: mybatis://selectAllAccounts",
+                e.getCause().getCause().getMessage());
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExchangeBuilderTest {
     private static CamelContext context;
@@ -56,8 +57,11 @@ public class ExchangeBuilderTest {
     @Test
     public void testBuildAnExchangeWithBodyHeaderAndPatternInOnly() {
 
-        Exchange exchange = ExchangeBuilder.anExchange(context).withBody(BODY).withHeader(KEY, VALUE)
-                .withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOnly)
+        Exchange exchange = ExchangeBuilder.anExchange(context)
+                .withBody(BODY)
+                .withHeader(KEY, VALUE)
+                .withProperty(PROPERTY_KEY, PROPERTY_VALUE)
+                .withPattern(ExchangePattern.InOnly)
                 .build();
 
         assertEquals(BODY, exchange.getMessage().getBody());
@@ -69,8 +73,11 @@ public class ExchangeBuilderTest {
     @Test
     public void testBuildAnExchangeWithBodyHeaderAndPatternInOut() {
 
-        Exchange exchange = ExchangeBuilder.anExchange(context).withBody(BODY).withHeader(KEY, VALUE)
-                .withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOut)
+        Exchange exchange = ExchangeBuilder.anExchange(context)
+                .withBody(BODY)
+                .withHeader(KEY, VALUE)
+                .withProperty(PROPERTY_KEY, PROPERTY_VALUE)
+                .withPattern(ExchangePattern.InOut)
                 .build();
 
         assertEquals(BODY, exchange.getIn().getBody());
@@ -78,5 +85,4 @@ public class ExchangeBuilderTest {
         assertEquals(ExchangePattern.InOut, exchange.getPattern());
         assertEquals(PROPERTY_VALUE, exchange.getProperty(PROPERTY_KEY));
     }
-
 }

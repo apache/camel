@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.qdrant.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -27,9 +28,10 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.qdrant.QdrantContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = QdrantInfraService.class,
-              description = "Vector Database and Vector Search Engine",
-              serviceAlias = { "qdrant" })
+@InfraService(
+        service = QdrantInfraService.class,
+        description = "Vector Database and Vector Search Engine",
+        serviceAlias = {"qdrant"})
 public class QdrantLocalContainerInfraService implements QdrantInfraService, ContainerService<QdrantContainer> {
     public static final int HTTP_PORT = 6333;
     public static final int GRPC_PORT = 6334;
@@ -39,7 +41,8 @@ public class QdrantLocalContainerInfraService implements QdrantInfraService, Con
     private final QdrantContainer container;
 
     public QdrantLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(QdrantLocalContainerInfraService.class, QdrantProperties.QDRANT_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                QdrantLocalContainerInfraService.class, QdrantProperties.QDRANT_CONTAINER));
     }
 
     public QdrantLocalContainerInfraService(String imageName) {
@@ -57,8 +60,7 @@ public class QdrantLocalContainerInfraService implements QdrantInfraService, Con
     private QdrantContainer initContainer(String imageName, boolean fixedPort) {
         class TestInfraQdrantContainer extends QdrantContainer {
             public TestInfraQdrantContainer() {
-                super(DockerImageName.parse(imageName)
-                        .asCompatibleSubstituteFor("qdrant/qdrant"));
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("qdrant/qdrant"));
 
                 if (fixedPort) {
                     addFixedExposedPort(6333, 6333);

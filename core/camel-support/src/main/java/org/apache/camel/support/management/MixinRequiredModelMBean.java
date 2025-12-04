@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.management;
 
 import javax.management.Descriptor;
@@ -51,8 +52,9 @@ public class MixinRequiredModelMBean extends RequiredModelMBean {
         // must have default no-arg constructor
     }
 
-    public MixinRequiredModelMBean(ModelMBeanInfo mbi, boolean mask, ModelMBeanInfo defaultMbi,
-                                   DynamicMBean defaultObject) throws MBeanException, RuntimeOperationsException {
+    public MixinRequiredModelMBean(
+            ModelMBeanInfo mbi, boolean mask, ModelMBeanInfo defaultMbi, DynamicMBean defaultObject)
+            throws MBeanException, RuntimeOperationsException {
         super(mbi);
         this.mask = mask;
         this.defaultMbi = defaultMbi;
@@ -111,8 +113,12 @@ public class MixinRequiredModelMBean extends RequiredModelMBean {
         // use sanitize uri which will mask sensitive information
         String answer = URISupport.sanitizeUri(value);
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Masking JMX operation: {}.{} value: {} -> {}",
-                    getMBeanInfo().getClassName(), opName, value, answer);
+            LOG.trace(
+                    "Masking JMX operation: {}.{} value: {} -> {}",
+                    getMBeanInfo().getClassName(),
+                    opName,
+                    value,
+                    answer);
         }
         return answer;
     }

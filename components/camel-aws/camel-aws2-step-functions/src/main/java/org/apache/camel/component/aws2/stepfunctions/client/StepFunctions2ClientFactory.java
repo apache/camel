@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.stepfunctions.client;
 
 import org.apache.camel.component.aws2.stepfunctions.StepFunctions2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2C
  */
 public final class StepFunctions2ClientFactory {
 
-    private StepFunctions2ClientFactory() {
-    }
+    private StepFunctions2ClientFactory() {}
 
     /**
      * Return the correct AWS StepFunctions client (based on remote vs local).

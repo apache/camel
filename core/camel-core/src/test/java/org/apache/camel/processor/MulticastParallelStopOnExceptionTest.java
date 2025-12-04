@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
     private ExecutorService service;
@@ -91,22 +92,29 @@ public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
             @Override
             public void configure() {
 
-                from("direct:start").multicast().parallelProcessing().stopOnException().executorService(service)
-                        .to("direct:foo", "direct:bar", "direct:baz").end()
+                from("direct:start")
+                        .multicast()
+                        .parallelProcessing()
+                        .stopOnException()
+                        .executorService(service)
+                        .to("direct:foo", "direct:bar", "direct:baz")
+                        .end()
                         .to("mock:result");
 
                 // need a little delay to slow these okays down so we better can
                 // test stop when parallel
                 from("direct:foo").delay(1000).to("mock:foo");
 
-                from("direct:bar").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kaboom".equals(body)) {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    }
-                }).to("mock:bar");
+                from("direct:bar")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kaboom".equals(body)) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
+                            }
+                        })
+                        .to("mock:bar");
 
                 // need a little delay to slow these okays down so we better can
                 // test stop when parallel

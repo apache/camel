@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import org.apache.camel.support.HeaderSelectorProducer;
@@ -23,7 +24,10 @@ public abstract class AbstractServiceNowProducer extends HeaderSelectorProducer 
     private final ServiceNowEndpoint endpoint;
 
     public AbstractServiceNowProducer(ServiceNowEndpoint endpoint, ServiceNowRelease release) {
-        super(endpoint, ServiceNowConstants.RESOURCE, endpoint.getConfiguration().getResource());
+        super(
+                endpoint,
+                ServiceNowConstants.RESOURCE,
+                endpoint.getConfiguration().getResource());
 
         this.release = release;
         this.endpoint = endpoint;

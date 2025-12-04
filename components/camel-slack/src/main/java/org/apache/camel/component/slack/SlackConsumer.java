@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.slack;
 
 import java.io.IOException;
@@ -77,10 +78,10 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         // Maximum limit is 1000. Slack recommends no more than 200 results at a time.
         // https://api.slack.com/methods/conversations.history
         // We set the limit to 1 the first call to set the timestamp of the last message of the history
-        ConversationsHistoryResponse response = slack.methods(slackEndpoint.getToken()).conversationsHistory(req -> req
-                .channel(channelId)
-                .oldest(timestamp)
-                .limit(timestamp != null ? Integer.parseInt(slackEndpoint.getMaxResults()) : 1));
+        ConversationsHistoryResponse response = slack.methods(slackEndpoint.getToken())
+                .conversationsHistory(req -> req.channel(channelId)
+                        .oldest(timestamp)
+                        .limit(timestamp != null ? Integer.parseInt(slackEndpoint.getMaxResults()) : 1));
 
         if (!response.isOk()) {
             throw new RuntimeCamelException("API request conversations.history to Slack failed: " + response);
@@ -146,10 +147,10 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         try {
             // Maximum limit is 1000. Slack recommends no more than 200 results at a time.
             // https://api.slack.com/methods/conversations.list
-            ConversationsListResponse response = slack.methods(slackEndpoint.getToken()).conversationsList(req -> req
-                    .types(Collections.singletonList(slackEndpoint.getConversationType()))
-                    .cursor(cursor)
-                    .limit(CONVERSATIONS_LIST_LIMIT));
+            ConversationsListResponse response = slack.methods(slackEndpoint.getToken())
+                    .conversationsList(req -> req.types(Collections.singletonList(slackEndpoint.getConversationType()))
+                            .cursor(cursor)
+                            .limit(CONVERSATIONS_LIST_LIMIT));
 
             if (!response.isOk()) {
                 throw new RuntimeCamelException("API request conversations.list to Slack failed: " + response);
@@ -158,11 +159,13 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             return response.getChannels().stream()
                     .filter(it -> it.getName().equals(channel))
                     .map(Conversation::getId)
-                    .findFirst().orElseGet(() -> {
+                    .findFirst()
+                    .orElseGet(() -> {
                         if (ObjectHelper.isEmpty(response.getResponseMetadata().getNextCursor())) {
                             throw new RuntimeCamelException(String.format("Channel %s not found", channel));
                         }
-                        return getChannelId(channel, response.getResponseMetadata().getNextCursor());
+                        return getChannelId(
+                                channel, response.getResponseMetadata().getNextCursor());
                     });
         } catch (IOException | SlackApiException e) {
             throw new RuntimeCamelException("API request conversations.list to Slack failed", e);

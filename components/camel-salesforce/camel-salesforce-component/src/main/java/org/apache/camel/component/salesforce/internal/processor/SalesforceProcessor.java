@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.util.Arrays;
@@ -51,7 +52,9 @@ public interface SalesforceProcessor extends Service {
                     answer.put(headerName, Arrays.asList((String[]) headerValue));
                 } else if (headerValue instanceof Collection) {
                     Collection<?> collection = (Collection<?>) headerValue;
-                    answer.put(headerName, collection.stream().map(String.class::cast).collect(Collectors.toList()));
+                    answer.put(
+                            headerName,
+                            collection.stream().map(String.class::cast).collect(Collectors.toList()));
                 } else {
                     answer.put(headerName, Collections.singletonList(String.valueOf(headerValue)));
                 }

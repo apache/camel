@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.app;
 
 import java.util.List;
@@ -46,5 +47,4 @@ public class BeanConstructorsDefinition {
     public void setConstructors(List<BeanConstructorDefinition> constructors) {
         this.constructors = constructors;
     }
-
 }

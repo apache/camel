@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +37,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ListObjectsMaxTest extends CamelTestSupport {
 
     TestConfiguration testConfiguration = new TestConfiguration();
@@ -44,9 +45,8 @@ public class ListObjectsMaxTest extends CamelTestSupport {
     ObsClient mockClient = Mockito.mock(ObsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -54,11 +54,10 @@ public class ListObjectsMaxTest extends CamelTestSupport {
             public void configure() {
                 from("direct:list_objects")
                         .setProperty("CamelHwCloudObsBucketName", constant(testConfiguration.getProperty("bucketName")))
-                        .to("hwcloud-obs:listObjects?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&obsClient=#obsClient")
+                        .to("hwcloud-obs:listObjects?" + "serviceKeys=#serviceKeys"
+                                + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&obsClient=#obsClient")
                         .log("List objects successful")
                         .to("mock:list_objects_result");
             }
@@ -85,9 +84,11 @@ public class ListObjectsMaxTest extends CamelTestSupport {
         }
 
         ObjectListing listing1 = new ObjectListing(full1, null, null, true, null, null, 1000, null, "Object 999", null);
-        ObjectListing listing2 = new ObjectListing(full2, null, null, true, null, null, 1000, null, "Object 1999", null);
+        ObjectListing listing2 =
+                new ObjectListing(full2, null, null, true, null, null, 1000, null, "Object 1999", null);
         ObjectListing listing3 = new ObjectListing(half, null, null, false, null, null, 1000, null, null, null);
-        Mockito.when(mockClient.listObjects(Mockito.any(ListObjectsRequest.class))).thenReturn(listing1, listing2, listing3);
+        Mockito.when(mockClient.listObjects(Mockito.any(ListObjectsRequest.class)))
+                .thenReturn(listing1, listing2, listing3);
 
         MockEndpoint mock = getMockEndpoint("mock:list_objects_result");
         mock.expectedMinimumMessageCount(1);
@@ -96,12 +97,12 @@ public class ListObjectsMaxTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        List<ObsObject> result = new ObjectMapper().readValue(responseExchange.getIn().getBody(String.class),
-                new TypeReference<List<ObsObject>>() {
-                });
+        List<ObsObject> result = new ObjectMapper()
+                .readValue(responseExchange.getIn().getBody(String.class), new TypeReference<List<ObsObject>>() {});
         assertEquals(len, result.size());
         for (int i = 0; i < len; i++) {
-            assertEquals(testConfiguration.getProperty("bucketName"), result.get(i).getBucketName());
+            assertEquals(
+                    testConfiguration.getProperty("bucketName"), result.get(i).getBucketName());
             assertEquals("Object " + i, result.get(i).getObjectKey());
         }
     }

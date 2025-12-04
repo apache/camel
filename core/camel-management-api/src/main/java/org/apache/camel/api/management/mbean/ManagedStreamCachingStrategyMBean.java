@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -47,10 +48,12 @@ public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Cipher used if writing with encryption")
     String getSpoolCipher();
 
-    @ManagedAttribute(description = "Threshold in bytes when overflow and spooling to disk instead of keeping in memory")
+    @ManagedAttribute(
+            description = "Threshold in bytes when overflow and spooling to disk instead of keeping in memory")
     void setSpoolThreshold(long threshold);
 
-    @ManagedAttribute(description = "Threshold in bytes when overflow and spooling to disk instead of keeping in memory")
+    @ManagedAttribute(
+            description = "Threshold in bytes when overflow and spooling to disk instead of keeping in memory")
     long getSpoolThreshold();
 
     @ManagedAttribute(description = "Percentage (1-99) of used heap memory threshold to activate spooling to disk")
@@ -86,7 +89,8 @@ public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Number of in-memory StreamCache created")
     long getCacheMemoryCounter();
 
-    @ManagedAttribute(description = "Total accumulated number of bytes which has been stream cached for in-memory StreamCache")
+    @ManagedAttribute(
+            description = "Total accumulated number of bytes which has been stream cached for in-memory StreamCache")
     long getCacheMemorySize();
 
     @ManagedAttribute(description = "Average number of bytes per cached stream for in-memory stream caches.")
@@ -95,10 +99,12 @@ public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Number of spooled (not in-memory) StreamCache created")
     long getCacheSpoolCounter();
 
-    @ManagedAttribute(description = "Total accumulated number of bytes which has been stream cached for spooled StreamCache")
+    @ManagedAttribute(
+            description = "Total accumulated number of bytes which has been stream cached for spooled StreamCache")
     long getCacheSpoolSize();
 
-    @ManagedAttribute(description = "Average number of bytes per cached stream for spooled (not in-memory) stream caches.")
+    @ManagedAttribute(
+            description = "Average number of bytes per cached stream for spooled (not in-memory) stream caches.")
     long getCacheSpoolAverageSize();
 
     @ManagedAttribute(description = "Whether utilization statistics is enabled")
@@ -109,5 +115,4 @@ public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
 
     @ManagedOperation(description = "Reset the utilization statistics")
     void resetStatistics();
-
 }

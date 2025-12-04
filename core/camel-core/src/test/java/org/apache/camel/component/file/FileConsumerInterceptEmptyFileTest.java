@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -51,13 +52,16 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                interceptFrom().onWhen(simple("${file:length} == 0")).to("mock:skip").stop();
+                interceptFrom()
+                        .onWhen(simple("${file:length} == 0"))
+                        .to("mock:skip")
+                        .stop();
 
                 from(fileUri("?initialDelay=10&delay=10"))
-                        .convertBodyTo(String.class).to("log:test")
+                        .convertBodyTo(String.class)
+                        .to("log:test")
                         .to("mock:result");
             }
         };
     }
-
 }

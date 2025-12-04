@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -81,22 +82,33 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
             @Override
             public void configure() {
                 // only skip if the body equals 'skip'
-                interceptSendToEndpoint("mock:skippable").skipSendToOriginalEndpoint().onWhen(body().isEqualTo("skip"))
+                interceptSendToEndpoint("mock:skippable")
+                        .skipSendToOriginalEndpoint()
+                        .onWhen(body().isEqualTo("skip"))
                         .to("mock:detour");
 
                 // always skip with a normal with a normal choice inside
                 // instructing where to route instead
-                interceptSendToEndpoint("mock:skippableNoEffect").skipSendToOriginalEndpoint().choice()
-                        .when(body().isEqualTo("skipNoEffectWhen")).to("mock:noSkipWhen").otherwise()
+                interceptSendToEndpoint("mock:skippableNoEffect")
+                        .skipSendToOriginalEndpoint()
+                        .choice()
+                        .when(body().isEqualTo("skipNoEffectWhen"))
+                        .to("mock:noSkipWhen")
+                        .otherwise()
                         .to("mock:noSkipOW");
 
                 from("direct:start").to("mock:a").to("mock:skippable").to("mock:c");
 
-                from("direct:startNoEffect").to("mock:a").to("mock:skippableNoEffect").to("mock:c");
+                from("direct:startNoEffect")
+                        .to("mock:a")
+                        .to("mock:skippableNoEffect")
+                        .to("mock:c");
 
-                from("direct:startMultipleConditions").to("mock:a").to("mock:skippableMultipleConditions").to("mock:c");
+                from("direct:startMultipleConditions")
+                        .to("mock:a")
+                        .to("mock:skippableMultipleConditions")
+                        .to("mock:c");
             }
         };
     }
-
 }

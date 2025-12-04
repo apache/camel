@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870.client;
 
 import org.apache.camel.Exchange;
@@ -77,8 +78,8 @@ public class ClientProducer extends DefaultProducer {
     private Object makeIntCommand(final long value) {
 
         if (value < Short.MIN_VALUE || value > Short.MAX_VALUE) {
-            throw new IllegalArgumentException(
-                    String.format("Integer value is outside of range - min: %s, max: %s", Short.MIN_VALUE, Short.MAX_VALUE));
+            throw new IllegalArgumentException(String.format(
+                    "Integer value is outside of range - min: %s, max: %s", Short.MIN_VALUE, Short.MAX_VALUE));
         }
 
         return new SetPointCommandScaledValue(this.header, this.address, (short) value);

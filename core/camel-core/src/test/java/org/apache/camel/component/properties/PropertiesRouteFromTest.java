@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -41,7 +42,8 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
         assertEquals("{{cool.start}}", uri);
 
         // use a routes definition to dump the routes
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("foo"));
+        String xml =
+                PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("foo"));
         assertThat(xml).containsPattern("\\Q<from id=\"\\Efrom[0-9]+\\Q\" uri=\"{{cool.start}}\"/>\\E");
         assertThat(xml).containsPattern("\\Q<to id=\"\\Eto[0-9]+\\Q\" uri=\"{{cool.end}}\"/>\\E");
     }
@@ -59,8 +61,8 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
-
 }

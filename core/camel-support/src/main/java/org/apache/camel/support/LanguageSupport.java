@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.InputStream;
@@ -33,7 +34,7 @@ import org.apache.camel.util.TimeUtils;
  */
 public abstract class LanguageSupport implements Language, IsSingleton, CamelContextAware {
 
-    private static final String[] SIMPLE_FUNCTION_START = new String[] { "${", "$simple{" };
+    private static final String[] SIMPLE_FUNCTION_START = new String[] {"${", "$simple{"};
 
     private CamelContext camelContext;
 
@@ -168,9 +169,8 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
         // special for boolean values with string values as we only want to accept "true" or "false"
         if ((type == Boolean.class || type == boolean.class) && value instanceof String text) {
             if (!text.equalsIgnoreCase("true") && !text.equalsIgnoreCase("false")) {
-                throw new IllegalArgumentException(
-                        "Cannot convert the String value: " + value + " to type: " + type
-                                                   + " as the value is not true or false");
+                throw new IllegalArgumentException("Cannot convert the String value: " + value + " to type: " + type
+                        + " as the value is not true or false");
             }
         }
         if (value == null) {
@@ -182,5 +182,4 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
             return (T) value;
         }
     }
-
 }

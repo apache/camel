@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import java.util.Map;
@@ -49,7 +50,8 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Protocol used for service connecting (only available for some components)")
     String getServiceLocationProtocol();
 
-    @ManagedAttribute(description = "Additional metadata this endpoint is used for connecting (only available for some components)")
+    @ManagedAttribute(
+            description =
+                    "Additional metadata this endpoint is used for connecting (only available for some components)")
     Map<String, String> getServiceLocationMetadata();
-
 }

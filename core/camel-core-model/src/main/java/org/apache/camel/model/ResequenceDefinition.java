@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.time.Duration;
@@ -46,19 +47,21 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     @XmlTransient
     private BatchResequencerConfig batchConfig;
+
     @XmlTransient
     private StreamResequencerConfig streamConfig;
 
     @XmlElements({
-            @XmlElement(name = "batchConfig", type = BatchResequencerConfig.class),
-            @XmlElement(name = "streamConfig", type = StreamResequencerConfig.class) })
+        @XmlElement(name = "batchConfig", type = BatchResequencerConfig.class),
+        @XmlElement(name = "streamConfig", type = StreamResequencerConfig.class)
+    })
     private ResequencerConfig resequencerConfig;
+
     @XmlElementRef
     @Metadata(required = true)
     private ExpressionDefinition expression;
 
-    public ResequenceDefinition() {
-    }
+    public ResequenceDefinition() {}
 
     protected ResequenceDefinition(ResequenceDefinition source) {
         super(source);
@@ -231,7 +234,6 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         }
         streamConfig.setCapacity(Integer.toString(capacity));
         return this;
-
     }
 
     /**

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.common;
 
 import java.util.Map;
@@ -55,9 +56,7 @@ public interface CxfBinding {
      *
      */
     void populateCxfRequestFromExchange(
-            Exchange cxfExchange,
-            org.apache.camel.Exchange camelExchange,
-            Map<String, Object> requestContext);
+            Exchange cxfExchange, org.apache.camel.Exchange camelExchange, Map<String, Object> requestContext);
 
     /**
      * <p>
@@ -76,8 +75,7 @@ public interface CxfBinding {
      * @param responseContext map contains response context from CXF
      */
     void populateExchangeFromCxfResponse(
-            org.apache.camel.Exchange camelExchange,
-            Exchange cxfExchange, Map<String, Object> responseContext);
+            org.apache.camel.Exchange camelExchange, Exchange cxfExchange, Map<String, Object> responseContext);
 
     /**
      * <p>
@@ -94,9 +92,7 @@ public interface CxfBinding {
      * @param cxfExchange   CXF exchange that contains a request
      * @param camelExchange Camel exchange to be populated
      */
-    void populateExchangeFromCxfRequest(
-            Exchange cxfExchange,
-            org.apache.camel.Exchange camelExchange);
+    void populateExchangeFromCxfRequest(Exchange cxfExchange, org.apache.camel.Exchange camelExchange);
 
     /**
      * <p>
@@ -113,9 +109,7 @@ public interface CxfBinding {
      * @param camelExchange Camel exchange that contains an out message
      * @param cxfExchange   CXF exchange to be populated
      */
-    void populateCxfResponseFromExchange(
-            org.apache.camel.Exchange camelExchange,
-            Exchange cxfExchange);
+    void populateCxfResponseFromExchange(org.apache.camel.Exchange camelExchange, Exchange cxfExchange);
 
     /**
      * <p>
@@ -139,5 +133,4 @@ public interface CxfBinding {
      * @param context     The map which used to store the message headers
      */
     void copyJaxWsContext(Exchange cxfExchange, Map<String, Object> context);
-
 }

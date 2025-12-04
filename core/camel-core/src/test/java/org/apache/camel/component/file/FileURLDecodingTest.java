@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileURLDecodingTest extends ContextTestSupport {
 
@@ -92,5 +93,4 @@ public class FileURLDecodingTest extends ContextTestSupport {
 
         assertFileExists(testFile(expected), "Kermit");
     }
-
 }

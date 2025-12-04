@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.converter;
 
 import java.lang.reflect.Method;
@@ -35,8 +36,8 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
     private final boolean useExchange;
     private final boolean allowNull;
 
-    public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry,
-                                       boolean allowNull) {
+    public InstanceMethodTypeConverter(
+            CachingInjector<?> injector, Method method, TypeConverterRegistry registry, boolean allowNull) {
         this.injector = injector;
         this.method = method;
         this.useExchange = method.getParameterCount() == 2;
@@ -61,12 +62,11 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
             throw new RuntimeCamelException("Could not instantiate an instance of: " + type.getCanonicalName());
         }
         Object answer = useExchange
-                ? (T) ObjectHelper.invokeMethod(method, instance, value, exchange) : (T) ObjectHelper
-                        .invokeMethod(method, instance, value);
+                ? (T) ObjectHelper.invokeMethod(method, instance, value, exchange)
+                : (T) ObjectHelper.invokeMethod(method, instance, value);
         if (answer == null && allowNull) {
             answer = Void.class;
         }
         return (T) answer;
     }
-
 }

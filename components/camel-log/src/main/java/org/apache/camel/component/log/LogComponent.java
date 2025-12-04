@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
+
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 import java.util.Locale;
 import java.util.Map;
@@ -29,8 +32,6 @@ import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
-
 /**
  * The <a href="http://camel.apache.org/log.html">Log Component</a> is for logging message exchanges via the underlying
  * logging mechanism.
@@ -44,11 +45,11 @@ public class LogComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", autowired = true)
     private ExchangeFormatter exchangeFormatter;
+
     @Metadata
     private boolean sourceLocationLoggerName;
 
-    public LogComponent() {
-    }
+    public LogComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -57,19 +58,22 @@ public class LogComponent extends DefaultComponent {
 
         if (providedLogger == null) {
             // try to look up the logger in registry
-            Map<String, Logger> availableLoggers = getCamelContext().getRegistry().findByTypeWithName(Logger.class);
+            Map<String, Logger> availableLoggers =
+                    getCamelContext().getRegistry().findByTypeWithName(Logger.class);
             if (availableLoggers.size() == 1) {
                 providedLogger = availableLoggers.values().iterator().next();
                 LOG.info("Using custom Logger: {}", providedLogger);
             } else if (availableLoggers.size() > 1) {
-                LOG.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.",
-                        Logger.class.getName(), uri);
+                LOG.info(
+                        "More than one {} instance found in the registry. Falling back to creating logger from URI {}.",
+                        Logger.class.getName(),
+                        uri);
             }
         }
 
         // first, try to pick up the ExchangeFormatter from the registry
-        ExchangeFormatter logFormatter
-                = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
+        ExchangeFormatter logFormatter =
+                getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
         if (logFormatter != null) {
             setProperties(logFormatter, parameters);
         } else if (exchangeFormatter != null) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -43,6 +44,7 @@ public class SpringSetHeaderXPathResultTypeTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringSetHeaderXPathResultTypeTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringSetHeaderXPathResultTypeTest.xml");
     }
 }

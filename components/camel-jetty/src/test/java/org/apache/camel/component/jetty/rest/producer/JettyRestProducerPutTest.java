@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest.producer;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +28,11 @@ public class JettyRestProducerPutTest extends BaseJettyTest {
     public void testJettyProducerPut() throws Exception {
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
-        fluentTemplate.withBody("Donald Duck").withHeader("id", "123").to("direct:start").send();
+        fluentTemplate
+                .withBody("Donald Duck")
+                .withHeader("id", "123")
+                .to("direct:start")
+                .send();
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -38,7 +43,11 @@ public class JettyRestProducerPutTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").producerComponent("http").host("localhost").port(getPort());
+                restConfiguration()
+                        .component("jetty")
+                        .producerComponent("http")
+                        .host("localhost")
+                        .port(getPort());
 
                 from("direct:start").to("rest:put:users/{id}");
 
@@ -47,5 +56,4 @@ public class JettyRestProducerPutTest extends BaseJettyTest {
             }
         };
     }
-
 }

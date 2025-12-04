@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.jms.integration.polling;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -24,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class JmsPollingHighTimeOutIT extends JmsPollingConsumerIT {
     private volatile String body;
@@ -45,8 +45,7 @@ class JmsPollingHighTimeOutIT extends JmsPollingConsumerIT {
 
         assertNull(body, "No message should have been received because the test has not sent any");
         template.sendBody("direct:start", "Hello");
-        Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .until(() -> body != null);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> body != null);
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import java.sql.PreparedStatement;
@@ -52,8 +53,11 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
 
     @Override
     public Iterator<?> createPopulateIterator(
-            final String query, final String preparedQuery, final int expectedParams,
-            final Exchange exchange, final Object value)
+            final String query,
+            final String preparedQuery,
+            final int expectedParams,
+            final Exchange exchange,
+            final Object value)
             throws SQLException {
         Map<?, ?> map = null;
         if (exchange.getIn().hasHeaders()) {
@@ -98,8 +102,9 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
                             boolean contains = headerMap != null && headerMap.containsKey(key);
                             if (!contains) {
                                 throw new RuntimeExchangeException(
-                                        "Cannot find key [" + key + "] in message body or headers to use when setting named parameter in query ["
-                                                                   + query + "]",
+                                        "Cannot find key [" + key
+                                                + "] in message body or headers to use when setting named parameter in query ["
+                                                + query + "]",
                                         exchange);
                             }
                             next = headerMap.get(key);
@@ -119,8 +124,9 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
 
         } else {
             // just use a regular iterator
-            return exchange.getContext().getTypeConverter().convertTo(Iterator.class,
-                    headerMap != null ? headerMap.values() : null);
+            return exchange.getContext()
+                    .getTypeConverter()
+                    .convertTo(Iterator.class, headerMap != null ? headerMap.values() : null);
         }
     }
 
@@ -128,7 +134,8 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
     public void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
         int argNumber = 1;
         if (expectedParams > 0) {
-            // as the headers may have more values than the SQL needs we just break out when we reached the expected number
+            // as the headers may have more values than the SQL needs we just break out when we reached the expected
+            // number
             while (iterator != null && iterator.hasNext() && argNumber <= expectedParams) {
                 Object value = iterator.next();
                 LOG.trace("Setting parameter #{} with value: {}", argNumber, value);
@@ -138,7 +145,8 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
         }
 
         if (argNumber - 1 != expectedParams) {
-            throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was:" + (argNumber - 1));
+            throw new SQLException(
+                    "Number of parameters mismatch. Expected: " + expectedParams + ", was:" + (argNumber - 1));
         }
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.xmlsecurity;
 
 import java.lang.reflect.Constructor;
@@ -79,8 +80,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted");
+                from("direct:start").marshal(xmlEncDataFormat).to("mock:encrypted");
             }
         });
         xmlsecTestHelper.testEncryption(context);
@@ -101,8 +101,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted");
+                from("direct:start").marshal(xmlEncDataFormat).to("mock:encrypted");
             }
         });
         xmlsecTestHelper.testEncryption(context);
@@ -123,8 +122,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted");
+                from("direct:start").marshal(xmlEncDataFormat).to("mock:encrypted");
             }
         });
         xmlsecTestHelper.testEncryption(context);
@@ -147,9 +145,11 @@ public class XMLEncryption11Test extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal().xmlSecurity("", true, "recipient", XMLCipher.AES_128_GCM, XMLCipher.RSA_OAEP, tsParameters)
+                        .marshal()
+                        .xmlSecurity("", true, "recipient", XMLCipher.AES_128_GCM, XMLCipher.RSA_OAEP, tsParameters)
                         .to("mock:encrypted")
-                        .unmarshal().xmlSecurity("", true, "recipient", XMLCipher.AES_128_GCM, XMLCipher.RSA_OAEP, ksParameters)
+                        .unmarshal()
+                        .xmlSecurity("", true, "recipient", XMLCipher.AES_128_GCM, XMLCipher.RSA_OAEP, ksParameters)
                         .to("mock:decrypted");
             }
         });
@@ -170,11 +170,29 @@ public class XMLEncryption11Test extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal().xmlSecurity("", new HashMap<String, String>(), true, "recipient", XMLCipher.AES_128,
-                                XMLCipher.RSA_OAEP, tsParameters, null, XMLCipher.SHA256)
+                        .marshal()
+                        .xmlSecurity(
+                                "",
+                                new HashMap<String, String>(),
+                                true,
+                                "recipient",
+                                XMLCipher.AES_128,
+                                XMLCipher.RSA_OAEP,
+                                tsParameters,
+                                null,
+                                XMLCipher.SHA256)
                         .to("mock:encrypted")
-                        .unmarshal().xmlSecurity("", new HashMap<String, String>(), true, "recipient", XMLCipher.AES_128,
-                                XMLCipher.RSA_OAEP, ksParameters, null, XMLCipher.SHA256)
+                        .unmarshal()
+                        .xmlSecurity(
+                                "",
+                                new HashMap<String, String>(),
+                                true,
+                                "recipient",
+                                XMLCipher.AES_128,
+                                XMLCipher.RSA_OAEP,
+                                ksParameters,
+                                null,
+                                XMLCipher.SHA256)
                         .to("mock:decrypted");
             }
         });
@@ -202,14 +220,21 @@ public class XMLEncryption11Test extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         // .log("Body: + ${body}")
-                        .unmarshal().xmlSecurity("", new HashMap<String, String>(), true, "recipient", XMLCipher.AES_128,
-                                XMLCipher.RSA_OAEP, ksParameters)
+                        .unmarshal()
+                        .xmlSecurity(
+                                "",
+                                new HashMap<String, String>(),
+                                true,
+                                "recipient",
+                                XMLCipher.AES_128,
+                                XMLCipher.RSA_OAEP,
+                                ksParameters)
                         .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
 
 import java.lang.annotation.ElementType;
@@ -28,7 +29,7 @@ import java.lang.annotation.Target;
  * The <em>metricName</em> argument allows to define a custom name visible in the resulting AWS XRay trace. If none is
  * defined the simple class name of the respective class will be used.
  */
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
 public @interface XRayTrace {

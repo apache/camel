@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerPreMoveLastModifiedTest extends ContextTestSupport {
 
@@ -43,7 +44,8 @@ public class FileConsumerPreMoveLastModifiedTest extends ContextTestSupport {
             public void configure() {
                 from(fileUri("?preMove=work/work-${file:name}&initialDelay=0&delay=10&keepLastModified=true"))
                         .process(new LastModifiedCheckerProcessor())
-                        .log("Got file ${file:name} modified=${file:modified}").to("mock:result");
+                        .log("Got file ${file:name} modified=${file:modified}")
+                        .to("mock:result");
             }
         };
     }

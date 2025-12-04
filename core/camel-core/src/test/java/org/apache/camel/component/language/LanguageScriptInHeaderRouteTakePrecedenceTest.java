@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.language;
 
 import java.net.URLEncoder;
@@ -50,7 +51,9 @@ public class LanguageScriptInHeaderRouteTakePrecedenceTest extends ContextTestSu
             @Override
             public void configure() {
                 String script = URLEncoder.encode("Bye ${body}", StandardCharsets.UTF_8);
-                from("direct:start").to("language:simple:" + script + "?allowTemplateFromHeader=true").to("mock:result");
+                from("direct:start")
+                        .to("language:simple:" + script + "?allowTemplateFromHeader=true")
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita;
 
 import java.util.Map;
@@ -30,14 +31,19 @@ public class BonitaConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private BonitaOperation operation;
+
     @UriParam(defaultValue = "localhost")
     private String hostname = "localhost";
+
     @UriParam(defaultValue = "8080")
     private String port = "8080";
+
     @UriParam
     private String processName;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
 
@@ -95,7 +101,6 @@ public class BonitaConfiguration implements Cloneable {
         if (parameters.get("processName") != null) {
             this.processName = (String) parameters.get("processName");
         }
-
     }
 
     public String getUsername() {
@@ -119,5 +124,4 @@ public class BonitaConfiguration implements Cloneable {
     public void setPassword(String password) {
         this.password = password;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
@@ -26,9 +30,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
 
@@ -45,36 +46,44 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                rest()
-                    .securityDefinitions()
-                    .oauth2("global")
-                    .accessCode(
-                        "https://AUTHORIZATION_URL",
-                        "https://TOKEN_URL"
-                    )
-                    .withScope("groups", "Required scopes for Camel REST APIs")
-                    .end();
+                rest().securityDefinitions()
+                        .oauth2("global")
+                        .accessCode("https://AUTHORIZATION_URL", "https://TOKEN_URL")
+                        .withScope("groups", "Required scopes for Camel REST APIs")
+                        .end();
 
                 // this user REST service is json only
-                rest("/books").tag("dude").description("Book order service").consumes("application/json")
+                rest("/books")
+                        .tag("dude")
+                        .description("Book order service")
+                        .consumes("application/json")
                         .produces("application/json")
-
-                        .get("/{id}").description("Find order by id").outType(BookOrder.class).responseMessage()
-                        .message("The order returned").endResponseMessage().param().name("id")
-                        .type(RestParamType.path).description("The id of the order to get").dataType("integer").endParam()
+                        .get("/{id}")
+                        .description("Find order by id")
+                        .outType(BookOrder.class)
+                        .responseMessage()
+                        .message("The order returned")
+                        .endResponseMessage()
+                        .param()
+                        .name("id")
+                        .type(RestParamType.path)
+                        .description("The id of the order to get")
+                        .dataType("integer")
+                        .endParam()
                         .to("bean:bookService?method=getOrder(${header.id})")
-                        .get("/books/{id}/line/{lineNum}").outType(LineItem.class)
+                        .get("/books/{id}/line/{lineNum}")
+                        .outType(LineItem.class)
                         .to("bean:bookService?method=getOrder(${header.id})");
             }
         };
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0" })
+    @ValueSource(strings = {"3.1", "3.0"})
     public void testReaderReadV3(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -82,8 +91,8 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
         config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
@@ -100,5 +109,4 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
 
         context.stop();
     }
-
 }

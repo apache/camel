@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,9 +37,6 @@ import org.apache.camel.spi.PooledObjectFactory;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class BatchConsumerPooledExchangeTest extends ContextTestSupport {
 
@@ -79,8 +80,9 @@ public class BatchConsumerPooledExchangeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
-            PooledObjectFactory.Statistics stat
-                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+            PooledObjectFactory.Statistics stat = context.getCamelContextExtension()
+                    .getExchangeFactoryManager()
+                    .getStatistics();
             assertEquals(1, stat.getCreatedCounter());
             assertEquals(2, stat.getAcquiredCounter());
             assertEquals(3, stat.getReleasedCounter());
@@ -94,7 +96,8 @@ public class BatchConsumerPooledExchangeTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // maxMessagesPerPoll=1 to force polling 3 times to use pooled exchanges
-                from(fileUri("?initialDelay=0&delay=10&maxMessagesPerPoll=1")).autoStartup(false)
+                from(fileUri("?initialDelay=0&delay=10&maxMessagesPerPoll=1"))
+                        .autoStartup(false)
                         .setProperty("myprop", counter::incrementAndGet)
                         .setHeader("myheader", counter::incrementAndGet)
                         .process(new Processor() {

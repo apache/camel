@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb.integration;
 
 import com.arangodb.entity.DocumentEntity;
@@ -22,8 +23,7 @@ public class TestDocumentEntity extends DocumentEntity {
     private String foo;
     private long number;
 
-    public TestDocumentEntity() {
-    }
+    public TestDocumentEntity() {}
 
     public TestDocumentEntity(String foo) {
         this.foo = foo;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.CamelContext;
@@ -43,7 +44,11 @@ public class TransactedPropertyPlaceholderIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").policy(new MyDummyPolicy()).setBody().constant("{{cool.name}}").to("mock:result");
+                from("seda:foo")
+                        .policy(new MyDummyPolicy())
+                        .setBody()
+                        .constant("{{cool.name}}")
+                        .to("mock:result");
             }
         };
     }
@@ -51,7 +56,8 @@ public class TransactedPropertyPlaceholderIssueTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
 
@@ -67,5 +73,4 @@ public class TransactedPropertyPlaceholderIssueTest extends ContextTestSupport {
             return processor;
         }
     }
-
 }

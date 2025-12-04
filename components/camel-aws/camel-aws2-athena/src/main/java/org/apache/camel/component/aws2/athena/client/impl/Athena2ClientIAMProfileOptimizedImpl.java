@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena.client.impl;
 
 import java.net.URI;
@@ -56,17 +57,18 @@ public class Athena2ClientIAMProfileOptimizedImpl implements Athena2InternalClie
         AthenaClientBuilder clientBuilder = AthenaClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost())
+                && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
+                    + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
         }
         if (configuration.getProfileCredentialsName() != null) {
-            clientBuilder = clientBuilder
-                    .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+            clientBuilder = clientBuilder.credentialsProvider(
+                    ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
         }
         client = clientBuilder.build();
         return client;

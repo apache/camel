@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -52,8 +53,11 @@ public class AggregateCompletionSizeAndBatchConsumerTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionSize(3)
-                        .completionFromBatchConsumer().to("log:result", "mock:result");
+                from("direct:start")
+                        .aggregate(body(), new BodyInAggregatingStrategy())
+                        .completionSize(3)
+                        .completionFromBatchConsumer()
+                        .to("log:result", "mock:result");
             }
         };
     }

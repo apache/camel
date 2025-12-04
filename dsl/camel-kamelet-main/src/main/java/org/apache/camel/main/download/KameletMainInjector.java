@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.Component;
@@ -24,9 +25,9 @@ import org.apache.camel.util.ObjectHelper;
 
 public class KameletMainInjector implements Injector {
 
-    private static final String ACCEPTED_STUB_NAMES
-            = "StubComponent,BeanComponent,ClassComponent,DirectComponent,KameletComponent,LogComponent,RestComponent"
-              + ",RestApiComponent,PlatformHttpComponent,SedaComponent,VertxHttpComponent";
+    private static final String ACCEPTED_STUB_NAMES =
+            "StubComponent,BeanComponent,ClassComponent,DirectComponent,KameletComponent,LogComponent,RestComponent"
+                    + ",RestApiComponent,PlatformHttpComponent,SedaComponent,VertxHttpComponent";
 
     private final Injector delegate;
     private final String stubPattern;
@@ -83,8 +84,8 @@ public class KameletMainInjector implements Injector {
             accept = accept(type);
             if (!accept && !("*".equals(stubPattern) || "component:*".equals(stubPattern))) {
                 // grab component name via annotation trick!
-                org.apache.camel.spi.annotations.Component ann
-                        = ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
+                org.apache.camel.spi.annotations.Component ann =
+                        ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
                 if (ann != null) {
                     boolean stubbed = false;
                     String name = ann.value();

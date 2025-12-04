@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.component.mail.SearchTermBuilder.Comparison;
+import static org.apache.camel.component.mail.SearchTermBuilder.Op.or;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 
@@ -23,13 +31,6 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.search.SearchTerm;
 
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.mail.SearchTermBuilder.Comparison;
-import static org.apache.camel.component.mail.SearchTermBuilder.Op.or;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -124,5 +125,4 @@ public class SearchTermBuilderTest {
         assertEquals(5, Comparison.GT.asNum());
         assertEquals(6, Comparison.GE.asNum());
     }
-
 }

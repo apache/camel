@@ -27,8 +27,8 @@ public class OpenLdapContainer extends GenericContainer<OpenLdapContainer> {
     public static final int CONTAINER_PORT_LDAP_OVER_SSL = 636;
 
     public OpenLdapContainer(boolean fixedPort) {
-        super(LocalPropertyResolver.getProperty(OpenldapLocalContainerInfraService.class,
-                OpenldapProperties.OPENLDAP_CONTAINER));
+        super(LocalPropertyResolver.getProperty(
+                OpenldapLocalContainerInfraService.class, OpenldapProperties.OPENLDAP_CONTAINER));
 
         if (fixedPort) {
             this.addFixedExposedPort(CONTAINER_PORT_LDAP, CONTAINER_PORT_LDAP);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -39,31 +40,28 @@ public class SecretsManagerPropertiesSourceTestLocalstackIT extends AwsSecretsMa
         // Json multifield Secret
         builder = CreateSecretRequest.builder();
         builder.name("testJson");
-        builder.secretString("{\n" +
-                             "  \"username\": \"admin\",\n" +
-                             "  \"password\": \"password\",\n" +
-                             "  \"host\": \"myhost.com\"\n" +
-                             "}");
+        builder.secretString("{\n" + "  \"username\": \"admin\",\n"
+                + "  \"password\": \"password\",\n"
+                + "  \"host\": \"myhost.com\"\n"
+                + "}");
         getSecretManagerClient().createSecret(builder.build());
 
         // Json multifield Secret
         builder = CreateSecretRequest.builder();
         builder.name("testJsonVersioned");
-        builder.secretString("{\n" +
-                             "  \"username\": \"admin\",\n" +
-                             "  \"password\": \"password\",\n" +
-                             "  \"host\": \"myhost.com\"\n" +
-                             "}");
+        builder.secretString("{\n" + "  \"username\": \"admin\",\n"
+                + "  \"password\": \"password\",\n"
+                + "  \"host\": \"myhost.com\"\n"
+                + "}");
         getSecretManagerClient().createSecret(builder.build());
 
         // Json versioned multifield Secret
         PutSecretValueRequest.Builder builderPutSecValue = PutSecretValueRequest.builder();
         builderPutSecValue.secretId("testJsonVersioned");
-        builderPutSecValue.secretString("{\n" +
-                                        "  \"username\": \"admin\",\n" +
-                                        "  \"password\": \"admin123\",\n" +
-                                        "  \"host\": \"myhost.com\"\n" +
-                                        "}");
+        builderPutSecValue.secretString("{\n" + "  \"username\": \"admin\",\n"
+                + "  \"password\": \"admin123\",\n"
+                + "  \"host\": \"myhost.com\"\n"
+                + "}");
         PutSecretValueResponse resp = getSecretManagerClient().putSecretValue(builderPutSecValue.build());
         secretVersion = resp.versionId();
     }
@@ -100,8 +98,12 @@ public class SecretsManagerPropertiesSourceTestLocalstackIT extends AwsSecretsMa
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:testJson#username}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:testJson#password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{aws:testJson#username}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{aws:testJson#password}}"))
+                        .to("mock:bar");
                 from("direct:host").setBody(simple("{{aws:testJson#host}}")).to("mock:bar");
             }
         });
@@ -125,11 +127,14 @@ public class SecretsManagerPropertiesSourceTestLocalstackIT extends AwsSecretsMa
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:usernameVersioned").setBody(simple("{{aws:testJsonVersioned#username@" + secretVersion + "}}"))
+                from("direct:usernameVersioned")
+                        .setBody(simple("{{aws:testJsonVersioned#username@" + secretVersion + "}}"))
                         .to("mock:put");
-                from("direct:passwordVersioned").setBody(simple("{{aws:testJsonVersioned#password@" + secretVersion + "}}"))
+                from("direct:passwordVersioned")
+                        .setBody(simple("{{aws:testJsonVersioned#password@" + secretVersion + "}}"))
                         .to("mock:put");
-                from("direct:hostVersioned").setBody(simple("{{aws:testJsonVersioned#host@" + secretVersion + "}}"))
+                from("direct:hostVersioned")
+                        .setBody(simple("{{aws:testJsonVersioned#host@" + secretVersion + "}}"))
                         .to("mock:put");
             }
         });

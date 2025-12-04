@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
+
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_OUT_FILE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,12 +41,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_OUT_FILE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @CamelSpringTest
-@ContextConfiguration(locations = { "exec-mock-executor-context.xml" })
+@ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
 public class ExecOutFileTest {
 
     private static final String FILE_CONTENT = buildFileContent();

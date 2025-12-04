@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.consumer;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.EventsCmd;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Consumer test for events on Docker Platform
@@ -64,7 +65,9 @@ public class DockerEventsConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("docker://events?host=" + host + "&port=" + port).log("${body}").to("mock:result");
+                from("docker://events?host=" + host + "&port=" + port)
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }
@@ -83,5 +86,4 @@ public class DockerEventsConsumerTest extends CamelTestSupport {
 
         return camelContext;
     }
-
 }

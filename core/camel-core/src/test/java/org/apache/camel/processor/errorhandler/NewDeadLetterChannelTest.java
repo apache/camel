@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,8 +43,7 @@ public class NewDeadLetterChannelTest extends ContextTestSupport {
 
                 errorHandler(dlc);
 
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

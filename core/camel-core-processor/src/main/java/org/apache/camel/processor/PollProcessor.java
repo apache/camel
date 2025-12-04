@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.Expression;
@@ -27,5 +28,4 @@ public class PollProcessor extends PollEnricher {
     public PollProcessor(Expression expression, String uri, long timeout) {
         super(expression, uri, timeout);
     }
-
 }

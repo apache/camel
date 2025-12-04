@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,11 +45,18 @@ public class TracingWithDelayTest extends ContextTestSupport {
             public void configure() {
                 getContext().setTracing(true);
 
-                from("direct:start").delay(10).to("mock:a").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        LOG.info("This is the processor being invoked between mock:a and mock:b");
-                    }
-                }).to("mock:b").toD("direct:c").to("mock:result").transform(simple("${body}${body}"));
+                from("direct:start")
+                        .delay(10)
+                        .to("mock:a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                LOG.info("This is the processor being invoked between mock:a and mock:b");
+                            }
+                        })
+                        .to("mock:b")
+                        .toD("direct:c")
+                        .to("mock:result")
+                        .transform(simple("${body}${body}"));
 
                 from("direct:c").transform(constant("Bye World")).to("mock:c");
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns;
 
 import java.io.InputStream;
@@ -48,9 +49,14 @@ import software.amazon.awssdk.services.sns.model.Topic;
 /**
  * Send messages to AWS Simple Notification Topic.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS Simple Notification System (SNS)",
-             syntax = "aws2-sns:topicNameOrArn", producerOnly = true,
-             category = { Category.CLOUD, Category.MESSAGING, Category.MOBILE }, headersClass = Sns2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-sns",
+        title = "AWS Simple Notification System (SNS)",
+        syntax = "aws2-sns:topicNameOrArn",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MESSAGING, Category.MOBILE},
+        headersClass = Sns2Constants.class)
 public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Endpoint.class);
@@ -60,8 +66,10 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriPath(description = "Topic name or ARN")
     @Metadata(required = true)
     private String topicNameOrArn; // to support component docs
+
     @UriParam
     private final Sns2Configuration configuration;
+
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -102,7 +110,8 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void doInit() throws Exception {
         super.doInit();
         snsClient = configuration.getAmazonSNSClient() != null
-                ? configuration.getAmazonSNSClient() : Sns2ClientFactory.getSnsClient(configuration).getSNSClient();
+                ? configuration.getAmazonSNSClient()
+                : Sns2ClientFactory.getSnsClient(configuration).getSNSClient();
 
         // check the setting the headerFilterStrategy
         if (headerFilterStrategy == null) {
@@ -114,7 +123,8 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
                 String nextToken = null;
                 final String arnSuffix = ":" + configuration.getTopicName();
                 do {
-                    ListTopicsRequest request = ListTopicsRequest.builder().nextToken(nextToken).build();
+                    ListTopicsRequest request =
+                            ListTopicsRequest.builder().nextToken(nextToken).build();
                     final ListTopicsResponse response = snsClient.listTopics(request);
                     nextToken = response.nextToken();
 
@@ -126,7 +136,9 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     }
                 } while (nextToken != null);
             } catch (final AwsServiceException ase) {
-                LOG.trace("The list topics operation return the following error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "The list topics operation return the following error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
         }
@@ -160,12 +172,14 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
             LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
 
-            try (InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
-                    getConfiguration().getPolicy())) {
+            try (InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                    this.getCamelContext(), getConfiguration().getPolicy())) {
                 String policy = IOUtils.toString(s, Charset.defaultCharset());
 
-                snsClient.setTopicAttributes(SetTopicAttributesRequest.builder().topicArn(configuration.getTopicArn())
-                        .attributeName("Policy").attributeValue(policy)
+                snsClient.setTopicAttributes(SetTopicAttributesRequest.builder()
+                        .topicArn(configuration.getTopicArn())
+                        .attributeName("Policy")
+                        .attributeValue(policy)
                         .build());
 
                 LOG.trace("Topic policy updated");
@@ -174,16 +188,20 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
         if (configuration.isSubscribeSNStoSQS()) {
             if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getQueueArn()))) {
-                SubscribeResponse resp = snsClient.subscribe(SubscribeRequest.builder().topicArn(configuration.getTopicArn())
-                        .protocol("sqs").endpoint(configuration.getQueueArn())
-                        .returnSubscriptionArn(true).build());
-                LOG.trace("Subscription of SQS Queue to SNS Topic done with Amazon resource name: {}", resp.subscriptionArn());
+                SubscribeResponse resp = snsClient.subscribe(SubscribeRequest.builder()
+                        .topicArn(configuration.getTopicArn())
+                        .protocol("sqs")
+                        .endpoint(configuration.getQueueArn())
+                        .returnSubscriptionArn(true)
+                        .build());
+                LOG.trace(
+                        "Subscription of SQS Queue to SNS Topic done with Amazon resource name: {}",
+                        resp.subscriptionArn());
             } else {
                 throw new IllegalArgumentException(
                         "Using the SubscribeSNStoSQS option require both AmazonSQSClient and Queue URL options");
             }
         }
-
     }
 
     @Override

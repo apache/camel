@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,19 +31,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
-           disabledReason = "Google Drive credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+        disabledReason = "Google Drive credentials were not provided")
 public class FileConverterIT extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileConverterIT.class);
-    private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection()
+            .getApiName(DriveFilesApiMethod.class)
+            .getName();
 
     @Override
     @BeforeEach
@@ -58,8 +61,10 @@ public class FileConverterIT extends AbstractGoogleDriveTestSupport {
 
         File file = mock.getReceivedExchanges().get(0).getIn().getBody(com.google.api.services.drive.model.File.class);
 
-        assertEquals("Hello!", context.getTypeConverter().convertTo(String.class, mock.getReceivedExchanges().get(0), file));
-
+        assertEquals(
+                "Hello!",
+                context.getTypeConverter()
+                        .convertTo(String.class, mock.getReceivedExchanges().get(0), file));
     }
 
     @Override

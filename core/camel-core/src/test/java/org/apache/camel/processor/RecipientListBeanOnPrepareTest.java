@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -56,26 +57,30 @@ public class RecipientListBeanOnPrepareTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").bean(RecipientListBeanOnPrepareTest.class, "doSomething");
 
-                from("direct:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        Animal body = exchange.getIn().getBody(Animal.class);
-                        assertEquals(1, body.getId());
-                        assertEquals("Tiger", body.getName());
+                from("direct:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                Animal body = exchange.getIn().getBody(Animal.class);
+                                assertEquals(1, body.getId());
+                                assertEquals("Tiger", body.getName());
 
-                        // adjust the name
-                        body.setName("Tony the Tiger");
-                    }
-                }).to("mock:a");
+                                // adjust the name
+                                body.setName("Tony the Tiger");
+                            }
+                        })
+                        .to("mock:a");
 
-                from("direct:b").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        Animal body = exchange.getIn().getBody(Animal.class);
-                        assertEquals(1, body.getId());
-                        assertEquals("Tiger", body.getName());
-                    }
-                }).to("mock:b");
+                from("direct:b")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                Animal body = exchange.getIn().getBody(Animal.class);
+                                assertEquals(1, body.getId());
+                                assertEquals("Tiger", body.getName());
+                            }
+                        })
+                        .to("mock:b");
             }
         };
     }
@@ -84,5 +89,4 @@ public class RecipientListBeanOnPrepareTest extends ContextTestSupport {
     public static String doSomething() {
         return "direct:a,direct:b";
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift;
 
 import java.io.IOException;
@@ -49,8 +50,7 @@ import org.apache.thrift.transport.layered.TFramedTransport;
  */
 public final class ThriftUtils {
 
-    private ThriftUtils() {
-    }
+    private ThriftUtils() {}
 
     public static String extractServiceName(String service) {
         return service.substring(service.lastIndexOf('.') + 1);
@@ -60,16 +60,21 @@ public final class ThriftUtils {
         return service.substring(0, service.lastIndexOf('.'));
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static Object constructClientInstance(
-            String packageName, String serviceName, TTransport transport, ThriftExchangeProtocol exchangeProtocol,
-            final ThriftNegotiationType negotiationType, final ThriftCompressionType compressionType,
+            String packageName,
+            String serviceName,
+            TTransport transport,
+            ThriftExchangeProtocol exchangeProtocol,
+            final ThriftNegotiationType negotiationType,
+            final ThriftCompressionType compressionType,
             final CamelContext context)
             throws TTransportException {
         Object clientInstance = null;
-        Class[] constructorParamTypes = { TProtocol.class };
-        Object[] constructorParamValues
-                = { constructSyncProtocol(transport, exchangeProtocol, negotiationType, compressionType) };
+        Class[] constructorParamTypes = {TProtocol.class};
+        Object[] constructorParamValues = {
+            constructSyncProtocol(transport, exchangeProtocol, negotiationType, compressionType)
+        };
 
         String clientClassName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SYNC_CLIENT_CLASS_NAME;
         try {
@@ -87,27 +92,29 @@ public final class ThriftUtils {
         return clientInstance;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static Object constructAsyncClientInstance(
-            String packageName, String serviceName, TNonblockingTransport transport, ThriftExchangeProtocol exchangeProtocol,
+            String packageName,
+            String serviceName,
+            TNonblockingTransport transport,
+            ThriftExchangeProtocol exchangeProtocol,
             final CamelContext context) {
         Object asynClientInstance = null;
-        Class[] getterParamTypes = { TNonblockingTransport.class };
-        Class[] constructorParamTypes = { TAsyncClientManager.class, TProtocolFactory.class };
+        Class[] getterParamTypes = {TNonblockingTransport.class};
+        Class[] constructorParamTypes = {TAsyncClientManager.class, TProtocolFactory.class};
 
-        String clientClassName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_ASYNC_CLIENT_CLASS_NAME + "$"
-                                 + ThriftConstants.THRIFT_ASYNC_CLIENT_FACTORY_NAME;
+        String clientClassName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_ASYNC_CLIENT_CLASS_NAME
+                + "$" + ThriftConstants.THRIFT_ASYNC_CLIENT_FACTORY_NAME;
         try {
             Class clientClass = context.getClassResolver().resolveMandatoryClass(clientClassName);
             Constructor factoryConstructor = clientClass.getConstructor(constructorParamTypes);
-            Object factoryInstance
-                    = factoryConstructor.newInstance(new TAsyncClientManager(), constructAsyncProtocol(exchangeProtocol));
-            Method asyncClientGetter = ReflectionHelper.findMethod(clientClass, ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME,
-                    getterParamTypes);
+            Object factoryInstance =
+                    factoryConstructor.newInstance(new TAsyncClientManager(), constructAsyncProtocol(exchangeProtocol));
+            Method asyncClientGetter = ReflectionHelper.findMethod(
+                    clientClass, ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME, getterParamTypes);
             if (asyncClientGetter == null) {
-                throw new IllegalArgumentException(
-                        "Thrift async client getter not found: " + clientClassName + "."
-                                                   + ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME);
+                throw new IllegalArgumentException("Thrift async client getter not found: " + clientClassName + "."
+                        + ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME);
             }
             asynClientInstance = ObjectHelper.invokeMethod(asyncClientGetter, factoryInstance, transport);
 
@@ -115,14 +122,18 @@ public final class ThriftUtils {
             throw new IllegalArgumentException("Thrift sync client class not found: " + clientClassName);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("Thrift sync client factory class not found: " + clientClassName);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                 | IOException | SecurityException e) {
+        } catch (InstantiationException
+                | IllegalAccessException
+                | IllegalArgumentException
+                | InvocationTargetException
+                | IOException
+                | SecurityException e) {
             throw new IllegalArgumentException(e);
         }
         return asynClientInstance;
     }
 
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     public static Object invokeSyncMethod(Object syncClient, String invokeMethod, Object request) {
         Object[] params = convertObjects2Primitives(request, null);
         Class[] paramsTypes = (Class[]) params[0];
@@ -130,15 +141,14 @@ public final class ThriftUtils {
 
         Method method = ReflectionHelper.findMethod(syncClient.getClass(), invokeMethod, paramsTypes);
         if (method == null) {
-            throw new IllegalArgumentException(
-                    "Thrift service client method not found: " + syncClient.getClass().getName() + "." + invokeMethod
-                                               + printParamsTypes(paramsTypes));
+            throw new IllegalArgumentException("Thrift service client method not found: "
+                    + syncClient.getClass().getName() + "." + invokeMethod + printParamsTypes(paramsTypes));
         }
         Object result = ObjectHelper.invokeMethod(method, syncClient, paramsValues);
         return result;
     }
 
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     public static void invokeAsyncMethod(
             Object asyncClient, String invokeMethod, Object request, AsyncClientMethodCallback methodCallback) {
         Object[] params = convertObjects2Primitives(request, methodCallback);
@@ -147,9 +157,8 @@ public final class ThriftUtils {
 
         Method method = ReflectionHelper.findMethod(asyncClient.getClass(), invokeMethod, paramsTypes);
         if (method == null) {
-            throw new IllegalArgumentException(
-                    "Thrift service client method not found: " + asyncClient.getClass().getName() + "." + invokeMethod
-                                               + printParamsTypes(paramsTypes));
+            throw new IllegalArgumentException("Thrift service client method not found: "
+                    + asyncClient.getClass().getName() + "." + invokeMethod + printParamsTypes(paramsTypes));
         }
         ObjectHelper.invokeMethod(method, asyncClient, paramsValues);
     }
@@ -162,21 +171,26 @@ public final class ThriftUtils {
 
         try {
             if (isSyncInterface) {
-                serverInterfaceName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_SYNC_INTERFACE_NAME;
+                serverInterfaceName =
+                        packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_SYNC_INTERFACE_NAME;
             } else {
-                serverInterfaceName
-                        = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_ASYNC_INTERFACE_NAME;
+                serverInterfaceName =
+                        packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_ASYNC_INTERFACE_NAME;
             }
             serverInterface = context.getClassResolver().resolveMandatoryClass(serverInterfaceName);
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Unable to find server interface implementation for: " + serverInterfaceName);
+            throw new IllegalArgumentException(
+                    "Unable to find server interface implementation for: " + serverInterfaceName);
         }
         return serverInterface;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static Object constructServerProcessor(
-            String packageName, String serviceName, Object serverImplementation, boolean isSyncProcessor,
+            String packageName,
+            String serviceName,
+            Object serverImplementation,
+            boolean isSyncProcessor,
             final CamelContext context) {
         String processorClassName = null;
         Class serverInterface = null;
@@ -184,29 +198,35 @@ public final class ThriftUtils {
 
         try {
             if (isSyncProcessor) {
-                processorClassName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_SYNC_PROCESSOR_CLASS;
+                processorClassName =
+                        packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_SYNC_PROCESSOR_CLASS;
                 serverInterface = getServerInterface(packageName, serviceName, isSyncProcessor, context);
             } else {
-                processorClassName
-                        = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_ASYNC_PROCESSOR_CLASS;
+                processorClassName =
+                        packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_ASYNC_PROCESSOR_CLASS;
                 serverInterface = getServerInterface(packageName, serviceName, isSyncProcessor, context);
             }
             Class processorClass = context.getClassResolver().resolveMandatoryClass(processorClassName);
-            Constructor procesorConstructor = processorClass.getConstructor(new Class[] { serverInterface });
+            Constructor procesorConstructor = processorClass.getConstructor(new Class[] {serverInterface});
             processorInstance = procesorConstructor.newInstance(serverImplementation);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Unable to find server processor for: " + processorClassName);
         } catch (NoSuchMethodException | SecurityException e) {
             throw new IllegalArgumentException("Processor class instance not found for: " + processorClassName);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (InstantiationException
+                | IllegalAccessException
+                | IllegalArgumentException
+                | InvocationTargetException e) {
             throw new IllegalArgumentException(e);
         }
         return processorInstance;
     }
 
     private static TProtocol constructSyncProtocol(
-            TTransport transport, ThriftExchangeProtocol exchangeProtocol,
-            final ThriftNegotiationType negotiationType, final ThriftCompressionType compressionType)
+            TTransport transport,
+            ThriftExchangeProtocol exchangeProtocol,
+            final ThriftNegotiationType negotiationType,
+            final ThriftCompressionType compressionType)
             throws TTransportException {
         if (negotiationType == ThriftNegotiationType.SSL) {
             // If negotiation passed over SSL/TLS the only binary transport is supported
@@ -271,7 +291,7 @@ public final class ThriftUtils {
      * The function transforms objects types stored as list or simple object inside the Body to the primitives objects
      * to find appropriate method
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     private static Object[] convertObjects2Primitives(Object request, AsyncClientMethodCallback methodCallback) {
         Class[] paramsTypes = null;
         Object[] paramsValues = null;
@@ -325,6 +345,6 @@ public final class ThriftUtils {
             paramsTypes[paramListSize - 1] = AsyncMethodCallback.class;
             paramsValues[paramListSize - 1] = methodCallback;
         }
-        return new Object[] { paramsTypes, paramsValues };
+        return new Object[] {paramsTypes, paramsValues};
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +34,7 @@ public class JmsPollEnrichIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
 
@@ -74,5 +76,4 @@ public class JmsPollEnrichIT extends AbstractJMSTest {
         context = camelContextExtension.getContext();
         template = camelContextExtension.getProducerTemplate();
     }
-
 }

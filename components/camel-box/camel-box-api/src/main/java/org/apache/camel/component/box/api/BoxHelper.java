@@ -58,9 +58,7 @@ public final class BoxHelper {
     public static final String COLLABORATOR = "collaborator";
     public static final String ROLE = "role";
 
-    private BoxHelper() {
-
-    }
+    private BoxHelper() {}
 
     static String buildBoxApiErrorMessage(BoxAPIException e) {
         return String.format(BASE_ERROR_MESSAGE, e.getResponseCode(), e.getResponse());

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.impl.engine.DefaultClassResolver;
@@ -25,32 +30,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTestSupport {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/openapi/SpringRestOpenApiReaderModelApiSecurityTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/openapi/SpringRestOpenApiReaderModelApiSecurityTest.xml");
     }
 
     @Test
     public void testReaderReadV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -31,8 +34,6 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 /**
  * In this test we are checking that same netty endpoint can be safely called twice in single route with reconnect. It
  * requires for processing to be fully async otherwise {@link io.netty.util.concurrent.BlockingOperationException} is
@@ -45,19 +46,20 @@ public class NettyTCPChainedTest extends BaseNettyTest {
 
     private void sendFile(String uri) throws Exception {
         Exchange exchange = template.asyncSend(uri, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // Read from an input stream
-                InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/test.txt"));
+                    public void process(Exchange exchange) throws Exception {
+                        // Read from an input stream
+                        InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/test.txt"));
 
-                byte buffer[] = IOConverter.toBytes(is);
-                is.close();
+                        byte buffer[] = IOConverter.toBytes(is);
+                        is.close();
 
-                // Set the property of the charset encoding
-                exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
-                Message in = exchange.getIn();
-                in.setBody(buffer);
-            }
-        }).get();
+                        // Set the property of the charset encoding
+                        exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
+                        Message in = exchange.getIn();
+                        in.setBody(buffer);
+                    }
+                })
+                .get();
         if (exchange.getException() != null) {
             throw new AssertionError(exchange.getException());
         }
@@ -87,12 +89,10 @@ public class NettyTCPChainedTest extends BaseNettyTest {
                         .to("log:result")
                         .to("mock:result");
                 from("direct:nettyCall")
-                        .to("netty:tcp://localhost:{{port}}?sync=false&disconnect=true&workerCount=1&encoders=#encoder");
-                from("direct:chainedCalls")
-                        .to("direct:nettyCall")
-                        .to("direct:nettyCall");
+                        .to(
+                                "netty:tcp://localhost:{{port}}?sync=false&disconnect=true&workerCount=1&encoders=#encoder");
+                from("direct:chainedCalls").to("direct:nettyCall").to("direct:nettyCall");
             }
         };
     }
-
 }

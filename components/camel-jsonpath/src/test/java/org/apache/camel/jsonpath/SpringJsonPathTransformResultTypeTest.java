@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -28,7 +29,8 @@ public class SpringJsonPathTransformResultTypeTest extends CamelSpringTestSuppor
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/jsonpath/SpringJsonPathTransformResultTypeTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/jsonpath/SpringJsonPathTransformResultTypeTest.xml");
     }
 
     @Test
@@ -46,5 +48,4 @@ public class SpringJsonPathTransformResultTypeTest extends CamelSpringTestSuppor
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

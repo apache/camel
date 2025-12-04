@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
@@ -55,7 +56,9 @@ class TypedExpressionReifier<T extends TypedExpressionDefinition> extends Expres
     protected Class<?> asResultType() {
         if (definition.getResultType() == null && definition.getResultTypeName() != null) {
             try {
-                return camelContext.getClassResolver().resolveMandatoryClass(parseString(definition.getResultTypeName()));
+                return camelContext
+                        .getClassResolver()
+                        .resolveMandatoryClass(parseString(definition.getResultTypeName()));
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }

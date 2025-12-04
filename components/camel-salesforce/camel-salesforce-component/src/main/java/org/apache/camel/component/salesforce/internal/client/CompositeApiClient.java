@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
@@ -35,7 +36,6 @@ public interface CompositeApiClient {
     interface Operation<T, R> {
 
         void submit(T body, Map<String, List<String>> headers, ResponseCallback<R> callback) throws SalesforceException;
-
     }
 
     @FunctionalInterface
@@ -44,12 +44,13 @@ public interface CompositeApiClient {
     }
 
     void submitCompositeRaw(
-            InputStream raw, Map<String, List<String>> headers, ResponseCallback<InputStream> callback,
-            String method)
+            InputStream raw, Map<String, List<String>> headers, ResponseCallback<InputStream> callback, String method)
             throws SalesforceException;
 
     void submitComposite(
-            SObjectComposite composite, Map<String, List<String>> headers, ResponseCallback<SObjectCompositeResponse> callback)
+            SObjectComposite composite,
+            Map<String, List<String>> headers,
+            ResponseCallback<SObjectCompositeResponse> callback)
             throws SalesforceException;
 
     void submitCompositeBatch(
@@ -66,5 +67,4 @@ public interface CompositeApiClient {
     void submitCompositeTree(
             SObjectTree tree, Map<String, List<String>> headers, ResponseCallback<SObjectTreeResponse> callback)
             throws SalesforceException;
-
 }

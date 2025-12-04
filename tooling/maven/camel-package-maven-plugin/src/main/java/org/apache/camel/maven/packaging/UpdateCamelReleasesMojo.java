@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -52,9 +53,10 @@ import org.codehaus.plexus.build.BuildContext;
 @Mojo(name = "update-camel-releases", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
 
-    private static final String GIT_CAMEL_URL = "https://api.github.com/repos/apache/camel-website/contents/content/releases/";
-    private static final String GIT_CAMEL_QUARKUS_URL
-            = "https://api.github.com/repos/apache/camel-website/contents/content/releases/q/";
+    private static final String GIT_CAMEL_URL =
+            "https://api.github.com/repos/apache/camel-website/contents/content/releases/";
+    private static final String GIT_CAMEL_QUARKUS_URL =
+            "https://api.github.com/repos/apache/camel-website/contents/content/releases/q/";
 
     /**
      * The output directory for the generated catalog releases files
@@ -122,7 +124,10 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
 
         HttpClient hc = HttpClient.newHttpClient();
         for (String url : urls) {
-            HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(url)).timeout(Duration.ofSeconds(20)).build(),
+            HttpResponse<String> res = hc.send(
+                    HttpRequest.newBuilder(new URI(url))
+                            .timeout(Duration.ofSeconds(20))
+                            .build(),
                     HttpResponse.BodyHandlers.ofString());
 
             if (res.statusCode() == 200) {
@@ -163,14 +168,20 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
 
         // use JDK http client to call github api
         HttpClient hc = HttpClient.newHttpClient();
-        HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(gitUrl)).timeout(Duration.ofSeconds(20)).build(),
+        HttpResponse<String> res = hc.send(
+                HttpRequest.newBuilder(new URI(gitUrl))
+                        .timeout(Duration.ofSeconds(20))
+                        .build(),
                 HttpResponse.BodyHandlers.ofString());
 
         // follow redirect
         if (res.statusCode() == 302) {
             String loc = res.headers().firstValue("location").orElse(null);
             if (loc != null) {
-                res = hc.send(HttpRequest.newBuilder(new URI(loc)).timeout(Duration.ofSeconds(20)).build(),
+                res = hc.send(
+                        HttpRequest.newBuilder(new URI(loc))
+                                .timeout(Duration.ofSeconds(20))
+                                .build(),
                         HttpResponse.BodyHandlers.ofString());
             }
         }
@@ -191,5 +202,4 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
 
         return answer;
     }
-
 }

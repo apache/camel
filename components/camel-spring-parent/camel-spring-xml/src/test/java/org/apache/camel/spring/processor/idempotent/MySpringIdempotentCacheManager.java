@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.idempotent;
 
 import java.util.ArrayList;
@@ -26,13 +27,11 @@ public class MySpringIdempotentCacheManager extends AbstractCacheManager {
 
     private final Collection<Cache> cache = new ArrayList<>(1);
 
-    public MySpringIdempotentCacheManager() {
-    }
+    public MySpringIdempotentCacheManager() {}
 
     @Override
     protected Collection<? extends Cache> loadCaches() {
         cache.add(new MyCache("idempotent"));
         return cache;
     }
-
 }

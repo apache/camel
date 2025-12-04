@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
@@ -40,6 +41,6 @@ public interface MainHttpServerFactory {
      * @param  configuration server configuration
      * @return               the server as a {@link Service} to be managed by {@link org.apache.camel.CamelContext}.
      */
-    Service newHttpManagementServer(CamelContext camelContext, HttpManagementServerConfigurationProperties configuration);
-
+    Service newHttpManagementServer(
+            CamelContext camelContext, HttpManagementServerConfigurationProperties configuration);
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,9 +41,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
-
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Prepares a Camel component analyzing if the maven module contains Camel
@@ -119,12 +120,11 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
     @Override
     public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         configurerSourceOutDir = new File(project.getBasedir(), "src/generated/java");
-        configurerResourceOutDir = componentOutDir
-                = dataFormatOutDir = languageOutDir
-                        = otherOutDir = schemaOutDir
-                                = new File(project.getBasedir(), "src/generated/resources");
+        configurerResourceOutDir = componentOutDir = dataFormatOutDir =
+                languageOutDir = otherOutDir = schemaOutDir = new File(project.getBasedir(), "src/generated/resources");
         buildDir = new File(project.getBuild().getDirectory());
-        prepareComponent = Boolean.parseBoolean(project.getProperties().getProperty("camel-prepare-component", "false"));
+        prepareComponent =
+                Boolean.parseBoolean(project.getProperties().getProperty("camel-prepare-component", "false"));
         super.execute(project);
     }
 
@@ -142,20 +142,25 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
         }
 
         int count = 0;
-        count += new PackageComponentMojo(
-                getLog(), project, projectHelper, buildDir,
-                componentOutDir, buildContext).prepareComponent();
+        count += new PackageComponentMojo(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext)
+                .prepareComponent();
         count += new PackageDataFormatMojo(
-                getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir,
-                configurerResourceOutDir, schemaOutDir, buildContext).prepareDataFormat();
+                        getLog(),
+                        project,
+                        projectHelper,
+                        dataFormatOutDir,
+                        configurerSourceOutDir,
+                        configurerResourceOutDir,
+                        schemaOutDir,
+                        buildContext)
+                .prepareDataFormat();
         count += new PackageLanguageMojo(
-                getLog(), project, projectHelper, buildDir, languageOutDir,
-                schemaOutDir, buildContext).prepareLanguage();
+                        getLog(), project, projectHelper, buildDir, languageOutDir, schemaOutDir, buildContext)
+                .prepareLanguage();
         if (count == 0 && new File(project.getBasedir(), "src/main/java").isDirectory()) {
             // okay its not any of the above then its other
-            new PackageOtherMojo(
-                    getLog(), project, projectHelper, otherOutDir,
-                    schemaOutDir, buildContext).prepareOthers();
+            new PackageOtherMojo(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext)
+                    .prepareOthers();
             count = 1;
         }
 
@@ -236,15 +241,16 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             }
             // add ourselves
             dependencies.add(new MavenGav(
-                    project.getGroupId(), project.getArtifactId(), "${project.version}", project.getArtifact().getType()));
+                    project.getGroupId(),
+                    project.getArtifactId(),
+                    "${project.version}",
+                    project.getArtifact().getType()));
 
             // generate string output of all dependencies
-            String s = dependencies.stream()
-                    .map(g -> g.asString("            "))
-                    .collect(Collectors.joining("\n"));
-            final String updatedPom = before + startDependenciesMarker
-                                      + "\n" + s + "\n"
-                                      + "        " + endDependenciesMarker + after;
+            String s =
+                    dependencies.stream().map(g -> g.asString("            ")).collect(Collectors.joining("\n"));
+            final String updatedPom =
+                    before + startDependenciesMarker + "\n" + s + "\n" + "        " + endDependenciesMarker + after;
 
             updateResource(root, "pom.xml", updatedPom);
         } catch (IOException e) {
@@ -253,7 +259,8 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
     }
 
     private void syncAllComponentsPomFile() throws MojoExecutionException {
-        Path root = findCamelDirectory(project.getBasedir(), "catalog/camel-allcomponents").toPath();
+        Path root = findCamelDirectory(project.getBasedir(), "catalog/camel-allcomponents")
+                .toPath();
         Path pomFile = root.resolve("pom.xml");
 
         final String startDependenciesMarker = "<dependencies>";
@@ -289,9 +296,8 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                     .filter(g -> !g.artifactId.contains("-maven-plugin"))
                     .map(g -> g.asString("        "))
                     .collect(Collectors.joining("\n"));
-            final String updatedPom = before + startDependenciesMarker
-                                      + "\n" + s + "\n"
-                                      + "    " + endDependenciesMarker + after;
+            final String updatedPom =
+                    before + startDependenciesMarker + "\n" + s + "\n" + "    " + endDependenciesMarker + after;
 
             updateResource(root, "pom.xml", updatedPom);
         } catch (IOException e) {
@@ -369,5 +375,4 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             return n;
         }
     }
-
 }

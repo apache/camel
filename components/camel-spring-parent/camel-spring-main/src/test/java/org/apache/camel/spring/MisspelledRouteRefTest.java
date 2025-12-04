@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
 
-import org.apache.camel.CamelException;
-import org.apache.camel.RuntimeCamelException;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.spring;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.CamelException;
+import org.apache.camel.RuntimeCamelException;
+import org.junit.jupiter.api.Test;
 
 public class MisspelledRouteRefTest {
 
@@ -34,8 +35,7 @@ public class MisspelledRouteRefTest {
         Exception ex = assertThrows(RuntimeCamelException.class, () -> main.start());
 
         CamelException ce = assertIsInstanceOf(CamelException.class, ex.getCause());
-        assertEquals("Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]",
-                ce.getMessage());
-
+        assertEquals(
+                "Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]", ce.getMessage());
     }
 }

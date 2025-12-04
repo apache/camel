@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -26,10 +31,6 @@ import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
-import static org.junit.jupiter.api.Assertions.*;
-
 @DisabledOnOs(OS.AIX)
 public class SpringJmxEndpointInjectBeanTest extends SpringTestSupport {
 
@@ -40,7 +41,8 @@ public class SpringJmxEndpointInjectBeanTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxEndpointInjectBeanTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/SpringJmxEndpointInjectBeanTest.xml");
     }
 
     protected MBeanServer getMBeanServer() {
@@ -63,5 +65,4 @@ public class SpringJmxEndpointInjectBeanTest extends SpringTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
     }
-
 }

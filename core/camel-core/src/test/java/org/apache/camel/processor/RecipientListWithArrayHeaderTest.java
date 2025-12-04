@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,7 +40,8 @@ public class RecipientListWithArrayHeaderTest extends ContextTestSupport {
     }
 
     protected void sendBody() {
-        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader", new String[] { "mock:x", "mock:y", "mock:z" });
+        template.sendBodyAndHeader(
+                "direct:a", "answer", "recipientListHeader", new String[] {"mock:x", "mock:y", "mock:z"});
     }
 
     @Override
@@ -51,7 +53,5 @@ public class RecipientListWithArrayHeaderTest extends ContextTestSupport {
                 // END SNIPPET: example
             }
         };
-
     }
-
 }

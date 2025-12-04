@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -45,8 +46,7 @@ public class IncomingGame implements Serializable {
 
     public IncomingAnimation animation;
 
-    public IncomingGame() {
-    }
+    public IncomingGame() {}
 
     public String getTitle() {
         return title;
@@ -99,12 +99,12 @@ public class IncomingGame implements Serializable {
     @Override
     public String toString() {
         return "IncomingGame{"
-               + "title='" + title + '\''
-               + ", description='" + description + '\''
-               + ", photo=" + photo
-               + ", text='" + text + '\''
-               + ", textEntities=" + textEntities
-               + ", animation=" + animation
-               + '}';
+                + "title='" + title + '\''
+                + ", description='" + description + '\''
+                + ", photo=" + photo
+                + ", text='" + text + '\''
+                + ", textEntities=" + textEntities
+                + ", animation=" + animation
+                + '}';
     }
 }

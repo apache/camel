@@ -14,7 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_ADD;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_REMOVE;
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
+import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
+import static org.apache.camel.component.jira.JiraTestConstants.KEY;
+import static org.apache.camel.component.jira.JiraTestConstants.TEST_JIRA_URL;
+import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -45,21 +61,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_ADD;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_REMOVE;
-import static org.apache.camel.component.jira.JiraConstants.JIRA;
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
-import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
-import static org.apache.camel.component.jira.JiraTestConstants.KEY;
-import static org.apache.camel.component.jira.JiraTestConstants.TEST_JIRA_URL;
-import static org.apache.camel.component.jira.Utils.createIssue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.lenient;
-
 @ExtendWith(MockitoExtension.class)
 public class WatcherProducerTest extends CamelTestSupport {
 
@@ -87,7 +88,9 @@ public class WatcherProducerTest extends CamelTestSupport {
     }
 
     public void setMocks() {
-        lenient().when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        lenient()
+                .when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any()))
+                .thenReturn(jiraClient);
         lenient().when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
 
         backendwatchers.add("user1");
@@ -97,26 +100,42 @@ public class WatcherProducerTest extends CamelTestSupport {
         backendwatchers.add("user5");
         URI watchersUri = URI.create(TEST_JIRA_URL + "/rest/api/2/backendIssue/" + KEY + "-11/backendwatchers");
         BasicWatchers initialBasicWatchers = new BasicWatchers(watchersUri, true, backendwatchers.size());
-        backendIssue
-                = createIssue(11L, "Test backendIssue", KEY + "-" + 11, null, null, null, null, null, initialBasicWatchers);
+        backendIssue = createIssue(
+                11L, "Test backendIssue", KEY + "-" + 11, null, null, null, null, null, initialBasicWatchers);
         lenient().when(issueRestClient.addWatcher(any(URI.class), anyString())).then(inv -> {
             String username = inv.getArgument(1);
             backendwatchers.add(username);
             BasicWatchers basicWatchers = new BasicWatchers(watchersUri, true, backendwatchers.size());
-            backendIssue = createIssue(backendIssue.getId(), backendIssue.getSummary(), backendIssue.getKey(),
-                    backendIssue.getIssueType(), backendIssue.getDescription(),
-                    backendIssue.getPriority(), backendIssue.getAssignee(), null, basicWatchers);
+            backendIssue = createIssue(
+                    backendIssue.getId(),
+                    backendIssue.getSummary(),
+                    backendIssue.getKey(),
+                    backendIssue.getIssueType(),
+                    backendIssue.getDescription(),
+                    backendIssue.getPriority(),
+                    backendIssue.getAssignee(),
+                    null,
+                    basicWatchers);
             return null;
         });
-        lenient().when(issueRestClient.removeWatcher(any(URI.class), anyString())).then(inv -> {
-            String username = inv.getArgument(1);
-            backendwatchers.remove(username);
-            BasicWatchers basicWatchers = new BasicWatchers(watchersUri, true, backendwatchers.size());
-            backendIssue = createIssue(backendIssue.getId(), backendIssue.getSummary(), backendIssue.getKey(),
-                    backendIssue.getIssueType(), backendIssue.getDescription(),
-                    backendIssue.getPriority(), backendIssue.getAssignee(), null, basicWatchers);
-            return null;
-        });
+        lenient()
+                .when(issueRestClient.removeWatcher(any(URI.class), anyString()))
+                .then(inv -> {
+                    String username = inv.getArgument(1);
+                    backendwatchers.remove(username);
+                    BasicWatchers basicWatchers = new BasicWatchers(watchersUri, true, backendwatchers.size());
+                    backendIssue = createIssue(
+                            backendIssue.getId(),
+                            backendIssue.getSummary(),
+                            backendIssue.getKey(),
+                            backendIssue.getIssueType(),
+                            backendIssue.getDescription(),
+                            backendIssue.getPriority(),
+                            backendIssue.getAssignee(),
+                            null,
+                            basicWatchers);
+                    return null;
+                });
         lenient().when(issueRestClient.getIssue(anyString())).then(inv -> Promises.promise(backendIssue));
         lenient().when(issueRestClient.getWatchers(any(URI.class))).then(inv -> {
             Collection<BasicUser> users = new ArrayList<>();
@@ -163,7 +182,9 @@ public class WatcherProducerTest extends CamelTestSupport {
         assertEquals(backendIssue, retrievedIssue);
         assertEquals(retrievedIssue.getWatchers().getNumWatchers(), this.backendwatchers.size());
 
-        Watchers watchers = issueRestClient.getWatchers(retrievedIssue.getWatchers().getSelf()).claim();
+        Watchers watchers = issueRestClient
+                .getWatchers(retrievedIssue.getWatchers().getSelf())
+                .claim();
         for (BasicUser user : watchers.getUsers()) {
             assertTrue(this.backendwatchers.contains(user.getName()));
         }
@@ -183,7 +204,9 @@ public class WatcherProducerTest extends CamelTestSupport {
         assertEquals(backendIssue, retrievedIssue);
         assertEquals(retrievedIssue.getWatchers().getNumWatchers(), this.backendwatchers.size());
 
-        Watchers watchers = issueRestClient.getWatchers(retrievedIssue.getWatchers().getSelf()).claim();
+        Watchers watchers = issueRestClient
+                .getWatchers(retrievedIssue.getWatchers().getSelf())
+                .claim();
         for (BasicUser user : watchers.getUsers()) {
             assertTrue(this.backendwatchers.contains(user.getName()));
         }
@@ -205,7 +228,9 @@ public class WatcherProducerTest extends CamelTestSupport {
         assertEquals(backendIssue, retrievedIssue);
         assertEquals(retrievedIssue.getWatchers().getNumWatchers(), this.backendwatchers.size());
 
-        Watchers watchers = issueRestClient.getWatchers(retrievedIssue.getWatchers().getSelf()).claim();
+        Watchers watchers = issueRestClient
+                .getWatchers(retrievedIssue.getWatchers().getSelf())
+                .claim();
         for (BasicUser user : watchers.getUsers()) {
             assertTrue(this.backendwatchers.contains(user.getName()));
         }

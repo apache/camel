@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.ws.rs.core.Response;
 
@@ -32,14 +35,11 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfRsConvertBodyToTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConvertBodyToTest";
-    private static final String CXF_RS_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT
+            + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -69,10 +69,9 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
         put.setEntity(entity);
 
         try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-             CloseableHttpResponse response = httpclient.execute(put)) {
+                CloseableHttpResponse response = httpclient.execute(put)) {
             assertEquals(200, response.getCode());
             assertEquals("", EntityUtils.toString(response.getEntity()));
         }
     }
-
 }

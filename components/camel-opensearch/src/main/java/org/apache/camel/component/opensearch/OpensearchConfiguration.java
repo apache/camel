@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch;
 
 import java.util.List;
@@ -37,43 +38,62 @@ public class OpensearchConfiguration {
     @UriPath
     @Metadata(required = true)
     private String clusterName;
+
     @UriParam
     private OpensearchOperation operation;
+
     @UriParam
     private Integer size;
+
     @UriParam
     private Integer from;
+
     @UriParam
     private String indexName;
+
     @UriParam(defaultValue = "" + OpensearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
     private int waitForActiveShards = OpensearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
+
     @UriParam
     private String hostAddresses;
+
     @UriParam(defaultValue = "" + OpensearchConstants.DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = OpensearchConstants.DEFAULT_SOCKET_TIMEOUT;
+
     @UriParam(defaultValue = "" + OpensearchConstants.MAX_RETRY_TIMEOUT)
     private int maxRetryTimeout = OpensearchConstants.MAX_RETRY_TIMEOUT;
+
     @UriParam(defaultValue = "" + OpensearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = OpensearchConstants.DEFAULT_CONNECTION_TIMEOUT;
+
     @UriParam
     private boolean disconnect;
+
     @UriParam(label = "security")
     private boolean enableSSL;
+
     @UriParam(label = "security")
     @Metadata(supportFileReference = true)
     private String certificatePath;
+
     @UriParam
     private boolean useScroll;
+
     @UriParam(defaultValue = "" + OpensearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS)
     private int scrollKeepAliveMs = OpensearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS;
+
     @UriParam(label = "advanced")
     private boolean enableSniffer;
+
     @UriParam(label = "advanced", defaultValue = "" + OpensearchConstants.DEFAULT_SNIFFER_INTERVAL)
     private int snifferInterval = OpensearchConstants.DEFAULT_SNIFFER_INTERVAL;
+
     @UriParam(label = "advanced", defaultValue = "" + OpensearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
     private int sniffAfterFailureDelay = OpensearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
+
     @UriParam(label = "advanced", defaultValue = "ObjectNode")
     private Class<?> documentClass = ObjectNode.class;
+
     @UriParam(label = "advanced")
     private HostnameVerifier hostnameVerifier;
 

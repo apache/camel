@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static java.lang.invoke.MethodHandles.publicLookup;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,8 +101,6 @@ import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.invoke.MethodHandles.publicLookup;
-
 /**
  * A Camel REST-DSL openApi reader that parse the rest-dsl into a openApi model representation.
  * <p/>
@@ -110,11 +111,24 @@ public class RestOpenApiReader {
     public static final String OAS30_SCHEMA_DEFINITION_PREFIX = "#/components/schemas/";
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiReader.class);
     // Types that are not allowed in references.
-    private static final Set<String> NO_REFERENCE_TYPE_NAMES = new HashSet<>(
-            Arrays.asList(
-                    "byte", "char", "short", "int", "java.lang.Integer", "long", "java.lang.Long", "float", "java.lang.Float",
-                    "double", "java.lang.Double", "string", "java.lang.String", "boolean", "java.lang.Boolean",
-                    "file", "java.io.File"));
+    private static final Set<String> NO_REFERENCE_TYPE_NAMES = new HashSet<>(Arrays.asList(
+            "byte",
+            "char",
+            "short",
+            "int",
+            "java.lang.Integer",
+            "long",
+            "java.lang.Long",
+            "float",
+            "java.lang.Float",
+            "double",
+            "java.lang.Double",
+            "string",
+            "java.lang.String",
+            "boolean",
+            "java.lang.Boolean",
+            "file",
+            "java.io.File"));
 
     private static String getValue(CamelContext camelContext, String text) {
         return camelContext.resolvePropertyPlaceholders(text);
@@ -143,15 +157,18 @@ public class RestOpenApiReader {
      * @throws UnknownHostException   is thrown if error resolving local hostname
      */
     public OpenAPI read(
-            CamelContext camelContext, List<RestDefinition> rests, BeanConfig config,
-            String camelContextId, ClassResolver classResolver)
+            CamelContext camelContext,
+            List<RestDefinition> rests,
+            BeanConfig config,
+            String camelContextId,
+            ClassResolver classResolver)
             throws ClassNotFoundException, IOException, UnknownHostException {
 
         // contract first, then load the specification as-is and use as response
         for (RestDefinition rest : rests) {
             if (rest.getOpenApi() != null) {
-                Resource res
-                        = PluginHelper.getResourceLoader(camelContext).resolveResource(rest.getOpenApi().getSpecification());
+                Resource res = PluginHelper.getResourceLoader(camelContext)
+                        .resolveResource(rest.getOpenApi().getSpecification());
                 if (res != null && res.exists()) {
                     InputStream is = res.getInputStream();
                     String data = IOHelper.loadText(is);
@@ -168,8 +185,8 @@ public class RestOpenApiReader {
                             String scheme = "http";
                             int port = 0;
                             host = RestComponentHelper.resolveRestHostName(host, restConfig);
-                            EmbeddedHttpService server
-                                    = CamelContextHelper.findSingleByType(camelContext, EmbeddedHttpService.class);
+                            EmbeddedHttpService server =
+                                    CamelContextHelper.findSingleByType(camelContext, EmbeddedHttpService.class);
                             if (server != null) {
                                 scheme = server.getScheme();
                                 port = server.getServerPort();
@@ -224,15 +241,10 @@ public class RestOpenApiReader {
          * Fixes the problem of generating duplicated tags which is invalid per the specification
          */
         if (openApi.getTags() != null) {
-            openApi.setTags(new ArrayList<>(
-                    openApi.getTags()
-                            .stream()
-                            .collect(Collectors.toMap(
-                                    Tag::getName,
-                                    Function.identity(),
-                                    (prev, current) -> prev,
-                                    LinkedHashMap::new))
-                            .values()));
+            openApi.setTags(new ArrayList<>(openApi.getTags().stream()
+                    .collect(Collectors.toMap(
+                            Tag::getName, Function.identity(), (prev, current) -> prev, LinkedHashMap::new))
+                    .values()));
         }
 
         // configure before returning
@@ -248,8 +260,12 @@ public class RestOpenApiReader {
     }
 
     private void parse(
-            CamelContext camelContext, OpenAPI openApi, RestDefinition rest, String camelContextId,
-            ClassResolver classResolver, BeanConfig config)
+            CamelContext camelContext,
+            OpenAPI openApi,
+            RestDefinition rest,
+            String camelContextId,
+            ClassResolver classResolver,
+            BeanConfig config)
             throws ClassNotFoundException {
 
         // only include enabled verbs
@@ -268,9 +284,7 @@ public class RestOpenApiReader {
         // Multi tag support for a comma delimeted tag
         String[] pathAsTags = null != rest.getTag()
                 ? getValue(camelContext, rest.getTag()).split(",")
-                : null != rest.getPath()
-                        ? new String[] { getValue(camelContext, rest.getPath()) }
-                : new String[0];
+                : null != rest.getPath() ? new String[] {getValue(camelContext, rest.getPath())} : new String[0];
 
         parseOas30(camelContext, openApi, rest, pathAsTags);
 
@@ -357,18 +371,25 @@ public class RestOpenApiReader {
         if (sd != null) {
             for (RestSecurityDefinition def : sd.getSecurityDefinitions()) {
                 if (def instanceof BasicAuthDefinition) {
-                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                            .scheme("basic").description(CamelContextHelper.parseText(camelContext, def.getDescription()));
-                    openApi.getComponents().addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
+                    SecurityScheme auth = new SecurityScheme()
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("basic")
+                            .description(CamelContextHelper.parseText(camelContext, def.getDescription()));
+                    openApi.getComponents()
+                            .addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
                 } else if (def instanceof BearerTokenDefinition) {
-                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                            .scheme("bearer").description(CamelContextHelper.parseText(camelContext, def.getDescription()))
-                            .bearerFormat(
-                                    (CamelContextHelper.parseText(camelContext, ((BearerTokenDefinition) def).getFormat())));
-                    openApi.getComponents().addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
+                    SecurityScheme auth = new SecurityScheme()
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .description(CamelContextHelper.parseText(camelContext, def.getDescription()))
+                            .bearerFormat((CamelContextHelper.parseText(
+                                    camelContext, ((BearerTokenDefinition) def).getFormat())));
+                    openApi.getComponents()
+                            .addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
                 } else if (def instanceof ApiKeyDefinition) {
                     ApiKeyDefinition rs = (ApiKeyDefinition) def;
-                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.APIKEY)
+                    SecurityScheme auth = new SecurityScheme()
+                            .type(SecurityScheme.Type.APIKEY)
                             .name(CamelContextHelper.parseText(camelContext, rs.getName()))
                             .description(CamelContextHelper.parseText(camelContext, def.getDescription()));
                     if (Boolean.TRUE.equals(CamelContextHelper.parseBoolean(camelContext, rs.getInHeader()))) {
@@ -380,11 +401,13 @@ public class RestOpenApiReader {
                     } else {
                         throw new IllegalStateException("No API Key location specified.");
                     }
-                    openApi.getComponents().addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
+                    openApi.getComponents()
+                            .addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
                 } else if (def instanceof OAuth2Definition) {
                     OAuth2Definition rs = (OAuth2Definition) def;
 
-                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.OAUTH2)
+                    SecurityScheme auth = new SecurityScheme()
+                            .type(SecurityScheme.Type.OAUTH2)
                             .description(CamelContextHelper.parseText(camelContext, def.getDescription()));
                     String flow = CamelContextHelper.parseText(camelContext, rs.getFlow());
                     if (flow == null) {
@@ -417,21 +440,29 @@ public class RestOpenApiReader {
                     if (!rs.getScopes().isEmpty()) {
                         oauthFlow.setScopes(new Scopes());
                         for (RestPropertyDefinition scope : rs.getScopes()) {
-                            oauthFlow.getScopes().addString(CamelContextHelper.parseText(camelContext, scope.getKey()),
-                                    CamelContextHelper.parseText(camelContext, scope.getValue()));
+                            oauthFlow
+                                    .getScopes()
+                                    .addString(
+                                            CamelContextHelper.parseText(camelContext, scope.getKey()),
+                                            CamelContextHelper.parseText(camelContext, scope.getValue()));
                         }
                     }
-                    openApi.getComponents().addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
+                    openApi.getComponents()
+                            .addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
                 } else if (def instanceof MutualTLSDefinition) {
-                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.MUTUALTLS)
+                    SecurityScheme auth = new SecurityScheme()
+                            .type(SecurityScheme.Type.MUTUALTLS)
                             .description(CamelContextHelper.parseText(camelContext, def.getDescription()));
-                    openApi.getComponents().addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
+                    openApi.getComponents()
+                            .addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
                 } else if (def instanceof OpenIdConnectDefinition) {
-                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.OPENIDCONNECT)
+                    SecurityScheme auth = new SecurityScheme()
+                            .type(SecurityScheme.Type.OPENIDCONNECT)
                             .description(CamelContextHelper.parseText(camelContext, def.getDescription()));
                     auth.setOpenIdConnectUrl(
                             CamelContextHelper.parseText(camelContext, ((OpenIdConnectDefinition) def).getUrl()));
-                    openApi.getComponents().addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
+                    openApi.getComponents()
+                            .addSecuritySchemes(CamelContextHelper.parseText(camelContext, def.getKey()), auth);
                 }
             }
         }
@@ -448,8 +479,13 @@ public class RestOpenApiReader {
     }
 
     private void doParseVerbs(
-            CamelContext camelContext, OpenAPI openApi, RestDefinition rest, String camelContextId,
-            List<VerbDefinition> verbs, String[] pathAsTags, BeanConfig config) {
+            CamelContext camelContext,
+            OpenAPI openApi,
+            RestDefinition rest,
+            String camelContextId,
+            List<VerbDefinition> verbs,
+            String[] pathAsTags,
+            BeanConfig config) {
 
         String basePath = buildBasePath(camelContext, rest);
 
@@ -476,10 +512,10 @@ public class RestOpenApiReader {
             }
             PathItem path = openApi.getPaths().get(opPath);
             if (path == null) {
-                path = new PathItem();   //openApi.paths.createPathItem(opPath);
+                path = new PathItem(); // openApi.paths.createPathItem(opPath);
             }
 
-            Operation op = new Operation(); //path.createOperation(method);
+            Operation op = new Operation(); // path.createOperation(method);
             for (String tag : pathAsTags) {
                 // group in the same tag
                 op.addTagsItem(tag);
@@ -502,12 +538,14 @@ public class RestOpenApiReader {
 
             path.operation(PathItem.HttpMethod.valueOf(method.toUpperCase()), op);
 
-            String consumes = getValue(camelContext, verb.getConsumes() != null ? verb.getConsumes() : rest.getConsumes());
+            String consumes =
+                    getValue(camelContext, verb.getConsumes() != null ? verb.getConsumes() : rest.getConsumes());
             if (consumes == null) {
                 consumes = config.defaultConsumes;
             }
 
-            String produces = getValue(camelContext, verb.getProduces() != null ? verb.getProduces() : rest.getProduces());
+            String produces =
+                    getValue(camelContext, verb.getProduces() != null ? verb.getProduces() : rest.getProduces());
             if (produces == null) {
                 produces = config.defaultProduces;
             }
@@ -522,7 +560,11 @@ public class RestOpenApiReader {
     }
 
     private void doParseVerb(
-            CamelContext camelContext, OpenAPI openApi, VerbDefinition verb, Operation op, String consumes,
+            CamelContext camelContext,
+            OpenAPI openApi,
+            VerbDefinition verb,
+            Operation op,
+            String consumes,
             String produces) {
         if (verb.getDescriptionText() != null) {
             op.setSummary(getValue(camelContext, verb.getDescriptionText()));
@@ -540,7 +582,7 @@ public class RestOpenApiReader {
                     scopes.add(scope);
                 }
             }
-            SecurityRequirement securityRequirement = new SecurityRequirement(); //op.createSecurityRequirement();
+            SecurityRequirement securityRequirement = new SecurityRequirement(); // op.createSecurityRequirement();
             securityRequirement.addList(getValue(camelContext, sd.getKey()), scopes);
             op.addSecurityItem(securityRequirement);
         }
@@ -555,8 +597,8 @@ public class RestOpenApiReader {
                 }
                 parameter.setRequired(param.getRequired());
 
-                final String dataType
-                        = getValue(camelContext, param.getDataType() != null ? param.getDataType() : "string");
+                final String dataType =
+                        getValue(camelContext, param.getDataType() != null ? param.getDataType() : "string");
 
                 // set type on parameter
                 if (!"body".equals(parameter.getIn())) {
@@ -611,7 +653,8 @@ public class RestOpenApiReader {
                         }
                     }
                     if (param.getCollectionFormat() != null) {
-                        parameter.setStyle(convertToOpenApiStyle(getValue(camelContext, param.getCollectionFormat().name())));
+                        parameter.setStyle(convertToOpenApiStyle(getValue(
+                                camelContext, param.getCollectionFormat().name())));
                     }
                     if (hasAllowableValues && !isArray) {
                         schema.setEnum(allowableValues);
@@ -708,11 +751,10 @@ public class RestOpenApiReader {
                 }
             }
         }
-
     }
 
     private StyleEnum convertToOpenApiStyle(String value) {
-        //Should be a Collection Format name
+        // Should be a Collection Format name
         switch (CollectionFormat.valueOf(value)) {
             case csv:
                 return StyleEnum.FORM;
@@ -729,9 +771,7 @@ public class RestOpenApiReader {
     }
 
     private static void defineSchemas(
-            final Parameter serializableParameter,
-            final List<String> allowableValues,
-            final Class<?> type) {
+            final Parameter serializableParameter, final List<String> allowableValues, final Class<?> type) {
         Schema parameterSchema = serializableParameter.getSchema();
         if (allowableValues != null && !allowableValues.isEmpty()) {
             if (String.class.equals(type)) {
@@ -773,35 +813,38 @@ public class RestOpenApiReader {
     }
 
     private static void convertAndSetItemsEnum(
-            final Schema items, final List<String> allowableValues,
-            final Class<?> type) {
+            final Schema items, final List<String> allowableValues, final Class<?> type) {
         try {
             final MethodHandle valueOf = ClassUtils.isPrimitiveWrapper(type)
-                    ? publicLookup().findStatic(type, "valueOf", MethodType.methodType(type, String.class)) : null;
-            final MethodHandle setEnum = publicLookup().bind(items, "setEnum",
-                    MethodType.methodType(void.class, List.class));
-            final Method castSchema
-                    = type.getSuperclass().equals(Schema.class) ? type.getDeclaredMethod("cast", Object.class) : null;
+                    ? publicLookup().findStatic(type, "valueOf", MethodType.methodType(type, String.class))
+                    : null;
+            final MethodHandle setEnum =
+                    publicLookup().bind(items, "setEnum", MethodType.methodType(void.class, List.class));
+            final Method castSchema =
+                    type.getSuperclass().equals(Schema.class) ? type.getDeclaredMethod("cast", Object.class) : null;
             if (castSchema != null) {
                 castSchema.setAccessible(true);
             }
-            final Object schema = castSchema != null ? type.getDeclaredConstructor().newInstance() : null;
+            final Object schema =
+                    castSchema != null ? type.getDeclaredConstructor().newInstance() : null;
 
-            final List<?> values = allowableValues.stream().map(v -> {
-                try {
-                    if (valueOf != null) {
-                        return valueOf.invoke(v);
-                    } else if (castSchema != null) {
-                        return castSchema.invoke(schema, v);
-                    } else {
-                        throw new RuntimeException("Can not convert allowable value " + v);
-                    }
-                } catch (RuntimeException e) {
-                    throw e;
-                } catch (Throwable e) {
-                    throw new IllegalStateException(e);
-                }
-            }).collect(Collectors.toList());
+            final List<?> values = allowableValues.stream()
+                    .map(v -> {
+                        try {
+                            if (valueOf != null) {
+                                return valueOf.invoke(v);
+                            } else if (castSchema != null) {
+                                return castSchema.invoke(schema, v);
+                            } else {
+                                throw new RuntimeException("Can not convert allowable value " + v);
+                            }
+                        } catch (RuntimeException e) {
+                            throw e;
+                        } catch (Throwable e) {
+                            throw new IllegalStateException(e);
+                        }
+                    })
+                    .collect(Collectors.toList());
             setEnum.invoke(values);
         } catch (RuntimeException e) {
             throw e;
@@ -826,8 +869,7 @@ public class RestOpenApiReader {
     }
 
     private void doParseResponse(
-            CamelContext camelContext, OpenAPI openApi, Operation op, String produces,
-            ResponseMessageDefinition msg) {
+            CamelContext camelContext, OpenAPI openApi, Operation op, String produces, ResponseMessageDefinition msg) {
         ApiResponse response = null;
 
         String code = getValue(camelContext, msg.getCode());
@@ -860,8 +902,11 @@ public class RestOpenApiReader {
                 String type = getValue(camelContext, header.getDataType());
                 String format = getValue(camelContext, header.getDataFormat());
 
-                if ("string".equals(type) || "long".equals(type) || "float".equals(type)
-                        || "double".equals(type) || "boolean".equals(type)) {
+                if ("string".equals(type)
+                        || "long".equals(type)
+                        || "float".equals(type)
+                        || "double".equals(type)
+                        || "boolean".equals(type)) {
                     setResponseHeader(camelContext, response, header, name, format, type);
                 } else if ("int".equals(type) || "integer".equals(type)) {
                     setResponseHeader(camelContext, response, header, name, format, "integer");
@@ -879,11 +924,9 @@ public class RestOpenApiReader {
                                 || arrayType.equalsIgnoreCase("double")
                                 || arrayType.equalsIgnoreCase("boolean")) {
                             setHeaderSchemaOas30(ap, arrayType);
-                        } else if (arrayType.equalsIgnoreCase("int")
-                                || arrayType.equalsIgnoreCase("integer")) {
+                        } else if (arrayType.equalsIgnoreCase("int") || arrayType.equalsIgnoreCase("integer")) {
                             setHeaderSchemaOas30(ap, "integer");
                         }
-
                     }
                     // add example
                     if (header.getExample() != null) {
@@ -898,8 +941,9 @@ public class RestOpenApiReader {
             if (response.getContent() != null) {
                 for (MediaType mediaType : response.getContent().values()) {
                     for (RestPropertyDefinition prop : msg.getExamples()) {
-                        mediaType.addExamples(getValue(camelContext, prop.getKey()), new Example()
-                                .value(getValue(camelContext, prop.getValue())));
+                        mediaType.addExamples(
+                                getValue(camelContext, prop.getKey()),
+                                new Example().value(getValue(camelContext, prop.getValue())));
                     }
                 }
             }
@@ -913,8 +957,12 @@ public class RestOpenApiReader {
     }
 
     private void setResponseHeader(
-            CamelContext camelContext, ApiResponse response, ResponseHeaderDefinition header,
-            String name, String format, String type) {
+            CamelContext camelContext,
+            ApiResponse response,
+            ResponseHeaderDefinition header,
+            String name,
+            String format,
+            String type) {
         Header ip = new Header();
         response.addHeaderObject(name, ip);
         Schema schema = new Schema().type(type);
@@ -948,8 +996,7 @@ public class RestOpenApiReader {
             return null;
         }
 
-        if (openApi.getComponents() != null
-                && openApi.getComponents().getSchemas() != null) {
+        if (openApi.getComponents() != null && openApi.getComponents().getSchemas() != null) {
             for (Schema model : openApi.getComponents().getSchemas().values()) {
                 if (typeName.equals(getClassNameExtension(model))) {
                     return model.getName();
@@ -1045,8 +1092,10 @@ public class RestOpenApiReader {
                     if (oldClassName != null) {
                         // a schema with this name and a classname is already in the model
                         addSchema = false;
-                        LOG.info("Duplicate schema found for with name {}; classname1={}, classname2={}",
-                                newSchema.getName(), oldClassName,
+                        LOG.info(
+                                "Duplicate schema found for with name {}; classname1={}, classname2={}",
+                                newSchema.getName(),
+                                oldClassName,
                                 newClassName != null ? newClassName : "none");
                     }
                 }
@@ -1055,7 +1104,6 @@ public class RestOpenApiReader {
                 openApi.getComponents().addSchemas(newSchema.getName(), newSchema);
             }
         }
-
     }
 
     /**
@@ -1116,7 +1164,6 @@ public class RestOpenApiReader {
 
         AbstractSpecFilter filter = new SchemaFilter(names);
         return new SpecFilter().filter(document, filter, null, null, null);
-
     }
 
     private String inferOauthFlow(CamelContext camelContext, OAuth2Definition rs) {
@@ -1142,8 +1189,12 @@ public class RestOpenApiReader {
 
         @Override
         public Optional<Parameter> filterParameter(
-                Parameter parameter, Operation operation, ApiDescription api,
-                Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+                Parameter parameter,
+                Operation operation,
+                ApiDescription api,
+                Map<String, List<String>> params,
+                Map<String, String> cookies,
+                Map<String, List<String>> headers) {
             if (parameter.getContent() != null) {
                 processRefsInContent(parameter.getContent(), params, cookies, headers);
             }
@@ -1152,8 +1203,12 @@ public class RestOpenApiReader {
 
         @Override
         public Optional<RequestBody> filterRequestBody(
-                RequestBody requestBody, Operation operation, ApiDescription api,
-                Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+                RequestBody requestBody,
+                Operation operation,
+                ApiDescription api,
+                Map<String, List<String>> params,
+                Map<String, String> cookies,
+                Map<String, List<String>> headers) {
             if (requestBody.getContent() != null) {
                 processRefsInContent(requestBody.getContent(), params, cookies, headers);
             }
@@ -1162,8 +1217,12 @@ public class RestOpenApiReader {
 
         @Override
         public Optional<ApiResponse> filterResponse(
-                ApiResponse response, Operation operation, ApiDescription api,
-                Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+                ApiResponse response,
+                Operation operation,
+                ApiDescription api,
+                Map<String, List<String>> params,
+                Map<String, String> cookies,
+                Map<String, List<String>> headers) {
             if (response.getContent() != null) {
                 processRefsInContent(response.getContent(), params, cookies, headers);
             }
@@ -1174,7 +1233,9 @@ public class RestOpenApiReader {
         @Override
         public Optional<Schema> filterSchema(
                 Schema schema,
-                Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+                Map<String, List<String>> params,
+                Map<String, String> cookies,
+                Map<String, List<String>> headers) {
             if (schema.getName() != null) {
                 schema.setName(fixSchemaReference(schema.getName(), OAS30_SCHEMA_DEFINITION_PREFIX));
             }
@@ -1185,12 +1246,12 @@ public class RestOpenApiReader {
                 filterSchema(schema.getItems(), params, cookies, headers);
             }
             if (schema.getProperties() != null) {
-                for (Schema<?> propSchema : (Collection<Schema>) schema.getProperties().values()) {
+                for (Schema<?> propSchema :
+                        (Collection<Schema>) schema.getProperties().values()) {
                     filterSchema(propSchema, params, cookies, headers);
                 }
             }
-            if (schema.getAdditionalProperties() != null &&
-                    schema.getAdditionalProperties() instanceof Schema) {
+            if (schema.getAdditionalProperties() != null && schema.getAdditionalProperties() instanceof Schema) {
                 filterSchema((Schema) schema.getAdditionalProperties(), params, cookies, headers);
             }
             if (schema.getAnyOf() != null) {
@@ -1215,8 +1276,10 @@ public class RestOpenApiReader {
         }
 
         private void processRefsInContent(
-                Content content, Map<String, List<String>> params,
-                Map<String, String> cookies, Map<String, List<String>> headers) {
+                Content content,
+                Map<String, List<String>> params,
+                Map<String, String> cookies,
+                Map<String, List<String>> headers) {
             for (MediaType media : content.values()) {
                 if (media.getSchema() != null) {
                     filterSchema(media.getSchema(), params, cookies, headers);
@@ -1233,5 +1296,4 @@ public class RestOpenApiReader {
             return name == null ? ref : name;
         }
     }
-
 }

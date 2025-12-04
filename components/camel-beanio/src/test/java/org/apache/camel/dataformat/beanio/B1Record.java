@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
 
 public class B1Record extends Record {
     String securityName;
 
-    public B1Record() {
-    }
+    public B1Record() {}
 
     public B1Record(String sedol, String source, String securityName) {
         super(sedol, source);

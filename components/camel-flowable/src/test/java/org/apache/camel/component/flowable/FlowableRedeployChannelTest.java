@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -22,16 +26,15 @@ import org.apache.camel.Exchange;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class FlowableRedeployChannelTest extends CamelFlowableTestCase {
 
     @Test
     public void testUnregisterChannelModel() throws Exception {
         String deploymentId = deployProcessDefinition("process/start.bpmn20.xml");
         try {
-            eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
+            eventRegistryEngineConfiguration
+                    .getEventRepositoryService()
+                    .createDeployment()
                     .addClasspathResource("channel/userChannel.channel")
                     .addClasspathResource("event/userEvent.event")
                     .deploy();
@@ -43,14 +46,18 @@ public class FlowableRedeployChannelTest extends CamelFlowableTestCase {
             exchange.getIn().setBody(bodyNode);
             template.send("direct:start", exchange);
 
-            ProcessInstance processInstance
-                    = runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").singleResult();
+            ProcessInstance processInstance = runtimeService
+                    .createProcessInstanceQuery()
+                    .processDefinitionKey("camelProcess")
+                    .singleResult();
             assertNotNull(processInstance);
 
             assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
             assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
 
-            eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
+            eventRegistryEngineConfiguration
+                    .getEventRepositoryService()
+                    .createDeployment()
                     .addClasspathResource("channel/userChannelUpdated.channel")
                     .addClasspathResource("event/userEventUpdated.event")
                     .deploy();
@@ -61,13 +68,23 @@ public class FlowableRedeployChannelTest extends CamelFlowableTestCase {
             bodyNode.put("address", "Main street 1");
             assertEquals(null, context.hasEndpoint("direct:start"));
 
-            assertEquals(1, runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").count());
+            assertEquals(
+                    1,
+                    runtimeService
+                            .createProcessInstanceQuery()
+                            .processDefinitionKey("camelProcess")
+                            .count());
 
             exchange = context.getEndpoint("direct:startUpdated").createExchange();
             exchange.getIn().setBody(bodyNode);
             template.send("direct:startUpdated", exchange);
 
-            assertEquals(2, runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").count());
+            assertEquals(
+                    2,
+                    runtimeService
+                            .createProcessInstanceQuery()
+                            .processDefinitionKey("camelProcess")
+                            .count());
 
         } finally {
             repositoryService.deleteDeployment(deploymentId, true);

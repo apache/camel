@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite;
 
 import java.io.File;
@@ -42,14 +43,15 @@ public abstract class AbstractNitriteTest extends CamelTestSupport {
     }
 
     protected List<Exchange> sortByChangeTimestamp(List<Exchange> input) {
-        return input.stream().sorted((e1, e2) -> {
-            Long timestamp1 = e1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP, Long.class);
-            Long timestamp2 = e2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP, Long.class);
-            if (timestamp1 == null || timestamp2 == null) {
-                return 0;
-            }
-            return Long.compare(timestamp1, timestamp2);
-        }).toList();
+        return input.stream()
+                .sorted((e1, e2) -> {
+                    Long timestamp1 = e1.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP, Long.class);
+                    Long timestamp2 = e2.getMessage().getHeader(NitriteConstants.CHANGE_TIMESTAMP, Long.class);
+                    if (timestamp1 == null || timestamp2 == null) {
+                        return 0;
+                    }
+                    return Long.compare(timestamp1, timestamp2);
+                })
+                .toList();
     }
-
 }

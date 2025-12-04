@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromToInOutUsingToTest extends ContextTestSupport {
 
@@ -45,12 +46,14 @@ public class FromToInOutUsingToTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").to(ExchangePattern.InOut, "direct:foo").to("mock:result");
 
-                from("direct:foo").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // but it should have been changed to InOut
-                        assertEquals(ExchangePattern.InOut, exchange.getPattern());
-                    }
-                }).to("mock:foo");
+                from("direct:foo")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // but it should have been changed to InOut
+                                assertEquals(ExchangePattern.InOut, exchange.getPattern());
+                            }
+                        })
+                        .to("mock:foo");
             }
         };
     }

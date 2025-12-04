@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.Arrays;
@@ -51,7 +52,8 @@ public class TahuEdgePayloadConverter implements HeaderFilterStrategyAware {
 
         Message messageCopy = message.copy();
 
-        SparkplugBPayload.SparkplugBPayloadBuilder dataPayloadBuilder = new SparkplugBPayload.SparkplugBPayloadBuilder();
+        SparkplugBPayload.SparkplugBPayloadBuilder dataPayloadBuilder =
+                new SparkplugBPayload.SparkplugBPayloadBuilder();
 
         final Date payloadDate = getPayloadDate(exchange, messageCopy, dataPayloadBuilder);
         dataPayloadBuilder.setTimestamp(payloadDate);
@@ -105,12 +107,10 @@ public class TahuEdgePayloadConverter implements HeaderFilterStrategyAware {
         });
 
         return dataPayloadBuilder.createPayload();
-
     }
 
     private Date getPayloadDate(
-            Exchange exchange, Message messageCopy,
-            SparkplugBPayload.SparkplugBPayloadBuilder dataPayloadBuilder) {
+            Exchange exchange, Message messageCopy, SparkplugBPayload.SparkplugBPayloadBuilder dataPayloadBuilder) {
         long payloadTimestamp;
         if (messageCopy != null && messageCopy.getMessageTimestamp() != 0L) {
             payloadTimestamp = messageCopy.getMessageTimestamp();
@@ -124,12 +124,11 @@ public class TahuEdgePayloadConverter implements HeaderFilterStrategyAware {
 
     private static class MetricDataTypeStreamHolder {
         private static int[] VALUES;
+
         static {
             // 20 and 21 are not MetricDataTypes, 35 will hit the default case to include
             // MetricDataType.Unknown
-            VALUES = IntStream.range(1, 35)
-                    .filter(i -> i != 20 && i != 21)
-                    .toArray();
+            VALUES = IntStream.range(1, 35).filter(i -> i != 20 && i != 21).toArray();
         }
 
         private static Stream<MetricDataType> getStream() {
@@ -144,7 +143,8 @@ public class TahuEdgePayloadConverter implements HeaderFilterStrategyAware {
 
         MetricDataType defaultType = MetricDataTypeStreamHolder.getStream()
                 .dropWhile(checkType -> !checkType.getClazz().isAssignableFrom(headerValue.getClass()))
-                .findFirst().orElse(MetricDataType.Unknown);
+                .findFirst()
+                .orElse(MetricDataType.Unknown);
 
         return defaultType;
     }

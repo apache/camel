@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunkhec;
 
 import java.io.IOException;
@@ -40,9 +41,14 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 /**
  * The splunk component allows publishing events in Splunk using the HTTP Event Collector.
  */
-@UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", producerOnly = true,
-             syntax = "splunk-hec:splunkURL", category = { Category.MONITORING },
-             headersClass = SplunkHECConstants.class)
+@UriEndpoint(
+        firstVersion = "3.3.0",
+        scheme = "splunk-hec",
+        title = "Splunk HEC",
+        producerOnly = true,
+        syntax = "splunk-hec:splunkURL",
+        category = {Category.MONITORING},
+        headersClass = SplunkHECConstants.class)
 public class SplunkHECEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Pattern SPLUNK_URL_PATTERN = Pattern.compile("^(.*?):(\\d+)$");
@@ -51,14 +57,14 @@ public class SplunkHECEndpoint extends DefaultEndpoint implements EndpointServic
     @UriPath
     @Metadata(required = true)
     private String splunkURL;
+
     @UriParam(description = "SSL configuration")
     private SSLContextParameters sslContextParameters;
 
     @UriParam
     private SplunkHECConfiguration configuration;
 
-    public SplunkHECEndpoint() {
-    }
+    public SplunkHECEndpoint() {}
 
     public SplunkHECEndpoint(String uri, SplunkHECComponent component, SplunkHECConfiguration configuration) {
         super(uri, component);

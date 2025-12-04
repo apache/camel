@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -23,14 +27,11 @@ import org.apache.camel.component.openstack.swift.SwiftConstants;
 import org.junit.jupiter.api.Test;
 import org.openstack4j.model.storage.object.SwiftContainer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class OpenstackSwiftContainerTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-swift://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + SwiftConstants.SWIFT_SUBSYSTEM_CONTAINERS;
+    private static final String URI_FORMAT =
+            "openstack-swift://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + SwiftConstants.SWIFT_SUBSYSTEM_CONTAINERS;
 
     private static final String CONTAINER_NAME = "myContainer";
     private static final String NAME_BOOK = "Book";
@@ -51,11 +52,11 @@ public class OpenstackSwiftContainerTest extends OpenstackWiremockTestSupport {
     @Test
     void getMetadataShouldSucceed() {
         String uri = String.format(URI_FORMAT, url(), SwiftConstants.GET_METADATA);
-        Map<?, ?> metadata = template.requestBodyAndHeader(uri, null, SwiftConstants.CONTAINER_NAME, CONTAINER_NAME, Map.class);
+        Map<?, ?> metadata =
+                template.requestBodyAndHeader(uri, null, SwiftConstants.CONTAINER_NAME, CONTAINER_NAME, Map.class);
 
         assertNotNull(metadata);
         assertEquals("2000", metadata.get(NAME_YEAR));
         assertEquals("TestBook", metadata.get(NAME_BOOK));
     }
-
 }

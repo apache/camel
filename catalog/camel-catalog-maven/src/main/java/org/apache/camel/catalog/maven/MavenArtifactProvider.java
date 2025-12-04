@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.maven;
 
 import java.util.Set;
@@ -57,8 +58,5 @@ public interface MavenArtifactProvider {
      * @return              the names of the components that was added, or an empty set if none found or they already
      *                      exists in the catalog
      */
-    Set<String> addArtifactToCatalog(
-            CamelCatalog camelCatalog,
-            String groupId, String artifactId, String version);
-
+    Set<String> addArtifactToCatalog(CamelCatalog camelCatalog, String groupId, String artifactId, String version);
 }

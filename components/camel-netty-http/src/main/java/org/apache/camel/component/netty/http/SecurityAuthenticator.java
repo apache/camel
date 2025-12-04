@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import javax.security.auth.Subject;
@@ -71,5 +72,4 @@ public interface SecurityAuthenticator {
      * @return         <tt>null</tt> if no roles, otherwise a String with roles separated by comma.
      */
     String getUserRoles(Subject subject);
-
 }

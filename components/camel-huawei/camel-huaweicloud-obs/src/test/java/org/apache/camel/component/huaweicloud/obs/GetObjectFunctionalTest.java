@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetObjectFunctionalTest extends CamelTestSupport {
 
@@ -39,11 +40,10 @@ public class GetObjectFunctionalTest extends CamelTestSupport {
                 from("direct:get_object")
                         .setProperty(OBSProperties.BUCKET_NAME, constant("reji-test"))
                         .setProperty(OBSProperties.OBJECT_NAME, constant("test_file.txt"))
-                        .to("hwcloud-obs:getObject?" +
-                            "accessKey=" + ACCESS_KEY +
-                            "&secretKey=" + SECRET_KEY +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-obs:getObject?" + "accessKey="
+                                + ACCESS_KEY + "&secretKey="
+                                + SECRET_KEY + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Get object successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:get_object_result");

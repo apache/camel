@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.endpoint;
 
 import org.apache.camel.Message;
@@ -58,8 +59,9 @@ public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClien
 
     @InvokeOnHeader("DEREGISTER")
     public void invokeDeregister(Message message) throws Exception {
-        getClient().deregister(getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE_ID, String.class),
-                buildQueryOptions(message, getConfiguration()));
+        getClient()
+                .deregister(
+                        getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE_ID, String.class),
+                        buildQueryOptions(message, getConfiguration()));
     }
-
 }

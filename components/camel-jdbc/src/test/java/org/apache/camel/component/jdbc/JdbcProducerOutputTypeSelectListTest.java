@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -24,15 +28,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JdbcProducerOutputTypeSelectListTest extends AbstractJdbcTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Test
     public void testOutputTypeSelectList() throws Exception {
         mock.expectedMessageCount(1);
@@ -41,7 +42,8 @@ public class JdbcProducerOutputTypeSelectListTest extends AbstractJdbcTestSuppor
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(3, received.size());
 
         Map<String, Object> row = assertIsInstanceOf(Map.class, received.get(0));

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.io.IOException;
@@ -54,8 +55,7 @@ public final class ObjectHelper {
     /**
      * Utility classes should not have a public constructor.
      */
-    private ObjectHelper() {
-    }
+    private ObjectHelper() {}
 
     /**
      * A helper method for comparing objects for equality while handling nulls
@@ -355,8 +355,11 @@ public final class ObjectHelper {
         try {
             return System.getProperty(name, defaultValue);
         } catch (Exception e) {
-            logger().debug("Caught security exception accessing system property: {}. Will use default value: {}",
-                    name, defaultValue, e);
+            logger().debug(
+                            "Caught security exception accessing system property: {}. Will use default value: {}",
+                            name,
+                            defaultValue,
+                            e);
 
             return defaultValue;
         }
@@ -853,9 +856,7 @@ public final class ObjectHelper {
      * @deprecated                use AnnotationHelper
      */
     @Deprecated(since = "4.13.0")
-    public static List<Method> findMethodsWithAnnotation(
-            Class<?> type,
-            Class<? extends Annotation> annotationType) {
+    public static List<Method> findMethodsWithAnnotation(Class<?> type, Class<? extends Annotation> annotationType) {
         return AnnotationHelper.findMethodsWithAnnotation(type, annotationType);
     }
 
@@ -871,9 +872,7 @@ public final class ObjectHelper {
      */
     @Deprecated(since = "4.13.0")
     public static List<Method> findMethodsWithAnnotation(
-            Class<?> type,
-            Class<? extends Annotation> annotationType,
-            boolean checkMetaAnnotations) {
+            Class<?> type, Class<? extends Annotation> annotationType, boolean checkMetaAnnotations) {
         return AnnotationHelper.findMethodsWithAnnotation(type, annotationType, checkMetaAnnotations);
     }
 
@@ -889,8 +888,7 @@ public final class ObjectHelper {
      */
     @Deprecated(since = "4.13.0")
     public static boolean hasAnnotation(
-            AnnotatedElement elem, Class<? extends Annotation> annotationType,
-            boolean checkMetaAnnotations) {
+            AnnotatedElement elem, Class<? extends Annotation> annotationType, boolean checkMetaAnnotations) {
         return AnnotationHelper.hasAnnotation(elem, annotationType, checkMetaAnnotations);
     }
 
@@ -1127,9 +1125,7 @@ public final class ObjectHelper {
             return toType.cast(value);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(
-                    "Failed to convert: "
-                                               + value + " to type: " + toType.getName() + " due to: " + e,
-                    e);
+                    "Failed to convert: " + value + " to type: " + toType.getName() + " due to: " + e, e);
         }
     }
 
@@ -1259,7 +1255,7 @@ public final class ObjectHelper {
             return null;
         }
 
-        //check the suppressed exception first
+        // check the suppressed exception first
         for (Throwable throwable : exception.getSuppressed()) {
             if (type.isInstance(throwable)) {
                 return type.cast(throwable);
@@ -1320,8 +1316,7 @@ public final class ObjectHelper {
      * @return       <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
-        return value instanceof Float && ((Float) value).isNaN()
-                || value instanceof Double && ((Double) value).isNaN();
+        return value instanceof Float && ((Float) value).isNaN() || value instanceof Double && ((Double) value).isNaN();
     }
 
     /**
@@ -1381,5 +1376,4 @@ public final class ObjectHelper {
     private static Logger logger() {
         return Holder.LOG;
     }
-
 }

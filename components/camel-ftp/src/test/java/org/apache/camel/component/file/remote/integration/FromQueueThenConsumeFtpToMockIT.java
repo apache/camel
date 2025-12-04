@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Endpoint;
@@ -77,40 +78,42 @@ public class FromQueueThenConsumeFtpToMockIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e2
-                from("seda:start").process(new Processor() {
-                    public void process(final Exchange exchange) throws Exception {
-                        // get the filename from our custome header we want to
-                        // get from a remote server
-                        String filename = exchange.getIn().getHeader("myfile", String.class);
+                from("seda:start")
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                // get the filename from our custome header we want to
+                                // get from a remote server
+                                String filename = exchange.getIn().getHeader("myfile", String.class);
 
-                        // construct the total url for the ftp consumer
-                        // add the fileName option with the file we want to
-                        // consume
-                        String url = getFtpUrl() + "&fileName=" + filename;
+                                // construct the total url for the ftp consumer
+                                // add the fileName option with the file we want to
+                                // consume
+                                String url = getFtpUrl() + "&fileName=" + filename;
 
-                        // create a ftp endpoint
-                        Endpoint ftp = context.getEndpoint(url);
+                                // create a ftp endpoint
+                                Endpoint ftp = context.getEndpoint(url);
 
-                        // create a polling consumer where we can poll the
-                        // myfile from the ftp server
-                        PollingConsumer consumer = ftp.createPollingConsumer();
+                                // create a polling consumer where we can poll the
+                                // myfile from the ftp server
+                                PollingConsumer consumer = ftp.createPollingConsumer();
 
-                        // must start the consumer before we can receive
-                        consumer.start();
+                                // must start the consumer before we can receive
+                                consumer.start();
 
-                        // poll the file from the ftp server
-                        Exchange result = consumer.receive();
+                                // poll the file from the ftp server
+                                Exchange result = consumer.receive();
 
-                        // the result is the response from the FTP consumer (the
-                        // downloaded file)
-                        // replace the outher exchange with the content from the
-                        // downloaded file
-                        exchange.getIn().setBody(result.getIn().getBody());
+                                // the result is the response from the FTP consumer (the
+                                // downloaded file)
+                                // replace the outher exchange with the content from the
+                                // downloaded file
+                                exchange.getIn().setBody(result.getIn().getBody());
 
-                        // stop the consumer
-                        consumer.stop();
-                    }
-                }).to("mock:result");
+                                // stop the consumer
+                                consumer.stop();
+                            }
+                        })
+                        .to("mock:result");
                 // END SNIPPET: e2
             }
         };

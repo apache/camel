@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.saga;
 
 import org.apache.camel.Exchange;
@@ -24,7 +25,5 @@ public final class SagaConstants {
     @Metadata(description = "The long running action", javaType = "String")
     public static final String SAGA_LONG_RUNNING_ACTION = Exchange.SAGA_LONG_RUNNING_ACTION;
 
-    private SagaConstants() {
-
-    }
+    private SagaConstants() {}
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
@@ -32,8 +35,6 @@ import org.apache.camel.support.resume.Resumables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisplayName("Tests whether file consumer works with the resume strategy")
 public class FileConsumerResumeStrategyTest extends ContextTestSupport {
 
@@ -42,9 +43,7 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
         private boolean resumedCalled;
 
         @Override
-        public void resume() {
-
-        }
+        public void resume() {}
 
         @Override
         public boolean resume(File file) {
@@ -106,5 +105,4 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
             }
         };
     }
-
 }

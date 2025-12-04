@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -27,9 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JdbcMessageIdRepositoryCustomTableNameTest extends CamelSpringTestSupport {
 
@@ -77,6 +78,7 @@ public class JdbcMessageIdRepositoryCustomTableNameTest extends CamelSpringTestS
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/customized-tablename-spring.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/processor/idempotent/jdbc/customized-tablename-spring.xml");
     }
 }

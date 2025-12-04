@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_EVENT_ID;
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_REPLAY_ID;
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_RPC_ID;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -28,10 +33,6 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.client.PubSubApiClient;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
-
-import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_EVENT_ID;
-import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_REPLAY_ID;
-import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_RPC_ID;
 
 public class PubSubApiConsumer extends DefaultConsumer {
 
@@ -112,9 +113,12 @@ public class PubSubApiConsumer extends DefaultConsumer {
 
         this.eventClassMap = endpoint.getComponent().getEventClassMap();
         this.pubSubClient = new PubSubApiClient(
-                endpoint.getComponent().getSession(), endpoint.getComponent().getLoginConfig(),
-                endpoint.getComponent().getPubSubHost(), endpoint.getComponent().getPubSubPort(),
-                endpoint.getConfiguration().getBackoffIncrement(), endpoint.getConfiguration().getMaxBackoff(),
+                endpoint.getComponent().getSession(),
+                endpoint.getComponent().getLoginConfig(),
+                endpoint.getComponent().getPubSubHost(),
+                endpoint.getComponent().getPubSubPort(),
+                endpoint.getConfiguration().getBackoffIncrement(),
+                endpoint.getConfiguration().getMaxBackoff(),
                 endpoint.getComponent().isPubsubAllowUseSystemProxy());
         this.pubSubClient.setUsePlainTextConnection(this.usePlainTextConnection);
 

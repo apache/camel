@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi.validator.client;
 
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
@@ -88,8 +89,8 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         for (var header : exchange.getMessage().getHeaders().entrySet()) {
             String key = header.getKey();
             Object value = header.getValue();
-            boolean customHeader
-                    = !startsWithIgnoreCase(key, "Camel") && !filter.applyFilterToCamelHeaders(key, value, exchange);
+            boolean customHeader =
+                    !startsWithIgnoreCase(key, "Camel") && !filter.applyFilterToCamelHeaders(key, value, exchange);
             if (customHeader) {
                 builder.withHeader(key, exchange.getMessage().getHeader(key, String.class));
             }

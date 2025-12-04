@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -55,25 +56,41 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "BatchInfo",
-         propOrder = {
-                 "id", "jobId", "state", "stateMessage", "createdDate", "systemModstamp", "numberRecordsProcessed",
-                 "numberRecordsFailed",
-                 "totalProcessingTime", "apiActiveProcessingTime", "apexProcessingTime" })
+@XmlType(
+        name = "BatchInfo",
+        propOrder = {
+            "id",
+            "jobId",
+            "state",
+            "stateMessage",
+            "createdDate",
+            "systemModstamp",
+            "numberRecordsProcessed",
+            "numberRecordsFailed",
+            "totalProcessingTime",
+            "apiActiveProcessingTime",
+            "apexProcessingTime"
+        })
 public class BatchInfo {
 
     @XmlElement(required = true)
     protected String id;
+
     @XmlElement(required = true)
     protected String jobId;
+
     @XmlElement(required = true)
     protected BatchStateEnum state;
+
     protected String stateMessage;
+
     @XmlElement(required = true)
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar createdDate;
+
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar systemModstamp;
+
     protected int numberRecordsProcessed;
     protected Integer numberRecordsFailed;
     protected Long totalProcessingTime;
@@ -273,5 +290,4 @@ public class BatchInfo {
     public void setApexProcessingTime(Long value) {
         this.apexProcessingTime = value;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import java.util.HashMap;
@@ -39,28 +40,26 @@ import org.slf4j.LoggerFactory;
 public class JoorCompiler extends ServiceSupport implements StaticService {
 
     private static final Pattern BEAN_INJECTION_PATTERN = Pattern.compile("(#bean:)([A-Za-z0-9-_]*)");
-    private static final Pattern BODY_AS_PATTERN = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)(.class)\\)");
-    private static final Pattern BODY_AS_PATTERN_NO_CLASS = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)\\)");
-    private static final Pattern HEADER_AS_PATTERN
-            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*),\\s*([A-Za-z0-9.$]*.class)\\)");
-    private static final Pattern HEADER_AS_PATTERN_NO_CLASS
-            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*)\\)");
-    private static final Pattern HEADER_AS_DEFAULT_VALUE_PATTERN
-            = Pattern.compile("(headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*.class)\\)");
-    private static final Pattern HEADER_AS_DEFAULT_VALUE_PATTERN_NO_CLASS
-            = Pattern.compile("(headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*)\\)");
-    private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN
-            = Pattern.compile(
-                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*.class)\\)");
-    private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN_NO_CLASS
-            = Pattern.compile(
-                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*)\\)");
-    private static final Pattern EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN
-            = Pattern.compile(
-                    "(exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*.class)\\)");
-    private static final Pattern EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN_NO_CLASS
-            = Pattern.compile(
-                    "(exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*)\\)");
+    private static final Pattern BODY_AS_PATTERN =
+            Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)(.class)\\)");
+    private static final Pattern BODY_AS_PATTERN_NO_CLASS =
+            Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)\\)");
+    private static final Pattern HEADER_AS_PATTERN = Pattern.compile(
+            "(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*),\\s*([A-Za-z0-9.$]*.class)\\)");
+    private static final Pattern HEADER_AS_PATTERN_NO_CLASS =
+            Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*)\\)");
+    private static final Pattern HEADER_AS_DEFAULT_VALUE_PATTERN =
+            Pattern.compile("(headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*.class)\\)");
+    private static final Pattern HEADER_AS_DEFAULT_VALUE_PATTERN_NO_CLASS =
+            Pattern.compile("(headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*)\\)");
+    private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN = Pattern.compile(
+            "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*.class)\\)");
+    private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN_NO_CLASS = Pattern.compile(
+            "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*)\\)");
+    private static final Pattern EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN = Pattern.compile(
+            "(exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*.class)\\)");
+    private static final Pattern EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN_NO_CLASS =
+            Pattern.compile("(exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*)\\)");
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
@@ -89,7 +88,10 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
     protected void doStop() throws Exception {
         super.doStop();
         if (counter > 0) {
-            LOG.debug("Java compiled {} {} in {}", counter, counter == 1 ? "script" : "scripts",
+            LOG.debug(
+                    "Java compiled {} {} in {}",
+                    counter,
+                    counter == 1 ? "script" : "scripts",
                     TimeUtils.printDuration(taken, true));
         }
     }
@@ -168,15 +170,25 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
 
         // local beans variables
         for (Map.Entry<String, Class> entry : scriptBeans.entrySet()) {
-            sb.append("    private ").append(entry.getValue().getSimpleName()).append(" ").append(entry.getKey()).append(";\n");
+            sb.append("    private ")
+                    .append(entry.getValue().getSimpleName())
+                    .append(" ")
+                    .append(entry.getKey())
+                    .append(";\n");
         }
         sb.append("\n");
 
         // constructor to lookup beans
         sb.append("    public ").append(name).append("(CamelContext context) throws Exception {\n");
         for (Map.Entry<String, Class> entry : scriptBeans.entrySet()) {
-            sb.append("        ").append(entry.getKey()).append(" = ").append("context.getRegistry().lookupByNameAndType(\"")
-                    .append(entry.getKey()).append("\", ").append(entry.getValue().getSimpleName()).append(".class);\n");
+            sb.append("        ")
+                    .append(entry.getKey())
+                    .append(" = ")
+                    .append("context.getRegistry().lookupByNameAndType(\"")
+                    .append(entry.getKey())
+                    .append("\", ")
+                    .append(entry.getValue().getSimpleName())
+                    .append(".class);\n");
         }
         sb.append("    }\n");
         sb.append("\n");
@@ -269,5 +281,4 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
     private static String nextFQN() {
         return "org.apache.camel.language.joor.compiled.JoorScript" + UUID.incrementAndGet();
     }
-
 }

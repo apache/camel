@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.util.UUID;
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DirectoryCreateIssueTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME_PREFIX = "file" + UUID.randomUUID();
@@ -45,7 +46,8 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
                 for (int i = 0; i < numFiles; i++) {
                     destinations[i] = "direct:file" + i;
 
-                    from("direct:file" + i).setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME_PREFIX + i + ".txt"))
+                    from("direct:file" + i)
+                            .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME_PREFIX + i + ".txt"))
                             .to(fileUri("a/b/c/d/e/f/g/h/?fileExist=Override&noop=true"), "mock:result");
                 }
 
@@ -73,5 +75,4 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
             }
         });
     }
-
 }

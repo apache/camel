@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trim;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -31,8 +34,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -61,8 +62,8 @@ public class BindySimpleFixedLengthUnmarshallTest {
         result.assertIsSatisfied();
 
         // check the model
-        BindySimpleFixedLengthUnmarshallTest.Order order
-                = result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallTest.Order.class);
+        BindySimpleFixedLengthUnmarshallTest.Order order =
+                result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallTest.Order.class);
         assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         assertEquals("  Pauline", order.getFirstName());
@@ -77,7 +78,6 @@ public class BindySimpleFixedLengthUnmarshallTest {
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
-
     }
 
     @FixedLengthRecord(length = 75)
@@ -218,11 +218,11 @@ public class BindySimpleFixedLengthUnmarshallTest {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

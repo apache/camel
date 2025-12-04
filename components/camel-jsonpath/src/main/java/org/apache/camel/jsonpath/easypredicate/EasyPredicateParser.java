@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsonpath.easypredicate;
 
-import java.util.ArrayList;
-import java.util.List;
+package org.apache.camel.jsonpath.easypredicate;
 
 import static org.apache.camel.jsonpath.easypredicate.EasyPredicateOperators.hasOperator;
 import static org.apache.camel.jsonpath.easypredicate.EasyPredicateOperators.isOperator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * To allow defining very easy jsonpath predicates using the syntax: left OP right
@@ -125,5 +126,4 @@ public class EasyPredicateParser {
 
         return list.toArray(new String[0]);
     }
-
 }

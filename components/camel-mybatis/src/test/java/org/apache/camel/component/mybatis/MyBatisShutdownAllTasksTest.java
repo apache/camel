@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,9 +26,6 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
 
@@ -95,8 +96,7 @@ public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
         context.stop();
 
         // should route all 8
-        await()
-                .atMost(1, TimeUnit.SECONDS)
+        await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(8, bar.getReceivedCounter(), "Should complete all messages"));
     }
 
@@ -105,10 +105,13 @@ public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("mybatis:selectAllAccounts").noAutoStartup().routeId("route1")
+                from("mybatis:selectAllAccounts")
+                        .noAutoStartup()
+                        .routeId("route1")
                         // let it complete all tasks
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                        .delay(1000).to("seda:foo");
+                        .delay(1000)
+                        .to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

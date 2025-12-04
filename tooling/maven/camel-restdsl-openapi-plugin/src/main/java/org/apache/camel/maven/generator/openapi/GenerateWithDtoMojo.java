@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.generator.openapi;
 
 import javax.inject.Inject;
@@ -24,8 +25,11 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-@Mojo(name = "generate-with-dto", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-      requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Mojo(
+        name = "generate-with-dto",
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+        requiresDependencyResolution = ResolutionScope.COMPILE,
+        threadSafe = true)
 public class GenerateWithDtoMojo extends GenerateMojo {
 
     @Inject
@@ -42,5 +46,4 @@ public class GenerateWithDtoMojo extends GenerateMojo {
 
         generateDto("java");
     }
-
 }

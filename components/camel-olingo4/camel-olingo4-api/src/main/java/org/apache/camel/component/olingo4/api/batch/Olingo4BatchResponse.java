@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4.api.batch;
 
 import java.util.Collections;
@@ -33,7 +34,8 @@ public class Olingo4BatchResponse {
     private final Map<String, String> headers;
     private final Object body;
 
-    public Olingo4BatchResponse(int statusCode, String statusInfo, String contentId, Map<String, String> headers, Object body) {
+    public Olingo4BatchResponse(
+            int statusCode, String statusInfo, String contentId, Map<String, String> headers, Object body) {
         this.statusCode = statusCode;
         this.statusInfo = statusInfo;
         this.contentId = contentId;

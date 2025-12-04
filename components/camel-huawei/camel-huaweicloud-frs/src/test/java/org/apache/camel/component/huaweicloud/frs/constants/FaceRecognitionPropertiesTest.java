@@ -17,9 +17,9 @@
 
 package org.apache.camel.component.huaweicloud.frs.constants;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class FaceRecognitionPropertiesTest {
     @Test

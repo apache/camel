@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sns;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.sns;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SNSComponentClientRegistryTest extends CamelTestSupport {
 
@@ -51,7 +52,8 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
         AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
         context.getRegistry().bind("awsSNSClient", awsSNSClient);
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy");
+        Sns2Endpoint endpoint =
+                (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy");
 
         assertSame(awsSNSClient, endpoint.getConfiguration().getAmazonSNSClient());
     }

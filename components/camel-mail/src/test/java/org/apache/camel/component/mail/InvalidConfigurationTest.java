@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for various invalid configurations etc.
@@ -51,5 +52,4 @@ public class InvalidConfigurationTest extends CamelTestSupport {
             // expected
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cassandra;
+
+import static org.apache.camel.utils.cassandra.CassandraUtils.isEmpty;
 
 import java.util.Collection;
 
@@ -25,8 +28,6 @@ import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
-
-import static org.apache.camel.utils.cassandra.CassandraUtils.isEmpty;
 
 /**
  * Cassandra 2 CQL3 producer.
@@ -81,7 +82,7 @@ public class CassandraProducer extends DefaultProducer {
         } else if (cqlParamsObj instanceof Collection<?> cqlParamsColl) {
             cqlParams = cqlParamsColl.toArray();
         } else {
-            cqlParams = new Object[] { cqlParamsObj };
+            cqlParams = new Object[] {cqlParamsObj};
         }
         return cqlParams;
     }
@@ -171,5 +172,4 @@ public class CassandraProducer extends DefaultProducer {
         ResultSet resultSet = execute(exchange.getIn());
         getEndpoint().fillMessage(resultSet, exchange.getMessage());
     }
-
 }

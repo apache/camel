@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.api;
 
 import java.util.function.Function;
@@ -300,5 +301,4 @@ public interface CamelReactiveStreamsService extends Service, HasId, HasCamelCon
      * @param name the stream name
      */
     void detachCamelConsumer(String name);
-
 }

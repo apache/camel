@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -42,17 +47,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode with the exception cause returned
  */
 public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelSpringTestSupport {
     protected static final QName SERVICE_QNAME = new QName("http://camel.apache.org/wsdl-first", "PersonService");
-    protected final String serviceAddress = "http://localhost:" + CXFTestSupport.getPort1()
-                                            + "/" + getClass().getSimpleName() + "/PersonService";
+    protected final String serviceAddress =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/PersonService";
 
     @Override
     public void setupResources() {
@@ -85,8 +86,7 @@ public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelSpringTestSupp
         Client c = ClientProxy.getClient(client);
         c.getInInterceptors().add(new LoggingInInterceptor());
         c.getOutInterceptors().add(new LoggingOutInterceptor());
-        ((BindingProvider) client).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceAddress);
+        ((BindingProvider) client).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceAddress);
 
         Holder<String> personId = new Holder<>();
         personId.value = "";
@@ -104,6 +104,7 @@ public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelSpringTestSupp
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfConsumerFaultCauseEnabledBeans.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/CxfConsumerFaultCauseEnabledBeans.xml");
     }
 }

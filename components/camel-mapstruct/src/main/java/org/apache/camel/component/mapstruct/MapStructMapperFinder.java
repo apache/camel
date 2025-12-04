@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mapstruct;
 
 import org.apache.camel.StaticService;
@@ -38,5 +39,4 @@ public interface MapStructMapperFinder extends StaticService {
      * @return number of mapping methods loaded from the given mapper class
      */
     int discoverMappings(Class<?> clazz);
-
 }

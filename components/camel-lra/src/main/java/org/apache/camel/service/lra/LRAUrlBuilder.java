@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
+
+import static org.apache.camel.service.lra.LRAConstants.URL_COMPENSATION_KEY;
+import static org.apache.camel.service.lra.LRAConstants.URL_COMPLETION_KEY;
 
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.Endpoint;
-
-import static org.apache.camel.service.lra.LRAConstants.URL_COMPENSATION_KEY;
-import static org.apache.camel.service.lra.LRAConstants.URL_COMPLETION_KEY;
 
 public class LRAUrlBuilder {
 
@@ -32,8 +33,7 @@ public class LRAUrlBuilder {
 
     private String query = "";
 
-    public LRAUrlBuilder() {
-    }
+    public LRAUrlBuilder() {}
 
     public LRAUrlBuilder(String host, String path, String query) {
         this.host = host;
@@ -123,5 +123,4 @@ public class LRAUrlBuilder {
     private LRAUrlBuilder copy() {
         return new LRAUrlBuilder(this.host, this.path, this.query);
     }
-
 }

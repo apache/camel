@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.annotation;
 
 import java.lang.annotation.Documented;
@@ -123,5 +124,4 @@ public @interface CsvRecord {
      * Whether to trim each line (stand and end) before parsing the line into data fields.
      */
     boolean trimLine() default true;
-
 }

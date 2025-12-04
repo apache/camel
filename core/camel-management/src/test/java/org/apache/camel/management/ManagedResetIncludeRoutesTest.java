@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -29,8 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
@@ -71,7 +72,7 @@ public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
 
         // reset which should reset all routes also
         ObjectName ctx = getContextObjectName();
-        mbeanServer.invoke(ctx, "reset", new Object[] { true }, new String[] { "boolean" });
+        mbeanServer.invoke(ctx, "reset", new Object[] {true}, new String[] {"boolean"});
 
         // should be 0 on the route
         completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
@@ -108,15 +109,17 @@ public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("first")
-                        .to("log:foo").id("foo")
-                        .to("log:bar").id("bar")
-                        .to("mock:result").id("mock");
+                from("direct:start")
+                        .routeId("first")
+                        .to("log:foo")
+                        .id("foo")
+                        .to("log:bar")
+                        .id("bar")
+                        .to("mock:result")
+                        .id("mock");
 
-                from("direct:baz").routeId("second")
-                        .to("mock:baz").id("baz");
+                from("direct:baz").routeId("second").to("mock:baz").id("baz");
             }
         };
     }
-
 }

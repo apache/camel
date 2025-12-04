@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
@@ -89,16 +90,15 @@ public final class NettyHelper {
      * @param listener      listener with work to be executed when the operation is complete
      */
     public static void writeBodyAsync(
-            Logger log, Channel channel, SocketAddress remoteAddress, Object body,
-            ChannelFutureListener listener) {
+            Logger log, Channel channel, SocketAddress remoteAddress, Object body, ChannelFutureListener listener) {
         ChannelFuture future;
         if (remoteAddress != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Channel: {} remote address: {} writing body: {}", channel, remoteAddress, body);
             }
             // Need to create AddressedEnvelope to setup the address information here
-            DefaultAddressedEnvelope<Object, InetSocketAddress> ae
-                    = new DefaultAddressedEnvelope<>(body, (InetSocketAddress) remoteAddress);
+            DefaultAddressedEnvelope<Object, InetSocketAddress> ae =
+                    new DefaultAddressedEnvelope<>(body, (InetSocketAddress) remoteAddress);
             future = channel.writeAndFlush(ae);
         } else {
             if (log.isDebugEnabled()) {
@@ -135,5 +135,4 @@ public final class NettyHelper {
         ThreadFactory factory = new CamelThreadFactory(pattern, name, true);
         return new DefaultEventExecutorGroup(threads, factory);
     }
-
 }

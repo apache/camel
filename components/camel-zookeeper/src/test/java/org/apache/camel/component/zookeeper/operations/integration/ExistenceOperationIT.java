@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations.integration;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.zookeeper.integration.ZooKeeperITSupport;
 import org.apache.camel.component.zookeeper.operations.ExistsOperation;
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExistenceOperationIT extends ZooKeeperITSupport {
 

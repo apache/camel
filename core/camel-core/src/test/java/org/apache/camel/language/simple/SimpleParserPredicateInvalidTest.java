@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -34,9 +35,8 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("high", true);
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${header.high} == abc", true, null);
-        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
-                parser::parsePredicate,
-                "Should thrown exception");
+        SimpleIllegalSyntaxException e =
+                assertThrows(SimpleIllegalSyntaxException.class, parser::parsePredicate, "Should thrown exception");
 
         assertEquals(19, e.getIndex());
     }
@@ -47,9 +47,8 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("high", true);
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${header.high} = true", true, null);
-        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
-                parser::parsePredicate,
-                "Should thrown exception");
+        SimpleIllegalSyntaxException e =
+                assertThrows(SimpleIllegalSyntaxException.class, parser::parsePredicate, "Should thrown exception");
 
         assertEquals(15, e.getIndex());
     }
@@ -59,9 +58,8 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         exchange.getIn().setBody("foo");
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body} == 'foo", true, null);
-        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
-                parser::parsePredicate,
-                "Should thrown exception");
+        SimpleIllegalSyntaxException e =
+                assertThrows(SimpleIllegalSyntaxException.class, parser::parsePredicate, "Should thrown exception");
 
         assertEquals(14, e.getIndex());
     }
@@ -71,9 +69,8 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         exchange.getIn().setBody("foo");
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body} == \"foo", true, null);
-        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
-                parser::parsePredicate,
-                "Should thrown exception");
+        SimpleIllegalSyntaxException e =
+                assertThrows(SimpleIllegalSyntaxException.class, parser::parsePredicate, "Should thrown exception");
 
         assertEquals(14, e.getIndex());
     }
@@ -82,11 +79,10 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
     public void testSimpleTwoAnd() {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser
-                = new SimplePredicateParser(context, "${body} == 'foo' && && ${header} == 123", true, null);
-        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
-                parser::parsePredicate,
-                "Should thrown exception");
+        SimplePredicateParser parser =
+                new SimplePredicateParser(context, "${body} == 'foo' && && ${header} == 123", true, null);
+        SimpleIllegalSyntaxException e =
+                assertThrows(SimpleIllegalSyntaxException.class, parser::parsePredicate, "Should thrown exception");
 
         assertEquals(20, e.getIndex());
     }
@@ -95,11 +91,10 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
     public void testSimpleTwoOr() {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser
-                = new SimplePredicateParser(context, "${body} == 'foo' || || ${header} == 123", true, null);
-        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
-                parser::parsePredicate,
-                "Should thrown exception");
+        SimplePredicateParser parser =
+                new SimplePredicateParser(context, "${body} == 'foo' || || ${header} == 123", true, null);
+        SimpleIllegalSyntaxException e =
+                assertThrows(SimpleIllegalSyntaxException.class, parser::parsePredicate, "Should thrown exception");
 
         assertEquals(20, e.getIndex());
     }
@@ -109,11 +104,9 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         exchange.getIn().setBody("foo");
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body} == == 'foo'", true, null);
-        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
-                parser::parsePredicate,
-                "Should thrown exception");
+        SimpleIllegalSyntaxException e =
+                assertThrows(SimpleIllegalSyntaxException.class, parser::parsePredicate, "Should thrown exception");
 
         assertEquals(13, e.getIndex());
     }
-
 }

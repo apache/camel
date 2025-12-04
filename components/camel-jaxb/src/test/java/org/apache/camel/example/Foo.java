@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
 
 import java.util.ArrayList;
@@ -29,8 +30,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Foo {
     @XmlElements({
-            @XmlElement(name = "bar", type = Bar.class, required = false),
-            @XmlElement(name = "zot", type = Zot.class, required = false) })
+        @XmlElement(name = "bar", type = Bar.class, required = false),
+        @XmlElement(name = "zot", type = Zot.class, required = false)
+    })
     List<Bar> barRefs = new ArrayList<>();
 
     public List<Bar> getBarRefs() {

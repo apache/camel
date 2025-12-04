@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,11 +38,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class CometBindingTest {
 
@@ -52,10 +53,13 @@ public class CometBindingTest {
     private static final String STRING_ATTR_NAME = "string";
     private static final String BOOLEAN_ATT_NAME = "boolean";
     private CometdBinding testObj;
+
     @Mock
     private BayeuxServerImpl bayeux;
+
     @Mock
     private ServerSession remote;
+
     @Mock
     private ServerMessage cometdMessage;
 
@@ -69,10 +73,13 @@ public class CometBindingTest {
     @Test
     void testBindingTransfersSessionAttributtes() {
         // setup
-        Set<String> attributeNames = new HashSet<>(
-                Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
-                        LONG_ATTR_NAME, DOUBLE_ATTR_NAME,
-                        FOO_ATTR_NAME, BOOLEAN_ATT_NAME));
+        Set<String> attributeNames = new HashSet<>(Arrays.asList(
+                STRING_ATTR_NAME,
+                INTEGER_ATTR_NAME,
+                LONG_ATTR_NAME,
+                DOUBLE_ATTR_NAME,
+                FOO_ATTR_NAME,
+                BOOLEAN_ATT_NAME));
         when(remote.getAttributeNames()).thenReturn(attributeNames);
         when(remote.getAttribute(STRING_ATTR_NAME)).thenReturn(HELLO);
         when(remote.getAttribute(INTEGER_ATTR_NAME)).thenReturn(EIGHT);
@@ -114,16 +121,13 @@ public class CometBindingTest {
     void testSubscriptionHeadersPassed() {
         // setup
         String expectedSubscriptionInfo = "subscriptionInfo";
-        when(cometdMessage.get(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME))
-                .thenReturn(expectedSubscriptionInfo);
+        when(cometdMessage.get(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME)).thenReturn(expectedSubscriptionInfo);
 
         // act
         Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
 
         // assert
         assertEquals(2, result.getHeaders().size());
-        assertEquals(expectedSubscriptionInfo,
-                result.getHeader(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME));
+        assertEquals(expectedSubscriptionInfo, result.getHeader(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME));
     }
-
 }

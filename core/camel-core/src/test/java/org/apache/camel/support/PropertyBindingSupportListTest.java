@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.apache.camel.util.CollectionHelper.mapOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,11 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyBindingException;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.CollectionHelper.mapOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -139,11 +140,19 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         // use CollectionHelper::mapOf to avoid insertion ordered iteration
-        PropertyBindingSupport.build().bind(context, foo, mapOf(
-                "bar.works[0]", "#class:" + Company.class.getName(),
-                "bar.works[0].name", "first",
-                "bar.works[1]", "#class:" + Company.class.getName(),
-                "bar.works[1].name", "second"));
+        PropertyBindingSupport.build()
+                .bind(
+                        context,
+                        foo,
+                        mapOf(
+                                "bar.works[0]",
+                                "#class:" + Company.class.getName(),
+                                "bar.works[0].name",
+                                "first",
+                                "bar.works[1]",
+                                "#class:" + Company.class.getName(),
+                                "bar.works[1].name",
+                                "second"));
 
         assertEquals(2, foo.getBar().getWorks().size());
         assertEquals(0, foo.getBar().getWorks().get(0).getId());
@@ -186,8 +195,10 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("gold-customer[]", e.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().startsWith(
-                    "Cannot set property: gold-customer[] as either a Map/List/array because target bean is not a Map, List or array type"));
+            assertTrue(
+                    iae.getMessage()
+                            .startsWith(
+                                    "Cannot set property: gold-customer[] as either a Map/List/array because target bean is not a Map, List or array type"));
         }
     }
 
@@ -250,5 +261,4 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
             this.goldCustomer = goldCustomer;
         }
     }
-
 }

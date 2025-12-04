@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
+
+import static org.apache.camel.Exchange.CONTENT_TYPE;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,15 +27,14 @@ import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.ServiceBusMessage;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.Exchange.CONTENT_TYPE;
-
 public final class ServiceBusUtils {
 
-    private ServiceBusUtils() {
-    }
+    private ServiceBusUtils() {}
 
     public static ServiceBusMessage createServiceBusMessage(
-            final Object data, final Map<String, Object> applicationProperties, final String correlationId,
+            final Object data,
+            final Map<String, Object> applicationProperties,
+            final String correlationId,
             final String sessionId) {
         ServiceBusMessage serviceBusMessage;
         if (data instanceof String) {
@@ -47,7 +49,10 @@ public final class ServiceBusUtils {
         if (applicationProperties != null) {
             serviceBusMessage.getRawAmqpMessage().getApplicationProperties().putAll(applicationProperties);
 
-            final Object contentType = serviceBusMessage.getRawAmqpMessage().getApplicationProperties().get(CONTENT_TYPE);
+            final Object contentType = serviceBusMessage
+                    .getRawAmqpMessage()
+                    .getApplicationProperties()
+                    .get(CONTENT_TYPE);
             if (contentType != null) {
                 serviceBusMessage.getRawAmqpMessage().getProperties().setContentType(contentType.toString());
             }
@@ -62,7 +67,9 @@ public final class ServiceBusUtils {
     }
 
     public static Iterable<ServiceBusMessage> createServiceBusMessages(
-            final Iterable<?> data, final Map<String, Object> applicationProperties, final String correlationId,
+            final Iterable<?> data,
+            final Map<String, Object> applicationProperties,
+            final String correlationId,
             final String sessionId) {
         return StreamSupport.stream(data.spliterator(), false)
                 .map(obj -> createServiceBusMessage(obj, applicationProperties, correlationId, sessionId))
@@ -70,8 +77,8 @@ public final class ServiceBusUtils {
     }
 
     public static void validateConfiguration(final ServiceBusConfiguration configuration, final boolean isConsumer) {
-        final boolean customClientAbsent
-                = isConsumer ? configuration.getProcessorClient() == null : configuration.getSenderClient() == null;
+        final boolean customClientAbsent =
+                isConsumer ? configuration.getProcessorClient() == null : configuration.getSenderClient() == null;
         if (customClientAbsent && isConnectionStringOrFQNSAbsent(configuration)) {
             throw new IllegalArgumentException("Azure ServiceBus ConnectionString or FQNS must be specified.");
         }

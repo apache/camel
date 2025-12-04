@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadLockKey;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,8 +51,6 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadLockKey;
-
 /**
  * File operations for {@link java.io.File}.
  */
@@ -58,8 +59,7 @@ public class FileOperations implements GenericFileOperations<File> {
     private final Lock lock = new ReentrantLock();
     private FileEndpoint endpoint;
 
-    public FileOperations() {
-    }
+    public FileOperations() {}
 
     public FileOperations(FileEndpoint endpoint) {
         this.endpoint = endpoint;
@@ -105,7 +105,8 @@ public class FileOperations implements GenericFileOperations<File> {
         return file.exists();
     }
 
-    protected boolean buildDirectory(File dir, Set<PosixFilePermission> permissions, boolean absolute, boolean stepwise) {
+    protected boolean buildDirectory(
+            File dir, Set<PosixFilePermission> permissions, boolean absolute, boolean stepwise) {
         if (dir.exists()) {
             return true;
         }
@@ -134,7 +135,9 @@ public class FileOperations implements GenericFileOperations<File> {
                     if (subDir.mkdir()) {
                         if (hasPermissions) {
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Setting chmod: {} on directory: {}", PosixFilePermissions.toString(permissions),
+                                LOG.trace(
+                                        "Setting chmod: {} on directory: {}",
+                                        PosixFilePermissions.toString(permissions),
                                         subDir);
                             }
                             Files.setPosixFilePermissions(subDir.toPath(), permissions);
@@ -159,7 +162,8 @@ public class FileOperations implements GenericFileOperations<File> {
         // always create endpoint defined directory
         if (endpoint.isAutoCreate() && !endpoint.getFile().exists()) {
             LOG.trace("Building starting directory: {}", endpoint.getFile());
-            buildDirectory(endpoint.getFile(), endpoint.getDirectoryPermissions(), absolute, endpoint.isAutoCreateStepwise());
+            buildDirectory(
+                    endpoint.getFile(), endpoint.getDirectoryPermissions(), absolute, endpoint.isAutoCreateStepwise());
         }
 
         if (ObjectHelper.isEmpty(directory)) {
@@ -204,7 +208,8 @@ public class FileOperations implements GenericFileOperations<File> {
                 return true;
             } else {
                 LOG.trace("Building directory: {}", path);
-                return buildDirectory(path, endpoint.getDirectoryPermissions(), absolute, endpoint.isAutoCreateStepwise());
+                return buildDirectory(
+                        path, endpoint.getDirectoryPermissions(), absolute, endpoint.isAutoCreateStepwise());
             }
         } finally {
             lock.unlock();
@@ -343,8 +348,9 @@ public class FileOperations implements GenericFileOperations<File> {
 
     private void handleReaderAsFileSource(Exchange exchange, File file, String charset)
             throws InvalidPayloadException, IOException {
-        Reader in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange,
-                exchange.getIn().getBody());
+        Reader in = exchange.getContext()
+                .getTypeConverter()
+                .tryConvertTo(Reader.class, exchange, exchange.getIn().getBody());
         if (in == null) {
             // okay no direct reader conversion, so use an input stream
             // (which a lot can be converted as)
@@ -439,8 +445,7 @@ public class FileOperations implements GenericFileOperations<File> {
             Set<PosixFilePermission> permissions = endpoint.getPermissions();
             if (!permissions.isEmpty()) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions),
-                            file);
+                    LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions), file);
                 }
                 Files.setPosixFilePermissions(file.toPath(), permissions);
             }
@@ -475,11 +480,11 @@ public class FileOperations implements GenericFileOperations<File> {
         // in case we are using file locks as read-locks then we need to use
         // file channels for copying to support this
         String path = source.getAbsolutePath();
-        FileChannel channel
-                = exchange.getProperty(asExclusiveReadLockKey(path, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
+        FileChannel channel =
+                exchange.getProperty(asExclusiveReadLockKey(path, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
         if (channel != null) {
             try (FileOutputStream fos = new FileOutputStream(target);
-                 FileChannel out = fos.getChannel()) {
+                    FileChannel out = fos.getChannel()) {
                 LOG.trace("writeFileByFile using FileChannel: {} -> {}", source, target);
                 channel.transferTo(0, channel.size(), out);
             }
@@ -519,8 +524,12 @@ public class FileOperations implements GenericFileOperations<File> {
 
     private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
-        try (Writer out = Files.newBufferedWriter(target.toPath(), Charset.forName(charset), StandardOpenOption.WRITE,
-                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
+        try (Writer out = Files.newBufferedWriter(
+                target.toPath(),
+                Charset.forName(charset),
+                StandardOpenOption.WRITE,
+                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.CREATE)) {
             LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);
@@ -535,11 +544,15 @@ public class FileOperations implements GenericFileOperations<File> {
 
     private void writeFileByString(String body, File target) throws IOException {
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
-        Files.writeString(target.toPath(), body, StandardOpenOption.WRITE,
-                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        Files.writeString(
+                target.toPath(),
+                body,
+                StandardOpenOption.WRITE,
+                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.CREATE);
         if (append && endpoint.getAppendChars() != null) {
-            Files.writeString(target.toPath(), endpoint.getAppendChars(), StandardOpenOption.WRITE,
-                    StandardOpenOption.APPEND);
+            Files.writeString(
+                    target.toPath(), endpoint.getAppendChars(), StandardOpenOption.WRITE, StandardOpenOption.APPEND);
         }
     }
 
@@ -567,11 +580,14 @@ public class FileOperations implements GenericFileOperations<File> {
         if (endpoint.getFileExist() == GenericFileExist.Append) {
             // NOTE: we open the channel and seek the position at the end of the channel. As we return
             // this stream, we must not close it (letting the client doing so).
-            SeekableByteChannel out
-                    = Files.newByteChannel(target.toPath(), StandardOpenOption.CREATE, StandardOpenOption.APPEND); // NOSONAR
+            SeekableByteChannel out = Files.newByteChannel(
+                    target.toPath(), StandardOpenOption.CREATE, StandardOpenOption.APPEND); // NOSONAR
             return out.position(out.size());
         }
-        return Files.newByteChannel(target.toPath(), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING,
+        return Files.newByteChannel(
+                target.toPath(),
+                StandardOpenOption.WRITE,
+                StandardOpenOption.TRUNCATE_EXISTING,
                 StandardOpenOption.CREATE);
     }
 }

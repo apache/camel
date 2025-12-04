@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,10 +28,12 @@ public class XQueryExampleTest extends CamelSpringTestSupport {
     public void testExample() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<employee id=\"James\"><name><firstName>James</firstName>"
-                                    + "<lastName>Strachan</lastName></name><location><city>London</city></location></employee>");
+                + "<lastName>Strachan</lastName></name><location><city>London</city></location></employee>");
 
-        template.sendBody("direct:start", "<person user='James'><firstName>James</firstName>"
-                                          + "<lastName>Strachan</lastName><city>London</city></person>");
+        template.sendBody(
+                "direct:start",
+                "<person user='James'><firstName>James</firstName>"
+                        + "<lastName>Strachan</lastName><city>London</city></person>");
 
         MockEndpoint.assertIsSatisfied(context);
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AggregationStrategy;
@@ -30,25 +31,34 @@ public class MulticastThreadPoolProfileTest extends MulticastParallelTest {
             @Override
             public void configure() {
                 // register thread pool profile
-                ThreadPoolProfile profile
-                        = new ThreadPoolProfileBuilder("myProfile").poolSize(5).maxPoolSize(10).maxQueueSize(20).build();
+                ThreadPoolProfile profile = new ThreadPoolProfileBuilder("myProfile")
+                        .poolSize(5)
+                        .maxPoolSize(10)
+                        .maxQueueSize(20)
+                        .build();
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start").multicast(new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
+                from("direct:start")
+                        .multicast(new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
 
-                        String body = oldExchange.getIn().getBody(String.class);
-                        oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
-                        return oldExchange;
-                    }
-                })
+                                String body = oldExchange.getIn().getBody(String.class);
+                                oldExchange
+                                        .getIn()
+                                        .setBody(body + newExchange.getIn().getBody(String.class));
+                                return oldExchange;
+                            }
+                        })
                         // and refer to the profile here
-                        .parallelProcessing().executorService("myProfile").to("direct:a", "direct:b")
+                        .parallelProcessing()
+                        .executorService("myProfile")
+                        .to("direct:a", "direct:b")
                         // use end to indicate end of multicast route
-                        .end().to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from("direct:a").delay(100).setBody(constant("A"));
 

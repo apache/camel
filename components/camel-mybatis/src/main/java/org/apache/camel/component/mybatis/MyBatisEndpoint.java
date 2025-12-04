@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -27,37 +30,48 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS;
-
 /**
  * Performs a query, poll, insert, update or delete in a relational database using MyBatis.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MYBATIS, title = "MyBatis", syntax = "mybatis:statement",
-             category = { Category.DATABASE }, headersClass = MyBatisConstants.class)
+@UriEndpoint(
+        firstVersion = "2.7.0",
+        scheme = SCHEME_MYBATIS,
+        title = "MyBatis",
+        syntax = "mybatis:statement",
+        category = {Category.DATABASE},
+        headersClass = MyBatisConstants.class)
 public class MyBatisEndpoint extends BaseMyBatisEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private String statement;
+
     @UriParam(label = "producer")
     private StatementType statementType;
-    @UriParam(label = "consumer",
-              description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
                             + " breaks out processing any further exchanges to cause a rollback eager.")
     private boolean transacted;
+
     @UriParam(label = "consumer", defaultValue = "0")
     private int maxMessagesPerPoll;
+
     @UriParam(label = "consumer")
     private String onConsume;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean useIterator = true;
+
     @UriParam(label = "consumer")
     private boolean routeEmptyResultSet;
+
     @UriParam(label = "consumer,advanced")
     private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
 
-    public MyBatisEndpoint() {
-    }
+    public MyBatisEndpoint() {}
 
     public MyBatisEndpoint(String endpointUri, Component component, String statement) {
         super(endpointUri, component);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch.converter;
 
 import java.io.IOException;
@@ -60,8 +61,7 @@ public final class OpensearchActionRequestConverter {
     private static final String OPENSEARCH_QUERY_DSL_PREFIX = "query";
     private static final String OPENSEARCH_UPDATE_DOC_PREFIX = "doc";
 
-    private OpensearchActionRequestConverter() {
-    }
+    private OpensearchActionRequestConverter() {}
 
     // Index requests
     private static IndexOperation.Builder<?> createIndexOperationBuilder(Object document, Exchange exchange)
@@ -72,18 +72,21 @@ public final class OpensearchActionRequestConverter {
         JacksonJsonpMapper mapper = createMapper();
         IndexOperation.Builder<Object> builder = new IndexOperation.Builder<>();
         if (document instanceof byte[] byteArray) {
-            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(byteArray), mapper).toJson());
+            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(byteArray), mapper)
+                    .toJson());
         } else if (document instanceof InputStream inputStream) {
-            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(inputStream), mapper).toJson());
+            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(inputStream), mapper)
+                    .toJson());
         } else if (document instanceof String string) {
-            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(new StringReader(string)), mapper).toJson());
+            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(new StringReader(string)), mapper)
+                    .toJson());
         } else if (document instanceof Reader reader) {
-            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(reader), mapper).toJson());
+            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(reader), mapper)
+                    .toJson());
         } else {
             builder.document(document);
         }
-        return builder
-                .index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class));
+        return builder.index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class));
     }
 
     @Converter
@@ -94,42 +97,48 @@ public final class OpensearchActionRequestConverter {
         JacksonJsonpMapper mapper = createMapper();
         IndexRequest.Builder<Object> builder = new IndexRequest.Builder<>();
         if (document instanceof byte[] byteArray) {
-            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(byteArray), mapper).toJson());
+            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(byteArray), mapper)
+                    .toJson());
         } else if (document instanceof InputStream inputStream) {
-            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(inputStream), mapper).toJson());
+            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(inputStream), mapper)
+                    .toJson());
         } else if (document instanceof String string) {
-            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(new StringReader(string)), mapper).toJson());
+            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(new StringReader(string)), mapper)
+                    .toJson());
         } else if (document instanceof Reader reader) {
-            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(reader), mapper).toJson());
+            builder.document(JsonData.of(mapper.objectMapper().reader().readTree(reader), mapper)
+                    .toJson());
         } else {
             builder.document(document);
         }
-        return builder
-                .waitForActiveShards(
-                        new WaitForActiveShards.Builder()
-                                .count(exchange.getIn().getHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS,
-                                        Integer.class))
-                                .build())
+        return builder.waitForActiveShards(new WaitForActiveShards.Builder()
+                        .count(exchange.getIn()
+                                .getHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
+                        .build())
                 .id(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_ID, String.class))
                 .index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class));
     }
 
     @Converter
-    public static UpdateRequest.Builder<?, ?> toUpdateRequestBuilder(Object document, Exchange exchange) throws IOException {
+    public static UpdateRequest.Builder<?, ?> toUpdateRequestBuilder(Object document, Exchange exchange)
+            throws IOException {
         if (document instanceof UpdateRequest.Builder<?, ?> builder) {
             return builder.id(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_ID, String.class));
         }
         JacksonJsonpMapper mapper = createMapper();
         UpdateRequest.Builder<?, Object> builder = new UpdateRequest.Builder<>();
         if (document instanceof byte[] byteArray) {
-            document = JsonData.of(mapper.objectMapper().reader().readTree(byteArray), mapper).to(JsonNode.class);
+            document = JsonData.of(mapper.objectMapper().reader().readTree(byteArray), mapper)
+                    .to(JsonNode.class);
         } else if (document instanceof InputStream inputStream) {
-            document = JsonData.of(mapper.objectMapper().reader().readTree(inputStream), mapper).to(JsonNode.class);
+            document = JsonData.of(mapper.objectMapper().reader().readTree(inputStream), mapper)
+                    .to(JsonNode.class);
         } else if (document instanceof String string) {
             document = JsonData.of(mapper.objectMapper().reader().readTree(new StringReader(string)), mapper)
                     .to(JsonNode.class);
         } else if (document instanceof Reader reader) {
-            document = JsonData.of(mapper.objectMapper().reader().readTree(reader), mapper).to(JsonNode.class);
+            document = JsonData.of(mapper.objectMapper().reader().readTree(reader), mapper)
+                    .to(JsonNode.class);
         } else if (document instanceof Map<?, ?> map) {
             document = mapper.objectMapper().convertValue(map, JsonNode.class);
         }
@@ -142,13 +151,11 @@ public final class OpensearchActionRequestConverter {
             document = JsonData.of(document, mapper).toJson();
         }
 
-        return builder
-                .doc(document)
-                .waitForActiveShards(
-                        new WaitForActiveShards.Builder()
-                                .count(exchange.getIn().getHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS,
-                                        Integer.class))
-                                .build())
+        return builder.doc(document)
+                .waitForActiveShards(new WaitForActiveShards.Builder()
+                        .count(exchange.getIn()
+                                .getHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
+                        .build())
                 .index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class))
                 .id(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_ID, String.class));
     }
@@ -215,7 +222,8 @@ public final class OpensearchActionRequestConverter {
     }
 
     @Converter
-    public static SearchRequest.Builder toSearchRequestBuilder(Object queryObject, Exchange exchange) throws IOException {
+    public static SearchRequest.Builder toSearchRequestBuilder(Object queryObject, Exchange exchange)
+            throws IOException {
         String indexName = exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class);
 
         if (queryObject instanceof SearchRequest.Builder) {
@@ -251,7 +259,8 @@ public final class OpensearchActionRequestConverter {
                 queryString = parentJsonNode.toString();
             }
             mapper.objectMapper().reader().readTree(new StringReader(queryString));
-            queryObject = JsonData.of(mapper.objectMapper().reader().readTree(new StringReader(queryString)), mapper).toJson();
+            queryObject = JsonData.of(mapper.objectMapper().reader().readTree(new StringReader(queryString)), mapper)
+                    .toJson();
         } else {
             // Cannot convert the queryObject into SearchRequest
             LOG.warn(
@@ -283,17 +292,22 @@ public final class OpensearchActionRequestConverter {
                 if (document instanceof BulkOperationVariant) {
                     builder.operations(((BulkOperationVariant) document)._toBulkOperation());
                 } else if (document instanceof DeleteOperation.Builder) {
-                    builder.operations(
-                            new BulkOperation.Builder().delete(((DeleteOperation.Builder) document).build()).build());
+                    builder.operations(new BulkOperation.Builder()
+                            .delete(((DeleteOperation.Builder) document).build())
+                            .build());
                 } else if (document instanceof UpdateOperation.Builder) {
-                    builder.operations(
-                            new BulkOperation.Builder().update(((UpdateOperation.Builder<?>) document).build()).build());
+                    builder.operations(new BulkOperation.Builder()
+                            .update(((UpdateOperation.Builder<?>) document).build())
+                            .build());
                 } else if (document instanceof CreateOperation.Builder) {
-                    builder.operations(
-                            new BulkOperation.Builder().create(((CreateOperation.Builder<?>) document).build()).build());
+                    builder.operations(new BulkOperation.Builder()
+                            .create(((CreateOperation.Builder<?>) document).build())
+                            .build());
                 } else {
-                    builder.operations(
-                            new BulkOperation.Builder().index(createIndexOperationBuilder(document, exchange).build()).build());
+                    builder.operations(new BulkOperation.Builder()
+                            .index(createIndexOperationBuilder(document, exchange)
+                                    .build())
+                            .build());
                 }
             }
 

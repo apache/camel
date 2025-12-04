@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mustache;
 
 import org.apache.camel.EndpointInject;
@@ -60,7 +61,8 @@ public class MustacheComponentTest extends CamelTestSupport {
         // Prepare
         Exchange exchange = createExchangeWithBody("The Body");
         exchange.getIn().setHeader("someHeader", "Some Header");
-        exchange.getIn().setHeader(MustacheConstants.MUSTACHE_TEMPLATE, "Body='{{body}}'|SomeHeader='{{headers.someHeader}}'");
+        exchange.getIn()
+                .setHeader(MustacheConstants.MUSTACHE_TEMPLATE, "Body='{{body}}'|SomeHeader='{{headers.someHeader}}'");
         endSimpleMock.expectedMessageCount(1);
         endSimpleMock.expectedBodiesReceived("Body='The Body'|SomeHeader='Some Header'");
         // Act
@@ -141,9 +143,7 @@ public class MustacheComponentTest extends CamelTestSupport {
                 MustacheComponent mc = context.getComponent("mustache", MustacheComponent.class);
                 mc.setAllowTemplateFromHeader(true);
 
-                from("direct:startSimple")
-                        .to("mustache://simple.mustache")
-                        .to("mock:endSimple");
+                from("direct:startSimple").to("mustache://simple.mustache").to("mock:endSimple");
             }
         };
     }

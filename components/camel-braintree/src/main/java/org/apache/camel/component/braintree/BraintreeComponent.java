@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
 
 import java.util.Map;
@@ -32,7 +33,8 @@ import org.apache.camel.support.component.AbstractApiComponent;
  * Represents the component that manages {@link BraintreeEndpoint}.
  */
 @Component("braintree")
-public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, BraintreeConfiguration, BraintreeApiCollection> {
+public class BraintreeComponent
+        extends AbstractApiComponent<BraintreeApiName, BraintreeConfiguration, BraintreeApiCollection> {
 
     @Metadata
     private BraintreeConfiguration configuration;
@@ -66,7 +68,8 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     public BraintreeGateway getGateway(BraintreeConfiguration configuration) {
         BraintreeGateway gateway;
         if (configuration.getAccessToken() != null) {
-            gateway = gateways.computeIfAbsent(configuration.getAccessToken(), k -> configuration.newBraintreeGateway());
+            gateway =
+                    gateways.computeIfAbsent(configuration.getAccessToken(), k -> configuration.newBraintreeGateway());
         } else {
             gateway = gateways.computeIfAbsent(configuration.getMerchantId(), k -> configuration.newBraintreeGateway());
         }

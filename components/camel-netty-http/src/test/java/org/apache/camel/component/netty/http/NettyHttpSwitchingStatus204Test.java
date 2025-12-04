@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 import org.apache.camel.Exchange;
@@ -27,17 +32,13 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
 
     @Test
     public void testSwitchNoBodyTo204ViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse httpResponse = client.execute(request)) {
+                CloseableHttpResponse httpResponse = client.execute(request)) {
 
             assertEquals(204, httpResponse.getCode());
             assertNull(httpResponse.getEntity());
@@ -78,7 +79,7 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     public void testNoSwitchingNoCodeViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foo");
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse httpResponse = client.execute(request)) {
+                CloseableHttpResponse httpResponse = client.execute(request)) {
 
             assertEquals(200, httpResponse.getCode());
             assertNotNull(httpResponse.getEntity());
@@ -120,7 +121,7 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     public void testNoSwitchingNoBodyViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foobar");
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse httpResponse = client.execute(request)) {
+                CloseableHttpResponse httpResponse = client.execute(request)) {
 
             assertEquals(200, httpResponse.getCode());
             assertNotNull(httpResponse.getEntity());
@@ -163,25 +164,20 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://localhost:{{port}}/bar")
-                        .setBody().constant("");
+                from("netty-http:http://localhost:{{port}}/bar").setBody().constant("");
 
-                from("direct:bar")
-                        .to("netty-http:http://localhost:{{port}}/bar");
+                from("direct:bar").to("netty-http:http://localhost:{{port}}/bar");
 
-                from("netty-http:http://localhost:{{port}}/foo")
-                        .setBody().constant("No Content");
+                from("netty-http:http://localhost:{{port}}/foo").setBody().constant("No Content");
 
-                from("direct:foo")
-                        .to("netty-http:http://localhost:{{port}}/foo");
+                from("direct:foo").to("netty-http:http://localhost:{{port}}/foo");
 
                 from("netty-http:http://localhost:{{port}}/foobar")
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
-                        .setBody().constant("");
+                        .setBody()
+                        .constant("");
 
-                from("direct:foobar")
-                        .to("netty-http:http://localhost:{{port}}/foobar");
-
+                from("direct:foobar").to("netty-http:http://localhost:{{port}}/foobar");
             }
         };
     }

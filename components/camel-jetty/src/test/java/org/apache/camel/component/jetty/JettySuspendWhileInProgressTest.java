@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -29,10 +34,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JettySuspendWhileInProgressTest extends BaseJettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(JettySuspendWhileInProgressTest.class);
@@ -61,8 +62,8 @@ public class JettySuspendWhileInProgressTest extends BaseJettyTest {
         assertEquals("Bye Camel", reply.get(20, TimeUnit.SECONDS));
 
         // the 2nd should have a 503 returned as we are shutting down
-        Exception ex = assertThrows(ExecutionException.class, () -> reply2.get(20, TimeUnit.SECONDS),
-                "Should have thrown an exception");
+        Exception ex = assertThrows(
+                ExecutionException.class, () -> reply2.get(20, TimeUnit.SECONDS), "Should have thrown an exception");
         RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, ex.getCause());
         HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, rce.getCause());
         assertEquals(503, hofe.getStatusCode(), "The 2nd status code should have been a 503 as we are shutting down");
@@ -84,7 +85,8 @@ public class JettySuspendWhileInProgressTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty://" + serverUri).log("Got data will wait 5 sec with reply")
+                from("jetty://" + serverUri)
+                        .log("Got data will wait 5 sec with reply")
                         .process(e -> latch.countDown())
                         .delay(5000)
                         .transform(simple("Bye ${header.name}"));

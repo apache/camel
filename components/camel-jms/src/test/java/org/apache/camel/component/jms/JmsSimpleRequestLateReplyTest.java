@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +43,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * A simple request / late reply test.
  */
@@ -50,6 +51,7 @@ public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsSimpleRequestLateReplyTest.class);
     private static Destination replyDestination;
     private static String cid;

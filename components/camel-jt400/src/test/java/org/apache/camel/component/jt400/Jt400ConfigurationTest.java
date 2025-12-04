@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jt400;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.jt400;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.junit.jupiter.api.Test;
 
 public class Jt400ConfigurationTest extends Jt400TestSupport {
 
@@ -27,8 +28,8 @@ public class Jt400ConfigurationTest extends Jt400TestSupport {
 
     @Override
     public void doPostSetup() throws Exception {
-        jt400Configuration
-                = new Jt400Configuration("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
+        jt400Configuration = new Jt400Configuration(
+                "jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
     }
 
     @Test
@@ -70,5 +71,4 @@ public class Jt400ConfigurationTest extends Jt400TestSupport {
     public void testDefaultGuiAvailable() {
         assertEquals(false, jt400Configuration.isGuiAvailable());
     }
-
 }

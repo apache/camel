@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
 
 import org.apache.camel.AsyncCallback;
@@ -68,10 +69,12 @@ public class PahoConsumer extends DefaultConsumer {
                     getEndpoint().getConfiguration().getBrokerUrl(),
                     clientId,
                     PahoEndpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
-            LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug(
+                    "Connecting client: {} to broker: {}",
+                    clientId,
+                    getEndpoint().getConfiguration().getBrokerUrl());
             if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
                 client.setManualAcks(true);
-
             }
             client.connect(connectOptions);
         }
@@ -82,7 +85,9 @@ public class PahoConsumer extends DefaultConsumer {
             public void connectComplete(boolean reconnect, String serverURI) {
                 if (reconnect) {
                     try {
-                        client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+                        client.subscribe(
+                                getEndpoint().getTopic(),
+                                getEndpoint().getConfiguration().getQos());
                     } catch (MqttException e) {
                         LOG.error("MQTT resubscribe failed {}", e.getMessage(), e);
                     }
@@ -111,7 +116,8 @@ public class PahoConsumer extends DefaultConsumer {
         });
 
         LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
-        client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+        client.subscribe(
+                getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
     }
 
     @Override
@@ -127,7 +133,10 @@ public class PahoConsumer extends DefaultConsumer {
             } else {
                 LOG.debug("Client: {} is durable so will not unsubscribe from topic: {}", clientId, topic);
             }
-            LOG.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug(
+                    "Disconnecting client: {} from broker: {}",
+                    clientId,
+                    getEndpoint().getConfiguration().getBrokerUrl());
             client.disconnect();
         }
         client = null;
@@ -160,12 +169,13 @@ public class PahoConsumer extends DefaultConsumer {
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    LOG.error("Rollback due to error processing Exchange ID: {}", exchange.getExchangeId(),
+                    LOG.error(
+                            "Rollback due to error processing Exchange ID: {}",
+                            exchange.getExchangeId(),
                             exchange.getException());
                 }
             });
         }
         return exchange;
     }
-
 }

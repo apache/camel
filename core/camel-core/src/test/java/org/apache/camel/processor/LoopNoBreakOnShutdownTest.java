@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -23,9 +27,6 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
 
 class LoopNoBreakOnShutdownTest extends ContextTestSupport {
 
@@ -50,10 +51,7 @@ class LoopNoBreakOnShutdownTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from("seda:foo")
-                        .startupOrder(1)
-                        .loop(LOOP_COUNT).delay(50)
-                        .to("seda:bar");
+                from("seda:foo").startupOrder(1).loop(LOOP_COUNT).delay(50).to("seda:bar");
 
                 from("seda:bar")
                         .startupOrder(2)

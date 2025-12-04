@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets;
 
 import java.util.Map;
@@ -38,9 +39,13 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage spreadsheets in Google Sheets.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets",
-             syntax = "google-sheets:apiName/methodName", apiSyntax = "apiName/methodName",
-             category = { Category.CLOUD, Category.DOCUMENT })
+@UriEndpoint(
+        firstVersion = "2.23.0",
+        scheme = "google-sheets",
+        title = "Google Sheets",
+        syntax = "google-sheets:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        category = {Category.CLOUD, Category.DOCUMENT})
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration>
         implements EndpointServiceLocation {
 
@@ -49,10 +54,19 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
 
     private Object apiProxy;
 
-    public GoogleSheetsEndpoint(String uri, GoogleSheetsComponent component, GoogleSheetsApiName apiName, String methodName,
-                                GoogleSheetsConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, GoogleSheetsApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public GoogleSheetsEndpoint(
+            String uri,
+            GoogleSheetsComponent component,
+            GoogleSheetsApiName apiName,
+            String methodName,
+            GoogleSheetsConfiguration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                GoogleSheetsApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 

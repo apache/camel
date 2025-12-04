@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.io.BufferedInputStream;
@@ -67,8 +68,8 @@ public final class IOHelper {
     // allows to turn on backwards compatible to turn off regarding the first
     // read byte with value zero (0b0) as EOL.
     // See more at CAMEL-11672
-    private static final boolean ZERO_BYTE_EOL_ENABLED
-            = "true".equalsIgnoreCase(System.getProperty("camel.zeroByteEOLEnabled", "true"));
+    private static final boolean ZERO_BYTE_EOL_ENABLED =
+            "true".equalsIgnoreCase(System.getProperty("camel.zeroByteEOLEnabled", "true"));
 
     private IOHelper() {
         // Utility Class
@@ -209,8 +210,7 @@ public final class IOHelper {
      * @throws IOException      for I/O errors
      */
     public static int copy(
-            final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite,
-            long maxSize)
+            final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite, long maxSize)
             throws IOException {
 
         if (input instanceof ByteArrayInputStream) {
@@ -231,8 +231,12 @@ public final class IOHelper {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Copying InputStream: {} -> OutputStream: {} with buffer: {} and flush on each write {}", input, output,
-                    bufferSize, flushOnEachWrite);
+            LOG.trace(
+                    "Copying InputStream: {} -> OutputStream: {} with buffer: {} and flush on each write {}",
+                    input,
+                    output,
+                    bufferSize,
+                    flushOnEachWrite);
         }
 
         int total = 0;
@@ -895,8 +899,7 @@ public final class IOHelper {
     public static String stripLineComments(Path path, String commentPrefix, boolean stripBlankLines) {
         StringBuilder result = new StringBuilder(2048);
         try (Stream<String> lines = Files.lines(path)) {
-            lines
-                    .filter(l -> !stripBlankLines || !l.isBlank())
+            lines.filter(l -> !stripBlankLines || !l.isBlank())
                     .filter(line -> !line.startsWith(commentPrefix))
                     .forEach(line -> result.append(line).append('\n'));
         } catch (IOException e) {
@@ -904,5 +907,4 @@ public final class IOHelper {
         }
         return result.toString();
     }
-
 }

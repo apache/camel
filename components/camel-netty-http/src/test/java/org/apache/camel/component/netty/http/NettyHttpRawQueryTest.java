@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.Exchange.HTTP_QUERY;
+import static org.apache.camel.Exchange.HTTP_RAW_QUERY;
 
 import java.net.URL;
 
@@ -22,9 +26,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.Exchange.HTTP_QUERY;
-import static org.apache.camel.Exchange.HTTP_RAW_QUERY;
 
 public class NettyHttpRawQueryTest extends BaseNettyTest {
 
@@ -38,7 +39,10 @@ public class NettyHttpRawQueryTest extends BaseNettyTest {
         mockEndpoint.message(0).header(HTTP_QUERY).isEqualTo("param=x1&y=2");
         mockEndpoint.message(0).header(HTTP_RAW_QUERY).isEqualTo(query);
 
-        new URL("http://localhost:" + getPort() + "/?" + query).openConnection().getInputStream().close();
+        new URL("http://localhost:" + getPort() + "/?" + query)
+                .openConnection()
+                .getInputStream()
+                .close();
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -48,10 +52,8 @@ public class NettyHttpRawQueryTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://0.0.0.0:{{port}}/")
-                        .to(mockEndpoint);
+                from("netty-http:http://0.0.0.0:{{port}}/").to(mockEndpoint);
             }
         };
     }
-
 }

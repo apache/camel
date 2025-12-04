@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Duration;
 
@@ -26,11 +32,6 @@ import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class QueueComponentTest extends CamelTestSupport {
 
@@ -45,8 +46,8 @@ class QueueComponentTest extends CamelTestSupport {
 
         context.getRegistry().bind("client", client);
 
-        final QueueEndpoint endpoint
-                = (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure/testqueue?serviceClient=#client");
+        final QueueEndpoint endpoint =
+                (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure/testqueue?serviceClient=#client");
 
         doTestCreateEndpointWithMinConfig(endpoint, true);
     }
@@ -55,19 +56,20 @@ class QueueComponentTest extends CamelTestSupport {
     public void testCreateEndpointWithMinConfigForCredsOnly() {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
-        final QueueEndpoint endpoint
-                = (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure/testqueue?credentials=#creds");
+        final QueueEndpoint endpoint =
+                (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure/testqueue?credentials=#creds");
 
         doTestCreateEndpointWithMinConfig(endpoint, false);
-        assertEquals(CredentialType.SHARED_KEY_CREDENTIAL, endpoint.getConfiguration().getCredentialType());
+        assertEquals(
+                CredentialType.SHARED_KEY_CREDENTIAL,
+                endpoint.getConfiguration().getCredentialType());
     }
 
     @Test
     public void testCreateEndpointWithMinConfigForAzIdentity() {
 
-        final QueueEndpoint endpoint
-                = (QueueEndpoint) context
-                        .getEndpoint("azure-storage-queue://camelazure/testqueue?credentialType=AZURE_IDENTITY");
+        final QueueEndpoint endpoint = (QueueEndpoint)
+                context.getEndpoint("azure-storage-queue://camelazure/testqueue?credentialType=AZURE_IDENTITY");
 
         doTestCreateEndpointWithMinConfigForAzIdentity(endpoint);
     }
@@ -82,7 +84,9 @@ class QueueComponentTest extends CamelTestSupport {
             assertNull(endpoint.getConfiguration().getServiceClient());
             assertNotNull(endpoint.getConfiguration().getCredentials());
         }
-        assertEquals(QueueOperationDefinition.sendMessage, endpoint.getConfiguration().getOperation());
+        assertEquals(
+                QueueOperationDefinition.sendMessage,
+                endpoint.getConfiguration().getOperation());
 
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getTimeToLive());
@@ -94,7 +98,9 @@ class QueueComponentTest extends CamelTestSupport {
         assertEquals("testqueue", endpoint.getConfiguration().getQueueName());
         assertNull(endpoint.getConfiguration().getServiceClient());
         assertNull(endpoint.getConfiguration().getCredentials());
-        assertEquals(QueueOperationDefinition.sendMessage, endpoint.getConfiguration().getOperation());
+        assertEquals(
+                QueueOperationDefinition.sendMessage,
+                endpoint.getConfiguration().getOperation());
 
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getTimeToLive());
@@ -107,14 +113,16 @@ class QueueComponentTest extends CamelTestSupport {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
         final String uri = "azure-storage-queue://camelazure/testqueue"
-                           + "?credentials=#creds&operation=deleteQueue&timeToLive=PT100s&visibilityTimeout=PT10s&maxMessages=1";
+                + "?credentials=#creds&operation=deleteQueue&timeToLive=PT100s&visibilityTimeout=PT10s&maxMessages=1";
 
         final QueueEndpoint endpoint = (QueueEndpoint) context.getEndpoint(uri);
 
         assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
         assertEquals("testqueue", endpoint.getConfiguration().getQueueName());
         assertNull(endpoint.getConfiguration().getServiceClient());
-        assertEquals(QueueOperationDefinition.deleteQueue, endpoint.getConfiguration().getOperation());
+        assertEquals(
+                QueueOperationDefinition.deleteQueue,
+                endpoint.getConfiguration().getOperation());
         assertEquals(Duration.ofSeconds(100), endpoint.getConfiguration().getTimeToLive());
         assertEquals(Duration.ofSeconds(10), endpoint.getConfiguration().getVisibilityTimeout());
         assertEquals(1, endpoint.getConfiguration().getMaxMessages());
@@ -124,8 +132,8 @@ class QueueComponentTest extends CamelTestSupport {
     public void testNoQueueNameProducerWithOpNeedsQueueName() throws Exception {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
-        final QueueEndpoint endpoint = (QueueEndpoint) context
-                .getEndpoint("azure-storage-queue://camelazure?credentials=#creds&operation=deleteQueue");
+        final QueueEndpoint endpoint = (QueueEndpoint)
+                context.getEndpoint("azure-storage-queue://camelazure?credentials=#creds&operation=deleteQueue");
 
         Producer producer = endpoint.createProducer();
         DefaultExchange exchange = new DefaultExchange(context);
@@ -136,8 +144,8 @@ class QueueComponentTest extends CamelTestSupport {
     public void testNoQueueNameConsumer() {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
-        final QueueEndpoint endpoint = (QueueEndpoint) context
-                .getEndpoint("azure-storage-queue://camelazure?credentials=#creds&operation=deleteQueue");
+        final QueueEndpoint endpoint = (QueueEndpoint)
+                context.getEndpoint("azure-storage-queue://camelazure?credentials=#creds&operation=deleteQueue");
 
         assertThrows(IllegalArgumentException.class, () -> endpoint.createConsumer(null));
     }
@@ -152,27 +160,34 @@ class QueueComponentTest extends CamelTestSupport {
         assertEquals("testqueue", endpoint.getConfiguration().getQueueName());
         assertEquals("testKey", endpoint.getConfiguration().getAccessKey());
         assertNull(endpoint.getConfiguration().getServiceClient());
-        assertEquals(QueueOperationDefinition.deleteQueue, endpoint.getConfiguration().getOperation());
+        assertEquals(
+                QueueOperationDefinition.deleteQueue,
+                endpoint.getConfiguration().getOperation());
         assertEquals(1, endpoint.getConfiguration().getMaxMessages());
-        assertEquals(CredentialType.SHARED_ACCOUNT_KEY, endpoint.getConfiguration().getCredentialType());
+        assertEquals(
+                CredentialType.SHARED_ACCOUNT_KEY, endpoint.getConfiguration().getCredentialType());
     }
 
     @Test
     public void testCreateEndpointWithAutowiring() {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
-        final String uri = "azure-storage-queue://camelazure/testqueue?operation=deleteQueue&timeToLive=PT100s" +
-                           "&visibilityTimeout=PT10s&maxMessages=1";
+        final String uri = "azure-storage-queue://camelazure/testqueue?operation=deleteQueue&timeToLive=PT100s"
+                + "&visibilityTimeout=PT10s&maxMessages=1";
 
         final QueueEndpoint endpoint = (QueueEndpoint) context.getEndpoint(uri);
 
         assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
         assertEquals("testqueue", endpoint.getConfiguration().getQueueName());
         assertNull(endpoint.getConfiguration().getServiceClient());
-        assertEquals(QueueOperationDefinition.deleteQueue, endpoint.getConfiguration().getOperation());
+        assertEquals(
+                QueueOperationDefinition.deleteQueue,
+                endpoint.getConfiguration().getOperation());
         assertEquals(Duration.ofSeconds(100), endpoint.getConfiguration().getTimeToLive());
         assertEquals(Duration.ofSeconds(10), endpoint.getConfiguration().getVisibilityTimeout());
         assertEquals(1, endpoint.getConfiguration().getMaxMessages());
-        assertEquals(CredentialType.SHARED_KEY_CREDENTIAL, endpoint.getConfiguration().getCredentialType());
+        assertEquals(
+                CredentialType.SHARED_KEY_CREDENTIAL,
+                endpoint.getConfiguration().getCredentialType());
     }
 }

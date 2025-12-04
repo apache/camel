@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import com.schibsted.spt.data.jslt.Expression;
@@ -44,14 +45,15 @@ public class JsltObjectFilterTest extends CamelTestSupport {
     @Test
     public void testJsltAsInputStream() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/objectFilter/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jslt/objectFilter/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
-        sendBody("direct://start",
+        sendBody(
+                "direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/objectFilter/input.json"));
 

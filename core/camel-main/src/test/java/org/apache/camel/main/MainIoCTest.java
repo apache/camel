@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
@@ -29,8 +32,6 @@ import org.apache.camel.component.seda.PriorityBlockingQueueFactory;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.model.ModelCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MainIoCTest {
 
@@ -52,7 +53,11 @@ public class MainIoCTest {
         // and now its created
         assertNotNull(main.getCamelContext());
         // should be 1 route model
-        assertEquals(1, ((ModelCamelContext) main.getCamelContext()).getRouteDefinitions().size());
+        assertEquals(
+                1,
+                ((ModelCamelContext) main.getCamelContext())
+                        .getRouteDefinitions()
+                        .size());
         // and the configuration should have registered beans
         assertNotNull(main.getCamelContext().getRegistry().lookupByName("MyCoolBean"));
         assertEquals("Tiger", main.getCamelContext().getRegistry().lookupByName("coolStuff"));
@@ -87,7 +92,8 @@ public class MainIoCTest {
         assertInstanceOf(PriorityBlockingQueueFactory.class, qf);
         assertSame(camelContext, seda.getCamelContext());
 
-        MyConfiguration.MyCoolBean mcb = (MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
+        MyConfiguration.MyCoolBean mcb =
+                (MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
         assertNotNull(mcb);
         assertEquals("Tiger", mcb.getName());
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -38,8 +39,7 @@ public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     @Metadata(javaType = "org.apache.camel.ErrorHandlerFactory")
     private String ref;
 
-    public RefErrorHandlerDefinition() {
-    }
+    public RefErrorHandlerDefinition() {}
 
     public RefErrorHandlerDefinition(RefErrorHandlerDefinition source) {
         this.ref = source.ref;
@@ -83,5 +83,4 @@ public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         setRef(ref);
         return this;
     }
-
 }

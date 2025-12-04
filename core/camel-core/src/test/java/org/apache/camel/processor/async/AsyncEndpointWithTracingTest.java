@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointWithTracingTest extends ContextTestSupport {
 
@@ -52,17 +53,25 @@ public class AsyncEndpointWithTracingTest extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 // enable tracing to ensure it works using async API
-                from("direct:start").tracing().to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).to("async:bye:camel").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("log:after").to("mock:after").to("mock:result");
+                from("direct:start")
+                        .tracing()
+                        .to("mock:before")
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("async:bye:camel")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("log:after")
+                        .to("mock:after")
+                        .to("mock:result");
             }
         };
     }
-
 }

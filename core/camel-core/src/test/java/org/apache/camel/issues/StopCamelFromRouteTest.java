@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -27,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -73,13 +74,17 @@ public class StopCamelFromRouteTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").to("mock:start").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        // stop Camel by signalling to the latch
-                        latch.countDown();
-                    }
-                }).to("mock:done");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .to("mock:start")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                // stop Camel by signalling to the latch
+                                latch.countDown();
+                            }
+                        })
+                        .to("mock:done");
             }
         };
     }

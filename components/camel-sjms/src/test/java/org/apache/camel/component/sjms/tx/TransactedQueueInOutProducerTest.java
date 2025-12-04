@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.tx;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
@@ -32,8 +35,6 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class TransactedQueueInOutProducerTest extends CamelTestSupport {
 
@@ -61,8 +62,7 @@ public class TransactedQueueInOutProducerTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ActiveMQConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory(service.serviceAddress());
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
         CamelContext camelContext = super.createCamelContext();
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
@@ -80,18 +80,17 @@ public class TransactedQueueInOutProducerTest extends CamelTestSupport {
                         // request/reply is not transacted
                         .to(ExchangePattern.InOut, "sjms:queue:test.transform.TransactedQueueInOutProducerTest")
                         .to("sjms:queue:test.queue2.TransactedQueueInOutProducerTest?transacted=true")
-                        .process(
-                                new Processor() {
-                                    @Override
-                                    public void process(Exchange exchange) throws Exception {
-                                        if (exchange.getIn().getHeader("isfailed", Boolean.class)) {
-                                            log.info("We failed. Should roll back.");
-                                            throw new RollbackExchangeException(exchange);
-                                        } else {
-                                            log.info("We passed.  Should commit.");
-                                        }
-                                    }
-                                });
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                if (exchange.getIn().getHeader("isfailed", Boolean.class)) {
+                                    log.info("We failed. Should roll back.");
+                                    throw new RollbackExchangeException(exchange);
+                                } else {
+                                    log.info("We passed.  Should commit.");
+                                }
+                            }
+                        });
 
                 from("sjms:queue:test.queue.TransactedQueueInOutProducerTest?transacted=true")
                         .to("mock:result");

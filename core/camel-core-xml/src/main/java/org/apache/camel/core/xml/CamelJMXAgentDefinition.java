@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import java.util.StringJoiner;
@@ -37,45 +38,59 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String disabled;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String onlyRegisterProcessorWithCustomId;
+
     @XmlAttribute
     @Metadata(defaultValue = "org.apache.camel")
     private String mbeanServerDefaultDomain;
+
     @XmlAttribute
     @Metadata(defaultValue = "org.apache.camel")
     private String mbeanObjectDomainName;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String usePlatformMBeanServer;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String registerAlways;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String registerNewRoutes;
+
     @XmlAttribute
     @Metadata(defaultValue = "Default", enums = "ContextOnly,RoutesOnly,Default")
     private String statisticsLevel;
+
     @XmlAttribute
     @Metadata(defaultValue = "Default", enums = "ContextOnly,RoutesOnly,Default")
     private String mbeansLevel;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String loadStatisticsEnabled;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String endpointRuntimeStatisticsEnabled;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String includeHostName;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String useHostIPAddress;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String mask;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String updateRouteEnabled;
@@ -295,5 +310,4 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         return buffer.toString();
     }
-
 }

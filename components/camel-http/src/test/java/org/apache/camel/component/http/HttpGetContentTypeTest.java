@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.hc.core5.http.Header;
@@ -24,8 +27,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpGetContentTypeTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -33,8 +34,10 @@ public class HttpGetContentTypeTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/myget", (request, response, context) -> {
                     Header ctHeader = request.getFirstHeader(Exchange.CONTENT_TYPE);
@@ -42,7 +45,8 @@ public class HttpGetContentTypeTest extends BaseHttpTest {
                     assertEquals("application/json", ct);
                     response.setEntity(new StringEntity(getExpectedContent()));
                     response.setCode(HttpStatus.SC_OK);
-                }).create();
+                })
+                .create();
         localServer.start();
     }
 

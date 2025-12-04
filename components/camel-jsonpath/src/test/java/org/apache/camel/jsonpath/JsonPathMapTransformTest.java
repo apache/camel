@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.util.List;
@@ -28,9 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JsonPathMapTransformTest extends CamelTestSupport {
 
     @Override
@@ -39,7 +40,8 @@ public class JsonPathMapTransformTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().jsonpath("$.store.book[*].author")
+                        .transform()
+                        .jsonpath("$.store.book[*].author")
                         .to("mock:authors");
             }
         };
@@ -53,17 +55,20 @@ public class JsonPathMapTransformTest extends CamelTestSupport {
         Configuration.ConfigurationBuilder builder = Configuration.builder();
         builder.jsonProvider(new JacksonJsonProvider());
         builder.mappingProvider(new JacksonMappingProvider());
-        Object document = builder.build().jsonProvider()
-                .parse(new FileInputStream("src/test/resources/books.json"), "utf-8");
+        Object document =
+                builder.build().jsonProvider().parse(new FileInputStream("src/test/resources/books.json"), "utf-8");
         assertIsInstanceOf(Map.class, document);
 
         template.sendBody("direct:start", document);
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<?> authors = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> authors = getMockEndpoint("mock:authors")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(List.class);
         assertEquals("Nigel Rees", authors.get(0));
         assertEquals("Evelyn Waugh", authors.get(1));
     }
-
 }

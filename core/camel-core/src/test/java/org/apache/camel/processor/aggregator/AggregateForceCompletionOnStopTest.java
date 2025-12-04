@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,16 +26,15 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
     @Test
     public void testForceCompletionTrue() {
-        MyCompletionProcessor myCompletionProcessor
-                = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
+        MyCompletionProcessor myCompletionProcessor =
+                context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
 
         context.getShutdownStrategy().setShutdownNowOnTimeout(true);
@@ -50,8 +52,8 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
     @Test
     public void testForceCompletionFalse() {
-        MyCompletionProcessor myCompletionProcessor
-                = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
+        MyCompletionProcessor myCompletionProcessor =
+                context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
 
         context.getShutdownStrategy().setShutdownNowOnTimeout(true);
@@ -69,8 +71,8 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
     @Test
     public void testStopRouteForceCompletionTrue() throws Exception {
-        MyCompletionProcessor myCompletionProcessor
-                = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
+        MyCompletionProcessor myCompletionProcessor =
+                context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
 
         context.getShutdownStrategy().setShutdownNowOnTimeout(true);
@@ -89,8 +91,8 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
     @Test
     public void testStopRouteForceCompletionFalse() throws Exception {
-        MyCompletionProcessor myCompletionProcessor
-                = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
+        MyCompletionProcessor myCompletionProcessor =
+                context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
 
         context.getShutdownStrategy().setShutdownNowOnTimeout(true);
@@ -118,12 +120,19 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:forceCompletionTrue").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .forceCompletionOnStop().completionSize(10).delay(100)
+                from("direct:forceCompletionTrue")
+                        .routeId("foo")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .forceCompletionOnStop()
+                        .completionSize(10)
+                        .delay(100)
                         .process("myCompletionProcessor");
 
-                from("direct:forceCompletionFalse").routeId("bar").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(10).delay(100)
+                from("direct:forceCompletionFalse")
+                        .routeId("bar")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(10)
+                        .delay(100)
                         .process("myCompletionProcessor");
             }
         };

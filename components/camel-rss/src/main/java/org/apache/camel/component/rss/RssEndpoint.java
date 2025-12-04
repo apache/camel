@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rss;
 
 import java.util.Arrays;
@@ -35,14 +36,20 @@ import org.slf4j.LoggerFactory;
 /**
  * Poll RSS feeds.
  */
-@UriEndpoint(firstVersion = "2.0.0", scheme = "rss", extendsScheme = "atom", title = "RSS",
-             syntax = "rss:feedUri", consumerOnly = true, category = { Category.DOCUMENT }, lenientProperties = true,
-             headersClass = RssConstants.class)
+@UriEndpoint(
+        firstVersion = "2.0.0",
+        scheme = "rss",
+        extendsScheme = "atom",
+        title = "RSS",
+        syntax = "rss:feedUri",
+        consumerOnly = true,
+        category = {Category.DOCUMENT},
+        lenientProperties = true,
+        headersClass = RssConstants.class)
 public class RssEndpoint extends FeedEndpoint implements EndpointServiceLocation {
     protected static final Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
 
-    public RssEndpoint() {
-    }
+    public RssEndpoint() {}
 
     public RssEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component, feedUri);
@@ -87,15 +94,15 @@ public class RssEndpoint extends FeedEndpoint implements EndpointServiceLocation
 
     @Override
     protected FeedPollingConsumer createEntryPollingConsumer(
-            FeedEndpoint feedEndpoint, Processor processor, boolean throttleEntries)
-            throws Exception {
+            FeedEndpoint feedEndpoint, Processor processor, boolean throttleEntries) throws Exception {
         RssEntryPollingConsumer answer = new RssEntryPollingConsumer(this, processor, throttleEntries);
         configureConsumer(answer);
         return answer;
     }
 
     @Override
-    protected FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) throws Exception {
+    protected FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor)
+            throws Exception {
         RssPollingConsumer answer = new RssPollingConsumer(this, processor);
         configureConsumer(answer);
         return answer;

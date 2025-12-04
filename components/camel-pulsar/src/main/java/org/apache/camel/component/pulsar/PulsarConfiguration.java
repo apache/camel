@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar;
+
+import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.LATEST;
+import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.EXCLUSIVE;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,115 +34,186 @@ import org.apache.pulsar.client.api.MessageRoutingMode;
 import org.apache.pulsar.client.api.RedeliveryBackoff;
 import org.apache.pulsar.client.api.RegexSubscriptionMode;
 
-import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.LATEST;
-import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.EXCLUSIVE;
-
 @UriParams
 public class PulsarConfiguration implements Cloneable {
 
     @UriParam(label = "common")
     private String serviceUrl;
+
     @UriParam(label = "common")
     private String authenticationClass;
+
     @UriParam(label = "common")
     private String authenticationParams;
+
     @UriParam(label = "consumer")
     private boolean topicsPattern;
+
     @UriParam(label = "consumer", defaultValue = "PersistentOnly")
     private RegexSubscriptionMode subscriptionTopicsMode;
+
     @UriParam(label = "consumer", defaultValue = "subs")
     private String subscriptionName = "subs";
+
     @UriParam(label = "consumer", defaultValue = "EXCLUSIVE")
     private SubscriptionType subscriptionType = EXCLUSIVE;
+
     @UriParam(label = "consumer", defaultValue = "1")
     private int numberOfConsumers = 1;
+
     @UriParam(label = "consumer", defaultValue = "10")
     private int consumerQueueSize = 10;
+
     @UriParam(label = "consumer", defaultValue = "sole-consumer")
     private String consumerName = "sole-consumer";
+
     @UriParam(label = "producer")
     private String producerName;
+
     @UriParam(label = "consumer", defaultValue = "cons")
     private String consumerNamePrefix = "cons";
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean allowManualAcknowledgement;
+
     @UriParam(label = "consumer", defaultValue = "10000")
     private long ackTimeoutMillis = 10000;
+
     @UriParam(label = "consumer", defaultValue = "60000000")
     private long negativeAckRedeliveryDelayMicros = 60000000;
+
     @UriParam(label = "consumer", description = "RedeliveryBackoff to use for ack timeout redelivery backoff.")
     private RedeliveryBackoff ackTimeoutRedeliveryBackoff;
+
     @UriParam(label = "consumer", description = "RedeliveryBackoff to use for negative ack redelivery backoff.")
     private RedeliveryBackoff negativeAckRedeliveryBackoff;
+
     @UriParam(label = "consumer", defaultValue = "100")
     private long ackGroupTimeMillis = 100;
+
     @UriParam(label = "consumer", defaultValue = "LATEST")
     private SubscriptionInitialPosition subscriptionInitialPosition = LATEST;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean readCompacted;
-    @UriParam(label = "consumer",
-              description = "Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created")
     private Integer maxRedeliverCount;
-    @UriParam(label = "consumer",
-              description = "Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ")
     private String deadLetterTopic;
-    @UriParam(label = "consumer",
-              description = "To enable retry letter topic mode. The default retry letter topic uses this format: topicname-subscriptionname-RETRY")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "To enable retry letter topic mode. The default retry letter topic uses this format: topicname-subscriptionname-RETRY")
     private boolean enableRetry;
-    @UriParam(label = "consumer",
-              description = "Name of the topic to use in retry mode. Note: if not set, default topic name will be topicName-subscriptionName-RETRY")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Name of the topic to use in retry mode. Note: if not set, default topic name will be topicName-subscriptionName-RETRY")
     private String retryLetterTopic;
-    @UriParam(label = "consumer", defaultValue = "true",
-              description = "Whether to use the `messageListener` interface, or to receive messages using a separate thread pool")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "true",
+            description =
+                    "Whether to use the `messageListener` interface, or to receive messages using a separate thread pool")
     private boolean messageListener = true;
-    @UriParam(label = "consumer", defaultValue = "1",
-              description = "Number of threads to receive and handle messages when using a separate thread pool")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "1",
+            description = "Number of threads to receive and handle messages when using a separate thread pool")
     private int numberOfConsumerThreads = 1;
-    @UriParam(label = "consumer", enums = "AUTO_SPLIT,STICKY",
-              description = "Policy to use by consumer when using key-shared subscription type.")
+
+    @UriParam(
+            label = "consumer",
+            enums = "AUTO_SPLIT,STICKY",
+            description = "Policy to use by consumer when using key-shared subscription type.")
     private String keySharedPolicy;
+
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
-    @UriParam(label = "producer",
-              description = "Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError",
-              defaultValue = "false")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError",
+            defaultValue = "false")
     private boolean blockIfQueueFull;
-    @UriParam(label = "producer",
-              description = "Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true",
-              defaultValue = "1000")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true",
+            defaultValue = "1000")
     private int maxPendingMessages = 1000;
-    @UriParam(label = "producer",
-              description = "The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if "
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if "
                             + "(number of partitions * maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition.",
-              defaultValue = "50000")
+            defaultValue = "50000")
     @Deprecated
     private int maxPendingMessagesAcrossPartitions = 50000;
-    @UriParam(label = "producer",
-              description = "The maximum time period within which the messages sent will be batched if batchingEnabled is true.",
-              defaultValue = "1000")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "The maximum time period within which the messages sent will be batched if batchingEnabled is true.",
+            defaultValue = "1000")
     private long batchingMaxPublishDelayMicros = TimeUnit.MILLISECONDS.toMicros(1);
+
     @UriParam(label = "producer", description = "The maximum size to batch messages.", defaultValue = "1000")
     private int batchingMaxMessages = 1000;
-    @UriParam(label = "producer", description = "Control whether automatic batching of messages is enabled for the producer.",
-              defaultValue = "true")
+
+    @UriParam(
+            label = "producer",
+            description = "Control whether automatic batching of messages is enabled for the producer.",
+            defaultValue = "true")
     private boolean batchingEnabled = true;
-    @UriParam(label = "producer", description = "Control batching method used by the producer.", defaultValue = "DEFAULT")
+
+    @UriParam(
+            label = "producer",
+            description = "Control batching method used by the producer.",
+            defaultValue = "DEFAULT")
     private BatcherBuilder batcherBuilder = BatcherBuilder.DEFAULT;
-    @UriParam(label = "producer", description = "The first message published will have a sequence Id of initialSequenceId  1.",
-              defaultValue = "-1")
+
+    @UriParam(
+            label = "producer",
+            description = "The first message published will have a sequence Id of initialSequenceId  1.",
+            defaultValue = "-1")
     private long initialSequenceId = -1;
+
     @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE")
     private CompressionType compressionType = CompressionType.NONE;
-    @UriParam(label = "producer", description = "Control whether chunking of messages is enabled for the producer.",
-              defaultValue = "false")
+
+    @UriParam(
+            label = "producer",
+            description = "Control whether chunking of messages is enabled for the producer.",
+            defaultValue = "false")
     private boolean chunkingEnabled;
+
     @UriParam(label = "producer", description = "Message Routing Mode to use", defaultValue = "RoundRobinPartition")
     private MessageRoutingMode messageRoutingMode = MessageRoutingMode.RoundRobinPartition;
+
     @UriParam(label = "producer", description = "Custom Message Router to use")
     private MessageRouter messageRouter;
-    @UriParam(label = "producer",
-              description = "Hashing function to use when choosing the partition to use for a particular message",
-              enums = "JavaStringHash,Murmur3_32Hash", defaultValue = "JavaStringHash")
+
+    @UriParam(
+            label = "producer",
+            description = "Hashing function to use when choosing the partition to use for a particular message",
+            enums = "JavaStringHash,Murmur3_32Hash",
+            defaultValue = "JavaStringHash")
     private String hashingScheme = "JavaStringHash";
 
     /**

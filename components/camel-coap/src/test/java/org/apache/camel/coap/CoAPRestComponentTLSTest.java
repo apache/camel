@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
 
 import java.io.IOException;
@@ -58,11 +59,11 @@ public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
         truststoreParameters.setPassword("storepass");
 
         KeyStore trustStore = truststoreParameters.createKeyStore();
-        X509Certificate[] certs
-                = new X509Certificate[] { (X509Certificate) trustStore.getCertificate(trustStore.aliases().nextElement()) };
+        X509Certificate[] certs = new X509Certificate[] {
+            (X509Certificate) trustStore.getCertificate(trustStore.aliases().nextElement())
+        };
 
-        NewAdvancedCertificateVerifier trust = StaticNewAdvancedCertificateVerifier
-                .builder()
+        NewAdvancedCertificateVerifier trust = StaticNewAdvancedCertificateVerifier.builder()
                 .setTrustedCertificates(certs)
                 .build();
         builder.setAdvancedCertificateVerifier(trust);
@@ -110,5 +111,4 @@ public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
     protected String getClientURI() {
         return super.getClientURI() + "?sslContextParameters=#clientSSLContextParameters";
     }
-
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.spanLastRecord.RegexSpanLastRecord;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindySimpleCsvRegexAutospanLineTest extends CamelTestSupport {
 
@@ -35,7 +36,8 @@ public class BindySimpleCsvRegexAutospanLineTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        final RegexSpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(RegexSpanLastRecord.class);
+        final RegexSpanLastRecord order =
+                mock.getReceivedExchanges().get(0).getIn().getBody(RegexSpanLastRecord.class);
 
         assertEquals(1, order.getRecordId());
         assertEquals("hei", order.getName());
@@ -51,7 +53,8 @@ public class BindySimpleCsvRegexAutospanLineTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        final RegexSpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(RegexSpanLastRecord.class);
+        final RegexSpanLastRecord order =
+                mock.getReceivedExchanges().get(0).getIn().getBody(RegexSpanLastRecord.class);
 
         assertEquals(1, order.getRecordId());
         assertEquals("hei", order.getName());
@@ -65,9 +68,7 @@ public class BindySimpleCsvRegexAutospanLineTest extends CamelTestSupport {
             public void configure() {
                 final BindyCsvDataFormat bindy = new BindyCsvDataFormat(RegexSpanLastRecord.class);
 
-                from("direct:unmarshal")
-                        .unmarshal(bindy)
-                        .to("mock:unmarshal");
+                from("direct:unmarshal").unmarshal(bindy).to("mock:unmarshal");
             }
         };
     }

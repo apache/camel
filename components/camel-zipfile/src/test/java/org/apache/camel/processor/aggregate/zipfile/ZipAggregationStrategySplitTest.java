@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.zipfile;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,9 +34,6 @@ import org.apache.camel.util.IOHelper;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ZipAggregationStrategySplitTest extends CamelTestSupport {
 
@@ -65,7 +66,9 @@ public class ZipAggregationStrategySplitTest extends CamelTestSupport {
             for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
                 fileCount++;
             }
-            assertEquals(ZipAggregationStrategySplitTest.EXPECTED_NO_FILES, fileCount,
+            assertEquals(
+                    ZipAggregationStrategySplitTest.EXPECTED_NO_FILES,
+                    fileCount,
                     "Zip file should contains " + ZipAggregationStrategySplitTest.EXPECTED_NO_FILES + " files");
         } finally {
             IOHelper.close(zin);
@@ -83,20 +86,21 @@ public class ZipAggregationStrategySplitTest extends CamelTestSupport {
             public void configure() {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?delay=1000&noop=true")
-                    .aggregate(new GroupedMessageAggregationStrategy())
-                    .constant(true)
-                    .completionFromBatchConsumer()
-                    .eagerCheckCompletion()
-                    .split(body(), new ZipAggregationStrategy(true, true))
-                    .streaming()
-                    .process(exchange -> { /* NOOP - Do nothing */ })
-                    .end()
-                    .setHeader("tempFile", header("CamelFileAbsolutePath"))
-                    .to("file:" + TEST_DIR)
-                    .to("mock:aggregateToZipEntry")
-                    .log("Done processing zip file: ${header.CamelFileName}");
+                        .aggregate(new GroupedMessageAggregationStrategy())
+                        .constant(true)
+                        .completionFromBatchConsumer()
+                        .eagerCheckCompletion()
+                        .split(body(), new ZipAggregationStrategy(true, true))
+                        .streaming()
+                        .process(exchange -> {
+                            /* NOOP - Do nothing */
+                        })
+                        .end()
+                        .setHeader("tempFile", header("CamelFileAbsolutePath"))
+                        .to("file:" + TEST_DIR)
+                        .to("mock:aggregateToZipEntry")
+                        .log("Done processing zip file: ${header.CamelFileName}");
             }
         };
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import io.netty.handler.codec.http.HttpContent;
@@ -34,11 +35,11 @@ public class NettyHttpOperationFailedException extends CamelException {
     private final transient HttpContent content;
     private final String contentAsString;
 
-    public NettyHttpOperationFailedException(String uri, int statusCode, String statusText, String location,
-                                             HttpContent content) {
+    public NettyHttpOperationFailedException(
+            String uri, int statusCode, String statusText, String location, HttpContent content) {
         // sanitize uri so we do not show sensitive information such as passwords
         super("Netty HTTP operation failed invoking " + URISupport.sanitizeUri(uri) + " with statusCode: " + statusCode
-              + (location != null ? ", redirectLocation: " + location : ""));
+                + (location != null ? ", redirectLocation: " + location : ""));
         this.uri = URISupport.sanitizeUri(uri);
         this.statusCode = statusCode;
         this.statusText = statusText;

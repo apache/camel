@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
@@ -55,5 +56,4 @@ final class DelegatingDataSource implements DataSource {
     public OutputStream getOutputStream() throws IOException {
         return delegate.getOutputStream();
     }
-
 }

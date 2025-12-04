@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.ByteArrayInputStream;
@@ -63,8 +64,11 @@ public class StreamCacheInternalErrorTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:error").message(0).body().isInstanceOf(MyBody.class);
-        getMockEndpoint("mock:exception").message(0).body().contains(
-                "Handled big error due to Error during type conversion from type: org.apache.camel.processor.StreamCacheInternalErrorTest.MyBody");
+        getMockEndpoint("mock:exception")
+                .message(0)
+                .body()
+                .contains(
+                        "Handled big error due to Error during type conversion from type: org.apache.camel.processor.StreamCacheInternalErrorTest.MyBody");
         getMockEndpoint("mock:exception").message(0).body().contains("Kaboom");
 
         template.sendBody("direct:start", new MyBody("Kaboom"));
@@ -90,7 +94,8 @@ public class StreamCacheInternalErrorTest extends ContextTestSupport {
                         .setBody(simple("Handled big error due to ${exception.message}"))
                         .to("mock:exception");
 
-                from("direct:start").tracing()
+                from("direct:start")
+                        .tracing()
                         .to("mock:a")
                         .to("mock:b")
                         .to("mock:c")

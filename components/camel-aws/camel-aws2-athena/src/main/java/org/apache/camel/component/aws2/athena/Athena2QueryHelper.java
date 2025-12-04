@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena;
 
 import java.time.Clock;
@@ -132,7 +133,8 @@ class Athena2QueryHelper {
         long now = now();
         long millisWaited = now - this.startMs;
         if (millisWaited >= this.waitTimeout) {
-            LOG.trace("AWS Athena start query execution waited for {}, which exceeded wait timeout of {}",
+            LOG.trace(
+                    "AWS Athena start query execution waited for {}, which exceeded wait timeout of {}",
                     millisWaited,
                     this.waitTimeout);
             return false;
@@ -178,7 +180,8 @@ class Athena2QueryHelper {
      * Has the query completed (does not imply success, only completion).
      */
     boolean isComplete(GetQueryExecutionResponse getQueryExecutionResponse) {
-        QueryExecutionState state = getQueryExecutionResponse.queryExecution().status().state();
+        QueryExecutionState state =
+                getQueryExecutionResponse.queryExecution().status().state();
         return state == QueryExecutionState.SUCCEEDED
                 || state == QueryExecutionState.FAILED
                 || state == QueryExecutionState.CANCELLED
@@ -189,7 +192,8 @@ class Athena2QueryHelper {
      * Did the query complete successfully?
      */
     boolean wasSuccessful(GetQueryExecutionResponse getQueryExecutionResponse) {
-        QueryExecutionState state = getQueryExecutionResponse.queryExecution().status().state();
+        QueryExecutionState state =
+                getQueryExecutionResponse.queryExecution().status().state();
         return state == QueryExecutionState.SUCCEEDED;
     }
 
@@ -205,7 +209,8 @@ class Athena2QueryHelper {
                 this.isRetry = true;
 
             } else {
-                LOG.trace("AWS Athena start query execution detected failure ({})",
+                LOG.trace(
+                        "AWS Athena start query execution detected failure ({})",
                         getQueryExecutionResponse.queryExecution().status().state());
                 this.isFailure = true;
             }
@@ -218,11 +223,12 @@ class Athena2QueryHelper {
      * conditions.
      */
     boolean shouldRetry(GetQueryExecutionResponse getQueryExecutionResponse) {
-        String stateChangeReason = getQueryExecutionResponse.queryExecution().status().stateChangeReason();
+        String stateChangeReason =
+                getQueryExecutionResponse.queryExecution().status().stateChangeReason();
 
         if (this.retry.contains("never")) {
-            LOG.trace("AWS Athena start query execution detected error ({}), marked as not retryable",
-                    stateChangeReason);
+            LOG.trace(
+                    "AWS Athena start query execution detected error ({}), marked as not retryable", stateChangeReason);
             return false;
         }
 
@@ -232,17 +238,21 @@ class Athena2QueryHelper {
         }
 
         // Generic errors happen sometimes in Athena.  It's possible that a retry will fix the problem.
-        if (stateChangeReason != null && stateChangeReason.contains("GENERIC_INTERNAL_ERROR")
+        if (stateChangeReason != null
+                && stateChangeReason.contains("GENERIC_INTERNAL_ERROR")
                 && (this.retry.contains("generic") || this.retry.contains("retryable"))) {
-            LOG.trace("AWS Athena start query execution detected generic error ({}), marked as retryable",
+            LOG.trace(
+                    "AWS Athena start query execution detected generic error ({}), marked as retryable",
                     stateChangeReason);
             return true;
         }
 
         // Resource exhaustion happens sometimes in Athena.  It's possible that a retry will fix the problem.
-        if (stateChangeReason != null && stateChangeReason.contains("exhausted resources at this scale factor")
+        if (stateChangeReason != null
+                && stateChangeReason.contains("exhausted resources at this scale factor")
                 && (this.retry.contains("exhausted") || this.retry.contains("retryable"))) {
-            LOG.trace("AWS Athena start query execution detected resource exhaustion error ({}), marked as retryable",
+            LOG.trace(
+                    "AWS Athena start query execution detected resource exhaustion error ({}), marked as retryable",
                     stateChangeReason);
             return true;
         }
@@ -333,7 +343,9 @@ class Athena2QueryHelper {
         }
 
         if (finalRetry.size() > 1
-                && (finalRetry.contains("retryable") || finalRetry.contains("always") || finalRetry.contains("never"))) {
+                && (finalRetry.contains("retryable")
+                        || finalRetry.contains("always")
+                        || finalRetry.contains("never"))) {
             throw new IllegalArgumentException(
                     "AWS Athena retry is invalid - provide only one mutually exclusive option (retryable, always, never)");
         }
@@ -383,12 +395,13 @@ class Athena2QueryHelper {
      * starting the query over again.
      */
     private boolean determineResetWaitTimeoutOnRetry(final Exchange exchange, Athena2Configuration configuration) {
-        Boolean resetWaitTimeoutOnRetry
-                = exchange.getIn().getHeader(Athena2Constants.RESET_WAIT_TIMEOUT_ON_RETRY, Boolean.class);
+        Boolean resetWaitTimeoutOnRetry =
+                exchange.getIn().getHeader(Athena2Constants.RESET_WAIT_TIMEOUT_ON_RETRY, Boolean.class);
 
         if (ObjectHelper.isEmpty(resetWaitTimeoutOnRetry)) {
             resetWaitTimeoutOnRetry = configuration.isResetWaitTimeoutOnRetry();
-            LOG.trace("AWS Athena reset wait timeout on retry is missing, using default one [{}]",
+            LOG.trace(
+                    "AWS Athena reset wait timeout on retry is missing, using default one [{}]",
                     resetWaitTimeoutOnRetry);
         }
 

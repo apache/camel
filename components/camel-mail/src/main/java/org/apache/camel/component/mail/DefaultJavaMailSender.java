@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.util.Date;
@@ -86,7 +87,8 @@ public class DefaultJavaMailSender implements JavaMailSender {
     @Override
     public Session getSession() {
         if (session == null) {
-            session = Session.getInstance(getJavaMailProperties(),
+            session = Session.getInstance(
+                    getJavaMailProperties(),
                     authenticator == null ? new DefaultAuthenticator(username, password) : authenticator);
         }
         return session;
@@ -142,7 +144,8 @@ public class DefaultJavaMailSender implements JavaMailSender {
     public PasswordAuthentication getPasswordAuthentication() {
         // call authenticator so that the authenticator can dynamically determine the password or token
         return authenticator == null
-                ? new PasswordAuthentication(username, password) : authenticator.getPasswordAuthentication();
+                ? new PasswordAuthentication(username, password)
+                : authenticator.getPasswordAuthentication();
     }
 
     @Override
@@ -178,5 +181,4 @@ public class DefaultJavaMailSender implements JavaMailSender {
     protected Transport getTransport(Session session) throws NoSuchProviderException {
         return session.getTransport(getProtocol());
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import jakarta.jms.JMSException;
 
@@ -34,10 +39,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  *
  */
@@ -46,12 +47,13 @@ public class JmsAllowNullBodyTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
     @ParameterizedTest
-    @ValueSource(strings = { "", "?allowNullBody=true", "?allowNullBody=true&jmsMessageType=Text" })
+    @ValueSource(strings = {"", "?allowNullBody=true", "?allowNullBody=true&jmsMessageType=Text"})
     @DisplayName("Test correct handling of allowNullBody configuration")
     public void testAllowNullBody(String option) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -70,8 +72,11 @@ public class JmsAllowNullBodyTest extends AbstractJMSTest {
             template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest?allowNullBody=false", null, "bar", 123);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            JMSException cause = assertIsInstanceOf(JMSException.class, e.getCause().getCause());
-            assertEquals("Cannot send message as message body is null, and option allowNullBody is false.", cause.getMessage());
+            JMSException cause =
+                    assertIsInstanceOf(JMSException.class, e.getCause().getCause());
+            assertEquals(
+                    "Cannot send message as message body is null, and option allowNullBody is false.",
+                    cause.getMessage());
         }
     }
 

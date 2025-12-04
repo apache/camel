@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.operations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosAsyncDatabase;
@@ -23,12 +30,6 @@ import com.azure.cosmos.models.CosmosContainerResponse;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class CosmosDbDatabaseOperationsTest {
 
@@ -43,29 +44,46 @@ class CosmosDbDatabaseOperationsTest {
         final CosmosDbDatabaseOperations databaseOperations = new CosmosDbDatabaseOperations(Mono.just(database));
 
         // assert params
-        CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> databaseOperations.createContainer(null, null, null, null));
-        CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> databaseOperations.createContainer("", null, null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(
+                () -> databaseOperations.createContainer(null, null, null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(
+                () -> databaseOperations.createContainer("", null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.createContainer("", "", null, null));
-        CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> databaseOperations.createContainer("test", "", null, null));
-        CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> databaseOperations.createContainer("", "test", null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(
+                () -> databaseOperations.createContainer("test", "", null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(
+                () -> databaseOperations.createContainer("", "test", null, null));
 
         // assert key path
-        final CosmosContainerResponse returnedContainerResponseFirstCase
-                = databaseOperations.createContainer("test-container", "path", null, null).block();
-        final CosmosContainerResponse returnedContainerResponseSecondCase
-                = databaseOperations.createContainer("test-container", "/path", null, null).block();
+        final CosmosContainerResponse returnedContainerResponseFirstCase = databaseOperations
+                .createContainer("test-container", "path", null, null)
+                .block();
+        final CosmosContainerResponse returnedContainerResponseSecondCase = databaseOperations
+                .createContainer("test-container", "/path", null, null)
+                .block();
 
         assertNotNull(returnedContainerResponseFirstCase);
         assertNotNull(returnedContainerResponseSecondCase);
-        assertEquals("test-container", returnedContainerResponseFirstCase.getProperties().getId());
-        assertEquals("test-container", returnedContainerResponseSecondCase.getProperties().getId());
-        assertEquals("/path", returnedContainerResponseFirstCase.getProperties().getPartitionKeyDefinition().getPaths().get(0));
-        assertEquals("/path",
-                returnedContainerResponseSecondCase.getProperties().getPartitionKeyDefinition().getPaths().get(0));
+        assertEquals(
+                "test-container",
+                returnedContainerResponseFirstCase.getProperties().getId());
+        assertEquals(
+                "test-container",
+                returnedContainerResponseSecondCase.getProperties().getId());
+        assertEquals(
+                "/path",
+                returnedContainerResponseFirstCase
+                        .getProperties()
+                        .getPartitionKeyDefinition()
+                        .getPaths()
+                        .get(0));
+        assertEquals(
+                "/path",
+                returnedContainerResponseSecondCase
+                        .getProperties()
+                        .getPartitionKeyDefinition()
+                        .getPaths()
+                        .get(0));
     }
 
     @Test
@@ -97,11 +115,18 @@ class CosmosDbDatabaseOperationsTest {
         CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.getContainerOperations(null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.getContainerOperations(""));
 
-        assertEquals("container-new", databaseOperations
-                .createContainerIfNotExistAndGetContainerOperations("container-new", "/path", null, null).getContainerId()
-                .block());
-        assertEquals("container-existing",
-                databaseOperations.getContainerOperations("container-existing").getContainerId().block());
+        assertEquals(
+                "container-new",
+                databaseOperations
+                        .createContainerIfNotExistAndGetContainerOperations("container-new", "/path", null, null)
+                        .getContainerId()
+                        .block());
+        assertEquals(
+                "container-existing",
+                databaseOperations
+                        .getContainerOperations("container-existing")
+                        .getContainerId()
+                        .block());
     }
 
     @Test

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,8 +31,7 @@ public class SqlConsumerFromFileTest extends SqlConsumerTest {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:file:src/test/resources/sql/selectProjects.sql")
-                        .to("mock:result");
+                from("sql:file:src/test/resources/sql/selectProjects.sql").to("mock:result");
             }
         };
     }

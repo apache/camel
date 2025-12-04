@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -35,8 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class UndertowHttpStreamingTest extends BaseUndertowTest {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowHttpStreamingTest.class);
 
@@ -50,9 +51,8 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(expectedLength);
 
-        Exchange response = template.send(
-                "undertow:http://localhost:{{port}}?useStreaming=true",
-                e -> produceStream(e));
+        Exchange response =
+                template.send("undertow:http://localhost:{{port}}?useStreaming=true", e -> produceStream(e));
         consumeStream(response);
         long length = response.getIn().getBody(Long.class).longValue();
 
@@ -67,9 +67,8 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(12);
 
-        Exchange response = template.send(
-                "undertow:http://localhost:{{port}}?useStreaming=true",
-                e -> e.getIn().setBody("Hello Camel!"));
+        Exchange response = template.send("undertow:http://localhost:{{port}}?useStreaming=true", e -> e.getIn()
+                .setBody("Hello Camel!"));
         consumeStream(response);
         long length = response.getIn().getBody(Long.class).longValue();
 
@@ -81,27 +80,27 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
         PipedOutputStream out = new PipedOutputStream();
         exchange.getIn().setBody(new PipedInputStream(out));
         new Thread(() -> {
-            try (OutputStreamWriter osw = new OutputStreamWriter(out);
-                 BufferedWriter writer = new BufferedWriter(osw)) {
-                LongStream.range(0, COUNT).forEach(i -> {
-                    try {
-                        writer.write(LINE);
-                        writer.newLine();
+                    try (OutputStreamWriter osw = new OutputStreamWriter(out);
+                            BufferedWriter writer = new BufferedWriter(osw)) {
+                        LongStream.range(0, COUNT).forEach(i -> {
+                            try {
+                                writer.write(LINE);
+                                writer.newLine();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        LOG.warn("I/O exception: {}", e.getMessage(), e);
                     }
-                });
-            } catch (IOException e) {
-                LOG.warn("I/O exception: {}", e.getMessage(), e);
-            }
-        }).start();
+                })
+                .start();
     }
 
     private static void consumeStream(Exchange exchange) throws IOException {
         try (InputStream in = exchange.getIn().getBody(InputStream.class);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            long length = reader.lines()
-                    .collect(Collectors.summingLong(String::length));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            long length = reader.lines().collect(Collectors.summingLong(String::length));
             exchange.getIn().setBody(length);
         }
     }
@@ -118,5 +117,4 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
             }
         };
     }
-
 }

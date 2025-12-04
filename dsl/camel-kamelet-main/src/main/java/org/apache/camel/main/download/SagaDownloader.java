@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.main.KameletMain;
@@ -27,24 +28,26 @@ import org.apache.camel.saga.InMemorySagaService;
  */
 public class SagaDownloader {
 
-    private SagaDownloader() {
-    }
+    private SagaDownloader() {}
 
     public static void registerDownloadReifiers(KameletMain main) {
 
-        ProcessorReifier.registerReifier(SagaDefinition.class,
-                (route, processorDefinition) -> {
-                    if (processorDefinition instanceof SagaDefinition) {
-                        DependencyDownloader downloader = route.getCamelContext().hasService(DependencyDownloader.class);
-                        if (downloader != null) {
-                            downloader.downloadDependency("org.apache.camel", "camel-saga",
-                                    route.getCamelContext().getVersion());
-                            downloader.downloadDependency("org.apache.camel", "camel-lra",
-                                    route.getCamelContext().getVersion());
-                        }
-                    }
-                    main.bind("inMemorySagaService", new InMemorySagaService());
-                    return ProcessReifier.coreReifier(route, processorDefinition);
-                });
+        ProcessorReifier.registerReifier(SagaDefinition.class, (route, processorDefinition) -> {
+            if (processorDefinition instanceof SagaDefinition) {
+                DependencyDownloader downloader = route.getCamelContext().hasService(DependencyDownloader.class);
+                if (downloader != null) {
+                    downloader.downloadDependency(
+                            "org.apache.camel",
+                            "camel-saga",
+                            route.getCamelContext().getVersion());
+                    downloader.downloadDependency(
+                            "org.apache.camel",
+                            "camel-lra",
+                            route.getCamelContext().getVersion());
+                }
+            }
+            main.bind("inMemorySagaService", new InMemorySagaService());
+            return ProcessReifier.coreReifier(route, processorDefinition);
+        });
     }
 }

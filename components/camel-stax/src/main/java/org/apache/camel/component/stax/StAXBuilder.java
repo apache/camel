@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax;
 
 import org.apache.camel.Expression;
@@ -64,5 +65,4 @@ public final class StAXBuilder {
     public static <T> Expression stax(String clazzName, boolean isNamespaceAware) {
         return new StAXJAXBIteratorExpression<T>(clazzName, isNamespaceAware);
     }
-
 }

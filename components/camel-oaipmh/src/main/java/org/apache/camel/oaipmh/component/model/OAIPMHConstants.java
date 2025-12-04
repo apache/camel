@@ -14,15 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh.component.model;
 
 import org.apache.camel.spi.Metadata;
 
 public final class OAIPMHConstants {
-    @Metadata(label = "producer", description = "This header is obtained when onlyFirst option is enable. " +
-                                                "Return resumption token of the request when data is still available.",
-              javaType = "String")
+    @Metadata(
+            label = "producer",
+            description = "This header is obtained when onlyFirst option is enable. "
+                    + "Return resumption token of the request when data is still available.",
+            javaType = "String")
     public static final String RESUMPTION_TOKEN = "CamelOaimphResumptionToken";
+
     public static final String URL = "CamelOaimphUrl";
     public static final String ENDPOINT_URL = "CamelOaimphEndpointUrl";
     public static final String VERB = "CamelOaimphVerb";
@@ -34,7 +38,5 @@ public final class OAIPMHConstants {
     public static final String SET = "CamelOaimphSet";
     public static final String IDENTIFIER = "CamelOaimphIdentifier";
 
-    private OAIPMHConstants() {
-    }
-
+    private OAIPMHConstants() {}
 }

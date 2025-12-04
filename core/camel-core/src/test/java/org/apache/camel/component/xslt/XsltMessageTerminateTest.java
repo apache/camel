@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XsltMessageTerminateTest extends ContextTestSupport {
 
@@ -54,7 +55,8 @@ public class XsltMessageTerminateTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("file:src/test/data/?fileName=terminate.xml&noop=true&initialDelay=0&delay=10")
-                        .to("xslt:org/apache/camel/component/xslt/terminate.xsl").to("log:foo")
+                        .to("xslt:org/apache/camel/component/xslt/terminate.xsl")
+                        .to("log:foo")
                         .to("mock:result");
             }
         };

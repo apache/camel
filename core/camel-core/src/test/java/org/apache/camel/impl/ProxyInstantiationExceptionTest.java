@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -22,15 +25,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ProxyInstantiationException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ProxyInstantiationExceptionTest extends ContextTestSupport {
 
     @Test
     public void testProxyException() {
         Endpoint endpoint = context.getEndpoint("mock:foo");
-        ProxyInstantiationException e
-                = new ProxyInstantiationException(CamelContext.class, endpoint, new IllegalArgumentException("Damn"));
+        ProxyInstantiationException e =
+                new ProxyInstantiationException(CamelContext.class, endpoint, new IllegalArgumentException("Damn"));
 
         assertNotNull(e);
         assertNotNull(e.getMessage());
@@ -39,5 +40,4 @@ public class ProxyInstantiationExceptionTest extends ContextTestSupport {
         assertNotNull(e.getCause());
         assertEquals("Damn", e.getCause().getMessage());
     }
-
 }

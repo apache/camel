@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
 import org.apache.camel.ExchangeException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanWithExchangeExceptionAnnotationWrappedExceptionTest extends BeanWithExchangeExceptionAnnotationTest {
 
@@ -31,8 +32,8 @@ public class BeanWithExchangeExceptionAnnotationWrappedExceptionTest extends Bea
     }
 
     public static class MyBean {
-        private static final String MESSAGE
-                = "I'm being thrown from " + BeanWithExchangeExceptionAnnotationWrappedExceptionTest.class;
+        private static final String MESSAGE =
+                "I'm being thrown from " + BeanWithExchangeExceptionAnnotationWrappedExceptionTest.class;
 
         public void throwException() throws Exception {
             // wrap the problem in an IO exception

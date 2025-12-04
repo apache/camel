@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,8 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
 
@@ -88,7 +89,11 @@ public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
             @Override
             public void configure() {
 
-                from("direct:start").split(body().tokenize(",")).parallelProcessing().stopOnException().executorService(service)
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .parallelProcessing()
+                        .stopOnException()
+                        .executorService(service)
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
@@ -96,9 +101,9 @@ public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
                                     throw new IllegalArgumentException("Forced");
                                 }
                             }
-                        }).to("mock:split");
+                        })
+                        .to("mock:split");
             }
         };
     }
-
 }

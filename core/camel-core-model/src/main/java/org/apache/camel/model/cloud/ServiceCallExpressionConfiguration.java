@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.Map;
@@ -45,16 +46,21 @@ import org.apache.camel.support.PropertyBindingSupport;
 public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration implements ServiceExpressionFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;
+
     @XmlTransient
     private final String factoryKey;
+
     @XmlAttribute
     @Metadata(defaultValue = ServiceCallConstants.SERVICE_HOST)
     private String hostHeader = ServiceCallConstants.SERVICE_HOST;
+
     @XmlAttribute
     @Metadata(defaultValue = ServiceCallConstants.SERVICE_PORT)
     private String portHeader = ServiceCallConstants.SERVICE_PORT;
+
     @XmlElementRef(required = false)
     private ExpressionDefinition expressionType;
+
     @XmlTransient
     private Expression expression;
 
@@ -166,8 +172,8 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
 
         if (factoryKey != null) {
             // First try to find the factory from the registry.
-            ServiceExpressionFactory factory
-                    = CamelContextHelper.lookup(camelContext, factoryKey, ServiceExpressionFactory.class);
+            ServiceExpressionFactory factory =
+                    CamelContextHelper.lookup(camelContext, factoryKey, ServiceExpressionFactory.class);
             if (factory != null) {
                 // If a factory is found in the registry do not re-configure it
                 // as it should be pre-configured.
@@ -177,19 +183,22 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
                 Class<?> type;
                 try {
                     // Then use Service factory.
-                    type = camelContext.getCamelContextExtension()
-                            .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElseThrow();
+                    type = camelContext
+                            .getCamelContextExtension()
+                            .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH)
+                            .findClass(factoryKey)
+                            .orElseThrow();
                 } catch (Exception e) {
                     throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
                 }
 
                 if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type, false);
+                    factory = (ServiceExpressionFactory)
+                            camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new IllegalArgumentException(
-                            "Resolving Expression: " + factoryKey
-                                                       + " detected type conflict: Not a ExpressionFactory implementation. Found: "
-                                                       + type.getName());
+                    throw new IllegalArgumentException("Resolving Expression: " + factoryKey
+                            + " detected type conflict: Not a ExpressionFactory implementation. Found: "
+                            + type.getName());
                 }
 
                 try {
@@ -227,5 +236,4 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
 
         return answer;
     }
-
 }

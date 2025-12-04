@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,8 +39,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 class BlobChangeFeedOperationsIT extends Base {
 
     private BlobChangefeedClient client;
@@ -48,12 +49,12 @@ class BlobChangeFeedOperationsIT extends Base {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
     private String resultName = "mock:result";
 
     @BeforeAll
     public void setupClient() {
-        client = new BlobChangefeedClientBuilder(serviceClient)
-                .buildClient();
+        client = new BlobChangefeedClientBuilder(serviceClient).buildClient();
 
         // create test container
         containerClient = serviceClient.getBlobContainerClient(containerName);
@@ -68,8 +69,10 @@ class BlobChangeFeedOperationsIT extends Base {
         final String data = "Hello world from my awesome tests!";
         final InputStream dataStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
 
-        containerClient.getBlobClient(blobName).getBlockBlobClient().upload(dataStream,
-                BlobUtils.getInputStreamLength(dataStream));
+        containerClient
+                .getBlobClient(blobName)
+                .getBlockBlobClient()
+                .upload(dataStream, BlobUtils.getInputStreamLength(dataStream));
 
         result.expectedMessageCount(1);
 

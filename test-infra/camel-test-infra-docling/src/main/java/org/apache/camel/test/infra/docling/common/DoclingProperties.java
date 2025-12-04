@@ -21,7 +21,5 @@ public final class DoclingProperties {
     public static final String DOCLING_SERVER_URL = "docling.server.url";
     public static final String DOCLING_CONTAINER = "docling.container";
 
-    private DoclingProperties() {
-
-    }
+    private DoclingProperties() {}
 }

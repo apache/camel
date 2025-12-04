@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
 
 import jakarta.servlet.ServletConfig;
@@ -58,8 +59,8 @@ public class CamelHttpTransportServlet extends CamelServlet {
             httpRegistry = DefaultHttpRegistry.getHttpRegistry(name);
             HttpRegistryProvider existing = httpRegistry.getCamelServlet(name);
             if (existing != null) {
-                String msg = "Duplicate ServletName detected: " + name + ". Existing: " + existing + " This: " + this.toString()
-                             + ". Its advised to use unique ServletName per Camel application.";
+                String msg = "Duplicate ServletName detected: " + name + ". Existing: " + existing + " This: "
+                        + this.toString() + ". Its advised to use unique ServletName per Camel application.";
                 // always log so people can see it easier
                 if (isIgnoreDuplicateServletName()) {
                     LOG.warn(msg);
@@ -86,9 +87,8 @@ public class CamelHttpTransportServlet extends CamelServlet {
 
     private ServletEndpoint getServletEndpoint(HttpConsumer consumer) {
         if (!(consumer.getEndpoint() instanceof ServletEndpoint)) {
-            throw new RuntimeException(
-                    "Invalid consumer type. Must be ServletEndpoint but is "
-                                       + consumer.getClass().getName());
+            throw new RuntimeException("Invalid consumer type. Must be ServletEndpoint but is "
+                    + consumer.getClass().getName());
         }
         return (ServletEndpoint) consumer.getEndpoint();
     }

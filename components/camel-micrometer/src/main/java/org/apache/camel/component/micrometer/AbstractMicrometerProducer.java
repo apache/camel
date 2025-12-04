@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_DESCRIPTION;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_TAGS;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_PREFIX;
 
 import java.util.function.Function;
 
@@ -28,12 +35,6 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_DESCRIPTION;
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_TAGS;
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_PREFIX;
 
 public abstract class AbstractMicrometerProducer<T extends Meter> extends DefaultProducer {
 
@@ -66,11 +67,9 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         Iterable<Tag> headerTags = getTagHeader(in, HEADER_METRIC_TAGS, Tags.empty());
         Iterable<Tag> finalTags = Tags.concat(tags, headerTags).stream()
                 .map(tag -> Tag.of(
-                        simple(exchange, tag.getKey(), String.class),
-                        simple(exchange, tag.getValue(), String.class)))
+                        simple(exchange, tag.getKey(), String.class), simple(exchange, tag.getValue(), String.class)))
                 .reduce(Tags.empty(), Tags::and, Tags::and)
-                .and(Tags.of(
-                        CAMEL_CONTEXT_TAG, getEndpoint().getCamelContext().getName()));
+                .and(Tags.of(CAMEL_CONTEXT_TAG, getEndpoint().getCamelContext().getName()));
         try {
             doProcess(exchange, finalMetricsName, finalMetricsDescription, finalTags);
         } catch (Exception e) {

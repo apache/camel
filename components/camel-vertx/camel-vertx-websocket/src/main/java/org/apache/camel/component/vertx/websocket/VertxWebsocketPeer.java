@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.util.Objects;
@@ -55,10 +56,8 @@ public class VertxWebsocketPeer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         VertxWebsocketPeer that = (VertxWebsocketPeer) o;
         return Objects.equals(connectionKey, that.connectionKey);
     }

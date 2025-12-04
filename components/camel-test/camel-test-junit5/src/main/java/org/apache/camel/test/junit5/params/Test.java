@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5.params;
 
 import java.lang.annotation.Retention;
@@ -23,5 +24,4 @@ import org.junit.jupiter.api.TestTemplate;
 
 @Retention(RetentionPolicy.RUNTIME)
 @TestTemplate
-public @interface Test {
-}
+public @interface Test {}

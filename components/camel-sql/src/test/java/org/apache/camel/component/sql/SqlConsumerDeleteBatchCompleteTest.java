@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,8 +29,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import static org.awaitility.Awaitility.await;
 
 /**
  *
@@ -42,7 +43,8 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
 
         jdbcTemplate = new JdbcTemplate(db);
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.ref;
 
 import org.apache.camel.CamelContext;
@@ -128,5 +129,4 @@ public class RefLanguage extends TypedLanguageSupport {
         answer.init(getCamelContext());
         return answer;
     }
-
 }

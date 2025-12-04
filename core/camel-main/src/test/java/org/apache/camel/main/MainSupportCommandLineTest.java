@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
@@ -47,21 +48,21 @@ public class MainSupportCommandLineTest {
     @Test
     public void testMainSupport() {
         MyMainSupport my = new MyMainSupport();
-        final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-d", "1" }));
+        final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] {"-d", "1"}));
         Assertions.assertEquals(0, ret, "The code should return 0 when -d, 1 is requested");
     }
 
     @Test
     public void testMainSupportMaxMessages() {
         MyMainSupport my = new MyMainSupport();
-        final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-d", "1", "-dm", "2" }));
+        final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] {"-d", "1", "-dm", "2"}));
         Assertions.assertEquals(0, ret, "The code should return 0 when -d, 1, -dm, 2 is requested");
     }
 
     @Test
     public void testMainSupportHelp() {
         MyMainSupport my = new MyMainSupport();
-        final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-h" }));
+        final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] {"-h"}));
         Assertions.assertEquals(0, ret, "The code should return 0 when -h is requested");
     }
 }

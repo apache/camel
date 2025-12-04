@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import org.apache.camel.dsl.yaml.common.YamlSupport;
@@ -24,8 +25,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
 
 public final class EndpointDeserializers {
 
-    private EndpointDeserializers() {
-    }
+    private EndpointDeserializers() {}
 
     public static class From implements ConstructNode {
         private final String scheme;

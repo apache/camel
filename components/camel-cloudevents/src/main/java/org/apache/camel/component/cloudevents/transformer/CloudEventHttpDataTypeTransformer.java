@@ -32,8 +32,10 @@ import org.apache.camel.spi.Transformer;
  * headers and transforms these to Http headers according to the CloudEvents Http binding specification. Sets default
  * values for CloudEvent attributes such as the Http content type header, event source, event type.
  */
-@DataTypeTransformer(name = "http:application-cloudevents",
-                     description = "Adds default CloudEvent (HTTP binding) headers to the Camel message (such as content-type, event source, event type etc.)")
+@DataTypeTransformer(
+        name = "http:application-cloudevents",
+        description =
+                "Adds default CloudEvent (HTTP binding) headers to the Camel message (such as content-type, event source, event type etc.)")
 public class CloudEventHttpDataTypeTransformer extends Transformer {
 
     @Override
@@ -41,28 +43,46 @@ public class CloudEventHttpDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID).http(),
-                headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId()));
-        headers.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_VERSION).http(),
+        headers.putIfAbsent(
+                cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID).http(),
+                headers.getOrDefault(
+                        CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId()));
+        headers.putIfAbsent(
+                cloudEvent
+                        .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_VERSION)
+                        .http(),
                 headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version()));
-        headers.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).http(),
+        headers.putIfAbsent(
+                cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).http(),
                 headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_TYPE));
-        headers.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE).http(),
+        headers.putIfAbsent(
+                cloudEvent
+                        .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)
+                        .http(),
                 headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_SOURCE));
 
         if (headers.containsKey(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT)) {
-            headers.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT).http(),
+            headers.putIfAbsent(
+                    cloudEvent
+                            .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT)
+                            .http(),
                     headers.get(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
         }
 
         if (headers.containsKey(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE)) {
-            headers.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).http(),
+            headers.putIfAbsent(
+                    cloudEvent
+                            .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE)
+                            .http(),
                     headers.get(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE));
         }
 
-        headers.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME).http(),
-                headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange())));
-        headers.putIfAbsent(Exchange.CONTENT_TYPE,
+        headers.putIfAbsent(
+                cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME).http(),
+                headers.getOrDefault(
+                        CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange())));
+        headers.putIfAbsent(
+                Exchange.CONTENT_TYPE,
                 headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "application/json"));
 
         cloudEvent.attributes().stream().map(CloudEvent.Attribute::id).forEach(headers::remove);

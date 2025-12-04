@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.hazelcast;
 
 import java.util.Collections;
@@ -54,13 +55,13 @@ import org.slf4j.LoggerFactory;
  * will DESTROY this instance on {@link #doStop()}. You should control {@link HazelcastInstance} lifecycle yourself
  * whenever you instantiate {@link HazelcastAggregationRepository} passing a reference to the instance.
  */
-@Metadata(label = "bean",
-          description = "Aggregation repository that uses Hazelcast Cache to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
+@Metadata(
+        label = "bean",
+        description = "Aggregation repository that uses Hazelcast Cache to store exchanges.",
+        annotations = {"interfaceName=org.apache.camel.spi.AggregationRepository"})
 @Configurer(metadataOnly = true)
 public class HazelcastAggregationRepository extends ServiceSupport
-        implements RecoverableAggregationRepository,
-        OptimisticLockingAggregationRepository {
+        implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
 
     protected static final String COMPLETED_SUFFIX = "-completed";
 
@@ -69,30 +70,43 @@ public class HazelcastAggregationRepository extends ServiceSupport
     protected boolean useLocalHzInstance;
     protected IMap<String, DefaultExchangeHolder> cache;
     protected IMap<String, DefaultExchangeHolder> persistedCache;
+
     @Metadata(description = "Name of cache to use", required = true)
     protected String mapName;
+
     @Metadata(description = "To use an existing Hazelcast instance instead of local")
     protected HazelcastInstance hazelcastInstance;
+
     @Metadata(label = "advanced", description = "Name of cache to use for completed exchanges")
     protected String persistenceMapName;
+
     @Metadata(description = "Whether to use optimistic locking")
     protected boolean optimistic;
+
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     protected boolean useRecovery = true;
+
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     protected long recoveryInterval = 5000;
-    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+
+    @Metadata(
+            description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     protected String deadLetterUri;
-    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+
+    @Metadata(
+            description =
+                    "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
-              defaultValue = "3")
+            defaultValue = "3")
     protected int maximumRedeliveries = 3;
-    @Metadata(label = "advanced",
-              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     protected boolean allowSerializedHeaders;
 
-    public HazelcastAggregationRepository() {
-    }
+    public HazelcastAggregationRepository() {}
 
     /**
      * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
@@ -137,8 +151,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      * @param optimistic               whether to use optimistic locking manner.
      */
-    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
-                                          boolean optimistic) {
+    public HazelcastAggregationRepository(
+            final String repositoryName, final String persistentRepositoryName, boolean optimistic) {
         this(repositoryName, persistentRepositoryName);
         this.optimistic = optimistic;
     }
@@ -163,8 +177,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      * @param hzInstanse               externally configured {@link HazelcastInstance}.
      */
-    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
-                                          HazelcastInstance hzInstanse) {
+    public HazelcastAggregationRepository(
+            final String repositoryName, final String persistentRepositoryName, HazelcastInstance hzInstanse) {
         this(repositoryName, persistentRepositoryName, false);
         this.hazelcastInstance = hzInstanse;
     }
@@ -177,7 +191,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
      * @param optimistic     whether to use optimistic locking manner;
      * @param hzInstance     externally configured {@link HazelcastInstance}.
      */
-    public HazelcastAggregationRepository(final String repositoryName, boolean optimistic, HazelcastInstance hzInstance) {
+    public HazelcastAggregationRepository(
+            final String repositoryName, boolean optimistic, HazelcastInstance hzInstance) {
         this(repositoryName, optimistic);
         this.hazelcastInstance = hzInstance;
     }
@@ -190,8 +205,11 @@ public class HazelcastAggregationRepository extends ServiceSupport
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      * @param hzInstance               externally configured {@link HazelcastInstance}.
      */
-    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
-                                          boolean optimistic, HazelcastInstance hzInstance) {
+    public HazelcastAggregationRepository(
+            final String repositoryName,
+            final String persistentRepositoryName,
+            boolean optimistic,
+            HazelcastInstance hzInstance) {
         this(repositoryName, persistentRepositoryName, optimistic);
         this.hazelcastInstance = hzInstance;
     }
@@ -202,7 +220,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
         if (!optimistic) {
             throw new UnsupportedOperationException();
         }
-        LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
+        LOG.trace(
+                "Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
             DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             final DefaultExchangeHolder misbehaviorHolder = cache.putIfAbsent(key, holder);
@@ -210,7 +229,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
                 Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
                 LOG.error(
                         "Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
-                        key, misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
+                        key,
+                        misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
                 throw new OptimisticLockingException();
             }
         } else {
@@ -240,7 +260,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
             DefaultExchangeHolder oldHolder = cache.put(key, newHolder);
             return unmarshallExchange(camelContext, oldHolder);
         } finally {
-            LOG.trace("Added an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Added an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
             l.unlock();
         }
     }
@@ -255,7 +276,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
         } else {
             LOG.warn(
                     "What for to run recovery scans in {} context while repository {} is running in non-recoverable aggregation repository mode?!",
-                    camelContext.getName(), mapName);
+                    camelContext.getName(),
+                    mapName);
             return Collections.emptySet();
         }
     }
@@ -358,24 +380,37 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         if (optimistic) {
-            LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Removing an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(),
+                    key);
             if (!cache.remove(key, holder)) {
                 LOG.error(
                         "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
                         key);
                 throw new OptimisticLockingException();
             }
-            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Removed an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(),
+                    key);
             if (useRecovery) {
-                LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
-                        exchange.getExchangeId(), key);
+                LOG.trace(
+                        "Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                        exchange.getExchangeId(),
+                        key);
                 persistedCache.put(exchange.getExchangeId(), holder);
-                LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
-                        exchange.getExchangeId(), key);
+                LOG.trace(
+                        "Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                        exchange.getExchangeId(),
+                        key);
             }
         } else {
             if (useRecovery) {
-                LOG.trace("Removing an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+                LOG.trace(
+                        "Removing an exchange with ID {} for key {} in a thread-safe manner.",
+                        exchange.getExchangeId(),
+                        key);
                 // The only considerable case for transaction usage is fault tolerance:
                 // the transaction will be rolled back automatically (default timeout is 2 minutes)
                 // if no commit occurs during the timeout. So we are still consistent whether local node crashes.
@@ -388,18 +423,25 @@ public class HazelcastAggregationRepository extends ServiceSupport
                     tCtx.beginTransaction();
 
                     TransactionalMap<String, DefaultExchangeHolder> tCache = tCtx.getMap(cache.getName());
-                    TransactionalMap<String, DefaultExchangeHolder> tPersistentCache = tCtx.getMap(persistedCache.getName());
+                    TransactionalMap<String, DefaultExchangeHolder> tPersistentCache =
+                            tCtx.getMap(persistedCache.getName());
 
                     DefaultExchangeHolder removedHolder = tCache.remove(key);
-                    LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
-                            exchange.getExchangeId(), key);
+                    LOG.trace(
+                            "Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+                            exchange.getExchangeId(),
+                            key);
                     tPersistentCache.put(exchange.getExchangeId(), removedHolder);
 
                     tCtx.commitTransaction();
-                    LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(),
+                    LOG.trace(
+                            "Removed an exchange with ID {} for key {} in a thread-safe manner.",
+                            exchange.getExchangeId(),
                             key);
-                    LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
-                            exchange.getExchangeId(), key);
+                    LOG.trace(
+                            "Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+                            exchange.getExchangeId(),
+                            key);
                 } catch (Exception exception) {
                     tCtx.rollbackTransaction();
 

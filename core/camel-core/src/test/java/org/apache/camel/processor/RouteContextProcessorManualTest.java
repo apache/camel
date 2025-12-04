@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,11 +42,12 @@ public class RouteContextProcessorManualTest extends ContextTestSupport {
     public static final int SAFETY_CAPACITY = 10;
 
     // Resequencer time-out
-    public static final long TIMEOUT
-            = SAFETY_TIMEOUT + (RandomSleepProcessor.MAX_PROCESS_TIME - RandomSleepProcessor.MIN_PROCESS_TIME);
+    public static final long TIMEOUT =
+            SAFETY_TIMEOUT + (RandomSleepProcessor.MAX_PROCESS_TIME - RandomSleepProcessor.MIN_PROCESS_TIME);
 
     // Resequencer capacity
-    public static final int CAPACITY = SAFETY_CAPACITY + (int) (CONCURRENCY * TIMEOUT / RandomSleepProcessor.MIN_PROCESS_TIME);
+    public static final int CAPACITY =
+            SAFETY_CAPACITY + (int) (CONCURRENCY * TIMEOUT / RandomSleepProcessor.MIN_PROCESS_TIME);
 
     private static final int NUMBER_OF_MESSAGES = 10000;
 
@@ -59,8 +61,11 @@ public class RouteContextProcessorManualTest extends ContextTestSupport {
             template.sendBodyAndHeader("seda:fork", "Test Message: " + i, "seqnum", Long.valueOf(i));
         }
 
-        long expectedTime = NUMBER_OF_MESSAGES * (RandomSleepProcessor.MAX_PROCESS_TIME + RandomSleepProcessor.MIN_PROCESS_TIME)
-                            / 2 / CONCURRENCY + TIMEOUT;
+        long expectedTime = NUMBER_OF_MESSAGES
+                        * (RandomSleepProcessor.MAX_PROCESS_TIME + RandomSleepProcessor.MIN_PROCESS_TIME)
+                        / 2
+                        / CONCURRENCY
+                + TIMEOUT;
         Thread.sleep(expectedTime);
 
         assertMockEndpointsSatisfied();
@@ -73,8 +78,13 @@ public class RouteContextProcessorManualTest extends ContextTestSupport {
             @Override
             public void configure() {
                 Processor myProcessor = new RandomSleepProcessor();
-                from("seda:fork?concurrentConsumers=" + CONCURRENCY).process(myProcessor).to("seda:join");
-                from("seda:join").resequence(header("seqnum")).stream().capacity(CAPACITY).timeout(TIMEOUT).to("mock:result");
+                from("seda:fork?concurrentConsumers=" + CONCURRENCY)
+                        .process(myProcessor)
+                        .to("seda:join");
+                from("seda:join").resequence(header("seqnum")).stream()
+                        .capacity(CAPACITY)
+                        .timeout(TIMEOUT)
+                        .to("mock:result");
             }
         };
     }

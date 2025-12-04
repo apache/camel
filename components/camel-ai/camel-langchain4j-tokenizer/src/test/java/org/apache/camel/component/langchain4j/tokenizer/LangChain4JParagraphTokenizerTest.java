@@ -43,11 +43,12 @@ public class LangChain4JParagraphTokenizerTest extends LangChain4JTokenizerTestS
                 from("direct:start")
                         .tokenize(tokenizer()
                                 .byParagraph()
-                                    .maxTokens(1024)
-                                    .maxOverlap(10)
-                                    .using(LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI)
-                                    .end())
-                        .split().body()
+                                .maxTokens(1024)
+                                .maxOverlap(10)
+                                .using(LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI)
+                                .end())
+                        .split()
+                        .body()
                         .to("mock:result");
             }
         };

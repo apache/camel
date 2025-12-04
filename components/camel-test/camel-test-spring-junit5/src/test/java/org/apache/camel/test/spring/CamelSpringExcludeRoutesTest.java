@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.test.spring.junit5.ExcludeRoutes;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 @ExcludeRoutes(TestRouteBuilder.class)
-public class CamelSpringExcludeRoutesTest
-        extends CamelSpringPlainTest {
+public class CamelSpringExcludeRoutesTest extends CamelSpringPlainTest {
 
     @Override
     @Test

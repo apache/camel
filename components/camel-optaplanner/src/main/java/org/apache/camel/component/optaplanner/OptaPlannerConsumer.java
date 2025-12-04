@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.optaplanner;
 
 import org.apache.camel.Exchange;
@@ -25,7 +26,8 @@ public class OptaPlannerConsumer extends DefaultConsumer {
     private final OptaPlannerConfiguration configuration;
     private OptaplannerSolutionEventListener solverJobListener;
 
-    public OptaPlannerConsumer(OptaPlannerEndpoint endpoint, Processor processor, OptaPlannerConfiguration configuration) {
+    public OptaPlannerConsumer(
+            OptaPlannerEndpoint endpoint, Processor processor, OptaPlannerConfiguration configuration) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.configuration = configuration;

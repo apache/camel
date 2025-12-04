@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class PlatformHttpRestOpenApiConsumerTest {
 
@@ -40,8 +41,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore")
                             .to("mock:result");
 
-                    from("direct:getPetById")
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                    from("direct:getPetById").setBody().constant("{\"pet\": \"tony the tiger\"}");
                 }
             });
 
@@ -50,12 +50,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
             MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
             mock.expectedMessageCount(1);
 
-            given()
-                    .when()
-                    .get("/api/v3/pet/123")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+            given().when().get("/api/v3/pet/123").then().statusCode(200).body(equalTo("{\"pet\": \"tony the tiger\"}"));
 
             mock.assertIsSatisfied();
 
@@ -77,19 +72,13 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     from("rest-openapi:classpath:openapi-v3.json")
                             .stop(); // use stop if you dont need to do anything after rest-dsl
 
-                    from("direct:getPetById")
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                    from("direct:getPetById").setBody().constant("{\"pet\": \"tony the tiger\"}");
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/api/v3/pet/123")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+            given().when().get("/api/v3/pet/123").then().statusCode(200).body(equalTo("{\"pet\": \"tony the tiger\"}"));
         } finally {
             context.stop();
         }
@@ -106,27 +95,16 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     from("rest-openapi:classpath:openapi-v3.json?missingOperation=mock")
                             .log("dummy");
 
-                    from("direct:getPetById")
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                    from("direct:getPetById").setBody().constant("{\"pet\": \"tony the tiger\"}");
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/api/v3/pet/123")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+            given().when().get("/api/v3/pet/123").then().statusCode(200).body(equalTo("{\"pet\": \"tony the tiger\"}"));
 
             // mocked gives empty response
-            given()
-                    .when()
-                    .get("/api/v3/pet/findByTags")
-                    .then()
-                    .statusCode(204)
-                    .body(equalTo(""));
+            given().when().get("/api/v3/pet/findByTags").then().statusCode(204).body(equalTo(""));
         } finally {
             context.stop();
         }
@@ -143,17 +121,16 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     from("rest-openapi:classpath:openapi-v3.json?missingOperation=fail")
                             .log("dummy");
 
-                    from("direct:getPetById")
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                    from("direct:getPetById").setBody().constant("{\"pet\": \"tony the tiger\"}");
                 }
             });
 
             context.start();
             fail();
         } catch (Exception e) {
-            Assertions.assertTrue(
-                    e.getCause().getMessage()
-                            .startsWith("OpenAPI specification has 18 unmapped operations to corresponding routes"));
+            Assertions.assertTrue(e.getCause()
+                    .getMessage()
+                    .startsWith("OpenAPI specification has 18 unmapped operations to corresponding routes"));
         } finally {
             context.stop();
         }
@@ -170,18 +147,13 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore")
                             .log("dummy");
 
-                    from("direct:getPetById")
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                    from("direct:getPetById").setBody().constant("{\"pet\": \"tony the tiger\"}");
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/api/v3/pet/123/unknown")
-                    .then()
-                    .statusCode(404);
+            given().when().get("/api/v3/pet/123/unknown").then().statusCode(404);
         } finally {
             context.stop();
         }
@@ -198,18 +170,13 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore")
                             .log("dummy");
 
-                    from("direct:getPetById")
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                    from("direct:getPetById").setBody().constant("{\"pet\": \"tony the tiger\"}");
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .put("/api/v3/pet/123")
-                    .then()
-                    .statusCode(405);
+            given().when().put("/api/v3/pet/123").then().statusCode(405);
         } finally {
             context.stop();
         }
@@ -226,18 +193,13 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore&clientRequestValidation=true")
                             .log("dummy");
 
-                    from("direct:updatePet")
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                    from("direct:updatePet").setBody().constant("{\"pet\": \"tony the tiger\"}");
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .put("/api/v3/pet")
-                    .then()
-                    .statusCode(400); // no request body
+            given().when().put("/api/v3/pet").then().statusCode(400); // no request body
         } finally {
             context.stop();
         }
@@ -258,14 +220,14 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
             context.start();
 
-            given()
-                    .when()
+            given().when()
                     .contentType("application/json")
                     .get("/api/v3/pet/444")
                     .then()
                     .statusCode(200)
-                    .body(equalToCompressingWhiteSpace(
-                            """
+                    .body(
+                            equalToCompressingWhiteSpace(
+                                    """
                                     {
                                       "pet": "donald the dock"
                                     }"""));
@@ -273,5 +235,4 @@ public class PlatformHttpRestOpenApiConsumerTest {
             context.stop();
         }
     }
-
 }

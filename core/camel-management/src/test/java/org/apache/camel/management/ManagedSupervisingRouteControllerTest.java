@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,11 +42,6 @@ import org.apache.camel.spi.SupervisingRouteController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport {
@@ -88,8 +89,8 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
             assertEquals(2, exhausted.intValue());
         });
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "routeStatus", new Object[] { true, true, true },
-                new String[] { "boolean", "boolean", "boolean" });
+        TabularData data = (TabularData) mbeanServer.invoke(
+                on, "routeStatus", new Object[] {true, true, true}, new String[] {"boolean", "boolean", "boolean"});
         assertNotNull(data);
         assertEquals(3, data.size());
     }
@@ -122,8 +123,7 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
 
     private static class MyJmsEndpoint extends SedaEndpoint {
 
-        public MyJmsEndpoint() {
-        }
+        public MyJmsEndpoint() {}
 
         @Override
         public Consumer createConsumer(Processor processor) {

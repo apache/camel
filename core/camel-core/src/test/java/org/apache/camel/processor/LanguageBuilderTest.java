@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.builder.Builder.language;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.Builder.language;
 
 public class LanguageBuilderTest extends ContextTestSupport {
 
@@ -41,7 +42,9 @@ public class LanguageBuilderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").filter(language("simple", "${body} contains 'Camel'")).to("mock:camel");
+                from("direct:start")
+                        .filter(language("simple", "${body} contains 'Camel'"))
+                        .to("mock:camel");
             }
         };
     }

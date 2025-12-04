@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn.constants;
 
 public final class SmnConstants {
 
     public static final String TOPIC_URN_FORMAT = "urn:smn:%s:%s:%s";
 
-    private SmnConstants() {
-    }
+    private SmnConstants() {}
 }

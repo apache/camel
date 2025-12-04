@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import java.util.LinkedList;
@@ -36,7 +37,7 @@ public class ListDataSet extends DataSetSupport {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public List<Object> getDefaultBodies() {
         if (defaultBodies == null) {
@@ -52,7 +53,7 @@ public class ListDataSet extends DataSetSupport {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Creates the message body for a given message. If the messageIndex is greater than the size of the list, use the

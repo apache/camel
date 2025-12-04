@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.functions.unit;
 
 import java.util.Arrays;
@@ -42,17 +43,18 @@ public abstract class GoogleCloudFunctionsBaseTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        GoogleCloudFunctionsComponent component = context.getComponent("google-functions", GoogleCloudFunctionsComponent.class);
+        GoogleCloudFunctionsComponent component =
+                context.getComponent("google-functions", GoogleCloudFunctionsComponent.class);
 
-        //init mock
+        // init mock
         mockCloudFunctionsService = new MockCloudFunctionsService();
         mockServiceHelper = new MockServiceHelper(
-                UUID.randomUUID().toString(),
-                Arrays.<MockGrpcService> asList(mockCloudFunctionsService));
+                UUID.randomUUID().toString(), Arrays.<MockGrpcService>asList(mockCloudFunctionsService));
         mockServiceHelper.start();
         channelProvider = mockServiceHelper.createChannelProvider();
         CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder()
-                .setTransportChannelProvider(channelProvider).setCredentialsProvider(NoCredentialsProvider.create())
+                .setTransportChannelProvider(channelProvider)
+                .setCredentialsProvider(NoCredentialsProvider.create())
                 .build();
         clientMock = CloudFunctionsServiceClient.create(settings);
 

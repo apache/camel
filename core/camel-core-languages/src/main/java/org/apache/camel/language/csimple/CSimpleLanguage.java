@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple;
 
 import java.io.File;
@@ -69,8 +70,8 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
     /**
      * For 100% pre-compiled use cases
      */
-    private CSimpleLanguage(Map<String, CSimpleExpression> compiledPredicates,
-                            Map<String, CSimpleExpression> compiledExpressions) {
+    private CSimpleLanguage(
+            Map<String, CSimpleExpression> compiledPredicates, Map<String, CSimpleExpression> compiledExpressions) {
         this.compiledPredicates = compiledPredicates;
         this.compiledExpressions = compiledExpressions;
         this.compilationSupport = null;
@@ -141,7 +142,8 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
                     return exp;
                 }
             }
-            throw new CSimpleException("Cannot find compiled csimple language for predicate: " + expression, expression);
+            throw new CSimpleException(
+                    "Cannot find compiled csimple language for predicate: " + expression, expression);
         });
     }
 
@@ -176,7 +178,8 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
                     return exp;
                 }
             }
-            throw new CSimpleException("Cannot find compiled csimple language for expression: " + expression, expression);
+            throw new CSimpleException(
+                    "Cannot find compiled csimple language for expression: " + expression, expression);
         });
     }
 
@@ -197,9 +200,8 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
         private Map<String, CSimpleExpression> compiledExpressions = new LinkedHashMap<>();
 
         public CSimpleLanguage build() {
-            final Map<String, CSimpleExpression> predicates = compiledPredicates.isEmpty()
-                    ? Collections.emptyMap()
-                    : new ConcurrentHashMap<>(compiledPredicates);
+            final Map<String, CSimpleExpression> predicates =
+                    compiledPredicates.isEmpty() ? Collections.emptyMap() : new ConcurrentHashMap<>(compiledPredicates);
             this.compiledPredicates = null; // invalidate the builder to prevent leaking the mutable collection
             final Map<String, CSimpleExpression> expressions = compiledExpressions.isEmpty()
                     ? Collections.emptyMap()
@@ -240,8 +242,8 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
 
             // detect custom compiler (camel-csimple-joor)
             CamelContext ecc = getCamelContext();
-            Optional<Class<?>> clazz
-                    = ecc.getCamelContextExtension().getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
+            Optional<Class<?>> clazz =
+                    ecc.getCamelContextExtension().getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
             if (clazz.isPresent()) {
                 compiler = (CSimpleCompiler) ecc.getInjector().newInstance(clazz.get(), false);
                 if (compiler != null) {
@@ -289,8 +291,8 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
                             continue;
                         }
                         // load class
-                        Class<CSimpleExpression> clazz
-                                = ecc.getClassResolver().resolveMandatoryClass(fqn, CSimpleExpression.class);
+                        Class<CSimpleExpression> clazz =
+                                ecc.getClassResolver().resolveMandatoryClass(fqn, CSimpleExpression.class);
                         CSimpleExpression ce = clazz.getConstructor().newInstance();
                         ce.init(getCamelContext());
                         if (ce.isPredicate()) {
@@ -348,11 +350,13 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
                 }
             }
             if (counter1 > 0 || counter2 > 0) {
-                LOG.info("Loaded csimple language imports: {} and aliases: {} from configuration: {}", counter1, counter2,
+                LOG.info(
+                        "Loaded csimple language imports: {} and aliases: {} from configuration: {}",
+                        counter1,
+                        counter2,
                         configResource);
             }
         }
-
     }
 
     private String load(String configResource) {
@@ -373,10 +377,8 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
             loaded = IOHelper.loadText(is);
         } catch (IOException e) {
             throw new RuntimeCamelException("Cannot load " + CONFIG_FILE + " from classpath");
-
         }
         IOHelper.close(is);
         return loaded;
     }
-
 }

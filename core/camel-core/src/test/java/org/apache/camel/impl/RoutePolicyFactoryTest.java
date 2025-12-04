@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
@@ -44,8 +45,7 @@ public class RoutePolicyFactoryTest extends ContextTestSupport {
 
     public static final class MyRoutePolicyFactory implements RoutePolicyFactory {
 
-        public MyRoutePolicyFactory() {
-        }
+        public MyRoutePolicyFactory() {}
 
         @Override
         public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {

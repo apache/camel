@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.controlbus;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,11 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Flaky test on CI environments")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky test on CI environments")
 public class ControlBusFailRouteTest extends ContextTestSupport {
 
     @Test
@@ -42,7 +42,8 @@ public class ControlBusFailRouteTest extends ContextTestSupport {
         template.sendBody("direct:foo", "Hello World");
 
         // runs async so it can take a little while
-        await().atMost(5, TimeUnit.SECONDS).until(() -> routeController.getRouteStatus("foo").isStopped());
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> routeController.getRouteStatus("foo").isStopped());
 
         Route route = context.getRoute("foo");
         RouteError re = route.getLastError();
@@ -61,8 +62,7 @@ public class ControlBusFailRouteTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("controlbus:route?routeId=current&action=fail&async=true"));
 
-                from("direct:foo").routeId("foo")
-                        .throwException(new IllegalArgumentException("Forced by Donkey Kong"));
+                from("direct:foo").routeId("foo").throwException(new IllegalArgumentException("Forced by Donkey Kong"));
             }
         };
     }

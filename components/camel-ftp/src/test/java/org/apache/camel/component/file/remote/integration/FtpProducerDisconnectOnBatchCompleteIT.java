@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,10 +29,6 @@ import org.apache.camel.component.file.remote.FtpEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.commons.net.ftp.FTPClient;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpProducerDisconnectOnBatchCompleteIT extends FtpServerTestSupport {
 
@@ -49,8 +50,8 @@ public class FtpProducerDisconnectOnBatchCompleteIT extends FtpServerTestSupport
 
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
         await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertFalse(endpoint.getFtpClient().isConnected(),
-                        "The FTPClient should be already disconnected"));
+                .untilAsserted(() -> assertFalse(
+                        endpoint.getFtpClient().isConnected(), "The FTPClient should be already disconnected"));
         assertTrue(endpoint.isDisconnectOnBatchComplete(), "The FtpEndpoint should be configured to disconnect");
     }
 
@@ -65,5 +66,4 @@ public class FtpProducerDisconnectOnBatchCompleteIT extends FtpServerTestSupport
             }
         });
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.fix.complex.onetomany;
 
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
@@ -59,8 +60,7 @@ public class Security {
 
     @Override
     public String toString() {
-        return Security.class.getName() + " --> 22: " + this.getIdSource() + ", 48: " + this.getSecurityCode() + ", 54: "
-               + this.getSide();
+        return Security.class.getName() + " --> 22: " + this.getIdSource() + ", 48: " + this.getSecurityCode()
+                + ", 54: " + this.getSide();
     }
-
 }

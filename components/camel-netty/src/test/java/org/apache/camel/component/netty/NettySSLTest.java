@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.security.Principal;
@@ -28,8 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettySSLTest extends BaseNettyTest {
@@ -58,14 +59,15 @@ public class NettySSLTest extends BaseNettyTest {
                 from("netty:tcp://127.0.0.1:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf&needClientAuth=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                SSLSession session
-                                        = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+                                SSLSession session =
+                                        exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
                                 if (session != null) {
                                     X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
                                     Principal principal = cert.getSubjectDN();
                                     log.info("Client Cert SubjectDN: {}", principal.getName());
-                                    exchange.getMessage().setBody(
-                                            "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                                    exchange.getMessage()
+                                            .setBody(
+                                                    "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                                 } else {
                                     exchange.getMessage().setBody("Cannot start conversion without SSLSession");
                                 }
@@ -81,5 +83,4 @@ public class NettySSLTest extends BaseNettyTest {
                 String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
-
 }

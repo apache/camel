@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -25,8 +28,6 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A test case of the builder using Spring 2.0 to load the rules
@@ -102,10 +103,15 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
 
     protected List<Route> getRoutesFromContext(String classpathConfigFile) {
         applicationContext = new ClassPathXmlApplicationContext(classpathConfigFile);
-        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext context = applicationContext
+                .getBeansOfType(SpringCamelContext.class)
+                .values()
+                .iterator()
+                .next();
         assertNotNull(context, "No Camel Context in file: " + classpathConfigFile);
         List<Route> routes = context.getRoutes();
-        assertNotNull(routes, "No routes available for context: " + context.getName() + " in file: " + classpathConfigFile);
+        assertNotNull(
+                routes, "No routes available for context: " + context.getName() + " in file: " + classpathConfigFile);
         return routes;
     }
 }

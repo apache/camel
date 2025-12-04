@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -35,9 +39,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -120,10 +121,10 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
         CompletableFuture.runAsync(() -> {
             mongoCollection.insertOne(new Document("_id", objectId1).append("property", "random value"));
             mongoCollection.insertOne(new Document("_id", objectId2).append("property", "another value"));
-            mongoCollection.updateOne(new Document("_id", objectId1),
-                    new Document("$set", new Document("property", "filterOk")));
-            mongoCollection.updateOne(new Document("_id", objectId2),
-                    new Document("$set", new Document("property", "filterNotOk")));
+            mongoCollection.updateOne(
+                    new Document("_id", objectId1), new Document("$set", new Document("property", "filterOk")));
+            mongoCollection.updateOne(
+                    new Document("_id", objectId2), new Document("$set", new Document("property", "filterNotOk")));
         });
 
         mock.assertIsSatisfied();
@@ -163,7 +164,8 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
         assertEquals(objectId, deleteExchange.getIn().getHeader("_id"));
         assertEquals(1, deleteBodyDocument.size());
         assertTrue(deleteBodyDocument.containsKey("_id"));
-        assertEquals(objectId.toHexString(), deleteBodyDocument.getObjectId("_id").toHexString());
+        assertEquals(
+                objectId.toHexString(), deleteBodyDocument.getObjectId("_id").toHexString());
         context.getRouteController().stopRoute(consumerRouteId);
     }
 

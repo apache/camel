@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.validator;
 
 import java.util.HashMap;
@@ -32,8 +33,10 @@ import org.apache.camel.spi.Validator;
 public abstract class ValidatorReifier<T> extends AbstractReifier {
 
     // for custom reifiers
-    private static final Map<Class<?>, BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>>> VALIDATORS
-            = new HashMap<>(0);
+    private static final Map<
+                    Class<?>,
+                    BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>>>
+            VALIDATORS = new HashMap<>(0);
 
     protected final T definition;
 
@@ -57,8 +60,8 @@ public abstract class ValidatorReifier<T> extends AbstractReifier {
         ValidatorReifier<? extends ValidatorDefinition> answer = null;
         if (!VALIDATORS.isEmpty()) {
             // custom take precedence
-            BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>> reifier
-                    = VALIDATORS.get(definition.getClass());
+            BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>> reifier =
+                    VALIDATORS.get(definition.getClass());
             if (reifier != null) {
                 answer = reifier.apply(camelContext, definition);
             }
@@ -95,5 +98,4 @@ public abstract class ValidatorReifier<T> extends AbstractReifier {
     }
 
     protected abstract Validator doCreateValidator();
-
 }

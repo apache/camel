@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -25,17 +30,16 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class RestJettyRequiredQueryParameterTest extends BaseJettyTest {
 
     @Test
     public void testJettyValid() {
-        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
-                .withHeader("Accept", "application/json").withHeader(Exchange.HTTP_METHOD, "post")
-                .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update?country=uk")
+        String out = fluentTemplate
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withHeader("Accept", "application/json")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody("{ \"name\": \"Donald Duck\" }")
+                .to("http://localhost:" + getPort() + "/users/123/update?country=uk")
                 .request(String.class);
 
         assertEquals("{ \"status\": \"ok\" }", out);
@@ -43,7 +47,8 @@ public class RestJettyRequiredQueryParameterTest extends BaseJettyTest {
 
     @Test
     public void testJettyMissing() {
-        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+        FluentProducerTemplate requestTemplate = fluentTemplate
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{ \"name\": \"Donald Duck\" }")
@@ -58,7 +63,8 @@ public class RestJettyRequiredQueryParameterTest extends BaseJettyTest {
 
     @Test
     public void testJettyNotAllowed() {
-        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+        FluentProducerTemplate requestTemplate = fluentTemplate
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{ \"name\": \"Donald Duck\" }")
@@ -77,18 +83,28 @@ public class RestJettyRequiredQueryParameterTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
                         // turn on client request validation
                         .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").param()
-                        .name("country").required(true).allowableValues("uk,dk").type(RestParamType.query)
-                        .endParam().to("direct:update");
+                rest("/users/")
+                        .post("{id}/update")
+                        .consumes("application/json")
+                        .produces("application/json")
+                        .param()
+                        .name("country")
+                        .required(true)
+                        .allowableValues("uk,dk")
+                        .type(RestParamType.query)
+                        .endParam()
+                        .to("direct:update");
 
                 from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }
-
 }

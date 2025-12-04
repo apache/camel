@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2.api.impl;
+
+import static org.apache.camel.component.olingo2.api.impl.Olingo2Helper.getContentTypeHeader;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -31,8 +34,6 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
-
-import static org.apache.camel.component.olingo2.api.impl.Olingo2Helper.getContentTypeHeader;
 
 /**
  * Helper implementation of {@link org.apache.http.concurrent.FutureCallback} for
@@ -55,11 +56,16 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
                 try {
                     final ContentType responseContentType = getContentTypeHeader(response);
 
-                    if (responseContentType != null && ODATA_MIME_TYPE.matcher(responseContentType.getMimeType()).matches()) {
-                        final ODataErrorContext errorContext = EntityProvider
-                                .readErrorDocument(response.getEntity().getContent(), responseContentType.toString());
+                    if (responseContentType != null
+                            && ODATA_MIME_TYPE
+                                    .matcher(responseContentType.getMimeType())
+                                    .matches()) {
+                        final ODataErrorContext errorContext = EntityProvider.readErrorDocument(
+                                response.getEntity().getContent(), responseContentType.toString());
                         throw new ODataApplicationException(
-                                errorContext.getMessage(), errorContext.getLocale(), httpStatusCode,
+                                errorContext.getMessage(),
+                                errorContext.getLocale(),
+                                httpStatusCode,
                                 errorContext.getErrorCode(),
                                 errorContext.getException());
                     }

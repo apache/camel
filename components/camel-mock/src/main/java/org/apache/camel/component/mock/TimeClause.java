@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
 
 import java.util.Date;
@@ -148,7 +149,8 @@ public class TimeClause implements BinaryPredicate {
         boolean answer = true;
 
         if (timeTo == null) {
-            throw new IllegalArgumentException("The time period has not been set. Ensure to include the time unit as well.");
+            throw new IllegalArgumentException(
+                    "The time period has not been set. Ensure to include the time unit as well.");
         }
 
         Date currentDate = exchange.getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
@@ -177,7 +179,11 @@ public class TimeClause implements BinaryPredicate {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Evaluated time clause [{}] with current: {}, other: {} -> {}", this, currentDate, otherDate,
+            LOG.debug(
+                    "Evaluated time clause [{}] with current: {}, other: {} -> {}",
+                    this,
+                    currentDate,
+                    otherDate,
                     answer);
         }
 
@@ -222,8 +228,8 @@ public class TimeClause implements BinaryPredicate {
             return "no later than " + timeTo + " " + getOperationText() + " (" + was + ")";
         } else {
             return "between " + timeFrom.getNumber() + "-" + timeTo.getNumber() + " "
-                   + timeTo.getTimeUnit().toString().toLowerCase(Locale.ENGLISH)
-                   + " " + getOperationText() + " (" + was + ")";
+                    + timeTo.getTimeUnit().toString().toLowerCase(Locale.ENGLISH)
+                    + " " + getOperationText() + " (" + was + ")";
         }
     }
 }

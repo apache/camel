@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
 
 import org.apache.camel.CamelContext;
@@ -24,8 +25,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.infinispan.commons.api.BasicCache;
 
-public abstract class InfinispanIdempotentRepository
-        extends ServiceSupport
+public abstract class InfinispanIdempotentRepository extends ServiceSupport
         implements IdempotentRepository, CamelContextAware {
 
     private CamelContext camelContext;

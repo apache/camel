@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.Map;
@@ -45,8 +48,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BigQueryITSupport extends CamelTestSupport {
     public static final String SERVICE_KEY;
@@ -80,8 +81,8 @@ public class BigQueryITSupport extends CamelTestSupport {
 
     protected void addBigqueryComponent(CamelContext context) {
 
-        GoogleBigQueryConfiguration configuration = new GoogleBigQueryConfiguration()
-                .setServiceAccountKey(CREDENTIALS_FILE_LOCATION);
+        GoogleBigQueryConfiguration configuration =
+                new GoogleBigQueryConfiguration().setServiceAccountKey(CREDENTIALS_FILE_LOCATION);
 
         connectionFactory = new GoogleBigQueryConnectionFactory()
                 .setServiceAccountKeyFile(configuration.getServiceAccountKey())
@@ -97,8 +98,8 @@ public class BigQueryITSupport extends CamelTestSupport {
 
     protected void addBigquerySqlComponent(CamelContext context) {
 
-        GoogleBigQuerySQLConfiguration configuration = new GoogleBigQuerySQLConfiguration()
-                .setServiceAccountKey(CREDENTIALS_FILE_LOCATION);
+        GoogleBigQuerySQLConfiguration configuration =
+                new GoogleBigQuerySQLConfiguration().setServiceAccountKey(CREDENTIALS_FILE_LOCATION);
         connectionFactory = new GoogleBigQueryConnectionFactory()
                 .setServiceAccountKeyFile(configuration.getServiceAccountKey())
                 .setCamelContext(context);
@@ -130,14 +131,16 @@ public class BigQueryITSupport extends CamelTestSupport {
 
     protected void assertRowExist(String tableName, Map<String, String> row) throws Exception {
         String query = "SELECT * FROM " + DATASET_ID + "." + tableName + " WHERE "
-                       + row.entrySet().stream()
-                               .map(e -> e.getKey() + " = '" + e.getValue() + "'")
-                               .collect(Collectors.joining(" AND "));
+                + row.entrySet().stream()
+                        .map(e -> e.getKey() + " = '" + e.getValue() + "'")
+                        .collect(Collectors.joining(" AND "));
         LOGGER.debug("Query: {}", query);
         QueryJobConfiguration queryJobConfiguration = QueryJobConfiguration.of(query);
         TableResult tableResult = getConnectionFactory()
                 .getDefaultClient()
-                .query(queryJobConfiguration, JobId.of(PROJECT_ID, UUID.randomUUID().toString()));
+                .query(
+                        queryJobConfiguration,
+                        JobId.of(PROJECT_ID, UUID.randomUUID().toString()));
         assertEquals(1, tableResult.getTotalRows());
     }
 

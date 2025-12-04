@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.releases.helsinki;
 
 import org.apache.camel.Exchange;
@@ -102,5 +103,4 @@ public class HelsinkiServiceNowProducer extends AbstractServiceNowProducer {
     public void invokeProcessor10(Exchange exchange) throws Exception {
         processor10.process(exchange);
     }
-
 }

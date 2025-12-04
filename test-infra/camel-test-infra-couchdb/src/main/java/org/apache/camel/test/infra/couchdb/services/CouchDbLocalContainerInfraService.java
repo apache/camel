@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.couchdb.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -27,9 +28,10 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = CouchDbInfraService.class,
-              description = "SQL Clustered database CouchDB",
-              serviceAlias = { "couchdb" })
+@InfraService(
+        service = CouchDbInfraService.class,
+        description = "SQL Clustered database CouchDB",
+        serviceAlias = {"couchdb"})
 public class CouchDbLocalContainerInfraService implements CouchDbInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "couchdb";
 
@@ -39,8 +41,7 @@ public class CouchDbLocalContainerInfraService implements CouchDbInfraService, C
 
     public CouchDbLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
-                CouchDbLocalContainerInfraService.class,
-                CouchDbProperties.COUCHDB_CONTAINER));
+                CouchDbLocalContainerInfraService.class, CouchDbProperties.COUCHDB_CONTAINER));
     }
 
     public CouchDbLocalContainerInfraService(String imageName) {

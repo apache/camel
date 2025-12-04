@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
 
 public interface FaultToleranceConstants {
 
     String DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID = "fault-tolerance-configuration";
-
 }

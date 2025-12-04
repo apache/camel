@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.BeanScope;
@@ -49,7 +50,10 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         }
         Processor answer = fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
         if (answer instanceof IdAware idAware) {
-            String id = camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class).createId(definition);
+            String id = camelContext
+                    .getCamelContextExtension()
+                    .getContextPlugin(NodeIdFactory.class)
+                    .createId(definition);
             idAware.setId(id);
         }
         if (answer instanceof DisabledAware da) {
@@ -57,5 +61,4 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         }
         return answer;
     }
-
 }

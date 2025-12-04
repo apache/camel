@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.idgen;
 
 import org.apache.camel.AsyncCallback;
@@ -47,7 +48,6 @@ public class IgniteIdGenProducer extends DefaultAsyncProducer {
         Long id = in.getBody(Long.class);
 
         switch (idGenOperationFor(exchange)) {
-
             case ADD_AND_GET:
                 out.setBody(atomicSeq.addAndGet(id));
                 break;
@@ -79,8 +79,7 @@ public class IgniteIdGenProducer extends DefaultAsyncProducer {
     }
 
     private IgniteIdGenOperation idGenOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_IDGEN_OPERATION, endpoint.getOperation(),
-                IgniteIdGenOperation.class);
+        return exchange.getIn()
+                .getHeader(IgniteConstants.IGNITE_IDGEN_OPERATION, endpoint.getOperation(), IgniteIdGenOperation.class);
     }
-
 }

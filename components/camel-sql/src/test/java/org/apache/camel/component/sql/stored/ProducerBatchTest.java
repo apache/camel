@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,21 +34,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class ProducerBatchTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
-                .addScript("sql/storedProcedureTest.sql").build();
-
+                .addScript("sql/storedProcedureTest.sql")
+                .build();
     }
 
     @Override
@@ -89,9 +89,13 @@ public class ProducerBatchTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // required for the sql component
-                getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
+                getContext()
+                        .getComponent("sql-stored", SqlStoredComponent.class)
+                        .setDataSource(db);
 
-                from("direct:query").to("sql-stored:BATCHFN(INTEGER :#num)?batch=true").to("mock:query");
+                from("direct:query")
+                        .to("sql-stored:BATCHFN(INTEGER :#num)?batch=true")
+                        .to("mock:query");
             }
         };
     }

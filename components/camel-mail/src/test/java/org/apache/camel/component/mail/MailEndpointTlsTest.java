@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,22 +30,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MailEndpointTlsTest extends CamelTestSupport {
 
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                { "smtp" },
-                { "smtps" },
-                { "pop3" },
-                { "pop3s" },
-                { "imap" },
-                { "imaps" }
-        });
+        return Arrays.asList(new Object[][] {{"smtp"}, {"smtps"}, {"pop3"}, {"pop3s"}, {"imap"}, {"imaps"}});
     }
 
     @ParameterizedTest
@@ -112,5 +106,4 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory"));
         assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }
-
 }

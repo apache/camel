@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
 
 public class JacksonObjectListSplitTest extends CamelTestSupport {
     @Test
@@ -52,8 +53,7 @@ public class JacksonObjectListSplitTest extends CamelTestSupport {
 
         private String dummy;
 
-        public DummyObject() {
-        }
+        public DummyObject() {}
 
         public String getDummy() {
             return dummy;
@@ -63,5 +63,4 @@ public class JacksonObjectListSplitTest extends CamelTestSupport {
             this.dummy = dummy;
         }
     }
-
 }

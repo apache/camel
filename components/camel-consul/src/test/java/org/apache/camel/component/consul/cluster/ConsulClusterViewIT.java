@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cluster;
 
 import java.util.Optional;
@@ -34,13 +35,13 @@ public class ConsulClusterViewIT {
 
     @Test
     public void getLeaderTest() throws Exception {
-        //Set up a single node cluster.
+        // Set up a single node cluster.
         ConsulClusterService consulClusterService = new ConsulClusterService();
         consulClusterService.setId("node");
         consulClusterService.setUrl(service.getConsulUrl());
         consulClusterService.setRootPath("root");
 
-        //Set up context with single locked route.
+        // Set up context with single locked route.
         DefaultCamelContext context = new DefaultCamelContext();
         context.getCamelContextExtension().setName("context");
         context.addService(consulClusterService);
@@ -48,15 +49,13 @@ public class ConsulClusterViewIT {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("master:key:timer:consul?repeatCount=1")
-                        .routeId("route1")
-                        .stop();
+                from("master:key:timer:consul?repeatCount=1").routeId("route1").stop();
             }
         });
 
         context.start();
 
-        //Get view and leader.
+        // Get view and leader.
         CamelClusterView view = consulClusterService.getView("key");
         Optional<CamelClusterMember> leaderOptional = view.getLeader();
 
@@ -66,5 +65,4 @@ public class ConsulClusterViewIT {
 
         context.stop();
     }
-
 }

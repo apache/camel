@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.IOException;
@@ -39,9 +40,12 @@ public class DefaultRawClient extends AbstractClientBase implements RawClient {
     private static final String REST_TOKEN_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
 
-    public DefaultRawClient(final SalesforceHttpClient httpClient, final String version,
-                            final SalesforceSession session,
-                            final SalesforceLoginConfig loginConfig) throws SalesforceException {
+    public DefaultRawClient(
+            final SalesforceHttpClient httpClient,
+            final String version,
+            final SalesforceSession session,
+            final SalesforceLoginConfig loginConfig)
+            throws SalesforceException {
         super(version, session, httpClient, loginConfig);
     }
 
@@ -79,7 +83,11 @@ public class DefaultRawClient extends AbstractClientBase implements RawClient {
      */
     @Override
     public void makeRequest(
-            String method, String path, PayloadFormat format, InputStream body, Map<String, List<String>> headers,
+            String method,
+            String path,
+            PayloadFormat format,
+            InputStream body,
+            Map<String, List<String>> headers,
             ResponseCallback callback) {
         final Request request = getRequest(method, instanceUrl + path, headers);
         final String contentType = PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Map;
@@ -151,7 +152,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
         super.doBuild();
 
         getCamelContextExtension().addContextPlugin(CliConnectorFactory.class, createCliConnectorFactory());
-        getCamelContextExtension().addContextPlugin(ScheduledExecutorService.class, createErrorHandlerExecutorService());
+        getCamelContextExtension()
+                .addContextPlugin(ScheduledExecutorService.class, createErrorHandlerExecutorService());
     }
 
     @Override
@@ -179,8 +181,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected TypeConverter createTypeConverter() {
         return new DefaultTypeConverter(
-                getCamelContextReference(), PluginHelper.getPackageScanClassResolver(getCamelContextReference()), getInjector(),
-                isLoadTypeConverters(), isTypeConverterStatisticsEnabled());
+                getCamelContextReference(),
+                PluginHelper.getPackageScanClassResolver(getCamelContextReference()),
+                getInjector(),
+                isLoadTypeConverters(),
+                isTypeConverterStatisticsEnabled());
     }
 
     @Override
@@ -386,10 +391,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     protected PackageScanClassResolver createPackageScanClassResolver() {
         PackageScanClassResolver packageScanClassResolver;
         // use WebSphere specific resolver if running on WebSphere
-        if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
+        if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(
+                this.getClass().getClassLoader())) {
             LOG.info("Using WebSphere specific PackageScanClassResolver");
-            packageScanClassResolver
-                    = new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
+            packageScanClassResolver =
+                    new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
         } else {
             packageScanClassResolver = new DefaultPackageScanClassResolver();
         }
@@ -512,7 +518,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new IllegalArgumentException("Cannot find BeanProxyFactory on classpath. Add camel-bean to classpath.");
+            throw new IllegalArgumentException(
+                    "Cannot find BeanProxyFactory on classpath. Add camel-bean to classpath.");
         }
     }
 
@@ -559,7 +566,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new IllegalArgumentException("Cannot find BeanProcessorFactory on classpath. Add camel-bean to classpath.");
+            throw new IllegalArgumentException(
+                    "Cannot find BeanProcessorFactory on classpath. Add camel-bean to classpath.");
         }
     }
 
@@ -601,7 +609,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new IllegalArgumentException("Cannot find ModelToXMLDumper on classpath. Add camel-xml-io to classpath.");
+            throw new IllegalArgumentException(
+                    "Cannot find ModelToXMLDumper on classpath. Add camel-xml-io to classpath.");
         }
     }
 
@@ -616,7 +625,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new IllegalArgumentException("Cannot find ModelToYAMLDumper on classpath. Add camel-yaml-io to classpath.");
+            throw new IllegalArgumentException(
+                    "Cannot find ModelToYAMLDumper on classpath. Add camel-yaml-io to classpath.");
         }
     }
 
@@ -715,7 +725,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new IllegalArgumentException("Cannot find RestRegistryFactory on classpath. Add camel-rest to classpath.");
+            throw new IllegalArgumentException(
+                    "Cannot find RestRegistryFactory on classpath. Add camel-rest to classpath.");
         }
     }
 
@@ -829,8 +840,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, String prefixId, Map<String, Object> parameters)
-            throws Exception {
+    public String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, Map<String, Object> parameters) throws Exception {
         throw new UnsupportedOperationException();
     }
 
@@ -843,7 +854,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     public String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId, String group, RouteTemplateContext routeTemplateContext)
+            String routeId,
+            String routeTemplateId,
+            String prefixId,
+            String group,
+            RouteTemplateContext routeTemplateContext)
             throws Exception {
         throw new UnsupportedOperationException();
     }
@@ -857,7 +872,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     public String addRouteFromKamelet(
-            String routeId, String routeTemplateId, String prefixId, String parentRouteId, String parentProcessorId,
+            String routeId,
+            String routeTemplateId,
+            String prefixId,
+            String parentRouteId,
+            String parentProcessorId,
             Map<String, Object> parameters)
             throws Exception {
         throw new UnsupportedOperationException();
@@ -865,8 +884,13 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     public String addRouteFromKamelet(
-            String routeId, String routeTemplateId, String prefixId, String group, String parentRouteId,
-            String parentProcessorId, Map<String, Object> parameters)
+            String routeId,
+            String routeTemplateId,
+            String prefixId,
+            String group,
+            String parentRouteId,
+            String parentProcessorId,
+            Map<String, Object> parameters)
             throws Exception {
         throw new UnsupportedOperationException();
     }

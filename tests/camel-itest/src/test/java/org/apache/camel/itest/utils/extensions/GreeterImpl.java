@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.utils.extensions;
 
 import java.util.logging.Logger;
@@ -22,14 +23,16 @@ import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.types.FaultDetail;
 
-@jakarta.jws.WebService(portName = "SoapOverHttp", serviceName = "SOAPService",
-                        targetNamespace = "http://apache.org/hello_world_soap_http",
-                        endpointInterface = "org.apache.hello_world_soap_http.Greeter",
-                        wsdlLocation = "wsdl/hello_world.wsdl")
-
+@jakarta.jws.WebService(
+        portName = "SoapOverHttp",
+        serviceName = "SOAPService",
+        targetNamespace = "http://apache.org/hello_world_soap_http",
+        endpointInterface = "org.apache.hello_world_soap_http.Greeter",
+        wsdlLocation = "wsdl/hello_world.wsdl")
 public class GreeterImpl implements Greeter {
 
-    private static final Logger LOG = Logger.getLogger(GreeterImpl.class.getPackage().getName());
+    private static final Logger LOG =
+            Logger.getLogger(GreeterImpl.class.getPackage().getName());
     private int oneWayCounter;
 
     public String greetMe(String me) {
@@ -56,8 +59,7 @@ public class GreeterImpl implements Greeter {
         FaultDetail faultDetail = new FaultDetail();
         faultDetail.setMajor((short) 2);
         faultDetail.setMinor((short) 1);
-        LOG.info("Executing operation pingMe, throwing PingMeFault exception, message = "
-                 + messageIn);
+        LOG.info("Executing operation pingMe, throwing PingMeFault exception, message = " + messageIn);
         LOG.info("Executing operation pingMe, throwing PingMeFault exception\n");
         throw new PingMeFault("PingMeFault raised by server", faultDetail);
     }
@@ -69,5 +71,4 @@ public class GreeterImpl implements Greeter {
     public void resetOneWayCounter() {
         oneWayCounter = 0;
     }
-
 }

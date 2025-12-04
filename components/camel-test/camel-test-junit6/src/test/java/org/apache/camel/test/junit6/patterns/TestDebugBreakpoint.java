@@ -42,7 +42,11 @@ public class TestDebugBreakpoint extends DebugBreakpoint {
 
     @Override
     protected void debugAfter(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
+            Exchange exchange,
+            Processor processor,
+            ProcessorDefinition<?> definition,
+            String id,
+            String label,
             long timeTaken) {
 
         debugAfterCalled = true;

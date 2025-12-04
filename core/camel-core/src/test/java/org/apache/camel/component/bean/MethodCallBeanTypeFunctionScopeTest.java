@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.BeanScope;
@@ -26,20 +27,31 @@ public class MethodCallBeanTypeFunctionScopeTest extends SimpleLanguageBeanFunct
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:single").choice().when().method(MyBean.class, BeanScope.Singleton).to("mock:result")
-                        .otherwise().to("mock:other");
+                from("direct:single")
+                        .choice()
+                        .when()
+                        .method(MyBean.class, BeanScope.Singleton)
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
 
-                from("direct:proto").choice().when().method(MyBean.class, BeanScope.Prototype).to("mock:result")
-                        .otherwise().to("mock:other");
+                from("direct:proto")
+                        .choice()
+                        .when()
+                        .method(MyBean.class, BeanScope.Prototype)
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
 
-                from("direct:request")
-                        .to("direct:sub")
-                        .to("direct:sub")
-                        .to("direct:sub");
+                from("direct:request").to("direct:sub").to("direct:sub").to("direct:sub");
 
-                from("direct:sub").choice().when().method(MyBean.class, BeanScope.Request).to("mock:result")
-                        .otherwise().to("mock:other");
-
+                from("direct:sub")
+                        .choice()
+                        .when()
+                        .method(MyBean.class, BeanScope.Request)
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
             }
         };
     }

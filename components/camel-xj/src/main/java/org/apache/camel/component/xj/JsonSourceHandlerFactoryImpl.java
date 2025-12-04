@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xj;
 
 import java.io.File;
@@ -67,7 +68,9 @@ public class JsonSourceHandlerFactoryImpl implements SourceHandlerFactory {
      */
     @Override
     public Source getSource(Exchange exchange, Expression source) throws Exception {
-        Object body = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+        Object body = source != null
+                ? source.evaluate(exchange, Object.class)
+                : exchange.getMessage().getBody();
 
         JsonParser jsonParser = null;
         if (body instanceof File) {
@@ -83,7 +86,8 @@ public class JsonSourceHandlerFactoryImpl implements SourceHandlerFactory {
         }
 
         if (jsonParser == null) {
-            final String bodyAsString = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, body);
+            final String bodyAsString =
+                    exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, body);
             if (bodyAsString != null) {
                 jsonParser = jsonFactory.createParser(bodyAsString);
             }

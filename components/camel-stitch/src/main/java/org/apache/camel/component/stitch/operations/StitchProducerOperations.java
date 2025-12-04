@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.operations;
 
 import java.util.Arrays;
@@ -57,18 +58,21 @@ public class StitchProducerOperations {
     public boolean sendEvents(
             final Message inMessage, final Consumer<StitchResponse> resultCallback, final AsyncCallback callback) {
         sendAsyncEvents(inMessage)
-                .subscribe(resultCallback, error -> {
-                    // error but we continue
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Error processing async exchange with error: {}", error.getMessage());
-                    }
-                    inMessage.getExchange().setException(error);
-                    callback.done(false);
-                }, () -> {
-                    // we are done from everything, so mark it as sync done
-                    LOG.trace("All events with exchange have been sent successfully.");
-                    callback.done(false);
-                });
+                .subscribe(
+                        resultCallback,
+                        error -> {
+                            // error but we continue
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Error processing async exchange with error: {}", error.getMessage());
+                            }
+                            inMessage.getExchange().setException(error);
+                            callback.done(false);
+                        },
+                        () -> {
+                            // we are done from everything, so mark it as sync done
+                            LOG.trace("All events with exchange have been sent successfully.");
+                            callback.done(false);
+                        });
 
         return false;
     }
@@ -85,8 +89,8 @@ public class StitchProducerOperations {
         }
 
         if (inMessage.getBody() instanceof StitchMessage) {
-            return createStitchRequestBodyFromStitchMessages(Collections.singletonList(inMessage.getBody(StitchMessage.class)),
-                    inMessage);
+            return createStitchRequestBodyFromStitchMessages(
+                    Collections.singletonList(inMessage.getBody(StitchMessage.class)), inMessage);
         }
 
         if (inMessage.getBody() instanceof Iterable) {
@@ -107,33 +111,36 @@ public class StitchProducerOperations {
 
     private StitchRequestBody createStitchRequestBodyFromStitchMessages(
             final Collection<StitchMessage> stitchMessages, final Message message) {
-        final StitchRequestBody.Builder builder = StitchRequestBody.builder()
-                .addMessages(stitchMessages);
+        final StitchRequestBody.Builder builder = StitchRequestBody.builder().addMessages(stitchMessages);
 
         return createStitchRecordFromBuilder(builder, message);
     }
 
     @SuppressWarnings("unchecked")
-    private StitchRequestBody createStitchRequestBodyFromIterable(final Iterable<Object> inputData, final Message message) {
+    private StitchRequestBody createStitchRequestBodyFromIterable(
+            final Iterable<Object> inputData, final Message message) {
         final Collection<StitchMessage> stitchMessages = new LinkedList<>();
 
         inputData.forEach(data -> {
             if (data instanceof StitchMessage) {
                 stitchMessages.add((StitchMessage) data);
             } else if (data instanceof Map) {
-                stitchMessages.add(StitchMessage.fromMap(ObjectHelper.cast(Map.class, data)).build());
+                stitchMessages.add(StitchMessage.fromMap(ObjectHelper.cast(Map.class, data))
+                        .build());
             } else if (data instanceof StitchRequestBody) {
                 stitchMessages.addAll(((StitchRequestBody) data).getMessages());
             } else if (data instanceof Message) {
                 final Message camelNestedMessage = (Message) data;
                 // set all the headers from parent message
                 camelNestedMessage.setHeaders(message.getHeaders());
-                stitchMessages.addAll(createStitchRequestBody(camelNestedMessage).getMessages());
+                stitchMessages.addAll(
+                        createStitchRequestBody(camelNestedMessage).getMessages());
             } else if (data instanceof Exchange) {
                 final Message camelNestedMessage = ((Exchange) data).getMessage();
                 // set all the headers from parent message
                 camelNestedMessage.setHeaders(message.getHeaders());
-                stitchMessages.addAll(createStitchRequestBody(camelNestedMessage).getMessages());
+                stitchMessages.addAll(
+                        createStitchRequestBody(camelNestedMessage).getMessages());
             } else {
                 throw new IllegalArgumentException("Input data `" + data + "` type is not supported");
             }
@@ -146,9 +153,9 @@ public class StitchProducerOperations {
         return createStitchRecordFromBuilder(StitchRequestBody.fromMap(data), message);
     }
 
-    private StitchRequestBody createStitchRecordFromBuilder(final StitchRequestBody.Builder builder, final Message message) {
-        return builder
-                .withSchema(getStitchSchema(message))
+    private StitchRequestBody createStitchRecordFromBuilder(
+            final StitchRequestBody.Builder builder, final Message message) {
+        return builder.withSchema(getStitchSchema(message))
                 .withTableName(getTableName(message))
                 .withKeyNames(getKeyNames(message))
                 .build();
@@ -166,7 +173,9 @@ public class StitchProducerOperations {
                 return message.getHeader(StitchConstants.SCHEMA, StitchSchema.class);
             }
             if (message.getHeader(StitchConstants.SCHEMA) instanceof Map) {
-                return StitchSchema.builder().addKeywords(message.getHeader(StitchConstants.SCHEMA, Map.class)).build();
+                return StitchSchema.builder()
+                        .addKeywords(message.getHeader(StitchConstants.SCHEMA, Map.class))
+                        .build();
             }
         }
         // otherwise we just get whatever we have in the config
@@ -185,7 +194,8 @@ public class StitchProducerOperations {
 
     private <R> R getOption(
             final Message message, final String headerName, final Supplier<R> fallbackFn, final Class<R> type) {
-        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
+        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a
+        // function or constant
         return ObjectHelper.isEmpty(message) || ObjectHelper.isEmpty(getObjectFromHeaders(message, headerName, type))
                 ? fallbackFn.get()
                 : getObjectFromHeaders(message, headerName, type);

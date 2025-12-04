@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5.annotation;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
@@ -27,8 +30,6 @@ import org.apache.camel.test.main.junit5.common.Greetings;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The test class ensuring that an existing bean can be replaced with a bean defined as a field.

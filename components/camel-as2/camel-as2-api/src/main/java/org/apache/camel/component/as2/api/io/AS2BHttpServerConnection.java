@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.io;
 
 import java.io.IOException;
@@ -36,21 +37,27 @@ public class AS2BHttpServerConnection extends DefaultBHttpServerConnection {
         this(http1Config, null, null);
     }
 
-    public AS2BHttpServerConnection(Http1Config http1Config,
-                                    CharsetDecoder chardecoder,
-                                    CharsetEncoder charencoder) {
+    public AS2BHttpServerConnection(Http1Config http1Config, CharsetDecoder chardecoder, CharsetEncoder charencoder) {
         this(http1Config, chardecoder, charencoder, null, null, null, null);
     }
 
-    public AS2BHttpServerConnection(Http1Config http1Config,
-                                    CharsetDecoder chardecoder,
-                                    CharsetEncoder charencoder,
-                                    ContentLengthStrategy incomingContentStrategy,
-                                    ContentLengthStrategy outgoingContentStrategy,
-                                    HttpMessageParserFactory<ClassicHttpRequest> requestParserFactory,
-                                    HttpMessageWriterFactory<ClassicHttpResponse> responseWriterFactory) {
-        super(null, http1Config, chardecoder, charencoder, incomingContentStrategy,
-              outgoingContentStrategy, requestParserFactory, responseWriterFactory);
+    public AS2BHttpServerConnection(
+            Http1Config http1Config,
+            CharsetDecoder chardecoder,
+            CharsetEncoder charencoder,
+            ContentLengthStrategy incomingContentStrategy,
+            ContentLengthStrategy outgoingContentStrategy,
+            HttpMessageParserFactory<ClassicHttpRequest> requestParserFactory,
+            HttpMessageWriterFactory<ClassicHttpResponse> responseWriterFactory) {
+        super(
+                null,
+                http1Config,
+                chardecoder,
+                charencoder,
+                incomingContentStrategy,
+                outgoingContentStrategy,
+                requestParserFactory,
+                responseWriterFactory);
     }
 
     @Override
@@ -58,5 +65,4 @@ public class AS2BHttpServerConnection extends DefaultBHttpServerConnection {
         super.receiveRequestEntity(request);
         EntityParser.parseAS2MessageEntity(request);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker;
 
 import java.util.HashMap;
@@ -28,45 +29,64 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DockerConfiguration implements Cloneable {
 
-    @UriPath(enums = "events,stats,auth,info,ping,version,imagebuild,imagecreate,imageinspect,imagelist,imagepull,imagepush,"
-                     + "imageremove,imagesearch,imagetag,containerattach,containercommit,containercopyfile,containercreate,containerdiff,"
-                     + "inspectcontainer,containerkill,containerlist,containerlog,containerpause,containerrestart,containerremove,containerstart,"
-                     + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart,networkconnect,networkcreate,networkremove")
+    @UriPath(
+            enums =
+                    "events,stats,auth,info,ping,version,imagebuild,imagecreate,imageinspect,imagelist,imagepull,imagepush,"
+                            + "imageremove,imagesearch,imagetag,containerattach,containercommit,containercopyfile,containercreate,containerdiff,"
+                            + "inspectcontainer,containerkill,containerlist,containerlog,containerpause,containerrestart,containerremove,containerstart,"
+                            + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart,networkconnect,networkcreate,networkremove")
     @Metadata(required = true)
     private DockerOperation operation;
+
     @UriParam(defaultValue = "localhost")
     @Metadata(required = true)
     private String host = "localhost";
+
     @UriParam(defaultValue = "2375")
     private Integer port = 2375;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam
     private String email;
+
     @UriParam(label = "advanced", defaultValue = "https://index.docker.io/v1/")
     private String serverAddress = "https://index.docker.io/v1/";
+
     @UriParam
     private Integer requestTimeout;
+
     @UriParam(label = "security")
     private boolean secure;
+
     @UriParam(label = "security")
     private String certPath;
+
     @UriParam(label = "advanced", defaultValue = "100")
     private Integer maxTotalConnections = 100;
+
     @UriParam(label = "advanced", defaultValue = "100")
     private Integer maxPerRouteConnections = 100;
+
     @UriParam(label = "advanced")
     private boolean loggingFilter;
+
     @UriParam(label = "advanced")
     private boolean followRedirectFilter;
+
     @UriParam(label = "security", defaultValue = "false")
     private boolean tlsVerify;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean socket;
+
     @UriParam(label = "advanced", defaultValue = "com.github.dockerjava.netty.NettyDockerCmdExecFactory")
     private String cmdExecFactory = "com.github.dockerjava.netty.NettyDockerCmdExecFactory";
+
     @UriParam(label = "advanced")
     private Map<String, Object> parameters = new HashMap<>();
 

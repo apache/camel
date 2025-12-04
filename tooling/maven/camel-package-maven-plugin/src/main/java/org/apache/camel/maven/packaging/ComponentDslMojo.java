@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 import java.io.File;
 import java.io.IOError;
@@ -45,13 +48,14 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
-
 /**
  * Generate Endpoint DSL source files for Components.
  */
-@Mojo(name = "generate-component-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(
+        name = "generate-component-dsl",
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ComponentDslMojo extends AbstractGeneratorMojo {
 
     /**
@@ -99,8 +103,10 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     /**
      * The catalog directory where the component json files are
      */
-    @Parameter(property = "camel.pmp.json-directory",
-               defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
+    @Parameter(
+            property = "camel.pmp.json-directory",
+            defaultValue =
+                    "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
     protected File jsonDir;
 
     @Inject
@@ -126,8 +132,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
 
         if (jsonDir == null) {
-            jsonDir = findCamelDirectory(baseDir,
-                    "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components");
+            jsonDir = findCamelDirectory(
+                    baseDir, "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components");
 
             if (jsonDir == null) {
                 getLog().debug("No json directory folder found, skipping execution");
@@ -143,7 +149,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             outputResourcesDir = root.resolve("src/generated/resources").toFile();
         }
         if (componentsMetadata == null) {
-            componentsMetadata = outputResourcesDir.toPath().resolve("metadata.json").toFile();
+            componentsMetadata =
+                    outputResourcesDir.toPath().resolve("metadata.json").toFile();
         }
 
         List<ComponentModel> models = new ArrayList<>();
@@ -181,7 +188,9 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             ctx.put("className", className);
             ctx.put("model", model);
             ctx.put("mojo", this);
-            ctx.put("configurationOption", findConfiguration(model.getComponentOptions()).orElse(null));
+            ctx.put(
+                    "configurationOption",
+                    findConfiguration(model.getComponentOptions()).orElse(null));
 
             String source = velocity("velocity/component-builder.vm", ctx);
 
@@ -203,7 +212,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         writeSourceIfChanged(source, packageName, className);
     }
 
-    private boolean writeSourceIfChanged(String code, String packageName, String className) throws MojoFailureException {
+    private boolean writeSourceIfChanged(String code, String packageName, String className)
+            throws MojoFailureException {
         String fileName = packageName.replace('.', '/') + "/" + className + ".java";
         try {
             if (getLog().isDebugEnabled()) {
@@ -271,5 +281,4 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             Collection<ComponentModel.ComponentOptionModel> options) {
         return options.stream().filter(o -> o.getConfigurationField() != null).findFirst();
     }
-
 }

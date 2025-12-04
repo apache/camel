@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -23,9 +27,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProxyReturnFutureExceptionTest extends ContextTestSupport {
 
@@ -38,7 +39,8 @@ public class ProxyReturnFutureExceptionTest extends ContextTestSupport {
 
         log.info("Waiting for future to be done ...");
 
-        ExecutionException e = assertThrows(ExecutionException.class,
+        ExecutionException e = assertThrows(
+                ExecutionException.class,
                 () -> assertEquals("Four", future.get(5, TimeUnit.SECONDS)),
                 "Should have thrown exception");
 
@@ -59,5 +61,4 @@ public class ProxyReturnFutureExceptionTest extends ContextTestSupport {
     public interface Echo {
         Future<String> asText(int number);
     }
-
 }

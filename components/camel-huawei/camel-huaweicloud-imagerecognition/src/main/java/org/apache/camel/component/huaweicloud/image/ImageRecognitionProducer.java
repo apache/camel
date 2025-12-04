@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.image;
 
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
@@ -81,15 +82,16 @@ public class ImageRecognitionProducer extends DefaultProducer {
      * @param  clientConfigurations
      * @return
      */
-    private ImageClient initializeSdkClient(ImageRecognitionEndpoint endpoint, ClientConfigurations clientConfigurations) {
+    private ImageClient initializeSdkClient(
+            ImageRecognitionEndpoint endpoint, ClientConfigurations clientConfigurations) {
         if (endpoint.getImageClient() != null) {
             LOG.info(
                     "Instance of ImageClient was set on the endpoint. Skipping creation of ImageClient from endpoint parameters");
             this.imageClient = endpoint.getImageClient();
             return endpoint.getImageClient();
         }
-        HttpConfig httpConfig
-                = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
+        HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig()
+                .withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
         if (!StringUtils.isEmpty(clientConfigurations.getProxyHost())) {
             httpConfig.setProxyHost(clientConfigurations.getProxyHost());
             httpConfig.setProxyPort(clientConfigurations.getProxyPort());
@@ -99,7 +101,8 @@ public class ImageRecognitionProducer extends DefaultProducer {
             }
         }
 
-        BasicCredentials credentials = new BasicCredentials().withAk(clientConfigurations.getAccessKey())
+        BasicCredentials credentials = new BasicCredentials()
+                .withAk(clientConfigurations.getAccessKey())
                 .withSk(clientConfigurations.getSecretKey())
                 .withProjectId(clientConfigurations.getProjectId());
 
@@ -154,12 +157,13 @@ public class ImageRecognitionProducer extends DefaultProducer {
     private void performCelebrityRecognitionOperation(Exchange exchange, ClientConfigurations clientConfigurations) {
         updateClientConfigurations(exchange, clientConfigurations);
 
-        CelebrityRecognitionReq reqBody = new CelebrityRecognitionReq().withImage(clientConfigurations.getImageContent())
+        CelebrityRecognitionReq reqBody = new CelebrityRecognitionReq()
+                .withImage(clientConfigurations.getImageContent())
                 .withUrl(clientConfigurations.getImageUrl())
                 .withThreshold(clientConfigurations.getThreshold());
 
-        RunCelebrityRecognitionResponse response
-                = this.imageClient.runCelebrityRecognition(new RunCelebrityRecognitionRequest().withBody(reqBody));
+        RunCelebrityRecognitionResponse response =
+                this.imageClient.runCelebrityRecognition(new RunCelebrityRecognitionRequest().withBody(reqBody));
 
         exchange.getMessage().setBody(response.getResult());
     }
@@ -172,13 +176,15 @@ public class ImageRecognitionProducer extends DefaultProducer {
     private void performTagRecognitionOperation(Exchange exchange, ClientConfigurations clientConfigurations) {
         updateClientConfigurations(exchange, clientConfigurations);
 
-        ImageTaggingReq reqBody = new ImageTaggingReq().withImage(clientConfigurations.getImageContent())
+        ImageTaggingReq reqBody = new ImageTaggingReq()
+                .withImage(clientConfigurations.getImageContent())
                 .withUrl(clientConfigurations.getImageUrl())
                 .withThreshold(clientConfigurations.getThreshold())
                 .withLanguage(clientConfigurations.getTagLanguage())
                 .withLimit(clientConfigurations.getTagLimit());
 
-        RunImageTaggingResponse response = this.imageClient.runImageTagging(new RunImageTaggingRequest().withBody(reqBody));
+        RunImageTaggingResponse response =
+                this.imageClient.runImageTagging(new RunImageTaggingRequest().withBody(reqBody));
 
         exchange.getMessage().setBody(response.getResult());
     }
@@ -232,8 +238,8 @@ public class ImageRecognitionProducer extends DefaultProducer {
         clientConfigurations.setThreshold(thresholdProperty == null ? endpoint.getThreshold() : thresholdProperty);
 
         if (clientConfigurations.getThreshold() == -1) {
-            clientConfigurations
-                    .setThreshold(ImageRecognitionConstants.OPERATION_TAG_RECOGNITION.equals(endpoint.getOperation())
+            clientConfigurations.setThreshold(
+                    ImageRecognitionConstants.OPERATION_TAG_RECOGNITION.equals(endpoint.getOperation())
                             ? ImageRecognitionConstants.DEFAULT_TAG_RECOGNITION_THRESHOLD
                             : ImageRecognitionConstants.DEFAULT_CELEBRITY_RECOGNITION_THRESHOLD);
         }
@@ -297,5 +303,4 @@ public class ImageRecognitionProducer extends DefaultProducer {
         }
         return ImageRegion.valueOf(endpoint.getRegion()).getEndpoint();
     }
-
 }

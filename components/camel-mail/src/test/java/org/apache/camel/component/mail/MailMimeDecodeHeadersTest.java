@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import jakarta.mail.internet.MimeUtility;
@@ -35,6 +36,7 @@ public class MailMimeDecodeHeadersTest extends CamelTestSupport {
     private String encodedNonAsciiSubject = "=?UTF-8?Q?=F0=9F=90=AA_rocks!?=";
 
     private String longSubject;
+
     {
         StringBuilder sb = new StringBuilder("Camel rocks!");
 
@@ -44,6 +46,7 @@ public class MailMimeDecodeHeadersTest extends CamelTestSupport {
         }
         longSubject = sb.toString();
     }
+
     private String foldedLongSubject = MimeUtility.fold(9, longSubject);
 
     @Test

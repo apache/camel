@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Consumer;
@@ -38,7 +39,8 @@ public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsume
                 // disconnect from the server to force it to re login at next
                 // poll to recover
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Trying to recover by force disconnecting from remote server and re-connecting at next poll: {}",
+                    LOG.warn(
+                            "Trying to recover by force disconnecting from remote server and re-connecting at next poll: {}",
                             rfc.remoteServer());
                 }
                 try {
@@ -46,8 +48,10 @@ public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsume
                 } catch (Exception t) {
                     // ignore the exception
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Error occurred during force disconnecting from: {}. This exception will be ignored.",
-                                rfc.remoteServer(), t);
+                        LOG.debug(
+                                "Error occurred during force disconnecting from: {}. This exception will be ignored.",
+                                rfc.remoteServer(),
+                                t);
                     }
                 }
             }
@@ -55,5 +59,4 @@ public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsume
 
         return super.rollback(consumer, endpoint, retryCounter, e);
     }
-
 }

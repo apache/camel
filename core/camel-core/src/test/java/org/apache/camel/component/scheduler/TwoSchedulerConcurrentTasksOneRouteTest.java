@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scheduler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,18 +44,20 @@ public class TwoSchedulerConcurrentTasksOneRouteTest extends ContextTestSupport 
                 SchedulerComponent comp = context.getComponent("scheduler", SchedulerComponent.class);
                 comp.setPoolSize(2);
 
-                from("scheduler://foo?delay=250").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        if (sleep.compareAndSet(true, false)) {
-                            log.info("Thread is sleeping");
-                            Thread.sleep(1000);
-                            log.info("Thread is done sleeping");
-                        }
-                    }
-                }).to("log:done").to("mock:done");
+                from("scheduler://foo?delay=250")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                if (sleep.compareAndSet(true, false)) {
+                                    log.info("Thread is sleeping");
+                                    Thread.sleep(1000);
+                                    log.info("Thread is done sleeping");
+                                }
+                            }
+                        })
+                        .to("log:done")
+                        .to("mock:done");
             }
         };
     }
-
 }

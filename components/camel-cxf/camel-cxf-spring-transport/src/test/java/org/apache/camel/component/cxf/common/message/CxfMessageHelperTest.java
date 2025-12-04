@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.common.message;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,10 +44,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfMessageHelperTest {
     private static final String REQUEST_STRING = "<testMethod xmlns=\"http://camel.apache.org/testService\"/>";
     private DefaultCamelContext context = new DefaultCamelContext();
@@ -54,8 +55,8 @@ public class CxfMessageHelperTest {
         org.apache.camel.Exchange exchange = new DefaultExchange(context);
         // String
         exchange.getIn().setBody("hello world");
-        org.apache.cxf.message.Message message = CxfMessageHelper.getCxfInMessage(
-                headerFilterStrategy, exchange, false);
+        org.apache.cxf.message.Message message =
+                CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
         // test message
         InputStream is = message.getContent(InputStream.class);
         assertNotNull(is, "The input stream should not be null");
@@ -110,8 +111,9 @@ public class CxfMessageHelperTest {
         IOHelper.copy(is, os);
         is.close();
         os.writeCacheTo(out);
-        return out.toString().replaceAll("(?s)<\\?.*\\?>", "").replaceAll("(?s)<!--.*-->", "").replaceAll("(\\r)?\\n", "");
-
+        return out.toString()
+                .replaceAll("(?s)<\\?.*\\?>", "")
+                .replaceAll("(?s)<!--.*-->", "")
+                .replaceAll("(\\r)?\\n", "");
     }
-
 }

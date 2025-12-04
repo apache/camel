@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -84,7 +85,8 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
         }
     }
 
-    public static void generateArchetypeCatalog(Log log, MavenProject project, MavenProjectHelper projectHelper, File outDir)
+    public static void generateArchetypeCatalog(
+            Log log, MavenProject project, MavenProjectHelper projectHelper, File outDir)
             throws MojoExecutionException, IOException {
 
         File archetypes = PackageHelper.findCamelDirectory(project.getBasedir(), "archetypes");
@@ -94,8 +96,8 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
         log.info("Scanning for Camel Maven Archetypes from directory: " + archetypes);
 
         // find all archetypes which are in the parent dir of the build dir
-        File[] dirs
-                = archetypes.listFiles(pathname -> pathname.getName().startsWith("camel-archetype") && pathname.isDirectory());
+        File[] dirs = archetypes.listFiles(
+                pathname -> pathname.getName().startsWith("camel-archetype") && pathname.isDirectory());
 
         List<ArchetypeModel> models = new ArrayList<>();
 
@@ -253,5 +255,4 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
             this.description = description;
         }
     }
-
 }

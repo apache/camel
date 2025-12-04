@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs.simplebinding;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.StringWriter;
 
@@ -37,16 +41,13 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Tests for the Simple Binding style of CXF JAX-RS consumers.
  */
 public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     private static final String PORT_PATH = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
     private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT_PATH
-                                                      + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceImpl&bindingStyle=SimpleConsumer";
+            + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceImpl&bindingStyle=SimpleConsumer";
 
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;
@@ -67,8 +68,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(CXF_RS_ENDPOINT_URI)
-                        .recipientList(simple("direct:${header.operationName}"));
+                from(CXF_RS_ENDPOINT_URI).recipientList(simple("direct:${header.operationName}"));
 
                 from("direct:getCustomer").process(new Processor() {
                     @Override
@@ -99,7 +99,8 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
         get.addHeader("Accept", "text/xml");
         CloseableHttpResponse response = httpclient.execute(get);
         assertEquals(200, response.getCode());
-        Customer entity = (Customer) jaxb.createUnmarshaller().unmarshal(response.getEntity().getContent());
+        Customer entity = (Customer)
+                jaxb.createUnmarshaller().unmarshal(response.getEntity().getContent());
         assertEquals(123, entity.getId());
     }
 

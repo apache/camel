@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Tag Image Request headers are applied properly
@@ -53,17 +54,16 @@ public class TagImageCmdHeaderTest extends BaseDockerHeaderTest<TagImageCmd> {
 
         Mockito.verify(dockerClient, Mockito.times(1)).tagImageCmd(imageId, repository, tag);
         Mockito.verify(mockObject, Mockito.times(1)).withForce(force);
-
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.tagImageCmd(anyString(), anyString(), anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.tagImageCmd(anyString(), anyString(), anyString()))
+                .thenReturn(mockObject);
     }
 
     @Override
     protected DockerOperation getOperation() {
         return DockerOperation.TAG_IMAGE;
     }
-
 }

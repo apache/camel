@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
+
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_HEADER;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIPTION_ID;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.URI_PARAMS_TO_HEADER_NAMES;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -26,12 +33,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_HEADER;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIPTION_ID;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.URI_PARAMS_TO_HEADER_NAMES;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterControlChannelSendDynamicAwareTest {
@@ -46,7 +47,8 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
     void prepare() throws Exception {
         String originalUri = "dynamic-router-control://subscribe?subscriptionId=testSub1";
         String uri = "dynamic-router-control://subscribe?subscriptionId=testSub1";
-        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+        try (DynamicRouterControlChannelSendDynamicAware testSubject =
+                new DynamicRouterControlChannelSendDynamicAware()) {
             SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
             assertAll(
                     () -> assertEquals(entry.getOriginalUri(), originalUri),
@@ -61,7 +63,8 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
     void resolveStaticUri() throws Exception {
         String originalUri = "dynamic-router-control:subscribe?subscriptionId=testSub1";
         String uri = "dynamic-router-control://subscribe?subscriptionId=testSub1";
-        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+        try (DynamicRouterControlChannelSendDynamicAware testSubject =
+                new DynamicRouterControlChannelSendDynamicAware()) {
             SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
             String result = testSubject.resolveStaticUri(exchange, entry);
             assertEquals("dynamic-router-control://subscribe", result);
@@ -72,7 +75,8 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
     void resolveStaticUriShouldNotOptimize() throws Exception {
         String originalUri = "dynamic-router-ctrl:subscribe?subscriptionId=testSub1";
         String uri = "dynamic-router-ctrl://subscribe?subscriptionId=testSub1";
-        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+        try (DynamicRouterControlChannelSendDynamicAware testSubject =
+                new DynamicRouterControlChannelSendDynamicAware()) {
             SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
             String result = testSubject.resolveStaticUri(exchange, entry);
             assertEquals(null, result);
@@ -86,7 +90,8 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
         Mockito.doNothing().when(message).setHeader(CONTROL_SUBSCRIPTION_ID, "testSub1");
         String originalUri = "dynamic-router-control:subscribe?subscriptionId=testSub1";
         String uri = "dynamic-router-control://subscribe?subscriptionId=testSub1";
-        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+        try (DynamicRouterControlChannelSendDynamicAware testSubject =
+                new DynamicRouterControlChannelSendDynamicAware()) {
             SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
             Processor preProcessor = testSubject.createPreProcessor(exchange, entry);
             Assertions.assertNotNull(preProcessor);
@@ -98,7 +103,8 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
     void createPreProcessorShouldNotOptimize() throws Exception {
         String originalUri = "dynamic-router-ctrl:subscribe?subscriptionId=testSub1";
         String uri = "dynamic-router-ctrl://subscribe?subscriptionId=testSub1";
-        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+        try (DynamicRouterControlChannelSendDynamicAware testSubject =
+                new DynamicRouterControlChannelSendDynamicAware()) {
             SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
             Processor preProcessor = testSubject.createPreProcessor(exchange, entry);
             Assertions.assertNull(preProcessor);
@@ -111,19 +117,22 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
         Mockito.when(message.removeHeader(any())).thenReturn("test");
         String originalUri = "dynamic-router-control:subscribe?subscriptionId=testSub1";
         String uri = "dynamic-router-control://subscribe?subscriptionId=testSub1";
-        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+        try (DynamicRouterControlChannelSendDynamicAware testSubject =
+                new DynamicRouterControlChannelSendDynamicAware()) {
             SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
             Processor postProcessor = testSubject.createPostProcessor(exchange, entry);
             postProcessor.process(exchange);
         }
-        Mockito.verify(message, Mockito.times(URI_PARAMS_TO_HEADER_NAMES.size())).removeHeader(any());
+        Mockito.verify(message, Mockito.times(URI_PARAMS_TO_HEADER_NAMES.size()))
+                .removeHeader(any());
     }
 
     @Test
     void createPostProcessorShouldNotOptimize() throws Exception {
         String originalUri = "dynamic-router-ctrl:subscribe?subscriptionId=testSub1";
         String uri = "dynamic-router-ctrl://subscribe?subscriptionId=testSub1";
-        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+        try (DynamicRouterControlChannelSendDynamicAware testSubject =
+                new DynamicRouterControlChannelSendDynamicAware()) {
             SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
             Processor postProcessor = testSubject.createPostProcessor(exchange, entry);
             assertNull(postProcessor);

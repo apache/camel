@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.concurrent.TimeUnit;
@@ -47,7 +48,10 @@ public class JdbcAggregateRecoverWithSedaTest extends AbstractJdbcAggregationTes
         // should be marked as redelivered
         getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
         // on the 2nd redelivery attempt we success
-        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
+        getMockEndpoint("mock:result")
+                .message(0)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(2);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -67,7 +71,8 @@ public class JdbcAggregateRecoverWithSedaTest extends AbstractJdbcAggregationTes
 
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
+                        .completionSize(5)
+                        .aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .to("seda:foo")

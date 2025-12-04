@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xchange;
 
 import org.apache.camel.spi.Metadata;
@@ -50,20 +51,25 @@ public class XChangeConfiguration {
 
     @Metadata(description = "The target currency", javaType = "org.knowm.xchange.currency.Currency")
     public static final String HEADER_CURRENCY = "Currency";
+
     @Metadata(description = "The target currency pair", javaType = "org.knowm.xchange.currency.CurrencyPair")
     public static final String HEADER_CURRENCY_PAIR = "CurrencyPair";
 
     @UriPath(description = "The exchange to connect to")
     @Metadata(required = true)
     private String name;
+
     @UriParam(description = "The service to call")
     @Metadata(required = true)
     private XChangeService service;
+
     @UriParam(description = "The method to execute")
     @Metadata(required = true)
     private XChangeMethod method;
+
     @UriParam(description = "The currency")
     private Currency currency;
+
     @UriParam(description = "The currency pair")
     private String currencyPair;
 
@@ -117,5 +123,4 @@ public class XChangeConfiguration {
     public void setCurrencyPair(String currencyPair) {
         this.currencyPair = currencyPair;
     }
-
 }

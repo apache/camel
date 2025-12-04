@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml.in;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,25 +67,16 @@ import org.apache.camel.xml.io.XmlPullParserLocationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class ModelParserTest {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/xml-io";
-    private static final List<String> REST_XMLS
-            = List.of("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
+    private static final List<String> REST_XMLS =
+            List.of("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
     private static final List<String> TEMPLATE_XMLS = List.of("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = List.of("barTemplatedRoute.xml");
     private static final List<String> REST_CONFIGURATION_XMLS = List.of("barRestConfiguration.xml");
-    private static final List<String> ROUTE_CONFIGURATION_XMLS
-            = List.of("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
+    private static final List<String> ROUTE_CONFIGURATION_XMLS =
+            List.of("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
     @Test
     public void testNoNamespace() throws Exception {
@@ -100,7 +101,8 @@ public class ModelParserTest {
         Path dir = getResourceFolder();
         Path path = new File(dir.toFile(), "nonamespace/singleTemplatedRouteNoNamespace.xml").toPath();
         ModelParser parser = new ModelParser(Files.newInputStream(path));
-        TemplatedRoutesDefinition templatedRoutes = parser.parseTemplatedRoutesDefinition().orElse(null);
+        TemplatedRoutesDefinition templatedRoutes =
+                parser.parseTemplatedRoutesDefinition().orElse(null);
         assertNotNull(templatedRoutes);
     }
 
@@ -108,30 +110,39 @@ public class ModelParserTest {
     public void testFiles() throws Exception {
         Path dir = getResourceFolder();
         try (Stream<Path> list = Files.list(dir)) {
-            List<Path> files = list.sorted().filter(Files::isRegularFile)
-                    .filter(f -> f.getFileName().toString().endsWith("xml")).toList();
+            List<Path> files = list.sorted()
+                    .filter(Files::isRegularFile)
+                    .filter(f -> f.getFileName().toString().endsWith("xml"))
+                    .toList();
             for (Path path : files) {
                 ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
                 boolean isRest = REST_XMLS.contains(path.getFileName().toString());
                 boolean isTemplate = TEMPLATE_XMLS.contains(path.getFileName().toString());
-                boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
+                boolean isTemplatedRoute =
+                        TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
                 boolean isBeans = path.getFileName().toString().startsWith("beans");
-                boolean isConfiguration = ROUTE_CONFIGURATION_XMLS.contains(path.getFileName().toString());
-                boolean isRestConfiguration = REST_CONFIGURATION_XMLS.contains(path.getFileName().toString());
+                boolean isConfiguration =
+                        ROUTE_CONFIGURATION_XMLS.contains(path.getFileName().toString());
+                boolean isRestConfiguration =
+                        REST_CONFIGURATION_XMLS.contains(path.getFileName().toString());
                 if (isRest) {
                     RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
                     assertNotNull(rests);
                 } else if (isTemplate) {
-                    RouteTemplatesDefinition templates = parser.parseRouteTemplatesDefinition().orElse(null);
+                    RouteTemplatesDefinition templates =
+                            parser.parseRouteTemplatesDefinition().orElse(null);
                     assertNotNull(templates);
                 } else if (isTemplatedRoute) {
-                    TemplatedRoutesDefinition templatedRoutes = parser.parseTemplatedRoutesDefinition().orElse(null);
+                    TemplatedRoutesDefinition templatedRoutes =
+                            parser.parseTemplatedRoutesDefinition().orElse(null);
                     assertNotNull(templatedRoutes);
                 } else if (isConfiguration) {
-                    RouteConfigurationsDefinition configurations = parser.parseRouteConfigurationsDefinition().orElse(null);
+                    RouteConfigurationsDefinition configurations =
+                            parser.parseRouteConfigurationsDefinition().orElse(null);
                     assertNotNull(configurations);
                 } else if (isRestConfiguration) {
-                    BeansDefinition configurations = parser.parseBeansDefinition().orElse(null);
+                    BeansDefinition configurations =
+                            parser.parseBeansDefinition().orElse(null);
                     assertNotNull(configurations);
                 } else if (!isBeans) {
                     RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
@@ -143,13 +154,12 @@ public class ModelParserTest {
 
     @Test
     public void testSimpleString() throws Exception {
-        RoutesDefinition routes = new ModelParser(
-                new StringReader(
-                        "<routes>"
-                                 + "  <route id='foo'>" + "    <from uri='my:bar'/>" + "    <to uri='mock:res'/>"
-                                 + "  </route>"
-                                 + "</routes>"))
-                .parseRoutesDefinition().orElse(null);
+        RoutesDefinition routes = new ModelParser(new StringReader("<routes>"
+                        + "  <route id='foo'>" + "    <from uri='my:bar'/>" + "    <to uri='mock:res'/>"
+                        + "  </route>"
+                        + "</routes>"))
+                .parseRoutesDefinition()
+                .orElse(null);
 
         assertNotNull(routes);
     }
@@ -157,23 +167,26 @@ public class ModelParserTest {
     @Test
     public void namespaces() throws Exception {
         final String routesXml = "<routes xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                                 + "       xmlns:foo=\"http://camel.apache.org/foo\">\n"
-                                 + "   <route id=\"xpath-route\">\n"
-                                 + "      <from uri=\"direct:test\"/>\n"
-                                 + "      <setBody>\n"
-                                 + "         <xpath resultType=\"java.lang.String\">\n"
-                                 + "            /foo:orders/order[1]/country/text()\n"
-                                 + "         </xpath>\n"
-                                 + "      </setBody>\n"
-                                 + "   </route>\n"
-                                 + "</routes>";
-        final RoutesDefinition routes = new ModelParser(new StringReader(routesXml)).parseRoutesDefinition().orElse(null);
+                + "       xmlns:foo=\"http://camel.apache.org/foo\">\n"
+                + "   <route id=\"xpath-route\">\n"
+                + "      <from uri=\"direct:test\"/>\n"
+                + "      <setBody>\n"
+                + "         <xpath resultType=\"java.lang.String\">\n"
+                + "            /foo:orders/order[1]/country/text()\n"
+                + "         </xpath>\n"
+                + "      </setBody>\n"
+                + "   </route>\n"
+                + "</routes>";
+        final RoutesDefinition routes = new ModelParser(new StringReader(routesXml))
+                .parseRoutesDefinition()
+                .orElse(null);
 
         assertNotNull(routes, "There should be routes");
         final List<RouteDefinition> routeDefinitions = routes.getRoutes();
         assertNotNull(routeDefinitions, "There should be a list of route definitions");
         final RouteDefinition route0 = routeDefinitions.get(0);
-        final SetBodyDefinition setBody = (SetBodyDefinition) route0.getOutputs().get(0);
+        final SetBodyDefinition setBody =
+                (SetBodyDefinition) route0.getOutputs().get(0);
         final XPathExpression xPath = (XPathExpression) setBody.getExpression();
         final Map<String, String> namespaces = xPath.getNamespaces();
         assertNotNull(namespaces);
@@ -350,7 +363,8 @@ public class ModelParserTest {
         String document = sw.toString();
         assertTrue(document.contains("class=\"java.lang.String\""));
 
-        assertSame(beans.getSpringOrBlueprintBeans().get(0).getOwnerDocument(),
+        assertSame(
+                beans.getSpringOrBlueprintBeans().get(0).getOwnerDocument(),
                 beans.getSpringOrBlueprintBeans().get(1).getOwnerDocument());
         assertEquals("s1", beans.getSpringOrBlueprintBeans().get(0).getAttribute("id"));
         assertEquals("s2", beans.getSpringOrBlueprintBeans().get(1).getAttribute("id"));
@@ -370,19 +384,20 @@ public class ModelParserTest {
         final String toFrag2 = "lazyStartProducer=true&amp;";
         final String toFrag3 = "defaultBlockWhenFull=true";
         final String routesXml = "<routes xmlns=\"" + NAMESPACE + "\">\n"
-                                 + "  <route>\n"
-                                 + "    <from uri=\"" + fromFrag1 + "\n"
-                                 + "        " + fromFrag2 + "\n"
-                                 + "        \"/>\n"
-                                 + "    <to uri=\"" + jpaFrag1 + "\n"
-                                 + jpaSpaces + jpaFrag2 + "\"/>\n"
-                                 + "    <to uri=\"" + toFrag1 + "\n"
-                                 + "        " + toFrag2 + "\n"
-                                 + "        " + toFrag3 + "\"/>\n"
-                                 + "  </route>\n"
-                                 + "</routes>";
-        final RoutesDefinition routes
-                = new ModelParser(new StringReader(routesXml), NAMESPACE).parseRoutesDefinition().orElse(null);
+                + "  <route>\n"
+                + "    <from uri=\"" + fromFrag1 + "\n"
+                + "        " + fromFrag2 + "\n"
+                + "        \"/>\n"
+                + "    <to uri=\"" + jpaFrag1 + "\n"
+                + jpaSpaces + jpaFrag2 + "\"/>\n"
+                + "    <to uri=\"" + toFrag1 + "\n"
+                + "        " + toFrag2 + "\n"
+                + "        " + toFrag3 + "\"/>\n"
+                + "  </route>\n"
+                + "</routes>";
+        final RoutesDefinition routes = new ModelParser(new StringReader(routesXml), NAMESPACE)
+                .parseRoutesDefinition()
+                .orElse(null);
         final RouteDefinition route = routes.getRoutes().get(0);
         final FromDefinition from = route.getInput();
 
@@ -403,13 +418,16 @@ public class ModelParserTest {
         Path dir = getResourceFolder();
         Path path = new File(dir.toFile(), "errorHandlerConfiguration.xml").toPath();
         ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
-        RouteConfigurationsDefinition routes = parser.parseRouteConfigurationsDefinition().orElse(null);
+        RouteConfigurationsDefinition routes =
+                parser.parseRouteConfigurationsDefinition().orElse(null);
         assertNotNull(routes);
         assertEquals(1, routes.getRouteConfigurations().size());
 
         RouteConfigurationDefinition cfg = routes.getRouteConfigurations().get(0);
-        assertInstanceOf(DeadLetterChannelDefinition.class, cfg.getErrorHandler().getErrorHandlerType());
-        DeadLetterChannelDefinition dlc = (DeadLetterChannelDefinition) cfg.getErrorHandler().getErrorHandlerType();
+        assertInstanceOf(
+                DeadLetterChannelDefinition.class, cfg.getErrorHandler().getErrorHandlerType());
+        DeadLetterChannelDefinition dlc =
+                (DeadLetterChannelDefinition) cfg.getErrorHandler().getErrorHandlerType();
         assertEquals("mock:dead", dlc.getDeadLetterUri());
         assertTrue(dlc.hasRedeliveryPolicy());
         assertEquals("2", dlc.getRedeliveryPolicy().getMaximumRedeliveries());
@@ -422,13 +440,16 @@ public class ModelParserTest {
         Path dir = getResourceFolder();
         Path path = new File(dir.toFile(), "errorHandlerConfigurationRedeliveryPolicyRef.xml").toPath();
         ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
-        RouteConfigurationsDefinition routes = parser.parseRouteConfigurationsDefinition().orElse(null);
+        RouteConfigurationsDefinition routes =
+                parser.parseRouteConfigurationsDefinition().orElse(null);
         assertNotNull(routes);
         assertEquals(1, routes.getRouteConfigurations().size());
 
         RouteConfigurationDefinition cfg = routes.getRouteConfigurations().get(0);
-        assertInstanceOf(DeadLetterChannelDefinition.class, cfg.getErrorHandler().getErrorHandlerType());
-        DeadLetterChannelDefinition dlc = (DeadLetterChannelDefinition) cfg.getErrorHandler().getErrorHandlerType();
+        assertInstanceOf(
+                DeadLetterChannelDefinition.class, cfg.getErrorHandler().getErrorHandlerType());
+        DeadLetterChannelDefinition dlc =
+                (DeadLetterChannelDefinition) cfg.getErrorHandler().getErrorHandlerType();
         assertEquals("mock:dead", dlc.getDeadLetterUri());
         assertFalse(dlc.hasRedeliveryPolicy());
         assertEquals("myPolicy", dlc.getRedeliveryPolicyRef());

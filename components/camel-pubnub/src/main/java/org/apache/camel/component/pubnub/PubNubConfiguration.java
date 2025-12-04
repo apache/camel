@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pubnub;
 
 import org.apache.camel.RuntimeCamelException;
@@ -28,23 +29,34 @@ public class PubNubConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String channel;
+
     @UriParam(label = "security", secret = true)
     private String publishKey;
+
     @UriParam(label = "security", secret = true)
     private String subscribeKey;
+
     @UriParam(label = "security", secret = true)
     private String secretKey;
+
     @Deprecated
-    @UriParam(label = "security", secret = true,
-              defaultValueNote = "This setting is deprecated because it relates to deprecated Access Manager (PAM V2) and will be removed in the future. Please, migrate to new Access Manager (PAM V3) https://www.pubnub.com/docs/general/resources/migration-guides/pam-v3-migration")
+    @UriParam(
+            label = "security",
+            secret = true,
+            defaultValueNote =
+                    "This setting is deprecated because it relates to deprecated Access Manager (PAM V2) and will be removed in the future. Please, migrate to new Access Manager (PAM V3) https://www.pubnub.com/docs/general/resources/migration-guides/pam-v3-migration")
     private String authKey;
+
     @UriParam(label = "security", defaultValue = "true")
     private boolean secure = true;
+
     @UriParam
     @Metadata(required = true)
     private String uuid;
+
     @UriParam(label = "producer", enums = "HERENOW,GETSTATE,SETSTATE,GETHISTORY,PUBLISH,FIRE")
     private String operation;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean withPresence;
 
@@ -166,5 +178,4 @@ public class PubNubConfiguration implements Cloneable {
     public boolean isWithPresence() {
         return withPresence;
     }
-
 }

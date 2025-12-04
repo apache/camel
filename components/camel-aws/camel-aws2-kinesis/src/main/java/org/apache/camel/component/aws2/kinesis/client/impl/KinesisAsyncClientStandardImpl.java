@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis.client.impl;
 
 import java.net.URI;
@@ -61,16 +62,14 @@ public class KinesisAsyncClientStandardImpl implements KinesisAsyncInternalClien
         var isClientConfigFound = false;
         SdkAsyncHttpClient.Builder httpClientBuilder = null;
 
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            var proxyConfig = ProxyConfiguration
-                    .builder()
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost())
+                && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            var proxyConfig = ProxyConfiguration.builder()
                     .scheme(configuration.getProxyProtocol().toString())
                     .host(configuration.getProxyHost())
                     .port(configuration.getProxyPort())
                     .build();
-            httpClientBuilder = NettyNioAsyncHttpClient
-                    .builder()
-                    .proxyConfiguration(proxyConfig);
+            httpClientBuilder = NettyNioAsyncHttpClient.builder().proxyConfiguration(proxyConfig);
             isClientConfigFound = true;
         }
         if (Objects.nonNull(configuration.getAccessKey()) && Objects.nonNull(configuration.getSecretKey())) {
@@ -97,13 +96,9 @@ public class KinesisAsyncClientStandardImpl implements KinesisAsyncInternalClien
             if (httpClientBuilder == null) {
                 httpClientBuilder = NettyNioAsyncHttpClient.builder();
             }
-            SdkAsyncHttpClient ahc = httpClientBuilder
-                    .buildWithDefaults(AttributeMap
-                            .builder()
-                            .put(
-                                    SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                                    Boolean.TRUE)
-                            .build());
+            SdkAsyncHttpClient ahc = httpClientBuilder.buildWithDefaults(AttributeMap.builder()
+                    .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE)
+                    .build());
             // set created http client to use instead of builder
             clientBuilder.httpClient(ahc);
             clientBuilder.httpClientBuilder(null);

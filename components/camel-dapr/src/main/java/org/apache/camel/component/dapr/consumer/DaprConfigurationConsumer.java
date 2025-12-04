@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.consumer;
 
 import java.util.HashMap;
@@ -115,5 +116,4 @@ public class DaprConfigurationConsumer extends DefaultConsumer {
 
         return exchange;
     }
-
 }

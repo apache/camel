@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.minio.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class MinioServiceFactory {
-    private MinioServiceFactory() {
-
-    }
+    private MinioServiceFactory() {}
 
     public static SimpleTestServiceBuilder<MinioService> builder() {
         return new SimpleTestServiceBuilder<>("minio");
@@ -34,9 +33,7 @@ public final class MinioServiceFactory {
                 .build();
     }
 
-    public static class MinioLocalContainerService extends MinioLocalContainerInfraService implements MinioService {
-    }
+    public static class MinioLocalContainerService extends MinioLocalContainerInfraService implements MinioService {}
 
-    public static class MinioRemoteService extends MinioRemoteInfraService implements MinioService {
-    }
+    public static class MinioRemoteService extends MinioRemoteInfraService implements MinioService {}
 }

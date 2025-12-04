@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
 
@@ -29,8 +32,6 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ExplicitFileEncodingTest extends CamelTestSupport {
     @TempDir
     Path testDirectory;
@@ -38,7 +39,7 @@ public class ExplicitFileEncodingTest extends CamelTestSupport {
     @Test
     public void testISOFileEncoding() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
-        //Data containing characters ÆØÅæøå that differ in utf-8 and iso
+        // Data containing characters ÆØÅæøå that differ in utf-8 and iso
         String name = "\u00c6\u00d8\u00C5\u00e6\u00f8\u00e5";
         order.setName(name);
         order.setAmount(123.45);
@@ -52,7 +53,8 @@ public class ExplicitFileEncodingTest extends CamelTestSupport {
 
         JAXBContext jaxbContext = JAXBContext.newInstance("org.apache.camel.example");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        PurchaseOrder obj = (PurchaseOrder) unmarshaller.unmarshal(testDirectory.resolve("output.txt").toFile());
+        PurchaseOrder obj = (PurchaseOrder)
+                unmarshaller.unmarshal(testDirectory.resolve("output.txt").toFile());
         assertEquals(obj.getName(), name);
     }
 
@@ -70,5 +72,4 @@ public class ExplicitFileEncodingTest extends CamelTestSupport {
             }
         };
     }
-
 }

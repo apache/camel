@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JdbcAggregateNotLostTest extends AbstractJdbcAggregationTestSupport {
 
@@ -41,7 +42,8 @@ public class JdbcAggregateNotLostTest extends AbstractJdbcAggregationTestSupport
 
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
-        String exchangeId = getMockEndpoint("mock:aggregated").getReceivedExchanges().get(0).getExchangeId();
+        String exchangeId =
+                getMockEndpoint("mock:aggregated").getReceivedExchanges().get(0).getExchangeId();
 
         // the exchange should be in the completed repo where we should be able to find it
         Exchange completed = repo.recover(context, exchangeId);
@@ -66,7 +68,8 @@ public class JdbcAggregateNotLostTest extends AbstractJdbcAggregationTestSupport
 
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
+                        .completionSize(5)
+                        .aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         // throw an exception to fail, which we then will loose this message

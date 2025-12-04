@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirCapabilities} APIs. The class source won't be generated
  * again if the generator MOJO finds it under src/test/java.
@@ -39,12 +40,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirCapabilitiesIT.class);
-    private static final String PATH_PREFIX
-            = FhirApiCollection.getCollection().getApiName(FhirCapabilitiesApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirCapabilitiesApiMethod.class)
+            .getName();
 
     @Test
     public void testOfType() {
-        org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OF_TYPE", CapabilityStatement.class);
+        org.hl7.fhir.instance.model.api.IBaseConformance result =
+                requestBody("direct://OF_TYPE", CapabilityStatement.class);
 
         LOG.debug("ofType: {}", result);
         assertNotNull(result, "ofType result");
@@ -56,8 +59,8 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(ExtraParameters.ENCODE_JSON.getHeaderName(), Boolean.TRUE);
 
-        org.hl7.fhir.instance.model.api.IBaseConformance result
-                = requestBodyAndHeaders("direct://OF_TYPE", CapabilityStatement.class, headers);
+        org.hl7.fhir.instance.model.api.IBaseConformance result =
+                requestBodyAndHeaders("direct://OF_TYPE", CapabilityStatement.class, headers);
 
         LOG.debug("ofType: {}", result);
         assertNotNull(result, "ofType result");
@@ -69,9 +72,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for ofType
-                from("direct://OF_TYPE")
-                        .to("fhir://" + PATH_PREFIX + "/ofType?inBody=type&log=true");
-
+                from("direct://OF_TYPE").to("fhir://" + PATH_PREFIX + "/ofType?inBody=type&log=true");
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.nova;
+
+import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_NOVA;
 
 import org.apache.camel.Category;
 import org.apache.camel.Producer;
@@ -28,21 +31,27 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
-import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_NOVA;
-
 /**
  * Access OpenStack to manage compute resources.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_NOVA, title = "OpenStack Nova", syntax = "openstack-nova:host",
-             category = { Category.CONTAINER }, producerOnly = true, headersClass = NovaConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = SCHEME_NOVA,
+        title = "OpenStack Nova",
+        syntax = "openstack-nova:host",
+        category = {Category.CONTAINER},
+        producerOnly = true,
+        headersClass = NovaConstants.class)
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "flavors,servers,keypairs")
     @Metadata(required = true)
     String subsystem;
+
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriParam(defaultValue = "default")
     private String domain = "default";
 

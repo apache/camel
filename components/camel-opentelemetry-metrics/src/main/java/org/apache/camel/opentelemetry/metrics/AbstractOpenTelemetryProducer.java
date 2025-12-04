@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_ATTRIBUTES;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_DESCRIPTION;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_PREFIX;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,13 +36,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_ATTRIBUTES;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_DESCRIPTION;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_NAME;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_PREFIX;
-
-abstract public class AbstractOpenTelemetryProducer<T> extends DefaultProducer {
+public abstract class AbstractOpenTelemetryProducer<T> extends DefaultProducer {
 
     private static final String HEADER_PATTERN = HEADER_PREFIX + "*";
     private Attributes attributes;
@@ -64,11 +65,13 @@ abstract public class AbstractOpenTelemetryProducer<T> extends DefaultProducer {
         String finalMetricsDescription = getStringHeader(in, HEADER_METRIC_DESCRIPTION, defaultMetricsDescription);
 
         Map<AttributeKey<?>, Object> map = new HashMap<>(attributes.asMap());
-        map.putAll(getAttributesHeader(in, HEADER_METRIC_ATTRIBUTES, Attributes.empty()).asMap());
+        map.putAll(getAttributesHeader(in, HEADER_METRIC_ATTRIBUTES, Attributes.empty())
+                .asMap());
 
         AttributesBuilder ab = Attributes.builder();
         for (Map.Entry<AttributeKey<?>, Object> entry : map.entrySet()) {
-            ab.put(simple(exchange, entry.getKey().toString(), String.class),
+            ab.put(
+                    simple(exchange, entry.getKey().toString(), String.class),
                     simple(exchange, entry.getValue().toString(), String.class));
         }
         ab.put(CAMEL_CONTEXT_ATTRIBUTE, getEndpoint().getCamelContext().getName());
@@ -88,8 +91,7 @@ abstract public class AbstractOpenTelemetryProducer<T> extends DefaultProducer {
 
     protected abstract T getInstrument(String name, String description);
 
-    protected abstract void doProcess(
-            Exchange exchange, String metricsName, T meter, Attributes attributes);
+    protected abstract void doProcess(Exchange exchange, String metricsName, T meter, Attributes attributes);
 
     protected <C> C simple(Exchange exchange, String expression, Class<C> clazz) {
         if (expression != null) {

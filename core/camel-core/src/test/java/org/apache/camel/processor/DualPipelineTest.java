@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,8 +25,6 @@ import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DualPipelineTest extends ContextTestSupport {
 
@@ -41,22 +42,28 @@ public class DualPipelineTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // now check the route
-        MulticastDefinition mc
-                = assertIsInstanceOf(MulticastDefinition.class, context.getRouteDefinitions().get(0).getOutputs().get(0));
-        PipelineDefinition pd1 = assertIsInstanceOf(PipelineDefinition.class, mc.getOutputs().get(0));
-        PipelineDefinition pd2 = assertIsInstanceOf(PipelineDefinition.class, mc.getOutputs().get(1));
+        MulticastDefinition mc = assertIsInstanceOf(
+                MulticastDefinition.class,
+                context.getRouteDefinitions().get(0).getOutputs().get(0));
+        PipelineDefinition pd1 =
+                assertIsInstanceOf(PipelineDefinition.class, mc.getOutputs().get(0));
+        PipelineDefinition pd2 =
+                assertIsInstanceOf(PipelineDefinition.class, mc.getOutputs().get(1));
 
         assertEquals(3, pd1.getOutputs().size());
         assertEquals(4, pd2.getOutputs().size());
 
-        SendDefinition<?> send1 = assertIsInstanceOf(SendDefinition.class, pd1.getOutputs().get(2));
+        SendDefinition<?> send1 =
+                assertIsInstanceOf(SendDefinition.class, pd1.getOutputs().get(2));
         assertEquals("mock:b", send1.getUri());
 
-        SendDefinition<?> send2 = assertIsInstanceOf(SendDefinition.class, pd2.getOutputs().get(3));
+        SendDefinition<?> send2 =
+                assertIsInstanceOf(SendDefinition.class, pd2.getOutputs().get(3));
         assertEquals("mock:e", send2.getUri());
 
-        SendDefinition<?> send
-                = assertIsInstanceOf(SendDefinition.class, context.getRouteDefinitions().get(0).getOutputs().get(1));
+        SendDefinition<?> send = assertIsInstanceOf(
+                SendDefinition.class,
+                context.getRouteDefinitions().get(0).getOutputs().get(1));
         assertEquals("mock:result", send.getUri());
     }
 
@@ -65,9 +72,20 @@ public class DualPipelineTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").multicast().pipeline().to("mock:a").setBody(constant("After A")).to("mock:b").end() // pipeline
-                        .pipeline().to("mock:c").setBody(constant("After C")).to("mock:d").to("mock:e").end() // pipeline
-                        .end()// multicast
+                from("direct:start")
+                        .multicast()
+                        .pipeline()
+                        .to("mock:a")
+                        .setBody(constant("After A"))
+                        .to("mock:b")
+                        .end() // pipeline
+                        .pipeline()
+                        .to("mock:c")
+                        .setBody(constant("After C"))
+                        .to("mock:d")
+                        .to("mock:e")
+                        .end() // pipeline
+                        .end() // multicast
                         .to("mock:result");
             }
         };

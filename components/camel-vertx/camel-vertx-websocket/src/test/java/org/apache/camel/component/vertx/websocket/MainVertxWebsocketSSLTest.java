@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -39,8 +40,7 @@ public class MainVertxWebsocketSSLTest extends VertxWebSocketTestSupport {
         main.configure().addRoutesBuilder(new RouteBuilder() {
 
             public void configure() {
-                from("direct:start")
-                        .toF("vertx-websocket:localhost:%d/echo?", port);
+                from("direct:start").toF("vertx-websocket:localhost:%d/echo?", port);
 
                 fromF("vertx-websocket:localhost:%d/echo?", port)
                         .setBody(simple("Hello ${body}"))
@@ -62,6 +62,5 @@ public class MainVertxWebsocketSSLTest extends VertxWebSocketTestSupport {
     }
 
     @Override
-    protected void startCamelContext() {
-    }
+    protected void startCamelContext() {}
 }

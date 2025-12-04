@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class PassThroughJmsKeyFormatStrategyTest {
 
@@ -42,5 +43,4 @@ public class PassThroughJmsKeyFormatStrategyTest {
         assertEquals("Content-Type", strategy.decodeKey("Content-Type"));
         assertEquals("My-Header.You", strategy.decodeKey("My-Header.You"));
     }
-
 }

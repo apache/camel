@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import java.util.HashMap;
@@ -53,5 +54,4 @@ public class GroovyScriptingLanguageTest extends CamelTestSupport {
         String text = slan.evaluate("resource:classpath:mygroovy.groovy", bindings, String.class);
         Assertions.assertEquals("The result is 6", text);
     }
-
 }

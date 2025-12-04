@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import java.io.InputStream;
@@ -35,19 +36,20 @@ public class JsltVariablesTest extends CamelTestSupport {
     @Test
     public void testWithVariables() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/withVariables/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jslt/withVariables/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("published", "2020-05-26T16:00:00+02:00");
         headers.put("type", "Controller");
-        //add an infinite recursion value, cannot be serialized with Jackson
+        // add an infinite recursion value, cannot be serialized with Jackson
         headers.put("infinite", createInfiniteRecursionObject());
-        sendBody("direct://start",
+        sendBody(
+                "direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/withVariables/input.json"),
                 headers);
@@ -58,12 +60,13 @@ public class JsltVariablesTest extends CamelTestSupport {
     @Test
     public void testWithVariablesAndProperties() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/withVariables/outputWithProperties.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context,
+                                        "org/apache/camel/component/jslt/withVariables/outputWithProperties.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
         InputStream body = ResourceHelper.resolveMandatoryResourceAsInputStream(
                 context, "org/apache/camel/component/jslt/withVariables/input.json");
@@ -89,7 +92,8 @@ public class JsltVariablesTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("direct://startWithProperties")
-                        .to("jslt:org/apache/camel/component/jslt/withVariables/transformationWithProperties.json?allowContextMapAll=true")
+                        .to(
+                                "jslt:org/apache/camel/component/jslt/withVariables/transformationWithProperties.json?allowContextMapAll=true")
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.producer;
 
 import java.util.Map;
@@ -31,9 +32,16 @@ public class DummyRestProducerFactory implements RestProducerFactory {
 
     @Override
     public Producer createProducer(
-            CamelContext camelContext, String host,
-            String verb, String basePath, final String uriTemplate, String queryParameters,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) {
+            CamelContext camelContext,
+            String host,
+            String verb,
+            String basePath,
+            final String uriTemplate,
+            String queryParameters,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters) {
 
         // use a dummy endpoint
         Endpoint endpoint = camelContext.getEndpoint("stub:dummy");

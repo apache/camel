@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
@@ -26,9 +30,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -36,10 +37,13 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/joes", new DrinkAuthValidationHandler(GET.name(), null, null, "drink")).create();
+                .register("/joes", new DrinkAuthValidationHandler(GET.name(), null, null, "drink"))
+                .create();
 
         localServer.start();
     }
@@ -73,23 +77,26 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
                 // according to the RFC 7230, so its support has been removed
 
                 from("direct:joes")
-                        .toD("http://localhost:" + localServer.getLocalPort()
-                             + "/joes?authMethod=Basic&authUsername={{myUsername}}&authPassword={{myPassword}}&authenticationPreemptive=true&throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD(
+                                "http://localhost:" + localServer.getLocalPort()
+                                        + "/joes?authMethod=Basic&authUsername={{myUsername}}&authPassword={{myPassword}}&authenticationPreemptive=true&throwExceptionOnFailure=false&drink=${header.drink}");
             }
         };
     }
 
     @Test
     public void testDynamicAware() {
-        String out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
+        String out =
+                fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
         assertEquals("Drinking wine", out);
 
         // and there should be one http endpoint
-        long count = context.getEndpoints().stream().filter(e -> e instanceof HttpEndpoint).count();
+        long count = context.getEndpoints().stream()
+                .filter(e -> e instanceof HttpEndpoint)
+                .count();
         assertEquals(1, count);
 
         // we only have one direct and one http
         assertEquals(2, context.getEndpointRegistry().size());
     }
-
 }

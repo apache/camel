@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.releases.helsinki;
+
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CREATE;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_DELETE;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_MODIFY;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_RETRIEVE;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_UPDATE;
 
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.MediaType;
@@ -26,12 +33,6 @@ import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
 import org.apache.camel.component.servicenow.ServiceNowParams;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CREATE;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_DELETE;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_MODIFY;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_RETRIEVE;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_UPDATE;
 
 class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
     HelsinkiServiceNowTableProcessor(ServiceNowEndpoint endpoint) {

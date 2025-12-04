@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.spring.SpringTestSupport;
@@ -23,16 +28,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class SpringFilterNoChildTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        try (ClassPathXmlApplicationContext x
-                = new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/filterNoChild.xml")) {
+        try (ClassPathXmlApplicationContext x =
+                new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/filterNoChild.xml")) {
             fail("Should thrown an exception");
         } catch (Exception e) {
             FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e);
@@ -54,5 +55,4 @@ public class SpringFilterNoChildTest extends SpringTestSupport {
         // No op test: we test that the context is setup properly.
         assertTrue(true);
     }
-
 }

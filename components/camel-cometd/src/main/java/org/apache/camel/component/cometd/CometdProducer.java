@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
 
 import org.apache.camel.Exchange;
@@ -50,7 +51,11 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         // should probably look into synchronization for this.
         if (service == null) {
             service = new ProducerService(
-                    getBayeux(), new CometdBinding(bayeux), endpoint.getPath(), this, getEndpoint().isDisconnectLocalSession());
+                    getBayeux(),
+                    new CometdBinding(bayeux),
+                    endpoint.getPath(),
+                    this,
+                    getEndpoint().isDisconnectLocalSession());
         }
     }
 
@@ -89,8 +94,12 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         private final CometdBinding binding;
         private final boolean disconnectLocalSession;
 
-        public ProducerService(BayeuxServer bayeux, CometdBinding cometdBinding, String channel,
-                               CometdProducer producer, boolean disconnectLocalSession) {
+        public ProducerService(
+                BayeuxServer bayeux,
+                CometdBinding cometdBinding,
+                String channel,
+                CometdProducer producer,
+                boolean disconnectLocalSession) {
             super(bayeux, channel);
             this.producer = producer;
             this.binding = cometdBinding;
@@ -106,10 +115,9 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
             try {
                 if (channel != null) {
                     logDelivery(exchange, channel);
-                    ServerMessage.Mutable mutable = binding.createCometdMessage(channel, serverSession,
-                            exchange.getIn());
-                    channel.publish(serverSession, mutable, new org.cometd.bayeux.Promise<>() {
-                    });
+                    ServerMessage.Mutable mutable =
+                            binding.createCometdMessage(channel, serverSession, exchange.getIn());
+                    channel.publish(serverSession, mutable, new org.cometd.bayeux.Promise<>() {});
                 }
             } finally {
                 if (disconnectLocalSession && serverSession.isLocalSession()) {
@@ -121,8 +129,8 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
 
         private void logDelivery(Exchange exchange, ServerChannel channel) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace(String.format("Delivering to clients %s path: %s exchange: %s",
-                        channel.getSubscribers(), channel, exchange));
+                LOG.trace(String.format(
+                        "Delivering to clients %s path: %s exchange: %s", channel.getSubscribers(), channel, exchange));
             }
         }
     }

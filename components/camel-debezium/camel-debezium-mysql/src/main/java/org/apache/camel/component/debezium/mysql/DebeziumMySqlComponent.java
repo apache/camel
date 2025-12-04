@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.mysql;
 
 import org.apache.camel.CamelContext;
@@ -27,10 +28,10 @@ import org.apache.camel.spi.annotations.Component;
 public final class DebeziumMySqlComponent extends DebeziumComponent<MySqlConnectorEmbeddedDebeziumConfiguration> {
 
     @Metadata
-    private MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
+    private MySqlConnectorEmbeddedDebeziumConfiguration configuration =
+            new MySqlConnectorEmbeddedDebeziumConfiguration();
 
-    public DebeziumMySqlComponent() {
-    }
+    public DebeziumMySqlComponent() {}
 
     public DebeziumMySqlComponent(final CamelContext context) {
         super(context);

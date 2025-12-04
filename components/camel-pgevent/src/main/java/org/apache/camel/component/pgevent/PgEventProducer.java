@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pgevent;
 
 import java.sql.CallableStatement;
@@ -73,5 +74,4 @@ public class PgEventProducer extends DefaultProducer {
             dbConnection.close();
         }
     }
-
 }

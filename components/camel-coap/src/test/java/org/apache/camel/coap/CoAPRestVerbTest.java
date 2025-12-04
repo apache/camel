@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,15 +26,15 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CoAPRestVerbTest extends CoAPTestSupport {
 
     @Test
     void testGetAll() throws Exception {
         CoapClient client = createClient("/users");
         CoapResponse response = client.get();
-        assertEquals("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]", response.getResponseText());
+        assertEquals(
+                "[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]",
+                response.getResponseText());
     }
 
     @Test
@@ -86,17 +89,21 @@ public class CoAPRestVerbTest extends CoAPTestSupport {
             public void configure() {
                 restConfiguration().component("coap").host("localhost").port(PORT);
 
-                rest()
-                        .get("/users").to("direct:users")
-                        .get("/users/{id}").to("direct:id")
-                        .post("/users").to("mock:create")
-                        .put("/users/{id}").to("mock:update")
-                        .delete("/users/{id}").to("mock:delete");
+                rest().get("/users")
+                        .to("direct:users")
+                        .get("/users/{id}")
+                        .to("direct:id")
+                        .post("/users")
+                        .to("mock:create")
+                        .put("/users/{id}")
+                        .to("mock:update")
+                        .delete("/users/{id}")
+                        .to("mock:delete");
 
-                from("direct:users").transform()
+                from("direct:users")
+                        .transform()
                         .constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]");
-                from("direct:id").transform()
-                        .simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }");
+                from("direct:id").transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }");
             }
         };
     }

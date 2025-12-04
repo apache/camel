@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.file;
 
 import org.apache.camel.Endpoint;
@@ -29,10 +30,13 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class SpringFileAntPathMatcherFileFilterTest extends SpringRunWithTestSupport {
     protected String expectedBody = "Godday World";
+
     @Autowired
     protected ProducerTemplate template;
+
     @EndpointInject("ref:myFileEndpoint")
     protected Endpoint inputFile;
+
     @EndpointInject("mock:result")
     protected MockEndpoint result;
 
@@ -48,5 +52,4 @@ public class SpringFileAntPathMatcherFileFilterTest extends SpringRunWithTestSup
 
         result.assertIsSatisfied();
     }
-
 }

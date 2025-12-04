@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
 
 import java.io.InputStream;
@@ -70,14 +71,19 @@ public class EnricherAggregateStreamingTest extends ContextTestSupport {
                 StreamCachingStrategy scs = getContext().getStreamCachingStrategy();
                 scs.setSpoolThreshold(1L);
                 scs.setSpoolDirectory(testDirectory().toFile());
-                from("direct:start").process(new StreamProcessor()).enrich("direct:foo", new MyAggregationStrategy(), false)
+                from("direct:start")
+                        .process(new StreamProcessor())
+                        .enrich("direct:foo", new MyAggregationStrategy(), false)
                         .to("mock:result");
 
                 from("direct:foo").bean(new MyProcessor());
 
-                from("direct:startSync").process(new StreamProcessor()).enrich().simple("bean:b1")
-                        .aggregationStrategy(new MyAggregationStrategy()).to("mock:result");
-
+                from("direct:startSync")
+                        .process(new StreamProcessor())
+                        .enrich()
+                        .simple("bean:b1")
+                        .aggregationStrategy(new MyAggregationStrategy())
+                        .to("mock:result");
             }
         };
     }
@@ -121,5 +127,4 @@ public class EnricherAggregateStreamingTest extends ContextTestSupport {
             return oldExchange;
         }
     }
-
 }

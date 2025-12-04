@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hashicorp.vault;
 
 import org.apache.camel.RuntimeCamelException;
@@ -28,21 +29,29 @@ public class HashicorpVaultConfiguration implements Cloneable {
 
     @UriPath
     private String secretsEngine;
+
     @UriParam
     @Metadata(autowired = true)
     private VaultTemplate vaultTemplate;
+
     @UriParam
     private String host;
+
     @UriParam(defaultValue = "8200")
     private String port = "8200";
+
     @UriParam(defaultValue = "https")
     private String scheme = "https";
+
     @UriParam
     private String secretPath;
+
     @UriParam(label = "security", secret = true)
     private String token;
+
     @UriParam
     private boolean cloud;
+
     @UriParam
     private String namespace;
 

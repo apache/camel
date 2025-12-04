@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,5 +24,4 @@ public abstract class MyBasePortRouteBuilder extends RouteBuilder {
     public int getNextPort() {
         return 8080;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.w3c.dom.Document;
 
@@ -25,9 +29,6 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelSpringTestSupport {
     /*
@@ -41,10 +42,11 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelSpringTestSu
      * will be defined within the payload (and everything works fine).
      */
 
-    protected static final String RESPONSE_MESSAGE
-            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
-              + "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse></soap:Body></soap:Envelope>";
-    protected static final String REQUEST_PAYLOAD = "<ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"/>";
+    protected static final String RESPONSE_MESSAGE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
+                    + "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse></soap:Body></soap:Envelope>";
+    protected static final String REQUEST_PAYLOAD =
+            "<ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"/>";
 
     // Don't remove this, it initializes the CXFTestSupport class
     static {

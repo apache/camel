@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.seda;
 
 import java.io.Serializable;
@@ -69,5 +70,4 @@ public class HazelcastSedaProducer extends DefaultAsyncProducer {
         // finally copy headers
         HazelcastComponentHelper.copyHeaders(exchange);
     }
-
 }

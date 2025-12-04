@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 /*
@@ -29,8 +30,8 @@ public class MllpAcknowledgementGenerationException extends MllpException {
         super(message, hl7MessageBytes, logPhi);
     }
 
-    public MllpAcknowledgementGenerationException(String message, byte[] hl7MessageBytes, Throwable cause, boolean logPhi) {
+    public MllpAcknowledgementGenerationException(
+            String message, byte[] hl7MessageBytes, Throwable cause, boolean logPhi) {
         super(message, hl7MessageBytes, cause, logPhi);
     }
-
 }

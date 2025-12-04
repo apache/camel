@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.discovery;
 
 import java.util.Map;
@@ -29,13 +30,12 @@ public class WatsonDiscoveryComponent extends DefaultComponent {
     @Metadata
     private WatsonDiscoveryConfiguration configuration = new WatsonDiscoveryConfiguration();
 
-    public WatsonDiscoveryComponent() {
-    }
+    public WatsonDiscoveryComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        WatsonDiscoveryConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new WatsonDiscoveryConfiguration();
+        WatsonDiscoveryConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new WatsonDiscoveryConfiguration();
 
         WatsonDiscoveryEndpoint endpoint = new WatsonDiscoveryEndpoint(uri, this, configuration);
         endpoint.setLabel(remaining);

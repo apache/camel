@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import java.util.Map;
@@ -44,7 +45,8 @@ public class Ddb2Component extends HealthCheckComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Table name must be specified.");
         }
-        Ddb2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Ddb2Configuration();
+        Ddb2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new Ddb2Configuration();
         configuration.setTableName(remaining);
         Ddb2Endpoint endpoint = new Ddb2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.consumer.integration.support;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -53,8 +56,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
     protected static final KubernetesClient CLIENT = new KubernetesClientBuilder().build();
 
@@ -71,9 +72,19 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
     public static void createNamespaces() {
         ns1 = "kubernetesitcase-" + ThreadLocalRandom.current().nextInt(0, 100000);
         ns2 = "kubernetesitcase-" + ThreadLocalRandom.current().nextInt(0, 100000);
-        CLIENT.namespaces().resource(new NamespaceBuilder().withNewMetadata().withName(ns1).endMetadata().build())
+        CLIENT.namespaces()
+                .resource(new NamespaceBuilder()
+                        .withNewMetadata()
+                        .withName(ns1)
+                        .endMetadata()
+                        .build())
                 .serverSideApply();
-        CLIENT.namespaces().resource(new NamespaceBuilder().withNewMetadata().withName(ns2).endMetadata().build())
+        CLIENT.namespaces()
+                .resource(new NamespaceBuilder()
+                        .withNewMetadata()
+                        .withName(ns2)
+                        .endMetadata()
+                        .build())
                 .serverSideApply();
     }
 
@@ -92,7 +103,10 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
         Map<String, String> data = Map.of("test1", "test1");
 
         ConfigMap cm = new ConfigMapBuilder()
-                .withNewMetadata().withName(name).withLabels(labels).endMetadata()
+                .withNewMetadata()
+                .withName(name)
+                .withLabels(labels)
+                .endMetadata()
                 .withData(data)
                 .build();
 
@@ -102,7 +116,10 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
 
     protected void createDeployment(String namespace, String name, Map<String, String> labels) {
         Deployment deployment = new DeploymentBuilder()
-                .withNewMetadata().withName(name).withLabels(labels).endMetadata()
+                .withNewMetadata()
+                .withName(name)
+                .withLabels(labels)
+                .endMetadata()
                 .withNewSpec()
                 .withReplicas(0)
                 .withNewSelector()
@@ -124,15 +141,24 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
                 .build();
 
         CLIENT.apps().deployments().inNamespace(namespace).resource(deployment).serverSideApply();
-        assertNotNull(CLIENT.apps().deployments().inNamespace(namespace).withName(name).get());
+        assertNotNull(CLIENT.apps()
+                .deployments()
+                .inNamespace(namespace)
+                .withName(name)
+                .get());
     }
 
     protected void createEvent(String namespace, String name, Map<String, String> labels) {
         Event event = new EventBuilder()
-                .withNewMetadata().withName(name).withLabels(labels).endMetadata()
+                .withNewMetadata()
+                .withName(name)
+                .withLabels(labels)
+                .endMetadata()
                 .withReason("Reason")
                 .withType("Normal")
-                .withEventTime(new MicroTimeBuilder().withTime("2025-01-01T00:00:00.000000Z").build())
+                .withEventTime(new MicroTimeBuilder()
+                        .withTime("2025-01-01T00:00:00.000000Z")
+                        .build())
                 .withNewRegarding()
                 .withKind("Pod")
                 .withName("test")
@@ -144,12 +170,19 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
                 .build();
 
         CLIENT.events().v1().events().inNamespace(namespace).resource(event).serverSideApply();
-        assertNotNull(CLIENT.events().v1().events().inNamespace(namespace).withName(name).get());
+        assertNotNull(CLIENT.events()
+                .v1()
+                .events()
+                .inNamespace(namespace)
+                .withName(name)
+                .get());
     }
 
     protected void createHPA(String namespace, String name, Map<String, String> labels) {
         HorizontalPodAutoscaler hpa = new HorizontalPodAutoscalerBuilder()
-                .withNewMetadata().withName(name).withLabels(labels)
+                .withNewMetadata()
+                .withName(name)
+                .withLabels(labels)
                 .endMetadata()
                 .withNewSpec()
                 .withMinReplicas(1)
@@ -163,13 +196,25 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
                 .endSpec()
                 .build();
 
-        CLIENT.autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespace).resource(hpa).serverSideApply();
-        assertNotNull(CLIENT.autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespace).withName(name).get());
+        CLIENT.autoscaling()
+                .v1()
+                .horizontalPodAutoscalers()
+                .inNamespace(namespace)
+                .resource(hpa)
+                .serverSideApply();
+        assertNotNull(CLIENT.autoscaling()
+                .v1()
+                .horizontalPodAutoscalers()
+                .inNamespace(namespace)
+                .withName(name)
+                .get());
     }
 
     protected void createNamespace(String name, Map<String, String> labels) {
         Namespace namespace = new NamespaceBuilder()
-                .withNewMetadata().withName(name).withLabels(labels)
+                .withNewMetadata()
+                .withName(name)
+                .withLabels(labels)
                 .endMetadata()
                 .build();
 
@@ -179,7 +224,10 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
 
     protected void createPod(String namespace, String name, Map<String, String> labels) {
         Pod pod = new PodBuilder()
-                .withNewMetadata().withName(name).withLabels(labels).endMetadata()
+                .withNewMetadata()
+                .withName(name)
+                .withLabels(labels)
+                .endMetadata()
                 .withNewSpec()
                 .withRestartPolicy("Never")
                 .addNewContainer()
@@ -200,7 +248,10 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
 
     protected void createReplicationController(String namespace, String name, Map<String, String> labels) {
         ReplicationController rc = new ReplicationControllerBuilder()
-                .withNewMetadata().withName(name).withLabels(labels).endMetadata()
+                .withNewMetadata()
+                .withName(name)
+                .withLabels(labels)
+                .endMetadata()
                 .withNewSpec()
                 .withReplicas(0)
                 .withSelector(Map.of("key", "value"))
@@ -218,12 +269,18 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
                 .endSpec()
                 .build();
         CLIENT.replicationControllers().inNamespace(namespace).resource(rc).serverSideApply();
-        assertNotNull(CLIENT.replicationControllers().inNamespace(namespace).withName(name).get());
+        assertNotNull(CLIENT.replicationControllers()
+                .inNamespace(namespace)
+                .withName(name)
+                .get());
     }
 
     protected void createService(String namespace, String name, Map<String, String> labels) {
         Service svc = new ServiceBuilder()
-                .withNewMetadata().withName(name).withLabels(labels).endMetadata()
+                .withNewMetadata()
+                .withName(name)
+                .withLabels(labels)
+                .endMetadata()
                 .withNewSpec()
                 .addNewPort()
                 .withProtocol("TCP")
@@ -244,7 +301,9 @@ public class KubernetesConsumerTestSupport extends KubernetesTestSupport {
         public void process(Exchange exchange) {
             final Message in = exchange.getIn();
             HasMetadata res = in.getBody(HasMetadata.class);
-            StringBuilder body = new StringBuilder(res.getKind()).append(" ").append(res.getMetadata().getName());
+            StringBuilder body = new StringBuilder(res.getKind())
+                    .append(" ")
+                    .append(res.getMetadata().getName());
             String ns = res.getMetadata().getNamespace();
             if (ns != null) {
                 body.append(" ").append(ns);

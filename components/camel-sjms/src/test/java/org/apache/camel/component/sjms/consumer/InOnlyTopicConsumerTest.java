@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +24,8 @@ import org.junit.jupiter.api.Test;
 
 public class InOnlyTopicConsumerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "sjms:topic:in.only.topic.consumer.test.InOnlyTopicConsumerTest";
+    private static final String TEST_DESTINATION_NAME =
+            "sjms:topic:in.only.topic.consumer.test.InOnlyTopicConsumerTest";
 
     @Test
     public void testSynchronous() throws Exception {
@@ -36,7 +38,6 @@ public class InOnlyTopicConsumerTest extends JmsTestSupport {
         template.sendBody("direct:start", expectedBody);
 
         mock.assertIsSatisfied();
-
     }
 
     /**
@@ -48,11 +49,9 @@ public class InOnlyTopicConsumerTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to(TEST_DESTINATION_NAME);
+                from("direct:start").to(TEST_DESTINATION_NAME);
 
-                from(TEST_DESTINATION_NAME)
-                        .to("log:test.log.1?showBody=true", "mock:result");
+                from(TEST_DESTINATION_NAME).to("log:test.log.1?showBody=true", "mock:result");
             }
         };
     }

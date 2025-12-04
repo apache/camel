@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcAggregateTimeoutCompletionRestartTest extends AbstractJdbcAggregationTestSupport {
 
@@ -58,7 +59,8 @@ public class JdbcAggregateTimeoutCompletionRestartTest extends AbstractJdbcAggre
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         // use our created jdbc repo as aggregation repository
-                        .completionTimeout(3000).aggregationRepository(repo)
+                        .completionTimeout(3000)
+                        .aggregationRepository(repo)
                         .to("mock:aggregated");
             }
         };

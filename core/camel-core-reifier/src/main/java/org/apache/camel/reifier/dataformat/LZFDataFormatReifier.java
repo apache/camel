@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -32,5 +33,4 @@ public class LZFDataFormatReifier extends DataFormatReifier<LZFDataFormat> {
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("usingParallelCompression", definition.getUsingParallelCompression());
     }
-
 }

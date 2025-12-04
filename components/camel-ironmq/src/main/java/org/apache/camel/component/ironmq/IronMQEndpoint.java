@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq;
 
 import java.net.MalformedURLException;
@@ -35,8 +36,13 @@ import org.slf4j.LoggerFactory;
  * Send and receive messages to/from <a href="https://www.iron.io/">IronMQ</a> an elastic and durable hosted message
  * queue as a service.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ",
-             category = { Category.CLOUD, Category.MESSAGING }, headersClass = IronMQConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = "ironmq",
+        syntax = "ironmq:queueName",
+        title = "IronMQ",
+        category = {Category.CLOUD, Category.MESSAGING},
+        headersClass = IronMQConstants.class)
 public class IronMQEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(IronMQEndpoint.class);
@@ -117,5 +123,4 @@ public class IronMQEndpoint extends ScheduledPollEndpoint implements EndpointSer
     public IronMQConfiguration getConfiguration() {
         return configuration;
     }
-
 }

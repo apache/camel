@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 
@@ -24,9 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleConsumeStreamingIT extends SftpServerTestSupport {
 
     @Test
@@ -55,9 +58,11 @@ public class SftpSimpleConsumeStreamingIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&knownHostsFile="
-                     + service.getKnownHostsFile()).routeId("foo")
-                        .noAutoStartup().to("mock:result");
+                                + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&knownHostsFile="
+                                + service.getKnownHostsFile())
+                        .routeId("foo")
+                        .noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

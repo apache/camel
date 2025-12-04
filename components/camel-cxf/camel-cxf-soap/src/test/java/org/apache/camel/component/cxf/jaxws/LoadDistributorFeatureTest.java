@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +32,18 @@ import org.apache.cxf.frontend.ServerFactoryBean;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class LoadDistributorFeatureTest {
 
     private static int port1 = CXFTestSupport.getPort1();
     private static int port2 = CXFTestSupport.getPort2();
     private static int port3 = CXFTestSupport.getPort3();
 
-    private static final String SERVICE_ADDRESS_1 = "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service1";
-    private static final String SERVICE_ADDRESS_2 = "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service2";
-    private static final String PAYLOAD_PROXY_ADDRESS = "http://localhost:" + port2 + "/LoadDistributorFeatureTest/proxy";
+    private static final String SERVICE_ADDRESS_1 =
+            "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service1";
+    private static final String SERVICE_ADDRESS_2 =
+            "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service2";
+    private static final String PAYLOAD_PROXY_ADDRESS =
+            "http://localhost:" + port2 + "/LoadDistributorFeatureTest/proxy";
     private static final String POJO_PROXY_ADDRESS = "http://localhost:" + port3 + "/LoadDistributorFeatureTest/proxy";
 
     private DefaultCamelContext context1;
@@ -82,11 +86,11 @@ public class LoadDistributorFeatureTest {
 
     private void startRoutePayload() throws Exception {
 
-        String proxy = "cxf://" + PAYLOAD_PROXY_ADDRESS + "?wsdlURL=" + SERVICE_ADDRESS_1 + "?wsdl"
-                       + "&dataFormat=PAYLOAD";
+        String proxy =
+                "cxf://" + PAYLOAD_PROXY_ADDRESS + "?wsdlURL=" + SERVICE_ADDRESS_1 + "?wsdl" + "&dataFormat=PAYLOAD";
 
-        String backend = "cxf://" + SERVICE_ADDRESS_1 + "?wsdlURL=" + SERVICE_ADDRESS_1 + "?wsdl"
-                         + "&dataFormat=PAYLOAD";
+        String backend =
+                "cxf://" + SERVICE_ADDRESS_1 + "?wsdlURL=" + SERVICE_ADDRESS_1 + "?wsdl" + "&dataFormat=PAYLOAD";
 
         context1 = new DefaultCamelContext();
         startRoute(context1, proxy, backend);
@@ -94,11 +98,11 @@ public class LoadDistributorFeatureTest {
 
     private void startRoutePojo() throws Exception {
 
-        String proxy = "cxf://" + POJO_PROXY_ADDRESS + "?serviceClass=" + "org.apache.camel.component.cxf.jaxws.HelloService"
-                       + "&dataFormat=POJO";
+        String proxy = "cxf://" + POJO_PROXY_ADDRESS + "?serviceClass="
+                + "org.apache.camel.component.cxf.jaxws.HelloService" + "&dataFormat=POJO";
 
-        String backend = "cxf://" + SERVICE_ADDRESS_1 + "?serviceClass=" + "org.apache.camel.component.cxf.jaxws.HelloService"
-                         + "&dataFormat=POJO";
+        String backend = "cxf://" + SERVICE_ADDRESS_1 + "?serviceClass="
+                + "org.apache.camel.component.cxf.jaxws.HelloService" + "&dataFormat=POJO";
 
         context2 = new DefaultCamelContext();
         startRoute(context2, proxy, backend);
@@ -126,7 +130,6 @@ public class LoadDistributorFeatureTest {
             }
         });
         ctx.start();
-
     }
 
     private String tryLoadDistributor(String url) {
@@ -139,5 +142,4 @@ public class LoadDistributorFeatureTest {
         HelloService client = (HelloService) factory.create();
         return client.sayHello();
     }
-
 }

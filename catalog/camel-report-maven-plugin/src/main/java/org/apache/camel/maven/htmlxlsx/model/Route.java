@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
 
 import java.util.HashMap;
@@ -106,13 +107,12 @@ public class Route {
     @Override
     public String toString() {
 
-        return "Route{" +
-               "customId='" + customId + '\'' +
-               ", exchangesTotal=" + exchangesTotal +
-               ", id='" + id + '\'' +
-               ", totalProcessingTime=" + totalProcessingTime +
-               ", components=" + components +
-               ", componentsMap=" + componentsMap +
-               '}';
+        return "Route{" + "customId='"
+                + customId + '\'' + ", exchangesTotal="
+                + exchangesTotal + ", id='"
+                + id + '\'' + ", totalProcessingTime="
+                + totalProcessingTime + ", components="
+                + components + ", componentsMap="
+                + componentsMap + '}';
     }
 }

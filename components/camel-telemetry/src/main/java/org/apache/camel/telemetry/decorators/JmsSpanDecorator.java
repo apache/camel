@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 import org.apache.camel.Endpoint;
@@ -54,12 +55,13 @@ public class JmsSpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
     public SpanContextPropagationExtractor getExtractor(Exchange exchange) {
-        return new CamelJMSHeadersSpanContextPropagationExtractor(exchange.getIn().getHeaders());
+        return new CamelJMSHeadersSpanContextPropagationExtractor(
+                exchange.getIn().getHeaders());
     }
 
     @Override
     public SpanContextPropagationInjector getInjector(Exchange exchange) {
-        return new CamelJMSHeadersSpanContextPropagationInjector(exchange.getIn().getHeaders());
+        return new CamelJMSHeadersSpanContextPropagationInjector(
+                exchange.getIn().getHeaders());
     }
-
 }

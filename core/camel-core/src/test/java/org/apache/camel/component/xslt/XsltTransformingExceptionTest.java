@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class XsltTransformingExceptionTest extends ContextTestSupport {
     private static final String GOOD_XML_STRING = "<name>Camel</name>";
@@ -35,7 +36,8 @@ public class XsltTransformingExceptionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
+        CamelExecutionException ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", BAD_XML_STRING),
                 "Except a camel Execution exception here");
 
@@ -67,9 +69,10 @@ public class XsltTransformingExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("xslt:org/apache/camel/component/xslt/transformCallEcho.xsl").to("mock:result");
+                from("direct:start")
+                        .to("xslt:org/apache/camel/component/xslt/transformCallEcho.xsl")
+                        .to("mock:result");
             }
         };
     }
-
 }

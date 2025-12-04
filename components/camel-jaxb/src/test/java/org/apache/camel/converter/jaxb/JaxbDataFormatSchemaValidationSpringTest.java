@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,12 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSupport {
 
@@ -81,22 +82,24 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
         LOG.info(payload);
 
-        Person unmarshalledPerson = (Person) jbCtx.createUnmarshaller().unmarshal(new InputSource(new StringReader(payload)));
+        Person unmarshalledPerson =
+                (Person) jbCtx.createUnmarshaller().unmarshal(new InputSource(new StringReader(payload)));
 
         assertNotNull(unmarshalledPerson);
         assertEquals(person.getFirstName(), unmarshalledPerson.getFirstName());
         assertEquals(person.getLastName(), unmarshalledPerson.getLastName());
         assertEquals(person.getAge(), unmarshalledPerson.getAge());
         assertNotNull(unmarshalledPerson.getAddress());
-        assertEquals(person.getAddress().getAddressLine1(), unmarshalledPerson.getAddress().getAddressLine1());
+        assertEquals(
+                person.getAddress().getAddressLine1(),
+                unmarshalledPerson.getAddress().getAddressLine1());
     }
 
     @Test
     public void testMarshallWithValidationException() {
         Person person = new Person();
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:marshall", person));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:marshall", person));
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
@@ -110,7 +113,8 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
         mockUnmarshall.expectedMessageCount(1);
 
         String xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-                .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
+                .append(
+                        "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
                 .append("<firstName>Christian</firstName>")
                 .append("<lastName>Mueller</lastName>")
                 .append("<age>36</age>")
@@ -136,8 +140,7 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
                 .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" />")
                 .toString();
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:unmarshall", xml));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:unmarshall", xml));
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
@@ -149,8 +152,7 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
     @Test
     public void testMarshallOfNonRootElementWithValidationException() {
         Message message = new Message();
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:marshall", message));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:marshall", message));
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
@@ -169,8 +171,7 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
             xml = new String(baos.toByteArray(), "UTF-8");
         }
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:unmarshall", xml));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:unmarshall", xml));
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);

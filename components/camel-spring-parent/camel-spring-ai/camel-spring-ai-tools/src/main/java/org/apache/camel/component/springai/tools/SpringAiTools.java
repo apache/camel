@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.tools;
 
 public final class SpringAiTools {
@@ -21,6 +22,5 @@ public final class SpringAiTools {
     public static final String SCHEME = "spring-ai-tools";
     public static final String NO_TOOLS_CALLED_HEADER = "SpringAiToolsNoToolsCalled";
 
-    private SpringAiTools() {
-    }
+    private SpringAiTools() {}
 }

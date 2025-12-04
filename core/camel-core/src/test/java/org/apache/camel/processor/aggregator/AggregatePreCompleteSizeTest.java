@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,7 +46,8 @@ public class AggregatePreCompleteSizeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInPreCompleteSizeAggregatingStrategy())
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInPreCompleteSizeAggregatingStrategy())
                         .to("mock:aggregated");
             }
         };

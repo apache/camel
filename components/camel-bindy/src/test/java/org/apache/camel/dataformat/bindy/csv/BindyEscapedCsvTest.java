@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.util.ArrayList;
@@ -41,7 +42,8 @@ public class BindyEscapedCsvTest extends CamelTestSupport {
     public void testUnMarshallEscapedMessage() throws Exception {
         mockEndPointUnmarshal.expectedMessageCount(1);
 
-        String body = """
+        String body =
+                """
                 #a,"b",c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,y
                 AA-01L,"Android,10,0",3,4,"test,1,2,hello",5,6,7,8,9,100,0,0,0,0,0,0,0,0,0,0,1,0,0,0
                 """;
@@ -49,8 +51,8 @@ public class BindyEscapedCsvTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CsvRecordModel csvRecordModel
-                = mockEndPointUnmarshal.getReceivedExchanges().get(0).getIn().getBody(CsvRecordModel.class);
+        CsvRecordModel csvRecordModel =
+                mockEndPointUnmarshal.getReceivedExchanges().get(0).getIn().getBody(CsvRecordModel.class);
 
         Assertions.assertEquals("AA-01L", csvRecordModel.a);
         Assertions.assertEquals("Android,10,0", csvRecordModel.b);
@@ -133,9 +135,7 @@ public class BindyEscapedCsvTest extends CamelTestSupport {
         @BindyConverter(AppIdentificationConvrtter.class)
         private List<String> list;
 
-        public CsvRecordModel() {
-
-        }
+        public CsvRecordModel() {}
 
         public static class AppIdentificationConvrtter implements Format<List<String>> {
 
@@ -150,7 +150,6 @@ public class BindyEscapedCsvTest extends CamelTestSupport {
             public List<String> parse(String string) throws Exception {
                 return Arrays.asList((string == null ? "" : string).split(SEPARATOR, -1));
             }
-
         }
 
         public String getA() {

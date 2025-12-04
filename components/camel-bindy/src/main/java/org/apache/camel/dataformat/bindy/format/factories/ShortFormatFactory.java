@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import org.apache.camel.dataformat.bindy.Format;
@@ -32,8 +33,7 @@ public class ShortFormatFactory extends AbstractFormatFactory {
 
     @Override
     public boolean canBuild(FormattingOptions formattingOptions) {
-        return super.canBuild(formattingOptions)
-                && ObjectHelper.isEmpty(formattingOptions.getPattern());
+        return super.canBuild(formattingOptions) && ObjectHelper.isEmpty(formattingOptions.getPattern());
     }
 
     @Override
@@ -52,7 +52,5 @@ public class ShortFormatFactory extends AbstractFormatFactory {
         public Short parse(String string) throws Exception {
             return Short.valueOf(string);
         }
-
     }
-
 }

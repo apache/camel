@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSupport {
 
     private static boolean called;
@@ -33,7 +34,8 @@ public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSu
     private static class MyStrategy extends InterceptSendToMockEndpointStrategy {
 
         @Override
-        protected Producer onInterceptEndpoint(String uri, Endpoint endpoint, Endpoint mockEndpoint, Producer mockProducer) {
+        protected Producer onInterceptEndpoint(
+                String uri, Endpoint endpoint, Endpoint mockEndpoint, Producer mockProducer) {
             called = true;
             return mockProducer;
         }

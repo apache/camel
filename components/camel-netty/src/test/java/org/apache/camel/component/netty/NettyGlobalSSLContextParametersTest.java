@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -30,8 +33,6 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
 
@@ -39,7 +40,8 @@ public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("keystore.jks").toString());
+        ksp.setResource(
+                this.getClass().getClassLoader().getResource("keystore.jks").toString());
         ksp.setPassword("changeit");
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -73,13 +75,13 @@ public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
     public void testSSLInOutWithNettyConsumer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                exchange.getMessage().setBody(
+                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true").process(new Processor() {
+                    public void process(Exchange exchange) {
+                        exchange.getMessage()
+                                .setBody(
                                         "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
-                            }
-                        });
+                    }
+                });
             }
         });
         context.start();
@@ -90,5 +92,4 @@ public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
                 String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
-
 }

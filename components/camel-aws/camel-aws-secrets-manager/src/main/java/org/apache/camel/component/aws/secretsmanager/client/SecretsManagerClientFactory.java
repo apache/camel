@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.client;
 
 import org.apache.camel.component.aws.secretsmanager.SecretsManagerConfiguration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerC
  */
 public final class SecretsManagerClientFactory {
 
-    private SecretsManagerClientFactory() {
-    }
+    private SecretsManagerClientFactory() {}
 
     /**
      * Return the correct aws Secrets Manager client (based on remote vs local).

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.doc;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
@@ -22,8 +25,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnabledIfSystemProperty(named = "enable.documentation.itests", matches = "true")
 public class DirectComponentConfigurationAndDocumentationTest extends CamelTestSupport {
@@ -40,5 +41,4 @@ public class DirectComponentConfigurationAndDocumentationTest extends CamelTestS
             assertNotNull(json, "Should have found some auto-generated JSON");
         }
     }
-
 }

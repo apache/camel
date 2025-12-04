@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -38,14 +47,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 public class AbstractRestProcessorApprovalTest {
 
@@ -85,22 +86,23 @@ public class AbstractRestProcessorApprovalTest {
         }
 
         @Override
-        protected void processRequest(final Exchange exchange) throws SalesforceException {
-        }
+        protected void processRequest(final Exchange exchange) throws SalesforceException {}
 
         @Override
         protected void processResponse(
-                final Exchange exchange, final InputStream responseEntity, final Map<String, String> headers,
+                final Exchange exchange,
+                final InputStream responseEntity,
+                final Map<String, String> headers,
                 final SalesforceException ex,
-                final AsyncCallback callback) {
-        }
+                final AsyncCallback callback) {}
 
         @Override
         protected void processStreamResultResponse(
-                Exchange exchange, InputStream responseEntity, Map<String, String> headers, SalesforceException ex,
-                AsyncCallback callback) {
-
-        }
+                Exchange exchange,
+                InputStream responseEntity,
+                Map<String, String> headers,
+                SalesforceException ex,
+                AsyncCallback callback) {}
     }
 
     private static <T> T notUsed() {
@@ -124,8 +126,9 @@ public class AbstractRestProcessorApprovalTest {
 
         final TestRestProcessor processor = sendBodyAndHeader(approvalRequest, template);
 
-        verify(processor).getRequestStream(any(Message.class),
-                eq(new ApprovalRequests(approvalRequest.applyTemplate(template))));
+        verify(processor)
+                .getRequestStream(
+                        any(Message.class), eq(new ApprovalRequests(approvalRequest.applyTemplate(template))));
     }
 
     @Test
@@ -139,11 +142,14 @@ public class AbstractRestProcessorApprovalTest {
         final ApprovalRequest approvalRequest2 = new ApprovalRequest();
         approvalRequest2.setComments("it should be me second");
 
-        final TestRestProcessor processor = sendBodyAndHeader(Arrays.asList(approvalRequest1, approvalRequest2), template);
+        final TestRestProcessor processor =
+                sendBodyAndHeader(Arrays.asList(approvalRequest1, approvalRequest2), template);
 
-        verify(processor).getRequestStream(any(Message.class),
-                eq(new ApprovalRequests(
-                        Arrays.asList(approvalRequest1.applyTemplate(template), approvalRequest2.applyTemplate(template)))));
+        verify(processor)
+                .getRequestStream(
+                        any(Message.class),
+                        eq(new ApprovalRequests(Arrays.asList(
+                                approvalRequest1.applyTemplate(template), approvalRequest2.applyTemplate(template)))));
     }
 
     @Test
@@ -152,8 +158,10 @@ public class AbstractRestProcessorApprovalTest {
             sendBodyAndHeader(Collections.EMPTY_LIST, null);
             fail("SalesforceException should be thrown");
         } catch (final SalesforceException e) {
-            assertEquals("Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
-                    e.getMessage(), "Exception should be about not giving a body or a header");
+            assertEquals(
+                    "Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
+                    e.getMessage(),
+                    "Exception should be about not giving a body or a header");
         }
     }
 
@@ -163,8 +171,10 @@ public class AbstractRestProcessorApprovalTest {
             sendBodyAndHeader(null, null);
             fail("SalesforceException should be thrown");
         } catch (final SalesforceException e) {
-            assertEquals("Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
-                    e.getMessage(), "Exception should be about not giving a body or a header");
+            assertEquals(
+                    "Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
+                    e.getMessage(),
+                    "Exception should be about not giving a body or a header");
         }
     }
 
@@ -192,8 +202,8 @@ public class AbstractRestProcessorApprovalTest {
         final ApprovalRequest request = new ApprovalRequest();
         request.setComments("hi there");
 
-        final TestRestProcessor processor = sendBodyAndHeaders("Nothing to see here", request,
-                Collections.singletonMap("approval.ContextId", "context-id"));
+        final TestRestProcessor processor = sendBodyAndHeaders(
+                "Nothing to see here", request, Collections.singletonMap("approval.ContextId", "context-id"));
 
         final ApprovalRequest combined = new ApprovalRequest();
         combined.setComments("hi there");
@@ -212,8 +222,10 @@ public class AbstractRestProcessorApprovalTest {
 
         final TestRestProcessor processor = sendBody(Arrays.asList(approvalRequest1, approvalRequest2));
 
-        verify(processor).getRequestStream(any(Message.class),
-                eq(new ApprovalRequests(Arrays.asList(approvalRequest1, approvalRequest2))));
+        verify(processor)
+                .getRequestStream(
+                        any(Message.class),
+                        eq(new ApprovalRequests(Arrays.asList(approvalRequest1, approvalRequest2))));
     }
 
     @Test
@@ -241,14 +253,16 @@ public class AbstractRestProcessorApprovalTest {
 
         final TestRestProcessor processor1 = sendBodyAndHeaders(null, template, null);
 
-        verify(processor1).getRequestStream(any(Message.class), eq(new ApprovalRequests(requestWithComment("third priority"))));
+        verify(processor1)
+                .getRequestStream(any(Message.class), eq(new ApprovalRequests(requestWithComment("third priority"))));
 
         final TestRestProcessor processor2 = sendBodyAndHeaders(null, template, headers);
-        verify(processor2).getRequestStream(any(Message.class),
-                eq(new ApprovalRequests(requestWithComment("second priority"))));
+        verify(processor2)
+                .getRequestStream(any(Message.class), eq(new ApprovalRequests(requestWithComment("second priority"))));
 
         final TestRestProcessor processor3 = sendBodyAndHeaders(body, template, headers);
-        verify(processor3).getRequestStream(any(Message.class), eq(new ApprovalRequests(requestWithComment("first priority"))));
+        verify(processor3)
+                .getRequestStream(any(Message.class), eq(new ApprovalRequests(requestWithComment("first priority"))));
     }
 
     TestRestProcessor sendBody(final Object body) throws SalesforceException {
@@ -259,7 +273,8 @@ public class AbstractRestProcessorApprovalTest {
         return sendBodyAndHeaders(body, template, Collections.emptyMap());
     }
 
-    TestRestProcessor sendBodyAndHeaders(final Object body, final ApprovalRequest template, final Map<String, Object> headers)
+    TestRestProcessor sendBodyAndHeaders(
+            final Object body, final ApprovalRequest template, final Map<String, Object> headers)
             throws SalesforceException {
         final TestRestProcessor processor = spy(new TestRestProcessor());
 

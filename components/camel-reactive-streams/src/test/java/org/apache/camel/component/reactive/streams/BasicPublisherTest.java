@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,10 +34,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class BasicPublisherTest extends BaseReactiveTest {
 
     @Test
@@ -42,7 +43,8 @@ public class BasicPublisherTest extends BaseReactiveTest {
             @Override
             public void configure() {
                 from("timer:tick?period=5&repeatCount=30&includeMetadata=true")
-                        .setBody().header(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:pub");
             }
         }.addRoutesToCamelContext(context);
@@ -72,20 +74,23 @@ public class BasicPublisherTest extends BaseReactiveTest {
             @Override
             public void configure() {
                 from("timer:tick?period=50&includeMetadata=true")
-                        .setBody().header(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:unbounded");
             }
         }.addRoutesToCamelContext(context);
 
         CountDownLatch latch1 = new CountDownLatch(5);
-        Disposable disp1 = Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
+        Disposable disp1 = Observable.fromPublisher(
+                        CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
                 .subscribe(n -> latch1.countDown());
 
         context.start();
 
         // Add another subscription
         CountDownLatch latch2 = new CountDownLatch(5);
-        Disposable disp2 = Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
+        Disposable disp2 = Observable.fromPublisher(
+                        CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
                 .subscribe(n -> latch2.countDown());
 
         assertTrue(latch1.await(5, TimeUnit.SECONDS));
@@ -100,7 +105,8 @@ public class BasicPublisherTest extends BaseReactiveTest {
 
         // Add another subscription
         CountDownLatch latch3 = new CountDownLatch(5);
-        Disposable disp3 = Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
+        Disposable disp3 = Observable.fromPublisher(
+                        CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
                 .subscribe(n -> latch3.countDown());
 
         assertTrue(latch3.await(5, TimeUnit.SECONDS));
@@ -113,21 +119,17 @@ public class BasicPublisherTest extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:one")
-                        .to("reactive-streams:stream");
+                from("direct:one").to("reactive-streams:stream");
 
-                from("direct:two")
-                        .to("reactive-streams:stream");
+                from("direct:two").to("reactive-streams:stream");
             }
         }.addRoutesToCamelContext(context);
 
-        assertThrows(FailedToStartRouteException.class,
-                () -> context.start());
+        assertThrows(FailedToStartRouteException.class, () -> context.start());
     }
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

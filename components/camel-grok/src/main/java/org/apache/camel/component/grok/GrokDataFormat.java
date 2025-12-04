@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grok;
 
 import java.io.BufferedReader;
@@ -54,8 +55,7 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.pattern = pattern;
     }
 
-    public GrokDataFormat() {
-    }
+    public GrokDataFormat() {}
 
     public GrokDataFormat registerPatternDefinition(GrokPattern pattern) {
         this.customPatterns.add(pattern);
@@ -162,7 +162,8 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
             reader = r;
         } else {
             // fallback to input stream
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            InputStream is =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
             reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
         }
 
@@ -184,7 +185,7 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
         CharBuffer charBuffer = CharBuffer.wrap(line);
 
         int start = 0;
-        while (start < charBuffer.length()) { //Allow multiple matches per line
+        while (start < charBuffer.length()) { // Allow multiple matches per line
             Match gm = grok.match(charBuffer.subSequence(start, charBuffer.length()));
             if (Boolean.FALSE.equals(gm.isNull())) {
                 if (flattened) {
@@ -211,7 +212,6 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     protected void doStop() throws Exception {
-        //noop
+        // noop
     }
-
 }

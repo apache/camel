@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import java.util.Map;
@@ -29,9 +30,7 @@ public class JqFilterGETest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .filter().jq(".amount >= 1000")
-                        .to("mock:result");
+                from("direct:start").filter().jq(".amount >= 1000").to("mock:result");
             }
         };
     }
@@ -55,20 +54,11 @@ public class JqFilterGETest extends JqTestSupport {
 
     @Test
     public void testFilterStringPayload() throws Exception {
-        String b0 = "{\n"
-                    + "    \"branch\": \"BRANCH0\",\n"
-                    + "    \"amount\": 1234\n"
-                    + "}";
+        String b0 = "{\n" + "    \"branch\": \"BRANCH0\",\n" + "    \"amount\": 1234\n" + "}";
 
-        String b1 = "{\n"
-                    + "    \"branch\": \"BRANCH1\",\n"
-                    + "    \"amount\": 499\n"
-                    + "}";
+        String b1 = "{\n" + "    \"branch\": \"BRANCH1\",\n" + "    \"amount\": 499\n" + "}";
 
-        String b2 = "{\n"
-                    + "    \"branch\": \"BRANCH2\",\n"
-                    + "    \"amount\": 4444\n"
-                    + "}";
+        String b2 = "{\n" + "    \"branch\": \"BRANCH2\",\n" + "    \"amount\": 4444\n" + "}";
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:result").message(0).body().isEqualTo(b0);

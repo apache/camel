@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionAsyncTest extends ContextTestSupport {
 
@@ -39,7 +40,11 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onCompletion().parallelProcessing().to("mock:before").delay(250).setBody(simple("OnComplete:${body}"))
+                onCompletion()
+                        .parallelProcessing()
+                        .to("mock:before")
+                        .delay(250)
+                        .setBody(simple("OnComplete:${body}"))
                         .to("mock:after");
 
                 from("direct:start").process(new MyProcessor()).to("mock:result");
@@ -65,7 +70,11 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onCompletion().parallelProcessing().to("mock:before").delay(250).setBody(simple("OnComplete:${body}"))
+                onCompletion()
+                        .parallelProcessing()
+                        .to("mock:before")
+                        .delay(250)
+                        .setBody(simple("OnComplete:${body}"))
                         .to("mock:after");
 
                 from("direct:start").process(new MyProcessor()).to("mock:result");
@@ -95,8 +104,13 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onCompletion().useOriginalBody().parallelProcessing().to("mock:before").delay(250)
-                        .setBody(simple("OnComplete:${body}")).to("mock:after");
+                onCompletion()
+                        .useOriginalBody()
+                        .parallelProcessing()
+                        .to("mock:before")
+                        .delay(250)
+                        .setBody(simple("OnComplete:${body}"))
+                        .to("mock:after");
 
                 from("direct:start").process(new MyProcessor()).to("mock:result");
             }
@@ -121,10 +135,18 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onCompletion().useOriginalBody().parallelProcessing().to("mock:before").delay(250)
-                        .setBody(simple("OnComplete:${body}")).to("mock:after");
+                onCompletion()
+                        .useOriginalBody()
+                        .parallelProcessing()
+                        .to("mock:before")
+                        .delay(250)
+                        .setBody(simple("OnComplete:${body}"))
+                        .to("mock:after");
 
-                from("direct:start").transform(body().prepend("Before:${body}")).process(new MyProcessor()).to("mock:result");
+                from("direct:start")
+                        .transform(body().prepend("Before:${body}"))
+                        .process(new MyProcessor())
+                        .to("mock:result");
             }
         });
         context.start();
@@ -151,10 +173,15 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onCompletion().parallelProcessing().to("mock:before").delay(250).setBody(simple("OnComplete:${body}"))
+                onCompletion()
+                        .parallelProcessing()
+                        .to("mock:before")
+                        .delay(250)
+                        .setBody(simple("OnComplete:${body}"))
                         // this exception does not cause any side effect as we are
                         // in async mode
-                        .throwException(new IllegalAccessException("From onComplete")).to("mock:after");
+                        .throwException(new IllegalAccessException("From onComplete"))
+                        .to("mock:after");
 
                 from("direct:start").process(new MyProcessor()).to("mock:result");
             }
@@ -176,8 +203,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
-        public MyProcessor() {
-        }
+        public MyProcessor() {}
 
         @Override
         public void process(Exchange exchange) {
@@ -187,5 +213,4 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
             exchange.getIn().setBody("Bye World");
         }
     }
-
 }

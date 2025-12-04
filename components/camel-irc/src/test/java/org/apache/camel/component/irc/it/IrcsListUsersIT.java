@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc.it;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,14 +27,14 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Integration test for the {@link IrcConfiguration#isNamesOnJoin()} option. Joins a channel and asserts that the
  * username of the current test user is listed for the channel.
  */
-@EnabledIfSystemProperty(named = "enable.irc.itests", matches = ".*",
-                         disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
+@EnabledIfSystemProperty(
+        named = "enable.irc.itests",
+        matches = ".*",
+        disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
 public class IrcsListUsersIT extends IrcIntegrationITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IrcsListUsersIT.class);
@@ -55,7 +58,8 @@ public class IrcsListUsersIT extends IrcIntegrationITSupport {
                         .choice()
                         .when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
                         .filter(header("irc.num").isEqualTo(IRC_RPL_NAMREPLY))
-                        .to("mock:result").stop();
+                        .to("mock:result")
+                        .stop();
             }
         };
     }
@@ -69,5 +73,4 @@ public class IrcsListUsersIT extends IrcIntegrationITSupport {
         String username = properties.getProperty("camelFrom");
         assertTrue(body.contains(username), "userlist does not contain test user");
     }
-
 }

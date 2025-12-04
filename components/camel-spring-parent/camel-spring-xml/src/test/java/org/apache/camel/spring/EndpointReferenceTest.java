@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -25,11 +31,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class EndpointReferenceTest extends SpringTestSupport {
     protected static Object body = "<hello>world!</hello>";
@@ -82,7 +83,10 @@ public class EndpointReferenceTest extends SpringTestSupport {
             CamelContextHelper.resolveEndpoint(context, null, "endpoint1");
             fail("Should have thrown exception");
         } catch (NoSuchEndpointException exception) {
-            assertTrue(exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"),
+            assertTrue(
+                    exception
+                            .getMessage()
+                            .contains("make sure the endpoint has the same camel context as the route does"),
                     "Get a wrong exception message");
         }
     }

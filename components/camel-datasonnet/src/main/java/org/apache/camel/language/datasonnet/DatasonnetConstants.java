@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
 
 public final class DatasonnetConstants {
     public static final String BODY_MEDIATYPE = "CamelDatasonnetBodyMediaType";
     public static final String OUTPUT_MEDIATYPE = "CamelDatasonnetOutputMediaType";
 
-    private DatasonnetConstants() {
-    }
+    private DatasonnetConstants() {}
 }

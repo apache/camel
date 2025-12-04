@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Map;
 
@@ -28,8 +31,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.annotation.Bean;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public abstract class StartupShutdownOrderBaseTest {
 
@@ -234,5 +235,4 @@ public abstract class StartupShutdownOrderBaseTest {
     static boolean camelIsStopped(final ApplicationContext context) {
         return !camelIsStarted(context);
     }
-
 }

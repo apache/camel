@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.impl;
 
 import java.util.Map;
@@ -93,5 +94,4 @@ public class DefaultInference implements Inference {
     public Object explanations(String modelName) {
         throw new UnsupportedOperationException("Not supported yet");
     }
-
 }

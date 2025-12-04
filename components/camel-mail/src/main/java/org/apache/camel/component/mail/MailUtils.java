@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.text.DateFormat;
@@ -49,8 +50,7 @@ public final class MailUtils {
     public static final String PROTOCOL_IMAP = "imap";
     public static final String PROTOCOL_IMAPS = "imaps";
 
-    private MailUtils() {
-    }
+    private MailUtils() {}
 
     /**
      * Returns the default port for a given protocol.
@@ -124,12 +124,16 @@ public final class MailUtils {
 
             Date sentDate = message.getSentDate();
             if (sentDate != null) {
-                sb.append(", sentDate=[").append(DateFormat.getDateTimeInstance().format(sentDate)).append("]");
+                sb.append(", sentDate=[")
+                        .append(DateFormat.getDateTimeInstance().format(sentDate))
+                        .append("]");
             }
 
             Date receivedDate = message.getReceivedDate();
             if (receivedDate != null) {
-                sb.append(", receivedDate=[").append(DateFormat.getDateTimeInstance().format(receivedDate)).append("]");
+                sb.append(", receivedDate=[")
+                        .append(DateFormat.getDateTimeInstance().format(receivedDate))
+                        .append("]");
             }
 
             return sb.toString();
@@ -225,5 +229,4 @@ public final class MailUtils {
         }
         return null;
     }
-
 }

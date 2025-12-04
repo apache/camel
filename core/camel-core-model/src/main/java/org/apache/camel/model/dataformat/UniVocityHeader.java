@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,11 +36,11 @@ public class UniVocityHeader implements CopyableDefinition<UniVocityHeader> {
 
     @XmlValue
     private String name;
+
     @XmlAttribute
     private String length;
 
-    public UniVocityHeader() {
-    }
+    public UniVocityHeader() {}
 
     protected UniVocityHeader(UniVocityHeader source) {
         this.name = source.name;

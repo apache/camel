@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -57,14 +58,14 @@ public class RabbitMQConsumerQueuesIT extends RabbitMQITSupport {
                 .setMessageId("123")
                 .setHeader("bar", "baz")
                 .build();
-        Message body = MessageBuilder.withBody("foo".getBytes())
-                .andProperties(props)
-                .build();
+        Message body =
+                MessageBuilder.withBody("foo".getBytes()).andProperties(props).build();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
-        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.CONTENT_TYPE,
-                MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
+        getMockEndpoint("mock:result")
+                .expectedHeaderReceived(
+                        SpringRabbitMQConstants.CONTENT_TYPE, MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
 
         template.sendBody("direct:start", body);
 
@@ -81,17 +82,17 @@ public class RabbitMQConsumerQueuesIT extends RabbitMQITSupport {
                 .setPriority(1)
                 .setHeader("bar", "baz")
                 .build();
-        Message body = MessageBuilder.withBody("foo".getBytes())
-                .andProperties(props)
-                .build();
+        Message body =
+                MessageBuilder.withBody("foo".getBytes()).andProperties(props).build();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
-        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.DELIVERY_MODE,
-                MessageDeliveryMode.PERSISTENT);
+        getMockEndpoint("mock:result")
+                .expectedHeaderReceived(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT);
         getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.TYPE, "price");
-        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.CONTENT_TYPE,
-                MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
+        getMockEndpoint("mock:result")
+                .expectedHeaderReceived(
+                        SpringRabbitMQConstants.CONTENT_TYPE, MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
         getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.MESSAGE_ID, "123");
         getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.PRIORITY, 1);
 
@@ -105,12 +106,9 @@ public class RabbitMQConsumerQueuesIT extends RabbitMQITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("spring-rabbitmq:foo");
+                from("direct:start").to("spring-rabbitmq:foo");
 
-                from("spring-rabbitmq:foo?queues=myqueue")
-                        .to("log:result")
-                        .to("mock:result");
+                from("spring-rabbitmq:foo?queues=myqueue").to("log:result").to("mock:result");
             }
         };
     }

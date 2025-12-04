@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -37,12 +44,6 @@ import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-
 /**
  * A unit test for spring configured cxf endpoint.
  */
@@ -51,29 +52,29 @@ public class CxfEndpointTest {
     private int port2 = CXFTestSupport.getPort2();
 
     private String routerEndpointURI = "cxf://http://localhost:" + port1 + "/CxfEndpointTest/router"
-                                       + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-                                       + "&dataFormat=POJO";
+            + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+            + "&dataFormat=POJO";
     private String wsdlEndpointURI = "cxf://http://localhost:" + port2 + "/CxfEndpointTest/helloworld"
-                                     + "?wsdlURL=classpath:person.wsdl"
-                                     + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
-                                     + "&portName={http://camel.apache.org/wsdl-first}soap"
-                                     + "&dataFormat=PAYLOAD";
+            + "?wsdlURL=classpath:person.wsdl"
+            + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
+            + "&portName={http://camel.apache.org/wsdl-first}soap"
+            + "&dataFormat=PAYLOAD";
 
     @Test
     public void testSettingContinucationTimout() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        CxfEndpoint endpoint = context.getEndpoint(routerEndpointURI + "&continuationTimeout=800000",
-                CxfEndpoint.class);
+        CxfEndpoint endpoint =
+                context.getEndpoint(routerEndpointURI + "&continuationTimeout=800000", CxfEndpoint.class);
         assertEquals(800000, endpoint.getContinuationTimeout(), "Get a wrong continucationTimeout value");
     }
 
     @Test
     public void testSpringCxfEndpoint() throws Exception {
 
-        ClassPathXmlApplicationContext ctx
-                = new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/component/cxf/CxfEndpointBeans.xml" });
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
+                new String[] {"org/apache/camel/component/cxf/CxfEndpointBeans.xml"});
 
         SpringCamelContext context = new SpringCamelContext(ctx);
         context.start();
@@ -81,9 +82,13 @@ public class CxfEndpointTest {
         CxfComponent cxfComponent = new CxfComponent(context);
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint) cxfComponent.createEndpoint("cxf://bean:serviceEndpoint");
 
-        assertEquals(endpoint.getAddress(),
-                "http://localhost:" + port2 + "/CxfEndpointTest/helloworld", "Got the wrong endpoint address");
-        assertEquals("org.apache.camel.component.cxf.HelloService", endpoint.getServiceClass().getCanonicalName(),
+        assertEquals(
+                endpoint.getAddress(),
+                "http://localhost:" + port2 + "/CxfEndpointTest/helloworld",
+                "Got the wrong endpoint address");
+        assertEquals(
+                "org.apache.camel.component.cxf.HelloService",
+                endpoint.getServiceClass().getCanonicalName(),
                 "Got the wrong endpont service class");
     }
 
@@ -93,7 +98,8 @@ public class CxfEndpointTest {
         bus.setId("oldCXF");
         BusFactory.setThreadDefaultBus(bus);
 
-        ExtensionManagerBus newBus = (ExtensionManagerBus) BusFactory.newInstance().createBus();
+        ExtensionManagerBus newBus =
+                (ExtensionManagerBus) BusFactory.newInstance().createBus();
         newBus.setId("newCXF");
 
         CamelContext context = new DefaultCamelContext();
@@ -121,7 +127,8 @@ public class CxfEndpointTest {
         camelContext.start();
 
         CxfComponent cxfComponent = new CxfComponent(camelContext);
-        CxfEndpoint endpoint = (CxfEndpoint) cxfComponent.createEndpoint(routerEndpointURI + "&cxfConfigurer=#myConfigurer");
+        CxfEndpoint endpoint =
+                (CxfEndpoint) cxfComponent.createEndpoint(routerEndpointURI + "&cxfConfigurer=#myConfigurer");
 
         Consumer consumer = endpoint.createConsumer(processor);
         consumer.start();
@@ -136,5 +143,4 @@ public class CxfEndpointTest {
         verify(configurer).configure(isA(AbstractWSDLBasedEndpointFactory.class));
         verify(configurer).configureClient(isA(Client.class));
     }
-
 }

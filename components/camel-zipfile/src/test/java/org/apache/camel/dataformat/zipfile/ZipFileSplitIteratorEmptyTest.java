@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
 
 import java.util.Iterator;
@@ -44,7 +45,8 @@ public class ZipFileSplitIteratorEmptyTest extends CamelTestSupport {
 
                 from("file://src/test/resources?delay=10&fileName=empty.zip&noop=true")
                         .unmarshal(zf)
-                        .split(bodyAs(Iterator.class)).streaming()
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
                         .end();

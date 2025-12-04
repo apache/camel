@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook.support;
 
 import java.util.Map;
@@ -27,8 +28,7 @@ public class TestComponent extends DefaultComponent {
 
     private Consumer<TestEndpoint> customizer;
 
-    public TestComponent() {
-    }
+    public TestComponent() {}
 
     public TestComponent(Consumer<TestEndpoint> customizer) {
         this.customizer = customizer;
@@ -45,5 +45,4 @@ public class TestComponent extends DefaultComponent {
 
         return this.endpoint;
     }
-
 }

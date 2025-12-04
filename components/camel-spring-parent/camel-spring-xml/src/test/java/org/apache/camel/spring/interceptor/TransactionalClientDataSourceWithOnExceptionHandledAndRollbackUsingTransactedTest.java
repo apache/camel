@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -51,19 +52,25 @@ public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackUsing
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
-                        .handled(true).to("mock:error").transform(constant("Sorry")).markRollbackOnly();
+                        .handled(true)
+                        .to("mock:error")
+                        .transform(constant("Sorry"))
+                        .markRollbackOnly();
 
                 from("direct:okay")
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 from("direct:fail")
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
             }
         };
     }
-
 }

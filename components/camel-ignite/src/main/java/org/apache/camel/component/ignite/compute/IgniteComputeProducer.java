@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.compute;
 
 import java.util.ArrayList;
@@ -55,7 +56,6 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
 
         try {
             switch (executionTypeFor(exchange)) {
-
                 case CALL:
                     doCall(exchange, compute);
                     break;
@@ -101,11 +101,11 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void doCall(final Exchange exchange, IgniteCompute compute) throws NoTypeConversionAvailableException {
         Object job = exchange.getIn().getBody();
-        IgniteReducer<Object, Object> reducer
-                = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_REDUCER, IgniteReducer.class);
+        IgniteReducer<Object, Object> reducer =
+                exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_REDUCER, IgniteReducer.class);
 
         if (Collection.class.isAssignableFrom(job.getClass())) {
             Collection<?> col = (Collection<?>) job;
@@ -122,11 +122,10 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
         } else if (IgniteCallable.class.isAssignableFrom(job.getClass())) {
             compute.call((IgniteCallable<Object>) job);
         } else {
-            throw new RuntimeCamelException(
-                    String.format(
-                            "Ignite Compute endpoint with CALL executionType is only "
-                                  + "supported for IgniteCallable payloads, or collections of them. The payload type was: %s.",
-                            job.getClass().getName()));
+            throw new RuntimeCamelException(String.format(
+                    "Ignite Compute endpoint with CALL executionType is only "
+                            + "supported for IgniteCallable payloads, or collections of them. The payload type was: %s.",
+                    job.getClass().getName()));
         }
     }
 
@@ -139,13 +138,14 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
         } else if (IgniteRunnable.class.isAssignableFrom(job.getClass())) {
             compute.broadcast((IgniteRunnable) job);
         } else if (IgniteClosure.class.isAssignableFrom(job.getClass())) {
-            compute.broadcast((IgniteClosure<Object, Object>) job,
+            compute.broadcast(
+                    (IgniteClosure<Object, Object>) job,
                     exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_PARAMS));
         } else {
-            throw new RuntimeCamelException(
-                    String.format("Ignite Compute endpoint with BROADCAST executionType is only "
-                                  + "supported for IgniteCallable, IgniteRunnable or IgniteClosure payloads. The payload type was: %s.",
-                            job.getClass().getName()));
+            throw new RuntimeCamelException(String.format(
+                    "Ignite Compute endpoint with BROADCAST executionType is only "
+                            + "supported for IgniteCallable, IgniteRunnable or IgniteClosure payloads. The payload type was: %s.",
+                    job.getClass().getName()));
         }
     }
 
@@ -165,11 +165,11 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
             }
             compute.execute(endpoint.getTaskName(), params);
         } else {
-            throw new RuntimeCamelException(
-                    String.format("Ignite Compute endpoint with EXECUTE executionType is only "
-                                  + "supported for ComputeTask payloads, Class<ComputeTask> or any payload in conjunction with the "
-                                  + "task name option. The payload type was: %s.",
-                            job.getClass().getName()));
+            throw new RuntimeCamelException(String.format(
+                    "Ignite Compute endpoint with EXECUTE executionType is only "
+                            + "supported for ComputeTask payloads, Class<ComputeTask> or any payload in conjunction with the "
+                            + "task name option. The payload type was: %s.",
+                    job.getClass().getName()));
         }
     }
 
@@ -187,11 +187,10 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
         } else if (IgniteRunnable.class.isAssignableFrom(job.getClass())) {
             compute.run((IgniteRunnable) job);
         } else {
-            throw new RuntimeCamelException(
-                    String.format(
-                            "Ignite Compute endpoint with RUN executionType is only "
-                                  + "supported for IgniteRunnable payloads, or collections of them. The payload type was: %s.",
-                            job.getClass().getName()));
+            throw new RuntimeCamelException(String.format(
+                    "Ignite Compute endpoint with RUN executionType is only "
+                            + "supported for IgniteRunnable payloads, or collections of them. The payload type was: %s.",
+                    job.getClass().getName()));
         }
     }
 
@@ -201,13 +200,14 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
         T params = (T) exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_PARAMS);
 
         if (job == null || params == null) {
-            throw new RuntimeCamelException(
-                    String.format("Ignite Compute endpoint with APPLY executionType is only "
-                                  + "supported for IgniteClosure payloads with parameters. The payload type was: %s.",
-                            exchange.getIn().getBody().getClass().getName()));
+            throw new RuntimeCamelException(String.format(
+                    "Ignite Compute endpoint with APPLY executionType is only "
+                            + "supported for IgniteClosure payloads with parameters. The payload type was: %s.",
+                    exchange.getIn().getBody().getClass().getName()));
         }
 
-        IgniteReducer<R1, R2> reducer = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_REDUCER, IgniteReducer.class);
+        IgniteReducer<R1, R2> reducer =
+                exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_REDUCER, IgniteReducer.class);
 
         if (Collection.class.isAssignableFrom(params.getClass())) {
             Collection<T> colParams = (Collection<T>) params;
@@ -224,15 +224,15 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     @SuppressWarnings("unchecked")
     private void doAffinityCall(final Exchange exchange, IgniteCompute compute) {
         IgniteCallable<Object> job = exchange.getIn().getBody(IgniteCallable.class);
-        String affinityCache = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME, String.class);
+        String affinityCache =
+                exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME, String.class);
         Object affinityKey = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY, Object.class);
 
         if (job == null || affinityCache == null || affinityKey == null) {
-            throw new RuntimeCamelException(
-                    String.format(
-                            "Ignite Compute endpoint with AFFINITY_CALL executionType is only "
-                                  + "supported for IgniteCallable payloads, along with an affinity cache and key. The payload type was: %s.",
-                            exchange.getIn().getBody().getClass().getName()));
+            throw new RuntimeCamelException(String.format(
+                    "Ignite Compute endpoint with AFFINITY_CALL executionType is only "
+                            + "supported for IgniteCallable payloads, along with an affinity cache and key. The payload type was: %s.",
+                    exchange.getIn().getBody().getClass().getName()));
         }
 
         compute.affinityCall(affinityCache, affinityKey, job);
@@ -240,23 +240,26 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
 
     private void doAffinityRun(final Exchange exchange, IgniteCompute compute) {
         IgniteRunnable job = exchange.getIn().getBody(IgniteRunnable.class);
-        String affinityCache = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME, String.class);
+        String affinityCache =
+                exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME, String.class);
         Object affinityKey = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY, Object.class);
 
         if (job == null || affinityCache == null || affinityKey == null) {
-            throw new RuntimeCamelException(
-                    String.format(
-                            "Ignite Compute endpoint with AFFINITY_RUN executionType is only "
-                                  + "supported for IgniteRunnable payloads, along with an affinity cache and key. The payload type was: %s.",
-                            exchange.getIn().getBody().getClass().getName()));
+            throw new RuntimeCamelException(String.format(
+                    "Ignite Compute endpoint with AFFINITY_RUN executionType is only "
+                            + "supported for IgniteRunnable payloads, along with an affinity cache and key. The payload type was: %s.",
+                    exchange.getIn().getBody().getClass().getName()));
         }
 
         compute.affinityRun(affinityCache, affinityKey, job);
     }
 
     private IgniteComputeExecutionType executionTypeFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_EXECUTION_TYPE, endpoint.getExecutionType(),
-                IgniteComputeExecutionType.class);
+        return exchange.getIn()
+                .getHeader(
+                        IgniteConstants.IGNITE_COMPUTE_EXECUTION_TYPE,
+                        endpoint.getExecutionType(),
+                        IgniteComputeExecutionType.class);
     }
 
     private static class IgniteInCamelClosure implements IgniteInClosure<IgniteFuture<Object>> {
@@ -292,5 +295,4 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
             callback.done(false);
         }
     }
-
 }

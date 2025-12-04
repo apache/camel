@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.base;
 
 import java.net.ProtocolException;
@@ -65,7 +66,7 @@ public final class HttpHelper {
         } catch (NumberFormatException e) {
             throw new ProtocolException("Invalid HTTP minor version number: " + s);
         }
-        return new int[] { major, minor };
+        return new int[] {major, minor};
     }
 
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
@@ -174,5 +175,4 @@ public final class HttpHelper {
             }
         }
     }
-
 }

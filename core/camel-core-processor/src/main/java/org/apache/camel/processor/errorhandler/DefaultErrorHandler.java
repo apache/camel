@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,8 +32,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultErrorHandler extends RedeliveryErrorHandler {
 
-    private static final CamelLogger DEFAULT_LOGGER
-            = new CamelLogger(LoggerFactory.getLogger(DefaultErrorHandler.class), LoggingLevel.ERROR);
+    private static final CamelLogger DEFAULT_LOGGER =
+            new CamelLogger(LoggerFactory.getLogger(DefaultErrorHandler.class), LoggingLevel.ERROR);
 
     /**
      * Creates the default error handler.
@@ -51,21 +52,46 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
      * @param onExceptionOccurredProcessor a custom {@link org.apache.camel.Processor} to process the
      *                                     {@link org.apache.camel.Exchange} just after an exception was thrown.
      */
-    public DefaultErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
-                               RedeliveryPolicy redeliveryPolicy, Predicate retryWhile,
-                               ScheduledExecutorService executorService, Processor onPrepareProcessor,
-                               Processor onExceptionOccurredProcessor) {
+    public DefaultErrorHandler(
+            CamelContext camelContext,
+            Processor output,
+            CamelLogger logger,
+            Processor redeliveryProcessor,
+            RedeliveryPolicy redeliveryPolicy,
+            Predicate retryWhile,
+            ScheduledExecutorService executorService,
+            Processor onPrepareProcessor,
+            Processor onExceptionOccurredProcessor) {
 
-        super(camelContext, output, logger != null ? logger : DEFAULT_LOGGER, redeliveryProcessor, redeliveryPolicy, null, null,
-              true, false, false, retryWhile,
-              executorService, onPrepareProcessor, onExceptionOccurredProcessor);
+        super(
+                camelContext,
+                output,
+                logger != null ? logger : DEFAULT_LOGGER,
+                redeliveryProcessor,
+                redeliveryPolicy,
+                null,
+                null,
+                true,
+                false,
+                false,
+                retryWhile,
+                executorService,
+                onPrepareProcessor,
+                onExceptionOccurredProcessor);
     }
 
     @Override
     public ErrorHandler clone(Processor output) {
         DefaultErrorHandler answer = new DefaultErrorHandler(
-                camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, retryWhilePolicy, executorService,
-                onPrepareProcessor, onExceptionProcessor);
+                camelContext,
+                output,
+                logger,
+                redeliveryProcessor,
+                redeliveryPolicy,
+                retryWhilePolicy,
+                executorService,
+                onPrepareProcessor,
+                onExceptionProcessor);
         // shallow clone is okay as we do not mutate these
         if (exceptionPolicies != null) {
             answer.exceptionPolicies = exceptionPolicies;
@@ -81,5 +107,4 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
         }
         return "DefaultErrorHandler[" + output + "]";
     }
-
 }

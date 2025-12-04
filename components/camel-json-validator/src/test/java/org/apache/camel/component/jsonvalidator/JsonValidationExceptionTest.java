@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonvalidator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.MessageFormat;
 import java.util.LinkedHashSet;
@@ -22,8 +25,6 @@ import java.util.Set;
 
 import com.networknt.schema.ValidationMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonValidationExceptionTest {
     private int errorId = 0;
@@ -48,6 +49,7 @@ public class JsonValidationExceptionTest {
     private ValidationMessage createError(String msg) {
         return new ValidationMessage.Builder()
                 .messageKey(String.valueOf(errorId++))
-                .format(new MessageFormat(msg)).build();
+                .format(new MessageFormat(msg))
+                .build();
     }
 }

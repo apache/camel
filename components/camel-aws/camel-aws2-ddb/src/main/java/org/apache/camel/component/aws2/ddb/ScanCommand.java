@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import java.util.Collection;
@@ -35,14 +36,17 @@ public class ScanCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        ScanResponse result = ddbClient.scan(ScanRequest.builder().tableName(determineTableName()).limit(determineLimit())
+        ScanResponse result = ddbClient.scan(ScanRequest.builder()
+                .tableName(determineTableName())
+                .limit(determineLimit())
                 .exclusiveStartKey(determineExclusiveStartKey())
                 .attributesToGet(determineAttributesToGet())
                 .filterExpression(determineFilterExpression())
                 .expressionAttributeNames(determineFilterExpressionAttributeNames())
                 .expressionAttributeValues(determineFilterExpressionAttributeValues())
                 .projectionExpression(determineProjectExpression())
-                .scanFilter(determineScanFilter()).build());
+                .scanFilter(determineScanFilter())
+                .build());
 
         Map<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.ITEMS, result.items());

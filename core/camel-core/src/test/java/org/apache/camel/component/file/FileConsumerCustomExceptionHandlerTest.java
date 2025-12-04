@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -69,25 +70,31 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // to handle any IOException being thrown
-                onException(IOException.class).handled(true).log("IOException occurred due: ${exception.message}")
+                onException(IOException.class)
+                        .handled(true)
+                        .log("IOException occurred due: ${exception.message}")
                         // as we handle the exception we can send it to
                         // direct:file-error,
                         // where we could send out alerts or whatever we want
                         .to("direct:file-error");
 
                 // special route that handles file errors
-                from("direct:file-error").log("File error route triggered to deal with exception ${exception?.class}")
+                from("direct:file-error")
+                        .log("File error route triggered to deal with exception ${exception?.class}")
                         // as this is based on unit test just transform a message
                         // and send it to a mock
-                        .transform().simple("Error ${exception.message}").to("mock:error");
+                        .transform()
+                        .simple("Error ${exception.message}")
+                        .to("mock:error");
 
                 // this is the file route that pickup files, notice how we use
                 // our custom exception handler on the consumer
                 // the exclusiveReadLockStrategy is only configured because this
                 // is from an unit test, so we use that to simulate exceptions
                 from(fileUri(
-                        "?exclusiveReadLockStrategy=#myReadLockStrategy&exceptionHandler=#myExceptionHandler&initialDelay=0&delay=10"))
-                        .convertBodyTo(String.class).to("mock:result");
+                                "?exclusiveReadLockStrategy=#myReadLockStrategy&exceptionHandler=#myExceptionHandler&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
@@ -149,8 +156,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
 
         @Override
         public boolean acquireExclusiveReadLock(
-                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-                throws Exception {
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
             if (file.getFileNameOnly().equals("bye.txt")) {
                 if (counter++ == 0) {
                     // force an exception on acquire attempt for the bye.txt

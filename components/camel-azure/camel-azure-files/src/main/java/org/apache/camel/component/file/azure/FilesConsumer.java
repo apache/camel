@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 import java.util.Arrays;
@@ -48,9 +49,11 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     private transient String toString;
 
-    public FilesConsumer(FilesEndpoint endpoint, Processor processor,
-                         FilesOperations fileOperations,
-                         GenericFileProcessStrategy<?> processStrategy) {
+    public FilesConsumer(
+            FilesEndpoint endpoint,
+            Processor processor,
+            FilesOperations fileOperations,
+            GenericFileProcessStrategy<?> processStrategy) {
         super(endpoint, processor, fileOperations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
@@ -75,7 +78,9 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
                     getOperations().buildDirectory(endpointPath, true);
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
-                    LOG.warn("Error auto creating directory: {} due to {}. This exception is ignored.", endpointPath,
+                    LOG.warn(
+                            "Error auto creating directory: {} due to {}. This exception is ignored.",
+                            endpointPath,
                             e.getMessage(),
                             e);
                 }
@@ -90,9 +95,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     @Override
     protected boolean pollDirectory(
-            Exchange dynamic,
-            String path, List<GenericFile<ShareFileItem>> fileList,
-            int depth) {
+            Exchange dynamic, String path, List<GenericFile<ShareFileItem>> fileList, int depth) {
         LOG.trace("pollDirectory({},,{})", path, depth);
 
         return doPollDirectory(dynamic, FilesPath.trimTrailingSeparator(path), null, fileList, depth);
@@ -100,9 +103,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     @Override
     protected boolean doPollDirectory(
-            Exchange dynamic,
-            String path, String dirName,
-            List<GenericFile<ShareFileItem>> fileList, int depth) {
+            Exchange dynamic, String path, String dirName, List<GenericFile<ShareFileItem>> fileList, int depth) {
         LOG.trace("doPollDirectory({},{},,{})", path, dirName, depth);
 
         var listedFileItems = listFileItems(path);
@@ -132,8 +133,11 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     private boolean handleFileItem(
             Exchange dynamic,
-            String path, List<GenericFile<ShareFileItem>> polledFiles,
-            int depth, ShareFileItem[] listedFileItems, ShareFileItem fileItem) {
+            String path,
+            List<GenericFile<ShareFileItem>> polledFiles,
+            int depth,
+            ShareFileItem[] listedFileItems,
+            ShareFileItem fileItem) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Item[name={}, dir={}]", fileItem.getName(), fileItem.isDirectory());
         }
@@ -155,8 +159,11 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     private boolean handleDirectory(
             Exchange dynamic,
-            String path, List<GenericFile<ShareFileItem>> polledFiles,
-            int depth, ShareFileItem[] listedFileItems, ShareFileItem dir) {
+            String path,
+            List<GenericFile<ShareFileItem>> polledFiles,
+            int depth,
+            ShareFileItem[] listedFileItems,
+            ShareFileItem dir) {
 
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
             Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, dir));
@@ -176,14 +183,16 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     private void handleFile(
             Exchange dynamic,
-            String path, List<GenericFile<ShareFileItem>> polledFiles, int depth,
-            ShareFileItem[] listedFileItems, ShareFileItem file) {
+            String path,
+            List<GenericFile<ShareFileItem>> polledFiles,
+            int depth,
+            ShareFileItem[] listedFileItems,
+            ShareFileItem file) {
         if (depth >= endpoint.getMinDepth()) {
             Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, file));
             String absoluteFilePath = FilesPath.concat(path, file.getName());
             Supplier<String> relative = getRelativeFilePath(endpointPath, path, absoluteFilePath, file);
-            if (isValidFile(dynamic, remote, file.getName(), absoluteFilePath, relative, false,
-                    listedFileItems)) {
+            if (isValidFile(dynamic, remote, file.getName(), absoluteFilePath, relative, false, listedFileItems)) {
                 polledFiles.add(remote.get());
             }
         }
@@ -205,9 +214,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     @Override
-    protected boolean isMatched(
-            Supplier<GenericFile<ShareFileItem>> file, String doneFileName,
-            ShareFileItem[] files) {
+    protected boolean isMatched(Supplier<GenericFile<ShareFileItem>> file, String doneFileName, ShareFileItem[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
 
         for (ShareFileItem f : files) {
@@ -246,7 +253,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     @Override
-    protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, ShareFileItem file) {
+    protected Supplier<String> getRelativeFilePath(
+            String endpointPath, String path, String absolutePath, ShareFileItem file) {
         return () -> {
             String relativePath = StringHelper.after(absolutePath, endpointPath);
             return FilesPath.ensureRelative(relativePath);

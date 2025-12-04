@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr;
 
 import io.dapr.client.domain.HttpExtension;
@@ -22,8 +23,7 @@ import org.apache.camel.Converter;
 @Converter(generateLoader = true)
 public class DaprTypeConverter {
 
-    public DaprTypeConverter() {
-    }
+    public DaprTypeConverter() {}
 
     @Converter(allowNull = true)
     public static HttpExtension toHttpExtension(String verb) {

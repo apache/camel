@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.File;
@@ -30,5 +31,4 @@ public interface ArtifactDownloadListener {
      * @param file the downloaded artifact as a file
      */
     void onDownloadedFile(File file);
-
 }

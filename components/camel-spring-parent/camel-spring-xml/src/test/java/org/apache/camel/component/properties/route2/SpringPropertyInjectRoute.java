@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties.route2;
 
 import org.apache.camel.PropertyInject;
@@ -26,9 +27,6 @@ public class SpringPropertyInjectRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:start")
-                .transform().constant(greeting)
-                .to("{{result}}");
+        from("direct:start").transform().constant(greeting).to("{{result}}");
     }
-
 }

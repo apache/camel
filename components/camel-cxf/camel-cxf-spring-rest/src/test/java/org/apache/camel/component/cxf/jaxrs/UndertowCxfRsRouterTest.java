@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -39,5 +40,4 @@ public class UndertowCxfRsRouterTest extends CxfRsRouterTest {
     public void testEndpointUris() {
         // Don't test anything here
     }
-
 }

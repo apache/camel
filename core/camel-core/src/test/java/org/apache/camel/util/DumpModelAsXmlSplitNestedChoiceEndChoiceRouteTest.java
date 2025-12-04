@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,7 +29,14 @@ public class DumpModelAsXmlSplitNestedChoiceEndChoiceRouteTest extends DumpModel
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").split().body().to("mock:sub").id("myMock").choice().when(header("foo"))
+                from("direct:start")
+                        .routeId("myRoute")
+                        .split()
+                        .body()
+                        .to("mock:sub")
+                        .id("myMock")
+                        .choice()
+                        .when(header("foo"))
                         .to("mock:foo") // eg
                         // we
                         // can
@@ -36,16 +44,20 @@ public class DumpModelAsXmlSplitNestedChoiceEndChoiceRouteTest extends DumpModel
                         // .endChoice()
                         // here
                         // also
-                        .when(header("bar")).to("mock:bar") // eg we can use
+                        .when(header("bar"))
+                        .to("mock:bar") // eg we can use
                         // .endChoice() here
                         // also
-                        .otherwise().to("mock:other").endChoice()
+                        .otherwise()
+                        .to("mock:other")
+                        .endChoice()
                         // end choice goes back to same level as choice (eg such as
                         // ending the otherwise),
                         // so we need a 2nd end to end the choice block in general
                         .end()
                         // and then an end to end the splitter
-                        .end().to("mock:last");
+                        .end()
+                        .to("mock:last");
             }
         };
     }

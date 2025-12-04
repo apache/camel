@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
 
 import java.io.IOException;
@@ -60,11 +61,11 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
 
     private List<Item> readItems() throws IOException {
         if (items == null) {
-            items = AtomUtils.readItems(endpoint.getCamelContext(), endpoint.getFeedUri(), rssReader, endpoint.isSortEntries());
+            items = AtomUtils.readItems(
+                    endpoint.getCamelContext(), endpoint.getFeedUri(), rssReader, endpoint.isSortEntries());
             list = items;
             entryIndex = list.size() - 1;
         }
         return items;
     }
-
 }

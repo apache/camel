@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
 
 import java.io.File;
@@ -27,12 +28,11 @@ import org.apache.camel.component.file.GenericFile;
 
 @Converter(generateLoader = true)
 public final class GoogleDriveFilesConverter {
-    private GoogleDriveFilesConverter() {
-    }
+    private GoogleDriveFilesConverter() {}
 
     @Converter
-    public static com.google.api.services.drive.model.File genericFileToGoogleDriveFile(GenericFile<?> file, Exchange exchange)
-            throws Exception {
+    public static com.google.api.services.drive.model.File genericFileToGoogleDriveFile(
+            GenericFile<?> file, Exchange exchange) throws Exception {
         if (file.getFile() instanceof File) {
             File f = (File) file.getFile();
             com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
@@ -47,7 +47,8 @@ public final class GoogleDriveFilesConverter {
         if (exchange != null) {
             // body wasn't a java.io.File so let's try to convert it
             file.getBinding().loadContent(exchange, file);
-            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file.getBody());
+            InputStream is =
+                    exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file.getBody());
 
             com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
             fileMetadata.setName(file.getFileName());

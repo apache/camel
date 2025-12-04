@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -54,7 +55,9 @@ public class BeanToFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").to("bean:myBean").setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME))
+                from("direct:in")
+                        .to("bean:myBean")
+                        .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME))
                         .to(fileUri("?fileExist=Override"), "mock:result");
             }
         };
@@ -65,5 +68,4 @@ public class BeanToFileTest extends ContextTestSupport {
             return "Bye " + input;
         }
     }
-
 }

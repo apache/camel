@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +30,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MultipleEventNotifierEventsTest extends ContextTestSupport {
 
@@ -122,7 +123,8 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
 
     @Test
     public void testExchangeFailed() {
-        Exception e = assertThrows(Exception.class,
+        Exception e = assertThrows(
+                Exception.class,
                 () -> template.sendBody("direct:fail", "Hello World"),
                 "Should have thrown an exception");
 
@@ -180,5 +182,4 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
             }
         };
     }
-
 }

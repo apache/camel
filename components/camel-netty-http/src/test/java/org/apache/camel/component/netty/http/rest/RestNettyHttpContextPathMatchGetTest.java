@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestNettyHttpContextPathMatchGetTest extends BaseNettyTest {
 
@@ -42,22 +43,16 @@ public class RestNettyHttpContextPathMatchGetTest extends BaseNettyTest {
                 restConfiguration().component("netty-http").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}").to("direct:id")
-                        .get("list").to("direct:list");
+                rest("/users/").get("{id}").to("direct:id").get("list").to("direct:list");
 
-                from("direct:id")
-                        .to("mock:input")
-                        .process(exchange -> {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getMessage().setBody(id + ";Donald Duck");
-                        });
+                from("direct:id").to("mock:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Donald Duck");
+                });
 
-                from("direct:list")
-                        .to("mock:input")
-                        .process(exchange -> exchange.getMessage().setBody("123;Donald Duck\n456;John Doe"));
+                from("direct:list").to("mock:input").process(exchange -> exchange.getMessage()
+                        .setBody("123;Donald Duck\n456;John Doe"));
             }
         };
     }
-
 }

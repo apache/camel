@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb;
 
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class InfluxDbProducerPingTest extends AbstractInfluxDbTest {
         return new RouteBuilder() {
             public void configure() {
 
-                //test route
+                // test route
                 from("direct:test")
                         .to("influxdb:influxDbBean?databaseName={{influxdb.testDb}}&operation=ping")
                         .to("mock:test");
@@ -64,5 +65,4 @@ public class InfluxDbProducerPingTest extends AbstractInfluxDbTest {
         pointMap.put("CPU", 1);
         return pointMap;
     }
-
 }

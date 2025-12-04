@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xchange;
+
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.apache.camel.CamelContext;
@@ -26,10 +29,9 @@ import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.utils.AuthUtils;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-
 public abstract class XChangeTestSupport extends CamelTestSupport {
-    public static WireMockServer wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
+    public static WireMockServer wireMockServer =
+            new WireMockServer(wireMockConfig().dynamicPort());
 
     @BeforeAll
     public static void startWireMockServer() {
@@ -65,7 +67,8 @@ public abstract class XChangeTestSupport extends CamelTestSupport {
             if (specification.getApiKey() == null)
                 specification.setApiKey(System.getProperty("xchange.api.key", System.getenv("XCHANGE_API_KEY")));
             if (specification.getSecretKey() == null)
-                specification.setSecretKey(System.getProperty("xchange.secret.key", System.getenv("XCHANGE_SECRET_KEY")));
+                specification.setSecretKey(
+                        System.getProperty("xchange.secret.key", System.getenv("XCHANGE_SECRET_KEY")));
         }
 
         XChange xchange = new XChange(ExchangeFactory.INSTANCE.createExchange(specification));

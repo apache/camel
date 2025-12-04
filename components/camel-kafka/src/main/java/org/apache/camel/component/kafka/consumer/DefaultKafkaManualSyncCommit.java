@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer;
 
 public class DefaultKafkaManualSyncCommit extends DefaultKafkaManualCommit implements KafkaManualCommit {
     private final CommitManager commitManager;
 
-    public DefaultKafkaManualSyncCommit(KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
-                                        KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload,
-                                        CommitManager commitManager) {
+    public DefaultKafkaManualSyncCommit(
+            KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
+            KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload,
+            CommitManager commitManager) {
         super(camelExchangePayload, kafkaRecordPayload);
         this.commitManager = commitManager;
     }

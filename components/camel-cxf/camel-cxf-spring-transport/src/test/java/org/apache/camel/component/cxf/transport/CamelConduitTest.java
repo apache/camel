@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,9 +39,6 @@ import org.apache.cxf.message.MessageImpl;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CamelConduitTest extends CamelTransportTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CamelConduitTest.class);
@@ -85,7 +86,8 @@ public class CamelConduitTest extends CamelTransportTestSupport {
 
         assertNotNull(context, "the camel context which get from camel conduit is not null");
         assertEquals("conduit_context", context.getName(), "get the wrong camel context");
-        assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
+        assertEquals(
+                "direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
 
         // test the configuration of camelContextId attribute
         endpointInfo.setAddress("camel://direct:EndpointA");
@@ -95,7 +97,8 @@ public class CamelConduitTest extends CamelTransportTestSupport {
 
         assertNotNull(context, "the camel context which get from camel conduit is not null");
         assertEquals("conduit_context", context.getName(), "get the wrong camel context");
-        assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
+        assertEquals(
+                "direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
 
         endpointInfo.setAddress("camel://direct:EndpointC");
         endpointInfo.setName(testEndpointQNameB);
@@ -103,7 +106,8 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         context = conduit.getCamelContext();
         assertNotNull(context, "the camel context which get from camel conduit is not null");
         assertEquals("context", context.getName(), "get the wrong camel context");
-        assertEquals("direct://EndpointC", context.getRoutes().get(0).getEndpoint().getEndpointUri());
+        assertEquals(
+                "direct://EndpointC", context.getRoutes().get(0).getEndpoint().getEndpointUri());
         bus.shutdown(false);
     }
 
@@ -163,6 +167,5 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         }
         String reponse = new String(bytes);
         assertEquals(content, reponse, "The reponse date should be equals");
-
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx.async;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
@@ -26,9 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class AsyncEndpointJmsTXRollback2IT extends AbstractSpringJMSITSupport {
 
     private static int invoked;
@@ -83,17 +84,13 @@ public class AsyncEndpointJmsTXRollback2IT extends AbstractSpringJMSITSupport {
                         .to("direct:foo")
                         .to("mock:result");
 
-                from("direct:foo")
-                        .transacted()
-                        .to("async:bye:camel")
-                        .process(exchange -> {
-                            invoked++;
-                            if (invoked < 2) {
-                                throw new IllegalArgumentException("Damn");
-                            }
-                            assertTrue(exchange.isTransacted(), "Exchange should be transacted");
-                        });
-
+                from("direct:foo").transacted().to("async:bye:camel").process(exchange -> {
+                    invoked++;
+                    if (invoked < 2) {
+                        throw new IllegalArgumentException("Damn");
+                    }
+                    assertTrue(exchange.isTransacted(), "Exchange should be transacted");
+                });
             }
         };
     }

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestUndertowHttpGetOrderingIssueTest extends BaseUndertowTest {
 
@@ -57,23 +58,25 @@ public class RestUndertowHttpGetOrderingIssueTest extends BaseUndertowTest {
 
                 rest().get("/bar").to("direct:bar");
                 from("direct:bar")
-                        .setBody().constant("Going to the bar")
+                        .setBody()
+                        .constant("Going to the bar")
                         .to("mock:bar")
                         .setHeader("Content-Type", constant("text/plain"));
 
                 rest().get("/{pippo}").to("direct:pippo");
                 from("direct:pippo")
-                        .setBody().simple("Route with name: ${header.pippo}")
+                        .setBody()
+                        .simple("Route with name: ${header.pippo}")
                         .to("mock:pippo")
                         .setHeader("Content-Type", constant("text/plain"));
 
                 rest().get("/").to("direct:noname");
                 from("direct:noname")
-                        .setBody().constant("Route without name")
+                        .setBody()
+                        .constant("Route without name")
                         .to("mock:root")
                         .setHeader("Content-Type", constant("text/plain"));
             }
         };
     }
-
 }

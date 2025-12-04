@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.support.http.HttpUtil.isStatusCodeOk;
 
 import java.net.URI;
 import java.util.List;
@@ -33,8 +36,6 @@ import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.http.HttpUtil.isStatusCodeOk;
 
 /**
  * HTTP based {@link NettyProducer}.
@@ -134,7 +135,8 @@ public class NettyHttpProducer extends NettyProducer {
         private final AsyncCallback callback;
         private final NettyHttpConfiguration configuration;
 
-        private NettyHttpProducerCallback(Exchange exchange, AsyncCallback callback, NettyHttpConfiguration configuration) {
+        private NettyHttpProducerCallback(
+                Exchange exchange, AsyncCallback callback, NettyHttpConfiguration configuration) {
             this.exchange = exchange;
             this.callback = callback;
             this.configuration = configuration;
@@ -143,7 +145,8 @@ public class NettyHttpProducer extends NettyProducer {
         @Override
         public void done(boolean doneSync) {
             try {
-                // only handle when we are done asynchronous as then the netty producer is done sending, and we have a response
+                // only handle when we are done asynchronous as then the netty producer is done sending, and we have a
+                // response
                 if (!doneSync) {
                     NettyHttpMessage nettyMessage = exchange.getMessage(NettyHttpMessage.class);
                     if (nettyMessage != null) {
@@ -163,9 +166,12 @@ public class NettyHttpProducer extends NettyProducer {
                                 }
                             });
 
-                            // the actual url is stored on the IN message in the getRequestBody method as its accessed on-demand
+                            // the actual url is stored on the IN message in the getRequestBody method as its accessed
+                            // on-demand
                             String actualUrl = exchange.getIn().getHeader(NettyHttpConstants.HTTP_URL, String.class);
-                            int code = response.status() != null ? response.status().code() : -1;
+                            int code = response.status() != null
+                                    ? response.status().code()
+                                    : -1;
                             LOG.debug("Http responseCode: {}", code);
 
                             // if there was a http error code then check if we should throw an exception
@@ -180,8 +186,12 @@ public class NettyHttpProducer extends NettyProducer {
                                 removeCamelHeaders(exchange);
                             } else if (getConfiguration().isThrowExceptionOnFailure()) {
                                 // operation failed so populate exception to throw
-                                Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl,
-                                        response, code, getConfiguration().isTransferException());
+                                Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(
+                                        exchange,
+                                        actualUrl,
+                                        response,
+                                        code,
+                                        getConfiguration().isTransferException());
                                 exchange.setException(cause);
                             }
                         }
@@ -200,8 +210,7 @@ public class NettyHttpProducer extends NettyProducer {
      * @param exchange the exchange
      */
     protected void removeCamelHeaders(Exchange exchange) {
-        List<String> headersToRemove = exchange.getMessage().getHeaders().keySet()
-                .stream()
+        List<String> headersToRemove = exchange.getMessage().getHeaders().keySet().stream()
                 .filter(key -> !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE)
                         && !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT)
                         && key.startsWith("Camel"))

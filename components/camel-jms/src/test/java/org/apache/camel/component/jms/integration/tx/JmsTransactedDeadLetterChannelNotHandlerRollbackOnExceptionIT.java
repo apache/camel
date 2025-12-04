@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.tx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 // This test cannot run in parallel: it reads from the default DLQ and there could be more messages there
-@Tags({ @Tag("not-parallel"), @Tag("transaction") })
+@Tags({@Tag("not-parallel"), @Tag("transaction")})
 public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionIT
         extends JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT {
 
@@ -42,5 +43,4 @@ public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionIT
         Object dlqBody = consumer.receiveBody("activemq:DLQ", 2000);
         assertEquals("Hello World", dlqBody);
     }
-
 }

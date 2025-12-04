@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
 
 import org.apache.camel.test.AvailablePortFinder;
@@ -28,5 +29,4 @@ public class WebhookTestBase extends CamelTestSupport {
     public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
-
 }

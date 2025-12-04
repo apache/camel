@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collections;
@@ -116,23 +117,26 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
 
     @Override
     public boolean isVerifySupported() {
-        return component.getExtension(org.apache.camel.component.extension.ComponentVerifierExtension.class).isPresent();
+        return component
+                .getExtension(org.apache.camel.component.extension.ComponentVerifierExtension.class)
+                .isPresent();
     }
 
     @Override
     public ComponentVerifierExtension.Result verify(String scope, Map<String, String> options) {
         try {
-            org.apache.camel.component.extension.ComponentVerifierExtension.Scope scopeEnum
-                    = org.apache.camel.component.extension.ComponentVerifierExtension.Scope.fromString(scope);
-            Optional<org.apache.camel.component.extension.ComponentVerifierExtension> verifier
-                    = component.getExtension(org.apache.camel.component.extension.ComponentVerifierExtension.class);
+            org.apache.camel.component.extension.ComponentVerifierExtension.Scope scopeEnum =
+                    org.apache.camel.component.extension.ComponentVerifierExtension.Scope.fromString(scope);
+            Optional<org.apache.camel.component.extension.ComponentVerifierExtension> verifier =
+                    component.getExtension(org.apache.camel.component.extension.ComponentVerifierExtension.class);
             if (verifier.isPresent()) {
-                org.apache.camel.component.extension.ComponentVerifierExtension.Result result
-                        = verifier.get().verify(scopeEnum, CastUtils.cast(options));
+                org.apache.camel.component.extension.ComponentVerifierExtension.Result result =
+                        verifier.get().verify(scopeEnum, CastUtils.cast(options));
                 String rstatus = result.getStatus().toString();
                 String rscope = result.getScope().toString();
                 return new ResultImpl(
-                        Scope.valueOf(rscope), Status.valueOf(rstatus),
+                        Scope.valueOf(rscope),
+                        Status.valueOf(rstatus),
                         result.getErrors().stream().map(this::translate).toList());
 
             } else {
@@ -140,7 +144,9 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
             }
         } catch (IllegalArgumentException e) {
             return new ResultImpl(
-                    Scope.PARAMETERS, Status.UNSUPPORTED, Collections.singletonList(
+                    Scope.PARAMETERS,
+                    Status.UNSUPPORTED,
+                    Collections.singletonList(
                             new VerificationErrorImpl(StandardCode.UNSUPPORTED_SCOPE, "Unsupported scope: " + scope)));
         }
     }
@@ -153,32 +159,40 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
     }
 
     private Map<VerificationError.Attribute, Object> translate(
-            Map<org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.Attribute, Object> details) {
+            Map<org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.Attribute, Object>
+                    details) {
         return details.entrySet().stream().collect(Collectors.toMap(e -> translate(e.getKey()), Entry::getValue));
     }
 
     private VerificationError.Attribute translate(
             org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.Attribute attribute) {
         if (attribute
-            == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.GroupAttribute.GROUP_NAME) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.GroupAttribute
+                        .GROUP_NAME) {
             return GroupAttribute.GROUP_NAME;
         } else if (attribute
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.GroupAttribute.GROUP_OPTIONS) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.GroupAttribute
+                        .GROUP_OPTIONS) {
             return GroupAttribute.GROUP_OPTIONS;
         } else if (attribute
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.HttpAttribute
+                        .HTTP_CODE) {
             return HttpAttribute.HTTP_CODE;
         } else if (attribute
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_REDIRECT) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.HttpAttribute
+                        .HTTP_REDIRECT) {
             return HttpAttribute.HTTP_REDIRECT;
         } else if (attribute
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_TEXT) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.HttpAttribute
+                        .HTTP_TEXT) {
             return HttpAttribute.HTTP_TEXT;
         } else if (attribute
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_CLASS) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.ExceptionAttribute
+                        .EXCEPTION_CLASS) {
             return ExceptionAttribute.EXCEPTION_CLASS;
         } else if (attribute
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.ExceptionAttribute
+                        .EXCEPTION_INSTANCE) {
             return ExceptionAttribute.EXCEPTION_INSTANCE;
         } else if (attribute != null) {
             return VerificationError.asAttribute(attribute.getName());
@@ -190,43 +204,56 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
     private VerificationError.Code translate(
             org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.Code code) {
         if (code
-            == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.AUTHENTICATION) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .AUTHENTICATION) {
             return StandardCode.AUTHENTICATION;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .EXCEPTION) {
             return StandardCode.EXCEPTION;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.INTERNAL) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .INTERNAL) {
             return StandardCode.INTERNAL;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .MISSING_PARAMETER) {
             return StandardCode.MISSING_PARAMETER;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .UNKNOWN_PARAMETER) {
             return StandardCode.UNKNOWN_PARAMETER;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .ILLEGAL_PARAMETER) {
             return StandardCode.ILLEGAL_PARAMETER;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .ILLEGAL_PARAMETER_GROUP_COMBINATION) {
             return StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .ILLEGAL_PARAMETER_VALUE) {
             return StandardCode.ILLEGAL_PARAMETER_VALUE;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .INCOMPLETE_PARAMETER_GROUP) {
             return StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.UNSUPPORTED) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .UNSUPPORTED) {
             return StandardCode.UNSUPPORTED;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.UNSUPPORTED_SCOPE) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .UNSUPPORTED_SCOPE) {
             return StandardCode.UNSUPPORTED_SCOPE;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.UNSUPPORTED_COMPONENT) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .UNSUPPORTED_COMPONENT) {
             return StandardCode.UNSUPPORTED_COMPONENT;
         } else if (code
-                   == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.GENERIC) {
+                == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode
+                        .GENERIC) {
             return StandardCode.GENERIC;
         } else if (code != null) {
             return VerificationError.asCode(code.getName());
@@ -248,7 +275,8 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
             this.details = Collections.emptyMap();
         }
 
-        public VerificationErrorImpl(Code code, String description, Set<String> parameterKeys, Map<Attribute, Object> details) {
+        public VerificationErrorImpl(
+                Code code, String description, Set<String> parameterKeys, Map<Attribute, Object> details) {
             this.code = code;
             this.description = description;
             this.parameterKeys = parameterKeys;

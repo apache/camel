@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq6.converter;
 
 import org.apache.activemq.command.ActiveMQDestination;
@@ -34,5 +35,4 @@ public class ActiveMQConverter {
     public ActiveMQDestination toDestination(String name) {
         return ActiveMQDestination.createDestination(name, ActiveMQDestination.QUEUE_TYPE);
     }
-
 }

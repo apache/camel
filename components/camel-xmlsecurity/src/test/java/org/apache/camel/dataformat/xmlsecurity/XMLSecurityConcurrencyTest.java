@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.xmlsecurity;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -28,10 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XMLSecurityConcurrencyTest extends CamelTestSupport {
 
@@ -55,7 +56,8 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
             final int index = i;
             executor.submit(new Callable<Object>() {
                 public Object call() {
-                    String body = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><body>you can not read me " + index + "</body>";
+                    String body =
+                            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><body>you can not read me " + index + "</body>";
                     template.sendBody("direct:start", body);
                     return null;
                 }
@@ -64,7 +66,11 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        String secure = getMockEndpoint("mock:secure").getReceivedExchanges().get(0).getIn().getBody(String.class);
+        String secure = getMockEndpoint("mock:secure")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(String.class);
         assertNotNull(secure);
         assertEquals(-1, secure.indexOf("read"), "Should not be readable");
         executor.shutdownNow();
@@ -78,12 +84,18 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").marshal().xmlSecurity(defaultKey.getEncoded()).to("mock:secure").to("direct:marshalled");
+                from("direct:start")
+                        .marshal()
+                        .xmlSecurity(defaultKey.getEncoded())
+                        .to("mock:secure")
+                        .to("direct:marshalled");
 
-                from("direct:marshalled").unmarshal().xmlSecurity(defaultKey.getEncoded()).convertBodyTo(String.class)
+                from("direct:marshalled")
+                        .unmarshal()
+                        .xmlSecurity(defaultKey.getEncoded())
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
     }
-
 }

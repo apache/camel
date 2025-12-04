@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -34,7 +35,8 @@ public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
         if (definition.getLibrary() == AvroLibrary.ApacheAvro) {
             if (definition.getInstanceClassName() == null) {
                 if (definition.getUnmarshalType() != null) {
-                    properties.put("instanceClassName", definition.getUnmarshalType().getName());
+                    properties.put(
+                            "instanceClassName", definition.getUnmarshalType().getName());
                 } else if (definition.getUnmarshalTypeName() != null) {
                     properties.put("instanceClassName", definition.getUnmarshalTypeName());
                 }
@@ -51,8 +53,11 @@ public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
                 properties.put("useDefaultObjectMapper", definition.getUseDefaultObjectMapper());
             }
             properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
-            properties.put("unmarshalType", or(
-                    or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()), definition.getInstanceClassName()));
+            properties.put(
+                    "unmarshalType",
+                    or(
+                            or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()),
+                            definition.getInstanceClassName()));
             properties.put("jsonView", or(definition.getJsonView(), definition.getJsonViewTypeName()));
             properties.put("include", definition.getInclude());
             properties.put("allowJmsType", definition.getAllowJmsType());
@@ -67,5 +72,4 @@ public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
             properties.put("autoDiscoverSchemaResolver", definition.getAutoDiscoverSchemaResolver());
         }
     }
-
 }

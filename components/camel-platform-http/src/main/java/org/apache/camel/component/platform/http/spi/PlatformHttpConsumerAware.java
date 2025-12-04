@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.spi;
 
 import org.apache.camel.AfterPropertiesConfigured;
@@ -34,5 +35,4 @@ public interface PlatformHttpConsumerAware {
      * For example used by camel-rest-openapi
      */
     void registerAfterConfigured(AfterPropertiesConfigured listener);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.IOException;
@@ -49,8 +50,11 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "log",
-                     description = "Tail logs from running Camel integrations", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "log",
+        description = "Tail logs from running Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelLogAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
@@ -63,8 +67,7 @@ public class CamelLogAction extends ActionBaseCommand {
 
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
-        public PrefixCompletionCandidates() {
-        }
+        public PrefixCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
@@ -72,42 +75,66 @@ public class CamelLogAction extends ActionBaseCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
+    @CommandLine.Parameters(
+            description = "Name or pid of running Camel integration. (default selects all)",
+            arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(
+            names = {"--logging-color"},
+            defaultValue = "true",
+            description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
-                        description = "Print timestamp.")
+    @CommandLine.Option(
+            names = {"--timestamp"},
+            defaultValue = "true",
+            description = "Print timestamp.")
     boolean timestamp = true;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
-                        description = "Keep following and outputting new log lines (press enter to exit).")
+    @CommandLine.Option(
+            names = {"--follow"},
+            defaultValue = "true",
+            description = "Keep following and outputting new log lines (press enter to exit).")
     boolean follow = true;
 
-    @CommandLine.Option(names = { "--startup" }, defaultValue = "false",
-                        description = "Only shows logs from the starting phase to make it quick to look at how Camel was started.")
+    @CommandLine.Option(
+            names = {"--startup"},
+            defaultValue = "false",
+            description = "Only shows logs from the starting phase to make it quick to look at how Camel was started.")
     boolean startup;
 
-    @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto", completionCandidates = PrefixCompletionCandidates.class,
-                        description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
+    @CommandLine.Option(
+            names = {"--prefix"},
+            defaultValue = "auto",
+            completionCandidates = PrefixCompletionCandidates.class,
+            description =
+                    "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
     String prefix = "auto";
 
-    @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
-                        description = "The number of lines from the end of the logs to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all logs from beginning.")
+    @CommandLine.Option(
+            names = {"--tail"},
+            defaultValue = "-1",
+            description =
+                    "The number of lines from the end of the logs to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all logs from beginning.")
     int tail = -1;
 
-    @CommandLine.Option(names = { "--since" },
-                        description = "Return logs newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
+    @CommandLine.Option(
+            names = {"--since"},
+            description =
+                    "Return logs newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
     String since;
 
-    @CommandLine.Option(names = { "--find" },
-                        description = "Find and highlight matching text (ignore case).", arity = "0..*")
+    @CommandLine.Option(
+            names = {"--find"},
+            description = "Find and highlight matching text (ignore case).",
+            arity = "0..*")
     String[] find;
 
-    @CommandLine.Option(names = { "--grep" },
-                        description = "Filter logs to only output lines matching text (ignore case).", arity = "0..*")
+    @CommandLine.Option(
+            names = {"--grep"},
+            description = "Filter logs to only output lines matching text (ignore case).",
+            arity = "0..*")
     String[] grep;
 
     String findAnsi;
@@ -130,7 +157,12 @@ public class CamelLogAction extends ActionBaseCommand {
         if (!rows.isEmpty()) {
             // read existing log files (skip by tail/since)
             if (find != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+                findAnsi = Ansi.ansi()
+                        .fg(Ansi.Color.BLACK)
+                        .bg(Ansi.Color.YELLOW)
+                        .a("$0")
+                        .reset()
+                        .toString();
                 for (int i = 0; i < find.length; i++) {
                     String f = find[i];
                     f = Pattern.quote(f);
@@ -138,7 +170,12 @@ public class CamelLogAction extends ActionBaseCommand {
                 }
             }
             if (grep != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+                findAnsi = Ansi.ansi()
+                        .fg(Ansi.Color.BLACK)
+                        .bg(Ansi.Color.YELLOW)
+                        .a("$0")
+                        .reset()
+                        .toString();
                 for (int i = 0; i < grep.length; i++) {
                     String f = grep[i];
                     f = Pattern.quote(f);
@@ -171,10 +208,12 @@ public class CamelLogAction extends ActionBaseCommand {
         if (follow) {
             boolean waitMessage = true;
             final AtomicBoolean running = new AtomicBoolean(true);
-            Thread t = new Thread(() -> {
-                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
-                waitUserTask.run();
-            }, "WaitForUser");
+            Thread t = new Thread(
+                    () -> {
+                        waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
+                        waitUserTask.run();
+                    },
+                    "WaitForUser");
             t.start();
             StopWatch watch = new StopWatch();
             do {
@@ -207,36 +246,34 @@ public class CamelLogAction extends ActionBaseCommand {
 
     private void updatePids(Map<Long, Row> rows) {
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        Row row = new Row();
-                        row.pid = Long.toString(ph.pid());
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        int len = row.name.length();
-                        if (len < NAME_MIN_WIDTH) {
-                            len = NAME_MIN_WIDTH;
-                        }
-                        if (len > NAME_MAX_WIDTH) {
-                            len = NAME_MAX_WIDTH;
-                        }
-                        if (len > nameMaxWidth) {
-                            nameMaxWidth = len;
-                        }
-                        if (!rows.containsKey(ph.pid())) {
-                            rows.put(ph.pid(), row);
-                        }
-                    }
-                });
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            if (root != null) {
+                Row row = new Row();
+                row.pid = Long.toString(ph.pid());
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                int len = row.name.length();
+                if (len < NAME_MIN_WIDTH) {
+                    len = NAME_MIN_WIDTH;
+                }
+                if (len > NAME_MAX_WIDTH) {
+                    len = NAME_MAX_WIDTH;
+                }
+                if (len > nameMaxWidth) {
+                    nameMaxWidth = len;
+                }
+                if (!rows.containsKey(ph.pid())) {
+                    rows.put(ph.pid(), row);
+                }
+            }
+        });
 
         // remove pids that are no long active from the rows
         Set<Long> remove = new HashSet<>();
@@ -444,8 +481,10 @@ public class CamelLogAction extends ActionBaseCommand {
                     line = row.reader.readLine();
                     if (line != null) {
                         row.fifo.offer(line);
-                        boolean found = line.contains("AbstractCamelContext") && line.contains("Apache Camel ")
-                                && line.contains(" started in ") && line.contains("(build:");
+                        boolean found = line.contains("AbstractCamelContext")
+                                && line.contains("Apache Camel ")
+                                && line.contains(" started in ")
+                                && line.contains("(build:");
                         if (found) {
                             line = null;
                         }
@@ -576,5 +615,4 @@ public class CamelLogAction extends ActionBaseCommand {
         Queue<String> fifo;
         LineNumberReader reader;
     }
-
 }

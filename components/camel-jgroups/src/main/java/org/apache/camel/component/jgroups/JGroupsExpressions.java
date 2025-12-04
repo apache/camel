@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
 
 import org.apache.camel.Exchange;
@@ -22,8 +23,7 @@ import org.apache.camel.support.ExpressionAdapter;
 
 public final class JGroupsExpressions {
 
-    private JGroupsExpressions() {
-    }
+    private JGroupsExpressions() {}
 
     public static Expression delayIfContextNotStarted(final long delay) {
         return new ExpressionAdapter() {
@@ -33,5 +33,4 @@ public final class JGroupsExpressions {
             }
         };
     }
-
 }

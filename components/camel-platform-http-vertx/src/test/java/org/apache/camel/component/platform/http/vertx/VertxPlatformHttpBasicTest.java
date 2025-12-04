@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformHttpBasicTest {
 
@@ -33,22 +34,15 @@ public class VertxPlatformHttpBasicTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/camel/ok")
-                            .setBody().constant("Bye World");
+                    from("platform-http:/camel/ok").setBody().constant("Bye World");
 
-                    from("platform-http:/camel/fail")
-                            .throwException(new IllegalArgumentException("Forced error"));
+                    from("platform-http:/camel/fail").throwException(new IllegalArgumentException("Forced error"));
                 }
             });
 
             context.start();
 
-            given()
-                    .body("Hello World")
-                    .post("/camel/ok")
-                    .then()
-                    .statusCode(200)
-                    .body(is("Bye World"));
+            given().body("Hello World").post("/camel/ok").then().statusCode(200).body(is("Bye World"));
         } finally {
             context.stop();
         }
@@ -62,15 +56,13 @@ public class VertxPlatformHttpBasicTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/camel/fail")
-                            .throwException(new IllegalArgumentException("Forced error"));
+                    from("platform-http:/camel/fail").throwException(new IllegalArgumentException("Forced error"));
                 }
             });
 
             context.start();
 
-            given()
-                    .body("Hello World")
+            given().body("Hello World")
                     .post("/camel/fail")
                     .then()
                     .statusCode(500)
@@ -79,5 +71,4 @@ public class VertxPlatformHttpBasicTest {
             context.stop();
         }
     }
-
 }

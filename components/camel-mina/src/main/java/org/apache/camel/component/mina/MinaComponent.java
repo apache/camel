@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import java.net.URI;
@@ -37,11 +38,11 @@ public class MinaComponent extends DefaultComponent implements SSLContextParamet
 
     @Metadata(label = "advanced")
     private MinaConfiguration configuration;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
-    public MinaComponent() {
-    }
+    public MinaComponent() {}
 
     public MinaComponent(CamelContext context) {
         super(context);
@@ -109,7 +110,7 @@ public class MinaComponent extends DefaultComponent implements SSLContextParamet
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public MinaConfiguration getConfiguration() {
         return configuration;
     }
@@ -133,5 +134,4 @@ public class MinaComponent extends DefaultComponent implements SSLContextParamet
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
-
 }

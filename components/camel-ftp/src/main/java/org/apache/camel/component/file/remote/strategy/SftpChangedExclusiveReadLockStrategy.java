@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.strategy;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -48,7 +49,9 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
     @Override
     public boolean acquireExclusiveReadLock(
-            GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
+            GenericFileOperations<ChannelSftp.LsEntry> operations,
+            GenericFile<ChannelSftp.LsEntry> file,
+            Exchange exchange)
             throws Exception {
         boolean exclusive = false;
 
@@ -64,7 +67,9 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel,
+                    CamelLogger.log(
+                            LOG,
+                            readLockLoggingLevel,
                             "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
                     // we could not get the lock within the timeout period, so
                     // return false
@@ -126,8 +131,9 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             long newOlderThan = startTime + watch.taken() - minAge;
             LOG.trace("New older than threshold: {}", newOlderThan);
 
-            if (newLength >= minLength && (minAge == 0 && newLastModified == lastModified && newLength == length
-                    || minAge != 0 && newLastModified < newOlderThan)) {
+            if (newLength >= minLength
+                    && (minAge == 0 && newLastModified == lastModified && newLength == length
+                            || minAge != 0 && newLastModified < newOlderThan)) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -161,21 +167,27 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
     @Override
     public void releaseExclusiveReadLockOnAbort(
-            GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
+            GenericFileOperations<ChannelSftp.LsEntry> operations,
+            GenericFile<ChannelSftp.LsEntry> file,
+            Exchange exchange)
             throws Exception {
         // noop
     }
 
     @Override
     public void releaseExclusiveReadLockOnRollback(
-            GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
+            GenericFileOperations<ChannelSftp.LsEntry> operations,
+            GenericFile<ChannelSftp.LsEntry> file,
+            Exchange exchange)
             throws Exception {
         // noop
     }
 
     @Override
     public void releaseExclusiveReadLockOnCommit(
-            GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
+            GenericFileOperations<ChannelSftp.LsEntry> operations,
+            GenericFile<ChannelSftp.LsEntry> file,
+            Exchange exchange)
             throws Exception {
         // noop
     }

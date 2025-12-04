@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq6;
 
 import jakarta.jms.Message;
@@ -51,5 +52,4 @@ public class OriginalDestinationPropagateStrategy implements MessageCreatedStrat
             }
         }
     }
-
 }

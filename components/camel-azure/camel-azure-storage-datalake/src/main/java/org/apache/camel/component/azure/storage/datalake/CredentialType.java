@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 public enum CredentialType {
@@ -48,5 +49,4 @@ public enum CredentialType {
      *
      */
     SERVICE_CLIENT_INSTANCE
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.routing;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.function.BiFunction;
@@ -42,9 +46,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterComponentTest {
@@ -104,7 +105,8 @@ class DynamicRouterComponentTest {
         processorFactory = new DynamicRouterProcessorFactory() {
             @Override
             public DynamicRouterProcessor getInstance(
-                    CamelContext camelContext, DynamicRouterConfiguration configuration,
+                    CamelContext camelContext,
+                    DynamicRouterConfiguration configuration,
                     DynamicRouterFilterService filterService,
                     final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier) {
                 return processor;
@@ -113,7 +115,8 @@ class DynamicRouterComponentTest {
         producerFactory = new DynamicRouterProducerFactory() {
             @Override
             public DynamicRouterProducer getInstance(
-                    DynamicRouterEndpoint endpoint, DynamicRouterComponent component,
+                    DynamicRouterEndpoint endpoint,
+                    DynamicRouterComponent component,
                     DynamicRouterConfiguration configuration) {
                 return producer;
             }
@@ -121,7 +124,11 @@ class DynamicRouterComponentTest {
         prioritizedFilterFactory = new PrioritizedFilterFactory() {
             @Override
             public PrioritizedFilter getInstance(
-                    String id, int priority, Predicate predicate, String endpoint, PrioritizedFilterStatistics statistics) {
+                    String id,
+                    int priority,
+                    Predicate predicate,
+                    String endpoint,
+                    PrioritizedFilterStatistics statistics) {
                 return prioritizedFilter;
             }
         };
@@ -132,21 +139,27 @@ class DynamicRouterComponentTest {
             }
         };
         component = new DynamicRouterComponent(
-                () -> endpointFactory, () -> processorFactory, () -> producerFactory, recipientListSupplier,
-                () -> prioritizedFilterFactory, () -> filterServiceFactory);
+                () -> endpointFactory,
+                () -> processorFactory,
+                () -> producerFactory,
+                recipientListSupplier,
+                () -> prioritizedFilterFactory,
+                () -> filterServiceFactory);
     }
 
     @Test
     void testCreateEndpoint() throws Exception {
         component.setCamelContext(context);
-        Endpoint actualEndpoint = component.createEndpoint("dynamic-router:testname", "remaining", Collections.emptyMap());
+        Endpoint actualEndpoint =
+                component.createEndpoint("dynamic-router:testname", "remaining", Collections.emptyMap());
         assertEquals(endpoint, actualEndpoint);
     }
 
     @Test
     void testCreateEndpointWithEmptyRemainingError() {
         component.setCamelContext(context);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> component.createEndpoint("dynamic-router:testname", "", Collections.emptyMap()));
     }
 
@@ -160,7 +173,8 @@ class DynamicRouterComponentTest {
     void testAddRoutingProcessorWithSecondProcessorForChannelError() {
         component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor);
         assertEquals(processor, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
-        assertThrows(IllegalArgumentException.class, () -> component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor));
+        assertThrows(
+                IllegalArgumentException.class, () -> component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor));
     }
 
     @Test

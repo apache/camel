@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RemovePropertyTest extends ContextTestSupport {
     private MockEndpoint end;
@@ -69,8 +70,12 @@ public class RemovePropertyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setProperty(propertyName).constant(expectedPropertyValue).to("mock:mid")
-                        .removeProperty(propertyName).to("mock:end");
+                from("direct:start")
+                        .setProperty(propertyName)
+                        .constant(expectedPropertyValue)
+                        .to("mock:mid")
+                        .removeProperty(propertyName)
+                        .to("mock:end");
             }
         };
     }

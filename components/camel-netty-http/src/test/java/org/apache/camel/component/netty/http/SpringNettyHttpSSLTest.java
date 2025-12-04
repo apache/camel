@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URL;
 
@@ -30,10 +33,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @CamelSpringTest
-@ContextConfiguration(locations = { "/org/apache/camel/component/netty/http/SpringNettyHttpSSLTest.xml" })
+@ContextConfiguration(locations = {"/org/apache/camel/component/netty/http/SpringNettyHttpSSLTest.xml"})
 public class SpringNettyHttpSSLTest {
 
     @Produce
@@ -77,5 +78,4 @@ public class SpringNettyHttpSSLTest {
 
         mockEndpoint.assertIsSatisfied();
     }
-
 }

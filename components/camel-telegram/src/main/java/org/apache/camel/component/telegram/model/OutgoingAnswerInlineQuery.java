@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.util.List;
@@ -52,9 +53,14 @@ public class OutgoingAnswerInlineQuery extends OutgoingMessage {
     @JsonProperty("switch_pm_parameter")
     private String switchPmParameter;
 
-    public OutgoingAnswerInlineQuery(String inlineQueryId, List<InlineQueryResult> results, Integer cacheTime,
-                                     Boolean personal, String nextOffset, String switchPmText,
-                                     String switchPmParameter) {
+    public OutgoingAnswerInlineQuery(
+            String inlineQueryId,
+            List<InlineQueryResult> results,
+            Integer cacheTime,
+            Boolean personal,
+            String nextOffset,
+            String switchPmText,
+            String switchPmParameter) {
         this.inlineQueryId = inlineQueryId;
         this.results = results;
         this.cacheTime = cacheTime;
@@ -64,8 +70,7 @@ public class OutgoingAnswerInlineQuery extends OutgoingMessage {
         this.switchPmParameter = switchPmParameter;
     }
 
-    public OutgoingAnswerInlineQuery() {
-    }
+    public OutgoingAnswerInlineQuery() {}
 
     public static Builder builder() {
         return new Builder();
@@ -80,8 +85,7 @@ public class OutgoingAnswerInlineQuery extends OutgoingMessage {
         private String switchPmText;
         private String switchPmParameter;
 
-        public Builder() {
-        }
+        public Builder() {}
 
         public Builder inlineQueryId(String inlineQueryId) {
             this.inlineQueryId = inlineQueryId;

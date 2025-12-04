@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
 
 import java.util.Collection;
@@ -35,24 +36,32 @@ public class GoogleDriveConfiguration {
     @UriPath
     @Metadata(required = true)
     private GoogleDriveApiName apiName;
+
     @UriPath(enums = "copy,delete,get,getIdForEmail,insert,list,patch,stop,touch,trash,untrash,update,watch")
     @Metadata(required = true)
     private String methodName;
+
     @UriParam
     private String scopes;
+
     @UriParam
     private String clientId;
+
     @UriParam(label = "security", secret = true)
     private String clientSecret;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "security", secret = true)
     private String refreshToken;
+
     @UriParam
     private String applicationName;
     /* Service account */
     @UriParam(label = "security")
     private String serviceAccountKey;
+
     @UriParam
     private String delegate;
 
@@ -181,5 +190,4 @@ public class GoogleDriveConfiguration {
     public void setDelegate(String delegate) {
         this.delegate = delegate;
     }
-
 }

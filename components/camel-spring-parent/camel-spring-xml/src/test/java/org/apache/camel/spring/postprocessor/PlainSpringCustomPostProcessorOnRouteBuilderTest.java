@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.postprocessor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PlainSpringCustomPostProcessorOnRouteBuilderTest {
 
@@ -38,5 +39,4 @@ public class PlainSpringCustomPostProcessorOnRouteBuilderTest {
 
         assertEquals("Changed Value", pojo.getTestValue(), "Processor has not changed field value");
     }
-
 }

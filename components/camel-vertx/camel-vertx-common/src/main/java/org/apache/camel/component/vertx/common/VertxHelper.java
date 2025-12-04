@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.common;
 
 import java.security.KeyStore;
@@ -67,16 +68,14 @@ public final class VertxHelper {
         TrustManagerFactory trustManagerFactory = createTrustManagerFactory(camelContext, sslContextParameters);
         tcpsslOptions.setTrustOptions(new TrustManagerFactoryOptions(trustManagerFactory));
 
-        if (sslContextParameters.getTrustManagers() != null &&
-                sslContextParameters.getTrustManagers().getTrustManager() == TrustAllTrustManager.INSTANCE) {
+        if (sslContextParameters.getTrustManagers() != null
+                && sslContextParameters.getTrustManagers().getTrustManager() == TrustAllTrustManager.INSTANCE) {
             tcpsslOptions.setTrustOptions(TrustOptions.wrap(TrustAllTrustManager.INSTANCE));
         }
-
     }
 
     private static KeyManagerFactory createKeyManagerFactory(
-            CamelContext camelContext, SSLContextParameters sslContextParameters)
-            throws Exception {
+            CamelContext camelContext, SSLContextParameters sslContextParameters) throws Exception {
         final KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
         if (keyManagers == null) {
             return null;
@@ -95,24 +94,27 @@ public final class VertxHelper {
         if (keyManagers.getProvider() == null) {
             kmf = KeyManagerFactory.getInstance(kmfAlgorithm);
         } else {
-            kmf = KeyManagerFactory.getInstance(kmfAlgorithm,
-                    camelContext.resolvePropertyPlaceholders(keyManagers.getProvider()));
+            kmf = KeyManagerFactory.getInstance(
+                    kmfAlgorithm, camelContext.resolvePropertyPlaceholders(keyManagers.getProvider()));
         }
 
         char[] kmfPassword = null;
         if (keyManagers.getKeyPassword() != null) {
-            kmfPassword = camelContext.resolvePropertyPlaceholders(keyManagers.getKeyPassword()).toCharArray();
+            kmfPassword = camelContext
+                    .resolvePropertyPlaceholders(keyManagers.getKeyPassword())
+                    .toCharArray();
         }
 
-        KeyStore ks = keyManagers.getKeyStore() == null ? null : keyManagers.getKeyStore().createKeyStore();
+        KeyStore ks = keyManagers.getKeyStore() == null
+                ? null
+                : keyManagers.getKeyStore().createKeyStore();
 
         kmf.init(ks, kmfPassword);
         return kmf;
     }
 
     private static TrustManagerFactory createTrustManagerFactory(
-            CamelContext camelContext, SSLContextParameters sslContextParameters)
-            throws Exception {
+            CamelContext camelContext, SSLContextParameters sslContextParameters) throws Exception {
         final TrustManagersParameters trustManagers = sslContextParameters.getTrustManagers();
         if (trustManagers == null) {
             return null;
@@ -133,11 +135,13 @@ public final class VertxHelper {
             if (trustManagers.getProvider() == null) {
                 tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
             } else {
-                tmf = TrustManagerFactory.getInstance(tmfAlgorithm,
-                        camelContext.resolvePropertyPlaceholders(trustManagers.getProvider()));
+                tmf = TrustManagerFactory.getInstance(
+                        tmfAlgorithm, camelContext.resolvePropertyPlaceholders(trustManagers.getProvider()));
             }
 
-            KeyStore ks = trustManagers.getKeyStore() == null ? null : trustManagers.getKeyStore().createKeyStore();
+            KeyStore ks = trustManagers.getKeyStore() == null
+                    ? null
+                    : trustManagers.getKeyStore().createKeyStore();
             tmf.init(ks);
         }
         return tmf;

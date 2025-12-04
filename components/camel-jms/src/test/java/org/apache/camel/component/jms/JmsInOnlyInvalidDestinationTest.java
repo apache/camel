@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.Destination;
@@ -43,9 +44,11 @@ public class JmsInOnlyInvalidDestinationTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
+
     @BindToRegistry("myResolver")
     private final MyDestinationResolver resolver = new MyDestinationResolver();
 
@@ -53,7 +56,10 @@ public class JmsInOnlyInvalidDestinationTest extends AbstractJMSTest {
     public void testInvalidDestination() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:foo", "Hello World", "foo",
+        template.sendBodyAndHeader(
+                "direct:foo",
+                "Hello World",
+                "foo",
                 "activemq:queue:JmsInOnlyInvalidDestinationTest?destinationResolver=#myResolver");
 
         MockEndpoint.assertIsSatisfied(context);

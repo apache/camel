@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.keycloak.services;
 
 import java.time.Duration;
@@ -30,9 +31,10 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = KeycloakInfraService.class,
-              description = "Identity and access management solution",
-              serviceAlias = { "keycloak" })
+@InfraService(
+        service = KeycloakInfraService.class,
+        description = "Identity and access management solution",
+        serviceAlias = {"keycloak"})
 public class KeycloakLocalContainerInfraService implements KeycloakInfraService, ContainerService<GenericContainer<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeycloakLocalContainerInfraService.class);
@@ -40,15 +42,14 @@ public class KeycloakLocalContainerInfraService implements KeycloakInfraService,
     private static final String DEFAULT_KEYCLOAK_CONTAINER = "quay.io/keycloak/keycloak:latest";
     private static final int KEYCLOAK_PORT = 8080;
     private static final String DEFAULT_ADMIN_USERNAME = "admin";
-    // NOTE: default value used only for testing purposes.
-    private static final String DEFAULT_ADMIN_PASSWORD = "admin"; // NOSONAR
+    private static final String DEFAULT_ADMIN_PASSWORD = "admin";
     private static final String DEFAULT_REALM = "master";
 
     private final GenericContainer<?> container;
 
     public KeycloakLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(KeycloakLocalContainerInfraService.class,
-                KeycloakProperties.KEYCLOAK_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                KeycloakLocalContainerInfraService.class, KeycloakProperties.KEYCLOAK_CONTAINER));
     }
 
     public KeycloakLocalContainerInfraService(String imageName) {
@@ -138,10 +139,6 @@ public class KeycloakLocalContainerInfraService implements KeycloakInfraService,
     @Override
     public Keycloak getKeycloakAdminClient() {
         return Keycloak.getInstance(
-                getKeycloakServerUrl(),
-                getKeycloakRealm(),
-                getKeycloakUsername(),
-                getKeycloakPassword(),
-                "admin-cli");
+                getKeycloakServerUrl(), getKeycloakRealm(), getKeycloakUsername(), getKeycloakPassword(), "admin-cli");
     }
 }

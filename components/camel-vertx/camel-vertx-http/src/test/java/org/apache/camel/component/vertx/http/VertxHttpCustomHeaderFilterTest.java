@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class VertxHttpCustomHeaderFilterTest extends VertxHttpTestSupport {
 
@@ -41,8 +42,7 @@ public class VertxHttpCustomHeaderFilterTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri())
-                        .setBody(constant("Hello World"));
+                from(getTestServerUri()).setBody(constant("Hello World"));
             }
         };
     }

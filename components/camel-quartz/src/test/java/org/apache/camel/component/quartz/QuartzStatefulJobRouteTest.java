@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,9 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * This test the CronTrigger as a timer endpoint in a route.
@@ -51,7 +52,8 @@ public class QuartzStatefulJobRouteTest extends BaseQuartzTest {
             public void configure() {
                 // triggers every 2th second at precise 00,02,04,06..58
                 // notice we must use + as space when configured using URI parameter
-                from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?&stateful=true").to("mock:result");
+                from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?&stateful=true")
+                        .to("mock:result");
             }
         };
     }

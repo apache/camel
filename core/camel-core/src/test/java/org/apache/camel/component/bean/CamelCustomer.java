@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 public class CamelCustomer {
-    public CamelCustomer() {
-    }
+    public CamelCustomer() {}
 
-    public void extraMethod() {
-    }
+    public void extraMethod() {}
 
     public static boolean isGoldCustomer(String body) {
         return body.contains("Camel");

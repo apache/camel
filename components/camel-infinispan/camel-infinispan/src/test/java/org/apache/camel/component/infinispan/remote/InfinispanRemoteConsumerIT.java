@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,8 +26,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Extremely unreliable on virtual machines")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Extremely unreliable on virtual machines")
 public class InfinispanRemoteConsumerIT extends InfinispanRemoteTestSupport implements InfinispanConsumerTestSupport {
     @Test
     public void consumerReceivedEventNotifications() throws Exception {

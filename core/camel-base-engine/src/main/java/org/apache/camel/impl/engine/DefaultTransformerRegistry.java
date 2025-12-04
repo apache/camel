@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Map;
@@ -68,7 +69,8 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
 
         // try wildcard match for transformers with matching data type scheme - add an alias if matched
         TransformerKey alias = null;
-        if (!DataType.isAnyType(key.getFrom()) && ObjectHelper.isNotEmpty(key.getFrom().getName())) {
+        if (!DataType.isAnyType(key.getFrom())
+                && ObjectHelper.isNotEmpty(key.getFrom().getName())) {
             alias = new TransformerKey(new DataType(key.getFrom().getScheme()), key.getTo());
             answer = get(alias);
         }
@@ -76,9 +78,13 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
             alias = new TransformerKey(key.getFrom(), new DataType(key.getTo().getScheme()));
             answer = get(alias);
         }
-        if (answer == null && !DataType.isAnyType(key.getFrom()) && ObjectHelper.isNotEmpty(key.getFrom().getName())
+        if (answer == null
+                && !DataType.isAnyType(key.getFrom())
+                && ObjectHelper.isNotEmpty(key.getFrom().getName())
                 && ObjectHelper.isNotEmpty(key.getTo().getName())) {
-            alias = new TransformerKey(new DataType(key.getFrom().getScheme()), new DataType(key.getTo().getScheme()));
+            alias = new TransformerKey(
+                    new DataType(key.getFrom().getScheme()),
+                    new DataType(key.getTo().getScheme()));
             answer = get(alias);
         }
 
@@ -104,7 +110,11 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
 
         if (answer != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found transformer {} for key {} using alias {}", ObjectHelper.name(answer.getClass()), key, alias);
+                LOG.debug(
+                        "Found transformer {} for key {} using alias {}",
+                        ObjectHelper.name(answer.getClass()),
+                        key,
+                        alias);
             }
 
             aliasMap.put(key, alias);
@@ -213,5 +223,4 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
     public String toString() {
         return "TransformerRegistry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
     }
-
 }

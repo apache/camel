@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security.cache;
 
 import org.apache.camel.component.keycloak.security.KeycloakTokenIntrospector;
@@ -40,8 +41,7 @@ public final class TokenCacheFactory {
      * @return                          a TokenCache instance, or null if caching is disabled
      * @throws IllegalArgumentException if the cache type is not supported or dependencies are missing
      */
-    public static TokenCache createCache(
-            TokenCacheType cacheType, long ttlSeconds, long maxSize, boolean recordStats) {
+    public static TokenCache createCache(TokenCacheType cacheType, long ttlSeconds, long maxSize, boolean recordStats) {
 
         if (cacheType == null) {
             cacheType = TokenCacheType.CONCURRENT_MAP;
@@ -83,7 +83,7 @@ public final class TokenCacheFactory {
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(
                     "Caffeine cache type selected but caffeine dependency is not available. "
-                                               + "Add caffeine to your dependencies or use CONCURRENT_MAP cache type.",
+                            + "Add caffeine to your dependencies or use CONCURRENT_MAP cache type.",
                     e);
         }
     }

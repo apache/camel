@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.util.ArrayList;
@@ -50,7 +51,8 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
 
         List<HttpConsumer> candidates = resolveCandidates(request, consumers);
         // extra filter by restrict
-        candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict()))
+        candidates = candidates.stream()
+                .filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict()))
                 .collect(Collectors.toList());
         if (candidates.size() == 1) {
             answer = candidates.get(0);
@@ -59,13 +61,12 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
         return answer;
     }
 
-    private List<HttpConsumer> resolveCandidates(
-            HttpServletRequest request, Map<String, HttpConsumer> consumers) {
+    private List<HttpConsumer> resolveCandidates(HttpServletRequest request, Map<String, HttpConsumer> consumers) {
         String path = request.getPathInfo();
 
         List<HttpConsumer> candidates = new ArrayList<>();
         for (Map.Entry<String, HttpConsumer> entry : consumers.entrySet()) {
-            //We need to look up the consumer path here
+            // We need to look up the consumer path here
             String consumerPath = entry.getValue().getPath();
             HttpConsumer consumer = entry.getValue();
             boolean matchOnUriPrefix = consumer.getEndpoint().isMatchOnUriPrefix();
@@ -80,5 +81,4 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
     private static boolean matchRestMethod(String method, String restrict) {
         return restrict == null || restrict.toLowerCase(Locale.ENGLISH).contains(method.toLowerCase(Locale.ENGLISH));
     }
-
 }

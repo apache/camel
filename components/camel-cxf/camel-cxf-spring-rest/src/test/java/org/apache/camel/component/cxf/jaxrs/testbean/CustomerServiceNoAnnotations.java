@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs.testbean;
 
 // START SNIPPET: example
 public interface CustomerServiceNoAnnotations {
 
     Customer getCustomer(String id);
-
 }
 // END SNIPPET: example

@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.consul.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class ConsulServiceFactory {
 
-    private ConsulServiceFactory() {
-    }
+    private ConsulServiceFactory() {}
 
     public static SimpleTestServiceBuilder<ConsulService> builder() {
         return new SimpleTestServiceBuilder<>("consul");
@@ -34,9 +34,8 @@ public final class ConsulServiceFactory {
                 .build();
     }
 
-    public static class ConsulLocalContainerTestService extends ConsulLocalContainerInfraService implements ConsulService {
-    }
+    public static class ConsulLocalContainerTestService extends ConsulLocalContainerInfraService
+            implements ConsulService {}
 
-    public static class ConsulRemoteTestService extends ConsulRemoteInfraService implements ConsulService {
-    }
+    public static class ConsulRemoteTestService extends ConsulRemoteInfraService implements ConsulService {}
 }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnCompletionModeTest extends ContextTestSupport {
 
@@ -54,16 +55,27 @@ public class OnCompletionModeTest extends ContextTestSupport {
                 from("seda:foo")
                         // we do not want parallel as we want to change the message
                         // before the consumer writes the response
-                        .onCompletion().modeBeforeConsumer().transform(body().prepend("I was here ")).to("mock:after").end()
-                        .to("mock:input").transform(body().prepend("Hello "))
+                        .onCompletion()
+                        .modeBeforeConsumer()
+                        .transform(body().prepend("I was here "))
+                        .to("mock:after")
+                        .end()
+                        .to("mock:input")
+                        .transform(body().prepend("Hello "))
                         .to("log:foo");
 
                 from("seda:bar")
                         // need to use parallel to make copy so we do not do
                         // side-effects
-                        .onCompletion().modeAfterConsumer().parallelProcessing().transform(body().prepend("I was here "))
-                        .to("mock:after").end().to("mock:input")
-                        .transform(body().prepend("Hello ")).to("log:bar");
+                        .onCompletion()
+                        .modeAfterConsumer()
+                        .parallelProcessing()
+                        .transform(body().prepend("I was here "))
+                        .to("mock:after")
+                        .end()
+                        .to("mock:input")
+                        .transform(body().prepend("Hello "))
+                        .to("log:bar");
             }
         };
     }

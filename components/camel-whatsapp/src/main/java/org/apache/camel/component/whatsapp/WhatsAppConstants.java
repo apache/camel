@@ -14,19 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp;
 
 import org.apache.camel.spi.Metadata;
 
 public final class WhatsAppConstants {
 
-    @Metadata(label = "producer", description = "Phone Number ID taken from WhatsApp Meta for Developers Dashboard",
-              javaType = "Object")
+    @Metadata(
+            label = "producer",
+            description = "Phone Number ID taken from WhatsApp Meta for Developers Dashboard",
+            javaType = "Object")
     public static final String WHATSAPP_PHONE_NUMBER_ID = "CamelWhatsAppPhoneNumberId";
 
-    @Metadata(label = "producer", description = "Recipient phone number associated with Phone Number ID", javaType = "Object")
+    @Metadata(
+            label = "producer",
+            description = "Recipient phone number associated with Phone Number ID",
+            javaType = "Object")
     public static final String WHATSAPP_RECIPIENT_PHONE_NUMBER_ID = "CamelWhatsAppRecipientPhoneNumberId";
 
-    private WhatsAppConstants() {
-    }
+    private WhatsAppConstants() {}
 }

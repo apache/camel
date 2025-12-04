@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
@@ -36,5 +37,4 @@ public abstract class RoutesBuilderLoaderSupport extends ServiceSupport implemen
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
-
 }

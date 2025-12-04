@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
 
 import org.apache.camel.spi.Metadata;
@@ -38,20 +39,25 @@ public final class PahoMqtt5Constants {
     public static final int DEFAULT_QOS = 2;
 
     public static final String CAMEL_PAHO = "CamelPahoMqtt5";
+
     @Metadata(label = "producer", description = "The client quality of service level (0-2).", javaType = "Integer")
     public static final String CAMEL_PAHO_MSG_QOS = CAMEL_PAHO + "Qos";
+
     @Metadata(label = "producer", description = "Retain option.", javaType = "Boolean")
     public static final String CAMEL_PAHO_MSG_RETAINED = CAMEL_PAHO + "Retained";
-    @Metadata(label = "producer",
-              description = "The name of topic to override and send to instead of topic specified on endpoint.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "The name of topic to override and send to instead of topic specified on endpoint.",
+            javaType = "String")
     public static final String CAMEL_PAHO_OVERRIDE_TOPIC = CAMEL_PAHO + "OverrideTopic";
 
-    @Metadata(label = "consumer,producer",
-              description = "Consumer: The properties set on the incoming message. Producer: The properties to be set on the outgoing message.",
-              javaType = "org.eclipse.paho.mqttv5.common.packet.MqttProperties")
+    @Metadata(
+            label = "consumer,producer",
+            description =
+                    "Consumer: The properties set on the incoming message. Producer: The properties to be set on the outgoing message.",
+            javaType = "org.eclipse.paho.mqttv5.common.packet.MqttProperties")
     public static final String CAMEL_PAHO_MSG_PROPERTIES = CAMEL_PAHO + "MsgProperties";
 
-    private PahoMqtt5Constants() {
-    }
+    private PahoMqtt5Constants() {}
 }

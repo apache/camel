@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -28,9 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for poll strategy
@@ -51,8 +52,11 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10")).routeId("foo").autoStartup(false)
-                        .convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10"))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
@@ -96,5 +100,4 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
             return false;
         }
     }
-
 }

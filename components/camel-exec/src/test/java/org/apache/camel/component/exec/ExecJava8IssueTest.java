@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,9 +39,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test to duplicate issues with Camel's exec command in Java 8 on Unix This issue appears to be caused by a race
@@ -74,7 +75,8 @@ public class ExecJava8IssueTest {
 
         String tempFilePath = tempDir.getAbsolutePath() + "/" + tempFileName;
 
-        final File script = Files.createTempFile(tempDir.toPath(), "script", ".sh").toFile();
+        final File script =
+                Files.createTempFile(tempDir.toPath(), "script", ".sh").toFile();
 
         writeScript(script);
 
@@ -94,7 +96,6 @@ public class ExecJava8IssueTest {
                                 assertEquals("hello world\n", output);
                             }
                         });
-
             }
         });
 
@@ -111,7 +112,7 @@ public class ExecJava8IssueTest {
      */
     private void writeScript(File script) throws IOException {
         try (FileWriter fw = new FileWriter(script);
-             PrintWriter pw = new PrintWriter(fw);) {
+                PrintWriter pw = new PrintWriter(fw); ) {
             String s = "echo \" world\" >> $1";
             pw.print(s);
         }

@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.kafka.integration.common;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -38,9 +41,6 @@ import org.apache.kafka.common.requests.CreateTopicsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public final class KafkaTestUtil {
     public static final String MOCK_RESULT = "mock:result";
     public static final String MOCK_RESULT_BAR = "mock:resultBar";
@@ -48,9 +48,7 @@ public final class KafkaTestUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaTestUtil.class);
 
-    private KafkaTestUtil() {
-
-    }
+    private KafkaTestUtil() {}
 
     public static void setServiceProperties(KafkaService service) {
         LOG.info("### Kafka cluster broker list: {}", service.getBootstrapServers());
@@ -94,8 +92,10 @@ public final class KafkaTestUtil {
         AdminClient kafkaAdminClient = createAdminClient(service);
         NewTopic testTopic = new NewTopic(topic, numPartitions, CreateTopicsRequest.NO_REPLICATION_FACTOR);
         kafkaAdminClient.createTopics(Collections.singleton(testTopic));
-        KafkaFuture<TopicDescription> tdFuture
-                = kafkaAdminClient.describeTopics(Collections.singletonList(topic)).topicNameValues().get(topic);
+        KafkaFuture<TopicDescription> tdFuture = kafkaAdminClient
+                .describeTopics(Collections.singletonList(topic))
+                .topicNameValues()
+                .get(topic);
 
         try {
             TopicDescription td = tdFuture.get(5L, TimeUnit.SECONDS);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,13 +30,23 @@ public class OnExceptionSubRouteWithDefaultErrorHandlerTest extends OnExceptionR
             @Override
             public void configure() {
                 // here we start the routing with the consumer
-                from("direct:start").onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true).end()
+                from("direct:start")
+                        .onException(MyTechnicalException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .end()
                         .onException(MyFunctionalException.class)
-                        .maximumRedeliveries(0).handled(true).to("bean:myOwnHandler").end()
-
-                        .choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end().to("mock:result");
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .to("bean:myOwnHandler")
+                        .end()
+                        .choice()
+                        .when()
+                        .xpath("//type = 'myType'")
+                        .to("bean:myServiceBean")
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

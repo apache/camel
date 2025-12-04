@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.concurrent.CountDownLatch;
@@ -50,7 +51,8 @@ public class AggregatorLockingTest extends ContextTestSupport {
                 // in case of blocked thread then retry
                 errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(1));
 
-                from("seda:a?concurrentConsumers=2").aggregate(header("myId"), new UseLatestAggregationStrategy())
+                from("seda:a?concurrentConsumers=2")
+                        .aggregate(header("myId"), new UseLatestAggregationStrategy())
                         .completionSize(1)
                         // N.B. *no* parallelProcessing() nor optimisticLocking() !
                         // each thread releases 1 permit and then blocks waiting for
@@ -62,18 +64,21 @@ public class AggregatorLockingTest extends ContextTestSupport {
                         // lock in AggregateProcessor.doProcess() then only 1 thread
                         // will run and will not release
                         // the current thread, causing the test to time out.
-                        .log("Before await with thread: ${threadName} and body: ${body}").process(new Processor() {
+                        .log("Before await with thread: ${threadName} and body: ${body}")
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 latch.countDown();
                                 // block until the other thread counts down as well
                                 if (!latch.await(1, TimeUnit.SECONDS)) {
-                                    throw new RuntimeException("Took too long; assume threads are blocked and fail test");
+                                    throw new RuntimeException(
+                                            "Took too long; assume threads are blocked and fail test");
                                 }
                             }
-                        }).log("After await with thread: ${threadName} and body: ${body}").to("mock:result");
+                        })
+                        .log("After await with thread: ${threadName} and body: ${body}")
+                        .to("mock:result");
             }
         };
     }
-
 }

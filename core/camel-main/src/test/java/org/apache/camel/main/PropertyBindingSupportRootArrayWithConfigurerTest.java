@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
@@ -23,8 +26,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -51,7 +52,8 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
                 .withProperty("bars[0].names[0]", "a")
                 .withProperty("bars[0].names[1]", "b")
                 .withConfigurer(new MySecondFooConfigurer())
-                .withRemoveParameters(false).bind();
+                .withRemoveParameters(false)
+                .bind();
 
         assertEquals(1, target.getBars().size());
         assertEquals(123, target.getBars().get(0).getNumber());
@@ -84,7 +86,8 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
                 .withProperty("bars[0].names[0]", "a")
                 .withProperty("bars[0].names[1]", "b")
                 .withConfigurer(new MySecondFooConfigurer())
-                .withRemoveParameters(false).bind();
+                .withRemoveParameters(false)
+                .bind();
 
         assertEquals(1, target.getBars().size());
         assertEquals(123, target.getBars().get(0).getNumber());
@@ -116,7 +119,8 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
                 .withProperty("bars[0].names[0]", "a")
                 .withProperty("bars[0].names[1]", "b")
                 .withConfigurer(new MySecondFooConfigurer())
-                .withRemoveParameters(false).bind();
+                .withRemoveParameters(false)
+                .bind();
 
         assertEquals(1, target.getBars().size());
         assertEquals(2, target.getBars().get(0).getNames().size());
@@ -127,5 +131,4 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
 
         context.stop();
     }
-
 }

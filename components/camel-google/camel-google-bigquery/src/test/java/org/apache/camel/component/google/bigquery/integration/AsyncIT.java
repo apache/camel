@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.integration;
 
 import java.util.ArrayList;
@@ -36,8 +37,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
-           disabledReason = "Credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
+        disabledReason = "Credentials were not provided")
 public class AsyncIT extends BigQueryITSupport {
     private static final String TABLE_ID = "asynctest";
 
@@ -62,8 +64,7 @@ public class AsyncIT extends BigQueryITSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(directIn)
-                        .to("seda:seda");
+                from(directIn).to("seda:seda");
                 from("seda:seda")
                         .routeId("Async")
                         .to(ExchangePattern.InOnly, bigqueryEndpoint)
@@ -96,5 +97,4 @@ public class AsyncIT extends BigQueryITSupport {
             assertRowExist(TABLE_ID, object);
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,27 +74,25 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
-
 public abstract class ExportBaseCommand extends CamelCommand {
 
     protected static final String BUILD_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/work";
 
     protected static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
-            "camel.main.routesIncludePattern",
-            "camel.component.properties.location",
-            "camel.component.kamelet.location",
-            CLASSPATH_FILES,
-            LOCAL_KAMELET_DIR,
-            GROOVY_FILES,
-            SCRIPT_FILES,
-            TLS_FILES,
-            JKUBE_FILES,
-            "kamelet"
+        "camel.main.routesIncludePattern",
+        "camel.component.properties.location",
+        "camel.component.kamelet.location",
+        CLASSPATH_FILES,
+        LOCAL_KAMELET_DIR,
+        GROOVY_FILES,
+        SCRIPT_FILES,
+        TLS_FILES,
+        JKUBE_FILES,
+        "kamelet"
     };
 
-    private static final Pattern PACKAGE_PATTERN = Pattern.compile(
-            "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+    private static final Pattern PACKAGE_PATTERN =
+            Pattern.compile("^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
@@ -99,192 +100,278 @@ public abstract class ExportBaseCommand extends CamelCommand {
     private MavenDownloader downloader;
     private Printer quietPrinter;
 
-    @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
-                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
+    @CommandLine.Parameters(
+            description =
+                    "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
+            arity = "0..9",
+            paramLabel = "<files>",
+            parameterConsumer = FilesConsumer.class)
     protected Path[] filePaths; // Defined only for file path completion; the field never used
 
     protected List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repositories;
 
-    @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
-                        split = ",")
+    @CommandLine.Option(
+            names = {"--dep", "--dependency"},
+            description = "Add additional dependencies",
+            split = ",")
     protected List<String> dependencies = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @CommandLine.Option(
+            names = {"--runtime"},
+            completionCandidates = RuntimeCompletionCandidates.class,
+            converter = RuntimeTypeConverter.class,
+            description = "Runtime (${COMPLETION-CANDIDATES})")
     protected RuntimeType runtime;
 
-    @CommandLine.Option(names = { "--name" },
-                        description = "The integration name. Use this when the name should not get derived otherwise.")
+    @CommandLine.Option(
+            names = {"--name"},
+            description = "The integration name. Use this when the name should not get derived otherwise.")
     protected String name;
 
-    @CommandLine.Option(names = { "--port" },
-                        description = "Embeds a local HTTP server on this port", defaultValue = "8080")
+    @CommandLine.Option(
+            names = {"--port"},
+            description = "Embeds a local HTTP server on this port",
+            defaultValue = "8080")
     int port;
 
-    @CommandLine.Option(names = { "--management-port" },
-                        description = "To use a dedicated port for HTTP management")
+    @CommandLine.Option(
+            names = {"--management-port"},
+            description = "To use a dedicated port for HTTP management")
     int managementPort = -1;
 
-    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
+    @CommandLine.Option(
+            names = {"--gav"},
+            description = "The Maven group:artifact:version")
     protected String gav;
 
-    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    @CommandLine.Option(
+            names = {"--exclude"},
+            description = "Exclude files by name or pattern")
     protected List<String> excludes = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--maven-settings" },
-                        description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
-                                      + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+    @CommandLine.Option(
+            names = {"--maven-settings"},
+            description =
+                    "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
+                            + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     protected String mavenSettings;
 
-    @CommandLine.Option(names = { "--maven-settings-security" },
-                        description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
+    @CommandLine.Option(
+            names = {"--maven-settings-security"},
+            description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     protected String mavenSettingsSecurity;
 
-    @CommandLine.Option(names = { "--maven-central-enabled" }, defaultValue = "true",
-                        description = "Whether downloading JARs from Maven Central repository is enabled")
+    @CommandLine.Option(
+            names = {"--maven-central-enabled"},
+            defaultValue = "true",
+            description = "Whether downloading JARs from Maven Central repository is enabled")
     protected boolean mavenCentralEnabled = true;
 
-    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true",
-                        description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    @CommandLine.Option(
+            names = {"--maven-apache-snapshot-enabled"},
+            defaultValue = "true",
+            description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     protected boolean mavenApacheSnapshotEnabled = true;
 
-    @CommandLine.Option(names = { "--main-classname" },
-                        description = "The class name of the Camel Main application class",
-                        defaultValue = "CamelApplication")
+    @CommandLine.Option(
+            names = {"--main-classname"},
+            description = "The class name of the Camel Main application class",
+            defaultValue = "CamelApplication")
     protected String mainClassname = "CamelApplication";
 
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version", defaultValue = "21")
+    @CommandLine.Option(
+            names = {"--java-version"},
+            description = "Java version",
+            defaultValue = "21")
     protected String javaVersion = "21";
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To export using a different Camel version than the default version.")
+    @CommandLine.Option(
+            names = {"--camel-version"},
+            description = "To export using a different Camel version than the default version.")
     protected String camelVersion;
 
-    @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = RuntimeType.KAMELETS_VERSION)
+    @CommandLine.Option(
+            names = {"--kamelets-version"},
+            description = "Apache Camel Kamelets version",
+            defaultValue = RuntimeType.KAMELETS_VERSION)
     protected String kameletsVersion = RuntimeType.KAMELETS_VERSION;
 
-    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
-                        description = "Profile to export (dev, test, or prod).")
+    @CommandLine.Option(
+            names = {"--profile"},
+            scope = CommandLine.ScopeType.INHERIT,
+            description = "Profile to export (dev, test, or prod).")
     protected String profile;
 
-    @CommandLine.Option(names = { "--local-kamelet-dir" },
-                        description = "Local directory for loading Kamelets (takes precedence)")
+    @CommandLine.Option(
+            names = {"--local-kamelet-dir"},
+            description = "Local directory for loading Kamelets (takes precedence)")
     protected String localKameletDir;
 
-    @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = RuntimeType.SPRING_BOOT_VERSION)
+    @CommandLine.Option(
+            names = {"--spring-boot-version"},
+            description = "Spring Boot version",
+            defaultValue = RuntimeType.SPRING_BOOT_VERSION)
     protected String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
 
-    @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
+    @CommandLine.Option(
+            names = {"--camel-spring-boot-version"},
+            description = "Camel version to use with Spring Boot")
     protected String camelSpringBootVersion;
 
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
+    @CommandLine.Option(
+            names = {"--quarkus-group-id"},
+            description = "Quarkus Platform Maven groupId",
+            defaultValue = "io.quarkus.platform")
     protected String quarkusGroupId = "io.quarkus.platform";
 
-    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
-                        defaultValue = "quarkus-bom")
+    @CommandLine.Option(
+            names = {"--quarkus-artifact-id"},
+            description = "Quarkus Platform Maven artifactId",
+            defaultValue = "quarkus-bom")
     protected String quarkusArtifactId = "quarkus-bom";
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
+    @CommandLine.Option(
+            names = {"--quarkus-version"},
+            description = "Quarkus Platform version",
+            defaultValue = RuntimeType.QUARKUS_VERSION)
     protected String quarkusVersion = RuntimeType.QUARKUS_VERSION;
 
-    @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
-                        description = "Include Maven Wrapper files in exported project")
+    @CommandLine.Option(
+            names = {"--maven-wrapper"},
+            defaultValue = "true",
+            description = "Include Maven Wrapper files in exported project")
     protected boolean mavenWrapper = true;
 
-    @CommandLine.Option(names = { "--gradle-wrapper" }, defaultValue = "true",
-                        description = "Include Gradle Wrapper files in exported project")
+    @CommandLine.Option(
+            names = {"--gradle-wrapper"},
+            defaultValue = "true",
+            description = "Include Gradle Wrapper files in exported project")
     protected boolean gradleWrapper = true;
 
-    @CommandLine.Option(names = { "--build-tool" }, defaultValue = "maven",
-                        description = "Build tool to use (maven or gradle)")
+    @CommandLine.Option(
+            names = {"--build-tool"},
+            defaultValue = "maven",
+            description = "Build tool to use (maven or gradle)")
     protected String buildTool = "maven";
 
-    @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
+    @CommandLine.Option(
+            names = {"--open-api"},
+            description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     protected String openapi;
 
-    @CommandLine.Option(names = { "--observe" }, defaultValue = "false",
-                        description = "Enable observability services")
+    @CommandLine.Option(
+            names = {"--observe"},
+            defaultValue = "false",
+            description = "Enable observability services")
     protected boolean observe;
 
-    @CommandLine.Option(names = {
-            "--dir",
-            "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
+    @CommandLine.Option(
+            names = {"--dir", "--directory"},
+            description = "Directory where the project will be exported",
+            defaultValue = ".")
     protected String exportDir;
 
-    @CommandLine.Option(names = { "--clean-dir" }, defaultValue = "false",
-                        description = "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)")
+    @CommandLine.Option(
+            names = {"--clean-dir"},
+            defaultValue = "false",
+            description =
+                    "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)")
     protected boolean cleanExportDir;
 
-    @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
+    @CommandLine.Option(
+            names = {"--logging-level"},
+            defaultValue = "info",
+            description = "Logging level")
     protected String loggingLevel = "info";
 
-    @CommandLine.Option(names = { "--package-name" },
-                        description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
-                                      + "Use false to turn off and not include package name in the Java source files.")
+    @CommandLine.Option(
+            names = {"--package-name"},
+            description =
+                    "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
+                            + "Use false to turn off and not include package name in the Java source files.")
     protected String packageName;
 
-    @CommandLine.Option(names = { "--fresh" }, defaultValue = "false",
-                        description = "Make sure we use fresh (i.e. non-cached) resources")
+    @CommandLine.Option(
+            names = {"--fresh"},
+            defaultValue = "false",
+            description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    @CommandLine.Option(
+            names = {"--download"},
+            defaultValue = "true",
+            description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     protected boolean download = true;
 
-    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    @CommandLine.Option(
+            names = {"--package-scan-jars"},
+            defaultValue = "false",
+            description =
+                    "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
     protected boolean packageScanJars;
 
-    @CommandLine.Option(names = { "--build-property" },
-                        description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
+    @CommandLine.Option(
+            names = {"--build-property"},
+            description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     protected List<String> buildProperties = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Camel application properties, ex. --property=prop1=foo")
+    @CommandLine.Option(
+            names = {"--prop", "--property"},
+            description = "Camel application properties, ex. --property=prop1=foo")
     protected String[] applicationProperties;
 
-    @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
-                        description = "Can be used to turn on logging to console (logs by default to file in <user home>/.camel directory)")
+    @CommandLine.Option(
+            names = {"--logging"},
+            defaultValue = "false",
+            description =
+                    "Can be used to turn on logging to console (logs by default to file in <user home>/.camel directory)")
     protected boolean logging;
 
-    @CommandLine.Option(names = { "--quiet" }, defaultValue = "false",
-                        description = "Will be quiet, only print when error occurs")
+    @CommandLine.Option(
+            names = {"--quiet"},
+            defaultValue = "false",
+            description = "Will be quiet, only print when error occurs")
     protected boolean quiet;
 
-    @CommandLine.Option(names = { "--verbose" }, defaultValue = "false",
-                        description = "Verbose output of startup activity (dependency resolution and downloading")
+    @CommandLine.Option(
+            names = {"--verbose"},
+            defaultValue = "false",
+            description = "Verbose output of startup activity (dependency resolution and downloading")
     protected boolean verbose;
 
-    @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
-                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    @CommandLine.Option(
+            names = {"--ignore-loading-error"},
+            defaultValue = "false",
+            description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
-    @CommandLine.Option(names = { "--lazy-bean" }, defaultValue = "true",
-                        description = "Whether to use lazy bean initialization (can help with complex classloading issues")
+    @CommandLine.Option(
+            names = {"--lazy-bean"},
+            defaultValue = "true",
+            description = "Whether to use lazy bean initialization (can help with complex classloading issues")
     protected boolean lazyBean = true;
 
-    @CommandLine.Option(names = { "--skip-plugins" }, defaultValue = "false",
-                        description = "Skip plugins during export")
+    @CommandLine.Option(
+            names = {"--skip-plugins"},
+            defaultValue = "false",
+            description = "Skip plugins during export")
     protected boolean skipPlugins;
 
-    @CommandLine.Option(names = { "--groovy-pre-compiled" }, defaultValue = "false",
-                        description = "Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main)")
+    @CommandLine.Option(
+            names = {"--groovy-pre-compiled"},
+            defaultValue = "false",
+            description =
+                    "Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main)")
     protected boolean groovyPrecompiled;
 
-    protected boolean symbolicLink;     // copy source files using symbolic link
+    protected boolean symbolicLink; // copy source files using symbolic link
     protected boolean javaLiveReload; // reload java codes in dev
-    public String pomTemplateName;   // support for specialised pom templates
+    public String pomTemplateName; // support for specialised pom templates
 
     public ExportBaseCommand(CamelJBangMain main) {
         super(main);
@@ -399,8 +486,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         Properties properties = mapBuildProperties();
 
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
-                    .stream()
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values().stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
@@ -418,7 +504,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 .collect(Collectors.joining(System.lineSeparator()));
 
         if (!mavenProperties.isEmpty()) {
-            context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), Matcher.quoteReplacement(mavenProperties));
+            context = context.replaceFirst(
+                    Pattern.quote("{{ .BuildProperties }}"), Matcher.quoteReplacement(mavenProperties));
         } else {
             context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), "");
         }
@@ -472,7 +559,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 String v = StringHelper.after(line, "dependency=");
                 // skip endpointdsl as its already included, and core-languages and java-joor as
                 // we let quarkus compile
-                boolean skip = v == null || v.contains("org.apache.camel:camel-core-languages")
+                boolean skip = v == null
+                        || v.contains("org.apache.camel:camel-core-languages")
                         || v.contains("org.apache.camel:camel-java-joor-dsl")
                         || v.contains("camel-endpointdsl")
                         || (v.contains("org.apache.camel.kamelets:camel-kamelets"))
@@ -547,7 +635,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                                         // include JARs for official ASF kamelets
                                         answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                                         if (VersionHelper.compare(camelVersion, "4.10.0") < 0) {
-                                            answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                                            answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:"
+                                                    + kameletsVersion);
                                         }
                                     }
                                 }
@@ -597,8 +686,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
-                    .stream()
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values().stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
@@ -635,8 +723,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected void copySourceFiles(
-            Path settings, Path profile, Path srcJavaDirRoot, Path srcJavaDir, Path srcResourcesDir, Path srcCamelResourcesDir,
-            Path srcKameletsResourcesDir, String packageName)
+            Path settings,
+            Path profile,
+            Path srcJavaDirRoot,
+            Path srcJavaDir,
+            Path srcResourcesDir,
+            Path srcCamelResourcesDir,
+            Path srcKameletsResourcesDir,
+            String packageName)
             throws Exception {
 
         // read the settings file and find the files to copy
@@ -680,14 +774,18 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         continue;
                     }
                     boolean java = "java".equals(ext);
-                    boolean kamelet = "kamelet".equals(k) || "camel.component.kamelet.location".equals(k)
-                            || LOCAL_KAMELET_DIR.equals(k) || "kamelet.yaml".equalsIgnoreCase(ext2);
+                    boolean kamelet = "kamelet".equals(k)
+                            || "camel.component.kamelet.location".equals(k)
+                            || LOCAL_KAMELET_DIR.equals(k)
+                            || "kamelet.yaml".equalsIgnoreCase(ext2);
                     boolean camel = !kamelet && "camel.main.routesIncludePattern".equals(k);
                     boolean jkube = JKUBE_FILES.equals(k);
                     boolean script = SCRIPT_FILES.equals(k);
                     boolean groovy = GROOVY_FILES.equals(k);
                     boolean tls = TLS_FILES.equals(k);
-                    boolean web = ext != null && List.of("css", "html", "ico", "jpeg", "jpg", "js", "png").contains(ext);
+                    boolean web = ext != null
+                            && List.of("css", "html", "ico", "jpeg", "jpg", "js", "png")
+                                    .contains(ext);
                     Path targetDir;
                     if (java) {
                         targetDir = srcJavaDir;
@@ -738,7 +836,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     } else {
                         // need to append package name in java source file
                         List<String> lines = Files.readAllLines(source);
-                        Optional<String> hasPackage = lines.stream().filter(l -> l.trim().startsWith("package ")).findFirst();
+                        Optional<String> hasPackage = lines.stream()
+                                .filter(l -> l.trim().startsWith("package "))
+                                .findFirst();
                         OutputStream fos;
 
                         if (hasPackage.isPresent()) {
@@ -777,16 +877,17 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
-                    .stream()
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values().stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(Collectors.toSet());
 
             for (PluginExporter exporter : exporters) {
-                exporter.addSourceFiles(srcJavaDirRoot.getParent().getParent().getParent(),
-                        packageName, getMain().getOut());
+                exporter.addSourceFiles(
+                        srcJavaDirRoot.getParent().getParent().getParent(),
+                        packageName,
+                        getMain().getOut());
             }
         }
     }
@@ -796,9 +897,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected void copySettingsAndProfile(
-            Path settings, Path profile, Path targetDir,
-            Function<Properties, Object> customize)
-            throws Exception {
+            Path settings, Path profile, Path targetDir, Function<Properties, Object> customize) throws Exception {
         Properties settingsProps = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(settingsProps, settings);
 
@@ -876,12 +975,15 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Map<String, String> propertiesMap(String[]... propertySources) {
         Map<String, String> result = new LinkedHashMap<>();
         if (propertySources != null) {
-            for (String[] props : Arrays.stream(propertySources).filter(Objects::nonNull).toList()) {
+            for (String[] props :
+                    Arrays.stream(propertySources).filter(Objects::nonNull).toList()) {
                 for (String s : props) {
                     String[] kv = s.split("=");
                     if (kv.length != 2) {
                         // likely a user mistake, we warn the user
-                        printer().println("WARN: property '" + s + "'' has a bad format (should be 'key=value'), skipping.");
+                        printer()
+                                .println("WARN: property '" + s
+                                        + "'' has a bad format (should be 'key=value'), skipping.");
                     } else {
                         result.put(kv[0], kv[1]);
                     }
@@ -893,7 +995,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     // Returns true if it has either an openapi spec or it uses contract-first DSL
     protected boolean hasOpenapi(Set<String> dependencies) {
-        return openapi != null || dependencies.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-rest-openapi"));
+        return openapi != null
+                || dependencies.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-rest-openapi"));
     }
 
     protected Properties mapBuildProperties() {
@@ -920,11 +1023,13 @@ public abstract class ExportBaseCommand extends CamelCommand {
         try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/mvnw.cmd")) {
             Files.copy(is, mvnwCmdPath, StandardCopyOption.REPLACE_EXISTING);
         }
-        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.jar")) {
+        try (InputStream is =
+                ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.jar")) {
             Files.copy(is, wrapperJarPath, StandardCopyOption.REPLACE_EXISTING);
         }
-        try (InputStream is
-                = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.properties")) {
+        try (InputStream is = ExportBaseCommand.class
+                .getClassLoader()
+                .getResourceAsStream("maven-wrapper/maven-wrapper.properties")) {
             Files.copy(is, wrapperPropsPath, StandardCopyOption.REPLACE_EXISTING);
         }
 
@@ -945,15 +1050,17 @@ public abstract class ExportBaseCommand extends CamelCommand {
         try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew")) {
             Files.copy(is, gradlewPath, StandardCopyOption.REPLACE_EXISTING);
         }
-        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew.bat")) {
+        try (InputStream is =
+                ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew.bat")) {
             Files.copy(is, gradlewBatPath, StandardCopyOption.REPLACE_EXISTING);
         }
-        try (InputStream is
-                = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.jar")) {
+        try (InputStream is =
+                ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.jar")) {
             Files.copy(is, wrapperJarPath, StandardCopyOption.REPLACE_EXISTING);
         }
-        try (InputStream is
-                = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.properties")) {
+        try (InputStream is = ExportBaseCommand.class
+                .getClassLoader()
+                .getResourceAsStream("gradle-wrapper/gradle-wrapper.properties")) {
             Files.copy(is, wrapperPropsPath, StandardCopyOption.REPLACE_EXISTING);
         }
 
@@ -1002,9 +1109,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
             Collections.addAll(answer, this.repositories.split(","));
         }
 
-        return answer.stream()
-                .filter(item -> !item.isEmpty())
-                .collect(Collectors.joining(","));
+        return answer.stream().filter(item -> !item.isEmpty()).collect(Collectors.joining(","));
     }
 
     protected static boolean hasModeline(Path settings) {
@@ -1020,8 +1125,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected static int httpServerPort(Path settings) {
         try {
             List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-            String port = lines.stream().filter(l -> l.startsWith("camel.server.port="))
-                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
+            String port = lines.stream()
+                    .filter(l -> l.startsWith("camel.server.port="))
+                    .map(s -> StringHelper.after(s, "="))
+                    .findFirst()
+                    .orElse("-1");
             return Integer.parseInt(port);
         } catch (Exception e) {
             // ignore
@@ -1032,8 +1140,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected static int httpManagementPort(Path settings) {
         try {
             List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-            String port = lines.stream().filter(l -> l.startsWith("camel.management.port="))
-                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
+            String port = lines.stream()
+                    .filter(l -> l.startsWith("camel.management.port="))
+                    .map(s -> StringHelper.after(s, "="))
+                    .findFirst()
+                    .orElse("-1");
             return Integer.parseInt(port);
         } catch (Exception e) {
             // ignore
@@ -1049,8 +1160,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
         if (answer == null) {
             try {
                 List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-                answer = lines.stream().filter(l -> l.startsWith(JIB_MAVEN_PLUGIN_VERSION + "="))
-                        .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
+                answer = lines.stream()
+                        .filter(l -> l.startsWith(JIB_MAVEN_PLUGIN_VERSION + "="))
+                        .map(s -> StringHelper.after(s, "="))
+                        .findFirst()
+                        .orElse(null);
             } catch (Exception e) {
                 // ignore
             }
@@ -1068,7 +1182,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
                 answer = lines.stream()
                         .filter(l -> l.startsWith(JKUBE_MAVEN_PLUGIN_VERSION + "=") || l.startsWith("jkube.version="))
-                        .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
+                        .map(s -> StringHelper.after(s, "="))
+                        .findFirst()
+                        .orElse(null);
             } catch (Exception e) {
                 // ignore
             }
@@ -1151,8 +1267,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         try (JarFile jf = new JarFile(path.toFile())) {
-            Optional<JarEntry> je = jf.stream().filter(e -> e.getName().startsWith("META-INF/maven/")
-                    && e.getName().endsWith("/pom.properties")).findFirst();
+            Optional<JarEntry> je = jf.stream()
+                    .filter(e -> e.getName().startsWith("META-INF/maven/")
+                            && e.getName().endsWith("/pom.properties"))
+                    .findFirst();
             if (je.isPresent()) {
                 JarEntry e = je.get();
                 try (InputStream is = jf.getInputStream(e)) {
@@ -1200,11 +1318,16 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     private void copyAgentLibDependencies(MavenGav gav) {
         try {
-            List<MavenArtifact> artifacts = getDownloader().resolveArtifacts(
-                    List.of(gav.toString()), Set.of(), true, gav.getVersion().contains("SNAPSHOT"));
+            List<MavenArtifact> artifacts = getDownloader()
+                    .resolveArtifacts(
+                            List.of(gav.toString()),
+                            Set.of(),
+                            true,
+                            gav.getVersion().contains("SNAPSHOT"));
             for (MavenArtifact artifact : artifacts) {
                 Path target = Paths.get(BUILD_DIR, "agent", artifact.getFile().getName());
-                if (Files.exists(target) || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
+                if (Files.exists(target)
+                        || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
                     continue;
                 }
                 Files.copy(artifact.getFile().toPath(), target);
@@ -1293,5 +1416,4 @@ public abstract class ExportBaseCommand extends CamelCommand {
             cmd.files.add(arg);
         }
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.Charset;
 
@@ -31,11 +37,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.codec.ObjectDecoder;
 import org.apache.camel.component.netty.codec.ObjectEncoder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyTransferExchangeOptionTest extends BaseNettyTest {
 
@@ -67,8 +68,8 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
     }
 
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context
-                .getEndpoint("netty:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder");
+        Endpoint endpoint = context.getEndpoint(
+                "netty:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder");
         Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
@@ -100,7 +101,8 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
             Message fault = exchange.getOut();
             assertNotNull(fault);
             assertNotNull(fault.getBody());
-            assertTrue(fault.getBody() instanceof InterruptedException, "Should get the InterruptedException exception");
+            assertTrue(
+                    fault.getBody() instanceof InterruptedException, "Should get the InterruptedException exception");
             assertEquals("nihao", fault.getHeader("hello"));
         }
 

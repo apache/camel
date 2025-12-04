@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -29,8 +32,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -72,7 +73,10 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("products[bar]", "baz");
 
         myConfigurer.reset();
-        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        PropertyBindingSupport.build()
+                .withConfigurer(myConfigurer)
+                .withIgnoreCase(true)
+                .bind(context, bar, prop);
         assertEquals(7, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
@@ -99,7 +103,8 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         Bar bar = new Bar() {
             @Override
             public void setProducts(Map<String, String> products) {
-                // force setter to create a new map instance - configurer should grab this new instance before putting values
+                // force setter to create a new map instance - configurer should grab this new instance before putting
+                // values
                 super.setProducts(new HashMap<>(products));
             }
         };
@@ -109,7 +114,10 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("products[bar]", "baz");
 
         myConfigurer.reset();
-        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        PropertyBindingSupport.build()
+                .withConfigurer(myConfigurer)
+                .withIgnoreCase(true)
+                .bind(context, bar, prop);
         assertEquals(4, myConfigurer.getCounter());
 
         assertNotNull(bar.getProducts());
@@ -139,7 +147,10 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("work.name", "{{companyName}}");
 
         myConfigurer.reset();
-        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        PropertyBindingSupport.build()
+                .withConfigurer(myConfigurer)
+                .withIgnoreCase(true)
+                .bind(context, bar, prop);
         assertEquals(6, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
@@ -165,7 +176,10 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("work", "#autowired");
 
         myConfigurer.reset();
-        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        PropertyBindingSupport.build()
+                .withConfigurer(myConfigurer)
+                .withIgnoreCase(true)
+                .bind(context, bar, prop);
         // there should be 4 as autowried is also used
         assertEquals(3 + 1, myConfigurer.getCounter());
 
@@ -193,7 +207,10 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("?work.addresss.zip", "1234");
 
         myConfigurer.reset();
-        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        PropertyBindingSupport.build()
+                .withConfigurer(myConfigurer)
+                .withIgnoreCase(true)
+                .bind(context, bar, prop);
         assertEquals(7, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
@@ -224,8 +241,11 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("?work.addresss.zip", "1234");
 
         myConfigurer.reset();
-        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context, bar,
-                prop);
+        PropertyBindingSupport.build()
+                .withConfigurer(myConfigurer)
+                .withIgnoreCase(true)
+                .withMandatory(true)
+                .bind(context, bar, prop);
         assertEquals(7, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
@@ -242,15 +262,21 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
         // should not fail as we marked the option as optional
         prop.put("?unknown", "123");
-        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context, bar,
-                prop);
+        PropertyBindingSupport.build()
+                .withConfigurer(myConfigurer)
+                .withIgnoreCase(true)
+                .withMandatory(true)
+                .bind(context, bar, prop);
         prop.remove("?unknown");
 
         // should fail as its mandatory
         prop.put("unknown", "123");
         try {
-            PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context,
-                    bar, prop);
+            PropertyBindingSupport.build()
+                    .withConfigurer(myConfigurer)
+                    .withIgnoreCase(true)
+                    .withMandatory(true)
+                    .bind(context, bar, prop);
             fail("Should fail");
         } catch (PropertyBindingException e) {
             assertEquals("unknown", e.getPropertyName());
@@ -274,8 +300,11 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("products[foo]", "bar");
 
         myConfigurer.reset();
-        PropertyBindingSupport.build().withReflection(false).withConfigurer(myConfigurer).withIgnoreCase(true).bind(context,
-                bar, prop);
+        PropertyBindingSupport.build()
+                .withReflection(false)
+                .withConfigurer(myConfigurer)
+                .withIgnoreCase(true)
+                .bind(context, bar, prop);
         assertEquals(9, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
@@ -322,7 +351,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         private int age;
         private boolean rider;
         private Company work; // has no default value but Camel can automatic
-                             // create one if there is a setter
+        // create one if there is a setter
         private boolean goldCustomer;
 
         private Map<String, String> products; // no default value - should auto-create this via the setter
@@ -381,7 +410,8 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         private int counter;
 
         @Override
-        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        public boolean configure(
+                CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             if (ignoreCase) {
                 name = name.toLowerCase(Locale.ENGLISH);
             }
@@ -461,5 +491,4 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
             return null;
         }
     }
-
 }

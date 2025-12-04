@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
@@ -23,9 +27,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class BindToRegistryBeanPostProcessorTest extends ContextTestSupport {
 

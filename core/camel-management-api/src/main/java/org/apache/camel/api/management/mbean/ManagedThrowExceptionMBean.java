@@ -14,16 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedThrowExceptionMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "To create a new exception instance and use the given message as caused message (supports simple language)")
+    @ManagedAttribute(
+            description =
+                    "To create a new exception instance and use the given message as caused message (supports simple language)")
     String getMessage();
 
     @ManagedAttribute(description = "The class of the exception to create using the message")
     String getExceptionType();
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -48,22 +49,37 @@ public class ResilienceInheritErrorHandlerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(
+                        deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start").to("log:start")
+                from("direct:start")
+                        .to("log:start")
                         // turn on Camel's error handler so it can do
                         // redeliveries
-                        .circuitBreaker().inheritErrorHandler(true).to("mock:a")
-                        .throwException(new IllegalArgumentException("Forced")).end().to("log:result").to("mock:result");
+                        .circuitBreaker()
+                        .inheritErrorHandler(true)
+                        .to("mock:a")
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
-                from("direct:start.with.timeout.enabled").to("log:direct:start.with.timeout.enabled")
+                from("direct:start.with.timeout.enabled")
+                        .to("log:direct:start.with.timeout.enabled")
                         // turn on Camel's error handler on so it can do
                         // redeliveries
-                        .circuitBreaker().inheritErrorHandler(true).resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+                        .circuitBreaker()
+                        .inheritErrorHandler(true)
+                        .resilience4jConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .end()
                         .to("mock:a")
-                        .throwException(new IllegalArgumentException("Forced")).end().to("log:result").to("mock:result");
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }
-
 }

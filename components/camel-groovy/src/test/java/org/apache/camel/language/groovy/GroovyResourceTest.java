@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -41,7 +42,8 @@ public class GroovyResourceTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().groovy("resource:classpath:mygroovy.groovy")
+                        .transform()
+                        .groovy("resource:classpath:mygroovy.groovy")
                         .to("mock:result");
             }
         };

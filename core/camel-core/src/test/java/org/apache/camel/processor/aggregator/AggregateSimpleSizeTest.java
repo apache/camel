@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,7 +48,9 @@ public class AggregateSimpleSizeTest extends ContextTestSupport {
                         // and after 3 messages has been aggregated then complete
                         // the aggregation
                         // and send it to mock:aggregated
-                        .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3).to("mock:aggregated");
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(3)
+                        .to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

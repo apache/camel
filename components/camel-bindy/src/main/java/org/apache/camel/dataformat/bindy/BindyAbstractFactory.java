@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
@@ -114,7 +115,6 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
                 loadModels(clazz);
             }
-
         }
     }
 
@@ -145,9 +145,11 @@ public abstract class BindyAbstractFactory implements BindyFactory {
                 String toClassName = field.getType().getName();
                 Object to = model.get(toClassName);
 
-                org.apache.camel.util.ObjectHelper.notNull(to, "No @link annotation has been defined for the object to link");
+                org.apache.camel.util.ObjectHelper.notNull(
+                        to, "No @link annotation has been defined for the object to link");
 
-                ReflectionHelper.setField(field, model.get(field.getDeclaringClass().getName()), to);
+                ReflectionHelper.setField(
+                        field, model.get(field.getDeclaringClass().getName()), to);
             }
         }
     }
@@ -236,7 +238,6 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         } else {
             return null;
         }
-
     }
 
     /**

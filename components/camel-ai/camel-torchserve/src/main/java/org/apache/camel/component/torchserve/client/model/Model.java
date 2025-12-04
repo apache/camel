@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.model;
 
 import org.apache.camel.component.torchserve.client.management.model.ListModels200ResponseModelsInner;
@@ -27,8 +28,7 @@ public class Model {
     protected String modelName = null;
     protected String modelUrl = null;
 
-    public Model() {
-    }
+    public Model() {}
 
     public static Model from(ListModels200ResponseModelsInner src) {
         Model model = new Model();
@@ -55,9 +55,8 @@ public class Model {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {" +
-               " modelName: " + modelName + "," +
-               " modelUrl: " + modelUrl + " " +
-               "}";
+        return getClass().getSimpleName() + " {" + " modelName: "
+                + modelName + "," + " modelUrl: "
+                + modelUrl + " " + "}";
     }
 }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Easier transaction configuration as we do not have to setup a transaction error handler
@@ -38,7 +39,8 @@ public class TransactionalClientDataSourceMDCTest extends TransactionalClientDat
             public void configure() throws Exception {
                 context.setUseMDCLogging(true);
 
-                from("direct:okay").routeId("route-a")
+                from("direct:okay")
+                        .routeId("route-a")
                         .transacted()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
@@ -48,12 +50,15 @@ public class TransactionalClientDataSourceMDCTest extends TransactionalClientDat
                             }
                         })
                         .to("log:foo")
-                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
                         .to("log:bar")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 // marks this route as transacted that will use the single policy defined in the registry
-                from("direct:fail").routeId("route-b")
+                from("direct:fail")
+                        .routeId("route-b")
                         .transacted()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
@@ -63,11 +68,12 @@ public class TransactionalClientDataSourceMDCTest extends TransactionalClientDat
                             }
                         })
                         .to("log:foo2")
-                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
                         .to("log:bar2")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
             }
         };
     }
-
 }

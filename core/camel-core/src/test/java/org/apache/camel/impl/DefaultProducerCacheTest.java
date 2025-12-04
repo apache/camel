@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +52,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private final AtomicInteger producerCounter = new AtomicInteger();
@@ -251,11 +253,14 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private boolean isEqualTask(DefaultProducerCache cache, List<Endpoint> endpoints, int index) {
         Producer producer = cache.acquireProducer(endpoints.get(index));
-        boolean isEqual
-                = producer.getEndpoint().getEndpointUri().equalsIgnoreCase(endpoints.get(index).getEndpointUri());
+        boolean isEqual = producer.getEndpoint()
+                .getEndpointUri()
+                .equalsIgnoreCase(endpoints.get(index).getEndpointUri());
 
         if (!isEqual) {
-            log.info("Endpoint uri to acquire: {}, returned producer (uri): {}", endpoints.get(index).getEndpointUri(),
+            log.info(
+                    "Endpoint uri to acquire: {}, returned producer (uri): {}",
+                    endpoints.get(index).getEndpointUri(),
                     producer.getEndpoint().getEndpointUri());
         }
 
@@ -279,13 +284,14 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         public void forceEvict(AsyncProducer producer) {
             myServicePool.onEvict(producer);
         }
-
     }
 
     private static class MyServicePool extends ProducerServicePool {
 
-        public MyServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator,
-                             Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
+        public MyServicePool(
+                ThrowingFunction<Endpoint, AsyncProducer, Exception> creator,
+                Function<AsyncProducer, Endpoint> getEndpoint,
+                int capacity) {
             super(creator, getEndpoint, capacity);
         }
 

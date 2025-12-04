@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ldap;
 
 import java.util.Map;
@@ -28,8 +29,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("ldap")
 public class LdapComponent extends DefaultComponent {
 
-    public LdapComponent() {
-    }
+    public LdapComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

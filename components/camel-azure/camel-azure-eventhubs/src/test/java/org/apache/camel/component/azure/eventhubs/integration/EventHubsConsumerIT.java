@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,11 +49,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
-                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
+@EnabledIfSystemProperty(
+        named = "connectionString",
+        matches = ".*",
+        disabledReason =
+                "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventHubsConsumerIT extends CamelTestSupport {
 
@@ -81,14 +85,16 @@ class EventHubsConsumerIT extends CamelTestSupport {
     @Test
     public void testConsumerEvents() throws InterruptedException {
         // send test data
-        final EventHubProducerAsyncClient producerAsyncClient
-                = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+        final EventHubProducerAsyncClient producerAsyncClient =
+                EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
 
         final String messageBody = RandomStringUtils.randomAlphabetic(30);
         final String messageKey = RandomStringUtils.randomAlphabetic(5);
 
         producerAsyncClient
-                .send(Collections.singletonList(new EventData(messageBody)), new SendOptions().setPartitionKey(messageKey))
+                .send(
+                        Collections.singletonList(new EventData(messageBody)),
+                        new SendOptions().setPartitionKey(messageKey))
                 .block();
 
         result.expectedMinimumMessageCount(1);
@@ -100,9 +106,10 @@ class EventHubsConsumerIT extends CamelTestSupport {
         // now we check our messages
         final Exchange returnedMessage = exchanges.stream()
                 .filter(Objects::nonNull)
-                .filter(exchange -> exchange.getMessage().getHeader(EventHubsConstants.PARTITION_KEY)
-                                    != null
-                        && exchange.getMessage().getHeader(EventHubsConstants.PARTITION_KEY).equals(messageKey))
+                .filter(exchange -> exchange.getMessage().getHeader(EventHubsConstants.PARTITION_KEY) != null
+                        && exchange.getMessage()
+                                .getHeader(EventHubsConstants.PARTITION_KEY)
+                                .equals(messageKey))
                 .findFirst()
                 .orElse(null);
 
@@ -129,11 +136,10 @@ class EventHubsConsumerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("azure-eventhubs:?"
-                     + "connectionString=RAW({{connectionString}})"
-                     + "&blobContainerName=" + containerName + "&eventPosition=#eventPosition"
-                     + "&blobAccountName={{blobAccountName}}&blobAccessKey=RAW({{blobAccessKey}})")
+                                + "connectionString=RAW({{connectionString}})"
+                                + "&blobContainerName=" + containerName + "&eventPosition=#eventPosition"
+                                + "&blobAccountName={{blobAccountName}}&blobAccessKey=RAW({{blobAccessKey}})")
                         .to(result);
-
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.AsyncProcessor;
@@ -34,7 +35,8 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
     public Processor createProcessor() throws Exception {
         Expression expression = createExpression(definition.getExpression());
         String delimiter = definition.getUriDelimiter() != null
-                ? definition.getUriDelimiter() : DynamicRouterDefinition.DEFAULT_DELIMITER;
+                ? definition.getUriDelimiter()
+                : DynamicRouterDefinition.DEFAULT_DELIMITER;
 
         DynamicRouter dynamicRouter = new DynamicRouter(camelContext, expression, delimiter);
         dynamicRouter.setDisabled(isDisabled(camelContext, definition));
@@ -46,10 +48,9 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
             dynamicRouter.setCacheSize(num);
         }
 
-        AsyncProcessor errorHandler
-                = (AsyncProcessor) wrapInErrorHandler(dynamicRouter.newRoutingSlipProcessorForErrorHandler());
+        AsyncProcessor errorHandler =
+                (AsyncProcessor) wrapInErrorHandler(dynamicRouter.newRoutingSlipProcessorForErrorHandler());
         dynamicRouter.setErrorHandler(errorHandler);
         return dynamicRouter;
     }
-
 }

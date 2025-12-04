@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.resources_quota;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_RESOURCES_QUOTA;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,18 +28,21 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_RESOURCES_QUOTA;
-
 /**
  * Perform operations on Kubernetes Resources Quotas.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_RESOURCES_QUOTA, title = "Kubernetes Resources Quota",
-             syntax = "kubernetes-resources-quota:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_RESOURCES_QUOTA,
+        title = "Kubernetes Resources Quota",
+        syntax = "kubernetes-resources-quota:masterUrl",
+        producerOnly = true,
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesResourcesQuotaEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesResourcesQuotaEndpoint(String uri, KubernetesResourcesQuotaComponent component,
-                                            KubernetesConfiguration config) {
+    public KubernetesResourcesQuotaEndpoint(
+            String uri, KubernetesResourcesQuotaComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -49,5 +55,4 @@ public class KubernetesResourcesQuotaEndpoint extends AbstractKubernetesEndpoint
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new IllegalArgumentException("The kubernetes-resources-quota doesn't support consumer");
     }
-
 }

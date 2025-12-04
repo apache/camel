@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnExceptionErrorHandlerNoRouteOnExchangeIssueTest extends ContextTestSupport {
 
@@ -52,27 +53,33 @@ public class OnExceptionErrorHandlerNoRouteOnExchangeIssueTest extends ContextTe
                 onException(Exception.class)
                         .handled(true)
                         .log(LoggingLevel.ERROR, "error", "${messageHistory} \n ${exchange} \n ${exception.stacktrace}")
-                        .transform().simple("general exception was properly handled")
+                        .transform()
+                        .simple("general exception was properly handled")
                         .stop();
 
-                from("direct:hello").routeId("routeHello")
-                        .transform().constant("Hello World")
+                from("direct:hello")
+                        .routeId("routeHello")
+                        .transform()
+                        .constant("Hello World")
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200));
 
-                from("direct:normalError").routeId("normalError")
+                from("direct:normalError")
+                        .routeId("normalError")
                         .throwException(new NullPointerException("some null value"))
                         .to("direct:hello");
 
-                from("direct:bug").routeId("routeBug")
+                from("direct:bug")
+                        .routeId("routeBug")
                         .to("direct:detour")
                         .throwException(new NullPointerException("something went wrong"))
                         .to("direct:hello");
 
-                from("direct:detour").routeId("routeDetour1")
-                        .to("direct:detour2");
+                from("direct:detour").routeId("routeDetour1").to("direct:detour2");
 
-                from("direct:detour2").routeId("routeDetour2")
-                        .transform().constant("random processing (should not be exposed)");
+                from("direct:detour2")
+                        .routeId("routeDetour2")
+                        .transform()
+                        .constant("random processing (should not be exposed)");
             }
         };
     }

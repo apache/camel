@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 /**
  * Sort collection by object attribute.
  */
 public enum PostOrderBy {
-
     author,
     date,
     id,
@@ -30,5 +30,4 @@ public enum PostOrderBy {
     relevance,
     slug,
     title;
-
 }

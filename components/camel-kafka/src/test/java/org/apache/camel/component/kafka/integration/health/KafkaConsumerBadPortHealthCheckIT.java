@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration.health;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -42,13 +45,14 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.awaitility.Awaitility.await;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DisabledIfSystemProperty(named = "kafka.instance.type", matches = "local-strimzi-container",
-                          disabledReason = "Test infra Kafka runs the Strimzi containers in a way that conflicts with multiple concurrent images")
-@Tags({ @Tag("health") })
+@DisabledIfSystemProperty(
+        named = "kafka.instance.type",
+        matches = "local-strimzi-container",
+        disabledReason =
+                "Test infra Kafka runs the Strimzi containers in a way that conflicts with multiple concurrent images")
+@Tags({@Tag("health")})
 public class KafkaConsumerBadPortHealthCheckIT extends KafkaHealthCheckTestSupport {
     public static final String TOPIC = "test-health";
 
@@ -77,12 +81,15 @@ public class KafkaConsumerBadPortHealthCheckIT extends KafkaHealthCheckTestSuppo
             @Override
             public void configure() {
                 String from = "kafka:" + TOPIC
-                              + "?groupId=KafkaConsumerBadPortHealthCheckIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
-                              + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                              + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
+                        + "?groupId=KafkaConsumerBadPortHealthCheckIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+                        + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                        + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
                 from(from)
-                        .process(exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
-                        .routeId("test-health-it").to(to);
+                        .process(exchange -> LOG.trace(
+                                "Captured on the processor: {}",
+                                exchange.getMessage().getBody()))
+                        .routeId("test-health-it")
+                        .to(to);
             }
         };
     }
@@ -108,8 +115,8 @@ public class KafkaConsumerBadPortHealthCheckIT extends KafkaHealthCheckTestSuppo
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean up2 = res2.stream().allMatch(r -> {
-                return r.getState().equals(HealthCheck.State.DOWN) &&
-                        r.getMessage().stream().allMatch(msg -> msg.contains("port"));
+                return r.getState().equals(HealthCheck.State.DOWN)
+                        && r.getMessage().stream().allMatch(msg -> msg.contains("port"));
             });
             Assertions.assertTrue(up2, "readiness check");
         });

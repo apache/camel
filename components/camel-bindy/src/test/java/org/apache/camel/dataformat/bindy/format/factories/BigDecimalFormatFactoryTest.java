@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 import java.math.BigDecimal;
 
 import org.apache.camel.dataformat.bindy.FormattingOptions;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
 public class BigDecimalFormatFactoryTest {
 
-    private FormattingOptions formattingOptions = new FormattingOptions()
-            .forClazz(BigDecimal.class);
-    private FormattingOptions wrongClass = new FormattingOptions()
-            .forClazz(Integer.class);
-    private FormattingOptions hasPattern = new FormattingOptions()
-            .forClazz(BigDecimal.class)
-            .withPattern("999.99");
+    private FormattingOptions formattingOptions = new FormattingOptions().forClazz(BigDecimal.class);
+    private FormattingOptions wrongClass = new FormattingOptions().forClazz(Integer.class);
+    private FormattingOptions hasPattern =
+            new FormattingOptions().forClazz(BigDecimal.class).withPattern("999.99");
 
     @Test
     public void canBuild() {

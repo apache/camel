@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.http.common.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
@@ -28,9 +32,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.http.common.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpStreamCacheNoSpoolToDiskTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -38,10 +39,13 @@ public class HttpStreamCacheNoSpoolToDiskTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/test/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .register("/test/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
 
         FileUtil.removeDir(new File("target/camel-cache"));
@@ -77,7 +81,8 @@ public class HttpStreamCacheNoSpoolToDiskTest extends BaseHttpTest {
                 streamCachingStrategy.setSpoolEnabled(true);
                 streamCachingStrategy.setBufferSize(4096);
 
-                from("direct:start").streamCache("true")
+                from("direct:start")
+                        .streamCache("true")
                         .to("http://localhost:" + localServer.getLocalPort() + "/test/?disableStreamCache=true")
                         .process(e -> {
                             // should not be temp spool file

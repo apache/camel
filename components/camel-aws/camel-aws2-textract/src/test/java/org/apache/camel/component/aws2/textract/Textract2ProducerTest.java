@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.textract;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -28,9 +32,6 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.textract.model.DetectDocumentTextRequest;
 import software.amazon.awssdk.services.textract.model.DetectDocumentTextResponse;
 import software.amazon.awssdk.services.textract.model.Document;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Textract2ProducerTest extends CamelTestSupport {
 
@@ -60,7 +61,6 @@ public class Textract2ProducerTest extends CamelTestSupport {
         assertNotNull(resultGet.blocks());
         assertEquals(1, resultGet.blocks().size());
         assertEquals("Mock detected text", resultGet.blocks().get(0).text());
-
     }
 
     @Test
@@ -88,7 +88,6 @@ public class Textract2ProducerTest extends CamelTestSupport {
         assertNotNull(resultGet.blocks());
         assertEquals(1, resultGet.blocks().size());
         assertEquals("Mock detected text", resultGet.blocks().get(0).text());
-
     }
 
     @Test
@@ -109,7 +108,6 @@ public class Textract2ProducerTest extends CamelTestSupport {
         assertNotNull(resultGet.blocks());
         assertEquals(1, resultGet.blocks().size());
         assertEquals("Mock detected text", resultGet.blocks().get(0).text());
-
     }
 
     @Override
@@ -120,11 +118,13 @@ public class Textract2ProducerTest extends CamelTestSupport {
                 from("direct:detectDocumentText")
                         .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=detectDocumentText")
                         .to("mock:result");
-                from("direct:detectDocumentTextPojo").to(
-                        "aws2-textract://test?textractClient=#amazonTextractClient&operation=detectDocumentText&pojoRequest=true")
+                from("direct:detectDocumentTextPojo")
+                        .to(
+                                "aws2-textract://test?textractClient=#amazonTextractClient&operation=detectDocumentText&pojoRequest=true")
                         .to("mock:result");
-                from("direct:detectDocumentTextOptions").to(
-                        "aws2-textract://test?textractClient=#amazonTextractClient&operation=detectDocumentText&s3Bucket=testbucket&s3Object=testobject.pdf")
+                from("direct:detectDocumentTextOptions")
+                        .to(
+                                "aws2-textract://test?textractClient=#amazonTextractClient&operation=detectDocumentText&s3Bucket=testbucket&s3Object=testobject.pdf")
                         .to("mock:result");
             }
         };

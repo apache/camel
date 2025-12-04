@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
@@ -41,7 +42,6 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-
             case list:
                 getFloatingIPs(exchange);
                 break;
@@ -87,9 +87,13 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     }
 
     private void getFloatingIPs(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        FloatingIPs ips = getEndpoint().getDigitalOceanClient().getAvailableFloatingIPs(configuration.getPage(),
-                configuration.getPerPage());
-        LOG.trace("All Floating IPs : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+        FloatingIPs ips = getEndpoint()
+                .getDigitalOceanClient()
+                .getAvailableFloatingIPs(configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "All Floating IPs : page {} / {} per page [{}] ",
+                configuration.getPage(),
+                configuration.getPerPage(),
                 ips.getFloatingIPs());
         exchange.getMessage().setBody(ips.getFloatingIPs());
     }
@@ -118,7 +122,8 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(delete);
     }
 
-    private void assignFloatingIPToDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
+    private void assignFloatingIPToDroplet(Exchange exchange)
+            throws RequestUnsuccessfulException, DigitalOceanException {
         Integer dropletId = exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ID, Integer.class);
 
         if (ObjectHelper.isEmpty(dropletId)) {
@@ -155,11 +160,15 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.FLOATING_IP_ADDRESS + " must be specified");
         }
 
-        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableFloatingIPActions(ipAddress,
-                configuration.getPage(), configuration.getPerPage());
-        LOG.trace("Actions for FloatingIP {} : page {} / {} per page [{}] ", ipAddress, configuration.getPage(),
-                configuration.getPerPage(), actions.getActions());
+        Actions actions = getEndpoint()
+                .getDigitalOceanClient()
+                .getAvailableFloatingIPActions(ipAddress, configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "Actions for FloatingIP {} : page {} / {} per page [{}] ",
+                ipAddress,
+                configuration.getPage(),
+                configuration.getPerPage(),
+                actions.getActions());
         exchange.getMessage().setBody(actions.getActions());
     }
-
 }

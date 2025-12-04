@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.jms;
 
 import jakarta.jms.Destination;
@@ -32,16 +33,25 @@ public interface JmsObjectFactory {
 
     // NOTE: client must close the returned resource.
     MessageConsumer createMessageConsumer(
-            Session session, Destination destination,
-            String messageSelector, boolean topic, String subscriptionId, boolean durable,
+            Session session,
+            Destination destination,
+            String messageSelector,
+            boolean topic,
+            String subscriptionId,
+            boolean durable,
             boolean shared)
             throws Exception;
 
     // NOTE: client must close the returned resource.
     MessageConsumer createMessageConsumer(
-            Session session, Destination destination,
-            String messageSelector, boolean topic, String subscriptionId, boolean durable,
-            boolean shared, boolean noLocal)
+            Session session,
+            Destination destination,
+            String messageSelector,
+            boolean topic,
+            String subscriptionId,
+            boolean durable,
+            boolean shared,
+            boolean noLocal)
             throws Exception;
 
     // NOTE: client must close the returned resource.
@@ -54,8 +64,6 @@ public interface JmsObjectFactory {
     MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination) throws Exception;
 
     // NOTE: client must close the returned resource.
-    MessageProducer createMessageProducer(
-            Session session, Destination destination,
-            boolean persistent, long ttl)
+    MessageProducer createMessageProducer(Session session, Destination destination, boolean persistent, long ttl)
             throws Exception;
 }

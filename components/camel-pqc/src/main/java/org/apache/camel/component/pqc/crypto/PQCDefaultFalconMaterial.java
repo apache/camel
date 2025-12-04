@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
@@ -38,8 +39,8 @@ public class PQCDefaultFalconMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm(),
-                    PQCSignatureAlgorithms.FALCON.getBcProvider());
+            signer = Signature.getInstance(
+                    PQCSignatureAlgorithms.FALCON.getAlgorithm(), PQCSignatureAlgorithms.FALCON.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +48,8 @@ public class PQCDefaultFalconMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm(),
-                PQCSignatureAlgorithms.FALCON.getBcProvider());
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.FALCON.getAlgorithm(), PQCSignatureAlgorithms.FALCON.getBcProvider());
         kpGen.initialize(FalconParameterSpec.falcon_1024);
         return kpGen;
     }

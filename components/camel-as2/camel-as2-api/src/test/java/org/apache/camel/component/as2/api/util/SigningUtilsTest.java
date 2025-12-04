@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -36,9 +40,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SigningUtilsTest {
 
     private static KeyPair signingKP;
@@ -53,31 +54,42 @@ public class SigningUtilsTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
-    }
+    public void tearDown() throws Exception {}
 
     @Test
     public void createSigningGeneratorTest() throws Exception {
-        AS2SignedDataGenerator gen = SigningUtils.createSigningGenerator(AS2SignatureAlgorithm.SHA1WITHRSA,
-                new Certificate[] { signingCert }, signingKP.getPrivate());
+        AS2SignedDataGenerator gen = SigningUtils.createSigningGenerator(
+                AS2SignatureAlgorithm.SHA1WITHRSA, new Certificate[] {signingCert}, signingKP.getPrivate());
         CMSProcessableByteArray sData = new CMSProcessableByteArray(MESSAGE.getBytes(StandardCharsets.UTF_8));
         CMSSignedData signedData = gen.generate(sData, true);
 
-        assertTrue(signedData.verifySignatures((SignerId sid) -> {
-            return new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(signingCert);
-        }), "Message was wrongly signed");
+        assertTrue(
+                signedData.verifySignatures((SignerId sid) -> {
+                    return new JcaSimpleSignerInfoVerifierBuilder()
+                            .setProvider("BC")
+                            .build(signingCert);
+                }),
+                "Message was wrongly signed");
     }
 
     @Test
     public void isValidSignedTest() throws Exception {
-        AS2SignedDataGenerator gen = SigningUtils.createSigningGenerator(AS2SignatureAlgorithm.SHA1WITHRSA,
-                new Certificate[] { signingCert }, signingKP.getPrivate());
+        AS2SignedDataGenerator gen = SigningUtils.createSigningGenerator(
+                AS2SignatureAlgorithm.SHA1WITHRSA, new Certificate[] {signingCert}, signingKP.getPrivate());
         CMSProcessableByteArray sData = new CMSProcessableByteArray(MESSAGE.getBytes(StandardCharsets.UTF_8));
         CMSSignedData signedData = gen.generate(sData, true);
-        assertTrue(SigningUtils.isValidSigned(MESSAGE.getBytes(StandardCharsets.UTF_8), signedData.getEncoded(),
-                new Certificate[] { signingCert }), "Message must be valid");
-        assertFalse(SigningUtils.isValidSigned(MESSAGE.getBytes(StandardCharsets.UTF_8), signedData.getEncoded(),
-                new Certificate[] { evilSigningCert }), "Message must be invalid");
+        assertTrue(
+                SigningUtils.isValidSigned(
+                        MESSAGE.getBytes(StandardCharsets.UTF_8),
+                        signedData.getEncoded(),
+                        new Certificate[] {signingCert}),
+                "Message must be valid");
+        assertFalse(
+                SigningUtils.isValidSigned(
+                        MESSAGE.getBytes(StandardCharsets.UTF_8),
+                        signedData.getEncoded(),
+                        new Certificate[] {evilSigningCert}),
+                "Message must be invalid");
     }
 
     private static void setupKeysAndCertificates() throws Exception {
@@ -92,8 +104,7 @@ public class SigningUtilsTest {
         {
             String signingDN = "O=AS2 Test Orgaisation, C=US";
             signingKP = kpg.generateKeyPair();
-            signingCert = Utils.makeCertificate(
-                    signingKP, signingDN, signingKP, signingDN);
+            signingCert = Utils.makeCertificate(signingKP, signingDN, signingKP, signingDN);
         }
 
         //
@@ -102,9 +113,7 @@ public class SigningUtilsTest {
         {
             String evilSigningDN = "O=Evil Haxor Coorp, C=RU";
             KeyPair evilSigningKP = kpg.generateKeyPair();
-            evilSigningCert = Utils.makeCertificate(
-                    evilSigningKP, evilSigningDN, evilSigningKP, evilSigningDN);
+            evilSigningCert = Utils.makeCertificate(evilSigningKP, evilSigningDN, evilSigningKP, evilSigningDN);
         }
     }
-
 }

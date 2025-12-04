@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.utils;
 
 import java.io.IOException;
@@ -49,11 +50,22 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
 
     private static final Logger LOG = LoggerFactory.getLogger(LockTestServer.class);
 
-    private static final PodStatus READY = new PodStatusBuilder().withPhase("Running").addNewCondition().withType("Ready")
-            .withStatus("true").endCondition().build();
-    private static final PodStatus FAILED = new PodStatusBuilder().withPhase("Failed").build();
-    private static final PodStatus NOT_READY = new PodStatusBuilder().withPhase("Running").addNewCondition().withType("Ready")
-            .withStatus("false").endCondition().build();
+    private static final PodStatus READY = new PodStatusBuilder()
+            .withPhase("Running")
+            .addNewCondition()
+            .withType("Ready")
+            .withStatus("true")
+            .endCondition()
+            .build();
+    private static final PodStatus FAILED =
+            new PodStatusBuilder().withPhase("Failed").build();
+    private static final PodStatus NOT_READY = new PodStatusBuilder()
+            .withPhase("Running")
+            .addNewCondition()
+            .withType("Ready")
+            .withStatus("false")
+            .endCondition()
+            .build();
 
     private boolean refuseRequests;
 
@@ -73,20 +85,22 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
         this.simulators = new HashMap<>();
 
         // Other resources
-        expect().get().withPath("/api/v1/namespaces/test/pods")
-                .andReply(200,
-                        request -> new PodListBuilder().withNewMetadata().withResourceVersion("1").and()
-                                .withItems(getCurrentPods().stream()
-                                        .map(name -> new PodBuilder()
-                                                .withNewMetadata()
-                                                .withName(name)
-                                                .endMetadata()
-                                                .withStatus(getPodStatus(name))
-                                                .build())
-                                        .collect(Collectors.toList()))
-                                .build())
+        expect().get()
+                .withPath("/api/v1/namespaces/test/pods")
+                .andReply(200, request -> new PodListBuilder()
+                        .withNewMetadata()
+                        .withResourceVersion("1")
+                        .and()
+                        .withItems(getCurrentPods().stream()
+                                .map(name -> new PodBuilder()
+                                        .withNewMetadata()
+                                        .withName(name)
+                                        .endMetadata()
+                                        .withStatus(getPodStatus(name))
+                                        .build())
+                                .collect(Collectors.toList()))
+                        .build())
                 .always();
-
     }
 
     static PodStatus getPodStatus(String podName) {
@@ -103,7 +117,8 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
     public NamespacedKubernetesClient createClient() {
         // Avoid exponential retry backoff from slowing down tests
         NamespacedKubernetesClient namespacedKubernetesClient = super.createClient();
-        RequestConfig requestConfig = namespacedKubernetesClient.getConfiguration().getRequestConfig();
+        RequestConfig requestConfig =
+                namespacedKubernetesClient.getConfiguration().getRequestConfig();
         requestConfig.setRequestRetryBackoffInterval(1000);
         requestConfig.setRequestRetryBackoffLimit(0);
         return namespacedKubernetesClient;
@@ -118,7 +133,8 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
 
         if (this.simulators.size() == 1) {
             // Global methods defined once
-            expect().post().withPath(lockSimulator.getAPIPath() + "/namespaces/test/" + lockSimulator.getResourcePath())
+            expect().post()
+                    .withPath(lockSimulator.getAPIPath() + "/namespaces/test/" + lockSimulator.getResourcePath())
                     .andReply(new ResponseProvider<Object>() {
 
                         private Headers headers = new Headers.Builder().build();
@@ -142,9 +158,12 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                                 LOG.error("No resource received");
                                 return 500;
                             }
-                            ResourceLockSimulator<T> lockSimulator = simulators.get(resource.getMetadata().getName());
+                            ResourceLockSimulator<T> lockSimulator =
+                                    simulators.get(resource.getMetadata().getName());
                             if (resource.getMetadata() == null
-                                    || !lockSimulator.getResourceName().equals(resource.getMetadata().getName())) {
+                                    || !lockSimulator
+                                            .getResourceName()
+                                            .equals(resource.getMetadata().getName())) {
                                 LOG.error("Illegal resource received");
                                 return 500;
                             }
@@ -166,8 +185,9 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                             delayIfNecessary();
 
                             if (lockNames.containsKey(LockTestServer.super.getRequestCount())) {
-                                T resource
-                                        = simulators.get(lockNames.get(LockTestServer.super.getRequestCount())).getResource();
+                                T resource = simulators
+                                        .get(lockNames.get(LockTestServer.super.getRequestCount()))
+                                        .getResource();
                                 if (resource != null) {
                                     return resource;
                                 }
@@ -185,12 +205,13 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                         public void setHeaders(Headers headers) {
                             this.headers = headers;
                         }
-                    }).always();
+                    })
+                    .always();
         }
 
         expect().get()
                 .withPath(lockSimulator.getAPIPath() + "/namespaces/test/" + lockSimulator.getResourcePath() + "/"
-                          + lockSimulator.getResourceName())
+                        + lockSimulator.getResourceName())
                 .andReply(new ResponseProvider<Object>() {
 
                     private Headers headers = new Headers.Builder().build();
@@ -227,11 +248,12 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                     public void setHeaders(Headers headers) {
                         this.headers = headers;
                     }
-                }).always();
+                })
+                .always();
 
         expect().put()
                 .withPath(lockSimulator.getAPIPath() + "/namespaces/test/" + lockSimulator.getResourcePath() + "/"
-                          + lockSimulator.getResourceName())
+                        + lockSimulator.getResourceName())
                 .andReply(new ResponseProvider<Object>() {
 
                     private Headers headers = new Headers.Builder().build();
@@ -277,7 +299,8 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                     public void setHeaders(Headers headers) {
                         this.headers = headers;
                     }
-                }).always();
+                })
+                .always();
     }
 
     public boolean isRefuseRequests() {
@@ -322,5 +345,4 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         return mapper.readValue(request.getBody().readByteArray(), targetClass);
     }
-
 }

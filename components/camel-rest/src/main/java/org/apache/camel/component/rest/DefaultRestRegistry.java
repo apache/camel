@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
 
 import java.util.ArrayList;
@@ -47,11 +48,31 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
 
     @Override
     public void addRestService(
-            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate,
+            Consumer consumer,
+            boolean contractFirst,
+            String url,
+            String baseUrl,
+            String basePath,
+            String uriTemplate,
             String method,
-            String consumes, String produces, String inType, String outType, String routeId, String description) {
+            String consumes,
+            String produces,
+            String inType,
+            String outType,
+            String routeId,
+            String description) {
         RestServiceEntry entry = new RestServiceEntry(
-                consumer, contractFirst, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType,
+                consumer,
+                contractFirst,
+                url,
+                baseUrl,
+                basePath,
+                uriTemplate,
+                method,
+                consumes,
+                produces,
+                inType,
+                outType,
                 description);
         List<RestService> list = registry.computeIfAbsent(consumer, c -> new ArrayList<>());
         list.add(entry);
@@ -86,7 +107,8 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
         if (apiProducer == null) {
             Endpoint restApiEndpoint = null;
             Endpoint restEndpoint = null;
-            for (Map.Entry<NormalizedEndpointUri, Endpoint> entry : camelContext.getEndpointRegistry().entrySet()) {
+            for (Map.Entry<NormalizedEndpointUri, Endpoint> entry :
+                    camelContext.getEndpointRegistry().entrySet()) {
                 String uri = entry.getKey().getUri();
                 if (uri.startsWith("rest-api:")) {
                     restApiEndpoint = entry.getValue();
@@ -105,7 +127,8 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
                     RestConfiguration config = camelContext.getRestConfiguration();
 
                     String apiComponent = config.getApiComponent() != null
-                            ? config.getApiComponent() : RestApiEndpoint.DEFAULT_API_COMPONENT_NAME;
+                            ? config.getApiComponent()
+                            : RestApiEndpoint.DEFAULT_API_COMPONENT_NAME;
                     String path = config.getApiContextPath() != null ? config.getApiContextPath() : "api-doc";
                     String uri = String.format(
                             "rest-api:%s/%s?componentName=%s&apiComponentName=%s",
@@ -153,7 +176,8 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "camelContext", this);
-        // add a lifecycle so we can keep track when consumers is being removed, so we can unregister them from our registry
+        // add a lifecycle so we can keep track when consumers is being removed, so we can unregister them from our
+        // registry
         camelContext.addLifecycleStrategy(new RemoveRestServiceLifecycleStrategy());
     }
 
@@ -180,9 +204,19 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
         private final String outType;
         private final String description;
 
-        private RestServiceEntry(Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath,
-                                 String uriTemplate, String method, String consumes, String produces,
-                                 String inType, String outType, String description) {
+        private RestServiceEntry(
+                Consumer consumer,
+                boolean contractFirst,
+                String url,
+                String baseUrl,
+                String basePath,
+                String uriTemplate,
+                String method,
+                String consumes,
+                String produces,
+                String inType,
+                String outType,
+                String description) {
             this.consumer = consumer;
             this.contractFirst = contractFirst;
             this.url = url;

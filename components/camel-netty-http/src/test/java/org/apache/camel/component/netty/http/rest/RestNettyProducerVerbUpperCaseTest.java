@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestNettyProducerVerbUpperCaseTest extends BaseNettyTest {
 
@@ -41,24 +42,19 @@ public class RestNettyProducerVerbUpperCaseTest extends BaseNettyTest {
                 // configure to use netty on localhost with the given port
                 restConfiguration().component("netty-http").host("localhost").port(getPort());
 
-                from("direct:start")
-                        .to("rest:get:users/{id}/basic");
+                from("direct:start").to("rest:get:users/{id}/basic");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic").to("direct:basic");
+                rest("/users/").get("{id}/basic").to("direct:basic");
 
-                from("direct:basic")
-                        .to("mock:input")
-                        .process(exchange -> {
-                            String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
-                            assertEquals("GET", method);
+                from("direct:basic").to("mock:input").process(exchange -> {
+                    String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
+                    assertEquals("GET", method);
 
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getMessage().setBody(id + ";Donald Duck");
-                        });
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Donald Duck");
+                });
             }
         };
     }
-
 }

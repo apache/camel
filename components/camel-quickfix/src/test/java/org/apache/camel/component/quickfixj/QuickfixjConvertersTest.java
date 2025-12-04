@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.net.URL;
@@ -37,12 +44,6 @@ import quickfix.field.MsgType;
 import quickfix.fix44.Message.Header.NoHops;
 import quickfix.mina.ProtocolFactory;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class QuickfixjConvertersTest extends CamelTestSupport {
     private File settingsFile;
     private ClassLoader contextClassLoader;
@@ -55,15 +56,17 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     public void doPostSetup() throws Exception {
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
         tempdir = settingsFile.getParentFile();
-        URL[] urls = new URL[] { tempdir.toURI().toURL() };
+        URL[] urls = new URL[] {tempdir.toURI().toURL()};
 
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader testClassLoader = new URLClassLoader(urls, contextClassLoader);
         Thread.currentThread().setContextClassLoader(testClassLoader);
 
         settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
-        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(
+                Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(
+                Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
     }
 
     @Override
@@ -87,11 +90,13 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
         Message message = new Message();
         message.getHeader().setString(MsgType.FIELD, MsgType.ORDER_SINGLE);
 
-        Exchange exchange = QuickfixjConverters.toExchange(endpoint, sessionID, message, QuickfixjEventCategory.AppMessageSent);
+        Exchange exchange =
+                QuickfixjConverters.toExchange(endpoint, sessionID, message, QuickfixjEventCategory.AppMessageSent);
 
         assertThat((SessionID) exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY), is(sessionID));
 
-        assertThat((QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY),
+        assertThat(
+                (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY),
                 is(QuickfixjEventCategory.AppMessageSent));
 
         assertThat((String) exchange.getIn().getHeader(QuickfixjEndpoint.MESSAGE_TYPE_KEY), is(MsgType.ORDER_SINGLE));
@@ -102,11 +107,13 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
         QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(context));
 
-        Exchange exchange = QuickfixjConverters.toExchange(endpoint, sessionID, null, QuickfixjEventCategory.AppMessageSent);
+        Exchange exchange =
+                QuickfixjConverters.toExchange(endpoint, sessionID, null, QuickfixjEventCategory.AppMessageSent);
 
         assertThat((SessionID) exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY), is(sessionID));
 
-        assertThat((QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY),
+        assertThat(
+                (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY),
                 is(QuickfixjEventCategory.AppMessageSent));
 
         assertThat(exchange.getIn().getHeader(QuickfixjEndpoint.MESSAGE_TYPE_KEY), is(nullValue()));
@@ -115,7 +122,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     @Test
     public void convertMessageWithoutRepeatingGroups() {
         String data = "8=FIX.4.0\0019=100\00135=D\00134=2\00149=TW\00156=ISLD\00111=ID\00121=1\001"
-                      + "40=1\00154=1\00140=2\00138=200\00155=INTC\00110=160\001";
+                + "40=1\00154=1\00140=2\00138=200\00155=INTC\00110=160\001";
 
         Exchange exchange = new DefaultExchange(context);
         Object value = context.getTypeConverter().convertTo(Message.class, exchange, data);
@@ -131,8 +138,8 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
 
         try {
             String data = "8=FIX.4.4\0019=40\00135=A\001"
-                          + "627=2\001628=FOO\001628=BAR\001"
-                          + "98=0\001384=2\001372=D\001385=R\001372=8\001385=S\00110=230\001";
+                    + "627=2\001628=FOO\001628=BAR\001"
+                    + "98=0\001384=2\001372=D\001385=R\001372=8\001385=S\00110=230\001";
 
             Exchange exchange = new DefaultExchange(context);
             exchange.getIn().setHeader(QuickfixjEndpoint.SESSION_ID_KEY, sessionID);
@@ -159,8 +166,8 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
 
         try {
             String data = "8=FIX.4.4\0019=40\00135=A\001"
-                          + "627=2\001628=FOO\001628=BAR\001"
-                          + "98=0\001384=2\001372=D\001385=R\001372=8\001385=S\00110=230\001";
+                    + "627=2\001628=FOO\001628=BAR\001"
+                    + "98=0\001384=2\001372=D\001385=R\001372=8\001385=S\00110=230\001";
 
             Exchange exchange = new DefaultExchange(context);
             exchange.setProperty(QuickfixjEndpoint.DATA_DICTIONARY_KEY, new DataDictionary("FIX44.xml"));
@@ -187,8 +194,8 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
 
         try {
             String data = "8=FIX.4.4\0019=40\00135=A\001"
-                          + "627=2\001628=FOO\001628=BAR\001"
-                          + "98=0\001384=2\001372=D\001385=R\001372=8\001385=S\00110=230\001";
+                    + "627=2\001628=FOO\001628=BAR\001"
+                    + "98=0\001384=2\001372=D\001385=R\001372=8\001385=S\00110=230\001";
 
             Exchange exchange = new DefaultExchange(context);
             exchange.setProperty(QuickfixjEndpoint.DATA_DICTIONARY_KEY, "FIX44.xml");
@@ -209,7 +216,8 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
 
     private void createSession(SessionID sessionID) throws Exception {
         SessionSettings settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(
+                Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
 
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);

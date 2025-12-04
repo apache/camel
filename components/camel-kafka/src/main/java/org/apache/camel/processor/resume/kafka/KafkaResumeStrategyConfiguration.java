@@ -76,7 +76,8 @@ public class KafkaResumeStrategyConfiguration extends ResumeStrategyConfiguratio
 
     public void setMaxInitializationRetries(int maxInitializationRetries) {
         if (maxInitializationRetries < 1) {
-            throw new IllegalArgumentException("The maximum number of initialization retries must be equal or bigger than 1");
+            throw new IllegalArgumentException(
+                    "The maximum number of initialization retries must be equal or bigger than 1");
         }
 
         this.maxInitializationRetries = maxInitializationRetries;

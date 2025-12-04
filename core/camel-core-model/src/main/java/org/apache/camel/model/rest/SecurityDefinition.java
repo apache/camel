@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,6 +35,7 @@ public class SecurityDefinition {
     @XmlAttribute(required = true)
     @Metadata(required = true)
     private String key;
+
     @XmlAttribute
     private String scopes;
 

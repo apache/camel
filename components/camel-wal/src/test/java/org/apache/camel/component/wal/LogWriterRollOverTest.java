@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.wal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -29,14 +31,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class LogWriterRollOverTest extends LogTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(LogWriterRollOverTest.class);
 
     @ParameterizedTest
-    @ValueSource(ints = { 1, 5, 10, 100, 3599, 3600 })
+    @ValueSource(ints = {1, 5, 10, 100, 3599, 3600})
     public void testReadWriteRecordsWithRollOver(int maxRecordCount) throws IOException {
         readWriteTest(maxRecordCount, maxRecordCount);
     }

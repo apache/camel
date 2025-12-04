@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.time.Duration;
@@ -41,7 +42,8 @@ public class BlobServiceOperations {
     }
 
     public BlobOperationResponse listBlobContainers(final Exchange exchange) {
-        final ListBlobContainersOptions listBlobContainersOptions = configurationProxy.getListBlobContainersOptions(exchange);
+        final ListBlobContainersOptions listBlobContainersOptions =
+                configurationProxy.getListBlobContainersOptions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
 
         return BlobOperationResponse.create(client.listBlobContainers(listBlobContainersOptions, timeout));

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,8 +40,7 @@ public class FilterDefinition extends OutputExpressionNode {
     @Metadata(label = "advanced")
     private String statusPropertyName;
 
-    public FilterDefinition() {
-    }
+    public FilterDefinition() {}
 
     protected FilterDefinition(FilterDefinition source) {
         super(source);

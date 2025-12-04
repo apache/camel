@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaTXRollbackTest extends AbstractJpaTest {
 
@@ -59,7 +60,9 @@ public class JpaTXRollbackTest extends AbstractJpaTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jpa://" + SendEmail.class.getName() + "?transacted=true&delay=1000").routeId("foo").autoStartup(false)
+                from("jpa://" + SendEmail.class.getName() + "?transacted=true&delay=1000")
+                        .routeId("foo")
+                        .autoStartup(false)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonpatch;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -55,5 +56,4 @@ public class JsonPatchProducer extends DefaultProducer {
 
         ExchangeHelper.setInOutBodyPatternAware(exchange, result.toString());
     }
-
 }

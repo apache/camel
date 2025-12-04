@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto;
 
 import java.io.IOException;
@@ -48,14 +49,12 @@ public final class Limits implements Serializable {
     public static final class LimitsDeserializer extends JsonDeserializer {
 
         @Override
-        public Object deserialize(final JsonParser parser, final DeserializationContext context)
-                throws IOException {
+        public Object deserialize(final JsonParser parser, final DeserializationContext context) throws IOException {
 
             final Map<String, Usage> usages = parser.readValueAs(TypeReferences.USAGES_TYPE);
 
             return new Limits(usages);
         }
-
     }
 
     public enum Operation {
@@ -162,8 +161,8 @@ public final class Limits implements Serializable {
         if (usages == null) {
             this.usages = new HashMap<>();
         } else {
-            this.usages
-                    = usages.entrySet().stream().collect(Collectors.toMap(e -> String.valueOf(e.getKey()), Entry::getValue));
+            this.usages = usages.entrySet().stream()
+                    .collect(Collectors.toMap(e -> String.valueOf(e.getKey()), Entry::getValue));
         }
     }
 
@@ -311,6 +310,8 @@ public final class Limits implements Serializable {
     @Override
     public String toString() {
         return "Limits: "
-               + usages.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue()).collect(Collectors.joining(", "));
+                + usages.entrySet().stream()
+                        .map(e -> e.getKey() + ": " + e.getValue())
+                        .collect(Collectors.joining(", "));
     }
 }

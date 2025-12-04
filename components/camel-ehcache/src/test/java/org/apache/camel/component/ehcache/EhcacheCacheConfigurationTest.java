@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -34,27 +39,27 @@ import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class EhcacheCacheConfigurationTest extends CamelTestSupport {
     @EndpointInject("ehcache:myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
     private EhcacheEndpoint ehcacheProgrammaticConf;
-    @EndpointInject("ehcache:myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
+
+    @EndpointInject(
+            "ehcache:myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
     private EhcacheEndpoint ehcacheFileConf;
+
     @EndpointInject("ehcache:myUserCacheConf")
     private EhcacheEndpoint ehcacheUserConf;
+
     @EndpointInject("ehcache:myCache?cacheManager=#myCacheManager&keyType=java.lang.String&valueType=java.lang.String")
     private EhcacheEndpoint ehcacheCacheManager;
 
     @BindToRegistry("myProgrammaticConfiguration")
     private CacheConfiguration<String, String> c = CacheConfigurationBuilder.newCacheConfigurationBuilder(
-            String.class,
-            String.class,
-            ResourcePoolsBuilder.newResourcePoolsBuilder()
-                    .heap(100, EntryUnit.ENTRIES)
-                    .offheap(1, MemoryUnit.MB))
+                    String.class,
+                    String.class,
+                    ResourcePoolsBuilder.newResourcePoolsBuilder()
+                            .heap(100, EntryUnit.ENTRIES)
+                            .offheap(1, MemoryUnit.MB))
             .build();
 
     @BindToRegistry("myCacheManager")
@@ -109,7 +114,8 @@ public class EhcacheCacheConfigurationTest extends CamelTestSupport {
                 .to("direct:ehcacheUserConf")
                 .send();
 
-        Cache<Object, Object> cache = ehcacheUserConf.getManager().getCache("myUserCacheConf", Object.class, Object.class);
+        Cache<Object, Object> cache =
+                ehcacheUserConf.getManager().getCache("myUserCacheConf", Object.class, Object.class);
 
         assertTrue(cache instanceof UserManagedCache);
         assertEquals("user-val", cache.get("user-key"));
@@ -147,14 +153,10 @@ public class EhcacheCacheConfigurationTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:ehcacheProgrammaticConf")
-                        .to(ehcacheProgrammaticConf);
-                from("direct:ehcacheFileConf")
-                        .to(ehcacheFileConf);
-                from("direct:ehcacheUserConf")
-                        .to(ehcacheUserConf);
-                from("direct:ehcacheCacheManager")
-                        .to(ehcacheCacheManager);
+                from("direct:ehcacheProgrammaticConf").to(ehcacheProgrammaticConf);
+                from("direct:ehcacheFileConf").to(ehcacheFileConf);
+                from("direct:ehcacheUserConf").to(ehcacheUserConf);
+                from("direct:ehcacheCacheManager").to(ehcacheCacheManager);
             }
         };
     }

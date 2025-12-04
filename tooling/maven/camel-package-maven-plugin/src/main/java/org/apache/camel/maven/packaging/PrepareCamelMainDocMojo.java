@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -43,8 +44,11 @@ import org.mvel2.templates.TemplateRuntime;
 /**
  * Prepares camel-main by updating the main documentation.
  */
-@Mojo(name = "prepare-main", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
-      requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "prepare-main",
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
 
     /**
@@ -56,7 +60,8 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
     /**
      * The metadata file
      */
-    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/META-INF/camel-main-configuration-metadata.json")
+    @Parameter(
+            defaultValue = "${project.basedir}/src/generated/resources/META-INF/camel-main-configuration-metadata.json")
     protected File mainJsonFile;
 
     @Inject
@@ -65,11 +70,10 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
     }
 
     @Override
-    public void execute(MavenProject project)
-            throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         docDocDir = new File(project.getBasedir(), "src/main/docs");
-        mainJsonFile
-                = new File(project.getBasedir(), "src/generated/resources/META-INF/camel-main-configuration-metadata.json");
+        mainJsonFile = new File(
+                project.getBasedir(), "src/generated/resources/META-INF/camel-main-configuration-metadata.json");
         super.execute(project);
     }
 
@@ -103,20 +107,24 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private static String evaluateTemplate(final String templateName, final MainModel model) throws MojoExecutionException {
+    private static String evaluateTemplate(final String templateName, final MainModel model)
+            throws MojoExecutionException {
         StringBuilder sb = new StringBuilder(256);
 
-        try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
+        try (InputStream templateStream =
+                UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
             String template = PackageHelper.loadText(templateStream);
             // loop each group and eval
             for (MainModel.MainGroupModel group : model.getGroups()) {
                 Map<String, Object> root = new HashMap<>();
                 root.put("group", group);
-                root.put("options", model.getOptions().stream()
-                        .filter(o -> o.getName().startsWith(group.getName()))
-                        .toList());
-                String eval
-                        = (String) TemplateRuntime.eval(template, root, Collections.singletonMap("util", MvelHelper.INSTANCE));
+                root.put(
+                        "options",
+                        model.getOptions().stream()
+                                .filter(o -> o.getName().startsWith(group.getName()))
+                                .toList());
+                String eval = (String)
+                        TemplateRuntime.eval(template, root, Collections.singletonMap("util", MvelHelper.INSTANCE));
                 sb.append(eval);
                 sb.append("\n");
             }
@@ -127,7 +135,8 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
         return sb.toString();
     }
 
-    private boolean updateOptionsIn(final File file, final String kind, final String changed) throws MojoExecutionException {
+    private boolean updateOptionsIn(final File file, final String kind, final String changed)
+            throws MojoExecutionException {
         if (!file.exists()) {
             return false;
         }
@@ -160,5 +169,4 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
         }
     }
-
 }

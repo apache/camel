@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsMessageHelper.getSafeLongProperty;
+import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
+import static org.apache.camel.component.jms.JmsMessageType.Bytes;
+import static org.apache.camel.component.jms.JmsMessageType.Map;
+import static org.apache.camel.component.jms.JmsMessageType.Object;
+import static org.apache.camel.component.jms.JmsMessageType.Stream;
+import static org.apache.camel.component.jms.JmsMessageType.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,14 +74,6 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsMessageHelper.getSafeLongProperty;
-import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
-import static org.apache.camel.component.jms.JmsMessageType.Bytes;
-import static org.apache.camel.component.jms.JmsMessageType.Map;
-import static org.apache.camel.component.jms.JmsMessageType.Object;
-import static org.apache.camel.component.jms.JmsMessageType.Stream;
-import static org.apache.camel.component.jms.JmsMessageType.Text;
-
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link JmsMessage} to and from a JMS {@link Message}
  */
@@ -106,7 +107,8 @@ public class JmsBinding {
             this.messageCreatedStrategy = endpoint.getMessageCreatedStrategy();
         } else if (endpoint.getComponent() != null) {
             // fallback and use from component
-            this.messageCreatedStrategy = endpoint.getComponent().getConfiguration().getMessageCreatedStrategy();
+            this.messageCreatedStrategy =
+                    endpoint.getComponent().getConfiguration().getMessageCreatedStrategy();
         } else {
             this.messageCreatedStrategy = null;
         }
@@ -125,8 +127,10 @@ public class JmsBinding {
             // based on message type
             if (endpoint != null && endpoint.getMessageConverter() != null) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body using a custom MessageConverter: {} from JMS message: {}",
-                            endpoint.getMessageConverter(), message);
+                    LOG.trace(
+                            "Extracting body using a custom MessageConverter: {} from JMS message: {}",
+                            endpoint.getMessageConverter(),
+                            message);
                 }
                 return endpoint.getMessageConverter().fromMessage(message);
             }
@@ -142,7 +146,8 @@ public class JmsBinding {
                 Object payload = objectMessage.getObject();
                 if (payload instanceof DefaultExchangeHolder holder) {
                     DefaultExchangeHolder.unmarshal(exchange, holder);
-                    // enrich with JMS headers also as otherwise they will get lost when use the transferExchange option.
+                    // enrich with JMS headers also as otherwise they will get lost when use the transferExchange
+                    // option.
                     Map<String, Object> jmsHeaders = extractHeadersFromJms(message, exchange);
                     exchange.getIn().getHeaders().putAll(jmsHeaders);
                     return exchange.getIn().getBody();
@@ -176,7 +181,8 @@ public class JmsBinding {
             try {
                 map.put(JmsConstants.JMS_HEADER_CORRELATION_ID, JmsMessageHelper.getJMSCorrelationID(jmsMessage));
                 if (endpoint == null || endpoint.getComponent().isIncludeCorrelationIDAsBytes()) {
-                    map.put(JmsConstants.JMS_HEADER_CORRELATION_ID_AS_BYTES,
+                    map.put(
+                            JmsConstants.JMS_HEADER_CORRELATION_ID_AS_BYTES,
                             JmsMessageHelper.getJMSCorrelationIDAsBytes(jmsMessage));
                 }
                 map.put(JmsConstants.JMS_HEADER_DELIVERY_MODE, jmsMessage.getJMSDeliveryMode());
@@ -191,9 +197,11 @@ public class JmsBinding {
                 map.put(JmsConstants.JMS_HEADER_TYPE, JmsMessageHelper.getJMSType(jmsMessage));
 
                 // this works around a bug in the ActiveMQ property handling
-                map.put(JmsConstants.JMS_X_GROUP_ID,
+                map.put(
+                        JmsConstants.JMS_X_GROUP_ID,
                         JmsMessageHelper.getStringProperty(jmsMessage, JmsConstants.JMS_X_GROUP_ID));
-                map.put(JmsConstants.JMS_HEADER_XUSER_ID,
+                map.put(
+                        JmsConstants.JMS_HEADER_XUSER_ID,
                         JmsMessageHelper.getStringProperty(jmsMessage, JmsConstants.JMS_HEADER_XUSER_ID));
             } catch (JMSException e) {
                 throw new RuntimeCamelException(e);
@@ -303,7 +311,8 @@ public class JmsBinding {
      * @return              a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
-    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, Exception cause)
+    public Message makeJmsMessage(
+            Exchange exchange, org.apache.camel.Message camelMessage, Session session, Exception cause)
             throws JMSException {
         Message answer = null;
 
@@ -315,7 +324,8 @@ public class JmsBinding {
 
                 if (!force) {
                     // answer must match endpoint type
-                    JmsMessageType type = endpoint != null ? endpoint.getConfiguration().getJmsMessageType() : null;
+                    JmsMessageType type =
+                            endpoint != null ? endpoint.getConfiguration().getJmsMessageType() : null;
                     if (type != null && answer != null) {
                         if (type == JmsMessageType.Text) {
                             answer = answer instanceof TextMessage ? answer : null;
@@ -363,7 +373,8 @@ public class JmsBinding {
     /**
      * Appends the JMS headers from the Camel {@link JmsMessage}
      */
-    public void appendJmsProperties(Message jmsMessage, Exchange exchange, org.apache.camel.Message in) throws JMSException {
+    public void appendJmsProperties(Message jmsMessage, Exchange exchange, org.apache.camel.Message in)
+            throws JMSException {
         Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
@@ -372,9 +383,7 @@ public class JmsBinding {
         }
     }
 
-    public void appendJmsProperty(
-            Message jmsMessage, Exchange exchange,
-            String headerName, Object headerValue)
+    public void appendJmsProperty(Message jmsMessage, Exchange exchange, String headerName, Object headerValue)
             throws JMSException {
         if (isStandardJMSHeader(headerName)) {
             if (headerName.equals(JmsConstants.JMS_HEADER_CORRELATION_ID)
@@ -411,7 +420,8 @@ public class JmsBinding {
             Object value = getValidJMSHeaderValue(headerName, headerValue);
             // if the value was null, then it may be allowed as an additional header
             if (value == null && endpoint != null && endpoint.getConfiguration().getAllowAdditionalHeaders() != null) {
-                Iterator it = ObjectHelper.createIterator(endpoint.getConfiguration().getAllowAdditionalHeaders());
+                Iterator it =
+                        ObjectHelper.createIterator(endpoint.getConfiguration().getAllowAdditionalHeaders());
                 while (it.hasNext()) {
                     String pattern = (String) it.next();
                     if (PatternHelper.matchPattern(headerName, pattern)) {
@@ -430,8 +440,11 @@ public class JmsBinding {
                 JmsMessageHelper.setProperty(jmsMessage, key, value);
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
-                LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",
-                        headerName, headerValue.getClass().getName(), headerValue);
+                LOG.debug(
+                        "Ignoring non primitive header: {} of class: {} with value: {}",
+                        headerName,
+                        headerValue.getClass().getName(),
+                        headerValue);
             }
         }
     }
@@ -531,7 +544,8 @@ public class JmsBinding {
         // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
             LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
-            Serializable holder = DefaultExchangeHolder.marshal(exchange, true, endpoint.isAllowSerializedHeaders(), false);
+            Serializable holder =
+                    DefaultExchangeHolder.marshal(exchange, true, endpoint.isAllowSerializedHeaders(), false);
             Message answer = session.createObjectMessage(holder);
             // ensure default delivery mode is used by default
             answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
@@ -541,15 +555,18 @@ public class JmsBinding {
         // use a custom message converter
         if (endpoint != null && endpoint.getMessageConverter() != null) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Creating JmsMessage using a custom MessageConverter: {} with body: {}",
-                        endpoint.getMessageConverter(), body);
+                LOG.trace(
+                        "Creating JmsMessage using a custom MessageConverter: {} with body: {}",
+                        endpoint.getMessageConverter(),
+                        body);
             }
             return endpoint.getMessageConverter().toMessage(body, session);
         }
 
         // check if header have a type set, if so we force to use it
         if (headers.containsKey(JmsConstants.JMS_MESSAGE_TYPE)) {
-            type = context.getTypeConverter().convertTo(JmsMessageType.class, headers.get(JmsConstants.JMS_MESSAGE_TYPE));
+            type = context.getTypeConverter()
+                    .convertTo(JmsMessageType.class, headers.get(JmsConstants.JMS_MESSAGE_TYPE));
         } else if (endpoint != null && endpoint.getConfiguration().getJmsMessageType() != null) {
             // force a specific type from the endpoint configuration
             type = endpoint.getConfiguration().getJmsMessageType();
@@ -560,7 +577,8 @@ public class JmsBinding {
         // create the JmsMessage based on the type
         if (type != null) {
             if (body == null && endpoint != null && !endpoint.getConfiguration().isAllowNullBody()) {
-                throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
+                throw new JMSException(
+                        "Cannot send message as message body is null, and option allowNullBody is false.");
             }
             LOG.trace("Using JmsMessageType: {}", type);
             Message answer = createJmsMessageForType(exchange, body, session, context, type);
@@ -576,11 +594,12 @@ public class JmsBinding {
 
         // warn if the body could not be mapped
         if (body != null && LOG.isWarnEnabled()) {
-            LOG.warn("Cannot determine specific JmsMessage type to use from body class."
-                     + " Will use generic JmsMessage."
-                     + " Body class: {}"
-                     + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
-                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.",
+            LOG.warn(
+                    "Cannot determine specific JmsMessage type to use from body class."
+                            + " Will use generic JmsMessage."
+                            + " Body class: {}"
+                            + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
+                            + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.",
                     org.apache.camel.util.ObjectHelper.classCanonicalName(body));
         }
 
@@ -596,8 +615,7 @@ public class JmsBinding {
      *
      * @return type or null if no mapping was possible
      */
-    protected JmsMessageType getJMSMessageTypeForBody(
-            Exchange exchange, Object body) {
+    protected JmsMessageType getJMSMessageTypeForBody(Exchange exchange, Object body) {
         boolean streamingEnabled = endpoint.getConfiguration().isStreamMessageTypeEnabled();
 
         JmsMessageType type = null;
@@ -606,8 +624,11 @@ public class JmsBinding {
             type = Text;
         } else if (body instanceof byte[] || body instanceof ByteBuffer) {
             type = Bytes;
-        } else if (body instanceof WrappedFile || body instanceof File || body instanceof Reader
-                || body instanceof InputStream || body instanceof StreamCache) {
+        } else if (body instanceof WrappedFile
+                || body instanceof File
+                || body instanceof Reader
+                || body instanceof InputStream
+                || body instanceof StreamCache) {
             type = streamingEnabled ? Stream : Bytes;
         } else if (body instanceof Map) {
             type = Map;
@@ -637,8 +658,7 @@ public class JmsBinding {
      * @return jmsMessage or null if the mapping was not successfully
      */
     protected Message createJmsMessageForType(
-            Exchange exchange, Object body, Session session, CamelContext context,
-            JmsMessageType type)
+            Exchange exchange, Object body, Session session, CamelContext context, JmsMessageType type)
             throws JMSException {
         switch (type) {
             case Text: {
@@ -655,11 +675,13 @@ public class JmsBinding {
                     try {
                         if (endpoint.isArtemisStreamingEnabled()) {
                             LOG.trace("Optimised for Artemis: Streaming payload in BytesMessage");
-                            InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                            InputStream is =
+                                    context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                             message.setObjectProperty("JMS_AMQ_InputStream", is);
                             LOG.trace("Optimised for Artemis: Finished streaming payload in BytesMessage");
                         } else {
-                            byte[] payload = context.getTypeConverter().mandatoryConvertTo(byte[].class, exchange, body);
+                            byte[] payload =
+                                    context.getTypeConverter().mandatoryConvertTo(byte[].class, exchange, body);
                             message.writeBytes(payload);
                         }
                     } catch (NoTypeConversionAvailableException e) {
@@ -683,8 +705,8 @@ public class JmsBinding {
                 ObjectMessage message = session.createObjectMessage();
                 if (body != null) {
                     try {
-                        Serializable payload
-                                = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
+                        Serializable payload =
+                                context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
                         message.setObject(payload);
                     } catch (NoTypeConversionAvailableException e) {
                         // cannot convert to serializable then thrown an exception to avoid sending a null message
@@ -725,7 +747,6 @@ public class JmsBinding {
                     } finally {
                         IOHelper.close(is);
                     }
-
                 }
                 return message;
             }
@@ -738,8 +759,7 @@ public class JmsBinding {
     /**
      * Populates a {@link MapMessage} from a {@link Map} instance.
      */
-    protected void populateMapMessage(MapMessage message, Map<?, ?> map, CamelContext context)
-            throws JMSException {
+    protected void populateMapMessage(MapMessage message, Map<?, ?> map, CamelContext context) throws JMSException {
         for (Entry<?, ?> entry : map.entrySet()) {
             String keyString = CamelContextHelper.convertTo(context, String.class, entry.getKey());
             if (keyString != null) {
@@ -767,11 +787,8 @@ public class JmsBinding {
      * <p/>
      * <b>Note</b>: Currently only supports sending java identifiers as keys
      */
-    protected boolean shouldOutputHeader(
-            String headerName,
-            Object headerValue, Exchange exchange) {
+    protected boolean shouldOutputHeader(String headerName, Object headerValue, Exchange exchange) {
         return headerFilterStrategy == null
                 || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange);
     }
-
 }

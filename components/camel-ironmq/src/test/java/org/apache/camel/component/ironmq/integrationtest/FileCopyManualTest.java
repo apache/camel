@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq.integrationtest;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ironmq.IronMQConstants;
@@ -24,9 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
 @Disabled("Integration test that requires ironmq account.")
 public class FileCopyManualTest extends CamelTestSupport {
     // replace with your proejctid
@@ -35,7 +36,7 @@ public class FileCopyManualTest extends CamelTestSupport {
     private String token = "myIronMQToken";
 
     private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token
-                                          + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&preserveHeaders=true";
+            + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&preserveHeaders=true";
 
     @BeforeEach
     public void clean() {
@@ -54,10 +55,16 @@ public class FileCopyManualTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                //copies test.txt from test/data to ironmq
-                from("file:src/test/data?noop=true").convertBodyTo(String.class).log("sending : ${body}").to(ironMQEndpoint);
-                //Receives test.txt from ironmq and writes it to target/out
-                from(ironMQEndpoint).log("got message : ${body}").to("file:target/out").to("mock:result");
+                // copies test.txt from test/data to ironmq
+                from("file:src/test/data?noop=true")
+                        .convertBodyTo(String.class)
+                        .log("sending : ${body}")
+                        .to(ironMQEndpoint);
+                // Receives test.txt from ironmq and writes it to target/out
+                from(ironMQEndpoint)
+                        .log("got message : ${body}")
+                        .to("file:target/out")
+                        .to("mock:result");
             }
         };
     }

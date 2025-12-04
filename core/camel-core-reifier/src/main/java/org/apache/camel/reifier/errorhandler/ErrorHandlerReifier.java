@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.errorhandler;
 
 import java.time.Duration;
@@ -51,8 +52,10 @@ import org.apache.camel.util.ObjectHelper;
 
 public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends AbstractReifier {
 
-    private static final Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS
-            = new HashMap<>(0);
+    private static final Map<
+                    Class<?>,
+                    BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>>
+            ERROR_HANDLERS = new HashMap<>(0);
 
     protected final T definition;
 
@@ -72,12 +75,13 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         ERROR_HANDLERS.put(errorHandlerClass, creator);
     }
 
-    public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(Route route, ErrorHandlerFactory definition) {
+    public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(
+            Route route, ErrorHandlerFactory definition) {
         ErrorHandlerReifier<? extends ErrorHandlerFactory> answer = null;
         if (!ERROR_HANDLERS.isEmpty()) {
             // custom take precedence
-            BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier
-                    = ERROR_HANDLERS.get(definition.getClass());
+            BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier =
+                    ERROR_HANDLERS.get(definition.getClass());
             if (reifier != null) {
                 answer = reifier.apply(route, definition);
             }
@@ -91,7 +95,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         return answer;
     }
 
-    private static ErrorHandlerReifier<? extends ErrorHandlerFactory> coreReifier(Route route, ErrorHandlerFactory definition) {
+    private static ErrorHandlerReifier<? extends ErrorHandlerFactory> coreReifier(
+            Route route, ErrorHandlerFactory definition) {
         if (definition instanceof DeadLetterChannelDefinition deadLetterChannelDefinition) {
             return new DeadLetterChannelReifier(route, deadLetterChannelDefinition);
         } else if (definition instanceof DefaultErrorHandlerDefinition defaultErrorHandlerDefinition) {
@@ -121,13 +126,19 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         Processor onRedelivery = getProcessor(def.getOnRedelivery(), def.getOnRedeliveryRef());
         Processor onExceptionOccurred = getProcessor(def.getOnExceptionOccurred(), def.getOnExceptionOccurredRef());
         return new ExceptionPolicy(
-                parseString(def.getId()), CamelContextHelper.getRouteId(def),
+                parseString(def.getId()),
+                CamelContextHelper.getRouteId(def),
                 parseBoolean(def.getUseOriginalMessage(), false),
                 parseBoolean(def.getUseOriginalBody(), false),
-                ObjectHelper.isNotEmpty(def.getOutputs()), handled,
-                continued, retryWhile, onRedelivery,
-                onExceptionOccurred, parseString(def.getRedeliveryPolicyRef()),
-                createRedeliveryPolicyOptions(def.getRedeliveryPolicyType()), def.getExceptions());
+                ObjectHelper.isNotEmpty(def.getOutputs()),
+                handled,
+                continued,
+                retryWhile,
+                onRedelivery,
+                onExceptionOccurred,
+                parseString(def.getRedeliveryPolicyRef()),
+                createRedeliveryPolicyOptions(def.getRedeliveryPolicyType()),
+                def.getExceptions());
     }
 
     @Deprecated
@@ -155,36 +166,36 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
                         CamelContextHelper.parseLong(context, definition.get(RedeliveryOption.redeliveryDelay)));
             }
             if (definition.get(RedeliveryOption.asyncDelayedRedelivery) != null) {
-                answer.setAsyncDelayedRedelivery(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.asyncDelayedRedelivery)));
+                answer.setAsyncDelayedRedelivery(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.asyncDelayedRedelivery)));
             }
             if (definition.get(RedeliveryOption.retriesExhaustedLogLevel) != null) {
-                answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class,
-                        definition.get(RedeliveryOption.retriesExhaustedLogLevel)));
+                answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(
+                        context, LoggingLevel.class, definition.get(RedeliveryOption.retriesExhaustedLogLevel)));
             }
             if (definition.get(RedeliveryOption.retryAttemptedLogLevel) != null) {
-                answer.setRetryAttemptedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class,
-                        definition.get(RedeliveryOption.retryAttemptedLogLevel)));
+                answer.setRetryAttemptedLogLevel(CamelContextHelper.parse(
+                        context, LoggingLevel.class, definition.get(RedeliveryOption.retryAttemptedLogLevel)));
             }
             if (definition.get(RedeliveryOption.retryAttemptedLogInterval) != null) {
-                answer.setRetryAttemptedLogInterval(
-                        CamelContextHelper.parseInteger(context, definition.get(RedeliveryOption.retryAttemptedLogInterval)));
+                answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(
+                        context, definition.get(RedeliveryOption.retryAttemptedLogInterval)));
             }
             if (definition.get(RedeliveryOption.backOffMultiplier) != null) {
                 answer.setBackOffMultiplier(
                         CamelContextHelper.parseDouble(context, definition.get(RedeliveryOption.backOffMultiplier)));
             }
             if (definition.get(RedeliveryOption.useExponentialBackOff) != null) {
-                answer.setUseExponentialBackOff(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.useExponentialBackOff)));
+                answer.setUseExponentialBackOff(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.useExponentialBackOff)));
             }
             if (definition.get(RedeliveryOption.collisionAvoidanceFactor) != null) {
-                answer.setCollisionAvoidanceFactor(
-                        CamelContextHelper.parseDouble(context, definition.get(RedeliveryOption.collisionAvoidanceFactor)));
+                answer.setCollisionAvoidanceFactor(CamelContextHelper.parseDouble(
+                        context, definition.get(RedeliveryOption.collisionAvoidanceFactor)));
             }
             if (definition.get(RedeliveryOption.useCollisionAvoidance) != null) {
-                answer.setUseCollisionAvoidance(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.useCollisionAvoidance)));
+                answer.setUseCollisionAvoidance(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.useCollisionAvoidance)));
             }
             if (definition.get(RedeliveryOption.maximumRedeliveryDelay) != null) {
                 answer.setMaximumRedeliveryDelay(
@@ -199,29 +210,32 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
                         CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logRetryStackTrace)));
             }
             if (definition.get(RedeliveryOption.logHandled) != null) {
-                answer.setLogHandled(CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logHandled)));
+                answer.setLogHandled(
+                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logHandled)));
             }
             if (definition.get(RedeliveryOption.logNewException) != null) {
                 answer.setLogNewException(
                         CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logNewException)));
             }
             if (definition.get(RedeliveryOption.logContinued) != null) {
-                answer.setLogContinued(CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logContinued)));
+                answer.setLogContinued(
+                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logContinued)));
             }
             if (definition.get(RedeliveryOption.logRetryAttempted) != null) {
                 answer.setLogRetryAttempted(
                         CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logRetryAttempted)));
             }
             if (definition.get(RedeliveryOption.logExhausted) != null) {
-                answer.setLogExhausted(CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logExhausted)));
+                answer.setLogExhausted(
+                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logExhausted)));
             }
             if (definition.get(RedeliveryOption.logExhaustedMessageHistory) != null) {
-                answer.setLogExhaustedMessageHistory(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logExhaustedMessageHistory)));
+                answer.setLogExhaustedMessageHistory(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.logExhaustedMessageHistory)));
             }
             if (definition.get(RedeliveryOption.logExhaustedMessageBody) != null) {
-                answer.setLogExhaustedMessageBody(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logExhaustedMessageBody)));
+                answer.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.logExhaustedMessageBody)));
             }
             if (definition.get(RedeliveryOption.disableRedelivery) != null) {
                 if (CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.disableRedelivery))) {
@@ -229,11 +243,12 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
                 }
             }
             if (definition.get(RedeliveryOption.delayPattern) != null) {
-                answer.setDelayPattern(CamelContextHelper.parseText(context, definition.get(RedeliveryOption.delayPattern)));
+                answer.setDelayPattern(
+                        CamelContextHelper.parseText(context, definition.get(RedeliveryOption.delayPattern)));
             }
             if (definition.get(RedeliveryOption.allowRedeliveryWhileStopping) != null) {
-                answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context,
-                        definition.get(RedeliveryOption.allowRedeliveryWhileStopping)));
+                answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.allowRedeliveryWhileStopping)));
             }
             if (definition.get(RedeliveryOption.exchangeFormatterRef) != null) {
                 answer.setExchangeFormatterRef(
@@ -273,7 +288,11 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         setOption(policy, RedeliveryOption.logExhaustedMessageBody, definition.getLogExhaustedMessageBody());
         setOption(policy, RedeliveryOption.disableRedelivery, definition.getDisableRedelivery());
         setOption(policy, RedeliveryOption.delayPattern, definition.getDelayPattern());
-        setOption(policy, RedeliveryOption.allowRedeliveryWhileStopping, definition.getAllowRedeliveryWhileStopping(), "true");
+        setOption(
+                policy,
+                RedeliveryOption.allowRedeliveryWhileStopping,
+                definition.getAllowRedeliveryWhileStopping(),
+                "true");
         setOption(policy, RedeliveryOption.exchangeFormatterRef, definition.getExchangeFormatterRef());
         return policy;
     }
@@ -306,7 +325,9 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
                 if (exceptionType.isRouteScoped()) {
                     routeId = route.getRouteId();
                 }
-                Predicate when = exceptionType.getOnWhen() != null ? exceptionType.getOnWhen().getExpression() : null;
+                Predicate when = exceptionType.getOnWhen() != null
+                        ? exceptionType.getOnWhen().getExpression()
+                        : null;
                 ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, when);
                 ExceptionPolicy policy = createExceptionPolicy(exceptionType);
                 handlerSupport.addExceptionPolicy(key, policy);
@@ -319,7 +340,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
         for (String name : list) {
             try {
-                Class<? extends Throwable> type = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+                Class<? extends Throwable> type =
+                        camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
                 answer.add(type);
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -368,7 +390,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         try {
             // copy across the properties - if they are set
             if (definition.getMaximumRedeliveries() != null) {
-                answer.setMaximumRedeliveries(CamelContextHelper.parseInteger(context, definition.getMaximumRedeliveries()));
+                answer.setMaximumRedeliveries(
+                        CamelContextHelper.parseInteger(context, definition.getMaximumRedeliveries()));
             }
             if (definition.getRedeliveryDelay() != null) {
                 Duration duration = CamelContextHelper.parseDuration(context, definition.getRedeliveryDelay());
@@ -379,8 +402,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
                         CamelContextHelper.parseBoolean(context, definition.getAsyncDelayedRedelivery()));
             }
             if (definition.getRetriesExhaustedLogLevel() != null) {
-                answer.setRetriesExhaustedLogLevel(
-                        CamelContextHelper.parse(context, LoggingLevel.class, definition.getRetriesExhaustedLogLevel()));
+                answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(
+                        context, LoggingLevel.class, definition.getRetriesExhaustedLogLevel()));
             }
             if (definition.getRetryAttemptedLogLevel() != null) {
                 answer.setRetryAttemptedLogLevel(
@@ -413,7 +436,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
                 answer.setLogStackTrace(CamelContextHelper.parseBoolean(context, definition.getLogStackTrace()));
             }
             if (definition.getLogRetryStackTrace() != null) {
-                answer.setLogRetryStackTrace(CamelContextHelper.parseBoolean(context, definition.getLogRetryStackTrace()));
+                answer.setLogRetryStackTrace(
+                        CamelContextHelper.parseBoolean(context, definition.getLogRetryStackTrace()));
             }
             if (definition.getLogHandled() != null) {
                 answer.setLogHandled(CamelContextHelper.parseBoolean(context, definition.getLogHandled()));
@@ -425,7 +449,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
                 answer.setLogContinued(CamelContextHelper.parseBoolean(context, definition.getLogContinued()));
             }
             if (definition.getLogRetryAttempted() != null) {
-                answer.setLogRetryAttempted(CamelContextHelper.parseBoolean(context, definition.getLogRetryAttempted()));
+                answer.setLogRetryAttempted(
+                        CamelContextHelper.parseBoolean(context, definition.getLogRetryAttempted()));
             }
             if (definition.getLogExhausted() != null) {
                 answer.setLogExhausted(CamelContextHelper.parseBoolean(context, definition.getLogExhausted()));
@@ -451,7 +476,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
                         CamelContextHelper.parseBoolean(context, definition.getAllowRedeliveryWhileStopping()));
             }
             if (definition.getExchangeFormatterRef() != null) {
-                answer.setExchangeFormatterRef(CamelContextHelper.parseText(context, definition.getExchangeFormatterRef()));
+                answer.setExchangeFormatterRef(
+                        CamelContextHelper.parseText(context, definition.getExchangeFormatterRef()));
             }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -493,5 +519,4 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         }
         return processor;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Properties;
@@ -28,9 +32,6 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailBindingAttachmentDuplicateFileNameTest {
 
@@ -77,7 +78,9 @@ public class MailBindingAttachmentDuplicateFileNameTest {
     private void extractAttachmentsAndValidate(Message message, String filename, String filename2) throws Exception {
         MessagingException thrown;
         setAttachments(message, filename, filename2);
-        thrown = assertThrows(MessagingException.class, () -> binding.extractAttachmentsFromMail(message, new HashMap<>()),
+        thrown = assertThrows(
+                MessagingException.class,
+                () -> binding.extractAttachmentsFromMail(message, new HashMap<>()),
                 "Duplicate attachment names should cause an exception");
         assertTrue(thrown.getMessage().contains("Duplicate file attachment"));
     }
@@ -94,5 +97,4 @@ public class MailBindingAttachmentDuplicateFileNameTest {
 
         message.setContent(multipart);
     }
-
 }

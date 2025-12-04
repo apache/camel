@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
 
 import java.util.List;
@@ -34,8 +35,7 @@ import org.apache.zookeeper.data.ACL;
  */
 public final class ZooKeeperUtils {
 
-    private ZooKeeperUtils() {
-    }
+    private ZooKeeperUtils() {}
 
     /**
      * Pulls a createMode flag from the header keyed by {@link ZooKeeperMessage#ZOOKEEPER_CREATE_MODE} in the given
@@ -87,7 +87,8 @@ public final class ZooKeeperUtils {
     }
 
     public static byte[] getPayloadFromExchange(Exchange exchange) {
-        return ExchangeHelper.convertToType(exchange, byte[].class, exchange.getIn().getBody());
+        return ExchangeHelper.convertToType(
+                exchange, byte[].class, exchange.getIn().getBody());
     }
 
     @SuppressWarnings("unchecked")

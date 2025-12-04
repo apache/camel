@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.oauth;
 
 import java.io.FileInputStream;
@@ -58,7 +59,7 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
         try {
             for (var tm : tmf.getTrustManagers()) {
                 var xtm = (javax.net.ssl.X509TrustManager) tm;
-                xtm.checkServerTrusted(new X509Certificate[] { cert }, "RSA");
+                xtm.checkServerTrusted(new X509Certificate[] {cert}, "RSA");
             }
         } catch (CertificateException ex) {
             LOG.error("Untrusted, because of: ", ex);
@@ -78,7 +79,8 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
     @Test
     void testUntrustedCertificate() {
         String url = "https://untrusted-root.badssl.com"; // Example of an untrusted cert
-        Assertions.assertThrows(SSLHandshakeException.class, () -> connectToUrl(url), "Certificate should not be trusted");
+        Assertions.assertThrows(
+                SSLHandshakeException.class, () -> connectToUrl(url), "Certificate should not be trusted");
     }
 
     private static void connectToUrl(String httpsUrl) throws IOException {

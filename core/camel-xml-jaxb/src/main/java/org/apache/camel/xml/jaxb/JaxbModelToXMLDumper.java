@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml.jaxb;
+
+import static org.apache.camel.xml.jaxb.JaxbHelper.enrichLocations;
+import static org.apache.camel.xml.jaxb.JaxbHelper.extractNamespaces;
+import static org.apache.camel.xml.jaxb.JaxbHelper.extractSourceLocations;
+import static org.apache.camel.xml.jaxb.JaxbHelper.getJAXBContext;
+import static org.apache.camel.xml.jaxb.JaxbHelper.modelToXml;
+import static org.apache.camel.xml.jaxb.JaxbHelper.newXmlConverter;
+import static org.apache.camel.xml.jaxb.JaxbHelper.resolveEndpointDslUris;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -32,7 +41,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 
-// TODO: camel4
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
 
@@ -61,14 +69,6 @@ import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.xml.XmlLineNumberParser;
 
-import static org.apache.camel.xml.jaxb.JaxbHelper.enrichLocations;
-import static org.apache.camel.xml.jaxb.JaxbHelper.extractNamespaces;
-import static org.apache.camel.xml.jaxb.JaxbHelper.extractSourceLocations;
-import static org.apache.camel.xml.jaxb.JaxbHelper.getJAXBContext;
-import static org.apache.camel.xml.jaxb.JaxbHelper.modelToXml;
-import static org.apache.camel.xml.jaxb.JaxbHelper.newXmlConverter;
-import static org.apache.camel.xml.jaxb.JaxbHelper.resolveEndpointDslUris;
-
 /**
  * JAXB based {@link ModelToXMLDumper}.
  */
@@ -80,8 +80,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         return doDumpModelAsXml(context, definition, true, false);
     }
 
-    public String doDumpModelAsXml(CamelContext context, NamedNode definition, boolean generatedIds, boolean sourceLocation)
-            throws Exception {
+    public String doDumpModelAsXml(
+            CamelContext context, NamedNode definition, boolean generatedIds, boolean sourceLocation) throws Exception {
         final JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
         final Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
@@ -162,7 +162,10 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds,
+            CamelContext context,
+            NamedNode definition,
+            boolean resolvePlaceholders,
+            boolean generatedIds,
             boolean sourceLocation)
             throws Exception {
         String xml = doDumpModelAsXml(context, definition, generatedIds, sourceLocation);
@@ -188,8 +191,10 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                     }
                     while (it != null && it.hasNext()) {
                         RouteDefinition routeDefinition = (RouteDefinition) it.next();
-                        // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
-                        if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
+                        // if the route definition was created via a route template then we need to prepare its
+                        // parameters when the route is being created and started
+                        if (routeDefinition.isTemplate() != null
+                                && routeDefinition.isTemplate()
                                 && routeDefinition.getTemplateParameters() != null) {
                             prop.putAll(routeDefinition.getTemplateParameters());
                         }
@@ -218,8 +223,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 NamedNode copy = modelToXml(context, xml, NamedNode.class);
-                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy, false, generatedIds,
-                        sourceLocation);
+                xml = PluginHelper.getModelToXMLDumper(context)
+                        .dumpModelAsXml(context, copy, false, generatedIds, sourceLocation);
             }
         }
 
@@ -369,7 +374,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                 buffer.write(String.format("        <constructors>%n"));
                 b.getConstructors().forEach((idx, value) -> {
                     if (idx != null) {
-                        buffer.write(String.format("            <constructor index=\"%d\" value=\"%s\"/>%n", idx, value));
+                        buffer.write(
+                                String.format("            <constructor index=\"%d\" value=\"%s\"/>%n", idx, value));
                     } else {
                         buffer.write(String.format("            <constructor value=\"%s\"/>%n", value));
                     }
@@ -444,5 +450,4 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             }
         }
     }
-
 }

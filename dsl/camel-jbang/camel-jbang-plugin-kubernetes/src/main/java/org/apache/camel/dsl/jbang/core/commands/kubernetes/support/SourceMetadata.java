@@ -30,10 +30,13 @@ public class SourceMetadata {
 
     @JsonProperty
     public final Reources resources = new Reources();
+
     @JsonProperty
     public final Endpoints endpoints = new Endpoints();
+
     @JsonProperty
     public final List<Capability> capabilities = new ArrayList<>();
+
     @JsonProperty
     public final Set<String> dependencies = new TreeSet<>();
 
@@ -41,10 +44,13 @@ public class SourceMetadata {
     public static class Reources {
         @JsonProperty
         public final Set<String> components = new TreeSet<>();
+
         @JsonProperty
         public final Set<String> languages = new TreeSet<>();
+
         @JsonProperty
         public final Set<String> dataformats = new TreeSet<>();
+
         @JsonProperty
         public final Set<String> kamelets = new TreeSet<>();
     }
@@ -53,6 +59,7 @@ public class SourceMetadata {
     public static class Endpoints {
         @JsonProperty
         public final Set<String> from = new TreeSet<>();
+
         @JsonProperty
         public final Set<String> to = new TreeSet<>();
     }

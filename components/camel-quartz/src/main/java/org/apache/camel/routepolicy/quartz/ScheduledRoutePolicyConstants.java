@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
 
 /**
@@ -40,5 +41,4 @@ public interface ScheduledRoutePolicyConstants {
     String TRIGGER_SUSPEND = "trigger-" + Action.SUSPEND + "-";
     String TRIGGER_RESUME = "trigger-" + Action.RESUME + "-";
     String TRIGGER_GROUP = "triggerGroup-";
-
 }

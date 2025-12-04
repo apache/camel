@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.lambda;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.lambda.LambdaClient;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LambdaComponentClientRegistryTest extends CamelTestSupport {
 
@@ -33,8 +34,8 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
         LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        Lambda2Endpoint endpoint = (Lambda2Endpoint) component
-                .createEndpoint(
+        Lambda2Endpoint endpoint = (Lambda2Endpoint)
+                component.createEndpoint(
                         "aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
 
         assertNotNull(endpoint.getConfiguration().getAwsLambdaClient());
@@ -45,9 +46,8 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
 
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         assertThrows(PropertyBindingException.class, () -> {
-            component
-                    .createEndpoint(
-                            "aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+            component.createEndpoint(
+                    "aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
         });
     }
 
@@ -57,8 +57,8 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
         LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        Lambda2Endpoint endpoint = (Lambda2Endpoint) component
-                .createEndpoint("aws2-lambda://myFunction?operation=getFunction&accessKey=xxx&secretKey=yyy");
+        Lambda2Endpoint endpoint = (Lambda2Endpoint)
+                component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&accessKey=xxx&secretKey=yyy");
 
         assertSame(awsLambdaClient, endpoint.getConfiguration().getAwsLambdaClient());
     }

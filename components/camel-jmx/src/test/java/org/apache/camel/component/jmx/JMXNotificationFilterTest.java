@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedHashSet;
 
@@ -24,8 +27,6 @@ import javax.management.NotificationFilter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests that the NotificationFilter is applied if configured
@@ -89,5 +90,4 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
             }
         });
     }
-
 }

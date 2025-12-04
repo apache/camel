@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.maven;
 
 import java.util.Objects;
@@ -35,16 +36,14 @@ public final class MavenGav {
     private String classifier = "";
     private String scope;
 
-    public MavenGav() {
-    }
+    public MavenGav() {}
 
     public static MavenGav parseGav(String gav) {
         return parseGav(gav, null);
     }
 
     public static MavenGav fromCoordinates(
-            String groupId, String artifactId, String version, String packaging,
-            String classifier) {
+            String groupId, String artifactId, String version, String packaging, String classifier) {
         MavenGav answer = new MavenGav();
         answer.groupId = groupId;
         answer.artifactId = artifactId;
@@ -208,8 +207,10 @@ public final class MavenGav {
             return false;
         }
 
-        return groupId.equals(mavenGav.groupId) && artifactId.equals(mavenGav.artifactId)
-                && Objects.equals(version, mavenGav.version) && Objects.equals(scope, mavenGav.scope)
+        return groupId.equals(mavenGav.groupId)
+                && artifactId.equals(mavenGav.artifactId)
+                && Objects.equals(version, mavenGav.version)
+                && Objects.equals(scope, mavenGav.scope)
                 && Objects.equals(packaging, mavenGav.packaging)
                 && Objects.equals(classifier, mavenGav.classifier);
     }

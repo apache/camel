@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage.unit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.google.storage.GoogleCloudStorageComponent;
 import org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration;
 import org.apache.camel.component.google.storage.GoogleCloudStorageEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GoogleCloudStorageComponentConfigurationTest extends CamelTestSupport {
 
@@ -31,7 +32,8 @@ public class GoogleCloudStorageComponentConfigurationTest extends CamelTestSuppo
         final String bucketName = "myCamelBucket";
         final String serviceAccountKeyFile = "somefile.json";
 
-        GoogleCloudStorageComponent component = context.getComponent("google-storage", GoogleCloudStorageComponent.class);
+        GoogleCloudStorageComponent component =
+                context.getComponent("google-storage", GoogleCloudStorageComponent.class);
         GoogleCloudStorageEndpoint endpoint = (GoogleCloudStorageEndpoint) component.createEndpoint(
                 String.format("google-storage://%s?serviceAccountKey=file:%s", bucketName, serviceAccountKeyFile));
 
@@ -49,12 +51,17 @@ public class GoogleCloudStorageComponentConfigurationTest extends CamelTestSuppo
         final boolean deleteAfterRead = false;
         final boolean includeBody = true;
 
-        GoogleCloudStorageComponent component = context.getComponent("google-storage", GoogleCloudStorageComponent.class);
-        GoogleCloudStorageEndpoint endpoint = (GoogleCloudStorageEndpoint) component.createEndpoint(
-                String.format(
-                        "google-storage://%s?serviceAccountKey=file:%s&moveAfterRead=%s&destinationBucket=%s&autoCreateBucket=%s&deleteAfterRead=%s&includeBody=%s",
-                        bucketName, serviceAccountKeyFile, moveAfterRead, destinationBucket, autoCreateBucket,
-                        deleteAfterRead, includeBody));
+        GoogleCloudStorageComponent component =
+                context.getComponent("google-storage", GoogleCloudStorageComponent.class);
+        GoogleCloudStorageEndpoint endpoint = (GoogleCloudStorageEndpoint) component.createEndpoint(String.format(
+                "google-storage://%s?serviceAccountKey=file:%s&moveAfterRead=%s&destinationBucket=%s&autoCreateBucket=%s&deleteAfterRead=%s&includeBody=%s",
+                bucketName,
+                serviceAccountKeyFile,
+                moveAfterRead,
+                destinationBucket,
+                autoCreateBucket,
+                deleteAfterRead,
+                includeBody));
 
         GoogleCloudStorageConfiguration configuration = endpoint.getConfiguration();
         assertEquals(configuration.getBucketName(), bucketName);
@@ -64,7 +71,5 @@ public class GoogleCloudStorageComponentConfigurationTest extends CamelTestSuppo
         assertEquals(configuration.isAutoCreateBucket(), autoCreateBucket);
         assertEquals(configuration.isDeleteAfterRead(), deleteAfterRead);
         assertEquals(configuration.isIncludeBody(), includeBody);
-
     }
-
 }

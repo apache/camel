@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import javax.sql.DataSource;
@@ -49,5 +50,4 @@ public class TransactionClientDataSourceSupport extends SpringTestSupport {
     public boolean isUseTransactionErrorHandler() {
         return useTransactionErrorHandler;
     }
-
 }

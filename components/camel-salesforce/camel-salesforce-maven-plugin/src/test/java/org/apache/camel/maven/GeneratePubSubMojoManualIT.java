@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,9 +38,6 @@ import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class GeneratePubSubMojoManualIT {
 
@@ -59,12 +60,13 @@ public class GeneratePubSubMojoManualIT {
         // test that the generated sources can be compiled
         try (Stream<Path> list = Files.list(packagePath)) {
             final List<JavaFileObject> sources = list.map(p -> {
-                try {
-                    return JavaFileObjects.forResource(p.toUri().toURL());
-                } catch (final MalformedURLException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }).collect(Collectors.toList());
+                        try {
+                            return JavaFileObjects.forResource(p.toUri().toURL());
+                        } catch (final MalformedURLException e) {
+                            throw new IllegalArgumentException(e);
+                        }
+                    })
+                    .collect(Collectors.toList());
             final Compilation compilation = Compiler.javac().compile(sources);
             assertThat(compilation.status()).isEqualTo(Compilation.Status.SUCCESS);
         }
@@ -82,7 +84,7 @@ public class GeneratePubSubMojoManualIT {
             properties.load(stream);
             mojo.pubSubHost = properties.getProperty("salesforce.pubsub.host");
             mojo.pubSubPort = Integer.valueOf(properties.getProperty("salesforce.pubsub.port"));
-            mojo.topics = new String[] { "/event/BatchApexErrorEvent" };
+            mojo.topics = new String[] {"/event/BatchApexErrorEvent"};
         }
         mojo.outputDirectory = temp.toFile();
         return mojo;

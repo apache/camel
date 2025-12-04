@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 /**
@@ -29,8 +30,7 @@ public class BatchConversionResult {
     private long processingTimeMs;
     private int batchIndex;
 
-    public BatchConversionResult() {
-    }
+    public BatchConversionResult() {}
 
     public BatchConversionResult(String documentId, String originalPath) {
         this.documentId = documentId;
@@ -131,7 +131,7 @@ public class BatchConversionResult {
     @Override
     public String toString() {
         return "BatchConversionResult{" + "documentId='" + documentId + '\'' + ", originalPath='" + originalPath + '\''
-               + ", success=" + success + ", processingTimeMs=" + processingTimeMs + ", batchIndex=" + batchIndex + '}';
+                + ", success=" + success + ", processingTimeMs=" + processingTimeMs + ", batchIndex=" + batchIndex
+                + '}';
     }
-
 }

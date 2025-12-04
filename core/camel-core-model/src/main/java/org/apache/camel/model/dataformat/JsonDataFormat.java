@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,82 +37,114 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
     @XmlAttribute
     private String objectMapper;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String useDefaultObjectMapper;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String autoDiscoverObjectMapper;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String prettyPrint;
+
     @XmlAttribute
     @Metadata(defaultValue = "Jackson")
     private JsonLibrary library = JsonLibrary.Jackson;
+
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean",
-              description = "Force generator that outputs JSON content to combine surrogate pairs (if any) into 4-byte "
-                            + "characters. This should be preferred when using 4-byte characters such as Japanese.")
+    @Metadata(
+            javaType = "java.lang.Boolean",
+            description = "Force generator that outputs JSON content to combine surrogate pairs (if any) into 4-byte "
+                    + "characters. This should be preferred when using 4-byte characters such as Japanese.")
     private String combineUnicodeSurrogates;
+
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
+
     @XmlTransient
     private Class<?> unmarshalType;
+
     @XmlAttribute(name = "jsonView")
     @Metadata(label = "advanced")
     private String jsonViewTypeName;
+
     @XmlTransient
     private Class<?> jsonView;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String include;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowJmsType;
+
     @XmlAttribute(name = "collectionType")
     @Metadata(label = "advanced")
     private String collectionTypeName;
+
     @XmlTransient
     private Class<?> collectionType;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String useList;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String moduleClassNames;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String moduleRefs;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String enableFeatures;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String disableFeatures;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowUnmarshallType;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String timezone;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.component.jackson.SchemaResolver")
     private String schemaResolver;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String autoDiscoverSchemaResolver;
+
     @XmlAttribute
-    @Metadata(description = "If set then Jackson will use the the defined Property Naming Strategy."
+    @Metadata(
+            description =
+                    "If set then Jackson will use the the defined Property Naming Strategy."
                             + "Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE")
     private String namingStrategy;
+
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether the data format should set the Content-Type header with the type from the data format."
+    @Metadata(
+            javaType = "java.lang.Boolean",
+            defaultValue = "true",
+            description =
+                    "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
+
     @XmlAttribute
     @Metadata(description = "To configure the date format while marshall or unmarshall Date fields in JSON using Gson")
     private String dateFormatPattern;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String maxStringLength;

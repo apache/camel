@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends ContextTestSupport {
@@ -57,7 +58,8 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
         log.info("OnRedelivery processor counter {}", counter.get());
 
         assertTrue(taken < 5000, "Should stop route faster, was " + taken);
-        assertTrue(counter.get() >= 20 && counter.get() < 100,
+        assertTrue(
+                counter.get() >= 20 && counter.get() < 100,
                 "Redelivery counter should be >= 20 and < 100, was: " + counter.get());
     }
 
@@ -74,9 +76,12 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:deadLetter").allowRedeliveryWhileStopping(false)
-                        .onRedelivery(new MyRedeliverProcessor()).maximumRedeliveries(200)
-                        .redeliveryDelay(10).retryAttemptedLogLevel(LoggingLevel.INFO));
+                errorHandler(deadLetterChannel("mock:deadLetter")
+                        .allowRedeliveryWhileStopping(false)
+                        .onRedelivery(new MyRedeliverProcessor())
+                        .maximumRedeliveries(200)
+                        .redeliveryDelay(10)
+                        .retryAttemptedLogLevel(LoggingLevel.INFO));
 
                 from("seda:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced"));
             }

@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
+
+import static org.apache.camel.component.metrics.AbstractMetricsProducer.HEADER_PATTERN;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
@@ -28,15 +38,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.metrics.AbstractMetricsProducer.HEADER_PATTERN;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AbstractMetricsProducerTest {
@@ -65,13 +66,14 @@ public class AbstractMetricsProducerTest {
     public void setUp() {
         okProducer = new AbstractMetricsProducer(endpoint) {
             @Override
-            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) {
-            }
+            protected void doProcess(
+                    Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) {}
         };
         failProducer = new AbstractMetricsProducer(endpoint) {
 
             @Override
-            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
+            protected void doProcess(
+                    Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
                     throws Exception {
                 throw new Exception("Muchos problemos");
             }

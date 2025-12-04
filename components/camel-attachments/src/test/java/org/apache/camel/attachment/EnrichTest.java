@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
 
 import jakarta.activation.DataHandler;
@@ -45,7 +46,8 @@ public class EnrichTest extends CamelTestSupport {
         // original has 1 attachment
         Assertions.assertTrue(am1.hasAttachments());
         Assertions.assertEquals(1, am1.getAttachmentNames().size());
-        Assertions.assertEquals("myfile.txt", am1.getAttachmentNames().iterator().next());
+        Assertions.assertEquals(
+                "myfile.txt", am1.getAttachmentNames().iterator().next());
     }
 
     @Override
@@ -69,8 +71,7 @@ public class EnrichTest extends CamelTestSupport {
                         })
                         .to("mock:result");
 
-                from("direct:enrich")
-                        .setBody().constant("Hello World", byte[].class);
+                from("direct:enrich").setBody().constant("Hello World", byte[].class);
             }
         };
     }

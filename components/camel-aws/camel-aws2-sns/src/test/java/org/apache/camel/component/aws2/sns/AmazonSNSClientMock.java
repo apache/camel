@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +34,11 @@ import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 import software.amazon.awssdk.services.sns.model.SetTopicAttributesResponse;
 import software.amazon.awssdk.services.sns.model.Topic;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class AmazonSNSClientMock implements SnsClient {
 
     private static final String DEFAULT_TOPIC_ARN = "arn:aws:sns:us-east-1:541925086079:MyTopic";
 
-    public AmazonSNSClientMock() {
-    }
+    public AmazonSNSClientMock() {}
 
     @Override
     public SetTopicAttributesResponse setTopicAttributes(SetTopicAttributesRequest setTopicAttributesRequest) {
@@ -59,7 +59,9 @@ public class AmazonSNSClientMock implements SnsClient {
 
     @Override
     public PublishResponse publish(PublishRequest publishRequest) {
-        return PublishResponse.builder().messageId("dcc8ce7a-7f18-4385-bedd-b97984b4363c").build();
+        return PublishResponse.builder()
+                .messageId("dcc8ce7a-7f18-4385-bedd-b97984b4363c")
+                .build();
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openai.mock;
 
 import java.io.IOException;
@@ -74,7 +75,8 @@ public class RequestHandler {
         MockExpectation expectation = findExpectationByInput(originalInput);
         if (expectation == null) {
             LOG.warn("No matching expectation found for tool sequence with input: {}", originalInput);
-            return responseBuilder.createErrorResponse(404, "No matching expectation found for tool sequence", exchange);
+            return responseBuilder.createErrorResponse(
+                    404, "No matching expectation found for tool sequence", exchange);
         }
 
         expectation.advanceToNextToolStep();
@@ -85,8 +87,8 @@ public class RequestHandler {
             return result;
         } else {
             LOG.debug("Tool sequence completed for expectation: {}", originalInput);
-            return responseBuilder.createFinalToolResponse(context.getMessagesNode(), expectation.getExpectedResponse(),
-                    expectation.getToolContentResponse());
+            return responseBuilder.createFinalToolResponse(
+                    context.getMessagesNode(), expectation.getExpectedResponse(), expectation.getToolContentResponse());
         }
     }
 
@@ -130,9 +132,7 @@ public class RequestHandler {
 
     private String createToolCallResponse(MockExpectation expectation) throws Exception {
         ToolExecutionStep currentStep = expectation.getCurrentToolStep();
-        return responseBuilder.createToolCallResponse(
-                expectation.getExpectedResponse(),
-                currentStep.getToolCalls());
+        return responseBuilder.createToolCallResponse(expectation.getExpectedResponse(), currentStep.getToolCalls());
     }
 
     private MockExpectation findExpectationByInput(String input) {

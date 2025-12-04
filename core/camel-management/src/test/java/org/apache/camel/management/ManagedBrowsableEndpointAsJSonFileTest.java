@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -28,9 +32,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedBrowsableEndpointAsJSonFileTest extends ManagementTestSupport {
@@ -52,8 +53,8 @@ public class ManagedBrowsableEndpointAsJSonFileTest extends ManagementTestSuppor
             name = it.next();
         }
 
-        String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsJSon", new Object[] { true },
-                new String[] { "java.lang.Boolean" });
+        String out = (String) mbeanServer.invoke(
+                name, "browseAllMessagesAsJSon", new Object[] {true}, new String[] {"java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
         assertTrue(out.contains("\"value\": \"Hello World\""));
@@ -72,5 +73,4 @@ public class ManagedBrowsableEndpointAsJSonFileTest extends ManagementTestSuppor
             }
         };
     }
-
 }

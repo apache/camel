@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.ringbuffer.Ringbuffer;
@@ -22,11 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class HazelcastRingbufferProducerTest extends HazelcastCamelTestSupport {
 
@@ -85,25 +86,25 @@ public class HazelcastRingbufferProducerTest extends HazelcastCamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:READ_ONCE_HEAD")
-                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.READ_ONCE_HEAD)).to(
-                                String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.READ_ONCE_HEAD))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
 
                 from("direct:READ_ONCE_TAIL")
-                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.READ_ONCE_TAIL)).to(
-                                String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.READ_ONCE_TAIL))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
 
-                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.ADD)).to(
-                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                from("direct:add")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.ADD))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
 
-                from("direct:capacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CAPACITY)).to(
-                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                from("direct:capacity")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CAPACITY))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
 
                 from("direct:REMAINING_CAPACITY")
-                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMAINING_CAPACITY)).to(
-                                String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
-
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMAINING_CAPACITY))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
             }
         };
     }
-
 }

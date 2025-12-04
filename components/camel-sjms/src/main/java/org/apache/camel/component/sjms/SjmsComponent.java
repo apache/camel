@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import java.util.Map;
@@ -40,47 +41,73 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
 
     private ExecutorService asyncStartStopExecutorService;
 
-    @Metadata(label = "common", autowired = true,
-              description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
+    @Metadata(
+            label = "common",
+            autowired = true,
+            description =
+                    "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
-    @UriParam(description = "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
+
+    @UriParam(
+            description =
+                    "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
                             + " It is typically only required for durable topic subscriptions."
                             + " If using Apache ActiveMQ you may prefer to use Virtual Topics instead.")
     private String clientId;
-    @Metadata(label = "advanced",
-              description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
                             + " Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -)."
                             + " Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation"
                             + " of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+
     @Metadata(label = "advanced", description = "To use a custom DestinationCreationStrategy.")
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
-    @Metadata(label = "advanced",
-              description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
-                            + " of jakarta.jms.Message objects when Camel is sending a JMS message.")
+
+    @Metadata(
+            label = "advanced",
+            description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
+                    + " of jakarta.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
-    @Metadata(defaultValue = "5000", label = "advanced", javaType = "java.time.Duration",
-              description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
+
+    @Metadata(
+            defaultValue = "5000",
+            label = "advanced",
+            javaType = "java.time.Duration",
+            description =
+                    "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
                             + " The default is 5000 ms, that is, 5 seconds.")
     private long recoveryInterval = 5000;
-    @Metadata(defaultValue = "1000", label = "advanced", javaType = "java.time.Duration",
-              description = "Configures how often Camel should check for timed out Exchanges when doing request/reply over JMS."
+
+    @Metadata(
+            defaultValue = "1000",
+            label = "advanced",
+            javaType = "java.time.Duration",
+            description =
+                    "Configures how often Camel should check for timed out Exchanges when doing request/reply over JMS."
                             + " By default Camel checks once per second. But if you must react faster when a timeout occurs,"
                             + " then you can lower this interval, to check more frequently. The timeout is determined by the option requestTimeout.")
     private long requestTimeoutCheckerInterval = 1000L;
-    @Metadata(label = "advanced", defaultValue = "1",
-              description = "Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.")
+
+    @Metadata(
+            label = "advanced",
+            defaultValue = "1",
+            description =
+                    "Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.")
     private int replyToOnTimeoutMaxConcurrentConsumers = 1;
 
-    @Metadata(label = "advanced",
-              description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
     private ExceptionListener exceptionListener;
 
-    public SjmsComponent() {
-    }
+    public SjmsComponent() {}
 
-    protected SjmsComponent(Class<? extends Endpoint> endpointClass) {
-    }
+    protected SjmsComponent(Class<? extends Endpoint> endpointClass) {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -118,9 +145,8 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
             if (!parameters.get("exchangePattern").equals(ExchangePattern.InOut.toString())) {
                 String replyTo = (String) parameters.get("replyTo");
                 ExchangePattern mep = ExchangePattern.valueOf((String) parameters.get("exchangePattern"));
-                throw new CamelException(
-                        "Setting parameter replyTo=" + replyTo
-                                         + " requires a MEP of type InOut. Parameter exchangePattern is set to " + mep);
+                throw new CamelException("Setting parameter replyTo=" + replyTo
+                        + " requires a MEP of type InOut. Parameter exchangePattern is set to " + mep);
             }
         }
     }
@@ -138,10 +164,12 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         lock.lock();
         try {
             if (asyncStartStopExecutorService == null) {
-                // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
+                // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated
+                // thread
                 // for each task, and the thread pool will shrink when no more tasks running
-                asyncStartStopExecutorService
-                        = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
+                asyncStartStopExecutorService = getCamelContext()
+                        .getExecutorServiceManager()
+                        .newCachedThreadPool(this, "AsyncStartStopListener");
             }
             return asyncStartStopExecutorService;
         } finally {

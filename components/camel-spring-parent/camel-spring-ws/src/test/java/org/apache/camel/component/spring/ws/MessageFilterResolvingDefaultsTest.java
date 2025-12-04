@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
 
 import java.io.IOException;
@@ -36,14 +37,14 @@ import org.springframework.ws.test.client.RequestMatcher;
  * Check if the MessageFilter is used and resolved from endpoint uri or global context configuration.
  */
 @CamelSpringTest
-@ContextConfiguration(locations = { "classpath:org/apache/camel/component/spring/ws/DefaultMessageFilter-context.xml" })
+@ContextConfiguration(locations = {"classpath:org/apache/camel/component/spring/ws/DefaultMessageFilter-context.xml"})
 public class MessageFilterResolvingDefaultsTest extends AbstractSmockClientTest {
 
     @Autowired
     private ProducerTemplate template;
 
     private String body = "<customerCountRequest xmlns='http://springframework.org/spring-ws'>"
-                          + "<customerName>John Doe</customerName>" + "</customerCountRequest>";
+            + "<customerName>John Doe</customerName>" + "</customerCountRequest>";
 
     @Test
     public void isUsedDefaultFilter() {
@@ -51,9 +52,8 @@ public class MessageFilterResolvingDefaultsTest extends AbstractSmockClientTest 
                 .andExpect(doesntContains(soapHeader(new QName("http://virtualCheck/", "localFilter"))))
                 .andExpect(doesntContains(soapHeader(new QName("http://virtualCheck/", "globalFilter"))));
 
-        template.sendBodyAndHeader("direct:sendDefault", body, "headerKey",
-                new QName("http://newHeaderSupport/", "testHeaderValue1"));
-
+        template.sendBodyAndHeader(
+                "direct:sendDefault", body, "headerKey", new QName("http://newHeaderSupport/", "testHeaderValue1"));
     }
 
     private RequestMatcher doesntContains(final RequestMatcher soapHeader) {

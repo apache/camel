@@ -14,28 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Properties;
-
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.tooling.maven.MavenGav;
-import org.apache.camel.util.CamelCaseOrderedProperties;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
-import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.BUILD_TOOL;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION;
@@ -59,9 +39,32 @@ import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.REPOS;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.SPRING_BOOT_VERSION;
 
-@Command(name = "export",
-         description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
-         showDefaultValues = true)
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Properties;
+
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.CamelCaseOrderedProperties;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
+import picocli.CommandLine.Command;
+
+@Command(
+        name = "export",
+        description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)",
+        sortOptions = false,
+        showDefaultValues = true)
 public class Export extends ExportBaseCommand {
 
     public Export(CamelJBangMain main) {
@@ -182,20 +185,19 @@ public class Export extends ExportBaseCommand {
             this.quarkusVersion = props.getProperty(QUARKUS_VERSION, this.quarkusVersion);
             this.camelSpringBootVersion = props.getProperty(CAMEL_SPRING_BOOT_VERSION, this.camelSpringBootVersion);
             this.springBootVersion = props.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
-            this.mavenWrapper
-                    = "true".equals(props.getProperty(MAVEN_WRAPPER, this.mavenWrapper ? "true" : "false"));
-            this.gradleWrapper
-                    = "true".equals(props.getProperty(GRADLE_WRAPPER, this.gradleWrapper ? "true" : "false"));
+            this.mavenWrapper = "true".equals(props.getProperty(MAVEN_WRAPPER, this.mavenWrapper ? "true" : "false"));
+            this.gradleWrapper =
+                    "true".equals(props.getProperty(GRADLE_WRAPPER, this.gradleWrapper ? "true" : "false"));
             this.exportDir = props.getProperty(EXPORT_DIR, this.exportDir);
             this.buildTool = props.getProperty(BUILD_TOOL, this.buildTool);
             this.openapi = props.getProperty(OPEN_API, this.openapi);
             this.repositories = props.getProperty(REPOS, this.repositories);
             this.mavenSettings = props.getProperty(MAVEN_SETTINGS, this.mavenSettings);
             this.mavenSettingsSecurity = props.getProperty(MAVEN_SETTINGS_SECURITY, this.mavenSettingsSecurity);
-            this.mavenCentralEnabled = "true"
-                    .equals(props.getProperty(MAVEN_CENTRAL_ENABLED, mavenCentralEnabled ? "true" : "false"));
-            this.mavenApacheSnapshotEnabled = "true".equals(props.getProperty(MAVEN_APACHE_SNAPSHOTS,
-                    mavenApacheSnapshotEnabled ? "true" : "false"));
+            this.mavenCentralEnabled =
+                    "true".equals(props.getProperty(MAVEN_CENTRAL_ENABLED, mavenCentralEnabled ? "true" : "false"));
+            this.mavenApacheSnapshotEnabled = "true"
+                    .equals(props.getProperty(MAVEN_APACHE_SNAPSHOTS, mavenApacheSnapshotEnabled ? "true" : "false"));
             this.excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(props, EXCLUDES, this.excludes);
         }
     }
@@ -207,8 +209,8 @@ public class Export extends ExportBaseCommand {
         this.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
         this.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
         this.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
-        this.camelSpringBootVersion
-                = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> this.camelSpringBootVersion);
+        this.camelSpringBootVersion =
+                PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> this.camelSpringBootVersion);
     }
 
     protected Integer export(Path exportBaseDir, ExportBaseCommand cmd) throws Exception {
@@ -373,8 +375,8 @@ public class Export extends ExportBaseCommand {
         String[] ids = gav.split(":");
         // we only support and have docker files for java 17 or 21
         String v = javaVersion.equals("17") ? "17" : "21";
-        InputStream is
-                = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile" + v + ".tmpl");
+        InputStream is =
+                ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile" + v + ".tmpl");
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 

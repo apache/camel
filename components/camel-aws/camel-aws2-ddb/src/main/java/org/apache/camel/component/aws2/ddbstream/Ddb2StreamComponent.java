@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
 
 import java.util.Map;
@@ -42,8 +43,8 @@ public class Ddb2StreamComponent extends HealthCheckComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Table name must be specified.");
         }
-        Ddb2StreamConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new Ddb2StreamConfiguration();
+        Ddb2StreamConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new Ddb2StreamConfiguration();
         configuration.setTableName(remaining);
         Ddb2StreamEndpoint endpoint = new Ddb2StreamEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);

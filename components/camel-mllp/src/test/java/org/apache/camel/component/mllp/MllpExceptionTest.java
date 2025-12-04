@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mllp;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mllp;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MllpExceptionTest extends MllpExceptionTestSupport {
     static final String EXCEPTION_MESSAGE = "Test MllpException";
@@ -157,7 +158,8 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
         expectedMessageBuilder.append(EXCEPTION_MESSAGE);
 
         if (hl7Message != null) {
-            expectedMessageBuilder.append("\n\t{hl7Message [")
+            expectedMessageBuilder
+                    .append("\n\t{hl7Message [")
                     .append(hl7Message.length())
                     .append("] = ")
                     .append(hl7Message.replaceAll("\r", "<0x0D CR>").replaceAll("\n", "<0x0A LF>"))
@@ -165,7 +167,8 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
         }
 
         if (hl7Acknowledgment != null) {
-            expectedMessageBuilder.append("\n\t{hl7Acknowledgement [")
+            expectedMessageBuilder
+                    .append("\n\t{hl7Acknowledgement [")
                     .append(hl7Acknowledgment.length())
                     .append("] = ")
                     .append(hl7Acknowledgment.replaceAll("\r", "<0x0D CR>").replaceAll("\n", "<0x0A LF>"))

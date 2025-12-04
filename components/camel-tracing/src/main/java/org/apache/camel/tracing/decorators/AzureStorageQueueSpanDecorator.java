@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import java.time.Duration;
@@ -37,6 +38,7 @@ public class AzureStorageQueueSpanDecorator extends AbstractMessagingSpanDecorat
      * Constants copied from {@link org.apache.camel.component.azure.storage.queue.QueueConstants}
      */
     static final String MESSAGE_ID = "CamelAzureStorageQueueMessageId";
+
     static final String INSERTION_TIME = "CamelAzureStorageQueueInsertionTime";
     static final String EXPIRATION_TIME = "CamelAzureStorageQueueExpirationTime";
     static final String TIME_NEXT_VISIBLE = "CamelAzureStorageQueueTimeNextVisible";

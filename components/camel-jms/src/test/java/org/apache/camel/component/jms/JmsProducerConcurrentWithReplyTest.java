@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +41,6 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.apache.camel.test.junit5.TestSupport.body;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Timeout(60)
 @Isolated("Creates multiple threads")
 public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
@@ -47,6 +48,7 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -86,7 +88,6 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
         for (int i = 0; i < data.size(); i++) {
             assertEquals("Bye Message " + i, data.get(i));
         }
-
     }
 
     @Override
@@ -101,7 +102,8 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
             public void configure() {
                 from("direct:start").to("jms:queue:JmsProducerConcurrentWithReplyTest");
 
-                from("jms:queue:JmsProducerConcurrentWithReplyTest?concurrentConsumers=5").transform(simple("Bye ${in.body}"))
+                from("jms:queue:JmsProducerConcurrentWithReplyTest?concurrentConsumers=5")
+                        .transform(simple("Bye ${in.body}"))
                         .to("mock:result");
             }
         };

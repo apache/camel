@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.net.URI;
@@ -29,12 +30,16 @@ public class FtpsConfiguration extends FtpConfiguration {
 
     @UriParam(defaultValue = "TLSv1.3", label = "security")
     private String securityProtocol = "TLSv1.3";
+
     @UriParam(label = "security")
     private boolean implicit;
+
     @UriParam(label = "security")
     private boolean disableSecureDataChannelDefaults;
+
     @UriParam(label = "security")
     private String execProt;
+
     @UriParam(label = "security")
     private Long execPbsz;
 

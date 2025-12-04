@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.util.Map;
@@ -41,7 +42,8 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
         this.location = location;
     }
 
-    public abstract Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location);
+    public abstract Properties loadPropertiesFromLocation(
+            PropertiesComponent propertiesComponent, PropertiesLocation location);
 
     @Override
     public PropertiesLocation getLocation() {
@@ -149,5 +151,4 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
         }
         return s.substring(0, endIndex);
     }
-
 }

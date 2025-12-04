@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
 
@@ -59,8 +60,8 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
             Future<List<?>> out = executor.submit(new Callable<List<?>>() {
                 public List<?> call() {
                     int id = (index % 2) + 1;
-                    return template.requestBody("direct:start", "select * from customer where id = 'cust" + id + "'",
-                            List.class);
+                    return template.requestBody(
+                            "direct:start", "select * from customer where id = 'cust" + id + "'", List.class);
                 }
             });
             responses.put(index, out);

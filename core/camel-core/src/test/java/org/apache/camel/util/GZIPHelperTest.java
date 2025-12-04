@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,11 +30,9 @@ import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.GZIPHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class GZIPHelperTest {
 
-    private static final byte[] sampleBytes = new byte[] { 1, 2, 3, 1, 2, 3 };
+    private static final byte[] sampleBytes = new byte[] {1, 2, 3, 1, 2, 3};
 
     @Test
     public void toGZIPInputStreamShouldReturnTheSameInputStream() throws IOException {
@@ -59,7 +60,6 @@ public class GZIPHelperTest {
         inputStream = GZIPHelper.uncompressGzip("gzip", inputStream);
         String result = IOConverter.toString(inputStream, null);
         assertEquals(sampleString, result, "The result is wrong.");
-
     }
 
     @Test

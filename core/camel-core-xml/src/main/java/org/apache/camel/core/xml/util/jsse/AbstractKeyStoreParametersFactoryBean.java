@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml.util.jsse;
 
 import java.security.KeyStore;
@@ -31,25 +32,35 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 public abstract class AbstractKeyStoreParametersFactoryBean extends AbstractJsseUtilFactoryBean<KeyStoreParameters> {
 
     @XmlAttribute
-    @Metadata(description = "The keystore to load. The keystore is by default loaded from classpath. If you must load from file system, then use file: as prefix."
+    @Metadata(
+            description =
+                    "The keystore to load. The keystore is by default loaded from classpath. If you must load from file system, then use file: as prefix."
                             + " file:nameOfFile (to refer to the file system)"
                             + " classpath:nameOfFile (to refer to the classpath; default)"
                             + " http:uri (to load the resource using HTTP)"
                             + " ref:nameOfBean (to lookup an existing KeyStore instance from the registry, for example for testing and development)")
     protected String resource;
+
     @XmlAttribute
     @Metadata(description = "The password for reading/opening/verifying the key store")
     protected String password;
+
     @XmlAttribute
-    @Metadata(label = "advanced", description = "The type of the key store to create and load."
-                                                + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+    @Metadata(
+            label = "advanced",
+            description = "The type of the key store to create and load."
+                    + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
     protected String type;
+
     @XmlAttribute
     @Metadata(label = "advanced", description = "The provider identifier for instantiating the key store")
     protected String provider;
+
     @XmlAttribute
-    @Metadata(label = "advanced",
-              description = "To lookup an existing KeyStore instance from the registry, for example for testing and development")
+    @Metadata(
+            label = "advanced",
+            description =
+                    "To lookup an existing KeyStore instance from the registry, for example for testing and development")
     protected String keyStore;
 
     @XmlTransient
@@ -125,5 +136,4 @@ public abstract class AbstractKeyStoreParametersFactoryBean extends AbstractJsse
     public Class<? extends KeyStoreParameters> getObjectType() {
         return KeyStoreParameters.class;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.util.ArrayList;
@@ -59,18 +60,15 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
         if (!gavs.isEmpty()) {
             for (String gav : gavs) {
                 MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
-                downloader.downloadDependency(mg.getGroupId(), mg.getArtifactId(),
-                        mg.getVersion());
+                downloader.downloadDependency(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
             }
         }
     }
 
     private boolean isValidGav(String gav) {
         MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
-        boolean exists
-                = downloader.alreadyOnClasspath(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
+        boolean exists = downloader.alreadyOnClasspath(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
         // valid if not already on classpath
         return !exists;
     }
-
 }

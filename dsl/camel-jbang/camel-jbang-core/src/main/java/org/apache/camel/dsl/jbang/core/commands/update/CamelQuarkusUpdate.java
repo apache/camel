@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.update;
 
 import java.util.ArrayList;
@@ -42,10 +43,8 @@ public final class CamelQuarkusUpdate implements Update {
      */
     public String getQuarkusStream() {
         // Assume that the quarkus updates are in the form 3.8, 3.15, 3.16...
-        List<String[]> qVersions
-                = downloader.resolveAvailableVersions("org.apache.camel.quarkus", QUARKUS_UPDATE_ARTIFACTID,
-                        updateMixin.version,
-                        updateMixin.repos);
+        List<String[]> qVersions = downloader.resolveAvailableVersions(
+                "org.apache.camel.quarkus", QUARKUS_UPDATE_ARTIFACTID, updateMixin.version, updateMixin.repos);
         String streamVersion = null;
         for (String[] qVersion : qVersions) {
             if (qVersion[0].equals(updateMixin.version)) {
@@ -80,8 +79,9 @@ public final class CamelQuarkusUpdate implements Update {
     public List<String> command() throws CamelUpdateException {
         commands.add(mvnProgramCall());
         commands.add(debug());
-        commands.add(String.format("%s:quarkus-maven-plugin:%s:update", updateMixin.quarkusMavenPluginGroupId,
-                updateMixin.quarkusMavenPluginVersion));
+        commands.add(String.format(
+                "%s:quarkus-maven-plugin:%s:update",
+                updateMixin.quarkusMavenPluginGroupId, updateMixin.quarkusMavenPluginVersion));
         commands.add("-Dstream=" + getQuarkusStream());
         commands.add(runMode());
 

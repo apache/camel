@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import org.apache.camel.CamelContext;
@@ -26,8 +27,7 @@ public final class ErrorHandlerHelper {
 
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
 
-    private ErrorHandlerHelper() {
-    }
+    private ErrorHandlerHelper() {}
 
     /**
      * Lookup the error handler by the given ref
@@ -66,7 +66,9 @@ public final class ErrorHandlerHelper {
                     // then fallback to the default error handler
                     // otherwise we could recursive loop forever (triggered by
                     // createErrorHandler method)
-                    answer = ((ModelCamelContext) camelContext).getModelReifierFactory().createDefaultErrorHandler();
+                    answer = ((ModelCamelContext) camelContext)
+                            .getModelReifierFactory()
+                            .createDefaultErrorHandler();
                 }
                 // inherit the error handlers from the other as they are to be
                 // shared
@@ -93,7 +95,8 @@ public final class ErrorHandlerHelper {
             if (isErrorHandlerFactoryConfigured(otherRef)) {
                 answer = CamelContextHelper.lookup(camelContext, otherRef, ErrorHandlerFactory.class);
                 if (answer == null) {
-                    throw new IllegalArgumentException("ErrorHandlerBuilder with id " + otherRef + " not found in registry.");
+                    throw new IllegalArgumentException(
+                            "ErrorHandlerBuilder with id " + otherRef + " not found in registry.");
                 }
             }
         }
@@ -111,5 +114,4 @@ public final class ErrorHandlerHelper {
     public static boolean isErrorHandlerFactoryConfigured(String ref) {
         return !RefErrorHandlerDefinition.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
     }
-
 }

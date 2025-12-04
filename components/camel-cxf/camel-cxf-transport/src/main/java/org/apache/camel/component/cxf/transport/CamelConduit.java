@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
 
 import java.io.IOException;
@@ -59,8 +60,12 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         this(context, b, epInfo, targetReference, null);
     }
 
-    public CamelConduit(CamelContext context, Bus b, EndpointInfo epInfo, EndpointReferenceType targetReference,
-                        HeaderFilterStrategy headerFilterStrategy) {
+    public CamelConduit(
+            CamelContext context,
+            Bus b,
+            EndpointInfo epInfo,
+            EndpointReferenceType targetReference,
+            HeaderFilterStrategy headerFilterStrategy) {
         super(getTargetReference(epInfo, targetReference, b));
         String address = epInfo.getAddress();
         if (address != null) {
@@ -151,5 +156,4 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     public void setCamelTemplate(ProducerTemplate template) {
         camelTemplate = template;
     }
-
 }

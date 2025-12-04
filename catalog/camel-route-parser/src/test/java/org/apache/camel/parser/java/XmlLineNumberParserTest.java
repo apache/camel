@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -25,15 +28,14 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.parser.helper.XmlLineNumberParser;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class XmlLineNumberParserTest {
 
     @Test
     void testRespectNamespace() throws Exception {
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/mycamel.xml");
         Document parsedXml = XmlLineNumberParser.parseXml(is);
-        NodeList fromCamelWithNamespace = parsedXml.getElementsByTagNameNS("http://camel.apache.org/schema/spring", "from");
+        NodeList fromCamelWithNamespace =
+                parsedXml.getElementsByTagNameNS("http://camel.apache.org/schema/spring", "from");
         assertEquals(1, fromCamelWithNamespace.getLength());
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.agent;
 
 import org.apache.camel.RuntimeCamelException;
@@ -30,52 +31,75 @@ public class BedrockAgentConfiguration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
+
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private BedrockAgentClient bedrockAgentClient;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
+
     @UriParam(label = "security", secret = true)
     private String secretKey;
+
     @UriParam(label = "security", secret = true)
     private String sessionToken;
+
     @UriParam(enums = "anthropic.claude-instant-v1,anthropic.claude-v2,anthropic.claude-v2:1")
     @Metadata(required = true)
     private String modelId;
+
     @UriParam
     @Metadata
     private String knowledgeBaseId;
+
     @UriParam
     @Metadata
     private String dataSourceId;
+
     @UriParam
     @Metadata(label = "consumer")
     private String ingestionJobId;
+
     @UriParam
     @Metadata(required = true)
     private BedrockAgentOperations operation;
+
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
+
     @UriParam(label = "proxy")
     private String proxyHost;
+
     @UriParam(label = "proxy")
     private Integer proxyPort;
-    @UriParam(enums = "us-east-1,us-east-2,us-west-2,us-gov-west-1,ap-northeast-1,ap-northeast-2,ap-south-1,ap-southeast-1,ap-southeast-2,ca-central-1,eu-central-1,eu-central-2,eu-west-1,eu-west-2,eu-west-3,sa-east-1")
+
+    @UriParam(
+            enums =
+                    "us-east-1,us-east-2,us-west-2,us-gov-west-1,ap-northeast-1,ap-northeast-2,ap-south-1,ap-southeast-1,ap-southeast-2,ca-central-1,eu-central-1,eu-central-2,eu-west-1,eu-west-2,eu-west-3,sa-east-1")
     private String region;
+
     @UriParam
     private boolean pojoRequest;
+
     @UriParam(label = "security")
     private boolean trustAllCertificates;
+
     @UriParam
     private boolean overrideEndpoint;
+
     @UriParam
     private String uriEndpointOverride;
+
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
+
     @UriParam(defaultValue = "false")
     private boolean useProfileCredentialsProvider;
+
     @UriParam(label = "security")
     private boolean useSessionCredentials;
+
     @UriParam(defaultValue = "false")
     private String profileCredentialsName;
 

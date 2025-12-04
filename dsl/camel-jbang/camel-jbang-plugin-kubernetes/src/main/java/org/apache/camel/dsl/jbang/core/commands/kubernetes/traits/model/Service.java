@@ -26,26 +26,24 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "auto", "enabled", "nodePort", "type" })
+@JsonPropertyOrder({"auto", "enabled", "nodePort", "type"})
 public class Service {
     @JsonProperty("auto")
     @JsonPropertyDescription("To automatically detect from the code if a Service needs to be created.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean auto;
+
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
+
     @JsonProperty("type")
     @JsonPropertyDescription("The type of service to be used, either 'ClusterIP', 'NodePort' or 'LoadBalancer'.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Type type;
 
-    public Service() {
-    }
+    public Service() {}
 
     public Boolean getAuto() {
         return this.auto;

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Concurrent consumer with JMSReply test.
@@ -54,7 +55,8 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
         final List<Future<String>> futures = new ArrayList<>();
         for (int i = 0; i < messages; i++) {
             final int index = i;
-            Future<String> out = executor.submit(() -> template.requestBody("direct:start", "Message " + index, String.class));
+            Future<String> out =
+                    executor.submit(() -> template.requestBody("direct:start", "Message " + index, String.class));
             futures.add(out);
         }
 
@@ -80,16 +82,15 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
                         .to("sjms:a.InOutConcurrentConsumerTest?replyToConcurrentConsumers=5&replyTo=myResponse")
                         .to("mock:result");
 
-                from("sjms:a.InOutConcurrentConsumerTest?concurrentConsumers=5")
-                        .process(exchange -> {
-                            String body = exchange.getIn().getBody(String.class);
-                            // sleep a little to simulate heavy work and force concurrency processing
-                            Thread.sleep(1000);
-                            exchange.getMessage().setBody("Bye " + body);
-                            exchange.getMessage().setHeader("threadName", Thread.currentThread().getName());
-                        });
+                from("sjms:a.InOutConcurrentConsumerTest?concurrentConsumers=5").process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    // sleep a little to simulate heavy work and force concurrency processing
+                    Thread.sleep(1000);
+                    exchange.getMessage().setBody("Bye " + body);
+                    exchange.getMessage()
+                            .setHeader("threadName", Thread.currentThread().getName());
+                });
             }
         };
     }
-
 }

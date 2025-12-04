@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs.models;
 
 import org.apache.camel.component.huaweicloud.common.models.InputSourceType;
@@ -229,5 +230,4 @@ public class ClientConfigurations {
     public void setInputSourceType(InputSourceType inputSourceType) {
         this.inputSourceType = inputSourceType;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2.api.impl;
 
 import java.util.ArrayList;
@@ -30,9 +31,16 @@ public enum UriType {
     /**
      * Entity set
      */
-    URI1(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$inlinecount, SystemQueryOption.$orderby,
-         SystemQueryOption.$skiptoken, SystemQueryOption.$skip,
-         SystemQueryOption.$top, SystemQueryOption.$expand, SystemQueryOption.$select),
+    URI1(
+            SystemQueryOption.$format,
+            SystemQueryOption.$filter,
+            SystemQueryOption.$inlinecount,
+            SystemQueryOption.$orderby,
+            SystemQueryOption.$skiptoken,
+            SystemQueryOption.$skip,
+            SystemQueryOption.$top,
+            SystemQueryOption.$expand,
+            SystemQueryOption.$select),
     /**
      * Entity set with key predicate
      */
@@ -56,9 +64,16 @@ public enum UriType {
     /**
      * Navigation property of an entity with target multiplicity '*'
      */
-    URI6B(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$inlinecount, SystemQueryOption.$orderby,
-          SystemQueryOption.$skiptoken, SystemQueryOption.$skip,
-          SystemQueryOption.$top, SystemQueryOption.$expand, SystemQueryOption.$select),
+    URI6B(
+            SystemQueryOption.$format,
+            SystemQueryOption.$filter,
+            SystemQueryOption.$inlinecount,
+            SystemQueryOption.$orderby,
+            SystemQueryOption.$skiptoken,
+            SystemQueryOption.$skip,
+            SystemQueryOption.$top,
+            SystemQueryOption.$expand,
+            SystemQueryOption.$select),
     /**
      * Link to a single entity
      */
@@ -66,9 +81,14 @@ public enum UriType {
     /**
      * Link to multiple entities
      */
-    URI7B(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$inlinecount, SystemQueryOption.$orderby,
-          SystemQueryOption.$skiptoken, SystemQueryOption.$skip,
-          SystemQueryOption.$top),
+    URI7B(
+            SystemQueryOption.$format,
+            SystemQueryOption.$filter,
+            SystemQueryOption.$inlinecount,
+            SystemQueryOption.$orderby,
+            SystemQueryOption.$skiptoken,
+            SystemQueryOption.$skip,
+            SystemQueryOption.$top),
     /**
      * Metadata document
      */
@@ -127,5 +147,4 @@ public enum UriType {
     public boolean isCompatible(final SystemQueryOption queryOption) {
         return whiteList.contains(queryOption);
     }
-
 }

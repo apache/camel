@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.saga;
 
 import java.util.Map;
@@ -69,8 +70,7 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
     @Override
     protected void doStart() throws Exception {
         if (this.executorService == null) {
-            this.executorService = camelContext.getExecutorServiceManager()
-                    .newDefaultScheduledThreadPool(this, "saga");
+            this.executorService = camelContext.getExecutorServiceManager().newDefaultScheduledThreadPool(this, "saga");
         }
     }
 
@@ -111,5 +111,4 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
     public void setRetryDelayInMilliseconds(long retryDelayInMilliseconds) {
         this.retryDelayInMilliseconds = retryDelayInMilliseconds;
     }
-
 }

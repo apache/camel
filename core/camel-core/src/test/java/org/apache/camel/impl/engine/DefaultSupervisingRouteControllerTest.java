@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -40,13 +46,9 @@ import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
     @Override
@@ -96,14 +98,18 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").toString());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").toString());
         // cheese was not able to start
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("cheese").toString());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("cheese").toString());
         // cake was not able to start
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("cake").toString());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("cake").toString());
 
         await("Await all exceptions and retries finished")
-                .atMost(Duration.ofMillis(src.getInitialDelay() + src.getBackOffDelay() * (src.getBackOffMaxAttempts() + 1)))
+                .atMost(Duration.ofMillis(
+                        src.getInitialDelay() + src.getBackOffDelay() * (src.getBackOffMaxAttempts() + 1)))
                 .untilAsserted(() -> assertNotNull(src.getRestartException("cake")));
         Throwable e = src.getRestartException("cake");
         assertEquals("Cannot start", e.getMessage());
@@ -111,14 +117,19 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         assertTrue(b);
 
         // bar is no auto startup
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("bar").toString());
 
-        assertEquals(10, failures.size(),
+        assertEquals(
+                10,
+                failures.size(),
                 "There should have 2 x 1 initial + 2 x 3 restart failure + 2 x 1 exhausted failures.");
 
         assertEquals(6, events.size(), "There should have been 2 x 3 restart attempts.");
 
-        assertEquals(2, failures.stream().filter(failure -> failure.isExhausted()).count(),
+        assertEquals(
+                2,
+                failures.stream().filter(failure -> failure.isExhausted()).count(),
                 "There should be 2 exhausted failure. Current state of failure list: " + getFailureStatus(failures));
     }
 
@@ -127,8 +138,10 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         for (RouteRestartingFailureEvent routeRestartingFailureEvent : failure) {
             sb.append("\nAttempt: " + routeRestartingFailureEvent.getAttempt());
             sb.append(", Is exhausted: " + routeRestartingFailureEvent.isExhausted());
-            sb.append(", Cause: " + routeRestartingFailureEvent.getCause() != null
-                    ? routeRestartingFailureEvent.getCause().getMessage() : "No exception");
+            sb.append(
+                    ", Cause: " + routeRestartingFailureEvent.getCause() != null
+                            ? routeRestartingFailureEvent.getCause().getMessage()
+                            : "No exception");
             sb.append(", timestamp: " + routeRestartingFailureEvent.getTimestamp());
         }
         return sb.toString();
@@ -177,11 +190,15 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
         // these should all start
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").toString());
-        assertEquals("Started", context.getRouteController().getRouteStatus("cheese").toString());
-        assertEquals("Started", context.getRouteController().getRouteStatus("cake").toString());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").toString());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("cheese").toString());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("cake").toString());
         // bar is no auto startup
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("bar").toString());
 
         // 2 x 1 initial + 2 x 4 restart failure attempts
         assertEquals(10, failure.size());
@@ -246,5 +263,4 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
             }
         }
     }
-
 }

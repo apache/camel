@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.directory.server.core.integ5;
 
 import java.io.File;
@@ -70,8 +71,7 @@ public final class DSAnnotationProcessor {
      */
     private static final Logger LOG = LoggerFactory.getLogger(DSAnnotationProcessor.class);
 
-    private DSAnnotationProcessor() {
-    }
+    private DSAnnotationProcessor() {}
 
     /**
      * Create the DirectoryService
@@ -80,12 +80,11 @@ public final class DSAnnotationProcessor {
      * @return           an instance of DirectoryService
      * @throws Exception If the DirectoryService cannot be created
      */
-    public static DirectoryService createDS(CreateDS dsBuilder)
-            throws Exception {
+    public static DirectoryService createDS(CreateDS dsBuilder) throws Exception {
         LOG.debug("Starting DS {}...", dsBuilder.name());
         Class<?> factory = dsBuilder.factory();
-        DirectoryServiceFactory dsf = (DirectoryServiceFactory) factory
-                .getDeclaredConstructor().newInstance();
+        DirectoryServiceFactory dsf =
+                (DirectoryServiceFactory) factory.getDeclaredConstructor().newInstance();
 
         DirectoryService service = dsf.getDirectoryService();
         service.setAccessControlEnabled(dsBuilder.enableAccessControl());
@@ -95,7 +94,8 @@ public final class DSAnnotationProcessor {
         dsf.init(dsBuilder.name());
 
         for (Class<?> interceptorClass : dsBuilder.additionalInterceptors()) {
-            service.addLast((Interceptor) interceptorClass.getDeclaredConstructor().newInstance());
+            service.addLast(
+                    (Interceptor) interceptorClass.getDeclaredConstructor().newInstance());
         }
 
         List<Interceptor> interceptorList = service.getInterceptors();
@@ -111,14 +111,14 @@ public final class DSAnnotationProcessor {
             }
 
             if (authenticationInterceptor == null) {
-                throw new IllegalStateException(
-                        "authentication interceptor not found");
+                throw new IllegalStateException("authentication interceptor not found");
             }
 
             Set<Authenticator> authenticators = new HashSet<Authenticator>();
 
             for (CreateAuthenticator createAuthenticator : dsBuilder.authenticators()) {
-                Authenticator auth = createAuthenticator.type().getDeclaredConstructor().newInstance();
+                Authenticator auth =
+                        createAuthenticator.type().getDeclaredConstructor().newInstance();
 
                 if (auth instanceof DelegatingAuthenticator) {
                     DelegatingAuthenticator dauth = (DelegatingAuthenticator) auth;
@@ -208,29 +208,25 @@ public final class DSAnnotationProcessor {
                 CreateIndex[] indexes = createPartition.indexes();
 
                 for (CreateIndex createIndex : indexes) {
-                    partitionFactory.addIndex(partition,
-                            createIndex.attribute(), createIndex.cacheSize());
+                    partitionFactory.addIndex(partition, createIndex.attribute(), createIndex.cacheSize());
                 }
 
                 partition.initialize();
             } else {
                 // The annotation contains a specific partition type, we use
                 // that type.
-                Class<?>[] partypes = new Class[] {
-                        SchemaManager.class, DnFactory.class };
+                Class<?>[] partypes = new Class[] {SchemaManager.class, DnFactory.class};
                 Constructor<?> constructor = createPartition.type().getConstructor(partypes);
-                partition = (Partition) constructor.newInstance(new Object[] {
-                        schemaManager, service.getDnFactory() });
+                partition = (Partition) constructor.newInstance(new Object[] {schemaManager, service.getDnFactory()});
                 partition.setId(createPartition.name());
                 partition.setSuffixDn(new Dn(schemaManager, createPartition.suffix()));
 
                 if (partition instanceof AbstractBTreePartition) {
                     AbstractBTreePartition btreePartition = (AbstractBTreePartition) partition;
                     btreePartition.setCacheSize(createPartition.cacheSize());
-                    btreePartition.setPartitionPath(new File(
-                            service
-                                    .getInstanceLayout().getPartitionsDirectory(),
-                            createPartition.name()).toURI());
+                    btreePartition.setPartitionPath(
+                            new File(service.getInstanceLayout().getPartitionsDirectory(), createPartition.name())
+                                    .toURI());
 
                     // Process the indexes if any
                     CreateIndex[] indexes = createPartition.indexes();
@@ -281,8 +277,7 @@ public final class DSAnnotationProcessor {
      * @return             A valid DirectoryService
      * @throws Exception   If the DirectoryService instance can't be returned
      */
-    public static DirectoryService getDirectoryService(Description description)
-            throws Exception {
+    public static DirectoryService getDirectoryService(Description description) throws Exception {
         CreateDS dsBuilder = description.getAnnotation(CreateDS.class);
 
         if (dsBuilder != null) {
@@ -322,16 +317,11 @@ public final class DSAnnotationProcessor {
      * @param  service   the DirectoryService
      * @throws Exception If the entry cannot be injected
      */
-    private static void injectEntry(LdifEntry entry, DirectoryService service)
-            throws LdapException {
+    private static void injectEntry(LdifEntry entry, DirectoryService service) throws LdapException {
         if (entry.isChangeAdd() || entry.isLdifContent()) {
-            service.getAdminSession().add(
-                    new DefaultEntry(
-                            service.getSchemaManager(), entry
-                                    .getEntry()));
+            service.getAdminSession().add(new DefaultEntry(service.getSchemaManager(), entry.getEntry()));
         } else if (entry.isChangeModify()) {
-            service.getAdminSession().modify(entry.getDn(),
-                    entry.getModifications());
+            service.getAdminSession().modify(entry.getDn(), entry.getModifications());
         } else {
             String message = I18n.err(I18n.ERR_117, entry.getChangeType());
             throw new LdapException(message);
@@ -346,18 +336,12 @@ public final class DSAnnotationProcessor {
      * @param  ldifFiles array of LDIF file names (only )
      * @throws Exception If we weren't able to inject LdifFiles
      */
-    public static void injectLdifFiles(
-            Class<?> clazz,
-            DirectoryService service, String[] ldifFiles)
-            throws Exception {
+    public static void injectLdifFiles(Class<?> clazz, DirectoryService service, String[] ldifFiles) throws Exception {
         if (ldifFiles != null && ldifFiles.length > 0) {
             for (String ldifFile : ldifFiles) {
-                InputStream is = clazz.getClassLoader().getResourceAsStream(
-                        ldifFile);
+                InputStream is = clazz.getClassLoader().getResourceAsStream(ldifFile);
                 if (is == null) {
-                    throw new FileNotFoundException(
-                            "LDIF file '" + ldifFile
-                                                    + "' not found.");
+                    throw new FileNotFoundException("LDIF file '" + ldifFile + "' not found.");
                 } else {
                     LdifReader ldifReader = new LdifReader(is);
 
@@ -378,8 +362,7 @@ public final class DSAnnotationProcessor {
      * @param  ldif      the ldif containing entries to add to the server.
      * @throws Exception if there is a problem adding the entries from the LDIF
      */
-    public static void injectEntries(DirectoryService service, String ldif)
-            throws Exception {
+    public static void injectEntries(DirectoryService service, String ldif) throws Exception {
         LdifReader reader = new LdifReader();
         List<LdifEntry> entries = reader.parseLdif(ldif);
 
@@ -406,8 +389,7 @@ public final class DSAnnotationProcessor {
         {
             service.addLast( ( Interceptor ) interceptorClass.newInstance() );
         }*/
-        LoadSchema loadSchema = desc
-                .getAnnotation(LoadSchema.class);
+        LoadSchema loadSchema = desc.getAnnotation(LoadSchema.class);
 
         if (loadSchema != null) {
             LOG.debug("Found LoadSchema annotation: {}", loadSchema);
@@ -421,18 +403,15 @@ public final class DSAnnotationProcessor {
      * @param  service   The DirectoryService instance
      * @throws Exception If we can't apply the ldifs
      */
-    public static void applyLdifs(Description desc, DirectoryService service)
-            throws Exception {
+    public static void applyLdifs(Description desc, DirectoryService service) throws Exception {
         if (desc == null) {
             return;
         }
 
-        ApplyLdifFiles applyLdifFiles = desc
-                .getAnnotation(ApplyLdifFiles.class);
+        ApplyLdifFiles applyLdifFiles = desc.getAnnotation(ApplyLdifFiles.class);
 
         if (applyLdifFiles != null) {
-            LOG.debug("Applying {} to {}", applyLdifFiles.value(),
-                    desc.getDisplayName());
+            LOG.debug("Applying {} to {}", applyLdifFiles.value(), desc.getDisplayName());
             injectLdifFiles(applyLdifFiles.clazz(), service, applyLdifFiles.value());
         }
 
@@ -445,7 +424,7 @@ public final class DSAnnotationProcessor {
 
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < ldifs.length;) {
+            for (int i = 0; i < ldifs.length; ) {
                 String s = ldifs[i++].trim();
                 if (s.startsWith(dnStart)) {
                     sb.append(s).append('\n');

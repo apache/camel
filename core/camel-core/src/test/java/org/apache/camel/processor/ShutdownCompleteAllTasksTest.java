@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
@@ -81,9 +82,13 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
             @Override
             // START SNIPPET: e1
             public void configure() {
-                from(fileUri(FILE_URI_QUERY)).routeId("foo").autoStartup(false)
+                from(fileUri(FILE_URI_QUERY))
+                        .routeId("foo")
+                        .autoStartup(false)
                         // let it complete all tasks during shutdown
-                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).process(new MyProcessor()).to("mock:bar");
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
+                        .process(new MyProcessor())
+                        .to("mock:bar");
             }
             // END SNIPPET: e1
         };
@@ -97,5 +102,4 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
             latch.countDown();
         }
     }
-
 }

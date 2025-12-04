@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +36,6 @@ import org.apache.camel.spi.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedValidatorRegistryTest extends ManagementTestSupport {
@@ -86,15 +87,9 @@ public class ManagedValidatorRegistryTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                validator()
-                        .type("xml:foo")
-                        .withUri("direct:transformer");
-                validator()
-                        .type("json:test")
-                        .withExpression(body().isNotNull());
-                validator()
-                        .type("custom")
-                        .withJava(MyValidator.class);
+                validator().type("xml:foo").withUri("direct:transformer");
+                validator().type("json:test").withExpression(body().isNotNull());
+                validator().type("custom").withJava(MyValidator.class);
 
                 from("direct:start").to("mock:result");
             }

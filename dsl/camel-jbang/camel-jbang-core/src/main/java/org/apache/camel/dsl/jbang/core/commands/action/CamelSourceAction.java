@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
+
+import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,20 +34,25 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
-
-@Command(name = "source", description = "Display Camel route source code", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "source",
+        description = "Display Camel route source code",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelSourceAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter source by filename (multiple names can be separated by comma)")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter source by filename (multiple names can be separated by comma)")
     String filter;
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort source by name", defaultValue = "name")
+    @CommandLine.Option(
+            names = {"--sort"},
+            description = "Sort source by name",
+            defaultValue = "name")
     String sort;
 
     private volatile long pid;
@@ -61,8 +69,9 @@ public class CamelSourceAction extends ActionBaseCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -210,5 +219,4 @@ public class CamelSourceAction extends ActionBaseCommand {
         int line;
         String code;
     }
-
 }

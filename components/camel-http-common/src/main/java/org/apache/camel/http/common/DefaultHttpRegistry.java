@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.util.HashSet;
@@ -63,7 +64,8 @@ public class DefaultHttpRegistry implements HttpRegistry {
         lock.lock();
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Registering consumer for path {} providers present: {}", consumer.getPath(), providers.size());
+                LOG.debug(
+                        "Registering consumer for path {} providers present: {}", consumer.getPath(), providers.size());
             }
             consumers.add(consumer);
             for (HttpRegistryProvider provider : providers) {
@@ -101,7 +103,9 @@ public class DefaultHttpRegistry implements HttpRegistry {
         lock.lock();
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Registering CamelServlet with name {} consumers present: {}", provider.getServletName(),
+                LOG.debug(
+                        "Registering CamelServlet with name {} consumers present: {}",
+                        provider.getServletName(),
                         consumers.size());
             }
             providers.add(provider);
@@ -154,5 +158,4 @@ public class DefaultHttpRegistry implements HttpRegistry {
             lock.unlock();
         }
     }
-
 }

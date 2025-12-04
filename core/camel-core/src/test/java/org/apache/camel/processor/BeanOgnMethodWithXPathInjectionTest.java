@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,8 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanOgnMethodWithXPathInjectionTest.class);
     protected final MyBean myBean = new MyBean();
@@ -34,7 +35,7 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
     @Test
     public void testSendMessage() {
         String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
-                              + "<foo>bar</foo></env:Body></env:Envelope>";
+                + "<foo>bar</foo></env:Body></env:Envelope>";
 
         Object out = template.requestBodyAndHeader("direct:in", expectedBody, "foo", "bar");
         assertEquals("bar", out);
@@ -47,7 +48,7 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
     public void testSendTwoMessages() {
         // 1st message
         String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
-                              + "<foo>bar</foo></env:Body></env:Envelope>";
+                + "<foo>bar</foo></env:Body></env:Envelope>";
 
         Object out = template.requestBodyAndHeader("direct:in", expectedBody, "foo", "bar");
         assertEquals("bar", out);
@@ -57,7 +58,7 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
 
         // 2nd message
         String expectedBody2 = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
-                               + "<foo>baz</foo></env:Body></env:Envelope>";
+                + "<foo>baz</foo></env:Body></env:Envelope>";
 
         Object out2 = template.requestBodyAndHeader("direct:in", expectedBody2, "foo", "bar");
         assertEquals("baz", out2);
@@ -94,7 +95,6 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
         public MyBean doSomething() {
             return inner;
         }
-
     }
 
     public static class MyBean {

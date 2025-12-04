@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 import java.util.List;
@@ -59,5 +60,4 @@ public class SimpleExpressionParserNodesTest extends ExchangeTestSupport {
         ln = (LiteralNode) fe.getBlock().getChildren().get(0);
         Assertions.assertEquals("header.bar", ln.toString());
     }
-
 }

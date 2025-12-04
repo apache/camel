@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonb;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -51,5 +52,4 @@ public class JsonbSkipNullTest extends CamelTestSupport {
             }
         };
     }
-
 }

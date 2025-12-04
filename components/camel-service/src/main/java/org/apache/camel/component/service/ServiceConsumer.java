@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.service;
 
 import org.apache.camel.Consumer;
@@ -53,7 +54,8 @@ public class ServiceConsumer extends DefaultConsumer {
         final ServiceEndpoint endpoint = (ServiceEndpoint) getEndpoint();
         final ServiceDefinition definition = endpoint.getServiceDefinition();
 
-        LOG.debug("Using ServiceRegistry instance {} (id={}, type={}) to register: {}",
+        LOG.debug(
+                "Using ServiceRegistry instance {} (id={}, type={}) to register: {}",
                 serviceRegistry,
                 serviceRegistry.getId(),
                 serviceRegistry.getClass().getName(),

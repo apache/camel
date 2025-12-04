@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Service;
@@ -34,20 +39,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
     protected static Endpoint endpoint;
     protected static GreeterImpl implementor;
 
-    private final QName serviceName = new QName(
-            "http://apache.org/hello_world_soap_http",
-            "SOAPService");
-    private final QName routerPortName = new QName(
-            "http://apache.org/hello_world_soap_http",
-            "RouterPort");
+    private final QName serviceName = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
+    private final QName routerPortName = new QName("http://apache.org/hello_world_soap_http", "RouterPort");
 
     @AfterAll
     public static void stopService() {
@@ -83,20 +80,20 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
     @Override
     @Test
     public void testPublishEndpointUrl() throws Exception {
-        final String path = getClass().getSimpleName() + "/CamelContext/RouterPort/" + getClass().getSimpleName();
-        String response = template.requestBody("http://localhost:" + getPort2() + "/" + path
-                                               + "?wsdl",
-                null, String.class);
+        final String path = getClass().getSimpleName() + "/CamelContext/RouterPort/"
+                + getClass().getSimpleName();
+        String response =
+                template.requestBody("http://localhost:" + getPort2() + "/" + path + "?wsdl", null, String.class);
         assertTrue(response.indexOf(path) > 0, "Can't find the right service location.");
     }
 
     @Test
     public void testInvokeGreetMeOverProvider() throws Exception {
         Service service = Service.create(serviceName);
-        service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
-                "http://localhost:" + getPort2() + "/"
-                                                                            + getClass().getSimpleName()
-                                                                            + "/CamelContext/RouterPort");
+        service.addPort(
+                routerPortName,
+                "http://schemas.xmlsoap.org/soap/",
+                "http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/CamelContext/RouterPort");
         Greeter greeter = service.getPort(routerPortName, Greeter.class);
         org.apache.cxf.endpoint.Client client = org.apache.cxf.frontend.ClientProxy.getClient(greeter);
         VerifyInboundInterceptor icp = new VerifyInboundInterceptor();
@@ -137,6 +134,5 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
         public void setCalled(boolean b) {
             called = b;
         }
-
     }
 }

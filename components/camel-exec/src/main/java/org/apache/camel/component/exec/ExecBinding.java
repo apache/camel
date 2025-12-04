@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
 
 import java.io.InputStream;
@@ -34,9 +35,11 @@ public interface ExecBinding {
      * e.g. in the URI <i> <code>exec:C:/Program Files/jdk/java.exe</code> </i>, <code>C:/Program
      * Files/jdk/java.exe<code> is the executable.
      */
-    @Metadata(label = "in", description = "The name of the system command that will be executed. Overrides\n" +
-                                          "`executable` in the URI.",
-              javaType = "String")
+    @Metadata(
+            label = "in",
+            description =
+                    "The name of the system command that will be executed. Overrides\n" + "`executable` in the URI.",
+            javaType = "String")
     String EXEC_COMMAND_EXECUTABLE = "CamelExecCommandExecutable";
 
     /**
@@ -45,10 +48,12 @@ public interface ExecBinding {
      *
      * @see #EXEC_COMMAND_EXECUTABLE
      */
-    @Metadata(label = "in", description = "Command-line argument(s) to pass to the executed process. The argument(s)\n" +
-                                          "is/are used literally - no quoting is applied. Overrides any existing\n" +
-                                          "`args` in the URI.",
-              javaType = "java.util.List<String> or String")
+    @Metadata(
+            label = "in",
+            description = "Command-line argument(s) to pass to the executed process. The argument(s)\n"
+                    + "is/are used literally - no quoting is applied. Overrides any existing\n"
+                    + "`args` in the URI.",
+            javaType = "java.util.List<String> or String")
     String EXEC_COMMAND_ARGS = "CamelExecCommandArgs";
 
     /**
@@ -57,9 +62,11 @@ public interface ExecBinding {
      *
      * @see ExecResultConverter#toInputStream(ExecResult)
      */
-    @Metadata(label = "in", description = "The name of a file, created by the executable, that should be considered\n" +
-                                          "as its output. Overrides any existing `outFile` in the URI.",
-              javaType = "String")
+    @Metadata(
+            label = "in",
+            description = "The name of a file, created by the executable, that should be considered\n"
+                    + "as its output. Overrides any existing `outFile` in the URI.",
+            javaType = "String")
     String EXEC_COMMAND_OUT_FILE = "CamelExecCommandOutFile";
 
     /**
@@ -67,18 +74,22 @@ public interface ExecBinding {
      * command in the endpoint URI. If this is not configured, the working directory of the current process will be
      * used.
      */
-    @Metadata(label = "in", description = "The directory in which the command should be executed. Overrides any\n" +
-                                          "existing `workingDir` in the URI.",
-              javaType = "String")
+    @Metadata(
+            label = "in",
+            description = "The directory in which the command should be executed. Overrides any\n"
+                    + "existing `workingDir` in the URI.",
+            javaType = "String")
     String EXEC_COMMAND_WORKING_DIR = "CamelExecCommandWorkingDir";
 
     /**
      * Specifies the amount of time, in milliseconds, after which the process of the executable should be terminated.
      * The default value is {@link Long#MAX_VALUE}.
      */
-    @Metadata(label = "in", description = "The timeout, in milliseconds, after which the executable should be\n" +
-                                          "terminated. Overrides any existing `timeout` in the URI.",
-              javaType = "long")
+    @Metadata(
+            label = "in",
+            description = "The timeout, in milliseconds, after which the executable should be\n"
+                    + "terminated. Overrides any existing `timeout` in the URI.",
+            javaType = "long")
     String EXEC_COMMAND_TIMEOUT = "CamelExecCommandTimeout";
 
     /**
@@ -86,17 +97,21 @@ public interface ExecBinding {
      * an ExecuteException is raised. When the list is empty (the default), no exception is raised based on the exit
      * value. Example:
      */
-    @Metadata(label = "in", description = "The exit values for successful execution of the process.\n" +
-                                          "Overrides any existing `exitValues` in the URI.",
-              javaType = "String")
+    @Metadata(
+            label = "in",
+            description = "The exit values for successful execution of the process.\n"
+                    + "Overrides any existing `exitValues` in the URI.",
+            javaType = "String")
     String EXEC_COMMAND_EXIT_VALUES = "CamelExecExitValues";
 
     /**
      * The value of this header is a {@link InputStream} with the standard error stream of the executable.
      */
-    @Metadata(label = "out", description = "The value of this header points to the standard error stream (stderr) of\n" +
-                                           "the executable. If no stderr is written, the value is `null`.",
-              javaType = "java.io.InputStream")
+    @Metadata(
+            label = "out",
+            description = "The value of this header points to the standard error stream (stderr) of\n"
+                    + "the executable. If no stderr is written, the value is `null`.",
+            javaType = "java.io.InputStream")
     String EXEC_STDERR = "CamelExecStderr";
 
     /**
@@ -104,29 +119,35 @@ public interface ExecBinding {
      * exit value indicates abnormal termination. <br>
      * <b>Note that the exit value is OS dependent.</b>
      */
-    @Metadata(label = "out", description = "The value of this header is the _exit value_ of the executable. Non-zero\n" +
-                                           "exit values typically indicate abnormal termination. Note that the exit\n" +
-                                           "value is OS-dependent.",
-              javaType = "int", important = true)
+    @Metadata(
+            label = "out",
+            description = "The value of this header is the _exit value_ of the executable. Non-zero\n"
+                    + "exit values typically indicate abnormal termination. Note that the exit\n"
+                    + "value is OS-dependent.",
+            javaType = "int",
+            important = true)
     String EXEC_EXIT_VALUE = "CamelExecExitValue";
 
     /**
      * The value of this header is a boolean which indicates whether to fallback and use stderr when stdout is empty.
      */
-    @Metadata(label = "in", description = "Indicates that when `stdout` is empty, this component will populate the\n" +
-                                          "Camel Message Body with `stderr`. This behavior is disabled (`false`) by\n" +
-                                          "default.",
-              javaType = "boolean")
+    @Metadata(
+            label = "in",
+            description = "Indicates that when `stdout` is empty, this component will populate the\n"
+                    + "Camel Message Body with `stderr`. This behavior is disabled (`false`) by\n"
+                    + "default.",
+            javaType = "boolean")
     String EXEC_USE_STDERR_ON_EMPTY_STDOUT = "CamelExecUseStderrOnEmptyStdout";
 
     /**
      * The value of this header define logging level to be used for commands during execution. The default value is
      * INFO. Possible values are TRACE, DEBUG, INFO, WARN, ERROR or OFF. (Values of LoggingLevel enum)
      */
-    @Metadata(label = "in",
-              description = "Logging level to be used for commands during execution. The default value is DEBUG.\n" +
-                            "Possible values are TRACE, DEBUG, INFO, WARN, ERROR or OFF (Values of LoggingLevel enum)",
-              javaType = "String")
+    @Metadata(
+            label = "in",
+            description = "Logging level to be used for commands during execution. The default value is DEBUG.\n"
+                    + "Possible values are TRACE, DEBUG, INFO, WARN, ERROR or OFF (Values of LoggingLevel enum)",
+            javaType = "String")
     String EXEC_COMMAND_LOG_LEVEL = "CamelExecCommandLogLevel";
 
     /**

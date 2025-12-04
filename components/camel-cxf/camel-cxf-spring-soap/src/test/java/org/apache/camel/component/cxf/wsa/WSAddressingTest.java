@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.wsa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
 import java.util.List;
@@ -41,9 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class WSAddressingTest {
@@ -53,6 +54,7 @@ public class WSAddressingTest {
 
     @Autowired
     protected CamelContext context;
+
     protected ProducerTemplate template;
 
     private Server serviceEndpoint;
@@ -81,7 +83,6 @@ public class WSAddressingTest {
         }
         svrBean.setBus(bf.createBus(cxfConfig));
         serviceEndpoint = svrBean.create();
-
     }
 
     @AfterEach
@@ -133,7 +134,5 @@ public class WSAddressingTest {
             // we don't need send the soap headers to the client
             exchange.getIn().removeHeader(Header.HEADER_LIST);
         }
-
     }
-
 }

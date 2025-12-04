@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats.integration;
 
 import org.apache.camel.EndpointInject;
@@ -50,16 +51,15 @@ public class NatsConsumerReplyToIT extends NatsITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:send")
-                        .to("nats:test?replySubject=myReplyQueue&flushConnection=true");
+                from("direct:send").to("nats:test?replySubject=myReplyQueue&flushConnection=true");
 
                 from("nats:test?flushConnection=true")
                         .to(mockResultEndpoint)
                         .convertBodyTo(String.class)
-                        .setBody().simple("Bye ${body}");
+                        .setBody()
+                        .simple("Bye ${body}");
 
-                from("nats:myReplyQueue")
-                        .to("mock:reply");
+                from("nats:myReplyQueue").to("mock:reply");
             }
         };
     }

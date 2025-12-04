@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.jms.integration.polling;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -24,9 +27,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JmsPollingConsumerNoWaitIT extends JmsPollingConsumerIT {
     private final CountDownLatch latch = new CountDownLatch(1);
@@ -52,7 +52,8 @@ class JmsPollingConsumerNoWaitIT extends JmsPollingConsumerIT {
         mock.expectedBodiesReceived("Hello Claus");
 
         assertTrue(latch.await(1, TimeUnit.SECONDS));
-        assertNull(body, "Message body should be null because there was no message and the polling consumer is 'no wait'");
+        assertNull(
+                body, "Message body should be null because there was no message and the polling consumer is 'no wait'");
 
         template.sendBody("direct:start", "Hello");
 

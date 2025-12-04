@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,9 +34,12 @@ public class AggregateParallelProcessingTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).eagerCheckCompletion()
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .eagerCheckCompletion()
                         .completionPredicate(body().isEqualTo("END"))
-                        .parallelProcessing().to("log:result", "mock:result");
+                        .parallelProcessing()
+                        .to("log:result", "mock:result");
             }
         });
         context.start();
@@ -58,9 +62,11 @@ public class AggregateParallelProcessingTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).eagerCheckCompletion()
-                        .completionPredicate(body().isEqualTo("END")).to("log:result",
-                                "mock:result");
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .eagerCheckCompletion()
+                        .completionPredicate(body().isEqualTo("END"))
+                        .to("log:result", "mock:result");
             }
         });
         context.start();
@@ -77,5 +83,4 @@ public class AggregateParallelProcessingTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

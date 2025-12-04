@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -33,19 +34,26 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "event",
-         description = "Get latest events of Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "event",
+        description = "Get latest events of Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListEvent extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter event by event type: context, route, or exchange")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter event by event type: context, route, or exchange")
     String filter;
 
     public ListEvent(CamelJBangMain main) {
@@ -57,46 +65,63 @@ public class ListEvent extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row row = new Row();
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
 
-                        if (filter == null || filter.contains("context")) {
-                            fetchEvents(root, row, "events", rows);
-                        }
-                        if (filter == null || filter.contains("route")) {
-                            fetchEvents(root, row, "routeEvents", rows);
-                        }
-                        if (filter == null || filter.contains("exchange")) {
-                            fetchEvents(root, row, "exchangeEvents", rows);
-                        }
-                    }
-                });
+                if (filter == null || filter.contains("context")) {
+                    fetchEvents(root, row, "events", rows);
+                }
+                if (filter == null || filter.contains("route")) {
+                    fetchEvents(root, row, "routeEvents", rows);
+                }
+                if (filter == null || filter.contains("exchange")) {
+                    fetchEvents(root, row, "exchangeEvents", rows);
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("AGE").dataAlign(HorizontalAlign.RIGHT).with(this::getTimestamp),
-                    new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT).with(r -> r.message))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("TYPE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.type),
+                                    new Column()
+                                            .header("AGE")
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getTimestamp),
+                                    new Column()
+                                            .header("MESSAGE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.message))));
         }
 
         return 0;
@@ -165,5 +190,4 @@ public class ListEvent extends ProcessWatchCommand {
             }
         }
     }
-
 }

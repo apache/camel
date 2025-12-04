@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import java.lang.annotation.Annotation;
@@ -92,8 +93,10 @@ public final class CxfEndpointUtils {
         if (retval == null) {
             retval = defaultAddress;
         } else {
-            LOG.trace("Client address is overridden by header '{}' to value '{}'",
-                    CxfConstants.DESTINATION_OVERRIDE_URL, retval);
+            LOG.trace(
+                    "Client address is overridden by header '{}' to value '{}'",
+                    CxfConstants.DESTINATION_OVERRIDE_URL,
+                    retval);
         }
         return retval;
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
 
 import org.apache.camel.Exchange;
@@ -38,11 +39,10 @@ public class DropboxMoveProducer extends DropboxProducer {
 
         DropboxConfigurationValidator.validateMoveOp(remotePath, newRemotePath);
 
-        DropboxMoveResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
-                .move(remotePath, newRemotePath);
+        DropboxMoveResult result =
+                new DropboxAPIFacade(configuration.getClient(), exchange).move(remotePath, newRemotePath);
 
         exchange.getIn().setHeader(DropboxConstants.MOVED_PATH, result.getOldPath());
         exchange.getIn().setBody(result.getNewPath());
     }
-
 }

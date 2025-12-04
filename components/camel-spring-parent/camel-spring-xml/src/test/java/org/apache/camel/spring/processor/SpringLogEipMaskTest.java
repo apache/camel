@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.MaskingFormatter;
@@ -23,16 +26,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
 @SuppressWarnings("deprecation")
 public class SpringLogEipMaskTest {
 
     @Test
     public void testLogEipMask() throws Exception {
-        final AbstractXmlApplicationContext applicationContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/logEipMaskTest.xml");
+        final AbstractXmlApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/logEipMaskTest.xml");
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
         mock.expectedMessageCount(1);
@@ -45,12 +46,12 @@ public class SpringLogEipMaskTest {
 
     @Test
     public void testCustomFormatter() throws Exception {
-        final AbstractXmlApplicationContext applicationContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/logEipCustomFormatterTest.xml");
+        final AbstractXmlApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/logEipCustomFormatterTest.xml");
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
-        MockMaskingFormatter customFormatter
-                = applicationContext.getBean(MaskingFormatter.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
+        MockMaskingFormatter customFormatter =
+                applicationContext.getBean(MaskingFormatter.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
         context.createProducerTemplate().sendBody("direct:foo", "mock password=\"my passw0rd!\"");
         assertEquals("Got mock password=\"my passw0rd!\"", customFormatter.received);
         context.stop();
@@ -65,5 +66,4 @@ public class SpringLogEipMaskTest {
             return source;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Collection;
@@ -115,8 +116,13 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
 
     @Override
     public DevConsole resolveById(String id) {
-        DevConsole answer = consoles.stream().filter(h -> h.getId().equals(id)).findFirst()
-                .orElse(camelContext.getRegistry().findByTypeWithName(DevConsole.class).get(id));
+        DevConsole answer = consoles.stream()
+                .filter(h -> h.getId().equals(id))
+                .findFirst()
+                .orElse(camelContext
+                        .getRegistry()
+                        .findByTypeWithName(DevConsole.class)
+                        .get(id));
         if (answer == null) {
             DevConsoleResolver resolver = PluginHelper.getDevConsoleResolver(camelContext);
             answer = resolver.resolveDevConsole(id);

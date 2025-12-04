@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.swift;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,13 +47,6 @@ import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.common.Payloads;
 import org.openstack4j.model.storage.object.SwiftObject;
 import org.openstack4j.model.storage.object.options.ObjectLocation;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ObjectProducerTest extends SwiftProducerTestSupport {
@@ -95,7 +96,8 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
 
         producer.process(exchange);
 
-        verify(objectService).put(containerNameCaptor.capture(), objectNameCaptor.capture(), payloadArgumentCaptor.capture());
+        verify(objectService)
+                .put(containerNameCaptor.capture(), objectNameCaptor.capture(), payloadArgumentCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertEquals(OBJECT_NAME, objectNameCaptor.getValue());
         assertEquals(payload, payloadArgumentCaptor.getValue());

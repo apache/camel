@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -28,13 +34,10 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
-                          disabledReason = "In case of Virtual Threads, the thread pools are not ThreadPoolExecutor")
+@DisabledIfSystemProperty(
+        named = "camel.threads.virtual.enabled",
+        matches = "true",
+        disabledReason = "In case of Virtual Threads, the thread pools are not ThreadPoolExecutor")
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteRemoveWireTapTest extends ManagementTestSupport {
 
@@ -101,5 +104,4 @@ public class ManagedRouteRemoveWireTapTest extends ManagementTestSupport {
             }
         };
     }
-
 }

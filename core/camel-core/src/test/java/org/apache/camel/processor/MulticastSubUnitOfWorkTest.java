@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -79,16 +80,29 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .useOriginalMessage()
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0));
 
-                from("direct:start").to("mock:start").process(new MyPreProcessor()).multicast().shareUnitOfWork().to("direct:a")
-                        .to("direct:b").end().to("mock:result");
+                from("direct:start")
+                        .to("mock:start")
+                        .process(new MyPreProcessor())
+                        .multicast()
+                        .shareUnitOfWork()
+                        .to("direct:a")
+                        .to("direct:b")
+                        .end()
+                        .to("mock:result");
 
                 from("direct:a").to("mock:a");
 
                 from("direct:b").process(new MyProcessor()).to("mock:b");
 
-                from("direct:e").multicast().shareUnitOfWork().throwException(new IllegalArgumentException("exception1"))
+                from("direct:e")
+                        .multicast()
+                        .shareUnitOfWork()
+                        .throwException(new IllegalArgumentException("exception1"))
                         .throwException(new IllegalArgumentException("exception2"))
                         .end();
             }
@@ -120,5 +134,4 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
             }
         }
     }
-
 }

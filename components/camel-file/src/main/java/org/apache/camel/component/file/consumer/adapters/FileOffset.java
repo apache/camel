@@ -22,8 +22,7 @@ import org.apache.camel.resume.Offset;
 public class FileOffset implements Offset<Long> {
     private Long offset;
 
-    public FileOffset() {
-    }
+    public FileOffset() {}
 
     public FileOffset(Long offset) {
         this.offset = offset;

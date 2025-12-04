@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.slf4j.MDC;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringMDCWithBreadcrumbTest extends SpringMDCTest {
 
@@ -49,5 +50,4 @@ public class SpringMDCWithBreadcrumbTest extends SpringMDCTest {
             assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));
         }
     }
-
 }

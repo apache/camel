@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
@@ -33,8 +34,7 @@ public final class FtpUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(FtpUtils.class);
 
-    private FtpUtils() {
-    }
+    private FtpUtils() {}
 
     public static String extractDirNameFromAbsolutePath(String path) {
         // default is unix so try with '/'
@@ -97,7 +97,7 @@ public final class FtpUtils {
         }
 
         // now we build back using FIFO so need to use descending
-        for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
+        for (Iterator<String> it = stack.descendingIterator(); it.hasNext(); ) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append(File.separator);
@@ -131,9 +131,12 @@ public final class FtpUtils {
     public static void ensureRelativeFtpDirectory(Component ftpComponent, RemoteFileConfiguration configuration) {
         if (FileUtil.hasLeadingSeparator(configuration.getDirectoryName())) {
             String relativePath = FileUtil.stripLeadingSeparator(configuration.getDirectoryName());
-            LOG.warn("{} doesn't support absolute paths, \"{}\" will be converted to \"{}\". "
-                     + "After Camel 2.16, absolute paths will be invalid.",
-                    ftpComponent.getClass().getSimpleName(), configuration.getDirectoryName(), relativePath);
+            LOG.warn(
+                    "{} doesn't support absolute paths, \"{}\" will be converted to \"{}\". "
+                            + "After Camel 2.16, absolute paths will be invalid.",
+                    ftpComponent.getClass().getSimpleName(),
+                    configuration.getDirectoryName(),
+                    relativePath);
             configuration.setDirectory(relativePath);
             configuration.setDirectoryName(relativePath);
         }
@@ -169,5 +172,4 @@ public final class FtpUtils {
         }
         return absoluteFileName;
     }
-
 }

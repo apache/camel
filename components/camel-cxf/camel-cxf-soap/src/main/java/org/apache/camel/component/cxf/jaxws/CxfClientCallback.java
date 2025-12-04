@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import java.io.IOException;
@@ -39,11 +40,12 @@ public class CxfClientCallback extends ClientCallback {
     private final BindingOperationInfo boi;
     private final CxfEndpoint endpoint;
 
-    public CxfClientCallback(AsyncCallback callback,
-                             Exchange camelExchange,
-                             org.apache.cxf.message.Exchange cxfExchange,
-                             BindingOperationInfo boi,
-                             CxfEndpoint endpoint) {
+    public CxfClientCallback(
+            AsyncCallback callback,
+            Exchange camelExchange,
+            org.apache.cxf.message.Exchange cxfExchange,
+            BindingOperationInfo boi,
+            CxfEndpoint endpoint) {
         this.camelAsyncCallback = callback;
         this.camelExchange = camelExchange;
         this.cxfExchange = cxfExchange;
@@ -59,9 +61,10 @@ public class CxfClientCallback extends ClientCallback {
             // add cookies to the cookie store
             if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
                 try {
-                    Map<String, List<String>> cxfHeaders
-                            = CastUtils.cast((Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
-                    endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
+                    Map<String, List<String>> cxfHeaders = CastUtils.cast(
+                            (Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
+                    endpoint.getCookieHandler()
+                            .storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
                 } catch (IOException e) {
                     LOG.error("Cannot store cookies", e);
                 }
@@ -102,9 +105,10 @@ public class CxfClientCallback extends ClientCallback {
             // add cookies to the cookie store
             if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
                 try {
-                    Map<String, List<String>> cxfHeaders
-                            = CastUtils.cast((Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
-                    endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
+                    Map<String, List<String>> cxfHeaders = CastUtils.cast(
+                            (Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
+                    endpoint.getCookieHandler()
+                            .storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
                 } catch (IOException e) {
                     LOG.error("Cannot store cookies", e);
                 }
@@ -122,5 +126,4 @@ public class CxfClientCallback extends ClientCallback {
             }
         }
     }
-
 }

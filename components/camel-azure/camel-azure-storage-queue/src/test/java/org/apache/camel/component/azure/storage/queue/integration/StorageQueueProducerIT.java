@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Map;
 
@@ -26,9 +30,6 @@ import org.apache.camel.component.azure.storage.queue.QueueConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 class StorageQueueProducerIT extends StorageQueueBase {
 
     @EndpointInject
@@ -36,6 +37,7 @@ class StorageQueueProducerIT extends StorageQueueBase {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
     private String resultName = "mock:result";
 
     @Test
@@ -53,13 +55,11 @@ class StorageQueueProducerIT extends StorageQueueBase {
         });
 
         // create from name from the route
-        template.send("direct:createQueue", ExchangePattern.InOnly, exchange -> {
-        });
+        template.send("direct:createQueue", ExchangePattern.InOnly, exchange -> {});
         result.assertIsSatisfied();
 
         // check name
         assertEquals("testqueue", serviceClient.getQueueClient("testqueue").getQueueName());
-
     }
 
     @Test
@@ -87,7 +87,8 @@ class StorageQueueProducerIT extends StorageQueueBase {
 
         result.assertIsSatisfied();
 
-        final Map<String, Object> sentMessageHeaders = result.getExchanges().get(0).getMessage().getHeaders();
+        final Map<String, Object> sentMessageHeaders =
+                result.getExchanges().get(0).getMessage().getHeaders();
 
         result.reset();
 

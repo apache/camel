@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ldif;
 
 import org.apache.camel.Category;
@@ -28,8 +29,13 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform updates on an LDAP server from an LDIF body content.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "ldif", title = "LDIF", syntax = "ldif:ldapConnectionName", producerOnly = true,
-             category = { Category.DATABASE, Category.SECURITY })
+@UriEndpoint(
+        firstVersion = "2.20.0",
+        scheme = "ldif",
+        title = "LDIF",
+        syntax = "ldif:ldapConnectionName",
+        producerOnly = true,
+        category = {Category.DATABASE, Category.SECURITY})
 public class LdifEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
@@ -42,7 +48,8 @@ public class LdifEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("An LDIF Consumer would be the LDAP server itself! No such support here");
+        throw new UnsupportedOperationException(
+                "An LDIF Consumer would be the LDAP server itself! No such support here");
     }
 
     @Override

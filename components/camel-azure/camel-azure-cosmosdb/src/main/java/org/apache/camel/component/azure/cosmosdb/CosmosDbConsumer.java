@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb;
 
 import java.util.List;
@@ -48,9 +49,12 @@ public class CosmosDbConsumer extends DefaultConsumer {
         super.doInit();
         this.clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
         this.onCompletion = new ConsumerOnCompletion();
-        this.changeFeedProcessor = getContainerOperations().captureEventsWithChangeFeed(
-                getLeaseContainerOperations().getContainer(), getHostName(),
-                this::onEventListener, getConfiguration().getChangeFeedProcessorOptions());
+        this.changeFeedProcessor = getContainerOperations()
+                .captureEventsWithChangeFeed(
+                        getLeaseContainerOperations().getContainer(),
+                        getHostName(),
+                        this::onEventListener,
+                        getConfiguration().getChangeFeedProcessorOptions());
     }
 
     @Override
@@ -58,9 +62,7 @@ public class CosmosDbConsumer extends DefaultConsumer {
         super.doStart();
 
         // start our changeFeedProcessor
-        changeFeedProcessor.start()
-                .subscribe(aVoid -> {
-                }, this::onErrorListener);
+        changeFeedProcessor.start().subscribe(aVoid -> {}, this::onErrorListener);
     }
 
     @Override

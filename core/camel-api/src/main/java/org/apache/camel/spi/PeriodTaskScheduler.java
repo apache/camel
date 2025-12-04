@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
@@ -50,5 +51,4 @@ public interface PeriodTaskScheduler {
      * @return      the task, or <tt>null</tt> if no tasks exists
      */
     <T> T getTaskByType(Class<T> type);
-
 }

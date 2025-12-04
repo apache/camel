@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5.integration;
 
 import org.apache.camel.EndpointInject;
@@ -31,8 +32,7 @@ public class PahoMqtt5ManualAcksIT extends PahoMqtt5ITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test")
-                        .to("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2");
+                from("direct:test").to("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2");
 
                 from("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2&manualAcksEnabled=true")
                         .to("mock:test");

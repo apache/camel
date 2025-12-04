@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Date;
 
@@ -26,8 +29,6 @@ import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
 
@@ -56,22 +57,20 @@ public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteStopRepeatCount(1);
                 policy.setRouteStopRepeatInterval(3000);
 
-                from("direct:start")
-                        .routeId("test")
-                        .routePolicy(policy)
-                        .to("mock:success");
+                from("direct:start").routeId("test").routePolicy(policy).to("mock:success");
             }
         });
         context.start();
 
         Awaitility.await()
-                .untilAsserted(() -> assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test")));
+                .untilAsserted(() -> assertSame(
+                        ServiceStatus.Started, context.getRouteController().getRouteStatus("test")));
         template.sendBody("direct:start", "Ready or not, Here, I come");
         Awaitility.await()
-                .untilAsserted(() -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
+                .untilAsserted(() -> assertSame(
+                        ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
 
         context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }
-
 }

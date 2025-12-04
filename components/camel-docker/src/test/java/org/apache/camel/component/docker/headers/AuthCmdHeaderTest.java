@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Map;
 
@@ -26,8 +29,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.any;
 
 /**
  * Validates Authentication Request headers are parsed properly
@@ -59,7 +60,6 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
 
         Mockito.verify(dockerClient, Mockito.times(1)).authCmd();
         Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig((AuthConfig) any());
-
     }
 
     @Override
@@ -82,5 +82,4 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
     protected DockerOperation getOperation() {
         return DockerOperation.AUTH;
     }
-
 }

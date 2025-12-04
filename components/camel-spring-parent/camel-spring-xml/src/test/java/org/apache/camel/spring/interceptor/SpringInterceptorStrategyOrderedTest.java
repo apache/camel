@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.interceptor.InterceptorStrategyOrderedTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringInterceptorStrategyOrderedTest extends InterceptorStrategyOrderedTest {
 
@@ -27,5 +28,4 @@ public class SpringInterceptorStrategyOrderedTest extends InterceptorStrategyOrd
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/interceptor/InterceptorStrategyOrderedTest.xml");
     }
-
 }

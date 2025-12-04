@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,9 +29,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -37,9 +38,8 @@ public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                rest()
-                        .securityDefinitions()
-                        .oauth2("petstore_auth_implicit")// OAuth implicit
+                rest().securityDefinitions()
+                        .oauth2("petstore_auth_implicit") // OAuth implicit
                         .authorizationUrl("https://petstore.swagger.io/oauth/dialog")
                         .refreshUrl("https://petstore.swagger.io/oauth/refresh")
                         .end()
@@ -47,7 +47,7 @@ public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
                         .flow("password")
                         .tokenUrl("https://petstore.swagger.io/oauth/token")
                         .end()
-                        .oauth2("oauth2_accessCode")// OAuth access code
+                        .oauth2("oauth2_accessCode") // OAuth access code
                         .authorizationUrl("https://petstore.swagger.io/oauth/dialog")
                         .tokenUrl("https://petstore.swagger.io/oauth/token")
                         .end()
@@ -68,11 +68,11 @@ public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.0", "3.1" })
+    @ValueSource(strings = {"3.0", "3.1"})
     public void testSecuritySchemesV3(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -80,8 +80,8 @@ public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
         config.setVersion(version);
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
@@ -89,24 +89,24 @@ public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
         assertTrue(json.contains(
-                "\"petstore_auth_implicit\" : { \"type\" : \"oauth2\", \"flows\" : { \"implicit\" : { \"authorizationUrl\" : " +
-                                 "\"https://petstore.swagger.io/oauth/dialog\", \"refreshUrl\" : " +
-                                 "\"https://petstore.swagger.io/oauth/refresh\" } } }"));
-        assertTrue(
-                json.contains("\"oauth_password\" : { \"type\" : \"oauth2\", \"flows\" : { \"password\" : { \"tokenUrl\" : " +
-                              "\"https://petstore.swagger.io/oauth/token\" } } }"));
+                "\"petstore_auth_implicit\" : { \"type\" : \"oauth2\", \"flows\" : { \"implicit\" : { \"authorizationUrl\" : "
+                        + "\"https://petstore.swagger.io/oauth/dialog\", \"refreshUrl\" : "
+                        + "\"https://petstore.swagger.io/oauth/refresh\" } } }"));
+        assertTrue(json.contains(
+                "\"oauth_password\" : { \"type\" : \"oauth2\", \"flows\" : { \"password\" : { \"tokenUrl\" : "
+                        + "\"https://petstore.swagger.io/oauth/token\" } } }"));
         assertTrue(json.contains(
                 "\"oauth2_accessCode\" : { \"type\" : \"oauth2\", \"flows\" : { \"authorizationCode\" : { \"authorizationUrl\" : "
-                                 +
-                                 "\"https://petstore.swagger.io/oauth/dialog\", \"tokenUrl\" : " +
-                                 "\"https://petstore.swagger.io/oauth/token\" } } }"));
-        assertTrue(
-                json.contains("\"api_key_header\" : { \"type\" : \"apiKey\", \"name\" : \"myHeader\", \"in\" : \"header\" }"));
-        assertTrue(json.contains("\"api_key_query\" : { \"type\" : \"apiKey\", \"name\" : \"myQuery\", \"in\" : \"query\" }"));
-        assertTrue(json.contains("\"api_key_cookie\" : { \"type\" : \"apiKey\", \"description\" : \"API Key using cookie\", " +
-                                 "\"name\" : \"myCookie\", \"in\" : \"cookie\" }"));
+                        + "\"https://petstore.swagger.io/oauth/dialog\", \"tokenUrl\" : "
+                        + "\"https://petstore.swagger.io/oauth/token\" } } }"));
+        assertTrue(json.contains(
+                "\"api_key_header\" : { \"type\" : \"apiKey\", \"name\" : \"myHeader\", \"in\" : \"header\" }"));
+        assertTrue(json.contains(
+                "\"api_key_query\" : { \"type\" : \"apiKey\", \"name\" : \"myQuery\", \"in\" : \"query\" }"));
+        assertTrue(json.contains(
+                "\"api_key_cookie\" : { \"type\" : \"apiKey\", \"description\" : \"API Key using cookie\", "
+                        + "\"name\" : \"myCookie\", \"in\" : \"cookie\" }"));
 
         assertTrue(json.contains("\"mutualTLS_auth\" : { \"type\" : \"mutualTLS\" }"));
     }
-
 }

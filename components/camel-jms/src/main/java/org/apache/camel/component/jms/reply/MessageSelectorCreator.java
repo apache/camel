@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.reply;
+
+import static org.apache.camel.TimeoutMap.Listener.Type.*;
 
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
@@ -24,8 +27,6 @@ import org.apache.camel.TimeoutMap;
 import org.apache.camel.component.jms.JmsConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.TimeoutMap.Listener.Type.*;
 
 /**
  * A creator which can build the JMS message selector query string to use with a shared reply-to queue, so we can select
@@ -106,5 +107,4 @@ public class MessageSelectorCreator {
     public String getCorrelationProperty() {
         return this.correlationProperty;
     }
-
 }

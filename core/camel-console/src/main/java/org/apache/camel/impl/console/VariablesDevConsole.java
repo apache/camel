@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -38,7 +39,8 @@ public class VariablesDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        Set<BrowsableVariableRepository> repos = getCamelContext().getRegistry().findByType(BrowsableVariableRepository.class);
+        Set<BrowsableVariableRepository> repos =
+                getCamelContext().getRegistry().findByType(BrowsableVariableRepository.class);
         for (BrowsableVariableRepository repo : repos) {
             sb.append("\n");
             sb.append(String.format("Repository: %s (size: %d)", repo.getId(), repo.size()));
@@ -58,7 +60,8 @@ public class VariablesDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        Set<BrowsableVariableRepository> repos = getCamelContext().getRegistry().findByType(BrowsableVariableRepository.class);
+        Set<BrowsableVariableRepository> repos =
+                getCamelContext().getRegistry().findByType(BrowsableVariableRepository.class);
         for (BrowsableVariableRepository repo : repos) {
             final List<JsonObject> arr = toJsonObjects(repo);
             if (!arr.isEmpty()) {

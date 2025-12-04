@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest
         extends TcpServerConsumerEndOfDataAndValidationTestSupport {
@@ -71,8 +72,8 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest
 
         NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
 
-        mllpClient.sendFramedData(
-                Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
+        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage()
+                .replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
 
         assertFalse(done.matches(5, TimeUnit.SECONDS), "Exchange should not have completed");
     }

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -32,12 +39,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
 
     @Test
@@ -49,8 +50,8 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedBodiesReceived(bean);
 
-        template.sendBodyAndHeader(getProducerUri() + "/serialized", bean, Exchange.CONTENT_TYPE,
-                CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+        template.sendBodyAndHeader(
+                getProducerUri() + "/serialized", bean, Exchange.CONTENT_TYPE, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
 
         mockEndpoint.assertIsSatisfied();
     }
@@ -60,8 +61,10 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
         final String endpointUri = getProducerUri() + "/serialized";
         final NotSerializableBean body = new NotSerializableBean();
 
-        assertThrows(CamelExecutionException.class, () -> template.sendBodyAndHeader(endpointUri, body, Exchange.CONTENT_TYPE,
-                CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
+        assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(
+                        endpointUri, body, Exchange.CONTENT_TYPE, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
     }
 
     @Test
@@ -72,8 +75,10 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
         final String endpointUri = getProducerUri() + "/serialized";
         final SerializedBean body = new SerializedBean();
 
-        assertThrows(CamelExecutionException.class, () -> template.sendBodyAndHeader(endpointUri, body, Exchange.CONTENT_TYPE,
-                CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
+        assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(
+                        endpointUri, body, Exchange.CONTENT_TYPE, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT));
     }
 
     @Test
@@ -113,8 +118,11 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 // camel-undertow does not (yet) support object deserialization so we do it manually
-                                InputStream inputStream = exchange.getContext().getTypeConverter().convertTo(InputStream.class,
-                                        exchange.getIn().getBody());
+                                InputStream inputStream = exchange.getContext()
+                                        .getTypeConverter()
+                                        .convertTo(
+                                                InputStream.class,
+                                                exchange.getIn().getBody());
                                 if (inputStream != null) {
                                     try {
                                         Object object = VertxHttpHelper.deserializeJavaObjectFromStream(inputStream);
@@ -130,23 +138,22 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
                         })
                         .to("mock:result");
 
-                from(getTestServerUri() + "/deserialized")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                SerializedBean bean = new SerializedBean();
-                                bean.setName("Mr A Camel");
-                                bean.setAge(15);
+                from(getTestServerUri() + "/deserialized").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        SerializedBean bean = new SerializedBean();
+                        bean.setName("Mr A Camel");
+                        bean.setAge(15);
 
-                                Message message = exchange.getMessage();
-                                message.setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                        Message message = exchange.getMessage();
+                        message.setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
 
-                                try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-                                    VertxHttpHelper.writeObjectToStream(bos, bean);
-                                    message.setBody(bos.toByteArray());
-                                }
-                            }
-                        });
+                        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                            VertxHttpHelper.writeObjectToStream(bos, bean);
+                            message.setBody(bos.toByteArray());
+                        }
+                    }
+                });
             }
         };
     }
@@ -189,7 +196,5 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
         }
     }
 
-    private static final class NotSerializableBean {
-
-    }
+    private static final class NotSerializableBean {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.cassandra;
 
 import org.apache.camel.CamelExecutionException;
@@ -29,5 +30,4 @@ public class CassandraAggregationException extends CamelExecutionException {
     public CassandraAggregationException(String message, Exchange exchange, Throwable cause) {
         super(message, exchange, cause);
     }
-
 }

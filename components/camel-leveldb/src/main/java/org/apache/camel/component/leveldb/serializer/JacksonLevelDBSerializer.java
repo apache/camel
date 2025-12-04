@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb.serializer;
 
 import java.io.ByteArrayInputStream;
@@ -64,7 +65,8 @@ public class JacksonLevelDBSerializer extends AbstractLevelDBSerializer {
 
         DefaultExchangeHolder pe = createExchangeHolder(exchange, allowSerializedHeaders);
 
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); DataOutputStream dos = new DataOutputStream(baos)) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                DataOutputStream dos = new DataOutputStream(baos)) {
             serializeByteArrayBody(inBody, dos);
             serializeByteArrayBody(outBody, dos);
             objectMapper.writeValue(baos, pe);
@@ -77,7 +79,8 @@ public class JacksonLevelDBSerializer extends AbstractLevelDBSerializer {
         Object inBody;
         Object outBody;
         DefaultExchangeHolder pe;
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(buffer); DataInputStream dis = new DataInputStream(bis)) {
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(buffer);
+                DataInputStream dis = new DataInputStream(bis)) {
             inBody = deserializeByteArrayBody(dis);
             outBody = deserializeByteArrayBody(dis);
             pe = objectMapper.readValue(bis, DefaultExchangeHolder.class);
@@ -121,5 +124,4 @@ public class JacksonLevelDBSerializer extends AbstractLevelDBSerializer {
 
         return payload;
     }
-
 }

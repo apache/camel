@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,9 +40,16 @@ public class SimpleTryCatchFinallyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry().to("mock:try").throwException(new IllegalArgumentException("Damn"))
-                        .doCatch(IllegalArgumentException.class).to("mock:catch")
-                        .doFinally().to("mock:finally").end().to("mock:result");
+                from("direct:start")
+                        .doTry()
+                        .to("mock:try")
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .doCatch(IllegalArgumentException.class)
+                        .to("mock:catch")
+                        .doFinally()
+                        .to("mock:finally")
+                        .end()
+                        .to("mock:result");
             }
         };
     }

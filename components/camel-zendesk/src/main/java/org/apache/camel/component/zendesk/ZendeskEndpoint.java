@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zendesk;
 
 import java.util.Map;
@@ -39,9 +40,14 @@ import org.zendesk.client.v2.Zendesk;
 /**
  * Manage Zendesk tickets, users, organizations, etc.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "zendesk", title = "Zendesk", syntax = "zendesk:methodName",
-             apiSyntax = "methodName",
-             consumerPrefix = "consumer", category = { Category.CLOUD, Category.API, Category.SAAS })
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "zendesk",
+        title = "Zendesk",
+        syntax = "zendesk:methodName",
+        apiSyntax = "methodName",
+        consumerPrefix = "consumer",
+        category = {Category.CLOUD, Category.API, Category.SAAS})
 public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, ZendeskConfiguration>
         implements EndpointServiceLocation {
 
@@ -50,10 +56,19 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
 
     private Zendesk apiProxy;
 
-    public ZendeskEndpoint(String uri, ZendeskComponent component, ZendeskApiName apiName, String methodName,
-                           ZendeskConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, ZendeskApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public ZendeskEndpoint(
+            String uri,
+            ZendeskComponent component,
+            ZendeskApiName apiName,
+            String methodName,
+            ZendeskConfiguration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                ZendeskApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -121,8 +136,7 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
     }
 
     @Override
-    protected void afterConfigureProperties() {
-    }
+    protected void afterConfigureProperties() {}
 
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
@@ -139,5 +153,4 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
         }
         return apiProxy;
     }
-
 }

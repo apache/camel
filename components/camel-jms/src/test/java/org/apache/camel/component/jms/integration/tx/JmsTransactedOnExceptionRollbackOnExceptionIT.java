@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.tx;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -33,11 +37,8 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 // This test cannot run in parallel: it reads from the default DLQ and there could be more messages there
-@Tags({ @Tag("not-parallel"), @Tag("transaction") })
+@Tags({@Tag("not-parallel"), @Tag("transaction")})
 public class JmsTransactedOnExceptionRollbackOnExceptionIT extends CamelTestSupport {
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createVMService();
@@ -89,5 +90,4 @@ public class JmsTransactedOnExceptionRollbackOnExceptionIT extends CamelTestSupp
         camelContext.addComponent("activemq", component);
         return camelContext;
     }
-
 }

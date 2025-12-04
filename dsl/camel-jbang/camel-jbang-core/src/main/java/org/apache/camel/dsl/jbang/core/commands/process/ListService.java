@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -34,27 +35,36 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "service",
-         description = "Get services of Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "service",
+        description = "Get services of Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListService extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--metadata" },
-                        description = "Show service metadata (only available for some services)")
+    @CommandLine.Option(
+            names = {"--metadata"},
+            description = "Show service metadata (only available for some services)")
     boolean metadata;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @CommandLine.Option(
+            names = {"--short-uri"},
+            description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @CommandLine.Option(
+            names = {"--wide-uri"},
+            description = "List endpoint URI in full details")
     boolean wideUri;
 
     public ListService(CamelJBangMain main) {
@@ -66,69 +76,105 @@ public class ListService extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row row = new Row();
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
+                row.uptime = extractSince(ph);
+                row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("services");
-                        if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("services");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
-                                    row.component = jo.getString("component");
-                                    row.direction = jo.getString("direction");
-                                    row.hosted = jo.getBooleanOrDefault("hosted", false);
-                                    row.protocol = jo.getString("protocol");
-                                    row.serviceUrl = jo.getString("serviceUrl");
-                                    row.endpointUri = jo.getString("endpointUri");
-                                    row.hits = jo.getLongOrDefault("hits", 0);
-                                    row.routeId = jo.getString("routeId");
-                                    row.metadata = jo.getMap("metadata");
-                                    rows.add(row);
-                                }
-                            }
+                JsonObject jo = (JsonObject) root.get("services");
+                if (jo != null) {
+                    JsonArray arr = (JsonArray) jo.get("services");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = row.copy();
+                            jo = (JsonObject) arr.get(i);
+                            row.component = jo.getString("component");
+                            row.direction = jo.getString("direction");
+                            row.hosted = jo.getBooleanOrDefault("hosted", false);
+                            row.protocol = jo.getString("protocol");
+                            row.serviceUrl = jo.getString("serviceUrl");
+                            row.endpointUri = jo.getString("endpointUri");
+                            row.hits = jo.getLongOrDefault("hits", 0);
+                            row.routeId = jo.getString("routeId");
+                            row.metadata = jo.getMap("metadata");
+                            rows.add(row);
                         }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
-                    new Column().header("DIR").dataAlign(HorizontalAlign.LEFT).with(r -> r.direction),
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(this::getRouteId),
-                    new Column().header("PROTOCOL").dataAlign(HorizontalAlign.LEFT).with(this::getProtocol),
-                    new Column().header("SERVICE").dataAlign(HorizontalAlign.LEFT).with(this::getService),
-                    new Column().header("METADATA").visible(metadata).dataAlign(HorizontalAlign.LEFT).with(this::getMetadata),
-                    new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.hits),
-                    new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getUri),
-                    new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(140, OverflowBehaviour.NEWLINE)
-                            .with(this::getUri))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("COMPONENT")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.component),
+                                    new Column()
+                                            .header("DIR")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.direction),
+                                    new Column()
+                                            .header("ROUTE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getRouteId),
+                                    new Column()
+                                            .header("PROTOCOL")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getProtocol),
+                                    new Column()
+                                            .header("SERVICE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getService),
+                                    new Column()
+                                            .header("METADATA")
+                                            .visible(metadata)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getMetadata),
+                                    new Column()
+                                            .header("TOTAL")
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> "" + r.hits),
+                                    new Column()
+                                            .header("ENDPOINT")
+                                            .visible(!wideUri)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(this::getUri),
+                                    new Column()
+                                            .header("ENDPOINT")
+                                            .visible(wideUri)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                            .with(this::getUri))));
         }
 
         return 0;
@@ -211,5 +257,4 @@ public class ListService extends ProcessWatchCommand {
             }
         }
     }
-
 }

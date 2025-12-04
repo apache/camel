@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GuavaEventBusConsumerTest extends CamelTestSupport {
 
@@ -63,7 +64,9 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
         // Then
         getMockEndpoint("mock:allEvents").setExpectedMessageCount(1);
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(message, getMockEndpoint("mock:allEvents").getExchanges().get(0).getIn().getBody());
+        assertEquals(
+                message,
+                getMockEndpoint("mock:allEvents").getExchanges().get(0).getIn().getBody());
     }
 
     @Test
@@ -78,8 +81,16 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
         getMockEndpoint("mock:allEvents").setExpectedMessageCount(1);
         getMockEndpoint("mock:multipliedConsumer").setExpectedMessageCount(1);
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(message, getMockEndpoint("mock:allEvents").getExchanges().get(0).getIn().getBody());
-        assertEquals(message, getMockEndpoint("mock:multipliedConsumer").getExchanges().get(0).getIn().getBody());
+        assertEquals(
+                message,
+                getMockEndpoint("mock:allEvents").getExchanges().get(0).getIn().getBody());
+        assertEquals(
+                message,
+                getMockEndpoint("mock:multipliedConsumer")
+                        .getExchanges()
+                        .get(0)
+                        .getIn()
+                        .getBody());
     }
 
     @Test
@@ -94,7 +105,13 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
         // Then
         getMockEndpoint("mock:wrapperEvents").setExpectedMessageCount(1);
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(wrappedMessage, getMockEndpoint("mock:wrapperEvents").getExchanges().get(0).getIn().getBody());
+        assertEquals(
+                wrappedMessage,
+                getMockEndpoint("mock:wrapperEvents")
+                        .getExchanges()
+                        .get(0)
+                        .getIn()
+                        .getBody());
     }
 
     @Test
@@ -109,7 +126,13 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
         // Then
         getMockEndpoint("mock:customListenerEvents").setExpectedMessageCount(1);
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(wrappedMessage, getMockEndpoint("mock:customListenerEvents").getExchanges().get(0).getIn().getBody());
+        assertEquals(
+                wrappedMessage,
+                getMockEndpoint("mock:customListenerEvents")
+                        .getExchanges()
+                        .get(0)
+                        .getIn()
+                        .getBody());
     }
 
     @Test
@@ -125,9 +148,19 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
         // Then
         getMockEndpoint("mock:customMultiEventListenerEvents").setExpectedMessageCount(2);
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(stringEvent,
-                getMockEndpoint("mock:customMultiEventListenerEvents").getExchanges().get(0).getIn().getBody());
-        assertEquals(dateEvent, getMockEndpoint("mock:customMultiEventListenerEvents").getExchanges().get(1).getIn().getBody());
+        assertEquals(
+                stringEvent,
+                getMockEndpoint("mock:customMultiEventListenerEvents")
+                        .getExchanges()
+                        .get(0)
+                        .getIn()
+                        .getBody());
+        assertEquals(
+                dateEvent,
+                getMockEndpoint("mock:customMultiEventListenerEvents")
+                        .getExchanges()
+                        .get(1)
+                        .getIn()
+                        .getBody());
     }
-
 }

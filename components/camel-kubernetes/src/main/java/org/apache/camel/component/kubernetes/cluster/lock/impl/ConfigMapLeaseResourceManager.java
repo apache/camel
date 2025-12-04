@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.lock.impl;
 
 import java.text.SimpleDateFormat;
@@ -45,9 +46,7 @@ public class ConfigMapLeaseResourceManager implements KubernetesLeaseResourceMan
 
     @Override
     public ConfigMap fetchLeaseResource(KubernetesClient client, String namespace, String name, String group) {
-        return client.configMaps()
-                .inNamespace(namespace)
-                .withName(name).get();
+        return client.configMaps().inNamespace(namespace).withName(name).get();
     }
 
     @Override
@@ -56,49 +55,56 @@ public class ConfigMapLeaseResourceManager implements KubernetesLeaseResourceMan
         return client.configMaps()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
                 .resource(updatedConfigMap)
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion())
+                .update();
     }
 
     @Override
-    public ConfigMap optimisticAcquireLeadership(KubernetesClient client, ConfigMap leaseResource, LeaderInfo newLeaderInfo) {
+    public ConfigMap optimisticAcquireLeadership(
+            KubernetesClient client, ConfigMap leaseResource, LeaderInfo newLeaderInfo) {
         ConfigMap updatedConfigMap = getConfigMapWithNewLeader(leaseResource, newLeaderInfo);
         return client.configMaps()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
                 .resource(updatedConfigMap)
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion())
+                .update();
     }
 
     @Override
     public ConfigMap createNewLeaseResource(
             KubernetesClient client, String namespace, String leaseResourceName, LeaderInfo leaderInfo) {
-        ConfigMap newConfigMap
-                = new ConfigMapBuilder().withNewMetadata().withName(leaseResourceName).addToLabels("provider", "camel")
-                        .addToLabels("kind", "locks").endMetadata()
-                        .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
-                        .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(),
-                                formatDate(leaderInfo.getLocalTimestamp()))
-                        .build();
+        ConfigMap newConfigMap = new ConfigMapBuilder()
+                .withNewMetadata()
+                .withName(leaseResourceName)
+                .addToLabels("provider", "camel")
+                .addToLabels("kind", "locks")
+                .endMetadata()
+                .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
+                .addToData(
+                        LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp()))
+                .build();
 
-        return client.configMaps()
-                .inNamespace(namespace)
-                .resource(newConfigMap)
-                .create();
+        return client.configMaps().inNamespace(namespace).resource(newConfigMap).create();
     }
 
     @Override
-    public ConfigMap refreshLeaseRenewTime(KubernetesClient client, ConfigMap leaseResource, int minUpdateIntervalSeconds) {
+    public ConfigMap refreshLeaseRenewTime(
+            KubernetesClient client, ConfigMap leaseResource, int minUpdateIntervalSeconds) {
         // Configmap does not store renew information
         return leaseResource;
     }
 
     private static ConfigMap getConfigMapWithNewLeader(ConfigMap configMap, LeaderInfo leaderInfo) {
-        return new ConfigMapBuilder(configMap).addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
-                .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp()))
+        return new ConfigMapBuilder(configMap)
+                .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
+                .addToData(
+                        LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp()))
                 .build();
     }
 
     private static ConfigMap getConfigMapWithoutLeader(ConfigMap configMap, String group) {
-        return new ConfigMapBuilder(configMap).removeFromData(LEADER_PREFIX + group)
+        return new ConfigMapBuilder(configMap)
+                .removeFromData(LEADER_PREFIX + group)
                 .removeFromData(LOCAL_TIMESTAMP_PREFIX + group)
                 .build();
     }
@@ -141,5 +147,4 @@ public class ConfigMapLeaseResourceManager implements KubernetesLeaseResourceMan
 
         return null;
     }
-
 }

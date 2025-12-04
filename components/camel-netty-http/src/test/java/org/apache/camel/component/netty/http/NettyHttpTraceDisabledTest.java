@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
@@ -25,12 +28,11 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class NettyHttpTraceDisabledTest extends BaseNettyTest {
 
     @RegisterExtension
     AvailablePortFinder.Port portTraceOn = AvailablePortFinder.find();
+
     @RegisterExtension
     AvailablePortFinder.Port portTraceOff = AvailablePortFinder.find();
 
@@ -38,7 +40,7 @@ public class NettyHttpTraceDisabledTest extends BaseNettyTest {
     public void testTraceDisabled() throws Exception {
         HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOff + "/myservice");
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(trace)) {
+                CloseableHttpResponse response = client.execute(trace)) {
             // TRACE shouldn't be allowed by default
             assertEquals(405, response.getCode());
         }
@@ -48,7 +50,7 @@ public class NettyHttpTraceDisabledTest extends BaseNettyTest {
     public void testTraceEnabled() throws Exception {
         HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOn + "/myservice");
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(trace)) {
+                CloseableHttpResponse response = client.execute(trace)) {
             // TRACE is allowed
             assertEquals(200, response.getCode());
         }
@@ -59,10 +61,11 @@ public class NettyHttpTraceDisabledTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://localhost:" + portTraceOff + "/myservice").to("log:foo");
-                from("netty-http:http://localhost:" + portTraceOn + "/myservice?traceEnabled=true").to("log:bar");
+                from("netty-http:http://localhost:" + portTraceOff + "/myservice")
+                        .to("log:foo");
+                from("netty-http:http://localhost:" + portTraceOn + "/myservice?traceEnabled=true")
+                        .to("log:bar");
             }
         };
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -22,27 +28,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class RecentItemTest {
 
     @Test
     public void shouldDeserializeFromJSON() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Object read = mapper.readerFor(RecentItem.class).readValue("{ \n" + //
-                                                                         "    \"attributes\" : \n" + //
-                                                                         "    { \n" + //
-                                                                         "        \"type\" : \"Account\", \n" + //
-                                                                         "        \"url\" : \"/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ\" \n"
-                                                                         + //
-                                                                         "    }, \n" + //
-                                                                         "    \"Id\" : \"a06U000000CelH0IAJ\", \n" + //
-                                                                         "    \"Name\" : \"Acme\" \n" + //
-                                                                         "}");
+        final Object read = mapper.readerFor(RecentItem.class)
+                .readValue("{ \n" + //
+                        "    \"attributes\" : \n"
+                        + //
+                        "    { \n"
+                        + //
+                        "        \"type\" : \"Account\", \n"
+                        + //
+                        "        \"url\" : \"/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ\" \n"
+                        + //
+                        "    }, \n"
+                        + //
+                        "    \"Id\" : \"a06U000000CelH0IAJ\", \n"
+                        + //
+                        "    \"Name\" : \"Acme\" \n"
+                        + //
+                        "}");
 
         assertThat("RecentItem should deserialize from JSON", read, instanceOf(RecentItem.class));
 
@@ -54,10 +62,12 @@ public class RecentItemTest {
 
         assertNotNull(recentItem.getAttributes(), "RecentItem.attributes should be deserialized");
 
-        assertEquals("Account", recentItem.getAttributes().getType(), "RecentItem.attributes.type should be deserialized");
+        assertEquals(
+                "Account", recentItem.getAttributes().getType(), "RecentItem.attributes.type should be deserialized");
 
-        assertEquals("/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ", recentItem.getAttributes().getUrl(),
+        assertEquals(
+                "/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ",
+                recentItem.getAttributes().getUrl(),
                 "RecentItem.attributes.url should be deserialized");
-
     }
 }

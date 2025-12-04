@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.fhir.services;
 
 import java.time.Duration;
@@ -28,9 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = FhirInfraService.class,
-              description = "HAPI FHIR RESTful test server",
-              serviceAlias = { "fhir" })
+@InfraService(
+        service = FhirInfraService.class,
+        description = "HAPI FHIR RESTful test server",
+        serviceAlias = {"fhir"})
 public class FhirLocalContainerInfraService implements FhirInfraService, ContainerService<GenericContainer<?>> {
     // needs https://github.com/hapifhir/hapi-fhir-jpaserver-starter/commit/54120f374eea5084634830d34c99a9137b22a310
     public static final String CONTAINER_NAME = "fhir";
@@ -40,9 +42,7 @@ public class FhirLocalContainerInfraService implements FhirInfraService, Contain
     private final GenericContainer<?> container;
 
     public FhirLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(
-                FhirLocalContainerInfraService.class,
-                FhirProperties.FHIR_CONTAINER));
+        this(LocalPropertyResolver.getProperty(FhirLocalContainerInfraService.class, FhirProperties.FHIR_CONTAINER));
     }
 
     public FhirLocalContainerInfraService(String imageName) {
@@ -110,9 +110,7 @@ public class FhirLocalContainerInfraService implements FhirInfraService, Contain
     @Override
     public String getServiceBaseURL() {
         return String.format(
-                "http://%s:%d/fhir",
-                container.getHost(),
-                container.getMappedPort(FhirProperties.DEFAULT_SERVICE_PORT));
+                "http://%s:%d/fhir", container.getHost(), container.getMappedPort(FhirProperties.DEFAULT_SERVICE_PORT));
     }
 
     @Override

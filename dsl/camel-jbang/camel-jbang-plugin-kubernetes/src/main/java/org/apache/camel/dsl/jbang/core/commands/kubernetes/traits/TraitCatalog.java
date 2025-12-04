@@ -77,7 +77,8 @@ public class TraitCatalog {
      */
     public void apply(Traits traitsSpec, TraitContext context, String clusterType, RuntimeType runtimeType) {
         if (clusterType != null) {
-            new TraitCatalog().traitsForProfile(ClusterType.valueOf(clusterType.toUpperCase(Locale.US)))
+            new TraitCatalog()
+                    .traitsForProfile(ClusterType.valueOf(clusterType.toUpperCase(Locale.US)))
                     .forEach(t -> {
                         if (t.configure(traitsSpec, context)) {
                             t.apply(traitsSpec, context);
@@ -93,5 +94,4 @@ public class TraitCatalog {
             });
         }
     }
-
 }

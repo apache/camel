@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.apache.camel.test.spring.junit5.SpringTestExecutionListenerSorter.getPrecedence;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,10 +29,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestContextLoaderTestExecu
 import org.apache.camel.test.spring.junit5.SpringTestExecutionListenerSorter;
 import org.apache.camel.test.spring.junit5.StopWatchTestExecutionListener;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.spring.junit5.SpringTestExecutionListenerSorter.getPrecedence;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringTestExecutionListenerSorterTest {
 
@@ -48,5 +49,4 @@ public class SpringTestExecutionListenerSorterTest {
     void getPrecedenceForWrongClassShouldThrow() {
         assertThrows(IllegalArgumentException.class, () -> getPrecedence(Object.class));
     }
-
 }

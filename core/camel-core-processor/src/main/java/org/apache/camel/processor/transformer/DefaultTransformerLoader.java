@@ -32,10 +32,8 @@ public class DefaultTransformerLoader extends Transformer implements Transformer
     @SuppressWarnings("resource")
     @Override
     public void load(TransformerRegistry registry) {
-        Transformer[] defaultTransformers = new Transformer[] {
-                new ByteArrayDataTypeTransformer(),
-                new StringDataTypeTransformer()
-        };
+        Transformer[] defaultTransformers =
+                new Transformer[] {new ByteArrayDataTypeTransformer(), new StringDataTypeTransformer()};
 
         for (Transformer defaultTransformer : defaultTransformers) {
             registry.put(TransformerKey.createFrom(defaultTransformer), defaultTransformer);

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,18 +46,15 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values} APIs.
  */
 public class SheetsSpreadsheetsValuesIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(SheetsSpreadsheetsValuesIT.class);
-    private static final String PATH_PREFIX
-            = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsValuesApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleSheetsApiCollection.getCollection()
+            .getApiName(SheetsSpreadsheetsValuesApiMethod.class)
+            .getName();
 
     @Nested
     class GetIT extends AbstractGoogleSheetsTestSupport {
@@ -77,9 +79,8 @@ public class SheetsSpreadsheetsValuesIT {
 
         @Override
         protected GoogleSheetsClientFactory getClientFactory() throws Exception {
-            return new MockGoogleSheetsClientFactory(
-                    new MockLowLevelHttpResponse()
-                            .setContent("{" + "\"range\": \"" + TEST_RANGE + "\"," + "\"majorDimension\": \"ROWS\"" + "}"));
+            return new MockGoogleSheetsClientFactory(new MockLowLevelHttpResponse()
+                    .setContent("{" + "\"range\": \"" + TEST_RANGE + "\"," + "\"majorDimension\": \"ROWS\"" + "}"));
         }
 
         @Override
@@ -87,8 +88,7 @@ public class SheetsSpreadsheetsValuesIT {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct://GET")
-                            .to("google-sheets://" + PATH_PREFIX + "/get");
+                    from("direct://GET").to("google-sheets://" + PATH_PREFIX + "/get");
                 }
             };
         }
@@ -98,9 +98,7 @@ public class SheetsSpreadsheetsValuesIT {
     class UpdateIT extends AbstractGoogleSheetsTestSupport {
         private Spreadsheet testSheet = getSpreadsheet();
         private String range = "TEST_SHEET!A1:B2";
-        private List<List<Object>> data = Arrays.asList(
-                Arrays.asList("A1", "B1"),
-                Arrays.asList("A2", "B2"));
+        private List<List<Object>> data = Arrays.asList(Arrays.asList("A1", "B1"), Arrays.asList("A2", "B2"));
 
         @Test
         public void test() throws Exception {
@@ -132,16 +130,19 @@ public class SheetsSpreadsheetsValuesIT {
 
         @Override
         protected GoogleSheetsClientFactory getClientFactory() throws Exception {
-            return new MockGoogleSheetsClientFactory(
-                    new MockLowLevelHttpResponse()
-                            .setContent("{" + "\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\","
-                                        + "\"updatedRange\": \"" + range + "\"," + "\"updatedRows\": "
-                                        + data.size() + "," + "\"updatedColumns\": "
-                                        + Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) + ","
-                                        + "\"updatedCells\": "
-                                        + data.size()
-                                          * Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0)
-                                        + "}"));
+            return new MockGoogleSheetsClientFactory(new MockLowLevelHttpResponse()
+                    .setContent("{" + "\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\","
+                            + "\"updatedRange\": \"" + range + "\"," + "\"updatedRows\": "
+                            + data.size() + "," + "\"updatedColumns\": "
+                            + Optional.ofNullable(data.get(0))
+                                    .map(Collection::size)
+                                    .orElse(0) + ","
+                            + "\"updatedCells\": "
+                            + data.size()
+                                    * Optional.ofNullable(data.get(0))
+                                            .map(Collection::size)
+                                            .orElse(0)
+                            + "}"));
         }
 
         @Override
@@ -149,8 +150,7 @@ public class SheetsSpreadsheetsValuesIT {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct://UPDATE")
-                            .to("google-sheets://" + PATH_PREFIX + "/update");
+                    from("direct://UPDATE").to("google-sheets://" + PATH_PREFIX + "/update");
                 }
             };
         }
@@ -161,7 +161,8 @@ public class SheetsSpreadsheetsValuesIT {
         private Spreadsheet testSheet = getSpreadsheet();
         private List<List<Object>> data = Collections.singletonList(Arrays.asList("A10", "B10", "C10"));
         private String range = TEST_SHEET + "!A10";
-        private String updateRange = TEST_SHEET + "!" + data.get(0).get(0) + ":" + data.get(0).get(data.get(0).size() - 1);
+        private String updateRange = TEST_SHEET + "!" + data.get(0).get(0) + ":"
+                + data.get(0).get(data.get(0).size() - 1);
 
         @Test
         public void test() throws Exception {
@@ -189,18 +190,21 @@ public class SheetsSpreadsheetsValuesIT {
 
         @Override
         protected GoogleSheetsClientFactory getClientFactory() throws Exception {
-            return new MockGoogleSheetsClientFactory(
-                    new MockLowLevelHttpResponse()
-                            .setContent(
-                                    "{" + "\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\"," + "\"updates\":" + "{"
-                                        + "\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\","
-                                        + "\"updatedRange\": \"" + updateRange + "\"," + "\"updatedRows\": "
-                                        + data.size() + "," + "\"updatedColumns\": "
-                                        + Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0) + ","
-                                        + "\"updatedCells\": "
-                                        + data.size()
-                                          * Optional.ofNullable(data.get(0)).map(Collection::size).orElse(0)
-                                        + "}" + "}"));
+            return new MockGoogleSheetsClientFactory(new MockLowLevelHttpResponse()
+                    .setContent(
+                            "{" + "\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\"," + "\"updates\":" + "{"
+                                    + "\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\","
+                                    + "\"updatedRange\": \"" + updateRange + "\"," + "\"updatedRows\": "
+                                    + data.size() + "," + "\"updatedColumns\": "
+                                    + Optional.ofNullable(data.get(0))
+                                            .map(Collection::size)
+                                            .orElse(0) + ","
+                                    + "\"updatedCells\": "
+                                    + data.size()
+                                            * Optional.ofNullable(data.get(0))
+                                                    .map(Collection::size)
+                                                    .orElse(0)
+                                    + "}" + "}"));
         }
 
         @Override
@@ -208,8 +212,7 @@ public class SheetsSpreadsheetsValuesIT {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct://APPEND")
-                            .to("google-sheets://" + PATH_PREFIX + "/append");
+                    from("direct://APPEND").to("google-sheets://" + PATH_PREFIX + "/append");
                 }
             };
         }
@@ -240,10 +243,9 @@ public class SheetsSpreadsheetsValuesIT {
 
         @Override
         protected GoogleSheetsClientFactory getClientFactory() throws Exception {
-            return new MockGoogleSheetsClientFactory(
-                    new MockLowLevelHttpResponse().setContent(
-                            "{" + "\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\"," + "\"clearedRange\": \""
-                                                              + TEST_RANGE + "\"" + "}"));
+            return new MockGoogleSheetsClientFactory(new MockLowLevelHttpResponse()
+                    .setContent("{" + "\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\","
+                            + "\"clearedRange\": \"" + TEST_RANGE + "\"" + "}"));
         }
 
         @Override
@@ -251,8 +253,7 @@ public class SheetsSpreadsheetsValuesIT {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct://CLEAR")
-                            .to("google-sheets://" + PATH_PREFIX + "/clear");
+                    from("direct://CLEAR").to("google-sheets://" + PATH_PREFIX + "/clear");
                 }
             };
         }

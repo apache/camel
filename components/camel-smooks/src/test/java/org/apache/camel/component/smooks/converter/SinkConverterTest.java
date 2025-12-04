@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 
@@ -24,8 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smooks.io.sink.StringSink;
 import org.smooks.io.source.ReaderSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SinkConverterTest {
 
@@ -52,5 +53,4 @@ public class SinkConverterTest {
         stringResult.getStringWriter().write(string);
         return stringResult;
     }
-
 }

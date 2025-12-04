@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,10 +38,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /*
  * Note: these tests offer only a naive check of the deliveryDelay functionality as they check the
  * test duration. There is no guarantee that the cause for the delay is actually the deliveryDelay
@@ -44,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * taking a long time to handle this test workload. Nonetheless, it can still be useful for investigating
  * bugs which is why we keep them here.
  */
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
     private static final Logger LOG = LoggerFactory.getLogger(JmsDeliveryDelayTest.class);
@@ -65,7 +66,8 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
         mock.expectedBodiesReceived("Hello World from testInOnlyWithDelay");
 
         routeWatch.restart();
-        template.sendBody("activemq:topic:JmsDeliveryDelayTest1?deliveryDelay=1000", "Hello World from testInOnlyWithDelay");
+        template.sendBody(
+                "activemq:topic:JmsDeliveryDelayTest1?deliveryDelay=1000", "Hello World from testInOnlyWithDelay");
         if (!routeComplete.await(5000, TimeUnit.MILLISECONDS)) {
             fail("Message was not received from Artemis topic for too long");
         }
@@ -102,14 +104,16 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
             public void configure() {
                 from("activemq:topic:JmsDeliveryDelayTest1")
                         .routeId("route-1")
-                        .process(exchange -> LOG.info("Received from JmsDeliveryDelayTest1: {}",
+                        .process(exchange -> LOG.info(
+                                "Received from JmsDeliveryDelayTest1: {}",
                                 exchange.getMessage().getBody()))
                         .process(exchange -> routeComplete.countDown())
                         .to("mock:result");
 
                 from("activemq:topic:JmsDeliveryDelayTest2")
                         .routeId("route-2")
-                        .process(exchange -> LOG.info("Received from JmsDeliveryDelayTest2: {}",
+                        .process(exchange -> LOG.info(
+                                "Received from JmsDeliveryDelayTest2: {}",
                                 exchange.getMessage().getBody()))
                         .to("mock:result");
             }

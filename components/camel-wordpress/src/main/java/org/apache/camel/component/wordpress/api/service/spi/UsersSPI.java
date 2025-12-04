@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.spi;
 
 import java.util.List;
@@ -47,18 +48,26 @@ public interface UsersSPI {
     @Path("/v{apiVersion}/users")
     @Produces(MediaType.APPLICATION_JSON)
     List<User> list(
-            @PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context,
-            @QueryParam("page") Integer page, @QueryParam("per_page") Integer perPage,
-            @QueryParam("search") String search, @QueryParam("exclude") List<Integer> exclude,
-            @QueryParam("include") List<Integer> include, @QueryParam("offset") List<Integer> offset,
-            @QueryParam("order") Order order, @QueryParam("orderby") UserOrderBy orderBy, @QueryParam("slug") List<String> slug,
+            @PathParam("apiVersion") String apiVersion,
+            @QueryParam("context") Context context,
+            @QueryParam("page") Integer page,
+            @QueryParam("per_page") Integer perPage,
+            @QueryParam("search") String search,
+            @QueryParam("exclude") List<Integer> exclude,
+            @QueryParam("include") List<Integer> include,
+            @QueryParam("offset") List<Integer> offset,
+            @QueryParam("order") Order order,
+            @QueryParam("orderby") UserOrderBy orderBy,
+            @QueryParam("slug") List<String> slug,
             @QueryParam("roles") List<String> roles);
 
     @GET
     @Path("/v{apiVersion}/users/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     User retrieve(
-            @PathParam("apiVersion") String apiVersion, @PathParam("id") Integer id, @QueryParam("context") Context context);
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("id") Integer id,
+            @QueryParam("context") Context context);
 
     @POST
     @Path("/v{apiVersion}/users")
@@ -77,6 +86,8 @@ public interface UsersSPI {
     @DELETE
     @Path("/v{apiVersion}/users/{id}")
     DeletedModel<User> delete(
-            @PathParam("apiVersion") String apiVersion, @PathParam("id") Integer id, @QueryParam("force") boolean force,
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("id") Integer id,
+            @QueryParam("force") boolean force,
             @QueryParam("reassign") Integer reassignId);
 }

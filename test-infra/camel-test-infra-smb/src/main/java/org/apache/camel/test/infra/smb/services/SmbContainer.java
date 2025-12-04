@@ -25,13 +25,11 @@ public class SmbContainer extends GenericContainer<SmbContainer> {
 
     public static final int SMB_PORT_DEFAULT = 445;
     public static final String DEFAULT_USER = "camel";
-    // NOTE: default value used for testing purposes only.
-    public static final String DEFAULT_PASSWORD = "camelTester123"; // NOSONAR
+    public static final String DEFAULT_PASSWORD = "camelTester123";
 
     public SmbContainer(boolean fixedPort) {
         super(new ImageFromDockerfile("localhost/samba:camel", false)
-                .withFileFromClasspath(".",
-                        "org/apache/camel/test/infra/smb/services/"));
+                .withFileFromClasspath(".", "org/apache/camel/test/infra/smb/services/"));
 
         if (fixedPort) {
             addFixedExposedPort(SMB_PORT_DEFAULT, SMB_PORT_DEFAULT);

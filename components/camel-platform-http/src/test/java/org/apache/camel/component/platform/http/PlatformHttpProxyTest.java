@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
 
 import io.restassured.http.ContentType;
 import org.apache.camel.Exchange;
@@ -22,18 +26,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.containsString;
-
 @Disabled("Broken test: fails due to invalid host")
 public class PlatformHttpProxyTest extends AbstractPlatformHttpTest {
     @Test
     void testProxy() {
-        given()
-                .body("hello")
+        given().body("hello")
                 .proxy("http://localhost:" + AbstractPlatformHttpTest.port)
                 .contentType(ContentType.HTML)
-                .when().get("http://neverssl.com:80")
+                .when()
+                .get("http://neverssl.com:80")
                 .then()
                 .statusCode(200)
                 .body(containsString("<html>"));
@@ -45,12 +46,11 @@ public class PlatformHttpProxyTest extends AbstractPlatformHttpTest {
             @Override
             public void configure() {
                 from("platform-http:proxy")
-                        .toD("${headers." + Exchange.HTTP_SCHEME + "}://" +
-                             "${headers." + Exchange.HTTP_HOST + "}:" +
-                             "${headers." + Exchange.HTTP_PORT + "}" +
-                             "${headers." + Exchange.HTTP_PATH + "}?bridgeEndpoint=true");
+                        .toD("${headers." + Exchange.HTTP_SCHEME + "}://" + "${headers."
+                                + Exchange.HTTP_HOST + "}:" + "${headers."
+                                + Exchange.HTTP_PORT + "}" + "${headers."
+                                + Exchange.HTTP_PATH + "}?bridgeEndpoint=true");
             }
         };
     }
-
 }

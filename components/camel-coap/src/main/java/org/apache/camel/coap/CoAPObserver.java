@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
 
 import java.io.IOException;
@@ -65,7 +66,8 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
 
     @Override
     public void onError() {
-        getExceptionHandler().handleException(new IOException("CoAP request timed out or has been rejected by the server"));
+        getExceptionHandler()
+                .handleException(new IOException("CoAP request timed out or has been rejected by the server"));
         startObserve();
     }
 

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.ALWAYS;
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_METERS;
 
 import java.time.Duration;
 import java.util.function.Predicate;
@@ -23,9 +27,6 @@ import java.util.stream.LongStream;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.ALWAYS;
-import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_METERS;
 
 /**
  * Filter for adding distribution statistics to Timers and Distribution Summaries. Configure and add this to the

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -31,7 +32,7 @@ public class FtpConsumerIdempotentKeyChangedIssueIT extends FtpServerTestSupport
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/idempotent?password=admin&readLock=changed"
-               + "&idempotentKey=${file:onlyname}-${file:size}-${date:file:yyyyMMddHHmmss}";
+                + "&idempotentKey=${file:onlyname}-${file:size}-${date:file:yyyyMMddHHmmss}";
     }
 
     @Test
@@ -63,5 +64,4 @@ public class FtpConsumerIdempotentKeyChangedIssueIT extends FtpServerTestSupport
             }
         };
     }
-
 }

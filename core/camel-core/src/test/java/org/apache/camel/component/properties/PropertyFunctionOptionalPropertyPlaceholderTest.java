@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PropertiesFunction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTestSupport {
 
@@ -40,9 +41,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setBody().constant("{{?myKey}}")
-                        .to("mock:result");
+                from("direct:start").setBody().constant("{{?myKey}}").to("mock:result");
             }
         });
         context.start();
@@ -67,9 +66,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setBody().constant("{{?myKey}}")
-                        .to("mock:result");
+                from("direct:start").setBody().constant("{{?myKey}}").to("mock:result");
             }
         });
         context.start();
@@ -89,9 +86,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setBody().constant("{{reverse:?myKey}}")
-                        .to("mock:result");
+                from("direct:start").setBody().constant("{{reverse:?myKey}}").to("mock:result");
             }
         });
         context.start();
@@ -112,9 +107,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setBody().constant("{{magic:myMagic}}")
-                        .to("mock:result");
+                from("direct:start").setBody().constant("{{magic:myMagic}}").to("mock:result");
             }
         });
         context.start();
@@ -135,9 +128,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setBody().constant("{{magic:myOptional}}")
-                        .to("mock:result");
+                from("direct:start").setBody().constant("{{magic:myOptional}}").to("mock:result");
             }
         });
         context.start();
@@ -162,9 +153,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setBody().constant("{{reverse:?myKey}}")
-                        .to("mock:result");
+                from("direct:start").setBody().constant("{{reverse:?myKey}}").to("mock:result");
             }
         });
         context.start();
@@ -179,8 +168,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
 
     @Test
     public void testKeepUnresolved() {
-        String out = context.getCamelContextExtension()
-                .resolvePropertyPlaceholders("{{reverse:?myKey}}", true);
+        String out = context.getCamelContextExtension().resolvePropertyPlaceholders("{{reverse:?myKey}}", true);
         Assertions.assertEquals("{{?myKey}}", out);
     }
 
@@ -189,8 +177,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result?retainFirst={{reverse:?maxKeep}}");
+                from("direct:start").to("mock:result?retainFirst={{reverse:?maxKeep}}");
             }
         });
         context.start();
@@ -211,8 +198,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result?retainFirst={{reverse:?maxKeep}}");
+                from("direct:start").to("mock:result?retainFirst={{reverse:?maxKeep}}");
             }
         });
         context.start();
@@ -224,13 +210,18 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(2, getMockEndpoint("mock:result?retainFirst=123").getReceivedExchanges().size());
+        assertEquals(
+                2,
+                getMockEndpoint("mock:result?retainFirst=123")
+                        .getReceivedExchanges()
+                        .size());
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         ReverseFunction func = new ReverseFunction();
         func.setCamelContext(context);
         context.getPropertiesComponent().addPropertiesFunction(func);
@@ -303,5 +294,4 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
             return "myOptional".equals(remainder);
         }
     }
-
 }

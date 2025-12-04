@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,8 +33,6 @@ import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SaxonUriResolverTest extends CamelTestSupport {
     private static final String XSL_PATH = "org/apache/camel/component/xslt/transform_includes_data.xsl";
@@ -61,7 +62,6 @@ public class SaxonUriResolverTest extends CamelTestSupport {
     }
 
     protected Source fromClasspath(String path) throws IOException {
-        return new StreamSource(
-                ResourceHelper.resolveMandatoryResourceAsInputStream(context(), path));
+        return new StreamSource(ResourceHelper.resolveMandatoryResourceAsInputStream(context(), path));
     }
 }

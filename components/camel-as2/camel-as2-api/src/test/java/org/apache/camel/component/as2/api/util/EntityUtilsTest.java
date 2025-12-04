@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
 
 import java.nio.charset.StandardCharsets;
@@ -32,39 +33,37 @@ public class EntityUtilsTest {
     public void testCreateEDIEntityContentTypeWithoutEncoding() throws Exception {
         ContentType ediMessageContentType = ContentType.create(AS2MediaType.APPLICATION_EDIFACT, (String) null);
         String ediMessage = "whatever";
-        ApplicationEntity applicationEntity
-                = EntityUtils.createEDIEntity(ediMessage.getBytes(StandardCharsets.US_ASCII), ediMessageContentType, null,
-                        false, "sample.txt");
+        ApplicationEntity applicationEntity = EntityUtils.createEDIEntity(
+                ediMessage.getBytes(StandardCharsets.US_ASCII), ediMessageContentType, null, false, "sample.txt");
         String actualContentType = applicationEntity.getContentType();
         Assertions.assertEquals("application/edifact", actualContentType, "content type matches");
         Header[] actualContentDisposition = applicationEntity.getHeaders(AS2Header.CONTENT_DISPOSITION);
         Assertions.assertEquals(1, actualContentDisposition.length, "exactly one Content-Disposition header found");
-        Assertions.assertEquals("Content-Disposition: attachment; filename=sample.txt",
-                actualContentDisposition[0].toString());
+        Assertions.assertEquals(
+                "Content-Disposition: attachment; filename=sample.txt", actualContentDisposition[0].toString());
     }
 
     @Test
     public void testCreateEDIEntityContentTypeWithEncoding() throws Exception {
-        ContentType ediMessageContentType = ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII);
+        ContentType ediMessageContentType =
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII);
         String ediMessage = "whatever";
-        ApplicationEntity applicationEntity
-                = EntityUtils.createEDIEntity(ediMessage.getBytes(StandardCharsets.US_ASCII), ediMessageContentType, null,
-                        false, "sample.txt");
+        ApplicationEntity applicationEntity = EntityUtils.createEDIEntity(
+                ediMessage.getBytes(StandardCharsets.US_ASCII), ediMessageContentType, null, false, "sample.txt");
         String actualContentType = applicationEntity.getContentType();
         Assertions.assertEquals("application/edifact; charset=US-ASCII", actualContentType, "content type matches");
         Header[] actualContentDisposition = applicationEntity.getHeaders(AS2Header.CONTENT_DISPOSITION);
         Assertions.assertEquals(1, actualContentDisposition.length, "exactly one Content-Disposition header found");
-        Assertions.assertEquals("Content-Disposition: attachment; filename=sample.txt",
-                actualContentDisposition[0].toString());
+        Assertions.assertEquals(
+                "Content-Disposition: attachment; filename=sample.txt", actualContentDisposition[0].toString());
     }
 
     @Test
     public void testCreateEDIEntityContentTypeWithoutContentDisposition() throws Exception {
         ContentType ediMessageContentType = ContentType.create(AS2MediaType.APPLICATION_EDIFACT, (String) null);
         String ediMessage = "whatever";
-        ApplicationEntity applicationEntity
-                = EntityUtils.createEDIEntity(ediMessage.getBytes(StandardCharsets.US_ASCII), ediMessageContentType, null,
-                        false, "");
+        ApplicationEntity applicationEntity = EntityUtils.createEDIEntity(
+                ediMessage.getBytes(StandardCharsets.US_ASCII), ediMessageContentType, null, false, "");
         String actualContentType = applicationEntity.getContentType();
         Assertions.assertEquals("application/edifact", actualContentType, "content type matches");
         Header[] actualContentDisposition = applicationEntity.getHeaders(AS2Header.CONTENT_DISPOSITION);

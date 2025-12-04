@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
 
 import org.apache.camel.spi.Metadata;
@@ -26,18 +27,16 @@ public class ThymeleafConstants {
     @Metadata(description = "The content of the Thymeleaf template.", javaType = "String")
     public static final String THYMELEAF_TEMPLATE = "CamelThymeleafTemplate";
 
-    @Metadata(description = "The value of this header should be a `Map` with key/values that will be\n" +
-                            "override any existing key with the same name. \n" +
-                            "This can be used to preconfigure common key/values you want to reuse\n" +
-                            "in your Thymeleaf endpoints.",
-              javaType = "Map<String, Object>")
+    @Metadata(
+            description = "The value of this header should be a `Map` with key/values that will be\n"
+                    + "override any existing key with the same name. \n"
+                    + "This can be used to preconfigure common key/values you want to reuse\n"
+                    + "in your Thymeleaf endpoints.",
+            javaType = "Map<String, Object>")
     public static final String THYMELEAF_VARIABLE_MAP = "CamelThymeleafVariableMap";
 
     @Metadata(description = "The ServletContext for a web application.", javaType = "jakarta.servlet.ServletContext")
     public static final String THYMELEAF_SERVLET_CONTEXT = "CamelThymeleafServletContext";
 
-    private ThymeleafConstants() {
-
-    }
-
+    private ThymeleafConstants() {}
 }

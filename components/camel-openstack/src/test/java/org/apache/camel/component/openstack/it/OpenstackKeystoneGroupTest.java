@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,16 +31,11 @@ import org.junit.jupiter.api.Test;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.identity.v3.Group;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenstackKeystoneGroupTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-keystone://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + KeystoneConstants.GROUPS;
+    private static final String URI_FORMAT =
+            "openstack-keystone://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + KeystoneConstants.GROUPS;
 
     private static final String GROUP_NAME = "GROUP_CRUD";
     private static final String GROUP_ID = "c0d675eac29945ad9dfd08aa1bb75751";
@@ -44,7 +45,11 @@ public class OpenstackKeystoneGroupTest extends OpenstackWiremockTestSupport {
 
     @Test
     void createShouldSucceed() {
-        Group in = Builders.group().name(GROUP_NAME).description(GROUP_DESCRIPTION).domainId(GROUP_DOMAIN_ID).build();
+        Group in = Builders.group()
+                .name(GROUP_NAME)
+                .description(GROUP_DESCRIPTION)
+                .domainId(GROUP_DOMAIN_ID)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.CREATE);
         Group out = template.requestBody(uri, in, Group.class);
@@ -84,7 +89,10 @@ public class OpenstackKeystoneGroupTest extends OpenstackWiremockTestSupport {
 
     @Test
     void updateShouldSucceed() {
-        Group in = Builders.group().id(GROUP_ID).description(GROUP_DESCRIPTION_UPDATED).build();
+        Group in = Builders.group()
+                .id(GROUP_ID)
+                .description(GROUP_DESCRIPTION_UPDATED)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.UPDATE);
         Group out = template.requestBody(uri, in, Group.class);

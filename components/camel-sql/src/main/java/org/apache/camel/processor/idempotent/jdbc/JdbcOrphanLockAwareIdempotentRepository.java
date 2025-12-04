@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
@@ -63,27 +64,31 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     /** intervals after which keep alive is sent for the locks held by an instance **/
     private long lockKeepAliveIntervalMillis;
 
-    private String updateTimestampQuery
-            = "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt =? WHERE processorName =? AND messageId = ?";
+    private String updateTimestampQuery =
+            "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt =? WHERE processorName =? AND messageId = ?";
 
     public JdbcOrphanLockAwareIdempotentRepository(CamelContext camelContext) {
         super();
         this.context = camelContext;
     }
 
-    public JdbcOrphanLockAwareIdempotentRepository(DataSource dataSource, String processorName, CamelContext camelContext) {
+    public JdbcOrphanLockAwareIdempotentRepository(
+            DataSource dataSource, String processorName, CamelContext camelContext) {
         super(dataSource, processorName);
         this.context = camelContext;
     }
 
-    public JdbcOrphanLockAwareIdempotentRepository(DataSource dataSource, TransactionTemplate transactionTemplate,
-                                                   String processorName, CamelContext camelContext) {
+    public JdbcOrphanLockAwareIdempotentRepository(
+            DataSource dataSource,
+            TransactionTemplate transactionTemplate,
+            String processorName,
+            CamelContext camelContext) {
         super(dataSource, transactionTemplate, processorName);
         this.context = camelContext;
     }
 
-    public JdbcOrphanLockAwareIdempotentRepository(JdbcTemplate jdbcTemplate,
-                                                   TransactionTemplate transactionTemplate, CamelContext camelContext) {
+    public JdbcOrphanLockAwareIdempotentRepository(
+            JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate, CamelContext camelContext) {
         super(jdbcTemplate, transactionTemplate);
         this.context = camelContext;
     }
@@ -96,8 +101,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
          */
         String orphanLockRecoverQueryString = getQueryString() + " AND createdAt >= ?";
         Timestamp xMillisAgo = new Timestamp(System.currentTimeMillis() - lockMaxAgeMillis);
-        return jdbcTemplate.queryForObject(orphanLockRecoverQueryString, Integer.class, processorName, key,
-                xMillisAgo);
+        return jdbcTemplate.queryForObject(orphanLockRecoverQueryString, Integer.class, processorName, key, xMillisAgo);
     }
 
     @Override
@@ -110,7 +114,6 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         } finally {
             sl.unlockWrite(stamp);
         }
-
     }
 
     @Override
@@ -123,9 +126,8 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
                 processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
                 return result;
             } else {
-                //Update in case of orphan lock where a process dies without releasing exist lock
-                return jdbcTemplate.update(getUpdateTimestampQuery(), currentTimestamp,
-                        processorName, key);
+                // Update in case of orphan lock where a process dies without releasing exist lock
+                return jdbcTemplate.update(getUpdateTimestampQuery(), currentTimestamp, processorName, key);
             }
         } finally {
             sl.unlockWrite(stamp);
@@ -144,12 +146,16 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
             updateTimestampQuery = updateTimestampQuery.replaceFirst(DEFAULT_TABLENAME, getTableName());
         }
         executorServiceManager = context.getExecutorServiceManager();
-        executorService = executorServiceManager.newSingleThreadScheduledExecutor(this, this.getClass().getSimpleName());
+        executorService = executorServiceManager.newSingleThreadScheduledExecutor(
+                this, this.getClass().getSimpleName());
 
         // Schedule a task which will keep updating the timestamp on the acquired locks at lockKeepAliveInterval so that
         // the timestamp does not reaches lockMaxAge
-        executorService.scheduleWithFixedDelay(new LockKeepAliveTask(), lockKeepAliveIntervalMillis,
-                lockKeepAliveIntervalMillis, TimeUnit.MILLISECONDS);
+        executorService.scheduleWithFixedDelay(
+                new LockKeepAliveTask(),
+                lockKeepAliveIntervalMillis,
+                lockKeepAliveIntervalMillis,
+                TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -169,7 +175,6 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         } finally {
             sl.unlockWrite(stamp);
         }
-
     }
 
     void keepAlive() {
@@ -178,7 +183,8 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         try {
             List<Object[]> args = processorNameMessageIdSet.stream()
                     .map(processorNameMessageId -> new Object[] {
-                            currentTimestamp, processorNameMessageId.processorName, processorNameMessageId.messageId })
+                        currentTimestamp, processorNameMessageId.processorName, processorNameMessageId.messageId
+                    })
                     .collect(Collectors.toList());
             transactionTemplate.execute(status -> jdbcTemplate.batchUpdate(getUpdateTimestampQuery(), args));
         } catch (Exception e) {
@@ -257,7 +263,6 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
             }
             if (obj == null) {
                 return false;
-
             }
             if (getClass() != obj.getClass()) {
                 return false;
@@ -280,5 +285,4 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
             return true;
         }
     }
-
 }

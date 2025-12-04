@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
@@ -29,9 +30,13 @@ public class AuthenticationValidationHandler extends BasicValidationHandler {
     protected final String user;
     protected final String password;
 
-    public AuthenticationValidationHandler(String expectedMethod,
-                                           String expectedQuery, Object expectedContent,
-                                           String responseContent, String user, String password) {
+    public AuthenticationValidationHandler(
+            String expectedMethod,
+            String expectedQuery,
+            Object expectedContent,
+            String responseContent,
+            String user,
+            String password) {
         super(expectedMethod, expectedQuery, expectedContent, responseContent);
 
         this.user = user;
@@ -39,9 +44,7 @@ public class AuthenticationValidationHandler extends BasicValidationHandler {
     }
 
     @Override
-    public void handle(
-            final ClassicHttpRequest request, final ClassicHttpResponse response,
-            final HttpContext context)
+    public void handle(final ClassicHttpRequest request, final ClassicHttpResponse response, final HttpContext context)
             throws HttpException, IOException {
         if (!getExpectedCredential().equals(context.getAttribute("creds"))) {
             response.setCode(HttpStatus.SC_UNAUTHORIZED);

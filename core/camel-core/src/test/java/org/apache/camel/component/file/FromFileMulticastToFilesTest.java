@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,11 +30,19 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).multicast().pipeline()
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .multicast()
+                        .pipeline()
                         .transform(body().prepend("HEADER:"))
-                        .to(fileUri("out/?fileName=header.txt")).to("mock:header").end().pipeline()
+                        .to(fileUri("out/?fileName=header.txt"))
+                        .to("mock:header")
+                        .end()
+                        .pipeline()
                         .transform(body().prepend("FOOTER:"))
-                        .to(fileUri("out/?fileName=footer.txt")).to("mock:footer").end().end()
+                        .to(fileUri("out/?fileName=footer.txt"))
+                        .to("mock:footer")
+                        .end()
+                        .end()
                         .to("mock:end");
             }
         });
@@ -61,11 +70,20 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).multicast().parallelProcessing().pipeline()
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .multicast()
+                        .parallelProcessing()
+                        .pipeline()
                         .transform(body().prepend("HEADER:"))
-                        .to(fileUri("out/?fileName=header.txt")).to("mock:header").end().pipeline()
+                        .to(fileUri("out/?fileName=header.txt"))
+                        .to("mock:header")
+                        .end()
+                        .pipeline()
                         .transform(body().prepend("FOOTER:"))
-                        .to(fileUri("out/?fileName=footer.txt")).to("mock:footer").end().end()
+                        .to(fileUri("out/?fileName=footer.txt"))
+                        .to("mock:footer")
+                        .end()
+                        .end()
                         .to("mock:end");
             }
         });

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -34,32 +35,35 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,error")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "resilience4jConfiguration", "faultToleranceConfiguration", "outputs", "onFallback" })
+@XmlType(propOrder = {"resilience4jConfiguration", "faultToleranceConfiguration", "outputs", "onFallback"})
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlAttribute
     private String configuration;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private Boolean inheritErrorHandler;
+
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
+
     @XmlElement
     private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
+
     @XmlElement
     private OnFallbackDefinition onFallback;
 
-    public CircuitBreakerDefinition() {
-    }
+    public CircuitBreakerDefinition() {}
 
     protected CircuitBreakerDefinition(CircuitBreakerDefinition source) {
         super(source);
         this.configuration = source.configuration;
         this.inheritErrorHandler = source.inheritErrorHandler;
-        this.resilience4jConfiguration
-                = source.resilience4jConfiguration != null ? source.resilience4jConfiguration.copyDefinition() : null;
-        this.faultToleranceConfiguration
-                = source.faultToleranceConfiguration != null ? source.faultToleranceConfiguration.copyDefinition() : null;
+        this.resilience4jConfiguration =
+                source.resilience4jConfiguration != null ? source.resilience4jConfiguration.copyDefinition() : null;
+        this.faultToleranceConfiguration =
+                source.faultToleranceConfiguration != null ? source.faultToleranceConfiguration.copyDefinition() : null;
         this.onFallback = source.onFallback != null ? source.onFallback.copyDefinition() : null;
     }
 
@@ -157,8 +161,9 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      * Use <tt>end</tt> when configuration is complete, to return back to the Circuit Breaker EIP.
      */
     public Resilience4jConfigurationDefinition resilience4jConfiguration() {
-        resilience4jConfiguration
-                = resilience4jConfiguration == null ? new Resilience4jConfigurationDefinition(this) : resilience4jConfiguration;
+        resilience4jConfiguration = resilience4jConfiguration == null
+                ? new Resilience4jConfigurationDefinition(this)
+                : resilience4jConfiguration;
         return resilience4jConfiguration;
     }
 
@@ -177,7 +182,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      */
     public FaultToleranceConfigurationDefinition faultToleranceConfiguration() {
         faultToleranceConfiguration = faultToleranceConfiguration == null
-                ? new FaultToleranceConfigurationDefinition(this) : faultToleranceConfiguration;
+                ? new FaultToleranceConfigurationDefinition(this)
+                : faultToleranceConfiguration;
         return faultToleranceConfiguration;
     }
 
@@ -234,5 +240,4 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         onFallback.setParent(this);
         return this;
     }
-
 }

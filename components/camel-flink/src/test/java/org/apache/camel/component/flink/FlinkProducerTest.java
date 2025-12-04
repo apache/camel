@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink;
 
 import java.io.File;
@@ -65,7 +66,10 @@ public class FlinkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataSetCallback() {
-        Long linesCount = template.requestBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER,
+        Long linesCount = template.requestBodyAndHeader(
+                flinkDataSetUri,
+                null,
+                FlinkConstants.FLINK_DATASET_CALLBACK_HEADER,
                 new DataSetCallback() {
                     @Override
                     public Object onDataSet(DataSet ds, Object... payloads) {
@@ -75,14 +79,18 @@ public class FlinkProducerTest extends CamelTestSupport {
                             return null;
                         }
                     }
-                }, Long.class);
+                },
+                Long.class);
 
         Assertions.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile);
     }
 
     @Test
     public void shouldExecuteDataSetCallbackWithSinglePayload() {
-        Long linesCount = template.requestBodyAndHeader(flinkDataSetUri, 10, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER,
+        Long linesCount = template.requestBodyAndHeader(
+                flinkDataSetUri,
+                10,
+                FlinkConstants.FLINK_DATASET_CALLBACK_HEADER,
                 new DataSetCallback() {
                     @Override
                     public Object onDataSet(DataSet ds, Object... payloads) {
@@ -92,15 +100,19 @@ public class FlinkProducerTest extends CamelTestSupport {
                             return null;
                         }
                     }
-                }, Long.class);
+                },
+                Long.class);
 
         Assertions.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10);
     }
 
     @Test
     public void shouldExecuteDataSetCallbackWithPayloads() {
-        Long linesCount = template.requestBodyAndHeader(flinkDataSetUri, Arrays.<Integer> asList(10, 10),
-                FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new DataSetCallback() {
+        Long linesCount = template.requestBodyAndHeader(
+                flinkDataSetUri,
+                Arrays.<Integer>asList(10, 10),
+                FlinkConstants.FLINK_DATASET_CALLBACK_HEADER,
+                new DataSetCallback() {
                     @Override
                     public Object onDataSet(DataSet ds, Object... payloads) {
                         try {
@@ -109,14 +121,16 @@ public class FlinkProducerTest extends CamelTestSupport {
                             return null;
                         }
                     }
-                }, Long.class);
+                },
+                Long.class);
 
         Assertions.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
     }
 
     @Test
     public void shouldUseTransformationFromRegistry() {
-        Long linesCount = template.requestBody(flinkDataSetUri + "&dataSetCallback=#countLinesContaining", null, Long.class);
+        Long linesCount =
+                template.requestBody(flinkDataSetUri + "&dataSetCallback=#countLinesContaining", null, Long.class);
         Assertions.assertThat(linesCount).isGreaterThan(0L);
     }
 
@@ -125,8 +139,8 @@ public class FlinkProducerTest extends CamelTestSupport {
         final File output = Files.createTempFile("camel", "flink").toFile();
         output.delete();
 
-        template.sendBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER,
-                new VoidDataSetCallback() {
+        template.sendBodyAndHeader(
+                flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new VoidDataSetCallback() {
                     @Override
                     public void doOnDataSet(DataSet ds, Object... payloads) {
                         ds.writeAsText(output.getAbsolutePath());
@@ -149,8 +163,8 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         });
 
-        long pomLinesCount = template.requestBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER,
-                dataSetCallback, Long.class);
+        long pomLinesCount = template.requestBodyAndHeader(
+                flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback, Long.class);
 
         Assertions.assertThat(pomLinesCount).isEqualTo(19);
     }
@@ -167,7 +181,8 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         });
 
-        template.sendBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback);
+        template.sendBodyAndHeader(
+                flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback);
 
         Assertions.assertThat(output.length()).isGreaterThanOrEqualTo(0L);
     }
@@ -185,8 +200,11 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         });
 
-        long pomLinesCount = template.requestBodyAndHeader(flinkDataSetUri, Arrays.<Integer> asList(10, 10),
-                FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback,
+        long pomLinesCount = template.requestBodyAndHeader(
+                flinkDataSetUri,
+                Arrays.<Integer>asList(10, 10),
+                FlinkConstants.FLINK_DATASET_CALLBACK_HEADER,
+                dataSetCallback,
                 Long.class);
         Assertions.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
     }
@@ -196,7 +214,10 @@ public class FlinkProducerTest extends CamelTestSupport {
         final File output = File.createTempFile("camel", "flink");
         output.delete();
 
-        template.sendBodyAndHeader(flinkDataStreamUri, null, FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
+        template.sendBodyAndHeader(
+                flinkDataStreamUri,
+                null,
+                FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                 new VoidDataStreamCallback() {
                     @Override
                     public void doOnDataStream(DataStream ds, Object... payloads) {

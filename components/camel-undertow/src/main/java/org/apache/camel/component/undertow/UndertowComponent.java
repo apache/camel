@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.apache.camel.support.http.HttpUtil.recreateUrl;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -58,8 +61,6 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.http.HttpUtil.recreateUrl;
-
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
  */
@@ -75,18 +76,25 @@ public class UndertowComponent extends DefaultComponent
 
     @Metadata(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
+
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
+
     @Metadata(label = "advanced")
     private UndertowHostOptions hostOptions;
+
     @Metadata(label = "consumer")
     private boolean muteException;
+
     @Metadata(label = "security")
     private Object securityConfiguration;
+
     @Metadata(label = "security")
     private String allowedRoles;
+
     @Metadata(label = "security")
     private UndertowSecurityProvider securityProvider;
 
@@ -154,35 +162,58 @@ public class UndertowComponent extends DefaultComponent
 
     @Override
     public Consumer createConsumer(
-            CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            Processor processor,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
-        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
-                parameters, false);
+        return doCreateConsumer(
+                camelContext,
+                processor,
+                verb,
+                basePath,
+                uriTemplate,
+                consumes,
+                produces,
+                configuration,
+                parameters,
+                false);
     }
 
     @Override
     public Consumer createApiConsumer(
-            CamelContext camelContext, Processor processor, String contextPath,
-            RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            Processor processor,
+            String contextPath,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
-        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+        return doCreateConsumer(
+                camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
     }
 
     private void initSecurityProvider() throws Exception {
         Object securityConfiguration = getSecurityConfiguration();
         if (securityConfiguration != null) {
-            ServiceLoader<UndertowSecurityProvider> securityProvider = ServiceLoader.load(UndertowSecurityProvider.class);
+            ServiceLoader<UndertowSecurityProvider> securityProvider =
+                    ServiceLoader.load(UndertowSecurityProvider.class);
 
             Iterator<UndertowSecurityProvider> iter = securityProvider.iterator();
             List<String> providers = new LinkedList();
             while (iter.hasNext()) {
                 UndertowSecurityProvider security = iter.next();
-                //only securityProvider, who accepts security configuration, could be used
+                // only securityProvider, who accepts security configuration, could be used
                 if (security.acceptConfiguration(securityConfiguration, null)) {
                     this.securityProvider = security;
-                    LOG.info("Security provider found {}", securityProvider.getClass().getName());
+                    LOG.info(
+                            "Security provider found {}",
+                            securityProvider.getClass().getName());
                     break;
                 }
                 providers.add(security.getClass().getName());
@@ -194,8 +225,16 @@ public class UndertowComponent extends DefaultComponent
     }
 
     Consumer doCreateConsumer(
-            CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api)
+            CamelContext camelContext,
+            Processor processor,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters,
+            boolean api)
             throws Exception {
         String path = basePath;
         if (uriTemplate != null) {
@@ -214,7 +253,6 @@ public class UndertowComponent extends DefaultComponent
         RestConfiguration config = configuration;
         if (config == null) {
             config = CamelContextHelper.getRestConfiguration(camelContext, getComponentName());
-
         }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
@@ -276,7 +314,8 @@ public class UndertowComponent extends DefaultComponent
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null
+                && !config.getConsumerProperties().isEmpty()) {
             setProperties(camelContext, consumer, config.getConsumerProperties());
         }
         if (consumer instanceof UndertowConsumer) {
@@ -289,9 +328,16 @@ public class UndertowComponent extends DefaultComponent
 
     @Override
     public Producer createProducer(
-            CamelContext camelContext, String host,
-            String verb, String basePath, String uriTemplate, String queryParameters,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            String host,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String queryParameters,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
 
         // avoid leading slash
@@ -311,9 +357,11 @@ public class UndertowComponent extends DefaultComponent
 
         Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
-        if (config.getProducerComponent() == null || config.getProducerComponent().equals(getComponentName())) {
+        if (config.getProducerComponent() == null
+                || config.getProducerComponent().equals(getComponentName())) {
             // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+            if (config.getEndpointProperties() != null
+                    && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
             }
         }
@@ -325,7 +373,8 @@ public class UndertowComponent extends DefaultComponent
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component
-        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
+        RestProducerFactoryHelper.setupComponentFor(
+                url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
         UndertowEndpoint endpoint = (UndertowEndpoint) camelContext.getEndpoint(url, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
@@ -349,7 +398,8 @@ public class UndertowComponent extends DefaultComponent
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), getComponentName());
 
             // configure additional options on undertow configuration
-            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            if (config.getComponentProperties() != null
+                    && !config.getComponentProperties().isEmpty()) {
                 setProperties(this, config.getComponentProperties());
             }
         } catch (IllegalArgumentException e) {
@@ -360,7 +410,10 @@ public class UndertowComponent extends DefaultComponent
     }
 
     public HttpHandler registerEndpoint(
-            UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler)
+            UndertowConsumer consumer,
+            HttpHandlerRegistrationInfo registrationInfo,
+            SSLContext sslContext,
+            HttpHandler handler)
             throws Exception {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);

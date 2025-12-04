@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.embeddings;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,16 +34,14 @@ import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.embedding.EmbeddingResponseMetadata;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        SpringAiEmbeddingsComponent component
-                = context.getComponent(SpringAiEmbeddings.SCHEME, SpringAiEmbeddingsComponent.class);
+        SpringAiEmbeddingsComponent component =
+                context.getComponent(SpringAiEmbeddings.SCHEME, SpringAiEmbeddingsComponent.class);
 
         // Use a simple mock embedding model for testing
         EmbeddingModel embeddingModel = new EmbeddingModel() {
@@ -49,7 +50,7 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
                 List<Embedding> embeddings = new ArrayList<>();
                 int index = 0;
                 for (String text : request.getInstructions()) {
-                    float[] vector = new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f };
+                    float[] vector = new float[] {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
                     embeddings.add(new Embedding(vector, index++));
                 }
                 return new EmbeddingResponse(embeddings, new EmbeddingResponseMetadata());
@@ -57,14 +58,14 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
 
             @Override
             public float[] embed(Document document) {
-                return new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f };
+                return new float[] {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
             }
 
             @Override
             public List<float[]> embed(List<String> texts) {
                 List<float[]> results = new ArrayList<>();
                 for (int i = 0; i < texts.size(); i++) {
-                    results.add(new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f });
+                    results.add(new float[] {0.1f, 0.2f, 0.3f, 0.4f, 0.5f});
                 }
                 return results;
             }
@@ -83,9 +84,8 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
     @Test
     public void testSimpleEmbedding() {
 
-        Message first = fluentTemplate.to("spring-ai-embeddings:first")
-                .withBody("hi")
-                .request(Message.class);
+        Message first =
+                fluentTemplate.to("spring-ai-embeddings:first").withBody("hi").request(Message.class);
 
         float[] firstEmbedding = first.getBody(float[].class);
         assertThat(firstEmbedding).isNotNull();
@@ -98,7 +98,8 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
         Integer embeddingIndex = first.getHeader(SpringAiEmbeddingsHeaders.EMBEDDING_INDEX, Integer.class);
         assertThat(embeddingIndex).isEqualTo(0);
 
-        Message second = fluentTemplate.to("spring-ai-embeddings:second")
+        Message second = fluentTemplate
+                .to("spring-ai-embeddings:second")
                 .withBody("hello")
                 .request(Message.class);
 
@@ -119,9 +120,8 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
     public void testBatchEmbedding() {
         List<String> texts = Arrays.asList("hello", "world", "test");
 
-        Message result = fluentTemplate.to("spring-ai-embeddings:batch")
-                .withBody(texts)
-                .request(Message.class);
+        Message result =
+                fluentTemplate.to("spring-ai-embeddings:batch").withBody(texts).request(Message.class);
 
         List<float[]> vectors = result.getBody(List.class);
         assertThat(vectors).isNotNull();

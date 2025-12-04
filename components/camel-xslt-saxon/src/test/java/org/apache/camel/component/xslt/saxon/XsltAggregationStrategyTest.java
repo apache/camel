@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -57,15 +58,18 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")
-                        .routeId("route1").noAutoStartup()
+                        .routeId("route1")
+                        .noAutoStartup()
                         .aggregate(new XsltSaxonAggregationStrategy("org/apache/camel/util/toolbox/aggregate.xsl"))
                         .constant(true)
                         .completionFromBatchConsumer()
                         .to("mock:transformed");
 
                 from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")
-                        .routeId("route2").noAutoStartup()
-                        .aggregate(new XsltSaxonAggregationStrategy("org/apache/camel/util/toolbox/aggregate-user-property.xsl")
+                        .routeId("route2")
+                        .noAutoStartup()
+                        .aggregate(new XsltSaxonAggregationStrategy(
+                                        "org/apache/camel/util/toolbox/aggregate-user-property.xsl")
                                 .withPropertyName("user-property"))
                         .constant(true)
                         .completionFromBatchConsumer()

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 public class OpenstackWiremockTestSupport extends CamelTestSupport {
 
@@ -46,5 +47,4 @@ public class OpenstackWiremockTestSupport extends CamelTestSupport {
     protected static String url() {
         return server.baseUrl();
     }
-
 }

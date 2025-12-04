@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
 
 public interface AS2MimeType {
@@ -57,5 +58,4 @@ public interface AS2MimeType {
      * Mime Type for Message/Disposition-Notification
      */
     String MESSAGE_DISPOSITION_NOTIFICATION = "message/disposition-notification";
-
 }

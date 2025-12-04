@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsConfiguration.QUEUE_PREFIX;
+import static org.apache.camel.component.jms.JmsConfiguration.TEMP_QUEUE_PREFIX;
+import static org.apache.camel.component.jms.JmsConfiguration.TEMP_TOPIC_PREFIX;
+import static org.apache.camel.component.jms.JmsConfiguration.TOPIC_PREFIX;
+import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -34,19 +41,12 @@ import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.jms.JmsConfiguration.QUEUE_PREFIX;
-import static org.apache.camel.component.jms.JmsConfiguration.TEMP_QUEUE_PREFIX;
-import static org.apache.camel.component.jms.JmsConfiguration.TEMP_TOPIC_PREFIX;
-import static org.apache.camel.component.jms.JmsConfiguration.TOPIC_PREFIX;
-import static org.apache.camel.util.StringHelper.removeStartingCharacters;
-
 /**
  * Utility class for {@link jakarta.jms.Message}.
  */
 public final class JmsMessageHelper {
 
-    private JmsMessageHelper() {
-    }
+    private JmsMessageHelper() {}
 
     /**
      * Removes the property from the JMS message.
@@ -416,8 +416,8 @@ public final class JmsMessageHelper {
      * @param  preserveMessageQos       whether the option preserveMessageQos has been enabled
      * @throws jakarta.jms.JMSException is thrown if error setting the delivery mode
      */
-    public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode, boolean preserveMessageQos)
-            throws JMSException {
+    public static void setJMSDeliveryMode(
+            Exchange exchange, Message message, Object deliveryMode, boolean preserveMessageQos) throws JMSException {
         Integer mode = null;
 
         if (deliveryMode instanceof String s) {

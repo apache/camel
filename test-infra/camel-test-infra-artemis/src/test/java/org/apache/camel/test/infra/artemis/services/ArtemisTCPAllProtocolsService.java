@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ArtemisTCPAllProtocolsService extends ArtemisTCPAllProtocolsInfraService implements ArtemisService {
 

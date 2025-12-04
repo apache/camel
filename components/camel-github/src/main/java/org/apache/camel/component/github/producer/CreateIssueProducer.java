@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
@@ -61,5 +62,4 @@ public class CreateIssueProducer extends AbstractGitHubProducer {
         exchange.getOut().copyFrom(exchange.getIn());
         exchange.getOut().setBody(finalIssue);
     }
-
 }

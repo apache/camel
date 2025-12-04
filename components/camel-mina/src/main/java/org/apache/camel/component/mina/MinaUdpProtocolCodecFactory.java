@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelContext;
@@ -72,7 +73,7 @@ public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
     }
 
     private IoBuffer toIoBuffer(Object message) throws NoTypeConversionAvailableException {
-        //try to convert it to a byte array
+        // try to convert it to a byte array
         byte[] value = context.getTypeConverter().tryConvertTo(byte[].class, message);
         if (value != null) {
             IoBuffer answer = IoBuffer.allocate(value.length).setAutoExpand(true);

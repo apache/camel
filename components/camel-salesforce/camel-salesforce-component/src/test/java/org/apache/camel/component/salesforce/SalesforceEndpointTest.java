@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -23,26 +26,26 @@ import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.spi.UriPath;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-
 public class SalesforceEndpointTest {
 
     @Test
-    public void allOperationValuesShouldBeListedInOperationNameUriPath() throws NoSuchFieldException, SecurityException {
-        UriPath uriPath = SalesforceEndpoint.class.getDeclaredField("operationName").getAnnotation(UriPath.class);
+    public void allOperationValuesShouldBeListedInOperationNameUriPath()
+            throws NoSuchFieldException, SecurityException {
+        UriPath uriPath =
+                SalesforceEndpoint.class.getDeclaredField("operationName").getAnnotation(UriPath.class);
 
         String[] operationNamesInAnnotation = uriPath.enums().split(",");
         Arrays.sort(operationNamesInAnnotation);
 
-        String[] operationNamesInEnum
-                = Arrays.stream(OperationName.values()).map(OperationName::value).toArray(length -> new String[length]);
+        String[] operationNamesInEnum =
+                Arrays.stream(OperationName.values()).map(OperationName::value).toArray(length -> new String[length]);
         Arrays.sort(operationNamesInEnum);
 
-        assertArrayEquals(operationNamesInEnum, operationNamesInAnnotation,
+        assertArrayEquals(
+                operationNamesInEnum,
+                operationNamesInAnnotation,
                 "All operation values, the String value returned from OperationName::value, must be defined in the @UriPath "
-                                                                            + "enum parameter of the operationName field in SalesforceEndpoint, set the enums parameter to:\n"
-                                                                            + Arrays.stream(operationNamesInEnum)
-                                                                                    .collect(Collectors.joining(",")));
+                        + "enum parameter of the operationName field in SalesforceEndpoint, set the enums parameter to:\n"
+                        + Arrays.stream(operationNamesInEnum).collect(Collectors.joining(",")));
     }
-
 }

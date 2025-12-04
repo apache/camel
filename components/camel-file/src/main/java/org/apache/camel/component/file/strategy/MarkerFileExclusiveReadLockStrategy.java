@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
@@ -59,22 +60,32 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             String endpointPath = endpoint.getConfiguration().getDirectory();
 
             StopWatch watch = new StopWatch();
-            deleteLockFiles(file, endpoint.isRecursive(), endpoint.getMinDepth(), endpoint.getMaxDepth(), 1,
-                    endpoint.isHiddenFilesEnabled(), endpointPath, endpoint.getFilter(),
+            deleteLockFiles(
+                    file,
+                    endpoint.isRecursive(),
+                    endpoint.getMinDepth(),
+                    endpoint.getMaxDepth(),
+                    1,
+                    endpoint.isHiddenFilesEnabled(),
+                    endpointPath,
+                    endpoint.getFilter(),
                     endpoint.getAntFilter(),
-                    excludePattern, includePattern);
+                    excludePattern,
+                    includePattern);
 
             // log anything that takes more than a second
             if (watch.taken() > 1000) {
-                LOG.info("Prepared on startup by deleting orphaned lock files from: {} took {} millis to complete.", dir,
+                LOG.info(
+                        "Prepared on startup by deleting orphaned lock files from: {} took {} millis to complete.",
+                        dir,
                         watch.taken());
             }
         }
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+    public boolean acquireExclusiveReadLock(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
 
         if (!markerFile) {
             // if not using marker file then we assume acquired
@@ -96,22 +107,19 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     @Override
     public void releaseExclusiveReadLockOnAbort(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         doReleaseExclusiveReadLock(file, exchange);
     }
 
     @Override
     public void releaseExclusiveReadLockOnRollback(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         doReleaseExclusiveReadLock(file, exchange);
     }
 
     @Override
     public void releaseExclusiveReadLockOnCommit(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         doReleaseExclusiveReadLock(file, exchange);
     }
 
@@ -132,7 +140,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             return;
         }
 
-        boolean acquired = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_ACQUIRED), false, Boolean.class);
+        boolean acquired =
+                exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_FILE_ACQUIRED), false, Boolean.class);
 
         // only release the file if camel get the lock before
         if (acquired) {
@@ -173,7 +182,13 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     private static <T> void deleteLockFiles(
-            File dir, boolean recursive, int minDepth, int maxDepth, int depth, boolean hiddenFilesEnabled, String endpointPath,
+            File dir,
+            boolean recursive,
+            int minDepth,
+            int maxDepth,
+            int depth,
+            boolean hiddenFilesEnabled,
+            String endpointPath,
             GenericFileFilter<T> filter,
             AntFilter antFilter,
             Pattern excludePattern,
@@ -204,8 +219,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
                 // if its a lock file then check if we accept its target file to
                 // know if we should delete the orphan lock file
                 if (file.getName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
-                    String target = file.getName().substring(0,
-                            file.getName().length() - FileComponent.DEFAULT_LOCK_FILE_POSTFIX.length());
+                    String target = file.getName()
+                            .substring(0, file.getName().length() - FileComponent.DEFAULT_LOCK_FILE_POSTFIX.length());
                     if (file.getParent() != null) {
                         targetFile = new File(file.getParent(), target);
                     } else {
@@ -213,7 +228,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
                     }
                 }
 
-                boolean accept = acceptFile(targetFile, endpointPath, filter, antFilter, excludePattern, includePattern);
+                boolean accept =
+                        acceptFile(targetFile, endpointPath, filter, antFilter, excludePattern, includePattern);
                 if (!accept) {
                     continue;
                 }
@@ -223,7 +239,15 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
                 LOG.warn("Deleting orphaned lock file: {}", file);
                 FileUtil.deleteFile(file);
             } else if (recursive && file.isDirectory() && (depth < maxDepth)) {
-                deleteLockFiles(file, true, minDepth, maxDepth, depth + 1, hiddenFilesEnabled, endpointPath, filter,
+                deleteLockFiles(
+                        file,
+                        true,
+                        minDepth,
+                        maxDepth,
+                        depth + 1,
+                        hiddenFilesEnabled,
+                        endpointPath,
+                        filter,
                         antFilter,
                         excludePattern,
                         includePattern);
@@ -233,7 +257,11 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     @SuppressWarnings("unchecked")
     private static <T> boolean acceptFile(
-            File file, String endpointPath, GenericFileFilter<T> filter, AntFilter antFilter, Pattern excludePattern,
+            File file,
+            String endpointPath,
+            GenericFileFilter<T> filter,
+            AntFilter antFilter,
+            Pattern excludePattern,
             Pattern includePattern) {
         GenericFile gf = new GenericFile<>();
         gf.setEndpointPath(endpointPath);
@@ -317,15 +345,18 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         // for example if the file consumer uses preMove then the file is moved
         // and therefore has another name
         // that would no longer match
-        String path
-                = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
+        String path = file.getCopyFromAbsoluteFilePath() != null
+                ? file.getCopyFromAbsoluteFilePath()
+                : file.getAbsoluteFilePath();
         return path + "-" + key;
     }
 
     protected static boolean isTimedOut(StopWatch watch, File target, long timeout, LoggingLevel readLockLoggingLevel) {
         long delta = watch.taken();
         if (delta > timeout) {
-            CamelLogger.log(LOG, readLockLoggingLevel,
+            CamelLogger.log(
+                    LOG,
+                    readLockLoggingLevel,
                     "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
             // we could not get the lock within the timeout period,
             // so return false
@@ -333,5 +364,4 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         }
         return false;
     }
-
 }

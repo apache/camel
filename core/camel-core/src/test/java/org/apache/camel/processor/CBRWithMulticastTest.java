@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -62,10 +63,17 @@ public class CBRWithMulticastTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").choice().when(body().contains("Camel"))
+                from("direct:start")
+                        .choice()
+                        .when(body().contains("Camel"))
                         // we need to use endChoice to tell Java DSL to return scope
                         // back to the choice DSL
-                        .multicast().to("mock:foo").to("mock:bar").endChoice().otherwise().to("mock:result");
+                        .multicast()
+                        .to("mock:foo")
+                        .to("mock:bar")
+                        .endChoice()
+                        .otherwise()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

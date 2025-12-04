@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import org.apache.camel.component.as2.api.AS2MessageStructure;
@@ -33,10 +34,15 @@ public class AS2ServerSecUnsignedUnencryptedIT extends AS2ServerSecTestBase {
 
     // verify message types that fail decryption when encrypted with an invalid cert
     @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = {
-                        "ENCRYPTED", "SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED", "ENCRYPTED_COMPRESSED_SIGNED",
-                        "ENCRYPTED_SIGNED_COMPRESSED" })
+    @EnumSource(
+            value = AS2MessageStructure.class,
+            names = {
+                "ENCRYPTED",
+                "SIGNED_ENCRYPTED",
+                "ENCRYPTED_COMPRESSED",
+                "ENCRYPTED_COMPRESSED_SIGNED",
+                "ENCRYPTED_SIGNED_COMPRESSED"
+            })
     public void cannotDecryptFailureTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = sendWithInvalidEncryption(messageStructure);
         verifyOkResponse(context);
@@ -45,8 +51,9 @@ public class AS2ServerSecUnsignedUnencryptedIT extends AS2ServerSecTestBase {
 
     // verify message types that are successfully processed
     @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = { "PLAIN", "SIGNED", "PLAIN_COMPRESSED", "COMPRESSED_SIGNED", "SIGNED_COMPRESSED" })
+    @EnumSource(
+            value = AS2MessageStructure.class,
+            names = {"PLAIN", "SIGNED", "PLAIN_COMPRESSED", "COMPRESSED_SIGNED", "SIGNED_COMPRESSED"})
     public void successfullyProcessedTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = send(messageStructure);
         verifyOkResponse(context);

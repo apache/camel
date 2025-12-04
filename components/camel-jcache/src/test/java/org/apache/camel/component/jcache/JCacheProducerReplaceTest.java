@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +31,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
     @Test
@@ -169,12 +170,8 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:replace")
-                        .to("jcache://test-cache")
-                        .to("mock:replace");
-                from("direct:replace-fail")
-                        .to("jcache://test-cache")
-                        .to("mock:replace-fail");
+                from("direct:replace").to("jcache://test-cache").to("mock:replace");
+                from("direct:replace-fail").to("jcache://test-cache").to("mock:replace-fail");
             }
         };
     }

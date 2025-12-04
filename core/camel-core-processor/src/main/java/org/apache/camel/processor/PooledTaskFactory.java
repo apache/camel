@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
@@ -23,8 +24,7 @@ import org.apache.camel.support.PooledObjectFactorySupport;
 public abstract class PooledTaskFactory extends PooledObjectFactorySupport<PooledExchangeTask>
         implements PooledExchangeTaskFactory {
 
-    public PooledTaskFactory() {
-    }
+    public PooledTaskFactory() {}
 
     public PooledTaskFactory(Object source) {
         super(source);

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SqsProducerDeleteQueueTest extends CamelTestSupport {
     @BindToRegistry("client")
@@ -46,8 +47,7 @@ public class SqsProducerDeleteQueueTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
 
             @Override
-            public void process(Exchange exchange) {
-            }
+            public void process(Exchange exchange) {}
         });
         MockEndpoint.assertIsSatisfied(context);
         DeleteQueueResponse res = result.getExchanges().get(0).getIn().getBody(DeleteQueueResponse.class);
@@ -59,7 +59,9 @@ public class SqsProducerDeleteQueueTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("aws2-sqs://camel-1?amazonSQSClient=#client&operation=deleteQueue").to("mock:result");
+                from("direct:start")
+                        .to("aws2-sqs://camel-1?amazonSQSClient=#client&operation=deleteQueue")
+                        .to("mock:result");
             }
         };
     }

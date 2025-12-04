@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.activemq;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 import java.util.List;
@@ -36,13 +39,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ActiveMQPropagateHeadersIT extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final Object expectedBody = "<time>" + new Date() + "</time>";
     protected final ActiveMQQueue replyQueue = new ActiveMQQueue("test.reply.queue.ActiveMQPropagateHeadersTest");
     protected final String correlationID = "ABC-123";
@@ -84,13 +86,15 @@ public class ActiveMQPropagateHeadersIT extends AbstractJMSTest {
                 // must set option to preserve message QoS as we send an InOnly but put a JMSReplyTo
                 // that does not work well on the consumer side, as it would assume it should send a reply
                 // but we do not expect a reply as we are InOnly.
-                from("activemq:test.a.ActiveMQPropagateHeadersTest").process(exchange -> {
-                    // set the JMS headers
-                    Message in = exchange.getIn();
-                    in.setHeader("JMSReplyTo", replyQueue);
-                    in.setHeader("JMSCorrelationID", correlationID);
-                    in.setHeader("JMSType", messageType);
-                }).to("activemq:test.b.ActiveMQPropagateHeadersTest?preserveMessageQos=true");
+                from("activemq:test.a.ActiveMQPropagateHeadersTest")
+                        .process(exchange -> {
+                            // set the JMS headers
+                            Message in = exchange.getIn();
+                            in.setHeader("JMSReplyTo", replyQueue);
+                            in.setHeader("JMSCorrelationID", correlationID);
+                            in.setHeader("JMSType", messageType);
+                        })
+                        .to("activemq:test.b.ActiveMQPropagateHeadersTest?preserveMessageQos=true");
 
                 from("activemq:test.b.ActiveMQPropagateHeadersTest").to("mock:result");
             }

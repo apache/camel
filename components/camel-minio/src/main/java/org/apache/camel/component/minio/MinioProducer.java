@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -59,9 +63,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * A Producer which sends messages to the Minio Simple Storage
@@ -185,12 +186,17 @@ public class MinioProducer extends DefaultProducer {
     }
 
     private void doPutObject(
-            Exchange exchange, String bucketName, String objectName, Map<String, String> objectMetadata,
-            Map<String, String> extraHeaders, InputStream inputStream, long contentLength)
-            throws IOException, ErrorResponseException, InsufficientDataException, InternalException, InvalidKeyException,
-            InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException {
-        PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder()
-                .stream(inputStream, contentLength, -1)
+            Exchange exchange,
+            String bucketName,
+            String objectName,
+            Map<String, String> objectMetadata,
+            Map<String, String> extraHeaders,
+            InputStream inputStream,
+            long contentLength)
+            throws IOException, ErrorResponseException, InsufficientDataException, InternalException,
+                    InvalidKeyException, InvalidResponseException, NoSuchAlgorithmException, ServerException,
+                    XmlParserException {
+        PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder().stream(inputStream, contentLength, -1)
                 .bucket(bucketName)
                 .object(objectName)
                 .userMetadata(objectMetadata);
@@ -240,20 +246,21 @@ public class MinioProducer extends DefaultProducer {
 
             final String bucketName = determineBucketName(exchange);
             final String sourceKey = determineObjectName(exchange);
-            final String destinationKey = exchange.getIn().getHeader(MinioConstants.DESTINATION_OBJECT_NAME, String.class);
-            final String destinationBucketName
-                    = exchange.getIn().getHeader(MinioConstants.DESTINATION_BUCKET_NAME, String.class);
+            final String destinationKey =
+                    exchange.getIn().getHeader(MinioConstants.DESTINATION_OBJECT_NAME, String.class);
+            final String destinationBucketName =
+                    exchange.getIn().getHeader(MinioConstants.DESTINATION_BUCKET_NAME, String.class);
 
             if (isEmpty(destinationBucketName)) {
-                throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
+                throw new IllegalArgumentException(
+                        "Bucket Name Destination must be specified for copyObject Operation");
             }
             if (isEmpty(destinationKey)) {
                 throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
             }
 
-            CopySource.Builder copySourceBuilder = CopySource.builder()
-                    .bucket(bucketName)
-                    .object(sourceKey);
+            CopySource.Builder copySourceBuilder =
+                    CopySource.builder().bucket(bucketName).object(sourceKey);
 
             CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
                     .bucket(destinationBucketName)
@@ -282,7 +289,8 @@ public class MinioProducer extends DefaultProducer {
             final String sourceKey = determineObjectName(exchange);
             minioClient.removeObject(RemoveObjectArgs.builder()
                     .bucket(bucketName)
-                    .object(sourceKey).build());
+                    .object(sourceKey)
+                    .build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(true);
@@ -305,7 +313,7 @@ public class MinioProducer extends DefaultProducer {
     private void listBuckets(MinioClient minioClient, Exchange exchange) throws Exception {
         List<Bucket> bucketsList = minioClient.listBuckets();
         Message message = getMessageForResponse(exchange);
-        //returns iterator of bucketList
+        // returns iterator of bucketList
         message.setBody(bucketsList.iterator());
     }
 
@@ -321,7 +329,8 @@ public class MinioProducer extends DefaultProducer {
             }
         } else {
 
-            minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
+            minioClient.removeBucket(
+                    RemoveBucketArgs.builder().bucket(bucketName).build());
             Message message = getMessageForResponse(exchange);
             message.setBody("ok");
         }
@@ -340,10 +349,8 @@ public class MinioProducer extends DefaultProducer {
             final String bucketName = determineBucketName(exchange);
             final String sourceKey = determineObjectName(exchange);
 
-            InputStream respond = minioClient.getObject(GetObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(sourceKey)
-                    .build());
+            InputStream respond = minioClient.getObject(
+                    GetObjectArgs.builder().bucket(bucketName).object(sourceKey).build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(respond);
@@ -394,9 +401,8 @@ public class MinioProducer extends DefaultProducer {
         } else {
             final String bucketName = determineBucketName(exchange);
 
-            Iterable<Result<Item>> objectList = minioClient.listObjects(ListObjectsArgs.builder()
-                    .bucket(bucketName)
-                    .build());
+            Iterable<Result<Item>> objectList = minioClient.listObjects(
+                    ListObjectsArgs.builder().bucket(bucketName).build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(objectList);
@@ -405,16 +411,18 @@ public class MinioProducer extends DefaultProducer {
 
     private void createPresignedUrl(MinioClient minioClient, Exchange exchange, Method method) throws Exception {
         int expiry = 60 * 60;
-        Integer expirationInSeconds = exchange.getIn().getHeader(MinioConstants.PRESIGNED_URL_EXPIRATION_TIME, Integer.class);
+        Integer expirationInSeconds =
+                exchange.getIn().getHeader(MinioConstants.PRESIGNED_URL_EXPIRATION_TIME, Integer.class);
         Message message = getMessageForResponse(exchange);
         if (expirationInSeconds != null) {
             expiry = expirationInSeconds;
         }
         if (getConfiguration().isPojoRequest()) {
-            GetPresignedObjectUrlArgs.Builder payload
-                    = exchange.getIn().getMandatoryBody(GetPresignedObjectUrlArgs.Builder.class);
+            GetPresignedObjectUrlArgs.Builder payload =
+                    exchange.getIn().getMandatoryBody(GetPresignedObjectUrlArgs.Builder.class);
             if (isNotEmpty(payload)) {
-                GetPresignedObjectUrlArgs args = payload.expiry(expiry).method(method).build();
+                GetPresignedObjectUrlArgs args =
+                        payload.expiry(expiry).method(method).build();
                 String response = minioClient.getPresignedObjectUrl(args);
                 message.setBody(response);
             }

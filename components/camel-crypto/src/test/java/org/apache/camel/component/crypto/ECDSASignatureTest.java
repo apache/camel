@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.crypto;
+
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -35,8 +38,6 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class ECDSASignatureTest extends CamelTestSupport {
 
@@ -51,7 +52,8 @@ public class ECDSASignatureTest extends CamelTestSupport {
         // see if we can load the keystore et all
         try {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            InputStream in = ECDSASignatureTest.class.getResourceAsStream("/org/apache/camel/component/crypto/ecdsa.jks");
+            InputStream in =
+                    ECDSASignatureTest.class.getResourceAsStream("/org/apache/camel/component/crypto/ecdsa.jks");
             keyStore.load(in, "security".toCharArray());
             privateKey = (PrivateKey) keyStore.getKey("ECDSA", "security".toCharArray());
             x509 = (X509Certificate) keyStore.getCertificate("ECDSA");
@@ -67,23 +69,27 @@ public class ECDSASignatureTest extends CamelTestSupport {
             return new RouteBuilder[] {};
         }
 
-        return new RouteBuilder[] { new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: ecdsa-sha1
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: ecdsa-sha1
 
-                // we can set the keys explicitly on the endpoint instances.
-                context.getEndpoint("crypto:sign:ecdsa-sha1?algorithm=SHA1withECDSA", DigitalSignatureEndpoint.class)
-                        .setPrivateKey(privateKey);
-                context.getEndpoint("crypto:verify:ecdsa-sha1?algorithm=SHA1withECDSA", DigitalSignatureEndpoint.class)
-                        .setPublicKey(x509.getPublicKey());
+                    // we can set the keys explicitly on the endpoint instances.
+                    context.getEndpoint(
+                                    "crypto:sign:ecdsa-sha1?algorithm=SHA1withECDSA", DigitalSignatureEndpoint.class)
+                            .setPrivateKey(privateKey);
+                    context.getEndpoint(
+                                    "crypto:verify:ecdsa-sha1?algorithm=SHA1withECDSA", DigitalSignatureEndpoint.class)
+                            .setPublicKey(x509.getPublicKey());
 
-                from("direct:ecdsa-sha1")
-                        .to("crypto:sign:ecdsa-sha1?algorithm=SHA1withECDSA")
-                        .to("crypto:verify:ecdsa-sha1?algorithm=SHA1withECDSA")
-                        .to("mock:result");
-                // END SNIPPET: ecdsa-sha1
+                    from("direct:ecdsa-sha1")
+                            .to("crypto:sign:ecdsa-sha1?algorithm=SHA1withECDSA")
+                            .to("crypto:verify:ecdsa-sha1?algorithm=SHA1withECDSA")
+                            .to("mock:result");
+                    // END SNIPPET: ecdsa-sha1
+                }
             }
-        } };
+        };
     }
 
     @Test
@@ -102,10 +108,11 @@ public class ECDSASignatureTest extends CamelTestSupport {
     }
 
     public Exchange doTestSignatureRoute(RouteBuilder builder) throws Exception {
-        return doSignatureRouteTest(builder, null, Collections.<String, Object> emptyMap());
+        return doSignatureRouteTest(builder, null, Collections.<String, Object>emptyMap());
     }
 
-    public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers) throws Exception {
+    public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers)
+            throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             context.addRoutes(builder);
             context.start();

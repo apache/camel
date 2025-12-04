@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
 
 import java.util.Map;
@@ -28,7 +29,8 @@ public class DummyRestProcessorFactory implements RestApiProcessorFactory {
 
     @Override
     public Processor createApiProcessor(
-            CamelContext camelContext, String contextPath,
+            CamelContext camelContext,
+            String contextPath,
             RestConfiguration configuration,
             Map<String, Object> parameters) {
         return new Processor() {

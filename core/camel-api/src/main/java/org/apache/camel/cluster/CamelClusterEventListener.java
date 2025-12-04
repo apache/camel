@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cluster;
 
 /**
@@ -30,7 +31,6 @@ public interface CamelClusterEventListener {
          * @param leader the optional new leader
          */
         void leadershipChanged(CamelClusterView view, CamelClusterMember leader);
-
     }
 
     interface Membership extends CamelClusterEventListener {
@@ -50,6 +50,5 @@ public interface CamelClusterEventListener {
          * @param member the member that has been removed
          */
         void memberRemoved(CamelClusterView view, CamelClusterMember member);
-
     }
 }

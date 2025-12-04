@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -33,8 +36,6 @@ import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Performs sanity check on the model classes that their JAXB annotations and getter/setter match up.
@@ -85,7 +86,7 @@ public class ModelSanityCheckerTest {
                 // 2+ of them
                 if (attribute && element || attribute && elementRef || element && elementRef) {
                     fail("Class " + clazz.getName() + " has field " + field.getName()
-                         + " which has 2+ annotations that are not allowed together.");
+                            + " which has 2+ annotations that are not allowed together.");
                 }
 
                 // check getter/setter
@@ -114,16 +115,21 @@ public class ModelSanityCheckerTest {
                 boolean element = method.getAnnotation(XmlElement.class) != null;
                 boolean elementRef = method.getAnnotation(XmlElementRef.class) != null;
 
-                assertFalse(attribute, "Class " + clazz.getName() + " has method " + method.getName()
-                                       + " should not have @XmlAttribute annotation");
-                assertFalse(element, "Class " + clazz.getName() + " has method " + method.getName()
-                                     + " should not have @XmlElement annotation");
+                assertFalse(
+                        attribute,
+                        "Class " + clazz.getName() + " has method " + method.getName()
+                                + " should not have @XmlAttribute annotation");
+                assertFalse(
+                        element,
+                        "Class " + clazz.getName() + " has method " + method.getName()
+                                + " should not have @XmlElement annotation");
                 boolean b = elementRef && !"setOutputs".equals(method.getName());
-                assertFalse(b, "Class " + clazz.getName() + " has method " + method.getName()
-                               + " should not have @XmlElementRef annotation");
+                assertFalse(
+                        b,
+                        "Class " + clazz.getName() + " has method " + method.getName()
+                                + " should not have @XmlElementRef annotation");
             }
         }
         context.stop();
     }
-
 }

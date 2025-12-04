@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
@@ -62,12 +63,12 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
-    public SingleTCPNettyServerBootstrapFactory() {
-    }
+    public SingleTCPNettyServerBootstrapFactory() {}
 
     @Override
     public void init(
-            CamelContext camelContext, NettyServerBootstrapConfiguration configuration,
+            CamelContext camelContext,
+            NettyServerBootstrapConfiguration configuration,
             ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
@@ -81,7 +82,8 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     @Override
     public void init(
-            ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration,
+            ThreadFactory threadFactory,
+            NettyServerBootstrapConfiguration configuration,
             ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
@@ -190,8 +192,8 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             for (Map.Entry<String, Object> entry : options.entrySet()) {
                 String value = entry.getValue().toString();
                 ChannelOption<Object> option = ChannelOption.valueOf(entry.getKey());
-                //For all netty options that aren't of type String
-                //TODO: find a way to add primitive Netty options without having to add them to the Camel registry.
+                // For all netty options that aren't of type String
+                // TODO: find a way to add primitive Netty options without having to add them to the Camel registry.
                 if (EndpointHelper.isReferenceParameter(value)) {
                     String name = value.substring(1);
                     Object o = CamelContextHelper.mandatoryLookup(camelContext, name);
@@ -229,7 +231,6 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             LOG.info("ServerBootstrap unbinding from {}", udsPath);
         } else {
             LOG.info("ServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
-
         }
 
         LOG.trace("Closing {} channels", allChannels.size());
@@ -245,5 +246,4 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             workerGroup = null;
         }
     }
-
 }

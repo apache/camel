@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springldap;
 
 import java.util.Map;
@@ -87,7 +88,8 @@ public class SpringLdapProducer extends DefaultProducer {
 
         LdapOperation operation = endpoint.getOperation();
         if (null == operation) {
-            throw new UnsupportedOperationException("LDAP operation must not be empty, but you provided an empty operation");
+            throw new UnsupportedOperationException(
+                    "LDAP operation must not be empty, but you provided an empty operation");
         }
 
         LdapTemplate ldapTemplate = endpoint.getLdapTemplate();
@@ -118,24 +120,24 @@ public class SpringLdapProducer extends DefaultProducer {
                 ldapTemplate.unbind(dn);
                 break;
             case AUTHENTICATE:
-                ldapTemplate.authenticate(LdapQueryBuilder.query().base(dn).filter((String) body.get(FILTER)),
-                        (String) body.get(PASSWORD));
+                ldapTemplate.authenticate(LdapQueryBuilder.query().base(dn).filter((String) body.get(FILTER)), (String)
+                        body.get(PASSWORD));
                 break;
             case MODIFY_ATTRIBUTES:
                 ModificationItem[] modificationItems = (ModificationItem[]) body.get(MODIFICATION_ITEMS);
                 ldapTemplate.modifyAttributes(dn, modificationItems);
                 break;
             case FUNCTION_DRIVEN:
-                BiFunction<LdapOperations, Object, ?> ldapOperationFunction
-                        = (BiFunction<LdapOperations, Object, ?>) body.get(FUNCTION);
+                BiFunction<LdapOperations, Object, ?> ldapOperationFunction =
+                        (BiFunction<LdapOperations, Object, ?>) body.get(FUNCTION);
                 Object ldapOperationRequest = body.get(REQUEST);
                 exchange.getIn().setBody(ldapOperationFunction.apply(ldapTemplate, ldapOperationRequest));
                 break;
             default:
                 throw new UnsupportedOperationException(
                         "Bug in the Spring-LDAP component. Despite of all assertions, you managed to call an unsupported operation '"
-                                                        + operation
-                                                        + "'");
+                                + operation
+                                + "'");
         }
     }
 }

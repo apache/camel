@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Properties;
 import java.util.UUID;
@@ -25,8 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for writing done files
@@ -66,7 +67,9 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
 
                 context.getPropertiesComponent().setLocation("ref:myProp");
 
-                from("direct:start").to("file:{{myDir}}?doneFileName=done-${file:name}").to("mock:result");
+                from("direct:start")
+                        .to("file:{{myDir}}?doneFileName=done-${file:name}")
+                        .to("mock:result");
             }
         };
     }

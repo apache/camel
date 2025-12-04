@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -22,8 +25,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class InitSolrEndpointTest extends CamelTestSupport {
 
@@ -52,8 +53,7 @@ public class InitSolrEndpointTest extends CamelTestSupport {
             solrEndpoint = camelContext.getEndpoint(dummyUri, SolrEndpoint.class);
             assertNotNull(solrEndpoint);
             assertNull(solrEndpoint.getConfiguration().getSolrClient());
-            solrEndpoint
-                    = camelContext.getEndpoint(dummyUri + "?solrClient=#client1", SolrEndpoint.class);
+            solrEndpoint = camelContext.getEndpoint(dummyUri + "?solrClient=#client1", SolrEndpoint.class);
             assertNotNull(solrEndpoint);
             assertNotNull(solrEndpoint.getConfiguration().getSolrClient());
             assertEquals(solrClient1, solrEndpoint.getConfiguration().getSolrClient());
@@ -66,8 +66,7 @@ public class InitSolrEndpointTest extends CamelTestSupport {
         String testUri = dummyUri.replace(":8983", ":89xx");
         try (CamelContext camelContext = context()) {
             // should fail as invalid uri
-            assertThrows(ResolveEndpointFailedException.class,
-                    () -> camelContext.getEndpoint(testUri));
+            assertThrows(ResolveEndpointFailedException.class, () -> camelContext.getEndpoint(testUri));
             // should not fail as valid uri
             solrEndpoint = camelContext.getEndpoint(testUri.replace(":89xx", ""), SolrEndpoint.class);
             assertNotNull(solrEndpoint);
@@ -78,11 +77,13 @@ public class InitSolrEndpointTest extends CamelTestSupport {
     public void endpointCreatedWithSolrUriPath() throws Exception {
         SolrEndpoint solrEndpoint;
         try (CamelContext camelContext = context()) {
-            solrEndpoint = camelContext.getEndpoint(dummyUri.concat("/solr/testcollection/update/xml"), SolrEndpoint.class);
+            solrEndpoint =
+                    camelContext.getEndpoint(dummyUri.concat("/solr/testcollection/update/xml"), SolrEndpoint.class);
             assertNotNull(solrEndpoint);
             assertEquals("testcollection", solrEndpoint.getConfiguration().getCollection());
             assertEquals("/update/xml", solrEndpoint.getConfiguration().getRequestHandler());
-            solrEndpoint = camelContext.getEndpoint(dummyUri.concat("/solr/testcollection/update/"), SolrEndpoint.class);
+            solrEndpoint =
+                    camelContext.getEndpoint(dummyUri.concat("/solr/testcollection/update/"), SolrEndpoint.class);
             assertNotNull(solrEndpoint);
             assertEquals("testcollection", solrEndpoint.getConfiguration().getCollection());
             assertEquals("/update", solrEndpoint.getConfiguration().getRequestHandler());
@@ -97,5 +98,4 @@ public class InitSolrEndpointTest extends CamelTestSupport {
             assertEquals("/sub-app/solr2/", solrEndpoint.getConfiguration().getBasePath());
         }
     }
-
 }

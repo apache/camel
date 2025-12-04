@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_TIMER_ACTION;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,8 +28,6 @@ import io.opentelemetry.api.metrics.LongHistogramBuilder;
 import io.opentelemetry.api.metrics.Meter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_TIMER_ACTION;
 
 public class TimerProducer extends AbstractOpenTelemetryProducer<LongHistogram> {
 
@@ -62,7 +63,8 @@ public class TimerProducer extends AbstractOpenTelemetryProducer<LongHistogram> 
     protected void doProcess(Exchange exchange, String metricsName, String metricsDescription, Attributes attributes) {
         Message in = exchange.getIn();
         OpenTelemetryTimerAction action = simple(exchange, getEndpoint().getAction(), OpenTelemetryTimerAction.class);
-        OpenTelemetryTimerAction finalAction = in.getHeader(HEADER_TIMER_ACTION, action, OpenTelemetryTimerAction.class);
+        OpenTelemetryTimerAction finalAction =
+                in.getHeader(HEADER_TIMER_ACTION, action, OpenTelemetryTimerAction.class);
 
         if (finalAction == OpenTelemetryTimerAction.START) {
             handleStart(exchange, metricsName);
@@ -72,8 +74,7 @@ public class TimerProducer extends AbstractOpenTelemetryProducer<LongHistogram> 
     }
 
     @Override
-    protected void doProcess(
-            Exchange exchange, String metricsName, LongHistogram timer, Attributes attributes) {
+    protected void doProcess(Exchange exchange, String metricsName, LongHistogram timer, Attributes attributes) {
 
         String propertyName = getPropertyName(metricsName);
         TaskTimer timedTask = getTimerFromExchange(exchange, propertyName);

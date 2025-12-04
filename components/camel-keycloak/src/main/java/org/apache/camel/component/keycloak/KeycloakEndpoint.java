@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
 
 import org.apache.camel.Category;
@@ -32,9 +33,13 @@ import org.keycloak.admin.client.KeycloakBuilder;
 /**
  * Manage Keycloak instances via Admin API.
  */
-@UriEndpoint(firstVersion = "4.15.0", scheme = "keycloak", title = "Keycloak",
-             syntax = "keycloak:label", category = { Category.SECURITY, Category.MANAGEMENT },
-             headersClass = KeycloakConstants.class)
+@UriEndpoint(
+        firstVersion = "4.15.0",
+        scheme = "keycloak",
+        title = "Keycloak",
+        syntax = "keycloak:label",
+        category = {Category.SECURITY, Category.MANAGEMENT},
+        headersClass = KeycloakConstants.class)
 public class KeycloakEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private Keycloak keycloakClient;
@@ -93,9 +98,8 @@ public class KeycloakEndpoint extends ScheduledPollEndpoint implements EndpointS
 
     private Keycloak createKeycloakClient() {
         // Use authRealm for authentication if specified, otherwise use realm
-        String authenticationRealm = configuration.getAuthRealm() != null
-                ? configuration.getAuthRealm()
-                : configuration.getRealm();
+        String authenticationRealm =
+                configuration.getAuthRealm() != null ? configuration.getAuthRealm() : configuration.getRealm();
 
         KeycloakBuilder builder = KeycloakBuilder.builder()
                 .serverUrl(configuration.getServerUrl())

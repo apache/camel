@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,7 +26,8 @@ public class JsonPathLeafNullTest extends CamelTestSupport {
 
     @Test
     public void testLeafNull() throws Exception {
-        String json = """
+        String json =
+                """
                     {
                         "errorcode": 0,
                         "errormessage": ""
@@ -46,8 +48,13 @@ public class JsonPathLeafNullTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setHeader("summary",
-                                expression().jsonpath().expression("$.summary").option("DEFAULT_PATH_LEAF_TO_NULL").end())
+                        .setHeader(
+                                "summary",
+                                expression()
+                                        .jsonpath()
+                                        .expression("$.summary")
+                                        .option("DEFAULT_PATH_LEAF_TO_NULL")
+                                        .end())
                         .to("mock:result");
             }
         };

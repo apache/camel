@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
 
@@ -55,7 +56,8 @@ public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
             public void configure() {
                 from("direct:default").to("language:constant:resource:org/apache/camel/logo.jpeg?binary=true");
 
-                from("direct:classpath").to("language:constant:resource:classpath:org/apache/camel/logo.jpeg?binary=true");
+                from("direct:classpath")
+                        .to("language:constant:resource:classpath:org/apache/camel/logo.jpeg?binary=true");
             }
         };
     }

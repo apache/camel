@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.io.Closeable;
@@ -68,11 +69,18 @@ import org.slf4j.LoggerFactory;
 /**
  * Send requests to external HTTP servers using Apache HTTP Client 5.x.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http://httpUri",
-             producerOnly = true, category = { Category.HTTP }, lenientProperties = true, headersClass = HttpConstants.class)
-@Metadata(excludeProperties = "httpBinding,matchOnUriPrefix,chunked,transferException", annotations = {
-        "protocol=http"
-})
+@UriEndpoint(
+        firstVersion = "2.3.0",
+        scheme = "http,https",
+        title = "HTTP,HTTPS",
+        syntax = "http://httpUri",
+        producerOnly = true,
+        category = {Category.HTTP},
+        lenientProperties = true,
+        headersClass = HttpConstants.class)
+@Metadata(
+        excludeProperties = "httpBinding,matchOnUriPrefix,chunked,transferException",
+        annotations = {"protocol=http"})
 @ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware {
 
@@ -81,135 +89,226 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     private int lineNumber;
     private String location;
 
-    @UriParam(label = "security", description = "To configure security using SSLContextParameters."
-                                                + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
-                                                + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+    @UriParam(
+            label = "security",
+            description =
+                    "To configure security using SSLContextParameters."
+                            + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
+                            + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
     protected SSLContextParameters sslContextParameters;
 
     @UriParam(label = "advanced", description = "To use a custom HttpContext instance")
     private HttpContext httpContext;
-    @UriParam(label = "advanced", description = "Register a custom configuration strategy for new HttpClient instances"
-                                                + " created by producers or consumers such as to configure authentication mechanisms etc.")
+
+    @UriParam(
+            label = "advanced",
+            description = "Register a custom configuration strategy for new HttpClient instances"
+                    + " created by producers or consumers such as to configure authentication mechanisms etc.")
     private HttpClientConfigurer httpClientConfigurer;
-    @UriParam(label = "advanced", prefix = "httpClient.", multiValue = true,
-              description = "To configure the HttpClient using the key/values from the Map.")
+
+    @UriParam(
+            label = "advanced",
+            prefix = "httpClient.",
+            multiValue = true,
+            description = "To configure the HttpClient using the key/values from the Map.")
     private Map<String, Object> httpClientOptions;
-    @UriParam(label = "advanced", prefix = "httpConnection.", multiValue = true,
-              description = "To configure the connection and the socket using the key/values from the Map.")
+
+    @UriParam(
+            label = "advanced",
+            prefix = "httpConnection.",
+            multiValue = true,
+            description = "To configure the connection and the socket using the key/values from the Map.")
     private Map<String, Object> httpConnectionOptions;
+
     @UriParam(label = "advanced", description = "To use a custom HttpClientConnectionManager to manage connections")
     private HttpClientConnectionManager clientConnectionManager;
-    @UriParam(label = "advanced",
-              description = "Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.")
     private HttpClientBuilder clientBuilder;
+
     @UriParam(label = "advanced", description = "Sets a custom HttpClient to be used by the producer")
     private HttpClient httpClient;
-    @UriParam(label = "advanced", defaultValue = "false",
-              description = "To use System Properties as fallback for configuration for configuring HTTP Client")
+
+    @UriParam(
+            label = "advanced",
+            defaultValue = "false",
+            description = "To use System Properties as fallback for configuration for configuring HTTP Client")
     private boolean useSystemProperties;
 
     // timeout
-    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
-              description = "Returns the connection lease request timeout (in millis) used when requesting"
-                            + " a connection from the connection manager."
-                            + " A timeout value of zero is interpreted as a disabled timeout.")
+    @Metadata(
+            label = "timeout",
+            defaultValue = "" + 3 * 60 * 1000,
+            description = "Returns the connection lease request timeout (in millis) used when requesting"
+                    + " a connection from the connection manager."
+                    + " A timeout value of zero is interpreted as a disabled timeout.")
     private long connectionRequestTimeout = 3 * 60 * 1000L;
-    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
-              description = "Determines the timeout (in millis) until a new connection is fully established."
-                            + " A timeout value of zero is interpreted as an infinite timeout.")
+
+    @Metadata(
+            label = "timeout",
+            defaultValue = "" + 3 * 60 * 1000,
+            description = "Determines the timeout (in millis) until a new connection is fully established."
+                    + " A timeout value of zero is interpreted as an infinite timeout.")
     private long connectTimeout = 3 * 60 * 1000L;
-    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
-              description = "Determines the default socket timeout (in millis) value for blocking I/O operations.")
+
+    @Metadata(
+            label = "timeout",
+            defaultValue = "" + 3 * 60 * 1000,
+            description = "Determines the default socket timeout (in millis) value for blocking I/O operations.")
     private long soTimeout = 3 * 60 * 1000L;
-    @Metadata(label = "timeout", defaultValue = "0",
-              description = "Determines the timeout (in millis) until arrival of a response from the opposite endpoint."
-                            + " A timeout value of zero is interpreted as an infinite timeout."
-                            + " Please note that response " +
-                            " may be unsupported by HTTP transports with message multiplexing.")
+
+    @Metadata(
+            label = "timeout",
+            defaultValue = "0",
+            description = "Determines the timeout (in millis) until arrival of a response from the opposite endpoint."
+                    + " A timeout value of zero is interpreted as an infinite timeout."
+                    + " Please note that response "
+                    + " may be unsupported by HTTP transports with message multiplexing.")
     private long responseTimeout;
-    @UriParam(label = "producer,advanced", description = "To use a custom CookieStore."
-                                                         + " By default the BasicCookieStore is used which is an in-memory only cookie store."
-                                                         + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
-                                                         + " If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.")
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "To use a custom CookieStore."
+                            + " By default the BasicCookieStore is used which is an in-memory only cookie store."
+                            + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
+                            + " If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.")
     private CookieStore cookieStore = new BasicCookieStore();
-    @UriParam(label = "producer,advanced", defaultValue = "true",
-              description = "Whether to clear expired cookies before sending the HTTP request."
-                            + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired."
-                            + " If the component has disabled cookie management then this option is disabled too.")
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "true",
+            description = "Whether to clear expired cookies before sending the HTTP request."
+                    + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired."
+                    + " If the component has disabled cookie management then this option is disabled too.")
     private boolean clearExpiredCookies = true;
-    @UriParam(label = "producer,security",
-              description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
+
+    @UriParam(
+            label = "producer,security",
+            description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
     private boolean authenticationPreemptive;
-    @UriParam(label = "producer,advanced", description = "Whether the HTTP GET should include the message body or not."
-                                                         + " By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "Whether the HTTP GET should include the message body or not."
+                            + " By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
     private boolean getWithBody;
-    @UriParam(label = "producer,advanced", description = "Whether the HTTP DELETE should include the message body or not."
-                                                         + " By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "Whether the HTTP DELETE should include the message body or not."
+                            + " By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
     private boolean deleteWithBody;
+
     @UriParam(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
     private int maxTotalConnections;
+
     @UriParam(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
     private int connectionsPerRoute;
-    @UriParam(label = "security",
-              description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
+
+    @UriParam(
+            label = "security",
+            description =
+                    "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
-    @UriParam(label = "producer,advanced", description = "To use custom host header for producer. When not set in query will "
-                                                         + "be ignored. When set will override host header derived from url.")
+
+    @UriParam(
+            label = "producer,advanced",
+            description = "To use custom host header for producer. When not set in query will "
+                    + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
-    @UriParam(label = "producer",
-              description = "Whether to skip Camel control headers (CamelHttp... headers) to influence this endpoint. Control headers from previous HTTP components can influence"
-                            +
-                            " how this Camel component behaves such as CamelHttpPath, CamelHttpQuery, etc.")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Whether to skip Camel control headers (CamelHttp... headers) to influence this endpoint. Control headers from previous HTTP components can influence"
+                            + " how this Camel component behaves such as CamelHttpPath, CamelHttpQuery, etc.")
     private boolean skipControlHeaders;
-    @UriParam(label = "producer",
-              description = "Whether to skip mapping the Camel headers as HTTP request headers." +
-                            " This is useful when you know that calling the HTTP service should not include any custom headers.")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Whether to skip mapping the Camel headers as HTTP request headers."
+                            + " This is useful when you know that calling the HTTP service should not include any custom headers.")
     private boolean skipRequestHeaders;
-    @UriParam(label = "producer",
-              description = "Whether to skip mapping all the HTTP response headers to Camel headers.")
+
+    @UriParam(
+            label = "producer",
+            description = "Whether to skip mapping all the HTTP response headers to Camel headers.")
     private boolean skipResponseHeaders;
-    @UriParam(label = "producer,advanced", defaultValue = "false",
-              description = "Whether to the HTTP request should follow redirects."
-                            + " By default the HTTP request does not follow redirects ")
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "false",
+            description = "Whether to the HTTP request should follow redirects."
+                    + " By default the HTTP request does not follow redirects ")
     private boolean followRedirects;
+
     @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
     private String userAgent;
+
     @UriParam(label = "producer,advanced", description = "To use a custom activity listener")
     private HttpActivityListener httpActivityListener;
-    @UriParam(label = "producer",
-              description = "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
     private boolean logHttpActivity;
-    @UriParam(label = "producer",
-              description = "Whether to force using multipart/form-data for easy file uploads. This is only to be used for uploading the message body as a single entity form-data. For uploading multiple entries then use org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder to build the form.")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Whether to force using multipart/form-data for easy file uploads. This is only to be used for uploading the message body as a single entity form-data. For uploading multiple entries then use org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder to build the form.")
     private boolean multipartUpload;
-    @UriParam(label = "producer", defaultValue = "data",
-              description = "The name of the multipart/form-data when multipartUpload is enabled.")
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "data",
+            description = "The name of the multipart/form-data when multipartUpload is enabled.")
     private String multipartUploadName = "data";
-    @UriParam(label = "producer,advanced", defaultValue = "true",
-              description = "Whether the Content-Type header should automatic include charset for string based content.")
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "true",
+            description = "Whether the Content-Type header should automatic include charset for string based content.")
     private boolean contentTypeCharsetEnabled = true;
 
-    public HttpEndpoint() {
-    }
+    public HttpEndpoint() {}
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI) {
         this(endPointURI, component, httpURI, null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI,
-                        HttpClientConnectionManager clientConnectionManager) {
+    public HttpEndpoint(
+            String endPointURI,
+            HttpComponent component,
+            URI httpURI,
+            HttpClientConnectionManager clientConnectionManager) {
         this(endPointURI, component, httpURI, HttpClientBuilder.create(), clientConnectionManager, null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientBuilder clientBuilder,
-                        HttpClientConnectionManager clientConnectionManager,
-                        HttpClientConfigurer clientConfigurer) {
+    public HttpEndpoint(
+            String endPointURI,
+            HttpComponent component,
+            HttpClientBuilder clientBuilder,
+            HttpClientConnectionManager clientConnectionManager,
+            HttpClientConfigurer clientConfigurer) {
         this(endPointURI, component, null, clientBuilder, clientConnectionManager, clientConfigurer);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientBuilder clientBuilder,
-                        HttpClientConnectionManager clientConnectionManager,
-                        HttpClientConfigurer clientConfigurer) {
+    public HttpEndpoint(
+            String endPointURI,
+            HttpComponent component,
+            URI httpURI,
+            HttpClientBuilder clientBuilder,
+            HttpClientConnectionManager clientConnectionManager,
+            HttpClientConfigurer clientConfigurer) {
         super(endPointURI, component, httpURI);
         this.clientBuilder = clientBuilder;
         this.httpClientConfigurer = clientConfigurer;
@@ -287,9 +386,11 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
                 }
                 LOG.warn(
                         "CamelContext global options [http.proxyHost,http.proxyPort,http.proxyScheme] detected."
-                         + " Using global option configuration is deprecated. Instead configure this on the HTTP component."
-                         + " Using http proxy host: {} port: {} scheme: {}",
-                        host, port, scheme);
+                                + " Using global option configuration is deprecated. Instead configure this on the HTTP component."
+                                + " Using http proxy host: {} port: {} scheme: {}",
+                        host,
+                        port,
+                        scheme);
                 HttpHost proxy = new HttpHost(scheme, host, port);
                 clientBuilder.setProxy(proxy);
             }
@@ -342,7 +443,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
                     }
                     Exchange exchange = (Exchange) context.getAttribute("org.apache.camel.Exchange");
                     HttpHost host = (HttpHost) context.getAttribute("org.apache.hc.core5.http.HttpHost");
-                    httpActivityListener.onResponseReceived(this, exchange, host, response, (HttpEntity) entity, elapsed);
+                    httpActivityListener.onResponseReceived(
+                            this, exchange, host, response, (HttpEntity) entity, elapsed);
                 }
             });
         }
@@ -381,7 +483,7 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     public int getLineNumber() {
@@ -816,7 +918,9 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         return -1;
     }
 
-    @ManagedAttribute(description = "Number of persistent connections tracked by the connection manager currently being used to execute requests")
+    @ManagedAttribute(
+            description =
+                    "Number of persistent connections tracked by the connection manager currently being used to execute requests")
     public int getClientConnectionsPoolStatsLeased() {
         ConnPoolControl<?> pool = null;
         if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
@@ -831,8 +935,9 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         return -1;
     }
 
-    @ManagedAttribute(description = "Number of connection requests being blocked awaiting a free connection."
-                                    + " This can happen only if there are more worker threads contending for fewer connections.")
+    @ManagedAttribute(
+            description = "Number of connection requests being blocked awaiting a free connection."
+                    + " This can happen only if there are more worker threads contending for fewer connections.")
     public int getClientConnectionsPoolStatsPending() {
         ConnPoolControl<?> pool = null;
         if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
@@ -846,5 +951,4 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         }
         return -1;
     }
-
 }

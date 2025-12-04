@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * The test ensuring that the precondition set on a route determines if the route is included or not
@@ -95,12 +96,12 @@ class RoutePreconditionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").routeId("myRoute").precondition("'{{protocol}}' == 'json'")
+                from("direct:in")
+                        .routeId("myRoute")
+                        .precondition("'{{protocol}}' == 'json'")
                         .to("mock:out");
-                from("direct:inNP").routeId("myRouteNP")
-                        .to("mock:outNP");
+                from("direct:inNP").routeId("myRouteNP").to("mock:outNP");
             }
         };
     }
-
 }

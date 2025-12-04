@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb;
 
 import com.azure.core.util.IterableStream;
@@ -24,11 +25,10 @@ import reactor.core.publisher.Flux;
 
 public final class CosmosDbUtils {
 
-    private CosmosDbUtils() {
-    }
+    private CosmosDbUtils() {}
 
-    public static <
-            T> Flux<T> convertCosmosPagedFluxToFluxResults(final CosmosPagedFlux<T> pagedFlux, final Integer maxResults) {
+    public static <T> Flux<T> convertCosmosPagedFluxToFluxResults(
+            final CosmosPagedFlux<T> pagedFlux, final Integer maxResults) {
         final Flux<FeedResponse<T>> byPageFlux;
 
         if (ObjectHelper.isEmpty(maxResults)) {

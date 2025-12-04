@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.backoff;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BackOffTest {
 
@@ -83,7 +84,8 @@ public class BackOffTest {
 
     @Test
     public void testBackOffWithMaxTime() {
-        final BackOff backOff = BackOff.builder().maxElapsedTime(9, TimeUnit.SECONDS).build();
+        final BackOff backOff =
+                BackOff.builder().maxElapsedTime(9, TimeUnit.SECONDS).build();
         final BackOffTimerTask context = new BackOffTimerTask(null, backOff, null, t -> true);
 
         long delay;

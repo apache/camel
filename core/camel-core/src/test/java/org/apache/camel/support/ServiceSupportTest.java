@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ServiceSupportTest extends TestSupport {
 
-    private static class MyService extends ServiceSupport {
-    }
+    private static class MyService extends ServiceSupport {}
 
     @Test
     public void testServiceSupport() {

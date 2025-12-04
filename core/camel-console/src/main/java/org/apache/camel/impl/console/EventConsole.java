@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -35,8 +36,9 @@ import org.apache.camel.util.json.JsonObject;
 @Configurer(extended = true)
 public class EventConsole extends AbstractDevConsole {
 
-    @Metadata(defaultValue = "25",
-              description = "Maximum capacity of last number of events to capture (capacity must be between 25 and 1000)")
+    @Metadata(
+            defaultValue = "25",
+            description = "Maximum capacity of last number of events to capture (capacity must be between 25 and 1000)")
     private int capacity = 25;
 
     private CamelEvent[] events;
@@ -189,6 +191,5 @@ public class EventConsole extends AbstractDevConsole {
                 events[pos] = event;
             }
         }
-
     }
 }

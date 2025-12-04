@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -83,9 +84,12 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").resequence(header("seqno")).stream().timeout(50).deliveryAttemptInterval(10)
+                from("direct:start").resequence(header("seqno")).stream()
+                        .timeout(50)
+                        .deliveryAttemptInterval(10)
                         // ignore invalid exchanges (they are discarded)
-                        .ignoreInvalidExchanges().to("mock:result");
+                        .ignoreInvalidExchanges()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.xml.transform.TransformerException;
 
@@ -22,9 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SaxonInvalidXsltFileTest {
 
@@ -40,17 +41,18 @@ public class SaxonInvalidXsltFileTest {
             }
         } catch (Exception e) {
             // expected
-            assertIsInstanceOf(TransformerException.class, e.getCause().getCause().getCause());
+            assertIsInstanceOf(
+                    TransformerException.class, e.getCause().getCause().getCause());
         }
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:a").to(
-                        "xslt-saxon:org/apache/camel/component/xslt/notfound.xsl?transformerFactoryClass=net.sf.saxon.TransformerFactoryImpl");
+                from("seda:a")
+                        .to(
+                                "xslt-saxon:org/apache/camel/component/xslt/notfound.xsl?transformerFactoryClass=net.sf.saxon.TransformerFactoryImpl");
             }
         };
     }
-
 }

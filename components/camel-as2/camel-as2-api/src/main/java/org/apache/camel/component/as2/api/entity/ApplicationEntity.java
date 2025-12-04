@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.ByteArrayInputStream;
@@ -38,14 +39,20 @@ public abstract class ApplicationEntity extends MimeEntity {
 
     protected final byte[] ediContent;
 
-    protected ApplicationEntity(byte[] ediContent, ContentType contentType, String contentTransferEncoding,
-                                boolean isMainBody, String filename) {
+    protected ApplicationEntity(
+            byte[] ediContent,
+            ContentType contentType,
+            String contentTransferEncoding,
+            boolean isMainBody,
+            String filename) {
         super(contentType, contentTransferEncoding);
         this.ediContent = ObjectHelper.notNull(ediContent, "EDI Content");
         setMainBody(isMainBody);
         if (StringUtils.isNotBlank(filename)) {
-            addHeader(AS2Header.CONTENT_DISPOSITION,
-                    MessageFormatter.format(CONTENT_DISPOSITION_PATTERN, filename).getMessage());
+            addHeader(
+                    AS2Header.CONTENT_DISPOSITION,
+                    MessageFormatter.format(CONTENT_DISPOSITION_PATTERN, filename)
+                            .getMessage());
         }
     }
 
@@ -70,8 +77,9 @@ public abstract class ApplicationEntity extends MimeEntity {
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
-        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name());
-             OutputStream transferEncodedStream = EntityUtils.encode(ncos, getContentTransferEncodingValue())) {
+        try (CanonicalOutputStream canonicalOutstream =
+                        new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name());
+                OutputStream transferEncodedStream = EntityUtils.encode(ncos, getContentTransferEncodingValue())) {
 
             // Write out mime part headers if this is not the main body of message.
             if (!isMainBody()) {
@@ -85,5 +93,4 @@ public abstract class ApplicationEntity extends MimeEntity {
             throw new IOException("Failed to write to output stream", e);
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.reactivex.Flowable;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class EventTypeTest extends BaseReactiveTest {
 
     @Test
@@ -35,8 +36,7 @@ public class EventTypeTest extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:numbers?forwardOnComplete=true")
-                        .to("mock:endpoint");
+                from("reactive-streams:numbers?forwardOnComplete=true").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -44,13 +44,12 @@ public class EventTypeTest extends BaseReactiveTest {
 
         context.start();
 
-        Flowable.<Integer> empty()
-                .subscribe(numbers);
+        Flowable.<Integer>empty().subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(1);
         endpoint.expectedHeaderReceived(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onComplete");
-        endpoint.expectedBodiesReceived(new Object[] { null });
+        endpoint.expectedBodiesReceived(new Object[] {null});
         endpoint.assertIsSatisfied();
     }
 
@@ -60,8 +59,7 @@ public class EventTypeTest extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:numbers")
-                        .to("mock:endpoint");
+                from("reactive-streams:numbers").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -69,8 +67,7 @@ public class EventTypeTest extends BaseReactiveTest {
 
         context.start();
 
-        Flowable.<Integer> empty()
-                .subscribe(numbers);
+        Flowable.<Integer>empty().subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(0);
@@ -83,8 +80,7 @@ public class EventTypeTest extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:numbers")
-                        .to("mock:endpoint");
+                from("reactive-streams:numbers").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -92,8 +88,7 @@ public class EventTypeTest extends BaseReactiveTest {
 
         context.start();
 
-        Flowable.just(1)
-                .subscribe(numbers);
+        Flowable.just(1).subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedHeaderReceived(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onNext");
@@ -110,8 +105,7 @@ public class EventTypeTest extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:numbers?forwardOnError=true")
-                        .to("mock:endpoint");
+                from("reactive-streams:numbers?forwardOnError=true").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -145,8 +139,7 @@ public class EventTypeTest extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:numbers")
-                        .to("mock:endpoint");
+                from("reactive-streams:numbers").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 

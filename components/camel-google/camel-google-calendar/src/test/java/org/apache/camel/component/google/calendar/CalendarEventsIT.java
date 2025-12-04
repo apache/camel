@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,19 +38,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$Events} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
-           disabledReason = "Google Calendar credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
+        disabledReason = "Google Calendar credentials were not provided")
 public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CalendarEventsIT.class);
-    private static final String PATH_PREFIX
-            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarEventsApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection()
+            .getApiName(CalendarEventsApiMethod.class)
+            .getName();
 
     @Test
     public void testInsert() {
@@ -72,7 +75,8 @@ public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
         // parameter type is com.google.api.services.calendar.model.Event
         headers.put("CamelGoogleCalendar.content", event);
 
-        final com.google.api.services.calendar.model.Event result = requestBodyAndHeaders("direct://INSERT", null, headers);
+        final com.google.api.services.calendar.model.Event result =
+                requestBodyAndHeaders("direct://INSERT", null, headers);
 
         assertEquals("Feed the Camel", result.getSummary());
         LOG.debug("insert: {}", result);
@@ -90,7 +94,8 @@ public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
         assertNotNull(result, "quickAdd result");
 
         // Check if it is in the list of events for this calendar
-        com.google.api.services.calendar.model.Events events = requestBody("direct://LIST", getCalendar().getId());
+        com.google.api.services.calendar.model.Events events =
+                requestBody("direct://LIST", getCalendar().getId());
         Event item = events.getItems().get(0);
         String eventId = item.getId();
         assertEquals("Feed the Camel", item.getSummary());
@@ -161,7 +166,6 @@ public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
 
                 // test route for watch
                 from("direct://WATCH").to("google-calendar://" + PATH_PREFIX + "/watch");
-
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.server;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,8 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Test setting the certificate manager
@@ -59,6 +60,5 @@ public class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
     }
 
     @Test
-    public void shouldStart() {
-    }
+    public void shouldStart() {}
 }

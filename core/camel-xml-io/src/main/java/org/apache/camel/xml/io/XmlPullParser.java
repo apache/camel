@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-/* -*-             c-basic-offset: 4; indent-tabs-mode: nil; -*-  //------100-columns-wide------>|*/
-// for license please see accompanying LICENSE.txt file (available also at http://www.xmlpull.org/)
-
 package org.apache.camel.xml.io;
 
 import java.io.IOException;
@@ -144,7 +141,6 @@ import java.io.Reader;
  * @author <a href= "http://www-ai.cs.uni-dortmund.de/PERSONAL/haustein.html">Stefan Haustein</a>
  * @author <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
  */
-
 public interface XmlPullParser {
 
     /** This constant represents the default namespace (empty string "") */
@@ -300,9 +296,18 @@ public interface XmlPullParser {
      * although it is final, due to limitations of the Java language.
      */
     String[] TYPES = {
-            "START_DOCUMENT", "END_DOCUMENT", "START_TAG", "END_TAG", "TEXT", "CDSECT", "ENTITY_REF", "IGNORABLE_WHITESPACE",
-            "PROCESSING_INSTRUCTION", "COMMENT",
-            "DOCDECL" };
+        "START_DOCUMENT",
+        "END_DOCUMENT",
+        "START_TAG",
+        "END_TAG",
+        "TEXT",
+        "CDSECT",
+        "ENTITY_REF",
+        "IGNORABLE_WHITESPACE",
+        "PROCESSING_INSTRUCTION",
+        "COMMENT",
+        "DOCDECL"
+    };
 
     // ----------------------------------------------------------------------------
     // namespace related features
@@ -791,7 +796,6 @@ public interface XmlPullParser {
      * @see #END_TAG
      * @see #END_DOCUMENT
      */
-
     int next() throws XmlPullParserException, IOException;
 
     /**
@@ -967,5 +971,4 @@ public interface XmlPullParser {
      * </pre>
      */
     int nextTag() throws XmlPullParserException, IOException;
-
 }

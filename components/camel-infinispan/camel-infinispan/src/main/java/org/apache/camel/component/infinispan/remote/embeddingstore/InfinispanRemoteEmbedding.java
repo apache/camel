@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.embeddingstore;
 
 import java.util.Arrays;
@@ -27,8 +28,8 @@ public class InfinispanRemoteEmbedding {
     private final List<String> metadataKeys;
     private final List<String> metadataValues;
 
-    public InfinispanRemoteEmbedding(String id, float[] embedding, String text, List<String> metadataKeys,
-                                     List<String> metadataValues) {
+    public InfinispanRemoteEmbedding(
+            String id, float[] embedding, String text, List<String> metadataKeys, List<String> metadataValues) {
         this.id = id;
         this.embedding = embedding;
         this.text = text;
@@ -58,13 +59,12 @@ public class InfinispanRemoteEmbedding {
 
     @Override
     public String toString() {
-        return "InfinispanRemoteEmbedding{" +
-               "id='" + id + '\'' +
-               ", embedding=" + Arrays.toString(embedding) +
-               ", text='" + text + '\'' +
-               ", metadataKeys=" + metadataKeys +
-               ", metadataValues=" + metadataValues +
-               '}';
+        return "InfinispanRemoteEmbedding{" + "id='"
+                + id + '\'' + ", embedding="
+                + Arrays.toString(embedding) + ", text='"
+                + text + '\'' + ", metadataKeys="
+                + metadataKeys + ", metadataValues="
+                + metadataValues + '}';
     }
 
     @Override
@@ -76,10 +76,11 @@ public class InfinispanRemoteEmbedding {
             return false;
         }
         InfinispanRemoteEmbedding that = (InfinispanRemoteEmbedding) o;
-        return Objects.equals(id, that.id) && Arrays.equals(embedding, that.embedding) && Objects.equals(text,
-                that.text) && Objects.equals(metadataKeys, that.metadataKeys)
-                && Objects.equals(metadataValues,
-                        that.metadataValues);
+        return Objects.equals(id, that.id)
+                && Arrays.equals(embedding, that.embedding)
+                && Objects.equals(text, that.text)
+                && Objects.equals(metadataKeys, that.metadataKeys)
+                && Objects.equals(metadataValues, that.metadataValues);
     }
 
     @Override

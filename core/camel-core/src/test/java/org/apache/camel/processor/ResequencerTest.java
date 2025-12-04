@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -28,8 +31,6 @@ import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResequencerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -79,8 +80,12 @@ public class ResequencerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").routeId("myRoute")
-                        .resequence().body().timeout(50).to("mock:result");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .resequence()
+                        .body()
+                        .timeout(50)
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };
@@ -105,5 +110,4 @@ public class ResequencerTest extends ContextTestSupport {
 
         assertIsInstanceOf(Resequencer.class, channel.getNextProcessor());
     }
-
 }

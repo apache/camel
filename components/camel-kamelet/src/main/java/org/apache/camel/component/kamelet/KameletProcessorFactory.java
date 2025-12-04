@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.Processor;
@@ -31,5 +32,4 @@ public class KameletProcessorFactory extends TypedProcessorFactory<KameletDefini
     public Processor doCreateProcessor(Route route, KameletDefinition definition) throws Exception {
         return new KameletReifier(route, definition).createProcessor();
     }
-
 }

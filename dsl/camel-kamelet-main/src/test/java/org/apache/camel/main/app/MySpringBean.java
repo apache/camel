@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.app;
 
 import org.apache.camel.CamelContext;
@@ -27,9 +28,8 @@ public class MySpringBean {
     @Autowired(required = true)
     private CamelContext camelContext;
 
-    @Bean({ "a1", "a2" })
+    @Bean({"a1", "a2"})
     public String cheese() {
         return "cheese";
     }
-
 }

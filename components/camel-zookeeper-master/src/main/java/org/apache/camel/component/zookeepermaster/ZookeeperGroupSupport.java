@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster;
 
 import java.util.Set;
@@ -51,14 +52,19 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
 
     @Metadata(label = "advanced", autowired = true)
     private ManagedGroupFactory managedGroupFactory;
+
     @Metadata(label = "advanced", autowired = true)
     private ManagedGroupFactoryStrategy managedGroupFactoryStrategy;
+
     @Metadata(label = "advanced")
     private CuratorFramework curator;
+
     @Metadata(defaultValue = "10000")
     private int maximumConnectionTimeout = 10 * 1000;
+
     @Metadata(defaultValue = "localhost:2181")
     private String zooKeeperUrl;
+
     @Metadata(label = "security", secret = true)
     private String zooKeeperPassword;
 
@@ -151,8 +157,8 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
         // attempt to lookup curator framework from registry using the name curator
         if (curator == null) {
             try {
-                CuratorFramework aCurator
-                        = getCamelContext().getRegistry().lookupByNameAndType("curator", CuratorFramework.class);
+                CuratorFramework aCurator =
+                        getCamelContext().getRegistry().lookupByNameAndType("curator", CuratorFramework.class);
                 if (aCurator != null) {
                     LOG.debug("CuratorFramework found in CamelRegistry: {}", aCurator);
                     setCurator(aCurator);
@@ -163,8 +169,8 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
         }
 
         if (managedGroupFactoryStrategy == null) {
-            Set<ManagedGroupFactoryStrategy> set
-                    = getCamelContext().getRegistry().findByType(ManagedGroupFactoryStrategy.class);
+            Set<ManagedGroupFactoryStrategy> set =
+                    getCamelContext().getRegistry().findByType(ManagedGroupFactoryStrategy.class);
             if (set.size() == 1) {
                 setManagedGroupFactoryStrategy(set.iterator().next());
             }
@@ -176,8 +182,8 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
             }
         }
         if (managedGroupFactory == null) {
-            Set<ManagedGroupFactoryStrategy> set
-                    = getCamelContext().getRegistry().findByType(ManagedGroupFactoryStrategy.class);
+            Set<ManagedGroupFactoryStrategy> set =
+                    getCamelContext().getRegistry().findByType(ManagedGroupFactoryStrategy.class);
             if (set.size() == 1) {
                 setManagedGroupFactoryStrategy(set.iterator().next());
             } else {
@@ -185,8 +191,8 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
             }
         }
         if (managedGroupFactory == null) {
-            setManagedGroupFactory(getManagedGroupFactoryStrategy().createGroupFactory(curator, getClass().getClassLoader(),
-                    getCamelContext(), this));
+            setManagedGroupFactory(getManagedGroupFactoryStrategy()
+                    .createGroupFactory(curator, getClass().getClassLoader(), getCamelContext(), this));
         }
     }
 

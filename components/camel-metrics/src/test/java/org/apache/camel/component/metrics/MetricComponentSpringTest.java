@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
+
+import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
@@ -32,10 +37,6 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-
-import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @CamelSpringTest
 public class MetricComponentSpringTest extends CamelSpringTestSupport {
@@ -75,9 +76,7 @@ public class MetricComponentSpringTest extends CamelSpringTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in")
-                        .to("metrics:counter:A?increment=512")
-                        .to("mock:out");
+                from("direct:in").to("metrics:counter:A?increment=512").to("mock:out");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import java.io.UnsupportedEncodingException;
@@ -30,7 +31,6 @@ import org.apache.camel.support.ExchangeHelper;
  * back
  */
 public enum HL7Charset {
-
     ISO_8859_1("8859/1", "ISO-8859-1"),
     ISO_8859_2("8859/2", "ISO-8859-2"),
     ISO_8859_3("8859/3", "ISO-8859-3"),

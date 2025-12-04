@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.simple.onetomany;
 
 import org.apache.camel.dataformat.bindy.annotation.DataField;
@@ -41,5 +42,4 @@ public class Book {
     public void setYear(String year) {
         this.year = year;
     }
-
 }

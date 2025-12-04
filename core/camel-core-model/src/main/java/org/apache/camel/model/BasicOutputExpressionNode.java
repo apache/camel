@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -42,8 +43,7 @@ public abstract class BasicOutputExpressionNode extends BasicExpressionNode<Basi
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
-    public BasicOutputExpressionNode() {
-    }
+    public BasicOutputExpressionNode() {}
 
     public BasicOutputExpressionNode(BasicOutputExpressionNode source) {
         super(source);

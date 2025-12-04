@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -27,11 +28,11 @@ public class Bar {
 
     @XmlAttribute
     private String name;
+
     @XmlAttribute
     private String value;
 
-    public Bar() {
-    }
+    public Bar() {}
 
     public void setName(String name) {
         this.name = name;
@@ -48,5 +49,4 @@ public class Bar {
     public String getValue() {
         return value;
     }
-
 }

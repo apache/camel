@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -30,10 +35,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * During integration tests setup, Salesforce has been configured to fire change events for Account objects. This test
  * merely uses some API calls to trigger some change events, and then perform assertion on the received events.
@@ -42,8 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ChangeEventsConsumerManualIT extends AbstractSalesforceTestBase {
 
     private static final String ACCOUNT_NAME = "ChangeEventsConsumerIntegrationTest-TestAccount";
-    private static final String ACCOUNT_DESCRIPTION
-            = "Account used to check that creation, update and deletion fire change events";
+    private static final String ACCOUNT_DESCRIPTION =
+            "Account used to check that creation, update and deletion fire change events";
 
     @EndpointInject(value = "mock:capturedChangeEvents")
     private MockEndpoint capturedChangeEvents;
@@ -54,8 +55,8 @@ public class ChangeEventsConsumerManualIT extends AbstractSalesforceTestBase {
         // Trigger a CREATE event for an Account
         final Account account = new Account();
         account.setName(ACCOUNT_NAME);
-        final CreateSObjectResult result
-                = template.requestBody("salesforce:createSObject?sObjectName=Account", account, CreateSObjectResult.class);
+        final CreateSObjectResult result = template.requestBody(
+                "salesforce:createSObject?sObjectName=Account", account, CreateSObjectResult.class);
         assertNotNull(result.getId());
 
         // Trigger an UPDATE event for an Account
@@ -67,7 +68,8 @@ public class ChangeEventsConsumerManualIT extends AbstractSalesforceTestBase {
         template.sendBody("salesforce:deleteSObject", account);
 
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            Assertions.assertThat(capturedChangeEvents.assertExchangeReceived(2) != null).isTrue();
+            Assertions.assertThat(capturedChangeEvents.assertExchangeReceived(2) != null)
+                    .isTrue();
         });
 
         final Message createEvent = capturedChangeEvents.getExchanges().get(0).getIn();

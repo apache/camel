@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-@DisabledOnOs(value = { OS.LINUX },
-              architectures = { "s390x" },
-              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@DisabledOnOs(
+        value = {OS.LINUX},
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class ResequenceBatchNotIgnoreInvalidExchangesTest extends ResequenceStreamNotIgnoreInvalidExchangesTest {
 
     @Override
@@ -30,7 +32,11 @@ public class ResequenceBatchNotIgnoreInvalidExchangesTest extends ResequenceStre
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").resequence(header("seqno")).batch().timeout(150).to("mock:result");
+                from("direct:start")
+                        .resequence(header("seqno"))
+                        .batch()
+                        .timeout(150)
+                        .to("mock:result");
             }
         };
     }

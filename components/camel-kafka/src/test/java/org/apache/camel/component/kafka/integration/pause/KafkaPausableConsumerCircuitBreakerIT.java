@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration.pause;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Map;
@@ -44,12 +51,6 @@ import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaPausableConsumerCircuitBreakerIT extends BaseKafkaTestSupport {
     public static final String SOURCE_TOPIC = "pause-source-cb";
@@ -73,8 +74,10 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseKafkaTestSupport 
         }
 
         if (count.intValue() >= SIMULATED_FAILURES) {
-            LOG.info("Count is {}, allowing processing to proceed because it's greater than retry count {}",
-                    count.intValue(), SIMULATED_FAILURES);
+            LOG.info(
+                    "Count is {}, allowing processing to proceed because it's greater than retry count {}",
+                    count.intValue(),
+                    SIMULATED_FAILURES);
             return true;
         }
 
@@ -104,7 +107,8 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseKafkaTestSupport 
         }
         // clean all test topics
         KafkaTestUtil.createAdminClient(service)
-                .deleteTopics(Collections.singletonList(SOURCE_TOPIC)).all();
+                .deleteTopics(Collections.singletonList(SOURCE_TOPIC))
+                .all();
     }
 
     @Override
@@ -120,7 +124,8 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseKafkaTestSupport 
                  * system availability. It watches for error events and, when they happen, it triggers a scheduled
                  * check (in this case, that simply increments a value). On success, it shuts down the scheduled check
                  */
-                circuitBreaker.getEventPublisher()
+                circuitBreaker
+                        .getEventPublisher()
                         .onSuccess(event -> {
                             LOG.info("Downstream call succeeded");
                             if (executorService != null) {
@@ -134,7 +139,8 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseKafkaTestSupport 
 
                             if (executorService == null) {
                                 executorService = Executors.newSingleThreadScheduledExecutor();
-                                // In a real world scenario, instead of incrementing, it could be pinging a remote system or
+                                // In a real world scenario, instead of incrementing, it could be pinging a remote
+                                // system or
                                 // running a similar check to determine whether it's available. That
                                 executorService.scheduleAtFixedRate(() -> increment(), 1, 1, TimeUnit.SECONDS);
                             }
@@ -144,19 +150,25 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseKafkaTestSupport 
                 getCamelContext().getRegistry().bind("pausableCircuit", circuitBreaker);
 
                 from("kafka:" + SOURCE_TOPIC
-                        + "?groupId=KafkaPausableConsumerCircuitBreakerIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                        + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                        + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                                + "?groupId=KafkaPausableConsumerCircuitBreakerIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .pausable(new KafkaConsumerListener(), o -> canContinue())
                         .routeId("pausable-it")
-                        .process(exchange -> LOG.info("Got record from Kafka: {}", exchange.getMessage().getBody()))
+                        .process(exchange -> LOG.info(
+                                "Got record from Kafka: {}",
+                                exchange.getMessage().getBody()))
                         .circuitBreaker()
-                            .resilience4jConfiguration().circuitBreaker("pausableCircuit").end()
+                        .resilience4jConfiguration()
+                        .circuitBreaker("pausableCircuit")
+                        .end()
                         .to("direct:intermediate");
 
                 from("direct:intermediate")
                         .process(exchange -> {
-                            LOG.info("Got record on the intermediate processor: {}", exchange.getMessage().getBody());
+                            LOG.info(
+                                    "Got record on the intermediate processor: {}",
+                                    exchange.getMessage().getBody());
 
                             if (getCount() <= SIMULATED_FAILURES) {
                                 throw new RuntimeCamelException("Error");
@@ -184,7 +196,8 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseKafkaTestSupport 
 
         // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
         // exchange because autoCommitEnable=true
-        to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
+        to.expectedHeaderValuesReceivedInAnyOrder(
+                KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
         to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
 
         for (int k = 0; k < 5; k++) {

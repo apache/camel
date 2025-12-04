@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -23,11 +27,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
-                         disabledReason = "Disabled to avoid hitting API limits")
+@EnabledIfSystemProperty(
+        named = "enable.weather.tests",
+        matches = "true",
+        disabledReason = "Disabled to avoid hitting API limits")
 public class CurrentWeatherMadridProducerIT extends BaseWeatherConsumerIT {
 
     @Override
@@ -96,10 +99,10 @@ public class CurrentWeatherMadridProducerIT extends BaseWeatherConsumerIT {
 
                 /* The Camel Route uses the apache-camel appid to access the openweathermap service */
                 from("direct:start")
-                        .to("weather:foo?location=Madrid,Spain&appid=9162755b2efa555823cfe0451d7fff38&geolocationAccessKey=test&geolocationRequestHostIP=test")
+                        .to(
+                                "weather:foo?location=Madrid,Spain&appid=9162755b2efa555823cfe0451d7fff38&geolocationAccessKey=test&geolocationRequestHostIP=test")
                         .to("mock:result");
             }
         };
     }
-
 }

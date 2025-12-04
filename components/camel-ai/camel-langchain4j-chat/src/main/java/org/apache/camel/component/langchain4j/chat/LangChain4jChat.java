@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.chat;
 
 import org.apache.camel.spi.Metadata;
@@ -22,8 +23,7 @@ public class LangChain4jChat {
 
     public static final String SCHEME = "langchain4j-chat";
 
-    private LangChain4jChat() {
-    }
+    private LangChain4jChat() {}
 
     /**
      * @deprecated As of Camel 4.15, this nested Headers class has been moved to its own class. Use

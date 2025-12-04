@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.function.BiFunction;
 
@@ -29,9 +32,8 @@ import org.infinispan.stats.Stats;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class InfinispanEmbeddedProducerTest extends InfinispanEmbeddedTestSupport implements InfinispanProducerTestSupport {
+public class InfinispanEmbeddedProducerTest extends InfinispanEmbeddedTestSupport
+        implements InfinispanProducerTestSupport {
 
     @BindToRegistry("mappingFunction")
     public BiFunction<String, String, String> mappingFunction() {
@@ -100,12 +102,9 @@ public class InfinispanEmbeddedProducerTest extends InfinispanEmbeddedTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .toF("infinispan-embedded:%s", getCacheName());
-                from("direct:compute")
-                        .toF("infinispan-embedded:%s?remappingFunction=#mappingFunction", getCacheName());
-                from("direct:explicitput")
-                        .toF("infinispan-embedded:%s?operation=PUT&key=a&value=3", getCacheName());
+                from("direct:start").toF("infinispan-embedded:%s", getCacheName());
+                from("direct:compute").toF("infinispan-embedded:%s?remappingFunction=#mappingFunction", getCacheName());
+                from("direct:explicitput").toF("infinispan-embedded:%s?operation=PUT&key=a&value=3", getCacheName());
             }
         };
     }

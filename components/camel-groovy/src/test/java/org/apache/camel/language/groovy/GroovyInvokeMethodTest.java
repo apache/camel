@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -42,8 +43,10 @@ public class GroovyInvokeMethodTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setHeader("name").groovy("request.body.name")
-                        .setHeader("dangerous").groovy("request.body.isDangerous()")
+                        .setHeader("name")
+                        .groovy("request.body.name")
+                        .setHeader("dangerous")
+                        .groovy("request.body.isDangerous()")
                         .to("mock:result");
             }
         };

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.restassured.RestAssured;
@@ -32,29 +40,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.containsString;
-
 public class VertxPlatformHttpsProxyTest {
 
     private final int port = AvailablePortFinder.getNextAvailable();
-    private final WireMockServer wireMockServer = new WireMockServer(
-            options().httpsPort(port)
-                    .httpDisabled(true)
-                    .keystorePath("proxy/keystore.p12")
-                    .keystorePassword("changeit")
-                    .keyManagerPassword("changeit"));
+    private final WireMockServer wireMockServer = new WireMockServer(options()
+            .httpsPort(port)
+            .httpDisabled(true)
+            .keystorePath("proxy/keystore.p12")
+            .keystorePassword("changeit")
+            .keyManagerPassword("changeit"));
 
     @BeforeEach
     void before() {
-        wireMockServer.stubFor(get(urlPathEqualTo("/"))
-                .willReturn(aResponse()
-                        .withBody(
-                                "{\"message\": \"Hello World\"}")));
+        wireMockServer.stubFor(
+                get(urlPathEqualTo("/")).willReturn(aResponse().withBody("{\"message\": \"Hello World\"}")));
 
         wireMockServer.start();
     }
@@ -79,8 +78,9 @@ public class VertxPlatformHttpsProxyTest {
                 @Override
                 public void configure() {
                     from("platform-http:proxy")
-                            .toD("https://${headers." + Exchange.HTTP_HOST
-                                 + "}?bridgeEndpoint=true&sslContextParameters=#sslContextParameters&x509HostnameVerifier=#x509HostnameVerifier");
+                            .toD(
+                                    "https://${headers." + Exchange.HTTP_HOST
+                                            + "}?bridgeEndpoint=true&sslContextParameters=#sslContextParameters&x509HostnameVerifier=#x509HostnameVerifier");
                 }
             });
 
@@ -93,10 +93,10 @@ public class VertxPlatformHttpsProxyTest {
             // if we want to do test manually from a terminal we use the real HTTPS address
             final var originURI = "http://localhost:" + port;
 
-            given()
-                    .proxy(proxyURI)
+            given().proxy(proxyURI)
                     .contentType(ContentType.JSON)
-                    .when().get(originURI)
+                    .when()
+                    .get(originURI)
                     .then()
                     .statusCode(200)
                     .body(containsString("{\"message\": \"Hello World\"}"));
@@ -131,5 +131,4 @@ public class VertxPlatformHttpsProxyTest {
     public NoopHostnameVerifier x509HostnameVerifier() {
         return NoopHostnameVerifier.INSTANCE;
     }
-
 }

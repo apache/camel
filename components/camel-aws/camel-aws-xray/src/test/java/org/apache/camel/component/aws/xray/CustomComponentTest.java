@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.apache.camel.component.aws.xray.TestDataBuilder.createSegment;
+import static org.apache.camel.component.aws.xray.TestDataBuilder.createSubsegment;
+import static org.apache.camel.component.aws.xray.TestDataBuilder.createTrace;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,14 +37,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.aws.xray.TestDataBuilder.createSegment;
-import static org.apache.camel.component.aws.xray.TestDataBuilder.createSubsegment;
-import static org.apache.camel.component.aws.xray.TestDataBuilder.createTrace;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 
 /**
  * This test uses a custom component that will trigger a long-running backing task for certain specific states. The task
@@ -64,32 +65,34 @@ public class CustomComponentTest extends CamelAwsXRayTestSupport {
     private static final String PERSISTING = "seda:persisting";
 
     public CustomComponentTest() {
-        super(
-              createTrace().inRandomOrder()
-                      .withSegment(createSegment("start")
-                              .withSubsegment(createSubsegment(DELIVERY)))
-                      .withSegment(createSegment("delivery")
-                              .withSubsegment(createSubsegment(CommonEndpoints.RECEIVED)
-                                      .withSubsegment(createSubsegment("seda:backingTask"))
-                                      .withSubsegment(createSubsegment("seda:backingTask"))
-                                      .withMetadata("state", "received"))
-                              .withSubsegment(createSubsegment(IN_QUEUE)))
-                      .withSegment(createSegment("processing")
-                              .withSubsegment(createSubsegment(CommonEndpoints.PROCESSING))
-                              .withSubsegment(createSubsegment(PERSISTENCE_QUEUE)))
-                      .withSegment(createSegment("wait-for-persisting")
-                              .withSubsegment(createSubsegment(CommonEndpoints.PERSISTENCE_QUEUE))
-                              .withSubsegment(createSubsegment(PERSISTING)))
-                      .withSegment(createSegment("persisting")
-                              .withSubsegment(createSubsegment(CommonEndpoints.READY)
-                              // not available due to the asynchronous, long-running nature of the processing
-                              // bean. If the sleep is commented out in the bean, this subsegments should be
-                              // available
-                              //                                        .withSubsegment(createSubsegment("backingTask")
-                              //                                                .withSubsegment(createSubsegment("bean:ProcessingCamelBean"))
-                              //                                        )
-                              //                                        .withMetadata("state", "ready")
-                              )));
+        super(createTrace()
+                .inRandomOrder()
+                .withSegment(createSegment("start").withSubsegment(createSubsegment(DELIVERY)))
+                .withSegment(createSegment("delivery")
+                        .withSubsegment(createSubsegment(CommonEndpoints.RECEIVED)
+                                .withSubsegment(createSubsegment("seda:backingTask"))
+                                .withSubsegment(createSubsegment("seda:backingTask"))
+                                .withMetadata("state", "received"))
+                        .withSubsegment(createSubsegment(IN_QUEUE)))
+                .withSegment(createSegment("processing")
+                        .withSubsegment(createSubsegment(CommonEndpoints.PROCESSING))
+                        .withSubsegment(createSubsegment(PERSISTENCE_QUEUE)))
+                .withSegment(createSegment("wait-for-persisting")
+                        .withSubsegment(createSubsegment(CommonEndpoints.PERSISTENCE_QUEUE))
+                        .withSubsegment(createSubsegment(PERSISTING)))
+                .withSegment(createSegment("persisting")
+                        .withSubsegment(
+                                createSubsegment(CommonEndpoints.READY)
+                                // not available due to the asynchronous, long-running nature of the processing
+                                // bean. If the sleep is commented out in the bean, this subsegments should be
+                                // available
+                                //
+                                // .withSubsegment(createSubsegment("backingTask")
+                                //
+                                // .withSubsegment(createSubsegment("bean:ProcessingCamelBean"))
+                                //                                        )
+                                //                                        .withMetadata("state", "ready")
+                                )));
     }
 
     @Override
@@ -103,8 +106,7 @@ public class CustomComponentTest extends CamelAwsXRayTestSupport {
 
         template.requestBody(START, "Hello");
 
-        assertThat("Not all exchanges were fully processed",
-                notify.matches(10, TimeUnit.SECONDS), is(equalTo(true)));
+        assertThat("Not all exchanges were fully processed", notify.matches(10, TimeUnit.SECONDS), is(equalTo(true)));
 
         verify();
 
@@ -117,44 +119,48 @@ public class CustomComponentTest extends CamelAwsXRayTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(START).routeId("start")
-                        .log("Starting test")
-                        .to(ExchangePattern.InOnly, DELIVERY);
+                from(START).routeId("start").log("Starting test").to(ExchangePattern.InOnly, DELIVERY);
 
-                from(DELIVERY).routeId("delivery")
+                from(DELIVERY)
+                        .routeId("delivery")
                         .log("Doing some stuff")
                         .to(CommonEndpoints.RECEIVED)
                         .delay(100)
                         .to(ExchangePattern.InOnly, IN_QUEUE);
 
-                from(IN_QUEUE).routeId("processing")
+                from(IN_QUEUE)
+                        .routeId("processing")
                         .log("Do some more stuff")
                         .to(CommonEndpoints.PROCESSING)
                         .delay(100)
                         .to(ExchangePattern.InOnly, PERSISTENCE_QUEUE);
 
-                from(PERSISTENCE_QUEUE).routeId("wait-for-persisting")
+                from(PERSISTENCE_QUEUE)
+                        .routeId("wait-for-persisting")
                         .log("Waiting on available persisting instance")
                         .to(CommonEndpoints.PERSISTENCE_QUEUE)
                         .delay(100)
                         .to(ExchangePattern.InOnly, PERSISTING);
 
-                from(PERSISTING).routeId("persisting")
+                from(PERSISTING)
+                        .routeId("persisting")
                         .log("Payload ready for usage")
                         .to(CommonEndpoints.READY)
                         .delay(100)
                         .log("done");
 
-                from("seda:backingTask").routeId("backingTask")
+                from("seda:backingTask")
+                        .routeId("backingTask")
                         .onException(Exception.class)
-                            .redeliveryDelay(100L)
-                            .onRedelivery((Exchange exchange) -> LOG.warn(">> Retrying due to: {}",
-                                    exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getLocalizedMessage()))
-                            .logExhausted(true)
-                            .handled(true)
-                            .logStackTrace(true)
+                        .redeliveryDelay(100L)
+                        .onRedelivery((Exchange exchange) -> LOG.warn(
+                                ">> Retrying due to: {}",
+                                exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class)
+                                        .getLocalizedMessage()))
+                        .logExhausted(true)
+                        .handled(true)
+                        .logStackTrace(true)
                         .end()
-
                         .log("routing at ${routeId}")
                         .bean(ProcessingCamelBean.class)
                         .log("processing camel bean invoked");

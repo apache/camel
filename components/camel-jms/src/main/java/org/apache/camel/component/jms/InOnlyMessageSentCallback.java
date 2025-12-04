@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsMessageHelper.getJMSMessageID;
 
 import jakarta.jms.Destination;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
 
 import org.apache.camel.Exchange;
-
-import static org.apache.camel.component.jms.JmsMessageHelper.getJMSMessageID;
 
 /**
  * {@link MessageSentCallback} used to enrich the Camel {@link Exchange} with the actual <tt>JMSMessageID</tt> after
@@ -45,5 +46,4 @@ public class InOnlyMessageSentCallback implements MessageSentCallback {
             }
         }
     }
-
 }

@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb.integration;
+
+import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY_BIND_PARAMETERS;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Map;
@@ -31,19 +40,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY_BIND_PARAMETERS;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                                  disabledReason = "Apache CI nodes are too resource constrained for this test"),
-        @DisabledIfSystemProperty(named = "arangodb.tests.disable", matches = "true",
-                                  disabledReason = "Manually disabled tests")
+    @DisabledIfSystemProperty(
+            named = "ci.env.name",
+            matches = ".*",
+            disabledReason = "Apache CI nodes are too resource constrained for this test"),
+    @DisabledIfSystemProperty(
+            named = "arangodb.tests.disable",
+            matches = "true",
+            disabledReason = "Manually disabled tests")
 })
 public class ArangoCustomVertxIT extends BaseArangoDb {
     @BindToRegistry("customVertx")
@@ -54,7 +59,8 @@ public class ArangoCustomVertxIT extends BaseArangoDb {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:query")
-                        .toF("arangodb:{{arangodb.testDb}}?host=%s&port=%d&operation=AQL_QUERY",
+                        .toF(
+                                "arangodb:{{arangodb.testDb}}?host=%s&port=%d&operation=AQL_QUERY",
                                 service.host(), service.port());
             }
         };
@@ -95,7 +101,8 @@ public class ArangoCustomVertxIT extends BaseArangoDb {
         });
 
         assertInstanceOf(Collection.class, result.getMessage().getBody());
-        Collection<TestDocumentEntity> list = (Collection<TestDocumentEntity>) result.getMessage().getBody();
+        Collection<TestDocumentEntity> list =
+                (Collection<TestDocumentEntity>) result.getMessage().getBody();
 
         assertNotNull(list);
         Optional<TestDocumentEntity> optional = list.stream().findFirst();

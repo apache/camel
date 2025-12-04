@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
 
 import jakarta.validation.ValidationProviderResolver;
@@ -42,8 +43,9 @@ public class HibernateValidationProviderResolverTest extends CamelTestSupport {
             public void configure() {
                 onException(BeanValidationException.class).to(mockEndpoint);
 
-                from("direct:test").to(
-                        "bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
+                from("direct:test")
+                        .to(
+                                "bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
             }
         };
     }
@@ -63,5 +65,4 @@ public class HibernateValidationProviderResolverTest extends CamelTestSupport {
         // Then
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

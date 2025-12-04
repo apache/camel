@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.replicatedmap;
 
 import java.util.UUID;
@@ -31,8 +32,8 @@ public class HazelcastReplicatedmapConsumer extends HazelcastDefaultConsumer {
 
     private UUID listener;
 
-    public HazelcastReplicatedmapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
-                                          String cacheName) {
+    public HazelcastReplicatedmapConsumer(
+            HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
         cache = hazelcastInstance.getReplicatedMap(cacheName);

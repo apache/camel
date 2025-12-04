@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Inspect Container Request headers are applied properly
@@ -46,7 +47,6 @@ public class InspectContainerCmdHeaderTest extends BaseDockerHeaderTest<InspectC
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).inspectContainerCmd(containerId);
-
     }
 
     @Override
@@ -58,5 +58,4 @@ public class InspectContainerCmdHeaderTest extends BaseDockerHeaderTest<InspectC
     protected DockerOperation getOperation() {
         return DockerOperation.INSPECT_CONTAINER;
     }
-
 }

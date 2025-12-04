@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,10 +27,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
 
@@ -56,7 +57,13 @@ public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo").delay(500).split(body().tokenize(",")).to("mock:split").end().to("mock:foo");
+                from("seda:foo")
+                        .routeId("foo")
+                        .delay(500)
+                        .split(body().tokenize(","))
+                        .to("mock:split")
+                        .end()
+                        .to("mock:foo");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge.localstack;
 
 import java.util.ArrayList;
@@ -60,7 +61,9 @@ public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                Target target = Target.builder()
+                        .id("sqs-queue")
+                        .arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
                 targets.add(target);
@@ -77,8 +80,8 @@ public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
             exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
         });
 
-        template.send("direct:evs-deleteRule",
-                exchange -> exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule"));
+        template.send("direct:evs-deleteRule", exchange -> exchange.getIn()
+                .setHeader(EventbridgeConstants.RULE_NAME, "firstrule"));
     }
 
     @Override
@@ -86,8 +89,8 @@ public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint
-                        = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
+                String awsEndpoint =
+                        "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
                 String removeTarget = "aws2-eventbridge://default?operation=removeTargets";
                 String deleteRule = "aws2-eventbridge://default?operation=deleteRule";

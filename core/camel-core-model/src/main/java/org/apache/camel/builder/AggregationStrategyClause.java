@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.function.BiFunction;
@@ -85,7 +86,8 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
     public T message(final BiFunction<Message, Message, Message> function) {
         return exchange((Exchange oldExchange, Exchange newExchange) -> {
             Message oldMessage = oldExchange != null ? oldExchange.getIn() : null;
-            Message newMessage = ObjectHelper.notNull(newExchange, "NewExchange").getIn();
+            Message newMessage =
+                    ObjectHelper.notNull(newExchange, "NewExchange").getIn();
             Message result = function.apply(oldMessage, newMessage);
 
             if (oldExchange != null) {
@@ -154,9 +156,11 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
     public <O, N> T body(final Class<O> oldType, final Class<N> newType, final BiFunction<O, N, Object> function) {
         return exchange((Exchange oldExchange, Exchange newExchange) -> {
             Message oldMessage = oldExchange != null ? oldExchange.getIn() : null;
-            Message newMessage = ObjectHelper.notNull(newExchange, "NewExchange").getIn();
+            Message newMessage =
+                    ObjectHelper.notNull(newExchange, "NewExchange").getIn();
 
-            Object result = function.apply(oldMessage != null ? oldMessage.getBody(oldType) : null,
+            Object result = function.apply(
+                    oldMessage != null ? oldMessage.getBody(oldType) : null,
                     newMessage != null ? newMessage.getBody(newType) : null);
 
             if (oldExchange != null) {

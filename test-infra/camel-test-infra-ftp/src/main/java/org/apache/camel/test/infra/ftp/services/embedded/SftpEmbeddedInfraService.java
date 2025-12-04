@@ -45,9 +45,10 @@ import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = FtpInfraService.class,
-              description = "Embedded SFTP Server",
-              serviceAlias = { "sftp" })
+@InfraService(
+        service = FtpInfraService.class,
+        description = "Embedded SFTP Server",
+        serviceAlias = {"sftp"})
 public class SftpEmbeddedInfraService extends AbstractService implements FtpInfraService {
     private static final Logger LOG = LoggerFactory.getLogger(SftpEmbeddedInfraService.class);
 
@@ -104,9 +105,9 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
         if (rootDirMode) {
             final File testDirectory = new File(embeddedConfiguration.getTestDirectory());
 
-            sshd.setFileSystemFactory(new VirtualFileSystemFactory(
-                    testDirectory().resolve(testDirectory.getParentFile().getName())
-                            .toAbsolutePath()));
+            sshd.setFileSystemFactory(new VirtualFileSystemFactory(testDirectory()
+                    .resolve(testDirectory.getParentFile().getName())
+                    .toAbsolutePath()));
         }
         List<NamedFactory<Signature>> signatureFactories = sshd.getSignatureFactories();
         signatureFactories.clear();
@@ -175,8 +176,7 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
     }
 
     @Override
-    public void registerProperties() {
-    }
+    public void registerProperties() {}
 
     @Override
     public int getPort() {

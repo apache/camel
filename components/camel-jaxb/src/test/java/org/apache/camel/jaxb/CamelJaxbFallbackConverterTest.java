@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -29,18 +35,13 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
 
     @Test
     public void testFallbackConverterWithoutObjectFactory() {
         TypeConverter converter = context.getTypeConverter();
-        Foo foo = converter.convertTo(Foo.class, exchange,
-                "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
+        Foo foo = converter.convertTo(
+                Foo.class, exchange, "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
         assertNotNull(foo, "foo should not be null");
         assertEquals("value", foo.getBarRefs().get(0).getValue());
 
@@ -55,7 +56,8 @@ public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
 
         String value = converter.convertTo(String.class, exchange, foo);
 
-        assertTrue(value.indexOf("<bar name=\"myName\" value=\"myValue\"/>") > 0, "Should get a right marshalled string");
+        assertTrue(
+                value.indexOf("<bar name=\"myName\" value=\"myValue\"/>") > 0, "Should get a right marshalled string");
     }
 
     @Test
@@ -80,8 +82,8 @@ public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
     @Test
     public void testConverter() throws Exception {
         TypeConverter converter = context.getTypeConverter();
-        PersonType person = converter.convertTo(PersonType.class, exchange,
-                "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
+        PersonType person = converter.convertTo(
+                PersonType.class, exchange, "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
         assertNotNull(person, "Person should not be null");
         assertEquals("FOO", person.getFirstName(), "Get the wrong first name");
         assertEquals("BAR", person.getLastName(), "Get the wrong second name");

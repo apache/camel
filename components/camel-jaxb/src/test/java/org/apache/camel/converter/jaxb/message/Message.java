@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb.message;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -42,14 +43,15 @@ import jakarta.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "text" })
+@XmlType(
+        name = "",
+        propOrder = {"text"})
 public class Message {
 
     @XmlElement(required = true)
     private String text;
 
-    public Message() {
-    }
+    public Message() {}
 
     public Message(String text) {
         this.text = text;

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cloud;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.UUID;
 
@@ -25,9 +29,6 @@ import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConsulServiceCallWithRegistrationIT extends ConsulTestSupport {
     private static final String SERVICE_HOST = "localhost";
@@ -73,14 +74,21 @@ public class ConsulServiceCallWithRegistrationIT extends ConsulTestSupport {
                 // context path is derived from the jetty endpoint.
                 from("direct:start")
                         .serviceCall()
-                            .name(serviceName).component("undertow").defaultLoadBalancer()
-                            .consulServiceDiscovery().url(service.getConsulUrl()).end()
+                        .name(serviceName)
+                        .component("undertow")
+                        .defaultLoadBalancer()
+                        .consulServiceDiscovery()
+                        .url(service.getConsulUrl())
+                        .end()
                         .end()
                         .log("${body}");
 
-                fromF("undertow:http://%s:%d/service/path", SERVICE_HOST, port).routeId(serviceId).routeGroup(serviceName)
+                fromF("undertow:http://%s:%d/service/path", SERVICE_HOST, port)
+                        .routeId(serviceId)
+                        .routeGroup(serviceName)
                         .routePolicy(new ServiceRegistrationRoutePolicy())
-                        .transform().simple("${in.body} on " + port);
+                        .transform()
+                        .simple("${in.body} on " + port);
             }
         });
 
@@ -102,20 +110,26 @@ public class ConsulServiceCallWithRegistrationIT extends ConsulTestSupport {
                 // by jetty
                 from("direct:start")
                         .serviceCall()
-                            .name(serviceName + "/bad/path").component("http")
-                            .defaultLoadBalancer().consulServiceDiscovery().url(service.getConsulUrl()).end()
+                        .name(serviceName + "/bad/path")
+                        .component("http")
+                        .defaultLoadBalancer()
+                        .consulServiceDiscovery()
+                        .url(service.getConsulUrl())
+                        .end()
                         .end()
                         .log("${body}");
 
-                fromF("undertow:http://%s:%d/service/path", SERVICE_HOST, port).routeId(serviceId).routeGroup(serviceName)
+                fromF("undertow:http://%s:%d/service/path", SERVICE_HOST, port)
+                        .routeId(serviceId)
+                        .routeGroup(serviceName)
                         .routePolicy(new ServiceRegistrationRoutePolicy())
-                        .transform().simple("${in.body} on " + port);
+                        .transform()
+                        .simple("${in.body} on " + port);
             }
         });
 
         context.start();
 
-        assertThrows(CamelExecutionException.class,
-                () -> template.requestBody("direct:start", "ping", String.class));
+        assertThrows(CamelExecutionException.class, () -> template.requestBody("direct:start", "ping", String.class));
     }
 }

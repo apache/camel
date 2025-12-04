@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.gson;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
@@ -26,9 +30,6 @@ import org.apache.camel.component.gson.annotation.ExcludeWeight;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GsonMarshalExclusionTest extends CamelTestSupport {
 
@@ -90,7 +91,7 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
         }
     }
 
-    //START SNIPPET: strategy
+    // START SNIPPET: strategy
     /**
      * Strategy to exclude {@link ExcludeAge} annotated fields
      */
@@ -106,7 +107,7 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
             return false;
         }
     }
-    //END SNIPPET: strategy
+    // END SNIPPET: strategy
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -116,18 +117,20 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
             public void configure() {
 
                 GsonDataFormat weightExclusionFormat = new GsonDataFormat(TestPojoExclusion.class);
-                weightExclusionFormat.setExclusionStrategies(Arrays.<ExclusionStrategy> asList(new WeightExclusionStrategy()));
+                weightExclusionFormat.setExclusionStrategies(
+                        Arrays.<ExclusionStrategy>asList(new WeightExclusionStrategy()));
                 from("direct:inPojoExcludeWeight").marshal(weightExclusionFormat);
-                from("direct:backPojoExcludeWeight").unmarshal(weightExclusionFormat).to("mock:reversePojoExcludeWeight");
+                from("direct:backPojoExcludeWeight")
+                        .unmarshal(weightExclusionFormat)
+                        .to("mock:reversePojoExcludeWeight");
 
-                //START SNIPPET: format
+                // START SNIPPET: format
                 GsonDataFormat ageExclusionFormat = new GsonDataFormat(TestPojoExclusion.class);
-                ageExclusionFormat.setExclusionStrategies(Arrays.<ExclusionStrategy> asList(new AgeExclusionStrategy()));
+                ageExclusionFormat.setExclusionStrategies(Arrays.<ExclusionStrategy>asList(new AgeExclusionStrategy()));
                 from("direct:inPojoExcludeAge").marshal(ageExclusionFormat);
-                //END SNIPPET: format
+                // END SNIPPET: format
                 from("direct:backPojoExcludeAge").unmarshal(ageExclusionFormat).to("mock:reversePojoExcludeAge");
             }
         };
     }
-
 }

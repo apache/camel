@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +33,6 @@ import org.apache.camel.spi.Condition;
 import org.apache.camel.support.BreakpointSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DebugSingleStepConditionTest extends ContextTestSupport {
 
@@ -90,5 +91,4 @@ public class DebugSingleStepConditionTest extends ContextTestSupport {
             }
         };
     }
-
 }

@@ -49,7 +49,9 @@ public final class UserConfigHelper {
             configFileName = CommandLineHelper.LOCAL_USER_CONFIG;
         }
 
-        Files.writeString(userConfigDir.resolve(configFileName), content,
+        Files.writeString(
+                userConfigDir.resolve(configFileName),
+                content,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.WRITE,
                 StandardOpenOption.TRUNCATE_EXISTING);

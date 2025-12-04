@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,13 +33,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -47,7 +49,10 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
 
         // instantiate JmsInOutExclusiveTopicRecipientListTest.reply queue
         Awaitility.await().untilAsserted(() -> {
-            String out = template.requestBodyAndHeader("direct:start", "Camel", "whereTo",
+            String out = template.requestBodyAndHeader(
+                    "direct:start",
+                    "Camel",
+                    "whereTo",
                     "activemq:topic:JmsInOutExclusiveTopicRecipientListTest.news?replyToType=Exclusive&replyTo=queue:JmsInOutExclusiveTopicRecipientListTest.reply",
                     String.class);
             assertEquals("Bye Camel", out);
@@ -65,9 +70,7 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .recipientList().header("whereTo")
-                        .to("mock:result");
+                from("direct:start").recipientList().header("whereTo").to("mock:result");
 
                 from("activemq:topic:JmsInOutExclusiveTopicRecipientListTest.news")
                         .transform(body().prepend("Bye "))
@@ -79,8 +82,8 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
                             log.info("CorrelationID: {}", cid);
                             if (replyTo != null && cid != null) {
                                 log.info("Sending back reply message on {}", replyTo);
-                                template.sendBodyAndHeader("activemq:" + replyTo, exchange.getIn().getBody(),
-                                        "JMSCorrelationID", cid);
+                                template.sendBodyAndHeader(
+                                        "activemq:" + replyTo, exchange.getIn().getBody(), "JMSCorrelationID", cid);
                             }
                         });
             }

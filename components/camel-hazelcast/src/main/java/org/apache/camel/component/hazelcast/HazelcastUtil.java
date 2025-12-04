@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.config.Config;
@@ -22,19 +23,14 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
 public final class HazelcastUtil {
-    private HazelcastUtil() {
-    }
+    private HazelcastUtil() {}
 
     public static HazelcastInstance newInstance() {
         Config cfg = new XmlConfigBuilder().build();
 
         // hazelcast.version.check.enabled is deprecated
-        cfg.setProperty(
-                "hazelcast.phone.home.enabled",
-                System.getProperty("hazelcast.phone.home.enabled", "false"));
-        cfg.setProperty(
-                "hazelcast.logging.type",
-                System.getProperty("hazelcast.logging.type", "slf4j"));
+        cfg.setProperty("hazelcast.phone.home.enabled", System.getProperty("hazelcast.phone.home.enabled", "false"));
+        cfg.setProperty("hazelcast.logging.type", System.getProperty("hazelcast.logging.type", "slf4j"));
 
         return newInstance(cfg);
     }

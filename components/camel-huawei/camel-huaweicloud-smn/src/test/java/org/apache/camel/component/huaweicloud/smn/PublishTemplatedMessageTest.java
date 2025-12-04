@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,23 +34,22 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PublishTemplatedMessageTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublishTemplatedMessageTest.class.getName());
 
     TestConfiguration testConfiguration = new TestConfiguration();
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys
-            = new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     @BindToRegistry("smnClient")
-    SmnClientMock smnClientMock = new SmnClientMock(null); // creating mock smn client to stub method behavior for unit testing
+    SmnClientMock smnClientMock =
+            new SmnClientMock(null); // creating mock smn client to stub method behavior for unit testing
 
     protected RouteBuilder createRouteBuilder() {
-        // populating tag values. user has to adjust the map entries according to the structure of their respective templates
+        // populating tag values. user has to adjust the map entries according to the structure of their respective
+        // templates
         Map<String, String> tags = new HashMap<>();
         tags.put("name", "reji");
         tags.put("phone", "1234567890");
@@ -55,14 +58,16 @@ public class PublishTemplatedMessageTest extends CamelTestSupport {
             public void configure() {
                 from("direct:publish_templated_message")
                         .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("This is my subjectline"))
-                        .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
+                        .setProperty(
+                                SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
                         .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
                         .setProperty(SmnProperties.TEMPLATE_TAGS, constant(tags))
                         .setProperty(SmnProperties.TEMPLATE_NAME, constant("hello-template"))
-                        .to("hwcloud-smn:publishMessageService?serviceKeys=#serviceKeys&operation=publishAsTemplatedMessage"
-                            + "&projectId=" + testConfiguration.getProperty("projectId") + "&region="
-                            + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
-                            + "&smnClient=#smnClient")
+                        .to(
+                                "hwcloud-smn:publishMessageService?serviceKeys=#serviceKeys&operation=publishAsTemplatedMessage"
+                                        + "&projectId=" + testConfiguration.getProperty("projectId") + "&region="
+                                        + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                        + "&smnClient=#smnClient")
                         .log("templated notification sent")
                         .to("mock:publish_templated_message_result");
             }
@@ -80,8 +85,15 @@ public class PublishTemplatedMessageTest extends CamelTestSupport {
 
         assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
         assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
-        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
-        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
+        assertTrue(responseExchange
+                        .getProperty(SmnProperties.SERVICE_MESSAGE_ID)
+                        .toString()
+                        .length()
+                > 0);
+        assertTrue(responseExchange
+                        .getProperty(SmnProperties.SERVICE_REQUEST_ID)
+                        .toString()
+                        .length()
+                > 0);
     }
-
 }

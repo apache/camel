@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.ArrayList;
@@ -42,8 +43,7 @@ public final class RestConsumerContextPathMatcher {
     private static final Pattern CONSUMER_PATH_PARAMETER_PATTERN = Pattern.compile("([^{]*)(\\{.*?\\})([^{]*)");
     private static final Map<String, Pattern> PATH_PATTERN = new ConcurrentHashMap<>();
 
-    private RestConsumerContextPathMatcher() {
-    }
+    private RestConsumerContextPathMatcher() {}
 
     /**
      * Consumer path details which must be implemented and provided by the components.
@@ -69,7 +69,6 @@ public final class RestConsumerContextPathMatcher {
          * Whether the consumer match on uri prefix
          */
         boolean isMatchOnUriPrefix();
-
     }
 
     /**
@@ -94,7 +93,8 @@ public final class RestConsumerContextPathMatcher {
         // remove starting/ending slashes
         consumerPath = removePathSlashes(consumerPath);
 
-        if (matchOnUriPrefix && requestPath.toLowerCase(Locale.ENGLISH).startsWith(consumerPath.toLowerCase(Locale.ENGLISH))) {
+        if (matchOnUriPrefix
+                && requestPath.toLowerCase(Locale.ENGLISH).startsWith(consumerPath.toLowerCase(Locale.ENGLISH))) {
             return true;
         }
 
@@ -113,8 +113,8 @@ public final class RestConsumerContextPathMatcher {
      * @param  consumerPaths the list of consumer context path details
      * @return               the best matched consumer, or <tt>null</tt> if none could be determined.
      */
-    public static <
-            T> ConsumerPath<T> matchBestPath(String requestMethod, String requestPath, List<ConsumerPath<T>> consumerPaths) {
+    public static <T> ConsumerPath<T> matchBestPath(
+            String requestMethod, String requestPath, List<ConsumerPath<T>> consumerPaths) {
         ConsumerPath<T> answer = null;
 
         List<ConsumerPath<T>> candidates = new ArrayList<>();
@@ -159,7 +159,10 @@ public final class RestConsumerContextPathMatcher {
             answer = candidates.stream()
                     .filter(c -> matchPath(requestPath, c.getConsumerPath(), c.isMatchOnUriPrefix()))
                     // sort by longest by inverting the sort by multiply with -1
-                    .sorted(Comparator.comparingInt(o -> -1 * o.getConsumerPath().length())).findFirst().orElse(null);
+                    .sorted(Comparator.comparingInt(
+                            o -> -1 * o.getConsumerPath().length()))
+                    .findFirst()
+                    .orElse(null);
         }
 
         // is there a direct match by with a different VERB, as then this call is not allowed
@@ -196,17 +199,22 @@ public final class RestConsumerContextPathMatcher {
                 ConsumerPath<T> entry = it.next();
                 int curlyBraces = countCurlyBraces(entry.getConsumerPath());
                 if (curlyBraces > 0) {
-                    List<ConsumerPath<T>> consumerPathsList = pathMap.computeIfAbsent(curlyBraces, key -> new ArrayList<>());
+                    List<ConsumerPath<T>> consumerPathsList =
+                            pathMap.computeIfAbsent(curlyBraces, key -> new ArrayList<>());
                     consumerPathsList.add(entry);
                 }
             }
 
-            OptionalInt min = pathMap.keySet().stream().mapToInt(Integer::intValue).min();
+            OptionalInt min =
+                    pathMap.keySet().stream().mapToInt(Integer::intValue).min();
             if (min.isPresent()) {
                 List<ConsumerPath<T>> bestConsumerPaths = pathMap.get(min.getAsInt());
                 if (bestConsumerPaths.size() > 1 && !canBeAmbiguous(requestMethod, requestMethod)) {
-                    String exceptionMsg = "Ambiguous paths " + bestConsumerPaths.stream().map(ConsumerPath::getConsumerPath)
-                            .collect(Collectors.joining(",")) + " for request path " + requestPath;
+                    String exceptionMsg = "Ambiguous paths "
+                            + bestConsumerPaths.stream()
+                                    .map(ConsumerPath::getConsumerPath)
+                                    .collect(Collectors.joining(","))
+                            + " for request path " + requestPath;
                     throw new IllegalStateException(exceptionMsg);
                 }
                 best = bestConsumerPaths.get(0);
@@ -248,8 +256,7 @@ public final class RestConsumerContextPathMatcher {
         String regex = prepareConsumerPathRegex(consumerPath);
 
         // Convert URI template to a regex pattern
-        regex = regex
-                .replace("/", "\\/")
+        regex = regex.replace("/", "\\/")
                 .replace("-", "\\-")
                 .replace("{", "(?<")
                 .replace("}", ">[^\\/]+)");
@@ -419,5 +426,4 @@ public final class RestConsumerContextPathMatcher {
             return regexBuilder.toString();
         }
     }
-
 }

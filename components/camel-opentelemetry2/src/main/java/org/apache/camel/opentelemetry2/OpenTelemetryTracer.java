@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
@@ -58,8 +59,7 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
         }
 
         if (contextPropagators == null) {
-            contextPropagators = CamelContextHelper.findSingleByType(
-                    getCamelContext(), ContextPropagators.class);
+            contextPropagators = CamelContextHelper.findSingleByType(getCamelContext(), ContextPropagators.class);
         }
         if (contextPropagators == null) {
             contextPropagators = GlobalOpenTelemetry.get().getPropagators();
@@ -106,8 +106,9 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
                 baggage = otelParentSpan.getBaggage();
             } else {
                 // Try to get parent from context propagation (upstream traces)
-                Context ctx = contextPropagators.getTextMapPropagator().extract(Context.root(), extractor,
-                        new TextMapGetter<SpanContextPropagationExtractor>() {
+                Context ctx = contextPropagators
+                        .getTextMapPropagator()
+                        .extract(Context.root(), extractor, new TextMapGetter<SpanContextPropagationExtractor>() {
                             @Override
                             public Iterable<String> keys(SpanContextPropagationExtractor carrier) {
                                 return carrier.keys();
@@ -154,14 +155,17 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
             if (otelSpan.getBaggage() != null) {
                 ctx = ctx.with(otelSpan.getBaggage());
             }
-            contextPropagators.getTextMapPropagator().inject(ctx, injector,
-                    (carrier, key, value) -> carrier.put(key, value));
+            contextPropagators
+                    .getTextMapPropagator()
+                    .inject(ctx, injector, (carrier, key, value) -> carrier.put(key, value));
             if (includeTracing) {
-                injector.put(org.apache.camel.telemetry.Tracer.TRACE_HEADER, otelSpan.getSpan().getSpanContext().getTraceId());
-                injector.put(org.apache.camel.telemetry.Tracer.SPAN_HEADER, otelSpan.getSpan().getSpanContext().getSpanId());
+                injector.put(
+                        org.apache.camel.telemetry.Tracer.TRACE_HEADER,
+                        otelSpan.getSpan().getSpanContext().getTraceId());
+                injector.put(
+                        org.apache.camel.telemetry.Tracer.SPAN_HEADER,
+                        otelSpan.getSpan().getSpanContext().getSpanId());
             }
         }
-
     }
-
 }

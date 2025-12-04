@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.translate;
 
 public enum Translate2LanguageEnum {
-
     AFRIKAANS("af"),
     ALBANIAN("sq"),
     AMHARIC("am"),
@@ -48,15 +48,13 @@ public enum Translate2LanguageEnum {
     GUJARATI("gu"),
     HAITIAN_CREOLE("ht"),
     HAUSA("ha"),
-    HEBREW(
-           "he"),
+    HEBREW("he"),
     HINDI("hi"),
     HUNGARIAN("hu"),
     ICELANDIC("is"),
     INDONESIAN("id"),
     ITALIAN("it"),
-    JAPANESE(
-             "ja"),
+    JAPANESE("ja"),
     KANNADA("kn"),
     KAZAKH("kk"),
     KOREAN("ko"),
@@ -104,5 +102,4 @@ public enum Translate2LanguageEnum {
     public String toString() {
         return language;
     }
-
 }

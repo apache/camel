@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.master;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +38,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MasterComponentTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterComponentTest.class);
-    private static final List<String> INSTANCES
-            = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
+    private static final List<String> INSTANCES =
+            IntStream.range(0, 3).mapToObj(Integer::toString).toList();
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(INSTANCES.size());
     private static final CountDownLatch LATCH = new CountDownLatch(INSTANCES.size());
@@ -89,7 +90,8 @@ public class MasterComponentTest {
 
             // Start the context after some random time so the startup order
             // changes for each test.
-            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
+            Awaitility.await()
+                    .pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
                     .untilAsserted(() -> Assertions.assertDoesNotThrow(() -> {
                         LOGGER.info("Starting node {}", id);
                         context.start();

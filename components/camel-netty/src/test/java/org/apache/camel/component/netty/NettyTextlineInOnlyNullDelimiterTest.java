@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +27,8 @@ public class NettyTextlineInOnlyNullDelimiterTest extends BaseNettyTest {
     public void testTextlineInOnlyNull() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("netty:tcp://localhost:{{port}}?textline=true&delimiter=NULL&sync=false", "Hello World\u0000");
+        template.sendBody(
+                "netty:tcp://localhost:{{port}}?textline=true&delimiter=NULL&sync=false", "Hello World\u0000");
 
         MockEndpoint.assertIsSatisfied(context);
     }

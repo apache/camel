@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Queue;
@@ -36,14 +39,13 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.jms.core.JmsTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Timeout(15)
 public class JmsCustomJMSReplyToIssueTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -88,11 +90,13 @@ public class JmsCustomJMSReplyToIssueTest extends AbstractJMSTest {
         return new RouteBuilder() {
             public void configure() {
                 // must preserve QoS so Camel will send JMSReplyTo even if message is inOnly
-                from("direct:start").process(exchange -> {
-                    exchange.getMessage().setBody("Hello World");
-                    // set the JMSReplyTo to force sending the reply here
-                    exchange.getMessage().setHeader("JMSReplyTo", "JmsCustomJMSReplyToIssueTest.reply");
-                }).to("activemq:queue:JmsCustomJMSReplyToIssueTest.in?preserveMessageQos=true");
+                from("direct:start")
+                        .process(exchange -> {
+                            exchange.getMessage().setBody("Hello World");
+                            // set the JMSReplyTo to force sending the reply here
+                            exchange.getMessage().setHeader("JMSReplyTo", "JmsCustomJMSReplyToIssueTest.reply");
+                        })
+                        .to("activemq:queue:JmsCustomJMSReplyToIssueTest.in?preserveMessageQos=true");
 
                 from("activemq:queue:JmsCustomJMSReplyToIssueTest.reply").to("mock:result");
             }

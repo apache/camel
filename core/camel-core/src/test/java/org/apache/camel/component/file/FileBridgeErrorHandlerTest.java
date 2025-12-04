@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,7 +28,10 @@ public class FileBridgeErrorHandlerTest extends ContextTestSupport {
     public void testBridgeErrorHandler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:error").allMessages().exchangeProperty(Exchange.EXCEPTION_CAUGHT).isNotNull();
+        getMockEndpoint("mock:error")
+                .allMessages()
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isNotNull();
 
         assertMockEndpointsSatisfied();
     }

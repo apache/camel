@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LambdaRouteBuilderTest extends ContextTestSupport {
 
@@ -76,7 +77,9 @@ public class LambdaRouteBuilderTest extends ContextTestSupport {
     public void testLambdaSimple() throws Exception {
         assertEquals(0, context.getRoutesSize());
 
-        RouteBuilder.addRoutes(context, rb -> rb.from("direct:start").transform(rb.simple("Hello ${body}")).to("mock:result"));
+        RouteBuilder.addRoutes(context, rb -> rb.from("direct:start")
+                .transform(rb.simple("Hello ${body}"))
+                .to("mock:result"));
 
         context.start();
 
@@ -89,5 +92,4 @@ public class LambdaRouteBuilderTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

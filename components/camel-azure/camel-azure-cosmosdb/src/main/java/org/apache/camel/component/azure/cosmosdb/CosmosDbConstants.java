@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb;
 
 public final class CosmosDbConstants {
@@ -46,6 +47,5 @@ public final class CosmosDbConstants {
     public static final String MANUAL_THROUGHPUT = HEADER_PREFIX + "ManualThroughput";
     public static final String AUTOSCALE_MAX_THROUGHPUT = HEADER_PREFIX + "AutoscaleMaxThroughput";
 
-    private CosmosDbConstants() {
-    }
+    private CosmosDbConstants() {}
 }

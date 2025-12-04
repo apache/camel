@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.test;
 
 import java.io.ByteArrayInputStream;
@@ -44,10 +45,13 @@ public class TestPlugin implements Plugin {
 
     @Override
     public void customize(CommandLine commandLine, CamelJBangMain main) {
-        commandLine.setExecutionStrategy(new CitrusExecutionStrategy(main))
-                .addSubcommand("test", new CommandLine(new TestCommand(main))
-                        .setUnmatchedArgumentsAllowed(true)
-                        .setUnmatchedOptionsAllowedAsOptionParameters(true));
+        commandLine
+                .setExecutionStrategy(new CitrusExecutionStrategy(main))
+                .addSubcommand(
+                        "test",
+                        new CommandLine(new TestCommand(main))
+                                .setUnmatchedArgumentsAllowed(true)
+                                .setUnmatchedOptionsAllowedAsOptionParameters(true));
     }
 
     @Override
@@ -74,7 +78,9 @@ public class TestPlugin implements Plugin {
 
             if (parseResult.originalArgs().size() > 2) {
                 command = parseResult.originalArgs().get(1);
-                args = parseResult.originalArgs().subList(2, parseResult.originalArgs().size());
+                args = parseResult
+                        .originalArgs()
+                        .subList(2, parseResult.originalArgs().size());
             } else if (parseResult.originalArgs().size() == 2) {
                 command = parseResult.originalArgs().get(1);
             } else {
@@ -82,7 +88,8 @@ public class TestPlugin implements Plugin {
                 command = "--help";
             }
 
-            JBangSupport citrus = JBangSupport.jbang().app(JBangSettings.getApp())
+            JBangSupport citrus = JBangSupport.jbang()
+                    .app(JBangSettings.getApp())
                     .withSystemProperty("citrus.jbang.version", CitrusVersion.version());
 
             // Prepare commands
@@ -123,13 +130,14 @@ public class TestPlugin implements Plugin {
             // Create jbang properties with default dependencies if not present
             if (!workingDir.resolve("jbang.properties").toFile().exists()) {
                 Path jbangProperties = workingDir.resolve("jbang.properties");
-                try (InputStream is
-                        = TestPlugin.class.getClassLoader().getResourceAsStream("templates/jbang-properties.tmpl")) {
+                try (InputStream is =
+                        TestPlugin.class.getClassLoader().getResourceAsStream("templates/jbang-properties.tmpl")) {
                     String context = IOHelper.loadText(is);
 
                     context = context.replaceAll("\\{\\{ \\.CitrusVersion }}", CitrusVersion.version());
 
-                    ExportHelper.safeCopy(new ByteArrayInputStream(context.getBytes(StandardCharsets.UTF_8)), jbangProperties);
+                    ExportHelper.safeCopy(
+                            new ByteArrayInputStream(context.getBytes(StandardCharsets.UTF_8)), jbangProperties);
                 } catch (Exception e) {
                     main.getOut().println("Failed to create jbang.properties for tests in:" + jbangProperties);
                 }

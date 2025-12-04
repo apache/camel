@@ -14,7 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.binaryEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -51,26 +69,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.binaryEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.matching;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestOpenApiRequestValidationTest extends CamelTestSupport {
 
-    public static WireMockServer wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
+    public static WireMockServer wireMockServer =
+            new WireMockServer(wireMockConfig().dynamicPort());
 
     @BeforeAll
     public static void startWireMockServer() throws Exception {
@@ -91,86 +93,80 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     }
 
     static void setUpPetStoreStubs(String specificationPath, String urlBasePath) throws Exception {
-        wireMockServer.stubFor(get(urlEqualTo(specificationPath)).willReturn(aResponse().withBody(
-                Files.readAllBytes(Paths.get(
-                        Objects.requireNonNull(RestOpenApiComponentV3Test.class.getResource(specificationPath)).toURI())))));
+        wireMockServer.stubFor(get(urlEqualTo(specificationPath))
+                .willReturn(aResponse()
+                        .withBody(Files.readAllBytes(Paths.get(
+                                Objects.requireNonNull(RestOpenApiComponentV3Test.class.getResource(specificationPath))
+                                        .toURI())))));
 
-        String validationEnabledPetJson
-                = "{\"id\":10,\"name\":\"doggie\",\"photoUrls\":[\"https://test.photos.org/doggie.gif\"]}";
+        String validationEnabledPetJson =
+                "{\"id\":10,\"name\":\"doggie\",\"photoUrls\":[\"https://test.photos.org/doggie.gif\"]}";
         wireMockServer.stubFor(post(urlEqualTo(urlBasePath))
                 .withHeader("Content-Type", equalTo("application/json; charset=UTF-8"))
-                .withRequestBody(equalTo(
-                        validationEnabledPetJson))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_CREATED)
-                        .withBody(validationEnabledPetJson)));
+                .withRequestBody(equalTo(validationEnabledPetJson))
+                .willReturn(
+                        aResponse().withStatus(HttpURLConnection.HTTP_CREATED).withBody(validationEnabledPetJson)));
 
-        String validationEnabledPetXml
-                = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                  "<Pet>\n" +
-                  "    <id>10</id>\n" +
-                  "    <name>doggie</name>\n" +
-                  "    <photoUrls>https://test.photos.org/doggie.gif</photoUrls>\n" +
-                  "</Pet>\n";
+        String validationEnabledPetXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + "<Pet>\n"
+                + "    <id>10</id>\n"
+                + "    <name>doggie</name>\n"
+                + "    <photoUrls>https://test.photos.org/doggie.gif</photoUrls>\n"
+                + "</Pet>\n";
         wireMockServer.stubFor(post(urlEqualTo(urlBasePath))
                 .withHeader("Content-Type", equalTo("application/xml"))
-                .withRequestBody(equalTo(
-                        validationEnabledPetXml))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_CREATED)
-                        .withBody(validationEnabledPetXml)));
+                .withRequestBody(equalTo(validationEnabledPetXml))
+                .willReturn(
+                        aResponse().withStatus(HttpURLConnection.HTTP_CREATED).withBody(validationEnabledPetXml)));
 
         String validationDisabledPetJson = "{\"id\":10,\"name\":\"doggie\"}";
         wireMockServer.stubFor(post(urlEqualTo(urlBasePath))
-                .withRequestBody(equalTo(
-                        validationDisabledPetJson))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_CREATED)
-                        .withBody(validationDisabledPetJson)));
+                .withRequestBody(equalTo(validationDisabledPetJson))
+                .willReturn(
+                        aResponse().withStatus(HttpURLConnection.HTTP_CREATED).withBody(validationDisabledPetJson)));
 
         String petsJson = "[{\"id\":1,\"name\":\"doggie\", \"id\":2,\"name\":\"doggie2\"}]";
         wireMockServer.stubFor(get(urlPathEqualTo(urlBasePath + "/findByStatus"))
                 .withQueryParam("status", equalTo("available"))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK)
-                        .withBody(petsJson)));
+                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(petsJson)));
 
         wireMockServer.stubFor(delete(urlPathEqualTo(urlBasePath + "/10"))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK)
-                        .withBody("Pet deleted")));
+                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody("Pet deleted")));
 
-        String uploadImageJson
-                = "{\"id\":1,\"category\":{\"id\":1,\"name\":\"Pet\"},\"name\":\"Test\",\"photoUrls\":[\"image.jpg\"],\"tags\":[],\"status\":\"available\"}";
+        String uploadImageJson =
+                "{\"id\":1,\"category\":{\"id\":1,\"name\":\"Pet\"},\"name\":\"Test\",\"photoUrls\":[\"image.jpg\"],\"tags\":[],\"status\":\"available\"}";
         wireMockServer.stubFor(post(urlPathEqualTo(urlBasePath + "/1/uploadImage"))
                 .withRequestBody(binaryEqualTo(createUploadImage()))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK)
-                        .withBody(uploadImageJson)));
+                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(uploadImageJson)));
     }
 
     static void setUpFruitsApiStubs(String specificationPath) throws Exception {
         String urlBasePath = "/api/v1/fruit";
 
-        wireMockServer.stubFor(get(urlEqualTo(specificationPath)).willReturn(aResponse().withBody(
-                Files.readAllBytes(Paths.get(
-                        Objects.requireNonNull(RestOpenApiComponentV3Test.class.getResource(specificationPath)).toURI())))));
+        wireMockServer.stubFor(get(urlEqualTo(specificationPath))
+                .willReturn(aResponse()
+                        .withBody(Files.readAllBytes(Paths.get(
+                                Objects.requireNonNull(RestOpenApiComponentV3Test.class.getResource(specificationPath))
+                                        .toURI())))));
 
         wireMockServer.stubFor(post(urlPathEqualTo(urlBasePath + "/form"))
                 .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded"))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK)
+                .willReturn(aResponse()
+                        .withStatus(HttpURLConnection.HTTP_OK)
                         .withBody("{\"name\":\"Lemon\",\"color\":\"Yellow\"}")));
 
         wireMockServer.stubFor(delete(urlPathEqualTo(urlBasePath + "/1"))
                 .withHeader("deletionReason", matching("Test deletion reason"))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK)
-                        .withBody("Fruit deleted")));
+                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody("Fruit deleted")));
 
         wireMockServer.stubFor(delete(urlPathEqualTo(urlBasePath + "/1"))
                 .withHeader("deletionReason", containing("Test deletion reason 1"))
                 .withHeader("deletionReason", containing("Test deletion reason 2"))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK)
-                        .withBody("Fruit deleted")));
+                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody("Fruit deleted")));
 
         wireMockServer.stubFor(delete(urlPathEqualTo(urlBasePath))
                 .withQueryParam("id", containing("1"))
                 .withQueryParam("id", containing("2"))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK)
-                        .withBody("Fruits deleted")));
+                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody("Fruits deleted")));
     }
 
     @ParameterizedTest
@@ -180,8 +176,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         pet.setId(10);
         pet.setName("doggie");
 
-        Pet createdPet = template.requestBodyAndHeader("direct:validationDisabled", pet, "petStoreVersion", petStoreVersion,
-                Pet.class);
+        Pet createdPet = template.requestBodyAndHeader(
+                "direct:validationDisabled", pet, "petStoreVersion", petStoreVersion, Pet.class);
         assertEquals(10, createdPet.getId());
     }
 
@@ -193,8 +189,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         pet.setName("doggie");
         pet.setPhotoUrls(List.of("https://test.photos.org/doggie.gif"));
 
-        Pet createdPet
-                = template.requestBodyAndHeader("direct:validateJsonBody", pet, "petStoreVersion", petStoreVersion, Pet.class);
+        Pet createdPet = template.requestBodyAndHeader(
+                "direct:validateJsonBody", pet, "petStoreVersion", petStoreVersion, Pet.class);
         assertEquals(10, createdPet.getId());
     }
 
@@ -229,8 +225,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         pet.setName("doggie");
         pet.setPhotoUrls(List.of("https://test.photos.org/doggie.gif"));
 
-        Pet createdPet
-                = template.requestBodyAndHeader("direct:validateXmlBody", pet, "petStoreVersion", petStoreVersion, Pet.class);
+        Pet createdPet = template.requestBodyAndHeader(
+                "direct:validateXmlBody", pet, "petStoreVersion", petStoreVersion, Pet.class);
         assertEquals(10, createdPet.getId());
     }
 
@@ -252,7 +248,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         RestOpenApiValidationException validationException = (RestOpenApiValidationException) exception;
         Set<String> errors = validationException.getValidationErrors();
         assertEquals(1, errors.size());
-        assertEquals("A request body is required but none found.", errors.iterator().next());
+        assertEquals(
+                "A request body is required but none found.", errors.iterator().next());
     }
 
     @ParameterizedTest
@@ -280,17 +277,14 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         assertEquals(1, errors.size());
 
         String errorMessage = errors.iterator().next();
-        assertTrue(
-                errorMessage.startsWith("Request Content-Type header 'application/camel' does not match any allowed types"));
+        assertTrue(errorMessage.startsWith(
+                "Request Content-Type header 'application/camel' does not match any allowed types"));
     }
 
     @ParameterizedTest
     @MethodSource("petStoreVersions")
     void requestValidationWithRequiredPathAndQueryParameter(String petStoreVersion) {
-        Map<String, Object> headers = Map.of(
-                "petStoreVersion", petStoreVersion,
-                "petId", 10,
-                "api_key", "foo");
+        Map<String, Object> headers = Map.of("petStoreVersion", petStoreVersion, "petId", 10, "api_key", "foo");
         String result = template.requestBodyAndHeaders("direct:validateDelete", null, headers, String.class);
         assertEquals("Pet deleted", result);
     }
@@ -299,19 +293,16 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     @MethodSource("petStoreVersions")
     @SuppressWarnings("unchecked")
     void requestValidationWithRequiredQueryParameter(String petStoreVersion) {
-        Map<String, Object> headers = Map.of(
-                "status", "available",
-                "petStoreVersion", petStoreVersion);
-        List<Pet> pets = template.requestBodyAndHeaders("direct:validateOperationForQueryParams", null, headers, List.class);
+        Map<String, Object> headers = Map.of("status", "available", "petStoreVersion", petStoreVersion);
+        List<Pet> pets =
+                template.requestBodyAndHeaders("direct:validateOperationForQueryParams", null, headers, List.class);
         assertFalse(pets.isEmpty());
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "petStoreV3" })
+    @ValueSource(strings = {"petStoreV3"})
     void requestValidationWithBinaryBody(String petStoreVersion) throws IOException {
-        Map<String, Object> headers = Map.of(
-                "petId", 1,
-                "petStoreVersion", petStoreVersion);
+        Map<String, Object> headers = Map.of("petId", 1, "petStoreVersion", petStoreVersion);
         Pet pet = template.requestBodyAndHeaders("direct:binaryContent", createUploadImage(), headers, Pet.class);
         assertNotNull(pet);
         assertEquals(1, pet.getPhotoUrls().size());
@@ -348,10 +339,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     @ParameterizedTest
     @MethodSource("fruitsApiVersions")
     void requestValidationRequiredHeaderParamsPresent(String fruitsApiVersion) {
-        Map<String, Object> headers = Map.of(
-                "fruitsApiVersion", fruitsApiVersion,
-                "id", 1,
-                "deletionReason", "Test deletion reason");
+        Map<String, Object> headers =
+                Map.of("fruitsApiVersion", fruitsApiVersion, "id", 1, "deletionReason", "Test deletion reason");
 
         String result = template.requestBodyAndHeaders("direct:headerParam", null, headers, String.class);
         assertEquals("Fruit deleted", result);
@@ -361,9 +350,12 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     @MethodSource("fruitsApiVersions")
     void requestValidationRequiredHeaderParamsPresentAsList(String fruitsApiVersion) {
         Map<String, Object> headers = Map.of(
-                "fruitsApiVersion", fruitsApiVersion,
-                "id", 1,
-                "deletionReason", List.of("Test deletion reason 1", "Test deletion reason 2"));
+                "fruitsApiVersion",
+                fruitsApiVersion,
+                "id",
+                1,
+                "deletionReason",
+                List.of("Test deletion reason 1", "Test deletion reason 2"));
 
         String result = template.requestBodyAndHeaders("direct:headerParam", null, headers, String.class);
         assertEquals("Fruit deleted", result);
@@ -372,17 +364,15 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     @ParameterizedTest
     @MethodSource("fruitsApiVersions")
     void requestValidationRequiredFormParamsPresent(String fruitsApiVersion) {
-        String result = template.requestBodyAndHeader("direct:formParam", "name=Lemon&color=Yellow", "fruitsApiVersion",
-                fruitsApiVersion, String.class);
+        String result = template.requestBodyAndHeader(
+                "direct:formParam", "name=Lemon&color=Yellow", "fruitsApiVersion", fruitsApiVersion, String.class);
         assertEquals("{\"name\":\"Lemon\",\"color\":\"Yellow\"}", result);
     }
 
     @ParameterizedTest
     @MethodSource("fruitsApiVersions")
     void requestValidationRequiredQueryParamsPresentAsList(String fruitsApiVersion) {
-        Map<String, Object> headers = Map.of(
-                "fruitsApiVersion", fruitsApiVersion,
-                "id", List.of("1", "2"));
+        Map<String, Object> headers = Map.of("fruitsApiVersion", fruitsApiVersion, "id", List.of("1", "2"));
 
         String result = template.requestBodyAndHeaders("direct:queryParam", null, headers, String.class);
         assertEquals("Fruits deleted", result);
@@ -429,30 +419,33 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
                 from("direct:validateJsonBody")
                         .marshal(jacksonDataFormat)
                         // Append charset to verify the validator internals can handle it
-                        .setHeader(Exchange.CONTENT_TYPE).constant("application/json; charset=UTF-8")
+                        .setHeader(Exchange.CONTENT_TYPE)
+                        .constant("application/json; charset=UTF-8")
                         .toD("${header.petStoreVersion}:#addPet?requestValidationEnabled=true")
                         .unmarshal(jacksonDataFormat);
 
-                from("direct:validateDelete")
-                        .toD("${header.petStoreVersion}:#deletePet?requestValidationEnabled=true");
+                from("direct:validateDelete").toD("${header.petStoreVersion}:#deletePet?requestValidationEnabled=true");
 
                 from("direct:validateXmlBody")
                         .marshal(jaxbDataFormat)
-                        .setHeader(Exchange.CONTENT_TYPE).constant("application/xml")
-                        .toD("${header.petStoreVersion}:#addPet?requestValidationEnabled=true&consumes=application/xml&produces=application/xml")
+                        .setHeader(Exchange.CONTENT_TYPE)
+                        .constant("application/xml")
+                        .toD(
+                                "${header.petStoreVersion}:#addPet?requestValidationEnabled=true&consumes=application/xml&produces=application/xml")
                         .unmarshal(jaxbDataFormat);
 
                 from("direct:validateContentType")
                         .marshal(jacksonDataFormat)
-                        .setHeader(Exchange.CONTENT_TYPE).constant("application/camel")
+                        .setHeader(Exchange.CONTENT_TYPE)
+                        .constant("application/camel")
                         .toD("${header.petStoreVersion}:#addPet?requestValidationEnabled=true")
                         .unmarshal(jaxbDataFormat);
 
-                from("direct:validateNullBody")
-                        .toD("${header.petStoreVersion}:#addPet?requestValidationEnabled=true");
+                from("direct:validateNullBody").toD("${header.petStoreVersion}:#addPet?requestValidationEnabled=true");
 
                 from("direct:validateInvalidJsonBody")
-                        .setHeader(Exchange.CONTENT_TYPE).constant("application/json")
+                        .setHeader(Exchange.CONTENT_TYPE)
+                        .constant("application/json")
                         .toD("${header.petStoreVersion}:#addPet?requestValidationEnabled=true");
 
                 from("direct:validateOperationForQueryParams")
@@ -460,18 +453,18 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
                         .unmarshal(jacksonDataFormat);
 
                 from("direct:binaryContent")
-                        .toD("${header.petStoreVersion}:uploadFile?requestValidationEnabled=true&produces=application/octet-stream")
+                        .toD(
+                                "${header.petStoreVersion}:uploadFile?requestValidationEnabled=true&produces=application/octet-stream")
                         .unmarshal(jacksonDataFormat);
 
-                from("direct:headerParam")
-                        .toD("${header.fruitsApiVersion}:#deleteFruit?requestValidationEnabled=true");
+                from("direct:headerParam").toD("${header.fruitsApiVersion}:#deleteFruit?requestValidationEnabled=true");
 
                 from("direct:formParam")
-                        .setHeader(Exchange.CONTENT_TYPE).constant("application/x-www-form-urlencoded")
+                        .setHeader(Exchange.CONTENT_TYPE)
+                        .constant("application/x-www-form-urlencoded")
                         .toD("${header.fruitsApiVersion}:#addFruitFromForm?requestValidationEnabled=true");
 
-                from("direct:queryParam")
-                        .toD("${header.fruitsApiVersion}:#deleteFruits?requestValidationEnabled=true");
+                from("direct:queryParam").toD("${header.fruitsApiVersion}:#deleteFruits?requestValidationEnabled=true");
             }
         };
     }

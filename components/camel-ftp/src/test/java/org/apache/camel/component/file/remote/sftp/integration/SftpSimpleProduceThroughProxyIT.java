@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -30,10 +34,9 @@ import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthenticator;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleProduceThroughProxyIT extends SftpServerTestSupport {
 
     private static HttpProxyServer proxyServer;
@@ -53,7 +56,8 @@ public class SftpSimpleProduceThroughProxyIT extends SftpServerTestSupport {
                     public String getRealm() {
                         return "myrealm";
                     }
-                }).start();
+                })
+                .start();
     }
 
     @AfterEach
@@ -64,9 +68,9 @@ public class SftpSimpleProduceThroughProxyIT extends SftpServerTestSupport {
     @Test
     public void testSftpSimpleProduceThroughProxy() {
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "?username=admin&password=admin&proxy=#proxy",
-                "Hello World", Exchange.FILE_NAME,
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}" + "?username=admin&password=admin&proxy=#proxy",
+                "Hello World",
+                Exchange.FILE_NAME,
                 "hello.txt");
 
         File file = ftpFile("hello.txt").toFile();
@@ -78,9 +82,10 @@ public class SftpSimpleProduceThroughProxyIT extends SftpServerTestSupport {
     public void testSftpSimpleSubPathProduceThroughProxy() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "/mysub?username=admin&password=admin&proxy=#proxy&knownHostsFile="
-                                   + service.getKnownHostsFile(),
-                "Bye World", Exchange.FILE_NAME,
+                        + "/mysub?username=admin&password=admin&proxy=#proxy&knownHostsFile="
+                        + service.getKnownHostsFile(),
+                "Bye World",
+                Exchange.FILE_NAME,
                 "bye.txt");
 
         File file = ftpFile("mysub/bye.txt").toFile();
@@ -90,11 +95,13 @@ public class SftpSimpleProduceThroughProxyIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleTwoSubPathProduceThroughProxy() {
-        template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "/mysub/myother?username=admin&password=admin&proxy=#proxy&knownHostsFile="
-                                   + service.getKnownHostsFile(),
+        template.sendBodyAndHeader(
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
+                        + "/mysub/myother?username=admin&password=admin&proxy=#proxy&knownHostsFile="
+                        + service.getKnownHostsFile(),
                 "Farewell World",
-                Exchange.FILE_NAME, "farewell.txt");
+                Exchange.FILE_NAME,
+                "farewell.txt");
 
         File file = ftpFile("mysub/myother/farewell.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
@@ -108,5 +115,4 @@ public class SftpSimpleProduceThroughProxyIT extends SftpServerTestSupport {
         proxyHTTP.setUserPasswd("user", "password");
         return proxyHTTP;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.protostream;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +36,8 @@ final class DefaultExchangeHolderUtils {
     }
 
     static byte[] serialize(DefaultExchangeHolder holder) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos)) {
             oos.writeObject(holder);
             return baos.toByteArray();
         } catch (IOException e) {
@@ -45,7 +47,7 @@ final class DefaultExchangeHolderUtils {
 
     static DefaultExchangeHolder deserialize(byte[] bytes) {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-             ObjectInputStream ois = new ClassLoadingAwareObjectInputStream(bais)) {
+                ObjectInputStream ois = new ClassLoadingAwareObjectInputStream(bais)) {
             return (DefaultExchangeHolder) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);

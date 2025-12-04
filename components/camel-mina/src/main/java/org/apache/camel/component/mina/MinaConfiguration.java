@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import java.nio.charset.Charset;
@@ -38,57 +39,82 @@ public class MinaConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String protocol;
+
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath
     @Metadata(required = true)
     private int port;
+
     @UriParam(defaultValue = "true")
     private boolean sync = true;
+
     @UriParam(label = "codec")
     private boolean textline;
+
     @UriParam(label = "codec")
     private MinaTextLineDelimiter textlineDelimiter;
+
     @UriParam(label = "codec")
     private ProtocolCodecFactory codec;
+
     @UriParam(label = "codec")
     private String encoding;
+
     @UriParam(defaultValue = "10000")
     private long writeTimeout = 10000;
+
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
+
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean lazySessionCreation = true;
+
     @UriParam(label = "advanced")
     @Deprecated
     private boolean transferExchange;
+
     @UriParam
     private boolean minaLogger;
+
     @UriParam(label = "codec", defaultValue = "-1")
     private int encoderMaxLineLength = -1;
+
     @UriParam(label = "codec", defaultValue = "1024")
     private int decoderMaxLineLength = 1024;
+
     @UriParam(label = "codec")
     private List<IoFilter> filters;
+
     @UriParam(label = "codec", defaultValue = "true")
     private boolean allowDefaultCodec = true;
+
     @UriParam(label = "codec")
     private String objectCodecPattern;
+
     @UriParam
     private boolean disconnect;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
+
     @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "advanced", defaultValue = "16")
     private int maximumPoolSize = 16; // 16 is the default mina setting
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean orderedThreadPoolExecutor = true;
+
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean cachedAddress = true;
+
     @UriParam(label = "consumer")
     private boolean clientMode;
 

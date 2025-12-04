@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,8 +35,6 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test cases for dealing with stream types in an exception handler
@@ -57,8 +58,12 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
         successEndpoint.assertIsSatisfied();
         exceptionEndpoint.assertIsSatisfied();
 
-        InputStream body = (InputStream) exceptionEndpoint.getExchanges().get(0).getIn().getBody();
-        assertEquals(message, new String(IOConverter.toBytes(body)), "Ensure message re-readability in the exception handler");
+        InputStream body =
+                (InputStream) exceptionEndpoint.getExchanges().get(0).getIn().getBody();
+        assertEquals(
+                message,
+                new String(IOConverter.toBytes(body)),
+                "Ensure message re-readability in the exception handler");
     }
 
     @Test
@@ -75,8 +80,10 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
         successEndpoint.assertIsSatisfied();
         exceptionEndpoint.assertIsSatisfied();
 
-        StreamSource body = (StreamSource) exceptionEndpoint.getExchanges().get(0).getIn().getBody();
-        assertEquals(xml, new XmlConverter().toString(body, null), "Ensure message re-readability in the exception handler");
+        StreamSource body =
+                (StreamSource) exceptionEndpoint.getExchanges().get(0).getIn().getBody();
+        assertEquals(
+                xml, new XmlConverter().toString(body, null), "Ensure message re-readability in the exception handler");
     }
 
     @Override
@@ -98,15 +105,17 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
 
                 onException(Exception.class).handled(true).to("mock:exception");
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String message = exchange.getIn().getBody(String.class);
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String message = exchange.getIn().getBody(String.class);
 
-                        if (message.contains("error")) {
-                            throw new RuntimeException(message);
-                        }
-                    }
-                }).to("mock:success");
+                                if (message.contains("error")) {
+                                    throw new RuntimeException(message);
+                                }
+                            }
+                        })
+                        .to("mock:success");
             }
         };
     }

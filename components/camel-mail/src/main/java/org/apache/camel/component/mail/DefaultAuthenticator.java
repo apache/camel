@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import jakarta.mail.Authenticator;
@@ -39,5 +40,4 @@ public class DefaultAuthenticator extends MailAuthenticator {
     public PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(username, password);
     }
-
 }

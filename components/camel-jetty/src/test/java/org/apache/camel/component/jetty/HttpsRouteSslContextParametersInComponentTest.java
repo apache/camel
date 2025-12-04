@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
@@ -32,7 +33,10 @@ public class HttpsRouteSslContextParametersInComponentTest extends HttpsRouteTes
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
 
                 KeyStoreParameters ksp = new KeyStoreParameters();
-                ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
+                ksp.setResource(this.getClass()
+                        .getClassLoader()
+                        .getResource("jsse/localhost.p12")
+                        .toString());
                 ksp.setPassword(pwd);
 
                 KeyManagersParameters kmp = new KeyManagersParameters();

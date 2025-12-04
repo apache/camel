@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -24,8 +27,6 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BasicSubscriberTest extends BaseReactiveTest {
 
@@ -69,14 +70,13 @@ public class BasicSubscriberTest extends BaseReactiveTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:sub")
-                        .to("mock:sub1");
+                from("reactive-streams:sub").to("mock:sub1");
 
-                from("reactive-streams:sub2")
-                        .to("mock:sub2");
+                from("reactive-streams:sub2").to("mock:sub2");
 
                 from("timer:tick?period=50")
-                        .setBody().simple("${random(500)}")
+                        .setBody()
+                        .simple("${random(500)}")
                         .wireTap("mock:sub3")
                         .to("reactive-streams:pub");
             }

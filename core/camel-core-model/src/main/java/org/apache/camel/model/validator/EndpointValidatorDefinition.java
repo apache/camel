@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.validator;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,11 +34,11 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
 
     @XmlAttribute
     private String ref;
+
     @XmlAttribute
     private String uri;
 
-    public EndpointValidatorDefinition() {
-    }
+    public EndpointValidatorDefinition() {}
 
     public EndpointValidatorDefinition(EndpointValidatorDefinition source) {
         super(source);
@@ -71,5 +72,4 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
     public void setUri(String uri) {
         this.uri = uri;
     }
-
 }

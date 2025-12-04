@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.component.mail.SearchTermBuilder.Op;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -30,9 +34,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.mail.SearchTermBuilder.Op;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailSearchTermTest extends CamelTestSupport {
     protected static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
@@ -125,5 +126,4 @@ public class MailSearchTermTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.freemarker;
 
 import org.apache.camel.EndpointInject;
@@ -36,8 +37,10 @@ public class FreemarkerValuesInPropertiesTest extends CamelTestSupport {
         template.send("direct:a", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(FreemarkerConstants.FREEMARKER_TEMPLATE,
-                        "Dear ${exchange.properties.name}. You ordered item ${exchange.properties.item}.");
+                exchange.getIn()
+                        .setHeader(
+                                FreemarkerConstants.FREEMARKER_TEMPLATE,
+                                "Dear ${exchange.properties.name}. You ordered item ${exchange.properties.item}.");
                 exchange.setProperty("name", "Christian");
                 exchange.setProperty("item", "7");
             }
@@ -54,9 +57,7 @@ public class FreemarkerValuesInPropertiesTest extends CamelTestSupport {
                 fc.setAllowTemplateFromHeader(true);
                 fc.setAllowContextMapAll(true);
 
-                from("direct:a")
-                        .to("freemarker:dummy")
-                        .to("mock:result");
+                from("direct:a").to("freemarker:dummy").to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft.cluster;
 
 import java.util.concurrent.TimeUnit;
@@ -22,7 +23,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.jgroups.raft.RaftHandle;
 
 public abstract class JGroupsRaftClusterAbstractTest {
-    protected void waitForLeader(int attempts, RaftHandle rh, RaftHandle rh2, RaftHandle rh3) throws InterruptedException {
+    protected void waitForLeader(int attempts, RaftHandle rh, RaftHandle rh2, RaftHandle rh3)
+            throws InterruptedException {
         boolean thereIsLeader = rh.isLeader() || rh2.isLeader() || rh3.isLeader();
         while (!thereIsLeader && attempts > 0) {
             thereIsLeader = rh.isLeader() || rh2.isLeader() || rh3.isLeader();

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -27,18 +30,18 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @ContextConfiguration
 @CamelSpringTest
 public class BindyComplexCsvUnmarshallEmptyStreamTest {
 
-    private static final Class<?> TYPE = org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
+    private static final Class<?> TYPE =
+            org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
 
     @Produce("direct:start")
     protected ProducerTemplate template;
 
     private String emptyRecords = "";
+
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
@@ -61,9 +64,7 @@ public class BindyComplexCsvUnmarshallEmptyStreamTest {
         public void configure() {
             BindyCsvDataFormat bindyCsvDataFormat = new BindyCsvDataFormat(TYPE);
             bindyCsvDataFormat.setAllowEmptyStream(true);
-            from("direct:start")
-                    .unmarshal(bindyCsvDataFormat)
-                    .to("mock:result");
+            from("direct:start").unmarshal(bindyCsvDataFormat).to("mock:result");
         }
     }
 }

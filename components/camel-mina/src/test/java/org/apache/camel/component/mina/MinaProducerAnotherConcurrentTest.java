@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("TODO: investigate for Camel 3.0")
 public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
@@ -78,10 +79,12 @@ public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
             public void configure() {
                 from("direct:start").toF("mina:tcp://localhost:%1$s?sync=true", getPort());
 
-                fromF("mina:tcp://localhost:%1$s?sync=true", getPort()).process(exchange -> {
-                    String body = exchange.getIn().getBody(String.class);
-                    exchange.getMessage().setBody("Bye " + body);
-                }).to("mock:result");
+                fromF("mina:tcp://localhost:%1$s?sync=true", getPort())
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            exchange.getMessage().setBody("Bye " + body);
+                        })
+                        .to("mock:result");
             }
         };
     }

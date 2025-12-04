@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar.stream;
 
 import java.util.Map;
@@ -32,8 +33,10 @@ public class GoogleCalendarStreamComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced")
     private Calendar client;
+
     @Metadata(label = "advanced")
     private GoogleCalendarClientFactory clientFactory;
+
     @Metadata
     private GoogleCalendarStreamConfiguration configuration;
 
@@ -50,13 +53,25 @@ public class GoogleCalendarStreamComponent extends HealthCheckComponent {
     public Calendar getClient(GoogleCalendarStreamConfiguration config) {
         if (client == null) {
             if (config.getClientId() != null && config.getClientSecret() != null) {
-                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(),
-                        config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
+                client = getClientFactory()
+                        .makeClient(
+                                config.getClientId(),
+                                config.getClientSecret(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getRefreshToken(),
+                                config.getAccessToken(),
+                                config.getEmailAddress(),
+                                config.getP12FileName(),
+                                config.getUser());
             } else if (config.getServiceAccountKey() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(),
-                        config.getApplicationName(), config.getDelegate());
+                client = getClientFactory()
+                        .makeClient(
+                                getCamelContext(),
+                                config.getServiceAccountKey(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
                         "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");

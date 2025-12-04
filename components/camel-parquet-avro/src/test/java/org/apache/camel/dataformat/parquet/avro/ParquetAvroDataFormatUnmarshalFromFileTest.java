@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.parquet.avro;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,17 +33,11 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ParquetAvroDataFormatUnmarshalFromFileTest extends CamelTestSupport {
 
     @Test
     public void testUnmarshalFromFile() throws Exception {
-        Collection<Pojo> in = List.of(
-                new Pojo(1, "airport"),
-                new Pojo(2, "penguin"),
-                new Pojo(3, "verb"));
+        Collection<Pojo> in = List.of(new Pojo(1, "airport"), new Pojo(2, "penguin"), new Pojo(3, "verb"));
         getMockEndpoint("mock:reverse").expectedMessageCount(1);
         File testFile = new File("src/test/resources/example1.parquet");
         ByteArrayInputStream bais = reteriveByteArrayInputStream(testFile);

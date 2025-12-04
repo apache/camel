@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -51,7 +52,10 @@ public class BeanWithHeaderTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").setHeader("foo", constant("bar")).to("bean:myBean").to("seda:a");
+                from("direct:in")
+                        .setHeader("foo", constant("bar"))
+                        .to("bean:myBean")
+                        .to("seda:a");
 
                 from("seda:a").to("bean:myBean").to("mock:result");
             }
@@ -65,5 +69,4 @@ public class BeanWithHeaderTest extends ContextTestSupport {
             exchange.getIn().setBody(body + "MyBean");
         }
     }
-
 }

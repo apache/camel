@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * JMS with XPath
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class SpringJmsXPathHeaderIT extends AbstractSpringJMSITSupport {
 
     @Test
@@ -44,7 +45,8 @@ public class SpringJmsXPathHeaderIT extends AbstractSpringJMSITSupport {
         getMockEndpoint("mock:true").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("activemq:queue:SpringJmsXPathHeaderTest.in", "<hello>World</hello>", "foo", "false");
+        template.sendBodyAndHeader(
+                "activemq:queue:SpringJmsXPathHeaderTest.in", "<hello>World</hello>", "foo", "false");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -64,5 +66,4 @@ public class SpringJmsXPathHeaderIT extends AbstractSpringJMSITSupport {
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/component/jms/integration/spring/SpringJmsXPathHeaderIT.xml");
     }
-
 }

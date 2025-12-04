@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eks;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -29,8 +32,6 @@ import software.amazon.awssdk.services.eks.model.DescribeClusterResponse;
 import software.amazon.awssdk.services.eks.model.ListClustersRequest;
 import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 import software.amazon.awssdk.services.eks.model.VpcConfigRequest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
 
@@ -63,7 +64,8 @@ public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(EKS2Constants.OPERATION, EKS2Operations.listClusters);
-                exchange.getIn().setBody(ListClustersRequest.builder().maxResults(12).build());
+                exchange.getIn()
+                        .setBody(ListClustersRequest.builder().maxResults(12).build());
             }
         });
 
@@ -91,7 +93,8 @@ public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
+        CreateClusterResponse resultGet =
+                (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("Test", resultGet.cluster().name());
     }
 
@@ -133,6 +136,7 @@ public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/eks/EKSComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/eks/EKSComponentSpringTest-context.xml");
     }
 }

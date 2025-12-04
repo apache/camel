@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Easier transaction configuration as we do not have to setup a transaction error handler
@@ -49,5 +50,4 @@ public class SpringTransactionalClientDataWithOnExceptionAndRollbackUsingTransac
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/spring/interceptor/springTransactionalClientDataWithOnExceptionAndRollbackUsingTransacted.xml");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.interceptors;
 
 import org.apache.cxf.interceptor.AbstractInDatabindingInterceptor;
@@ -37,9 +38,11 @@ public class ConfigureDocLitWrapperInterceptor extends AbstractInDatabindingInte
 
     @Override
     public void handleMessage(Message message) throws Fault {
-        message.put("org.apache.cxf.interceptor.DocLiteralInInterceptor.DocLiteralInInterceptor.keep-parameters-wrapper",
+        message.put(
+                "org.apache.cxf.interceptor.DocLiteralInInterceptor.DocLiteralInInterceptor.keep-parameters-wrapper",
                 unwrapParameterFlag);
-        message.put("org.apache.cxf.wsdl.interceptors.DocLiteralInInterceptor.DocLiteralInInterceptor.keep-parameters-wrapper",
+        message.put(
+                "org.apache.cxf.wsdl.interceptors.DocLiteralInInterceptor.DocLiteralInInterceptor.keep-parameters-wrapper",
                 unwrapParameterFlag);
     }
 
@@ -50,5 +53,4 @@ public class ConfigureDocLitWrapperInterceptor extends AbstractInDatabindingInte
     public void setUnwrapParameterFlag(boolean unwrapParameterFlag) {
         this.unwrapParameterFlag = unwrapParameterFlag;
     }
-
 }

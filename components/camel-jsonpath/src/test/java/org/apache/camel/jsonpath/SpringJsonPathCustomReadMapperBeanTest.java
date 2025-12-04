@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -24,13 +27,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SpringJsonPathCustomReadMapperBeanTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/jsonpath/SpringJsonPathCustomReadMapperBeanTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/jsonpath/SpringJsonPathCustomReadMapperBeanTest.xml");
     }
 
     @Test
@@ -47,7 +49,5 @@ public class SpringJsonPathCustomReadMapperBeanTest extends CamelSpringTestSuppo
         assertTrue(resultFromMock.toString().contains("121002700.0"));
         assertTrue(resultFromMock.toString().contains("-91000000.0"));
         MockEndpoint.assertIsSatisfied(context);
-
     }
-
 }

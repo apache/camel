@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmppUcs2SplitterTest {
 
@@ -36,13 +37,15 @@ public class SmppUcs2SplitterTest {
         byte[][] result = splitter.split(message.getBytes(charset));
 
         assertEquals(1, result.length);
-        assertArrayEquals(new byte[] {
-                0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54,
-                0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51,
-                0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57,
-                0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57,
-                0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53,
-                0, 54, 0, 55, 0, 56, 0, 57, 0, 48 }, result[0]);
+        assertArrayEquals(
+                new byte[] {
+                    0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0,
+                    53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0,
+                    57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0,
+                    51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0,
+                    55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48
+                },
+                result[0]);
 
         assertEquals(message, new String(result[0], charset));
     }
@@ -57,23 +60,178 @@ public class SmppUcs2SplitterTest {
         byte[][] result = splitter.split(message.getBytes(charset));
 
         assertEquals(2, result.length);
-        assertArrayEquals(new byte[] {
-                SmppSplitter.UDHIE_HEADER_LENGTH, SmppSplitter.UDHIE_IDENTIFIER_SAR, SmppSplitter.UDHIE_SAR_LENGTH, 1, 2, 1, 0,
-                49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0,
-                56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0,
-                52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0,
-                52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0,
-                48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 57, 0,
-                48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 55 }, result[0]);
-        assertArrayEquals(new byte[] {
-                SmppSplitter.UDHIE_HEADER_LENGTH, SmppSplitter.UDHIE_IDENTIFIER_SAR, SmppSplitter.UDHIE_SAR_LENGTH, 1, 2, 2, 0,
-                56, 0, 57, 0, 48, 0, 49 }, result[1]);
+        assertArrayEquals(
+                new byte[] {
+                    SmppSplitter.UDHIE_HEADER_LENGTH,
+                    SmppSplitter.UDHIE_IDENTIFIER_SAR,
+                    SmppSplitter.UDHIE_SAR_LENGTH,
+                    1,
+                    2,
+                    1,
+                    0,
+                    49,
+                    0,
+                    50,
+                    0,
+                    51,
+                    0,
+                    52,
+                    0,
+                    53,
+                    0,
+                    54,
+                    0,
+                    55,
+                    0,
+                    56,
+                    0,
+                    57,
+                    0,
+                    48,
+                    0,
+                    49,
+                    0,
+                    50,
+                    0,
+                    51,
+                    0,
+                    52,
+                    0,
+                    53,
+                    0,
+                    54,
+                    0,
+                    55,
+                    0,
+                    56,
+                    0,
+                    57,
+                    0,
+                    48,
+                    0,
+                    49,
+                    0,
+                    50,
+                    0,
+                    51,
+                    0,
+                    52,
+                    0,
+                    53,
+                    0,
+                    54,
+                    0,
+                    55,
+                    0,
+                    56,
+                    0,
+                    57,
+                    0,
+                    48,
+                    0,
+                    49,
+                    0,
+                    50,
+                    0,
+                    51,
+                    0,
+                    52,
+                    0,
+                    53,
+                    0,
+                    54,
+                    0,
+                    55,
+                    0,
+                    56,
+                    0,
+                    57,
+                    0,
+                    48,
+                    0,
+                    49,
+                    0,
+                    50,
+                    0,
+                    51,
+                    0,
+                    52,
+                    0,
+                    53,
+                    0,
+                    54,
+                    0,
+                    55,
+                    0,
+                    56,
+                    0,
+                    57,
+                    0,
+                    48,
+                    0,
+                    49,
+                    0,
+                    50,
+                    0,
+                    51,
+                    0,
+                    52,
+                    0,
+                    53,
+                    0,
+                    54,
+                    0,
+                    55,
+                    0,
+                    56,
+                    0,
+                    57,
+                    0,
+                    48,
+                    0,
+                    49,
+                    0,
+                    50,
+                    0,
+                    51,
+                    0,
+                    52,
+                    0,
+                    53,
+                    0,
+                    54,
+                    0,
+                    55
+                },
+                result[0]);
+        assertArrayEquals(
+                new byte[] {
+                    SmppSplitter.UDHIE_HEADER_LENGTH,
+                    SmppSplitter.UDHIE_IDENTIFIER_SAR,
+                    SmppSplitter.UDHIE_SAR_LENGTH,
+                    1,
+                    2,
+                    2,
+                    0,
+                    56,
+                    0,
+                    57,
+                    0,
+                    48,
+                    0,
+                    49
+                },
+                result[1]);
 
         String firstShortMessage = new String(
-                result[0], SmppSplitter.UDHIE_HEADER_REAL_LENGTH, result[0].length - SmppSplitter.UDHIE_HEADER_REAL_LENGTH,
+                result[0],
+                SmppSplitter.UDHIE_HEADER_REAL_LENGTH,
+                result[0].length - SmppSplitter.UDHIE_HEADER_REAL_LENGTH,
                 charset);
         String secondShortMessage = new String(
-                result[1], SmppSplitter.UDHIE_HEADER_REAL_LENGTH, result[1].length - SmppSplitter.UDHIE_HEADER_REAL_LENGTH,
+                result[1],
+                SmppSplitter.UDHIE_HEADER_REAL_LENGTH,
+                result[1].length - SmppSplitter.UDHIE_HEADER_REAL_LENGTH,
                 charset);
 
         assertEquals(message, firstShortMessage + secondShortMessage);

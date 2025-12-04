@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,9 +28,6 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class XmlLoadTest {
     @Test
     public void testLoadRoutesBuilderFromXml() throws Exception {
@@ -34,9 +35,7 @@ public class XmlLoadTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:foo")
-                            .routeId("foo")
-                            .to("mock:foo");
+                    from("direct:foo").routeId("foo").to("mock:foo");
                 }
             });
 
@@ -53,8 +52,8 @@ public class XmlLoadTest {
 
             // START SNIPPET: e1
             // load route from XML and add them to the existing camel context
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/barRoute.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/barRoute.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
@@ -76,8 +75,8 @@ public class XmlLoadTest {
             context.start();
 
             // load route from XML and add them to the existing camel context
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/bar2.xml");
+            Resource resource =
+                    PluginHelper.getResourceLoader(context).resolveResource("/org/apache/camel/dsl/xml/io/bar2.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
@@ -97,13 +96,13 @@ public class XmlLoadTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
             // Load routeConfiguration from XML
-            Resource configResource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/routeConfig.xml");
+            Resource configResource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/routeConfig.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(configResource);
             // load route from XML and add them to the existing camel context
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/routeWithRouteConfig.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/routeWithRouteConfig.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 

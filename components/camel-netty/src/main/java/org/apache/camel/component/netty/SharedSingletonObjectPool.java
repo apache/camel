@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.concurrent.locks.Lock;
@@ -97,5 +98,4 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
     public void returnObject(T obj) throws Exception {
         // noop
     }
-
 }

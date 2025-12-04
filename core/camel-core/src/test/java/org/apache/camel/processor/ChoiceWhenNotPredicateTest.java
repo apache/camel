@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.builder.PredicateBuilder.not;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.PredicateBuilder.not;
 
 public class ChoiceWhenNotPredicateTest extends ContextTestSupport {
 
@@ -50,11 +51,15 @@ public class ChoiceWhenNotPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").choice().when(not(header("username").regex("goofy|pluto"))).to("mock:people").otherwise()
-                        .to("mock:animals").end();
+                from("direct:start")
+                        .choice()
+                        .when(not(header("username").regex("goofy|pluto")))
+                        .to("mock:people")
+                        .otherwise()
+                        .to("mock:animals")
+                        .end();
                 // END SNIPPET: e1
             }
         };
     }
-
 }

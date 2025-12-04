@@ -24,8 +24,7 @@ import org.apache.rocketmq.remoting.RPCHook;
 
 public final class RocketMQAclUtils {
 
-    private RocketMQAclUtils() {
-    }
+    private RocketMQAclUtils() {}
 
     public static RPCHook getAclRPCHook(String accessKey, String secretKey) {
         if (StringUtils.isNotBlank(accessKey) && StringUtils.isNotBlank(secretKey)) {

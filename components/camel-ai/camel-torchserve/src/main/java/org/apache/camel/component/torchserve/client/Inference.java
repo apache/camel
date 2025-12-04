@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client;
 
 import org.apache.camel.component.torchserve.client.model.Api;
@@ -49,5 +50,4 @@ public interface Inference {
      * Not supported yet.
      */
     Object explanations(String modelName) throws ApiException;
-
 }

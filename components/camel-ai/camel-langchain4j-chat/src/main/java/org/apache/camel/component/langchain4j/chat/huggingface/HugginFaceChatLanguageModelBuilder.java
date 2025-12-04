@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.chat.huggingface;
 
-import dev.langchain4j.model.huggingface.HuggingFaceLanguageModel;
-
 import static java.time.Duration.ofSeconds;
+
+import dev.langchain4j.model.huggingface.HuggingFaceLanguageModel;
 
 public final class HugginFaceChatLanguageModelBuilder {
     private String accessToken;

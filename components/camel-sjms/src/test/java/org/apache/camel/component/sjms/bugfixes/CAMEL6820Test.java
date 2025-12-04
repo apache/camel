@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.bugfixes;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -25,8 +28,6 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for CAMEL_6820Test. This test is to verify the ability to support the Camel File Component more cleanly
@@ -48,7 +49,6 @@ public class CAMEL6820Test extends JmsTestSupport {
         // test that is run against an uncleaned target directory
         if (f.exists()) {
             FileUtils.deleteDirectory(new File(TEST_DATA_DIR));
-
         }
 
         // Then add the directory back
@@ -77,13 +77,9 @@ public class CAMEL6820Test extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(FILE_INPUT_URI)
-                        .convertBodyTo(InputStream.class)
-                        .to(SJMS_QUEUE_URI);
+                from(FILE_INPUT_URI).convertBodyTo(InputStream.class).to(SJMS_QUEUE_URI);
 
-                from(SJMS_QUEUE_URI)
-                        .convertBodyTo(String.class)
-                        .to(MOCK_RESULT_URI);
+                from(SJMS_QUEUE_URI).convertBodyTo(String.class).to(MOCK_RESULT_URI);
             }
         };
     }

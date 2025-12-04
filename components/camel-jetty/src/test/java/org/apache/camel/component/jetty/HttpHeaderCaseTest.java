@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
@@ -30,9 +34,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class HttpHeaderCaseTest extends BaseJettyTest {
 
     @Test
@@ -44,7 +45,7 @@ public class HttpHeaderCaseTest extends BaseJettyTest {
         method.addHeader("beer", "Carlsberg");
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(method)) {
+                CloseableHttpResponse response = client.execute(method)) {
             String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
             assertEquals("Bye World", responseString);
@@ -61,7 +62,8 @@ public class HttpHeaderCaseTest extends BaseJettyTest {
                     public void process(Exchange exchange) {
 
                         // headers received should be in case as well
-                        Map<String, Object> map = new LinkedHashMap<>(exchange.getIn().getHeaders());
+                        Map<String, Object> map =
+                                new LinkedHashMap<>(exchange.getIn().getHeaders());
 
                         assertEquals("123", map.get("OTHER"));
                         assertNull(map.get("other"));
@@ -76,5 +78,4 @@ public class HttpHeaderCaseTest extends BaseJettyTest {
             }
         };
     }
-
 }

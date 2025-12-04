@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import org.springframework.core.Ordered;
@@ -28,8 +29,7 @@ import org.springframework.core.Ordered;
  */
 public final class SpringTestExecutionListenerSorter {
 
-    private SpringTestExecutionListenerSorter() {
-    }
+    private SpringTestExecutionListenerSorter() {}
 
     public static int getPrecedence(Class<?> clazz) {
         if (clazz == StopWatchTestExecutionListener.class) {
@@ -41,5 +41,4 @@ public final class SpringTestExecutionListenerSorter {
         }
         throw new IllegalArgumentException("Impossible to get the precedence of the class " + clazz.getName() + ".");
     }
-
 }

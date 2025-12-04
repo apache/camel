@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -29,18 +32,17 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Isolated
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
 @DisabledOnOs(OS.WINDOWS)
 public class MainPropertyPlaceholderWithEnvTest {
 
-    public static final String ENV_PROPERTY_PLACEHOLDER_LOCATION
-            = MainHelper.toEnvVar(MainConstants.PROPERTY_PLACEHOLDER_LOCATION);
-    public static final String ENV_INITIAL_PROPERTIES_LOCATION = MainHelper.toEnvVar(MainConstants.INITIAL_PROPERTIES_LOCATION);
-    public static final String ENV_OVERRIDE_PROPERTIES_LOCATION
-            = MainHelper.toEnvVar(MainConstants.OVERRIDE_PROPERTIES_LOCATION);
+    public static final String ENV_PROPERTY_PLACEHOLDER_LOCATION =
+            MainHelper.toEnvVar(MainConstants.PROPERTY_PLACEHOLDER_LOCATION);
+    public static final String ENV_INITIAL_PROPERTIES_LOCATION =
+            MainHelper.toEnvVar(MainConstants.INITIAL_PROPERTIES_LOCATION);
+    public static final String ENV_OVERRIDE_PROPERTIES_LOCATION =
+            MainHelper.toEnvVar(MainConstants.OVERRIDE_PROPERTIES_LOCATION);
 
     protected final Map<String, String> env = new HashMap<>();
     protected final Map<String, String> sys = new HashMap<>();
@@ -222,26 +224,17 @@ public class MainPropertyPlaceholderWithEnvTest {
         try {
             return getFieldValue(classOfMap, System.getenv(), "m");
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(
-                    "System Rules cannot access the field"
-                                       + " 'm' of the map System.getenv().",
-                    e);
+            throw new RuntimeException("System Rules cannot access the field" + " 'm' of the map System.getenv().", e);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(
-                    "System Rules expects System.getenv() to"
-                                       + " have a field 'm' but it has not.",
-                    e);
+                    "System Rules expects System.getenv() to" + " have a field 'm' but it has not.", e);
         }
     }
 
-    private static Map<String, String> getFieldValue(
-            Class<?> klass,
-            Object object,
-            String name)
+    private static Map<String, String> getFieldValue(Class<?> klass, Object object, String name)
             throws NoSuchFieldException, IllegalAccessException {
         Field field = klass.getDeclaredField(name);
         field.setAccessible(true);
         return (Map<String, String>) field.get(object);
     }
-
 }

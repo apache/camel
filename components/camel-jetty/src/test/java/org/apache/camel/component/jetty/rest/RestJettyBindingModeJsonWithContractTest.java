@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -27,10 +32,6 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestJettyBindingModeJsonWithContractTest extends BaseJettyTest {
 
@@ -68,15 +69,22 @@ public class RestJettyBindingModeJsonWithContractTest extends BaseJettyTest {
             @Override
             public void configure() {
                 context.getTypeConverterRegistry().addTypeConverters(new MyTypeConverters());
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.json);
 
                 rest("/users/")
                         // REST binding converts from JSON to UserPojo
-                        .post("new").type(UserPojo.class).to("direct:new");
+                        .post("new")
+                        .type(UserPojo.class)
+                        .to("direct:new");
 
                 from("direct:new")
                         // then contract advice converts from UserPojo to UserPojoEx
-                        .inputType(UserPojoEx.class).to("mock:input");
+                        .inputType(UserPojoEx.class)
+                        .to("mock:input");
             }
         };
     }

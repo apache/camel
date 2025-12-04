@@ -52,27 +52,38 @@ class AvroBinaryDataTypeTransformerTest {
                 """);
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     { "name": "Christoph", "age": 32 }
-                """, Json.mapper().writeValueAsString(
-                Avro.mapper().reader().with(avroSchema).readTree(exchange.getMessage().getBody(byte[].class))), true);
+                """,
+                Json.mapper()
+                        .writeValueAsString(Avro.mapper()
+                                .reader()
+                                .with(avroSchema)
+                                .readTree(exchange.getMessage().getBody(byte[].class))),
+                true);
     }
 
     @Test
     void shouldHandlePojo() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        AvroSchema avroSchema = new AvroSchema(
-                new Schema.Parser(NameValidator.UTF_VALIDATOR)
-                        .parse(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc")));
+        AvroSchema avroSchema = new AvroSchema(new Schema.Parser(NameValidator.UTF_VALIDATOR)
+                .parse(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc")));
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
         exchange.getMessage().setBody(new Person("Mickey", 20));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     {"name":"Mickey","age":20}
-                """, Json.mapper().writeValueAsString(
-                Avro.mapper().reader().with(avroSchema).readTree(exchange.getMessage().getBody(byte[].class))), true);
+                """,
+                Json.mapper()
+                        .writeValueAsString(Avro.mapper()
+                                .reader()
+                                .with(avroSchema)
+                                .readTree(exchange.getMessage().getBody(byte[].class))),
+                true);
     }
 
     @Test
@@ -81,15 +92,24 @@ class AvroBinaryDataTypeTransformerTest {
 
         AvroSchema avroSchema = getSchema();
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
-        exchange.getMessage().setBody(Json.mapper().readerFor(JsonNode.class).readValue("""
+        exchange.getMessage()
+                .setBody(Json.mapper()
+                        .readerFor(JsonNode.class)
+                        .readValue("""
                     { "name": "Goofy", "age": 25 }
                 """));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     {"name":"Goofy","age":25}
-                """, Json.mapper().writeValueAsString(
-                Avro.mapper().reader().with(avroSchema).readTree(exchange.getMessage().getBody(byte[].class))), true);
+                """,
+                Json.mapper()
+                        .writeValueAsString(Avro.mapper()
+                                .reader()
+                                .with(avroSchema)
+                                .readTree(exchange.getMessage().getBody(byte[].class))),
+                true);
     }
 
     @Test
@@ -102,23 +122,28 @@ class AvroBinaryDataTypeTransformerTest {
         exchange.getMessage().setBody(new Person("Donald", 19));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     {"name":"Donald","age":19}
-                """, Json.mapper().writeValueAsString(
-                Avro.mapper().reader().with(avroSchema).readTree(exchange.getMessage().getBody(byte[].class))), true);
+                """,
+                Json.mapper()
+                        .writeValueAsString(Avro.mapper()
+                                .reader()
+                                .with(avroSchema)
+                                .readTree(exchange.getMessage().getBody(byte[].class))),
+                true);
     }
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("avro-binary"));
+        Transformer transformer =
+                camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("avro-binary"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(AvroBinaryDataTypeTransformer.class, transformer.getClass());
     }
 
     private AvroSchema getSchema() throws IOException {
-        return new AvroSchema(
-                new Schema.Parser(NameValidator.UTF_VALIDATOR)
-                        .parse(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc")));
+        return new AvroSchema(new Schema.Parser(NameValidator.UTF_VALIDATOR)
+                .parse(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc")));
     }
 }

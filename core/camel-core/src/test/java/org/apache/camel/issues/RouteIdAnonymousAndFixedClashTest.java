@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.NodeIdFactory;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
 
@@ -59,7 +60,8 @@ public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in1").id("route1") // Note the name
+                from("direct:in1")
+                        .id("route1") // Note the name
                         .to("mock:test1");
 
                 from("direct:in2").to("mock:test2");

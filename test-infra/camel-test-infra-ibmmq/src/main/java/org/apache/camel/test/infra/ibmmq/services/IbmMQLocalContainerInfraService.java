@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ibmmq.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -27,9 +28,7 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = IbmMQInfraService.class,
-              description = "IBM MQ messaging middleware",
-              serviceAlias = "ibmmq")
+@InfraService(service = IbmMQInfraService.class, description = "IBM MQ messaging middleware", serviceAlias = "ibmmq")
 public class IbmMQLocalContainerInfraService implements IbmMQInfraService, ContainerService<GenericContainer<?>> {
 
     public static final String CONTAINER_NAME = "ibmmq";
@@ -59,8 +58,8 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
                         .withEnv("LICENSE", "accept")
                         .withEnv("MQ_QMGR_NAME", IbmMQProperties.DEFAULT_QMGR_NAME)
                         .withLogConsumer(new Slf4jLogConsumer(LOG))
-                        .waitingFor(Wait.forLogMessage(
-                                ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1));
+                        .waitingFor(
+                                Wait.forLogMessage(".*Queued Publish/Subscribe Daemon started for queue manager.*", 1));
 
                 addFixedExposedPort(MQ_LISTENER_PORT, MQ_LISTENER_PORT);
                 addFixedExposedPort(WEB_CONSOLE_PORT, WEB_CONSOLE_PORT);

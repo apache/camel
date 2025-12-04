@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.protobuf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchema;
 import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchemaLoader;
@@ -26,9 +30,6 @@ import org.apache.camel.model.dataformat.ProtobufLibrary;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JacksonProtobufLookupResolverTest extends CamelTestSupport {
 
@@ -60,9 +61,7 @@ public class JacksonProtobufLookupResolverTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        String protobufStr = "message Pojo {\n"
-                             + " required string text = 1;\n"
-                             + "}\n";
+        String protobufStr = "message Pojo {\n" + " required string text = 1;\n" + "}\n";
         ProtobufSchema schema = ProtobufSchemaLoader.std.parse(protobufStr);
         SchemaResolver resolver = ex -> schema;
         registry.bind("schema-resolver-1", SchemaResolver.class, resolver);
@@ -78,9 +77,13 @@ public class JacksonProtobufLookupResolverTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:serialized").unmarshal().protobuf(ProtobufLibrary.Jackson, Pojo.class, "schema-resolver-1")
+                from("direct:serialized")
+                        .unmarshal()
+                        .protobuf(ProtobufLibrary.Jackson, Pojo.class, "schema-resolver-1")
                         .to("mock:pojo");
-                from("direct:pojo").marshal().protobuf(ProtobufLibrary.Jackson, Pojo.class, "schema-resolver-1")
+                from("direct:pojo")
+                        .marshal()
+                        .protobuf(ProtobufLibrary.Jackson, Pojo.class, "schema-resolver-1")
                         .to("mock:serialized");
             }
         };
@@ -90,8 +93,7 @@ public class JacksonProtobufLookupResolverTest extends CamelTestSupport {
 
         private String text;
 
-        public Pojo() {
-        }
+        public Pojo() {}
 
         public Pojo(String text) {
             this.text = text;
@@ -105,5 +107,4 @@ public class JacksonProtobufLookupResolverTest extends CamelTestSupport {
             this.text = text;
         }
     }
-
 }

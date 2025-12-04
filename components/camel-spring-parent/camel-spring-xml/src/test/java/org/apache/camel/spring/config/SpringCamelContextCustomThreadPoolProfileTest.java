@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ThreadPoolProfile;
@@ -23,8 +26,6 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringCamelContextCustomThreadPoolProfileTest extends SpringTestSupport {
 
@@ -45,5 +46,4 @@ public class SpringCamelContextCustomThreadPoolProfileTest extends SpringTestSup
         assertEquals(250, profile.getMaxQueueSize().intValue());
         assertEquals(ThreadPoolRejectedPolicy.Abort, profile.getRejectedPolicy());
     }
-
 }

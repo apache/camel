@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import java.time.Duration;
@@ -67,7 +68,7 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public String getPrefix(final Exchange exchange) {
-        //if regex is set, prefix will not take effect
+        // if regex is set, prefix will not take effect
         if (ObjectHelper.isNotEmpty(getRegex(exchange))) {
             return null;
         }
@@ -79,7 +80,8 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public Integer getMaxResultsPerPage(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getMaxResultsPerPageFromHeaders, configuration::getMaxResultsPerPage, exchange);
+        return getOption(
+                BlobExchangeHeaders::getMaxResultsPerPageFromHeaders, configuration::getMaxResultsPerPage, exchange);
     }
 
     public ListBlobsOptions getListBlobOptions(final Exchange exchange) {
@@ -154,12 +156,16 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public Long getDownloadLinkExpiration(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getDownloadLinkExpirationFromHeaders, configuration::getDownloadLinkExpiration,
+        return getOption(
+                BlobExchangeHeaders::getDownloadLinkExpirationFromHeaders,
+                configuration::getDownloadLinkExpiration,
                 exchange);
     }
 
     public boolean isCommitBlockListLater(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getCommitBlockListFlagFromHeaders, configuration::isCommitBlockListLater,
+        return getOption(
+                BlobExchangeHeaders::getCommitBlockListFlagFromHeaders,
+                configuration::isCommitBlockListLater,
                 exchange);
     }
 
@@ -168,7 +174,8 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public boolean isCreateAppendBlob(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getCreateAppendBlobFlagFromHeaders, configuration::isCreateAppendBlob, exchange);
+        return getOption(
+                BlobExchangeHeaders::getCreateAppendBlobFlagFromHeaders, configuration::isCreateAppendBlob, exchange);
     }
 
     public Long getPageBlobSize(final Exchange exchange) {
@@ -176,11 +183,13 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public Long getBlobSequenceNumber(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getBlobSequenceNumberFromHeaders, configuration::getBlobSequenceNumber, exchange);
+        return getOption(
+                BlobExchangeHeaders::getBlobSequenceNumberFromHeaders, configuration::getBlobSequenceNumber, exchange);
     }
 
     public boolean isCreatePageBlob(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getCreatePageBlobFlagFromHeaders, configuration::isCreatePageBlob, exchange);
+        return getOption(
+                BlobExchangeHeaders::getCreatePageBlobFlagFromHeaders, configuration::isCreatePageBlob, exchange);
     }
 
     public String getBlobName(final Exchange exchange) {
@@ -188,11 +197,13 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public String getContainerName(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getBlobContainerNameFromHeaders, configuration::getContainerName, exchange);
+        return getOption(
+                BlobExchangeHeaders::getBlobContainerNameFromHeaders, configuration::getContainerName, exchange);
     }
 
     public BlobOperationsDefinition getOperation(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getBlobOperationsDefinitionFromHeaders, configuration::getOperation, exchange);
+        return getOption(
+                BlobExchangeHeaders::getBlobOperationsDefinitionFromHeaders, configuration::getOperation, exchange);
     }
 
     public int getMaxRetryRequests() {
@@ -200,16 +211,20 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public OffsetDateTime getChangeFeedStartTime(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getChangeFeedStartTimeFromHeaders, configuration::getChangeFeedStartTime,
+        return getOption(
+                BlobExchangeHeaders::getChangeFeedStartTimeFromHeaders,
+                configuration::getChangeFeedStartTime,
                 exchange);
     }
 
     public OffsetDateTime getChangeFeedEndTime(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getChangeFeedEndTimeFromHeaders, configuration::getChangeFeedEndTime, exchange);
+        return getOption(
+                BlobExchangeHeaders::getChangeFeedEndTimeFromHeaders, configuration::getChangeFeedEndTime, exchange);
     }
 
     public Context getChangeFeedContext(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getChangeFeedContextFromHeaders, configuration::getChangeFeedContext, exchange);
+        return getOption(
+                BlobExchangeHeaders::getChangeFeedContextFromHeaders, configuration::getChangeFeedContext, exchange);
     }
 
     public boolean getLeaseBlob(final Exchange exchange) {
@@ -217,7 +232,9 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public Integer getLeaseDurationInSeconds(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getLeaseDurationInSecondsFromHeaders, configuration::getLeaseDurationInSeconds,
+        return getOption(
+                BlobExchangeHeaders::getLeaseDurationInSecondsFromHeaders,
+                configuration::getLeaseDurationInSeconds,
                 exchange);
     }
 
@@ -225,8 +242,10 @@ public class BlobConfigurationOptionsProxy {
         return configuration;
     }
 
-    private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
-        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
+    private <R> R getOption(
+            final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
+        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a
+        // function or constant
         return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange))
                 ? fallbackFn.get()
                 : exchangeFn.apply(exchange);

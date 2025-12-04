@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.approval;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
@@ -23,8 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApprovalRequestsTest {
 
@@ -56,25 +57,25 @@ public class ApprovalRequestsTest {
 
     @Test
     public void shouldSerializeAsJson() throws JsonProcessingException {
-        final String json = "{\"requests\":["//
-                            + "{"//
-                            + "\"actionType\":\"Submit\","//
-                            + "\"contextActorId\":\"005D00000015rZy\","//
-                            + "\"contextId\":\"001D000000I8mIm\","//
-                            + "\"comments\":\"this is a test 1\","//
-                            + "\"nextApproverIds\":[\"005D00000015rY9\"],"//
-                            + "\"processDefinitionNameOrId\":\"PTO_Request_Process\","//
-                            + "\"skipEntryCriteria\":true"//
-                            + "},{"//
-                            + "\"actionType\":\"Submit\","//
-                            + "\"contextActorId\":\"005D00000015rZy\","//
-                            + "\"contextId\":\"001D000000I8dIm\","//
-                            + "\"comments\":\"this is a test 2\","//
-                            + "\"nextApproverIds\":[\"005D00000015xY9\"],"//
-                            + "\"processDefinitionNameOrId\":\"PTO_Request_Process\","//
-                            + "\"skipEntryCriteria\":true"//
-                            + "}"//
-                            + "]}";
+        final String json = "{\"requests\":[" //
+                + "{" //
+                + "\"actionType\":\"Submit\"," //
+                + "\"contextActorId\":\"005D00000015rZy\"," //
+                + "\"contextId\":\"001D000000I8mIm\"," //
+                + "\"comments\":\"this is a test 1\"," //
+                + "\"nextApproverIds\":[\"005D00000015rY9\"]," //
+                + "\"processDefinitionNameOrId\":\"PTO_Request_Process\"," //
+                + "\"skipEntryCriteria\":true" //
+                + "},{" //
+                + "\"actionType\":\"Submit\"," //
+                + "\"contextActorId\":\"005D00000015rZy\"," //
+                + "\"contextId\":\"001D000000I8dIm\"," //
+                + "\"comments\":\"this is a test 2\"," //
+                + "\"nextApproverIds\":[\"005D00000015xY9\"]," //
+                + "\"processDefinitionNameOrId\":\"PTO_Request_Process\"," //
+                + "\"skipEntryCriteria\":true" //
+                + "}" //
+                + "]}";
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileWriter;
 
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for the FileRenameStrategy using move options
@@ -75,7 +76,8 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("reports?move=../done/${file:name}&initialDelay=0&delay=10")).autoStartup(false)
+                from(fileUri("reports?move=../done/${file:name}&initialDelay=0&delay=10"))
+                        .autoStartup(false)
                         .convertBodyTo(String.class)
                         .to("mock:report");
             }

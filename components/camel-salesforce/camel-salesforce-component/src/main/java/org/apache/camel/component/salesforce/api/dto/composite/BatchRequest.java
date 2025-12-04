@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.io.Serializable;
@@ -24,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch.Method;
 
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({ "method", "url", "richInput" })
+@JsonPropertyOrder({"method", "url", "richInput"})
 final class BatchRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,5 +62,4 @@ final class BatchRequest implements Serializable {
     public String toString() {
         return "Batch: " + method + " " + url + ", data:" + richInput;
     }
-
 }

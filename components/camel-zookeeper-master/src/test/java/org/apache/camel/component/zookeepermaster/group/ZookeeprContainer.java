@@ -14,22 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group;
 
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.testcontainers.containers.GenericContainer;
 
 public class ZookeeprContainer implements ContainerService {
-    //dummy zookeeper container to use ExecutionCondition from ContainerService
-    //to detect if docker env exists or not
+    // dummy zookeeper container to use ExecutionCondition from ContainerService
+    // to detect if docker env exists or not
 
-    public ZookeeprContainer() {
-
-    }
+    public ZookeeprContainer() {}
 
     @Override
     public GenericContainer getContainer() {
         return null;
     }
-
 }

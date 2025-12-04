@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import java.net.URI;
@@ -36,59 +37,92 @@ public class VertxHttpConfiguration {
     @UriPath(name = "httpUri")
     @Metadata(required = true)
     private URI httpUri;
-    @UriParam(label = "producer",
-              enums = "OPTIONS,GET,HEAD,POST,PUT,DELETE,TRACE,CONNECT,PATCH,PROPFIND,PROPPATCH,MKCOL,COPY,MOVE,LOCK,UNLOCK,MKCALENDAR,VERSION_CONTROL,REPORT,CHECKIN,CHECKOUT,UNCHECKOUT,MKWORKSPACE,UPDATE,LABEL,MERGE,BASELINE_CONTROL,MKACTIVITY,ORDERPATCH,ACL,SEARCH")
+
+    @UriParam(
+            label = "producer",
+            enums =
+                    "OPTIONS,GET,HEAD,POST,PUT,DELETE,TRACE,CONNECT,PATCH,PROPFIND,PROPPATCH,MKCOL,COPY,MOVE,LOCK,UNLOCK,MKCALENDAR,VERSION_CONTROL,REPORT,CHECKIN,CHECKOUT,UNCHECKOUT,MKWORKSPACE,UPDATE,LABEL,MERGE,BASELINE_CONTROL,MKACTIVITY,ORDERPATCH,ACL,SEARCH")
     private HttpMethod httpMethod;
+
     @UriParam(label = "producer", defaultValue = "-1")
     private long timeout = -1;
+
     @UriParam(label = "producer", defaultValue = "60000")
     private int connectTimeout = ClientOptionsBase.DEFAULT_CONNECT_TIMEOUT;
+
     @UriParam(label = "producer", defaultValue = "VertxHttpHeaderFilterStrategy")
     private HeaderFilterStrategy headerFilterStrategy = new VertxHttpHeaderFilterStrategy();
+
     @UriParam(label = "producer")
     private VertxHttpBinding vertxHttpBinding;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
+
     @UriParam(label = "producer", defaultValue = "false")
     private boolean transferException;
+
     @UriParam(label = "producer", defaultValue = "200-299")
     private String okStatusCodeRange = "200-299";
+
     @UriParam(label = "producer", defaultValue = "false")
     private boolean sessionManagement;
+
     @UriParam(label = "producer", defaultValue = "InMemoryCookieStore")
     private CookieStore cookieStore;
+
     @UriParam(label = "producer", defaultValue = "false")
     private boolean useCompression;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean responsePayloadAsByteArray = true;
+
     @UriParam(label = "security")
     private String basicAuthUsername;
+
     @UriParam(label = "security")
     private String basicAuthPassword;
+
     @UriParam(label = "security")
     private String bearerToken;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "proxy")
     private String proxyHost;
+
     @UriParam(label = "proxy")
     private Integer proxyPort;
+
     @UriParam(label = "proxy", enums = "HTTP,SOCKS4,SOCKS5")
     private ProxyType proxyType;
+
     @UriParam(label = "proxy")
     private String proxyUsername;
+
     @UriParam(label = "proxy")
     private String proxyPassword;
+
     @UriParam(label = "producer")
     private WebClientOptions webClientOptions;
-    @UriParam(label = "producer",
-              description = "Whether to force using multipart/form-data for easy file uploads. This is only to be used for uploading the message body as a single entity form-data. For uploading multiple entries then use io.vertx.ext.web.multipart.MultipartForm to build the form.")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Whether to force using multipart/form-data for easy file uploads. This is only to be used for uploading the message body as a single entity form-data. For uploading multiple entries then use io.vertx.ext.web.multipart.MultipartForm to build the form.")
     private boolean multipartUpload;
-    @UriParam(label = "producer", defaultValue = "data",
-              description = "The name of the multipart/form-data when multipartUpload is enabled.")
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "data",
+            description = "The name of the multipart/form-data when multipartUpload is enabled.")
     private String multipartUploadName = "data";
-    @UriParam(label = "producer",
-              description = "If the option is true, the Exchange.HTTP_URI header will be ignored and the endpoint URI will be used for the HTTP request. You may also set option throwExceptionOnFailure to false to return the fault response back to the client.")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "If the option is true, the Exchange.HTTP_URI header will be ignored and the endpoint URI will be used for the HTTP request. You may also set option throwExceptionOnFailure to false to return the fault response back to the client.")
     private boolean bridgeEndpoint;
 
     /**

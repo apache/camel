@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.apache.camel.spi.PropertiesComponent.OPTIONAL_TOKEN;
+import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
+import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
+import static org.apache.camel.util.IOHelper.lookupEnvironmentVariable;
 
 import java.util.HashSet;
 import java.util.Properties;
@@ -27,11 +33,6 @@ import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.spi.PropertiesComponent.OPTIONAL_TOKEN;
-import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
-import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
-import static org.apache.camel.util.IOHelper.lookupEnvironmentVariable;
 
 /**
  * A parser to parse a string which contains property placeholders.
@@ -48,8 +49,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
     private PropertiesComponent propertiesComponent;
 
-    public DefaultPropertiesParser() {
-    }
+    public DefaultPropertiesParser() {}
 
     public DefaultPropertiesParser(PropertiesComponent propertiesComponent) {
         this.propertiesComponent = propertiesComponent;
@@ -65,11 +65,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
     @Override
     public String parseUri(
-            String text, PropertiesLookup properties, boolean defaultFallbackEnabled, boolean keepUnresolvedOptional,
+            String text,
+            PropertiesLookup properties,
+            boolean defaultFallbackEnabled,
+            boolean keepUnresolvedOptional,
             boolean nestedPlaceholder)
             throws IllegalArgumentException {
-        ParsingContext context
-                = new ParsingContext(properties, defaultFallbackEnabled, keepUnresolvedOptional, nestedPlaceholder);
+        ParsingContext context =
+                new ParsingContext(properties, defaultFallbackEnabled, keepUnresolvedOptional, nestedPlaceholder);
         String answer = context.parse(text);
         if (keepUnresolvedOptional && answer != null && answer.contains(UNRESOLVED_PREFIX_TOKEN)) {
             // replace temporary unresolved keys back to with placeholders so they are kept as-is
@@ -93,8 +96,11 @@ public class DefaultPropertiesParser implements PropertiesParser {
         private final boolean keepUnresolvedOptional;
         private final boolean nestedPlaceholder;
 
-        ParsingContext(PropertiesLookup properties, boolean defaultFallbackEnabled, boolean keepUnresolvedOptional,
-                       boolean nestedPlaceholder) {
+        ParsingContext(
+                PropertiesLookup properties,
+                boolean defaultFallbackEnabled,
+                boolean keepUnresolvedOptional,
+                boolean nestedPlaceholder) {
             this.properties = properties;
             this.defaultFallbackEnabled = defaultFallbackEnabled;
             this.keepUnresolvedOptional = keepUnresolvedOptional;
@@ -228,7 +234,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
             // If not found, ensure that there is no valid prefix token in the string
             if (suffix == -1) {
                 if (getMatchingPrefixIndex(input, input.length()) != -1) {
-                    throw new IllegalArgumentException(String.format("Missing %s from the text: %s", SUFFIX_TOKEN, input));
+                    throw new IllegalArgumentException(
+                            String.format("Missing %s from the text: %s", SUFFIX_TOKEN, input));
                 }
                 return null;
             }
@@ -351,7 +358,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
                         if (!remainderOptional) {
                             remainderOptional = function.optional(remainder);
                         }
-                        if (!remainderOptional && propertiesComponent != null
+                        if (!remainderOptional
+                                && propertiesComponent != null
                                 && propertiesComponent.isIgnoreMissingProperty()) {
                             // property is missing, but we should ignore this and return the placeholder unresolved
                             return UNRESOLVED_PREFIX_TOKEN + key + UNRESOLVED_SUFFIX_TOKEN;
@@ -359,8 +367,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
                         if (!remainderOptional) {
                             throw new IllegalArgumentException(
                                     "Property with key [" + key + "] using function [" + function.getName() + "]"
-                                                               + " returned null value which is not allowed, from input: "
-                                                               + input);
+                                            + " returned null value which is not allowed, from input: "
+                                            + input);
                         } else {
                             if (keepUnresolvedOptional) {
                                 // mark the key as unresolved
@@ -371,7 +379,10 @@ public class DefaultPropertiesParser implements PropertiesParser {
                         }
                     } else {
                         if (log.isDebugEnabled()) {
-                            log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(),
+                            log.debug(
+                                    "Property with key [{}] applied by function [{}] -> {}",
+                                    key,
+                                    function.getName(),
                                     value);
                         }
                         String k = prevKey != null ? prevKey : key;
@@ -447,8 +458,10 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     if (local instanceof OrderedLocationProperties propSource) {
                         Object val = propSource.getDefaultValue(key);
                         if (val != null) {
-                            localDefaultValue
-                                    = propertiesComponent.getCamelContext().getTypeConverter().tryConvertTo(String.class, val);
+                            localDefaultValue = propertiesComponent
+                                    .getCamelContext()
+                                    .getTypeConverter()
+                                    .tryConvertTo(String.class, val);
                         }
                     }
                     onLookup(key, value, localDefaultValue, loc);
@@ -462,7 +475,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     : PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK;
             // override is the default mode for SYS
             int sysMode = propertiesComponent != null
-                    ? propertiesComponent.getSystemPropertiesMode() : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
+                    ? propertiesComponent.getSystemPropertiesMode()
+                    : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
 
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
                 value = lookupEnvironmentVariable(key);

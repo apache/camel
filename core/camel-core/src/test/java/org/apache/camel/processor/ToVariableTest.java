@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -81,8 +82,7 @@ public class ToVariableTest extends ContextTestSupport {
                         .toV("direct:foo", "hello", "bye")
                         .to("mock:result");
 
-                from("direct:foo")
-                        .transform().simple("Bye ${body}");
+                from("direct:foo").transform().simple("Bye ${body}");
             }
         };
     }

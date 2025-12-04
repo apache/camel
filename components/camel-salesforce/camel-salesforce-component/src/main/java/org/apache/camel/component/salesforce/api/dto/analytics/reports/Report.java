@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 
 import java.time.ZonedDateTime;
@@ -90,5 +91,4 @@ public class Report extends AbstractSObjectBase {
     public void setFormat(FormatEnum Format) {
         this.Format = Format;
     }
-
 }

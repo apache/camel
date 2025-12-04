@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.cluster;
 
 import java.util.Properties;
@@ -26,8 +27,7 @@ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.configuration.cache.CacheMode;
 
 public final class InfinispanRemoteClusteredTestSupport {
-    private InfinispanRemoteClusteredTestSupport() {
-    }
+    private InfinispanRemoteClusteredTestSupport() {}
 
     public static Configuration createConfiguration(InfinispanService service) {
         if (SystemUtils.IS_OS_MAC) {
@@ -60,15 +60,16 @@ public final class InfinispanRemoteClusteredTestSupport {
                     .realm("default")
                     .build();
         }
-
     }
 
     public static void createCache(RemoteCacheManager cacheContainer, String cacheName) {
-        cacheContainer.administration()
+        cacheContainer
+                .administration()
                 .getOrCreateCache(
                         cacheName,
                         new org.infinispan.configuration.cache.ConfigurationBuilder()
                                 .clustering()
-                                .cacheMode(CacheMode.DIST_SYNC).build());
+                                .cacheMode(CacheMode.DIST_SYNC)
+                                .build());
     }
 }

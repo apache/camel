@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.common;
 
 import jakarta.jms.ConnectionFactory;
@@ -25,8 +26,7 @@ import org.apache.camel.test.infra.artemis.services.ServiceAware;
 import org.apache.camel.test.infra.messaging.services.ConnectionFactoryAware;
 
 public final class ConnectionFactoryHelper {
-    private ConnectionFactoryHelper() {
-    }
+    private ConnectionFactoryHelper() {}
 
     public static ConnectionFactory createConnectionFactory(ArtemisInfraService service) {
         return createConnectionFactory(service, null);
@@ -40,8 +40,8 @@ public final class ConnectionFactoryHelper {
         }
 
         if (service instanceof ServiceAware) {
-            return createConnectionFactory(((ServiceAware<ArtemisInfraService>) service).getService(),
-                    maximumRedeliveries);
+            return createConnectionFactory(
+                    ((ServiceAware<ArtemisInfraService>) service).getService(), maximumRedeliveries);
         }
 
         throw new UnsupportedOperationException(

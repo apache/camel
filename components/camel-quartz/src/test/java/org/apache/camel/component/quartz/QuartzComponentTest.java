@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class QuartzComponentTest extends BaseQuartzTest {
 
@@ -48,5 +49,4 @@ public class QuartzComponentTest extends BaseQuartzTest {
         comp.start();
         comp.stop();
     }
-
 }

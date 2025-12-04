@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.TemporaryQueue;
@@ -56,7 +57,7 @@ public class JmsProviderMetadata {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public Class<? extends TemporaryQueue> getTemporaryQueueType() {
         return temporaryQueueType;
@@ -75,7 +76,7 @@ public class JmsProviderMetadata {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected void loadTemporaryDestinationTypes(JmsOperations template) {
         if (template == null) {
             throw new IllegalArgumentException("No JmsTemplate supplied!");

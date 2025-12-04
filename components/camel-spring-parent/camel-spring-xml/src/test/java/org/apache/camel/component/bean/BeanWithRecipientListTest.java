@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.EndpointInject;
@@ -28,8 +29,10 @@ import org.springframework.test.context.ContextConfiguration;
 public class BeanWithRecipientListTest extends SpringRunWithTestSupport {
     @Autowired
     protected ProducerTemplate template;
+
     @EndpointInject("mock:a")
     protected MockEndpoint a;
+
     @EndpointInject("mock:b")
     protected MockEndpoint b;
 

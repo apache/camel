@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.common.message;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -33,13 +41,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.security.SecurityContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class DefaultCxfMessageMapperTest {
 
     @Test
@@ -50,8 +51,7 @@ public class DefaultCxfMessageMapperTest {
         DefaultCxfMessageMapper mapper = new DefaultCxfMessageMapper();
 
         Exchange camelExchange = setupCamelExchange(requestURI, requestPath, null);
-        Message cxfMessage = mapper.createCxfMessageFromCamelExchange(
-                camelExchange, mock(HeaderFilterStrategy.class));
+        Message cxfMessage = mapper.createCxfMessageFromCamelExchange(camelExchange, mock(HeaderFilterStrategy.class));
 
         assertEquals(requestURI, cxfMessage.get(Message.REQUEST_URI).toString());
         assertEquals(requestPath, cxfMessage.get(Message.BASE_PATH).toString());
@@ -67,8 +67,7 @@ public class DefaultCxfMessageMapperTest {
         when(request.isUserInRole("role2")).thenReturn(false);
         Exchange camelExchange = setupCamelExchange("/", "/", request);
 
-        Message cxfMessage = mapper.createCxfMessageFromCamelExchange(
-                camelExchange, mock(HeaderFilterStrategy.class));
+        Message cxfMessage = mapper.createCxfMessageFromCamelExchange(camelExchange, mock(HeaderFilterStrategy.class));
         SecurityContext sc = cxfMessage.get(SecurityContext.class);
         assertNotNull(sc);
         assertEquals("barry", sc.getUserPrincipal().getName());
@@ -78,16 +77,18 @@ public class DefaultCxfMessageMapperTest {
 
     private Exchange setupCamelExchange(String requestURI, String requestPath, HttpServletRequest request) {
         org.apache.camel.Message camelMessage = mock(org.apache.camel.Message.class);
-        org.apache.camel.http.common.HttpMessage camelHttpMessage = mock(org.apache.camel.http.common.HttpMessage.class);
+        org.apache.camel.http.common.HttpMessage camelHttpMessage =
+                mock(org.apache.camel.http.common.HttpMessage.class);
         Exchange camelExchange = mock(Exchange.class);
-        when(camelExchange.getProperty(CamelTransportConstants.CXF_EXCHANGE,
-                org.apache.cxf.message.Exchange.class)).thenReturn(new ExchangeImpl());
+        when(camelExchange.getProperty(CamelTransportConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class))
+                .thenReturn(new ExchangeImpl());
         when(camelExchange.hasOut()).thenReturn(false);
         when(camelExchange.getIn()).thenReturn(camelMessage);
         when(camelMessage.getHeaders()).thenReturn(Collections.emptyMap());
         when(camelMessage.getHeader(Exchange.CONTENT_TYPE, String.class)).thenReturn(null);
         when(camelMessage.getHeader("Accept", String.class)).thenReturn(null);
-        when(camelMessage.getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class)).thenReturn(null);
+        when(camelMessage.getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class))
+                .thenReturn(null);
         when(camelMessage.getHeader(Exchange.CHARSET_NAME, String.class)).thenReturn(null);
         when(camelMessage.getHeader(Exchange.HTTP_URI, String.class)).thenReturn(requestURI);
         when(camelMessage.getHeader(Exchange.HTTP_PATH, String.class)).thenReturn(requestPath);

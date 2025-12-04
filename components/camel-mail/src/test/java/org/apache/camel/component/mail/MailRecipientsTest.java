@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,22 +32,20 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  * Unit test for recipients (To, CC, BCC)
  */
 public class MailRecipientsTest extends CamelTestSupport {
     private static final MailboxUser you = Mailbox.getOrCreateUser("youRecipients", "secret");
-    private static final MailboxUser camelRiders
-            = Mailbox.getOrCreateUser("camelRecipients@riders.org", "camelRecipients", "secret");
-    private static final MailboxUser easyRiders
-            = Mailbox.getOrCreateUser("easyRecipients@riders.org", "easyRecipients", "secret");
+    private static final MailboxUser camelRiders =
+            Mailbox.getOrCreateUser("camelRecipients@riders.org", "camelRecipients", "secret");
+    private static final MailboxUser easyRiders =
+            Mailbox.getOrCreateUser("easyRecipients@riders.org", "easyRecipients", "secret");
     private static final MailboxUser me = Mailbox.getOrCreateUser("meRecipients@you.org", "meRecipients", "secret");
-    private static final MailboxUser someone
-            = Mailbox.getOrCreateUser("someoneRecipients@somewhere.org", "someoneRecipients", "secret");
-    private static final MailboxUser to = Mailbox.getOrCreateUser("toRecipients@somewhere.org", "toRecipients", "secret");
+    private static final MailboxUser someone =
+            Mailbox.getOrCreateUser("someoneRecipients@somewhere.org", "someoneRecipients", "secret");
+    private static final MailboxUser to =
+            Mailbox.getOrCreateUser("toRecipients@somewhere.org", "toRecipients", "secret");
 
     @Test
     public void testMultiRecipients() throws Exception {
@@ -150,13 +152,15 @@ public class MailRecipientsTest extends CamelTestSupport {
                 // to: camel@riders.org , easy@riders.org
                 // cc: me@you.org
                 // bcc: someone@somewhere.org
-                String recipients = "&to=" + camelRiders.getEmail() + "," + easyRiders.getEmail() + "&cc=" + me.getEmail()
-                                    + "&bcc=" + someone.getEmail();
+                String recipients = "&to=" + camelRiders.getEmail() + "," + easyRiders.getEmail() + "&cc="
+                        + me.getEmail() + "&bcc=" + someone.getEmail();
 
                 from("direct:a").to(you.uriPrefix(Protocol.smtp) + "&from=" + you.getEmail() + recipients);
-                from("direct:b").removeHeaders("*")
+                from("direct:b")
+                        .removeHeaders("*")
                         .to(you.uriPrefix(Protocol.smtp) + "&from=" + you.getEmail() + recipients);
-                from("direct:c").removeHeaders("cc")
+                from("direct:c")
+                        .removeHeaders("cc")
                         .to(you.uriPrefix(Protocol.smtp) + "&from=" + you.getEmail() + recipients);
                 // END SNIPPET: e1
             }

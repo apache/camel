@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.triton.services;
 
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
@@ -39,8 +40,7 @@ public class TritonLocalContainerInfraService implements TritonInfraService, Con
 
     public TritonLocalContainerInfraService() {
         String imageName = LocalPropertyResolver.getProperty(
-                TritonLocalContainerInfraService.class,
-                TritonProperties.TRITON_CONTAINER);
+                TritonLocalContainerInfraService.class, TritonProperties.TRITON_CONTAINER);
 
         container = initContainer(imageName);
     }

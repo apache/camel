@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -32,17 +42,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
-                          disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
+@DisabledIfSystemProperty(
+        named = "camel.threads.virtual.enabled",
+        matches = "true",
+        disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
 public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
     @Test
@@ -133,7 +136,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     public void testGetThreadNameCustomPatternInvalid() {
         context.getExecutorServiceManager().setThreadNamePattern("Cool #xxx#");
 
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class,
                 () -> context.getExecutorServiceManager().resolveThreadName("foo"),
                 "Should thrown an exception");
 
@@ -273,8 +277,10 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertSame(bar, context.getExecutorServiceManager().getThreadPoolProfile("bar"));
         assertNotSame(foo, bar);
 
-        assertFalse(context.getExecutorServiceManager().getThreadPoolProfile("foo").isDefaultProfile());
-        assertFalse(context.getExecutorServiceManager().getThreadPoolProfile("bar").isDefaultProfile());
+        assertFalse(
+                context.getExecutorServiceManager().getThreadPoolProfile("foo").isDefaultProfile());
+        assertFalse(
+                context.getExecutorServiceManager().getThreadPoolProfile("bar").isDefaultProfile());
     }
 
     @Test
@@ -608,5 +614,4 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
         c.stop();
     }
-
 }

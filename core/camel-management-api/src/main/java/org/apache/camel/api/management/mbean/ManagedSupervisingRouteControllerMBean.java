@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import java.util.Collection;
@@ -28,7 +29,8 @@ public interface ManagedSupervisingRouteControllerMBean extends ManagedRouteCont
     @ManagedAttribute(description = "Whether supervising is enabled")
     boolean isEnabled();
 
-    @ManagedAttribute(description = "The number of threads used by the scheduled thread pool that are used for restarting routes")
+    @ManagedAttribute(
+            description = "The number of threads used by the scheduled thread pool that are used for restarting routes")
     int getThreadPoolSize();
 
     @ManagedAttribute(description = "Initial delay in milli seconds before the route controller starts")
@@ -40,7 +42,9 @@ public interface ManagedSupervisingRouteControllerMBean extends ManagedRouteCont
     @ManagedAttribute(description = "Backoff maximum delay in millis when restarting a route that failed to startup")
     long getBackOffMaxDelay();
 
-    @ManagedAttribute(description = "Backoff maximum elapsed time in millis, after which the backoff should be considered exhausted and no more attempts should be made")
+    @ManagedAttribute(
+            description =
+                    "Backoff maximum elapsed time in millis, after which the backoff should be considered exhausted and no more attempts should be made")
     long getBackOffMaxElapsedTime();
 
     @ManagedAttribute(description = "Backoff maximum number of attempts to restart a route that failed to startup")
@@ -55,16 +59,21 @@ public interface ManagedSupervisingRouteControllerMBean extends ManagedRouteCont
     @ManagedAttribute(description = "Pattern for filtering routes to be excluded as supervised")
     String getExcludeRoutes();
 
-    @ManagedAttribute(description = "Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed and the route is not successfully started and the route manager is giving up.")
+    @ManagedAttribute(
+            description =
+                    "Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed and the route is not successfully started and the route manager is giving up.")
     boolean isUnhealthyOnExhausted();
 
-    @ManagedAttribute(description = "Whether to mark the route as unhealthy (down) when the route failed to initially start, and is being controlled for restarting (backoff)")
+    @ManagedAttribute(
+            description =
+                    "Whether to mark the route as unhealthy (down) when the route failed to initially start, and is being controlled for restarting (backoff)")
     boolean isUnhealthyOnRestarting();
 
     @ManagedAttribute(description = "Number of routes controlled by the controller")
     int getNumberOfControlledRoutes();
 
-    @ManagedAttribute(description = "Number of routes which have failed to startup and are currently managed to be restarted")
+    @ManagedAttribute(
+            description = "Number of routes which have failed to startup and are currently managed to be restarted")
     int getNumberOfRestartingRoutes();
 
     @ManagedAttribute(description = "Number of routes which have failed all attempts to startup and are now exhausted")
@@ -76,10 +85,11 @@ public interface ManagedSupervisingRouteControllerMBean extends ManagedRouteCont
     @ManagedAttribute(description = "Routes that are restarting or scheduled to restart")
     Collection<String> getRestartingRoutes();
 
-    @ManagedOperation(description = "Lists detailed status about all the routes (incl failure details for routes failed to start)")
+    @ManagedOperation(
+            description =
+                    "Lists detailed status about all the routes (incl failure details for routes failed to start)")
     TabularData routeStatus(boolean exhausted, boolean restarting, boolean includeStacktrace);
 
     @ManagedOperation(description = "Starts all routes")
     void startRoutes();
-
 }

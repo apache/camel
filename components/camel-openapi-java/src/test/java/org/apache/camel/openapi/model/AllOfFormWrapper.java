@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,5 +31,4 @@ public class AllOfFormWrapper {
     public void setFullForm(AllOfForm fullForm) {
         this.fullForm = fullForm;
     }
-
 }

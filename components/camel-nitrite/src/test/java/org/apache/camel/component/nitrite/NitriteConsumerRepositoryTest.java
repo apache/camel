@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -28,9 +32,6 @@ import org.apache.camel.component.nitrite.operation.repository.RemoveRepositoryO
 import org.dizitart.no2.event.ChangeType;
 import org.dizitart.no2.objects.filters.ObjectFilters;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
 
@@ -78,9 +79,7 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
 
         mock.assertIsSatisfied();
 
-        assertEquals(
-                1,
-                template.requestBody("direct:listAll", null, List.class).size());
+        assertEquals(1, template.requestBody("direct:listAll", null, List.class).size());
 
         List<Exchange> sorted = sortByChangeTimestamp(mock.getExchanges());
         Exchange change1 = sorted.get(0);
@@ -106,15 +105,15 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
         template.sendBodyAndHeader(
                 String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 new MyPersistentObject(123L, "val1", "val2", ""),
-                NitriteConstants.OPERATION, new InsertOperation());
+                NitriteConstants.OPERATION,
+                new InsertOperation());
         template.sendBodyAndHeader(
                 String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 null,
-                NitriteConstants.OPERATION, new RemoveRepositoryOperation(ObjectFilters.eq("key1", "val1")));
+                NitriteConstants.OPERATION,
+                new RemoveRepositoryOperation(ObjectFilters.eq("key1", "val1")));
 
-        assertEquals(
-                0,
-                template.requestBody("direct:listAll", null, List.class).size());
+        assertEquals(0, template.requestBody("direct:listAll", null, List.class).size());
 
         mock.assertIsSatisfied();
 

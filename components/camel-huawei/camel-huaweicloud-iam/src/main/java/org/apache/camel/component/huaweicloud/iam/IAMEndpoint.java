@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
 
 import com.huaweicloud.sdk.core.auth.GlobalCredentials;
@@ -35,17 +36,20 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To securely manage users on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-iam", title = "Huawei Identity and Access Management (IAM)",
-             syntax = "hwcloud-iam:operation",
-             category = { Category.CLOUD }, producerOnly = true)
+@UriEndpoint(
+        firstVersion = "3.11.0",
+        scheme = "hwcloud-iam",
+        title = "Huawei Identity and Access Management (IAM)",
+        syntax = "hwcloud-iam:operation",
+        category = {Category.CLOUD},
+        producerOnly = true)
 public class IAMEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "IAM service region",
-              displayName = "Service region", secret = false)
+    @UriParam(description = "IAM service region", displayName = "Service region", secret = false)
     @Metadata(required = true)
     private String region;
 
@@ -65,13 +69,18 @@ public class IAMEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-              defaultValue = "false")
+    @UriParam(
+            description = "Ignore SSL verification",
+            displayName = "SSL Verification Ignored",
+            secret = false,
+            defaultValue = "false")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true)
+    @UriParam(
+            description = "Configuration object for cloud service authentication",
+            displayName = "Service Configuration",
+            secret = true)
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
@@ -93,8 +102,7 @@ public class IAMEndpoint extends DefaultEndpoint {
 
     private IamClient iamClient;
 
-    public IAMEndpoint() {
-    }
+    public IAMEndpoint() {}
 
     public IAMEndpoint(String uri, String operation, IAMComponent component) {
         super(uri, component);
@@ -233,22 +241,17 @@ public class IAMEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
         }
 
-        // setup AK/SK credential information. AK/SK provided through ServiceKeys overrides the AK/SK passed through the endpoint
+        // setup AK/SK credential information. AK/SK provided through ServiceKeys overrides the AK/SK passed through the
+        // endpoint
         GlobalCredentials auth = new GlobalCredentials()
-                .withAk(getServiceKeys() != null
-                        ? getServiceKeys().getAccessKey()
-                        : getAccessKey())
-                .withSk(getServiceKeys() != null
-                        ? getServiceKeys().getSecretKey()
-                        : getSecretKey());
+                .withAk(getServiceKeys() != null ? getServiceKeys().getAccessKey() : getAccessKey())
+                .withSk(getServiceKeys() != null ? getServiceKeys().getSecretKey() : getSecretKey());
 
         // setup http information (including proxy information if provided)
         HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig();
         httpConfig.withIgnoreSSLVerification(isIgnoreSslVerification());
-        if (ObjectHelper.isNotEmpty(getProxyHost())
-                && ObjectHelper.isNotEmpty(getProxyPort())) {
-            httpConfig.withProxyHost(getProxyHost())
-                    .withProxyPort(getProxyPort());
+        if (ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort())) {
+            httpConfig.withProxyHost(getProxyHost()).withProxyPort(getProxyPort());
 
             if (ObjectHelper.isNotEmpty(getProxyUser())) {
                 httpConfig.withProxyUsername(getProxyUser());

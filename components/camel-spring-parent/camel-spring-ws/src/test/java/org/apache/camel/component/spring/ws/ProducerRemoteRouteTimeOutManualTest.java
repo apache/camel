@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.SocketTimeoutException;
 
@@ -26,17 +31,13 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 @Disabled("Run manually, makes connection to external webservice")
 @CamelSpringTest
 @ContextConfiguration
 public class ProducerRemoteRouteTimeOutManualTest {
 
-    private final String xmlRequestForGoogleStockQuote
-            = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String xmlRequestForGoogleStockQuote =
+            "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
 
     @Produce
     private ProducerTemplate template;
@@ -44,8 +45,8 @@ public class ProducerRemoteRouteTimeOutManualTest {
     @Test
     public void callStockQuoteWebserviceCosmmonsHttpWith3MillSecondsTimeout() throws Exception {
         try {
-            template.requestBody("direct:stockQuoteWebserviceCommonsHttpWith3MillSecondsTimeout",
-                    xmlRequestForGoogleStockQuote);
+            template.requestBody(
+                    "direct:stockQuoteWebserviceCommonsHttpWith3MillSecondsTimeout", xmlRequestForGoogleStockQuote);
             fail("Miss the expected exception in chain");
         } catch (CamelExecutionException cee) {
             assertTrue(hasThrowableInChain(cee, SocketTimeoutException.class));
@@ -54,8 +55,8 @@ public class ProducerRemoteRouteTimeOutManualTest {
 
     @Test
     public void callStockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout() throws Exception {
-        Object result = template.requestBody("direct:stockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout",
-                xmlRequestForGoogleStockQuote);
+        Object result = template.requestBody(
+                "direct:stockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout", xmlRequestForGoogleStockQuote);
 
         assertNotNull(result);
         assertTrue(result instanceof String);
@@ -66,7 +67,8 @@ public class ProducerRemoteRouteTimeOutManualTest {
     @Test
     public void callStockQuoteWebserviceJDKWith3MillSecondsTimeout() throws Exception {
         try {
-            template.requestBody("direct:stockQuoteWebserviceJDKWith3MillSecondsTimeout", xmlRequestForGoogleStockQuote);
+            template.requestBody(
+                    "direct:stockQuoteWebserviceJDKWith3MillSecondsTimeout", xmlRequestForGoogleStockQuote);
             fail("Miss the expected exception in chain");
         } catch (CamelExecutionException cee) {
             assertTrue(hasThrowableInChain(cee, SocketTimeoutException.class));
@@ -75,8 +77,8 @@ public class ProducerRemoteRouteTimeOutManualTest {
 
     @Test
     public void callStockQuoteWebserviceJDKWith5000MillSecondsTimeout() throws Exception {
-        Object result = template.requestBody("direct:stockQuoteWebserviceJDKWith5000MillSecondsTimeout",
-                xmlRequestForGoogleStockQuote);
+        Object result = template.requestBody(
+                "direct:stockQuoteWebserviceJDKWith5000MillSecondsTimeout", xmlRequestForGoogleStockQuote);
 
         assertNotNull(result);
         assertTrue(result instanceof String);

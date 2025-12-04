@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink;
+
+import static java.lang.String.format;
 
 import org.apache.camel.CamelContext;
 import org.apache.flink.api.java.DataSet;
-
-import static java.lang.String.format;
 
 /**
  * DataSet callback with automatic type conversion for payloads.

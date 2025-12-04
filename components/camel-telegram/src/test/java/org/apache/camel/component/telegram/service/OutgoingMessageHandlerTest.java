@@ -17,14 +17,14 @@
 
 package org.apache.camel.component.telegram.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Multipart message serialization tests")
 class OutgoingMessageHandlerTest {
@@ -52,8 +52,8 @@ class OutgoingMessageHandlerTest {
     void testMultiBody() {
         TelegramBodyPublisher bodyPublisher = new TelegramBodyPublisher(1024);
 
-        bodyPublisher
-                .addBodyPart(new TelegramBodyPublisher.MultilineBodyPart<>("message", "value1", StandardCharsets.UTF_8.name()));
+        bodyPublisher.addBodyPart(
+                new TelegramBodyPublisher.MultilineBodyPart<>("message", "value1", StandardCharsets.UTF_8.name()));
 
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         Set<TelegramBodyPublisher.TelegramBodyPart> bodyParts = bodyPublisher.getBodyParts();
@@ -63,11 +63,11 @@ class OutgoingMessageHandlerTest {
         int written = buffer.capacity() - buffer.remaining();
         String serialized = new String(buffer.array(), 0, written);
 
-        assertEquals("--aaa\r\n" +
-                     "Content-Disposition: form-data; name=\"message\"\r\n" +
-                     "Content-Type: UTF-8; charset=UTF-8\r\n\r\n" +
-                     "value1\r\n" +
-                     "--aaa--\r\n",
+        assertEquals(
+                "--aaa\r\n" + "Content-Disposition: form-data; name=\"message\"\r\n"
+                        + "Content-Type: UTF-8; charset=UTF-8\r\n\r\n"
+                        + "value1\r\n"
+                        + "--aaa--\r\n",
                 serialized);
     }
 
@@ -76,8 +76,8 @@ class OutgoingMessageHandlerTest {
     void testMultiBodyWithMoreHeaders() {
         TelegramBodyPublisher bodyPublisher = new TelegramBodyPublisher(1024);
 
-        final TelegramBodyPublisher.MultilineBodyPart<String> stringMultilineBodyPart
-                = new TelegramBodyPublisher.MultilineBodyPart<>("message", "value1", StandardCharsets.UTF_8.name());
+        final TelegramBodyPublisher.MultilineBodyPart<String> stringMultilineBodyPart =
+                new TelegramBodyPublisher.MultilineBodyPart<>("message", "value1", StandardCharsets.UTF_8.name());
 
         // Headers must be serialized in the insertion order
         stringMultilineBodyPart.addHeader("key1", "value1");
@@ -92,12 +92,11 @@ class OutgoingMessageHandlerTest {
         int written = buffer.capacity() - buffer.remaining();
         String serialized = new String(buffer.array(), 0, written);
 
-        assertEquals("--aaa\r\n" +
-                     "Content-Disposition: form-data; name=\"message\"; key1=\"value1\"; key2=\"value2\"\r\n"
-                     +
-                     "Content-Type: UTF-8; charset=UTF-8\r\n\r\n" +
-                     "value1\r\n" +
-                     "--aaa--\r\n",
+        assertEquals(
+                "--aaa\r\n" + "Content-Disposition: form-data; name=\"message\"; key1=\"value1\"; key2=\"value2\"\r\n"
+                        + "Content-Type: UTF-8; charset=UTF-8\r\n\r\n"
+                        + "value1\r\n"
+                        + "--aaa--\r\n",
                 serialized);
     }
 
@@ -106,16 +105,16 @@ class OutgoingMessageHandlerTest {
     void testMultiBodyWith2BodiesWithMoreHeaders() {
         TelegramBodyPublisher bodyPublisher = new TelegramBodyPublisher(1024);
 
-        final TelegramBodyPublisher.MultilineBodyPart<String> stringMultilineBodyPart1
-                = new TelegramBodyPublisher.MultilineBodyPart<>("message1", "value1", StandardCharsets.UTF_8.name());
+        final TelegramBodyPublisher.MultilineBodyPart<String> stringMultilineBodyPart1 =
+                new TelegramBodyPublisher.MultilineBodyPart<>("message1", "value1", StandardCharsets.UTF_8.name());
 
         // Headers must be serialized in the insertion order
         stringMultilineBodyPart1.addHeader("key1", "value1");
         stringMultilineBodyPart1.addHeader("key2", "value2");
         bodyPublisher.addBodyPart(stringMultilineBodyPart1);
 
-        final TelegramBodyPublisher.MultilineBodyPart<String> stringMultilineBodyPart2
-                = new TelegramBodyPublisher.MultilineBodyPart<>("message2", "value2", StandardCharsets.UTF_8.name());
+        final TelegramBodyPublisher.MultilineBodyPart<String> stringMultilineBodyPart2 =
+                new TelegramBodyPublisher.MultilineBodyPart<>("message2", "value2", StandardCharsets.UTF_8.name());
 
         // Headers must be serialized in the insertion order
         stringMultilineBodyPart2.addHeader("key1", "value1");
@@ -130,17 +129,15 @@ class OutgoingMessageHandlerTest {
         int written = buffer.capacity() - buffer.remaining();
         String serialized = new String(buffer.array(), 0, written);
 
-        assertEquals("--aaa\r\n" +
-                     "Content-Disposition: form-data; name=\"message1\"; key1=\"value1\"; key2=\"value2\"\r\n"
-                     +
-                     "Content-Type: UTF-8; charset=UTF-8\r\n\r\n" +
-                     "value1\r\n" +
-                     "--aaa\r\n" +
-                     "Content-Disposition: form-data; name=\"message2\"; key1=\"value1\"; key2=\"value2\"\r\n"
-                     +
-                     "Content-Type: UTF-8; charset=UTF-8\r\n\r\n" +
-                     "value2\r\n" +
-                     "--aaa--\r\n",
+        assertEquals(
+                "--aaa\r\n" + "Content-Disposition: form-data; name=\"message1\"; key1=\"value1\"; key2=\"value2\"\r\n"
+                        + "Content-Type: UTF-8; charset=UTF-8\r\n\r\n"
+                        + "value1\r\n"
+                        + "--aaa\r\n"
+                        + "Content-Disposition: form-data; name=\"message2\"; key1=\"value1\"; key2=\"value2\"\r\n"
+                        + "Content-Type: UTF-8; charset=UTF-8\r\n\r\n"
+                        + "value2\r\n"
+                        + "--aaa--\r\n",
                 serialized);
     }
 }

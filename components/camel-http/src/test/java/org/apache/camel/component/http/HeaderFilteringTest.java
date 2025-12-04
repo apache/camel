@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
+import static org.apache.camel.component.http.HttpMethods.POST;
+import static org.apache.hc.core5.http.HttpHeaders.HOST;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -37,12 +44,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
-import static org.apache.camel.component.http.HttpMethods.POST;
-import static org.apache.hc.core5.http.HttpHeaders.HOST;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 public class HeaderFilteringTest {
 
     private static final String BODY = "{\"example\":\"json\"}";
@@ -58,8 +59,16 @@ public class HeaderFilteringTest {
 
         final HttpComponent http = context.getComponent("http", HttpComponent.class);
 
-        final Producer producer = http.createProducer(context, "http://localhost:" + port, POST.name(), "/test", null, null,
-                APPLICATION_JSON.getMimeType(), APPLICATION_JSON.getMimeType(), new RestConfiguration(),
+        final Producer producer = http.createProducer(
+                context,
+                "http://localhost:" + port,
+                POST.name(),
+                "/test",
+                null,
+                null,
+                APPLICATION_JSON.getMimeType(),
+                APPLICATION_JSON.getMimeType(),
+                new RestConfiguration(),
                 Collections.emptyMap());
 
         final DefaultExchange exchange = new DefaultExchange(context);
@@ -97,8 +106,8 @@ public class HeaderFilteringTest {
             try {
                 assertThat(exchange.getRequestBody())
                         .hasSameContentAs(new ByteArrayInputStream(BODY.getBytes(StandardCharsets.UTF_8)));
-                assertThat(exchange.getRequestHeaders()).containsEntry(HOST,
-                        Collections.singletonList("localhost:" + port));
+                assertThat(exchange.getRequestHeaders())
+                        .containsEntry(HOST, Collections.singletonList("localhost:" + port));
 
                 exchange.sendResponseHeaders(200, 0);
             } catch (final AssertionError error) {

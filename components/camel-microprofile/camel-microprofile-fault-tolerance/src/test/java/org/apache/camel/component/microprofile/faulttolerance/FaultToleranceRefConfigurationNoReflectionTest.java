@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
@@ -26,8 +29,6 @@ import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FaultToleranceRefConfigurationNoReflectionTest extends CamelTestSupport {
 
@@ -57,7 +58,8 @@ public class FaultToleranceRefConfigurationNoReflectionTest extends CamelTestSup
         assertEquals(0, bi.getInvokedCounter());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
 
         template.sendBody("direct:start", "Hello World");
@@ -72,14 +74,25 @@ public class FaultToleranceRefConfigurationNoReflectionTest extends CamelTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").circuitBreaker().configuration("myConfig").faultToleranceConfiguration().delay(2000)
-                        .timeoutEnabled(true).timeoutDuration(5000).end()
-                        .to("direct:foo").to("log:foo").onFallback().transform().constant("Fallback message").end()
-                        .to("log:result").to("mock:result");
+                from("direct:start")
+                        .circuitBreaker()
+                        .configuration("myConfig")
+                        .faultToleranceConfiguration()
+                        .delay(2000)
+                        .timeoutEnabled(true)
+                        .timeoutDuration(5000)
+                        .end()
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
         };
     }
-
 }

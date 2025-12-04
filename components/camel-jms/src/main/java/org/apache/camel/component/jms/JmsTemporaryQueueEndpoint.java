@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.Destination;
@@ -29,13 +30,18 @@ import jakarta.jms.TemporaryQueue;
 public class JmsTemporaryQueueEndpoint extends JmsQueueEndpoint implements DestinationEndpoint {
     private Destination jmsDestination;
 
-    public JmsTemporaryQueueEndpoint(String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
+    public JmsTemporaryQueueEndpoint(
+            String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
         super(uri, component, destination, configuration);
         setDestinationType("temp-queue");
     }
 
-    public JmsTemporaryQueueEndpoint(String uri, JmsComponent component, String destination, JmsConfiguration configuration,
-                                     QueueBrowseStrategy queueBrowseStrategy) {
+    public JmsTemporaryQueueEndpoint(
+            String uri,
+            JmsComponent component,
+            String destination,
+            JmsConfiguration configuration,
+            QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, configuration, queueBrowseStrategy);
         setDestinationType("temp-queue");
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.auth.jwt;
 
 import com.auth0.jwt.JWT;
@@ -40,8 +41,7 @@ public class JwtServerInterceptor implements ServerInterceptor {
     private static final Logger LOG = LoggerFactory.getLogger(JwtServerInterceptor.class);
 
     @SuppressWarnings("rawtypes")
-    private static final ServerCall.Listener NOOP_LISTENER = new ServerCall.Listener() {
-    };
+    private static final ServerCall.Listener NOOP_LISTENER = new ServerCall.Listener() {};
 
     private final JWTVerifier verifier;
 
@@ -63,7 +63,8 @@ public class JwtServerInterceptor implements ServerInterceptor {
         try {
             DecodedJWT verified = verifier.verify(jwtToken);
             ctx = Context.current()
-                    .withValue(GrpcConstants.GRPC_JWT_USER_ID_CTX_KEY,
+                    .withValue(
+                            GrpcConstants.GRPC_JWT_USER_ID_CTX_KEY,
                             verified.getSubject() == null ? "anonymous" : verified.getSubject())
                     .withValue(GrpcConstants.GRPC_JWT_CTX_KEY, jwtToken);
         } catch (Exception e) {
@@ -75,10 +76,14 @@ public class JwtServerInterceptor implements ServerInterceptor {
         return Contexts.interceptCall(ctx, call, metadata, serverCallHandler);
     }
 
-    public static JWTVerifier prepareJwtVerifier(JwtAlgorithm algorithmName, String secret, String issuer, String subject) {
+    public static JWTVerifier prepareJwtVerifier(
+            JwtAlgorithm algorithmName, String secret, String issuer, String subject) {
         try {
             Algorithm algorithm = JwtHelper.selectAlgorithm(algorithmName, secret);
-            return JWT.require(algorithm).withIssuer(issuer).withSubject(subject).build();
+            return JWT.require(algorithm)
+                    .withIssuer(issuer)
+                    .withSubject(subject)
+                    .build();
         } catch (JWTCreationException e) {
             throw new IllegalArgumentException("Unable to create JWT verifier", e);
         }

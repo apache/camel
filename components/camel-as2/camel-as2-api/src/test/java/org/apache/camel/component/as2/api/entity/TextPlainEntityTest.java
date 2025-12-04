@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.ByteArrayOutputStream;
@@ -39,7 +40,8 @@ public class TextPlainEntityTest {
         Assertions.assertEquals(parsedMimeMessage, MESSAGE);
     }
 
-    String MESSAGE = """
+    String MESSAGE =
+            """
             Content-Type: text/plain; charset=US-ASCII\r
             Content-Transfer-Encoding: binary\r
             \r
@@ -47,5 +49,4 @@ public class TextPlainEntityTest {
             \t<item/>
             </root>
             """;
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
 
 import org.apache.camel.Converter;
@@ -32,8 +33,7 @@ public final class CamelConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private CamelConverter() {
-    }
+    private CamelConverter() {}
 
     @Converter(order = 1)
     public static Processor toProcessor(final Expression expression) {
@@ -56,5 +56,4 @@ public final class CamelConverter {
             out.setBody(answer);
         };
     }
-
 }

@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.htmlxlsx.process;
 
-import org.apache.camel.maven.htmlxlsx.TestUtil;
-import org.apache.camel.maven.htmlxlsx.model.TestResult;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+package org.apache.camel.maven.htmlxlsx.process;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
+
+import org.apache.camel.maven.htmlxlsx.TestUtil;
+import org.apache.camel.maven.htmlxlsx.model.TestResult;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class TestResultParserTest {
 
@@ -46,7 +47,11 @@ public class TestResultParserTest {
 
         assertAll(
                 () -> assertNotNull(result),
-                () -> assertNotNull(result.getCamelContextRouteCoverage().getRoutes().getRouteList().get(0).getComponents()));
+                () -> assertNotNull(result.getCamelContextRouteCoverage()
+                        .getRoutes()
+                        .getRouteList()
+                        .get(0)
+                        .getComponents()));
     }
 
     @Test
@@ -54,11 +59,11 @@ public class TestResultParserTest {
 
         TestResultParser spy = spy(new TestResultParser());
 
-        Mockito
-                .doAnswer(invocation -> {
+        Mockito.doAnswer(invocation -> {
                     throw new TestJsonProcessingException();
                 })
-                .when(spy).objectMapper();
+                .when(spy)
+                .objectMapper();
 
         assertThrows(RuntimeException.class, () -> {
             spy.parse(TestUtil.testResult());

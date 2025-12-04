@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Various tests for the uri builder
@@ -34,40 +35,55 @@ public class JMXUriBuilderTest {
 
     @Test
     public void remote() {
-        assertEquals("jmx:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi",
+        assertEquals(
+                "jmx:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi",
                 new JMXUriBuilder("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi").toString());
     }
 
     @Test
     public void withServerName() {
-        assertEquals("jmx:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi",
-                new JMXUriBuilder().withServerName("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi").toString());
+        assertEquals(
+                "jmx:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi",
+                new JMXUriBuilder()
+                        .withServerName("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi")
+                        .toString());
     }
 
     @Test
     public void format() {
-        assertEquals("jmx:platform?format=raw", new JMXUriBuilder().withFormat("raw").toString());
+        assertEquals(
+                "jmx:platform?format=raw", new JMXUriBuilder().withFormat("raw").toString());
     }
 
     @Test
     public void credentials() {
-        assertEquals("jmx:platform?user=me&password=pass", new JMXUriBuilder().withUser("me").withPassword("pass").toString());
+        assertEquals(
+                "jmx:platform?user=me&password=pass",
+                new JMXUriBuilder().withUser("me").withPassword("pass").toString());
     }
 
     @Test
     public void objectName() {
-        assertEquals("jmx:platform?objectDomain=myDomain&objectName=oname",
-                new JMXUriBuilder().withObjectDomain("myDomain").withObjectName("oname").toString());
+        assertEquals(
+                "jmx:platform?objectDomain=myDomain&objectName=oname",
+                new JMXUriBuilder()
+                        .withObjectDomain("myDomain")
+                        .withObjectName("oname")
+                        .toString());
     }
 
     @Test
     public void notificationFilter() {
-        assertEquals("jmx:platform?notificationFilter=#foo", new JMXUriBuilder().withNotificationFilter("#foo").toString());
+        assertEquals(
+                "jmx:platform?notificationFilter=#foo",
+                new JMXUriBuilder().withNotificationFilter("#foo").toString());
     }
 
     @Test
     public void handback() {
-        assertEquals("jmx:platform?handback=#hb", new JMXUriBuilder().withHandback("#hb").toString());
+        assertEquals(
+                "jmx:platform?handback=#hb",
+                new JMXUriBuilder().withHandback("#hb").toString());
     }
 
     @Test
@@ -75,16 +91,22 @@ public class JMXUriBuilderTest {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("one", "1");
         map.put("two", "2");
-        assertEquals("jmx:platform?key.one=1&key.two=2", new JMXUriBuilder().withObjectProperties(map).toString());
+        assertEquals(
+                "jmx:platform?key.one=1&key.two=2",
+                new JMXUriBuilder().withObjectProperties(map).toString());
     }
 
     @Test
     public void withObjectPropertiesReference() {
-        assertEquals("jmx:platform?objectProperties=#op", new JMXUriBuilder().withObjectPropertiesReference("#op").toString());
+        assertEquals(
+                "jmx:platform?objectProperties=#op",
+                new JMXUriBuilder().withObjectPropertiesReference("#op").toString());
     }
 
     @Test
     public void withObjectPropertiesReferenceSansHashmark() {
-        assertEquals("jmx:platform?objectProperties=#op", new JMXUriBuilder().withObjectPropertiesReference("op").toString());
+        assertEquals(
+                "jmx:platform?objectProperties=#op",
+                new JMXUriBuilder().withObjectPropertiesReference("op").toString());
     }
 }

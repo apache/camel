@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.producer;
 
 import org.apache.camel.BindToRegistry;
@@ -44,7 +45,9 @@ public class RestOpenApiGetTest extends CamelTestSupport {
             public void configure() {
                 restConfiguration().host("camelhost").producerComponent("dummy");
 
-                from("direct:start").to("rest:get:hello/hi/{name}?apiDoc=hello-api.json").to("mock:result");
+                from("direct:start")
+                        .to("rest:get:hello/hi/{name}?apiDoc=hello-api.json")
+                        .to("mock:result");
             }
         };
     }

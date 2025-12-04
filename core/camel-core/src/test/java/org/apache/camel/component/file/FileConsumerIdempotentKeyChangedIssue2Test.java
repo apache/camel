@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -59,9 +60,13 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
             @Override
             public void configure() {
                 endpoint = endpoint(fileUri("?noop=true&initialDelay=0&delay=100"
-                                            + "&idempotentKey=${file:name}-${file:size}-${file:modified}"));
+                        + "&idempotentKey=${file:name}-${file:size}-${file:modified}"));
 
-                from(endpoint).autoStartup(false).convertBodyTo(String.class).to("log:file").to("mock:file");
+                from(endpoint)
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
+                        .to("log:file")
+                        .to("mock:file");
             }
         };
     }

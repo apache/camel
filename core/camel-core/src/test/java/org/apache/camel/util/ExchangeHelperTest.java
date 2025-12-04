@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +36,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ExchangeHelperTest extends ContextTestSupport {
 
@@ -179,8 +180,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertSame(exchange.getIn(), map.get("request"));
         assertSame(exchange.getMessage(), map.get("out"));
         assertSame(exchange.getMessage(), map.get("response"));
-        assertSame(exchange.getIn().getHeaders(), map.get("header" +
-                                                          ""));
+        assertSame(exchange.getIn().getHeaders(), map.get("header" + ""));
         assertSame(exchange.getIn().getHeaders(), map.get("headers"));
         assertSame(exchange.getIn().getBody(), map.get("body"));
         assertSame(exchange.getContext(), map.get("camelContext"));

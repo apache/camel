@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestUndertowProducerThrowExceptionErrorTest extends BaseUndertowTest {
 
@@ -47,28 +48,25 @@ public class RestUndertowProducerThrowExceptionErrorTest extends BaseUndertowTes
             @Override
             public void configure() {
                 // configure to use localhost with the given port
-                restConfiguration().component("undertow").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("undertow")
+                        .host("localhost")
+                        .port(getPort())
                         .endpointProperty("throwExceptionOnFailure", "false");
 
-                from("direct:start")
-                        .to("rest:get:users/{id}/basic");
+                from("direct:start").to("rest:get:users/{id}/basic");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic")
-                        .to("direct:basic");
+                rest("/users/").get("{id}/basic").to("direct:basic");
 
-                from("direct:basic")
-                        .to("mock:input")
-                        .process(exchange -> {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            if ("777".equals(id)) {
-                                throw new IllegalArgumentException("Bad id number");
-                            }
-                            exchange.getMessage().setBody(id + ";Donald Duck");
-                        });
+                from("direct:basic").to("mock:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    if ("777".equals(id)) {
+                        throw new IllegalArgumentException("Bad id number");
+                    }
+                    exchange.getMessage().setBody(id + ";Donald Duck");
+                });
             }
         };
     }
-
 }

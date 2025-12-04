@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
@@ -25,8 +26,8 @@ public class NettyRecipientListHttpBaseTest extends BaseNettyTest {
 
     @Test
     public void testRecipientListHttpBase() throws Exception {
-        getMockEndpoint("mock:foo").expectedHeaderValuesReceivedInAnyOrder(Exchange.HTTP_PATH, "/bar", "/baz", "/bar/baz",
-                "/baz/bar");
+        getMockEndpoint("mock:foo")
+                .expectedHeaderValuesReceivedInAnyOrder(Exchange.HTTP_PATH, "/bar", "/baz", "/bar/baz", "/baz/bar");
         getMockEndpoint("mock:foo").expectedHeaderValuesReceivedInAnyOrder("num", "1", "2", "3", "4");
 
         template.sendBodyAndHeader("direct:start", "A", Exchange.HTTP_PATH, "/foo/bar?num=1");
@@ -46,10 +47,8 @@ public class NettyRecipientListHttpBaseTest extends BaseNettyTest {
                         .to("mock:foo")
                         .transform(body().prepend("Bye "));
 
-                from("direct:start")
-                        .recipientList().constant("netty-http:http://localhost:{{port}}");
+                from("direct:start").recipientList().constant("netty-http:http://localhost:{{port}}");
             }
         };
     }
-
 }

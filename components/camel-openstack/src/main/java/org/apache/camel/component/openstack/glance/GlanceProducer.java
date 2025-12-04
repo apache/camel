@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.glance;
 
 import java.util.List;
@@ -158,11 +159,13 @@ public class GlanceProducer extends AbstractOpenstackProducer {
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.CHECKSUM))) {
-            imageBuilder = getImageBuilder(imageBuilder).checksum(message.getHeader(GlanceConstants.CHECKSUM, String.class));
+            imageBuilder =
+                    getImageBuilder(imageBuilder).checksum(message.getHeader(GlanceConstants.CHECKSUM, String.class));
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.MIN_DISK))) {
-            imageBuilder = getImageBuilder(imageBuilder).minDisk(message.getHeader(GlanceConstants.MIN_DISK, Long.class));
+            imageBuilder =
+                    getImageBuilder(imageBuilder).minDisk(message.getHeader(GlanceConstants.MIN_DISK, Long.class));
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.MIN_RAM))) {
@@ -174,12 +177,13 @@ public class GlanceProducer extends AbstractOpenstackProducer {
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.IS_PUBLIC))) {
-            imageBuilder = getImageBuilder(imageBuilder).isPublic(message.getHeader(GlanceConstants.IS_PUBLIC, Boolean.class));
+            imageBuilder =
+                    getImageBuilder(imageBuilder).isPublic(message.getHeader(GlanceConstants.IS_PUBLIC, Boolean.class));
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(OpenstackConstants.PROPERTIES))) {
-            imageBuilder
-                    = getImageBuilder(imageBuilder).properties(message.getHeader(OpenstackConstants.PROPERTIES, Map.class));
+            imageBuilder = getImageBuilder(imageBuilder)
+                    .properties(message.getHeader(OpenstackConstants.PROPERTIES, Map.class));
         }
 
         if (!required && imageBuilder == null) {

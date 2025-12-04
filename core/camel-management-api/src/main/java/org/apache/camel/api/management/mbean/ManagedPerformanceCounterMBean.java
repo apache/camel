@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import java.util.Date;
@@ -104,5 +105,4 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
 
     @ManagedOperation(description = "Adds statistics to the Map")
     void statsAsJSon(Map<String, Object> json, boolean fullStats);
-
 }

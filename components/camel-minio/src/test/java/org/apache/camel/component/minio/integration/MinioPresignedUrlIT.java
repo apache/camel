@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio.integration;
 
 import java.io.IOException;
@@ -42,8 +43,7 @@ public class MinioPresignedUrlIT extends MinioIntegrationTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioPresignedUrlIT() throws IOException {
-    }
+    MinioPresignedUrlIT() throws IOException {}
 
     @Test
     void createDownloadLinkTest() throws Exception {
@@ -98,7 +98,6 @@ public class MinioPresignedUrlIT extends MinioIntegrationTestSupport {
                 from("direct:createUploadLink")
                         .to("minio://mycamel?minioClient=#minioClient&operation=createUploadLink")
                         .to("mock:result");
-
             }
         };
     }

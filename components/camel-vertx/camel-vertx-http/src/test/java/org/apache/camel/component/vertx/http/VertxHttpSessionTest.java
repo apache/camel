@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +32,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxHttpSessionTest extends VertxHttpTestSupport {
 
@@ -47,28 +48,31 @@ public class VertxHttpSessionTest extends VertxHttpTestSupport {
 
     @Test
     public void testSessionSupport() {
-        Exchange result = template.request(getProducerUri() + "/secure?sessionManagement=true&cookieStore=#cookieStore", null);
+        Exchange result =
+                template.request(getProducerUri() + "/secure?sessionManagement=true&cookieStore=#cookieStore", null);
 
         HttpOperationFailedException exception = result.getException(HttpOperationFailedException.class);
         assertEquals(403, exception.getStatusCode());
 
-        result = template.request(getProducerUri() + "/login?sessionManagement=true&cookieStore=#cookieStore", exchange -> {
-            exchange.getMessage().setHeader("username", USERNAME);
-            exchange.getMessage().setHeader("password", PASSWORD);
-        });
+        result = template.request(
+                getProducerUri() + "/login?sessionManagement=true&cookieStore=#cookieStore", exchange -> {
+                    exchange.getMessage().setHeader("username", USERNAME);
+                    exchange.getMessage().setHeader("password", PASSWORD);
+                });
         assertEquals("sessionId=" + SESSION_ID + ";", result.getMessage().getHeader("Set-Cookie"));
 
-        String content = template.requestBody(getProducerUri() + "/secure?sessionManagement=true&cookieStore=#cookieStore",
-                null, String.class);
+        String content = template.requestBody(
+                getProducerUri() + "/secure?sessionManagement=true&cookieStore=#cookieStore", null, String.class);
         assertEquals(SECRET_CONTENT, content);
     }
 
     @Test
     public void testCustomCookieStore() {
-        template.request(getProducerUri() + "/login?sessionManagement=true&cookieStore=#customCookieStore", exchange -> {
-            exchange.getMessage().setHeader("username", USERNAME);
-            exchange.getMessage().setHeader("password", PASSWORD);
-        });
+        template.request(
+                getProducerUri() + "/login?sessionManagement=true&cookieStore=#customCookieStore", exchange -> {
+                    exchange.getMessage().setHeader("username", USERNAME);
+                    exchange.getMessage().setHeader("password", PASSWORD);
+                });
 
         Cookie cookie = customCookieStore.get(false, null, null).iterator().next();
         assertEquals("sessionId", cookie.name());
@@ -81,33 +85,30 @@ public class VertxHttpSessionTest extends VertxHttpTestSupport {
             @Override
             public void configure() {
                 // Simulate session handling for an application with a 'secured' endpoint
-                from(getTestServerUri() + "/secure")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                Message message = exchange.getMessage();
-                                String cookie = message.getHeader("Cookie", String.class);
-                                if (cookie != null && cookie.equals("sessionId=" + SESSION_ID)) {
-                                    message.setBody("Some secret content");
-                                } else {
-                                    message.setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
-                                }
-                            }
-                        });
+                from(getTestServerUri() + "/secure").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                        Message message = exchange.getMessage();
+                        String cookie = message.getHeader("Cookie", String.class);
+                        if (cookie != null && cookie.equals("sessionId=" + SESSION_ID)) {
+                            message.setBody("Some secret content");
+                        } else {
+                            message.setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
+                        }
+                    }
+                });
 
-                from(getTestServerUri() + "/login")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                Message message = exchange.getMessage();
-                                String username = message.getHeader("username", String.class);
-                                String password = message.getHeader("password", String.class);
-                                if (username.equals(USERNAME) && password.equals(PASSWORD)) {
-                                    message.setHeader("Set-Cookie", "sessionId=" + SESSION_ID + ";");
-                                }
-                            }
-                        });
-
+                from(getTestServerUri() + "/login").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                        Message message = exchange.getMessage();
+                        String username = message.getHeader("username", String.class);
+                        String password = message.getHeader("password", String.class);
+                        if (username.equals(USERNAME) && password.equals(PASSWORD)) {
+                            message.setHeader("Set-Cookie", "sessionId=" + SESSION_ID + ";");
+                        }
+                    }
+                });
             }
         };
     }

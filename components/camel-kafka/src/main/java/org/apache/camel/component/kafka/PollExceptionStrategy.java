@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 /**
@@ -27,9 +28,7 @@ public interface PollExceptionStrategy {
     /**
      * Reset any error flags set by a previous error condition
      */
-    default void reset() {
-
-    }
+    default void reset() {}
 
     /**
      * This method provides an "answer" to whether the consumer can continue polling or not. This is specific to each

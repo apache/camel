@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,7 +25,8 @@ public class VelocityEncodingTest extends VelocityLetterTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").to("velocity:org/apache/camel/component/velocity/letter-utf16.vm?encoding=UTF-16")
+                from("direct:a")
+                        .to("velocity:org/apache/camel/component/velocity/letter-utf16.vm?encoding=UTF-16")
                         .to("mock:result");
             }
         };

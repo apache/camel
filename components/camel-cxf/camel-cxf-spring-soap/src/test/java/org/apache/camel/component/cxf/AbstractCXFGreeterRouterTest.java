@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import jakarta.xml.ws.Service;
 
@@ -29,25 +36,16 @@ import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public abstract class AbstractCXFGreeterRouterTest extends CamelSpringTestSupport {
 
-    private final QName serviceName = new QName(
-            "http://apache.org/hello_world_soap_http",
-            "SOAPService");
-    private final QName routerPortName = new QName(
-            "http://apache.org/hello_world_soap_http",
-            "RouterPort");
+    private final QName serviceName = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
+    private final QName routerPortName = new QName("http://apache.org/hello_world_soap_http", "RouterPort");
 
-    private final String testDocLitFaultBody = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                                               + "<soap:Body><testDocLitFault xmlns=\"http://apache.org/hello_world_soap_http/types\">"
-                                               + "<faultType>NoSuchCodeLitFault</faultType></testDocLitFault>"
-                                               + "</soap:Body></soap:Envelope>";
+    private final String testDocLitFaultBody =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                    + "<soap:Body><testDocLitFault xmlns=\"http://apache.org/hello_world_soap_http/types\">"
+                    + "<faultType>NoSuchCodeLitFault</faultType></testDocLitFault>"
+                    + "</soap:Body></soap:Envelope>";
 
     public static int getPort1() {
         return CXFTestSupport.getPort1();
@@ -65,10 +63,10 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelSpringTestSuppor
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
         Service service = Service.create(serviceName);
-        service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
-                "http://localhost:" + getPort2() + "/"
-                                                                            + getClass().getSimpleName()
-                                                                            + "/CamelContext/RouterPort");
+        service.addPort(
+                routerPortName,
+                "http://schemas.xmlsoap.org/soap/",
+                "http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/CamelContext/RouterPort");
         Greeter greeter = service.getPort(routerPortName, Greeter.class);
 
         String reply = greeter.greetMe("test");
@@ -89,29 +87,29 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelSpringTestSuppor
             // expect the fault here
             assertNotNull(fault.getFaultInfo(), "The fault info should not be null");
         }
-
     }
 
     @Test
     public void testRoutingSOAPFault() {
-        String endpointUri = "http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
-                             + "/CamelContext/RouterPort/";
+        String endpointUri =
+                "http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/CamelContext/RouterPort/";
 
-        Exception ex = assertThrows(RuntimeCamelException.class,
-                () -> template.sendBody(endpointUri, testDocLitFaultBody));
+        Exception ex =
+                assertThrows(RuntimeCamelException.class, () -> template.sendBody(endpointUri, testDocLitFaultBody));
 
         assertTrue(ex.getCause() instanceof HttpOperationFailedException, "It should get the response error");
-        assertEquals(500, ((HttpOperationFailedException) ex.getCause()).getStatusCode(),
-                "Get a wrong response code");
+        assertEquals(500, ((HttpOperationFailedException) ex.getCause()).getStatusCode(), "Get a wrong response code");
     }
 
     @Test
     public void testPublishEndpointUrl() throws Exception {
-        String response = template.requestBody("http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
-                                               + "/CamelContext/RouterPort/"
-                                               + getClass().getSimpleName() + "?wsdl",
-                null, String.class);
-        assertTrue(response.indexOf("http://www.simple.com/services/test") > 0, "Can't find the right service location.");
+        String response = template.requestBody(
+                "http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
+                        + "/CamelContext/RouterPort/"
+                        + getClass().getSimpleName() + "?wsdl",
+                null,
+                String.class);
+        assertTrue(
+                response.indexOf("http://www.simple.com/services/test") > 0, "Can't find the right service location.");
     }
-
 }

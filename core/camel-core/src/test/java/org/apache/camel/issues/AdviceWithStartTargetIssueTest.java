@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.CamelContext;
@@ -40,7 +41,10 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
-                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+                interceptSendToEndpoint("mock:foo")
+                        .skipSendToOriginalEndpoint()
+                        .to("log:foo")
+                        .to("mock:advised");
             }
         });
 
@@ -72,7 +76,10 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) {
+                final CamelContext context,
+                final NamedNode definition,
+                final Processor target,
+                final Processor nextTarget) {
 
             return new DelegateAsyncProcessor(new Processor() {
 

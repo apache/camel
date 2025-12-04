@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config.scan.component;
 
 import org.apache.camel.Exchange;
@@ -27,5 +28,4 @@ public class MyProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         exchange.getIn().setBody("foo");
     }
-
 }

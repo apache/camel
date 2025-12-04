@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.get;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,11 +38,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.get;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class VertxPlatformHttpPooledExchangeTest {
 
     @Test
@@ -45,11 +46,13 @@ public class VertxPlatformHttpPooledExchangeTest {
         try {
             context.start();
 
-            assertThat(VertxPlatformHttpRouter.lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)))
+            assertThat(VertxPlatformHttpRouter.lookup(
+                            context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)))
                     .isNotNull();
-            assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
-                assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
-            });
+            assertThat(context.getComponent("platform-http"))
+                    .isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
+                        assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
+                    });
 
         } finally {
             context.stop();
@@ -64,25 +67,22 @@ public class VertxPlatformHttpPooledExchangeTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/vertx/pooled")
-                            .transform().simple("Bye World");
+                    from("platform-http:/vertx/pooled").transform().simple("Bye World");
                 }
             });
 
             context.start();
 
             for (int i = 0; i < 3; i++) {
-                get("/vertx/pooled")
-                        .then()
-                        .statusCode(200)
-                        .body(is("Bye World"));
+                get("/vertx/pooled").then().statusCode(200).body(is("Bye World"));
             }
 
             MockEndpoint.assertIsSatisfied(context);
 
             Awaitility.waitAtMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
-                PooledObjectFactory.Statistics stat
-                        = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+                PooledObjectFactory.Statistics stat = context.getCamelContextExtension()
+                        .getExchangeFactoryManager()
+                        .getStatistics();
                 assertEquals(1, stat.getCreatedCounter());
                 assertEquals(2, stat.getAcquiredCounter());
                 assertEquals(3, stat.getReleasedCounter());

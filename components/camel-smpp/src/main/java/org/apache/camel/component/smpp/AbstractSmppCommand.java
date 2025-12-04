@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.lang.reflect.Field;
@@ -65,7 +66,9 @@ public abstract class AbstractSmppCommand implements SmppCommand {
                 } else if (value instanceof Short) {
                     optParam = new OptionalParameter.Short(key, (Short) value);
                 } else {
-                    log.info("Couldn't determine optional parameter for value {} (type: {}). Skip this one.", value,
+                    log.info(
+                            "Couldn't determine optional parameter for value {} (type: {}). Skip this one.",
+                            value,
                             value.getClass());
                     continue;
                 }
@@ -85,7 +88,7 @@ public abstract class AbstractSmppCommand implements SmppCommand {
      * @return
      */
     @Deprecated
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected List<OptionalParameter> createOptionalParametersByName(Map<String, String> optinalParamaters) {
         List<OptionalParameter> optParams = new ArrayList<>();
 
@@ -104,21 +107,33 @@ public abstract class AbstractSmppCommand implements SmppCommand {
                     ancestorClasses.add(superclass.getSuperclass());
                 }
                 if (ancestorClasses.contains(OctetString.class)) {
-                    optParam = (OptionalParameter) type.getConstructor(byte[].class).newInstance(value.getBytes());
+                    optParam = (OptionalParameter)
+                            type.getConstructor(byte[].class).newInstance(value.getBytes());
                 } else if (ancestorClasses.contains(OptionalParameter.Byte.class)) {
-                    Byte byteValue = (value == null) ? 0 : Byte.parseByte(value); // required because jsmpp 2.1.1 interpreted null as 0
-                    optParam = (OptionalParameter) type.getConstructor(byte.class).newInstance(byteValue);
+                    Byte byteValue = (value == null)
+                            ? 0
+                            : Byte.parseByte(value); // required because jsmpp 2.1.1 interpreted null as 0
+                    optParam =
+                            (OptionalParameter) type.getConstructor(byte.class).newInstance(byteValue);
                 } else if (ancestorClasses.contains(OptionalParameter.Int.class)) {
-                    Integer intValue = (value == null) ? 0 : Integer.parseInt(value); // required because jsmpp 2.1.1 interpreted null as 0
-                    optParam = (OptionalParameter) type.getConstructor(int.class).newInstance(intValue);
+                    Integer intValue = (value == null)
+                            ? 0
+                            : Integer.parseInt(value); // required because jsmpp 2.1.1 interpreted null as 0
+                    optParam =
+                            (OptionalParameter) type.getConstructor(int.class).newInstance(intValue);
                 } else if (ancestorClasses.contains(OptionalParameter.Short.class)) {
-                    Short shortValue = (value == null) ? 0 : Short.parseShort(value); // required because jsmpp 2.1.1 interpreted null as 0
-                    optParam = (OptionalParameter) type.getConstructor(short.class).newInstance(shortValue);
+                    Short shortValue = (value == null)
+                            ? 0
+                            : Short.parseShort(value); // required because jsmpp 2.1.1 interpreted null as 0
+                    optParam =
+                            (OptionalParameter) type.getConstructor(short.class).newInstance(shortValue);
                 }
 
                 optParams.add(optParam);
             } catch (Exception e) {
-                log.info("Couldn't determine optional parameter for key {} and value {}. Skip this one.", entry.getKey(),
+                log.info(
+                        "Couldn't determine optional parameter for key {} and value {}. Skip this one.",
+                        entry.getKey(),
                         value);
             }
         }

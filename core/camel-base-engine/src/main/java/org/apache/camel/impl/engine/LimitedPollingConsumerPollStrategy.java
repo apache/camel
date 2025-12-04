@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.HashMap;
@@ -97,8 +98,11 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
      * @throws Exception is thrown if error suspending the consumer
      */
     protected void onSuspend(Consumer consumer, Endpoint endpoint) throws Exception {
-        LOG.warn("Suspending consumer {} after {} attempts to consume from {}. You have to manually resume the consumer!",
-                consumer, limit, endpoint);
+        LOG.warn(
+                "Suspending consumer {} after {} attempts to consume from {}. You have to manually resume the consumer!",
+                consumer,
+                limit,
+                endpoint);
         ServiceHelper.suspendService(consumer);
     }
 
@@ -119,5 +123,4 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
     protected void doStop() throws Exception {
         state.clear();
     }
-
 }

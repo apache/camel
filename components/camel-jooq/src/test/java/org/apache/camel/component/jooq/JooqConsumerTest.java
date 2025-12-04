@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jooq;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
@@ -27,13 +30,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.jooq.Result;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JooqConsumerTest extends BaseJooqTest {
 
     @Test
     public void testConsumerConfig() {
-        JooqConsumer consumer = (JooqConsumer) context.getRoute("consumer-config").getConsumer();
+        JooqConsumer consumer =
+                (JooqConsumer) context.getRoute("consumer-config").getConsumer();
         assertEquals(1000, consumer.getInitialDelay());
         assertEquals(2000, consumer.getDelay());
     }
@@ -49,10 +51,12 @@ public class JooqConsumerTest extends BaseJooqTest {
 
         // Insert
         BookStoreRecord bookStoreRecord = new BookStoreRecord("test");
-        producerTemplate.sendBody(context.getEndpoint("direct:insertBookStoreRecord"), ExchangePattern.InOut, bookStoreRecord);
+        producerTemplate.sendBody(
+                context.getEndpoint("direct:insertBookStoreRecord"), ExchangePattern.InOut, bookStoreRecord);
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(bookStoreRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
+        assertEquals(
+                bookStoreRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
         assertEquals(1, ((Result) mockResult.getExchanges().get(0).getMessage().getBody()).size());
     }
 
@@ -67,10 +71,12 @@ public class JooqConsumerTest extends BaseJooqTest {
 
         // Insert
         AuthorRecord authorRecord = new AuthorRecord(1, null, "test", null, null, null);
-        producerTemplate.sendBody(context.getEndpoint("direct:insertAuthorRecord"), ExchangePattern.InOut, authorRecord);
+        producerTemplate.sendBody(
+                context.getEndpoint("direct:insertAuthorRecord"), ExchangePattern.InOut, authorRecord);
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(authorRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
+        assertEquals(
+                authorRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
         assertEquals(0, ((Result) mockResult.getExchanges().get(0).getMessage().getBody()).size());
     }
 
@@ -113,5 +119,4 @@ public class JooqConsumerTest extends BaseJooqTest {
             }
         };
     }
-
 }

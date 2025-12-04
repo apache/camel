@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.client;
 
 import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
@@ -25,8 +26,7 @@ import org.apache.camel.component.aws2.timestream.client.impl.Timestream2ClientS
  */
 public final class Timestream2ClientFactory {
 
-    private Timestream2ClientFactory() {
-    }
+    private Timestream2ClientFactory() {}
 
     /**
      * Return the correct AWS Timestream client (based on remote vs local).
@@ -36,7 +36,7 @@ public final class Timestream2ClientFactory {
      */
     public static Timestream2InternalClient getTimestreamClient(Timestream2Configuration configuration) {
         return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
-                ? new Timestream2ClientIAMOptimizedImpl(configuration) : new Timestream2ClientStandardImpl(configuration);
+                ? new Timestream2ClientIAMOptimizedImpl(configuration)
+                : new Timestream2ClientStandardImpl(configuration);
     }
-
 }

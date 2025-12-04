@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
+
+import static io.restassured.RestAssured.given;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-
 public class PlatformHttpConsumesPlusSignTest extends AbstractPlatformHttpTest {
 
     @Test
     void testConsumesPlusSign() {
-        given()
-                .header("Accept", "application/fhir+json")
+        given().header("Accept", "application/fhir+json")
                 .header("User-Agent", "User-Agent-Camel")
                 .port(port)
                 .expect()
@@ -38,7 +38,8 @@ public class PlatformHttpConsumesPlusSignTest extends AbstractPlatformHttpTest {
                 .when()
                 .get("/get");
 
-        PlatformHttpEndpoint phe = (PlatformHttpEndpoint) getContext().getEndpoints().iterator().next();
+        PlatformHttpEndpoint phe =
+                (PlatformHttpEndpoint) getContext().getEndpoints().iterator().next();
         Assertions.assertEquals("application/fhir+json,text/plain", phe.getConsumes());
     }
 
@@ -49,13 +50,15 @@ public class PlatformHttpConsumesPlusSignTest extends AbstractPlatformHttpTest {
             public void configure() {
                 from("platform-http:/get?consumes=application/fhir+json, text/plain")
                         .process(e -> {
-                            Assertions.assertEquals("application/fhir+json", e.getMessage().getHeader("Accept"));
-                            Assertions.assertEquals("User-Agent-Camel", e.getMessage().getHeader("User-Agent"));
+                            Assertions.assertEquals(
+                                    "application/fhir+json", e.getMessage().getHeader("Accept"));
+                            Assertions.assertEquals(
+                                    "User-Agent-Camel", e.getMessage().getHeader("User-Agent"));
                             Assertions.assertNull(e.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
                         })
-                        .setBody().constant("");
+                        .setBody()
+                        .constant("");
             }
         };
     }
-
 }

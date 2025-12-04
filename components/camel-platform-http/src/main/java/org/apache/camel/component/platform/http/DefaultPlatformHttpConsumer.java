@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
 
 import org.apache.camel.AfterPropertiesConfigured;
@@ -93,8 +94,13 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
         super.doStart();
         ServiceHelper.startService(platformHttpConsumer);
         if (register) {
-            getComponent().addHttpEndpoint(getEndpoint().getPath(), getEndpoint().getHttpMethodRestrict(),
-                    getEndpoint().getConsumes(), getEndpoint().getProduces(), platformHttpConsumer);
+            getComponent()
+                    .addHttpEndpoint(
+                            getEndpoint().getPath(),
+                            getEndpoint().getHttpMethodRestrict(),
+                            getEndpoint().getConsumes(),
+                            getEndpoint().getProduces(),
+                            platformHttpConsumer);
         }
     }
 
@@ -118,5 +124,4 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
         ServiceHelper.suspendService(platformHttpConsumer);
         super.doSuspend();
     }
-
 }

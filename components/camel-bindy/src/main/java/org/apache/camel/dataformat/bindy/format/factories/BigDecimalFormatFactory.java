@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.math.BigDecimal;
@@ -61,7 +62,8 @@ public class BigDecimalFormatFactory extends AbstractFormatFactory {
         public BigDecimal parse(String string) throws Exception {
             BigDecimal result = new BigDecimal(string.trim());
             if (super.hasImpliedDecimalPosition()) {
-                result = result.divide(BigDecimal.valueOf(super.getMultiplier()), super.getPrecision(), RoundingMode.HALF_EVEN);
+                result = result.divide(
+                        BigDecimal.valueOf(super.getMultiplier()), super.getPrecision(), RoundingMode.HALF_EVEN);
             } else {
                 if (super.getPrecision() != -1) {
                     result = result.setScale(super.getPrecision());
@@ -69,6 +71,5 @@ public class BigDecimalFormatFactory extends AbstractFormatFactory {
             }
             return result;
         }
-
     }
 }

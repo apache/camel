@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.model;
 
 import java.util.LinkedHashMap;
@@ -58,8 +59,7 @@ public class RestConfigurationDetails {
     private Map<String, String> apiProperties;
     private Map<String, String> corsHeaders;
 
-    public RestConfigurationDetails() {
-    }
+    public RestConfigurationDetails() {}
 
     public String getFileName() {
         return fileName;

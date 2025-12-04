@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -22,9 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.common.HttpMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test to verify that we can have URI options for external system (endpoint is lenient)
@@ -75,7 +76,8 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:" + serverUri).process(processor).to("mock:result");
-                from("direct:start").setHeader(Exchange.HTTP_METHOD, constant("GET"))
+                from("direct:start")
+                        .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                         .setHeader(Exchange.HTTP_URI, simple(serverUri + "?${in.headers.parameters}"))
                         .to("http://example");
             }

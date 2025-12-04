@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.xml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -26,8 +29,6 @@ import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlOnExceptionRouteTest {
 
@@ -49,8 +50,8 @@ public class XmlOnExceptionRouteTest {
         assertEquals("log:all", endpoints.get(0).getEndpointUri());
         assertEquals("mock:dead", endpoints.get(1).getEndpointUri());
         assertEquals("log:done", endpoints.get(2).getEndpointUri());
-        assertEquals("stream:in?promptMessage=Enter something:", endpoints.get(3).getEndpointUri());
+        assertEquals(
+                "stream:in?promptMessage=Enter something:", endpoints.get(3).getEndpointUri());
         assertEquals("stream:out", endpoints.get(4).getEndpointUri());
     }
-
 }

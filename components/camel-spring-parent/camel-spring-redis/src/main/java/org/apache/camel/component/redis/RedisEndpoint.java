@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
 
 import org.apache.camel.Category;
@@ -29,8 +30,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 /**
  * Send and receive messages from Redis.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port",
-             category = { Category.CACHE }, headersClass = RedisConstants.class)
+@UriEndpoint(
+        firstVersion = "2.11.0",
+        scheme = "spring-redis",
+        title = "Spring Redis",
+        syntax = "spring-redist:host:port",
+        category = {Category.CACHE},
+        headersClass = RedisConstants.class)
 public class RedisEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -50,8 +56,7 @@ public class RedisEndpoint extends DefaultEndpoint implements EndpointServiceLoc
 
         @SuppressWarnings("unchecked")
         RedisTemplate<String, Object> redisTemplate = (RedisTemplate<String, Object>) configuration.getRedisTemplate();
-        return new RedisProducer(
-                this, RedisConstants.COMMAND, defaultCommand.name(), new RedisClient(redisTemplate));
+        return new RedisProducer(this, RedisConstants.COMMAND, defaultCommand.name(), new RedisClient(redisTemplate));
     }
 
     @Override

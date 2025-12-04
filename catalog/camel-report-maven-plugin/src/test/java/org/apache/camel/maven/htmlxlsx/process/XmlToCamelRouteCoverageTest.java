@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.process;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,12 +32,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.spy;
 
 public class XmlToCamelRouteCoverageTest {
 
@@ -52,8 +53,11 @@ public class XmlToCamelRouteCoverageTest {
 
         assertAll(
                 () -> assertNotNull(result),
-                () -> assertNotNull(
-                        result.getCamelContextRouteCoverage().getRoutes().getRouteList().get(0).getComponentsMap()));
+                () -> assertNotNull(result.getCamelContextRouteCoverage()
+                        .getRoutes()
+                        .getRouteList()
+                        .get(0)
+                        .getComponentsMap()));
     }
 
     @Test
@@ -61,11 +65,11 @@ public class XmlToCamelRouteCoverageTest {
 
         XmlToCamelRouteCoverageConverter spy = spy(new XmlToCamelRouteCoverageConverter());
 
-        Mockito
-                .doAnswer(invocation -> {
+        Mockito.doAnswer(invocation -> {
                     throw new TestJsonProcessingException();
                 })
-                .when(spy).readValue(anyString());
+                .when(spy)
+                .readValue(anyString());
 
         assertThrows(RuntimeException.class, () -> {
             spy.convert(loadXml());

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.padding;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
@@ -47,5 +48,4 @@ public class Unity {
     public String toString() {
         return "Unity [mandant=" + mandant + ", receiver=" + receiver + "]";
     }
-
 }

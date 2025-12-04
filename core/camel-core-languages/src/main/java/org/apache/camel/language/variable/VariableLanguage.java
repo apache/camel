@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.variable;
 
 import org.apache.camel.Expression;
@@ -44,5 +45,4 @@ public class VariableLanguage extends LanguageSupport {
         }
         return VariableLanguage.variable(expression);
     }
-
 }

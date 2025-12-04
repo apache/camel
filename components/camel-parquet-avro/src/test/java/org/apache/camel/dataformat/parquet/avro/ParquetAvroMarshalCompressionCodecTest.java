@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.parquet.avro;
+
+import static org.apache.parquet.hadoop.metadata.CompressionCodecName.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,15 +32,9 @@ import org.apache.parquet.hadoop.ParquetFileReader;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.parquet.hadoop.metadata.CompressionCodecName.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ParquetAvroMarshalCompressionCodecTest extends CamelTestSupport {
 
-    Collection<Pojo> in = List.of(
-            new Pojo(1, "airport"),
-            new Pojo(2, "penguin"),
-            new Pojo(3, "verb"));
+    Collection<Pojo> in = List.of(new Pojo(1, "airport"), new Pojo(2, "penguin"), new Pojo(3, "verb"));
 
     DefaultUuidGenerator uuidGenerator = new DefaultUuidGenerator();
 
@@ -53,7 +51,8 @@ public class ParquetAvroMarshalCompressionCodecTest extends CamelTestSupport {
         byte[] marshalled = mock.getExchanges().get(0).getIn().getBody(byte[].class);
         ParquetInputStream inputStream = new ParquetInputStream(uuidGenerator.generateUuid(), marshalled);
         try (ParquetFileReader reader = new ParquetFileReader(inputStream, readOptions)) {
-            CompressionCodecName codecName = reader.getRowGroups().get(0).getColumns().get(0).getCodec();
+            CompressionCodecName codecName =
+                    reader.getRowGroups().get(0).getColumns().get(0).getCodec();
             assertEquals(GZIP, codecName);
         }
     }
@@ -69,7 +68,8 @@ public class ParquetAvroMarshalCompressionCodecTest extends CamelTestSupport {
         byte[] marshalled = mock.getExchanges().get(0).getIn().getBody(byte[].class);
         ParquetInputStream inputStream = new ParquetInputStream(uuidGenerator.generateUuid(), marshalled);
         try (ParquetFileReader reader = new ParquetFileReader(inputStream, readOptions)) {
-            CompressionCodecName codecName = reader.getRowGroups().get(0).getColumns().get(0).getCodec();
+            CompressionCodecName codecName =
+                    reader.getRowGroups().get(0).getColumns().get(0).getCodec();
             assertEquals(GZIP, codecName);
         }
     }
@@ -85,7 +85,8 @@ public class ParquetAvroMarshalCompressionCodecTest extends CamelTestSupport {
         byte[] marshalled = mock.getExchanges().get(0).getIn().getBody(byte[].class);
         ParquetInputStream inputStream = new ParquetInputStream(uuidGenerator.generateUuid(), marshalled);
         try (ParquetFileReader reader = new ParquetFileReader(inputStream, readOptions)) {
-            CompressionCodecName codecName = reader.getRowGroups().get(0).getColumns().get(0).getCodec();
+            CompressionCodecName codecName =
+                    reader.getRowGroups().get(0).getColumns().get(0).getCodec();
             assertEquals(SNAPPY, codecName);
         }
     }
@@ -101,7 +102,8 @@ public class ParquetAvroMarshalCompressionCodecTest extends CamelTestSupport {
         byte[] marshalled = mock.getExchanges().get(0).getIn().getBody(byte[].class);
         ParquetInputStream inputStream = new ParquetInputStream(uuidGenerator.generateUuid(), marshalled);
         try (ParquetFileReader reader = new ParquetFileReader(inputStream, readOptions)) {
-            CompressionCodecName codecName = reader.getRowGroups().get(0).getColumns().get(0).getCodec();
+            CompressionCodecName codecName =
+                    reader.getRowGroups().get(0).getColumns().get(0).getCodec();
             assertEquals(UNCOMPRESSED, codecName);
         }
     }
@@ -117,7 +119,8 @@ public class ParquetAvroMarshalCompressionCodecTest extends CamelTestSupport {
         byte[] marshalled = mock.getExchanges().get(0).getIn().getBody(byte[].class);
         ParquetInputStream inputStream = new ParquetInputStream(uuidGenerator.generateUuid(), marshalled);
         try (ParquetFileReader reader = new ParquetFileReader(inputStream, readOptions)) {
-            CompressionCodecName codecName = reader.getRowGroups().get(0).getColumns().get(0).getCodec();
+            CompressionCodecName codecName =
+                    reader.getRowGroups().get(0).getColumns().get(0).getCodec();
             assertEquals(ZSTD, codecName);
         }
     }

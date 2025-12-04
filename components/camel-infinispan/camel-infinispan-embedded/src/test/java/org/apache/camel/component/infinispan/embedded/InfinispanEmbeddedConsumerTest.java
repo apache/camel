@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,20 +29,19 @@ import org.infinispan.commons.api.BasicCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSupport implements InfinispanConsumerTestSupport {
+public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSupport
+        implements InfinispanConsumerTestSupport {
     @Test
     public void consumerReceivedPreAndPostEntryCreatedEventNotifications() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:created");
         mock.expectedMessageCount(2);
 
-        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_CREATED",
-                "CACHE_ENTRY_CREATED");
+        mock.expectedHeaderValuesReceivedInAnyOrder(
+                InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_CREATED", "CACHE_ENTRY_CREATED");
         mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.IS_PRE, false, true);
         mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.CACHE_NAME, getCacheName(), getCacheName());
-        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE,
-                InfinispanConsumerTestSupport.KEY_ONE);
+        mock.expectedHeaderValuesReceivedInAnyOrder(
+                InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.KEY_ONE);
 
         getCache().put(InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.VALUE_ONE);
         mock.assertIsSatisfied();
@@ -52,12 +54,12 @@ public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:removed");
         mock.expectedMessageCount(2);
 
-        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_REMOVED",
-                "CACHE_ENTRY_REMOVED");
+        mock.expectedHeaderValuesReceivedInAnyOrder(
+                InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_REMOVED", "CACHE_ENTRY_REMOVED");
         mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.IS_PRE, false, true);
         mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.CACHE_NAME, getCacheName(), getCacheName());
-        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE,
-                InfinispanConsumerTestSupport.KEY_ONE);
+        mock.expectedHeaderValuesReceivedInAnyOrder(
+                InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.KEY_ONE);
 
         getCache().remove(InfinispanConsumerTestSupport.KEY_ONE);
 
@@ -71,12 +73,12 @@ public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:modified");
         mock.expectedMessageCount(2);
 
-        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_MODIFIED",
-                "CACHE_ENTRY_MODIFIED");
+        mock.expectedHeaderValuesReceivedInAnyOrder(
+                InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_MODIFIED", "CACHE_ENTRY_MODIFIED");
         mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.IS_PRE, false, true);
         mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.CACHE_NAME, getCacheName(), getCacheName());
-        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE,
-                InfinispanConsumerTestSupport.KEY_ONE);
+        mock.expectedHeaderValuesReceivedInAnyOrder(
+                InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.KEY_ONE);
 
         getCache().replace(InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.VALUE_TWO);
 
@@ -90,12 +92,12 @@ public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:visited");
         mock.expectedMessageCount(2);
 
-        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_VISITED",
-                "CACHE_ENTRY_VISITED");
+        mock.expectedHeaderValuesReceivedInAnyOrder(
+                InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_VISITED", "CACHE_ENTRY_VISITED");
         mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.IS_PRE, false, true);
         mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.CACHE_NAME, getCacheName(), getCacheName());
-        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE,
-                InfinispanConsumerTestSupport.KEY_ONE);
+        mock.expectedHeaderValuesReceivedInAnyOrder(
+                InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.KEY_ONE);
 
         getCache().get(InfinispanConsumerTestSupport.KEY_ONE);
 
@@ -116,7 +118,7 @@ public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSuppor
         getCache().put("keyTwo", "valueTwo", 1000, TimeUnit.MILLISECONDS);
         ts.advance(1001);
 
-        //expiration events are thrown only after a get if expiration reaper thread is not enabled
+        // expiration events are thrown only after a get if expiration reaper thread is not enabled
         assertNull(getCache().get("keyTwo"));
 
         mock.assertIsSatisfied();
@@ -168,7 +170,6 @@ public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSuppor
                         .to("mock:expired");
                 fromF("infinispan-embedded:%s?sync=true&eventTypes=CACHE_ENTRY_CREATED", getCacheName())
                         .to("mock:sync");
-
             }
         };
     }

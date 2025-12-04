@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxHttpQueryStringTest extends VertxHttpTestSupport {
 
@@ -45,7 +46,8 @@ public class VertxHttpQueryStringTest extends VertxHttpTestSupport {
 
     @Test
     public void testQueryStringUnsafeCharactersFromHttpQueryHeader() {
-        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_QUERY, "foo=bar#^[]", String.class);
+        String result =
+                template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_QUERY, "foo=bar#^[]", String.class);
         assertEquals("foo=bar%23%5E%5B%5D", result);
     }
 
@@ -60,8 +62,7 @@ public class VertxHttpQueryStringTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri())
-                        .setBody(header(Exchange.HTTP_QUERY));
+                from(getTestServerUri()).setBody(header(Exchange.HTTP_QUERY));
 
                 from("direct:start")
                         .setHeader(Exchange.HTTP_URI, constant(getTestServerUrl() + "?foo=bar#^[]"))

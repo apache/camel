@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.constants;
 
 public enum DigitalOceanResources {
-
     account,
     actions,
     blockStorages,
@@ -29,5 +29,4 @@ public enum DigitalOceanResources {
     sizes,
     floatingIPs,
     tags
-
 }

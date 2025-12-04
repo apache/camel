@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -68,7 +69,6 @@ public class ArrayBlockingQueueFactory<E> implements BlockingQueueFactory<E> {
 
     @Override
     public ArrayBlockingQueue<E> create(int capacity) {
-        return fair == null
-                ? new ArrayBlockingQueue<>(capacity) : new ArrayBlockingQueue<>(capacity, fair);
+        return fair == null ? new ArrayBlockingQueue<>(capacity) : new ArrayBlockingQueue<>(capacity, fair);
     }
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_DECREMENT;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_INCREMENT;
 
 import java.util.function.Function;
 
@@ -24,9 +28,6 @@ import io.micrometer.core.instrument.Tag;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_DECREMENT;
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_INCREMENT;
-
 public class CounterProducer extends AbstractMicrometerProducer<Counter> {
 
     public CounterProducer(MicrometerEndpoint endpoint) {
@@ -35,7 +36,8 @@ public class CounterProducer extends AbstractMicrometerProducer<Counter> {
 
     @Override
     protected Function<MeterRegistry, Counter> registrar(String name, String description, Iterable<Tag> tags) {
-        return meterRegistry -> Counter.builder(name).description(description).tags(tags).register(meterRegistry);
+        return meterRegistry ->
+                Counter.builder(name).description(description).tags(tags).register(meterRegistry);
     }
 
     @Override

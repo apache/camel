@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
@@ -52,7 +53,8 @@ public final class VertxWebsocketHelper {
         boolean exactPathMatch = true;
 
         if (ObjectHelper.isEmpty(hostPath) || ObjectHelper.isEmpty(targetPath)) {
-            // This scenario should not really be possible as the input args come from the vertx-websocket consumer / producer URI
+            // This scenario should not really be possible as the input args come from the vertx-websocket consumer /
+            // producer URI
             return false;
         }
 

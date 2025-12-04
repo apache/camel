@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.HashMap;
@@ -277,7 +278,10 @@ public class DefaultMessage extends MessageSupport {
                 this.headers = headers;
             } else {
                 // create a new map
-                this.headers = camelContext.getCamelContextExtension().getHeadersMapFactory().newMap(headers);
+                this.headers = camelContext
+                        .getCamelContextExtension()
+                        .getHeadersMapFactory()
+                        .newMap(headers);
             }
         } else {
             // should not really happen but some tests rely on using camel context that is not started

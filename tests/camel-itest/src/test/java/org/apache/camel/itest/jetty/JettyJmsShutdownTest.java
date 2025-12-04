@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @CamelSpringTest
 @ContextConfiguration
 public class JettyJmsShutdownTest {
@@ -38,12 +39,13 @@ public class JettyJmsShutdownTest {
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     private static final String URL;
+
     static {
         int port = AvailablePortFinder.getNextAvailable();
         URL = "http://localhost:" + port + "/JettyJmsShutdownTest";
 
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("JettyJmsShutdownTest.port", Integer.toString(port));
     }
 
@@ -68,5 +70,4 @@ public class JettyJmsShutdownTest {
         assertEquals("Bye Camel", reply2.get(5, TimeUnit.SECONDS));
         assertEquals("Bye Tiger", reply3.get(5, TimeUnit.SECONDS));
     }
-
 }

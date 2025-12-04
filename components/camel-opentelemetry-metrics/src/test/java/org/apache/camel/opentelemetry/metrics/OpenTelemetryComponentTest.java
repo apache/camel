@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.opentelemetry.api.metrics.Meter;
 import org.apache.camel.Endpoint;
@@ -24,11 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class OpenTelemetryComponentTest {
@@ -52,8 +53,7 @@ public class OpenTelemetryComponentTest {
 
     @Test
     public void testCreateNewEndpointForHistogram() {
-        Endpoint endpoint
-                = new OpenTelemetryEndpoint(null, null, meter, InstrumentType.DISTRIBUTION_SUMMARY, "a name");
+        Endpoint endpoint = new OpenTelemetryEndpoint(null, null, meter, InstrumentType.DISTRIBUTION_SUMMARY, "a name");
         assertNotNull(endpoint);
         assertInstanceOf(OpenTelemetryEndpoint.class, endpoint);
     }
@@ -67,7 +67,9 @@ public class OpenTelemetryComponentTest {
 
     @Test
     public void testGetMetricsType() {
-        InstrumentType[] supportedTypes = { InstrumentType.COUNTER, InstrumentType.DISTRIBUTION_SUMMARY, InstrumentType.TIMER };
+        InstrumentType[] supportedTypes = {
+            InstrumentType.COUNTER, InstrumentType.DISTRIBUTION_SUMMARY, InstrumentType.TIMER
+        };
         for (InstrumentType type : supportedTypes) {
             assertEquals(type, component.getMetricsType(type.getName() + ":metrics-name"));
         }
@@ -80,7 +82,6 @@ public class OpenTelemetryComponentTest {
 
     @Test
     public void testGetMetricsTypeNotFound() {
-        assertThrows(RuntimeCamelException.class,
-                () -> component.getMetricsType("unknown-metrics:metrics-name"));
+        assertThrows(RuntimeCamelException.class, () -> component.getMetricsType("unknown-metrics:metrics-name"));
     }
 }

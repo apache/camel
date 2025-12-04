@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.stress;
 
 import java.io.BufferedOutputStream;
@@ -61,9 +62,13 @@ public class FileProducerAppendManyMessagesManualTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("big")).split(body().tokenize(LS)).streaming().to("log:processing?groupSize=1000")
+                from(fileUri("big"))
+                        .split(body().tokenize(LS))
+                        .streaming()
+                        .to("log:processing?groupSize=1000")
                         .to(fileUri("out/also-big.txt?fileExist=Append"))
-                        .end().to("mock:done");
+                        .end()
+                        .to("mock:done");
             }
         };
     }

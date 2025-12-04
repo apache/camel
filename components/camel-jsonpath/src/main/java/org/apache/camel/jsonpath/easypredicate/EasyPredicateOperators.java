@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath.easypredicate;
 
 import java.util.Arrays;
@@ -36,10 +37,9 @@ public final class EasyPredicateOperators {
     private static final String SIZE = "size";
     private static final String EMPTY = "empty";
 
-    private static final String[] OPS = new String[] { EQ, NE, LT, LE, GT, GE, REG, IN, NIN, SIZE, EMPTY };
+    private static final String[] OPS = new String[] {EQ, NE, LT, LE, GT, GE, REG, IN, NIN, SIZE, EMPTY};
 
-    private EasyPredicateOperators() {
-    }
+    private EasyPredicateOperators() {}
 
     /**
      * Does the expression have any operator (with single space around)?
@@ -60,7 +60,9 @@ public final class EasyPredicateOperators {
      * Gets the operator (with single space around)
      */
     static String getOperatorAtStart(String exp) {
-        return Arrays.stream(OPS).filter(o -> exp.startsWith(" " + o)).findFirst().orElse(null);
+        return Arrays.stream(OPS)
+                .filter(o -> exp.startsWith(" " + o))
+                .findFirst()
+                .orElse(null);
     }
-
 }

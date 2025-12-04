@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +26,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteTemplateTest extends ContextTestSupport {
 
@@ -59,8 +60,10 @@ public class RouteTemplateTest extends ContextTestSupport {
 
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("first").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("second").name());
         assertEquals("true", context.getRoute("first").getProperties().get(Route.TEMPLATE_PROPERTY));
         assertEquals("true", context.getRoute("second").getProperties().get(Route.TEMPLATE_PROPERTY));
 
@@ -95,8 +98,10 @@ public class RouteTemplateTest extends ContextTestSupport {
 
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("first").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("second").name());
         assertEquals("true", context.getRoute("first").getProperties().get(Route.TEMPLATE_PROPERTY));
         assertEquals("true", context.getRoute("second").getProperties().get(Route.TEMPLATE_PROPERTY));
 
@@ -124,7 +129,8 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertNotNull(routeId);
         assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus(routeId).name());
         assertEquals("true", context.getRoute(routeId).getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:one", "Hello Cheese");
@@ -160,7 +166,8 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertNotEquals("route1", routeId, "Should not be named route1");
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus(routeId).name());
         assertEquals("true", context.getRoute(routeId).getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:one", "Hello Cheese");
@@ -179,11 +186,13 @@ public class RouteTemplateTest extends ContextTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("foo", "one");
 
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class,
                 () -> context.addRouteFromTemplate(null, "myTemplate", parameters),
                 "Should throw exception");
 
-        assertEquals("Route template myTemplate the following mandatory parameters must be provided: bar", e.getMessage());
+        assertEquals(
+                "Route template myTemplate the following mandatory parameters must be provided: bar", e.getMessage());
     }
 
     @Override
@@ -191,7 +200,9 @@ public class RouteTemplateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
+                        .templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("mock:{{bar}}");
             }

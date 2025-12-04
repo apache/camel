@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.AggregationStrategy;
@@ -42,17 +43,44 @@ public class MulticastPipelineAggregateIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").multicast(new SumAggregateBean()).pipeline().bean(IncreaseOne.class).bean(new IncreaseTwo())
-                        .end().pipeline().bean(IncreaseOne.class)
-                        .bean(new IncreaseTwo()).end().end().to("mock:a");
+                from("direct:a")
+                        .multicast(new SumAggregateBean())
+                        .pipeline()
+                        .bean(IncreaseOne.class)
+                        .bean(new IncreaseTwo())
+                        .end()
+                        .pipeline()
+                        .bean(IncreaseOne.class)
+                        .bean(new IncreaseTwo())
+                        .end()
+                        .end()
+                        .to("mock:a");
 
-                from("direct:b").multicast(new SumAggregateBean()).pipeline().transform(method(IncreaseOne.class))
-                        .bean(new IncreaseTwo()).end().pipeline()
-                        .transform(method(IncreaseOne.class)).bean(new IncreaseTwo()).end().end().to("mock:b");
+                from("direct:b")
+                        .multicast(new SumAggregateBean())
+                        .pipeline()
+                        .transform(method(IncreaseOne.class))
+                        .bean(new IncreaseTwo())
+                        .end()
+                        .pipeline()
+                        .transform(method(IncreaseOne.class))
+                        .bean(new IncreaseTwo())
+                        .end()
+                        .end()
+                        .to("mock:b");
 
-                from("direct:c").multicast(new SumAggregateBean()).pipeline().transform(method(IncreaseOne.class))
-                        .transform(method(new IncreaseTwo())).end().pipeline()
-                        .transform(method(IncreaseOne.class)).transform(method(new IncreaseTwo())).end().end().to("mock:c");
+                from("direct:c")
+                        .multicast(new SumAggregateBean())
+                        .pipeline()
+                        .transform(method(IncreaseOne.class))
+                        .transform(method(new IncreaseTwo()))
+                        .end()
+                        .pipeline()
+                        .transform(method(IncreaseOne.class))
+                        .transform(method(new IncreaseTwo()))
+                        .end()
+                        .end()
+                        .to("mock:c");
             }
         };
     }
@@ -86,5 +114,4 @@ public class MulticastPipelineAggregateIssueTest extends ContextTestSupport {
             return newExchange;
         }
     }
-
 }

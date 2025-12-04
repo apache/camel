@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -30,9 +34,6 @@ import org.dizitart.no2.event.ChangeType;
 import org.dizitart.no2.filters.Filters;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
 
     @Test
@@ -40,9 +41,11 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
+        template.sendBody(
+                String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key1", "value1"));
-        template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
+        template.sendBody(
+                String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key2", "value2"));
 
         mock.assertIsSatisfied();
@@ -68,9 +71,11 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
+        template.sendBody(
+                String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key1", "value1").put("_id", 123L));
-        template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
+        template.sendBody(
+                String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key2", "value2").put("_id", 123L));
         mock.assertIsSatisfied();
 
@@ -95,9 +100,11 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBodyAndHeader(String.format("nitrite://%s?collection=collection", tempDb()),
+        template.sendBodyAndHeader(
+                String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key1", "value1"),
-                NitriteConstants.OPERATION, new InsertOperation());
+                NitriteConstants.OPERATION,
+                new InsertOperation());
 
         mock.assertIsSatisfied();
 
@@ -116,16 +123,18 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        template.sendBodyAndHeader(String.format("nitrite://%s?collection=collection", tempDb()),
+        template.sendBodyAndHeader(
+                String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key1", "value1"),
-                NitriteConstants.OPERATION, new InsertOperation());
-        template.sendBodyAndHeader(String.format("nitrite://%s?collection=collection", tempDb()),
+                NitriteConstants.OPERATION,
+                new InsertOperation());
+        template.sendBodyAndHeader(
+                String.format("nitrite://%s?collection=collection", tempDb()),
                 null,
-                NitriteConstants.OPERATION, new RemoveCollectionOperation(Filters.eq("key1", "value1")));
+                NitriteConstants.OPERATION,
+                new RemoveCollectionOperation(Filters.eq("key1", "value1")));
 
-        assertEquals(
-                0,
-                template.requestBody("direct:listAll", null, List.class).size());
+        assertEquals(0, template.requestBody("direct:listAll", null, List.class).size());
 
         mock.assertIsSatisfied();
 
@@ -144,8 +153,7 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("nitrite://%s?collection=collection", tempDb())
-                        .to("mock:result");
+                fromF("nitrite://%s?collection=collection", tempDb()).to("mock:result");
 
                 from("direct:listAll")
                         .setHeader(NitriteConstants.OPERATION, constant(new FindCollectionOperation()))

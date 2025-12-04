@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
+
+import static org.apache.camel.test.junit5.TestSupport.executeSlowly;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -28,9 +32,6 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.executeSlowly;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
     private String url = "seda:foo?concurrentConsumers=20";
@@ -88,5 +89,4 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
         context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }
-
 }

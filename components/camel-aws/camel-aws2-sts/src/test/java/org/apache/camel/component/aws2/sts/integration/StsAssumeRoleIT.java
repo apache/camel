@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Doesn't work with Localstack 4.4.0")
 public class StsAssumeRoleIT extends Aws2StsBase {
@@ -55,10 +56,18 @@ public class StsAssumeRoleIT extends Aws2StsBase {
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
-        assertNotNull(
-                result.getExchanges().get(0).getIn().getBody(AssumeRoleResponse.class).credentials().accessKeyId());
-        assertNotNull(
-                result.getExchanges().get(0).getIn().getBody(AssumeRoleResponse.class).assumedRoleUser().assumedRoleId());
+        assertNotNull(result.getExchanges()
+                .get(0)
+                .getIn()
+                .getBody(AssumeRoleResponse.class)
+                .credentials()
+                .accessKeyId());
+        assertNotNull(result.getExchanges()
+                .get(0)
+                .getIn()
+                .getBody(AssumeRoleResponse.class)
+                .assumedRoleUser()
+                .assumedRoleId());
     }
 
     @Override
@@ -66,8 +75,7 @@ public class StsAssumeRoleIT extends Aws2StsBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint
-                        = "aws2-sts://default?operation=assumeRole";
+                String awsEndpoint = "aws2-sts://default?operation=assumeRole";
                 from("direct:assumeRole").to(awsEndpoint).to("mock:result");
             }
         };

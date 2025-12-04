@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.exceptionpolicy;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +32,6 @@ import org.apache.camel.processor.errorhandler.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for a custom ExceptionPolicy
@@ -94,21 +95,27 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                onException(IllegalStateException.class).maximumRedeliveries(1).redeliveryDelay(0)
+                onException(IllegalStateException.class)
+                        .maximumRedeliveries(1)
+                        .redeliveryDelay(0)
                         .to(ERROR_USER_QUEUE);
 
-                onException(Exception.class).maximumRedeliveries(1).redeliveryDelay(0)
+                onException(Exception.class)
+                        .maximumRedeliveries(1)
+                        .redeliveryDelay(0)
                         .to(ERROR_QUEUE);
 
-                from("direct:a").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String s = exchange.getIn().getBody(String.class);
-                        if ("Hello Camel".equals(s)) {
-                            throw new MyUserException("Forced for testing", new IOException("Uh oh!"));
-                        }
-                        exchange.getMessage().setBody("Hello World");
-                    }
-                }).to("mock:result");
+                from("direct:a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String s = exchange.getIn().getBody(String.class);
+                                if ("Hello Camel".equals(s)) {
+                                    throw new MyUserException("Forced for testing", new IOException("Uh oh!"));
+                                }
+                                exchange.getMessage().setBody("Hello World");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

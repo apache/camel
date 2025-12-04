@@ -29,119 +29,140 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "allowPrivilegeEscalation", "auto", "capabilitiesAdd", "capabilitiesDrop", "enabled", "expose",
-        "image", "imagePullPolicy", "imagePullSecrets", "limitCPU", "limitMemory", "name", "port", "portName", "requestCPU",
-        "requestMemory",
-        "runAsNonRoot", "runAsUser", "seccompProfileType", "servicePort", "servicePortName" })
+    "allowPrivilegeEscalation",
+    "auto",
+    "capabilitiesAdd",
+    "capabilitiesDrop",
+    "enabled",
+    "expose",
+    "image",
+    "imagePullPolicy",
+    "imagePullSecrets",
+    "limitCPU",
+    "limitMemory",
+    "name",
+    "port",
+    "portName",
+    "requestCPU",
+    "requestMemory",
+    "runAsNonRoot",
+    "runAsUser",
+    "seccompProfileType",
+    "servicePort",
+    "servicePortName"
+})
 public class Container {
     @JsonProperty("allowPrivilegeEscalation")
     @JsonPropertyDescription("Security Context AllowPrivilegeEscalation configuration (default false).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean allowPrivilegeEscalation;
+
     @JsonProperty("auto")
     @JsonPropertyDescription("To automatically enable the trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean auto;
+
     @JsonProperty("capabilitiesAdd")
     @JsonPropertyDescription("Security Context Capabilities Add configuration (default none).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> capabilitiesAdd;
+
     @JsonProperty("capabilitiesDrop")
     @JsonPropertyDescription("Security Context Capabilities Drop configuration (default ALL).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> capabilitiesDrop;
+
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
+
     @JsonProperty("expose")
     @JsonPropertyDescription("Can be used to enable/disable exposure via kubernetes Service.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean expose;
+
     @JsonProperty("image")
-    @JsonPropertyDescription("The main container image to use for the Integration. When using this parameter the operator will create a synthetic IntegrationKit which won't be able to execute traits requiring CamelCatalog. If the container image you're using is coming from an IntegrationKit, use instead Integration `.spec.integrationKit` parameter. If you're moving the Integration across environments, you will also need to create an \"external\" IntegrationKit.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The main container image to use for the Integration. When using this parameter the operator will create a synthetic IntegrationKit which won't be able to execute traits requiring CamelCatalog. If the container image you're using is coming from an IntegrationKit, use instead Integration `.spec.integrationKit` parameter. If you're moving the Integration across environments, you will also need to create an \"external\" IntegrationKit.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String image;
+
     @JsonProperty("imagePullPolicy")
     @JsonPropertyDescription("The pull policy: Always|Never|IfNotPresent")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private ImagePullPolicy imagePullPolicy;
+
     @JsonProperty("imagePullSecrets")
     @JsonPropertyDescription("The pull secrets for private registries")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> imagePullSecrets;
+
     @JsonProperty("limitCPU")
     @JsonPropertyDescription("The maximum amount of CPU to be provided (default 500 millicores).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String limitCPU;
+
     @JsonProperty("limitMemory")
     @JsonPropertyDescription("The maximum amount of memory to be provided (default 512 Mi).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String limitMemory;
+
     @JsonProperty("name")
     @JsonPropertyDescription("The main container name. It's named `integration` by default.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String name;
+
     @JsonProperty("port")
     @JsonPropertyDescription("To configure a different port exposed by the container (default `8080`).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Long port;
+
     @JsonProperty("portName")
-    @JsonPropertyDescription("To configure a different port name for the port exposed by the container. It defaults to `http` only when the `expose` parameter is true.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "To configure a different port name for the port exposed by the container. It defaults to `http` only when the `expose` parameter is true.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String portName;
+
     @JsonProperty("requestCPU")
     @JsonPropertyDescription("The minimum amount of CPU required (default 125 millicores).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String requestCPU;
+
     @JsonProperty("requestMemory")
     @JsonPropertyDescription("The minimum amount of memory required (default 128 Mi).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String requestMemory;
+
     @JsonProperty("runAsNonRoot")
     @JsonPropertyDescription("Security Context RunAsNonRoot configuration (default false).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean runAsNonRoot;
+
     @JsonProperty("runAsUser")
-    @JsonPropertyDescription("Security Context RunAsUser configuration (default none): this value is automatically retrieved in OpenShift clusters when not explicitly set.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Security Context RunAsUser configuration (default none): this value is automatically retrieved in OpenShift clusters when not explicitly set.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Long runAsUser;
+
     @JsonProperty("seccompProfileType")
     @JsonPropertyDescription("Security Context SeccompProfileType configuration (default RuntimeDefault).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private SeccompProfileType seccompProfileType;
+
     @JsonProperty("servicePort")
-    @JsonPropertyDescription("To configure under which service port the container port is to be exposed (default `80`).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "To configure under which service port the container port is to be exposed (default `80`).")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Long servicePort;
+
     @JsonProperty("servicePortName")
-    @JsonPropertyDescription("To configure under which service port name the container port is to be exposed (default `http`).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "To configure under which service port name the container port is to be exposed (default `http`).")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String servicePortName;
 
-    public Container() {
-    }
+    public Container() {}
 
     public Boolean getAllowPrivilegeEscalation() {
         return this.allowPrivilegeEscalation;

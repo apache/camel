@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs.testbean;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -25,8 +26,7 @@ public class Customer {
     private long id;
     private String name;
 
-    public Customer() {
-    }
+    public Customer() {}
 
     public Customer(long id, String name) {
         setId(id);
@@ -71,5 +71,4 @@ public class Customer {
         Customer other = (Customer) obj;
         return id == other.id && ObjectHelper.equal(name, other.name);
     }
-
 }

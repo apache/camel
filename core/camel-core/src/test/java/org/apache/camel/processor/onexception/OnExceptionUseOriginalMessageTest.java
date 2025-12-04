@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
 
@@ -35,10 +36,14 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     @Test
     public void testOnExceptionError() throws Exception {
         getMockEndpoint("mock:middle").expectedBodiesReceived(HELLO_WORLD);
-        getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:middle")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:end").expectedBodiesReceived(HELLO_WORLD);
-        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:end")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
@@ -50,10 +55,14 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     public void testOnExceptionStreamReset() throws Exception {
 
         getMockEndpoint("mock:middle").expectedMessageCount(1);
-        getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:middle")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:end").expectedMessageCount(1);
-        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:end")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         InputStreamCache cache = new InputStreamCache(TEST_STRING.getBytes());
@@ -63,7 +72,8 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // To make sure we can read something from the InputStream
-        String result = getMockEndpoint("mock:end").getExchanges().get(0).getIn().getBody(String.class);
+        String result =
+                getMockEndpoint("mock:end").getExchanges().get(0).getIn().getBody(String.class);
         assertTrue(result.contains("<firstName>James</firstName>"));
     }
 
@@ -73,12 +83,14 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
             @Override
             public void configure() {
 
-                onException(IllegalArgumentException.class).useOriginalMessage().handled(true).to("seda:test");
+                onException(IllegalArgumentException.class)
+                        .useOriginalMessage()
+                        .handled(true)
+                        .to("seda:test");
 
                 from("direct:a").setExchangePattern(ExchangePattern.InOut).process(new MyProcessor());
 
                 from("seda:test").to("mock:middle").to("mock:end");
-
             }
         };
     }

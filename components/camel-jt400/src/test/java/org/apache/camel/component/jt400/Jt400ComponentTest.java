@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jt400;
 
-import org.apache.camel.Endpoint;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.jt400;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.apache.camel.Endpoint;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link Jt400Component}
@@ -41,8 +42,8 @@ public class Jt400ComponentTest extends Jt400TestSupport {
      */
     @Test
     public void testCreateDatqEndpoint() throws Exception {
-        Endpoint endpoint = component
-                .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool");
+        Endpoint endpoint = component.createEndpoint(
+                "jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400Endpoint);
     }
@@ -52,8 +53,8 @@ public class Jt400ComponentTest extends Jt400TestSupport {
      */
     @Test
     public void testCreatePgmEndpoint() throws Exception {
-        Endpoint endpoint = component
-                .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.pgm?connectionPool=#mockPool");
+        Endpoint endpoint = component.createEndpoint(
+                "jt400://user:password@host/qsys.lib/library.lib/queue.pgm?connectionPool=#mockPool");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400Endpoint);
     }
@@ -76,9 +77,8 @@ public class Jt400ComponentTest extends Jt400TestSupport {
      */
     @Test
     public void testCreateDatqSecuredEndpoint() throws Exception {
-        Endpoint endpoint = component
-                .createEndpoint(
-                        "jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool&secured=true");
+        Endpoint endpoint = component.createEndpoint(
+                "jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool&secured=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400Endpoint);
         assertTrue(((Jt400Endpoint) endpoint).isSecured());
@@ -89,12 +89,10 @@ public class Jt400ComponentTest extends Jt400TestSupport {
      */
     @Test
     public void testCreatePgmSecuredEndpoint() throws Exception {
-        Endpoint endpoint = component
-                .createEndpoint(
-                        "jt400://user:password@host/qsys.lib/library.lib/queue.pgm?connectionPool=#mockPool&secured=true");
+        Endpoint endpoint = component.createEndpoint(
+                "jt400://user:password@host/qsys.lib/library.lib/queue.pgm?connectionPool=#mockPool&secured=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400Endpoint);
         assertTrue(((Jt400Endpoint) endpoint).isSecured());
     }
-
 }

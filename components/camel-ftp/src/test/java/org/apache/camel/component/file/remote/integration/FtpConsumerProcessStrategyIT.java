@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.atomic.LongAdder;
@@ -27,10 +32,6 @@ import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FtpConsumerProcessStrategyIT extends FtpServerTestSupport {
 
     @BindToRegistry("myStrategy")
@@ -38,7 +39,7 @@ public class FtpConsumerProcessStrategyIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-               + "?password=admin&processStrategy=#myStrategy";
+                + "?password=admin&processStrategy=#myStrategy";
     }
 
     @Test
@@ -62,25 +63,37 @@ public class FtpConsumerProcessStrategyIT extends FtpServerTestSupport {
 
         @Override
         public boolean begin(
-                GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) {
+                GenericFileOperations<T> operations,
+                GenericFileEndpoint<T> endpoint,
+                Exchange exchange,
+                GenericFile<T> file) {
             return true;
         }
 
         @Override
         public void abort(
-                GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) {
+                GenericFileOperations<T> operations,
+                GenericFileEndpoint<T> endpoint,
+                Exchange exchange,
+                GenericFile<T> file) {
             // noop
         }
 
         @Override
         public void commit(
-                GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) {
+                GenericFileOperations<T> operations,
+                GenericFileEndpoint<T> endpoint,
+                Exchange exchange,
+                GenericFile<T> file) {
             invoked.increment();
         }
 
         @Override
         public void rollback(
-                GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) {
+                GenericFileOperations<T> operations,
+                GenericFileEndpoint<T> endpoint,
+                Exchange exchange,
+                GenericFile<T> file) {
             // noop
         }
 

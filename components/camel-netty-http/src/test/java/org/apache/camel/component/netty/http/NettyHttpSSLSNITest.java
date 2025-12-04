@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.util.List;
@@ -109,8 +110,8 @@ public class NettyHttpSSLSNITest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:https://localhost:{{port}}?ssl=true&passphrase=changeit&keyStoreResource=jsse/localhost.p12&trustStoreResource=jsse/localhost.p12")
                         .process(exchange -> {
-                            ExtendedSSLSession extendedSSLSession
-                                    = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, ExtendedSSLSession.class);
+                            ExtendedSSLSession extendedSSLSession = exchange.getIn()
+                                    .getHeader(NettyConstants.NETTY_SSL_SESSION, ExtendedSSLSession.class);
                             if (extendedSSLSession != null) {
                                 List<SNIServerName> serverNames = extendedSSLSession.getRequestedServerNames();
                                 if (serverNames.size() == 1) {

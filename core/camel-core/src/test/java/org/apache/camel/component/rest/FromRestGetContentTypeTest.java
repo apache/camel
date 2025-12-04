@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestGetContentTypeTest extends ContextTestSupport {
 
@@ -39,9 +40,7 @@ public class FromRestGetContentTypeTest extends ContextTestSupport {
     public void testFromRestModelContentType() {
         Exchange out = template.request("seda:get-say-hello", new Processor() {
             @Override
-            public void process(Exchange exchange) {
-
-            }
+            public void process(Exchange exchange) {}
         });
 
         assertNotNull(out);
@@ -59,7 +58,6 @@ public class FromRestGetContentTypeTest extends ContextTestSupport {
                 rest("/say/hello").produces("application/json").get().to("direct:hello");
 
                 from("direct:hello").setBody(constant("{ \"name\" : \"Donald\" }"));
-
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import java.util.Properties;
@@ -89,7 +90,6 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
         public String callA(@PropertyInject("greeting") String greeting, String body) {
             return greeting + " " + body;
         }
-
     }
 
     public static final class MyOtherBean {
@@ -97,7 +97,6 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
         public String callA(@PropertyInject(value = "bye", defaultValue = "Goodbye") String bye, String body) {
             return bye + " " + body;
         }
-
     }
 
     public static final class MyCounterBean {
@@ -109,7 +108,5 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
             }
             return sb.toString();
         }
-
     }
-
 }

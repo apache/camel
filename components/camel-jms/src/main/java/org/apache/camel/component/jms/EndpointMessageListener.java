@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -38,8 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.listener.SessionAwareMessageListener;
-
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * A JMS {@link MessageListener} which can be used to delegate processing to a Camel endpoint.
@@ -82,9 +83,12 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
 
             // we should also not send back reply to ourself if this destination and replyDestination is the same
             Destination destination = JmsMessageHelper.getJMSDestination(message);
-            if (destination != null && sendReply && !endpoint.isReplyToSameDestinationAllowed()
+            if (destination != null
+                    && sendReply
+                    && !endpoint.isReplyToSameDestinationAllowed()
                     && destination.equals(replyDestination)) {
-                LOG.debug("JMSDestination and JMSReplyTo is the same, will skip sending a reply message to itself: {}",
+                LOG.debug(
+                        "JMSDestination and JMSReplyTo is the same, will skip sending a reply message to itself: {}",
                         destination);
                 sendReply = false;
             }
@@ -99,8 +103,10 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                     exchange.setException(e);
                     String text = eagerPoisonBody;
                     try {
-                        text = endpoint.getCamelContext().resolveLanguage("simple")
-                                .createExpression(eagerPoisonBody).evaluate(exchange, String.class);
+                        text = endpoint.getCamelContext()
+                                .resolveLanguage("simple")
+                                .createExpression(eagerPoisonBody)
+                                .evaluate(exchange, String.class);
                     } catch (Exception t) {
                         // ignore
                     }
@@ -118,8 +124,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
 
             // process the exchange either asynchronously or synchronous
             LOG.trace("onMessage.process START");
-            AsyncCallback callback
-                    = new EndpointMessageListenerAsyncCallback(message, exchange, endpoint, sendReply, replyDestination);
+            AsyncCallback callback =
+                    new EndpointMessageListenerAsyncCallback(message, exchange, endpoint, sendReply, replyDestination);
 
             // async is by default false, which mean we by default will process the exchange synchronously
             // to keep backwards compatible, as well ensure this consumer will pickup messages in order
@@ -183,8 +189,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
         private final boolean sendReply;
         private final Object replyDestination;
 
-        private EndpointMessageListenerAsyncCallback(Message message, Exchange exchange, JmsEndpoint endpoint,
-                                                     boolean sendReply, Object replyDestination) {
+        private EndpointMessageListenerAsyncCallback(
+                Message message, Exchange exchange, JmsEndpoint endpoint, boolean sendReply, Object replyDestination) {
             this.message = message;
             this.exchange = exchange;
             this.endpoint = endpoint;
@@ -375,7 +381,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Strategy to determine which correlation id to use among <tt>JMSMessageID</tt> and <tt>JMSCorrelationID</tt>.
@@ -400,8 +406,11 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
     }
 
     protected void sendReply(
-            Destination replyDestination, final Message message, final Exchange exchange,
-            final org.apache.camel.Message out, final Exception cause) {
+            Destination replyDestination,
+            final Message message,
+            final Exchange exchange,
+            final org.apache.camel.Message out,
+            final Exception cause) {
         if (replyDestination == null) {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
@@ -423,8 +432,11 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
     }
 
     protected void sendReply(
-            String replyDestination, final Message message, final Exchange exchange,
-            final org.apache.camel.Message out, final Exception cause) {
+            String replyDestination,
+            final Message message,
+            final Exchange exchange,
+            final org.apache.camel.Message out,
+            final Exception cause) {
         if (replyDestination == null) {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;

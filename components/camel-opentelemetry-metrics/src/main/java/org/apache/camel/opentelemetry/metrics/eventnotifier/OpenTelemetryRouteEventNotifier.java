@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.eventnotifier;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.EVENT_TYPE_ATTRIBUTE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ATTRIBUTE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ROUTE;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
@@ -31,11 +37,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EventNotifierSupport;
 
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.EVENT_TYPE_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ROUTE;
-
 public class OpenTelemetryRouteEventNotifier extends EventNotifierSupport implements CamelContextAware {
 
     private final Class<RouteEvent> eventType = RouteEvent.class;
@@ -43,12 +44,14 @@ public class OpenTelemetryRouteEventNotifier extends EventNotifierSupport implem
     boolean registerKamelets;
     boolean registerTemplates = true;
     private Attributes attributes = Attributes.of(
-            AttributeKey.stringKey(KIND_ATTRIBUTE), KIND_ROUTE,
-            AttributeKey.stringKey(EVENT_TYPE_ATTRIBUTE), RouteEvent.class.getSimpleName());
+            AttributeKey.stringKey(KIND_ATTRIBUTE),
+            KIND_ROUTE,
+            AttributeKey.stringKey(EVENT_TYPE_ATTRIBUTE),
+            RouteEvent.class.getSimpleName());
 
     // Event Notifier options
-    private OpenTelemetryRouteEventNotifierNamingStrategy namingStrategy
-            = OpenTelemetryRouteEventNotifierNamingStrategy.DEFAULT;
+    private OpenTelemetryRouteEventNotifierNamingStrategy namingStrategy =
+            OpenTelemetryRouteEventNotifierNamingStrategy.DEFAULT;
 
     // OpenTelemetry instruments
     private LongUpDownCounter addedCounter;
@@ -112,11 +115,14 @@ public class OpenTelemetryRouteEventNotifier extends EventNotifierSupport implem
     protected void doStart() throws Exception {
         super.doStart();
         addedCounter = meter.upDownCounterBuilder(namingStrategy.getRouteAddedName())
-                .setUnit("routes").build();
+                .setUnit("routes")
+                .build();
         runningCounter = meter.upDownCounterBuilder(namingStrategy.getRouteRunningName())
-                .setUnit("routes").build();
+                .setUnit("routes")
+                .build();
         reloadedCounter = meter.counterBuilder(namingStrategy.getRouteReloadedName())
-                .setUnit("routes").build();
+                .setUnit("routes")
+                .build();
     }
 
     @Override

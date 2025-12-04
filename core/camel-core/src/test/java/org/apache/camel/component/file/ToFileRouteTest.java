@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -55,8 +56,7 @@ public class ToFileRouteTest extends ContextTestSupport {
             public void configure() {
                 // the reports from the seda queue is processed by our processor
                 // before they are written to files in the test directory
-                from("direct:reports").process("processReport")
-                        .to(fileUri(), "mock:result");
+                from("direct:reports").process("processReport").to(fileUri(), "mock:result");
             }
         };
     }
@@ -76,7 +76,6 @@ public class ToFileRouteTest extends ContextTestSupport {
             // a special header property of the out exchange
             exchange.getMessage().setHeader(Exchange.FILE_NAME, "report.txt");
         }
-
     }
     // END SNIPPET: e1
 

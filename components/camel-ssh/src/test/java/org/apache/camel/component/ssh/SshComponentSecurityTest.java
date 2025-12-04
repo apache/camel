@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.nio.file.Paths;
@@ -135,23 +136,20 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class)
-                        .handled(true)
-                        .to("mock:error");
+                onException(Exception.class).handled(true).to("mock:error");
 
                 SshComponent sshComponent = new SshComponent();
                 sshComponent.getConfiguration().setHost("localhost");
                 sshComponent.getConfiguration().setPort(port);
                 sshComponent.getConfiguration().setUsername("smx");
-                sshComponent.getConfiguration()
+                sshComponent
+                        .getConfiguration()
                         .setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
                 sshComponent.getConfiguration().setKeyType(KeyPairProvider.SSH_RSA);
 
                 getContext().addComponent("ssh-rsa", sshComponent);
 
-                from("direct:ssh-rsa")
-                        .to("ssh-rsa:test")
-                        .to("mock:rsa");
+                from("direct:ssh-rsa").to("ssh-rsa:test").to("mock:rsa");
 
                 from("direct:ssh-rsaFile")
                         .to("ssh://smx@localhost:" + port + "?certResource=file:src/test/resources/hostkey.pem")
@@ -163,7 +161,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
                 from("direct:ssh-encrsaFile")
                         .to("ssh://smx@localhost:" + port
-                            + "?certResource=file:src/test/resources/encrsa.pem&certResourcePassword=security")
+                                + "?certResource=file:src/test/resources/encrsa.pem&certResourcePassword=security")
                         .to("mock:encrsaFile");
 
                 from("direct:ssh-ecFile")
@@ -180,7 +178,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
                 from("direct:ssh-enceddsaFile")
                         .to("ssh://smx@localhost:" + port
-                            + "?certResource=file:src/test/resources/enceddsa.pem&certResourcePassword=security")
+                                + "?certResource=file:src/test/resources/enceddsa.pem&certResourcePassword=security")
                         .to("mock:enceddsaFile");
             }
         };

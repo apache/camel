@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.component.servlet.ServletRestHttpBinding;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
 
@@ -55,18 +56,22 @@ public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 // configure to use servlet on localhost
-                restConfiguration().component("servlet").host("localhost").endpointProperty("httpBinding", "#myBinding");
+                restConfiguration()
+                        .component("servlet")
+                        .host("localhost")
+                        .endpointProperty("httpBinding", "#myBinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic").to("direct:basic")
-                        .get("{id}/{query}").to("direct:query");
+                        .get("{id}/basic")
+                        .to("direct:basic")
+                        .get("{id}/{query}")
+                        .to("direct:query");
 
-                from("direct:basic")
-                        .to("mock:input").process(exchange -> {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getMessage().setBody(id + ";Donald Duck");
-                        });
+                from("direct:basic").to("mock:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Donald Duck");
+                });
 
                 from("direct:query").to("mock:query").process(exchange -> {
                     String id = exchange.getIn().getHeader("id", String.class);
@@ -75,5 +80,4 @@ public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
             }
         };
     }
-
 }

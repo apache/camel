@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -38,8 +39,7 @@ public abstract class OutputExpressionNode extends ExpressionNode implements Out
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
-    public OutputExpressionNode() {
-    }
+    public OutputExpressionNode() {}
 
     public OutputExpressionNode(OutputExpressionNode source) {
         super(source);
@@ -70,5 +70,4 @@ public abstract class OutputExpressionNode extends ExpressionNode implements Out
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
-
 }

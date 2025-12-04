@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,12 +35,11 @@ public class ToVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -59,16 +59,15 @@ public class ToVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .doTry()
-                            .throwException(new IllegalArgumentException("Forced"))
+                        .throwException(new IllegalArgumentException("Forced"))
                         .doCatch(Exception.class)
-                            .setBody(simple("Catch: ${body}"))
+                        .setBody(simple("Catch: ${body}"))
                         .end();
             }
         });
@@ -88,16 +87,13 @@ public class ToVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class)
-                        .handled(true)
-                        .setBody(simple("Error: ${body}"));
+                onException(Exception.class).handled(true).setBody(simple("Error: ${body}"));
 
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -116,16 +112,13 @@ public class ToVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class)
-                        .handled(false)
-                        .setBody(simple("Error: ${body}"));
+                onException(Exception.class).handled(false).setBody(simple("Error: ${body}"));
 
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -146,12 +139,11 @@ public class ToVariableErrorTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -173,12 +165,11 @@ public class ToVariableErrorTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(defaultErrorHandler());
 
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -197,13 +188,9 @@ public class ToVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
-                from("direct:foo")
-                        .transform().simple("Bye ${body}")
-                        .stop();
+                from("direct:foo").transform().simple("Bye ${body}").stop();
             }
         });
         context.start();
@@ -221,13 +208,9 @@ public class ToVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
-                from("direct:foo")
-                        .transform().simple("Bye ${body}")
-                        .rollback();
+                from("direct:foo").transform().simple("Bye ${body}").rollback();
             }
         });
         context.start();
@@ -245,13 +228,9 @@ public class ToVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
-                from("direct:foo")
-                        .transform().simple("Bye ${body}")
-                        .markRollbackOnly();
+                from("direct:foo").transform().simple("Bye ${body}").markRollbackOnly();
             }
         });
         context.start();
@@ -269,13 +248,9 @@ public class ToVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:receive")
-                        .toV("direct:foo", null, "bye")
-                        .to("mock:result");
+                from("direct:receive").toV("direct:foo", null, "bye").to("mock:result");
 
-                from("direct:foo")
-                        .transform().simple("Bye ${body}")
-                        .markRollbackOnlyLast();
+                from("direct:foo").transform().simple("Bye ${body}").markRollbackOnlyLast();
             }
         });
         context.start();
@@ -287,5 +262,4 @@ public class ToVariableErrorTest extends ContextTestSupport {
         Assertions.assertEquals("Bye World", out.getMessage().getBody());
         assertMockEndpointsSatisfied();
     }
-
 }

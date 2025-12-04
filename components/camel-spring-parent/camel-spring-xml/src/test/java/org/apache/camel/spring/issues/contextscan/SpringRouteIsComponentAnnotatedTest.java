@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues.contextscan;
 
 import org.apache.camel.spring.SpringTestSupport;
@@ -37,5 +38,4 @@ public class SpringRouteIsComponentAnnotatedTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

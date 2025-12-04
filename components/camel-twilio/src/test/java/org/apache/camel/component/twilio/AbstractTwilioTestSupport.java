@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twilio;
 
 import java.util.HashMap;
@@ -43,7 +44,6 @@ public class AbstractTwilioTestSupport extends CamelTestSupport {
     private static void loadProperties() {
         // read Twilio component configuration from TEST_OPTIONS_PROPERTIES
         TestSupport.loadExternalPropertiesQuietly(properties, AbstractTwilioTestSupport.class, TEST_OPTIONS_PROPERTIES);
-
     }
 
     private static boolean hasCredentials() {

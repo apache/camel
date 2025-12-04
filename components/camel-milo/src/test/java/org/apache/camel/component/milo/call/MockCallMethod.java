@@ -30,19 +30,11 @@ import org.eclipse.milo.opcua.stack.core.types.structured.Argument;
 
 public class MockCallMethod extends AbstractMethodInvocationHandler {
 
-    public static final Argument IN = new Argument(
-            "in",
-            Identifiers.String,
-            ValueRanks.Scalar,
-            null,
-            new LocalizedText("A value."));
+    public static final Argument IN =
+            new Argument("in", Identifiers.String, ValueRanks.Scalar, null, new LocalizedText("A value."));
 
-    public static final Argument OUT = new Argument(
-            "out",
-            Identifiers.String,
-            ValueRanks.Scalar,
-            null,
-            new LocalizedText("A value."));
+    public static final Argument OUT =
+            new Argument("out", Identifiers.String, ValueRanks.Scalar, null, new LocalizedText("A value."));
 
     public List<String> calls = new LinkedList<>();
 
@@ -52,12 +44,12 @@ public class MockCallMethod extends AbstractMethodInvocationHandler {
 
     @Override
     public Argument[] getInputArguments() {
-        return new Argument[] { IN };
+        return new Argument[] {IN};
     }
 
     @Override
     public Argument[] getOutputArguments() {
-        return new Argument[] { OUT };
+        return new Argument[] {OUT};
     }
 
     @Override
@@ -66,7 +58,7 @@ public class MockCallMethod extends AbstractMethodInvocationHandler {
 
         calls.add("out-" + in);
 
-        return new Variant[] { new Variant("out-" + in) };
+        return new Variant[] {new Variant("out-" + in)};
     }
 
     public List<String> getCalls() {

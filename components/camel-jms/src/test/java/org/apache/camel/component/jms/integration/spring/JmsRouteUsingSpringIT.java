@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring;
 
 import org.apache.camel.CamelContext;
@@ -26,7 +27,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class JmsRouteUsingSpringIT extends JmsRouteTest {
     private ClassPathXmlApplicationContext applicationContext;
 
@@ -37,7 +38,8 @@ public class JmsRouteUsingSpringIT extends JmsRouteTest {
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/integration/spring/jmsRouteUsingSpring.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jms/integration/spring/jmsRouteUsingSpring.xml");
     }
 
     @AfterEach

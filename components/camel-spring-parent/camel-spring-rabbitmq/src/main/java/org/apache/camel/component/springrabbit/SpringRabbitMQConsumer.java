@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
 
 import org.apache.camel.Endpoint;
@@ -35,7 +36,8 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
 
-    public SpringRabbitMQConsumer(Endpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
+    public SpringRabbitMQConsumer(
+            Endpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
         this.listenerContainer = listenerContainer;
         this.listenerContainer.setMessageListener(getEndpointMessageListener());
@@ -64,9 +66,15 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
      * Can be used to start this consumer later if it was configured to not auto startup.
      */
     public void startListenerContainer() {
-        LOG.trace("Starting listener container {} on queues: {}", listenerContainer, getEndpoint().getQueues());
+        LOG.trace(
+                "Starting listener container {} on queues: {}",
+                listenerContainer,
+                getEndpoint().getQueues());
         listenerContainer.start();
-        LOG.debug("Started listener container {} on queues: {}", listenerContainer, getEndpoint().getQueues());
+        LOG.debug(
+                "Started listener container {} on queues: {}",
+                listenerContainer,
+                getEndpoint().getQueues());
     }
 
     /**
@@ -80,11 +88,14 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
         Connection conn = null;
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Testing RabbitMQ Connection on startup for: {}", getEndpoint().getConnectionFactory().getHost());
+                LOG.debug(
+                        "Testing RabbitMQ Connection on startup for: {}",
+                        getEndpoint().getConnectionFactory().getHost());
             }
             conn = listenerContainer.getConnectionFactory().createConnection();
 
-            LOG.debug("Successfully tested RabbitMQ Connection on startup for: {}",
+            LOG.debug(
+                    "Successfully tested RabbitMQ Connection on startup for: {}",
                     getEndpoint().getConnectionFactory().getHost());
         } catch (Exception e) {
             throw new FailedToCreateConsumerException(getEndpoint(), e);
@@ -126,7 +137,8 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
 
     @Override
     protected void doResume() throws Exception {
-        // we may not have been started before, and now the end user calls resume, so lets handle that and start it first
+        // we may not have been started before, and now the end user calls resume, so lets handle that and start it
+        // first
         if (!initialized) {
             doStart();
         } else {
@@ -174,5 +186,4 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
         messageListener = null;
         initialized = false;
     }
-
 }

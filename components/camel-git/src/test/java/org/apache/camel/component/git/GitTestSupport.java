@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.UUID;
@@ -26,9 +30,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.util.SystemReader;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GitTestSupport extends CamelTestSupport {
 
@@ -74,11 +75,19 @@ public class GitTestSupport extends CamelTestSupport {
     protected Repository getTestRepository() throws Exception {
         if (repository == null) {
             File gitRepo = new File(localRepo, ".git");
-            SystemReader.getInstance().getUserConfig().clear(); //clears user config in JGit context, that way there are no environmental contamination that may affect the tests
-            Git.init().setDirectory(localRepo).setInitialBranch("master").setBare(false).call();
+            SystemReader.getInstance()
+                    .getUserConfig()
+                    .clear(); // clears user config in JGit context, that way there are no environmental contamination
+            // that may affect the tests
+            Git.init()
+                    .setDirectory(localRepo)
+                    .setInitialBranch("master")
+                    .setBare(false)
+                    .call();
             // now open the resulting repository with a FileRepositoryBuilder
             FileRepositoryBuilder builder = new FileRepositoryBuilder();
-            Repository repo = builder.setGitDir(gitRepo).readEnvironment() // scan
+            Repository repo = builder.setGitDir(gitRepo)
+                    .readEnvironment() // scan
                     // environment
                     // GIT_*
                     // variables
@@ -102,5 +111,4 @@ public class GitTestSupport extends CamelTestSupport {
         }
         assertEquals(messages.length, count);
     }
-
 }

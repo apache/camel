@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 
@@ -25,10 +30,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class HttpProducerFileUploadTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -38,11 +39,12 @@ public class HttpProducerFileUploadTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/upload", (request, response, context) -> {
-
                     var e = request.getEntity();
                     var arr = e.getContent().readAllBytes();
                     long len = arr.length;
@@ -50,7 +52,8 @@ public class HttpProducerFileUploadTest extends BaseHttpTest {
                     response.setEntity(new StringEntity(name + ";" + len));
 
                     response.setCode(HttpStatus.SC_OK);
-                }).create();
+                })
+                .create();
         localServer.start();
 
         endpointUrl = "http://localhost:" + localServer.getLocalPort();
@@ -76,5 +79,4 @@ public class HttpProducerFileUploadTest extends BaseHttpTest {
         assertFalse(out.isFailed(), "Should not fail");
         assertEquals("log4j2.properties;" + f.length(), out.getMessage().getBody(String.class));
     }
-
 }

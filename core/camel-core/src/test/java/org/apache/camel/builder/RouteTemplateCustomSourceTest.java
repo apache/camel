@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateCustomSourceTest extends ContextTestSupport {
 
@@ -59,7 +60,9 @@ public class RouteTemplateCustomSourceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
+                        .templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("mock:{{bar}}");
             }

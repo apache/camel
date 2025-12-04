@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.eventbridge.client.EventbridgeClientFactory;
 import org.apache.camel.component.aws2.eventbridge.client.EventbridgeInternalClient;
@@ -23,14 +26,13 @@ import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClient
 import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class EventbridgeClientFactoryTest {
 
     @Test
     public void getStandardEventbridgeClientDefault() {
         EventbridgeConfiguration eventbridgeConfiguration = new EventbridgeConfiguration();
-        EventbridgeInternalClient eventbridgeClient = EventbridgeClientFactory.getEventbridgeClient(eventbridgeConfiguration);
+        EventbridgeInternalClient eventbridgeClient =
+                EventbridgeClientFactory.getEventbridgeClient(eventbridgeConfiguration);
         assertTrue(eventbridgeClient instanceof EventbridgeClientStandardImpl);
     }
 
@@ -38,7 +40,8 @@ public class EventbridgeClientFactoryTest {
     public void getStandardEventbridgeClient() {
         EventbridgeConfiguration eventbridgeConfiguration = new EventbridgeConfiguration();
         eventbridgeConfiguration.setUseDefaultCredentialsProvider(false);
-        EventbridgeInternalClient eventbridgeClient = EventbridgeClientFactory.getEventbridgeClient(eventbridgeConfiguration);
+        EventbridgeInternalClient eventbridgeClient =
+                EventbridgeClientFactory.getEventbridgeClient(eventbridgeConfiguration);
         assertTrue(eventbridgeClient instanceof EventbridgeClientStandardImpl);
     }
 
@@ -46,7 +49,8 @@ public class EventbridgeClientFactoryTest {
     public void getIAMOptimizedEventbridgeClient() {
         EventbridgeConfiguration eventbridgeConfiguration = new EventbridgeConfiguration();
         eventbridgeConfiguration.setUseDefaultCredentialsProvider(true);
-        EventbridgeInternalClient eventbridgeClient = EventbridgeClientFactory.getEventbridgeClient(eventbridgeConfiguration);
+        EventbridgeInternalClient eventbridgeClient =
+                EventbridgeClientFactory.getEventbridgeClient(eventbridgeConfiguration);
         assertTrue(eventbridgeClient instanceof EventbridgeClientIAMOptimizedImpl);
     }
 
@@ -54,7 +58,8 @@ public class EventbridgeClientFactoryTest {
     public void getSessionTokenEventbridgeClient() {
         EventbridgeConfiguration eventbridgeConfiguration = new EventbridgeConfiguration();
         eventbridgeConfiguration.setUseSessionCredentials(true);
-        EventbridgeInternalClient eventbridgeClient = EventbridgeClientFactory.getEventbridgeClient(eventbridgeConfiguration);
+        EventbridgeInternalClient eventbridgeClient =
+                EventbridgeClientFactory.getEventbridgeClient(eventbridgeConfiguration);
         assertTrue(eventbridgeClient instanceof EventbridgeClientSessionTokenImpl);
     }
 }

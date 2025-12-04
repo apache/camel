@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.telemetry.SpanDecorator;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TimerSpanDecoratorTest {
 
@@ -42,5 +43,4 @@ public class TimerSpanDecoratorTest {
 
         assertEquals(TEST_NAME, decorator.getOperationName(exchange, null));
     }
-
 }

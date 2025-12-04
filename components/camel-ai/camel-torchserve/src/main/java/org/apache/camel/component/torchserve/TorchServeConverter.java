@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve;
 
 import org.apache.camel.Converter;
@@ -22,5 +23,4 @@ import org.apache.camel.Converter;
  * Converter methods to convert from / to TorchServe types.
  */
 @Converter(generateLoader = true)
-public class TorchServeConverter {
-}
+public class TorchServeConverter {}

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.nio.file.OpenOption;
@@ -60,16 +61,20 @@ public class DataLakeConfigurationOptionsProxy {
     }
 
     public DataLakeOperationsDefinition getOperation(final Exchange exchange) {
-        return getOption(DataLakeExchangeHeaders::getDataLakeOperationsDefinitionFromHeader, configuration::getOperation,
+        return getOption(
+                DataLakeExchangeHeaders::getDataLakeOperationsDefinitionFromHeader,
+                configuration::getOperation,
                 exchange);
     }
 
     public String getFileSystemName(final Exchange exchange) {
-        return getOption(DataLakeExchangeHeaders::getFileSystemNameFromHeaders, configuration::getFileSystemName, exchange);
+        return getOption(
+                DataLakeExchangeHeaders::getFileSystemNameFromHeaders, configuration::getFileSystemName, exchange);
     }
 
     public String getDirectoryName(final Exchange exchange) {
-        return getOption(DataLakeExchangeHeaders::getDirectoryNameFromHeaders, configuration::getDirectoryName, exchange);
+        return getOption(
+                DataLakeExchangeHeaders::getDirectoryNameFromHeaders, configuration::getDirectoryName, exchange);
     }
 
     public String getFileName(final Exchange exchange) {
@@ -93,8 +98,10 @@ public class DataLakeConfigurationOptionsProxy {
     }
 
     public Boolean isUserPrincipalNameReturned(final Exchange exchange) {
-        return getOption(DataLakeExchangeHeaders::getUserPrincipalNameReturnedFromHeaders,
-                configuration::getUserPrincipalNameReturned, exchange);
+        return getOption(
+                DataLakeExchangeHeaders::getUserPrincipalNameReturnedFromHeaders,
+                configuration::getUserPrincipalNameReturned,
+                exchange);
     }
 
     public String getRegex(final Exchange exchange) {
@@ -106,8 +113,10 @@ public class DataLakeConfigurationOptionsProxy {
     }
 
     public Long getDownloadLinkExpiration(final Exchange exchange) {
-        return getOption(DataLakeExchangeHeaders::getDownloadLinkExpirationFromHeaders,
-                configuration::getDownloadLinkExpiration, exchange);
+        return getOption(
+                DataLakeExchangeHeaders::getDownloadLinkExpirationFromHeaders,
+                configuration::getDownloadLinkExpiration,
+                exchange);
     }
 
     public Long getFileOffset(final Exchange exchange) {
@@ -123,7 +132,9 @@ public class DataLakeConfigurationOptionsProxy {
     }
 
     public Boolean retainUnCommitedData(final Exchange exchange) {
-        return getOption(DataLakeExchangeHeaders::getRetainUncommittedDataFromHeaders, configuration::getRetainUncommitedData,
+        return getOption(
+                DataLakeExchangeHeaders::getRetainUncommittedDataFromHeaders,
+                configuration::getRetainUncommitedData,
                 exchange);
     }
 
@@ -151,7 +162,10 @@ public class DataLakeConfigurationOptionsProxy {
         final Integer maxResults = getMaxResults(exchange);
         final Boolean userPrincipalNameReturned = isUserPrincipalNameReturned(exchange);
 
-        pathsOptions = pathsOptions.setPath(path).setMaxResults(maxResults).setRecursive(recursive)
+        pathsOptions = pathsOptions
+                .setPath(path)
+                .setMaxResults(maxResults)
+                .setRecursive(recursive)
                 .setUserPrincipalNameReturned(userPrincipalNameReturned);
         return pathsOptions;
     }
@@ -210,7 +224,6 @@ public class DataLakeConfigurationOptionsProxy {
                 .setProgressConsumer(progressConsumer);
 
         return queryOptions;
-
     }
 
     public Map<String, String> getMetadata(final Exchange exchange) {

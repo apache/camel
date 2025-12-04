@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.oauth;
 
 import org.apache.camel.CamelContext;
@@ -43,8 +44,14 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
             // Verify Realm, Client, and User exist
             var keycloak = getKeycloakAdmin().getKeycloak();
             Assertions.assertNotNull(keycloak.realm(KEYCLOAK_REALM).toRepresentation());
-            Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).clients().findByClientId(TEST_CLIENT_ID).size());
-            Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).users().search("alice").size());
+            Assertions.assertEquals(
+                    1,
+                    keycloak.realm(KEYCLOAK_REALM)
+                            .clients()
+                            .findByClientId(TEST_CLIENT_ID)
+                            .size());
+            Assertions.assertEquals(
+                    1, keycloak.realm(KEYCLOAK_REALM).users().search("alice").size());
 
             LOG.info("Keycloak realm, client, and user available!");
             LOG.info("Open: {}", APP_BASE_URL);
@@ -62,8 +69,7 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
                     i = 0;
                 }
                 if (i % 4 == 0) {
-                    LOG.info("Waiting on logout: {}/{} - {}", maxLoopCount - i, maxLoopCount,
-                            APP_BASE_URL + "logout");
+                    LOG.info("Waiting on logout: {}/{} - {}", maxLoopCount - i, maxLoopCount, APP_BASE_URL + "logout");
                 }
                 Thread.sleep(500L);
             }

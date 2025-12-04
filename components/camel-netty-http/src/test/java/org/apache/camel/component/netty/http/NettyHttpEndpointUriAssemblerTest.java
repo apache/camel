@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,8 +26,6 @@ import java.util.Map;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpEndpointUriAssemblerTest extends CamelTestSupport {
 
@@ -72,5 +73,4 @@ public class NettyHttpEndpointUriAssemblerTest extends CamelTestSupport {
         uri = assembler.buildUri("netty-http", map);
         assertEquals("netty-http:https://localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
     }
-
 }

@@ -48,7 +48,8 @@ public class AWSConfigProducerHealthCheck extends AbstractHealthCheck {
         }
         try {
             ConfigClient configClient = configEndpoint.getConfigClient();
-            configClient.listDiscoveredResources(ListDiscoveredResourcesRequest.builder().build());
+            configClient.listDiscoveredResources(
+                    ListDiscoveredResourcesRequest.builder().build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -67,5 +68,4 @@ public class AWSConfigProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

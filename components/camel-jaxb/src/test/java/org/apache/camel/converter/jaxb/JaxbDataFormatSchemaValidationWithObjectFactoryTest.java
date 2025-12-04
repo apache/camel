@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,10 +37,6 @@ import org.apache.camel.converter.jaxb.message.ObjectFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTestSupport {
 
@@ -58,8 +59,8 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
     @Test
     public void testMarshallOfNonRootElementWithValidationException() {
         Message message = new Message();
-        Exception ex = Assertions.assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:marshall", message));
+        Exception ex = Assertions.assertThrows(
+                CamelExecutionException.class, () -> template.sendBody("direct:marshall", message));
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
@@ -78,8 +79,8 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
             xml = new String(baos.toByteArray(), "UTF-8");
         }
 
-        Exception ex = Assertions.assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:unmarshall", xml));
+        Exception ex = Assertions.assertThrows(
+                CamelExecutionException.class, () -> template.sendBody("direct:unmarshall", xml));
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
@@ -100,15 +101,10 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
                 // won't be done and the object won'T get marshalled
                 jaxbDataFormat.setObjectFactory(true);
 
-                from("direct:marshall")
-                        .marshal(jaxbDataFormat)
-                        .to("mock:marshall");
+                from("direct:marshall").marshal(jaxbDataFormat).to("mock:marshall");
 
-                from("direct:unmarshall")
-                        .unmarshal(jaxbDataFormat)
-                        .to("mock:unmarshall");
+                from("direct:unmarshall").unmarshal(jaxbDataFormat).to("mock:unmarshall");
             }
         };
     }
-
 }

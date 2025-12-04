@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.jaxb;
+
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestConfigurationDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestsDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteConfigurationsDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteTemplatesDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadRoutesDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadTemplatedRoutesDefinition;
 
 import java.io.InputStream;
 
@@ -33,13 +41,6 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
-
-import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestConfigurationDefinition;
-import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestsDefinition;
-import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteConfigurationsDefinition;
-import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteTemplatesDefinition;
-import static org.apache.camel.xml.jaxb.JaxbHelper.loadRoutesDefinition;
-import static org.apache.camel.xml.jaxb.JaxbHelper.loadTemplatedRoutesDefinition;
 
 @ManagedResource(description = "Managed JAXB XML RoutesBuilderLoader")
 @RoutesLoader(JaxbXmlRoutesBuilderLoader.EXTENSION)
@@ -96,7 +97,8 @@ public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 try (InputStream is = resourceInputStream(resource)) {
                     RestConfigurationDefinition config = loadRestConfigurationDefinition(getCamelContext(), is);
                     if (config != null) {
-                        config.asRestConfiguration(getCamelContext(), getCamelContext().getRestConfiguration());
+                        config.asRestConfiguration(
+                                getCamelContext(), getCamelContext().getRestConfiguration());
                     }
                 }
             }
@@ -104,7 +106,8 @@ public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             @Override
             public void configuration() throws Exception {
                 try (InputStream is = resourceInputStream(resource)) {
-                    RouteConfigurationsDefinition configurations = loadRouteConfigurationsDefinition(getCamelContext(), is);
+                    RouteConfigurationsDefinition configurations =
+                            loadRouteConfigurationsDefinition(getCamelContext(), is);
                     if (configurations != null) {
                         for (RouteConfigurationDefinition config : configurations.getRouteConfigurations()) {
                             CamelContextAware.trySetCamelContext(config, getCamelContext());
@@ -113,7 +116,6 @@ public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                     }
                 }
             }
-
         };
     }
 }

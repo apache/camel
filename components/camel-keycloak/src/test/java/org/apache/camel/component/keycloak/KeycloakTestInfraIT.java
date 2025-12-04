@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,8 +47,6 @@ import org.keycloak.representations.idm.authorization.ResourceRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration test for Keycloak producer operations using test-infra for container management.
  *
@@ -61,14 +62,22 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     static KeycloakService keycloakService = KeycloakServiceFactory.createService();
 
     // Test data - use unique names to avoid conflicts
-    private static final String TEST_REALM_NAME = "testinfra-realm-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_USER_NAME = "testinfra-user-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_ROLE_NAME = "testinfra-role-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_GROUP_NAME = "testinfra-group-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_CLIENT_ID = "testinfra-client-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_IDP_ALIAS = "testinfra-idp-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_RESOURCE_NAME = "testinfra-resource-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_POLICY_NAME = "testinfra-policy-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_REALM_NAME =
+            "testinfra-realm-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_USER_NAME =
+            "testinfra-user-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_ROLE_NAME =
+            "testinfra-role-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_GROUP_NAME =
+            "testinfra-group-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_CLIENT_ID =
+            "testinfra-client-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_IDP_ALIAS =
+            "testinfra-idp-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_RESOURCE_NAME =
+            "testinfra-resource-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_POLICY_NAME =
+            "testinfra-policy-" + UUID.randomUUID().toString().substring(0, 8);
 
     private static String testUserId;
     private static String testGroupId;
@@ -98,153 +107,111 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
                 String keycloakEndpoint = "keycloak:admin";
 
                 // Realm operations
-                from("direct:createRealm")
-                        .to(keycloakEndpoint + "?operation=createRealm");
+                from("direct:createRealm").to(keycloakEndpoint + "?operation=createRealm");
 
-                from("direct:getRealm")
-                        .to(keycloakEndpoint + "?operation=getRealm");
+                from("direct:getRealm").to(keycloakEndpoint + "?operation=getRealm");
 
-                from("direct:deleteRealm")
-                        .to(keycloakEndpoint + "?operation=deleteRealm");
+                from("direct:deleteRealm").to(keycloakEndpoint + "?operation=deleteRealm");
 
                 // User operations
-                from("direct:createUser")
-                        .to(keycloakEndpoint + "?operation=createUser");
+                from("direct:createUser").to(keycloakEndpoint + "?operation=createUser");
 
-                from("direct:listUsers")
-                        .to(keycloakEndpoint + "?operation=listUsers");
+                from("direct:listUsers").to(keycloakEndpoint + "?operation=listUsers");
 
-                from("direct:deleteUser")
-                        .to(keycloakEndpoint + "?operation=deleteUser");
+                from("direct:deleteUser").to(keycloakEndpoint + "?operation=deleteUser");
 
                 // Role operations
-                from("direct:createRole")
-                        .to(keycloakEndpoint + "?operation=createRole");
+                from("direct:createRole").to(keycloakEndpoint + "?operation=createRole");
 
-                from("direct:getRole")
-                        .to(keycloakEndpoint + "?operation=getRole");
+                from("direct:getRole").to(keycloakEndpoint + "?operation=getRole");
 
-                from("direct:deleteRole")
-                        .to(keycloakEndpoint + "?operation=deleteRole");
+                from("direct:deleteRole").to(keycloakEndpoint + "?operation=deleteRole");
 
                 // Group operations
-                from("direct:createGroup")
-                        .to(keycloakEndpoint + "?operation=createGroup");
+                from("direct:createGroup").to(keycloakEndpoint + "?operation=createGroup");
 
-                from("direct:getGroup")
-                        .to(keycloakEndpoint + "?operation=getGroup");
+                from("direct:getGroup").to(keycloakEndpoint + "?operation=getGroup");
 
-                from("direct:listGroups")
-                        .to(keycloakEndpoint + "?operation=listGroups");
+                from("direct:listGroups").to(keycloakEndpoint + "?operation=listGroups");
 
-                from("direct:addUserToGroup")
-                        .to(keycloakEndpoint + "?operation=addUserToGroup");
+                from("direct:addUserToGroup").to(keycloakEndpoint + "?operation=addUserToGroup");
 
-                from("direct:listUserGroups")
-                        .to(keycloakEndpoint + "?operation=listUserGroups");
+                from("direct:listUserGroups").to(keycloakEndpoint + "?operation=listUserGroups");
 
-                from("direct:deleteGroup")
-                        .to(keycloakEndpoint + "?operation=deleteGroup");
+                from("direct:deleteGroup").to(keycloakEndpoint + "?operation=deleteGroup");
 
                 // Client operations
-                from("direct:createClient")
-                        .to(keycloakEndpoint + "?operation=createClient");
+                from("direct:createClient").to(keycloakEndpoint + "?operation=createClient");
 
-                from("direct:listClients")
-                        .to(keycloakEndpoint + "?operation=listClients");
+                from("direct:listClients").to(keycloakEndpoint + "?operation=listClients");
 
-                from("direct:deleteClient")
-                        .to(keycloakEndpoint + "?operation=deleteClient");
+                from("direct:deleteClient").to(keycloakEndpoint + "?operation=deleteClient");
 
                 // Password operations
-                from("direct:resetUserPassword")
-                        .to(keycloakEndpoint + "?operation=resetUserPassword");
+                from("direct:resetUserPassword").to(keycloakEndpoint + "?operation=resetUserPassword");
 
                 // getUserRoles operation
-                from("direct:getUserRoles")
-                        .to(keycloakEndpoint + "?operation=getUserRoles");
+                from("direct:getUserRoles").to(keycloakEndpoint + "?operation=getUserRoles");
 
                 // Search users operation
-                from("direct:searchUsers")
-                        .to(keycloakEndpoint + "?operation=searchUsers");
+                from("direct:searchUsers").to(keycloakEndpoint + "?operation=searchUsers");
 
                 // Identity Provider operations
                 from("direct:createIdentityProvider")
                         .to(keycloakEndpoint + "?operation=createIdentityProvider&pojoRequest=true");
 
-                from("direct:getIdentityProvider")
-                        .to(keycloakEndpoint + "?operation=getIdentityProvider");
+                from("direct:getIdentityProvider").to(keycloakEndpoint + "?operation=getIdentityProvider");
 
-                from("direct:listIdentityProviders")
-                        .to(keycloakEndpoint + "?operation=listIdentityProviders");
+                from("direct:listIdentityProviders").to(keycloakEndpoint + "?operation=listIdentityProviders");
 
-                from("direct:deleteIdentityProvider")
-                        .to(keycloakEndpoint + "?operation=deleteIdentityProvider");
+                from("direct:deleteIdentityProvider").to(keycloakEndpoint + "?operation=deleteIdentityProvider");
 
                 // Authorization Services operations
-                from("direct:createResource")
-                        .to(keycloakEndpoint + "?operation=createResource&pojoRequest=true");
+                from("direct:createResource").to(keycloakEndpoint + "?operation=createResource&pojoRequest=true");
 
-                from("direct:getResource")
-                        .to(keycloakEndpoint + "?operation=getResource");
+                from("direct:getResource").to(keycloakEndpoint + "?operation=getResource");
 
-                from("direct:listResources")
-                        .to(keycloakEndpoint + "?operation=listResources");
+                from("direct:listResources").to(keycloakEndpoint + "?operation=listResources");
 
-                from("direct:deleteResource")
-                        .to(keycloakEndpoint + "?operation=deleteResource");
+                from("direct:deleteResource").to(keycloakEndpoint + "?operation=deleteResource");
 
                 from("direct:createResourcePolicy")
                         .to(keycloakEndpoint + "?operation=createResourcePolicy&pojoRequest=true");
 
-                from("direct:getResourcePolicy")
-                        .to(keycloakEndpoint + "?operation=getResourcePolicy");
+                from("direct:getResourcePolicy").to(keycloakEndpoint + "?operation=getResourcePolicy");
 
-                from("direct:listResourcePolicies")
-                        .to(keycloakEndpoint + "?operation=listResourcePolicies");
+                from("direct:listResourcePolicies").to(keycloakEndpoint + "?operation=listResourcePolicies");
 
-                from("direct:deleteResourcePolicy")
-                        .to(keycloakEndpoint + "?operation=deleteResourcePolicy");
+                from("direct:deleteResourcePolicy").to(keycloakEndpoint + "?operation=deleteResourcePolicy");
 
                 from("direct:createResourcePermission")
                         .to(keycloakEndpoint + "?operation=createResourcePermission&pojoRequest=true");
 
-                from("direct:listResourcePermissions")
-                        .to(keycloakEndpoint + "?operation=listResourcePermissions");
+                from("direct:listResourcePermissions").to(keycloakEndpoint + "?operation=listResourcePermissions");
 
                 // User Attribute operations
-                from("direct:getUserAttributes")
-                        .to(keycloakEndpoint + "?operation=getUserAttributes");
+                from("direct:getUserAttributes").to(keycloakEndpoint + "?operation=getUserAttributes");
 
-                from("direct:setUserAttribute")
-                        .to(keycloakEndpoint + "?operation=setUserAttribute");
+                from("direct:setUserAttribute").to(keycloakEndpoint + "?operation=setUserAttribute");
 
-                from("direct:deleteUserAttribute")
-                        .to(keycloakEndpoint + "?operation=deleteUserAttribute");
+                from("direct:deleteUserAttribute").to(keycloakEndpoint + "?operation=deleteUserAttribute");
 
                 // User Credential operations
-                from("direct:getUserCredentials")
-                        .to(keycloakEndpoint + "?operation=getUserCredentials");
+                from("direct:getUserCredentials").to(keycloakEndpoint + "?operation=getUserCredentials");
 
-                from("direct:deleteUserCredential")
-                        .to(keycloakEndpoint + "?operation=deleteUserCredential");
+                from("direct:deleteUserCredential").to(keycloakEndpoint + "?operation=deleteUserCredential");
 
                 // User Action operations
-                from("direct:sendVerifyEmail")
-                        .to(keycloakEndpoint + "?operation=sendVerifyEmail");
+                from("direct:sendVerifyEmail").to(keycloakEndpoint + "?operation=sendVerifyEmail");
 
-                from("direct:addRequiredAction")
-                        .to(keycloakEndpoint + "?operation=addRequiredAction");
+                from("direct:addRequiredAction").to(keycloakEndpoint + "?operation=addRequiredAction");
 
-                from("direct:removeRequiredAction")
-                        .to(keycloakEndpoint + "?operation=removeRequiredAction");
+                from("direct:removeRequiredAction").to(keycloakEndpoint + "?operation=removeRequiredAction");
 
                 // Client Secret Management
-                from("direct:getClientSecret")
-                        .to(keycloakEndpoint + "?operation=getClientSecret");
+                from("direct:getClientSecret").to(keycloakEndpoint + "?operation=getClientSecret");
 
-                from("direct:regenerateClientSecret")
-                        .to(keycloakEndpoint + "?operation=regenerateClientSecret");
+                from("direct:regenerateClientSecret").to(keycloakEndpoint + "?operation=regenerateClientSecret");
             }
         };
     }
@@ -262,7 +229,8 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         assertEquals("admin", keycloakService.getKeycloakUsername());
         assertEquals("admin", keycloakService.getKeycloakPassword());
 
-        log.info("Testing Keycloak at: {} with realm: {}",
+        log.info(
+                "Testing Keycloak at: {} with realm: {}",
                 keycloakService.getKeycloakServerUrl(),
                 keycloakService.getKeycloakRealm());
     }
@@ -643,8 +611,10 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
             assertEquals("Engineering", attributes.get("department").get(0));
             log.info("Retrieved {} attributes for user {}, including 'department'", attributes.size(), testUserId);
         } else {
-            log.info("Retrieved {} attributes for user {} (department attribute may have been deleted in previous test run)",
-                    attributes.size(), testUserId);
+            log.info(
+                    "Retrieved {} attributes for user {} (department attribute may have been deleted in previous test run)",
+                    attributes.size(),
+                    testUserId);
         }
     }
 
@@ -798,7 +768,9 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
                     log.info("Created resource: {} with ID: {}", TEST_RESOURCE_NAME, testResourceId);
                 }
             } else {
-                log.warn("Authorization services may not be enabled on client: {}", result.getException().getMessage());
+                log.warn(
+                        "Authorization services may not be enabled on client: {}",
+                        result.getException().getMessage());
             }
         } catch (Exception e) {
             log.warn("Skipping resource creation test - authorization may not be enabled: {}", e.getMessage());

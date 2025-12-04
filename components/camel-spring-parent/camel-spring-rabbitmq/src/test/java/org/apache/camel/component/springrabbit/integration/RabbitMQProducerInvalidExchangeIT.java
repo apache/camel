@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.integration;
 
 import com.rabbitmq.client.ShutdownSignalException;
@@ -48,8 +49,8 @@ public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
         admin.declareExchange(t);
         admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
 
-        final CamelExecutionException exception = Assertions.assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:start", "Hello World"));
+        final CamelExecutionException exception = Assertions.assertThrows(
+                CamelExecutionException.class, () -> template.sendBody("direct:start", "Hello World"));
         Assertions.assertInstanceOf(ShutdownSignalException.class, exception.getCause());
     }
 
@@ -58,8 +59,7 @@ public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("spring-rabbitmq:unknown?routingKey=foo.bar");
+                from("direct:start").to("spring-rabbitmq:unknown?routingKey=foo.bar");
             }
         };
     }

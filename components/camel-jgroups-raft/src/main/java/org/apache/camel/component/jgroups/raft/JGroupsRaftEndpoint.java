@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,8 +39,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Exchange messages with JGroups-raft clusters.
  */
-@UriEndpoint(firstVersion = "2.24.0", scheme = "jgroups-raft", title = "JGroups raft", syntax = "jgroup-raft:clusterName",
-             category = { Category.CLUSTERING, Category.MESSAGING }, headersClass = JGroupsRaftConstants.class)
+@UriEndpoint(
+        firstVersion = "2.24.0",
+        scheme = "jgroups-raft",
+        title = "JGroups raft",
+        syntax = "jgroup-raft:clusterName",
+        category = {Category.CLUSTERING, Category.MESSAGING},
+        headersClass = JGroupsRaftConstants.class)
 public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftEndpoint.class);
 
@@ -54,11 +60,18 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String clusterName;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean enableRoleChangeEvents;
 
-    public JGroupsRaftEndpoint(String endpointUri, String clusterName, Component component,
-                               String raftId, String channelProperties, StateMachine stateMachine, RaftHandle raftHandle) {
+    public JGroupsRaftEndpoint(
+            String endpointUri,
+            String clusterName,
+            Component component,
+            String raftId,
+            String channelProperties,
+            StateMachine stateMachine,
+            RaftHandle raftHandle) {
         super(endpointUri, component);
         this.clusterName = clusterName;
 
@@ -81,10 +94,13 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     }
 
     public void populateJGroupsRaftHeaders(Exchange exchange) {
-        exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_COMMIT_INDEX, resolvedRaftHandle.commitIndex());
-        exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_CURRENT_TERM, resolvedRaftHandle.currentTerm());
+        exchange.getIn()
+                .setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_COMMIT_INDEX, resolvedRaftHandle.commitIndex());
+        exchange.getIn()
+                .setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_CURRENT_TERM, resolvedRaftHandle.currentTerm());
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_IS_LEADER, resolvedRaftHandle.isLeader());
-        exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LAST_APPLIED, resolvedRaftHandle.lastApplied());
+        exchange.getIn()
+                .setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LAST_APPLIED, resolvedRaftHandle.lastApplied());
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LOG_SIZE, resolvedRaftHandle.logSize());
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_RAFT_ID, resolvedRaftHandle.raftId());
     }
@@ -117,7 +133,9 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             return raftHandle;
         }
         if (channelProperties != null && !channelProperties.isEmpty()) {
-            LOG.trace("Raft Handle created with configured channelProperties: {} and state machine: {}", channelProperties,
+            LOG.trace(
+                    "Raft Handle created with configured channelProperties: {} and state machine: {}",
+                    channelProperties,
                     stateMachine);
             @SuppressWarnings("resource")
             // NOTE: channel will be closed by the component during
@@ -125,7 +143,10 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             JChannel channel = new JChannel(channelProperties).name(raftId); // NOSONAR
             return new RaftHandle(channel, stateMachine).raftId(raftId);
         }
-        LOG.trace("Raft Handle created with defaults: {}, {},", JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG, stateMachine);
+        LOG.trace(
+                "Raft Handle created with defaults: {}, {},",
+                JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG,
+                stateMachine);
         @SuppressWarnings("resource")
         // NOTE: channel will be closed by the component during
         // stop() lifecycle step.
@@ -140,8 +161,12 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
      */
     public void connect() throws Exception {
         connectCount.incrementAndGet();
-        LOG.trace("Connecting JGroups-raft Channel {} with cluster name: {}, raftHandle: {} and using config: {}",
-                getEndpointUri(), clusterName, resolvedRaftHandle, channelProperties == null ? "default" : channelProperties);
+        LOG.trace(
+                "Connecting JGroups-raft Channel {} with cluster name: {}, raftHandle: {} and using config: {}",
+                getEndpointUri(),
+                clusterName,
+                resolvedRaftHandle,
+                channelProperties == null ? "default" : channelProperties);
         resolvedRaftHandle.channel().connect(clusterName);
     }
 

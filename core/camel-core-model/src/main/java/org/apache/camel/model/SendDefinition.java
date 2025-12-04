@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,8 +36,10 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
 
     @XmlTransient
     private String endpointUriToString;
+
     @XmlTransient
     protected Endpoint endpoint;
+
     @XmlTransient
     protected EndpointProducerBuilder endpointProducerBuilder;
 
@@ -44,8 +47,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(required = true)
     protected String uri;
 
-    public SendDefinition() {
-    }
+    public SendDefinition() {}
 
     public SendDefinition(String uri) {
         this.uri = uri;

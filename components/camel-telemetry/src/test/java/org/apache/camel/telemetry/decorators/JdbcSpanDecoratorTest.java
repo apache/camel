@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.telemetry.TagConstants;
 import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcSpanDecoratorTest {
 
@@ -50,5 +51,4 @@ public class JdbcSpanDecoratorTest {
         assertEquals("sql", span.tags().get(TagConstants.DB_SYSTEM));
         assertEquals(SQL_STATEMENT, span.tags().get(TagConstants.DB_STATEMENT));
     }
-
 }

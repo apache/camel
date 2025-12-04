@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -36,13 +37,13 @@ public class ImportSetResult {
 
     @JsonCreator
     public ImportSetResult(
-                           @JsonProperty(value = "transform_map") String transformMap,
-                           @JsonProperty(value = "table", required = true) String table,
-                           @JsonProperty(value = "display_name") String displayName,
-                           @JsonProperty(value = "display_value") String displayValue,
-                           @JsonProperty(value = "record_link") String recordLink,
-                           @JsonProperty(value = "status", required = true) String status,
-                           @JsonProperty(value = "sys_id", required = true) String sysId) {
+            @JsonProperty(value = "transform_map") String transformMap,
+            @JsonProperty(value = "table", required = true) String table,
+            @JsonProperty(value = "display_name") String displayName,
+            @JsonProperty(value = "display_value") String displayValue,
+            @JsonProperty(value = "record_link") String recordLink,
+            @JsonProperty(value = "status", required = true) String status,
+            @JsonProperty(value = "sys_id", required = true) String sysId) {
 
         this.transformMap = transformMap;
         this.table = table;

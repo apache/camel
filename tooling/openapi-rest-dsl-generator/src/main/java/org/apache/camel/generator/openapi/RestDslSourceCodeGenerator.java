@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
+
+import static org.apache.camel.util.StringHelper.notEmpty;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -37,8 +40,6 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * Generates Java source code
@@ -99,8 +100,10 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
     }
 
     MethodSpec generateConfigureMethod(final OpenAPI document) {
-        final MethodSpec.Builder configure = MethodSpec.methodBuilder("configure").addModifiers(Modifier.PUBLIC)
-                .returns(void.class).addJavadoc("Defines Apache Camel routes using REST DSL fluent API.\n");
+        final MethodSpec.Builder configure = MethodSpec.methodBuilder("configure")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(void.class)
+                .addJavadoc("Defines Apache Camel routes using REST DSL fluent API.\n");
 
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(configure);
 
@@ -128,17 +131,30 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         for (String name : document.getPaths().keySet()) {
             PathItem s = document.getPaths().get(name);
             // there must be at least one verb
-            if (s.getGet() != null || s.getDelete() != null || s.getHead() != null || s.getOptions() != null
-                    || s.getPut() != null || s.getPatch() != null
+            if (s.getGet() != null
+                    || s.getDelete() != null
+                    || s.getHead() != null
+                    || s.getOptions() != null
+                    || s.getPut() != null
+                    || s.getPatch() != null
                     || s.getPost() != null) {
-                // there must be at least one operation accepted by the filter (otherwise we generate empty rest methods)
-                boolean anyAccepted = filter == null || ofNullable(s.getGet(), s.getDelete(), s.getHead(), s.getOptions(),
-                        s.getPut(), s.getPatch(), s.getPost())
-                        .stream().anyMatch(o -> filter.accept(o.getOperationId()));
+                // there must be at least one operation accepted by the filter (otherwise we generate empty rest
+                // methods)
+                boolean anyAccepted = filter == null
+                        || ofNullable(
+                                        s.getGet(),
+                                        s.getDelete(),
+                                        s.getHead(),
+                                        s.getOptions(),
+                                        s.getPut(),
+                                        s.getPatch(),
+                                        s.getPost())
+                                .stream()
+                                .anyMatch(o -> filter.accept(o.getOperationId()));
                 if (anyAccepted) {
                     // create new rest statement per path to avoid a giant chained single method
-                    PathVisitor<MethodSpec> restDslStatement
-                            = new PathVisitor<>(basePath, emitter, filter, destinationGenerator(), dtoPackageName);
+                    PathVisitor<MethodSpec> restDslStatement =
+                            new PathVisitor<>(basePath, emitter, filter, destinationGenerator(), dtoPackageName);
                     restDslStatement.visit(document, name, s);
                     emitter.endEmit();
                 }
@@ -156,26 +172,30 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
         final String classNameToUse = classNameGenerator.apply(document);
 
-        final AnnotationSpec.Builder generatedAnnotation = AnnotationSpec.builder(Generated.class).addMember("value",
-                "$S", getClass().getName());
+        final AnnotationSpec.Builder generatedAnnotation = AnnotationSpec.builder(Generated.class)
+                .addMember("value", "$S", getClass().getName());
         if (sourceCodeTimestamps) {
             generatedAnnotation.addMember("date", "$S", generated());
         }
 
-        final TypeSpec.Builder builder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(methodSpec)
+        final TypeSpec.Builder builder = TypeSpec.classBuilder(classNameToUse)
+                .superclass(RouteBuilder.class)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addMethod(methodSpec)
                 .addAnnotation(generatedAnnotation.build())
                 .addJavadoc("Generated from OpenApi specification by Camel REST DSL generator.\n");
         if (springComponent) {
-            final AnnotationSpec.Builder springAnnotation
-                    = AnnotationSpec.builder(ClassName.bestGuess("org.springframework.stereotype.Component"));
+            final AnnotationSpec.Builder springAnnotation =
+                    AnnotationSpec.builder(ClassName.bestGuess("org.springframework.stereotype.Component"));
             builder.addAnnotation(springAnnotation.build());
         }
         final TypeSpec generatedRouteBuilder = builder.build();
 
         final String packageNameToUse = packageNameGenerator.apply(document);
 
-        return JavaFile.builder(packageNameToUse, generatedRouteBuilder).indent(indent).build();
+        return JavaFile.builder(packageNameToUse, generatedRouteBuilder)
+                .indent(indent)
+                .build();
     }
 
     RestDslSourceCodeGenerator<T> withGeneratedTime(final Instant generated) {
@@ -195,8 +215,14 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             return DEFAULT_CLASS_NAME;
         }
 
-        final String className = title.chars().filter(Character::isJavaIdentifierPart).filter(c -> c < 'z').boxed()
-                .collect(Collector.of(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append,
+        final String className = title.chars()
+                .filter(Character::isJavaIdentifierPart)
+                .filter(c -> c < 'z')
+                .boxed()
+                .collect(Collector.of(
+                        StringBuilder::new,
+                        StringBuilder::appendCodePoint,
+                        StringBuilder::append,
                         StringBuilder::toString));
 
         if (className.isEmpty() || !Character.isJavaIdentifierStart(className.charAt(0))) {
@@ -242,5 +268,4 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         }
         return list;
     }
-
 }

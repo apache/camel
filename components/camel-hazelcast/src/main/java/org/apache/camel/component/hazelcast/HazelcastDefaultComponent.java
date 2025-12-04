@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_PARAM;
+import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_URI_PARAM;
+import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_NAME_PARAM;
+import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_PARAM;
 
 import java.io.InputStream;
 import java.util.LinkedHashSet;
@@ -37,17 +43,14 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_PARAM;
-import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_URI_PARAM;
-import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_NAME_PARAM;
-import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_PARAM;
-
 public abstract class HazelcastDefaultComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastDefaultComponent.class);
 
     private final Set<HazelcastInstance> customHazelcastInstances;
+
     @Metadata(label = "advanced")
     private HazelcastInstance hazelcastInstance;
+
     @Metadata(label = "advanced", defaultValue = "" + HazelcastConstants.HAZELCAST_NODE_MODE)
     private String hazelcastMode = HazelcastConstants.HAZELCAST_NODE_MODE;
 
@@ -71,8 +74,8 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
             hzInstance = getOrCreateHzClientInstance(getCamelContext(), parameters);
         }
 
-        String defaultOperation
-                = getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, String.class);
+        String defaultOperation =
+                getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, String.class);
         if (defaultOperation == null) {
             defaultOperation = getAndRemoveOrResolveReferenceParameter(parameters, "defaultOperation", String.class);
         }
@@ -131,7 +134,8 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
         this.hazelcastMode = hazelcastMode;
     }
 
-    protected HazelcastInstance getOrCreateHzInstance(CamelContext context, Map<String, Object> parameters) throws Exception {
+    protected HazelcastInstance getOrCreateHzInstance(CamelContext context, Map<String, Object> parameters)
+            throws Exception {
         HazelcastInstance hzInstance = null;
         Config config = null;
 
@@ -193,7 +197,8 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
 
         // Check if an already created instance is given then just get instance by its name.
         if (hzInstance == null && parameters.get(HAZELCAST_INSTANCE_NAME_PARAM) != null) {
-            hzInstance = HazelcastClient.getHazelcastClientByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
+            hzInstance =
+                    HazelcastClient.getHazelcastClientByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
         }
 
         // If instance neither supplied nor found by name, try to lookup its config

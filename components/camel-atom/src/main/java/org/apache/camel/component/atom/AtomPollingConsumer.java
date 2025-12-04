@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
 
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class AtomPollingConsumer extends FeedPollingConsumer {
 
     @Override
     protected Object createFeed() throws IOException {
-        return AtomUtils.readItems(endpoint.getCamelContext(), endpoint.getFeedUri(), rssReader, endpoint.isSortEntries());
+        return AtomUtils.readItems(
+                endpoint.getCamelContext(), endpoint.getFeedUri(), rssReader, endpoint.isSortEntries());
     }
-
 }

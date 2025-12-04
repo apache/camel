@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static java.util.Collections.singleton;
+import static org.apache.camel.Exchange.HTTP_QUERY;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static java.util.Collections.singleton;
-import static org.apache.camel.Exchange.HTTP_QUERY;
 
 public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
 
@@ -52,8 +53,8 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.message(0).header(headerToFilter).isNull();
 
-        template.sendBodyAndHeader("netty-http:http://localhost:" + getPort() + "/?" + options, "message", headerToFilter,
-                "headerValue");
+        template.sendBodyAndHeader(
+                "netty-http:http://localhost:" + getPort() + "/?" + options, "message", headerToFilter, "headerValue");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -67,5 +68,4 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
@@ -26,8 +27,8 @@ import org.apache.hc.core5.http.ClassicHttpRequest;
  */
 public class BasicRawQueryValidationHandler extends BasicValidationHandler {
 
-    public BasicRawQueryValidationHandler(String expectedMethod, String expectedQuery, Object expectedContent,
-                                          String responseContent) {
+    public BasicRawQueryValidationHandler(
+            String expectedMethod, String expectedQuery, Object expectedContent, String responseContent) {
         super(expectedMethod, expectedQuery, expectedContent, responseContent);
     }
 

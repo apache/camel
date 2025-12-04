@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.version;
+
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
 
 import java.io.LineNumberReader;
 import java.io.StringReader;
@@ -54,80 +57,112 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
-
-@CommandLine.Command(name = "list", description = "Displays available Camel versions",
-                     sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "list",
+        description = "Displays available Camel versions",
+        sortOptions = false,
+        showDefaultValues = true)
 public class VersionList extends CamelCommand {
 
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
 
-    private static final String GIT_CAMEL_URL
-            = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/release-%s.md";
-    private static final String GIT_CAMEL_QUARKUS_URL
-            = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/q/release-%s.md";
+    private static final String GIT_CAMEL_URL =
+            "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/release-%s.md";
+    private static final String GIT_CAMEL_QUARKUS_URL =
+            "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/q/release-%s.md";
 
     private static final String DEFAULT_DATE_FORMAT = "MMMM yyyy";
 
-    @CommandLine.Option(names = { "--runtime" },
-                        defaultValue = "camel-main",
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @CommandLine.Option(
+            names = {"--runtime"},
+            defaultValue = "camel-main",
+            completionCandidates = RuntimeCompletionCandidates.class,
+            converter = RuntimeTypeConverter.class,
+            description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime = RuntimeType.main;
 
-    @CommandLine.Option(names = { "--from-version" },
-                        description = "Filter by Camel version (inclusive). Will start from 4.0 if no version ranges provided.")
+    @CommandLine.Option(
+            names = {"--from-version"},
+            description = "Filter by Camel version (inclusive). Will start from 4.0 if no version ranges provided.")
     String fromVersion;
 
-    @CommandLine.Option(names = { "--to-version" },
-                        description = "Filter by Camel version (exclusive)")
+    @CommandLine.Option(
+            names = {"--to-version"},
+            description = "Filter by Camel version (exclusive)")
     String toVersion;
 
-    @CommandLine.Option(names = { "--from-date" },
-                        description = "Filter by release date (inclusive)")
+    @CommandLine.Option(
+            names = {"--from-date"},
+            description = "Filter by release date (inclusive)")
     String fromDate;
 
-    @CommandLine.Option(names = { "--to-date" },
-                        description = "Filter by release date (exclusive)")
+    @CommandLine.Option(
+            names = {"--to-date"},
+            description = "Filter by release date (exclusive)")
     String toDate;
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by (version, date, or days)", defaultValue = "version")
+    @CommandLine.Option(
+            names = {"--sort"},
+            description = "Sort by (version, date, or days)",
+            defaultValue = "version")
     String sort;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 
-    @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--lts"},
+            description = "Only show LTS supported releases",
+            defaultValue = "false")
     boolean lts;
 
-    @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true")
+    @CommandLine.Option(
+            names = {"--eol"},
+            description = "Include releases that are end-of-life",
+            defaultValue = "true")
     boolean eol = true;
 
-    @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true")
+    @CommandLine.Option(
+            names = {"--patch"},
+            description = "Whether to include patch releases (x.y.z)",
+            defaultValue = "true")
     boolean patch = true;
 
-    @CommandLine.Option(names = { "--rc" }, description = "Include also milestone or RC releases", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--rc"},
+            description = "Include also milestone or RC releases",
+            defaultValue = "false")
     boolean rc;
 
-    @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true")
+    @CommandLine.Option(
+            names = {"--days"},
+            description = "Whether to include days since release",
+            defaultValue = "true")
     boolean days;
 
-    @CommandLine.Option(names = { "--date-format" }, description = "The format to show the date (such as dd-MM-yyyy)",
-                        defaultValue = DEFAULT_DATE_FORMAT)
+    @CommandLine.Option(
+            names = {"--date-format"},
+            description = "The format to show the date (such as dd-MM-yyyy)",
+            defaultValue = DEFAULT_DATE_FORMAT)
     String dateFormat;
 
-    @CommandLine.Option(names = { "--tail" },
-                        description = "The number of lines from the end of the table to show.")
+    @CommandLine.Option(
+            names = {"--tail"},
+            description = "The number of lines from the end of the table to show.")
     int tail;
 
-    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources",
-                        defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--fresh"},
+            description = "Make sure we use fresh (i.e. non-cached) resources",
+            defaultValue = "false")
     boolean fresh;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--json"},
+            description = "Output in JSON Format",
+            defaultValue = "false")
     boolean jsonOutput;
 
     public VersionList(CamelJBangMain main) {
@@ -159,7 +194,8 @@ public class VersionList extends CamelCommand {
         }
 
         CamelCatalog catalog = new DefaultCamelCatalog();
-        List<ReleaseModel> releases = RuntimeType.quarkus == runtime ? catalog.camelQuarkusReleases() : catalog.camelReleases();
+        List<ReleaseModel> releases =
+                RuntimeType.quarkus == runtime ? catalog.camelQuarkusReleases() : catalog.camelReleases();
 
         List<Row> rows = new ArrayList<>();
         filterVersions(versions, rows, releases);
@@ -204,33 +240,67 @@ public class VersionList extends CamelCommand {
         }
 
         if (jsonOutput) {
-            printer().println(
-                    Jsoner.serialize(
-                            rows.stream()
-                                    .map(row -> new VersionListDTO(
-                                            row.coreVersion, runtime.runtime(), row.runtimeVersion, row.jdks, row.kind,
-                                            row.releaseDate,
-                                            row.eolDate))
-                                    .map(VersionListDTO::toMap)
-                                    .collect(Collectors.toList())));
+            printer()
+                    .println(Jsoner.serialize(rows.stream()
+                            .map(row -> new VersionListDTO(
+                                    row.coreVersion,
+                                    runtime.runtime(),
+                                    row.runtimeVersion,
+                                    row.jdks,
+                                    row.kind,
+                                    row.releaseDate,
+                                    row.eolDate))
+                            .map(VersionListDTO::toMap)
+                            .collect(Collectors.toList())));
         } else {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("CAMEL VERSION")
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.coreVersion),
-                    new Column().header("QUARKUS").visible(RuntimeType.quarkus == runtime)
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
-                    new Column().header("SPRING-BOOT").visible(RuntimeType.springBoot == runtime)
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
-                    new Column().header("JDK")
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::jdkVersion),
-                    new Column().header("KIND")
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::kind),
-                    new Column().header("RELEASED")
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::releaseDate),
-                    new Column().header("SUPPORTED UNTIL")
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::eolDate),
-                    new Column().header("DAYS").visible(days)
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::daysAgo))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("CAMEL VERSION")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.coreVersion),
+                                    new Column()
+                                            .header("QUARKUS")
+                                            .visible(RuntimeType.quarkus == runtime)
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.runtimeVersion),
+                                    new Column()
+                                            .header("SPRING-BOOT")
+                                            .visible(RuntimeType.springBoot == runtime)
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.runtimeVersion),
+                                    new Column()
+                                            .header("JDK")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::jdkVersion),
+                                    new Column()
+                                            .header("KIND")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::kind),
+                                    new Column()
+                                            .header("RELEASED")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::releaseDate),
+                                    new Column()
+                                            .header("SUPPORTED UNTIL")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::eolDate),
+                                    new Column()
+                                            .header("DAYS")
+                                            .visible(days)
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::daysAgo))));
         }
 
         return 0;
@@ -316,7 +386,10 @@ public class VersionList extends CamelCommand {
 
                 // enrich with details from catalog (if we can find any)
                 String catalogVersion = RuntimeType.quarkus == runtime ? v[1] : v[0];
-                ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
+                ReleaseModel rm = releases.stream()
+                        .filter(r -> catalogVersion.equals(r.getVersion()))
+                        .findFirst()
+                        .orElse(null);
                 if (rm == null) {
                     // unknown release but if it's an Apache Camel release we can grab from online
                     int dots = StringHelper.countChar(v[0], '.');
@@ -462,10 +535,14 @@ public class VersionList extends CamelCommand {
     }
 
     private ReleaseModel onlineRelease(RuntimeType runtime, String coreVersion) throws Exception {
-        String gitUrl = String.format(RuntimeType.quarkus == runtime ? GIT_CAMEL_QUARKUS_URL : GIT_CAMEL_URL, coreVersion);
+        String gitUrl =
+                String.format(RuntimeType.quarkus == runtime ? GIT_CAMEL_QUARKUS_URL : GIT_CAMEL_URL, coreVersion);
 
         HttpClient hc = HttpClient.newHttpClient();
-        HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(gitUrl)).timeout(Duration.ofSeconds(20)).build(),
+        HttpResponse<String> res = hc.send(
+                HttpRequest.newBuilder(new URI(gitUrl))
+                        .timeout(Duration.ofSeconds(20))
+                        .build(),
                 HttpResponse.BodyHandlers.ofString());
 
         if (res.statusCode() == 200) {
@@ -507,5 +584,4 @@ public class VersionList extends CamelCommand {
         String kind;
         String jdks;
     }
-
 }

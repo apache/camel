@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +28,8 @@ public class JqExpressionHeaderFnTest extends JqTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().jq(".foo = header(\"MyHeader\")")
+                        .transform()
+                        .jq(".foo = header(\"MyHeader\")")
                         .to("mock:result");
             }
         };
@@ -35,8 +37,7 @@ public class JqExpressionHeaderFnTest extends JqTestSupport {
 
     @Test
     public void testExpression() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(node("foo", "MyValue"));
+        getMockEndpoint("mock:result").expectedBodiesReceived(node("foo", "MyValue"));
 
         template.sendBodyAndHeader("direct:start", node("foo", "bar"), "MyHeader", "MyValue");
 

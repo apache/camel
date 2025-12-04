@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,8 +35,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class ZipFileSplitOneFileTest extends CamelTestSupport {
 
@@ -63,7 +64,8 @@ public class ZipFileSplitOneFileTest extends CamelTestSupport {
                 from("file://target/zip-unmarshal?noop=true&include=.*zip")
                         .to("mock:input")
                         .unmarshal(zf)
-                        .split(bodyAs(Iterator.class)).streaming()
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
                         .end();
@@ -77,9 +79,9 @@ public class ZipFileSplitOneFileTest extends CamelTestSupport {
         file.getParentFile().mkdirs();
 
         try (FileWriter fw = new FileWriter(file);
-             FileOutputStream fos = new FileOutputStream(basePath + "test.zip");
-             ZipOutputStream zos = new ZipOutputStream(fos);
-             FileInputStream fis = new FileInputStream(basePath + "test.txt")) {
+                FileOutputStream fos = new FileOutputStream(basePath + "test.zip");
+                ZipOutputStream zos = new ZipOutputStream(fos);
+                FileInputStream fis = new FileInputStream(basePath + "test.txt")) {
 
             fw.write(content);
             fw.close();

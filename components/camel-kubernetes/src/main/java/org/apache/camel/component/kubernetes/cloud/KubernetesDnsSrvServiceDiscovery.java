@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cloud;
 
 import java.util.Collections;
@@ -46,7 +47,7 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
 
     static {
         LOGGER = LoggerFactory.getLogger(KubernetesDnsSrvServiceDiscovery.class);
-        ATTRIBUTE_IDS = new String[] { "SRV" };
+        ATTRIBUTE_IDS = new String[] {"SRV"};
 
         ENV = new Hashtable<>();
         ENV.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
@@ -62,8 +63,9 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
     public KubernetesDnsSrvServiceDiscovery(KubernetesConfiguration configuration) {
         super(configuration);
 
-        this.namespace
-                = configuration.getNamespace() != null ? configuration.getNamespace() : System.getenv("KUBERNETES_NAMESPACE");
+        this.namespace = configuration.getNamespace() != null
+                ? configuration.getNamespace()
+                : System.getenv("KUBERNETES_NAMESPACE");
         this.portName = configuration.getPortName();
         this.portProtocol = configuration.getPortProtocol();
         this.zone = configuration.getDnsDomain();
@@ -87,7 +89,8 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
      */
     protected String computeQueryString(String serviceName) {
         // _<port_name>._<port_proto>.<serviceName>.<namespace>.svc.<zone>.
-        return String.format("_%s._%s.%s.%s.svc.%s", this.portName, this.portProtocol, serviceName, this.namespace, this.zone);
+        return String.format(
+                "_%s._%s.%s.%s.svc.%s", this.portName, this.portProtocol, serviceName, this.namespace, this.zone);
     }
 
     @Override
@@ -95,7 +98,8 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
         try {
             final String query = cache.computeIfAbsent(name, this::computeQueryString);
             final DirContext ctx = new InitialDirContext(ENV);
-            final NamingEnumeration<?> resolved = ctx.getAttributes(query, ATTRIBUTE_IDS).get("srv").getAll();
+            final NamingEnumeration<?> resolved =
+                    ctx.getAttributes(query, ATTRIBUTE_IDS).get("srv").getAll();
 
             if (resolved.hasMore()) {
                 List<ServiceDefinition> servers = new LinkedList<>();
@@ -133,7 +137,7 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
     @Override
     public String toString() {
         return "KubernetesDnsSrvServiceDiscovery{" + "namespace='" + namespace + '\'' + ", portName='" + portName + '\''
-               + ", portProtocol='" + portProtocol + '\'' + ", zone='"
-               + zone + '\'' + '}';
+                + ", portProtocol='" + portProtocol + '\'' + ", zone='"
+                + zone + '\'' + '}';
     }
 }

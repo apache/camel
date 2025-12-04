@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
 
@@ -34,7 +35,13 @@ public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // should be an empty list
-        assertEquals(0, endpoint.getReceivedExchanges().get(0).getIn().getBody(ArrayList.class).size(),
+        assertEquals(
+                0,
+                endpoint.getReceivedExchanges()
+                        .get(0)
+                        .getIn()
+                        .getBody(ArrayList.class)
+                        .size(),
                 "Should be an empty list");
     }
 
@@ -42,7 +49,8 @@ public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mybatis:selectAllAccounts?useIterator=false&routeEmptyResultSet=true").to("mock:results");
+                from("mybatis:selectAllAccounts?useIterator=false&routeEmptyResultSet=true")
+                        .to("mock:results");
             }
         };
     }
@@ -52,5 +60,4 @@ public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
         // no test data so an empty resultset
         return false;
     }
-
 }

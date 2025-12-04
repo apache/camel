@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
 
 import java.io.IOException;
@@ -27,8 +28,7 @@ public final class TestUtils {
     public static final String BLOB_ACCOUNT_NAME = "blobAccountName";
     public static final String BLOB_ACCESS_KEY = "blobAccessKey";
 
-    private TestUtils() {
-    }
+    private TestUtils() {}
 
     public static Properties loadAzurePropertiesFile() throws IOException {
         return TestSupport.loadExternalProperties(TestUtils.class, "azure_key.properties");
@@ -41,7 +41,7 @@ public final class TestUtils {
                 || System.getProperty(BLOB_ACCESS_KEY) == null) {
             throw new Exception(
                     "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string"
-                                + " -DblobAccountName=blob -DblobAccessKey=key");
+                            + " -DblobAccountName=blob -DblobAccessKey=key");
         }
         properties.setProperty(CONNECTION_STRING, System.getProperty(CONNECTION_STRING));
         properties.setProperty(BLOB_ACCOUNT_NAME, System.getProperty(BLOB_ACCOUNT_NAME));
@@ -49,5 +49,4 @@ public final class TestUtils {
 
         return properties;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.runtime.client;
 
 import org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.bedrock.runtime.client.impl.BedrockRuntim
  */
 public final class BedrockClientFactory {
 
-    private BedrockClientFactory() {
-    }
+    private BedrockClientFactory() {}
 
     /**
      * Return the correct AWS Bedrock runtime client (based on remote vs local).

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 public final class LocationHelper {
 
-    private LocationHelper() {
-    }
+    private LocationHelper() {}
 
     /**
      * The location as human-readable with the given key from the properties
@@ -58,5 +58,4 @@ public final class LocationHelper {
         loc = String.format("%-30s", loc);
         return loc;
     }
-
 }

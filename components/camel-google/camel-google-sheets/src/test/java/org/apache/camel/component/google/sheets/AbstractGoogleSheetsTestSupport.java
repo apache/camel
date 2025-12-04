@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets;
 
 import java.security.SecureRandom;
@@ -108,5 +109,4 @@ public abstract class AbstractGoogleSheetsTestSupport extends CamelTestSupport {
         }
         return spreadsheet;
     }
-
 }

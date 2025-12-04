@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter.search;
+
+import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_SEARCH;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -28,22 +31,24 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_SEARCH;
-
 /**
  * Access Twitter Search.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = SCHEME_SEARCH, title = "Twitter Search", syntax = "twitter-search:keywords",
-             category = { Category.SAAS, Category.SOCIAL },
-             headersClass = TwitterConstants.class)
+@UriEndpoint(
+        firstVersion = "2.10.0",
+        scheme = SCHEME_SEARCH,
+        title = "Twitter Search",
+        syntax = "twitter-search:keywords",
+        category = {Category.SAAS, Category.SOCIAL},
+        headersClass = TwitterConstants.class)
 public class TwitterSearchEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The search query, use the keywords AND, OR, - and () to narrow the search results.")
     @Metadata(required = true)
     private String keywords;
 
-    public TwitterSearchEndpoint(String uri, String remaining, TwitterSearchComponent component,
-                                 TwitterConfiguration properties) {
+    public TwitterSearchEndpoint(
+            String uri, String remaining, TwitterSearchComponent component, TwitterConfiguration properties) {
         super(uri, component, properties);
         this.keywords = remaining;
     }

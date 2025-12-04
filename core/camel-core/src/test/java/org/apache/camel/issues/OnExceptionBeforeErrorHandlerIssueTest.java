@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -68,23 +69,32 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalArgumentException.class).handled(true).setBody().constant("Handled").to("mock:error").end();
+                onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .setBody()
+                        .constant("Handled")
+                        .to("mock:error")
+                        .end();
 
                 // usually error handler should be defined first (before
                 // onException),
                 // but its not enforced
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage());
 
-                from("direct:start").routeId("foo").autoStartup(false).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("illegal".equals(body)) {
-                            throw new IllegalArgumentException("I cannot do this");
-                        } else if ("kaboom".equals(body)) {
-                            throw new RuntimeException("Kaboom");
-                        }
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("illegal".equals(body)) {
+                                    throw new IllegalArgumentException("I cannot do this");
+                                } else if ("kaboom".equals(body)) {
+                                    throw new RuntimeException("Kaboom");
+                                }
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

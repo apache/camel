@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import java.io.Serializable;
@@ -31,29 +32,41 @@ public class Comment implements Serializable {
 
     private Integer id;
     private Integer author;
+
     @JsonProperty("author_email")
     private String authorEmail;
+
     @JsonProperty("author_ip")
     private String authorIp;
+
     @JsonProperty("author_name")
     private String authorName;
+
     @JsonProperty("author_url")
     private String authorUrl;
+
     @JsonProperty("author_user_agent")
     private String authorUserAgent;
+
     private Content content;
     private Date date;
+
     @JsonProperty("date_gmt")
     private Date dateGmt;
+
     private Integer karma;
     private String link;
     private Integer parent;
+
     @JsonProperty("post")
     private Integer postId;
+
     private String status;
     private String type;
+
     @JsonProperty("author_avatar_urls")
     private List<String> authorAvatarUrls;
+
     private List<String> meta;
 
     public Comment() {
@@ -208,7 +221,6 @@ public class Comment implements Serializable {
     @Override
     public String toString() {
         return "Comment{ID=" + getId() + ", " + this.authorName + ", " + this.authorEmail + ", " + this.date + ", "
-               + this.status + ", PostID=" + this.parent + "}";
+                + this.status + ", PostID=" + this.parent + "}";
     }
-
 }

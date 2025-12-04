@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.univocity;
+
+import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
+import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,14 +38,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
-import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This class tests the unmarshalling of {@link UniVocityFixedDataFormat}.
@@ -55,7 +56,8 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        List<?> body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(
+                List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(3, body.size());
         assertEquals(Arrays.asList("A", "B", "C"), body.get(0));
         assertEquals(Arrays.asList("1", "2", "3"), body.get(1));
@@ -72,7 +74,8 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        List<?> body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(
+                List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.get(0));
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.get(1));
@@ -88,7 +91,8 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        List<?> body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(
+                List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.get(0));
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.get(1));
@@ -104,7 +108,8 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        Iterator<?> body = assertIsInstanceOf(Iterator.class, result.getExchanges().get(0).getIn().getBody());
+        Iterator<?> body = assertIsInstanceOf(
+                Iterator.class, result.getExchanges().get(0).getIn().getBody());
 
         // Read first line
         assertTrue(body.hasNext());
@@ -144,7 +149,8 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        List<?> body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(
+                List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(Arrays.asList("A", "B"), body.get(0));
         assertEquals(Arrays.asList("N/A", "D"), body.get(1));

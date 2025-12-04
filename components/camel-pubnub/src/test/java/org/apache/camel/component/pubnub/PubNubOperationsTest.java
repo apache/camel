@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pubnub;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,26 +39,22 @@ import com.pubnub.api.models.consumer.presence.PNSetStateResult;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static org.apache.camel.test.junit5.TestSupport.assertListSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class PubNubOperationsTest extends PubNubTestBase {
 
     @Test
     public void testHereNow() {
-        stubFor(get(urlPathEqualTo("/v2/presence/sub_key/mySubscribeKey/channel/myChannel")).willReturn(aResponse()
-                .withBody(
-                        "{\"status\" : 200, \"message\" : \"OK\", \"service\" : \"Presence\", \"uuids\" : [{\"uuid\" : \"myUUID0\"}, {\"state\" : {\"abcd\" : {\"age\" : 15}}, "
-                          + "\"uuid\" : \"myUUID1\"}, {\"uuid\" : \"b9eb408c-bcec-4d34-b4c4-fabec057ad0d\"}, {\"state\" : {\"abcd\" : {\"age\" : 15}}, \"uuid\" : \"myUUID2\"},"
-                          + " {\"state\" : {\"abcd\" : {\"age\" : 24}}, \"uuid\" : \"myUUID9\"}], \"occupancy\" : 5}")));
+        stubFor(
+                get(urlPathEqualTo("/v2/presence/sub_key/mySubscribeKey/channel/myChannel"))
+                        .willReturn(
+                                aResponse()
+                                        .withBody(
+                                                "{\"status\" : 200, \"message\" : \"OK\", \"service\" : \"Presence\", \"uuids\" : [{\"uuid\" : \"myUUID0\"}, {\"state\" : {\"abcd\" : {\"age\" : 15}}, "
+                                                        + "\"uuid\" : \"myUUID1\"}, {\"uuid\" : \"b9eb408c-bcec-4d34-b4c4-fabec057ad0d\"}, {\"state\" : {\"abcd\" : {\"age\" : 15}}, \"uuid\" : \"myUUID2\"},"
+                                                        + " {\"state\" : {\"abcd\" : {\"age\" : 24}}, \"uuid\" : \"myUUID9\"}], \"occupancy\" : 5}")));
         Map<String, Object> headers = new HashMap<>();
         headers.put(PubNubConstants.OPERATION, "HERENOW");
-        PNHereNowResult response = template.requestBodyAndHeaders("direct:publish", null, headers, PNHereNowResult.class);
+        PNHereNowResult response =
+                template.requestBodyAndHeaders("direct:publish", null, headers, PNHereNowResult.class);
         assertNotNull(response);
         assertEquals(5, response.getTotalOccupancy());
     }
@@ -89,33 +94,43 @@ public class PubNubOperationsTest extends PubNubTestBase {
         Map<String, Object> headers = new HashMap<>();
         headers.put(PubNubConstants.OPERATION, "GETHISTORY");
         @SuppressWarnings("unchecked")
-        List<PNHistoryItemResult> response = template.requestBodyAndHeaders("direct:publish", null, headers, List.class);
+        List<PNHistoryItemResult> response =
+                template.requestBodyAndHeaders("direct:publish", null, headers, List.class);
         assertNotNull(response);
         assertListSize(response, 2);
     }
 
     @Test
     public void testGetState() {
-        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/myChannel/uuid/myuuid")).willReturn(aResponse()
-                .withBody("{ \"status\": 200, \"message\": \"OK\", \"payload\": "
-                          + "{ \"myChannel\": { \"age\" : 20, \"status\" : \"online\"}, \"ch2\": { \"age\": 100, \"status\": \"offline\" } }, \"service\": \"Presence\"}")));
+        stubFor(
+                get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/myChannel/uuid/myuuid"))
+                        .willReturn(
+                                aResponse()
+                                        .withBody(
+                                                "{ \"status\": 200, \"message\": \"OK\", \"payload\": "
+                                                        + "{ \"myChannel\": { \"age\" : 20, \"status\" : \"online\"}, \"ch2\": { \"age\": 100, \"status\": \"offline\" } }, \"service\": \"Presence\"}")));
         Map<String, Object> headers = new HashMap<>();
         headers.put(PubNubConstants.OPERATION, "GETSTATE");
-        PNGetStateResult response = template.requestBodyAndHeaders("direct:publish", null, headers, PNGetStateResult.class);
+        PNGetStateResult response =
+                template.requestBodyAndHeaders("direct:publish", null, headers, PNGetStateResult.class);
         assertNotNull(response);
         assertNotNull(response.getStateByUUID().get("myChannel"));
     }
 
     @Test
     public void testSetState() {
-        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/myChannel/uuid/myuuid/data"))
-                .willReturn(aResponse().withBody(
-                        "{ \"status\": 200, \"message\": \"OK\", \"payload\": { \"age\" : 20, \"status\" : \"online\" }, \"service\": \"Presence\"}")));
+        stubFor(
+                get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/myChannel/uuid/myuuid/data"))
+                        .willReturn(
+                                aResponse()
+                                        .withBody(
+                                                "{ \"status\": 200, \"message\": \"OK\", \"payload\": { \"age\" : 20, \"status\" : \"online\" }, \"service\": \"Presence\"}")));
         Map<String, Object> myState = new HashMap<>();
         myState.put("age", 20);
         Map<String, Object> headers = new HashMap<>();
         headers.put(PubNubConstants.OPERATION, "SETSTATE");
-        PNSetStateResult response = template.requestBodyAndHeaders("direct:publish", myState, headers, PNSetStateResult.class);
+        PNSetStateResult response =
+                template.requestBodyAndHeaders("direct:publish", myState, headers, PNSetStateResult.class);
         assertNotNull(response);
         assertNotNull(response.getState());
         assertEquals(20, response.getState().getAsJsonObject().get("age").getAsInt());
@@ -125,7 +140,8 @@ public class PubNubOperationsTest extends PubNubTestBase {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:publish").to("pubnub://myChannel?uuid=myuuid&pubnub=#pubnub")
+                from("direct:publish")
+                        .to("pubnub://myChannel?uuid=myuuid&pubnub=#pubnub")
                         .to("mock:result");
             }
         };

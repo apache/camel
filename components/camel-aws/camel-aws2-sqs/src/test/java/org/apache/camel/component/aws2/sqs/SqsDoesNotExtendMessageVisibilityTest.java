@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.model.Message;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
 
@@ -71,5 +72,4 @@ public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.manual;
 
 import java.nio.file.Path;
@@ -42,7 +43,8 @@ public class FtpConsumerScottManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("ftp:localhost?username=scott&password=tiger&noop=true").to(TestSupport.fileUri(testDirectory))
+                from("ftp:localhost?username=scott&password=tiger&noop=true")
+                        .to(TestSupport.fileUri(testDirectory))
                         .to("mock:result");
             }
         };

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -36,9 +40,6 @@ import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractOlingo2AppAPITestSupport {
 
@@ -146,8 +147,7 @@ public class AbstractOlingo2AppAPITestSupport {
     }
 
     protected static JettyConfiguration createConfiguration(int port) {
-        return JettyConfigurationBuilder
-                .emptyTemplate()
+        return JettyConfigurationBuilder.emptyTemplate()
                 .withPort(port)
                 .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH)
                 .withWebAppContextConfiguration()

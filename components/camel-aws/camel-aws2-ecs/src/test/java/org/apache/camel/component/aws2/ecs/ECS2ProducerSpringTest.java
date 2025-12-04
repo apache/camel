@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ecs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -28,8 +31,6 @@ import software.amazon.awssdk.services.ecs.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersResponse;
 import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
 
@@ -62,7 +63,8 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.listClusters);
-                exchange.getIn().setBody(ListClustersRequest.builder().maxResults(10).build());
+                exchange.getIn()
+                        .setBody(ListClustersRequest.builder().maxResults(10).build());
             }
         });
 
@@ -87,7 +89,8 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
+        CreateClusterResponse resultGet =
+                (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("Test", resultGet.cluster().clusterName());
     }
 
@@ -129,6 +132,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/ecs/ECSComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/ecs/ECSComponentSpringTest-context.xml");
     }
 }

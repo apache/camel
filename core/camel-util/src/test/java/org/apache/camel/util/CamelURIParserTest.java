@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
 
 public class CamelURIParserTest {
 
@@ -139,5 +140,4 @@ public class CamelURIParserTest {
         assertEquals("relative", out4[1]);
         assertEquals("delete=true", out4[2]);
     }
-
 }

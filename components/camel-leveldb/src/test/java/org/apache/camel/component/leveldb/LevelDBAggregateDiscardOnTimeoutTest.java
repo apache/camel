@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,9 +28,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBAggregateDiscardOnTimeoutTest extends LevelDBTestSupport {
 
     @Override
@@ -68,7 +69,8 @@ public class LevelDBAggregateDiscardOnTimeoutTest extends LevelDBTestSupport {
             public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
-                        .completionSize(3).aggregationRepository(getRepo())
+                        .completionSize(3)
+                        .aggregationRepository(getRepo())
                         // use a 3 second timeout
                         .completionTimeout(2000)
                         // and if timeout occurred then just discard the aggregated message

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lucene;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 import java.util.HashMap;
@@ -35,19 +38,17 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerIT.class);
 
     private String[] humorousQuotes = {
-            "I think, therefore I am. I think - George Carlin",
-            "I have as much authority as the Pope. I just don't have as many people who believe it. - George Carlin",
-            "There`s no present. There`s only the immediate future and the recent past - George Carlin",
-            "Politics doesn't make strange bedfellows - marriage does. - Groucho Marx",
-            "I refuse to join any club that would have me as a member. - Groucho Marx",
-            "I tell ya when I was a kid, all I knew was rejection. My yo-yo, it never came back. - Rodney Dangerfield",
-            "I worked in a pet store and people kept asking how big I'd get. - Rodney Dangerfield"
+        "I think, therefore I am. I think - George Carlin",
+        "I have as much authority as the Pope. I just don't have as many people who believe it. - George Carlin",
+        "There`s no present. There`s only the immediate future and the recent past - George Carlin",
+        "Politics doesn't make strange bedfellows - marriage does. - Groucho Marx",
+        "I refuse to join any club that would have me as a member. - Groucho Marx",
+        "I tell ya when I was a kid, all I knew was rejection. My yo-yo, it never came back. - Rodney Dangerfield",
+        "I worked in a pet store and people kept asking how big I'd get. - Rodney Dangerfield"
     };
 
     @Override
@@ -97,11 +98,13 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("lucene:stdQuotesIndex:insert?analyzer=#stdAnalyzer&indexDir=#std&srcDir=#load_dir")
-                        .to("lucene:simpleQuotesIndex:insert?analyzer=#simpleAnalyzer&indexDir=#simple&srcDir=#load_dir")
-                        .to("lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&srcDir=#load_dir")
+                from("direct:start")
+                        .to("lucene:stdQuotesIndex:insert?analyzer=#stdAnalyzer&indexDir=#std&srcDir=#load_dir")
+                        .to(
+                                "lucene:simpleQuotesIndex:insert?analyzer=#simpleAnalyzer&indexDir=#simple&srcDir=#load_dir")
+                        .to(
+                                "lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&srcDir=#load_dir")
                         .to("mock:result");
-
             }
         });
         context.start();
@@ -122,25 +125,36 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
-                from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Seinfeld"))
+                from("direct:start")
+                        .setHeader(LuceneConstants.HEADER_QUERY, constant("Seinfeld"))
                         .to("lucene:searchIndex:query?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20")
                         .to("direct:next");
 
-                from("direct:next").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        Hits hits = exchange.getIn().getBody(Hits.class);
-                        printResults(hits);
-                    }
+                from("direct:next")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                Hits hits = exchange.getIn().getBody(Hits.class);
+                                printResults(hits);
+                            }
 
-                    private void printResults(Hits hits) {
-                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
-                        for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                            LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
-                            LOG.debug("Hit {} Score: {}", i, hits.getHit().get(i).getScore());
-                            LOG.debug("Hit {} Data: {}", hits.getHit().get(i).getData());
-                        }
-                    }
-                }).to("mock:searchResult");
+                            private void printResults(Hits hits) {
+                                LOG.debug("Number of hits: {}", hits.getNumberOfHits());
+                                for (int i = 0; i < hits.getNumberOfHits(); i++) {
+                                    LOG.debug(
+                                            "Hit {} Index Location: {}",
+                                            i,
+                                            hits.getHit().get(i).getHitLocation());
+                                    LOG.debug(
+                                            "Hit {} Score: {}",
+                                            i,
+                                            hits.getHit().get(i).getScore());
+                                    LOG.debug(
+                                            "Hit {} Data: {}",
+                                            hits.getHit().get(i).getData());
+                                }
+                            }
+                        })
+                        .to("mock:searchResult");
             }
         });
         context.start();
@@ -158,24 +172,37 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
-                from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Grouc?? Marx"))
-                        .to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20").to("direct:next");
+                from("direct:start")
+                        .setHeader(LuceneConstants.HEADER_QUERY, constant("Grouc?? Marx"))
+                        .to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20")
+                        .to("direct:next");
 
-                from("direct:next").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        Hits hits = exchange.getIn().getBody(Hits.class);
-                        printResults(hits);
-                    }
+                from("direct:next")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                Hits hits = exchange.getIn().getBody(Hits.class);
+                                printResults(hits);
+                            }
 
-                    private void printResults(Hits hits) {
-                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
-                        for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                            LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
-                            LOG.debug("Hit {} Score: {}", i, hits.getHit().get(i).getScore());
-                            LOG.debug("Hit {} Data: {}", i, hits.getHit().get(i).getData());
-                        }
-                    }
-                }).to("mock:searchResult");
+                            private void printResults(Hits hits) {
+                                LOG.debug("Number of hits: {}", hits.getNumberOfHits());
+                                for (int i = 0; i < hits.getNumberOfHits(); i++) {
+                                    LOG.debug(
+                                            "Hit {} Index Location: {}",
+                                            i,
+                                            hits.getHit().get(i).getHitLocation());
+                                    LOG.debug(
+                                            "Hit {} Score: {}",
+                                            i,
+                                            hits.getHit().get(i).getScore());
+                                    LOG.debug(
+                                            "Hit {} Data: {}",
+                                            i,
+                                            hits.getHit().get(i).getData());
+                                }
+                            }
+                        })
+                        .to("mock:searchResult");
             }
         });
         context.start();
@@ -192,36 +219,50 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
-                from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Grouc?? Marx"))
+                from("direct:start")
+                        .setHeader(LuceneConstants.HEADER_QUERY, constant("Grouc?? Marx"))
                         .setHeader(LuceneConstants.HEADER_RETURN_LUCENE_DOCS, constant("true"))
-                        .to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20").to("direct:next");
+                        .to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20")
+                        .to("direct:next");
 
-                from("direct:next").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Hits hits = exchange.getIn().getBody(Hits.class);
-                        printResults(hits);
-                    }
-
-                    private void printResults(Hits hits) throws Exception {
-                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
-                        for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                            LOG.debug("Hit {}  Index Location: {}", i, hits.getHit().get(i).getHitLocation());
-                            LOG.debug("Hit {}  Score: {}", i, hits.getHit().get(i).getScore());
-                            LOG.debug("Hit {}  Data: {}", i, hits.getHit().get(i).getData());
-                            if (hits.getHit().get(i).getDocument() == null) {
-                                throw new Exception("Failed to return lucene documents");
+                from("direct:next")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Hits hits = exchange.getIn().getBody(Hits.class);
+                                printResults(hits);
                             }
-                        }
-                    }
-                }).to("mock:searchResult").process(exchange -> {
-                    Hits hits = exchange.getIn().getBody(Hits.class);
-                    if (hits == null) {
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put("NO_LUCENE_DOCS_ERROR", "NO LUCENE DOCS FOUND");
-                        exchange.getContext().setGlobalOptions(map);
-                    }
-                    LOG.debug("Number of hits: {}", hits.getNumberOfHits());
-                });
+
+                            private void printResults(Hits hits) throws Exception {
+                                LOG.debug("Number of hits: {}", hits.getNumberOfHits());
+                                for (int i = 0; i < hits.getNumberOfHits(); i++) {
+                                    LOG.debug(
+                                            "Hit {}  Index Location: {}",
+                                            i,
+                                            hits.getHit().get(i).getHitLocation());
+                                    LOG.debug(
+                                            "Hit {}  Score: {}",
+                                            i,
+                                            hits.getHit().get(i).getScore());
+                                    LOG.debug(
+                                            "Hit {}  Data: {}",
+                                            i,
+                                            hits.getHit().get(i).getData());
+                                    if (hits.getHit().get(i).getDocument() == null) {
+                                        throw new Exception("Failed to return lucene documents");
+                                    }
+                                }
+                            }
+                        })
+                        .to("mock:searchResult")
+                        .process(exchange -> {
+                            Hits hits = exchange.getIn().getBody(Hits.class);
+                            if (hits == null) {
+                                HashMap<String, String> map = new HashMap<>();
+                                map.put("NO_LUCENE_DOCS_ERROR", "NO LUCENE DOCS FOUND");
+                                exchange.getContext().setGlobalOptions(map);
+                            }
+                            LOG.debug("Number of hits: {}", hits.getNumberOfHits());
+                        });
             }
         });
         context.start();

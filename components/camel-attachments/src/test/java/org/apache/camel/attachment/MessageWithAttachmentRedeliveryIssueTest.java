@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -27,10 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -45,16 +46,21 @@ public class MessageWithAttachmentRedeliveryIssueTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
-                exchange.getIn(AttachmentMessage.class).addAttachment("message1.xml",
-                        new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
-                exchange.getIn(AttachmentMessage.class).addAttachmentObject("message2.xml",
-                        new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
+                exchange.getIn(AttachmentMessage.class)
+                        .addAttachment(
+                                "message1.xml",
+                                new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
+                exchange.getIn(AttachmentMessage.class)
+                        .addAttachmentObject(
+                                "message2.xml",
+                                new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        AttachmentMessage msg = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn(AttachmentMessage.class);
+        AttachmentMessage msg =
+                getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn(AttachmentMessage.class);
         assertNotNull(msg);
 
         assertEquals("Hello World", msg.getBody());
@@ -78,8 +84,8 @@ public class MessageWithAttachmentRedeliveryIssueTest extends CamelTestSupport {
                                     throw new IllegalArgumentException("Forced");
                                 }
                             }
-                        }).to("mock:result");
-
+                        })
+                        .to("mock:result");
             }
         };
     }

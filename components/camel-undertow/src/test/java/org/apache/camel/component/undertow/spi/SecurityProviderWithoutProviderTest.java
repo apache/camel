@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.spi;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.net.URL;
@@ -26,10 +31,6 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Test of basic securityProvider scenario, when provider does not accepts security configuration.
  */
@@ -37,7 +38,8 @@ public class SecurityProviderWithoutProviderTest extends AbstractSecurityProvide
 
     @BeforeAll
     public static void createSecurtyProviderConfigurationFile() {
-        URL location = MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
+        URL location =
+                MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
         File file = new File(location.getPath() + "META-INF/services/" + UndertowSecurityProvider.class.getName());
         if (file.exists()) {
             file.delete();

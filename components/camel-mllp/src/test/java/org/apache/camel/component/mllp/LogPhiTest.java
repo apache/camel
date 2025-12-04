@@ -17,6 +17,11 @@
 
 package org.apache.camel.component.mllp;
 
+import static org.apache.camel.ExchangePattern.InOut;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.function.Consumer;
 
 import org.apache.camel.Endpoint;
@@ -31,11 +36,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.ExchangePattern.InOut;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogPhiTest extends CamelTestSupport {
 
@@ -80,18 +80,24 @@ public class LogPhiTest extends CamelTestSupport {
                 getContext().addComponent("mllplogphi", mllpComponentLogPhi);
                 getContext().addComponent("mllpdefault", mllpComponentLogPhiDefault);
                 from(startNoLogPhi)
-                        .toF("mllpnologphi://%s:%d?receiveTimeout=%d",
-                                mllpServer.getListenHost(), mllpServer.getListenPort(),
+                        .toF(
+                                "mllpnologphi://%s:%d?receiveTimeout=%d",
+                                mllpServer.getListenHost(),
+                                mllpServer.getListenPort(),
                                 SERVER_ACKNOWLEDGEMENT_DELAY / 2);
 
                 from(startLogPhi)
-                        .toF("mllplogphi://%s:%d?receiveTimeout=%d",
-                                mllpServer.getListenHost(), mllpServer.getListenPort(),
+                        .toF(
+                                "mllplogphi://%s:%d?receiveTimeout=%d",
+                                mllpServer.getListenHost(),
+                                mllpServer.getListenPort(),
                                 SERVER_ACKNOWLEDGEMENT_DELAY / 2);
 
                 from(startDefaultPhi)
-                        .toF("mllpdefault://%s:%d?receiveTimeout=%d",
-                                mllpServer.getListenHost(), mllpServer.getListenPort(),
+                        .toF(
+                                "mllpdefault://%s:%d?receiveTimeout=%d",
+                                mllpServer.getListenHost(),
+                                mllpServer.getListenPort(),
                                 SERVER_ACKNOWLEDGEMENT_DELAY / 2);
             }
         };

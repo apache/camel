@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -31,12 +32,14 @@ public class DependencyListITCase extends JBangTestSupport {
     @InVersion(includeSnapshot = false)
     public void testDependencyList() {
         checkCommandOutputs("dependency list", "org.apache.camel:camel-main:" + version());
-        checkCommandOutputs("dependency list --output=maven", "<dependency>\n" +
-                                                              "    <groupId>org.apache.camel</groupId>\n" +
-                                                              "    <artifactId>camel-main</artifactId>\n" +
-                                                              "    <version>" + version() + "</version>\n" +
-                                                              "</dependency>");
-        checkCommandOutputs("dependency list --runtime=spring-boot",
+        checkCommandOutputs(
+                "dependency list --output=maven",
+                "<dependency>\n" + "    <groupId>org.apache.camel</groupId>\n"
+                        + "    <artifactId>camel-main</artifactId>\n"
+                        + "    <version>"
+                        + version() + "</version>\n" + "</dependency>");
+        checkCommandOutputs(
+                "dependency list --runtime=spring-boot",
                 "org.apache.camel.springboot:camel-spring-boot-starter:" + version());
     }
 

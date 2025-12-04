@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.util;
 
 import java.util.logging.Logger;
@@ -52,5 +53,4 @@ public class DataOutInterceptor extends AbstractOutDatabindingInterceptor {
             throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION", JUL_LOG, e), e);
         }
     }
-
 }

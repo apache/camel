@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -28,9 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Based on user forum.
@@ -52,14 +53,16 @@ public class JmsHttpJmsTest extends CamelTestSupport {
         template.sendBody("jms:in", "Hello World");
 
         Endpoint endpoint = context.getEndpoint("jms:out");
-        endpoint.createConsumer(exchange -> assertEquals("Bye World", exchange.getIn().getBody(String.class)));
+        endpoint.createConsumer(
+                exchange -> assertEquals("Bye World", exchange.getIn().getBody(String.class)));
 
         mock.assertIsSatisfied();
     }
 
     @Test
     void testResultReplyJms() throws Exception {
-        Exchange exchange = template.request("jms:reply?replyTo=bar", exchange1 -> exchange1.getIn().setBody("Hello World"));
+        Exchange exchange = template.request(
+                "jms:reply?replyTo=bar", exchange1 -> exchange1.getIn().setBody("Hello World"));
         assertEquals("Bye World", exchange.getMessage().getBody(String.class));
         assertTrue(exchange.getMessage().hasHeaders(), "Should have headers");
         assertEquals("ActiveMQQueue[bar]", exchange.getMessage().getHeader("JMSDestination", String.class));
@@ -71,8 +74,10 @@ public class JmsHttpJmsTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("jms:in").to("http://localhost:" + port + "/myservice").convertBodyTo(String.class).to("jms:out",
-                        "mock:result");
+                from("jms:in")
+                        .to("http://localhost:" + port + "/myservice")
+                        .convertBodyTo(String.class)
+                        .to("jms:out", "mock:result");
 
                 from("jms:reply").to("http://localhost:" + port + "/myservice");
 
@@ -89,5 +94,4 @@ public class JmsHttpJmsTest extends CamelTestSupport {
         amq.setCamelContext(context);
         registry.bind("jms", amq);
     }
-
 }

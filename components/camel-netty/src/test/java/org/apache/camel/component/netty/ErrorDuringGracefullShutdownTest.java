@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,8 +30,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Regression test for CAMEL-9527
@@ -47,8 +48,7 @@ class ErrorDuringGracefullShutdownTest extends BaseNettyTest {
                         .log("Got request ${body}")
                         .setBody(constant("response"));
 
-                from("direct:req")
-                        .to("netty:tcp://127.0.0.1:{{port}}?textline=true");
+                from("direct:req").to("netty:tcp://127.0.0.1:{{port}}?textline=true");
             }
         };
     }
@@ -62,7 +62,8 @@ class ErrorDuringGracefullShutdownTest extends BaseNettyTest {
         // when: context is closed
         context().close();
 
-        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
                 .until(() -> context.getStatus(), Matchers.equalTo(ServiceStatus.Stopped));
 
         // then: there should be no entries in log indicating that the callback was called twice

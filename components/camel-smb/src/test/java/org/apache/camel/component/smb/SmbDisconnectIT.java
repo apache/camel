@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -27,9 +31,6 @@ import javax.net.SocketFactory;
 import com.hierynomus.smbj.SmbConfig;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SmbDisconnectIT extends SmbServerTestSupport {
 
     public static final String SOCKET_TRACKING_SMB_CONFIG = "socketTrackingSmbConfig";
@@ -37,7 +38,11 @@ public class SmbDisconnectIT extends SmbServerTestSupport {
     protected String getSmbUrl() {
         return String.format(
                 "smb:%s/%s/disconnect?username=%s&password=%s&smbConfig=#%s&disconnect=true&initialDelay=5000",
-                service.address(), service.shareName(), service.userName(), service.password(), SOCKET_TRACKING_SMB_CONFIG);
+                service.address(),
+                service.shareName(),
+                service.userName(),
+                service.password(),
+                SOCKET_TRACKING_SMB_CONFIG);
     }
 
     @Test
@@ -56,14 +61,16 @@ public class SmbDisconnectIT extends SmbServerTestSupport {
         String out = consumer.receiveBody(getSmbUrl(), 5000L, String.class);
 
         assertEquals("Hello World", out);
-        assertSocketsAreClosed(socketFactory, 2, "There should be two tracked and closed sockets (producer and consumer)");
+        assertSocketsAreClosed(
+                socketFactory, 2, "There should be two tracked and closed sockets (producer and consumer)");
     }
 
     private TrackingSocketFactory createAndBindSocketTrackingSmbConfig() {
         TrackingSocketFactory socketFactory = new TrackingSocketFactory();
-        context.getRegistry().bind(SOCKET_TRACKING_SMB_CONFIG, SmbConfig.builder()
-                .withSocketFactory(socketFactory)
-                .build());
+        context.getRegistry()
+                .bind(
+                        SOCKET_TRACKING_SMB_CONFIG,
+                        SmbConfig.builder().withSocketFactory(socketFactory).build());
         return socketFactory;
     }
 
@@ -107,7 +114,8 @@ public class SmbDisconnectIT extends SmbServerTestSupport {
         }
 
         @Override
-        public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+        public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort)
+                throws IOException {
             Socket socket = delegate.createSocket(address, port, localAddress, localPort);
             trackedSockets.add(socket);
             return socket;

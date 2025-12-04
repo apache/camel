@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
 
 import org.apache.camel.Category;
@@ -30,9 +31,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform chat operations using Spring AI.
  */
-@UriEndpoint(firstVersion = "4.17.0", scheme = "spring-ai-chat", title = "Spring AI Chat",
-             syntax = "spring-ai-chat:chatId", producerOnly = true, category = { Category.AI },
-             headersClass = SpringAiChatConstants.class)
+@UriEndpoint(
+        firstVersion = "4.17.0",
+        scheme = "spring-ai-chat",
+        title = "Spring AI Chat",
+        syntax = "spring-ai-chat:chatId",
+        producerOnly = true,
+        category = {Category.AI},
+        headersClass = SpringAiChatConstants.class)
 public class SpringAiChatEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "The ID of the chat endpoint")
@@ -41,7 +47,8 @@ public class SpringAiChatEndpoint extends DefaultEndpoint implements EndpointSer
     @UriParam
     private SpringAiChatConfiguration configuration;
 
-    public SpringAiChatEndpoint(String uri, Component component, SpringAiChatConfiguration configuration, String chatId) {
+    public SpringAiChatEndpoint(
+            String uri, Component component, SpringAiChatConfiguration configuration, String chatId) {
         super(uri, component);
         this.configuration = configuration;
         this.chatId = chatId;

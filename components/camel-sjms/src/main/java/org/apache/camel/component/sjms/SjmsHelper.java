@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import jakarta.jms.Connection;
@@ -25,8 +26,7 @@ import jakarta.jms.Session;
 
 public final class SjmsHelper {
 
-    private SjmsHelper() {
-    }
+    private SjmsHelper() {}
 
     public static void closeProducer(MessageProducer producer) {
         if (producer != null) {
@@ -112,5 +112,4 @@ public final class SjmsHelper {
     public static boolean isTransactionOrClientAcknowledgeMode(Session session) throws JMSException {
         return session.getTransacted() || session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE;
     }
-
 }

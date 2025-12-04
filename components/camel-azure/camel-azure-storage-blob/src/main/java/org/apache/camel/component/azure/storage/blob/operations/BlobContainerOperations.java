@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.time.Duration;
@@ -66,16 +67,16 @@ public class BlobContainerOperations {
         final PublicAccessType publicAccessType = configurationProxy.getPublicAccessType(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
 
-        final BlobExchangeHeaders blobExchangeHeaders
-                = new BlobExchangeHeaders().httpHeaders(client.createContainer(metadata, publicAccessType, timeout));
+        final BlobExchangeHeaders blobExchangeHeaders =
+                new BlobExchangeHeaders().httpHeaders(client.createContainer(metadata, publicAccessType, timeout));
         return BlobOperationResponse.createWithEmptyBody(blobExchangeHeaders.toMap());
     }
 
     public BlobOperationResponse deleteContainer(final Exchange exchange) {
         final BlobRequestConditions blobRequestConditions = configurationProxy.getBlobRequestConditions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
-        final BlobExchangeHeaders blobExchangeHeaders
-                = new BlobExchangeHeaders().httpHeaders(client.deleteContainer(blobRequestConditions, timeout));
+        final BlobExchangeHeaders blobExchangeHeaders =
+                new BlobExchangeHeaders().httpHeaders(client.deleteContainer(blobRequestConditions, timeout));
         return BlobOperationResponse.createWithEmptyBody(blobExchangeHeaders.toMap());
     }
 }

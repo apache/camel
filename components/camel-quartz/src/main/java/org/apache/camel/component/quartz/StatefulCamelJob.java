@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import org.quartz.DisallowConcurrentExecution;
@@ -26,6 +27,4 @@ import org.quartz.PersistJobDataAfterExecution;
  */
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class StatefulCamelJob extends CamelJob {
-
-}
+public class StatefulCamelJob extends CamelJob {}

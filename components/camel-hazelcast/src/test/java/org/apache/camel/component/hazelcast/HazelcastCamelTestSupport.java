@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
@@ -22,8 +25,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class HazelcastCamelTestSupport extends CamelTestSupport {
 
@@ -39,18 +40,13 @@ public class HazelcastCamelTestSupport extends CamelTestSupport {
         return context;
     }
 
-    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
+    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {}
 
-    }
-
-    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
-
-    }
+    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {}
 
     @AfterEach
     public final void verifyHazelcastInstanceMock() {
         verifyHazelcastInstance(hazelcastInstance);
         verifyNoMoreInteractions(hazelcastInstance);
     }
-
 }

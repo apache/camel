@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -26,10 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteGetPropertiesTest extends ManagementTestSupport {
@@ -46,12 +47,12 @@ public class ManagedRouteGetPropertiesTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "getRouteProperties", null, null);
 
         assertNotNull(data);
-        assertTrue(data.containsKey(new Object[] { "key1" }));
-        assertEquals("key1", data.get(new Object[] { "key1" }).get("key"));
-        assertEquals("val1", data.get(new Object[] { "key1" }).get("value"));
-        assertTrue(data.containsKey(new Object[] { "key2" }));
-        assertEquals("key2", data.get(new Object[] { "key2" }).get("key"));
-        assertEquals("val2", data.get(new Object[] { "key2" }).get("value"));
+        assertTrue(data.containsKey(new Object[] {"key1"}));
+        assertEquals("key1", data.get(new Object[] {"key1"}).get("key"));
+        assertEquals("val1", data.get(new Object[] {"key1"}).get("value"));
+        assertTrue(data.containsKey(new Object[] {"key2"}));
+        assertEquals("key2", data.get(new Object[] {"key2"}).get("key"));
+        assertEquals("val2", data.get(new Object[] {"key2"}).get("value"));
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import java.util.Properties;
@@ -60,7 +61,9 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("goto").simple("${bean:myBean.whereToMate({{myApp}}, ${header.id})}")
+                from("direct:start")
+                        .setHeader("goto")
+                        .simple("${bean:myBean.whereToMate({{myApp}}, ${header.id})}")
                         .to("mock:result");
             }
         };
@@ -71,6 +74,5 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
         public String whereToMate(String version, String id) {
             return "mock:" + version + "/" + id;
         }
-
     }
 }

@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.chat.openai;
+
+import static java.time.Duration.ofSeconds;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-
-import static java.time.Duration.ofSeconds;
 
 public final class OpenAiChatLanguageModelBuilder {
     private String apiKey;

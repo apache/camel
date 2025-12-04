@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.concurrent.Callable;
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class JdbcAggregateLoadConcurrentTest extends AbstractJdbcAggregationTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcAggregateLoadConcurrentTest.class);
-    private static final char[] KEYS = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+    private static final char[] KEYS = new char[] {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
     private static final int SIZE = 500;
 
     @Test

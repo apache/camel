@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,8 +39,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.csv.CSVFormat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * <b>Camel</b> based test cases for {@link org.apache.camel.dataformat.csv.CsvDataFormat}.
@@ -69,8 +70,7 @@ public class CsvMarshalHeaderFromCsvFormatTest extends CamelTestSupport {
         body.put("first_name", "Max");
         body.put("last_name", "Mustermann");
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
-        try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI()))
-                .filter(l -> !l.isBlank())) {
+        try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI())).filter(l -> !l.isBlank())) {
             List<String> lines = stream.toList();
             // We got twice the headers... :(
             assertEquals(4, lines.size());
@@ -85,8 +85,7 @@ public class CsvMarshalHeaderFromCsvFormatTest extends CamelTestSupport {
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
         body = Collections.singletonList(Arrays.asList("Max", "Mustermann"));
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
-        try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI()))
-                .filter(l -> !l.isBlank())) {
+        try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI())).filter(l -> !l.isBlank())) {
             List<String> lines = stream.toList();
             // We got twice the headers... :(
             assertEquals(4, lines.size());
@@ -98,8 +97,9 @@ public class CsvMarshalHeaderFromCsvFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String uri
-                        = String.format("file:%s?charset=utf-8&fileExist=Append", outputFile.getParentFile().getAbsolutePath());
+                String uri = String.format(
+                        "file:%s?charset=utf-8&fileExist=Append",
+                        outputFile.getParentFile().getAbsolutePath());
                 from("direct:start").marshal(createCsvDataFormat()).to(uri);
             }
         };

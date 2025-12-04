@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.ArrayList;
@@ -145,8 +146,7 @@ public class AntPathMatcher {
             if (!fullMatch) {
                 return true;
             }
-            if (pattIdxStart == pattIdxEnd && pattDirs[pattIdxStart].equals("*")
-                    && path.endsWith(this.pathSeparator)) {
+            if (pattIdxStart == pattIdxEnd && pattDirs[pattIdxStart].equals("*") && path.endsWith(this.pathSeparator)) {
                 return true;
             }
             for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
@@ -204,7 +204,8 @@ public class AntPathMatcher {
             int strLength = pathIdxEnd - pathIdxStart + 1;
             int foundIdx = -1;
 
-            strLoop: for (int i = 0; i <= strLength - patLength; i++) {
+            strLoop:
+            for (int i = 0; i <= strLength - patLength; i++) {
                 for (int j = 0; j < patLength; j++) {
                     String subPat = pattDirs[pattIdxStart + j + 1];
                     String subStr = pathDirs[pathIdxStart + i + j];
@@ -346,7 +347,8 @@ public class AntPathMatcher {
             int patLength = patIdxTmp - patIdxStart - 1;
             int strLength = strIdxEnd - strIdxStart + 1;
             int foundIdx = -1;
-            strLoop: for (int i = 0; i <= strLength - patLength; i++) {
+            strLoop:
+            for (int i = 0; i <= strLength - patLength; i++) {
                 for (int j = 0; j < patLength; j++) {
                     ch = patArr[patIdxStart + j + 1];
                     if (ch != '?') {
@@ -486,5 +488,4 @@ public class AntPathMatcher {
         }
         return location.substring(0, rootDirEnd);
     }
-
 }

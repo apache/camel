@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +33,6 @@ import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactor
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ServiceBusEndpointTest extends CamelTestSupport {
 
@@ -71,8 +72,8 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         params.put("connectionString", "testString");
         params.put("binary", "true");
 
-        final ServiceBusEndpoint endpoint
-                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+        final ServiceBusEndpoint endpoint =
+                (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
                         .createEndpoint(uri, remaining, params);
 
         assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
@@ -93,8 +94,8 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         params.put("binary", "true");
         params.put("sessionId", "session-1");
 
-        final ServiceBusEndpoint endpoint
-                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+        final ServiceBusEndpoint endpoint =
+                (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
                         .createEndpoint(uri, remaining, params);
 
         assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
@@ -115,8 +116,8 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         params.put("prefetchCount", 10);
         params.put("fullyQualifiedNamespace", fullyQualifiedNamespace);
 
-        final ServiceBusEndpoint endpoint
-                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+        final ServiceBusEndpoint endpoint =
+                (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
                         .createEndpoint(uri, remaining, params);
 
         assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
@@ -138,8 +139,8 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         params.put("fullyQualifiedNamespace", fullyQualifiedNamespace);
         params.put("tokenCredential", credential);
 
-        final ServiceBusEndpoint endpoint
-                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+        final ServiceBusEndpoint endpoint =
+                (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
                         .createEndpoint(uri, remaining, params);
 
         assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
@@ -161,8 +162,8 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         params.put("prefetchCount", 10);
         params.put("fullyQualifiedNamespace", fullyQualifiedNamespace);
 
-        final ServiceBusEndpoint endpoint
-                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+        final ServiceBusEndpoint endpoint =
+                (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
                         .createEndpoint(uri, remaining, params);
 
         assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
@@ -185,8 +186,8 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         params.put("fullyQualifiedNamespace", fullyQualifiedNamespace);
         params.put("credentialType", CredentialType.AZURE_IDENTITY);
 
-        final ServiceBusEndpoint endpoint
-                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+        final ServiceBusEndpoint endpoint =
+                (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
                         .createEndpoint(uri, remaining, params);
 
         assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
@@ -199,7 +200,8 @@ class ServiceBusEndpointTest extends CamelTestSupport {
     @Test
     void testCreateBaseServiceBusClientWithNoCredentialType() throws Exception {
         ServiceBusConfiguration configuration = new ServiceBusConfiguration();
-        configuration.setConnectionString("Endpoint=sb://camel.apache.org/;SharedAccessKeyName=test;SharedAccessKey=test");
+        configuration.setConnectionString(
+                "Endpoint=sb://camel.apache.org/;SharedAccessKeyName=test;SharedAccessKey=test");
         configuration.setTopicOrQueueName("myQueue");
         ServiceBusClientFactory factory = new ServiceBusClientFactory();
         ServiceBusSenderClient senderClient = factory.createServiceBusSenderClient(configuration);

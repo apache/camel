@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -85,7 +86,6 @@ public final class ReferenceCount {
     }
 
     public static ReferenceCount onRelease(Runnable onRelease) {
-        return new ReferenceCount(() -> {
-        }, onRelease);
+        return new ReferenceCount(() -> {}, onRelease);
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
 
 import java.util.Collection;
@@ -35,8 +36,7 @@ class ShardTree {
     }
 
     List<Shard> getRoots() {
-        List<Shard> roots = shards.values()
-                .stream()
+        List<Shard> roots = shards.values().stream()
                 .filter(s -> !shards.containsKey(s.parentShardId()))
                 .toList();
         if (roots.isEmpty()) {
@@ -46,15 +46,13 @@ class ShardTree {
     }
 
     List<Shard> getLeaves() {
-        return shards.values()
-                .stream()
+        return shards.values().stream()
                 .filter(s -> s.sequenceNumberRange().endingSequenceNumber() == null)
                 .toList();
     }
 
     List<Shard> getChildren(String shardId) {
-        return shards.values()
-                .stream()
+        return shards.values().stream()
                 .filter(s -> shardId.equals(s.parentShardId()))
                 .toList();
     }
@@ -63,5 +61,4 @@ class ShardTree {
     public String toString() {
         return "ShardList{" + "shards=" + shards + '}';
     }
-
 }

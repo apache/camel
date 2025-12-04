@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant.transform;
 
 import java.util.UUID;
@@ -36,16 +37,18 @@ import org.apache.camel.spi.Transformer;
 /**
  * Maps a LangChain4j Embeddings to a Qdrant PointStruct to write an embeddings vector on a Qdrant Database.
  */
-@DataTypeTransformer(name = "qdrant:embeddings",
-                     description = "Prepares the message to become an object writable by Qdrant component")
+@DataTypeTransformer(
+        name = "qdrant:embeddings",
+        description = "Prepares the message to become an object writable by Qdrant component")
 public class QdrantEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        Embedding embedding =
+                message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
         TextSegment text = message.getBody(TextSegment.class);
-        Common.PointId id
-                = message.getHeader(Qdrant.Headers.POINT_ID, () -> PointIdFactory.id(UUID.randomUUID()), Common.PointId.class);
+        Common.PointId id = message.getHeader(
+                Qdrant.Headers.POINT_ID, () -> PointIdFactory.id(UUID.randomUUID()), Common.PointId.class);
 
         var builder = Points.PointStruct.newBuilder();
         builder.setId(id);
@@ -54,9 +57,7 @@ public class QdrantEmbeddingsDataTypeTransformer extends Transformer {
         if (text != null) {
             builder.putPayload("text_segment", ValueFactory.value(text.text()));
             Metadata metadata = text.metadata();
-            metadata.toMap()
-                    .forEach((key, value) -> builder.putPayload(key, ValueFactory.value((String) value)));
-
+            metadata.toMap().forEach((key, value) -> builder.putPayload(key, ValueFactory.value((String) value)));
         }
 
         message.setBody(builder.build());

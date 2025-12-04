@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pdf;
 
 import org.apache.camel.Category;
@@ -28,9 +29,15 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Create, modify or extract content from PDF documents.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true,
-             remote = false, category = { Category.DOCUMENT, Category.TRANSFORMATION },
-             headersClass = PdfHeaderConstants.class)
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = "pdf",
+        title = "PDF",
+        syntax = "pdf:operation",
+        producerOnly = true,
+        remote = false,
+        category = {Category.DOCUMENT, Category.TRANSFORMATION},
+        headersClass = PdfHeaderConstants.class)
 public class PdfEndpoint extends DefaultEndpoint {
 
     @UriParam

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Collection;
@@ -38,5 +39,4 @@ public class DefaultDevConsolesLoaderTest extends ContextTestSupport {
         Collection<DevConsole> col = loader.loadDevConsoles(true);
         Assertions.assertTrue(col.size() > 3);
     }
-
 }

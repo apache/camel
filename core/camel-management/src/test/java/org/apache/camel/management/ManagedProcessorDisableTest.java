@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -26,10 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedProcessorDisableTest extends ManagementTestSupport {
@@ -53,9 +54,9 @@ public class ManagedProcessorDisableTest extends ManagementTestSupport {
         Long counter = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1L, counter.longValue());
 
-        ManagedProcessorMBean mb
-                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
-                        .getManagedProcessor("myProcessor");
+        ManagedProcessorMBean mb = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedProcessor("myProcessor");
         assertNotNull(mb);
         assertEquals(1L, mb.getExchangesCompleted());
         assertEquals(false, mb.getDisabled());
@@ -88,11 +89,12 @@ public class ManagedProcessorDisableTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo")
-                        .setBody(simple("Hello ${body}")).id("myProcessor")
+                from("direct:start")
+                        .routeId("foo")
+                        .setBody(simple("Hello ${body}"))
+                        .id("myProcessor")
                         .to("mock:result");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.fhir.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
@@ -23,9 +24,7 @@ import org.slf4j.LoggerFactory;
 public final class FhirServiceFactory {
     private static final Logger LOG = LoggerFactory.getLogger(FhirServiceFactory.class);
 
-    private FhirServiceFactory() {
-
-    }
+    private FhirServiceFactory() {}
 
     public static SimpleTestServiceBuilder<FhirService> builder() {
         return new SimpleTestServiceBuilder<>("fhir");
@@ -45,6 +44,5 @@ public final class FhirServiceFactory {
                 .build();
     }
 
-    public static class FhirRemoteTestService extends FhirRemoteInfraService implements FhirService {
-    }
+    public static class FhirRemoteTestService extends FhirRemoteInfraService implements FhirService {}
 }

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax;
+
+import static org.apache.camel.component.stax.StAXBuilder.stax;
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,12 +40,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.stax.StAXBuilder.stax;
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -91,9 +92,11 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
                                 watch.restart();
                             }
                         })
-                        .split(stax(Order.class)).streaming()
+                        .split(stax(Order.class))
+                        .streaming()
                         .choice()
-                        .when().xpath("/order/amount < 10")
+                        .when()
+                        .xpath("/order/amount < 10")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
@@ -106,7 +109,8 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
                                 }
                             }
                         })
-                        .when().xpath("/order/amount < 50")
+                        .when()
+                        .xpath("/order/amount < 50")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
@@ -119,7 +123,8 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
                                 }
                             }
                         })
-                        .when().xpath("/order/amount < 100")
+                        .when()
+                        .xpath("/order/amount < 100")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
@@ -188,5 +193,4 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
 
         log.info("Creating data file done.");
     }
-
 }

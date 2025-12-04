@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Path;
@@ -29,8 +30,10 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--id" },
-                        description = "Route ids (multiple ids can be separated by comma)", defaultValue = "*")
+    @CommandLine.Option(
+            names = {"--id"},
+            description = "Route ids (multiple ids can be separated by comma)",
+            defaultValue = "*")
     String id = "*";
 
     public CamelRouteAction(CamelJBangMain main) {

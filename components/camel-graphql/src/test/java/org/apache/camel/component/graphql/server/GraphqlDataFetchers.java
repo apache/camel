@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.graphql.server;
 
 import java.util.Arrays;
@@ -34,8 +35,7 @@ public final class GraphqlDataFetchers {
             new Author("author-2", "Herman Melville"),
             new Author("author-3", "Anne Rice"));
 
-    private GraphqlDataFetchers() {
-    }
+    private GraphqlDataFetchers() {}
 
     public static DataFetcher<List<Book>> getBooksDataFetcher() {
         return dataFetchingEnvironment -> BOOKS;
@@ -44,7 +44,10 @@ public final class GraphqlDataFetchers {
     public static DataFetcher<Book> getBookByIdDataFetcher() {
         return dataFetchingEnvironment -> {
             String bookId = dataFetchingEnvironment.getArgument("id");
-            return BOOKS.stream().filter(book -> book.getId().equals(bookId)).findFirst().orElse(null);
+            return BOOKS.stream()
+                    .filter(book -> book.getId().equals(bookId))
+                    .findFirst()
+                    .orElse(null);
         };
     }
 
@@ -52,7 +55,10 @@ public final class GraphqlDataFetchers {
         return dataFetchingEnvironment -> {
             Book book = dataFetchingEnvironment.getSource();
             String authorId = book.getAuthorId();
-            return AUTHORS.stream().filter(author -> author.getId().equals(authorId)).findFirst().orElse(null);
+            return AUTHORS.stream()
+                    .filter(author -> author.getId().equals(authorId))
+                    .findFirst()
+                    .orElse(null);
         };
     }
 

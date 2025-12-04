@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +33,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractJpaMethodTest extends AbstractJpaMethodSupport {
 
@@ -48,18 +49,30 @@ public abstract class AbstractJpaMethodTest extends AbstractJpaMethodSupport {
 
         assertEquals(customer.getName(), receivedCustomer.getName());
         assertNotNull(receivedCustomer.getId());
-        assertEquals(customer.getAddress().getAddressLine1(), receivedCustomer.getAddress().getAddressLine1());
-        assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
+        assertEquals(
+                customer.getAddress().getAddressLine1(),
+                receivedCustomer.getAddress().getAddressLine1());
+        assertEquals(
+                customer.getAddress().getAddressLine2(),
+                receivedCustomer.getAddress().getAddressLine2());
         assertNotNull(receivedCustomer.getAddress().getId());
 
-        List<?> results = entityManager.createQuery("select o from " + Customer.class.getName() + " o").getResultList();
+        List<?> results = entityManager
+                .createQuery("select o from " + Customer.class.getName() + " o")
+                .getResultList();
         assertEquals(1, results.size());
         Customer persistedCustomer = (Customer) results.get(0);
         assertEquals(receivedCustomer.getName(), persistedCustomer.getName());
         assertEquals(receivedCustomer.getId(), persistedCustomer.getId());
-        assertEquals(receivedCustomer.getAddress().getAddressLine1(), persistedCustomer.getAddress().getAddressLine1());
-        assertEquals(receivedCustomer.getAddress().getAddressLine2(), persistedCustomer.getAddress().getAddressLine2());
-        assertEquals(receivedCustomer.getAddress().getId(), persistedCustomer.getAddress().getId());
+        assertEquals(
+                receivedCustomer.getAddress().getAddressLine1(),
+                persistedCustomer.getAddress().getAddressLine1());
+        assertEquals(
+                receivedCustomer.getAddress().getAddressLine2(),
+                persistedCustomer.getAddress().getAddressLine2());
+        assertEquals(
+                receivedCustomer.getAddress().getId(),
+                persistedCustomer.getAddress().getId());
     }
 
     @Test
@@ -81,7 +94,7 @@ public abstract class AbstractJpaMethodTest extends AbstractJpaMethodSupport {
     public void produceNewEntitiesFromArray() throws Exception {
         setUp("jpa://" + Customer[].class.getName() + "?usePersist=" + (usePersist() ? "true" : "false"));
 
-        Customer[] customers = new Customer[] { createDefaultCustomer(), createDefaultCustomer() };
+        Customer[] customers = new Customer[] {createDefaultCustomer(), createDefaultCustomer()};
         Object reply = template.requestBody(endpoint, customers);
 
         Customer[] returnedCustomers = (Customer[]) reply;
@@ -120,9 +133,14 @@ public abstract class AbstractJpaMethodTest extends AbstractJpaMethodSupport {
         assertNotNull(receivedCustomer);
         assertEquals(customer.getName(), receivedCustomer.getName());
         assertEquals(customer.getId(), receivedCustomer.getId());
-        assertEquals(customer.getAddress().getAddressLine1(), receivedCustomer.getAddress().getAddressLine1());
-        assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
-        assertEquals(customer.getAddress().getId(), receivedCustomer.getAddress().getId());
+        assertEquals(
+                customer.getAddress().getAddressLine1(),
+                receivedCustomer.getAddress().getAddressLine1());
+        assertEquals(
+                customer.getAddress().getAddressLine2(),
+                receivedCustomer.getAddress().getAddressLine2());
+        assertEquals(
+                customer.getAddress().getId(), receivedCustomer.getAddress().getId());
 
         // give a bit time for consumer to delete after done
         Thread.sleep(1000);
@@ -130,5 +148,4 @@ public abstract class AbstractJpaMethodTest extends AbstractJpaMethodSupport {
         assertEntitiesInDatabase(0, Customer.class.getName());
         assertEntitiesInDatabase(0, Address.class.getName());
     }
-
 }

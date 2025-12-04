@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
+
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -36,17 +40,13 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class SalesforceTimeFormatsTest {
 
     public static class DateTransferObject<T> {
 
         private T value;
 
-        public DateTransferObject() {
-        }
+        public DateTransferObject() {}
 
         public DateTransferObject(final T value) {
             this.value = value;
@@ -93,10 +93,11 @@ public class SalesforceTimeFormatsTest {
     @MethodSource("cases")
     public void shouldDeserializeJson(DateTransferObject<?> dto, String json, Class<?> parameterType)
             throws IOException {
-        final JavaType javaType
-                = TypeFactory.defaultInstance().constructParametricType(DateTransferObject.class, parameterType);
+        final JavaType javaType =
+                TypeFactory.defaultInstance().constructParametricType(DateTransferObject.class, parameterType);
 
-        final DateTransferObject<?> deserialized = objectMapper.readerFor(javaType).readValue(json);
+        final DateTransferObject<?> deserialized =
+                objectMapper.readerFor(javaType).readValue(json);
 
         assertDeserializationResult(dto, deserialized);
     }
@@ -116,8 +117,8 @@ public class SalesforceTimeFormatsTest {
             // loose time zone information
             final ZonedDateTime dtoValue = (ZonedDateTime) dto.value;
             final ZonedDateTime deserializedValue = (ZonedDateTime) deserialized.value;
-            String actual
-                    = deserializedValue.format(DateTimeFormatter.ISO_INSTANT).replaceAll("000\\+00:00", "000+0000");
+            String actual =
+                    deserializedValue.format(DateTimeFormatter.ISO_INSTANT).replaceAll("000\\+00:00", "000+0000");
             String expected = dtoValue.format(DateTimeFormatter.ISO_INSTANT);
 
             assertThat(actual).isEqualTo(expected);
@@ -131,27 +132,32 @@ public class SalesforceTimeFormatsTest {
         final ZonedDateTime zonedDateTime = ZonedDateTime.of(localDate.atTime(10, 54, 57), ZoneId.of("Z"));
         final Instant instant = zonedDateTime.toInstant();
 
-        final String zone = DateTimeFormatter.ofPattern("XX").format(zonedDateTime.withZoneSameLocal(ZoneId.systemDefault()));
+        final String zone =
+                DateTimeFormatter.ofPattern("XX").format(zonedDateTime.withZoneSameLocal(ZoneId.systemDefault()));
 
-        return Arrays.asList(//
+        return Arrays.asList( //
                 dto(Date.from(instant), "2007-03-19T10:54:57.000+0000"), // 0
                 dto(Date.from(localDate.atStartOfDay().toInstant(ZoneOffset.UTC)), "2007-03-19T00:00:00.000+0000"), // 1
                 dto(localDate, "2007-03-19"), // 2
                 dto(zonedDateTime.toLocalDateTime(), "2007-03-19T10:54:57.000" + zone), // 3
                 dto(zonedDateTime.toOffsetDateTime(), "2007-03-19T10:54:57.000Z"), // 4
                 dto(zonedDateTime.toOffsetDateTime(), "2007-03-19T10:54:57.000Z"), // 5
-                dto(zonedDateTime.toOffsetDateTime().withOffsetSameInstant(ZoneOffset.of("-7")),
+                dto(
+                        zonedDateTime.toOffsetDateTime().withOffsetSameInstant(ZoneOffset.of("-7")),
                         "2007-03-19T03:54:57.000-0700"), // 6
                 dto(zonedDateTime, "2007-03-19T10:54:57.000Z"), // 7
                 dto(zonedDateTime.withZoneSameInstant(ZoneId.of("Asia/Kolkata")), "2007-03-19T16:24:57.000+0530"), // 8
                 dto(zonedDateTime.withZoneSameInstant(ZoneId.of("+3")), "2007-03-19T13:54:57.000+0300"), // 9
-                dto(instant,
+                dto(
+                        instant,
                         instant.atZone(ZoneId.systemDefault())
                                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXX"))), // 10
-                dto(ZonedDateTime.of(2018, 03, 22, 9, 58, 8, 5000000, ZoneId.of("Z")), "2018-03-22T09:58:08.005Z"), // 11
+                dto(
+                        ZonedDateTime.of(2018, 03, 22, 9, 58, 8, 5000000, ZoneId.of("Z")),
+                        "2018-03-22T09:58:08.005Z"), // 11
                 dto(OffsetTime.of(LocalTime.MIDNIGHT, ZoneOffset.UTC), "00:00:00.000Z"), // 12
                 dto(OffsetTime.of(12, 13, 14, 7000000, ZoneOffset.UTC), "12:13:14.007Z") // 13
-        );
+                );
     }
 
     private static Object[] dto(final Object value, final String serialized) {
@@ -159,6 +165,6 @@ public class SalesforceTimeFormatsTest {
 
         final String json = format(JSON_FMT, serialized);
 
-        return new Object[] { dto, json, value.getClass() };
+        return new Object[] {dto, json, value.getClass()};
     }
 }

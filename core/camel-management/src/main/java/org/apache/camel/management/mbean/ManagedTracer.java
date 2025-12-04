@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -102,5 +103,4 @@ public class ManagedTracer implements ManagedTracerMBean {
     public void resetTraceCounter() {
         tracer.resetTraceCounter();
     }
-
 }

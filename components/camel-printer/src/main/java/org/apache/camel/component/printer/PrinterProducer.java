@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.printer;
 
 import java.io.InputStream;
@@ -137,9 +138,8 @@ public class PrinterProducer extends DefaultProducer {
             setPrinter(name);
             int position = findPrinter(services, printer);
             if (position < 0) {
-                throw new PrintException(
-                        "No printer found with name: " + printer
-                                         + ". Please verify that the host and printer are registered and reachable from this machine.");
+                throw new PrintException("No printer found with name: " + printer
+                        + ". Please verify that the host and printer are registered and reachable from this machine.");
             }
             retPrintService = services[position];
         }
@@ -210,5 +210,4 @@ public class PrinterProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         super.doStop();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,9 +27,8 @@ public class FileChangedReadLockLoggingLevelTest extends FileChangedReadLockTest
             @Override
             public void configure() {
                 from(fileUri(
-                        "in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockLoggingLevel=DEBUG"))
-                        .to(fileUri("out"),
-                                "mock:result");
+                                "in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockLoggingLevel=DEBUG"))
+                        .to(fileUri("out"), "mock:result");
             }
         };
     }

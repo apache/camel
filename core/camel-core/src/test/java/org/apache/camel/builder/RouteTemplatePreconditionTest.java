@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
 
-import org.apache.camel.ContextTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.builder;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.apache.camel.ContextTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * The test ensuring that the precondition set on a rule determines if the route is included or not
@@ -81,11 +82,10 @@ class RouteTemplatePreconditionTest extends ContextTestSupport {
             public void configure() {
                 routeTemplate("myTemplateWithPrecondition")
                         .templateParameter("protocol")
-                        .from("direct:in").precondition("'{{protocol}}' == 'json'")
-                        .to("mock:out");
-                routeTemplate("myTemplateWithoutPrecondition")
                         .from("direct:in")
+                        .precondition("'{{protocol}}' == 'json'")
                         .to("mock:out");
+                routeTemplate("myTemplateWithoutPrecondition").from("direct:in").to("mock:out");
             }
         };
     }

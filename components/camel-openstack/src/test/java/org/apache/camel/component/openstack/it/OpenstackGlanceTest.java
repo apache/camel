@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -30,13 +35,10 @@ import org.openstack4j.model.image.ContainerFormat;
 import org.openstack4j.model.image.DiskFormat;
 import org.openstack4j.model.image.Image;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class OpenstackGlanceTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT = "openstack-glance://%s?username=user&password=secret&project=project&operation=%s";
+    private static final String URI_FORMAT =
+            "openstack-glance://%s?username=user&password=secret&project=project&operation=%s";
 
     @Test
     void createShouldSucceed() {
@@ -47,7 +49,7 @@ public class OpenstackGlanceTest extends OpenstackWiremockTestSupport {
         headers.put(GlanceConstants.MIN_DISK, 0L);
         headers.put(GlanceConstants.MIN_RAM, 0L);
 
-        Payload<InputStream> payload = Payloads.create(new ByteArrayInputStream(new byte[] { 10, 11, 12 }));
+        Payload<InputStream> payload = Payloads.create(new ByteArrayInputStream(new byte[] {10, 11, 12}));
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.CREATE);
         Image out = template.requestBodyAndHeaders(uri, payload, headers, Image.class);
 
@@ -70,7 +72,7 @@ public class OpenstackGlanceTest extends OpenstackWiremockTestSupport {
         headers.put(GlanceConstants.MIN_DISK, 0L);
         headers.put(GlanceConstants.MIN_RAM, 0L);
 
-        Payload<InputStream> payload = Payloads.create(new ByteArrayInputStream(new byte[] { 10, 11, 12 }));
+        Payload<InputStream> payload = Payloads.create(new ByteArrayInputStream(new byte[] {10, 11, 12}));
         String uri = String.format(URI_FORMAT, url(), GlanceConstants.UPLOAD);
         Image out = template.requestBodyAndHeaders(uri, payload, headers, Image.class);
 
@@ -99,7 +101,7 @@ public class OpenstackGlanceTest extends OpenstackWiremockTestSupport {
     @Test
     void deleteShouldSucceed() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.DELETE);
-        assertDoesNotThrow(
-                () -> template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, "8a2ea42d-06b5-42c2-a54d-97105420f2bb"));
+        assertDoesNotThrow(() -> template.requestBodyAndHeader(
+                uri, null, OpenstackConstants.ID, "8a2ea42d-06b5-42c2-a54d-97105420f2bb"));
     }
 }

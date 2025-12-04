@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
@@ -36,10 +37,12 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntrospection, CamelContextAware, StartupListener {
+public class DefaultBeanIntrospection extends ServiceSupport
+        implements BeanIntrospection, CamelContextAware, StartupListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanIntrospection.class);
-    private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SECRETS =
+            Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
 
     private CamelContext camelContext;
     private volatile boolean preStartDone;
@@ -104,8 +107,8 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
         } else if (args == null) {
             line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + "]";
         } else {
-            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: "
-                   + obj + "]";
+            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target
+                    + ", Arguments: " + obj + "]";
         }
 
         if (preStartDone) {
@@ -155,7 +158,8 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     }
 
     @Override
-    public boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull) {
+    public boolean getProperties(
+            Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull) {
         invoked.incrementAndGet();
         if (!preStartDone || logger.shouldLog()) {
             log("getProperties", target);
@@ -173,7 +177,8 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     }
 
     @Override
-    public Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase) throws NoSuchMethodException {
+    public Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase)
+            throws NoSuchMethodException {
         invoked.incrementAndGet();
         if (!preStartDone || logger.shouldLog()) {
             log("getPropertyGetter", type, propertyName);
@@ -192,8 +197,15 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
 
     @Override
     public boolean setProperty(
-            CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
-            boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase)
+            CamelContext context,
+            TypeConverter typeConverter,
+            Object target,
+            String name,
+            Object value,
+            String refName,
+            boolean allowBuilderPattern,
+            boolean allowPrivateSetter,
+            boolean ignoreCase)
             throws Exception {
         invoked.incrementAndGet();
         if (!preStartDone || logger.shouldLog()) {
@@ -203,8 +215,16 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
             }
             log("setProperty", target, name, text);
         }
-        return IntrospectionSupport.setProperty(context, typeConverter, target, name, value, refName, allowBuilderPattern,
-                allowPrivateSetter, ignoreCase);
+        return IntrospectionSupport.setProperty(
+                context,
+                typeConverter,
+                target,
+                name,
+                value,
+                refName,
+                allowBuilderPattern,
+                allowPrivateSetter,
+                ignoreCase);
     }
 
     @Override

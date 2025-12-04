@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
@@ -31,8 +32,7 @@ public class ExchangePatternProcessor extends BaseProcessorSupport implements Id
     private String routeId;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
 
-    public ExchangePatternProcessor() {
-    }
+    public ExchangePatternProcessor() {}
 
     public ExchangePatternProcessor(ExchangePattern ep) {
         setExchangePattern(ep);
@@ -77,5 +77,4 @@ public class ExchangePatternProcessor extends BaseProcessorSupport implements Id
     public String toString() {
         return id;
     }
-
 }

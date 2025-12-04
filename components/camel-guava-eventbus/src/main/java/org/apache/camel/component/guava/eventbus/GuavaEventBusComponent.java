@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
 
 import java.util.Map;
@@ -29,11 +30,11 @@ public class GuavaEventBusComponent extends DefaultComponent {
 
     @Metadata
     private EventBus eventBus;
+
     @Metadata(label = "consumer")
     private Class<?> listenerInterface;
 
-    public GuavaEventBusComponent() {
-    }
+    public GuavaEventBusComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -66,5 +67,4 @@ public class GuavaEventBusComponent extends DefaultComponent {
     public void setListenerInterface(Class<?> listenerInterface) {
         this.listenerInterface = listenerInterface;
     }
-
 }

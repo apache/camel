@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.manual;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -23,8 +26,6 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Used for manual unit test, eg to curl to upload a file with: curl -F data=@src/test/data/plain.txt
@@ -51,9 +52,11 @@ public class JettyManualTest extends BaseJettyTest {
                                 String body = exchange.getIn().getBody(String.class);
                                 assertNotNull(body, "Body should not be null");
                             }
-                        }).transform(constant("OK")).setHeader("Content-Type", constant("text/plain")).to("mock:result");
+                        })
+                        .transform(constant("OK"))
+                        .setHeader("Content-Type", constant("text/plain"))
+                        .to("mock:result");
             }
         };
     }
-
 }

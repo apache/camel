@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -27,8 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class XsltRouteTest extends ContextTestSupport {
 
@@ -79,9 +80,11 @@ public class XsltRouteTest extends ContextTestSupport {
             @Override
             public void configure() {
 
-                from("direct:start").to("xslt:org/apache/camel/component/xslt/transform.xsl").multicast().bean("testBean")
+                from("direct:start")
+                        .to("xslt:org/apache/camel/component/xslt/transform.xsl")
+                        .multicast()
+                        .bean("testBean")
                         .to("mock:result");
-
             }
         };
     }
@@ -92,5 +95,4 @@ public class XsltRouteTest extends ContextTestSupport {
         jndi.bind("testBean", new TestBean());
         return jndi;
     }
-
 }

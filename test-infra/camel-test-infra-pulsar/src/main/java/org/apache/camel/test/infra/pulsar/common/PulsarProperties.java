@@ -22,7 +22,5 @@ public final class PulsarProperties {
     public static final String PULSAR_ADMIN_URL = "pulsar.admin.url";
     public static final String PULSAR_CONTAINER = "pulsar.container";
 
-    private PulsarProperties() {
-
-    }
+    private PulsarProperties() {}
 }

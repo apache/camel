@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.text.DecimalFormatSymbols;
@@ -23,8 +24,7 @@ import java.text.DecimalFormatSymbols;
  */
 public final class UnitUtils {
 
-    private UnitUtils() {
-    }
+    private UnitUtils() {}
 
     /**
      * If having a size in bytes and wanting to print this in human friendly\ format with xx kB, xx MB, xx GB instead of
@@ -84,5 +84,4 @@ public final class UnitUtils {
         }
         return answer;
     }
-
 }

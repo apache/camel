@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.spi;
 
 import org.apache.camel.Consumer;
@@ -34,5 +35,6 @@ public interface KnativeConsumerFactory extends Service {
     Consumer createConsumer(
             Endpoint endpoint,
             KnativeTransportConfiguration configuration,
-            KnativeResource service, Processor processor);
+            KnativeResource service,
+            Processor processor);
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.util.List;
@@ -88,9 +89,8 @@ public abstract class PropertyConfigurerSupport {
         // special for boolean values with string values as we only want to accept "true" or "false"
         if ((type == Boolean.class || type == boolean.class) && value instanceof String text) {
             if (!MAGIC_VALUE.equals(value) && !text.equalsIgnoreCase("true") && !text.equalsIgnoreCase("false")) {
-                throw new IllegalArgumentException(
-                        "Cannot convert the String value: " + value + " to type: " + type
-                                                   + " as the value is not true or false");
+                throw new IllegalArgumentException("Cannot convert the String value: " + value + " to type: " + type
+                        + " as the value is not true or false");
             }
         }
 
@@ -107,5 +107,4 @@ public abstract class PropertyConfigurerSupport {
             return null;
         }
     }
-
 }

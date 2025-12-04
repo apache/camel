@@ -44,11 +44,10 @@ public class TokenizerReifier<T extends TokenizerDefinition> extends ProcessorRe
     public Processor createProcessor() throws Exception {
         Processor childProcessor = createChildProcessor(false);
 
-        final FactoryFinder factoryFinder
-                = camelContext.getCamelContextExtension().getFactoryFinder(TOKENIZER_PATH);
+        final FactoryFinder factoryFinder =
+                camelContext.getCamelContextExtension().getFactoryFinder(TOKENIZER_PATH);
 
-        final Optional<Tokenizer> tokenize = factoryFinder.newInstance(
-                definition.tokenizerName(), Tokenizer.class);
+        final Optional<Tokenizer> tokenize = factoryFinder.newInstance(definition.tokenizerName(), Tokenizer.class);
 
         if (tokenize.isEmpty()) {
             throw new RuntimeCamelException(

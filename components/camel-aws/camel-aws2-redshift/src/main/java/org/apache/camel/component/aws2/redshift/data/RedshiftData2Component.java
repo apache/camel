@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data;
 
 import java.util.Map;
@@ -40,8 +41,8 @@ public class RedshiftData2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        RedshiftData2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new RedshiftData2Configuration();
+        RedshiftData2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new RedshiftData2Configuration();
         RedshiftData2Endpoint endpoint = new RedshiftData2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
@@ -66,5 +67,4 @@ public class RedshiftData2Component extends HealthCheckComponent {
     public void setConfiguration(RedshiftData2Configuration configuration) {
         this.configuration = configuration;
     }
-
 }

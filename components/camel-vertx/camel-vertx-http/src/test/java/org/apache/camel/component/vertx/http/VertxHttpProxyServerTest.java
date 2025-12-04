@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.vertx.core.net.ProxyType;
 import org.apache.camel.RoutesBuilder;
@@ -22,18 +25,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class VertxHttpProxyServerTest extends VertxHttpTestSupport {
 
     private final int port2 = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testProxyConfiguration() {
-        String result = template.requestBody(getProducerUri() + "?proxyHost=localhost&proxyPort="
-                                             + port2 + "&proxyUsername=foo"
-                                             + "&proxyPassword=bar&proxyType=HTTP",
-                null, String.class);
+        String result = template.requestBody(
+                getProducerUri() + "?proxyHost=localhost&proxyPort="
+                        + port2 + "&proxyUsername=foo"
+                        + "&proxyPassword=bar&proxyType=HTTP",
+                null,
+                String.class);
         assertEquals("Hello Proxied World", result);
     }
 
@@ -61,11 +64,9 @@ public class VertxHttpProxyServerTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri())
-                        .setBody(constant("Hello Proxied World"));
+                from(getTestServerUri()).setBody(constant("Hello Proxied World"));
 
-                fromF("undertow:http://localhost:%d", port2)
-                        .to(getTestServerUri());
+                fromF("undertow:http://localhost:%d", port2).to(getTestServerUri());
             }
         };
     }

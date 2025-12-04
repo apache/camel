@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
 
 import java.util.function.Consumer;
@@ -38,8 +39,7 @@ public class ConsumingAppender extends AbstractAppender {
     }
 
     public ConsumingAppender(String name, String pattern, Consumer<LogEvent> consumer) {
-        super(name, null, PatternLayout.newBuilder().withPattern(pattern).build(), true,
-              Property.EMPTY_ARRAY);
+        super(name, null, PatternLayout.newBuilder().withPattern(pattern).build(), true, Property.EMPTY_ARRAY);
         this.consumer = consumer;
     }
 
@@ -52,7 +52,8 @@ public class ConsumingAppender extends AbstractAppender {
     // Helpers
     // *******************
 
-    public static Appender newAppender(String loggerName, String appenderName, Level level, Consumer<LogEvent> consumer) {
+    public static Appender newAppender(
+            String loggerName, String appenderName, Level level, Consumer<LogEvent> consumer) {
         return newAppender(loggerName, appenderName, PatternLayout.SIMPLE_CONVERSION_PATTERN, level, consumer);
     }
 
@@ -72,7 +73,7 @@ public class ConsumingAppender extends AbstractAppender {
                 .withLevel(level)
                 .withAdditivity(true)
                 .withConfig(config)
-                .withRefs(new AppenderRef[] { AppenderRef.createAppenderRef(appenderName, null, null) })
+                .withRefs(new AppenderRef[] {AppenderRef.createAppenderRef(appenderName, null, null)})
                 .build();
 
         loggerConfig.addAppender(appender, null, null);

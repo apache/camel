@@ -48,7 +48,8 @@ public class Translate2ProducerHealthCheck extends AbstractHealthCheck {
         }
         try {
             TranslateClient translateClient = translate2Endpoint.getTranslateClient();
-            translateClient.listLanguages(ListLanguagesRequest.builder().maxResults(1).build());
+            translateClient.listLanguages(
+                    ListLanguagesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -67,5 +68,4 @@ public class Translate2ProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

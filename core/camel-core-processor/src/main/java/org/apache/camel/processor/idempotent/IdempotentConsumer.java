@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent;
 
 import java.util.ArrayList;
@@ -64,9 +65,14 @@ public class IdempotentConsumer extends BaseProcessorSupport
     private final boolean removeOnFailure;
     private final AtomicLong duplicateMessageCount = new AtomicLong();
 
-    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository,
-                              boolean eager, boolean completionEager, boolean skipDuplicate, boolean removeOnFailure,
-                              Processor processor) {
+    public IdempotentConsumer(
+            Expression messageIdExpression,
+            IdempotentRepository idempotentRepository,
+            boolean eager,
+            boolean completionEager,
+            boolean skipDuplicate,
+            boolean removeOnFailure,
+            Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.eager = eager;
@@ -152,8 +158,8 @@ public class IdempotentConsumer extends BaseProcessorSupport
                 }
             }
 
-            final Synchronization onCompletion
-                    = new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure);
+            final Synchronization onCompletion =
+                    new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure);
 
             if (completionEager) {
                 // the callback will eager complete
@@ -161,7 +167,8 @@ public class IdempotentConsumer extends BaseProcessorSupport
             } else {
                 // we can use existing callback as target
                 target = callback;
-                // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
+                // the scope is to do the idempotent completion work as an unit of work on the exchange when its done
+                // being routed
                 exchange.getExchangeExtension().addOnCompletion(onCompletion);
             }
         } catch (Exception e) {

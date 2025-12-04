@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.List;
@@ -67,17 +68,16 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         Processor p = exchange -> {
             exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID, route.getId());
             exchange.setProperty(ExchangePropertyKey.INTERCEPTED_NODE_ID, definition.getId());
-            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI, route.getEndpoint().getEndpointUri());
+            exchange.setProperty(
+                    ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI,
+                    route.getEndpoint().getEndpointUri());
         };
 
         // register endpoint callback so we can proxy the endpoint
-        camelContext.getCamelContextExtension()
-                .registerEndpointCallback(
-                        new InterceptSendToEndpointCallback(
-                                camelContext,
-                                Pipeline.newInstance(camelContext, p, before),
-                                after,
-                                matchURI, skip, when));
+        camelContext
+                .getCamelContextExtension()
+                .registerEndpointCallback(new InterceptSendToEndpointCallback(
+                        camelContext, Pipeline.newInstance(camelContext, p, before), after, matchURI, skip, when));
 
         // remove the original intercepted route from the outputs as we do not
         // intercept as the regular interceptor
@@ -126,5 +126,4 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             return delegate.toString();
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.concurrent;
 
 import java.util.function.Supplier;
@@ -44,5 +45,4 @@ public final class NamedThreadLocal<T> extends ThreadLocal<T> {
     public String toString() {
         return name;
     }
-
 }

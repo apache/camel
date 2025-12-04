@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
+
+import static org.apache.camel.component.box.api.BoxHelper.FOLDER_ID;
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -31,9 +35,6 @@ import com.box.sdk.sharedlink.BoxSharedLinkRequest;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.box.api.BoxHelper.FOLDER_ID;
-import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to manage Box folders.
@@ -66,8 +67,7 @@ public class BoxFoldersManager {
             LOG.debug("Getting root folder");
             return BoxFolder.getRootFolder(boxConnection);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -90,7 +90,8 @@ public class BoxFoldersManager {
                 return folder;
             }
 
-            searchPath: for (int folderIndex = 0; folderIndex < path.length; folderIndex++) {
+            searchPath:
+            for (int folderIndex = 0; folderIndex < path.length; folderIndex++) {
                 for (BoxItem.Info itemInfo : folder) {
                     if (itemInfo instanceof BoxFolder.Info && itemInfo.getName().equals(path[folderIndex])) {
                         folder = (BoxFolder) itemInfo.getResource();
@@ -102,8 +103,7 @@ public class BoxFoldersManager {
             }
             return folder;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -121,8 +121,12 @@ public class BoxFoldersManager {
     public Collection<BoxItem.Info> getFolderItems(String folderId, Long offset, Long limit, String... fields) {
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Getting folder items in folder(id={}) at offset={} and limit={} with fields={}",
-                        folderId, offset, limit, Arrays.toString(fields));
+                LOG.debug(
+                        "Getting folder items in folder(id={}) at offset={} and limit={} with fields={}",
+                        folderId,
+                        offset,
+                        limit,
+                        Arrays.toString(fields));
             }
             BoxHelper.notNull(folderId, FOLDER_ID);
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
@@ -146,8 +150,7 @@ public class BoxFoldersManager {
                 return folderItems;
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -167,8 +170,7 @@ public class BoxFoldersManager {
             BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
             return parentFolder.createFolder(folderName).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -184,14 +186,18 @@ public class BoxFoldersManager {
         try {
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating folder with path '{}' in parent_folder(id={})", Arrays.toString(path), parentFolderId);
+                LOG.debug(
+                        "Creating folder with path '{}' in parent_folder(id={})",
+                        Arrays.toString(path),
+                        parentFolderId);
             }
 
             BoxHelper.notNull(parentFolderId, BoxHelper.PARENT_FOLDER_ID);
             BoxHelper.notNull(path, BoxHelper.PATH);
 
             BoxFolder folder = new BoxFolder(boxConnection, parentFolderId);
-            searchPath: for (int folderIndex = 0; folderIndex < path.length; folderIndex++) {
+            searchPath:
+            for (int folderIndex = 0; folderIndex < path.length; folderIndex++) {
                 for (BoxItem.Info itemInfo : folder) {
                     if (itemInfo instanceof BoxFolder.Info && itemInfo.getName().equals(path[folderIndex])) {
                         folder = (BoxFolder) itemInfo.getResource();
@@ -202,8 +208,7 @@ public class BoxFoldersManager {
             }
             return folder;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -218,8 +223,11 @@ public class BoxFoldersManager {
      */
     public BoxFolder copyFolder(String folderId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Copying folder(id={}) to destination_folder(id={}) {}",
-                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
+            LOG.debug(
+                    "Copying folder(id={}) to destination_folder(id={}) {}",
+                    folderId,
+                    destinationFolderId,
+                    newName == null ? "" : " with new name '" + newName + "'");
 
             BoxHelper.notNull(folderId, FOLDER_ID);
             BoxHelper.notNull(destinationFolderId, BoxHelper.DESTINATION_FOLDER_ID);
@@ -232,8 +240,7 @@ public class BoxFoldersManager {
                 return folderToCopy.copy(destinationFolder, newName).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -248,8 +255,11 @@ public class BoxFoldersManager {
      */
     public BoxFolder moveFolder(String folderId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Moving folder(id={}) to destination_folder(id={}) {}",
-                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
+            LOG.debug(
+                    "Moving folder(id={}) to destination_folder(id={}) {}",
+                    folderId,
+                    destinationFolderId,
+                    newName == null ? "" : " with new name '" + newName + "'");
             BoxHelper.notNull(folderId, FOLDER_ID);
             BoxHelper.notNull(destinationFolderId, BoxHelper.DESTINATION_FOLDER_ID);
 
@@ -261,8 +271,7 @@ public class BoxFoldersManager {
                 return (BoxFolder) folderToMove.move(destinationFolder, newName).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -284,8 +293,7 @@ public class BoxFoldersManager {
             folderToRename.rename(newFolderName);
             return folderToRename;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -302,8 +310,7 @@ public class BoxFoldersManager {
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             folder.delete(true);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -327,8 +334,7 @@ public class BoxFoldersManager {
                 return folder.getInfo(fields);
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -349,8 +355,7 @@ public class BoxFoldersManager {
             folder.updateInfo(info);
             return folder;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -366,27 +371,29 @@ public class BoxFoldersManager {
      * @return             The created shared link.
      */
     public BoxSharedLink createFolderSharedLink(
-            String folderId, BoxSharedLink.Access access, Date unshareDate,
-            BoxSharedLink.Permissions permissions) {
+            String folderId, BoxSharedLink.Access access, Date unshareDate, BoxSharedLink.Permissions permissions) {
         try {
-            LOG.debug("Creating shared link for folder(id={}) with access={} {}",
-                    folderId, access, unshareDate == null
+            LOG.debug(
+                    "Creating shared link for folder(id={}) with access={} {}",
+                    folderId,
+                    access,
+                    unshareDate == null
                             ? ""
-                            : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
-                              + " permissions=" + permissions);
+                            : " unsharedDate="
+                                    + DateFormat.getDateTimeInstance().format(unshareDate) + " permissions="
+                                    + permissions);
 
             BoxHelper.notNull(folderId, FOLDER_ID);
             BoxHelper.notNull(access, BoxHelper.ACCESS);
 
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             BoxSharedLinkRequest request = new BoxSharedLinkRequest();
-            request.access(access).unsharedDate(unshareDate)
+            request.access(access)
+                    .unsharedDate(unshareDate)
                     .permissions(permissions.getCanDownload(), permissions.getCanPreview(), permissions.getCanEdit());
             return folder.createSharedLink(request);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
-
 }

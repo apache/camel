@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink;
 
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class DataStreamBatchProcessingIT extends CamelTestSupport {
     private DataStreamSource<Integer> numberStream = batchEnv.fromElements(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
     @BindToRegistry("textStream")
-    private DataStreamSource<String> textStream
-            = transformEnv.fromElements("apache", "camel", "flink", "integration", "test");
+    private DataStreamSource<String> textStream =
+            transformEnv.fromElements("apache", "camel", "flink", "integration", "test");
 
     @BindToRegistry("multiplyCallback")
     public DataStreamCallback multiplyCallback() {
@@ -73,7 +74,8 @@ public class DataStreamBatchProcessingIT extends CamelTestSupport {
                         Assertions.assertThat(env.getParallelism()).isEqualTo(2);
 
                         // Set up transformation (won't execute in test context)
-                        ds.map((MapFunction<Integer, Integer>) value -> value * 2).print();
+                        ds.map((MapFunction<Integer, Integer>) value -> value * 2)
+                                .print();
                     }
                 });
     }
@@ -134,7 +136,8 @@ public class DataStreamBatchProcessingIT extends CamelTestSupport {
                         Assertions.assertThat(env.getParallelism()).isEqualTo(3);
 
                         // Set up transformation
-                        ds.map((MapFunction<String, String>) String::toUpperCase).print();
+                        ds.map((MapFunction<String, String>) String::toUpperCase)
+                                .print();
                     }
                 });
     }
@@ -156,7 +159,8 @@ public class DataStreamBatchProcessingIT extends CamelTestSupport {
                         Assertions.assertThat(env.getMaxParallelism()).isEqualTo(256);
 
                         // Set up transformation
-                        ds.map((MapFunction<Integer, Integer>) value -> value * value).print();
+                        ds.map((MapFunction<Integer, Integer>) value -> value * value)
+                                .print();
                     }
                 });
     }
@@ -164,7 +168,7 @@ public class DataStreamBatchProcessingIT extends CamelTestSupport {
     @Test
     public void testCallbackFromRegistry() {
         // Track that the callback was actually invoked
-        final boolean[] callbackInvoked = { false };
+        final boolean[] callbackInvoked = {false};
 
         // Send body with multiplier and verify callback executes
         template.sendBodyAndHeader(
@@ -186,7 +190,8 @@ public class DataStreamBatchProcessingIT extends CamelTestSupport {
                         Assertions.assertThat(payloads[0]).isEqualTo(5);
 
                         // Set up the transformation (using the registry callback pattern)
-                        ds.map((MapFunction<Integer, Integer>) value -> value * (Integer) payloads[0]).print();
+                        ds.map((MapFunction<Integer, Integer>) value -> value * (Integer) payloads[0])
+                                .print();
                     }
                 });
 
@@ -252,40 +257,30 @@ public class DataStreamBatchProcessingIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:batchTransform")
-                        .to("flink:datastream?dataStream=#numberStream"
-                            + "&executionMode=BATCH"
-                            + "&parallelism=2");
+                        .to("flink:datastream?dataStream=#numberStream" + "&executionMode=BATCH" + "&parallelism=2");
 
-                from("direct:withPayload")
-                        .to("flink:datastream?dataStream=#numberStream"
-                            + "&executionMode=BATCH");
+                from("direct:withPayload").to("flink:datastream?dataStream=#numberStream" + "&executionMode=BATCH");
 
                 from("direct:batchFilter")
-                        .to("flink:datastream?dataStream=#numberStream"
-                            + "&executionMode=BATCH"
-                            + "&parallelism=1");
+                        .to("flink:datastream?dataStream=#numberStream" + "&executionMode=BATCH" + "&parallelism=1");
 
                 from("direct:stringTransform")
-                        .to("flink:datastream?dataStream=#textStream"
-                            + "&executionMode=BATCH"
-                            + "&parallelism=3");
+                        .to("flink:datastream?dataStream=#textStream" + "&executionMode=BATCH" + "&parallelism=3");
 
                 from("direct:highParallelism")
                         .to("flink:datastream?dataStream=#numberStream"
-                            + "&executionMode=BATCH"
-                            + "&parallelism=16"
-                            + "&maxParallelism=256");
+                                + "&executionMode=BATCH"
+                                + "&parallelism=16"
+                                + "&maxParallelism=256");
 
                 from("direct:registryCallback")
                         .to("flink:datastream?dataStream=#numberStream"
-                            + "&dataStreamCallback=#multiplyCallback"
-                            + "&executionMode=BATCH"
-                            + "&parallelism=4");
+                                + "&dataStreamCallback=#multiplyCallback"
+                                + "&executionMode=BATCH"
+                                + "&parallelism=4");
 
                 from("direct:multipleOps")
-                        .to("flink:datastream?dataStream=#numberStream"
-                            + "&executionMode=BATCH"
-                            + "&parallelism=4");
+                        .to("flink:datastream?dataStream=#numberStream" + "&executionMode=BATCH" + "&parallelism=4");
             }
         };
     }

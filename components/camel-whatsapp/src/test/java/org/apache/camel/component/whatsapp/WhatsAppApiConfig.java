@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp;
 
 public final class WhatsAppApiConfig {
@@ -25,8 +26,13 @@ public final class WhatsAppApiConfig {
     private final String apiVersion;
     private final String recipientPhoneNumber;
 
-    public WhatsAppApiConfig(String baseUri, int port, String authorizationToken, String phoneNumberId, String apiVersion,
-                             String recipientPhoneNumber) {
+    public WhatsAppApiConfig(
+            String baseUri,
+            int port,
+            String authorizationToken,
+            String phoneNumberId,
+            String apiVersion,
+            String recipientPhoneNumber) {
         this.baseUri = baseUri;
         this.port = port;
         this.authorizationToken = authorizationToken;
@@ -41,8 +47,12 @@ public final class WhatsAppApiConfig {
         final String recipientPhoneNumber = System.getenv("WHATSAPP_RECIPIENT_PHONE_NUMBER");
 
         return new WhatsAppApiConfig(
-                WhatsAppComponent.API_DEFAULT_URL, 443, authorizationToken, phoneNumberId,
-                WhatsAppComponent.API_DEFAULT_VERSION, recipientPhoneNumber);
+                WhatsAppComponent.API_DEFAULT_URL,
+                443,
+                authorizationToken,
+                phoneNumberId,
+                WhatsAppComponent.API_DEFAULT_VERSION,
+                recipientPhoneNumber);
     }
 
     public static WhatsAppApiConfig mock(int port) {

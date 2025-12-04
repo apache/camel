@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,10 +28,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class HttpSendDynamicAwareTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -34,11 +35,14 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/moes", new DrinkValidationHandler(GET.name(), null, null, "drink"))
-                .register("/joes", new DrinkValidationHandler(GET.name(), null, null, "drink")).create();
+                .register("/joes", new DrinkValidationHandler(GET.name(), null, null, "drink"))
+                .create();
         localServer.start();
     }
 
@@ -57,18 +61,19 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
             public void configure() {
                 from("direct:moes")
                         .toD("http://localhost:" + localServer.getLocalPort()
-                             + "/moes?throwExceptionOnFailure=false&drink=${header.drink}");
+                                + "/moes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("direct:joes")
                         .toD("http://localhost:" + localServer.getLocalPort()
-                             + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
+                                + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
             }
         };
     }
 
     @Test
     public void testDynamicAware() {
-        String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
+        String out =
+                fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
         assertEquals("Drinking beer", out);
 
         out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
@@ -84,5 +89,4 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
         // we only have 2xdirect and 1xhttp
         assertEquals(3, context.getEndpointRegistry().size());
     }
-
 }

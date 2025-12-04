@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
+
+import static java.lang.String.format;
 
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
-
-import static java.lang.String.format;
 
 /**
  * <code>GetDataOperation</code> is a basic operation to immediately retrieve the data associated with a given ZooKeeper
@@ -51,5 +52,4 @@ public class GetDataOperation extends ZooKeeperOperation<byte[]> {
             return new OperationResult<>(e);
         }
     }
-
 }

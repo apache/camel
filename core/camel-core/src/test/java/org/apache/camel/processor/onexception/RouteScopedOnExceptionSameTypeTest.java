@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import java.io.FileNotFoundException;
@@ -35,10 +36,18 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:foo").onException(IllegalArgumentException.class).handled(true).to("mock:foo").end()
+                from("direct:foo")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:foo")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
             }
         });
@@ -57,10 +66,18 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:foo").onException(IOException.class).handled(true).to("mock:foo").end()
+                from("direct:foo")
+                        .onException(IOException.class)
+                        .handled(true)
+                        .to("mock:foo")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
             }
         });
@@ -79,12 +96,19 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").onException(IllegalArgumentException.class).handled(true).to("mock:foo").end()
+                from("direct:foo")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:foo")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
-
             }
         });
         context.start();
@@ -102,10 +126,18 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").onException(IOException.class).handled(true).to("mock:foo").end()
+                from("direct:foo")
+                        .onException(IOException.class)
+                        .handled(true)
+                        .to("mock:foo")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
             }
         });
@@ -126,10 +158,18 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:foo").onException(IllegalArgumentException.class).handled(true).to("mock:foo").end()
+                from("direct:foo")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:foo")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
             }
         });
@@ -149,12 +189,26 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").onException(IOException.class).handled(true).to("mock:io").end()
-                        .onException(IllegalArgumentException.class).handled(true).to("mock:damn")
-                        .end().throwException(new IllegalArgumentException("Damn"));
+                from("direct:start")
+                        .onException(IOException.class)
+                        .handled(true)
+                        .to("mock:io")
+                        .end()
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
+                        .throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:foo").onException(IOException.class).handled(true).to("mock:io").end()
-                        .onException(IllegalArgumentException.class).handled(true).to("mock:foo").end()
+                from("direct:foo")
+                        .onException(IOException.class)
+                        .handled(true)
+                        .to("mock:io")
+                        .end()
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:foo")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
             }
         });
@@ -176,7 +230,11 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
             public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:foo");
 
-                from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
             }
         });
@@ -197,7 +255,11 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
             public void configure() {
                 onException(IOException.class).handled(true).to("mock:foo");
 
-                from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
             }
         });
@@ -218,7 +280,11 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
             public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:foo");
 
-                from("direct:start").onException(IOException.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(IOException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new IllegalArgumentException("Damn"));
             }
         });
@@ -241,7 +307,11 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
             public void configure() {
                 onException(IOException.class).handled(true).to("mock:foo");
 
-                from("direct:start").onException(Exception.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new FileNotFoundException("unknown.txt"));
             }
         });
@@ -264,7 +334,11 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
             public void configure() {
                 onException(IOException.class).handled(true).to("mock:foo");
 
-                from("direct:start").onException(IOException.class).handled(true).to("mock:damn").end()
+                from("direct:start")
+                        .onException(IOException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                        .end()
                         .throwException(new FileNotFoundException("unknown.txt"));
             }
         });
@@ -278,5 +352,4 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

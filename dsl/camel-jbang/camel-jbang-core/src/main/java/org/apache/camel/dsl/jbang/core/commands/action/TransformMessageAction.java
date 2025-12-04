@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Files;
@@ -37,86 +38,111 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "message",
-                     description = "Transform message from one format to another via an existing running Camel integration",
-                     sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "message",
+        description = "Transform message from one format to another via an existing running Camel integration",
+        sortOptions = false,
+        showDefaultValues = true)
 public class TransformMessageAction extends ActionWatchCommand {
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To run using a different Camel version than the default version.")
+    @CommandLine.Option(
+            names = {"--camel-version"},
+            description = "To run using a different Camel version than the default version.")
     String camelVersion;
 
-    @CommandLine.Option(names = { "--body" }, required = true,
-                        description = "Message body to send (prefix with file: to refer to loading message body from file)")
+    @CommandLine.Option(
+            names = {"--body"},
+            required = true,
+            description = "Message body to send (prefix with file: to refer to loading message body from file)")
     String body;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "Message header (key=value)")
+    @CommandLine.Option(
+            names = {"--header"},
+            description = "Message header (key=value)")
     List<String> headers;
 
-    @CommandLine.Option(names = {
-            "--source" },
-                        description = "Instead of using external template file then refer to an existing Camel route source with inlined Camel language expression in a route. (use :line-number or :id to refer to the exact location of the EIP to use)")
+    @CommandLine.Option(
+            names = {"--source"},
+            description =
+                    "Instead of using external template file then refer to an existing Camel route source with inlined Camel language expression in a route. (use :line-number or :id to refer to the exact location of the EIP to use)")
     private String source;
 
-    @CommandLine.Option(names = {
-            "--language" },
-                        description = "The language to use for message transformation")
+    @CommandLine.Option(
+            names = {"--language"},
+            description = "The language to use for message transformation")
     private String language;
 
-    @CommandLine.Option(names = {
-            "--component" },
-                        description = "The component to use for message transformation")
+    @CommandLine.Option(
+            names = {"--component"},
+            description = "The component to use for message transformation")
     private String component;
 
-    @CommandLine.Option(names = {
-            "--dataformat" },
-                        description = "The dataformat to use for message transformation")
+    @CommandLine.Option(
+            names = {"--dataformat"},
+            description = "The dataformat to use for message transformation")
     private String dataformat;
 
-    @CommandLine.Option(names = {
-            "--template" },
-                        description = "The template to use for message transformation (prefix with file: to refer to loading message body from file)")
+    @CommandLine.Option(
+            names = {"--template"},
+            description =
+                    "The template to use for message transformation (prefix with file: to refer to loading message body from file)")
     private String template;
 
-    @CommandLine.Option(names = { "--option" },
-                        description = "Option for additional configuration of the used language, component or dataformat (key=value)")
+    @CommandLine.Option(
+            names = {"--option"},
+            description =
+                    "Option for additional configuration of the used language, component or dataformat (key=value)")
     List<String> options;
 
-    @CommandLine.Option(names = {
-            "--output" },
-                        description = "File to store output. If none provide then output is printed to console.")
+    @CommandLine.Option(
+            names = {"--output"},
+            description = "File to store output. If none provide then output is printed to console.")
     private String output;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties from the output message")
+    @CommandLine.Option(
+            names = {"--show-exchange-properties"},
+            defaultValue = "false",
+            description = "Show exchange properties from the output message")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers from the output message")
+    @CommandLine.Option(
+            names = {"--show-headers"},
+            defaultValue = "true",
+            description = "Show message headers from the output message")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body from the output message")
+    @CommandLine.Option(
+            names = {"--show-body"},
+            defaultValue = "true",
+            description = "Show message body from the output message")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
-                        description = "Show exception and stacktrace for failed transformation")
+    @CommandLine.Option(
+            names = {"--show-exception"},
+            defaultValue = "true",
+            description = "Show exception and stacktrace for failed transformation")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
-                        description = "Timeout in millis waiting for message to be transformed")
+    @CommandLine.Option(
+            names = {"--timeout"},
+            defaultValue = "20000",
+            description = "Timeout in millis waiting for message to be transformed")
     long timeout = 20000;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(
+            names = {"--logging-color"},
+            defaultValue = "true",
+            description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @CommandLine.Option(
+            names = {"--pretty"},
+            description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 
     private volatile long pid;
@@ -301,7 +327,12 @@ public class TransformMessageAction extends ActionWatchCommand {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String ts = sdf.format(new Date(jo.getLong("timestamp")));
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
+            AnsiConsole.out()
+                    .print(Ansi.ansi()
+                            .fgBrightDefault()
+                            .a(Ansi.Attribute.INTENSITY_FAINT)
+                            .a(ts)
+                            .reset());
         } else {
             printer().print(ts);
         }
@@ -310,7 +341,12 @@ public class TransformMessageAction extends ActionWatchCommand {
         String p = String.format("%5.5s", this.pid);
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+            AnsiConsole.out()
+                    .print(Ansi.ansi()
+                            .fgBrightDefault()
+                            .a(Ansi.Attribute.INTENSITY_FAINT)
+                            .a(" --- ")
+                            .reset());
         } else {
             printer().print(p);
             printer().print(" --- ");
@@ -320,7 +356,8 @@ public class TransformMessageAction extends ActionWatchCommand {
         // elapsed
         String e = TimeUtils.printDuration(jo.getLong("elapsed"), true);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+            AnsiConsole.out()
+                    .print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
         } else {
             printer().print("(" + e + ")");
         }
@@ -338,7 +375,11 @@ public class TransformMessageAction extends ActionWatchCommand {
             status = "Message transformed (success)";
         }
         if (loggingColor) {
-            return Ansi.ansi().fg(failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(status).reset().toString();
+            return Ansi.ansi()
+                    .fg(failed ? Ansi.Color.RED : Ansi.Color.GREEN)
+                    .a(status)
+                    .reset()
+                    .toString();
         } else {
             return status;
         }

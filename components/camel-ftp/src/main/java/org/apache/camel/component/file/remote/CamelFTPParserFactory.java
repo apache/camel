@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.util.regex.Pattern;
@@ -88,7 +89,7 @@ public class CamelFTPParserFactory extends DefaultFTPFileEntryParserFactory {
             } catch (ClassCastException e) {
                 throw new ParserInitializationException(
                         parserClass.getName() + " does not implement the interface "
-                                                        + "org.apache.commons.net.ftp.FTPFileEntryParser.",
+                                + "org.apache.commons.net.ftp.FTPFileEntryParser.",
                         e);
             } catch (Exception | ExceptionInInitializerError e) {
                 throw new ParserInitializationException("Error initializing parser", e);
@@ -140,19 +141,17 @@ public class CamelFTPParserFactory extends DefaultFTPFileEntryParserFactory {
      * @return        the parser
      */
     private FTPFileEntryParser createNTFTPEntryParser(final FTPClientConfig config) {
-        if (config != null && FTPClientConfig.SYST_NT.equals(
-                config.getServerSystemKey())) {
+        if (config != null && FTPClientConfig.SYST_NT.equals(config.getServerSystemKey())) {
             return new NTFTPEntryParser(config);
         }
         // clone the config as it may be changed by the parsers (NET-602)
         final FTPClientConfig config2 = config != null ? new FTPClientConfig(config) : null;
-        return new CompositeFileEntryParser(
-                new FTPFileEntryParser[] {
-                        new NTFTPEntryParser(config),
-                        new UnixFTPEntryParser(
-                                config2,
-                                config2 != null && FTPClientConfig.SYST_UNIX_TRIM_LEADING.equals(config2.getServerSystemKey()))
-                });
+        return new CompositeFileEntryParser(new FTPFileEntryParser[] {
+            new NTFTPEntryParser(config),
+            new UnixFTPEntryParser(
+                    config2,
+                    config2 != null && FTPClientConfig.SYST_UNIX_TRIM_LEADING.equals(config2.getServerSystemKey()))
+        });
     }
 
     /**
@@ -164,18 +163,16 @@ public class CamelFTPParserFactory extends DefaultFTPFileEntryParserFactory {
      * @return        the parser
      */
     private FTPFileEntryParser createOS400FTPEntryParser(final FTPClientConfig config) {
-        if (config != null &&
-                FTPClientConfig.SYST_OS400.equals(config.getServerSystemKey())) {
+        if (config != null && FTPClientConfig.SYST_OS400.equals(config.getServerSystemKey())) {
             return new OS400FTPEntryParser(config);
         }
         // clone the config as it may be changed by the parsers (NET-602)
         final FTPClientConfig config2 = config != null ? new FTPClientConfig(config) : null;
-        return new CompositeFileEntryParser(
-                new FTPFileEntryParser[] {
-                        new OS400FTPEntryParser(config),
-                        new UnixFTPEntryParser(
-                                config2,
-                                config2 != null && FTPClientConfig.SYST_UNIX_TRIM_LEADING.equals(config2.getServerSystemKey()))
-                });
+        return new CompositeFileEntryParser(new FTPFileEntryParser[] {
+            new OS400FTPEntryParser(config),
+            new UnixFTPEntryParser(
+                    config2,
+                    config2 != null && FTPClientConfig.SYST_UNIX_TRIM_LEADING.equals(config2.getServerSystemKey()))
+        });
     }
 }

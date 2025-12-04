@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -29,8 +30,7 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
     @XmlAttribute
     private String source;
 
-    protected SingleInputTypedExpressionDefinition() {
-    }
+    protected SingleInputTypedExpressionDefinition() {}
 
     protected SingleInputTypedExpressionDefinition(SingleInputTypedExpressionDefinition source) {
         super(source);
@@ -69,7 +69,7 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
     @XmlTransient
     @SuppressWarnings("unchecked")
     public abstract static class AbstractBuilder<
-            T extends AbstractBuilder<T, E>, E extends SingleInputTypedExpressionDefinition>
+                    T extends AbstractBuilder<T, E>, E extends SingleInputTypedExpressionDefinition>
             extends TypedExpressionDefinition.AbstractBuilder<T, E> {
 
         private String source;

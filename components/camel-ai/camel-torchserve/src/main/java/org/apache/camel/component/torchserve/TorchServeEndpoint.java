@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve;
 
 import org.apache.camel.Category;
@@ -30,17 +31,23 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-@UriEndpoint(firstVersion = "4.9.0", scheme = "torchserve", title = "TorchServe",
-             syntax = "torchserve:api/operation", producerOnly = true,
-             category = { Category.AI }, headersClass = TorchServeConstants.class)
+@UriEndpoint(
+        firstVersion = "4.9.0",
+        scheme = "torchserve",
+        title = "TorchServe",
+        syntax = "torchserve:api/operation",
+        producerOnly = true,
+        category = {Category.AI},
+        headersClass = TorchServeConstants.class)
 public class TorchServeEndpoint extends DefaultEndpoint {
 
     @UriPath(enums = "inference,management,metrics", description = "The TorchServe API")
     @Metadata(required = true)
     private final String api;
 
-    @UriPath(enums = "ping,predictions,explanations,register,scale-worker,describe,unregister,list,set-default,metrics",
-             description = "The API operation")
+    @UriPath(
+            enums = "ping,predictions,explanations,register,scale-worker,describe,unregister,list,set-default,metrics",
+            description = "The API operation")
     @Metadata(required = true)
     private final String operation;
 
@@ -49,8 +56,8 @@ public class TorchServeEndpoint extends DefaultEndpoint {
 
     private TorchServeClient client;
 
-    public TorchServeEndpoint(String uri, TorchServeComponent component, String path,
-                              TorchServeConfiguration configuration) {
+    public TorchServeEndpoint(
+            String uri, TorchServeComponent component, String path, TorchServeConfiguration configuration) {
         super(uri, component);
         String[] parts = extractPath(path);
         this.api = parts[0];

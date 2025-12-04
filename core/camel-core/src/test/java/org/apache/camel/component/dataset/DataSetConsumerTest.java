@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DataSetConsumerTest extends ContextTestSupport {
 
@@ -56,7 +57,9 @@ public class DataSetConsumerTest extends ContextTestSupport {
             }
         });
 
-        assertEquals(-1, getMockEndpoint(dataSetUri).getExpectedCount(),
+        assertEquals(
+                -1,
+                getMockEndpoint(dataSetUri).getExpectedCount(),
                 "expectedMessageCount should be unset(i.e. -1) for a consumer-only endpoint");
 
         MockEndpoint result = getMockEndpoint(resultUri);
@@ -80,7 +83,9 @@ public class DataSetConsumerTest extends ContextTestSupport {
             }
         });
 
-        assertEquals(dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount(),
+        assertEquals(
+                dataSet.getSize(),
+                getMockEndpoint(dataSetUri).getExpectedCount(),
                 "expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint");
 
         MockEndpoint result = getMockEndpoint(resultUri);

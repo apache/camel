@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 import java.io.IOException;
@@ -45,14 +46,16 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     public static final String SIGNATURE_KEY_RING = "CamelPGPDataFormatSignatureKeyRing";
     public static final String SIGNATURE_KEY_PASSWORD = "CamelPGPDataFormatSignatureKeyPassword";
 
-    //private static final Logger log = LoggerFactory.getLogger(PGPDataFormatChanged.class);
+    // private static final Logger log = LoggerFactory.getLogger(PGPDataFormatChanged.class);
 
     private String password; // only for decryption
     private String keyFileName;
     // alternatively to the file name you can specify the key ring as byte array
     private byte[] encryptionKeyRing;
 
-    private String signaturePassword; //only for signing, optional if you have several signature keys, then you should use passphaseAccessor
+    private String
+            signaturePassword; // only for signing, optional if you have several signature keys, then you should use
+    // passphaseAccessor
     private String signatureKeyFileName;
     // alternatively to the signature key file name you can specify the signature key ring as byte array
     private byte[] signatureKeyRing;
@@ -74,7 +77,8 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
 
     protected String findKeyPassword(Exchange exchange) {
         return exchange.getIn().getHeader(KEY_PASSWORD, getPassword(), String.class);
-        // the following lines are not needed because the passphrase accessor is taken into account later in the decryption case
+        // the following lines are not needed because the passphrase accessor is taken into account later in the
+        // decryption case
         //        if (passphraseAccessor != null) {
         //            return passphraseAccessor.getPassphrase(findKeyUserid(exchange));
         //        } else {
@@ -103,21 +107,23 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     }
 
     public List<PGPSecretKeyAndPrivateKeyAndUserId> determineSecretKeysWithPrivateKeyAndUserId(
-            Exchange exchange, String sigKeyFileName,
-            List<String> sigKeyUserids, String sigKeyPassword, byte[] sigKeyRing)
+            Exchange exchange,
+            String sigKeyFileName,
+            List<String> sigKeyUserids,
+            String sigKeyPassword,
+            byte[] sigKeyRing)
             throws IOException, PGPException {
 
         Map<String, String> sigKeyUserId2Password = determineSignatureKeyUserId2Password(sigKeyUserids, sigKeyPassword);
 
-        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId = PGPDataFormatUtil
-                .findSecretKeysWithPrivateKeyAndUserId(exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyUserId2Password,
-                        getProvider());
+        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId =
+                PGPDataFormatUtil.findSecretKeysWithPrivateKeyAndUserId(
+                        exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyUserId2Password, getProvider());
 
         if (sigSecretKeysWithPrivateKeyAndUserId.isEmpty()) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Cannot PGP sign message. No secret key found for User IDs %s. Either add keys with this User IDs to the secret keyring or change the configured User IDs.",
-                            sigKeyUserids));
+            throw new IllegalArgumentException(String.format(
+                    "Cannot PGP sign message. No secret key found for User IDs %s. Either add keys with this User IDs to the secret keyring or change the configured User IDs.",
+                    sigKeyUserids));
         }
         return sigSecretKeysWithPrivateKeyAndUserId;
     }
@@ -130,10 +136,9 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
                 sigKeyPassword = passphraseAccessor.getPassphrase(sigKeyUserid);
             }
             if (sigKeyPassword == null) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "No passphrase specified for signature key user ID %s. Either specify a passphrase or remove this user ID from the configuration.",
-                                sigKeyUserid));
+                throw new IllegalArgumentException(String.format(
+                        "No passphrase specified for signature key user ID %s. Either specify a passphrase or remove this user ID from the configuration.",
+                        sigKeyUserid));
             }
             sigKeyUserId2Password.put(sigKeyUserid, sigKeyPassword);
         }
@@ -227,9 +232,8 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
 
     @Override
     public List<PGPPublicKey> getEncryptionKeys(Exchange exchange, List<String> useridParts) throws Exception {
-        return PGPDataFormatUtil.findPublicKeys(exchange.getContext(), findKeyFileName(exchange),
-                findEncryptionKeyRing(exchange),
-                useridParts, true);
+        return PGPDataFormatUtil.findPublicKeys(
+                exchange.getContext(), findKeyFileName(exchange), findEncryptionKeyRing(exchange), useridParts, true);
     }
 
     @Override
@@ -240,11 +244,14 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
         String sigKeyPassword = findSignatureKeyPassword(exchange);
         byte[] sigKeyRing = findSignatureKeyRing(exchange);
 
-        if (hasSigKeys(sigKeyFileName, sigKeyRing) || useridParts == null || useridParts.isEmpty()
+        if (hasSigKeys(sigKeyFileName, sigKeyRing)
+                || useridParts == null
+                || useridParts.isEmpty()
                 || hasPassword(sigKeyPassword)) {
             return Collections.emptyList();
         }
-        return determineSecretKeysWithPrivateKeyAndUserId(exchange, sigKeyFileName, useridParts, sigKeyPassword, sigKeyRing);
+        return determineSecretKeysWithPrivateKeyAndUserId(
+                exchange, sigKeyFileName, useridParts, sigKeyPassword, sigKeyRing);
     }
 
     private boolean hasPassword(String sigKeyPassword) {
@@ -257,15 +264,20 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
 
     @Override
     public PGPPrivateKey getPrivateKey(Exchange exchange, long keyId) throws Exception {
-        return PGPDataFormatUtil.findPrivateKeyWithKeyId(exchange.getContext(), findKeyFileName(exchange),
+        return PGPDataFormatUtil.findPrivateKeyWithKeyId(
+                exchange.getContext(),
+                findKeyFileName(exchange),
                 findEncryptionKeyRing(exchange),
-                keyId, findKeyPassword(exchange), getPassphraseAccessor(), getProvider());
+                keyId,
+                findKeyPassword(exchange),
+                getPassphraseAccessor(),
+                getProvider());
     }
 
     @Override
     public PGPPublicKey getPublicKey(Exchange exchange, long keyId, List<String> userIdParts) throws Exception {
-        PGPPublicKeyRingCollection publicKeyringCollection = PGPDataFormatUtil.getPublicKeyRingCollection(exchange.getContext(),
-                findSignatureKeyFileName(exchange), findSignatureKeyRing(exchange), false);
+        PGPPublicKeyRingCollection publicKeyringCollection = PGPDataFormatUtil.getPublicKeyRingCollection(
+                exchange.getContext(), findSignatureKeyFileName(exchange), findSignatureKeyRing(exchange), false);
         return PGPDataFormatUtil.getPublicKeyWithKeyIdAndUserID(keyId, userIdParts, publicKeyringCollection);
     }
 
@@ -278,5 +290,4 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     public void setSecretKeyAccessor(PGPSecretKeyAccessor secretKeyAccessor) {
         throw new UnsupportedOperationException("Use PGPKeyAccessDataFormat if you want to set the secret key access");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import org.apache.camel.util.IOHelper;
@@ -29,9 +30,8 @@ public class DefaultMaskingFormatterLongJsonTest {
         String in = IOHelper.loadText(DefaultMaskingFormatterLongJsonTest.class.getResourceAsStream("long-json.json"));
         String out = formatter.format(in);
 
-        String expected
-                = IOHelper.loadText(DefaultMaskingFormatterLongJsonTest.class.getResourceAsStream("long-json-masked.json"));
+        String expected = IOHelper.loadText(
+                DefaultMaskingFormatterLongJsonTest.class.getResourceAsStream("long-json-masked.json"));
         Assertions.assertEquals(expected, out);
     }
-
 }

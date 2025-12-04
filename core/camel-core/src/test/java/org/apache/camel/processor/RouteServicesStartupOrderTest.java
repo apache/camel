@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -27,8 +30,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteServicesStartupOrderTest extends ContextTestSupport {
 
@@ -112,7 +113,6 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) {
-        }
+        public void process(Exchange exchange) {}
     }
 }

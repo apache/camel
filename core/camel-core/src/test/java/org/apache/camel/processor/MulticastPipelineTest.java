@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,7 +33,10 @@ public class MulticastPipelineTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").pipeline("direct:a", "direct:b").pipeline("direct:c", "direct:d").to("mock:result");
+                from("direct:start")
+                        .pipeline("direct:a", "direct:b")
+                        .pipeline("direct:c", "direct:d")
+                        .to("mock:result");
 
                 from("direct:a").to("mock:a").setBody().constant("A");
                 from("direct:b").to("mock:b").setBody().constant("B");
@@ -58,7 +62,13 @@ public class MulticastPipelineTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").pipeline().to("direct:a", "direct:b").end().pipeline().to("direct:c", "direct:d").end()
+                from("direct:start")
+                        .pipeline()
+                        .to("direct:a", "direct:b")
+                        .end()
+                        .pipeline()
+                        .to("direct:c", "direct:d")
+                        .end()
                         .to("mock:result");
 
                 from("direct:a").to("mock:a").setBody().constant("A");
@@ -85,7 +95,11 @@ public class MulticastPipelineTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").multicast().pipeline("direct:a", "direct:b").pipeline("direct:c", "direct:d").end()
+                from("direct:start")
+                        .multicast()
+                        .pipeline("direct:a", "direct:b")
+                        .pipeline("direct:c", "direct:d")
+                        .end()
                         .to("mock:result");
 
                 from("direct:a").to("mock:a").setBody().constant("A");
@@ -112,8 +126,16 @@ public class MulticastPipelineTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").multicast().pipeline().to("direct:a", "direct:b").end().pipeline()
-                        .to("direct:c", "direct:d").end().end().to("mock:result");
+                from("direct:start")
+                        .multicast()
+                        .pipeline()
+                        .to("direct:a", "direct:b")
+                        .end()
+                        .pipeline()
+                        .to("direct:c", "direct:d")
+                        .end()
+                        .end()
+                        .to("mock:result");
 
                 from("direct:a").to("mock:a").setBody().constant("A");
                 from("direct:b").to("mock:b").setBody().constant("B");
@@ -133,5 +155,4 @@ public class MulticastPipelineTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

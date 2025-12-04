@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.hazelcast;
 
 import java.util.Collections;
@@ -56,8 +57,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
     protected Map<String, DefaultExchangeHolder> replicatedCache;
     protected Map<String, DefaultExchangeHolder> replicatedPersistedCache;
 
-    public ReplicatedHazelcastAggregationRepository() {
-    }
+    public ReplicatedHazelcastAggregationRepository() {}
 
     /**
      * Creates new {@link ReplicatedHazelcastAggregationRepository} that defaults to non-optimistic locking with
@@ -77,7 +77,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param repositoryName           {@link IMap} repository name;
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      */
-    public ReplicatedHazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName) {
+    public ReplicatedHazelcastAggregationRepository(
+            final String repositoryName, final String persistentRepositoryName) {
         super(repositoryName, persistentRepositoryName);
     }
 
@@ -100,8 +101,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      * @param optimistic               whether to use optimistic locking manner.
      */
-    public ReplicatedHazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
-                                                    boolean optimistic) {
+    public ReplicatedHazelcastAggregationRepository(
+            final String repositoryName, final String persistentRepositoryName, boolean optimistic) {
         super(repositoryName, persistentRepositoryName, optimistic);
     }
 
@@ -124,8 +125,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      * @param hzInstanse               externally configured {@link HazelcastInstance}.
      */
-    public ReplicatedHazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
-                                                    HazelcastInstance hzInstanse) {
+    public ReplicatedHazelcastAggregationRepository(
+            final String repositoryName, final String persistentRepositoryName, HazelcastInstance hzInstanse) {
         super(repositoryName, persistentRepositoryName, hzInstanse);
     }
 
@@ -137,8 +138,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param optimistic     whether to use optimistic locking manner;
      * @param hzInstance     externally configured {@link HazelcastInstance}.
      */
-    public ReplicatedHazelcastAggregationRepository(final String repositoryName, boolean optimistic,
-                                                    HazelcastInstance hzInstance) {
+    public ReplicatedHazelcastAggregationRepository(
+            final String repositoryName, boolean optimistic, HazelcastInstance hzInstance) {
         super(repositoryName, optimistic, hzInstance);
     }
 
@@ -150,8 +151,11 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      * @param hzInstance               externally configured {@link HazelcastInstance}.
      */
-    public ReplicatedHazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
-                                                    boolean optimistic, HazelcastInstance hzInstance) {
+    public ReplicatedHazelcastAggregationRepository(
+            final String repositoryName,
+            final String persistentRepositoryName,
+            boolean optimistic,
+            HazelcastInstance hzInstance) {
         super(repositoryName, persistentRepositoryName, optimistic, hzInstance);
     }
 
@@ -161,7 +165,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
         if (!optimistic) {
             throw new UnsupportedOperationException();
         }
-        LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
+        LOG.trace(
+                "Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
             DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             final DefaultExchangeHolder misbehaviorHolder = replicatedCache.putIfAbsent(key, holder);
@@ -169,7 +174,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
                 Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
                 LOG.error(
                         "Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
-                        key, misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
+                        key,
+                        misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
                 throw new OptimisticLockingException();
             }
         } else {
@@ -199,7 +205,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
             DefaultExchangeHolder oldHolder = replicatedCache.put(key, newHolder);
             return unmarshallExchange(camelContext, oldHolder);
         } finally {
-            LOG.trace("Added an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Added an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
             l.unlock();
         }
     }
@@ -214,7 +221,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
         } else {
             LOG.warn(
                     "What for to run recovery scans in {} context while repository {} is running in non-recoverable aggregation repository mode?!",
-                    camelContext.getName(), mapName);
+                    camelContext.getName(),
+                    mapName);
             return Collections.emptySet();
         }
     }
@@ -257,24 +265,37 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         if (optimistic) {
-            LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Removing an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(),
+                    key);
             if (!replicatedCache.remove(key, holder)) {
                 LOG.error(
                         "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
                         key);
                 throw new OptimisticLockingException();
             }
-            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Removed an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(),
+                    key);
             if (useRecovery) {
-                LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
-                        exchange.getExchangeId(), key);
+                LOG.trace(
+                        "Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                        exchange.getExchangeId(),
+                        key);
                 replicatedPersistedCache.put(exchange.getExchangeId(), holder);
-                LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
-                        exchange.getExchangeId(), key);
+                LOG.trace(
+                        "Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                        exchange.getExchangeId(),
+                        key);
             }
         } else {
             if (useRecovery) {
-                LOG.trace("Removing an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+                LOG.trace(
+                        "Removing an exchange with ID {} for key {} in a thread-safe manner.",
+                        exchange.getExchangeId(),
+                        key);
                 // The only considerable case for transaction usage is fault tolerance:
                 // the transaction will be rolled back automatically (default timeout is 2 minutes)
                 // if no commit occurs during the timeout. So we are still consistent whether local node crashes.
@@ -290,15 +311,21 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
                     TransactionalMap<String, DefaultExchangeHolder> tPersistentCache = tCtx.getMap(persistenceMapName);
 
                     DefaultExchangeHolder removedHolder = tCache.remove(key);
-                    LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
-                            exchange.getExchangeId(), key);
+                    LOG.trace(
+                            "Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+                            exchange.getExchangeId(),
+                            key);
                     tPersistentCache.put(exchange.getExchangeId(), removedHolder);
 
                     tCtx.commitTransaction();
-                    LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(),
+                    LOG.trace(
+                            "Removed an exchange with ID {} for key {} in a thread-safe manner.",
+                            exchange.getExchangeId(),
                             key);
-                    LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
-                            exchange.getExchangeId(), key);
+                    LOG.trace(
+                            "Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+                            exchange.getExchangeId(),
+                            key);
                 } catch (Exception throwable) {
                     tCtx.rollbackTransaction();
 
@@ -349,5 +376,4 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
             replicatedPersistedCache = hazelcastInstance.getReplicatedMap(persistenceMapName);
         }
     }
-
 }

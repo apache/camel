@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -25,8 +28,6 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test to verify that aggregate by timeout only also works.
  */
@@ -36,7 +37,8 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
 
     @Test
     public void testThreadNotUsedForEveryAggregatorWithCustomExecutorService() throws Exception {
-        assertTrue(aggregateThreadsCount(context.getName()) < NUM_AGGREGATORS,
+        assertTrue(
+                aggregateThreadsCount(context.getName()) < NUM_AGGREGATORS,
                 "There should not be a thread for every aggregator when using a shared thread pool");
 
         // sanity check to make sure were testing routes that work
@@ -60,7 +62,8 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
         Thread[] threads = new Thread[threadGroup.activeCount()];
         threadGroup.enumerate(threads);
         for (Thread thread : threads) {
-            if (thread != null && thread.getName().contains(AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER)
+            if (thread != null
+                    && thread.getName().contains(AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER)
                     && thread.getName().contains(contextName)) {
                 ++count;
             }
@@ -74,14 +77,16 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
             @Override
             public void configure() {
                 // share 8 threads among the 20 routes
-                ScheduledExecutorService threadPool
-                        = context.getExecutorServiceManager().newScheduledThreadPool(this, "MyThreadPool", 8);
+                ScheduledExecutorService threadPool =
+                        context.getExecutorServiceManager().newScheduledThreadPool(this, "MyThreadPool", 8);
                 for (int i = 0; i < NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
                             // aggregate timeout after 0.1 second
-                            .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(1000)
+                            .aggregate(header("id"), new UseLatestAggregationStrategy())
+                            .completionTimeout(1000)
                             .timeoutCheckerExecutorService(threadPool)
-                            .completionTimeoutCheckerInterval(100).to("mock:result" + i);
+                            .completionTimeoutCheckerInterval(100)
+                            .to("mock:result" + i);
                 }
             }
         };

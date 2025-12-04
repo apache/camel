@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,7 +37,9 @@ public class BeanOverloadsWithAssignableParamTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:stringParam").bean(new MyOtherFooBean(), "toString(String.class)").to("mock:stringParamResult");
+                from("direct:stringParam")
+                        .bean(new MyOtherFooBean(), "toString(String.class)")
+                        .to("mock:stringParamResult");
             }
         };
     }

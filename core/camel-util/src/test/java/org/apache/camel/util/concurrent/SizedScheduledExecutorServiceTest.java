@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.concurrent;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -47,9 +48,10 @@ public class SizedScheduledExecutorServiceTest {
         sized.schedule(task, 2, TimeUnit.SECONDS);
         sized.schedule(task, 3, TimeUnit.SECONDS);
 
-        RejectedExecutionException e
-                = assertThrows(RejectedExecutionException.class, () -> sized.schedule(task, 4, TimeUnit.SECONDS),
-                        "Should have thrown a RejectedExecutionException");
+        RejectedExecutionException e = assertThrows(
+                RejectedExecutionException.class,
+                () -> sized.schedule(task, 4, TimeUnit.SECONDS),
+                "Should have thrown a RejectedExecutionException");
         assertEquals("Task rejected due queue size limit reached", e.getMessage());
 
         sized.shutdownNow();

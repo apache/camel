@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.robotframework;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -27,8 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
 
@@ -65,59 +66,85 @@ public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
 
         Exchange responseExchange = template.send("direct:setVariableCamelExchange", exchange);
 
-        List<String> camelRobotVariables = ObjectHelper.cast(List.class,
-                responseExchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_VARIABLES));
+        List<String> camelRobotVariables = ObjectHelper.cast(
+                List.class, responseExchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_VARIABLES));
         for (String camelRobotVariable : camelRobotVariables) {
-            if (!camelRobotVariable.contains("headers") && !camelRobotVariable.contains("properties")
+            if (!camelRobotVariable.contains("headers")
+                    && !camelRobotVariable.contains("properties")
                     && camelRobotVariable.contains("body")) {
-                assertEquals("body:Hello Robot", camelRobotVariable, "Body variable content should be [body:<body_value>]");
+                assertEquals(
+                        "body:Hello Robot", camelRobotVariable, "Body variable content should be [body:<body_value>]");
             }
             if (camelRobotVariable.contains("headers") && camelRobotVariable.contains("stringKey")) {
-                assertEquals("headers.stringKey:str1", camelRobotVariable,
+                assertEquals(
+                        "headers.stringKey:str1",
+                        camelRobotVariable,
                         "Header variable content should be [headers.stringKey:<header_value>]");
             }
             if (camelRobotVariable.contains("headers") && camelRobotVariable.contains("numericIntKey")) {
-                assertEquals("headers.numericIntKey:1", camelRobotVariable,
+                assertEquals(
+                        "headers.numericIntKey:1",
+                        camelRobotVariable,
                         "Header variable content should be [headers.numericIntKey:<header_value>]");
             }
             if (camelRobotVariable.contains("headers") && camelRobotVariable.contains("numericBigDecimalKey")) {
-                assertEquals("headers.numericBigDecimalKey:2", camelRobotVariable,
+                assertEquals(
+                        "headers.numericBigDecimalKey:2",
+                        camelRobotVariable,
                         "Header variable content should be [headers.numericIntKey:<header_value>]");
             }
             if (camelRobotVariable.contains("headers") && camelRobotVariable.contains("innerStringKey")) {
-                assertEquals("headers.inner.innerStringKey:str1", camelRobotVariable,
+                assertEquals(
+                        "headers.inner.innerStringKey:str1",
+                        camelRobotVariable,
                         "Header variable content should be [headers.stringKey:<header_value>]");
             }
             if (camelRobotVariable.contains("headers") && camelRobotVariable.contains("innerNumericIntKey")) {
-                assertEquals("headers.inner.innerNumericIntKey:1", camelRobotVariable,
+                assertEquals(
+                        "headers.inner.innerNumericIntKey:1",
+                        camelRobotVariable,
                         "Header variable content should be [headers.numericIntKey:<header_value>]");
             }
             if (camelRobotVariable.contains("headers") && camelRobotVariable.contains("innerNumericBigDecimalKey")) {
-                assertEquals("headers.inner.innerNumericBigDecimalKey:2", camelRobotVariable,
+                assertEquals(
+                        "headers.inner.innerNumericBigDecimalKey:2",
+                        camelRobotVariable,
                         "Header variable content should be [headers.numericIntKey:<header_value>]");
             }
             if (camelRobotVariable.contains("properties") && camelRobotVariable.contains("stringKey")) {
-                assertEquals("properties.stringKey:str1", camelRobotVariable,
+                assertEquals(
+                        "properties.stringKey:str1",
+                        camelRobotVariable,
                         "Header variable content should be [properties.stringKey:<header_value>]");
             }
             if (camelRobotVariable.contains("properties") && camelRobotVariable.contains("numericIntKey")) {
-                assertEquals("properties.numericIntKey:1", camelRobotVariable,
+                assertEquals(
+                        "properties.numericIntKey:1",
+                        camelRobotVariable,
                         "Header variable content should be [properties.numericIntKey:<header_value>]");
             }
             if (camelRobotVariable.contains("properties") && camelRobotVariable.contains("numericBigDecimalKey")) {
-                assertEquals("properties.numericBigDecimalKey:2", camelRobotVariable,
+                assertEquals(
+                        "properties.numericBigDecimalKey:2",
+                        camelRobotVariable,
                         "Header variable content should be [properties.numericIntKey:<header_value>]");
             }
             if (camelRobotVariable.contains("properties") && camelRobotVariable.contains("innerStringKey")) {
-                assertEquals("properties.inner.innerStringKey:str1", camelRobotVariable,
+                assertEquals(
+                        "properties.inner.innerStringKey:str1",
+                        camelRobotVariable,
                         "Header variable content should be [properties.stringKey:<header_value>]");
             }
             if (camelRobotVariable.contains("properties") && camelRobotVariable.contains("innerNumericIntKey")) {
-                assertEquals("properties.inner.innerNumericIntKey:1", camelRobotVariable,
+                assertEquals(
+                        "properties.inner.innerNumericIntKey:1",
+                        camelRobotVariable,
                         "Header variable content should be [properties.numericIntKey:<header_value>]");
             }
             if (camelRobotVariable.contains("properties") && camelRobotVariable.contains("innerNumericBigDecimalKey")) {
-                assertEquals("properties.inner.innerNumericBigDecimalKey:2", camelRobotVariable,
+                assertEquals(
+                        "properties.inner.innerNumericBigDecimalKey:2",
+                        camelRobotVariable,
                         "Header variable content should be [properties.numericIntKey:<header_value>]");
             }
         }
@@ -125,8 +152,8 @@ public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
-                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
+        assertEquals(0, (int) ObjectHelper.cast(
+                Integer.class, exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
     }
 
     @Override
@@ -134,8 +161,9 @@ public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:setVariableCamelExchange")
-                        .to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_exchange.robot?"
-                            + "xunitFile=target/out.xml&outputDirectory=target&allowContextMapAll=true")
+                        .to(
+                                "robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_exchange.robot?"
+                                        + "xunitFile=target/out.xml&outputDirectory=target&allowContextMapAll=true")
                         .to("mock:result");
             }
         };

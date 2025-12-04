@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.converter;
 
 import java.io.File;
@@ -69,12 +70,9 @@ public class SjmsConverterTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(FILE_INPUT_URI)
-                        .convertBodyTo(InputStream.class)
-                        .to(SJMS_QUEUE_URI);
+                from(FILE_INPUT_URI).convertBodyTo(InputStream.class).to(SJMS_QUEUE_URI);
 
-                from(SJMS_QUEUE_URI)
-                        .to(MOCK_RESULT_URI);
+                from(SJMS_QUEUE_URI).to(MOCK_RESULT_URI);
             }
         };
     }

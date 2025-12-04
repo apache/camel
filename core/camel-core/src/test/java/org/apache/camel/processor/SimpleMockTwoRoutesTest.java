@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleMockTwoRoutesTest extends ContextTestSupport {
 
@@ -57,12 +58,15 @@ public class SimpleMockTwoRoutesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo")
+                from("direct:start")
+                        .routeId("foo")
                         .to("log:foo")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                assertEquals("foo", exchange.getUnitOfWork().getRoute().getRouteId());
+                                assertEquals(
+                                        "foo",
+                                        exchange.getUnitOfWork().getRoute().getRouteId());
                             }
                         })
                         .to("mock:foo")
@@ -70,17 +74,22 @@ public class SimpleMockTwoRoutesTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                assertEquals("foo", exchange.getUnitOfWork().getRoute().getRouteId());
+                                assertEquals(
+                                        "foo",
+                                        exchange.getUnitOfWork().getRoute().getRouteId());
                             }
                         })
                         .to("mock:result");
 
-                from("direct:bar").routeId("bar")
+                from("direct:bar")
+                        .routeId("bar")
                         .to("log:bar")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                assertEquals("bar", exchange.getUnitOfWork().getRoute().getRouteId());
+                                assertEquals(
+                                        "bar",
+                                        exchange.getUnitOfWork().getRoute().getRouteId());
                             }
                         })
                         .to("mock:bar");

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -22,8 +25,6 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -72,5 +73,4 @@ public class PropertyBindingSupportMapDotKeyTest extends ContextTestSupport {
             this.data = data;
         }
     }
-
 }

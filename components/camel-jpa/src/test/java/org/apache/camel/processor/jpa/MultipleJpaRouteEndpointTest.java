@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 
@@ -33,22 +42,17 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class MultipleJpaRouteEndpointTest extends CamelTestSupport {
 
     @Mock
     private final EntityManagerFactory emf1 = mock(EntityManagerFactory.class);
+
     @Mock
     private final EntityManager em1 = mock(EntityManager.class);
+
     @Mock
     private final EntityManagerFactory emf2 = mock(EntityManagerFactory.class);
+
     @Mock
     private final EntityManager em2 = mock(EntityManager.class);
 
@@ -101,7 +105,8 @@ public class MultipleJpaRouteEndpointTest extends CamelTestSupport {
 
     @SuppressWarnings("unchecked")
     private void assertEntityManagerMap(Exchange exchange) {
-        HashMap<String, EntityManager> entityManagerMap = exchange.getProperty(JpaConstants.ENTITY_MANAGER, HashMap.class);
+        HashMap<String, EntityManager> entityManagerMap =
+                exchange.getProperty(JpaConstants.ENTITY_MANAGER, HashMap.class);
         assertNotNull(entityManagerMap);
         assertEquals(2, entityManagerMap.keySet().size());
         assertTrue(entityManagerMap.containsKey(String.valueOf(emf1.hashCode())));

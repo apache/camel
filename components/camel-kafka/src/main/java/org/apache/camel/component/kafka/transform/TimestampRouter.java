@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import java.text.SimpleDateFormat;
@@ -30,8 +31,10 @@ import org.apache.camel.util.ObjectHelper;
 public class TimestampRouter {
 
     public void process(
-            @ExchangeProperty("topicFormat") String topicFormat, @ExchangeProperty("timestampFormat") String timestampFormat,
-            @ExchangeProperty("timestampHeaderName") String timestampHeaderName, Exchange ex) {
+            @ExchangeProperty("topicFormat") String topicFormat,
+            @ExchangeProperty("timestampFormat") String timestampFormat,
+            @ExchangeProperty("timestampHeaderName") String timestampHeaderName,
+            Exchange ex) {
         final Pattern TOPIC = Pattern.compile("$[topic]", Pattern.LITERAL);
 
         final Pattern TIMESTAMP = Pattern.compile("$[timestamp]", Pattern.LITERAL);
@@ -64,5 +67,4 @@ public class TimestampRouter {
             ex.getMessage().setHeader("kafka.OVERRIDE_TOPIC", updatedTopic);
         }
     }
-
 }

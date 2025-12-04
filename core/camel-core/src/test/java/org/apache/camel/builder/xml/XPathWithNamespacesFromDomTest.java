@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,15 +30,12 @@ import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.support.builder.xml.NamespacesHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class XPathWithNamespacesFromDomTest extends ContextTestSupport {
 
     @Test
     public void testXPathUsingDomForNamespaces() {
-        Document document = context.getTypeConverter().convertTo(Document.class,
-                "<x:foo xmlns:x='n1' xmlns:y='n2'><bar id='a' xmlns:y='n3'/></x:foo>");
+        Document document = context.getTypeConverter()
+                .convertTo(Document.class, "<x:foo xmlns:x='n1' xmlns:y='n2'><bar id='a' xmlns:y='n3'/></x:foo>");
         Element element = (Element) document.getElementsByTagName("bar").item(0);
         assertNotNull(element, "Could not find element for id 'a'");
 

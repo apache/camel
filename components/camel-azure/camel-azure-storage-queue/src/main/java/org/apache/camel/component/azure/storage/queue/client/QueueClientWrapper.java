@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.client;
 
 import java.time.Duration;
@@ -71,6 +72,7 @@ public class QueueClientWrapper {
 
     public Response<UpdateMessageResult> updateMessage(
             String messageId, String popReceipt, String messageText, Duration visibilityTimeout, Duration timeout) {
-        return client.updateMessageWithResponse(messageId, popReceipt, messageText, visibilityTimeout, timeout, Context.NONE);
+        return client.updateMessageWithResponse(
+                messageId, popReceipt, messageText, visibilityTimeout, timeout, Context.NONE);
     }
 }

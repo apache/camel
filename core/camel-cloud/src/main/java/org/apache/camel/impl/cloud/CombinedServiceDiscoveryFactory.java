@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.List;
@@ -34,8 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 public class CombinedServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private List<ServiceDiscovery> serviceDiscoveryList;
 
-    public CombinedServiceDiscoveryFactory() {
-    }
+    public CombinedServiceDiscoveryFactory() {}
 
     // *************************************************************************
     // Properties

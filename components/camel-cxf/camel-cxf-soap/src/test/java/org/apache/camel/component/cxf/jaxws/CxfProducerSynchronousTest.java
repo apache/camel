@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,23 +30,22 @@ import org.apache.cxf.frontend.ServerFactoryBean;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfProducerSynchronousTest extends CamelTestSupport {
 
-    private static final String SIMPLE_SERVER_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSynchronousTest/test";
-    private static final String REQUEST_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                                                  + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                                  + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0>"
-                                                  + "</ns1:echo></soap:Body></soap:Envelope>";
+    private static final String SIMPLE_SERVER_ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSynchronousTest/test";
+    private static final String REQUEST_MESSAGE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                    + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                    + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0>"
+                    + "</ns1:echo></soap:Body></soap:Envelope>";
 
     private static final String TEST_MESSAGE = "Hello World!";
     private static String beforeThreadName;
     private static String afterThreadName;
 
     private String url = "cxf://" + SIMPLE_SERVER_ADDRESS
-                         + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService&dataFormat=RAW&synchronous=true";
+            + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService&dataFormat=RAW&synchronous=true";
 
     @BeforeAll
     public static void startServer() throws Exception {
@@ -91,5 +93,4 @@ public class CxfProducerSynchronousTest extends CamelTestSupport {
             }
         };
     }
-
 }

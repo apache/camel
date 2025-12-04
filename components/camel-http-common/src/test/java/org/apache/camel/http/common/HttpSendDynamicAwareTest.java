@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.http.base.HttpSendDynamicAware;
 import org.apache.camel.spi.SendDynamicAware.DynamicAwareEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpSendDynamicAwareTest {
 
@@ -95,5 +96,4 @@ public class HttpSendDynamicAwareTest {
         String[] result = httpSendDynamicAware.parseUri(entry);
         assertEquals("localhost:1234", result[0], "Parse should not add port if https and not specified");
     }
-
 }

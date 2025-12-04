@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mustache;
+
+import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_ENDPOINT_URI_PREFIX;
+import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RESOURCE_URI;
+import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEMPLATE;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,16 +40,18 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
 
-import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_ENDPOINT_URI_PREFIX;
-import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RESOURCE_URI;
-import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEMPLATE;
-
 /**
  * Transform messages using a Mustache template.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri",
-             remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
-             headersClass = MustacheConstants.class)
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = "mustache",
+        title = "Mustache",
+        syntax = "mustache:resourceUri",
+        remote = false,
+        producerOnly = true,
+        category = {Category.TRANSFORMATION},
+        headersClass = MustacheConstants.class)
 public class MustacheEndpoint extends ResourceEndpoint {
 
     private MustacheFactory mustacheFactory;
@@ -52,15 +59,17 @@ public class MustacheEndpoint extends ResourceEndpoint {
 
     @UriParam
     private boolean allowTemplateFromHeader;
+
     @UriParam
     private String encoding;
+
     @UriParam(defaultValue = "{{")
     private String startDelimiter;
+
     @UriParam(defaultValue = "}}")
     private String endDelimiter;
 
-    public MustacheEndpoint() {
-    }
+    public MustacheEndpoint() {}
 
     public MustacheEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
@@ -95,8 +104,8 @@ public class MustacheEndpoint extends ResourceEndpoint {
         }
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(MustacheConstants.MUSTACHE_RESOURCE_URI);
-            MustacheEndpoint newEndpoint
-                    = getCamelContext().getEndpoint(MUSTACHE_ENDPOINT_URI_PREFIX + newResourceUri, MustacheEndpoint.class);
+            MustacheEndpoint newEndpoint = getCamelContext()
+                    .getEndpoint(MUSTACHE_ENDPOINT_URI_PREFIX + newResourceUri, MustacheEndpoint.class);
             newEndpoint.onExchange(exchange);
             return;
         }
@@ -233,5 +242,4 @@ public class MustacheEndpoint extends ResourceEndpoint {
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
-
 }

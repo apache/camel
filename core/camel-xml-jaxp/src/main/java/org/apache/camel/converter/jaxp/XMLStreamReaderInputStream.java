@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxp;
 
 import java.io.ByteArrayOutputStream;
@@ -47,7 +48,7 @@ class XMLStreamReaderInputStream extends InputStream {
         try {
             this.writer = outfactory.createXMLStreamWriter(chunk, this.charset);
         } catch (XMLStreamException e) {
-            //ignore
+            // ignore
         }
     }
 
@@ -104,14 +105,17 @@ class XMLStreamReaderInputStream extends InputStream {
                             writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
                             for (int i = 0; i < reader.getAttributeCount(); i++) {
                                 String namespaceUri = reader.getAttributeNamespace(i);
-                                writer.writeAttribute(reader.getAttributePrefix(i), namespaceUri == null ? "" : namespaceUri,
+                                writer.writeAttribute(
+                                        reader.getAttributePrefix(i),
+                                        namespaceUri == null ? "" : namespaceUri,
                                         reader.getAttributeLocalName(i),
                                         reader.getAttributeValue(i));
                             }
                             for (int i = 0; i < reader.getNamespaceCount(); i++) {
                                 String namespacePrefix = reader.getNamespacePrefix(i);
                                 String namespaceURI = reader.getNamespaceURI(i);
-                                writer.writeNamespace(namespacePrefix == null ? "" : namespacePrefix,
+                                writer.writeNamespace(
+                                        namespacePrefix == null ? "" : namespacePrefix,
                                         namespaceURI == null ? "" : namespaceURI);
                             }
                             break;

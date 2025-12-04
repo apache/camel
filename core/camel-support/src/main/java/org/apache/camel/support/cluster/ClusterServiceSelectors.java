@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cluster;
 
 import java.util.Collection;
@@ -33,8 +34,7 @@ public final class ClusterServiceSelectors {
     public static final Selector DEFAULT_SELECTOR = new SelectSingle();
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusterServiceSelectors.class);
 
-    private ClusterServiceSelectors() {
-    }
+    private ClusterServiceSelectors() {}
 
     public static final class SelectSingle implements Selector {
         @Override
@@ -61,16 +61,17 @@ public final class ClusterServiceSelectors {
     public static final class SelectByOrder implements CamelClusterService.Selector {
         @Override
         public Optional<CamelClusterService> select(Collection<CamelClusterService> services) {
-            Optional<Map.Entry<Integer, List<CamelClusterService>>> highPriorityServices = services.stream()
-                    .collect(Collectors.groupingBy(CamelClusterService::getOrder))
-                    .entrySet().stream()
-                    .min(Comparator.comparingInt(Map.Entry::getKey));
+            Optional<Map.Entry<Integer, List<CamelClusterService>>> highPriorityServices =
+                    services.stream().collect(Collectors.groupingBy(CamelClusterService::getOrder)).entrySet().stream()
+                            .min(Comparator.comparingInt(Map.Entry::getKey));
 
             if (highPriorityServices.isPresent()) {
                 if (highPriorityServices.get().getValue().size() == 1) {
-                    return Optional.of(highPriorityServices.get().getValue().iterator().next());
+                    return Optional.of(
+                            highPriorityServices.get().getValue().iterator().next());
                 } else {
-                    LOGGER.warn("Multiple CamelClusterService instances available for highest priority (order={}, items={})",
+                    LOGGER.warn(
+                            "Multiple CamelClusterService instances available for highest priority (order={}, items={})",
                             highPriorityServices.get().getKey(),
                             highPriorityServices.get().getValue());
                 }

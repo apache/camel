@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
 
 import java.util.Timer;
@@ -77,5 +78,4 @@ public class Timeout extends TimerTask {
     public void run() {
         timeoutHandler.timeout(this);
     }
-
 }

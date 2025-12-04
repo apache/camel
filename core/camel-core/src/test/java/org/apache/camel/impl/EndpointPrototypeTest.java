@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class EndpointPrototypeTest extends ContextTestSupport {
 
@@ -116,5 +117,4 @@ public class EndpointPrototypeTest extends ContextTestSupport {
         assertEquals("mock://foo", endpoints.get(0).getEndpointUri());
         assertEquals("mock://foo2", endpoints.get(1).getEndpointUri());
     }
-
 }

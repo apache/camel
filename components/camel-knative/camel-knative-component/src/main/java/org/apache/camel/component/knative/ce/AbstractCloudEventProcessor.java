@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.ce;
 
 import java.io.InputStream;
@@ -53,7 +54,8 @@ abstract class AbstractCloudEventProcessor implements CloudEventProcessor {
                 throw new UnsupportedOperationException("Batched CloudEvents are not yet supported");
             }
 
-            if (!Objects.equals(exchange.getIn().getHeader(Exchange.CONTENT_TYPE), Knative.MIME_STRUCTURED_CONTENT_MODE)) {
+            if (!Objects.equals(
+                    exchange.getIn().getHeader(Exchange.CONTENT_TYPE), Knative.MIME_STRUCTURED_CONTENT_MODE)) {
                 final Map<String, Object> headers = exchange.getIn().getHeaders();
 
                 for (CloudEvent.Attribute attribute : cloudEvent.attributes()) {
@@ -106,7 +108,11 @@ abstract class AbstractCloudEventProcessor implements CloudEventProcessor {
                             endpoint.getTypeId());
                 }
 
-                headers.put(cloudEvent().mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).http(), endpoint.getTypeId());
+                headers.put(
+                        cloudEvent()
+                                .mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE)
+                                .http(),
+                        endpoint.getTypeId());
             } else {
                 setCloudEventHeader(headers, CloudEvent.CAMEL_CLOUD_EVENT_TYPE, () -> {
                     String eventType = service.getCloudEventType();
@@ -127,8 +133,10 @@ abstract class AbstractCloudEventProcessor implements CloudEventProcessor {
             });
 
             for (Map.Entry<String, String> ceOverride : service.getCeOverrides().entrySet()) {
-                // when using keys in YAML DSL camelCase is being used by default -convert to dash due to CloudEvents spec
-                headers.put(StringHelper.camelCaseToDash(ceOverride.getKey()),
+                // when using keys in YAML DSL camelCase is being used by default -convert to dash due to CloudEvents
+                // spec
+                headers.put(
+                        StringHelper.camelCaseToDash(ceOverride.getKey()),
                         exchange.getContext().resolvePropertyPlaceholders(ceOverride.getValue()));
             }
         };

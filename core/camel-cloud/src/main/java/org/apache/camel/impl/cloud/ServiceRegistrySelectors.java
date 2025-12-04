@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.Collection;
@@ -36,8 +37,7 @@ public final class ServiceRegistrySelectors {
     public static final ServiceRegistry.Selector DEFAULT_SELECTOR = new SelectSingle();
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistrySelectors.class);
 
-    private ServiceRegistrySelectors() {
-    }
+    private ServiceRegistrySelectors() {}
 
     public static final class SelectSingle implements ServiceRegistry.Selector {
         @Override
@@ -64,16 +64,17 @@ public final class ServiceRegistrySelectors {
     public static final class SelectByOrder implements ServiceRegistry.Selector {
         @Override
         public Optional<ServiceRegistry> select(Collection<ServiceRegistry> services) {
-            Optional<Map.Entry<Integer, List<ServiceRegistry>>> highPriorityServices = services.stream()
-                    .collect(Collectors.groupingBy(ServiceRegistry::getOrder))
-                    .entrySet().stream()
-                    .min(Comparator.comparingInt(Map.Entry::getKey));
+            Optional<Map.Entry<Integer, List<ServiceRegistry>>> highPriorityServices =
+                    services.stream().collect(Collectors.groupingBy(ServiceRegistry::getOrder)).entrySet().stream()
+                            .min(Comparator.comparingInt(Map.Entry::getKey));
 
             if (highPriorityServices.isPresent()) {
                 if (highPriorityServices.get().getValue().size() == 1) {
-                    return Optional.of(highPriorityServices.get().getValue().iterator().next());
+                    return Optional.of(
+                            highPriorityServices.get().getValue().iterator().next());
                 } else {
-                    LOGGER.warn("Multiple ServiceRegistry instances available for highest priority (order={}, items={})",
+                    LOGGER.warn(
+                            "Multiple ServiceRegistry instances available for highest priority (order={}, items={})",
                             highPriorityServices.get().getKey(),
                             highPriorityServices.get().getValue());
                 }

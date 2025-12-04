@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
 
 import com.fasterxml.jackson.core.FormatSchema;
@@ -32,5 +33,4 @@ public interface SchemaResolver {
      * @return          the resolved format or null if no format is found
      */
     FormatSchema resolve(Exchange exchange);
-
 }

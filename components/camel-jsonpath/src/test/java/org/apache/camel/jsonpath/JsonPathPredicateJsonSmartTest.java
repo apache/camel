@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -24,8 +27,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonPathPredicateJsonSmartTest extends CamelTestSupport {
 
@@ -44,5 +45,4 @@ public class JsonPathPredicateJsonSmartTest extends CamelTestSupport {
         boolean bot = pre.matches(exchange);
         assertTrue(bot, "Should have message from bot");
     }
-
 }

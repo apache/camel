@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to verify continuing using NOT same thread on the consumer side.
@@ -47,12 +48,14 @@ public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("disruptor-vm:foo").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertNull(local.get());
-                        assertNotSame(id, Thread.currentThread().getId(), "Thread is should not be same");
-                    }
-                }).to("mock:result");
+                from("disruptor-vm:foo")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertNull(local.get());
+                                assertNotSame(id, Thread.currentThread().getId(), "Thread is should not be same");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
@@ -62,12 +65,14 @@ public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        local.set("Hello");
-                        id = Thread.currentThread().getId();
-                    }
-                }).to("disruptor-vm:foo");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                local.set("Hello");
+                                id = Thread.currentThread().getId();
+                            }
+                        })
+                        .to("disruptor-vm:foo");
             }
         };
     }

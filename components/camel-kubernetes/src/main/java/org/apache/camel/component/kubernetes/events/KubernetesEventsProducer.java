@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.events;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,8 +42,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
-
 public class KubernetesEventsProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesEventsProducer.class);
@@ -59,7 +60,6 @@ public class KubernetesEventsProducer extends DefaultProducer {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
-
             case KubernetesOperations.LIST_EVENTS_OPERATION:
                 doList(exchange);
                 break;
@@ -93,16 +93,29 @@ public class KubernetesEventsProducer extends DefaultProducer {
         EventList eventList;
         String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(namespace)) {
-            eventList = getEndpoint().getKubernetesClient().events().v1().events().inAnyNamespace().list();
+            eventList = getEndpoint()
+                    .getKubernetesClient()
+                    .events()
+                    .v1()
+                    .events()
+                    .inAnyNamespace()
+                    .list();
         } else {
-            eventList = getEndpoint().getKubernetesClient().events().v1().events().inNamespace(namespace).list();
+            eventList = getEndpoint()
+                    .getKubernetesClient()
+                    .events()
+                    .v1()
+                    .events()
+                    .inNamespace(namespace)
+                    .list();
         }
         prepareOutboundMessage(exchange, eventList.getItems());
     }
 
     protected void doListEventsByLabel(Exchange exchange) {
         String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, Map.class);
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, Map.class);
         EventList eventList;
 
         if (ObjectHelper.isEmpty(labels)) {
@@ -111,9 +124,22 @@ public class KubernetesEventsProducer extends DefaultProducer {
         }
 
         if (ObjectHelper.isEmpty(namespace)) {
-            eventList = getEndpoint().getKubernetesClient().events().v1().events().inAnyNamespace().withLabels(labels).list();
+            eventList = getEndpoint()
+                    .getKubernetesClient()
+                    .events()
+                    .v1()
+                    .events()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         } else {
-            eventList = getEndpoint().getKubernetesClient().events().v1().events().inNamespace(namespace).withLabels(labels)
+            eventList = getEndpoint()
+                    .getKubernetesClient()
+                    .events()
+                    .v1()
+                    .events()
+                    .inNamespace(namespace)
+                    .withLabels(labels)
                     .list();
         }
 
@@ -131,7 +157,13 @@ public class KubernetesEventsProducer extends DefaultProducer {
             LOG.error("Get a specific event require specify a namespace name");
             throw new IllegalArgumentException("Get a specific event require specify a namespace name");
         }
-        Event event = getEndpoint().getKubernetesClient().events().v1().events().inNamespace(namespaceName).withName(eventName)
+        Event event = getEndpoint()
+                .getKubernetesClient()
+                .events()
+                .v1()
+                .events()
+                .inNamespace(namespaceName)
+                .withName(eventName)
                 .get();
 
         prepareOutboundMessage(exchange, event);
@@ -145,7 +177,8 @@ public class KubernetesEventsProducer extends DefaultProducer {
         doCreateOrUpdateEvent(exchange, "Create", Resource::create);
     }
 
-    private void doCreateOrUpdateEvent(Exchange exchange, String operationName, Function<Resource<Event>, Event> operation) {
+    private void doCreateOrUpdateEvent(
+            Exchange exchange, String operationName, Function<Resource<Event>, Event> operation) {
         String eventName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(eventName)) {
@@ -158,31 +191,44 @@ public class KubernetesEventsProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     String.format("%s a specific event require specify a namespace name", operationName));
         }
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, Map.class);
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, Map.class);
         EventBuilder builder = exchange.getIn().getBody(EventBuilder.class);
         if (builder == null) {
             builder = new EventBuilder()
-                    .withEventTime(new MicroTimeBuilder().withTime(
-                            exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_TIME,
-                                    () -> OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), String.class))
+                    .withEventTime(new MicroTimeBuilder()
+                            .withTime(exchange.getIn()
+                                    .getHeader(
+                                            KubernetesConstants.KUBERNETES_EVENT_TIME,
+                                            () -> OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                                            String.class))
                             .build())
-                    .withAction(exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION_PRODUCER, String.class))
+                    .withAction(exchange.getIn()
+                            .getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION_PRODUCER, String.class))
                     .withType(exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_TYPE, String.class))
                     .withReason(exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_REASON, String.class))
                     .withNote(exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_NOTE, String.class))
-                    .withReportingController(
-                            exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_REPORTING_CONTROLLER, String.class))
-                    .withReportingInstance(
-                            exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_REPORTING_INSTANCE, String.class))
-                    .withRegarding(
-                            exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_REGARDING, ObjectReference.class))
-                    .withRelated(
-                            exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_RELATED, ObjectReference.class));
+                    .withReportingController(exchange.getIn()
+                            .getHeader(KubernetesConstants.KUBERNETES_EVENT_REPORTING_CONTROLLER, String.class))
+                    .withReportingInstance(exchange.getIn()
+                            .getHeader(KubernetesConstants.KUBERNETES_EVENT_REPORTING_INSTANCE, String.class))
+                    .withRegarding(exchange.getIn()
+                            .getHeader(KubernetesConstants.KUBERNETES_EVENT_REGARDING, ObjectReference.class))
+                    .withRelated(exchange.getIn()
+                            .getHeader(KubernetesConstants.KUBERNETES_EVENT_RELATED, ObjectReference.class));
         }
-        Event eventCreating = builder.withNewMetadata().withName(eventName).withLabels(labels).endMetadata()
+        Event eventCreating = builder.withNewMetadata()
+                .withName(eventName)
+                .withLabels(labels)
+                .endMetadata()
                 .build();
-        Event event = operation.apply(
-                getEndpoint().getKubernetesClient().events().v1().events().inNamespace(namespaceName).resource(eventCreating));
+        Event event = operation.apply(getEndpoint()
+                .getKubernetesClient()
+                .events()
+                .v1()
+                .events()
+                .inNamespace(namespaceName)
+                .resource(eventCreating));
 
         prepareOutboundMessage(exchange, event);
     }
@@ -199,9 +245,14 @@ public class KubernetesEventsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific event require specify a namespace name");
         }
 
-        List<StatusDetails> statusDetails
-                = getEndpoint().getKubernetesClient().events().v1().events().inNamespace(namespaceName).withName(eventName)
-                        .delete();
+        List<StatusDetails> statusDetails = getEndpoint()
+                .getKubernetesClient()
+                .events()
+                .v1()
+                .events()
+                .inNamespace(namespaceName)
+                .withName(eventName)
+                .delete();
         boolean eventDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, eventDeleted);

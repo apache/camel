@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo;
 
 import org.apache.camel.EndpointInject;
@@ -39,19 +40,16 @@ public class MonitorItemMultiConnectionsTest extends AbstractMiloServerTest {
     private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
     private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
-                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "myitem1")
-                                                        + "&overrideHost=true";
+            + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1")
+            + "&overrideHost=true";
 
     private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:opc.tcp://foo:bar2@localhost:@@port@@?node="
-                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "myitem1")
-                                                        + "&overrideHost=true";
+            + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1")
+            + "&overrideHost=true";
 
     private static final String MILO_CLIENT_ITEM_C3_1 = "milo-client:opc.tcp://foo2:bar@localhost:@@port@@?node="
-                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "myitem1")
-                                                        + "&overrideHost=true";
+            + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1")
+            + "&overrideHost=true";
 
     private static final String MOCK_TEST_1 = "mock:test1";
     private static final String MOCK_TEST_2 = "mock:test2";

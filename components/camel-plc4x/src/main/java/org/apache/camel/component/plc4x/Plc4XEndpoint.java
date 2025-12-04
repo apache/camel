@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
 
 import java.util.Map;
@@ -43,8 +44,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Read and write to PLC devices
  */
-@UriEndpoint(scheme = "plc4x", firstVersion = "3.20.0", title = "PLC4X",
-             lenientProperties = true, syntax = "plc4x:driver", category = Category.IOT)
+@UriEndpoint(
+        scheme = "plc4x",
+        firstVersion = "3.20.0",
+        title = "PLC4X",
+        lenientProperties = true,
+        syntax = "plc4x:driver",
+        category = Category.IOT)
 public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
 
@@ -54,16 +60,21 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     @UriPath
     @Metadata(required = true, description = "PLC4X connection string for the connection to the target")
     private String driver;
+
     @UriParam(label = "consumer", prefix = "tag.", multiValue = true)
     @Metadata(description = "Tags as key/values from the Map to use in query")
     private Map<String, String> tags;
+
     @UriParam
-    @Metadata(label = "consumer",
-              description = "Query to a trigger. On a rising edge of the trigger, the tags will be read once")
+    @Metadata(
+            label = "consumer",
+            description = "Query to a trigger. On a rising edge of the trigger, the tags will be read once")
     private String trigger;
+
     @UriParam
     @Metadata(label = "consumer", description = "Interval on which the Trigger should be checked")
     private int period;
+
     @UriParam
     @Metadata(description = "Whether to reconnect when no connection is present upon doing a request")
     private boolean autoReconnect;
@@ -132,7 +143,8 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
                     LOGGER.warn("Could not connect during setup, retrying on next request");
                 }
             } else {
-                LOGGER.warn("Could not connect during setup and auto reconnect is turned off due to: {}", e.getMessage());
+                LOGGER.warn(
+                        "Could not connect during setup and auto reconnect is turned off due to: {}", e.getMessage());
                 throw e;
             }
         }
@@ -207,7 +219,8 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
                 try {
                     builder.addTagAddress(tag.getKey(), tag.getValue());
                 } catch (PlcIncompatibleDatatypeException e) {
-                    LOGGER.warn("For consumer, please use Map<String,String>, currently using {}",
+                    LOGGER.warn(
+                            "For consumer, please use Map<String,String>, currently using {}",
                             tags.getClass().getSimpleName());
                 }
             }
@@ -226,7 +239,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
         PlcWriteRequest.Builder builder = connection.writeRequestBuilder();
 
         for (Map.Entry<String, Map<String, Object>> entry : tags.entrySet()) {
-            //Tags are stored like this --> Map<Tagname,Map<Query,Value>> for writing
+            // Tags are stored like this --> Map<Tagname,Map<Query,Value>> for writing
             String name = entry.getKey();
             String query = entry.getValue().keySet().iterator().next();
             Object value = entry.getValue().get(query);
@@ -270,5 +283,4 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
             connection = null;
         }
     }
-
 }

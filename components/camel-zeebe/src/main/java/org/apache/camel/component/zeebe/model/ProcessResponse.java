@@ -70,11 +70,10 @@ public class ProcessResponse extends AbstractZeebeResponse {
 
     @Override
     public String toString() {
-        return "ProcessResponse{" + "processId='" + processId + '\'' +
-               ", processInstanceKey=" + processInstanceKey +
-               ", processVersion=" + processVersion +
-               ", processKey=" + processKey +
-               '}';
+        return "ProcessResponse{" + "processId='" + processId + '\'' + ", processInstanceKey="
+                + processInstanceKey + ", processVersion="
+                + processVersion + ", processKey="
+                + processKey + '}';
     }
 
     @Override
@@ -89,8 +88,10 @@ public class ProcessResponse extends AbstractZeebeResponse {
             return false;
         }
         ProcessResponse that = (ProcessResponse) o;
-        return processInstanceKey == that.processInstanceKey && processVersion == that.processVersion
-                && processKey == that.processKey && processId.equals(that.processId);
+        return processInstanceKey == that.processInstanceKey
+                && processVersion == that.processVersion
+                && processKey == that.processKey
+                && processId.equals(that.processId);
     }
 
     @Override

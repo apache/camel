@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.server;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
 
 import io.grpc.BindableService;
 import io.grpc.stub.StreamObserver;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
 import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcEndpoint;
 import org.apache.camel.component.grpc.GrpcUtils;
@@ -47,21 +48,25 @@ public class DefaultBindableServiceFactory implements BindableServiceFactory {
                     grpcMethodHandler.handle(args[0], (StreamObserver<Object>) args[1], thisMethod.getName());
                 } else if (args.length == 1 && args[0] instanceof StreamObserver) {
                     // Single incoming parameter is instance of the io.grpc.stub.StreamObserver
-                    return grpcMethodHandler.handleForConsumerStrategy((StreamObserver<Object>) args[0], thisMethod.getName());
+                    return grpcMethodHandler.handleForConsumerStrategy(
+                            (StreamObserver<Object>) args[0], thisMethod.getName());
                 } else {
                     throw new IllegalArgumentException("Invalid to process gRPC method: " + thisMethod.getName());
                 }
                 return null;
             }
         };
-        serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(endpoint.getServicePackage(), endpoint.getServiceName(),
-                endpoint.getCamelContext()));
+        serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(
+                endpoint.getServicePackage(), endpoint.getServiceName(), endpoint.getCamelContext()));
         try {
             return (BindableService) serviceProxy.create(new Class<?>[0], new Object[0], methodHandler);
-        } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException e) {
-            throw new IllegalArgumentException(
-                    "Unable to create bindable proxy service for " + endpoint.getConfiguration().getService());
+        } catch (NoSuchMethodException
+                | IllegalArgumentException
+                | InstantiationException
+                | IllegalAccessException
+                | InvocationTargetException e) {
+            throw new IllegalArgumentException("Unable to create bindable proxy service for "
+                    + endpoint.getConfiguration().getService());
         }
     }
 }

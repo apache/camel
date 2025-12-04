@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.maven;
 
 import java.io.IOException;
@@ -76,8 +77,8 @@ public class MavenVersionManager implements VersionManager {
         this(new MavenDownloaderImpl());
     }
 
-    public MavenVersionManager(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession,
-                               Settings settings) {
+    public MavenVersionManager(
+            RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession, Settings settings) {
         this(new MavenDownloaderImpl(repositorySystem, repositorySystemSession, settings));
     }
 
@@ -204,8 +205,8 @@ public class MavenVersionManager implements VersionManager {
         Set<String> extraRepositories = new LinkedHashSet<>(repositories.values());
 
         // non-transitive resolve, because we load static data from the catalog artifacts
-        List<MavenArtifact> artifacts = mavenDownloader.resolveArtifacts(Collections.singletonList(gav),
-                extraRepositories, false, useSnapshots);
+        List<MavenArtifact> artifacts = mavenDownloader.resolveArtifacts(
+                Collections.singletonList(gav), extraRepositories, false, useSnapshots);
 
         for (MavenArtifact ma : artifacts) {
             helperClassLoader.addURL(ma.getFile().toURI().toURL());

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +38,6 @@ import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
@@ -78,8 +79,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
             String routeId = "mllp-sender";
 
             public void configure() {
-                onCompletion()
-                        .to(complete);
+                onCompletion().to(complete);
 
                 onException(ConnectException.class)
                         .handled(true)
@@ -99,7 +99,8 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
                         .log(LoggingLevel.ERROR, routeId, "Acknowledgement Error")
                         .stop();
 
-                from(source.getDefaultEndpoint()).routeId(routeId)
+                from(source.getDefaultEndpoint())
+                        .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Sending Message")
                         .toF("mllp://%s:%d", mllpServer.getListenHost(), mllpServer.getListenPort())
                         .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
@@ -223,7 +224,9 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         // Depending on the timing, either a write or a receive exception will be thrown
-        assertEquals(1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
+        assertEquals(
+                1,
+                writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
                 "Either a write or a receive exception should have been be thrown");
     }
 
@@ -248,7 +251,9 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         // Depending on the timing, either a write or a receive exception will be thrown
-        assertEquals(1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
+        assertEquals(
+                1,
+                writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
                 "Either a write or a receive exception should have been be thrown");
     }
 
@@ -274,5 +279,4 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
-
 }

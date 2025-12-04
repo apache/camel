@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import com.huaweicloud.sdk.core.HcClient;
@@ -32,19 +33,17 @@ public class FunctionGraphMockClient extends FunctionGraphClient {
                 .withRequestId("1939bbbb-4009-4685-bcc0-2ff0381fa911")
                 .withResult(
                         "{\"headers\":{\"Content-Type\":\"application/json\"},\"statusCode\":200,\"isBase64Encoded\":false,\"body\":{\"orderId\":1621950031517,"
-                            +
-                            "\"department\":\"sales\",\"vendor\":\"huawei\",\"product\":\"monitors\",\"price\":20.13,\"quantity\":20,\"status\":\"order submitted successfully\"}}\n")
+                                + "\"department\":\"sales\",\"vendor\":\"huawei\",\"product\":\"monitors\",\"price\":20.13,\"quantity\":20,\"status\":\"order submitted successfully\"}}\n")
                 .withStatus(200);
         if (request.getXCffLogType().equals("tail")) {
             response.withLog(
                     "2021-05-25 21:40:31.472+08:00 Start invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', version: latest\n"
-                             +
-                             "    { product: 'monitors',\n" +
-                             "      quantity: 20,\n" +
-                             "      vendor: 'huawei',\n" +
-                             "      price: 20.13,\n" +
-                             "      department: 'sales' }\n" +
-                             "    2021-05-25 21:40:31.518+08:00 Finish invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', duration: 45.204ms, billing duration: 100ms, memory used: 64.383MB.");
+                            + "    { product: 'monitors',\n"
+                            + "      quantity: 20,\n"
+                            + "      vendor: 'huawei',\n"
+                            + "      price: 20.13,\n"
+                            + "      department: 'sales' }\n"
+                            + "    2021-05-25 21:40:31.518+08:00 Finish invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', duration: 45.204ms, billing duration: 100ms, memory used: 64.383MB.");
         }
         return response;
     }

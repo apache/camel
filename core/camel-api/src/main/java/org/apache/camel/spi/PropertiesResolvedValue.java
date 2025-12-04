@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
  * Data about a {@link PropertiesComponent} property placeholder that has been resolved to a value by Camel.
  */
-public record PropertiesResolvedValue(String name, String originalValue, String value, String defaultValue, String source) {
-
-}
+public record PropertiesResolvedValue(
+        String name, String originalValue, String value, String defaultValue, String source) {}

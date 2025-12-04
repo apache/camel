@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink.annotations;
 
 import java.lang.annotation.ElementType;
@@ -31,8 +32,6 @@ import java.lang.annotation.Target;
  */
 @Deprecated(since = "4.16.0")
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.PARAMETER })
+@Target({ElementType.METHOD, ElementType.PARAMETER})
 @Inherited
-public @interface DataSetCallback {
-
-}
+public @interface DataSetCallback {}

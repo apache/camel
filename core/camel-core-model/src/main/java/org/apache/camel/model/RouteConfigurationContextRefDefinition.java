@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -37,8 +38,7 @@ public class RouteConfigurationContextRefDefinition {
     @XmlAttribute(required = true)
     private String ref;
 
-    public RouteConfigurationContextRefDefinition() {
-    }
+    public RouteConfigurationContextRefDefinition() {}
 
     public RouteConfigurationContextRefDefinition(String ref) {
         this.ref = ref;
@@ -63,5 +63,4 @@ public class RouteConfigurationContextRefDefinition {
     public List<RouteConfigurationDefinition> lookupRouteConfigurations(CamelContext camelContext) {
         return RouteConfigurationContextRefDefinitionHelper.lookupRouteConfigurations(camelContext, ref);
     }
-
 }

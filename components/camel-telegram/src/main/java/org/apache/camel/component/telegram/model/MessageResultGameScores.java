@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.util.List;
@@ -28,8 +29,7 @@ public class MessageResultGameScores extends MessageResult {
     @JsonProperty("result")
     private List<GameHighScore> gameHighScores;
 
-    public MessageResultGameScores() {
-    }
+    public MessageResultGameScores() {}
 
     public List<GameHighScore> getGameHighScores() {
         return gameHighScores;

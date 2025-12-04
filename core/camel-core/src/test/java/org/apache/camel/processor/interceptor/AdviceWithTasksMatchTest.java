@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
@@ -53,7 +54,13 @@ public class AdviceWithTasksMatchTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:foo").id("gold-1").to("mock:bar").id("gold-2").to("mock:result").id("silver-1");
+                from("direct:start")
+                        .to("mock:foo")
+                        .id("gold-1")
+                        .to("mock:bar")
+                        .id("gold-2")
+                        .to("mock:result")
+                        .id("silver-1");
             }
         };
     }

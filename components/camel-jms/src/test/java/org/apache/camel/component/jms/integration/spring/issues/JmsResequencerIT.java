@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.issues;
 
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
@@ -27,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Integration test for issues CAMEL-1034 and CAMEL-1037
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("issues") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("issues")})
 public class JmsResequencerIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -55,12 +56,12 @@ public class JmsResequencerIT extends AbstractSpringJMSITSupport {
         }
 
         for (int i = 100; i > 0; i--) {
-            // send as text messages (not java objects - as they are not serializable and allowed by JMS brokers like ActiveMQ)
+            // send as text messages (not java objects - as they are not serializable and allowed by JMS brokers like
+            // ActiveMQ)
             String text = Integer.toString(i);
             template.sendBodyAndHeader(endpoint, text, "num", (long) i);
         }
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

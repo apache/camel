@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.Date;
@@ -54,7 +55,10 @@ public class FhirHistory {
      * @return                 the {@link IBaseBundle}
      */
     public <T extends IBaseBundle> T onServer(
-            Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff,
+            Class<T> returnType,
+            Integer count,
+            Date cutoff,
+            IPrimitiveType<Date> iCutoff,
             Map<ExtraParameters, Object> extraParameters) {
         IHistoryTyped<T> tiHistoryTyped = client.history().onServer().returnBundle(returnType);
         processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
@@ -80,8 +84,12 @@ public class FhirHistory {
      * @return                 the {@link IBaseBundle}
      */
     public <T extends IBaseBundle> T onType(
-            Class<IBaseResource> resourceType, Class<T> returnType, Integer count, Date cutoff,
-            IPrimitiveType<Date> iCutoff, Map<ExtraParameters, Object> extraParameters) {
+            Class<IBaseResource> resourceType,
+            Class<T> returnType,
+            Integer count,
+            Date cutoff,
+            IPrimitiveType<Date> iCutoff,
+            Map<ExtraParameters, Object> extraParameters) {
         IHistoryTyped<T> tiHistoryTyped = client.history().onType(resourceType).andReturnBundle(returnType);
         processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
         ExtraParameters.process(extraParameters, tiHistoryTyped);
@@ -110,7 +118,11 @@ public class FhirHistory {
      * @return                          the {@link IBaseBundle}
      */
     public <T extends IBaseBundle> T onInstance(
-            IIdType id, Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff,
+            IIdType id,
+            Class<T> returnType,
+            Integer count,
+            Date cutoff,
+            IPrimitiveType<Date> iCutoff,
             Map<ExtraParameters, Object> extraParameters) {
         IHistoryTyped<T> tiHistoryTyped = client.history().onInstance(id).andReturnBundle(returnType);
         processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
@@ -130,5 +142,4 @@ public class FhirHistory {
             tiHistoryTyped.since(cutoff);
         }
     }
-
 }

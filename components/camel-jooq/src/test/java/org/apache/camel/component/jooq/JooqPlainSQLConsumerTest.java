@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jooq;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JooqPlainSQLConsumerTest extends BaseJooqTest {
 
@@ -40,7 +41,8 @@ public class JooqPlainSQLConsumerTest extends BaseJooqTest {
         producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, bookStoreRecord);
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(bookStoreRecord, mockResult.getExchanges().get(0).getMessage().getBody());
+        assertEquals(
+                bookStoreRecord, mockResult.getExchanges().get(0).getMessage().getBody());
     }
 
     @Override
@@ -54,8 +56,7 @@ public class JooqPlainSQLConsumerTest extends BaseJooqTest {
             @Override
             public void configure() {
                 // Book store
-                from("direct:insert")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
+                from("direct:insert").to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
 
                 // Consumer SQL query
                 from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?initialDelay=0&delay=100")
@@ -63,5 +64,4 @@ public class JooqPlainSQLConsumerTest extends BaseJooqTest {
             }
         };
     }
-
 }

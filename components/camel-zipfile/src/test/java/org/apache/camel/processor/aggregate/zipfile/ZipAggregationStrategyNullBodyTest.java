@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.zipfile;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,11 +34,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ZipAggregationStrategyNullBodyTest extends CamelTestSupport {
 
@@ -119,8 +120,7 @@ public class ZipAggregationStrategyNullBodyTest extends CamelTestSupport {
             for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
                 fileCount++;
             }
-            assertEquals(expectedCount, fileCount,
-                    "Zip file should contains " + expectedCount + " files");
+            assertEquals(expectedCount, fileCount, "Zip file should contains " + expectedCount + " files");
         } finally {
             IOHelper.close(zin);
         }
@@ -139,9 +139,7 @@ public class ZipAggregationStrategyNullBodyTest extends CamelTestSupport {
                         .to("file:" + TEST_DIR)
                         .to(MOCK_AGGREGATE_TO_ZIP_ENTRY)
                         .log("Done processing zip file: ${header.CamelFileName}");
-
             }
         };
-
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
+
+import static org.apache.camel.TypeConverter.MISS_VALUE;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -30,8 +33,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.TypeConverter.MISS_VALUE;
-
 /**
  * Default converters for {@link ExecResult}. For details how to extend the converters check out
  * <a href="http://camel.apache.org/type-converter.html">the Camel docs for type converters.</a>
@@ -41,8 +42,7 @@ public final class ExecResultConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExecResultConverter.class);
 
-    private ExecResultConverter() {
-    }
+    private ExecResultConverter() {}
 
     @Converter
     public static InputStream convertToInputStream(ExecResult result) throws FileNotFoundException {

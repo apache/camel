@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.condition.OS.AIX;
 
 import java.lang.annotation.ElementType;
 import java.util.Locale;
@@ -31,18 +37,15 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.condition.OS.AIX;
-
 @DisabledOnOs(AIX)
 public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
     @BindToRegistry("myMessageInterpolator")
     private MessageInterpolator messageInterpolator;
+
     @BindToRegistry("myTraversableResolver")
     private TraversableResolver traversableResolver;
+
     @BindToRegistry("myConstraintValidatorFactory")
     private ConstraintValidatorFactory constraintValidatorFactory;
 
@@ -61,12 +64,12 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
     @Test
     void configureBeanValidator() {
-        BeanValidatorEndpoint endpoint = context
-                .getEndpoint("bean-validator://x" + "?group=org.apache.camel.component.bean.validator.OptionalChecks"
-                             + "&messageInterpolator=#myMessageInterpolator"
-                             + "&traversableResolver=#myTraversableResolver"
-                             + "&constraintValidatorFactory=#myConstraintValidatorFactory",
-                        BeanValidatorEndpoint.class);
+        BeanValidatorEndpoint endpoint = context.getEndpoint(
+                "bean-validator://x" + "?group=org.apache.camel.component.bean.validator.OptionalChecks"
+                        + "&messageInterpolator=#myMessageInterpolator"
+                        + "&traversableResolver=#myTraversableResolver"
+                        + "&constraintValidatorFactory=#myConstraintValidatorFactory",
+                BeanValidatorEndpoint.class);
 
         assertEquals("org.apache.camel.component.bean.validator.OptionalChecks", endpoint.getGroup());
         assertSame(this.messageInterpolator, endpoint.getMessageInterpolator());
@@ -91,14 +94,20 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
         @Override
         public boolean isCascadable(
-                Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject,
+                Object traversableObject,
+                Node traversableProperty,
+                Class<?> rootBeanType,
+                Path pathToTraversableObject,
                 ElementType elementType) {
             return false;
         }
 
         @Override
         public boolean isReachable(
-                Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject,
+                Object traversableObject,
+                Node traversableProperty,
+                Class<?> rootBeanType,
+                Path pathToTraversableObject,
                 ElementType elementType) {
             return false;
         }

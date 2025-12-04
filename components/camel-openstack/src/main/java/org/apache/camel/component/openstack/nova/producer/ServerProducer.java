@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.nova.producer;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
                 doAction(exchange);
                 break;
             default:
-                //execute action when Operation:Action header is not set but
+                // execute action when Operation:Action header is not set but
                 // Action is properly specified
                 if (exchange.getIn().getHeaders().containsKey(NovaConstants.ACTION)) {
                     doAction(exchange);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch;
 
 import org.apache.camel.Category;
@@ -32,10 +33,14 @@ import org.apache.camel.util.ObjectHelper;
  * Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various
  * integrations.
  */
-@UriEndpoint(firstVersion = "3.8.0", scheme = "stitch", title = "Stitch",
-             syntax = "stitch:tableName", producerOnly = true, category = {
-                     Category.CLOUD, Category.API, Category.SAAS, Category.BIGDATA },
-             headersClass = StitchConstants.class)
+@UriEndpoint(
+        firstVersion = "3.8.0",
+        scheme = "stitch",
+        title = "Stitch",
+        syntax = "stitch:tableName",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.API, Category.SAAS, Category.BIGDATA},
+        headersClass = StitchConstants.class)
 public class StitchEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -43,8 +48,7 @@ public class StitchEndpoint extends DefaultEndpoint {
 
     private StitchClient stitchClient;
 
-    public StitchEndpoint() {
-    }
+    public StitchEndpoint() {}
 
     public StitchEndpoint(final String uri, final Component component, final StitchConfiguration configuration) {
         super(uri, component);
@@ -57,8 +61,9 @@ public class StitchEndpoint extends DefaultEndpoint {
 
         // since HttpClient.create() will create a pooled a connection when is called, hence placed in doStart
         if (stitchClient == null) {
-            stitchClient
-                    = configuration.getStitchClient() != null ? configuration.getStitchClient() : createClient(configuration);
+            stitchClient = configuration.getStitchClient() != null
+                    ? configuration.getStitchClient()
+                    : createClient(configuration);
         }
     }
 

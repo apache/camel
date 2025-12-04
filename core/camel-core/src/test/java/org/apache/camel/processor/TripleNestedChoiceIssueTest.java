@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TripleNestedChoiceIssueTest extends ContextTestSupport {
 
@@ -63,8 +64,8 @@ public class TripleNestedChoiceIssueTest extends ContextTestSupport {
 
     @Test
     public void testNestedChoiceLow() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context,
-                context.getRouteDefinition("route1"));
+        String xml =
+                PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("route1"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -83,10 +84,25 @@ public class TripleNestedChoiceIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(header("foo").isGreaterThan(1)).choice().when(header("foo").isGreaterThan(5))
-                        .choice().when(header("foo").isGreaterThan(10))
-                        .to("mock:verybig").otherwise().to("mock:big").end().endChoice().otherwise().to("mock:med").end().endChoice()
-                        .otherwise().to("mock:low").end();
+                from("direct:start")
+                        .choice()
+                        .when(header("foo").isGreaterThan(1))
+                        .choice()
+                        .when(header("foo").isGreaterThan(5))
+                        .choice()
+                        .when(header("foo").isGreaterThan(10))
+                        .to("mock:verybig")
+                        .otherwise()
+                        .to("mock:big")
+                        .end()
+                        .endChoice()
+                        .otherwise()
+                        .to("mock:med")
+                        .end()
+                        .endChoice()
+                        .otherwise()
+                        .to("mock:low")
+                        .end();
             }
         };
     }

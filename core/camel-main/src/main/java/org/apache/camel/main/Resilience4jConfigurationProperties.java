@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.concurrent.ForkJoinPool;
@@ -32,37 +33,55 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
 
     private String circuitBreaker;
     private String config;
+
     @Metadata(defaultValue = "50")
     private Float failureRateThreshold;
+
     @Metadata(defaultValue = "10")
     private Integer permittedNumberOfCallsInHalfOpenState;
+
     @Metadata(defaultValue = "false")
     private Boolean throwExceptionWhenHalfOpenOrOpenState;
+
     @Metadata(defaultValue = "100")
     private Integer slidingWindowSize;
+
     @Metadata(defaultValue = "COUNT_BASED", enums = "COUNT_BASED,TIME_BASED")
     private String slidingWindowType;
+
     @Metadata(defaultValue = "100")
     private Integer minimumNumberOfCalls;
+
     private Boolean writableStackTraceEnabled;
+
     @Metadata(defaultValue = "60")
     private Integer waitDurationInOpenState;
+
     private Boolean automaticTransitionFromOpenToHalfOpenEnabled;
+
     @Metadata(defaultValue = "100")
     private Float slowCallRateThreshold;
+
     @Metadata(defaultValue = "60")
     private Integer slowCallDurationThreshold;
+
     @Metadata(defaultValue = "false")
     private Boolean bulkheadEnabled;
+
     private Integer bulkheadMaxConcurrentCalls;
     private Integer bulkheadMaxWaitDuration;
+
     @Metadata(defaultValue = "false")
     private Boolean timeoutEnabled;
+
     private String timeoutExecutorService;
+
     @Metadata(defaultValue = "1000")
     private Integer timeoutDuration;
+
     @Metadata(defaultValue = "true")
     private Boolean timeoutCancelRunningFuture;
+
     @Metadata(defaultValue = "false")
     private Boolean micrometerEnabled;
 
@@ -578,5 +597,4 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
         this.micrometerEnabled = micrometerEnabled;
         return this;
     }
-
 }

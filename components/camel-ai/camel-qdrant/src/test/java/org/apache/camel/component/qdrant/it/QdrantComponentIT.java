@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant.it;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,15 +43,14 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class QdrantComponentIT extends QdrantTestSupport {
 
     @Test
     @Order(0)
     public void collectionInfoNonExistent() {
-        Exchange result = fluentTemplate.to("qdrant:testComponent")
+        Exchange result = fluentTemplate
+                .to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
 
@@ -68,12 +70,13 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Test
     @Order(1)
     public void createCollection() {
-        Exchange result = fluentTemplate.to("qdrant:testComponent")
+        Exchange result = fluentTemplate
+                .to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
-                .withBody(
-                        Collections.VectorParams.newBuilder()
-                                .setSize(2)
-                                .setDistance(Collections.Distance.Cosine).build())
+                .withBody(Collections.VectorParams.newBuilder()
+                        .setSize(2)
+                        .setDistance(Collections.Distance.Cosine)
+                        .build())
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -83,7 +86,8 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Test
     @Order(2)
     public void collectionInfoExistent() {
-        Exchange result = fluentTemplate.to("qdrant:testComponent")
+        Exchange result = fluentTemplate
+                .to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
 
@@ -95,16 +99,16 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Test
     @Order(3)
     public void upsert() {
-        Exchange result = fluentTemplate.to("qdrant:testComponent")
+        Exchange result = fluentTemplate
+                .to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.UPSERT)
-                .withBody(
-                        Points.PointStruct.newBuilder()
-                                .setId(PointIdFactory.id(8))
-                                .setVectors(VectorsFactory.vectors(List.of(3.5f, 4.5f)))
-                                .putAllPayload(Map.of(
-                                        "foo", ValueFactory.value("hello"),
-                                        "bar", ValueFactory.value(1)))
-                                .build())
+                .withBody(Points.PointStruct.newBuilder()
+                        .setId(PointIdFactory.id(8))
+                        .setVectors(VectorsFactory.vectors(List.of(3.5f, 4.5f)))
+                        .putAllPayload(Map.of(
+                                "foo", ValueFactory.value("hello"),
+                                "bar", ValueFactory.value(1)))
+                        .build())
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -123,9 +127,10 @@ public class QdrantComponentIT extends QdrantTestSupport {
 
     @Test
     @Order(4)
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public void retrieve() {
-        Exchange result = fluentTemplate.to("qdrant:testComponent")
+        Exchange result = fluentTemplate
+                .to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(8))
                 .request(Exchange.class);
@@ -143,30 +148,33 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @EnumSource(TestData.class)
     @Order(5)
     public void upsertOtherVectors(TestData testData) {
-        Exchange result = fluentTemplate.to("qdrant:testComponent")
+        Exchange result = fluentTemplate
+                .to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.UPSERT)
-                .withBody(
-                        Points.PointStruct.newBuilder()
-                                .setId(PointIdFactory.id(testData.getId()))
-                                .putPayload("text_segment", ValueFactory.value(testData.getPayload()))
-                                .setVectors(VectorsFactory.vectors(testData.getVectors()))
-                                .build())
+                .withBody(Points.PointStruct.newBuilder()
+                        .setId(PointIdFactory.id(testData.getId()))
+                        .putPayload("text_segment", ValueFactory.value(testData.getPayload()))
+                        .setVectors(VectorsFactory.vectors(testData.getVectors()))
+                        .build())
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_ID, v -> assertThat(v).isNotNull());
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS,
-                v -> assertThat(v).isEqualTo(Points.UpdateStatus.Completed.name()));
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS_VALUE,
-                v -> assertThat(v).isEqualTo(Points.UpdateStatus.Completed.getNumber()));
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_ID, v -> assertThat(v)
+                .isNotNull());
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS, v -> assertThat(v)
+                .isEqualTo(Points.UpdateStatus.Completed.name()));
+        assertThat(result.getIn().getHeaders())
+                .hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS_VALUE, v -> assertThat(v)
+                        .isEqualTo(Points.UpdateStatus.Completed.getNumber()));
     }
 
     @Test
     @Order(6)
     public void similaritySeach() {
-        Exchange result = fluentTemplate.to("qdrant:testComponent")
+        Exchange result = fluentTemplate
+                .to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.SIMILARITY_SEARCH)
                 .withHeader(QdrantHeaders.INCLUDE_VECTORS, true)
                 .withHeader(QdrantHeaders.INCLUDE_PAYLOAD, true)
@@ -185,7 +193,8 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Test
     @Order(7)
     public void delete() {
-        Exchange result = fluentTemplate.to("qdrant:testComponent")
+        Exchange result = fluentTemplate
+                .to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE)
                 .withBody(ConditionFactory.matchKeyword("foo", "hello"))
                 .request(Exchange.class);
@@ -207,7 +216,8 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Test
     @Order(8)
     public void retrieveAfterDelete() {
-        Exchange result = fluentTemplate.to("qdrant:testComponent")
+        Exchange result = fluentTemplate
+                .to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(8))
                 .request(Exchange.class);
@@ -250,5 +260,4 @@ public class QdrantComponentIT extends QdrantTestSupport {
             return payload;
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResilienceManagementTest extends CamelTestSupport {
 
@@ -62,8 +63,8 @@ public class ResilienceManagementTest extends CamelTestSupport {
         String name = context.getManagementName();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"" + circuitBreakerName + "\"");
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=" + name + ",type=processors,name=\"" + circuitBreakerName + "\"");
 
         // should be on start
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
@@ -91,19 +92,34 @@ public class ResilienceManagementTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("start").circuitBreaker().id("myResilience").to("direct:foo").onFallback()
-                        .transform().constant("Fallback message").end()
+                from("direct:start")
+                        .routeId("start")
+                        .circuitBreaker()
+                        .id("myResilience")
+                        .to("direct:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
                         .to("mock:result");
 
-                from("direct:start.with.timeout.enabled").routeId("start.with.timeout.enabled").circuitBreaker().id("myResilienceWithTimeout")
-                        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
-                        .to("direct:foo").onFallback()
-                        .transform().constant("Fallback message").end()
+                from("direct:start.with.timeout.enabled")
+                        .routeId("start.with.timeout.enabled")
+                        .circuitBreaker()
+                        .id("myResilienceWithTimeout")
+                        .resilience4jConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .end()
+                        .to("direct:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
                         .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
         };
     }
-
 }

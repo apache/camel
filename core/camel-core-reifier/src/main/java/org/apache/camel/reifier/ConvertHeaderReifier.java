@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.nio.charset.UnsupportedCharsetException;
@@ -60,8 +61,8 @@ public class ConvertHeaderReifier extends ProcessorReifier<ConvertHeaderDefiniti
         if (definition.getMandatory() != null) {
             mandatory = parseBoolean(definition.getMandatory(), true);
         }
-        ConvertHeaderProcessor answer
-                = new ConvertHeaderProcessor(key, nameExpr, toKey, toNameExpr, typeClass, charset, mandatory);
+        ConvertHeaderProcessor answer =
+                new ConvertHeaderProcessor(key, nameExpr, toKey, toNameExpr, typeClass, charset, mandatory);
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }
@@ -69,5 +70,4 @@ public class ConvertHeaderReifier extends ProcessorReifier<ConvertHeaderDefiniti
     public static String validateCharset(String charset) throws UnsupportedCharsetException {
         return ConvertBodyReifier.validateCharset(charset);
     }
-
 }

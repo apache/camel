@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.function.Supplier;
@@ -28,9 +29,10 @@ import org.apache.camel.util.function.Suppliers;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.manager.EmbeddedCacheManager;
 
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses embedded Infinispan to store message ids.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "Idempotent repository that uses embedded Infinispan to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Infinispan Embedded message id repository")
 public class InfinispanEmbeddedIdempotentRepository extends InfinispanIdempotentRepository {
@@ -40,11 +42,11 @@ public class InfinispanEmbeddedIdempotentRepository extends InfinispanIdempotent
 
     @Metadata(description = "Name of cache", required = true)
     private String cacheName;
+
     @Metadata(description = "Configuration for embedded Infinispan")
     private InfinispanEmbeddedConfiguration configuration;
 
-    public InfinispanEmbeddedIdempotentRepository() {
-    }
+    public InfinispanEmbeddedIdempotentRepository() {}
 
     public InfinispanEmbeddedIdempotentRepository(String cacheName) {
         this.cacheName = cacheName;

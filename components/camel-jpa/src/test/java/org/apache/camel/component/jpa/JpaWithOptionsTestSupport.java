@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
 
 import java.lang.annotation.Annotation;
@@ -73,7 +74,6 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
                 processor.process(exchange);
             }
         });
-
     }
 
     protected <E> E runQueryTest(Class<E> type, final Processor... preRun) throws Exception {
@@ -83,7 +83,6 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         Assertions.assertNull(result.getProperty(Exchange.EXCEPTION_CAUGHT));
 
         return result.getMessage().getBody(type);
-
     }
 
     @SuppressWarnings(value = "unchecked")
@@ -108,7 +107,6 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
             setAdditionalParameters(annotatedElement);
             setQueryOrFind(annotatedElement);
         }
-
     }
 
     @Override
@@ -118,7 +116,8 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
     }
 
     private void setAdditionalParameters(final AnnotatedElement annotatedElement) {
-        final AdditionalEndpointParameters annotation = annotatedElement.getAnnotation(AdditionalEndpointParameters.class);
+        final AdditionalEndpointParameters annotation =
+                annotatedElement.getAnnotation(AdditionalEndpointParameters.class);
         if (annotation != null && !annotation.value().isBlank()) {
             additionalQueryParameters = annotation.value();
         }
@@ -131,13 +130,14 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
 
         final Method annotatedMethod = (Method) annotatedElement;
 
-        final Predicate<Annotation> isQueryOrFind
-                = ann -> Stream.of(Query.class, Find.class).anyMatch(foc -> foc.isAssignableFrom(ann.annotationType()));
+        final Predicate<Annotation> isQueryOrFind =
+                ann -> Stream.of(Query.class, Find.class).anyMatch(foc -> foc.isAssignableFrom(ann.annotationType()));
 
         final List<Annotation> onMethod = Arrays.stream(annotatedMethod.getAnnotations())
                 .filter(isQueryOrFind)
                 .toList();
-        final List<Annotation> onClass = Arrays.stream(annotatedMethod.getDeclaringClass().getAnnotations())
+        final List<Annotation> onClass = Arrays.stream(
+                        annotatedMethod.getDeclaringClass().getAnnotations())
                 .filter(isQueryOrFind)
                 .toList();
 
@@ -146,7 +146,9 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         }
 
         final Annotation queryOrFindAnn = Stream.concat(onMethod.stream(), onClass.stream())
-                .filter(isQueryOrFind).findFirst().get();
+                .filter(isQueryOrFind)
+                .findFirst()
+                .get();
 
         if (queryOrFindAnn instanceof Find) {
             queryOrFind = "findEntity=" + true;
@@ -156,10 +158,7 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
     }
 
     protected String getEndpointUri() {
-        return String.format("%s?%s%s",
-                ENDPOINT_URI,
-                queryOrFind,
-                createAdditionalQueryParameters());
+        return String.format("%s?%s%s", ENDPOINT_URI, queryOrFind, createAdditionalQueryParameters());
     }
 
     protected void createCustomers() {
@@ -171,8 +170,9 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
     }
 
     static Long validCustomerId(final EntityManager entityManager) {
-        final Customer fromDb
-                = (Customer) entityManager.createQuery("select c from Customer c where c.name like '% 001'").getSingleResult();
+        final Customer fromDb = (Customer) entityManager
+                .createQuery("select c from Customer c where c.name like '% 001'")
+                .getSingleResult();
         final Long customerId = fromDb.getId();
         return customerId;
     }
@@ -184,15 +184,13 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         assertEntitiesInDatabase(ENTRIES_COUNT, Customer.class.getName());
     }
 
-    @Target({ ElementType.METHOD, ElementType.TYPE })
+    @Target({ElementType.METHOD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
-    @interface Find {
-    }
+    @interface Find {}
 
-    @Target({ ElementType.METHOD, ElementType.TYPE })
+    @Target({ElementType.METHOD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface Query {
         String value() default "select c from Customer c";
     }
-
 }

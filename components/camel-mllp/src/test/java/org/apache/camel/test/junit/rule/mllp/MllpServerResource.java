@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit.rule.mllp;
 
 import java.io.BufferedOutputStream;
@@ -84,8 +85,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
 
     AcceptSocketThread acceptSocketThread;
 
-    public MllpServerResource() {
-    }
+    public MllpServerResource() {}
 
     public MllpServerResource(int listenPort) {
         this.listenPort = listenPort;
@@ -546,15 +546,17 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
      */
     protected String generateAcknowledgement(String hl7Message, String acknowledgementCode) {
         final String defaulNackMessage = "MSH|^~\\&|||||||NACK||P|2.2" + MllpProtocolConstants.SEGMENT_DELIMITER
-                                         + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
-                                         + MllpProtocolConstants.MESSAGE_TERMINATOR;
+                + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
+                + MllpProtocolConstants.MESSAGE_TERMINATOR;
 
         if (hl7Message == null) {
             log.error("Invalid HL7 message for parsing operation. Please check your inputs");
             return defaulNackMessage;
         }
 
-        if (!("AA".equals(acknowledgementCode) || "AE".equals(acknowledgementCode) || "AR".equals(acknowledgementCode))) {
+        if (!("AA".equals(acknowledgementCode)
+                || "AE".equals(acknowledgementCode)
+                || "AR".equals(acknowledgementCode))) {
             throw new IllegalArgumentException("Acknowledgemnt Code must be AA, AE or AR: " + acknowledgementCode);
         }
 
@@ -570,14 +572,22 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                 StringBuilder ackBuilder = new StringBuilder(mshSegment.length() + 25);
                 // Build the MSH Segment
                 ackBuilder
-                        .append(mshFields[0]).append(fieldSeparator)
-                        .append(mshFields[1]).append(fieldSeparator)
-                        .append(mshFields[4]).append(fieldSeparator)
-                        .append(mshFields[5]).append(fieldSeparator)
-                        .append(mshFields[2]).append(fieldSeparator)
-                        .append(mshFields[3]).append(fieldSeparator)
-                        .append(mshFields[6]).append(fieldSeparator)
-                        .append(mshFields[7]).append(fieldSeparator)
+                        .append(mshFields[0])
+                        .append(fieldSeparator)
+                        .append(mshFields[1])
+                        .append(fieldSeparator)
+                        .append(mshFields[4])
+                        .append(fieldSeparator)
+                        .append(mshFields[5])
+                        .append(fieldSeparator)
+                        .append(mshFields[2])
+                        .append(fieldSeparator)
+                        .append(mshFields[3])
+                        .append(fieldSeparator)
+                        .append(mshFields[6])
+                        .append(fieldSeparator)
+                        .append(mshFields[7])
+                        .append(fieldSeparator)
                         .append("ACK")
                         .append(mshFields[8].substring(3));
                 for (int i = 9; i < mshFields.length; ++i) {
@@ -597,9 +607,12 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
 
                 // Build the MSA Segment
                 ackBuilder
-                        .append("MSA").append(fieldSeparator)
-                        .append(acknowledgementCode).append(fieldSeparator)
-                        .append(mshFields[9]).append(fieldSeparator)
+                        .append("MSA")
+                        .append(fieldSeparator)
+                        .append(acknowledgementCode)
+                        .append(fieldSeparator)
+                        .append(mshFields[9])
+                        .append(fieldSeparator)
                         .append(MllpProtocolConstants.SEGMENT_DELIMITER);
 
                 // Terminate the message
@@ -728,7 +741,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
         @Override
         public void run() {
             log.info("Accepting connections on port {}", serverSocket.getLocalPort());
-            this.setName("MllpServerResource$AcceptSocketThread - " + serverSocket.getLocalSocketAddress().toString());
+            this.setName("MllpServerResource$AcceptSocketThread - "
+                    + serverSocket.getLocalSocketAddress().toString());
             while (!isInterrupted() && serverSocket.isBound() && !serverSocket.isClosed()) {
                 Socket clientSocket = null;
                 try {
@@ -743,7 +757,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                     // Socket is null at this stage
                     continue;
                 } catch (Exception ex) {
-                    throw new MllpJUnitResourceException("Unexpected exception encountered accepting client connection", ex);
+                    throw new MllpJUnitResourceException(
+                            "Unexpected exception encountered accepting client connection", ex);
                 }
                 if (null != clientSocket) {
                     try {
@@ -760,7 +775,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                         try {
                             clientSocket.close();
                         } catch (IOException ingoreEx) {
-                            log.warn("Exceptiong encountered closing client socket after attempting to accept connection",
+                            log.warn(
+                                    "Exceptiong encountered closing client socket after attempting to accept connection",
                                     ingoreEx);
                         }
                         throw new MllpJUnitResourceException(
@@ -824,9 +840,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
             this.raiseExceptionOnAcceptTimeout = raiseExceptionOnAcceptTimeout;
         }
 
-        public void close() {
-
-        }
+        public void close() {}
 
         @Override
         public void interrupt() {
@@ -843,7 +857,6 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
             }
             super.interrupt();
         }
-
     }
 
     /**
@@ -874,7 +887,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
             }
 
             try {
-                if (MllpProtocolConstants.END_OF_STREAM == clientSocket.getInputStream().read()) {
+                if (MllpProtocolConstants.END_OF_STREAM
+                        == clientSocket.getInputStream().read()) {
                     throw new MllpJUnitResourceException("checkConnection failed - read() returned END_OF_STREAM");
                 }
             } catch (IOException ioEx) {
@@ -934,7 +948,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                             waitingForStartOfBlock = false;
                             break;
                         default:
-                            log.warn("START_OF_BLOCK character has not been received.  Out-of-band character received: {}",
+                            log.warn(
+                                    "START_OF_BLOCK character has not been received.  Out-of-band character received: {}",
                                     potentialStartCharacter);
                     }
                 }
@@ -946,7 +961,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                         log.info("SocketException encountered while waiting for START_OF_BLOCK");
                         resetConnection();
                     } else {
-                        log.error("Unable to read from socket stream when expected START_OF_BLOCK - resetting connection ",
+                        log.error(
+                                "Unable to read from socket stream when expected START_OF_BLOCK - resetting connection ",
                                 socketEx);
                         resetConnection();
                     }
@@ -971,7 +987,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                         if (characterReceived != MllpProtocolConstants.END_OF_DATA) {
                             log.error(
                                     "Received {} when expecting END_OF_DATA after END_OF_BLOCK.  Discarding Hl7TestMessageGenerator: {}",
-                                    characterReceived, parsedMessage.toString());
+                                    characterReceived,
+                                    parsedMessage.toString());
                             return null;
                         }
                         endOfMessage = true;
@@ -979,7 +996,6 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                     default:
                         parsedMessage.append((char) characterReceived);
                 }
-
             }
 
             return parsedMessage.toString();
@@ -1014,7 +1030,6 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
             } catch (InterruptedException e) {
                 log.warn("Sleep interrupted", e);
             }
-
         }
 
         /**
@@ -1030,7 +1045,10 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
             log.info("Handling Connection: {} -> {}", localAddress, remoteAddress);
 
             try {
-                while (!isInterrupted() && null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
+                while (!isInterrupted()
+                        && null != clientSocket
+                        && clientSocket.isConnected()
+                        && !clientSocket.isClosed()) {
                     InputStream instream;
                     try {
                         instream = clientSocket.getInputStream();
@@ -1039,7 +1057,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                             log.debug("Client socket was closed - ignoring exception");
                             break;
                         } else {
-                            throw new MllpJUnitResourceException("Unexpected IOException encounted getting input stream", ioEx);
+                            throw new MllpJUnitResourceException(
+                                    "Unexpected IOException encounted getting input stream", ioEx);
                         }
                     } catch (Exception unexpectedEx) {
                         throw new MllpJUnitResourceException(
@@ -1067,7 +1086,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                             try {
                                 clientSocket.setSoLinger(true, 0);
                             } catch (IOException ioEx) {
-                                log.warn("Ignoring IOException encountered setting SO_LINGER when prepareing to reset socket",
+                                log.warn(
+                                        "Ignoring IOException encountered setting SO_LINGER when prepareing to reset socket",
                                         ioEx);
                             }
                             clientSocket.shutdownInput();
@@ -1199,7 +1219,5 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
             }
             super.interrupt();
         }
-
     }
-
 }

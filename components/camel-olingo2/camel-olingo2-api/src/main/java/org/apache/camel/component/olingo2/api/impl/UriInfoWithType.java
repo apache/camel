@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2.api.impl;
 
 import java.util.ArrayList;
@@ -102,7 +103,10 @@ public class UriInfoWithType implements UriInfo {
                                 } else {
                                     final NavigationSegment lastSegment = segments.get(segments.size() - 1);
                                     many = lastSegment.getKeyPredicates().isEmpty()
-                                            && lastSegment.getNavigationProperty().getMultiplicity() == EdmMultiplicity.MANY;
+                                            && lastSegment
+                                                            .getNavigationProperty()
+                                                            .getMultiplicity()
+                                                    == EdmMultiplicity.MANY;
                                 }
                                 if (isCount) {
                                     if (many) {
@@ -120,7 +124,8 @@ public class UriInfoWithType implements UriInfo {
                             }
                             break;
                         default:
-                            throw new ODataApplicationException("Unexpected property type " + targetKind, Locale.ENGLISH);
+                            throw new ODataApplicationException(
+                                    "Unexpected property type " + targetKind, Locale.ENGLISH);
                     }
                 }
             } else {
@@ -139,7 +144,8 @@ public class UriInfoWithType implements UriInfo {
                         uriType = UriType.URI10;
                         break;
                     default:
-                        throw new ODataApplicationException("Invalid function return type " + targetType, Locale.ENGLISH);
+                        throw new ODataApplicationException(
+                                "Invalid function return type " + targetType, Locale.ENGLISH);
                 }
             }
         }

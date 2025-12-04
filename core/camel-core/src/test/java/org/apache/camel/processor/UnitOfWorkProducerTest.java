@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UnitOfWorkProducerTest extends ContextTestSupport {
 

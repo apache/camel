@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.zipfile;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,11 +36,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
@@ -58,9 +59,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
         File resultFile = files[0];
         Set<String> expectedZipFiles = new HashSet<>(
-                Arrays.asList("another/hello.txt",
-                        "other/greetings.txt",
-                        "chiau.txt", "hi.txt", "hola.txt"));
+                Arrays.asList("another/hello.txt", "other/greetings.txt", "chiau.txt", "hi.txt", "hola.txt"));
         ZipInputStream zin = new ZipInputStream(new FileInputStream(resultFile));
         try {
             int fileCount = 0;
@@ -71,10 +70,15 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                 }
             }
 
-            assertEquals(AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount,
-                    String.format("Zip file should contains %d files, got %d files",
+            assertEquals(
+                    AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES,
+                    fileCount,
+                    String.format(
+                            "Zip file should contains %d files, got %d files",
                             AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount));
-            assertEquals(0, expectedZipFiles.size(),
+            assertEquals(
+                    0,
+                    expectedZipFiles.size(),
                     "Should have found all of the zip files in the file. Remaining: " + expectedZipFiles);
         } finally {
             IOHelper.close(zin);
@@ -97,6 +101,5 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                         .log("Done processing zip file: ${header.CamelFileName}");
             }
         };
-
     }
 }

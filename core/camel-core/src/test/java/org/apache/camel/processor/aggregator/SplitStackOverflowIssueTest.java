@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class SplitStackOverflowIssueTest extends ContextTestSupport {
 
@@ -48,9 +49,7 @@ public class SplitStackOverflowIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .split().tokenize("\n").streaming()
-                        .to("log:result?groupSize=100", "mock:result");
+                from("direct:start").split().tokenize("\n").streaming().to("log:result?groupSize=100", "mock:result");
             }
         };
     }

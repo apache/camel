@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import java.io.IOException;
@@ -55,13 +56,19 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExcepti
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).logStackTrace(false));
 
                 // shared for both routes
-                onException(MyTechnicalException.class).handled(true).maximumRedeliveries(2).to("mock:tech.error");
+                onException(MyTechnicalException.class)
+                        .handled(true)
+                        .maximumRedeliveries(2)
+                        .to("mock:tech.error");
 
                 from("direct:start")
                         // route specific on exception for MyFunctionalException
                         // we MUST use .end() to indicate that this sub block is
                         // ended
-                        .onException(MyFunctionalException.class).maximumRedeliveries(0).end().to("bean:myServiceBean")
+                        .onException(MyFunctionalException.class)
+                        .maximumRedeliveries(0)
+                        .end()
+                        .to("bean:myServiceBean")
                         .to("mock:result");
 
                 from("direct:start2")
@@ -71,8 +78,13 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExcepti
                         // destination mock:handled
                         // we MUST use .end() to indicate that this sub block is
                         // ended
-                        .onException(MyFunctionalException.class).handled(true).maximumRedeliveries(0).to("mock:handled").end()
-                        .to("bean:myServiceBean").to("mock:result");
+                        .onException(MyFunctionalException.class)
+                        .handled(true)
+                        .maximumRedeliveries(0)
+                        .to("mock:handled")
+                        .end()
+                        .to("bean:myServiceBean")
+                        .to("mock:result");
 
                 // START SNIPPET: e1
                 from("direct:start3")
@@ -84,10 +96,16 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExcepti
 
                         // route specific on exception to mark MyFunctionalException
                         // as being handled
-                        .onException(MyFunctionalException.class).handled(true).end()
+                        .onException(MyFunctionalException.class)
+                        .handled(true)
+                        .end()
                         // however we want the IO exceptions to redeliver at most 3
                         // times
-                        .onException(IOException.class).maximumRedeliveries(3).end().to("bean:myServiceBean").to("mock:result");
+                        .onException(IOException.class)
+                        .maximumRedeliveries(3)
+                        .end()
+                        .to("bean:myServiceBean")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

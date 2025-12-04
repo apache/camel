@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
 
 import java.net.URI;
@@ -134,23 +135,22 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
     }
 
     private void addEndpointMappingToConfiguration(
-            Map<String, Object> parameters,
-            SpringWebserviceConfiguration configuration) {
+            Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
         // Obtain generic CamelSpringWSEndpointMapping from registry
-        CamelSpringWSEndpointMapping endpointMapping
-                = resolveAndRemoveReferenceParameter(parameters, "endpointMapping", CamelSpringWSEndpointMapping.class, null);
+        CamelSpringWSEndpointMapping endpointMapping = resolveAndRemoveReferenceParameter(
+                parameters, "endpointMapping", CamelSpringWSEndpointMapping.class, null);
         if (endpointMapping == null && configuration.getEndpointDispatcher() == null) {
             throw new IllegalArgumentException(
                     "No instance of CamelSpringWSEndpointMapping found in Spring ApplicationContext."
-                                               + " This bean is required for Spring-WS consumer support (unless the 'spring-ws:beanname:' URI scheme is used)");
+                            + " This bean is required for Spring-WS consumer support (unless the 'spring-ws:beanname:' URI scheme is used)");
         }
         configuration.setEndpointMapping(endpointMapping);
     }
 
     private void addEndpointDispatcherToConfiguration(SpringWebserviceConfiguration configuration, String lookupKey) {
         // Obtain CamelEndpointDispatcher with the given name from registry
-        CamelEndpointDispatcher endpoint
-                = CamelContextHelper.mandatoryLookup(getCamelContext(), lookupKey, CamelEndpointDispatcher.class);
+        CamelEndpointDispatcher endpoint =
+                CamelContextHelper.mandatoryLookup(getCamelContext(), lookupKey, CamelEndpointDispatcher.class);
         configuration.setEndpointDispatcher(endpoint);
     }
 
@@ -163,8 +163,8 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
     private void configureMessageFilter(SpringWebserviceConfiguration configuration) {
         if (configuration.getMessageFilter() == null) {
             // try to lookup a global filter to use
-            final MessageFilter globalMessageFilter
-                    = EndpointHelper.resolveReferenceParameter(getCamelContext(), "messageFilter", MessageFilter.class, false);
+            final MessageFilter globalMessageFilter = EndpointHelper.resolveReferenceParameter(
+                    getCamelContext(), "messageFilter", MessageFilter.class, false);
             if (globalMessageFilter != null) {
                 configuration.setMessageFilter(globalMessageFilter);
             } else {
@@ -186,5 +186,4 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
-
 }

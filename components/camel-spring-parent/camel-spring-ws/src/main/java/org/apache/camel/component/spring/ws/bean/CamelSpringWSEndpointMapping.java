@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.bean;
 
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
@@ -39,5 +40,4 @@ public interface CamelSpringWSEndpointMapping extends EndpointMapping {
      * @param key unique consumer key
      */
     void removeConsumer(Object key);
-
 }

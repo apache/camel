@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionOnCompleteOnlyTest extends OnCompletionTest {
 
@@ -56,14 +57,17 @@ public class OnCompletionOnCompleteOnlyTest extends OnCompletionTest {
                         // exchange completed with success
                         // if the exchange failed this onCompletion route will NOT
                         // be routed then
-                        .onCompletion().onCompleteOnly().to("log:sync").to("mock:sync")
+                        .onCompletion()
+                        .onCompleteOnly()
+                        .to("log:sync")
+                        .to("mock:sync")
                         // must use end to denote the end of the onCompletion route
                         .end()
                         // here the original route contiues
-                        .process(new MyProcessor()).to("mock:result");
+                        .process(new MyProcessor())
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

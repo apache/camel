@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import java.util.Map;
@@ -37,7 +38,8 @@ public class QuartzTriggerParametersTest extends BaseQuartzTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String cron = String.format("quartz://job?cron=0+%s+%s+?+*+*&trigger.timeZone=%s&trigger.misfireInstruction=2",
+                String cron = String.format(
+                        "quartz://job?cron=0+%s+%s+?+*+*&trigger.timeZone=%s&trigger.misfireInstruction=2",
                         59, 23, "Europe/Berlin");
 
                 from(cron).to("mock:cron");
@@ -52,5 +54,4 @@ public class QuartzTriggerParametersTest extends BaseQuartzTest {
             }
         };
     }
-
 }

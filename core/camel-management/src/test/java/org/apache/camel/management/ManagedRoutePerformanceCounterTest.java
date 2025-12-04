@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -27,13 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
@@ -41,7 +42,8 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
     public void testPerformanceCounterStats() throws Exception {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
+        ObjectName on =
+                getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
 
         Long delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
         assertEquals(0, delta.intValue());
@@ -105,5 +107,4 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
             }
         };
     }
-
 }

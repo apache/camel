@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DeleteInstanceFunctionalTest extends CamelTestSupport {
     private static final String ACCESS_KEY = "replace_this_with_access_key";
@@ -44,11 +45,10 @@ public class DeleteInstanceFunctionalTest extends CamelTestSupport {
                 from("direct:operation")
                         .setProperty(DMSProperties.OPERATION, constant("deleteInstance"))
                         .setProperty(DMSProperties.INSTANCE_ID, constant(INSTANCE_ID))
-                        .to("hwcloud-dms:?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + PROJECT_ID +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-dms:?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + PROJECT_ID + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Operation successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:operation_result");

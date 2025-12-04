@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -22,5 +23,4 @@ public interface ManagedTopicLoadBalancerMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Number of processors in the load balancer")
     Integer getSize();
-
 }

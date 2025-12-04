@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -30,10 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledOnOs(OS.AIX)
 public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
 
@@ -41,8 +42,8 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
     @Test
     public void testBacklogTracerEventMessageStreamCaching() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on
-                = new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
         assertNotNull(on);
         assertTrue(mbeanServer.isRegistered(on));
 
@@ -69,21 +70,22 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
 
         List<Exchange> exchanges = getMockEndpoint("mock:bar").getReceivedExchanges();
 
-        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[] { "bar" }, new String[] { "java.lang.String" });
+        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>)
+                mbeanServer.invoke(on, "dumpTracedMessages", new Object[] {"bar"}, new String[] {"java.lang.String"});
 
         assertNotNull(events);
         assertEquals(1, events.size());
 
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("bar", event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
-                     + "      <exchangeProperties>\n"
-                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
-                     + "      </exchangeProperties>\n"
-                     + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\" size=\"9\" position=\"0\">Bye World</body>\n"
-                     + "    </message>",
+        assertEquals(
+                "    <message exchangeId=\"" + exchanges.get(0).getExchangeId()
+                        + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                        + "      <exchangeProperties>\n"
+                        + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                        + "      </exchangeProperties>\n"
+                        + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\" size=\"9\" position=\"0\">Bye World</body>\n"
+                        + "    </message>",
                 event1.getMessageAsXml());
     }
 
@@ -95,15 +97,16 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
                 context.setUseBreadcrumb(false);
                 context.setBacklogTracingStandby(true);
 
-                from("direct:start").streamCache("true")
+                from("direct:start")
+                        .streamCache("true")
                         .process(exchange -> {
                             ByteArrayInputStream is = new ByteArrayInputStream("Bye World".getBytes());
                             exchange.getIn().setBody(is);
                         })
                         .log("Got ${body}")
-                        .to("mock:bar").id("bar");
+                        .to("mock:bar")
+                        .id("bar");
             }
         };
     }
-
 }

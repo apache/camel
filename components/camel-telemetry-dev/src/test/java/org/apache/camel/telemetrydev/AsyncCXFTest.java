@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,10 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.telemetry.Op;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /*
  * AsyncCXFTest tests the execution of CXF async which was reported as a potential candidate to
@@ -70,7 +71,6 @@ public class AsyncCXFTest extends TelemetryDevTracerTestSupport {
         for (DevTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(DevTrace trace, String expectedBody) {
@@ -79,15 +79,14 @@ public class AsyncCXFTest extends TelemetryDevTracerTestSupport {
         DevSpanAdapter testProducer = TelemetryDevTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_SENT);
         DevSpanAdapter direct = TelemetryDevTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
         DevSpanAdapter directSendTo = TelemetryDevTracerTestSupport.getSpan(spans, "direct://send", Op.EVENT_SENT);
-        DevSpanAdapter directSendFrom = TelemetryDevTracerTestSupport.getSpan(spans, "direct://send", Op.EVENT_RECEIVED);
+        DevSpanAdapter directSendFrom =
+                TelemetryDevTracerTestSupport.getSpan(spans, "direct://send", Op.EVENT_RECEIVED);
         DevSpanAdapter cxfRs = TelemetryDevTracerTestSupport.getSpan(
                 spans,
                 "cxfrs://http://localhost:" + cxfPort + "/rest/helloservice/sayHello?synchronous=false",
                 Op.EVENT_SENT);
         DevSpanAdapter rest = TelemetryDevTracerTestSupport.getSpan(
-                spans,
-                "rest://post:/rest/helloservice:/sayHello?routeId=direct-hi",
-                Op.EVENT_RECEIVED);
+                spans, "rest://post:/rest/helloservice:/sayHello?routeId=direct-hi", Op.EVENT_RECEIVED);
         DevSpanAdapter log = TelemetryDevTracerTestSupport.getSpan(spans, "log://hi", Op.EVENT_SENT);
         DevSpanAdapter mock = TelemetryDevTracerTestSupport.getSpan(spans, "mock://end", Op.EVENT_SENT);
 
@@ -130,7 +129,9 @@ public class AsyncCXFTest extends TelemetryDevTracerTestSupport {
         assertEquals(rest.getTag("spanid"), mock.getTag("parentSpan"));
 
         // Validate message logging
-        assertEquals("A direct message", directSendFrom.getLogEntries().get(0).getFields().get("message"));
+        assertEquals(
+                "A direct message",
+                directSendFrom.getLogEntries().get(0).getFields().get("message"));
         assertEquals("say-hi", rest.getLogEntries().get(0).getFields().get("message"));
     }
 
@@ -139,22 +140,18 @@ public class AsyncCXFTest extends TelemetryDevTracerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("myRoute")
-                        .to("direct:send");
+                from("direct:start").routeId("myRoute").to("direct:send");
 
                 from("direct:send")
                         .log("A direct message")
-                        .to("cxfrs:http://localhost:" + cxfPort
-                            + "/rest/helloservice/sayHello?synchronous=false");
+                        .to("cxfrs:http://localhost:" + cxfPort + "/rest/helloservice/sayHello?synchronous=false");
 
-                restConfiguration()
-                        .port(cxfPort);
+                restConfiguration().port(cxfPort);
 
                 rest("/rest/helloservice")
-                    .post("/sayHello")
-                    .routeId("rest-GET-say-hi")
-                    .to("direct:hi");
+                        .post("/sayHello")
+                        .routeId("rest-GET-say-hi")
+                        .to("direct:hi");
 
                 from("direct:hi")
                         .routeId("direct-hi")
@@ -165,5 +162,4 @@ public class AsyncCXFTest extends TelemetryDevTracerTestSupport {
             }
         };
     }
-
 }

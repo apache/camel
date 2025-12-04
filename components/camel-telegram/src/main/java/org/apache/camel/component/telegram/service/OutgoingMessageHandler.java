@@ -38,8 +38,13 @@ abstract class OutgoingMessageHandler<T extends OutgoingMessage> {
     private final String uri;
     private final Class<? extends MessageResult> resultClass;
 
-    public OutgoingMessageHandler(HttpClient client, ObjectMapper mapper, String uri,
-                                  String contentType, Class<? extends MessageResult> resultClass, int bufferSize) {
+    public OutgoingMessageHandler(
+            HttpClient client,
+            ObjectMapper mapper,
+            String uri,
+            String contentType,
+            Class<? extends MessageResult> resultClass,
+            int bufferSize) {
         this.client = client;
         this.mapper = mapper;
         this.uri = uri;
@@ -66,11 +71,12 @@ abstract class OutgoingMessageHandler<T extends OutgoingMessage> {
 
         builder.POST(bodyPublisher.newPublisher());
         try {
-            final TelegramAsyncHandler telegramAsyncHandler
-                    = new TelegramAsyncHandler(uri, resultClass, mapper, exchange, callback);
+            final TelegramAsyncHandler telegramAsyncHandler =
+                    new TelegramAsyncHandler(uri, resultClass, mapper, exchange, callback);
 
             client.sendAsync(builder.build(), HttpResponse.BodyHandlers.ofInputStream())
-                    .thenApply(telegramAsyncHandler::handleCompressedResponse).get();
+                    .thenApply(telegramAsyncHandler::handleCompressedResponse)
+                    .get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
@@ -94,8 +100,8 @@ abstract class OutgoingMessageHandler<T extends OutgoingMessage> {
 
     static <T> void buildTextPart(TelegramBodyPublisher bodyPublisher, String name, T value) {
         if (value != null) {
-            TelegramBodyPublisher.MultilineBodyPart<T> bodyPart
-                    = new TelegramBodyPublisher.MultilineBodyPart<>(name, value, "text/plain");
+            TelegramBodyPublisher.MultilineBodyPart<T> bodyPart =
+                    new TelegramBodyPublisher.MultilineBodyPart<>(name, value, "text/plain");
 
             bodyPublisher.addBodyPart(bodyPart);
         }
@@ -106,12 +112,11 @@ abstract class OutgoingMessageHandler<T extends OutgoingMessage> {
     }
 
     void buildMediaPart(TelegramBodyPublisher bodyPublisher, String name, String fileNameWithExtension, byte[] value) {
-        TelegramBodyPublisher.MultilineBodyPart<byte[]> bodyPart
-                = new TelegramBodyPublisher.MultilineBodyPart<>(name, value, "application/octet-stream", null);
+        TelegramBodyPublisher.MultilineBodyPart<byte[]> bodyPart =
+                new TelegramBodyPublisher.MultilineBodyPart<>(name, value, "application/octet-stream", null);
 
         bodyPart.addHeader("filename", fileNameWithExtension);
 
         bodyPublisher.addBodyPart(bodyPart);
     }
-
 }

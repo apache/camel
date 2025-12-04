@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.transformer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -28,8 +31,6 @@ import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ByteArrayDataTypeTransformerTest {
 
@@ -88,7 +89,8 @@ public class ByteArrayDataTypeTransformerTest {
     @Test
     public void shouldResolveTransformer() {
         DefaultTransformerRegistry transformerRegistry = new DefaultTransformerRegistry(camelContext);
-        Transformer transformer = transformerRegistry.resolveTransformer(new TransformerKey("application-octet-stream"));
+        Transformer transformer =
+                transformerRegistry.resolveTransformer(new TransformerKey("application-octet-stream"));
         Assertions.assertNotNull(transformer);
 
         transformer = transformerRegistry.resolveTransformer(new TransformerKey("application/octet-stream"));

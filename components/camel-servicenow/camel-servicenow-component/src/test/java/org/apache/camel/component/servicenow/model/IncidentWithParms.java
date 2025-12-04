@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,13 +29,14 @@ import org.apache.camel.component.servicenow.annotations.ServiceNowSysParm;
 public class IncidentWithParms {
     @JsonProperty("sys_id")
     private String id;
+
     @JsonProperty("number")
     private String number;
+
     @JsonProperty("caller_id")
     private String callerId;
 
-    public IncidentWithParms() {
-    }
+    public IncidentWithParms() {}
 
     public String getId() {
         return id;

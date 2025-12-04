@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
 
 import org.apache.camel.Category;
@@ -26,8 +27,13 @@ import org.apache.camel.spi.UriEndpoint;
  * This class extends JmsEndpoint because it uses Apache Qpid JMS-compatible client for performing the AMQP
  * connectivity.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "amqp", extendsScheme = "jms", title = "AMQP",
-             syntax = "amqp:destinationType:destinationName", category = { Category.MESSAGING })
+@UriEndpoint(
+        firstVersion = "1.2.0",
+        scheme = "amqp",
+        extendsScheme = "jms",
+        title = "AMQP",
+        syntax = "amqp:destinationType:destinationName",
+        category = {Category.MESSAGING})
 public class AMQPEndpoint extends JmsEndpoint {
 
     @Override

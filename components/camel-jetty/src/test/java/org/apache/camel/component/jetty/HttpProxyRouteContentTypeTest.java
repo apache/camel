@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -22,15 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
 
     @Test
     public void testHttpProxyWithContentType() {
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test", "Content-Type", "application/xml",
-                String.class);
+        String out = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/hello", "test", "Content-Type", "application/xml", String.class);
 
         assertEquals("application/xml", out, "Get a wrong response ");
     }
@@ -48,10 +49,8 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
 
                         exchange.getMessage().setBody(ExchangeHelper.getContentType(exchange));
                     }
-
                 });
             }
         };
     }
-
 }

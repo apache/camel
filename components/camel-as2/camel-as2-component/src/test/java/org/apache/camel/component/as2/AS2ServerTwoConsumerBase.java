@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import java.security.KeyPair;
@@ -102,14 +103,14 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
             public void configure() {
                 // Consumer A: Uses keys registered as 'keyPairA'
                 from("as2://server/listen?requestUriPattern=/consumerA&decryptingPrivateKey=#"
-                     + ConsumerConfig.CONSUMER_A.getDecryptingKey() + "&signingPrivateKey=#"
-                     + ConsumerConfig.CONSUMER_A.getSigningKey())
+                                + ConsumerConfig.CONSUMER_A.getDecryptingKey() + "&signingPrivateKey=#"
+                                + ConsumerConfig.CONSUMER_A.getSigningKey())
                         .to("mock:consumerA");
 
                 // Consumer B: Uses keys registered as 'keyPairB'
                 from("as2://server/listen?requestUriPattern=/consumerB&decryptingPrivateKey=#"
-                     + ConsumerConfig.CONSUMER_B.getDecryptingKey() + "&signingPrivateKey=#"
-                     + ConsumerConfig.CONSUMER_B.getSigningKey())
+                                + ConsumerConfig.CONSUMER_B.getDecryptingKey() + "&signingPrivateKey=#"
+                                + ConsumerConfig.CONSUMER_B.getSigningKey())
                         .to("mock:consumerB");
             }
         };
@@ -155,9 +156,9 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
                 targetUri,
                 as2To,
                 AS2_NAME, // AS2-From header can safely reuse the base's static AS2_NAME
-                new Certificate[] { signingCert },
+                new Certificate[] {signingCert},
                 signingPrivateKey,
-                new Certificate[] { encryptionCert });
+                new Certificate[] {encryptionCert});
     }
 
     protected HttpCoreContext send(
@@ -171,9 +172,9 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
             throws Exception {
 
         // Use provided arguments or fall back to base class statics for non-overridden parts
-        Certificate[] signingCertificate = sc == null ? new Certificate[] { this.signingCert } : sc;
+        Certificate[] signingCertificate = sc == null ? new Certificate[] {this.signingCert} : sc;
         PrivateKey signingPrivateKey = spk == null ? this.signingKP.getPrivate() : spk;
-        Certificate[] encryptingCertificate = ec == null ? new Certificate[] { this.signingCert } : ec;
+        Certificate[] encryptingCertificate = ec == null ? new Certificate[] {this.signingCert} : ec;
 
         AS2SignatureAlgorithm signingAlgorithm = structure.isSigned() ? AS2SignatureAlgorithm.SHA256WITHRSA : null;
         signingCertificate = structure.isSigned() ? signingCertificate : null;
@@ -182,30 +183,31 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
         encryptingCertificate = structure.isEncrypted() ? encryptingCertificate : null;
         AS2CompressionAlgorithm compressionAlgorithm = structure.isCompressed() ? AS2CompressionAlgorithm.ZLIB : null;
 
-        return clientConnection().send(
-                EDI_MESSAGE,
-                requestUri,
-                SUBJECT,
-                FROM,
-                as2To,
-                as2From,
-                structure,
-                AS2MediaType.APPLICATION_EDIFACT,
-                null,
-                null,
-                signingAlgorithm,
-                signingCertificate,
-                signingPrivateKey,
-                compressionAlgorithm,
-                DISPOSITION_NOTIFICATION_TO,
-                SIGNED_RECEIPT_MIC_ALGORITHMS,
-                encryptionAlgorithm,
-                encryptingCertificate,
-                null,
-                null,
-                null,
-                null,
-                null);
+        return clientConnection()
+                .send(
+                        EDI_MESSAGE,
+                        requestUri,
+                        SUBJECT,
+                        FROM,
+                        as2To,
+                        as2From,
+                        structure,
+                        AS2MediaType.APPLICATION_EDIFACT,
+                        null,
+                        null,
+                        signingAlgorithm,
+                        signingCertificate,
+                        signingPrivateKey,
+                        compressionAlgorithm,
+                        DISPOSITION_NOTIFICATION_TO,
+                        SIGNED_RECEIPT_MIC_ALGORITHMS,
+                        encryptionAlgorithm,
+                        encryptingCertificate,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
     }
 
     protected Object[] generateNewKeyPairSet(String commonName) throws Exception {
@@ -219,13 +221,9 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
         String signingDN = "CN=" + commonName + ", E=test@example.org, O=AS2 Test, C=US";
         KeyPair signingKeyPair = kpg.generateKeyPair();
 
-        X509Certificate signingCert = Utils.makeCertificate(
-                signingKeyPair,
-                signingDN,
-                issueKeyPair,
-                issueDN);
+        X509Certificate signingCert = Utils.makeCertificate(signingKeyPair, signingDN, issueKeyPair, issueDN);
 
-        return new Object[] { issueKeyPair, signingKeyPair, signingCert };
+        return new Object[] {issueKeyPair, signingKeyPair, signingCert};
     }
 
     protected PrivateKey getSigningPrivateKeyByRequestUri(String requestUri) {
@@ -237,10 +235,10 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
                     return (PrivateKey) key;
                 }
                 // Key should always be a PrivateKey based on the AS2ServerTwoConsumerBase setup
-                throw new IllegalStateException("Registry entry for key '" + config.getSigningKey() + "' is not a PrivateKey.");
+                throw new IllegalStateException(
+                        "Registry entry for key '" + config.getSigningKey() + "' is not a PrivateKey.");
             }
         }
         throw new IllegalArgumentException("No consumer configuration found for URI: " + requestUri);
     }
-
 }

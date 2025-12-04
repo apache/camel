@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
 
 import java.util.Iterator;
@@ -33,8 +34,8 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
         MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");
         MockEndpoint splitResult = getMockEndpoint("mock:splitResult");
         processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "another_chiau", "another_hi");
-        splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "directoryOne/another_chiau.txt",
-                "directoryOne/another_hi.txt");
+        splitResult.expectedBodiesReceivedInAnyOrder(
+                "chiau.txt", "hi.txt", "hola.txt", "directoryOne/another_chiau.txt", "directoryOne/another_hi.txt");
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -55,12 +56,13 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
                         .to("mock:processZipEntry")
                         .end()
                         .log("Done processing big file: ${header.CamelFileName}")
-                        .setBody().header(PROCESSED_FILES_HEADER_NAME)
-                        .split().body()
+                        .setBody()
+                        .header(PROCESSED_FILES_HEADER_NAME)
+                        .split()
+                        .body()
                         .to("mock:splitResult");
             }
         };
-
     }
 
     private AggregationStrategy updateHeader() {
@@ -77,8 +79,6 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
                 }
                 return newExchange;
             }
-
         };
     }
-
 }

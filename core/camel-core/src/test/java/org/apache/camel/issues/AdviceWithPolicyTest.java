@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -54,7 +55,12 @@ public class AdviceWithPolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").policy(new MyPolicy()).to("mock:a").id("a").to("mock:b").id("b");
+                from("direct:start")
+                        .policy(new MyPolicy())
+                        .to("mock:a")
+                        .id("a")
+                        .to("mock:b")
+                        .id("b");
             }
         };
     }
@@ -71,5 +77,4 @@ public class AdviceWithPolicyTest extends ContextTestSupport {
             return processor;
         }
     }
-
 }

@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
 
 public class RestartAwareArtemisContainer extends ArtemisContainer {
 
     public void restart() {
         String tag = this.getContainerId();
-        dockerClient.commitCmd(this.getContainerId())
+        dockerClient
+                .commitCmd(this.getContainerId())
                 .withRepository("tempimg")
-                .withTag(tag).exec();
+                .withTag(tag)
+                .exec();
         this.stop();
         this.setDockerImageName("tempimg:" + tag);
         this.start();
     }
-
 }

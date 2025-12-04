@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.kafka;
 
 import java.util.HashMap;
@@ -50,5 +51,4 @@ public class KafkaConsumerUtil {
         return partitions.stream()
                 .allMatch(partition -> consumer.position(partition) >= extendedTargetOffsets.get(partition));
     }
-
 }

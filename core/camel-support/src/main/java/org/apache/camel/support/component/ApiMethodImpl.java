@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.lang.reflect.Method;
@@ -58,8 +59,8 @@ public final class ApiMethodImpl implements ApiMethod {
     private final List<Class<?>> argTypes;
     private final Method method;
 
-    public ApiMethodImpl(Class<?> proxyType, Class<?> resultType, String name,
-                         ApiMethodArg... args) throws IllegalArgumentException {
+    public ApiMethodImpl(Class<?> proxyType, Class<?> resultType, String name, ApiMethodArg... args)
+            throws IllegalArgumentException {
         this.name = name;
         this.resultType = resultType;
 
@@ -84,7 +85,9 @@ public final class ApiMethodImpl implements ApiMethod {
             this.method = proxyType.getMethod(name, argTypes.toArray(new Class[argNames.size()]));
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
-                    String.format("Missing method %s %s", name, argTypes.toString().replace('[', '(').replace(']', ')')),
+                    String.format(
+                            "Missing method %s %s",
+                            name, argTypes.toString().replace('[', '(').replace(']', ')')),
                     e);
         }
     }
@@ -123,10 +126,14 @@ public final class ApiMethodImpl implements ApiMethod {
     public String toString() {
         StringBuilder builder = new StringBuilder(128);
         builder.append("{")
-                .append("name=").append(name)
-                .append(", resultType=").append(resultType)
-                .append(", argNames=").append(argNames)
-                .append(", argTypes=").append(argTypes)
+                .append("name=")
+                .append(name)
+                .append(", resultType=")
+                .append(resultType)
+                .append(", argNames=")
+                .append(argNames)
+                .append(", argTypes=")
+                .append(argTypes)
                 .append("}");
 
         return builder.toString();

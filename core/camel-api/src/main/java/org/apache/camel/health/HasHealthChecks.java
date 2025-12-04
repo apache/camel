@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.health;
 
 import java.util.stream.Stream;
@@ -26,5 +27,4 @@ public interface HasHealthChecks {
      * Returns a sequential {@code Stream} with the known {@link HealthCheck} as its source.
      */
     Stream<HealthCheck> stream();
-
 }

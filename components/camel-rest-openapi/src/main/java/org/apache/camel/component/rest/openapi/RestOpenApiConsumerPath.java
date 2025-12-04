@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.Operation;
@@ -27,8 +28,7 @@ class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.Consumer
     private final Operation consumer;
     private final RestBindingAdvice binding;
 
-    public RestOpenApiConsumerPath(String verb, String path, Operation consumer,
-                                   RestBindingAdvice binding) {
+    public RestOpenApiConsumerPath(String verb, String path, Operation consumer, RestBindingAdvice binding) {
         this.verb = verb;
         this.path = path;
         this.consumer = consumer;

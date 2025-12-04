@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for Spring AI Chat component using Ollama.
@@ -30,12 +31,13 @@ public class SpringAiChatOllamaIT extends OllamaTestSupport {
 
     @Test
     public void testSimpleChatWithOllama() {
-        String response
-                = template.requestBody("direct:chat", "What is the capital of Italy? Answer in one word.", String.class);
+        String response =
+                template.requestBody("direct:chat", "What is the capital of Italy? Answer in one word.", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response).isNotEmpty();
-        assertThat(response.toLowerCase()).contains("rome")
+        assertThat(response.toLowerCase())
+                .contains("rome")
                 .as("Expected to contain rome but was " + response.toLowerCase());
     }
 
@@ -62,16 +64,17 @@ public class SpringAiChatOllamaIT extends OllamaTestSupport {
 
     @Test
     public void testMultipleChatRequests() {
-        String response1 = template.requestBody("direct:chat", "What is 2+2? Answer with just the number.", String.class);
-        String response2
-                = template.requestBody("direct:chat", "What is the color of the sky? Answer in one word.", String.class);
+        String response1 =
+                template.requestBody("direct:chat", "What is 2+2? Answer with just the number.", String.class);
+        String response2 =
+                template.requestBody("direct:chat", "What is the color of the sky? Answer in one word.", String.class);
 
         assertThat(response1).isNotNull();
-        assertThat(response1).contains("4")
-                .as("Expected to contain 4 " + response1);
+        assertThat(response1).contains("4").as("Expected to contain 4 " + response1);
 
         assertThat(response2).isNotNull();
-        assertThat(response2.toLowerCase()).containsAnyOf("blue", "azure")
+        assertThat(response2.toLowerCase())
+                .containsAnyOf("blue", "azure")
                 .as("Expected to contain any of blue or azure, but was " + response2);
     }
 
@@ -84,8 +87,7 @@ public class SpringAiChatOllamaIT extends OllamaTestSupport {
                 component.setChatModel(chatModel);
                 context.addComponent("spring-ai-chat", component);
 
-                from("direct:chat")
-                        .to("spring-ai-chat:test");
+                from("direct:chat").to("spring-ai-chat:test");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +30,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 /**
  * Unit test to test delete option.
  */
@@ -36,9 +37,9 @@ public class SftpFromSedaDeleteFileIT extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
         return "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&knownHostsFile="
-               + service.getKnownHostsFile()
-               + "&privateKeyFile=./src/test/resources/id_rsa"
-               + "&privateKeyPassphrase=secret&delay=500&disconnect=false&delete=true";
+                + service.getKnownHostsFile()
+                + "&privateKeyFile=./src/test/resources/id_rsa"
+                + "&privateKeyPassphrase=secret&delay=500&disconnect=false&delete=true";
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.lang.management.ManagementFactory;
@@ -54,8 +55,9 @@ public class ThreadDevConsole extends AbstractDevConsole {
                 ThreadInfo ti = st ? tb.getThreadInfo(id, Integer.MAX_VALUE) : tb.getThreadInfo(id);
                 if (ti != null) {
                     String lock = ti.getLockName() != null ? "locked: " + ti.getLockName() : "";
-                    sb.append(String.format("\n    Thread %s: %s (%s) %s", id, ti.getThreadName(), ti.getThreadState().name(),
-                            lock));
+                    sb.append(String.format(
+                            "\n    Thread %s: %s (%s) %s",
+                            id, ti.getThreadName(), ti.getThreadState().name(), lock));
                     if (st) {
                         for (StackTraceElement e : ti.getStackTrace()) {
                             sb.append(String.format("\n        %s", e));
@@ -118,5 +120,4 @@ public class ThreadDevConsole extends AbstractDevConsole {
         }
         return jo;
     }
-
 }

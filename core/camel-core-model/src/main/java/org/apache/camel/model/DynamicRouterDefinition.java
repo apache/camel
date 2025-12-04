@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.Collections;
@@ -41,15 +42,16 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     @XmlAttribute
     @Metadata(defaultValue = ",")
     private String uriDelimiter;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoints;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String cacheSize;
 
-    public DynamicRouterDefinition() {
-    }
+    public DynamicRouterDefinition() {}
 
     protected DynamicRouterDefinition(DynamicRouterDefinition source) {
         super(source);
@@ -201,5 +203,4 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
         setCacheSize(cacheSize);
         return this;
     }
-
 }

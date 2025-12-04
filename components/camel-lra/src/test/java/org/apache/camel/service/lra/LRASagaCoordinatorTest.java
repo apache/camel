@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
 
 import java.net.URI;
@@ -75,7 +76,8 @@ public class LRASagaCoordinatorTest extends CamelTestSupport {
         CamelSagaStep step = new CamelSagaStep(null, null, Collections.emptyMap(), null);
 
         CompletableFuture<Void> expected = CompletableFuture.completedFuture(null);
-        Mockito.when(client.join(Mockito.eq(url), Mockito.any(LRASagaStep.class), Mockito.eq(exchange))).thenReturn(expected);
+        Mockito.when(client.join(Mockito.eq(url), Mockito.any(LRASagaStep.class), Mockito.eq(exchange)))
+                .thenReturn(expected);
 
         CompletableFuture<Void> actual = coordinator.beginStep(exchange, step);
         Assertions.assertSame(expected, actual);
@@ -109,5 +111,4 @@ public class LRASagaCoordinatorTest extends CamelTestSupport {
         Mockito.verify(sagaService).getClient();
         Mockito.verify(client).compensate(url, exchange);
     }
-
 }

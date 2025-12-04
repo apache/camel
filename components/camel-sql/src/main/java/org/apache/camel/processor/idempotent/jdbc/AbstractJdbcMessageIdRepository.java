@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jdbc;
 
 import javax.sql.DataSource;
@@ -54,25 +55,29 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    @Metadata(description = "The name of the processor that are used for this repository. Use unique names to separate processors in the same database.",
-              required = true)
+    @Metadata(
+            description =
+                    "The name of the processor that are used for this repository. Use unique names to separate processors in the same database.",
+            required = true)
     protected String processorName;
+
     @Metadata(description = "The Spring JdbcTemplate to use for connecting to the database", required = true)
     protected JdbcTemplate jdbcTemplate;
+
     @Metadata(description = "The Spring TransactionTemplate to use for connecting to the database", required = true)
     protected TransactionTemplate transactionTemplate;
+
     protected DataSource dataSource; // not in use
 
-    public AbstractJdbcMessageIdRepository() {
-    }
+    public AbstractJdbcMessageIdRepository() {}
 
     public AbstractJdbcMessageIdRepository(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.transactionTemplate = transactionTemplate;
     }
 
-    public AbstractJdbcMessageIdRepository(DataSource dataSource, TransactionTemplate transactionTemplate,
-                                           String processorName) {
+    public AbstractJdbcMessageIdRepository(
+            DataSource dataSource, TransactionTemplate transactionTemplate, String processorName) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcTemplate.afterPropertiesSet();
         this.processorName = processorName;
@@ -125,12 +130,10 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
     }
 
     @Override
-    protected void doStart() throws Exception {
-    }
+    protected void doStart() throws Exception {}
 
     @Override
-    protected void doStop() throws Exception {
-    }
+    protected void doStop() throws Exception {}
 
     @ManagedOperation(description = "Adds the key to the store")
     @Override
@@ -165,7 +168,6 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
             }
         });
         return rc.booleanValue();
-
     }
 
     @ManagedOperation(description = "Remove the key from the store")
@@ -231,5 +233,4 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
 }

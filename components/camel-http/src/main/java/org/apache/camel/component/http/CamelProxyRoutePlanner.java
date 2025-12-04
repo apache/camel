@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.util.ArrayList;
@@ -102,9 +103,7 @@ public class CamelProxyRoutePlanner extends DefaultProxyRoutePlanner {
 
             if (pattern.contains("*")) {
                 // Compile wildcard pattern to regex
-                String regex = pattern
-                        .replace(".", "\\.")
-                        .replace("*", ".*");
+                String regex = pattern.replace(".", "\\.").replace("*", ".*");
                 // Case-insensitive matching
                 wildcardPatterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
             } else {
@@ -165,6 +164,5 @@ public class CamelProxyRoutePlanner extends DefaultProxyRoutePlanner {
         }
 
         return super.determineProxy(target, context);
-
     }
 }

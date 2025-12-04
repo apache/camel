@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.processor;
+
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.BATCH_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.CONTENT_TYPE;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.JOB_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.RESULT_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_QUERY;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,12 +45,6 @@ import org.apache.camel.component.salesforce.internal.client.BulkApiClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultBulkApiClient;
 import org.apache.camel.converter.stream.StreamCacheConverter;
 import org.apache.camel.support.service.ServiceHelper;
-
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.BATCH_ID;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.CONTENT_TYPE;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.JOB_ID;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.RESULT_ID;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_QUERY;
 
 public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
@@ -114,7 +115,9 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             }
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(
-                    String.format("Error processing %s: [%s] \"%s\"", operationName.value(), e.getStatusCode(), e.getMessage()),
+                    String.format(
+                            "Error processing %s: [%s] \"%s\"",
+                            operationName.value(), e.getStatusCode(), e.getMessage()),
                     e));
             callback.done(true);
             done = true;
@@ -134,26 +137,30 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         Map<String, List<String>> headers = super.determineHeaders(exchange);
         try {
             Boolean pkChunking = getParameter(
-                    SalesforceEndpointConfig.PK_CHUNKING, exchange, IGNORE_BODY, IS_OPTIONAL,
-                    Boolean.class);
+                    SalesforceEndpointConfig.PK_CHUNKING, exchange, IGNORE_BODY, IS_OPTIONAL, Boolean.class);
             if (pkChunking != null && pkChunking) {
                 List<String> values = new ArrayList<>();
                 values.add("true");
                 Integer chunkSize = getParameter(
-                        SalesforceEndpointConfig.PK_CHUNKING_CHUNK_SIZE, exchange, IGNORE_BODY, IS_OPTIONAL,
+                        SalesforceEndpointConfig.PK_CHUNKING_CHUNK_SIZE,
+                        exchange,
+                        IGNORE_BODY,
+                        IS_OPTIONAL,
                         Integer.class);
                 if (chunkSize != null) {
                     values.add("chunkSize=" + chunkSize);
                 }
                 String startRow = getParameter(
-                        SalesforceEndpointConfig.PK_CHUNKING_START_ROW, exchange, IGNORE_BODY, IS_OPTIONAL,
+                        SalesforceEndpointConfig.PK_CHUNKING_START_ROW,
+                        exchange,
+                        IGNORE_BODY,
+                        IS_OPTIONAL,
                         String.class);
                 if (startRow != null) {
                     values.add("startRow=" + startRow);
                 }
                 String parent = getParameter(
-                        SalesforceEndpointConfig.PK_CHUNKING_PARENT, exchange, IGNORE_BODY, IS_OPTIONAL,
-                        String.class);
+                        SalesforceEndpointConfig.PK_CHUNKING_PARENT, exchange, IGNORE_BODY, IS_OPTIONAL, String.class);
                 if (parent != null) {
                     values.add("parent=" + parent);
                 }
@@ -230,7 +237,8 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
     private void processCreateBatch(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         String jobId;
         // since request is in the body, use headers or endpoint params
-        ContentType contentType = ContentType.fromValue(getParameter(CONTENT_TYPE, exchange, IGNORE_BODY, NOT_OPTIONAL));
+        ContentType contentType =
+                ContentType.fromValue(getParameter(CONTENT_TYPE, exchange, IGNORE_BODY, NOT_OPTIONAL));
         jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
         InputStream request;
@@ -241,8 +249,8 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             throw new SalesforceException(msg, e);
         }
 
-        bulkClient.createBatch(request, jobId, contentType, determineHeaders(exchange),
-                new BulkApiClient.BatchInfoResponseCallback() {
+        bulkClient.createBatch(
+                request, jobId, contentType, determineHeaders(exchange), new BulkApiClient.BatchInfoResponseCallback() {
                     @Override
                     public void onResponse(BatchInfo batchInfo, Map<String, String> headers, SalesforceException ex) {
                         processResponse(exchange, batchInfo, headers, ex, callback);
@@ -269,7 +277,8 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         });
     }
 
-    private void processGetAllBatches(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+    private void processGetAllBatches(final Exchange exchange, final AsyncCallback callback)
+            throws SalesforceException {
         JobInfo jobBody;
         String jobId;
         jobBody = exchange.getIn().getBody(JobInfo.class);
@@ -361,7 +370,8 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         });
     }
 
-    private void processCreateBatchQuery(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+    private void processCreateBatchQuery(final Exchange exchange, final AsyncCallback callback)
+            throws SalesforceException {
         JobInfo jobBody;
         String jobId;
         ContentType contentType;
@@ -378,7 +388,11 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             // reuse SOBJECT_QUERY property
             soqlQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.createBatchQuery(jobId, soqlQuery, contentType, determineHeaders(exchange),
+        bulkClient.createBatchQuery(
+                jobId,
+                soqlQuery,
+                contentType,
+                determineHeaders(exchange),
                 new BulkApiClient.BatchInfoResponseCallback() {
                     @Override
                     public void onResponse(BatchInfo batchInfo, Map<String, String> headers, SalesforceException ex) {
@@ -387,7 +401,8 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
                 });
     }
 
-    private void processGetQueryResultIds(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+    private void processGetQueryResultIds(final Exchange exchange, final AsyncCallback callback)
+            throws SalesforceException {
         String jobId;
         BatchInfo batchBody;
         String batchId;
@@ -399,15 +414,17 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
             batchId = getParameter(BATCH_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.getQueryResultIds(jobId, batchId, determineHeaders(exchange), new BulkApiClient.QueryResultIdsCallback() {
-            @Override
-            public void onResponse(List<String> ids, Map<String, String> headers, SalesforceException ex) {
-                processResponse(exchange, ids, headers, ex, callback);
-            }
-        });
+        bulkClient.getQueryResultIds(
+                jobId, batchId, determineHeaders(exchange), new BulkApiClient.QueryResultIdsCallback() {
+                    @Override
+                    public void onResponse(List<String> ids, Map<String, String> headers, SalesforceException ex) {
+                        processResponse(exchange, ids, headers, ex, callback);
+                    }
+                });
     }
 
-    private void processGetQueryResult(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+    private void processGetQueryResult(final Exchange exchange, final AsyncCallback callback)
+            throws SalesforceException {
         String jobId;
         BatchInfo batchBody;
         String batchId;
@@ -422,10 +439,11 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             batchId = getParameter(BATCH_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
             resultId = getParameter(RESULT_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.getQueryResult(jobId, batchId, resultId, determineHeaders(exchange),
-                new BulkApiClient.StreamResponseCallback() {
+        bulkClient.getQueryResult(
+                jobId, batchId, resultId, determineHeaders(exchange), new BulkApiClient.StreamResponseCallback() {
                     @Override
-                    public void onResponse(InputStream inputStream, Map<String, String> headers, SalesforceException ex) {
+                    public void onResponse(
+                            InputStream inputStream, Map<String, String> headers, SalesforceException ex) {
                         StreamCache body = null;
                         if (inputStream != null) {
                             // read the result stream into a StreamCache temp file
@@ -450,7 +468,11 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
     }
 
     private void processResponse(
-            Exchange exchange, Object body, Map<String, String> headers, SalesforceException ex, AsyncCallback callback) {
+            Exchange exchange,
+            Object body,
+            Map<String, String> headers,
+            SalesforceException ex,
+            AsyncCallback callback) {
         final Message out = exchange.getOut();
         if (ex != null) {
             exchange.setException(ex);

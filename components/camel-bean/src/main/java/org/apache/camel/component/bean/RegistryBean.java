@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.Map;
@@ -40,12 +41,16 @@ public class RegistryBean implements BeanHolder {
     private volatile Class<?> clazz;
     private Map<String, Object> options;
 
-    public RegistryBean(CamelContext context, String name,
-                        ParameterMappingStrategy parameterMappingStrategy, BeanComponent beanComponent) {
+    public RegistryBean(
+            CamelContext context,
+            String name,
+            ParameterMappingStrategy parameterMappingStrategy,
+            BeanComponent beanComponent) {
         this.registry = context.getRegistry();
         this.context = context;
         this.parameterMappingStrategy = parameterMappingStrategy != null
-                ? parameterMappingStrategy : ParameterMappingStrategyHelper.createParameterMappingStrategy(context);
+                ? parameterMappingStrategy
+                : ParameterMappingStrategyHelper.createParameterMappingStrategy(context);
         this.beanComponent = beanComponent != null ? beanComponent : context.getComponent("bean", BeanComponent.class);
         if (name != null) {
             // for ref it may have "ref:" or "bean:" as prefix by mistake
@@ -175,7 +180,7 @@ public class RegistryBean implements BeanHolder {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected BeanInfo createBeanInfo(Object bean) {
         BeanInfo bi = new BeanInfo(context, bean.getClass(), parameterMappingStrategy, beanComponent);
         if (errorHandler != null) {

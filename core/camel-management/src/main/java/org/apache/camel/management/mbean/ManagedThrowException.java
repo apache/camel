@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -26,7 +27,8 @@ import org.apache.camel.util.ObjectHelper;
 @ManagedResource(description = "Managed ThrowException")
 public class ManagedThrowException extends ManagedProcessor implements ManagedThrowExceptionMBean {
 
-    public ManagedThrowException(CamelContext context, ThrowExceptionProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedThrowException(
+            CamelContext context, ThrowExceptionProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
 

@@ -51,7 +51,6 @@ class LogEntry {
                     throw new IllegalArgumentException("Invalid state with value " + value);
             }
         }
-
     }
 
     private EntryState entryState;
@@ -119,6 +118,12 @@ class LogEntry {
      * @return       the size in bytes
      */
     public static int size(byte[] key, byte[] value) {
-        return Integer.BYTES + Integer.BYTES + Integer.BYTES + key.length + Integer.BYTES + Integer.BYTES + value.length;
+        return Integer.BYTES
+                + Integer.BYTES
+                + Integer.BYTES
+                + key.length
+                + Integer.BYTES
+                + Integer.BYTES
+                + value.length;
     }
 }

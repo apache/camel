@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.write;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.timestreamwrite.model.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Timestream2WriteProducerTest extends CamelTestSupport {
 
@@ -52,9 +53,12 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeEndpointsResponse resultGet = (DescribeEndpointsResponse) exchange.getIn().getBody();
+        DescribeEndpointsResponse resultGet =
+                (DescribeEndpointsResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.endpoints().size());
-        assertEquals("ingest.timestream.region.amazonaws.com", resultGet.endpoints().get(0).address());
+        assertEquals(
+                "ingest.timestream.region.amazonaws.com",
+                resultGet.endpoints().get(0).address());
     }
 
     @Test
@@ -71,9 +75,12 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeEndpointsResponse resultGet = (DescribeEndpointsResponse) exchange.getIn().getBody();
+        DescribeEndpointsResponse resultGet =
+                (DescribeEndpointsResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.endpoints().size());
-        assertEquals("ingest.timestream.region.amazonaws.com", resultGet.endpoints().get(0).address());
+        assertEquals(
+                "ingest.timestream.region.amazonaws.com",
+                resultGet.endpoints().get(0).address());
     }
 
     @Test
@@ -89,7 +96,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateBatchLoadTaskResponse resultGet = (CreateBatchLoadTaskResponse) exchange.getIn().getBody();
+        CreateBatchLoadTaskResponse resultGet =
+                (CreateBatchLoadTaskResponse) exchange.getIn().getBody();
         assertEquals("task-1", resultGet.taskId());
     }
 
@@ -106,7 +114,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeBatchLoadTaskResponse resultGet = (DescribeBatchLoadTaskResponse) exchange.getIn().getBody();
+        DescribeBatchLoadTaskResponse resultGet =
+                (DescribeBatchLoadTaskResponse) exchange.getIn().getBody();
         assertEquals("task-1", resultGet.batchLoadTaskDescription().taskId());
     }
 
@@ -123,7 +132,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ResumeBatchLoadTaskResponse resultGet = (ResumeBatchLoadTaskResponse) exchange.getIn().getBody();
+        ResumeBatchLoadTaskResponse resultGet =
+                (ResumeBatchLoadTaskResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -140,7 +150,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListBatchLoadTasksResponse resultGet = (ListBatchLoadTasksResponse) exchange.getIn().getBody();
+        ListBatchLoadTasksResponse resultGet =
+                (ListBatchLoadTasksResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.batchLoadTasks().size());
         assertEquals("task-1", resultGet.batchLoadTasks().get(0).taskId());
     }
@@ -158,7 +169,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateDatabaseResponse resultGet = (CreateDatabaseResponse) exchange.getIn().getBody();
+        CreateDatabaseResponse resultGet =
+                (CreateDatabaseResponse) exchange.getIn().getBody();
         assertEquals("testDb", resultGet.database().databaseName());
     }
 
@@ -175,7 +187,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DeleteDatabaseResponse resultGet = (DeleteDatabaseResponse) exchange.getIn().getBody();
+        DeleteDatabaseResponse resultGet =
+                (DeleteDatabaseResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -192,7 +205,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeDatabaseResponse resultGet = (DescribeDatabaseResponse) exchange.getIn().getBody();
+        DescribeDatabaseResponse resultGet =
+                (DescribeDatabaseResponse) exchange.getIn().getBody();
         assertEquals("testDb", resultGet.database().databaseName());
     }
 
@@ -209,7 +223,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        UpdateDatabaseResponse resultGet = (UpdateDatabaseResponse) exchange.getIn().getBody();
+        UpdateDatabaseResponse resultGet =
+                (UpdateDatabaseResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -226,7 +241,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListDatabasesResponse resultGet = (ListDatabasesResponse) exchange.getIn().getBody();
+        ListDatabasesResponse resultGet =
+                (ListDatabasesResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.databases().size());
         assertEquals("testDb", resultGet.databases().get(0).databaseName());
     }
@@ -278,7 +294,8 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeTableResponse resultGet = (DescribeTableResponse) exchange.getIn().getBody();
+        DescribeTableResponse resultGet =
+                (DescribeTableResponse) exchange.getIn().getBody();
         assertEquals("testTable", resultGet.table().tableName());
     }
 
@@ -340,57 +357,73 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:describeWriteEndpoints")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeEndpoints")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeEndpoints")
                         .to("mock:result");
                 from("direct:describeWriteEndpointsPojo")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeEndpoints&pojoRequest=true")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeEndpoints&pojoRequest=true")
                         .to("mock:result");
                 from("direct:createBatchLoadTask")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createBatchLoadTask")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createBatchLoadTask")
                         .to("mock:result");
                 from("direct:describeBatchLoadTask")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeBatchLoadTask")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeBatchLoadTask")
                         .to("mock:result");
                 from("direct:resumeBatchLoadTask")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=resumeBatchLoadTask")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=resumeBatchLoadTask")
                         .to("mock:result");
                 from("direct:listBatchLoadTasks")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=listBatchLoadTasks")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=listBatchLoadTasks")
                         .to("mock:result");
                 from("direct:createDatabase")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createDatabase")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createDatabase")
                         .to("mock:result");
                 from("direct:deleteDatabase")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=deleteDatabase")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=deleteDatabase")
                         .to("mock:result");
                 from("direct:describeDatabase")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeDatabase")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeDatabase")
                         .to("mock:result");
                 from("direct:updateDatabase")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=updateDatabase")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=updateDatabase")
                         .to("mock:result");
                 from("direct:listDatabases")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=listDatabases")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=listDatabases")
                         .to("mock:result");
                 from("direct:createTable")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createTable")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createTable")
                         .to("mock:result");
                 from("direct:deleteTable")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=deleteTable")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=deleteTable")
                         .to("mock:result");
                 from("direct:describeTable")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeTable")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeTable")
                         .to("mock:result");
                 from("direct:updateTable")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=updateTable")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=updateTable")
                         .to("mock:result");
                 from("direct:listTables")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=listTables")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=listTables")
                         .to("mock:result");
                 from("direct:writeRecords")
-                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=writeRecords")
+                        .to(
+                                "aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=writeRecords")
                         .to("mock:result");
-
             }
         };
     }

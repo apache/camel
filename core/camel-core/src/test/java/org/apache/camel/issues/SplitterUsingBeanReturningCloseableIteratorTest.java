@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Closeable;
 import java.util.Iterator;
@@ -25,9 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTestSupport {
 
@@ -46,7 +47,8 @@ public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTest
 
     @Test
     public void testCloseableIterator() {
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Hello,World"),
                 "Exception should have been thrown");
 
@@ -68,8 +70,7 @@ final class MyCloseableIterator implements Iterator<String>, Closeable {
     private static MyCloseableIterator singleton;
     private boolean closed;
 
-    private MyCloseableIterator() {
-    }
+    private MyCloseableIterator() {}
 
     public static MyCloseableIterator getInstance() {
         if (singleton == null) {
@@ -98,7 +99,5 @@ final class MyCloseableIterator implements Iterator<String>, Closeable {
     }
 
     @Override
-    public void remove() {
-    }
-
+    public void remove() {}
 }

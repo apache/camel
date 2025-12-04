@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.kafka.services;
 
 import com.github.dockerjava.api.command.InspectContainerResponse;
@@ -25,8 +26,7 @@ import org.testcontainers.utility.DockerImageName;
 
 public class RedpandaTransactionsEnabledContainer extends RedpandaContainer {
     public static final String REDPANDA_CONTAINER = LocalPropertyResolver.getProperty(
-            RedpandaTransactionsEnabledContainer.class,
-            KafkaProperties.REDPANDA_CONTAINER);
+            RedpandaTransactionsEnabledContainer.class, KafkaProperties.REDPANDA_CONTAINER);
     public static final int REDPANDA_PORT = 9092;
 
     public RedpandaTransactionsEnabledContainer(String image) {

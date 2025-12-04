@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -27,11 +33,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
 
@@ -70,16 +71,18 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         assertEquals(false, cfb.isLoggingFeatureEnabled(), "Got the wrong loggingFeatureEnabled");
         assertEquals(0, cfb.getLoggingSizeLimit(), "Got the wrong loggingSizeLimit");
         assertEquals(1, cfb.getInInterceptors().size(), "Got a wrong size of interceptors");
-
     }
 
     @Test
     public void testCreateCxfRsClientFactoryBeanProgrammatically() {
 
-        CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://" + BEAN_SERVICE_ENDPOINT_NAME, CxfRsEndpoint.class);
+        CxfRsEndpoint endpoint =
+                resolveMandatoryEndpoint("cxfrs://bean://" + BEAN_SERVICE_ENDPOINT_NAME, CxfRsEndpoint.class);
         SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) endpoint.createJAXRSClientFactoryBean();
 
-        assertNotSame(super.applicationContext.getBean(BEAN_SERVICE_ENDPOINT_NAME), cfb,
+        assertNotSame(
+                super.applicationContext.getBean(BEAN_SERVICE_ENDPOINT_NAME),
+                cfb,
                 "Got the same object but must be different");
         assertEquals(BEAN_SERVICE_ADDRESS, cfb.getAddress(), "Got the wrong address");
         assertNotNull(cfb.getServiceClass(), "Service class must not be null");
@@ -112,8 +115,9 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
     private void emulateBeanRegistrationProgrammatically(ClassPathXmlApplicationContext applicationContext) {
 
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) applicationContext.getBeanFactory();
-        BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
-                .rootBeanDefinition(CxfRsSpringEndpointTest.class.getName()).setFactoryMethod("serviceEndpoint");
+        BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(
+                        CxfRsSpringEndpointTest.class.getName())
+                .setFactoryMethod("serviceEndpoint");
         beanFactory.registerBeanDefinition(BEAN_SERVICE_ENDPOINT_NAME, definitionBuilder.getBeanDefinition());
     }
 }

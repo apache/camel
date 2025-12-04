@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm.test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Set;
 
@@ -35,11 +39,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 @CamelSpringTest
-@ContextConfiguration(classes = { ValidatorConfiguration.class })
+@ContextConfiguration(classes = {ValidatorConfiguration.class})
 public class SMSMessageTest {
 
     @Autowired
@@ -139,7 +140,7 @@ public class SMSMessageTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "34600000000", "+34 600 00 00 00", "" })
+    @ValueSource(strings = {"34600000000", "+34 600 00 00 00", ""})
     @NullSource
     public void testIsInvalidNumbers(String phoneNumber) {
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
@@ -151,8 +152,10 @@ public class SMSMessageTest {
     @Test
     public void testE164NoPlusSignedNumberBut00IsInvalid() {
 
-        final String phoneNumber = new PhoneNumber().setCountryCodeSource(CountryCodeSource.FROM_NUMBER_WITHOUT_PLUS_SIGN)
-                .setNationalNumber(0034600000000).toString();
+        final String phoneNumber = new PhoneNumber()
+                .setCountryCodeSource(CountryCodeSource.FROM_NUMBER_WITHOUT_PLUS_SIGN)
+                .setNationalNumber(0034600000000)
+                .toString();
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);

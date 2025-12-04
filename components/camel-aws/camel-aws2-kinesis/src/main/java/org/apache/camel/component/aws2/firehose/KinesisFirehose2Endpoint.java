@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.firehose;
+
+import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
 
 import java.util.Map;
 
@@ -30,16 +33,17 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 
-import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
-
 /**
  * Produce data to AWS Kinesis Firehose streams.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS Kinesis Firehose",
-             syntax = "aws2-kinesis-firehose:streamName", producerOnly = true, category = {
-                     Category.CLOUD,
-                     Category.MESSAGING },
-             headersClass = KinesisFirehose2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.2.0",
+        scheme = "aws2-kinesis-firehose",
+        title = "AWS Kinesis Firehose",
+        syntax = "aws2-kinesis-firehose:streamName",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MESSAGING},
+        headersClass = KinesisFirehose2Constants.class)
 public class KinesisFirehose2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -47,8 +51,8 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint implements Endpoin
 
     private FirehoseClient kinesisFirehoseClient;
 
-    public KinesisFirehose2Endpoint(String uri, KinesisFirehose2Configuration configuration,
-                                    KinesisFirehose2Component component) {
+    public KinesisFirehose2Endpoint(
+            String uri, KinesisFirehose2Configuration configuration, KinesisFirehose2Component component) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -71,8 +75,8 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint implements Endpoin
         }
         kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null
                 ? configuration.getAmazonKinesisFirehoseClient()
-                : KinesisFirehoseClientFactory.getKinesisFirehoseClient(configuration).getKinesisFirehoseClient();
-
+                : KinesisFirehoseClientFactory.getKinesisFirehoseClient(configuration)
+                        .getKinesisFirehoseClient();
     }
 
     @Override

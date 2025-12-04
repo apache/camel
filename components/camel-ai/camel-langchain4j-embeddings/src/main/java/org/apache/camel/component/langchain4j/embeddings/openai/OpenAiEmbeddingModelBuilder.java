@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings.openai;
+
+import static java.time.Duration.ofSeconds;
 
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
-
-import static java.time.Duration.ofSeconds;
 
 public final class OpenAiEmbeddingModelBuilder {
     private String apiKey;

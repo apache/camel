@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
 
 import java.nio.file.Path;
@@ -35,14 +36,18 @@ public class SplitGroupWrappedMultiXmlTokenTest extends CamelTestSupport {
     public void testTokenXMLPairGroup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
-        mock.message(0).body()
+        mock.message(0)
+                .body()
                 .isEqualTo(
                         "<?xml version=\"1.0\"?>\n<orders xmlns=\"http:acme.com\">\n  <order id=\"1\">Camel in Action</order><order id=\"2\">ActiveMQ in Action</order></orders>");
-        mock.message(1).body()
+        mock.message(1)
+                .body()
                 .isEqualTo(
                         "<?xml version=\"1.0\"?>\n<orders xmlns=\"http:acme.com\">\n  <order id=\"3\">Spring in Action</order><order id=\"4\">Scala in Action</order></orders>");
-        mock.message(2).body().isEqualTo(
-                "<?xml version=\"1.0\"?>\n<orders xmlns=\"http:acme.com\">\n  <order id=\"5\">Groovy in Action</order></orders>");
+        mock.message(2)
+                .body()
+                .isEqualTo(
+                        "<?xml version=\"1.0\"?>\n<orders xmlns=\"http:acme.com\">\n  <order id=\"5\">Groovy in Action</order></orders>");
 
         String body = createBody();
         template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), body, Exchange.FILE_NAME, "orders.xml");
@@ -73,10 +78,12 @@ public class SplitGroupWrappedMultiXmlTokenTest extends CamelTestSupport {
                 from(TestSupport.fileUri(testDirectory, "?initialDelay=0&delay=10"))
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
-                        .split().xtokenize("//order", 'w', ns, 2).to("log:split").to("mock:split");
+                        .split()
+                        .xtokenize("//order", 'w', ns, 2)
+                        .to("log:split")
+                        .to("mock:split");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

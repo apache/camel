@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -54,7 +55,8 @@ public class JsonPathSuppressTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                        .when().jsonpath("person.middlename", true)
+                        .when()
+                        .jsonpath("person.middlename", true)
                         .to("mock:middle")
                         .otherwise()
                         .to("mock:other");

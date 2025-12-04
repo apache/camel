@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.util.Date;
@@ -41,8 +42,10 @@ public class SmppReplaceSmCommand extends SmppSmCommand {
         replaceSm.setShortMessage(message);
 
         if (log.isDebugEnabled()) {
-            log.debug("Sending replacement command for a short message for exchange id '{}' and message id '{}'",
-                    exchange.getExchangeId(), replaceSm.getMessageId());
+            log.debug(
+                    "Sending replacement command for a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(),
+                    replaceSm.getMessageId());
         }
 
         try {
@@ -61,8 +64,10 @@ public class SmppReplaceSmCommand extends SmppSmCommand {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Sent replacement command for a short message for exchange id '{}' and message id '{}'",
-                    exchange.getExchangeId(), replaceSm.getMessageId());
+            log.debug(
+                    "Sent replacement command for a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(),
+                    replaceSm.getMessageId());
         }
 
         Message rspMsg = ExchangeHelper.getResultMessage(exchange);

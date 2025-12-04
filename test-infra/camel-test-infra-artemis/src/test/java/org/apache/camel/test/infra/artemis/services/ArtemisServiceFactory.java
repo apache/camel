@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.activemq.artemis.core.server.QueueQueryResult;
@@ -85,9 +86,7 @@ public final class ArtemisServiceFactory {
         }
     }
 
-    private ArtemisServiceFactory() {
-
-    }
+    private ArtemisServiceFactory() {}
 
     public static synchronized ArtemisService createVMService() {
         return new ArtemisVMService();
@@ -123,12 +122,13 @@ public final class ArtemisServiceFactory {
 
     private static class SingletonVMServiceHolder {
         static final ArtemisService INSTANCE;
-        static {
-            SimpleTestServiceBuilder<ArtemisService> nonPersistentInstanceBuilder
-                    = new SimpleTestServiceBuilder<>("artemis");
 
-            nonPersistentInstanceBuilder
-                    .addLocalMapping(() -> new SingletonArtemisService(new ArtemisVMService(), "artemis"));
+        static {
+            SimpleTestServiceBuilder<ArtemisService> nonPersistentInstanceBuilder =
+                    new SimpleTestServiceBuilder<>("artemis");
+
+            nonPersistentInstanceBuilder.addLocalMapping(
+                    () -> new SingletonArtemisService(new ArtemisVMService(), "artemis"));
 
             INSTANCE = nonPersistentInstanceBuilder.build();
         }
@@ -136,8 +136,10 @@ public final class ArtemisServiceFactory {
 
     private static class SingletonPersistentVMServiceHolder {
         static final ArtemisService INSTANCE;
+
         static {
-            SimpleTestServiceBuilder<ArtemisService> persistentInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
+            SimpleTestServiceBuilder<ArtemisService> persistentInstanceBuilder =
+                    new SimpleTestServiceBuilder<>("artemis");
 
             persistentInstanceBuilder.addLocalMapping(
                     () -> new SingletonArtemisService(new ArtemisPersistentVMService(), "artemis-persistent"));
@@ -148,11 +150,12 @@ public final class ArtemisServiceFactory {
 
     private static class SingletonAMQPServiceHolder {
         static final ArtemisService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<ArtemisService> amqpInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
 
-            amqpInstanceBuilder
-                    .addLocalMapping(() -> new SingletonArtemisService(new ArtemisAMQPService(), "artemis-amqp"));
+            amqpInstanceBuilder.addLocalMapping(
+                    () -> new SingletonArtemisService(new ArtemisAMQPService(), "artemis-amqp"));
 
             INSTANCE = amqpInstanceBuilder.build();
         }
@@ -160,11 +163,12 @@ public final class ArtemisServiceFactory {
 
     private static class SingletonMQTTServiceHolder {
         static final ArtemisService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<ArtemisService> mqttInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
 
-            mqttInstanceBuilder
-                    .addLocalMapping(() -> new SingletonArtemisService(new ArtemisMQTTService(), "artemis-mqtt"));
+            mqttInstanceBuilder.addLocalMapping(
+                    () -> new SingletonArtemisService(new ArtemisMQTTService(), "artemis-mqtt"));
 
             INSTANCE = mqttInstanceBuilder.build();
         }

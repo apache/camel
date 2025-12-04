@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
@@ -28,8 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
@@ -60,29 +61,50 @@ public class ManagedAThrottlerTest extends AbstractManagedThrottlerTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").id("route1")
+                from("direct:start")
+                        .id("route1")
                         .to("log:foo")
-                        .throttle(10).totalRequestsMode().id("mythrottler")
+                        .throttle(10)
+                        .totalRequestsMode()
+                        .id("mythrottler")
                         .delay(100)
                         .to("mock:result");
 
-                from("seda:throttleCount").id("route2")
-                        .throttle(1).totalRequestsMode().id("mythrottler2").delay(250)
+                from("seda:throttleCount")
+                        .id("route2")
+                        .throttle(1)
+                        .totalRequestsMode()
+                        .id("mythrottler2")
+                        .delay(250)
                         .to("mock:end");
 
-                from("seda:throttleCountAsync").id("route3")
-                        .throttle(1).totalRequestsMode().asyncDelayed().id("mythrottler3").delay(250)
+                from("seda:throttleCountAsync")
+                        .id("route3")
+                        .throttle(1)
+                        .totalRequestsMode()
+                        .asyncDelayed()
+                        .id("mythrottler3")
+                        .delay(250)
                         .to("mock:endAsync");
 
-                from("seda:throttleCountAsyncException").id("route4")
-                        .throttle(1).totalRequestsMode().asyncDelayed().id("mythrottler4").delay(250)
+                from("seda:throttleCountAsyncException")
+                        .id("route4")
+                        .throttle(1)
+                        .totalRequestsMode()
+                        .asyncDelayed()
+                        .id("mythrottler4")
+                        .delay(250)
                         .to("mock:endAsyncException")
                         .process(exchange -> {
                             throw new RuntimeException("Fail me");
                         });
-                from("seda:throttleCountRejectExecutionCallerRuns").id("route5")
-                        .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
-                        .throttle(1).totalRequestsMode()
+                from("seda:throttleCountRejectExecutionCallerRuns")
+                        .id("route5")
+                        .onException(RejectedExecutionException.class)
+                        .to("mock:rejectedExceptionEndpoint1")
+                        .end()
+                        .throttle(1)
+                        .totalRequestsMode()
                         .asyncDelayed()
                         .executorService(badService)
                         .callerRunsWhenRejected(true)
@@ -90,9 +112,13 @@ public class ManagedAThrottlerTest extends AbstractManagedThrottlerTest {
                         .delay(250)
                         .to("mock:endAsyncRejectCallerRuns");
 
-                from("seda:throttleCountRejectExecution").id("route6")
-                        .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
-                        .throttle(1).totalRequestsMode()
+                from("seda:throttleCountRejectExecution")
+                        .id("route6")
+                        .onException(RejectedExecutionException.class)
+                        .to("mock:rejectedExceptionEndpoint1")
+                        .end()
+                        .throttle(1)
+                        .totalRequestsMode()
                         .asyncDelayed()
                         .executorService(badService)
                         .callerRunsWhenRejected(false)
@@ -102,5 +128,4 @@ public class ManagedAThrottlerTest extends AbstractManagedThrottlerTest {
             }
         };
     }
-
 }

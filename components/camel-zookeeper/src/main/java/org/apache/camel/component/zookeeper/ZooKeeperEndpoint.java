@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
 
 import java.util.List;
@@ -34,12 +35,18 @@ import org.apache.camel.support.DefaultEndpoint;
  * Manage ZooKeeper clusters.
  */
 @ManagedResource(description = "ZooKeeper Endpoint")
-@UriEndpoint(firstVersion = "2.9.0", scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path",
-             category = { Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA }, headersClass = ZooKeeperMessage.class)
+@UriEndpoint(
+        firstVersion = "2.9.0",
+        scheme = "zookeeper",
+        title = "ZooKeeper",
+        syntax = "zookeeper:serverUrls/path",
+        category = {Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA},
+        headersClass = ZooKeeperMessage.class)
 public class ZooKeeperEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private ZooKeeperConfiguration configuration;
+
     private ZooKeeperConnectionManager connectionManager;
 
     public ZooKeeperEndpoint(String uri, ZooKeeperComponent component, ZooKeeperConfiguration configuration) {
@@ -171,5 +178,4 @@ public class ZooKeeperEndpoint extends DefaultEndpoint implements EndpointServic
             connectionManager.shutdown();
         }
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,11 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MinioComponentIT extends MinioIntegrationTestSupport {
 
@@ -81,7 +82,10 @@ class MinioComponentIT extends MinioIntegrationTestSupport {
     private void assertResultExchange(Exchange resultExchange) {
         assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
         assertEquals("mycamelbucket", resultExchange.getIn().getHeader(MinioConstants.BUCKET_NAME));
-        assertTrue(resultExchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class).startsWith("CamelUnitTest"));
+        assertTrue(resultExchange
+                .getIn()
+                .getHeader(MinioConstants.OBJECT_NAME, String.class)
+                .startsWith("CamelUnitTest"));
         assertNull(resultExchange.getIn().getHeader(MinioConstants.VERSION_ID)); // not enabled on this bucket
         assertNotNull(resultExchange.getIn().getHeader(MinioConstants.LAST_MODIFIED));
         assertEquals("application/octet-stream", resultExchange.getIn().getHeader(MinioConstants.CONTENT_TYPE));
@@ -101,14 +105,12 @@ class MinioComponentIT extends MinioIntegrationTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String minioEndpointUri
-                        = "minio://mycamelbucket?accessKey=" + service.accessKey()
-                          + "&secretKey=RAW(" + service.secretKey()
-                          + ")&autoCreateBucket=true&endpoint=http://" + service.host() + "&proxyPort="
-                          + service.port();
+                String minioEndpointUri = "minio://mycamelbucket?accessKey=" + service.accessKey()
+                        + "&secretKey=RAW(" + service.secretKey()
+                        + ")&autoCreateBucket=true&endpoint=http://" + service.host() + "&proxyPort="
+                        + service.port();
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
-
             }
         };
     }

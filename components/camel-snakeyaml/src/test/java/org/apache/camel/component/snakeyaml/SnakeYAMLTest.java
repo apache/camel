@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snakeyaml;
+
+import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createDataFormat;
+import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createPrettyFlowDataFormat;
+import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createTestMap;
+import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createTestPojo;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,51 +33,38 @@ import org.apache.camel.test.junit5.params.Parameterized;
 import org.apache.camel.test.junit5.params.Parameters;
 import org.apache.camel.test.junit5.params.Test;
 
-import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createDataFormat;
-import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createPrettyFlowDataFormat;
-import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createTestMap;
-import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createTestPojo;
-
 @Parameterized
 public class SnakeYAMLTest extends CamelTestSupport {
 
     @Parameter
     private SnakeYAMLDataFormat format;
+
     @Parameter(1)
     private Object body;
+
     @Parameter(2)
     private String expected;
 
     @Parameters
     public static Collection yamlCases() {
         return Arrays.asList(new Object[][] {
-                {
-                        createDataFormat(null),
-                        createTestMap(),
-                        "{name: Camel}"
-                },
-                {
-                        createDataFormat(TestPojo.class),
-                        createTestPojo(),
-                        "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}"
-                },
-                {
-                        createPrettyFlowDataFormat(TestPojo.class, true),
-                        createTestPojo(),
-                        "!!org.apache.camel.component.snakeyaml.model.TestPojo {\n  name: Camel\n}"
-                }
+            {createDataFormat(null), createTestMap(), "{name: Camel}"},
+            {
+                createDataFormat(TestPojo.class),
+                createTestPojo(),
+                "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}"
+            },
+            {
+                createPrettyFlowDataFormat(TestPojo.class, true),
+                createTestPojo(),
+                "!!org.apache.camel.component.snakeyaml.model.TestPojo {\n  name: Camel\n}"
+            }
         });
     }
 
     @Test
     public void testMarshalAndUnmarshal() throws Exception {
-        SnakeYAMLTestHelper.marshalAndUnmarshal(
-                context(),
-                body,
-                "mock:reverse",
-                "direct:in",
-                "direct:back",
-                expected);
+        SnakeYAMLTestHelper.marshalAndUnmarshal(context(), body, "mock:reverse", "direct:in", "direct:back", expected);
     }
 
     @Override
@@ -79,11 +72,8 @@ public class SnakeYAMLTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in")
-                        .marshal(format);
-                from("direct:back")
-                        .unmarshal(format)
-                        .to("mock:reverse");
+                from("direct:in").marshal(format);
+                from("direct:back").unmarshal(format).to("mock:reverse");
             }
         };
     }

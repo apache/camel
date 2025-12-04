@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
 
 import java.util.Map;
@@ -39,12 +40,11 @@ public class GoogleDriveProducer extends AbstractApiProducer<GoogleDriveApiName,
     }
 
     @Override
-    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
-            throws RuntimeCamelException {
+    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
-            BeanIntrospection beanIntrospection
-                    = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
+            BeanIntrospection beanIntrospection =
+                    PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }
@@ -57,5 +57,4 @@ public class GoogleDriveProducer extends AbstractApiProducer<GoogleDriveApiName,
     protected String getThreadProfileName() {
         return GoogleDriveConstants.THREAD_PROFILE_NAME;
     }
-
 }

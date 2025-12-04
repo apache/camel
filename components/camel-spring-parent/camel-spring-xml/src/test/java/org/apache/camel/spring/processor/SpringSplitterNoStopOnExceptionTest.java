@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.SplitterNoStopOnExceptionTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringSplitterNoStopOnExceptionTest extends SplitterNoStopOnExceptionTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringSplitterNoStopOnExceptionTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/SpringSplitterNoStopOnExceptionTest.xml");
     }
-
 }

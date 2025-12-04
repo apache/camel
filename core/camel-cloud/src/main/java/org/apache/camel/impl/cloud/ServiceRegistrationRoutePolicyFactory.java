@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import org.apache.camel.CamelContext;
@@ -38,8 +39,8 @@ public class ServiceRegistrationRoutePolicyFactory implements RoutePolicyFactory
         this(null, serviceRegistrySelector);
     }
 
-    public ServiceRegistrationRoutePolicyFactory(ServiceRegistry serviceRegistry,
-                                                 ServiceRegistry.Selector serviceRegistrySelector) {
+    public ServiceRegistrationRoutePolicyFactory(
+            ServiceRegistry serviceRegistry, ServiceRegistry.Selector serviceRegistrySelector) {
         this.serviceRegistry = serviceRegistry;
         this.serviceRegistrySelector = serviceRegistrySelector;
     }

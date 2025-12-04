@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
 
 import java.io.IOException;
@@ -129,8 +130,7 @@ public class CamelTransportFactory extends AbstractTransportFactory
     }
 
     @Override
-    public Conduit getConduit(EndpointInfo localInfo, EndpointReferenceType target, Bus b)
-            throws IOException {
+    public Conduit getConduit(EndpointInfo localInfo, EndpointReferenceType target, Bus b) throws IOException {
         return new CamelConduit(camelContext, b, localInfo, target, headerFilterStrategy);
     }
 
@@ -180,7 +180,7 @@ public class CamelTransportFactory extends AbstractTransportFactory
                     cim.deregisterConduitInitiator(ns);
                 }
             } catch (BusException e) {
-                //ignore
+                // ignore
             }
         }
     }
@@ -192,7 +192,7 @@ public class CamelTransportFactory extends AbstractTransportFactory
                     dfm.deregisterDestinationFactory(ns);
                 }
             } catch (BusException e) {
-                //ignore
+                // ignore
             }
         }
     }

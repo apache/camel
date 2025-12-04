@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
@@ -32,8 +35,6 @@ import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class PQCNTRUGenerateEncapsulationAESNoAutowiredTest extends CamelTestSupport {
 
     @EndpointInject("mock:encapsulate")
@@ -45,18 +46,19 @@ public class PQCNTRUGenerateEncapsulationAESNoAutowiredTest extends CamelTestSup
     @EndpointInject("mock:extract")
     protected MockEndpoint resultExtract;
 
-    public PQCNTRUGenerateEncapsulationAESNoAutowiredTest() throws NoSuchAlgorithmException {
-    }
+    public PQCNTRUGenerateEncapsulationAESNoAutowiredTest() throws NoSuchAlgorithmException {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:encapsulate").to(
-                        "pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=NTRU")
+                from("direct:encapsulate")
+                        .to(
+                                "pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=NTRU")
                         .to("mock:encapsulate")
-                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=NTRU")
+                        .to(
+                                "pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=NTRU")
                         .to("mock:extract");
             }
         };
@@ -75,15 +77,27 @@ public class PQCNTRUGenerateEncapsulationAESNoAutowiredTest extends CamelTestSup
         templateEncapsulate.sendBody("Hello");
         resultEncapsulate.assertIsSatisfied();
         assertNotNull(resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
-        assertEquals(PQCSymmetricAlgorithms.AES.getAlgorithm(),
-                resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
-        SecretKeyWithEncapsulation secEncrypted
-                = resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class);
+        assertEquals(
+                PQCSymmetricAlgorithms.AES.getAlgorithm(),
+                resultEncapsulate
+                        .getExchanges()
+                        .get(0)
+                        .getMessage()
+                        .getBody(SecretKeyWithEncapsulation.class)
+                        .getAlgorithm());
+        SecretKeyWithEncapsulation secEncrypted =
+                resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class);
         assertNotNull(resultExtract.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
-        assertEquals(PQCSymmetricAlgorithms.AES.getAlgorithm(),
-                resultExtract.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
-        SecretKeyWithEncapsulation secEncryptedExtracted
-                = resultExtract.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class);
+        assertEquals(
+                PQCSymmetricAlgorithms.AES.getAlgorithm(),
+                resultExtract
+                        .getExchanges()
+                        .get(0)
+                        .getMessage()
+                        .getBody(SecretKeyWithEncapsulation.class)
+                        .getAlgorithm());
+        SecretKeyWithEncapsulation secEncryptedExtracted =
+                resultExtract.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class);
         assertTrue(Arrays.areEqual(secEncrypted.getEncoded(), secEncryptedExtracted.getEncoded()));
     }
 }

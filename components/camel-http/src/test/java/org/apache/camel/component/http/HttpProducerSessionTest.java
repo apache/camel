@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import org.apache.camel.BindToRegistry;
@@ -35,8 +36,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class HttpProducerSessionTest extends CamelTestSupport {
     private static final int PORT = AvailablePortFinder.getNextAvailable();
 
-    private final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder
-            .emptyTemplate()
+    private final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder.emptyTemplate()
             .withPort(PORT)
             .withContextPath("/session")
             .withContextHandlerConfiguration()

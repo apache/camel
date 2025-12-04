@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc.it;
 
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@EnabledIfSystemProperty(named = "enable.irc.itests", matches = ".*",
-                         disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
+@EnabledIfSystemProperty(
+        named = "enable.irc.itests",
+        matches = ".*",
+        disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
 public class IrcsRouteIT extends IrcRouteIT {
 
     @Override
@@ -31,5 +34,4 @@ public class IrcsRouteIT extends IrcRouteIT {
     protected String fromUri() {
         return "ircs://{{camelFrom}}@{{server}}?channels={{channel1}}";
     }
-
 }

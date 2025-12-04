@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.eventnotifier;
 
 import java.util.HashMap;
@@ -175,7 +176,8 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
                     handleCreatedEvent((ExchangeCreatedEvent) eventObject);
                 } else if (eventObject instanceof ExchangeSentEvent) {
                     handleSentEvent((ExchangeSentEvent) eventObject);
-                } else if (eventObject instanceof ExchangeCompletedEvent || eventObject instanceof ExchangeFailedEvent) {
+                } else if (eventObject instanceof ExchangeCompletedEvent
+                        || eventObject instanceof ExchangeFailedEvent) {
                     handleDoneEvent((ExchangeEvent) eventObject);
                 }
             }
@@ -185,19 +187,24 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
         String name = getNamingStrategy().getName(sentEvent.getExchange(), sentEvent.getEndpoint());
         Tags tags = getNamingStrategy().getTags(sentEvent, sentEvent.getEndpoint());
-        Timer timer = Timer.builder(name).tags(tags).description("Time taken to send message to the endpoint")
+        Timer timer = Timer.builder(name)
+                .tags(tags)
+                .description("Time taken to send message to the endpoint")
                 .register(getMeterRegistry());
         timer.record(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
     }
 
     protected void handleCreatedEvent(ExchangeCreatedEvent createdEvent) {
-        String name = getNamingStrategy().getName(createdEvent.getExchange(), createdEvent.getExchange().getFromEndpoint());
+        String name = getNamingStrategy()
+                .getName(createdEvent.getExchange(), createdEvent.getExchange().getFromEndpoint());
         createdEvent.getExchange().setProperty("eventTimer:" + name, Timer.start(getMeterRegistry()));
     }
 
     protected void handleDoneEvent(ExchangeEvent doneEvent) {
-        String name = getNamingStrategy().getName(doneEvent.getExchange(), doneEvent.getExchange().getFromEndpoint());
-        Tags tags = getNamingStrategy().getTags(doneEvent, doneEvent.getExchange().getFromEndpoint());
+        String name = getNamingStrategy()
+                .getName(doneEvent.getExchange(), doneEvent.getExchange().getFromEndpoint());
+        Tags tags =
+                getNamingStrategy().getTags(doneEvent, doneEvent.getExchange().getFromEndpoint());
         // Would have preferred LongTaskTimer, but you cannot set the FAILED_TAG once it is registered
         Timer.Sample sample = (Timer.Sample) doneEvent.getExchange().removeProperty("eventTimer:" + name);
         if (sample != null) {
@@ -207,16 +214,17 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     }
 
     private void setLastTimeExchange() {
-        Gauge meter = getMeterRegistry().find(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME).gauge();
+        Gauge meter = getMeterRegistry()
+                .find(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME)
+                .gauge();
         if (meter == null) {
             meter = Gauge.builder(
-                    MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
-                    MicrometerExchangeEventNotifier.lastExchangeTimestampHolder,
-                    AtomicLong::get)
+                            MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
+                            MicrometerExchangeEventNotifier.lastExchangeTimestampHolder,
+                            AtomicLong::get)
                     .description("Last exchange processed time in milliseconds since the Unix epoch")
                     .register(getMeterRegistry());
         }
         MicrometerExchangeEventNotifier.lastExchangeTimestampHolder.set(System.currentTimeMillis());
     }
-
 }

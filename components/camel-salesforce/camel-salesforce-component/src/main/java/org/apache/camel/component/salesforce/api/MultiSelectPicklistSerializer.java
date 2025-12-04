@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api;
 
 import java.io.IOException;
@@ -61,8 +62,9 @@ public class MultiSelectPicklistSerializer extends StdSerializer<Object> {
 
         } catch (Exception e) {
             throw new JsonGenerationException(
-                    String.format("Exception writing pick list value %s of type %s: %s", value, value.getClass().getName(),
-                            e.getMessage()),
+                    String.format(
+                            "Exception writing pick list value %s of type %s: %s",
+                            value, value.getClass().getName(), e.getMessage()),
                     jgen);
         }
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 import java.util.List;
@@ -27,18 +31,15 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class RoasterJavaRestDslTest extends CamelTestSupport {
 
     @Test
     void parseRestConfiguration() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster
-                .parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource)
+                Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
-        List<RestConfigurationDetails> list = RestDslParser.parseRestConfiguration(clazz,
-                "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
+        List<RestConfigurationDetails> list = RestDslParser.parseRestConfiguration(
+                clazz, "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         RestConfigurationDetails details = list.get(0);
         assertEquals("27", details.getLineNumber());
@@ -70,11 +71,11 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
 
     @Test
     void parseRestService() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster
-                .parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource)
+                Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
-        List<RestServiceDetails> list = RestDslParser.parseRestService(clazz,
-                "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
+        List<RestServiceDetails> list = RestDslParser.parseRestService(
+                clazz, "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         RestServiceDetails details = list.get(0);
         assertEquals("43", details.getLineNumber());
@@ -99,5 +100,4 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         assertEquals("log:post", details.getVerbs().get(1).getTo());
         assertNull(details.getVerbs().get(1).getPath());
     }
-
 }

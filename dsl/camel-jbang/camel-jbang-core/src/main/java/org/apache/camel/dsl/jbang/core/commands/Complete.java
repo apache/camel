@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.PrintStream;
@@ -30,9 +31,7 @@ public class Complete extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        String script = AutoComplete.bash(
-                spec.parent().name(),
-                spec.parent().commandLine());
+        String script = AutoComplete.bash(spec.parent().name(), spec.parent().commandLine());
 
         // not PrintWriter.println: scripts with Windows line separators fail in strange
         // ways!
@@ -42,5 +41,4 @@ public class Complete extends CamelCommand {
         out.flush();
         return 0;
     }
-
 }

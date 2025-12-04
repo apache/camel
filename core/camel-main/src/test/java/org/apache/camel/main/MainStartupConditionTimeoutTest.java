@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.support.startup.EnvStartupCondition;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MainStartupConditionTimeoutTest {
 
@@ -30,7 +31,9 @@ public class MainStartupConditionTimeoutTest {
         StopWatch watch = new StopWatch();
         Main main = new Main();
         try {
-            main.configure().startupCondition().withEnabled(true)
+            main.configure()
+                    .startupCondition()
+                    .withEnabled(true)
                     .withOnTimeout("fail")
                     .withTimeout(250)
                     .withCustomClassNames("org.apache.camel.main.MainStartupConditionTimeoutTest$MyEnvCondition");

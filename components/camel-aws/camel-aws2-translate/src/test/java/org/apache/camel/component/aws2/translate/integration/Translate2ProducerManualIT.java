@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.translate.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -30,12 +33,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 // Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+    @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
 })
 public class Translate2ProducerManualIT extends CamelTestSupport {
 
@@ -71,8 +72,11 @@ public class Translate2ProducerManualIT extends CamelTestSupport {
             public void process(Exchange exchange) {
 
                 exchange.getIn()
-                        .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
-                                .targetLanguageCode(Translate2LanguageEnum.GERMAN.toString()).text("Ciao Signorina").build());
+                        .setBody(TranslateTextRequest.builder()
+                                .sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                                .targetLanguageCode(Translate2LanguageEnum.GERMAN.toString())
+                                .text("Ciao Signorina")
+                                .build());
             }
         });
 
@@ -106,14 +110,17 @@ public class Translate2ProducerManualIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:translateText").to(
-                        "aws2-translate://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=translateText")
+                from("direct:translateText")
+                        .to(
+                                "aws2-translate://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=translateText")
                         .to("mock:result");
                 from("direct:translateTextAuto")
-                        .to("aws2-translate://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=translateText&autodetectSourceLanguage=true")
+                        .to(
+                                "aws2-translate://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=translateText&autodetectSourceLanguage=true")
                         .to("mock:result");
-                from("direct:translateTextPojo").to(
-                        "aws2-translate://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=translateText&pojoRequest=true")
+                from("direct:translateTextPojo")
+                        .to(
+                                "aws2-translate://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=translateText&pojoRequest=true")
                         .to("mock:result");
             }
         };

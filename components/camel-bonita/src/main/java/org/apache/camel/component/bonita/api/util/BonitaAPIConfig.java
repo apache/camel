@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api.util;
 
 public class BonitaAPIConfig {
@@ -36,7 +37,7 @@ public class BonitaAPIConfig {
 
     public String getProcessFileUploadBaseURI(String processName, String processVersion) {
         return getBaseBonitaURI() + "portal/resource/process/" + processName + "/" + processVersion
-               + "/API/formFileUpload";
+                + "/API/formFileUpload";
     }
 
     public String getHostname() {
@@ -70,5 +71,4 @@ public class BonitaAPIConfig {
     public void setPassword(String password) {
         this.password = password;
     }
-
 }

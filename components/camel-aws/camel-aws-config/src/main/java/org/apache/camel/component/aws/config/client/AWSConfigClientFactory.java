@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.config.client;
 
 import org.apache.camel.component.aws.config.AWSConfigConfiguration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws.config.client.impl.AWSConfigClientStandard
  */
 public final class AWSConfigClientFactory {
 
-    private AWSConfigClientFactory() {
-    }
+    private AWSConfigClientFactory() {}
 
     /**
      * Return the correct AWS Config client (based on remote vs local).

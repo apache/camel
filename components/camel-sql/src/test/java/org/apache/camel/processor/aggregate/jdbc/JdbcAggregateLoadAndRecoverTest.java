@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTestSupport {
 
@@ -77,9 +78,7 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
             public void configure() {
                 configureJdbcAggregationRepository();
 
-                onException(IllegalStateException.class)
-                        .maximumRedeliveries(3)
-                        .redeliveryDelay(100L);
+                onException(IllegalStateException.class).maximumRedeliveries(3).redeliveryDelay(100L);
 
                 from("seda:start?size=" + SIZE)
                         .to("log:input?groupSize=500")
@@ -90,7 +89,7 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
                         // have every 10th exchange fail which should then be recovered
                         .process(new Processor() {
                             public void process(Exchange exchange) {
-                                //Avoid same message to be discarded twice
+                                // Avoid same message to be discarded twice
                                 if (exchange.getIn().getHeader(Exchange.REDELIVERED) == null) {
                                     int num = counter.incrementAndGet();
                                     if (num % 10 == 0) {

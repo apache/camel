@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 /**
@@ -26,16 +27,18 @@ public class MllpAcknowledgementDeliveryException extends MllpAcknowledgementExc
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, logPhi);
     }
 
-    public MllpAcknowledgementDeliveryException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause, boolean logPhi) {
+    public MllpAcknowledgementDeliveryException(
+            byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause, boolean logPhi) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause, logPhi);
     }
 
-    public MllpAcknowledgementDeliveryException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
+    public MllpAcknowledgementDeliveryException(
+            String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
         super(message, hl7Message, hl7Acknowledgement, logPhi);
     }
 
-    public MllpAcknowledgementDeliveryException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause,
-                                                boolean logPhi) {
+    public MllpAcknowledgementDeliveryException(
+            String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause, boolean logPhi) {
         super(message, hl7Message, hl7Acknowledgement, cause, logPhi);
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.spring;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.UUID;
 
@@ -30,8 +33,6 @@ import org.infinispan.query.remote.client.impl.MarshallerRegistration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public abstract class SpringInfinispanRemoteIdempotentRepositoryTestSupport extends CamelSpringTestSupport {
     @RegisterExtension
     public static InfinispanService service = InfinispanServiceFactory.createSingletonInfinispanService();
@@ -42,14 +43,10 @@ public abstract class SpringInfinispanRemoteIdempotentRepositoryTestSupport exte
 
         // for default tests, we force return value for all the
         // operations
-        clientBuilder
-                .forceReturnValues(true);
+        clientBuilder.forceReturnValues(true);
 
         // add server from the test infra service
-        clientBuilder
-                .addServer()
-                .host(service.host())
-                .port(service.port());
+        clientBuilder.addServer().host(service.host()).port(service.port());
 
         // add security info
         clientBuilder

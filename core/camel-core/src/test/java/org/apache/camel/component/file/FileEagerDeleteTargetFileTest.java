@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,9 +27,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
 
@@ -41,7 +42,8 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
         template.sendBodyAndHeader(
                 fileUri("?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=true"),
                 "Bye World",
-                Exchange.FILE_NAME, "world.txt");
+                Exchange.FILE_NAME,
+                "world.txt");
 
         Path file = testFile("world.txt");
         assertTrue(Files.exists(file), "File should exist");
@@ -53,7 +55,8 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
         template.sendBodyAndHeader(
                 fileUri("?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=false"),
                 "Bye World",
-                Exchange.FILE_NAME, "world.txt");
+                Exchange.FILE_NAME,
+                "world.txt");
 
         Path file = testFile("world.txt");
         assertTrue(Files.exists(file), "File should exist");
@@ -63,13 +66,10 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
     @Test
     public void testEagerDeleteTargetFileDefault() throws Exception {
         template.sendBodyAndHeader(
-                fileUri("?tempFileName=inprogress-${file:name}"),
-                "Bye World",
-                Exchange.FILE_NAME, "world.txt");
+                fileUri("?tempFileName=inprogress-${file:name}"), "Bye World", Exchange.FILE_NAME, "world.txt");
 
         Path file = testFile("world.txt");
         assertTrue(Files.exists(file), "File should exist");
         assertEquals("Bye World", new String(Files.readAllBytes(file)));
     }
-
 }

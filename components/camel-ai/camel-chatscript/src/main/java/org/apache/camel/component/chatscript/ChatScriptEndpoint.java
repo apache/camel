@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chatscript;
+
+import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DEFAULT_PORT;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,13 +34,16 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DEFAULT_PORT;
-
 /**
  * Chat with a ChatScript Server.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botName",
-             producerOnly = true, category = { Category.AI, Category.CHAT })
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "chatscript",
+        title = "ChatScript",
+        syntax = "chatscript:host:port/botName",
+        producerOnly = true,
+        category = {Category.AI, Category.CHAT})
 public class ChatScriptEndpoint extends DefaultEndpoint {
 
     private ChatScriptBot bot;
@@ -45,21 +51,25 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     @UriPath(description = "Hostname or IP of the server on which CS server is running")
     @Metadata(required = true)
     private String host;
+
     @UriPath(description = "Port on which ChatScript is listening to", defaultValue = "" + DEFAULT_PORT)
     private int port;
+
     @UriPath(description = "Name of the Bot in CS to converse with")
     @Metadata(required = true)
     private String botName;
-    @UriParam(description = "Username who initializes the CS conversation. To be set when chat is initialized from camel route")
+
+    @UriParam(
+            description =
+                    "Username who initializes the CS conversation. To be set when chat is initialized from camel route")
     private String chatUserName;
+
     @UriParam(description = "Issues :reset command to start a new conversation everytime", defaultValue = "false")
     private boolean resetChat;
 
-    public ChatScriptEndpoint() {
-    }
+    public ChatScriptEndpoint() {}
 
-    public ChatScriptEndpoint(String uri, String remaining,
-                              ChatScriptComponent component) throws URISyntaxException {
+    public ChatScriptEndpoint(String uri, String remaining, ChatScriptComponent component) throws URISyntaxException {
         super(uri, component);
 
         URI remainingUri = new URI("tcp://" + remaining);
@@ -77,7 +87,6 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         }
         botName = botName.substring(1);
         setBot(new ChatScriptBot(getHost(), getPort(), getBotName(), ""));
-
     }
 
     public boolean isResetChat() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
@@ -53,7 +54,6 @@ public final class HL7 {
                 String s = exchange.getIn().getBody(String.class);
                 return s != null ? s.replace('\n', '\r') : null;
             }
-
         });
     }
 
@@ -76,5 +76,4 @@ public final class HL7 {
     public static Predicate messageConformsTo(Expression expression) {
         return new ValidationContextPredicate(expression);
     }
-
 }

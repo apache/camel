@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
@@ -44,7 +45,8 @@ public class SplitterParallelAggregateManualTest extends ContextTestSupport {
                         .to("log:someSplitProcessing?groupSize=500");
 
                 from("direct:splitUnsynchronizedAggregation")
-                        .split(method(new MySplitter(), "rowIterator"), new MyAggregationStrategy()).parallelAggregate()
+                        .split(method(new MySplitter(), "rowIterator"), new MyAggregationStrategy())
+                        .parallelAggregate()
                         .to("log:someSplitProcessing?groupSize=500");
             }
         };
@@ -69,7 +71,8 @@ public class SplitterParallelAggregateManualTest extends ContextTestSupport {
     }
 
     protected void timeSplitRoutes(int numberOfRequests) throws Exception {
-        String[] endpoints = new String[] { "direct:splitSynchronizedAggregation", "direct:splitUnsynchronizedAggregation" };
+        String[] endpoints =
+                new String[] {"direct:splitSynchronizedAggregation", "direct:splitUnsynchronizedAggregation"};
         List<Future<String>> futures = new ArrayList<>();
         StopWatch stopWatch = new StopWatch(false);
 
@@ -122,5 +125,4 @@ public class SplitterParallelAggregateManualTest extends ContextTestSupport {
             return newExchange;
         }
     }
-
 }

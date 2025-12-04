@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
 
 import java.security.PublicKey;
@@ -48,6 +49,7 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
      * Comma-separated list of required permissions for authorization. Example: "read:documents,write:documents"
      */
     private String requiredPermissions;
+
     private boolean allRolesRequired = true;
     private boolean allPermissionsRequired = true;
     private boolean useResourceOwnerPasswordCredentials = false;
@@ -145,12 +147,10 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
 
     private void initializeTokenIntrospector() {
         if (clientSecret == null) {
-            throw new IllegalArgumentException(
-                    "Client secret is required for token introspection");
+            throw new IllegalArgumentException("Client secret is required for token introspection");
         }
         tokenIntrospector = new KeycloakTokenIntrospector(
-                serverUrl, realm, clientId, clientSecret,
-                introspectionCacheEnabled, introspectionCacheTtl);
+                serverUrl, realm, clientId, clientSecret, introspectionCacheEnabled, introspectionCacheTtl);
     }
 
     // Getters and setters

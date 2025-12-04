@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import java.util.Base64;
@@ -27,8 +28,8 @@ public class VertxHttpAuthenticationTest extends VertxHttpTestSupport {
 
     @Test
     public void testBasicAuthentication() {
-        String result = template.requestBody(getProducerUri() + "/basic?basicAuthUsername=foo&basicAuthPassword=bar", null,
-                String.class);
+        String result = template.requestBody(
+                getProducerUri() + "/basic?basicAuthUsername=foo&basicAuthPassword=bar", null, String.class);
         Assertions.assertEquals("foo:bar", result);
     }
 
@@ -43,25 +44,23 @@ public class VertxHttpAuthenticationTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri() + "/basic")
-                        .process(exchange -> {
-                            // Decode the username & password from the Authorization header
-                            String authorization = exchange.getMessage().getHeader("Authorization", String.class);
-                            if (authorization != null) {
-                                String encoded = authorization.replace("Basic ", "");
-                                exchange.getMessage().setBody(Base64.getDecoder().decode(encoded));
-                            }
-                        });
+                from(getTestServerUri() + "/basic").process(exchange -> {
+                    // Decode the username & password from the Authorization header
+                    String authorization = exchange.getMessage().getHeader("Authorization", String.class);
+                    if (authorization != null) {
+                        String encoded = authorization.replace("Basic ", "");
+                        exchange.getMessage().setBody(Base64.getDecoder().decode(encoded));
+                    }
+                });
 
-                from(getTestServerUri() + "/token")
-                        .process(exchange -> {
-                            // Decode the token from the Authorization header
-                            String authorization = exchange.getMessage().getHeader("Authorization", String.class);
-                            if (authorization != null) {
-                                String token = authorization.replace("Bearer ", "");
-                                exchange.getMessage().setBody(token);
-                            }
-                        });
+                from(getTestServerUri() + "/token").process(exchange -> {
+                    // Decode the token from the Authorization header
+                    String authorization = exchange.getMessage().getHeader("Authorization", String.class);
+                    if (authorization != null) {
+                        String token = authorization.replace("Bearer ", "");
+                        exchange.getMessage().setBody(token);
+                    }
+                });
             }
         };
     }

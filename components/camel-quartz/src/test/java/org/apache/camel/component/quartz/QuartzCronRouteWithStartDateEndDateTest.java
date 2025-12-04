@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * This test the CronTrigger as a timer endpoint in a route.
@@ -58,8 +59,10 @@ public class QuartzCronRouteWithStartDateEndDateTest extends BaseQuartzTest {
 
                 // triggers every 1th second at precise 00,01,02,03..59 with startAt and endAt exactly 2 second apart.
                 // configuration will create a maximum of three messages
-                fromF("quartz://myGroup/myTimerName?cron=0/1 * * * * ?&trigger.startAt=%s&trigger.endAt=%s",
-                        dateFormat.format(startDate), dateFormat.format(endDate)).to("mock:result");
+                fromF(
+                                "quartz://myGroup/myTimerName?cron=0/1 * * * * ?&trigger.startAt=%s&trigger.endAt=%s",
+                                dateFormat.format(startDate), dateFormat.format(endDate))
+                        .to("mock:result");
             }
         };
     }

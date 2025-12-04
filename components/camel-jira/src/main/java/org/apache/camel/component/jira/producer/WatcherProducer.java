@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_ADD;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_REMOVE;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -23,10 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_ADD;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_REMOVE;
 
 public class WatcherProducer extends DefaultProducer {
 

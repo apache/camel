@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
+import static org.apache.camel.util.StringHelper.notEmpty;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -33,9 +37,6 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.utils.UrlUtils;
 import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
-import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * Executes a series of REST API requests in a single call. You can use the output of one request as the input to a
@@ -174,7 +175,8 @@ public final class SObjectComposite implements Serializable {
      * @param  fields to return
      * @return        this batch builder
      */
-    public SObjectComposite addGet(final String type, final String id, final String referenceId, final String... fields) {
+    public SObjectComposite addGet(
+            final String type, final String id, final String referenceId, final String... fields) {
         final String fieldsParameter = composeFieldsParameter(fields);
 
         addCompositeRequest(new CompositeRequest(Method.GET, rowBaseUrl(type, id) + fieldsParameter, referenceId));
@@ -216,13 +218,19 @@ public final class SObjectComposite implements Serializable {
      * @return          this batch builder
      */
     public SObjectComposite addGetRelated(
-            final String type, final String id, final String relation, final String referenceId, final String... fields) {
+            final String type,
+            final String id,
+            final String relation,
+            final String referenceId,
+            final String... fields) {
         version.requireAtLeast(36, 0);
 
         final String fieldsParameter = composeFieldsParameter(fields);
 
         addCompositeRequest(new CompositeRequest(
-                Method.GET, rowBaseUrl(type, id) + "/" + notEmpty(relation, "relation") + fieldsParameter, referenceId));
+                Method.GET,
+                rowBaseUrl(type, id) + "/" + notEmpty(relation, "relation") + fieldsParameter,
+                referenceId));
 
         return this;
     }
@@ -234,7 +242,8 @@ public final class SObjectComposite implements Serializable {
      * @return       this batch builder
      */
     public SObjectComposite addQuery(final String query, final String referenceId) {
-        addCompositeRequest(new CompositeRequest(Method.GET, apiPrefix + "/query/?q=" + notEmpty(query, "query"), referenceId));
+        addCompositeRequest(
+                new CompositeRequest(Method.GET, apiPrefix + "/query/?q=" + notEmpty(query, "query"), referenceId));
 
         return this;
     }
@@ -264,7 +273,8 @@ public final class SObjectComposite implements Serializable {
      */
     public SObjectComposite addUpdate(
             final String type, final String id, final AbstractSObjectBase data, final String referenceId) {
-        addCompositeRequest(new CompositeRequest(Method.PATCH, rowBaseUrl(type, notEmpty(id, "data.Id")), data, referenceId));
+        addCompositeRequest(
+                new CompositeRequest(Method.PATCH, rowBaseUrl(type, notEmpty(id, "data.Id")), data, referenceId));
 
         return this;
     }
@@ -281,10 +291,14 @@ public final class SObjectComposite implements Serializable {
      * @return            this batch builder
      */
     public SObjectComposite addUpdateByExternalId(
-            final String type, final String fieldName, final String fieldValue, final AbstractSObjectBase data,
+            final String type,
+            final String fieldName,
+            final String fieldValue,
+            final AbstractSObjectBase data,
             final String referenceId) {
 
-        addCompositeRequest(new CompositeRequest(Method.PATCH, rowBaseUrl(type, fieldName, fieldValue), data, referenceId));
+        addCompositeRequest(
+                new CompositeRequest(Method.PATCH, rowBaseUrl(type, fieldName, fieldValue), data, referenceId));
 
         return this;
     }
@@ -301,7 +315,10 @@ public final class SObjectComposite implements Serializable {
      * @return            this batch builder
      */
     public SObjectComposite addUpsertByExternalId(
-            final String type, final String fieldName, final String fieldValue, final AbstractSObjectBase data,
+            final String type,
+            final String fieldName,
+            final String fieldValue,
+            final AbstractSObjectBase data,
             final String referenceId) {
 
         return addUpdateByExternalId(type, fieldName, fieldValue, data, referenceId);
@@ -339,18 +356,21 @@ public final class SObjectComposite implements Serializable {
     @SuppressWarnings("rawtypes")
     public Class[] objectTypes() {
 
-        return Stream
-                .concat(Stream.of(SObjectComposite.class, BatchRequest.class),
-                        compositeRequests.stream().map(CompositeRequest::getBody).filter(Objects::nonNull)
+        return Stream.concat(
+                        Stream.of(SObjectComposite.class, BatchRequest.class),
+                        compositeRequests.stream()
+                                .map(CompositeRequest::getBody)
+                                .filter(Objects::nonNull)
                                 .map(Object::getClass))
-                .distinct().toArray(Class[]::new);
+                .distinct()
+                .toArray(Class[]::new);
     }
 
     void addCompositeRequest(final CompositeRequest compositeRequest) {
         if (compositeRequests.size() >= MAX_COMPOSITE_OPERATIONS) {
             throw new IllegalArgumentException(
                     "You can add up to " + MAX_COMPOSITE_OPERATIONS
-                                               + " requests in a single composite request. Split your requests across multiple composite request.");
+                            + " requests in a single composite request. Split your requests across multiple composite request.");
         }
         compositeRequests.add(compositeRequest);
     }
@@ -361,8 +381,8 @@ public final class SObjectComposite implements Serializable {
 
     String rowBaseUrl(final String type, final String fieldName, final String fieldValue) {
         try {
-            return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/" + notEmpty(fieldName, "fieldName") + "/"
-                   + UrlUtils.encodePath(notEmpty(fieldValue, "fieldValue"));
+            return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/"
+                    + notEmpty(fieldName, "fieldName") + "/" + UrlUtils.encodePath(notEmpty(fieldValue, "fieldValue"));
         } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }

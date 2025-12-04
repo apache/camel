@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,11 +32,6 @@ import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.test.junit5.CamelTestSupport;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractOpenTelemetryTest extends CamelTestSupport {
 
@@ -44,14 +45,17 @@ public class AbstractOpenTelemetryTest extends CamelTestSupport {
 
     protected PointData getPointDataForRouteId(String metricName, String routeId) {
         List<PointData> pointDataList = getAllPointDataForRouteId(metricName, routeId);
-        assertEquals(1, pointDataList.size(),
+        assertEquals(
+                1,
+                pointDataList.size(),
                 "Should have one metric for routeId " + routeId + " and metricName " + metricName);
         return pointDataList.get(0);
     }
 
     protected LongPointData getSingleLongPointData(String metricName, String routeId) {
         List<PointData> pdList = getAllPointDataForRouteId(metricName, routeId);
-        assertEquals(1, pdList.size(), "Should have one metric for routeId " + routeId + " and metricName " + metricName);
+        assertEquals(
+                1, pdList.size(), "Should have one metric for routeId " + routeId + " and metricName " + metricName);
         PointData pd = pdList.get(0);
         assertInstanceOf(LongPointData.class, pd);
         return (LongPointData) pd;

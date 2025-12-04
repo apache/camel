@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.management.ManagementFactory;
 
@@ -23,9 +27,6 @@ import javax.management.ObjectName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test that verifies JMX can be disabled via Spring.
@@ -46,7 +47,8 @@ public class DisableJmxAgentTest extends DefaultJMXAgentTest {
 
         // whats the numbers before, because the JVM can have left overs when unit testing
         int before = ManagementFactory.getPlatformMBeanServer()
-                .queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+                .queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null)
+                .size();
 
         // start route should enlist the consumer to JMX if JMX was enabled
         context.getRouteController().startRoute("foo");
@@ -54,8 +56,8 @@ public class DisableJmxAgentTest extends DefaultJMXAgentTest {
         assertThrows(NullPointerException.class, () -> getMBeanConnection());
 
         int after = ManagementFactory.getPlatformMBeanServer()
-                .queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+                .queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null)
+                .size();
         assertEquals(before, after, "Should not have added consumer to JMX");
     }
-
 }

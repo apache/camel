@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfProducerSoapActionTest extends CamelTestSupport {
 
     private static int port = AvailablePortFinder.getNextAvailable();
@@ -38,10 +39,10 @@ public class CxfProducerSoapActionTest extends CamelTestSupport {
     private static final String OPERATION_NAMESPACE = "http://camel.apache.org/order";
     private static final String OPERATION_NAME = "order";
     private static final String DIRECT_START = "direct:start";
-    private static final String CXF_ENDPOINT
-            = "cxf:http://localhost:" + port + "/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
-    private static final String REQUEST_MESSAGE = "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                                                  + "<Body/>" + "</Envelope>";
+    private static final String CXF_ENDPOINT =
+            "cxf:http://localhost:" + port + "/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
+    private static final String REQUEST_MESSAGE =
+            "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">" + "<Body/>" + "</Envelope>";
 
     @Test
     public void testSendSoapRequestWithoutSoapActionSet() {
@@ -54,7 +55,8 @@ public class CxfProducerSoapActionTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                from(DIRECT_START).setHeader(CxfConstants.OPERATION_NAME, constant(OPERATION_NAME))
+                from(DIRECT_START)
+                        .setHeader(CxfConstants.OPERATION_NAME, constant(OPERATION_NAME))
                         .setHeader(CxfConstants.OPERATION_NAMESPACE, constant(OPERATION_NAMESPACE))
                         .process(new Processor() {
 
@@ -66,24 +68,21 @@ public class CxfProducerSoapActionTest extends CamelTestSupport {
                                 params.add("bar");
 
                                 exchange.getIn().setBody(params);
-
                             }
-                        }).to("log:org.apache.camel?level=DEBUG")
+                        })
+                        .to("log:org.apache.camel?level=DEBUG")
                         .to(CXF_ENDPOINT + "&serviceClass=org.apache.camel.order.OrderEndpoint");
 
                 from(CXF_ENDPOINT + "&dataFormat=POJO&serviceClass=org.apache.camel.order.OrderEndpoint")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                String soapAction = exchange.getIn().getHeader(SoapBindingConstants.SOAP_ACTION,
-                                        String.class);
+                                String soapAction =
+                                        exchange.getIn().getHeader(SoapBindingConstants.SOAP_ACTION, String.class);
                                 assertEquals(SOAP_ACTION, soapAction);
-
                             }
                         });
             }
-
         };
     }
-
 }

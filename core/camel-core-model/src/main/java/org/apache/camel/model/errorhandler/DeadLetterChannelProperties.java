@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import org.apache.camel.CamelContext;
@@ -28,5 +29,4 @@ public interface DeadLetterChannelProperties extends DefaultErrorHandlerProperti
     // has no additional configurations
 
     Predicate getRetryWhilePolicy(CamelContext context);
-
 }

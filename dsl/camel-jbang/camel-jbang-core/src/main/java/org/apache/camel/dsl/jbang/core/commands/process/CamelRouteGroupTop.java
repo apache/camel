@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.Arrays;
@@ -26,8 +27,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine.Command;
 
-@Command(name = "group", description = "Top performing route groups",
-         sortOptions = false, showDefaultValues = true)
+@Command(name = "group", description = "Top performing route groups", sortOptions = false, showDefaultValues = true)
 public class CamelRouteGroupTop extends CamelRouteGroupStatus {
 
     public CamelRouteGroupTop(CamelJBangMain main) {
@@ -36,27 +36,51 @@ public class CamelRouteGroupTop extends CamelRouteGroupStatus {
 
     @Override
     protected void printTable(List<Row> rows) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("GROUP").dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getGroup),
-                new Column().header("ROUTES").dataAlign(HorizontalAlign.RIGHT).headerAlign(HorizontalAlign.CENTER)
-                        .with(r -> "" + r.size),
-                new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).headerAlign(HorizontalAlign.CENTER)
-                        .with(r -> r.state),
-                new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("LOAD").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
-                        .with(this::getLoad),
-                new Column().header("TOTAL").with(this::getTotal),
-                new Column().header("FAIL").with(this::getFailed),
-                new Column().header("INFLIGHT").with(this::getInflight),
-                new Column().header("MEAN").with(r -> r.mean),
-                new Column().header("MIN").with(r -> r.min),
-                new Column().header("MAX").with(r -> r.max),
-                new Column().header("SINCE-LAST").with(this::getSinceLast))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("PID")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.pid),
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column()
+                                        .header("GROUP")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getGroup),
+                                new Column()
+                                        .header("ROUTES")
+                                        .dataAlign(HorizontalAlign.RIGHT)
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> "" + r.size),
+                                new Column()
+                                        .header("STATUS")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.state),
+                                new Column()
+                                        .header("AGE")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.age),
+                                new Column()
+                                        .header("LOAD")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .dataAlign(HorizontalAlign.CENTER)
+                                        .with(this::getLoad),
+                                new Column().header("TOTAL").with(this::getTotal),
+                                new Column().header("FAIL").with(this::getFailed),
+                                new Column().header("INFLIGHT").with(this::getInflight),
+                                new Column().header("MEAN").with(r -> r.mean),
+                                new Column().header("MIN").with(r -> r.min),
+                                new Column().header("MAX").with(r -> r.max),
+                                new Column().header("SINCE-LAST").with(this::getSinceLast))));
     }
 
     private String getLoad(Row r) {
@@ -98,5 +122,4 @@ public class CamelRouteGroupTop extends CamelRouteGroupStatus {
         }
         return answer;
     }
-
 }

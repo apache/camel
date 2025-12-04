@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
@@ -34,8 +35,7 @@ public class RollbackProcessor extends BaseProcessorSupport implements Traceable
     private boolean markRollbackOnlyLast;
     private String message;
 
-    public RollbackProcessor() {
-    }
+    public RollbackProcessor() {}
 
     public RollbackProcessor(String message) {
         this.message = message;
@@ -118,5 +118,4 @@ public class RollbackProcessor extends BaseProcessorSupport implements Traceable
     public void setMarkRollbackOnlyLast(boolean markRollbackOnlyLast) {
         this.markRollbackOnlyLast = markRollbackOnlyLast;
     }
-
 }

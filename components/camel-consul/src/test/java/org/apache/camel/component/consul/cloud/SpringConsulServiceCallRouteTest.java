@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cloud;
 
 import java.util.ArrayList;
@@ -54,17 +55,41 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         this.client = Consul.builder().withUrl(service.getConsulUrl()).build().agentClient();
 
         this.registrations = Arrays.asList(
-                ImmutableRegistration.builder().id("service-1-1").name("http-service-1").address("127.0.0.1").port(9011)
+                ImmutableRegistration.builder()
+                        .id("service-1-1")
+                        .name("http-service-1")
+                        .address("127.0.0.1")
+                        .port(9011)
                         .build(),
-                ImmutableRegistration.builder().id("service-1-2").name("http-service-1").address("127.0.0.1").port(9012)
+                ImmutableRegistration.builder()
+                        .id("service-1-2")
+                        .name("http-service-1")
+                        .address("127.0.0.1")
+                        .port(9012)
                         .build(),
-                ImmutableRegistration.builder().id("service-1-3").name("http-service-1").address("127.0.0.1").port(9013)
+                ImmutableRegistration.builder()
+                        .id("service-1-3")
+                        .name("http-service-1")
+                        .address("127.0.0.1")
+                        .port(9013)
                         .build(),
-                ImmutableRegistration.builder().id("service-2-1").name("http-service-2").address("127.0.0.1").port(9021)
+                ImmutableRegistration.builder()
+                        .id("service-2-1")
+                        .name("http-service-2")
+                        .address("127.0.0.1")
+                        .port(9021)
                         .build(),
-                ImmutableRegistration.builder().id("service-2-2").name("http-service-2").address("127.0.0.1").port(9022)
+                ImmutableRegistration.builder()
+                        .id("service-2-2")
+                        .name("http-service-2")
+                        .address("127.0.0.1")
+                        .port(9022)
                         .build(),
-                ImmutableRegistration.builder().id("service-2-3").name("http-service-2").address("127.0.0.1").port(9023)
+                ImmutableRegistration.builder()
+                        .id("service-2-3")
+                        .name("http-service-2")
+                        .address("127.0.0.1")
+                        .port(9023)
                         .build());
 
         this.registrations.forEach(client::register);

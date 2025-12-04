@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.net.URI;
@@ -86,17 +87,15 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private static final String CAMEL_AWS_VAULT_ACCESS_KEY_ENV = "CAMEL_VAULT_AWS_ACCESS_KEY";
     private static final String CAMEL_AWS_VAULT_SECRET_KEY_ENV = "CAMEL_VAULT_AWS_SECRET_KEY";
     private static final String CAMEL_AWS_VAULT_REGION_ENV = "CAMEL_VAULT_AWS_REGION";
-    private static final String CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV
-            = "CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER";
+    private static final String CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV =
+            "CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER";
 
-    private static final String CAMEL_AWS_VAULT_USE_PROFILE_CREDENTIALS_PROVIDER_ENV
-            = "CAMEL_VAULT_AWS_USE_PROFILE_CREDENTIALS_PROVIDER";
+    private static final String CAMEL_AWS_VAULT_USE_PROFILE_CREDENTIALS_PROVIDER_ENV =
+            "CAMEL_VAULT_AWS_USE_PROFILE_CREDENTIALS_PROVIDER";
 
-    private static final String CAMEL_AWS_VAULT_PROFILE_NAME_ENV
-            = "CAMEL_AWS_VAULT_PROFILE_NAME";
+    private static final String CAMEL_AWS_VAULT_PROFILE_NAME_ENV = "CAMEL_AWS_VAULT_PROFILE_NAME";
 
-    private static final String CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT
-            = "CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT";
+    private static final String CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT = "CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT";
 
     private static final String CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE = "CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE";
 
@@ -132,15 +131,16 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String accessKey = System.getenv(CAMEL_AWS_VAULT_ACCESS_KEY_ENV);
         String secretKey = System.getenv(CAMEL_AWS_VAULT_SECRET_KEY_ENV);
         String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
-        boolean useDefaultCredentialsProvider
-                = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV));
-        boolean useProfileCredentialsProvider
-                = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_PROFILE_CREDENTIALS_PROVIDER_ENV));
+        boolean useDefaultCredentialsProvider =
+                Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV));
+        boolean useProfileCredentialsProvider =
+                Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_PROFILE_CREDENTIALS_PROVIDER_ENV));
         String profileName = System.getenv(CAMEL_AWS_VAULT_PROFILE_NAME_ENV);
         boolean isOverrideEndpoint = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT));
         String uriEndpointOverride = System.getenv(CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE);
         if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
-            AwsVaultConfiguration awsVaultConfiguration = getCamelContext().getVaultConfiguration().aws();
+            AwsVaultConfiguration awsVaultConfiguration =
+                    getCamelContext().getVaultConfiguration().aws();
             if (ObjectHelper.isNotEmpty(awsVaultConfiguration)) {
                 accessKey = awsVaultConfiguration.getAccessKey();
                 secretKey = awsVaultConfiguration.getSecretKey();
@@ -153,7 +153,9 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             }
         }
         this.region = region;
-        if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
+        if (ObjectHelper.isNotEmpty(accessKey)
+                && ObjectHelper.isNotEmpty(secretKey)
+                && ObjectHelper.isNotEmpty(region)) {
             SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
             AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
             clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
@@ -261,8 +263,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         return returnValue;
     }
 
-    private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version)
+    private String getSecretFromSource(String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
 
         // capture name of secret
@@ -281,7 +282,9 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             if (ObjectHelper.isNotEmpty(secret.secretString())) {
                 returnValue = secret.secretString();
             } else {
-                returnValue = new String(Base64.getDecoder().decode(secret.secretBinary().asByteBuffer()).array());
+                returnValue = new String(Base64.getDecoder()
+                        .decode(secret.secretBinary().asByteBuffer())
+                        .array());
             }
             if (ObjectHelper.isNotEmpty(subkey)) {
                 ObjectMapper mapper = new ObjectMapper();

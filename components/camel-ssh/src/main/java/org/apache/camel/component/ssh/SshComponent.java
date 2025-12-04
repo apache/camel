@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.net.URI;
@@ -32,8 +33,7 @@ public class SshComponent extends HealthCheckComponent {
     @Metadata(label = "advanced")
     private SshConfiguration configuration = new SshConfiguration();
 
-    public SshComponent() {
-    }
+    public SshComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -30,19 +33,18 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class JmsInOutDisableTimeToLiveTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
     private final String urlTimeout = "activemq:JmsInOutDisableTimeToLiveTest.in?requestTimeout=2000";
-    private final String urlTimeToLiveDisabled
-            = "activemq:JmsInOutDisableTimeToLiveTest.in?requestTimeout=2000&disableTimeToLive=true";
+    private final String urlTimeToLiveDisabled =
+            "activemq:JmsInOutDisableTimeToLiveTest.in?requestTimeout=2000&disableTimeToLive=true";
 
     @Test
     public void testInOutExpired() throws Exception {
@@ -93,16 +95,11 @@ public class JmsInOutDisableTimeToLiveTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:timeout")
-                        .to(urlTimeout)
-                        .to("mock:result");
+                from("direct:timeout").to(urlTimeout).to("mock:result");
 
-                from("direct:disable")
-                        .to(urlTimeToLiveDisabled)
-                        .to("mock:result");
+                from("direct:disable").to(urlTimeToLiveDisabled).to("mock:result");
 
-                from("activemq:JmsInOutDisableTimeToLiveTest.out")
-                        .to("mock:end");
+                from("activemq:JmsInOutDisableTimeToLiveTest.out").to("mock:end");
             }
         };
     }

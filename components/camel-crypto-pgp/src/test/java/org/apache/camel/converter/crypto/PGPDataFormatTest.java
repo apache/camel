@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -67,11 +73,6 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodG
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     private static final String PUB_KEY_RING_SUBKEYS_FILE_NAME = "org/apache/camel/component/crypto/pubringSubKeys.gpg";
@@ -84,7 +85,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     @BeforeEach
     public void setUpEncryptorAndDecryptor() {
 
-        // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
+        // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for
+        // encryption
         encryptor.setKeyFileName(PUB_KEY_RING_SUBKEYS_FILE_NAME);
         encryptor.setSignatureKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");
         encryptor.setSignaturePassword("Abcd1234");
@@ -93,7 +95,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         encryptor.setIntegrity(false);
         encryptor.setFileName("fileNameABC");
 
-        // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
+        // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for
+        // encryption
         decryptor.setKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");
         decryptor.setSignatureKeyFileName(PUB_KEY_RING_SUBKEYS_FILE_NAME);
         decryptor.setPassword("Abcd1234");
@@ -202,7 +205,6 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(exception, IllegalArgumentException.class, null, "No public key found for the key ID(s)");
-
     }
 
     @Test
@@ -218,8 +220,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         template.sendBodyAndHeaders("direct:several-signer-keys", payload, headers);
         MockEndpoint.assertIsSatisfied(context);
 
-        checkThrownException(exception, IllegalArgumentException.class, null,
-                "No passphrase specified for signature key user ID");
+        checkThrownException(
+                exception, IllegalArgumentException.class, null, "No passphrase specified for signature key user ID");
     }
 
     /**
@@ -257,7 +259,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
      */
     @Test
     void testDecryptVerifyWithSubkey() throws Exception {
-        // do not use doRoundTripEncryptionTests("direct:subkey"); because otherwise you get an error in the dynamic test
+        // do not use doRoundTripEncryptionTests("direct:subkey"); because otherwise you get an error in the dynamic
+        // test
         String payload = "Test Message";
         MockEndpoint mockSubkey = getMockEndpoint("mock:unencrypted");
         mockSubkey.expectedBodiesReceived(payload);
@@ -282,7 +285,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         template.sendBody("direct:subkeyUnmarshal", payload);
         MockEndpoint.assertIsSatisfied(context);
 
-        checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
+        checkThrownException(
+                mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
 
     @Test
@@ -295,7 +299,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         template.sendBody("direct:subkeyUnmarshal", bos.toByteArray());
         MockEndpoint.assertIsSatisfied(context);
 
-        checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
+        checkThrownException(
+                mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
 
     @Test
@@ -310,7 +315,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         //        template.sendBody("direct:encrypt-sign-without-compressed-data-packet", bos.toByteArray());
         //        assertMockEndpointsSatisfied();
         //
-        //        //checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
+        //        //checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an
+        // invalid format.");
     }
 
     @Test
@@ -324,19 +330,23 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         template.sendBody("direct:subkeyUnmarshal", bos.toByteArray());
         MockEndpoint.assertIsSatisfied(context);
 
-        checkThrownException(mock, PGPException.class, null,
+        checkThrownException(
+                mock,
+                PGPException.class,
+                null,
                 "PGP message is encrypted with a key which could not be found in the Secret Keyring");
     }
 
-    void createEncryptedNonCompressedData(ByteArrayOutputStream bos, String keyringPath)
-            throws Exception {
-        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(
-                new JcePGPDataEncryptorBuilder(SymmetricKeyAlgorithmTags.CAST5)
-                        .setSecureRandom(new SecureRandom()).setProvider(getProvider()));
+    void createEncryptedNonCompressedData(ByteArrayOutputStream bos, String keyringPath) throws Exception {
+        PGPEncryptedDataGenerator encGen =
+                new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(SymmetricKeyAlgorithmTags.CAST5)
+                        .setSecureRandom(new SecureRandom())
+                        .setProvider(getProvider()));
         encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(readPublicKey(keyringPath)));
         OutputStream encOut = encGen.open(bos, new byte[512]);
         PGPLiteralDataGenerator litData = new PGPLiteralDataGenerator();
-        OutputStream litOut = litData.open(encOut, PGPLiteralData.BINARY, PGPLiteralData.CONSOLE, new Date(), new byte[512]);
+        OutputStream litOut =
+                litData.open(encOut, PGPLiteralData.BINARY, PGPLiteralData.CONSOLE, new Date(), new byte[512]);
 
         try {
             litOut.write("Test Message Without Compression".getBytes("UTF-8"));
@@ -349,13 +359,11 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     private void createSignature(OutputStream out) throws Exception {
         PGPSecretKey pgpSec = readSecretKey();
-        PGPPrivateKey pgpPrivKey
-                = pgpSec.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(getProvider()).build(
-                        "sdude".toCharArray()));
+        PGPPrivateKey pgpPrivKey = pgpSec.extractPrivateKey(
+                new JcePBESecretKeyDecryptorBuilder().setProvider(getProvider()).build("sdude".toCharArray()));
         PGPSignatureGenerator sGen = new PGPSignatureGenerator(
-                new JcaPGPContentSignerBuilder(
-                        pgpSec.getPublicKey().getAlgorithm(),
-                        HashAlgorithmTags.SHA1).setProvider(getProvider()));
+                new JcaPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA1)
+                        .setProvider(getProvider()));
 
         sGen.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
 
@@ -371,14 +379,12 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         fIn.close();
 
         sGen.generate().encode(bOut);
-
     }
 
     static PGPSecretKey readSecretKey() throws Exception {
         InputStream input = new ByteArrayInputStream(getSecKeyRing());
-        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(
-                PGPUtil.getDecoderStream(input),
-                new BcKeyFingerprintCalculator());
+        PGPSecretKeyRingCollection pgpSec =
+                new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(input), new BcKeyFingerprintCalculator());
 
         @SuppressWarnings("rawtypes")
         Iterator keyRingIter = pgpSec.getKeyRings();
@@ -401,9 +407,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     static PGPPublicKey readPublicKey(String keyringPath) throws Exception {
         InputStream input = new ByteArrayInputStream(getKeyRing(keyringPath));
-        PGPPublicKeyRingCollection pgpPub = new PGPPublicKeyRingCollection(
-                PGPUtil.getDecoderStream(input),
-                new BcKeyFingerprintCalculator());
+        PGPPublicKeyRingCollection pgpPub =
+                new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(input), new BcKeyFingerprintCalculator());
 
         @SuppressWarnings("rawtypes")
         Iterator keyRingIter = pgpPub.getKeyRings();
@@ -430,9 +435,10 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         byte[] payload = "Not Correct Format".getBytes("UTF-8");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(
-                new JcePGPDataEncryptorBuilder(SymmetricKeyAlgorithmTags.CAST5)
-                        .setSecureRandom(new SecureRandom()).setProvider(getProvider()));
+        PGPEncryptedDataGenerator encGen =
+                new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(SymmetricKeyAlgorithmTags.CAST5)
+                        .setSecureRandom(new SecureRandom())
+                        .setProvider(getProvider()));
 
         encGen.addMethod(new JcePBEKeyEncryptionMethodGenerator("pw".toCharArray()));
 
@@ -440,7 +446,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(CompressionAlgorithmTags.ZIP);
         OutputStream comOut = new BufferedOutputStream(comData.open(encOut));
         PGPLiteralDataGenerator litData = new PGPLiteralDataGenerator();
-        OutputStream litOut = litData.open(comOut, PGPLiteralData.BINARY, PGPLiteralData.CONSOLE, new Date(), new byte[1024]);
+        OutputStream litOut =
+                litData.open(comOut, PGPLiteralData.BINARY, PGPLiteralData.CONSOLE, new Date(), new byte[1024]);
         litOut.write(payload);
         litOut.flush();
         litOut.close();
@@ -451,20 +458,25 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         template.sendBody("direct:subkeyUnmarshal", bos.toByteArray());
         MockEndpoint.assertIsSatisfied(context);
 
-        checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
+        checkThrownException(
+                mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
 
     @Test
     void testExceptionForSignatureVerificationOptionNoSignatureAllowed() throws Exception {
 
-        decryptor.setSignatureVerificationOption(PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
+        decryptor.setSignatureVerificationOption(
+                PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
 
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkey", "Test Message");
         MockEndpoint.assertIsSatisfied(context);
 
-        checkThrownException(mock, PGPException.class, null,
+        checkThrownException(
+                mock,
+                PGPException.class,
+                null,
                 "PGP message contains a signature although a signature is not expected");
     }
 
@@ -479,7 +491,10 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         template.sendBody("direct:subkey", "Test Message");
         MockEndpoint.assertIsSatisfied(context);
 
-        checkThrownException(mock, PGPException.class, null,
+        checkThrownException(
+                mock,
+                PGPException.class,
+                null,
                 "PGP message does not contain any signatures although a signature is expected");
     }
 
@@ -496,282 +511,334 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         mock.expectedBodiesReceived(payload);
         template.sendBody("direct:subkey", payload);
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
-        return new RouteBuilder[] { new RouteBuilder() {
-            public void configure() throws Exception {
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                public void configure() throws Exception {
 
-                onException(Exception.class).handled(true).to("mock:exception");
+                    onException(Exception.class).handled(true).to("mock:exception");
 
-                // START SNIPPET: pgp-format
-                // Public Key FileName
-                String keyFileName = getKeyFileName();
-                // Private Key FileName
-                String keyFileNameSec = getKeyFileNameSec();
-                // Keyring Userid Used to Encrypt
-                String keyUserid = getKeyUserId();
-                // Private key password
-                String keyPassword = getKeyPassword();
+                    // START SNIPPET: pgp-format
+                    // Public Key FileName
+                    String keyFileName = getKeyFileName();
+                    // Private Key FileName
+                    String keyFileNameSec = getKeyFileNameSec();
+                    // Keyring Userid Used to Encrypt
+                    String keyUserid = getKeyUserId();
+                    // Private key password
+                    String keyPassword = getKeyPassword();
 
-                from("direct:inline").marshal().pgp(keyFileName, keyUserid).to("mock:encrypted").unmarshal()
-                        .pgp(keyFileNameSec, null, keyPassword).to("mock:unencrypted");
-                // END SNIPPET: pgp-format
+                    from("direct:inline")
+                            .marshal()
+                            .pgp(keyFileName, keyUserid)
+                            .to("mock:encrypted")
+                            .unmarshal()
+                            .pgp(keyFileNameSec, null, keyPassword)
+                            .to("mock:unencrypted");
+                    // END SNIPPET: pgp-format
 
-                // START SNIPPET: pgp-format-header
-                PGPDataFormat pgpEncrypt = new PGPDataFormat();
-                pgpEncrypt.setKeyFileName(keyFileName);
-                pgpEncrypt.setKeyUserid(keyUserid);
-                pgpEncrypt.setProvider(getProvider());
-                pgpEncrypt.setAlgorithm(getAlgorithm());
-                pgpEncrypt.setCompressionAlgorithm(getCompressionAlgorithm());
+                    // START SNIPPET: pgp-format-header
+                    PGPDataFormat pgpEncrypt = new PGPDataFormat();
+                    pgpEncrypt.setKeyFileName(keyFileName);
+                    pgpEncrypt.setKeyUserid(keyUserid);
+                    pgpEncrypt.setProvider(getProvider());
+                    pgpEncrypt.setAlgorithm(getAlgorithm());
+                    pgpEncrypt.setCompressionAlgorithm(getCompressionAlgorithm());
 
-                PGPDataFormat pgpDecrypt = new PGPDataFormat();
-                pgpDecrypt.setKeyFileName(keyFileNameSec);
-                pgpDecrypt.setPassword(keyPassword);
-                pgpDecrypt.setProvider(getProvider());
-                pgpDecrypt.setSignatureVerificationOption(
-                        PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
+                    PGPDataFormat pgpDecrypt = new PGPDataFormat();
+                    pgpDecrypt.setKeyFileName(keyFileNameSec);
+                    pgpDecrypt.setPassword(keyPassword);
+                    pgpDecrypt.setProvider(getProvider());
+                    pgpDecrypt.setSignatureVerificationOption(
+                            PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
 
-                from("direct:inline2").marshal(pgpEncrypt).to("mock:encrypted").unmarshal(pgpDecrypt).to("mock:unencrypted");
+                    from("direct:inline2")
+                            .marshal(pgpEncrypt)
+                            .to("mock:encrypted")
+                            .unmarshal(pgpDecrypt)
+                            .to("mock:unencrypted");
 
-                from("direct:inline-armor").marshal().pgp(keyFileName, keyUserid, null, true, true).to("mock:encrypted")
-                        .unmarshal()
-                        .pgp(keyFileNameSec, null, keyPassword, true, true).to("mock:unencrypted");
-                // END SNIPPET: pgp-format-header
+                    from("direct:inline-armor")
+                            .marshal()
+                            .pgp(keyFileName, keyUserid, null, true, true)
+                            .to("mock:encrypted")
+                            .unmarshal()
+                            .pgp(keyFileNameSec, null, keyPassword, true, true)
+                            .to("mock:unencrypted");
+                    // END SNIPPET: pgp-format-header
 
-                // START SNIPPET: pgp-format-signature
-                PGPDataFormat pgpSignAndEncrypt = new PGPDataFormat();
-                pgpSignAndEncrypt.setKeyFileName(keyFileName);
-                pgpSignAndEncrypt.setKeyUserid(keyUserid);
-                pgpSignAndEncrypt.setSignatureKeyFileName(keyFileNameSec);
-                PGPPassphraseAccessor passphraseAccessor = getPassphraseAccessor();
-                pgpSignAndEncrypt.setSignatureKeyUserid("Super <sdude@nowhere.net>"); // must be the exact user Id because passphrase is searched in accessor
-                pgpSignAndEncrypt.setPassphraseAccessor(passphraseAccessor);
-                pgpSignAndEncrypt.setProvider(getProvider());
-                pgpSignAndEncrypt.setAlgorithm(getAlgorithm());
-                pgpSignAndEncrypt.setHashAlgorithm(getHashAlgorithm());
-                pgpSignAndEncrypt.setCompressionAlgorithm(getCompressionAlgorithm());
+                    // START SNIPPET: pgp-format-signature
+                    PGPDataFormat pgpSignAndEncrypt = new PGPDataFormat();
+                    pgpSignAndEncrypt.setKeyFileName(keyFileName);
+                    pgpSignAndEncrypt.setKeyUserid(keyUserid);
+                    pgpSignAndEncrypt.setSignatureKeyFileName(keyFileNameSec);
+                    PGPPassphraseAccessor passphraseAccessor = getPassphraseAccessor();
+                    pgpSignAndEncrypt.setSignatureKeyUserid(
+                            "Super <sdude@nowhere.net>"); // must be the exact user Id because passphrase is searched in
+                    // accessor
+                    pgpSignAndEncrypt.setPassphraseAccessor(passphraseAccessor);
+                    pgpSignAndEncrypt.setProvider(getProvider());
+                    pgpSignAndEncrypt.setAlgorithm(getAlgorithm());
+                    pgpSignAndEncrypt.setHashAlgorithm(getHashAlgorithm());
+                    pgpSignAndEncrypt.setCompressionAlgorithm(getCompressionAlgorithm());
 
-                PGPDataFormat pgpVerifyAndDecrypt = new PGPDataFormat();
-                pgpVerifyAndDecrypt.setKeyFileName(keyFileNameSec);
-                pgpVerifyAndDecrypt.setPassword(keyPassword);
-                pgpVerifyAndDecrypt.setSignatureKeyFileName(keyFileName);
-                pgpVerifyAndDecrypt.setProvider(getProvider());
-                pgpVerifyAndDecrypt.setSignatureKeyUserid(keyUserid); // restrict verification to public keys with certain User ID
+                    PGPDataFormat pgpVerifyAndDecrypt = new PGPDataFormat();
+                    pgpVerifyAndDecrypt.setKeyFileName(keyFileNameSec);
+                    pgpVerifyAndDecrypt.setPassword(keyPassword);
+                    pgpVerifyAndDecrypt.setSignatureKeyFileName(keyFileName);
+                    pgpVerifyAndDecrypt.setProvider(getProvider());
+                    pgpVerifyAndDecrypt.setSignatureKeyUserid(
+                            keyUserid); // restrict verification to public keys with certain User ID
 
-                from("direct:inline-sign").marshal(pgpSignAndEncrypt).to("mock:encrypted").unmarshal(pgpVerifyAndDecrypt)
-                        .to("mock:unencrypted");
-                // END SNIPPET: pgp-format-signature
+                    from("direct:inline-sign")
+                            .marshal(pgpSignAndEncrypt)
+                            .to("mock:encrypted")
+                            .unmarshal(pgpVerifyAndDecrypt)
+                            .to("mock:unencrypted");
+                    // END SNIPPET: pgp-format-signature
 
-                // test verifying exception, no public key found corresponding to signature key userIds
-                from("direct:verify_exception_sig_userids").marshal(pgpSignAndEncrypt).to("mock:encrypted")
-                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERIDS)
-                        .constant(Arrays.asList(new String[] { "wrong1", "wrong2" }))
-                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID).constant("wrongUserID")
-                        .unmarshal(pgpVerifyAndDecrypt)
-                        .to("mock:unencrypted");
+                    // test verifying exception, no public key found corresponding to signature key userIds
+                    from("direct:verify_exception_sig_userids")
+                            .marshal(pgpSignAndEncrypt)
+                            .to("mock:encrypted")
+                            .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERIDS)
+                            .constant(Arrays.asList(new String[] {"wrong1", "wrong2"}))
+                            .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
+                            .constant("wrongUserID")
+                            .unmarshal(pgpVerifyAndDecrypt)
+                            .to("mock:unencrypted");
 
-                /* ---- key ring as byte array -- */
-                // START SNIPPET: pgp-format-key-ring-byte-array
-                PGPDataFormat pgpEncryptByteArray = new PGPDataFormat();
-                pgpEncryptByteArray.setEncryptionKeyRing(getPublicKeyRing());
-                pgpEncryptByteArray.setKeyUserids(getKeyUserIds());
-                pgpEncryptByteArray.setProvider(getProvider());
-                pgpEncryptByteArray.setAlgorithm(SymmetricKeyAlgorithmTags.DES);
-                pgpEncryptByteArray.setCompressionAlgorithm(CompressionAlgorithmTags.UNCOMPRESSED);
+                    /* ---- key ring as byte array -- */
+                    // START SNIPPET: pgp-format-key-ring-byte-array
+                    PGPDataFormat pgpEncryptByteArray = new PGPDataFormat();
+                    pgpEncryptByteArray.setEncryptionKeyRing(getPublicKeyRing());
+                    pgpEncryptByteArray.setKeyUserids(getKeyUserIds());
+                    pgpEncryptByteArray.setProvider(getProvider());
+                    pgpEncryptByteArray.setAlgorithm(SymmetricKeyAlgorithmTags.DES);
+                    pgpEncryptByteArray.setCompressionAlgorithm(CompressionAlgorithmTags.UNCOMPRESSED);
 
-                PGPDataFormat pgpDecryptByteArray = new PGPDataFormat();
-                pgpDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
-                pgpDecryptByteArray.setPassphraseAccessor(passphraseAccessor);
-                pgpDecryptByteArray.setProvider(getProvider());
+                    PGPDataFormat pgpDecryptByteArray = new PGPDataFormat();
+                    pgpDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
+                    pgpDecryptByteArray.setPassphraseAccessor(passphraseAccessor);
+                    pgpDecryptByteArray.setProvider(getProvider());
 
-                from("direct:key-ring-byte-array").streamCaching().marshal(pgpEncryptByteArray).to("mock:encrypted")
-                        .unmarshal(pgpDecryptByteArray).to("mock:unencrypted");
-                // END SNIPPET: pgp-format-key-ring-byte-array
+                    from("direct:key-ring-byte-array")
+                            .streamCaching()
+                            .marshal(pgpEncryptByteArray)
+                            .to("mock:encrypted")
+                            .unmarshal(pgpDecryptByteArray)
+                            .to("mock:unencrypted");
+                    // END SNIPPET: pgp-format-key-ring-byte-array
 
-                // START SNIPPET: pgp-format-signature-key-ring-byte-array
-                PGPDataFormat pgpSignAndEncryptByteArray = new PGPDataFormat();
-                pgpSignAndEncryptByteArray.setKeyUserid(keyUserid);
-                pgpSignAndEncryptByteArray.setSignatureKeyRing(getSecKeyRing());
-                pgpSignAndEncryptByteArray.setSignatureKeyUserid(keyUserid);
-                pgpSignAndEncryptByteArray.setSignaturePassword(keyPassword);
-                pgpSignAndEncryptByteArray.setProvider(getProvider());
-                pgpSignAndEncryptByteArray.setAlgorithm(SymmetricKeyAlgorithmTags.BLOWFISH);
-                pgpSignAndEncryptByteArray.setHashAlgorithm(HashAlgorithmTags.RIPEMD160);
-                pgpSignAndEncryptByteArray.setCompressionAlgorithm(CompressionAlgorithmTags.ZLIB);
+                    // START SNIPPET: pgp-format-signature-key-ring-byte-array
+                    PGPDataFormat pgpSignAndEncryptByteArray = new PGPDataFormat();
+                    pgpSignAndEncryptByteArray.setKeyUserid(keyUserid);
+                    pgpSignAndEncryptByteArray.setSignatureKeyRing(getSecKeyRing());
+                    pgpSignAndEncryptByteArray.setSignatureKeyUserid(keyUserid);
+                    pgpSignAndEncryptByteArray.setSignaturePassword(keyPassword);
+                    pgpSignAndEncryptByteArray.setProvider(getProvider());
+                    pgpSignAndEncryptByteArray.setAlgorithm(SymmetricKeyAlgorithmTags.BLOWFISH);
+                    pgpSignAndEncryptByteArray.setHashAlgorithm(HashAlgorithmTags.RIPEMD160);
+                    pgpSignAndEncryptByteArray.setCompressionAlgorithm(CompressionAlgorithmTags.ZLIB);
 
-                PGPDataFormat pgpVerifyAndDecryptByteArray = new PGPDataFormat();
-                pgpVerifyAndDecryptByteArray.setPassphraseAccessor(passphraseAccessor);
-                pgpVerifyAndDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
-                pgpVerifyAndDecryptByteArray.setProvider(getProvider());
-                // restrict verification to public keys with certain User ID
-                pgpVerifyAndDecryptByteArray.setSignatureKeyUserids(getSignatureKeyUserIds());
-                pgpVerifyAndDecryptByteArray
-                        .setSignatureVerificationOption(PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
+                    PGPDataFormat pgpVerifyAndDecryptByteArray = new PGPDataFormat();
+                    pgpVerifyAndDecryptByteArray.setPassphraseAccessor(passphraseAccessor);
+                    pgpVerifyAndDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
+                    pgpVerifyAndDecryptByteArray.setProvider(getProvider());
+                    // restrict verification to public keys with certain User ID
+                    pgpVerifyAndDecryptByteArray.setSignatureKeyUserids(getSignatureKeyUserIds());
+                    pgpVerifyAndDecryptByteArray.setSignatureVerificationOption(
+                            PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
 
-                from("direct:sign-key-ring-byte-array").streamCaching()
-                        // encryption key ring can also be set as header
-                        .setHeader(PGPDataFormat.ENCRYPTION_KEY_RING).constant(getPublicKeyRing())
-                        .marshal(pgpSignAndEncryptByteArray)
-                        // it is recommended to remove the header immediately when it is no longer needed
-                        .removeHeader(PGPDataFormat.ENCRYPTION_KEY_RING).to("mock:encrypted")
-                        // signature key ring can also be set as header
-                        .setHeader(PGPDataFormat.SIGNATURE_KEY_RING).constant(getPublicKeyRing())
-                        .unmarshal(pgpVerifyAndDecryptByteArray)
-                        // it is recommended to remove the header immediately when it is no longer needed
-                        .removeHeader(PGPDataFormat.SIGNATURE_KEY_RING).to("mock:unencrypted");
-                // END SNIPPET: pgp-format-signature-key-ring-byte-array
+                    from("direct:sign-key-ring-byte-array")
+                            .streamCaching()
+                            // encryption key ring can also be set as header
+                            .setHeader(PGPDataFormat.ENCRYPTION_KEY_RING)
+                            .constant(getPublicKeyRing())
+                            .marshal(pgpSignAndEncryptByteArray)
+                            // it is recommended to remove the header immediately when it is no longer needed
+                            .removeHeader(PGPDataFormat.ENCRYPTION_KEY_RING)
+                            .to("mock:encrypted")
+                            // signature key ring can also be set as header
+                            .setHeader(PGPDataFormat.SIGNATURE_KEY_RING)
+                            .constant(getPublicKeyRing())
+                            .unmarshal(pgpVerifyAndDecryptByteArray)
+                            // it is recommended to remove the header immediately when it is no longer needed
+                            .removeHeader(PGPDataFormat.SIGNATURE_KEY_RING)
+                            .to("mock:unencrypted");
+                    // END SNIPPET: pgp-format-signature-key-ring-byte-array
 
-                // START SNIPPET: pgp-format-several-signer-keys
-                PGPDataFormat pgpSignAndEncryptSeveralSignerKeys = new PGPDataFormat();
-                pgpSignAndEncryptSeveralSignerKeys.setKeyUserid(keyUserid);
-                pgpSignAndEncryptSeveralSignerKeys.setEncryptionKeyRing(getPublicKeyRing());
-                pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyRing(getSecKeyRing());
+                    // START SNIPPET: pgp-format-several-signer-keys
+                    PGPDataFormat pgpSignAndEncryptSeveralSignerKeys = new PGPDataFormat();
+                    pgpSignAndEncryptSeveralSignerKeys.setKeyUserid(keyUserid);
+                    pgpSignAndEncryptSeveralSignerKeys.setEncryptionKeyRing(getPublicKeyRing());
+                    pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyRing(getSecKeyRing());
 
-                List<String> signerUserIds = new ArrayList<>();
-                signerUserIds.add("Third (comment third) <email@third.com>");
-                signerUserIds.add("Second <email@second.com>");
-                pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyUserids(signerUserIds);
+                    List<String> signerUserIds = new ArrayList<>();
+                    signerUserIds.add("Third (comment third) <email@third.com>");
+                    signerUserIds.add("Second <email@second.com>");
+                    pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyUserids(signerUserIds);
 
-                Map<String, String> userId2Passphrase = new HashMap<>();
-                userId2Passphrase.put("Third (comment third) <email@third.com>", "sdude");
-                userId2Passphrase.put("Second <email@second.com>", "sdude");
-                PGPPassphraseAccessor passphraseAccessorSeveralKeys = new DefaultPGPPassphraseAccessor(userId2Passphrase);
-                pgpSignAndEncryptSeveralSignerKeys.setPassphraseAccessor(passphraseAccessorSeveralKeys);
+                    Map<String, String> userId2Passphrase = new HashMap<>();
+                    userId2Passphrase.put("Third (comment third) <email@third.com>", "sdude");
+                    userId2Passphrase.put("Second <email@second.com>", "sdude");
+                    PGPPassphraseAccessor passphraseAccessorSeveralKeys =
+                            new DefaultPGPPassphraseAccessor(userId2Passphrase);
+                    pgpSignAndEncryptSeveralSignerKeys.setPassphraseAccessor(passphraseAccessorSeveralKeys);
 
-                PGPDataFormat pgpVerifyAndDecryptSeveralSignerKeys = new PGPDataFormat();
-                pgpVerifyAndDecryptSeveralSignerKeys.setPassphraseAccessor(passphraseAccessor);
-                pgpVerifyAndDecryptSeveralSignerKeys.setEncryptionKeyRing(getSecKeyRing());
-                pgpVerifyAndDecryptSeveralSignerKeys.setSignatureKeyRing(getPublicKeyRing());
-                pgpVerifyAndDecryptSeveralSignerKeys.setProvider(getProvider());
-                // only specify one expected signature
-                List<String> expectedSigUserIds = new ArrayList<>();
-                expectedSigUserIds.add("Second <email@second.com>");
-                pgpVerifyAndDecryptSeveralSignerKeys.setSignatureKeyUserids(expectedSigUserIds);
-                from("direct:several-signer-keys").streamCaching().marshal(pgpSignAndEncryptSeveralSignerKeys)
-                        .to("mock:encrypted")
-                        .unmarshal(pgpVerifyAndDecryptSeveralSignerKeys).to("mock:unencrypted");
-                // END SNIPPET: pgp-format-several-signer-keys
+                    PGPDataFormat pgpVerifyAndDecryptSeveralSignerKeys = new PGPDataFormat();
+                    pgpVerifyAndDecryptSeveralSignerKeys.setPassphraseAccessor(passphraseAccessor);
+                    pgpVerifyAndDecryptSeveralSignerKeys.setEncryptionKeyRing(getSecKeyRing());
+                    pgpVerifyAndDecryptSeveralSignerKeys.setSignatureKeyRing(getPublicKeyRing());
+                    pgpVerifyAndDecryptSeveralSignerKeys.setProvider(getProvider());
+                    // only specify one expected signature
+                    List<String> expectedSigUserIds = new ArrayList<>();
+                    expectedSigUserIds.add("Second <email@second.com>");
+                    pgpVerifyAndDecryptSeveralSignerKeys.setSignatureKeyUserids(expectedSigUserIds);
+                    from("direct:several-signer-keys")
+                            .streamCaching()
+                            .marshal(pgpSignAndEncryptSeveralSignerKeys)
+                            .to("mock:encrypted")
+                            .unmarshal(pgpVerifyAndDecryptSeveralSignerKeys)
+                            .to("mock:unencrypted");
+                    // END SNIPPET: pgp-format-several-signer-keys
 
-                // test encryption by several key and signing by serveral keys where the keys are specified by one User ID part
-                PGPDataFormat pgpSignAndEncryptOneUserIdWithServeralKeys = new PGPDataFormat();
-                pgpSignAndEncryptOneUserIdWithServeralKeys.setEncryptionKeyRing(getPublicKeyRing());
-                pgpSignAndEncryptOneUserIdWithServeralKeys.setSignatureKeyRing(getSecKeyRing());
-                // the two private keys have the same password therefore we do not need a passphrase accessor
-                pgpSignAndEncryptOneUserIdWithServeralKeys.setPassword(getKeyPassword());
+                    // test encryption by several key and signing by serveral keys where the keys are specified by one
+                    // User ID part
+                    PGPDataFormat pgpSignAndEncryptOneUserIdWithServeralKeys = new PGPDataFormat();
+                    pgpSignAndEncryptOneUserIdWithServeralKeys.setEncryptionKeyRing(getPublicKeyRing());
+                    pgpSignAndEncryptOneUserIdWithServeralKeys.setSignatureKeyRing(getSecKeyRing());
+                    // the two private keys have the same password therefore we do not need a passphrase accessor
+                    pgpSignAndEncryptOneUserIdWithServeralKeys.setPassword(getKeyPassword());
 
-                PGPDataFormat pgpVerifyAndDecryptOneUserIdWithServeralKeys = new PGPDataFormat();
-                pgpVerifyAndDecryptOneUserIdWithServeralKeys.setPassword(getKeyPassword());
-                pgpVerifyAndDecryptOneUserIdWithServeralKeys.setEncryptionKeyRing(getSecKeyRing());
-                pgpVerifyAndDecryptOneUserIdWithServeralKeys.setSignatureKeyRing(getPublicKeyRing());
-                pgpVerifyAndDecryptOneUserIdWithServeralKeys.setProvider(getProvider());
-                pgpVerifyAndDecryptOneUserIdWithServeralKeys.setSignatureKeyUserids(expectedSigUserIds);
-                from("direct:one-userid-several-keys")
-                        // there are two keys which have a User ID which contains the string "econd"
-                        .setHeader(PGPKeyAccessDataFormat.KEY_USERID)
-                        .constant("econd")
-                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
-                        .constant("econd")
-                        .marshal(pgpSignAndEncryptOneUserIdWithServeralKeys)
-                        // it is recommended to remove the header immediately when it is no longer needed
-                        .removeHeader(PGPKeyAccessDataFormat.KEY_USERID)
-                        .removeHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
-                        .to("mock:encrypted")
-                        // only specify one expected signature key, to check the first signature
-                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
-                        .constant("Second <email@second.com>")
-                        .unmarshal(pgpVerifyAndDecryptOneUserIdWithServeralKeys)
-                        // do it again but now check the second signature key
-                        // there are two keys which have a User ID which contains the string "econd"
-                        .setHeader(PGPKeyAccessDataFormat.KEY_USERID).constant("econd")
-                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
-                        .constant("econd").marshal(pgpSignAndEncryptOneUserIdWithServeralKeys)
-                        // it is recommended to remove the header immediately when it is no longer needed
-                        .removeHeader(PGPKeyAccessDataFormat.KEY_USERID)
-                        .removeHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
-                        // only specify one expected signature key, to check the second signature
-                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
-                        .constant("Third (comment third) <email@third.com>")
-                        .unmarshal(pgpVerifyAndDecryptOneUserIdWithServeralKeys).to("mock:unencrypted");
+                    PGPDataFormat pgpVerifyAndDecryptOneUserIdWithServeralKeys = new PGPDataFormat();
+                    pgpVerifyAndDecryptOneUserIdWithServeralKeys.setPassword(getKeyPassword());
+                    pgpVerifyAndDecryptOneUserIdWithServeralKeys.setEncryptionKeyRing(getSecKeyRing());
+                    pgpVerifyAndDecryptOneUserIdWithServeralKeys.setSignatureKeyRing(getPublicKeyRing());
+                    pgpVerifyAndDecryptOneUserIdWithServeralKeys.setProvider(getProvider());
+                    pgpVerifyAndDecryptOneUserIdWithServeralKeys.setSignatureKeyUserids(expectedSigUserIds);
+                    from("direct:one-userid-several-keys")
+                            // there are two keys which have a User ID which contains the string "econd"
+                            .setHeader(PGPKeyAccessDataFormat.KEY_USERID)
+                            .constant("econd")
+                            .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
+                            .constant("econd")
+                            .marshal(pgpSignAndEncryptOneUserIdWithServeralKeys)
+                            // it is recommended to remove the header immediately when it is no longer needed
+                            .removeHeader(PGPKeyAccessDataFormat.KEY_USERID)
+                            .removeHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
+                            .to("mock:encrypted")
+                            // only specify one expected signature key, to check the first signature
+                            .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
+                            .constant("Second <email@second.com>")
+                            .unmarshal(pgpVerifyAndDecryptOneUserIdWithServeralKeys)
+                            // do it again but now check the second signature key
+                            // there are two keys which have a User ID which contains the string "econd"
+                            .setHeader(PGPKeyAccessDataFormat.KEY_USERID)
+                            .constant("econd")
+                            .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
+                            .constant("econd")
+                            .marshal(pgpSignAndEncryptOneUserIdWithServeralKeys)
+                            // it is recommended to remove the header immediately when it is no longer needed
+                            .removeHeader(PGPKeyAccessDataFormat.KEY_USERID)
+                            .removeHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
+                            // only specify one expected signature key, to check the second signature
+                            .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
+                            .constant("Third (comment third) <email@third.com>")
+                            .unmarshal(pgpVerifyAndDecryptOneUserIdWithServeralKeys)
+                            .to("mock:unencrypted");
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
 
+                    onException(Exception.class).handled(true).to("mock:exception");
+
+                    from("direct:keyflag").marshal(encryptor).to("mock:encrypted_keyflag");
+
+                    // test that the correct subkey is selected during decrypt and verify
+                    from("direct:subkey")
+                            .marshal(encryptor)
+                            .to("mock:encrypted")
+                            .unmarshal(decryptor)
+                            .to("mock:unencrypted");
+
+                    from("direct:subkeyUnmarshal").unmarshal(decryptor).to("mock:unencrypted");
+                }
+            },
+            new RouteBuilder() {
+                public void configure() throws Exception {
+
+                    PGPPublicKeyAccessor publicKeyAccessor = new DefaultPGPPublicKeyAccessor(getPublicKeyRing());
+                    // password cannot be set dynamically!
+                    PGPSecretKeyAccessor secretKeyAccessor =
+                            new DefaultPGPSecretKeyAccessor(getSecKeyRing(), "sdude", getProvider());
+
+                    PGPKeyAccessDataFormat dfEncryptSignKeyAccess = new PGPKeyAccessDataFormat();
+                    dfEncryptSignKeyAccess.setPublicKeyAccessor(publicKeyAccessor);
+                    dfEncryptSignKeyAccess.setSecretKeyAccessor(secretKeyAccessor);
+                    dfEncryptSignKeyAccess.setKeyUserid(getKeyUserId());
+                    dfEncryptSignKeyAccess.setSignatureKeyUserid(getKeyUserId());
+
+                    PGPKeyAccessDataFormat dfDecryptVerifyKeyAccess = new PGPKeyAccessDataFormat();
+                    dfDecryptVerifyKeyAccess.setPublicKeyAccessor(publicKeyAccessor);
+                    dfDecryptVerifyKeyAccess.setSecretKeyAccessor(secretKeyAccessor);
+                    dfDecryptVerifyKeyAccess.setSignatureKeyUserid(getKeyUserId());
+
+                    from("direct:key_access")
+                            .marshal(dfEncryptSignKeyAccess)
+                            .to("mock:encrypted")
+                            .unmarshal(dfDecryptVerifyKeyAccess)
+                            .to("mock:unencrypted");
+                }
+            },
+            new RouteBuilder() {
+                public void configure() throws Exception {
+
+                    // START SNIPPET: pgp-encrypt-sign-without-compressed-data-packet
+                    PGPDataFormat pgpEncryptSign = new PGPDataFormat();
+                    pgpEncryptSign.setKeyUserid(getKeyUserId());
+                    pgpEncryptSign.setSignatureKeyRing(getSecKeyRing());
+                    pgpEncryptSign.setSignatureKeyUserid(getKeyUserId());
+                    pgpEncryptSign.setSignaturePassword(getKeyPassword());
+                    pgpEncryptSign.setProvider(getProvider());
+                    pgpEncryptSign.setAlgorithm(SymmetricKeyAlgorithmTags.BLOWFISH);
+                    pgpEncryptSign.setHashAlgorithm(HashAlgorithmTags.RIPEMD160);
+                    // without compressed data packet
+                    pgpEncryptSign.setWithCompressedDataPacket(false);
+
+                    PGPDataFormat pgpVerifyAndDecryptByteArray = new PGPDataFormat();
+                    pgpVerifyAndDecryptByteArray.setPassphraseAccessor(getPassphraseAccessor());
+                    pgpVerifyAndDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
+                    pgpVerifyAndDecryptByteArray.setProvider(getProvider());
+                    // restrict verification to public keys with certain User ID
+                    pgpVerifyAndDecryptByteArray.setSignatureKeyUserids(getSignatureKeyUserIds());
+                    pgpVerifyAndDecryptByteArray.setSignatureVerificationOption(
+                            PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
+
+                    from("direct:encrypt-sign-without-compressed-data-packet")
+                            .streamCaching()
+                            // encryption key ring can also be set as header
+                            .setHeader(PGPDataFormat.ENCRYPTION_KEY_RING)
+                            .constant(getPublicKeyRing())
+                            .marshal(pgpEncryptSign)
+                            // it is recommended to remove the header immediately when it is no longer needed
+                            .removeHeader(PGPDataFormat.ENCRYPTION_KEY_RING)
+                            .to("mock:encrypted")
+                            // signature key ring can also be set as header
+                            .setHeader(PGPDataFormat.SIGNATURE_KEY_RING)
+                            .constant(getPublicKeyRing())
+                            .unmarshal(pgpVerifyAndDecryptByteArray)
+                            // it is recommended to remove the header immediately when it is no longer needed
+                            .removeHeader(PGPDataFormat.SIGNATURE_KEY_RING)
+                            .to("mock:unencrypted");
+                    // END SNIPPET: pgp-encrypt-sign-without-compressed-data-packet
+                }
             }
-
-        }, new RouteBuilder() {
-            public void configure() {
-
-                onException(Exception.class).handled(true).to("mock:exception");
-
-                from("direct:keyflag").marshal(encryptor).to("mock:encrypted_keyflag");
-
-                // test that the correct subkey is selected during decrypt and verify
-                from("direct:subkey").marshal(encryptor).to("mock:encrypted").unmarshal(decryptor).to("mock:unencrypted");
-
-                from("direct:subkeyUnmarshal").unmarshal(decryptor).to("mock:unencrypted");
-            }
-        }, new RouteBuilder() {
-            public void configure() throws Exception {
-
-                PGPPublicKeyAccessor publicKeyAccessor = new DefaultPGPPublicKeyAccessor(getPublicKeyRing());
-                //password cannot be set dynamically!
-                PGPSecretKeyAccessor secretKeyAccessor
-                        = new DefaultPGPSecretKeyAccessor(getSecKeyRing(), "sdude", getProvider());
-
-                PGPKeyAccessDataFormat dfEncryptSignKeyAccess = new PGPKeyAccessDataFormat();
-                dfEncryptSignKeyAccess.setPublicKeyAccessor(publicKeyAccessor);
-                dfEncryptSignKeyAccess.setSecretKeyAccessor(secretKeyAccessor);
-                dfEncryptSignKeyAccess.setKeyUserid(getKeyUserId());
-                dfEncryptSignKeyAccess.setSignatureKeyUserid(getKeyUserId());
-
-                PGPKeyAccessDataFormat dfDecryptVerifyKeyAccess = new PGPKeyAccessDataFormat();
-                dfDecryptVerifyKeyAccess.setPublicKeyAccessor(publicKeyAccessor);
-                dfDecryptVerifyKeyAccess.setSecretKeyAccessor(secretKeyAccessor);
-                dfDecryptVerifyKeyAccess.setSignatureKeyUserid(getKeyUserId());
-
-                from("direct:key_access").marshal(dfEncryptSignKeyAccess).to("mock:encrypted")
-                        .unmarshal(dfDecryptVerifyKeyAccess)
-                        .to("mock:unencrypted");
-
-            }
-        }, new RouteBuilder() {
-            public void configure() throws Exception {
-
-                // START SNIPPET: pgp-encrypt-sign-without-compressed-data-packet
-                PGPDataFormat pgpEncryptSign = new PGPDataFormat();
-                pgpEncryptSign.setKeyUserid(getKeyUserId());
-                pgpEncryptSign.setSignatureKeyRing(getSecKeyRing());
-                pgpEncryptSign.setSignatureKeyUserid(getKeyUserId());
-                pgpEncryptSign.setSignaturePassword(getKeyPassword());
-                pgpEncryptSign.setProvider(getProvider());
-                pgpEncryptSign.setAlgorithm(SymmetricKeyAlgorithmTags.BLOWFISH);
-                pgpEncryptSign.setHashAlgorithm(HashAlgorithmTags.RIPEMD160);
-                // without compressed data packet
-                pgpEncryptSign.setWithCompressedDataPacket(false);
-
-                PGPDataFormat pgpVerifyAndDecryptByteArray = new PGPDataFormat();
-                pgpVerifyAndDecryptByteArray.setPassphraseAccessor(getPassphraseAccessor());
-                pgpVerifyAndDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
-                pgpVerifyAndDecryptByteArray.setProvider(getProvider());
-                // restrict verification to public keys with certain User ID
-                pgpVerifyAndDecryptByteArray.setSignatureKeyUserids(getSignatureKeyUserIds());
-                pgpVerifyAndDecryptByteArray
-                        .setSignatureVerificationOption(PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
-
-                from("direct:encrypt-sign-without-compressed-data-packet").streamCaching()
-                        // encryption key ring can also be set as header
-                        .setHeader(PGPDataFormat.ENCRYPTION_KEY_RING).constant(getPublicKeyRing()).marshal(pgpEncryptSign)
-                        // it is recommended to remove the header immediately when it is no longer needed
-                        .removeHeader(PGPDataFormat.ENCRYPTION_KEY_RING).to("mock:encrypted")
-                        // signature key ring can also be set as header
-                        .setHeader(PGPDataFormat.SIGNATURE_KEY_RING).constant(getPublicKeyRing())
-                        .unmarshal(pgpVerifyAndDecryptByteArray)
-                        // it is recommended to remove the header immediately when it is no longer needed
-                        .removeHeader(PGPDataFormat.SIGNATURE_KEY_RING).to("mock:unencrypted");
-                // END SNIPPET: pgp-encrypt-sign-without-compressed-data-packet
-            }
-        } };
+        };
     }
 
     public static byte[] getPublicKeyRing() throws Exception {
@@ -797,23 +864,27 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     public static void checkThrownException(
-            MockEndpoint mock, Class<? extends Exception> cl,
-            Class<? extends Exception> expectedCauseClass, String expectedMessagePart)
+            MockEndpoint mock,
+            Class<? extends Exception> cl,
+            Class<? extends Exception> expectedCauseClass,
+            String expectedMessagePart)
             throws Exception {
         Exception e = (Exception) mock.getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT);
         assertNotNull(e, "Expected excpetion " + cl.getName() + " missing");
         if (e.getClass() != cl) {
             String stackTrace = ExceptionHelper.stackTraceToString(e);
-            fail("Exception  " + cl.getName() + " excpected, but was " + e.getClass().getName() + ": " + stackTrace);
+            fail("Exception  " + cl.getName() + " excpected, but was "
+                    + e.getClass().getName() + ": " + stackTrace);
         }
         if (expectedMessagePart != null) {
             if (e.getMessage() == null) {
-                fail("Expected excption does not contain a message. Stack trace: " + ExceptionHelper.stackTraceToString(e));
+                fail("Expected excption does not contain a message. Stack trace: "
+                        + ExceptionHelper.stackTraceToString(e));
             } else {
                 if (!e.getMessage().contains(expectedMessagePart)) {
                     fail("Expected excption message does not contain a expected message part " + expectedMessagePart
-                         + ".  Stack trace: "
-                         + ExceptionHelper.stackTraceToString(e));
+                            + ".  Stack trace: "
+                            + ExceptionHelper.stackTraceToString(e));
                 }
             }
         }
@@ -821,11 +892,11 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
             Throwable cause = e.getCause();
             assertNotNull(cause, "Expected cause exception" + expectedCauseClass.getName() + " missing");
             if (expectedCauseClass != cause.getClass()) {
-                fail("Cause exception " + expectedCauseClass.getName() + " expected, but was " + cause.getClass().getName()
-                     + ": "
-                     + ExceptionHelper.stackTraceToString(e));
+                fail("Cause exception " + expectedCauseClass.getName() + " expected, but was "
+                        + cause.getClass().getName()
+                        + ": "
+                        + ExceptionHelper.stackTraceToString(e));
             }
         }
     }
-
 }

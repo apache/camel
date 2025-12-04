@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,9 +49,13 @@ public class AdviceWithWeaveByToUriCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(header("foo")).to("direct:branch-1").otherwise().to("direct:branch-2");
+                from("direct:start")
+                        .choice()
+                        .when(header("foo"))
+                        .to("direct:branch-1")
+                        .otherwise()
+                        .to("direct:branch-2");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import java.util.Arrays;
@@ -40,12 +41,12 @@ public class XQueryModuleURIResolver implements ModuleURIResolver {
         StreamSource[] ss = new StreamSource[locations.length];
         try {
             for (int i = 0; i < locations.length; i++) {
-                ss[i] = new StreamSource(xqueryComponent.resolveModuleResource(locations[i]).openStream());
+                ss[i] = new StreamSource(
+                        xqueryComponent.resolveModuleResource(locations[i]).openStream());
             }
         } catch (Exception e) {
             throw new XPathException("Error resolving resource: " + Arrays.toString(locations), e);
         }
         return ss;
     }
-
 }

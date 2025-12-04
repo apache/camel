@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
+
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.eclipse.jetty.client.Response;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.mockito.Mockito.mock;
 
 public class DefaultRawClientTest {
 
@@ -39,5 +40,4 @@ public class DefaultRawClientTest {
             assertInstanceOf(SalesforceException.class, resultException);
         }
     }
-
 }

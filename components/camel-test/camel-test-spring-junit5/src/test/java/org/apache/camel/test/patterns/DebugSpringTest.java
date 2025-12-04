@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.patterns;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class DebugSpringTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DebugSpringTest.class);
@@ -38,15 +39,18 @@ public class DebugSpringTest extends CamelSpringTestSupport {
 
     @Override
     public void setupResources() throws Exception {
-        camelContextConfiguration()
-                .withBreakpoint(createBreakpoint());
+        camelContextConfiguration().withBreakpoint(createBreakpoint());
     }
 
     protected DebugBreakpoint createBreakpoint() {
         return new DebugBreakpoint() {
             @Override
             protected void debugBefore(
-                    Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {
+                    Exchange exchange,
+                    Processor processor,
+                    ProcessorDefinition<?> definition,
+                    String id,
+                    String label) {
                 // this method is invoked before we are about to enter the given processor
                 // from your Java editor you can add a breakpoint in the code line below
                 LOG.info("Before {} with body {}", definition, exchange.getIn().getBody());
@@ -55,10 +59,12 @@ public class DebugSpringTest extends CamelSpringTestSupport {
 
             @Override
             protected void debugAfter(
-                    Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
-                    long timeTaken) {
-
-            }
+                    Exchange exchange,
+                    Processor processor,
+                    ProcessorDefinition<?> definition,
+                    String id,
+                    String label,
+                    long timeTaken) {}
         };
     }
 
@@ -94,5 +100,4 @@ public class DebugSpringTest extends CamelSpringTestSupport {
     protected AbstractApplicationContext createApplicationContext() {
         return new GenericApplicationContext();
     }
-
 }

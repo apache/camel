@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -79,7 +80,8 @@ public class DefaultDevConsolesLoader {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error during scanning for custom dev-consoles on classpath due to: {}. This exception is ignored.",
+            LOG.warn(
+                    "Error during scanning for custom dev-consoles on classpath due to: {}. This exception is ignored.",
                     e.getMessage());
         }
 
@@ -103,5 +105,4 @@ public class DefaultDevConsolesLoader {
         String loc = resource.getLocation();
         return StringHelper.after(loc, META_INF_SERVICES + "/");
     }
-
 }

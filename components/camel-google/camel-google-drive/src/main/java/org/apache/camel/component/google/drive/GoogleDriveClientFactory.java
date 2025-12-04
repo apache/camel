@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
 
 import java.util.Collection;
@@ -24,11 +25,17 @@ import org.apache.camel.CamelContext;
 public interface GoogleDriveClientFactory {
 
     Drive makeClient(
-            String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
+            String clientId,
+            String clientSecret,
+            Collection<String> scopes,
+            String applicationName,
+            String refreshToken,
             String accessToken);
 
     Drive makeClient(
-            CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
+            CamelContext camelContext,
+            String serviceAccountKey,
+            Collection<String> scopes,
+            String applicationName,
             String delegate);
-
 }

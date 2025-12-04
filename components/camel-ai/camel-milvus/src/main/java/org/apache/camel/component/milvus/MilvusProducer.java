@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milvus;
 
 import java.util.concurrent.ExecutorService;
@@ -104,7 +105,7 @@ public class MilvusProducer extends DefaultProducer {
     //
     // ***************************************
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private void upsert(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         final UpsertParam upsert = in.getMandatoryBody(UpsertParam.class);
@@ -115,7 +116,7 @@ public class MilvusProducer extends DefaultProducer {
         populateResponse(result, exchange);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private void insert(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         final InsertParam insert = in.getMandatoryBody(InsertParam.class);
@@ -134,7 +135,6 @@ public class MilvusProducer extends DefaultProducer {
 
         handleResponseStatus(result);
         populateResponse(result, exchange);
-
     }
 
     private void createIndex(Exchange exchange) throws Exception {
@@ -145,33 +145,34 @@ public class MilvusProducer extends DefaultProducer {
 
         handleResponseStatus(result);
         populateResponse(result, exchange);
-
     }
 
     private void search(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         final SearchSimpleParam body = in.getMandatoryBody(SearchSimpleParam.class);
 
-        this.client.loadCollection(
-                LoadCollectionParam.newBuilder().withCollectionName(getEndpoint().getCollection()).withSyncLoad(true).build());
+        this.client.loadCollection(LoadCollectionParam.newBuilder()
+                .withCollectionName(getEndpoint().getCollection())
+                .withSyncLoad(true)
+                .build());
         R<SearchResponse> result = this.client.search(body);
 
         handleResponseStatus(result);
         populateResponse(result, exchange);
-
     }
 
     private void query(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         final QueryParam body = in.getMandatoryBody(QueryParam.class);
 
-        this.client.loadCollection(
-                LoadCollectionParam.newBuilder().withCollectionName(getEndpoint().getCollection()).withSyncLoad(true).build());
+        this.client.loadCollection(LoadCollectionParam.newBuilder()
+                .withCollectionName(getEndpoint().getCollection())
+                .withSyncLoad(true)
+                .build());
         R<QueryResults> result = this.client.query(body);
 
         handleResponseStatus(result);
         populateResponse(result, exchange);
-
     }
 
     private void delete(Exchange exchange) throws Exception {
@@ -182,7 +183,6 @@ public class MilvusProducer extends DefaultProducer {
 
         handleResponseStatus(result);
         populateResponse(result, exchange);
-
     }
 
     // ***************************************

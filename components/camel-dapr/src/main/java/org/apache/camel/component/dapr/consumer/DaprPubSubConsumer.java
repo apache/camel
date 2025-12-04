@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.consumer;
 
 import java.io.Closeable;
@@ -69,7 +70,8 @@ public class DaprPubSubConsumer extends DefaultConsumer {
         if (client == null) {
             client = new DaprClientBuilder().buildPreviewClient();
         }
-        subscription = client.subscribeToEvents(pubSubName, topic, new DaprSubscriptionListener(), TypeRef.get(byte[].class));
+        subscription =
+                client.subscribeToEvents(pubSubName, topic, new DaprSubscriptionListener(), TypeRef.get(byte[].class));
     }
 
     @Override

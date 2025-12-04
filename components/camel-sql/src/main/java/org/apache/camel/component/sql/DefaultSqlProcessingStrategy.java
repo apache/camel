@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import java.sql.PreparedStatement;
@@ -40,19 +41,22 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
 
     @Override
     public int commit(
-            final DefaultSqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate,
+            final DefaultSqlEndpoint endpoint,
+            final Exchange exchange,
+            final Object data,
+            final JdbcTemplate jdbcTemplate,
             final String query)
             throws Exception {
 
-        final String preparedQuery
-                = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters(), exchange);
+        final String preparedQuery =
+                sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters(), exchange);
 
         return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 int expected = ps.getParameterMetaData().getParameterCount();
 
-                Iterator<?> iterator
-                        = sqlPrepareStatementStrategy.createPopulateIterator(query, preparedQuery, expected, exchange, data);
+                Iterator<?> iterator = sqlPrepareStatementStrategy.createPopulateIterator(
+                        query, preparedQuery, expected, exchange, data);
                 if (iterator != null) {
                     sqlPrepareStatementStrategy.populateStatement(ps, iterator, expected);
                     LOG.trace("Execute query {}", query);
@@ -71,9 +75,10 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
     }
 
     @Override
-    public int commitBatchComplete(final DefaultSqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query)
-            throws Exception {
-        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters(), null);
+    public int commitBatchComplete(
+            final DefaultSqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
+        final String preparedQuery =
+                sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters(), null);
 
         return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {

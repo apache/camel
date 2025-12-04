@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.io.IOException;
@@ -59,8 +60,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
 
     protected final ObjectMapper jsonMapper = new ObjectMapper();
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @CommandLine.Option(
+            names = {"--json"},
+            description = "Output in JSON Format")
     boolean jsonOutput;
 
     public InfraBaseCommand(CamelJBangMain main) {
@@ -90,9 +92,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
 
         try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
             List<Path> pidFiles = files.filter(p -> {
-                var n = p.getFileName().toString();
-                return n.startsWith("infra-") && n.endsWith(".json");
-            })
+                        var n = p.getFileName().toString();
+                        return n.startsWith("infra-") && n.endsWith(".json");
+                    })
                     .toList();
             for (Path pidFile : pidFiles) {
                 String fn = pidFile.getFileName().toString();
@@ -115,11 +117,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
         List<TestInfraService> metadata;
 
         CamelCatalog catalog = new DefaultCamelCatalog();
-        try (InputStream is
-                = catalog.loadResource("test-infra", "metadata.json")) {
+        try (InputStream is = catalog.loadResource("test-infra", "metadata.json")) {
             String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            metadata = jsonMapper.readValue(json, new TypeReference<>() {
-            });
+            metadata = jsonMapper.readValue(json, new TypeReference<>() {});
         }
 
         return metadata;
@@ -150,10 +150,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
             rows.add(new InfraList.Row(
                     pid,
                     entry.getKey(),
-                    entry.getValue().getAliasImplementation()
-                            .stream()
-                            .sorted()
-                            .collect(Collectors.joining(", ")),
+                    entry.getValue().getAliasImplementation().stream().sorted().collect(Collectors.joining(", ")),
                     entry.getValue().getDescription(),
                     getServiceData(entry.getKey(), pid)));
         }
@@ -164,28 +161,49 @@ public abstract class InfraBaseCommand extends CamelCommand {
         serviceConsumer.accept(rows);
 
         if (jsonOutput) {
-            printer().println(
-                    Jsoner.serialize(
-                            rows.stream().map(row -> {
+            printer()
+                    .println(Jsoner.serialize(rows.stream()
+                            .map(row -> {
                                 Object serviceDataObj = null;
                                 try {
                                     serviceDataObj = Jsoner.deserialize(row.serviceData());
                                 } catch (DeserializationException e) {
                                     // ignore
                                 }
-                                return new InfraBaseDTO(row.alias, row.aliasImplementation, row.description, serviceDataObj);
+                                return new InfraBaseDTO(
+                                        row.alias, row.aliasImplementation, row.description, serviceDataObj);
                             })
-                                    .map(InfraBaseDTO::toMap)
-                                    .collect(Collectors.toList())));
+                            .map(InfraBaseDTO::toMap)
+                            .collect(Collectors.toList())));
         } else {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").visible(showPidColumn()).headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("ALIAS").minWidth(width + 2).dataAlign(HorizontalAlign.LEFT)
-                            .with(Row::alias),
-                    new Column().header("IMPLEMENTATION").maxWidth(35, OverflowBehaviour.NEWLINE)
-                            .dataAlign(HorizontalAlign.LEFT).with(Row::aliasImplementation),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(Row::description),
-                    new Column().header("SERVICE_DATA").dataAlign(HorizontalAlign.LEFT).with(Row::serviceData))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .visible(showPidColumn())
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("ALIAS")
+                                            .minWidth(width + 2)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(Row::alias),
+                                    new Column()
+                                            .header("IMPLEMENTATION")
+                                            .maxWidth(35, OverflowBehaviour.NEWLINE)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(Row::aliasImplementation),
+                                    new Column()
+                                            .header("DESCRIPTION")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(Row::description),
+                                    new Column()
+                                            .header("SERVICE_DATA")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(Row::serviceData))));
         }
 
         return 0;
@@ -235,11 +253,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
             List<String> aliasImplementation,
             String groupId,
             String artifactId,
-            String version) {
-    }
+            String version) {}
 
-    record Row(String pid, String alias, String aliasImplementation, String description, String serviceData) {
-    }
+    record Row(String pid, String alias, String aliasImplementation, String description, String serviceData) {}
 
     private static class InfraServiceAlias {
         private final String description;

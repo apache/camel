@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.milvus.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class MilvusServiceFactory {
-    private MilvusServiceFactory() {
-
-    }
+    private MilvusServiceFactory() {}
 
     public static class SingletonMilvusService extends SingletonService<MilvusService> implements MilvusService {
 
@@ -73,9 +72,7 @@ public final class MilvusServiceFactory {
                 .build();
     }
 
-    public static class MilvusLocalContainerService extends MilvusLocalContainerInfraService implements MilvusService {
-    }
+    public static class MilvusLocalContainerService extends MilvusLocalContainerInfraService implements MilvusService {}
 
-    public static class MilvusRemoteService extends MilvusRemoteInfraService implements MilvusService {
-    }
+    public static class MilvusRemoteService extends MilvusRemoteInfraService implements MilvusService {}
 }

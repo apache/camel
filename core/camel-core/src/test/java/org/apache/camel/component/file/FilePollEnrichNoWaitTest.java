@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.nio.file.Files;
 import java.time.Duration;
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FilePollEnrichNoWaitTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
@@ -55,11 +56,17 @@ public class FilePollEnrichNoWaitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:foo?delay=0&period=10").routeId("foo").log("Trigger timer foo")
+                from("timer:foo?delay=0&period=10")
+                        .routeId("foo")
+                        .log("Trigger timer foo")
                         // use 0 as timeout for no wait
                         .pollEnrich(fileUri("?initialDelay=0&delay=10&move=done"), 0)
-                        .convertBodyTo(String.class).filter(body().isNull()).stop().end()
-                        .log("Polled filed ${file:name}").to("mock:result");
+                        .convertBodyTo(String.class)
+                        .filter(body().isNull())
+                        .stop()
+                        .end()
+                        .log("Polled filed ${file:name}")
+                        .to("mock:result");
             }
         };
     }

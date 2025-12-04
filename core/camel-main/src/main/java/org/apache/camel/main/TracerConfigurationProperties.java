@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -30,30 +31,43 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private boolean enabled;
+
     @Metadata
     private boolean standby;
+
     @Metadata(label = "advanced", defaultValue = "100")
     private int backlogSize = 100;
+
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean removeOnDump = true;
+
     @Metadata(label = "advanced", defaultValue = "32768")
     private int bodyMaxChars = 32 * 1024;
+
     @Metadata
     private boolean bodyIncludeStreams;
+
     @Metadata(defaultValue = "true")
     private boolean bodyIncludeFiles = true;
+
     @Metadata(defaultValue = "true")
     private boolean includeExchangeProperties = true;
+
     @Metadata(defaultValue = "true")
     private boolean includeExchangeVariables = true;
+
     @Metadata(defaultValue = "true")
     private boolean includeException = true;
+
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean traceRests;
+
     @Metadata(label = "advanced")
     private boolean traceTemplates;
+
     @Metadata
     private String tracePattern;
+
     @Metadata
     private String traceFilter;
 
@@ -343,5 +357,4 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
         this.traceFilter = traceFilter;
         return this;
     }
-
 }

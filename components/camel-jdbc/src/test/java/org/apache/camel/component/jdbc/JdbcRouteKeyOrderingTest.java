@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Iterator;
 import java.util.List;
@@ -24,10 +29,6 @@ import java.util.Set;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that key ordering for the Maps (rows) is preserved.
@@ -53,7 +54,10 @@ public class JdbcRouteKeyOrderingTest extends JdbcRouteTest {
             // assertions of the response
             assertNotNull(out);
             List<Map<String, Object>> rowList = out.getMessage().getBody(List.class);
-            assertNotNull(rowList, "out body could not be converted to a List - was: " + out.getMessage().getBody());
+            assertNotNull(
+                    rowList,
+                    "out body could not be converted to a List - was: "
+                            + out.getMessage().getBody());
             assertEquals(3, rowList.size());
 
             Map<String, Object> row = rowList.get(0);

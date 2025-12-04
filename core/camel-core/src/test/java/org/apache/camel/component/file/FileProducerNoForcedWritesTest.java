@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileProducerNoForcedWritesTest extends ContextTestSupport {
 
@@ -36,12 +37,16 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertFileExists(testFile("output.txt"));
-        assertEquals("Hello World",
-                context.getTypeConverter().convertTo(String.class, testFile("output.txt").toFile()));
+        assertEquals(
+                "Hello World",
+                context.getTypeConverter()
+                        .convertTo(String.class, testFile("output.txt").toFile()));
 
         assertFileExists(testFile("output2.txt"));
-        assertEquals("Hello World",
-                context.getTypeConverter().convertTo(String.class, testFile("output2.txt").toFile()));
+        assertEquals(
+                "Hello World",
+                context.getTypeConverter()
+                        .convertTo(String.class, testFile("output2.txt").toFile()));
     }
 
     @Override
@@ -49,8 +54,10 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&noop=true")).multicast()
-                        .to(fileUri("?fileName=output.txt&forceWrites=false"),
+                from(fileUri("?initialDelay=0&delay=10&noop=true"))
+                        .multicast()
+                        .to(
+                                fileUri("?fileName=output.txt&forceWrites=false"),
                                 fileUri("?fileName=output2.txt&charset=iso-8859-1&forceWrites=false"))
                         .to("mock:result");
             }

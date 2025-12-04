@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,9 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
@@ -65,7 +66,9 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri("?scheduler=#myScheduler&scheduler.foo=bar&initialDelay=0&delay=10"))
-                        .routeId("foo").autoStartup(false).to("mock:result");
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .to("mock:result");
             }
         };
     }
@@ -137,11 +140,9 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         }
 
         @Override
-        public void start() {
-        }
+        public void start() {}
 
         @Override
-        public void stop() {
-        }
+        public void stop() {}
     }
 }

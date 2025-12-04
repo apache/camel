@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.it;
 
 import com.github.dockerjava.api.command.AttachContainerCmd;
@@ -102,8 +103,7 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
 
     public static final String FAKE_VERSION = "Fake Camel Version 1.0";
 
-    public FakeDockerCmdExecFactory() {
-    }
+    public FakeDockerCmdExecFactory() {}
 
     @Override
     public VersionCmd.Exec createVersionCmdExec() {

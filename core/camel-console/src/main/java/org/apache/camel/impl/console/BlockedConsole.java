@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -42,7 +43,8 @@ public class BlockedConsole extends AbstractDevConsole {
         sb.append(String.format("\n    Blocked: %s", am.size()));
         for (AsyncProcessorAwaitManager.AwaitThread at : am.browse()) {
             String age = TimeUtils.printDuration(at.getWaitDuration(), true);
-            sb.append(String.format("\n    %s (at: %s/%s age: %s)",
+            sb.append(String.format(
+                    "\n    %s (at: %s/%s age: %s)",
                     at.getExchange().getExchangeId(), at.getRouteId(), at.getNodeId(), age));
         }
 
@@ -70,5 +72,4 @@ public class BlockedConsole extends AbstractDevConsole {
         }
         return root;
     }
-
 }

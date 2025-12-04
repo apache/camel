@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
@@ -59,12 +60,14 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain");
-        template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=true", "Hello World", headers);
+        template.sendBodyAndHeaders(
+                jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=true", "Hello World", headers);
 
         headers.clear();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain; charset=ansi_x3.110-1983");
-        template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=true", "Bye World", headers);
+        template.sendBodyAndHeaders(
+                jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=true", "Bye World", headers);
 
         mock.assertIsSatisfied();
     }
@@ -89,14 +92,15 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain");
-        template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=false", "Hello World", headers);
+        template.sendBodyAndHeaders(
+                jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=false", "Hello World", headers);
 
         headers.clear();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain; charset=XXX");
         try {
-            template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=false", "Bye World",
-                    headers);
+            template.sendBodyAndHeaders(
+                    jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=false", "Bye World", headers);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(UnsupportedEncodingException.class, e.getCause());
@@ -104,5 +108,4 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
-
 }

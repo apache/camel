@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr.converter;
 
 import java.lang.reflect.InvocationTargetException;
@@ -32,8 +33,7 @@ import org.apache.solr.common.util.NamedList;
 @SuppressWarnings("unchecked")
 public final class SolrResponseConverter {
 
-    private SolrResponseConverter() {
-    }
+    private SolrResponseConverter() {}
 
     @Converter
     public static Map<String, Object> createSolrResponseMap(Object body, Exchange exchange) {
@@ -60,7 +60,10 @@ public final class SolrResponseConverter {
             T t;
             try {
                 t = type.getDeclaredConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (InstantiationException
+                    | IllegalAccessException
+                    | InvocationTargetException
+                    | NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
             t.setResponse((NamedList<Object>) namedList);
@@ -68,5 +71,4 @@ public final class SolrResponseConverter {
         }
         return null;
     }
-
 }

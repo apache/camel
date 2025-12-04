@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,17 +28,13 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class TwoService2Test extends CamelAwsXRayTestSupport {
 
     public TwoService2Test() {
-        super(
-              TestDataBuilder.createTrace().inRandomOrder()
-                      .withSegment(TestDataBuilder.createSegment("route1"))
-                      .withSegment(TestDataBuilder.createSegment("route2")));
+        super(TestDataBuilder.createTrace()
+                .inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("route1"))
+                .withSegment(TestDataBuilder.createSegment("route2")));
     }
 
     @Test
@@ -42,8 +43,7 @@ public class TwoService2Test extends CamelAwsXRayTestSupport {
 
         template.requestBody("direct:ServiceA", "Hello");
 
-        assertThat("Not all exchanges were fully processed",
-                notify.matches(10, TimeUnit.SECONDS), is(equalTo(true)));
+        assertThat("Not all exchanges were fully processed", notify.matches(10, TimeUnit.SECONDS), is(equalTo(true)));
 
         verify();
     }
@@ -58,9 +58,7 @@ public class TwoService2Test extends CamelAwsXRayTestSupport {
                         .delay(simple("${random(1000,2000)}"))
                         .to("direct:ServiceB");
 
-                from("direct:ServiceB")
-                        .log("ServiceB has been called")
-                        .delay(simple("${random(0,500)}"));
+                from("direct:ServiceB").log("ServiceB has been called").delay(simple("${random(0,500)}"));
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.spi.ClassResolver;
@@ -121,7 +122,8 @@ public final class BeanHelper {
      * @return               <tt>null</tt> if parameter type is <b>not</b> a class, <tt>true</tt> if parameter type is
      *                       assignable, <tt>false</tt> if not assignable
      */
-    public static Boolean isAssignableToExpectedType(ClassResolver resolver, String parameterType, Class<?> expectedType) {
+    public static Boolean isAssignableToExpectedType(
+            ClassResolver resolver, String parameterType, Class<?> expectedType) {
         if (parameterType == null || !parameterType.contains(".class")) {
             // not a class so return null
             return null;
@@ -151,5 +153,4 @@ public final class BeanHelper {
         // if there was a class, then it must be assignable to match
         return parameterClass.isAssignableFrom(expectedType);
     }
-
 }

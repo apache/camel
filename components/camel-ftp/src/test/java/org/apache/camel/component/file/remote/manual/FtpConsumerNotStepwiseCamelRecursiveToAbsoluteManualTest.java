@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.manual;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -37,7 +38,8 @@ public class FtpConsumerNotStepwiseCamelRecursiveToAbsoluteManualTest extends Ca
             @Override
             public void configure() {
                 from("ftp:localhost/one/two?username=camel&password=camel&recursive=true&noop=true&stepwise=false")
-                        .to("file:E:/temp/sample/file2ftp").to("mock:result");
+                        .to("file:E:/temp/sample/file2ftp")
+                        .to("mock:result");
             }
         };
     }

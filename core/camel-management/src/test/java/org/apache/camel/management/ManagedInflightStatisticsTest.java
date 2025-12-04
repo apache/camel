@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -29,12 +36,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedInflightStatisticsTest extends ManagementTestSupport {
@@ -130,12 +131,13 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
             public void configure() {
                 from("direct:start")
                         .process(exchange -> {
-                            CountDownLatch latch = (CountDownLatch) exchange.getIn().getBody();
+                            CountDownLatch latch =
+                                    (CountDownLatch) exchange.getIn().getBody();
                             latch.await(10, TimeUnit.SECONDS);
                         })
-                        .to("mock:result").id("mock");
+                        .to("mock:result")
+                        .id("mock");
             }
         };
     }
-
 }

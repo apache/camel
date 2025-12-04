@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.SocketTimeoutException;
 
@@ -22,10 +27,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for using http client SO timeout
@@ -37,7 +38,8 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        String out = template.requestBody("http://localhost:{{port}}/myservice?responseTimeout=5000", null, String.class);
+        String out =
+                template.requestBody("http://localhost:{{port}}/myservice?responseTimeout=5000", null, String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -66,7 +68,10 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
             public void configure() {
                 from("jetty://http://localhost:{{port}}/myservice")
                         // but we wait for 2 sec before reply is sent back
-                        .delay(2000).transform().constant("Bye World").to("mock:result");
+                        .delay(2000)
+                        .transform()
+                        .constant("Bye World")
+                        .to("mock:result");
             }
         };
     }

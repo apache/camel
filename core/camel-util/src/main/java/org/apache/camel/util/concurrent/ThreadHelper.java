@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,8 +33,7 @@ public final class ThreadHelper {
 
     private static final AtomicLong THREAD_COUNTER = new AtomicLong();
 
-    private ThreadHelper() {
-    }
+    private ThreadHelper() {}
 
     private static long nextThreadCounter() {
         return THREAD_COUNTER.incrementAndGet();
@@ -72,5 +72,4 @@ public final class ThreadHelper {
 
         return answer;
     }
-
 }

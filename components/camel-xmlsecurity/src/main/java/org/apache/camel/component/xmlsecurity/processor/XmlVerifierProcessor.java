@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.processor;
 
 import java.io.InputStream;
@@ -139,11 +140,18 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
             final XMLSignature signature = fac.unmarshalXMLSignature(valContext);
 
             if (getConfiguration().getXmlSignatureChecker() != null) {
-                XmlSignatureChecker.Input checkerInput = new CheckerInputBuilder().message(out).messageBodyDocument(doc)
-                        .keyInfo(signature.getKeyInfo()).currentCountOfSignatures(i + 1).currentSignatureElement(signatureNode)
-                        .objects(signature.getObjects()).signatureValue(signature.getSignatureValue())
-                        .signedInfo(signature.getSignedInfo()).totalCountOfSignatures(totalCount)
-                        .xmlSchemaValidationExecuted(getSchemaResourceUri(out) != null).build();
+                XmlSignatureChecker.Input checkerInput = new CheckerInputBuilder()
+                        .message(out)
+                        .messageBodyDocument(doc)
+                        .keyInfo(signature.getKeyInfo())
+                        .currentCountOfSignatures(i + 1)
+                        .currentSignatureElement(signatureNode)
+                        .objects(signature.getObjects())
+                        .signatureValue(signature.getSignatureValue())
+                        .signedInfo(signature.getSignedInfo())
+                        .totalCountOfSignatures(totalCount)
+                        .xmlSchemaValidationExecuted(getSchemaResourceUri(out) != null)
+                        .build();
                 getConfiguration().getXmlSignatureChecker().checkBeforeCoreValidation(checkerInput);
             }
 
@@ -214,13 +222,11 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
             public String getOutputXmlEncoding() {
                 return getConfiguration().getOutputXmlEncoding();
             }
-
         };
         getConfiguration().getXmlSignature2Message().mapToMessage(refsAndObjects, out);
     }
 
-    private NodeList getSignatureNodes(Document doc)
-            throws XmlSignatureFormatException {
+    private NodeList getSignatureNodes(Document doc) throws XmlSignatureFormatException {
 
         // Find Signature element
         NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
@@ -234,7 +240,8 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected boolean handleSignatureValidationFailed(DOMValidateContext valContext, XMLSignature signature) throws Exception {
+    protected boolean handleSignatureValidationFailed(DOMValidateContext valContext, XMLSignature signature)
+            throws Exception {
         ValidationFailedHandler handler = getConfiguration().getValidationFailedHandler();
         LOG.debug("handleSignatureValidationFailed called");
         try {
@@ -280,22 +287,21 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         } finally {
             handler.end();
         }
-
     }
 
     protected Document parseInput(InputStream is, Message message) throws Exception {
         try {
             ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
             Schema schema = getSchema(message);
-            DocumentBuilder db = XmlSignatureHelper.newDocumentBuilder(getConfiguration().getDisallowDoctypeDecl(), schema);
+            DocumentBuilder db =
+                    XmlSignatureHelper.newDocumentBuilder(getConfiguration().getDisallowDoctypeDecl(), schema);
             db.setErrorHandler(errorHandler);
             Document doc = db.parse(is);
             errorHandler.handleErrors(message.getExchange(), schema, null); // throws ValidationException
             return doc;
         } catch (SAXException e) {
             throw new XmlSignatureFormatException(
-                    "Message has wrong format, it is not a XML signature document. Check the sent message.",
-                    e);
+                    "Message has wrong format, it is not a XML signature document. Check the sent message.", e);
         }
     }
 

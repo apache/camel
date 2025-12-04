@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.io.File;
@@ -49,8 +50,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultStreamCachingStrategy extends ServiceSupport implements CamelContextAware, StreamCachingStrategy {
 
     // stream cache type converters
-    private record CoreConverter(Class<?> from, TypeConverter converter) {
-    }
+    private record CoreConverter(Class<?> from, TypeConverter converter) {}
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamCachingStrategy.class);
 
@@ -377,7 +377,10 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         }
 
         // find core type converters that can convert to StreamCache
-        var set = getCamelContext().getTypeConverterRegistry().lookup(StreamCache.class).entrySet();
+        var set = getCamelContext()
+                .getTypeConverterRegistry()
+                .lookup(StreamCache.class)
+                .entrySet();
         set.forEach(e -> coreConverters.add(new CoreConverter(e.getKey(), e.getValue())));
 
         if (allowClassNames != null) {
@@ -402,8 +405,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         }
 
         if (spoolUsedHeapMemoryThreshold > 99) {
-            throw new IllegalArgumentException(
-                    "SpoolHeapMemoryWatermarkThreshold must not be higher than 99, was: " + spoolUsedHeapMemoryThreshold);
+            throw new IllegalArgumentException("SpoolHeapMemoryWatermarkThreshold must not be higher than 99, was: "
+                    + spoolUsedHeapMemoryThreshold);
         }
 
         // if we can overflow to disk then make sure directory exists / is created
@@ -417,7 +420,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                     spoolDirectory = new File(name);
                     spoolDirectoryName = null;
                 } else {
-                    throw new IllegalStateException("Cannot resolve spool directory from pattern: " + spoolDirectoryName);
+                    throw new IllegalStateException(
+                            "Cannot resolve spool directory from pattern: " + spoolDirectoryName);
                 }
             }
             if (spoolDirectory.exists()) {
@@ -453,7 +457,10 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         LOG.debug("StreamCaching configuration {}", this);
 
         if (spoolDirectory != null) {
-            LOG.info("StreamCaching in use with spool directory: {} and rules: {}", spoolDirectory.getPath(), spoolRules);
+            LOG.info(
+                    "StreamCaching in use with spool directory: {} and rules: {}",
+                    spoolDirectory.getPath(),
+                    spoolRules);
         } else if (!spoolRules.isEmpty()) {
             LOG.info("StreamCaching in use with rules: {}", spoolRules);
         } else {
@@ -483,13 +490,13 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     @Override
     public String toString() {
         return "DefaultStreamCachingStrategy["
-               + "spoolDirectoryEnabled=" + spoolEnabled
-               + ", spoolDirectory=" + spoolDirectory
-               + ", spoolCipher=" + spoolCipher
-               + ", spoolThreshold=" + spoolThreshold
-               + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold
-               + ", bufferSize=" + bufferSize
-               + ", anySpoolRules=" + anySpoolRules + "]";
+                + "spoolDirectoryEnabled=" + spoolEnabled
+                + ", spoolDirectory=" + spoolDirectory
+                + ", spoolCipher=" + spoolCipher
+                + ", spoolThreshold=" + spoolThreshold
+                + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold
+                + ", bufferSize=" + bufferSize
+                + ", anySpoolRules=" + anySpoolRules + "]";
     }
 
     private final class FixedThresholdSpoolRule implements SpoolRule {
@@ -529,7 +536,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                 // must use double to calculate with decimals for the percentage
                 double used = heapUsage.getHeapMemoryUsage().getUsed();
                 double upper = limit == SpoolUsedHeapMemoryLimit.Committed
-                        ? heapUsage.getHeapMemoryUsage().getCommitted() : heapUsage.getHeapMemoryUsage().getMax();
+                        ? heapUsage.getHeapMemoryUsage().getCommitted()
+                        : heapUsage.getHeapMemoryUsage().getMax();
                 double calc = (used / upper) * 100;
                 int percentage = (int) calc;
 
@@ -537,11 +545,15 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                     long u = heapUsage.getHeapMemoryUsage().getUsed();
                     long c = heapUsage.getHeapMemoryUsage().getCommitted();
                     long m = heapUsage.getHeapMemoryUsage().getMax();
-                    LOG.trace("Heap memory: [used={}M ({}%), committed={}M, max={}M]", u >> 20, percentage, c >> 20, m >> 20);
+                    LOG.trace(
+                            "Heap memory: [used={}M ({}%), committed={}M, max={}M]",
+                            u >> 20, percentage, c >> 20, m >> 20);
                 }
 
                 if (percentage > spoolUsedHeapMemoryThreshold) {
-                    LOG.trace("Should spool cache heap memory threshold {} > {} -> true", percentage,
+                    LOG.trace(
+                            "Should spool cache heap memory threshold {} > {} -> true",
+                            percentage,
                             spoolUsedHeapMemoryThreshold);
                     return true;
                 }
@@ -649,5 +661,4 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                     memoryCounter, memorySize, memoryAverageSize, spoolCounter, spoolSize, spoolAverageSize);
         }
     }
-
 }

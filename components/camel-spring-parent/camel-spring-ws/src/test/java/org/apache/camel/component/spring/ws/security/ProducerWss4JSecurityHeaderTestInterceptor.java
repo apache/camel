@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.security;
 
 import java.io.ByteArrayOutputStream;
@@ -40,5 +41,4 @@ public class ProducerWss4JSecurityHeaderTestInterceptor extends Wss4jSecurityInt
         isX509DataPresent = strMsg.contains("X509Data");
         super.validateMessage(soapMessage, messageContext);
     }
-
 }

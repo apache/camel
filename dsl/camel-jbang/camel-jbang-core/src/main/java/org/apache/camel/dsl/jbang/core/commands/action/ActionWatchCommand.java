@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,8 +28,9 @@ import picocli.CommandLine;
 
 abstract class ActionWatchCommand extends ActionBaseCommand {
 
-    @CommandLine.Option(names = { "--watch" },
-                        description = "Execute periodically and showing output fullscreen")
+    @CommandLine.Option(
+            names = {"--watch"},
+            description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
     private CommandHelper.ReadConsoleTask waitUserTask;
@@ -42,10 +44,12 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
         int exit;
         final AtomicBoolean running = new AtomicBoolean(true);
         if (watch) {
-            Thread t = new Thread(() -> {
-                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
-                waitUserTask.run();
-            }, "WaitForUser");
+            Thread t = new Thread(
+                    () -> {
+                        waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
+                        waitUserTask.run();
+                    },
+                    "WaitForUser");
             t.start();
             do {
                 exit = doWatchCall();
@@ -72,5 +76,4 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
     }
 
     protected abstract Integer doWatchCall() throws Exception;
-
 }

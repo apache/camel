@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.ArrayList;
@@ -38,8 +39,7 @@ public class DelegateProcessor extends ServiceSupport
         implements org.apache.camel.DelegateProcessor, Processor, Navigate<Processor> {
     protected Processor processor;
 
-    public DelegateProcessor() {
-    }
+    public DelegateProcessor() {}
 
     public DelegateProcessor(Processor processor) {
         if (processor == this) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import io.vertx.core.Vertx;
@@ -36,9 +37,15 @@ import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-http", title = "Vert.x HTTP Client", syntax = "vertx-http:httpUri",
-             category = { Category.HTTP }, producerOnly = true, lenientProperties = true,
-             headersClass = VertxHttpConstants.class)
+@UriEndpoint(
+        firstVersion = "3.5.0",
+        scheme = "vertx-http",
+        title = "Vert.x HTTP Client",
+        syntax = "vertx-http:httpUri",
+        category = {Category.HTTP},
+        producerOnly = true,
+        lenientProperties = true,
+        headersClass = VertxHttpConstants.class)
 public class VertxHttpEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -120,8 +127,8 @@ public class VertxHttpEndpoint extends DefaultEndpoint implements EndpointServic
 
             webClient = WebClient.create(getVertx(), options);
             if (configuration.isSessionManagement()) {
-                CookieStore cookieStore
-                        = configuration.getCookieStore() == null ? CookieStore.build() : configuration.getCookieStore();
+                CookieStore cookieStore =
+                        configuration.getCookieStore() == null ? CookieStore.build() : configuration.getCookieStore();
                 webClient = WebClientSession.create(webClient, cookieStore);
             }
         }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Based on an issue on the camel user forum.
@@ -50,7 +51,9 @@ public class InterceptSendToIssueTest extends ContextTestSupport {
             public void configure() {
                 interceptSendToEndpoint("direct:foo").to("mock:foo");
 
-                from("direct:start").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to("direct:foo");
+                from("direct:start")
+                        .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                        .to("direct:foo");
                 from("direct:foo").log("Dummy");
             }
         };

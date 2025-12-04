@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.Exchange;
@@ -23,18 +26,13 @@ import org.apache.camel.component.http.HttpMethods;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "/mypath?useRelativePath=false",
-            "?useRelativePath=false",
-            "/?useRelativePath=false"
-    })
+    @ValueSource(strings = {"/mypath?useRelativePath=false", "?useRelativePath=false", "/?useRelativePath=false"})
     public void testSendToNettyPath(String pathPart) {
-        Exchange exchange = template.request("netty-http:http://localhost:{{port}}" + pathPart,
+        Exchange exchange = template.request(
+                "netty-http:http://localhost:{{port}}" + pathPart,
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
 
         // convert the response to a String
@@ -47,12 +45,17 @@ public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
         return new RouteBuilder() {
             public void configure() {
                 from("netty-http:http://localhost:{{port}}/mypath").process(exchange -> {
-                    assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"),
+                    assertEquals(
+                            "localhost:" + getPort(),
+                            exchange.getIn().getHeader("host"),
                             "Get a wrong form parameter from the message header");
 
                     NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                     FullHttpRequest request = in.getHttpRequest();
-                    assertEquals("http://localhost:" + getPort() + "/mypath", request.uri(), "Relative path not used in POST");
+                    assertEquals(
+                            "http://localhost:" + getPort() + "/mypath",
+                            request.uri(),
+                            "Relative path not used in POST");
 
                     // send a response
                     exchange.getMessage().getHeaders().clear();
@@ -61,12 +64,15 @@ public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
                 });
 
                 from("netty-http:http://localhost:{{port}}").process(exchange -> {
-                    assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"),
+                    assertEquals(
+                            "localhost:" + getPort(),
+                            exchange.getIn().getHeader("host"),
                             "Get a wrong form parameter from the message header");
 
                     NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                     FullHttpRequest request = in.getHttpRequest();
-                    assertEquals("http://localhost:" + getPort() + "/", request.uri(), "Relative path not used in POST");
+                    assertEquals(
+                            "http://localhost:" + getPort() + "/", request.uri(), "Relative path not used in POST");
 
                     // send a response
                     exchange.getMessage().getHeaders().clear();
@@ -76,5 +82,4 @@ public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
             }
         };
     }
-
 }

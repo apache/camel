@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import org.apache.camel.spi.UnitOfWork;
@@ -65,5 +66,4 @@ public interface Consumer extends Service, EndpointAware {
     default AsyncCallback defaultConsumerCallback(Exchange exchange, boolean autoRelease) {
         return null;
     }
-
 }

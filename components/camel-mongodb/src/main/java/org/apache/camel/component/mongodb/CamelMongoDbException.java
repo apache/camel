@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
 
 public class CamelMongoDbException extends RuntimeException {
@@ -31,5 +32,4 @@ public class CamelMongoDbException extends RuntimeException {
     public CamelMongoDbException(Throwable cause) {
         super(cause);
     }
-
 }

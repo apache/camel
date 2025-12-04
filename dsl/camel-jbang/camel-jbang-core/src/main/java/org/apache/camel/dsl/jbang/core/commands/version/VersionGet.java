@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.version;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -24,11 +25,16 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "get", description = "Displays current Camel version", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "get",
+        description = "Displays current Camel version",
+        sortOptions = false,
+        showDefaultValues = true)
 public class VersionGet extends CamelCommand {
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(
+            names = {"--global"},
+            description = "Use global or local configuration")
     boolean global = true;
 
     public VersionGet(CamelJBangMain main) {
@@ -46,29 +52,30 @@ public class VersionGet extends CamelCommand {
         String v = catalog.getCatalogVersion();
         printer().println("Camel JBang version: " + v);
 
-        CommandLineHelper.loadProperties(properties -> {
-            String uv = properties.getProperty("camel-version");
-            String kv = properties.getProperty("kamelets-version");
-            String repos = properties.getProperty("repos");
-            String runtime = properties.getProperty("runtime");
-            if (uv != null || repos != null || runtime != null) {
-                printer().println("User configuration:");
-                if (uv != null) {
-                    printer().println("    camel-version = " + uv);
-                }
-                if (kv != null) {
-                    printer().println("    kamelets-version = " + kv);
-                }
-                if (runtime != null) {
-                    printer().println("    runtime = " + runtime);
-                }
-                if (repos != null) {
-                    printer().println("    repos = " + repos);
-                }
-            }
-        }, !global);
+        CommandLineHelper.loadProperties(
+                properties -> {
+                    String uv = properties.getProperty("camel-version");
+                    String kv = properties.getProperty("kamelets-version");
+                    String repos = properties.getProperty("repos");
+                    String runtime = properties.getProperty("runtime");
+                    if (uv != null || repos != null || runtime != null) {
+                        printer().println("User configuration:");
+                        if (uv != null) {
+                            printer().println("    camel-version = " + uv);
+                        }
+                        if (kv != null) {
+                            printer().println("    kamelets-version = " + kv);
+                        }
+                        if (runtime != null) {
+                            printer().println("    runtime = " + runtime);
+                        }
+                        if (repos != null) {
+                            printer().println("    repos = " + repos);
+                        }
+                    }
+                },
+                !global);
 
         return 0;
     }
-
 }

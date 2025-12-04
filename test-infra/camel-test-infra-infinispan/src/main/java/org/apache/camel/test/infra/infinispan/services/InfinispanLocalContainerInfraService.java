@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.infinispan.services;
 
 import java.util.function.Consumer;
@@ -31,10 +32,12 @@ import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = InfinispanInfraService.class,
-              description = "Distributed Database For High‑Performance Applications With In‑Memory Speed",
-              serviceAlias = { "infinispan" })
-public class InfinispanLocalContainerInfraService implements InfinispanInfraService, ContainerService<GenericContainer<?>> {
+@InfraService(
+        service = InfinispanInfraService.class,
+        description = "Distributed Database For High‑Performance Applications With In‑Memory Speed",
+        serviceAlias = {"infinispan"})
+public class InfinispanLocalContainerInfraService
+        implements InfinispanInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";
     private static final String DEFAULT_PASSWORD = "password";
@@ -46,8 +49,7 @@ public class InfinispanLocalContainerInfraService implements InfinispanInfraServ
 
     public InfinispanLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
-                InfinispanLocalContainerInfraService.class,
-                InfinispanProperties.INFINISPAN_CONTAINER));
+                InfinispanLocalContainerInfraService.class, InfinispanProperties.INFINISPAN_CONTAINER));
     }
 
     public InfinispanLocalContainerInfraService(String containerImage) {
@@ -75,17 +77,18 @@ public class InfinispanLocalContainerInfraService implements InfinispanInfraServ
                         .withEnv("USER", DEFAULT_USERNAME)
                         .withEnv("PASS", DEFAULT_PASSWORD)
                         .withLogConsumer(logConsumer)
-                        .withClasspathResourceMapping("infinispan.xml", "/user-config/infinispan.xml", BindMode.READ_ONLY)
+                        .withClasspathResourceMapping(
+                                "infinispan.xml", "/user-config/infinispan.xml", BindMode.READ_ONLY)
                         .withCommand("-c", "/user-config/infinispan.xml")
                         .waitingFor(Wait.forLogMessage(".*Infinispan.*Server.*started.*", 1));
 
                 if (isNetworkHost) {
                     withNetworkMode("host");
                 } else if (fixedPort) {
-                    addFixedExposedPort(InfinispanProperties.DEFAULT_SERVICE_PORT, InfinispanProperties.DEFAULT_SERVICE_PORT);
+                    addFixedExposedPort(
+                            InfinispanProperties.DEFAULT_SERVICE_PORT, InfinispanProperties.DEFAULT_SERVICE_PORT);
                 } else {
-                    withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
-                            .waitingFor(Wait.forListeningPort());
+                    withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT).waitingFor(Wait.forListeningPort());
                 }
             }
         }

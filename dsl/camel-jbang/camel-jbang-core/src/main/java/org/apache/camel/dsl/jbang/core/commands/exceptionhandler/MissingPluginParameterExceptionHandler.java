@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 
 import java.io.PrintWriter;
@@ -43,13 +44,14 @@ public class MissingPluginParameterExceptionHandler implements IParameterExcepti
         err.printf("Try '%s --help' for more information.%n", spec.qualifiedName());
 
         if (ex.getMessage().startsWith("Unmatched argument at index 0")) {
-            err.println(cmd.getColorScheme().errorText(
-                    "Maybe a specific Camel JBang plugin must be installed? (Try camel plugin --help' for more information)"));
+            err.println(
+                    cmd.getColorScheme()
+                            .errorText(
+                                    "Maybe a specific Camel JBang plugin must be installed? (Try camel plugin --help' for more information)"));
         }
 
         return cmd.getExitCodeExceptionMapper() != null
                 ? cmd.getExitCodeExceptionMapper().getExitCode(ex)
                 : spec.exitCodeOnInvalidInput();
     }
-
 }

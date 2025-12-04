@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ErrorHandlerFactory;
@@ -23,8 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for useOriginalnBody option on DeadLetterChannel
@@ -57,24 +58,34 @@ public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // will use original
-                ErrorHandlerFactory a = deadLetterChannel("mock:a").maximumRedeliveries(2).redeliveryDelay(0)
-                        .logStackTrace(false).useOriginalMessage();
+                ErrorHandlerFactory a = deadLetterChannel("mock:a")
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false)
+                        .useOriginalMessage();
 
                 // will NOT use original
-                ErrorHandlerFactory b
-                        = deadLetterChannel("mock:b").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false);
+                ErrorHandlerFactory b = deadLetterChannel("mock:b")
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false);
 
-                from("direct:a").errorHandler(a).setBody(body().append(" World")).process(new MyThrowProcessor());
+                from("direct:a")
+                        .errorHandler(a)
+                        .setBody(body().append(" World"))
+                        .process(new MyThrowProcessor());
 
-                from("direct:b").errorHandler(b).setBody(body().append(" World")).process(new MyThrowProcessor());
+                from("direct:b")
+                        .errorHandler(b)
+                        .setBody(body().append(" World"))
+                        .process(new MyThrowProcessor());
             }
         };
     }
 
     public static class MyThrowProcessor implements Processor {
 
-        public MyThrowProcessor() {
-        }
+        public MyThrowProcessor() {}
 
         @Override
         public void process(Exchange exchange) {

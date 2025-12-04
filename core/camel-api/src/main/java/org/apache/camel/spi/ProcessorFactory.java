@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -76,5 +77,4 @@ public interface ProcessorFactory {
      * @throws Exception      can be thrown if error creating the processor
      */
     Processor createProcessor(CamelContext camelContext, String definitionName, Object[] args) throws Exception;
-
 }

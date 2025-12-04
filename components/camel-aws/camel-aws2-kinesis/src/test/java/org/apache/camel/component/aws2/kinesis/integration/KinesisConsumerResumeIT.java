@@ -17,6 +17,14 @@
 
 package org.apache.camel.component.aws2.kinesis.integration;
 
+import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
+import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.deleteStream;
+import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.putRecords;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -52,14 +60,6 @@ import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsResultEntry;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
-import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
-import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.deleteStream;
-import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.putRecords;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /*
  * This test simulates resuming consumption from AWS Kinesis - consuming right at the middle of the batch of messages
  * sent.
@@ -71,10 +71,7 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
 
         @Override
         public String toString() {
-            return "KinesisData{" +
-                   "partition='" + partition + '\'' +
-                   ", body='" + body + '\'' +
-                   '}';
+            return "KinesisData{" + "partition='" + partition + '\'' + ", body='" + body + '\'' + '}';
         }
     }
 
@@ -102,7 +99,8 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
             LOG.debug("Waiting for data");
             Awaitility.await().atMost(1, TimeUnit.MINUTES).until(() -> !previousRecords.isEmpty());
 
-            final PutRecordsResultEntry putRecordsResultEntry = previousRecords.get(0).records().get(expectedCount);
+            final PutRecordsResultEntry putRecordsResultEntry =
+                    previousRecords.get(0).records().get(expectedCount);
 
             LOG.info("Setting sequence number to: {}", putRecordsResultEntry.sequenceNumber());
 
@@ -138,16 +136,17 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
             @Override
             public void configure() {
                 final ResumeCache<Object> simpleCache = TransientResumeStrategy.createSimpleCache();
-                final KinesisResumeStrategyConfiguration.KinesisResumeStrategyConfigurationBuilder resumeConfigurationBuilder
-                        = KinesisResumeStrategyConfiguration.builder()
-                                .withResumeCache(simpleCache);
+                final KinesisResumeStrategyConfiguration.KinesisResumeStrategyConfigurationBuilder
+                        resumeConfigurationBuilder =
+                                KinesisResumeStrategyConfiguration.builder().withResumeCache(simpleCache);
 
                 bindToRegistry(Kinesis2Constants.RESUME_ACTION, action);
 
                 String kinesisEndpointUri = "aws2-kinesis://%s?amazonKinesisClient=#amazonKinesisClient";
 
                 fromF(kinesisEndpointUri, streamName)
-                        .resumable().configuration(resumeConfigurationBuilder)
+                        .resumable()
+                        .configuration(resumeConfigurationBuilder)
                         .process(exchange -> {
                             KinesisData data = new KinesisData();
                             final Message message = exchange.getMessage();
@@ -191,8 +190,7 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
     void testProduceMessages() {
         result.expectedMessageCount(expectedCount);
 
-        await().atMost(2, TimeUnit.MINUTES)
-                .untilAsserted(() -> result.assertIsSatisfied());
+        await().atMost(2, TimeUnit.MINUTES).untilAsserted(() -> result.assertIsSatisfied());
 
         assertEquals(expectedCount, receivedMessages.size());
         for (KinesisData data : receivedMessages) {
@@ -201,9 +199,9 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
             assertNotNull(data.body, "The body should not be null");
             assertNotNull(data.partition, "The partition should not be null");
             /*
-             In this test scenario message "1" is sent to partition-1, message "2" is sent to partition-2,
-             and so on. This is just testing that the code is not mixing things up.
-             */
+            In this test scenario message "1" is sent to partition-1, message "2" is sent to partition-2,
+            and so on. This is just testing that the code is not mixing things up.
+            */
             assertTrue(data.partition.endsWith(data.body), "The data/partition mismatch for record: " + data);
         }
     }

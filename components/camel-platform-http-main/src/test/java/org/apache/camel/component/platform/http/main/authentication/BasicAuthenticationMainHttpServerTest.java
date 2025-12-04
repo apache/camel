@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main.authentication;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,10 +27,6 @@ import org.apache.camel.main.Main;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BasicAuthenticationMainHttpServerTest {
 
@@ -50,15 +51,10 @@ public class BasicAuthenticationMainHttpServerTest {
         CamelContext camelContext = main.getCamelContext();
         assertNotNull(camelContext);
 
-        given()
-                .when()
-                .get("/main-http-test")
-                .then()
-                .statusCode(401)
-                .body(equalTo("Unauthorized"));
+        given().when().get("/main-http-test").then().statusCode(401).body(equalTo("Unauthorized"));
 
-        given()
-                .auth().basic("camel", "propertiesPass")
+        given().auth()
+                .basic("camel", "propertiesPass")
                 .when()
                 .get("/main-http-test")
                 .then()

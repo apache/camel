@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,15 +27,13 @@ public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
     @Test
     public void testLanguage() throws Exception {
         // create script to start with
-        template.sendBodyAndHeader(fileUri(), "Hello ${body}",
-                Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 
         template.sendBody("direct:start", "World");
 
-        template.sendBodyAndHeader(fileUri(), "Bye ${body}",
-                Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
         template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();

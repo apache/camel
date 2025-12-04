@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.HashMap;
@@ -54,7 +55,8 @@ public class AggregateExpressionSizeTest extends ContextTestSupport {
                         // and the header mySize determines the number of aggregated
                         // messages should trigger the completion
                         // and send it to mock:aggregated
-                        .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(header("mySize"))
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(header("mySize"))
                         .to("mock:aggregated");
                 // END SNIPPET: e1
             }

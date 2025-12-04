@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fop;
 
 public enum FopOutputType {
-
     pdf("application/pdf"),
     ps("application/postscript"),
     pcl("application/x-pcl"),

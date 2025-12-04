@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,11 +24,11 @@ public class User {
     private int id;
     private String name;
     private boolean alive;
+
     @Schema(example = "44", nullable = true)
     private Long age;
 
-    public User() {
-    }
+    public User() {}
 
     public User(int id, String name, boolean alive) {
         this.id = id;

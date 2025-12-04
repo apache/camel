@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -24,15 +28,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
 
     private static final String DATA = "ABC\u00e6";
 
     private static final String INPUT_FILE = "input." + FileProducerCharsetUTFtoUTFTest.class.getSimpleName() + ".txt";
-    private static final String OUTPUT_FILE = "output." + FileProducerCharsetUTFtoUTFTest.class.getSimpleName() + ".txt";
+    private static final String OUTPUT_FILE =
+            "output." + FileProducerCharsetUTFtoUTFTest.class.getSimpleName() + ".txt";
 
     @Test
     void testFileProducerCharsetUTFtoUTF() throws Exception {
@@ -46,8 +48,11 @@ class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
         assertFileExists(testFile(OUTPUT_FILE));
         byte[] target = Files.readAllBytes(testFile(OUTPUT_FILE));
 
-        assertArrayEquals(source, target, "The byte arrays should be equals but they are not.\n Source:\n" + new String(source)
-                                          + "\nTarget:\n" + new String(target));
+        assertArrayEquals(
+                source,
+                target,
+                "The byte arrays should be equals but they are not.\n Source:\n" + new String(source) + "\nTarget:\n"
+                        + new String(target));
     }
 
     @Override

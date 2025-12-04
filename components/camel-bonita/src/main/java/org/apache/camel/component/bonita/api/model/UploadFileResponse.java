@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,8 +23,10 @@ public class UploadFileResponse {
 
     @JsonProperty("filename")
     private String filename;
+
     @JsonProperty("tempPath")
     private String tempPath;
+
     @JsonProperty("contentType")
     private String contentType;
 
@@ -50,5 +53,4 @@ public class UploadFileResponse {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
-
 }

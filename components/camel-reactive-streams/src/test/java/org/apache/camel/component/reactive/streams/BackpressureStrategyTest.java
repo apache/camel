@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -27,9 +31,6 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class BackpressureStrategyTest extends BaseReactiveTest {
 
     @Test
@@ -39,13 +40,14 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
             @Override
             public void configure() {
                 from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
-                        .setBody().header(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
 
-        Flowable<Integer> integers
-                = Flowable.fromPublisher(CamelReactiveStreams.get(context).fromStream("integers", Integer.class));
+        Flowable<Integer> integers =
+                Flowable.fromPublisher(CamelReactiveStreams.get(context).fromStream("integers", Integer.class));
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         CountDownLatch latch = new CountDownLatch(1);
@@ -77,7 +79,8 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
             @Override
             public void configure() {
                 from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
-                        .setBody().header(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
@@ -122,7 +125,8 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
             @Override
             public void configure() {
                 from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
-                        .setBody().header(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
@@ -163,7 +167,8 @@ public class BackpressureStrategyTest extends BaseReactiveTest {
             @Override
             public void configure() {
                 from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
-                        .setBody().header(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers?backpressureStrategy=OLDEST");
             }
         }.addRoutesToCamelContext(context);

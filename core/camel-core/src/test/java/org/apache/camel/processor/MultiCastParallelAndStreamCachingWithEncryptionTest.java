@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.ByteArrayOutputStream;
@@ -41,21 +42,28 @@ public class MultiCastParallelAndStreamCachingWithEncryptionTest extends Context
             public void configure() {
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy()
+                        .setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(5000L);
                 context.getStreamCachingStrategy().setSpoolCipher("AES/CTR/NoPadding");
 
-                from("direct:start").multicast().parallelProcessing().stopOnException().to("direct:a", "direct:b").end()
+                from("direct:start")
+                        .multicast()
+                        .parallelProcessing()
+                        .stopOnException()
+                        .to("direct:a", "direct:b")
+                        .end()
                         .to("mock:result");
 
                 from("direct:a") //
                         // read stream
-                        .process(new SimpleProcessor()).to("mock:resulta");
+                        .process(new SimpleProcessor())
+                        .to("mock:resulta");
 
                 from("direct:b") //
                         // read stream concurrently, because of parallel processing
-                        .process(new SimpleProcessor()).to("mock:resultb");
-
+                        .process(new SimpleProcessor())
+                        .to("mock:resultb");
             }
         };
     }
@@ -74,7 +82,6 @@ public class MultiCastParallelAndStreamCachingWithEncryptionTest extends Context
             } else {
                 throw new RuntimeException("Type " + body.getClass().getName() + " not supported");
             }
-
         }
     }
 
@@ -108,8 +115,8 @@ public class MultiCastParallelAndStreamCachingWithEncryptionTest extends Context
     }
 
     private InputStream getPayload() {
-        return MultiCastParallelAndStreamCachingWithEncryptionTest.class.getClassLoader()
+        return MultiCastParallelAndStreamCachingWithEncryptionTest.class
+                .getClassLoader()
                 .getResourceAsStream("org/apache/camel/processor/payload10KB.txt");
     }
-
 }

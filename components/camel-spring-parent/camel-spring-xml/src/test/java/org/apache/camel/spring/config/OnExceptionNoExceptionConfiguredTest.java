@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
 
@@ -39,7 +40,8 @@ public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/OnExceptionNoExceptionConfiguredTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/OnExceptionNoExceptionConfiguredTest.xml");
     }
 
     @Test

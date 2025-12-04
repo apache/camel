@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pubnub;
 
 import com.pubnub.api.PubNubException;
@@ -32,8 +33,13 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send and receive messages to/from PubNub data stream network for connected devices.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "pubnub", title = "PubNub", syntax = "pubnub:channel",
-             category = { Category.CLOUD, Category.IOT, Category.MESSAGING }, headersClass = PubNubConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "pubnub",
+        title = "PubNub",
+        syntax = "pubnub:channel",
+        category = {Category.CLOUD, Category.IOT, Category.MESSAGING},
+        headersClass = PubNubConstants.class)
 public class PubNubEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "advanced")
@@ -89,11 +95,13 @@ public class PubNubEndpoint extends DefaultEndpoint {
     }
 
     private PubNub getInstance() throws PubNubException {
-        PNConfiguration config = PNConfiguration.builder(new UserId(configuration.getUuid()), configuration.getSubscribeKey())
+        PNConfiguration config = PNConfiguration.builder(
+                        new UserId(configuration.getUuid()), configuration.getSubscribeKey())
                 .publishKey(configuration.getPublishKey())
                 .secretKey(configuration.getSecretKey())
                 .authKey(configuration.getAuthKey())
-                .secure(configuration.isSecure()).build();
+                .secure(configuration.isSecure())
+                .build();
         return PubNub.create(config);
     }
 }

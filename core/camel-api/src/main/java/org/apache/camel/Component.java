@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.util.Collection;
@@ -129,5 +130,4 @@ public interface Component extends CamelContextAware, Service {
     default boolean isAutowiredEnabled() {
         return true;
     }
-
 }

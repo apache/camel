@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snmp;
 
 import java.util.concurrent.TimeUnit;
@@ -62,11 +63,11 @@ public class TrapTest extends SnmpTestSupport {
         mock.expectedMessageCount(1);
 
         // wait a bit
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> mock.assertIsSatisfied());
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
 
         Message in = mock.getReceivedExchanges().get(0).getIn();
-        Assertions.assertTrue(in instanceof SnmpMessage, "Expected received object 'SnmpMessage.class'. Got: " + in.getClass());
+        Assertions.assertTrue(
+                in instanceof SnmpMessage, "Expected received object 'SnmpMessage.class'. Got: " + in.getClass());
         String msg = in.getBody(String.class);
         String expected = "<oid>1.2.3.4.5</oid><value>some string</value>";
         Assertions.assertTrue(msg.contains(expected), "Expected string containing '" + expected + "'. Got: " + msg);
@@ -80,10 +81,10 @@ public class TrapTest extends SnmpTestSupport {
         trap.add(new VariableBinding(SnmpConstants.sysUpTime, new TimeTicks(5000))); // put your uptime here
         trap.add(new VariableBinding(SnmpConstants.sysDescr, new OctetString("System Description")));
         if (version == 0) {
-            ((PDUv1) trap).setEnterprise(oid); //?
+            ((PDUv1) trap).setEnterprise(oid); // ?
         }
 
-        //Add Payload
+        // Add Payload
         Variable var = new OctetString("some string");
         trap.add(new VariableBinding(oid, var));
         return trap;
@@ -93,7 +94,7 @@ public class TrapTest extends SnmpTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                //genrate ports for trap consumers/producers
+                // genrate ports for trap consumers/producers
                 int portV0 = AvailablePortFinder.getNextAvailable();
                 int portV1 = AvailablePortFinder.getNextAvailable();
                 int portV3 = AvailablePortFinder.getNextAvailable();
@@ -115,12 +116,12 @@ public class TrapTest extends SnmpTestSupport {
                 from("direct:snmptrapV3")
                         .log(LoggingLevel.INFO, "Sending Trap pdu ${body}")
                         .to("snmp:127.0.0.1:" + portV3
-                            + "?securityName=test&securityLevel=1&protocol=udp&type=TRAP&snmpVersion=3");
+                                + "?securityName=test&securityLevel=1&protocol=udp&type=TRAP&snmpVersion=3");
 
-                from("snmp:0.0.0.0:" + portV3 + "?securityName=test&securityLevel=1&protocol=udp&type=TRAP&snmpVersion=3")
+                from("snmp:0.0.0.0:" + portV3
+                                + "?securityName=test&securityLevel=1&protocol=udp&type=TRAP&snmpVersion=3")
                         .to("mock:resultV3");
             }
         };
     }
-
 }

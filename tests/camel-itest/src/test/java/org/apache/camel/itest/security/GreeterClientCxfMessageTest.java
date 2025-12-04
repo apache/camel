@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.security;
 
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
@@ -21,9 +22,8 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.test.context.ContextConfiguration;
 
 @CamelSpringTest
-@ContextConfiguration(locations = { "CxfMessageCamelContext.xml" })
-@EnabledIf(value = "org.apache.camel.itest.security.GreeterClientTest#isPortAvailable",
-           disabledReason = "This test uses a fixed port that may not be available on certain hosts")
-public class GreeterClientCxfMessageTest extends GreeterClientTest {
-
-}
+@ContextConfiguration(locations = {"CxfMessageCamelContext.xml"})
+@EnabledIf(
+        value = "org.apache.camel.itest.security.GreeterClientTest#isPortAvailable",
+        disabledReason = "This test uses a fixed port that may not be available on certain hosts")
+public class GreeterClientCxfMessageTest extends GreeterClientTest {}

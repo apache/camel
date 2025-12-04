@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.transformer;
 
 import org.apache.camel.CamelContext;
@@ -40,8 +41,7 @@ public class ProcessorTransformer extends Transformer {
     private Processor processor;
     private String transformerString;
 
-    public ProcessorTransformer() {
-    }
+    public ProcessorTransformer() {}
 
     public ProcessorTransformer(CamelContext context) {
         setCamelContext(context);
@@ -104,7 +104,8 @@ public class ProcessorTransformer extends Transformer {
     @Override
     public String toString() {
         if (transformerString == null) {
-            transformerString = String.format("ProcessorTransformer[name='%s', from='%s', to='%s', processor='%s']",
+            transformerString = String.format(
+                    "ProcessorTransformer[name='%s', from='%s', to='%s', processor='%s']",
                     getName(), getFrom(), getTo(), processor);
         }
         return transformerString;

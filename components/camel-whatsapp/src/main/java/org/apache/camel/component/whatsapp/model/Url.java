@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 public class Url {
@@ -21,8 +22,7 @@ public class Url {
     private String url;
     private String type;
 
-    public Url() {
-    }
+    public Url() {}
 
     public String getUrl() {
         return url;

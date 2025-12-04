@@ -32,19 +32,17 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 
 /*
- The reason we are not using LocalStack containers here is because they bundle AWS SDK v1. They would
- be added to the classpath during the test and, potentially, cause errors or cause the code to not
- behave as in runtime.
- */
+The reason we are not using LocalStack containers here is because they bundle AWS SDK v1. They would
+be added to the classpath during the test and, potentially, cause errors or cause the code to not
+behave as in runtime.
+*/
 public class AWSContainer extends GenericContainer<AWSContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerInfraService.class);
     private static final int SERVICE_PORT = 4566;
 
     public AWSContainer() {
-        this(LocalPropertyResolver.getProperty(
-                AWSContainer.class,
-                AWSProperties.AWS_CONTAINER));
+        this(LocalPropertyResolver.getProperty(AWSContainer.class, AWSProperties.AWS_CONTAINER));
     }
 
     public AWSContainer(String imageName) {
@@ -67,12 +65,9 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
     }
 
     public void setupServices(Service... services) {
-        String serviceList = Arrays.stream(services)
-                .map(Service::serviceName)
-                .collect(Collectors.joining(","));
+        String serviceList = Arrays.stream(services).map(Service::serviceName).collect(Collectors.joining(","));
 
         setupServices(serviceList);
-
     }
 
     public void setupServices(String serviceList) {
@@ -105,8 +100,8 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
 
             return new URI(address);
         } catch (URISyntaxException e) {
-            throw new RuntimeException(String.format("Unable to determine the service endpoint: %s", e.getMessage()), e);
+            throw new RuntimeException(
+                    String.format("Unable to determine the service endpoint: %s", e.getMessage()), e);
         }
-
     }
 }

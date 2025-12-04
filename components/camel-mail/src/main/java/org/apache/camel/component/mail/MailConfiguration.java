@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -36,9 +40,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
-import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
-
 /**
  * Represents the configuration data for communicating over email
  */
@@ -54,103 +55,142 @@ public class MailConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath
     private int port = -1;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam
     @Metadata(label = "producer")
     private String subject;
+
     @UriParam
     @Metadata(label = "producer,advanced")
     private JavaMailSender javaMailSender;
+
     @UriParam(label = "advanced")
     private Session session;
+
     @UriParam(defaultValue = "true", label = "consumer,advanced")
     private boolean mapMailMessage = true;
+
     @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FROM, label = "producer")
     private String from = MailConstants.MAIL_DEFAULT_FROM;
+
     @UriParam(label = "producer")
     private String to;
+
     @UriParam(label = "producer")
     private String cc;
+
     @UriParam(label = "producer")
     private String bcc;
+
     @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER, label = "consumer,advanced")
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
+
     @UriParam
     @Metadata(label = "consumer")
     private boolean delete;
+
     @UriParam
     @Metadata(label = "consumer")
     private String copyTo;
+
     @UriParam
     @Metadata(label = "consumer")
     private String moveTo;
+
     @UriParam(defaultValue = "true")
     @Metadata(label = "consumer")
     private boolean unseen = true;
+
     @UriParam(label = "advanced")
     private boolean ignoreUriScheme;
+
     @UriParam
     @Metadata(label = "producer")
     private String replyTo;
+
     @UriParam(defaultValue = "-1")
     @Metadata(label = "consumer,advanced")
     private int fetchSize = -1;
+
     @UriParam(label = "advanced")
     private boolean debugMode;
+
     @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, label = "advanced")
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
+
     @UriParam(defaultValue = "text/plain", label = "advanced")
     private String contentType = "text/plain";
+
     @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY, label = "advanced")
     private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
+
     @UriParam(label = "advanced")
     private boolean useInlineAttachments;
+
     @UriParam(label = "advanced")
     private boolean ignoreUnsupportedCharset;
+
     @UriParam
     @Metadata(label = "consumer")
     private boolean disconnect;
+
     @UriParam(defaultValue = "true")
     @Metadata(label = "consumer")
     private boolean closeFolder = true;
+
     @UriParam(defaultValue = "true")
     @Metadata(label = "consumer")
     private boolean peek = true;
+
     @UriParam
     @Metadata(label = "consumer")
     private boolean skipFailedMessage;
+
     @UriParam
     @Metadata(label = "consumer")
     private boolean handleFailedMessage;
+
     @UriParam(defaultValue = "false")
     @Metadata(label = "consumer")
     private boolean mimeDecodeHeaders;
+
     @UriParam(label = "consumer")
     private boolean decodeFilename;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "advanced", prefix = "mail.", multiValue = true)
     private Properties additionalJavaMailProperties;
+
     @UriParam(label = "advanced")
     private AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver;
+
     @UriParam(label = "advanced")
     private Properties javaMailProperties;
+
     @UriParam(label = "advanced")
     private MailAuthenticator authenticator;
+
     @UriParam(label = "consumer,advanced")
     private boolean failOnDuplicateFileAttachment;
+
     @UriParam(label = "consumer,advanced")
     private String generateMissingAttachmentNames = MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+
     @UriParam(label = "consumer,advanced")
     private String handleDuplicateAttachmentNames = MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
 
-    public MailConfiguration() {
-    }
+    public MailConfiguration() {}
 
     public MailConfiguration(CamelContext context) {
         this.applicationClassLoader = context.getApplicationContextClassLoader();
@@ -252,8 +292,10 @@ public class MailConfiguration implements Cloneable {
                 if (applicationClassLoader != null) {
                     Thread.currentThread().setContextClassLoader(applicationClassLoader);
                 }
-                // use our authenticator that does not live user interaction but returns the already configured username and password
-                Session sessionInstance = Session.getInstance(answer.getJavaMailProperties(),
+                // use our authenticator that does not live user interaction but returns the already configured username
+                // and password
+                Session sessionInstance = Session.getInstance(
+                        answer.getJavaMailProperties(),
                         authenticator == null ? new DefaultAuthenticator(getUsername(), getPassword()) : authenticator);
                 // sets the debug mode of the underlying mail framework
                 sessionInstance.setDebug(debugMode);
@@ -291,12 +333,16 @@ public class MailConfiguration implements Cloneable {
         }
 
         if (sslContextParameters != null && isSecureProtocol()) {
-            properties.put("mail." + protocol + ".socketFactory", createSSLContext(context).getSocketFactory());
+            properties.put(
+                    "mail." + protocol + ".socketFactory",
+                    createSSLContext(context).getSocketFactory());
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
             properties.put("mail." + protocol + ".socketFactory.port", Integer.toString(port));
         }
         if (sslContextParameters != null && isStartTlsEnabled()) {
-            properties.put("mail." + protocol + ".ssl.socketFactory", createSSLContext(context).getSocketFactory());
+            properties.put(
+                    "mail." + protocol + ".ssl.socketFactory",
+                    createSSLContext(context).getSocketFactory());
             properties.put("mail." + protocol + ".ssl.socketFactory.port", Integer.toString(port));
         }
 
@@ -309,7 +355,8 @@ public class MailConfiguration implements Cloneable {
     public PasswordAuthentication getPasswordAuthentication() {
         // call authenticator so that the authenticator can dynamically determine the password or token
         return authenticator == null
-                ? new PasswordAuthentication(username, password) : authenticator.getPasswordAuthentication();
+                ? new PasswordAuthentication(username, password)
+                : authenticator.getPasswordAuthentication();
     }
 
     private SSLContext createSSLContext(CamelContext context) {
@@ -324,16 +371,21 @@ public class MailConfiguration implements Cloneable {
      * Is the used protocol to be secure or not
      */
     public boolean isSecureProtocol() {
-        return this.protocol.equalsIgnoreCase("smtps") || this.protocol.equalsIgnoreCase("pop3s")
+        return this.protocol.equalsIgnoreCase("smtps")
+                || this.protocol.equalsIgnoreCase("pop3s")
                 || this.protocol.equalsIgnoreCase("imaps");
     }
 
     public boolean isStartTlsEnabled() {
         if (additionalJavaMailProperties != null) {
-            return ObjectHelper.equal(additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.enable"), "true",
-                    true)
-                    || ObjectHelper.equal(additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.required"),
-                            "true", true);
+            return ObjectHelper.equal(
+                            additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.enable"),
+                            "true",
+                            true)
+                    || ObjectHelper.equal(
+                            additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.required"),
+                            "true",
+                            true);
         }
 
         return false;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
 
 import java.util.Map;
@@ -41,9 +42,16 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
 
     @Override
     public Producer createProducer(
-            CamelContext camelContext, String host,
-            String verb, String basePath, String uriTemplate, String queryParameters,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            String host,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String queryParameters,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
 
         String apiDoc = (String) parameters.get("apiDoc");
@@ -73,8 +81,8 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                     String token = key + "=";
                     boolean hasQuery = queryParameters.contains(token);
                     if (!hasQuery) {
-                        throw new IllegalArgumentException(
-                                "OpenApi api-doc does not contain query parameter " + key + " for " + verb + ":" + path);
+                        throw new IllegalArgumentException("OpenApi api-doc does not contain query parameter " + key
+                                + " for " + verb + ":" + path);
                     }
                 }
             }
@@ -82,8 +90,18 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
 
         String componentName = (String) parameters.get("componentName");
 
-        return createHttpProducer(camelContext, openApi, operation, host, verb, path, queryParameters,
-                produces, consumes, componentName, parameters);
+        return createHttpProducer(
+                camelContext,
+                openApi,
+                operation,
+                host,
+                verb,
+                path,
+                queryParameters,
+                produces,
+                consumes,
+                componentName,
+                parameters);
     }
 
     OpenAPI loadOpenApiModel(String apiDoc) throws Exception {
@@ -97,7 +115,6 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
         // In theory there should be a message in the parse result but it has disappeared...
         throw new IllegalArgumentException(
                 "The given OpenApi specification could not be loaded from `" + apiDoc + "`.");
-
     }
 
     private Operation getOpenApiOperation(OpenAPI openApi, String verb, String path) {
@@ -122,10 +139,17 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
     }
 
     private Producer createHttpProducer(
-            CamelContext camelContext, OpenAPI openApi, Operation operation,
-            String host, String verb, String path, String queryParameters,
-            String consumes, String produces,
-            String componentName, Map<String, Object> parameters)
+            CamelContext camelContext,
+            OpenAPI openApi,
+            Operation operation,
+            String host,
+            String verb,
+            String path,
+            String queryParameters,
+            String consumes,
+            String produces,
+            String componentName,
+            Map<String, Object> parameters)
             throws Exception {
 
         LOG.debug("Using OpenApi operation: {} with {} {}", operation, verb, path);
@@ -150,8 +174,10 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
             }
             if (consumes == null) {
                 StringJoiner consumesBuilder = new StringJoiner(",");
-                if (operation.getRequestBody() != null && operation.getRequestBody().getContent() != null) {
-                    for (String mediaType : operation.getRequestBody().getContent().keySet()) {
+                if (operation.getRequestBody() != null
+                        && operation.getRequestBody().getContent() != null) {
+                    for (String mediaType :
+                            operation.getRequestBody().getContent().keySet()) {
                         consumesBuilder.add(mediaType);
                     }
                 }
@@ -161,7 +187,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
             String basePath;
             String uriTemplate;
             if (host == null) {
-                //if no explicit host has been configured then use host and base path from the openApi api-doc
+                // if no explicit host has been configured then use host and base path from the openApi api-doc
                 host = RestOpenApiSupport.getHostFromOasDocument(openApi);
                 basePath = RestOpenApiSupport.getBasePathFromOasDocument(openApi);
                 uriTemplate = path;
@@ -172,9 +198,17 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
             }
 
             RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, null, componentName);
-            Producer answer = factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes,
+            Producer answer = factory.createProducer(
+                    camelContext,
+                    host,
+                    verb,
+                    basePath,
+                    uriTemplate,
+                    queryParameters,
+                    consumes,
                     produces,
-                    config, parameters);
+                    config,
+                    parameters);
             CamelContextAware.trySetCamelContext(answer, camelContext);
             return answer;
         } else {

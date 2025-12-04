@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.util.UUID;
@@ -24,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerNoopTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME_1 = "hello" + UUID.randomUUID() + ".txt";
@@ -50,7 +51,8 @@ public class FileConsumerNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true&initialDelay=0&delay=10")).convertBodyTo(String.class)
+                from(fileUri("?noop=true&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

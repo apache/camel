@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import org.apache.camel.DisabledAware;
@@ -31,7 +32,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A processor which validates the content of the inbound message body against a {@link Predicate}.
  */
-public class PredicateValidatingProcessor extends ServiceSupport implements Processor, Traceable, IdAware, DisabledAware {
+public class PredicateValidatingProcessor extends ServiceSupport
+        implements Processor, Traceable, IdAware, DisabledAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(PredicateValidatingProcessor.class);
 

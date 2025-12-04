@@ -31,7 +31,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -51,7 +52,9 @@ class BindTest extends CamelCommandBaseTest {
                       name: log-sink
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -63,7 +66,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -85,7 +89,9 @@ class BindTest extends CamelCommandBaseTest {
                       namespace: my-namespace
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -97,7 +103,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -117,7 +124,9 @@ class BindTest extends CamelCommandBaseTest {
                       name: log-sink
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -125,15 +134,14 @@ class BindTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer", "log");
 
         command.properties = new String[] {
-                "source.message=Hello",
-                "source.period=5000",
-                "sink.showHeaders=true",
+            "source.message=Hello", "source.period=5000", "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -154,7 +162,9 @@ class BindTest extends CamelCommandBaseTest {
                       name: log-sink
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -166,7 +176,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -186,22 +197,22 @@ class BindTest extends CamelCommandBaseTest {
                       name: log-sink
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
     public void shouldBindWithSteps() throws Exception {
         Bind command = createCommand("timer", "http");
 
-        command.steps = new String[] {
-                "set-body-action",
-                "log-action"
-        };
+        command.steps = new String[] {"set-body-action", "log-action"};
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -234,22 +245,22 @@ class BindTest extends CamelCommandBaseTest {
                       name: http-sink
                     properties:
                       url: "https://my-service/path"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
     public void shouldBindWithUriSteps() throws Exception {
         Bind command = createCommand("timer", "http");
 
-        command.steps = new String[] {
-                "set-body-action",
-                "log:info"
-        };
+        command.steps = new String[] {"set-body-action", "log:info"};
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -279,28 +290,26 @@ class BindTest extends CamelCommandBaseTest {
                       name: http-sink
                     properties:
                       url: "https://my-service/path"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
     public void shouldBindWithStepsAndProperties() throws Exception {
         Bind command = createCommand("timer", "http");
 
-        command.steps = new String[] {
-                "set-body-action",
-                "log-action"
-        };
+        command.steps = new String[] {"set-body-action", "log-action"};
 
         command.properties = new String[] {
-                "step-1.value=\"Camel rocks!\"",
-                "step-2.showHeaders=true",
-                "step-2.showExchangePattern=false"
+            "step-1.value=\"Camel rocks!\"", "step-2.showHeaders=true", "step-2.showExchangePattern=false"
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -334,27 +343,24 @@ class BindTest extends CamelCommandBaseTest {
                       name: http-sink
                     properties:
                       url: "https://my-service/path"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
     public void shouldBindWithUriStepsAndProperties() throws Exception {
         Bind command = createCommand("timer", "http");
 
-        command.steps = new String[] {
-                "set-body-action",
-                "log:info"
-        };
+        command.steps = new String[] {"set-body-action", "log:info"};
 
-        command.properties = new String[] {
-                "step-1.value=\"Camel rocks!\"",
-                "step-2.showHeaders=true"
-        };
+        command.properties = new String[] {"step-1.value=\"Camel rocks!\"", "step-2.showHeaders=true"};
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -384,27 +390,24 @@ class BindTest extends CamelCommandBaseTest {
                       name: http-sink
                     properties:
                       url: "https://my-service/path"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
     public void shouldBindWithUriStepsAndUriProperties() throws Exception {
         Bind command = createCommand("timer", "http");
 
-        command.steps = new String[] {
-                "set-body-action",
-                "log:info?showExchangePattern=false&showStreams=true"
-        };
+        command.steps = new String[] {"set-body-action", "log:info?showExchangePattern=false&showStreams=true"};
 
-        command.properties = new String[] {
-                "step-1.value=\"Camel rocks!\"",
-                "step-2.showHeaders=true"
-        };
+        command.properties = new String[] {"step-1.value=\"Camel rocks!\"", "step-2.showHeaders=true"};
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -436,7 +439,9 @@ class BindTest extends CamelCommandBaseTest {
                       name: http-sink
                     properties:
                       url: "https://my-service/path"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -446,7 +451,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -463,7 +469,9 @@ class BindTest extends CamelCommandBaseTest {
                     uri: log:info
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -471,14 +479,14 @@ class BindTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer", "log:info");
 
         command.properties = new String[] {
-                "source.message=Hello",
-                "sink.showHeaders=true",
+            "source.message=Hello", "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -495,7 +503,9 @@ class BindTest extends CamelCommandBaseTest {
                     uri: log:info
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -503,14 +513,14 @@ class BindTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer", "log:info?showStreams=false");
 
         command.properties = new String[] {
-                "source.message=Hello",
-                "sink.showHeaders=true",
+            "source.message=Hello", "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -528,7 +538,9 @@ class BindTest extends CamelCommandBaseTest {
                     properties:
                       showStreams: false
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -538,7 +550,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -552,7 +565,9 @@ class BindTest extends CamelCommandBaseTest {
                     uri: log:info
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -560,14 +575,14 @@ class BindTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer:tick", "log:info");
 
         command.properties = new String[] {
-                "source.message=Hello",
-                "sink.showHeaders=true",
+            "source.message=Hello", "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -581,7 +596,9 @@ class BindTest extends CamelCommandBaseTest {
                     uri: log:info
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -589,14 +606,14 @@ class BindTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer:tick?period=10000", "log:info?showStreams=false");
 
         command.properties = new String[] {
-                "source.message=Hello",
-                "sink.showHeaders=true",
+            "source.message=Hello", "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -612,7 +629,9 @@ class BindTest extends CamelCommandBaseTest {
                     properties:
                       showStreams: false
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -624,7 +643,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -654,7 +674,9 @@ class BindTest extends CamelCommandBaseTest {
                         #properties:
                           #key: "value"
                       parameters: {}
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -663,15 +685,13 @@ class BindTest extends CamelCommandBaseTest {
 
         command.errorHandler = "sink:log-sink";
 
-        command.properties = new String[] {
-                "error-handler.maximumRedeliveries=3",
-                "error-handler.redeliveryDelay=2000"
-        };
+        command.properties = new String[] {"error-handler.maximumRedeliveries=3", "error-handler.redeliveryDelay=2000"};
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -703,7 +723,9 @@ class BindTest extends CamelCommandBaseTest {
                       parameters:
                         redeliveryDelay: 2000
                         maximumRedeliveries: 3
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -713,15 +735,16 @@ class BindTest extends CamelCommandBaseTest {
         command.errorHandler = "sink:log-sink";
 
         command.properties = new String[] {
-                "error-handler.sink.showHeaders=true",
-                "error-handler.maximumRedeliveries=3",
-                "error-handler.redeliveryDelay=2000"
+            "error-handler.sink.showHeaders=true",
+            "error-handler.maximumRedeliveries=3",
+            "error-handler.redeliveryDelay=2000"
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -753,7 +776,9 @@ class BindTest extends CamelCommandBaseTest {
                       parameters:
                         redeliveryDelay: 2000
                         maximumRedeliveries: 3
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -765,7 +790,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -792,7 +818,9 @@ class BindTest extends CamelCommandBaseTest {
                         #properties:
                           #key: "value"
                       parameters: {}
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -801,15 +829,13 @@ class BindTest extends CamelCommandBaseTest {
 
         command.errorHandler = "sink:log:error";
 
-        command.properties = new String[] {
-                "error-handler.maximumRedeliveries=3",
-                "error-handler.redeliveryDelay=2000"
-        };
+        command.properties = new String[] {"error-handler.maximumRedeliveries=3", "error-handler.redeliveryDelay=2000"};
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -838,7 +864,9 @@ class BindTest extends CamelCommandBaseTest {
                       parameters:
                         redeliveryDelay: 2000
                         maximumRedeliveries: 3
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -848,15 +876,16 @@ class BindTest extends CamelCommandBaseTest {
         command.errorHandler = "sink:log:error";
 
         command.properties = new String[] {
-                "error-handler.sink.showHeaders=true",
-                "error-handler.maximumRedeliveries=3",
-                "error-handler.redeliveryDelay=2000"
+            "error-handler.sink.showHeaders=true",
+            "error-handler.maximumRedeliveries=3",
+            "error-handler.redeliveryDelay=2000"
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -885,7 +914,9 @@ class BindTest extends CamelCommandBaseTest {
                       parameters:
                         redeliveryDelay: 2000
                         maximumRedeliveries: 3
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -895,15 +926,16 @@ class BindTest extends CamelCommandBaseTest {
         command.errorHandler = "sink:log:error?showStreams=false";
 
         command.properties = new String[] {
-                "error-handler.sink.showHeaders=true",
-                "error-handler.maximumRedeliveries=3",
-                "error-handler.redeliveryDelay=2000"
+            "error-handler.sink.showHeaders=true",
+            "error-handler.maximumRedeliveries=3",
+            "error-handler.redeliveryDelay=2000"
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -933,7 +965,9 @@ class BindTest extends CamelCommandBaseTest {
                       parameters:
                         redeliveryDelay: 2000
                         maximumRedeliveries: 3
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -945,7 +979,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -968,7 +1003,9 @@ class BindTest extends CamelCommandBaseTest {
                   errorHandler:
                     log:
                       parameters: {}
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -977,15 +1014,13 @@ class BindTest extends CamelCommandBaseTest {
 
         command.errorHandler = "log";
 
-        command.properties = new String[] {
-                "error-handler.maximumRedeliveries=3",
-                "error-handler.redeliveryDelay=2000"
-        };
+        command.properties = new String[] {"error-handler.maximumRedeliveries=3", "error-handler.redeliveryDelay=2000"};
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -1010,7 +1045,9 @@ class BindTest extends CamelCommandBaseTest {
                       parameters:
                         redeliveryDelay: 2000
                         maximumRedeliveries: 3
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -1022,7 +1059,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -1044,7 +1082,9 @@ class BindTest extends CamelCommandBaseTest {
                       #key: "value"
                   errorHandler:
                     none: {}
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -1055,7 +1095,8 @@ class BindTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                  {
                   "apiVersion": "camel.apache.org/v1",
                   "kind": "Pipe",
@@ -1082,7 +1123,9 @@ class BindTest extends CamelCommandBaseTest {
                     }
                   }
                 }
-                 """.trim(), output);
+                 """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -1092,7 +1135,8 @@ class BindTest extends CamelCommandBaseTest {
 
         Assertions.assertEquals(-1, command.doCall());
 
-        Assertions.assertEquals("ERROR: Unsupported output format 'wrong' (supported: file, yaml, json)", printer.getOutput());
+        Assertions.assertEquals(
+                "ERROR: Unsupported output format 'wrong' (supported: file, yaml, json)", printer.getOutput());
     }
 
     private Bind createCommand(String source, String sink) {

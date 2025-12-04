@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistributedTest {
 
@@ -81,9 +82,12 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .aggregationRepository(sharedAggregationRepository).optimisticLocking()
-                        .completionSize(8).to("mock:result");
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(sharedAggregationRepository)
+                        .optimisticLocking()
+                        .completionSize(8)
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import java.io.IOException;
@@ -30,8 +31,10 @@ import org.slf4j.LoggerFactory;
  * the server is not available upon route initialization. Also verify that these endpoints will then deliver messages as
  * expected.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppDeferredConnectionIT extends XmppBaseContainerTest {
     private static final Logger LOG = LoggerFactory.getLogger(XmppDeferredConnectionIT.class);
 
@@ -90,27 +93,24 @@ public class XmppDeferredConnectionIT extends XmppBaseContainerTest {
 
                 onException(RuntimeException.class).handled(true).to("mock:error");
 
-                from("direct:start")
-                        .to(getProducerUri());
+                from("direct:start").to(getProducerUri());
 
-                from(getConsumerUri()).id("test-consumer")
-                        .to("mock:out");
+                from(getConsumerUri()).id("test-consumer").to("mock:out");
 
-                from("direct:simple")
-                        .to("mock:simple");
+                from("direct:simple").to("mock:simple");
             }
         };
     }
 
     protected String getProducerUri() {
         return "xmpp://localhost:" + xmppServer.getUrl()
-               + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel"
-               + "&testConnectionOnStartup=false";
+                + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel"
+                + "&testConnectionOnStartup=false";
     }
 
     protected String getConsumerUri() {
         return "xmpp://localhost:" + xmppServer.getUrl()
-               + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel"
-               + "&testConnectionOnStartup=false&connectionPollDelay=1";
+                + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel"
+                + "&testConnectionOnStartup=false&connectionPollDelay=1";
     }
 }

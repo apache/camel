@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snakeyaml;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -29,11 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SnakeYAMLDoSTest extends CamelTestSupport {
 
@@ -66,7 +67,8 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
 
             ProducerTemplate template = context.createProducerTemplate();
 
-            Exception ex = assertThrows(CamelExecutionException.class,
+            Exception ex = assertThrows(
+                    CamelExecutionException.class,
                     () -> template.requestBody("direct:back", is, String.class),
                     "Failure expected on an alias expansion attack");
 
@@ -87,13 +89,14 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
         ProducerTemplate template = context.createProducerTemplate();
         String dump = createDump(30);
 
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("direct:back2", dump, String.class),
                 "Failure expected on an alias expansion attack");
 
         Throwable cause = ex.getCause();
-        assertEquals("Recursive key for mapping is detected but it is not configured to be allowed.",
-                cause.getMessage());
+        assertEquals(
+                "Recursive key for mapping is detected but it is not configured to be allowed.", cause.getMessage());
 
         mock.assertIsSatisfied();
     }
@@ -156,13 +159,9 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:back")
-                        .unmarshal(new SnakeYAMLDataFormat())
-                        .to("mock:reverse");
+                from("direct:back").unmarshal(new SnakeYAMLDataFormat()).to("mock:reverse");
 
-                from("direct:back2")
-                        .unmarshal(dataFormat)
-                        .to("mock:reverse2");
+                from("direct:back2").unmarshal(dataFormat).to("mock:reverse2");
             }
         };
     }

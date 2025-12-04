@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
@@ -125,11 +126,11 @@ public class AS2ServerConnection {
         private final AS2SignatureAlgorithm signingAlgorithm;
 
         public AS2ConsumerConfiguration(
-                                        AS2SignatureAlgorithm signingAlgorithm,
-                                        Certificate[] signingCertificateChain,
-                                        PrivateKey signingPrivateKey,
-                                        PrivateKey decryptingPrivateKey,
-                                        Certificate[] validateSigningCertificateChain) {
+                AS2SignatureAlgorithm signingAlgorithm,
+                Certificate[] signingCertificateChain,
+                PrivateKey signingPrivateKey,
+                PrivateKey decryptingPrivateKey,
+                Certificate[] validateSigningCertificateChain) {
             this.signingAlgorithm = signingAlgorithm;
             this.signingCertificateChain = signingCertificateChain;
             this.signingPrivateKey = signingPrivateKey;
@@ -187,16 +188,20 @@ public class AS2ServerConnection {
         String requestUriPath = cleanUpPath(requestUri);
 
         // 1. LOOKUP: Find the specific consumer configuration
-        AS2ConsumerConfiguration config = AS2ServerConnection.this
-                .getConfigurationForPath(requestUriPath).orElse(null);
+        AS2ConsumerConfiguration config =
+                AS2ServerConnection.this.getConfigurationForPath(requestUriPath).orElse(null);
 
         // 2. Logging BEFORE injection (CRITICAL for debugging path issues)
-        LOG.debug("Processing request. Incoming URI: {}, Canonical Path: {}. Config Found: {}",
-                requestUri, requestUriPath, (config != null));
+        LOG.debug(
+                "Processing request. Incoming URI: {}, Canonical Path: {}. Config Found: {}",
+                requestUri,
+                requestUriPath,
+                (config != null));
 
         // 3. Handle missing config
         if (config == null) {
-            LOG.warn("No AS2 consumer configuration found for canonical path: {}. Encrypted messages will likely fail.",
+            LOG.warn(
+                    "No AS2 consumer configuration found for canonical path: {}. Encrypted messages will likely fail.",
                     requestUriPath);
             return null;
         }
@@ -216,9 +221,12 @@ public class AS2ServerConnection {
                     "FATAL: Decrypting Private Key failed to be read back from HttpContext immediately after injection for path: {}",
                     requestUriPath);
         } else if (!(checkKey instanceof PrivateKey)) {
-            LOG.error("FATAL: Key in HttpContext is not a PrivateKey object! Found type: {}", checkKey.getClass().getName());
+            LOG.error(
+                    "FATAL: Key in HttpContext is not a PrivateKey object! Found type: {}",
+                    checkKey.getClass().getName());
         } else {
-            LOG.debug("Context injection confirmed: Decrypting Key set successfully into HttpContext. Key type: {}",
+            LOG.debug(
+                    "Context injection confirmed: Decrypting Key set successfully into HttpContext. Key type: {}",
                     checkKey.getClass().getName());
         }
 
@@ -276,16 +284,13 @@ public class AS2ServerConnection {
         private final HttpService httpService;
         private final RequestHandlerRegistry registry;
 
-        public RequestListenerService(String as2Version,
-                                      String originServer,
-                                      String serverFqdn,
-                                      String mdnMessageTemplate)
-                                                                 throws IOException {
+        public RequestListenerService(
+                String as2Version, String originServer, String serverFqdn, String mdnMessageTemplate)
+                throws IOException {
 
             // Set up HTTP protocol processor for incoming connections
-            final HttpProcessor inhttpproc = initProtocolProcessor(
-                    as2Version, originServer, serverFqdn,
-                    mdnMessageTemplate);
+            final HttpProcessor inhttpproc =
+                    initProtocolProcessor(as2Version, originServer, serverFqdn, mdnMessageTemplate);
 
             registry = new RequestHandlerRegistry<>();
             HttpServerRequestHandler handler = new BasicHttpServerRequestHandler(registry);
@@ -309,7 +314,7 @@ public class AS2ServerConnection {
         private final RequestListenerService service;
 
         public RequestAcceptorThread(int port, SSLContext sslContext, RequestListenerService service)
-                                                                                                      throws IOException {
+                throws IOException {
             setName(REQUEST_LISTENER_THREAD_NAME_PREFIX + port);
             this.service = service;
 
@@ -382,8 +387,8 @@ public class AS2ServerConnection {
                             .map(w -> w.config)
                             .orElse(null);
 
-                    String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
-                            String.class);
+                    String recipientAddress =
+                            coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS, String.class);
 
                     if (recipientAddress != null && config != null) {
                         // Send the MDN asynchronously.
@@ -418,15 +423,18 @@ public class AS2ServerConnection {
                             }
                             if (multipartSignedEntity != null) {
                                 asynchronousMDNManager.send(
-                                        multipartSignedEntity, multipartSignedEntity.getContentType(), recipientAddress);
+                                        multipartSignedEntity,
+                                        multipartSignedEntity.getContentType(),
+                                        recipientAddress);
                             }
                         } else {
                             // send an unsigned MDN
-                            asynchronousMDNManager.send(multipartReportEntity,
-                                    multipartReportEntity.getMainMessageContentType(), recipientAddress);
+                            asynchronousMDNManager.send(
+                                    multipartReportEntity,
+                                    multipartReportEntity.getMainMessageContentType(),
+                                    recipientAddress);
                         }
                     }
-
                 }
             } catch (final ConnectionClosedException ex) {
                 LOG.info("Client closed connection");
@@ -441,24 +449,24 @@ public class AS2ServerConnection {
                 }
             }
         }
-
     }
 
-    public AS2ServerConnection(String as2Version,
-                               String originServer,
-                               String serverFqdn,
-                               Integer serverPortNumber,
-                               AS2SignatureAlgorithm signingAlgorithm,
-                               Certificate[] signingCertificateChain,
-                               PrivateKey signingPrivateKey,
-                               PrivateKey decryptingPrivateKey,
-                               String mdnMessageTemplate,
-                               Certificate[] validateSigningCertificateChain,
-                               SSLContext sslContext,
-                               String userName,
-                               String password,
-                               String accessToken)
-                                                   throws IOException {
+    public AS2ServerConnection(
+            String as2Version,
+            String originServer,
+            String serverFqdn,
+            Integer serverPortNumber,
+            AS2SignatureAlgorithm signingAlgorithm,
+            Certificate[] signingCertificateChain,
+            PrivateKey signingPrivateKey,
+            PrivateKey decryptingPrivateKey,
+            String mdnMessageTemplate,
+            Certificate[] validateSigningCertificateChain,
+            SSLContext sslContext,
+            String userName,
+            String password,
+            String accessToken)
+            throws IOException {
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.originServer = ObjectHelper.notNull(originServer, "userAgent");
         this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
@@ -478,11 +486,8 @@ public class AS2ServerConnection {
                 validateSigningCertificateChain);
         registerConsumerConfiguration("/", consumerConfig);
 
-        listenerService = new RequestListenerService(
-                this.as2Version,
-                this.originServer,
-                this.serverFqdn,
-                mdnMessageTemplate);
+        listenerService =
+                new RequestListenerService(this.as2Version, this.originServer, this.serverFqdn, mdnMessageTemplate);
 
         acceptorThread = new RequestAcceptorThread(parserServerPortNumber, sslContext, listenerService);
         acceptorThread.setDaemon(true);
@@ -556,12 +561,11 @@ public class AS2ServerConnection {
     }
 
     protected HttpProcessor initProtocolProcessor(
-            String as2Version,
-            String originServer,
-            String serverFqdn,
-            String mdnMessageTemplate) {
+            String as2Version, String originServer, String serverFqdn, String mdnMessageTemplate) {
         return HttpProcessorBuilder.create()
-                .addFirst(new AS2ConsumerConfigInterceptor()) // Sets up the request-specific keys and certificates in the HttpContext
+                .addFirst(
+                        new AS2ConsumerConfigInterceptor()) // Sets up the request-specific keys and certificates in the
+                // HttpContext
                 .add(new ResponseContent(true))
                 .add(new ResponseServer(originServer))
                 .add(new ResponseDate())
@@ -569,5 +573,4 @@ public class AS2ServerConnection {
                 .add(new ResponseMDN(as2Version, serverFqdn, mdnMessageTemplate))
                 .build();
     }
-
 }

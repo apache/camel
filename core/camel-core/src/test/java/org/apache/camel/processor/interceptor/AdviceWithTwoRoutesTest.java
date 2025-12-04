@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
@@ -94,11 +95,14 @@ public class AdviceWithTwoRoutesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").routeId("a").to("log:a").setBody(body().regexReplaceAll("\n", "")).to("mock:a");
+                from("direct:a")
+                        .routeId("a")
+                        .to("log:a")
+                        .setBody(body().regexReplaceAll("\n", ""))
+                        .to("mock:a");
 
                 from("direct:b").routeId("b").to("log:b").to("mock:b");
             }
         };
     }
-
 }

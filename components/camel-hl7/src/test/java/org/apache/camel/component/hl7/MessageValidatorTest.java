@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
+
+import static org.apache.camel.component.hl7.HL7.messageConforms;
+import static org.apache.camel.component.hl7.HL7.messageConformsTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
@@ -30,10 +35,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.hl7.HL7.messageConforms;
-import static org.apache.camel.component.hl7.HL7.messageConformsTo;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MessageValidatorTest extends CamelTestSupport {
 
@@ -54,9 +55,7 @@ public class MessageValidatorTest extends CamelTestSupport {
 
             @Override
             protected void configure() {
-                forVersion(Version.V24)
-                        .message("ADT", "A01")
-                        .terser("PID-8", not(empty()));
+                forVersion(Version.V24).message("ADT", "A01").terser("PID-8", not(empty()));
             }
         };
         customValidationContext = ValidationContextFactory.fromBuilder(builder);
@@ -79,8 +78,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:test5");
         mock.expectedMessageCount(0);
         Message msg = createADT01Message();
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:test5", msg));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:test5", msg));
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -98,8 +96,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:test2");
         mock.expectedMessageCount(0);
         Message msg = createADT01Message();
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:test2", msg));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:test2", msg));
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -128,8 +125,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
         Message msg = createADT01Message();
         msg.setParser(customContext.getPipeParser());
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:test6", msg));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:test6", msg));
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -137,9 +133,15 @@ public class MessageValidatorTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:test1").validate(messageConformsTo(defaultValidationContext)).to("mock:test1");
-                from("direct:test2").validate(messageConformsTo(customValidationContext)).to("mock:test2");
-                from("direct:test3").validate(messageConformsTo(header("validator"))).to("mock:test3");
+                from("direct:test1")
+                        .validate(messageConformsTo(defaultValidationContext))
+                        .to("mock:test1");
+                from("direct:test2")
+                        .validate(messageConformsTo(customValidationContext))
+                        .to("mock:test2");
+                from("direct:test3")
+                        .validate(messageConformsTo(header("validator")))
+                        .to("mock:test3");
                 from("direct:test4").validate(messageConformsTo(defaultContext)).to("mock:test4");
                 from("direct:test5").validate(messageConformsTo(customContext)).to("mock:test5");
                 from("direct:test6").validate(messageConforms()).to("mock:test6");

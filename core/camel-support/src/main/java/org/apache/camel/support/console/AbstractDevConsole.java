@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.console;
 
 import java.util.Map;
@@ -129,5 +130,4 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
      * @see DevConsole#call(MediaType, Map)
      */
     protected abstract String doCallText(Map<String, Object> options);
-
 }

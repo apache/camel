@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
 
 import java.time.temporal.ChronoUnit;
@@ -79,9 +80,7 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     private TypedGuard<Exchange> typedGuard;
 
     public FaultToleranceProcessor(
-                                   FaultToleranceConfiguration config,
-                                   Processor processor,
-                                   Processor fallbackProcessor) {
+            FaultToleranceConfiguration config, Processor processor, Processor fallbackProcessor) {
         this.config = config;
         this.processor = processor;
         this.fallbackProcessor = fallbackProcessor;
@@ -199,7 +198,8 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     @ManagedAttribute(description = "Returns the current state of the circuit breaker")
     public String getCircuitBreakerState() {
         try {
-            CircuitBreakerState circuitBreakerState = CircuitBreakerMaintenance.get().currentState(id);
+            CircuitBreakerState circuitBreakerState =
+                    CircuitBreakerMaintenance.get().currentState(id);
             return circuitBreakerState.name();
         } catch (Exception e) {
             return null;
@@ -238,7 +238,8 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
                 typedGuard.call(task);
             } catch (Exception e) {
                 // Do fallback if applicable. Note that a fallback handler is not configured on the TypedGuard builder
-                // and is instead invoked manually here since we need access to the message exchange on each FaultToleranceProcessor.process call
+                // and is instead invoked manually here since we need access to the message exchange on each
+                // FaultToleranceProcessor.process call
                 if (fallbackProcessor != null) {
                     fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, null);
                     fallbackTask.call();
@@ -274,9 +275,11 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     protected void doBuild() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
-        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
+        boolean pooled =
+                camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
         if (pooled) {
-            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
+            int capacity =
+                    camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory = new PooledTaskFactory(getId()) {
                 @Override
                 public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
@@ -307,8 +310,10 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
         }
 
         // create a per processor exchange factory
-        this.processorExchangeFactory = getCamelContext().getCamelContextExtension()
-                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory = getCamelContext()
+                .getCamelContextExtension()
+                .getProcessorExchangeFactory()
+                .newProcessorExchangeFactory(this);
         this.processorExchangeFactory.setRouteId(getRouteId());
         this.processorExchangeFactory.setId(getId());
 
@@ -334,13 +339,15 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
                     .done();
 
             if (config.isTimeoutEnabled()) {
-                typedGuardBuilder.withTimeout()
+                typedGuardBuilder
+                        .withTimeout()
                         .duration(config.getTimeoutDuration(), ChronoUnit.MILLIS)
                         .done();
             }
 
             if (config.isBulkheadEnabled()) {
-                typedGuardBuilder.withBulkhead()
+                typedGuardBuilder
+                        .withBulkhead()
                         .queueSize(config.getBulkheadWaitingTaskQueue())
                         .limit(config.getBulkheadMaxConcurrentCalls())
                         .done();
@@ -352,8 +359,9 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     protected void doStart() throws Exception {
         if (typedGuard == null) {
             if (executorService == null) {
-                executorService = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this,
-                        "CamelMicroProfileFaultTolerance");
+                executorService = getCamelContext()
+                        .getExecutorServiceManager()
+                        .newCachedThreadPool(this, "CamelMicroProfileFaultTolerance");
                 shutdownExecutorService = true;
             }
             typedGuardBuilder.withThreadOffloadExecutor(executorService);
@@ -526,8 +534,8 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
 
             // store the last to endpoint as the failure endpoint
             if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
-                exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
-                        exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+                exchange.setProperty(
+                        ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
             }
             // give the rest of the pipeline another chance
             exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, true);

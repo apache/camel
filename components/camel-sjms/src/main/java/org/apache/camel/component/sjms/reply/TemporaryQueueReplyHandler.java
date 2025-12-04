@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.reply;
 
 import jakarta.jms.Message;
@@ -36,8 +37,13 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     protected final String correlationId;
     protected final long timeout;
 
-    public TemporaryQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                      String originalCorrelationId, String correlationId, long timeout) {
+    public TemporaryQueueReplyHandler(
+            ReplyManager replyManager,
+            Exchange exchange,
+            AsyncCallback callback,
+            String originalCorrelationId,
+            String correlationId,
+            long timeout) {
         this.replyManager = replyManager;
         this.exchange = exchange;
         this.originalCorrelationId = originalCorrelationId;

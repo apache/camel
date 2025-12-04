@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
 
 import java.io.IOException;
@@ -36,20 +37,23 @@ import org.springframework.ws.test.client.RequestMatcher;
  * Check if the MessageFilter is used and resolved from endpoint uri or global context configuration.
  */
 @CamelSpringTest
-@ContextConfiguration(locations = { "classpath:org/apache/camel/component/spring/ws/MessageFilter-context.xml" })
+@ContextConfiguration(locations = {"classpath:org/apache/camel/component/spring/ws/MessageFilter-context.xml"})
 public class MessageFilterResolvingTest extends AbstractSmockClientTest {
     @Autowired
     private ProducerTemplate template;
 
     private String body = "<customerCountRequest xmlns='http://springframework.org/spring-ws'>"
-                          + "<customerName>John Doe</customerName>" + "</customerCountRequest>";
+            + "<customerName>John Doe</customerName>" + "</customerCountRequest>";
 
     @Test
     public void globalTestHeaderAttribute() {
         expect(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1")))
                 .andExpect(soapHeader(new QName("http://virtualCheck/", "globalFilter")));
 
-        template.sendBodyAndHeader("direct:sendWithGlobalFilter", body, "headerKey",
+        template.sendBodyAndHeader(
+                "direct:sendWithGlobalFilter",
+                body,
+                "headerKey",
                 new QName("http://newHeaderSupport/", "testHeaderValue1"));
     }
 
@@ -58,18 +62,22 @@ public class MessageFilterResolvingTest extends AbstractSmockClientTest {
         expect(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1")))
                 .andExpect(soapHeader(new QName("http://virtualCheck/", "localFilter")));
 
-        template.sendBodyAndHeader("direct:sendWithLocalFilter", body, "headerKey",
+        template.sendBodyAndHeader(
+                "direct:sendWithLocalFilter",
+                body,
+                "headerKey",
                 new QName("http://newHeaderSupport/", "testHeaderValue1"));
-
     }
 
     @Test
     public void emptyTestHeaderAttribute() {
         expect(doesntContains(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1"))));
 
-        template.sendBodyAndHeader("direct:sendWithoutFilter", body, "headerKey",
+        template.sendBodyAndHeader(
+                "direct:sendWithoutFilter",
+                body,
+                "headerKey",
                 new QName("http://newHeaderSupport/", "testHeaderValue1"));
-
     }
 
     private RequestMatcher doesntContains(final RequestMatcher soapHeader) {

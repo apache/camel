@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.micrometer.eventnotifier;
 
-import io.micrometer.core.instrument.Gauge;
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.micrometer.eventnotifier;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_ADDED;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_RUNNING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import io.micrometer.core.instrument.Gauge;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Christian Ohr

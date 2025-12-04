@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.multimap;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MULTIMAP;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Category;
@@ -27,18 +30,20 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MULTIMAP;
-
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed multimap.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MULTIMAP, title = "Hazelcast Multimap",
-             syntax = "hazelcast-multimap:cacheName", category = { Category.CACHE, Category.CLUSTERING },
-             headersClass = HazelcastConstants.class)
+@UriEndpoint(
+        firstVersion = "2.7.0",
+        scheme = SCHEME_MULTIMAP,
+        title = "Hazelcast Multimap",
+        syntax = "hazelcast-multimap:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = HazelcastConstants.class)
 public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastMultimapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName,
-                                     HazelcastDefaultComponent component) {
+    public HazelcastMultimapEndpoint(
+            HazelcastInstance hazelcastInstance, String uri, String cacheName, HazelcastDefaultComponent component) {
         super(hazelcastInstance, uri, component, cacheName);
         setCommand(HazelcastCommand.multimap);
     }
@@ -54,5 +59,4 @@ public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {
     public Producer createProducer() throws Exception {
         return new HazelcastMultimapProducer(hazelcastInstance, this, cacheName);
     }
-
 }

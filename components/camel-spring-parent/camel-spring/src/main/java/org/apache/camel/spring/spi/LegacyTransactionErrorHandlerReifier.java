@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
+
+import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
 import java.util.Map;
 
@@ -28,8 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
 /**
  * Legacy error handler for XML DSL in camel-spring-xml
@@ -49,7 +50,8 @@ public class LegacyTransactionErrorHandlerReifier
         TransactionTemplate transactionTemplate = definition.getTransactionTemplate();
         if (transactionTemplate == null) {
             // lookup in context if no transaction template has been configured
-            LOG.debug("No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
+            LOG.debug(
+                    "No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
 
             Map<String, TransactedPolicy> mapPolicy = findByTypeWithName(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
@@ -73,22 +75,25 @@ public class LegacyTransactionErrorHandlerReifier
                 } else if (mapTemplate.size() == 1) {
                     transactionTemplate = mapTemplate.values().iterator().next();
                 } else {
-                    LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
-                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
+                    LOG.debug(
+                            "Found {} TransactionTemplate in registry. Cannot determine which one to use. "
+                                    + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
                             mapTemplate.size());
                 }
             }
 
             if (transactionTemplate == null) {
-                Map<String, PlatformTransactionManager> mapManager = findByTypeWithName(PlatformTransactionManager.class);
+                Map<String, PlatformTransactionManager> mapManager =
+                        findByTypeWithName(PlatformTransactionManager.class);
                 if (mapManager == null || mapManager.isEmpty()) {
                     LOG.trace("No PlatformTransactionManager found in registry.");
                 } else if (mapManager.size() == 1) {
-                    transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
+                    transactionTemplate = new TransactionTemplate(
+                            mapManager.values().iterator().next());
                 } else {
                     LOG.debug(
                             "Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
-                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
+                                    + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
                             mapManager.size());
                 }
             }
@@ -101,15 +106,18 @@ public class LegacyTransactionErrorHandlerReifier
         ObjectHelper.notNull(transactionTemplate, "transactionTemplate", this);
 
         TransactionErrorHandler answer = new TransactionErrorHandler(
-                camelContext, processor,
-                definition.getLogger(), definition.getOnRedelivery(),
-                definition.getRedeliveryPolicy(), transactionTemplate,
+                camelContext,
+                processor,
+                definition.getLogger(),
+                definition.getOnRedelivery(),
+                definition.getRedeliveryPolicy(),
+                transactionTemplate,
                 definition.getRetryWhilePolicy(camelContext),
                 getExecutorService(definition.getExecutorService(), definition.getExecutorServiceRef()),
-                definition.getRollbackLoggingLevel(), definition.getOnExceptionOccurred());
+                definition.getRollbackLoggingLevel(),
+                definition.getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(answer);
         return answer;
     }
-
 }

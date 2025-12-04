@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -24,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DeleteBucketFunctionalTest extends CamelTestSupport {
 
@@ -43,10 +44,9 @@ public class DeleteBucketFunctionalTest extends CamelTestSupport {
             public void configure() {
                 from("direct:delete_bucket")
                         .setProperty("CamelHwCloudObsBucketName", constant(BUCKET_NAME))
-                        .to("hwcloud-obs:deleteBucket?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-obs:deleteBucket?" + "serviceKeys=#serviceKeys"
+                                + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Delete bucket successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:delete_bucket_result");

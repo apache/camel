@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery;
+
+import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY;
 
 import com.google.cloud.bigquery.BigQuery;
 import org.apache.camel.Category;
@@ -26,8 +29,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY;
 
 /**
  * Google BigQuery data warehouse for analytics.
@@ -41,9 +42,14 @@ import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants
  * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be
  * handled by Camel.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_BIGQUERY, title = "Google BigQuery",
-             syntax = "google-bigquery:projectId:datasetId:tableId",
-             category = { Category.CLOUD, Category.BIGDATA }, producerOnly = true, headersClass = GoogleBigQueryConstants.class)
+@UriEndpoint(
+        firstVersion = "2.20.0",
+        scheme = SCHEME_BIGQUERY,
+        title = "Google BigQuery",
+        syntax = "google-bigquery:projectId:datasetId:tableId",
+        category = {Category.CLOUD, Category.BIGDATA},
+        producerOnly = true,
+        headersClass = GoogleBigQueryConstants.class)
 public class GoogleBigQueryEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -51,8 +57,8 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint implements EndpointS
 
     private BigQuery bigQuery;
 
-    protected GoogleBigQueryEndpoint(String endpointUri, GoogleBigQueryComponent component,
-                                     GoogleBigQueryConfiguration configuration) {
+    protected GoogleBigQueryEndpoint(
+            String endpointUri, GoogleBigQueryComponent component, GoogleBigQueryConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
     }
@@ -91,10 +97,11 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint implements EndpointS
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(configuration.getProjectId()) && ObjectHelper.isNotEmpty(configuration.getDatasetId())
+        if (ObjectHelper.isNotEmpty(configuration.getProjectId())
+                && ObjectHelper.isNotEmpty(configuration.getDatasetId())
                 && ObjectHelper.isNotEmpty(configuration.getTableId())) {
             return getServiceProtocol() + ":" + configuration.getProjectId() + ":" + configuration.getDatasetId() + ":"
-                   + configuration.getTableId();
+                    + configuration.getTableId();
         }
         return null;
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import java.time.Duration;
@@ -51,9 +52,14 @@ import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 /**
  * Store and retrieve data from AWS DynamoDB.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS DynamoDB", syntax = "aws2-ddb:tableName",
-             producerOnly = true, category = { Category.CLOUD, Category.DATABASE },
-             headersClass = Ddb2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-ddb",
+        title = "AWS DynamoDB",
+        syntax = "aws2-ddb:tableName",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.DATABASE},
+        headersClass = Ddb2Constants.class)
 public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(Ddb2Endpoint.class);
@@ -88,15 +94,18 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
         super.doStart();
 
         ddbClient = configuration.getAmazonDDBClient() != null
-                ? configuration.getAmazonDDBClient() : Ddb2ClientFactory.getDynamoDBClient(configuration).getDynamoDBClient();
+                ? configuration.getAmazonDDBClient()
+                : Ddb2ClientFactory.getDynamoDBClient(configuration).getDynamoDBClient();
 
         String tableName = getConfiguration().getTableName();
         LOG.trace("Querying whether table [{}] already exists...", tableName);
 
         if (configuration.isEnabledInitialDescribeTable()) {
             try {
-                DescribeTableRequest.Builder request = DescribeTableRequest.builder().tableName(tableName);
-                TableDescription tableDescription = ddbClient.describeTable(request.build()).table();
+                DescribeTableRequest.Builder request =
+                        DescribeTableRequest.builder().tableName(tableName);
+                TableDescription tableDescription =
+                        ddbClient.describeTable(request.build()).table();
                 if (!isTableActive(tableDescription)) {
                     waitForTableToBecomeAvailable(tableName);
                 }
@@ -127,11 +136,16 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     }
 
     private TableDescription createTable(String tableName) {
-        CreateTableRequest.Builder createTableRequest = CreateTableRequest.builder().tableName(tableName)
-                .keySchema(KeySchemaElement.builder().attributeName(configuration.getKeyAttributeName())
-                        .keyType(configuration.getKeyAttributeType()).build())
-                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(configuration.getReadCapacity())
-                        .writeCapacityUnits(configuration.getWriteCapacity()).build())
+        CreateTableRequest.Builder createTableRequest = CreateTableRequest.builder()
+                .tableName(tableName)
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName(configuration.getKeyAttributeName())
+                        .keyType(configuration.getKeyAttributeType())
+                        .build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
+                        .readCapacityUnits(configuration.getReadCapacity())
+                        .writeCapacityUnits(configuration.getWriteCapacity())
+                        .build())
                 .attributeDefinitions(AttributeDefinition.builder()
                         .attributeName(configuration.getKeyAttributeName())
                         .attributeType(configuration.getKeyScalarType())
@@ -150,11 +164,12 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     private void waitForTableToBecomeAvailable(String tableName) {
         LOG.trace("Waiting for [{}] to become ACTIVE...", tableName);
 
-        BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationTimeBudget()
-                .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
-                .withMaxDuration(Duration.ofMinutes(5))
-                .withInterval(Duration.ofSeconds(5))
-                .build())
+        BlockingTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                        .withMaxDuration(Duration.ofMinutes(5))
+                        .withInterval(Duration.ofSeconds(5))
+                        .build())
                 .build();
 
         if (!task.run(getCamelContext(), this::waitForTable, tableName)) {
@@ -164,8 +179,10 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
 
     private boolean waitForTable(String tableName) {
         try {
-            DescribeTableRequest request = DescribeTableRequest.builder().tableName(tableName).build();
-            TableDescription tableDescription = getDdbClient().describeTable(request).table();
+            DescribeTableRequest request =
+                    DescribeTableRequest.builder().tableName(tableName).build();
+            TableDescription tableDescription =
+                    getDdbClient().describeTable(request).table();
             if (isTableActive(tableDescription)) {
                 LOG.trace("Table [{}] became active", tableName);
                 return true;

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.security.SecureRandom;
 import java.util.Collections;
@@ -37,17 +41,15 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link com.google.api.services.sheets.v4.Sheets.Spreadsheets} APIs.
  */
 public class SheetsSpreadsheetsIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(SheetsSpreadsheetsIT.class);
-    private static final String PATH_PREFIX
-            = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleSheetsApiCollection.getCollection()
+            .getApiName(SheetsSpreadsheetsApiMethod.class)
+            .getName();
 
     @Nested
     class CreateIT extends AbstractGoogleSheetsTestSupport {
@@ -80,8 +82,7 @@ public class SheetsSpreadsheetsIT {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct://CREATE")
-                            .to("google-sheets://" + PATH_PREFIX + "/create?inBody=content");
+                    from("direct://CREATE").to("google-sheets://" + PATH_PREFIX + "/create?inBody=content");
                 }
             };
         }
@@ -103,7 +104,8 @@ public class SheetsSpreadsheetsIT {
 
         @Override
         protected GoogleSheetsClientFactory getClientFactory() throws Exception {
-            return new MockGoogleSheetsClientFactory(new MockLowLevelHttpResponse().setContent(testSheet.toPrettyString()));
+            return new MockGoogleSheetsClientFactory(
+                    new MockLowLevelHttpResponse().setContent(testSheet.toPrettyString()));
         }
 
         @Override
@@ -111,8 +113,7 @@ public class SheetsSpreadsheetsIT {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct://GET")
-                            .to("google-sheets://" + PATH_PREFIX + "/get?inBody=spreadsheetId");
+                    from("direct://GET").to("google-sheets://" + PATH_PREFIX + "/get?inBody=spreadsheetId");
                 }
             };
         }
@@ -129,30 +130,30 @@ public class SheetsSpreadsheetsIT {
             // parameter type is String
             headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", testSheet.getSpreadsheetId());
             // parameter type is com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
-            headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "batchUpdateSpreadsheetRequest",
+            headers.put(
+                    GoogleSheetsConstants.PROPERTY_PREFIX + "batchUpdateSpreadsheetRequest",
                     new BatchUpdateSpreadsheetRequest()
                             .setIncludeSpreadsheetInResponse(true)
-                            .setRequests(Collections
-                                    .singletonList(new Request()
-                                            .setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
-                                                    .setProperties(new SpreadsheetProperties().setTitle(updateTitle))
-                                                    .setFields("title")))));
+                            .setRequests(Collections.singletonList(new Request()
+                                    .setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
+                                            .setProperties(new SpreadsheetProperties().setTitle(updateTitle))
+                                            .setFields("title")))));
 
             final BatchUpdateSpreadsheetResponse result = requestBodyAndHeaders("direct://BATCHUPDATE", null, headers);
 
             assertNotNull(result, "batchUpdate result is null");
-            assertEquals(updateTitle, result.getUpdatedSpreadsheet().getProperties().getTitle());
+            assertEquals(
+                    updateTitle, result.getUpdatedSpreadsheet().getProperties().getTitle());
 
             LOG.debug("batchUpdate: {}", result);
         }
 
         @Override
         protected GoogleSheetsClientFactory getClientFactory() throws Exception {
-            return new MockGoogleSheetsClientFactory(
-                    new MockLowLevelHttpResponse()
-                            .setContent("{\"spreadsheetId\":\"" + testSheet.getSpreadsheetId()
-                                        + "\",\"updatedSpreadsheet\":{\"properties\":{\"title\":\"" + updateTitle
-                                        + "\"},\"spreadsheetId\":\"" + testSheet.getSpreadsheetId() + "\"}}"));
+            return new MockGoogleSheetsClientFactory(new MockLowLevelHttpResponse()
+                    .setContent("{\"spreadsheetId\":\"" + testSheet.getSpreadsheetId()
+                            + "\",\"updatedSpreadsheet\":{\"properties\":{\"title\":\"" + updateTitle
+                            + "\"},\"spreadsheetId\":\"" + testSheet.getSpreadsheetId() + "\"}}"));
         }
 
         @Override
@@ -160,11 +161,9 @@ public class SheetsSpreadsheetsIT {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct://BATCHUPDATE")
-                            .to("google-sheets://" + PATH_PREFIX + "/batchUpdate");
+                    from("direct://BATCHUPDATE").to("google-sheets://" + PATH_PREFIX + "/batchUpdate");
                 }
             };
         }
     }
-
 }

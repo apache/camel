@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.neo4j;
 
 import org.apache.camel.RuntimeCamelException;
@@ -30,38 +31,66 @@ public class Neo4jConfiguration implements Cloneable {
     @Metadata
     @UriParam(description = "Url for connecting to Neo database")
     private String databaseUrl;
-    @UriParam(label = "security", description = "Basic authentication database user", displayName = "Database user",
-              secret = true)
+
+    @UriParam(
+            label = "security",
+            description = "Basic authentication database user",
+            displayName = "Database user",
+            secret = true)
     private String username;
-    @UriParam(label = "security", description = "Basic authentication database password", displayName = "Database password",
-              secret = true)
+
+    @UriParam(
+            label = "security",
+            description = "Basic authentication database password",
+            displayName = "Database password",
+            secret = true)
     private String password;
-    @UriParam(label = "security", description = "Basic authentication database realm", displayName = "Database realm",
-              secret = true)
+
+    @UriParam(
+            label = "security",
+            description = "Basic authentication database realm",
+            displayName = "Database realm",
+            secret = true)
     private String realm;
-    @UriParam(label = "security", description = "Bearer authentication database realm", displayName = "Realm", secret = true)
+
+    @UriParam(
+            label = "security",
+            description = "Bearer authentication database realm",
+            displayName = "Realm",
+            secret = true)
     private String token;
-    @UriParam(label = "security", description = "Kerberos Authentication encoded base64 ticket",
-              displayName = "Encoded base64 ticket",
-              secret = true)
+
+    @UriParam(
+            label = "security",
+            description = "Kerberos Authentication encoded base64 ticket",
+            displayName = "Encoded base64 ticket",
+            secret = true)
     private String kerberosAuthTicket;
 
     @UriParam
     private String query;
+
     @UriParam
     private String label;
+
     @UriParam
     private String vectorIndexName;
+
     @UriParam
     private String alias;
+
     @UriParam(defaultValue = "false")
     private boolean detachRelationship = false;
+
     @UriParam
     private Integer dimension;
+
     @UriParam(defaultValue = "cosine")
     private Neo4jSimilarityFunction similarityFunction = Neo4jSimilarityFunction.cosine;
+
     @UriParam(defaultValue = "0.0")
     private double minScore = 0.0;
+
     @UriParam(defaultValue = "3")
     private int maxResults = 3;
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
 
 import java.util.ArrayList;
@@ -28,9 +29,7 @@ public class DevTrace implements Iterable<DevSpanAdapter> {
     private String traceId;
     private List<DevSpanAdapter> spans;
 
-    DevTrace() {
-
-    }
+    DevTrace() {}
 
     public DevTrace(String traceId, List<DevSpanAdapter> spans) {
         this.traceId = traceId;
@@ -110,21 +109,18 @@ public class DevTrace implements Iterable<DevSpanAdapter> {
 
         private DevSpanAdapter getWithParent(String parentSpanId) {
             for (DevSpanAdapter span : spans) {
-                if (parentSpanId == null &&
-                        span.getParentSpanId() == null &&
-                        !scanned.containsKey(span.getSpanId())) {
+                if (parentSpanId == null && span.getParentSpanId() == null && !scanned.containsKey(span.getSpanId())) {
                     return span;
                 }
-                if (span.getParentSpanId() != null &&
-                        span.getParentSpanId().equals(parentSpanId) &&
-                        !scanned.containsKey(span.getSpanId())) {
+                if (span.getParentSpanId() != null
+                        && span.getParentSpanId().equals(parentSpanId)
+                        && !scanned.containsKey(span.getSpanId())) {
                     return span;
                 }
             }
 
             return null;
         }
-
     }
 }
 

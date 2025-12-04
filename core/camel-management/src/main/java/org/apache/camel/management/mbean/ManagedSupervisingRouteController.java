@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
@@ -40,7 +41,8 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.backoff.BackOffTimer;
 
 @ManagedResource(description = "Managed SupervisingRouteController")
-public class ManagedSupervisingRouteController extends ManagedService implements ManagedSupervisingRouteControllerMBean {
+public class ManagedSupervisingRouteController extends ManagedService
+        implements ManagedSupervisingRouteControllerMBean {
 
     private final SupervisingRouteController controller;
 
@@ -141,9 +143,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     @Override
     public Collection<String> getControlledRoutes() {
         if (controller != null) {
-            return controller.getControlledRoutes().stream()
-                    .map(Route::getId)
-                    .toList();
+            return controller.getControlledRoutes().stream().map(Route::getId).toList();
         }
 
         return Collections.emptyList();
@@ -161,9 +161,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     @Override
     public Collection<String> getRestartingRoutes() {
         if (controller != null) {
-            return controller.getRestartingRoutes().stream()
-                    .map(Route::getId)
-                    .toList();
+            return controller.getRestartingRoutes().stream().map(Route::getId).toList();
         }
 
         return Collections.emptyList();
@@ -172,9 +170,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     @Override
     public Collection<String> getExhaustedRoutes() {
         if (controller != null) {
-            return controller.getExhaustedRoutes().stream()
-                    .map(Route::getId)
-                    .toList();
+            return controller.getExhaustedRoutes().stream().map(Route::getId).toList();
         }
 
         return Collections.emptyList();
@@ -183,7 +179,8 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     @Override
     public TabularData routeStatus(boolean exhausted, boolean restarting, boolean includeStacktrace) {
         try {
-            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.supervisingRouteControllerRouteStatusTabularType());
+            TabularData answer =
+                    new TabularDataSupport(CamelOpenMBeanTypes.supervisingRouteControllerRouteStatusTabularType());
 
             int index = 0;
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
@@ -207,12 +204,15 @@ public class ManagedSupervisingRouteController extends ManagedService implements
                 String last = "";
                 // we can only track elapsed/time for active supervised routes
                 long time = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
-                        ? state.getFirstAttemptTime() : 0;
+                        ? state.getFirstAttemptTime()
+                        : 0;
                 if (time > 0) {
                     long delta = System.currentTimeMillis() - time;
                     elapsed = TimeUtils.printDuration(delta, true);
                 }
-                time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
+                time = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
+                        ? state.getLastAttemptTime()
+                        : 0;
                 if (time > 0) {
                     long delta = System.currentTimeMillis() - time;
                     last = TimeUtils.printDuration(delta, true);
@@ -230,9 +230,17 @@ public class ManagedSupervisingRouteController extends ManagedService implements
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "index", "routeId", "status", "supervising", "attempts", "elapsed", "last", "error",
-                                "stacktrace" },
-                        new Object[] { index, routeId, status, supervising, attempts, elapsed, last, error, stacktrace });
+                            "index",
+                            "routeId",
+                            "status",
+                            "supervising",
+                            "attempts",
+                            "elapsed",
+                            "last",
+                            "error",
+                            "stacktrace"
+                        },
+                        new Object[] {index, routeId, status, supervising, attempts, elapsed, last, error, stacktrace});
                 answer.put(data);
 
                 // use a counter as the single index in the TabularData as we do not want a multi-value index

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.language;
 
 import javax.xml.xpath.XPathConstants;
@@ -88,7 +89,8 @@ public class XPathExpressionReifier extends SingleInputTypedExpressionReifier<XP
     protected void configureLanguage(Language language) {
         if (definition.getDocumentType() == null && definition.getDocumentTypeName() != null) {
             try {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getDocumentTypeName());
+                Class<?> clazz =
+                        camelContext.getClassResolver().resolveMandatoryClass(definition.getDocumentTypeName());
                 definition.setDocumentType(clazz);
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
@@ -98,5 +100,4 @@ public class XPathExpressionReifier extends SingleInputTypedExpressionReifier<XP
             definition.setXPathFactory(mandatoryLookup(definition.getFactoryRef(), XPathFactory.class));
         }
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +35,6 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.AdminEventRepresentation;
 import org.keycloak.representations.idm.EventRepresentation;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 
 public class KeycloakConsumerTest extends CamelTestSupport {
 
@@ -73,8 +74,7 @@ public class KeycloakConsumerTest extends CamelTestSupport {
         events.add(event2);
 
         when(keycloakClient.realm(anyString())).thenReturn(realmResource);
-        when(realmResource.getEvents(
-                any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
+        when(realmResource.getEvents(any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
                 .thenReturn(events);
 
         MockEndpoint mock = getMockEndpoint("mock:events");
@@ -90,8 +90,7 @@ public class KeycloakConsumerTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // Verify headers
-        assertEquals("event",
-                mock.getExchanges().get(0).getIn().getHeader(KeycloakConstants.EVENT_TYPE));
+        assertEquals("event", mock.getExchanges().get(0).getIn().getHeader(KeycloakConstants.EVENT_TYPE));
     }
 
     @Test
@@ -111,8 +110,7 @@ public class KeycloakConsumerTest extends CamelTestSupport {
         adminEvents.add(adminEvent2);
 
         when(keycloakClient.realm(anyString())).thenReturn(realmResource);
-        when(realmResource.getAdminEvents(
-                any(), any(), any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
+        when(realmResource.getAdminEvents(any(), any(), any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
                 .thenReturn(adminEvents);
 
         MockEndpoint mock = getMockEndpoint("mock:admin-events");
@@ -128,7 +126,6 @@ public class KeycloakConsumerTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // Verify headers
-        assertEquals("admin-event",
-                mock.getExchanges().get(0).getIn().getHeader(KeycloakConstants.EVENT_TYPE));
+        assertEquals("admin-event", mock.getExchanges().get(0).getIn().getHeader(KeycloakConstants.EVENT_TYPE));
     }
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
@@ -33,11 +39,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMultipartAlternativeTest extends CamelTestSupport {
     private static final MailboxUser ryan = Mailbox.getOrCreateUser("ryan", "secret");
@@ -73,7 +74,8 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange out = mock.assertExchangeReceived(0);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage) out.getIn()).getMessage().getSize());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(
+                ((MailMessage) out.getIn()).getMessage().getSize());
         ((MailMessage) out.getIn()).getMessage().writeTo(baos);
         String dumpedMessage = baos.toString();
         assertTrue(dumpedMessage.indexOf(expectString) > 0, "There should have the " + expectString);
@@ -83,7 +85,8 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         assertEquals(alternativeBody, out.getIn().getBody(String.class));
 
         // attachment
-        Map<String, DataHandler> attachments = out.getIn(AttachmentMessage.class).getAttachments();
+        Map<String, DataHandler> attachments =
+                out.getIn(AttachmentMessage.class).getAttachments();
         assertNotNull(attachments, "Should not have null attachments");
         assertEquals(1, attachments.size());
         assertEquals(2, out.getIn().getBody(MimeMultipart.class).getCount(), "multipart body should have 2 parts");
@@ -105,7 +108,8 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(ryan.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100&closeFolder=false").to("mock:result");
+                from(ryan.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100&closeFolder=false")
+                        .to("mock:result");
             }
         };
     }

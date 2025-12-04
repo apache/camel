@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.converter;
 
 import java.io.IOException;
@@ -55,7 +56,8 @@ import org.slf4j.LoggerFactory;
  */
 public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     private static final Logger LOG = LoggerFactory.getLogger(CachedCxfPayload.class);
-    private static final String DEFAULT_CHARSET = ObjectHelper.getSystemProperty("org.apache.camel.default.charset", "UTF-8");
+    private static final String DEFAULT_CHARSET =
+            ObjectHelper.getSystemProperty("org.apache.camel.default.charset", "UTF-8");
 
     public CachedCxfPayload(CxfPayload<T> orig, Exchange exchange) {
         super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
@@ -89,14 +91,15 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                     if (tryUsingReader(cos, source, li)) {
                         continue;
                     }
-                    //tryUsingReader returns false so we will fallback to DOM mode
+                    // tryUsingReader returns false so we will fallback to DOM mode
                     LOG.debug(
                             "Error during parsing XMLStreamReader from StaxSource/StAXSource. Will fallback to using DOM mode. This exception is ignored",
                             e);
                 }
             }
             // fallback to using DOM
-            DOMSource document = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, source);
+            DOMSource document =
+                    exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, source);
             if (document != null) {
                 li.set(document);
             }

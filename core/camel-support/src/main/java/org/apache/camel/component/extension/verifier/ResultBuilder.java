@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.extension.verifier;
 
 import java.util.ArrayList;
@@ -78,7 +79,8 @@ public final class ResultBuilder {
         } catch (NoSuchOptionException e) {
             error(ResultErrorBuilder.withMissingOption(e.getOptionName()).build());
         } catch (IllegalOptionException e) {
-            error(ResultErrorBuilder.withIllegalOption(e.getOptionName(), e.getOptionValue()).build());
+            error(ResultErrorBuilder.withIllegalOption(e.getOptionName(), e.getOptionValue())
+                    .build());
         } catch (Exception e) {
             error(ResultErrorBuilder.withException(e).build());
         }
@@ -92,7 +94,8 @@ public final class ResultBuilder {
         } catch (NoSuchOptionException e) {
             error(ResultErrorBuilder.withMissingOption(e.getOptionName()).build());
         } catch (IllegalOptionException e) {
-            error(ResultErrorBuilder.withIllegalOption(e.getOptionName(), e.getOptionValue()).build());
+            error(ResultErrorBuilder.withIllegalOption(e.getOptionName(), e.getOptionValue())
+                    .build());
         } catch (Exception e) {
             error(ResultErrorBuilder.withException(e).build());
         }
@@ -113,7 +116,9 @@ public final class ResultBuilder {
         return new DefaultResult(
                 scope != null ? scope : ComponentVerifierExtension.Scope.PARAMETERS,
                 status != null ? status : ComponentVerifierExtension.Result.Status.UNSUPPORTED,
-                verificationErrors != null ? Collections.unmodifiableList(verificationErrors) : Collections.emptyList());
+                verificationErrors != null
+                        ? Collections.unmodifiableList(verificationErrors)
+                        : Collections.emptyList());
     }
 
     // **********************************
@@ -134,8 +139,8 @@ public final class ResultBuilder {
     }
 
     public static ResultBuilder unsupported() {
-        return withStatusAndScope(ComponentVerifierExtension.Result.Status.UNSUPPORTED,
-                ComponentVerifierExtension.Scope.PARAMETERS);
+        return withStatusAndScope(
+                ComponentVerifierExtension.Result.Status.UNSUPPORTED, ComponentVerifierExtension.Scope.PARAMETERS);
     }
 
     public static ResultBuilder unsupportedScope(ComponentVerifierExtension.Scope scope) {

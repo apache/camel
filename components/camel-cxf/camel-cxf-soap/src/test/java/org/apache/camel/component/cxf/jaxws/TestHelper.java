@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import java.util.Locale;
@@ -23,8 +24,7 @@ import java.util.Locale;
  */
 public final class TestHelper {
 
-    private TestHelper() {
-    }
+    private TestHelper() {}
 
     /**
      * Is this OS the given platform.

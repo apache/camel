@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -26,9 +30,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -42,9 +43,11 @@ public class XQueryFromFileTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory),
+        template.sendBodyAndHeader(
+                TestSupport.fileUri(testDirectory),
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
-                Exchange.FILE_NAME, "body.xml");
+                Exchange.FILE_NAME,
+                "body.xml");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -52,9 +55,11 @@ public class XQueryFromFileTest extends CamelTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
         assertNotNull(xml, "The transformed XML should not be null");
-        assertEquals("<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
-                     + "<body>Hello world!</body></mail></transformed>",
-                xml, "transformed");
+        assertEquals(
+                "<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
+                        + "<body>Hello world!</body></mail></transformed>",
+                xml,
+                "transformed");
     }
 
     @Override

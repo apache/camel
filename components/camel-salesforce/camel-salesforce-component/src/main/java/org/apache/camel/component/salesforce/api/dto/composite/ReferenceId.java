@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Optional.ofNullable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,10 +28,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.component.salesforce.api.dto.RestError;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Optional.ofNullable;
 
 public final class ReferenceId implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -38,8 +39,10 @@ public final class ReferenceId implements Serializable {
     private final String referenceId;
 
     @JsonCreator
-    ReferenceId(@JsonProperty("referenceId") final String referenceId, @JsonProperty("id") final String id,
-                @JsonProperty("errors") final List<RestError> errors) {
+    ReferenceId(
+            @JsonProperty("referenceId") final String referenceId,
+            @JsonProperty("id") final String id,
+            @JsonProperty("errors") final List<RestError> errors) {
         this.referenceId = referenceId;
         this.id = id;
         this.errors = errors;
@@ -57,7 +60,8 @@ public final class ReferenceId implements Serializable {
 
         final ReferenceId other = (ReferenceId) obj;
 
-        return Objects.equals(id, other.id) && Objects.equals(referenceId, other.referenceId)
+        return Objects.equals(id, other.id)
+                && Objects.equals(referenceId, other.referenceId)
                 && Objects.equals(getErrors(), other.getErrors());
     }
 
@@ -85,7 +89,8 @@ public final class ReferenceId implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder buildy = new StringBuilder("Reference: ").append(referenceId).append(", Id: ");
+        final StringBuilder buildy =
+                new StringBuilder("Reference: ").append(referenceId).append(", Id: ");
 
         final List<RestError> anyErrors = getErrors();
         if (anyErrors.isEmpty()) {

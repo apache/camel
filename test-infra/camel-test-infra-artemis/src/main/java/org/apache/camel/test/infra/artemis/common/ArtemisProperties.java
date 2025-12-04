@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.common;
 
 public final class ArtemisProperties {
@@ -30,7 +31,5 @@ public final class ArtemisProperties {
     public static final String ARTEMIS_SSL_TRUSTSTORE_PATH = "artemis.ssl.truststore.path";
     public static final String ARTEMIS_SSL_TRUSTSTORE_PASSWORD = "artemis.ssl.truststore.password";
 
-    private ArtemisProperties() {
-
-    }
+    private ArtemisProperties() {}
 }

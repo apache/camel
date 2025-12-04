@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,8 +44,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CustomFiltersTest extends BaseJettyTest {
 
@@ -74,13 +75,14 @@ public class CustomFiltersTest extends BaseJettyTest {
         httppost.setEntity(new StringEntity("This is a test"));
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(httppost)) {
+                CloseableHttpResponse response = client.execute(httppost)) {
 
             assertEquals(200, response.getCode(), "Get a wrong response status");
             String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
             assertEquals("This is a test response", responseString, "Get a wrong result");
-            assertEquals("true", response.getFirstHeader("MyTestFilter").getValue(), "Did not use custom multipart filter");
+            assertEquals(
+                    "true", response.getFirstHeader("MyTestFilter").getValue(), "Did not use custom multipart filter");
 
             // just make sure the KeyWord header is set
             assertEquals("KEY", response.getFirstHeader("KeyWord").getValue(), "Did not set the right KeyWord header");

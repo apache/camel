@@ -14,16 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry.metrics.eventnotifier;
 
-import io.opentelemetry.api.common.AttributeKey;
-import io.opentelemetry.api.common.Attributes;
-import io.opentelemetry.api.common.AttributesBuilder;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.CamelEvent.ExchangeEvent;
-import org.apache.camel.util.StringHelper;
+package org.apache.camel.opentelemetry.metrics.eventnotifier;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER;
@@ -36,6 +28,15 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.FAIL
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_EXCHANGE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
+
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributesBuilder;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.util.StringHelper;
 
 public interface OpenTelemetryExchangeEventNotifierNamingStrategy {
 
@@ -84,9 +85,13 @@ public interface OpenTelemetryExchangeEventNotifierNamingStrategy {
         String routeId = exchange.getFromRouteId();
 
         AttributesBuilder builder = Attributes.builder();
-        builder.put(AttributeKey.stringKey(CAMEL_CONTEXT_ATTRIBUTE), exchange.getContext().getName())
+        builder.put(
+                        AttributeKey.stringKey(CAMEL_CONTEXT_ATTRIBUTE),
+                        exchange.getContext().getName())
                 .put(AttributeKey.stringKey(KIND_ATTRIBUTE), KIND_EXCHANGE)
-                .put(AttributeKey.stringKey(EVENT_TYPE_ATTRIBUTE), event.getClass().getSimpleName())
+                .put(
+                        AttributeKey.stringKey(EVENT_TYPE_ATTRIBUTE),
+                        event.getClass().getSimpleName())
                 .put(AttributeKey.stringKey(ENDPOINT_NAME_ATTRIBUTE), uri)
                 .put(AttributeKey.stringKey(FAILED_ATTRIBUTE), Boolean.toString(exchange.isFailed()));
         if (routeId != null) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
 
 import java.util.Map;
@@ -21,5 +22,4 @@ import java.util.Map;
 public interface SplunkConfigurationFactory {
 
     SplunkConfiguration parseMap(Map<String, Object> parameters);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.java.joor;
 
 import java.util.ArrayList;
@@ -30,15 +31,13 @@ import org.apache.camel.util.FileUtil;
  */
 public final class Helper {
 
-    private static final Pattern PACKAGE_PATTERN = Pattern.compile(
-            "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+    private static final Pattern PACKAGE_PATTERN =
+            Pattern.compile("^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
-    private static final Pattern IMPORT_PATTERN = Pattern.compile(
-            "^import\\s+([a-zA-Z][.\\w]*)\\s*;", Pattern.MULTILINE);
+    private static final Pattern IMPORT_PATTERN =
+            Pattern.compile("^import\\s+([a-zA-Z][.\\w]*)\\s*;", Pattern.MULTILINE);
 
-    private Helper() {
-
-    }
+    private Helper() {}
 
     /**
      * @return the name of the class according to its location and its source code.
@@ -53,9 +52,7 @@ public final class Helper {
         final String name = FileUtil.onlyName(loc, true);
         final Matcher matcher = PACKAGE_PATTERN.matcher(content);
 
-        return matcher.find()
-                ? matcher.group(1) + "." + name
-                : name;
+        return matcher.find() ? matcher.group(1) + "." + name : name;
     }
 
     public static List<String> determineImports(String content) {
@@ -68,5 +65,4 @@ public final class Helper {
         }
         return answer;
     }
-
 }

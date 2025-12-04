@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb;
 
 import org.apache.camel.spi.Metadata;
@@ -25,17 +26,22 @@ public interface CouchDbConstants {
 
     @Metadata(label = "consumer", description = "The database the message came from", javaType = "String")
     String HEADER_DATABASE = "CouchDbDatabase";
-    @Metadata(label = "consumer", description = "The couchdb changeset sequence number of the update / delete message",
-              javaType = "String")
+
+    @Metadata(
+            label = "consumer",
+            description = "The couchdb changeset sequence number of the update / delete message",
+            javaType = "String")
     String HEADER_SEQ = "CouchDbSeq";
+
     @Metadata(description = "The couchdb document id", javaType = "String")
     String HEADER_DOC_ID = "CouchDbId";
+
     @Metadata(description = "The couchdb document revision", javaType = "String")
     String HEADER_DOC_REV = "CouchDbRev";
+
     @Metadata(description = "The method (delete / update)", javaType = "String")
     String HEADER_METHOD = "CouchDbMethod";
 
     @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")
     String COUCHDB_RESUME_ACTION = "CamelCouchDbResumeAction";
-
 }

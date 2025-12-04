@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -35,9 +39,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-
 @EnabledIf("org.apache.camel.component.dropbox.integration.DropboxTestSupport#hasCredentials")
 class DropboxProducerPutSingleFileIT extends DropboxTestSupport {
     public static final String FILENAME = "newFile.txt";
@@ -55,7 +56,8 @@ class DropboxProducerPutSingleFileIT extends DropboxTestSupport {
 
     @Test
     void uploadBodyTest() throws Exception {
-        template.sendBodyAndHeader("direct:start", "Hello Camels", DropboxConstants.HEADER_UPLOAD_MODE, DropboxUploadMode.add);
+        template.sendBodyAndHeader(
+                "direct:start", "Hello Camels", DropboxConstants.HEADER_UPLOAD_MODE, DropboxUploadMode.add);
 
         assertFileUploaded();
     }
@@ -102,11 +104,11 @@ class DropboxProducerPutSingleFileIT extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://put?accessToken={{accessToken}}" +
-                            "&expireIn={{expireIn}}" +
-                            "&refreshToken={{refreshToken}}" +
-                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
-                            "&remotePath=" + workdir + "/" + FILENAME)
+                        .to("dropbox://put?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                + "&refreshToken={{refreshToken}}"
+                                + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}"
+                                + "&remotePath="
+                                + workdir + "/" + FILENAME)
                         .to("mock:result");
             }
         };

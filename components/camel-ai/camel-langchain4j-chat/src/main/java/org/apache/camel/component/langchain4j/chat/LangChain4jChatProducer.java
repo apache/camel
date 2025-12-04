@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.chat;
+
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.AUGMENTED_DATA;
 
 import java.util.List;
 import java.util.Map;
@@ -34,8 +37,6 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.AUGMENTED_DATA;
 
 public class LangChain4jChatProducer extends DefaultProducer {
 
@@ -65,7 +66,8 @@ public class LangChain4jChatProducer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void processSingleMessageWithPrompt(Exchange exchange) throws NoSuchHeaderException, InvalidPayloadException {
+    private void processSingleMessageWithPrompt(Exchange exchange)
+            throws NoSuchHeaderException, InvalidPayloadException {
         final String promptTemplate = exchange.getIn().getHeader(LangChain4jChatHeaders.PROMPT_TEMPLATE, String.class);
         if (promptTemplate == null) {
             throw new NoSuchHeaderException(
@@ -84,10 +86,10 @@ public class LangChain4jChatProducer extends DefaultProducer {
         final var message = exchange.getIn().getMandatoryBody();
 
         // Use pattern matching with instanceof to streamline type checks and assignments
-        ChatMessage userMessage = (message instanceof String) ? new UserMessage((String) message) : (ChatMessage) message;
+        ChatMessage userMessage =
+                (message instanceof String) ? new UserMessage((String) message) : (ChatMessage) message;
 
         populateResponse(sendChatMessage(userMessage, exchange), exchange);
-
     }
 
     @SuppressWarnings("unchecked")
@@ -159,7 +161,6 @@ public class LangChain4jChatProducer extends DefaultProducer {
             if (lastUserMessage instanceof UserMessage) {
                 chatMessages.set(lastIndex, addAugmentedData(lastUserMessage, exchange));
             }
-
         }
 
         response = this.chatModel.chat(chatMessages).aiMessage();
@@ -175,5 +176,4 @@ public class LangChain4jChatProducer extends DefaultProducer {
         Prompt prompt = template.apply(variables);
         return this.sendChatMessage(new UserMessage(prompt.text()), exchange);
     }
-
 }

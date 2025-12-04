@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.io.ByteArrayInputStream;
@@ -41,14 +42,13 @@ public class SkipLastNewlineInputStreamTest {
         assertRead("fo\n", "fo");
         assertRead("foo\n", "foo");
         assertRead("foo \n", "foo ");
-
     }
 
     private void assertRead(String input, String expected) throws IOException {
 
-        try (InputStream in
-                = new SkipLastByteInputStream(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)), (byte) '\n');
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (InputStream in = new SkipLastByteInputStream(
+                        new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)), (byte) '\n');
+                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             int c;
             while ((c = in.read()) >= 0) {
                 out.write(c);
@@ -56,9 +56,9 @@ public class SkipLastNewlineInputStreamTest {
             Assertions.assertEquals(expected, out.toString(StandardCharsets.UTF_8));
         }
 
-        try (InputStream in
-                = new SkipLastByteInputStream(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)), (byte) '\n');
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (InputStream in = new SkipLastByteInputStream(
+                        new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)), (byte) '\n');
+                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buf = new byte[3];
             int len;
             while ((len = in.read(buf)) >= 0) {
@@ -66,7 +66,5 @@ public class SkipLastNewlineInputStreamTest {
             }
             Assertions.assertEquals(expected, out.toString(StandardCharsets.UTF_8));
         }
-
     }
-
 }

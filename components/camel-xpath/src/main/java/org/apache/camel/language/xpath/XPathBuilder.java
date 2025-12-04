@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xpath;
+
+import static org.apache.camel.support.builder.Namespaces.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -73,8 +76,6 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.builder.Namespaces.*;
-
 /**
  * Creates an XPath expression builder which creates a nodeset result by default. If you want to evaluate a String
  * expression then call {@link #stringResult()}
@@ -91,8 +92,7 @@ import static org.apache.camel.support.builder.Namespaces.*;
  * @see XPathConstants#NODESET
  */
 public class XPathBuilder extends ServiceSupport
-        implements CamelContextAware, Expression, Predicate,
-        NamespaceAware, ExpressionResultTypeAware {
+        implements CamelContextAware, Expression, Predicate, NamespaceAware, ExpressionResultTypeAware {
     private static final Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
     private static final String SAXON_FACTORY_CLASS_NAME = "net.sf.saxon.xpath.XPathFactoryImpl";
@@ -650,7 +650,8 @@ public class XPathBuilder extends ServiceSupport
                 if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String headerText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        String headerText =
+                                exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
                         return exchange.get().getIn().getHeader(headerText);
                     }
                 }
@@ -710,7 +711,8 @@ public class XPathBuilder extends ServiceSupport
                 if (exchange.get() != null && !list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String headerText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        String headerText =
+                                exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
                         return exchange.get().getOut().getHeader(headerText);
                     }
                 }
@@ -742,7 +744,8 @@ public class XPathBuilder extends ServiceSupport
                 if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String propertyText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        String propertyText =
+                                exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
                         try {
                             // use the property placeholder resolver to lookup
                             // the property for us
@@ -781,7 +784,8 @@ public class XPathBuilder extends ServiceSupport
                 if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String exprText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        String exprText =
+                                exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
                         Language simple = exchange.get().getContext().resolveLanguage("simple");
                         Expression exp = simple.createExpression(exprText);
                         return exp.evaluate(exchange.get(), Object.class);
@@ -1001,7 +1005,9 @@ public class XPathBuilder extends ServiceSupport
         // set exchange and variable resolver as thread locals for concurrency
         this.exchange.set(exchange);
 
-        Object payload = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+        Object payload = source != null
+                ? source.evaluate(exchange, Object.class)
+                : exchange.getMessage().getBody();
         Object document;
         InputStream is = null;
         if (isInputStreamNeededForObject(payload)) {
@@ -1049,13 +1055,16 @@ public class XPathBuilder extends ServiceSupport
             try {
                 NodeList list = (NodeList) answer;
 
-                // when the result is NodeList and has 1 or more elements, then it is not thread-safe to use concurrently,
+                // when the result is NodeList and has 1 or more elements, then it is not thread-safe to use
+                // concurrently,
                 // and we need to clone each node and build a thread-safe list to be used instead
                 boolean threadSafetyNeeded = list.getLength() >= 1;
                 if (threadSafetyNeeded) {
                     answer = new ThreadSafeNodeList(list);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Created thread-safe result from: {} as: {}", list.getClass().getName(),
+                        LOG.debug(
+                                "Created thread-safe result from: {} as: {}",
+                                list.getClass().getName(),
                                 answer.getClass().getName());
                     }
                 }
@@ -1076,8 +1085,7 @@ public class XPathBuilder extends ServiceSupport
      * This implementation must be synchronized to ensure thread safety, as this XPathBuilder instance may not have been
      * started prior to being used.
      */
-    protected XPathExpression createXPathExpression()
-            throws XPathExpressionException {
+    protected XPathExpression createXPathExpression() throws XPathExpressionException {
         lock.lock();
         try {
             // ensure we are started
@@ -1091,9 +1099,13 @@ public class XPathBuilder extends ServiceSupport
             XPath xPath = getXPathFactory().newXPath();
 
             if (!logNamespaces && LOG.isTraceEnabled()) {
-                LOG.trace("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext());
+                LOG.trace(
+                        "Creating new XPath expression in pool. Namespaces on XPath expression: {}",
+                        getNamespaceContext());
             } else if (logNamespaces && LOG.isInfoEnabled()) {
-                LOG.info("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext());
+                LOG.info(
+                        "Creating new XPath expression in pool. Namespaces on XPath expression: {}",
+                        getNamespaceContext());
             }
             xPath.setNamespaceContext(getNamespaceContext());
             xPath.setXPathVariableResolver(getVariableResolver());
@@ -1109,8 +1121,7 @@ public class XPathBuilder extends ServiceSupport
         }
     }
 
-    protected XPathExpression createTraceNamespaceExpression()
-            throws XPathExpressionException {
+    protected XPathExpression createTraceNamespaceExpression() throws XPathExpressionException {
         lock.lock();
         try {
             // XPathFactory is not thread safe
@@ -1332,9 +1343,9 @@ public class XPathBuilder extends ServiceSupport
                     // https://www.saxonica.com/html/documentation/xpath-api/jaxp-xpath/factory.html
                     try {
                         if (camelContext != null) {
-                            Class<XPathFactory> clazz
-                                    = camelContext.getClassResolver().resolveClass(SAXON_FACTORY_CLASS_NAME,
-                                            XPathFactory.class);
+                            Class<XPathFactory> clazz = camelContext
+                                    .getClassResolver()
+                                    .resolveClass(SAXON_FACTORY_CLASS_NAME, XPathFactory.class);
                             if (clazz != null) {
                                 LOG.debug("Creating Saxon XPathFactory using class: {})", clazz);
                                 xpathFactory = camelContext.getInjector().newInstance(clazz);
@@ -1342,8 +1353,9 @@ public class XPathBuilder extends ServiceSupport
                             }
                         }
                     } catch (Exception e) {
-                        LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of {}" +
-                                 " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).",
+                        LOG.warn(
+                                "Attempted to create Saxon XPathFactory by creating a new instance of {}"
+                                        + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).",
                                 SAXON_FACTORY_CLASS_NAME);
                         LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
                     }
@@ -1380,7 +1392,11 @@ public class XPathBuilder extends ServiceSupport
                 String uri = StringHelper.after(key, ":");
                 if (uri != null) {
                     factory = XPathFactory.newInstance(uri);
-                    LOG.info("Using system property {} with value {} when created default XPathFactory {}", key, uri, factory);
+                    LOG.info(
+                            "Using system property {} with value {} when created default XPathFactory {}",
+                            key,
+                            uri,
+                            factory);
                 }
             }
         }
@@ -1392,5 +1408,4 @@ public class XPathBuilder extends ServiceSupport
 
         return factory;
     }
-
 }

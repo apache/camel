@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,7 +39,9 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("doCatch");
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:catch").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:catch")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
@@ -55,7 +58,9 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("doCatch");
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:catch").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:catch")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
@@ -74,10 +79,14 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:result2").expectedBodiesReceived("doCatch2");
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:catch").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:catch")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:catch2").expectedBodiesReceived("doCatch");
-        getMockEndpoint("mock:catch2").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:catch2")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
@@ -93,7 +102,9 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:dead")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
@@ -109,7 +120,9 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:dead")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
@@ -123,8 +136,15 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").doTry().to("direct:foo").doCatch(Exception.class).to("mock:catch").transform()
-                        .constant("doCatch").end().to("mock:result");
+                from("direct:start")
+                        .doTry()
+                        .to("direct:foo")
+                        .doCatch(Exception.class)
+                        .to("mock:catch")
+                        .transform()
+                        .constant("doCatch")
+                        .end()
+                        .to("mock:result");
 
                 from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {
                     @Override
@@ -142,8 +162,15 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").doTry().recipientList(constant("direct:foo")).end().doCatch(Exception.class)
-                        .to("mock:catch").transform().constant("doCatch").end()
+                from("direct:start")
+                        .doTry()
+                        .recipientList(constant("direct:foo"))
+                        .end()
+                        .doCatch(Exception.class)
+                        .to("mock:catch")
+                        .transform()
+                        .constant("doCatch")
+                        .end()
                         .to("mock:result");
 
                 from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {
@@ -162,10 +189,24 @@ public class TryCatchRecipientListTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").doTry().recipientList(constant("direct:foo")).end().doCatch(Exception.class)
-                        .to("mock:catch").transform().constant("doCatch").end()
-                        .to("mock:result").doTry().recipientList(constant("direct:bar")).end().doCatch(Exception.class)
-                        .to("mock:catch2").transform().constant("doCatch2").end()
+                from("direct:start")
+                        .doTry()
+                        .recipientList(constant("direct:foo"))
+                        .end()
+                        .doCatch(Exception.class)
+                        .to("mock:catch")
+                        .transform()
+                        .constant("doCatch")
+                        .end()
+                        .to("mock:result")
+                        .doTry()
+                        .recipientList(constant("direct:bar"))
+                        .end()
+                        .doCatch(Exception.class)
+                        .to("mock:catch2")
+                        .transform()
+                        .constant("doCatch2")
+                        .end()
                         .to("mock:result2");
 
                 from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {

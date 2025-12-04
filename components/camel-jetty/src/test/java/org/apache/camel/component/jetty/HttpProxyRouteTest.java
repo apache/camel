@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -25,8 +28,6 @@ import org.apache.camel.util.TimeUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProxyRouteTest extends BaseJettyTest {
 
@@ -64,8 +65,11 @@ public class HttpProxyRouteTest extends BaseJettyTest {
 
     @Test
     public void testHttpProxyFormHeader() {
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/form", "username=abc&pass=password",
-                Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded",
+        String out = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/form",
+                "username=abc&pass=password",
+                Exchange.CONTENT_TYPE,
+                "application/x-www-form-urlencoded",
                 String.class);
         assertEquals("username=abc&pass=password", out, "Get a wrong response message");
     }
@@ -78,30 +82,32 @@ public class HttpProxyRouteTest extends BaseJettyTest {
                         .to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:{{port}}/proxy?matchOnUriPrefix=true")
-                        .to("http://localhost:{{port}}/otherEndpoint?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                        .to(
+                                "http://localhost:{{port}}/otherEndpoint?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
-                from("jetty://http://localhost:{{port}}/bye").transform(header("foo").prepend("Bye "));
+                from("jetty://http://localhost:{{port}}/bye")
+                        .transform(header("foo").prepend("Bye "));
 
                 from("jetty://http://localhost:{{port}}/otherEndpoint?matchOnUriPrefix=true")
                         .transform(header(Exchange.HTTP_URI));
 
-                from("jetty://http://localhost:{{port}}/proxyServer").to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
+                from("jetty://http://localhost:{{port}}/proxyServer")
+                        .to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
 
                 from("jetty://http://localhost:{{port2}}/host").transform(header("host"));
 
                 // check the from request
-                from("jetty://http://localhost:{{port}}/form?bridgeEndpoint=true").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        // just take out the message body and send it back
-                        Message in = exchange.getIn();
-                        String request = in.getBody(String.class);
-                        exchange.getMessage().setBody(request);
-                    }
-
-                });
+                from("jetty://http://localhost:{{port}}/form?bridgeEndpoint=true")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                // just take out the message body and send it back
+                                Message in = exchange.getIn();
+                                String request = in.getBody(String.class);
+                                exchange.getMessage().setBody(request);
+                            }
+                        });
             }
         };
     }
-
 }

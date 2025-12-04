@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
 
 import java.util.concurrent.BlockingQueue;
@@ -44,5 +45,4 @@ public class SequenceBuffer<E> implements SequenceSender<E> {
     public void sendElement(E o) throws Exception {
         queue.put(o);
     }
-
 }

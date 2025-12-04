@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JpaProducerWithQueryParametersHeaderTest {
 
@@ -50,8 +51,8 @@ public class JpaProducerWithQueryParametersHeaderTest {
         Map<String, Object> params = new HashMap<>();
         params.put("custName", "${body}");
 
-        List list = template.requestBodyAndHeader("direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params,
-                List.class);
+        List list = template.requestBodyAndHeader(
+                "direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params, List.class);
         assertEquals(1, list.size());
         assertEquals("Willem", ((Customer) list.get(0)).getName());
 
@@ -69,11 +70,9 @@ public class JpaProducerWithQueryParametersHeaderTest {
                 from("direct:namedQuery")
                         .to("jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName");
 
-                from("direct:addCustomer")
-                        .to("jpa://" + Customer.class.getName());
+                from("direct:addCustomer").to("jpa://" + Customer.class.getName());
                 from("direct:deleteCustomers")
                         .to("jpa://" + Customer.class.getName() + "?query=delete from " + Customer.class.getName());
-
             }
         });
 

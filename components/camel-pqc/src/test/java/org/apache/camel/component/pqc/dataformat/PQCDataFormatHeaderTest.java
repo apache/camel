@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.dataformat;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -35,8 +38,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests PQCDataFormat with header-based configuration

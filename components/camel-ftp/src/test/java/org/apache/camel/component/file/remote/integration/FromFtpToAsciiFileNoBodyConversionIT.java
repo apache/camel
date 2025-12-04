@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.nio.file.Path;
@@ -68,7 +69,8 @@ public class FromFtpToAsciiFileNoBodyConversionIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).to(TestSupport.fileUri(testDirectory, "?fileExist=Override&noop=true"), "mock:result");
+                from(getFtpUrl())
+                        .to(TestSupport.fileUri(testDirectory, "?fileExist=Override&noop=true"), "mock:result");
             }
         };
     }

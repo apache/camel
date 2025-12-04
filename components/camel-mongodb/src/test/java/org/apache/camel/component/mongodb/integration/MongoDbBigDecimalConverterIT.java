@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 
@@ -25,10 +30,6 @@ import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbBigDecimalConverterIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
@@ -46,7 +47,8 @@ public class MongoDbBigDecimalConverterIT extends AbstractMongoDbITSupport imple
         NumberClass testClass = new NumberClass();
         Object result = template.requestBody("direct:insert", testClass);
         assertTrue(result instanceof Document);
-        Document b = testCollection.find(new BasicDBObject("_id", testClass._id)).first();
+        Document b =
+                testCollection.find(new BasicDBObject("_id", testClass._id)).first();
         assertNotNull(b, "No record with 'testInsertString' _id");
 
         assertEquals(new BigDecimal((double) b.get("aNumber")), testClass.aNumber);
@@ -63,7 +65,8 @@ public class MongoDbBigDecimalConverterIT extends AbstractMongoDbITSupport imple
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insert")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
             }
         };
     }

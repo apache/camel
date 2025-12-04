@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -23,10 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SaxonXsltXsltMessageLoggerTest extends CamelSpringTestSupport {
 
@@ -40,8 +41,7 @@ public class SaxonXsltXsltMessageLoggerTest extends CamelSpringTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+        template.sendBody("direct:start", "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -57,6 +57,5 @@ public class SaxonXsltXsltMessageLoggerTest extends CamelSpringTestSupport {
         assertNotNull(testXsltMessageLogger);
         String message = testXsltMessageLogger.getMessage();
         assertEquals("sample message", message);
-
     }
 }

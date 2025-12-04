@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data;
 
 import java.util.ArrayList;
@@ -45,11 +46,11 @@ import software.amazon.awssdk.services.redshiftdata.model.TableMember;
 
 public class AmazonRedshiftDataClientMock implements RedshiftDataClient {
 
-    public AmazonRedshiftDataClientMock() {
-    }
+    public AmazonRedshiftDataClientMock() {}
 
     @Override
-    public BatchExecuteStatementResponse batchExecuteStatement(BatchExecuteStatementRequest batchExecuteStatementRequest) {
+    public BatchExecuteStatementResponse batchExecuteStatement(
+            BatchExecuteStatementRequest batchExecuteStatementRequest) {
         BatchExecuteStatementResponse.Builder result = BatchExecuteStatementResponse.builder();
         result.id("statement1");
         return result.build();
@@ -130,7 +131,5 @@ public class AmazonRedshiftDataClientMock implements RedshiftDataClient {
     }
 
     @Override
-    public void close() {
-
-    }
+    public void close() {}
 }

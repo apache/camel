@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.maven;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -24,9 +28,6 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Cannot run on CI servers so run manually")
 @Deprecated
@@ -42,15 +43,18 @@ public class MavenArtifactProviderManualTest {
 
         // use ~/.m2/repository as one of the remote repos - I needed it to test dummy-component SNAPSHOT
         // fixed only locally (and also when Apache Snapshots repo was down)
-        provider.addMavenRepository("local",
-                new File(System.getProperty("user.home"), ".m2/repository").toURI().toURL().toString());
-        Set<String> names = provider.addArtifactToCatalog(camelCatalog, "org.apache.camel", "dummy-component",
-                camelCatalog.getCatalogVersion());
+        provider.addMavenRepository(
+                "local",
+                new File(System.getProperty("user.home"), ".m2/repository")
+                        .toURI()
+                        .toURL()
+                        .toString());
+        Set<String> names = provider.addArtifactToCatalog(
+                camelCatalog, "org.apache.camel", "dummy-component", camelCatalog.getCatalogVersion());
         assertTrue(names.contains("dummy"));
 
         int after = camelCatalog.findComponentNames().size();
 
         assertEquals(1, after - before, "Should find 1 new component");
     }
-
 }

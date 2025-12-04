@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,73 +36,102 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String maximumRedeliveries;
+
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration", defaultValue = "1000")
     private String redeliveryDelay;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String asyncDelayedRedelivery;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Double", defaultValue = "2.0")
     private String backOffMultiplier;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useExponentialBackOff;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Double", defaultValue = "0.15")
     private String collisionAvoidanceFactor;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useCollisionAvoidance;
+
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration", defaultValue = "60000")
     private String maximumRedeliveryDelay;
+
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
-              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(
+            label = "advanced",
+            javaType = "org.apache.camel.LoggingLevel",
+            defaultValue = "ERROR",
+            enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String retriesExhaustedLogLevel;
+
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(
+            javaType = "org.apache.camel.LoggingLevel",
+            defaultValue = "DEBUG",
+            enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String retryAttemptedLogLevel;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "1")
     private String retryAttemptedLogInterval;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logRetryAttempted;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logStackTrace;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logRetryStackTrace;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logHandled;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logNewException;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String logContinued;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logExhausted;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logExhaustedMessageHistory;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logExhaustedMessageBody;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String disableRedelivery;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String delayPattern;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String allowRedeliveryWhileStopping;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String exchangeFormatterRef;
@@ -111,8 +141,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
         return "RedeliveryPolicy[maximumRedeliveries: " + maximumRedeliveries + "]";
     }
 
-    public RedeliveryPolicyDefinition() {
-    }
+    public RedeliveryPolicyDefinition() {}
 
     protected RedeliveryPolicyDefinition(RedeliveryPolicyDefinition source) {
         this.maximumRedeliveries = source.maximumRedeliveries;
@@ -817,5 +846,4 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     public void setExchangeFormatterRef(String exchangeFormatterRef) {
         this.exchangeFormatterRef = exchangeFormatterRef;
     }
-
 }

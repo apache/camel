@@ -95,7 +95,8 @@ public class AnnotationTransformerLoader extends Transformer implements Transfor
         if (LOG.isTraceEnabled()) {
             LOG.trace("Found data type packages to scan: {}", String.join(", ", packages));
         }
-        Set<Class<?>> scannedClasses = resolver.findAnnotated(DataTypeTransformer.class, packages.toArray(new String[] {}));
+        Set<Class<?>> scannedClasses =
+                resolver.findAnnotated(DataTypeTransformer.class, packages.toArray(new String[] {}));
         if (!scannedClasses.isEmpty()) {
             LOG.debug("Found {} packages with {} @DataType classes to load", packages.size(), scannedClasses.size());
 
@@ -124,18 +125,24 @@ public class AnnotationTransformerLoader extends Transformer implements Transfor
         try {
             if (Transformer.class.isAssignableFrom(type) && type.isAnnotationPresent(DataTypeTransformer.class)) {
                 DataTypeTransformer dt = type.getAnnotation(DataTypeTransformer.class);
-                Transformer transformer = (Transformer) camelContext.getInjector().newInstance(type);
+                Transformer transformer =
+                        (Transformer) camelContext.getInjector().newInstance(type);
                 if (!ObjectHelper.isEmpty(dt.name())) {
                     registry.put(new TransformerKey(dt.name()), transformer);
                 }
 
-                if (!DataType.isAnyType(new DataType(dt.fromType())) || !DataType.isAnyType(new DataType(dt.toType()))) {
-                    registry.put(new TransformerKey(new DataType(dt.fromType()), new DataType(dt.toType())), transformer);
+                if (!DataType.isAnyType(new DataType(dt.fromType()))
+                        || !DataType.isAnyType(new DataType(dt.toType()))) {
+                    registry.put(
+                            new TransformerKey(new DataType(dt.fromType()), new DataType(dt.toType())), transformer);
                 }
             }
         } catch (NoClassDefFoundError e) {
-            LOG.debug("Ignoring transformer type: {} as a dependent class could not be found: {}",
-                    type.getCanonicalName(), e, e);
+            LOG.debug(
+                    "Ignoring transformer type: {} as a dependent class could not be found: {}",
+                    type.getCanonicalName(),
+                    e,
+                    e);
         }
     }
 
@@ -152,8 +159,8 @@ public class AnnotationTransformerLoader extends Transformer implements Transfor
                 // remember we have visited this uri so we wont read it twice
                 visitedURIs.add(path);
                 LOG.debug("Loading file {} to retrieve list of packages, from url: {}", META_INF_SERVICES, url);
-                try (BufferedReader reader
-                        = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+                try (BufferedReader reader =
+                        IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
                     while (true) {
                         String line = reader.readLine();
                         if (line == null) {

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -35,10 +40,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.xml.StreamSourceConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for {@link StreamCacheConverter}
@@ -61,8 +62,8 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         context.start();
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
-        StreamCache streamCache
-                = StreamSourceConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
+        StreamCache streamCache =
+                StreamSourceConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
         String message = exchange.getContext().getTypeConverter().convertTo(String.class, streamCache);
         assertNotNull(message);
         assertEquals(MESSAGE, message, "The converted message is wrong");
@@ -104,10 +105,13 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         InputStream cache = (InputStream) StreamCacheConverter.convertToStreamCache(is, exchange);
         assertNotNull(IOConverter.toString(cache, null));
 
-        assertThrows(Exception.class, () -> {
-            cache.reset();
-            exchange.getUnitOfWork().done(exchange);
-        }, "We except the exception here");
+        assertThrows(
+                Exception.class,
+                () -> {
+                    cache.reset();
+                    exchange.getUnitOfWork().done(exchange);
+                },
+                "We except the exception here");
     }
 
     @Test

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ExchangePattern;
@@ -32,11 +33,11 @@ public class SedaFileIdempotentTimeoutIssueTest extends SedaFileIdempotentIssueT
                 onException(RuntimeException.class).process(new ShutDown());
 
                 from(fileUri("inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10"))
-                        .to("log:begin").to(ExchangePattern.InOut, "seda:process?timeout=100");
+                        .to("log:begin")
+                        .to(ExchangePattern.InOut, "seda:process?timeout=100");
 
                 from("seda:process").throwException(new RuntimeException("Testing with exception"));
             }
         };
     }
-
 }

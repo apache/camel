@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.secret.manager;
 
 import java.util.Map;
@@ -30,8 +31,7 @@ public class GoogleSecretManagerComponent extends DefaultComponent {
     @Metadata
     private GoogleSecretManagerConfiguration configuration = new GoogleSecretManagerConfiguration();
 
-    public GoogleSecretManagerComponent() {
-    }
+    public GoogleSecretManagerComponent() {}
 
     public GoogleSecretManagerComponent(CamelContext context) {
         super(context);
@@ -41,8 +41,8 @@ public class GoogleSecretManagerComponent extends DefaultComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Project id must be specified.");
         }
-        final GoogleSecretManagerConfiguration endpointConfiguration
-                = this.configuration != null ? this.configuration.copy() : new GoogleSecretManagerConfiguration();
+        final GoogleSecretManagerConfiguration endpointConfiguration =
+                this.configuration != null ? this.configuration.copy() : new GoogleSecretManagerConfiguration();
         endpointConfiguration.setProject(remaining);
 
         Endpoint endpoint = new GoogleSecretManagerEndpoint(uri, this, endpointConfiguration);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -73,7 +74,12 @@ public class DetourTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").choice().when().method("controlBean", "isDetour").to("mock:detour").end()
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .method("controlBean", "isDetour")
+                        .to("mock:detour")
+                        .end()
                         .to("mock:result");
                 // END SNIPPET: e1
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp.internal;
 
 import java.io.IOException;
@@ -44,8 +45,8 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
     private final String remoteAddress;
     private final String combinedAddress;
 
-    public TcpServerConsumerValidationRunnable(MllpTcpServerConsumer consumer, Socket clientSocket,
-                                               MllpSocketBuffer mllpBuffer) {
+    public TcpServerConsumerValidationRunnable(
+            MllpTcpServerConsumer consumer, Socket clientSocket, MllpSocketBuffer mllpBuffer) {
         this.consumer = consumer;
         // this.setName(createThreadName(clientSocket));
         this.clientSocket = clientSocket;
@@ -74,7 +75,8 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
                 this.clientSocket.setTcpNoDelay(consumer.getConfiguration().getTcpNoDelay());
             }
             if (consumer.getConfiguration().hasReceiveBufferSize()) {
-                this.clientSocket.setReceiveBufferSize(consumer.getConfiguration().getReceiveBufferSize());
+                this.clientSocket.setReceiveBufferSize(
+                        consumer.getConfiguration().getReceiveBufferSize());
             }
             if (consumer.getConfiguration().hasSendBufferSize()) {
                 this.clientSocket.setSendBufferSize(consumer.getConfiguration().getSendBufferSize());
@@ -85,7 +87,8 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
             // Initial Read Timeout
             this.clientSocket.setSoTimeout(consumer.getConfiguration().getReceiveTimeout());
         } catch (IOException initializationException) {
-            throw new IllegalStateException("Failed to initialize " + this.getClass().getSimpleName(), initializationException);
+            throw new IllegalStateException(
+                    "Failed to initialize " + this.getClass().getSimpleName(), initializationException);
         }
 
         if (mllpBuffer == null) {
@@ -118,7 +121,9 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
     public void run() {
         String originalThreadName = Thread.currentThread().getName();
         Thread.currentThread().setName(createThreadName());
-        MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
+        MDC.put(
+                UnitOfWork.MDC_CAMEL_CONTEXT_ID,
+                consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();
         if (route != null) {
@@ -131,20 +136,26 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
         log.debug("Checking {} for data", combinedAddress);
 
         try {
-            mllpBuffer.readFrom(clientSocket, Math.min(500, consumer.getConfiguration().getReceiveTimeout()),
+            mllpBuffer.readFrom(
+                    clientSocket,
+                    Math.min(500, consumer.getConfiguration().getReceiveTimeout()),
                     consumer.getConfiguration().getReadTimeout());
             if (mllpBuffer.hasCompleteEnvelope() || mllpBuffer.hasStartOfBlock()) {
                 consumer.startConsumer(clientSocket, mllpBuffer);
             } else if (!mllpBuffer.isEmpty()) {
                 // We have some leading out-of-band data but no START_OF_BLOCK
-                log.info("Ignoring out-of-band data on initial read [{} bytes]: {}", mllpBuffer.size(),
+                log.info(
+                        "Ignoring out-of-band data on initial read [{} bytes]: {}",
+                        mllpBuffer.size(),
                         mllpBuffer.toPrintFriendlyStringAndReset());
                 mllpBuffer.resetSocket(clientSocket);
             }
         } catch (MllpSocketException socketEx) {
             // TODO:  The socket is invalid for some reason
             if (!mllpBuffer.isEmpty()) {
-                log.warn("Exception encountered receiving complete initial message [{} bytes]: {}", mllpBuffer.size(),
+                log.warn(
+                        "Exception encountered receiving complete initial message [{} bytes]: {}",
+                        mllpBuffer.size(),
                         mllpBuffer.toPrintFriendlyStringAndReset());
             }
             mllpBuffer.resetSocket(clientSocket);
@@ -153,7 +164,9 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
                 log.debug("Initial read timed-out but no data was read - starting consumer");
                 consumer.startConsumer(clientSocket, mllpBuffer);
             } else {
-                log.warn("Timeout receiving complete initial message on read [{} bytes]: {}", mllpBuffer.size(),
+                log.warn(
+                        "Timeout receiving complete initial message on read [{} bytes]: {}",
+                        mllpBuffer.size(),
                         mllpBuffer.toPrintFriendlyStringAndReset());
                 mllpBuffer.resetSocket(clientSocket);
             }
@@ -189,5 +202,4 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
     public String getCombinedAddress() {
         return combinedAddress;
     }
-
 }

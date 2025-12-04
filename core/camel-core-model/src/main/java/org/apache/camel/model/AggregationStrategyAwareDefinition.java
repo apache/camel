@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import org.apache.camel.AggregationStrategy;
@@ -60,5 +61,4 @@ public interface AggregationStrategyAwareDefinition<Type extends ProcessorDefini
      * AggregationStrategy.
      */
     String getAggregationStrategyMethodAllowNull();
-
 }

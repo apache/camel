@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -54,24 +55,22 @@ public class RecipientListParallelSynchronousTest extends ContextTestSupport {
                         .process(e -> {
                             before = Thread.currentThread().getName();
                         })
-                        .recipientList(header("whereTo")).parallelProcessing().synchronous()
+                        .recipientList(header("whereTo"))
+                        .parallelProcessing()
+                        .synchronous()
                         .process(e -> {
                             after = Thread.currentThread().getName();
                         })
                         .to("mock:end");
 
-                from("direct:b")
-                        .process(e -> {
-                            middle = Thread.currentThread().getName();
-                        });
+                from("direct:b").process(e -> {
+                    middle = Thread.currentThread().getName();
+                });
 
-                from("direct:c")
-                        .process(e -> {
-                            middle2 = Thread.currentThread().getName();
-                        });
-
+                from("direct:c").process(e -> {
+                    middle2 = Thread.currentThread().getName();
+                });
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
 
 import java.io.File;
@@ -40,8 +41,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ServiceBusProducer extends DefaultProducer {
 
-    private final Map<ServiceBusProducerOperationDefinition, Consumer<Exchange>> operationsToExecute
-            = new EnumMap<>(ServiceBusProducerOperationDefinition.class);
+    private final Map<ServiceBusProducerOperationDefinition, Consumer<Exchange>> operationsToExecute =
+            new EnumMap<>(ServiceBusProducerOperationDefinition.class);
     private ServiceBusSenderClient client;
     private ServiceBusConfigurationOptionsProxy configurationOptionsProxy;
     private ServiceBusSenderOperations serviceBusSenderOperations;
@@ -77,8 +78,8 @@ public class ServiceBusProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) {
-        final ServiceBusProducerOperationDefinition operation
-                = configurationOptionsProxy.getServiceBusProducerOperationDefinition(exchange);
+        final ServiceBusProducerOperationDefinition operation =
+                configurationOptionsProxy.getServiceBusProducerOperationDefinition(exchange);
         final ServiceBusProducerOperationDefinition operationsToInvoke;
 
         // we put sendMessage operation as default in case no operation has been selected
@@ -124,27 +125,34 @@ public class ServiceBusProducer extends DefaultProducer {
     private Consumer<Exchange> sendMessages() {
         return (exchange) -> {
             final Object inputBody = exchange.getMessage().getBody();
-            Map<String, Object> applicationProperties
-                    = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+            Map<String, Object> applicationProperties =
+                    exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
             if (applicationProperties == null) {
                 applicationProperties = new HashMap<>();
             }
             propagateHeaders(exchange, applicationProperties);
-            final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
+            final String correlationId =
+                    exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
             final String sessionId = getConfiguration().getSessionId();
 
             if (inputBody instanceof Iterable<?>) {
-                serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<?>) inputBody),
-                        configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties,
+                serviceBusSenderOperations.sendMessages(
+                        convertBodyToList((Iterable<?>) inputBody),
+                        configurationOptionsProxy.getServiceBusTransactionContext(exchange),
+                        applicationProperties,
                         correlationId,
                         sessionId);
             } else {
-                Object convertedBody = inputBody instanceof BinaryData ? inputBody
-                        : getConfiguration().isBinary() ? convertBodyToBinary(exchange)
-                        : exchange.getMessage().getBody(String.class);
+                Object convertedBody = inputBody instanceof BinaryData
+                        ? inputBody
+                        : getConfiguration().isBinary()
+                                ? convertBodyToBinary(exchange)
+                                : exchange.getMessage().getBody(String.class);
 
-                serviceBusSenderOperations.sendMessages(convertedBody,
-                        configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties,
+                serviceBusSenderOperations.sendMessages(
+                        convertedBody,
+                        configurationOptionsProxy.getServiceBusTransactionContext(exchange),
+                        applicationProperties,
                         correlationId,
                         sessionId);
             }
@@ -155,27 +163,32 @@ public class ServiceBusProducer extends DefaultProducer {
     private Consumer<Exchange> scheduleMessages() {
         return (exchange) -> {
             final Object inputBody = exchange.getMessage().getBody();
-            Map<String, Object> applicationProperties
-                    = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+            Map<String, Object> applicationProperties =
+                    exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
             if (applicationProperties == null) {
                 applicationProperties = new HashMap<>();
             }
             propagateHeaders(exchange, applicationProperties);
-            final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
+            final String correlationId =
+                    exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
             final String sessionId = getConfiguration().getSessionId();
 
             if (inputBody instanceof Iterable<?>) {
-                serviceBusSenderOperations.scheduleMessages(convertBodyToList((Iterable<?>) inputBody),
+                serviceBusSenderOperations.scheduleMessages(
+                        convertBodyToList((Iterable<?>) inputBody),
                         configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange),
                         applicationProperties,
                         correlationId,
                         sessionId);
             } else {
-                Object convertedBody = inputBody instanceof BinaryData ? inputBody
-                        : getConfiguration().isBinary() ? convertBodyToBinary(exchange)
-                        : exchange.getMessage().getBody(String.class);
-                serviceBusSenderOperations.scheduleMessages(convertedBody,
+                Object convertedBody = inputBody instanceof BinaryData
+                        ? inputBody
+                        : getConfiguration().isBinary()
+                                ? convertBodyToBinary(exchange)
+                                : exchange.getMessage().getBody(String.class);
+                serviceBusSenderOperations.scheduleMessages(
+                        convertedBody,
                         configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange),
                         applicationProperties,
@@ -186,7 +199,9 @@ public class ServiceBusProducer extends DefaultProducer {
     }
 
     private List<?> convertBodyToList(final Iterable<?> inputBody) {
-        return StreamSupport.stream(inputBody.spliterator(), false).map(this::convertMessageBody).toList();
+        return StreamSupport.stream(inputBody.spliterator(), false)
+                .map(this::convertMessageBody)
+                .toList();
     }
 
     private Object convertBodyToBinary(Exchange exchange) {
@@ -223,10 +238,9 @@ public class ServiceBusProducer extends DefaultProducer {
 
     private void propagateHeaders(Exchange exchange, Map<String, Object> applicationProperties) {
         final HeaderFilterStrategy headerFilterStrategy = getConfiguration().getHeaderFilterStrategy();
-        applicationProperties.putAll(
-                exchange.getMessage().getHeaders().entrySet().stream()
-                        .filter(entry -> !headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(),
-                                exchange))
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+        applicationProperties.putAll(exchange.getMessage().getHeaders().entrySet().stream()
+                .filter(entry ->
+                        !headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
     }
 }

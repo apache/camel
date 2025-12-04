@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.cassandra;
+
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
+import static org.apache.camel.utils.cassandra.CassandraUtils.append;
+import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLevel;
+import static org.apache.camel.utils.cassandra.CassandraUtils.concat;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateDelete;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -42,23 +51,16 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
-import static org.apache.camel.utils.cassandra.CassandraUtils.append;
-import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLevel;
-import static org.apache.camel.utils.cassandra.CassandraUtils.concat;
-import static org.apache.camel.utils.cassandra.CassandraUtils.generateDelete;
-import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
-import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
-
 /**
  * Implementation of {@link AggregationRepository} using Cassandra table to store exchanges. Advice: use
  * LeveledCompaction for this table and tune read/write consistency levels. Warning: Cassandra is not the best tool for
  * queuing use cases See: http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
-@Metadata(label = "bean",
-          description = "Aggregation repository that uses Cassandra table to store exchanges."
-                        + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.",
-          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
+@Metadata(
+        label = "bean",
+        description = "Aggregation repository that uses Cassandra table to store exchanges."
+                + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.",
+        annotations = {"interfaceName=org.apache.camel.spi.AggregationRepository"})
 @Configurer(metadataOnly = true)
 public class CassandraAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
@@ -68,26 +70,40 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
 
     @Metadata(description = "Cassandra session", required = true)
     private CassandraSessionHolder sessionHolder;
+
     @Metadata(description = "The table name for storing the data", defaultValue = "CAMEL_AGGREGATION")
     private String table = "CAMEL_AGGREGATION";
+
     @Metadata(description = "Column name for Exchange ID", defaultValue = "EXCHANGE_ID")
     private String exchangeIdColumn = "EXCHANGE_ID";
+
     @Metadata(description = "Column name for Exchange", defaultValue = "EXCHANGE")
     private String exchangeColumn = "EXCHANGE";
-    @Metadata(description = "Values used as primary key prefix. Multiple values can be separated by comma.",
-              displayName = "Prefix Primary Key Values", javaType = "java.lang.String")
+
+    @Metadata(
+            description = "Values used as primary key prefix. Multiple values can be separated by comma.",
+            displayName = "Prefix Primary Key Values",
+            javaType = "java.lang.String")
     private Object[] prefixPKValues = new Object[0];
-    @Metadata(description = "Primary key columns. Multiple values can be separated by comma.",
-              displayName = "Primary Key Columns",
-              javaType = "java.lang.String", defaultValue = "KEY")
-    private String[] pkColumns = { "KEY" };
+
+    @Metadata(
+            description = "Primary key columns. Multiple values can be separated by comma.",
+            displayName = "Primary Key Columns",
+            javaType = "java.lang.String",
+            defaultValue = "KEY")
+    private String[] pkColumns = {"KEY"};
+
     @Metadata(description = "Time to live in seconds used for inserts", displayName = "Time to Live")
     private Integer ttl;
-    @Metadata(description = "Write consistency level",
-              enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
+
+    @Metadata(
+            description = "Write consistency level",
+            enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel writeConsistencyLevel;
-    @Metadata(description = "Read consistency level",
-              enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
+
+    @Metadata(
+            description = "Read consistency level",
+            enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel readConsistencyLevel;
 
     private PreparedStatement insertStatement;
@@ -104,15 +120,24 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
 
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
+
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
-    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+
+    @Metadata(
+            description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterUri;
-    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+
+    @Metadata(
+            description =
+                    "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.")
     private int maximumRedeliveries;
-    @Metadata(label = "advanced",
-              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
     /**
@@ -123,8 +148,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
      */
     private String deserializationFilter = "java.**;org.apache.camel.**;!*";
 
-    public CassandraAggregationRepository() {
-    }
+    public CassandraAggregationRepository() {}
 
     public CassandraAggregationRepository(CqlSession session) {
         this.sessionHolder = new CassandraSessionHolder(session);
@@ -184,7 +208,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         LOGGER.debug("Inserting key {} exchange {}", idValues, exchange);
         try {
             ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(exchange, allowSerializedHeaders);
-            Object[] cqlParams = concat(idValues, new Object[] { exchange.getExchangeId(), marshalledExchange });
+            Object[] cqlParams = concat(idValues, new Object[] {exchange.getExchangeId(), marshalledExchange});
             getSession().execute(insertStatement.bind(cqlParams));
             return exchange;
         } catch (IOException iOException) {
@@ -213,8 +237,8 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         Exchange exchange = null;
         if (row != null) {
             try {
-                exchange = exchangeCodec.unmarshallExchange(camelContext, row.getByteBuffer(exchangeColumn),
-                        deserializationFilter);
+                exchange = exchangeCodec.unmarshallExchange(
+                        camelContext, row.getByteBuffer(exchangeColumn), deserializationFilter);
             } catch (IOException iOException) {
                 throw new CassandraAggregationException("Failed to read exchange", exchange, iOException);
             } catch (ClassNotFoundException classNotFoundException) {
@@ -274,12 +298,15 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
 
     // -------------------------------------------------------------------------
     private void initSelectKeyIdStatement() {
-        Select select = generateSelect(table, new String[] { getKeyColumn(), exchangeIdColumn }, // Key
+        Select select = generateSelect(
+                table,
+                new String[] {getKeyColumn(), exchangeIdColumn}, // Key
                 // +
                 // Exchange
                 // Id
                 // columns
-                pkColumns, pkColumns.length - 1); // Where
+                pkColumns,
+                pkColumns.length - 1); // Where
         // fixed
         // PK
         // columns
@@ -290,7 +317,9 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
 
     protected List<Row> selectKeyIds() {
         LOGGER.debug("Selecting keys {}", getPrefixPKValues());
-        return getSession().execute(selectKeyIdStatement.bind(getPrefixPKValues())).all();
+        return getSession()
+                .execute(selectKeyIdStatement.bind(getPrefixPKValues()))
+                .all();
     }
 
     /**

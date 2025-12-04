@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.rocketmq.services;
 
 import java.io.IOException;
@@ -44,18 +45,14 @@ public final class RocketMQServiceFactory {
         }
     }
 
-    private RocketMQServiceFactory() {
-
-    }
+    private RocketMQServiceFactory() {}
 
     public static SimpleTestServiceBuilder<RocketMQService> builder() {
         return new SimpleTestServiceBuilder<>("rocketmq");
     }
 
     public static RocketMQService createService() {
-        return builder()
-                .addLocalMapping(RocketMQContainerService::new)
-                .build();
+        return builder().addLocalMapping(RocketMQContainerService::new).build();
     }
 
     public static RocketMQService createSingletonService() {
@@ -74,6 +71,5 @@ public final class RocketMQServiceFactory {
         }
     }
 
-    public static class RocketMQContainerService extends RocketMQContainerInfraService implements RocketMQService {
-    }
+    public static class RocketMQContainerService extends RocketMQContainerInfraService implements RocketMQService {}
 }

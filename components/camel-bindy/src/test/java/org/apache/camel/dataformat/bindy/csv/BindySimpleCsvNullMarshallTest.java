@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.math.BigDecimal;
@@ -86,13 +87,11 @@ public class BindySimpleCsvNullMarshallTest {
 
         @Override
         public void configure() {
-            BindyCsvDataFormat camelDataFormat
-                    = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+            BindyCsvDataFormat camelDataFormat =
+                    new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");
         }
-
     }
-
 }

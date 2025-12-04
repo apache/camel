@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.nio.file.Files;
@@ -31,8 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class S3UploadInputStreamMultipartIT extends Aws2S3Base {
 
@@ -66,7 +67,8 @@ public class S3UploadInputStreamMultipartIT extends Aws2S3Base {
         List<S3Object> resp = ex.getMessage().getBody(List.class);
         assertEquals(1, resp.size());
 
-        assertEquals(1 * Files.size(Paths.get("src/test/resources/empty-big.bin")),
+        assertEquals(
+                1 * Files.size(Paths.get("src/test/resources/empty-big.bin")),
                 resp.stream().mapToLong(S3Object::size).sum());
     }
 
@@ -75,15 +77,13 @@ public class S3UploadInputStreamMultipartIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint1
-                        = String.format(
-                                "aws2-s3://%s?autoCreateBucket=true&keyName=fileTest.txt&multiPartUpload=true&partSize=6000000",
-                                name.get());
+                String awsEndpoint1 = String.format(
+                        "aws2-s3://%s?autoCreateBucket=true&keyName=fileTest.txt&multiPartUpload=true&partSize=6000000",
+                        name.get());
 
                 from("direct:stream1").to(awsEndpoint1).to("mock:result");
 
-                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true",
-                        name.get());
+                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true", name.get());
 
                 from("direct:listObjects").to(awsEndpoint);
             }

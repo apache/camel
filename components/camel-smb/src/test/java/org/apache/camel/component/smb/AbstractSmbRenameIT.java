@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -33,9 +37,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Abstract base class for testing SMB file rename operations with different configuration options. This class provides
@@ -79,8 +80,8 @@ public abstract class AbstractSmbRenameIT extends SmbServerTestSupport {
 
         // Verify file was moved
         await().atMost(6, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World\n",
-                        service.smbFile(getPath() + "/.done/" + getFilename())));
+                .untilAsserted(
+                        () -> assertEquals("Hello World\n", service.smbFile(getPath() + "/.done/" + getFilename())));
     }
 
     @Override
@@ -109,8 +110,7 @@ public abstract class AbstractSmbRenameIT extends SmbServerTestSupport {
 
         @Override
         protected GenericFileEndpoint<FileIdBothDirectoryInformation> buildFileEndpoint(
-                String uri, String remaining, Map<String, Object> parameters)
-                throws Exception {
+                String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
             // Replicate parent logic to build configuration
             String baseUri = getBaseUri(uri);
@@ -127,8 +127,8 @@ public abstract class AbstractSmbRenameIT extends SmbServerTestSupport {
             }
 
             // Create our custom endpoint instead of the default one
-            SmbAtomicRenameBehaviorIT.CustomSmbEndpoint endpoint
-                    = new SmbAtomicRenameBehaviorIT.CustomSmbEndpoint(uri, this, config);
+            SmbAtomicRenameBehaviorIT.CustomSmbEndpoint endpoint =
+                    new SmbAtomicRenameBehaviorIT.CustomSmbEndpoint(uri, this, config);
 
             // Set properties on the endpoint (this consumes parameters from the map)
             setProperties(endpoint, parameters);
@@ -137,13 +137,19 @@ public abstract class AbstractSmbRenameIT extends SmbServerTestSupport {
         }
     }
 
-    @UriEndpoint(firstVersion = "4.3.0", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName/path",
-                 headersClass = SmbConstants.class, category = { Category.FILE })
-    @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
-                                  + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
-                                  + "directoryMustExist,extendedAttributes,probeContentType,"
-                                  + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,"
-                                  + "synchronous")
+    @UriEndpoint(
+            firstVersion = "4.3.0",
+            scheme = "smb",
+            title = "SMB",
+            syntax = "smb:hostname:port/shareName/path",
+            headersClass = SmbConstants.class,
+            category = {Category.FILE})
+    @Metadata(
+            excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+                    + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                    + "directoryMustExist,extendedAttributes,probeContentType,"
+                    + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,"
+                    + "synchronous")
     class CustomSmbEndpoint extends SmbEndpoint {
 
         @UriParam
@@ -164,5 +170,4 @@ public abstract class AbstractSmbRenameIT extends SmbServerTestSupport {
     protected abstract String getFilename();
 
     protected abstract String getPath();
-
 }

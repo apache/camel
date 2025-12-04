@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.vault.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MainVaultTest {
 
@@ -139,7 +140,9 @@ public class MainVaultTest {
     @Test
     public void testMainOverrideEndpointAwsFluent() {
         Main main = new Main();
-        main.configure().vault().aws()
+        main.configure()
+                .vault()
+                .aws()
                 .withAccessKey("myKey")
                 .withSecretKey("mySecret")
                 .withRegion("myRegion")
@@ -169,7 +172,9 @@ public class MainVaultTest {
     @Test
     public void testMainAwsFluent() {
         Main main = new Main();
-        main.configure().vault().aws()
+        main.configure()
+                .vault()
+                .aws()
                 .withAccessKey("myKey")
                 .withSecretKey("mySecret")
                 .withRegion("myRegion")
@@ -195,7 +200,9 @@ public class MainVaultTest {
     @Test
     public void testMainAwsProfileFluent() {
         Main main = new Main();
-        main.configure().vault().aws()
+        main.configure()
+                .vault()
+                .aws()
                 .withAccessKey("myKey")
                 .withSecretKey("mySecret")
                 .withRegion("myRegion")
@@ -246,7 +253,9 @@ public class MainVaultTest {
     @Test
     public void testMainGcpFluent() {
         Main main = new Main();
-        main.configure().vault().gcp()
+        main.configure()
+                .vault()
+                .gcp()
                 .withServiceAccountKey("file:////myKey")
                 .withProjectId("gcp-project")
                 .end();
@@ -292,7 +301,9 @@ public class MainVaultTest {
     @Test
     public void testMainAzureFluent() {
         Main main = new Main();
-        main.configure().vault().azure()
+        main.configure()
+                .vault()
+                .azure()
                 .withVaultName("vault")
                 .withClientId("id1")
                 .withClientSecret("secret1")
@@ -389,7 +400,9 @@ public class MainVaultTest {
     @Test
     public void testMainKubernetesFluent() {
         Main main = new Main();
-        main.configure().vault().kubernetes()
+        main.configure()
+                .vault()
+                .kubernetes()
                 .withRefreshEnabled(true)
                 .withSecrets("xxxx")
                 .end();
@@ -419,7 +432,8 @@ public class MainVaultTest {
         CamelContext context = main.getCamelContext();
         assertNotNull(context);
 
-        KubernetesConfigMapVaultConfiguration cfg = context.getVaultConfiguration().kubernetesConfigmaps();
+        KubernetesConfigMapVaultConfiguration cfg =
+                context.getVaultConfiguration().kubernetesConfigmaps();
         assertNotNull(cfg);
 
         Assertions.assertTrue(cfg.isRefreshEnabled());
@@ -430,7 +444,9 @@ public class MainVaultTest {
     @Test
     public void testMainKubernetesConfigmapsFluent() {
         Main main = new Main();
-        main.configure().vault().kubernetesConfigmaps()
+        main.configure()
+                .vault()
+                .kubernetesConfigmaps()
                 .withRefreshEnabled(true)
                 .withConfigmaps("xxxx")
                 .end();
@@ -440,7 +456,8 @@ public class MainVaultTest {
         CamelContext context = main.getCamelContext();
         assertNotNull(context);
 
-        KubernetesConfigMapVaultConfiguration cfg = context.getVaultConfiguration().kubernetesConfigmaps();
+        KubernetesConfigMapVaultConfiguration cfg =
+                context.getVaultConfiguration().kubernetesConfigmaps();
         assertNotNull(cfg);
 
         Assertions.assertTrue(cfg.isRefreshEnabled());
@@ -460,7 +477,8 @@ public class MainVaultTest {
         CamelContext context = main.getCamelContext();
         assertNotNull(context);
 
-        IBMSecretsManagerVaultConfiguration cfg = context.getVaultConfiguration().ibmSecretsManager();
+        IBMSecretsManagerVaultConfiguration cfg =
+                context.getVaultConfiguration().ibmSecretsManager();
         assertNotNull(cfg);
 
         Assertions.assertEquals("token", cfg.getToken());
@@ -471,7 +489,9 @@ public class MainVaultTest {
     @Test
     public void testMainIBMFluent() {
         Main main = new Main();
-        main.configure().vault().ibmSecretsManager()
+        main.configure()
+                .vault()
+                .ibmSecretsManager()
                 .withToken("token")
                 .withServiceUrl("http://ibm.cloud.com")
                 .end();
@@ -481,7 +501,8 @@ public class MainVaultTest {
         CamelContext context = main.getCamelContext();
         assertNotNull(context);
 
-        IBMSecretsManagerVaultConfiguration cfg = context.getVaultConfiguration().ibmSecretsManager();
+        IBMSecretsManagerVaultConfiguration cfg =
+                context.getVaultConfiguration().ibmSecretsManager();
         assertNotNull(cfg);
 
         Assertions.assertEquals("token", cfg.getToken());
@@ -512,7 +533,9 @@ public class MainVaultTest {
     @Test
     public void testMainCyberarkConjurFluent() {
         Main main = new Main();
-        main.configure().vault().cyberark()
+        main.configure()
+                .vault()
+                .cyberark()
                 .withAuthToken("token")
                 .withUrl("http://conjur.com")
                 .end();

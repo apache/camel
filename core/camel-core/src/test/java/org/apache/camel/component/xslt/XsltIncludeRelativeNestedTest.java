@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,7 +41,8 @@ public class XsltIncludeRelativeNestedTest extends ContextTestSupport {
             public void configure() {
                 from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
                         .to("xslt:org/apache/camel/component/xslt/staff_include_relative_nested.xsl")
-                        .to("log:foo").to("mock:result");
+                        .to("log:foo")
+                        .to("mock:result");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,9 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
 public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
     Logger log = LoggerFactory.getLogger(MllpProducerConsumerLoopbackTest.class);
@@ -52,7 +53,8 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
     @BeforeAll
     public static void setUpClass() {
-        assumeTrue(System.getenv("BUILD_ID") == null,
+        assumeTrue(
+                System.getenv("BUILD_ID") == null,
                 "Skipping test running in CI server - Fails sometimes on CI server with address already in use");
     }
 
@@ -74,7 +76,8 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
             String routeId = "mllp-receiver";
 
             public void configure() {
-                fromF("mllp://%s:%d?autoAck=true&readTimeout=5000", mllpHost, mllpPort).id(routeId)
+                fromF("mllp://%s:%d?autoAck=true&readTimeout=5000", mllpHost, mllpPort)
+                        .id(routeId)
                         .convertBodyTo(String.class)
                         .to(acknowledged)
                         .process(new PassthroughProcessor("after send to result"))
@@ -86,7 +89,8 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
             String routeId = "mllp-sender";
 
             public void configure() {
-                from(source.getDefaultEndpoint()).routeId(routeId)
+                from(source.getDefaultEndpoint())
+                        .routeId(routeId)
                         .log(LoggingLevel.DEBUG, routeId, "Sending: ${body}")
                         .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPort)
                         .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
@@ -102,8 +106,8 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
         acknowledged.expectedBodiesReceived(testMessage);
 
         String acknowledgement = source.requestBody((Object) testMessage, String.class);
-        assertThat("Should be acknowledgment for message 1", acknowledgement,
-                CoreMatchers.containsString("MSA|AA|00001"));
+        assertThat(
+                "Should be acknowledgment for message 1", acknowledgement, CoreMatchers.containsString("MSA|AA|00001"));
 
         MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
     }
@@ -118,7 +122,9 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
             String testMessage = Hl7TestMessageGenerator.generateMessage(i);
             acknowledged.message(i - 1).body().isEqualTo(testMessage);
             String acknowledgement = source.requestBody((Object) testMessage, String.class);
-            assertThat("Should be acknowledgment for message " + i, acknowledgement,
+            assertThat(
+                    "Should be acknowledgment for message " + i,
+                    acknowledgement,
                     CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
         }
 

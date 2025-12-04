@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,7 +37,8 @@ public class LanguageResourceLoadConstantFromClasspathTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("language:constant:resource:classpath:org/apache/camel/component/language/hello.txt")
+                from("direct:start")
+                        .to("language:constant:resource:classpath:org/apache/camel/component/language/hello.txt")
                         .to("mock:result");
             }
         };

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.ConnectException;
 
@@ -37,10 +42,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * JMS with JDBC idempotent consumer test.
  */
@@ -61,7 +62,8 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/sql/FromJmsToJdbcIdempotentConsumerToJmsTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/itest/sql/FromJmsToJdbcIdempotentConsumerToJmsTest.xml");
     }
 
     @BeforeEach
@@ -83,8 +85,11 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         mockB.expectedMessageCount(1);
 
         // use NotifyBuilder to know when the message is done
-        NotifyBuilder notify
-                = new NotifyBuilder(context).whenExactlyCompleted(1).whenDoneSatisfied(mockA).whenDoneSatisfied(mockB).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenExactlyCompleted(1)
+                .whenDoneSatisfied(mockA)
+                .whenDoneSatisfied(mockB)
+                .create();
 
         template.sendBodyAndHeader("activemq2:queue:inbox", "A", "uid", 123);
 
@@ -107,14 +112,18 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         mockB.expectedMessageCount(0);
 
         // use NotifyBuilder to know that after 1+6 (1 original + 6 redelivery) attempts from ActiveMQ
-        NotifyBuilder notify
-                = new NotifyBuilder(context).whenExactlyDone(7).whenDoneSatisfied(mockA).whenDoneSatisfied(mockB).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenExactlyDone(7)
+                .whenDoneSatisfied(mockA)
+                .whenDoneSatisfied(mockB)
+                .create();
 
         template.sendBodyAndHeader("activemq2:queue:inbox", "A", "uid", 123);
 
         assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
-        // Start by checking the DLQ queue to prevent a mix-up between client and server resources being part of the same transaction
+        // Start by checking the DLQ queue to prevent a mix-up between client and server resources being part of the
+        // same transaction
 
         // the message should have been moved to the AMQ DLQ queue
         assertEquals("A", consumer.receiveBody("activemq2:queue:DLQ", 3000));
@@ -135,14 +144,18 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         });
 
         // use NotifyBuilder to know that after 1+6 (1 original + 6 redelivery) attempts from ActiveMQ
-        NotifyBuilder notify
-                = new NotifyBuilder(context).whenExactlyDone(7).whenDoneSatisfied(mockA).whenDoneSatisfied(mockB).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenExactlyDone(7)
+                .whenDoneSatisfied(mockA)
+                .whenDoneSatisfied(mockB)
+                .create();
 
         template.sendBodyAndHeader("activemq2:queue:inbox", "B", "uid", 456);
 
         assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
-        // Start by checking the DLQ queue to prevent a mix-up between client and server resources being part of the same transaction
+        // Start by checking the DLQ queue to prevent a mix-up between client and server resources being part of the
+        // same transaction
 
         // the message should have been moved to the AMQ DLQ queue
         assertEquals("B", consumer.receiveBody("activemq2:queue:DLQ", 3000));
@@ -160,8 +173,11 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         mockB.expectedMessageCount(2);
 
         // use NotifyBuilder to know when the message is done
-        NotifyBuilder notify
-                = new NotifyBuilder(context).whenExactlyDone(3).whenDoneSatisfied(mockA).whenDoneSatisfied(mockB).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenExactlyDone(3)
+                .whenDoneSatisfied(mockA)
+                .whenDoneSatisfied(mockB)
+                .create();
 
         template.sendBodyAndHeader("activemq2:queue:inbox", "D", "uid", 111);
         template.sendBodyAndHeader("activemq2:queue:inbox", "E", "uid", 222);
@@ -196,8 +212,11 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         });
 
         // use NotifyBuilder to know when the message is done
-        NotifyBuilder notify
-                = new NotifyBuilder(context).whenExactlyDone(4).whenDoneSatisfied(mockA).whenDoneSatisfied(mockB).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenExactlyDone(4)
+                .whenDoneSatisfied(mockA)
+                .whenDoneSatisfied(mockB)
+                .create();
 
         template.sendBodyAndHeader("activemq2:queue:inbox", "D", "uid", 111);
         template.sendBodyAndHeader("activemq2:queue:inbox", "E", "uid", 222);

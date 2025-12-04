@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
+
+import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationLineNumber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +39,6 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-
-import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationLineNumber;
 
 @DevConsole(name = "route-structure", description = "Dump route structure")
 public class RouteStructureDevConsole extends AbstractDevConsole {
@@ -70,7 +71,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 Route route = getCamelContext().getRoute(mrb.getRouteId());
-                List<ModelDumpLine> lines = dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
+                List<ModelDumpLine> lines =
+                        dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
 
                 sb.append(String.format("    Id: %s", mrb.getRouteId()));
                 if (mrb.getSourceLocation() != null) {
@@ -118,7 +120,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 Route route = getCamelContext().getRoute(mrb.getRouteId());
-                List<ModelDumpLine> lines = dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
+                List<ModelDumpLine> lines =
+                        dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
                 List<JsonObject> code = dumpAsJSon(lines);
                 jo.put("code", code);
             } catch (Exception e) {
@@ -138,7 +141,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         String limit = (String) options.get(LIMIT);
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             List<Route> routes = getCamelContext().getRoutes();
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
@@ -189,5 +193,4 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         }
         return code;
     }
-
 }

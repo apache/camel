@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
 
 import org.apache.zookeeper.CreateMode;
@@ -24,10 +25,10 @@ import org.apache.zookeeper.common.PathUtils;
 
 public final class ZooKeeperHelper {
 
-    private ZooKeeperHelper() {
-    }
+    private ZooKeeperHelper() {}
 
-    public static void mkdirs(ZooKeeper zookeeper, String path, boolean makeLastNode, CreateMode createMode) throws Exception {
+    public static void mkdirs(ZooKeeper zookeeper, String path, boolean makeLastNode, CreateMode createMode)
+            throws Exception {
         PathUtils.validatePath(path);
 
         int pos = 1; // skip first slash, root is guaranteed to exist
@@ -53,5 +54,4 @@ public final class ZooKeeperHelper {
 
         } while (pos < path.length());
     }
-
 }

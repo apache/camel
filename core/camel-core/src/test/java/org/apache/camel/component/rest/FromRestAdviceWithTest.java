@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWith;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromRestAdviceWithTest extends ContextTestSupport {
 
@@ -47,8 +48,10 @@ public class FromRestAdviceWithTest extends ContextTestSupport {
             public void configure() {
                 rest("/say/hello").get().to("direct:hello");
 
-                from("direct:hello").routeId("myRoute")
-                        .transform().constant("Bye World")
+                from("direct:hello")
+                        .routeId("myRoute")
+                        .transform()
+                        .constant("Bye World")
                         .to("mock:hello");
             }
         });
@@ -70,5 +73,4 @@ public class FromRestAdviceWithTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

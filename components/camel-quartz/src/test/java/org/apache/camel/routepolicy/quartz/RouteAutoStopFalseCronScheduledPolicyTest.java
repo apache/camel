@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -38,7 +39,9 @@ public class RouteAutoStopFalseCronScheduledPolicyTest extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo").noAutoStartup()
+                from("seda:foo")
+                        .routeId("foo")
+                        .noAutoStartup()
                         .routePolicy(policy)
                         .to("mock:foo");
             }
@@ -46,5 +49,4 @@ public class RouteAutoStopFalseCronScheduledPolicyTest extends CamelTestSupport 
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

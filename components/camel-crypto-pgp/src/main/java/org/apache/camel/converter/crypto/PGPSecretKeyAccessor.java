@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 import java.util.List;
@@ -31,7 +32,8 @@ public interface PGPSecretKeyAccessor {
      * @return             list of secret keys with their private keys and User Ids which corresponds to one of the
      *                     useridParts, must not be <code>null</code>, can be empty
      */
-    List<PGPSecretKeyAndPrivateKeyAndUserId> getSignerKeys(Exchange exchange, List<String> useridParts) throws Exception;
+    List<PGPSecretKeyAndPrivateKeyAndUserId> getSignerKeys(Exchange exchange, List<String> useridParts)
+            throws Exception;
 
     /**
      * Returns the private key with a certain key ID. This method is used for decrypting.
@@ -42,5 +44,4 @@ public interface PGPSecretKeyAccessor {
      * @return          private key or <code>null</code> if the key cannot be found
      */
     PGPPrivateKey getPrivateKey(Exchange exchange, long keyId) throws Exception;
-
 }

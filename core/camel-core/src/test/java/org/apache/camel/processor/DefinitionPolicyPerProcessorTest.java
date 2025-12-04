@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,8 +31,6 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
 
@@ -63,7 +64,11 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
                 from("direct:start")
                         // only wrap policy foo around the to(mock:foo) - notice the
                         // end()
-                        .policy("foo").setBody().constant("body not altered").to("mock:foo").end();
+                        .policy("foo")
+                        .setBody()
+                        .constant("body not altered")
+                        .to("mock:foo")
+                        .end();
             }
         };
     }
@@ -83,7 +88,8 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
 
         @Override
         public void beforeWrap(Route route, NamedNode definition) {
-            SetBodyDefinition bodyDef = (SetBodyDefinition) ((ProcessorDefinition<?>) definition).getOutputs().get(0);
+            SetBodyDefinition bodyDef = (SetBodyDefinition)
+                    ((ProcessorDefinition<?>) definition).getOutputs().get(0);
             bodyDef.setExpression(new ConstantExpression("body was altered"));
         }
 

@@ -17,5 +17,4 @@
 
 package org.apache.camel.component.jackson.transform;
 
-record Person(String name, int age) {
-}
+record Person(String name, int age) {}

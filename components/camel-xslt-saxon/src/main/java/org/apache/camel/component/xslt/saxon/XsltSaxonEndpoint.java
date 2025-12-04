@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
 
 import java.io.IOException;
@@ -62,24 +63,36 @@ import org.slf4j.LoggerFactory;
  * Transform XML payloads using an XSLT template using Saxon.
  */
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
-@UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri",
-             remote = false, producerOnly = true, category = { Category.CORE, Category.TRANSFORMATION })
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "xslt-saxon",
+        title = "XSLT Saxon",
+        syntax = "xslt-saxon:resourceUri",
+        remote = false,
+        producerOnly = true,
+        category = {Category.CORE, Category.TRANSFORMATION})
 public class XsltSaxonEndpoint extends XsltEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonEndpoint.class);
 
     @UriParam(label = "advanced")
     private Configuration saxonConfiguration;
+
     @Metadata(label = "advanced")
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
+
     @Metadata(label = "advanced")
     private Map<String, Object> saxonReaderProperties = new HashMap<>();
+
     @UriParam(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
+
     @UriParam(displayName = "Allow StAX", defaultValue = "true")
     private boolean allowStAX = true;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean secureProcessing = true;
+
     @UriParam
     @Metadata(firstVersion = "4.15.0", displayName = "Use JSON Body", defaultValue = "false", required = false)
     private boolean useJsonBody = false;
@@ -110,10 +123,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
      * classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup.
      */
     public void setSaxonExtensionFunctions(String extensionFunctions) {
-        this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
-                getCamelContext(),
-                extensionFunctions,
-                Object.class);
+        this.saxonExtensionFunctions =
+                EndpointHelper.resolveReferenceListParameter(getCamelContext(), extensionFunctions, Object.class);
     }
 
     public Configuration getSaxonConfiguration() {
@@ -229,8 +240,10 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 factory = new TransformerFactoryImpl();
             } else {
                 // provide the class loader of this component to work in OSGi environments
-                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(getTransformerFactoryClass(),
-                        TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
+                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(
+                        getTransformerFactoryClass(),
+                        TransformerFactory.class,
+                        XsltSaxonComponent.class.getClassLoader());
                 LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
             }
@@ -283,8 +296,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         XsltBuilder builder = createXsltBuilder();
         Source source = new StreamSource(is);
         if (this.saxonReaderProperties != null) {
-            //for Saxon we need to create XMLReader for the coming source
-            //so that the features configuration can take effect
+            // for Saxon we need to create XMLReader for the coming source
+            // so that the features configuration can take effect
             source = createReaderForSource(source);
         }
         builder.setTransformerSource(source);
@@ -303,8 +316,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         LOG.trace("{} loading schema resource: {}", this, resourceUri);
         Source source = xslt.getUriResolver().resolve(resourceUri, null);
         if (this.saxonReaderProperties != null) {
-            //for Saxon we need to create XMLReader for the coming source
-            //so that the features configuration can take effect
+            // for Saxon we need to create XMLReader for the coming source
+            // so that the features configuration can take effect
             source = createReaderForSource(source);
         }
         if (source == null) {
@@ -328,7 +341,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 try {
                     URI uri = new URI(key);
                     if (value != null
-                            && (value.toString().equals("true") || (value.toString().equals("false")))) {
+                            && (value.toString().equals("true")
+                                    || (value.toString().equals("false")))) {
                         xmlReader.setFeature(uri.toString(), Boolean.valueOf(value.toString()));
                     } else if (value != null) {
                         xmlReader.setProperty(uri.toString(), value);
@@ -344,5 +358,4 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
             return null;
         }
     }
-
 }

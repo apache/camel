@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.huaweicloud.sdk.frs.v2.model.DetectFaceByUrlResponse;
 import org.apache.camel.BindToRegistry;
@@ -26,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FaceDetectionWithImageUrlAndMockClientTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -39,15 +40,16 @@ public class FaceDetectionWithImageUrlAndMockClientTest extends CamelTestSupport
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_URL,
+                        .setProperty(
+                                FaceRecognitionProperties.FACE_IMAGE_URL,
                                 constant(testConfiguration.getProperty("imageUrl")))
                         .to("hwcloud-frs:faceDetection?"
-                            + "accessKey=" + testConfiguration.getProperty("accessKey")
-                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                            + "&projectId=" + testConfiguration.getProperty("projectId")
-                            + "&region=" + testConfiguration.getProperty("region")
-                            + "&ignoreSslVerification=true"
-                            + "&frsClient=#frsClient")
+                                + "accessKey=" + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                                + "&projectId=" + testConfiguration.getProperty("projectId")
+                                + "&region=" + testConfiguration.getProperty("region")
+                                + "&ignoreSslVerification=true"
+                                + "&frsClient=#frsClient")
                         .log("perform faceDetection successful")
                         .to("mock:perform_face_detection_result");
             }
@@ -69,8 +71,8 @@ public class FaceDetectionWithImageUrlAndMockClientTest extends CamelTestSupport
         mock.assertIsSatisfied();
 
         assertTrue(responseExchange.getIn().getBody() instanceof DetectFaceByUrlResponse);
-        DetectFaceByUrlResponse response = (DetectFaceByUrlResponse) responseExchange.getIn().getBody();
+        DetectFaceByUrlResponse response =
+                (DetectFaceByUrlResponse) responseExchange.getIn().getBody();
         assertEquals(response.getFaces(), MockResult.getFaceDetectionResult());
     }
-
 }

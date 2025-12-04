@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
@@ -33,15 +34,17 @@ public class DefaultErrorHandlerExplicitConfiguredTest extends DefaultErrorHandl
                 // use default error handler
                 errorHandler(defaultErrorHandler());
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kaboom".equals(body)) {
-                            throw new IllegalArgumentException("Boom");
-                        }
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kaboom".equals(body)) {
+                                    throw new IllegalArgumentException("Boom");
+                                }
+                                exchange.getIn().setBody("Bye World");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

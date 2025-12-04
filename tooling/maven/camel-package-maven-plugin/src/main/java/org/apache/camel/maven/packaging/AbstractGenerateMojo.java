@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -46,10 +47,13 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
 
     private final MavenProjectHelper projectHelper;
     private final BuildContext buildContext;
+
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
+
     @Parameter(defaultValue = "${showStaleFiles}")
     private boolean showStaleFiles;
+
     @Parameter(defaultValue = "false")
     private boolean skip;
 
@@ -85,7 +89,8 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     protected void invoke(Class<? extends AbstractGeneratorMojo> mojoClass, Map<String, Object> parameters)
             throws MojoExecutionException, MojoFailureException {
         try {
-            AbstractGeneratorMojo mojo = mojoClass.getDeclaredConstructor(MavenProjectHelper.class, BuildContext.class)
+            AbstractGeneratorMojo mojo = mojoClass
+                    .getDeclaredConstructor(MavenProjectHelper.class, BuildContext.class)
                     .newInstance(projectHelper, buildContext);
             mojo.setLog(getLog());
             mojo.setPluginContext(getPluginContext());
@@ -128,11 +133,13 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
             final String prvdata = getPreviousRunData(cacheData);
             if (INCREMENTAL_DATA.equals(prvdata)) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
-                Set<String> stale = Stream.concat(Stream.concat(
-                        project.getCompileSourceRoots().stream().map(File::new),
-                        Stream.of(new File(project.getBuild().getOutputDirectory()))),
-                        project.getArtifacts().stream().map(Artifact::getFile))
-                        .flatMap(f -> newer(lastmod, f)).collect(Collectors.toSet());
+                Set<String> stale = Stream.concat(
+                                Stream.concat(
+                                        project.getCompileSourceRoots().stream().map(File::new),
+                                        Stream.of(new File(project.getBuild().getOutputDirectory()))),
+                                project.getArtifacts().stream().map(Artifact::getFile))
+                        .flatMap(f -> newer(lastmod, f))
+                        .collect(Collectors.toSet());
                 if (!stale.isEmpty()) {
                     getLog().info("Stale files detected, re-generating.");
                     if (showStaleFiles) {
@@ -167,7 +174,9 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     }
 
     private Path getIncrementalDataPath(MavenProject project) {
-        return Paths.get(project.getBuild().getDirectory(), "camel-package-maven-plugin",
+        return Paths.get(
+                project.getBuild().getDirectory(),
+                "camel-package-maven-plugin",
                 "org.apache.camel_camel-package-maven-plugin_info_xx");
     }
 
@@ -195,15 +204,19 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
             BasicFileAttributes fileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
 
             if (fileAttributes.isDirectory()) {
-                return Files.walk(file.toPath()).filter(p -> isRecentlyModifiedFile(p) > lastmod)
+                return Files.walk(file.toPath())
+                        .filter(p -> isRecentlyModifiedFile(p) > lastmod)
                         .map(Path::toString);
             } else if (fileAttributes.isRegularFile()) {
                 if (fileAttributes.lastModifiedTime().toMillis() > lastmod) {
                     if (file.getName().endsWith(".jar")) {
                         try (ZipFile zf = new ZipFile(file)) {
-                            return zf.stream().filter(ze -> !ze.isDirectory())
+                            return zf.stream()
+                                    .filter(ze -> !ze.isDirectory())
                                     .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
-                                    .map(ze -> file + "!" + ze.getName()).toList().stream();
+                                    .map(ze -> file + "!" + ze.getName())
+                                    .toList()
+                                    .stream();
                         } catch (IOException e) {
                             throw new IOException("Error reading zip file: " + file, e);
                         }
@@ -220,5 +233,4 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
             throw new IOError(e);
         }
     }
-
 }

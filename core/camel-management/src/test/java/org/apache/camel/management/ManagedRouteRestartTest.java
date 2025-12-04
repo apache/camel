@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -28,10 +33,6 @@ import org.apache.camel.support.RoutePolicySupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteRestartTest extends ManagementTestSupport {
@@ -91,8 +92,11 @@ public class ManagedRouteRestartTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routePolicy(myRoutePolicy)
-                        .delayer(10).to("log:foo").to("mock:result");
+                from("direct:start")
+                        .routePolicy(myRoutePolicy)
+                        .delayer(10)
+                        .to("log:foo")
+                        .to("mock:result");
             }
         };
     }
@@ -120,5 +124,4 @@ public class ManagedRouteRestartTest extends ManagementTestSupport {
             return stop;
         }
     }
-
 }

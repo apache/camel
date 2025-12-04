@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PRODUCER;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,11 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PRODUCER;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.
@@ -255,12 +256,15 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:bar").routeId("bar")
+                from("direct:bar")
+                        .routeId("bar")
                         .onException(Exception.class)
                         .handled(true)
                         .recipientList(header("error"))
-                        .end().end()
-                        .recipientList(header("bar")).throwException(new IllegalArgumentException("Forced"));
+                        .end()
+                        .end()
+                        .recipientList(header("bar"))
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -319,8 +323,10 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
                         .recipientList(header("error"))
                         .end();
 
-                from("direct:bar").routeId("bar")
-                        .recipientList(header("bar")).throwException(new IllegalArgumentException("Forced"));
+                from("direct:bar")
+                        .routeId("bar")
+                        .recipientList(header("bar"))
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -374,10 +380,12 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:bar").routeId("bar")
+                from("direct:bar")
+                        .routeId("bar")
                         .onCompletion()
                         .recipientList(header("done"))
-                        .end().end()
+                        .end()
+                        .end()
                         .recipientList(header("bar"));
             }
         });
@@ -432,12 +440,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onCompletion()
-                        .recipientList(header("done"))
-                        .end();
+                onCompletion().recipientList(header("done")).end();
 
-                from("direct:bar").routeId("bar")
-                        .recipientList(header("bar"));
+                from("direct:bar").routeId("bar").recipientList(header("bar"));
             }
         });
 

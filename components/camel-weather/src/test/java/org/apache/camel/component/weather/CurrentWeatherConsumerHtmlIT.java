@@ -14,15 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
+
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-
-@EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
-                         disabledReason = "Disabled to avoid hitting API limits")
+@EnabledIfSystemProperty(
+        named = "enable.weather.tests",
+        matches = "true",
+        disabledReason = "Disabled to avoid hitting API limits")
 public class CurrentWeatherConsumerHtmlIT extends BaseWeatherConsumerIT {
 
     @Override
@@ -32,7 +35,8 @@ public class CurrentWeatherConsumerHtmlIT extends BaseWeatherConsumerIT {
         assertStringContains(weather, "<!DOCTYPE html>");
         assertStringContains(weather, "<head>");
         assertStringContains(weather, "<body>");
-        assertStringContains(weather,
+        assertStringContains(
+                weather,
                 "<meta name=\"description\" content=\"A layer with current weather conditions in cities for world wide\" />");
     }
 
@@ -46,5 +50,4 @@ public class CurrentWeatherConsumerHtmlIT extends BaseWeatherConsumerIT {
             }
         };
     }
-
 }

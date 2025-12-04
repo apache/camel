@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.HashMap;
@@ -374,5 +375,4 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
         getValidationLevels().put(key, value);
         return this;
     }
-
 }

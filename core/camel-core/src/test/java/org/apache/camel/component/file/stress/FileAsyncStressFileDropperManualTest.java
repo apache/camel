@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.stress;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,11 +51,12 @@ public class FileAsyncStressFileDropperManualTest extends ContextTestSupport {
             public void configure() {
                 // generate a new file continuously
                 from("timer:foo?period=50")
-                        .setHeader(Exchange.FILE_NAME, method(FileAsyncStressFileDropperManualTest.class, "getFilename"))
+                        .setHeader(
+                                Exchange.FILE_NAME, method(FileAsyncStressFileDropperManualTest.class, "getFilename"))
                         .setBody(constant("Hello World"))
-                        .to(fileUri()).to("mock:result");
+                        .to(fileUri())
+                        .to("mock:result");
             }
         };
     }
-
 }

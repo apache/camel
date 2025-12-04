@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import java.io.IOException;
@@ -63,29 +64,38 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
 
     @Metadata(label = "advanced", autowired = true)
     private Scheduler scheduler;
+
     @Metadata(label = "advanced")
     private SchedulerFactory schedulerFactory;
+
     @Metadata
     private String propertiesRef;
+
     @Metadata
     private Map properties;
+
     @Metadata(supportFileReference = true)
     private String propertiesFile;
+
     @Metadata(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;
+
     @Metadata(label = "scheduler")
     private boolean interruptJobsOnShutdown;
+
     @Metadata(defaultValue = "true")
     private boolean enableJmx = true;
+
     @Metadata
     private boolean prefixJobNameWithEndpointId;
+
     @Metadata(defaultValue = "true")
     private boolean prefixInstanceName = true;
+
     @UriParam(label = "advanced")
     private boolean ignoreExpiredNextFireTime;
 
-    public QuartzComponent() {
-    }
+    public QuartzComponent() {}
 
     public QuartzComponent(CamelContext camelContext) {
         super(camelContext);
@@ -243,7 +253,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
-                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX");
+                LOG.info(
+                        "Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX");
             }
 
             answer = new StdSchedulerFactory(prop);
@@ -253,9 +264,11 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // or setFactory(SchedulerFactory) methods
 
             // must use classloader from StdSchedulerFactory to work even in OSGi
-            InputStream is = StdSchedulerFactory.class.getClassLoader().getResourceAsStream("org/quartz/quartz.properties");
+            InputStream is =
+                    StdSchedulerFactory.class.getClassLoader().getResourceAsStream("org/quartz/quartz.properties");
             if (is == null) {
-                throw new SchedulerException("Quartz properties file not found in classpath: org/quartz/quartz.properties");
+                throw new SchedulerException(
+                        "Quartz properties file not found in classpath: org/quartz/quartz.properties");
             }
             prop = new Properties();
             try {
@@ -285,7 +298,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
-                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX");
+                LOG.info(
+                        "Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX");
             }
 
             answer = new StdSchedulerFactory(prop);
@@ -388,7 +402,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         if (autoStartScheduler != null) {
             this.autoStartScheduler = autoStartScheduler;
         }
-        Boolean prefixJobNameWithEndpointId = getAndRemoveParameter(parameters, "prefixJobNameWithEndpointId", Boolean.class);
+        Boolean prefixJobNameWithEndpointId =
+                getAndRemoveParameter(parameters, "prefixJobNameWithEndpointId", Boolean.class);
         if (prefixJobNameWithEndpointId != null) {
             this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
         }
@@ -498,10 +513,13 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
                 scheduler.shutdown(false);
                 scheduler = null;
             } else {
-                AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
+                AtomicInteger number =
+                        (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
                 if (number != null && number.get() > 0) {
-                    LOG.info("Cannot shutdown Quartz scheduler: {} as there are still {} jobs registered",
-                            scheduler.getSchedulerName(), number.get());
+                    LOG.info(
+                            "Cannot shutdown Quartz scheduler: {} as there are still {} jobs registered",
+                            scheduler.getSchedulerName(),
+                            number.get());
                 } else {
                     LOG.info("Shutting down Quartz scheduler (will wait for all jobs to complete first)");
                     scheduler.shutdown(true);

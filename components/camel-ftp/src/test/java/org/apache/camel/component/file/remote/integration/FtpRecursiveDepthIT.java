@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -32,20 +33,30 @@ public class FtpRecursiveDepthIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a2", "b2");
 
-        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth?password=admin", "a", Exchange.FILE_NAME,
-                "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth?password=admin", "b", Exchange.FILE_NAME,
-                "b.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth/foo?password=admin", "a2",
+        template.sendBodyAndHeader(
+                "ftp://admin@localhost:{{ftp.server.port}}/depth?password=admin", "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader(
+                "ftp://admin@localhost:{{ftp.server.port}}/depth?password=admin", "b", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader(
+                "ftp://admin@localhost:{{ftp.server.port}}/depth/foo?password=admin",
+                "a2",
                 Exchange.FILE_NAME,
                 "a2.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth/foo/bar?password=admin", "a3",
-                Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth/bar?password=admin", "b2",
+        template.sendBodyAndHeader(
+                "ftp://admin@localhost:{{ftp.server.port}}/depth/foo/bar?password=admin",
+                "a3",
+                Exchange.FILE_NAME,
+                "a.txt");
+        template.sendBodyAndHeader(
+                "ftp://admin@localhost:{{ftp.server.port}}/depth/bar?password=admin",
+                "b2",
                 Exchange.FILE_NAME,
                 "b2.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth/bar/foo?password=admin", "b3",
-                Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader(
+                "ftp://admin@localhost:{{ftp.server.port}}/depth/bar/foo?password=admin",
+                "b3",
+                Exchange.FILE_NAME,
+                "b.txt");
 
         // only expect 2 of the 6 sent, those at depth 2
         MockEndpoint.assertIsSatisfied(context);
@@ -56,7 +67,9 @@ public class FtpRecursiveDepthIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl() + "&minDepth=2&maxDepth=2").convertBodyTo(String.class).to("mock:result");
+                from(getFtpUrl() + "&minDepth=2&maxDepth=2")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

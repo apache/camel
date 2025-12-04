@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.browse;
 
 import java.util.List;
@@ -41,25 +42,34 @@ import org.apache.camel.support.DefaultProducer;
  * This can be useful for testing, visualisation tools or debugging. The exchanges sent to the endpoint are all
  * available to be browsed.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "browse", title = "Browse", syntax = "browse:name",
-             remote = false, category = { Category.CORE, Category.MONITORING })
+@UriEndpoint(
+        firstVersion = "1.3.0",
+        scheme = "browse",
+        title = "Browse",
+        syntax = "browse:name",
+        remote = false,
+        category = {Category.CORE, Category.MONITORING})
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     @UriPath(description = "A name which can be any string to uniquely identify the endpoint")
     @Metadata(required = true)
     private String name;
-    @UriParam(label = "advanced",
-              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+
+    @UriParam(
+            label = "advanced",
+            description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
     private int browseLimit;
-    @UriParam(label = "advanced",
-              description = "To use a predicate to filter whether to include the message for browsing. Return true to include, false to exclude.")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "To use a predicate to filter whether to include the message for browsing. Return true to include, false to exclude.")
     private Predicate<Exchange> filter;
 
     private List<Exchange> exchanges;
     private volatile Processor onExchangeProcessor;
 
-    public BrowseEndpoint() {
-    }
+    public BrowseEndpoint() {}
 
     public BrowseEndpoint(String uri, Component component) {
         super(uri, component);

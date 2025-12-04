@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.docling;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.test.infra.docling.services.DoclingInfraService;
 import org.apache.camel.test.infra.docling.services.DoclingRemoteInfraService;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DoclingInfraServiceTest {
 

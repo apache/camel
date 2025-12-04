@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.File;
@@ -41,9 +42,11 @@ public class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
             if (!hasResourceResolver(scheme)) {
                 // need to download github resolver
                 if (!downloader.alreadyOnClasspath(
-                        "org.apache.camel", "camel-resourceresolver-github",
+                        "org.apache.camel",
+                        "camel-resourceresolver-github",
                         getCamelContext().getVersion())) {
-                    downloader.downloadDependency("org.apache.camel",
+                    downloader.downloadDependency(
+                            "org.apache.camel",
                             "camel-resourceresolver-github",
                             getCamelContext().getVersion());
                 }
@@ -67,5 +70,4 @@ public class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
         }
         return answer;
     }
-
 }

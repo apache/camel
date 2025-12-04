@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.unit.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,14 +46,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class GoogleBigQuerySQLProducerPaginationTest extends GoogleBigQuerySQLProducerBaseTest {
 
     @BeforeEach
@@ -66,7 +67,8 @@ public class GoogleBigQuerySQLProducerPaginationTest extends GoogleBigQuerySQLPr
         Exchange exchange = createExchangeWithBody(null);
         producer.process(exchange);
 
-        ArgumentCaptor<BigQuery.QueryResultsOption[]> dataCaptor = ArgumentCaptor.forClass(BigQuery.QueryResultsOption[].class);
+        ArgumentCaptor<BigQuery.QueryResultsOption[]> dataCaptor =
+                ArgumentCaptor.forClass(BigQuery.QueryResultsOption[].class);
         verify(job).getQueryResults(dataCaptor.capture());
         BigQuery.QueryResultsOption[] capturedOptions = dataCaptor.getValue();
 
@@ -82,7 +84,8 @@ public class GoogleBigQuerySQLProducerPaginationTest extends GoogleBigQuerySQLPr
         Exchange exchange = createExchangeWithBody(null);
         producer.process(exchange);
 
-        ArgumentCaptor<BigQuery.QueryResultsOption[]> dataCaptor = ArgumentCaptor.forClass(BigQuery.QueryResultsOption[].class);
+        ArgumentCaptor<BigQuery.QueryResultsOption[]> dataCaptor =
+                ArgumentCaptor.forClass(BigQuery.QueryResultsOption[].class);
         verify(job).getQueryResults(dataCaptor.capture());
         BigQuery.QueryResultsOption[] capturedOptions = dataCaptor.getValue();
 
@@ -130,7 +133,8 @@ public class GoogleBigQuerySQLProducerPaginationTest extends GoogleBigQuerySQLPr
         Exchange exchange = createExchangeWithBody(null);
         producer.process(exchange);
 
-        ArgumentCaptor<BigQuery.QueryResultsOption[]> dataCaptor = ArgumentCaptor.forClass(BigQuery.QueryResultsOption[].class);
+        ArgumentCaptor<BigQuery.QueryResultsOption[]> dataCaptor =
+                ArgumentCaptor.forClass(BigQuery.QueryResultsOption[].class);
         verify(job).getQueryResults(dataCaptor.capture());
         BigQuery.QueryResultsOption[] capturedOptions = dataCaptor.getValue();
 

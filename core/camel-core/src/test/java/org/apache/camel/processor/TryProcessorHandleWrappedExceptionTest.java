@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for try .. handle routing where it should handle wrapped exceptions as well.
@@ -49,9 +50,15 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().process(new ProcessorFail()).to("mock:result").doCatch(IllegalStateException.class)
-                        .process(new ProcessorHandle()).doFinally()
-                        .to("mock:finally").end();
+                from("direct:start")
+                        .doTry()
+                        .process(new ProcessorFail())
+                        .to("mock:result")
+                        .doCatch(IllegalStateException.class)
+                        .process(new ProcessorHandle())
+                        .doFinally()
+                        .to("mock:finally")
+                        .end();
             }
         };
     }
@@ -77,5 +84,4 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
             assertEquals("Force to fail", e.getMessage());
         }
     }
-
 }

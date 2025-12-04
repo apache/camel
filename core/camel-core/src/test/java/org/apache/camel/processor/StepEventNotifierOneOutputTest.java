@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepEventNotifierOneOutputTest extends ContextTestSupport {
 
@@ -45,8 +46,10 @@ public class StepEventNotifierOneOutputTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(2, notifier.getEvents().size());
-        assertIsInstanceOf(CamelEvent.StepStartedEvent.class, notifier.getEvents().get(0));
-        assertIsInstanceOf(CamelEvent.StepCompletedEvent.class, notifier.getEvents().get(1));
+        assertIsInstanceOf(
+                CamelEvent.StepStartedEvent.class, notifier.getEvents().get(0));
+        assertIsInstanceOf(
+                CamelEvent.StepCompletedEvent.class, notifier.getEvents().get(1));
         assertEquals("foo", ((CamelEvent.StepEvent) notifier.getEvents().get(0)).getStepId());
         assertEquals("foo", ((CamelEvent.StepEvent) notifier.getEvents().get(1)).getStepId());
     }

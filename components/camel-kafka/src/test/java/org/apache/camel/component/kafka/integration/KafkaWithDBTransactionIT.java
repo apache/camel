@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -40,8 +43,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
 
@@ -69,7 +70,8 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
     public void configureContext(CamelContext context) {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.H2).build();
+                .setType(EmbeddedDatabaseType.H2)
+                .build();
         context.getRegistry().bind("testdb", db);
 
         DataSourceTransactionManager txMgr = new DataSourceTransactionManager();
@@ -103,9 +105,7 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
     public void noTransactionProducerWithDBLast() throws Exception {
         contextExtension.getContext().addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:startNoTx")
-                        .to("kafka:" + TOPIC_TX_1)
-                        .to("sql:" + INSERT_SQL_1);
+                from("direct:startNoTx").to("kafka:" + TOPIC_TX_1).to("sql:" + INSERT_SQL_1);
             }
         });
 
@@ -134,12 +134,12 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
         contextExtension.getContext().addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:startNoTx2")
-                    .onException(Exception.class)
+                        .onException(Exception.class)
                         .handled(true)
                         .log("Expected error when trying to insert duplicate values in the unique column.")
-                    .end()
-                    .to("kafka:" + TOPIC_TX_2)
-                    .to("sql:" + INSERT_SQL_2);
+                        .end()
+                        .to("kafka:" + TOPIC_TX_2)
+                        .to("sql:" + INSERT_SQL_2);
             }
         });
 
@@ -165,18 +165,20 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
      */
     // @Test
     @ParameterizedTest
-    @ValueSource(strings = { "transacted=true", "transactionalId=my-foo1", "additionalProperties[transactional.id]=my-foo2" })
+    @ValueSource(
+            strings = {"transacted=true", "transactionalId=my-foo1", "additionalProperties[transactional.id]=my-foo2"})
     public void transactionProducerWithDBLast(String txParam) throws Exception {
         String startEndpoint = "direct:startTxDBLast";
         contextExtension.getContext().addRoutes(new RouteBuilder() {
             public void configure() {
-                from(startEndpoint).routeId("tx-kafka-db-last")
-                    .onException(Exception.class)
+                from(startEndpoint)
+                        .routeId("tx-kafka-db-last")
+                        .onException(Exception.class)
                         .handled(true)
                         .markRollbackOnly()
-                    .end()
-                    .to("kafka:" + TOPIC_TX_3 + "?" + txParam)
-                    .to("sql:" + INSERT_SQL_3);
+                        .end()
+                        .to("kafka:" + TOPIC_TX_3 + "?" + txParam)
+                        .to("sql:" + INSERT_SQL_3);
             }
         });
 
@@ -206,28 +208,28 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
         contextExtension.getContext().addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:startTxDBLast2a")
-                    .onException(Exception.class)
+                        .onException(Exception.class)
                         .handled(true)
                         .markRollbackOnly()
-                    .end()
-                    .to("kafka:" + TOPIC_TX_5 + "?transacted=true")
-                    .to("sql:" + INSERT_SQL_5);
+                        .end()
+                        .to("kafka:" + TOPIC_TX_5 + "?transacted=true")
+                        .to("sql:" + INSERT_SQL_5);
 
                 from("direct:startTxDBLast2b")
-                    .onException(Exception.class)
+                        .onException(Exception.class)
                         .handled(true)
                         .markRollbackOnly()
-                    .end()
-                    .to("kafka:" + TOPIC_TX_5 + "?transacted=true")
-                    .to("sql:" + INSERT_SQL_5);
+                        .end()
+                        .to("kafka:" + TOPIC_TX_5 + "?transacted=true")
+                        .to("sql:" + INSERT_SQL_5);
 
                 from("direct:startTxDBLast2c")
-                    .onException(Exception.class)
+                        .onException(Exception.class)
                         .handled(true)
                         .markRollbackOnly()
-                    .end()
-                    .to("kafka:" + TOPIC_TX_5)
-                    .to("sql:" + INSERT_SQL_5);
+                        .end()
+                        .to("kafka:" + TOPIC_TX_5)
+                        .to("sql:" + INSERT_SQL_5);
             }
         });
 
@@ -262,18 +264,20 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
      * take place. in this case the SQL operation is the first endpoint.
      */
     @ParameterizedTest
-    @ValueSource(strings = { "transacted=true", "transactionalId=my-bar1", "additionalProperties[transactional.id]=my-bar2" })
+    @ValueSource(
+            strings = {"transacted=true", "transactionalId=my-bar1", "additionalProperties[transactional.id]=my-bar2"})
     public void transactionProducerWithDBFirst(String txParam) throws Exception {
         String startEndpoint = "direct:startTxDBFirst";
         contextExtension.getContext().addRoutes(new RouteBuilder() {
             public void configure() {
-                from(startEndpoint).routeId("tx-kafka-db-first")
-                    .onException(Exception.class)
+                from(startEndpoint)
+                        .routeId("tx-kafka-db-first")
+                        .onException(Exception.class)
                         .handled(true)
                         .log("Expected error when trying to insert duplicate values in the unique column.")
-                    .end()
-                    .to("sql:" + INSERT_SQL_4)
-                    .to("kafka:" + TOPIC_TX_4 + "?" + txParam);
+                        .end()
+                        .to("sql:" + INSERT_SQL_4)
+                        .to("kafka:" + TOPIC_TX_4 + "?" + txParam);
             }
         });
 
@@ -293,7 +297,8 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
         assertEquals(1, count);
     }
 
-    private ConsumerRecords<String, String> getMessagesFromTopic(KafkaConsumer<String, String> consumerConn, String topic) {
+    private ConsumerRecords<String, String> getMessagesFromTopic(
+            KafkaConsumer<String, String> consumerConn, String topic) {
         consumerConn.subscribe(Arrays.asList(topic));
         ConsumerRecords<String, String> records = null;
         for (int i = 0; i < 5; i++) {
@@ -308,14 +313,17 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
 
     private static KafkaConsumer<String, String> createStringKafkaConsumer(final String groupId) {
         Properties stringsProps = new Properties();
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
+        stringsProps.put(
+                org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, groupId);
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+        stringsProps.put(
+                org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
                 "org.apache.kafka.common.serialization.StringDeserializer");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+        stringsProps.put(
+                org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                 "org.apache.kafka.common.serialization.StringDeserializer");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
@@ -331,5 +339,4 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
             }
         };
     }
-
 }

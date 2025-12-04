@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import java.io.FileNotFoundException;
@@ -30,7 +31,8 @@ public class ResilienceRecordExceptionTest extends CamelTestSupport {
     @Test
     public void testHello() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         template.sendBody("direct:start", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -38,7 +40,8 @@ public class ResilienceRecordExceptionTest extends CamelTestSupport {
     @Test
     public void testFile() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
         template.sendBody("direct:start", "file");
@@ -48,7 +51,8 @@ public class ResilienceRecordExceptionTest extends CamelTestSupport {
     @Test
     public void testKaboom() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("kaboom");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         template.sendBody("direct:start", "kaboom");
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -56,7 +60,8 @@ public class ResilienceRecordExceptionTest extends CamelTestSupport {
     @Test
     public void testIo() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
         template.sendBody("direct:start", "io");
@@ -70,7 +75,10 @@ public class ResilienceRecordExceptionTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:start")
-                        .circuitBreaker().resilience4jConfiguration().recordException(IOException.class).end()
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .recordException(IOException.class)
+                        .end()
                         .process(e -> {
                             String b = e.getMessage().getBody(String.class);
                             if ("kaboom".equals(b)) {
@@ -82,12 +90,12 @@ public class ResilienceRecordExceptionTest extends CamelTestSupport {
                             }
                         })
                         .onFallback()
-                        .transform().constant("Fallback message")
+                        .transform()
+                        .constant("Fallback message")
                         .end()
                         .to("log:result")
                         .to("mock:result");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml.util.jsse;
 
 import java.util.ArrayList;
@@ -26,7 +27,9 @@ import jakarta.xml.bind.annotation.XmlType;
 import org.apache.camel.spi.Metadata;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "cipherSuitesParameters", propOrder = { "cipherSuite" })
+@XmlType(
+        name = "cipherSuitesParameters",
+        propOrder = {"cipherSuite"})
 public class CipherSuitesParametersDefinition {
 
     @Metadata(description = "List of TLS/SSL cipher suite algorithm names")

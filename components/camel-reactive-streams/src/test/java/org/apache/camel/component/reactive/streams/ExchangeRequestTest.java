@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.reactivex.Flowable;
 import org.apache.camel.Exchange;
@@ -25,9 +29,6 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsServi
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ExchangeRequestTest extends BaseReactiveTest {
 
@@ -77,11 +78,11 @@ public class ExchangeRequestTest extends BaseReactiveTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:data")
-                        .setBody().constant("123");
+                from("reactive-streams:data").setBody().constant("123");
 
                 from("reactive-streams:plusOne")
-                        .setBody().body(Integer.class, b -> b + 1)
+                        .setBody()
+                        .body(Integer.class, b -> b + 1)
                         .log("Hello ${body}");
             }
         };

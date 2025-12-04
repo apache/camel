@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.CamelContext;
@@ -34,7 +35,8 @@ public class CronTest {
             @Override
             public void configure() {
                 from(cron("tab").schedule("0/1 * * * * ?"))
-                        .setBody().constant("x")
+                        .setBody()
+                        .constant("x")
                         .to("mock:result");
             }
         });
@@ -58,9 +60,7 @@ public class CronTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() {
-                from("cron:tab?schedule=0/1 * * * * ?")
-                        .setBody().constant("x")
-                        .to("mock:result");
+                from("cron:tab?schedule=0/1 * * * * ?").setBody().constant("x").to("mock:result");
             }
         });
 

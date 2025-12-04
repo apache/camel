@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets;
 
 import java.util.Map;
@@ -38,13 +39,11 @@ public class GoogleSheetsProducer extends AbstractApiProducer<GoogleSheetsApiNam
     }
 
     @Override
-    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
-            throws RuntimeCamelException {
-        AbstractGoogleClientRequest<?> request
-                = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
+    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
+        AbstractGoogleClientRequest<?> request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
-            BeanIntrospection beanIntrospection
-                    = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
+            BeanIntrospection beanIntrospection =
+                    PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }
@@ -53,5 +52,4 @@ public class GoogleSheetsProducer extends AbstractApiProducer<GoogleSheetsApiNam
             throw new RuntimeCamelException(e);
         }
     }
-
 }

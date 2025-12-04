@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.time.Duration;
@@ -67,7 +68,8 @@ public class SamplingThrottler extends BaseProcessorSupport implements Traceable
             throw new IllegalArgumentException("A positive value is required for the sampling period");
         }
         if (units == null) {
-            throw new IllegalArgumentException("A invalid null value was supplied for the units of the sampling period");
+            throw new IllegalArgumentException(
+                    "A invalid null value was supplied for the units of the sampling period");
         }
         this.samplePeriod = samplePeriod;
         this.units = units;
@@ -104,8 +106,8 @@ public class SamplingThrottler extends BaseProcessorSupport implements Traceable
         if (messageFrequency > 0) {
             return "samplingThrottler[1 exchange per: " + messageFrequency + " messages received]";
         } else {
-            return "samplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH)
-                   + "]";
+            return "samplingThrottler[1 exchange per: " + samplePeriod + " "
+                    + units.toString().toLowerCase(Locale.ENGLISH) + "]";
         }
     }
 
@@ -188,9 +190,9 @@ public class SamplingThrottler extends BaseProcessorSupport implements Traceable
         }
 
         String getDroppedLog() {
-            return String.format("Dropped %d of %d exchanges in this period, totalling %d dropped of %d exchanges overall.",
+            return String.format(
+                    "Dropped %d of %d exchanges in this period, totalling %d dropped of %d exchanges overall.",
                     droppedThisPeriod, totalThisPeriod, totalDropped, totalSampled + totalDropped);
         }
     }
-
 }

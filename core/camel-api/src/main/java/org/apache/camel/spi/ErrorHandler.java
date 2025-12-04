@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Processor;
@@ -21,5 +22,4 @@ import org.apache.camel.Processor;
 /**
  * An interface used to represent an error handler
  */
-public interface ErrorHandler extends Processor {
-}
+public interface ErrorHandler extends Processor {}

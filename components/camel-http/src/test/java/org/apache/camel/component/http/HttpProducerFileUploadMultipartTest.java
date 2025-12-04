@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 
@@ -27,10 +32,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class HttpProducerFileUploadMultipartTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -40,8 +41,10 @@ public class HttpProducerFileUploadMultipartTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/upload2", (request, response, context) -> {
 
@@ -49,11 +52,13 @@ public class HttpProducerFileUploadMultipartTest extends BaseHttpTest {
                     var e = request.getEntity();
                     var s = new String(e.getContent().readAllBytes());
                     String cd = StringHelper.between(s, "Content-Disposition:", "\n");
-                    var n = StringHelper.removeQuotes(StringHelper.after(cd, "filename=")).trim();
+                    var n = StringHelper.removeQuotes(StringHelper.after(cd, "filename="))
+                            .trim();
                     response.setEntity(new StringEntity(n));
 
                     response.setCode(HttpStatus.SC_OK);
-                }).create();
+                })
+                .create();
         localServer.start();
 
         endpointUrl = "http://localhost:" + localServer.getLocalPort();
@@ -79,5 +84,4 @@ public class HttpProducerFileUploadMultipartTest extends BaseHttpTest {
         assertFalse(out.isFailed(), "Should not fail");
         assertEquals("log4j2.properties", out.getMessage().getBody(String.class));
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -27,8 +30,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for a special corner case with fetchSize=0
@@ -81,9 +82,9 @@ public class MailFetchSizeZeroTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(bill.uriPrefix(Protocol.pop3) + "&fetchSize=0&initialDelay=100&delay=100").to("mock:result");
+                from(bill.uriPrefix(Protocol.pop3) + "&fetchSize=0&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }
-
 }

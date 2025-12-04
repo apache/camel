@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncProcessor;
@@ -56,7 +57,11 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
 
     @Override
     public AsyncProducer createInterceptSendToEndpointProcessor(
-            InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip, Predicate onWhen) {
+            InterceptSendToEndpoint endpoint,
+            Endpoint delegate,
+            AsyncProducer producer,
+            boolean skip,
+            Predicate onWhen) {
         return new InterceptSendToEndpointProcessor(endpoint, delegate, producer, skip, onWhen);
     }
 
@@ -74,7 +79,10 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
     public AsyncProducer createAsyncProducer(Endpoint endpoint) throws Exception {
         AsyncProducer answer = endpoint.createAsyncProducer();
         // is auto mocked intercepting enabled?
-        if (!endpoint.getCamelContext().getCamelContextExtension().getAutoMockInterceptStrategies().isEmpty()) {
+        if (!endpoint.getCamelContext()
+                .getCamelContextExtension()
+                .getAutoMockInterceptStrategies()
+                .isEmpty()) {
             answer = new AutoMockInterceptProducer(answer);
         }
         return answer;
@@ -84,7 +92,10 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
     public Producer createProducer(Endpoint endpoint) throws Exception {
         Producer answer = endpoint.createProducer();
         // is auto mocked intercepting enabled?
-        if (!endpoint.getCamelContext().getCamelContextExtension().getAutoMockInterceptStrategies().isEmpty()) {
+        if (!endpoint.getCamelContext()
+                .getCamelContextExtension()
+                .getAutoMockInterceptStrategies()
+                .isEmpty()) {
             answer = new AutoMockInterceptProducer(answer);
         }
         return answer;

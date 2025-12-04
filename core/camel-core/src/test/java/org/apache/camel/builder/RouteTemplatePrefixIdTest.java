@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +29,6 @@ import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteTemplatePrefixIdTest extends ContextTestSupport {
 
@@ -62,8 +63,10 @@ public class RouteTemplatePrefixIdTest extends ContextTestSupport {
 
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("first").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("second").name());
         assertEquals("true", context.getRoute("first").getProperties().get(Route.TEMPLATE_PROPERTY));
         assertEquals("true", context.getRoute("second").getProperties().get(Route.TEMPLATE_PROPERTY));
 
@@ -104,8 +107,10 @@ public class RouteTemplatePrefixIdTest extends ContextTestSupport {
 
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("first").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("second").name());
         assertEquals("true", context.getRoute("first").getProperties().get(Route.TEMPLATE_PROPERTY));
         assertEquals("true", context.getRoute("second").getProperties().get(Route.TEMPLATE_PROPERTY));
 
@@ -137,7 +142,8 @@ public class RouteTemplatePrefixIdTest extends ContextTestSupport {
         assertNotNull(routeId);
         assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus(routeId).name());
         assertEquals("true", context.getRoute(routeId).getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:one", "Hello Cheese");
@@ -176,7 +182,8 @@ public class RouteTemplatePrefixIdTest extends ContextTestSupport {
         assertNotEquals("route1", routeId, "Should not be named route1");
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus(routeId).name());
         assertEquals("true", context.getRoute(routeId).getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:one", "Hello Cheese");
@@ -192,13 +199,17 @@ public class RouteTemplatePrefixIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
+                        .templateParameter("bar")
                         .from("direct:{{foo}}")
                         .choice()
                         .when(header("foo"))
-                        .log("${body}").id("myLog")
+                        .log("${body}")
+                        .id("myLog")
                         .otherwise()
-                        .to("mock:{{bar}}").id("end");
+                        .to("mock:{{bar}}")
+                        .id("end");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -30,7 +31,8 @@ public class MavenGradleITCase extends JBangTestSupport {
         execInContainer(String.format("mkdir %s/mvn-app", mountPoint()));
         execInContainer(String.format("cd %s/mvn-app && camel init cheese.xml", mountPoint()));
         execInContainer(String.format(
-                "cd %s/mvn-app && camel export --runtime=camel-main --gav=org.jbang:maven-app:1.0-SNAPSHOT", mountPoint()));
+                "cd %s/mvn-app && camel export --runtime=camel-main --gav=org.jbang:maven-app:1.0-SNAPSHOT",
+                mountPoint()));
         execInContainer(String.format("cd %s/mvn-app && camel run pom.xml --background", mountPoint()));
         checkLogContains("Apache Camel " + version() + " (maven-app) started");
         checkLogContains("Hello Camel from route1");
@@ -41,9 +43,11 @@ public class MavenGradleITCase extends JBangTestSupport {
         execInContainer(String.format("mkdir %s/gradle-app", mountPoint()));
         execInContainer(String.format("cd %s/gradle-app && camel init cheese.xml", mountPoint()));
         execInContainer(String.format(
-                "cd %s/gradle-app && camel export --runtime=camel-main --gav=org.jbang:gradle-app:1.0-SNAPSHOT", mountPoint()));
+                "cd %s/gradle-app && camel export --runtime=camel-main --gav=org.jbang:gradle-app:1.0-SNAPSHOT",
+                mountPoint()));
         copyResourceInDataFolder(TestResources.BUILD_GRADLE);
-        Files.move(Path.of(String.format("%s/build.gradle", getDataFolder())),
+        Files.move(
+                Path.of(String.format("%s/build.gradle", getDataFolder())),
                 Path.of(String.format("%s/gradle-app/build.gradle", getDataFolder())));
         execInContainer(String.format("cd %s/gradle-app && camel run pom.xml --background", mountPoint()));
         checkLogContains("Apache Camel " + version() + " (gradle-app) started");

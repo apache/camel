@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.console;
 
 import java.util.ArrayList;
@@ -111,8 +112,13 @@ public class CatalogConsole extends AbstractDevConsole {
             if (model.isDeprecated()) {
                 level += "-deprecated";
             }
-            sb.append(String.format("\n    %s %s %s %s: %s", model.getArtifactId(), level,
-                    model.getFirstVersionShort(), model.getTitle(), model.getDescription()));
+            sb.append(String.format(
+                    "\n    %s %s %s %s: %s",
+                    model.getArtifactId(),
+                    level,
+                    model.getFirstVersionShort(),
+                    model.getTitle(),
+                    model.getDescription()));
         }
     }
 

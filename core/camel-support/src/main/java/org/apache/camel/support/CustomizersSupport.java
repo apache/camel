@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
@@ -26,8 +27,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageCustomizer;
 
 public final class CustomizersSupport {
-    private CustomizersSupport() {
-    }
+    private CustomizersSupport() {}
 
     /**
      * Determine the value of the "enabled" flag for a hierarchy of properties.
@@ -47,7 +47,8 @@ public final class CustomizersSupport {
             // evaluate the value of the current prefix using the parent one as
             // default value so if the `enabled` property is not set, the parent
             // one is used.
-            answer = camelContext.getPropertiesComponent()
+            answer = camelContext
+                    .getPropertiesComponent()
                     .resolveProperty(property)
                     .map(Boolean::valueOf)
                     .orElse(answer);
@@ -77,8 +78,7 @@ public final class CustomizersSupport {
      * A {@link ComponentCustomizer.Policy} that uses a hierarchical lists of properties to determine if customization
      * is enabled for the given {@link org.apache.camel.Component}.
      */
-    public static final class ComponentCustomizationEnabledPolicy
-            extends CamelContextAwarePolicy
+    public static final class ComponentCustomizationEnabledPolicy extends CamelContextAwarePolicy
             implements ComponentCustomizer.Policy {
 
         @Override
@@ -95,8 +95,7 @@ public final class CustomizersSupport {
      * A {@link DataFormatCustomizer.Policy} that uses a hierarchical lists of properties to determine if customization
      * is enabled for the given {@link org.apache.camel.spi.DataFormat}.
      */
-    public static final class DataFormatCustomizationEnabledPolicy
-            extends CamelContextAwarePolicy
+    public static final class DataFormatCustomizationEnabledPolicy extends CamelContextAwarePolicy
             implements DataFormatCustomizer.Policy {
 
         @Override
@@ -113,8 +112,7 @@ public final class CustomizersSupport {
      * A {@link LanguageCustomizer.Policy} that uses a hierarchical lists of properties to determine if customization is
      * enabled for the given {@link org.apache.camel.spi.Language}.
      */
-    public static final class LanguageCustomizationEnabledPolicy
-            extends CamelContextAwarePolicy
+    public static final class LanguageCustomizationEnabledPolicy extends CamelContextAwarePolicy
             implements LanguageCustomizer.Policy {
 
         @Override

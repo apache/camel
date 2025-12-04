@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test case for routes that contain <code>jt400:</code> endpoints This test case does nothing by default -- you can use
@@ -56,7 +57,7 @@ public class Jt400PgmRouteTest extends CamelTestSupport {
                     Exchange exchange = endpoint.getReceivedExchanges().get(0);
                     char[] secondParameter = new char[512];
                     Arrays.fill(secondParameter, ' ');
-                    String[] expectedBody = new String[] { "1234", new String(secondParameter), "01" };
+                    String[] expectedBody = new String[] {"1234", new String(secondParameter), "01"};
                     Object actualBody = exchange.getIn().getBody();
 
                     assertNotNull(actualBody);
@@ -69,7 +70,7 @@ public class Jt400PgmRouteTest extends CamelTestSupport {
                 }
             };
             endpoint.expects(runnable);
-            sendBody("direct:a", new String[] { "1234", "", "" });
+            sendBody("direct:a", new String[] {"1234", "", ""});
             endpoint.assertIsSatisfied();
         }
     }
@@ -81,9 +82,9 @@ public class Jt400PgmRouteTest extends CamelTestSupport {
             @Override
             public void configure() {
                 if (SYSTEM != null) {
-                    String uri = String
-                            .format("jt400://%s:%s@%s/QSYS.LIB/%s.LIB/%s.pgm?outputFieldsIdx=%s&fieldsLength=%s",
-                                    USER, PASSWORD, SYSTEM, LIBRARY, PGM, OUTPUT_FIELDS, FIELDS_LENGTH);
+                    String uri = String.format(
+                            "jt400://%s:%s@%s/QSYS.LIB/%s.LIB/%s.pgm?outputFieldsIdx=%s&fieldsLength=%s",
+                            USER, PASSWORD, SYSTEM, LIBRARY, PGM, OUTPUT_FIELDS, FIELDS_LENGTH);
                     from("direct:a").to(uri).to("mock:a");
                 }
             }

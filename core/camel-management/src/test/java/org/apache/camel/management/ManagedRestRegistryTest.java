@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -29,12 +36,6 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRestRegistryTest extends ManagementTestSupport {
@@ -90,19 +91,20 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 restConfiguration().host("localhost");
-                rest("/say/hello/{name}")
-                        .get().to("direct:hello").description("Calling direct route");
+                rest("/say/hello/{name}").get().to("direct:hello").description("Calling direct route");
 
-                rest("/say/bye").description("the bye rest service")
-                        .get().consumes("application/json").description("I am saying bye world").to("direct:bye")
-                        .post().to("mock:update");
+                rest("/say/bye")
+                        .description("the bye rest service")
+                        .get()
+                        .consumes("application/json")
+                        .description("I am saying bye world")
+                        .to("direct:bye")
+                        .post()
+                        .to("mock:update");
 
-                from("direct:hello").description("The hello route")
-                        .transform().simple("Hello ${header.name}");
+                from("direct:hello").description("The hello route").transform().simple("Hello ${header.name}");
 
-                from("direct:bye").description("The bye route")
-                        .transform().constant("Bye World");
-
+                from("direct:bye").description("The bye route").transform().constant("Bye World");
             }
         };
     }

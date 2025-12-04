@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.concurrent.ExecutorService;
@@ -135,5 +136,4 @@ public final class ThreadPoolBuilder {
     public ScheduledExecutorService buildScheduled(Object source, String name) throws Exception {
         return context.getExecutorServiceManager().newScheduledThreadPool(source, name, profile);
     }
-
 }

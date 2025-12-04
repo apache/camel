@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.util.concurrent.CountDownLatch;
@@ -50,8 +51,8 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
     private ExceptionHandler exceptionHandler;
     private final CountDownLatch initialized = new CountDownLatch(1);
 
-    public MessageReceiverListenerImpl(SmppConsumer consumer, SmppEndpoint endpoint, Processor processor,
-                                       ExceptionHandler exceptionHandler) {
+    public MessageReceiverListenerImpl(
+            SmppConsumer consumer, SmppEndpoint endpoint, Processor processor, ExceptionHandler exceptionHandler) {
         this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = processor;
@@ -92,8 +93,8 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         }
 
         if (exchange.getException() != null) {
-            exceptionHandler.handleException("Cannot process exchange. This exception will be ignored.", exchange,
-                    exchange.getException());
+            exceptionHandler.handleException(
+                    "Cannot process exchange. This exception will be ignored.", exchange, exchange.getException());
         }
         consumer.releaseExchange(exchange, false);
     }
@@ -177,5 +178,4 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), alertNotification));
         return exchange;
     }
-
 }

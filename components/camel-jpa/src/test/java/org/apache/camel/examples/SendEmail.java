@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.examples;
 
 import jakarta.persistence.Entity;
@@ -33,8 +34,7 @@ public class SendEmail {
     private Long id;
     private String address;
 
-    public SendEmail() {
-    }
+    public SendEmail() {}
 
     public SendEmail(String address) {
         setAddress(address);
@@ -71,5 +71,4 @@ public class SendEmail {
         // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
         return "SendEmail[id: " + getId() + ", address: " + getAddress() + "]";
     }
-
 }

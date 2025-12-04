@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
 
 import java.util.HashMap;
@@ -43,7 +44,8 @@ public class VelocitySupplementalContextTest extends CamelTestSupport {
         outputEndpoint.expectedBodiesReceived("bar");
 
         Map<String, Object> headers = new HashMap<>();
-        headers.put(VelocityConstants.VELOCITY_TEMPLATE,
+        headers.put(
+                VelocityConstants.VELOCITY_TEMPLATE,
                 "#set( $headers.body = ${body} )\n#set( $headers['in.body'] = $in.body )\n" + "bar");
         inputEndpoint.sendBodyAndHeaders("old_body", headers);
 
@@ -60,11 +62,11 @@ public class VelocitySupplementalContextTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:input")
-                        .setHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT).constant(supplementalContext)
+                        .setHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT)
+                        .constant(supplementalContext)
                         .to("velocity:template-in-header?allowTemplateFromHeader=true&allowContextMapAll=true")
                         .to("mock:results");
             }
         };
     }
-
 }

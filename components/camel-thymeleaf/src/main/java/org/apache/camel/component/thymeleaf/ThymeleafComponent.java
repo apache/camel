@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
 
 import java.util.Map;
@@ -28,11 +29,11 @@ public class ThymeleafComponent extends DefaultComponent {
 
     @Metadata
     private boolean allowTemplateFromHeader;
+
     @Metadata
     private boolean allowContextMapAll;
 
-    public ThymeleafComponent() {
-    }
+    public ThymeleafComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -69,5 +70,4 @@ public class ThymeleafComponent extends DefaultComponent {
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
-
 }

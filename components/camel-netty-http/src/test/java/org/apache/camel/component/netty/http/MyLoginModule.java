@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.io.IOException;
@@ -74,9 +75,8 @@ public class MyLoginModule implements LoginModule {
             le.initCause(ioe);
             throw le;
         } catch (UnsupportedCallbackException uce) {
-            LoginException le = new LoginException(
-                    "Error: " + uce.getCallback().toString()
-                                                   + " not available to gather authentication information from the user");
+            LoginException le = new LoginException("Error: " + uce.getCallback().toString()
+                    + " not available to gather authentication information from the user");
             le.initCause(uce);
             throw le;
         }
@@ -100,5 +100,4 @@ public class MyLoginModule implements LoginModule {
         callbackHandler = null;
         return true;
     }
-
 }

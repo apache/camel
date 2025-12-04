@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 import java.util.ArrayList;
@@ -209,15 +210,16 @@ public class BatchProcessingResults {
      */
     private void updateCounts() {
         this.totalDocuments = results.size();
-        this.successCount = (int) results.stream().filter(BatchConversionResult::isSuccess).count();
+        this.successCount =
+                (int) results.stream().filter(BatchConversionResult::isSuccess).count();
         this.failureCount = totalDocuments - successCount;
     }
 
     @Override
     public String toString() {
         return "BatchProcessingResults{" + "totalDocuments=" + totalDocuments + ", successCount=" + successCount
-               + ", failureCount=" + failureCount + ", totalProcessingTimeMs=" + totalProcessingTimeMs + ", successRate="
-               + String.format("%.2f%%", getSuccessRate()) + '}';
+                + ", failureCount=" + failureCount + ", totalProcessingTimeMs=" + totalProcessingTimeMs
+                + ", successRate="
+                + String.format("%.2f%%", getSuccessRate()) + '}';
     }
-
 }

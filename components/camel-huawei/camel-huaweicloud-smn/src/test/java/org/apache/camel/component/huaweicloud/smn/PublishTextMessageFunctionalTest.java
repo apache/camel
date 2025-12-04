@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -28,9 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PublishTextMessageFunctionalTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublishTemplatedMessageTest.class.getName());
 
@@ -42,8 +43,7 @@ public class PublishTextMessageFunctionalTest extends CamelTestSupport {
     private static final String REGION = "replace_this_with_region";
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys
-            = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
+    ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -53,10 +53,10 @@ public class PublishTextMessageFunctionalTest extends CamelTestSupport {
                         .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(TOPIC_NAME))
                         .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
                         .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&accessKey=" + ACCESS_KEY
-                            + "&secretKey=" + SECRET_KEY
-                            + "&projectId=" + PROJECT_ID
-                            + "&region=" + REGION
-                            + "&ignoreSslVerification=true")
+                                + "&secretKey=" + SECRET_KEY
+                                + "&projectId=" + PROJECT_ID
+                                + "&region=" + REGION
+                                + "&ignoreSslVerification=true")
                         .log("publish message successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:publish_text_message_result");
@@ -83,8 +83,15 @@ public class PublishTextMessageFunctionalTest extends CamelTestSupport {
 
         assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
         assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
-        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
-        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
+        assertTrue(responseExchange
+                        .getProperty(SmnProperties.SERVICE_MESSAGE_ID)
+                        .toString()
+                        .length()
+                > 0);
+        assertTrue(responseExchange
+                        .getProperty(SmnProperties.SERVICE_REQUEST_ID)
+                        .toString()
+                        .length()
+                > 0);
     }
-
 }

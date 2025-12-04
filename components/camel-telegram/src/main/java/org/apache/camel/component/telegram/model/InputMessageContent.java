@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 /**
@@ -22,5 +23,4 @@ package org.apache.camel.component.telegram.model;
  * @see <a href="https://core.telegram.org/bots/api#inputmessagecontent">
  *      https://core.telegram.org/bots/api#inputmessagecontent</a>
  */
-public interface InputMessageContent {
-}
+public interface InputMessageContent {}

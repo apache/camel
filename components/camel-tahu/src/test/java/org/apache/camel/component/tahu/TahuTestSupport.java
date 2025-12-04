@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.concurrent.TimeUnit;
@@ -44,8 +45,8 @@ public abstract class TahuTestSupport implements ConfigurableContext, Configurab
 
     @Order(2)
     @RegisterExtension
-    protected static final CamelContextExtension camelContextExtension = new TransientCamelContextExtension(
-            new DefaultContextLifeCycleManager() {
+    protected static final CamelContextExtension camelContextExtension =
+            new TransientCamelContextExtension(new DefaultContextLifeCycleManager() {
                 @Override
                 public void beforeEach(CamelContext context) {
                     // NO-OP - Let test methods start the context

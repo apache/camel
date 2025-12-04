@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
@@ -26,8 +27,8 @@ public class RouteBuilderRefTest extends XmlConfigTestSupport {
 
     @Test
     public void testUsingRouteBuilderRefInCamelXml() throws Exception {
-        AbstractApplicationContext applicationContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/routeBuilderRef.xml");
+        AbstractApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/spring/config/routeBuilderRef.xml");
 
         CamelContext context = applicationContext.getBean("camel5", CamelContext.class);
         assertValidContext(context);
@@ -35,5 +36,4 @@ public class RouteBuilderRefTest extends XmlConfigTestSupport {
         // we're done so let's properly close the application context
         IOHelper.close(applicationContext);
     }
-
 }

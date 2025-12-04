@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl;
 
 import java.util.Map;
@@ -28,7 +29,8 @@ public class DJLComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (ObjectHelper.isEmpty(remaining)) {
-            throw new IllegalArgumentException("Application must be configured on endpoint using syntax djl:application");
+            throw new IllegalArgumentException(
+                    "Application must be configured on endpoint using syntax djl:application");
         }
         Endpoint endpoint = new DJLEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);

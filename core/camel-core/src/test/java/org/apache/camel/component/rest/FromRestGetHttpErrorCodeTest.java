@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
 
@@ -60,10 +61,14 @@ public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
                 rest("/say/bye").get().to("direct:bye");
 
                 from("direct:bye")
-                        .choice().when(body().contains("Kaboom"))
+                        .choice()
+                        .when(body().contains("Kaboom"))
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
-                        .setHeader(Exchange.CONTENT_TYPE, constant("text/plain")).setBody(constant("The data is invalid"))
-                        .otherwise().transform().constant("Bye World");
+                        .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
+                        .setBody(constant("The data is invalid"))
+                        .otherwise()
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }

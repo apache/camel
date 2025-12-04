@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
@@ -54,7 +55,8 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
         return endpoint;
     }
 
-    public void addMethod(final Object pojo, final Method method, final Endpoint endpoint, String predicate) throws Exception {
+    public void addMethod(final Object pojo, final Method method, final Endpoint endpoint, String predicate)
+            throws Exception {
         Processor answer = PluginHelper.getBeanProcessorFactory(endpoint.getCamelContext())
                 .createBeanProcessor(endpoint.getCamelContext(), pojo, method);
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -39,5 +40,4 @@ public class BridgePropertyPlaceholderConfigurerUtilIssueTest extends SpringTest
         template.sendBody("direct:start", "Test");
         result.assertIsSatisfied();
     }
-
 }

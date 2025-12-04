@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh.handler;
 
 import java.util.List;
@@ -36,5 +37,4 @@ public class ConsumerResponseHandler extends AbstractHandler implements Response
     public List<String> flush() {
         throw new UnsupportedOperationException();
     }
-
 }

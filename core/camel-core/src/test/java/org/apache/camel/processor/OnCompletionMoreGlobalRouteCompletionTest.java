@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionMoreGlobalRouteCompletionTest extends ContextTestSupport {
 
@@ -123,22 +124,31 @@ public class OnCompletionMoreGlobalRouteCompletionTest extends ContextTestSuppor
                 from("direct:start")
                         // no route on completion so this one uses all the global
                         // ones
-                        .process(new MyProcessor()).to("mock:result");
+                        .process(new MyProcessor())
+                        .to("mock:result");
 
                 from("direct:other")
                         // these route completions should override the global
-                        .onCompletion().onCompleteOnly().to("mock:routeComplete").end()
-                        .onCompletion().onFailureOnly().to("mock:routeFailure").end()
-                        .onCompletion().to("mock:routeAll").end()
-                        .process(new MyProcessor()).to("mock:other");
+                        .onCompletion()
+                        .onCompleteOnly()
+                        .to("mock:routeComplete")
+                        .end()
+                        .onCompletion()
+                        .onFailureOnly()
+                        .to("mock:routeFailure")
+                        .end()
+                        .onCompletion()
+                        .to("mock:routeAll")
+                        .end()
+                        .process(new MyProcessor())
+                        .to("mock:other");
             }
         };
     }
 
     public static class MyProcessor implements Processor {
 
-        public MyProcessor() {
-        }
+        public MyProcessor() {}
 
         @Override
         public void process(Exchange exchange) {

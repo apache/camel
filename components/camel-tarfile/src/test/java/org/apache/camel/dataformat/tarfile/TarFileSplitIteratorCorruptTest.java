@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
 
 import java.util.Iterator;
@@ -30,7 +31,9 @@ class TarFileSplitIteratorCorruptTest extends CamelTestSupport {
     @Test
     void testTarFileUnmarshal() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:dead")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalStateException.class);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
@@ -49,7 +52,8 @@ class TarFileSplitIteratorCorruptTest extends CamelTestSupport {
 
                 from("file://src/test/resources/data?delay=10&fileName=corrupt.tar&noop=true")
                         .unmarshal(zf)
-                        .split(bodyAs(Iterator.class)).streaming()
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
                         .end();

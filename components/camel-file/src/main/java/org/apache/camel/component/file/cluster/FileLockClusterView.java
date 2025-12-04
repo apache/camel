@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.cluster;
 
 import java.io.IOException;
@@ -114,9 +115,8 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         }
 
         FileLockClusterService service = getClusterService().unwrap(FileLockClusterService.class);
-        acquireLockIntervalDelayNanoseconds = TimeUnit.NANOSECONDS.convert(
-                service.getAcquireLockInterval(),
-                service.getAcquireLockIntervalUnit());
+        acquireLockIntervalDelayNanoseconds =
+                TimeUnit.NANOSECONDS.convert(service.getAcquireLockInterval(), service.getAcquireLockIntervalUnit());
 
         heartbeatTimeoutMultiplier = service.getHeartbeatTimeoutMultiplier();
         if (heartbeatTimeoutMultiplier <= 0) {
@@ -124,7 +124,8 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         }
 
         ScheduledExecutorService executor = service.getExecutor();
-        task = executor.scheduleWithFixedDelay(this::tryLock,
+        task = executor.scheduleWithFixedDelay(
+                this::tryLock,
                 TimeUnit.MILLISECONDS.convert(service.getAcquireLockDelay(), service.getAcquireLockDelayUnit()),
                 TimeUnit.MILLISECONDS.convert(service.getAcquireLockInterval(), service.getAcquireLockIntervalUnit()),
                 TimeUnit.MILLISECONDS);
@@ -141,7 +142,11 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 channel.force(true);
             } catch (Exception e) {
                 // Log and ignore since we need to release the file lock and do cleanup
-                LOGGER.debug("Failed to truncate {} on {} stop", leaderDataPath, getClass().getSimpleName(), e);
+                LOGGER.debug(
+                        "Failed to truncate {} on {} stop",
+                        leaderDataPath,
+                        getClass().getSimpleName(),
+                        e);
             }
         }
 
@@ -195,10 +200,14 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
             try {
                 if (isLeaderInternal()) {
-                    LOGGER.debug("Holding the lock on file {} (lock={}, cluster-member-id={})", leaderLockPath, lock,
+                    LOGGER.debug(
+                            "Holding the lock on file {} (lock={}, cluster-member-id={})",
+                            leaderLockPath,
+                            lock,
                             localMember.getUuid());
                     try {
-                        // Update the cluster data file with the leader state so that other cluster members can interrogate it
+                        // Update the cluster data file with the leader state so that other cluster members can
+                        // interrogate it
                         writeClusterLeaderInfo(false);
                         return;
                     } catch (IOException e) {
@@ -208,7 +217,10 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
                 // Non-null lock at this point signifies leadership has been lost or relinquished
                 if (lock != null) {
-                    LOGGER.info("Lock on file {} lost (lock={}, cluster-member-id={})", leaderLockPath, lock,
+                    LOGGER.info(
+                            "Lock on file {} lost (lock={}, cluster-member-id={})",
+                            leaderLockPath,
+                            lock,
                             localMember.getUuid());
                     localMember.setStatus(ClusterMemberStatus.FOLLOWER);
                     releaseFileLock();
@@ -223,8 +235,10 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
                 // Get & update cluster leader state
                 LOGGER.debug("Reading cluster leader state from {}", leaderDataPath);
-                FileLockClusterLeaderInfo latestClusterLeaderInfo = FileLockClusterUtils.readClusterLeaderInfo(leaderDataPath);
-                FileLockClusterLeaderInfo previousClusterLeaderInfo = clusterLeaderInfoRef.getAndSet(latestClusterLeaderInfo);
+                FileLockClusterLeaderInfo latestClusterLeaderInfo =
+                        FileLockClusterUtils.readClusterLeaderInfo(leaderDataPath);
+                FileLockClusterLeaderInfo previousClusterLeaderInfo =
+                        clusterLeaderInfoRef.getAndSet(latestClusterLeaderInfo);
 
                 // Check if we can attempt to take cluster leadership
                 if (isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo)
@@ -235,17 +249,28 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                     }
 
                     // Attempt to obtain cluster leadership
-                    LOGGER.debug("Try to acquire a lock on {} (cluster-member-id={})", leaderLockPath, localMember.getUuid());
+                    LOGGER.debug(
+                            "Try to acquire a lock on {} (cluster-member-id={})",
+                            leaderLockPath,
+                            localMember.getUuid());
                     leaderLockFile = new RandomAccessFile(leaderLockPath.toFile(), "rw");
                     leaderDataFile = new RandomAccessFile(leaderDataPath.toFile(), "rw");
 
                     lock = null;
                     if (Files.isReadable(leaderLockPath)) {
-                        lock = leaderLockFile.getChannel().tryLock(0, Math.max(1, leaderLockFile.getChannel().size()), false);
+                        lock = leaderLockFile
+                                .getChannel()
+                                .tryLock(
+                                        0,
+                                        Math.max(1, leaderLockFile.getChannel().size()),
+                                        false);
                     }
 
                     if (lock != null) {
-                        LOGGER.info("Lock on file {} acquired (lock={}, cluster-member-id={})", leaderLockPath, lock,
+                        LOGGER.info(
+                                "Lock on file {} acquired (lock={}, cluster-member-id={})",
+                                leaderLockPath,
+                                lock,
                                 localMember.getUuid());
                         localMember.setStatus(ClusterMemberStatus.LEADER);
                         clusterLeaderInfoRef.set(null);
@@ -263,7 +288,10 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 reason = e;
             } finally {
                 if (lock == null) {
-                    LOGGER.debug("Lock on file {} not acquired (cluster-member-id={})", leaderLockPath, localMember.getUuid(),
+                    LOGGER.debug(
+                            "Lock on file {} not acquired (cluster-member-id={})",
+                            leaderLockPath,
+                            localMember.getUuid(),
                             reason);
                     closeLockFiles();
                 }
@@ -271,12 +299,10 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         }
     }
 
-    boolean isLeaderStale(FileLockClusterLeaderInfo clusterLeaderInfo, FileLockClusterLeaderInfo previousClusterLeaderInfo) {
+    boolean isLeaderStale(
+            FileLockClusterLeaderInfo clusterLeaderInfo, FileLockClusterLeaderInfo previousClusterLeaderInfo) {
         return FileLockClusterUtils.isLeaderStale(
-                clusterLeaderInfo,
-                previousClusterLeaderInfo,
-                System.nanoTime(),
-                heartbeatTimeoutMultiplier);
+                clusterLeaderInfo, previousClusterLeaderInfo, System.nanoTime(), heartbeatTimeoutMultiplier);
     }
 
     boolean canReclaimLeadership(FileLockClusterLeaderInfo leaderInfo) {
@@ -285,15 +311,10 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
     void writeClusterLeaderInfo(boolean forceMetaData) throws IOException {
         FileLockClusterLeaderInfo latestClusterLeaderInfo = new FileLockClusterLeaderInfo(
-                localMember.getUuid(),
-                acquireLockIntervalDelayNanoseconds,
-                System.nanoTime());
+                localMember.getUuid(), acquireLockIntervalDelayNanoseconds, System.nanoTime());
 
         FileLockClusterUtils.writeClusterLeaderInfo(
-                leaderDataPath,
-                leaderDataFile.getChannel(),
-                latestClusterLeaderInfo,
-                forceMetaData);
+                leaderDataPath, leaderDataFile.getChannel(), latestClusterLeaderInfo, forceMetaData);
     }
 
     boolean isLeaderInternal() {

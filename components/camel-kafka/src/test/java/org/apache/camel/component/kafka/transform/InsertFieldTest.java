@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,9 +33,7 @@ class InsertFieldTest {
 
     private InsertField processor;
 
-    private final String baseJson = "{" +
-                                    "\"name\":\"Rajesh Koothrappali\"" +
-                                    "}";
+    private final String baseJson = "{" + "\"name\":\"Rajesh Koothrappali\"" + "}";
 
     @BeforeEach
     void setup() {
@@ -51,10 +50,9 @@ class InsertFieldTest {
         processor = new InsertField("age", "29");
         processor.process(exchange);
 
-        Assertions.assertEquals(exchange.getMessage().getBody(String.class), "{" + "\n" +
-                                                                             "  \"name\" : \"Rajesh Koothrappali\"," + "\n" +
-                                                                             "  \"age\" : \"29\"" + "\n" +
-                                                                             "}");
+        Assertions.assertEquals(
+                exchange.getMessage().getBody(String.class),
+                "{" + "\n" + "  \"name\" : \"Rajesh Koothrappali\"," + "\n" + "  \"age\" : \"29\"" + "\n" + "}");
     }
 
     @Test
@@ -67,7 +65,8 @@ class InsertFieldTest {
         processor.setValue("green lantern");
         processor.process(exchange);
 
-        Assertions.assertEquals(exchange.getMessage().getBody(String.class),
+        Assertions.assertEquals(
+                exchange.getMessage().getBody(String.class),
                 "[ \"batman\", \"spiderman\", \"wonderwoman\", \"green lantern\" ]");
     }
 }

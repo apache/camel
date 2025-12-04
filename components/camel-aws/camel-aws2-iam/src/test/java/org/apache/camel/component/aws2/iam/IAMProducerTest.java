@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -40,9 +44,6 @@ import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupResponse;
 import software.amazon.awssdk.services.iam.model.StatusType;
 import software.amazon.awssdk.services.iam.model.UpdateAccessKeyResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class IAMProducerTest extends CamelTestSupport {
 
     @BindToRegistry("amazonIAMClient")
@@ -64,7 +65,8 @@ public class IAMProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListAccessKeysResponse resultGet = (ListAccessKeysResponse) exchange.getIn().getBody();
+        ListAccessKeysResponse resultGet =
+                (ListAccessKeysResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.accessKeyMetadata().size());
         assertEquals("1", resultGet.accessKeyMetadata().get(0).accessKeyId());
     }
@@ -95,7 +97,8 @@ public class IAMProducerTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
-                exchange.getIn().setBody(CreateUserRequest.builder().userName("test").build());
+                exchange.getIn()
+                        .setBody(CreateUserRequest.builder().userName("test").build());
             }
         });
 
@@ -155,7 +158,8 @@ public class IAMProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse) exchange.getIn().getBody();
+        CreateAccessKeyResponse resultGet =
+                (CreateAccessKeyResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.accessKey().accessKeyId());
         assertEquals("testSecret", resultGet.accessKey().secretAccessKey());
     }
@@ -175,7 +179,8 @@ public class IAMProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DeleteAccessKeyResponse resultGet = (DeleteAccessKeyResponse) exchange.getIn().getBody();
+        DeleteAccessKeyResponse resultGet =
+                (DeleteAccessKeyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -212,7 +217,8 @@ public class IAMProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        UpdateAccessKeyResponse resultGet = (UpdateAccessKeyResponse) exchange.getIn().getBody();
+        UpdateAccessKeyResponse resultGet =
+                (UpdateAccessKeyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -286,7 +292,8 @@ public class IAMProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        AddUserToGroupResponse resultGet = (AddUserToGroupResponse) exchange.getIn().getBody();
+        AddUserToGroupResponse resultGet =
+                (AddUserToGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -304,7 +311,8 @@ public class IAMProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        RemoveUserFromGroupResponse resultGet = (RemoveUserFromGroupResponse) exchange.getIn().getBody();
+        RemoveUserFromGroupResponse resultGet =
+                (RemoveUserFromGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -313,33 +321,48 @@ public class IAMProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:listKeys").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listAccessKeys")
+                from("direct:listKeys")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listAccessKeys")
                         .to("mock:result");
-                from("direct:createUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser")
+                from("direct:createUser")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser")
                         .to("mock:result");
                 from("direct:createUserPojo")
                         .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser&pojoRequest=true")
                         .to("mock:result");
-                from("direct:deleteUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteUser")
+                from("direct:deleteUser")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteUser")
                         .to("mock:result");
-                from("direct:listUsers").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listUsers").to("mock:result");
-                from("direct:getUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getUser").to("mock:result");
-                from("direct:createAccessKey").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createAccessKey")
+                from("direct:listUsers")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listUsers")
                         .to("mock:result");
-                from("direct:deleteAccessKey").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteAccessKey")
+                from("direct:getUser")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getUser")
                         .to("mock:result");
-                from("direct:updateAccessKey").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=updateAccessKey")
+                from("direct:createAccessKey")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createAccessKey")
                         .to("mock:result");
-                from("direct:createGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createGroup")
+                from("direct:deleteAccessKey")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteAccessKey")
                         .to("mock:result");
-                from("direct:deleteGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup")
+                from("direct:updateAccessKey")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=updateAccessKey")
                         .to("mock:result");
-                from("direct:listGroups").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listGroups")
+                from("direct:createGroup")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createGroup")
                         .to("mock:result");
-                from("direct:addUserToGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=addUserToGroup")
+                from("direct:deleteGroup")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup")
+                        .to("mock:result");
+                from("direct:listGroups")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listGroups")
+                        .to("mock:result");
+                from("direct:addUserToGroup")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=addUserToGroup")
                         .to("mock:result");
                 from("direct:removeUserFromGroup")
-                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=removeUserFromGroup").to("mock:result");
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=removeUserFromGroup")
+                        .to("mock:result");
             }
         };
     }

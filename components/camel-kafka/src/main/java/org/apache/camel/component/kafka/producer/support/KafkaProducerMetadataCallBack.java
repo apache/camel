@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.producer.support;
 
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.RecordMetadata;
+package org.apache.camel.component.kafka.producer.support;
 
 import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setException;
 import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setRecordMetadata;
+
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 public class KafkaProducerMetadataCallBack implements Callback {
     private final Object body;

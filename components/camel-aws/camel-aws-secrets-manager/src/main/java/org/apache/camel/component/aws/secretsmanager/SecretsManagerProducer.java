@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.util.ArrayList;
@@ -97,8 +98,8 @@ public class SecretsManagerProducer extends DefaultProducer {
     }
 
     private SecretsManagerOperations determineOperation(Exchange exchange) {
-        SecretsManagerOperations operation = exchange.getIn().getHeader(SecretsManagerConstants.OPERATION,
-                SecretsManagerOperations.class);
+        SecretsManagerOperations operation =
+                exchange.getIn().getHeader(SecretsManagerConstants.OPERATION, SecretsManagerOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -113,7 +114,7 @@ public class SecretsManagerProducer extends DefaultProducer {
     public String toString() {
         if (secretsManagerProducerToString == null) {
             secretsManagerProducerToString = "SecretsManagerProducer["
-                                             + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return secretsManagerProducerToString;
     }
@@ -140,7 +141,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.listSecrets(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("List Secrets command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "List Secrets command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -176,7 +179,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.createSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Create Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Create Secret command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -202,12 +207,16 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.getSecretValue(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Get Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Get Secret value command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         if (getConfiguration().isBinaryPayload()) {
-            message.setBody(new String(Base64.getDecoder().decode(result.secretBinary().asByteBuffer()).array()));
+            message.setBody(new String(Base64.getDecoder()
+                    .decode(result.secretBinary().asByteBuffer())
+                    .array()));
         } else {
             message.setBody(result.secretString());
         }
@@ -235,7 +244,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.describeSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Describe Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Describe Secret value command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -257,8 +268,8 @@ public class SecretsManagerProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Secret Id must be specified");
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_FORCE_DELETION))) {
-                Boolean secretForceDeletion
-                        = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_FORCE_DELETION, Boolean.class);
+                Boolean secretForceDeletion =
+                        exchange.getIn().getHeader(SecretsManagerConstants.SECRET_FORCE_DELETION, Boolean.class);
                 if (secretForceDeletion) {
                     builder.forceDeleteWithoutRecovery(true);
                 }
@@ -268,7 +279,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.deleteSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Delete Secret value command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -289,9 +302,10 @@ public class SecretsManagerProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Secret Id must be specified");
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.LAMBDA_ROTATION_FUNCTION_ARN))) {
-                String lambdaRotationArn
-                        = exchange.getIn().getHeader(SecretsManagerConstants.LAMBDA_ROTATION_FUNCTION_ARN, String.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(SecretsManagerConstants.LAMBDA_ROTATION_FUNCTION_ARN))) {
+                String lambdaRotationArn =
+                        exchange.getIn().getHeader(SecretsManagerConstants.LAMBDA_ROTATION_FUNCTION_ARN, String.class);
                 builder.rotationLambdaARN(lambdaRotationArn);
             }
             request = builder.build();
@@ -299,7 +313,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.rotateSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Rotate Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Rotate Secret value command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -335,7 +351,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.updateSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Update Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Update Secret command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -356,8 +374,10 @@ public class SecretsManagerProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Secret Id must be specified");
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_REPLICATION_REGIONS))) {
-                String regions = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_REPLICATION_REGIONS, String.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(SecretsManagerConstants.SECRET_REPLICATION_REGIONS))) {
+                String regions =
+                        exchange.getIn().getHeader(SecretsManagerConstants.SECRET_REPLICATION_REGIONS, String.class);
                 String[] s = regions.split(",");
                 for (String region : s) {
                     ReplicaRegionType.Builder regionType = ReplicaRegionType.builder();
@@ -372,7 +392,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.replicateSecretToRegions(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Replicate Secret to region command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Replicate Secret to region command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -398,7 +420,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.restoreSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Restore Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Restore Secret value command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -414,9 +438,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         } else {
             BatchGetSecretValueRequest.Builder builder = BatchGetSecretValueRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_IDS))) {
-                List<String> secretIds
-                        = Arrays.asList(
-                                exchange.getIn().getHeader(SecretsManagerConstants.SECRET_IDS, String.class).split(","));
+                List<String> secretIds = Arrays.asList(exchange.getIn()
+                        .getHeader(SecretsManagerConstants.SECRET_IDS, String.class)
+                        .split(","));
                 builder.secretIdList(secretIds);
             } else {
                 throw new IllegalArgumentException("Secret Ids must be specified");
@@ -426,7 +450,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.batchGetSecretValue(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Batch Get Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Batch Get Secret value command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -434,7 +460,9 @@ public class SecretsManagerProducer extends DefaultProducer {
             List<String> secretsReturned = new ArrayList<String>();
             if (!result.secretValues().isEmpty()) {
                 for (SecretValueEntry entry : result.secretValues()) {
-                    secretsReturned.add(new String(Base64.getDecoder().decode(entry.secretBinary().asByteBuffer()).array()));
+                    secretsReturned.add(new String(Base64.getDecoder()
+                            .decode(entry.secretBinary().asByteBuffer())
+                            .array()));
                 }
             }
             message.setBody(secretsReturned);
@@ -483,7 +511,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.putSecretValue(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Put Secret Value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace(
+                    "Put Secret Value command returned the error code {}",
+                    ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -498,9 +528,7 @@ public class SecretsManagerProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -517,5 +545,4 @@ public class SecretsManagerProducer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

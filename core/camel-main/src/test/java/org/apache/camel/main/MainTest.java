@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.apache.camel.util.CollectionHelper.propertiesOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ManagementStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.CollectionHelper.propertiesOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MainTest {
 
@@ -115,7 +116,7 @@ public class MainTest {
     public void testLoadingRouteFromCommand() throws Exception {
         Main main = new Main();
         // let the main load the MyRouteBuilder
-        main.parseArguments(new String[] { "-r", "org.apache.camel.main.MainTest$MyRouteBuilder" });
+        main.parseArguments(new String[] {"-r", "org.apache.camel.main.MainTest$MyRouteBuilder"});
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import java.util.List;
@@ -38,41 +39,54 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(label = "advanced")
     protected String nullValue;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     protected String skipEmptyLines;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     protected String ignoreTrailingWhitespaces;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     protected String ignoreLeadingWhitespaces;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     protected String headersDisabled;
+
     @XmlElementRef
     protected List<UniVocityHeader> headers;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     protected String headerExtractionEnabled;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     protected String numberOfRecordsToRead;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     protected String emptyValue;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     protected String lineSeparator;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     protected String normalizedLineSeparator;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "#")
     protected String comment;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     protected String lazyLoad;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     protected String asMap;
@@ -305,7 +319,8 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
      */
     @XmlTransient
     @SuppressWarnings("unchecked")
-    protected abstract static class AbstractBuilder<T extends AbstractBuilder<T, F>, F extends UniVocityAbstractDataFormat>
+    protected abstract static class AbstractBuilder<
+                    T extends AbstractBuilder<T, F>, F extends UniVocityAbstractDataFormat>
             implements DataFormatBuilder<F> {
 
         private String nullValue;

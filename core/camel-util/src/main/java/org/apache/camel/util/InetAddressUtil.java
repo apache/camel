@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.net.InetAddress;
@@ -81,5 +82,4 @@ public final class InetAddressUtil {
         }
         return null;
     }
-
 }

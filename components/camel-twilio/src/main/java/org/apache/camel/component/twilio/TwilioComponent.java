@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twilio;
 
 import com.twilio.http.TwilioRestClient;
@@ -31,12 +32,16 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
 
     @Metadata
     private TwilioConfiguration configuration = new TwilioConfiguration();
+
     @Metadata(label = "common,security", secret = true)
     private String username;
+
     @Metadata(label = "common,security", secret = true)
     private String password;
+
     @Metadata(label = "common,security", secret = true)
     private String accountSid;
+
     @Metadata(label = "advanced", autowired = true)
     private TwilioRestClient restClient;
 
@@ -55,8 +60,7 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
 
     @Override
     protected Endpoint createEndpoint(
-            String uri, String methodName, TwilioApiName apiName,
-            TwilioConfiguration endpointConfiguration) {
+            String uri, String methodName, TwilioApiName apiName, TwilioConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new TwilioEndpoint(uri, this, apiName, methodName, endpointConfiguration);
@@ -68,7 +72,8 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
 
         if (restClient == null) {
             if (ObjectHelper.isEmpty(username) && ObjectHelper.isEmpty(password)) {
-                throw new IllegalStateException("Unable to initialise Twilio, Twilio component configuration is missing");
+                throw new IllegalStateException(
+                        "Unable to initialise Twilio, Twilio component configuration is missing");
             }
             if (ObjectHelper.isEmpty(accountSid)) {
                 accountSid = username;

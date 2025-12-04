@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PredicateExceptionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ValidatePredicateExceptionFactoryGlobalTest extends ContextTestSupport {
 
@@ -75,7 +76,11 @@ public class ValidatePredicateExceptionFactoryGlobalTest extends ContextTestSupp
             public void configure() {
                 context.getRegistry().bind("myExceptionFactory", new MyExceptionFactory());
 
-                from("direct:start").validate().simple("${body} contains 'Camel'").id("myValidate").to("mock:result");
+                from("direct:start")
+                        .validate()
+                        .simple("${body} contains 'Camel'")
+                        .id("myValidate")
+                        .to("mock:result");
             }
         };
     }

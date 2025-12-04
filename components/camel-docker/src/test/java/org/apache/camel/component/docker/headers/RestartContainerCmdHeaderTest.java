@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Restart Container Request headers are applied properly
@@ -50,7 +51,6 @@ public class RestartContainerCmdHeaderTest extends BaseDockerHeaderTest<RestartC
 
         Mockito.verify(dockerClient, Mockito.times(1)).restartContainerCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withtTimeout(eq(timeout));
-
     }
 
     @Override
@@ -62,5 +62,4 @@ public class RestartContainerCmdHeaderTest extends BaseDockerHeaderTest<RestartC
     protected DockerOperation getOperation() {
         return DockerOperation.RESTART_CONTAINER;
     }
-
 }

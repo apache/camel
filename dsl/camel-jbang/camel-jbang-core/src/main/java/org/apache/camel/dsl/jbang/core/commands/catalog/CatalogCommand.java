@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "catalog",
-                     description = "List artifacts from Camel Catalog (use catalog --help to see sub commands)")
+@CommandLine.Command(
+        name = "catalog",
+        description = "List artifacts from Camel Catalog (use catalog --help to see sub commands)")
 public class CatalogCommand extends CamelCommand {
 
     public CatalogCommand(CamelJBangMain main) {

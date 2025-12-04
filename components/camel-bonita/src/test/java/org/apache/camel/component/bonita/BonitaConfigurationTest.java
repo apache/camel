@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.bonita.util.BonitaOperation;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BonitaConfigurationTest extends CamelTestSupport {
 
@@ -52,8 +53,8 @@ public class BonitaConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testBonitaConfigurationWrongOperation() {
-        assertThrows(ResolveEndpointFailedException.class,
+        assertThrows(
+                ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("bonita:wrongOperation", BonitaEndpoint.class));
     }
-
 }

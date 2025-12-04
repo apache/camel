@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis.processor.aggregate.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -58,7 +59,8 @@ public class AggregateRedisIT extends CamelTestSupport {
                 from("direct:start")
                         .log("Sending ${body} with correlation key ${header.myId}")
                         .aggregate(header("myId"), new MyAggregationStrategy())
-                        .aggregationRepository(new RedisAggregationRepository("aggregation", service.getServiceAddress()))
+                        .aggregationRepository(
+                                new RedisAggregationRepository("aggregation", service.getServiceAddress()))
                         .completionSize(3)
                         .log("Sending out ${body}")
                         .to("mock:result");

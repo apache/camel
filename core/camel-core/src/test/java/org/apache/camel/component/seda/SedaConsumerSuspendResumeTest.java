@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -41,8 +42,10 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("bar").name());
 
         // suspend bar consumer (not the route)
         SedaConsumer consumer = (SedaConsumer) context.getRoute("bar").getConsumer();
@@ -60,8 +63,12 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
         // it would poll and route (there is a little slack (up till 1 sec)
         // before suspension is empowered)
         await().atMost(1, TimeUnit.SECONDS)
-                .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().isEmpty()
-                        && context.getEndpoint("seda:bar", SedaEndpoint.class).getQueue().isEmpty());
+                .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class)
+                                .getQueue()
+                                .isEmpty()
+                        && context.getEndpoint("seda:bar", SedaEndpoint.class)
+                                .getQueue()
+                                .isEmpty());
 
         // even though we wait for the queues to empty, there is a race condition where the consumer
         // may still process messages while it's being suspended due to asynchronous message handling.

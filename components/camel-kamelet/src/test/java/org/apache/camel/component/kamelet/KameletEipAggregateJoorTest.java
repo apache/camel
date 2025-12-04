@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -48,13 +49,16 @@ public class KameletEipAggregateJoorTest extends CamelTestSupport {
             @Override
             public void configure() {
                 routeTemplate("my-aggregate")
-                        .templateBean("myAgg", "joor",
-                                // for aggregation we can use a BiFunction that takes Exchange as input and return the aggregated response
-                                // camel-joor has special support for this if we use (e1, e2) -> { ... } as a lambda expression
-                                "(e1, e2) -> {" +
-                                                       " String b1 = e1.getMessage().getBody(String.class);" +
-                                                       " String b2 = e2.getMessage().getBody(String.class);" +
-                                                       " return b1 + ',' + b2; }")
+                        .templateBean(
+                                "myAgg",
+                                "joor",
+                                // for aggregation we can use a BiFunction that takes Exchange as input and return the
+                                // aggregated response
+                                // camel-joor has special support for this if we use (e1, e2) -> { ... } as a lambda
+                                // expression
+                                "(e1, e2) -> {" + " String b1 = e1.getMessage().getBody(String.class);"
+                                        + " String b2 = e2.getMessage().getBody(String.class);"
+                                        + " return b1 + ',' + b2; }")
                         .templateParameter("count")
                         .from("kamelet:source")
                         .aggregate(constant(true))

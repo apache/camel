@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
 
 import com.huaweicloud.sdk.core.http.FieldExistence;
@@ -36,31 +37,35 @@ import org.apache.camel.component.huaweicloud.dms.models.UpdateInstanceResponse;
 @SuppressWarnings("unchecked")
 public final class DmsMeta {
 
-    public static final HttpRequestDef<CreateInstanceRequest, CreateInstanceResponse> CREATE_INSTANCE = genForcreateInstance();
+    public static final HttpRequestDef<CreateInstanceRequest, CreateInstanceResponse> CREATE_INSTANCE =
+            genForcreateInstance();
 
-    public static final HttpRequestDef<DeleteInstanceRequest, DeleteInstanceResponse> DELETE_INSTANCE = genFordeleteInstance();
+    public static final HttpRequestDef<DeleteInstanceRequest, DeleteInstanceResponse> DELETE_INSTANCE =
+            genFordeleteInstance();
 
-    public static final HttpRequestDef<ListInstancesRequest, ListInstancesResponse> LIST_INSTANCES = genForlistInstances();
+    public static final HttpRequestDef<ListInstancesRequest, ListInstancesResponse> LIST_INSTANCES =
+            genForlistInstances();
 
     public static final HttpRequestDef<QueryInstanceRequest, DmsInstance> QUERY_INSTANCE = genForqueryInstance();
 
-    public static final HttpRequestDef<UpdateInstanceRequest, UpdateInstanceResponse> UPDATE_INSTANCE = genForupdateInstsance();
+    public static final HttpRequestDef<UpdateInstanceRequest, UpdateInstanceResponse> UPDATE_INSTANCE =
+            genForupdateInstsance();
     public static final String JSON_CONTENT_TYPE = "application/json";
     public static final String INSTANCE_ID = "instance_id";
 
-    private DmsMeta() {
-    }
+    private DmsMeta() {}
 
     private static HttpRequestDef<CreateInstanceRequest, CreateInstanceResponse> genForcreateInstance() {
         // basic
-        HttpRequestDef.Builder<CreateInstanceRequest, CreateInstanceResponse> builder
-                = HttpRequestDef.builder(HttpMethod.POST, CreateInstanceRequest.class, CreateInstanceResponse.class)
-                        .withName("CreateInstanceKafka")
-                        .withUri("/v1.0/{project_id}/instances")
-                        .withContentType(JSON_CONTENT_TYPE);
+        HttpRequestDef.Builder<CreateInstanceRequest, CreateInstanceResponse> builder = HttpRequestDef.builder(
+                        HttpMethod.POST, CreateInstanceRequest.class, CreateInstanceResponse.class)
+                .withName("CreateInstanceKafka")
+                .withUri("/v1.0/{project_id}/instances")
+                .withContentType(JSON_CONTENT_TYPE);
 
         // requests
-        builder.withRequestField("body",
+        builder.withRequestField(
+                "body",
                 LocationType.Body,
                 FieldExistence.NON_NULL_NON_EMPTY,
                 CreateInstanceRequestBody.class,
@@ -71,14 +76,15 @@ public final class DmsMeta {
 
     private static HttpRequestDef<DeleteInstanceRequest, DeleteInstanceResponse> genFordeleteInstance() {
         // basic
-        HttpRequestDef.Builder<DeleteInstanceRequest, DeleteInstanceResponse> builder
-                = HttpRequestDef.builder(HttpMethod.DELETE, DeleteInstanceRequest.class, DeleteInstanceResponse.class)
-                        .withName("DeleteInstance")
-                        .withUri("/v1.0/{project_id}/instances/{instance_id}")
-                        .withContentType(JSON_CONTENT_TYPE);
+        HttpRequestDef.Builder<DeleteInstanceRequest, DeleteInstanceResponse> builder = HttpRequestDef.builder(
+                        HttpMethod.DELETE, DeleteInstanceRequest.class, DeleteInstanceResponse.class)
+                .withName("DeleteInstance")
+                .withUri("/v1.0/{project_id}/instances/{instance_id}")
+                .withContentType(JSON_CONTENT_TYPE);
 
         // requests
-        builder.withRequestField(INSTANCE_ID,
+        builder.withRequestField(
+                INSTANCE_ID,
                 LocationType.Path,
                 FieldExistence.NON_NULL_NON_EMPTY,
                 String.class,
@@ -89,14 +95,15 @@ public final class DmsMeta {
 
     private static HttpRequestDef<ListInstancesRequest, ListInstancesResponse> genForlistInstances() {
         // basic
-        HttpRequestDef.Builder<ListInstancesRequest, ListInstancesResponse> builder
-                = HttpRequestDef.builder(HttpMethod.GET, ListInstancesRequest.class, ListInstancesResponse.class)
-                        .withName("ListInstances")
-                        .withUri("/v1.0/{project_id}/instances")
-                        .withContentType(JSON_CONTENT_TYPE);
+        HttpRequestDef.Builder<ListInstancesRequest, ListInstancesResponse> builder = HttpRequestDef.builder(
+                        HttpMethod.GET, ListInstancesRequest.class, ListInstancesResponse.class)
+                .withName("ListInstances")
+                .withUri("/v1.0/{project_id}/instances")
+                .withContentType(JSON_CONTENT_TYPE);
 
         // requests
-        builder.withRequestField("engine",
+        builder.withRequestField(
+                "engine",
                 LocationType.Query,
                 FieldExistence.NULL_IGNORE,
                 String.class,
@@ -107,14 +114,15 @@ public final class DmsMeta {
 
     private static HttpRequestDef<QueryInstanceRequest, DmsInstance> genForqueryInstance() {
         // basic
-        HttpRequestDef.Builder<QueryInstanceRequest, DmsInstance> builder
-                = HttpRequestDef.builder(HttpMethod.GET, QueryInstanceRequest.class, DmsInstance.class)
-                        .withName("QueryInstance")
-                        .withUri("/v1.0/{project_id}/instances/{instance_id}")
-                        .withContentType(JSON_CONTENT_TYPE);
+        HttpRequestDef.Builder<QueryInstanceRequest, DmsInstance> builder = HttpRequestDef.builder(
+                        HttpMethod.GET, QueryInstanceRequest.class, DmsInstance.class)
+                .withName("QueryInstance")
+                .withUri("/v1.0/{project_id}/instances/{instance_id}")
+                .withContentType(JSON_CONTENT_TYPE);
 
         // requests
-        builder.withRequestField(INSTANCE_ID,
+        builder.withRequestField(
+                INSTANCE_ID,
                 LocationType.Path,
                 FieldExistence.NON_NULL_NON_EMPTY,
                 String.class,
@@ -125,20 +133,22 @@ public final class DmsMeta {
 
     private static HttpRequestDef<UpdateInstanceRequest, UpdateInstanceResponse> genForupdateInstsance() {
         // basic
-        HttpRequestDef.Builder<UpdateInstanceRequest, UpdateInstanceResponse> builder
-                = HttpRequestDef.builder(HttpMethod.PUT, UpdateInstanceRequest.class, UpdateInstanceResponse.class)
-                        .withName("UpdateInstance")
-                        .withUri("/v1.0/{project_id}/instances/{instance_id}")
-                        .withContentType(JSON_CONTENT_TYPE);
+        HttpRequestDef.Builder<UpdateInstanceRequest, UpdateInstanceResponse> builder = HttpRequestDef.builder(
+                        HttpMethod.PUT, UpdateInstanceRequest.class, UpdateInstanceResponse.class)
+                .withName("UpdateInstance")
+                .withUri("/v1.0/{project_id}/instances/{instance_id}")
+                .withContentType(JSON_CONTENT_TYPE);
 
         // requests
-        builder.withRequestField(INSTANCE_ID,
+        builder.withRequestField(
+                INSTANCE_ID,
                 LocationType.Path,
                 FieldExistence.NON_NULL_NON_EMPTY,
                 String.class,
                 f -> f.withMarshaller(UpdateInstanceRequest::getInstanceId, UpdateInstanceRequest::setInstanceId));
 
-        builder.withRequestField("body",
+        builder.withRequestField(
+                "body",
                 LocationType.Body,
                 FieldExistence.NON_NULL_NON_EMPTY,
                 UpdateInstanceRequestBody.class,

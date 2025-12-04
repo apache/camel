@@ -67,5 +67,4 @@ public class Cw2ProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

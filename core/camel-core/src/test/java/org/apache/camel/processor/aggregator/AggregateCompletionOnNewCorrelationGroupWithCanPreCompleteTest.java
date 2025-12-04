@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.ArrayList;
@@ -59,16 +60,22 @@ public class AggregateCompletionOnNewCorrelationGroupWithCanPreCompleteTest exte
             @Override
             public void configure() {
                 from("direct:start")
-                        .split().body().streaming().parallelProcessing(false)
+                        .split()
+                        .body()
+                        .streaming()
+                        .parallelProcessing(false)
                         .process(exchange -> {
                             if ("end".equals(exchange.getIn().getBody())) {
                                 // expectation: C is the last body to aggregate
                                 exchange.getIn().setHeader("id", "C".hashCode());
                             } else {
-                                exchange.getIn().setHeader("id", exchange.getIn().getBody().hashCode());
+                                exchange.getIn()
+                                        .setHeader(
+                                                "id", exchange.getIn().getBody().hashCode());
                             }
                         })
-                        .aggregate(header("id"), new CanPreCompleteAggregationStrategy()).completionOnNewCorrelationGroup()
+                        .aggregate(header("id"), new CanPreCompleteAggregationStrategy())
+                        .completionOnNewCorrelationGroup()
                         .to("log:aggregated", "mock:aggregated");
             }
         };
@@ -77,8 +84,7 @@ public class AggregateCompletionOnNewCorrelationGroupWithCanPreCompleteTest exte
     public static class CanPreCompleteAggregationStrategy implements AggregationStrategy {
         private static final Logger LOG = LoggerFactory.getLogger(CanPreCompleteAggregationStrategy.class);
 
-        public CanPreCompleteAggregationStrategy() {
-        }
+        public CanPreCompleteAggregationStrategy() {}
 
         @Override
         public boolean canPreComplete() {
@@ -107,8 +113,7 @@ public class AggregateCompletionOnNewCorrelationGroupWithCanPreCompleteTest exte
                 newExchangeId = newExchange.getExchangeId();
             }
 
-            LOG.debug("preComplete body1[{}] body2[{}] [{}] [{}]", body1, body2,
-                    oldExchangeId, newExchangeId);
+            LOG.debug("preComplete body1[{}] body2[{}] [{}] [{}]", body1, body2, oldExchangeId, newExchangeId);
 
             if (newExchange.getIn().getBody().equals("end")) {
                 preComplete = true;
@@ -123,21 +128,26 @@ public class AggregateCompletionOnNewCorrelationGroupWithCanPreCompleteTest exte
             LOG.debug("aggregate");
 
             if (oldExchange == null) {
-                LOG.debug("aggregate oldExchange[{}] newExchangeId[{}]",
-                        oldExchange,
-                        newExchange.getExchangeId());
+                LOG.debug("aggregate oldExchange[{}] newExchangeId[{}]", oldExchange, newExchange.getExchangeId());
                 return newExchange;
             }
 
             String body1 = oldExchange.getIn().getBody(String.class);
             String body2 = newExchange.getIn().getBody(String.class);
-            LOG.debug("aggregate body1[{}] body2[{}] [{}] [{}]", body1, body2,
-                    oldExchange.getExchangeId(), newExchange.getExchangeId());
+            LOG.debug(
+                    "aggregate body1[{}] body2[{}] [{}] [{}]",
+                    body1,
+                    body2,
+                    oldExchange.getExchangeId(),
+                    newExchange.getExchangeId());
 
             oldExchange.getIn().setBody(body1 + body2);
 
-            LOG.debug("aggregate [{}] [{}] [{}]", oldExchange.getIn().getBody(),
-                    oldExchange.getExchangeId(), newExchange.getExchangeId());
+            LOG.debug(
+                    "aggregate [{}] [{}] [{}]",
+                    oldExchange.getIn().getBody(),
+                    oldExchange.getExchangeId(),
+                    newExchange.getExchangeId());
 
             return oldExchange;
         }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import java.io.IOException;
@@ -98,7 +99,8 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         @Override
         public void notify(CamelEvent event) throws Exception {
             // if context or route is reloading then clear cache to ensure old scripts are removed from memory.
-            if (event instanceof CamelEvent.CamelContextReloadingEvent || event instanceof CamelEvent.RouteReloadedEvent) {
+            if (event instanceof CamelEvent.CamelContextReloadingEvent
+                    || event instanceof CamelEvent.RouteReloadedEvent) {
                 ServiceHelper.stopService(scriptCache.values());
                 scriptCache.clear();
             }
@@ -119,14 +121,12 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         }
 
         @Override
-        public void start() {
-        }
+        public void start() {}
 
         @Override
         public void stop() {
             InvokerHelper.removeClass(script);
         }
-
     }
 
     public static GroovyExpression groovy(String expression) {
@@ -158,7 +158,8 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         Class<Script> clazz = getScriptFromCache(script);
         if (clazz == null) {
             // prefer to use classloader from groovy script compiler, and if not fallback to app context
-            ClassLoader cl = getCamelContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
+            ClassLoader cl =
+                    getCamelContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
             GroovyShell shell = cl != null ? new GroovyShell(cl) : new GroovyShell();
             clazz = shell.getClassLoader().parseClass(script);
             addScriptToCache(script, clazz);

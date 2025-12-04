@@ -17,15 +17,15 @@
 
 package org.apache.camel.component.leveldb;
 
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBSetupTest extends CamelTestSupport {
     /**
      * The Level db file.

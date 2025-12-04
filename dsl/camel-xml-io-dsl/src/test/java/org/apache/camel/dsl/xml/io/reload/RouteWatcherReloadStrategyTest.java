@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io.reload;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
@@ -31,12 +38,6 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
 
@@ -74,12 +75,14 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         LOG.info("Copying file to target/dummy");
 
         // create an xml file with some routes
-        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/reload/barRoute.xml"),
+        FileUtil.copyFile(
+                new File("src/test/resources/org/apache/camel/reload/barRoute.xml"),
                 new File("target/dummy/barRoute.xml"));
 
         // wait for that file to be processed
         // (is slow on osx, so wait up till 20 seconds)
-        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
 
         // and the route should work
         getMockEndpoint("mock:bar").expectedMessageCount(1);
@@ -128,7 +131,8 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         LOG.info("Copying file to target/dummy");
 
         // create an xml file with some routes
-        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/reload/barRoute.xml"),
+        FileUtil.copyFile(
+                new File("src/test/resources/org/apache/camel/reload/barRoute.xml"),
                 new File("target/dummy/barRoute.xml"));
 
         // wait for that file to be processed and remove/add the route
@@ -171,12 +175,14 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         LOG.info("Copying file to target/dummy");
 
         // create an xml file with some routes
-        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/reload/barRoute.xml"),
+        FileUtil.copyFile(
+                new File("src/test/resources/org/apache/camel/reload/barRoute.xml"),
                 new File("target/dummy/barRoute.xml"));
 
         // wait for that file to be processed
         // (is slow on osx, so wait up till 20 seconds)
-        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
 
         // and the route should work
         getMockEndpoint("mock:bar").expectedMessageCount(1);
@@ -189,7 +195,8 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         LOG.info("Updating file in target/dummy");
 
         // create an xml file with some routes
-        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/reload/barUpdatedRoute.xml"),
+        FileUtil.copyFile(
+                new File("src/test/resources/org/apache/camel/reload/barUpdatedRoute.xml"),
                 new File("target/dummy/barRoute.xml"));
 
         // wait for that file to be processed and remove/add the route

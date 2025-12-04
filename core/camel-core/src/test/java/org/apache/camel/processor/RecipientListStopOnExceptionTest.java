@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RecipientListStopOnExceptionTest extends ContextTestSupport {
 
@@ -51,7 +52,10 @@ public class RecipientListStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").recipientList(header("foo")).stopOnException().to("mock:result");
+                from("direct:start")
+                        .recipientList(header("foo"))
+                        .stopOnException()
+                        .to("mock:result");
 
                 from("direct:a").to("mock:a");
                 from("direct:b").to("mock:b").throwException(new IllegalArgumentException("Damn"));

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlEnum;
@@ -36,5 +37,4 @@ public enum YAMLLibrary {
     public String getDataFormatName() {
         return dataFormatName;
     }
-
 }

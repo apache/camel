@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 import org.apache.camel.component.file.GenericFileSendDynamicAware;
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic(FilesComponent.SCHEME)
-public class FilesSendDynamicAware extends GenericFileSendDynamicAware {
-}
+public class FilesSendDynamicAware extends GenericFileSendDynamicAware {}

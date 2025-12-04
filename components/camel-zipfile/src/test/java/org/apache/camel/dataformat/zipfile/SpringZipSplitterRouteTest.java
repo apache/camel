@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,5 +35,4 @@ public class SpringZipSplitterRouteTest extends CamelSpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/zipfile/SpringZipSplitterRouteTest.xml");
     }
-
 }

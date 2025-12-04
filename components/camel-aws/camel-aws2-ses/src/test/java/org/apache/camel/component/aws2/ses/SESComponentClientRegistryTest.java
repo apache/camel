@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ses;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.ses;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SESComponentClientRegistryTest extends CamelTestSupport {
 
@@ -30,8 +31,7 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint
-                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com");
+        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
     }
@@ -42,8 +42,8 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint
-                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+        Ses2Endpoint endpoint =
+                (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
 
         assertSame(awsSESClient, endpoint.getConfiguration().getAmazonSESClient());
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IronMQPreserveHeadersTest extends CamelTestSupport {
 
@@ -50,7 +51,8 @@ public class IronMQPreserveHeadersTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
         IronMQComponent component = new IronMQComponent(context);
         component.init();
-        endpoint = (IronMQEndpoint) component.createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&preserveHeaders=true");
+        endpoint = (IronMQEndpoint)
+                component.createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&preserveHeaders=true");
         endpoint.setClient(new IronMQClientMock("dummy", "dummy"));
         context.addComponent("ironmq", component);
         return context;

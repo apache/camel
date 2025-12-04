@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import org.apache.camel.spi.CamelEvent;
@@ -63,5 +64,4 @@ public class LoggingEventNotifier extends EventNotifierSupport {
             log = LoggerFactory.getLogger(logName);
         }
     }
-
 }

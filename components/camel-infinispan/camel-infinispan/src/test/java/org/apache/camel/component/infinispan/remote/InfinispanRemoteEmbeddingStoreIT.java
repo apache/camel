@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.List;
@@ -42,11 +48,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSupport {
     private static final String CACHE_NAME = "camel-infinispan-embeddings";
     private static final int DIMENSION = 3;
@@ -60,14 +61,11 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
 
     @Test
     public void embeddingStore() throws Exception {
-        Embedding embedding = Embedding.from(new float[] { 1.0f, 2.0f, 3.0f });
-        fluentTemplate.to("direct:put")
-                .withBody(embedding)
-                .send();
+        Embedding embedding = Embedding.from(new float[] {1.0f, 2.0f, 3.0f});
+        fluentTemplate.to("direct:put").withBody(embedding).send();
 
-        List<Object> results = fluentTemplate.toF("direct:query")
-                .withBody(embedding)
-                .request(List.class);
+        List<Object> results =
+                fluentTemplate.toF("direct:query").withBody(embedding).request(List.class);
         assertEquals(1, results.size());
     }
 
@@ -88,8 +86,8 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
         try {
             manager.start();
 
-            Optional<Schema> metadata
-                    = cacheContainer.administration().schemas().get(EmbeddingStoreUtil.getSchemeFileName(configuration));
+            Optional<Schema> metadata =
+                    cacheContainer.administration().schemas().get(EmbeddingStoreUtil.getSchemeFileName(configuration));
             assertTrue(metadata.isEmpty());
         } finally {
             manager.stop();
@@ -106,8 +104,8 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
         try {
             manager.start();
 
-            Optional<Schema> metadata
-                    = cacheContainer.administration().schemas().get(EmbeddingStoreUtil.getSchemeFileName(configuration));
+            Optional<Schema> metadata =
+                    cacheContainer.administration().schemas().get(EmbeddingStoreUtil.getSchemeFileName(configuration));
             assertTrue(metadata.isEmpty());
         } finally {
             manager.stop();
@@ -130,8 +128,8 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
         try {
             manager.start();
 
-            Optional<Schema> metadata
-                    = cacheContainer.administration().schemas().get(EmbeddingStoreUtil.getSchemeFileName(configuration));
+            Optional<Schema> metadata =
+                    cacheContainer.administration().schemas().get(EmbeddingStoreUtil.getSchemeFileName(configuration));
             assertTrue(metadata.isPresent());
             assertNotNull(metadata);
         } finally {
@@ -154,12 +152,12 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
     @Override
     protected void getOrCreateCache() {
         String configuration = "<distributed-cache name=\"" + CACHE_NAME + "\">\n"
-                               + "<indexing storage=\"local-heap\">\n"
-                               + "<indexed-entities>\n"
-                               + "<indexed-entity>" + ENTITY_TYPE_NAME + "</indexed-entity>\n"
-                               + "</indexed-entities>\n"
-                               + "</indexing>\n"
-                               + "</distributed-cache>";
+                + "<indexing storage=\"local-heap\">\n"
+                + "<indexed-entities>\n"
+                + "<indexed-entity>" + ENTITY_TYPE_NAME + "</indexed-entity>\n"
+                + "</indexed-entities>\n"
+                + "</indexing>\n"
+                + "</distributed-cache>";
 
         cacheContainer.administration().getOrCreateCache(CACHE_NAME, new StringConfiguration(configuration));
     }
@@ -178,13 +176,16 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
             @Override
             public void configure() throws Exception {
                 from("direct:put")
-                        .setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR).body()
+                        .setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR)
+                        .body()
                         .transformDataType(new DataType("infinispan:embeddings"))
                         .toF("infinispan://%s?embeddingStoreDimension=3", CACHE_NAME);
 
                 from("direct:query")
-                        .setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR).body()
-                        .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.QUERY)
+                        .setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR)
+                        .body()
+                        .setHeader(InfinispanConstants.OPERATION)
+                        .constant(InfinispanOperation.QUERY)
                         .transformDataType(new DataType("infinispan:embeddings"))
                         .toF("infinispan://%s?embeddingStoreDimension=3&embeddingStoreDistance=2", CACHE_NAME);
             }

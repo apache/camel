@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,9 +29,6 @@ import org.apache.camel.component.aws2.sts.STS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StsGetSessionTokenIT extends Aws2StsBase {
 
@@ -51,7 +52,12 @@ public class StsGetSessionTokenIT extends Aws2StsBase {
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
-        assertNotNull(result.getExchanges().get(0).getIn().getBody(GetSessionTokenResponse.class).credentials().accessKeyId());
+        assertNotNull(result.getExchanges()
+                .get(0)
+                .getIn()
+                .getBody(GetSessionTokenResponse.class)
+                .credentials()
+                .accessKeyId());
     }
 
     @Override
@@ -59,8 +65,7 @@ public class StsGetSessionTokenIT extends Aws2StsBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint
-                        = "aws2-sts://default?operation=getSessionToken";
+                String awsEndpoint = "aws2-sts://default?operation=getSessionToken";
                 from("direct:getSessonToken").to(awsEndpoint).to("mock:result");
             }
         };

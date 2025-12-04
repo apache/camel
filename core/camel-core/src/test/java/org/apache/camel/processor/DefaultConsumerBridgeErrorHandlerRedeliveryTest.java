@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -47,8 +48,10 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
         // the error handler
         assertEquals(0, redeliverCounter.get());
 
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertEquals("Simulated", cause.getMessage());
     }
@@ -62,14 +65,18 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
                 getContext().addComponent("my", new MyComponent());
 
                 // configure exception clause
-                onException(Exception.class).maximumRedeliveries(3).onRedelivery(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        redeliverCounter.incrementAndGet();
-                    }
-                })
+                onException(Exception.class)
+                        .maximumRedeliveries(3)
+                        .onRedelivery(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                redeliverCounter.incrementAndGet();
+                            }
+                        })
                         // setting delay to zero is just to make unit testing faster
-                        .redeliveryDelay(0).handled(true).to("mock:dead");
+                        .redeliveryDelay(0)
+                        .handled(true)
+                        .to("mock:dead");
 
                 // configure the consumer to bridge with the Camel error
                 // handler,
@@ -79,5 +86,4 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
             }
         };
     }
-
 }

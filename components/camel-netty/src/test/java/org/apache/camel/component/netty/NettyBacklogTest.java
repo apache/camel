@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
@@ -27,15 +28,14 @@ public class NettyBacklogTest extends NettyTCPSyncTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?sync=true&backlog=500")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                exchange.getMessage().setBody(
+                from("netty:tcp://localhost:{{port}}?sync=true&backlog=500").process(new Processor() {
+                    public void process(Exchange exchange) {
+                        exchange.getMessage()
+                                .setBody(
                                         "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
-                            }
-                        });
+                    }
+                });
             }
         };
     }
-
 }

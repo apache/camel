@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream.client;
 
 import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientSta
  */
 public final class Ddb2StreamClientFactory {
 
-    private Ddb2StreamClientFactory() {
-    }
+    private Ddb2StreamClientFactory() {}
 
     /**
      * Return the correct AWS DynamoDB client (based on remote vs local).

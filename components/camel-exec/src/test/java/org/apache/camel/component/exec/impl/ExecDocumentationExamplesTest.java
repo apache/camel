@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec.impl;
+
+import static org.apache.camel.component.exec.ExecTestUtils.buildJavaExecutablePath;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.InputStream;
@@ -34,17 +41,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.exec.ExecTestUtils.buildJavaExecutablePath;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * The tests are Disabledd by default, because they are OS-specific. On demand they can be run manually to validate the
  * documentation examples for that OS.
  */
-
 public class ExecDocumentationExamplesTest extends CamelTestSupport {
 
     private static final String ANT_BUILD_FILE_NAME = "CamelExecTestAntBuildFile.xml";
@@ -78,7 +78,6 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
         // use type conversion here
         ExecResult body = templateWordCount.requestBody((Object) "test", ExecResult.class);
         assertNotNull(body);
-
     }
 
     /**
@@ -151,25 +150,28 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // word count
-                from("direct:wordCount").to("exec:wc?args=--words /usr/share/dict/words").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // By default, the body is ExecResult instance
-                        assertIsInstanceOf(ExecResult.class, exchange.getIn().getBody());
-                        // Use the Camel Exec String type converter to
-                        // convert the ExecResult to String
-                        // In this case, the stdout is considered as output
-                        String wordCountOutput = exchange.getIn().getBody(String.class);
-                        // do something with the output
-                        log.info(wordCountOutput);
-                    }
-
-                });
+                from("direct:wordCount")
+                        .to("exec:wc?args=--words /usr/share/dict/words")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // By default, the body is ExecResult instance
+                                assertIsInstanceOf(
+                                        ExecResult.class, exchange.getIn().getBody());
+                                // Use the Camel Exec String type converter to
+                                // convert the ExecResult to String
+                                // In this case, the stdout is considered as output
+                                String wordCountOutput = exchange.getIn().getBody(String.class);
+                                // do something with the output
+                                log.info(wordCountOutput);
+                            }
+                        });
 
                 // example 1 in the component docs
                 from("direct:javaVersion").to("exec:java?args=-version -server");
                 // example 2 in the component docs
                 from("direct:javaVersionWorkingDir")
-                        .to("exec:" + buildJavaExecutablePath() + "?args=-version -Duser.name=Camel&workingDir=C:/temp");
+                        .to("exec:" + buildJavaExecutablePath()
+                                + "?args=-version -Duser.name=Camel&workingDir=C:/temp");
 
                 // advanced, test ant
                 from("direct:execAnt").to("exec:ant.bat?args=-f " + ANT_BUILD_FILE_NAME);
@@ -177,7 +179,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
                 // advanced, test ant with out file
                 from("direct:execAntWithOutFile")
                         .to("exec:ant.bat?args=-f " + ANT_BUILD_FILE_NAME + " -l " + ANT_OUT_FILE_NAME + "&outFile="
-                            + ANT_OUT_FILE_NAME)
+                                + ANT_OUT_FILE_NAME)
                         .process(new Processor() {
 
                             public void process(Exchange exchange) throws Exception {
@@ -185,7 +187,6 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
                                 // do something with the out file here
                                 log.info(IOUtils.toString(outFile, Charset.defaultCharset()));
                             }
-
                         });
             }
         };
@@ -195,12 +196,9 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
         StringBuilder builder = new StringBuilder();
         builder.append("<project name=\"TestExec\" default=\"test\" basedir=\".\">");
         builder.append("<target name=\"test\">");
-        builder.append("<echo message=\"")
-                .append(TEST_MSG)
-                .append("\"/>");
+        builder.append("<echo message=\"").append(TEST_MSG).append("\"/>");
         builder.append("</target>");
         builder.append("</project>");
         return builder.toString();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git.consumer;
 
 import java.util.Queue;
@@ -73,8 +74,10 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
         int total = exchanges.size();
         int answer = total;
         if (this.maxMessagesPerPoll > 0 && total > this.maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
-                    this.maxMessagesPerPoll, total);
+            LOG.debug(
+                    "Limiting to maximum messages to poll {} as there were {} messages in this poll.",
+                    this.maxMessagesPerPoll,
+                    total);
             total = this.maxMessagesPerPoll;
         }
 
@@ -95,5 +98,4 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
     public abstract Object onPreProcessed(Exchange exchange);
 
     public abstract void onProcessed(Exchange exchange, Object value);
-
 }

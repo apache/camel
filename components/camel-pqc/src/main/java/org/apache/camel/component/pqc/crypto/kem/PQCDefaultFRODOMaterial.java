@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto.kem;
 
 import java.security.*;
@@ -49,14 +50,16 @@ public class PQCDefaultFRODOMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.FRODO.getAlgorithm(),
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.FRODO.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.FRODO.getBcProvider());
         kpg.initialize(FrodoParameterSpec.frodokem976aes, new SecureRandom());
         return kpg;
     }
 
     protected static KeyGenerator prepareKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.FRODO.getAlgorithm(),
+        KeyGenerator kg = KeyGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.FRODO.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.FRODO.getBcProvider());
         return kg;
     }

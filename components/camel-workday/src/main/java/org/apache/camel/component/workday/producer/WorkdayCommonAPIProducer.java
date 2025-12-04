@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.workday.producer;
 
 import java.net.MalformedURLException;
@@ -79,7 +80,6 @@ public class WorkdayCommonAPIProducer extends WorkdayDefaultProducer {
         this.workdayValidEndpointSet.add("/workers/{ID}/timeOffEntries/{ID}");
         this.workdayValidEndpointSet.add("/workers/{ID}/timeOffPlans");
         this.workdayValidEndpointSet.add("/workers/{ID}/timeOffPlans/{ID}");
-
     }
 
     @Override
@@ -93,8 +93,7 @@ public class WorkdayCommonAPIProducer extends WorkdayDefaultProducer {
                     String.format("An invalid Workday Common endpoint: '%s' was provided.", genericPath));
         }
 
-        return String.format(WORKDAY_COMMON_API_URL_TEMPLATE, configuration.getHost(), configuration.getTenant(),
-                pathString);
+        return String.format(
+                WORKDAY_COMMON_API_URL_TEMPLATE, configuration.getHost(), configuration.getTenant(), pathString);
     }
-
 }

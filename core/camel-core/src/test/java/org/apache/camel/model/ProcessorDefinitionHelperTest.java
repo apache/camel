@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Iterator;
 
@@ -22,17 +26,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ProcessorDefinitionHelperTest extends ContextTestSupport {
 
     @Test
     public void testFilterTypeInOutputs() {
         RouteDefinition route = context.getRouteDefinitions().get(0);
 
-        Iterator<ProcessorDefinition> it
-                = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class).iterator();
+        Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(
+                        route.getOutputs(), ProcessorDefinition.class)
+                .iterator();
         assertNotNull(it);
 
         assertThat(it.next().getId()).matches("choice[0-9]+");
@@ -47,11 +49,20 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(header("foo")).id("whenfoo").to("mock:foo").id("foo").when(header("bar"))
-                        .id("whenbar").to("mock:bar").id("bar").otherwise()
-                        .to("mock:baz").id("baz");
+                from("direct:start")
+                        .choice()
+                        .when(header("foo"))
+                        .id("whenfoo")
+                        .to("mock:foo")
+                        .id("foo")
+                        .when(header("bar"))
+                        .id("whenbar")
+                        .to("mock:bar")
+                        .id("bar")
+                        .otherwise()
+                        .to("mock:baz")
+                        .id("baz");
             }
         };
     }
-
 }

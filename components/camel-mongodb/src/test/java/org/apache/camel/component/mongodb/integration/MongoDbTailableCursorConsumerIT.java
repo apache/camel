@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
@@ -39,10 +44,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static com.mongodb.client.model.Filters.eq;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -78,7 +79,6 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         context.getRouteController().startRoute("tailableCursorConsumer1");
         Awaitility.await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
         context.getRouteController().stopRoute("tailableCursorConsumer1");
-
     }
 
     @Test
@@ -121,7 +121,6 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         Executors.newSingleThreadExecutor().submit(() -> doLongerInsert(mock)).get();
 
         context.getRouteController().stopRoute("tailableCursorConsumer1");
-
     }
 
     private void doLongerInsert(MockEndpoint mock) {
@@ -160,8 +159,7 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         mock.assertIsSatisfied();
         mock.reset();
         context.getRouteController().stopRoute("tailableCursorConsumer2");
-        while (context.getRouteController().getRouteStatus("tailableCursorConsumer2") != ServiceStatus.Stopped) {
-        }
+        while (context.getRouteController().getRouteStatus("tailableCursorConsumer2") != ServiceStatus.Stopped) {}
         context.getRouteController().startRoute("tailableCursorConsumer2");
 
         // expect 300 messages and not 600
@@ -179,15 +177,21 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
 
         // check that the lastVal is persisted at the right time: check before
         // and after stopping the route
-        assertEquals(300, db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION).find(eq("persistentId", "darwin"))
-                .first().get("lastTrackingValue"));
+        assertEquals(
+                300,
+                db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION)
+                        .find(eq("persistentId", "darwin"))
+                        .first()
+                        .get("lastTrackingValue"));
         // stop the route and verify the last value has been updated
         context.getRouteController().stopRoute("tailableCursorConsumer2");
-        while (context.getRouteController().getRouteStatus("tailableCursorConsumer2") != ServiceStatus.Stopped) {
-        }
-        assertEquals(600, db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION).find(eq("persistentId", "darwin"))
-                .first().get("lastTrackingValue"));
-
+        while (context.getRouteController().getRouteStatus("tailableCursorConsumer2") != ServiceStatus.Stopped) {}
+        assertEquals(
+                600,
+                db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION)
+                        .find(eq("persistentId", "darwin"))
+                        .first()
+                        .get("lastTrackingValue"));
     }
 
     private void doQuickInsert(int initial, int limit) {
@@ -203,7 +207,8 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         final Calendar startTimestamp = Calendar.getInstance();
 
         // get default tracking collection
-        MongoCollection<Document> trackingCol = db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION, Document.class);
+        MongoCollection<Document> trackingCol =
+                db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION, Document.class);
         trackingCol.drop();
         trackingCol = db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION, Document.class);
 
@@ -217,7 +222,8 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
                 for (int i = 1; i <= 300; i++) {
                     Calendar c = (Calendar) (startTimestamp.clone());
                     c.add(Calendar.MINUTE, i);
-                    cappedTestCollection.insertOne(new Document("increasing", c.getTime()).append("string", "value" + i));
+                    cappedTestCollection.insertOne(
+                            new Document("increasing", c.getTime()).append("string", "value" + i));
                 }
             }
         });
@@ -232,7 +238,8 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         Calendar cal300 = (Calendar) startTimestamp.clone();
         cal300.add(Calendar.MINUTE, 300);
         context.getRouteController().stopRoute("tailableCursorConsumer2");
-        assertEquals(cal300.getTime(),
+        assertEquals(
+                cal300.getTime(),
                 trackingCol.find(eq("persistentId", "darwin")).first().get(MongoDbTailTrackingConfig.DEFAULT_FIELD));
         context.getRouteController().startRoute("tailableCursorConsumer2");
 
@@ -245,7 +252,8 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
                 for (int i = 301; i <= 600; i++) {
                     Calendar c = (Calendar) (startTimestamp.clone());
                     c.add(Calendar.MINUTE, i);
-                    cappedTestCollection.insertOne(new Document("increasing", c.getTime()).append("string", "value" + i));
+                    cappedTestCollection.insertOne(
+                            new Document("increasing", c.getTime()).append("string", "value" + i));
                 }
             }
         });
@@ -264,7 +272,8 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         context.getRouteController().stopRoute("tailableCursorConsumer2");
         Calendar cal600 = (Calendar) startTimestamp.clone();
         cal600.add(Calendar.MINUTE, 600);
-        assertEquals(cal600.getTime(),
+        assertEquals(
+                cal600.getTime(),
                 trackingCol.find(eq("persistentId", "darwin")).first().get(MongoDbTailTrackingConfig.DEFAULT_FIELD));
     }
 
@@ -327,7 +336,6 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         // newton is the name of the trackingField we are using
         context.getRouteController().stopRoute("tailableCursorConsumer3");
         assertEquals(600, trackingCol.find(eq("persistentId", "darwin")).first().get("newton"));
-
     }
 
     public void assertAndResetMockEndpoint(MockEndpoint mock) throws Exception {
@@ -366,7 +374,10 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
         cappedTestCollection = db.getCollection(cappedTestCollectionName, Document.class);
         cappedTestCollection.drop();
 
-        createCollectionOptions = new CreateCollectionOptions().capped(true).sizeInBytes(1000000000).maxDocuments(1000);
+        createCollectionOptions = new CreateCollectionOptions()
+                .capped(true)
+                .sizeInBytes(1000000000)
+                .maxDocuments(1000);
         db.createCollection(cappedTestCollectionName, createCollectionOptions);
         cappedTestCollection = db.getCollection(cappedTestCollectionName, Document.class);
     }
@@ -381,19 +392,24 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
 
                 from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing")
                         .id("tailableCursorConsumer1")
-                        .autoStartup(false).to("mock:test");
+                        .autoStartup(false)
+                        .to("mock:test");
 
                 from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&persistentTailTracking=true&persistentId=darwin")
-                        .id("tailableCursorConsumer2").autoStartup(false).to("mock:test");
+                        .id("tailableCursorConsumer2")
+                        .autoStartup(false)
+                        .to("mock:test");
 
                 from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&"
-                     + "persistentTailTracking=true&persistentId=darwin&tailTrackDb=einstein&tailTrackCollection=curie&tailTrackField=newton")
+                                + "persistentTailTracking=true&persistentId=darwin&tailTrackDb=einstein&tailTrackCollection=curie&tailTrackField=newton")
                         .id("tailableCursorConsumer3")
-                        .autoStartup(false).to("mock:test");
+                        .autoStartup(false)
+                        .to("mock:test");
 
-                from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing")// &readPreference=primary")
-                        .id("tailableCursorConsumer1.readPreference").autoStartup(false).to("mock:test");
-
+                from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing") // &readPreference=primary")
+                        .id("tailableCursorConsumer1.readPreference")
+                        .autoStartup(false)
+                        .to("mock:test");
             }
         });
     }

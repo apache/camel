@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -32,7 +33,8 @@ public class JsonPathExchangePropertyTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setProperty("foo").jsonpath("$.store.bicycle.color", String.class)
+                        .setProperty("foo")
+                        .jsonpath("$.store.bicycle.color", String.class)
                         .log("${exchangeProperty.foo}")
                         .to("mock:color");
             }
@@ -51,5 +53,4 @@ public class JsonPathExchangePropertyTest extends CamelTestSupport {
         Assertions.assertTrue(foo instanceof String);
         Assertions.assertEquals("red", foo);
     }
-
 }

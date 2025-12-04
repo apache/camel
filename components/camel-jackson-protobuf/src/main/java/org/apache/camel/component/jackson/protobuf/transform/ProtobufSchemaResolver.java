@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.protobuf.transform;
 
 import java.io.IOException;
@@ -98,7 +99,8 @@ public class ProtobufSchemaResolver implements SchemaResolver, Processor {
         if (answer != null) {
             exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, answer);
             exchange.setProperty(SchemaHelper.CONTENT_SCHEMA_TYPE, SchemaType.PROTOBUF.type());
-            exchange.setProperty(SchemaHelper.CONTENT_CLASS, SchemaHelper.resolveContentClass(exchange, this.contentClass));
+            exchange.setProperty(
+                    SchemaHelper.CONTENT_CLASS, SchemaHelper.resolveContentClass(exchange, this.contentClass));
         }
     }
 
@@ -133,8 +135,9 @@ public class ProtobufSchemaResolver implements SchemaResolver, Processor {
             if (contentClass != null) {
                 answer = this.schemes.computeIfAbsent(contentClass, t -> {
                     Resource res = PluginHelper.getResourceLoader(exchange.getContext())
-                            .resolveResource("classpath:schemas/" + SchemaType.PROTOBUF.name().toLowerCase(Locale.US) +
-                                             "/" + t + "." + SchemaType.PROTOBUF.type());
+                            .resolveResource("classpath:schemas/"
+                                    + SchemaType.PROTOBUF.name().toLowerCase(Locale.US) + "/" + t + "."
+                                    + SchemaType.PROTOBUF.type());
 
                     try {
                         if (res.exists()) {
@@ -146,14 +149,14 @@ public class ProtobufSchemaResolver implements SchemaResolver, Processor {
                         }
                     } catch (Exception e) {
                         throw new RuntimeException(
-                                "Unable to load Protobuf schema for type: " + t + ", resource: " + res.getLocation(), e);
+                                "Unable to load Protobuf schema for type: " + t + ", resource: " + res.getLocation(),
+                                e);
                     }
 
                     try {
                         return Protobuf.mapper().generateSchemaFor(Class.forName(contentClass));
                     } catch (JsonMappingException | ClassNotFoundException e) {
-                        throw new RuntimeException(
-                                "Unable to compute Protobuf schema for type: " + t, e);
+                        throw new RuntimeException("Unable to compute Protobuf schema for type: " + t, e);
                     }
                 });
             }

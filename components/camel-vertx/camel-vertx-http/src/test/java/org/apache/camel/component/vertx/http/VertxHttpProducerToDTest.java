@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import org.apache.camel.RoutesBuilder;
@@ -70,16 +71,13 @@ public class VertxHttpProducerToDTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:static")
-                        .toD(getProducerUri() + "/hello");
+                from("direct:static").toD(getProducerUri() + "/hello");
 
                 from("direct:static2")
                         .setHeader("CamelHttpUri", constant(getTestServerUrl() + "/hello"))
                         .to("vertx-http:does-not-exist");
 
-                from("direct:dynamic")
-                        .setHeader("foo", constant("/hello"))
-                        .toD(getProducerUri() + "${header.foo}");
+                from("direct:dynamic").setHeader("foo", constant("/hello")).toD(getProducerUri() + "${header.foo}");
 
                 from("direct:dynamic2")
                         .setHeader("bar", constant(getTestServerUrl() + "/hello"))
@@ -99,8 +97,7 @@ public class VertxHttpProducerToDTest extends VertxHttpTestSupport {
                         .setHeader("CamelHttpUri", constant(getTestServerUrl() + "/hello"))
                         .toD("vertx-http:does-not-exist");
 
-                from(getTestServerUri() + "/hello")
-                        .setBody(constant("Hello World"));
+                from(getTestServerUri() + "/hello").setBody(constant("Hello World"));
             }
         };
     }

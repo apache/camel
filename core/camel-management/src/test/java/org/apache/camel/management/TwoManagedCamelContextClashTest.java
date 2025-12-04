@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -27,9 +31,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class TwoManagedCamelContextClashTest extends TestSupport {
@@ -54,7 +55,8 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         camel1.start();
         assertTrue(camel1.getStatus().isStarted(), "Should be started");
 
-        MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
         ObjectName on = getContextObjectName(camel1);
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
@@ -75,7 +77,8 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         camel1.start();
         assertTrue(camel1.getStatus().isStarted(), "Should be started");
 
-        MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
         ObjectName on = getContextObjectName(camel1);
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
@@ -96,7 +99,8 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         camel1.start();
         assertTrue(camel1.getStatus().isStarted(), "Should be started");
 
-        MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
         ObjectName on = getContextObjectName(camel1);
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
@@ -110,9 +114,8 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
     }
 
     private static ObjectName getContextObjectName(CamelContext context) throws MalformedObjectNameException {
-        return ObjectName
-                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=context,name=\""
-                             + context.getName() + "\"");
+        return ObjectName.getInstance("org.apache.camel:context=" + context.getManagementName()
+                + ",type=context,name=\"" + context.getName() + "\"");
     }
 
     @Override
@@ -126,5 +129,4 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         }
         super.tearDown();
     }
-
 }

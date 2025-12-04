@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -51,7 +52,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
  */
-public class XmppConsumer extends DefaultConsumer implements IncomingChatMessageListener, MessageListener, StanzaListener {
+public class XmppConsumer extends DefaultConsumer
+        implements IncomingChatMessageListener, MessageListener, StanzaListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);
 
@@ -88,7 +90,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
         OrFilter pubsubPacketFilter = new OrFilter();
         if (endpoint.isPubsub()) {
-            //xep-0060: pubsub#notification_type can be 'headline' or 'normal'
+            // xep-0060: pubsub#notification_type can be 'headline' or 'normal'
             pubsubPacketFilter.addFilter(MessageTypeFilter.HEADLINE);
             pubsubPacketFilter.addFilter(MessageTypeFilter.NORMAL);
             connection.addSyncStanzaListener(this, pubsubPacketFilter);
@@ -106,7 +108,8 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
             muc = mucm.getMultiUserChat(JidCreate.entityBareFrom(endpoint.resolveRoom(connection)));
             muc.addMessageListener(this);
-            MucEnterConfiguration.Builder mucc = muc.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+            MucEnterConfiguration.Builder mucc = muc.getEnterConfigurationBuilder(
+                            Resourcepart.from(endpoint.getNickname()))
                     .requestNoHistory();
             if (roomPassword != null) {
                 mucc.withPassword(roomPassword);
@@ -130,8 +133,10 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 }
             }
         };
-        LOG.info("Delaying XMPP consumer startup for endpoint {}. Trying again in {} seconds.",
-                URISupport.sanitizeUri(endpoint.getEndpointUri()), endpoint.getConnectionPollDelay());
+        LOG.info(
+                "Delaying XMPP consumer startup for endpoint {}. Trying again in {} seconds.",
+                URISupport.sanitizeUri(endpoint.getEndpointUri()),
+                endpoint.getConnectionPollDelay());
         getExecutor().schedule(startRunnable, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
     }
 
@@ -147,8 +152,12 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             }
         };
         // background thread to detect and repair lost connections
-        getExecutor().scheduleAtFixedRate(connectionCheckRunnable, endpoint.getConnectionPollDelay(),
-                endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+        getExecutor()
+                .scheduleAtFixedRate(
+                        connectionCheckRunnable,
+                        endpoint.getConnectionPollDelay(),
+                        endpoint.getConnectionPollDelay(),
+                        TimeUnit.SECONDS);
     }
 
     private void checkConnection() throws Exception {
@@ -165,7 +174,9 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     private ScheduledExecutorService getExecutor() {
         if (this.scheduledExecutor == null) {
-            scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+            scheduledExecutor = getEndpoint()
+                    .getCamelContext()
+                    .getExecutorServiceManager()
                     .newSingleThreadScheduledExecutor(this, "connectionPoll");
         }
         return scheduledExecutor;
@@ -211,8 +222,11 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     public void processMessage(Chat chat, Message message) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Received XMPP message for {} from {} : {}",
-                    endpoint.getUser(), endpoint.getParticipant(), message.getBody());
+            LOG.debug(
+                    "Received XMPP message for {} from {} : {}",
+                    endpoint.getUser(),
+                    endpoint.getParticipant(),
+                    message.getBody());
         }
 
         Exchange exchange = createExchange(message);
@@ -250,5 +264,4 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         exchange.setIn(new XmppMessage(exchange, packet));
         return exchange;
     }
-
 }

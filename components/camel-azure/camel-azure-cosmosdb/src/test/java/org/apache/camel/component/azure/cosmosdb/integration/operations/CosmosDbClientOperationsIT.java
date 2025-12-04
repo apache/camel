@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.integration.operations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Properties;
 
@@ -33,16 +39,15 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
-        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
+    @EnabledIfSystemProperty(
+            named = "endpoint",
+            matches = ".*",
+            disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
+    @EnabledIfSystemProperty(
+            named = "accessKey",
+            matches = ".*",
+            disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbClientOperationsIT {
@@ -64,10 +69,10 @@ class CosmosDbClientOperationsIT {
     @AfterEach
     void cleanup() {
         // delete all databases being used in the test after each test
-        clientWrapper.readAllDatabases()
-                .toIterable()
-                .forEach(cosmosDatabaseProperties -> clientWrapper.getDatabase(cosmosDatabaseProperties.getId()).delete()
-                        .block());
+        clientWrapper.readAllDatabases().toIterable().forEach(cosmosDatabaseProperties -> clientWrapper
+                .getDatabase(cosmosDatabaseProperties.getId())
+                .delete()
+                .block());
     }
 
     @Test
@@ -108,7 +113,9 @@ class CosmosDbClientOperationsIT {
                 .block();
 
         // we expect an exception since database is not existing and we don't want to create a database
-        assertThrows(Exception.class, () -> clientWrapper.getDatabase(databaseName).read().block());
+        assertThrows(
+                Exception.class,
+                () -> clientWrapper.getDatabase(databaseName).read().block());
 
         // second we test if we want to create a database when we get database operations
         CosmosDbClientOperations.withClient(clientWrapper)
@@ -123,7 +130,8 @@ class CosmosDbClientOperationsIT {
     @Test
     void testQueryAndReadAllDatabases() {
         // create bunch of databases
-        final String prefixDatabaseNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String prefixDatabaseNames =
+                RandomStringUtils.randomAlphabetic(10).toLowerCase();
         final int expectedSize = 5;
 
         for (int i = 0; i < expectedSize; i++) {

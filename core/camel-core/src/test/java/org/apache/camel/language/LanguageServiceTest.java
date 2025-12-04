@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
@@ -26,8 +29,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class LanguageServiceTest extends ContextTestSupport {
 
@@ -68,7 +69,6 @@ public class LanguageServiceTest extends ContextTestSupport {
         @Override
         public Predicate createPredicate(String expression) {
             return PredicateBuilder.constant(true);
-
         }
 
         @Override
@@ -83,7 +83,6 @@ public class LanguageServiceTest extends ContextTestSupport {
         @Override
         protected void doStart() {
             state = "Started";
-
         }
 
         @Override

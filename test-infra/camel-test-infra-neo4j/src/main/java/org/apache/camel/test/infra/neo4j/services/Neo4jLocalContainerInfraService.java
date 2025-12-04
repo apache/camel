@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.neo4j.services;
 
 import java.time.Duration;
@@ -28,9 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.neo4j.Neo4jContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = Neo4jInfraService.class,
-              description = "Neo4j Database",
-              serviceAlias = { "neo4j" })
+@InfraService(
+        service = Neo4jInfraService.class,
+        description = "Neo4j Database",
+        serviceAlias = {"neo4j"})
 public class Neo4jLocalContainerInfraService implements Neo4jInfraService, ContainerService<Neo4jContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Neo4jLocalContainerInfraService.class);

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class LoopCopyErrorTest extends ContextTestSupport {
 
@@ -47,16 +48,22 @@ public class LoopCopyErrorTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").loop(3).copy().process(new Processor() {
-                    int invoked;
+                from("direct:start")
+                        .loop(3)
+                        .copy()
+                        .process(new Processor() {
+                            int invoked;
 
-                    @Override
-                    public void process(Exchange exchange) {
-                        if (invoked++ > 1) {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    }
-                }).to("mock:loop").end().to("mock:result");
+                            @Override
+                            public void process(Exchange exchange) {
+                                if (invoked++ > 1) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
+                            }
+                        })
+                        .to("mock:loop")
+                        .end()
+                        .to("mock:result");
             }
         };
     }

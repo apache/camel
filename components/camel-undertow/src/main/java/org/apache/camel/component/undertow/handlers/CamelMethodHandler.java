@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.handlers;
 
 import java.util.Map;
@@ -35,17 +36,18 @@ public class CamelMethodHandler implements HttpHandler {
      * A key to use for handlers with no method specified
      */
     private static final String DEFAULT_HANDLER_KEY = "";
+
     private static final String[] DEFAULT_METHODS;
+
     static {
-        DEFAULT_METHODS = new String[] { DEFAULT_HANDLER_KEY };
+        DEFAULT_METHODS = new String[] {DEFAULT_HANDLER_KEY};
     }
 
     private final Lock methodMapLock = new ReentrantLock();
     private final Map<String, MethodEntry> methodMap = new ConcurrentHashMap<>();
     private String handlerString;
 
-    CamelMethodHandler() {
-    }
+    CamelMethodHandler() {}
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
@@ -60,7 +62,8 @@ public class CamelMethodHandler implements HttpHandler {
                 handler.handleRequest(exchange);
             } else {
                 exchange.setStatusCode(StatusCodes.METHOD_NOT_ALLOWED);
-                exchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
+                exchange.getResponseHeaders()
+                        .put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
                 exchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
                 exchange.endExchange();
             }
@@ -119,24 +122,24 @@ public class CamelMethodHandler implements HttpHandler {
          * The number of references pointing to {@link #handler}
          */
         private int refCount;
+
         private HttpHandler handler;
 
-        MethodEntry() {
-        }
+        MethodEntry() {}
 
         public HttpHandler addRef(HttpHandler handler, String method) {
             if (this.handler == null) {
                 this.handler = handler;
                 refCount++;
                 return handler;
-            } else if ("OPTIONS".equals(method) || CamelWebSocketHandler.class == this.handler.getClass()
-                    && CamelWebSocketHandler.class == handler.getClass()) {
+            } else if ("OPTIONS".equals(method)
+                    || CamelWebSocketHandler.class == this.handler.getClass()
+                            && CamelWebSocketHandler.class == handler.getClass()) {
                 refCount++;
                 return this.handler;
             } else {
                 throw new IllegalArgumentException(
-                        String.format(
-                                "Duplicate handler for %s method: '%s', '%s'", method, this.handler, handler));
+                        String.format("Duplicate handler for %s method: '%s', '%s'", method, this.handler, handler));
             }
         }
 
@@ -150,6 +153,5 @@ public class CamelMethodHandler implements HttpHandler {
         public String toString() {
             return handler == null ? "null" : handler.toString();
         }
-
     }
 }

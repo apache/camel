@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ValidationException;
@@ -29,11 +30,18 @@ public class ValidationWithMultipleHandlesTest extends ValidationTest {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start").doTry().process(validator).doCatch(ValidationException.class)
-                        .setHeader("xxx", constant("yyy")).end().doTry().process(validator)
-                        .to("mock:valid").doCatch(ValidationException.class).pipeline("seda:a", "mock:invalid");
+                from("direct:start")
+                        .doTry()
+                        .process(validator)
+                        .doCatch(ValidationException.class)
+                        .setHeader("xxx", constant("yyy"))
+                        .end()
+                        .doTry()
+                        .process(validator)
+                        .to("mock:valid")
+                        .doCatch(ValidationException.class)
+                        .pipeline("seda:a", "mock:invalid");
             }
         };
     }
-
 }

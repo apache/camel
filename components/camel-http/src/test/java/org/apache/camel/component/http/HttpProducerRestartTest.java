@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 
@@ -26,8 +29,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpProducerRestartTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -37,8 +38,10 @@ public class HttpProducerRestartTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/hello", (request, response, context) -> {
                     Object agent = request.getFirstHeader("User-Agent").getValue();
@@ -46,7 +49,8 @@ public class HttpProducerRestartTest extends BaseHttpTest {
 
                     response.setEntity(new StringEntity("Bye World", StandardCharsets.US_ASCII));
                     response.setCode(HttpStatus.SC_OK);
-                }).create();
+                })
+                .create();
         localServer.start();
 
         endpointUrl = "http://localhost:" + localServer.getLocalPort();
@@ -69,8 +73,7 @@ public class HttpProducerRestartTest extends BaseHttpTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo")
-                        .to(endpointUrl + "/hello?clientBuilder=#myClientBuilder");
+                from("direct:start").routeId("foo").to(endpointUrl + "/hello?clientBuilder=#myClientBuilder");
             }
         });
 
@@ -86,5 +89,4 @@ public class HttpProducerRestartTest extends BaseHttpTest {
         out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.ArrayList;
@@ -32,7 +33,8 @@ import org.junit.jupiter.api.Test;
 public class MultipleCodecsTest extends BaseNettyTest {
 
     @BindToRegistry("length-decoder")
-    private ChannelHandlerFactory lengthDecoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+    private ChannelHandlerFactory lengthDecoder =
+            ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
     @BindToRegistry("string-decoder")
     private StringDecoder stringDecoder = new StringDecoder();
@@ -71,7 +73,6 @@ public class MultipleCodecsTest extends BaseNettyTest {
         sendBody("direct:multiple-codec", poem);
         mock.await(1, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
-
     }
 
     @Override

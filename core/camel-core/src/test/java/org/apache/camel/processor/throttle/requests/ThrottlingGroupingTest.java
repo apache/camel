@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle.requests;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 public class ThrottlingGroupingTest extends ContextTestSupport {
@@ -102,16 +103,25 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         long maximum = calculateMaximum(intervalMs, throttle, messageCount) + 50;
         // add 500 in case running on slow CI boxes
         maximum += 500;
-        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", messageCount,
-                elapsedTimeMs, throttle, intervalMs, minimum,
+        log.info(
+                "Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms",
+                messageCount,
+                elapsedTimeMs,
+                throttle,
+                intervalMs,
+                minimum,
                 maximum);
 
         assertTrue(elapsedTimeMs >= minimum, "Should take at least " + minimum + "ms, was: " + elapsedTimeMs);
-        assertTrue(elapsedTimeMs <= maximum + TOLERANCE, "Should take at most " + maximum + "ms, was: " + elapsedTimeMs);
+        assertTrue(
+                elapsedTimeMs <= maximum + TOLERANCE, "Should take at most " + maximum + "ms, was: " + elapsedTimeMs);
     }
 
     private long sendMessagesAndAwaitDelivery(
-            final int messageCount, final String endpointUri, final int threadPoolSize, final MockEndpoint receivingEndpoint)
+            final int messageCount,
+            final String endpointUri,
+            final int threadPoolSize,
+            final MockEndpoint receivingEndpoint)
             throws InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
         try {
@@ -177,7 +187,10 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
     }
 
     private void sendMessagesWithHeaderExpression(
-            final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int intervalMs,
+            final ExecutorService executor,
+            final MockEndpoint resultEndpoint,
+            final int throttle,
+            final int intervalMs,
             final int messageCount)
             throws InterruptedException {
         resultEndpoint.expectedMessageCount(messageCount);
@@ -213,14 +226,24 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
                 from("seda:a").throttle(header("max"), 1).to("mock:result");
                 from("seda:b").throttle(header("max"), 2).to("mock:result2");
-                from("seda:c").throttle(header("max")).correlationExpression(header("key")).to("mock:resultdynamic");
+                from("seda:c")
+                        .throttle(header("max"))
+                        .correlationExpression(header("key"))
+                        .to("mock:resultdynamic");
 
-                from("seda:ga").throttle(constant(3), header("key")).timePeriodMillis(1000).to("log:gresult", "mock:gresult");
+                from("seda:ga")
+                        .throttle(constant(3), header("key"))
+                        .timePeriodMillis(1000)
+                        .to("log:gresult", "mock:gresult");
 
-                from("direct:ga").throttle(constant(5), header("key")).timePeriodMillis(INTERVAL).to("log:gresult",
-                        "mock:gresult");
+                from("direct:ga")
+                        .throttle(constant(5), header("key"))
+                        .timePeriodMillis(INTERVAL)
+                        .to("log:gresult", "mock:gresult");
 
-                from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key")).timePeriodMillis(INTERVAL)
+                from("direct:gexpressionHeader")
+                        .throttle(header("throttleValue"), header("key"))
+                        .timePeriodMillis(INTERVAL)
                         .to("log:gresult", "mock:gresult");
             }
         };

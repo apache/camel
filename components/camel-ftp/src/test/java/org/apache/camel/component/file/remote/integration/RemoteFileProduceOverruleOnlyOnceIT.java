@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.nio.file.Path;
@@ -54,9 +55,9 @@ public class RemoteFileProduceOverruleOnlyOnceIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:input").to("ftp://admin:admin@localhost:{{ftp.server.port}}/out/").to(
-                        TestSupport.fileUri(testDirectory, "out"),
-                        "mock:result");
+                from("direct:input")
+                        .to("ftp://admin:admin@localhost:{{ftp.server.port}}/out/")
+                        .to(TestSupport.fileUri(testDirectory, "out"), "mock:result");
             }
         };
     }

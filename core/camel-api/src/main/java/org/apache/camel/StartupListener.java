@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -53,8 +54,7 @@ public interface StartupListener {
      * @throws Exception      can be thrown in case of errors to fail the startup process and have the application fail
      *                        on startup.
      */
-    default void onCamelContextStarting(CamelContext context, boolean alreadyStarted) throws Exception {
-    }
+    default void onCamelContextStarting(CamelContext context, boolean alreadyStarted) throws Exception {}
 
     /**
      * Callback invoked when the {@link CamelContext} is about to be fully started (not started yet). Yes we are aware
@@ -79,7 +79,5 @@ public interface StartupListener {
      * @throws Exception      can be thrown in case of errors to fail the startup process and have the application fail
      *                        on startup.
      */
-    default void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception {
-    }
-
+    default void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception {}
 }

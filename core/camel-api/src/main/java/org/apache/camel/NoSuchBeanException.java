@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -29,9 +30,10 @@ public class NoSuchBeanException extends RuntimeCamelException {
     }
 
     public NoSuchBeanException(String name, int size) {
-        super(size > 0
-                ? "Found " + size + " beans for: " + name + " in the registry, only 1 bean excepted."
-                : "No bean could be found in the registry for: " + name);
+        super(
+                size > 0
+                        ? "Found " + size + " beans for: " + name + " in the registry, only 1 bean excepted."
+                        : "No bean could be found in the registry for: " + name);
         this.name = name;
     }
 

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.tx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToStartRouteException;
@@ -25,9 +29,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * A unit test to ensure the error is raised against incompatible configuration, InOut + transacted.
@@ -54,7 +55,8 @@ public class TransactedProducerInOutErrorTest {
             public void configure() {
 
                 from("direct:start")
-                        .to("sjms:queue:test-in.TransactedProducerInOutErrorTest?replyTo=test-out&exchangePattern=InOut&transacted=true")
+                        .to(
+                                "sjms:queue:test-in.TransactedProducerInOutErrorTest?replyTo=test-out&exchangePattern=InOut&transacted=true")
                         .to("mock:result");
 
                 from("sjms:queue:test-in.TransactedProducerInOutErrorTest?exchangePattern=InOut")

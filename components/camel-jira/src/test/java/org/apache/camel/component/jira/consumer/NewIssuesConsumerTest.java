@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.consumer;
+
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
+import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
+import static org.apache.camel.component.jira.JiraTestConstants.PROJECT;
+import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.apache.camel.component.jira.Utils.createIssueWithCreationDate;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -47,16 +58,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.jira.JiraConstants.JIRA;
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
-import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
-import static org.apache.camel.component.jira.JiraTestConstants.PROJECT;
-import static org.apache.camel.component.jira.Utils.createIssue;
-import static org.apache.camel.component.jira.Utils.createIssueWithCreationDate;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class NewIssuesConsumerTest extends CamelTestSupport {
@@ -94,13 +95,20 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         SearchResult result = new SearchResult(0, 50, 0, ISSUES);
         Promise<SearchResult> promiseSearchResult = Promises.promise(result);
         User user = new User(
-                null, "admin", null, null, true, null,
-                Map.of("48x48", URI.create("")), DateTime.now().getZone().getID());
+                null,
+                "admin",
+                null,
+                null,
+                true,
+                null,
+                Map.of("48x48", URI.create("")),
+                DateTime.now().getZone().getID());
         Promise<User> promiseUserResult = Promises.promise(user);
 
         when(jiraClient.getSearchClient()).thenReturn(searchRestClient);
         when(jiraClient.getUserClient()).thenReturn(userRestClient);
-        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any()))
+                .thenReturn(jiraClient);
         when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(promiseSearchResult);
         when(userRestClient.getUser(any(URI.class))).thenReturn(promiseUserResult);
     }
@@ -184,24 +192,27 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         Issue issue5 = createIssue(35);
 
         reset(searchRestClient);
-        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
-            int startAt = invocation.getArgument(2);
-            Assertions.assertEquals(0, startAt);
+        when(searchRestClient.searchJql(any(), any(), any(), any()))
+                .then(invocation -> {
+                    int startAt = invocation.getArgument(2);
+                    Assertions.assertEquals(0, startAt);
 
-            // return getTotal=100 to force next page query
-            SearchResult result = new SearchResult(0, 50, 100, List.of(issue5, issue4, issue3));
-            return Promises.promise(result);
-        }).then(invocation -> {
-            int startAt = invocation.getArgument(2);
-            Assertions.assertEquals(50, startAt);
-            SearchResult result = new SearchResult(0, 50, 100, List.of(issue2, issue1));
-            return Promises.promise(result);
-        }).then(invocation -> {
-            int startAt = invocation.getArgument(2);
-            Assertions.assertEquals(100, startAt);
-            SearchResult result = new SearchResult(0, 50, 0, Collections.emptyList());
-            return Promises.promise(result);
-        });
+                    // return getTotal=100 to force next page query
+                    SearchResult result = new SearchResult(0, 50, 100, List.of(issue5, issue4, issue3));
+                    return Promises.promise(result);
+                })
+                .then(invocation -> {
+                    int startAt = invocation.getArgument(2);
+                    Assertions.assertEquals(50, startAt);
+                    SearchResult result = new SearchResult(0, 50, 100, List.of(issue2, issue1));
+                    return Promises.promise(result);
+                })
+                .then(invocation -> {
+                    int startAt = invocation.getArgument(2);
+                    Assertions.assertEquals(100, startAt);
+                    SearchResult result = new SearchResult(0, 50, 0, Collections.emptyList());
+                    return Promises.promise(result);
+                });
 
         mockResult.expectedBodiesReceived(issue5, issue4, issue3, issue2, issue1);
         mockResult.assertIsSatisfied();
@@ -214,17 +225,20 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         Issue issue3 = createIssue(43);
 
         reset(searchRestClient);
-        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
-            // return getTotal=100 to force next page query
-            SearchResult result = new SearchResult(0, 50, 100, List.of(issue3, issue2));
-            return Promises.promise(result);
-        }).then(invocation -> {
-            SearchResult result = new SearchResult(0, 50, 100, List.of(issue3, issue2, issue1));
-            return Promises.promise(result);
-        }).then(invocation -> {
-            SearchResult result = new SearchResult(0, 50, 0, Collections.emptyList());
-            return Promises.promise(result);
-        });
+        when(searchRestClient.searchJql(any(), any(), any(), any()))
+                .then(invocation -> {
+                    // return getTotal=100 to force next page query
+                    SearchResult result = new SearchResult(0, 50, 100, List.of(issue3, issue2));
+                    return Promises.promise(result);
+                })
+                .then(invocation -> {
+                    SearchResult result = new SearchResult(0, 50, 100, List.of(issue3, issue2, issue1));
+                    return Promises.promise(result);
+                })
+                .then(invocation -> {
+                    SearchResult result = new SearchResult(0, 50, 0, Collections.emptyList());
+                    return Promises.promise(result);
+                });
 
         mockResult.expectedBodiesReceived(issue3, issue2, issue1);
         mockResult.assertIsSatisfied();
@@ -239,18 +253,21 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         Issue issue4 = createIssueWithCreationDate(54, now);
 
         reset(searchRestClient);
-        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
-            SearchResult result = new SearchResult(0, 50, 3, List.of(issue3, issue2, issue1));
-            return Promises.promise(result);
-        }).then(invocation -> {
-            int startAt = invocation.getArgument(2);
-            Assertions.assertEquals(0, startAt);
+        when(searchRestClient.searchJql(any(), any(), any(), any()))
+                .then(invocation -> {
+                    SearchResult result = new SearchResult(0, 50, 3, List.of(issue3, issue2, issue1));
+                    return Promises.promise(result);
+                })
+                .then(invocation -> {
+                    int startAt = invocation.getArgument(2);
+                    Assertions.assertEquals(0, startAt);
 
-            String jqlFilter = invocation.getArgument(0);
-            Assertions.assertTrue(jqlFilter.startsWith("created > \"" + now.minusMinutes(1).toString("yyyy-MM-dd HH:mm")));
-            SearchResult result = new SearchResult(0, 50, 1, Collections.singletonList(issue4));
-            return Promises.promise(result);
-        });
+                    String jqlFilter = invocation.getArgument(0);
+                    Assertions.assertTrue(jqlFilter.startsWith(
+                            "created > \"" + now.minusMinutes(1).toString("yyyy-MM-dd HH:mm")));
+                    SearchResult result = new SearchResult(0, 50, 1, Collections.singletonList(issue4));
+                    return Promises.promise(result);
+                });
 
         mockResult.expectedBodiesReceived(issue3, issue2, issue1);
         mockResult.assertIsSatisfied();
@@ -273,7 +290,8 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
                 .then(invocation -> {
                     SearchResult result = new SearchResult(0, 50, 1, List.of(issue2));
                     return Promises.promise(result);
-                }).then(invocation -> {
+                })
+                .then(invocation -> {
                     SearchResult result = new SearchResult(0, 50, 3, List.of(issue1, issue2, issue3));
                     return Promises.promise(result);
                 });
@@ -299,10 +317,10 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
                 .then(invocation -> {
                     SearchResult result = new SearchResult(0, 50, 1, List.of(issue1));
                     return Promises.promise(result);
-                }).then(invocation -> {
+                })
+                .then(invocation -> {
                     String jqlFilter = invocation.getArgument(0);
-                    Assertions.assertTrue(
-                            jqlFilter.startsWith("created > \"" + now.toString("yyyy-MM-dd HH:mm")));
+                    Assertions.assertTrue(jqlFilter.startsWith("created > \"" + now.toString("yyyy-MM-dd HH:mm")));
                     SearchResult result = new SearchResult(0, 50, 1, List.of(issue2));
                     return Promises.promise(result);
                 });
@@ -322,10 +340,12 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
                 .then(invocation -> {
                     SearchResult result = new SearchResult(0, 50, 1, List.of(issue1));
                     return Promises.promise(result);
-                }).then(invocation -> {
+                })
+                .then(invocation -> {
                     SearchResult result = new SearchResult(0, 50, 1, List.of(issue1));
                     return Promises.promise(result);
-                }).then(invocation -> {
+                })
+                .then(invocation -> {
                     SearchResult result = new SearchResult(0, 50, 1, List.of(issue2));
                     return Promises.promise(result);
                 });

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -79,9 +80,11 @@ public class SplitTokenizerNamespaceTest extends ContextTestSupport {
 
                 from("direct:noPrefix").split().tokenizeXML("person", "persons").to("mock:split");
 
-                from("direct:explicitPrefix").split().tokenizeXML("ns1:person", "ns1:persons").to("mock:split");
+                from("direct:explicitPrefix")
+                        .split()
+                        .tokenizeXML("ns1:person", "ns1:persons")
+                        .to("mock:split");
             }
         };
     }
-
 }

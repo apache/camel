@@ -23,7 +23,5 @@ public final class AzureConfigs {
     public static final String ACCOUNT_NAME = "azure.storage.account.name";
     public static final String ACCOUNT_KEY = "azure.storage.account.key";
 
-    private AzureConfigs() {
-
-    }
+    private AzureConfigs() {}
 }

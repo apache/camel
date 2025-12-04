@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 
@@ -33,11 +39,6 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test with custom codec.
  */
@@ -55,8 +56,8 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
 
-        Object out = template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()),
-                "Hello World");
+        Object out = template.requestBody(
+                String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");
         assertEquals("Bye World", out);
 
         mock.assertIsSatisfied();
@@ -67,8 +68,10 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exception e = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()),
+        Exception e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.requestBody(
+                        String.format("mina:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()),
                         "Hello World"),
                 "Expecting that decode of result fails");
 
@@ -109,7 +112,9 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         final int port = getPort();
         final String format = String.format("mina:tcp://localhost:%1$s?sync=true&codec=#XXX", port);
 
-        assertThrows(ResolveEndpointFailedException.class, () -> template.sendBody(format, "Hello World"),
+        assertThrows(
+                ResolveEndpointFailedException.class,
+                () -> template.sendBody(format, "Hello World"),
                 "Should have thrown a ResolveEndpointFailedException");
     }
 
@@ -120,7 +125,8 @@ public class MinaCustomCodecTest extends BaseMinaTest {
             @Override
             public void configure() {
                 fromF("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort())
-                        .transform(constant("Bye World")).to("mock:result");
+                        .transform(constant("Bye World"))
+                        .to("mock:result");
             }
         };
     }
@@ -155,7 +161,6 @@ public class MinaCustomCodecTest extends BaseMinaTest {
                     // do nothing
                 }
             };
-
         }
 
         @Override

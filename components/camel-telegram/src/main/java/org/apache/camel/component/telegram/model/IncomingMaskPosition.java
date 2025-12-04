@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -35,8 +36,7 @@ public class IncomingMaskPosition {
 
     private Float scale;
 
-    public IncomingMaskPosition() {
-    }
+    public IncomingMaskPosition() {}
 
     public String getPoint() {
         return point;
@@ -73,10 +73,10 @@ public class IncomingMaskPosition {
     @Override
     public String toString() {
         return "IncomingMaskPosition{"
-               + "point='" + point + '\''
-               + ", xShift=" + xShift
-               + ", yShift=" + yShift
-               + ", scale=" + scale
-               + '}';
+                + "point='" + point + '\''
+                + ", xShift=" + xShift
+                + ", yShift=" + yShift
+                + ", scale=" + scale
+                + '}';
     }
 }

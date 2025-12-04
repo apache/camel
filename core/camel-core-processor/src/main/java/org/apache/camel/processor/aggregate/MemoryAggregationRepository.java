@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 import java.util.Collections;
@@ -33,9 +34,10 @@ import org.apache.camel.support.service.ServiceSupport;
  *
  * Supports both optimistic locking and non-optimistic locking modes. Defaults to non-optimistic locking mode.
  */
-@Metadata(label = "bean",
-          description = "A memory based AggregationRepository which stores Exchange in memory only.",
-          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
+@Metadata(
+        label = "bean",
+        description = "A memory based AggregationRepository which stores Exchange in memory only.",
+        annotations = {"interfaceName=org.apache.camel.spi.AggregationRepository"})
 @Configurer(metadataOnly = true)
 public class MemoryAggregationRepository extends ServiceSupport implements OptimisticLockingAggregationRepository {
     private final ConcurrentMap<String, Exchange> cache = new ConcurrentHashMap<>();
@@ -115,5 +117,4 @@ public class MemoryAggregationRepository extends ServiceSupport implements Optim
     protected void doStop() throws Exception {
         cache.clear();
     }
-
 }

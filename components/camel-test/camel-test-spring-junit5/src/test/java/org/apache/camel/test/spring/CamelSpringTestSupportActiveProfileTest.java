@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,13 +35,13 @@ public class CamelSpringTestSupportActiveProfileTest extends CamelSpringTestSupp
         // must not refresh when using active profiles
         // lets reuse the xml file from the other test
         return new ClassPathXmlApplicationContext(
-                new String[] { "org/apache/camel/test/spring/CamelSpringActiveProfileTest-context.xml" }, false);
+                new String[] {"org/apache/camel/test/spring/CamelSpringActiveProfileTest-context.xml"}, false);
     }
 
     @Override
     protected String[] activeProfiles() {
         // return the active profiles to be used
-        return new String[] { "test" };
+        return new String[] {"test"};
     }
 
     @Test
@@ -49,6 +50,5 @@ public class CamelSpringTestSupportActiveProfileTest extends CamelSpringTestSupp
         template.sendBody("direct:start", "World");
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }
 // END SNIPPET: e1

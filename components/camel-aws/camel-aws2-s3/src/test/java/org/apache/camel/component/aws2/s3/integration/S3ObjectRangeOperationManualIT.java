@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
 
 import java.io.BufferedReader;
@@ -43,10 +44,17 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and
+// -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+    @EnabledIfSystemProperty(
+            named = "aws.manual.access.key",
+            matches = ".*",
+            disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(
+            named = "aws.manual.secret.key",
+            matches = ".*",
+            disabledReason = "Secret key not provided")
 })
 public class S3ObjectRangeOperationManualIT extends CamelTestSupport {
     private static final String ACCESS_KEY = System.getProperty("aws.manual.access.key");
@@ -55,11 +63,10 @@ public class S3ObjectRangeOperationManualIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(S3ObjectRangeOperationManualIT.class);
 
     @BindToRegistry("amazonS3Client")
-    S3Client client
-            = S3Client.builder().credentialsProvider(
-                    StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
-                    .region(Region.US_WEST_1).build();
+    S3Client client = S3Client.builder()
+            .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
+            .region(Region.US_WEST_1)
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -81,7 +88,6 @@ public class S3ObjectRangeOperationManualIT extends CamelTestSupport {
             }
         });
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Override
@@ -91,25 +97,26 @@ public class S3ObjectRangeOperationManualIT extends CamelTestSupport {
             public void configure() {
                 String awsEndpoint = "aws2-s3://mycamelbucket?operation=getObjectRange&autoCreateBucket=false";
 
-                from("direct:getObjectRange").to(awsEndpoint).process(new Processor() {
+                from("direct:getObjectRange")
+                        .to(awsEndpoint)
+                        .process(new Processor() {
 
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        ResponseInputStream<GetObjectResponse> s3 = exchange.getIn().getBody(ResponseInputStream.class);
-                        LOG.info(readInputStream(s3));
-
-                    }
-                }).to("mock:result");
-
+                            @SuppressWarnings("unchecked")
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ResponseInputStream<GetObjectResponse> s3 =
+                                        exchange.getIn().getBody(ResponseInputStream.class);
+                                LOG.info(readInputStream(s3));
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
 
     private String readInputStream(ResponseInputStream<GetObjectResponse> s3Object) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader
-                = new BufferedReader(new InputStreamReader(s3Object, StandardCharsets.UTF_8))) {
+        try (Reader reader = new BufferedReader(new InputStreamReader(s3Object, StandardCharsets.UTF_8))) {
             int c = 0;
             while ((c = reader.read()) != -1) {
                 textBuilder.append((char) c);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.IOException;
@@ -32,5 +33,4 @@ public class UnixTimestampSerializer extends JsonSerializer<Instant> {
     public void serialize(Instant value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeNumber(value.getEpochSecond());
     }
-
 }

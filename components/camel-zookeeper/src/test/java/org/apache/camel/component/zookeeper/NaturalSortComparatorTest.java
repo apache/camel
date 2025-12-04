@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,17 +27,26 @@ import java.util.List;
 import org.apache.camel.component.zookeeper.NaturalSortComparator.Order;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class NaturalSortComparatorTest {
 
     @Test
     public void testSortOrder() {
 
-        List<String> sorted = Arrays
-                .asList(new String[] {
-                        "0", "1", "3", "4.0", "11", "30", "55", "225", "333", "camel-2.1.0", "camel-2.1.1",
-                        "camel-2.1.1-SNAPSHOT", "camel-2.2.0" });
+        List<String> sorted = Arrays.asList(new String[] {
+            "0",
+            "1",
+            "3",
+            "4.0",
+            "11",
+            "30",
+            "55",
+            "225",
+            "333",
+            "camel-2.1.0",
+            "camel-2.1.1",
+            "camel-2.1.1-SNAPSHOT",
+            "camel-2.2.0"
+        });
 
         List<String> unsorted = new ArrayList<>(sorted);
         Collections.shuffle(unsorted);

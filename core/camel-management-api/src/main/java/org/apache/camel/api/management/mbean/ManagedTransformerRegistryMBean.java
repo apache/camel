@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -43,5 +44,4 @@ public interface ManagedTransformerRegistryMBean extends ManagedServiceMBean {
 
     @ManagedOperation(description = "Lists all the transformers in the registry")
     TabularData listTransformers();
-
 }

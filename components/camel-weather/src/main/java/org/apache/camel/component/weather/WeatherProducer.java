@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
 
 import org.apache.camel.Exchange;
@@ -53,36 +54,32 @@ public class WeatherProducer extends DefaultProducer {
         HttpClient httpClient = getEndpoint().getConfiguration().getHttpClient();
         String uri = q;
         HttpGet method = new HttpGet(uri);
-        httpClient.execute(
-                method,
-                response -> {
-                    try {
-                        LOG.debug("Going to execute the Weather query {}", uri);
-                        if (HttpStatus.SC_OK != response.getCode()) {
-                            throw new IllegalStateException(
-                                    "Got the invalid http status value '" + response.getCode()
-                                                            + "' as the result of the query '" + query + "'");
-                        }
-                        String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        LOG.debug("Got back the Weather information {}", weather);
+        httpClient.execute(method, response -> {
+            try {
+                LOG.debug("Going to execute the Weather query {}", uri);
+                if (HttpStatus.SC_OK != response.getCode()) {
+                    throw new IllegalStateException("Got the invalid http status value '" + response.getCode()
+                            + "' as the result of the query '" + query + "'");
+                }
+                String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
+                LOG.debug("Got back the Weather information {}", weather);
 
-                        if (ObjectHelper.isEmpty(weather)) {
-                            throw new IllegalStateException(
-                                    "Got the unexpected value '" + weather + "' as the result of the query '" + uri + "'");
-                        }
+                if (ObjectHelper.isEmpty(weather)) {
+                    throw new IllegalStateException(
+                            "Got the unexpected value '" + weather + "' as the result of the query '" + uri + "'");
+                }
 
-                        String header = getEndpoint().getConfiguration().getHeaderName();
-                        if (header != null) {
-                            exchange.getIn().setHeader(header, weather);
-                        } else {
-                            exchange.getIn().setBody(weather);
-                        }
-                        exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, uri);
-                        return null;
-                    } finally {
-                        method.reset();
-                    }
-                });
-
+                String header = getEndpoint().getConfiguration().getHeaderName();
+                if (header != null) {
+                    exchange.getIn().setHeader(header, weather);
+                } else {
+                    exchange.getIn().setBody(weather);
+                }
+                exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, uri);
+                return null;
+            } finally {
+                method.reset();
+            }
+        });
     }
 }

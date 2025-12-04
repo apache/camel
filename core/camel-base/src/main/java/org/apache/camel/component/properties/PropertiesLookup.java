@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 /**
@@ -30,5 +31,4 @@ public interface PropertiesLookup {
      * @return              the property value, or <tt>null</tt> if the properties does not exist.
      */
     String lookup(String name, String defaultValue);
-
 }

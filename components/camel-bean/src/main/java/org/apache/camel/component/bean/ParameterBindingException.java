@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.Method;
@@ -28,7 +29,8 @@ public class ParameterBindingException extends RuntimeCamelException {
     private final Class<?> parameterType;
     private final Object parameterValue;
 
-    public ParameterBindingException(Throwable cause, Method method, int index, Class<?> parameterType, Object parameterValue) {
+    public ParameterBindingException(
+            Throwable cause, Method method, int index, Class<?> parameterType, Object parameterValue) {
         super(createMessage(method, index, parameterType, parameterValue), cause);
         this.method = method;
         this.index = index;
@@ -54,7 +56,7 @@ public class ParameterBindingException extends RuntimeCamelException {
 
     private static String createMessage(Method method, int index, Class<?> parameterType, Object parameterValue) {
         return "Error during parameter binding on method: " + method + " at parameter #" + index + " with type: "
-               + parameterType
-               + " with value type: " + ObjectHelper.type(parameterValue) + " and value: " + parameterValue;
+                + parameterType
+                + " with value type: " + ObjectHelper.type(parameterValue) + " and value: " + parameterValue;
     }
 }

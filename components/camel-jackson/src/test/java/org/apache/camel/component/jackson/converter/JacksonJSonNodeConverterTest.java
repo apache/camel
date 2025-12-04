@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.converter;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -33,9 +37,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class JacksonJSonNodeConverterTest extends CamelTestSupport {
 
     @Override
@@ -47,7 +48,8 @@ public class JacksonJSonNodeConverterTest extends CamelTestSupport {
     public void stringToJsonNode() {
         Exchange exchange = new DefaultExchange(context);
 
-        JsonNode node = context.getTypeConverter().convertTo(JsonNode.class, exchange, "{ \"message\": \"Hello World\" }");
+        JsonNode node =
+                context.getTypeConverter().convertTo(JsonNode.class, exchange, "{ \"message\": \"Hello World\" }");
         assertNotNull(node);
 
         Assertions.assertEquals("\"Hello World\"", node.get("message").toString());
@@ -57,8 +59,8 @@ public class JacksonJSonNodeConverterTest extends CamelTestSupport {
     public void byteArrayToJsonNode() {
         Exchange exchange = new DefaultExchange(context);
 
-        JsonNode node = context.getTypeConverter().convertTo(JsonNode.class, exchange,
-                "{ \"message\": \"Bye World\" }".getBytes(StandardCharsets.UTF_8));
+        JsonNode node = context.getTypeConverter()
+                .convertTo(JsonNode.class, exchange, "{ \"message\": \"Bye World\" }".getBytes(StandardCharsets.UTF_8));
         assertNotNull(node);
 
         Assertions.assertEquals("\"Bye World\"", node.get("message").toString());
@@ -68,7 +70,8 @@ public class JacksonJSonNodeConverterTest extends CamelTestSupport {
     public void inputStreamToJsonNode() {
         Exchange exchange = new DefaultExchange(context);
 
-        ByteArrayInputStream bis = new ByteArrayInputStream("{ \"message\": \"Bye World\" }".getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream bis =
+                new ByteArrayInputStream("{ \"message\": \"Bye World\" }".getBytes(StandardCharsets.UTF_8));
         JsonNode node = context.getTypeConverter().convertTo(JsonNode.class, exchange, bis);
         assertNotNull(node);
 
@@ -194,5 +197,4 @@ public class JacksonJSonNodeConverterTest extends CamelTestSupport {
         boolean value = context.getTypeConverter().convertTo(Boolean.class, BooleanNode.TRUE);
         Assertions.assertTrue(value);
     }
-
 }

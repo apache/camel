@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.wasm;
 
 import java.util.Objects;
@@ -95,8 +96,7 @@ public class WasmFunction implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-    }
+    public void close() throws Exception {}
 
     private static boolean isError(int number) {
         return (number & (1 << 31)) != 0;

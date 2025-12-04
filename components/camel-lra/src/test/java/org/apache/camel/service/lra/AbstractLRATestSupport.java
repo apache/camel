@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,11 +39,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Base class for LRA based tests.
@@ -71,8 +72,7 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration()
-                        .port(getServerPort());
+                restConfiguration().port(getServerPort());
             }
         });
 
@@ -82,8 +82,7 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
     protected LRASagaService createLRASagaService() {
         LRASagaService sagaService = new LRASagaService();
         sagaService.setCoordinatorUrl(getCoordinatorURL());
-        sagaService.setLocalParticipantUrl(
-                String.format("http://%s:%d", service.callbackHost(), getServerPort()));
+        sagaService.setLocalParticipantUrl(String.format("http://%s:%d", service.callbackHost(), getServerPort()));
         return sagaService;
     }
 

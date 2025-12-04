@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
 
 import java.util.List;
@@ -40,5 +41,4 @@ public class OpenTelemetryTracerTestSupport extends ExchangeTestSupport {
         }
         throw new IllegalArgumentException("Trying to get a non existing span!");
     }
-
 }

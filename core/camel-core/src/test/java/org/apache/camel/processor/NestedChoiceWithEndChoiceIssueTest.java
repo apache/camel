@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.file.Paths;
 
@@ -27,9 +31,6 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NestedChoiceWithEndChoiceIssueTest extends ContextTestSupport {
 
@@ -51,15 +52,15 @@ public class NestedChoiceWithEndChoiceIssueTest extends ContextTestSupport {
 
     @Test
     public void testNestedChoiceOtherwise() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context,
-                context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
-        String expected
-                = IOHelper.stripLineComments(
-                        Paths.get("src/test/resources/org/apache/camel/processor/NestedChoiceWithEndChoiceIssueTest.xml"), "#",
-                        true);
+        String expected = IOHelper.stripLineComments(
+                Paths.get("src/test/resources/org/apache/camel/processor/NestedChoiceWithEndChoiceIssueTest.xml"),
+                "#",
+                true);
         expected = StringHelper.after(expected, "-->");
         assertThat(expected).isEqualToNormalizingNewlines("\n" + xml + "\n");
 
@@ -77,44 +78,46 @@ public class NestedChoiceWithEndChoiceIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test").routeId("myRoute")
-                    .choice()
+                from("direct:test")
+                        .routeId("myRoute")
+                        .choice()
                         .when(simple("${header.count} < 1000 && ${body} == 0"))
-                            .setHeader("count", simple("${header.count}++"))
-                            .setBody(constant(1))
-                            .log("First when. Header is:${header.count} Body is:${body}")
-                            .to("direct:test")
+                        .setHeader("count", simple("${header.count}++"))
+                        .setBody(constant(1))
+                        .log("First when. Header is:${header.count} Body is:${body}")
+                        .to("direct:test")
                         .when(simple("${header.count} < 1000 && ${body} == 1"))
-                            .setHeader("count", simple("${header.count}++"))
-                            .setBody().constant(2)
-                            .log("Second when. Header is:${header.count} Body is:${body}")
-                            .to("direct:test")
+                        .setHeader("count", simple("${header.count}++"))
+                        .setBody()
+                        .constant(2)
+                        .log("Second when. Header is:${header.count} Body is:${body}")
+                        .to("direct:test")
                         .when(simple("${header.count} < 1000 && ${body} == 2"))
-                            .setHeader("count").simple("${header.count}++")
-                            .setBody(constant(0))
-                            .choice()
-                                .when(simple("${header.count} < 500"))
-                                    .log("Third when and small header. Header is:${header.count} Body is:${body}")
-                                .when(simple("${header.count} < 900"))
-                                    .log("Third when and big header. Header is:${header.count} Body is:${body}")
-                                .otherwise()
-                                    .log("Third when and header over 900. Header is:${header.count} Body is:${body}")
-                                    .choice()
-                                        .when(simple("${header.count} == 996"))
-                                            .log("Deep choice log. Header is:${header.count}")
-                                            .setHeader("count", constant(998))
-                                        .end().endChoice()
-                                .end()
-                            .to("direct:test")
+                        .setHeader("count")
+                        .simple("${header.count}++")
+                        .setBody(constant(0))
+                        .choice()
+                        .when(simple("${header.count} < 500"))
+                        .log("Third when and small header. Header is:${header.count} Body is:${body}")
+                        .when(simple("${header.count} < 900"))
+                        .log("Third when and big header. Header is:${header.count} Body is:${body}")
+                        .otherwise()
+                        .log("Third when and header over 900. Header is:${header.count} Body is:${body}")
+                        .choice()
+                        .when(simple("${header.count} == 996"))
+                        .log("Deep choice log. Header is:${header.count}")
+                        .setHeader("count", constant(998))
+                        .end()
+                        .endChoice()
+                        .end()
+                        .to("direct:test")
                         .endChoice()
                         .otherwise()
-                            .log("Header is:${header.count}")
-                            .log("Final Body is:${body}")
+                        .log("Header is:${header.count}")
+                        .log("Final Body is:${body}")
                         .end();
 
-                from("direct:start").routeId("start")
-                        .to("direct:test")
-                        .to("mock:result");
+                from("direct:start").routeId("start").to("direct:test").to("mock:result");
             }
         };
     }

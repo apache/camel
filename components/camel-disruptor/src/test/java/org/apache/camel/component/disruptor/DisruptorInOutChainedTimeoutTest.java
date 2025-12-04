@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
@@ -22,11 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
     @Test
@@ -37,8 +38,7 @@ public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
             template.requestBody("disruptor:a?timeout=5000", "Hello World");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            final ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
-                    e.getCause());
+            final ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
             assertEquals(2000, cause.getTimeout());
         }
         final long delta = watch.taken();
@@ -53,9 +53,11 @@ public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
             public void configure() {
                 errorHandler(noErrorHandler());
 
-                from("disruptor:a").to("mock:a")
+                from("disruptor:a")
+                        .to("mock:a")
                         // this timeout will trigger an exception to occur
-                        .to("disruptor:b?timeout=2000").to("mock:a2");
+                        .to("disruptor:b?timeout=2000")
+                        .to("mock:a2");
 
                 from("disruptor:b").to("mock:b").delay(3000).transform().constant("Bye World");
             }

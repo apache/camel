@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -22,9 +26,6 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestRefTest extends SpringTestSupport {
 
@@ -38,7 +39,8 @@ public class RestRefTest extends SpringTestSupport {
         assertNotNull(rest);
         assertEquals("/say/hello", rest.getPath());
         assertEquals(1, rest.getVerbs().size());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
+        ToDefinition to =
+                assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
 
         rest = context.getRestDefinitions().get(1);

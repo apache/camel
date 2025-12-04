@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.integration;
 
 import org.apache.camel.RoutesBuilder;
@@ -43,14 +44,22 @@ public class RabbitMQProducerToDIT extends RabbitMQITSupport {
         admin.declareExchange(t);
         admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
 
-        fluentTemplate.to("direct:start").withBody("Hello World").withHeader("whereTo", "foo").withHeader("myKey", "foo.bar")
+        fluentTemplate
+                .to("direct:start")
+                .withBody("Hello World")
+                .withHeader("whereTo", "foo")
+                .withHeader("myKey", "foo.bar")
                 .send();
 
         AmqpTemplate template = new RabbitTemplate(cf);
         String out = (String) template.receiveAndConvert("myqueue");
         Assertions.assertEquals("Hello World", out);
 
-        fluentTemplate.to("direct:start").withBody("Bye World").withHeader("whereTo", "foo").withHeader("myKey", "foo.bar.baz")
+        fluentTemplate
+                .to("direct:start")
+                .withBody("Bye World")
+                .withHeader("whereTo", "foo")
+                .withHeader("myKey", "foo.bar.baz")
                 .send();
 
         template = new RabbitTemplate(cf);
@@ -58,7 +67,9 @@ public class RabbitMQProducerToDIT extends RabbitMQITSupport {
         Assertions.assertEquals("Bye World", out);
 
         // there should only be 1 rabbit endpoint
-        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("spring-rabbit")).count();
+        long count = context.getEndpoints().stream()
+                .filter(e -> e.getEndpointUri().startsWith("spring-rabbit"))
+                .count();
         Assertions.assertEquals(1, count);
     }
 
@@ -67,8 +78,7 @@ public class RabbitMQProducerToDIT extends RabbitMQITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .toD("spring-rabbitmq:${header.whereTo}?routingKey=${header.myKey}");
+                from("direct:start").toD("spring-rabbitmq:${header.whereTo}?routingKey=${header.myKey}");
             }
         };
     }

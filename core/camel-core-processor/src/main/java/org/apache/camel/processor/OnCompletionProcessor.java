@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.processor.ProcessorHelper.prepareMDCParallelTask;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +44,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.processor.ProcessorHelper.prepareMDCParallelTask;
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 /**
  * Processor implementing <a href="http://camel.apache.org/oncompletion.html">onCompletion</a>.
  */
@@ -63,10 +64,17 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
     private final boolean afterConsumer;
     private final boolean routeScoped;
 
-    public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
-                                 boolean shutdownExecutorService,
-                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody,
-                                 boolean afterConsumer, boolean routeScoped) {
+    public OnCompletionProcessor(
+            CamelContext camelContext,
+            Processor processor,
+            ExecutorService executorService,
+            boolean shutdownExecutorService,
+            boolean onCompleteOnly,
+            boolean onFailureOnly,
+            Predicate onWhen,
+            boolean useOriginalBody,
+            boolean afterConsumer,
+            boolean routeScoped) {
         notNull(camelContext, "camelContext");
         notNull(processor, "processor");
         this.camelContext = camelContext;
@@ -151,7 +159,8 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
     }
 
     protected boolean isCreateCopy() {
-        // we need to create a correlated copy if we run in parallel mode or is in after consumer mode (as the UoW would be done on the original exchange otherwise)
+        // we need to create a correlated copy if we run in parallel mode or is in after consumer mode (as the UoW would
+        // be done on the original exchange otherwise)
         return executorService != null || afterConsumer;
     }
 
@@ -277,7 +286,8 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                     // route scope = remember we have been at this route
                     if (routeScoped && route.getRouteId().equals(routeId)) {
                         @SuppressWarnings("unchecked")
-                        List<String> routeIds = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
+                        List<String> routeIds =
+                                exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
                         if (routeIds == null) {
                             routeIds = new ArrayList<>();
                             exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, routeIds);
@@ -436,7 +446,9 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                     }
 
                     // global scope = should be from the original route
-                    if (!routeScoped && (!route.getRouteId().equals(routeId) || !exchange.getFromRouteId().equals(routeId))) {
+                    if (!routeScoped
+                            && (!route.getRouteId().equals(routeId)
+                                    || !exchange.getFromRouteId().equals(routeId))) {
                         return;
                     }
 

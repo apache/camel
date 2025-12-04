@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,10 +28,6 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTestSupport {
 
@@ -80,8 +81,9 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         // give time for route to stop.
         // this was originally 1 second, but the route does not always
         // shut down that fast, so bumped it up for some cushion.
-        await().atMost(3, TimeUnit.SECONDS).untilAsserted(
-                () -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("errorRoute")));
+        await().atMost(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(
+                        ServiceStatus.Stopped, context.getRouteController().getRouteStatus("errorRoute")));
 
         template.sendBody("direct:start", "Kaboom");
 
@@ -100,14 +102,26 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).loadBalance().roundRobin().to("seda:error", "seda:error2").end()
+                onException(Exception.class)
+                        .handled(true)
+                        .loadBalance()
+                        .roundRobin()
+                        .to("seda:error", "seda:error2")
+                        .end()
                         .to("mock:exception");
 
-                from("direct:start").to("mock:start").choice().when(body().contains("Kaboom"))
-                        .throwException(new IllegalArgumentException("Forced")).otherwise()
-                        .transform(body().prepend("Bye ")).to("mock:result");
+                from("direct:start")
+                        .to("mock:start")
+                        .choice()
+                        .when(body().contains("Kaboom"))
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .otherwise()
+                        .transform(body().prepend("Bye "))
+                        .to("mock:result");
 
-                from("seda:error").routeId("errorRoute").to("controlbus:route?action=stop&routeId=errorRoute&async=true")
+                from("seda:error")
+                        .routeId("errorRoute")
+                        .to("controlbus:route?action=stop&routeId=errorRoute&async=true")
                         .to("mock:error");
             }
         };

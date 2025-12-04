@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.secrets.manager;
 
 import org.apache.camel.spi.Metadata;
@@ -22,35 +23,34 @@ public final class IBMSecretsManagerConstants {
     private static final String HEADER_PREFIX = "CamelIbmSecretsManager";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Overrides the desired operation to be used in the producer.",
-              javaType = "String")
+    @Metadata(
+            label = "producer",
+            description = "Overrides the desired operation to be used in the producer.",
+            javaType = "String")
     public static final String OPERATION = HEADER_PREFIX + "ProducerOperation";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Set the desired secret path as header.",
-              javaType = "String")
+    @Metadata(label = "producer", description = "Set the desired secret path as header.", javaType = "String")
     public static final String SECRET_NAME = HEADER_PREFIX + "SecretName";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Set the desired secret version as header.",
-              javaType = "String")
+    @Metadata(label = "producer", description = "Set the desired secret version as header.", javaType = "String")
     public static final String SECRET_VERSION = HEADER_PREFIX + "SecretVersion";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Set the desired secret version as header.",
-              javaType = "String")
+    @Metadata(label = "producer", description = "Set the desired secret version as header.", javaType = "String")
     public static final String SECRET_ID = HEADER_PREFIX + "SecretId";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Set the secret payload for update operation.",
-              javaType = "String")
+    @Metadata(label = "producer", description = "Set the secret payload for update operation.", javaType = "String")
     public static final String SECRET_PAYLOAD = HEADER_PREFIX + "SecretPayload";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Set the secret data (Map) for KV secret update operation.",
-              javaType = "java.util.Map")
+    @Metadata(
+            label = "producer",
+            description = "Set the secret data (Map) for KV secret update operation.",
+            javaType = "java.util.Map")
     public static final String SECRET_DATA = HEADER_PREFIX + "SecretData";
 
-    private IBMSecretsManagerConstants() {
-    }
+    private IBMSecretsManagerConstants() {}
 }

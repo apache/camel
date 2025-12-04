@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport {
 
@@ -37,9 +38,11 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
             @Override
             public void configure() {
                 from("direct:start")
-                        .filter(method(BeanLanguageMethodMissingParenthesisTest.class,
+                        .filter(method(
+                                BeanLanguageMethodMissingParenthesisTest.class,
                                 "couldThisBeFoo(${body}, ${header.foo})"))
-                        .to("mock:foo").end()
+                        .to("mock:foo")
+                        .end()
                         .to("mock:result");
             }
         });
@@ -64,17 +67,23 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
             @Override
             public void configure() {
                 from("direct:start")
-                        .filter(method(BeanLanguageMethodMissingParenthesisTest.class, "couldThisBeFoo(${body}, ${header.foo}"))
-                        .to("mock:foo").end().to("mock:result");
+                        .filter(method(
+                                BeanLanguageMethodMissingParenthesisTest.class,
+                                "couldThisBeFoo(${body}, ${header.foo}"))
+                        .to("mock:foo")
+                        .end()
+                        .to("mock:result");
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start", "Hello World", "foo", "yes"),
                 "Should throw exception");
 
-        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        IllegalArgumentException iae =
+                assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
         assertEquals("Method should end with parenthesis, was couldThisBeFoo(${body}, ${header.foo}", iae.getMessage());
     }
 
@@ -84,19 +93,23 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
             @Override
             public void configure() {
                 from("direct:start")
-                        .filter(method(BeanLanguageMethodMissingParenthesisTest.class,
+                        .filter(method(
+                                BeanLanguageMethodMissingParenthesisTest.class,
                                 "--couldThisBeFoo(${body}, ${header.foo})"))
-                        .to("mock:foo").end()
+                        .to("mock:foo")
+                        .end()
                         .to("mock:result");
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start", "Hello World", "foo", "yes"),
                 "Should throw exception");
 
-        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        IllegalArgumentException iae =
+                assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
         assertEquals(
                 "Method name must start with a valid java identifier at position: 0 in method: --couldThisBeFoo(${body}, ${header.foo})",
                 iae.getMessage());

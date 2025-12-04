@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
 
 import java.util.Map;
 import java.util.Set;
@@ -44,22 +47,27 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
-
 /**
  * Expose REST services or call external REST services.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate",
-             category = { Category.CORE, Category.REST }, lenientProperties = true, headersClass = RestConstants.class)
-@Metadata(annotations = {
-        "protocol=http",
-})
+@UriEndpoint(
+        firstVersion = "2.14.0",
+        scheme = "rest",
+        title = "REST",
+        syntax = "rest:method:path:uriTemplate",
+        category = {Category.CORE, Category.REST},
+        lenientProperties = true,
+        headersClass = RestConstants.class)
+@Metadata(
+        annotations = {
+            "protocol=http",
+        })
 public class RestEndpoint extends DefaultEndpoint {
 
-    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS
-            = new String[] { "platform-http", "servlet", "jetty", "undertow", "netty-http", "coap" };
-    public static final String[] DEFAULT_REST_PRODUCER_COMPONENTS
-            = new String[] { "vertx-http", "http", "undertow", "netty-http" };
+    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS =
+            new String[] {"platform-http", "servlet", "jetty", "undertow", "netty-http", "coap"};
+    public static final String[] DEFAULT_REST_PRODUCER_COMPONENTS =
+            new String[] {"vertx-http", "http", "undertow", "netty-http"};
     public static final String DEFAULT_API_COMPONENT_NAME = "openapi";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
 
@@ -68,33 +76,47 @@ public class RestEndpoint extends DefaultEndpoint {
     @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options")
     @Metadata(required = true)
     private String method;
+
     @UriPath(label = "common")
     @Metadata(required = true)
     private String path;
+
     @UriPath(label = "common")
     private String uriTemplate;
+
     @UriParam(label = "common")
     private String consumes;
+
     @UriParam(label = "common")
     private String produces;
+
     @UriParam(label = "common")
     private String inType;
+
     @UriParam(label = "common")
     private String outType;
+
     @UriParam(label = "common")
     private String routeId;
+
     @UriParam(label = "consumer")
     private String description;
+
     @UriParam(label = "producer")
     private String apiDoc;
+
     @UriParam(label = "producer")
     private String host;
+
     @UriParam(label = "producer")
     private String queryParameters;
+
     @UriParam(label = "producer", enums = "auto,off,json,xml,json_xml")
     private RestConfiguration.RestBindingMode bindingMode;
+
     @UriParam(label = "producer")
     private String producerComponentName;
+
     @UriParam(label = "consumer")
     private String consumerComponentName;
 
@@ -315,10 +337,9 @@ public class RestEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         if (ObjectHelper.isEmpty(host)) {
             // hostname must be provided
-            throw new IllegalArgumentException(
-                    "Hostname must be configured on either restConfiguration"
-                                               + " or in the rest endpoint uri as a query parameter with name host, eg rest:"
-                                               + method + ":" + path + "?host=someserver");
+            throw new IllegalArgumentException("Hostname must be configured on either restConfiguration"
+                    + " or in the rest endpoint uri as a query parameter with name host, eg rest:"
+                    + method + ":" + path + "?host=someserver");
         }
 
         RestProducerFactory apiDocFactory = null;
@@ -326,18 +347,20 @@ public class RestEndpoint extends DefaultEndpoint {
 
         if (apiDoc != null) {
             LOG.debug("Discovering camel-openapi-java on classpath for using api-doc: {}", apiDoc);
-            // lookup on classpath using factory finder to automatic find it (just add camel-openapi-java to classpath etc)
+            // lookup on classpath using factory finder to automatic find it (just add camel-openapi-java to classpath
+            // etc)
             try {
-                FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
-                apiDocFactory = finder.newInstance(DEFAULT_API_COMPONENT_NAME, RestProducerFactory.class).orElse(null);
+                FactoryFinder finder =
+                        getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
+                apiDocFactory = finder.newInstance(DEFAULT_API_COMPONENT_NAME, RestProducerFactory.class)
+                        .orElse(null);
                 if (apiDocFactory == null) {
                     throw new NoFactoryAvailableException("Cannot find camel-openapi-java on classpath");
                 }
                 parameters.put("apiDoc", apiDoc);
             } catch (NoFactoryAvailableException e) {
                 throw new IllegalStateException(
-                        "Cannot find camel-openapi-java on classpath to use with api-doc: "
-                                                + apiDoc);
+                        "Cannot find camel-openapi-java on classpath to use with api-doc: " + apiDoc);
             }
         }
 
@@ -347,8 +370,8 @@ public class RestEndpoint extends DefaultEndpoint {
             if (comp instanceof RestProducerFactory restProducerFactory) {
                 factory = restProducerFactory;
             } else {
-                comp = setupComponent(getProducerComponentName(), getCamelContext(),
-                        (Map<String, Object>) parameters.get("component"));
+                comp = setupComponent(getProducerComponentName(), getCamelContext(), (Map<String, Object>)
+                        parameters.get("component"));
                 if (comp instanceof RestProducerFactory restProducerFactory) {
                     factory = restProducerFactory;
                 }
@@ -366,7 +389,8 @@ public class RestEndpoint extends DefaultEndpoint {
         // try all components
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
-                Component comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
+                Component comp =
+                        setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
                 if (comp instanceof RestProducerFactory producerFactory) {
                     factory = producerFactory;
                     pname = name;
@@ -404,7 +428,8 @@ public class RestEndpoint extends DefaultEndpoint {
             RestProducerFactory found = null;
             String foundName = null;
             for (String name : DEFAULT_REST_PRODUCER_COMPONENTS) {
-                Object comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
+                Object comp =
+                        setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
                 if (comp instanceof RestProducerFactory restProducerFactory) {
                     found = restProducerFactory;
                     foundName = name;
@@ -428,12 +453,30 @@ public class RestEndpoint extends DefaultEndpoint {
             if (apiDocFactory != null) {
                 // wrap the factory using the api doc factory which will use the factory
                 parameters.put("restProducerFactory", factory);
-                producer = apiDocFactory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters,
-                        consumes, produces, config, parameters);
+                producer = apiDocFactory.createProducer(
+                        getCamelContext(),
+                        host,
+                        method,
+                        path,
+                        uriTemplate,
+                        queryParameters,
+                        consumes,
+                        produces,
+                        config,
+                        parameters);
             } else {
                 // NOTE: the stream must be closed by the client.
-                producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, // NOSONAR
-                        produces, config, parameters);
+                producer = factory.createProducer(
+                        getCamelContext(),
+                        host,
+                        method,
+                        path,
+                        uriTemplate,
+                        queryParameters,
+                        consumes, // NOSONAR
+                        produces,
+                        config,
+                        parameters);
             }
 
             RestProducer answer = new RestProducer(this, producer, config);
@@ -555,8 +598,10 @@ public class RestEndpoint extends DefaultEndpoint {
                 path = "/" + path;
             }
 
-            // there may be an optional context path configured to help Camel calculate the correct urls for the REST services
-            // this may be needed when using camel-servlet where we cannot get the actual context-path or port number of the servlet engine
+            // there may be an optional context path configured to help Camel calculate the correct urls for the REST
+            // services
+            // this may be needed when using camel-servlet where we cannot get the actual context-path or port number of
+            // the servlet engine
             // during init of the servlet
             String contextPath = config.getContextPath();
             if (contextPath != null) {
@@ -579,16 +624,38 @@ public class RestEndpoint extends DefaultEndpoint {
                 }
             }
 
-            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getMethod(), getPath(),
-                    getUriTemplate(), getConsumes(), getProduces(), config, getParameters());
+            Consumer consumer = factory.createConsumer(
+                    getCamelContext(),
+                    processor,
+                    getMethod(),
+                    getPath(),
+                    getUriTemplate(),
+                    getConsumes(),
+                    getProduces(),
+                    config,
+                    getParameters());
             configureConsumer(consumer);
 
-            // add to rest registry, so we can keep track of them, we will remove from the registry when the consumer is removed
+            // add to rest registry, so we can keep track of them, we will remove from the registry when the consumer is
+            // removed
             // the rest registry will automatically keep track when the consumer is removed,
             // and un-register the REST service from the registry
-            getCamelContext().getRestRegistry().addRestService(consumer, false, url, baseUrl, getPath(), getUriTemplate(),
-                    getMethod(),
-                    getConsumes(), getProduces(), getInType(), getOutType(), getRouteId(), getDescription());
+            getCamelContext()
+                    .getRestRegistry()
+                    .addRestService(
+                            consumer,
+                            false,
+                            url,
+                            baseUrl,
+                            getPath(),
+                            getUriTemplate(),
+                            getMethod(),
+                            getConsumes(),
+                            getProduces(),
+                            getInType(),
+                            getOutType(),
+                            getRouteId(),
+                            getDescription());
             return consumer;
         } else {
             throw new IllegalStateException("Cannot find RestConsumerFactory in Registry or as a Component to use");

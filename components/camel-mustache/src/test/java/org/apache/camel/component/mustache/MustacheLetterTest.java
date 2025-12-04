@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mustache;
 
 import org.apache.camel.Exchange;
@@ -56,9 +57,7 @@ public class MustacheLetterTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                        .to("mustache:letter.mustache")
-                        .to("mock:result");
+                from("direct:a").to("mustache:letter.mustache").to("mock:result");
             }
         };
     }

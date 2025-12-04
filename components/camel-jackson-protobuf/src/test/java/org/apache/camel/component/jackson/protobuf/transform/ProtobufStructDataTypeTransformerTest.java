@@ -44,11 +44,12 @@ class ProtobufStructDataTypeTransformerTest {
 
         ProtobufSchema protobufSchema = getSchema();
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, protobufSchema);
-        exchange.getMessage().setBody(Protobuf.mapper().writer(protobufSchema)
-                .writeValueAsBytes(new Person("Christoph", 32)));
+        exchange.getMessage()
+                .setBody(Protobuf.mapper().writer(protobufSchema).writeValueAsBytes(new Person("Christoph", 32)));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertEquals(ObjectNode.class, exchange.getMessage().getBody().getClass());
+        Assertions.assertEquals(
+                ObjectNode.class, exchange.getMessage().getBody().getClass());
     }
 
     @Test
@@ -62,7 +63,8 @@ class ProtobufStructDataTypeTransformerTest {
                 """);
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertEquals(ObjectNode.class, exchange.getMessage().getBody().getClass());
+        Assertions.assertEquals(
+                ObjectNode.class, exchange.getMessage().getBody().getClass());
     }
 
     @Test
@@ -74,7 +76,8 @@ class ProtobufStructDataTypeTransformerTest {
         exchange.getMessage().setBody(new Person("Mickey", 20));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertEquals(ObjectNode.class, exchange.getMessage().getBody().getClass());
+        Assertions.assertEquals(
+                ObjectNode.class, exchange.getMessage().getBody().getClass());
     }
 
     @Test
@@ -83,12 +86,16 @@ class ProtobufStructDataTypeTransformerTest {
 
         ProtobufSchema protobufSchema = getSchema();
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, protobufSchema);
-        exchange.getMessage().setBody(Json.mapper().readerFor(JsonNode.class).readValue("""
+        exchange.getMessage()
+                .setBody(Json.mapper()
+                        .readerFor(JsonNode.class)
+                        .readValue("""
                     { "name": "Goofy", "age": 25 }
                 """));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertEquals(ObjectNode.class, exchange.getMessage().getBody().getClass());
+        Assertions.assertEquals(
+                ObjectNode.class, exchange.getMessage().getBody().getClass());
     }
 
     @Test
@@ -101,19 +108,21 @@ class ProtobufStructDataTypeTransformerTest {
         exchange.getMessage().setBody(new Person("Donald", 19));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertEquals(ObjectNode.class, exchange.getMessage().getBody().getClass());
+        Assertions.assertEquals(
+                ObjectNode.class, exchange.getMessage().getBody().getClass());
     }
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("protobuf-x-struct"));
+        Transformer transformer =
+                camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("protobuf-x-struct"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(ProtobufStructDataTypeTransformer.class, transformer.getClass());
     }
 
     private ProtobufSchema getSchema() throws IOException {
-        return Protobuf.mapper().schemaLoader()
+        return Protobuf.mapper()
+                .schemaLoader()
                 .load(ProtobufStructDataTypeTransformer.class.getResourceAsStream("Person.proto"));
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.maven.support;
 
 import java.lang.annotation.Annotation;
@@ -130,7 +131,8 @@ public class DIRegistry extends SupplierRegistry {
         }
 
         Constructor<?> defaultConstructor = null;
-        Comparator<Constructor<?>> byParamCount = Comparator.<Constructor<?>> comparingInt(Constructor::getParameterCount)
+        Comparator<Constructor<?>> byParamCount = Comparator.<Constructor<?>>comparingInt(
+                        Constructor::getParameterCount)
                 .reversed();
         Set<Constructor<?>> constructors = new TreeSet<>(byParamCount);
         for (Constructor<?> ctr : type.getDeclaredConstructors()) {
@@ -159,13 +161,12 @@ public class DIRegistry extends SupplierRegistry {
             // dependency-cycle alert!
             final Type[] parameterTypes = ctr.getGenericParameterTypes();
             Supplier<?> lazyCreator = new Supplier<>() {
-                @SuppressWarnings({ "unchecked", "rawtypes" })
+                @SuppressWarnings({"unchecked", "rawtypes"})
                 @Override
                 public Object get() {
                     if (underConstruction.contains(this)) {
                         throw new IllegalStateException(
-                                "Cyclic dependency found when creating bean of "
-                                                        + type.getName() + " type");
+                                "Cyclic dependency found when creating bean of " + type.getName() + " type");
                     }
                     underConstruction.add(this);
                     try {
@@ -214,22 +215,19 @@ public class DIRegistry extends SupplierRegistry {
                                 }
                             }
                             if (t == null) {
-                                throw new IllegalArgumentException(
-                                        "Can't handle argument of " + pt
-                                                                   + " type when creating bean of " + type.getName() + " type");
+                                throw new IllegalArgumentException("Can't handle argument of " + pt
+                                        + " type when creating bean of " + type.getName() + " type");
                             }
                             if (param == null) {
                                 List<Object> instances = byClass.get(t);
                                 if (instances == null) {
-                                    throw new IllegalArgumentException(
-                                            "Missing " + t.getName()
-                                                                       + " instance when creating bean of " + type.getName()
-                                                                       + " type");
+                                    throw new IllegalArgumentException("Missing " + t.getName()
+                                            + " instance when creating bean of " + type.getName()
+                                            + " type");
                                 }
                                 if (instances.size() > 1) {
-                                    throw new IllegalArgumentException(
-                                            "Ambiguous parameter of " + t.getName()
-                                                                       + " when creating bean of " + type.getName() + " type");
+                                    throw new IllegalArgumentException("Ambiguous parameter of " + t.getName()
+                                            + " when creating bean of " + type.getName() + " type");
                                 }
                                 param = instances.get(0);
                             }
@@ -239,12 +237,12 @@ public class DIRegistry extends SupplierRegistry {
                         try {
                             ctr.setAccessible(true);
                             return ctr.newInstance(parameters);
-                        } catch (InstantiationException | IllegalAccessException
-                                 | InvocationTargetException | IllegalArgumentException e) {
+                        } catch (InstantiationException
+                                | IllegalAccessException
+                                | InvocationTargetException
+                                | IllegalArgumentException e) {
                             throw new IllegalArgumentException(
-                                    "Problem instantiating bean of "
-                                                               + type.getName() + " type",
-                                    e);
+                                    "Problem instantiating bean of " + type.getName() + " type", e);
                         }
                     } finally {
                         underConstruction.remove(this);
@@ -303,5 +301,4 @@ public class DIRegistry extends SupplierRegistry {
         Object instance = instances.get(0);
         return (T) (instance instanceof Supplier ? ((Supplier<?>) instance).get() : instance);
     }
-
 }

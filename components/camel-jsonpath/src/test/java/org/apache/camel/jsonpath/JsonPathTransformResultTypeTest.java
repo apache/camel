@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -31,11 +32,13 @@ public class JsonPathTransformResultTypeTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().jsonpath("$.store.book[0].price", Float.class)
+                        .transform()
+                        .jsonpath("$.store.book[0].price", Float.class)
                         .to("mock:price");
 
                 from("direct:second")
-                        .transform().jsonpath("$.store.book[0].price", Double.class)
+                        .transform()
+                        .jsonpath("$.store.book[0].price", Double.class)
                         .to("mock:price");
             }
         };
@@ -56,5 +59,4 @@ public class JsonPathTransformResultTypeTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

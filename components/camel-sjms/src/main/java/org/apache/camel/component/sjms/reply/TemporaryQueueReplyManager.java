@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.reply;
 
 import java.util.concurrent.locks.Condition;
@@ -55,7 +56,10 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
-        log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
+        log.trace(
+                "Updated provisional correlationId [{}] to expected correlationId [{}]",
+                correlationId,
+                newCorrelationId);
 
         ReplyHandler handler = correlation.remove(correlationId);
         if (handler != null) {
@@ -72,14 +76,16 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
             // log a warn and then ignore the message
-            log.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
+            log.warn(
+                    "Reply received for unknown correlationID [{}]. The message will be ignored: {}",
+                    correlationID,
+                    message);
         }
     }
 
     @Override
     protected MessageListenerContainer createListenerContainer() throws Exception {
-        TemporaryQueueMessageListenerContainer answer
-                = new TemporaryQueueMessageListenerContainer(endpoint);
+        TemporaryQueueMessageListenerContainer answer = new TemporaryQueueMessageListenerContainer(endpoint);
         answer.setMessageListener(this);
 
         String clientId = endpoint.getClientId();
@@ -104,11 +110,12 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         @Override
         public void onException(JMSException exception) {
             // capture exceptions, and schedule a refresh of the ReplyTo destination
-            log.warn("Exception inside the DMLC for Temporary ReplyTo Queue for destination {}, refreshing ReplyTo destination",
-                    endpoint.getDestinationName(), exception);
+            log.warn(
+                    "Exception inside the DMLC for Temporary ReplyTo Queue for destination {}, refreshing ReplyTo destination",
+                    endpoint.getDestinationName(),
+                    exception);
             destResolver.scheduleRefresh();
         }
-
     }
 
     private final class TemporaryReplyQueueDestinationResolver implements DestinationCreationStrategy {
@@ -149,7 +156,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             if (refreshWanted) {
                 lock.lock();
                 try {
-                    //check if requestWanted is still true
+                    // check if requestWanted is still true
                     if (refreshWanted) {
                         log.debug("Waiting for new Temporary ReplyTo queue to be assigned before we can continue");
                         condition.await();
@@ -159,7 +166,5 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
                 }
             }
         }
-
     }
-
 }

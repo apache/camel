@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,8 +35,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.util.ClassLoadingAwareObjectInputStream;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClassLoadingAwareObjectInputStreamTest {
 
@@ -67,7 +68,6 @@ public class ClassLoadingAwareObjectInputStreamTest {
         assertEquals(1, receivedObjects.size());
         assertEquals(o, receivedObjects.get(0));
     }
-
 }
 
 class MyObject implements Serializable {

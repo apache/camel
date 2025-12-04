@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,26 +49,27 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and
+// -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+    @EnabledIfSystemProperty(
+            named = "aws.manual.access.key",
+            matches = ".*",
+            disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(
+            named = "aws.manual.secret.key",
+            matches = ".*",
+            disabledReason = "Secret key not provided")
 })
 public class S3ConsumerManualIT extends CamelTestSupport {
     private static final String ACCESS_KEY = System.getProperty("aws.manual.access.key");
     private static final String SECRET_KEY = System.getProperty("aws.manual.secret.key");
 
     @BindToRegistry("amazonS3Client")
-    S3Client client
-            = S3Client.builder()
-                    .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
-                    .region(Region.EU_WEST_1).build();
+    S3Client client = S3Client.builder()
+            .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
+            .region(Region.EU_WEST_1)
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -106,7 +113,8 @@ public class S3ConsumerManualIT extends CamelTestSupport {
     }
 
     @Test
-    @DisplayName("Should consume S3StreamObject when include body is true and should close the stream when autocloseBody is true")
+    @DisplayName(
+            "Should consume S3StreamObject when include body is true and should close the stream when autocloseBody is true")
     public void shouldConsumeS3StreamObjectWhenIncludeBodyIsTrueAndNotCloseStreamWhenAutoCloseBodyIsTrue()
             throws InterruptedException {
         result.reset();
@@ -134,7 +142,8 @@ public class S3ConsumerManualIT extends CamelTestSupport {
     }
 
     @Test
-    @DisplayName("Should not consume S3StreamObject when include body is false and should not close the stream when autocloseBody is false")
+    @DisplayName(
+            "Should not consume S3StreamObject when include body is false and should not close the stream when autocloseBody is false")
     public void shouldNotConsumeS3StreamObjectWhenIncludeBodyIsFalseAndNotCloseStreamWhenAutoCloseBodyIsFalse()
             throws InterruptedException {
         result.reset();
@@ -159,7 +168,8 @@ public class S3ConsumerManualIT extends CamelTestSupport {
 
         assertThat(exchange.getIn().getBody().getClass(), is(equalTo(ResponseInputStream.class)));
         assertDoesNotThrow(() -> {
-            final ResponseInputStream<GetObjectResponse> inputStream = exchange.getIn().getBody(ResponseInputStream.class);
+            final ResponseInputStream<GetObjectResponse> inputStream =
+                    exchange.getIn().getBody(ResponseInputStream.class);
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                 final String text = reader.lines().collect(Collectors.joining());
                 assertThat(text, is("Test"));
@@ -168,7 +178,8 @@ public class S3ConsumerManualIT extends CamelTestSupport {
     }
 
     @Test
-    @DisplayName("Should not consume S3StreamObject when include body is false and should close the stream when autocloseBody is true")
+    @DisplayName(
+            "Should not consume S3StreamObject when include body is false and should close the stream when autocloseBody is true")
     public void shouldNotConsumeS3StreamObjectWhenIncludeBodyIsFalseAndCloseStreamWhenAutoCloseBodyIsTrue()
             throws InterruptedException {
         result.reset();
@@ -193,7 +204,8 @@ public class S3ConsumerManualIT extends CamelTestSupport {
 
         assertThat(exchange.getIn().getBody().getClass(), is(equalTo(ResponseInputStream.class)));
         assertThrows(IOException.class, () -> {
-            final ResponseInputStream<GetObjectResponse> inputStream = exchange.getIn().getBody(ResponseInputStream.class);
+            final ResponseInputStream<GetObjectResponse> inputStream =
+                    exchange.getIn().getBody(ResponseInputStream.class);
             inputStream.read();
         });
     }
@@ -207,18 +219,23 @@ public class S3ConsumerManualIT extends CamelTestSupport {
                 String includeBodyTrueAutoCloseTrue = String.format(template, true, true);
                 String includeBodyFalseAutoCloseFalse = String.format(template, false, false);
                 String includeBodyFalseAutoCloseTrue = String.format(template, false, true);
-                from("direct:includeBodyTrueAutoCloseTrue").pollEnrich(includeBodyTrueAutoCloseTrue, 5000).to("mock:result");
-                from("direct:includeBodyFalseAutoCloseFalse").pollEnrich(includeBodyFalseAutoCloseFalse, 5000)
+                from("direct:includeBodyTrueAutoCloseTrue")
+                        .pollEnrich(includeBodyTrueAutoCloseTrue, 5000)
                         .to("mock:result");
-                from("direct:includeBodyFalseAutoCloseTrue").pollEnrich(includeBodyFalseAutoCloseTrue, 5000).to("mock:result");
+                from("direct:includeBodyFalseAutoCloseFalse")
+                        .pollEnrich(includeBodyFalseAutoCloseFalse, 5000)
+                        .to("mock:result");
+                from("direct:includeBodyFalseAutoCloseTrue")
+                        .pollEnrich(includeBodyFalseAutoCloseTrue, 5000)
+                        .to("mock:result");
 
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false";
 
                 from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");
 
                 from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=false&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)")
-                        .startupOrder(2).log("${body}");
-
+                        .startupOrder(2)
+                        .log("${body}");
             }
         };
     }

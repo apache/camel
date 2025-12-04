@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -27,20 +37,13 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class NonXmlFilterReaderTest {
     private NonXmlFilterReader nonXmlFilterReader;
+
     @Mock
     private NonXmlCharFilterer nonXmlCharFiltererMock;
+
     @Mock
     private Reader readerMock;
 
@@ -57,7 +60,7 @@ public class NonXmlFilterReaderTest {
         when(readerMock.read(same(buffer), eq(3), eq(5))).thenAnswer(new Answer<Integer>() {
 
             public Integer answer(InvocationOnMock invocation) throws Throwable {
-                try (ConstantReader reader = new ConstantReader(new char[] { 'a', 'b', 'c' })) {
+                try (ConstantReader reader = new ConstantReader(new char[] {'a', 'b', 'c'})) {
                     Object[] args = invocation.getArguments();
                     return reader.read((char[]) args[0], (Integer) args[1], (Integer) args[2]);
                 }
@@ -70,7 +73,7 @@ public class NonXmlFilterReaderTest {
         verify(nonXmlCharFiltererMock).filter(same(buffer), eq(3), eq(3));
 
         assertEquals(3, result, "Unexpected number of chars read");
-        assertArrayEquals(new char[] { 0, 0, 0, 'a', 'b', 'c', 0, 0, 0, 0 }, buffer, "Wrong buffer contents");
+        assertArrayEquals(new char[] {0, 0, 0, 'a', 'b', 'c', 0, 0, 0, 0}, buffer, "Wrong buffer contents");
     }
 
     @Test
@@ -82,7 +85,7 @@ public class NonXmlFilterReaderTest {
         int result = nonXmlFilterReader.read(buffer, 3, 5);
 
         assertEquals(-1, result, "Unexpected number of chars read");
-        assertArrayEquals(new char[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, buffer, "Buffer should not have been affected");
+        assertArrayEquals(new char[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, buffer, "Buffer should not have been affected");
     }
 
     static class ConstantReader extends Reader {
@@ -93,8 +96,7 @@ public class NonXmlFilterReaderTest {
         }
 
         @Override
-        public void close() {
-        }
+        public void close() {}
 
         @Override
         public int read(char[] cbuf, int off, int len) {
@@ -102,6 +104,5 @@ public class NonXmlFilterReaderTest {
             System.arraycopy(constant, 0, cbuf, off, length);
             return length;
         }
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snmp;
 
 import java.util.StringTokenizer;
@@ -43,7 +44,7 @@ public final class SnmpConverters {
     private static final String VALUE_TAG_CLOSE = "</" + VALUE_TAG + '>';
 
     private SnmpConverters() {
-        //Utility Class
+        // Utility Class
     }
 
     @Converter
@@ -132,5 +133,4 @@ public final class SnmpConverters {
 
         return sb.toString();
     }
-
 }

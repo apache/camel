@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cluster;
 
 import java.util.ArrayList;
@@ -70,29 +71,28 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
             return;
         }
 
-        LockHelper.doWithWriteLock(
-                lock,
-                () -> {
-                    listeners.add(listener);
+        LockHelper.doWithWriteLock(lock, () -> {
+            listeners.add(listener);
 
-                    if (isRunAllowed()) {
-                        // if the view has already been started, fire known events so
-                        // the consumer can catch up.
+            if (isRunAllowed()) {
+                // if the view has already been started, fire known events so
+                // the consumer can catch up.
 
-                        if (CamelClusterEventListener.Leadership.class.isInstance(listener)) {
-                            CamelClusterEventListener.Leadership.class.cast(listener).leadershipChanged(this,
-                                    getLeader().orElse(null));
-                        }
+                if (CamelClusterEventListener.Leadership.class.isInstance(listener)) {
+                    CamelClusterEventListener.Leadership.class
+                            .cast(listener)
+                            .leadershipChanged(this, getLeader().orElse(null));
+                }
 
-                        if (CamelClusterEventListener.Membership.class.isInstance(listener)) {
-                            CamelClusterEventListener.Membership ml = CamelClusterEventListener.Membership.class.cast(listener);
+                if (CamelClusterEventListener.Membership.class.isInstance(listener)) {
+                    CamelClusterEventListener.Membership ml = CamelClusterEventListener.Membership.class.cast(listener);
 
-                            for (CamelClusterMember member : getMembers()) {
-                                ml.memberAdded(this, member);
-                            }
-                        }
+                    for (CamelClusterMember member : getMembers()) {
+                        ml.memberAdded(this, member);
                     }
-                });
+                }
+            }
+        });
     }
 
     @Override
@@ -109,17 +109,15 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
     // **************************************
 
     private <T extends CamelClusterEventListener> void doWithListener(Class<T> type, Consumer<T> consumer) {
-        LockHelper.doWithReadLock(
-                lock,
-                () -> {
-                    for (int i = 0; i < listeners.size(); i++) {
-                        CamelClusterEventListener listener = listeners.get(i);
+        LockHelper.doWithReadLock(lock, () -> {
+            for (int i = 0; i < listeners.size(); i++) {
+                CamelClusterEventListener listener = listeners.get(i);
 
-                        if (type.isInstance(listener)) {
-                            consumer.accept(type.cast(listener));
-                        }
-                    }
-                });
+                if (type.isInstance(listener)) {
+                    consumer.accept(type.cast(listener));
+                }
+            }
+        });
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -130,19 +128,14 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
 
     protected void fireLeadershipChangedEvent(CamelClusterMember leader) {
         doWithListener(
-                CamelClusterEventListener.Leadership.class,
-                listener -> listener.leadershipChanged(this, leader));
+                CamelClusterEventListener.Leadership.class, listener -> listener.leadershipChanged(this, leader));
     }
 
     protected void fireMemberAddedEvent(CamelClusterMember member) {
-        doWithListener(
-                CamelClusterEventListener.Membership.class,
-                listener -> listener.memberAdded(this, member));
+        doWithListener(CamelClusterEventListener.Membership.class, listener -> listener.memberAdded(this, member));
     }
 
     protected void fireMemberRemovedEvent(CamelClusterMember member) {
-        doWithListener(
-                CamelClusterEventListener.Membership.class,
-                listener -> listener.memberRemoved(this, member));
+        doWithListener(CamelClusterEventListener.Membership.class, listener -> listener.memberRemoved(this, member));
     }
 }

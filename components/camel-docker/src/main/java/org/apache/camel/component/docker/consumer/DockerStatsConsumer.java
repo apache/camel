@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.consumer;
 
 import com.github.dockerjava.api.async.ResultCallbackTemplate;
@@ -56,10 +57,11 @@ public class DockerStatsConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, endpoint.getConfiguration(), null,
-                String.class);
+        String containerId = DockerHelper.getProperty(
+                DockerConstants.DOCKER_CONTAINER_ID, endpoint.getConfiguration(), null, String.class);
 
-        this.statsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).statsCmd(containerId);
+        this.statsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null)
+                .statsCmd(containerId);
         this.statsCmd.exec(new StatsCallback());
 
         super.doStart();

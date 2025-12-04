@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.hamcrest.CoreMatchers.is;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.CoreMatchers.is;
 
 public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
 
@@ -89,11 +90,12 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").multicast(new GroupedExchangeAggregationStrategy()).to("mock:endpointA", "mock:endpointB")
-                        .end().to("mock:result");
-
+                from("direct:start")
+                        .multicast(new GroupedExchangeAggregationStrategy())
+                        .to("mock:endpointA", "mock:endpointB")
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

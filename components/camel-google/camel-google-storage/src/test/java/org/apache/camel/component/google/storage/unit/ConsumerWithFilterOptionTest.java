@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage.unit;
 
 import java.nio.file.Path;
@@ -45,21 +46,17 @@ public class ConsumerWithFilterOptionTest extends GoogleCloudStorageBaseTest {
 
                 String endpoint = "google-storage://myCamelBucket?autoCreateBucket=true";
 
-                from("direct:putObject")
-                        .startupOrder(1)
-                        .to(endpoint)
-                        .to("mock:result");
+                from("direct:putObject").startupOrder(1).to(endpoint).to("mock:result");
 
                 from("google-storage://myCamelBucket?"
-                     + "moveAfterRead=true"
-                     + "&destinationBucket=camelDestinationBucket"
-                     + "&autoCreateBucket=true"
-                     + "&deleteAfterRead=true"
-                     + "&includeBody=true"
-                     + "&filter=.*.csv")
+                                + "moveAfterRead=true"
+                                + "&destinationBucket=camelDestinationBucket"
+                                + "&autoCreateBucket=true"
+                                + "&deleteAfterRead=true"
+                                + "&includeBody=true"
+                                + "&filter=.*.csv")
                         .startupOrder(2)
                         .to("mock:consumedObjects");
-
             }
         };
     }
@@ -81,7 +78,6 @@ public class ConsumerWithFilterOptionTest extends GoogleCloudStorageBaseTest {
         MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
-
     }
 
     @Test
@@ -101,7 +97,6 @@ public class ConsumerWithFilterOptionTest extends GoogleCloudStorageBaseTest {
         MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
-
     }
 
     private void uploadFiles(final String fileNamePrefix, final String extension, final int numberOfFiles) {
@@ -110,7 +105,7 @@ public class ConsumerWithFilterOptionTest extends GoogleCloudStorageBaseTest {
 
             final String filename = String.format("%s_%s.%s", fileNamePrefix, i, extension);
             final String body = String.format("body_%s", i);
-            //upload a file
+            // upload a file
 
             template.send("direct:putObject", exchange -> {
                 exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, filename);
@@ -118,5 +113,4 @@ public class ConsumerWithFilterOptionTest extends GoogleCloudStorageBaseTest {
             });
         }
     }
-
 }

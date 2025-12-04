@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
 
 import com.github.tomakehurst.wiremock.common.HttpsSettings;
@@ -40,16 +41,20 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 public final class WireMockJettyServerFactory extends JettyHttpServerFactory {
     @Override
     public HttpServer buildHttpServer(
-            final Options options, final AdminRequestHandler adminRequestHandler,
+            final Options options,
+            final AdminRequestHandler adminRequestHandler,
             final StubRequestHandler stubRequestHandler) {
 
         return new Jetty11HttpServer(options, adminRequestHandler, stubRequestHandler) {
 
             @Override
             protected ServerConnector createHttpsConnector(
-                    String bindAddress, HttpsSettings httpsSettings, JettySettings jettySettings,
+                    String bindAddress,
+                    HttpsSettings httpsSettings,
+                    JettySettings jettySettings,
                     NetworkTrafficListener listener) {
-                SslContextFactory.Server http2SslContextFactory = SslContexts.buildHttp2SslContextFactory(httpsSettings);
+                SslContextFactory.Server http2SslContextFactory =
+                        SslContexts.buildHttp2SslContextFactory(httpsSettings);
                 http2SslContextFactory.setIncludeCipherSuites("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256");
                 http2SslContextFactory.setProtocol("TLSv1.3");
 
@@ -70,14 +75,15 @@ public final class WireMockJettyServerFactory extends JettyHttpServerFactory {
 
                 int acceptors = jettySettings.getAcceptors().orElse(3);
 
-                NetworkTrafficServerConnector connector = new NetworkTrafficServerConnector(
-                        jettyServer, null, null, null, acceptors, 2, ssl, http);
+                NetworkTrafficServerConnector connector =
+                        new NetworkTrafficServerConnector(jettyServer, null, null, null, acceptors, 2, ssl, http);
 
                 connector.setPort(httpsSettings.port());
                 connector.setNetworkTrafficListener(listener);
                 jettySettings.getAcceptQueueSize().ifPresent(connector::setAcceptQueueSize);
                 jettySettings.getIdleTimeout().ifPresent(connector::setIdleTimeout);
-                connector.setShutdownIdleTimeout(jettySettings.getShutdownIdleTimeout().orElse(200L));
+                connector.setShutdownIdleTimeout(
+                        jettySettings.getShutdownIdleTimeout().orElse(200L));
                 connector.setHost(bindAddress);
 
                 return connector;

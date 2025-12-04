@@ -48,7 +48,8 @@ public class StepFunctions2ProducerHealthCheck extends AbstractHealthCheck {
         }
         try {
             SfnClient client = stepFunctions2Endpoint.getAwsSfnClient();
-            client.listStateMachines(ListStateMachinesRequest.builder().maxResults(1).build());
+            client.listStateMachines(
+                    ListStateMachinesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -67,5 +68,4 @@ public class StepFunctions2ProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

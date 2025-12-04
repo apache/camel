@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -29,14 +33,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 public class AsyncJmsProducerTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     private static String beforeThreadName;
     private static String afterThreadName;
     protected CamelContext context;
@@ -83,15 +85,16 @@ public class AsyncJmsProducerTest extends AbstractJMSTest {
                 from("direct:start")
                         .to("mock:before")
                         .to("log:before")
-                        .process(exchange -> beforeThreadName = Thread.currentThread().getName())
+                        .process(exchange ->
+                                beforeThreadName = Thread.currentThread().getName())
                         .to("activemq:queue:AsyncJmsProducerTest")
-                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
+                        .process(exchange ->
+                                afterThreadName = Thread.currentThread().getName())
                         .to("log:after")
                         .to("mock:after")
                         .to("mock:result");
 
-                from("activemq:queue:AsyncJmsProducerTest")
-                        .transform(constant("Bye Camel"));
+                from("activemq:queue:AsyncJmsProducerTest").transform(constant("Bye Camel"));
             }
         };
     }

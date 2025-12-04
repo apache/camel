@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
 
@@ -48,7 +49,10 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
                         .endpointProperty("throwExceptionOnFailure", "false");
 
                 from("direct:start").to("rest:get:users/{id}/basic");
@@ -68,5 +72,4 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
             }
         };
     }
-
 }

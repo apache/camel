@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.language;
 
 import org.apache.camel.spi.Metadata;
@@ -29,24 +30,34 @@ public interface WatsonLanguageConstants {
     // Natural Language Understanding headers
     @Metadata(description = "The text to analyze", javaType = "String")
     String TEXT = "CamelIBMWatsonLanguageText";
+
     @Metadata(description = "The URL to analyze", javaType = "String")
     String URL = "CamelIBMWatsonLanguageUrl";
+
     @Metadata(description = "Enable sentiment analysis", javaType = "Boolean")
     String ANALYZE_SENTIMENT = "CamelIBMWatsonLanguageAnalyzeSentiment";
+
     @Metadata(description = "Enable emotion analysis", javaType = "Boolean")
     String ANALYZE_EMOTION = "CamelIBMWatsonLanguageAnalyzeEmotion";
+
     @Metadata(description = "Enable entity extraction", javaType = "Boolean")
     String ANALYZE_ENTITIES = "CamelIBMWatsonLanguageAnalyzeEntities";
+
     @Metadata(description = "Enable keyword extraction", javaType = "Boolean")
     String ANALYZE_KEYWORDS = "CamelIBMWatsonLanguageAnalyzeKeywords";
+
     @Metadata(description = "Enable concept extraction", javaType = "Boolean")
     String ANALYZE_CONCEPTS = "CamelIBMWatsonLanguageAnalyzeConcepts";
+
     @Metadata(description = "Enable category classification", javaType = "Boolean")
     String ANALYZE_CATEGORIES = "CamelIBMWatsonLanguageAnalyzeCategories";
+
     @Metadata(description = "The language of the text", javaType = "String")
     String LANGUAGE = "CamelIBMWatsonLanguageLanguage";
+
     @Metadata(description = "The sentiment score", javaType = "Double")
     String SENTIMENT_SCORE = "CamelIBMWatsonLanguageSentimentScore";
+
     @Metadata(description = "The sentiment label (positive, negative, neutral)", javaType = "String")
     String SENTIMENT_LABEL = "CamelIBMWatsonLanguageSentimentLabel";
 }

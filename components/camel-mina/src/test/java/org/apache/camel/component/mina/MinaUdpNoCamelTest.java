@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -40,9 +44,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinaUdpNoCamelTest {
 
@@ -73,8 +74,7 @@ public class MinaUdpNoCamelTest {
             client.sendNoMina("Hello Mina " + i + System.lineSeparator());
         }
 
-        await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(222, server.numMessagesReceived));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(222, server.numMessagesReceived));
     }
 
     /*
@@ -96,12 +96,10 @@ public class MinaUdpNoCamelTest {
             acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
             acceptor.setHandler(this);
-
         }
 
         public void listen() throws IOException {
             acceptor.bind(new InetSocketAddress(host, port));
-
         }
 
         public void close() {
@@ -128,6 +126,7 @@ public class MinaUdpNoCamelTest {
          * @param args The command line args.
          */
         private final NioDatagramConnector connector;
+
         private DatagramSocket socket;
         private InetAddress address;
         private int localPort;
@@ -137,7 +136,6 @@ public class MinaUdpNoCamelTest {
             connector = new NioDatagramConnector();
             connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
             connector.setHandler(this);
-
         }
 
         public void connect(String host, int port) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
 
 import java.util.Date;
@@ -29,29 +30,41 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
-@Metadata(label = "bean",
-          description = "A basic RoutePolicy that can be used to start/stop routes using fixed intervals.",
-          annotations = { "interfaceName=org.apache.camel.spi.RoutePolicy" })
+@Metadata(
+        label = "bean",
+        description = "A basic RoutePolicy that can be used to start/stop routes using fixed intervals.",
+        annotations = {"interfaceName=org.apache.camel.spi.RoutePolicy"})
 @Configurer(metadataOnly = true)
 public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
     private Date routeStartDate;
+
     @Metadata(description = "Maximum number of times the route should be started")
     private int routeStartRepeatCount;
+
     @Metadata(description = "Interval (in millis) how often the route should be started")
     private long routeStartRepeatInterval;
+
     private Date routeStopDate;
+
     @Metadata(description = "Maximum number of times the route should be stopped")
     private int routeStopRepeatCount;
+
     @Metadata(description = "Interval (in millis) how often the route should be stopped")
     private long routeStopRepeatInterval;
+
     private Date routeSuspendDate;
+
     @Metadata(label = "advanced", description = "Maximum number of times the route should be suspended")
     private int routeSuspendRepeatCount;
+
     @Metadata(label = "advanced", description = "Interval (in millis) how often the route should be suspended")
     private long routeSuspendRepeatInterval;
+
     private Date routeResumeDate;
+
     @Metadata(label = "advanced", description = "Maximum number of times the route should be resumed")
     private int routeResumeRepeatCount;
+
     @Metadata(label = "advanced", description = "Interval (in millis) how often the route should be resumed")
     private long routeResumeRepeatInterval;
 
@@ -81,11 +94,12 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
             }
 
             // validate time options has been configured
-            if (getRouteStartDate() == null && getRouteStopDate() == null && getRouteSuspendDate() == null
+            if (getRouteStartDate() == null
+                    && getRouteStopDate() == null
+                    && getRouteSuspendDate() == null
                     && getRouteResumeDate() == null) {
-                throw new IllegalArgumentException(
-                        "Scheduled Route Policy for route " + route.getId()
-                                                   + " has no start/stop/suspend/resume times specified");
+                throw new IllegalArgumentException("Scheduled Route Policy for route " + route.getId()
+                        + " has no start/stop/suspend/resume times specified");
             }
 
             registerRouteToScheduledRouteDetails(route);
@@ -241,5 +255,4 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
     public long getRouteResumeRepeatInterval() {
         return routeResumeRepeatInterval;
     }
-
 }

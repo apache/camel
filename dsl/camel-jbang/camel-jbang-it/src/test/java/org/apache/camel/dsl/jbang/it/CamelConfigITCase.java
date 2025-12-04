@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
@@ -36,10 +37,9 @@ public class CamelConfigITCase extends JBangTestSupport {
         execute("config set gav=com.foo:acme:1.0-SNAPSHOT");
         execute("config set runtime=quarkus");
         execute("config set directory=" + mountPoint());
-        checkCommandOutputs("config list",
-                "gav = com.foo:acme:1.0-SNAPSHOT\n" +
-                                           "runtime = quarkus\n" +
-                                           "directory = " + mountPoint());
+        checkCommandOutputs(
+                "config list",
+                "gav = com.foo:acme:1.0-SNAPSHOT\n" + "runtime = quarkus\n" + "directory = " + mountPoint());
     }
 
     @Test
@@ -47,10 +47,9 @@ public class CamelConfigITCase extends JBangTestSupport {
         execute("config set gav=com.foo:acme:1.0-SNAPSHOT");
         execute("config set runtime=quarkus");
         execute("config set directory=" + mountPoint());
-        checkCommandOutputs("config list",
-                "gav = com.foo:acme:1.0-SNAPSHOT\n" +
-                                           "runtime = quarkus\n" +
-                                           "directory = " + mountPoint());
+        checkCommandOutputs(
+                "config list",
+                "gav = com.foo:acme:1.0-SNAPSHOT\n" + "runtime = quarkus\n" + "directory = " + mountPoint());
         execute("config unset runtime");
         checkCommandDoesNotOutput("config list", "runtime = quarkus");
     }

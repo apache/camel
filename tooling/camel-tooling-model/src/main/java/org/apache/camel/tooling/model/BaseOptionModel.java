@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public abstract class BaseOptionModel {
     protected String configurationClass;
     protected String configurationField;
     protected String description;
-    protected String nestedType;  // optional and currently only used by configurer
+    protected String nestedType; // optional and currently only used by configurer
     protected boolean supportFileReference;
     protected boolean largeInput;
     protected String inputLanguage;
@@ -354,7 +355,9 @@ public abstract class BaseOptionModel {
         if ("boolean".equals(type) || "java.lang.Boolean".equals(javaType)) {
             return defaultValue != null && "true".equalsIgnoreCase(defaultValue.toString());
         }
-        if (defaultValue != null && "integer".equals(type) && !defaultValue.toString().isBlank()) {
+        if (defaultValue != null
+                && "integer".equals(type)
+                && !defaultValue.toString().isBlank()) {
             return Long.parseLong(defaultValue.toString());
         }
         return defaultValue;

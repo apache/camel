@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple.joor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -40,9 +41,10 @@ public class CSimpleIncHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("myCounter", csimple("${header.myCounter}++")).to("mock:result");
+                from("direct:start")
+                        .setHeader("myCounter", csimple("${header.myCounter}++"))
+                        .to("mock:result");
             }
         };
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Set;
@@ -29,11 +35,6 @@ import org.apache.camel.impl.DefaultDumpRoutesStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
@@ -66,9 +67,9 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String mbeanName
-                = String.format("org.apache.camel:context=" + context.getManagementName() + ",name=%s,type=services",
-                        DefaultDumpRoutesStrategy.class.getSimpleName());
+        String mbeanName = String.format(
+                "org.apache.camel:context=" + context.getManagementName() + ",name=%s,type=services",
+                DefaultDumpRoutesStrategy.class.getSimpleName());
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName(mbeanName), null);
         assertEquals(1, set.size());
         ObjectName on = set.iterator().next();
@@ -94,11 +95,8 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute")
-                        .log("Got ${body}")
-                        .to("mock:result");
+                from("direct:start").routeId("myRoute").log("Got ${body}").to("mock:result");
             }
         };
     }
-
 }

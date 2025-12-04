@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.camel.Exchange.SPLIT_COMPLETE;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -25,10 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.junit.jupiter.api.Test;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.camel.Exchange.SPLIT_COMPLETE;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
 
@@ -63,13 +64,16 @@ public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
             public void configure() {
 
                 from("direct:start")
-                        .split().tokenize("\n").streaming()
+                        .split()
+                        .tokenize("\n")
+                        .streaming()
                         .to("log:input?groupSize=100")
                         .process(e -> {
                             if (e.getProperty(Exchange.SPLIT_INDEX, 0, int.class) % 1000 == 0) {
-                                int frames = (int) Stream.of(Thread.currentThread().getStackTrace())
-                                        .filter(st -> !st.getClassName().startsWith("org.junit."))
-                                        .count();
+                                int frames =
+                                        (int) Stream.of(Thread.currentThread().getStackTrace())
+                                                .filter(st -> !st.getClassName().startsWith("org.junit."))
+                                                .count();
                                 count.set(frames);
                                 log.info("Stackframe: {}", frames);
                             }

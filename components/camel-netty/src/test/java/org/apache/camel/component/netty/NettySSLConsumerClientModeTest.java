@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.io.File;
@@ -95,7 +96,6 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         } finally {
             shutdownServer();
         }
-
     }
 
     @Override
@@ -110,7 +110,9 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
                                 String body = exchange.getIn().getBody(String.class);
                                 exchange.getMessage().setBody("Bye " + body);
                             }
-                        }).to("mock:receive").noAutoStartup();
+                        })
+                        .to("mock:receive")
+                        .noAutoStartup();
             }
         };
     }
@@ -131,11 +133,13 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
             workerGroup = new NioEventLoopGroup();
 
             bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childHandler(new ServerInitializer());
+            bootstrap
+                    .group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ServerInitializer());
 
             ChannelFuture cf = bootstrap.bind(port).sync();
             channel = cf.channel();
-
         }
 
         public void shutdown() {
@@ -143,7 +147,6 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-
     }
 
     private static class ServerHandler extends SimpleChannelInboundHandler<String> {
@@ -198,8 +201,12 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
                 sslContext = SSLContext.getInstance("TLS");
 
                 sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-            } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException
-                     | UnrecoverableKeyException | KeyManagementException e) {
+            } catch (NoSuchAlgorithmException
+                    | KeyStoreException
+                    | CertificateException
+                    | IOException
+                    | UnrecoverableKeyException
+                    | KeyManagementException e) {
                 LOG.warn("Failed to initialize server: {}", e.getMessage(), e);
             }
         }
@@ -224,5 +231,4 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
             pipeline.addLast("handler", SERVERHANDLER);
         }
     }
-
 }

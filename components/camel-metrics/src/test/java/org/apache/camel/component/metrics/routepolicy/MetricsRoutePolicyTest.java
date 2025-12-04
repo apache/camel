@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics.routepolicy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.CamelContext;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MetricsRoutePolicyTest extends CamelTestSupport {
 
@@ -64,11 +65,9 @@ public class MetricsRoutePolicyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo")
-                        .to("mock:result");
+                from("seda:foo").routeId("foo").to("mock:result");
 
-                from("seda:bar").routeId("bar")
-                        .to("mock:result");
+                from("seda:bar").routeId("bar").to("mock:result");
             }
         };
     }

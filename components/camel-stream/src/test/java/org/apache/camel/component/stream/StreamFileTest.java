@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
+
+import static org.apache.camel.component.stream.StreamGroupLinesTest.LS;
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,10 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.stream.StreamGroupLinesTest.LS;
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * Unit test for stream file
@@ -89,10 +90,15 @@ public class StreamFileTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("produce")
+                from("direct:start")
+                        .routeId("produce")
                         .to("stream:file?fileName=target/stream/StreamFileTest.txt&autoCloseCount=2");
-                from("file://target/stream?fileName=StreamFileTest.txt&noop=true").routeId("consume").autoStartup(false)
-                        .split().tokenize(LS).to("mock:result");
+                from("file://target/stream?fileName=StreamFileTest.txt&noop=true")
+                        .routeId("consume")
+                        .autoStartup(false)
+                        .split()
+                        .tokenize(LS)
+                        .to("mock:result");
             }
         });
         context.start();

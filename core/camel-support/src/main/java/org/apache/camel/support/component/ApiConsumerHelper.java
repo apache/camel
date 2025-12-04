@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.lang.reflect.Array;
@@ -33,8 +34,7 @@ public final class ApiConsumerHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApiConsumerHelper.class);
 
-    private ApiConsumerHelper() {
-    }
+    private ApiConsumerHelper() {}
 
     /**
      * Utility method to find matching API Method for supplied endpoint's configuration properties.
@@ -60,16 +60,20 @@ public final class ApiConsumerHelper {
 
         if (filteredMethods.isEmpty()) {
             ApiMethodHelper<? extends ApiMethod> methodHelper = endpoint.getMethodHelper();
-            throw new IllegalArgumentException(
-                    String.format("Missing properties for %s/%s, need one or more from %s",
-                            endpoint.getApiName().getName(), endpoint.getMethodName(),
-                            methodHelper.getMissingProperties(endpoint.getMethodName(), argNames)));
+            throw new IllegalArgumentException(String.format(
+                    "Missing properties for %s/%s, need one or more from %s",
+                    endpoint.getApiName().getName(),
+                    endpoint.getMethodName(),
+                    methodHelper.getMissingProperties(endpoint.getMethodName(), argNames)));
         } else if (filteredMethods.size() == 1) {
             // single match
             result = filteredMethods.get(0);
         } else {
             result = ApiMethodHelper.getHighestPriorityMethod(filteredMethods);
-            LOG.warn("Using highest priority operation {} from operations {} for endpoint {}", result, filteredMethods,
+            LOG.warn(
+                    "Using highest priority operation {} from operations {} for endpoint {}",
+                    result,
+                    filteredMethods,
                     endpoint.getEndpointUri());
         }
 
@@ -89,8 +93,7 @@ public final class ApiConsumerHelper {
      * @throws Exception   on error.
      */
     public static <T extends DefaultConsumer & ResultInterceptor> int getResultsProcessed(
-            T consumer, Object result, boolean splitResult)
-            throws Exception {
+            T consumer, Object result, boolean splitResult) throws Exception {
 
         // process result according to type
         if (result != null && splitResult) {
@@ -135,9 +138,8 @@ public final class ApiConsumerHelper {
         return 1; // number of messages polled
     }
 
-    private static <
-            T extends DefaultConsumer & ResultInterceptor> void processResult(T consumer, Object methodResult, Object result)
-                    throws Exception {
+    private static <T extends DefaultConsumer & ResultInterceptor> void processResult(
+            T consumer, Object methodResult, Object result) throws Exception {
 
         Exchange exchange = consumer.createExchange(false);
         try {

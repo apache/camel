@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pubnub;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.pubnub;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
 public class PubNubSubscriberTest extends PubNubTestBase {
 
@@ -33,11 +34,13 @@ public class PubNubSubscriberTest extends PubNubTestBase {
 
     @Test
     public void testPubSubMessageSubscribe() throws Exception {
-        stubFor(get(urlPathEqualTo("/v2/subscribe/mySubscribeKey/mychannel/0"))
-                .willReturn(aResponse()
-                        .withBody(
-                                "{\"t\":{\"t\":\"14607577960932487\",\"r\":1},\"m\":[{\"a\":\"4\",\"f\":0,\"i\":\"Publisher-A\",\"p\":{\"t\":\"14607577960925503\",\"r\":1},\"o\":"
-                                  + "{\"t\":\"14737141991877032\",\"r\":2},\"k\":\"sub-c-mykey\",\"c\":\"mychannel\",\"d\":{\"text\":\"Message\"},\"b\":\"coolChannel\"}]}")));
+        stubFor(
+                get(urlPathEqualTo("/v2/subscribe/mySubscribeKey/mychannel/0"))
+                        .willReturn(
+                                aResponse()
+                                        .withBody(
+                                                "{\"t\":{\"t\":\"14607577960932487\",\"r\":1},\"m\":[{\"a\":\"4\",\"f\":0,\"i\":\"Publisher-A\",\"p\":{\"t\":\"14607577960925503\",\"r\":1},\"o\":"
+                                                        + "{\"t\":\"14737141991877032\",\"r\":2},\"k\":\"sub-c-mykey\",\"c\":\"mychannel\",\"d\":{\"text\":\"Message\"},\"b\":\"coolChannel\"}]}")));
         stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/mychannel/heartbeat"))
                 .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"service\": \"Presence\"}")));
 
@@ -51,10 +54,11 @@ public class PubNubSubscriberTest extends PubNubTestBase {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pubnub:mychannel?pubnub=#pubnub").id("subroute").autoStartup(false)
+                from("pubnub:mychannel?pubnub=#pubnub")
+                        .id("subroute")
+                        .autoStartup(false)
                         .to("mock:result");
             }
         };
     }
-
 }

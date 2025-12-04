@@ -14,22 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedMulticastMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "If enabled then the aggregate method on AggregationStrategy can be called concurrently.")
+    @ManagedAttribute(
+            description = "If enabled then the aggregate method on AggregationStrategy can be called concurrently.")
     Boolean isParallelAggregate();
 
     @ManagedAttribute(description = "If enabled then sending messages to the multicasts occurs concurrently.")
     Boolean isParallelProcessing();
 
-    @ManagedAttribute(description = "If enabled then Camel will process replies out-of-order, eg in the order they come back.")
+    @ManagedAttribute(
+            description = "If enabled then Camel will process replies out-of-order, eg in the order they come back.")
     Boolean isStreaming();
 
-    @ManagedAttribute(description = "Will now stop further processing if an exception or failure occurred during processing.")
+    @ManagedAttribute(
+            description = "Will now stop further processing if an exception or failure occurred during processing.")
     Boolean isStopOnException();
 
     @ManagedAttribute(description = "Shares the UnitOfWork with the parent and the resource exchange")
@@ -37,5 +41,4 @@ public interface ManagedMulticastMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "The total timeout specified in millis, when using parallel processing.")
     Long getTimeout();
-
 }

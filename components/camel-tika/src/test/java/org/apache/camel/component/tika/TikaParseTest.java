@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tika;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,13 +42,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.txt.UniversalEncodingDetector;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class TikaParseTest extends CamelTestSupport {
 
@@ -174,10 +175,12 @@ public class TikaParseTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start").to("tika:parse").to("mock:result");
-                from("direct:start2").to("tika:parse?tikaConfigUri=src/test/resources/tika-empty.xml")
+                from("direct:start2")
+                        .to("tika:parse?tikaConfigUri=src/test/resources/tika-empty.xml")
                         .to("mock:result");
                 from("direct:start3").to("tika:parse?tikaConfig=#testConfig").to("mock:result");
-                from("direct:start4").to("tika:parse?tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
+                from("direct:start4")
+                        .to("tika:parse?tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
                         .to("mock:result");
             }
         };

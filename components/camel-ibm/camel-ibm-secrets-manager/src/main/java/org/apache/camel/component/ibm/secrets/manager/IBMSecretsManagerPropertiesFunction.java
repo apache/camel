@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.secrets.manager;
 
 import java.util.HashSet;
@@ -67,7 +68,8 @@ import org.apache.camel.vault.IBMSecretsManagerVaultConfiguration;
  * as default value, if the conditions above were all met.
  */
 @org.apache.camel.spi.annotations.PropertiesFunction("ibm")
-public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
+public class IBMSecretsManagerPropertiesFunction extends ServiceSupport
+        implements PropertiesFunction, CamelContextAware {
 
     private static final String CAMEL_VAULT_IBM_TOKEN_ENV = "CAMEL_VAULT_IBM_TOKEN";
     private static final String CAMEL_VAULT_IBM_SERVICE_URL_ENV = "CAMEL_VAULT_IBM_SERVICE_URL";
@@ -94,15 +96,14 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
         String token = System.getenv(CAMEL_VAULT_IBM_TOKEN_ENV);
         String serviceUrl = System.getenv(CAMEL_VAULT_IBM_SERVICE_URL_ENV);
         if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(serviceUrl)) {
-            IBMSecretsManagerVaultConfiguration ibmVaultConfiguration
-                    = getCamelContext().getVaultConfiguration().ibmSecretsManager();
+            IBMSecretsManagerVaultConfiguration ibmVaultConfiguration =
+                    getCamelContext().getVaultConfiguration().ibmSecretsManager();
             if (ObjectHelper.isNotEmpty(ibmVaultConfiguration)) {
                 token = ibmVaultConfiguration.getToken();
                 serviceUrl = ibmVaultConfiguration.getServiceUrl();
             }
-            IamAuthenticator iamAuthenticator = new IamAuthenticator.Builder()
-                    .apikey(token)
-                    .build();
+            IamAuthenticator iamAuthenticator =
+                    new IamAuthenticator.Builder().apikey(token).build();
             client = new SecretsManager("Camel Secrets Manager Service for Properties", iamAuthenticator);
             client.setServiceUrl(serviceUrl);
         } else {
@@ -189,8 +190,7 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
         return returnValue;
     }
 
-    private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version) {
+    private String getSecretFromSource(String key, String subkey, String defaultValue, String version) {
         // capture name of secret
         secrets.add(key);
         String returnValue = "";
@@ -201,7 +201,8 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
                 GetSecretByNameTypeOptions.Builder secretRequestBuilder = new GetSecretByNameTypeOptions.Builder();
                 secretRequestBuilder.secretType(Secret.SecretType.KV).name(key);
                 secretRequestBuilder.secretGroupName(secretGroup);
-                Response<Secret> response = client.getSecretByNameType(secretRequestBuilder.build()).execute();
+                Response<Secret> response =
+                        client.getSecretByNameType(secretRequestBuilder.build()).execute();
                 data = response.getResult().getData();
                 if (ObjectHelper.isNotEmpty(version)) {
                     GetSecretVersionOptions getSecretVersionOptions = new GetSecretVersionOptions.Builder()
@@ -209,7 +210,8 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
                             .id(version)
                             .build();
 
-                    Response<SecretVersion> secVersion = client.getSecretVersion(getSecretVersionOptions).execute();
+                    Response<SecretVersion> secVersion =
+                            client.getSecretVersion(getSecretVersionOptions).execute();
                     data = secVersion.getResult().getData();
                 }
                 if (ObjectHelper.isNotEmpty(data)) {
@@ -227,7 +229,8 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
                 GetSecretByNameTypeOptions.Builder secretRequestBuilder = new GetSecretByNameTypeOptions.Builder();
                 secretRequestBuilder.secretType(Secret.SecretType.ARBITRARY).name(key);
                 secretRequestBuilder.secretGroupName(secretGroup);
-                Response<Secret> response = client.getSecretByNameType(secretRequestBuilder.build()).execute();
+                Response<Secret> response =
+                        client.getSecretByNameType(secretRequestBuilder.build()).execute();
                 String payload = response.getResult().getPayload();
                 if (ObjectHelper.isNotEmpty(version)) {
                     GetSecretVersionOptions getSecretVersionOptions = new GetSecretVersionOptions.Builder()
@@ -235,7 +238,8 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
                             .id(version)
                             .build();
 
-                    Response<SecretVersion> secVersion = client.getSecretVersion(getSecretVersionOptions).execute();
+                    Response<SecretVersion> secVersion =
+                            client.getSecretVersion(getSecretVersionOptions).execute();
                     payload = secVersion.getResult().getPayload();
                 }
                 if (ObjectHelper.isNotEmpty(payload)) {

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Map;
 
@@ -23,9 +27,6 @@ import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class GetRegistryAsTypeTest {
 
@@ -58,5 +59,4 @@ public class GetRegistryAsTypeTest {
 
         context.stop();
     }
-
 }

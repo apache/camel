@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.config;
 
 import io.debezium.config.Field;
@@ -29,8 +30,11 @@ public class ConnectorConfigField {
     private final boolean isRequired;
     private final Object overrideDefaultValue;
 
-    public ConnectorConfigField(final ConfigDef.ConfigKey configKey, final boolean isDeprecated, final boolean isRequired,
-                                final Object overrideDefaultValue) {
+    public ConnectorConfigField(
+            final ConfigDef.ConfigKey configKey,
+            final boolean isDeprecated,
+            final boolean isRequired,
+            final Object overrideDefaultValue) {
         ObjectHelper.notNull(configKey, "configKey");
         ObjectHelper.notNull(isDeprecated, "isDeprecated");
         ObjectHelper.notNull(isRequired, "isRequired");
@@ -107,7 +111,8 @@ public class ConnectorConfigField {
     }
 
     public boolean isTimeField() {
-        // since we don't really have an info if the field is a time or not, we use a hack that if the field name ends with `ms` and of type
+        // since we don't really have an info if the field is a time or not, we use a hack that if the field name ends
+        // with `ms` and of type
         // int or long. Not pretty but is the only feasible workaround here.
         return isMillSecondsInTheFieldName(fieldDef.name)
                 && (fieldDef.type == ConfigDef.Type.INT || fieldDef.type == ConfigDef.Type.LONG);
@@ -164,7 +169,8 @@ public class ConnectorConfigField {
         if (fieldDef.type() == ConfigDef.Type.LIST
                 || fieldDef.type() == ConfigDef.Type.CLASS && defaultValue instanceof Class) {
             return String.format("\"%s\"", ConfigDef.convertToString(defaultValue, fieldDef.type()));
-        } else if (field.type() == ConfigDef.Type.STRING || field.type() == ConfigDef.Type.PASSWORD
+        } else if (field.type() == ConfigDef.Type.STRING
+                || field.type() == ConfigDef.Type.PASSWORD
                 || field.type() == ConfigDef.Type.CLASS) {
             return String.format("\"%s\"", defaultValue);
         }

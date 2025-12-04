@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Files;
@@ -37,39 +38,49 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "route-controller", description = "List status of route controller",
-         sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "route-controller",
+        description = "List status of route controller",
+        sortOptions = false,
+        showDefaultValues = true)
 public class RouteControllerAction extends ActionWatchCommand {
 
     public static class IdStateCompletionCandidates implements Iterable<String> {
 
-        public IdStateCompletionCandidates() {
-        }
+        public IdStateCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("id", "state").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = IdStateCompletionCandidates.class,
-                        description = "Sort by id, or state", defaultValue = "id")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = IdStateCompletionCandidates.class,
+            description = "Sort by id, or state",
+            defaultValue = "id")
     String sort;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "Include controller configuration details", defaultValue = "true")
+    @CommandLine.Option(
+            names = {"--header"},
+            description = "Include controller configuration details",
+            defaultValue = "true")
     boolean header;
 
-    @CommandLine.Option(names = { "--trace" },
-                        description = "Include stack-traces in error messages", defaultValue = "true")
+    @CommandLine.Option(
+            names = {"--trace"},
+            description = "Include stack-traces in error messages",
+            defaultValue = "true")
     boolean trace;
 
-    @CommandLine.Option(names = { "--depth" },
-                        description = "Max depth of stack-trace", defaultValue = "1")
+    @CommandLine.Option(
+            names = {"--depth"},
+            description = "Max depth of stack-trace",
+            defaultValue = "1")
     int depth;
 
     private volatile long pid;
@@ -86,8 +97,9 @@ public class RouteControllerAction extends ActionWatchCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -197,22 +209,53 @@ public class RouteControllerAction extends ActionWatchCommand {
     }
 
     protected void dumpTable(List<Row> rows, boolean supervised) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.routeId),
-                new Column().header("URI").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.uri),
-                new Column().header("STATE").headerAlign(HorizontalAlign.RIGHT).with(this::getSupervising),
-                new Column().visible(supervised).header("ATTEMPT").headerAlign(HorizontalAlign.CENTER)
-                        .dataAlign(HorizontalAlign.CENTER).with(this::getAttempts),
-                new Column().visible(supervised).header("ELAPSED").headerAlign(HorizontalAlign.CENTER).with(this::getElapsed),
-                new Column().visible(supervised).header("LAST-AGO").headerAlign(HorizontalAlign.CENTER).with(this::getLast),
-                new Column().visible(supervised).header("ERROR-MESSAGE").headerAlign(HorizontalAlign.LEFT)
-                        .dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(80, OverflowBehaviour.ELLIPSIS_RIGHT).with(r -> r.error))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("ID")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.routeId),
+                                new Column()
+                                        .header("URI")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.uri),
+                                new Column()
+                                        .header("STATE")
+                                        .headerAlign(HorizontalAlign.RIGHT)
+                                        .with(this::getSupervising),
+                                new Column()
+                                        .visible(supervised)
+                                        .header("ATTEMPT")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .dataAlign(HorizontalAlign.CENTER)
+                                        .with(this::getAttempts),
+                                new Column()
+                                        .visible(supervised)
+                                        .header("ELAPSED")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(this::getElapsed),
+                                new Column()
+                                        .visible(supervised)
+                                        .header("LAST-AGO")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(this::getLast),
+                                new Column()
+                                        .visible(supervised)
+                                        .header("ERROR-MESSAGE")
+                                        .headerAlign(HorizontalAlign.LEFT)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(80, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.error))));
 
         if (supervised && trace) {
-            rows = rows.stream().filter(r -> r.error != null && !r.error.isEmpty()).collect(Collectors.toList());
+            rows = rows.stream()
+                    .filter(r -> r.error != null && !r.error.isEmpty())
+                    .collect(Collectors.toList());
             if (!rows.isEmpty()) {
                 for (Row row : rows) {
                     printer().println("\n");
@@ -300,5 +343,4 @@ public class RouteControllerAction extends ActionWatchCommand {
         String error;
         List<String> stackTrace;
     }
-
 }

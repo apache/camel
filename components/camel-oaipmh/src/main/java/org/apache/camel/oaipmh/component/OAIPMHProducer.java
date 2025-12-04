@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh.component;
 
 import java.net.URI;
@@ -77,11 +78,11 @@ public class OAIPMHProducer extends DefaultProducer {
         checkAndSetConfigs(msg, OAIPMHConstants.IGNORE_SSL_WARNINGS, endpoint::setIgnoreSSLWarnings, Boolean.class);
     }
 
-    private <T> void checkAndSetConfigs(final Message message, final String key, final Consumer<T> fn, final Class<T> type) {
+    private <T> void checkAndSetConfigs(
+            final Message message, final String key, final Consumer<T> fn, final Class<T> type) {
         final T header = message.getHeader(key, type);
         if (!ObjectHelper.isEmpty(header)) {
             fn.accept(header);
         }
     }
-
 }

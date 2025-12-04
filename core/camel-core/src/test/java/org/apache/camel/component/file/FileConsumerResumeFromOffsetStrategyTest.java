@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -39,8 +40,9 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FileConsumerResumeFromOffsetStrategyTest.class);
 
@@ -65,22 +67,19 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         }
     }
 
-    private static class FailResumeAdapter
-            implements FileResumeAdapter, DirectoryEntriesResumeAdapter {
+    private static class FailResumeAdapter implements FileResumeAdapter, DirectoryEntriesResumeAdapter {
 
         @Override
-        public void resume() {
-
-        }
+        public void resume() {}
 
         @Override
         public boolean resume(File file) {
             return false;
         }
-
     }
 
-    private static final TransientResumeStrategy FAIL_RESUME_STRATEGY = new TransientResumeStrategy(new FailResumeAdapter());
+    private static final TransientResumeStrategy FAIL_RESUME_STRATEGY =
+            new TransientResumeStrategy(new FailResumeAdapter());
 
     @DisplayName("Tests whether it can resume from an offset")
     @Test
@@ -105,7 +104,8 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         mock.expectedBodiesReceivedInAnyOrder("34567890");
         mock.expectedMessageCount(2);
 
-        template.sendBodyAndHeader(fileUri("resumeMissingOffset"), "01234567890", Exchange.FILE_NAME, "resume-from-offset.txt");
+        template.sendBodyAndHeader(
+                fileUri("resumeMissingOffset"), "01234567890", Exchange.FILE_NAME, "resume-from-offset.txt");
 
         MockEndpoint.assertWait(2, TimeUnit.SECONDS, mock);
 
@@ -119,7 +119,10 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("01234567890");
 
-        template.sendBodyAndHeader(fileUri("resumeMissingOffsetIntermittent"), "01234567890", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                fileUri("resumeMissingOffsetIntermittent"),
+                "01234567890",
+                Exchange.FILE_NAME,
                 "resume-from-offset.txt");
 
         assertMockEndpointsSatisfied();
@@ -151,25 +154,30 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
 
                 from(fileUri("resumeOff?noop=true&recursive=true"))
                         .resumable("myResumeStrategy")
-                        .setHeader(Exchange.OFFSET,
-                                constant(Resumables.of("resume-none.txt", 3)))
+                        .setHeader(Exchange.OFFSET, constant(Resumables.of("resume-none.txt", 3)))
                         .log("${body}")
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
 
                 from(fileUri("resumeMissingOffset?noop=true&recursive=true"))
-                        .resumable().resumeStrategy("resumeNotToBeCalledStrategy")
+                        .resumable()
+                        .resumeStrategy("resumeNotToBeCalledStrategy")
                         .log("${body}")
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
 
                 from(fileUri("resumeMissingOffsetIntermittent?noop=true&recursive=true"))
-                        .resumable().resumeStrategy("resumeNotToBeCalledStrategy").intermittent(true)
+                        .resumable()
+                        .resumeStrategy("resumeNotToBeCalledStrategy")
+                        .intermittent(true)
                         .log("${body}")
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
 
                 from(fileUri("resumeNone?noop=true&recursive=true"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
-
 }

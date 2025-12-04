@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,9 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link GoogleMailConfiguration}.
  */
@@ -36,10 +37,11 @@ public class GmailConfigurationTest extends AbstractGoogleMailTestSupport {
     // userid of the currently authenticated user
     public static final String CURRENT_USERID = "me";
     private static final Logger LOG = LoggerFactory.getLogger(GmailConfigurationTest.class);
-    private static final String PATH_PREFIX
-            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
-    private static final String TEST_URI
-            = "google-mail://" + PATH_PREFIX + "/send?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
+    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection()
+            .getApiName(GmailUsersMessagesApiMethod.class)
+            .getName();
+    private static final String TEST_URI = "google-mail://" + PATH_PREFIX
+            + "/send?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

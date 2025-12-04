@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.holder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.xml.ws.Holder;
 
@@ -25,14 +28,12 @@ import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfHolderConsumerTest extends CamelTestSupport {
-    protected static final String ADDRESS = "http://localhost:"
-                                            + CXFTestSupport.getPort1() + "/CxfHolderConsumerTest/test";
+    protected static final String ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/CxfHolderConsumerTest/test";
     protected static final String CXF_ENDPOINT_URI = "cxf://" + ADDRESS
-                                                     + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint"
-                                                     + "&loggingFeatureEnabled=true";
+            + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint"
+            + "&loggingFeatureEnabled=true";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -78,7 +79,5 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
         String result = client.mySecureOrder(1, header);
         assertEquals("Ordered ammount 1", result, "Get a wrong order result");
         assertEquals("secureParts", header.value, "Get a wrong parts");
-
     }
-
 }

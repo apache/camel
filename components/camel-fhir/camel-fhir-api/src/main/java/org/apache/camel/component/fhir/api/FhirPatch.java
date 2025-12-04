@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.Map;
@@ -97,7 +98,10 @@ public class FhirPatch {
      * @return                 the {@link MethodOutcome}
      */
     public MethodOutcome patchById(
-            String patchBody, String stringId, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
+            String patchBody,
+            String stringId,
+            PreferReturnEnum preferReturn,
+            Map<ExtraParameters, Object> extraParameters) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).withId(stringId);
         if (preferReturn != null) {
             patchExecutable.prefer(preferReturn);
@@ -105,5 +109,4 @@ public class FhirPatch {
         ExtraParameters.process(extraParameters, patchExecutable);
         return patchExecutable.execute();
     }
-
 }

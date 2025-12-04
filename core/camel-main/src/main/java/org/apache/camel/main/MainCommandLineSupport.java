@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.ArrayList;
@@ -44,8 +45,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
         super(configurationClasses);
     }
 
-    public MainCommandLineSupport() {
-    }
+    public MainCommandLineSupport() {}
 
     public Properties getArgumentProperties() {
         return argumentProperties;
@@ -94,47 +94,55 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 completed();
             }
         });
-        addOption(new ParameterOption(
-                "r", "routers",
-                "Sets the router builder classes which will be loaded while starting the camel context",
-                "routerBuilderClasses") {
-            @Override
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                configure().setRoutesBuilderClasses(parameter);
-            }
-        });
-        addOption(new ParameterOption(
-                "d", "duration",
-                "Sets the time duration (seconds) that the application will run for before terminating.",
-                "duration") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                // skip second marker to be backwards compatible
-                if (parameter.endsWith("s") || parameter.endsWith("S")) {
-                    parameter = parameter.substring(0, parameter.length() - 1);
-                }
-                configure().setDurationMaxSeconds(Integer.parseInt(parameter));
-            }
-        });
-        addOption(new ParameterOption(
-                "dm", "durationMaxMessages",
-                "Sets the duration of maximum number of messages that the application will process before terminating.",
-                "durationMaxMessages") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                configure().setDurationMaxMessages(Integer.parseInt(parameter));
-            }
-        });
-        addOption(new ParameterOption(
-                "di", "durationIdle",
-                "Sets the idle time duration (seconds) duration that the application can be idle before terminating.",
-                "durationIdle") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                // skip second marker to be backwards compatible
-                if (parameter.endsWith("s") || parameter.endsWith("S")) {
-                    parameter = parameter.substring(0, parameter.length() - 1);
-                }
-                configure().setDurationMaxIdleSeconds(Integer.parseInt(parameter));
-            }
-        });
+        addOption(
+                new ParameterOption(
+                        "r",
+                        "routers",
+                        "Sets the router builder classes which will be loaded while starting the camel context",
+                        "routerBuilderClasses") {
+                    @Override
+                    protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                        configure().setRoutesBuilderClasses(parameter);
+                    }
+                });
+        addOption(
+                new ParameterOption(
+                        "d",
+                        "duration",
+                        "Sets the time duration (seconds) that the application will run for before terminating.",
+                        "duration") {
+                    protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                        // skip second marker to be backwards compatible
+                        if (parameter.endsWith("s") || parameter.endsWith("S")) {
+                            parameter = parameter.substring(0, parameter.length() - 1);
+                        }
+                        configure().setDurationMaxSeconds(Integer.parseInt(parameter));
+                    }
+                });
+        addOption(
+                new ParameterOption(
+                        "dm",
+                        "durationMaxMessages",
+                        "Sets the duration of maximum number of messages that the application will process before terminating.",
+                        "durationMaxMessages") {
+                    protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                        configure().setDurationMaxMessages(Integer.parseInt(parameter));
+                    }
+                });
+        addOption(
+                new ParameterOption(
+                        "di",
+                        "durationIdle",
+                        "Sets the idle time duration (seconds) duration that the application can be idle before terminating.",
+                        "durationIdle") {
+                    protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                        // skip second marker to be backwards compatible
+                        if (parameter.endsWith("s") || parameter.endsWith("S")) {
+                            parameter = parameter.substring(0, parameter.length() - 1);
+                        }
+                        configure().setDurationMaxIdleSeconds(Integer.parseInt(parameter));
+                    }
+                });
         addOption(new Option("t", "trace", "Enables tracing") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 enableTrace();
@@ -145,39 +153,38 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 enableTraceStandby();
             }
         });
-        addOption(new ParameterOption(
-                "e", "exitcode",
-                "Sets the exit code if duration was hit",
-                "exitcode") {
+        addOption(new ParameterOption("e", "exitcode", "Sets the exit code if duration was hit", "exitcode") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 configure().setDurationHitExitCode(Integer.parseInt(parameter));
             }
         });
-        addOption(new ParameterOption(
-                "pl", "propertiesLocation",
-                "Sets location(s) to load properties, such as from classpath or file system."
-                                            + " You can use comma to separate multiple locations. Camel loads by default from classpath, so use file: as prefix to load from file system.",
-                "propertiesLocation") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setPropertyPlaceholderLocations(parameter);
-            }
-        });
-        addOption(new ParameterOption(
-                "cwd", "compileWorkDir",
-                "Work directory for compiler. Can be used to write compiled classes or other resources.",
-                "compileWorkDir") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                configure().withCompileWorkDir(parameter);
-            }
-        });
-        addOption(new ParameterOption(
-                "pro", "profile",
-                "Camel profile to use when running. (dev,test,prod)",
-                "profile") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                configure().withProfile(parameter);
-            }
-        });
+        addOption(
+                new ParameterOption(
+                        "pl",
+                        "propertiesLocation",
+                        "Sets location(s) to load properties, such as from classpath or file system."
+                                + " You can use comma to separate multiple locations. Camel loads by default from classpath, so use file: as prefix to load from file system.",
+                        "propertiesLocation") {
+                    protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                        setPropertyPlaceholderLocations(parameter);
+                    }
+                });
+        addOption(
+                new ParameterOption(
+                        "cwd",
+                        "compileWorkDir",
+                        "Work directory for compiler. Can be used to write compiled classes or other resources.",
+                        "compileWorkDir") {
+                    protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                        configure().withCompileWorkDir(parameter);
+                    }
+                });
+        addOption(
+                new ParameterOption("pro", "profile", "Camel profile to use when running. (dev,test,prod)", "profile") {
+                    protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                        configure().withProfile(parameter);
+                    }
+                });
     }
 
     /**
@@ -244,9 +251,9 @@ public abstract class MainCommandLineSupport extends MainSupport {
     protected void configurePropertiesService(CamelContext camelContext) throws Exception {
         if (mainConfigurationProperties.getProfile() != null) {
             // setup property placeholder location to include the profile based properties file also
-            defaultPropertyPlaceholderLocation
-                    = String.format("classpath:application-%s.properties;optional=true," + defaultPropertyPlaceholderLocation,
-                            mainConfigurationProperties.getProfile());
+            defaultPropertyPlaceholderLocation = String.format(
+                    "classpath:application-%s.properties;optional=true," + defaultPropertyPlaceholderLocation,
+                    mainConfigurationProperties.getProfile());
         }
 
         super.configurePropertiesService(camelContext);

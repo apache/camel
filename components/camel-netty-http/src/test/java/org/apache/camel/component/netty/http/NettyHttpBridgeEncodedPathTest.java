@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -31,30 +35,30 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
     final AvailablePortFinder.Port port1 = port;
+
     @RegisterExtension
     AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+
     @RegisterExtension
     AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+
     @RegisterExtension
     AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     @Test
     public void testEncodedQuery() {
-        String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=44777%2B7111222", null,
-                String.class);
+        String response = template.requestBody(
+                "http://localhost:" + port2 + "/nettyTestRouteA?param1=44777%2B7111222", null, String.class);
         assertEquals("param1=44777+7111222", response, "Get a wrong response");
     }
 
     @Test
     public void testEncodedPath() throws Exception {
-        String path = URLEncoder.encode(" :/?#[]@!$", StandardCharsets.UTF_8) + "/" + URLEncoder.encode("&'()+,;=",
-                StandardCharsets.UTF_8);
+        String path = URLEncoder.encode(" :/?#[]@!$", StandardCharsets.UTF_8) + "/"
+                + URLEncoder.encode("&'()+,;=", StandardCharsets.UTF_8);
         MockEndpoint mock = getMockEndpoint("mock:encodedPath");
         mock.message(0).header(Exchange.HTTP_PATH).isEqualTo("/" + path);
         mock.message(0).header(Exchange.HTTP_QUERY).isNull();
@@ -63,7 +67,7 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
         // cannot use template as it automatically decodes some chars in the path
         HttpGet httpGet = new HttpGet("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(httpGet)) {
+                CloseableHttpResponse response = client.execute(httpGet)) {
             assertEquals(200, response.getCode(), "Get a wrong response status");
             MockEndpoint.assertIsSatisfied(context);
         }
@@ -80,7 +84,9 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                     // %2B becomes decoded to a space
                     Object s = exchange.getIn().getHeader("param1");
                     // can be either + or %2B
-                    assertTrue(s.equals("44777 7111222") || s.equals("44777%207111222") || s.equals("44777+7111222")
+                    assertTrue(s.equals("44777 7111222")
+                            || s.equals("44777%207111222")
+                            || s.equals("44777+7111222")
                             || s.equals("44777%2B7111222"));
 
                     // send back the query
@@ -88,25 +94,28 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                 };
 
                 from("netty-http:http://localhost:" + port2 + "/nettyTestRouteA?matchOnUriPrefix=true")
-                        .log("Using NettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
+                        .log(
+                                "Using NettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .to("netty-http:http://localhost:" + port1
-                            + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                                + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("netty-http:http://localhost:" + port1 + "/nettyTestRouteB?matchOnUriPrefix=true")
-                        .log("Using NettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
+                        .log(
+                                "Using NettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .process(serviceProc);
 
                 from("netty-http:http://localhost:" + port4 + "/nettyTestRouteC?matchOnUriPrefix=true")
-                        .log("Using NettyTestRouteC route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
+                        .log(
+                                "Using NettyTestRouteC route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .to("netty-http:http://localhost:" + port3
-                            + "/nettyTestRouteD?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                                + "/nettyTestRouteD?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("netty-http:http://localhost:" + port3 + "/nettyTestRouteD?matchOnUriPrefix=true")
-                        .log("Using NettyTestRouteD route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
+                        .log(
+                                "Using NettyTestRouteD route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .setBody(constant("test"))
                         .to("mock:encodedPath");
             }
         };
     }
-
 }

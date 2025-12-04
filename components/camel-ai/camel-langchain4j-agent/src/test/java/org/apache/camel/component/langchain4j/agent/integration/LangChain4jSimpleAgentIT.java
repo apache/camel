@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -32,19 +38,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jSimpleAgentIT extends CamelTestSupport {
 
     // Test constants
     private static final String TEST_USER_MESSAGE_SIMPLE = "What is Apache Camel?";
     private static final String TEST_USER_MESSAGE_STORY = "Write a short story about a lost cat.";
-    private static final String TEST_SYSTEM_MESSAGE
-            = """
+    private static final String TEST_SYSTEM_MESSAGE =
+            """
                     You are a whimsical storyteller. Your responses should be imaginative, descriptive, and always include a touch of magic. Start every story with 'Once upon a starlit night...'""";
     private static final String EXPECTED_STORY_START = "Once upon a starlit night";
     private static final String EXPECTED_STORY_CONTENT = "cat";
@@ -52,9 +53,8 @@ public class LangChain4jSimpleAgentIT extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA =
+            ModelHelper.hasEnvironmentConfiguration() ? null : OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -68,7 +68,8 @@ public class LangChain4jSimpleAgentIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:send-simple-user-message", TEST_USER_MESSAGE_SIMPLE, String.class);
+        String response =
+                template.requestBody("direct:send-simple-user-message", TEST_USER_MESSAGE_SIMPLE, String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
@@ -81,14 +82,21 @@ public class LangChain4jSimpleAgentIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBodyAndHeader("direct:send-simple-user-message",
-                TEST_USER_MESSAGE_STORY, SYSTEM_MESSAGE, TEST_SYSTEM_MESSAGE, String.class);
+        String response = template.requestBodyAndHeader(
+                "direct:send-simple-user-message",
+                TEST_USER_MESSAGE_STORY,
+                SYSTEM_MESSAGE,
+                TEST_SYSTEM_MESSAGE,
+                String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
         assertNotEquals(TEST_USER_MESSAGE_STORY, response, "AI response should be different from the input message");
-        assertTrue(response.contains(EXPECTED_STORY_START), "Response should start with the expected magical opening phrase");
-        assertTrue(response.contains(EXPECTED_STORY_CONTENT), "Response should contain content about a cat as requested");
+        assertTrue(
+                response.contains(EXPECTED_STORY_START),
+                "Response should start with the expected magical opening phrase");
+        assertTrue(
+                response.contains(EXPECTED_STORY_CONTENT), "Response should contain content about a cat as requested");
     }
 
     @Test
@@ -96,17 +104,19 @@ public class LangChain4jSimpleAgentIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        AiAgentBody<?> body = new AiAgentBody<>()
-                .withSystemMessage(TEST_SYSTEM_MESSAGE)
-                .withUserMessage(TEST_USER_MESSAGE_STORY);
+        AiAgentBody<?> body =
+                new AiAgentBody<>().withSystemMessage(TEST_SYSTEM_MESSAGE).withUserMessage(TEST_USER_MESSAGE_STORY);
 
         String response = template.requestBody("direct:send-simple-user-message", body, String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
         assertNotEquals(TEST_USER_MESSAGE_STORY, response, "AI response should be different from the input message");
-        assertTrue(response.contains(EXPECTED_STORY_START), "Response should start with the expected magical opening phrase");
-        assertTrue(response.contains(EXPECTED_STORY_CONTENT), "Response should contain content about a cat as requested");
+        assertTrue(
+                response.contains(EXPECTED_STORY_START),
+                "Response should start with the expected magical opening phrase");
+        assertTrue(
+                response.contains(EXPECTED_STORY_CONTENT), "Response should contain content about a cat as requested");
     }
 
     @Override

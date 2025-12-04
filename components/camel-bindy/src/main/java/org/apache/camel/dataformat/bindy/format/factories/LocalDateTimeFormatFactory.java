@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.time.LocalDateTime;
@@ -35,9 +36,7 @@ public class LocalDateTimeFormatFactory extends AbstractFormatFactory {
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
         return new LocalDateTimePatternFormat(
-                formattingOptions.getPattern(),
-                formattingOptions.getTimezone(),
-                formattingOptions.getLocale());
+                formattingOptions.getPattern(), formattingOptions.getTimezone(), formattingOptions.getLocale());
     }
 
     private static class LocalDateTimePatternFormat implements PatternFormat<LocalDateTime> {
@@ -76,11 +75,9 @@ public class LocalDateTimeFormatFactory extends AbstractFormatFactory {
         DateTimeFormatter getDateFormat() {
             DateTimeFormatter result;
             if (locale != null) {
-                result = DateTimeFormatter.ofPattern(pattern, locale)
-                        .withZone(zone);
+                result = DateTimeFormatter.ofPattern(pattern, locale).withZone(zone);
             } else {
-                result = DateTimeFormatter.ofPattern(pattern)
-                        .withZone(zone);
+                result = DateTimeFormatter.ofPattern(pattern).withZone(zone);
             }
             return result;
         }
@@ -99,5 +96,4 @@ public class LocalDateTimeFormatFactory extends AbstractFormatFactory {
             this.pattern = pattern;
         }
     }
-
 }

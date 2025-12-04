@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant;
 
 import org.apache.camel.spi.Metadata;
 
 public class QdrantHeaders {
-    @Metadata(description = "The action to be performed.", javaType = "String",
-              enums = "CREATE_COLLECTION,DELETE_COLLECTION,UPSERT,RETRIEVE,DELETE,COLLECTION_INFO,SIMILARITY_SEARCH")
+    @Metadata(
+            description = "The action to be performed.",
+            javaType = "String",
+            enums = "CREATE_COLLECTION,DELETE_COLLECTION,UPSERT,RETRIEVE,DELETE,COLLECTION_INFO,SIMILARITY_SEARCH")
     public static final String ACTION = "CamelQdrantAction";
 
     @Metadata(description = "Payload Selector.", javaType = "io.qdrant.client.grpc.Points$WithPayloadSelector")
@@ -40,10 +43,12 @@ public class QdrantHeaders {
 
     @Metadata(description = "Include Payload.", javaType = "boolean", defaultValue = "true")
     public static final String INCLUDE_PAYLOAD = "CamelQdrantWithPayload";
+
     public static final boolean DEFAULT_INCLUDE_PAYLOAD = true;
 
     @Metadata(description = "Include Vectors.", javaType = "boolean", defaultValue = "false")
     public static final String INCLUDE_VECTORS = "CamelQdrantWithVectors";
+
     public static final boolean DEFAULT_INCLUDE_VECTORS = false;
 
     @Metadata(description = "The number of elements.", javaType = "int")

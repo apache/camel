@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import java.util.List;
@@ -31,57 +32,77 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     @XmlAttribute
     @Metadata(enums = "DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5", defaultValue = "R4")
     private String fhirVersion;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String fhirContext;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String prettyPrint;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String parserErrorHandler;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String parserOptions;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String preferTypes;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String forceResourceId;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String serverBaseUrl;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String omitResourceId;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String encodeElementsAppliesToChildResourcesOnly;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String encodeElements;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String dontEncodeElements;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String stripVersionsFromReferences;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String overrideResourceIdWithBundleEntryFullUrl;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String summaryMode;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String suppressNarratives;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String dontStripVersionsFromReferencesAtPaths;
+
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether the data format should set the Content-Type header with the type from the data format."
+    @Metadata(
+            javaType = "java.lang.Boolean",
+            defaultValue = "true",
+            description =
+                    "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
 
@@ -658,7 +679,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          * within it (i.e. search result resources in that bundle)
          */
         public T encodeElementsAppliesToChildResourcesOnly(boolean encodeElementsAppliesToChildResourcesOnly) {
-            this.encodeElementsAppliesToChildResourcesOnly = Boolean.toString(encodeElementsAppliesToChildResourcesOnly);
+            this.encodeElementsAppliesToChildResourcesOnly =
+                    Boolean.toString(encodeElementsAppliesToChildResourcesOnly);
             return (T) this;
         }
 

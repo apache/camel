@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +26,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 @DisabledOnOs(OS.AIX)
 public class CamelChoiceWithManagementTest extends ContextTestSupport {
@@ -86,12 +87,21 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                        .when(header("CBR1").isEqualTo("Yes")).to("mock:a").setHeader("Validation", constant("Yes"))
-                        .when(header("CBR1").isEqualTo("No")).to("mock:b").end()
-                        .choice().when(header("Validation").isEqualTo("Yes")).to("mock:c")
-                        .when(header("Validation").isEqualTo("No")).to("mock:d").otherwise().to("mock:e").end();
+                        .when(header("CBR1").isEqualTo("Yes"))
+                        .to("mock:a")
+                        .setHeader("Validation", constant("Yes"))
+                        .when(header("CBR1").isEqualTo("No"))
+                        .to("mock:b")
+                        .end()
+                        .choice()
+                        .when(header("Validation").isEqualTo("Yes"))
+                        .to("mock:c")
+                        .when(header("Validation").isEqualTo("No"))
+                        .to("mock:d")
+                        .otherwise()
+                        .to("mock:e")
+                        .end();
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.IOException;
@@ -33,7 +34,8 @@ public class UnixTimestampDeserializer extends JsonDeserializer<Instant> {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    public Instant deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public Instant deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+            throws IOException {
         try {
             long unixTimestamp = Long.parseLong(jsonParser.getText());
 

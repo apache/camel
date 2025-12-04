@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio.integration;
 
 import io.minio.MinioClient;
@@ -44,8 +45,8 @@ class MinioDeleteBucketOperationIT extends MinioIntegrationTestSupport {
     void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:listBuckets",
-                exchange -> exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
+        template.send("direct:listBuckets", exchange -> exchange.getIn()
+                .setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
 
         template.send("direct:deleteBucket", exchange -> {
             exchange.getIn().setHeader(MinioConstants.BUCKET_NAME, "mycamel2");
@@ -65,7 +66,6 @@ class MinioDeleteBucketOperationIT extends MinioIntegrationTestSupport {
                 from("direct:listBuckets").to(minioEndpoint);
 
                 from("direct:deleteBucket").to(minioEndpoint).to("mock:result");
-
             }
         };
     }

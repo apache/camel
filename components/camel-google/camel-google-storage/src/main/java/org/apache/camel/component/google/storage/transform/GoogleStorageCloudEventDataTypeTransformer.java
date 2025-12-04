@@ -31,8 +31,10 @@ import org.apache.camel.spi.Transformer;
  * Output data type represents Google Storage downloadTo response as CloudEvent V1. The data type sets Camel specific
  * CloudEvent headers on the exchange.
  */
-@DataTypeTransformer(name = "google-storage:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with Google Storage downloadTo response information")
+@DataTypeTransformer(
+        name = "google-storage:application-cloudevents",
+        description =
+                "Adds CloudEvent headers to the Camel message with Google Storage downloadTo response information")
 public class GoogleStorageCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,16 +42,20 @@ public class GoogleStorageCloudEventDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvents.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvents.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.google.storage.downloadTo");
 
         if (message.getHeaders().containsKey(GoogleCloudStorageConstants.BUCKET_NAME)) {
-            headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
-                    "google.storage.bucket." + message.getHeader(GoogleCloudStorageConstants.BUCKET_NAME, String.class));
+            headers.put(
+                    CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
+                    "google.storage.bucket."
+                            + message.getHeader(GoogleCloudStorageConstants.BUCKET_NAME, String.class));
         }
 
-        headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT,
+        headers.put(
+                CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT,
                 message.getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class));
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNettyTest {
 
@@ -49,11 +50,14 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:request").setHeader("Date", constant("31-03-2014"))
-                        .to("netty-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
+                from("direct:request")
+                        .setHeader("Date", constant("31-03-2014"))
+                        .to(
+                                "netty-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
 
-                from("netty-http:http://localhost:{{port}}/myapp/mytest").to("mock:outbound").setHeader("sub-date",
-                        constant("31-05-2014"));
+                from("netty-http:http://localhost:{{port}}/myapp/mytest")
+                        .to("mock:outbound")
+                        .setHeader("sub-date", constant("31-05-2014"));
             }
         };
     }

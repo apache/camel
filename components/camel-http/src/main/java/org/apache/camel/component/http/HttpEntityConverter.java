@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.io.ByteArrayInputStream;
@@ -36,8 +37,7 @@ import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 @Converter(generateLoader = true)
 public final class HttpEntityConverter {
 
-    private HttpEntityConverter() {
-    }
+    private HttpEntityConverter() {}
 
     @Converter
     public static HttpEntity toHttpEntity(byte[] data, Exchange exchange) throws Exception {
@@ -73,7 +73,9 @@ public final class HttpEntityConverter {
             InputStream stream = GZIPHelper.compressGzip(contentEncoding, in);
             int available = stream.available();
             entity = new InputStreamEntity(
-                    stream, stream instanceof ByteArrayInputStream ? available != 0 ? available : -1 : -1, contentType,
+                    stream,
+                    stream instanceof ByteArrayInputStream ? available != 0 ? available : -1 : -1,
+                    contentType,
                     contentEncoding);
         } else {
             entity = new InputStreamEntity(in, -1, contentType, contentEncoding);
@@ -106,9 +108,10 @@ public final class HttpEntityConverter {
                 InputStream stream = GZIPHelper.compressGzip(contentEncoding, data);
                 int available = stream.available();
                 entity = new InputStreamEntity(
-                        stream, stream instanceof ByteArrayInputStream
-                                ? available != 0 ? available : -1 : -1,
-                        contentType, contentEncoding);
+                        stream,
+                        stream instanceof ByteArrayInputStream ? available != 0 ? available : -1 : -1,
+                        contentType,
+                        contentEncoding);
             } else {
                 // use a byte array entity as-is
                 entity = new ByteArrayEntity(data, contentType, contentEncoding);

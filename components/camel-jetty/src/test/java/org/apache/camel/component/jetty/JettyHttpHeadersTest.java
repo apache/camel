@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyHttpHeadersTest extends BaseJettyTest {
 
@@ -30,13 +31,14 @@ public class JettyHttpHeadersTest extends BaseJettyTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived("beer", "yes");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
+        getMockEndpoint("mock:input")
+                .expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URI, "/foo");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "beer=yes");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "");
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo?beer=yes", "Hello World",
-                Exchange.HTTP_METHOD, "POST", String.class);
+        String out = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/foo?beer=yes", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -47,9 +49,11 @@ public class JettyHttpHeadersTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://0.0.0.0:{{port}}/foo").to("mock:input").transform().constant("Bye World");
+                from("jetty:http://0.0.0.0:{{port}}/foo")
+                        .to("mock:input")
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

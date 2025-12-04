@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.cassandra;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -27,12 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unite test for {@link CassandraAggregationRepository}
@@ -53,7 +54,10 @@ public class CassandraAggregationRepositoryIT extends BaseCassandra {
     }
 
     private boolean exists(String key) {
-        return getSession().execute("select KEY from CAMEL_AGGREGATION where KEY=?", key).one() != null;
+        return getSession()
+                        .execute("select KEY from CAMEL_AGGREGATION where KEY=?", key)
+                        .one()
+                != null;
     }
 
     @Test
@@ -121,7 +125,7 @@ public class CassandraAggregationRepositoryIT extends BaseCassandra {
     @Test
     public void testGetKeys() {
         // Given
-        String[] keys = { "GetKeys1", "GetKeys2" };
+        String[] keys = {"GetKeys1", "GetKeys2"};
         addExchanges(keys);
         // When
         Set<String> keySet = aggregationRepository.getKeys();
@@ -180,7 +184,7 @@ public class CassandraAggregationRepositoryIT extends BaseCassandra {
     @Test
     public void testScan() {
         // Given
-        String[] keys = { "Scan1", "Scan2" };
+        String[] keys = {"Scan1", "Scan2"};
         addExchanges(keys);
         // When
         Set<String> exchangeIdSet = aggregationRepository.scan(context);
@@ -193,7 +197,7 @@ public class CassandraAggregationRepositoryIT extends BaseCassandra {
     @Test
     public void testRecover() {
         // Given
-        String[] keys = { "Recover1", "Recover2" };
+        String[] keys = {"Recover1", "Recover2"};
         addExchanges(keys);
         // When
         Exchange exchange2 = aggregationRepository.recover(context, "Exchange-Recover2");

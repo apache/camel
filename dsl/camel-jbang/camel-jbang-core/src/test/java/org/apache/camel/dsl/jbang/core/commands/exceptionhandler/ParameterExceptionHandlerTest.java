@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -32,13 +33,16 @@ class ParameterExceptionHandlerTest {
 
         String[] lines = err.capturedLines();
         Assertions.assertEquals(5, lines.length, "5 lines for the error is expected but received " + lines.length);
-        Assertions.assertEquals("Unmatched argument at index 0: 'firstInvalid'", lines[0],
-                "First line mentioning unmatched argument");
-        Assertions.assertEquals("Did you mean: camel bind or camel infra or camel plugin?", lines[1],
+        Assertions.assertEquals(
+                "Unmatched argument at index 0: 'firstInvalid'", lines[0], "First line mentioning unmatched argument");
+        Assertions.assertEquals(
+                "Did you mean: camel bind or camel infra or camel plugin?",
+                lines[1],
                 "Second line with suggestion in case it is a typo");
         Assertions.assertEquals(
                 "Maybe a specific Camel JBang plugin must be installed? (Try camel plugin --help' for more information)",
-                lines[4], "Last line suggesting new plugin");
+                lines[4],
+                "Last line suggesting new plugin");
     }
 
     @Test
@@ -49,11 +53,11 @@ class ParameterExceptionHandlerTest {
 
         String[] lines = err.capturedLines();
         Assertions.assertEquals(3, lines.length, "3 lines for the error is expected but received " + lines.length);
-        Assertions.assertEquals("Unmatched argument at index 1: 'secondInvalid'", lines[0],
-                "First line mentioning unmatched argument");
+        Assertions.assertEquals(
+                "Unmatched argument at index 1: 'secondInvalid'", lines[0], "First line mentioning unmatched argument");
         Assertions.assertEquals("Usage: camel plugin [-h] [COMMAND]", lines[1], "Second line with usage");
-        Assertions.assertEquals("Try 'camel plugin --help' for more information.", lines[2],
-                "Last line with what to try to get help");
+        Assertions.assertEquals(
+                "Try 'camel plugin --help' for more information.", lines[2], "Last line with what to try to get help");
     }
 
     private CamelJBangMain createCamelJBangMain() {
@@ -65,5 +69,4 @@ class ParameterExceptionHandlerTest {
         };
         return camelJBangMainNotExiting;
     }
-
 }

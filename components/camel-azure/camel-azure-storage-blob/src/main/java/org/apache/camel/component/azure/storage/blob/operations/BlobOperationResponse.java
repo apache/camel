@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.util.HashMap;
@@ -70,16 +71,17 @@ public final class BlobOperationResponse {
         BlobExchangeHeaders exchangeHeaders;
 
         if (response.getValue() instanceof BlockBlobItem) {
-            exchangeHeaders
-                    = BlobExchangeHeaders.createBlobExchangeHeadersFromBlockBlobItem((BlockBlobItem) response.getValue());
+            exchangeHeaders =
+                    BlobExchangeHeaders.createBlobExchangeHeadersFromBlockBlobItem((BlockBlobItem) response.getValue());
         } else if (response.getValue() instanceof AppendBlobItem) {
-            exchangeHeaders
-                    = BlobExchangeHeaders.createBlobExchangeHeadersFromAppendBlobItem((AppendBlobItem) response.getValue());
+            exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromAppendBlobItem(
+                    (AppendBlobItem) response.getValue());
         } else if (response.getValue() instanceof PageBlobItem) {
-            exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromPageBlobItem((PageBlobItem) response.getValue());
+            exchangeHeaders =
+                    BlobExchangeHeaders.createBlobExchangeHeadersFromPageBlobItem((PageBlobItem) response.getValue());
         } else if (response.getValue() instanceof BlobProperties) {
-            exchangeHeaders
-                    = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties((BlobProperties) response.getValue());
+            exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(
+                    (BlobProperties) response.getValue());
         } else {
             exchangeHeaders = BlobExchangeHeaders.create();
         }

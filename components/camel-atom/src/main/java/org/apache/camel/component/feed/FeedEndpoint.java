@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.feed;
 
 import org.apache.camel.Consumer;
@@ -34,21 +35,30 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     @UriPath(description = "The URI to the feed to poll.")
     @Metadata(required = true)
     protected String feedUri;
-    @UriParam(defaultValue = "true", description = "Sets whether or not entries should be sent "
-                                                   + "individually or whether the entire feed should be sent as a single message")
+
+    @UriParam(
+            defaultValue = "true",
+            description = "Sets whether or not entries should be sent "
+                    + "individually or whether the entire feed should be sent as a single message")
     protected boolean splitEntries = true;
 
-    @UriParam(label = "advanced", defaultValue = "true", description = "Sets whether to add the feed object as a header.")
+    @UriParam(
+            label = "advanced",
+            defaultValue = "true",
+            description = "Sets whether to add the feed object as a header.")
     private boolean feedHeader = true;
+
     @UriParam(description = "Sets whether to sort entries by published date. Only works when splitEntries = true.")
     private boolean sortEntries;
-    @UriParam(defaultValue = "true", description = "Sets whether all entries identified in a "
-                                                   + "single feed poll should be delivered immediately. If true, only one entry is processed "
-                                                   + "per delay. Only applicable when splitEntries = true.")
+
+    @UriParam(
+            defaultValue = "true",
+            description = "Sets whether all entries identified in a "
+                    + "single feed poll should be delivered immediately. If true, only one entry is processed "
+                    + "per delay. Only applicable when splitEntries = true.")
     private boolean throttleEntries = true;
 
-    protected FeedEndpoint() {
-    }
+    protected FeedEndpoint() {}
 
     protected FeedEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component);
@@ -72,7 +82,8 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         }
 
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed,
-        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
+        // so we override with a new default value. End user can override this value by providing a consumer.delay
+        // parameter
         answer.setDelay(FeedPollingConsumer.DEFAULT_CONSUMER_DELAY);
         configureConsumer(answer);
         return answer;
@@ -82,8 +93,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
             throws Exception;
 
     protected abstract FeedPollingConsumer createEntryPollingConsumer(
-            FeedEndpoint feedEndpoint, Processor processor, boolean throttleEntries)
-            throws Exception;
+            FeedEndpoint feedEndpoint, Processor processor, boolean throttleEntries) throws Exception;
 
     protected Exchange createExchangeWithFeedHeader(Object feed, String header) {
         Exchange exchange = createExchange();
@@ -117,12 +127,13 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
     @Override
     public String getEndpointKey() {
-        // use the full endpoint uri because the lenient properties matters as they should be unique based on the feed uri
+        // use the full endpoint uri because the lenient properties matters as they should be unique based on the feed
+        // uri
         return getEndpointUri();
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public String getFeedUri() {
         return feedUri;
@@ -185,5 +196,4 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     public boolean isThrottleEntries() {
         return this.throttleEntries;
     }
-
 }

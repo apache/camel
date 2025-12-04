@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import java.util.concurrent.ExecutorService;
@@ -38,33 +39,48 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @XmlAttribute(required = true)
     @Metadata(description = "Sets the core pool size (threads to keep minimum in pool)")
     private String poolSize;
+
     @XmlAttribute
     @Metadata(description = "Sets the maximum pool size")
     private String maxPoolSize;
+
     @XmlAttribute
     @Metadata(description = "Sets the keep alive time for inactive threads")
     private String keepAliveTime;
+
     @XmlAttribute
-    @Metadata(description = "Sets the time unit used for keep alive time", defaultValue = "SECONDS",
-              javaType = "java.util.concurrent.TimeUnit",
-              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+    @Metadata(
+            description = "Sets the time unit used for keep alive time",
+            defaultValue = "SECONDS",
+            javaType = "java.util.concurrent.TimeUnit",
+            enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private String timeUnit = TimeUnit.SECONDS.name();
+
     @XmlAttribute
     @Metadata(description = "Sets the maximum number of tasks in the work queue. Use -1 for an unbounded queue")
     private String maxQueueSize;
+
     @XmlAttribute
     @Metadata(description = "Sets whether to allow core threads to timeout", javaType = "java.lang.Boolean")
     private String allowCoreThreadTimeOut;
+
     @XmlAttribute
-    @Metadata(description = "Sets the handler for tasks which cannot be executed by the thread pool.",
-              defaultValue = "CallerRuns", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
-              enums = "Abort,CallerRuns")
+    @Metadata(
+            description = "Sets the handler for tasks which cannot be executed by the thread pool.",
+            defaultValue = "CallerRuns",
+            javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
+            enums = "Abort,CallerRuns")
     private String rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns.name();
+
     @XmlAttribute(required = true)
     @Metadata(description = "To use a custom thread name / pattern")
     private String threadName;
+
     @XmlAttribute
-    @Metadata(description = "Whether to use a scheduled thread pool", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(
+            description = "Whether to use a scheduled thread pool",
+            defaultValue = "false",
+            javaType = "java.lang.Boolean")
     private String scheduled;
 
     @Override
@@ -90,8 +106,8 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
             allow = CamelContextHelper.parseBoolean(getCamelContext(), allowCoreThreadTimeOut);
         }
         TimeUnit tu = CamelContextHelper.parse(getCamelContext(), TimeUnit.class, timeUnit);
-        ThreadPoolRejectedPolicy tp
-                = CamelContextHelper.parse(getCamelContext(), ThreadPoolRejectedPolicy.class, rejectedPolicy);
+        ThreadPoolRejectedPolicy tp =
+                CamelContextHelper.parse(getCamelContext(), ThreadPoolRejectedPolicy.class, rejectedPolicy);
 
         ThreadPoolProfile profile = new ThreadPoolProfileBuilder(getId())
                 .poolSize(size)
@@ -105,7 +121,9 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         ExecutorService answer;
         Boolean scheduled = CamelContextHelper.parseBoolean(getCamelContext(), getScheduled());
         if (scheduled != null && scheduled) {
-            answer = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(getId(), getThreadName(), profile);
+            answer = getCamelContext()
+                    .getExecutorServiceManager()
+                    .newScheduledThreadPool(getId(), getThreadName(), profile);
         } else {
             answer = getCamelContext().getExecutorServiceManager().newThreadPool(getId(), getThreadName(), profile);
         }

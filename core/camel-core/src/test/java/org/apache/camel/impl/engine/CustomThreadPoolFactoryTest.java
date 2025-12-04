@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -25,8 +28,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -62,13 +63,25 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
 
         @Override
         public ExecutorService newThreadPool(
-                int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+                int corePoolSize,
+                int maxPoolSize,
+                long keepAliveTime,
+                TimeUnit timeUnit,
+                int maxQueueSize,
                 boolean allowCoreThreadTimeOut,
-                RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+                RejectedExecutionHandler rejectedExecutionHandler,
+                ThreadFactory threadFactory)
                 throws IllegalArgumentException {
             invoked = true;
-            return super.newThreadPool(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
-                    rejectedExecutionHandler, threadFactory);
+            return super.newThreadPool(
+                    corePoolSize,
+                    maxPoolSize,
+                    keepAliveTime,
+                    timeUnit,
+                    maxQueueSize,
+                    allowCoreThreadTimeOut,
+                    rejectedExecutionHandler,
+                    threadFactory);
         }
 
         public boolean isInvoked() {

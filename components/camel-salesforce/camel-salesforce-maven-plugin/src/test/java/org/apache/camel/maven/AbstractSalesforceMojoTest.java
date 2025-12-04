@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,8 +35,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class AbstractSalesforceMojoTest {
 
@@ -72,7 +73,8 @@ public abstract class AbstractSalesforceMojoTest {
     }
 
     @Test
-    public void shouldLoginWithJwtAndProvideRestClient() throws IOException, MojoExecutionException, MojoFailureException {
+    public void shouldLoginWithJwtAndProvideRestClient()
+            throws IOException, MojoExecutionException, MojoFailureException {
         final AbstractSalesforceMojo mojo = new AbstractSalesforceMojo() {
             final Logger logger = LoggerFactory.getLogger(AbstractSalesforceExecution.class.getName());
 
@@ -113,11 +115,10 @@ public abstract class AbstractSalesforceMojoTest {
             mojo.loginUrl = properties.getProperty("salesforce.login.url");
             mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;
         } catch (final FileNotFoundException e) {
-            final FileNotFoundException exception
-                    = new FileNotFoundException(
-                            "Create a properties file named " + TEST_LOGIN_PROPERTIES
-                                                + " with clientId, clientSecret, userName, password"
-                                                + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
+            final FileNotFoundException exception =
+                    new FileNotFoundException("Create a properties file named " + TEST_LOGIN_PROPERTIES
+                            + " with clientId, clientSecret, userName, password"
+                            + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
             exception.initCause(e);
 
             throw exception;
@@ -137,11 +138,10 @@ public abstract class AbstractSalesforceMojoTest {
             mojo.keystoreType = properties.getProperty("salesforce.keystore.type");
             mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;
         } catch (final FileNotFoundException e) {
-            final FileNotFoundException exception
-                    = new FileNotFoundException(
-                            "Create a properties file named " + TEST_LOGIN_PROPERTIES
-                                                + " with clientId, userName, keyStoreResource, keyStorePassword, keyStoreType"
-                                                + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
+            final FileNotFoundException exception =
+                    new FileNotFoundException("Create a properties file named " + TEST_LOGIN_PROPERTIES
+                            + " with clientId, userName, keyStoreResource, keyStorePassword, keyStoreType"
+                            + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
             exception.initCause(e);
 
             throw exception;

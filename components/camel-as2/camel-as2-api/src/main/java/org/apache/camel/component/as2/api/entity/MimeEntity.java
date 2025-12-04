@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.ByteArrayInputStream;
@@ -97,7 +98,8 @@ public abstract class MimeEntity extends AbstractHttpEntity {
      */
     public Header getContentTransferEncoding() {
         return (super.getContentEncoding() == null)
-                ? null : new BasicHeader(AS2Header.CONTENT_TRANSFER_ENCODING, super.getContentEncoding());
+                ? null
+                : new BasicHeader(AS2Header.CONTENT_TRANSFER_ENCODING, super.getContentEncoding());
     }
 
     public boolean containsHeader(final String name) {
@@ -201,5 +203,4 @@ public abstract class MimeEntity extends AbstractHttpEntity {
         }
         return StandardCharsets.US_ASCII.name();
     }
-
 }

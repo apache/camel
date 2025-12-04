@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch;
 
 import java.util.ArrayList;
@@ -37,24 +38,34 @@ public class OpensearchComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", autowired = true)
     private RestClient client;
+
     @Metadata
     private String hostAddresses;
+
     @Metadata(defaultValue = "" + OpensearchConstants.DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = OpensearchConstants.DEFAULT_SOCKET_TIMEOUT;
+
     @Metadata(defaultValue = "" + OpensearchConstants.MAX_RETRY_TIMEOUT)
     private int maxRetryTimeout = OpensearchConstants.MAX_RETRY_TIMEOUT;
+
     @Metadata(defaultValue = "" + OpensearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = OpensearchConstants.DEFAULT_CONNECTION_TIMEOUT;
+
     @Metadata(label = "security", secret = true)
     private String user;
+
     @Metadata(label = "security", secret = true)
     private String password;
+
     @Metadata(label = "security")
     private boolean enableSSL;
+
     @Metadata(label = "advanced")
     private boolean enableSniffer;
+
     @Metadata(label = "advanced", defaultValue = "" + OpensearchConstants.DEFAULT_SNIFFER_INTERVAL)
     private int snifferInterval = OpensearchConstants.DEFAULT_SNIFFER_INTERVAL;
+
     @Metadata(label = "advanced", defaultValue = "" + OpensearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
     private int sniffAfterFailureDelay = OpensearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
 
@@ -232,5 +243,4 @@ public class OpensearchComponent extends DefaultComponent {
     public void setSniffAfterFailureDelay(int sniffAfterFailureDelay) {
         this.sniffAfterFailureDelay = sniffAfterFailureDelay;
     }
-
 }

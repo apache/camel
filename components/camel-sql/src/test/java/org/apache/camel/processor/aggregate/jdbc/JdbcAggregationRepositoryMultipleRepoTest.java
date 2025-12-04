@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSupport {
 
@@ -106,5 +107,4 @@ public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSu
     protected AbstractApplicationContext createApplicationContext() {
         return newAppContext("JdbcSpringDataSource.xml");
     }
-
 }

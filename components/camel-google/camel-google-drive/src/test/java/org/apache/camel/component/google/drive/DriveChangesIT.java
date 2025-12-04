@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.List;
 
@@ -27,19 +31,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 /**
  * Test class for com.google.api.services.drive.Drive$Changes APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
-           disabledReason = "Google Drive credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+        disabledReason = "Google Drive credentials were not provided")
 public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveChangesIT.class);
-    private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveChangesApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection()
+            .getApiName(DriveChangesApiMethod.class)
+            .getName();
 
     @Test
     public void testGet() {
@@ -70,17 +73,13 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for get
-                from("direct://GET")
-                        .to("google-drive://" + PATH_PREFIX + "/get?inBody=changeId");
+                from("direct://GET").to("google-drive://" + PATH_PREFIX + "/get?inBody=changeId");
 
                 // test route for list
-                from("direct://LIST")
-                        .to("google-drive://" + PATH_PREFIX + "/list");
+                from("direct://LIST").to("google-drive://" + PATH_PREFIX + "/list");
 
                 // test route for watch
-                from("direct://WATCH")
-                        .to("google-drive://" + PATH_PREFIX + "/watch?inBody=contentChannel");
-
+                from("direct://WATCH").to("google-drive://" + PATH_PREFIX + "/watch?inBody=contentChannel");
             }
         };
     }

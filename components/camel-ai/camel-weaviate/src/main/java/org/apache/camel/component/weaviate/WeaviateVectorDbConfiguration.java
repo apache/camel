@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weaviate;
 
 import io.weaviate.client.WeaviateClient;
@@ -27,33 +28,27 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class WeaviateVectorDbConfiguration implements Cloneable {
 
-    @Metadata(label = "producer",
-              description = "Scheme used to connect to weaviate")
+    @Metadata(label = "producer", description = "Scheme used to connect to weaviate")
     @UriParam
     private String scheme;
 
-    @Metadata(label = "producer",
-              description = "Weaviate server host to connect to")
+    @Metadata(label = "producer", description = "Weaviate server host to connect to")
     @UriParam
     private String host;
 
-    @Metadata(label = "producer",
-              description = "Proxy host to connect to weaviate through")
+    @Metadata(label = "producer", description = "Proxy host to connect to weaviate through")
     @UriParam
     private String proxyHost;
 
-    @Metadata(label = "producer",
-              description = "Proxy port to connect to weaviate through")
+    @Metadata(label = "producer", description = "Proxy port to connect to weaviate through")
     @UriParam
     private Integer proxyPort;
 
-    @Metadata(label = "producer",
-              description = "Proxy scheme to connect to weaviate through")
+    @Metadata(label = "producer", description = "Proxy scheme to connect to weaviate through")
     @UriParam
     private String proxyScheme;
 
-    @Metadata(label = "producer",
-              description = "API Key to authenticate to weaviate with", secret = true)
+    @Metadata(label = "producer", description = "API Key to authenticate to weaviate with", secret = true)
     @UriParam
     private String apiKey;
 

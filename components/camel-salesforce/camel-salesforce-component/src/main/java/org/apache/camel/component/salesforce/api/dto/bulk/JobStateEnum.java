@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import jakarta.xml.bind.annotation.XmlEnum;
@@ -42,7 +43,6 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(name = "JobStateEnum")
 @XmlEnum
 public enum JobStateEnum {
-
     @XmlEnumValue("Open")
     OPEN("Open"),
     @XmlEnumValue("Closed")
@@ -70,5 +70,4 @@ public enum JobStateEnum {
         }
         throw new IllegalArgumentException(v);
     }
-
 }

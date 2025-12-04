@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.Produce;
@@ -30,5 +31,4 @@ public class MyProduceBean {
     public void doSomething(String s) {
         bar.sendBody(s);
     }
-
 }

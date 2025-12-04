@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.controlbus;
 
 import java.util.Map;
@@ -31,8 +32,7 @@ public class ControlBusComponent extends DefaultComponent {
 
     private ExecutorService executorService;
 
-    public ControlBusComponent() {
-    }
+    public ControlBusComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -52,7 +52,8 @@ public class ControlBusComponent extends DefaultComponent {
         lock.lock();
         try {
             if (executorService == null) {
-                executorService = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "ControlBus");
+                executorService =
+                        getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "ControlBus");
             }
             return executorService;
         } finally {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 /**
@@ -54,5 +55,4 @@ public abstract class ArtifactModel<O extends BaseOptionModel> extends BaseModel
     public String toGav() {
         return groupId + ":" + artifactId + ":" + version;
     }
-
 }

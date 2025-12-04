@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp.integration;
 
 import java.util.concurrent.CountDownLatch;
@@ -26,8 +27,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 class XmppMultiUserChatIT extends XmppBaseIT {
 
     private static final String BODY_1 = "the first message";
@@ -61,12 +64,9 @@ class XmppMultiUserChatIT extends XmppBaseIT {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:toProducer")
-                        .process(e -> latch.countDown())
-                        .to(getProducerUri());
+                from("direct:toProducer").process(e -> latch.countDown()).to(getProducerUri());
 
-                from(getConsumerUri())
-                        .to("mock:out");
+                from(getConsumerUri()).to("mock:out");
             }
         };
     }
@@ -78,13 +78,13 @@ class XmppMultiUserChatIT extends XmppBaseIT {
         // here on purpose we provide the room query parameter without the domain name as 'camel-test', and Camel
         // will resolve it properly to 'camel-test@conference.apache.camel'
         return "xmpp://localhost:" + getUrl()
-               + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
+                + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
     }
 
     protected String getConsumerUri() {
         // however here we provide the room query parameter as fully qualified, including the domain name as
         // 'camel-test@conference.apache.camel'
         return "xmpp://localhost:" + getUrl()
-               + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
+                + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
     }
 }

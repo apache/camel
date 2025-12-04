@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,18 +33,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
-@EnabledIf(value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
-           disabledReason = "Google Calendar credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
+        disabledReason = "Google Calendar credentials were not provided")
 public class CalendarFreebusyIT extends AbstractGoogleCalendarTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CalendarFreebusyIT.class);
-    private static final String PATH_PREFIX
-            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarFreebusyApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection()
+            .getApiName(CalendarFreebusyApiMethod.class)
+            .getName();
 
     @Test
     public void testQuery() {
@@ -68,7 +71,6 @@ public class CalendarFreebusyIT extends AbstractGoogleCalendarTestSupport {
             public void configure() {
                 // test route for query
                 from("direct://QUERY").to("google-calendar://" + PATH_PREFIX + "/query?inBody=content");
-
             }
         };
     }

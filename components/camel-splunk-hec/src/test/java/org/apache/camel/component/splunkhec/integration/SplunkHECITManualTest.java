@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunkhec.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 
@@ -30,8 +33,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Disabled("run manually since it requires a running local splunk server")
 public class SplunkHECITManualTest extends CamelTestSupport {
 
@@ -39,7 +40,9 @@ public class SplunkHECITManualTest extends CamelTestSupport {
     public void testSendHEC() throws Exception {
         SplunkHECEndpoint endpoint = getMandatoryEndpoint(
                 "splunk-hec:localhost:8088?token=4b35e71f-6a0f-4bab-94ce-f591ff45eecd", SplunkHECEndpoint.class);
-        assertEquals("4b35e71f-6a0f-4bab-94ce-f591ff45eecd", endpoint.getConfiguration().getToken());
+        assertEquals(
+                "4b35e71f-6a0f-4bab-94ce-f591ff45eecd",
+                endpoint.getConfiguration().getToken());
         endpoint.getConfiguration().setSkipTlsVerify(true);
         endpoint.getConfiguration().setIndex("camel");
         endpoint.getConfiguration().setSource("camel");
@@ -83,8 +86,9 @@ public class SplunkHECITManualTest extends CamelTestSupport {
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:hec").to(
-                        "splunk-hec:localhost:8088?token=4b35e71f-6a0f-4bab-94ce-f591ff45eecd&source=camelsource&skipTlsVerify=true")
+                from("direct:hec")
+                        .to(
+                                "splunk-hec:localhost:8088?token=4b35e71f-6a0f-4bab-94ce-f591ff45eecd&source=camelsource&skipTlsVerify=true")
                         .to("mock:hec-result");
             }
         };

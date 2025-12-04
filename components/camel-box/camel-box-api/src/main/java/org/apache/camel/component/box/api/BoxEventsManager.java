@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
@@ -23,8 +26,6 @@ import com.box.sdk.EventStream;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to manage Box events.
@@ -74,8 +75,7 @@ public class BoxEventsManager {
 
             eventStream.start();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 

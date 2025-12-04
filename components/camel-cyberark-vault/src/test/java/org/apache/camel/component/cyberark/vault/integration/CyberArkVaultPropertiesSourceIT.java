@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cyberark.vault.integration;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.net.URI;
@@ -36,22 +39,28 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 // Must be manually tested. Provide CyberArk Conjur connection details using system properties:
 // -Dcamel.cyberark.url=http://localhost:8080
 // -Dcamel.cyberark.account=myAccount
 // -Dcamel.cyberark.username=admin
 // -Dcamel.cyberark.apiKey=your-api-key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.cyberark.url", matches = ".*",
-                                 disabledReason = "CyberArk Conjur URL not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.account", matches = ".*",
-                                 disabledReason = "CyberArk Conjur account not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.username", matches = ".*",
-                                 disabledReason = "CyberArk Conjur username not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.apiKey", matches = ".*",
-                                 disabledReason = "CyberArk Conjur API key not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.cyberark.url",
+            matches = ".*",
+            disabledReason = "CyberArk Conjur URL not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.cyberark.account",
+            matches = ".*",
+            disabledReason = "CyberArk Conjur account not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.cyberark.username",
+            matches = ".*",
+            disabledReason = "CyberArk Conjur username not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.cyberark.apiKey",
+            matches = ".*",
+            disabledReason = "CyberArk Conjur API key not provided")
 })
 public class CyberArkVaultPropertiesSourceIT extends CamelTestSupport {
 
@@ -62,9 +71,8 @@ public class CyberArkVaultPropertiesSourceIT extends CamelTestSupport {
 
     @BeforeAll
     public static void init() throws Exception {
-        httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
+        httpClient =
+                HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
         // Authenticate and get token
         authToken = authenticate();
@@ -76,7 +84,8 @@ public class CyberArkVaultPropertiesSourceIT extends CamelTestSupport {
     }
 
     private static String authenticate() throws IOException, InterruptedException {
-        String url = String.format("%s/authn/%s/%s/authenticate",
+        String url = String.format(
+                "%s/authn/%s/%s/authenticate",
                 System.getProperty("camel.cyberark.url"),
                 System.getProperty("camel.cyberark.account"),
                 System.getProperty("camel.cyberark.username"));
@@ -97,15 +106,17 @@ public class CyberArkVaultPropertiesSourceIT extends CamelTestSupport {
 
     private static void createSecret(String secretId, String secretValue) {
         try {
-            String url = String.format("%s/secrets/%s/variable/%s",
-                    System.getProperty("camel.cyberark.url"),
-                    System.getProperty("camel.cyberark.account"),
-                    secretId);
+            String url = String.format(
+                    "%s/secrets/%s/variable/%s",
+                    System.getProperty("camel.cyberark.url"), System.getProperty("camel.cyberark.account"), secretId);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
-                    .header("Authorization", "Token token=\"" + Base64.getEncoder()
-                            .encodeToString(authToken.getBytes(StandardCharsets.UTF_8)) + "\"")
+                    .header(
+                            "Authorization",
+                            "Token token=\""
+                                    + Base64.getEncoder().encodeToString(authToken.getBytes(StandardCharsets.UTF_8))
+                                    + "\"")
                     .header("Content-Type", "application/octet-stream")
                     .POST(HttpRequest.BodyPublishers.ofString(secretValue))
                     .build();
@@ -242,9 +253,7 @@ public class CyberArkVaultPropertiesSourceIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:db")
-                        .setBody(simple("{{cyberark:database#host}}"))
-                        .to("mock:result");
+                from("direct:db").setBody(simple("{{cyberark:database#host}}")).to("mock:result");
                 from("direct:api")
                         .setBody(simple("{{cyberark:api/credentials#key}}"))
                         .to("mock:result");

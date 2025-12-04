@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.tx;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -49,8 +50,7 @@ public class TransactedOnCompletionTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ActiveMQConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory(service.serviceAddress());
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
         CamelContext camelContext = super.createCamelContext();
         JmsComponent component = new JmsComponent();
         component.setConnectionFactory(connectionFactory);
@@ -64,14 +64,13 @@ public class TransactedOnCompletionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .onCompletion()
-                    .setBody(simple("onCompletion"))
-                    .to("mock:onCompletion")
-                    .end()
-                    .to("jms:queue:test.queue?transacted=true");
+                        .onCompletion()
+                        .setBody(simple("onCompletion"))
+                        .to("mock:onCompletion")
+                        .end()
+                        .to("jms:queue:test.queue?transacted=true");
 
-                from("jms:queue:test.queue?transacted=true")
-                        .to("mock:result");
+                from("jms:queue:test.queue?transacted=true").to("mock:result");
             }
         };
     }

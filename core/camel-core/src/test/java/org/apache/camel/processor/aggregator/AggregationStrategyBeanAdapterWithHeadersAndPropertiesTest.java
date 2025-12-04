@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.Map;
@@ -45,9 +46,12 @@ public class AggregationStrategyBeanAdapterWithHeadersAndPropertiesTest extends 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("foo", constant("yes"))
-                        .aggregate(constant(true), AggregationStrategies.bean(appender, "appendWithHeadersAndProperties"))
-                        .completionSize(3).to("mock:result");
+                from("direct:start")
+                        .setHeader("foo", constant("yes"))
+                        .aggregate(
+                                constant(true), AggregationStrategies.bean(appender, "appendWithHeadersAndProperties"))
+                        .completionSize(3)
+                        .to("mock:result");
             }
         };
     }
@@ -55,8 +59,12 @@ public class AggregationStrategyBeanAdapterWithHeadersAndPropertiesTest extends 
     public static final class MyBodyAppender {
 
         public String appendWithHeadersAndProperties(
-                String existing, Map<String, String> oldHeaders, Map<String, Integer> oldProperties, String next,
-                Map<String, String> newHeaders, Map<String, Integer> newProperties) {
+                String existing,
+                Map<String, String> oldHeaders,
+                Map<String, Integer> oldProperties,
+                String next,
+                Map<String, String> newHeaders,
+                Map<String, Integer> newProperties) {
             if (next != null) {
                 Integer count = oldProperties.get("count") + newProperties.get("count");
                 oldProperties.put("count", count);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy;
 
 import org.apache.camel.dataformat.bindy.format.factories.FactoryRegistry;
@@ -25,12 +26,10 @@ public final class FormatFactory {
 
     private FactoryRegistry factoryRegistry;
 
-    public FormatFactory() {
-    }
+    public FormatFactory() {}
 
     private Format<?> doGetFormat(FormattingOptions formattingOptions) {
-        return factoryRegistry.findForFormattingOptions(formattingOptions)
-                .build(formattingOptions);
+        return factoryRegistry.findForFormattingOptions(formattingOptions).build(formattingOptions);
     }
 
     /**

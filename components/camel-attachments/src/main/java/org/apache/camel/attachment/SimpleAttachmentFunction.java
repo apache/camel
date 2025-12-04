@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
 
 import org.apache.camel.CamelContext;
@@ -33,8 +34,10 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
     public Expression createFunction(CamelContext camelContext, String function, int index) {
         if ("attachments".equals(function)) {
             return AttachmentExpressionBuilder.attachments();
-        } else if ("attachments.size".equals(function) || "attachments.size()".equals(function)
-                || "attachments.length".equals(function) || "attachments.length()".equals(function)) {
+        } else if ("attachments.size".equals(function)
+                || "attachments.size()".equals(function)
+                || "attachments.length".equals(function)
+                || "attachments.length()".equals(function)) {
             return AttachmentExpressionBuilder.attachmentsSize();
         }
 
@@ -42,10 +45,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         if (remainder != null) {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${attachmentContent(key)} was: "
-                                                + function,
-                        index);
+                throw new SimpleParserException("Valid syntax: ${attachmentContent(key)} was: " + function, index);
             }
             return AttachmentExpressionBuilder.attachmentContent(values, null);
         }
@@ -54,9 +54,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${attachmentContentAs(key,type)} was: "
-                                                + function,
-                        index);
+                        "Valid syntax: ${attachmentContentAs(key,type)} was: " + function, index);
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
             if (tokens.length > 2) {
@@ -72,9 +70,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${attachmentContentAsText(key)}} was: "
-                                                + function,
-                        index);
+                        "Valid syntax: ${attachmentContentAsText(key)}} was: " + function, index);
             }
             return AttachmentExpressionBuilder.attachmentContent(values, "String");
         }
@@ -89,8 +85,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
             if (tokens.length != 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${attachmentHeaderAs(key,name,type)} was: " + function,
-                        index);
+                        "Valid syntax: ${attachmentHeaderAs(key,name,type)} was: " + function, index);
             }
             String key = tokens[0];
             String name = tokens[1];
@@ -101,16 +96,11 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         if (remainder != null) {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${attachmentHeader(key,name)} was: "
-                                                + function,
-                        index);
+                throw new SimpleParserException("Valid syntax: ${attachmentHeader(key,name)} was: " + function, index);
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
             if (tokens.length != 2) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${attachmentHeader(key,name)} was: " + function,
-                        index);
+                throw new SimpleParserException("Valid syntax: ${attachmentHeader(key,name)} was: " + function, index);
             }
             String key = tokens[0];
             String name = tokens[1];
@@ -121,10 +111,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         if (remainder != null) {
             String key = StringHelper.before(remainder, ")");
             if (key == null || ObjectHelper.isEmpty(key)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${attachmentContentType(key)} was: "
-                                                + function,
-                        index);
+                throw new SimpleParserException("Valid syntax: ${attachmentContentType(key)} was: " + function, index);
             }
             return AttachmentExpressionBuilder.attachmentContentType(key);
         }
@@ -161,8 +148,10 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
     public String createCode(CamelContext camelContext, String function, int index) {
         if ("attachments".equals(function)) {
             return "attachments(exchange)";
-        } else if ("attachments.size".equals(function) || "attachments.size()".equals(function)
-                || "attachments.length".equals(function) || "attachments.length()".equals(function)) {
+        } else if ("attachments.size".equals(function)
+                || "attachments.size()".equals(function)
+                || "attachments.length".equals(function)
+                || "attachments.length()".equals(function)) {
             return "attachmentsSize(exchange)";
         }
 
@@ -170,10 +159,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         if (remainder != null) {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${attachmentContent(key)} was: "
-                                                + function,
-                        index);
+                throw new SimpleParserException("Valid syntax: ${attachmentContent(key)} was: " + function, index);
             }
             String key = StringHelper.removeQuotes(values);
             key = key.trim();
@@ -184,9 +170,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${attachmentContentAs(key,type)} was: "
-                                                + function,
-                        index);
+                        "Valid syntax: ${attachmentContentAs(key,type)} was: " + function, index);
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
             if (tokens.length > 2) {
@@ -207,9 +191,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${attachmentContentAsText(key)}} was: "
-                                                + function,
-                        index);
+                        "Valid syntax: ${attachmentContentAsText(key)}} was: " + function, index);
             }
             String key = StringHelper.removeQuotes(values);
             key = key.trim();
@@ -219,10 +201,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         if (remainder != null) {
             String key = StringHelper.before(remainder, ")");
             if (key == null || ObjectHelper.isEmpty(key)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${attachmentContentType(key)} was: "
-                                                + function,
-                        index);
+                throw new SimpleParserException("Valid syntax: ${attachmentContentType(key)} was: " + function, index);
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
@@ -232,15 +211,11 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         if (remainder != null) {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${attachmentHeader(key,name)} was: "
-                                                + function,
-                        index);
+                throw new SimpleParserException("Valid syntax: ${attachmentHeader(key,name)} was: " + function, index);
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
             if (tokens.length != 2) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${attachmentHeader(key,name)} was: " + function, index);
+                throw new SimpleParserException("Valid syntax: ${attachmentHeader(key,name)} was: " + function, index);
             }
             String key = tokens[0];
             String name = tokens[1];
@@ -255,9 +230,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${attachmentHeaderAs(key,name,type)} was: "
-                                                + function,
-                        index);
+                        "Valid syntax: ${attachmentHeaderAs(key,name,type)} was: " + function, index);
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
             if (tokens.length != 3) {
@@ -297,5 +270,4 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         }
         return type;
     }
-
 }

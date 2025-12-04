@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
 
 import java.net.UnknownHostException;
@@ -34,11 +35,12 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
 
     protected final String payloud = getPayloudPart("Hello world!");
 
-    protected final String ssrfPayloud
-            = "<!DOCTYPE roottag PUBLIC \"-//VSR//PENTEST//EN\" \"http://notex.isting/test\">\n" + payloud;
+    protected final String ssrfPayloud =
+            "<!DOCTYPE roottag PUBLIC \"-//VSR//PENTEST//EN\" \"http://notex.isting/test\">\n" + payloud;
 
-    protected final String xxePayloud
-            = "<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"http://notex.istinghost/test\">]>\n" + getPayloudPart("&file;");
+    protected final String xxePayloud =
+            "<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"http://notex.istinghost/test\">]>\n"
+                    + getPayloudPart("&file;");
 
     private final boolean accessExternalDTD;
 
@@ -71,12 +73,18 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
                 if (accessExternalDTD) {
                     getContext().getGlobalOptions().put(SchemaReader.ACCESS_EXTERNAL_DTD, "true");
                 }
-                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/schema.xsd").to("mock:valid")
-                        .doCatch(ValidationException.class).to("mock:invalid")
-                        .doCatch(UnknownHostException.class).to("mock:unknownHostException").doFinally().to("mock:finally")
+                from("direct:start")
+                        .doTry()
+                        .to("validator:org/apache/camel/component/validator/schema.xsd")
+                        .to("mock:valid")
+                        .doCatch(ValidationException.class)
+                        .to("mock:invalid")
+                        .doCatch(UnknownHostException.class)
+                        .to("mock:unknownHostException")
+                        .doFinally()
+                        .to("mock:finally")
                         .end();
             }
         };
     }
-
 }

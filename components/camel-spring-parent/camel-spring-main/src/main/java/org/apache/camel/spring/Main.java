@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import java.io.BufferedReader;
@@ -74,21 +75,23 @@ public class Main extends MainCommandLineSupport {
     protected void initOptions() {
         super.initOptions();
 
-        addOption(new ParameterOption(
-                "ac", "applicationContext",
-                "Sets the classpath based spring ApplicationContext", "applicationContext") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setApplicationContextUri(parameter);
-            }
-        });
+        addOption(
+                new ParameterOption(
+                        "ac", "applicationContext",
+                        "Sets the classpath based spring ApplicationContext", "applicationContext") {
+                    protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                        setApplicationContextUri(parameter);
+                    }
+                });
 
-        addOption(new ParameterOption(
-                "fa", "fileApplicationContext",
-                "Sets the filesystem based spring ApplicationContext", "fileApplicationContext") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setFileApplicationContextUri(parameter);
-            }
-        });
+        addOption(
+                new ParameterOption(
+                        "fa", "fileApplicationContext",
+                        "Sets the filesystem based spring ApplicationContext", "fileApplicationContext") {
+                    protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                        setFileApplicationContextUri(parameter);
+                    }
+                });
     }
 
     public static void main(String... args) throws Exception {
@@ -274,7 +277,8 @@ public class Main extends MainCommandLineSupport {
                 AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
                 ac.register(SpringCamelContext.class);
                 Set<String> packages = new LinkedHashSet<>();
-                String[] classes = mainConfigurationProperties.getRoutesBuilderClasses().split(",");
+                String[] classes =
+                        mainConfigurationProperties.getRoutesBuilderClasses().split(",");
                 for (String clazz : classes) {
                     if (clazz.contains(".")) {
                         String packageName = clazz.substring(0, clazz.lastIndexOf('.'));
@@ -327,5 +331,4 @@ public class Main extends MainCommandLineSupport {
             }
         }
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5.params;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,16 +40,11 @@ import org.junit.platform.commons.util.ClassLoaderUtils;
 import org.junit.platform.commons.util.CollectionUtils;
 import org.junit.platform.commons.util.ReflectionUtils;
 
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
-
 public class ParameterizedExtension implements TestTemplateInvocationContextProvider {
 
     @Override
     public boolean supportsTestTemplate(ExtensionContext context) {
-        return context.getTestMethod()
-                .map(m -> isAnnotated(m, Test.class))
-                .orElse(false);
+        return context.getTestMethod().map(m -> isAnnotated(m, Test.class)).orElse(false);
     }
 
     @Override
@@ -55,9 +54,8 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
         try {
             List<Method> parameters = getParametersMethods(testClass);
             if (parameters.size() != 1) {
-                throw new IllegalStateException(
-                        "Class " + testClass.getName() + " should provide a single method annotated with @"
-                                                + Parameters.class.getSimpleName());
+                throw new IllegalStateException("Class " + testClass.getName()
+                        + " should provide a single method annotated with @" + Parameters.class.getSimpleName());
             }
             Object params = parameters.iterator().next().invoke(null);
             return CollectionUtils.toStream(params)
@@ -111,13 +109,12 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
         @Override
         public String getDisplayName(int invocationIndex) {
             return "[" + invocationIndex + "] "
-                   + java.util.stream.Stream.of(params).map(Object::toString).collect(Collectors.joining(", "));
+                    + java.util.stream.Stream.of(params).map(Object::toString).collect(Collectors.joining(", "));
         }
 
         @Override
         public java.util.List<Extension> getAdditionalExtensions() {
-            return List.of(
-                    (TestInstancePostProcessor) this::postProcessTestInstance);
+            return List.of((TestInstancePostProcessor) this::postProcessTestInstance);
         }
 
         protected void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
@@ -126,15 +123,16 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
                     .map(Class::getDeclaredFields)
                     .flatMap(Stream::of)
                     .filter(f -> isAnnotated(f, Parameter.class))
-                    .sorted(Comparator.comparing(f -> (Integer) f.getAnnotation(Parameter.class).value()))
+                    .sorted(Comparator.comparing(
+                            f -> (Integer) f.getAnnotation(Parameter.class).value()))
                     .toList();
             if (params.length != fields.size()) {
-                throw new TestInstantiationException(
-                        "Expected " + fields.size() + " parameters bug got " + params.length + " when instantiating "
-                                                     + clazz.getName());
+                throw new TestInstantiationException("Expected " + fields.size() + " parameters bug got "
+                        + params.length + " when instantiating " + clazz.getName());
             }
             if (!fields.isEmpty()) {
-                ClassLoader classLoader = ClassLoaderUtils.getClassLoader(context.getExecutionMode().getDeclaringClass());
+                ClassLoader classLoader = ClassLoaderUtils.getClassLoader(
+                        context.getExecutionMode().getDeclaringClass());
                 DefaultArgumentConverter converter = new DefaultArgumentConverter(context);
                 for (int i = 0; i < fields.size(); i++) {
                     Field f = fields.get(i);
@@ -148,7 +146,5 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
             Class<?> superclass = clazz.getSuperclass();
             return Stream.concat(Stream.of(clazz), superclass != null ? hierarchy(superclass) : Stream.empty());
         }
-
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.PropertyBindingException;
@@ -27,22 +32,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class ProducerBatchInvalidTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
-                .addScript("sql/storedProcedureTest.sql").build();
-
+                .addScript("sql/storedProcedureTest.sql")
+                .build();
     }
 
     @Override
@@ -63,22 +63,26 @@ public class ProducerBatchInvalidTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // required for the sql component
-                getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
+                getContext()
+                        .getComponent("sql-stored", SqlStoredComponent.class)
+                        .setDataSource(db);
 
                 // batch option has been configured twice
-                from("direct:query").to("sql-stored:BATCHFN(INTEGER :#num)?batch=true&batch=true").to("mock:query");
+                from("direct:query")
+                        .to("sql-stored:BATCHFN(INTEGER :#num)?batch=true&batch=true")
+                        .to("mock:query");
             }
         });
         try {
             context.start();
             fail("Should throw exception");
         } catch (FailedToCreateRouteException e) {
-            ResolveEndpointFailedException refe = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+            ResolveEndpointFailedException refe =
+                    assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, refe.getCause());
             assertEquals("batch", pbe.getPropertyName());
             assertIsInstanceOf(TypeConversionException.class, pbe.getCause());
             assertEquals("[true, true]", pbe.getValue().toString());
         }
     }
-
 }

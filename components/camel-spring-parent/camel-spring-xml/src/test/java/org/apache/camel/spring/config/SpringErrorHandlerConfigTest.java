@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -22,9 +26,6 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringErrorHandlerConfigTest extends SpringTestSupport {
 
@@ -67,9 +68,10 @@ public class SpringErrorHandlerConfigTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
 
         assertTrue(exchange.isFailed());
-        assertEquals("Damn cannot do this", exchange.getException(IllegalArgumentException.class).getMessage());
+        assertEquals(
+                "Damn cannot do this",
+                exchange.getException(IllegalArgumentException.class).getMessage());
         assertEquals(true, exchange.getIn().getHeader(Exchange.REDELIVERED));
         assertEquals(2, exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
     }
-
 }

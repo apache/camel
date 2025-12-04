@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.model;
 
 import java.util.ArrayList;
@@ -26,8 +27,7 @@ public class ModelList {
     private String nextPageToken = null;
     private List<Model> models = new ArrayList<>();
 
-    public ModelList() {
-    }
+    public ModelList() {}
 
     public static ModelList from(ListModels200Response src) {
         ModelList modelList = new ModelList();
@@ -54,9 +54,8 @@ public class ModelList {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {\n" +
-               "    nextPageToken: " + nextPageToken + "\n" +
-               "    models: " + models + "\n" +
-               "}";
+        return getClass().getSimpleName() + " {\n" + "    nextPageToken: "
+                + nextPageToken + "\n" + "    models: "
+                + models + "\n" + "}";
     }
 }

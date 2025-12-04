@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snmp;
 
 import org.snmp4j.CommunityTarget;
@@ -41,8 +42,7 @@ import org.snmp4j.smi.OctetString;
 
 final class SnmpHelper {
 
-    private SnmpHelper() {
-    }
+    private SnmpHelper() {}
 
     static PDU createPDU(SnmpEndpoint endpoint) {
         return switch (endpoint.getSnmpVersion()) {

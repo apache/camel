@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
@@ -41,7 +42,9 @@ public class PullRequestFilesProducer extends AbstractGitHubProducer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
-            LOG.debug("Using PullRequestService found in registry {}", service.getClass().getCanonicalName());
+            LOG.debug(
+                    "Using PullRequestService found in registry {}",
+                    service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
         } else {
             pullRequestService = new PullRequestService();
@@ -59,5 +62,4 @@ public class PullRequestFilesProducer extends AbstractGitHubProducer {
         exchange.getOut().copyFrom(exchange.getIn());
         exchange.getOut().setBody(response);
     }
-
 }

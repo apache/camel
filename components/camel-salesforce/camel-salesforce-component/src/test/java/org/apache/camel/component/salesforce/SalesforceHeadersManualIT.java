@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.util.Collections;
@@ -32,7 +33,9 @@ public class SalesforceHeadersManualIT extends AbstractSalesforceTestBase {
             exchange1.getIn().setHeader("Sforce-Limit-Info", Collections.singletonList("api-usage"));
         });
 
-        Assertions.assertThat(exchange.getMessage().getBody(GlobalObjects.class)).isNotNull();
-        Assertions.assertThat(exchange.getMessage().getHeader("Sforce-Limit-Info", String.class)).contains("api-usage=");
+        Assertions.assertThat(exchange.getMessage().getBody(GlobalObjects.class))
+                .isNotNull();
+        Assertions.assertThat(exchange.getMessage().getHeader("Sforce-Limit-Info", String.class))
+                .contains("api-usage=");
     }
 }

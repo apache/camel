@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddingstore;
 
 import dev.langchain4j.data.segment.TextSegment;
@@ -47,7 +48,9 @@ public class LangChain4jEmbeddingStoreConfiguration implements Cloneable {
     private EmbeddingStore<TextSegment> embeddingStore;
 
     /** Factory for creating embedding stores dynamically, takes precedence over direct store */
-    @UriParam(description = "The embedding store factory to use for creating embedding stores if no embeddingstore is provided")
+    @UriParam(
+            description =
+                    "The embedding store factory to use for creating embedding stores if no embeddingstore is provided")
     @Metadata(autowired = true)
     private EmbeddingStoreFactory embeddingStoreFactory;
 

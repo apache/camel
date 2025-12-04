@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContextAware;
@@ -53,7 +54,6 @@ public interface PooledObjectFactory<T> extends Service, CamelContextAware {
          * Reset the counters
          */
         void reset();
-
     }
 
     /**
@@ -117,5 +117,4 @@ public interface PooledObjectFactory<T> extends Service, CamelContextAware {
      * @return   true if released into the pool, or false if something went wrong and the object was discarded
      */
     boolean release(T t);
-
 }

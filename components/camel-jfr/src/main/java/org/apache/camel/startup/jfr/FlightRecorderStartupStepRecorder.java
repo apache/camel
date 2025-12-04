@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.startup.jfr;
 
 import java.nio.file.Files;
@@ -70,12 +71,16 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
             if (getStartupRecorderDuration() == 0) {
                 if (rec.getDestination() != null) {
                     rec.setDumpOnExit(true);
-                    LOG.info("Java flight recorder with profile: {} will be saved to file on JVM exit: {}",
-                            getRecordingProfile(), rec.getDestination());
+                    LOG.info(
+                            "Java flight recorder with profile: {} will be saved to file on JVM exit: {}",
+                            getRecordingProfile(),
+                            rec.getDestination());
                 }
             } else if (getStartupRecorderDuration() > 0) {
                 rec.setDuration(Duration.ofSeconds(getStartupRecorderDuration()));
-                LOG.info("Starting Java flight recorder with profile: {} and duration: {} seconds", getRecordingProfile(),
+                LOG.info(
+                        "Starting Java flight recorder with profile: {} and duration: {} seconds",
+                        getRecordingProfile(),
                         getStartupRecorderDuration());
 
                 // add listener to trigger auto-save when duration is hit
@@ -83,8 +88,10 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
                     @Override
                     public void recordingStateChanged(Recording recording) {
                         if (recording == rec && recording.getState().equals(RecordingState.STOPPED)) {
-                            LOG.info("Java flight recorder stopped after {} seconds and saved to file: {}",
-                                    getStartupRecorderDuration(), rec.getDestination());
+                            LOG.info(
+                                    "Java flight recorder stopped after {} seconds and saved to file: {}",
+                                    getStartupRecorderDuration(),
+                                    rec.getDestination());
                         }
                     }
                 };
@@ -119,7 +126,8 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
     }
 
     @Override
-    public StartupStep createStartupStep(String type, String name, String description, int id, int parentId, int level) {
+    public StartupStep createStartupStep(
+            String type, String name, String description, int id, int parentId, int level) {
         return new FlightRecorderStartupStep(name, id, parentId, level, type, description);
     }
 

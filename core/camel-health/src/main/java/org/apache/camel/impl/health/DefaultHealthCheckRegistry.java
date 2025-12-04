@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
 
 import java.util.Collection;
@@ -174,8 +175,13 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     }
 
     private HealthCheck resolveHealthCheckById(String id) {
-        HealthCheck answer = checks.stream().filter(h -> h.getId().equals(id)).findFirst()
-                .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
+        HealthCheck answer = checks.stream()
+                .filter(h -> h.getId().equals(id))
+                .findFirst()
+                .orElse(camelContext
+                        .getRegistry()
+                        .findByTypeWithName(HealthCheck.class)
+                        .get(id));
         if (answer == null) {
             HealthCheckResolver resolver = PluginHelper.getHealthCheckResolver(camelContext);
             answer = resolver.resolveHealthCheck(id);
@@ -185,8 +191,13 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     }
 
     private HealthCheckRepository resolveHealthCheckRepositoryById(String id) {
-        HealthCheckRepository answer = repositories.stream().filter(h -> h.getId().equals(id)).findFirst()
-                .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheckRepository.class).get(id));
+        HealthCheckRepository answer = repositories.stream()
+                .filter(h -> h.getId().equals(id))
+                .findFirst()
+                .orElse(camelContext
+                        .getRegistry()
+                        .findByTypeWithName(HealthCheckRepository.class)
+                        .get(id));
         if (answer == null) {
             // discover via classpath (try first via -health-check-repository and then id as-is)
             HealthCheckResolver resolver = PluginHelper.getHealthCheckResolver(camelContext);
@@ -280,9 +291,8 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     @Override
     public Stream<HealthCheck> stream() {
         if (enabled) {
-            return Stream.concat(
-                    checks.stream(),
-                    repositories.stream().flatMap(HealthCheckRepository::stream)).distinct();
+            return Stream.concat(checks.stream(), repositories.stream().flatMap(HealthCheckRepository::stream))
+                    .distinct();
         }
         return Stream.empty();
     }

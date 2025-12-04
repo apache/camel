@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache.policy;
 
 import java.util.Set;
@@ -63,49 +64,53 @@ public class JCachePolicy implements Policy {
 
     @Override
     public Processor wrap(Route route, Processor processor) {
-        //Don't add JCachePolicyProcessor if JCachePolicy is disabled. This means enable/disable has impact only during startup
+        // Don't add JCachePolicyProcessor if JCachePolicy is disabled. This means enable/disable has impact only during
+        // startup
         if (!isEnabled()) {
             return processor;
         }
 
         Cache cache = this.cache;
         if (cache == null) {
-            //Create cache based on given configuration
+            // Create cache based on given configuration
 
-            //Find CacheManager
+            // Find CacheManager
             CacheManager cacheManager = this.cacheManager;
 
-            //Lookup CacheManager from CamelContext if it's not set
+            // Lookup CacheManager from CamelContext if it's not set
             if (cacheManager == null) {
-                Set<CacheManager> lookupResult = route.getCamelContext().getRegistry().findByType(CacheManager.class);
+                Set<CacheManager> lookupResult =
+                        route.getCamelContext().getRegistry().findByType(CacheManager.class);
                 if (ObjectHelper.isNotEmpty(lookupResult)) {
 
-                    //Use the first cache manager found
+                    // Use the first cache manager found
                     cacheManager = lookupResult.iterator().next();
                     LOG.debug("CacheManager from CamelContext registry: {}", cacheManager);
                 }
             }
 
-            //Lookup CacheManager the standard way
+            // Lookup CacheManager the standard way
             if (cacheManager == null) {
                 cacheManager = Caching.getCachingProvider().getCacheManager();
                 LOG.debug("CacheManager from CachingProvider: {}", cacheManager);
             }
 
-            //Use routeId as cacheName if it's not set
+            // Use routeId as cacheName if it's not set
             String cacheName = ObjectHelper.isNotEmpty(this.cacheName) ? this.cacheName : route.getRouteId();
             LOG.debug("Getting cache:{}", cacheName);
 
-            //Get cache or create a new one using the cacheConfiguration
+            // Get cache or create a new one using the cacheConfiguration
             cache = cacheManager.getCache(cacheName);
             if (cache == null) {
                 LOG.debug("Create cache:{}", cacheName);
                 // NOTE: the cache must not be closed. The closure is managed by the client
                 // (the component in this case) which will close it according to Camel lifecycle.
-                cache = cacheManager.createCache(cacheName, // NOSONAR
-                        cacheConfiguration != null ? this.cacheConfiguration : (Configuration) new MutableConfiguration());
+                cache = cacheManager.createCache(
+                        cacheName, // NOSONAR
+                        cacheConfiguration != null
+                                ? this.cacheConfiguration
+                                : (Configuration) new MutableConfiguration());
             }
-
         }
 
         return new JCachePolicyProcessor(route.getCamelContext(), cache, keyExpression, bypassExpression, processor);
@@ -169,9 +174,6 @@ public class JCachePolicy implements Policy {
 
     @Override
     public String toString() {
-        return "JCachePolicy{"
-               + "keyExpression=" + keyExpression
-               + ", enabled=" + enabled
-               + '}';
+        return "JCachePolicy{" + "keyExpression=" + keyExpression + ", enabled=" + enabled + '}';
     }
 }

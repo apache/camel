@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weaviate.it;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,14 +38,12 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 // This Integration test is meant to be run over the local container set up
 // by camel-test-infra-weaviate - if we want to run the integration tests against
 // a weaviate server, we should not run it.  If weaviate.apikey is specified,
 // skip this IT
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "weaviate.apikey", matches = ".*", disabledReason = "weaviate API Key provided"),
+    @DisabledIfSystemProperty(named = "weaviate.apikey", matches = ".*", disabledReason = "weaviate API Key provided"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WeaviateContainerIT extends WeaviateTestSupport {
@@ -102,7 +103,8 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("dog", "dachshund");
 
-        Exchange result = fluentTemplate.to(getUri())
+        Exchange result = fluentTemplate
+                .to(getUri())
                 .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.UPDATE_BY_ID)
                 .withBody(elements)
                 .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
@@ -122,7 +124,8 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
     @Order(8)
     public void queryById() {
 
-        Exchange result = fluentTemplate.to(getUri())
+        Exchange result = fluentTemplate
+                .to(getUri())
                 .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.QUERY_BY_ID)
                 .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
                 .withHeader(WeaviateVectorDbHeaders.INDEX_ID, CREATEID)
@@ -141,7 +144,6 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
             assertThat(map).containsKey("age");
             assertThat(map).containsKey("dog");
         }
-
     }
 
     @SuppressWarnings("unchecked")
@@ -157,15 +159,15 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
         Exchange result = fluentTemplate
                 .to(getUri())
                 .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.QUERY)
-                .withBody(
-                        elements)
+                .withBody(elements)
                 .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
                 .withHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, 20)
                 .withHeader(WeaviateVectorDbHeaders.FIELDS, map)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
-        GraphQLResponse<?> qlResponse = (GraphQLResponse<?>) result.getIn().getBody(Result.class).getResult();
+        GraphQLResponse<?> qlResponse =
+                (GraphQLResponse<?>) result.getIn().getBody(Result.class).getResult();
         var dataMap = (Map<String, Map<String, List<Map<String, String>>>>) qlResponse.getData();
         assertThat(dataMap.get("Get").get(COLLECTION).get(0)).containsEntry("sky", "blue");
     }
@@ -212,5 +214,4 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
 
         return "weaviate:test-collection";
     }
-
 }

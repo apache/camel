@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LogRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LogRouteTest.class);
@@ -44,11 +45,11 @@ public class LogRouteTest extends ContextTestSupport {
 
     @Test
     public void testSendMessageToBadLevel() {
-        Exception ex = assertThrows(Exception.class,
+        Exception ex = assertThrows(
+                Exception.class,
                 () -> template.sendBody("log:org.apache.camel.TEST?level=noSuchLevel", "<level>noSuchLevel</level>"),
                 "Should have failed!");
 
         LOG.debug("Caught expected exception: {}", ex.getMessage(), ex);
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -32,10 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the MarkerFileExclusiveReadLockStrategy in a multi-threaded scenario.
@@ -88,7 +89,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         LOG.debug("Writing files...");
 
         try (OutputStream fos = Files.newOutputStream(testFile("in/file1.dat"));
-             OutputStream fos2 = Files.newOutputStream(testFile("in/file2.dat"))) {
+                OutputStream fos2 = Files.newOutputStream(testFile("in/file2.dat"))) {
             for (int i = 0; i < 20; i++) {
                 fos.write(("Line " + i + LS).getBytes());
                 fos2.write(("Line " + i + LS).getBytes());
@@ -104,20 +105,24 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("in?readLock=markerFile&initialDelay=0&delay=10")).onCompletion()
+                from(fileUri("in?readLock=markerFile&initialDelay=0&delay=10"))
+                        .onCompletion()
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 numberOfFilesProcessed.addAndGet(1);
                                 latch.countDown();
                             }
-                        }).end().threads(NUMBER_OF_THREADS).to(fileUri("out"), "mock:result");
+                        })
+                        .end()
+                        .threads(NUMBER_OF_THREADS)
+                        .to(fileUri("out"), "mock:result");
             }
         };
     }
 
     private static void assertFileDoesNotExists(Path file) {
-        assertFalse(Files.exists(file),
+        assertFalse(
+                Files.exists(file),
                 "File " + file + " should not exist, it should have been deleted after being processed");
     }
-
 }

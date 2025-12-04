@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milvus;
 
 import org.apache.camel.spi.Metadata;
@@ -21,8 +22,7 @@ import org.apache.camel.spi.Metadata;
 public class Milvus {
     public static final String SCHEME = "milvus";
 
-    private Milvus() {
-    }
+    private Milvus() {}
 
     /**
      * @deprecated As of Camel 4.15, this nested Headers class has been moved to its own class. Use
@@ -30,8 +30,10 @@ public class Milvus {
      */
     @Deprecated
     public static class Headers {
-        @Metadata(description = "The action to be performed.", javaType = "String",
-                  enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,QUERY,DELETE")
+        @Metadata(
+                description = "The action to be performed.",
+                javaType = "String",
+                enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,QUERY,DELETE")
         public static final String ACTION = "CamelMilvusAction";
 
         @Metadata(description = "Operation Status.", javaType = "String")
@@ -55,5 +57,4 @@ public class Milvus {
         @Metadata(description = "Key Value for Insert/Upsert operation", javaType = "String")
         public static final String KEY_VALUE = "CamelMilvusKeyValue";
     }
-
 }

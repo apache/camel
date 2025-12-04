@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,8 +30,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PublisherTypeConversionTest extends BaseReactiveTest {
 
@@ -74,7 +75,8 @@ public class PublisherTypeConversionTest extends BaseReactiveTest {
             @Override
             public void configure() {
                 from("timer:tick?period=50&repeatCount=1")
-                        .setBody().constant(123)
+                        .setBody()
+                        .constant(123)
                         .to("reactive-streams:pub");
             }
         };

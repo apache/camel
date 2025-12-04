@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -93,7 +94,6 @@ public interface CamelEvent {
     interface FailureEvent extends CamelEvent {
 
         Throwable getCause();
-
     }
 
     interface CamelContextEvent extends CamelEvent {
@@ -104,7 +104,6 @@ public interface CamelEvent {
         default Object getSource() {
             return getContext();
         }
-
     }
 
     interface CamelContextInitializingEvent extends CamelContextEvent {
@@ -285,7 +284,6 @@ public interface CamelEvent {
         boolean isDeadLetterChannel();
 
         String getDeadLetterUri();
-
     }
 
     interface ExchangeFailureHandledEvent extends ExchangeFailureEvent {

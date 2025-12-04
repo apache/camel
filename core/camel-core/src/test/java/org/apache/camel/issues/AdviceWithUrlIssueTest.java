@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,7 +33,10 @@ public class AdviceWithUrlIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:test?concurrentConsumers=1").routeId("sedaroute").to("log:before").to("mock:target");
+                from("seda:test?concurrentConsumers=1")
+                        .routeId("sedaroute")
+                        .to("log:before")
+                        .to("mock:target");
             }
         };
     }
@@ -67,5 +71,4 @@ public class AdviceWithUrlIssueTest extends ContextTestSupport {
             interceptSendToEndpoint("mock:target").skipSendToOriginalEndpoint().to("mock:target2");
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.mtom;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
 
@@ -23,8 +26,6 @@ import jakarta.xml.ws.BindingProvider;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class CxfMtomRouterRawModeTest extends CxfMtomRouterPayloadModeTest {
@@ -36,10 +37,11 @@ public class CxfMtomRouterRawModeTest extends CxfMtomRouterPayloadModeTest {
         HelloService service = new HelloService(wsdl, HelloService.SERVICE);
         assertNotNull(service, "Service is null");
         Hello port = service.getHelloPort();
-        ((BindingProvider) port).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+        ((BindingProvider) port)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                         "http://localhost:" + port1 + "/CxfMtomRouterRawModeTest/jaxws-mtom/hello");
         return port;
     }
-
 }

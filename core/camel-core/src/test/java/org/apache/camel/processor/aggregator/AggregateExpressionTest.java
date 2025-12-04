@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -46,7 +47,9 @@ public class AggregateExpressionTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionFromBatchConsumer()
+                from("direct:start")
+                        .aggregate(body(), new BodyInAggregatingStrategy())
+                        .completionFromBatchConsumer()
                         .to("mock:result");
                 // END SNIPPET: e1
             }

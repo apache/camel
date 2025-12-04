@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
 
 import java.util.Iterator;
@@ -35,8 +36,8 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
 
         processTarEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "hello", "greetings");
 
-        splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "another/hello.txt",
-                "other/greetings.txt");
+        splitResult.expectedBodiesReceivedInAnyOrder(
+                "chiau.txt", "hi.txt", "hola.txt", "another/hello.txt", "other/greetings.txt");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -58,12 +59,13 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
                         .to("mock:processTarEntry")
                         .end()
                         .log("Done processing big file: ${header.CamelFileName}")
-                        .setBody().header(PROCESSED_FILES_HEADER_NAME)
-                        .split().body()
+                        .setBody()
+                        .header(PROCESSED_FILES_HEADER_NAME)
+                        .split()
+                        .body()
                         .to("mock:splitResult");
             }
         };
-
     }
 
     private AggregationStrategy updateHeader() {
@@ -73,16 +75,15 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
                 if (oldExchange != null) {
                     String processedFiles = oldExchange.getIn().getHeader(PROCESSED_FILES_HEADER_NAME, String.class);
                     if (processedFiles == null) {
-                        processedFiles = oldExchange.getIn().getHeader(TarIterator.TARFILE_ENTRY_NAME_HEADER, String.class);
+                        processedFiles =
+                                oldExchange.getIn().getHeader(TarIterator.TARFILE_ENTRY_NAME_HEADER, String.class);
                     }
                     processedFiles = processedFiles + ","
-                                     + newExchange.getIn().getHeader(TarIterator.TARFILE_ENTRY_NAME_HEADER, String.class);
+                            + newExchange.getIn().getHeader(TarIterator.TARFILE_ENTRY_NAME_HEADER, String.class);
                     newExchange.getIn().setHeader(PROCESSED_FILES_HEADER_NAME, processedFiles);
                 }
                 return newExchange;
             }
-
         };
     }
-
 }

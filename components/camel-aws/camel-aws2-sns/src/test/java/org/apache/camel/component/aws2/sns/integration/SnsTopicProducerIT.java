@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -26,8 +29,6 @@ import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class SnsTopicProducerIT extends Aws2SNSBase {
@@ -65,7 +66,9 @@ public class SnsTopicProducerIT extends Aws2SNSBase {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toF("aws2-sns://%s?subject=The+subject+message&autoCreateTopic=true", sharedNameGenerator.getName());
+                        .toF(
+                                "aws2-sns://%s?subject=The+subject+message&autoCreateTopic=true",
+                                sharedNameGenerator.getName());
             }
         };
     }

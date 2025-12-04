@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jaxb;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -27,11 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JaxbDataFormatMustBeJAXBElementTest extends CamelTestSupport {
 
@@ -54,7 +55,8 @@ public class JaxbDataFormatMustBeJAXBElementTest extends CamelTestSupport {
             template.sendBody("direct:start2", "<foo><bar>Hello Bar</bar></foo>");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            InvalidPayloadException ipe = assertIsInstanceOf(InvalidPayloadException.class, e.getCause().getCause());
+            InvalidPayloadException ipe = assertIsInstanceOf(
+                    InvalidPayloadException.class, e.getCause().getCause());
             assertNotNull(ipe);
             assertEquals(JAXBElement.class, ipe.getType());
         }
@@ -94,5 +96,4 @@ public class JaxbDataFormatMustBeJAXBElementTest extends CamelTestSupport {
             this.bar = bar;
         }
     }
-
 }

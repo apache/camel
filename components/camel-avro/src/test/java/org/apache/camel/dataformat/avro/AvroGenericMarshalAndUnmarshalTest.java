@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.avro;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AvroGenericMarshalAndUnmarshalTest extends CamelTestSupport {
 
@@ -59,7 +60,6 @@ public class AvroGenericMarshalAndUnmarshalTest extends CamelTestSupport {
 
         GenericRecord output = mock.getReceivedExchanges().get(0).getIn().getBody(GenericRecord.class);
         assertEquals(input, output);
-
     }
 
     @Override

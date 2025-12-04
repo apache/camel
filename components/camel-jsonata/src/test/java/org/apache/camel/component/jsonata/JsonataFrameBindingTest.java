@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonata;
 
 import com.dashjoin.jsonata.Jsonata;
@@ -46,14 +47,15 @@ class JsonataFrameBindingTest extends CamelTestSupport {
 
     @Test
     void testFrameBindingJsonata() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jsonata/frameBinding/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jsonata/frameBinding/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
-        sendBody("direct://start",
+        sendBody(
+                "direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jsonata/frameBinding/input.json"));
 
@@ -66,7 +68,8 @@ class JsonataFrameBindingTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                        .to("jsonata:org/apache/camel/component/jsonata/frameBinding/expressions.spec?inputType=JsonString&outputType=JsonString")
+                        .to(
+                                "jsonata:org/apache/camel/component/jsonata/frameBinding/expressions.spec?inputType=JsonString&outputType=JsonString")
                         .to("mock:result");
             }
         };

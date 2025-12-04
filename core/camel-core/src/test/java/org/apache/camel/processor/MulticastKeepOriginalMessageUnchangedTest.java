@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,13 +45,21 @@ public class MulticastKeepOriginalMessageUnchangedTest extends ContextTestSuppor
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").setHeader("bar", constant("no")).to("mock:a").multicast(AggregationStrategies.useOriginal())
-                        .to("direct:foo").end().to("mock:result");
+                from("direct:a")
+                        .setHeader("bar", constant("no"))
+                        .to("mock:a")
+                        .multicast(AggregationStrategies.useOriginal())
+                        .to("direct:foo")
+                        .end()
+                        .to("mock:result");
 
-                from("direct:foo").setHeader("foo", constant("yes")).removeHeader("bar").transform()
-                        .simple("Foo was here ${body}").to("mock:foo");
+                from("direct:foo")
+                        .setHeader("foo", constant("yes"))
+                        .removeHeader("bar")
+                        .transform()
+                        .simple("Foo was here ${body}")
+                        .to("mock:foo");
             }
         };
     }
-
 }

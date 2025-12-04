@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,13 +36,12 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
-
 /**
  * Implements a Choice structure where one or more predicates are used which if they are true their processors are used,
  * with a default otherwise clause used if none match.
  */
-public class ChoiceProcessor extends BaseProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+public class ChoiceProcessor extends BaseProcessorSupport
+        implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
 
@@ -193,5 +195,4 @@ public class ChoiceProcessor extends BaseProcessorSupport implements Navigate<Pr
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(otherwise, Arrays.asList(filters));
     }
-
 }

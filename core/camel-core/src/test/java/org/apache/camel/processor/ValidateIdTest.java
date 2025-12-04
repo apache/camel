@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -51,8 +52,14 @@ public class ValidateIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").validate(body().isInstanceOf(String.class)).id("myValidate")
-                        .to("log:foo").to("mock:result").id("result").to("log:after")
+                from("direct:start")
+                        .routeId("myRoute")
+                        .validate(body().isInstanceOf(String.class))
+                        .id("myValidate")
+                        .to("log:foo")
+                        .to("mock:result")
+                        .id("result")
+                        .to("log:after")
                         .id("after");
             }
         };

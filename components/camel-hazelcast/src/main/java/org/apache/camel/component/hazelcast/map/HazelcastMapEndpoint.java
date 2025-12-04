@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.map;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MAP;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Category;
@@ -27,17 +30,20 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MAP;
-
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed map.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MAP, title = "Hazelcast Map", syntax = "hazelcast-map:cacheName",
-             category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
+@UriEndpoint(
+        firstVersion = "2.7.0",
+        scheme = SCHEME_MAP,
+        title = "Hazelcast Map",
+        syntax = "hazelcast-map:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = HazelcastConstants.class)
 public class HazelcastMapEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastMapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName,
-                                HazelcastDefaultComponent component) {
+    public HazelcastMapEndpoint(
+            HazelcastInstance hazelcastInstance, String uri, String cacheName, HazelcastDefaultComponent component) {
         super(hazelcastInstance, uri, component, cacheName);
         setCommand(HazelcastCommand.map);
     }
@@ -53,5 +59,4 @@ public class HazelcastMapEndpoint extends HazelcastDefaultEndpoint {
     public Producer createProducer() throws Exception {
         return new HazelcastMapProducer(hazelcastInstance, this, cacheName);
     }
-
 }

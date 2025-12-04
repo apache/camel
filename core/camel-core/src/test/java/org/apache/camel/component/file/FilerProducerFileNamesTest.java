@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -52,10 +53,10 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:report")
-                        .to(fileUri("reports"));
+                from("direct:report").to(fileUri("reports"));
 
-                from("direct:report2").setHeader(Exchange.FILE_NAME, constant("report-super.txt"))
+                from("direct:report2")
+                        .setHeader(Exchange.FILE_NAME, constant("report-super.txt"))
                         .to(fileUri());
             }
         };

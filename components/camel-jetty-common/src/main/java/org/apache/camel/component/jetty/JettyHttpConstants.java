@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
@@ -23,11 +24,12 @@ public final class JettyHttpConstants {
 
     @Metadata(description = "The servlet context path used", javaType = "String")
     public static final String SERVLET_CONTEXT_PATH = "CamelServletContextPath";
-    @Metadata(description = "Request URI's path, the header will be used to build the request URI\n" +
-                            "with the HTTP_URI.",
-              javaType = "String")
+
+    @Metadata(
+            description =
+                    "Request URI's path, the header will be used to build the request URI\n" + "with the HTTP_URI.",
+            javaType = "String")
     public static final String HTTP_PATH = Exchange.HTTP_PATH;
 
-    private JettyHttpConstants() {
-    }
+    private JettyHttpConstants() {}
 }

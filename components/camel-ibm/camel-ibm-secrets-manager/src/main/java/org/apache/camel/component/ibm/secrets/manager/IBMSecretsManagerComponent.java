@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.secrets.manager;
 
 import java.util.Map;
@@ -32,8 +33,7 @@ public class IBMSecretsManagerComponent extends DefaultComponent {
     @Metadata
     private IBMSecretsManagerConfiguration configuration = new IBMSecretsManagerConfiguration();
 
-    public IBMSecretsManagerComponent() {
-    }
+    public IBMSecretsManagerComponent() {}
 
     public IBMSecretsManagerComponent(final CamelContext context) {
         super(context);
@@ -42,16 +42,14 @@ public class IBMSecretsManagerComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        final IBMSecretsManagerConfiguration epConfiguration
-                = this.configuration != null ? this.configuration.copy() : new IBMSecretsManagerConfiguration();
+        final IBMSecretsManagerConfiguration epConfiguration =
+                this.configuration != null ? this.configuration.copy() : new IBMSecretsManagerConfiguration();
 
         final IBMSecretsManagerEndpoint endpoint = new IBMSecretsManagerEndpoint(uri, this, epConfiguration);
         setProperties(endpoint, parameters);
 
-        if (epConfiguration.getServiceUrl() == null
-                && epConfiguration.getToken() == null) {
-            throw new IllegalArgumentException(
-                    "Service URL and Token must be specified");
+        if (epConfiguration.getServiceUrl() == null && epConfiguration.getToken() == null) {
+            throw new IllegalArgumentException("Service URL and Token must be specified");
         }
 
         return endpoint;

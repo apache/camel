@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scheduler;
 
 import java.util.Date;
@@ -70,7 +71,8 @@ public class SchedulerConsumer extends ScheduledPollConsumer {
             boolean doneSync = getAsyncProcessor().process(exchange, cbDoneSync -> {
                 // handle any thrown exception
                 if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                    getExceptionHandler()
+                            .handleException("Error processing exchange", exchange, exchange.getException());
                 }
                 boolean wasPolled = exchange.getProperty(Exchange.SCHEDULER_POLLED_MESSAGES, true, boolean.class);
                 if (!wasPolled) {

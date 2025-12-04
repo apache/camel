@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.producer;
 
 import org.apache.camel.Exchange;
@@ -42,7 +43,10 @@ public class WordpressUserProducer extends AbstractWordpressProducer<User> {
 
     @Override
     protected User processUpdate(Exchange exchange) {
-        LOG.debug("Trying to update the user {} with id {}", exchange.getIn().getBody(), this.getConfiguration().getId());
+        LOG.debug(
+                "Trying to update the user {} with id {}",
+                exchange.getIn().getBody(),
+                this.getConfiguration().getId());
         return serviceUsers.update(getConfiguration().getId(), exchange.getIn().getBody(User.class));
     }
 
@@ -51,5 +55,4 @@ public class WordpressUserProducer extends AbstractWordpressProducer<User> {
         LOG.debug("Trying to create a new user{}", exchange.getIn().getBody());
         return serviceUsers.create(exchange.getIn().getBody(User.class));
     }
-
 }

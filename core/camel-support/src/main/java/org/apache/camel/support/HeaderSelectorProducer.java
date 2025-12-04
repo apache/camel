@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.function.Supplier;
@@ -72,8 +73,8 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
         this(endpoint, () -> header, defaultHeaderValueSupplier, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
-                                  Supplier<String> defaultHeaderValueSupplier) {
+    public HeaderSelectorProducer(
+            Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier) {
         this(endpoint, headerSupplier, defaultHeaderValueSupplier, null);
     }
 
@@ -81,12 +82,16 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
         this(endpoint, () -> header, () -> defaultHeaderValue, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
-                                  Supplier<String> defaultHeaderValueSupplier, Object target) {
+    public HeaderSelectorProducer(
+            Endpoint endpoint,
+            Supplier<String> headerSupplier,
+            Supplier<String> defaultHeaderValueSupplier,
+            Object target) {
         super(endpoint);
 
         this.headerSupplier = ObjectHelper.notNull(headerSupplier, "headerSupplier");
-        this.defaultHeaderValueSupplier = ObjectHelper.notNull(defaultHeaderValueSupplier, "defaultHeaderValueSupplier");
+        this.defaultHeaderValueSupplier =
+                ObjectHelper.notNull(defaultHeaderValueSupplier, "defaultHeaderValueSupplier");
         this.target = target != null ? target : this;
     }
 
@@ -106,17 +111,22 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
 
         String key = this.getClass().getName();
         String fqn = RESOURCE_PATH + key;
-        strategy = camelContext.getCamelContextExtension().getBootstrapFactoryFinder(RESOURCE_PATH)
+        strategy = camelContext
+                .getCamelContextExtension()
+                .getBootstrapFactoryFinder(RESOURCE_PATH)
                 .newInstance(key, InvokeOnHeaderStrategy.class)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn + " in classpath."));
 
         Class<?> sclazz = this.getClass().getSuperclass();
-        if (sclazz != null && !sclazz.getName().equals("java.lang.Object")
+        if (sclazz != null
+                && !sclazz.getName().equals("java.lang.Object")
                 && !sclazz.getName().equals(HeaderSelectorProducer.class.getName())) {
             // some components may have a common base class they extend from (such as camel-infinispan)
             // so try to discover that (optional so return null if not present)
             String key2 = this.getClass().getSuperclass().getName();
-            parentStrategy = camelContext.getCamelContextExtension().getBootstrapFactoryFinder(RESOURCE_PATH)
+            parentStrategy = camelContext
+                    .getCamelContextExtension()
+                    .getBootstrapFactoryFinder(RESOURCE_PATH)
                     .newInstance(key2, InvokeOnHeaderStrategy.class)
                     .orElse(null);
         }
@@ -174,5 +184,4 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
             exchange.getMessage().setBody(result);
         }
     }
-
 }

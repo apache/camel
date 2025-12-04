@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,13 +27,13 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class NettyHttpProducerBridgeTest extends BaseNettyTest {
 
     final AvailablePortFinder.Port port1 = port;
+
     @RegisterExtension
     AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+
     @RegisterExtension
     AvailablePortFinder.Port port3 = AvailablePortFinder.find();
 
@@ -79,15 +82,13 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
             @Override
             public void configure() {
                 from("netty-http:http://0.0.0.0:" + port1 + "/foo")
-                        .to("netty-http:http://localhost:" + port2 + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
+                        .to("netty-http:http://localhost:" + port2
+                                + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
 
-                from("netty-http:http://0.0.0.0:" + port2 + "/bar")
-                        .transform().simple("Bye ${body}");
+                from("netty-http:http://0.0.0.0:" + port2 + "/bar").transform().simple("Bye ${body}");
 
-                from("netty-http:http://0.0.0.0:" + port3 + "/query")
-                        .to("mock:query");
+                from("netty-http:http://0.0.0.0:" + port3 + "/query").to("mock:query");
             }
         };
     }
-
 }

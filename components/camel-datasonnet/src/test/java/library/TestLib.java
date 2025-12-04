@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package library;
 
 import java.util.Collections;
@@ -34,8 +35,7 @@ public class TestLib extends Library {
 
     private static final TestLib INSTANCE = new TestLib();
 
-    public TestLib() {
-    }
+    public TestLib() {}
 
     public static TestLib getInstance() {
         return INSTANCE;
@@ -49,14 +49,16 @@ public class TestLib extends Library {
     @Override
     public Map<String, Val.Func> functions(DataFormatService dataFormats, Header header) {
         Map<String, Val.Func> answer = new HashMap<>();
-        answer.put("sayHello", makeSimpleFunc(
-                Collections.emptyList(), //parameters list
-                new Function<List<Val>, Val>() {
-                    @Override
-                    public Val apply(List<Val> vals) {
-                        return new Val.Str("Hello, World");
-                    }
-                }));
+        answer.put(
+                "sayHello",
+                makeSimpleFunc(
+                        Collections.emptyList(), // parameters list
+                        new Function<List<Val>, Val>() {
+                            @Override
+                            public Val apply(List<Val> vals) {
+                                return new Val.Str("Hello, World");
+                            }
+                        }));
         return answer;
     }
 

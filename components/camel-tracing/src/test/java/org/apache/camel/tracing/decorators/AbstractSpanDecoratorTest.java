@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AbstractSpanDecoratorTest {
 
@@ -144,5 +145,4 @@ public class AbstractSpanDecoratorTest {
 
         assertEquals("hello", AbstractSpanDecorator.stripSchemeAndOptions(endpoint));
     }
-
 }

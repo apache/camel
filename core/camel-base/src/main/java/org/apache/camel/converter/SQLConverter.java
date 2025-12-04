@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
 
 import java.sql.Timestamp;
@@ -29,8 +30,7 @@ public final class SQLConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private SQLConverter() {
-    }
+    private SQLConverter() {}
 
     @Converter(order = 1)
     public static Timestamp toTimestamp(Long l) {

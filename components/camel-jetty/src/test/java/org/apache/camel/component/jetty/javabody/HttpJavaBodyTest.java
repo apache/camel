@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.javabody;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -26,11 +32,6 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConstants;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpJavaBodyTest extends BaseJettyTest {
 
@@ -69,7 +70,10 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
-        String reply = template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE,
+        String reply = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/myapp/myservice",
+                cool,
+                Exchange.CONTENT_TYPE,
                 HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT,
                 String.class);
 
@@ -97,8 +101,8 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
                         MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
                         exchange.getMessage().setBody(reply);
-                        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE,
-                                HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                        exchange.getMessage()
+                                .setHeader(Exchange.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
                     }
                 });
             }
@@ -107,9 +111,12 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
-        MyCoolBean reply
-                = template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE,
-                        HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, MyCoolBean.class);
+        MyCoolBean reply = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/myapp/myservice",
+                cool,
+                Exchange.CONTENT_TYPE,
+                HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT,
+                MyCoolBean.class);
 
         assertEquals(456, reply.getId());
         assertEquals("Camel rocks", reply.getName());
@@ -134,15 +141,16 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
                         MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
                         exchange.getMessage().setBody(reply);
-                        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE,
-                                HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                        exchange.getMessage()
+                                .setHeader(Exchange.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
                     }
                 });
             }
         });
         context.start();
 
-        MyCoolBean reply = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World", MyCoolBean.class);
+        MyCoolBean reply =
+                template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World", MyCoolBean.class);
 
         assertEquals(456, reply.getId());
         assertEquals("Camel rocks", reply.getName());
@@ -169,8 +177,8 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
                         MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
                         exchange.getMessage().setBody(reply);
-                        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE,
-                                HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                        exchange.getMessage()
+                                .setHeader(Exchange.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
                     }
                 });
             }
@@ -204,8 +212,8 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
                         MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
                         exchange.getMessage().setBody(reply);
-                        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE,
-                                HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                        exchange.getMessage()
+                                .setHeader(Exchange.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
                     }
                 });
             }
@@ -215,7 +223,10 @@ public class HttpJavaBodyTest extends BaseJettyTest {
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
         try {
-            template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE,
+            template.requestBodyAndHeader(
+                    "http://localhost:{{port}}/myapp/myservice",
+                    cool,
+                    Exchange.CONTENT_TYPE,
                     HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT,
                     MyCoolBean.class);
             fail("Should fail");
@@ -224,5 +235,4 @@ public class HttpJavaBodyTest extends BaseJettyTest {
             assertEquals(415, cause.getStatusCode());
         }
     }
-
 }

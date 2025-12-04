@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.startup;
 
 import java.util.ArrayDeque;
@@ -74,7 +75,6 @@ public class DefaultStartupStepRecorder extends ServiceSupport implements Startu
         public void endStep() {
             // noop
         }
-
     };
 
     private final AtomicInteger stepCounter = new AtomicInteger();
@@ -185,7 +185,8 @@ public class DefaultStartupStepRecorder extends ServiceSupport implements Startu
         }
     }
 
-    public StartupStep createStartupStep(String type, String name, String description, int id, int parentId, int level) {
+    public StartupStep createStartupStep(
+            String type, String name, String description, int id, int parentId, int level) {
         return new DefaultStartupStep(type, name, description, id, parentId, level, System.currentTimeMillis());
     }
 
@@ -196,5 +197,4 @@ public class DefaultStartupStepRecorder extends ServiceSupport implements Startu
     protected void onEndStep(StartupStep step) {
         // noop
     }
-
 }

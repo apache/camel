@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.charset.StandardCharsets;
 
@@ -24,10 +29,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit testing using different encodings with the TCP protocol.
@@ -70,7 +71,8 @@ public class MinaEncodingTest extends BaseMinaTest {
 
     @Test
     public void testTCPEncodeUTF8TextLineInputIsString() throws Exception {
-        final String uri = String.format("mina:tcp://localhost:%1$s?textline=true&encoding=UTF-8&sync=false", getPort());
+        final String uri =
+                String.format("mina:tcp://localhost:%1$s?textline=true&encoding=UTF-8&sync=false", getPort());
         context.addRoutes(getBuilder(uri));
 
         MockEndpoint endpoint = getMockEndpoint("mock:result");
@@ -113,7 +115,7 @@ public class MinaEncodingTest extends BaseMinaTest {
 
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         String body = "Hello Thai Elephant \u0E08";
-        //String body = "Hello Thai Elephant Yay";
+        // String body = "Hello Thai Elephant Yay";
 
         endpoint.expectedMessageCount(1);
         endpoint.expectedBodiesReceived(body);
@@ -161,7 +163,9 @@ public class MinaEncodingTest extends BaseMinaTest {
     public void testInvalidEncoding() {
         final String uri = String.format("mina:tcp://localhost:%1$s?textline=true&encoding=XXX&sync=false", getPort());
 
-        Exception e = assertThrows(Exception.class, () -> context.addRoutes(getBuilder(uri)),
+        Exception e = assertThrows(
+                Exception.class,
+                () -> context.addRoutes(getBuilder(uri)),
                 "Should have thrown a ResolveEndpointFailedException due invalid encoding parameter");
         IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("The encoding: XXX is not supported", iae.getMessage());

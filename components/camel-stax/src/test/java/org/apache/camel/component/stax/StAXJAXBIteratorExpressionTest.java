@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax;
+
+import static org.apache.camel.component.stax.StAXBuilder.stax;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,9 +28,6 @@ import org.apache.camel.component.stax.model.RecordsUtil;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.stax.StAXBuilder.stax;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StAXJAXBIteratorExpressionTest extends CamelTestSupport {
     @EndpointInject("mock:records")
@@ -46,7 +47,8 @@ public class StAXJAXBIteratorExpressionTest extends CamelTestSupport {
                 from("file:target/in")
                         // split the file using StAX (the stax method is from StAXBuilder)
                         // and use streaming mode in the splitter
-                        .split(stax(Record.class)).streaming()
+                        .split(stax(Record.class))
+                        .streaming()
                         .to("mock:records");
                 // END SNIPPET: e1
             }

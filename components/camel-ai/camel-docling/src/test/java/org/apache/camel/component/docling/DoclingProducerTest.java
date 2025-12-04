@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,9 +28,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class DoclingProducerTest extends CamelTestSupport {
 
     @Test
@@ -34,9 +35,12 @@ public class DoclingProducerTest extends CamelTestSupport {
     public void testMarkdownConversion() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-markdown",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-markdown",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(result);
         assertTrue(result.length() > 0);
@@ -47,9 +51,12 @@ public class DoclingProducerTest extends CamelTestSupport {
     public void testHtmlConversion() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-html",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-html",
                 testFile.toString(),
-                DoclingHeaders.OPERATION, DoclingOperations.CONVERT_TO_HTML, String.class);
+                DoclingHeaders.OPERATION,
+                DoclingOperations.CONVERT_TO_HTML,
+                String.class);
 
         assertNotNull(result);
         assertTrue(result.length() > 0);
@@ -60,9 +67,12 @@ public class DoclingProducerTest extends CamelTestSupport {
     public void testContentInBodyEnabled() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-content-in-body",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-content-in-body",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(result);
         assertTrue(result.length() > 0);
@@ -75,9 +85,12 @@ public class DoclingProducerTest extends CamelTestSupport {
     public void testContentInBodyDisabled() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-file-path",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-file-path",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(result);
         assertTrue(result.length() > 0);
@@ -88,7 +101,8 @@ public class DoclingProducerTest extends CamelTestSupport {
 
     private Path createTestFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-test", ".md");
-        Files.write(tempFile,
+        Files.write(
+                tempFile,
                 "# Test Document\n\nThis is a test document for Docling processing.\n\n## Section 1\n\nSome content here.\n\n- List item 1\n- List item 2\n"
                         .getBytes());
         return tempFile;
@@ -99,11 +113,9 @@ public class DoclingProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:convert-markdown")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN");
+                from("direct:convert-markdown").to("docling:convert?operation=CONVERT_TO_MARKDOWN");
 
-                from("direct:convert-html")
-                        .to("docling:convert?operation=CONVERT_TO_HTML");
+                from("direct:convert-html").to("docling:convert?operation=CONVERT_TO_HTML");
 
                 from("direct:convert-content-in-body")
                         .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true");
@@ -113,5 +125,4 @@ public class DoclingProducerTest extends CamelTestSupport {
             }
         };
     }
-
 }

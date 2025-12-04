@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.solr.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class SolrServiceFactory {
-    private SolrServiceFactory() {
-
-    }
+    private SolrServiceFactory() {}
 
     public static SimpleTestServiceBuilder<SolrService> builder() {
         return new SimpleTestServiceBuilder<>(SolrContainer.CONTAINER_NAME);
@@ -34,7 +33,5 @@ public final class SolrServiceFactory {
                 .build();
     }
 
-    public static class SolrRemoteService extends SolrRemoteInfraService implements SolrService {
-    }
-
+    public static class SolrRemoteService extends SolrRemoteInfraService implements SolrService {}
 }

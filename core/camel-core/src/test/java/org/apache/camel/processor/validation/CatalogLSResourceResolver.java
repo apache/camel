@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.validation;
 
 import java.io.InputStream;
@@ -30,8 +31,7 @@ public class CatalogLSResourceResolver implements LSResourceResolver {
 
     CatalogResolver catalogResolver;
 
-    public CatalogLSResourceResolver() {
-    }
+    public CatalogLSResourceResolver() {}
 
     public CatalogLSResourceResolver(CatalogResolver catalogResolver) {
         this.catalogResolver = catalogResolver;

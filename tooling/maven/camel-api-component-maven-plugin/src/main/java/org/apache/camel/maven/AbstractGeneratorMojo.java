@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -77,6 +78,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     // Thread-safe deferred-construction singleton via nested static class
     private static class VelocityEngineHolder {
         private static final VelocityEngine ENGINE;
+
         static {
             // initialize velocity to load resources from class loader and use Log4J
             Properties velocityProperties = new Properties();
@@ -132,16 +134,21 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
                 .peek(url -> log.debug("Adding project path {}", url))
                 .toArray(URL[]::new);
 
-        // if there are no urls then its because we are testing ourselves, then add the urls for source so java source parser can find them
+        // if there are no urls then its because we are testing ourselves, then add the urls for source so java source
+        // parser can find them
         if (urls.length == 0) {
-            urls = new URL[] { URI.create("file:src/main/java/").toURL(), URI.create("file:src/test/java/").toURL() };
+            urls = new URL[] {
+                URI.create("file:src/main/java/").toURL(),
+                URI.create("file:src/test/java/").toURL()
+            };
         }
 
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         return new URLClassLoader(urls, tccl != null ? tccl : getClass().getClassLoader());
     }
 
-    protected void mergeTemplate(VelocityContext context, File outFile, String templateName) throws MojoExecutionException {
+    protected void mergeTemplate(VelocityContext context, File outFile, String templateName)
+            throws MojoExecutionException {
         // ensure parent directories exist
         final File outDir = outFile.getParentFile();
         if (!outDir.isDirectory() && !outDir.mkdirs()) {
@@ -197,5 +204,4 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             buildContext.refresh(file.toFile());
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser;
 
 import java.io.InputStream;
@@ -34,8 +35,7 @@ import org.apache.camel.parser.model.RestServiceDetails;
  */
 public final class XmlRestDslParser {
 
-    private XmlRestDslParser() {
-    }
+    private XmlRestDslParser() {}
 
     /**
      * Parses the XML file and build a rest configuration model of the discovered rest configurations in the XML source
@@ -86,5 +86,4 @@ public final class XmlRestDslParser {
 
         return Collections.emptyList();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
@@ -32,5 +33,4 @@ public class SpringRabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrat
         this.setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
         this.setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
-
 }

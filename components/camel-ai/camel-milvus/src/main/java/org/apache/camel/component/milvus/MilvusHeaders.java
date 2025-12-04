@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milvus;
 
 import org.apache.camel.spi.Metadata;
 
 public class MilvusHeaders {
-    @Metadata(description = "The action to be performed.", javaType = "String",
-              enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,QUERY,DELETE")
+    @Metadata(
+            description = "The action to be performed.",
+            javaType = "String",
+            enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,QUERY,DELETE")
     public static final String ACTION = "CamelMilvusAction";
 
     @Metadata(description = "Operation Status.", javaType = "String")

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.InputStream;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class QuartzPropertiesTest extends BaseQuartzTest {
 
@@ -56,10 +57,10 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
 
         quartz.setPropertiesFile("doesnotexist.properties");
 
-        Exception thrown = assertThrows(Exception.class,
-                () -> quartz.start(),
-                "Should have thrown exception");
-        assertEquals("Error loading Quartz properties file: doesnotexist.properties", thrown.getCause().getMessage());
+        Exception thrown = assertThrows(Exception.class, () -> quartz.start(), "Should have thrown exception");
+        assertEquals(
+                "Error loading Quartz properties file: doesnotexist.properties",
+                thrown.getCause().getMessage());
     }
 
     @Test
@@ -67,8 +68,8 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
         quartz = context.getComponent("quartz", QuartzComponent.class);
 
         Properties prop = new Properties();
-        InputStream is
-                = context.getClassResolver().loadResourceAsStream("org/apache/camel/component/quartz/myquartz.properties");
+        InputStream is = context.getClassResolver()
+                .loadResourceAsStream("org/apache/camel/component/quartz/myquartz.properties");
         prop.load(is);
         quartz.setProperties(prop);
 
@@ -77,5 +78,4 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
         assertEquals("MyScheduler-" + context.getName(), quartz.getScheduler().getSchedulerName());
         assertEquals("2", quartz.getScheduler().getSchedulerInstanceId());
     }
-
 }

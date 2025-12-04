@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jandex;
 
 import java.io.InputStream;
@@ -150,5 +151,4 @@ public class JandexPackageScanClassResolver extends DefaultPackageScanClassResol
             }
         }
     }
-
 }

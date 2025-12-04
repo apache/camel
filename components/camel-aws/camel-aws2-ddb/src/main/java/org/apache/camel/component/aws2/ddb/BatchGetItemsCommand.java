@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import java.util.HashMap;
@@ -33,8 +34,9 @@ public class BatchGetItemsCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        BatchGetItemResponse result
-                = ddbClient.batchGetItem(BatchGetItemRequest.builder().requestItems(determineBatchItems()).build());
+        BatchGetItemResponse result = ddbClient.batchGetItem(BatchGetItemRequest.builder()
+                .requestItems(determineBatchItems())
+                .build());
 
         HashMap<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.BATCH_RESPONSE, result.responses());

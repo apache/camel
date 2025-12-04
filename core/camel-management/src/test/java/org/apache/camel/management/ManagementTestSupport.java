@@ -14,7 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_CONTEXT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_NAME;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_TYPE;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_CONTEXT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_STEP;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,18 +44,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.NodeIdFactory;
-
-import static org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_CONTEXT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_NAME;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_TYPE;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_CONTEXT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_STEP;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 
 /**
  * Base class for JMX tests.
@@ -116,9 +117,9 @@ public abstract class ManagementTestSupport extends ContextTestSupport {
                 break;
         }
         String on = DEFAULT_DOMAIN + ":"
-                    + KEY_CONTEXT + "=" + context.getManagementName() + ","
-                    + KEY_TYPE + "=" + type + ","
-                    + KEY_NAME + "=" + quote + name + quote;
+                + KEY_CONTEXT + "=" + context.getManagementName() + ","
+                + KEY_TYPE + "=" + type + ","
+                + KEY_NAME + "=" + quote + name + quote;
         return ObjectName.getInstance(on);
     }
 }

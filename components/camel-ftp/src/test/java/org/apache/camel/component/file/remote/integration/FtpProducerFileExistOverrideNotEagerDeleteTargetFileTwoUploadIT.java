@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 public class FtpProducerFileExistOverrideNotEagerDeleteTargetFileTwoUploadIT
@@ -22,7 +23,6 @@ public class FtpProducerFileExistOverrideNotEagerDeleteTargetFileTwoUploadIT
     @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/exist?password=admin&tempPrefix=upload-&fileExist=Override&disconnect=true&eagerDeleteTargetFile=false";
+                + "/exist?password=admin&tempPrefix=upload-&fileExist=Override&disconnect=true&eagerDeleteTargetFile=false";
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -43,11 +48,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 public class ManagedJmsSelectorTest implements CamelTestSupportHelper {
 
     @Order(1)
@@ -60,8 +61,8 @@ public class ManagedJmsSelectorTest implements CamelTestSupportHelper {
 
     @ContextFixture
     public void setupContext(CamelContext context) {
-        final ConnectionFactory connectionFactory
-                = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
+        final ConnectionFactory connectionFactory =
+                ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
 
         context.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
@@ -83,7 +84,11 @@ public class ManagedJmsSelectorTest implements CamelTestSupportHelper {
     }
 
     protected MBeanServer getMBeanServer() {
-        return camelContextExtension.getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        return camelContextExtension
+                .getContext()
+                .getManagementStrategy()
+                .getManagementAgent()
+                .getMBeanServer();
     }
 
     @Test
@@ -133,7 +138,8 @@ public class ManagedJmsSelectorTest implements CamelTestSupportHelper {
             @Override
             public void configure() {
                 from("activemq:queue:startManagedJmsSelectorTest?cacheLevelName=CACHE_NONE&selector=brand='beer'")
-                        .routeId("foo").to("log:foo")
+                        .routeId("foo")
+                        .to("log:foo")
                         .to("mock:result");
             }
         };

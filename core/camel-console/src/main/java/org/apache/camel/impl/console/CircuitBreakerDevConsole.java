@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -47,8 +48,9 @@ public class CircuitBreakerDevConsole extends AbstractDevConsole {
                     int sc = cb.getSuccess();
                     int fc = cb.getFailures();
                     String lastFailure = cb.getLastFailure() > 0 ? TimeUtils.printSince(cb.getLastFailure()) : "n/a";
-                    sb.append(String.format("    %s: %s (success: %d failure: %d last-failure: %s)\n", rid, state, sc, fc,
-                            lastFailure));
+                    sb.append(String.format(
+                            "    %s: %s (success: %d failure: %d last-failure: %s)\n",
+                            rid, state, sc, fc, lastFailure));
                 }
             }
         }

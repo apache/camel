@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +34,6 @@ import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MongoDbInsertBatchIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
@@ -64,13 +65,16 @@ public class MongoDbInsertBatchIT extends AbstractMongoDbITSupport implements Co
         assertNotNull(oid);
         assertEquals(3, oid.size());
 
-        Document out1 = testCollection.find(new BasicDBObject("_id", oid.get(0))).first();
+        Document out1 =
+                testCollection.find(new BasicDBObject("_id", oid.get(0))).first();
         assertNotNull(out1);
         assertEquals(1, out1.getInteger("MyId"));
-        Document out2 = testCollection.find(new BasicDBObject("_id", oid.get(1))).first();
+        Document out2 =
+                testCollection.find(new BasicDBObject("_id", oid.get(1))).first();
         assertNotNull(out2);
         assertEquals(2, out2.getInteger("MyId"));
-        Document out3 = testCollection.find(new BasicDBObject("_id", oid.get(2))).first();
+        Document out3 =
+                testCollection.find(new BasicDBObject("_id", oid.get(2))).first();
         assertNotNull(out3);
         assertEquals(3, out3.getInteger("MyId"));
     }
@@ -79,7 +83,8 @@ public class MongoDbInsertBatchIT extends AbstractMongoDbITSupport implements Co
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insert")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
             }
         };
     }

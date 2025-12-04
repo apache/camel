@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
 
 import java.net.URI;
@@ -128,16 +129,24 @@ public class GrpcConfiguration {
     @UriParam(label = "producer", defaultValue = "true")
     private boolean autoDiscoverClientInterceptors = true;
 
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+    @UriParam(
+            defaultValue = "false",
+            label = "advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
-    @UriParam(defaultValue = "false", label = "producer",
-              description = "Copies exchange properties from original exchange to all exchanges created for route defined by streamRepliesTo.")
+    @UriParam(
+            defaultValue = "false",
+            label = "producer",
+            description =
+                    "Copies exchange properties from original exchange to all exchanges created for route defined by streamRepliesTo.")
     private boolean inheritExchangePropertiesForReplies = false;
 
-    @UriParam(defaultValue = "false", label = "producer",
-              description = "Expects that exchange property GrpcConstants.GRPC_RESPONSE_OBSERVER is set. Takes its value and calls onNext, onError and onComplete on that StreamObserver. All other gRPC parameters are ignored.")
+    @UriParam(
+            defaultValue = "false",
+            label = "producer",
+            description =
+                    "Expects that exchange property GrpcConstants.GRPC_RESPONSE_OBSERVER is set. Takes its value and calls onNext, onError and onComplete on that StreamObserver. All other gRPC parameters are ignored.")
     private boolean toRouteControlledStreamObserver = false;
 
     @UriParam(label = "consumer", defaultValue = "" + NettyServerBuilder.DEFAULT_FLOW_CONTROL_WINDOW)

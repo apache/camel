@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.soap.name;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.xml.namespace.QName;
 
@@ -31,10 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class ServiceInterfaceStrategyTest {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceInterfaceStrategyTest.class);
 
@@ -50,12 +51,12 @@ public class ServiceInterfaceStrategyTest {
         assertEquals("getCustomersByName", elName2.getLocalPart());
 
         // Tests the case where the soap action is found but the in type is null
-        QName elName3 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllCustomers",
-                null);
+        QName elName3 =
+                strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllCustomers", null);
         assertNull(elName3);
 
-        QName elName4 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllAmericanCustomers",
-                null);
+        QName elName4 = strategy.findQNameForSoapActionOrType(
+                "http://customerservice.example.com/getAllAmericanCustomers", null);
         assertNull(elName4);
 
         try {
@@ -76,8 +77,8 @@ public class ServiceInterfaceStrategyTest {
         assertEquals("getCustomersByNameResponse", elName.getLocalPart());
 
         // Tests the case where the soap action is found
-        QName elName2 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getCustomersByName",
-                GetCustomersByName.class);
+        QName elName2 = strategy.findQNameForSoapActionOrType(
+                "http://customerservice.example.com/getCustomersByName", GetCustomersByName.class);
         assertEquals("http://customerservice.example.com/", elName2.getNamespaceURI());
         assertEquals("getCustomersByNameResponse", elName2.getLocalPart());
 
@@ -93,8 +94,8 @@ public class ServiceInterfaceStrategyTest {
 
     @Test
     public void testServiceInterfaceStrategyWithRequestWrapperAndClient() {
-        ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(
-                com.example.customerservice2.CustomerService.class, true);
+        ServiceInterfaceStrategy strategy =
+                new ServiceInterfaceStrategy(com.example.customerservice2.CustomerService.class, true);
         QName elName = strategy.findQNameForSoapActionOrType("", com.example.customerservice2.GetCustomersByName.class);
         assertEquals("http://customerservice2.example.com/", elName.getNamespaceURI());
         assertEquals("getCustomersByName", elName.getLocalPart());
@@ -120,12 +121,12 @@ public class ServiceInterfaceStrategyTest {
     @Test
     public void testMultiPart() {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(MultiPartCustomerService.class, true);
-        QName custNameQName
-                = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
-                        com.example.customerservice.multipart.GetCustomersByName.class);
-        QName custTypeQName
-                = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
-                        com.example.customerservice.multipart.Product.class);
+        QName custNameQName = strategy.findQNameForSoapActionOrType(
+                "http://multipart.customerservice.example.com/getCustomersByName",
+                com.example.customerservice.multipart.GetCustomersByName.class);
+        QName custTypeQName = strategy.findQNameForSoapActionOrType(
+                "http://multipart.customerservice.example.com/getCustomersByName",
+                com.example.customerservice.multipart.Product.class);
 
         assertEquals("http://multipart.customerservice.example.com/", custNameQName.getNamespaceURI());
         assertEquals("getCustomersByName", custNameQName.getLocalPart());
@@ -138,13 +139,16 @@ public class ServiceInterfaceStrategyTest {
     public void testQNameToException() {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(TestService.class, true);
         QName soapExceptionMultipleDefined = new QName("http://www.example.com/duplicateerror", "soapException");
-        assertEquals(ExceptionA.class,
+        assertEquals(
+                ExceptionA.class,
                 strategy.findExceptionForSoapActionAndFaultName("throwErrorA", soapExceptionMultipleDefined));
-        assertEquals(ExceptionB.class,
+        assertEquals(
+                ExceptionB.class,
                 strategy.findExceptionForSoapActionAndFaultName("throwErrorB", soapExceptionMultipleDefined));
 
         // This is implementation dependant (position in HashMap) one of ExceptionA or ExceptionB
-        Class<? extends Exception> multiDefinedException = strategy.findExceptionForFaultName(soapExceptionMultipleDefined);
+        Class<? extends Exception> multiDefinedException =
+                strategy.findExceptionForFaultName(soapExceptionMultipleDefined);
 
         if (multiDefinedException != ExceptionA.class && multiDefinedException != ExceptionB.class) {
             fail("Not one of ExceptionA or ExceptionB");

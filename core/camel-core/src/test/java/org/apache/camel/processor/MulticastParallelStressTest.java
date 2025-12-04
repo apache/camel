@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.Callable;
@@ -28,8 +29,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class MulticastParallelStressTest extends ContextTestSupport {
 
     @Test
@@ -84,19 +86,25 @@ public class MulticastParallelStressTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").multicast(new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
+                from("direct:start")
+                        .multicast(new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
 
-                        String body = oldExchange.getIn().getBody(String.class);
-                        oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
-                        return oldExchange;
-                    }
-                }).parallelProcessing().to("direct:a", "direct:b", "direct:c", "direct:d")
+                                String body = oldExchange.getIn().getBody(String.class);
+                                oldExchange
+                                        .getIn()
+                                        .setBody(body + newExchange.getIn().getBody(String.class));
+                                return oldExchange;
+                            }
+                        })
+                        .parallelProcessing()
+                        .to("direct:a", "direct:b", "direct:c", "direct:d")
                         // use end to indicate end of multicast route
-                        .end().to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from("direct:a").delay(20).setBody(body().append("A"));
 
@@ -108,5 +116,4 @@ public class MulticastParallelStressTest extends ContextTestSupport {
             }
         };
     }
-
 }

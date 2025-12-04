@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.IOException;
@@ -28,15 +29,12 @@ final class OffsetDateTimeDeserializer extends JsonDeserializer<OffsetDateTime> 
 
     static final JsonDeserializer<OffsetDateTime> INSTANCE = new OffsetDateTimeDeserializer();
 
-    private OffsetDateTimeDeserializer() {
-    }
+    private OffsetDateTimeDeserializer() {}
 
     @Override
-    public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-            throws IOException {
+    public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
         final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
 
         return zonedDateTime.toOffsetDateTime();
     }
-
 }

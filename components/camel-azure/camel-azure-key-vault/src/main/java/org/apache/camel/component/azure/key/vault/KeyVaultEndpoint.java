@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.key.vault;
 
 import java.util.Map;
@@ -38,14 +39,18 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage secrets and keys in Azure Key Vault Service
  */
-@UriEndpoint(firstVersion = "3.17.0", scheme = "azure-key-vault", title = "Azure Key Vault",
-             syntax = "azure-key-vault:vaultName", category = {
-                     Category.CLOUD, Category.CLOUD },
-             producerOnly = true,
-             headersClass = KeyVaultConstants.class)
-@Metadata(annotations = {
-        "vault=azure-key-vault",
-})
+@UriEndpoint(
+        firstVersion = "3.17.0",
+        scheme = "azure-key-vault",
+        title = "Azure Key Vault",
+        syntax = "azure-key-vault:vaultName",
+        category = {Category.CLOUD, Category.CLOUD},
+        producerOnly = true,
+        headersClass = KeyVaultConstants.class)
+@Metadata(
+        annotations = {
+            "vault=azure-key-vault",
+        })
 public class KeyVaultEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SecretClient secretClient;
@@ -61,8 +66,7 @@ public class KeyVaultEndpoint extends DefaultEndpoint implements EndpointService
     @Override
     public void doInit() throws Exception {
         super.doInit();
-        secretClient = configuration.getSecretClient() != null
-                ? configuration.getSecretClient() : createSecretClient();
+        secretClient = configuration.getSecretClient() != null ? configuration.getSecretClient() : createSecretClient();
     }
 
     private SecretClient createSecretClient() {

@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
+
+import static org.apache.camel.Exchange.FILE_NAME;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,30 +53,21 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.Exchange.FILE_NAME;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit tests for {@link ZipFileDataFormat}.
  */
 public class ZipFileDataFormatTest extends CamelTestSupport {
 
     private static final String TEXT = "The Masque of Queen Bersabe (excerpt) \n"
-                                       + "by: Algernon Charles Swinburne \n\n"
-                                       + "My lips kissed dumb the word of Ah \n"
-                                       + "Sighed on strange lips grown sick thereby. \n"
-                                       + "God wrought to me my royal bed; \n"
-                                       + "The inner work thereof was red, \n"
-                                       + "The outer work was ivory. \n"
-                                       + "My mouth's heat was the heat of flame \n"
-                                       + "For lust towards the kings that came \n"
-                                       + "With horsemen riding royally.";
+            + "by: Algernon Charles Swinburne \n\n"
+            + "My lips kissed dumb the word of Ah \n"
+            + "Sighed on strange lips grown sick thereby. \n"
+            + "God wrought to me my royal bed; \n"
+            + "The inner work thereof was red, \n"
+            + "The outer work was ivory. \n"
+            + "My mouth's heat was the heat of flame \n"
+            + "For lust towards the kings that came \n"
+            + "With horsemen riding royally.";
 
     private static final File TEST_DIR = new File("target/zip");
 
@@ -84,7 +85,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
         assertIsInstanceOf(InputStreamCache.class, exchange.getIn().getBody());
-        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getMandatoryBody(byte[].class));
+        assertArrayEquals(
+                getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getMandatoryBody(byte[].class));
     }
 
     @Test
@@ -98,7 +100,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
-        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getBody(byte[].class));
+        assertArrayEquals(
+                getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getBody(byte[].class));
     }
 
     @Test
@@ -167,7 +170,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     public void testUnzipWithCorruptedZipFile() {
         deleteDirectory(new File("hello_out"));
 
-        assertThrows(CamelExecutionException.class,
+        assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:corruptUnzip", new File("src/test/resources/corrupt.zip")));
     }
 
@@ -205,7 +209,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         Exchange exchange = mock.getReceivedExchanges().get(0);
         File file = new File(TEST_DIR, exchange.getIn().getMessageId() + ".zip");
         assertTrue(file.exists(), "The file should exist.");
-        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), getBytes(file), "Get a wrong message content.");
+        assertArrayEquals(
+                getZippedText(exchange.getIn().getMessageId()), getBytes(file), "Get a wrong message content.");
     }
 
     @Test
@@ -253,7 +258,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     @Test
     public void testUnzipMaxDecompressedSize() {
         // We are only allowing 10 bytes to be decompressed, so we expect an error
-        assertThrows(CamelExecutionException.class,
+        assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:unzipMaxDecompressedSize", getZippedText("file")));
     }
 
@@ -296,15 +302,17 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
                 from("direct:zip").marshal(zip).to("mock:zip");
                 from("direct:unzip").unmarshal(zip).to("mock:unzip");
-                from("direct:unzipWithEmptyDirectory").unmarshal(zip)
+                from("direct:unzipWithEmptyDirectory")
+                        .unmarshal(zip)
                         .split(bodyAs(Iterator.class))
                         .streaming()
-                        //.to("file:hello_out?autoCreate=true")
+                        // .to("file:hello_out?autoCreate=true")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 ZipFile zfile = new ZipFile(new File("src/test/resources/hello.odt"));
-                                ZipEntry entry = new ZipEntry((String) exchange.getIn().getHeader(Exchange.FILE_NAME));
+                                ZipEntry entry =
+                                        new ZipEntry((String) exchange.getIn().getHeader(Exchange.FILE_NAME));
                                 File file = new File("hello_out", entry.getName());
                                 if (entry.isDirectory()) {
                                     file.mkdirs();
@@ -321,16 +329,25 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                         })
                         .end();
                 from("direct:zipAndUnzip").marshal(zip).unmarshal(zip).to("mock:zipAndUnzip");
-                from("direct:zipToFile").marshal(zip).to("file:" + TEST_DIR.getPath()).to("mock:zipToFile");
+                from("direct:zipToFile")
+                        .marshal(zip)
+                        .to("file:" + TEST_DIR.getPath())
+                        .to("mock:zipToFile");
                 from("direct:dslZip").marshal().zipFile().to("mock:dslZip");
                 from("direct:dslUnzip").unmarshal().zipFile().to("mock:dslUnzip");
                 from("direct:corruptUnzip").unmarshal().zipFile().to("mock:corruptUnzip");
-                from("direct:zipStreamCache").streamCaching().marshal().zipFile().to("mock:zipStreamCache");
+                from("direct:zipStreamCache")
+                        .streamCaching()
+                        .marshal()
+                        .zipFile()
+                        .to("mock:zipStreamCache");
 
                 ZipFileDataFormat maxDecompressedSizeZip = new ZipFileDataFormat();
                 // Only allow 10 bytes to be decompressed
                 maxDecompressedSizeZip.setMaxDecompressedSize(10L);
-                from("direct:unzipMaxDecompressedSize").unmarshal(maxDecompressedSizeZip).to("mock:unzip");
+                from("direct:unzipMaxDecompressedSize")
+                        .unmarshal(maxDecompressedSizeZip)
+                        .to("mock:unzip");
             }
         };
     }

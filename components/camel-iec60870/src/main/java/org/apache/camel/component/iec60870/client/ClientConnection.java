@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870.client;
 
 import java.util.Arrays;
@@ -62,18 +63,17 @@ public class ClientConnection {
          * Called when the start data was accepted
          */
         @Override
-        public void started() {
-        }
+        public void started() {}
 
         /**
          * Called when the connection broke
          */
         @Override
-        public void disconnected() {
-        }
+        public void disconnected() {}
 
         @Override
-        protected void fireEntry(final ASDUAddress asduAddress, final InformationObjectAddress address, final Value<?> value) {
+        protected void fireEntry(
+                final ASDUAddress asduAddress, final InformationObjectAddress address, final Value<?> value) {
             ClientConnection.this.handleData(ObjectAddress.valueOf(asduAddress, address), value);
         }
     };
@@ -104,8 +104,8 @@ public class ClientConnection {
             }
         };
 
-        this.client
-                = new AutoConnectClient(this.host, this.port, this.options.getProtocolOptions(), factory, stateListener);
+        this.client =
+                new AutoConnectClient(this.host, this.port, this.options.getProtocolOptions(), factory, stateListener);
         try {
             latch.await(this.options.getConnectionTimeout(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {

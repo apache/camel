@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
 
 import java.net.URI;
@@ -27,11 +28,13 @@ import org.junit.jupiter.api.Disabled;
 @Disabled("Run this test manually")
 public class CometdProducerConsumerInteractiveManualTest {
 
-    private static final String URI = "cometd://127.0.0.1:9091/channel/test?baseResource=file:./src/test/resources/webapp&"
-                                      + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+    private static final String URI =
+            "cometd://127.0.0.1:9091/channel/test?baseResource=file:./src/test/resources/webapp&"
+                    + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-    private static final String URIS = "cometds://127.0.0.1:9443/channel/test?baseResource=file:./src/test/resources/webapp&"
-                                       + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+    private static final String URIS =
+            "cometds://127.0.0.1:9443/channel/test?baseResource=file:./src/test/resources/webapp&"
+                    + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private CamelContext context;
 
@@ -54,12 +57,13 @@ public class CometdProducerConsumerInteractiveManualTest {
                 CometdComponent component = (CometdComponent) context.getComponent("cometds");
                 component.setSslPassword(pwd);
                 component.setSslKeyPassword(pwd);
-                URI keyStoreUrl = CometdProducerConsumerInteractiveManualTest.class.getResource("/jsse/localhost.p12").toURI();
+                URI keyStoreUrl = CometdProducerConsumerInteractiveManualTest.class
+                        .getResource("/jsse/localhost.p12")
+                        .toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
 
                 from("stream:in").to(URI).to(URIS);
             }
         };
     }
-
 }

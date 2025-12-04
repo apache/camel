@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,13 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.DefaultTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThymeleafDefaultResolverAllParamsTest extends ThymeleafAbstractBaseTest {
 
@@ -52,7 +53,8 @@ public class ThymeleafDefaultResolverAllParamsTest extends ThymeleafAbstractBase
                 "thymeleaf:dontcare?allowTemplateFromHeader=true&allowContextMapAll=true&checkExistence=false&order=1&resolver=DEFAULT",
                 ThymeleafEndpoint.class);
 
-        assertAll("properties",
+        assertAll(
+                "properties",
                 () -> assertNotNull(thymeleafEndpoint),
                 () -> assertTrue(thymeleafEndpoint.isAllowContextMapAll()),
                 () -> assertNull(thymeleafEndpoint.getCacheable()),
@@ -67,12 +69,16 @@ public class ThymeleafDefaultResolverAllParamsTest extends ThymeleafAbstractBase
                 () -> assertNotNull(thymeleafEndpoint.getTemplateEngine()),
                 () -> assertNull(thymeleafEndpoint.getTemplateMode()));
 
-        assertEquals(1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
-        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream().findFirst().get();
+        assertEquals(
+                1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
+        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream()
+                .findFirst()
+                .get();
         assertTrue(resolver instanceof DefaultTemplateResolver);
 
         DefaultTemplateResolver templateResolver = (DefaultTemplateResolver) resolver;
-        assertAll("templateResolver",
+        assertAll(
+                "templateResolver",
                 () -> assertFalse(templateResolver.getCheckExistence()),
                 () -> assertEquals(ORDER, templateResolver.getOrder()),
                 () -> assertEquals(TemplateMode.HTML, templateResolver.getTemplateMode()));
@@ -87,10 +93,10 @@ public class ThymeleafDefaultResolverAllParamsTest extends ThymeleafAbstractBase
 
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to("thymeleaf:dontcare?allowTemplateFromHeader=true&allowContextMapAll=true&checkExistence=false&order=1&resolver=DEFAULT")
+                        .to(
+                                "thymeleaf:dontcare?allowTemplateFromHeader=true&allowContextMapAll=true&checkExistence=false&order=1&resolver=DEFAULT")
                         .to(MOCK_RESULT);
             }
         };
     }
-
 }

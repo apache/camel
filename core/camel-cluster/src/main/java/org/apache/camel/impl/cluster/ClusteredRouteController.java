@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cluster;
 
 import java.time.Duration;
@@ -168,7 +169,10 @@ public class ClusteredRouteController extends DefaultRouteController {
 
     @Override
     public Collection<Route> getControlledRoutes() {
-        return this.routes.stream().map(getCamelContext()::getRoute).filter(Objects::nonNull).toList();
+        return this.routes.stream()
+                .map(getCamelContext()::getRoute)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     @Override
@@ -185,7 +189,10 @@ public class ClusteredRouteController extends DefaultRouteController {
             clusterService = ClusterServiceHelper.mandatoryLookupService(context, clusterServiceSelector);
         }
 
-        LOGGER.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(),
+        LOGGER.debug(
+                "Using ClusterService instance {} (id={}, type={})",
+                clusterService,
+                clusterService.getId(),
                 clusterService.getClass().getName());
 
         if (!ServiceHelper.isStarted(clusterService)) {
@@ -235,12 +242,12 @@ public class ClusteredRouteController extends DefaultRouteController {
                 }
 
                 try {
-                    final ClusteredRouteConfiguration configuration
-                            = configurations.getOrDefault(routeId, defaultConfiguration);
-                    final String namespace
-                            = ObjectHelper.supplyIfEmpty(configuration.getNamespace(), defaultConfiguration::getNamespace);
-                    final Duration initialDelay = ObjectHelper.supplyIfEmpty(configuration.getInitialDelay(),
-                            defaultConfiguration::getInitialDelay);
+                    final ClusteredRouteConfiguration configuration =
+                            configurations.getOrDefault(routeId, defaultConfiguration);
+                    final String namespace = ObjectHelper.supplyIfEmpty(
+                            configuration.getNamespace(), defaultConfiguration::getNamespace);
+                    final Duration initialDelay = ObjectHelper.supplyIfEmpty(
+                            configuration.getInitialDelay(), defaultConfiguration::getInitialDelay);
 
                     ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace(clusterService, namespace);
                     policy.setCamelContext(getCamelContext());

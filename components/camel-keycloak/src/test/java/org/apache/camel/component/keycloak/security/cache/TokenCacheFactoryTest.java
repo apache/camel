@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security.cache;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.component.keycloak.security.KeycloakTokenIntrospector;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class TokenCacheFactoryTest {
 
@@ -50,7 +51,8 @@ class TokenCacheFactoryTest {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("active", true);
-        KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+        KeycloakTokenIntrospector.IntrospectionResult result =
+                new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
         // NoOp cache should not store anything
         cache.put("token", result);

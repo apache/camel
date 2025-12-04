@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,18 +33,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for com.google.api.services.drive.Drive$Replies APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
-           disabledReason = "Google Drive credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+        disabledReason = "Google Drive credentials were not provided")
 public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveRepliesIT.class);
-    private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveRepliesApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection()
+            .getApiName(DriveRepliesApiMethod.class)
+            .getName();
 
     @Test
     public void testReplyToComment() {
@@ -91,12 +94,10 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.commentId", commentId);
 
-        final com.google.api.services.drive.model.Reply result
-                = requestBodyAndHeaders("direct://LIST", null, headers);
+        final com.google.api.services.drive.model.Reply result = requestBodyAndHeaders("direct://LIST", null, headers);
 
         assertNotNull(result, "list result");
         LOG.debug("list: {}", result);
-
     }
 
     @Override
@@ -104,43 +105,36 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for delete
-                from("direct://DELETE")
-                        .to("google-drive://" + PATH_PREFIX + "/delete");
+                from("direct://DELETE").to("google-drive://" + PATH_PREFIX + "/delete");
 
                 // test route for get
-                from("direct://GET")
-                        .to("google-drive://" + PATH_PREFIX + "/get");
+                from("direct://GET").to("google-drive://" + PATH_PREFIX + "/get");
 
                 // test route for insert
-                from("direct://INSERT")
-                        .to("google-drive://" + PATH_PREFIX + "/insert");
+                from("direct://INSERT").to("google-drive://" + PATH_PREFIX + "/insert");
 
                 // test route for list
-                from("direct://LIST")
-                        .to("google-drive://" + PATH_PREFIX + "/list");
+                from("direct://LIST").to("google-drive://" + PATH_PREFIX + "/list");
 
                 // test route for patch
-                from("direct://PATCH")
-                        .to("google-drive://" + PATH_PREFIX + "/patch");
+                from("direct://PATCH").to("google-drive://" + PATH_PREFIX + "/patch");
 
                 // test route for update
-                from("direct://UPDATE")
-                        .to("google-drive://" + PATH_PREFIX + "/update");
+                from("direct://UPDATE").to("google-drive://" + PATH_PREFIX + "/update");
 
                 // just used to upload file for test
                 from("direct://INSERT_1")
                         .to("google-drive://"
-                            + GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName()
-                            + "/insert");
+                                + GoogleDriveApiCollection.getCollection()
+                                        .getApiName(DriveFilesApiMethod.class)
+                                        .getName()
+                                + "/insert");
 
                 // test route for insert
-                from("direct://INSERT_COMMENT")
-                        .to("google-drive://drive-comments/insert");
+                from("direct://INSERT_COMMENT").to("google-drive://drive-comments/insert");
 
                 // test route for list
-                from("direct://LIST_COMMENTS")
-                        .to("google-drive://drive-comments/list?inBody=fileId");
-
+                from("direct://LIST_COMMENTS").to("google-drive://drive-comments/list?inBody=fileId");
             }
         };
     }

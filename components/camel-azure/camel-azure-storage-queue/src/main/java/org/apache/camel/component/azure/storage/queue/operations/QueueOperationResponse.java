@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.operations;
 
 import java.util.HashMap;
@@ -65,8 +66,8 @@ public final class QueueOperationResponse {
         QueueExchangeHeaders exchangeHeaders;
 
         if (response.getValue() instanceof SendMessageResult) {
-            exchangeHeaders = QueueExchangeHeaders
-                    .createQueueExchangeHeadersFromSendMessageResult((SendMessageResult) response.getValue());
+            exchangeHeaders = QueueExchangeHeaders.createQueueExchangeHeadersFromSendMessageResult(
+                    (SendMessageResult) response.getValue());
         } else {
             exchangeHeaders = new QueueExchangeHeaders();
         }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Endpoint;
@@ -65,5 +66,4 @@ public interface InterceptSendToEndpoint extends Endpoint {
      * Whether to skip sending to the original endpoint.
      */
     boolean isSkip();
-
 }

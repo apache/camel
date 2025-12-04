@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.io.Closeable;
@@ -51,15 +52,21 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
     private final boolean cacheTokens;
     private final Long cachedTokensDefaultExpirySeconds;
     private final Long cachedTokensExpirationMarginSeconds;
-    private final static ConcurrentMap<OAuth2URIAndCredentials, TokenCache> tokenCache = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<OAuth2URIAndCredentials, TokenCache> tokenCache = new ConcurrentHashMap<>();
     private final boolean useBodyAuthentication;
     private final String resourceIndicator;
     private HttpClient httpClient;
 
-    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
-                                  String scope, boolean cacheTokens,
-                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds,
-                                  boolean useBodyAuthentication) {
+    public OAuth2ClientConfigurer(
+            String clientId,
+            String clientSecret,
+            String tokenEndpoint,
+            String resourceIndicator,
+            String scope,
+            boolean cacheTokens,
+            long cachedTokensDefaultExpirySeconds,
+            long cachedTokensExpirationMarginSeconds,
+            boolean useBodyAuthentication) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;
@@ -81,8 +88,12 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
             OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(requestUri, clientId, clientSecret);
             if (cacheTokens) {
                 if (tokenCache.containsKey(uriAndCredentials)
-                        && !tokenCache.get(uriAndCredentials).isExpiredWithMargin(cachedTokensExpirationMarginSeconds)) {
-                    request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokenCache.get(uriAndCredentials).getToken());
+                        && !tokenCache
+                                .get(uriAndCredentials)
+                                .isExpiredWithMargin(cachedTokensExpirationMarginSeconds)) {
+                    request.setHeader(
+                            HttpHeaders.AUTHORIZATION,
+                            "Bearer " + tokenCache.get(uriAndCredentials).getToken());
                 } else {
                     JsonObject accessTokenResponse = getAccessTokenResponse(httpClient);
                     String accessToken = accessTokenResponse.getString("access_token");
@@ -90,7 +101,8 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
                     if (expiresIn != null && !expiresIn.isEmpty()) {
                         tokenCache.put(uriAndCredentials, new TokenCache(accessToken, expiresIn));
                     } else if (cachedTokensDefaultExpirySeconds > 0) {
-                        tokenCache.put(uriAndCredentials, new TokenCache(accessToken, cachedTokensDefaultExpirySeconds));
+                        tokenCache.put(
+                                uriAndCredentials, new TokenCache(accessToken, cachedTokensDefaultExpirySeconds));
                     }
                     request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
                 }
@@ -113,8 +125,8 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
             bodyStr += "&client_id=" + clientId;
             bodyStr += "&client_secret=" + clientSecret;
         } else {
-            httpPost.addHeader(HttpHeaders.AUTHORIZATION,
-                    HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
+            httpPost.addHeader(
+                    HttpHeaders.AUTHORIZATION, HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
         }
         if (null != resourceIndicator) {
             bodyStr = String.join(bodyStr, "&resource=" + resourceIndicator);
@@ -177,8 +189,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         }
     }
 
-    private record OAuth2URIAndCredentials(URI uri, String clientId, String clientSecret) {
-    }
+    private record OAuth2URIAndCredentials(URI uri, String clientId, String clientSecret) {}
 
     @Override
     protected void doStop() throws Exception {

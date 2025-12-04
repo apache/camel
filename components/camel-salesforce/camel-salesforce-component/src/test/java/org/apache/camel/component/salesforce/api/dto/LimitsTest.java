@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -31,13 +39,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LimitsTest {
 
@@ -60,7 +61,8 @@ public class LimitsTest {
         final Usage dailyApiRequests = limits.getDailyApiRequests();
         assertFalse(dailyApiRequests.isUnknown(), "Should have some usage present");
         assertFalse(dailyApiRequests.getPerApplicationUsage().isEmpty(), "Per application usage should be present");
-        assertNotNull(dailyApiRequests.forApplication("Camel Salesman"),
+        assertNotNull(
+                dailyApiRequests.forApplication("Camel Salesman"),
                 "'Camel Salesman' application usage should be present");
     }
 
@@ -68,8 +70,8 @@ public class LimitsTest {
     public void shouldDeserializeWithUnsupportedKeys() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Limits withUnsupported
-                = mapper.readerFor(Limits.class).readValue("{\"Camel-NotSupportedKey\": {\"Max\": 200,\"Remaining\": 200}}");
+        final Limits withUnsupported = mapper.readerFor(Limits.class)
+                .readValue("{\"Camel-NotSupportedKey\": {\"Max\": 200,\"Remaining\": 200}}");
 
         assertNotNull(withUnsupported);
         assertNotNull(withUnsupported.forOperation("Camel-NotSupportedKey"));
@@ -86,12 +88,16 @@ public class LimitsTest {
             found.add(descriptor.getName());
         }
 
-        final Set<String> defined = Arrays.stream(Limits.Operation.values()).map(Limits.Operation::name)
-                .map(Introspector::decapitalize).collect(Collectors.toSet());
+        final Set<String> defined = Arrays.stream(Limits.Operation.values())
+                .map(Limits.Operation::name)
+                .map(Introspector::decapitalize)
+                .collect(Collectors.toSet());
 
         defined.removeAll(found);
 
-        assertThat("All operations declared in Operation enum should have it's corresponding getter", defined,
+        assertThat(
+                "All operations declared in Operation enum should have it's corresponding getter",
+                defined,
                 is(Collections.emptySet()));
     }
 

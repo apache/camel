@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import java.util.Collection;
@@ -84,5 +85,4 @@ public enum ReactiveStreamsBackpressureStrategy {
      * @return         the list of discarded elements
      */
     public abstract <T> Collection<T> update(Deque<T> buffer, T newItem);
-
 }

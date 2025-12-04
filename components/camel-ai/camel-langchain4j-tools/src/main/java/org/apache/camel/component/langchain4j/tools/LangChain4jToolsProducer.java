@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools;
 
 import java.util.ArrayList;
@@ -152,36 +153,37 @@ public class LangChain4jToolsProducer extends DefaultProducer {
             LOG.info("Invoking tool {} ({}) of {}", i, toolName, toolExecutionRequests.size());
 
             final CamelToolSpecification camelToolSpecification = toolPair.callableTools().stream()
-                    .filter(c -> c.getToolSpecification().name().equals(toolName)).findFirst().get();
+                    .filter(c -> c.getToolSpecification().name().equals(toolName))
+                    .findFirst()
+                    .get();
 
             try {
                 TypeConverter typeConverter = endpoint.getCamelContext().getTypeConverter();
 
                 // Map Json to Header
                 JsonNode jsonNode = objectMapper.readValue(toolExecutionRequest.arguments(), JsonNode.class);
-                jsonNode.fieldNames()
-                        .forEachRemaining(name -> {
-                            final JsonNode value = jsonNode.get(name);
-                            Object headerValue;
+                jsonNode.fieldNames().forEachRemaining(name -> {
+                    final JsonNode value = jsonNode.get(name);
+                    Object headerValue;
 
-                            // Try to get values for the known tool parameter types
-                            if (value instanceof TextNode) {
-                                headerValue = typeConverter.convertTo(String.class, value);
-                            } else if (value instanceof IntNode) {
-                                headerValue = typeConverter.convertTo(Integer.class, value);
-                            } else if (value instanceof LongNode) {
-                                headerValue = typeConverter.convertTo(Long.class, value);
-                            } else if (value instanceof DoubleNode) {
-                                headerValue = typeConverter.convertTo(Double.class, value);
-                            } else if (value instanceof BooleanNode) {
-                                headerValue = typeConverter.convertTo(Boolean.class, value);
-                            } else {
-                                // Fallback to JsonNode to enable the value to be extracted elsewhere
-                                headerValue = value;
-                            }
+                    // Try to get values for the known tool parameter types
+                    if (value instanceof TextNode) {
+                        headerValue = typeConverter.convertTo(String.class, value);
+                    } else if (value instanceof IntNode) {
+                        headerValue = typeConverter.convertTo(Integer.class, value);
+                    } else if (value instanceof LongNode) {
+                        headerValue = typeConverter.convertTo(Long.class, value);
+                    } else if (value instanceof DoubleNode) {
+                        headerValue = typeConverter.convertTo(Double.class, value);
+                    } else if (value instanceof BooleanNode) {
+                        headerValue = typeConverter.convertTo(Boolean.class, value);
+                    } else {
+                        // Fallback to JsonNode to enable the value to be extracted elsewhere
+                        headerValue = value;
+                    }
 
-                            exchange.getMessage().setHeader(name, headerValue);
-                        });
+                    exchange.getMessage().setHeader(name, headerValue);
+                });
 
                 // Execute the consumer route
 
@@ -209,8 +211,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
      */
     private Response<AiMessage> chatWithLLM(List<ChatMessage> chatMessages, ToolPair toolPair, Exchange exchange) {
 
-        ChatRequest.Builder requestBuilder = ChatRequest.builder()
-                .messages(chatMessages);
+        ChatRequest.Builder requestBuilder = ChatRequest.builder().messages(chatMessages);
 
         // Add tools if available
         if (toolPair != null && toolPair.toolSpecifications() != null) {
@@ -251,8 +252,8 @@ public class LangChain4jToolsProducer extends DefaultProducer {
         String[] tags = TagsHelper.splitTags(endpoint.getTags());
         for (var entry : tools.entrySet()) {
             if (isMatch(tags, entry)) {
-                final List<CamelToolSpecification> callablesForTag = entry.getValue().stream()
-                        .toList();
+                final List<CamelToolSpecification> callablesForTag =
+                        entry.getValue().stream().toList();
 
                 callableTools.addAll(callablesForTag);
 
@@ -278,12 +279,10 @@ public class LangChain4jToolsProducer extends DefaultProducer {
      * @param toolSpecifications
      * @param callableTools
      */
-    private record ToolPair(List<ToolSpecification> toolSpecifications, List<CamelToolSpecification> callableTools) {
-    }
+    private record ToolPair(List<ToolSpecification> toolSpecifications, List<CamelToolSpecification> callableTools) {}
 
     private String extractAiResponse(Response<AiMessage> response) {
         AiMessage message = response.content();
         return message == null ? null : message.text();
     }
-
 }

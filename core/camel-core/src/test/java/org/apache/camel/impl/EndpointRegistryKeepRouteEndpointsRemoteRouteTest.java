@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class EndpointRegistryKeepRouteEndpointsRemoteRouteTest extends ContextTestSupport {
 
@@ -77,11 +78,14 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo").to("log:start").to("log:foo").to("mock:result");
+                from("direct:start")
+                        .routeId("foo")
+                        .to("log:start")
+                        .to("log:foo")
+                        .to("mock:result");
 
                 from("direct:bar").routeId("bar").to("log:bar");
             }
         };
     }
-
 }

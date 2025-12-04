@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Properties;
@@ -40,27 +45,24 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * this will test basic breakOnFirstError functionality uses allowManualCommit and KafkaManualCommit because relying on
  * Camel default to use NOOP Commit Manager this means the route implementation MUST manage all offset commits
  *
  * will demonstrate how to retry
  */
-@Tags({ @Tag("breakOnFirstError") })
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64" },
-             disabledReason = "This test does not run reliably on some platforms")
+@Tags({@Tag("breakOnFirstError")})
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS},
+        architectures = {"amd64", "aarch64"},
+        disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstErrorBatchRetryIT";
     public static final String TOPIC = "breakOnFirstErrorBatchRetryIT";
 
-    private static final Logger LOG
-            = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT.class);
+    private static final Logger LOG =
+            LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT.class);
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
@@ -107,8 +109,9 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseK
                 .anyMatch(exc -> "message-5".equals(exc.getMessage().getBody(String.class))));
 
         assertTrue(to.getExchanges().stream()
-                .filter(exc -> "message-3".equals(exc.getMessage().getBody(String.class)))
-                .count() > 1);
+                        .filter(exc -> "message-3".equals(exc.getMessage().getBody(String.class)))
+                        .count()
+                > 1);
 
         to.assertIsSatisfied(3000);
     }
@@ -130,16 +133,16 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseK
                         .end();
 
                 from("kafka:" + TOPIC
-                     + "?groupId=" + ROUTE_ID
-                     + "&autoOffsetReset=earliest"
-                     + "&autoCommitEnable=false"
-                     + "&allowManualCommit=true"
-                     + "&breakOnFirstError=true"
-                     + "&maxPollRecords=3"
-                     + "&pollTimeoutMs=1000"
-                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                                + "?groupId=" + ROUTE_ID
+                                + "&autoOffsetReset=earliest"
+                                + "&autoCommitEnable=false"
+                                + "&allowManualCommit=true"
+                                + "&breakOnFirstError=true"
+                                + "&maxPollRecords=3"
+                                + "&pollTimeoutMs=1000"
+                                + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
                         .process(exchange -> {
                             LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Consuming", exchange, true));
@@ -165,8 +168,8 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseK
 
     private void doCommitOffset(Exchange exchange) {
         LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Committing", exchange, true));
-        KafkaManualCommit manual = exchange.getMessage()
-                .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+        KafkaManualCommit manual =
+                exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
         assertNotNull(manual);
         manual.commit();
     }
@@ -177,5 +180,4 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseK
             throw new RuntimeException("ERROR TRIGGERED BY TEST");
         }
     }
-
 }

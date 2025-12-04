@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.test;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "test",
-                     description = "Manage tests for Camel applications (use test --help to see sub commands)")
+@CommandLine.Command(
+        name = "test",
+        description = "Manage tests for Camel applications (use test --help to see sub commands)")
 public class TestCommand extends CamelCommand {
 
     public TestCommand(CamelJBangMain main) {

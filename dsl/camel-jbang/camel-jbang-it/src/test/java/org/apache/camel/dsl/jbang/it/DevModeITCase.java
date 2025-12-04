@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -43,7 +44,8 @@ public class DevModeITCase extends JBangTestSupport {
         executeBackground(String.format("run %s/cheese.xml --dev", mountPoint()));
         checkLogContains("cheese", DEFAULT_MSG);
         final Path routeFile = Path.of(getDataFolder(), "cheese.xml");
-        Files.write(routeFile,
+        Files.write(
+                routeFile,
                 Files.readAllLines(routeFile).stream()
                         .map(line -> line.replace("${routeId}", "custom"))
                         .collect(Collectors.toList()));
@@ -59,13 +61,18 @@ public class DevModeITCase extends JBangTestSupport {
         final HttpResponse<String> res = getDevRequest("");
         Assertions.assertThat(res.statusCode()).as("dev console status code").isEqualTo(200);
         final HttpResponse<String> health = getObserve("/health");
-        Assertions.assertThat(health.statusCode()).as("dev console health status code").isEqualTo(200);
+        Assertions.assertThat(health.statusCode())
+                .as("dev console health status code")
+                .isEqualTo(200);
         Assertions.assertThat(health.body()).as("health status is UP").contains("UP");
         final HttpResponse<String> top = getDevRequest("/top");
-        Assertions.assertThat(top.statusCode()).as("dev console top status code").isEqualTo(200);
+        Assertions.assertThat(top.statusCode())
+                .as("dev console top status code")
+                .isEqualTo(200);
         Assertions.assertThat(top.body()).as("top contains route").contains("Route Id: route1");
-        //check all endpoints status code
-        SoftAssertions.assertSoftly(softly -> res.body().lines()
+        // check all endpoints status code
+        SoftAssertions.assertSoftly(softly -> res.body()
+                .lines()
                 .map(line -> "/" + line.split(":")[0])
                 .map(this::getDevRequest)
                 .forEach(response -> softly.assertThat(response.statusCode())
@@ -78,8 +85,8 @@ public class DevModeITCase extends JBangTestSupport {
     public void runUsingProfileTest() throws IOException {
         copyResourceInDataFolder(TestResources.HELLO_NAME);
         copyResourceInDataFolder(TestResources.TEST_PROFILE_PROP);
-        containerService.copyFileInternally(mountPoint() + "/" + TestResources.TEST_PROFILE_PROP.getName(),
-                DEFAULT_ROUTE_FOLDER);
+        containerService.copyFileInternally(
+                mountPoint() + "/" + TestResources.TEST_PROFILE_PROP.getName(), DEFAULT_ROUTE_FOLDER);
         executeBackground(String.format("run %s/%s", mountPoint(), TestResources.HELLO_NAME.getName()));
         checkLogContains("Hello Camel from John");
         execute("stop helloName");
@@ -102,12 +109,14 @@ public class DevModeITCase extends JBangTestSupport {
     public void testUploadFileViaHttp() throws IOException {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
         Files.createDirectory(Path.of(getDataFolder() + "/source-dir"));
-        Files.copy(Path.of(getDataFolder() + "/FromDirectoryRoute.java"),
+        Files.copy(
+                Path.of(getDataFolder() + "/FromDirectoryRoute.java"),
                 Path.of(getDataFolder() + "/source-dir/FromDirectoryRoute.java"));
         executeBackground(String.format("run --dev --console --source-dir=%s/source-dir", mountPoint()));
         checkLogContains("Hello world!");
         Path routeFile = Path.of(getDataFolder(), "FromDirectoryRoute.java");
-        Files.write(routeFile,
+        Files.write(
+                routeFile,
                 Files.readAllLines(routeFile).stream()
                         .map(line -> line.replace("Hello world!", "I have been modified!"))
                         .collect(Collectors.toList()));
@@ -120,12 +129,12 @@ public class DevModeITCase extends JBangTestSupport {
 
     private HttpResponse<String> getDevRequest(final String ctxUrl) {
         try {
-            return httpClient.send(HttpRequest
-                    .newBuilder(
-                            new URI(String.format("http://localhost:%s/q/dev%s", containerService.getDevConsolePort(), ctxUrl)))
-                    .timeout(Duration.ofSeconds(5))
-                    .GET()
-                    .build(),
+            return httpClient.send(
+                    HttpRequest.newBuilder(new URI(String.format(
+                                    "http://localhost:%s/q/dev%s", containerService.getDevConsolePort(), ctxUrl)))
+                            .timeout(Duration.ofSeconds(5))
+                            .GET()
+                            .build(),
                     HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException | URISyntaxException e) {
             Assertions.fail("unable to call dev console");
@@ -135,19 +144,16 @@ public class DevModeITCase extends JBangTestSupport {
 
     private HttpResponse<String> getObserve(final String ctxUrl) {
         try {
-            return httpClient.send(HttpRequest
-                    .newBuilder(
-                            new URI(
-                                    String.format("http://localhost:%s/observe%s", containerService.getDevConsolePort(),
-                                            ctxUrl)))
-                    .timeout(Duration.ofSeconds(5))
-                    .GET()
-                    .build(),
+            return httpClient.send(
+                    HttpRequest.newBuilder(new URI(String.format(
+                                    "http://localhost:%s/observe%s", containerService.getDevConsolePort(), ctxUrl)))
+                            .timeout(Duration.ofSeconds(5))
+                            .GET()
+                            .build(),
                     HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException | URISyntaxException e) {
             Assertions.fail("unable to call observe");
             throw new RuntimeException(e);
         }
     }
-
 }

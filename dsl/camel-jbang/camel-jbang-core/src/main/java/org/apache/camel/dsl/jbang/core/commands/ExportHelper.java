@@ -45,7 +45,7 @@ public final class ExportHelper {
             throws Exception {
         if ("classpath".equals(scheme)) {
             try (var ins = classLoader.getResourceAsStream(source.toString());
-                 var outs = Files.newOutputStream(target)) {
+                    var outs = Files.newOutputStream(target)) {
                 IOHelper.copy(ins, outs);
             }
         } else {
@@ -65,14 +65,13 @@ public final class ExportHelper {
         if (Files.isDirectory(source)) {
             // flatten files if they are from a directory
             try (var stream = Files.list(source)) {
-                stream.filter(Files::isRegularFile)
-                        .forEach(child -> {
-                            try {
-                                safeCopy(child, target.resolve(child.getFileName()), override, symbolicLink);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+                stream.filter(Files::isRegularFile).forEach(child -> {
+                    try {
+                        safeCopy(child, target.resolve(child.getFileName()), override, symbolicLink);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
             return;
         }
@@ -95,8 +94,7 @@ public final class ExportHelper {
         if (!Files.exists(target)) {
             Files.copy(source, target);
         } else if (override) {
-            Files.copy(source, target,
-                    StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -135,5 +133,4 @@ public final class ExportHelper {
         }
         return sb.toString();
     }
-
 }

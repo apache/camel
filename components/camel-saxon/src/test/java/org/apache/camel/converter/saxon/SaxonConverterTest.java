@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.saxon;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -38,14 +42,12 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.xml.StringSource;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SaxonConverterTest extends CamelTestSupport {
-    private static final String CONTENT
-            = "<a xmlns=\"http://www.apache.org/test\"><b foo=\"bar\">test</b><c><d>foobar</d></c></a>";
+    private static final String CONTENT =
+            "<a xmlns=\"http://www.apache.org/test\"><b foo=\"bar\">test</b><c><d>foobar</d></c></a>";
     private static final String CONTENT_B = "<b xmlns=\"http://www.apache.org/test\" foo=\"bar\">test</b>";
-    private static final NamespaceContext NS_CONTEXT = new DefaultNamespaceContext().add("ns1", "http://www.apache.org/test");
+    private static final NamespaceContext NS_CONTEXT =
+            new DefaultNamespaceContext().add("ns1", "http://www.apache.org/test");
 
     private Exchange exchange;
     private XPathEvaluator evaluator;
@@ -55,7 +57,10 @@ public class SaxonConverterTest extends CamelTestSupport {
     public void doPostSetup() throws Exception {
         exchange = new DefaultExchange(context);
         evaluator = new XPathEvaluator();
-        doc = evaluator.getConfiguration().buildDocumentTree(new StringSource(CONTENT)).getRootNode();
+        doc = evaluator
+                .getConfiguration()
+                .buildDocumentTree(new StringSource(CONTENT))
+                .getRootNode();
     }
 
     @Test

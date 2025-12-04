@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.apache.camel.Exchange.CORRELATION_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.Exchange.CORRELATION_ID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EnricherCorrelationIdTest extends ContextTestSupport {
 
@@ -38,8 +39,8 @@ class EnricherCorrelationIdTest extends ContextTestSupport {
     @Test
     void testCorrelationIdIsNotOverwrittenByEnricherfailedResource() {
         String originalCorrelationId = "SOME_ID";
-        Exchange exchange
-                = template.request("direct:failed-resource", e -> e.setProperty(CORRELATION_ID, originalCorrelationId));
+        Exchange exchange =
+                template.request("direct:failed-resource", e -> e.setProperty(CORRELATION_ID, originalCorrelationId));
 
         assertEquals(originalCorrelationId, exchange.getProperty(CORRELATION_ID));
     }
@@ -57,5 +58,4 @@ class EnricherCorrelationIdTest extends ContextTestSupport {
             }
         };
     }
-
 }

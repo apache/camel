@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionFailAndOkTest extends ContextTestSupport {
 
@@ -74,12 +75,19 @@ public class OnCompletionFailAndOkTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .onCompletion().onCompleteOnly().to("log:ok").to("mock:ok").end()
-                    .onCompletion().onFailureOnly().to("log:fail").to("mock:fail").end()
-                    .process(new OnCompletionTest.MyProcessor())
-                    .to("mock:result");
+                        .onCompletion()
+                        .onCompleteOnly()
+                        .to("log:ok")
+                        .to("mock:ok")
+                        .end()
+                        .onCompletion()
+                        .onFailureOnly()
+                        .to("log:fail")
+                        .to("mock:fail")
+                        .end()
+                        .process(new OnCompletionTest.MyProcessor())
+                        .to("mock:result");
             }
         };
     }
-
 }

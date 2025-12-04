@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,9 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AsyncDirectTest extends TelemetryDevTracerTestSupport {
 
@@ -62,7 +63,6 @@ public class AsyncDirectTest extends TelemetryDevTracerTestSupport {
         for (DevTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(DevTrace trace, String expectedBody) {
@@ -113,8 +113,11 @@ public class AsyncDirectTest extends TelemetryDevTracerTestSupport {
         assertEquals(newDirectFrom.getTag("spanid"), newMock.getTag("parentSpan"));
 
         // Validate message logging
-        assertEquals("A direct message", direct.getLogEntries().get(0).getFields().get("message"));
-        assertEquals("A new message", newDirectFrom.getLogEntries().get(0).getFields().get("message"));
+        assertEquals(
+                "A direct message", direct.getLogEntries().get(0).getFields().get("message"));
+        assertEquals(
+                "A new message",
+                newDirectFrom.getLogEntries().get(0).getFields().get("message"));
         if (expectedBody == null) {
             assertEquals(
                     "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
@@ -152,5 +155,4 @@ public class AsyncDirectTest extends TelemetryDevTracerTestSupport {
             }
         };
     }
-
 }

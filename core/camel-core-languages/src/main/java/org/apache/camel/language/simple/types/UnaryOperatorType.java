@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.types;
 
 /**
@@ -23,7 +24,6 @@ package org.apache.camel.language.simple.types;
  * <i>after</i> the function it should work upon.
  */
 public enum UnaryOperatorType {
-
     INC,
     DEC;
 
@@ -49,5 +49,4 @@ public enum UnaryOperatorType {
     public String toString() {
         return getOperatorText(this);
     }
-
 }

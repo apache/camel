@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Map;
@@ -56,8 +57,9 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
         this.resolvers = new ConcurrentHashMap<>();
         this.fallbackResolver = null;
         if (camelContext != null) {
-            this.fallbackResolver = camelContext.getRegistry().lookupByNameAndType(ResourceResolver.FALLBACK_RESOURCE_RESOLVER,
-                    ResourceResolver.class);
+            this.fallbackResolver = camelContext
+                    .getRegistry()
+                    .lookupByNameAndType(ResourceResolver.FALLBACK_RESOURCE_RESOLVER, ResourceResolver.class);
         }
         if (this.fallbackResolver == null) {
             this.fallbackResolver = new DefaultFallbackResourceResolver(camelContext);
@@ -126,9 +128,9 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
      * @param scheme the scheme
      */
     protected boolean hasResourceResolver(String scheme) {
-        ResourceResolver answer = getCamelContext().getRegistry().lookupByNameAndType(
-                RESOURCE_LOADER_KEY_PREFIX + scheme,
-                ResourceResolver.class);
+        ResourceResolver answer = getCamelContext()
+                .getRegistry()
+                .lookupByNameAndType(RESOURCE_LOADER_KEY_PREFIX + scheme, ResourceResolver.class);
 
         if (answer == null) {
             answer = resolvers.get(scheme);
@@ -145,9 +147,9 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
      * @return        a {@link RoutesBuilderLoader} or <code>null</code> if none found.
      */
     private ResourceResolver getResourceResolver(final String scheme) {
-        ResourceResolver answer = getCamelContext().getRegistry().lookupByNameAndType(
-                RESOURCE_LOADER_KEY_PREFIX + scheme,
-                ResourceResolver.class);
+        ResourceResolver answer = getCamelContext()
+                .getRegistry()
+                .lookupByNameAndType(RESOURCE_LOADER_KEY_PREFIX + scheme, ResourceResolver.class);
 
         if (answer == null) {
             answer = resolvers.computeIfAbsent(scheme, this::resolveService);
@@ -164,10 +166,11 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
      */
     private ResourceResolver resolveService(String scheme) {
         final CamelContext context = getCamelContext();
-        final FactoryFinder finder
-                = context.getCamelContextExtension().getBootstrapFactoryFinder(ResourceResolver.FACTORY_PATH);
+        final FactoryFinder finder =
+                context.getCamelContextExtension().getBootstrapFactoryFinder(ResourceResolver.FACTORY_PATH);
 
-        ResourceResolver rr = ResolverHelper.resolveService(context, finder, scheme, ResourceResolver.class).orElse(null);
+        ResourceResolver rr = ResolverHelper.resolveService(context, finder, scheme, ResourceResolver.class)
+                .orElse(null);
         if (rr != null) {
             CamelContextAware.trySetCamelContext(rr, getCamelContext());
             ServiceHelper.startService(rr);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -28,11 +29,11 @@ public abstract class TypedExpressionDefinition extends ExpressionDefinition {
 
     @XmlAttribute(name = "resultType")
     private String resultTypeName;
+
     @XmlTransient
     private Class<?> resultType;
 
-    protected TypedExpressionDefinition() {
-    }
+    protected TypedExpressionDefinition() {}
 
     protected TypedExpressionDefinition(TypedExpressionDefinition source) {
         super(source);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.properties;
 
 import java.io.IOException;
@@ -41,9 +42,12 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
@@ -57,9 +61,9 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .transform().simple("Connect with {{secret:mysecret/myuser}}:{{secret:mysecret/mypass}}");
-                from("direct:binary")
-                        .transform().simple("File saved to {{secret-binary:mysecret/binary.dat}}");
+                        .transform()
+                        .simple("Connect with {{secret:mysecret/myuser}}:{{secret:mysecret/mypass}}");
+                from("direct:binary").transform().simple("File saved to {{secret-binary:mysecret/binary.dat}}");
             }
         };
     }
@@ -74,11 +78,19 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
         client = new KubernetesClientBuilder().withConfig(builder.build()).build();
         context.getRegistry().bind("KubernetesClient", client);
 
-        Map<String, String> data
-                = Map.of("myuser", Base64.getEncoder().encodeToString("scott".getBytes(StandardCharsets.UTF_8)),
-                        "mypass", Base64.getEncoder().encodeToString("tiger".getBytes(StandardCharsets.UTF_8)),
-                        "binary.dat", Base64.getEncoder().encodeToString(readExampleBinaryFile()));
-        Secret sec = new SecretBuilder().editOrNewMetadata().withName("mysecret").endMetadata().withData(data).build();
+        Map<String, String> data = Map.of(
+                "myuser",
+                Base64.getEncoder().encodeToString("scott".getBytes(StandardCharsets.UTF_8)),
+                "mypass",
+                Base64.getEncoder().encodeToString("tiger".getBytes(StandardCharsets.UTF_8)),
+                "binary.dat",
+                Base64.getEncoder().encodeToString(readExampleBinaryFile()));
+        Secret sec = new SecretBuilder()
+                .editOrNewMetadata()
+                .withName("mysecret")
+                .endMetadata()
+                .withData(data)
+                .build();
         this.sec = client.resource(sec).serverSideApply();
 
         return context;
@@ -108,8 +120,7 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
         String out = template.requestBody("direct:binary", null, String.class);
         Assertions.assertTrue(out.matches("File saved to .*binary.dat"));
         Path filePath = Path.of(out.substring("File saved to ".length()));
-        Assertions.assertArrayEquals(readExampleBinaryFile(),
-                Files.readAllBytes(filePath));
+        Assertions.assertArrayEquals(readExampleBinaryFile(), Files.readAllBytes(filePath));
         Files.deleteIfExists(filePath);
     }
 }

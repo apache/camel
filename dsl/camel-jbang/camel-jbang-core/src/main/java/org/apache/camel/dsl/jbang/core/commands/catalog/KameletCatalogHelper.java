@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.io.InputStream;
@@ -30,8 +31,7 @@ import org.apache.camel.util.StringHelper;
 
 public final class KameletCatalogHelper {
 
-    private KameletCatalogHelper() {
-    }
+    private KameletCatalogHelper() {}
 
     public static List<String> findKameletNames(String version) throws Exception {
         Map<String, Object> kamelets = loadKamelets(version);
@@ -246,5 +246,4 @@ public final class KameletCatalogHelper {
         }
         return answer.isEmpty() ? null : answer;
     }
-
 }

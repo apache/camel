@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.CompletableFuture;
@@ -27,14 +28,14 @@ public abstract class AsyncProcessorSupport extends ServiceSupport implements As
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorAwaitManager awaitManager
-                = PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
+        AsyncProcessorAwaitManager awaitManager = PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
         awaitManager.process(this, exchange);
     }
 
     @Override
     public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                new AsyncCallbackToCompletableFutureAdapter<>(exchange);
         process(exchange, callback);
         return callback.getFuture();
     }

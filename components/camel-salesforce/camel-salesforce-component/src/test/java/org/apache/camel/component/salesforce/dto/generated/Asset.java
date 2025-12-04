@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.dto.generated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -170,5 +171,4 @@ public class Asset extends AbstractSObjectBase {
     public void setDescription(String Description) {
         this.Description = Description;
     }
-
 }

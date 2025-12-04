@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
@@ -32,7 +33,8 @@ import org.apache.camel.support.service.ServiceSupport;
  * <p/>
  * This strategy is <b>not</b> intended for end users to use.
  */
-public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
+public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport
+        implements AggregationStrategy, CamelContextAware {
 
     private final AggregationStrategy strategy;
     private CamelContext camelContext;
@@ -108,29 +110,36 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
 
     private void propagateFailure(Exchange answer, Exchange newExchange) {
         // if new exchange failed then propagate all the error related properties to the answer
-        if (newExchange.isFailed() || newExchange.isRollbackOnly() || newExchange.isRollbackOnlyLast()
+        if (newExchange.isFailed()
+                || newExchange.isRollbackOnly()
+                || newExchange.isRollbackOnlyLast()
                 || newExchange.getExchangeExtension().isErrorHandlerHandledSet()
                         && newExchange.getExchangeExtension().isErrorHandlerHandled()) {
             if (newExchange.getException() != null) {
                 answer.setException(newExchange.getException());
             }
             if (newExchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT) != null) {
-                answer.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT,
+                answer.setProperty(
+                        ExchangePropertyKey.EXCEPTION_CAUGHT,
                         newExchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT));
             }
             if (newExchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) != null) {
-                answer.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                answer.setProperty(
+                        ExchangePropertyKey.FAILURE_ENDPOINT,
                         newExchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT));
             }
             if (newExchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID) != null) {
-                answer.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID,
+                answer.setProperty(
+                        ExchangePropertyKey.FAILURE_ROUTE_ID,
                         newExchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID));
             }
             if (newExchange.getExchangeExtension().getErrorHandlerHandled() != null) {
                 answer.getExchangeExtension()
-                        .setErrorHandlerHandled(newExchange.getExchangeExtension().getErrorHandlerHandled());
+                        .setErrorHandlerHandled(
+                                newExchange.getExchangeExtension().getErrorHandlerHandled());
             }
-            answer.getExchangeExtension().setFailureHandled(newExchange.getExchangeExtension().isFailureHandled());
+            answer.getExchangeExtension()
+                    .setFailureHandled(newExchange.getExchangeExtension().isFailureHandled());
         }
     }
 

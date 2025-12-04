@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.yaml.out;
 
 import java.io.FileInputStream;
@@ -45,7 +46,8 @@ public class XmlToYamlTest {
     @DisplayName("Test xml to yaml for <routes>")
     void testRoutes(String xml) throws Exception {
         try (InputStream is = new FileInputStream("../camel-xml-io/src/test/resources/" + xml)) {
-            RoutesDefinition expected = new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
+            RoutesDefinition expected =
+                    new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
             StringWriter sw = new StringWriter();
             new ModelWriter(sw).writeRoutesDefinition(expected);
             LOG.info("xml={}\n{}\n", xml, sw);
@@ -74,5 +76,4 @@ public class XmlToYamlTest {
             throw new IOError(e);
         }
     }
-
 }

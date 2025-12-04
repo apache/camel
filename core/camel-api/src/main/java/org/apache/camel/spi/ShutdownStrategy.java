@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.List;
@@ -83,7 +84,8 @@ public interface ShutdownStrategy extends StaticService {
      * @param  timeUnit  the unit to use
      * @throws Exception is thrown if error shutting down the consumers, however its preferred to avoid this
      */
-    void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception;
+    void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit)
+            throws Exception;
 
     /**
      * Shutdown the route using a specified timeout instead of the default timeout values and supports abortAfterTimeout
@@ -97,7 +99,8 @@ public interface ShutdownStrategy extends StaticService {
      * @return                   <tt>true</tt> if the route is stopped before the timeout
      * @throws Exception         is thrown if error shutting down the consumer, however its preferred to avoid this
      */
-    boolean shutdown(CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
+    boolean shutdown(
+            CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
             throws Exception;
 
     /**
@@ -109,7 +112,8 @@ public interface ShutdownStrategy extends StaticService {
      * @param  timeUnit  the unit to use
      * @throws Exception is thrown if error suspending the consumers, however its preferred to avoid this
      */
-    void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception;
+    void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit)
+            throws Exception;
 
     /**
      * Set a timeout to wait for the shutdown to complete.
@@ -253,5 +257,4 @@ public interface ShutdownStrategy extends StaticService {
      * logging level is DEBUG.
      */
     void setLoggingLevel(LoggingLevel loggingLevel);
-
 }

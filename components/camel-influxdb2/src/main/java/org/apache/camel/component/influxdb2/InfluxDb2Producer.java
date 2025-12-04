@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb2;
 
 import com.influxdb.client.InfluxDBClient;
@@ -92,8 +93,7 @@ public class InfluxDb2Producer extends DefaultProducer {
         }
     }
 
-    private void insertPoint(Exchange exchange, String orgName, String bucketName)
-            throws InvalidPayloadException {
+    private void insertPoint(Exchange exchange, String orgName, String bucketName) throws InvalidPayloadException {
         Point point = exchange.getIn().getMandatoryBody(Point.class);
         try {
             if (LOG.isDebugEnabled()) {
@@ -131,8 +131,7 @@ public class InfluxDb2Producer extends DefaultProducer {
         }
     }
 
-    private void insertPoints(Exchange exchange, String orgName, String bucketName)
-            throws InvalidPayloadException {
+    private void insertPoints(Exchange exchange, String orgName, String bucketName) throws InvalidPayloadException {
         @SuppressWarnings("unchecked")
         Points points = exchange.getIn().getMandatoryBody(Points.class);
         try {
@@ -145,7 +144,7 @@ public class InfluxDb2Producer extends DefaultProducer {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void insertMeasurements(Exchange exchange, String orgName, String bucketName, WritePrecision writePrecision)
             throws InvalidPayloadException {
         Measurements measurements = exchange.getIn().getMandatoryBody(Measurements.class);

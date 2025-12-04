@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -31,14 +36,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent {
 
     @RegisterExtension
-    public static OpenAIMock openAIMock = new OpenAIMock().builder()
+    public static OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("Hi! Can you look up user 123 and tell me about our rental policies?")
             .assertRequest(request -> {
                 // Both tools are part of the request
@@ -77,45 +79,30 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
         mockEndpoint.expectedMessageCount(3);
 
         AiAgentBody<?> firstRequest = new AiAgentBody<>(
-                "Hi! Can you look up user 123 and tell me about our rental policies?",
-                null,
-                MEMORY_ID_SESSION);
+                "Hi! Can you look up user 123 and tell me about our rental policies?", null, MEMORY_ID_SESSION);
 
-        String firstResponse = template.requestBody(
-                "direct:complete-agent",
-                firstRequest,
-                String.class);
+        String firstResponse = template.requestBody("direct:complete-agent", firstRequest, String.class);
 
         assertNotNull(firstResponse, "First response should not be null");
-        Assertions.assertThat(firstResponse).contains("John Smith", "Gold")
+        Assertions.assertThat(firstResponse)
+                .contains("John Smith", "Gold")
                 .withFailMessage("Response should contain user information from tools");
-        Assertions.assertThat(firstResponse).contains("21", "age", "rental")
+        Assertions.assertThat(firstResponse)
+                .contains("21", "age", "rental")
                 .withFailMessage("Response should contain rental policy information from RAG");
 
         // Second interaction: Follow-up question
-        AiAgentBody<?> secondRequest = new AiAgentBody<>(
-                "What's his preferred vehicle type?",
-                null,
-                MEMORY_ID_SESSION);
+        AiAgentBody<?> secondRequest = new AiAgentBody<>("What's his preferred vehicle type?", null, MEMORY_ID_SESSION);
 
-        String secondResponse = template.requestBody(
-                "direct:complete-agent",
-                secondRequest,
-                String.class);
+        String secondResponse = template.requestBody("direct:complete-agent", secondRequest, String.class);
 
         assertNotNull(secondResponse, "Second response should not be null");
         Assertions.assertThat(secondResponse).isEqualTo("SUV");
 
         // Third interaction: Follow-up weather question
-        AiAgentBody<?> thirdRequest = new AiAgentBody<>(
-                "What's the weather in London?",
-                null,
-                MEMORY_ID_SESSION);
+        AiAgentBody<?> thirdRequest = new AiAgentBody<>("What's the weather in London?", null, MEMORY_ID_SESSION);
 
-        String thirdResponse = template.requestBody(
-                "direct:complete-agent",
-                thirdRequest,
-                String.class);
+        String thirdResponse = template.requestBody("direct:complete-agent", thirdRequest, String.class);
 
         assertNotNull(thirdRequest, "Third response should not be null");
         Assertions.assertThat(thirdResponse).contains(WEATHER_INFO);
@@ -123,8 +110,7 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
         mockEndpoint.assertIsSatisfied();
 
         // Verify guardrails were called
-        assertTrue(TestSuccessInputGuardrail.wasValidated(),
-                "Input guardrail should have been called");
+        assertTrue(TestSuccessInputGuardrail.wasValidated(), "Input guardrail should have been called");
 
         // Verify memory persistence
         assertTrue(chatMemoryStore.getMemoryCount() > 0, "Memory should be persisted");
@@ -136,7 +122,8 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
         AgentConfiguration configuration = new AgentConfiguration()
                 .withChatModel(chatModel)
                 .withChatMemoryProvider(chatMemoryProvider)
-                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withInputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
                 .withOutputGuardrailClasses(List.of());
 
         Agent agent = new AgentWithMemory(configuration);
@@ -155,7 +142,8 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
                         .setBody(constant(USER_DATABASE));
 
                 from("langchain4j-tools:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
-                        .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
+                        .setBody(constant(
+                                "{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
             }
         };
     }

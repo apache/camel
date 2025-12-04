@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -41,10 +46,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class ServiceBusConsumerTest {
     private static final String MESSAGE_BODY = "bodyValue";
@@ -87,7 +88,8 @@ public class ServiceBusConsumerTest {
     private final ExchangeFactory ef = mock();
     private final HeaderFilterStrategy headerFilterStrategy = mock();
     private final ExceptionHandler exceptionHandler = mock();
-    private final ArgumentCaptor<Consumer<ServiceBusReceivedMessageContext>> processMessageCaptor = ArgumentCaptor.captor();
+    private final ArgumentCaptor<Consumer<ServiceBusReceivedMessageContext>> processMessageCaptor =
+            ArgumentCaptor.captor();
     private final ArgumentCaptor<Consumer<ServiceBusErrorContext>> processErrorCaptor = ArgumentCaptor.captor();
     private final ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.captor();
     private final ArgumentCaptor<AsyncCallback> asyncCallbackCaptor = ArgumentCaptor.captor();
@@ -103,12 +105,14 @@ public class ServiceBusConsumerTest {
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getServiceBusClientFactory()).thenReturn(clientFactory);
-        when(clientFactory.createServiceBusProcessorClient(any(), processMessageCaptor.capture(), processErrorCaptor.capture()))
+        when(clientFactory.createServiceBusProcessorClient(
+                        any(), processMessageCaptor.capture(), processErrorCaptor.capture()))
                 .thenReturn(client);
-        when(clientFactory.createServiceBusSessionProcessorClient(any(), processMessageCaptor.capture(),
-                processErrorCaptor.capture()))
+        when(clientFactory.createServiceBusSessionProcessorClient(
+                        any(), processMessageCaptor.capture(), processErrorCaptor.capture()))
                 .thenReturn(client);
-        when(processor.process(exchangeCaptor.capture(), asyncCallbackCaptor.capture())).thenReturn(true);
+        when(processor.process(exchangeCaptor.capture(), asyncCallbackCaptor.capture()))
+                .thenReturn(true);
         when(configuration.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
     }
 
@@ -195,11 +199,13 @@ public class ServiceBusConsumerTest {
             when(messageContext.getMessage()).thenReturn(message);
             configureMockMessage();
             message.getApplicationProperties().put(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE);
-            when(headerFilterStrategy.applyFilterToExternalHeaders(anyString(), any(), any())).thenReturn(false);
+            when(headerFilterStrategy.applyFilterToExternalHeaders(anyString(), any(), any()))
+                    .thenReturn(false);
 
             processMessageCaptor.getValue().accept(messageContext);
 
-            verify(headerFilterStrategy, atLeastOnce()).applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class));
+            verify(headerFilterStrategy, atLeastOnce())
+                    .applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class));
             verifyNoMoreInteractions(headerFilterStrategy);
 
             verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
@@ -222,11 +228,13 @@ public class ServiceBusConsumerTest {
             when(messageContext.getMessage()).thenReturn(message);
             configureMockMessage();
             message.getApplicationProperties().put(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE);
-            when(headerFilterStrategy.applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class))).thenReturn(true);
+            when(headerFilterStrategy.applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class)))
+                    .thenReturn(true);
 
             processMessageCaptor.getValue().accept(messageContext);
 
-            verify(headerFilterStrategy, atLeastOnce()).applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class));
+            verify(headerFilterStrategy, atLeastOnce())
+                    .applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class));
             verifyNoMoreInteractions(headerFilterStrategy);
 
             verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
@@ -273,7 +281,8 @@ public class ServiceBusConsumerTest {
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            Synchronization synchronization =
+                    exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onComplete(exchange);
             verify(messageContext).complete();
 
@@ -298,7 +307,8 @@ public class ServiceBusConsumerTest {
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            Synchronization synchronization =
+                    exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onFailure(exchange);
             verify(messageContext).abandon();
 
@@ -324,7 +334,8 @@ public class ServiceBusConsumerTest {
 
             final Exception testException = new Exception("Test exception");
             exchange.setException(testException);
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            Synchronization synchronization =
+                    exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onFailure(exchange);
             verify(exceptionHandler).handleException(anyString(), eq(exchange), eq(testException));
         }
@@ -361,7 +372,8 @@ public class ServiceBusConsumerTest {
             assertThat(exchange).isNotNull();
             exchange.setException(new Exception("Test exception"));
 
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            Synchronization synchronization =
+                    exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onFailure(exchange);
 
             ArgumentCaptor<DeadLetterOptions> deadLetterOptionsCaptor = ArgumentCaptor.captor();
@@ -369,7 +381,8 @@ public class ServiceBusConsumerTest {
             DeadLetterOptions deadLetterOptions = deadLetterOptionsCaptor.getValue();
             assertThat(deadLetterOptions.getDeadLetterReason()).contains(Exception.class.getName());
             assertThat(deadLetterOptions.getDeadLetterReason()).contains("Test exception");
-            assertThat(deadLetterOptions.getDeadLetterErrorDescription()).contains(getClass().getName());
+            assertThat(deadLetterOptions.getDeadLetterErrorDescription())
+                    .contains(getClass().getName());
 
             verifyNoMoreInteractions(messageContext);
         }
@@ -394,7 +407,8 @@ public class ServiceBusConsumerTest {
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            Synchronization synchronization =
+                    exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onFailure(exchange);
             verify(messageContext).deadLetter();
 
@@ -424,7 +438,8 @@ public class ServiceBusConsumerTest {
             assertThat(exchange).isNotNull();
             exchange.setException(new Exception("Test exception"));
 
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            Synchronization synchronization =
+                    exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onFailure(exchange);
             verify(messageContext).abandon();
 
@@ -449,7 +464,8 @@ public class ServiceBusConsumerTest {
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            Synchronization synchronization =
+                    exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onComplete(exchange);
 
             verifyNoMoreInteractions(messageContext);
@@ -474,7 +490,8 @@ public class ServiceBusConsumerTest {
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            Synchronization synchronization =
+                    exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onFailure(exchange);
 
             verifyNoMoreInteractions(messageContext);
@@ -500,7 +517,8 @@ public class ServiceBusConsumerTest {
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
-            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            Synchronization synchronization =
+                    exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onFailure(exchange);
 
             verifyNoMoreInteractions(messageContext);
@@ -560,7 +578,8 @@ public class ServiceBusConsumerTest {
         expectedMessageHeaders.put(ServiceBusConstants.DEAD_LETTER_SOURCE, null);
         expectedMessageHeaders.put(ServiceBusConstants.DELIVERY_COUNT, MESSAGE_DELIVERY_COUNT_VALUE);
         expectedMessageHeaders.put(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, MESSAGE_SCHEDULED_ENQUEUE_TIME);
-        expectedMessageHeaders.put(ServiceBusConstants.ENQUEUED_SEQUENCE_NUMBER, MESSAGE_ENQUEUED_SEQUENCE_NUMBER_VALUE);
+        expectedMessageHeaders.put(
+                ServiceBusConstants.ENQUEUED_SEQUENCE_NUMBER, MESSAGE_ENQUEUED_SEQUENCE_NUMBER_VALUE);
         expectedMessageHeaders.put(ServiceBusConstants.ENQUEUED_TIME, MESSAGE_ENQUEUED_TIME);
         expectedMessageHeaders.put(ServiceBusConstants.EXPIRES_AT, MESSAGE_EXPIRES_AT);
         expectedMessageHeaders.put(ServiceBusConstants.LOCK_TOKEN, MESSAGE_LOCK_TOKEN);
@@ -579,7 +598,8 @@ public class ServiceBusConsumerTest {
 
     private Map<String, Object> createExpectedDeadLetterMessageHeaders() {
         Map<String, Object> expectedMessageHeaders = createExpectedMessageHeaders();
-        expectedMessageHeaders.put(ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION, MESSAGE_DEAD_LETTER_ERROR_DESCRIPTION);
+        expectedMessageHeaders.put(
+                ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION, MESSAGE_DEAD_LETTER_ERROR_DESCRIPTION);
         expectedMessageHeaders.put(ServiceBusConstants.DEAD_LETTER_REASON, MESSAGE_DEAD_LETTER_REASON);
         expectedMessageHeaders.put(ServiceBusConstants.DEAD_LETTER_SOURCE, MESSAGE_DEAD_LETTER_SOURCE);
         return expectedMessageHeaders;

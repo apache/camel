@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
 
 import java.time.OffsetDateTime;
@@ -35,7 +36,8 @@ public class ServiceBusConfigurationOptionsProxy {
         this.configuration = configuration;
     }
 
-    private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
+    private static <T> T getObjectFromHeaders(
+            final Exchange exchange, final String headerName, final Class<T> classType) {
         return exchange.getIn().getHeader(headerName, classType);
     }
 
@@ -44,26 +46,35 @@ public class ServiceBusConfigurationOptionsProxy {
     }
 
     public ServiceBusTransactionContext getServiceBusTransactionContext(final Exchange exchange) {
-        return getOption(exchange, ServiceBusConstants.SERVICE_BUS_TRANSACTION_CONTEXT,
-                configuration::getServiceBusTransactionContext, ServiceBusTransactionContext.class);
+        return getOption(
+                exchange,
+                ServiceBusConstants.SERVICE_BUS_TRANSACTION_CONTEXT,
+                configuration::getServiceBusTransactionContext,
+                ServiceBusTransactionContext.class);
     }
 
     public OffsetDateTime getScheduledEnqueueTime(final Exchange exchange) {
-        return getOption(exchange, ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, configuration::getScheduledEnqueueTime,
+        return getOption(
+                exchange,
+                ServiceBusConstants.SCHEDULED_ENQUEUE_TIME,
+                configuration::getScheduledEnqueueTime,
                 OffsetDateTime.class);
     }
 
     public ServiceBusProducerOperationDefinition getServiceBusProducerOperationDefinition(final Exchange exchange) {
-        return getOption(exchange, ServiceBusConstants.PRODUCER_OPERATION, configuration::getProducerOperation,
+        return getOption(
+                exchange,
+                ServiceBusConstants.PRODUCER_OPERATION,
+                configuration::getProducerOperation,
                 ServiceBusProducerOperationDefinition.class);
     }
 
     private <R> R getOption(
             final Exchange exchange, final String headerName, final Supplier<R> fallbackFn, final Class<R> type) {
-        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
+        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a
+        // function or constant
         return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(getObjectFromHeaders(exchange, headerName, type))
                 ? fallbackFn.get()
                 : getObjectFromHeaders(exchange, headerName, type);
     }
-
 }

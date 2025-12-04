@@ -14,23 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class NotFoundManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void shouldNotReportNotFoundExceptionFromRestApiIfConfiguredNotTo() {
-        final Account got = template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name"
-                                                 + "&notFoundBehaviour=NULL",
+        final Account got = template.requestBody(
+                "salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name" + "&notFoundBehaviour=NULL",
                 "NonExistent",
                 Account.class);
 
@@ -40,11 +41,12 @@ public class NotFoundManualIT extends AbstractSalesforceTestBase {
     @Test
     public void shouldReportNotFoundExceptionFromRestApi() {
         try {
-            template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name",
-                    "NonExistant", Account.class);
+            template.requestBody(
+                    "salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name", "NonExistant", Account.class);
             fail("Expecting CamelExecutionException");
         } catch (final CamelExecutionException e) {
-            assertTrue(e.getCause() instanceof NoSuchSObjectException,
+            assertTrue(
+                    e.getCause() instanceof NoSuchSObjectException,
                     "Expecting the cause of CamelExecutionException to be NoSuchSObjectException");
         }
     }

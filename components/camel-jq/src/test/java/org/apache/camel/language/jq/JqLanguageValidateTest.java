@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import net.thisptr.jackson.jq.exception.JsonQueryException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JqLanguageValidateTest {
 
@@ -36,5 +37,4 @@ public class JqLanguageValidateTest {
             Assertions.assertTrue(e.getMessage().startsWith("Cannot compile query"));
         }
     }
-
 }

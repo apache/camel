@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,18 +30,17 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
 
     @Test
     public void testDurationRoutePolicy() {
-        Assumptions.assumeTrue(context.getRouteController().getRouteStatus("foo").isStarted());
-        Assumptions.assumeFalse(context.getRouteController().getRouteStatus("foo").isStopped());
+        Assumptions.assumeTrue(
+                context.getRouteController().getRouteStatus("foo").isStarted());
+        Assumptions.assumeFalse(
+                context.getRouteController().getRouteStatus("foo").isStopped());
 
         // need a little time to stop async
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -44,7 +48,8 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
             assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
         });
 
-        // the policy should stop the route after 2 seconds, which should be enough for at least 1 message even on slow CI hosts
+        // the policy should stop the route after 2 seconds, which should be enough for at least 1 message even on slow
+        // CI hosts
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
     }
 
@@ -56,7 +61,10 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
                 DurationRoutePolicy policy = new DurationRoutePolicy();
                 policy.setMaxSeconds(2);
 
-                from("timer:foo?delay=100&period=100").routeId("foo").routePolicy(policy).to("mock:foo");
+                from("timer:foo?delay=100&period=100")
+                        .routeId("foo")
+                        .routePolicy(policy)
+                        .to("mock:foo");
             }
         };
     }

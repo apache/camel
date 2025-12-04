@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -38,8 +41,6 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
 
     private int port;
@@ -54,7 +55,6 @@ public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
     protected void doPreSetup() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         startRsEchoServer();
-
     }
 
     @AfterEach
@@ -86,9 +86,8 @@ public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final String cxfrsUri = "cxfrs://http://localhost:" + port + "/rs"
-                                + "?httpClientAPI=true"
-                                + "&throwExceptionOnFailure=false";
+        final String cxfrsUri =
+                "cxfrs://http://localhost:" + port + "/rs" + "?httpClientAPI=true" + "&throwExceptionOnFailure=false";
 
         return new RouteBuilder() {
             @Override
@@ -99,7 +98,6 @@ public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
                 getContext().getStreamCachingStrategy().setSpoolThreshold(1024 * 1024 * 10); // 10MB
 
                 from("direct:start")
-
                         .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                         .setHeader(Exchange.HTTP_PATH, constant("/echo"))
                         .setExchangePattern(ExchangePattern.InOut)
@@ -108,10 +106,8 @@ public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
                         // 2) read response after cxfrs call multiple times
                         .process(e -> {
                             String body = e.getIn().getBody(String.class);
-
                         })
                         .log("The body is ===> ${body}");
-
             }
         };
     }

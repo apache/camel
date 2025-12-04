@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.consumer;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
@@ -40,17 +52,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class DaprPubSubConsumerTest extends CamelTestSupport {
 
     private final CamelContext context = mock(CamelContext.class);
@@ -62,8 +63,8 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
     private final DaprPreviewClient mockClient = mock(DaprPreviewClient.class);
     private final Subscription mockSubscription = mock(Subscription.class);
 
-    private final ArgumentCaptor<SubscriptionListener<byte[]>> listenerCaptor
-            = ArgumentCaptor.forClass(SubscriptionListener.class);
+    private final ArgumentCaptor<SubscriptionListener<byte[]>> listenerCaptor =
+            ArgumentCaptor.forClass(SubscriptionListener.class);
     private final ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
     private final ArgumentCaptor<AsyncCallback> callbackCaptor = ArgumentCaptor.forClass(AsyncCallback.class);
 
@@ -74,8 +75,7 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
         when(context.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
-        when(ef.create(any(), anyBoolean()))
-                .thenAnswer(inv -> DefaultExchange.newFromEndpoint(inv.getArgument(0)));
+        when(ef.create(any(), anyBoolean())).thenAnswer(inv -> DefaultExchange.newFromEndpoint(inv.getArgument(0)));
         when(endpoint.getCamelContext()).thenReturn(context);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(configuration.getPubSubName()).thenReturn("testPubSub");
@@ -85,11 +85,9 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
         DaprClientBuilder builder = mock(DaprClientBuilder.class);
         when(builder.buildPreviewClient()).thenReturn(mockClient);
 
-        doReturn(mockSubscription).when(mockClient).subscribeToEvents(
-                anyString(),
-                anyString(),
-                listenerCaptor.capture(),
-                any(TypeRef.class));
+        doReturn(mockSubscription)
+                .when(mockClient)
+                .subscribeToEvents(anyString(), anyString(), listenerCaptor.capture(), any(TypeRef.class));
 
         consumer = new DaprPubSubConsumer(endpoint, processor);
     }

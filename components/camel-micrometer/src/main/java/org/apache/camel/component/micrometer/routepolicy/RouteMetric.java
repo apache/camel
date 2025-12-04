@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
 
 import org.apache.camel.Exchange;
@@ -25,5 +26,4 @@ public interface RouteMetric {
     void onExchangeDone(Exchange exchange);
 
     void remove();
-
 }

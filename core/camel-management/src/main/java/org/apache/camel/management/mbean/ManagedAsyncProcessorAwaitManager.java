@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
@@ -36,7 +37,8 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
  *
  */
 @ManagedResource(description = "Managed AsyncProcessorAwaitManager")
-public class ManagedAsyncProcessorAwaitManager extends ManagedService implements ManagedAsyncProcessorAwaitManagerMBean {
+public class ManagedAsyncProcessorAwaitManager extends ManagedService
+        implements ManagedAsyncProcessorAwaitManagerMBean {
 
     private final AsyncProcessorAwaitManager manager;
 
@@ -93,8 +95,8 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
 
         return new CompositeDataSupport(
                 ct,
-                new String[] { "id", "name", "exchangeId", "routeId", "nodeId", "duration" },
-                new Object[] { id, name, exchangeId, routeId, nodeId, duration });
+                new String[] {"id", "name", "exchangeId", "routeId", "nodeId", "duration"},
+                new Object[] {id, name, exchangeId, routeId, nodeId, duration});
     }
 
     @Override
@@ -146,5 +148,4 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
     public void setStatisticsEnabled(boolean statisticsEnabled) {
         manager.getStatistics().setStatisticsEnabled(statisticsEnabled);
     }
-
 }

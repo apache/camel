@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.io.File;
@@ -104,7 +105,6 @@ public interface StreamCachingStrategy extends StaticService {
          * @return        <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
          */
         boolean shouldSpoolCache(long length);
-
     }
 
     /**
@@ -289,5 +289,4 @@ public interface StreamCachingStrategy extends StaticService {
      * @return       the value cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
      */
     StreamCache cache(Object value);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.InputStream;
@@ -65,11 +66,11 @@ public class RawProcessor extends AbstractSalesforceProcessor {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            StringBuilder path
-                    = new StringBuilder(getParameter(SalesforceEndpointConfig.RAW_PATH, exchange, IGNORE_BODY, NOT_OPTIONAL));
+            StringBuilder path = new StringBuilder(
+                    getParameter(SalesforceEndpointConfig.RAW_PATH, exchange, IGNORE_BODY, NOT_OPTIONAL));
             String method = getParameter(SalesforceEndpointConfig.RAW_METHOD, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            String params = getParameter(
-                    SalesforceEndpointConfig.RAW_QUERY_PARAMETERS, exchange, IGNORE_BODY, IS_OPTIONAL);
+            String params =
+                    getParameter(SalesforceEndpointConfig.RAW_QUERY_PARAMETERS, exchange, IGNORE_BODY, IS_OPTIONAL);
             if (params != null) {
                 path.append("?");
                 for (String p : params.split(",")) {
@@ -79,15 +80,19 @@ public class RawProcessor extends AbstractSalesforceProcessor {
                     path.append(p).append("=");
 
                     if (exchange.getIn().getHeader(p) == null) {
-                        throw new SalesforceException(
-                                String.format("Missing header with key: %s", p));
+                        throw new SalesforceException(String.format("Missing header with key: %s", p));
                     }
                     path.append(urlEncode(exchange.getIn().getHeader(p).toString()));
                 }
             }
 
             InputStream body = exchange.getIn().getBody(InputStream.class);
-            rawClient.makeRequest(method, path.toString(), format, body, determineHeaders(exchange),
+            rawClient.makeRequest(
+                    method,
+                    path.toString(),
+                    format,
+                    body,
+                    determineHeaders(exchange),
                     (response, headers, exception) -> {
                         Message in = exchange.getIn();
                         in.getHeaders().putAll(headers);
@@ -109,11 +114,13 @@ public class RawProcessor extends AbstractSalesforceProcessor {
     public Map<String, List<String>> determineHeaders(Exchange exchange) {
         try {
             final Map<String, List<String>> headers = super.determineHeaders(exchange);
-            String params = getParameter(
-                    SalesforceEndpointConfig.RAW_HTTP_HEADERS, exchange, IGNORE_BODY, IS_OPTIONAL);
+            String params = getParameter(SalesforceEndpointConfig.RAW_HTTP_HEADERS, exchange, IGNORE_BODY, IS_OPTIONAL);
             if (params != null) {
                 for (String p : params.split(",")) {
-                    headers.put(p, Collections.singletonList(exchange.getIn().getHeader(p).toString()));
+                    headers.put(
+                            p,
+                            Collections.singletonList(
+                                    exchange.getIn().getHeader(p).toString()));
                 }
             }
             return headers;

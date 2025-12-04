@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.nio.charset.Charset;
@@ -54,7 +55,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
                 case ALLOW:
                     return segments;
                 case TRUNCATE:
-                    return new byte[][] { java.util.Arrays.copyOfRange(shortMessage, 0, segments[0].length) };
+                    return new byte[][] {java.util.Arrays.copyOfRange(shortMessage, 0, segments[0].length)};
                 case REJECT:
                     // FIXME - JSMPP needs to have an enum of the negative response
                     // codes instead of just using them like this
@@ -150,7 +151,8 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         }
 
         if (providedAlphabet == Alphabet.ALPHA_UCS2.value()
-                || providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value()) {
+                || providedAlphabet == SmppConstants.UNKNOWN_ALPHABET
+                        && determinedAlphabet == Alphabet.ALPHA_UCS2.value()) {
             // change charset to use multilang messages
             return StandardCharsets.UTF_16BE;
         }

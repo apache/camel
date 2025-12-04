@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -33,8 +36,6 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.elements.config.Configuration;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     static int coapport = AvailablePortFinder.getNextAvailable();
@@ -124,13 +125,19 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                RestConfigurationDefinition restConfig
-                        = restConfiguration().scheme(getProtocol()).host("localhost").port(coapport);
+                RestConfigurationDefinition restConfig = restConfiguration()
+                        .scheme(getProtocol())
+                        .host("localhost")
+                        .port(coapport);
                 decorateRestConfiguration(restConfig);
 
                 rest("/TestParams").get().to("direct:get1").post().to("direct:post1");
 
-                rest("/TestResource").get("/{id}").to("direct:get1").post("/{id}").to("direct:post1");
+                rest("/TestResource")
+                        .get("/{id}")
+                        .to("direct:get1")
+                        .post("/{id}")
+                        .to("direct:post1");
 
                 from("direct:get1").process(exchange -> {
                     String id = exchange.getIn().getHeader("id", String.class);
@@ -140,7 +147,8 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
                 from("direct:post1").process(exchange -> {
                     String id = exchange.getIn().getHeader("id", String.class);
                     String ct = exchange.getIn().getHeader(CoAPConstants.CONTENT_TYPE, String.class);
-                    exchange.getMessage().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
+                    exchange.getMessage()
+                            .setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
                     exchange.getMessage().setHeader(CoAPConstants.CONTENT_TYPE, ct);
                 });
 
@@ -148,5 +156,4 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
             }
         };
     }
-
 }

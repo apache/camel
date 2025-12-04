@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
@@ -79,9 +80,12 @@ public class SpringQuartzConsumerTwoAppsClusteredFailoverTest {
         // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
         // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
         // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
-        // 2013-09-30 11:22:35,340 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: detected 1 failed or restarted instances.
-        // 2013-09-30 11:22:35,340 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
-        // 2013-09-30 11:22:35,369 [eduler_Worker-1] INFO  triggered                      - Exchange[ExchangePattern: InOnly, BodyType: String, Body: clustering PONGS!]
+        // 2013-09-30 11:22:35,340 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: detected 1
+        // failed or restarted instances.
+        // 2013-09-30 11:22:35,340 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for
+        // instance "app-one"'s failed in-progress jobs.
+        // 2013-09-30 11:22:35,369 [eduler_Worker-1] INFO  triggered                      - Exchange[ExchangePattern:
+        // InOnly, BodyType: String, Body: clustering PONGS!]
 
         // and as the last step shutdown the second app as well as the database
         IOHelper.close(app2, db);
@@ -103,7 +107,5 @@ public class SpringQuartzConsumerTwoAppsClusteredFailoverTest {
         public boolean matches(Exchange exchange) {
             return exchange.getIn().getBody().equals(expectedPayload);
         }
-
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
 
 import org.apache.camel.spi.Metadata;
@@ -22,12 +23,16 @@ import org.apache.camel.spi.Metadata;
  * Constants used in Camel AWS DynamoDB Streams component
  */
 public interface Ddb2StreamConstants {
-    @Metadata(label = "consumer",
-              description = "The Amazon Web Services service from which the stream record originated. For DynamoDB Streams, this is aws:dynamodb.",
-              javaType = "String")
+    @Metadata(
+            label = "consumer",
+            description =
+                    "The Amazon Web Services service from which the stream record originated. For DynamoDB Streams, this is aws:dynamodb.",
+            javaType = "String")
     String EVENT_SOURCE = "CamelAwsDdbStreamEventSource";
-    @Metadata(label = "consumer",
-              description = "A globally unique identifier for the event that was recorded in this stream record.",
-              javaType = "String")
+
+    @Metadata(
+            label = "consumer",
+            description = "A globally unique identifier for the event that was recorded in this stream record.",
+            javaType = "String")
     String EVENT_ID = "CamelAwsDdbStreamEventId";
 }

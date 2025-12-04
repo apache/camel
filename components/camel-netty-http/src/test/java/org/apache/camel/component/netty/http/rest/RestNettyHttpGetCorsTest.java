@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RestNettyHttpGetCorsTest extends BaseNettyTest {
 
     @Test
@@ -32,16 +33,21 @@ public class RestNettyHttpGetCorsTest extends BaseNettyTest {
         // send OPTIONS first which should not be routed
         getMockEndpoint("mock:input").expectedMessageCount(0);
 
-        Exchange out = template.request("http://localhost:" + getPort() + "/users/123/basic",
-                exchange -> exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
+        Exchange out =
+                template.request("http://localhost:" + getPort() + "/users/123/basic", exchange -> exchange.getIn()
+                        .setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN,
                 out.getMessage().getHeader("Access-Control-Allow-Origin"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
                 out.getMessage().getHeader("Access-Control-Allow-Methods"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
                 out.getMessage().getHeader("Access-Control-Allow-Headers"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -62,20 +68,20 @@ public class RestNettyHttpGetCorsTest extends BaseNettyTest {
             @Override
             public void configure() {
                 // configure to use netty-http on localhost with the given port
-                restConfiguration().component("netty-http").host("localhost").port(getPort()).enableCORS(true);
+                restConfiguration()
+                        .component("netty-http")
+                        .host("localhost")
+                        .port(getPort())
+                        .enableCORS(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic").to("direct:basic");
+                rest("/users/").get("{id}/basic").to("direct:basic");
 
-                from("direct:basic")
-                        .to("mock:input")
-                        .process(exchange -> {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getMessage().setBody(id + ";Donald Duck");
-                        });
+                from("direct:basic").to("mock:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Donald Duck");
+                });
             }
         };
     }
-
 }

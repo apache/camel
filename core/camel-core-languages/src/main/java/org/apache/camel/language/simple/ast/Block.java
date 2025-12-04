@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.ast;
 
 /**
@@ -31,5 +32,4 @@ public interface Block extends SimpleNode {
      * @return      <tt>true</tt> to accept and add to this block, <tt>false</tt> to end this block.
      */
     boolean acceptAndAddNode(SimpleNode node);
-
 }

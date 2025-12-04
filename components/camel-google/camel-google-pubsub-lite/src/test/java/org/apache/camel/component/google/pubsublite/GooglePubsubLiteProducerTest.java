@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsublite;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -29,17 +33,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-
 public class GooglePubsubLiteProducerTest extends CamelTestSupport {
 
     @Mock
     private GooglePubsubLiteEndpoint mockEndpoint;
+
     @Mock
     private Exchange mockExchange;
+
     @Mock
     private Message mockMessage;
+
     @Mock
     private Publisher mockPublisher;
 
@@ -62,8 +66,10 @@ public class GooglePubsubLiteProducerTest extends CamelTestSupport {
 
         when(mockExchange.getMessage()).thenReturn(mockMessage);
         when(mockMessage.getBody()).thenReturn(testPayload.getBytes());
-        when(mockExchange.getMessage().getHeader(GooglePubsubLiteConstants.ATTRIBUTES, Map.class)).thenReturn(null);
-        when(mockExchange.getMessage().getHeader(GooglePubsubLiteConstants.ORDERING_KEY, String.class)).thenReturn(null);
+        when(mockExchange.getMessage().getHeader(GooglePubsubLiteConstants.ATTRIBUTES, Map.class))
+                .thenReturn(null);
+        when(mockExchange.getMessage().getHeader(GooglePubsubLiteConstants.ORDERING_KEY, String.class))
+                .thenReturn(null);
 
         when(mockPublisher.publish(any())).thenReturn(ApiFutures.immediateFuture("messageId"));
 
@@ -88,8 +94,10 @@ public class GooglePubsubLiteProducerTest extends CamelTestSupport {
 
         when(mockExchange.getIn()).thenReturn(mockMessage);
         when(mockMessage.getBody()).thenReturn(testPayload.getBytes());
-        when(mockExchange.getIn().getHeader(GooglePubsubLiteConstants.ATTRIBUTES, Map.class)).thenReturn(null);
-        when(mockExchange.getIn().getHeader(GooglePubsubLiteConstants.ORDERING_KEY, String.class)).thenReturn(null);
+        when(mockExchange.getIn().getHeader(GooglePubsubLiteConstants.ATTRIBUTES, Map.class))
+                .thenReturn(null);
+        when(mockExchange.getIn().getHeader(GooglePubsubLiteConstants.ORDERING_KEY, String.class))
+                .thenReturn(null);
 
         assertThrows(ExecutionException.class, () -> producer.process(mockExchange));
     }
@@ -98,8 +106,7 @@ public class GooglePubsubLiteProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("google-pubsub-lite:123456789012:europe-west3:test");
+                from("direct:start").to("google-pubsub-lite:123456789012:europe-west3:test");
             }
         };
     }

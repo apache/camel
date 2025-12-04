@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -57,9 +58,13 @@ public class BeanMethodWithStringParameterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("bean:myBean?method=doSomething('Hello World', 2)").to("mock:result");
+                from("direct:start")
+                        .to("bean:myBean?method=doSomething('Hello World', 2)")
+                        .to("mock:result");
 
-                from("direct:other").to("bean:myBean?method=doSomethingWithExchange('Bye')").to("mock:result");
+                from("direct:other")
+                        .to("bean:myBean?method=doSomethingWithExchange('Bye')")
+                        .to("mock:result");
             }
         };
     }
@@ -78,6 +83,5 @@ public class BeanMethodWithStringParameterTest extends ContextTestSupport {
         public static String doSomethingWithExchange(String name, Exchange exchange) {
             return name + " " + exchange.getIn().getBody(String.class);
         }
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +28,8 @@ public class FaultToleranceRouteBulkheadOkTest extends CamelTestSupport {
     @Test
     public void testFaultTolerance() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
 
         template.sendBody("direct:start", "Hello World");
@@ -40,13 +42,22 @@ public class FaultToleranceRouteBulkheadOkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").circuitBreaker().faultToleranceConfiguration().bulkheadEnabled(true).end().to("direct:foo")
-                        .to("log:foo").onFallback().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start")
+                        .circuitBreaker()
+                        .faultToleranceConfiguration()
+                        .bulkheadEnabled(true)
+                        .end()
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
         };
     }
-
 }

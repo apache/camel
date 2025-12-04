@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.tarfile;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,8 +39,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.logging.log4j.core.util.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
 
@@ -109,11 +110,11 @@ class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // @formatter:off
                 from("direct:start")
-                    .split(body().tokenize("#"), new TarAggregationStrategy(false, true))
-                    .setHeader(Exchange.FILE_NAME, simple("${exchangeProperty.CamelSplitIndex}"))
-                .end()
-                .to("file:target/out")
-                .to("mock:aggregateToTarEntry");
+                        .split(body().tokenize("#"), new TarAggregationStrategy(false, true))
+                        .setHeader(Exchange.FILE_NAME, simple("${exchangeProperty.CamelSplitIndex}"))
+                        .end()
+                        .to("file:target/out")
+                        .to("mock:aggregateToTarEntry");
                 // @formatter:on
             }
         };
@@ -123,9 +124,7 @@ class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
         Map<String, String> content = new TreeMap<>();
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(file));
         try {
-            for (TarArchiveEntry te = tin.getNextEntry();
-                 te != null;
-                 te = tin.getNextEntry()) {
+            for (TarArchiveEntry te = tin.getNextEntry(); te != null; te = tin.getNextEntry()) {
                 String c = IOUtils.toString(new InputStreamReader(tin));
                 content.put(te.getName(), c);
             }

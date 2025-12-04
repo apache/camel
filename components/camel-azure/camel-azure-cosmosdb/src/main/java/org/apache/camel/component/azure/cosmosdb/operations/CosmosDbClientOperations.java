@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.operations;
 
 import com.azure.cosmos.CosmosAsyncDatabase;
@@ -71,11 +72,11 @@ public final class CosmosDbClientOperations {
     }
 
     private Mono<CosmosAsyncDatabase> getAndCreateDatabaseIfNotExist(
-            final String databaseName, final boolean createDatabaseIfNotExist,
+            final String databaseName,
+            final boolean createDatabaseIfNotExist,
             final ThroughputProperties throughputProperties) {
         if (createDatabaseIfNotExist) {
-            return createDatabase(databaseName, throughputProperties)
-                    .map(response -> getDatabase(databaseName));
+            return createDatabase(databaseName, throughputProperties).map(response -> getDatabase(databaseName));
         }
 
         return Mono.just(getDatabase(databaseName));

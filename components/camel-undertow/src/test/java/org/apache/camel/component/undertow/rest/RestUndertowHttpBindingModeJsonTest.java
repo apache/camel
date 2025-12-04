@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,10 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestUndertowHttpBindingModeJsonTest extends BaseUndertowTest {
 
@@ -64,14 +65,15 @@ public class RestUndertowHttpBindingModeJsonTest extends BaseUndertowTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
+                restConfiguration()
+                        .component("undertow")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.json);
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .post("new").type(UserJaxbPojo.class)
-                        .to("mock:input");
+                rest("/users/").post("new").type(UserJaxbPojo.class).to("mock:input");
             }
         };
     }
-
 }

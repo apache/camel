@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.model.errors;
 
 public class WebhookAlreadyExistsException extends RuntimeException {
@@ -21,5 +22,4 @@ public class WebhookAlreadyExistsException extends RuntimeException {
     public WebhookAlreadyExistsException() {
         super("Another webhook with the same characteristics already exists.");
     }
-
 }

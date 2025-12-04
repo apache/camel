@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.EnumMap;
@@ -62,8 +63,10 @@ abstract class AbstractExchange implements Exchange {
     protected String exchangeId;
     protected ExchangePattern pattern;
 
-    protected AbstractExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
-                               Map<String, Object> properties) {
+    protected AbstractExchange(
+            CamelContext context,
+            EnumMap<ExchangePropertyKey, Object> internalProperties,
+            Map<String, Object> properties) {
         this.context = context;
         this.internalProperties = new EnumMap<>(internalProperties);
         this.privateExtension = new ExtendedExchangeExtension(this);
@@ -143,7 +146,8 @@ abstract class AbstractExchange implements Exchange {
         AbstractExchange exchange = newCopy();
 
         if (getContext().isMessageHistory()) {
-            exchange.internalProperties.computeIfPresent(ExchangePropertyKey.MESSAGE_HISTORY,
+            exchange.internalProperties.computeIfPresent(
+                    ExchangePropertyKey.MESSAGE_HISTORY,
                     (k, v) -> new CopyOnWriteArrayList<>((List<MessageHistory>) v));
         }
 
@@ -725,7 +729,6 @@ abstract class AbstractExchange implements Exchange {
             // if the value is null, we just remove the key from the map
             safeCopyProperties.remove(key);
         }
-
     }
 
     @SuppressWarnings("unchecked")

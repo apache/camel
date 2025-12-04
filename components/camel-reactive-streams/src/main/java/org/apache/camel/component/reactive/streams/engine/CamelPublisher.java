@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.engine;
 
 import java.util.LinkedList;
@@ -58,8 +59,8 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
 
     public CamelPublisher(ExecutorService workerPool, CamelContext context, String name) {
         this.workerPool = workerPool;
-        this.backpressureStrategy
-                = ((ReactiveStreamsComponent) context.getComponent("reactive-streams")).getBackpressureStrategy();
+        this.backpressureStrategy =
+                ((ReactiveStreamsComponent) context.getComponent("reactive-streams")).getBackpressureStrategy();
         this.name = name;
     }
 
@@ -108,7 +109,8 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
                 sub.publish(data);
             }
         } else if (callback != null) {
-            callback.processed(data,
+            callback.processed(
+                    data,
                     new ReactiveStreamsNoActiveSubscriptionsException("The stream has no active subscriptions", name));
         }
     }
@@ -145,5 +147,4 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
     public List<CamelSubscription> getSubscriptions() {
         return subscriptions;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,9 +31,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
@@ -50,7 +51,8 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
     }
 
     protected void setupDestinationURL(Message inMessage) {
-        inMessage.setHeader(Exchange.DESTINATION_OVERRIDE_URL,
+        inMessage.setHeader(
+                Exchange.DESTINATION_OVERRIDE_URL,
                 "http://localhost:" + getPort1() + "/CxfRsProducerAddressOverrideTest");
     }
 
@@ -160,18 +162,21 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
     @Test
     public void testAddressMultiOverride() {
         // First call with override url
-        Exchange exchange = template.send("direct://http",
+        Exchange exchange = template.send(
+                "direct://http",
                 new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerAddressOverrideTest"));
         // get the response message
         Customer response = exchange.getMessage().getBody(Customer.class);
         assertNotNull(response, "The response should not be null");
 
         // Second call with override url
-        exchange = template.send("direct://http",
+        exchange = template.send(
+                "direct://http",
                 new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerNonExistingAddressOverrideTest"));
 
         // Third call with override url ( we reuse the first url there )
-        exchange = template.send("direct://http",
+        exchange = template.send(
+                "direct://http",
                 new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerAddressOverrideTest"));
         // get the response message
         response = exchange.getMessage().getBody(Customer.class);

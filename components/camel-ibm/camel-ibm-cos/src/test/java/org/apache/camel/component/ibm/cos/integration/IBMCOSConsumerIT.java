@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,19 +35,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration test for IBM COS Consumer.
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.apiKey", matches = ".*",
-                                 disabledReason = "IBM COS API Key not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.serviceInstanceId", matches = ".*",
-                                 disabledReason = "IBM COS Service Instance ID not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.endpointUrl", matches = ".*",
-                                 disabledReason = "IBM COS Endpoint URL not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.apiKey",
+            matches = ".*",
+            disabledReason = "IBM COS API Key not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.serviceInstanceId",
+            matches = ".*",
+            disabledReason = "IBM COS Service Instance ID not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.endpointUrl",
+            matches = ".*",
+            disabledReason = "IBM COS Endpoint URL not provided")
 })
 public class IBMCOSConsumerIT extends IBMCOSTestSupport {
 
@@ -64,8 +71,8 @@ public class IBMCOSConsumerIT extends IBMCOSTestSupport {
 
         // Upload an object
         byte[] contentBytes = testContent.getBytes();
-        com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata metadata
-                = new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
+        com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata metadata =
+                new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
         metadata.setContentLength(contentBytes.length);
         cosClient.putObject(bucketName, testKey, new ByteArrayInputStream(contentBytes), metadata);
 
@@ -89,8 +96,8 @@ public class IBMCOSConsumerIT extends IBMCOSTestSupport {
 
         // Object should be deleted after consumption (default deleteAfterRead=true)
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertFalse(cosClient.doesObjectExist(bucketName, testKey),
-                        "Object should be deleted after read"));
+                .untilAsserted(() -> assertFalse(
+                        cosClient.doesObjectExist(bucketName, testKey), "Object should be deleted after read"));
     }
 
     @Test
@@ -102,8 +109,8 @@ public class IBMCOSConsumerIT extends IBMCOSTestSupport {
             final String key = "multi-test-" + i + ".txt";
             final String content = "Content " + i;
             byte[] bytes = content.getBytes();
-            com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata meta
-                    = new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
+            com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata meta =
+                    new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
             meta.setContentLength(bytes.length);
             cosClient.putObject(bucketName, key, new ByteArrayInputStream(bytes), meta);
         }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack;
+
+import static io.netty.buffer.Unpooled.wrappedBuffer;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,12 +42,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.awaitility.Awaitility;
 
-import static io.netty.buffer.Unpooled.wrappedBuffer;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 final class LumberjackUtil {
-    private LumberjackUtil() {
-    }
+    private LumberjackUtil() {}
 
     static List<Integer> sendMessages(int port, SSLContextParameters sslContextParameters, List<Integer> windows)
             throws InterruptedException {
@@ -64,7 +64,8 @@ final class LumberjackUtil {
                 protected void initChannel(Channel ch) throws Exception {
                     ChannelPipeline pipeline = ch.pipeline();
                     if (sslContextParameters != null) {
-                        SSLEngine sslEngine = sslContextParameters.createSSLContext(sslContextParameters.getCamelContext())
+                        SSLEngine sslEngine = sslContextParameters
+                                .createSSLContext(sslContextParameters.getCamelContext())
                                 .createSSLEngine();
                         sslEngine.setUseClientMode(true);
                         pipeline.addLast(new SslHandler(sslEngine));
@@ -85,14 +86,17 @@ final class LumberjackUtil {
             };
 
             // Connect to the server
-            Channel channel = new Bootstrap()                     //
-                    .group(eventLoopGroup)                        //
-                    .channel(NioSocketChannel.class)              //
-                    .handler(initializer)                         //
-                    .connect("127.0.0.1", port).sync().channel(); //
+            Channel channel = new Bootstrap() //
+                    .group(eventLoopGroup) //
+                    .channel(NioSocketChannel.class) //
+                    .handler(initializer) //
+                    .connect("127.0.0.1", port)
+                    .sync()
+                    .channel(); //
 
             // send 5 frame windows, without pausing
-            windows.stream().forEach(window -> channel.writeAndFlush(readSample(String.format("io/window%s.bin", window))));
+            windows.stream()
+                    .forEach(window -> channel.writeAndFlush(readSample(String.format("io/window%s.bin", window))));
             if (waitForResult) {
                 Awaitility.await().until(() -> windows.size() == responses.size());
             }

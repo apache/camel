@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Optional;
@@ -73,9 +74,8 @@ public class DefaultDevConsoleResolver extends ServiceSupport implements DevCons
                 answer = (DevConsole) camelContext.getInjector().newInstance(type, false);
                 CamelContextAware.trySetCamelContext(answer, camelContext);
             } else {
-                throw new IllegalArgumentException(
-                        "Resolving dev-console: " + id + " detected type conflict: Not a DevConsole implementation. Found: "
-                                                   + type.getName());
+                throw new IllegalArgumentException("Resolving dev-console: " + id
+                        + " detected type conflict: Not a DevConsole implementation. Found: " + type.getName());
             }
         }
 

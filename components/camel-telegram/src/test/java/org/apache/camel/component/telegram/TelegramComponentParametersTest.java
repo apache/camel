@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests the usage of defaults in the component configuration
@@ -39,8 +40,8 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
         TelegramEndpoint ep2 = (TelegramEndpoint) component.createEndpoint("telegram:bots?authorizationToken=CUSTOM");
         assertEquals("CUSTOM", ep2.getConfiguration().getAuthorizationToken());
 
-        TelegramEndpoint ep3 = (TelegramEndpoint) component
-                .createEndpoint("telegram:bots?authorizationToken=ANOTHER&chatId=123");
+        TelegramEndpoint ep3 =
+                (TelegramEndpoint) component.createEndpoint("telegram:bots?authorizationToken=ANOTHER&chatId=123");
         assertEquals("ANOTHER", ep3.getConfiguration().getAuthorizationToken());
     }
 
@@ -83,5 +84,4 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
             component.createEndpoint("telegram:bots?proxyType=ANY");
         });
     }
-
 }

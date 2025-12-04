@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.cache.EmptyProducerCache;
 import org.apache.camel.util.ReflectionHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RecipientListNoCacheTest extends ContextTestSupport {
 
@@ -102,10 +103,10 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a")
-                        .recipientList(header("recipientListHeader").tokenize(",")).cacheSize(-1).id("foo");
+                        .recipientList(header("recipientListHeader").tokenize(","))
+                        .cacheSize(-1)
+                        .id("foo");
             }
         };
-
     }
-
 }

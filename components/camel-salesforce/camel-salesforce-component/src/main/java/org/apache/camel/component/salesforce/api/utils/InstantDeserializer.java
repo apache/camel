@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
+
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
 import java.time.Instant;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
-
-import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
 final class InstantDeserializer extends com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer<Instant> {
 
@@ -31,5 +32,4 @@ final class InstantDeserializer extends com.fasterxml.jackson.datatype.jsr310.de
     private InstantDeserializer() {
         super(com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer.INSTANT, ISO_OFFSET_DATE_TIME);
     }
-
 }

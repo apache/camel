@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyOnExceptionHandledTest extends BaseJettyTest {
 
@@ -43,12 +44,14 @@ public class JettyOnExceptionHandledTest extends BaseJettyTest {
                 from("jetty://http://localhost:{{port}}/myserver")
                         // use onException to catch all exceptions and return a
                         // custom reply message
-                        .onException(Exception.class).handled(true)
+                        .onException(Exception.class)
+                        .handled(true)
                         // create a custom failure response
                         .transform(constant("Dude something went wrong"))
                         // we must remember to set error code 500 as handled(true)
                         // otherwise would let Camel thing its a OK response (200)
-                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500)).end()
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
+                        .end()
                         // now just force an exception immediately
                         .throwException(new IllegalArgumentException("I cannot do this"));
                 // END SNIPPET: e1

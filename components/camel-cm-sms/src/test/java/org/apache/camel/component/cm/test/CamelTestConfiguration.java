@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm.test;
 
 import java.io.FileInputStream;
@@ -51,8 +52,7 @@ public abstract class CamelTestConfiguration extends CamelSpringTestSupport {
                 log.debug("CM Component is an URI based component\nCM URI: {}", uri);
 
                 // Route definition
-                from("direct:sms").to(uri).to("mock:test")
-                        .routeId(SIMPLE_ROUTE_ID);
+                from("direct:sms").to(uri).to("mock:test").routeId(SIMPLE_ROUTE_ID);
             }
         });
 
@@ -70,25 +70,22 @@ public abstract class CamelTestConfiguration extends CamelSpringTestSupport {
         final String productTokenString = prop.getProperty("cm.product-token");
         final String sender = prop.getProperty("cm.default-sender");
 
-        final StringBuilder cmUri = new StringBuilder("cm-sms:" + host)
-                .append("?productToken=").append(productTokenString);
+        final StringBuilder cmUri =
+                new StringBuilder("cm-sms:" + host).append("?productToken=").append(productTokenString);
         if (sender != null && !sender.isEmpty()) {
             cmUri.append("&defaultFrom=").append(sender);
         }
 
         // Defaults to false
-        final boolean testConnectionOnStartup = Boolean.parseBoolean(
-                prop.getProperty("cm.testConnectionOnStartup", "false"));
+        final boolean testConnectionOnStartup =
+                Boolean.parseBoolean(prop.getProperty("cm.testConnectionOnStartup", "false"));
         if (testConnectionOnStartup) {
-            cmUri.append("&testConnectionOnStartup=")
-                    .append(testConnectionOnStartup);
+            cmUri.append("&testConnectionOnStartup=").append(testConnectionOnStartup);
         }
 
         // Defaults to 8
-        final int defaultMaxNumberOfParts = Integer
-                .parseInt(prop.getProperty("defaultMaxNumberOfParts", "8"));
-        cmUri.append("&defaultMaxNumberOfParts=")
-                .append(defaultMaxNumberOfParts);
+        final int defaultMaxNumberOfParts = Integer.parseInt(prop.getProperty("defaultMaxNumberOfParts", "8"));
+        cmUri.append("&defaultMaxNumberOfParts=").append(defaultMaxNumberOfParts);
 
         uri = cmUri.toString();
     }

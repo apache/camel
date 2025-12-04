@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -36,8 +39,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * AMQP tests with SSL and SASL Authentication.
  */
@@ -49,11 +50,19 @@ public class AMQPSAuthRouteTest implements ConfigurableContext, ConfigurableRout
     static {
         // artemis service ssl config
         System.setProperty(ArtemisProperties.ARTEMIS_SSL_ENABLED, "true");
-        System.setProperty(ArtemisProperties.ARTEMIS_SSL_KEYSTORE_PATH,
-                AMQPSAuthRouteTest.class.getClassLoader().getResource("server-keystore.p12").getFile());
+        System.setProperty(
+                ArtemisProperties.ARTEMIS_SSL_KEYSTORE_PATH,
+                AMQPSAuthRouteTest.class
+                        .getClassLoader()
+                        .getResource("server-keystore.p12")
+                        .getFile());
         System.setProperty(ArtemisProperties.ARTEMIS_SSL_KEYSTORE_PASSWORD, "securepass");
-        System.setProperty(ArtemisProperties.ARTEMIS_SSL_TRUSTSTORE_PATH,
-                AMQPSAuthRouteTest.class.getClassLoader().getResource("server-ca-truststore.p12").getFile());
+        System.setProperty(
+                ArtemisProperties.ARTEMIS_SSL_TRUSTSTORE_PATH,
+                AMQPSAuthRouteTest.class
+                        .getClassLoader()
+                        .getResource("server-ca-truststore.p12")
+                        .getFile());
         System.setProperty(ArtemisProperties.ARTEMIS_SSL_TRUSTSTORE_PASSWORD, "securepass");
 
         // artemis service authentication
@@ -62,8 +71,8 @@ public class AMQPSAuthRouteTest implements ConfigurableContext, ConfigurableRout
 
     @Order(1)
     @RegisterExtension
-    protected static ArtemisService service
-            = new ArtemisServiceFactory.SingletonArtemisService(new ArtemisAMQPService(), "artemis-amqps");
+    protected static ArtemisService service =
+            new ArtemisServiceFactory.SingletonArtemisService(new ArtemisAMQPService(), "artemis-amqps");
 
     @Order(2)
     @RegisterExtension
@@ -112,10 +121,14 @@ public class AMQPSAuthRouteTest implements ConfigurableContext, ConfigurableRout
         amqpComponent.setUsername("camel");
         amqpComponent.setPassword("rider");
         amqpComponent.setUseSsl(true);
-        amqpComponent.setTrustStoreLocation(getClass().getClassLoader().getResource("server-ca-truststore.p12").getFile());
+        amqpComponent.setTrustStoreLocation(getClass()
+                .getClassLoader()
+                .getResource("server-ca-truststore.p12")
+                .getFile());
         amqpComponent.setTrustStorePassword("securepass");
         amqpComponent.setTrustStoreType("PKCS12");
-        amqpComponent.setKeyStoreLocation(getClass().getClassLoader().getResource("server-keystore.p12").getFile());
+        amqpComponent.setKeyStoreLocation(
+                getClass().getClassLoader().getResource("server-keystore.p12").getFile());
         amqpComponent.setKeyStorePassword("securepass");
         amqpComponent.setKeyStoreType("PKCS12");
         context.addComponent("amqps-customized", amqpComponent);
@@ -129,16 +142,11 @@ public class AMQPSAuthRouteTest implements ConfigurableContext, ConfigurableRout
     private static RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("amqps-customized:queue:ping")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqps-customized:queue:ping").to("log:routing").to("mock:result");
 
-                from("amqps-customized:topic:ping")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqps-customized:topic:ping").to("log:routing").to("mock:result");
 
-                from("amqps-customized:queue:inOut")
-                        .setBody().constant("response");
+                from("amqps-customized:queue:inOut").setBody().constant("response");
             }
         };
     }

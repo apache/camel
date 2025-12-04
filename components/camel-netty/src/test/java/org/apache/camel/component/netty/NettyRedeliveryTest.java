@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -37,8 +40,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the effect of redelivery in association with netty component.
@@ -188,7 +189,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     }
 
     private static <T> T newProxy(Class<T> interfaceType, InvocationHandler handler) {
-        Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[] { interfaceType }, handler);
+        Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[] {interfaceType}, handler);
         return interfaceType.cast(object);
     }
 
@@ -217,5 +218,4 @@ public class NettyRedeliveryTest extends CamelTestSupport {
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -38,8 +39,8 @@ public class KameletLocalBeanJoorExternalTest extends CamelTestSupport {
 
     @Test
     public void testTwo() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hi Jack we are going to Shamrock",
-                "Hi Mary we are going to Moes");
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived("Hi Jack we are going to Shamrock", "Hi Mary we are going to Moes");
 
         template.sendBody("direct:shamrock", "Jack");
         template.sendBody("direct:moe", "Mary");
@@ -65,15 +66,10 @@ public class KameletLocalBeanJoorExternalTest extends CamelTestSupport {
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");
 
-                from("direct:shamrock")
-                        .kamelet("whereTo?bar=Shamrock")
-                        .to("mock:result");
+                from("direct:shamrock").kamelet("whereTo?bar=Shamrock").to("mock:result");
 
-                from("direct:moe")
-                        .kamelet("whereTo?bar=Moes")
-                        .to("mock:result");
+                from("direct:moe").kamelet("whereTo?bar=Moes").to("mock:result");
             }
         };
     }
-
 }

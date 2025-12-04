@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test inspired by end user
@@ -39,7 +40,10 @@ public class OnExceptionHandleAndTransformWithDefaultErrorHandlerTest extends Co
                 // (= no failure returned to client)
                 // but we want to return a fixed text response, so we transform
                 // OUT body as Sorry.
-                onException(MyFunctionalException.class).handled(true).transform().constant("Sorry");
+                onException(MyFunctionalException.class)
+                        .handled(true)
+                        .transform()
+                        .constant("Sorry");
                 // END SNIPPET: e1
 
                 from("direct:start").process(new Processor() {
@@ -91,7 +95,9 @@ public class OnExceptionHandleAndTransformWithDefaultErrorHandlerTest extends Co
                 // OUT body and return a nice message
                 // using the simple language where we want insert the exception
                 // message
-                onException(MyFunctionalException.class).handled(true).transform()
+                onException(MyFunctionalException.class)
+                        .handled(true)
+                        .transform()
                         .simple("Error reported: ${exception.message} - cannot process this message.");
                 // END SNIPPET: e3
 
@@ -106,5 +112,4 @@ public class OnExceptionHandleAndTransformWithDefaultErrorHandlerTest extends Co
         Object out = template.requestBody("direct:start", "Hello World");
         assertEquals("Error reported: Out of order - cannot process this message.", out);
     }
-
 }

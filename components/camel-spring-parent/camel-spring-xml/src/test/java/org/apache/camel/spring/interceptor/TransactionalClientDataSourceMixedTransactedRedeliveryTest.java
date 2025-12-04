@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -33,22 +34,28 @@ public class TransactionalClientDataSourceMixedTransactedRedeliveryTest
             public void configure() throws Exception {
 
                 // ignore failure if its something with Donkey
-                onException(IllegalArgumentException.class).onWhen(exceptionMessage().contains("Donkey")).handled(true);
+                onException(IllegalArgumentException.class)
+                        .onWhen(exceptionMessage().contains("Donkey"))
+                        .handled(true);
 
                 from("direct:okay")
                         // mark this route as transacted
                         .errorHandler(transactionErrorHandler().maximumRedeliveries(3))
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
 
                 from("direct:fail")
                         // and this route is not transacted
                         .errorHandler(defaultErrorHandler())
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.ErrorHandlerFactory;
@@ -48,10 +49,12 @@ public class SpringTransactionPolicy implements TransactedPolicy {
 
     static {
         // register camel-spring as transaction error handler (both builder and definition)
-        ErrorHandlerReifier.registerReifier(SpringTransactionErrorHandlerBuilder.class,
+        ErrorHandlerReifier.registerReifier(
+                SpringTransactionErrorHandlerBuilder.class,
                 (route, errorHandlerFactory) -> new TransactionErrorHandlerReifier(
                         route, (SpringTransactionErrorHandlerDefinition) errorHandlerFactory));
-        ErrorHandlerReifier.registerReifier(SpringTransactionErrorHandlerDefinition.class,
+        ErrorHandlerReifier.registerReifier(
+                SpringTransactionErrorHandlerDefinition.class,
                 (route, errorHandlerFactory) -> new TransactionErrorHandlerReifier(
                         route, (SpringTransactionErrorHandlerDefinition) errorHandlerFactory));
     }
@@ -59,8 +62,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
     /**
      * Default constructor for easy spring configuration.
      */
-    public SpringTransactionPolicy() {
-    }
+    public SpringTransactionPolicy() {}
 
     public SpringTransactionPolicy(TransactionTemplate template) {
         this.template = template;
@@ -71,8 +73,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
     }
 
     @Override
-    public void beforeWrap(Route route, NamedNode definition) {
-    }
+    public void beforeWrap(Route route, NamedNode definition) {}
 
     @Override
     public Processor wrap(Route route, Processor processor) {
@@ -82,7 +83,8 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         // either its already a transacted or if not we replace it with a transacted one that we configure here
         // and wrap the processor in the transacted error handler as we can have transacted routes that change
         // propagation behavior, eg: from A required -> B -> requiresNew C (advanced use-case)
-        // if we should not support this we do not need to wrap the processor as we only need one transacted error handler
+        // if we should not support this we do not need to wrap the processor as we only need one transacted error
+        // handler
 
         // find the existing error handler builder
         RouteDefinition routeDefinition = (RouteDefinition) route.getRoute();
@@ -113,7 +115,8 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             if (builder != null) {
                 LOG.debug("The ErrorHandlerBuilder configured is not a TransactionErrorHandlerBuilder: {}", builder);
             } else {
-                LOG.debug("No ErrorHandlerBuilder configured, will use default LegacyTransactionErrorHandlerBuilder settings");
+                LOG.debug(
+                        "No ErrorHandlerBuilder configured, will use default LegacyTransactionErrorHandlerBuilder settings");
             }
             // use legacy transaction to also support camel-spring-xml
             LegacyTransactionErrorHandlerBuilder txBuilder = new LegacyTransactionErrorHandlerBuilder();
@@ -138,7 +141,8 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         TransactionErrorHandler answer;
         try {
             ModelCamelContext mcc = (ModelCamelContext) route.getCamelContext();
-            answer = (TransactionErrorHandler) mcc.getModelReifierFactory().createErrorHandler(route, builder, processor);
+            answer = (TransactionErrorHandler)
+                    mcc.getModelReifierFactory().createErrorHandler(route, builder, processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

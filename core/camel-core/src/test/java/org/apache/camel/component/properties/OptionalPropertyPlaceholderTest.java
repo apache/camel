@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
@@ -22,8 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
@@ -37,8 +38,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result?retainFirst={{?maxKeep}}");
+                from("direct:start").to("mock:result?retainFirst={{?maxKeep}}");
             }
         });
         context.start();
@@ -62,8 +62,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result?retainFirst={{?maxKeep}}");
+                from("direct:start").to("mock:result?retainFirst={{?maxKeep}}");
             }
         });
         context.start();
@@ -75,7 +74,11 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1, getMockEndpoint("mock:result?retainFirst=1").getReceivedExchanges().size());
+        assertEquals(
+                1,
+                getMockEndpoint("mock:result?retainFirst=1")
+                        .getReceivedExchanges()
+                        .size());
     }
 
     @Test
@@ -83,8 +86,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:res{{?unknown}}ult");
+                from("direct:start").to("mock:res{{?unknown}}ult");
             }
         });
         context.start();
@@ -106,8 +108,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:{{?whereTo}}");
+                from("direct:start").to("mock:{{?whereTo}}");
             }
         });
         context.start();
@@ -125,8 +126,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:res{{?unknown}}ult?retainFirst={{?maxKeep}}");
+                from("direct:start").to("mock:res{{?unknown}}ult?retainFirst={{?maxKeep}}");
             }
         });
         context.start();
@@ -151,8 +151,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:{{?whereTo}}?retainFirst={{?maxKeep}}");
+                from("direct:start").to("mock:{{?whereTo}}?retainFirst={{?maxKeep}}");
             }
         });
         context.start();
@@ -164,7 +163,11 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1, getMockEndpoint("mock:result?retainFirst=1").getReceivedExchanges().size());
+        assertEquals(
+                1,
+                getMockEndpoint("mock:result?retainFirst=1")
+                        .getReceivedExchanges()
+                        .size());
     }
 
     @Test
@@ -176,8 +179,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:res{{?unknown}}ult?retainFirst={{?maxKeep}}");
+                from("direct:start").to("mock:res{{?unknown}}ult?retainFirst={{?maxKeep}}");
             }
         });
         context.start();
@@ -189,7 +191,11 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1, getMockEndpoint("mock:result?retainFirst=1").getReceivedExchanges().size());
+        assertEquals(
+                1,
+                getMockEndpoint("mock:result?retainFirst=1")
+                        .getReceivedExchanges()
+                        .size());
     }
 
     @Test
@@ -201,8 +207,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:{{?whereTo}}?retainFirst={{?maxKeep}}");
+                from("direct:start").to("mock:{{?whereTo}}?retainFirst={{?maxKeep}}");
             }
         });
         context.start();
@@ -224,8 +229,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:{{?whereTo}}?retainFirst=base64:{{?maxBase64}}");
+                from("direct:start").to("mock:{{?whereTo}}?retainFirst=base64:{{?maxBase64}}");
             }
         });
         context.start();
@@ -241,8 +245,8 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
-
 }

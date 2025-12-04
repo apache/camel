@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -50,8 +51,13 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
      *                        inline URLs in your bot's message.
      * @param replyMarkup     An inline keyboard that appears right next to the message it belongs to.
      */
-    public EditMessageCaptionMessage(String chatId, Integer messageId, String inlineMessageId, String caption,
-                                     String parseMode, InlineKeyboardMarkup replyMarkup) {
+    public EditMessageCaptionMessage(
+            String chatId,
+            Integer messageId,
+            String inlineMessageId,
+            String caption,
+            String parseMode,
+            InlineKeyboardMarkup replyMarkup) {
         this.chatId = chatId;
         this.messageId = messageId;
         this.inlineMessageId = inlineMessageId;
@@ -92,8 +98,7 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
         private String parseMode;
         private InlineKeyboardMarkup replyMarkup;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder messageId(Integer messageId) {
             this.messageId = messageId;
@@ -126,8 +131,7 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
         }
 
         public EditMessageCaptionMessage build() {
-            return new EditMessageCaptionMessage(
-                    chatId, messageId, inlineMessageId, caption, parseMode, replyMarkup);
+            return new EditMessageCaptionMessage(chatId, messageId, inlineMessageId, caption, parseMode, replyMarkup);
         }
     }
 }

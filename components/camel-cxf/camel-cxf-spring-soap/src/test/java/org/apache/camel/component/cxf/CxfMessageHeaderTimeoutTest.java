@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.http.HttpTimeoutException;
 import java.util.ArrayList;
@@ -39,17 +43,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfMessageHeaderTimeoutTest.class);
 
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String SERVER_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfMessageHeaderTimeoutTest/SoapContext/SoapPort";
+    protected static final String SERVER_ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/CxfMessageHeaderTimeoutTest/SoapContext/SoapPort";
 
     @BeforeAll
     public static void startService() {
@@ -66,8 +67,11 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
         assertNotNull(e, "We should get the exception cause here");
-        assertTrue(e instanceof HttpTimeoutException,
-                String.format("Expected HttpTimeoutException, but got %s", e.getClass().getName()));
+        assertTrue(
+                e instanceof HttpTimeoutException,
+                String.format(
+                        "Expected HttpTimeoutException, but got %s",
+                        e.getClass().getName()));
     }
 
     protected Exchange sendJaxWsMessage(String endpointUri) throws InterruptedException {
@@ -84,7 +88,6 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
                 requestContext.put(HTTPClientPolicy.class.getName(), clientPolicy);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
-
             }
         });
         return exchange;
@@ -95,5 +98,4 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
         // we can put the http conduit configuration here
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/cxfMessageHeaderTimeOutContext.xml");
     }
-
 }

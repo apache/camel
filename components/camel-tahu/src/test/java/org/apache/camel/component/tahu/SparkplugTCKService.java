@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
+
+import static org.apache.camel.test.junit5.TestSupport.bodyAs;
 
 import java.nio.charset.StandardCharsets;
 
@@ -39,8 +42,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.bodyAs;
-
 public final class SparkplugTCKService implements TestService {
 
     public static final String SPARKPLUG_TCK_TEST_CONTROL_TOPIC = "SPARKPLUG_TCK/TEST_CONTROL";
@@ -48,8 +49,8 @@ public final class SparkplugTCKService implements TestService {
     public static final String SPARKPLUG_TCK_RESULT_TOPIC = "SPARKPLUG_TCK/RESULT";
 
     @RegisterExtension
-    static HiveMQService hiveMQService
-            = HiveMQServiceFactory.createSingletonService(HiveMQProperties.HIVEMQ_SPARKPLUG_INSTANCE_SELECTOR);
+    static HiveMQService hiveMQService =
+            HiveMQServiceFactory.createSingletonService(HiveMQProperties.HIVEMQ_SPARKPLUG_INSTANCE_SELECTOR);
 
     private static MqttClient mqttClient;
 
@@ -91,10 +92,10 @@ public final class SparkplugTCKService implements TestService {
         try {
             monitorCamelContext = new DefaultCamelContext();
 
-            spTckLogMockEndpoint = MockUtils.getMockEndpoint(monitorCamelContext,
-                    "mock:" + SPARKPLUG_TCK_LOG_TOPIC + "?log=true", true);
-            spTckResultMockEndpoint = MockUtils.getMockEndpoint(monitorCamelContext,
-                    "mock:" + SPARKPLUG_TCK_RESULT_TOPIC + "?log=true", true);
+            spTckLogMockEndpoint = MockUtils.getMockEndpoint(
+                    monitorCamelContext, "mock:" + SPARKPLUG_TCK_LOG_TOPIC + "?log=true", true);
+            spTckResultMockEndpoint = MockUtils.getMockEndpoint(
+                    monitorCamelContext, "mock:" + SPARKPLUG_TCK_RESULT_TOPIC + "?log=true", true);
 
             monitorCamelContext.addRoutes(new RouteBuilder() {
                 @Override
@@ -119,13 +120,13 @@ public final class SparkplugTCKService implements TestService {
         } catch (MqttException e) {
             throw new RuntimeCamelException("Exception caught subscribing to TCK topics", e);
         }
-
     }
 
     public void initiateTckTest(String testConfig) throws MqttException {
         sendTestControlMessage("NEW_TEST " + testConfig);
 
-        spTckResultMockEndpoint = MockUtils.getMockEndpoint(monitorCamelContext, "mock:" + SPARKPLUG_TCK_RESULT_TOPIC, false);
+        spTckResultMockEndpoint =
+                MockUtils.getMockEndpoint(monitorCamelContext, "mock:" + SPARKPLUG_TCK_RESULT_TOPIC, false);
         spTckLogMockEndpoint = MockUtils.getMockEndpoint(monitorCamelContext, "mock:" + SPARKPLUG_TCK_LOG_TOPIC, false);
 
         // Result message expectations are always the same--one message saying the test passed
@@ -198,6 +199,5 @@ public final class SparkplugTCKService implements TestService {
     }
 
     @Override
-    public void registerProperties() {
-    }
+    public void registerProperties() {}
 }

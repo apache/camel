@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExpressionAdapterTest extends ContextTestSupport {
 
@@ -62,9 +63,8 @@ public class ExpressionAdapterTest extends ContextTestSupport {
         Exchange e = new DefaultExchange(context);
         e.getIn().setBody("Kaboom");
 
-        AssertionError ae = assertThrows(AssertionError.class,
-                () -> my.assertMatches("damn", e),
-                "Should have thrown exception");
+        AssertionError ae =
+                assertThrows(AssertionError.class, () -> my.assertMatches("damn", e), "Should have thrown exception");
 
         assertTrue(ae.getMessage().contains("foo"));
     }

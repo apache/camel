@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteNoOutputTest extends ContextTestSupport {
     private Exception exception;
@@ -36,7 +37,6 @@ public class RouteNoOutputTest extends ContextTestSupport {
         } catch (Exception e) {
             exception = e;
         }
-
     }
 
     @Test
@@ -46,8 +46,12 @@ public class RouteNoOutputTest extends ContextTestSupport {
         FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, exception);
         assertTrue(failed.getRouteId().matches("route[0-9]+"));
         assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
-        assertTrue(exception.getCause().getMessage().matches(
-                "Route route[0-9]+\\Q has no output processors. You need to add outputs to the route such as to(\"log:foo\").\\E"));
+        assertTrue(
+                exception
+                        .getCause()
+                        .getMessage()
+                        .matches(
+                                "Route route[0-9]+\\Q has no output processors. You need to add outputs to the route such as to(\"log:foo\").\\E"));
     }
 
     @Override

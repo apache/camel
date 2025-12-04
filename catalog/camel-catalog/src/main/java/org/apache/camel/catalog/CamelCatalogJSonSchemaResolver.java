@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 import java.io.IOException;
@@ -40,10 +41,12 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
     private final Map<String, String> extraDataFormats;
     private final Map<String, String> extraDataFormatsJSonSchema;
 
-    public CamelCatalogJSonSchemaResolver(CamelCatalog camelCatalog,
-                                          Map<String, String> extraComponents, Map<String, String> extraComponentsJSonSchema,
-                                          Map<String, String> extraDataFormats,
-                                          Map<String, String> extraDataFormatsJSonSchema) {
+    public CamelCatalogJSonSchemaResolver(
+            CamelCatalog camelCatalog,
+            Map<String, String> extraComponents,
+            Map<String, String> extraComponentsJSonSchema,
+            Map<String, String> extraDataFormats,
+            Map<String, String> extraDataFormatsJSonSchema) {
         this.camelCatalog = camelCatalog;
         this.extraComponents = extraComponents;
         this.extraComponentsJSonSchema = extraComponentsJSonSchema;
@@ -58,7 +61,8 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
 
     @Override
     public String getComponentJSonSchema(String name) {
-        final String file = camelCatalog.getRuntimeProvider().getComponentJSonSchemaDirectory() + "/" + name + EXTENSION;
+        final String file =
+                camelCatalog.getRuntimeProvider().getComponentJSonSchemaDirectory() + "/" + name + EXTENSION;
 
         final String fromVersionManager = loadResourceFromVersionManager(file);
         if (fromVersionManager != null) {
@@ -78,7 +82,8 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
 
     @Override
     public String getDataFormatJSonSchema(String name) {
-        final String file = camelCatalog.getRuntimeProvider().getDataFormatJSonSchemaDirectory() + "/" + name + EXTENSION;
+        final String file =
+                camelCatalog.getRuntimeProvider().getDataFormatJSonSchemaDirectory() + "/" + name + EXTENSION;
 
         final String fromVersionManager = loadResourceFromVersionManager(file);
         if (fromVersionManager != null) {
@@ -109,14 +114,16 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
     @Override
     public String getTransformerJSonSchema(String name) {
         name = sanitizeFileName(name);
-        final String file = camelCatalog.getRuntimeProvider().getTransformerJSonSchemaDirectory() + "/" + name + EXTENSION;
+        final String file =
+                camelCatalog.getRuntimeProvider().getTransformerJSonSchemaDirectory() + "/" + name + EXTENSION;
         return loadResourceFromVersionManager(file);
     }
 
     @Override
     public String getDevConsoleJSonSchema(String name) {
         name = sanitizeFileName(name);
-        final String file = camelCatalog.getRuntimeProvider().getDevConsoleJSonSchemaDirectory() + "/" + name + EXTENSION;
+        final String file =
+                camelCatalog.getRuntimeProvider().getDevConsoleJSonSchemaDirectory() + "/" + name + EXTENSION;
         return loadResourceFromVersionManager(file);
     }
 

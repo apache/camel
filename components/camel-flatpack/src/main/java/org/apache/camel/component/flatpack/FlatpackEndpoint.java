@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flatpack;
 
 import java.io.IOException;
@@ -48,8 +49,14 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Parse fixed width and delimited files using the FlatPack library.
  */
-@UriEndpoint(firstVersion = "1.4.0", scheme = "flatpack", title = "Flatpack", syntax = "flatpack:type:resourceUri",
-             remote = false, category = { Category.TRANSFORMATION }, headersClass = FlatpackConstants.class)
+@UriEndpoint(
+        firstVersion = "1.4.0",
+        scheme = "flatpack",
+        title = "Flatpack",
+        syntax = "flatpack:type:resourceUri",
+        remote = false,
+        category = {Category.TRANSFORMATION},
+        headersClass = FlatpackConstants.class)
 public class FlatpackEndpoint extends DefaultPollingEndpoint {
 
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
@@ -58,27 +65,31 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
     @UriPath
     @Metadata(required = false, defaultValue = "delim")
     private FlatpackType type;
+
     @UriPath
     @Metadata(required = true, supportFileReference = true)
     private String resourceUri;
 
     @UriParam(defaultValue = "true")
     private boolean splitRows = true;
+
     @UriParam
     private boolean allowShortLines;
+
     @UriParam
     private boolean ignoreExtraColumns;
 
     // delimited
     @UriParam(defaultValue = ",")
     private char delimiter = ',';
+
     @UriParam
     private char textQualifier = '"';
+
     @UriParam(defaultValue = "true")
     private boolean ignoreFirstRecord = true;
 
-    public FlatpackEndpoint() {
-    }
+    public FlatpackEndpoint() {}
 
     public FlatpackEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component);
@@ -150,7 +161,8 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         } else {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
             InputStreamReader reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
-            parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+            parser = getParserFactory()
+                    .newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
         }
 
         if (isAllowShortLines()) {
@@ -166,7 +178,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public String getResourceUri() {
         return resourceUri;

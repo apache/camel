@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.util;
 
 import org.apache.camel.Exchange;
@@ -22,38 +23,45 @@ import org.apache.camel.component.telegram.model.Update;
 
 public final class TelegramMessageHelper {
 
-    private TelegramMessageHelper() {
-    }
+    private TelegramMessageHelper() {}
 
     public static void populateExchange(Exchange exchange, Update update) {
         if (update.getMessage() != null) {
             exchange.getMessage().setBody(update.getMessage());
 
             if (update.getMessage().getChat() != null) {
-                exchange.getMessage().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getMessage().getChat().getId());
+                exchange.getMessage()
+                        .setHeader(
+                                TelegramConstants.TELEGRAM_CHAT_ID,
+                                update.getMessage().getChat().getId());
             }
             if (update.getMessage().getDate() != null) {
                 // convert seconds to millis
-                exchange.getMessage().setHeader(TelegramConstants.MESSAGE_TIMESTAMP,
-                        update.getMessage().getDate().getEpochSecond() * 1000);
+                exchange.getMessage()
+                        .setHeader(
+                                TelegramConstants.MESSAGE_TIMESTAMP,
+                                update.getMessage().getDate().getEpochSecond() * 1000);
             }
         } else if (update.getChannelPost() != null) {
             exchange.getMessage().setBody(update.getChannelPost());
 
             if (update.getChannelPost().getChat() != null) {
-                exchange.getMessage().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getChannelPost().getChat().getId());
+                exchange.getMessage()
+                        .setHeader(
+                                TelegramConstants.TELEGRAM_CHAT_ID,
+                                update.getChannelPost().getChat().getId());
             }
             if (update.getChannelPost().getDate() != null) {
                 // convert seconds to millis
-                exchange.getMessage().setHeader(TelegramConstants.MESSAGE_TIMESTAMP,
-                        update.getChannelPost().getDate().getEpochSecond() * 1000);
+                exchange.getMessage()
+                        .setHeader(
+                                TelegramConstants.MESSAGE_TIMESTAMP,
+                                update.getChannelPost().getDate().getEpochSecond() * 1000);
             }
         } else if (update.getCallbackQuery() != null) {
             exchange.getMessage().setBody(update.getCallbackQuery());
         } else if (update.getIncomingInlineQuery() != null) {
             exchange.getMessage().setBody(update.getIncomingInlineQuery());
         }
-
     }
-
 }

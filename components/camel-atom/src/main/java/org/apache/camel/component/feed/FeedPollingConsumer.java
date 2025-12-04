@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.feed;
 
 import org.apache.camel.Exchange;
@@ -45,5 +46,4 @@ public abstract class FeedPollingConsumer extends ScheduledPollConsumer {
     }
 
     protected abstract Object createFeed() throws Exception;
-
 }

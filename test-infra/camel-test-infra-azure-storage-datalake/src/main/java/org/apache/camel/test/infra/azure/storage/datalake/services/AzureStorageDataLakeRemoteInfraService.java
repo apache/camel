@@ -38,9 +38,7 @@ public class AzureStorageDataLakeRemoteInfraService implements AzureInfraService
     }
 
     @Override
-    public void registerProperties() {
-
-    }
+    public void registerProperties() {}
 
     @Override
     public void initialize() {
@@ -48,9 +46,7 @@ public class AzureStorageDataLakeRemoteInfraService implements AzureInfraService
     }
 
     @Override
-    public void shutdown() {
-
-    }
+    public void shutdown() {}
 
     @Override
     public String host() {

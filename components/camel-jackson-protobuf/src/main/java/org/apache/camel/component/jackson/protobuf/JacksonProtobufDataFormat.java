@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.protobuf;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,15 +27,16 @@ import org.apache.camel.spi.annotations.Dataformat;
  * Marshal POJOs to Protobuf and back using Jackson.
  */
 @Dataformat("protobufJackson")
-@Metadata(firstVersion = "3.10.0", title = "Protobuf Jackson",
-          excludeProperties = "library,permissions,dateFormatPattern,instanceClass,contentTypeFormat,defaultInstance")
+@Metadata(
+        firstVersion = "3.10.0",
+        title = "Protobuf Jackson",
+        excludeProperties = "library,permissions,dateFormatPattern,instanceClass,contentTypeFormat,defaultInstance")
 public class JacksonProtobufDataFormat extends JacksonDataFormat {
 
     /**
      * Use the default Jackson {@link ProtobufMapper} and {@link Object}
      */
-    public JacksonProtobufDataFormat() {
-    }
+    public JacksonProtobufDataFormat() {}
 
     /**
      * Use the default Jackson {@link ProtobufMapper} and with a custom unmarshal type
@@ -95,5 +97,4 @@ public class JacksonProtobufDataFormat extends JacksonDataFormat {
     protected Class<? extends ObjectMapper> getObjectMapperClass() {
         return ProtobufMapper.class;
     }
-
 }

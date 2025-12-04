@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 /**
@@ -33,6 +34,5 @@ public final class Constants {
     public static final String XS_ANNOTATION_ELEMENT_NAME = "xs:annotation";
     public static final String XS_DOCUMENTATION_ELEMENT_NAME = "xs:documentation";
 
-    private Constants() {
-    }
+    private Constants() {}
 }

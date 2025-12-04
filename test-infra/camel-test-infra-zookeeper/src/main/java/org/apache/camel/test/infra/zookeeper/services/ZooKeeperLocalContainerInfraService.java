@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.zookeeper.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -24,17 +25,19 @@ import org.apache.camel.test.infra.zookeeper.common.ZooKeeperProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = ZooKeeperInfraService.class,
-              description = "Zookeeper is a server for highly reliable distributed coordination of cloud applications",
-              serviceAlias = { "zookeeper" })
-public class ZooKeeperLocalContainerInfraService implements ZooKeeperInfraService, ContainerService<ZooKeeperContainer> {
+@InfraService(
+        service = ZooKeeperInfraService.class,
+        description = "Zookeeper is a server for highly reliable distributed coordination of cloud applications",
+        serviceAlias = {"zookeeper"})
+public class ZooKeeperLocalContainerInfraService
+        implements ZooKeeperInfraService, ContainerService<ZooKeeperContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperLocalContainerInfraService.class);
 
     private final ZooKeeperContainer container;
 
     public ZooKeeperLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(ZooKeeperLocalContainerInfraService.class,
-                ZooKeeperProperties.ZOOKEEPER_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                ZooKeeperLocalContainerInfraService.class, ZooKeeperProperties.ZOOKEEPER_CONTAINER));
     }
 
     public ZooKeeperLocalContainerInfraService(String imageName) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.generator.openapi;
 
 import java.io.File;
@@ -36,8 +37,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-@Mojo(name = "generate-xml", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-      requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Mojo(
+        name = "generate-xml",
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+        requiresDependencyResolution = ResolutionScope.COMPILE,
+        threadSafe = true)
 public class GenerateXmlMojo extends AbstractGenerateMojo {
 
     @Parameter(defaultValue = "camel-rest.xml", required = true)
@@ -64,10 +68,9 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
         OpenAPI openapi = new OpenAPIV3Parser().read(specificationUri);
 
         if (openapi == null) {
-            throw new MojoExecutionException(
-                    "Unable to generate REST DSL OpenApi sources from specification: "
-                                             + specificationUri
-                                             + ", make sure that the specification is available at the given URI");
+            throw new MojoExecutionException("Unable to generate REST DSL OpenApi sources from specification: "
+                    + specificationUri
+                    + ", make sure that the specification is available at the given URI");
         }
 
         final RestDslXmlGenerator generator = RestDslGenerator.toXml(openapi);
@@ -118,5 +121,4 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
                     "Unable to generate REST DSL OpenApi sources from specification: " + specificationUri, e);
         }
     }
-
 }

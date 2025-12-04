@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.functions.unit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -32,9 +36,6 @@ import org.apache.camel.component.google.functions.mock.MockCloudFunctionsServic
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 public class GoogleCloudFunctionsConfigurationTest extends CamelTestSupport {
 
     @Test
@@ -46,8 +47,8 @@ public class GoogleCloudFunctionsConfigurationTest extends CamelTestSupport {
         final GoogleCloudFunctionsOperations operation = GoogleCloudFunctionsOperations.callFunction;
         final boolean pojoRequest = false;
 
-        GoogleCloudFunctionsComponent component = context.getComponent("google-functions",
-                GoogleCloudFunctionsComponent.class);
+        GoogleCloudFunctionsComponent component =
+                context.getComponent("google-functions", GoogleCloudFunctionsComponent.class);
         GoogleCloudFunctionsEndpoint endpoint = (GoogleCloudFunctionsEndpoint) component.createEndpoint(String.format(
                 "google-functions://%s?serviceAccountKey=%s&project=%s&location=%s&operation=%s&pojoRequest=%s",
                 functionName, serviceAccountKeyFile, project, location, operation.name(), pojoRequest));
@@ -67,26 +68,25 @@ public class GoogleCloudFunctionsConfigurationTest extends CamelTestSupport {
         // init mock
         MockCloudFunctionsService mockCloudFunctionsService = new MockCloudFunctionsService();
         MockServiceHelper mockServiceHelper = new MockServiceHelper(
-                UUID.randomUUID().toString(),
-                Arrays.<MockGrpcService> asList(mockCloudFunctionsService));
+                UUID.randomUUID().toString(), Arrays.<MockGrpcService>asList(mockCloudFunctionsService));
         mockServiceHelper.start();
         LocalChannelProvider channelProvider = mockServiceHelper.createChannelProvider();
         CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder()
-                .setTransportChannelProvider(channelProvider).setCredentialsProvider(NoCredentialsProvider.create())
+                .setTransportChannelProvider(channelProvider)
+                .setCredentialsProvider(NoCredentialsProvider.create())
                 .build();
         CloudFunctionsServiceClient clientMock = CloudFunctionsServiceClient.create(settings);
 
         context.getRegistry().bind("myClient", clientMock);
 
-        GoogleCloudFunctionsComponent component = context.getComponent("google-functions",
-                GoogleCloudFunctionsComponent.class);
-        GoogleCloudFunctionsEndpoint endpoint = (GoogleCloudFunctionsEndpoint) component
-                .createEndpoint(String.format("google-functions://%s?client=#myClient", functionName));
+        GoogleCloudFunctionsComponent component =
+                context.getComponent("google-functions", GoogleCloudFunctionsComponent.class);
+        GoogleCloudFunctionsEndpoint endpoint = (GoogleCloudFunctionsEndpoint)
+                component.createEndpoint(String.format("google-functions://%s?client=#myClient", functionName));
 
         assertEquals(endpoint.getConfiguration().getFunctionName(), functionName);
         assertSame(clientMock, endpoint.getConfiguration().getClient());
 
         mockServiceHelper.stop();
     }
-
 }

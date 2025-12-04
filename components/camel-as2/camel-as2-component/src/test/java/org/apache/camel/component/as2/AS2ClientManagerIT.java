@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -87,20 +94,15 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link org.apache.camel.component.as2.api.AS2ClientManager} APIs.
  */
 public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AS2ClientManagerIT.class);
-    private static final String PATH_PREFIX
-            = AS2ApiCollection.getCollection().getApiName(AS2ClientManagerApiMethod.class).getName();
+    private static final String PATH_PREFIX = AS2ApiCollection.getCollection()
+            .getApiName(AS2ClientManagerApiMethod.class)
+            .getName();
 
     private static final String SERVER_FQDN = "server.example.com";
     private static final String ORIGIN_SERVER_NAME = "AS2ClientManagerIntegrationTest Server";
@@ -116,38 +118,38 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private static final String MDN_MESSAGE_TEMPLATE = "TBD";
 
     private static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
-                                              + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
-                                              + "BGM+380+342459+9'\n"
-                                              + "DTM+3:20060515:102'\n"
-                                              + "RFF+ON:521052'\n"
-                                              + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
-                                              + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
-                                              + "CUX+1:USD'\n"
-                                              + "LIN+1++157870:IN'\n"
-                                              + "IMD+F++:::WIDGET'\n"
-                                              + "QTY+47:1020:EA'\n"
-                                              + "ALI+US'\n"
-                                              + "MOA+203:1202.58'\n"
-                                              + "PRI+INV:1.179'\n"
-                                              + "LIN+2++157871:IN'\n"
-                                              + "IMD+F++:::DIFFERENT WIDGET'\n"
-                                              + "QTY+47:20:EA'\n"
-                                              + "ALI+JP'\n"
-                                              + "MOA+203:410'\n"
-                                              + "PRI+INV:20.5'\n"
-                                              + "UNS+S'\n"
-                                              + "MOA+39:2137.58'\n"
-                                              + "ALC+C+ABG'\n"
-                                              + "MOA+8:525'\n"
-                                              + "UNT+23+00000000000117'\n"
-                                              + "UNZ+1+00000000000778'\n";
+            + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
+            + "BGM+380+342459+9'\n"
+            + "DTM+3:20060515:102'\n"
+            + "RFF+ON:521052'\n"
+            + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
+            + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
+            + "CUX+1:USD'\n"
+            + "LIN+1++157870:IN'\n"
+            + "IMD+F++:::WIDGET'\n"
+            + "QTY+47:1020:EA'\n"
+            + "ALI+US'\n"
+            + "MOA+203:1202.58'\n"
+            + "PRI+INV:1.179'\n"
+            + "LIN+2++157871:IN'\n"
+            + "IMD+F++:::DIFFERENT WIDGET'\n"
+            + "QTY+47:20:EA'\n"
+            + "ALI+JP'\n"
+            + "MOA+203:410'\n"
+            + "PRI+INV:20.5'\n"
+            + "UNS+S'\n"
+            + "MOA+39:2137.58'\n"
+            + "ALC+C+ABG'\n"
+            + "MOA+8:525'\n"
+            + "UNT+23+00000000000117'\n"
+            + "UNZ+1+00000000000778'\n";
 
     private static final String EDI_MESSAGE_CONTENT_TRANSFER_ENCODING = "7bit";
     private static final String EXPECTED_AS2_VERSION = AS2_VERSION;
     private static final String EXPECTED_MDN_SUBJECT = MDN_SUBJECT_PREFIX + SUBJECT;
     private static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
-    private static final String DISPOSITION_NOTIFICATION_OPTIONS
-            = "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
+    private static final String DISPOSITION_NOTIFICATION_OPTIONS =
+            "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
     private static final int PARTNER_TARGET_PORT = 8889;
     private static final int MDN_TARGET_PORT = AvailablePortFinder.getNextAvailable();
     private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + MDN_TARGET_PORT + "/handle-receipts";
@@ -213,13 +215,21 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         verifyMessage(appEntity, encoding);
 
         assertNotNull(response, "Response");
-        assertTrue(HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE).startsWith(AS2MimeType.MULTIPART_REPORT),
+        assertTrue(
+                HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE)
+                        .startsWith(AS2MimeType.MULTIPART_REPORT),
                 "Unexpected response type");
-        assertEquals(AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
+        assertEquals(
+                AS2Constants.MIME_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
                 "Unexpected mime version");
-        assertEquals(EXPECTED_AS2_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
+        assertEquals(
+                EXPECTED_AS2_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
                 "Unexpected AS2 version");
-        assertEquals(EXPECTED_MDN_SUBJECT, HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
+        assertEquals(
+                EXPECTED_MDN_SUBJECT,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
                 "Unexpected MDN subject");
         assertEquals(MDN_FROM, HttpMessageUtils.getHeaderValue(response, AS2Header.FROM), "Unexpected MDN from");
         assertEquals(AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM), "Unexpected AS2 from");
@@ -227,32 +237,47 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID), "Missing message id");
 
         assertNotNull(responseEntity, "Response entity");
-        assertTrue(responseEntity instanceof DispositionNotificationMultipartReportEntity, "Unexpected response entity type");
-        DispositionNotificationMultipartReportEntity reportEntity
-                = (DispositionNotificationMultipartReportEntity) responseEntity;
+        assertTrue(
+                responseEntity instanceof DispositionNotificationMultipartReportEntity,
+                "Unexpected response entity type");
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) responseEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentType(), "Unexpected content type in first body part of report");
+        assertEquals(
+                ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII)
+                        .toString(),
+                firstPart.getContentType(),
+                "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+        assertEquals(
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
                 secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
 
         assertTrue(secondPart instanceof AS2MessageDispositionNotificationEntity, "");
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = (AS2MessageDispositionNotificationEntity) secondPart;
-        assertEquals(ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA(),
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                (AS2MessageDispositionNotificationEntity) secondPart;
+        assertEquals(
+                ORIGIN_SERVER_NAME,
+                messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected value for reporting UA");
-        assertEquals(AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient(),
+        assertEquals(
+                AS2_NAME,
+                messageDispositionNotificationEntity.getFinalRecipient(),
                 "Unexpected value for final recipient");
-        assertEquals(HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
-                messageDispositionNotificationEntity.getOriginalMessageId(), "Unexpected value for original message ID");
-        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                messageDispositionNotificationEntity.getDispositionMode(), "Unexpected value for disposition mode");
-        assertEquals(AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType(),
+        assertEquals(
+                HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
+                messageDispositionNotificationEntity.getOriginalMessageId(),
+                "Unexpected value for original message ID");
+        assertEquals(
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                messageDispositionNotificationEntity.getDispositionMode(),
+                "Unexpected value for disposition mode");
+        assertEquals(
+                AS2DispositionType.PROCESSED,
+                messageDispositionNotificationEntity.getDispositionType(),
                 "Unexpected value for disposition type");
-
     }
 
     @Test
@@ -296,14 +321,11 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertEquals(EDI_MESSAGE, ediMessage.replaceAll("\r", ""), "EDI message is different");
 
         assertNotNull(response, "Response");
-        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE),
-                "Unexpected non-null content type");
-        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
-                "Unexpected mime version");
-        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
-                "Unexpected AS2 version");
-        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
-                "Unexpected MDN subject");
+        assertNull(
+                HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE), "Unexpected non-null content type");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION), "Unexpected mime version");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION), "Unexpected AS2 version");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT), "Unexpected MDN subject");
         assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.FROM), "Unexpected MDN from");
         assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM), "Unexpected AS2 from");
         assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO), "Unexpected AS2 to");
@@ -348,16 +370,25 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         ApplicationEntity appEntity = (ApplicationEntity) entity;
         assertTrue(appEntity.getEdiMessage() instanceof String);
         String ediMessage = (String) appEntity.getEdiMessage();
-        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""), "EDI message is different");
+        assertEquals(
+                EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""), "EDI message is different");
 
         assertNotNull(response, "Response");
-        assertTrue(HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE).startsWith(AS2MimeType.MULTIPART_REPORT),
+        assertTrue(
+                HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE)
+                        .startsWith(AS2MimeType.MULTIPART_REPORT),
                 "Unexpected response type");
-        assertEquals(AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
+        assertEquals(
+                AS2Constants.MIME_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
                 "Unexpected mime version");
-        assertEquals(EXPECTED_AS2_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
+        assertEquals(
+                EXPECTED_AS2_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
                 "Unexpected AS2 version");
-        assertEquals(EXPECTED_MDN_SUBJECT, HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
+        assertEquals(
+                EXPECTED_MDN_SUBJECT,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
                 "Unexpected MDN subject");
         assertEquals(MDN_FROM, HttpMessageUtils.getHeaderValue(response, AS2Header.FROM), "Unexpected MDN from");
         assertEquals(AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM), "Unexpected AS2 from");
@@ -365,32 +396,47 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID), "Missing message id");
 
         assertNotNull(responseEntity, "Response entity");
-        assertTrue(responseEntity instanceof DispositionNotificationMultipartReportEntity, "Unexpected response entity type");
-        DispositionNotificationMultipartReportEntity reportEntity
-                = (DispositionNotificationMultipartReportEntity) responseEntity;
+        assertTrue(
+                responseEntity instanceof DispositionNotificationMultipartReportEntity,
+                "Unexpected response entity type");
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) responseEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentType(), "Unexpected content type in first body part of report");
+        assertEquals(
+                ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII)
+                        .toString(),
+                firstPart.getContentType(),
+                "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+        assertEquals(
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
                 secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
 
         assertTrue(secondPart instanceof AS2MessageDispositionNotificationEntity, "");
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = (AS2MessageDispositionNotificationEntity) secondPart;
-        assertEquals(ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA(),
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                (AS2MessageDispositionNotificationEntity) secondPart;
+        assertEquals(
+                ORIGIN_SERVER_NAME,
+                messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected value for reporting UA");
-        assertEquals(AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient(),
+        assertEquals(
+                AS2_NAME,
+                messageDispositionNotificationEntity.getFinalRecipient(),
                 "Unexpected value for final recipient");
-        assertEquals(HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
-                messageDispositionNotificationEntity.getOriginalMessageId(), "Unexpected value for original message ID");
-        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                messageDispositionNotificationEntity.getDispositionMode(), "Unexpected value for disposition mode");
-        assertEquals(AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType(),
+        assertEquals(
+                HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
+                messageDispositionNotificationEntity.getOriginalMessageId(),
+                "Unexpected value for original message ID");
+        assertEquals(
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                messageDispositionNotificationEntity.getDispositionMode(),
+                "Unexpected value for disposition mode");
+        assertEquals(
+                AS2DispositionType.PROCESSED,
+                messageDispositionNotificationEntity.getDispositionType(),
                 "Unexpected value for disposition type");
-
     }
 
     @Test
@@ -426,7 +472,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         // parameter type is org.apache.camel.component.as2.api.AS2EncryptionAlgorithm
         headers.put("CamelAs2.encryptingAlgorithm", AS2EncryptionAlgorithm.AES128_CBC);
         // parameter type is java.security.cert.Certificate[]
-        headers.put("CamelAs2.encryptingCertificateChain", new Certificate[] { clientCert });
+        headers.put("CamelAs2.encryptingCertificateChain", new Certificate[] {clientCert});
         // parameter type is String
         headers.put("CamelAs2.attachedFileName", "");
 
@@ -442,23 +488,32 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertTrue(request instanceof ClassicHttpRequest, "Request does not contain body");
         HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
         assertNotNull(entity, "Request body");
-        assertTrue(entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity,
+        assertTrue(
+                entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity,
                 "Request body does not contain ApplicationPkcs7Mime entity");
-        MimeEntity envelopeEntity
-                = ((ApplicationPkcs7MimeEnvelopedDataEntity) entity).getEncryptedEntity(clientKeyPair.getPrivate());
+        MimeEntity envelopeEntity =
+                ((ApplicationPkcs7MimeEnvelopedDataEntity) entity).getEncryptedEntity(clientKeyPair.getPrivate());
         assertTrue(envelopeEntity instanceof ApplicationEntity, "Enveloped entity is not an EDI entity");
 
         ApplicationEntity appEntity = (ApplicationEntity) envelopeEntity;
         verifyMessage(appEntity, encoding);
 
         assertNotNull(response, "Response");
-        assertTrue(HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE).startsWith(AS2MimeType.MULTIPART_REPORT),
+        assertTrue(
+                HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE)
+                        .startsWith(AS2MimeType.MULTIPART_REPORT),
                 "Unexpected response type");
-        assertEquals(AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
+        assertEquals(
+                AS2Constants.MIME_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
                 "Unexpected mime version");
-        assertEquals(EXPECTED_AS2_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
+        assertEquals(
+                EXPECTED_AS2_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
                 "Unexpected AS2 version");
-        assertEquals(EXPECTED_MDN_SUBJECT, HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
+        assertEquals(
+                EXPECTED_MDN_SUBJECT,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
                 "Unexpected MDN subject");
         assertEquals(MDN_FROM, HttpMessageUtils.getHeaderValue(response, AS2Header.FROM), "Unexpected MDN from");
         assertEquals(AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM), "Unexpected AS2 from");
@@ -466,32 +521,47 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID), "Missing message id");
 
         assertNotNull(responseEntity, "Response entity");
-        assertTrue(responseEntity instanceof DispositionNotificationMultipartReportEntity, "Unexpected response entity type");
-        DispositionNotificationMultipartReportEntity reportEntity
-                = (DispositionNotificationMultipartReportEntity) responseEntity;
+        assertTrue(
+                responseEntity instanceof DispositionNotificationMultipartReportEntity,
+                "Unexpected response entity type");
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) responseEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentType(), "Unexpected content type in first body part of report");
+        assertEquals(
+                ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII)
+                        .toString(),
+                firstPart.getContentType(),
+                "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+        assertEquals(
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
                 secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
 
         assertTrue(secondPart instanceof AS2MessageDispositionNotificationEntity, "");
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = (AS2MessageDispositionNotificationEntity) secondPart;
-        assertEquals(ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA(),
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                (AS2MessageDispositionNotificationEntity) secondPart;
+        assertEquals(
+                ORIGIN_SERVER_NAME,
+                messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected value for reporting UA");
-        assertEquals(AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient(),
+        assertEquals(
+                AS2_NAME,
+                messageDispositionNotificationEntity.getFinalRecipient(),
                 "Unexpected value for final recipient");
-        assertEquals(HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
-                messageDispositionNotificationEntity.getOriginalMessageId(), "Unexpected value for original message ID");
-        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                messageDispositionNotificationEntity.getDispositionMode(), "Unexpected value for disposition mode");
-        assertEquals(AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType(),
+        assertEquals(
+                HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
+                messageDispositionNotificationEntity.getOriginalMessageId(),
+                "Unexpected value for original message ID");
+        assertEquals(
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                messageDispositionNotificationEntity.getDispositionMode(),
+                "Unexpected value for disposition mode");
+        assertEquals(
+                AS2DispositionType.PROCESSED,
+                messageDispositionNotificationEntity.getDispositionType(),
                 "Unexpected value for disposition type");
-
     }
 
     @Test
@@ -525,7 +595,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         // parameter type is org.apache.camel.component.as2.api.AS2SignatureAlgorithm
         headers.put("CamelAs2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
         // parameter type is java.security.cert.Certificate[]
-        headers.put("CamelAs2.signingCertificateChain", new Certificate[] { clientCert });
+        headers.put("CamelAs2.signingCertificateChain", new Certificate[] {clientCert});
         // parameter type is java.security.PrivateKey
         headers.put("CamelAs2.signingPrivateKey", clientKeyPair.getPrivate());
         // parameter type is String
@@ -557,11 +627,17 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         String contentTypeHeaderValue = HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE);
         ContentType responseContentType = ContentType.parse(contentTypeHeaderValue);
         assertEquals(AS2MimeType.MULTIPART_SIGNED, responseContentType.getMimeType(), "Unexpected response type");
-        assertEquals(AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
+        assertEquals(
+                AS2Constants.MIME_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
                 "Unexpected mime version");
-        assertEquals(EXPECTED_AS2_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
+        assertEquals(
+                EXPECTED_AS2_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
                 "Unexpected AS2 version");
-        assertEquals(EXPECTED_MDN_SUBJECT, HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
+        assertEquals(
+                EXPECTED_MDN_SUBJECT,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
                 "Unexpected MDN subject");
         assertEquals(MDN_FROM, HttpMessageUtils.getHeaderValue(response, AS2Header.FROM), "Unexpected MDN from");
         assertEquals(AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM), "Unexpected AS2 from");
@@ -571,43 +647,60 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(responseEntity, "Response entity");
         assertTrue(responseEntity instanceof MultipartSignedEntity, "Unexpected response entity type");
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
-        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { serverCert }),
+        assertTrue(
+                SigningUtils.isValid(responseSignedEntity, new Certificate[] {serverCert}),
                 "Signature for response entity is invalid");
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
-        assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
+        assertTrue(
+                responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
                 "Signed entity wrong type");
-        DispositionNotificationMultipartReportEntity reportEntity
-                = (DispositionNotificationMultipartReportEntity) responseSignedDataEntity;
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) responseSignedDataEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentType(), "Unexpected content type in first body part of report");
+        assertEquals(
+                ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII)
+                        .toString(),
+                firstPart.getContentType(),
+                "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+        assertEquals(
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
                 secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
         assertNotNull(signatureEntity, "Signature Entity");
 
         assertTrue(secondPart instanceof AS2MessageDispositionNotificationEntity, "");
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = (AS2MessageDispositionNotificationEntity) secondPart;
-        assertEquals(ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA(),
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                (AS2MessageDispositionNotificationEntity) secondPart;
+        assertEquals(
+                ORIGIN_SERVER_NAME,
+                messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected value for reporting UA");
-        assertEquals(AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient(),
+        assertEquals(
+                AS2_NAME,
+                messageDispositionNotificationEntity.getFinalRecipient(),
                 "Unexpected value for final recipient");
-        assertEquals(HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
-                messageDispositionNotificationEntity.getOriginalMessageId(), "Unexpected value for original message ID");
-        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                messageDispositionNotificationEntity.getDispositionMode(), "Unexpected value for disposition mode");
-        assertEquals(AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType(),
+        assertEquals(
+                HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
+                messageDispositionNotificationEntity.getOriginalMessageId(),
+                "Unexpected value for original message ID");
+        assertEquals(
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                messageDispositionNotificationEntity.getDispositionMode(),
+                "Unexpected value for disposition mode");
+        assertEquals(
+                AS2DispositionType.PROCESSED,
+                messageDispositionNotificationEntity.getDispositionType(),
                 "Unexpected value for disposition type");
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
-        ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { clientCert },
-                        null);
-        assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
+        ReceivedContentMic computedContentMic =
+                MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] {clientCert}, null);
+        assertEquals(
+                computedContentMic.getEncodedMessageDigest(),
+                receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
     }
 
@@ -633,7 +726,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         // parameter type is org.apache.camel.component.as2.api.AS2SignatureAlgorithm
         headers.put("CamelAs2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
         // parameter type is java.security.cert.Certificate[]
-        headers.put("CamelAs2.signingCertificateChain", new Certificate[] { clientCert });
+        headers.put("CamelAs2.signingCertificateChain", new Certificate[] {clientCert});
         // parameter type is java.security.PrivateKey
         headers.put("CamelAs2.signingPrivateKey", clientKeyPair.getPrivate());
         // parameter type is String
@@ -662,17 +755,24 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         assertTrue(ediMessageEntity.getEdiMessage() instanceof String);
         String ediMessage = (String) ediMessageEntity.getEdiMessage();
-        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""), "EDI message is different");
+        assertEquals(
+                EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""), "EDI message is different");
 
         assertNotNull(response, "Response");
         String contentTypeHeaderValue = HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE);
         ContentType responseContentType = ContentType.parse(contentTypeHeaderValue);
         assertEquals(AS2MimeType.MULTIPART_SIGNED, responseContentType.getMimeType(), "Unexpected response type");
-        assertEquals(AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
+        assertEquals(
+                AS2Constants.MIME_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
                 "Unexpected mime version");
-        assertEquals(EXPECTED_AS2_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
+        assertEquals(
+                EXPECTED_AS2_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
                 "Unexpected AS2 version");
-        assertEquals(EXPECTED_MDN_SUBJECT, HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
+        assertEquals(
+                EXPECTED_MDN_SUBJECT,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
                 "Unexpected MDN subject");
         assertEquals(MDN_FROM, HttpMessageUtils.getHeaderValue(response, AS2Header.FROM), "Unexpected MDN from");
         assertEquals(AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM), "Unexpected AS2 from");
@@ -682,42 +782,60 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(responseEntity, "Response entity");
         assertTrue(responseEntity instanceof MultipartSignedEntity, "Unexpected response entity type");
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
-        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { serverCert }),
+        assertTrue(
+                SigningUtils.isValid(responseSignedEntity, new Certificate[] {serverCert}),
                 "Signature for response entity is invalid");
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
-        assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
+        assertTrue(
+                responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
                 "Signed entity wrong type");
-        DispositionNotificationMultipartReportEntity reportEntity
-                = (DispositionNotificationMultipartReportEntity) responseSignedDataEntity;
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) responseSignedDataEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentType(), "Unexpected content type in first body part of report");
+        assertEquals(
+                ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII)
+                        .toString(),
+                firstPart.getContentType(),
+                "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+        assertEquals(
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
                 secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
         assertNotNull(signatureEntity, "Signature Entity");
 
         assertTrue(secondPart instanceof AS2MessageDispositionNotificationEntity, "");
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = (AS2MessageDispositionNotificationEntity) secondPart;
-        assertEquals(ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA(),
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                (AS2MessageDispositionNotificationEntity) secondPart;
+        assertEquals(
+                ORIGIN_SERVER_NAME,
+                messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected value for reporting UA");
-        assertEquals(AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient(),
+        assertEquals(
+                AS2_NAME,
+                messageDispositionNotificationEntity.getFinalRecipient(),
                 "Unexpected value for final recipient");
-        assertEquals(HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
-                messageDispositionNotificationEntity.getOriginalMessageId(), "Unexpected value for original message ID");
-        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                messageDispositionNotificationEntity.getDispositionMode(), "Unexpected value for disposition mode");
-        assertEquals(AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType(),
+        assertEquals(
+                HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
+                messageDispositionNotificationEntity.getOriginalMessageId(),
+                "Unexpected value for original message ID");
+        assertEquals(
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                messageDispositionNotificationEntity.getDispositionMode(),
+                "Unexpected value for disposition mode");
+        assertEquals(
+                AS2DispositionType.PROCESSED,
+                messageDispositionNotificationEntity.getDispositionType(),
                 "Unexpected value for disposition type");
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
-        ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { clientCert }, null);
-        assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
+        ReceivedContentMic computedContentMic =
+                MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] {clientCert}, null);
+        assertEquals(
+                computedContentMic.getEncodedMessageDigest(),
+                receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
     }
 
@@ -769,10 +887,11 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertTrue(request instanceof ClassicHttpRequest, "Request does not contain body");
         HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
         assertNotNull(entity, "Request body");
-        assertTrue(entity instanceof ApplicationPkcs7MimeCompressedDataEntity, "Request body does not contain EDI entity");
+        assertTrue(
+                entity instanceof ApplicationPkcs7MimeCompressedDataEntity, "Request body does not contain EDI entity");
 
-        MimeEntity compressedEntity
-                = ((ApplicationPkcs7MimeCompressedDataEntity) entity).getCompressedEntity(new ZlibExpanderProvider());
+        MimeEntity compressedEntity =
+                ((ApplicationPkcs7MimeCompressedDataEntity) entity).getCompressedEntity(new ZlibExpanderProvider());
         assertTrue(compressedEntity instanceof ApplicationEntity, "Signed entity wrong type");
         ApplicationEntity ediMessageEntity = (ApplicationEntity) compressedEntity;
         verifyMessage(ediMessageEntity, encoding);
@@ -781,11 +900,17 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         String contentTypeHeaderValue = HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE);
         ContentType responseContentType = ContentType.parse(contentTypeHeaderValue);
         assertEquals(AS2MimeType.MULTIPART_SIGNED, responseContentType.getMimeType(), "Unexpected response type");
-        assertEquals(AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
+        assertEquals(
+                AS2Constants.MIME_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
                 "Unexpected mime version");
-        assertEquals(EXPECTED_AS2_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
+        assertEquals(
+                EXPECTED_AS2_VERSION,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
                 "Unexpected AS2 version");
-        assertEquals(EXPECTED_MDN_SUBJECT, HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
+        assertEquals(
+                EXPECTED_MDN_SUBJECT,
+                HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
                 "Unexpected MDN subject");
         assertEquals(MDN_FROM, HttpMessageUtils.getHeaderValue(response, AS2Header.FROM), "Unexpected MDN from");
         assertEquals(AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM), "Unexpected AS2 from");
@@ -795,62 +920,86 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(responseEntity, "Response entity");
         assertTrue(responseEntity instanceof MultipartSignedEntity, "Unexpected response entity type");
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
-        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { serverCert }),
+        assertTrue(
+                SigningUtils.isValid(responseSignedEntity, new Certificate[] {serverCert}),
                 "Signature for response entity is invalid");
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
-        assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
+        assertTrue(
+                responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
                 "Signed entity wrong type");
-        DispositionNotificationMultipartReportEntity reportEntity
-                = (DispositionNotificationMultipartReportEntity) responseSignedDataEntity;
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) responseSignedDataEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentType(), "Unexpected content type in first body part of report");
+        assertEquals(
+                ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII)
+                        .toString(),
+                firstPart.getContentType(),
+                "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+        assertEquals(
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
                 secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
         assertNotNull(signatureEntity, "Signature Entity");
 
         assertTrue(secondPart instanceof AS2MessageDispositionNotificationEntity, "");
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = (AS2MessageDispositionNotificationEntity) secondPart;
-        assertEquals(ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA(),
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                (AS2MessageDispositionNotificationEntity) secondPart;
+        assertEquals(
+                ORIGIN_SERVER_NAME,
+                messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected value for reporting UA");
-        assertEquals(AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient(),
+        assertEquals(
+                AS2_NAME,
+                messageDispositionNotificationEntity.getFinalRecipient(),
                 "Unexpected value for final recipient");
-        assertEquals(HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
-                messageDispositionNotificationEntity.getOriginalMessageId(), "Unexpected value for original message ID");
-        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                messageDispositionNotificationEntity.getDispositionMode(), "Unexpected value for disposition mode");
-        assertEquals(AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType(),
+        assertEquals(
+                HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID),
+                messageDispositionNotificationEntity.getOriginalMessageId(),
+                "Unexpected value for original message ID");
+        assertEquals(
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                messageDispositionNotificationEntity.getDispositionMode(),
+                "Unexpected value for disposition mode");
+        assertEquals(
+                AS2DispositionType.PROCESSED,
+                messageDispositionNotificationEntity.getDispositionType(),
                 "Unexpected value for disposition type");
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
-        ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, null,
-                        null);
-        assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
+        ReceivedContentMic computedContentMic =
+                MicUtils.createReceivedContentMic((ClassicHttpRequest) request, null, null);
+        assertEquals(
+                computedContentMic.getEncodedMessageDigest(),
+                receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
     }
 
     @Test
     public void asyncMDNTest() {
         assertDoesNotThrow(() -> runAsyncMDNTest());
-
     }
 
     private void runAsyncMDNTest() throws CamelException, HttpException {
         AS2AsynchronousMDNManager mdnManager = new AS2AsynchronousMDNManager(
-                AS2_VERSION, ORIGIN_SERVER_NAME, SERVER_FQDN,
-                new Certificate[] { clientCert }, clientKeyPair.getPrivate(), null, null, null);
+                AS2_VERSION,
+                ORIGIN_SERVER_NAME,
+                SERVER_FQDN,
+                new Certificate[] {clientCert},
+                clientKeyPair.getPrivate(),
+                null,
+                null,
+                null);
 
         // Create plain edi request message to acknowledge
-        ApplicationEntity ediEntity = EntityUtils
-                .createEDIEntity(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII),
-                        ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, false,
-                        ATTACHED_FILE_NAME);
+        ApplicationEntity ediEntity = EntityUtils.createEDIEntity(
+                EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII),
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII),
+                null,
+                false,
+                ATTACHED_FILE_NAME);
         BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", REQUEST_URI);
         HttpMessageUtils.setHeaderValue(request, AS2Header.SUBJECT, SUBJECT);
         String httpdate = DATE_GENERATOR.getCurrentDate();
@@ -859,8 +1008,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpMessageUtils.setHeaderValue(request, AS2Header.AS2_FROM, AS2_NAME);
         String originalMessageId = AS2Utils.createMessageId(SERVER_FQDN);
         HttpMessageUtils.setHeaderValue(request, AS2Header.MESSAGE_ID, originalMessageId);
-        HttpMessageUtils.setHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS,
-                DISPOSITION_NOTIFICATION_OPTIONS);
+        HttpMessageUtils.setHeaderValue(
+                request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, DISPOSITION_NOTIFICATION_OPTIONS);
         EntityUtils.setMessageEntity(request, ediEntity);
 
         // Create response for MDN creation.
@@ -873,14 +1022,25 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         Map<String, String> extensionFields = new HashMap<>();
         extensionFields.put("Original-Recipient", "rfc822;" + AS2_NAME);
         AS2DispositionModifier dispositionModifier = AS2DispositionModifier.createWarning("AS2 is cool!");
-        String[] failureFields = new String[] { "failure-field-1" };
-        String[] errorFields = new String[] { "error-field-1" };
-        String[] warningFields = new String[] { "warning-field-1" };
+        String[] failureFields = new String[] {"failure-field-1"};
+        String[] errorFields = new String[] {"error-field-1"};
+        String[] warningFields = new String[] {"warning-field-1"};
         DispositionNotificationMultipartReportEntity mdn = new DispositionNotificationMultipartReportEntity(
                 request,
-                response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED,
-                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, null, "boundary",
-                true, null, "Got your message!", null);
+                response,
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                AS2DispositionType.PROCESSED,
+                dispositionModifier,
+                failureFields,
+                errorFields,
+                warningFields,
+                extensionFields,
+                null,
+                "boundary",
+                true,
+                null,
+                "Got your message!",
+                null);
 
         // Send MDN
         @SuppressWarnings("unused")
@@ -932,7 +1092,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         return new ImmutableTriple<>(responseEntity, requestHandler.getRequest(), requestHandler.getResponse());
     }
 
-    private Triple<HttpEntity, HttpRequest, HttpResponse> executeRequest2(Map<String, Object> headers) throws Exception {
+    private Triple<HttpEntity, HttpRequest, HttpResponse> executeRequest2(Map<String, Object> headers)
+            throws Exception {
         HttpEntity responseEntity = requestBodyAndHeaders("direct://SEND2", EDI_MESSAGE, headers);
 
         return new ImmutableTriple<>(responseEntity, requestHandler.getRequest(), requestHandler.getResponse());
@@ -951,17 +1112,19 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 };
                 // test route for send
                 from("direct://SEND")
-                        .to("as2://" + PATH_PREFIX + "/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m");
+                        .to("as2://" + PATH_PREFIX
+                                + "/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m");
 
                 // test route for send2
                 from("direct://SEND2")
-                        .toF("as2://" + PATH_PREFIX
-                             + "/send?inBody=ediMessage&as2From=%s&as2To=%s&httpSocketTimeout=5m&httpConnectionTimeout=5m",
+                        .toF(
+                                "as2://" + PATH_PREFIX
+                                        + "/send?inBody=ediMessage&as2From=%s&as2To=%s&httpSocketTimeout=5m&httpConnectionTimeout=5m",
                                 AS2_NAME,
                                 AS2_NAME);
 
-                from("jetty:http://localhost:" + MDN_TARGET_PORT + "/handle-receipts").process(proc);
-
+                from("jetty:http://localhost:" + MDN_TARGET_PORT + "/handle-receipts")
+                        .process(proc);
             }
         };
     }
@@ -978,8 +1141,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         String issueDN = "O=Punkhorn Software, C=US";
         KeyPair issueKP = kpg.generateKeyPair();
-        X509Certificate issueCert = Utils.makeCertificate(
-                issueKP, issueDN, issueKP, issueDN);
+        X509Certificate issueCert = Utils.makeCertificate(issueKP, issueDN, issueKP, issueDN);
 
         //
         // certificate we sign against
@@ -991,10 +1153,20 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
-                AS2_VERSION, ORIGIN_SERVER_NAME,
-                SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
-                new Certificate[] { serverCert }, serverKP.getPrivate(), null,
-                MDN_MESSAGE_TEMPLATE, null, null, null, null, null);
+                AS2_VERSION,
+                ORIGIN_SERVER_NAME,
+                SERVER_FQDN,
+                PARTNER_TARGET_PORT,
+                AS2SignatureAlgorithm.SHA256WITHRSA,
+                new Certificate[] {serverCert},
+                serverKP.getPrivate(),
+                null,
+                MDN_MESSAGE_TEMPLATE,
+                null,
+                null,
+                null,
+                null,
+                null);
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
     }
@@ -1009,8 +1181,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         String issueDN = "O=Punkhorn Software, C=US";
         KeyPair issueKP = kpg.generateKeyPair();
-        X509Certificate issueCert = Utils.makeCertificate(
-                issueKP, issueDN, issueKP, issueDN);
+        X509Certificate issueCert = Utils.makeCertificate(issueKP, issueDN, issueKP, issueDN);
 
         //
         // certificate we sign against

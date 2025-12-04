@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URL;
 
@@ -31,8 +34,6 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSupport {
 
     protected JAXBContext jaxbContext;
@@ -41,7 +42,8 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        jaxbContext = (JAXBContext) PluginHelper.getModelJAXBContextFactory(context).newJAXBContext();
+        jaxbContext =
+                (JAXBContext) PluginHelper.getModelJAXBContextFactory(context).newJAXBContext();
     }
 
     protected Object parseUri(String uri) throws JAXBException {

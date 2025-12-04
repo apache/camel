@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena.client;
 
 import org.apache.camel.component.aws2.athena.Athena2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientStandardI
  */
 public final class Athena2ClientFactory {
 
-    private Athena2ClientFactory() {
-    }
+    private Athena2ClientFactory() {}
 
     /**
      * Return the correct AWS Athena client (based on remote vs local).

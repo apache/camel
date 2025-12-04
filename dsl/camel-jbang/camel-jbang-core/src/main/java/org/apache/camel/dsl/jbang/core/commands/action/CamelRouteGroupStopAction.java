@@ -14,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "stop-group",
-                     description = "Stop Camel route groups", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "stop-group",
+        description = "Stop Camel route groups",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelRouteGroupStopAction extends CamelRouteAction {
 
     public CamelRouteGroupStopAction(CamelJBangMain main) {
@@ -33,5 +37,4 @@ public class CamelRouteGroupStopAction extends CamelRouteAction {
         root.put("group", true);
         root.put("command", "stop");
     }
-
 }

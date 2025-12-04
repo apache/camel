@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -132,5 +133,4 @@ public class AntPathMatcherFileFilter implements FileFilter {
     public void setIncludes(String includes) {
         setIncludes(includes.split(","));
     }
-
 }

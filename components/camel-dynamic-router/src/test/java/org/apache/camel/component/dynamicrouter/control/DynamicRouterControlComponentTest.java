@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 
@@ -32,8 +35,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterControlComponentTest {
@@ -99,8 +100,8 @@ class DynamicRouterControlComponentTest {
     @Test
     void testCreateEndpoint() throws Exception {
         component.setCamelContext(context);
-        Endpoint actualEndpoint = component.createEndpoint(
-                "dynamic-router-control:testname", "remaining", Collections.emptyMap());
+        Endpoint actualEndpoint =
+                component.createEndpoint("dynamic-router-control:testname", "remaining", Collections.emptyMap());
         assertEquals(endpoint, actualEndpoint);
     }
 }

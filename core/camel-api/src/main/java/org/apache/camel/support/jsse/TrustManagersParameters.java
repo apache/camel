@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
 
 import java.io.IOException;
@@ -52,7 +53,7 @@ public class TrustManagersParameters extends JsseParameters {
     public TrustManager[] createTrustManagers() throws GeneralSecurityException, IOException {
         if (trustManager != null) {
             // use existing trust manager
-            return new TrustManager[] { trustManager };
+            return new TrustManager[] {trustManager};
         }
 
         LOG.trace("Creating TrustManager[] from TrustManagersParameters [{}]", this);
@@ -72,8 +73,11 @@ public class TrustManagersParameters extends JsseParameters {
                 tmf = TrustManagerFactory.getInstance(tmfAlgorithm, this.parsePropertyValue(this.getProvider()));
             }
 
-            LOG.debug("TrustManagerFactory [{}] is using provider [{}] and algorithm [{}].",
-                    tmf, tmf.getProvider(), tmf.getAlgorithm());
+            LOG.debug(
+                    "TrustManagerFactory [{}] is using provider [{}] and algorithm [{}].",
+                    tmf,
+                    tmf.getProvider(),
+                    tmf.getAlgorithm());
 
             KeyStore ks = this.getKeyStore() == null ? null : this.getKeyStore().createKeyStore();
             tmf.init(ks);

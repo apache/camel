@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.apache.camel.util.PropertiesHelper.asProperties;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Properties;
 
@@ -24,94 +28,82 @@ import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.util.PropertiesHelper.asProperties;
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class KameletGlobalPropertiesTest extends CamelTestSupport {
     @Test
     public void propertiesAreTakenFromRouteId() {
-        assertThat(
-                fluentTemplate
-                        .to("direct:someId")
-                        .request(String.class))
-                .isEqualTo("from-route-someId");
+        assertThat(fluentTemplate.to("direct:someId").request(String.class)).isEqualTo("from-route-someId");
 
-        assertThat(
-                fluentTemplate
-                        .to("kamelet:setBody/test")
-                        .request(String.class))
+        assertThat(fluentTemplate.to("kamelet:setBody/test").request(String.class))
                 .isEqualTo("from-route");
     }
 
     @Test
     public void propertiesAreTakenFromTemplateId() {
-        assertThat(
-                fluentTemplate
-                        .to("kamelet:setBody")
-                        .request(String.class))
-                .isEqualTo("from-template");
+        assertThat(fluentTemplate.to("kamelet:setBody").request(String.class)).isEqualTo("from-template");
     }
 
     @Test
     public void propertiesAreTakenFromURI() {
-        assertThat(
-                fluentTemplate
-                        .to("kamelet:setBody?bodyValue={{bodyValue}}")
-                        .request(String.class))
+        assertThat(fluentTemplate.to("kamelet:setBody?bodyValue={{bodyValue}}").request(String.class))
                 .isEqualTo("from-uri");
     }
 
     @Test
     public void rawIsPropagated() {
-        context.getEndpoint(
-                "kamelet:http-send?proxyUsr=RAW(u+sr)&proxyPwd=RAW(p+wd)");
+        context.getEndpoint("kamelet:http-send?proxyUsr=RAW(u+sr)&proxyPwd=RAW(p+wd)");
 
-        assertThat(context.getEndpoints().stream().filter(HttpEndpoint.class::isInstance).findFirst()
-                .map(HttpEndpoint.class::cast))
+        assertThat(context.getEndpoints().stream()
+                        .filter(HttpEndpoint.class::isInstance)
+                        .findFirst()
+                        .map(HttpEndpoint.class::cast))
                 .get()
-                .hasFieldOrPropertyWithValue("endpointUri",
-                        "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
+                .hasFieldOrPropertyWithValue(
+                        "endpointUri", "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
                 .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
                 .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
     }
 
     @Test
     public void rawWithPlaceholdersIsPropagated() {
-        context.getEndpoint(
-                "kamelet:http-send?proxyUsr=RAW({{proxy.usr}})&proxyPwd=RAW({{proxy.pwd}})");
+        context.getEndpoint("kamelet:http-send?proxyUsr=RAW({{proxy.usr}})&proxyPwd=RAW({{proxy.pwd}})");
 
-        assertThat(context.getEndpoints().stream().filter(HttpEndpoint.class::isInstance).findFirst()
-                .map(HttpEndpoint.class::cast))
+        assertThat(context.getEndpoints().stream()
+                        .filter(HttpEndpoint.class::isInstance)
+                        .findFirst()
+                        .map(HttpEndpoint.class::cast))
                 .get()
-                .hasFieldOrPropertyWithValue("endpointUri",
-                        "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
+                .hasFieldOrPropertyWithValue(
+                        "endpointUri", "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
                 .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
                 .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
     }
 
     @Test
     public void rawPropertiesIsPropagated() {
-        context.getEndpoint(
-                "kamelet:http-send?proxyUsr={{raw.proxy.usr}}&proxyPwd={{raw.proxy.pwd}}");
+        context.getEndpoint("kamelet:http-send?proxyUsr={{raw.proxy.usr}}&proxyPwd={{raw.proxy.pwd}}");
 
-        assertThat(context.getEndpoints().stream().filter(HttpEndpoint.class::isInstance).findFirst()
-                .map(HttpEndpoint.class::cast))
+        assertThat(context.getEndpoints().stream()
+                        .filter(HttpEndpoint.class::isInstance)
+                        .findFirst()
+                        .map(HttpEndpoint.class::cast))
                 .get()
-                .hasFieldOrPropertyWithValue("endpointUri",
-                        "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
+                .hasFieldOrPropertyWithValue(
+                        "endpointUri", "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
                 .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
                 .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
     }
 
     @Test
     public void rawPropertyRefIsPropagated() {
-        context.getEndpoint(
-                "kamelet:http-send?proxyUsr=#property:proxy.usr&proxyPwd=#property:proxy.pwd");
+        context.getEndpoint("kamelet:http-send?proxyUsr=#property:proxy.usr&proxyPwd=#property:proxy.pwd");
 
-        assertThat(context.getEndpoints().stream().filter(HttpEndpoint.class::isInstance).findFirst()
-                .map(HttpEndpoint.class::cast))
+        assertThat(context.getEndpoints().stream()
+                        .filter(HttpEndpoint.class::isInstance)
+                        .findFirst()
+                        .map(HttpEndpoint.class::cast))
                 .get()
-                .hasFieldOrPropertyWithValue("endpointUri",
+                .hasFieldOrPropertyWithValue(
+                        "endpointUri",
                         "http://localhost:8080?proxyAuthUsername=%23property%3Aproxy.usr&proxyAuthPassword=%23property%3Aproxy.pwd")
                 .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
                 .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
@@ -120,14 +112,15 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
     @Test
     public void urlEncodingIsRespected() {
         assertThat(context.getEndpoint("kamelet:timer-source?message=Hello Kamelets&period=1000", KameletEndpoint.class)
-                .getKameletProperties())
+                        .getKameletProperties())
                 .containsEntry("message", "Hello Kamelets");
         assertThat(context.getEndpoint("kamelet:timer-source?message=Hi Kamelets&period=1000", KameletEndpoint.class)
-                .getKameletProperties())
+                        .getKameletProperties())
                 .containsEntry("message", "Hi Kamelets");
-        assertThat(context
-                .getEndpoint("kamelet:timer-source?message=messaging.knative.dev/v1beta1&period=1000", KameletEndpoint.class)
-                .getKameletProperties())
+        assertThat(context.getEndpoint(
+                                "kamelet:timer-source?message=messaging.knative.dev/v1beta1&period=1000",
+                                KameletEndpoint.class)
+                        .getKameletProperties())
                 .containsEntry("message", "messaging.knative.dev/v1beta1");
     }
 
@@ -140,14 +133,22 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
     @Override
     protected Properties useOverridePropertiesWithPropertiesComponent() {
         return asProperties(
-                "proxy.usr", "u+sr",
-                "proxy.pwd", "p+wd",
-                "raw.proxy.usr", "RAW(u+sr)",
-                "raw.proxy.pwd", "RAW(p+wd)",
-                "bodyValue", "from-uri",
-                Kamelet.PROPERTIES_PREFIX + "setBody.bodyValue", "from-template",
-                Kamelet.PROPERTIES_PREFIX + "setBody.test.bodyValue", "from-route",
-                Kamelet.PROPERTIES_PREFIX + "setBody.someId.bodyValue", "from-route-someId");
+                "proxy.usr",
+                "u+sr",
+                "proxy.pwd",
+                "p+wd",
+                "raw.proxy.usr",
+                "RAW(u+sr)",
+                "raw.proxy.pwd",
+                "RAW(p+wd)",
+                "bodyValue",
+                "from-uri",
+                Kamelet.PROPERTIES_PREFIX + "setBody.bodyValue",
+                "from-template",
+                Kamelet.PROPERTIES_PREFIX + "setBody.test.bodyValue",
+                "from-route",
+                Kamelet.PROPERTIES_PREFIX + "setBody.someId.bodyValue",
+                "from-route-someId");
     }
 
     @Override
@@ -159,7 +160,8 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
                 routeTemplate("setBody")
                         .templateParameter("bodyValue")
                         .from("kamelet:source")
-                        .setBody().constant("{{bodyValue}}");
+                        .setBody()
+                        .constant("{{bodyValue}}");
 
                 // template
                 routeTemplate("http-send")
@@ -167,14 +169,16 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
                         .templateParameter("proxyPwd")
                         .from("kamelet:source")
                         .log("info")
-                        .to("http://localhost:8080?proxyAuthUsername=RAW({{proxyUsr}})&proxyAuthPassword=RAW({{proxyPwd}})");
+                        .to(
+                                "http://localhost:8080?proxyAuthUsername=RAW({{proxyUsr}})&proxyAuthPassword=RAW({{proxyPwd}})");
 
                 // template
                 routeTemplate("timer-source")
                         .templateParameter("period")
                         .templateParameter("message")
                         .from("timer:tick")
-                        .setBody().constant("{{message}}")
+                        .setBody()
+                        .constant("{{message}}")
                         .to("kamelet:sink");
 
                 // routes

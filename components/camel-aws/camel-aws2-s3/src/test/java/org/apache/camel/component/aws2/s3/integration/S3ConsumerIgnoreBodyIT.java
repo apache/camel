@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -50,8 +51,7 @@ public class S3ConsumerIgnoreBodyIT extends Aws2S3Base {
             }
         });
 
-        Awaitility.await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
         Assertions.assertNull(result.getExchanges().get(0).getMessage().getBody());
     }
 
@@ -65,9 +65,10 @@ public class S3ConsumerIgnoreBodyIT extends Aws2S3Base {
                 from("direct:putObject").startupOrder(1).to(awsEndpoint);
 
                 from("aws2-s3://" + name.get()
-                     + "?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)&ignoreBody=true")
-                        .startupOrder(2).log("${body}").to("mock:result");
-
+                                + "?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)&ignoreBody=true")
+                        .startupOrder(2)
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

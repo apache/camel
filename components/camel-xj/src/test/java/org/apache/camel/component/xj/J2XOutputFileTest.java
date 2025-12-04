@@ -33,8 +33,8 @@ public class J2XOutputFileTest extends CamelTestSupport {
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
         mock.message(0).body().isInstanceOf(File.class);
 
-        template.sendBodyAndHeader("direct:start", "{\"hello\": \"world!\"}", Exchange.XSLT_FILE_NAME,
-                "target/J2XOutputFileTest.xml");
+        template.sendBodyAndHeader(
+                "direct:start", "{\"hello\": \"world!\"}", Exchange.XSLT_FILE_NAME, "target/J2XOutputFileTest.xml");
 
         MockEndpoint.assertIsSatisfied(context);
     }

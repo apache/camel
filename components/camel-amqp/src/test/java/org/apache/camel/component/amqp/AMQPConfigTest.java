@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
+
+import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.core.CamelContextExtension;
@@ -23,12 +30,6 @@ import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.qpid.jms.JmsConnectionFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AMQPConfigTest {
 
@@ -49,7 +50,8 @@ public class AMQPConfigTest {
 
     @Test
     public void testConfiguredComponent() {
-        AMQPComponent customizedComponent = contextExtension.getContext().getComponent("amqp-configured", AMQPComponent.class);
+        AMQPComponent customizedComponent =
+                contextExtension.getContext().getComponent("amqp-configured", AMQPComponent.class);
         assertEquals("remotehost", customizedComponent.getHost());
         assertEquals(5556, customizedComponent.getPort());
         assertEquals("camel", customizedComponent.getUsername());
@@ -65,7 +67,8 @@ public class AMQPConfigTest {
 
     @Test
     public void testConfiguredSslComponent() {
-        AMQPComponent customizedComponent = contextExtension.getContext().getComponent("amqps-configured", AMQPComponent.class);
+        AMQPComponent customizedComponent =
+                contextExtension.getContext().getComponent("amqps-configured", AMQPComponent.class);
         assertTrue(customizedComponent.getUseSsl());
         assertEquals("server-ca-truststore.p12", customizedComponent.getTrustStoreLocation());
         assertEquals("securepass", customizedComponent.getTrustStorePassword());
@@ -86,8 +89,8 @@ public class AMQPConfigTest {
 
     @Test
     public void testEnabledSslComponent() {
-        AMQPComponent amqpSslEnabledComponent
-                = contextExtension.getContext().getComponent("amqps-enabled", AMQPComponent.class);
+        AMQPComponent amqpSslEnabledComponent =
+                contextExtension.getContext().getComponent("amqps-enabled", AMQPComponent.class);
         assertTrue(amqpSslEnabledComponent.getUseSsl());
         assertNull(amqpSslEnabledComponent.getTrustStoreLocation());
         assertNull(amqpSslEnabledComponent.getTrustStorePassword());

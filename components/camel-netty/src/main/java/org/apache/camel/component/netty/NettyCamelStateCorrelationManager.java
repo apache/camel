@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.Map;
@@ -67,5 +68,4 @@ public interface NettyCamelStateCorrelationManager {
      * @param cause   the error
      */
     NettyCamelState getState(ChannelHandlerContext ctx, Channel channel, Throwable cause);
-
 }

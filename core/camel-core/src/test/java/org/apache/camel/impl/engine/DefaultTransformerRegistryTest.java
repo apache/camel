@@ -27,7 +27,8 @@ import org.junit.jupiter.api.Test;
 
 class DefaultTransformerRegistryTest {
 
-    private final DefaultTransformerRegistry dataTypeRegistry = new DefaultTransformerRegistry(new DefaultCamelContext());
+    private final DefaultTransformerRegistry dataTypeRegistry =
+            new DefaultTransformerRegistry(new DefaultCamelContext());
 
     @Test
     public void shouldLookupDefaultDataTypeTransformers() {
@@ -44,5 +45,4 @@ class DefaultTransformerRegistryTest {
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(UppercaseDataTypeTransformer.class, transformer.getClass());
     }
-
 }

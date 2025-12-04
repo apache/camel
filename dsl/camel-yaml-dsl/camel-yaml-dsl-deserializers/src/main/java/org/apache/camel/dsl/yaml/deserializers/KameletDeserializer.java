@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.Map;
@@ -31,15 +32,15 @@ import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
 @YamlType(
-          inline = true,
-          types = org.apache.camel.model.KameletDefinition.class,
-          order = YamlDeserializerResolver.ORDER_DEFAULT,
-          nodes = "kamelet",
-          properties = {
-                  @YamlProperty(name = "name", type = "string", required = true),
-                  @YamlProperty(name = "parameters", type = "object"),
-                  @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
-          })
+        inline = true,
+        types = org.apache.camel.model.KameletDefinition.class,
+        order = YamlDeserializerResolver.ORDER_DEFAULT,
+        nodes = "kamelet",
+        properties = {
+            @YamlProperty(name = "name", type = "string", required = true),
+            @YamlProperty(name = "parameters", type = "object"),
+            @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
+        })
 public class KameletDeserializer extends YamlDeserializerBase<KameletDefinition> {
 
     public KameletDeserializer() {

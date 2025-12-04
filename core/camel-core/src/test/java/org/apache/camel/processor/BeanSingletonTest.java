@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.naming.Context;
 
@@ -26,8 +29,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanSingletonTest extends ContextTestSupport {
 
@@ -80,7 +81,9 @@ public class BeanSingletonTest extends ContextTestSupport {
         } catch (CamelExecutionException ex) {
             boolean b = ex.getCause() instanceof IllegalStateException;
             assertTrue(b, "IllegalStateException is expected!");
-            assertEquals("This bean is not supported to be invoked again!", ex.getCause().getMessage());
+            assertEquals(
+                    "This bean is not supported to be invoked again!",
+                    ex.getCause().getMessage());
         }
     }
 
@@ -93,8 +96,6 @@ public class BeanSingletonTest extends ContextTestSupport {
             } else {
                 invoked = true;
             }
-
         }
     }
-
 }

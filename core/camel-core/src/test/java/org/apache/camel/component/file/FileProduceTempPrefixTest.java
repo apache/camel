@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -40,7 +41,8 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, TEST_FILE_NAME_2);
 
-        String tempFileName = producer.createTempFileName(exchange, testFile(TEST_FILE_NAME_2).toString());
+        String tempFileName =
+                producer.createTempFileName(exchange, testFile(TEST_FILE_NAME_2).toString());
         assertDirectoryEquals(testFile("inprogress." + TEST_FILE_NAME_2).toString(), tempFileName);
     }
 
@@ -51,7 +53,8 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "foo/" + TEST_FILE_NAME_2);
 
-        String tempFileName = producer.createTempFileName(exchange, testFile("foo/" + TEST_FILE_NAME_2).toString());
+        String tempFileName = producer.createTempFileName(
+                exchange, testFile("foo/" + TEST_FILE_NAME_2).toString());
         assertDirectoryEquals(testFile("foo/inprogress." + TEST_FILE_NAME_2).toString(), tempFileName);
     }
 

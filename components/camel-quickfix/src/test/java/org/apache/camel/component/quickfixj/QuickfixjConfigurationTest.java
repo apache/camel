@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +27,6 @@ import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class QuickfixjConfigurationTest {
 

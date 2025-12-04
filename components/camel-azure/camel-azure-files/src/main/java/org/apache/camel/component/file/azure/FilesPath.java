@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 /**
@@ -122,7 +123,7 @@ public final class FilesPath {
         }
 
         if (preserveRootAsStep && path.equals(SHARE_ROOT)) {
-            return new String[] { SHARE_ROOT };
+            return new String[] {SHARE_ROOT};
         }
 
         var includeRoot = preserveRootAsStep && path.startsWith(SHARE_ROOT);
@@ -148,5 +149,4 @@ public final class FilesPath {
         }
         return path;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -55,13 +56,17 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     private final String endpointPath;
     private Set<String> extendedAttributes;
 
-    public FileConsumer(FileEndpoint endpoint, Processor processor, GenericFileOperations<File> operations,
-                        GenericFileProcessStrategy<File> processStrategy) {
+    public FileConsumer(
+            FileEndpoint endpoint,
+            Processor processor,
+            GenericFileOperations<File> operations,
+            GenericFileProcessStrategy<File> processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
 
         if (endpoint.getExtendedAttributes() != null) {
-            List<String> attributes = Arrays.asList(endpoint.getExtendedAttributes().split(","));
+            List<String> attributes =
+                    Arrays.asList(endpoint.getExtendedAttributes().split(","));
             this.extendedAttributes = new HashSet<>(attributes);
         }
     }
@@ -106,14 +111,21 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
             // trace log as Windows/Unix can have different views what the file is
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file, file.isAbsolute(),
-                        file.isDirectory(), file.isFile(),
+                LOG.trace(
+                        "Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]",
+                        file,
+                        file.isAbsolute(),
+                        file.isDirectory(),
+                        file.isFile(),
                         file.isHidden());
             }
 
             // creates a generic file
-            Supplier<GenericFile<File>> gf = Suppliers.memorize(
-                    () -> asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType()));
+            Supplier<GenericFile<File>> gf = Suppliers.memorize(() -> asGenericFile(
+                    endpointPath,
+                    file,
+                    getEndpoint().getCharset(),
+                    getEndpoint().isProbeContentType()));
 
             if (resumeStrategy != null) {
                 final ResumeAdapter adapter = setupResumeStrategy(gf.get());
@@ -135,26 +147,37 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
     private boolean processEntry(
             Exchange dynamic,
-            List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
+            List<GenericFile<File>> fileList,
+            int depth,
+            File file,
+            Supplier<GenericFile<File>> gf,
+            File[] files) {
         if (file.isDirectory()) {
             return processDirectoryEntry(dynamic, fileList, depth, file, gf, files);
         } else {
             processFileEntry(dynamic, fileList, depth, file, gf, files);
-
         }
         return false;
     }
 
     private void processFileEntry(
             Exchange dynamic,
-            List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
+            List<GenericFile<File>> fileList,
+            int depth,
+            File file,
+            Supplier<GenericFile<File>> gf,
+            File[] files) {
         // Windows can report false to a file on a share so regard it
         // always as a file (if it is not a directory)
         if (depth >= endpoint.minDepth) {
-            boolean valid
-                    = isValidFile(dynamic, gf, file.getName(), file.getAbsolutePath(),
-                            getRelativeFilePath(endpointPath, null, null, file),
-                            false, files);
+            boolean valid = isValidFile(
+                    dynamic,
+                    gf,
+                    file.getName(),
+                    file.getAbsolutePath(),
+                    getRelativeFilePath(endpointPath, null, null, file),
+                    false,
+                    files);
             if (valid) {
                 LOG.trace("Adding valid file: {}", file);
                 if (extendedAttributes != null) {
@@ -172,12 +195,20 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
     private boolean processDirectoryEntry(
             Exchange dynamic,
-            List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
+            List<GenericFile<File>> fileList,
+            int depth,
+            File file,
+            Supplier<GenericFile<File>> gf,
+            File[] files) {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
-            boolean valid
-                    = isValidFile(dynamic, gf, file.getName(), file.getAbsolutePath(),
-                            getRelativeFilePath(endpointPath, null, null, file),
-                            true, files);
+            boolean valid = isValidFile(
+                    dynamic,
+                    gf,
+                    file.getName(),
+                    file.getAbsolutePath(),
+                    getRelativeFilePath(endpointPath, null, null, file),
+                    true,
+                    files);
             if (valid) {
                 boolean canPollMore = pollDirectory(dynamic, file, fileList, depth);
                 return !canPollMore;
@@ -284,7 +315,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
      * @param  probeContentType whether to probe the content type of the file or not
      * @return                  wrapped as a GenericFile
      */
-    public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset, boolean probeContentType) {
+    public static GenericFile<File> asGenericFile(
+            String endpointPath, File file, String charset, boolean probeContentType) {
         GenericFile<File> answer = new GenericFile<>(probeContentType);
         // use file specific binding
         answer.setBinding(new FileBinding());

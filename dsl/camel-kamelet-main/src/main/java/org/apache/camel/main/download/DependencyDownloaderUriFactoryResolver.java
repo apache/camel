@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
@@ -38,10 +39,9 @@ public class DependencyDownloaderUriFactoryResolver extends DefaultUriFactoryRes
     @Override
     public EndpointUriFactory resolveFactory(String name, CamelContext context) {
         ComponentModel model = catalog.componentModel(name);
-        if (model != null && !downloader.alreadyOnClasspath(model.getGroupId(), model.getArtifactId(),
-                model.getVersion())) {
-            downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
-                    model.getVersion());
+        if (model != null
+                && !downloader.alreadyOnClasspath(model.getGroupId(), model.getArtifactId(), model.getVersion())) {
+            downloader.downloadDependency(model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
 
         return super.resolveFactory(name, context);

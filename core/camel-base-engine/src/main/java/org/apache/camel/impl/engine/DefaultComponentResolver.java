@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
@@ -51,8 +52,12 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found component: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(),
-                    name);
+            getLog().debug(
+                            "Found component: {} via type: {} via: {}{}",
+                            name,
+                            type.getName(),
+                            factoryFinder.getResourcePath(),
+                            name);
         }
 
         // create the component
@@ -73,5 +78,4 @@ public class DefaultComponentResolver implements ComponentResolver {
     protected Logger getLog() {
         return LOG;
     }
-
 }

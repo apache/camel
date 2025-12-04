@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,8 +26,6 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ObjectMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JGroupsComponentTest extends CamelTestSupport {
 
@@ -100,5 +101,4 @@ public class JGroupsComponentTest extends CamelTestSupport {
         // Then
         assertNotNull(component.getChannel());
     }
-
 }

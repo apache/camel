@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -28,10 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedPollEnricherTest extends ManagementTestSupport {
@@ -92,10 +93,12 @@ public class ManagedPollEnricherTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .pollEnrich().simple("seda:${header.whereto}").timeout(1000).id("mysend")
+                        .pollEnrich()
+                        .simple("seda:${header.whereto}")
+                        .timeout(1000)
+                        .id("mysend")
                         .to("mock:foo");
             }
         };
     }
-
 }

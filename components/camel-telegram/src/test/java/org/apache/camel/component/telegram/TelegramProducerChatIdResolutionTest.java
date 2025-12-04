@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -27,9 +31,6 @@ import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests a producer route with a fixed destination.
@@ -46,7 +47,8 @@ public class TelegramProducerChatIdResolutionTest extends TelegramTestSupport {
 
         template.sendBody(endpoint, "Hello");
 
-        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        final OutgoingTextMessage message =
+                mockProcessor.awaitRecordedMessages(1, 5000).get(0);
         assertEquals("my-id", message.getChatId());
         assertEquals("Hello", message.getText());
         assertNull(message.getParseMode());
@@ -63,24 +65,24 @@ public class TelegramProducerChatIdResolutionTest extends TelegramTestSupport {
 
         template.send(endpoint, exchange);
 
-        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        final OutgoingTextMessage message =
+                mockProcessor.awaitRecordedMessages(1, 5000).get(0);
         assertEquals("my-second-id", message.getChatId());
         assertEquals("Hello 2", message.getText());
         assertNull(message.getParseMode());
-
     }
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("direct:telegram")
-                                .to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
+                }
+            }
+        };
     }
 
     @Override

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.discovery.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.ibm.watson.discovery.v2.model.ListCollectionsResponse;
 import com.ibm.watson.discovery.v2.model.QueryResponse;
@@ -31,18 +34,22 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration tests for Watson Discovery operations.
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.apiKey", matches = ".*",
-                                 disabledReason = "IBM Watson API Key not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.serviceUrl", matches = ".*",
-                                 disabledReason = "IBM Watson Discovery Service URL not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.projectId", matches = ".*",
-                                 disabledReason = "IBM Watson Discovery Project ID not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.watson.apiKey",
+            matches = ".*",
+            disabledReason = "IBM Watson API Key not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.watson.serviceUrl",
+            matches = ".*",
+            disabledReason = "IBM Watson Discovery Service URL not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.watson.projectId",
+            matches = ".*",
+            disabledReason = "IBM Watson Discovery Project ID not provided")
 })
 public class WatsonDiscoveryIT extends WatsonDiscoveryTestSupport {
 
@@ -131,13 +138,9 @@ public class WatsonDiscoveryIT extends WatsonDiscoveryTestSupport {
                         .to(buildEndpointUri("listCollections"))
                         .to("mock:result");
 
-                from("direct:query")
-                        .to(buildEndpointUri("query"))
-                        .to("mock:result");
+                from("direct:query").to(buildEndpointUri("query")).to("mock:result");
 
-                from("direct:queryWithFilter")
-                        .to(buildEndpointUri("query"))
-                        .to("mock:result");
+                from("direct:queryWithFilter").to(buildEndpointUri("query")).to("mock:result");
             }
         };
     }

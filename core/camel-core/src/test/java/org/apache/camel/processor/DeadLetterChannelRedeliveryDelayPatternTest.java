@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to verify delay pattern
@@ -55,7 +56,9 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delayPattern("0:250;2:500").maximumRedeliveries(3)
+                errorHandler(deadLetterChannel("mock:error")
+                        .delayPattern("0:250;2:500")
+                        .maximumRedeliveries(3)
                         .onRedelivery(new Processor() {
                             public void process(Exchange exchange) {
                                 counter++;
@@ -66,5 +69,4 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
             }
         };
     }
-
 }

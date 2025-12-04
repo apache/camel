@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.rocketmq.common;
 
 public final class RocketMQProperties {
@@ -25,7 +26,5 @@ public final class RocketMQProperties {
     public static final int ROCKETMQ_BROKER2_PORT = 10911;
     public static final int ROCKETMQ_BROKER3_PORT = 10912;
 
-    private RocketMQProperties() {
-
-    }
+    private RocketMQProperties() {}
 }

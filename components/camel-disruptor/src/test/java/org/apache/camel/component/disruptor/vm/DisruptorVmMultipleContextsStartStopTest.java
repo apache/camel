@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -38,7 +39,6 @@ public class DisruptorVmMultipleContextsStartStopTest extends AbstractVmTestSupp
         /* Send a message again and assert that it's received */
         template.requestBody("direct:test", "Hello world!");
         mock.assertIsSatisfied();
-
     }
 
     @Override
@@ -59,7 +59,5 @@ public class DisruptorVmMultipleContextsStartStopTest extends AbstractVmTestSupp
                 from("disruptor-vm:foo").to("mock:result");
             }
         };
-
     }
-
 }

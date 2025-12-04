@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.util.ArrayList;
@@ -33,8 +34,8 @@ import org.apache.camel.tooling.model.PojoBeanModel;
  */
 public class JavaKnownImportsDownloader implements CompilePreProcessor {
 
-    private static final Pattern IMPORT_PATTERN = Pattern.compile(
-            "^import\\s+([a-zA-Z][.\\w]*)\\s*;", Pattern.MULTILINE);
+    private static final Pattern IMPORT_PATTERN =
+            Pattern.compile("^import\\s+([a-zA-Z][.\\w]*)\\s*;", Pattern.MULTILINE);
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final DependencyDownloader downloader;
@@ -83,5 +84,4 @@ public class JavaKnownImportsDownloader implements CompilePreProcessor {
         }
         return answer;
     }
-
 }

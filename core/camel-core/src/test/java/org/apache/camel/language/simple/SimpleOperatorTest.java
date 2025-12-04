@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SimpleOperatorTest extends LanguageTestSupport {
 
@@ -606,7 +607,8 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} is 'String'", true);
         assertPredicate("${in.header.foo} is 'Integer'", false);
 
-        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} is com.mycompany.DoesNotExist", false),
                 "Should have thrown an exception");
 
@@ -625,13 +627,15 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} !is 'String'", false);
         assertPredicate("${in.header.foo} !is 'Integer'", true);
 
-        SimpleIllegalSyntaxException e1 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e1 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} not is com.mycompany.DoesNotExist", false),
                 "Should have thrown an exception");
 
         assertEquals(24, e1.getIndex());
 
-        SimpleIllegalSyntaxException e2 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e2 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} !is com.mycompany.DoesNotExist", false),
                 "Should have thrown an exception");
 
@@ -649,19 +653,22 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${bean:generator.generateId} range '120..122'", false);
         assertPredicate("${bean:generator.generateId} range '124..130'", false);
 
-        SimpleIllegalSyntaxException e1 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e1 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} range abc..200", false),
                 "Should have thrown an exception");
 
         assertEquals(23, e1.getIndex());
 
-        SimpleIllegalSyntaxException e2 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e2 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} range abc..", false),
                 "Should have thrown an exception");
 
         assertEquals(23, e2.getIndex());
 
-        SimpleIllegalSyntaxException e3 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e3 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} range 100.200", false),
                 "Should have thrown an exception");
 
@@ -691,37 +698,43 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${bean:generator.generateId} !range '120..122'", true);
         assertPredicate("${bean:generator.generateId} !range '124..130'", true);
 
-        SimpleIllegalSyntaxException e1 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e1 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} not range abc..200", false),
                 "Should have thrown an exception");
 
         assertEquals(27, e1.getIndex());
 
-        SimpleIllegalSyntaxException e2 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e2 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} !range abc..200", false),
                 "Should have thrown an exception");
 
         assertEquals(24, e2.getIndex());
 
-        SimpleIllegalSyntaxException e3 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e3 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} not range abc..", false),
                 "Should have thrown an exception");
 
         assertEquals(27, e3.getIndex());
 
-        SimpleIllegalSyntaxException e4 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e4 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} !range abc..", false),
                 "Should have thrown an exception");
 
         assertEquals(24, e4.getIndex());
 
-        SimpleIllegalSyntaxException e5 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e5 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} not range 100.200", false),
                 "Should have thrown an exception");
 
         assertEquals(34, e5.getIndex());
 
-        SimpleIllegalSyntaxException e6 = assertThrows(SimpleIllegalSyntaxException.class,
+        SimpleIllegalSyntaxException e6 = assertThrows(
+                SimpleIllegalSyntaxException.class,
                 () -> assertPredicate("${in.header.foo} !range 100.200", false),
                 "Should have thrown an exception");
 
@@ -814,5 +827,4 @@ public class SimpleOperatorTest extends LanguageTestSupport {
             return 123;
         }
     }
-
 }

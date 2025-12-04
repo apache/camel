@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -42,9 +43,11 @@ public class JettySteveIssueTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:" + serverUri).setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
+                from("jetty:" + serverUri)
+                        .setBody()
+                        .simple("<html><body>${in.header.x}</body></html>")
+                        .to("mock:result");
             }
         };
     }
-
 }

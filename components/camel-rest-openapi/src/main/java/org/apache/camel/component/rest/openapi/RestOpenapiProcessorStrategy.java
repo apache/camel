@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -82,9 +83,12 @@ public interface RestOpenapiProcessorStrategy {
      */
     boolean process(
             OpenAPI openAPI,
-            Operation operation, String verb, String path,
+            Operation operation,
+            String verb,
+            String path,
             RestBindingAdvice binding,
-            Exchange exchange, AsyncCallback callback);
+            Exchange exchange,
+            AsyncCallback callback);
 
     /**
      * Strategy for processing the OpenAPI specification (to return the contract)
@@ -97,5 +101,4 @@ public interface RestOpenapiProcessorStrategy {
      *                  asynchronously
      */
     boolean processApiSpecification(String specificationUri, Exchange exchange, AsyncCallback callback);
-
 }

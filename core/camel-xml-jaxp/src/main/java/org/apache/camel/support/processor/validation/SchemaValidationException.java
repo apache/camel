@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor.validation;
 
 import java.io.Serial;
@@ -35,8 +36,12 @@ public class SchemaValidationException extends ValidationException {
     private final List<SAXParseException> errors;
     private final List<SAXParseException> warnings;
 
-    public SchemaValidationException(Exchange exchange, Object schema, List<SAXParseException> fatalErrors,
-                                     List<SAXParseException> errors, List<SAXParseException> warnings) {
+    public SchemaValidationException(
+            Exchange exchange,
+            Object schema,
+            List<SAXParseException> fatalErrors,
+            List<SAXParseException> errors,
+            List<SAXParseException> warnings) {
         super(exchange, message(schema, fatalErrors, errors, warnings));
         this.schema = schema;
         this.fatalErrors = fatalErrors;
@@ -73,24 +78,23 @@ public class SchemaValidationException extends ValidationException {
     }
 
     protected static String message(
-            Object schema, List<SAXParseException> fatalErrors,
-            List<SAXParseException> errors, List<SAXParseException> warnings) {
+            Object schema,
+            List<SAXParseException> fatalErrors,
+            List<SAXParseException> errors,
+            List<SAXParseException> warnings) {
         StringBuilder buffer = new StringBuilder(128)
                 .append("Validation failed for: ")
                 .append(schema)
                 .append("\n");
 
         if (!fatalErrors.isEmpty()) {
-            buffer.append("fatal errors: [")
-                    .append("\n");
+            buffer.append("fatal errors: [").append("\n");
             appendDetails(buffer, fatalErrors);
-            buffer.append("]")
-                    .append("\n");
+            buffer.append("]").append("\n");
         }
 
         if (!errors.isEmpty()) {
-            buffer.append("errors: [")
-                    .append("\n");
+            buffer.append("errors: [").append("\n");
             appendDetails(buffer, errors);
             buffer.append("]");
         }

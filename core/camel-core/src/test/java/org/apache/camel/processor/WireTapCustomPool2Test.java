@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.ExecutorService;
@@ -70,9 +71,12 @@ public class WireTapCustomPool2Test extends ContextTestSupport {
                 // use a custom thread pool for sending tapped messages
                 pool = Executors.newFixedThreadPool(2);
 
-                from("direct:start").to("log:foo")
+                from("direct:start")
+                        .to("log:foo")
                         // pass in the custom pool to the wireTap DSL
-                        .wireTap("direct:tap").executorService(pool).to("mock:result");
+                        .wireTap("direct:tap")
+                        .executorService(pool)
+                        .to("mock:result");
                 // END SNIPPET: e1
 
                 from("direct:tap").delay(1000).setBody().constant("Tapped").to("mock:result", "mock:tap");

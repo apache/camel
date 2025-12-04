@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.tck;
 
 import org.apache.camel.CamelContext;
@@ -43,8 +44,7 @@ public class CamelPublisherVerificationTest extends PublisherVerification<Exchan
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:tick?delay=500&period=50&repeatCount=" + l)
-                        .to("reactive-streams:prod");
+                from("timer:tick?delay=500&period=50&repeatCount=" + l).to("reactive-streams:prod");
             }
         };
 

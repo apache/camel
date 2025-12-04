@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import java.util.ArrayList;
@@ -27,8 +28,10 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "resilience4j", displayName = "Resilience Circuit Breaker",
-            description = "Display circuit breaker information")
+@DevConsole(
+        name = "resilience4j",
+        displayName = "Resilience Circuit Breaker",
+        description = "Display circuit breaker information")
 public class ResilienceConsole extends AbstractDevConsole {
 
     public ResilienceConsole() {
@@ -61,11 +64,13 @@ public class ResilienceConsole extends AbstractDevConsole {
             long npc = cb.getNumberOfNotPermittedCalls();
             float fr = cb.getFailureRate();
             if (fr > 0) {
-                sb.append(String.format("    %s/%s: %s (buffered: %d success: %d failure: %d/%.0f%% not-permitted: %d)\n", rid,
-                        id, state, bc, sc, fc, fr, npc));
+                sb.append(String.format(
+                        "    %s/%s: %s (buffered: %d success: %d failure: %d/%.0f%% not-permitted: %d)\n",
+                        rid, id, state, bc, sc, fc, fr, npc));
             } else {
-                sb.append(String.format("    %s/%s: %s (buffered: %d success: %d failure: 0 not-permitted: %d)\n", rid, id,
-                        state, bc, sc, npc));
+                sb.append(String.format(
+                        "    %s/%s: %s (buffered: %d success: %d failure: 0 not-permitted: %d)\n",
+                        rid, id, state, bc, sc, npc));
             }
         }
 

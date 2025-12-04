@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FaultToleranceRouteRejectedTest extends CamelTestSupport {
 
@@ -59,20 +60,26 @@ public class FaultToleranceRouteRejectedTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .circuitBreaker().id("myFaultToleranceRejectedTest")
-                        .faultToleranceConfiguration().failureRatio(100).successThreshold(1).requestVolumeThreshold(1).end()
+                        .circuitBreaker()
+                        .id("myFaultToleranceRejectedTest")
+                        .faultToleranceConfiguration()
+                        .failureRatio(100)
+                        .successThreshold(1)
+                        .requestVolumeThreshold(1)
+                        .end()
                         .process(e -> {
                             if (counter++ < 1) {
                                 throw new IllegalArgumentException("Forced");
                             }
                         })
-                        .to("direct:foo").to("log:foo")
+                        .to("direct:foo")
+                        .to("log:foo")
                         .end()
-                        .to("log:result").to("mock:result");
+                        .to("log:result")
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
         };
     }
-
 }

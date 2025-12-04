@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.spi;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import io.undertow.servlet.handlers.ServletRequestContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test for case that UndertowSecurityProvider.requireServletContext returns false. ServletContext can not be present in
@@ -59,5 +60,4 @@ public class ProviderWithoutServletTest extends AbstractProviderServletTest {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

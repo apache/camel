@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyRouteSimpleTest extends BaseNettyTest {
 
@@ -51,7 +52,8 @@ public class NettyRouteSimpleTest extends BaseNettyTest {
 
                 from("netty-http:http://0.0.0.0:" + port2 + "/bar")
                         .to("mock:input2")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }

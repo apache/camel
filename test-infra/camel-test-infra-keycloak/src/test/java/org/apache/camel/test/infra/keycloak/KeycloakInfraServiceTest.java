@@ -14,23 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.keycloak;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.test.infra.keycloak.services.KeycloakInfraService;
 import org.apache.camel.test.infra.keycloak.services.KeycloakRemoteInfraService;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class KeycloakInfraServiceTest {
 
     @Test
     public void testRemoteServiceConfiguration() {
-        KeycloakInfraService service = new KeycloakRemoteInfraService(
-                "http://localhost:8080",
-                "master",
-                "admin",
-                "admin");
+        KeycloakInfraService service =
+                new KeycloakRemoteInfraService("http://localhost:8080", "master", "admin", "admin");
 
         assertEquals("http://localhost:8080", service.getKeycloakServerUrl());
         assertEquals("master", service.getKeycloakRealm());

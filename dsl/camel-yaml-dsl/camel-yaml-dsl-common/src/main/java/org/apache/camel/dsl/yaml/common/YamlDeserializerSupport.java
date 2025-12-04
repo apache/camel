@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common;
 
 import java.util.ArrayList;
@@ -49,8 +50,7 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
 
 public class YamlDeserializerSupport {
 
-    protected YamlDeserializerSupport() {
-    }
+    protected YamlDeserializerSupport() {}
 
     public static Class<?> asClass(String val) throws ClassNotFoundException {
         return Class.forName(val);
@@ -334,8 +334,8 @@ public class YamlDeserializerSupport {
 
     @SuppressWarnings("unchecked")
     public static <T> T asType(Node node, Class<T> type) throws YamlDeserializationException {
-        YamlDeserializationContext resolver
-                = (YamlDeserializationContext) node.getProperty(YamlDeserializationContext.class.getName());
+        YamlDeserializationContext resolver =
+                (YamlDeserializationContext) node.getProperty(YamlDeserializationContext.class.getName());
         if (resolver == null) {
             throw new YamlDeserializationException(node, "Unable to find YamlConstructor");
         }
@@ -348,8 +348,7 @@ public class YamlDeserializerSupport {
     }
 
     public static String asEndpoint(Node node) {
-        return asEndpoint(
-                asMappingNode(node));
+        return asEndpoint(asMappingNode(node));
     }
 
     public static String asEndpoint(MappingNode node) {
@@ -423,9 +422,7 @@ public class YamlDeserializerSupport {
                     ScalarNode scalar = (ScalarNode) child.getKeyNode();
                     if (scalar.getValue().equals(path)) {
                         String next = pointer.substring(path.length() + 1);
-                        return ObjectHelper.isEmpty(next)
-                                ? child.getValueNode()
-                                : nodeAt(child.getValueNode(), next);
+                        return ObjectHelper.isEmpty(next) ? child.getValueNode() : nodeAt(child.getValueNode(), next);
                     }
                 }
             }

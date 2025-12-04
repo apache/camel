@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Collection;
@@ -235,5 +236,4 @@ public interface RouteController extends CamelContextAware, StaticService {
      * @throws Exception  is thrown if any of the routes could not be stopped for whatever reason
      */
     void stopRouteGroup(String routeGroup) throws Exception;
-
 }

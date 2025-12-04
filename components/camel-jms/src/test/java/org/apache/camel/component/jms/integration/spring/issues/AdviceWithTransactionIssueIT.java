@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.issues;
 
 import org.apache.camel.builder.AdviceWith;
@@ -74,5 +75,4 @@ public class AdviceWithTransactionIssueIT extends SpringJMSBasic {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

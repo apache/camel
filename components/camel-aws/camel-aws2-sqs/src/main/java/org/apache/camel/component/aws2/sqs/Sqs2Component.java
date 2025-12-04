@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
 
 import java.util.Map;
@@ -47,7 +48,8 @@ public class Sqs2Component extends HealthCheckComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Queue name must be specified.");
         }
-        Sqs2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Sqs2Configuration();
+        Sqs2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new Sqs2Configuration();
         if (remaining.startsWith("arn:")) {
             String[] parts = remaining.split(":");
             if (parts.length != 6 || !parts[2].equals("sqs")) {
@@ -62,9 +64,10 @@ public class Sqs2Component extends HealthCheckComponent {
         Sqs2Endpoint sqsEndpoint = new Sqs2Endpoint(uri, this, configuration);
         setProperties(sqsEndpoint, parameters);
 
-        //validation of client has to be done after endpoint initialization (in case that sqs client is autowired)
+        // validation of client has to be done after endpoint initialization (in case that sqs client is autowired)
         // - covered by SqsDeadletterWithClientRegistryLocalstackIT
-        if (!configuration.isUseDefaultCredentialsProvider() && !configuration.isUseProfileCredentialsProvider()
+        if (!configuration.isUseDefaultCredentialsProvider()
+                && !configuration.isUseProfileCredentialsProvider()
                 && !configuration.isUseSessionCredentials()
                 && configuration.getAmazonSQSClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {

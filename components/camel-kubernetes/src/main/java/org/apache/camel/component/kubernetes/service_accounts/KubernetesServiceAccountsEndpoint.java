@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.service_accounts;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SERVICE_ACCOUNTS;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,18 +28,21 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SERVICE_ACCOUNTS;
-
 /**
  * Perform operations on Kubernetes Service Accounts.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SERVICE_ACCOUNTS, title = "Kubernetes Service Account",
-             syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_SERVICE_ACCOUNTS,
+        title = "Kubernetes Service Account",
+        syntax = "kubernetes-service-accounts:masterUrl",
+        producerOnly = true,
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component,
-                                             KubernetesConfiguration config) {
+    public KubernetesServiceAccountsEndpoint(
+            String uri, KubernetesServiceAccountsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -49,5 +55,4 @@ public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoin
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new IllegalArgumentException("The kubernetes-service-accounts doesn't support consumer");
     }
-
 }

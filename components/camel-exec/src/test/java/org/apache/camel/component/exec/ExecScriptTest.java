@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
+
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_STDERR;
+import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
+import static org.apache.camel.component.exec.ExecTestUtils.getClasspathResourceFileOrNull;
+import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.PRINT_IN_STDOUT;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -30,17 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
-import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
-import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
-import static org.apache.camel.component.exec.ExecBinding.EXEC_STDERR;
-import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
-import static org.apache.camel.component.exec.ExecTestUtils.getClasspathResourceFileOrNull;
-import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.PRINT_IN_STDOUT;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test executing a OS script. Use only manually, see the TODO
@@ -112,7 +113,6 @@ public class ExecScriptTest {
             classpath = "\"" + classpath + "\"";
         }
         return classpath;
-
     }
 
     private File getExecScriptFileOrNull(String scriptNameBase) {

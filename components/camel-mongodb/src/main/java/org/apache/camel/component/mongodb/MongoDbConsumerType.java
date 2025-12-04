@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
 
 public enum MongoDbConsumerType {
-
     tailable,
     changeStreams
     // more consumer types to be included in future versions

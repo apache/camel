@@ -14,26 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.keycloak.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class KeycloakServiceFactory {
-    private KeycloakServiceFactory() {
-
-    }
+    private KeycloakServiceFactory() {}
 
     public static SimpleTestServiceBuilder<KeycloakService> builder() {
         return new SimpleTestServiceBuilder<>("keycloak");
     }
 
     public static KeycloakService createService() {
-        return builder()
-                .addLocalMapping(KeycloakLocalContainerService::new)
-                .build();
+        return builder().addLocalMapping(KeycloakLocalContainerService::new).build();
     }
 
     public static class KeycloakLocalContainerService extends KeycloakLocalContainerInfraService
-            implements KeycloakService {
-    }
+            implements KeycloakService {}
 }

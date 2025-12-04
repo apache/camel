@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cluster;
 
 import java.util.Collection;
@@ -28,8 +29,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.CamelContextHelper;
 
 public final class ClusteredRouteFilters {
-    private ClusteredRouteFilters() {
-    }
+    private ClusteredRouteFilters() {}
 
     public static final class IsAutoStartup implements ClusteredRouteFilter {
         @Override

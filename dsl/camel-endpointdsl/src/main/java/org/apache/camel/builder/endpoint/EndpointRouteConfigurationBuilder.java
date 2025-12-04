@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import java.util.List;
@@ -28,7 +29,8 @@ import org.apache.camel.model.RouteConfigurationsDefinition;
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used for building route configuration(s).
  */
-public abstract class EndpointRouteConfigurationBuilder extends EndpointRouteBuilder implements RouteConfigurationsBuilder {
+public abstract class EndpointRouteConfigurationBuilder extends EndpointRouteBuilder
+        implements RouteConfigurationsBuilder {
 
     private final AtomicBoolean initializedConfiguration = new AtomicBoolean();
     private RouteConfigurationsDefinition routeConfigurationCollection = new RouteConfigurationsDefinition();
@@ -87,12 +89,12 @@ public abstract class EndpointRouteConfigurationBuilder extends EndpointRouteBui
         if (initializedConfiguration.compareAndSet(false, true)) {
             configuration();
         }
-        List<RouteConfigurationDefinition> list = getRouteConfigurationCollection().getRouteConfigurations();
+        List<RouteConfigurationDefinition> list =
+                getRouteConfigurationCollection().getRouteConfigurations();
         if (!list.isEmpty()) {
             // remove existing before updating
             for (RouteConfigurationDefinition def : list) {
-                context.getCamelContextExtension().getContextPlugin(Model.class)
-                        .removeRouteConfiguration(def);
+                context.getCamelContextExtension().getContextPlugin(Model.class).removeRouteConfiguration(def);
             }
             populateRoutesConfiguration();
         }
@@ -104,8 +106,9 @@ public abstract class EndpointRouteConfigurationBuilder extends EndpointRouteBui
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
         getRouteConfigurationCollection().setCamelContext(camelContext);
-        camelContext.getCamelContextExtension().getContextPlugin(Model.class)
+        camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
                 .addRouteConfigurations(getRouteConfigurationCollection().getRouteConfigurations());
     }
-
 }

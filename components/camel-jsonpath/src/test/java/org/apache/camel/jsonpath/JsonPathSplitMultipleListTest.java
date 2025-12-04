@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.util.List;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JsonPathSplitMultipleListTest extends CamelTestSupport {
 
@@ -36,14 +37,16 @@ public class JsonPathSplitMultipleListTest extends CamelTestSupport {
                 from("direct:start2")
                         // we select all books, but since we split after wards then ensure
                         // it will be wrapped inside a List object.
-                        .split().jsonpath("$.store.book", List.class)
+                        .split()
+                        .jsonpath("$.store.book", List.class)
                         .to("mock:authors2")
                         .convertBodyTo(String.class);
 
                 from("direct:start3")
                         // we select all books, but since we split after wards then ensure
                         // it will be wrapped inside a List object.
-                        .split().jsonpath("$.store.book[*]", List.class)
+                        .split()
+                        .jsonpath("$.store.book[*]", List.class)
                         .to("mock:authors3")
                         .convertBodyTo(String.class);
             }
@@ -62,5 +65,4 @@ public class JsonPathSplitMultipleListTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

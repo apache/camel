@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
 
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
@@ -26,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Simple unit test for transaction client EIP pattern and JMS.
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class JMSTransactionalClientIT extends AbstractSpringJMSITSupport {
 
     @Override

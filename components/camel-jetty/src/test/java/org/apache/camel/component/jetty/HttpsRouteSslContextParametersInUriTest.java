@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.BindToRegistry;
@@ -29,7 +30,10 @@ public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
     @BindToRegistry("sslContextParameters")
     public SSLContextParameters loadSSLParams() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
+        ksp.setResource(this.getClass()
+                .getClassLoader()
+                .getResource("jsse/localhost.p12")
+                .toString());
         ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -50,16 +54,19 @@ public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
                 // NOTE: These are here to check that they are properly ignored.
                 setSSLProps(jetty, "", "asdfasdfasdfdasfs", "sadfasdfasdfas");
 
-                from("jetty:https://localhost:" + port1 + "/test?sslContextParameters=#sslContextParameters").to("mock:a");
+                from("jetty:https://localhost:" + port1 + "/test?sslContextParameters=#sslContextParameters")
+                        .to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:https://localhost:" + port1 + "/hello?sslContextParameters=#sslContextParameters").process(proc);
+                from("jetty:https://localhost:" + port1 + "/hello?sslContextParameters=#sslContextParameters")
+                        .process(proc);
 
-                from("jetty:https://localhost:" + port2 + "/test?sslContextParameters=#sslContextParameters").to("mock:b");
+                from("jetty:https://localhost:" + port2 + "/test?sslContextParameters=#sslContextParameters")
+                        .to("mock:b");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
 
 import java.security.Principal;
@@ -48,7 +49,7 @@ public class MyLoginService implements LoginService {
                     return "camel";
                 }
             };
-            return getIdentityService().newUserIdentity(subject, principal, new String[] { "admin" });
+            return getIdentityService().newUserIdentity(subject, principal, new String[] {"admin"});
         } else {
             return null;
         }

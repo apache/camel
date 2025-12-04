@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -24,11 +30,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
 
@@ -68,10 +69,10 @@ public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
 
                 from("netty-http:http://localhost:{{port}}/myserver")
                         // wrap the response in 2 input streams so it will force caching to disk
-                        .transform().constant(new BufferedInputStream(new ByteArrayInputStream(body2.getBytes())))
+                        .transform()
+                        .constant(new BufferedInputStream(new ByteArrayInputStream(body2.getBytes())))
                         .to("log:reply");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc.it;
 
 import java.util.List;
@@ -27,8 +28,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@EnabledIfSystemProperty(named = "enable.irc.itests", matches = ".*",
-                         disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
+@EnabledIfSystemProperty(
+        named = "enable.irc.itests",
+        matches = ".*",
+        disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
 public class IrcOnReplyIT extends IrcIntegrationITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IrcOnReplyIT.class);
@@ -45,7 +48,8 @@ public class IrcOnReplyIT extends IrcIntegrationITSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            LOGGER.info("Received exchange: " + exchange + " headers: "
+                    + exchange.getIn().getHeaders());
         }
     }
 
@@ -53,8 +57,12 @@ public class IrcOnReplyIT extends IrcIntegrationITSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fromUri()).choice().when(header(IrcConstants.IRC_NUM).isEqualTo(315)).to("mock:result")
-                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
+                from(fromUri())
+                        .choice()
+                        .when(header(IrcConstants.IRC_NUM).isEqualTo(315))
+                        .to("mock:result")
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN"))
+                        .to("seda:consumerJoined");
 
                 from("seda:consumerJoined").process(new Processor() {
                     public void process(Exchange exchange) {

@@ -38,7 +38,5 @@ public final class AWSCommon {
      */
     public static final String KINESIS_STREAM_BASE_NAME = "ckc-kin-stream";
 
-    private AWSCommon() {
-    }
-
+    private AWSCommon() {}
 }

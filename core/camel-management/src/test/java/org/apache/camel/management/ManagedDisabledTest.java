@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedDisabledTest extends ManagementTestSupport {
@@ -96,16 +97,25 @@ public class ManagedDisabledTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("mock:foo").id("foo")
-                    .choice().disabled().id("mychoice")
-                        .when(xpath("/bar")).to("mock:bar")
-                        .when(xpath("/baz")).to("mock:baz")
-                    .end()
-                    .to("mock:baz").disabled(true).id("mybaz")
-                    .log("Hello World").disabled("true").id("mylog")
-                    .to("mock:result").id("result");
+                        .to("mock:foo")
+                        .id("foo")
+                        .choice()
+                        .disabled()
+                        .id("mychoice")
+                        .when(xpath("/bar"))
+                        .to("mock:bar")
+                        .when(xpath("/baz"))
+                        .to("mock:baz")
+                        .end()
+                        .to("mock:baz")
+                        .disabled(true)
+                        .id("mybaz")
+                        .log("Hello World")
+                        .disabled("true")
+                        .id("mylog")
+                        .to("mock:result")
+                        .id("result");
             }
         };
     }
-
 }

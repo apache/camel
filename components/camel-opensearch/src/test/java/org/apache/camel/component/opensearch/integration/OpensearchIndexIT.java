@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,11 +30,6 @@ import org.apache.camel.component.opensearch.OpensearchConstants;
 import org.apache.camel.component.opensearch.OpensearchOperation;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OpensearchIndexIT extends OpensearchTestSupport {
 
@@ -98,15 +99,17 @@ class OpensearchIndexIT extends OpensearchTestSupport {
 
     @Test
     void testExists() {
-        boolean exists = template().requestBodyAndHeader(
-                "direct:exists", null, OpensearchConstants.PARAM_INDEX_NAME, "test_exists", Boolean.class);
+        boolean exists = template()
+                .requestBodyAndHeader(
+                        "direct:exists", null, OpensearchConstants.PARAM_INDEX_NAME, "test_exists", Boolean.class);
         assertFalse(exists, "index should be absent");
 
         Map<String, String> map = createIndexedData();
         template().sendBodyAndHeader("direct:index", map, OpensearchConstants.PARAM_INDEX_NAME, "test_exists");
 
-        exists = template().requestBodyAndHeader(
-                "direct:exists", null, OpensearchConstants.PARAM_INDEX_NAME, "test_exists", Boolean.class);
+        exists = template()
+                .requestBodyAndHeader(
+                        "direct:exists", null, OpensearchConstants.PARAM_INDEX_NAME, "test_exists", Boolean.class);
         assertTrue(exists, "index should be present");
     }
 
@@ -115,14 +118,10 @@ class OpensearchIndexIT extends OpensearchTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("opensearch://opensearch");
-                from("direct:index")
-                        .to("opensearch://opensearch?operation=Index&indexName=twitter");
-                from("direct:exists")
-                        .to("opensearch://opensearch?operation=Exists&indexName=twitter");
-                from("direct:deleteIndex")
-                        .to("opensearch://opensearch?operation=DeleteIndex&indexName=twitter");
+                from("direct:start").to("opensearch://opensearch");
+                from("direct:index").to("opensearch://opensearch?operation=Index&indexName=twitter");
+                from("direct:exists").to("opensearch://opensearch?operation=Exists&indexName=twitter");
+                from("direct:deleteIndex").to("opensearch://opensearch?operation=DeleteIndex&indexName=twitter");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu.handlers;
 
 import java.time.Duration;
@@ -56,12 +57,27 @@ public final class TahuEdgeClient extends EdgeClient {
 
     private final Marker loggingMarker;
 
-    private TahuEdgeClient(TahuEdgeMetricHandler tahuEdgeNodeMetricHandler, EdgeNodeDescriptor edgeNodeDescriptor,
-                           List<String> deviceIds, String primaryHostId, boolean useAliases, Long rebirthDebounceDelay,
-                           List<MqttServerDefinition> mqttServerDefinitions, TahuEdgeClientCallback tahuEdgeNodeClientCallback,
-                           RandomStartupDelay randomStartupDelay, ExecutorService clientExecutorService) {
-        super(tahuEdgeNodeMetricHandler, edgeNodeDescriptor, deviceIds, primaryHostId, useAliases, rebirthDebounceDelay,
-              mqttServerDefinitions, tahuEdgeNodeClientCallback, randomStartupDelay);
+    private TahuEdgeClient(
+            TahuEdgeMetricHandler tahuEdgeNodeMetricHandler,
+            EdgeNodeDescriptor edgeNodeDescriptor,
+            List<String> deviceIds,
+            String primaryHostId,
+            boolean useAliases,
+            Long rebirthDebounceDelay,
+            List<MqttServerDefinition> mqttServerDefinitions,
+            TahuEdgeClientCallback tahuEdgeNodeClientCallback,
+            RandomStartupDelay randomStartupDelay,
+            ExecutorService clientExecutorService) {
+        super(
+                tahuEdgeNodeMetricHandler,
+                edgeNodeDescriptor,
+                deviceIds,
+                primaryHostId,
+                useAliases,
+                rebirthDebounceDelay,
+                mqttServerDefinitions,
+                tahuEdgeNodeClientCallback,
+                randomStartupDelay);
 
         this.edgeNodeDescriptor = edgeNodeDescriptor;
 
@@ -142,8 +158,7 @@ public final class TahuEdgeClient extends EdgeClient {
 
         private volatile TahuEdgeClient tahuEdgeClient;
 
-        public ClientBuilder() {
-        }
+        public ClientBuilder() {}
 
         public ClientBuilder edgeNodeDescriptor(EdgeNodeDescriptor end) {
             checkBuildState();
@@ -195,7 +210,8 @@ public final class TahuEdgeClient extends EdgeClient {
 
         private void checkBuildState() throws IllegalStateException {
             if (tahuEdgeClient != null) {
-                throw new IllegalStateException("Unable to reuse a ClientBuilder for multiple TahuEdgeClient instances");
+                throw new IllegalStateException(
+                        "Unable to reuse a ClientBuilder for multiple TahuEdgeClient instances");
             }
         }
 
@@ -203,21 +219,31 @@ public final class TahuEdgeClient extends EdgeClient {
             TahuEdgeClient cachedTahuEdgeClient = tahuEdgeClient;
             if (cachedTahuEdgeClient == null) {
 
-                TahuEdgeMetricHandler tahuEdgeNodeMetricHandler = new TahuEdgeMetricHandler(edgeNodeDescriptor, bdSeqManager);
-                TahuEdgeClientCallback tahuClientCallback
-                        = new TahuEdgeClientCallback(edgeNodeDescriptor, tahuEdgeNodeMetricHandler);
+                TahuEdgeMetricHandler tahuEdgeNodeMetricHandler =
+                        new TahuEdgeMetricHandler(edgeNodeDescriptor, bdSeqManager);
+                TahuEdgeClientCallback tahuClientCallback =
+                        new TahuEdgeClientCallback(edgeNodeDescriptor, tahuEdgeNodeMetricHandler);
 
                 cachedTahuEdgeClient = tahuEdgeClient = new TahuEdgeClient(
-                        tahuEdgeNodeMetricHandler, edgeNodeDescriptor, deviceIds, primaryHostId,
-                        useAliases, rebirthDebounceDelay, serverDefinitions, tahuClientCallback, randomStartupDelay,
+                        tahuEdgeNodeMetricHandler,
+                        edgeNodeDescriptor,
+                        deviceIds,
+                        primaryHostId,
+                        useAliases,
+                        rebirthDebounceDelay,
+                        serverDefinitions,
+                        tahuClientCallback,
+                        randomStartupDelay,
                         clientExecutorService);
 
-                LOG.debug(tahuEdgeClient.loggingMarker, "Created TahuEdgeClient for {} with deviceIds {}", edgeNodeDescriptor,
+                LOG.debug(
+                        tahuEdgeClient.loggingMarker,
+                        "Created TahuEdgeClient for {} with deviceIds {}",
+                        edgeNodeDescriptor,
                         deviceIds);
 
                 tahuEdgeNodeMetricHandler.setClient(cachedTahuEdgeClient);
                 tahuClientCallback.setClient(cachedTahuEdgeClient);
-
             }
 
             return cachedTahuEdgeClient;

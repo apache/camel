@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,11 +36,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelCatalogJsonSchemaTest {
 
@@ -115,14 +116,19 @@ public class CamelCatalogJsonSchemaTest {
 
         for (String part : syntaxParts.subList(1, syntaxParts.size())) {
             if (!part.isEmpty()) {
-                assertTrue(pathProperties.contains(part),
-                        String.format("Component %s. Syntax %s. Part %s is not defined as UriPath", name, syntax, part));
+                assertTrue(
+                        pathProperties.contains(part),
+                        String.format(
+                                "Component %s. Syntax %s. Part %s is not defined as UriPath", name, syntax, part));
             }
         }
 
         for (String requiredPart : requiredProperties) {
-            assertTrue(syntaxParts.contains(requiredPart), String
-                    .format("Component %s. Syntax %s. Required param %s is not defined in syntax", name, syntax, requiredPart));
+            assertTrue(
+                    syntaxParts.contains(requiredPart),
+                    String.format(
+                            "Component %s. Syntax %s. Required param %s is not defined in syntax",
+                            name, syntax, requiredPart));
         }
     }
 

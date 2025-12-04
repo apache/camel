@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,9 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DisableEndpointTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
@@ -86,10 +87,7 @@ public class DisableEndpointTest extends MicrometerObservabilityTracerPropagatio
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("log:info");
+                from("direct:start").routeId("start").log("A message").to("log:info");
 
                 from("direct:variable")
                         .setVariable("myVar", constant("testValue"))
@@ -97,5 +95,4 @@ public class DisableEndpointTest extends MicrometerObservabilityTracerPropagatio
             }
         };
     }
-
 }

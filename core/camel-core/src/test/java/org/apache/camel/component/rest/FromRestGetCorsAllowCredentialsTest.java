@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestGetCorsAllowCredentialsTest extends ContextTestSupport {
 
@@ -50,13 +51,17 @@ public class FromRestGetCorsAllowCredentialsTest extends ContextTestSupport {
         });
         assertNotNull(out);
 
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN,
                 out.getMessage().getHeader("Access-Control-Allow-Origin"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
                 out.getMessage().getHeader("Access-Control-Allow-Methods"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
                 out.getMessage().getHeader("Access-Control-Allow-Headers"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
         assertEquals("true", out.getMessage().getHeader("Access-Control-Allow-Credentials"));
 
         assertMockEndpointsSatisfied();
@@ -77,11 +82,14 @@ public class FromRestGetCorsAllowCredentialsTest extends ContextTestSupport {
         });
         assertNotNull(out);
 
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
                 out.getMessage().getHeader("Access-Control-Allow-Methods"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
                 out.getMessage().getHeader("Access-Control-Allow-Headers"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
         assertEquals("true", out.getMessage().getHeader("Access-Control-Allow-Credentials"));
         assertEquals("mydomain", out.getMessage().getHeader("Access-Control-Allow-Origin"));
 
@@ -97,7 +105,12 @@ public class FromRestGetCorsAllowCredentialsTest extends ContextTestSupport {
 
                 rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye").get().consumes("application/json").to("direct:bye").post().to("mock:update");
+                rest("/say/bye")
+                        .get()
+                        .consumes("application/json")
+                        .to("direct:bye")
+                        .post()
+                        .to("mock:update");
 
                 from("direct:hello").transform().constant("Hello World");
 

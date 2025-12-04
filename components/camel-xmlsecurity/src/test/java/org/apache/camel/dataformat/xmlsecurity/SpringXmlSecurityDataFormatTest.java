@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.xmlsecurity;
 
 import org.apache.camel.CamelContext;
@@ -44,5 +45,4 @@ public class SpringXmlSecurityDataFormatTest implements CamelContextAware {
     public CamelContext getCamelContext() {
         return camelContext;
     }
-
 }

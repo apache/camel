@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,13 +59,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test leader election scenarios using a mock server.
@@ -118,15 +119,17 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     @EnumSource(LeaseResourceType.class)
     public void testMultipleMembersLeaderElection(LeaseResourceType type) {
         int number = 5;
-        List<LeaderRecorder> members
-                = IntStream.range(0, number).mapToObj(i -> addMember("mypod" + i, type)).toList();
+        List<LeaderRecorder> members = IntStream.range(0, number)
+                .mapToObj(i -> addMember("mypod" + i, type))
+                .toList();
         context.start();
 
         for (LeaderRecorder member : members) {
             member.waitForAnyLeader(5, TimeUnit.SECONDS);
         }
 
-        Set<String> leaders = members.stream().map(LeaderRecorder::getCurrentLeader).collect(Collectors.toSet());
+        Set<String> leaders =
+                members.stream().map(LeaderRecorder::getCurrentLeader).collect(Collectors.toSet());
         assertEquals(1, leaders.size());
         String leader = leaders.iterator().next();
         assertTrue(leader.startsWith("mypod"));
@@ -136,7 +139,13 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     public void testSimpleLeaderElectionWithExistingConfigMap() {
         this.configMapLockSimulator = new ConfigMapLockSimulator("leaders");
         configMapLockSimulator.setResource(
-                new ConfigMapBuilder().withNewMetadata().withNamespace("test").withName("leaders").and().build(), true);
+                new ConfigMapBuilder()
+                        .withNewMetadata()
+                        .withNamespace("test")
+                        .withName("leaders")
+                        .and()
+                        .build(),
+                true);
 
         LeaderRecorder mypod1 = addMember("mypod1", LeaseResourceType.ConfigMap);
         LeaderRecorder mypod2 = addMember("mypod2", LeaseResourceType.ConfigMap);
@@ -153,10 +162,14 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     @Test
     public void testSimpleLeaderElectionWithExistingLeases() {
         LeaseLockSimulator simulator = new LeaseLockSimulator("leaders-mygroup");
-        simulator.setResource(new LeaseBuilder()
-                .withNewMetadata().withName("leaders-mygroup").withNamespace("test")
-                .and()
-                .build(), true);
+        simulator.setResource(
+                new LeaseBuilder()
+                        .withNewMetadata()
+                        .withName("leaders-mygroup")
+                        .withNamespace("test")
+                        .and()
+                        .build(),
+                true);
         this.leaseLockSimulators.put("mygroup", simulator);
 
         LeaderRecorder mypod1 = addMember("mypod1", "mygroup", LeaseResourceType.Lease);
@@ -198,9 +211,11 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         Long lossTimestamp = formerLeaderRecorder.getLastTimeOf(l -> l == null);
         Long gainTimestamp = formerLoserRecorder.getLastTimeOf(secondLeader::equals);
 
-        assertTrue(gainTimestamp >= lossTimestamp + (LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2,
+        assertTrue(
+                gainTimestamp >= lossTimestamp + (LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2,
                 "At least half distance must elapse from leadership loss and regain (see renewDeadlineSeconds)");
-        checkLeadershipChangeDistance((LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2, TimeUnit.MILLISECONDS, mypod1, mypod2);
+        checkLeadershipChangeDistance(
+                (LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2, TimeUnit.MILLISECONDS, mypod1, mypod2);
     }
 
     @ParameterizedTest
@@ -285,21 +300,26 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     @ParameterizedTest
     @MethodSource("rebalancingProvider")
-    public void testRebalancing(LeaseResourceType type, int pods, int partitions, int expectedPartitionsPerPod, int tolerance) {
+    public void testRebalancing(
+            LeaseResourceType type, int pods, int partitions, int expectedPartitionsPerPod, int tolerance) {
         Map<String, List<LeaderRecorder>> recorders = createCluster(type, pods, partitions);
         context.start();
 
-        waitForAllLeaders(recorders, leaders -> {
-            Map<String, Long> counts = leaders.values().stream()
-                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        waitForAllLeaders(
+                recorders,
+                leaders -> {
+                    Map<String, Long> counts = leaders.values().stream()
+                            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-            for (Long count : counts.values()) {
-                if (count < expectedPartitionsPerPod || count > expectedPartitionsPerPod + tolerance) {
-                    return false;
-                }
-            }
-            return true;
-        }, 30, TimeUnit.SECONDS);
+                    for (Long count : counts.values()) {
+                        if (count < expectedPartitionsPerPod || count > expectedPartitionsPerPod + tolerance) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                30,
+                TimeUnit.SECONDS);
     }
 
     private Map<String, List<LeaderRecorder>> createCluster(LeaseResourceType type, int pods, int partitions) {
@@ -316,7 +336,9 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     private void waitForAllLeaders(
             Map<String, List<LeaderRecorder>> partitionRecorders,
-            Predicate<Map<String, String>> condition, long time, TimeUnit unit) {
+            Predicate<Map<String, String>> condition,
+            long time,
+            TimeUnit unit) {
         Awaitility.waitAtMost(time, unit).until(() -> {
             Map<String, String> leaders = new HashMap<>();
             for (Map.Entry<String, List<LeaderRecorder>> entry : partitionRecorders.entrySet()) {
@@ -376,7 +398,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     }
 
     private void checkLeadershipChangeDistance(long minimum, TimeUnit unit, LeaderRecorder... recorders) {
-        List<LeaderRecorder.LeadershipInfo> infos = Arrays.stream(recorders).flatMap(lr -> lr.getLeadershipInfo().stream())
+        List<LeaderRecorder.LeadershipInfo> infos = Arrays.stream(recorders)
+                .flatMap(lr -> lr.getLeadershipInfo().stream())
                 .sorted(Comparator.comparingLong(LeaderRecorder.LeadershipInfo::getChangeTimestamp))
                 .toList();
 
@@ -390,9 +413,10 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
                 } else if (isCurrentLeader(info.getLeader(), currentLeaderLastSeen.getLeader())) {
                     // switch
                     long delay = info.getChangeTimestamp() - currentLeaderLastSeen.getChangeTimestamp();
-                    assertTrue(delay >= TimeUnit.MILLISECONDS.convert(minimum, unit),
-                            "Lease time not elapsed between switch, minimum=" + TimeUnit.MILLISECONDS.convert(minimum, unit)
-                                                                                      + ", found=" + delay);
+                    assertTrue(
+                            delay >= TimeUnit.MILLISECONDS.convert(minimum, unit),
+                            "Lease time not elapsed between switch, minimum="
+                                    + TimeUnit.MILLISECONDS.convert(minimum, unit) + ", found=" + delay);
                     currentLeaderLastSeen = info;
                 }
             }

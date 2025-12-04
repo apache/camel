@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.builder;
 
 import java.io.ByteArrayOutputStream;
@@ -104,5 +105,4 @@ class RecordableInputStream extends FilterInputStream {
             return buf;
         }
     }
-
 }

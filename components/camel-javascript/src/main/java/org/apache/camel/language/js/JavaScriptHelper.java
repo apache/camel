@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.js;
 
 import org.graalvm.polyglot.Context;
@@ -22,8 +23,7 @@ import org.graalvm.polyglot.PolyglotAccess;
 
 public final class JavaScriptHelper {
 
-    private JavaScriptHelper() {
-    }
+    private JavaScriptHelper() {}
 
     public static Context newContext() {
         final Context.Builder contextBuilder = Context.newBuilder("js")

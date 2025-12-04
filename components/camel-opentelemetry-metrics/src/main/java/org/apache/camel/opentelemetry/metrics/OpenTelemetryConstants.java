@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
 
 import org.apache.camel.spi.Metadata;
@@ -21,32 +22,40 @@ import org.apache.camel.spi.Metadata;
 public class OpenTelemetryConstants {
 
     public static final String HEADER_PREFIX = "CamelMetrics";
-    @Metadata(description = "Override timer action in URI",
-              javaType = "org.apache.camel.opentelemetry.metrics.OpenTelemetryTimerAction")
+
+    @Metadata(
+            description = "Override timer action in URI",
+            javaType = "org.apache.camel.opentelemetry.metrics.OpenTelemetryTimerAction")
     public static final String HEADER_TIMER_ACTION = HEADER_PREFIX + "TimerAction";
+
     @Metadata(description = "Override histogram value in URI", javaType = "long")
     public static final String HEADER_HISTOGRAM_VALUE = HEADER_PREFIX + "HistogramValue";
+
     @Metadata(description = "Override decrement value in URI", javaType = "Double")
     public static final String HEADER_COUNTER_DECREMENT = HEADER_PREFIX + "CounterDecrement";
+
     @Metadata(description = "Override increment value in URI", javaType = "Double")
     public static final String HEADER_COUNTER_INCREMENT = HEADER_PREFIX + "CounterIncrement";
+
     @Metadata(description = "Override name value in URI", javaType = "String")
     public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";
+
     @Metadata(description = "Override description value in URI", javaType = "String")
     public static final String HEADER_METRIC_DESCRIPTION = HEADER_PREFIX + "Description";
-    @Metadata(description = "To augment meter attributes defined as URI parameters",
-              javaType = "io.opentelemetry.api.common.Attributes")
 
+    @Metadata(
+            description = "To augment meter attributes defined as URI parameters",
+            javaType = "io.opentelemetry.api.common.Attributes")
     public static final String HEADER_METRIC_ATTRIBUTES = HEADER_PREFIX + "Attributes";
 
     // Route-policy metrics
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME = "camel.exchanges.failed";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME = "camel.exchanges.succeeded";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME = "camel.exchanges.total";
-    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME
-            = "camel.exchanges.failures.handled";
-    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME
-            = "camel.exchanges.external.redeliveries";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME =
+            "camel.exchanges.failures.handled";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME =
+            "camel.exchanges.external.redeliveries";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "camel.route.policy";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE = "camel.route.policy.tasks.active";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION = "camel.route.policy.tasks.duration";

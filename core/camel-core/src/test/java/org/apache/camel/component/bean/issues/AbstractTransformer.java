@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
 
 public abstract class AbstractTransformer<T> implements Transformer<T> {
@@ -21,5 +22,4 @@ public abstract class AbstractTransformer<T> implements Transformer<T> {
     protected String getTest() {
         return "test";
     }
-
 }

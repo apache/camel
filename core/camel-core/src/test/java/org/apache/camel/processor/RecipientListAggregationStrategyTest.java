@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,7 +39,9 @@ public class RecipientListAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").recipientList(header("foo")).aggregationStrategy(new BodyInAggregatingStrategy())
+                from("direct:start")
+                        .recipientList(header("foo"))
+                        .aggregationStrategy(new BodyInAggregatingStrategy())
                         .to("mock:result");
 
                 from("direct:a").transform(constant("a"));
@@ -47,5 +50,4 @@ public class RecipientListAggregationStrategyTest extends ContextTestSupport {
             }
         };
     }
-
 }

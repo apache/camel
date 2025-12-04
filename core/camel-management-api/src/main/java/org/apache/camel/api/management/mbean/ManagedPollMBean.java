@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -23,8 +24,7 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedPollMBean extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
 
-    @ManagedAttribute(description = "Destination as Endpoint URI",
-                      mask = true)
+    @ManagedAttribute(description = "Destination as Endpoint URI", mask = true)
     String getDestination();
 
     @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
@@ -36,5 +36,4 @@ public interface ManagedPollMBean extends ManagedProcessorMBean, ManagedExtended
     @Override
     @ManagedOperation(description = "Statistics of the endpoints that has been poll enriched from")
     TabularData extendedInformation();
-
 }

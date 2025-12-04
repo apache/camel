@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Regression test for CAMEL-16178
@@ -43,14 +44,11 @@ class EnrichWithoutRestResponseTest extends BaseNettyTest {
                         .setBody(constant(null));
 
                 // test routes
-                final String nettyClientUri
-                        = "netty:tcp://127.0.0.1:{{port}}?textline=true&connectTimeout=1000&requestTimeout=1000";
-                from("direct:reqTo")
-                        .to(nettyClientUri);
-                from("direct:reqEnrich")
-                        .enrich(nettyClientUri);
-                from("direct:reqEnrichShareUoW")
-                        .enrich(nettyClientUri, new UseLatestAggregationStrategy(), true, true);
+                final String nettyClientUri =
+                        "netty:tcp://127.0.0.1:{{port}}?textline=true&connectTimeout=1000&requestTimeout=1000";
+                from("direct:reqTo").to(nettyClientUri);
+                from("direct:reqEnrich").enrich(nettyClientUri);
+                from("direct:reqEnrichShareUoW").enrich(nettyClientUri, new UseLatestAggregationStrategy(), true, true);
             }
         };
     }
@@ -60,7 +58,8 @@ class EnrichWithoutRestResponseTest extends BaseNettyTest {
     void toTest() {
         assertThatExceptionOfType(CamelExecutionException.class)
                 .isThrownBy(() -> template.requestBody("direct:reqTo", ""))
-                .havingCause().withMessageContaining("No response received from remote server");
+                .havingCause()
+                .withMessageContaining("No response received from remote server");
     }
 
     @Test
@@ -68,7 +67,8 @@ class EnrichWithoutRestResponseTest extends BaseNettyTest {
     void enrichTest() {
         assertThatExceptionOfType(CamelExecutionException.class)
                 .isThrownBy(() -> template.requestBody("direct:reqEnrich", ""))
-                .havingCause().withMessageContaining("No response received from remote server");
+                .havingCause()
+                .withMessageContaining("No response received from remote server");
     }
 
     @Test
@@ -76,6 +76,7 @@ class EnrichWithoutRestResponseTest extends BaseNettyTest {
     void enrichShareUoWTest() {
         assertThatExceptionOfType(CamelExecutionException.class)
                 .isThrownBy(() -> template.requestBody("direct:reqEnrichShareUoW", ""))
-                .havingCause().withMessageContaining("No response received from remote server");
+                .havingCause()
+                .withMessageContaining("No response received from remote server");
     }
 }

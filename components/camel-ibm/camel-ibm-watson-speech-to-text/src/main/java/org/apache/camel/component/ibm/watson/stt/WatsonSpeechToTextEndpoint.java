@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.stt;
 
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
@@ -32,9 +33,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Convert speech audio to text using IBM Watson Speech to Text
  */
-@UriEndpoint(firstVersion = "4.17.0", scheme = "ibm-watson-speech-to-text", title = "IBM Watson Speech to Text",
-             syntax = "ibm-watson-speech-to-text:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
-             headersClass = WatsonSpeechToTextConstants.class)
+@UriEndpoint(
+        firstVersion = "4.17.0",
+        scheme = "ibm-watson-speech-to-text",
+        title = "IBM Watson Speech to Text",
+        syntax = "ibm-watson-speech-to-text:label",
+        producerOnly = true,
+        category = {Category.AI, Category.CLOUD},
+        headersClass = WatsonSpeechToTextConstants.class)
 public class WatsonSpeechToTextEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Logical name")
@@ -47,8 +53,7 @@ public class WatsonSpeechToTextEndpoint extends DefaultEndpoint implements Endpo
     private SpeechToText sttClient;
 
     public WatsonSpeechToTextEndpoint(
-                                      String uri, WatsonSpeechToTextComponent component,
-                                      WatsonSpeechToTextConfiguration configuration) {
+            String uri, WatsonSpeechToTextComponent component, WatsonSpeechToTextConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

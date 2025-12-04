@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.ArrayList;
@@ -59,8 +60,8 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
             when = createPredicate(definition.getOnWhen().getExpression());
         }
 
-        CatchProcessor processor
-                = new CatchProcessor(getCamelContext(), definition.getExceptionClasses(), childProcessor, when);
+        CatchProcessor processor =
+                new CatchProcessor(getCamelContext(), definition.getExceptionClasses(), childProcessor, when);
         processor.setDisabled(isDisabled(camelContext, definition));
         // inject id
         String id = getId(definition);

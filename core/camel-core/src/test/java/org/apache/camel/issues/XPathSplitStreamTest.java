@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.xml.sax.InputSource;
@@ -66,7 +67,9 @@ public class XPathSplitStreamTest extends ContextTestSupport {
                 from(fileUri("?initialDelay=0&delay=10"))
                         // set documentType to org.xml.sax.InputSource then Camel
                         // will use SAX to split the file
-                        .split(personXPath).streaming().to("mock:split");
+                        .split(personXPath)
+                        .streaming()
+                        .to("mock:split");
                 // END SNIPPET: e1
             }
         };

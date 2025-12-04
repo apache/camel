@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr.integration;
 
 import java.nio.file.Path;
@@ -68,9 +69,12 @@ public abstract class SolrTestSupport implements CamelTestSupportHelper, Configu
     static final String DEFAULT_START_ENDPOINT_SPLIT_THEN_COMMIT = DEFAULT_START_ENDPOINT + "SplitThenCommit";
     static final String DEFAULT_SOLR_ENDPOINT = "solr:default";
     static final String DEFAULT_MOCK_ENDPOINT = "mock:result";
-    static final String TEST_DATA_PATH_URI = Objects.requireNonNull(Path
-            .of(Objects.requireNonNull(SolrTestSupport.class.getClassLoader().getResource("data/books.csv")).getFile())
-            .getParent().toUri().toString());
+    static final String TEST_DATA_PATH_URI = Objects.requireNonNull(Path.of(Objects.requireNonNull(
+                            SolrTestSupport.class.getClassLoader().getResource("data/books.csv"))
+                    .getFile())
+            .getParent()
+            .toUri()
+            .toString());
     static final String TEST_ID = "test1";
     static final String TEST_ID2 = "test2";
 
@@ -157,8 +161,10 @@ public abstract class SolrTestSupport implements CamelTestSupportHelper, Configu
                 DEFAULT_START_ENDPOINT,
                 null,
                 Map.of(
-                        SolrConstants.PARAM_OPERATION, SolrOperation.INSERT.name(),
-                        SolrConstants.HEADER_PARAM_PREFIX + "commit", "true"));
+                        SolrConstants.PARAM_OPERATION,
+                        SolrOperation.INSERT.name(),
+                        SolrConstants.HEADER_PARAM_PREFIX + "commit",
+                        "true"));
     }
 
     public Exchange executeInsertFor(Object body) {
@@ -214,7 +220,8 @@ public abstract class SolrTestSupport implements CamelTestSupportHelper, Configu
         return executeSolrQuery(uri, queryString, Collections.emptyMap());
     }
 
-    public QueryResponse executeSolrQuery(String uri, String queryString, Map<String, Object> additionalExchangeHeaders) {
+    public QueryResponse executeSolrQuery(
+            String uri, String queryString, Map<String, Object> additionalExchangeHeaders) {
         var exchangeBuilder = ExchangeBuilder.anExchange(camelContext())
                 .withHeader(SolrConstants.PARAM_OPERATION, SolrOperation.SEARCH)
                 .withHeader(SolrConstants.PARAM_QUERY_STRING, queryString)
@@ -242,5 +249,4 @@ public abstract class SolrTestSupport implements CamelTestSupportHelper, Configu
         }
         return processRequest(uri, null, headers);
     }
-
 }

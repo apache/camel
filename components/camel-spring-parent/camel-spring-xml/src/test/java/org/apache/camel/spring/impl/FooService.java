@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.impl;
 
 import org.apache.camel.Consume;
@@ -27,6 +28,7 @@ public class FooService {
 
     private String fooEndpoint;
     private String barEndpoint;
+
     @Produce
     private ProducerTemplate bar;
 

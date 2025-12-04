@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import java.util.Collection;
@@ -152,7 +153,8 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     String dumpRouteAsYaml(boolean resolvePlaceholders, boolean uriAsParameters) throws Exception;
 
     @ManagedOperation(description = "Dumps the route as YAML")
-    String dumpRouteAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
+    String dumpRouteAsYaml(
+            boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
             throws Exception;
 
     @ManagedOperation(description = "Dumps the route stats as XML")
@@ -164,7 +166,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Dumps the route and steps stats as XML")
     String dumpStepStatsAsXml(boolean fullStats) throws Exception;
 
-    @ManagedOperation(description = "Dumps the route with mappings between node ids and their source location/line-number (currently only XML and YAML routes supported) as XML")
+    @ManagedOperation(
+            description =
+                    "Dumps the route with mappings between node ids and their source location/line-number (currently only XML and YAML routes supported) as XML")
     String dumpRouteSourceLocationsAsXml() throws Exception;
 
     @ManagedOperation(description = "Reset counters")
@@ -193,5 +197,4 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Whether the consumer connects to remote or local systems")
     boolean isRemoteEndpoint();
-
 }

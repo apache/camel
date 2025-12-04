@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
 
 import java.net.MalformedURLException;
@@ -57,7 +58,9 @@ public class LRAClientTest extends CamelTestSupport {
     void testCannotCreateLRAClientWithoutHttpClient() throws Exception {
         LRASagaService sagaService = new LRASagaService();
         applyMockProperties(sagaService);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new LRAClient(sagaService, null),
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> new LRAClient(sagaService, null),
                 "no client should result in IllegalArgumentException");
     }
 
@@ -86,7 +89,8 @@ public class LRAClientTest extends CamelTestSupport {
             }
         };
         Exchange exchange = Mockito.mock(Exchange.class);
-        Assertions.assertThrows(ExchangeRuntimeException.class,
+        Assertions.assertThrows(
+                ExchangeRuntimeException.class,
                 () -> client.compensate(URI.create("https://localhost/saga").toURL(), exchange));
     }
 
@@ -101,7 +105,8 @@ public class LRAClientTest extends CamelTestSupport {
             }
         };
         Exchange exchange = Mockito.mock(Exchange.class);
-        Assertions.assertThrows(ExchangeRuntimeException.class,
+        Assertions.assertThrows(
+                ExchangeRuntimeException.class,
                 () -> client.complete(URI.create("https://localhost/saga").toURL(), exchange));
     }
 

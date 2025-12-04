@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pg.replication.slot;
 
 import java.net.SocketException;
@@ -65,7 +66,9 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
         this.connect();
 
         if (this.scheduledExecutor == null) {
-            this.scheduledExecutor = this.getEndpoint().getCamelContext().getExecutorServiceManager()
+            this.scheduledExecutor = this.getEndpoint()
+                    .getCamelContext()
+                    .getExecutorServiceManager()
                     .newSingleThreadScheduledExecutor(this, "PgReplicationStatusUpdateSender");
         }
 
@@ -131,14 +134,18 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
         message.setBody(this.payload);
 
         final long delay = this.endpoint.getStatusInterval();
-        ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(() -> {
-            try {
-                LOG.debug("Processing took too long. Sending status update to avoid disconnect.");
-                stream.forceUpdateStatus();
-            } catch (SQLException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }, delay, delay, TimeUnit.SECONDS);
+        ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(
+                () -> {
+                    try {
+                        LOG.debug("Processing took too long. Sending status update to avoid disconnect.");
+                        stream.forceUpdateStatus();
+                    } catch (SQLException e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                },
+                delay,
+                delay,
+                TimeUnit.SECONDS);
 
         exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
             @Override
@@ -162,7 +169,8 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
     private void processCommit(Exchange exchange) {
         try {
             // Reset the `payload` buffer first because it's already processed, and in case of losing the connection
-            // while updating the status, the next poll will try to reconnect again instead of processing the stale payload.
+            // while updating the status, the next poll will try to reconnect again instead of processing the stale
+            // payload.
             this.payload = null;
 
             PGReplicationStream stream = getStream();
@@ -182,13 +190,17 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
     private void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
         if (cause != null) {
-            getExceptionHandler().handleException(
-                    "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
+            getExceptionHandler()
+                    .handleException(
+                            "Error during processing exchange. Will attempt to process the message on next poll.",
+                            exchange,
+                            cause);
         }
     }
 
     private void createSlot() throws SQLException {
-        this.pgConnection.getReplicationAPI()
+        this.pgConnection
+                .getReplicationAPI()
                 .createReplicationSlot()
                 .logical()
                 .withSlotName(this.endpoint.getSlot())
@@ -197,10 +209,11 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
     }
 
     private boolean isSlotCreated() throws SQLException {
-        String sql
-                = String.format("SELECT count(*) FROM pg_replication_slots WHERE slot_name = '%s';", this.endpoint.getSlot());
+        String sql = String.format(
+                "SELECT count(*) FROM pg_replication_slots WHERE slot_name = '%s';", this.endpoint.getSlot());
 
-        try (Statement statement = this.connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
+        try (Statement statement = this.connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql)) {
             resultSet.next();
             return resultSet.getInt(1) > 0;
         }
@@ -216,7 +229,8 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
             return null;
         }
 
-        ChainedLogicalStreamBuilder streamBuilder = this.pgConnection.getReplicationAPI()
+        ChainedLogicalStreamBuilder streamBuilder = this.pgConnection
+                .getReplicationAPI()
                 .replicationStream()
                 .logical()
                 .withSlotName(this.endpoint.getSlot())
@@ -232,10 +246,12 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
     }
 
     private boolean isSlotActive() throws SQLException {
-        String sql = String.format("SELECT count(*) FROM pg_replication_slots where slot_name = '%s' AND active = true;",
+        String sql = String.format(
+                "SELECT count(*) FROM pg_replication_slots where slot_name = '%s' AND active = true;",
                 this.endpoint.getSlot());
 
-        try (Statement statement = this.connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
+        try (Statement statement = this.connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql)) {
             resultSet.next();
             return resultSet.getInt(1) > 0;
         }

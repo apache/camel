@@ -27,7 +27,8 @@ public class CatalogHelper {
         // prevent instantiation of utility class
     }
 
-    public static CamelCatalog loadCatalog(RuntimeType runtime, String runtimeVersion, boolean download) throws Exception {
+    public static CamelCatalog loadCatalog(RuntimeType runtime, String runtimeVersion, boolean download)
+            throws Exception {
         return loadCatalog(runtime, runtimeVersion, "", null, download);
     }
 

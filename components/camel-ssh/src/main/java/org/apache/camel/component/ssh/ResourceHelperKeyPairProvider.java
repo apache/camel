@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.io.IOException;
@@ -74,18 +75,15 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
     private String[] resources;
     private Supplier<char[]> passwordFinder;
 
-    public ResourceHelperKeyPairProvider() {
-    }
+    public ResourceHelperKeyPairProvider() {}
 
-    public ResourceHelperKeyPairProvider(String[] resources,
-                                         CamelContext camelContext) {
+    public ResourceHelperKeyPairProvider(String[] resources, CamelContext camelContext) {
         this.camelContext = camelContext;
         this.resources = resources;
     }
 
-    public ResourceHelperKeyPairProvider(String[] resources,
-                                         Supplier<char[]> passwordFinder,
-                                         CamelContext camelContext) {
+    public ResourceHelperKeyPairProvider(
+            String[] resources, Supplier<char[]> passwordFinder, CamelContext camelContext) {
         this.camelContext = camelContext;
         this.resources = resources;
         this.passwordFinder = passwordFinder;
@@ -149,8 +147,8 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
                     //  - RSAPEMResourceKeyPairParser
                     //  - OpenSSHKeyPairResourceParser
                     // but it doesn't read keys with "BEGIN ENCRYPTED PRIVATE KEY"
-                    Iterable<KeyPair> keyPairs
-                            = SecurityUtils.loadKeyPairIdentities(sessionContext, null, is, passwordProvider);
+                    Iterable<KeyPair> keyPairs =
+                            SecurityUtils.loadKeyPairIdentities(sessionContext, null, is, passwordProvider);
                     if (keyPairs != null) {
                         return keyPairs;
                     }
@@ -204,8 +202,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (privateKey instanceof RSAPrivateCrtKey) {
             KeySpec keySpec = new RSAPublicKeySpec(
-                    ((RSAPrivateCrtKey) privateKey).getModulus(),
-                    ((RSAPrivateCrtKey) privateKey).getPublicExponent());
+                    ((RSAPrivateCrtKey) privateKey).getModulus(), ((RSAPrivateCrtKey) privateKey).getPublicExponent());
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(keySpec);
         } else if (privateKey instanceof ECPrivateKey) {
@@ -224,5 +221,4 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
             return null;
         }
     }
-
 }

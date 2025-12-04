@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.dataformat;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
@@ -37,8 +40,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Integration test demonstrating real-world usage of PQCDataFormat in a file encryption/decryption scenario
@@ -83,13 +84,9 @@ public class PQCDataFormatIntegrationTest extends CamelTestSupport {
                         .to("mock:decrypted-files");
 
                 // Alternative route: Encrypt-at-rest scenario
-                from("direct:encrypt-at-rest")
-                        .marshal(pqcFormat)
-                        .to("mock:storage");
+                from("direct:encrypt-at-rest").marshal(pqcFormat).to("mock:storage");
 
-                from("direct:decrypt-from-storage")
-                        .unmarshal(pqcFormat)
-                        .to("mock:retrieved");
+                from("direct:decrypt-from-storage").unmarshal(pqcFormat).to("mock:retrieved");
             }
         };
     }
@@ -144,7 +141,8 @@ public class PQCDataFormatIntegrationTest extends CamelTestSupport {
         encryptedFiles.expectedMessageCount(1);
         decryptedFiles.expectedMessageCount(1);
 
-        String jsonPayload = """
+        String jsonPayload =
+                """
                 {
                     "userId": "12345",
                     "action": "transfer",

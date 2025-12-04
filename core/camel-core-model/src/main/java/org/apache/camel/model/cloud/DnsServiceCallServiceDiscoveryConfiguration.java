@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,6 +34,7 @@ public class DnsServiceCallServiceDiscoveryConfiguration extends ServiceCallServ
     @XmlAttribute
     @Metadata(defaultValue = "_tcp")
     private String proto = "_tcp";
+
     @XmlAttribute
     private String domain;
 

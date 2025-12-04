@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedResequencerMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Expression to use for re-ordering the messages, such as a header with a sequence number")
+    @ManagedAttribute(
+            description = "Expression to use for re-ordering the messages, such as a header with a sequence number")
     String getExpression();
 
     @ManagedAttribute(description = "The size of the batch to be re-ordered. The default size is 100.")
@@ -41,7 +43,8 @@ public interface ManagedResequencerMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "The capacity of the resequencer's inbound queue")
     Integer getCapacity();
 
-    @ManagedAttribute(description = "If true, throws an exception when messages older than the last delivered message are processed")
+    @ManagedAttribute(
+            description =
+                    "If true, throws an exception when messages older than the last delivered message are processed")
     Boolean isRejectOld();
-
 }

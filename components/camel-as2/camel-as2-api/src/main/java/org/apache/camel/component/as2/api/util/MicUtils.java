@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
 
 import java.nio.charset.StandardCharsets;
@@ -36,8 +37,7 @@ import org.slf4j.LoggerFactory;
 public final class MicUtils {
     private static final Logger LOG = LoggerFactory.getLogger(MicUtils.class);
 
-    private MicUtils() {
-    }
+    private MicUtils() {}
 
     public static class ReceivedContentMic {
         private final String digestAlgorithmId;
@@ -83,22 +83,24 @@ public final class MicUtils {
             ClassicHttpRequest request, Certificate[] validateSigningCertificateChain, PrivateKey decryptingPrivateKey)
             throws HttpException {
 
-        String dispositionNotificationOptionsString
-                = HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
+        String dispositionNotificationOptionsString =
+                HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
         if (dispositionNotificationOptionsString == null) {
             LOG.debug("do not create MIC: no disposition notification options in request");
             return null;
         }
-        DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
-                .parseDispositionNotificationOptions(dispositionNotificationOptionsString, null);
-        String micJdkAlgorithmName
-                = getMicJdkAlgorithmName(dispositionNotificationOptions.getSignedReceiptMicalg().getValues());
+        DispositionNotificationOptions dispositionNotificationOptions =
+                DispositionNotificationOptionsParser.parseDispositionNotificationOptions(
+                        dispositionNotificationOptionsString, null);
+        String micJdkAlgorithmName = getMicJdkAlgorithmName(
+                dispositionNotificationOptions.getSignedReceiptMicalg().getValues());
         if (micJdkAlgorithmName == null) {
             LOG.debug("do not create MIC: no matching MIC algorithms found");
             return null;
         }
 
-        HttpEntity entity = HttpMessageUtils.extractEdiPayload(request,
+        HttpEntity entity = HttpMessageUtils.extractEdiPayload(
+                request,
                 new HttpMessageUtils.DecrpytingAndSigningInfo(validateSigningCertificateChain, decryptingPrivateKey));
 
         byte[] content = EntityUtils.getContent(entity);

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,17 +28,15 @@ import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 /**
  * Unit test for resolving reference parameters.
  */
 public class HttpReferenceParameterTest extends CamelTestSupport {
 
-    private static final String TEST_URI_1
-            = "http://localhost:8080?httpBinding=#customBinding&httpClientConfigurer=#customConfigurer&httpContext=#customContext";
-    private static final String TEST_URI_2
-            = "http://localhost:8081?httpBinding=#customBinding&httpClientConfigurer=#customConfigurer&httpContext=#customContext";
+    private static final String TEST_URI_1 =
+            "http://localhost:8080?httpBinding=#customBinding&httpClientConfigurer=#customConfigurer&httpContext=#customContext";
+    private static final String TEST_URI_2 =
+            "http://localhost:8081?httpBinding=#customBinding&httpClientConfigurer=#customConfigurer&httpContext=#customContext";
 
     private HttpEndpoint endpoint1;
     private HttpEndpoint endpoint2;
@@ -94,13 +95,11 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
         };
     }
 
-    private static class TestHttpBinding extends DefaultHttpBinding {
-    }
+    private static class TestHttpBinding extends DefaultHttpBinding {}
 
     private static class TestClientConfigurer implements HttpClientConfigurer {
 
         @Override
-        public void configureHttpClient(HttpClientBuilder clientBuilder) {
-        }
+        public void configureHttpClient(HttpClientBuilder clientBuilder) {}
     }
 }

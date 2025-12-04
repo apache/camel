@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,9 +42,12 @@ public class ConstantResultTypeTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setHeader("foo").constant("123", int.class)
-                        .setHeader("bar").constant("true", boolean.class)
-                        .setHeader("baz").constant("456")
+                        .setHeader("foo")
+                        .constant("123", int.class)
+                        .setHeader("bar")
+                        .constant("true", boolean.class)
+                        .setHeader("baz")
+                        .constant("456")
                         .to("mock:result");
             }
         };

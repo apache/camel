@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.Map;
@@ -39,16 +40,23 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     @XmlAttribute
     @Metadata(defaultValue = "60", javaType = "java.lang.Integer")
     private String timeout = Integer.toString(60);
+
     @XmlAttribute
-    @Metadata(javaType = "java.util.concurrent.TimeUnit", defaultValue = "SECONDS",
-              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+    @Metadata(
+            javaType = "java.util.concurrent.TimeUnit",
+            defaultValue = "SECONDS",
+            enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private String units = TimeUnit.SECONDS.name();
+
     @XmlElements({
-            @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class) })
+        @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(
+                name = "kubernetesServiceDiscovery",
+                type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)
+    })
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
     public CachingServiceCallServiceDiscoveryConfiguration() {
@@ -92,7 +100,8 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     /**
      * Set the service-call configuration to use
      */
-    public void setServiceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
+    public void setServiceDiscoveryConfiguration(
+            ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         this.serviceDiscoveryConfiguration = serviceDiscoveryConfiguration;
     }
 
@@ -165,7 +174,8 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     }
 
     public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesServiceDiscovery() {
-        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
+        KubernetesServiceCallServiceDiscoveryConfiguration conf =
+                new KubernetesServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
@@ -190,7 +200,8 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     // *************************************************************************
 
     @Override
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters)
+            throws Exception {
         if (serviceDiscoveryConfiguration != null) {
             parameters.put("serviceDiscovery", serviceDiscoveryConfiguration.newInstance(camelContext));
         }

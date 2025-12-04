@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stringtemplate;
 
 import java.io.StringWriter;
@@ -35,21 +36,27 @@ import org.stringtemplate.v4.STGroup;
 /**
  * Transform messages using StringTemplate engine.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "string-template", title = "String Template",
-             syntax = "string-template:resourceUri", producerOnly = true,
-             remote = false, category = { Category.TRANSFORMATION, Category.SCRIPT },
-             headersClass = StringTemplateConstants.class)
+@UriEndpoint(
+        firstVersion = "1.2.0",
+        scheme = "string-template",
+        title = "String Template",
+        syntax = "string-template:resourceUri",
+        producerOnly = true,
+        remote = false,
+        category = {Category.TRANSFORMATION, Category.SCRIPT},
+        headersClass = StringTemplateConstants.class)
 public class StringTemplateEndpoint extends ResourceEndpoint {
 
     @UriParam
     private boolean allowTemplateFromHeader;
+
     @UriParam(defaultValue = "<")
     private char delimiterStart = STGroup.defaultGroup.delimiterStartChar;
+
     @UriParam(defaultValue = ">")
     private char delimiterStop = STGroup.defaultGroup.delimiterStopChar;
 
-    public StringTemplateEndpoint() {
-    }
+    public StringTemplateEndpoint() {}
 
     public StringTemplateEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
@@ -118,12 +125,13 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         Map<String, Object> variableMap = null;
 
         if (allowTemplateFromHeader) {
-            String newResourceUri
-                    = exchange.getIn().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI, String.class);
+            String newResourceUri =
+                    exchange.getIn().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI, String.class);
             if (newResourceUri != null) {
                 exchange.getIn().removeHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI);
 
-                log.debug("{} set to {} creating new endpoint to handle exchange",
+                log.debug(
+                        "{} set to {} creating new endpoint to handle exchange",
                         StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI,
                         newResourceUri);
                 try (StringTemplateEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri)) {
@@ -140,16 +148,21 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         }
 
         if (template != null) {
-            log.debug("StringTemplate content read from header {} for endpoint {}",
+            log.debug(
+                    "StringTemplate content read from header {} for endpoint {}",
                     StringTemplateConstants.STRINGTEMPLATE_TEMPLATE,
                     getEndpointUri());
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(StringTemplateConstants.STRINGTEMPLATE_TEMPLATE);
         } else {
-            log.debug("StringTemplate content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(),
+            log.debug(
+                    "StringTemplate content read from resource {} with resourceUri: {} for endpoint {}",
+                    getResourceUri(),
                     path,
                     getEndpointUri());
-            template = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, getResourceAsInputStream());
+            template = exchange.getContext()
+                    .getTypeConverter()
+                    .mandatoryConvertTo(String.class, getResourceAsInputStream());
         }
         // getResourceAsInputStream also considers the content cache
         ST stTemplate = new ST(template, delimiterStart, delimiterStop);

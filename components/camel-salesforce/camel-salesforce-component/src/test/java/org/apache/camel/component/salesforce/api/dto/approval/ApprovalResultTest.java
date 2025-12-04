@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.approval;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -24,27 +31,21 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult.Res
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ApprovalResultTest {
 
     @Test
     public void shouldDeserializeFromJson() throws IOException {
-        final String json = "["//
-                            + "{"//
-                            + "\"actorIds\":[\"0050Y000000u5NOQAY\"],"//
-                            + "\"entityId\":\"0010Y000005BYrZQAW\","//
-                            + "\"errors\":null,"//
-                            + "\"instanceId\":\"04g0Y000000PL53QAG\","//
-                            + "\"instanceStatus\":\"Pending\","//
-                            + "\"newWorkitemIds\":[\"04i0Y000000L0fkQAC\"],"//
-                            + "\"success\":true"//
-                            + "}"//
-                            + "]";
+        final String json = "[" //
+                + "{" //
+                + "\"actorIds\":[\"0050Y000000u5NOQAY\"]," //
+                + "\"entityId\":\"0010Y000005BYrZQAW\"," //
+                + "\"errors\":null," //
+                + "\"instanceId\":\"04g0Y000000PL53QAG\"," //
+                + "\"instanceStatus\":\"Pending\"," //
+                + "\"newWorkitemIds\":[\"04i0Y000000L0fkQAC\"]," //
+                + "\"success\":true" //
+                + "}" //
+                + "]";
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 

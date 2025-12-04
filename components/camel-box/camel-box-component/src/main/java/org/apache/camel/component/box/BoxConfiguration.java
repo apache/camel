@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
 
 import java.util.Map;
@@ -41,6 +42,7 @@ public class BoxConfiguration {
      * Authentication Types for Connection
      */
     public static final String APP_ENTERPRISE_AUTHENTICATION = "APP_ENTERPRISE_AUTHENTICATION";
+
     public static final String APP_USER_AUTHENTICATION = "APP_USER_AUTHENTICATION";
     public static final String STANDARD_AUTHENTICATION = "STANDARD_AUTHENTICATION";
 
@@ -48,6 +50,7 @@ public class BoxConfiguration {
      * Encryption Algorithm Types for Server Authentication.
      */
     public static final String RSA_SHA_512 = "RSA_SHA_512";
+
     public static final String RSA_SHA_384 = "RSA_SHA_384";
     public static final String RSA_SHA_256 = "RSA_SHA_256";
 
@@ -79,8 +82,10 @@ public class BoxConfiguration {
 
     @UriParam(label = "security", secret = true)
     private String clientSecret;
+
     @UriParam(label = "security", secret = true)
     private String userName;
+
     @UriParam(label = "security", secret = true)
     private String userPassword;
 
@@ -98,6 +103,7 @@ public class BoxConfiguration {
 
     @UriParam(label = "advanced")
     private Map<String, Object> httpParams;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 

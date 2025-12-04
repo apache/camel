@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.propagation;
 
 import java.util.Iterator;
@@ -28,7 +29,8 @@ public final class CamelHeadersSpanContextPropagationExtractor implements SpanCo
 
     public CamelHeadersSpanContextPropagationExtractor(final Map<String, Object> map) {
         // Extract string valued map entries
-        map.entrySet().stream().filter(e -> e.getValue() instanceof String)
+        map.entrySet().stream()
+                .filter(e -> e.getValue() instanceof String)
                 .forEach(e -> this.map.put(e.getKey(), e.getValue()));
     }
 

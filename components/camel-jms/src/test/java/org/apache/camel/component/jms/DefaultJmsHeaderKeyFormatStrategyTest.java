@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class DefaultJmsHeaderKeyFormatStrategyTest {
 
@@ -43,5 +44,4 @@ public class DefaultJmsHeaderKeyFormatStrategyTest {
         assertEquals("My-Header.You", strategy.decodeKey("My_HYPHEN_Header_DOT_You"));
         assertEquals("org.apache.camel.MyBean", strategy.decodeKey("org_DOT_apache_DOT_camel_DOT_MyBean"));
     }
-
 }

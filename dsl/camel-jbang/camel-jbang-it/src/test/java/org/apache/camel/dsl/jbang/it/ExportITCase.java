@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -28,8 +29,8 @@ public class ExportITCase extends JBangTestSupport {
     @Test
     @Tag("spring-boot")
     public void testExportSB() throws IOException {
-        execute(String.format("export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
-                mountPoint()));
+        execute(String.format(
+                "export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s", mountPoint()));
         assertFileInDataFolderExists("mvnw");
         assertFileInDataFolderExists("mvnw.cmd");
         assertFileInDataFolderExists("pom.xml");
@@ -39,8 +40,7 @@ public class ExportITCase extends JBangTestSupport {
     @Test
     @Tag("quarkus")
     public void testExportQuarkus() throws IOException {
-        execute(String.format("export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
-                mountPoint()));
+        execute(String.format("export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s", mountPoint()));
         assertFileInDataFolderExists("mvnw");
         assertFileInDataFolderExists("mvnw.cmd");
         assertFileInDataFolderExists("pom.xml");
@@ -50,8 +50,8 @@ public class ExportITCase extends JBangTestSupport {
     @Test
     @Tag("main")
     public void testExportMain() throws IOException {
-        execute(String.format("export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
-                mountPoint()));
+        execute(String.format(
+                "export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s", mountPoint()));
         assertFileInDataFolderExists("mvnw");
         assertFileInDataFolderExists("mvnw.cmd");
         assertFileInDataFolderExists("pom.xml");
@@ -86,17 +86,17 @@ public class ExportITCase extends JBangTestSupport {
     public void testExportProperties() throws IOException {
         newFileInDataFolder("application.properties", "camel.jbang.runtime=quarkus");
         execInContainer(String.format("mv %s/application.properties .", mountPoint()));
-        execute(String.format(
-                "export --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s", mountPoint()));
+        execute(String.format("export --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s", mountPoint()));
         assertFileInDataFolderContains("pom.xml", "<groupId>org.apache.camel.quarkus</groupId>");
     }
 
     @Test
     @Tag("main")
     public void testExportWithAgent() throws IOException {
-        newFileInDataFolder("application.properties",
+        newFileInDataFolder(
+                "application.properties",
                 "camel.jbang.dependencies=camel:opentelemetry,agent:io.opentelemetry.javaagent:opentelemetry-javaagent:1.31.0\n"
-                                                      + "camel.opentelemetry.enabled=true");
+                        + "camel.opentelemetry.enabled=true");
         execInContainer(String.format("mv %s/application.properties .", mountPoint()));
         execute(String.format(
                 "export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s", mountPoint()));
@@ -136,22 +136,22 @@ public class ExportITCase extends JBangTestSupport {
     public void testExportWithCustomQuarkusBuild() throws IOException {
         String quarkusGid = System.getProperty("quarkusGroupId");
         String quarkusVersion = System.getProperty("quarkusVersion");
-        Assumptions.assumeTrue(quarkusGid != null && quarkusVersion != null,
-                "Skipping test, custom Quarkus properties not set");
+        Assumptions.assumeTrue(
+                quarkusGid != null && quarkusVersion != null, "Skipping test, custom Quarkus properties not set");
         execute(String.format(
                 "export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT "
-                              + "--quarkus-group-id=%s --quarkus-version=%s "
-                              + "--dep=org.apache.camel.quarkus:camel-quarkus-timer,"
-                              + "org.apache.camel.quarkus:camel-quarkus-management,"
-                              + "org.apache.camel.quarkus:camel-quarkus-cli-connector "
-                              + "--directory=%s",
+                        + "--quarkus-group-id=%s --quarkus-version=%s "
+                        + "--dep=org.apache.camel.quarkus:camel-quarkus-timer,"
+                        + "org.apache.camel.quarkus:camel-quarkus-management,"
+                        + "org.apache.camel.quarkus:camel-quarkus-cli-connector "
+                        + "--directory=%s",
                 quarkusGid, quarkusVersion, mountPoint()));
         assertFileInDataFolderExists("mvnw");
         assertFileInDataFolderExists("mvnw.cmd");
         assertFileInDataFolderExists("pom.xml");
-        assertFileInDataFolderContains("pom.xml",
-                String.format("<quarkus.platform.group-id>%s</quarkus.platform.group-id>", quarkusGid));
-        assertFileInDataFolderContains("pom.xml",
-                String.format("<quarkus.platform.version>%s</quarkus.platform.version>", quarkusVersion));
+        assertFileInDataFolderContains(
+                "pom.xml", String.format("<quarkus.platform.group-id>%s</quarkus.platform.group-id>", quarkusGid));
+        assertFileInDataFolderContains(
+                "pom.xml", String.format("<quarkus.platform.version>%s</quarkus.platform.version>", quarkusVersion));
     }
 }

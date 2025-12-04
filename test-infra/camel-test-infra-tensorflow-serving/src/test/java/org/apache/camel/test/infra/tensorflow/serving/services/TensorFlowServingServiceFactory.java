@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.tensorflow.serving.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class TensorFlowServingServiceFactory {
-    private TensorFlowServingServiceFactory() {
-    }
+    private TensorFlowServingServiceFactory() {}
 
     public static SimpleTestServiceBuilder<TensorFlowServingService> builder() {
         return new SimpleTestServiceBuilder<>("tensorflow-serving");

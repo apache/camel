@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +28,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
 
@@ -40,7 +41,8 @@ public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
 
         assertTrue(myListener.hasName("cool.end"));
         assertEquals("mock:result", myListener.getValue("cool.end"));
-        assertEquals("classpath:org/apache/camel/component/properties/myproperties.properties",
+        assertEquals(
+                "classpath:org/apache/camel/component/properties/myproperties.properties",
                 myListener.getSource("cool.end"));
     }
 
@@ -49,9 +51,7 @@ public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setBody(constant("{{greeting}}"))
-                        .to("{{cool.end}}");
+                from("direct:start").setBody(constant("{{greeting}}")).to("{{cool.end}}");
             }
         };
     }
@@ -59,7 +59,8 @@ public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         context.getPropertiesComponent().addInitialProperty("greeting", "Hello World");
         context.getPropertiesComponent().addPropertiesLookupListener(myListener);
         return context;
@@ -71,7 +72,7 @@ public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
 
         @Override
         public void onLookup(String name, String value, String defaultValue, String source) {
-            map.put(name, new String[] { value, source });
+            map.put(name, new String[] {value, source});
         }
 
         public boolean hasName(String name) {
@@ -86,5 +87,4 @@ public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
             return map.get(name)[1];
         }
     }
-
 }

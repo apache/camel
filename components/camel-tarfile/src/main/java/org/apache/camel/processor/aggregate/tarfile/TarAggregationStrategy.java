@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.tarfile;
 
 import java.io.File;
@@ -61,10 +62,11 @@ import org.slf4j.LoggerFactory;
  * tar file.
  * </p>
  */
-@Metadata(label = "bean",
-          description = "AggregationStrategy to combine together incoming messages into a tar file."
-                        + " Please note that this aggregation strategy requires eager completion check to work properly.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Metadata(
+        label = "bean",
+        description = "AggregationStrategy to combine together incoming messages into a tar file."
+                + " Please note that this aggregation strategy requires eager completion check to work properly.",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class TarAggregationStrategy implements AggregationStrategy {
 
@@ -72,14 +74,21 @@ public class TarAggregationStrategy implements AggregationStrategy {
 
     @Metadata(description = "Sets the prefix that will be used when creating the TAR filename.")
     private String filePrefix;
+
     @Metadata(description = "Sets the suffix that will be used when creating the TAR filename.", defaultValue = "tar")
     private String fileSuffix = ".tar";
-    @Metadata(label = "advanced",
-              description = "If the incoming message is from a file, then the folder structure of said file can be preserved")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "If the incoming message is from a file, then the folder structure of said file can be preserved")
     private boolean preserveFolderStructure;
-    @Metadata(label = "advanced",
-              description = "Whether to use CamelFileName header for the filename instead of using unique message id")
+
+    @Metadata(
+            label = "advanced",
+            description = "Whether to use CamelFileName header for the filename instead of using unique message id")
     private boolean useFilenameHeader;
+
     @Metadata(label = "advanced", description = "Sets the parent directory to use for writing temporary files")
     private File parentDir = new File(System.getProperty("java.io.tmpdir"));
 
@@ -248,15 +257,16 @@ public class TarAggregationStrategy implements AggregationStrategy {
     }
 
     private void addFileToTar(File source, File file, String fileName) throws IOException, ArchiveException {
-        File tmpTar = Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
+        File tmpTar =
+                Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
         Files.delete(tmpTar.toPath());
         if (!source.renameTo(tmpTar)) {
             throw new IOException("Could not make temp file (" + source.getName() + ")");
         }
 
         try (FileInputStream fis = new FileInputStream(tmpTar)) {
-            try (TarArchiveInputStream tin = new ArchiveStreamFactory()
-                    .createArchiveInputStream(ArchiveStreamFactory.TAR, fis)) {
+            try (TarArchiveInputStream tin =
+                    new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, fis)) {
                 try (TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source))) {
                     tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
                     tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
@@ -274,7 +284,8 @@ public class TarAggregationStrategy implements AggregationStrategy {
         FileUtil.deleteFile(tmpTar);
     }
 
-    private void addNewEntry(File file, String fileName, TarArchiveOutputStream tos, InputStream in) throws IOException {
+    private void addNewEntry(File file, String fileName, TarArchiveOutputStream tos, InputStream in)
+            throws IOException {
         TarArchiveEntry entry = new TarArchiveEntry(fileName == null ? file.getName() : fileName);
         entry.setSize(file.length());
         tos.putArchiveEntry(entry);
@@ -292,16 +303,18 @@ public class TarAggregationStrategy implements AggregationStrategy {
         }
     }
 
-    private void addEntryToTar(File source, String entryName, byte[] buffer, int length) throws IOException, ArchiveException {
-        File tmpTar = Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
+    private void addEntryToTar(File source, String entryName, byte[] buffer, int length)
+            throws IOException, ArchiveException {
+        File tmpTar =
+                Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
         Files.delete(tmpTar.toPath());
         if (!source.renameTo(tmpTar)) {
             throw new IOException("Cannot create temp file: " + source.getName());
         }
 
         try (FileInputStream fis = new FileInputStream(tmpTar)) {
-            try (TarArchiveInputStream tin = new ArchiveStreamFactory()
-                    .createArchiveInputStream(ArchiveStreamFactory.TAR, fis)) {
+            try (TarArchiveInputStream tin =
+                    new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, fis)) {
                 try (TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source))) {
                     tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
                     tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
@@ -318,7 +331,8 @@ public class TarAggregationStrategy implements AggregationStrategy {
         FileUtil.deleteFile(tmpTar);
     }
 
-    private void createNewEntry(String entryName, byte[] buffer, int length, TarArchiveOutputStream tos) throws IOException {
+    private void createNewEntry(String entryName, byte[] buffer, int length, TarArchiveOutputStream tos)
+            throws IOException {
         TarArchiveEntry entry = new TarArchiveEntry(entryName);
         entry.setSize(length);
         tos.putArchiveEntry(entry);

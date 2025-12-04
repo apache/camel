@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSupport {
 
@@ -37,11 +38,11 @@ public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                        .handled(true);
+                onException(Exception.class).handled(true);
 
                 from("servlet:/hello?httpBinding.eagerCheckContentAvailable=true")
-                        .setProperty("myProperty").method(ServletSetExchangePropertyBeanTest.class, "throwException");
+                        .setProperty("myProperty")
+                        .method(ServletSetExchangePropertyBeanTest.class, "throwException");
             }
         };
     }
@@ -49,5 +50,4 @@ public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSu
     public static void throwException() throws Exception {
         throw new IllegalArgumentException("Forced");
     }
-
 }

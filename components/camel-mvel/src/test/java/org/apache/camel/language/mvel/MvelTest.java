@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.mvel;
 
-import org.apache.camel.test.junit5.LanguageTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.language.mvel;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class MvelTest extends LanguageTestSupport {
 

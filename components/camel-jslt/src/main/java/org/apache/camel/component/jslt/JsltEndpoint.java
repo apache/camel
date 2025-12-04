@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import java.io.ByteArrayInputStream;
@@ -61,8 +62,15 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Query or transform JSON payloads using JSLT.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true,
-             remote = false, category = { Category.TRANSFORMATION }, headersClass = JsltConstants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "jslt",
+        title = "JSLT",
+        syntax = "jslt:resourceUri",
+        producerOnly = true,
+        remote = false,
+        category = {Category.TRANSFORMATION},
+        headersClass = JsltConstants.class)
 public class JsltEndpoint extends ResourceEndpoint {
 
     private static final ObjectMapper OBJECT_MAPPER;
@@ -70,23 +78,25 @@ public class JsltEndpoint extends ResourceEndpoint {
 
     static {
         OBJECT_MAPPER = new ObjectMapper();
-        OBJECT_MAPPER.setSerializerFactory(OBJECT_MAPPER.getSerializerFactory().withSerializerModifier(
-                new SafeTypesOnlySerializerModifier()));
+        OBJECT_MAPPER.setSerializerFactory(
+                OBJECT_MAPPER.getSerializerFactory().withSerializerModifier(new SafeTypesOnlySerializerModifier()));
     }
 
     private Expression transform;
 
     @UriParam(defaultValue = "false")
     private boolean allowTemplateFromHeader;
+
     @UriParam(defaultValue = "false", label = "common")
     private boolean prettyPrint;
+
     @UriParam(defaultValue = "false")
     private boolean mapBigDecimalAsFloats;
+
     @UriParam
     private ObjectMapper objectMapper;
 
-    public JsltEndpoint() {
-    }
+    public JsltEndpoint() {}
 
     public JsltEndpoint(String uri, JsltComponent component, String resourceUri) {
         super(uri, component, resourceUri);
@@ -117,8 +127,8 @@ public class JsltEndpoint extends ResourceEndpoint {
         getInternalLock().lock();
         try {
 
-            final String jsltStringFromHeader
-                    = allowTemplateFromHeader ? msg.getHeader(JsltConstants.HEADER_JSLT_STRING, String.class) : null;
+            final String jsltStringFromHeader =
+                    allowTemplateFromHeader ? msg.getHeader(JsltConstants.HEADER_JSLT_STRING, String.class) : null;
 
             final boolean useTemplateFromUri = jsltStringFromHeader == null;
 
@@ -127,12 +137,10 @@ public class JsltEndpoint extends ResourceEndpoint {
             }
 
             final Collection<Function> functions = Objects.requireNonNullElse(
-                    ((JsltComponent) getComponent()).getFunctions(),
-                    Collections.emptyList());
+                    ((JsltComponent) getComponent()).getFunctions(), Collections.emptyList());
 
-            final JsonFilter objectFilter = Objects.requireNonNullElse(
-                    ((JsltComponent) getComponent()).getObjectFilter(),
-                    DEFAULT_JSON_FILTER);
+            final JsonFilter objectFilter =
+                    Objects.requireNonNullElse(((JsltComponent) getComponent()).getObjectFilter(), DEFAULT_JSON_FILTER);
 
             final String transformSource;
             final InputStream stream;
@@ -141,7 +149,8 @@ public class JsltEndpoint extends ResourceEndpoint {
                 transformSource = getResourceUri();
 
                 if (log.isDebugEnabled()) {
-                    log.debug("Jslt content read from resource {} with resourceUri: {} for endpoint {}",
+                    log.debug(
+                            "Jslt content read from resource {} with resourceUri: {} for endpoint {}",
                             transformSource,
                             transformSource,
                             getEndpointUri());
@@ -195,7 +204,9 @@ public class JsltEndpoint extends ResourceEndpoint {
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(JsltConstants.HEADER_JSLT_RESOURCE_URI);
 
-            log.debug("{} set to {} creating new endpoint to handle exchange", JsltConstants.HEADER_JSLT_RESOURCE_URI,
+            log.debug(
+                    "{} set to {} creating new endpoint to handle exchange",
+                    JsltConstants.HEADER_JSLT_RESOURCE_URI,
                     newResourceUri);
             JsltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
             newEndpoint.onExchange(exchange);
@@ -229,7 +240,8 @@ public class JsltEndpoint extends ResourceEndpoint {
         } else if (body instanceof InputStream) {
             input = objectMapper.readTree((InputStream) body);
         } else {
-            throw new ValidationException(exchange, "Allowed body types are String, Reader, File, byte[] or InputStream.");
+            throw new ValidationException(
+                    exchange, "Allowed body types are String, Reader, File, byte[] or InputStream.");
         }
 
         Map<String, JsonNode> variables = extractVariables(exchange);
@@ -246,10 +258,12 @@ public class JsltEndpoint extends ResourceEndpoint {
         Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
         Map<String, JsonNode> serializedVariableMap = new HashMap<>();
         if (variableMap.containsKey("headers")) {
-            serializedVariableMap.put("headers", serializeMapToJsonNode((Map<String, Object>) variableMap.get("headers")));
+            serializedVariableMap.put(
+                    "headers", serializeMapToJsonNode((Map<String, Object>) variableMap.get("headers")));
         }
         if (variableMap.containsKey("variables")) {
-            serializedVariableMap.put("variables", serializeMapToJsonNode((Map<String, Object>) variableMap.get("variables")));
+            serializedVariableMap.put(
+                    "variables", serializeMapToJsonNode((Map<String, Object>) variableMap.get("variables")));
         }
         if (variableMap.containsKey("exchange")) {
             Exchange ex = (Exchange) variableMap.get("exchange");
@@ -270,7 +284,7 @@ public class JsltEndpoint extends ResourceEndpoint {
                     // Use Jackson to convert value to JsonNode
                     mapNode.set(entry.getKey(), OBJECT_MAPPER.valueToTree(entry.getValue()));
                 } catch (IllegalArgumentException e) {
-                    //If Jackson cannot convert the value to json (e.g. infinite recursion in the value to serialize)
+                    // If Jackson cannot convert the value to json (e.g. infinite recursion in the value to serialize)
                     log.debug("Value could not be converted to JsonNode", e);
                 }
             }
@@ -331,8 +345,7 @@ public class JsltEndpoint extends ResourceEndpoint {
         // Types that are not safe are serialized as their toString() value.
         @Override
         public JsonSerializer<?> modifySerializer(
-                SerializationConfig config, BeanDescription beanDesc,
-                JsonSerializer<?> serializer) {
+                SerializationConfig config, BeanDescription beanDesc, JsonSerializer<?> serializer) {
             final Class<?> beanClass = beanDesc.getBeanClass();
 
             if (Collection.class.isAssignableFrom(beanClass)

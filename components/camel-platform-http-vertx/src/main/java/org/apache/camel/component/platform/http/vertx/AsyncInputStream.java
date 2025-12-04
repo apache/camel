@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
 
 import java.io.IOException;
@@ -157,7 +158,7 @@ public class AsyncInputStream implements ReadStream<Buffer> {
         if (!contextToCheck.equals(context)) {
             throw new IllegalStateException(
                     "AsyncInputStream must only be used in the context that created it, expected: " + this.context
-                                            + " actual " + contextToCheck);
+                            + " actual " + contextToCheck);
         }
     }
 
@@ -213,37 +214,37 @@ public class AsyncInputStream implements ReadStream<Buffer> {
         }
     }
 
-    private void doRead(Buffer writeBuff, int offset, ByteBuffer buffer, long position, Handler<AsyncResult<Buffer>> handler) {
-        vertx.executeBlocking(() -> channel.read(buffer))
-                .onComplete(result -> {
-                    if (result.succeeded()) {
-                        Integer bytesRead = result.result();
-                        if (bytesRead == -1) {
-                            // EOF
-                            context.runOnContext((v) -> {
-                                buffer.flip();
-                                writeBuff.setBytes(offset, buffer);
-                                buffer.compact();
-                                handler.handle(Future.succeededFuture(writeBuff));
-                            });
-                        } else if (buffer.hasRemaining()) {
-                            // Read from the next offset
-                            context.runOnContext((v) -> {
-                                doRead(writeBuff, offset, buffer, position + bytesRead, handler);
-                            });
-                        } else {
-                            // All data is written
-                            context.runOnContext((v) -> {
-                                buffer.flip();
-                                writeBuff.setBytes(offset, buffer);
-                                buffer.compact();
-                                handler.handle(Future.succeededFuture(writeBuff));
-                            });
-                        }
-                    } else {
-                        context.runOnContext((v) -> handler.handle(Future.failedFuture(result.cause())));
-                    }
-                });
+    private void doRead(
+            Buffer writeBuff, int offset, ByteBuffer buffer, long position, Handler<AsyncResult<Buffer>> handler) {
+        vertx.executeBlocking(() -> channel.read(buffer)).onComplete(result -> {
+            if (result.succeeded()) {
+                Integer bytesRead = result.result();
+                if (bytesRead == -1) {
+                    // EOF
+                    context.runOnContext((v) -> {
+                        buffer.flip();
+                        writeBuff.setBytes(offset, buffer);
+                        buffer.compact();
+                        handler.handle(Future.succeededFuture(writeBuff));
+                    });
+                } else if (buffer.hasRemaining()) {
+                    // Read from the next offset
+                    context.runOnContext((v) -> {
+                        doRead(writeBuff, offset, buffer, position + bytesRead, handler);
+                    });
+                } else {
+                    // All data is written
+                    context.runOnContext((v) -> {
+                        buffer.flip();
+                        writeBuff.setBytes(offset, buffer);
+                        buffer.compact();
+                        handler.handle(Future.succeededFuture(writeBuff));
+                    });
+                }
+            } else {
+                context.runOnContext((v) -> handler.handle(Future.failedFuture(result.cause())));
+            }
+        });
     }
 
     private void handleData(Buffer buffer) {

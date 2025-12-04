@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import org.apache.camel.Exchange;
@@ -24,6 +25,5 @@ public final class DataSetConstants {
     @Metadata(description = "The dataset index", javaType = "Long")
     public static final String DATASET_INDEX = Exchange.DATASET_INDEX;
 
-    private DataSetConstants() {
-    }
+    private DataSetConstants() {}
 }

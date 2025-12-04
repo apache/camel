@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import org.apache.camel.Category;
@@ -28,13 +29,14 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Sparkplug B Host Application support over MQTT using Eclipse Tahu
  */
-@UriEndpoint(firstVersion = "4.8.0",
-             scheme = TahuConstants.HOST_APP_SCHEME,
-             title = "Tahu Host Application",
-             syntax = TahuConstants.HOST_APP_ENDPOINT_URI_SYNTAX,
-             consumerOnly = true,
-             category = { Category.MESSAGING, Category.IOT, Category.MONITORING },
-             headersClass = TahuConstants.class)
+@UriEndpoint(
+        firstVersion = "4.8.0",
+        scheme = TahuConstants.HOST_APP_SCHEME,
+        title = "Tahu Host Application",
+        syntax = TahuConstants.HOST_APP_ENDPOINT_URI_SYNTAX,
+        consumerOnly = true,
+        category = {Category.MESSAGING, Category.IOT, Category.MONITORING},
+        headersClass = TahuConstants.class)
 public class TahuHostEndpoint extends TahuDefaultEndpoint {
 
     @UriPath(label = "consumer", description = "ID for the host application")
@@ -45,12 +47,12 @@ public class TahuHostEndpoint extends TahuDefaultEndpoint {
         super(uri, component, configuration);
 
         this.hostId = hostId;
-
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        TahuHostConsumer consumer = new TahuHostConsumer(this, processor, ObjectHelper.notNullOrEmpty(hostId, "hostId"));
+        TahuHostConsumer consumer =
+                new TahuHostConsumer(this, processor, ObjectHelper.notNullOrEmpty(hostId, "hostId"));
         configureConsumer(consumer);
         return consumer;
     }
@@ -63,5 +65,4 @@ public class TahuHostEndpoint extends TahuDefaultEndpoint {
     public String getHostId() {
         return hostId;
     }
-
 }

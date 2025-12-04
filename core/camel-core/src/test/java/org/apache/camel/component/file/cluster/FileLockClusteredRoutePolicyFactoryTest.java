@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.cluster;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -36,9 +40,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class FileLockClusteredRoutePolicyFactoryTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileLockClusteredRoutePolicyFactoryTest.class);
@@ -103,14 +104,17 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("timer:file-lock?delay=10&period=100").routeId("route-" + id).log("From ${routeId}")
+                    from("timer:file-lock?delay=10&period=100")
+                            .routeId("route-" + id)
+                            .log("From ${routeId}")
                             .process(e -> contextLatch.countDown());
                 }
             });
 
             // Start the context after some random time so the startup order
             // changes for each test.
-            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
+            Awaitility.await()
+                    .pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
                     .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
 
             context.start();

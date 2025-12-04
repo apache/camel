@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 /**
@@ -347,7 +348,8 @@ public class MyConfiguration {
     /**
      * Whether to remove stream caching temporary directory when stopping. This option is default true.
      */
-    public void setStreamCachingRemoveSpoolDirectoryWhenStopping(boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
+    public void setStreamCachingRemoveSpoolDirectoryWhenStopping(
+            boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
         this.streamCachingRemoveSpoolDirectoryWhenStopping = streamCachingRemoveSpoolDirectoryWhenStopping;
     }
 
@@ -537,5 +539,4 @@ public class MyConfiguration {
     public void setRouteFilterExcludePattern(String exclude) {
         this.routeFilterExcludePattern = exclude;
     }
-
 }

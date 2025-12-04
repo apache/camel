@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
+
+import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
 
 import java.util.Map;
 import java.util.Objects;
@@ -33,13 +36,16 @@ import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
-import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
-
 /**
  * Consume and produce records from and to AWS Kinesis Streams.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS Kinesis", syntax = "aws2-kinesis:streamName",
-             category = { Category.CLOUD, Category.MESSAGING }, headersClass = Kinesis2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.2.0",
+        scheme = "aws2-kinesis",
+        title = "AWS Kinesis",
+        syntax = "aws2-kinesis:streamName",
+        category = {Category.CLOUD, Category.MESSAGING},
+        headersClass = Kinesis2Constants.class)
 public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -63,15 +69,14 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
             System.setProperty(CBOR_ENABLED.property(), "false");
         }
 
-        if (configuration.isAsyncClient() &&
-                Objects.isNull(configuration.getAmazonKinesisAsyncClient())) {
+        if (configuration.isAsyncClient() && Objects.isNull(configuration.getAmazonKinesisAsyncClient())) {
             kinesisAsyncClient = kinesisConnection.getAsyncClient(this);
         } else {
             kinesisClient = kinesisConnection.getClient(this);
         }
 
         if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
-                || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
+                        || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
                 && configuration.getSequenceNumber().isEmpty()) {
             throw new IllegalArgumentException(
                     "Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
@@ -158,7 +163,8 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
     }
 
     public ExecutorService createExecutor(Object source) {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source,
-                "KinesisStream[" + configuration.getStreamName() + "]", 1);
+        return getCamelContext()
+                .getExecutorServiceManager()
+                .newFixedThreadPool(source, "KinesisStream[" + configuration.getStreamName() + "]", 1);
     }
 }

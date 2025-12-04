@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.embeddings;
 
 import org.apache.camel.CamelContext;
@@ -48,13 +49,10 @@ public class OllamaTestSupport extends CamelTestSupport {
     }
 
     protected EmbeddingModel createModel() {
-        OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(OLLAMA.baseUrl())
-                .build();
+        OllamaApi ollamaApi = OllamaApi.builder().baseUrl(OLLAMA.baseUrl()).build();
 
-        OllamaEmbeddingOptions ollamaOptions = OllamaEmbeddingOptions.builder()
-                .model(OLLAMA.modelName())
-                .build();
+        OllamaEmbeddingOptions ollamaOptions =
+                OllamaEmbeddingOptions.builder().model(OLLAMA.modelName()).build();
 
         EmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi)

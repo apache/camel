@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import java.net.URI;
@@ -35,8 +36,7 @@ public class SmbComponent extends GenericFileComponent<FileIdBothDirectoryInform
 
     public static final String SMB_FILE_INPUT_STREAM = "CamelSmbFileInputStream";
 
-    public SmbComponent() {
-    }
+    public SmbComponent() {}
 
     public SmbComponent(CamelContext context) {
         super(context);
@@ -44,8 +44,7 @@ public class SmbComponent extends GenericFileComponent<FileIdBothDirectoryInform
 
     @Override
     protected GenericFileEndpoint<FileIdBothDirectoryInformation> buildFileEndpoint(
-            String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+            String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String baseUri = getBaseUri(uri);
 
         // lets make sure we create a new configuration as each endpoint can
@@ -59,7 +58,7 @@ public class SmbComponent extends GenericFileComponent<FileIdBothDirectoryInform
             config.setPath(path);
             LOG.warn(
                     "The path option should be specified in the context-path. Instead of using ?path=/mypath then specify this in the context-path in uri: "
-                     + uri);
+                            + uri);
         }
 
         if (config.getShareName() == null) {
@@ -84,5 +83,4 @@ public class SmbComponent extends GenericFileComponent<FileIdBothDirectoryInform
     protected String getBaseUri(String uri) {
         return StringHelper.before(uri, "?", uri);
     }
-
 }

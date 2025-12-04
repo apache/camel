@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo;
+
+import static java.util.Objects.requireNonNull;
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
 
 import java.util.Base64;
 import java.util.Objects;
@@ -26,16 +30,12 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 
-import static java.util.Objects.requireNonNull;
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
-
 /**
  * Helper class to work with node IDs
  */
 public final class NodeIds {
 
-    private NodeIds() {
-    }
+    private NodeIds() {}
 
     public static NodeId toNodeId(final UShort namespaceIndex, final ExpandedNodeId nodeId) {
         requireNonNull(namespaceIndex);
@@ -232,5 +232,4 @@ public final class NodeIds {
     private static void appendNodeId(final StringBuilder builder, final ByteString nodeId) {
         builder.append("b=").append(Base64.getEncoder().encodeToString(nodeId.bytes()));
     }
-
 }

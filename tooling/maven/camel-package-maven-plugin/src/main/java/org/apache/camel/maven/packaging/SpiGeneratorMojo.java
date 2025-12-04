@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -58,8 +59,11 @@ import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 import org.jboss.jandex.Indexer;
 
-@Mojo(name = "generate-spi", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(
+        name = "generate-spi",
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class SpiGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final DotName SERVICE_FACTORY = DotName.createSimple(ServiceFactory.class.getName());
@@ -68,8 +72,10 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File classesDirectory;
+
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File sourcesOutputDir;
+
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
@@ -121,10 +127,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             String source = generateConstantProviderClass(providerClassName, fields);
-            updateResource(
-                    sourcesOutputDir.toPath(),
-                    providerClassName.replace('.', '/') + ".java",
-                    source);
+            updateResource(sourcesOutputDir.toPath(), providerClassName.replace('.', '/') + ".java", source);
         }
 
         //
@@ -153,21 +156,30 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                     pvals = annotation.values().stream()
                             .filter(annotationValue -> "name".equals(annotationValue.name()))
                             .map(name -> name.value().toString())
-                            .findFirst().get();
+                            .findFirst()
+                            .get();
                 } else {
                     pvals = annotation.value().asString();
                 }
                 for (String pval : pvals.split(",")) {
                     pval = sanitizeFileName(pval);
                     StringBuilder sb = new StringBuilder(256);
-                    sb.append("# ").append(GENERATED_MSG).append(NL).append("class=").append(className).append(NL);
+                    sb.append("# ")
+                            .append(GENERATED_MSG)
+                            .append(NL)
+                            .append("class=")
+                            .append(className)
+                            .append(NL);
                     if (ServiceFactory.JDK_SERVICE.equals(sfa.value().asString())) {
-                        updateResource(resourcesOutputDir.toPath(),
+                        updateResource(
+                                resourcesOutputDir.toPath(),
                                 "META-INF/services/org/apache/camel/" + pval,
                                 sb.toString());
                     } else {
-                        updateResource(resourcesOutputDir.toPath(),
-                                "META-INF/services/org/apache/camel/" + sfa.value().asString() + "/" + pval,
+                        updateResource(
+                                resourcesOutputDir.toPath(),
+                                "META-INF/services/org/apache/camel/"
+                                        + sfa.value().asString() + "/" + pval,
                                 sb.toString());
                     }
                 }
@@ -223,9 +235,8 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
     private Index createIndexFromClass(JarFile jf) throws IOException {
         final Indexer indexer = new Indexer();
 
-        List<JarEntry> classes = jf.stream()
-                .filter(je -> je.getName().endsWith(".class"))
-                .toList();
+        List<JarEntry> classes =
+                jf.stream().filter(je -> je.getName().endsWith(".class")).toList();
 
         for (JarEntry je : classes) {
             try (InputStream is = jf.getInputStream(je)) {
@@ -252,5 +263,4 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
         ctx.put("mojo", this);
         return velocity("velocity/constant-provider.vm", ctx);
     }
-
 }

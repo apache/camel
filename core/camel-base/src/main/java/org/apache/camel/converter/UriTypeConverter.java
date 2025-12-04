@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
 
 import java.net.URI;
@@ -48,5 +49,4 @@ public final class UriTypeConverter {
             throw new TypeConversionException(value, URI.class, e);
         }
     }
-
 }

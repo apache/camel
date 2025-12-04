@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -30,8 +31,7 @@ import org.apache.camel.util.json.Jsoner;
  */
 public final class ValidateHelper {
 
-    private ValidateHelper() {
-    }
+    private ValidateHelper() {}
 
     /**
      * Validates the component json file
@@ -87,5 +87,4 @@ public final class ValidateHelper {
     private static boolean isNullOrEmpty(Object obj) {
         return obj == null || "".equals(obj);
     }
-
 }

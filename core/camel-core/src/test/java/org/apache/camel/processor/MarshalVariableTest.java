@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.InputStream;
@@ -74,11 +75,15 @@ public class MarshalVariableTest extends ContextTestSupport {
                 from("direct:send")
                         .setVariable("hello", simple("Camel"))
                         .to("mock:before")
-                        .marshal().variableSend("hello").custom("myDF")
+                        .marshal()
+                        .variableSend("hello")
+                        .custom("myDF")
                         .to("mock:result");
 
                 from("direct:receive")
-                        .marshal().variableReceive("bye").custom("myDF")
+                        .marshal()
+                        .variableReceive("bye")
+                        .custom("myDF")
                         .to("mock:after")
                         .setBody(simple("${variable:bye}"))
                         .to("mock:result");
@@ -86,7 +91,10 @@ public class MarshalVariableTest extends ContextTestSupport {
                 from("direct:sendAndReceive")
                         .setVariable("hello", simple("Camel"))
                         .to("mock:before")
-                        .marshal().variableSend("hello").variableReceive("bye").custom("myDF")
+                        .marshal()
+                        .variableSend("hello")
+                        .variableReceive("bye")
+                        .custom("myDF")
                         .to("mock:result");
             }
         };

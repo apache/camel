@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.firehose;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -26,9 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class KinesisFirehoseEndpointTest {
@@ -47,8 +48,8 @@ public class KinesisFirehoseEndpointTest {
 
     @Test
     public void allEndpointParams() {
-        KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) camelContext
-                .getEndpoint("aws2-kinesis-firehose://some_stream_name" + "?amazonKinesisFirehoseClient=#firehoseClient");
+        KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) camelContext.getEndpoint(
+                "aws2-kinesis-firehose://some_stream_name" + "?amazonKinesisFirehoseClient=#firehoseClient");
         endpoint.start();
 
         assertThat(endpoint.getClient(), is(amazonKinesisFirehoseClient));
@@ -57,8 +58,8 @@ public class KinesisFirehoseEndpointTest {
 
     @Test
     public void allClientCreationParams() {
-        KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) camelContext
-                .getEndpoint("aws2-kinesis-firehose://some_stream_name" + "?accessKey=xxx&secretKey=yyy&region=us-east-1");
+        KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) camelContext.getEndpoint(
+                "aws2-kinesis-firehose://some_stream_name" + "?accessKey=xxx&secretKey=yyy&region=us-east-1");
 
         assertThat(endpoint.getConfiguration().getRegion(), is(Region.US_EAST_1.id()));
         assertThat(endpoint.getConfiguration().getAccessKey(), is("xxx"));

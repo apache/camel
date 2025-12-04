@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
 
 import java.util.Map;
@@ -43,15 +44,16 @@ public class KeycloakComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KeycloakConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new KeycloakConfiguration();
+        KeycloakConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new KeycloakConfiguration();
         configuration.setLabel(remaining);
         KeycloakEndpoint endpoint = new KeycloakEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
         if (configuration.getKeycloakClient() == null
                 && (configuration.getServerUrl() == null
-                        || (configuration.getAccessToken() == null && configuration.getUsername() == null
+                        || (configuration.getAccessToken() == null
+                                && configuration.getUsername() == null
                                 && configuration.getClientId() == null))) {
             throw new IllegalArgumentException(
                     "Keycloak client or serverUrl with authentication credentials (accessToken, username/password, or clientId/clientSecret) must be specified");

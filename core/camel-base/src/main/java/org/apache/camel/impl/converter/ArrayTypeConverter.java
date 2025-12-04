@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.converter;
 
 import java.lang.reflect.Array;
@@ -70,5 +71,4 @@ public class ArrayTypeConverter extends TypeConverterSupport {
         }
         return null;
     }
-
 }

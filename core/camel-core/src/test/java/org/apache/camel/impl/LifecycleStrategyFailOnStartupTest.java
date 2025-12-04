@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LifecycleStrategyFailOnStartupTest extends TestSupport {
 
@@ -47,5 +48,4 @@ public class LifecycleStrategyFailOnStartupTest extends TestSupport {
             throw new IllegalArgumentException("Forced");
         }
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.concurrent.TimeUnit;
 
@@ -38,13 +46,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarCustomMessageReceiptIT.class);
@@ -57,8 +58,8 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
     public PulsarMessageReceipt mockPulsarMessageReceipt = mock(PulsarMessageReceipt.class);
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-                    + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000")
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+            + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -68,7 +69,11 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
 
     @BeforeEach
     public void setup() throws Exception {
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(TOPIC_URI)
+                .create();
     }
 
     @Override
@@ -90,7 +95,11 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     @Test
@@ -105,8 +114,8 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt
-                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt =
+                            (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
                 });
             }
@@ -122,5 +131,4 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
         verify(mockPulsarMessageReceipt, atLeast(2)).acknowledge();
         verifyNoMoreInteractions(mockPulsarMessageReceipt);
     }
-
 }

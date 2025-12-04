@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of the <tt>useMaps</tt> option.
@@ -44,7 +45,8 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<Map<String, String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<Map<String, String>> body =
+                result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, body.size());
         assertEquals("123", body.get(0).get("OrderId"));
         assertEquals("Camel in Action", body.get(0).get("Item"));
@@ -76,7 +78,8 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<Map<String, String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<Map<String, String>> body =
+                result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, body.size());
         assertEquals("123", body.get(0).get("MyOrderId"));
         assertEquals("Camel in Action", body.get(0).get("MyItem"));
@@ -95,7 +98,8 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<Map<String, String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<Map<String, String>> body =
+                result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, body.size());
         assertEquals("123", body.get(0).get("MyOrderId"));
         assertEquals("Camel in Action", body.get(0).get("MyItem"));
@@ -107,6 +111,7 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalMapLineSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvUnmarshalMapLineSpringTest-context.xml");
     }
 }

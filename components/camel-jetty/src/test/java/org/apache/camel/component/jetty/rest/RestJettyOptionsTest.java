@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestJettyOptionsTest extends BaseJettyTest {
 
@@ -39,8 +40,10 @@ public class RestJettyOptionsTest extends BaseJettyTest {
         assertEquals("GET,OPTIONS", exchange.getMessage().getHeader("ALLOW"));
         assertEquals("", exchange.getMessage().getBody(String.class));
 
-        exchange = fluentTemplate.to("http://localhost:" + getPort() + "/users/v1/id/123")
-                .withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
+        exchange = fluentTemplate
+                .to("http://localhost:" + getPort() + "/users/v1/id/123")
+                .withHeader(Exchange.HTTP_METHOD, "OPTIONS")
+                .send();
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("PUT,OPTIONS", exchange.getMessage().getHeader("ALLOW"));
         assertEquals("", exchange.getMessage().getBody(String.class));
@@ -69,10 +72,16 @@ public class RestJettyOptionsTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("v1/customers").to("mock:customers").put("v1/id/{id}").to("mock:id").get("v2/options")
-                        .to("mock:options").post("v2/options").to("mock:options");
+                rest("/users/")
+                        .get("v1/customers")
+                        .to("mock:customers")
+                        .put("v1/id/{id}")
+                        .to("mock:id")
+                        .get("v2/options")
+                        .to("mock:options")
+                        .post("v2/options")
+                        .to("mock:options");
             }
         };
     }
-
 }

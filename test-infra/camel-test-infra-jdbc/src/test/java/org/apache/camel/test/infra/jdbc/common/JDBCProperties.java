@@ -20,7 +20,5 @@ package org.apache.camel.test.infra.jdbc.common;
 public final class JDBCProperties {
     public static final String JDBC_CONNECTION_URL = "jdbc.connection.url";
 
-    private JDBCProperties() {
-
-    }
+    private JDBCProperties() {}
 }

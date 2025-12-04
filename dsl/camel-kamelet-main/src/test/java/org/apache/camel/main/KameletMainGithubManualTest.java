@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.junit.jupiter.api.Disabled;
@@ -37,7 +38,8 @@ public class KameletMainGithubManualTest {
         KameletMain main = new KameletMain();
         main.setDownload(true);
         main.configure().withDurationMaxSeconds(10);
-        main.configure().withRoutesIncludePattern("github:apache:camel-kamelets-examples:jbang/languages/simple.groovy");
+        main.configure()
+                .withRoutesIncludePattern("github:apache:camel-kamelets-examples:jbang/languages/simple.groovy");
 
         main.run();
     }

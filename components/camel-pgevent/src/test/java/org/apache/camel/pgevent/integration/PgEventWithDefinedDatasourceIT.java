@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.pgevent.integration;
 
 import com.impossibl.postgres.jdbc.PGDataSource;
@@ -62,12 +63,9 @@ public class PgEventWithDefinedDatasourceIT extends PgEventITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(timerEndpoint)
-                        .setBody(constant(TEST_MESSAGE_BODY))
-                        .to(notifyEndpoint);
+                from(timerEndpoint).setBody(constant(TEST_MESSAGE_BODY)).to(notifyEndpoint);
 
-                from(subscribeEndpoint)
-                        .to(mockEndpoint);
+                from(subscribeEndpoint).to(mockEndpoint);
             }
         };
     }

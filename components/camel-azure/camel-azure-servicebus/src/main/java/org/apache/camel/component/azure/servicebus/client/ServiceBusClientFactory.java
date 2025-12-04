@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus.client;
 
 import java.time.Duration;
@@ -45,7 +46,8 @@ public final class ServiceBusClientFactory {
         switch (type) {
             case CONNECTION_STRING -> builder.connectionString(configuration.getConnectionString());
             case TOKEN_CREDENTIAL -> builder.credential(fullyQualifiedNamespace, credential);
-            case AZURE_IDENTITY -> builder.credential(fullyQualifiedNamespace, new DefaultAzureCredentialBuilder().build());
+            case AZURE_IDENTITY -> builder.credential(
+                    fullyQualifiedNamespace, new DefaultAzureCredentialBuilder().build());
         }
 
         return builder;
@@ -54,17 +56,16 @@ public final class ServiceBusClientFactory {
     private static ServiceBusClientBuilder.ServiceBusSenderClientBuilder createBaseServiceBusSenderClient(
             final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
         if (configuration.getServiceBusType() == ServiceBusType.queue) {
-            return busClientBuilder.sender()
-                    .queueName(configuration.getTopicOrQueueName());
+            return busClientBuilder.sender().queueName(configuration.getTopicOrQueueName());
         } else {
-            return busClientBuilder.sender()
-                    .topicName(configuration.getTopicOrQueueName());
+            return busClientBuilder.sender().topicName(configuration.getTopicOrQueueName());
         }
     }
 
     private static ServiceBusClientBuilder.ServiceBusProcessorClientBuilder createBaseServiceBusProcessorClient(
             final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
-        final ServiceBusClientBuilder.ServiceBusProcessorClientBuilder processorClientBuilder = busClientBuilder.processor();
+        final ServiceBusClientBuilder.ServiceBusProcessorClientBuilder processorClientBuilder =
+                busClientBuilder.processor();
 
         // We handle auto-complete in the consumer, since we have no way to propagate errors back to the reactive
         // pipeline messages are published on so the message would be completed even if an error occurs during Exchange
@@ -79,10 +80,11 @@ public final class ServiceBusClientFactory {
         return processorClientBuilder;
     }
 
-    private static ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder createBaseServiceBusSessionProcessorClient(
-            final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
-        final ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder processorClientBuilder
-                = busClientBuilder.sessionProcessor();
+    private static ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder
+            createBaseServiceBusSessionProcessorClient(
+                    final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
+        final ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder processorClientBuilder =
+                busClientBuilder.sessionProcessor();
 
         // We handle auto-complete in the consumer, since we have no way to propagate errors back to the reactive
         // pipeline messages are published on so the message would be completed even if an error occurs during Exchange
@@ -103,10 +105,11 @@ public final class ServiceBusClientFactory {
     }
 
     public ServiceBusProcessorClient createServiceBusProcessorClient(
-            ServiceBusConfiguration configuration, Consumer<ServiceBusReceivedMessageContext> processMessage,
+            ServiceBusConfiguration configuration,
+            Consumer<ServiceBusReceivedMessageContext> processMessage,
             Consumer<ServiceBusErrorContext> processError) {
-        ServiceBusClientBuilder.ServiceBusProcessorClientBuilder clientBuilder
-                = createBaseServiceBusProcessorClient(createBaseServiceBusClient(configuration), configuration);
+        ServiceBusClientBuilder.ServiceBusProcessorClientBuilder clientBuilder =
+                createBaseServiceBusProcessorClient(createBaseServiceBusClient(configuration), configuration);
 
         clientBuilder
                 .subscriptionName(configuration.getSubscriptionName())
@@ -122,11 +125,12 @@ public final class ServiceBusClientFactory {
     }
 
     public ServiceBusProcessorClient createServiceBusSessionProcessorClient(
-            ServiceBusConfiguration configuration, Consumer<ServiceBusReceivedMessageContext> processMessage,
+            ServiceBusConfiguration configuration,
+            Consumer<ServiceBusReceivedMessageContext> processMessage,
             Consumer<ServiceBusErrorContext> processError) {
 
-        ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder clientBuilder
-                = createBaseServiceBusSessionProcessorClient(createBaseServiceBusClient(configuration), configuration);
+        ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder clientBuilder =
+                createBaseServiceBusSessionProcessorClient(createBaseServiceBusClient(configuration), configuration);
 
         clientBuilder
                 .subscriptionName(configuration.getSubscriptionName())

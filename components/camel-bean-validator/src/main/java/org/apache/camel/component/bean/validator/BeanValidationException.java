@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
 
 import java.util.Set;
@@ -32,7 +33,8 @@ public class BeanValidationException extends ValidationException {
 
     private final Set<ConstraintViolation<Object>> constraintViolations;
 
-    public BeanValidationException(Exchange exchange, Set<ConstraintViolation<Object>> constraintViolations, Object bean) {
+    public BeanValidationException(
+            Exchange exchange, Set<ConstraintViolation<Object>> constraintViolations, Object bean) {
         super(exchange, buildMessage(constraintViolations, bean));
         this.constraintViolations = constraintViolations;
     }
@@ -45,9 +47,13 @@ public class BeanValidationException extends ValidationException {
 
         buffer.append(" errors: [");
         for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
-            buffer.append("property: ").append(constraintViolation.getPropertyPath()).append("; value: ")
-                    .append(constraintViolation.getInvalidValue()).append("; constraint: ")
-                    .append(constraintViolation.getMessage()).append("; ");
+            buffer.append("property: ")
+                    .append(constraintViolation.getPropertyPath())
+                    .append("; value: ")
+                    .append(constraintViolation.getInvalidValue())
+                    .append("; constraint: ")
+                    .append(constraintViolation.getMessage())
+                    .append("; ");
         }
         buffer.append(']');
 

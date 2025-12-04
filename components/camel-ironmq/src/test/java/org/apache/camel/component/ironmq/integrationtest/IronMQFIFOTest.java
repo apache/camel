@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq.integrationtest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,15 +33,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Disabled("Integration test that requires ironmq account.")
 public class IronMQFIFOTest extends CamelTestSupport {
     private String projectId = "replace-this";
     private String token = "replace-this";
 
     private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token
-                                          + "&maxMessagesPerPoll=20&ironMQCloud=https://mq-v3-aws-us-east-1.iron.io";
+            + "&maxMessagesPerPoll=20&ironMQCloud=https://mq-v3-aws-us-east-1.iron.io";
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;

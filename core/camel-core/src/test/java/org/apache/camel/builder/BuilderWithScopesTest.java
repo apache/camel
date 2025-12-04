@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.processor.DelegateProcessor;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BuilderWithScopesTest extends TestSupport {
 
@@ -115,26 +116,43 @@ public class BuilderWithScopesTest extends TestSupport {
         List<String> expected = new ArrayList<>();
         expected.add("TO");
 
-        runTest(new RouteBuilder() {
-            public void configure() {
-                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
+        runTest(
+                new RouteBuilder() {
+                    public void configure() {
+                        errorHandler(deadLetterChannel("mock:error")
+                                .redeliveryDelay(0)
+                                .maximumRedeliveries(3));
 
-                from("direct:a").filter(header("foo").isEqualTo("bar")).process(orderProcessor).end().process(toProcessor);
-            }
-        }, expected, "banana");
+                        from("direct:a")
+                                .filter(header("foo").isEqualTo("bar"))
+                                .process(orderProcessor)
+                                .end()
+                                .process(toProcessor);
+                    }
+                },
+                expected,
+                "banana");
     }
 
     @Test
     public void testRouteWithFilterNoEnd() throws Exception {
         List<String> expected = new ArrayList<>();
 
-        runTest(new RouteBuilder() {
-            public void configure() {
-                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
+        runTest(
+                new RouteBuilder() {
+                    public void configure() {
+                        errorHandler(deadLetterChannel("mock:error")
+                                .redeliveryDelay(0)
+                                .maximumRedeliveries(3));
 
-                from("direct:a").filter(header("foo").isEqualTo("bar")).process(orderProcessor).process(toProcessor);
-            }
-        }, expected, "banana");
+                        from("direct:a")
+                                .filter(header("foo").isEqualTo("bar"))
+                                .process(orderProcessor)
+                                .process(toProcessor);
+                    }
+                },
+                expected,
+                "banana");
     }
 
     protected RouteBuilder createChoiceBuilder() {
@@ -142,8 +160,13 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
-                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).end()
+                from("direct:a")
+                        .choice()
+                        .when(header("foo").isEqualTo("bar"))
+                        .process(orderProcessor)
+                        .when(header("foo").isEqualTo("cheese"))
+                        .process(orderProcessor2)
+                        .end()
                         .process(toProcessor);
             }
         };
@@ -180,16 +203,25 @@ public class BuilderWithScopesTest extends TestSupport {
         List<String> expected = new ArrayList<>();
         expected.add("INVOKED");
 
-        runTest(new RouteBuilder() {
-            public void configure() {
-                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
+        runTest(
+                new RouteBuilder() {
+                    public void configure() {
+                        errorHandler(deadLetterChannel("mock:error")
+                                .redeliveryDelay(0)
+                                .maximumRedeliveries(3));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
-                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2)
-                        .process(toProcessor); // continuation of the second when
-                                                                                                                                                                                                     // clause
-            }
-        }, expected, "bar");
+                        from("direct:a")
+                                .choice()
+                                .when(header("foo").isEqualTo("bar"))
+                                .process(orderProcessor)
+                                .when(header("foo").isEqualTo("cheese"))
+                                .process(orderProcessor2)
+                                .process(toProcessor); // continuation of the second when
+                        // clause
+                    }
+                },
+                expected,
+                "bar");
     }
 
     protected RouteBuilder createChoiceWithOtherwiseBuilder() {
@@ -197,9 +229,16 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
-                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
-                        .process(orderProcessor3).end().process(toProcessor);
+                from("direct:a")
+                        .choice()
+                        .when(header("foo").isEqualTo("bar"))
+                        .process(orderProcessor)
+                        .when(header("foo").isEqualTo("cheese"))
+                        .process(orderProcessor2)
+                        .otherwise()
+                        .process(orderProcessor3)
+                        .end()
+                        .process(toProcessor);
             }
         };
     }
@@ -235,25 +274,42 @@ public class BuilderWithScopesTest extends TestSupport {
         List<String> expected = new ArrayList<>();
         expected.add("INVOKED");
 
-        runTest(new RouteBuilder() {
-            public void configure() {
-                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
+        runTest(
+                new RouteBuilder() {
+                    public void configure() {
+                        errorHandler(deadLetterChannel("mock:error")
+                                .redeliveryDelay(0)
+                                .maximumRedeliveries(3));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
-                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
-                        .process(orderProcessor3).process(toProcessor); // continuation
-                                                                                                                                                                                                                                          // of the
-                                                                                                                                                                                                                                          // otherwise
-                                                                                                                                                                                                                                          // clause
-            }
-        }, expected, "bar");
+                        from("direct:a")
+                                .choice()
+                                .when(header("foo").isEqualTo("bar"))
+                                .process(orderProcessor)
+                                .when(header("foo").isEqualTo("cheese"))
+                                .process(orderProcessor2)
+                                .otherwise()
+                                .process(orderProcessor3)
+                                .process(toProcessor); // continuation
+                        // of the
+                        // otherwise
+                        // clause
+                    }
+                },
+                expected,
+                "bar");
     }
 
     protected RouteBuilder createTryCatchNoEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class)
-                        .process(orderProcessor).process(orderProcessor3).end();
+                from("direct:a")
+                        .doTry()
+                        .process(validator)
+                        .process(toProcessor)
+                        .doCatch(ValidationException.class)
+                        .process(orderProcessor)
+                        .process(orderProcessor3)
+                        .end();
             }
         };
     }
@@ -288,8 +344,14 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class)
-                        .process(orderProcessor).end().process(orderProcessor3);
+                from("direct:a")
+                        .doTry()
+                        .process(validator)
+                        .process(toProcessor)
+                        .doCatch(ValidationException.class)
+                        .process(orderProcessor)
+                        .end()
+                        .process(orderProcessor3);
             }
         };
     }
@@ -325,10 +387,16 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchFinallyNoEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class)
-                        .process(orderProcessor).doFinally().process(orderProcessor2)
+                from("direct:a")
+                        .doTry()
+                        .process(validator)
+                        .process(toProcessor)
+                        .doCatch(ValidationException.class)
+                        .process(orderProcessor)
+                        .doFinally()
+                        .process(orderProcessor2)
                         .process(orderProcessor3); // continuation of the
-                                                                                                                                                                                                                  // finallyBlock clause
+                // finallyBlock clause
             }
         };
     }
@@ -368,9 +436,16 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchFinallyEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class)
-                        .process(orderProcessor).doFinally().process(orderProcessor2)
-                        .end().process(orderProcessor3);
+                from("direct:a")
+                        .doTry()
+                        .process(validator)
+                        .process(toProcessor)
+                        .doCatch(ValidationException.class)
+                        .process(orderProcessor)
+                        .doFinally()
+                        .process(orderProcessor2)
+                        .end()
+                        .process(orderProcessor3);
             }
         };
     }

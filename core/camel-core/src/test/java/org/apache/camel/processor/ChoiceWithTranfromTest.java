@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChoiceWithTranfromTest extends ContextTestSupport {
 
@@ -29,9 +30,16 @@ public class ChoiceWithTranfromTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:outerRoute").id("out").choice().when(header("test-header").isNotNull()).to("direct:mainProcess")
-                        .otherwise().to("log:badMessage").transform()
-                        .method(new MyBean(), "processRejectedMessage").end();
+                from("direct:outerRoute")
+                        .id("out")
+                        .choice()
+                        .when(header("test-header").isNotNull())
+                        .to("direct:mainProcess")
+                        .otherwise()
+                        .to("log:badMessage")
+                        .transform()
+                        .method(new MyBean(), "processRejectedMessage")
+                        .end();
                 from("direct:mainProcess").bean(new MyBean(), "processMessage");
             }
         };
@@ -49,7 +57,8 @@ public class ChoiceWithTranfromTest extends ContextTestSupport {
 
     @Test
     public void testRoute() {
-        String result = template.requestBodyAndHeader("direct:outerRoute", "body", "test-header", "headerValue", String.class);
+        String result =
+                template.requestBodyAndHeader("direct:outerRoute", "body", "test-header", "headerValue", String.class);
         assertEquals("Processing body", result);
 
         result = template.requestBody("direct:outerRoute", "body", String.class);
@@ -57,5 +66,4 @@ public class ChoiceWithTranfromTest extends ContextTestSupport {
 
         // context.getRouteDefinition("out").toString();
     }
-
 }

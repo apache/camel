@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import java.io.IOException;
@@ -52,8 +53,8 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
     protected int poll() throws Exception {
         final String containerName = getEndpoint().getConfiguration().getContainerName();
         final String blobName = getEndpoint().getConfiguration().getBlobName();
-        final BlobContainerClient blobContainerClient
-                = getEndpoint().getBlobServiceClient().getBlobContainerClient(containerName);
+        final BlobContainerClient blobContainerClient =
+                getEndpoint().getBlobServiceClient().getBlobContainerClient(containerName);
 
         Queue<Exchange> exchanges;
 
@@ -79,8 +80,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
 
     private Exchange createExchangeFromBlob(final String blobName, final BlobContainerClient blobContainerClient)
             throws IOException {
-        final BlobClientWrapper clientWrapper
-                = new BlobClientWrapper(blobContainerClient.getBlobClient(blobName));
+        final BlobClientWrapper clientWrapper = new BlobClientWrapper(blobContainerClient.getBlobClient(blobName));
         final BlobOperations operations = new BlobOperations(getEndpoint().getConfiguration(), clientWrapper);
         final Exchange exchange = createExchange(true);
 
@@ -103,10 +103,11 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
     private Queue<Exchange> createBatchExchangesFromContainer(final BlobContainerClient blobContainerClient)
             throws IOException {
         final BlobContainerClientWrapper containerClientWrapper = new BlobContainerClientWrapper(blobContainerClient);
-        final BlobContainerOperations containerOperations
-                = new BlobContainerOperations(getEndpoint().getConfiguration(), containerClientWrapper);
+        final BlobContainerOperations containerOperations =
+                new BlobContainerOperations(getEndpoint().getConfiguration(), containerClientWrapper);
 
-        final List<BlobItem> blobs = (List<BlobItem>) containerOperations.listBlobs(null).getBody();
+        final List<BlobItem> blobs =
+                (List<BlobItem>) containerOperations.listBlobs(null).getBody();
 
         // okay we have some response from azure so lets mark the consumer as ready
         forceConsumerAsReady();
@@ -167,8 +168,11 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
     protected void processRollback(Exchange exchange) {
         final Exception cause = exchange.getException();
         if (cause != null) {
-            getExceptionHandler().handleException(
-                    "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
+            getExceptionHandler()
+                    .handleException(
+                            "Error during processing exchange. Will attempt to process the message on next poll.",
+                            exchange,
+                            cause);
         }
     }
 }

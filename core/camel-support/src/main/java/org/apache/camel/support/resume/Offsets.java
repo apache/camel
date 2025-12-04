@@ -41,8 +41,7 @@ public final class Offsets {
         }
     }
 
-    private Offsets() {
-    }
+    private Offsets() {}
 
     /**
      * Creates a new offset with the given offset value

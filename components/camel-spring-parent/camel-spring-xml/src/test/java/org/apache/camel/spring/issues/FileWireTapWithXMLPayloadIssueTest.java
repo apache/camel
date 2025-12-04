@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -23,19 +27,17 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FileWireTapWithXMLPayloadIssueTest extends ContextTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        template.sendBodyAndHeader(fileUri(),
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                              + "<sample>\n<test>Helloooo</test>\n</sample>",
-                Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(
+                fileUri(),
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<sample>\n<test>Helloooo</test>\n</sample>",
+                Exchange.FILE_NAME,
+                "hello.xml");
     }
 
     @Test

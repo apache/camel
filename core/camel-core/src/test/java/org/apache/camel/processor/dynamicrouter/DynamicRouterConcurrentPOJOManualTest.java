@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.dynamicrouter;
 
 import java.util.concurrent.TimeUnit;
@@ -59,28 +60,26 @@ public class DynamicRouterConcurrentPOJOManualTest extends ContextTestSupport {
          * a bit faster: the problem is that sometimes messages for mock:a land in mock:b or vice versa
          * but the sum is always 200
          */
-        Awaitility.waitAtMost(10, TimeUnit.SECONDS).until(() -> mockA.getReceivedCounter() + mockB.getReceivedCounter() == 200);
+        Awaitility.waitAtMost(10, TimeUnit.SECONDS)
+                .until(() -> mockA.getReceivedCounter() + mockB.getReceivedCounter() == 200);
 
         /* Now that all messages were delivered, let's make sure that messages for mock:a did not land in mock:b or vice versa */
         Assertions.assertThat(mockA.getReceivedExchanges())
                 .map(Exchange::getMessage)
                 .map(m -> m.getBody(String.class))
                 .filteredOn(body -> body.contains("Message from seda:b"))
-                .as(
-                        "Expected mock:a to contain only messages from seda:a, but there were also messages from seda:b")
+                .as("Expected mock:a to contain only messages from seda:a, but there were also messages from seda:b")
                 .isEmpty();
 
         Assertions.assertThat(mockB.getReceivedExchanges())
                 .map(Exchange::getMessage)
                 .map(m -> m.getBody(String.class))
                 .filteredOn(body -> body.contains("Message from seda:a"))
-                .as(
-                        "Expected mock:b to contain only messages from seda:b, but there were also messages from seda:a")
+                .as("Expected mock:b to contain only messages from seda:b, but there were also messages from seda:a")
                 .isEmpty();
 
         Assertions.assertThat(mockA.getReceivedCounter()).isEqualTo(100);
         Assertions.assertThat(mockB.getReceivedCounter()).isEqualTo(100);
-
     }
 
     private Thread createSedaSenderThread(final String seda, final ProducerTemplate perThreadtemplate) {
@@ -98,11 +97,9 @@ public class DynamicRouterConcurrentPOJOManualTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:a")
-                        .bean(new MyDynamicRouterPojo("mock:a"));
+                from("seda:a").bean(new MyDynamicRouterPojo("mock:a"));
 
-                from("seda:b")
-                        .bean(new MyDynamicRouterPojo("mock:b"));
+                from("seda:b").bean(new MyDynamicRouterPojo("mock:b"));
             }
         };
     }

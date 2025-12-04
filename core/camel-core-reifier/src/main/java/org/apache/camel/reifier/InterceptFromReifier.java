@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.ExchangePropertyKey;
@@ -45,16 +46,19 @@ public class InterceptFromReifier extends ProcessorReifier<InterceptFromDefiniti
 
         Processor p = exchange -> {
             exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID, route.getId());
-            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI, route.getEndpoint().getEndpointUri());
+            exchange.setProperty(
+                    ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI,
+                    route.getEndpoint().getEndpointUri());
 
             if (exchange.getFromEndpoint() != null) {
-                exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ENDPOINT, exchange.getFromEndpoint().getEndpointUri());
+                exchange.setProperty(
+                        ExchangePropertyKey.INTERCEPTED_ENDPOINT,
+                        exchange.getFromEndpoint().getEndpointUri());
             }
         };
-        FilterProcessor answer
-                = new FilterProcessor(getCamelContext(), when, Pipeline.newInstance(getCamelContext(), p, child));
+        FilterProcessor answer =
+                new FilterProcessor(getCamelContext(), when, Pipeline.newInstance(getCamelContext(), p, child));
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -42,28 +43,34 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     @XmlAttribute
     @Metadata(required = true)
     private String uri;
+
     @XmlAttribute
     private String variableSend;
+
     @XmlAttribute
     private String variableReceive;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
     private String pattern;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String cacheSize;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowOptimisedComponents;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String autoStartComponents;
 
-    public ToDynamicDefinition() {
-    }
+    public ToDynamicDefinition() {}
 
     public ToDynamicDefinition(String uri) {
         this.uri = uri;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc;
 
 import java.util.HashMap;
@@ -44,8 +45,7 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
-    public IrcComponent() {
-    }
+    public IrcComponent() {}
 
     @Override
     public IrcEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -64,7 +64,10 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
             final IRCConnection connection;
             if (connectionCache.containsKey(configuration.getCacheKey())) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Returning Cached Connection to {}:{}", configuration.getHostname(), configuration.getNickname());
+                    LOG.debug(
+                            "Returning Cached Connection to {}:{}",
+                            configuration.getHostname(),
+                            configuration.getNickname());
                 }
                 connection = connectionCache.get(configuration.getCacheKey());
             } else {
@@ -97,9 +100,12 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         if (configuration.getUsingSSL()) {
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
-                        configuration.getHostname(), configuration.getSpaceSeparatedChannelNames(),
-                        configuration.getNickname(), configuration.getUsername());
+                LOG.debug(
+                        "Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
+                        configuration.getHostname(),
+                        configuration.getSpaceSeparatedChannelNames(),
+                        configuration.getNickname(),
+                        configuration.getUsername());
             }
 
             SSLContextParameters sslParams = configuration.getSslContextParameters();
@@ -109,27 +115,43 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
 
             if (sslParams != null) {
                 conn = new CamelSSLIRCConnection(
-                        configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
-                        configuration.getNickname(), configuration.getUsername(), configuration.getRealname(),
-                        sslParams, getCamelContext());
+                        configuration.getHostname(),
+                        configuration.getPorts(),
+                        configuration.getPassword(),
+                        configuration.getNickname(),
+                        configuration.getUsername(),
+                        configuration.getRealname(),
+                        sslParams,
+                        getCamelContext());
             } else {
                 SSLIRCConnection sconn = new SSLIRCConnection(
-                        configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
-                        configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
+                        configuration.getHostname(),
+                        configuration.getPorts(),
+                        configuration.getPassword(),
+                        configuration.getNickname(),
+                        configuration.getUsername(),
+                        configuration.getRealname());
 
                 sconn.addTrustManager(configuration.getTrustManager());
                 conn = sconn;
             }
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating Connection to {} destination(s): {} nick: {} user: {}",
-                        configuration.getHostname(), configuration.getSpaceSeparatedChannelNames(),
-                        configuration.getNickname(), configuration.getUsername());
+                LOG.debug(
+                        "Creating Connection to {} destination(s): {} nick: {} user: {}",
+                        configuration.getHostname(),
+                        configuration.getSpaceSeparatedChannelNames(),
+                        configuration.getNickname(),
+                        configuration.getUsername());
             }
 
             conn = new IRCConnection(
-                    configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
-                    configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
+                    configuration.getHostname(),
+                    configuration.getPorts(),
+                    configuration.getPassword(),
+                    configuration.getNickname(),
+                    configuration.getUsername(),
+                    configuration.getRealname());
         }
         conn.setEncoding("UTF-8");
         conn.setColors(configuration.isColors());

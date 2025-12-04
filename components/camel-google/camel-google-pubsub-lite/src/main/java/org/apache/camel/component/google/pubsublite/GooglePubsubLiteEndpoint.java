@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsublite;
 
 import java.util.Map;
@@ -33,10 +34,13 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Built on top of the Google Cloud Pub/Sub Lite libraries.
  */
-@UriEndpoint(firstVersion = "4.6.0", scheme = "google-pubsub-lite", title = "Google PubSub Lite",
-             syntax = "google-pubsub-lite:projectId:location:destinationName",
-             category = { Category.CLOUD, Category.MESSAGING },
-             headersClass = GooglePubsubLiteConstants.class)
+@UriEndpoint(
+        firstVersion = "4.6.0",
+        scheme = "google-pubsub-lite",
+        title = "Google PubSub Lite",
+        syntax = "google-pubsub-lite:projectId:location:destinationName",
+        category = {Category.CLOUD, Category.MESSAGING},
+        headersClass = GooglePubsubLiteConstants.class)
 public class GooglePubsubLiteEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private Logger log;
@@ -49,44 +53,60 @@ public class GooglePubsubLiteEndpoint extends DefaultEndpoint implements Endpoin
     @Metadata(required = true)
     private String location;
 
-    @UriPath(label = "common",
-             description = "The Destination Name. For the consumer this will be the subscription name, while for the producer this will be the topic name.")
+    @UriPath(
+            label = "common",
+            description =
+                    "The Destination Name. For the consumer this will be the subscription name, while for the producer this will be the topic name.")
     @Metadata(required = true)
     private String destinationName;
 
-    @UriParam(label = "security",
-              description = "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
+    @UriParam(
+            label = "security",
+            description =
+                    "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
 
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
     private String loggerId;
 
-    @UriParam(label = "consumer",
-              description = "The number of parallel streams consuming from the subscription",
-              defaultValue = "1")
+    @UriParam(
+            label = "consumer",
+            description = "The number of parallel streams consuming from the subscription",
+            defaultValue = "1")
     private Integer concurrentConsumers = 1;
 
-    @UriParam(label = "consumer",
-              description = "The max number of messages to receive from the server in a single API call", defaultValue = "1")
+    @UriParam(
+            label = "consumer",
+            description = "The max number of messages to receive from the server in a single API call",
+            defaultValue = "1")
     private Integer maxMessagesPerPoll = 1;
 
-    @UriParam(label = "consumer", defaultValue = "AUTO", enums = "AUTO,NONE",
-              description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
+    @UriParam(
+            label = "consumer",
+            defaultValue = "AUTO",
+            enums = "AUTO,NONE",
+            description =
+                    "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubLiteConstants.AckMode ackMode = GooglePubsubLiteConstants.AckMode.AUTO;
 
-    @UriParam(label = "consumer", name = "maxAckExtensionPeriod",
-              description = "Set the maximum period a message ack deadline will be extended. Value in seconds",
-              defaultValue = "3600")
+    @UriParam(
+            label = "consumer",
+            name = "maxAckExtensionPeriod",
+            description = "Set the maximum period a message ack deadline will be extended. Value in seconds",
+            defaultValue = "3600")
     private int maxAckExtensionPeriod = 3600;
 
-    @UriParam(description = "Pub/Sub endpoint to use. Required when using message ordering, and ensures that messages are received in order even when multiple publishers are used",
-              label = "producer,advanced")
+    @UriParam(
+            description =
+                    "Pub/Sub endpoint to use. Required when using message ordering, and ensures that messages are received in order even when multiple publishers are used",
+            label = "producer,advanced")
     private String pubsubEndpoint;
 
-    @UriParam(name = "serializer",
-              description = "A custom GooglePubsubLiteSerializer to use for serializing message payloads in the producer",
-              label = "producer,advanced")
+    @UriParam(
+            name = "serializer",
+            description = "A custom GooglePubsubLiteSerializer to use for serializing message payloads in the producer",
+            label = "producer,advanced")
     @Metadata(autowired = true)
     private GooglePubsubSerializer serializer;
 
@@ -133,8 +153,10 @@ public class GooglePubsubLiteEndpoint extends DefaultEndpoint implements Endpoin
     }
 
     public ExecutorService createExecutor(Object source) {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source,
-                "GooglePubsubLiteConsumer[" + getDestinationName() + "]", concurrentConsumers);
+        return getCamelContext()
+                .getExecutorServiceManager()
+                .newFixedThreadPool(
+                        source, "GooglePubsubLiteConsumer[" + getDestinationName() + "]", concurrentConsumers);
     }
 
     public Long getProjectId() {

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -70,15 +71,24 @@ public class MulticastCopyOfSplitSubUnitOfWorkTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .useOriginalMessage()
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0));
 
-                from("direct:start").to("mock:a")
+                from("direct:start")
+                        .to("mock:a")
                         // share unit of work in the multicast, which tells Camel to
                         // propagate failures from
                         // processing the multicast messages back to the result of
                         // the splitter, which allows
                         // it to act as a combined unit of work
-                        .multicast().shareUnitOfWork().to("mock:b").to("direct:line").end().to("mock:result");
+                        .multicast()
+                        .shareUnitOfWork()
+                        .to("mock:b")
+                        .to("direct:line")
+                        .end()
+                        .to("mock:result");
 
                 from("direct:line").to("log:line").process(new MyProcessor()).to("mock:line");
                 // END SNIPPET: e1
@@ -97,5 +107,4 @@ public class MulticastCopyOfSplitSubUnitOfWorkTest extends ContextTestSupport {
             }
         }
     }
-
 }

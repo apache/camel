@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink;
 
 import java.math.BigDecimal;
@@ -116,9 +117,11 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Model : " + Order.class.getName() + " : " + String.valueOf(this.orderNr) + ", " + String.valueOf(this.amount)
-               + ", " + String.valueOf(this.instrumentType) + ", "
-               + String.valueOf(this.orderType) + ", " + String.valueOf(this.currency) + ", " + String.valueOf(this.client)
-               + "," + String.valueOf(this.orderDate);
+        return "Model : " + Order.class.getName() + " : " + String.valueOf(this.orderNr) + ", "
+                + String.valueOf(this.amount)
+                + ", " + String.valueOf(this.instrumentType) + ", "
+                + String.valueOf(this.orderType) + ", " + String.valueOf(this.currency) + ", "
+                + String.valueOf(this.client)
+                + "," + String.valueOf(this.orderDate);
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
+
+import static org.apache.camel.component.avro.AvroConstants.AVRO_MESSAGE_NAME_SEPARATOR;
 
 import java.net.URI;
 
@@ -26,32 +29,39 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.commons.lang3.StringUtils;
 
-import static org.apache.camel.component.avro.AvroConstants.AVRO_MESSAGE_NAME_SEPARATOR;
-
 @UriParams
 public class AvroConfiguration implements Cloneable {
 
     @UriPath
     @Metadata(required = true)
     private AvroTransport transport;
+
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath
     @Metadata(required = true)
     private int port;
+
     @UriPath
     private String messageName;
+
     @UriParam
     private String protocolLocation;
+
     @UriParam
     private Protocol protocol;
+
     @UriParam
     private String protocolClassName;
+
     @UriParam
     private String uriAuthority;
+
     @UriParam
     private boolean reflectionProtocol;
+
     @UriParam
     private boolean singleParameter;
 
@@ -69,8 +79,7 @@ public class AvroConfiguration implements Cloneable {
         setHost(uri.getHost());
         setPort(uri.getPort());
 
-        if (uri.getPath() != null
-                && StringUtils.indexOf(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR) != -1) {
+        if (uri.getPath() != null && StringUtils.indexOf(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR) != -1) {
             String path = StringUtils.substringAfter(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR);
             if (!path.contains(AVRO_MESSAGE_NAME_SEPARATOR)) {
                 setMessageName(path);

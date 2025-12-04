@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.proxy;
 
 import org.apache.camel.component.wordpress.api.model.PostSearchCriteria;
@@ -24,7 +25,6 @@ import org.apache.camel.component.wordpress.api.model.UserSearchCriteria;
  * List of supported operations.
  */
 public enum WordpressOperationType {
-
     post(PostSearchCriteria.class),
     user(UserSearchCriteria.class);
 
@@ -37,5 +37,4 @@ public enum WordpressOperationType {
     public Class<? extends SearchCriteria> getCriteriaType() {
         return criteriaType;
     }
-
 }

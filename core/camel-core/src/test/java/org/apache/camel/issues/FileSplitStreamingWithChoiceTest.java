@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,9 +46,16 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).split(body().tokenize(LS)).streaming()
-                        .to("mock:split").choice().when(bodyAs(String.class).isNotNull())
-                        .to("mock:body").otherwise().to("mock:other").end();
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .split(body().tokenize(LS))
+                        .streaming()
+                        .to("mock:split")
+                        .choice()
+                        .when(bodyAs(String.class).isNotNull())
+                        .to("mock:body")
+                        .otherwise()
+                        .to("mock:other")
+                        .end();
             }
         };
     }

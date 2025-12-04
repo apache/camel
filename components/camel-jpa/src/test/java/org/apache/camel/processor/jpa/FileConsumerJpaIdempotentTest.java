@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.io.File;
 import java.util.List;
@@ -30,15 +33,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
 /**
  * Unit test using jpa idempotent repository for the file consumer.
  */
 public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
 
-    protected static final String SELECT_ALL_STRING
-            = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
+    protected static final String SELECT_ALL_STRING =
+            "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "FileConsumer";
 
     @BeforeEach
@@ -56,7 +57,8 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
         return new RouteBuilder() {
             public void configure() {
                 from("file://target/idempotent/?idempotent=true&idempotentRepository=#jpaStore&move=done/${file:name}")
-                        .routeId("foo").autoStartup(false)
+                        .routeId("foo")
+                        .autoStartup(false)
                         .to("mock:result");
             }
         };
@@ -115,5 +117,4 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
     protected String selectAllString() {
         return SELECT_ALL_STRING;
     }
-
 }

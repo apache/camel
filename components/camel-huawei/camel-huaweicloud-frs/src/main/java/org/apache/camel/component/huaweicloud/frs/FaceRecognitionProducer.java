@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs;
 
 import java.io.*;
@@ -133,8 +134,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
             this.frsClient = endpoint.getFrsClient();
             return;
         }
-        HttpConfig httpConfig
-                = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
+        HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig()
+                .withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
         if (!StringUtils.isEmpty(clientConfigurations.getProxyHost())) {
             httpConfig.setProxyHost(clientConfigurations.getProxyHost());
             httpConfig.setProxyPort(clientConfigurations.getProxyPort());
@@ -143,7 +144,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
                 httpConfig.setProxyPassword(clientConfigurations.getProxyPassword());
             }
         }
-        BasicCredentials credentials = new BasicCredentials().withAk(clientConfigurations.getAccessKey())
+        BasicCredentials credentials = new BasicCredentials()
+                .withAk(clientConfigurations.getAccessKey())
                 .withSk(clientConfigurations.getSecretKey())
                 .withProjectId(clientConfigurations.getProjectId());
 
@@ -168,8 +170,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
         SdkResponse result;
         switch (clientConfigurations.getInputSourceType()) {
             case BASE64:
-                FaceDetectBase64Req base64ReqBody
-                        = new FaceDetectBase64Req().withImageBase64(clientConfigurations.getImageBase64());
+                FaceDetectBase64Req base64ReqBody =
+                        new FaceDetectBase64Req().withImageBase64(clientConfigurations.getImageBase64());
                 result = this.frsClient.detectFaceByBase64(new DetectFaceByBase64Request().withBody(base64ReqBody));
                 break;
             case URL:
@@ -178,8 +180,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
                 break;
             default:
                 try (FileInputStream inputStream = new FileInputStream(clientConfigurations.getImageFilePath())) {
-                    DetectFaceByFileRequestBody fileReqBody = new DetectFaceByFileRequestBody().withImageFile(inputStream,
-                            getFileName(clientConfigurations.getImageFilePath()));
+                    DetectFaceByFileRequestBody fileReqBody = new DetectFaceByFileRequestBody()
+                            .withImageFile(inputStream, getFileName(clientConfigurations.getImageFilePath()));
                     result = this.frsClient.detectFaceByFile(new DetectFaceByFileRequest().withBody(fileReqBody));
                 } catch (IOException e) {
                     throw new IllegalArgumentException(
@@ -199,27 +201,30 @@ public class FaceRecognitionProducer extends DefaultProducer {
         SdkResponse result;
         switch (clientConfigurations.getInputSourceType()) {
             case BASE64:
-                FaceCompareBase64Req base64ReqBody
-                        = new FaceCompareBase64Req().withImage1Base64(clientConfigurations.getImageBase64())
-                                .withImage2Base64(clientConfigurations.getAnotherImageBase64());
+                FaceCompareBase64Req base64ReqBody = new FaceCompareBase64Req()
+                        .withImage1Base64(clientConfigurations.getImageBase64())
+                        .withImage2Base64(clientConfigurations.getAnotherImageBase64());
                 result = this.frsClient.compareFaceByBase64(new CompareFaceByBase64Request().withBody(base64ReqBody));
                 break;
             case URL:
-                FaceCompareUrlReq urlReqBody = new FaceCompareUrlReq().withImage1Url(clientConfigurations.getImageUrl())
+                FaceCompareUrlReq urlReqBody = new FaceCompareUrlReq()
+                        .withImage1Url(clientConfigurations.getImageUrl())
                         .withImage2Url(clientConfigurations.getAnotherImageUrl());
                 result = this.frsClient.compareFaceByUrl(new CompareFaceByUrlRequest().withBody(urlReqBody));
                 break;
             default:
                 try (FileInputStream image1InputStream = new FileInputStream(clientConfigurations.getImageFilePath());
-                     FileInputStream image2InputStream = new FileInputStream(clientConfigurations.getAnotherImageFilePath())) {
+                        FileInputStream image2InputStream =
+                                new FileInputStream(clientConfigurations.getAnotherImageFilePath())) {
                     CompareFaceByFileRequestBody fileReqBody = new CompareFaceByFileRequestBody()
                             .withImage1File(image1InputStream, getFileName(clientConfigurations.getImageFilePath()))
-                            .withImage2File(image2InputStream, getFileName(clientConfigurations.getAnotherImageFilePath()));
+                            .withImage2File(
+                                    image2InputStream, getFileName(clientConfigurations.getAnotherImageFilePath()));
                     result = this.frsClient.compareFaceByFile(new CompareFaceByFileRequest().withBody(fileReqBody));
                 } catch (IOException e) {
-                    throw new IllegalArgumentException(
-                            String.format("Image file paths are invalid: %s, %s", clientConfigurations.getImageFilePath(),
-                                    clientConfigurations.getAnotherImageFilePath()));
+                    throw new IllegalArgumentException(String.format(
+                            "Image file paths are invalid: %s, %s",
+                            clientConfigurations.getImageFilePath(), clientConfigurations.getAnotherImageFilePath()));
                 }
         }
         exchange.getMessage().setBody(result);
@@ -237,12 +242,15 @@ public class FaceRecognitionProducer extends DefaultProducer {
             case BASE64:
                 LiveDetectBase64Req base64ReqBody = new LiveDetectBase64Req()
                         .withVideoBase64(clientConfigurations.getVideoBase64())
-                        .withActions(clientConfigurations.getActions()).withActionTime(clientConfigurations.getActionTimes());
+                        .withActions(clientConfigurations.getActions())
+                        .withActionTime(clientConfigurations.getActionTimes());
                 result = this.frsClient.detectLiveByBase64(new DetectLiveByBase64Request().withBody(base64ReqBody));
                 break;
             case URL:
-                LiveDetectUrlReq urlReqBody = new LiveDetectUrlReq().withVideoUrl(clientConfigurations.getVideoUrl())
-                        .withActions(clientConfigurations.getActions()).withActionTime(clientConfigurations.getActionTimes());
+                LiveDetectUrlReq urlReqBody = new LiveDetectUrlReq()
+                        .withVideoUrl(clientConfigurations.getVideoUrl())
+                        .withActions(clientConfigurations.getActions())
+                        .withActionTime(clientConfigurations.getActionTimes());
                 result = this.frsClient.detectLiveByUrl(new DetectLiveByUrlRequest().withBody(urlReqBody));
                 break;
             default:
@@ -266,7 +274,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
 
     private void updateFaceDetectionConfigurations(Exchange exchange, ClientConfigurations clientConfigurations) {
         String imageBase64 = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64, String.class);
-        clientConfigurations.setImageBase64(StringUtils.isEmpty(imageBase64) ? this.endpoint.getImageBase64() : imageBase64);
+        clientConfigurations.setImageBase64(
+                StringUtils.isEmpty(imageBase64) ? this.endpoint.getImageBase64() : imageBase64);
         if (!StringUtils.isEmpty(clientConfigurations.getImageBase64())) {
             clientConfigurations.setInputSourceType(InputSourceType.BASE64);
             return;
@@ -278,8 +287,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
             return;
         }
         String imageFilePath = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH, String.class);
-        clientConfigurations
-                .setImageFilePath(StringUtils.isEmpty(imageFilePath) ? this.endpoint.getImageFilePath() : imageFilePath);
+        clientConfigurations.setImageFilePath(
+                StringUtils.isEmpty(imageFilePath) ? this.endpoint.getImageFilePath() : imageFilePath);
         if (!StringUtils.isEmpty(clientConfigurations.getImageFilePath())) {
             clientConfigurations.setInputSourceType(InputSourceType.FILE_PATH);
             return;
@@ -290,7 +299,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
     private void updateFaceVerificationConfigurations(Exchange exchange, ClientConfigurations clientConfigurations) {
         String image1Base64 = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64, String.class);
         String image2Base64 = exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64, String.class);
-        clientConfigurations.setImageBase64(StringUtils.isEmpty(image1Base64) ? this.endpoint.getImageBase64() : image1Base64);
+        clientConfigurations.setImageBase64(
+                StringUtils.isEmpty(image1Base64) ? this.endpoint.getImageBase64() : image1Base64);
         clientConfigurations.setAnotherImageBase64(
                 StringUtils.isEmpty(image2Base64) ? this.endpoint.getAnotherImageBase64() : image2Base64);
         if (!StringUtils.isEmpty(clientConfigurations.getImageBase64())
@@ -301,17 +311,18 @@ public class FaceRecognitionProducer extends DefaultProducer {
         String image1Url = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_URL, String.class);
         String image2Url = exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_URL, String.class);
         clientConfigurations.setImageUrl(StringUtils.isEmpty(image1Url) ? this.endpoint.getImageUrl() : image1Url);
-        clientConfigurations
-                .setAnotherImageUrl(StringUtils.isEmpty(image2Url) ? this.endpoint.getAnotherImageUrl() : image2Url);
+        clientConfigurations.setAnotherImageUrl(
+                StringUtils.isEmpty(image2Url) ? this.endpoint.getAnotherImageUrl() : image2Url);
         if (!StringUtils.isEmpty(clientConfigurations.getImageUrl())
                 && !StringUtils.isEmpty(clientConfigurations.getAnotherImageUrl())) {
             clientConfigurations.setInputSourceType(InputSourceType.URL);
             return;
         }
         String image1FilePath = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH, String.class);
-        String image2FilePath = exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_FILE_PATH, String.class);
-        clientConfigurations
-                .setImageFilePath(StringUtils.isEmpty(image1FilePath) ? this.endpoint.getImageFilePath() : image1FilePath);
+        String image2FilePath =
+                exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_FILE_PATH, String.class);
+        clientConfigurations.setImageFilePath(
+                StringUtils.isEmpty(image1FilePath) ? this.endpoint.getImageFilePath() : image1FilePath);
         clientConfigurations.setAnotherImageFilePath(
                 StringUtils.isEmpty(image2FilePath) ? this.endpoint.getAnotherImageFilePath() : image2FilePath);
         if (!StringUtils.isEmpty(clientConfigurations.getImageFilePath())
@@ -336,7 +347,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
 
     private void updateVideoSource(Exchange exchange, ClientConfigurations clientConfigurations) {
         String videoBase64 = exchange.getProperty(FaceRecognitionProperties.FACE_VIDEO_BASE64, String.class);
-        clientConfigurations.setVideoBase64(StringUtils.isEmpty(videoBase64) ? this.endpoint.getVideoBase64() : videoBase64);
+        clientConfigurations.setVideoBase64(
+                StringUtils.isEmpty(videoBase64) ? this.endpoint.getVideoBase64() : videoBase64);
         if (!StringUtils.isEmpty(clientConfigurations.getVideoBase64())) {
             clientConfigurations.setInputSourceType(InputSourceType.BASE64);
             return;
@@ -348,8 +360,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
             return;
         }
         String videoFilePath = exchange.getProperty(FaceRecognitionProperties.FACE_VIDEO_FILE_PATH, String.class);
-        clientConfigurations
-                .setVideoFilePath(StringUtils.isEmpty(videoFilePath) ? this.endpoint.getVideoFilePath() : videoFilePath);
+        clientConfigurations.setVideoFilePath(
+                StringUtils.isEmpty(videoFilePath) ? this.endpoint.getVideoFilePath() : videoFilePath);
         if (!StringUtils.isEmpty(clientConfigurations.getVideoFilePath())) {
             clientConfigurations.setInputSourceType(InputSourceType.FILE_PATH);
             return;
@@ -361,7 +373,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
         if (!StringUtils.isEmpty(endpoint.getAccessKey())) {
             return endpoint.getAccessKey();
         }
-        if (endpoint.getServiceKeys() != null && !StringUtils.isEmpty(endpoint.getServiceKeys().getAccessKey())) {
+        if (endpoint.getServiceKeys() != null
+                && !StringUtils.isEmpty(endpoint.getServiceKeys().getAccessKey())) {
             return endpoint.getServiceKeys().getAccessKey();
         }
         throw new IllegalArgumentException("authentication parameter access key (AK) not found");
@@ -371,7 +384,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
         if (!StringUtils.isEmpty(endpoint.getSecretKey())) {
             return endpoint.getSecretKey();
         }
-        if (endpoint.getServiceKeys() != null && !StringUtils.isEmpty(endpoint.getServiceKeys().getSecretKey())) {
+        if (endpoint.getServiceKeys() != null
+                && !StringUtils.isEmpty(endpoint.getServiceKeys().getSecretKey())) {
             return endpoint.getServiceKeys().getSecretKey();
         }
         throw new IllegalArgumentException("authentication parameter secret key (SK) not found");

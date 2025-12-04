@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
 
 import java.util.HashMap;
@@ -30,6 +31,7 @@ public class TagData {
     private Object value;
 
     private Map<Class<?>, Predicate<String>> canParse = new HashMap<>();
+
     {
         canParse.put(Integer.TYPE, s -> {
             try {
@@ -79,7 +81,8 @@ public class TagData {
                 return false;
             }
         });
-    };
+    }
+    ;
 
     public TagData(String alias, String query, Object value) {
         this.tagName = alias;
@@ -134,7 +137,6 @@ public class TagData {
             } else if (canParse.get(Float.TYPE).test(val)) {
                 value = Float.parseFloat(val);
             }
-
         }
     }
 
@@ -163,7 +165,8 @@ public class TagData {
 
     public static Map<String, String> toMap(List<TagData> tags) {
         Map<String, String> map = new HashMap<>();
-        LoggerFactory.getLogger(TagData.class).info("Classloader {} ", Thread.currentThread().getContextClassLoader());
+        LoggerFactory.getLogger(TagData.class)
+                .info("Classloader {} ", Thread.currentThread().getContextClassLoader());
         for (TagData tag : tags) {
             map.put(tag.getTagName(), tag.getQuery());
         }

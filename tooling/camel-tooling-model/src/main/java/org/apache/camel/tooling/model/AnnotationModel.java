@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
@@ -43,13 +44,15 @@ public class AnnotationModel {
     }
 
     public List<AnnotationOptionModel> getSortedOptions() {
-        return options.stream().sorted((o1, o2) -> {
-            if (o1.isOptional() == o2.isOptional()) {
-                return o1.getName().compareTo(o2.getName());
-            } else {
-                return Boolean.compare(o1.isOptional(), o2.isOptional());
-            }
-        }).collect(Collectors.toList());
+        return options.stream()
+                .sorted((o1, o2) -> {
+                    if (o1.isOptional() == o2.isOptional()) {
+                        return o1.getName().compareTo(o2.getName());
+                    } else {
+                        return Boolean.compare(o1.isOptional(), o2.isOptional());
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     public static class AnnotationOptionModel {

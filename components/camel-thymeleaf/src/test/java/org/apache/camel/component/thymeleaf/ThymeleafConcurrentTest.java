@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,8 +25,6 @@ import java.util.concurrent.Executors;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
 
 public class ThymeleafConcurrentTest extends ThymeleafAbstractBaseTest {
 
@@ -51,7 +52,6 @@ public class ThymeleafConcurrentTest extends ThymeleafAbstractBaseTest {
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(() -> {
-
                 template.sendBody(DIRECT_START, "Hello " + index);
 
                 return null;
@@ -75,5 +75,4 @@ public class ThymeleafConcurrentTest extends ThymeleafAbstractBaseTest {
             }
         };
     }
-
 }

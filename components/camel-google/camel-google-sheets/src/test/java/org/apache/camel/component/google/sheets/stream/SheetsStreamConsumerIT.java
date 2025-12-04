@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets.stream;
+
+import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.MAJOR_DIMENSION;
+import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.RANGE;
+import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.RANGE_INDEX;
+import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.SPREADSHEET_ID;
+import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.VALUE_INDEX;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,14 +44,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.MAJOR_DIMENSION;
-import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.RANGE;
-import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.RANGE_INDEX;
-import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.SPREADSHEET_ID;
-import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.VALUE_INDEX;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SheetsStreamConsumerIT {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
@@ -50,10 +51,10 @@ public class SheetsStreamConsumerIT {
                     JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY))
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-            .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING).disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
-    private static final List<List<Object>> TEST_DATA = Arrays.asList(
-            Arrays.asList("a1", "b1"),
-            Arrays.asList("a2", "b2"));
+            .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+            .disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+    private static final List<List<Object>> TEST_DATA =
+            Arrays.asList(Arrays.asList("a1", "b1"), Arrays.asList("a2", "b2"));
 
     @Nested
     class ConsumeValueRangeIT extends AbstractGoogleSheetsStreamTestSupport {
@@ -70,7 +71,8 @@ public class SheetsStreamConsumerIT {
             assertTrue(exchange.getIn().getHeaders().containsKey(RANGE));
             assertTrue(exchange.getIn().getHeaders().containsKey(RANGE_INDEX));
             assertTrue(exchange.getIn().getHeaders().containsKey(MAJOR_DIMENSION));
-            assertEquals(testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
+            assertEquals(
+                    testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
             assertEquals(TEST_RANGE, exchange.getIn().getHeaders().get(RANGE));
             assertEquals(1, exchange.getIn().getHeaders().get(RANGE_INDEX));
             assertEquals("ROWS", exchange.getIn().getHeaders().get(MAJOR_DIMENSION));
@@ -86,12 +88,11 @@ public class SheetsStreamConsumerIT {
 
         @Override
         protected GoogleSheetsClientFactory getClientFactory() throws Exception {
-            return new MockGoogleSheetsClientFactory(
-                    new MockLowLevelHttpResponse()
-                            .setContent(
-                                    "{\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\"," + "\"valueRanges\": [" + "{"
-                                        + "\"range\": \"" + TEST_RANGE + "\"," + "\"majorDimension\": \"ROWS\","
-                                        + "\"values\":" + MAPPER.writer().writeValueAsString(TEST_DATA) + "}" + "]}"));
+            return new MockGoogleSheetsClientFactory(new MockLowLevelHttpResponse()
+                    .setContent(
+                            "{\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\"," + "\"valueRanges\": [" + "{"
+                                    + "\"range\": \"" + TEST_RANGE + "\"," + "\"majorDimension\": \"ROWS\","
+                                    + "\"values\":" + MAPPER.writer().writeValueAsString(TEST_DATA) + "}" + "]}"));
         }
 
         @Override
@@ -99,8 +100,9 @@ public class SheetsStreamConsumerIT {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from(String.format("google-sheets-stream:%s?range=%s&delay=20000&maxResults=5&splitResults=%s",
-                            testSheet.getSpreadsheetId(), TEST_RANGE, false))
+                    from(String.format(
+                                    "google-sheets-stream:%s?range=%s&delay=20000&maxResults=5&splitResults=%s",
+                                    testSheet.getSpreadsheetId(), TEST_RANGE, false))
                             .to("mock:result");
                 }
             };
@@ -123,7 +125,8 @@ public class SheetsStreamConsumerIT {
             assertTrue(exchange.getIn().getHeaders().containsKey(RANGE_INDEX));
             assertTrue(exchange.getIn().getHeaders().containsKey(VALUE_INDEX));
             assertTrue(exchange.getIn().getHeaders().containsKey(MAJOR_DIMENSION));
-            assertEquals(testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
+            assertEquals(
+                    testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
             assertEquals(TEST_RANGE, exchange.getIn().getHeaders().get(RANGE));
             assertEquals(1, exchange.getIn().getHeaders().get(RANGE_INDEX));
             assertEquals(1, exchange.getIn().getHeaders().get(VALUE_INDEX));
@@ -140,7 +143,8 @@ public class SheetsStreamConsumerIT {
             assertTrue(exchange.getIn().getHeaders().containsKey(RANGE_INDEX));
             assertTrue(exchange.getIn().getHeaders().containsKey(VALUE_INDEX));
             assertTrue(exchange.getIn().getHeaders().containsKey(MAJOR_DIMENSION));
-            assertEquals(testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
+            assertEquals(
+                    testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
             assertEquals(1, exchange.getIn().getHeaders().get(RANGE_INDEX));
             assertEquals(2, exchange.getIn().getHeaders().get(VALUE_INDEX));
 
@@ -152,12 +156,11 @@ public class SheetsStreamConsumerIT {
 
         @Override
         protected GoogleSheetsClientFactory getClientFactory() throws Exception {
-            return new MockGoogleSheetsClientFactory(
-                    new MockLowLevelHttpResponse()
-                            .setContent(
-                                    "{\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\"," + "\"valueRanges\": [" + "{"
-                                        + "\"range\": \"" + TEST_RANGE + "\"," + "\"majorDimension\": \"ROWS\","
-                                        + "\"values\":" + MAPPER.writer().writeValueAsString(TEST_DATA) + "}" + "]}"));
+            return new MockGoogleSheetsClientFactory(new MockLowLevelHttpResponse()
+                    .setContent(
+                            "{\"spreadsheetId\": \"" + testSheet.getSpreadsheetId() + "\"," + "\"valueRanges\": [" + "{"
+                                    + "\"range\": \"" + TEST_RANGE + "\"," + "\"majorDimension\": \"ROWS\","
+                                    + "\"values\":" + MAPPER.writer().writeValueAsString(TEST_DATA) + "}" + "]}"));
         }
 
         @Override
@@ -165,8 +168,9 @@ public class SheetsStreamConsumerIT {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from(String.format("google-sheets-stream:%s?range=%s&delay=20000&maxResults=5&splitResults=%s",
-                            testSheet.getSpreadsheetId(), TEST_RANGE, true))
+                    from(String.format(
+                                    "google-sheets-stream:%s?range=%s&delay=20000&maxResults=5&splitResults=%s",
+                                    testSheet.getSpreadsheetId(), TEST_RANGE, true))
                             .to("mock:result");
                 }
             };

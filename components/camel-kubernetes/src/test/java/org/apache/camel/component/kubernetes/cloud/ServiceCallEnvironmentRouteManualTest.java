@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cloud;
 
 import org.apache.camel.RoutesBuilder;
@@ -47,7 +48,10 @@ public class ServiceCallEnvironmentRouteManualTest extends CamelTestSupport {
                 // register configuration
                 context.setServiceCallConfiguration(config);
 
-                from("direct:start").serviceCall("cdi-camel-jetty").serviceCall("cdi-camel-jetty").to("mock:result");
+                from("direct:start")
+                        .serviceCall("cdi-camel-jetty")
+                        .serviceCall("cdi-camel-jetty")
+                        .to("mock:result");
             }
         };
     }

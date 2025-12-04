@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -28,9 +32,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -86,8 +87,8 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
     static class MyComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
-                throws Exception {
+        protected Endpoint createEndpoint(
+                final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
             MyEndpoint answer = new MyEndpoint(uri, this, remaining);
             setProperties(answer, parameters);
             return answer;
@@ -118,5 +119,4 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
         assertEquals("++%%w?rd", endpoint.getBar());
         assertEquals(uri, endpoint.getUri());
     }
-
 }

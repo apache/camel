@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer;
 
 import org.apache.camel.spi.StateRepository;
@@ -25,8 +26,9 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
     protected final KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload;
     protected final KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload;
 
-    protected DefaultKafkaManualCommit(KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
-                                       KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload) {
+    protected DefaultKafkaManualCommit(
+            KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
+            KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload) {
         this.camelExchangePayload = camelExchangePayload;
         this.kafkaRecordPayload = kafkaRecordPayload;
     }
@@ -82,5 +84,4 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
     public String toString() {
         return "KafkaManualCommit[topic=" + getTopicName() + ", offset=" + getRecordOffset() + "]";
     }
-
 }

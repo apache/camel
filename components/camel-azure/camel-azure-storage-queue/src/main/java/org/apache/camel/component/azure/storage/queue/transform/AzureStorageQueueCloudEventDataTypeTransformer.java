@@ -31,8 +31,10 @@ import org.apache.camel.spi.Transformer;
  * Output data type represents Azure Storage Queue receive messages operation as CloudEvent V1. The data type sets Camel
  * specific CloudEvent headers on the exchange.
  */
-@DataTypeTransformer(name = "azure-storage-queue:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with Azure Storage Queue receive message information")
+@DataTypeTransformer(
+        name = "azure-storage-queue:application-cloudevents",
+        description =
+                "Adds CloudEvent headers to the Camel message with Azure Storage Queue receive message information")
 public class AzureStorageQueueCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,17 +42,20 @@ public class AzureStorageQueueCloudEventDataTypeTransformer extends Transformer 
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvents.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvents.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.storage.queue.receiveMessages");
 
         if (message.getHeaders().containsKey(QueueConstants.MESSAGE_ID)) {
-            headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
+            headers.put(
+                    CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
                     "azure.storage.queue." + message.getHeader(QueueConstants.MESSAGE_ID, String.class));
         }
 
         if (message.getHeaders().containsKey(QueueConstants.POP_RECEIPT)) {
-            headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(QueueConstants.POP_RECEIPT, String.class));
+            headers.put(
+                    CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(QueueConstants.POP_RECEIPT, String.class));
         }
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvents.TEXT_PLAIN_MIME_TYPE);

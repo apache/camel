@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Iterator;
 
@@ -35,12 +42,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -77,7 +78,8 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSup
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + PEOPLE + "?" + "$filter=LastName eq 'Whyte'&$expand=Trips").to("mock:consumer-query");
+                from("olingo4://read/" + PEOPLE + "?" + "$filter=LastName eq 'Whyte'&$expand=Trips")
+                        .to("mock:consumer-query");
             }
         };
         addRouteAndStartContext(builder);
@@ -122,7 +124,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSup
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + PEOPLE
-                     + "?delay=2&sendEmptyMessageWhenIdle=true&splitResult=false&filterAlreadySeen=true")
+                                + "?delay=2&sendEmptyMessageWhenIdle=true&splitResult=false&filterAlreadySeen=true")
                         .to("mock:consumer-alreadyseen");
             }
         };
@@ -172,7 +174,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSup
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + PEOPLE
-                     + "?delay=2&sendEmptyMessageWhenIdle=false&splitResult=false&filterAlreadySeen=true")
+                                + "?delay=2&sendEmptyMessageWhenIdle=false&splitResult=false&filterAlreadySeen=true")
                         .to("mock:consumer-alreadyseen");
             }
         };
@@ -211,8 +213,9 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSup
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&"
-                     + "delay=2&sendEmptyMessageWhenIdle=true&"
-                     + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
+                                + "delay=2&sendEmptyMessageWhenIdle=true&"
+                                + "splitResult=true")
+                        .to("mock:consumer-splitresult-kp-airport");
             }
         };
         addRouteAndStartContext(builder);
@@ -230,7 +233,9 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSup
                 ClientEntity ksfoEntity = (ClientEntity) body;
                 ClientProperty nameProp = ksfoEntity.getProperty("Name");
                 assertNotNull(nameProp);
-                assertEquals("San Francisco International Airport", nameProp.getValue().toString());
+                assertEquals(
+                        "San Francisco International Airport",
+                        nameProp.getValue().toString());
             } else {
                 //
                 // Subsequent polling messages should be empty
@@ -262,8 +267,9 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSup
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&"
-                     + "delay=2&sendEmptyMessageWhenIdle=false&"
-                     + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
+                                + "delay=2&sendEmptyMessageWhenIdle=false&"
+                                + "splitResult=true")
+                        .to("mock:consumer-splitresult-kp-airport");
             }
         };
         addRouteAndStartContext(builder);
@@ -387,7 +393,9 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSup
         Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
         assertIsInstanceOf(ClientComplexValue.class, body);
         ClientComplexValue value = (ClientComplexValue) body;
-        assertEquals("Boise", value.get("City").getComplexValue().get("Name").getValue().toString());
+        assertEquals(
+                "Boise",
+                value.get("City").getComplexValue().get("Name").getValue().toString());
     }
 
     /**
@@ -420,7 +428,9 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSup
         Object propValueObj = propIter.next();
         assertIsInstanceOf(ClientComplexValue.class, propValueObj);
         ClientComplexValue propValue = (ClientComplexValue) propValueObj;
-        assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
+        assertEquals(
+                "Boise",
+                propValue.get("City").getComplexValue().get("Name").getValue().toString());
     }
 
     @Override

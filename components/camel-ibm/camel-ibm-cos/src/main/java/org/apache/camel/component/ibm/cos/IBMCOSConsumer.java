@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos;
 
 import java.util.LinkedList;
@@ -103,7 +104,10 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
+                LOG.trace(
+                        "Found {} objects in bucket [{}]...",
+                        listObjects.getObjectSummaries().size(),
+                        bucketName);
             }
 
             exchanges = createExchanges(listObjects.getObjectSummaries());
@@ -163,8 +167,8 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
                 continue;
             }
 
-            S3Object s3Object = getCosClient().getObject(
-                    new GetObjectRequest(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey()));
+            S3Object s3Object = getCosClient()
+                    .getObject(new GetObjectRequest(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey()));
             Exchange exchange = createExchange(s3Object, s3ObjectSummary.getKey());
             exchanges.add(exchange);
         }
@@ -183,16 +187,25 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
         message.setHeader(IBMCOSConstants.KEY, key);
         message.setHeader(IBMCOSConstants.BUCKET_NAME, s3Object.getBucketName());
         message.setHeader(IBMCOSConstants.E_TAG, s3Object.getObjectMetadata().getETag());
-        message.setHeader(IBMCOSConstants.LAST_MODIFIED, s3Object.getObjectMetadata().getLastModified());
-        message.setHeader(IBMCOSConstants.VERSION_ID, s3Object.getObjectMetadata().getVersionId());
-        message.setHeader(IBMCOSConstants.CONTENT_TYPE, s3Object.getObjectMetadata().getContentType());
-        message.setHeader(IBMCOSConstants.CONTENT_LENGTH, s3Object.getObjectMetadata().getContentLength());
-        message.setHeader(IBMCOSConstants.CONTENT_ENCODING, s3Object.getObjectMetadata().getContentEncoding());
-        message.setHeader(IBMCOSConstants.CONTENT_DISPOSITION, s3Object.getObjectMetadata().getContentDisposition());
-        message.setHeader(IBMCOSConstants.CACHE_CONTROL, s3Object.getObjectMetadata().getCacheControl());
+        message.setHeader(
+                IBMCOSConstants.LAST_MODIFIED, s3Object.getObjectMetadata().getLastModified());
+        message.setHeader(
+                IBMCOSConstants.VERSION_ID, s3Object.getObjectMetadata().getVersionId());
+        message.setHeader(
+                IBMCOSConstants.CONTENT_TYPE, s3Object.getObjectMetadata().getContentType());
+        message.setHeader(
+                IBMCOSConstants.CONTENT_LENGTH, s3Object.getObjectMetadata().getContentLength());
+        message.setHeader(
+                IBMCOSConstants.CONTENT_ENCODING, s3Object.getObjectMetadata().getContentEncoding());
+        message.setHeader(
+                IBMCOSConstants.CONTENT_DISPOSITION,
+                s3Object.getObjectMetadata().getContentDisposition());
+        message.setHeader(
+                IBMCOSConstants.CACHE_CONTROL, s3Object.getObjectMetadata().getCacheControl());
 
         if (s3Object.getObjectMetadata().getUserMetadata() != null) {
-            message.setHeader(IBMCOSConstants.METADATA, s3Object.getObjectMetadata().getUserMetadata());
+            message.setHeader(
+                    IBMCOSConstants.METADATA, s3Object.getObjectMetadata().getUserMetadata());
         }
 
         /**
@@ -254,14 +267,15 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
     private void copyObject(String bucketName, String key) {
         String destinationKey = getDestinationKey(key);
 
-        CopyObjectRequest copyObjectRequest = new CopyObjectRequest(
+        CopyObjectRequest copyObjectRequest =
+                new CopyObjectRequest(bucketName, key, getConfiguration().getDestinationBucket(), destinationKey);
+
+        LOG.trace(
+                "Copying object from bucket {} with key {} to destination bucket {} with destination key {}",
                 bucketName,
                 key,
                 getConfiguration().getDestinationBucket(),
                 destinationKey);
-
-        LOG.trace("Copying object from bucket {} with key {} to destination bucket {} with destination key {}",
-                bucketName, key, getConfiguration().getDestinationBucket(), destinationKey);
 
         getCosClient().copyObject(copyObjectRequest);
     }
@@ -302,7 +316,8 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
     @Override
     public String toString() {
         if (s3ConsumerToString == null) {
-            s3ConsumerToString = "IBMCOSConsumer[" + getEndpoint().getConfiguration().getBucketName() + "]";
+            s3ConsumerToString =
+                    "IBMCOSConsumer[" + getEndpoint().getConfiguration().getBucketName() + "]";
         }
         return s3ConsumerToString;
     }

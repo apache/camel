@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service;
 
 import org.apache.camel.component.wordpress.api.model.Context;
@@ -23,5 +24,4 @@ import org.apache.camel.component.wordpress.api.model.PageSearchCriteria;
 public interface WordpressServicePages extends WordpressCrudService<Page, PageSearchCriteria> {
 
     Page retrieve(Integer pageId, Context context, String password);
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExpressionsInJavaTest extends CamelTestSupport {
     @EndpointInject("mock:direct:response")
@@ -47,13 +48,13 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:expressionsInJava")
-                                .choice()
-                                    .when(datasonnet("payload == 'World'"))
-                                        .setBody(datasonnet("'Hello, ' + payload", String.class))
-                                    .otherwise()
-                                        .setBody(datasonnet("'Good bye, ' + payload", String.class))
-                                    .end()
-                                .to("mock:direct:response");
+                        .choice()
+                        .when(datasonnet("payload == 'World'"))
+                        .setBody(datasonnet("'Hello, ' + payload", String.class))
+                        .otherwise()
+                        .setBody(datasonnet("'Good bye, ' + payload", String.class))
+                        .end()
+                        .to("mock:direct:response");
 
                 from("direct:fluentBuilder")
                         // no optional params, look in header
@@ -66,8 +67,8 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
                                 .outputMediaType(MediaTypes.APPLICATION_JSON))
 
                         // override input
-                        .transform(
-                                DatasonnetExpression.builder("payload", List.class).bodyMediaType(MediaTypes.APPLICATION_JSON))
+                        .transform(DatasonnetExpression.builder("payload", List.class)
+                                .bodyMediaType(MediaTypes.APPLICATION_JSON))
 
                         // override both
                         .setHeader(Exchange.CONTENT_TYPE, constant(MediaTypes.APPLICATION_JSON_VALUE))

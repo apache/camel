@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
 
 import java.util.HashMap;
@@ -25,7 +26,8 @@ import org.apache.camel.component.dapr.DaprConstants;
 
 public class DaprOperationResponse {
     private Object body;
-    private Map<String, Object> headers = new HashMap<>();;
+    private Map<String, Object> headers = new HashMap<>();
+    ;
 
     private DaprOperationResponse(final Object body) {
         this.body = body;

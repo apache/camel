@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.ast;
 
 import java.util.ArrayList;
@@ -92,30 +93,42 @@ public class BinaryExpression extends BaseSimpleNode {
         if (operator == BinaryOperatorType.EQ) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.EQ_IGNORE) {
-            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp));
+            return createExpression(
+                    camelContext, leftExp, rightExp, PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.GT) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isGreaterThan(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.GTE) {
-            return createExpression(camelContext, leftExp, rightExp,
-                    PredicateBuilder.isGreaterThanOrEqualTo(leftExp, rightExp));
+            return createExpression(
+                    camelContext, leftExp, rightExp, PredicateBuilder.isGreaterThanOrEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.LT) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isLessThan(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.LTE) {
-            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isLessThanOrEqualTo(leftExp, rightExp));
+            return createExpression(
+                    camelContext, leftExp, rightExp, PredicateBuilder.isLessThanOrEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_EQ) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isNotEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_EQ_IGNORE) {
-            return createExpression(camelContext, leftExp, rightExp,
+            return createExpression(
+                    camelContext,
+                    leftExp,
+                    rightExp,
                     PredicateBuilder.not(PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.CONTAINS) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.contains(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS) {
-            return createExpression(camelContext, leftExp, rightExp,
+            return createExpression(
+                    camelContext,
+                    leftExp,
+                    rightExp,
                     PredicateBuilder.not(PredicateBuilder.contains(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.CONTAINS_IGNORECASE) {
-            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.containsIgnoreCase(leftExp, rightExp));
+            return createExpression(
+                    camelContext, leftExp, rightExp, PredicateBuilder.containsIgnoreCase(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS_IGNORECASE) {
-            return createExpression(camelContext, leftExp, rightExp,
+            return createExpression(
+                    camelContext,
+                    leftExp,
+                    rightExp,
                     PredicateBuilder.not(PredicateBuilder.containsIgnoreCase(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.IS || operator == BinaryOperatorType.NOT_IS) {
             return createIsExpression(camelContext, expression, leftExp, rightExp);
@@ -135,7 +148,10 @@ public class BinaryExpression extends BaseSimpleNode {
     }
 
     private Expression createIsExpression(
-            final CamelContext camelContext, final String expression, final Expression leftExp, final Expression rightExp) {
+            final CamelContext camelContext,
+            final String expression,
+            final Expression leftExp,
+            final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -160,13 +176,15 @@ public class BinaryExpression extends BaseSimpleNode {
 
             private void throwClassNotFound(String name) {
                 throw new SimpleIllegalSyntaxException(
-                        expression, right.getToken().getIndex(),
+                        expression,
+                        right.getToken().getIndex(),
                         operator + " operator cannot find class with name: " + name);
             }
 
             private void throwMissingClass() {
                 throw new SimpleIllegalSyntaxException(
-                        expression, right.getToken().getIndex(),
+                        expression,
+                        right.getToken().getIndex(),
                         operator + " operator cannot accept null. A class type must be provided.");
             }
 
@@ -229,7 +247,10 @@ public class BinaryExpression extends BaseSimpleNode {
     }
 
     private Expression createRangeExpression(
-            final CamelContext camelContext, final String expression, final Expression leftExp, final Expression rightExp) {
+            final CamelContext camelContext,
+            final String expression,
+            final Expression leftExp,
+            final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -247,8 +268,10 @@ public class BinaryExpression extends BaseSimpleNode {
                     predicate = PredicateBuilder.and(predicate, PredicateBuilder.isLessThanOrEqualTo(leftExp, to));
                 } else {
                     throw new SimpleIllegalSyntaxException(
-                            expression, right.getToken().getIndex(),
-                            operator + " operator is not valid. Valid syntax:'from..to' (where from and to are numbers).");
+                            expression,
+                            right.getToken().getIndex(),
+                            operator
+                                    + " operator is not valid. Valid syntax:'from..to' (where from and to are numbers).");
                 }
                 if (operator == BinaryOperatorType.NOT_RANGE) {
                     predicate = PredicateBuilder.not(predicate);
@@ -357,5 +380,4 @@ public class BinaryExpression extends BaseSimpleNode {
 
         throw new SimpleParserException("Unknown binary operator " + operator, token.getIndex());
     }
-
 }

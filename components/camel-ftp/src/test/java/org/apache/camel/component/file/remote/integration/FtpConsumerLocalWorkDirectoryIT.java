@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -31,20 +38,14 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FtpConsumerLocalWorkDirectoryIT extends FtpServerTestSupport {
     @TempDir
     Path testDirectory;
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/lwd/?password=admin"
-               + "&localWorkDirectory=" + testDirectory.resolve("lwd")
-               + "&noop=true";
+                + "&localWorkDirectory=" + testDirectory.resolve("lwd")
+                + "&noop=true";
     }
 
     @Override
@@ -91,16 +92,23 @@ public class FtpConsumerLocalWorkDirectoryIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).routeId("myRoute").noAutoStartup().process(new Processor() {
-                    public void process(Exchange exchange) {
-                        File body = exchange.getIn().getBody(File.class);
-                        assertNotNull(body);
-                        assertTrue(body.exists(), "Local work file should exists");
-                        assertEquals(FileUtil.normalizePath(testDirectory.resolve("lwd/hello.txt").toString()), body.getPath());
-                    }
-                }).to("mock:result", TestSupport.fileUri(testDirectory, "out"));
+                from(getFtpUrl())
+                        .routeId("myRoute")
+                        .noAutoStartup()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                File body = exchange.getIn().getBody(File.class);
+                                assertNotNull(body);
+                                assertTrue(body.exists(), "Local work file should exists");
+                                assertEquals(
+                                        FileUtil.normalizePath(testDirectory
+                                                .resolve("lwd/hello.txt")
+                                                .toString()),
+                                        body.getPath());
+                            }
+                        })
+                        .to("mock:result", TestSupport.fileUri(testDirectory, "out"));
             }
         };
     }
-
 }

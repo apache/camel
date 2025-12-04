@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
 
 import java.io.IOException;
@@ -114,12 +115,13 @@ public class JsseParameters implements CamelContextAware {
     protected InputStream resolveResource(String resource) throws IOException {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
-        Resource res
-                = getCamelContext().getCamelContextExtension().getContextPlugin(ResourceLoader.class).resolveResource(resource);
+        Resource res = getCamelContext()
+                .getCamelContextExtension()
+                .getContextPlugin(ResourceLoader.class)
+                .resolveResource(resource);
         if (res == null || !res.exists()) {
             throw new IOException("Could not open " + resource + " as a file, class path resource, or URL.");
         }
         return res.getInputStream();
     }
-
 }

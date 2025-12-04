@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
@@ -30,15 +31,18 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  *
  * This aggregation strategy can used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
  */
-@Metadata(label = "bean",
-          description = "Aggregate result of pick expression into a single combined Exchange holding all the aggregated bodies in a"
+@Metadata(
+        label = "bean",
+        description =
+                "Aggregate result of pick expression into a single combined Exchange holding all the aggregated bodies in a"
                         + " String as the message body. This aggregation strategy can used in combination with Splitter to batch messages",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class StringAggregationStrategy implements AggregationStrategy {
 
     @Metadata(description = "Delimiter used for joining strings together.")
     private String delimiter = "";
+
     private Expression pickExpression = ExpressionBuilder.bodyExpression();
 
     public String getDelimiter() {
@@ -120,5 +124,4 @@ public class StringAggregationStrategy implements AggregationStrategy {
         }
         return stringBuffer;
     }
-
 }

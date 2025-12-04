@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.xml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -24,9 +28,6 @@ import org.apache.camel.parser.XmlRestDslParser;
 import org.apache.camel.parser.model.RestConfigurationDetails;
 import org.apache.camel.parser.model.RestServiceDetails;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class XmlRestDslTest {
 
@@ -102,5 +103,4 @@ public class XmlRestDslTest {
         assertEquals("log:post", details.getVerbs().get(1).getTo());
         assertNull(details.getVerbs().get(1).getPath());
     }
-
 }

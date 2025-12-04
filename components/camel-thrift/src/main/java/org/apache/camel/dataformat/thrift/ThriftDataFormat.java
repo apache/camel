@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.thrift;
 
 import java.io.InputStream;
@@ -51,14 +52,15 @@ public class ThriftDataFormat extends ServiceSupport
     private static final String CONTENT_TYPE_HEADER_JSON = "application/json";
 
     private CamelContext camelContext;
+
     @SuppressWarnings("rawtypes")
     private TBase defaultInstance;
+
     private String instanceClass;
     private boolean contentTypeHeader = true;
     private String contentTypeFormat = CONTENT_TYPE_FORMAT_BINARY;
 
-    public ThriftDataFormat() {
-    }
+    public ThriftDataFormat() {}
 
     @SuppressWarnings("rawtypes")
     public ThriftDataFormat(TBase defaultInstance) {
@@ -189,9 +191,8 @@ public class ThriftDataFormat extends ServiceSupport
                         "Cannot set the defaultInstance of ThriftDataFormat with " + className + ", caused by " + ex);
             }
         } else {
-            throw new CamelException(
-                    "Cannot set the defaultInstance of ThriftDataFormat with " + className
-                                     + ", as the class is not a subClass of org.apache.thrift.TBase");
+            throw new CamelException("Cannot set the defaultInstance of ThriftDataFormat with " + className
+                    + ", as the class is not a subClass of org.apache.thrift.TBase");
         }
     }
 
@@ -206,5 +207,4 @@ public class ThriftDataFormat extends ServiceSupport
     protected void doStop() throws Exception {
         // noop
     }
-
 }

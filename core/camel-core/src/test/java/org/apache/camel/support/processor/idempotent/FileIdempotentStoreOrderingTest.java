@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor.idempotent;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -28,8 +31,6 @@ import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FileIdempotentStoreOrderingTest extends TestSupport {
 
     private FileIdempotentRepository fileIdempotentRepository;
@@ -37,9 +38,16 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
 
     @BeforeEach
     public void setup() {
-        files = Arrays.asList("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124", "file3.txt.20171125",
-                "file2.txt.20171126", "fixed.income.lamr.out.20171126",
-                "pricing.px.20171126", "test.out.20171126", "processing.source.lamr.out.20171126");
+        files = Arrays.asList(
+                "file1.txt.20171123",
+                "file2.txt.20171123",
+                "file1.txt.20171124",
+                "file3.txt.20171125",
+                "file2.txt.20171126",
+                "fixed.income.lamr.out.20171126",
+                "pricing.px.20171126",
+                "test.out.20171126",
+                "processing.source.lamr.out.20171126");
         this.fileIdempotentRepository = new FileIdempotentRepository();
     }
 
@@ -59,10 +67,17 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
         try (Stream<String> fileContent = Files.lines(fileStore.toPath())) {
             List<String> fileEntries = fileContent.toList();
             // expected order
-            MatcherAssert.assertThat(fileEntries,
-                    IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
-                            "file3.txt.20171125", "file2.txt.20171126",
-                            "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
+            MatcherAssert.assertThat(
+                    fileEntries,
+                    IsIterableContainingInOrder.contains(
+                            "file1.txt.20171123",
+                            "file2.txt.20171123",
+                            "file1.txt.20171124",
+                            "file3.txt.20171125",
+                            "file2.txt.20171126",
+                            "fixed.income.lamr.out.20171126",
+                            "pricing.px.20171126",
+                            "test.out.20171126",
                             "processing.source.lamr.out.20171126"));
         }
     }
@@ -83,10 +98,17 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
         try (Stream<String> fileContent = Files.lines(fileStore.toPath())) {
             List<String> fileEntries = fileContent.toList();
             // expected order
-            MatcherAssert.assertThat(fileEntries,
-                    IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
-                            "file3.txt.20171125", "file2.txt.20171126",
-                            "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
+            MatcherAssert.assertThat(
+                    fileEntries,
+                    IsIterableContainingInOrder.contains(
+                            "file1.txt.20171123",
+                            "file2.txt.20171123",
+                            "file1.txt.20171124",
+                            "file3.txt.20171125",
+                            "file2.txt.20171126",
+                            "fixed.income.lamr.out.20171126",
+                            "pricing.px.20171126",
+                            "test.out.20171126",
                             "processing.source.lamr.out.20171126"));
         }
     }
@@ -117,5 +139,4 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
             assertEquals(0, fileEntries.size());
         }
     }
-
 }

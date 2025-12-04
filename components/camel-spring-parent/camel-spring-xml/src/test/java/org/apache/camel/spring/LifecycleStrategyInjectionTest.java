@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for LifecycleStrategy injection.
@@ -36,5 +37,4 @@ public class LifecycleStrategyInjectionTest extends SpringTestSupport {
     public void testInjectedStrategy() throws Exception {
         assertTrue(context.getLifecycleStrategies().stream().anyMatch(s -> s instanceof DummyLifecycleStrategy));
     }
-
 }

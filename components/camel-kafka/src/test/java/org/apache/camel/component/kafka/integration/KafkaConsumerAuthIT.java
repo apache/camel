@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collections;
 import java.util.Map;
@@ -50,18 +56,15 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * A KafkaContainer that supports JAAS+SASL based authentication
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka3-container",
-                                 disabledReason = "Requires Kafka 3.x"),
-        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
+    @EnabledIfSystemProperty(
+            named = "kafka.instance.type",
+            matches = "local-kafka3-container",
+            disabledReason = "Requires Kafka 3.x"),
+    @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerAuthIT {
@@ -85,7 +88,8 @@ public class KafkaConsumerAuthIT {
     public void before() {
         Properties props = KafkaTestUtil.getDefaultProperties(service);
 
-        props.put(SaslConfigs.SASL_JAAS_CONFIG,
+        props.put(
+                SaslConfigs.SASL_JAAS_CONFIG,
                 ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-secret"));
         props.put("security.protocol", "SASL_PLAINTEXT");
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
@@ -125,19 +129,25 @@ public class KafkaConsumerAuthIT {
 
             @Override
             public void configure() {
-                final String simpleSaslJaasConfig
-                        = ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-secret");
+                final String simpleSaslJaasConfig =
+                        ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-secret");
 
-                fromF("kafka:%s"
-                      + "?brokers=%s&groupId=%s&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                      + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer&clientId=camel-kafka-auth-test"
-                      + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=%s"
-                      + "&saslMechanism=PLAIN&securityProtocol=SASL_PLAINTEXT&saslJaasConfig=%s", TOPIC,
-                        service.getBootstrapServers(),
-                        "KafkaConsumerAuthIT", "org.apache.camel.component.kafka.MockConsumerInterceptor", simpleSaslJaasConfig)
-                        .process(
-                                exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
-                        .routeId("full-it").to(KafkaTestUtil.MOCK_RESULT);
+                fromF(
+                                "kafka:%s"
+                                        + "?brokers=%s&groupId=%s&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                        + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer&clientId=camel-kafka-auth-test"
+                                        + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=%s"
+                                        + "&saslMechanism=PLAIN&securityProtocol=SASL_PLAINTEXT&saslJaasConfig=%s",
+                                TOPIC,
+                                service.getBootstrapServers(),
+                                "KafkaConsumerAuthIT",
+                                "org.apache.camel.component.kafka.MockConsumerInterceptor",
+                                simpleSaslJaasConfig)
+                        .process(exchange -> LOG.trace(
+                                "Captured on the processor: {}",
+                                exchange.getMessage().getBody()))
+                        .routeId("full-it")
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
@@ -156,15 +166,19 @@ public class KafkaConsumerAuthIT {
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
         // exchange because autoCommitEnable=true
-        to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
+        to.expectedHeaderValuesReceivedInAnyOrder(
+                KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
         to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
 
         populateKafkaTopic(propagatedHeaderKey, propagatedHeaderValue);
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
-                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
+        assertEquals(
+                5,
+                MockConsumerInterceptor.recordsCaptured.stream()
+                        .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false))
+                        .count());
 
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertFalse(headers.containsKey(skippedHeaderKey), "Should not receive skipped header");
@@ -180,5 +194,4 @@ public class KafkaConsumerAuthIT {
             producer.send(data);
         }
     }
-
 }

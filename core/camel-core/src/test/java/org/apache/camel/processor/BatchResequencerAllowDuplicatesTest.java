@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,10 +50,11 @@ public class BatchResequencerAllowDuplicatesTest extends ContextTestSupport {
                 from("direct:start")
                         // allow duplicates which means messages with same id is
                         // retained
-                        .resequence(header("id")).allowDuplicates().to("mock:result");
+                        .resequence(header("id"))
+                        .allowDuplicates()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

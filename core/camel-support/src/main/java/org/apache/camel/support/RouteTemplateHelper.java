@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.File;
@@ -33,8 +34,7 @@ public final class RouteTemplateHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteTemplateHelper.class);
 
-    private RouteTemplateHelper() {
-    }
+    private RouteTemplateHelper() {}
 
     /**
      * Loads the route template with the given template id from a given location. After the template is loaded, it is
@@ -47,8 +47,7 @@ public final class RouteTemplateHelper {
      * @throws Exception    is thrown if any kind of error loading the route template
      */
     public static void loadRouteTemplateFromLocation(
-            CamelContext camelContext, RouteTemplateLoaderListener listener,
-            String templateId, String location)
+            CamelContext camelContext, RouteTemplateLoaderListener listener, String templateId, String location)
             throws Exception {
 
         if (location == null) {
@@ -83,7 +82,10 @@ public final class RouteTemplateHelper {
                         listener.loadRouteTemplate(res);
                     }
                 } catch (Exception e) {
-                    LOG.warn("RouteTemplateLoaderListener error due to {}. This exception is ignored", e.getMessage(), e);
+                    LOG.warn(
+                            "RouteTemplateLoaderListener error due to {}. This exception is ignored",
+                            e.getMessage(),
+                            e);
                 }
                 PluginHelper.getRoutesLoader(camelContext).loadRoutes(res);
                 found = true;

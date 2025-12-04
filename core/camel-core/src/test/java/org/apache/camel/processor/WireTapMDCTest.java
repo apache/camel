@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WireTapMDCTest extends ContextTestSupport {
 
@@ -52,7 +53,8 @@ public class WireTapMDCTest extends ContextTestSupport {
                 MdcCheckerProcessor checker = new MdcCheckerProcessor("route-a", "World", "MyValue");
                 MdcCheckerProcessor checker2 = new MdcCheckerProcessor("route-b", "Moon", "MyValue2");
 
-                from("seda:a").routeId("route-a")
+                from("seda:a")
+                        .routeId("route-a")
                         .process(e -> {
                             MDC.put("custom.hello", "World");
                             MDC.put("foo", "Bar");
@@ -64,7 +66,8 @@ public class WireTapMDCTest extends ContextTestSupport {
                         .process(checker)
                         .to("mock:end");
 
-                from("direct:b").routeId("route-b")
+                from("direct:b")
+                        .routeId("route-b")
                         .process(e -> {
                             MDC.put("custom.hello", "Moon");
                             MDC.put("foo", "Bar2");
@@ -152,5 +155,4 @@ public class WireTapMDCTest extends ContextTestSupport {
             }
         }
     }
-
 }

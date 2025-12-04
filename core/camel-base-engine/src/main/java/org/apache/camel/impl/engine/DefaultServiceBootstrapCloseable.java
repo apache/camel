@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Set;
@@ -52,9 +53,9 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
         // clear bootstrap configurers
         ConfigurerStrategy.clearBootstrapConfigurers();
 
-        Set<Service> set
-                = camelContextExtension.getServices().stream().filter(s -> s instanceof BootstrapCloseable)
-                        .collect(Collectors.toSet());
+        Set<Service> set = camelContextExtension.getServices().stream()
+                .filter(s -> s instanceof BootstrapCloseable)
+                .collect(Collectors.toSet());
         // its a bootstrap service
         for (Service service : set) {
             try {
@@ -99,5 +100,4 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
         }
         camelContextExtension.setBootstrapFactoryFinder(null);
     }
-
 }

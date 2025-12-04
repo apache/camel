@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-
 @Disabled("Manual integration test")
 public class HttpProducerLoadManualIT extends BaseHttpTest {
 
@@ -45,10 +46,13 @@ public class HttpProducerLoadManualIT extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/echo", new DrinkValidationHandler(GET.name(), null, null, "myHeader")).create();
+                .register("/echo", new DrinkValidationHandler(GET.name(), null, null, "myHeader"))
+                .create();
         localServer.start();
     }
 
@@ -65,8 +69,7 @@ public class HttpProducerLoadManualIT extends BaseHttpTest {
             @Override
             public void configure() {
                 from("direct:echo")
-                        .to("http://localhost:" + localServer.getLocalPort()
-                            + "/echo?throwExceptionOnFailure=false");
+                        .to("http://localhost:" + localServer.getLocalPort() + "/echo?throwExceptionOnFailure=false");
             }
         };
     }
@@ -97,5 +100,4 @@ public class HttpProducerLoadManualIT extends BaseHttpTest {
 
         LOG.info("Took {} ms", watch.taken());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.workday;
 
 import java.util.Map;
@@ -54,8 +55,7 @@ public class WorkdayComponent extends DefaultComponent {
      * @return the parsed and valid configuration to use
      */
     protected WorkdayConfiguration parseConfiguration(
-            WorkdayConfiguration configuration, String remaining, Map<String, Object> parameters)
-            throws Exception {
+            WorkdayConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
         configuration.parseURI(remaining, parameters);
         return configuration;
     }

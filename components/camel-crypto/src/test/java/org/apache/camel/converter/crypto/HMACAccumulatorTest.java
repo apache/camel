@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -27,12 +30,29 @@ import org.apache.camel.converter.crypto.HMACAccumulator.CircularBuffer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HMACAccumulatorTest {
     private byte[] payload = {
-            0x00, 0x00, 0x11, 0x11, 0x22, 0x22, 0x33, 0x33, 0x44, 0x44, 0x55, 0x55, 0x66, 0x66, 0x77, 0x77, (byte) 0x88,
-            (byte) 0x88, (byte) 0x99, (byte) 0x99 };
+        0x00,
+        0x00,
+        0x11,
+        0x11,
+        0x22,
+        0x22,
+        0x33,
+        0x33,
+        0x44,
+        0x44,
+        0x55,
+        0x55,
+        0x66,
+        0x66,
+        0x77,
+        0x77,
+        (byte) 0x88,
+        (byte) 0x88,
+        (byte) 0x99,
+        (byte) 0x99
+    };
     private byte[] expected;
     private Key key;
 

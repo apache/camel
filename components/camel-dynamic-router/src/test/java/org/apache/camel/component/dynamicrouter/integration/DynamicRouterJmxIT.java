@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.integration;
+
+import static org.apache.camel.builder.Builder.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -43,10 +48,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.apache.camel.builder.Builder.body;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringTest
 @DisableJmx(false)
@@ -95,29 +96,50 @@ class DynamicRouterJmxIT {
         // Create a subscription that accepts an exchange when the message body contains an even number
         // The destination URI is for the endpoint "mockOne"
         Predicate evenPredicate = body().regex("^\\d*[02468]$");
-        subscribe.sendBodyAndHeaders("direct:subscribe", evenPredicate,
-                Map.of("subscribeChannel", CHANNEL_NAME,
-                        "subscriptionId", "evenNumberSubscription",
-                        "destinationUri", mockOne.getEndpointUri(),
-                        "priority", 2));
+        subscribe.sendBodyAndHeaders(
+                "direct:subscribe",
+                evenPredicate,
+                Map.of(
+                        "subscribeChannel",
+                        CHANNEL_NAME,
+                        "subscriptionId",
+                        "evenNumberSubscription",
+                        "destinationUri",
+                        mockOne.getEndpointUri(),
+                        "priority",
+                        2));
 
         // Create a subscription that accepts an exchange when the message body contains an odd number
         // The destination URI is for the endpoint "mockTwo"
         Predicate oddPredicate = body().regex("^\\d*[13579]$");
-        subscribe.sendBodyAndHeaders("direct:subscribe", oddPredicate,
-                Map.of("subscribeChannel", CHANNEL_NAME,
-                        "subscriptionId", "oddNumberSubscription",
-                        "destinationUri", mockTwo.getEndpointUri(),
-                        "priority", 2));
+        subscribe.sendBodyAndHeaders(
+                "direct:subscribe",
+                oddPredicate,
+                Map.of(
+                        "subscribeChannel",
+                        CHANNEL_NAME,
+                        "subscriptionId",
+                        "oddNumberSubscription",
+                        "destinationUri",
+                        mockTwo.getEndpointUri(),
+                        "priority",
+                        2));
 
         // Create a subscription that accepts an exchange when the message body contains any number
         // The destination URI is for the endpoint "mockThree"
         Predicate allPredicate = body().regex("^\\d+$");
-        subscribe.sendBodyAndHeaders("direct:subscribe", allPredicate,
-                Map.of("subscribeChannel", CHANNEL_NAME,
-                        "subscriptionId", "allNumberSubscription",
-                        "destinationUri", mockThree.getEndpointUri(),
-                        "priority", 1));
+        subscribe.sendBodyAndHeaders(
+                "direct:subscribe",
+                allPredicate,
+                Map.of(
+                        "subscribeChannel",
+                        CHANNEL_NAME,
+                        "subscriptionId",
+                        "allNumberSubscription",
+                        "destinationUri",
+                        mockThree.getEndpointUri(),
+                        "priority",
+                        1));
     }
 
     void sendMessagesAndAssert() throws InterruptedException {
@@ -134,9 +156,9 @@ class DynamicRouterJmxIT {
         MBeanServer mBeanServer = getMBeanServer();
         ObjectInstance serviceMBean = getServiceMBean();
         @SuppressWarnings("unchecked")
-        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap
-                = (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>) mBeanServer.getAttribute(serviceMBean.getObjectName(),
-                        "SubscriptionsMap");
+        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap =
+                (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>)
+                        mBeanServer.getAttribute(serviceMBean.getObjectName(), "SubscriptionsMap");
         Set<String> actual = subscriptionsMap.get(CHANNEL_NAME).stream()
                 .map(PrioritizedFilter::id)
                 .collect(Collectors.toSet());
@@ -151,13 +173,13 @@ class DynamicRouterJmxIT {
         MBeanServer mBeanServer = getMBeanServer();
         ObjectInstance serviceMBean = getServiceMBean();
         @SuppressWarnings("unchecked")
-        Map<String, List<PrioritizedFilterStatistics>> statisticsMap
-                = (Map<String, List<PrioritizedFilterStatistics>>) mBeanServer.getAttribute(serviceMBean.getObjectName(),
-                        "SubscriptionsStatisticsMap");
+        Map<String, List<PrioritizedFilterStatistics>> statisticsMap = (Map<String, List<PrioritizedFilterStatistics>>)
+                mBeanServer.getAttribute(serviceMBean.getObjectName(), "SubscriptionsStatisticsMap");
         Set<String> actual = statisticsMap.get(CHANNEL_NAME).stream()
                 .map(pfs -> String.format("%s: %s", pfs.getFilterId(), pfs.getCount()))
                 .collect(Collectors.toSet());
-        Set<String> expected = Set.of("evenNumberSubscription: 6", "oddNumberSubscription: 5", "allNumberSubscription: 11");
+        Set<String> expected =
+                Set.of("evenNumberSubscription: 6", "oddNumberSubscription: 5", "allNumberSubscription: 11");
         assertEquals(expected, actual);
     }
 
@@ -167,20 +189,23 @@ class DynamicRouterJmxIT {
         subscribeParticipants();
         MBeanServer mBeanServer = getMBeanServer();
         ObjectInstance serviceMBean = getServiceMBean();
-        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap
-                = (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>) mBeanServer.getAttribute(serviceMBean.getObjectName(),
-                        "SubscriptionsMap");
+        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap =
+                (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>)
+                        mBeanServer.getAttribute(serviceMBean.getObjectName(), "SubscriptionsMap");
         Set<String> actualInitial = subscriptionsMap.get(CHANNEL_NAME).stream()
                 .map(PrioritizedFilter::id)
                 .collect(Collectors.toSet());
-        Set<String> expectedInitial = Set.of("evenNumberSubscription", "oddNumberSubscription", "allNumberSubscription");
+        Set<String> expectedInitial =
+                Set.of("evenNumberSubscription", "oddNumberSubscription", "allNumberSubscription");
         assertEquals(expectedInitial, actualInitial);
-        boolean result = (boolean) mBeanServer.invoke(serviceMBean.getObjectName(), "removeSubscription",
-                new Object[] { CHANNEL_NAME, "evenNumberSubscription" },
-                new String[] { String.class.getName(), String.class.getName() });
+        boolean result = (boolean) mBeanServer.invoke(
+                serviceMBean.getObjectName(),
+                "removeSubscription",
+                new Object[] {CHANNEL_NAME, "evenNumberSubscription"},
+                new String[] {String.class.getName(), String.class.getName()});
         assertTrue(result);
-        subscriptionsMap = (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>) mBeanServer
-                .getAttribute(serviceMBean.getObjectName(), "SubscriptionsMap");
+        subscriptionsMap = (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>)
+                mBeanServer.getAttribute(serviceMBean.getObjectName(), "SubscriptionsMap");
         Set<String> actual = subscriptionsMap.get(CHANNEL_NAME).stream()
                 .map(PrioritizedFilter::id)
                 .collect(Collectors.toSet());
@@ -194,15 +219,23 @@ class DynamicRouterJmxIT {
         MBeanServer mBeanServer = getMBeanServer();
         ObjectInstance serviceMBean = getServiceMBean();
         String subscriptionName = "trueSubscription";
-        String result = (String) mBeanServer.invoke(serviceMBean.getObjectName(), "subscribeWithPredicateExpression",
-                new Object[] { CHANNEL_NAME, subscriptionName, mockOne.getEndpointUri(), 2, "true", "simple", false },
+        String result = (String) mBeanServer.invoke(
+                serviceMBean.getObjectName(),
+                "subscribeWithPredicateExpression",
+                new Object[] {CHANNEL_NAME, subscriptionName, mockOne.getEndpointUri(), 2, "true", "simple", false},
                 new String[] {
-                        String.class.getName(), String.class.getName(), String.class.getName(), int.class.getName(),
-                        String.class.getName(), String.class.getName(), boolean.class.getName() });
+                    String.class.getName(),
+                    String.class.getName(),
+                    String.class.getName(),
+                    int.class.getName(),
+                    String.class.getName(),
+                    String.class.getName(),
+                    boolean.class.getName()
+                });
         assertEquals(subscriptionName, result);
-        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap
-                = (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>) mBeanServer.getAttribute(serviceMBean.getObjectName(),
-                        "SubscriptionsMap");
+        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap =
+                (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>)
+                        mBeanServer.getAttribute(serviceMBean.getObjectName(), "SubscriptionsMap");
         Set<String> actual = subscriptionsMap.get(CHANNEL_NAME).stream()
                 .map(PrioritizedFilter::id)
                 .collect(Collectors.toSet());
@@ -218,15 +251,22 @@ class DynamicRouterJmxIT {
         String subscriptionName = "trueSubscription";
         Predicate predicate = PredicateBuilder.constant(true);
         camelContext.getRegistry().bind("truePredicate", predicate);
-        String result = (String) mBeanServer.invoke(serviceMBean.getObjectName(), "subscribeWithPredicateBean",
-                new Object[] { CHANNEL_NAME, subscriptionName, mockOne.getEndpointUri(), 2, "truePredicate", false },
+        String result = (String) mBeanServer.invoke(
+                serviceMBean.getObjectName(),
+                "subscribeWithPredicateBean",
+                new Object[] {CHANNEL_NAME, subscriptionName, mockOne.getEndpointUri(), 2, "truePredicate", false},
                 new String[] {
-                        String.class.getName(), String.class.getName(), String.class.getName(), int.class.getName(),
-                        String.class.getName(), boolean.class.getName() });
+                    String.class.getName(),
+                    String.class.getName(),
+                    String.class.getName(),
+                    int.class.getName(),
+                    String.class.getName(),
+                    boolean.class.getName()
+                });
         assertEquals(subscriptionName, result);
-        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap
-                = (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>) mBeanServer.getAttribute(serviceMBean.getObjectName(),
-                        "SubscriptionsMap");
+        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap =
+                (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>)
+                        mBeanServer.getAttribute(serviceMBean.getObjectName(), "SubscriptionsMap");
         Set<String> actual = subscriptionsMap.get(CHANNEL_NAME).stream()
                 .map(PrioritizedFilter::id)
                 .collect(Collectors.toSet());
@@ -241,15 +281,22 @@ class DynamicRouterJmxIT {
         ObjectInstance serviceMBean = getServiceMBean();
         String subscriptionName = "trueSubscription";
         Predicate predicate = PredicateBuilder.constant(true);
-        String result = (String) mBeanServer.invoke(serviceMBean.getObjectName(), "subscribeWithPredicateInstance",
-                new Object[] { CHANNEL_NAME, subscriptionName, mockOne.getEndpointUri(), 2, predicate, false },
+        String result = (String) mBeanServer.invoke(
+                serviceMBean.getObjectName(),
+                "subscribeWithPredicateInstance",
+                new Object[] {CHANNEL_NAME, subscriptionName, mockOne.getEndpointUri(), 2, predicate, false},
                 new String[] {
-                        String.class.getName(), String.class.getName(), String.class.getName(), int.class.getName(),
-                        Object.class.getName(), boolean.class.getName() });
+                    String.class.getName(),
+                    String.class.getName(),
+                    String.class.getName(),
+                    int.class.getName(),
+                    Object.class.getName(),
+                    boolean.class.getName()
+                });
         assertEquals(subscriptionName, result);
-        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap
-                = (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>) mBeanServer.getAttribute(serviceMBean.getObjectName(),
-                        "SubscriptionsMap");
+        Map<String, ConcurrentSkipListSet<PrioritizedFilter>> subscriptionsMap =
+                (Map<String, ConcurrentSkipListSet<PrioritizedFilter>>)
+                        mBeanServer.getAttribute(serviceMBean.getObjectName(), "SubscriptionsMap");
         Set<String> actual = subscriptionsMap.get(CHANNEL_NAME).stream()
                 .map(PrioritizedFilter::id)
                 .collect(Collectors.toSet());

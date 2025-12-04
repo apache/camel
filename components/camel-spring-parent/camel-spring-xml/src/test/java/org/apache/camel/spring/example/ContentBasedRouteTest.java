@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.example;
+
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
@@ -22,8 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 public class ContentBasedRouteTest extends SpringTestSupport {
     protected MockEndpoint matchedEndpoint;

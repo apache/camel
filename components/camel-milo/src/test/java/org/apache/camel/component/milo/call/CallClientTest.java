@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.call;
+
+import static org.apache.camel.component.milo.NodeIds.nodeValue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -46,10 +51,6 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.milo.NodeIds.nodeValue;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Unit tests for calling from the client side
  */
@@ -59,9 +60,9 @@ public class CallClientTest extends AbstractMiloServerTest {
 
     private static final String MILO_CLIENT_BASE_C1 = "milo-client:opc.tcp://localhost:@@port@@";
 
-    private static final String MILO_CLIENT_ITEM_C1_1
-            = MILO_CLIENT_BASE_C1 + "?node=" + NodeIds.nodeValue(MockCamelNamespace.URI, MockCamelNamespace.FOLDER_ID)
-              + "&method=" + nodeValue(MockCamelNamespace.URI, MockCamelNamespace.CALL_ID) + "&overrideHost=true";
+    private static final String MILO_CLIENT_ITEM_C1_1 =
+            MILO_CLIENT_BASE_C1 + "?node=" + NodeIds.nodeValue(MockCamelNamespace.URI, MockCamelNamespace.FOLDER_ID)
+                    + "&method=" + nodeValue(MockCamelNamespace.URI, MockCamelNamespace.CALL_ID) + "&overrideHost=true";
 
     private static final Logger LOG = LoggerFactory.getLogger(CallClientTest.class);
 
@@ -99,9 +100,10 @@ public class CallClientTest extends AbstractMiloServerTest {
     public void start() throws Exception {
         final OpcUaServerConfigBuilder cfg = OpcUaServerConfig.builder();
 
-        //        cfg.setCertificateManager(new DefaultCertificateManager()); // TODO setCertificateManager is called afterwards
-        cfg.setEndpoints(createEndpointConfigs(Arrays.asList(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS),
-                EnumSet.of(SecurityPolicy.None)));
+        //        cfg.setCertificateManager(new DefaultCertificateManager()); // TODO setCertificateManager is called
+        // afterwards
+        cfg.setEndpoints(createEndpointConfigs(
+                Arrays.asList(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS), EnumSet.of(SecurityPolicy.None)));
         cfg.setApplicationName(LocalizedText.english("Apache Camel Milo Server"));
         cfg.setApplicationUri("urn:mock:namespace");
         cfg.setProductUri("urn:org:apache:camel:milo");
@@ -119,21 +121,19 @@ public class CallClientTest extends AbstractMiloServerTest {
                 certificateStore,
                 certificateFactory,
                 new CertificateValidator.InsecureCertificateValidator());
-        cfg.setCertificateManager(
-                new DefaultCertificateManager(certificateQuarantine, certificateGroup));
+        cfg.setCertificateManager(new DefaultCertificateManager(certificateQuarantine, certificateGroup));
 
         // https://github.com/eclipse-milo/milo/blob/1.0/milo-examples/server-examples/src/main/java/org/eclipse/milo/examples/server/ExampleServer.java
         //        this.server = new OpcUaServer(cfg.build());
         OpcUaServerConfig serverConfig = cfg.build();
-        this.server = new OpcUaServer(
-                serverConfig,
-                transportProfile -> {
-                    assert transportProfile == TransportProfile.TCP_UASC_UABINARY;
+        this.server = new OpcUaServer(serverConfig, transportProfile -> {
+            assert transportProfile == TransportProfile.TCP_UASC_UABINARY;
 
-                    OpcTcpServerTransportConfig transportConfig = OpcTcpServerTransportConfig.newBuilder().build();
+            OpcTcpServerTransportConfig transportConfig =
+                    OpcTcpServerTransportConfig.newBuilder().build();
 
-                    return new OpcTcpServerTransport(transportConfig);
-                });
+            return new OpcTcpServerTransport(transportConfig);
+        });
 
         this.namespace = new MockCamelNamespace(this.server, node -> callMethod = new MockCallMethod(node));
         this.namespace.startup();
@@ -149,7 +149,7 @@ public class CallClientTest extends AbstractMiloServerTest {
         hostnames.add(HostnameUtil.getHostname());
         hostnames.addAll(HostnameUtil.getHostnames(bindAddress));
 
-        UserTokenPolicy[] tokenPolicies = new UserTokenPolicy[] { OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS };
+        UserTokenPolicy[] tokenPolicies = new UserTokenPolicy[] {OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS};
 
         for (String hostname : hostnames) {
             EndpointConfig.Builder builder = EndpointConfig.newBuilder()
@@ -159,9 +159,8 @@ public class CallClientTest extends AbstractMiloServerTest {
                     .addTokenPolicies(tokenPolicies);
 
             if (securityPolicies == null || securityPolicies.contains(SecurityPolicy.None)) {
-                EndpointConfig.Builder noSecurityBuilder = builder.copy()
-                        .setSecurityPolicy(SecurityPolicy.None)
-                        .setSecurityMode(MessageSecurityMode.None);
+                EndpointConfig.Builder noSecurityBuilder =
+                        builder.copy().setSecurityPolicy(SecurityPolicy.None).setSecurityMode(MessageSecurityMode.None);
 
                 endpointConfigs.add(buildTcpEndpoint(noSecurityBuilder));
             }
@@ -203,7 +202,8 @@ public class CallClientTest extends AbstractMiloServerTest {
 
         // assert
         assertNotNull(this.callMethod);
-        assertArrayEquals(new Object[] { "out-foo", "out-bar" }, this.callMethod.getCalls().toArray());
+        assertArrayEquals(
+                new Object[] {"out-foo", "out-bar"}, this.callMethod.getCalls().toArray());
     }
 
     private static void doCall(final ProducerTemplate producerTemplate, final Object input) {

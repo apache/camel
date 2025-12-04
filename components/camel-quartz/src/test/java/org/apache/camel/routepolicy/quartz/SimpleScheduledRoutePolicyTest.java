@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -30,10 +35,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SimpleScheduledRoutePolicyTest {
 
@@ -55,10 +56,7 @@ public class SimpleScheduledRoutePolicyTest {
                     policy.setRouteStartRepeatCount(1);
                     policy.setRouteStartRepeatInterval(1000);
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:success");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:success");
                 }
             });
             context.start();
@@ -90,10 +88,7 @@ public class SimpleScheduledRoutePolicyTest {
                     policy.setRouteStopRepeatCount(1);
                     policy.setRouteStopRepeatInterval(1000);
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:unreachable");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:unreachable");
                 }
             });
             context.start();
@@ -103,10 +98,13 @@ public class SimpleScheduledRoutePolicyTest {
                 assertTrue(ServiceHelper.isStopped(context.getRoute("test").getConsumer()));
             });
 
-            CamelExecutionException thrown = assertThrows(CamelExecutionException.class,
+            CamelExecutionException thrown = assertThrows(
+                    CamelExecutionException.class,
                     () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
                     "Should have thrown an exception");
-            assertTrue(thrown.getCause().getMessage().contains("direct://start"), "Exception should mention missing endpoint");
+            assertTrue(
+                    thrown.getCause().getMessage().contains("direct://start"),
+                    "Exception should mention missing endpoint");
 
             context.getComponent("quartz", QuartzComponent.class).stop();
         }
@@ -127,10 +125,7 @@ public class SimpleScheduledRoutePolicyTest {
                     policy.setRouteSuspendRepeatCount(1);
                     policy.setRouteSuspendRepeatInterval(1000);
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:unreachable");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:unreachable");
                 }
             });
             context.start();
@@ -140,10 +135,13 @@ public class SimpleScheduledRoutePolicyTest {
                 assertTrue(ServiceHelper.isSuspended(context.getRoute("test").getConsumer()));
             });
 
-            CamelExecutionException thrown = assertThrows(CamelExecutionException.class,
+            CamelExecutionException thrown = assertThrows(
+                    CamelExecutionException.class,
                     () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
                     "Should have thrown an exception");
-            assertTrue(thrown.getCause().getMessage().contains("direct://start"), "Exception should mention missing endpoint");
+            assertTrue(
+                    thrown.getCause().getMessage().contains("direct://start"),
+                    "Exception should mention missing endpoint");
 
             context.getComponent("quartz", QuartzComponent.class).stop();
         }
@@ -167,17 +165,16 @@ public class SimpleScheduledRoutePolicyTest {
                     policy.setRouteResumeRepeatCount(1);
                     policy.setRouteResumeRepeatInterval(1000);
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:success");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:success");
                 }
             });
             context.start();
 
             ServiceHelper.suspendService(context.getRoute("test").getConsumer());
 
-            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
+            assertThrows(
+                    CamelExecutionException.class,
+                    () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
                     "Should have thrown an exception");
 
             // wait for route to resume/start
@@ -215,10 +212,7 @@ public class SimpleScheduledRoutePolicyTest {
                     policy.setRouteResumeRepeatCount(1);
                     policy.setRouteResumeRepeatInterval(1000);
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:success");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:success");
                 }
             });
             context.start();
@@ -228,7 +222,9 @@ public class SimpleScheduledRoutePolicyTest {
                 assertTrue(ServiceHelper.isSuspended(context.getRoute("test").getConsumer()));
             });
 
-            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
+            assertThrows(
+                    CamelExecutionException.class,
+                    () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
                     "Should have thrown an exception");
 
             // wait for route to resume/start
@@ -264,28 +260,25 @@ public class SimpleScheduledRoutePolicyTest {
                     policy.setRouteResumeRepeatCount(1);
                     policy.setRouteResumeRepeatInterval(1000);
 
-                    from("direct:start")
-                            .routeId("test")
-                            .routePolicy(policy)
-                            .to("mock:success");
+                    from("direct:start").routeId("test").routePolicy(policy).to("mock:success");
                 }
             });
             context.start();
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS).until(
-                    () -> {
-                        Consumer consumer = context.getRoute("test").getConsumer();
-                        return ServiceHelper.isSuspended(consumer);
-                    });
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
+                Consumer consumer = context.getRoute("test").getConsumer();
+                return ServiceHelper.isSuspended(consumer);
+            });
 
-            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
+            assertThrows(
+                    CamelExecutionException.class,
+                    () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
                     "Should have thrown an exception");
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS).until(
-                    () -> {
-                        Consumer consumer = context.getRoute("test").getConsumer();
-                        return ServiceHelper.isStarted(consumer);
-                    });
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
+                Consumer consumer = context.getRoute("test").getConsumer();
+                return ServiceHelper.isStarted(consumer);
+            });
 
             template.sendBody("direct:start", "Ready or not, Here, I come");
 
@@ -370,7 +363,8 @@ public class SimpleScheduledRoutePolicyTest {
 
                 // wait for route to start
                 Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
-                    assertTrue(ServiceHelper.isStarted(context.getRoute("dynamic").getConsumer()));
+                    assertTrue(
+                            ServiceHelper.isStarted(context.getRoute("dynamic").getConsumer()));
                 });
 
                 template.sendBody("direct:dynamic", "Ready or not, Here, I come");

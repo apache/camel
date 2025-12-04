@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.yaml.out;
+
+import static org.apache.camel.util.IOHelper.stripLineComments;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -43,8 +46,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.IOHelper.stripLineComments;
 
 public class ModelWriterTest {
 
@@ -229,18 +230,19 @@ public class ModelWriterTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start7").routeId("myRoute7")
-                    .doTry()
+                from("direct:start7")
+                        .routeId("myRoute7")
+                        .doTry()
                         .to("mock:try1")
                         .to("mock:try2")
-                    .doCatch(IOException.class)
+                        .doCatch(IOException.class)
                         .to("mock:io1")
                         .to("mock:io2")
-                    .doFinally()
+                        .doFinally()
                         .to("mock:finally1")
                         .to("mock:finally2")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
         });
 
@@ -326,5 +328,4 @@ public class ModelWriterTest {
         String expected = stripLineComments(Paths.get("src/test/resources/route10.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
-
 }

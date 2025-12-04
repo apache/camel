@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jta;
 
 import org.apache.camel.ErrorHandlerFactory;
@@ -43,10 +44,12 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
     static {
         // register camel-jta as transaction error handler (both builder and definition)
-        ErrorHandlerReifier.registerReifier(JtaTransactionErrorHandlerBuilder.class,
+        ErrorHandlerReifier.registerReifier(
+                JtaTransactionErrorHandlerBuilder.class,
                 (route, errorHandlerFactory) -> new JtaTransactionErrorHandlerReifier(
                         route, (JtaTransactionErrorHandlerDefinition) errorHandlerFactory));
-        ErrorHandlerReifier.registerReifier(JtaTransactionErrorHandlerDefinition.class,
+        ErrorHandlerReifier.registerReifier(
+                JtaTransactionErrorHandlerDefinition.class,
                 (route, errorHandlerFactory) -> new JtaTransactionErrorHandlerReifier(
                         route, (JtaTransactionErrorHandlerDefinition) errorHandlerFactory));
     }
@@ -101,10 +104,9 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         JtaTransactionErrorHandlerDefinition txBuilder;
         if (builder != null && builder.supportTransacted()) {
             if (!(builder instanceof JtaTransactionErrorHandlerDefinition)) {
-                throw new RuntimeCamelException(
-                        "The given transactional error handler builder '" + builder
-                                                + "' is not of type '" + JtaTransactionErrorHandlerDefinition.class.getName()
-                                                + "' which is required in this environment!");
+                throw new RuntimeCamelException("The given transactional error handler builder '" + builder
+                        + "' is not of type '" + JtaTransactionErrorHandlerDefinition.class.getName()
+                        + "' which is required in this environment!");
             }
             LOG.debug("The ErrorHandlerBuilder configured is a JtaTransactionErrorHandlerDefinition: {}", builder);
             txBuilder = (JtaTransactionErrorHandlerDefinition) builder.cloneBuilder();
@@ -131,12 +133,12 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
     }
 
     protected JtaTransactionErrorHandler createTransactionErrorHandler(
-            Route route, Processor processor,
-            ErrorHandlerFactory builder) {
+            Route route, Processor processor, ErrorHandlerFactory builder) {
         JtaTransactionErrorHandler answer;
         try {
             ModelCamelContext mcc = (ModelCamelContext) route.getCamelContext();
-            answer = (JtaTransactionErrorHandler) mcc.getModelReifierFactory().createErrorHandler(route, builder, processor);
+            answer = (JtaTransactionErrorHandler)
+                    mcc.getModelReifierFactory().createErrorHandler(route, builder, processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

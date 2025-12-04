@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.spi.Metadata;
@@ -34,10 +35,11 @@ public final class ReactiveStreamsConstants {
      */
     @Metadata(label = "consumer", javaType = "String")
     public static final String REACTIVE_STREAMS_EVENT_TYPE = "CamelReactiveStreamsEventType";
-    @Metadata(description = "The callback.", javaType = "org.apache.camel.component.reactive.streams.api.DispatchCallback")
+
+    @Metadata(
+            description = "The callback.",
+            javaType = "org.apache.camel.component.reactive.streams.api.DispatchCallback")
     public static final String REACTIVE_STREAMS_CALLBACK = "CamelReactiveStreamsCallback";
 
-    private ReactiveStreamsConstants() {
-    }
-
+    private ReactiveStreamsConstants() {}
 }

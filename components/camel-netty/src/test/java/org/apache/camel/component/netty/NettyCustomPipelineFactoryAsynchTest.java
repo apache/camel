@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
@@ -30,8 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
 
@@ -49,23 +50,26 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?serverInitializerFactory=#spf&textline=true").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        exchange.getMessage().setBody(
-                                "Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
-                    }
-                });
+                from("netty:tcp://localhost:{{port}}?serverInitializerFactory=#spf&textline=true")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getMessage()
+                                        .setBody(
+                                                "Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
+                            }
+                        });
             }
         };
     }
 
     @Test
     public void testCustomClientInitializerFactory() {
-        String response
-                = (String) template.requestBody("netty:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&textline=true",
-                        "Forest Gump describing Vietnam...");
+        String response = (String) template.requestBody(
+                "netty:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&textline=true",
+                "Forest Gump describing Vietnam...");
 
-        assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'",
+        assertEquals(
+                "Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'",
                 response);
         assertEquals(true, clientInvoked);
         assertEquals(true, serverInvoked);
@@ -84,8 +88,8 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
 
             ChannelPipeline channelPipeline = ch.pipeline();
             clientInvoked = true;
-            channelPipeline.addLast("decoder-DELIM",
-                    new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
+            channelPipeline.addLast(
+                    "decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ClientChannelHandler(producer));
@@ -110,8 +114,8 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
             ChannelPipeline channelPipeline = ch.pipeline();
             serverInvoked = true;
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
-            channelPipeline.addLast("decoder-DELIM",
-                    new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
+            channelPipeline.addLast(
+                    "decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ServerChannelHandler(consumer));
         }

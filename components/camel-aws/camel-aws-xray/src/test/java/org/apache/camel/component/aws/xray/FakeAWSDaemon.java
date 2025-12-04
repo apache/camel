@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
 
 import java.lang.invoke.MethodHandles;
@@ -42,7 +43,8 @@ import org.slf4j.LoggerFactory;
 
 public class FakeAWSDaemon {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOG =
+            LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private Map<String, TestTrace> receivedTraces = Collections.synchronizedMap(new LinkedHashMap<>());
     private UDPSocketListener socketListener = new UDPSocketListener(receivedTraces);
@@ -77,7 +79,8 @@ public class FakeAWSDaemon {
 
     private static final class UDPSocketListener implements Runnable {
 
-        private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+        private static final Logger LOG =
+                LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
         private DatagramSocket serverSocket;
         private Map<String, TestTrace> receivedTraces;
@@ -111,8 +114,10 @@ public class FakeAWSDaemon {
                             LOG.trace("Processing received segment: {}", segment);
                             if (!segment.isEmpty()) {
                                 if (!segment.endsWith("}")
-                                        || StringUtils.countMatches(segment, "{") != StringUtils.countMatches(segment, "}")
-                                        || StringUtils.countMatches(segment, "[") != StringUtils.countMatches(segment, "]")) {
+                                        || StringUtils.countMatches(segment, "{")
+                                                != StringUtils.countMatches(segment, "}")
+                                        || StringUtils.countMatches(segment, "[")
+                                                != StringUtils.countMatches(segment, "]")) {
                                     LOG.trace("Skipping incomplete content: {}", segment);
                                     continue;
                                 }
@@ -138,8 +143,11 @@ public class FakeAWSDaemon {
                                 }
                             }
                         }
-                        LOG.trace("Item {} received. JSON content: {}, Raw: {}",
-                                receivedTraces.size(), receivedTraces, raw);
+                        LOG.trace(
+                                "Item {} received. JSON content: {}, Raw: {}",
+                                receivedTraces.size(),
+                                receivedTraces,
+                                raw);
                     } catch (Exception jsonEx) {
                         LOG.warn("Could not convert segment {} to a Java object", locSegment, jsonEx);
                     }
@@ -204,7 +212,8 @@ public class FakeAWSDaemon {
                 Map<String, Map<String, Object>> metadata = parseMetadata(rawMetadata);
                 for (Map.Entry<String, Map<String, Object>> entry : metadata.entrySet()) {
                     for (String key : entry.getValue().keySet()) {
-                        entity.withMetadata(entry.getKey(), key, entry.getValue().get(key));
+                        entity.withMetadata(
+                                entry.getKey(), key, entry.getValue().get(key));
                     }
                 }
             }
@@ -212,20 +221,23 @@ public class FakeAWSDaemon {
 
         private Map<String, Map<String, Object>> parseMetadata(JsonObject json) {
             /*
-             "metadata" : {
-                "default" : {
-                    "meta1" : "meta1"
-                },
-                "customNamespace" : {
-                    "meta2" : "meta2"
-                }
-             }
-             */
-            Map<String, Map<String, Object>> metadata = new LinkedHashMap<>(json.getKeys().size());
+            "metadata" : {
+               "default" : {
+                   "meta1" : "meta1"
+               },
+               "customNamespace" : {
+                   "meta2" : "meta2"
+               }
+            }
+            */
+            Map<String, Map<String, Object>> metadata =
+                    new LinkedHashMap<>(json.getKeys().size());
             for (String namespace : json.getKeys()) {
                 JsonObject namespaceData = (JsonObject) json.get(namespace);
                 if (!metadata.containsKey(namespace)) {
-                    metadata.put(namespace, new LinkedHashMap<>(namespaceData.getKeys().size()));
+                    metadata.put(
+                            namespace,
+                            new LinkedHashMap<>(namespaceData.getKeys().size()));
                 }
                 for (String key : namespaceData.getKeys()) {
                     metadata.get(namespace).put(key, namespaceData.get(key));

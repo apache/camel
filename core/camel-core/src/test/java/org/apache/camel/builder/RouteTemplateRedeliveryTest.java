@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +25,6 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateRedeliveryTest extends ContextTestSupport {
 
@@ -45,12 +46,19 @@ public class RouteTemplateRedeliveryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("myCount").templateParameter("myFac")
+                routeTemplate("myTemplate")
+                        .templateParameter("myCount")
+                        .templateParameter("myFac")
                         .from("direct:start")
-                        .onException(Exception.class).maximumRedeliveryDelay(1).maximumRedeliveries("{{myCount}}")
-                        .collisionAvoidanceFactor("{{myFac}}").onRedelivery(e -> {
+                        .onException(Exception.class)
+                        .maximumRedeliveryDelay(1)
+                        .maximumRedeliveries("{{myCount}}")
+                        .collisionAvoidanceFactor("{{myFac}}")
+                        .onRedelivery(e -> {
                             e.getMessage().setBody(e.getMessage().getHeader(Exchange.REDELIVERY_COUNTER));
-                        }).handled(true).end()
+                        })
+                        .handled(true)
+                        .end()
                         .throwException(new IllegalArgumentException("Forced"));
             }
         };

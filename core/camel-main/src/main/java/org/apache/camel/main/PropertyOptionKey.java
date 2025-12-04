@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.Objects;
@@ -46,8 +47,7 @@ public final class PropertyOptionKey {
             return false;
         }
         PropertyOptionKey key = (PropertyOptionKey) o;
-        return Objects.equals(instance, key.instance)
-                && Objects.equals(optionPrefix, key.optionPrefix);
+        return Objects.equals(instance, key.instance) && Objects.equals(optionPrefix, key.optionPrefix);
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,8 @@ import org.apache.camel.support.processor.ConvertVariableProcessor;
 @ManagedResource(description = "Managed ConvertVariable")
 public class ManagedConvertVariable extends ManagedProcessor implements ManagedConvertVariableMBean {
 
-    public ManagedConvertVariable(CamelContext context, ConvertVariableProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedConvertVariable(
+            CamelContext context, ConvertVariableProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
 

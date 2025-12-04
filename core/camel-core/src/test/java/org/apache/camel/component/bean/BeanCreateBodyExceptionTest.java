@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -22,11 +28,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanCreateBodyExceptionTest extends ContextTestSupport {
 
@@ -117,9 +118,8 @@ public class BeanCreateBodyExceptionTest extends ContextTestSupport {
         // turn on fail mode
         fail.set(true);
 
-        Exception e = assertThrows(Exception.class,
-                () -> consumer.receiveBody("seda:empty", 1000),
-                "Should throw exception");
+        Exception e =
+                assertThrows(Exception.class, () -> consumer.receiveBody("seda:empty", 1000), "Should throw exception");
 
         assertIsInstanceOf(IllegalArgumentException.class, e);
         assertEquals("Forced internal error", e.getMessage());

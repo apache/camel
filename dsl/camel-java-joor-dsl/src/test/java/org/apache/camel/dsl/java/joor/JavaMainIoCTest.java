@@ -14,23 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.java.joor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.main.Main;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class JavaMainIoCTest {
 
     @Test
     public void testMainIoC() throws Exception {
-        doTestMain(
-                "routes/IoCWithBeanMethod.java",
-                null);
+        doTestMain("routes/IoCWithBeanMethod.java", null);
     }
 
     protected void doTestMain(String includes, String excludes) throws Exception {
@@ -48,5 +47,4 @@ public class JavaMainIoCTest {
 
         main.stop();
     }
-
 }

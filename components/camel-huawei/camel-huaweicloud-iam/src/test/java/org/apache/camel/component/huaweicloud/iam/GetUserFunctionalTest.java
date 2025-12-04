@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetUserFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GetUserFunctionalTest.class.getName());
@@ -47,10 +48,9 @@ public class GetUserFunctionalTest extends CamelTestSupport {
                 from("direct:get_user")
                         .setProperty("CamelHwCloudIamOperation", constant("getUser"))
                         .setProperty("CamelHwCloudIamUserId", constant(USER_ID))
-                        .to("hwcloud-iam:?" +
-                            "region=" + REGION +
-                            "&ignoreSslVerification=true" +
-                            "&serviceKeys=#serviceKeys")
+                        .to("hwcloud-iam:?" + "region="
+                                + REGION + "&ignoreSslVerification=true"
+                                + "&serviceKeys=#serviceKeys")
                         .log("Get user successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:get_user_result");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
@@ -35,8 +36,12 @@ public class GooglePubsubHeaderFilterStrategy extends DefaultHeaderFilterStrateg
 
     protected void ignoreGoogProperties() {
         String[] filterStartWith = new String[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length + 3];
-        System.arraycopy(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH, 0,
-                filterStartWith, 0, DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length);
+        System.arraycopy(
+                DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH,
+                0,
+                filterStartWith,
+                0,
+                DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length);
         filterStartWith[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length] = "x-goog";
         filterStartWith[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length + 1] = "X-GOOG";
         filterStartWith[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length + 2] = "goog";
@@ -44,5 +49,4 @@ public class GooglePubsubHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         setInFilterStartsWith(filterStartWith);
         getOutFilter().add("grpc-timeout");
     }
-
 }

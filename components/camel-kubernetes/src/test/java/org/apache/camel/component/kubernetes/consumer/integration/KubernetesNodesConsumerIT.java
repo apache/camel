@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.consumer.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.fabric8.kubernetes.api.model.Node;
 import org.apache.camel.EndpointInject;
@@ -32,12 +35,13 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KubernetesNodesConsumerIT extends KubernetesTestSupport {
@@ -49,9 +53,7 @@ public class KubernetesNodesConsumerIT extends KubernetesTestSupport {
     @Order(1)
     void listNode() throws Exception {
         configureMock();
-        Exchange ex = template.request("direct:listNode", exchange -> {
-
-        });
+        Exchange ex = template.request("direct:listNode", exchange -> {});
 
         Message message = ex.getMessage();
 
@@ -63,8 +65,7 @@ public class KubernetesNodesConsumerIT extends KubernetesTestSupport {
 
     private void configureMock() {
         mockResultEndpoint.expectedMessageCount(1);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION,
-                "ADDED");
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED");
     }
 
     @Override
@@ -74,7 +75,8 @@ public class KubernetesNodesConsumerIT extends KubernetesTestSupport {
             public void configure() {
                 from("direct:listNode").toF("kubernetes-nodes://%s?oauthToken=%s&operation=listNodes", host, authToken);
                 fromF("kubernetes-nodes://%s?oauthToken=%s&operation=listNodes", host, authToken)
-                        .process(new KubernetesProcessor()).to(mockResultEndpoint);
+                        .process(new KubernetesProcessor())
+                        .to(mockResultEndpoint);
             }
         };
     }
@@ -84,7 +86,9 @@ public class KubernetesNodesConsumerIT extends KubernetesTestSupport {
         public void process(Exchange exchange) {
             Message in = exchange.getIn();
             Node node = exchange.getIn().getBody(Node.class);
-            log.info("Got event with node name: {} and action {}", node.getMetadata().getName(),
+            log.info(
+                    "Got event with node name: {} and action {}",
+                    node.getMetadata().getName(),
                     in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm;
 
 import java.util.UUID;
@@ -36,15 +37,22 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 /**
  * Send SMS messages via <a href="https://www.cmtelecom.com/">CM SMS Gateway</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "cm-sms", title = "CM SMS Gateway", syntax = "cm-sms:host",
-             category = { Category.MOBILE }, producerOnly = true)
+@UriEndpoint(
+        firstVersion = "2.18.0",
+        scheme = "cm-sms",
+        title = "CM SMS Gateway",
+        syntax = "cm-sms:host",
+        category = {Category.MOBILE},
+        producerOnly = true)
 public class CMEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriParam
     private CMConfiguration configuration = new CMConfiguration();
+
     private final CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
     public CMEndpoint(final String uri, final CMComponent component) {

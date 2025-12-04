@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.skipheader;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,10 +39,6 @@ import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * This test validates that the header for a fixed length record will be skipped during marshalling or unmarshalling if
@@ -85,11 +86,11 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
         assertEquals("  Pauline", order.getFirstName());
         assertEquals("M    ", order.getLastName());
 
-        Map<String, Object> receivedHeaderMap
-                = (Map<String, Object>) exchange.getIn().getHeader(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_HEADER);
+        Map<String, Object> receivedHeaderMap = (Map<String, Object>)
+                exchange.getIn().getHeader(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_HEADER);
 
-        Map<String, Object> receivedFooterMap
-                = (Map<String, Object>) exchange.getIn().getHeader(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_FOOTER);
+        Map<String, Object> receivedFooterMap = (Map<String, Object>)
+                exchange.getIn().getHeader(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_FOOTER);
 
         assertNull(receivedHeaderMap);
         assertNotNull(receivedFooterMap);
@@ -122,7 +123,7 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
         marshallResult.expectedMessageCount(1);
         StringBuilder sb = new StringBuilder();
         sb.append(TEST_RECORD).append(TEST_FOOTER);
-        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { sb.toString() }));
+        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] {sb.toString()}));
         template.sendBody(URI_DIRECT_MARSHALL, input);
         marshallResult.assertIsSatisfied();
     }
@@ -160,12 +161,11 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
                 bindy.setLocale("en");
                 bindy.type(BindyType.Fixed);
 
-                from(URI_DIRECT_MARSHALL)
-                        .marshal(bindy)
-                        .to(URI_MOCK_MARSHALL_RESULT);
+                from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
 
                 from(URI_DIRECT_UNMARSHALL)
-                        .unmarshal().bindy(BindyType.Fixed, Order.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, Order.class)
                         .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.validator;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,8 +38,7 @@ public class PredicateValidatorDefinition extends ValidatorDefinition {
     @XmlElementRef
     private ExpressionDefinition expression;
 
-    public PredicateValidatorDefinition() {
-    }
+    public PredicateValidatorDefinition() {}
 
     protected PredicateValidatorDefinition(PredicateValidatorDefinition source) {
         super(source);
@@ -59,5 +59,4 @@ public class PredicateValidatorDefinition extends ValidatorDefinition {
         // unwanted builders when using Java DSL
         this.expression = ExpressionNodeHelper.toExpressionDefinition((Expression) expression);
     }
-
 }

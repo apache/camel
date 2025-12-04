@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -30,8 +33,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Create Container Request headers are parsed properly
@@ -70,7 +71,7 @@ class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateContainerC
         String cmd = "whoami";
         Capability capAdd = Capability.NET_BROADCAST;
         Capability capDrop = Capability.BLOCK_SUSPEND;
-        String[] entrypoint = new String[] { "sleep", "9999" };
+        String[] entrypoint = new String[] {"sleep", "9999"};
         String portSpecs = "80";
         String dns = "8.8.8.8";
         Bind bind = Bind.parse("/Users/foo/apps/:/apps:ro");
@@ -149,5 +150,4 @@ class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateContainerC
     protected DockerOperation getOperation() {
         return DockerOperation.CREATE_CONTAINER;
     }
-
 }

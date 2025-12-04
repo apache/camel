@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
 
@@ -43,7 +44,8 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
                     from("direct:start")
                             // will use a a custom thread pool with -1 in core and 2
                             // max
-                            .threads(-1, 2).to("mock:result");
+                            .threads(-1, 2)
+                            .to("mock:result");
                 }
             });
             fail("Expect FailedToCreateRouteException exception here");
@@ -71,7 +73,10 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
                 from("direct:foo")
                         // only change thread name and max, but rely on default
                         // settings
-                        .threads().maxPoolSize(20).threadName("myPool").to("mock:result");
+                        .threads()
+                        .maxPoolSize(20)
+                        .threadName("myPool")
+                        .to("mock:result");
             }
         };
     }

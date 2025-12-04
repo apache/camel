@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DirectRequestReplyAndDisruptorInOnlyTest extends CamelTestSupport {
 
@@ -51,7 +52,9 @@ public class DirectRequestReplyAndDisruptorInOnlyTest extends CamelTestSupport {
                 // In EIP patterns the WireTap pattern is what this would be
                 from("direct:start").transform(constant("Bye World")).to(ExchangePattern.InOnly, "disruptor:log");
 
-                from("disruptor:log").delay(1000).transform(body().prepend("Logging: "))
+                from("disruptor:log")
+                        .delay(1000)
+                        .transform(body().prepend("Logging: "))
                         .to("log:log", "mock:log");
             }
         };

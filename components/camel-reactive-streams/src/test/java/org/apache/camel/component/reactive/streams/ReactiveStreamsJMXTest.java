@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -36,10 +41,6 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test exposed services on JMX.
@@ -65,8 +66,7 @@ public class ReactiveStreamsJMXTest extends BaseReactiveTest {
 
         // Create another subscriber
         CamelReactiveStreamsService rxCamel = CamelReactiveStreams.get(context());
-        Flux.from(rxCamel.fromStream("strings"))
-                .subscribe();
+        Flux.from(rxCamel.fromStream("strings")).subscribe();
 
         pubdata = getValues(mbeanServer, rxService, "camelPublishers", 0);
         TabularData subTd = (TabularData) pubdata.get("subscriptions");
@@ -99,8 +99,8 @@ public class ReactiveStreamsJMXTest extends BaseReactiveTest {
 
     private ObjectName getReactiveStreamsServiceName(MBeanServer mbeanServer) throws Exception {
         ObjectName on = ObjectName.getInstance("org.apache.camel:type=services,*");
-        QueryExp queryExp
-                = Query.match(new AttributeValueExp("ServiceType"), new StringValueExp("DefaultCamelReactiveStreamsService"));
+        QueryExp queryExp = Query.match(
+                new AttributeValueExp("ServiceType"), new StringValueExp("DefaultCamelReactiveStreamsService"));
         Set<ObjectName> names = mbeanServer.queryNames(on, queryExp);
         assertEquals(1, names.size());
         return names.iterator().next();
@@ -121,7 +121,8 @@ public class ReactiveStreamsJMXTest extends BaseReactiveTest {
                         .to("mock:unbounded-endpoint");
 
                 from("timer:tick?includeMetadata=true")
-                        .setBody().simple("Hello world ${header.CamelTimerCounter}")
+                        .setBody()
+                        .simple("Hello world ${header.CamelTimerCounter}")
                         .to("reactive-streams:strings");
 
                 CamelReactiveStreamsService rxCamel = CamelReactiveStreams.get(getContext());

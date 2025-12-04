@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class NestedChoiceOtherwiseIssueTest extends ContextTestSupport {
 
     @Test
     public void testNestedChoiceOtherwise() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context,
-                context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -61,21 +62,22 @@ public class NestedChoiceOtherwiseIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute")
-                    .errorHandler(noErrorHandler())
-                    .choice()
+                from("direct:start")
+                        .routeId("myRoute")
+                        .errorHandler(noErrorHandler())
+                        .choice()
                         .when(header("foo"))
-                            .to("mock:foo")
+                        .to("mock:foo")
                         .otherwise()
-                            .to("mock:other")
-                            .choice()
-                                .when(header("bar"))
-                                    .to("mock:bar")
-                                .endChoice()
-                                .otherwise()
-                                    .to("mock:other2")
-                                .end()
-                            .end();
+                        .to("mock:other")
+                        .choice()
+                        .when(header("bar"))
+                        .to("mock:bar")
+                        .endChoice()
+                        .otherwise()
+                        .to("mock:other2")
+                        .end()
+                        .end();
             }
         };
     }

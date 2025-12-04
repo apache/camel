@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openai.mock;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -24,8 +27,6 @@ import java.net.http.HttpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OpenAIMockFailuresTest {
 
@@ -38,8 +39,8 @@ public class OpenAIMockFailuresTest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"assistant\", \"content\": \"any sentence\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"assistant\", \"content\": \"any sentence\"}]}"))
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -52,8 +53,8 @@ public class OpenAIMockFailuresTest {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"not found sentence\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"not found sentence\"}]}"))
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());

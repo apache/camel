@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -27,9 +28,11 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Too resource intensive for most systems to run reliably")
-@Tags({ @Tag("couchbase-71") })
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Too resource intensive for most systems to run reliably")
+@Tags({@Tag("couchbase-71")})
 public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
 
     @BeforeEach
@@ -45,7 +48,6 @@ public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
         mock.expectedMessageCount(10);
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
-
     }
 
     @AfterEach
@@ -58,11 +60,12 @@ public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(String.format("%s&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName, bucketName))
+                from(String.format(
+                                "%s&designDocumentName=%s&viewName=%s&limit=10",
+                                getConnectionUri(), bucketName, bucketName))
                         .log("message received")
                         .to("mock:result");
             }
         };
-
     }
 }

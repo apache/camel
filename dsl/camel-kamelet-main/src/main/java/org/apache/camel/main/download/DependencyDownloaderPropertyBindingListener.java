@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
@@ -25,8 +26,8 @@ public class DependencyDownloaderPropertyBindingListener implements PropertyBind
     private final KnownDependenciesResolver knownDependenciesResolver;
     private final DependencyDownloader downloader;
 
-    public DependencyDownloaderPropertyBindingListener(CamelContext camelContext,
-                                                       KnownDependenciesResolver knownDependenciesResolver) {
+    public DependencyDownloaderPropertyBindingListener(
+            CamelContext camelContext, KnownDependenciesResolver knownDependenciesResolver) {
         this.knownDependenciesResolver = knownDependenciesResolver;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
@@ -41,13 +42,10 @@ public class DependencyDownloaderPropertyBindingListener implements PropertyBind
                 gav = knownDependenciesResolver.mavenGavForClass(line);
             }
             if (gav != null) {
-                if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(),
-                        gav.getVersion())) {
-                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
-                            gav.getVersion());
+                if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
+                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
                 }
             }
         }
     }
-
 }

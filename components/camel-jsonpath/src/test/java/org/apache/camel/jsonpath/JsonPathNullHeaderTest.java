@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,9 +29,7 @@ public class JsonPathNullHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setHeader("foo").jsonpath("$.foo")
-                        .to("mock:foo");
+                from("direct:start").setHeader("foo").jsonpath("$.foo").to("mock:foo");
             }
         };
     }
@@ -39,7 +38,9 @@ public class JsonPathNullHeaderTest extends CamelTestSupport {
     public void testHeaderValue() throws Exception {
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "cheese");
 
-        template.sendBody("direct:start", """
+        template.sendBody(
+                "direct:start",
+                """
                 {
                   "foo": "cheese"
                 }
@@ -52,7 +53,9 @@ public class JsonPathNullHeaderTest extends CamelTestSupport {
     public void testHeaderNull() throws Exception {
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", null);
 
-        template.sendBody("direct:start", """
+        template.sendBody(
+                "direct:start",
+                """
                 {
                   "foo": null
                 }
@@ -60,5 +63,4 @@ public class JsonPathNullHeaderTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import java.io.File;
@@ -47,5 +48,4 @@ public class FileResultHandler implements ResultHandler {
     public void setBody(Message in) {
         in.setBody(file);
     }
-
 }

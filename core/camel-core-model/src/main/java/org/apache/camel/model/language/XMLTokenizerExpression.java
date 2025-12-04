@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,12 +37,12 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @XmlAttribute
     @Metadata(defaultValue = "i", enums = "i,w,u,t")
     private String mode;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String group;
 
-    public XMLTokenizerExpression() {
-    }
+    public XMLTokenizerExpression() {}
 
     protected XMLTokenizerExpression(XMLTokenizerExpression source) {
         super(source);

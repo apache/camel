@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
@@ -31,8 +32,7 @@ import org.apache.camel.util.StringHelper;
  */
 public final class PropertyConfigurerHelper {
 
-    private PropertyConfigurerHelper() {
-    }
+    private PropertyConfigurerHelper() {}
 
     /**
      * Resolves the given configurer.
@@ -92,10 +92,14 @@ public final class PropertyConfigurerHelper {
         // lookup configurer if there is any
         // use FQN class name first, then simple name, and root key last
         String[] names = new String[] {
-                targetType.getName(), targetType.getSimpleName(),
-                targetType.getName() + "-configurer", targetType.getSimpleName() + "-configurer" };
+            targetType.getName(),
+            targetType.getSimpleName(),
+            targetType.getName() + "-configurer",
+            targetType.getSimpleName() + "-configurer"
+        };
         for (String n : names) {
-            PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(n, context);
+            PropertyConfigurer configurer =
+                    PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(n, context);
             if (configurer != null) {
                 return configurer;
             }

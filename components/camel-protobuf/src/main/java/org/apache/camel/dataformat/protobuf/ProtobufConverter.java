@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.protobuf;
 
 import java.util.LinkedHashMap;
@@ -31,8 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class ProtobufConverter {
 
-    private ProtobufConverter() {
-    }
+    private ProtobufConverter() {}
 
     public static Message toProto(final Map<?, ?> inputData, final Message defaultInstance) {
         ObjectHelper.notNull(inputData, "inputData");
@@ -44,7 +44,8 @@ public final class ProtobufConverter {
         return convertMapToMessage(descriptor, target, inputData);
     }
 
-    private static Message convertMapToMessage(final Descriptor descriptor, final Builder builder, final Map<?, ?> inputData) {
+    private static Message convertMapToMessage(
+            final Descriptor descriptor, final Builder builder, final Map<?, ?> inputData) {
         ObjectHelper.notNull(descriptor, "descriptor");
         ObjectHelper.notNull(builder, "builder");
         ObjectHelper.notNull(inputData, "inputData");
@@ -55,12 +56,14 @@ public final class ProtobufConverter {
             // if we don't find our desired fieldDescriptor, we just ignore it
             if (fieldDescriptor != null) {
                 if (fieldDescriptor.isRepeated()) {
-                    final List<?> repeatedValues = castValue(value, List.class,
+                    final List<?> repeatedValues = castValue(
+                            value,
+                            List.class,
                             String.format(
                                     "Not able to cast value to list, make sure you have a list for the repeated field '%s'",
                                     fieldDescriptor.getName()));
-                    repeatedValues.forEach(repeatedValue -> builder.addRepeatedField(fieldDescriptor,
-                            getSuitableFieldValue(fieldDescriptor, builder, repeatedValue)));
+                    repeatedValues.forEach(repeatedValue -> builder.addRepeatedField(
+                            fieldDescriptor, getSuitableFieldValue(fieldDescriptor, builder, repeatedValue)));
                 } else {
                     builder.setField(fieldDescriptor, getSuitableFieldValue(fieldDescriptor, builder, value));
                 }
@@ -80,13 +83,15 @@ public final class ProtobufConverter {
                 return getEnumValue(fieldDescriptor, inputValue);
 
             case MESSAGE:
-                final Map<?, ?> nestedValue = castValue(inputValue, Map.class,
+                final Map<?, ?> nestedValue = castValue(
+                        inputValue,
+                        Map.class,
                         String.format(
                                 "Not able to cast value to map, make sure you have a map for the nested field message '%s'",
                                 fieldDescriptor.getName()));
                 // we do a nested call until we reach our final message
-                return convertMapToMessage(fieldDescriptor.getMessageType(), builder.newBuilderForField(fieldDescriptor),
-                        nestedValue);
+                return convertMapToMessage(
+                        fieldDescriptor.getMessageType(), builder.newBuilderForField(fieldDescriptor), nestedValue);
 
             default:
                 return inputValue;
@@ -97,10 +102,11 @@ public final class ProtobufConverter {
         final EnumValueDescriptor enumValueDescriptor = getSuitableEnumValue(fieldDescriptor, value);
 
         if (enumValueDescriptor == null) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Could not retrieve enum index '%s' for enum field '%s', most likely the index does not exist in the enum indexes '%s'",
-                            value, fieldDescriptor.getName(), fieldDescriptor.getEnumType().getValues()));
+            throw new IllegalArgumentException(String.format(
+                    "Could not retrieve enum index '%s' for enum field '%s', most likely the index does not exist in the enum indexes '%s'",
+                    value,
+                    fieldDescriptor.getName(),
+                    fieldDescriptor.getEnumType().getValues()));
         }
 
         return enumValueDescriptor;
@@ -111,7 +117,9 @@ public final class ProtobufConverter {
         if (value instanceof String) {
             return fieldDescriptor.getEnumType().findValueByName((String) value);
         } else {
-            final int index = castValue(value, Integer.class,
+            final int index = castValue(
+                    value,
+                    Integer.class,
                     String.format(
                             "Not able to cast value to integer, make sure you have an integer index for the enum field '%s'",
                             fieldDescriptor.getName()));
@@ -134,9 +142,14 @@ public final class ProtobufConverter {
         allFields.forEach((fieldDescriptor, value) -> {
             final String fieldName = fieldDescriptor.getName();
             if (fieldDescriptor.isRepeated()) {
-                final List<?> repeatedValues = castValue(value, List.class, String.format(
-                        "Not able to cast value to list, make sure you have a list for the repeated field '%s'", fieldName));
-                mapResult.put(fieldName,
+                final List<?> repeatedValues = castValue(
+                        value,
+                        List.class,
+                        String.format(
+                                "Not able to cast value to list, make sure you have a list for the repeated field '%s'",
+                                fieldName));
+                mapResult.put(
+                        fieldName,
                         repeatedValues.stream()
                                 .map(singleValue -> convertValueToSuitableFieldType(singleValue, fieldDescriptor))
                                 .collect(Collectors.toList()));

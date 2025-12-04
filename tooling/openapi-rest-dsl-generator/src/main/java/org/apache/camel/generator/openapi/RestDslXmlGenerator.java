@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
 
 import java.io.StringReader;
@@ -49,10 +50,8 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
     public String generate(final CamelContext context) throws Exception {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter();
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(
-                basePath, emitter, filter,
-                destinationGenerator(),
-                dtoPackageName);
+        final PathVisitor<RestsDefinition> restDslStatement =
+                new PathVisitor<>(basePath, emitter, filter, destinationGenerator(), dtoPackageName);
 
         for (String name : document.getPaths().keySet()) {
             PathItem item = document.getPaths().get(name);

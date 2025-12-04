@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jasypt;
 
 import java.util.ArrayList;
@@ -95,8 +96,7 @@ public class Main {
 
         @Override
         public String getInformation() {
-            return "  " + getAbbreviation() + " or " + getFullName()
-                   + " <" + parameterName + "> = " + getDescription();
+            return "  " + getAbbreviation() + " or " + getFullName() + " <" + parameterName + "> = " + getDescription();
         }
 
         protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
@@ -248,5 +248,4 @@ public class Main {
             main.run(args);
         }
     }
-
 }

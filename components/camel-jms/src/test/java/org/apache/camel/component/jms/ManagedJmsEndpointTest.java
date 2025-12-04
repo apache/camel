@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -29,10 +33,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
 
@@ -53,8 +54,8 @@ public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
 
         Set<ObjectName> objectNames = mbeanServer.queryNames(
                 new ObjectName(
-                        "org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://queue:ManagedJmsEndpointTest" + uuid
-                               + "\""),
+                        "org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://queue:ManagedJmsEndpointTest"
+                                + uuid + "\""),
                 null);
         assertEquals(1, objectNames.size());
         ObjectName name = objectNames.iterator().next();
@@ -81,8 +82,8 @@ public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
         // send a message to queue
         template.sendBody("activemq:queue:ManagedJmsEndpointTest" + uuid, "Hi World");
 
-        String body = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[] { 0 },
-                new String[] { "java.lang.Integer" });
+        String body = (String)
+                mbeanServer.invoke(name, "browseMessageBody", new Object[] {0}, new String[] {"java.lang.Integer"});
         assertEquals("Hi World", body);
     }
 
@@ -91,9 +92,11 @@ public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:ManagedJmsEndpointTest" + uuid).routeId("foo").to("log:foo").to("mock:result");
+                from("activemq:queue:ManagedJmsEndpointTest" + uuid)
+                        .routeId("foo")
+                        .to("log:foo")
+                        .to("mock:result");
             }
         };
     }
-
 }

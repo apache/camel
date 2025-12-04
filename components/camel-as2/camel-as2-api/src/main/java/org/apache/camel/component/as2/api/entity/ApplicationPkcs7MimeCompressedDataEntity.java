@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.ByteArrayOutputStream;
@@ -43,15 +44,19 @@ public class ApplicationPkcs7MimeCompressedDataEntity extends MimeEntity {
 
     private byte[] compressedData;
 
-    public ApplicationPkcs7MimeCompressedDataEntity(MimeEntity entity2Encrypt,
-                                                    CMSCompressedDataGenerator dataGenerator,
-                                                    OutputCompressor compressor,
-                                                    String compressedContentTransferEncoding,
-                                                    boolean isMainBody)
-                                                                        throws HttpException {
-        super(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "compressed-data"),
-                new BasicNameValuePair("name", "smime.p7z")),
-              compressedContentTransferEncoding);
+    public ApplicationPkcs7MimeCompressedDataEntity(
+            MimeEntity entity2Encrypt,
+            CMSCompressedDataGenerator dataGenerator,
+            OutputCompressor compressor,
+            String compressedContentTransferEncoding,
+            boolean isMainBody)
+            throws HttpException {
+        super(
+                ContentType.create(
+                        "application/pkcs7-mime",
+                        new BasicNameValuePair("smime-type", "compressed-data"),
+                        new BasicNameValuePair("name", "smime.p7z")),
+                compressedContentTransferEncoding);
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
         setMainBody(isMainBody);
         try {
@@ -61,11 +66,14 @@ public class ApplicationPkcs7MimeCompressedDataEntity extends MimeEntity {
         }
     }
 
-    public ApplicationPkcs7MimeCompressedDataEntity(byte[] compressedData, String compressedContentTransferEncoding,
-                                                    boolean isMainBody) {
-        super(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "compressed-data"),
-                new BasicNameValuePair("name", "smime.p7z")),
-              compressedContentTransferEncoding);
+    public ApplicationPkcs7MimeCompressedDataEntity(
+            byte[] compressedData, String compressedContentTransferEncoding, boolean isMainBody) {
+        super(
+                ContentType.create(
+                        "application/pkcs7-mime",
+                        new BasicNameValuePair("smime-type", "compressed-data"),
+                        new BasicNameValuePair("name", "smime.p7z")),
+                compressedContentTransferEncoding);
         this.compressedData = ObjectHelper.notNull(compressedData, "encryptedData");
 
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
@@ -78,19 +86,22 @@ public class ApplicationPkcs7MimeCompressedDataEntity extends MimeEntity {
 
         // Write out mime part headers if this is not the main body of message.
         if (!isMainBody()) {
-            try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
+            try (CanonicalOutputStream canonicalOutstream =
+                    new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
 
                 for (Header header : getAllHeaders()) {
                     canonicalOutstream.writeln(header.toString());
                 }
                 canonicalOutstream.writeln(); // ensure empty line between
-                                             // headers and body; RFC2046 -
-                                             // 5.1.1
+                // headers and body; RFC2046 -
+                // 5.1.1
             }
         }
 
         // Write out signed data.
-        String transferEncoding = getContentTransferEncoding() == null ? null : getContentTransferEncoding().getValue();
+        String transferEncoding = getContentTransferEncoding() == null
+                ? null
+                : getContentTransferEncoding().getValue();
         try (OutputStream transferEncodedStream = EntityUtils.encode(ncos, transferEncoding)) {
 
             transferEncodedStream.write(compressedData);

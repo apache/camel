@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -86,8 +87,11 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
         this(camelContext, processor, null, false);
     }
 
-    public DelayProcessorSupport(CamelContext camelContext, Processor processor, ScheduledExecutorService executorService,
-                                 boolean shutdownExecutorService) {
+    public DelayProcessorSupport(
+            CamelContext camelContext,
+            Processor processor,
+            ScheduledExecutorService executorService,
+            boolean shutdownExecutorService) {
         super(processor);
         this.camelContext = camelContext;
         this.executorService = executorService;
@@ -120,8 +124,10 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
             ProcessCall call = new ProcessCall(exchange, callback);
             try {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Scheduling delayed task to run in {} millis for exchangeId: {}",
-                            delay, exchange.getExchangeId());
+                    LOG.trace(
+                            "Scheduling delayed task to run in {} millis for exchangeId: {}",
+                            delay,
+                            exchange.getExchangeId());
                 }
                 executorService.schedule(call, delay, TimeUnit.MILLISECONDS);
                 // tell Camel routing engine we continue routing asynchronous
@@ -136,7 +142,8 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(
                                     "Scheduling rejected task, so letting caller run, delaying at first for {} millis for exchangeId: {}",
-                                    delay, exchange.getExchangeId());
+                                    delay,
+                                    exchange.getExchangeId());
                         }
                         // let caller run by processing
                         try {
@@ -241,7 +248,8 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
     /**
      * Called when a sleep is interrupted; allows derived classes to handle this case differently
      */
-    protected void handleSleepInterruptedException(InterruptedException e, Exchange exchange) throws InterruptedException {
+    protected void handleSleepInterruptedException(InterruptedException e, Exchange exchange)
+            throws InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
         }
@@ -278,5 +286,4 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
         }
         super.doShutdown();
     }
-
 }

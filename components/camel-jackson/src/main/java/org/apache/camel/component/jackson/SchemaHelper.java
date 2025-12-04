@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
 
 import org.apache.camel.Exchange;
@@ -26,8 +27,7 @@ public class SchemaHelper {
     public static final String CONTENT_SCHEMA_TYPE = "X-Content-Schema-Type";
     public static final String CONTENT_CLASS = "X-Content-Class";
 
-    private SchemaHelper() {
-    }
+    private SchemaHelper() {}
 
     /**
      * Helper resolves content class from exchange properties and as a fallback tries to retrieve the content class from
@@ -68,9 +68,12 @@ public class SchemaHelper {
     public static boolean isPrimitive(Class<?> type) {
         return type.isPrimitive()
                 || (type.isArray() && type.getComponentType().isPrimitive())
-                || char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type)
-                || byte.class.isAssignableFrom(type) || Byte.class.isAssignableFrom(type)
-                || boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type);
+                || char.class.isAssignableFrom(type)
+                || Character.class.isAssignableFrom(type)
+                || byte.class.isAssignableFrom(type)
+                || Byte.class.isAssignableFrom(type)
+                || boolean.class.isAssignableFrom(type)
+                || Boolean.class.isAssignableFrom(type);
     }
 
     public static boolean isPojo(Class<?> type) {

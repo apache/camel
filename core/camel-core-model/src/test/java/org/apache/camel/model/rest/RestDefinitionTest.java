@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class RestDefinitionTest {
 
@@ -34,12 +35,16 @@ public class RestDefinitionTest {
 
         rest.outType(RestDefinitionTest.class);
         assertEquals(RestDefinitionTest.class, verb.getOutTypeClass());
-        assertEquals("org.apache.camel.model.rest.RestDefinitionTest", rest.getVerbs().get(0).getOutType());
+        assertEquals(
+                "org.apache.camel.model.rest.RestDefinitionTest",
+                rest.getVerbs().get(0).getOutType());
 
         // Nested classes (CAMEL-15199)
         rest.outType(TestType.class);
         assertEquals(TestType.class, verb.getOutTypeClass());
-        assertEquals("org.apache.camel.model.rest.RestDefinitionTest$TestType", rest.getVerbs().get(0).getOutType());
+        assertEquals(
+                "org.apache.camel.model.rest.RestDefinitionTest$TestType",
+                rest.getVerbs().get(0).getOutType());
 
         // Primitives
         rest.outType(int.class);
@@ -54,7 +59,9 @@ public class RestDefinitionTest {
         // Nested object array
         rest.outType(TestType[].class);
         assertEquals(TestType[].class, verb.getOutTypeClass());
-        assertEquals("org.apache.camel.model.rest.RestDefinitionTest$TestType[]", rest.getVerbs().get(0).getOutType());
+        assertEquals(
+                "org.apache.camel.model.rest.RestDefinitionTest$TestType[]",
+                rest.getVerbs().get(0).getOutType());
 
         // Primitive array (CAMEL-20732)
         rest.outType(byte[].class);

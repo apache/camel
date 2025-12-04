@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -52,7 +53,9 @@ public class InterceptFromSimplePredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                interceptFrom().onWhen(header("usertype").isEqualTo("test")).process(new MyTestServiceProcessor())
+                interceptFrom()
+                        .onWhen(header("usertype").isEqualTo("test"))
+                        .process(new MyTestServiceProcessor())
                         .to("mock:intercepted");
 
                 // and here is our route

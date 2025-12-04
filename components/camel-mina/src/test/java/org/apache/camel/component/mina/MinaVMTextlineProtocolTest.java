@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,8 +29,8 @@ public class MinaVMTextlineProtocolTest extends BaseMinaTest {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader(String.format("mina:vm://localhost:%1$s?textline=true&sync=false", getPort()), body,
-                "cheese", 123);
+        template.sendBodyAndHeader(
+                String.format("mina:vm://localhost:%1$s?textline=true&sync=false", getPort()), body, "cheese", 123);
 
         MockEndpoint.assertIsSatisfied(context);
     }

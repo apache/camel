@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.kafka.integration.commit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Collections;
 import java.util.Properties;
 
@@ -29,8 +31,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract class BaseManualCommitTestSupport extends BaseKafkaTestSupport {
 
@@ -94,8 +94,8 @@ abstract class BaseManualCommitTestSupport extends BaseKafkaTestSupport {
 
         to.reset();
 
-        final String state = Awaitility.await().until(() -> stateRepository.getState(topic + "/0"),
-                Matchers.notNullValue());
+        final String state =
+                Awaitility.await().until(() -> stateRepository.getState(topic + "/0"), Matchers.notNullValue());
         // We send 5 records initially, so we expect the offset to be 5 after first step execution
         assertEquals("5", state, "5 messages were sent in the first step, therefore the offset should be 5");
 

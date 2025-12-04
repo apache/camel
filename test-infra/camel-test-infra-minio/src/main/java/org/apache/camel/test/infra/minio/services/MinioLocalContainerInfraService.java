@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.minio.services;
 
 import java.time.Duration;
@@ -28,9 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
-@InfraService(service = MinioInfraService.class,
-              description = "MinIO Object Storage, S3 compatible",
-              serviceAlias = { "minio" })
+@InfraService(
+        service = MinioInfraService.class,
+        description = "MinIO Object Storage, S3 compatible",
+        serviceAlias = {"minio"})
 public class MinioLocalContainerInfraService implements MinioInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "minio";
     private static final String ACCESS_KEY = System.getProperty(MinioProperties.ACCESS_KEY, "testAccessKey");

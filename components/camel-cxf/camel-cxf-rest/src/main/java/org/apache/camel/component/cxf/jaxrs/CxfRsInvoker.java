@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
@@ -53,9 +54,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
 
     @Override
     protected Object performInvocation(
-            Exchange cxfExchange, final Object serviceObject, Method method,
-            Object[] paramArray)
-            throws Exception {
+            Exchange cxfExchange, final Object serviceObject, Method method, Object[] paramArray) throws Exception {
         Object response = null;
         if (endpoint.isPerformInvocation()) {
             response = super.performInvocation(cxfExchange, serviceObject, method, paramArray);
@@ -77,18 +76,18 @@ public class CxfRsInvoker extends JAXRSInvoker {
     }
 
     private Continuation getContinuation(Exchange cxfExchange) {
-        ContinuationProvider provider
-                = (ContinuationProvider) cxfExchange.getInMessage().get(ContinuationProvider.class.getName());
+        ContinuationProvider provider =
+                (ContinuationProvider) cxfExchange.getInMessage().get(ContinuationProvider.class.getName());
         return provider == null ? null : provider.getContinuation();
     }
 
     private Object asyncInvoke(
-            Exchange cxfExchange, Method method,
-            Object[] paramArray, final Continuation continuation, Object response)
+            Exchange cxfExchange, Method method, Object[] paramArray, final Continuation continuation, Object response)
             throws Exception {
         synchronized (continuation) {
             if (continuation.isNew()) {
-                final org.apache.camel.Exchange camelExchange = prepareExchange(cxfExchange, method, paramArray, response);
+                final org.apache.camel.Exchange camelExchange =
+                        prepareExchange(cxfExchange, method, paramArray, response);
                 // we want to handle the UoW
                 cxfRsConsumer.createUoW(camelExchange);
                 // Now we don't set up the timeout value
@@ -99,7 +98,8 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 continuation.setObject(camelExchange);
                 cxfRsConsumer.getAsyncProcessor().process(camelExchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
-                        // make sure the continuation resume will not be called before the suspend method in other thread
+                        // make sure the continuation resume will not be called before the suspend method in other
+                        // thread
                         synchronized (continuation) {
                             LOG.trace("Resuming continuation of exchangeId: {}", camelExchange.getExchangeId());
                             // resume processing after both, sync and async callbacks
@@ -122,7 +122,8 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 if (continuation.isTimeout() || !continuation.isPending()) {
                     cxfExchange.put(SUSPENED, Boolean.FALSE);
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
-                    camelExchange.setException(new ExchangeTimedOutException(camelExchange, endpoint.getContinuationTimeout()));
+                    camelExchange.setException(
+                            new ExchangeTimedOutException(camelExchange, endpoint.getContinuationTimeout()));
                     try {
                         return returnResponse(cxfExchange, camelExchange);
                     } catch (Exception ex) {
@@ -135,10 +136,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
         return null;
     }
 
-    private Object syncInvoke(
-            Exchange cxfExchange, Method method,
-            Object[] paramArray,
-            Object response)
+    private Object syncInvoke(Exchange cxfExchange, Method method, Object[] paramArray, Object response)
             throws Exception {
         final org.apache.camel.Exchange camelExchange = prepareExchange(cxfExchange, method, paramArray, response);
         // we want to handle the UoW
@@ -159,14 +157,13 @@ public class CxfRsInvoker extends JAXRSInvoker {
     }
 
     private org.apache.camel.Exchange prepareExchange(
-            Exchange cxfExchange, Method method,
-            Object[] paramArray, Object response) {
+            Exchange cxfExchange, Method method, Object[] paramArray, Object response) {
         ExchangePattern ep = ExchangePattern.InOut;
         if (method.getReturnType() == Void.class) {
             ep = ExchangePattern.InOnly;
         }
         final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
-        //needs access in MessageObserver/Interceptor to close the UnitOfWork
+        // needs access in MessageObserver/Interceptor to close the UnitOfWork
         cxfExchange.put(org.apache.camel.Exchange.class, camelExchange);
 
         if (response != null) {
@@ -181,7 +178,8 @@ public class CxfRsInvoker extends JAXRSInvoker {
             camelExchange.setProperty(UriInfo.class.getName(), new UriInfoImpl(cxfExchange.getInMessage()));
             camelExchange.setProperty(Request.class.getName(), new RequestImpl(cxfExchange.getInMessage()));
             camelExchange.setProperty(HttpHeaders.class.getName(), new HttpHeadersImpl(cxfExchange.getInMessage()));
-            camelExchange.setProperty(SecurityContext.class.getName(), new SecurityContextImpl(cxfExchange.getInMessage()));
+            camelExchange.setProperty(
+                    SecurityContext.class.getName(), new SecurityContextImpl(cxfExchange.getInMessage()));
         }
 
         return camelExchange;
@@ -205,9 +203,8 @@ public class CxfRsInvoker extends JAXRSInvoker {
                     throw (WebApplicationException) exception;
                 }
             }
-            //CAMEL-7357 throw out other exception to make sure the ExceptionMapper work
+            // CAMEL-7357 throw out other exception to make sure the ExceptionMapper work
         }
         return endpoint.getBinding().populateCxfRsResponseFromExchange(camelExchange, cxfExchange);
     }
-
 }

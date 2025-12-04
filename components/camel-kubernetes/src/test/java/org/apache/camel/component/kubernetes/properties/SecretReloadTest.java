@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.properties;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SecretReloadTest extends CamelTestSupport {
     @BindToRegistry

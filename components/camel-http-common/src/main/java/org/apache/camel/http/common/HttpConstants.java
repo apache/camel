@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 public final class HttpConstants {
@@ -21,6 +22,5 @@ public final class HttpConstants {
     public static final String CONTENT_TYPE_JAVA_SERIALIZED_OBJECT = "application/x-java-serialized-object";
     public static final String CONTENT_TYPE_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
-    private HttpConstants() {
-    }
+    private HttpConstants() {}
 }

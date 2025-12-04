@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.drill;
 
 import java.util.concurrent.TimeUnit;
@@ -46,8 +47,10 @@ public class ProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query))
-                        .to("drill://" + host + "?mode=" + mode.name() + "&port=" + port).log("${body}")
+                from("direct:in")
+                        .setHeader(DrillConstants.DRILL_QUERY, constant(query))
+                        .to("drill://" + host + "?mode=" + mode.name() + "&port=" + port)
+                        .log("${body}")
                         .to("mock:result");
             }
         };

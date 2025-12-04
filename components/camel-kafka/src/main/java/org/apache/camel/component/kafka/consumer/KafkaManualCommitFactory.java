@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer;
 
 import org.apache.camel.Exchange;
@@ -34,8 +35,11 @@ public interface KafkaManualCommitFactory {
         public final String threadId;
         public final StateRepository<String, String> offsetRepository;
 
-        public CamelExchangePayload(Exchange exchange, Consumer<?, ?> consumer, String threadId,
-                                    StateRepository<String, String> offsetRepository) {
+        public CamelExchangePayload(
+                Exchange exchange,
+                Consumer<?, ?> consumer,
+                String threadId,
+                StateRepository<String, String> offsetRepository) {
             this.exchange = exchange;
             this.consumer = consumer;
             this.threadId = threadId;
@@ -65,5 +69,7 @@ public interface KafkaManualCommitFactory {
      * @param kafkaRecordPayload   the record-related payload from Kafka
      */
     KafkaManualCommit newInstance(
-            CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload, CommitManager commitManager);
+            CamelExchangePayload camelExchangePayload,
+            KafkaRecordPayload kafkaRecordPayload,
+            CommitManager commitManager);
 }

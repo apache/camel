@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cassandra.integration;
 
 import java.io.IOException;
@@ -89,15 +90,16 @@ public abstract class BaseCassandra implements ConfigurableRoute, CamelTestSuppo
 
     public CqlSession getSession() {
         if (session == null) {
-            InetSocketAddress endpoint
-                    = new InetSocketAddress(service.getCassandraHost(), service.getCQL3Port());
-            //create a new session
+            InetSocketAddress endpoint = new InetSocketAddress(service.getCassandraHost(), service.getCQL3Port());
+            // create a new session
             session = CqlSession.builder()
                     .withLocalDatacenter(DATACENTER_NAME)
                     .withKeyspace(KEYSPACE_NAME)
                     .withConfigLoader(DriverConfigLoader.programmaticBuilder()
-                            .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(5)).build())
-                    .addContactPoint(endpoint).build();
+                            .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(5))
+                            .build())
+                    .addContactPoint(endpoint)
+                    .build();
         }
         return session;
     }

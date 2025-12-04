@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cloud.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,10 +43,6 @@ import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class ZooKeeperServiceRegistrationITBase extends CamelTestSupport {
     protected static final String SERVICE_ID = UUID.randomUUID().toString();
@@ -122,7 +123,8 @@ public abstract class ZooKeeperServiceRegistrationITBase extends CamelTestSuppor
 
         // check that service has been registered
         await().atMost(2, TimeUnit.MINUTES)
-                .untilAsserted(() -> assertEquals(1, discovery.queryForInstances(SERVICE_NAME).size()));
+                .untilAsserted(() -> assertEquals(
+                        1, discovery.queryForInstances(SERVICE_NAME).size()));
         Collection<ServiceInstance<MetaData>> services = discovery.queryForInstances(SERVICE_NAME);
 
         ServiceInstance<MetaData> instance = services.iterator().next();
@@ -131,16 +133,16 @@ public abstract class ZooKeeperServiceRegistrationITBase extends CamelTestSuppor
         assertEquals("http", instance.getPayload().get(ServiceDefinition.SERVICE_META_PROTOCOL));
         assertEquals("/service/endpoint", instance.getPayload().get(ServiceDefinition.SERVICE_META_PATH));
 
-        getMetadata().forEach(
-                (k, v) -> {
-                    assertEquals(v, instance.getPayload().get(k));
-                });
+        getMetadata().forEach((k, v) -> {
+            assertEquals(v, instance.getPayload().get(k));
+        });
 
         // let stop the route
         context().getRouteController().stopRoute(SERVICE_ID);
 
         // the service should be removed once the route is stopped
         await().atMost(2, TimeUnit.MINUTES)
-                .untilAsserted(() -> assertTrue(discovery.queryForInstances(SERVICE_NAME).isEmpty()));
+                .untilAsserted(() ->
+                        assertTrue(discovery.queryForInstances(SERVICE_NAME).isEmpty()));
     }
 }

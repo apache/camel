@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.version;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "version",
-                     description = "Manage Camel versions (use version --help to see sub commands)")
+@CommandLine.Command(name = "version", description = "Manage Camel versions (use version --help to see sub commands)")
 public class VersionCommand extends CamelCommand {
 
     public VersionCommand(CamelJBangMain main) {

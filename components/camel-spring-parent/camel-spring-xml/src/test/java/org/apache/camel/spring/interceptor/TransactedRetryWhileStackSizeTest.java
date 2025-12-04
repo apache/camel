@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactedRetryWhileStackSizeTest extends TransactionClientDataSourceSupport {
 
@@ -47,12 +48,13 @@ public class TransactedRetryWhileStackSizeTest extends TransactionClientDataSour
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException().retryWhile(simple("${body.areWeCool} == 'no'")).redeliveryDelay(0)
-                        .handled(true).to("mock:error");
+                onException()
+                        .retryWhile(simple("${body.areWeCool} == 'no'"))
+                        .redeliveryDelay(0)
+                        .handled(true)
+                        .to("mock:error");
 
-                from("seda:start")
-                        .transacted()
-                        .recipientList(constant("foo:unknown"));
+                from("seda:start").transacted().recipientList(constant("foo:unknown"));
             }
         };
     }
@@ -86,5 +88,4 @@ public class TransactedRetryWhileStackSizeTest extends TransactionClientDataSour
             return counter;
         }
     }
-
 }

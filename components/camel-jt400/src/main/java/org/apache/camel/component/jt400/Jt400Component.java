@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
 import java.util.Map;
@@ -54,8 +55,7 @@ public class Jt400Component extends HealthCheckComponent {
     @Metadata(label = "advanced")
     private AS400ConnectionPool connectionPool;
 
-    public Jt400Component() {
-    }
+    public Jt400Component() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
@@ -67,8 +67,8 @@ public class Jt400Component extends HealthCheckComponent {
             // we must remove it from the given parameter list (see
             // http://camel.apache.org/writing-components.html)
             String poolId = properties.remove(CONNECTION_POOL).toString();
-            connectionPool
-                    = EndpointHelper.resolveReferenceParameter(getCamelContext(), poolId, AS400ConnectionPool.class, true);
+            connectionPool = EndpointHelper.resolveReferenceParameter(
+                    getCamelContext(), poolId, AS400ConnectionPool.class, true);
         } else {
             LOG.trace("No AS400ConnectionPool instance specified in the URI - one will be provided.");
             connectionPool = getConnectionPool();
@@ -112,5 +112,4 @@ public class Jt400Component extends HealthCheckComponent {
             connectionPool = null;
         }
     }
-
 }

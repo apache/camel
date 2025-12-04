@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 /**
@@ -26,8 +27,7 @@ public class ExtraOption {
     private String includeMethods;
     private String description;
 
-    public ExtraOption() {
-    }
+    public ExtraOption() {}
 
     public ExtraOption(String type, String name, String includeMethods, String description) {
         this.type = type;

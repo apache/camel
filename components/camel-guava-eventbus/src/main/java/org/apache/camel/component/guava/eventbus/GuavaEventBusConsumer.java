@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
 
 import java.lang.reflect.InvocationHandler;
@@ -38,8 +39,12 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
     private final EventBus eventBus;
     private final Object eventHandler;
 
-    public GuavaEventBusConsumer(GuavaEventBusEndpoint endpoint, Processor processor, EventBus eventBus, Class<?> eventClass,
-                                 Class<?> listenerInterface) {
+    public GuavaEventBusConsumer(
+            GuavaEventBusEndpoint endpoint,
+            Processor processor,
+            EventBus eventBus,
+            Class<?> eventClass,
+            Class<?> listenerInterface) {
         super(endpoint, processor);
 
         if (eventClass != null && listenerInterface != null) {
@@ -71,8 +76,8 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
     private Object createListenerInterfaceProxy(
             GuavaEventBusEndpoint endpoint, Processor processor, Class<?> listenerInterface) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        return Proxy.newProxyInstance(classLoader, new Class[] { listenerInterface },
-                new ListenerInterfaceHandler(this, endpoint, processor));
+        return Proxy.newProxyInstance(
+                classLoader, new Class[] {listenerInterface}, new ListenerInterfaceHandler(this, endpoint, processor));
     }
 
     private static final class ListenerInterfaceHandler implements InvocationHandler {
@@ -81,7 +86,8 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
 
         private final CamelEventHandler delegateHandler;
 
-        private ListenerInterfaceHandler(GuavaEventBusConsumer consumer, GuavaEventBusEndpoint endpoint, Processor processor) {
+        private ListenerInterfaceHandler(
+                GuavaEventBusConsumer consumer, GuavaEventBusEndpoint endpoint, Processor processor) {
             this.delegateHandler = new CamelEventHandler(consumer, endpoint, processor);
         }
 
@@ -94,7 +100,5 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
             }
             return null;
         }
-
     }
-
 }

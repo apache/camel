@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.io.Closeable;
@@ -82,7 +83,6 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         public void failed(final IOException e) {
             hasFailedWith(e);
         }
-
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowClientCallback.class);
@@ -100,8 +100,12 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
     private final ByteBuffer body;
     private final Boolean throwExceptionOnFailure;
 
-    UndertowClientCallback(final Exchange exchange, final AsyncCallback callback, final UndertowEndpoint endpoint,
-                           final ClientRequest request, final ByteBuffer body) {
+    UndertowClientCallback(
+            final Exchange exchange,
+            final AsyncCallback callback,
+            final UndertowEndpoint endpoint,
+            final ClientRequest request,
+            final ByteBuffer body) {
         this.exchange = exchange;
         this.callback = callback;
         this.endpoint = endpoint;
@@ -210,16 +214,19 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                     final String uri = endpoint.getHttpURI().toString();
                     final String statusText = clientExchange.getResponse().getStatus();
 
-                    // Convert Message headers (Map<String, Object>) to Map<String, String> as expected by HttpOperationsFailedException
+                    // Convert Message headers (Map<String, Object>) to Map<String, String> as expected by
+                    // HttpOperationsFailedException
                     // using Message versus clientExchange as its header values have extra formatting
-                    final Map<String, String> headers = result.getHeaders().entrySet()
-                            .stream()
-                            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().toString()));
+                    final Map<String, String> headers = result.getHeaders().entrySet().stream()
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey, entry -> entry.getValue().toString()));
 
-                    // Since result (Message) isn't associated with an Exchange yet, you can not use result.getBody(String.class)
+                    // Since result (Message) isn't associated with an Exchange yet, you can not use
+                    // result.getBody(String.class)
                     final String bodyText = ExchangeHelper.convertToType(exchange, String.class, result.getBody());
 
-                    final Exception cause = new HttpOperationFailedException(uri, code, statusText, null, headers, bodyText);
+                    final Exception cause =
+                            new HttpOperationFailedException(uri, code, statusText, null, headers, bodyText);
 
                     if (ExchangeHelper.isOutCapable(exchange)) {
                         exchange.setOut(result);
@@ -290,10 +297,10 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         channel.shutdownWrites();
         if (!channel.flush()) {
             final ChannelListener<StreamSinkChannel> safeClose = IoUtils::safeClose;
-            final ChannelExceptionHandler<Channel> closingChannelExceptionHandler = ChannelListeners
-                    .closingChannelExceptionHandler();
-            final ChannelListener<StreamSinkChannel> flushingChannelListener = ChannelListeners
-                    .flushingChannelListener(safeClose, closingChannelExceptionHandler);
+            final ChannelExceptionHandler<Channel> closingChannelExceptionHandler =
+                    ChannelListeners.closingChannelExceptionHandler();
+            final ChannelListener<StreamSinkChannel> flushingChannelListener =
+                    ChannelListeners.flushingChannelListener(safeClose, closingChannelExceptionHandler);
             channel.getWriteSetter().set(flushingChannelListener);
             channel.resumeWrites();
         }

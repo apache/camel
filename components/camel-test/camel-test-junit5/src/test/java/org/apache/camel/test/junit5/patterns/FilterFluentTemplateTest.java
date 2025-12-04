@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5.patterns;
 
 import org.apache.camel.EndpointInject;
@@ -57,7 +58,10 @@ public class FilterFluentTemplateTest extends CamelTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        fluentTemplate.withBody("<notMatched/>").withHeader("foo", "notMatchedHeaderValue").send();
+        fluentTemplate
+                .withBody("<notMatched/>")
+                .withHeader("foo", "notMatchedHeaderValue")
+                .send();
 
         resultEndpoint.assertIsSatisfied();
     }

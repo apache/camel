@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -53,13 +54,13 @@ public class KameletPollEnrichTest extends CamelTestSupport {
                 routeTemplate("broker")
                         .templateParameter("queue")
                         .from("kamelet:source")
-                        .pollEnrich().simple("seda:{{queue}}").timeout(5000);
+                        .pollEnrich()
+                        .simple("seda:{{queue}}")
+                        .timeout(5000);
 
-                from("direct:foo")
-                        .kamelet("broker?queue=foo");
+                from("direct:foo").kamelet("broker?queue=foo");
 
-                from("direct:bar")
-                        .kamelet("broker?queue=bar");
+                from("direct:bar").kamelet("broker?queue=bar");
             }
         };
     }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -25,10 +30,6 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSupport {
 
@@ -67,15 +68,21 @@ public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSup
             @Override
             public void configure() {
                 from("direct:start")
-                        .onCompletion().process(e -> {
+                        .onCompletion()
+                        .process(e -> {
                             Exception caught = e.getException();
                             assertNull(caught);
                             caught = e.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                             assertNull(caught);
-                        }).end()
-                        .split(body()).aggregationStrategy(AggregationStrategies.useOriginal(false))
+                        })
+                        .end()
+                        .split(body())
+                        .aggregationStrategy(AggregationStrategies.useOriginal(false))
                         .filter(simple("${body} == 'Kaboom'"))
-                        .throwException(new IllegalArgumentException("Forced error")).end().to("mock:line").end()
+                        .throwException(new IllegalArgumentException("Forced error"))
+                        .end()
+                        .to("mock:line")
+                        .end()
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util.srcgen;
 
 import java.util.ArrayList;
@@ -50,8 +51,7 @@ public class JavaClass {
     boolean isEnum;
     int maxImportPerPackage = 10;
 
-    public JavaClass() {
-    }
+    public JavaClass() {}
 
     public JavaClass(ClassLoader classLoader) {
         this.classLoader = classLoader;
@@ -300,7 +300,9 @@ public class JavaClass {
             sb.append(indent)
                     .append(isPublic ? "public " : "")
                     .append(isStatic ? "static " : "")
-                    .append("enum ").append(name).append(" {\n")
+                    .append("enum ")
+                    .append(name)
+                    .append(" {\n")
                     .append(indent)
                     .append("    ")
                     .append(String.join(",\n" + indent + "    ", values))
@@ -308,7 +310,6 @@ public class JavaClass {
                     .append(indent)
                     .append("}");
             return;
-
         }
 
         StringBuilder sb2 = new StringBuilder(4096);
@@ -324,8 +325,7 @@ public class JavaClass {
             sb2.append(" extends ").append(extendsName);
         }
         if (!implementNames.isEmpty()) {
-            sb2.append(isClass ? " implements " : " extends ")
-                    .append(String.join(", ", implementNames));
+            sb2.append(isClass ? " implements " : " extends ").append(String.join(", ", implementNames));
         }
         sb2.append(" {");
         if (sb2.length() < 80) {
@@ -347,8 +347,9 @@ public class JavaClass {
             if (!implementNames.isEmpty()) {
                 sb.append("\n");
                 sb.append(indent).append(isClass ? "        implements\n" : "        extends\n");
-                sb.append(
-                        implementNames.stream().map(name -> indent + "            " + name).collect(Collectors.joining(",\n")));
+                sb.append(implementNames.stream()
+                        .map(name -> indent + "            " + name)
+                        .collect(Collectors.joining(",\n")));
             }
             sb.append(" {\n");
         }
@@ -492,9 +493,7 @@ public class JavaClass {
             sb2.append(method.name);
             sb2.append("(");
             sb2.append(method.parameters.stream()
-                    .map(p -> p.vararg
-                            ? typeOf(p) + "... " + p.name
-                            : typeOf(p) + " " + p.name)
+                    .map(p -> p.vararg ? typeOf(p) + "... " + p.name : typeOf(p) + " " + p.name)
                     .collect(Collectors.joining(", ")));
 
             sb2.append(") ");
@@ -546,7 +545,8 @@ public class JavaClass {
                 }
                 if (!method.exceptions.isEmpty()) {
                     sb.append("\n            throws");
-                    sb.append(method.exceptions.stream().map(this::shortName).collect(Collectors.joining(", ", " ", "")));
+                    sb.append(
+                            method.exceptions.stream().map(this::shortName).collect(Collectors.joining(", ", " ", "")));
                 }
                 if (!method.isAbstract) {
                     sb.append(" {");
@@ -711,5 +711,4 @@ public class JavaClass {
         }
         return s1;
     }
-
 }

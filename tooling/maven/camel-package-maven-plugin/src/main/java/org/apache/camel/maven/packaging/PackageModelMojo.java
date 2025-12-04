@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -74,8 +75,8 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
 
         // find all json files in camel-core
         List<String> models;
-        try (Stream<Path> jsonFiles
-                = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/META-INF/org/apache/camel/model"))) {
+        try (Stream<Path> jsonFiles =
+                PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/META-INF/org/apache/camel/model"))) {
             models = jsonFiles
                     // special for app should not be in the summary
                     .filter(p -> !p.getParent().getFileName().toString().endsWith("app"))
@@ -83,7 +84,8 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
                     // strip out .json from the name
                     .map(s -> s.substring(0, s.length() - PackageHelper.JSON_SUFIX.length()))
                     // sort
-                    .sorted().toList();
+                    .sorted()
+                    .toList();
         }
 
         if (!models.isEmpty()) {
@@ -97,5 +99,4 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
             getLog().info("Generated " + "model.properties" + " containing " + models.size() + " Camel models");
         }
     }
-
 }

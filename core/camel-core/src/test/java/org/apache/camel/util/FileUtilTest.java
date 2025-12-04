@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,12 +31,6 @@ import org.apache.camel.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FileUtilTest extends TestSupport {
 
     @Test
@@ -37,12 +38,14 @@ public class FileUtilTest extends TestSupport {
         if (FileUtil.isWindows()) {
             assertEquals("foo\\bar", FileUtil.normalizePath("foo/bar"));
             assertEquals("foo\\bar\\baz", FileUtil.normalizePath("foo/bar\\baz"));
-            assertEquals("movefile\\sub\\sub2\\.done\\goodday.txt",
+            assertEquals(
+                    "movefile\\sub\\sub2\\.done\\goodday.txt",
                     FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
         } else {
             assertEquals("foo/bar", FileUtil.normalizePath("foo/bar"));
             assertEquals("foo/bar/baz", FileUtil.normalizePath("foo/bar\\baz"));
-            assertEquals("movefile/sub/sub2/.done/goodday.txt",
+            assertEquals(
+                    "movefile/sub/sub2/.done/goodday.txt",
                     FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
         }
     }
@@ -339,5 +342,4 @@ public class FileUtilTest extends TestSupport {
     void createTestDir() throws IOException {
         Files.createDirectories(testDirectory());
     }
-
 }

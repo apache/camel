@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Comparator;
 import java.util.List;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ObjectHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SortExpressionTest extends ContextTestSupport {
 
@@ -68,7 +69,9 @@ public class SortExpressionTest extends ContextTestSupport {
                 // END SNIPPET: e1
 
                 // START SNIPPET: e2
-                from("direct:reverse").sort(body().tokenize(","), new MyReverseComparator()).to("mock:result");
+                from("direct:reverse")
+                        .sort(body().tokenize(","), new MyReverseComparator())
+                        .to("mock:result");
                 // END SNIPPET: e2
             }
         };
@@ -78,8 +81,7 @@ public class SortExpressionTest extends ContextTestSupport {
     public static class MyReverseComparator implements Comparator<Object> {
 
         // must have default constructor when used by spring bean testing
-        public MyReverseComparator() {
-        }
+        public MyReverseComparator() {}
 
         @Override
         public int compare(Object o1, Object o2) {

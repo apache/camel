@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import jakarta.jms.Connection;
 import jakarta.jms.Session;
@@ -33,9 +37,6 @@ import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class QueueProducerQoSTest extends CamelTestSupport {
 
@@ -79,8 +80,8 @@ public class QueueProducerQoSTest extends CamelTestSupport {
     public void testInOutQueueProducerTTL() throws Exception {
         mockExpiredAdvisory.expectedMessageCount(1);
 
-        String endpoint = String.format("sjms:queue:%s?timeToLive=1000&exchangePattern=InOut&requestTimeout=500",
-                TEST_INOUT_DESTINATION_NAME);
+        String endpoint = String.format(
+                "sjms:queue:%s?timeToLive=1000&exchangePattern=InOut&requestTimeout=500", TEST_INOUT_DESTINATION_NAME);
 
         try {
             template.requestBody(endpoint, "test message");
@@ -93,7 +94,9 @@ public class QueueProducerQoSTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals(0, service.countMessages(TEST_INOUT_DESTINATION_NAME),
+        assertEquals(
+                0,
+                service.countMessages(TEST_INOUT_DESTINATION_NAME),
                 "There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME);
     }
 
@@ -106,16 +109,20 @@ public class QueueProducerQoSTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals(0, service.countMessages(TEST_INONLY_DESTINATION_NAME),
+        assertEquals(
+                0,
+                service.countMessages(TEST_INONLY_DESTINATION_NAME),
                 "There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME);
     }
 
     private static Configuration configureArtemis(Configuration configuration) {
-        return configuration.addAddressSetting("#",
-                new AddressSettings()
-                        .setDeadLetterAddress(SimpleString.of("DLQ"))
-                        .setExpiryAddress(SimpleString.of("ExpiryQueue"))
-                        .setExpiryDelay(1000L))
+        return configuration
+                .addAddressSetting(
+                        "#",
+                        new AddressSettings()
+                                .setDeadLetterAddress(SimpleString.of("DLQ"))
+                                .setExpiryAddress(SimpleString.of("ExpiryQueue"))
+                                .setExpiryDelay(1000L))
                 .setMessageExpiryScanPeriod(500L);
     }
 

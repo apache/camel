@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster;
 
 import org.apache.camel.Endpoint;
@@ -24,7 +25,8 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ZookeeperGroupListenerSupport<T extends NodeState> extends ZookeeperGroupSupport<T> implements GroupListener<T> {
+public class ZookeeperGroupListenerSupport<T extends NodeState> extends ZookeeperGroupSupport<T>
+        implements GroupListener<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZookeeperGroupListenerSupport.class);
     private Group<T> singleton;
@@ -33,8 +35,8 @@ public class ZookeeperGroupListenerSupport<T extends NodeState> extends Zookeepe
     private final Runnable onLockAcquired;
     private final Runnable onDisconnected;
 
-    public ZookeeperGroupListenerSupport(String clusterPath, Endpoint endpoint, Runnable onLockAcquired,
-                                         Runnable onDisconnected) {
+    public ZookeeperGroupListenerSupport(
+            String clusterPath, Endpoint endpoint, Runnable onLockAcquired, Runnable onDisconnected) {
         this.clusterPath = clusterPath;
         this.endpoint = endpoint;
         this.onLockAcquired = onLockAcquired;
@@ -77,13 +79,17 @@ public class ZookeeperGroupListenerSupport<T extends NodeState> extends Zookeepe
                 if (singleton.isConnected()) {
                     if (singleton.isMaster()) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Master/Standby endpoint is Master for: {} in {}", endpoint,
+                            LOG.debug(
+                                    "Master/Standby endpoint is Master for: {} in {}",
+                                    endpoint,
                                     endpoint.getCamelContext());
                         }
                         onLockOwned();
                     } else {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Master/Standby endpoint is Standby for: {} in {}", endpoint,
+                            LOG.debug(
+                                    "Master/Standby endpoint is Standby for: {} in {}",
+                                    endpoint,
                                     endpoint.getCamelContext());
                         }
                     }
@@ -109,5 +115,4 @@ public class ZookeeperGroupListenerSupport<T extends NodeState> extends Zookeepe
     protected void onLockOwned() {
         onLockAcquired.run();
     }
-
 }

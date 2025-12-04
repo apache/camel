@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import org.apache.camel.Endpoint;
@@ -27,5 +28,4 @@ public abstract class AbstractInternalSpanDecorator extends AbstractSpanDecorato
         // as an operation name, but need to strip the scheme and any options
         return clipMaxLength(stripSchemeAndOptions(endpoint));
     }
-
 }

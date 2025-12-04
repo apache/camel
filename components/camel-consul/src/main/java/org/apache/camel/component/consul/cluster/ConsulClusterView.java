@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cluster;
 
 import java.math.BigInteger;
@@ -85,8 +86,10 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             return Collections.emptyList();
         }
 
-        return sessionClient.listSessions().stream().filter(i -> i.getName().orElse("").equals(getNamespace()))
-                .map(ConsulClusterMember::new).collect(Collectors.toList());
+        return sessionClient.listSessions().stream()
+                .filter(i -> i.getName().orElse("").equals(getNamespace()))
+                .map(ConsulClusterMember::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -97,8 +100,11 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             keyValueClient = client.keyValueClient();
 
             sessionId.set(sessionClient
-                    .createSession(ImmutableSession.builder().name(getNamespace()).ttl(configuration.getSessionTtl() + "s")
-                            .lockDelay(configuration.getSessionLockDelay() + "s").build())
+                    .createSession(ImmutableSession.builder()
+                            .name(getNamespace())
+                            .ttl(configuration.getSessionTtl() + "s")
+                            .lockDelay(configuration.getSessionLockDelay() + "s")
+                            .build())
                     .getId());
 
             LOGGER.debug("Acquired session with id '{}'", sessionId.get());
@@ -132,7 +138,10 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             String sid = sessionId.get();
 
             return (sid != null)
-                    && sessionClient.getSessionInfo(sid).map(si -> keyValueClient.acquireLock(path, sid)).orElse(Boolean.FALSE);
+                    && sessionClient
+                            .getSessionInfo(sid)
+                            .map(si -> keyValueClient.acquireLock(path, sid))
+                            .orElse(Boolean.FALSE);
         } finally {
             sessionIdLock.unlock();
         }
@@ -246,13 +255,20 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                         // If the key is not held by any session, try acquire a
                         // lock (become leader)
                         boolean lock = acquireLock();
-                        LOGGER.debug("Try to acquire lock on path '{}' with id '{}', result '{}'", path, sessionId.get(), lock);
+                        LOGGER.debug(
+                                "Try to acquire lock on path '{}' with id '{}', result '{}'",
+                                path,
+                                sessionId.get(),
+                                lock);
 
                         localMember.setMaster(lock);
                     } else {
                         boolean master = sid.get().equals(sessionId.get());
                         if (!master) {
-                            LOGGER.debug("Path {} is held by session {}, local session is {}", path, sid.get(),
+                            LOGGER.debug(
+                                    "Path {} is held by session {}, local session is {}",
+                                    path,
+                                    sid.get(),
                                     sessionId.get());
                         }
 
@@ -284,8 +300,11 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
             if (isStarting() || isStarted()) {
                 // Watch for changes
-                keyValueClient.getValue(path,
-                        QueryOptions.blockSeconds(configuration.getSessionRefreshInterval(), index.get()).build(), this);
+                keyValueClient.getValue(
+                        path,
+                        QueryOptions.blockSeconds(configuration.getSessionRefreshInterval(), index.get())
+                                .build(),
+                        this);
 
                 if (sessionId.get() != null) {
                     // Refresh session

@@ -58,7 +58,8 @@ class AvroPojoDataTypeTransformerTest {
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Christoph", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Christoph", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(32, exchange.getMessage().getBody(Person.class).age());
     }
 
@@ -72,7 +73,8 @@ class AvroPojoDataTypeTransformerTest {
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Mickey", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Mickey", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(20, exchange.getMessage().getBody(Person.class).age());
     }
 
@@ -83,12 +85,12 @@ class AvroPojoDataTypeTransformerTest {
         AvroSchema avroSchema = getSchema();
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
-        exchange.getMessage()
-                .setBody(Avro.mapper().writer(avroSchema).writeValueAsBytes(new Person("Goofy", 25)));
+        exchange.getMessage().setBody(Avro.mapper().writer(avroSchema).writeValueAsBytes(new Person("Goofy", 25)));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Goofy", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Goofy", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(25, exchange.getMessage().getBody(Person.class).age());
     }
 
@@ -100,14 +102,21 @@ class AvroPojoDataTypeTransformerTest {
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
         exchange.getMessage()
-                .setBody(Avro.mapper().writerFor(JsonNode.class).with(avroSchema)
-                        .writeValueAsBytes(Json.mapper().readTree("""
+                .setBody(
+                        Avro.mapper()
+                                .writerFor(JsonNode.class)
+                                .with(avroSchema)
+                                .writeValueAsBytes(
+                                        Json.mapper()
+                                                .readTree(
+                                                        """
                                     { "name": "Goofy", "age": 25 }
                                 """)));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Goofy", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Goofy", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(25, exchange.getMessage().getBody(Person.class).age());
     }
 
@@ -122,21 +131,21 @@ class AvroPojoDataTypeTransformerTest {
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Donald", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Donald", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(19, exchange.getMessage().getBody(Person.class).age());
     }
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("avro-x-java-object"));
+        Transformer transformer =
+                camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("avro-x-java-object"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(AvroPojoDataTypeTransformer.class, transformer.getClass());
     }
 
     private AvroSchema getSchema() throws IOException {
-        return new AvroSchema(
-                new Schema.Parser(NameValidator.UTF_VALIDATOR)
-                        .parse(AvroPojoDataTypeTransformerTest.class.getResourceAsStream("Person.avsc")));
+        return new AvroSchema(new Schema.Parser(NameValidator.UTF_VALIDATOR)
+                .parse(AvroPojoDataTypeTransformerTest.class.getResourceAsStream("Person.avsc")));
     }
 }

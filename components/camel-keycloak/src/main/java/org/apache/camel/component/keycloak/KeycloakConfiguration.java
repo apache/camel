@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
 
 import org.apache.camel.RuntimeCamelException;
@@ -37,13 +38,17 @@ public class KeycloakConfiguration implements Cloneable {
     @UriParam(description = "Keycloak server URL")
     private String serverUrl;
 
-    @UriParam(description = "Keycloak realm, the default is master because usually all the operations are done starting from the master realm",
-              defaultValue = "master")
+    @UriParam(
+            description =
+                    "Keycloak realm, the default is master because usually all the operations are done starting from the master realm",
+            defaultValue = "master")
     private String realm = "master";
 
-    @UriParam(description = "Keycloak realm to authenticate against. If not specified, the realm parameter is used for authentication. "
+    @UriParam(
+            description =
+                    "Keycloak realm to authenticate against. If not specified, the realm parameter is used for authentication. "
                             + "This is useful when you want to authenticate against one realm (e.g., master) but perform operations on another realm.",
-              defaultValue = "master")
+            defaultValue = "master")
     private String authRealm;
 
     @UriParam(description = "Keycloak client ID")
@@ -58,8 +63,10 @@ public class KeycloakConfiguration implements Cloneable {
     @UriParam(description = "Keycloak password", secret = true)
     private String password;
 
-    @UriParam(description = "Pre-obtained access token for authentication. When provided, this token will be used directly instead of obtaining one through username/password or client credentials flow.",
-              secret = true)
+    @UriParam(
+            description =
+                    "Pre-obtained access token for authentication. When provided, this token will be used directly instead of obtaining one through username/password or client credentials flow.",
+            secret = true)
     private String accessToken;
 
     @UriParam(description = "The operation to perform")
@@ -117,18 +124,19 @@ public class KeycloakConfiguration implements Cloneable {
     private String resourcePath;
 
     // Token introspection configuration options
-    @UriParam(description = "Enable OAuth 2.0 token introspection for real-time token validation. "
-                            + "When enabled, tokens are validated by calling Keycloak's introspection endpoint "
-                            + "instead of local JWT parsing. This allows detecting revoked tokens before expiration.",
-              defaultValue = "false")
+    @UriParam(
+            description = "Enable OAuth 2.0 token introspection for real-time token validation. "
+                    + "When enabled, tokens are validated by calling Keycloak's introspection endpoint "
+                    + "instead of local JWT parsing. This allows detecting revoked tokens before expiration.",
+            defaultValue = "false")
     private boolean useTokenIntrospection = false;
 
-    @UriParam(description = "Enable caching of token introspection results to reduce API calls to Keycloak",
-              defaultValue = "true")
+    @UriParam(
+            description = "Enable caching of token introspection results to reduce API calls to Keycloak",
+            defaultValue = "true")
     private boolean introspectionCacheEnabled = true;
 
-    @UriParam(description = "Time-to-live for cached introspection results in seconds",
-              defaultValue = "60")
+    @UriParam(description = "Time-to-live for cached introspection results in seconds", defaultValue = "60")
     private long introspectionCacheTtl = 60;
 
     public String getLabel() {

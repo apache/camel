@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
 
 import org.apache.camel.ContextTestSupport;
@@ -62,12 +63,20 @@ public class XPathHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:in").choice()
+                from("direct:in")
+                        .choice()
                         // using $headerName is special notation in Camel to get the
                         // header key
-                        .when().xpath("$type = 'Camel'").to("mock:camel")
+                        .when()
+                        .xpath("$type = 'Camel'")
+                        .to("mock:camel")
                         // here we test for the body name tag
-                        .when().xpath("//name = 'Kong'").to("mock:donkey").otherwise().to("mock:other").end();
+                        .when()
+                        .xpath("//name = 'Kong'")
+                        .to("mock:donkey")
+                        .otherwise()
+                        .to("mock:other")
+                        .end();
                 // END SNIPPET: e1
             }
         };

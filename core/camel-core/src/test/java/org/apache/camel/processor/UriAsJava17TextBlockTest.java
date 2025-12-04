@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UriAsJava17TextBlockTest extends ContextTestSupport {
 
@@ -42,15 +43,15 @@ public class UriAsJava17TextBlockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(
-                        """
+                from("""
                                    direct:start?
                                    block=false&
                                    timeout=1234
                                 """)
                         .to("log:foo")
                         .to("log:bar")
-                        .to("""
+                        .to(
+                                """
                                 mock:result?
                                 retainFirst=123
                                 &failFast=false

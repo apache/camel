@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 import java.io.Closeable;
 import java.lang.annotation.Annotation;
@@ -64,8 +67,6 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
-
 /**
  * A helper class for Camel based injector or bean post-processing hooks.
  */
@@ -75,8 +76,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     private CamelContext camelContext;
 
-    public CamelPostProcessorHelper() {
-    }
+    public CamelPostProcessorHelper() {}
 
     public CamelPostProcessorHelper(CamelContext camelContext) {
         this.setCamelContext(camelContext);
@@ -101,7 +101,12 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     public void subscribeMethod(
-            Method method, Object bean, String beanName, String endpointUri, String endpointProperty, String predicate) {
+            Method method,
+            Object bean,
+            String beanName,
+            String endpointUri,
+            String endpointProperty,
+            String predicate) {
         // lets bind this method to a listener
         String injectionPointName = method.getName();
         Endpoint endpoint = getEndpointInjection(bean, endpointUri, endpointProperty, injectionPointName, true);
@@ -126,7 +131,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     processor.addMethod(bean, method, endpoint, predicate);
                 }
                 if (predicate != null) {
-                    LOG.debug("Subscribed method: {} to consume from endpoint: {} with predicate: {}", method, endpoint,
+                    LOG.debug(
+                            "Subscribed method: {} to consume from endpoint: {} with predicate: {}",
+                            method,
+                            endpoint,
                             predicate);
                 } else {
                     LOG.debug("Subscribed method: {} to consume from endpoint: {}", method, endpoint);
@@ -140,7 +148,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     /**
      * Stats the given service
      */
-    protected void startService(Service service, CamelContext camelContext, Object bean, String beanName) throws Exception {
+    protected void startService(Service service, CamelContext camelContext, Object bean, String beanName)
+            throws Exception {
         // defer starting the service until CamelContext has started all its initial services
         if (camelContext != null) {
             camelContext.deferStartService(service, true);
@@ -156,13 +165,16 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     protected SubscribeMethodProcessor getConsumerProcessor(Endpoint endpoint) {
-        Set<SubscribeMethodProcessor> processors = endpoint.getCamelContext().hasServices(SubscribeMethodProcessor.class);
-        return processors.stream().filter(s -> s.getEndpoint() == endpoint).findFirst().orElse(null);
+        Set<SubscribeMethodProcessor> processors =
+                endpoint.getCamelContext().hasServices(SubscribeMethodProcessor.class);
+        return processors.stream()
+                .filter(s -> s.getEndpoint() == endpoint)
+                .findFirst()
+                .orElse(null);
     }
 
     public Endpoint getEndpointInjection(
-            Object bean, String uri, String propertyName,
-            String injectionPointName, boolean mandatory) {
+            Object bean, String uri, String propertyName, String injectionPointName, boolean mandatory) {
         Endpoint answer;
         if (ObjectHelper.isEmpty(uri)) {
             // if no uri then fallback and try the endpoint property
@@ -198,12 +210,12 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         // 2. then the getter with Endpoint as postfix
         // 3. then if start with on then try step 1 and 2 again, but omit the on prefix
         try {
-            Object value = PluginHelper.getBeanIntrospection(getCamelContext()).getOrElseProperty(bean,
-                    propertyName, null, false);
+            Object value = PluginHelper.getBeanIntrospection(getCamelContext())
+                    .getOrElseProperty(bean, propertyName, null, false);
             if (value == null) {
                 // try endpoint as postfix
-                value = PluginHelper.getBeanIntrospection(getCamelContext()).getOrElseProperty(bean,
-                        propertyName + "Endpoint", null, false);
+                value = PluginHelper.getBeanIntrospection(getCamelContext())
+                        .getOrElseProperty(bean, propertyName + "Endpoint", null, false);
             }
             if (value == null && propertyName.startsWith("on")) {
                 // retry but without the on as prefix
@@ -229,8 +241,12 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * {@link org.apache.camel.Produce} injection point
      */
     public Object getInjectionValue(
-            Class<?> type, String endpointUri, String endpointProperty,
-            String injectionPointName, Object bean, String beanName) {
+            Class<?> type,
+            String endpointUri,
+            String endpointProperty,
+            String injectionPointName,
+            Object bean,
+            String beanName) {
         return getInjectionValue(type, endpointUri, endpointProperty, injectionPointName, bean, beanName, true);
     }
 
@@ -240,8 +256,13 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      */
     @SuppressWarnings("unchecked")
     public Object getInjectionValue(
-            Class<?> type, String endpointUri, String endpointProperty,
-            String injectionPointName, Object bean, String beanName, boolean binding) {
+            Class<?> type,
+            String endpointUri,
+            String endpointProperty,
+            String injectionPointName,
+            Object bean,
+            String beanName,
+            boolean binding) {
         if (type.isAssignableFrom(ProducerTemplate.class)) {
             return createInjectionProducerTemplate(endpointUri, endpointProperty, injectionPointName, bean);
         } else if (type.isAssignableFrom(FluentProducerTemplate.class)) {
@@ -267,10 +288,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                         throw createProxyInstantiationRuntimeException(type, endpoint, e);
                     }
                 } else {
-                    throw new IllegalArgumentException(
-                            "Invalid type: " + type.getName()
-                                                       + " which cannot be injected via @EndpointInject/@Produce for: "
-                                                       + endpoint);
+                    throw new IllegalArgumentException("Invalid type: " + type.getName()
+                            + " which cannot be injected via @EndpointInject/@Produce for: "
+                            + endpoint);
                 }
             }
             return null;
@@ -304,8 +324,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             if (ObjectHelper.isNotEmpty(propertyDefaultValue)) {
                 try {
                     if (separator != null && !separator.isBlank()) {
-                        Object values
-                                = convertValueUsingSeparator(camelContext, type, genericType, propertyDefaultValue, separator);
+                        Object values = convertValueUsingSeparator(
+                                camelContext, type, genericType, propertyDefaultValue, separator);
                         return getCamelContext().getTypeConverter().mandatoryConvertTo(type, values);
                     }
                     return getCamelContext().getTypeConverter().mandatoryConvertTo(type, propertyDefaultValue);
@@ -318,8 +338,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     private static Object convertValueUsingSeparator(
-            CamelContext camelContext, Class<?> type, Type genericType,
-            String value, String separator)
+            CamelContext camelContext, Class<?> type, Type genericType, String value, String separator)
             throws NoTypeConversionAvailableException {
         if (type.isArray()) {
             return convertArrayUsingSeparator(camelContext, type, value, separator);
@@ -382,7 +401,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         return values;
     }
 
-    private static Object[] convertArrayUsingSeparator(CamelContext camelContext, Class<?> type, String value, String separator)
+    private static Object[] convertArrayUsingSeparator(
+            CamelContext camelContext, Class<?> type, String value, String separator)
             throws NoTypeConversionAvailableException {
         String[] arr = value.split(separator);
         Object[] values = new Object[arr.length];
@@ -397,10 +417,12 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     public Object getInjectionBeanValue(Class<?> type, String name) {
         if (ObjectHelper.isEmpty(name)) {
             // is it camel context itself?
-            if (getCamelContext() != null && type.isAssignableFrom(getCamelContext().getClass())) {
+            if (getCamelContext() != null
+                    && type.isAssignableFrom(getCamelContext().getClass())) {
                 return getCamelContext();
             }
-            Object found = getCamelContext() != null ? getCamelContext().getRegistry().findSingleByType(type) : null;
+            Object found =
+                    getCamelContext() != null ? getCamelContext().getRegistry().findSingleByType(type) : null;
             if (found == null) {
                 // this may be a common type so lets check this first
                 if (getCamelContext() != null && type.isAssignableFrom(Registry.class)) {
@@ -501,7 +523,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         // use FQN class name first, then simple name, and root key last
         PropertyConfigurer configurer = null;
         String[] names = new String[] {
-                type.getName() + "-configurer", type.getSimpleName() + "-configurer", rootKey + "-configurer" };
+            type.getName() + "-configurer", type.getSimpleName() + "-configurer", rootKey + "-configurer"
+        };
         for (String n : names) {
             configurer = PluginHelper.getConfigurerResolver(ecc).resolvePropertyConfigurer(n, ecc);
             if (configurer != null) {
@@ -521,13 +544,11 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     public Object getInjectionBeanMethodValue(
-            CamelContext context,
-            Method method, Object bean, String beanName, String annotationName) {
+            CamelContext context, Method method, Object bean, String beanName, String annotationName) {
         Class<?> returnType = method.getReturnType();
         if (returnType == Void.TYPE) {
-            throw new IllegalArgumentException(
-                    "@" + annotationName + " on class: " + method.getDeclaringClass()
-                                               + " method: " + method.getName() + " with void return type is not allowed");
+            throw new IllegalArgumentException("@" + annotationName + " on class: " + method.getDeclaringClass()
+                    + " method: " + method.getName() + " with void return type is not allowed");
         }
 
         Object value;
@@ -568,8 +589,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     Annotation ann = anns[0];
                     if (ann.annotationType() == PropertyInject.class) {
                         PropertyInject pi = (PropertyInject) ann;
-                        Object result
-                                = getInjectionPropertyValue(type, genericType, pi.value(), pi.defaultValue(), pi.separator());
+                        Object result = getInjectionPropertyValue(
+                                type, genericType, pi.value(), pi.defaultValue(), pi.separator());
                         parameters[i] = result;
                     } else if (ann.annotationType() == BeanConfigInject.class) {
                         BeanConfigInject pi = (BeanConfigInject) ann;
@@ -587,10 +608,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                         parameters[i] = instances.iterator().next();
                     } else if (instances.size() > 1) {
                         // there are multiple instances of the same type, so barf
-                        throw new IllegalArgumentException(
-                                "Multiple beans of the same type: " + type
-                                                           + " exists in the Camel registry. Specify the bean name on @BeanInject to bind to a single bean, at the method: "
-                                                           + method);
+                        throw new IllegalArgumentException("Multiple beans of the same type: " + type
+                                + " exists in the Camel registry. Specify the bean name on @BeanInject to bind to a single bean, at the method: "
+                                + method);
                     }
                 }
             }
@@ -598,7 +618,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             // each parameter must be mapped
             if (parameters[i] == null) {
                 int pos = i + 1;
-                throw new IllegalArgumentException("@BindToProperty cannot bind parameter #" + pos + " on method: " + method);
+                throw new IllegalArgumentException(
+                        "@BindToProperty cannot bind parameter #" + pos + " on method: " + method);
             }
         }
 
@@ -609,8 +630,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * Factory method to create a {@link org.apache.camel.ProducerTemplate} to be injected into a POJO
      */
     protected ProducerTemplate createInjectionProducerTemplate(
-            String endpointUri, String endpointProperty,
-            String injectionPointName, Object bean) {
+            String endpointUri, String endpointProperty, String injectionPointName, Object bean) {
         // endpoint is optional for this injection point
         Endpoint endpoint = getEndpointInjection(bean, endpointUri, endpointProperty, injectionPointName, false);
         CamelContext context = endpoint != null ? endpoint.getCamelContext() : getCamelContext();
@@ -629,8 +649,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * Factory method to create a {@link org.apache.camel.FluentProducerTemplate} to be injected into a POJO
      */
     protected FluentProducerTemplate createInjectionFluentProducerTemplate(
-            String endpointUri, String endpointProperty,
-            String injectionPointName, Object bean) {
+            String endpointUri, String endpointProperty, String injectionPointName, Object bean) {
         // endpoint is optional for this injection point
         Endpoint endpoint = getEndpointInjection(bean, endpointUri, endpointProperty, injectionPointName, false);
         CamelContext context = endpoint != null ? endpoint.getCamelContext() : getCamelContext();
@@ -650,8 +669,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * Factory method to create a {@link org.apache.camel.ConsumerTemplate} to be injected into a POJO
      */
     protected ConsumerTemplate createInjectionConsumerTemplate(
-            String endpointUri, String endpointProperty,
-            String injectionPointName) {
+            String endpointUri, String endpointProperty, String injectionPointName) {
         ConsumerTemplate answer = new DefaultConsumerTemplate(getCamelContext());
         // start the template so its ready to use
         try {
@@ -680,7 +698,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      */
     protected Producer createInjectionProducer(Endpoint endpoint, Object bean, String beanName) {
         try {
-            return PluginHelper.getDeferServiceFactory(endpoint.getCamelContext()).createProducer(endpoint);
+            return PluginHelper.getDeferServiceFactory(endpoint.getCamelContext())
+                    .createProducer(endpoint);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -35,10 +40,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Verify that the authorization header is added to the request sent to the AS2 server for Basic Auth.
  */
@@ -49,31 +50,31 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
     private static final String PASSWORD = "rider";
     private static final String ACCESS_TOKEN = "MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3";
     private static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
-                                              + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
-                                              + "BGM+380+342459+9'\n"
-                                              + "DTM+3:20060515:102'\n"
-                                              + "RFF+ON:521052'\n"
-                                              + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
-                                              + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
-                                              + "CUX+1:USD'\n"
-                                              + "LIN+1++157870:IN'\n"
-                                              + "IMD+F++:::WIDGET'\n"
-                                              + "QTY+47:1020:EA'\n"
-                                              + "ALI+US'\n"
-                                              + "MOA+203:1202.58'\n"
-                                              + "PRI+INV:1.179'\n"
-                                              + "LIN+2++157871:IN'\n"
-                                              + "IMD+F++:::DIFFERENT WIDGET'\n"
-                                              + "QTY+47:20:EA'\n"
-                                              + "ALI+JP'\n"
-                                              + "MOA+203:410'\n"
-                                              + "PRI+INV:20.5'\n"
-                                              + "UNS+S'\n"
-                                              + "MOA+39:2137.58'\n"
-                                              + "ALC+C+ABG'\n"
-                                              + "MOA+8:525'\n"
-                                              + "UNT+23+00000000000117'\n"
-                                              + "UNZ+1+00000000000778'\n";
+            + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
+            + "BGM+380+342459+9'\n"
+            + "DTM+3:20060515:102'\n"
+            + "RFF+ON:521052'\n"
+            + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
+            + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
+            + "CUX+1:USD'\n"
+            + "LIN+1++157870:IN'\n"
+            + "IMD+F++:::WIDGET'\n"
+            + "QTY+47:1020:EA'\n"
+            + "ALI+US'\n"
+            + "MOA+203:1202.58'\n"
+            + "PRI+INV:1.179'\n"
+            + "LIN+2++157871:IN'\n"
+            + "IMD+F++:::DIFFERENT WIDGET'\n"
+            + "QTY+47:20:EA'\n"
+            + "ALI+JP'\n"
+            + "MOA+203:410'\n"
+            + "PRI+INV:20.5'\n"
+            + "UNS+S'\n"
+            + "MOA+39:2137.58'\n"
+            + "ALC+C+ABG'\n"
+            + "MOA+8:525'\n"
+            + "UNT+23+00000000000117'\n"
+            + "UNZ+1+00000000000778'\n";
 
     private static AS2ServerConnection serverConnection;
     private static AS2ClientManagerIT.RequestHandler requestHandler;
@@ -144,16 +145,20 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
         assertNotNull(responseEntity);
         assertInstanceOf(DispositionNotificationMultipartReportEntity.class, responseEntity);
 
-        DispositionNotificationMultipartReportEntity reportEntity
-                = (DispositionNotificationMultipartReportEntity) responseEntity;
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) responseEntity;
         assertEquals(2, reportEntity.getPartCount());
 
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
+        assertEquals(
+                ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII)
+                        .toString(),
                 firstPart.getContentType());
 
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(), secondPart.getContentType());
+        assertEquals(
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+                secondPart.getContentType());
     }
 
     private Map<String, Object> configureNonAuthHeaders() {
@@ -180,8 +185,9 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
                         .to("as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m");
 
                 from("direct://SEND2")
-                        .toF("as2://client/send?userName=%s&password=%s&accessToken=%s" +
-                             "&inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m",
+                        .toF(
+                                "as2://client/send?userName=%s&password=%s&accessToken=%s"
+                                        + "&inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m",
                                 USER_NAME, PASSWORD, ACCESS_TOKEN);
             }
         };
@@ -189,10 +195,20 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
 
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
-                "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", 8889, AS2SignatureAlgorithm.SHA256WITHRSA,
-                null, null, null,
-                "TBD", null, null, null, null, null);
+                "1.1",
+                "AS2ClientManagerIntegrationTest Server",
+                "server.example.com",
+                8889,
+                AS2SignatureAlgorithm.SHA256WITHRSA,
+                null,
+                null,
+                null,
+                "TBD",
+                null,
+                null,
+                null,
+                null,
+                null);
         requestHandler = new AS2ClientManagerIT.RequestHandler();
         serverConnection.listen("/", requestHandler);
     }

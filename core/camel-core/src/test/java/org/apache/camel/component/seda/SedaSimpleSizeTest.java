@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,7 +46,9 @@ public class SedaSimpleSizeTest extends ContextTestSupport {
             public void configure() {
                 endpoint("seda:foo");
 
-                from("direct:start").setBody().simple("${camelContext.getEndpoint('seda:foo').currentQueueSize}")
+                from("direct:start")
+                        .setBody()
+                        .simple("${camelContext.getEndpoint('seda:foo').currentQueueSize}")
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.lang.management.ManagementFactory;
@@ -69,7 +70,8 @@ public class LogDevConsole extends AbstractDevConsole {
         try {
             MBeanServer ms = ManagementFactory.getPlatformMBeanServer();
             if (ms != null) {
-                Set<ObjectName> set = ms.queryNames(new ObjectName(LOG4J_MBEAN + ":type=*,component=Loggers,name=*"), null);
+                Set<ObjectName> set =
+                        ms.queryNames(new ObjectName(LOG4J_MBEAN + ":type=*,component=Loggers,name=*"), null);
                 for (ObjectName on : set) {
                     if (ms.isRegistered(on)) {
                         String name = (String) ms.getAttribute(on, "Name");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Map;
@@ -31,8 +32,7 @@ public class SetVariablesProcessorTest extends ContextTestSupport {
     public static class VarBean {
         final Map<String, String> map = new java.util.LinkedHashMap<>();
 
-        public VarBean() {
-        }
+        public VarBean() {}
 
         Map<String, String> getVariables(String body) {
             map.clear();
@@ -53,7 +53,11 @@ public class SetVariablesProcessorTest extends ContextTestSupport {
         expected.message(0).variable("foo").isEqualTo("ABC");
         expected.message(0).variable("bar").isEqualTo("XYZ");
 
-        fluentTemplate.to("direct:startConstant").withBody(body).withVariable("bar", "ABC").send();
+        fluentTemplate
+                .to("direct:startConstant")
+                .withBody(body)
+                .withVariable("bar", "ABC")
+                .send();
         assertMockEndpointsSatisfied();
     }
 
@@ -62,7 +66,11 @@ public class SetVariablesProcessorTest extends ContextTestSupport {
         expected.message(0).variable("foo").isEqualTo("ABC");
         expected.message(0).variable("bar").isEqualTo("XYZ");
 
-        fluentTemplate.to("direct:start").withBody("ABC").withVariable("bar1", "XYZ").send();
+        fluentTemplate
+                .to("direct:start")
+                .withBody("ABC")
+                .withVariable("bar1", "XYZ")
+                .send();
         assertMockEndpointsSatisfied();
     }
 
@@ -92,7 +100,9 @@ public class SetVariablesProcessorTest extends ContextTestSupport {
     public void testUseMapOf() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:startMap").setVariables(Map.of("foo", "ABC", "bar", "XYZ")).to("mock:result");
+                from("direct:startMap")
+                        .setVariables(Map.of("foo", "ABC", "bar", "XYZ"))
+                        .to("mock:result");
             }
         });
         expected.message(0).variable("foo").isEqualTo("ABC");
@@ -122,15 +132,21 @@ public class SetVariablesProcessorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setVariables("foo", simple("${body}"),
-                        "bar", simple("${variable.bar1}")).to("mock:result");
-                from("direct:startDepHeader").setVariables("foo", simple("${body}"),
-                        "bar", simple("${variable.foo} > 10", Boolean.class)).to("mock:result");
-                from("direct:startConstant").setVariables("foo", constant("ABC"),
-                        "bar", constant("XYZ")).to("mock:result");
-                from("direct:startXpath").setVariables("age", xpath("/person/@age"),
-                        "name", xpath("/person/@name")).to("mock:result");
-                from("direct:startMethod").setVariables("mapTest", method(VarBean.class, "getVariables")).to("mock:result");
+                from("direct:start")
+                        .setVariables("foo", simple("${body}"), "bar", simple("${variable.bar1}"))
+                        .to("mock:result");
+                from("direct:startDepHeader")
+                        .setVariables("foo", simple("${body}"), "bar", simple("${variable.foo} > 10", Boolean.class))
+                        .to("mock:result");
+                from("direct:startConstant")
+                        .setVariables("foo", constant("ABC"), "bar", constant("XYZ"))
+                        .to("mock:result");
+                from("direct:startXpath")
+                        .setVariables("age", xpath("/person/@age"), "name", xpath("/person/@name"))
+                        .to("mock:result");
+                from("direct:startMethod")
+                        .setVariables("mapTest", method(VarBean.class, "getVariables"))
+                        .to("mock:result");
             }
         };
     }

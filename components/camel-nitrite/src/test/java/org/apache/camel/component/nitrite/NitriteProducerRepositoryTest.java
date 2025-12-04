@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -40,10 +45,6 @@ import org.dizitart.no2.objects.filters.ObjectFilters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
 
     @BeforeEach
@@ -64,7 +65,8 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         List<MyPersistentObject> result = template.requestBodyAndHeader(
                 String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 null,
-                NitriteConstants.OPERATION, new FindRepositoryOperation(ObjectFilters.eq("key1", "c")),
+                NitriteConstants.OPERATION,
+                new FindRepositoryOperation(ObjectFilters.eq("key1", "c")),
                 List.class);
 
         assertEquals(1, result.size());
@@ -75,42 +77,52 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     @Test
     public void removeRepositoryOperation() {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION,
-                new RemoveRepositoryOperation(ObjectFilters.eq("key2", "b")));
+        exchange.getMessage()
+                .setHeader(NitriteConstants.OPERATION, new RemoveRepositoryOperation(ObjectFilters.eq("key2", "b")));
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
+                exchange.getMessage()
+                        .getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class)
+                        .getAffectedCount());
     }
 
     @Test
     public void updateRepositoryOperation() {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION,
-                new UpdateRepositoryOperation(ObjectFilters.eq("key2", "f")));
+        exchange.getMessage()
+                .setHeader(NitriteConstants.OPERATION, new UpdateRepositoryOperation(ObjectFilters.eq("key2", "f")));
         exchange.getMessage().setBody(new MyPersistentObject(3, "updatedA", "updatedB", ""));
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
+                exchange.getMessage()
+                        .getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class)
+                        .getAffectedCount());
     }
 
     @Test
     public void createIndexOperation() {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION,
-                new CreateIndexOperation("key3", IndexOptions.indexOptions(IndexType.Unique)));
+        exchange.getMessage()
+                .setHeader(
+                        NitriteConstants.OPERATION,
+                        new CreateIndexOperation("key3", IndexOptions.indexOptions(IndexType.Unique)));
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
 
         Exchange listIndices = new DefaultExchange(context);
         listIndices.getMessage().setHeader(NitriteConstants.OPERATION, new ListIndicesOperation());
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 listIndices);
 
         assertEquals(4, listIndices.getMessage().getBody(List.class).size());
@@ -122,12 +134,14 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new DropIndexOperation("key3"));
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
 
         Exchange listIndices = new DefaultExchange(context);
         listIndices.getMessage().setHeader(NitriteConstants.OPERATION, new ListIndicesOperation());
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 listIndices);
 
         assertEquals(3, listIndices.getMessage().getBody(List.class).size());
@@ -138,7 +152,8 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new GetAttributesOperation());
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
         assertNotNull(exchange.getMessage().getBody(Attributes.class));
     }
@@ -146,14 +161,17 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     @Test
     public void insertOperation() {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new InsertOperation(
-                new MyPersistentObject(123, "", "", "")));
+        exchange.getMessage()
+                .setHeader(NitriteConstants.OPERATION, new InsertOperation(new MyPersistentObject(123, "", "", "")));
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
+                exchange.getMessage()
+                        .getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class)
+                        .getAffectedCount());
     }
 
     @Test
@@ -162,7 +180,8 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
 
         Exchange listIndices = new DefaultExchange(context);
         listIndices.getMessage().setHeader(NitriteConstants.OPERATION, new ListIndicesOperation());
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 listIndices);
 
         assertEquals(4, listIndices.getMessage().getBody(List.class).size());
@@ -172,38 +191,43 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     public void rebuildIndexOperation() throws Exception {
         createIndexOperation();
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new RebuildIndexOperation(
-                "key3"));
+        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new RebuildIndexOperation("key3"));
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
-
     }
 
     @Test
     public void updateOperation() {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpdateOperation(
-                new MyPersistentObject(1, "", "", "")));
+        exchange.getMessage()
+                .setHeader(NitriteConstants.OPERATION, new UpdateOperation(new MyPersistentObject(1, "", "", "")));
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
+                exchange.getMessage()
+                        .getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class)
+                        .getAffectedCount());
     }
 
     @Test
     public void upsertOperation() {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpsertOperation(
-                new MyPersistentObject(1, "", "", "")));
+        exchange.getMessage()
+                .setHeader(NitriteConstants.OPERATION, new UpsertOperation(new MyPersistentObject(1, "", "", "")));
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
+                exchange.getMessage()
+                        .getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class)
+                        .getAffectedCount());
     }
 
     @Test
@@ -211,11 +235,13 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new FindCollectionOperation());
 
-        template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.send(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 exchange);
 
         assertTrue(
                 exchange.getException() instanceof IllegalArgumentException,
-                String.format("Expected exception of type IllegalArgumentException, %s given", exchange.getException()));
+                String.format(
+                        "Expected exception of type IllegalArgumentException, %s given", exchange.getException()));
     }
 }

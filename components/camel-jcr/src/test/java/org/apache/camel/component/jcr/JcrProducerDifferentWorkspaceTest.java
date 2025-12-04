@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -23,9 +27,6 @@ import javax.jcr.Workspace;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JcrProducerDifferentWorkspaceTest extends JcrRouteDifferentWorkspaceTestSupport {
 
@@ -42,7 +43,9 @@ public class JcrProducerDifferentWorkspaceTest extends JcrRouteDifferentWorkspac
             assertEquals(CUSTOM_WORKSPACE_NAME, workspace.getName());
             assertNotNull(node);
             assertEquals("/home/test/node", node.getPath());
-            assertEquals("<hello>world!</hello>", node.getProperty("my.contents.property").getString());
+            assertEquals(
+                    "<hello>world!</hello>",
+                    node.getProperty("my.contents.property").getString());
         } finally {
             if (session != null && session.isLive()) {
                 session.logout();
@@ -56,12 +59,12 @@ public class JcrProducerDifferentWorkspaceTest extends JcrRouteDifferentWorkspac
             @Override
             public void configure() {
                 // START SNIPPET: jcr-create-node
-                from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
+                from("direct:a")
+                        .setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
                         .setHeader("my.contents.property", body())
                         .to("jcr://user:pass@repository/home/test?workspaceName=" + CUSTOM_WORKSPACE_NAME);
                 // END SNIPPET: jcr-create-node
             }
         };
     }
-
 }

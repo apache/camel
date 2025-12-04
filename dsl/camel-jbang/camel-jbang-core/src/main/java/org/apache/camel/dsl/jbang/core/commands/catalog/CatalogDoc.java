@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.catalog;
+
+import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
 
 import java.awt.*;
 import java.net.URI;
@@ -47,64 +50,81 @@ import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
-
-@CommandLine.Command(name = "doc",
-                     description = "Shows documentation for kamelet, component, and other Camel resources", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "doc",
+        description = "Shows documentation for kamelet, component, and other Camel resources",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CatalogDoc extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
-                            arity = "1")
+    @CommandLine.Parameters(
+            description = "Name of kamelet, component, dataformat, or other Camel resource",
+            arity = "1")
     String name;
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To use a different Camel version than the default version")
+    @CommandLine.Option(
+            names = {"--camel-version"},
+            description = "To use a different Camel version than the default version")
     String camelVersion;
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @CommandLine.Option(
+            names = {"--runtime"},
+            completionCandidates = RuntimeCompletionCandidates.class,
+            converter = RuntimeTypeConverter.class,
+            description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime;
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    @CommandLine.Option(
+            names = {"--download"},
+            defaultValue = "true",
+            description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
+    @CommandLine.Option(
+            names = {"--quarkus-version"},
+            description = "Quarkus Platform version",
+            defaultValue = RuntimeType.QUARKUS_VERSION)
     String quarkusVersion;
 
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
+    @CommandLine.Option(
+            names = {"--quarkus-group-id"},
+            description = "Quarkus Platform Maven groupId",
+            defaultValue = "io.quarkus.platform")
     String quarkusGroupId = "io.quarkus.platform";
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description =
+                    "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @CommandLine.Option(names = { "--url" },
-                        description = "Prints the link to the online documentation on the Camel website",
-                        defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--url"},
+            description = "Prints the link to the online documentation on the Camel website",
+            defaultValue = "false")
     boolean url;
 
-    @CommandLine.Option(names = { "--open-url" },
-                        description = "Opens the online documentation form the Camel website in the web browser",
-                        defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--open-url"},
+            description = "Opens the online documentation form the Camel website in the web browser",
+            defaultValue = "false")
     boolean openUrl;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter option listed in tables by name, description, or group")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter option listed in tables by name, description, or group")
     String filter;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "Whether to display component message headers", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--header"},
+            description = "Whether to display component message headers",
+            defaultValue = "false")
     boolean headers;
 
-    @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = RuntimeType.KAMELETS_VERSION)
+    @CommandLine.Option(
+            names = {"--kamelets-version"},
+            description = "Apache Camel Kamelets version",
+            defaultValue = RuntimeType.KAMELETS_VERSION)
     String kameletsVersion = RuntimeType.KAMELETS_VERSION;
 
     CamelCatalog catalog;
@@ -186,29 +206,37 @@ public class CatalogDoc extends CamelCommand {
             boolean kamelet = name.endsWith("-sink") || name.endsWith("-source") || name.endsWith("-action");
             if (kamelet) {
                 // kamelet names
-                suggestions = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
+                suggestions =
+                        SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
             } else {
                 // assume its a component
                 suggestions = SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
             }
             if (!suggestions.isEmpty()) {
                 String type = kamelet ? "kamelet" : "component";
-                printer().printf("Camel %s: %s not found. Did you mean? %s%n", type, name, String.join(", ", suggestions));
+                printer()
+                        .printf(
+                                "Camel %s: %s not found. Did you mean? %s%n",
+                                type, name, String.join(", ", suggestions));
             } else {
                 printer().println("Camel resource: " + name + " not found");
             }
         } else {
-            List<String> suggestions = switch (prefix) {
-                case "kamelet" ->
-                    SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
-                case "component" -> SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
-                case "dataformat" -> SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
-                case "language" -> SuggestSimilarHelper.didYouMean(catalog.findLanguageNames(), name);
-                case "other" -> SuggestSimilarHelper.didYouMean(catalog.findOtherNames(), name);
-                default -> List.of();
-            };
+            List<String> suggestions =
+                    switch (prefix) {
+                        case "kamelet" -> SuggestSimilarHelper.didYouMean(
+                                KameletCatalogHelper.findKameletNames(kameletsVersion), name);
+                        case "component" -> SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
+                        case "dataformat" -> SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
+                        case "language" -> SuggestSimilarHelper.didYouMean(catalog.findLanguageNames(), name);
+                        case "other" -> SuggestSimilarHelper.didYouMean(catalog.findOtherNames(), name);
+                        default -> List.of();
+                    };
             if (!suggestions.isEmpty()) {
-                printer().printf("Camel %s: %s not found. Did you mean? %s%n", prefix, name, String.join(", ", suggestions));
+                printer()
+                        .printf(
+                                "Camel %s: %s not found. Did you mean? %s%n",
+                                prefix, name, String.join(", ", suggestions));
             } else {
                 printer().printf("Camel %s: %s not found.%n", prefix, name);
             }
@@ -267,23 +295,47 @@ public class CatalogDoc extends CamelCommand {
             int total1 = km.properties.size();
             var total2 = filtered.size();
             if (total1 == total2) {
-                printer().printf("The %s kamelet supports (total: %s) options, which are listed below.%n%n", km.name, total1);
+                printer()
+                        .printf(
+                                "The %s kamelet supports (total: %s) options, which are listed below.%n%n",
+                                km.name, total1);
             } else {
-                printer().printf("The %s kamelet supports (total: %s match-filter: %s) options, which are listed below.%n%n",
-                        km.name, total1, total2);
+                printer()
+                        .printf(
+                                "The %s kamelet supports (total: %s match-filter: %s) options, which are listed below.%n%n",
+                                km.name, total1, total2);
             }
-            printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
-                            .maxWidth(35, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.name),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(this::getDescription),
-                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.defaultValue),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.type),
-                    new Column().header("EXAMPLE").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.example))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.FANCY_ASCII,
+                            filtered,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .minWidth(20)
+                                            .maxWidth(35, OverflowBehaviour.NEWLINE)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("DESCRIPTION")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                            .with(this::getDescription),
+                                    new Column()
+                                            .header("DEFAULT")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                            .with(r -> r.defaultValue),
+                                    new Column()
+                                            .header("TYPE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                            .with(r -> r.type),
+                                    new Column()
+                                            .header("EXAMPLE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(40, OverflowBehaviour.NEWLINE)
+                                            .with(r -> r.example))));
             printer().println("");
         }
 
@@ -311,8 +363,10 @@ public class CatalogDoc extends CamelCommand {
         printer().printf("Name: %s%n", "main");
         printer().printf("Since: %s%n", "3.0");
         printer().println("");
-        printer().printf("%s%n",
-                "This module is used for running Camel standalone via a main class extended from camel-main.");
+        printer()
+                .printf(
+                        "%s%n",
+                        "This module is used for running Camel standalone via a main class extended from camel-main.");
         printer().println("");
         printer().println("    <dependency>");
         printer().println("        <groupId>" + "org.apache.camel" + "</groupId>");
@@ -321,8 +375,10 @@ public class CatalogDoc extends CamelCommand {
         printer().println("    </dependency>");
         printer().println("");
 
-        printer().printf("%s%n%n%n",
-                "When running Camel via camel-main you can configure Camel in the application.properties file");
+        printer()
+                .printf(
+                        "%s%n%n%n",
+                        "When running Camel via camel-main you can configure Camel in the application.properties file");
 
         for (MainModel.MainGroupModel g : mm.getGroups()) {
             var go = filterMain(g.getName(), null, mm.getOptions());
@@ -335,17 +391,32 @@ public class CatalogDoc extends CamelCommand {
                 } else {
                     printer().printf("%s options (total: %s match-filter: %s):%n", g.getDescription(), total1, total2);
                 }
-                printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
-                                .maxWidth(40, OverflowBehaviour.NEWLINE)
-                                .with(this::getName),
-                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(80, OverflowBehaviour.NEWLINE)
-                                .with(this::getDescription),
-                        new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                                .with(r -> r.getShortDefaultValue(25)),
-                        new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                                .with(BaseOptionModel::getShortJavaType))));
+                printer()
+                        .println(AsciiTable.getTable(
+                                AsciiTable.FANCY_ASCII,
+                                filtered,
+                                Arrays.asList(
+                                        new Column()
+                                                .header("NAME")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .minWidth(20)
+                                                .maxWidth(40, OverflowBehaviour.NEWLINE)
+                                                .with(this::getName),
+                                        new Column()
+                                                .header("DESCRIPTION")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                                .with(this::getDescription),
+                                        new Column()
+                                                .header("DEFAULT")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                                .with(r -> r.getShortDefaultValue(25)),
+                                        new Column()
+                                                .header("TYPE")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                                .with(BaseOptionModel::getShortJavaType))));
                 printer().println("");
                 printer().println("");
             }
@@ -403,15 +474,32 @@ public class CatalogDoc extends CamelCommand {
         printer().println("with the following path and query parameters:");
         printer().println("");
         printer().printf("Path parameters (%s):%n", cm.getEndpointPathOptions().size());
-        printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, cm.getEndpointPathOptions(), Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
-                        .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                        .with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(25)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(BaseOptionModel::getShortJavaType))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.FANCY_ASCII,
+                        cm.getEndpointPathOptions(),
+                        Arrays.asList(
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .minWidth(20)
+                                        .maxWidth(35, OverflowBehaviour.NEWLINE)
+                                        .with(this::getName),
+                                new Column()
+                                        .header("DESCRIPTION")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                        .with(this::getDescription),
+                                new Column()
+                                        .header("DEFAULT")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                        .with(r -> r.getShortDefaultValue(25)),
+                                new Column()
+                                        .header("TYPE")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                        .with(BaseOptionModel::getShortJavaType))));
         printer().println("");
         var filtered = filter(filter, cm.getEndpointParameterOptions());
         var total1 = cm.getEndpointParameterOptions().size();
@@ -421,15 +509,32 @@ public class CatalogDoc extends CamelCommand {
         } else {
             printer().printf("Query parameters (total: %s match-filter: %s):%n", total1, total2);
         }
-        printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
-                        .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                        .with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(25)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(BaseOptionModel::getShortJavaType))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.FANCY_ASCII,
+                        filtered,
+                        Arrays.asList(
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .minWidth(20)
+                                        .maxWidth(35, OverflowBehaviour.NEWLINE)
+                                        .with(this::getName),
+                                new Column()
+                                        .header("DESCRIPTION")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                        .with(this::getDescription),
+                                new Column()
+                                        .header("DEFAULT")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                        .with(r -> r.getShortDefaultValue(25)),
+                                new Column()
+                                        .header("TYPE")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                        .with(BaseOptionModel::getShortJavaType))));
         printer().println("");
 
         if (headers && !cm.getEndpointHeaders().isEmpty()) {
@@ -441,16 +546,32 @@ public class CatalogDoc extends CamelCommand {
             } else {
                 printer().printf("Message headers (total: %s match-filter: %s):%n", total1, total2);
             }
-            printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
-                            .maxWidth(35, OverflowBehaviour.NEWLINE)
-                            .with(this::getName),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(this::getDescription),
-                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.getShortDefaultValue(25)),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                            .with(BaseOptionModel::getShortJavaType))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.FANCY_ASCII,
+                            filtered,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .minWidth(20)
+                                            .maxWidth(35, OverflowBehaviour.NEWLINE)
+                                            .with(this::getName),
+                                    new Column()
+                                            .header("DESCRIPTION")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                            .with(this::getDescription),
+                                    new Column()
+                                            .header("DEFAULT")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                            .with(r -> r.getShortDefaultValue(25)),
+                                    new Column()
+                                            .header("TYPE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                            .with(BaseOptionModel::getShortJavaType))));
             printer().println("");
         }
 
@@ -494,21 +615,42 @@ public class CatalogDoc extends CamelCommand {
         var total1 = dm.getOptions().size();
         var total2 = filtered.size();
         if (total1 == total2) {
-            printer().printf("The %s dataformat supports (total: %s) options, which are listed below.%n%n", dm.getName(),
-                    total1);
+            printer()
+                    .printf(
+                            "The %s dataformat supports (total: %s) options, which are listed below.%n%n",
+                            dm.getName(), total1);
         } else {
-            printer().printf("The %s dataformat supports (total: %s match-filter: %s) options, which are listed below.%n%n",
-                    dm.getName(), total1, total2);
+            printer()
+                    .printf(
+                            "The %s dataformat supports (total: %s match-filter: %s) options, which are listed below.%n%n",
+                            dm.getName(), total1, total2);
         }
-        printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
-                        .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                        .with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(25)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(BaseOptionModel::getShortJavaType))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.FANCY_ASCII,
+                        filtered,
+                        Arrays.asList(
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .minWidth(20)
+                                        .maxWidth(35, OverflowBehaviour.NEWLINE)
+                                        .with(this::getName),
+                                new Column()
+                                        .header("DESCRIPTION")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                        .with(this::getDescription),
+                                new Column()
+                                        .header("DEFAULT")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                        .with(r -> r.getShortDefaultValue(25)),
+                                new Column()
+                                        .header("TYPE")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                        .with(BaseOptionModel::getShortJavaType))));
         printer().println("");
 
         if (link != null) {
@@ -551,21 +693,42 @@ public class CatalogDoc extends CamelCommand {
         var total1 = lm.getOptions().size();
         var total2 = filtered.size();
         if (total1 == total2) {
-            printer().printf("The %s language supports (total: %s) options, which are listed below.%n%n", lm.getName(),
-                    total1);
+            printer()
+                    .printf(
+                            "The %s language supports (total: %s) options, which are listed below.%n%n",
+                            lm.getName(), total1);
         } else {
-            printer().printf("The %s language supports (total: %s match-filter: %s) options, which are listed below.%n%n",
-                    lm.getName(), total1, total2);
+            printer()
+                    .printf(
+                            "The %s language supports (total: %s match-filter: %s) options, which are listed below.%n%n",
+                            lm.getName(), total1, total2);
         }
-        printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
-                        .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                        .with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(25)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(BaseOptionModel::getShortJavaType))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.FANCY_ASCII,
+                        filtered,
+                        Arrays.asList(
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .minWidth(20)
+                                        .maxWidth(35, OverflowBehaviour.NEWLINE)
+                                        .with(this::getName),
+                                new Column()
+                                        .header("DESCRIPTION")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                        .with(this::getDescription),
+                                new Column()
+                                        .header("DEFAULT")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                        .with(r -> r.getShortDefaultValue(25)),
+                                new Column()
+                                        .header("TYPE")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(25, OverflowBehaviour.NEWLINE)
+                                        .with(BaseOptionModel::getShortJavaType))));
         printer().println("");
 
         if (link != null) {
@@ -651,10 +814,12 @@ public class CatalogDoc extends CamelCommand {
             return options;
         }
         String target = name.toLowerCase(Locale.ROOT);
-        return options.stream().filter(
-                r -> r.getName().contains(target) || r.getName().equalsIgnoreCase(target)
+        return options.stream()
+                .filter(r -> r.getName().contains(target)
+                        || r.getName().equalsIgnoreCase(target)
                         || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
-                        || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
+                        || r.getShortGroup() != null
+                                && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
     }
 
@@ -663,8 +828,9 @@ public class CatalogDoc extends CamelCommand {
             return options;
         }
         String target = name.toLowerCase(Locale.ROOT);
-        return options.stream().filter(
-                r -> r.name.equalsIgnoreCase(target) || r.description.toLowerCase(Locale.ROOT).contains(target))
+        return options.stream()
+                .filter(r -> r.name.equalsIgnoreCase(target)
+                        || r.description.toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
     }
 
@@ -697,10 +863,12 @@ public class CatalogDoc extends CamelCommand {
             return options;
         }
         String target = name.toLowerCase(Locale.ROOT);
-        return options.stream().filter(
-                r -> r.getName().contains(target) || r.getName().equalsIgnoreCase(target)
+        return options.stream()
+                .filter(r -> r.getName().contains(target)
+                        || r.getName().equalsIgnoreCase(target)
                         || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
-                        || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
+                        || r.getShortGroup() != null
+                                && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
     }
 
@@ -711,5 +879,4 @@ public class CatalogDoc extends CamelCommand {
         }
         return since;
     }
-
 }

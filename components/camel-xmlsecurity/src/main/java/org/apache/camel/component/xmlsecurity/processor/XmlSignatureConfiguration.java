@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.processor;
 
 import java.util.Map;
@@ -33,24 +34,30 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
 
     @UriParam(label = "producer")
     private String baseUri;
+
     @UriParam(label = "producer")
     private Map<String, ?> cryptoContextProperties;
+
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean disallowDoctypeDecl = Boolean.TRUE;
+
     @UriParam(label = "producer", defaultValue = "false")
     private Boolean omitXmlDeclaration = Boolean.FALSE;
+
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean clearHeaders = Boolean.TRUE;
+
     @UriParam(label = "producer")
     @Metadata(supportFileReference = true)
     private String schemaResourceUri;
+
     @UriParam(label = "producer")
     private String outputXmlEncoding;
+
     @UriParam(label = "advanced")
     private URIDereferencer uriDereferencer;
 
-    public XmlSignatureConfiguration() {
-    }
+    public XmlSignatureConfiguration() {}
 
     public URIDereferencer getUriDereferencer() {
         return uriDereferencer;
@@ -169,5 +176,4 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
     public void setOutputXmlEncoding(String outputXmlEncoding) {
         this.outputXmlEncoding = outputXmlEncoding;
     }
-
 }

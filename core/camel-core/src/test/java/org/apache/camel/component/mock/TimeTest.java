@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TimeTest {
 
@@ -62,5 +63,4 @@ public class TimeTest {
         assertTrue(time.toMillis() > 0);
         assertNotNull(time.toString());
     }
-
 }

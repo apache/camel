@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -31,7 +32,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         executeBackground(String.format("run --source-dir=%s", mountPoint()));
         checkLogContains("Hello world!");
         execute("cmd stop-route --id=route1");
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern(
+                "get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -44,7 +46,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         executeBackground(String.format("run %s/route2.yaml", mountPoint()));
         checkLogContains("Hello world!");
         execute("cmd stop-route " + PID);
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern(
+                "get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -56,7 +59,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         executeBackground(String.format("run --source-dir=%s", mountPoint()));
         checkLogContains("Hello world!");
         execute("cmd stop-route");
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern(
+                "get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -69,7 +73,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         checkLogContains("Hello world!");
         execute("cmd stop-route");
         execute("cmd start-route --id=route1");
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern(
+                "get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -83,7 +88,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         checkLogContains("Hello world!");
         execute("cmd stop-route");
         execute("cmd start-route " + PID);
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern(
+                "get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -96,7 +102,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         checkLogContains("Hello world!");
         execute("cmd stop-route");
         execute("cmd start-route");
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern(
+                "get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -105,12 +112,9 @@ public class CmdStartStopITCase extends JBangTestSupport {
     public void testCamelWatch() throws IOException {
         copyResourceInDataFolder(TestResources.ROUTE2);
         String PID = executeBackground(String.format("run %s/route2.yaml", mountPoint()));
-        newFileInDataFolder("watch-sleep", "nohup camel ps --watch&\n" +
-                                           "sleep 5\n" +
-                                           "echo \"q\"\n");
+        newFileInDataFolder("watch-sleep", "nohup camel ps --watch&\n" + "sleep 5\n" + "echo \"q\"\n");
         execInContainer(String.format("chmod +x %s/watch-sleep", mountPoint()));
-        Assertions.assertThat(
-                execInContainer(String.format("%s/watch-sleep", mountPoint())))
+        Assertions.assertThat(execInContainer(String.format("%s/watch-sleep", mountPoint())))
                 .as("watch command should output PID" + PID)
                 .contains(PID);
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.geocoder;
 
 import com.google.maps.GeoApiContext;
@@ -34,7 +35,8 @@ public class GeoCoderProxyManualIT extends GeoCoderApiKeyTestBase {
     @Test
     public void testGeoCoderProxyNoAuth() throws Exception {
         GeoCoderEndpoint endpoint = context.getEndpoint(
-                "geocoder:address:current?headersOnly=true&proxyHost=localhost" + "&proxyPort=8888&apiKey=" + getApiKey(),
+                "geocoder:address:current?headersOnly=true&proxyHost=localhost" + "&proxyPort=8888&apiKey="
+                        + getApiKey(),
                 GeoCoderEndpoint.class);
 
         GeoApiContext context = endpoint.createGeoApiContext();
@@ -46,9 +48,10 @@ public class GeoCoderProxyManualIT extends GeoCoderApiKeyTestBase {
 
     @Test
     public void testGeoCoderWithAuth() throws Exception {
-        GeoCoderEndpoint endpoint = context.getEndpoint("geocoder:address:current?headersOnly=true&proxyHost=localhost"
-                                                        + "&proxyPort=8888&proxyAuthMethod=Basic&proxyAuthUsername=proxy&proxyAuthPassword=proxy&apiKey="
-                                                        + getApiKey(),
+        GeoCoderEndpoint endpoint = context.getEndpoint(
+                "geocoder:address:current?headersOnly=true&proxyHost=localhost"
+                        + "&proxyPort=8888&proxyAuthMethod=Basic&proxyAuthUsername=proxy&proxyAuthPassword=proxy&apiKey="
+                        + getApiKey(),
                 GeoCoderEndpoint.class);
 
         GeoApiContext context = endpoint.createGeoApiContext();
@@ -57,5 +60,4 @@ public class GeoCoderProxyManualIT extends GeoCoderApiKeyTestBase {
 
         LOG.info("Response {}", results);
     }
-
 }

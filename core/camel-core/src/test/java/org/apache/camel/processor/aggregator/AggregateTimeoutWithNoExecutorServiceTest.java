@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,16 +26,17 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
-                          disabledReason = "In case of Virtual Threads, the threads cannot be counted this way")
+@DisabledIfSystemProperty(
+        named = "camel.threads.virtual.enabled",
+        matches = "true",
+        disabledReason = "In case of Virtual Threads, the threads cannot be counted this way")
 public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSupport {
 
     @Test
     public void testThreadUsedForEveryAggregatorWhenDefaultExecutorServiceUsed() throws Exception {
-        assertTrue(AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount(context.getName())
-                   >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS,
+        assertTrue(
+                AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount(context.getName())
+                        >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS,
                 "There should be a thread for every aggregator when using defaults");
 
         // sanity check to make sure were testing routes that work
@@ -58,8 +62,10 @@ public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSuppor
                 for (int i = 0; i < AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
                             // aggregate timeout after 0.1 second
-                            .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
-                            .completionTimeoutCheckerInterval(10).to("mock:result" + i);
+                            .aggregate(header("id"), new UseLatestAggregationStrategy())
+                            .completionTimeout(100)
+                            .completionTimeoutCheckerInterval(10)
+                            .to("mock:result" + i);
                 }
             }
         };

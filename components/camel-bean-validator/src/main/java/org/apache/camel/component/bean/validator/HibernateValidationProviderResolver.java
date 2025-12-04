@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
+
+import static java.util.Collections.singletonList;
 
 import java.util.List;
 
@@ -22,13 +25,10 @@ import jakarta.validation.ValidationProviderResolver;
 
 import org.hibernate.validator.HibernateValidator;
 
-import static java.util.Collections.singletonList;
-
 public class HibernateValidationProviderResolver implements ValidationProviderResolver {
 
     @Override
     public List getValidationProviders() {
         return singletonList(new HibernateValidator());
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.apache.camel.component.sjms.SjmsHelper.*;
 
 import java.util.Objects;
 
@@ -23,8 +26,6 @@ import jakarta.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.SynchronizationAdapter;
-
-import static org.apache.camel.component.sjms.SjmsHelper.*;
 
 /**
  * Completion {@link org.apache.camel.spi.Synchronization} work when processing the message is complete to either commit

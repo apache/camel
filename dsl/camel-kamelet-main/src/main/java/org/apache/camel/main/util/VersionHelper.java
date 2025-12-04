@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.util;
 
 import java.lang.management.ManagementFactory;
@@ -28,14 +29,14 @@ public final class VersionHelper {
 
     private static String camelVersion;
 
-    private static final Pattern KAMELETS_LIBRARY = Pattern.compile("camel-kamelets-(\\d[\\w\\d.-]*).jar", Pattern.DOTALL);
-    private static final Pattern CAMEL_BASE_ENGINE_LIBRARY
-            = Pattern.compile("camel-base-engine-(\\d[\\w\\d.-]*).jar", Pattern.DOTALL);
+    private static final Pattern KAMELETS_LIBRARY =
+            Pattern.compile("camel-kamelets-(\\d[\\w\\d.-]*).jar", Pattern.DOTALL);
+    private static final Pattern CAMEL_BASE_ENGINE_LIBRARY =
+            Pattern.compile("camel-base-engine-(\\d[\\w\\d.-]*).jar", Pattern.DOTALL);
 
     private static final String CP = System.getProperty("java.class.path");
 
-    private VersionHelper() {
-    }
+    private VersionHelper() {}
 
     public static boolean isGE(String source, String target) {
         return compare(source, target) >= 0;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,20 +25,20 @@ import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class WebhookMultiRouteTest extends WebhookTestBase {
 
     @Test
     public void testMultiRoute() {
-        String result = template.requestBody("netty-http:http://localhost:" + port
-                                             + WebhookConfiguration.computeDefaultPath("wb-delegate://yy"),
-                "", String.class);
+        String result = template.requestBody(
+                "netty-http:http://localhost:" + port + WebhookConfiguration.computeDefaultPath("wb-delegate://yy"),
+                "",
+                String.class);
         assertEquals("uri: webhook", result);
 
-        result = template.requestBody("netty-http:http://localhost:" + port
-                                      + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"),
-                "", String.class);
+        result = template.requestBody(
+                "netty-http:http://localhost:" + port + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"),
+                "",
+                String.class);
         assertEquals("msg: webhook", result);
     }
 
@@ -55,16 +58,11 @@ public class WebhookMultiRouteTest extends WebhookTestBase {
             @Override
             public void configure() {
 
-                restConfiguration()
-                        .host("0.0.0.0")
-                        .port(port);
+                restConfiguration().host("0.0.0.0").port(port);
 
-                from("webhook:wb-delegate://yy")
-                        .transform(body().prepend("uri: "));
+                from("webhook:wb-delegate://yy").transform(body().prepend("uri: "));
 
-                from("webhook:wb-delegate://xx")
-                        .transform(body().prepend("msg: "));
-
+                from("webhook:wb-delegate://xx").transform(body().prepend("msg: "));
             }
         };
     }

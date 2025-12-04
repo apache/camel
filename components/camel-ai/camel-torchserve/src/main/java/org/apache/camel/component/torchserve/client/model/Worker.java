@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.model;
 
 import org.apache.camel.component.torchserve.client.management.model.DescribeModel200ResponseInnerWorkersInner;
@@ -25,8 +26,7 @@ public class Worker {
     private Boolean gpu = null;
     private Status status = null;
 
-    public Worker() {
-    }
+    public Worker() {}
 
     public static Worker from(DescribeModel200ResponseInnerWorkersInner src) {
         if (src == null) {
@@ -75,12 +75,11 @@ public class Worker {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {" +
-               " id: " + id + "," +
-               " startTime: " + startTime + "," +
-               " gpu: " + gpu + "," +
-               " status: " + status + " " +
-               "}";
+        return getClass().getSimpleName() + " {" + " id: "
+                + id + "," + " startTime: "
+                + startTime + "," + " gpu: "
+                + gpu + "," + " status: "
+                + status + " " + "}";
     }
 
     public enum Status {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,8 +31,7 @@ public class DropField implements Processor {
     /**
      * Default constructor.
      */
-    public DropField() {
-    }
+    public DropField() {}
 
     /**
      * Constructor using fields.

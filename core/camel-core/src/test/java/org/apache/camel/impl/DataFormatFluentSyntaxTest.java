@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,13 +30,13 @@ public class DataFormatFluentSyntaxTest extends RefDataFormatTest {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:a").marshal(
-                    dataFormat().custom().ref("reverse").end()
-                ).to("mock:a");
+                from("direct:a")
+                        .marshal(dataFormat().custom().ref("reverse").end())
+                        .to("mock:a");
 
-                from("direct:b").unmarshal(
-                    dataFormat().custom().ref("reverse").end()
-                ).to("mock:b");
+                from("direct:b")
+                        .unmarshal(dataFormat().custom().ref("reverse").end())
+                        .to("mock:b");
                 // END SNIPPET: e1
             }
         };

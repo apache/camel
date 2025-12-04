@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config.routebuilder;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,5 +27,4 @@ public abstract class AbstractRouteBuilder extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:start").to(getResult());
     }
-
 }

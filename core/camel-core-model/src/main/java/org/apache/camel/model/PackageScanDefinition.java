@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -36,15 +37,16 @@ public class PackageScanDefinition {
 
     @XmlElement(name = "package", required = true)
     private List<String> packages = new ArrayList<>();
+
     @XmlElement
     @Metadata(label = "advanced")
     private List<String> excludes = new ArrayList<>();
+
     @XmlElement
     @Metadata(label = "advanced")
     private List<String> includes = new ArrayList<>();
 
-    public PackageScanDefinition() {
-    }
+    public PackageScanDefinition() {}
 
     public List<String> getExcludes() {
         return excludes;

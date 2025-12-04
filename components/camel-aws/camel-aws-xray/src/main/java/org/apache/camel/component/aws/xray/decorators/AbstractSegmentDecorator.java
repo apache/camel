@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray.decorators;
 
 import java.net.URI;
@@ -45,7 +46,9 @@ public abstract class AbstractSegmentDecorator implements SegmentDecorator {
 
     @Override
     public void pre(Entity segment, Exchange exchange, Endpoint endpoint) {
-        segment.putMetadata("component", CAMEL_COMPONENT + URI.create(endpoint.getEndpointUri()).getScheme());
+        segment.putMetadata(
+                "component",
+                CAMEL_COMPONENT + URI.create(endpoint.getEndpointUri()).getScheme());
         segment.putMetadata("camel.uri", URISupport.sanitizeUri(endpoint.getEndpointUri()));
     }
 
@@ -74,7 +77,9 @@ public abstract class AbstractSegmentDecorator implements SegmentDecorator {
             start++;
         }
         int end = endpoint.getEndpointUri().indexOf('?');
-        return end == -1 ? endpoint.getEndpointUri().substring(start) : endpoint.getEndpointUri().substring(start, end);
+        return end == -1
+                ? endpoint.getEndpointUri().substring(start)
+                : endpoint.getEndpointUri().substring(start, end);
     }
 
     /**

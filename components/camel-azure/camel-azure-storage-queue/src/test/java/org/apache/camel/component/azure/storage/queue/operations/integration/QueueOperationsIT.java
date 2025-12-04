@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.operations.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.List;
@@ -42,14 +49,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIfSystemProperty(named = "accountName", matches = ".*",
-                         disabledReason = "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey")
+@EnabledIfSystemProperty(
+        named = "accountName",
+        matches = ".*",
+        disabledReason =
+                "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueueOperationsIT extends CamelTestSupport {
 
@@ -82,8 +86,7 @@ class QueueOperationsIT extends CamelTestSupport {
         assertNotNull(response);
         assertNotNull(response.getHeaders());
         assertTrue((boolean) response.getBody());
-        assertTrue(serviceClientWrapper.listQueues(null, null)
-                .stream()
+        assertTrue(serviceClientWrapper.listQueues(null, null).stream()
                 .map(QueueItem::getName)
                 .toList()
                 .contains(queueName));
@@ -93,8 +96,7 @@ class QueueOperationsIT extends CamelTestSupport {
         assertNotNull(response2);
         assertNotNull(response2.getHeaders());
         assertTrue((boolean) response2.getBody());
-        assertFalse(serviceClientWrapper.listQueues(null, null)
-                .stream()
+        assertFalse(serviceClientWrapper.listQueues(null, null).stream()
                 .map(QueueItem::getName)
                 .toList()
                 .contains(queueName));
@@ -118,8 +120,9 @@ class QueueOperationsIT extends CamelTestSupport {
         assertNotNull(response.getHeaders().get(QueueConstants.EXPIRATION_TIME));
         assertNotNull(response.getHeaders().get(QueueConstants.POP_RECEIPT));
 
-        final QueueMessageItem messageItem
-                = clientWrapper.receiveMessages(1, Duration.ofSeconds(30), null).stream().findFirst().get();
+        final QueueMessageItem messageItem = clientWrapper.receiveMessages(1, Duration.ofSeconds(30), null).stream()
+                .findFirst()
+                .get();
 
         assertEquals("testing message", messageItem.getBody().toString());
 
@@ -184,11 +187,13 @@ class QueueOperationsIT extends CamelTestSupport {
 
         // test delete message
         assertThrows(IllegalArgumentException.class, () -> operations.deleteMessage(exchange));
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, sentMessage1.getHeaders().get(QueueConstants.MESSAGE_ID));
+        exchange.getIn()
+                .setHeader(QueueConstants.MESSAGE_ID, sentMessage1.getHeaders().get(QueueConstants.MESSAGE_ID));
         // we still need pop receipt
         assertThrows(IllegalArgumentException.class, () -> operations.deleteMessage(exchange));
         // delete message now
-        exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, sentMessage1.getHeaders().get(QueueConstants.POP_RECEIPT));
+        exchange.getIn()
+                .setHeader(QueueConstants.POP_RECEIPT, sentMessage1.getHeaders().get(QueueConstants.POP_RECEIPT));
         operations.deleteMessage(exchange);
 
         // check the what we have in the queue
@@ -197,7 +202,9 @@ class QueueOperationsIT extends CamelTestSupport {
         final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
 
         assertEquals(1, peekedMessageItems.size());
-        assertEquals(sentMessage2.getHeaders().get(QueueConstants.MESSAGE_ID), peekedMessageItems.get(0).getMessageId());
+        assertEquals(
+                sentMessage2.getHeaders().get(QueueConstants.MESSAGE_ID),
+                peekedMessageItems.get(0).getMessageId());
 
         // delete testing queue
         operations.deleteQueue(exchange);
@@ -213,8 +220,10 @@ class QueueOperationsIT extends CamelTestSupport {
 
         // let's do our update
         exchange.getIn().setBody("updated message-1");
-        exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, sentMessage.getHeaders().get(QueueConstants.POP_RECEIPT));
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, sentMessage.getHeaders().get(QueueConstants.MESSAGE_ID));
+        exchange.getIn()
+                .setHeader(QueueConstants.POP_RECEIPT, sentMessage.getHeaders().get(QueueConstants.POP_RECEIPT));
+        exchange.getIn()
+                .setHeader(QueueConstants.MESSAGE_ID, sentMessage.getHeaders().get(QueueConstants.MESSAGE_ID));
         exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMillis(10));
 
         final QueueOperationResponse updatedMessage = operations.updateMessage(exchange);
@@ -243,7 +252,9 @@ class QueueOperationsIT extends CamelTestSupport {
         final List<QueueItem> queues = serviceClientWrapper.listQueues(null, null);
 
         if (queues.size() > 0) {
-            queues.forEach(queueItem -> serviceClientWrapper.getQueueClientWrapper(queueItem.getName()).delete(null));
+            queues.forEach(queueItem -> serviceClientWrapper
+                    .getQueueClientWrapper(queueItem.getName())
+                    .delete(null));
         }
     }
 

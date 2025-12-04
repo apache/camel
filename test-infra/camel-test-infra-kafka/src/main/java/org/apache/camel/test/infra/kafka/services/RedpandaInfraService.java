@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -26,9 +27,11 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 import org.testcontainers.redpanda.RedpandaContainer;
 
-@InfraService(service = KafkaInfraService.class,
-              description = "Apache Kafka, Distributed event streaming platform",
-              serviceAlias = "kafka", serviceImplementationAlias = "redpanda")
+@InfraService(
+        service = KafkaInfraService.class,
+        description = "Apache Kafka, Distributed event streaming platform",
+        serviceAlias = "kafka",
+        serviceImplementationAlias = "redpanda")
 public class RedpandaInfraService implements KafkaInfraService, ContainerService<RedpandaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RedpandaInfraService.class);
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.util.Optional;
@@ -71,29 +72,30 @@ public class CamelParallelExecutionStrategy implements ParallelExecutionConfigur
         @Override
         public Predicate<? super ForkJoinPool> getSaturatePredicate() {
             return (ForkJoinPool pool) -> {
-                LOG.info("Junit ForkJoinPool saturated: running threads={}, pool size={}, queued tasks={}",
+                LOG.info(
+                        "Junit ForkJoinPool saturated: running threads={}, pool size={}, queued tasks={}",
                         pool.getRunningThreadCount(),
                         pool.getPoolSize(),
                         pool.getQueuedTaskCount());
                 return true;
             };
         }
-
     }
 
     @Override
     public ParallelExecutionConfiguration createConfiguration(ConfigurationParameters configurationParameters) {
-        Optional<Integer> parallelism = configurationParameters.get(CONFIG_CUSTOM_PARALLELISM_PROPERTY_NAME,
-                Integer::valueOf);
+        Optional<Integer> parallelism =
+                configurationParameters.get(CONFIG_CUSTOM_PARALLELISM_PROPERTY_NAME, Integer::valueOf);
         this.nbParallelExecutions = parallelism.orElse(DEFAULT_PARALLELISM);
-        Optional<Integer> poolSize = configurationParameters.get(CONFIG_CUSTOM_MAXPOOLSIZE_PROPERTY_NAME,
-                Integer::valueOf);
+        Optional<Integer> poolSize =
+                configurationParameters.get(CONFIG_CUSTOM_MAXPOOLSIZE_PROPERTY_NAME, Integer::valueOf);
         this.maxPoolSize = poolSize.orElseGet(() -> nbParallelExecutions * 256);
 
-        LOG.info("Using custom JUnit parallel execution with parallelism={} and maxPoolSize={}",
-                nbParallelExecutions, maxPoolSize);
+        LOG.info(
+                "Using custom JUnit parallel execution with parallelism={} and maxPoolSize={}",
+                nbParallelExecutions,
+                maxPoolSize);
 
         return new CamelParallelExecutionConfiguration();
     }
-
 }

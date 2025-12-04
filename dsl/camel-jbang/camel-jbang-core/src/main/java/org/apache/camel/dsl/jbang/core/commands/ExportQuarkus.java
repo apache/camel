@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -42,9 +46,6 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-
-import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 class ExportQuarkus extends Export {
 
@@ -102,9 +103,15 @@ class ExportQuarkus extends Export {
         Path srcCamelResourcesDir = buildDir.resolve("src/main/resources/camel");
         Path srcKameletsResourcesDir = buildDir.resolve("src/main/resources/kamelets");
         // copy source files
-        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir,
-                srcResourcesDir, srcCamelResourcesDir,
-                srcKameletsResourcesDir, srcPackageName);
+        copySourceFiles(
+                settings,
+                profile,
+                srcJavaDirRoot,
+                srcJavaDir,
+                srcResourcesDir,
+                srcCamelResourcesDir,
+                srcKameletsResourcesDir,
+                srcPackageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!hasModeline(settings)) {
@@ -238,7 +245,8 @@ class ExportQuarkus extends Export {
     }
 
     private void createGradleProperties(Path output) throws Exception {
-        InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-gradle-properties.tmpl");
+        InputStream is =
+                ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-gradle-properties.tmpl");
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
@@ -252,7 +260,8 @@ class ExportQuarkus extends Export {
     private void createSettingsGradle(Path output) throws Exception {
         String[] ids = gav.split(":");
 
-        InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-settings-gradle.tmpl");
+        InputStream is =
+                ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-settings-gradle.tmpl");
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
@@ -266,7 +275,8 @@ class ExportQuarkus extends Export {
     private void createBuildGradle(Path settings, Path gradleBuild, Set<String> deps) throws Exception {
         String[] ids = gav.split(":");
 
-        InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream("templates/quarkus-build-gradle.tmpl");
+        InputStream is =
+                ExportSpringBoot.class.getClassLoader().getResourceAsStream("templates/quarkus-build-gradle.tmpl");
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
@@ -338,8 +348,11 @@ class ExportQuarkus extends Export {
         for (MavenGav gav : gavs) {
             if ("lib".equals(gav.getPackaging())) {
                 // special for lib JARs
-                sb.append("    implementation files('lib/").append(gav.getArtifactId())
-                        .append("-").append(gav.getVersion()).append(".jar')\n");
+                sb.append("    implementation files('lib/")
+                        .append(gav.getArtifactId())
+                        .append("-")
+                        .append(gav.getVersion())
+                        .append(".jar')\n");
             } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
                 // special for camel-kamelets-utils
                 sb.append("    implementation ('").append(gav).append("') {\n");
@@ -358,7 +371,8 @@ class ExportQuarkus extends Export {
         // load information about dependencies that should be replaced
         Map<MavenGav, MavenGav> replace = new HashMap<>();
         try {
-            InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-dependencies.properties");
+            InputStream is =
+                    ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-dependencies.properties");
             if (is != null) {
                 Properties prop = new Properties();
                 prop.load(is);
@@ -377,13 +391,16 @@ class ExportQuarkus extends Export {
 
         // find and replace dependencies from the pom JARs
         for (MavenGav gav : gavs) {
-            replace.keySet().stream().filter(q -> compareGav(q, gav)).findFirst().ifPresent(q -> {
-                MavenGav to = replace.get(q);
-                gav.setGroupId(to.getGroupId());
-                gav.setArtifactId(to.getArtifactId());
-                gav.setVersion(to.getVersion());
-                gav.setScope(to.getScope());
-            });
+            replace.keySet().stream()
+                    .filter(q -> compareGav(q, gav))
+                    .findFirst()
+                    .ifPresent(q -> {
+                        MavenGav to = replace.get(q);
+                        gav.setGroupId(to.getGroupId());
+                        gav.setArtifactId(to.getArtifactId());
+                        gav.setVersion(to.getVersion());
+                        gav.setScope(to.getScope());
+                    });
         }
     }
 
@@ -496,7 +513,7 @@ class ExportQuarkus extends Export {
 
         StringBuilder sb = new StringBuilder();
         for (MavenGav gav : gavs) {
-            //Special case, quarkus-pom.tmpl already have them included.
+            // Special case, quarkus-pom.tmpl already have them included.
             if ("camel-quarkus-core".equals(gav.getArtifactId())
                     || "camel-quarkus-microprofile-health".equals(gav.getArtifactId())) {
                 continue;
@@ -513,8 +530,11 @@ class ExportQuarkus extends Export {
             if ("lib".equals(gav.getPackaging())) {
                 // special for lib JARs
                 sb.append("            <scope>system</scope>\n");
-                sb.append("            <systemPath>\\$\\{project.basedir}/lib/").append(gav.getArtifactId()).append("-")
-                        .append(gav.getVersion()).append(".jar</systemPath>\n");
+                sb.append("            <systemPath>\\$\\{project.basedir}/lib/")
+                        .append(gav.getArtifactId())
+                        .append("-")
+                        .append(gav.getVersion())
+                        .append(".jar</systemPath>\n");
             } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
                 // special for camel-kamelets-utils
                 sb.append("            <exclusions>\n");
@@ -546,5 +566,4 @@ class ExportQuarkus extends Export {
         // only check for groupId and artifactId
         return g1.getGroupId().equals(g2.getGroupId()) && g1.getArtifactId().equals(g2.getArtifactId());
     }
-
 }

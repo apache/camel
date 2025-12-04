@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,35 +36,50 @@ public class CamelRouteControllerDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String supervising;
+
     @XmlAttribute
     private String includeRoutes;
+
     @XmlAttribute
     private String excludeRoutes;
+
     @XmlAttribute
     @Metadata(defaultValue = "1")
     private String threadPoolSize;
+
     @XmlAttribute
     private String initialDelay;
+
     @XmlAttribute
     @Metadata(defaultValue = "2000")
     private String backOffDelay;
+
     @XmlAttribute
     private String backOffMaxDelay;
+
     @XmlAttribute
     private String backOffMaxElapsedTime;
+
     @XmlAttribute
     private String backOffMaxAttempts;
+
     @XmlAttribute
     @Metadata(defaultValue = "1.0")
     private String backOffMultiplier;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String unhealthyOnExhausted;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String unhealthyOnRestarting;
+
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(
+            javaType = "org.apache.camel.LoggingLevel",
+            defaultValue = "DEBUG",
+            enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
 
     public String getSupervising() {

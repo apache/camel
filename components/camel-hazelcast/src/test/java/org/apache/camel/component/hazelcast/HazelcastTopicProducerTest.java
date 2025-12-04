@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.topic.ITopic;
@@ -24,12 +31,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
 
     @Mock
@@ -37,7 +38,7 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String> getTopic("bar")).thenReturn(topic);
+        when(hazelcastInstance.<String>getTopic("bar")).thenReturn(topic);
     }
 
     @Override
@@ -52,8 +53,7 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
 
     @Test
     public void testWithInvalidOperation() {
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:publishInvalid", "foo"));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:publishInvalid", "foo"));
     }
 
     @Test
@@ -75,13 +75,14 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
             public void configure() throws Exception {
                 from("direct:no-operation").to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus"))
+                from("direct:publishInvalid")
+                        .setHeader(HazelcastConstants.OPERATION, constant("bogus"))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH))
+                from("direct:publish")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
             }
         };
     }
-
 }

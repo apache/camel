@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.load;
+
+import static org.apache.camel.component.caffeine.CaffeineHelper.defineBuilder;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,8 +31,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-import static org.apache.camel.component.caffeine.CaffeineHelper.defineBuilder;
-
 /**
  * Represents the component that manages {@link DefaultComponent}.
  */
@@ -40,8 +41,7 @@ public class CaffeineLoadCacheComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private CaffeineConfiguration configuration = new CaffeineConfiguration();
 
-    public CaffeineLoadCacheComponent() {
-    }
+    public CaffeineLoadCacheComponent() {}
 
     public CaffeineLoadCacheComponent(CamelContext context) {
         super(context);

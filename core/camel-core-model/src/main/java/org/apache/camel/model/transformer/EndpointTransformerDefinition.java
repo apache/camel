@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.transformer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,11 +34,11 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
     private String ref;
+
     @XmlAttribute
     private String uri;
 
-    public EndpointTransformerDefinition() {
-    }
+    public EndpointTransformerDefinition() {}
 
     protected EndpointTransformerDefinition(EndpointTransformerDefinition source) {
         super(source);
@@ -71,5 +72,4 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
     public void setUri(String uri) {
         this.uri = uri;
     }
-
 }

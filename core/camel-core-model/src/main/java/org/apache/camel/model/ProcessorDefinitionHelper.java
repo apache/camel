@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -32,8 +33,7 @@ import org.apache.camel.util.FileUtil;
  */
 public final class ProcessorDefinitionHelper {
 
-    private ProcessorDefinitionHelper() {
-    }
+    private ProcessorDefinitionHelper() {}
 
     /**
      * Looks for the given type in the list of outputs and recurring all the children as well.
@@ -54,7 +54,8 @@ public final class ProcessorDefinitionHelper {
      * @param  maxDeep maximum levels deep to traverse
      * @return         the found definitions, or <tt>null</tt> if not found
      */
-    public static <T> Collection<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
+    public static <T> Collection<T> filterTypeInOutputs(
+            List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
         List<T> found = new ArrayList<>();
         doFindType(outputs, type, found, maxDeep);
         return found;
@@ -248,7 +249,8 @@ public final class ProcessorDefinitionHelper {
         }
     }
 
-    private static <T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int maxDeep) {
+    private static <T> void doFindType(
+            List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int maxDeep) {
 
         // do we have any top level abstracts, then we should max deep one more
         // level down
@@ -266,9 +268,9 @@ public final class ProcessorDefinitionHelper {
         doFindType(outputs, type, found, 1, maxDeep);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static <
-            T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int current, int maxDeep) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static <T> void doFindType(
+            List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int current, int maxDeep) {
         if (outputs == null || outputs.isEmpty()) {
             return;
         }
@@ -306,7 +308,8 @@ public final class ProcessorDefinitionHelper {
 
                     // otherwise is optional
                     if (choice.getOtherwise() != null) {
-                        List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
+                        List<ProcessorDefinition<?>> children =
+                                choice.getOtherwise().getOutputs();
                         doFindType(children, type, found, ++current, maxDeep);
                     }
                 }
@@ -399,12 +402,12 @@ public final class ProcessorDefinitionHelper {
             // skip first stack as that is this method
             for (int i = 1; i < st.length; i++) {
                 StackTraceElement e = st[i];
-                if (!e.getClassName().startsWith("org.apache.camel.model") &&
-                        !e.getClassName().startsWith("org.apache.camel.builder.RouteBuilder") &&
-                        !e.getClassName().startsWith("org.apache.camel.reifier.RouteReifier") &&
-                        !e.getClassName().startsWith("org.apache.camel.impl") &&
-                        !e.getClassName().startsWith("org.apache.camel.support") &&
-                        !e.getClassName().startsWith("org.apache.camel.dsl")) {
+                if (!e.getClassName().startsWith("org.apache.camel.model")
+                        && !e.getClassName().startsWith("org.apache.camel.builder.RouteBuilder")
+                        && !e.getClassName().startsWith("org.apache.camel.reifier.RouteReifier")
+                        && !e.getClassName().startsWith("org.apache.camel.impl")
+                        && !e.getClassName().startsWith("org.apache.camel.support")
+                        && !e.getClassName().startsWith("org.apache.camel.dsl")) {
                     // when we are no longer in model/RouteBuilder, we have found the location:line-number
                     node.setLineNumber(e.getLineNumber());
                     if (node.getLocation() == null) {
@@ -478,13 +481,16 @@ public final class ProcessorDefinitionHelper {
      * wrapped or not.
      */
     public static boolean shouldWrapInErrorHandler(
-            CamelContext context, ProcessorDefinition<?> definition,
-            ProcessorDefinition<?> child, Boolean inheritErrorHandler) {
+            CamelContext context,
+            ProcessorDefinition<?> definition,
+            ProcessorDefinition<?> child,
+            Boolean inheritErrorHandler) {
         boolean wrap = false;
 
         // set the error handler, must be done after init as we can set the
         // error handler as first in the chain
-        if (definition instanceof TryDefinition || definition instanceof CatchDefinition
+        if (definition instanceof TryDefinition
+                || definition instanceof CatchDefinition
                 || definition instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it
             // will handle errors itself
@@ -523,5 +529,4 @@ public final class ProcessorDefinitionHelper {
         }
         return wrap;
     }
-
 }

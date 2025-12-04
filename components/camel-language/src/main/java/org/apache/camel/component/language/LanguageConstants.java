@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.language;
 
 import org.apache.camel.Exchange;
@@ -21,11 +22,11 @@ import org.apache.camel.spi.Metadata;
 
 public final class LanguageConstants {
 
-    @Metadata(description = "The script to execute provided in the header. Takes precedence over\n" +
-                            "script configured on the endpoint.",
-              javaType = "String or Expression")
+    @Metadata(
+            description = "The script to execute provided in the header. Takes precedence over\n"
+                    + "script configured on the endpoint.",
+            javaType = "String or Expression")
     public static final String LANGUAGE_SCRIPT = Exchange.LANGUAGE_SCRIPT;
 
-    private LanguageConstants() {
-    }
+    private LanguageConstants() {}
 }

@@ -49,8 +49,7 @@ public class HashicorpProducerDeleteSecretIT extends HashicorpVaultBase {
         });
         exchange = template.request("direct:deleteSecret", new Processor() {
             @Override
-            public void process(Exchange exchange) {
-            }
+            public void process(Exchange exchange) {}
         });
 
         MockEndpoint.assertIsSatisfied(context);
@@ -62,12 +61,14 @@ public class HashicorpProducerDeleteSecretIT extends HashicorpVaultBase {
             @Override
             public void configure() {
                 from("direct:createSecret")
-                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                        .toF(
+                                "hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
                                 service.token(), service.host(), service.port())
                         .to("mock:result-write");
 
                 from("direct:deleteSecret")
-                        .toF("hashicorp-vault://secret?operation=deleteSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                        .toF(
+                                "hashicorp-vault://secret?operation=deleteSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
                                 service.token(), service.host(), service.port())
                         .to("mock:result-delete");
             }

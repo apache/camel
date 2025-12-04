@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,8 +31,9 @@ import picocli.CommandLine;
  */
 abstract class ProcessWatchCommand extends ProcessBaseCommand {
 
-    @CommandLine.Option(names = { "--watch" },
-                        description = "Execute periodically and showing output fullscreen")
+    @CommandLine.Option(
+            names = {"--watch"},
+            description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
     private CommandHelper.ReadConsoleTask waitUserTask;
@@ -45,10 +47,12 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
         int exit;
         final AtomicBoolean running = new AtomicBoolean(true);
         if (watch) {
-            Thread t = new Thread(() -> {
-                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
-                waitUserTask.run();
-            }, "WaitForUser");
+            Thread t = new Thread(
+                    () -> {
+                        waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
+                        waitUserTask.run();
+                    },
+                    "WaitForUser");
             t.start();
             do {
                 autoClearScreen();
@@ -80,5 +84,4 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
     }
 
     protected abstract Integer doProcessWatchCall() throws Exception;
-
 }

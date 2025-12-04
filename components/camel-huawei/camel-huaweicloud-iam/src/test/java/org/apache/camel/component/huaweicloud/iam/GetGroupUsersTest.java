@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetGroupUsersTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GetGroupUsersTest.class.getName());
@@ -42,10 +43,9 @@ public class GetGroupUsersTest extends CamelTestSupport {
                 from("direct:get_group_users")
                         .setProperty("CamelHwCloudIamOperation", constant("getGroupUsers"))
                         .setProperty("CamelHwCloudIamGroupId", constant(testConfiguration.getProperty("groupId")))
-                        .to("hwcloud-iam:dummy?" +
-                            "region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&iamClient=#iamClient")
+                        .to("hwcloud-iam:dummy?" + "region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&iamClient=#iamClient")
                         .log("Get user successful")
                         .to("mock:get_group_users_result");
             }

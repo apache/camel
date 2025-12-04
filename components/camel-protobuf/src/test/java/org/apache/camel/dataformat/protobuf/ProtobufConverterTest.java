@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.protobuf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,10 +27,6 @@ import java.util.Map;
 
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProtobufConverterTest {
 
@@ -53,8 +54,8 @@ public class ProtobufConverterTest {
         input.put("nicknames", Arrays.asList("awesome1", "awesome2"));
         input.put("address", address);
 
-        final AddressBookProtos.Person message
-                = (AddressBookProtos.Person) ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
+        final AddressBookProtos.Person message = (AddressBookProtos.Person)
+                ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
 
         // assert primitives types and strings
         assertEquals("Martin", message.getName());
@@ -85,8 +86,7 @@ public class ProtobufConverterTest {
         input.put("address", "wrong address");
 
         final AddressBookProtos.Person defaultInstance = AddressBookProtos.Person.getDefaultInstance();
-        assertThrows(IllegalArgumentException.class,
-                () -> ProtobufConverter.toProto(input, defaultInstance));
+        assertThrows(IllegalArgumentException.class, () -> ProtobufConverter.toProto(input, defaultInstance));
     }
 
     @Test
@@ -98,8 +98,7 @@ public class ProtobufConverterTest {
         input.put("nicknames", "wrong nickname");
 
         final AddressBookProtos.Person defaultInstance = AddressBookProtos.Person.getDefaultInstance();
-        assertThrows(IllegalArgumentException.class,
-                () -> ProtobufConverter.toProto(input, defaultInstance));
+        assertThrows(IllegalArgumentException.class, () -> ProtobufConverter.toProto(input, defaultInstance));
     }
 
     @Test
@@ -126,13 +125,11 @@ public class ProtobufConverterTest {
         input.put("nicknames", Arrays.asList("awesome1", "awesome2"));
         input.put("address", address);
 
-        final AddressBookProtos.Person message
-                = (AddressBookProtos.Person) ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
+        final AddressBookProtos.Person message = (AddressBookProtos.Person)
+                ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
 
         final Map<String, Object> resultedMessageMap = ProtobufConverter.toMap(message);
 
         assertEquals(input, resultedMessageMap);
-
     }
-
 }

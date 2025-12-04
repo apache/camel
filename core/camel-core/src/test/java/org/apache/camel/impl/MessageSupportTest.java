@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 
@@ -26,8 +29,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MessageSupportTest extends ContextTestSupport {
 
@@ -45,8 +46,7 @@ public class MessageSupportTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = exchange.getIn();
 
-        assertThrows(InvalidPayloadException.class, in::getMandatoryBody,
-                "Should have thrown an exception");
+        assertThrows(InvalidPayloadException.class, in::getMandatoryBody, "Should have thrown an exception");
 
         in.setBody("Hello World");
 
@@ -125,5 +125,4 @@ public class MessageSupportTest extends ContextTestSupport {
         exchange.getMessage().setHeader(Exchange.MESSAGE_TIMESTAMP, 1234L);
         assertEquals(1234L, exchange.getMessage().getMessageTimestamp());
     }
-
 }

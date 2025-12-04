@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grok;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -26,10 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class GrokUnmarshalTest extends CamelTestSupport {
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -37,15 +38,15 @@ public class GrokUnmarshalTest extends CamelTestSupport {
             @Override
             public void configure() {
                 bindToRegistry("myCustomPatternBean", new GrokPattern("FOOBAR", "foo|bar"));
-                bindToRegistry("myAnotherCustomPatternBean",
+                bindToRegistry(
+                        "myAnotherCustomPatternBean",
                         new GrokPattern("FOOBAR_WITH_PREFIX_AND_SUFFIX", "-- %{FOOBAR}+ --"));
 
-                from("direct:ip")
-                        .unmarshal().grok("%{IP:ip}")
-                        .to("mock:ip");
+                from("direct:ip").unmarshal().grok("%{IP:ip}").to("mock:ip");
 
                 from("direct:fooBar")
-                        .unmarshal().grok("%{FOOBAR_WITH_PREFIX_AND_SUFFIX:fooBar}")
+                        .unmarshal()
+                        .grok("%{FOOBAR_WITH_PREFIX_AND_SUFFIX:fooBar}")
                         .to("mock:fooBar");
             }
         };
@@ -57,7 +58,9 @@ public class GrokUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:ip", "178.21.82.201");
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        assertEquals("178.21.82.201", result.getExchanges().get(0).getIn().getBody(Map.class).get("ip"));
+        assertEquals(
+                "178.21.82.201",
+                result.getExchanges().get(0).getIn().getBody(Map.class).get("ip"));
     }
 
     @Test

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.mongodb.ReadPreference;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mongodb.MongoDbEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbReadPreferenceOptionIT extends AbstractMongoDbITSupport {
 
@@ -33,8 +34,7 @@ public class MongoDbReadPreferenceOptionIT extends AbstractMongoDbITSupport {
     public void testInvalidReadPreferenceOptionValue() throws Exception {
         endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=foo");
 
-        Exception ex = assertThrows(IllegalArgumentException.class,
-                () -> endpoint.getReadPreferenceBean());
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> endpoint.getReadPreferenceBean());
 
         assertTrue(ex.getMessage().startsWith("No match for read preference"));
     }

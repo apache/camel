@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -49,11 +50,15 @@ public class AggregatorAndOnExceptionTest extends ContextTestSupport {
 
                 onException(CamelException.class).maximumRedeliveries(2);
 
-                from("seda:start").aggregate(header("id"), new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        return newExchange;
-                    }
-                }).completionSize(2).completionTimeout(500L).to("mock:result");
+                from("seda:start")
+                        .aggregate(header("id"), new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                return newExchange;
+                            }
+                        })
+                        .completionSize(2)
+                        .completionTimeout(500L)
+                        .to("mock:result");
             }
         };
     }

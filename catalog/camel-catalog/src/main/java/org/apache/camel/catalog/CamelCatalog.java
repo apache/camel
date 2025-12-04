@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 import java.io.InputStream;
@@ -662,5 +663,4 @@ public interface CamelCatalog {
      * Load all Camel Quarkus releases from catalog
      */
     List<ReleaseModel> camelQuarkusReleases();
-
 }

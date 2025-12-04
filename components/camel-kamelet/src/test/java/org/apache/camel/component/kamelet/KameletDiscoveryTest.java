@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RoutesBuilder;
@@ -25,16 +29,12 @@ import org.apache.camel.support.RoutesBuilderLoaderSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 public class KameletDiscoveryTest extends CamelTestSupport {
 
     @Test
     public void kameletCanBeDiscovered() throws Exception {
-        context.getRegistry().bind(
-                DefaultRoutesLoader.ROUTES_LOADER_KEY_PREFIX + "kamelet.yaml",
-                new RoutesBuilderLoaderSupport() {
+        context.getRegistry()
+                .bind(DefaultRoutesLoader.ROUTES_LOADER_KEY_PREFIX + "kamelet.yaml", new RoutesBuilderLoaderSupport() {
                     @Override
                     public String getSupportedExtension() {
                         return "kamelet.yaml";
@@ -47,8 +47,8 @@ public class KameletDiscoveryTest extends CamelTestSupport {
                             public void configure() {
                                 routeTemplate("mySetBody")
                                         .from("kamelet:source")
-                                        .setBody().constant("discovered");
-
+                                        .setBody()
+                                        .constant("discovered");
                             }
                         };
                     }
@@ -57,8 +57,7 @@ public class KameletDiscoveryTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:discovery")
-                        .toF("kamelet:mySetBody");
+                from("direct:discovery").toF("kamelet:mySetBody");
             }
         });
 
@@ -67,9 +66,8 @@ public class KameletDiscoveryTest extends CamelTestSupport {
 
     @Test
     public void kameletNotFound() {
-        context.getRegistry().bind(
-                DefaultRoutesLoader.ROUTES_LOADER_KEY_PREFIX + "kamelet.yaml",
-                new RoutesBuilderLoaderSupport() {
+        context.getRegistry()
+                .bind(DefaultRoutesLoader.ROUTES_LOADER_KEY_PREFIX + "kamelet.yaml", new RoutesBuilderLoaderSupport() {
                     @Override
                     public String getSupportedExtension() {
                         return "kamelet.yaml";
@@ -79,8 +77,7 @@ public class KameletDiscoveryTest extends CamelTestSupport {
                     public RoutesBuilder loadRoutesBuilder(Resource resource) {
                         return new RouteBuilder() {
                             @Override
-                            public void configure() {
-                            }
+                            public void configure() {}
                         };
                     }
                 });
@@ -88,8 +85,7 @@ public class KameletDiscoveryTest extends CamelTestSupport {
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:discovery")
-                        .toF("kamelet:mySetBody");
+                from("direct:discovery").toF("kamelet:mySetBody");
             }
         };
 

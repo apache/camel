@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.function.Supplier;
@@ -50,8 +51,13 @@ public class DefaultDependencyInjectionAnnotationFactory
     @Override
     @SuppressWarnings("unchecked")
     public Runnable createBindToRegistryFactory(
-            String id, Object bean, Class<?> beanType, String beanName, boolean beanPostProcess,
-            String initMethod, String destroyMethod) {
+            String id,
+            Object bean,
+            Class<?> beanType,
+            String beanName,
+            boolean beanPostProcess,
+            String initMethod,
+            String destroyMethod) {
 
         if (beanType.isAssignableFrom(Supplier.class)) {
             beanType = Object.class;

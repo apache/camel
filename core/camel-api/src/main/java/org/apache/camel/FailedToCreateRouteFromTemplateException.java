@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -29,7 +30,8 @@ public class FailedToCreateRouteFromTemplateException extends RuntimeCamelExcept
         this.templateId = templateId;
     }
 
-    public FailedToCreateRouteFromTemplateException(String routeId, String templateId, String message, Throwable cause) {
+    public FailedToCreateRouteFromTemplateException(
+            String routeId, String templateId, String message, Throwable cause) {
         super("Failed to create route " + routeId + " from template " + templateId + " because of " + message, cause);
         this.routeId = routeId;
         this.templateId = templateId;

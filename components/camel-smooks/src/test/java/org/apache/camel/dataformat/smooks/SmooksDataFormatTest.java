@@ -14,11 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.smooks;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import org.xmlunit.builder.DiffBuilder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,10 +39,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smooks.io.source.JavaSource;
 import org.smooks.support.StreamUtils;
-import org.xmlunit.builder.DiffBuilder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SmooksDataFormatTest extends CamelTestSupport {
     private static final String SMOOKS_CONFIG = "/smooks-config.xml";
@@ -90,8 +92,12 @@ public class SmooksDataFormatTest extends CamelTestSupport {
 
         marshalProcessor.process(exchange);
 
-        assertFalse(DiffBuilder.compare(getCustomerXml(EXPECTED_CUSTOMER_XML)).withTest(exchange.getOut().getBody(String.class))
-                .ignoreComments().ignoreWhitespace().build().hasDifferences());
+        assertFalse(DiffBuilder.compare(getCustomerXml(EXPECTED_CUSTOMER_XML))
+                .withTest(exchange.getOut().getBody(String.class))
+                .ignoreComments()
+                .ignoreWhitespace()
+                .build()
+                .hasDifferences());
     }
 
     @Test
@@ -99,20 +105,21 @@ public class SmooksDataFormatTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a")
-                        .unmarshal().smooks(SMOOKS_CONFIG)
-                        .marshal().smooks(SMOOKS_CONFIG);
+                from("direct:a").unmarshal().smooks(SMOOKS_CONFIG).marshal().smooks(SMOOKS_CONFIG);
             }
         });
 
         context.start();
 
-        final Exchange exchange
-                = template.request("direct:a", e -> e.getIn().setBody(getCustomerInputStream(CUSTOMER_XML)));
+        final Exchange exchange =
+                template.request("direct:a", e -> e.getIn().setBody(getCustomerInputStream(CUSTOMER_XML)));
 
-        assertFalse(
-                DiffBuilder.compare(getCustomerXml(EXPECTED_CUSTOMER_XML)).withTest(exchange.getMessage().getBody(String.class))
-                        .ignoreComments().ignoreWhitespace().build().hasDifferences());
+        assertFalse(DiffBuilder.compare(getCustomerXml(EXPECTED_CUSTOMER_XML))
+                .withTest(exchange.getMessage().getBody(String.class))
+                .ignoreComments()
+                .ignoreWhitespace()
+                .build()
+                .hasDifferences());
     }
 
     private InputStream getCustomerInputStream(final String resource) {
@@ -122,5 +129,4 @@ public class SmooksDataFormatTest extends CamelTestSupport {
     private String getCustomerXml(final String resource) throws IOException {
         return StreamUtils.readStream(new InputStreamReader(getCustomerInputStream(resource)));
     }
-
 }

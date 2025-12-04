@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity;
+
+import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.SCHEME_SIGN;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -29,19 +32,24 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.SCHEME_SIGN;
-
 /**
  * Sign XML payloads using the XML signature specification.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = SCHEME_SIGN, title = "XML Security Sign",
-             syntax = "xmlsecurity-sign:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
-             remote = false, headersClass = XmlSignatureConstants.class)
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = SCHEME_SIGN,
+        title = "XML Security Sign",
+        syntax = "xmlsecurity-sign:name",
+        producerOnly = true,
+        category = {Category.SECURITY, Category.TRANSFORMATION},
+        remote = false,
+        headersClass = XmlSignatureConstants.class)
 public class XmlSignerEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private String name;
+
     @UriParam
     private XmlSignerConfiguration configuration;
 

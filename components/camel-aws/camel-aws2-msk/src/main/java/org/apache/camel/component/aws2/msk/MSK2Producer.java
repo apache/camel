@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.msk;
 
 import org.apache.camel.Endpoint;
@@ -90,7 +91,8 @@ public class MSK2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (mskProducerToString == null) {
-            mskProducerToString = "MSKProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            mskProducerToString =
+                    "MSKProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return mskProducerToString;
     }
@@ -108,7 +110,9 @@ public class MSK2Producer extends DefaultProducer {
                 try {
                     result = mskClient.listClusters((ListClustersRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Clusters command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -124,7 +128,9 @@ public class MSK2Producer extends DefaultProducer {
             try {
                 result = mskClient.listClusters(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Clusters command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -140,7 +146,9 @@ public class MSK2Producer extends DefaultProducer {
                 try {
                     response = mskClient.createCluster((CreateClusterRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Cluster command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -167,8 +175,8 @@ public class MSK2Producer extends DefaultProducer {
                 throw new IllegalArgumentException("Kafka Version must be specified");
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO))) {
-                BrokerNodeGroupInfo brokerNodesGroupInfo
-                        = exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
+                BrokerNodeGroupInfo brokerNodesGroupInfo =
+                        exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
                 builder.brokerNodeGroupInfo(brokerNodesGroupInfo);
             } else {
                 throw new IllegalArgumentException("BrokerNodeGroupInfo must be specified");
@@ -177,7 +185,9 @@ public class MSK2Producer extends DefaultProducer {
             try {
                 response = mskClient.createCluster(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Cluster command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -193,7 +203,9 @@ public class MSK2Producer extends DefaultProducer {
                 try {
                     result = mskClient.deleteCluster((DeleteClusterRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Cluster command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -211,7 +223,9 @@ public class MSK2Producer extends DefaultProducer {
             try {
                 result = mskClient.deleteCluster(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Cluster command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -227,7 +241,9 @@ public class MSK2Producer extends DefaultProducer {
                 try {
                     result = mskClient.describeCluster((DescribeClusterRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Cluster command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -245,7 +261,9 @@ public class MSK2Producer extends DefaultProducer {
             try {
                 result = mskClient.describeCluster(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Cluster command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -261,9 +279,7 @@ public class MSK2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -280,5 +296,4 @@ public class MSK2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

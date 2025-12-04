@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +26,7 @@ public class Address {
     private String state;
     private String zip;
     private String country;
+
     @JsonProperty("country_code")
     private String countryCode;
     /**
@@ -32,8 +34,7 @@ public class Address {
      */
     private String type;
 
-    public Address() {
-    }
+    public Address() {}
 
     public String getStreet() {
         return street;

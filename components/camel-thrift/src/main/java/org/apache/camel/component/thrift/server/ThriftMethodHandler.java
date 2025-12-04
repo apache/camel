@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift.server;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-
 import javassist.util.proxy.MethodHandler;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.ThriftConstants;
@@ -40,7 +41,7 @@ public class ThriftMethodHandler implements MethodHandler {
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
         if (proceed == null) {
             // Detects async methods invocation as a last argument is instance of
@@ -67,7 +68,8 @@ public class ThriftMethodHandler implements MethodHandler {
                     message = exchange.getMessage();
 
                     if (message != null) {
-                        Class returnType = ThriftUtils.findMethodReturnType(args[args.length - 1].getClass(), "onComplete");
+                        Class returnType =
+                                ThriftUtils.findMethodReturnType(args[args.length - 1].getClass(), "onComplete");
                         if (returnType != null) {
                             response = message.getBody(returnType);
                         } else {

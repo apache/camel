@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_DECREMENT;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_INCREMENT;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,9 +29,6 @@ import io.opentelemetry.api.metrics.LongUpDownCounterBuilder;
 import io.opentelemetry.api.metrics.Meter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_DECREMENT;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_INCREMENT;
 
 public class CounterProducer extends AbstractOpenTelemetryProducer<LongUpDownCounter> {
 
@@ -59,8 +60,7 @@ public class CounterProducer extends AbstractOpenTelemetryProducer<LongUpDownCou
     }
 
     @Override
-    protected void doProcess(
-            Exchange exchange, String metricsName, LongUpDownCounter counter, Attributes attributes) {
+    protected void doProcess(Exchange exchange, String metricsName, LongUpDownCounter counter, Attributes attributes) {
         Message in = exchange.getIn();
         Long increment = simple(exchange, getEndpoint().getIncrement(), Long.class);
         Long decrement = simple(exchange, getEndpoint().getDecrement(), Long.class);

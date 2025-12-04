@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.rest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.camel.RoutesBuilder;
@@ -23,16 +26,13 @@ import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class RestProducerOutTypeBindingTest extends BaseNettyTest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Resp1 {
         private String value1;
 
-        public Resp1() {
-        }
+        public Resp1() {}
 
         public Resp1(String value1) {
             this.value1 = value1;
@@ -45,7 +45,6 @@ public class RestProducerOutTypeBindingTest extends BaseNettyTest {
         public void setValue1(String value1) {
             this.value1 = value1;
         }
-
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -53,8 +52,7 @@ public class RestProducerOutTypeBindingTest extends BaseNettyTest {
         private String value1;
         private String value2;
 
-        public Resp2() {
-        }
+        public Resp2() {}
 
         public Resp2(String value1, String value2) {
             this.value1 = value1;
@@ -85,18 +83,18 @@ public class RestProducerOutTypeBindingTest extends BaseNettyTest {
             @Override
             public void configure() {
                 // mock server
-                restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                restConfiguration()
+                        .component("netty-http")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.auto);
 
-                rest()
-                    .get("/req1").to("direct:r1")
-                    .get("/req2").to("direct:r2");
-                from("direct:r1")
-                        .log("Got req1")
-                        .setBody(constant(new Resp1("1")));
+                rest().get("/req1").to("direct:r1").get("/req2").to("direct:r2");
+                from("direct:r1").log("Got req1").setBody(constant(new Resp1("1")));
                 from("direct:r2")
                         .log("Got req2")
                         .setBody(constant(new Resp2(null, "2")))
-                    .end();
+                        .end();
 
                 // faulty client
                 from("direct:req1")
@@ -110,15 +108,15 @@ public class RestProducerOutTypeBindingTest extends BaseNettyTest {
     @Test
     public void type1Test() {
         assertThat(template.requestBody("direct:req1", ""))
-                .isInstanceOfSatisfying(Resp1.class, resp -> assertThat(resp.getValue1()).isEqualTo("1"));
+                .isInstanceOfSatisfying(
+                        Resp1.class, resp -> assertThat(resp.getValue1()).isEqualTo("1"));
     }
 
     @Test
     public void type2Test() {
-        assertThat(template.requestBody("direct:req2", ""))
-                .isInstanceOfSatisfying(Resp2.class, resp -> {
-                    assertThat(resp.getValue1()).isNull();
-                    assertThat(resp.getValue2()).isEqualTo("2");
-                });
+        assertThat(template.requestBody("direct:req2", "")).isInstanceOfSatisfying(Resp2.class, resp -> {
+            assertThat(resp.getValue1()).isNull();
+            assertThat(resp.getValue2()).isEqualTo("2");
+        });
     }
 }

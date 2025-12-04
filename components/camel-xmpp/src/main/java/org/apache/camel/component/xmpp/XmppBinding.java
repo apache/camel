@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import java.util.HashMap;
@@ -122,7 +123,7 @@ public class XmppBinding {
     private Object getMessageBody(Message message) {
         String messageBody = message.getBody();
         if (messageBody == null) {
-            //probably a pubsub message
+            // probably a pubsub message
             return message;
         }
         return messageBody;
@@ -173,5 +174,4 @@ public class XmppBinding {
             }
         }
     }
-
 }

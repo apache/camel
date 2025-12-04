@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite.operation.collection;
 
 import org.apache.camel.Exchange;
@@ -71,10 +72,10 @@ public class UpdateCollectionOperation extends AbstractPayloadAwareOperation imp
         NitriteCollection collection = (NitriteCollection) endpoint.getNitriteCollection();
         Document payload = (Document) getPayload(exchange, endpoint);
         if (filter != null && updateOptions != null) {
-            exchange.getMessage().setHeader(NitriteConstants.WRITE_RESULT, collection.update(filter, payload, updateOptions));
+            exchange.getMessage()
+                    .setHeader(NitriteConstants.WRITE_RESULT, collection.update(filter, payload, updateOptions));
         } else {
             exchange.getMessage().setHeader(NitriteConstants.WRITE_RESULT, collection.update(filter, payload));
         }
     }
-
 }

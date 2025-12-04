@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm;
 
 import java.io.BufferedReader;
@@ -182,68 +183,68 @@ public class CMSenderOneMessageImpl implements CMSender {
         post.setEntity(new StringEntity(requestString, StandardCharsets.UTF_8));
 
         try {
-            client.execute(post,
-                    response -> {
-                        final int statusCode = response.getCode();
+            client.execute(post, response -> {
+                final int statusCode = response.getCode();
 
-                        LOG.debug("Response Code : {}", statusCode);
+                LOG.debug("Response Code : {}", statusCode);
 
-                        if (statusCode == 400) {
-                            throw new CMDirectException(
-                                    "CM Component and CM API show some kind of inconsistency. "
-                                                        + "CM is complaining about not using a post method for the request. And this component only uses POST requests. What happens?");
+                if (statusCode == 400) {
+                    throw new CMDirectException(
+                            "CM Component and CM API show some kind of inconsistency. "
+                                    + "CM is complaining about not using a post method for the request. And this component only uses POST requests. What happens?");
+                }
+
+                if (statusCode != 200) {
+                    throw new CMDirectException(
+                            "CM Component and CM API show some kind of inconsistency. The component expects the status code to be 200 or 400. New api released? ");
+                }
+
+                // So we have 200 status code...
+
+                // The response type is 'text/plain' and contains the actual
+                // result of the request processing.
+
+                // We obtain the result text
+                try (BufferedReader rd = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent()))) {
+                    final StringBuilder result = new StringBuilder();
+                    String line;
+                    while ((line = rd.readLine()) != null) {
+                        result.append(line);
+                    }
+
+                    // ... and process it
+
+                    line = result.toString();
+                    if (!line.isEmpty()) {
+
+                        // Line is not empty = error
+                        LOG.debug("Result of the request processing: FAILED\n{}", line);
+
+                        // The response text contains the error description. We will
+                        // throw a custom exception for each.
+
+                        if (line.contains(CMConstants.ERROR_UNKNOWN)) {
+                            throw new UnknownErrorException();
+                        } else if (line.contains(CMConstants.ERROR_NO_ACCOUNT)
+                                || line.contains(CMConstants.ERROR_NO_USER)) {
+                            throw new NoAccountFoundForProductTokenException();
+                        } else if (line.contains(CMConstants.ERROR_INSUFICIENT_BALANCE)) {
+                            throw new InsufficientBalanceException();
+                        } else if (line.contains(CMConstants.ERROR_UNROUTABLE_MESSAGE)) {
+                            throw new UnroutableMessageException();
+                        } else if (line.contains(CMConstants.ERROR_INVALID_PRODUCT_TOKEN)) {
+                            throw new InvalidProductTokenException();
+                        } else {
+                            throw new CMResponseException(line);
                         }
+                    }
 
-                        if (statusCode != 200) {
-                            throw new CMDirectException(
-                                    "CM Component and CM API show some kind of inconsistency. The component expects the status code to be 200 or 400. New api released? ");
-                        }
-
-                        // So we have 200 status code...
-
-                        // The response type is 'text/plain' and contains the actual
-                        // result of the request processing.
-
-                        // We obtain the result text
-                        try (BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
-                            final StringBuilder result = new StringBuilder();
-                            String line;
-                            while ((line = rd.readLine()) != null) {
-                                result.append(line);
-                            }
-
-                            // ... and process it
-
-                            line = result.toString();
-                            if (!line.isEmpty()) {
-
-                                // Line is not empty = error
-                                LOG.debug("Result of the request processing: FAILED\n{}", line);
-
-                                // The response text contains the error description. We will
-                                // throw a custom exception for each.
-
-                                if (line.contains(CMConstants.ERROR_UNKNOWN)) {
-                                    throw new UnknownErrorException();
-                                } else if (line.contains(CMConstants.ERROR_NO_ACCOUNT)
-                                        || line.contains(CMConstants.ERROR_NO_USER)) {
-                                    throw new NoAccountFoundForProductTokenException();
-                                } else if (line.contains(CMConstants.ERROR_INSUFICIENT_BALANCE)) {
-                                    throw new InsufficientBalanceException();
-                                } else if (line.contains(CMConstants.ERROR_UNROUTABLE_MESSAGE)) {
-                                    throw new UnroutableMessageException();
-                                } else if (line.contains(CMConstants.ERROR_INVALID_PRODUCT_TOKEN)) {
-                                    throw new InvalidProductTokenException();
-                                } else {
-                                    throw new CMResponseException(line);
-                                }
-                            }
-
-                            // Ok. Line is EMPTY - successfully submitted
-                            LOG.debug("Result of the request processing: Successfully submitted");
-                        }
-                        return null;
-                    });
+                    // Ok. Line is EMPTY - successfully submitted
+                    LOG.debug("Result of the request processing: Successfully submitted");
+                }
+                return null;
+            });
 
         } catch (final IOException io) {
             throw new CMDirectException(io);

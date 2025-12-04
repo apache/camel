@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import java.util.List;
@@ -130,7 +131,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         } finally {
             taskCount.decrementAndGet();
             latch.countDown();
-            LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
+            LOG.debug(
+                    "Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
         }
     }
 
@@ -177,7 +179,10 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                 // use the end user configured poll timeout
                 exchange = queue.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Polled queue {} with timeout {} ms. -> {}", ObjectHelper.getIdentityHashCode(queue), pollTimeout,
+                    LOG.trace(
+                            "Polled queue {} with timeout {} ms. -> {}",
+                            ObjectHelper.getIdentityHashCode(queue),
+                            pollTimeout,
                             exchange);
                 }
                 if (exchange != null) {
@@ -193,7 +198,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                         getExceptionHandler().handleException("Error processing exchange", exchange, e);
                     }
                 } else if (shutdownPending && queue.isEmpty()) {
-                    LOG.trace("Shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
+                    LOG.trace(
+                            "Shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
                     // we want to shutdown so break out if there queue is empty
                     break;
                 }
@@ -222,8 +228,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     protected void onProcessingDone(Exchange original, Exchange prepared) {
         // log exception if an exception occurred and was not handled
         if (original.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange", original,
-                    original.getException());
+            getExceptionHandler().handleException("Error processing exchange", original, original.getException());
         }
     }
 
@@ -260,7 +265,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         // validate multiple consumers has been enabled
         int size = getEndpoint().getConsumers().size();
         if (size > 1 && !getEndpoint().isMultipleConsumersSupported()) {
-            throw new IllegalStateException("Multiple consumers for the same endpoint is not allowed: " + getEndpoint());
+            throw new IllegalStateException(
+                    "Multiple consumers for the same endpoint is not allowed: " + getEndpoint());
         }
 
         // if there are multiple consumers then multicast to them
@@ -271,7 +277,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             }
 
             // handover completions, as we need to done this when the multicast is done
-            final List<Synchronization> completions = exchange.getExchangeExtension().handoverCompletions();
+            final List<Synchronization> completions =
+                    exchange.getExchangeExtension().handoverCompletions();
 
             // use a multicast processor to process it
             AsyncProcessor mp = getEndpoint().getConsumerMulticastProcessor();
@@ -347,8 +354,10 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
         // create thread pool if needed
         if (executor == null) {
-            executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                    getEndpoint().getEndpointUri(), poolSize);
+            executor = getEndpoint()
+                    .getCamelContext()
+                    .getExecutorServiceManager()
+                    .newFixedThreadPool(this, getEndpoint().getEndpointUri(), poolSize);
         }
 
         // submit needed number of tasks
@@ -358,5 +367,4 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             executor.execute(this);
         }
     }
-
 }

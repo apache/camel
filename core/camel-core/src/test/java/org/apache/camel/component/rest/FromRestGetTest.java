@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
@@ -26,10 +31,6 @@ import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FromRestGetTest extends ContextTestSupport {
 
@@ -54,7 +55,8 @@ public class FromRestGetTest extends ContextTestSupport {
         assertNotNull(rest);
         assertEquals("/say/hello", rest.getPath());
         assertEquals(1, rest.getVerbs().size());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
+        ToDefinition to =
+                assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
 
         rest = context.getRestDefinitions().get(1);
@@ -65,27 +67,99 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("{{mySpecialId}}", rest.getVerbs().get(0).getId());
 
         assertEquals(2, rest.getVerbs().get(0).getParams().size());
-        assertEquals(RestParamType.header, rest.getVerbs().get(0).getParams().get(0).getType());
-        assertEquals(RestParamType.query, rest.getVerbs().get(0).getParams().get(1).getType());
+        assertEquals(
+                RestParamType.header, rest.getVerbs().get(0).getParams().get(0).getType());
+        assertEquals(
+                RestParamType.query, rest.getVerbs().get(0).getParams().get(1).getType());
 
-        assertEquals("header param description1", rest.getVerbs().get(0).getParams().get(0).getDescription());
-        assertEquals("header param description2", rest.getVerbs().get(0).getParams().get(1).getDescription());
+        assertEquals(
+                "header param description1",
+                rest.getVerbs().get(0).getParams().get(0).getDescription());
+        assertEquals(
+                "header param description2",
+                rest.getVerbs().get(0).getParams().get(1).getDescription());
 
         assertEquals("integer", rest.getVerbs().get(0).getParams().get(0).getDataType());
         assertEquals("string", rest.getVerbs().get(0).getParams().get(1).getDataType());
-        assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(0).getValue());
-        assertEquals("2", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(1).getValue());
-        assertEquals("3", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(2).getValue());
-        assertEquals("4", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(3).getValue());
-        assertEquals("a", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(0).getValue());
-        assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(1).getValue());
-        assertEquals("c", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(2).getValue());
-        assertEquals("d", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(3).getValue());
+        assertEquals(
+                "1",
+                rest.getVerbs()
+                        .get(0)
+                        .getParams()
+                        .get(0)
+                        .getAllowableValues()
+                        .get(0)
+                        .getValue());
+        assertEquals(
+                "2",
+                rest.getVerbs()
+                        .get(0)
+                        .getParams()
+                        .get(0)
+                        .getAllowableValues()
+                        .get(1)
+                        .getValue());
+        assertEquals(
+                "3",
+                rest.getVerbs()
+                        .get(0)
+                        .getParams()
+                        .get(0)
+                        .getAllowableValues()
+                        .get(2)
+                        .getValue());
+        assertEquals(
+                "4",
+                rest.getVerbs()
+                        .get(0)
+                        .getParams()
+                        .get(0)
+                        .getAllowableValues()
+                        .get(3)
+                        .getValue());
+        assertEquals(
+                "a",
+                rest.getVerbs()
+                        .get(0)
+                        .getParams()
+                        .get(1)
+                        .getAllowableValues()
+                        .get(0)
+                        .getValue());
+        assertEquals(
+                "b",
+                rest.getVerbs()
+                        .get(0)
+                        .getParams()
+                        .get(1)
+                        .getAllowableValues()
+                        .get(1)
+                        .getValue());
+        assertEquals(
+                "c",
+                rest.getVerbs()
+                        .get(0)
+                        .getParams()
+                        .get(1)
+                        .getAllowableValues()
+                        .get(2)
+                        .getValue());
+        assertEquals(
+                "d",
+                rest.getVerbs()
+                        .get(0)
+                        .getParams()
+                        .get(1)
+                        .getAllowableValues()
+                        .get(3)
+                        .getValue());
         assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
         assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
 
         assertNull(rest.getVerbs().get(0).getParams().get(0).getCollectionFormat());
-        assertEquals(CollectionFormat.multi, rest.getVerbs().get(0).getParams().get(1).getCollectionFormat());
+        assertEquals(
+                CollectionFormat.multi,
+                rest.getVerbs().get(0).getParams().get(1).getCollectionFormat());
 
         assertEquals("header_count", rest.getVerbs().get(0).getParams().get(0).getName());
         assertEquals("header_letter", rest.getVerbs().get(0).getParams().get(1).getName());
@@ -93,12 +167,38 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(1).getRequired());
 
         assertEquals("300", rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
-        assertEquals("rate", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getName());
-        assertEquals("Rate limit", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getDescription());
-        assertEquals("integer", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getDataType());
+        assertEquals(
+                "rate",
+                rest.getVerbs()
+                        .get(0)
+                        .getResponseMsgs()
+                        .get(0)
+                        .getHeaders()
+                        .get(0)
+                        .getName());
+        assertEquals(
+                "Rate limit",
+                rest.getVerbs()
+                        .get(0)
+                        .getResponseMsgs()
+                        .get(0)
+                        .getHeaders()
+                        .get(0)
+                        .getDescription());
+        assertEquals(
+                "integer",
+                rest.getVerbs()
+                        .get(0)
+                        .getResponseMsgs()
+                        .get(0)
+                        .getHeaders()
+                        .get(0)
+                        .getDataType());
         assertEquals("error", rest.getVerbs().get(0).getResponseMsgs().get(1).getCode());
         assertEquals("test msg", rest.getVerbs().get(0).getResponseMsgs().get(0).getMessage());
-        assertEquals(Integer.class.getCanonicalName(), rest.getVerbs().get(0).getResponseMsgs().get(0).getResponseModel());
+        assertEquals(
+                Integer.class.getCanonicalName(),
+                rest.getVerbs().get(0).getResponseMsgs().get(0).getResponseModel());
 
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:bye", to.getUri());
@@ -131,19 +231,45 @@ public class FromRestGetTest extends ContextTestSupport {
                 restConfiguration().host("localhost");
                 rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye").get()
+                rest("/say/bye")
+                        .get()
                         .id("{{mySpecialId}}")
-                        .consumes("application/json").param().type(RestParamType.header)
-                        .description("header param description1").dataType("integer")
-                        .allowableValues("1", "2", "3", "4").defaultValue("1").name("header_count").required(true).endParam()
-                        .param().type(RestParamType.query)
-                        .description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
-                        .defaultValue("b").collectionFormat(CollectionFormat.multi)
-                        .name("header_letter").required(false).endParam().responseMessage().code(300).message("test msg")
-                        .responseModel(Integer.class).header("rate")
-                        .description("Rate limit").dataType("integer").endHeader().endResponseMessage().responseMessage()
-                        .code("error").message("does not work").endResponseMessage()
-                        .to("direct:bye").post().to("mock:update");
+                        .consumes("application/json")
+                        .param()
+                        .type(RestParamType.header)
+                        .description("header param description1")
+                        .dataType("integer")
+                        .allowableValues("1", "2", "3", "4")
+                        .defaultValue("1")
+                        .name("header_count")
+                        .required(true)
+                        .endParam()
+                        .param()
+                        .type(RestParamType.query)
+                        .description("header param description2")
+                        .dataType("string")
+                        .allowableValues("a", "b", "c", "d")
+                        .defaultValue("b")
+                        .collectionFormat(CollectionFormat.multi)
+                        .name("header_letter")
+                        .required(false)
+                        .endParam()
+                        .responseMessage()
+                        .code(300)
+                        .message("test msg")
+                        .responseModel(Integer.class)
+                        .header("rate")
+                        .description("Rate limit")
+                        .dataType("integer")
+                        .endHeader()
+                        .endResponseMessage()
+                        .responseMessage()
+                        .code("error")
+                        .message("does not work")
+                        .endResponseMessage()
+                        .to("direct:bye")
+                        .post()
+                        .to("mock:update");
 
                 from("direct:hello").transform().constant("Hello World");
 

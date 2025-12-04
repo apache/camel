@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.xml.ws.Endpoint;
 
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A unit test for testing a CXF client invoking a CXF server via route in PAYLOAD mode and with CXF features specified
@@ -47,26 +48,24 @@ public class CxfGreeterPayLoadWithFeatureRouterTest extends AbstractCXFGreeterRo
     @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + getPort1()
-                         + "/CxfGreeterPayLoadWithFeatureRouterTest/SoapContext/SoapPort";
+        String address =
+                "http://localhost:" + getPort1() + "/CxfGreeterPayLoadWithFeatureRouterTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);
     }
 
     @Test
     public void testResources() {
-        CxfEndpoint endpoint = getMandatoryEndpoint("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD",
-                CxfEndpoint.class);
+        CxfEndpoint endpoint = getMandatoryEndpoint("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD", CxfEndpoint.class);
 
-        assertEquals(TestCxfFeature.class, ((CxfSpringEndpoint) endpoint)
-                .getFeatures().get(0).getClass());
+        assertEquals(
+                TestCxfFeature.class,
+                ((CxfSpringEndpoint) endpoint).getFeatures().get(0).getClass());
 
         assertEquals(DataFormat.PAYLOAD, endpoint.getDataFormat());
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/cxf/GreeterEndpointWithFeatureBeans.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointWithFeatureBeans.xml");
     }
-
 }

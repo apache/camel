@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,10 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /*
  * AsyncTest tests the execution of a new spin off async components.
@@ -66,7 +67,6 @@ public class AsyncTest extends TelemetryDevTracerTestSupport {
         for (DevTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(DevTrace trace, String expectedBody) {
@@ -75,8 +75,8 @@ public class AsyncTest extends TelemetryDevTracerTestSupport {
         DevSpanAdapter testProducer = TelemetryDevTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_SENT);
         DevSpanAdapter direct = TelemetryDevTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
         DevSpanAdapter asyncDirectTo = TelemetryDevTracerTestSupport.getSpan(spans, "direct://async", Op.EVENT_SENT);
-        DevSpanAdapter asyncDirectFrom
-                = TelemetryDevTracerTestSupport.getSpan(spans, "direct://async", Op.EVENT_RECEIVED);
+        DevSpanAdapter asyncDirectFrom =
+                TelemetryDevTracerTestSupport.getSpan(spans, "direct://async", Op.EVENT_RECEIVED);
         DevSpanAdapter async = TelemetryDevTracerTestSupport.getSpan(spans, "async://bye:camel", Op.EVENT_SENT);
         DevSpanAdapter log = TelemetryDevTracerTestSupport.getSpan(spans, "log://info", Op.EVENT_SENT);
         DevSpanAdapter asyncLog = TelemetryDevTracerTestSupport.getSpan(spans, "log://tapped", Op.EVENT_SENT);
@@ -121,8 +121,11 @@ public class AsyncTest extends TelemetryDevTracerTestSupport {
         assertEquals(asyncDirectFrom.getTag("spanid"), asyncMock.getTag("parentSpan"));
 
         // Validate message logging
-        assertEquals("A direct message", direct.getLogEntries().get(0).getFields().get("message"));
-        assertEquals("An async message", asyncDirectFrom.getLogEntries().get(0).getFields().get("message"));
+        assertEquals(
+                "A direct message", direct.getLogEntries().get(0).getFields().get("message"));
+        assertEquals(
+                "An async message",
+                asyncDirectFrom.getLogEntries().get(0).getFields().get("message"));
         String expectedAsyncBody = "Bye Camel";
 
         if (expectedBody == null) {

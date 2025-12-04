@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DeadLetterChannelNotHandleNewExceptionTest extends ContextTestSupport {
 
@@ -51,7 +52,8 @@ public class DeadLetterChannelNotHandleNewExceptionTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName()).deadLetterHandleNewException(false));
+                errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName())
+                        .deadLetterHandleNewException(false));
 
                 from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }

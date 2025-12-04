@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.file.Paths;
 
@@ -23,18 +26,17 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class DumpModelAsYamlSplitNestedChoiceEndRouteTest extends DumpModelAsYamlTestSupport {
 
     @Test
     public void testDumpModelAsYaml() throws Exception {
-        String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"));
+        String out = PluginHelper.getModelToYAMLDumper(context)
+                .dumpModelAsYaml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(out);
         log.info(out);
 
-        String expected = IOHelper.stripLineComments(Paths.get("src/test/resources/org/apache/camel/util/split-choice.yaml"),
-                "#", true);
+        String expected = IOHelper.stripLineComments(
+                Paths.get("src/test/resources/org/apache/camel/util/split-choice.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -43,9 +45,22 @@ public class DumpModelAsYamlSplitNestedChoiceEndRouteTest extends DumpModelAsYam
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").split().body().to("mock:sub").id("myMock").choice().when(header("foo"))
-                        .to("mock:foo").when(header("bar")).to("mock:bar")
-                        .otherwise().to("mock:other").end().end().to("mock:last");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .split()
+                        .body()
+                        .to("mock:sub")
+                        .id("myMock")
+                        .choice()
+                        .when(header("foo"))
+                        .to("mock:foo")
+                        .when(header("bar"))
+                        .to("mock:bar")
+                        .otherwise()
+                        .to("mock:other")
+                        .end()
+                        .end()
+                        .to("mock:last");
             }
         };
     }

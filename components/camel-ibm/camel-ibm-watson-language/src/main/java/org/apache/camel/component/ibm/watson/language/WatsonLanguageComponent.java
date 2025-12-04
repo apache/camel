@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.language;
 
 import java.util.Map;
@@ -29,12 +30,12 @@ public class WatsonLanguageComponent extends HealthCheckComponent {
     @Metadata
     private WatsonLanguageConfiguration configuration = new WatsonLanguageConfiguration();
 
-    public WatsonLanguageComponent() {
-    }
+    public WatsonLanguageComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        WatsonLanguageConfiguration config = configuration != null ? configuration.copy() : new WatsonLanguageConfiguration();
+        WatsonLanguageConfiguration config =
+                configuration != null ? configuration.copy() : new WatsonLanguageConfiguration();
 
         WatsonLanguageEndpoint endpoint = new WatsonLanguageEndpoint(uri, this, config);
         setProperties(endpoint, parameters);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -42,14 +43,14 @@ public class TemplatedRoutesDefinition extends OptionalIdentifiedDefinition<Temp
 
     @XmlTransient
     private CamelContext camelContext;
+
     @XmlTransient
     private Resource resource;
 
     @XmlElementRef
     private List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
 
-    public TemplatedRoutesDefinition() {
-    }
+    public TemplatedRoutesDefinition() {}
 
     @Override
     public Resource getResource() {
@@ -138,5 +139,4 @@ public class TemplatedRoutesDefinition extends OptionalIdentifiedDefinition<Temp
         CamelContextAware.trySetCamelContext(templatedRoute, camelContext);
         return templatedRoute;
     }
-
 }

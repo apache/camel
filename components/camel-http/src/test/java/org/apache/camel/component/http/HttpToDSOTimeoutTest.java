@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.http.HttpMethods.GET;
 
 public class HttpToDSOTimeoutTest extends BaseHttpTest {
 
@@ -35,21 +36,14 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/foo",
-                        new BasicValidationHandler(
-                                "/foo", GET.name(), null, null,
-                                getExpectedContent()))
-                .register("/bar",
-                        new BasicValidationHandler(
-                                "/bar", GET.name(), null, null,
-                                getExpectedContent()))
-                .register("/baz",
-                        new BasicValidationHandler(
-                                "/baz", GET.name(), null, null,
-                                getExpectedContent()))
+                .register("/foo", new BasicValidationHandler("/foo", GET.name(), null, null, getExpectedContent()))
+                .register("/bar", new BasicValidationHandler("/bar", GET.name(), null, null, getExpectedContent()))
+                .register("/baz", new BasicValidationHandler("/baz", GET.name(), null, null, getExpectedContent()))
                 .create();
         localServer.start();
 
@@ -66,25 +60,19 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpTo() {
-        Exchange exchange = template.request("direct:to",
-                exchange1 -> {
-                });
+        Exchange exchange = template.request("direct:to", exchange1 -> {});
         assertExchange(exchange);
     }
 
     @Test
     public void httpToD() {
-        Exchange exchange = template.request("direct:toD",
-                exchange1 -> {
-                });
+        Exchange exchange = template.request("direct:toD", exchange1 -> {});
         assertExchange(exchange);
     }
 
     @Test
     public void httpToDoff() {
-        Exchange exchange = template.request("direct:toDoff",
-                exchange1 -> {
-                });
+        Exchange exchange = template.request("direct:toDoff", exchange1 -> {});
         assertExchange(exchange);
     }
 
@@ -93,14 +81,14 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:to")
-                        .to(baseUrl + "/foo?httpClient.responseTimeout=5000");
+                from("direct:to").to(baseUrl + "/foo?httpClient.responseTimeout=5000");
 
-                from("direct:toD")
-                        .toD(baseUrl + "/bar?httpClient.responseTimeout=5000");
+                from("direct:toD").toD(baseUrl + "/bar?httpClient.responseTimeout=5000");
 
                 from("direct:toDoff")
-                        .toD().allowOptimisedComponents(false).uri(baseUrl + "/baz?httpClient.responseTimeout=5000");
+                        .toD()
+                        .allowOptimisedComponents(false)
+                        .uri(baseUrl + "/baz?httpClient.responseTimeout=5000");
             }
         };
     }

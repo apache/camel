@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -63,7 +64,8 @@ public class FailoverRoundRobinStickyTest extends ContextTestSupport {
                         // as it does NOT inherit error handler. It will also keep
                         // retrying as
                         // its configured to newer exhaust.
-                        .loadBalance().failover(-1, false, true, true)
+                        .loadBalance()
+                        .failover(-1, false, true, true)
                         .to("direct:bad", "direct:bad2", "direct:good", "direct:good2");
                 // END SNIPPET: e1
 
@@ -77,5 +79,4 @@ public class FailoverRoundRobinStickyTest extends ContextTestSupport {
             }
         };
     }
-
 }

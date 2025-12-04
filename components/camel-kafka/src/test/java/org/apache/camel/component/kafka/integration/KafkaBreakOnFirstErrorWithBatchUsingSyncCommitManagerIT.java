@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,21 +43,21 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * this will test basic breakOnFirstError functionality uses allowManualCommit and set Sync Commit Manager this allows
  * Camel to handle when to commit an offset
  */
-@Tags({ @Tag("breakOnFirstError") })
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64" },
-             disabledReason = "This test does not run reliably on some platforms")
+@Tags({@Tag("breakOnFirstError")})
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS},
+        architectures = {"amd64", "aarch64"},
+        disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorWithBatchUsingSyncCommitManagerIT extends BaseKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchITSyncCommitManager";
     public static final String TOPIC = "breakOnFirstErrorBatchITSyncCommitManager";
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingSyncCommitManagerIT.class);
+    private static final Logger LOG =
+            LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingSyncCommitManagerIT.class);
 
     private final List<String> errorPayloads = new CopyOnWriteArrayList<>();
 
@@ -98,7 +101,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingSyncCommitManagerIT extends BaseKafkaT
         contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
 
         Awaitility.await()
-                .atMost(30, TimeUnit.SECONDS)   // changed to 30 sec for CAMEL-20722
+                .atMost(30, TimeUnit.SECONDS) // changed to 30 sec for CAMEL-20722
                 .until(() -> errorPayloads.size() > 3);
 
         to.assertIsSatisfied();
@@ -115,18 +118,18 @@ class KafkaBreakOnFirstErrorWithBatchUsingSyncCommitManagerIT extends BaseKafkaT
             @Override
             public void configure() {
                 from("kafka:" + TOPIC
-                     + "?groupId=" + ROUTE_ID
-                     + "&autoOffsetReset=earliest"
-                     + "&autoCommitEnable=false"
-                     + "&allowManualCommit=true"
-                     + "&breakOnFirstError=true"
-                     + "&maxPollRecords=3"
-                     + "&pollTimeoutMs=1000"
-                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                // synch commit factory
-                     + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
-                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                                + "?groupId=" + ROUTE_ID
+                                + "&autoOffsetReset=earliest"
+                                + "&autoCommitEnable=false"
+                                + "&allowManualCommit=true"
+                                + "&breakOnFirstError=true"
+                                + "&maxPollRecords=3"
+                                + "&pollTimeoutMs=1000"
+                                + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                // synch commit factory
+                                + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
+                                + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
                         .process(exchange -> {
                             LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Consuming", exchange, true));
@@ -155,5 +158,4 @@ class KafkaBreakOnFirstErrorWithBatchUsingSyncCommitManagerIT extends BaseKafkaT
             throw new RuntimeException("ERROR TRIGGERED BY TEST");
         }
     }
-
 }

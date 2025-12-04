@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.concurrent.TimeUnit;
@@ -58,7 +59,8 @@ public class JdbcAggregateDiscardOnTimeoutTest extends AbstractJdbcAggregationTe
 
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(3).aggregationRepository(repo)
+                        .completionSize(3)
+                        .aggregationRepository(repo)
                         // use a 1 second timeout
                         .completionTimeout(1000)
                         // and if timeout occurred then just discard the aggregated message

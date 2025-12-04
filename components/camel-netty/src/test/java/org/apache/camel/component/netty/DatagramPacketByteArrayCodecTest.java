@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetSocketAddress;
 
@@ -25,10 +30,6 @@ import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class DatagramPacketByteArrayCodecTest {
 
     private static final String VALUE = "~!Camel rocks@%";
@@ -38,9 +39,10 @@ public class DatagramPacketByteArrayCodecTest {
         ByteBuf buf = Unpooled.buffer();
         buf.writeBytes(VALUE.getBytes());
         ByteBuf input = buf.duplicate();
-        AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop
-                = new DefaultAddressedEnvelope<>(input, new InetSocketAddress(8888));
-        EmbeddedChannel channel = new EmbeddedChannel(ChannelHandlerFactories.newByteArrayDecoder("udp").newChannelHandler());
+        AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
+                new DefaultAddressedEnvelope<>(input, new InetSocketAddress(8888));
+        EmbeddedChannel channel = new EmbeddedChannel(
+                ChannelHandlerFactories.newByteArrayDecoder("udp").newChannelHandler());
         assertTrue(channel.writeInbound(addressedEnvelop));
         assertTrue(channel.finish());
         AddressedEnvelope<Object, InetSocketAddress> result = (AddressedEnvelope) channel.readInbound();
@@ -54,9 +56,10 @@ public class DatagramPacketByteArrayCodecTest {
     public void testEncoder() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeBytes(VALUE.getBytes());
-        AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop
-                = new DefaultAddressedEnvelope<>(VALUE.getBytes(), new InetSocketAddress(8888));
-        EmbeddedChannel channel = new EmbeddedChannel(ChannelHandlerFactories.newByteArrayEncoder("udp").newChannelHandler());
+        AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
+                new DefaultAddressedEnvelope<>(VALUE.getBytes(), new InetSocketAddress(8888));
+        EmbeddedChannel channel = new EmbeddedChannel(
+                ChannelHandlerFactories.newByteArrayEncoder("udp").newChannelHandler());
         assertTrue(channel.writeOutbound(addressedEnvelop));
         assertTrue(channel.finish());
         AddressedEnvelope output = (AddressedEnvelope) channel.readOutbound();

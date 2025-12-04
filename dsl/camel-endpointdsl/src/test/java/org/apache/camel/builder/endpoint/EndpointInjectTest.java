@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.mock;
 
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.mock;
 
 /**
  * Its not exactly @EndpointInject but we can simulate it via endpoint builders
@@ -47,10 +48,8 @@ public class EndpointInjectTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("foo"))
-                        .to(seda("foo"));
-                from(seda("foo"))
-                        .to(foo);
+                from(direct("foo")).to(seda("foo"));
+                from(seda("foo")).to(foo);
             }
         };
     }

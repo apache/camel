@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,10 +54,6 @@ import org.apache.camel.util.StopWatch;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     CurrentSpanTest() {
         super(new SpanTestData[0]);
@@ -73,11 +74,21 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     @Test
     void testSync() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar")
-                        .setKind(SpanKind.SERVER),
-                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar").setKind(SpanKind.CLIENT)
+            new SpanTestData()
+                    .setLabel("syncmock:result")
+                    .setUri("syncmock://result")
+                    .setOperation("syncmock")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("direct:bar")
+                    .setUri("direct://bar")
+                    .setOperation("bar")
+                    .setKind(SpanKind.SERVER),
+            new SpanTestData()
+                    .setLabel("direct:bar")
+                    .setUri("direct://bar")
+                    .setOperation("bar")
+                    .setKind(SpanKind.CLIENT)
         };
 
         // sync pipeline
@@ -86,17 +97,26 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
-
     }
 
     @Test
     void testSyncToAsync() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo")
-                        .setKind(SpanKind.SERVER),
-                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo").setKind(SpanKind.CLIENT)
+            new SpanTestData()
+                    .setLabel("asyncmock1:result")
+                    .setUri("asyncmock1://result")
+                    .setOperation("asyncmock1")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("direct:foo")
+                    .setUri("direct://foo")
+                    .setOperation("foo")
+                    .setKind(SpanKind.SERVER),
+            new SpanTestData()
+                    .setLabel("direct:foo")
+                    .setUri("direct://foo")
+                    .setOperation("foo")
+                    .setKind(SpanKind.CLIENT)
         };
 
         // sync to async pipeline
@@ -105,19 +125,27 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
-
     }
 
     @Test
     void testAsyncToSync() {
         // direct client spans (event spans) are not created, so we saw only two spans in previous tests
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("asyncmock1:start").setUri("asyncmock1://start").setOperation("asyncmock1")
-                        .setKind(SpanKind.SERVER),
-                new SpanTestData().setLabel("asyncmock1:start").setUri("asyncmock1://start").setOperation("asyncmock1")
-                        .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("syncmock:result")
+                    .setUri("syncmock://result")
+                    .setOperation("syncmock")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock1:start")
+                    .setUri("asyncmock1://start")
+                    .setOperation("asyncmock1")
+                    .setKind(SpanKind.SERVER),
+            new SpanTestData()
+                    .setLabel("asyncmock1:start")
+                    .setUri("asyncmock1://start")
+                    .setOperation("asyncmock1")
+                    .setKind(SpanKind.CLIENT),
         };
 
         // sync pipeline
@@ -131,12 +159,21 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     @Test
     void testAsyncToAsync() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock2:result").setUri("asyncmock2://result").setOperation("asyncmock2")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("asyncmock2:start").setUri("asyncmock2://start").setOperation("asyncmock2")
-                        .setKind(SpanKind.SERVER),
-                new SpanTestData().setLabel("asyncmock2:start").setUri("asyncmock2://start").setOperation("asyncmock2")
-                        .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock2:result")
+                    .setUri("asyncmock2://result")
+                    .setOperation("asyncmock2")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock2:start")
+                    .setUri("asyncmock2://start")
+                    .setOperation("asyncmock2")
+                    .setKind(SpanKind.SERVER),
+            new SpanTestData()
+                    .setLabel("asyncmock2:start")
+                    .setUri("asyncmock2://start")
+                    .setOperation("asyncmock2")
+                    .setKind(SpanKind.CLIENT),
         };
 
         // async pipeline
@@ -150,10 +187,16 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     @Test
     void testAsyncFailure() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock:fail").setUri("asyncmock://fail").setOperation("asyncmock")
-                        .setKind(SpanKind.SERVER),
-                new SpanTestData().setLabel("asyncmock:fail").setUri("asyncmock://fail").setOperation("asyncmock")
-                        .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock:fail")
+                    .setUri("asyncmock://fail")
+                    .setOperation("asyncmock")
+                    .setKind(SpanKind.SERVER),
+            new SpanTestData()
+                    .setLabel("asyncmock:fail")
+                    .setUri("asyncmock://fail")
+                    .setOperation("asyncmock")
+                    .setKind(SpanKind.CLIENT),
         };
 
         assertThrows(CamelExecutionException.class, () -> template.sendBody("asyncmock:fail", "Hello World"));
@@ -164,22 +207,36 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
         assertNotNull(((ExceptionEventData) spans.get(0).getEvents().get(0)).getException());
         assertNotNull(((ExceptionEventData) spans.get(1).getEvents().get(0)).getException());
-
     }
 
     @Test
     void testMulticastAsync() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("asyncmock2:result").setUri("asyncmock2://result").setOperation("asyncmock2")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
-                        .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start")
-                        .setKind(SpanKind.SERVER),
-                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start")
-                        .setKind(SpanKind.CLIENT)
+            new SpanTestData()
+                    .setLabel("asyncmock1:result")
+                    .setUri("asyncmock1://result")
+                    .setOperation("asyncmock1")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("asyncmock2:result")
+                    .setUri("asyncmock2://result")
+                    .setOperation("asyncmock2")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("syncmock:result")
+                    .setUri("syncmock://result")
+                    .setOperation("syncmock")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData()
+                    .setLabel("direct:start")
+                    .setUri("direct://start")
+                    .setOperation("start")
+                    .setKind(SpanKind.SERVER),
+            new SpanTestData()
+                    .setLabel("direct:start")
+                    .setUri("direct://start")
+                    .setOperation("start")
+                    .setKind(SpanKind.CLIENT)
         };
 
         // sync pipeline
@@ -225,18 +282,21 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
                 });
 
                 // multicast pipeline
-                from("direct:start").multicast()
+                from("direct:start")
+                        .multicast()
                         .to("asyncmock1:result")
                         .to("asyncmock2:result")
                         .to("syncmock:result");
 
                 // stress pipeline
-                from("asyncmock3:start").multicast()
+                from("asyncmock3:start")
+                        .multicast()
                         .aggregationStrategy((oldExchange, newExchange) -> {
                             checkCurrentSpan(newExchange);
                             return newExchange;
                         })
-                        .executorService(context.getExecutorServiceManager().newFixedThreadPool(this, "CurrentSpanTest", 10))
+                        .executorService(
+                                context.getExecutorServiceManager().newFixedThreadPool(this, "CurrentSpanTest", 10))
                         .streaming()
                         .delay(10)
                         .to("log:line", "asyncmock1:start")
@@ -253,11 +313,14 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
             ReadableSpan readable = (ReadableSpan) Span.current();
             errorMessage = String.format(
                     "Current span: name - '%s', kind - '%s', ended - `%s', id - '%s-%s', exchange id - '%s-%s', thread - '%s'\n",
-                    readable.getName(), readable.getKind(), readable.hasEnded(),
-                    readable.getSpanContext().getTraceId(), readable.getSpanContext().getSpanId(),
-                    ActiveSpanManager.getSpan(exc).traceId(), ActiveSpanManager.getSpan(exc).spanId(),
+                    readable.getName(),
+                    readable.getKind(),
+                    readable.hasEnded(),
+                    readable.getSpanContext().getTraceId(),
+                    readable.getSpanContext().getSpanId(),
+                    ActiveSpanManager.getSpan(exc).traceId(),
+                    ActiveSpanManager.getSpan(exc).spanId(),
                     Thread.currentThread().getName());
-
         }
 
         Awaitility.await()
@@ -277,8 +340,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     }
 
     private static class AsyncMockEndpoint extends MockEndpoint {
-        private static final Executor DELAYED = CompletableFuture.delayedExecutor(10L, TimeUnit.MILLISECONDS,
-                new ForkJoinPool(3));
+        private static final Executor DELAYED =
+                CompletableFuture.delayedExecutor(10L, TimeUnit.MILLISECONDS, new ForkJoinPool(3));
 
         private Consumer consumer;
         private final String key;
@@ -315,9 +378,7 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
                             fail(e);
                         }
                     }
-                    CompletableFuture.runAsync(() -> {
-                    }, DELAYED)
-                            .thenRun(() -> callback.run());
+                    CompletableFuture.runAsync(() -> {}, DELAYED).thenRun(() -> callback.run());
 
                     return false;
                 }
@@ -362,7 +423,9 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     }
 
     private static void assertCurrentSpan(Exchange exchange) {
-        assertEquals(Span.current().getSpanContext().getSpanId(), ActiveSpanManager.getSpan(exchange).spanId());
+        assertEquals(
+                Span.current().getSpanContext().getSpanId(),
+                ActiveSpanManager.getSpan(exchange).spanId());
     }
 
     private void awaitInvalidSpanContext() {

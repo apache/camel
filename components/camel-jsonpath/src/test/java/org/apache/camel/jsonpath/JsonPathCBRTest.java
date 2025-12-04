@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -34,16 +35,19 @@ public class JsonPathCBRTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                        .when().jsonpath("$.store.book[?(@.price < 10)]")
+                        .when()
+                        .jsonpath("$.store.book[?(@.price < 10)]")
                         .to("mock:cheap")
-                        .when().jsonpath("$.store.book[?(@.price < 30)]")
+                        .when()
+                        .jsonpath("$.store.book[?(@.price < 30)]")
                         .to("mock:average")
                         .otherwise()
                         .to("mock:expensive");
 
                 from("direct:bicycle")
                         .choice()
-                        .when().method(new BeanPredicate())
+                        .when()
+                        .method(new BeanPredicate())
                         .to("mock:cheap")
                         .otherwise()
                         .to("mock:expensive");
@@ -115,5 +119,4 @@ public class JsonPathCBRTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

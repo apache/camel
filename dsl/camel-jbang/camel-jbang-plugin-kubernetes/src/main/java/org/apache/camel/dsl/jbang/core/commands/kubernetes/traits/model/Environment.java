@@ -27,21 +27,20 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "containerMeta", "enabled", "httpProxy", "vars" })
+@JsonPropertyOrder({"containerMeta", "enabled", "httpProxy", "vars"})
 public class Environment {
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
+
     @JsonProperty("vars")
-    @JsonPropertyDescription("A list of environment variables to be added to the integration container. The syntax is KEY=VALUE, e.g., `MY_VAR=\"my value\"`. These take precedence over the previously defined environment variables.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "A list of environment variables to be added to the integration container. The syntax is KEY=VALUE, e.g., `MY_VAR=\"my value\"`. These take precedence over the previously defined environment variables.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> vars;
 
-    public Environment() {
-    }
+    public Environment() {}
 
     public Boolean getEnabled() {
         return this.enabled;

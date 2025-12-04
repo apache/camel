@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
@@ -83,17 +84,18 @@ public class SoapTargetBean {
         return response;
     }
 
-    //Simulates a stream based processor or producer (e.g., file EP)
+    // Simulates a stream based processor or producer (e.g., file EP)
     public SOAPMessage invokeStream(InputStream in) {
         SOAPMessage response = null;
         try {
             Document doc = StaxUtils.read(in);
-            if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(),
-                    sayHi.getLocalPart()).getLength()
-                == 1) {
+            if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(), sayHi.getLocalPart())
+                            .getLength()
+                    == 1) {
                 response = sayHiResponse;
-            } else if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(),
-                    greetMe.getLocalPart()).getLength() == 1) {
+            } else if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(), greetMe.getLocalPart())
+                            .getLength()
+                    == 1) {
                 response = greetMeResponse;
             }
         } catch (Exception ex) {

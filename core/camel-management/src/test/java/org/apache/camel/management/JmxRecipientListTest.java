@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -24,11 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class JmxRecipientListTest extends ManagementTestSupport {
@@ -107,19 +108,15 @@ public class JmxRecipientListTest extends ManagementTestSupport {
     }
 
     protected void sendBody() {
-        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader",
-                "mock:x,mock:y,mock:z");
+        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader", "mock:x,mock:y,mock:z");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").recipientList(
-                        header("recipientListHeader").tokenize(","));
+                from("direct:a").recipientList(header("recipientListHeader").tokenize(","));
             }
         };
-
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.idgen;
+
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_IDGEN;
 
 import java.util.Map;
 
@@ -33,16 +36,20 @@ import org.apache.ignite.IgniteAtomicSequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_IDGEN;
-
 /**
  * Interact with <a href="https://apacheignite.readme.io/docs/id-generator">Ignite Atomic Sequences and ID Generators
  * </a>.
  *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_IDGEN, title = "Ignite ID Generator", syntax = "ignite-idgen:name",
-             category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_IDGEN,
+        title = "Ignite ID Generator",
+        syntax = "ignite-idgen:name",
+        category = {Category.CACHE, Category.CLUSTERING},
+        producerOnly = true,
+        headersClass = IgniteConstants.class)
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteIdGenEndpoint.class);
@@ -60,8 +67,11 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private IgniteIdGenOperation operation;
 
-    public IgniteIdGenEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
-                               IgniteIdGenComponent igniteComponent) {
+    public IgniteIdGenEndpoint(
+            String endpointUri,
+            String remaining,
+            Map<String, Object> parameters,
+            IgniteIdGenComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         name = remaining;
 
@@ -145,5 +155,4 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
     public void setBatchSize(Integer batchSize) {
         this.batchSize = batchSize;
     }
-
 }

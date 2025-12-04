@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
 
 import java.io.IOException;
@@ -96,5 +97,4 @@ public class CoAPRestComponentTCPTLSTest extends CoAPRestComponentTestBase {
     protected String getClientURI() {
         return super.getClientURI() + "?sslContextParameters=#clientSSLContextParameters";
     }
-
 }

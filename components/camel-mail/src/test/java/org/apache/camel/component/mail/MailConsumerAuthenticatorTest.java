@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -32,9 +36,6 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 /**
  * Test the dynamic behavior of the MailAuthenticator in the MailConsumer.
@@ -84,8 +85,10 @@ public class MailConsumerAuthenticatorTest {
         try {
             Assertions.assertThatThrownBy(() -> consumer.poll())
                     .isInstanceOf(MessagingException.class)
-                    .message().matches(actualMessage -> Stream.of("LOGIN failed. Invalid login/password for user id",
-                            "Authentication failed: com.icegreen.greenmail.user.UserException: Invalid password")
+                    .message()
+                    .matches(actualMessage -> Stream.of(
+                                    "LOGIN failed. Invalid login/password for user id",
+                                    "Authentication failed: com.icegreen.greenmail.user.UserException: Invalid password")
                             .anyMatch(expectedSubstring -> actualMessage.contains(expectedSubstring)));
 
             // poll a second time, this time there should be no exception, because we now provide the correct password
@@ -114,7 +117,5 @@ public class MailConsumerAuthenticatorTest {
         public void setPassword(String password) {
             this.password = password;
         }
-
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,40 +35,49 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EnrichDefinition extends ExpressionNode
-        implements AggregationStrategyAwareDefinition<EnrichDefinition> {
+public class EnrichDefinition extends ExpressionNode implements AggregationStrategyAwareDefinition<EnrichDefinition> {
 
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
 
     @XmlAttribute
     private String variableSend;
+
     @XmlAttribute
     private String variableReceive;
+
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String aggregationStrategyMethodName;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String aggregationStrategyMethodAllowNull;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregateOnException;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String cacheSize;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowOptimisedComponents;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String autoStartComponents;

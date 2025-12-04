@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb;
 
 import java.util.EnumMap;
@@ -50,8 +51,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
 
     private CosmosAsyncClientWrapper clientWrapper;
     private CosmosDbConfigurationOptionsProxy configurationOptionsProxy;
-    private final Map<CosmosDbOperationsDefinition, BiConsumer<Exchange, AsyncCallback>> operations
-            = new EnumMap<>(CosmosDbOperationsDefinition.class);
+    private final Map<CosmosDbOperationsDefinition, BiConsumer<Exchange, AsyncCallback>> operations =
+            new EnumMap<>(CosmosDbOperationsDefinition.class);
 
     {
         bind(CosmosDbOperationsDefinition.listDatabases, listDatabases());
@@ -145,7 +146,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> createDatabase() {
         return (exchange, callback) -> {
             final Mono<CosmosDatabaseResponse> operation = CosmosDbClientOperations.withClient(clientWrapper)
-                    .createDatabase(configurationOptionsProxy.getDatabaseName(exchange),
+                    .createDatabase(
+                            configurationOptionsProxy.getDatabaseName(exchange),
                             configurationOptionsProxy.getThroughputProperties(exchange));
 
             subscribeToMono(operation, exchange, setCosmosDatabaseResponseOnExchange(exchange), callback);
@@ -155,7 +157,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> queryDatabases() {
         return (exchange, callback) -> {
             final Mono<List<CosmosDatabaseProperties>> operation = CosmosDbClientOperations.withClient(clientWrapper)
-                    .queryDatabases(configurationOptionsProxy.getQuery(exchange),
+                    .queryDatabases(
+                            configurationOptionsProxy.getQuery(exchange),
                             configurationOptionsProxy.getQueryRequestOptions(exchange))
                     .collectList();
 
@@ -176,7 +179,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> createContainer() {
         return (exchange, callback) -> {
             final Mono<CosmosContainerResponse> operation = getDatabaseOperations(exchange)
-                    .createContainer(configurationOptionsProxy.getContainerName(exchange),
+                    .createContainer(
+                            configurationOptionsProxy.getContainerName(exchange),
                             configurationOptionsProxy.getContainerPartitionKeyPath(exchange),
                             configurationOptionsProxy.getThroughputProperties(exchange),
                             configurationOptionsProxy.getIndexingPolicy(exchange));
@@ -207,7 +211,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> queryContainers() {
         return (exchange, callback) -> {
             final Mono<List<CosmosContainerProperties>> operation = getDatabaseOperations(exchange)
-                    .queryContainers(configurationOptionsProxy.getQuery(exchange),
+                    .queryContainers(
+                            configurationOptionsProxy.getQuery(exchange),
                             configurationOptionsProxy.getQueryRequestOptions(exchange))
                     .collectList();
 
@@ -238,7 +243,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> createItem() {
         return (exchange, callback) -> {
             final Mono<CosmosItemResponse<Object>> operation = getContainerOperations(exchange)
-                    .createItem(configurationOptionsProxy.getItem(exchange),
+                    .createItem(
+                            configurationOptionsProxy.getItem(exchange),
                             configurationOptionsProxy.getItemPartitionKey(exchange),
                             configurationOptionsProxy.getItemRequestOptions(exchange));
 
@@ -249,7 +255,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> upsertItem() {
         return (exchange, callback) -> {
             final Mono<CosmosItemResponse<Object>> operation = getContainerOperations(exchange)
-                    .upsertItem(configurationOptionsProxy.getItem(exchange),
+                    .upsertItem(
+                            configurationOptionsProxy.getItem(exchange),
                             configurationOptionsProxy.getItemPartitionKey(exchange),
                             configurationOptionsProxy.getItemRequestOptions(exchange));
 
@@ -261,7 +268,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
         return (exchange, callback) -> {
             final Mono<CosmosItemResponse<Object>> operation = getDatabaseOperations(exchange)
                     .getContainerOperations(configurationOptionsProxy.getContainerName(exchange))
-                    .deleteItem(configurationOptionsProxy.getItemId(exchange),
+                    .deleteItem(
+                            configurationOptionsProxy.getItemId(exchange),
                             configurationOptionsProxy.getItemPartitionKey(exchange),
                             configurationOptionsProxy.getItemRequestOptions(exchange));
 
@@ -272,7 +280,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> replaceItem() {
         return (exchange, callback) -> {
             final Mono<CosmosItemResponse<Object>> operation = getContainerOperations(exchange)
-                    .replaceItem(configurationOptionsProxy.getItem(exchange),
+                    .replaceItem(
+                            configurationOptionsProxy.getItem(exchange),
                             configurationOptionsProxy.getItemId(exchange),
                             configurationOptionsProxy.getItemPartitionKey(exchange),
                             configurationOptionsProxy.getItemRequestOptions(exchange));
@@ -284,7 +293,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> readItem() {
         return (exchange, callback) -> {
             final Mono<CosmosItemResponse<Object>> operation = getContainerOperations(exchange)
-                    .readItem(configurationOptionsProxy.getItemId(exchange),
+                    .readItem(
+                            configurationOptionsProxy.getItemId(exchange),
                             configurationOptionsProxy.getItemPartitionKey(exchange),
                             configurationOptionsProxy.getItemRequestOptions(exchange),
                             Object.class);
@@ -296,7 +306,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> readAllItems() {
         return (exchange, callback) -> {
             final Mono<List<Object>> operation = getContainerOperations(exchange)
-                    .readAllItems(configurationOptionsProxy.getItemPartitionKey(exchange),
+                    .readAllItems(
+                            configurationOptionsProxy.getItemPartitionKey(exchange),
                             configurationOptionsProxy.getQueryRequestOptions(exchange),
                             Object.class)
                     .collectList();
@@ -308,7 +319,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> queryItems() {
         return (exchange, callback) -> {
             final Mono<List<Object>> operation = getContainerOperations(exchange)
-                    .queryItems(configurationOptionsProxy.getQuery(exchange),
+                    .queryItems(
+                            configurationOptionsProxy.getQuery(exchange),
                             configurationOptionsProxy.getQueryRequestOptions(exchange),
                             Object.class)
                     .collectList();
@@ -318,16 +330,21 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     }
 
     private <T> void subscribeToMono(
-            final Mono<T> inputMono, final Exchange exchange, final Consumer<T> resultsCallback, final AsyncCallback callback) {
-        inputMono
-                .subscribe(resultsCallback, error -> {
+            final Mono<T> inputMono,
+            final Exchange exchange,
+            final Consumer<T> resultsCallback,
+            final AsyncCallback callback) {
+        inputMono.subscribe(
+                resultsCallback,
+                error -> {
                     // error but we continue
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Error processing async exchange with error: {}", error.getMessage());
                     }
                     exchange.setException(error);
                     callback.done(false);
-                }, () -> {
+                },
+                () -> {
                     // we are done from everything, so mark it as sync done
                     LOG.trace("All events with exchange have been sent successfully.");
                     callback.done(false);
@@ -357,9 +374,18 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private Consumer<CosmosDatabaseResponse> setCosmosDatabaseResponseOnExchange(final Exchange exchange) {
         return response -> {
             if (ObjectHelper.isNotEmpty(response.getProperties())) {
-                setMessageHeader(exchange, CosmosDbConstants.RESOURCE_ID, response.getProperties().getResourceId());
-                setMessageHeader(exchange, CosmosDbConstants.E_TAG, response.getProperties().getETag());
-                setMessageHeader(exchange, CosmosDbConstants.TIMESTAMP, response.getProperties().getTimestamp());
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.RESOURCE_ID,
+                        response.getProperties().getResourceId());
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.E_TAG,
+                        response.getProperties().getETag());
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.TIMESTAMP,
+                        response.getProperties().getTimestamp());
             }
             setCommonResponseOnExchange(exchange, response);
         };
@@ -368,10 +394,21 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private Consumer<CosmosContainerResponse> setCosmosContainerResponseOnExchange(final Exchange exchange) {
         return response -> {
             if (ObjectHelper.isNotEmpty(response.getProperties())) {
-                setMessageHeader(exchange, CosmosDbConstants.RESOURCE_ID, response.getProperties().getResourceId());
-                setMessageHeader(exchange, CosmosDbConstants.E_TAG, response.getProperties().getETag());
-                setMessageHeader(exchange, CosmosDbConstants.TIMESTAMP, response.getProperties().getTimestamp());
-                setMessageHeader(exchange, CosmosDbConstants.DEFAULT_TIME_TO_LIVE_SECONDS,
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.RESOURCE_ID,
+                        response.getProperties().getResourceId());
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.E_TAG,
+                        response.getProperties().getETag());
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.TIMESTAMP,
+                        response.getProperties().getTimestamp());
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.DEFAULT_TIME_TO_LIVE_SECONDS,
                         response.getProperties().getDefaultTimeToLiveInSeconds());
             }
             setCommonResponseOnExchange(exchange, response);
@@ -381,11 +418,22 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     private Consumer<ThroughputResponse> setThroughputResponseOnExchange(final Exchange exchange) {
         return response -> {
             if (ObjectHelper.isNotEmpty(response.getProperties())) {
-                setMessageHeader(exchange, CosmosDbConstants.AUTOSCALE_MAX_THROUGHPUT,
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.AUTOSCALE_MAX_THROUGHPUT,
                         response.getProperties().getAutoscaleMaxThroughput());
-                setMessageHeader(exchange, CosmosDbConstants.MANUAL_THROUGHPUT, response.getProperties().getManualThroughput());
-                setMessageHeader(exchange, CosmosDbConstants.E_TAG, response.getProperties().getETag());
-                setMessageHeader(exchange, CosmosDbConstants.TIMESTAMP, response.getProperties().getTimestamp());
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.MANUAL_THROUGHPUT,
+                        response.getProperties().getManualThroughput());
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.E_TAG,
+                        response.getProperties().getETag());
+                setMessageHeader(
+                        exchange,
+                        CosmosDbConstants.TIMESTAMP,
+                        response.getProperties().getTimestamp());
             }
             setCommonResponseOnExchange(exchange, response);
         };

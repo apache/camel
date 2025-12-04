@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URL;
 
@@ -28,8 +31,6 @@ import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.retry.support.RetryTemplate;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for WrappedFile support in multimodal capabilities.
@@ -58,22 +59,15 @@ public class SpringAiChatWrappedFileIT extends OllamaTestSupport {
 
     @Override
     protected org.springframework.ai.chat.model.ChatModel createModel() {
-        OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(OLLAMA.baseUrl())
-                .build();
+        OllamaApi ollamaApi = OllamaApi.builder().baseUrl(OLLAMA.baseUrl()).build();
 
-        OllamaChatOptions ollamaOptions
-                = OllamaChatOptions.builder()
-                        .model(modelName())
-                        .temperature(0.3)
-                        .build();
+        OllamaChatOptions ollamaOptions =
+                OllamaChatOptions.builder().model(modelName()).temperature(0.3).build();
 
         return OllamaChatModel.builder()
                 .ollamaApi(ollamaApi)
                 .defaultOptions(ollamaOptions)
-                .retryTemplate(RetryTemplate.builder()
-                        .maxAttempts(1)
-                        .build())
+                .retryTemplate(RetryTemplate.builder().maxAttempts(1).build())
                 .build();
     }
 
@@ -142,7 +136,8 @@ public class SpringAiChatWrappedFileIT extends OllamaTestSupport {
                 // Route 3: Configured user message on endpoint
                 from("direct:configured")
                         .pollEnrich("file:" + testFilesPath + "?fileName=test-image.png&noop=true&idempotent=false")
-                        .to("spring-ai-chat:wrapped-file-config?chatModel=#chatModel&userMessage=Analyze this image in detail.");
+                        .to(
+                                "spring-ai-chat:wrapped-file-config?chatModel=#chatModel&userMessage=Analyze this image in detail.");
 
                 // Route 4: User message from header
                 from("direct:header-msg")
@@ -153,7 +148,8 @@ public class SpringAiChatWrappedFileIT extends OllamaTestSupport {
                 // Route 5: PDF file auto-detection
                 from("direct:pdf")
                         .pollEnrich("file:" + testFilesPath + "?fileName=test-document.pdf&noop=true&idempotent=false")
-                        .setHeader(SpringAiChatConstants.USER_MESSAGE,
+                        .setHeader(
+                                SpringAiChatConstants.USER_MESSAGE,
                                 constant("Summarize the content of this PDF document."))
                         .to("spring-ai-chat:wrapped-file-pdf?chatModel=#chatModel");
 
@@ -161,7 +157,8 @@ public class SpringAiChatWrappedFileIT extends OllamaTestSupport {
                 from("direct:content-type")
                         .pollEnrich("file:" + testFilesPath + "?fileName=test-image.png&noop=true&idempotent=false")
                         .setHeader(SpringAiChatConstants.USER_MESSAGE, constant("Describe this image."))
-                        // Simulate FILE_CONTENT_TYPE header that would be set by file component with probeContentType=true
+                        // Simulate FILE_CONTENT_TYPE header that would be set by file component with
+                        // probeContentType=true
                         .setHeader(org.apache.camel.Exchange.FILE_CONTENT_TYPE, constant("image/png"))
                         .to("spring-ai-chat:wrapped-file-ct?chatModel=#chatModel");
             }

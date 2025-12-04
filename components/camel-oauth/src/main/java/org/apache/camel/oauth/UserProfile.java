@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oauth;
 
 import java.security.interfaces.RSAPublicKey;
@@ -187,7 +188,9 @@ public class UserProfile {
                     if (aud.isJsonPrimitive()) {
                         targetAudience.add(aud.getAsString());
                     } else {
-                        targetAudience.addAll(aud.getAsJsonArray().asList().stream().map(JsonElement::getAsString).toList());
+                        targetAudience.addAll(aud.getAsJsonArray().asList().stream()
+                                .map(JsonElement::getAsString)
+                                .toList());
                     }
                 } catch (RuntimeException ex) {
                     throw new OAuthException("User audience isn't a JsonArray or String");

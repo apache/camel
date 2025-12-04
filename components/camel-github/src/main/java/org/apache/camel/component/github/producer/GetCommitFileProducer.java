@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
@@ -44,7 +45,8 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_DATA_SERVICE);
         if (service != null) {
-            LOG.debug("Using DataService found in registry {}", service.getClass().getCanonicalName());
+            LOG.debug(
+                    "Using DataService found in registry {}", service.getClass().getCanonicalName());
             dataService = (DataService) service;
         } else {
             dataService = new DataService();
@@ -54,8 +56,7 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
         if (endpoint.getEncoding() != null) {
             encoding = endpoint.getEncoding();
 
-            if (!encoding.equalsIgnoreCase(Blob.ENCODING_BASE64)
-                    && !encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
+            if (!encoding.equalsIgnoreCase(Blob.ENCODING_BASE64) && !encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
                 throw new IllegalArgumentException("Unknown encoding '" + encoding + "'");
             }
         }
@@ -72,7 +73,8 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
         // By default, if blob encoding is base64 then we convert to UTF-8. If
         // base64 encoding is required, then must be explicitly requested
         if (response.getEncoding().equals(Blob.ENCODING_BASE64)
-                && encoding != null && encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
+                && encoding != null
+                && encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
             text = new String(Base64.decodeBase64(text));
         }
 
@@ -80,5 +82,4 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
         exchange.getOut().copyFrom(exchange.getIn());
         exchange.getOut().setBody(text);
     }
-
 }

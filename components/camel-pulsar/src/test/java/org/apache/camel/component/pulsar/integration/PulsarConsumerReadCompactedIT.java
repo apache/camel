@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -49,10 +50,10 @@ public class PulsarConsumerReadCompactedIT extends PulsarITSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-                    + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000"
-                    + "&readCompacted=true"
-                    + "&negativeAckRedeliveryDelayMicros=100000")
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+            + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000"
+            + "&readCompacted=true"
+            + "&negativeAckRedeliveryDelayMicros=100000")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -65,7 +66,11 @@ public class PulsarConsumerReadCompactedIT extends PulsarITSupport {
         context.removeRoute("myRoute");
 
         String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(TOPIC_URI).create();
+        producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(producerName)
+                .topic(TOPIC_URI)
+                .create();
     }
 
     @AfterEach
@@ -88,11 +93,17 @@ public class PulsarConsumerReadCompactedIT extends PulsarITSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(service.getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(service.getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     private PulsarAdmin givenPulsarAdmin() throws PulsarClientException {
-        return new PulsarAdminBuilderImpl().serviceHttpUrl(service.getPulsarAdminUrl()).build();
+        return new PulsarAdminBuilderImpl()
+                .serviceHttpUrl(service.getPulsarAdminUrl())
+                .build();
     }
 
     private void triggerCompaction() throws PulsarAdminException, PulsarClientException {
@@ -116,8 +127,8 @@ public class PulsarConsumerReadCompactedIT extends PulsarITSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt
-                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt =
+                            (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
                 });
             }
@@ -140,8 +151,8 @@ public class PulsarConsumerReadCompactedIT extends PulsarITSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt
-                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt =
+                            (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
                 });
             }

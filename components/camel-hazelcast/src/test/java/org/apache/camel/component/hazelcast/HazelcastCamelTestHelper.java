@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -32,8 +33,7 @@ import org.apache.camel.component.hazelcast.topic.HazelcastTopicComponent;
 
 public final class HazelcastCamelTestHelper {
 
-    private HazelcastCamelTestHelper() {
-    }
+    private HazelcastCamelTestHelper() {}
 
     public static void registerHazelcastComponents(CamelContext context, HazelcastInstance hazelcastInstance) {
         HazelcastAtomicnumberComponent atomic = new HazelcastAtomicnumberComponent(context);
@@ -70,5 +70,4 @@ public final class HazelcastCamelTestHelper {
         topic.setHazelcastInstance(hazelcastInstance);
         context.addComponent("hazelcast-topic", topic);
     }
-
 }

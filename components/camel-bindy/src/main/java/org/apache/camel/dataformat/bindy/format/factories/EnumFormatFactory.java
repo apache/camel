@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import org.apache.camel.dataformat.bindy.Format;
@@ -28,7 +29,7 @@ public class EnumFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({"rawtypes", "unchecked"})
         EnumFormat enumFormat = new EnumFormat(formattingOptions.getClazz());
         return enumFormat;
     }
@@ -51,5 +52,4 @@ public class EnumFormatFactory extends AbstractFormatFactory {
             return Enum.valueOf(clazz, string);
         }
     }
-
 }

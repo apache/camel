@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.couchdb.services;
 
 import org.apache.camel.test.infra.couchdb.common.CouchDbProperties;
@@ -50,5 +51,4 @@ public class CouchDbRemoteInfraService implements CouchDbInfraService {
 
         return Integer.valueOf(port);
     }
-
 }

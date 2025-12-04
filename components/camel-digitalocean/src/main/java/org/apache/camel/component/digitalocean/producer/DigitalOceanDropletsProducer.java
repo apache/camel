@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import java.util.ArrayList;
@@ -59,13 +60,13 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
 
         DigitalOceanOperations op = determineOperation(exchange);
-        if (op != DigitalOceanOperations.create && op != DigitalOceanOperations.list
+        if (op != DigitalOceanOperations.create
+                && op != DigitalOceanOperations.list
                 && op != DigitalOceanOperations.listAllNeighbors) {
             dropletId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
             if (ObjectHelper.isEmpty(dropletId)) {
                 throw new IllegalArgumentException(DigitalOceanHeaders.ID + " must be specified");
             }
-
         }
 
         switch (op) {
@@ -165,48 +166,74 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
     }
 
     private void getDroplets(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        Droplets droplets = getEndpoint().getDigitalOceanClient().getAvailableDroplets(configuration.getPage(),
-                configuration.getPerPage());
-        LOG.trace("All Droplets : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+        Droplets droplets = getEndpoint()
+                .getDigitalOceanClient()
+                .getAvailableDroplets(configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "All Droplets : page {} / {} per page [{}] ",
+                configuration.getPage(),
+                configuration.getPerPage(),
                 droplets.getDroplets());
         exchange.getMessage().setBody(droplets.getDroplets());
     }
 
     private void getDropletActions(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableDropletActions(dropletId, configuration.getPage(),
-                configuration.getPerPage());
-        LOG.trace("Actions for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
-                configuration.getPerPage(), actions.getActions());
+        Actions actions = getEndpoint()
+                .getDigitalOceanClient()
+                .getAvailableDropletActions(dropletId, configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "Actions for Droplet {} : page {} / {} per page [{}] ",
+                dropletId,
+                configuration.getPage(),
+                configuration.getPerPage(),
+                actions.getActions());
         exchange.getMessage().setBody(actions.getActions());
     }
 
     private void getDropletKernels(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        Kernels kernels = getEndpoint().getDigitalOceanClient().getDropletKernels(dropletId, configuration.getPage(),
-                configuration.getPerPage());
-        LOG.trace("Kernels for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
-                configuration.getPerPage(), kernels.getKernels());
+        Kernels kernels = getEndpoint()
+                .getDigitalOceanClient()
+                .getDropletKernels(dropletId, configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "Kernels for Droplet {} : page {} / {} per page [{}] ",
+                dropletId,
+                configuration.getPage(),
+                configuration.getPerPage(),
+                kernels.getKernels());
         exchange.getMessage().setBody(kernels.getKernels());
     }
 
     private void getDropletBackups(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        Backups backups = getEndpoint().getDigitalOceanClient().getDropletBackups(dropletId, configuration.getPage(),
-                configuration.getPerPage());
-        LOG.trace("Backups for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
-                configuration.getPerPage(), backups.getBackups());
+        Backups backups = getEndpoint()
+                .getDigitalOceanClient()
+                .getDropletBackups(dropletId, configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "Backups for Droplet {} : page {} / {} per page [{}] ",
+                dropletId,
+                configuration.getPage(),
+                configuration.getPerPage(),
+                backups.getBackups());
         exchange.getMessage().setBody(backups.getBackups());
     }
 
     private void getDropletSnapshots(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        Snapshots snapshots = getEndpoint().getDigitalOceanClient().getDropletSnapshots(dropletId, configuration.getPage(),
-                configuration.getPerPage());
-        LOG.trace("Snapshots for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
-                configuration.getPerPage(), snapshots.getSnapshots());
+        Snapshots snapshots = getEndpoint()
+                .getDigitalOceanClient()
+                .getDropletSnapshots(dropletId, configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "Snapshots for Droplet {} : page {} / {} per page [{}] ",
+                dropletId,
+                configuration.getPage(),
+                configuration.getPerPage(),
+                snapshots.getSnapshots());
         exchange.getMessage().setBody(snapshots.getSnapshots());
     }
 
     private void getDropletNeighbors(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        Droplets droplets = getEndpoint().getDigitalOceanClient().getDropletNeighbors(dropletId, configuration.getPage());
-        LOG.trace("Neighbors for Droplet {} : page {} [{}] ", dropletId, configuration.getPage(), droplets.getDroplets());
+        Droplets droplets =
+                getEndpoint().getDigitalOceanClient().getDropletNeighbors(dropletId, configuration.getPage());
+        LOG.trace(
+                "Neighbors for Droplet {} : page {} [{}] ", dropletId, configuration.getPage(), droplets.getDroplets());
         exchange.getMessage().setBody(droplets.getDroplets());
     }
 
@@ -259,7 +286,8 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             droplet.setEnableIpv6(in.getHeader(DigitalOceanHeaders.DROPLET_ENABLE_IPV6, Boolean.class));
         }
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_PRIVATE_NETWORKING))) {
+        if (ObjectHelper.isNotEmpty(
+                exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_PRIVATE_NETWORKING))) {
             droplet.setEnablePrivateNetworking(
                     in.getHeader(DigitalOceanHeaders.DROPLET_ENABLE_PRIVATE_NETWORKING, Boolean.class));
         }
@@ -290,7 +318,6 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(
                     DigitalOceanHeaders.NAMES + " or " + DigitalOceanHeaders.NAME + " must be specified");
         }
-
     }
 
     private void restoreDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -298,11 +325,11 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.IMAGE_ID + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().restoreDroplet(dropletId,
-                exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
+        Action action = getEndpoint()
+                .getDigitalOceanClient()
+                .restoreDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
         LOG.trace("DropletAction Restore [{}] ", action);
         exchange.getMessage().setBody(action);
-
     }
 
     private void resizeDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -310,8 +337,9 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.DROPLET_SIZE + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().resizeDroplet(dropletId,
-                exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE, String.class));
+        Action action = getEndpoint()
+                .getDigitalOceanClient()
+                .resizeDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE, String.class));
         LOG.trace("DropletAction Resize [{}] ", action);
         exchange.getMessage().setBody(action);
     }
@@ -321,8 +349,9 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.IMAGE_ID + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().rebuildDroplet(dropletId,
-                exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
+        Action action = getEndpoint()
+                .getDigitalOceanClient()
+                .rebuildDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
         LOG.trace("Rebuild Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
@@ -332,8 +361,9 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().renameDroplet(dropletId,
-                exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
+        Action action = getEndpoint()
+                .getDigitalOceanClient()
+                .renameDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
         LOG.trace("Rename Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
@@ -343,8 +373,10 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.KERNEL_ID + " must be specified");
         }
 
-        Action action = getEndpoint().getDigitalOceanClient().changeDropletKernel(dropletId,
-                exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID, Integer.class));
+        Action action = getEndpoint()
+                .getDigitalOceanClient()
+                .changeDropletKernel(
+                        dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID, Integer.class));
         LOG.trace("Change Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
@@ -397,7 +429,8 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(action);
     }
 
-    private void enableDropletPrivateNetworking(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
+    private void enableDropletPrivateNetworking(Exchange exchange)
+            throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().enableDropletPrivateNetworking(dropletId);
         LOG.trace("Enable private networking for Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
@@ -413,8 +446,9 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         Action action;
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
-            action = getEndpoint().getDigitalOceanClient().takeDropletSnapshot(dropletId,
-                    exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
+            action = getEndpoint()
+                    .getDigitalOceanClient()
+                    .takeDropletSnapshot(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
         } else {
             action = getEndpoint().getDigitalOceanClient().takeDropletSnapshot(dropletId);
         }
@@ -446,5 +480,4 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         LOG.trace("Untag Droplet {} : [{}] ", dropletId, response);
         exchange.getMessage().setBody(response);
     }
-
 }

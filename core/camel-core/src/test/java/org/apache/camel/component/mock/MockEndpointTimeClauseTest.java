@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
@@ -27,9 +31,6 @@ import org.apache.camel.Service;
 import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
@@ -92,8 +93,8 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
             }
         });
 
-        AssertionError e = assertThrows(AssertionError.class, mock::assertIsSatisfied,
-                "Should have thrown an exception");
+        AssertionError e =
+                assertThrows(AssertionError.class, mock::assertIsSatisfied, "Should have thrown an exception");
 
         assertEquals("mock://result Received message count. Expected: <1> but was: <2>", e.getMessage());
 
@@ -235,5 +236,4 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         }
         return true;
     }
-
 }

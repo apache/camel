@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security.keycloak;
 
 import java.util.Collection;
@@ -36,9 +37,9 @@ public class KeycloakRealmRoleConverter implements Converter<Jwt, Collection<Gra
 
     @Override
     public Collection<GrantedAuthority> convert(final Jwt jwt) {
-        final Map<String, Object> realmAccess = (Map<String, Object>) jwt.getClaims().get(REALM_ACCESS);
-        return ((List<String>) realmAccess.get(ROLES)).stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        final Map<String, Object> realmAccess =
+                (Map<String, Object>) jwt.getClaims().get(REALM_ACCESS);
+        return ((List<String>) realmAccess.get(ROLES))
+                .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 }

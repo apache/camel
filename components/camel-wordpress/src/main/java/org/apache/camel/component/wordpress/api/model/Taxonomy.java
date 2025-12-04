@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import java.io.Serializable;
@@ -32,10 +33,13 @@ public class Taxonomy implements Serializable {
     private String slug;
     private String description;
     private boolean hierarchical;
+
     @JsonProperty("rest_base")
     private String restBase;
+
     @JsonProperty("show_cloud")
     private boolean showCloud;
+
     private List<Map<String, String>> capabilities;
     private List<String> labels;
     private List<String> types;
@@ -117,5 +121,4 @@ public class Taxonomy implements Serializable {
     public void setTypes(List<String> types) {
         this.types = types;
     }
-
 }

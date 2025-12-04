@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.io.IOException;
@@ -51,10 +52,13 @@ public class DataFormatProvider<T> implements MessageBodyWriter<T>, MessageBodyR
 
     @Override
     public T readFrom(
-            Class<T> cls, Type type, Annotation[] anns, MediaType mt,
-            MultivaluedMap<String, String> headers, InputStream is)
-            throws IOException,
-            WebApplicationException {
+            Class<T> cls,
+            Type type,
+            Annotation[] anns,
+            MediaType mt,
+            MultivaluedMap<String, String> headers,
+            InputStream is)
+            throws IOException, WebApplicationException {
         DataFormat format = getValidDataFormat(mt);
         try {
             @SuppressWarnings("unchecked")
@@ -72,17 +76,20 @@ public class DataFormatProvider<T> implements MessageBodyWriter<T>, MessageBodyR
 
     @Override
     public void writeTo(
-            T obj, Class<?> cls, Type type, Annotation[] anns, MediaType mt,
-            MultivaluedMap<String, Object> headers, OutputStream os)
-            throws IOException,
-            WebApplicationException {
+            T obj,
+            Class<?> cls,
+            Type type,
+            Annotation[] anns,
+            MediaType mt,
+            MultivaluedMap<String, Object> headers,
+            OutputStream os)
+            throws IOException, WebApplicationException {
         DataFormat format = getValidDataFormat(mt);
         try {
             format.marshal(null, obj, os);
         } catch (Exception ex) {
             throw new InternalServerErrorException(ex);
         }
-
     }
 
     public void setFormat(DataFormat format) {

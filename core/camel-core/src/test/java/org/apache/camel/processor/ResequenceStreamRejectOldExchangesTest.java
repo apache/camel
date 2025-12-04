@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +24,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-@DisabledOnOs(value = { OS.LINUX },
-              architectures = { "s390x" },
-              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@DisabledOnOs(
+        value = {OS.LINUX},
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
 
     @Test
@@ -91,9 +93,18 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
             @Override
             public void configure() {
 
-                from("direct:start").onException(MessageRejectedException.class).maximumRedeliveries(0).handled(true)
-                        .to("mock:error").end().resequence(header("seqno")).stream()
-                        .capacity(3).rejectOld().timeout(1000).deliveryAttemptInterval(10) // use
+                from("direct:start")
+                        .onException(MessageRejectedException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .to("mock:error")
+                        .end()
+                        .resequence(header("seqno"))
+                        .stream()
+                        .capacity(3)
+                        .rejectOld()
+                        .timeout(1000)
+                        .deliveryAttemptInterval(10) // use
                         // low
                         // timeout
                         // to

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.client;
 
 import java.util.stream.Stream;
@@ -28,17 +29,14 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class CosmosDbClientFactory {
 
-    private CosmosDbClientFactory() {
-    }
+    private CosmosDbClientFactory() {}
 
     public static CosmosAsyncClient createCosmosAsyncClient(final CosmosDbConfiguration configuration) {
-        return createBasicClient(configuration)
-                .buildAsyncClient();
+        return createBasicClient(configuration).buildAsyncClient();
     }
 
     public static CosmosClient createCosmosSyncClient(final CosmosDbConfiguration configuration) {
-        return createBasicClient(configuration)
-                .buildClient();
+        return createBasicClient(configuration).buildClient();
     }
 
     private static CosmosClientBuilder createBasicClient(final CosmosDbConfiguration configuration) {
@@ -52,9 +50,10 @@ public final class CosmosDbClientFactory {
                 .multipleWriteRegionsEnabled(configuration.isMultipleWriteRegionsEnabled())
                 .readRequestsFallbackEnabled(configuration.isReadRequestsFallbackEnabled());
         if (ObjectHelper.isNotEmpty(configuration.getPreferredRegions())) {
-            builder.preferredRegions(Stream.of(configuration.getPreferredRegions().split(","))
-                    .map(String::trim)
-                    .toList());
+            builder.preferredRegions(
+                    Stream.of(configuration.getPreferredRegions().split(","))
+                            .map(String::trim)
+                            .toList());
         }
         if (configuration.getCredentialType().equals(CredentialType.AZURE_IDENTITY)) {
             builder.credential(new DefaultAzureCredentialBuilder().build());

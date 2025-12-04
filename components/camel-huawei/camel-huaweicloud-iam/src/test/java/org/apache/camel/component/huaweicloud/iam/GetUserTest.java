@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -26,8 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class GetUserTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GetUserTest.class.getName());
 
@@ -37,9 +38,8 @@ public class GetUserTest extends CamelTestSupport {
     IAMMockClient mockClient = new IAMMockClient(null);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -48,11 +48,10 @@ public class GetUserTest extends CamelTestSupport {
                 from("direct:get_user")
                         .setProperty("CamelHwCloudIamOperation", constant("getUser"))
                         .setProperty("CamelHwCloudIamUserId", constant(testConfiguration.getProperty("userId")))
-                        .to("hwcloud-iam:?" +
-                            "region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&iamClient=#iamClient" +
-                            "&serviceKeys=#serviceKeys")
+                        .to("hwcloud-iam:?" + "region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&iamClient=#iamClient"
+                                + "&serviceKeys=#serviceKeys")
                         .log("Get user successful")
                         .to("mock:get_user_result");
             }
@@ -68,7 +67,8 @@ public class GetUserTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"domainId\":\"138\",\"name\":\"User 15\",\"email\":\"user15@email.com\"}",
+        assertEquals(
+                "{\"domainId\":\"138\",\"name\":\"User 15\",\"email\":\"user15@email.com\"}",
                 responseExchange.getIn().getBody(String.class));
     }
 }

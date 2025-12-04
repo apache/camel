@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringErrorHandlerInlinedPropertiesPlaceholderTest extends SpringTestSupport {
 
@@ -45,5 +46,4 @@ public class SpringErrorHandlerInlinedPropertiesPlaceholderTest extends SpringTe
         // 1 regular and 3 redeliveries
         assertEquals(3 + 1, bean.getCounter());
     }
-
 }

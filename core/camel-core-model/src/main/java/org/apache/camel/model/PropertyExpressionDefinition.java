@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -38,12 +39,12 @@ public class PropertyExpressionDefinition implements HasExpressionType {
 
     @XmlAttribute(required = true)
     private String key;
+
     @XmlElementRef
     @Metadata(required = true)
     private ExpressionDefinition expression;
 
-    public PropertyExpressionDefinition() {
-    }
+    public PropertyExpressionDefinition() {}
 
     protected PropertyExpressionDefinition(PropertyExpressionDefinition source) {
         this.key = source.key;

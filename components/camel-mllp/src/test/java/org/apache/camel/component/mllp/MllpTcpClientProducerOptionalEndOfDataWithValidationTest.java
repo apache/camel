@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import org.junit.jupiter.api.Test;
 
 public class MllpTcpClientProducerOptionalEndOfDataWithValidationTest
         extends TcpClientProducerEndOfDataAndValidationTestSupport {
@@ -89,5 +90,4 @@ public class MllpTcpClientProducerOptionalEndOfDataWithValidationTest
 
         assertDoesNotThrow(() -> runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte());
     }
-
 }

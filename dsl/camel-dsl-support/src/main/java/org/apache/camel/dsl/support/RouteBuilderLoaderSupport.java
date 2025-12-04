@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.support;
 
 import java.io.ByteArrayInputStream;
@@ -139,9 +140,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
 
             if (recorder != null) {
                 StartupStep step = recorder.beginStep(
-                        getClass(),
-                        resource.getLocation(),
-                        "Loading route from: " + resource.getLocation());
+                        getClass(), resource.getLocation(), "Loading route from: " + resource.getLocation());
 
                 builder.addLifecycleInterceptor(new RouteBuilderLifecycleStrategy() {
                     @Override
@@ -177,5 +176,4 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
      * @return          a {@link RoutesBuilder}
      */
     protected abstract RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception;
-
 }

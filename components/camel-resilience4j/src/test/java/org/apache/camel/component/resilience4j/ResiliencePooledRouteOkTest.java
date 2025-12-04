@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
@@ -26,8 +29,6 @@ import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResiliencePooledRouteOkTest extends CamelTestSupport {
 
@@ -59,7 +60,8 @@ public class ResiliencePooledRouteOkTest extends CamelTestSupport {
         assertEquals(0, bi.getInvokedCounter());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
 
         template.sendBody(endPointUri, "Hello World");
@@ -74,17 +76,34 @@ public class ResiliencePooledRouteOkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").circuitBreaker().to("direct:foo").to("log:foo").onFallback().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start")
+                        .circuitBreaker()
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
-                from("direct:start.with.timeout.enabled").circuitBreaker().resilience4jConfiguration()
-                        .timeoutEnabled(true).timeoutDuration(2000).end()
-                        .to("direct:foo").to("log:foo").onFallback().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start.with.timeout.enabled")
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .end()
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
         };
     }
-
 }

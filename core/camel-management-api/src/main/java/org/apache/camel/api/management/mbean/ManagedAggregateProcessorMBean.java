@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -69,7 +70,8 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Optimistic locking")
     boolean isOptimisticLocking();
 
-    @ManagedAttribute(description = "Whether or not to eager check for completion when a new incoming Exchange has been received")
+    @ManagedAttribute(
+            description = "Whether or not to eager check for completion when a new incoming Exchange has been received")
     boolean isEagerCheckCompletion();
 
     @ManagedAttribute(description = "The language for the predicate")
@@ -81,10 +83,13 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Whether or not exchanges which complete due to a timeout should be discarded")
     boolean isDiscardOnCompletionTimeout();
 
-    @ManagedAttribute(description = "Indicates to complete all current aggregated exchanges when the context is stopped")
+    @ManagedAttribute(
+            description = "Indicates to complete all current aggregated exchanges when the context is stopped")
     boolean isForceCompletionOnStop();
 
-    @ManagedAttribute(description = "Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped")
+    @ManagedAttribute(
+            description =
+                    "Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped")
     boolean isCompleteAllOnStop();
 
     @ManagedAttribute(description = "Number of completed exchanges which are currently in-flight")
@@ -151,5 +156,4 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @Override
     @ManagedAttribute(description = "Sets whether statistics is enabled")
     void setStatisticsEnabled(boolean statisticsEnabled);
-
 }

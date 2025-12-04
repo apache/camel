@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
 
 import java.util.List;
@@ -98,10 +99,12 @@ public class DMSProducer extends DefaultProducer {
      * @param  clientConfigurations
      * @throws JsonProcessingException
      */
-    private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations)
+            throws JsonProcessingException {
         CreateInstanceRequestBody body = null;
 
-        // checking if user inputted exchange body containing instance information. Body must be a CreateInstanceRequestBody or a valid JSON String (Advanced users)
+        // checking if user inputted exchange body containing instance information. Body must be a
+        // CreateInstanceRequestBody or a valid JSON String (Advanced users)
         Object exchangeBody = exchange.getMessage().getBody();
         if (exchangeBody instanceof CreateInstanceRequestBody) {
             body = (CreateInstanceRequestBody) exchangeBody;
@@ -115,7 +118,8 @@ public class DMSProducer extends DefaultProducer {
             }
         }
 
-        // if no CreateInstanceRequestBody was found in the exchange body, then create an instance from the endpoint parameters (basic users)
+        // if no CreateInstanceRequestBody was found in the exchange body, then create an instance from the endpoint
+        // parameters (basic users)
         if (body == null) {
             if (ObjectHelper.isEmpty(clientConfigurations.getName())) {
                 throw new IllegalArgumentException("Name is mandatory to create an instance");
@@ -139,7 +143,8 @@ public class DMSProducer extends DefaultProducer {
                     throw new IllegalArgumentException("Kafka manager user is mandatory to create a Kafka instance");
                 }
                 if (ObjectHelper.isEmpty(clientConfigurations.getKafkaManagerPassword())) {
-                    throw new IllegalArgumentException("Kafka manager password is mandatory to create a Kafka instance");
+                    throw new IllegalArgumentException(
+                            "Kafka manager password is mandatory to create a Kafka instance");
                 }
             } else if (clientConfigurations.getEngine().equals(DMSConstants.RABBITMQ)) {
                 // check for mandatory RabbitMQ values
@@ -195,8 +200,7 @@ public class DMSProducer extends DefaultProducer {
                     .withStorageSpecCode(clientConfigurations.getStorageSpecCode());
         }
 
-        CreateInstanceRequest request = new CreateInstanceRequest()
-                .withBody(body);
+        CreateInstanceRequest request = new CreateInstanceRequest().withBody(body);
         CreateInstanceResponse response = dmsClient.createInstance(request);
         exchange.getMessage().setBody(mapper.writeValueAsString(response));
     }
@@ -213,8 +217,8 @@ public class DMSProducer extends DefaultProducer {
             throw new IllegalArgumentException("Instance id is mandatory to delete an instance");
         }
 
-        DeleteInstanceRequest request = new DeleteInstanceRequest()
-                .withInstanceId(clientConfigurations.getInstanceId());
+        DeleteInstanceRequest request =
+                new DeleteInstanceRequest().withInstanceId(clientConfigurations.getInstanceId());
         dmsClient.deleteInstance(request);
         exchange.setProperty(DMSProperties.INSTANCE_DELETED, true);
     }
@@ -226,9 +230,9 @@ public class DMSProducer extends DefaultProducer {
      * @param  clientConfigurations
      * @throws JsonProcessingException
      */
-    private void listInstances(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
-        ListInstancesRequest request = new ListInstancesRequest()
-                .withEngine(clientConfigurations.getEngine());
+    private void listInstances(Exchange exchange, ClientConfigurations clientConfigurations)
+            throws JsonProcessingException {
+        ListInstancesRequest request = new ListInstancesRequest().withEngine(clientConfigurations.getEngine());
         ListInstancesResponse response = dmsClient.listInstances(request);
         exchange.getMessage().setBody(mapper.writeValueAsString(response.getInstances()));
     }
@@ -240,14 +244,14 @@ public class DMSProducer extends DefaultProducer {
      * @param  clientConfigurations
      * @throws JsonProcessingException
      */
-    private void queryInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void queryInstance(Exchange exchange, ClientConfigurations clientConfigurations)
+            throws JsonProcessingException {
         // check for instance id, which is mandatory to query an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to query an instance");
         }
 
-        QueryInstanceRequest request = new QueryInstanceRequest()
-                .withInstanceId(clientConfigurations.getInstanceId());
+        QueryInstanceRequest request = new QueryInstanceRequest().withInstanceId(clientConfigurations.getInstanceId());
         DmsInstance response = dmsClient.queryInstance(request);
         exchange.getMessage().setBody(mapper.writeValueAsString(response));
     }
@@ -259,7 +263,8 @@ public class DMSProducer extends DefaultProducer {
      * @param  clientConfigurations
      * @throws JsonProcessingException
      */
-    private void updateInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void updateInstance(Exchange exchange, ClientConfigurations clientConfigurations)
+            throws JsonProcessingException {
         // check for instance id, which is mandatory to update an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to update an instance");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -52,13 +53,12 @@ public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
             public void configure() {
 
                 from("oaipmh://localhost:" + mockOaipmhServer.getHttpsPort() + "/oai/request?"
-                     + "ssl=true&"
-                     + "ignoreSSLWarnings=true&"
-                     + "delay=1000&"
-                     + "verb=Identify&"
-                     + "initialDelay=1000")
+                                + "ssl=true&"
+                                + "ignoreSSLWarnings=true&"
+                                + "delay=1000&"
+                                + "verb=Identify&"
+                                + "initialDelay=1000")
                         .to("mock:result");
-
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -23,6 +24,4 @@ package org.apache.camel;
  * {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
  * {@link org.apache.camel.support.service.ServiceSupport#doStart()}.
  */
-public interface Producer extends Processor, Service, IsSingleton, EndpointAware {
-
-}
+public interface Producer extends Processor, Service, IsSingleton, EndpointAware {}

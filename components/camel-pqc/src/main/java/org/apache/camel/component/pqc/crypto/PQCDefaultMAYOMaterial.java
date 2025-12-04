@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
@@ -38,8 +39,8 @@ public class PQCDefaultMAYOMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.MAYO.getAlgorithm(),
-                    PQCSignatureAlgorithms.MAYO.getBcProvider());
+            signer = Signature.getInstance(
+                    PQCSignatureAlgorithms.MAYO.getAlgorithm(), PQCSignatureAlgorithms.MAYO.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +48,8 @@ public class PQCDefaultMAYOMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.MAYO.getAlgorithm(),
-                PQCSignatureAlgorithms.MAYO.getBcProvider());
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.MAYO.getAlgorithm(), PQCSignatureAlgorithms.MAYO.getBcProvider());
         kpGen.initialize(MayoParameterSpec.mayo5);
         return kpGen;
     }

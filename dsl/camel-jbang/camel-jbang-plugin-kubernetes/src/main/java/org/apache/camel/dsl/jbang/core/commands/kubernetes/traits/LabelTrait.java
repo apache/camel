@@ -32,27 +32,24 @@ public class LabelTrait extends BaseTrait {
 
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
-        context.doWithDeployments(
-                d -> d.editOrNewMetadata()
-                        .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
-                        .addToLabels(context.getLabels())
-                        .endMetadata());
-        context.doWithServices(
-                s -> s.editOrNewMetadata()
-                        .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
-                        .addToLabels(context.getLabels())
-                        .endMetadata());
-        context.doWithCronJobs(
-                c -> c.editOrNewMetadata()
-                        .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
-                        .addToLabels(context.getLabels())
-                        .endMetadata()
-                        .editOrNewSpec()
-                        .editOrNewJobTemplate()
-                        .editOrNewMetadata()
-                        .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
-                        .endMetadata()
-                        .endJobTemplate()
-                        .endSpec());
+        context.doWithDeployments(d -> d.editOrNewMetadata()
+                .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
+                .addToLabels(context.getLabels())
+                .endMetadata());
+        context.doWithServices(s -> s.editOrNewMetadata()
+                .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
+                .addToLabels(context.getLabels())
+                .endMetadata());
+        context.doWithCronJobs(c -> c.editOrNewMetadata()
+                .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
+                .addToLabels(context.getLabels())
+                .endMetadata()
+                .editOrNewSpec()
+                .editOrNewJobTemplate()
+                .editOrNewMetadata()
+                .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
+                .endMetadata()
+                .endJobTemplate()
+                .endSpec());
     }
 }

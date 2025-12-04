@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.w3c.dom.Node;
 
@@ -27,27 +32,23 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class CxfConsumerProviderTest extends CamelTestSupport {
 
-    protected static final String REQUEST_MESSAGE
-            = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
-              + "<soapenv:Header/><soapenv:Body><ser:ping/></soapenv:Body></soapenv:Envelope>";
+    protected static final String REQUEST_MESSAGE =
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
+                    + "<soapenv:Header/><soapenv:Body><ser:ping/></soapenv:Body></soapenv:Envelope>";
 
-    protected static final String RESPONSE_MESSAGE_BEGINE
-            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-              + "<soap:Body><pong xmlns=\"test/service\"";
+    protected static final String RESPONSE_MESSAGE_BEGINE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                    + "<soap:Body><pong xmlns=\"test/service\"";
     protected static final String RESPONSE_MESSAGE_END = "/></soap:Body></soap:Envelope>";
 
     protected static final String RESPONSE = "<pong xmlns=\"test/service\"/>";
 
-    protected final String simpleEndpointAddress = "http://localhost:"
-                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
-    protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
-                                               + "?serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider";
+    protected final String simpleEndpointAddress =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+    protected final String simpleEndpointURI =
+            "cxf://" + simpleEndpointAddress + "?serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -90,5 +91,4 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
     protected String getFromEndpointUri() {
         return simpleEndpointURI;
     }
-
 }

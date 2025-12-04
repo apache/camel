@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.Subscribe;
@@ -27,8 +28,8 @@ public class FilteringCamelEventHandler extends CamelEventHandler {
 
     private final Class<?> eventClass;
 
-    public FilteringCamelEventHandler(GuavaEventBusConsumer consumer, GuavaEventBusEndpoint endpoint, Processor processor,
-                                      Class<?> eventClass) {
+    public FilteringCamelEventHandler(
+            GuavaEventBusConsumer consumer, GuavaEventBusEndpoint endpoint, Processor processor, Class<?> eventClass) {
         super(consumer, endpoint, processor);
         this.eventClass = eventClass;
     }
@@ -44,10 +45,12 @@ public class FilteringCamelEventHandler extends CamelEventHandler {
             doEventReceived(event);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Cannot process event: {} as its class type: {} is not assignable with: {}",
-                        event, event.getClass().getName(), eventClass.getName());
+                log.debug(
+                        "Cannot process event: {} as its class type: {} is not assignable with: {}",
+                        event,
+                        event.getClass().getName(),
+                        eventClass.getName());
             }
         }
     }
-
 }

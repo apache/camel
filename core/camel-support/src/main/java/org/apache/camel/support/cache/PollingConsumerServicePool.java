@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
 
 import java.util.function.Function;
@@ -27,8 +28,10 @@ import org.apache.camel.util.function.ThrowingFunction;
  */
 public class PollingConsumerServicePool extends ServicePool<PollingConsumer> {
 
-    public PollingConsumerServicePool(ThrowingFunction<Endpoint, PollingConsumer, Exception> creator,
-                                      Function<PollingConsumer, Endpoint> getEndpoint, int capacity) {
+    public PollingConsumerServicePool(
+            ThrowingFunction<Endpoint, PollingConsumer, Exception> creator,
+            Function<PollingConsumer, Endpoint> getEndpoint,
+            int capacity) {
         super(creator, getEndpoint, capacity);
     }
 }

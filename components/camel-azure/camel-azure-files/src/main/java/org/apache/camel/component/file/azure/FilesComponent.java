@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 import java.util.Map;
@@ -33,17 +34,14 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
 
     public static final String SCHEME = "azure-files";
 
-    public FilesComponent() {
-    }
+    public FilesComponent() {}
 
     public FilesComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected FilesEndpoint buildFileEndpoint(
-            String uri, String remaining,
-            Map<String, Object> parameters)
+    protected FilesEndpoint buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
         var config = new FilesConfiguration(FilesURIStrings.getBaseURI(uri));
         return new FilesEndpoint(uri, this, config);
@@ -52,11 +50,9 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
     @Override
     protected void afterPropertiesSet(GenericFileEndpoint<ShareFileItem> endpoint) throws Exception {
         if (endpoint.getFileExist() == GenericFileExist.Append) {
-            throw new IllegalArgumentException(
-                    "Appending to remote files is not supported.");
+            throw new IllegalArgumentException("Appending to remote files is not supported.");
         } else if (endpoint.getFileExist() == GenericFileExist.Move) {
-            throw new IllegalArgumentException(
-                    "Moving of existing remote files is not implemented.");
+            throw new IllegalArgumentException("Moving of existing remote files is not implemented.");
         }
     }
 }

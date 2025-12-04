@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.StringJoiner;
@@ -57,7 +58,7 @@ public class MimeTypeHelper {
 
     private static String mimeType(String ext) {
         return switch (ext) {
-            // MIME-TYPES: START
+                // MIME-TYPES: START
             case "123" -> "application/vnd.lotus-1-2-3";
             case "3dml" -> "text/vnd.in3d.3dml";
             case "3ds" -> "image/x-3ds";
@@ -1052,7 +1053,7 @@ public class MimeTypeHelper {
             case "zir" -> "application/vnd.zul";
             case "zirz" -> "application/vnd.zul";
             case "zmm" -> "application/vnd.handheld-entertainment+xml";
-            // MIME-TYPES: END
+                // MIME-TYPES: END
             default -> null;
         };
     }

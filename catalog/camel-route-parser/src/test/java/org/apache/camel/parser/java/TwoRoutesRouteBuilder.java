@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -22,12 +23,8 @@ public class TwoRoutesRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("direct:foo").routeId("foo")
-                .log("I was here")
-                .to("mock:foo");
+        from("direct:foo").routeId("foo").log("I was here").to("mock:foo");
 
-        from("direct:bar").routeId("bar")
-                .transform(simple("Someone was here"))
-                .to("mock:bar");
+        from("direct:bar").routeId("bar").transform(simple("Someone was here")).to("mock:bar");
     }
 }

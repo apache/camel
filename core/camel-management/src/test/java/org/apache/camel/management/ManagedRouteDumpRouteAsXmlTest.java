@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Properties;
 import java.util.Set;
@@ -28,10 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
@@ -79,7 +80,7 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("myRoute", routeId);
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[] { true }, new String[] { "boolean" });
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[] {true}, new String[] {"boolean"});
         assertNotNull(xml);
         log.info(xml);
 
@@ -110,14 +111,16 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
                 bindToRegistry("bar", bar);
 
                 onException(Exception.class)
-                        .log("${exception.stacktrace}").logStackTrace(true).handled(true);
+                        .log("${exception.stacktrace}")
+                        .logStackTrace(true)
+                        .handled(true);
 
-                from("direct:start").routeId("myRoute")
+                from("direct:start")
+                        .routeId("myRoute")
                         .log("Got ${body}")
                         .to("ref:bar")
                         .to("{{result}}");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
@@ -64,28 +65,39 @@ import org.threeten.bp.Duration;
 public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
     private static final Logger LOG = LoggerFactory.getLogger(GooglePubsubComponent.class);
 
-    @Metadata(label = "common",
-              description = "Endpoint to use with local Pub/Sub emulator.")
+    @Metadata(label = "common", description = "Endpoint to use with local Pub/Sub emulator.")
     private String endpoint;
-    @Metadata(label = "common",
-              description = "Use Credentials when interacting with PubSub service (no authentication is required when using emulator).",
-              defaultValue = "true")
+
+    @Metadata(
+            label = "common",
+            description =
+                    "Use Credentials when interacting with PubSub service (no authentication is required when using emulator).",
+            defaultValue = "true")
     private boolean authenticate = true;
-    @Metadata(label = "common",
-              description = "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
+
+    @Metadata(
+            label = "common",
+            description =
+                    "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
-    @Metadata(label = "producer",
-              description = "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics.")
+
+    @Metadata(
+            label = "producer",
+            description =
+                    "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics.")
     private int publisherCacheSize = 100;
-    @Metadata(label = "producer",
-              description = "How many milliseconds should each producer stay alive in the cache.")
+
+    @Metadata(label = "producer", description = "How many milliseconds should each producer stay alive in the cache.")
     private int publisherCacheTimeout = 180000;
-    @Metadata(label = "advanced",
-              description = "How many milliseconds should a producer be allowed to terminate.")
+
+    @Metadata(label = "advanced", description = "How many milliseconds should a producer be allowed to terminate.")
     private int publisherTerminationTimeout = 60000;
-    @Metadata(label = "consumer",
-              description = "Comma-separated list of additional retryable error codes for synchronous pull. By default the PubSub client library retries ABORTED, UNAVAILABLE, UNKNOWN")
+
+    @Metadata(
+            label = "consumer",
+            description =
+                    "Comma-separated list of additional retryable error codes for synchronous pull. By default the PubSub client library retries ABORTED, UNAVAILABLE, UNKNOWN")
     private String synchronousPullRetryableCodes;
 
     private RemovalListener<String, Publisher> removalListener = removal -> {
@@ -110,8 +122,7 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
             .removalListener(removalListener)
             .build();
 
-    public GooglePubsubComponent() {
-    }
+    public GooglePubsubComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -149,13 +160,13 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
         return cachedPublishers.get(topicName, () -> buildPublisher(topicName, googlePubsubEndpoint));
     }
 
-    private Publisher buildPublisher(String topicName, GooglePubsubEndpoint googlePubsubEndpoint)
-            throws IOException {
+    private Publisher buildPublisher(String topicName, GooglePubsubEndpoint googlePubsubEndpoint) throws IOException {
         Publisher.Builder builder = Publisher.newBuilder(topicName);
         if (StringHelper.trimToNull(endpoint) != null) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider
-                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            ManagedChannel channel =
+                    ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider =
+                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
             builder.setChannelProvider(channelProvider);
         }
         builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));
@@ -166,7 +177,7 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
             builder.setEnableMessageOrdering(true);
             if (StringHelper.trimToNull(googlePubsubEndpoint.getPubsubEndpoint()) == null) {
                 LOG.warn("In conjunction with enabling message ordering the pubsubEndpoint should be set. "
-                         + "Message ordering is only guaranteed when send to the same region.");
+                        + "Message ordering is only guaranteed when send to the same region.");
             }
         }
         if (googlePubsubEndpoint.getRetry() != null) {
@@ -180,9 +191,10 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
             throws IOException {
         Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, messageReceiver);
         if (StringHelper.trimToNull(endpoint) != null) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider
-                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            ManagedChannel channel =
+                    ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider =
+                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
             builder.setChannelProvider(channelProvider);
         }
         builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));
@@ -191,12 +203,14 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
     }
 
     public SubscriberStub getSubscriberStub(GooglePubsubEndpoint googlePubsubEndpoint) throws IOException {
-        SubscriberStubSettings.Builder builder = SubscriberStubSettings.newBuilder().setTransportChannelProvider(
-                SubscriberStubSettings.defaultGrpcTransportProviderBuilder().build());
+        SubscriberStubSettings.Builder builder = SubscriberStubSettings.newBuilder()
+                .setTransportChannelProvider(SubscriberStubSettings.defaultGrpcTransportProviderBuilder()
+                        .build());
 
         if (synchronousPullRetryableCodes != null) {
             // retrieve the default retryable codes and add the ones specified as a component option
-            Set<StatusCode.Code> retryableCodes = EnumSet.copyOf(builder.pullSettings().getRetryableCodes());
+            Set<StatusCode.Code> retryableCodes =
+                    EnumSet.copyOf(builder.pullSettings().getRetryableCodes());
             Set<StatusCode.Code> customRetryableCodes = Stream.of(synchronousPullRetryableCodes.split(","))
                     .map(String::trim)
                     .map(StatusCode.Code::valueOf)
@@ -206,9 +220,10 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
         }
 
         if (StringHelper.trimToNull(endpoint) != null) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider
-                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            ManagedChannel channel =
+                    ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider =
+                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
             builder.setTransportChannelProvider(channelProvider);
         }
         builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));
@@ -219,10 +234,12 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
         CredentialsProvider credentialsProvider;
 
         if (endpoint.isAuthenticate()) {
-            credentialsProvider = FixedCredentialsProvider.create(ObjectHelper.isEmpty(endpoint.getServiceAccountKey())
-                    ? GoogleCredentials.getApplicationDefault() : ServiceAccountCredentials.fromStream(ResourceHelper
-                            .resolveMandatoryResourceAsInputStream(getCamelContext(), endpoint.getServiceAccountKey()))
-                            .createScoped(PublisherStubSettings.getDefaultServiceScopes()));
+            credentialsProvider = FixedCredentialsProvider.create(
+                    ObjectHelper.isEmpty(endpoint.getServiceAccountKey())
+                            ? GoogleCredentials.getApplicationDefault()
+                            : ServiceAccountCredentials.fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                            getCamelContext(), endpoint.getServiceAccountKey()))
+                                    .createScoped(PublisherStubSettings.getDefaultServiceScopes()));
         } else {
             credentialsProvider = NoCredentialsProvider.create();
         }

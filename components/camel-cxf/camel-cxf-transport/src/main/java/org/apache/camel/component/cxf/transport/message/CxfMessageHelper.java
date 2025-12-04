@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport.message;
 
 import java.io.InputStream;
@@ -28,16 +29,14 @@ import org.apache.cxf.message.MessageImpl;
 public final class CxfMessageHelper {
 
     private CxfMessageHelper() {
-        //Helper class
+        // Helper class
     }
 
     public static org.apache.cxf.message.Message getCxfInMessage(
-            HeaderFilterStrategy headerFilterStrategy,
-            org.apache.camel.Exchange exchange,
-            boolean isClient) {
+            HeaderFilterStrategy headerFilterStrategy, org.apache.camel.Exchange exchange, boolean isClient) {
         MessageImpl answer = new MessageImpl();
-        org.apache.cxf.message.Exchange cxfExchange = exchange
-                .getProperty(CamelTransportConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
+        org.apache.cxf.message.Exchange cxfExchange =
+                exchange.getProperty(CamelTransportConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
         org.apache.camel.Message message;
         if (isClient) {
             message = exchange.getMessage();
@@ -66,5 +65,4 @@ public final class CxfMessageHelper {
         cxfExchange.setInMessage(answer);
         return answer;
     }
-
 }

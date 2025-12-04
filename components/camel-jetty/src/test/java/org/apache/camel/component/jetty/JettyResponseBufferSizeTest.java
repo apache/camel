@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyResponseBufferSizeTest extends BaseJettyTest {
 
@@ -33,9 +34,9 @@ public class JettyResponseBufferSizeTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:{{port}}/myapp?responseBufferSize=65536").transform(body().prepend("Hello "));
+                from("jetty:http://localhost:{{port}}/myapp?responseBufferSize=65536")
+                        .transform(body().prepend("Hello "));
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.server;
+
+import static org.apache.camel.component.milo.MiloConstants.SCHEME_SERVER;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -27,13 +30,15 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-import static org.apache.camel.component.milo.MiloConstants.SCHEME_SERVER;
-
 /**
  * Make telemetry data available as an OPC UA server.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_SERVER, syntax = "milo-server:itemId", title = "OPC UA Server",
-             category = { Category.IOT })
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = SCHEME_SERVER,
+        syntax = "milo-server:itemId",
+        title = "OPC UA Server",
+        category = {Category.IOT})
 public class MiloServerEndpoint extends DefaultEndpoint {
 
     private volatile CamelServerItem item;

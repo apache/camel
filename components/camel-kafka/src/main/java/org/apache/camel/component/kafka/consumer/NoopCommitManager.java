@@ -26,14 +26,14 @@ import org.slf4j.LoggerFactory;
 public class NoopCommitManager extends AbstractCommitManager {
     private static final Logger LOG = LoggerFactory.getLogger(NoopCommitManager.class);
 
-    public NoopCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
+    public NoopCommitManager(
+            Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         super(consumer, kafkaConsumer, threadId, printableTopic);
     }
 
     @Override
     public void commit() {
         LOG.info("Auto commit on {} from {} is enabled via Kafka consumer (NO-OP)", threadId, printableTopic);
-
     }
 
     @Override

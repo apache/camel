@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.loadbalancer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,15 +35,16 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @XmlAttribute(required = true)
     private String distributionRatio;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = ",")
     private String distributionRatioDelimiter;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String roundRobin;
 
-    public WeightedLoadBalancerDefinition() {
-    }
+    public WeightedLoadBalancerDefinition() {}
 
     protected WeightedLoadBalancerDefinition(WeightedLoadBalancerDefinition source) {
         super(source);

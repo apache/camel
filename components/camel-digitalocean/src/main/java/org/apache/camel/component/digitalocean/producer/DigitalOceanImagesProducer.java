@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import com.myjeeva.digitalocean.common.ActionType;
@@ -44,7 +45,6 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
 
         switch (determineOperation(exchange)) {
-
             case list:
                 getImages(exchange);
                 break;
@@ -75,25 +75,36 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
     }
 
     private void getUserImages(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        Images images
-                = getEndpoint().getDigitalOceanClient().getUserImages(configuration.getPage(), configuration.getPerPage());
-        LOG.trace("User images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+        Images images = getEndpoint()
+                .getDigitalOceanClient()
+                .getUserImages(configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "User images : page {} / {} per page [{}] ",
+                configuration.getPage(),
+                configuration.getPerPage(),
                 images.getImages());
         exchange.getMessage().setBody(images.getImages());
     }
 
     private void getImages(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        DigitalOceanImageTypes type = exchange.getIn().getHeader(DigitalOceanHeaders.TYPE, DigitalOceanImageTypes.class);
+        DigitalOceanImageTypes type =
+                exchange.getIn().getHeader(DigitalOceanHeaders.TYPE, DigitalOceanImageTypes.class);
         Images images;
 
         if (ObjectHelper.isNotEmpty(type)) {
-            images = getEndpoint().getDigitalOceanClient().getAvailableImages(configuration.getPage(),
-                    configuration.getPerPage(), ActionType.valueOf(type.name()));
+            images = getEndpoint()
+                    .getDigitalOceanClient()
+                    .getAvailableImages(
+                            configuration.getPage(), configuration.getPerPage(), ActionType.valueOf(type.name()));
         } else {
-            images = getEndpoint().getDigitalOceanClient().getAvailableImages(configuration.getPage(),
-                    configuration.getPerPage());
+            images = getEndpoint()
+                    .getDigitalOceanClient()
+                    .getAvailableImages(configuration.getPage(), configuration.getPerPage());
         }
-        LOG.trace("All Images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+        LOG.trace(
+                "All Images : page {} / {} per page [{}] ",
+                configuration.getPage(),
+                configuration.getPerPage(),
                 images.getImages());
         exchange.getMessage().setBody(images.getImages());
     }
@@ -124,10 +135,15 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.ID + " must be specified");
         }
 
-        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableImageActions(imageId, configuration.getPage(),
-                configuration.getPerPage());
-        LOG.trace("Actions for Image {} : page {} / {} per page [{}] ", imageId, configuration.getPage(),
-                configuration.getPerPage(), actions.getActions());
+        Actions actions = getEndpoint()
+                .getDigitalOceanClient()
+                .getAvailableImageActions(imageId, configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "Actions for Image {} : page {} / {} per page [{}] ",
+                imageId,
+                configuration.getPage(),
+                configuration.getPerPage(),
+                actions.getActions());
         exchange.getMessage().setBody(actions.getActions());
     }
 

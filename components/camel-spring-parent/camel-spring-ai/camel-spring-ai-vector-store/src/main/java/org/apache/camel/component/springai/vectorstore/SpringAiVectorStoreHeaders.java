@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.vectorstore;
 
 import org.apache.camel.spi.Metadata;
 
 public class SpringAiVectorStoreHeaders {
     // Operation control
-    @Metadata(description = "The operation to perform (ADD, DELETE, SIMILARITY_SEARCH)",
-              javaType = "org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation")
+    @Metadata(
+            description = "The operation to perform (ADD, DELETE, SIMILARITY_SEARCH)",
+            javaType = "org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation")
     public static final String OPERATION = "CamelSpringAiVectorStoreOperation";
 
     // Search parameters
@@ -35,13 +37,15 @@ public class SpringAiVectorStoreHeaders {
     public static final String FILTER_EXPRESSION = "CamelSpringAiVectorStoreFilterExpression";
 
     // Delete parameters / Results
-    @Metadata(description = "List of document IDs (input for DELETE, output for ADD and SIMILARITY_SEARCH)",
-              javaType = "java.util.List<String>")
+    @Metadata(
+            description = "List of document IDs (input for DELETE, output for ADD and SIMILARITY_SEARCH)",
+            javaType = "java.util.List<String>")
     public static final String DOCUMENT_IDS = "CamelSpringAiVectorStoreDocumentIds";
 
     // Results
-    @Metadata(description = "List of similar documents found",
-              javaType = "java.util.List<org.springframework.ai.document.Document>")
+    @Metadata(
+            description = "List of similar documents found",
+            javaType = "java.util.List<org.springframework.ai.document.Document>")
     public static final String SIMILAR_DOCUMENTS = "CamelSpringAiVectorStoreSimilarDocuments";
 
     @Metadata(description = "Number of documents added", javaType = "Integer")

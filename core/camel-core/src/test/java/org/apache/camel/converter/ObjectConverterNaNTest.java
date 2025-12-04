@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
 
-import org.apache.camel.ContextTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.converter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.apache.camel.ContextTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class ObjectConverterNaNTest extends ContextTestSupport {
 

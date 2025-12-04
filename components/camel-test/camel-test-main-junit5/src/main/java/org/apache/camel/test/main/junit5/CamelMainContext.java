@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5;
+
+import static org.apache.camel.support.ObjectHelper.invokeMethod;
+import static org.apache.camel.util.ReflectionHelper.doWithFields;
+import static org.apache.camel.util.ReflectionHelper.getField;
+import static org.junit.platform.commons.support.AnnotationSupport.findAnnotatedMethods;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -43,11 +49,6 @@ import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
-
-import static org.apache.camel.support.ObjectHelper.invokeMethod;
-import static org.apache.camel.util.ReflectionHelper.doWithFields;
-import static org.apache.camel.util.ReflectionHelper.getField;
-import static org.junit.platform.commons.support.AnnotationSupport.findAnnotatedMethods;
 
 /**
  * An internal class representing the context of the test that is stored by the extension and closed automatically by
@@ -202,7 +203,8 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
                 final String mockEndpointsAndSkip = annotation.mockEndpointsAndSkip();
                 if (!mockEndpointsAndSkipSet && !mockEndpointsAndSkip.isEmpty()) {
                     mockEndpointsAndSkipSet = true;
-                    context.registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsAndSkip, true));
+                    context.registerEndpointCallback(
+                            new InterceptSendToMockEndpointStrategy(mockEndpointsAndSkip, true));
                 }
             }
         }
@@ -224,14 +226,24 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
                 context.getDebugger().addBreakpoint(new BreakpointSupport() {
                     @Override
                     public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
-                        callback.debugBefore(exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(),
+                        callback.debugBefore(
+                                exchange,
+                                processor,
+                                (ProcessorDefinition<?>) definition,
+                                definition.getId(),
                                 definition.getLabel());
                     }
 
                     @Override
-                    public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
-                        callback.debugAfter(exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(),
-                                definition.getLabel(), timeTaken);
+                    public void afterProcess(
+                            Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
+                        callback.debugAfter(
+                                exchange,
+                                processor,
+                                (ProcessorDefinition<?>) definition,
+                                definition.getId(),
+                                definition.getLabel(),
+                                timeTaken);
                     }
                 });
             }
@@ -298,7 +310,8 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
          *
          * @throws Exception if a route builder could not be created or initialized, or if a route could not be advised.
          */
-        private void adviceRoutes(ModelCamelContext context, CamelBeanPostProcessor beanPostProcessor, CamelMainTest annotation)
+        private void adviceRoutes(
+                ModelCamelContext context, CamelBeanPostProcessor beanPostProcessor, CamelMainTest annotation)
                 throws Exception {
             for (AdviceRouteMapping adviceRouteMapping : annotation.advices()) {
                 final Class<? extends RouteBuilder> adviceClass = adviceRouteMapping.advice();
@@ -306,18 +319,21 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
                     final Constructor<?> constructor = adviceClass.getDeclaredConstructor();
                     if (constructor.trySetAccessible()) {
                         RouteBuilder advice = adviceClass.cast(constructor.newInstance());
-                        beanPostProcessor.postProcessBeforeInitialization(advice, advice.getClass().getName());
-                        beanPostProcessor.postProcessAfterInitialization(advice, advice.getClass().getName());
+                        beanPostProcessor.postProcessBeforeInitialization(
+                                advice, advice.getClass().getName());
+                        beanPostProcessor.postProcessAfterInitialization(
+                                advice, advice.getClass().getName());
                         AdviceWith.adviceWith(context.getRouteDefinition(adviceRouteMapping.route()), context, advice);
                     } else {
-                        throw new RuntimeCamelException(
-                                String.format(
-                                        "The default constructor of the class %s is not accessible since it is in a package that is not opened to the extension.",
-                                        adviceClass.getName()));
+                        throw new RuntimeCamelException(String.format(
+                                "The default constructor of the class %s is not accessible since it is in a package that is not opened to the extension.",
+                                adviceClass.getName()));
                     }
                 } catch (NoSuchMethodException e) {
                     throw new RuntimeCamelException(
-                            String.format("Could not find the default constructor of the class %s.", adviceClass.getName()), e);
+                            String.format(
+                                    "Could not find the default constructor of the class %s.", adviceClass.getName()),
+                            e);
                 } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                     throw new RuntimeCamelException(e);
                 }
@@ -341,7 +357,9 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
                     throw new RuntimeCamelException(
                             "The attribute replaceRouteFromWith doesn't have the expected format, it should be of type \"route-id-1=new-uri-1\", ...");
                 }
-                AdviceWith.adviceWith(context.getRouteDefinition(fromEndpoint.substring(0, index)), context,
+                AdviceWith.adviceWith(
+                        context.getRouteDefinition(fromEndpoint.substring(0, index)),
+                        context,
                         new AdviceWithRouteBuilder() {
                             @Override
                             public void configure() {
@@ -360,17 +378,16 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
          */
         private void replaceBeansInRegistry(Registry registry, Object instance) {
             final Class<?> requiredTestClass = instance.getClass();
-            for (Method method : findAnnotatedMethods(requiredTestClass, ReplaceInRegistry.class,
-                    HierarchyTraversalMode.TOP_DOWN)) {
+            for (Method method :
+                    findAnnotatedMethods(requiredTestClass, ReplaceInRegistry.class, HierarchyTraversalMode.TOP_DOWN)) {
                 Class<?>[] parameterTypes = method.getParameterTypes();
                 if (parameterTypes.length == 0) {
                     if (method.trySetAccessible()) {
                         registry.bind(method.getName(), method.getReturnType(), invokeMethod(method, instance));
                     } else {
-                        throw new RuntimeCamelException(
-                                String.format(
-                                        "The method %s is not accessible since it is in a package that is not opened to the extension.",
-                                        method.getName()));
+                        throw new RuntimeCamelException(String.format(
+                                "The method %s is not accessible since it is in a package that is not opened to the extension.",
+                                method.getName()));
                     }
                 } else {
                     throw new RuntimeCamelException(
@@ -382,10 +399,9 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
                     if (field.trySetAccessible()) {
                         registry.bind(field.getName(), field.getType(), getField(field, instance));
                     } else {
-                        throw new RuntimeCamelException(
-                                String.format(
-                                        "The field %s is not accessible since it is in a package that is not opened to the extension.",
-                                        field.getName()));
+                        throw new RuntimeCamelException(String.format(
+                                "The field %s is not accessible since it is in a package that is not opened to the extension.",
+                                field.getName()));
                     }
                 }
             });
@@ -398,22 +414,21 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
          * @throws RuntimeCamelException if an annotated method could not be invoked or has invalid parameters.
          */
         private void invokeConfigureMethods(MainForTest main, Object instance) {
-            for (Method method : findAnnotatedMethods(instance.getClass(), Configure.class, HierarchyTraversalMode.TOP_DOWN)) {
+            for (Method method :
+                    findAnnotatedMethods(instance.getClass(), Configure.class, HierarchyTraversalMode.TOP_DOWN)) {
                 Class<?>[] parameterTypes = method.getParameterTypes();
                 if (parameterTypes.length == 1 && parameterTypes[0] == MainConfigurationProperties.class) {
                     if (method.trySetAccessible()) {
                         invokeMethod(method, instance, main.configure());
                     } else {
-                        throw new RuntimeCamelException(
-                                String.format(
-                                        "The method %s is not accessible since it is in a package that is not opened to the extension.",
-                                        method.getName()));
+                        throw new RuntimeCamelException(String.format(
+                                "The method %s is not accessible since it is in a package that is not opened to the extension.",
+                                method.getName()));
                     }
                 } else {
-                    throw new RuntimeCamelException(
-                            String.format(
-                                    "The method %s should have one single parameter of type MainConfigurationProperties.",
-                                    method.getName()));
+                    throw new RuntimeCamelException(String.format(
+                            "The method %s should have one single parameter of type MainConfigurationProperties.",
+                            method.getName()));
                 }
             }
         }
@@ -452,9 +467,9 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
             if (locations.length == 0) {
                 final String fileName = annotation.propertyPlaceholderFileName();
                 if (!fileName.isEmpty()) {
-                    main.setPropertyPlaceholderLocations(
-                            String.format("classpath:%s/%s;optional=true,classpath:%s;optional=true",
-                                    getOuterClassInstance().getClass().getPackageName().replace('.', '/'), fileName, fileName));
+                    main.setPropertyPlaceholderLocations(String.format(
+                            "classpath:%s/%s;optional=true,classpath:%s;optional=true",
+                            getOuterClassInstance().getClass().getPackageName().replace('.', '/'), fileName, fileName));
                 }
             } else {
                 main.setPropertyPlaceholderLocations(String.join(",", locations));

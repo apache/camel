@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xpath;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -24,5 +25,4 @@ public class XPathHeaderEnableSaxonTest extends XPathHeaderTest {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return newAppContext("XPathHeaderEnableSaxonTest.xml");
     }
-
 }

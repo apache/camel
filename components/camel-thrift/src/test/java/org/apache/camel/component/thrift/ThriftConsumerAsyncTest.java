@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -43,10 +48,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ThriftConsumerAsyncTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerAsyncTest.class);
     private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
@@ -66,7 +67,8 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
         if (transport == null) {
             LOG.info("Connecting to the Thrift server on port: {}", THRIFT_TEST_PORT);
             transport = new TNonblockingSocket("localhost", THRIFT_TEST_PORT);
-            thriftClient = (new Calculator.AsyncClient.Factory(new TAsyncClientManager(), new TBinaryProtocol.Factory()))
+            thriftClient = (new Calculator.AsyncClient.Factory(
+                            new TAsyncClientManager(), new TBinaryProtocol.Factory()))
                     .getAsyncClient(transport);
         }
     }
@@ -98,7 +100,6 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
                 LOG.info("Exception", exception);
                 latch.countDown();
             }
-
         });
         latch.await(5, TimeUnit.SECONDS);
 
@@ -127,7 +128,6 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
                 LOG.info("Exception", exception);
                 latch.countDown();
             }
-
         });
         latch.await(5, TimeUnit.SECONDS);
 
@@ -156,7 +156,6 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
                 LOG.info("Exception", exception);
                 latch.countDown();
             }
-
         });
         latch.await(5, TimeUnit.SECONDS);
 
@@ -174,11 +173,20 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
 
         final CountDownLatch latch = new CountDownLatch(1);
 
-        thriftClient.alltypes(true, (byte) THRIFT_TEST_NUM1, (short) THRIFT_TEST_NUM1, THRIFT_TEST_NUM1, THRIFT_TEST_NUM1,
-                THRIFT_TEST_NUM1, "empty",
-                ByteBuffer.allocate(10), new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY),
-                new ArrayList<Integer>(), new HashSet<String>(),
-                new HashMap<String, Long>(), new AsyncMethodCallback<Integer>() {
+        thriftClient.alltypes(
+                true,
+                (byte) THRIFT_TEST_NUM1,
+                (short) THRIFT_TEST_NUM1,
+                THRIFT_TEST_NUM1,
+                THRIFT_TEST_NUM1,
+                THRIFT_TEST_NUM1,
+                "empty",
+                ByteBuffer.allocate(10),
+                new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY),
+                new ArrayList<Integer>(),
+                new HashSet<String>(),
+                new HashMap<String, Long>(),
+                new AsyncMethodCallback<Integer>() {
 
                     @Override
                     public void onComplete(Integer response) {
@@ -191,7 +199,6 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
                         LOG.info("Exception", exception);
                         latch.countDown();
                     }
-
                 });
         latch.await(5, TimeUnit.SECONDS);
 
@@ -221,7 +228,6 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
                 LOG.info("Exception", exception);
                 latch.countDown();
             }
-
         });
         latch.await(5, TimeUnit.SECONDS);
 
@@ -241,15 +247,19 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator")
-                        .to("mock:thrift-service").choice()
+                from("thrift://localhost:" + THRIFT_TEST_PORT
+                                + "/org.apache.camel.component.thrift.generated.Calculator")
+                        .to("mock:thrift-service")
+                        .choice()
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
-                        .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
+                        .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2)
+                                .toString()))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("ping"))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("zip"))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("alltypes"))
                         .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1).toString()))
-                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo")).setBody(simple("${body[0]}"))
+                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo"))
+                        .setBody(simple("${body[0]}"))
                         .bean(new CalculatorMessageBuilder(), "echo");
             }
         };

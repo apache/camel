@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
@@ -23,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -44,7 +45,8 @@ public class TransactionalClientDataSourceWithOnExceptionRollbackTest extends Tr
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
-            RollbackExchangeException rollback = assertIsInstanceOf(RollbackExchangeException.class, e.getCause().getCause());
+            RollbackExchangeException rollback = assertIsInstanceOf(
+                    RollbackExchangeException.class, e.getCause().getCause());
             assertEquals("Donkey in Action", rollback.getExchange().getIn().getBody());
         }
 
@@ -68,19 +70,25 @@ public class TransactionalClientDataSourceWithOnExceptionRollbackTest extends Tr
                 errorHandler(transactionErrorHandler(required));
 
                 // on exception is also supported
-                onException(IllegalArgumentException.class).handled(false).to("mock:error").rollback();
+                onException(IllegalArgumentException.class)
+                        .handled(false)
+                        .to("mock:error")
+                        .rollback();
 
                 from("direct:okay")
                         .policy(required)
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 from("direct:fail")
                         .policy(required)
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
             }
         };
     }
-
 }

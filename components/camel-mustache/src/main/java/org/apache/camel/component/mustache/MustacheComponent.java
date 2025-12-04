@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mustache;
 
 import java.util.Map;
@@ -38,15 +39,17 @@ public class MustacheComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
+
     @Metadata
     private boolean allowTemplateFromHeader;
+
     @Metadata
     private boolean allowContextMapAll;
+
     @Metadata(label = "advanced", autowired = true)
     private MustacheFactory mustacheFactory;
 
-    public MustacheComponent() {
-    }
+    public MustacheComponent() {}
 
     @Override
     protected void doInit() throws Exception {
@@ -116,5 +119,4 @@ public class MustacheComponent extends DefaultComponent {
     public void setAllowContextMapAll(boolean allowContextMapAll) {
         this.allowContextMapAll = allowContextMapAll;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.Executors;
@@ -76,11 +77,11 @@ public class AggregateParallelThreadPoolAbortTest extends ContextTestSupport {
                         .rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
                         .build("inner");
 
-                from("direct:start")
-                        .to("direct:inner?synchronous=true");
+                from("direct:start").to("direct:inner?synchronous=true");
 
                 from("direct:inner")
-                        .aggregate(constant(true), new BodyInAggregatingStrategy()).executorService(executorService)
+                        .aggregate(constant(true), new BodyInAggregatingStrategy())
+                        .executorService(executorService)
                         .completionSize(2)
                         // force delay so threads are not free in the pool causing tasks to be rejected
                         .delay(1000)
@@ -88,5 +89,4 @@ public class AggregateParallelThreadPoolAbortTest extends ContextTestSupport {
             }
         };
     }
-
 }

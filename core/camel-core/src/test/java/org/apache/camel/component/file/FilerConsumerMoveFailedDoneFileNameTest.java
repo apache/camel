@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -54,10 +55,10 @@ public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?doneFileName=done&initialDelay=0&delay=10&moveFailed=failed")).to("mock:input")
+                from(fileUri("?doneFileName=done&initialDelay=0&delay=10&moveFailed=failed"))
+                        .to("mock:input")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }
-
 }

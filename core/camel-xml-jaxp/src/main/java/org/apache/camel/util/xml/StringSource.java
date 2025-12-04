@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.xml;
 
 import java.io.ByteArrayInputStream;
@@ -36,8 +37,7 @@ public class StringSource extends StreamSource implements Externalizable {
     private String text;
     private String encoding = "UTF-8";
 
-    public StringSource() {
-    }
+    public StringSource() {}
 
     public StringSource(String text) {
         if (text == null) {
@@ -96,7 +96,9 @@ public class StringSource extends StreamSource implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        int b = (text != null ? 0x01 : 0x00) + (encoding != null ? 0x02 : 0x00) + (getPublicId() != null ? 0x04 : 0x00)
+        int b = (text != null ? 0x01 : 0x00)
+                + (encoding != null ? 0x02 : 0x00)
+                + (getPublicId() != null ? 0x04 : 0x00)
                 + (getSystemId() != null ? 0x08 : 0x00);
         out.writeByte(b);
         if ((b & 0x01) != 0) {

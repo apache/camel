@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -51,7 +52,9 @@ public class MethodFilterVariableTest extends ContextTestSupport {
                 // START SNIPPET: example
                 from("direct:start")
                         .setVariable("location", header("city"))
-                        .filter().method("myBean", "matches").to("mock:result");
+                        .filter()
+                        .method("myBean", "matches")
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

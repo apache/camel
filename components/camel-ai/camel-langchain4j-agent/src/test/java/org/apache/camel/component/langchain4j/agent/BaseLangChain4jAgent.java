@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent;
+
+import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
+import static java.time.Duration.ofSeconds;
 
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -25,9 +29,6 @@ import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import org.apache.camel.component.langchain4j.agent.pojos.PersistentChatMemoryStore;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
-import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
-import static java.time.Duration.ofSeconds;
-
 public class BaseLangChain4jAgent extends CamelTestSupport {
 
     protected ChatModel chatModel;
@@ -37,14 +38,16 @@ public class BaseLangChain4jAgent extends CamelTestSupport {
 
     protected static final int MEMORY_ID_SESSION = 42;
 
-    protected static final String USER_DATABASE = """
+    protected static final String USER_DATABASE =
+            """
             {"id": "123", "name": "John Smith", "membership": "Gold", "rentals": 15, "preferredVehicle": "SUV"}
             """;
 
     protected static final String WEATHER_INFO = "Sunny, 22°C, perfect driving conditions";
 
     // Company knowledge base for RAG
-    protected static final String COMPANY_KNOWLEDGE_BASE = """
+    protected static final String COMPANY_KNOWLEDGE_BASE =
+            """
             Miles of Camels Car Rental - Company Information
 
             BUSINESS HOURS:

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringJacksonJsonDataFormatNamingStrategyTest extends CamelSpringTestSupport {
 
@@ -46,5 +47,4 @@ public class SpringJacksonJsonDataFormatNamingStrategyTest extends CamelSpringTe
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/component/jackson/SpringJacksonJsonDataFormatNamingStrategyTest.xml");
     }
-
 }

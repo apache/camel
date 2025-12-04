@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snmp;
 
 import java.net.URI;
@@ -38,8 +39,12 @@ import org.snmp4j.security.SecurityLevel;
 /**
  * Receive traps and poll SNMP (Simple Network Management Protocol) capable devices.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port",
-             category = { Category.MONITORING })
+@UriEndpoint(
+        firstVersion = "2.1.0",
+        scheme = "snmp",
+        title = "SNMP",
+        syntax = "snmp:host:port",
+        category = {Category.MONITORING})
 public class SnmpEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -54,42 +59,63 @@ public class SnmpEndpoint extends DefaultPollingEndpoint implements EndpointServ
     @UriPath(description = "Hostname of the SNMP enabled device")
     @Metadata(required = true)
     private String host;
+
     @UriPath(description = "Port number of the SNMP enabled device")
     @Metadata(required = true)
     private Integer port;
+
     @UriParam(defaultValue = "udp", enums = "tcp,udp")
     private String protocol = "udp";
+
     @UriParam(defaultValue = "" + DEFAULT_SNMP_RETRIES)
     private int retries = DEFAULT_SNMP_RETRIES;
+
     @UriParam(defaultValue = "" + DEFAULT_SNMP_TIMEOUT)
     private int timeout = DEFAULT_SNMP_TIMEOUT;
+
     @UriParam(defaultValue = "" + DEFAULT_SNMP_VERSION, enums = "0,1,3")
     private int snmpVersion = DEFAULT_SNMP_VERSION;
+
     @UriParam(defaultValue = DEFAULT_COMMUNITY)
     private String snmpCommunity = DEFAULT_COMMUNITY;
+
     @UriParam
     private SnmpActionType type;
-    @UriParam(label = "consumer", defaultValue = "60000", javaType = "java.time.Duration",
-              description = "Milliseconds before the next poll.")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "60000",
+            javaType = "java.time.Duration",
+            description = "Milliseconds before the next poll.")
     private long delay = 60000;
+
     @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3", label = "security")
     private int securityLevel = SecurityLevel.AUTH_PRIV;
+
     @UriParam(label = "security", secret = true)
     private String securityName;
+
     @UriParam(enums = "MD5,SHA1", label = "security")
     private String authenticationProtocol;
+
     @UriParam(label = "security", secret = true)
     private String authenticationPassphrase;
+
     @UriParam(label = "security", secret = true)
     private String privacyProtocol;
+
     @UriParam(label = "security", secret = true)
     private String privacyPassphrase;
+
     @UriParam
     private String snmpContextName;
+
     @UriParam
     private String snmpContextEngineId;
+
     @UriParam
     private OIDList oids = new OIDList();
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean treeList;
 

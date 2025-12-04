@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -23,10 +24,11 @@ public interface ManagedSamplingThrottlerMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "The sample period during which only a single Exchange will pass through")
     Long getSamplePeriod();
 
-    @ManagedAttribute(description = "The sample message count which only a single Exchange will pass through after this many received")
+    @ManagedAttribute(
+            description =
+                    "The sample message count which only a single Exchange will pass through after this many received")
     Long getMessageFrequency();
 
     @ManagedAttribute(description = "The time units for the sample period")
     String getTimeUnit();
-
 }

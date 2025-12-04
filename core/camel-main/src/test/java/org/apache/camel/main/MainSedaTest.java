@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaComponent;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MainSedaTest {
 
@@ -32,7 +33,8 @@ public class MainSedaTest {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.component.seda.defaultQueueFactory.counter", "123");
-        main.addProperty("camel.component.seda.defaultQueueFactory", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
+        main.addProperty(
+                "camel.component.seda.defaultQueueFactory", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -53,5 +55,4 @@ public class MainSedaTest {
             from("direct:start").to("seda:foo");
         }
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +39,6 @@ import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DistributedOptimisticLockFailingTest extends AbstractDistributedTest {
 
@@ -80,7 +81,8 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
             fail("Should throw CamelExecutionException");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
+            assertIsInstanceOf(
+                    OptimisticLockingAggregationRepository.OptimisticLockingException.class,
                     e.getCause().getCause());
         }
 
@@ -89,7 +91,8 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
             fail("Should throw CamelExecutionException");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
+            assertIsInstanceOf(
+                    OptimisticLockingAggregationRepository.OptimisticLockingException.class,
                     e.getCause().getCause());
         }
 
@@ -142,14 +145,22 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:fails").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .aggregationRepository(new AlwaysFailingRepository()).optimisticLocking()
+                from("direct:fails")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(new AlwaysFailingRepository())
+                        .optimisticLocking()
                         // do not use retry delay to speedup test
-                        .optimisticLockRetryPolicy(new OptimisticLockRetryPolicy().maximumRetries(5).retryDelay(0))
-                        .completionSize(2).to("mock:result");
+                        .optimisticLockRetryPolicy(new OptimisticLockRetryPolicy()
+                                .maximumRetries(5)
+                                .retryDelay(0))
+                        .completionSize(2)
+                        .to("mock:result");
 
-                from("direct:everysecondone").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .aggregationRepository(sharedRepository).optimisticLocking().completionSize(8)
+                from("direct:everysecondone")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(sharedRepository)
+                        .optimisticLocking()
+                        .completionSize(8)
                         .to("mock:result");
             }
         };

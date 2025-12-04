@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asType;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
@@ -37,38 +44,38 @@ import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asType;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
-
 @YamlIn
 @YamlType(
-          inline = false,
-          nodes = { "errorHandler" },
-          order = YamlDeserializerResolver.ORDER_DEFAULT,
-          properties = {
-                  @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                  @YamlProperty(name = "deadLetterChannel",
-                                type = "object:org.apache.camel.model.errorhandler.DeadLetterChannelDefinition",
-                                oneOf = "errorHandler"),
-                  @YamlProperty(name = "defaultErrorHandler",
-                                type = "object:org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition",
-                                oneOf = "errorHandler"),
-                  @YamlProperty(name = "jtaTransactionErrorHandler",
-                                type = "object:org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition",
-                                oneOf = "errorHandler"),
-                  @YamlProperty(name = "noErrorHandler",
-                                type = "object:org.apache.camel.model.errorhandler.NoErrorHandlerDefinition",
-                                oneOf = "errorHandler"),
-                  @YamlProperty(name = "refErrorHandler",
-                                type = "object:org.apache.camel.model.errorhandler.RefErrorHandlerDefinition",
-                                oneOf = "errorHandler"),
-                  @YamlProperty(name = "springTransactionErrorHandler",
-                                type = "object:org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition",
-                                oneOf = "errorHandler"),
-          })
+        inline = false,
+        nodes = {"errorHandler"},
+        order = YamlDeserializerResolver.ORDER_DEFAULT,
+        properties = {
+            @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+            @YamlProperty(
+                    name = "deadLetterChannel",
+                    type = "object:org.apache.camel.model.errorhandler.DeadLetterChannelDefinition",
+                    oneOf = "errorHandler"),
+            @YamlProperty(
+                    name = "defaultErrorHandler",
+                    type = "object:org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition",
+                    oneOf = "errorHandler"),
+            @YamlProperty(
+                    name = "jtaTransactionErrorHandler",
+                    type = "object:org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition",
+                    oneOf = "errorHandler"),
+            @YamlProperty(
+                    name = "noErrorHandler",
+                    type = "object:org.apache.camel.model.errorhandler.NoErrorHandlerDefinition",
+                    oneOf = "errorHandler"),
+            @YamlProperty(
+                    name = "refErrorHandler",
+                    type = "object:org.apache.camel.model.errorhandler.RefErrorHandlerDefinition",
+                    oneOf = "errorHandler"),
+            @YamlProperty(
+                    name = "springTransactionErrorHandler",
+                    type = "object:org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition",
+                    oneOf = "errorHandler"),
+        })
 public class ErrorHandlerDeserializer implements ConstructNode {
 
     private final boolean global;
@@ -142,5 +149,4 @@ public class ErrorHandlerDeserializer implements ConstructNode {
         }
         return answer;
     }
-
 }

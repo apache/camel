@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
 
 import java.io.Closeable;
@@ -41,7 +42,8 @@ public class KinesisConnection implements Closeable {
             if (Objects.isNull(kinesisClient)) {
                 kinesisClient = endpoint.getConfiguration().getAmazonKinesisClient() != null
                         ? endpoint.getConfiguration().getAmazonKinesisClient()
-                        : KinesisClientFactory.getKinesisClient(endpoint.getConfiguration()).getKinesisClient();
+                        : KinesisClientFactory.getKinesisClient(endpoint.getConfiguration())
+                                .getKinesisClient();
             }
             return kinesisClient;
         } finally {
@@ -55,7 +57,8 @@ public class KinesisConnection implements Closeable {
             if (Objects.isNull(kinesisAsyncClient)) {
                 kinesisAsyncClient = endpoint.getConfiguration().getAmazonKinesisAsyncClient() != null
                         ? endpoint.getConfiguration().getAmazonKinesisAsyncClient()
-                        : KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration()).getKinesisAsyncClient();
+                        : KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration())
+                                .getKinesisAsyncClient();
             }
             return kinesisAsyncClient;
         } finally {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
@@ -46,8 +47,7 @@ public class JBangModel {
         private String description;
         private String sourceType;
 
-        public JBangGroupModel() {
-        }
+        public JBangGroupModel() {}
 
         public JBangGroupModel(String name, String description, String sourceType) {
             this.name = name;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Map;
@@ -59,7 +60,8 @@ public class BeanDevConsole extends AbstractDevConsole {
     @Override
     protected String doCallText(Map<String, Object> options) {
         String filter = (String) options.get(FILTER);
-        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true").toString());
+        boolean properties =
+                "true".equals(options.getOrDefault(PROPERTIES, "true").toString());
         boolean nulls = "true".equals(options.getOrDefault(NULLS, "true").toString());
         boolean internal = "true".equals(options.getOrDefault(INTERNAL, "true").toString());
 
@@ -68,13 +70,15 @@ public class BeanDevConsole extends AbstractDevConsole {
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
         try {
             Map<String, Object> beans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
-            Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
+            Stream<String> keys =
+                    beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
             keys.forEach(k -> {
                 Object bean = beans.get(k);
                 if (bean != null) {
                     boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
                     if (include) {
-                        sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
+                        sb.append(String.format(
+                                "    %s (class: %s)%n", k, bean.getClass().getName()));
 
                         Map<String, Object> values = new TreeMap<>();
                         if (properties) {
@@ -108,7 +112,8 @@ public class BeanDevConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         String filter = (String) options.get(FILTER);
-        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true").toString());
+        boolean properties =
+                "true".equals(options.getOrDefault(PROPERTIES, "true").toString());
         boolean nulls = "true".equals(options.getOrDefault(NULLS, "true").toString());
         boolean internal = "true".equals(options.getOrDefault(INTERNAL, "true").toString());
 
@@ -119,7 +124,8 @@ public class BeanDevConsole extends AbstractDevConsole {
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
         try {
             Map<String, Object> beans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
-            Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
+            Stream<String> keys =
+                    beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
             keys.forEach(k -> {
                 Object bean = beans.get(k);
                 if (bean != null) {
@@ -183,5 +189,4 @@ public class BeanDevConsole extends AbstractDevConsole {
 
         return PatternHelper.matchPattern(name, filter);
     }
-
 }

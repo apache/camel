@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,7 +51,9 @@ public class AggregationStrategyBeanAdapterPollEnrichTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").pollEnrich("seda:foo", 100, AggregationStrategies.bean(appender)).to("mock:result");
+                from("direct:start")
+                        .pollEnrich("seda:foo", 100, AggregationStrategies.bean(appender))
+                        .to("mock:result");
             }
         };
     }
@@ -60,6 +63,5 @@ public class AggregationStrategyBeanAdapterPollEnrichTest extends ContextTestSup
         public String append(String existing, String next) {
             return existing + next;
         }
-
     }
 }

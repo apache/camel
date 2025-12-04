@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.util.ArrayList;
@@ -85,7 +86,9 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Sent multiple short messages for exchange id '{}' and received results '{}'", exchange.getExchangeId(),
+            log.debug(
+                    "Sent multiple short messages for exchange id '{}' and received results '{}'",
+                    exchange.getExchangeId(),
                     results);
         }
 
@@ -101,7 +104,9 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
 
                 for (UnsuccessDelivery delivery : deliveries) {
                     Map<String, Object> error = new HashMap<>();
-                    error.put(SmppConstants.DEST_ADDR, delivery.getDestinationAddress().getAddress());
+                    error.put(
+                            SmppConstants.DEST_ADDR,
+                            delivery.getDestinationAddress().getAddress());
                     error.put(SmppConstants.ERROR, delivery.getErrorStatusCode());
                     undelivered.add(error);
                 }
@@ -133,7 +138,8 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
             template.setEsmClass(esmClass.value());
         } else if (segments.length > 1) {
             // multipart message
-            template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
+            template.setEsmClass(
+                    new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
         }
 
         SubmitMulti[] submitMulties = new SubmitMulti[segments.length];
@@ -163,7 +169,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         submitMulties[submitMulties.length - 1].setRegisteredDelivery(specifiedDeliveryFlag);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     protected SubmitMulti createSubmitMultiTemplate(Exchange exchange) {
         Message in = exchange.getIn();
         SubmitMulti submitMulti = new SubmitMulti();

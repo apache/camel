@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.Callable;
@@ -63,8 +64,8 @@ public class RejectableScheduledThreadPoolExecutor extends ScheduledThreadPoolEx
         super(corePoolSize, handler);
     }
 
-    public RejectableScheduledThreadPoolExecutor(int corePoolSize, ThreadFactory threadFactory,
-                                                 RejectedExecutionHandler handler) {
+    public RejectableScheduledThreadPoolExecutor(
+            int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
         super(corePoolSize, threadFactory, handler);
     }
 
@@ -96,5 +97,4 @@ public class RejectableScheduledThreadPoolExecutor extends ScheduledThreadPoolEx
             return super.toString();
         }
     }
-
 }

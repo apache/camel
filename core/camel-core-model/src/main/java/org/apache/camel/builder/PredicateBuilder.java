@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 /**
@@ -27,7 +28,5 @@ public final class PredicateBuilder extends org.apache.camel.support.builder.Pre
     /**
      * Utility classes should not have a public constructor.
      */
-    private PredicateBuilder() {
-    }
-
+    private PredicateBuilder() {}
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
+
+import static org.apache.camel.component.file.azure.CredentialType.SHARED_ACCOUNT_KEY;
 
 import java.net.URI;
 
@@ -23,8 +26,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
-import static org.apache.camel.component.file.azure.CredentialType.SHARED_ACCOUNT_KEY;
 
 @UriParams
 public class FilesConfiguration extends RemoteFileConfiguration {
@@ -43,8 +44,11 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     @Metadata(required = true)
     private String share;
 
-    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
-              defaultValue = "SHARED_ACCOUNT_KEY", description = "Determines the credential strategy to adopt")
+    @UriParam(
+            label = "common",
+            enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
+            defaultValue = "SHARED_ACCOUNT_KEY",
+            description = "Determines the credential strategy to adopt")
     private CredentialType credentialType = SHARED_ACCOUNT_KEY;
 
     public FilesConfiguration() {
@@ -75,7 +79,9 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     @Override
     public void setDirectory(String path) {
         // split URI path to share and starting directory
-        if (path == null || path.isBlank() || path.contains(FilesPath.PATH_SEPARATOR + "" + FilesPath.PATH_SEPARATOR)
+        if (path == null
+                || path.isBlank()
+                || path.contains(FilesPath.PATH_SEPARATOR + "" + FilesPath.PATH_SEPARATOR)
                 || path.equals(FilesPath.SHARE_ROOT)) {
             throw new IllegalArgumentException("Illegal endpoint URI path (expected share[/dir]): " + path);
         }

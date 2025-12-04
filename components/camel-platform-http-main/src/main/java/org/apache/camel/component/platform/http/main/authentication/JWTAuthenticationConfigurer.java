@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main.authentication;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
@@ -28,17 +31,15 @@ import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.
 import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-
 public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer {
 
     @Override
     public void configureAuthentication(
-            AuthenticationConfig authenticationConfig,
-            HttpServerConfigurationProperties properties) {
+            AuthenticationConfig authenticationConfig, HttpServerConfigurationProperties properties) {
 
-        String path
-                = isNotEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : properties.getPath();
+        String path = isNotEmpty(properties.getAuthenticationPath())
+                ? properties.getAuthenticationPath()
+                : properties.getPath();
         // root means to authenticate everything
         if ("/".equals(path)) {
             path = "/*";
@@ -57,11 +58,13 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
         });
         entry.setAuthenticationProviderFactory(vertx -> JWTAuth.create(
                 vertx,
-                new JWTAuthOptions(
-                        new JsonObject().put("keyStore", new JsonObject()
-                                .put("type", properties.getJwtKeystoreType())
-                                .put("path", properties.getJwtKeystorePath())
-                                .put("password", properties.getJwtKeystorePassword())))));
+                new JWTAuthOptions(new JsonObject()
+                        .put(
+                                "keyStore",
+                                new JsonObject()
+                                        .put("type", properties.getJwtKeystoreType())
+                                        .put("path", properties.getJwtKeystorePath())
+                                        .put("password", properties.getJwtKeystorePassword())))));
 
         authenticationConfig.getEntries().add(entry);
         authenticationConfig.setEnabled(true);
@@ -69,11 +72,11 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
 
     @Override
     public void configureAuthentication(
-            AuthenticationConfig authenticationConfig,
-            HttpManagementServerConfigurationProperties properties) {
+            AuthenticationConfig authenticationConfig, HttpManagementServerConfigurationProperties properties) {
 
-        String path
-                = isNotEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : properties.getPath();
+        String path = isNotEmpty(properties.getAuthenticationPath())
+                ? properties.getAuthenticationPath()
+                : properties.getPath();
         // root means to authenticate everything
         if ("/".equals(path)) {
             path = "/*";
@@ -92,11 +95,13 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
         });
         entry.setAuthenticationProviderFactory(vertx -> JWTAuth.create(
                 vertx,
-                new JWTAuthOptions(
-                        new JsonObject().put("keyStore", new JsonObject()
-                                .put("type", properties.getJwtKeystoreType())
-                                .put("path", properties.getJwtKeystorePath())
-                                .put("password", properties.getJwtKeystorePassword())))));
+                new JWTAuthOptions(new JsonObject()
+                        .put(
+                                "keyStore",
+                                new JsonObject()
+                                        .put("type", properties.getJwtKeystoreType())
+                                        .put("path", properties.getJwtKeystorePath())
+                                        .put("password", properties.getJwtKeystorePassword())))));
 
         authenticationConfig.getEntries().add(entry);
         authenticationConfig.setEnabled(true);

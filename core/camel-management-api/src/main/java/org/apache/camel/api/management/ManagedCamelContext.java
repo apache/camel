@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management;
 
 import java.util.List;
@@ -125,5 +126,4 @@ public interface ManagedCamelContext {
      * @throws IllegalArgumentException if the type is not compliant
      */
     <T extends ManagedConsumerMBean> T getManagedConsumer(String id, Class<T> type);
-
 }

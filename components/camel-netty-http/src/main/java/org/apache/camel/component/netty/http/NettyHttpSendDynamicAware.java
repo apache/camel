@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.http.base.HttpSendDynamicAware;
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("netty-http")
-public class NettyHttpSendDynamicAware extends HttpSendDynamicAware {
-
-}
+public class NettyHttpSendDynamicAware extends HttpSendDynamicAware {}

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -33,5 +34,4 @@ public class ASN1DataFormatReifier extends DataFormatReifier<ASN1DataFormat> {
         properties.put("usingIterator", definition.getUsingIterator());
         properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
     }
-
 }

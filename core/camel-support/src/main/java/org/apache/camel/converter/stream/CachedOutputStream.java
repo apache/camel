@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.stream;
 
 import java.io.ByteArrayOutputStream;
@@ -147,7 +148,7 @@ public class CachedOutputStream extends OutputStream {
             } else {
                 throw new IllegalStateException(
                         "CurrentStream should be an instance of CachedByteArrayOutputStream but is: "
-                                                + currentStream.getClass().getName());
+                                + currentStream.getClass().getName());
             }
         } else {
             return tempFileManager.newStreamCache();
@@ -237,5 +238,4 @@ public class CachedOutputStream extends OutputStream {
             cachedOutputStream.close();
         }
     }
-
 }

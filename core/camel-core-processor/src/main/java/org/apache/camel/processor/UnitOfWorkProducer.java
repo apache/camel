@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
@@ -44,8 +45,8 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
         this.producer = producer;
         // wrap in unit of work
         CamelContext ecc = producer.getEndpoint().getCamelContext();
-        this.processor = PluginHelper.getInternalProcessorFactory(ecc)
-                .addUnitOfWorkProcessorAdvice(ecc, producer, null);
+        this.processor =
+                PluginHelper.getInternalProcessorFactory(ecc).addUnitOfWorkProcessorAdvice(ecc, producer, null);
     }
 
     @Override

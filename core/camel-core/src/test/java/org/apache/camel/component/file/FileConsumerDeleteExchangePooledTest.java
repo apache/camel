@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileConsumerDeleteExchangePooledTest extends ContextTestSupport {
 
@@ -69,8 +70,7 @@ public class FileConsumerDeleteExchangePooledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?delete=true&initialDelay=0&delay=10"))
-                        .to("mock:result");
+                from(fileUri("?delete=true&initialDelay=0&delay=10")).to("mock:result");
             }
         };
     }

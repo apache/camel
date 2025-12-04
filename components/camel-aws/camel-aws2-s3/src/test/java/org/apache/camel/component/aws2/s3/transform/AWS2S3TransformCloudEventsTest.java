@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.transform;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -30,8 +33,6 @@ import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AWS2S3TransformCloudEventsTest {
 
@@ -53,7 +54,8 @@ public class AWS2S3TransformCloudEventsTest {
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertTrue(exchange.getMessage().getHeaders().containsKey(AWS2S3Constants.BUCKET_NAME));
-        assertEquals("org.apache.camel.event.aws.s3.getObject",
+        assertEquals(
+                "org.apache.camel.event.aws.s3.getObject",
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
         assertEquals("camel.txt", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
         assertEquals("aws.s3.bucket.mycamel", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
@@ -61,7 +63,8 @@ public class AWS2S3TransformCloudEventsTest {
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
+        Transformer transformer = camelContext
+                .getTransformerRegistry()
                 .resolveTransformer(new TransformerKey("aws2-s3:application-cloudevents"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(AWS2S3CloudEventDataTypeTransformer.class, transformer.getClass());

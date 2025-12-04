@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 import java.io.IOException;
@@ -231,15 +232,17 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     @Override
     public List<String> findComponentNames() {
-        return cache(FIND_COMPONENT_NAMES, () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
-                .flatMap(Collection::stream)
-                .sorted()
-                .toList());
+        return cache(
+                FIND_COMPONENT_NAMES, () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
+                        .flatMap(Collection::stream)
+                        .sorted()
+                        .toList());
     }
 
     @Override
     public List<String> findDataFormatNames() {
-        return cache(FIND_DATA_FORMAT_NAMES, () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
+        return cache(FIND_DATA_FORMAT_NAMES, () -> Stream.of(
+                        runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
                 .flatMap(Collection::stream)
                 .sorted()
                 .toList());
@@ -322,7 +325,8 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
                 String[] parts = label.split(",");
                 for (String part : parts) {
                     try {
-                        if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter)
+                        if (part.equalsIgnoreCase(filter)
+                                || CatalogHelper.matchWildcard(part, filter)
                                 || part.matches(filter)) {
                             answer.add(name);
                         }
@@ -450,7 +454,8 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
         return cache(FIND_OTHER_LABELS, () -> findLabels(this::findOtherNames, this::otherModel));
     }
 
-    private SortedSet<String> findLabels(Supplier<List<String>> findNames, Function<String, ? extends BaseModel<?>> loadModel) {
+    private SortedSet<String> findLabels(
+            Supplier<List<String>> findNames, Function<String, ? extends BaseModel<?>> loadModel) {
         TreeSet<String> answer = new TreeSet<>();
         List<String> names = findNames.get();
         for (String name : names) {
@@ -486,74 +491,90 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     @Override
     public String listComponentsAsJson() {
-        return cache(LIST_COMPONENTS_AS_JSON, () -> JsonMapper.serialize(findComponentNames().stream()
-                .map(this::componentJSonSchema)
-                .map(JsonMapper::deserialize)
-                .map(o -> o.get("component"))
-                .toList()));
+        return cache(
+                LIST_COMPONENTS_AS_JSON,
+                () -> JsonMapper.serialize(findComponentNames().stream()
+                        .map(this::componentJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("component"))
+                        .toList()));
     }
 
     @Override
     public String listDataFormatsAsJson() {
-        return cache(LIST_DATA_FORMATS_AS_JSON, () -> JsonMapper.serialize(findDataFormatNames().stream()
-                .map(this::dataFormatJSonSchema)
-                .map(JsonMapper::deserialize)
-                .map(o -> o.get("dataformat"))
-                .toList()));
+        return cache(
+                LIST_DATA_FORMATS_AS_JSON,
+                () -> JsonMapper.serialize(findDataFormatNames().stream()
+                        .map(this::dataFormatJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("dataformat"))
+                        .toList()));
     }
 
     @Override
     public String listLanguagesAsJson() {
-        return cache(LIST_LANGUAGES_AS_JSON, () -> JsonMapper.serialize(findLanguageNames().stream()
-                .map(this::languageJSonSchema)
-                .map(JsonMapper::deserialize)
-                .map(o -> o.get("language"))
-                .toList()));
+        return cache(
+                LIST_LANGUAGES_AS_JSON,
+                () -> JsonMapper.serialize(findLanguageNames().stream()
+                        .map(this::languageJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("language"))
+                        .toList()));
     }
 
     @Override
     public String listTransformersAsJson() {
-        return cache(LIST_TRANSFORMERS_AS_JSON, () -> JsonMapper.serialize(findTransformerNames().stream()
-                .map(this::transformerJSonSchema)
-                .map(JsonMapper::deserialize)
-                .map(o -> o.get("transformer"))
-                .toList()));
+        return cache(
+                LIST_TRANSFORMERS_AS_JSON,
+                () -> JsonMapper.serialize(findTransformerNames().stream()
+                        .map(this::transformerJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("transformer"))
+                        .toList()));
     }
 
     @Override
     public String listDevConsolesAsJson() {
-        return cache(LIST_CONSOLES_AS_JSON, () -> JsonMapper.serialize(findDevConsoleNames().stream()
-                .map(this::devConsoleJSonSchema)
-                .map(JsonMapper::deserialize)
-                .map(o -> o.get("console"))
-                .toList()));
+        return cache(
+                LIST_CONSOLES_AS_JSON,
+                () -> JsonMapper.serialize(findDevConsoleNames().stream()
+                        .map(this::devConsoleJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("console"))
+                        .toList()));
     }
 
     @Override
     public String listModelsAsJson() {
-        return cache(LIST_MODELS_AS_JSON, () -> JsonMapper.serialize(findModelNames().stream()
-                .map(this::modelJSonSchema)
-                .map(JsonMapper::deserialize)
-                .map(o -> o.get("model"))
-                .toList()));
+        return cache(
+                LIST_MODELS_AS_JSON,
+                () -> JsonMapper.serialize(findModelNames().stream()
+                        .map(this::modelJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("model"))
+                        .toList()));
     }
 
     @Override
     public String listOthersAsJson() {
-        return cache(LIST_OTHERS_AS_JSON, () -> JsonMapper.serialize(findOtherNames().stream()
-                .map(this::otherJSonSchema)
-                .map(JsonMapper::deserialize)
-                .map(o -> o.get("other"))
-                .toList()));
+        return cache(
+                LIST_OTHERS_AS_JSON,
+                () -> JsonMapper.serialize(findOtherNames().stream()
+                        .map(this::otherJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("other"))
+                        .toList()));
     }
 
     @Override
     public String listBeansAsJson() {
-        return cache(LIST_BEANS_AS_JSON, () -> JsonMapper.serialize(findBeansNames().stream()
-                .map(this::pojoBeanJSonSchema)
-                .map(JsonMapper::deserialize)
-                .map(o -> o.get("bean"))
-                .toList()));
+        return cache(
+                LIST_BEANS_AS_JSON,
+                () -> JsonMapper.serialize(findBeansNames().stream()
+                        .map(this::pojoBeanJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("bean"))
+                        .toList()));
     }
 
     @Override
@@ -685,7 +706,8 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
         if (am == null) {
             return false;
         }
-        return groupId.equals(am.getGroupId()) && artifactId.equals(am.getArtifactId())
+        return groupId.equals(am.getGroupId())
+                && artifactId.equals(am.getArtifactId())
                 && (version == null || version.isBlank() || version.equals(am.getVersion()));
     }
 
@@ -696,5 +718,4 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
             return null;
         }
     }
-
 }

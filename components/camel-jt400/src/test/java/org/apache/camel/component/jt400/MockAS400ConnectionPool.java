@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
 import java.util.Locale;
@@ -52,7 +53,8 @@ public class MockAS400ConnectionPool extends AS400ConnectionPool {
     }
 
     @Override
-    public AS400 getConnection(String systemName, String userID, String password, int service) throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID, String password, int service)
+            throws ConnectionPoolException {
         return getConnection(systemName, userID, password);
     }
 
@@ -69,5 +71,4 @@ public class MockAS400ConnectionPool extends AS400ConnectionPool {
         connection.setLocale(locale);
         return connection;
     }
-
 }

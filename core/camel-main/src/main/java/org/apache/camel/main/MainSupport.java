@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.concurrent.TimeUnit;
@@ -250,17 +251,18 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     @Override
-    protected void doStart() throws Exception {
-    }
+    protected void doStart() throws Exception {}
 
     @Override
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
         if (mainConfigurationProperties.getDurationMaxSeconds() > 0
-                && mainConfigurationProperties.isRoutesReloadRestartDuration()
+                        && mainConfigurationProperties.isRoutesReloadRestartDuration()
                 || mainConfigurationProperties.getDurationMaxMessages() > 0
                 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
-            // register lifecycle, so we can trigger to shutdown the JVM when maximum number of messages has been processed
-            // (we must use the event notifier also for max seconds only to support restarting duration if routes are reloaded)
+            // register lifecycle, so we can trigger to shutdown the JVM when maximum number of messages has been
+            // processed
+            // (we must use the event notifier also for max seconds only to support restarting duration if routes are
+            // reloaded)
             EventNotifier notifier = new MainDurationEventNotifier(
                     camelContext,
                     mainConfigurationProperties.getDurationMaxMessages(),
@@ -312,7 +314,10 @@ public abstract class MainSupport extends BaseMainSupport {
                     shutdownStrategy.shutdown();
                 } else if (idle > 0 || max > 0) {
                     if (idle > 0 && max > 0) {
-                        LOG.info("Waiting until complete: Duration idle {} seconds or max {} messages processed", idle, max);
+                        LOG.info(
+                                "Waiting until complete: Duration idle {} seconds or max {} messages processed",
+                                idle,
+                                max);
                     } else if (idle > 0) {
                         LOG.info("Waiting until complete: Duration idle {} seconds", idle);
                     } else {

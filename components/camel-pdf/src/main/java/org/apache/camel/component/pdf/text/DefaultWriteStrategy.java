@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pdf.text;
 
 import java.io.IOException;
@@ -44,9 +45,9 @@ public class DefaultWriteStrategy implements WriteStrategy {
         document.addPage(page);
         float x = pdfConfiguration.getMarginLeft();
         float y = page.getMediaBox().getHeight() - pdfConfiguration.getMarginTop();
-        float averageFontHeight
-                = PdfUtils.getAverageFontHeight(new PDType1Font(Standard14Fonts.FontName.valueOf(pdfConfiguration.getFont())),
-                        pdfConfiguration.getFontSize());
+        float averageFontHeight = PdfUtils.getAverageFontHeight(
+                new PDType1Font(Standard14Fonts.FontName.valueOf(pdfConfiguration.getFont())),
+                pdfConfiguration.getFontSize());
         float lineSpacing = averageFontHeight * 2;
 
         PDPageContentStream contentStream = initializeContentStream(document, page);
@@ -78,7 +79,8 @@ public class DefaultWriteStrategy implements WriteStrategy {
 
     private PDPageContentStream initializeContentStream(PDDocument document, PDPage page) throws IOException {
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.valueOf(pdfConfiguration.getFont())),
+        contentStream.setFont(
+                new PDType1Font(Standard14Fonts.FontName.valueOf(pdfConfiguration.getFont())),
                 pdfConfiguration.getFontSize());
         return contentStream;
     }

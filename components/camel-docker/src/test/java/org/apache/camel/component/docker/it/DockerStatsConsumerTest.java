@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.it;
 
 import java.util.concurrent.TimeUnit;
@@ -28,7 +29,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
  * consume the stats from a docker instance. For this test to run you need to inform the container ID via
  * -D=id-of-the-container, the docker host name via -Ddocker.hostname=my.host.com and the port via -Ddocker.port=2375
  */
-@EnabledIfSystemProperty(named = "docker.test.container.id", matches = ".*", disabledReason = "Requires a running container")
+@EnabledIfSystemProperty(
+        named = "docker.test.container.id",
+        matches = ".*",
+        disabledReason = "Requires a running container")
 public class DockerStatsConsumerTest extends DockerITTestSupport {
     @Test
     void testDocker() throws Exception {

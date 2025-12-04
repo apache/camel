@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
 
 import java.util.List;
@@ -34,9 +35,10 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class VertxPlatformHttpRouter implements Router {
 
-    public static final String PLATFORM_HTTP_ROUTER_NAME = PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router";
-    public static final String PLATFORM_HTTP_ROUTER_NAME_ZERO
-            = PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router-0";
+    public static final String PLATFORM_HTTP_ROUTER_NAME =
+            PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router";
+    public static final String PLATFORM_HTTP_ROUTER_NAME_ZERO =
+            PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router-0";
 
     private final String name;
     private final VertxPlatformHttpServer server;
@@ -240,8 +242,7 @@ public class VertxPlatformHttpRouter implements Router {
             throw new IllegalArgumentException("Don't include * when mounting a sub router");
         }
 
-        return route(mountPoint + "*")
-                .subRouter(subRouter);
+        return route(mountPoint + "*").subRouter(subRouter);
     }
 
     @Override
@@ -299,10 +300,7 @@ public class VertxPlatformHttpRouter implements Router {
      * Default router lookup method.
      */
     public static VertxPlatformHttpRouter lookup(CamelContext camelContext, String routerName) {
-        return CamelContextHelper.lookup(
-                camelContext,
-                routerName,
-                VertxPlatformHttpRouter.class);
+        return CamelContextHelper.lookup(camelContext, routerName, VertxPlatformHttpRouter.class);
     }
 
     /**
@@ -318,5 +316,4 @@ public class VertxPlatformHttpRouter implements Router {
     public static String getRouterNameFromPort(int port) {
         return VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME + "-" + port;
     }
-
 }

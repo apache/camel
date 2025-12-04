@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.paho.mqtt5.PahoMqtt5Component;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PahoMqtt5ToDSendDynamicIT extends PahoMqtt5ITSupport {
 
@@ -30,7 +31,9 @@ public class PahoMqtt5ToDSendDynamicIT extends PahoMqtt5ITSupport {
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
         // there should only be one paho endpoint
-        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("paho-mqtt5:")).count();
+        long count = context.getEndpoints().stream()
+                .filter(e -> e.getEndpointUri().startsWith("paho-mqtt5:"))
+                .count();
         assertEquals(1, count, "There should only be 1 paho endpoint");
 
         // and the messages should be in the queues
@@ -53,5 +56,4 @@ public class PahoMqtt5ToDSendDynamicIT extends PahoMqtt5ITSupport {
             }
         };
     }
-
 }

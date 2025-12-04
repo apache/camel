@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  *
@@ -69,7 +70,11 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
         // 1 first + 3 redeliveries
         assertEquals(4, counter);
 
-        MyBody dead = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getIn().getBody(MyBody.class);
+        MyBody dead = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(MyBody.class);
         assertSame(body, dead, "Should be original message in DLC");
     }
 
@@ -78,22 +83,38 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .useOriginalMessage()
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0));
 
-                from("direct:start").to("mock:a").split(simple("${body.foo}")).shareUnitOfWork().to("mock:b").to("direct:line")
-                        .end().split(simple("${body.bar}")).shareUnitOfWork()
-                        .to("mock:c").to("direct:line").end().to("mock:result");
+                from("direct:start")
+                        .to("mock:a")
+                        .split(simple("${body.foo}"))
+                        .shareUnitOfWork()
+                        .to("mock:b")
+                        .to("direct:line")
+                        .end()
+                        .split(simple("${body.bar}"))
+                        .shareUnitOfWork()
+                        .to("mock:c")
+                        .to("direct:line")
+                        .end()
+                        .to("mock:result");
 
-                from("direct:line").to("log:line").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        if (body.contains("Donkey")) {
-                            counter++;
-                            throw new IllegalArgumentException("Donkey not allowed");
-                        }
-                    }
-                }).to("mock:line");
+                from("direct:line")
+                        .to("log:line")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                if (body.contains("Donkey")) {
+                                    counter++;
+                                    throw new IllegalArgumentException("Donkey not allowed");
+                                }
+                            }
+                        })
+                        .to("mock:line");
             }
         };
     }
@@ -115,5 +136,4 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
             return bar;
         }
     }
-
 }

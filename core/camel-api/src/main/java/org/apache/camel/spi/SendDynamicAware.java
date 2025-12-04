@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -71,8 +72,8 @@ public interface SendDynamicAware extends Service, CamelContextAware {
         private final Map<String, Object> properties;
         private final Map<String, Object> lenientProperties;
 
-        public DynamicAwareEntry(String uri, String originalUri, Map<String, Object> properties,
-                                 Map<String, Object> lenientProperties) {
+        public DynamicAwareEntry(
+                String uri, String originalUri, Map<String, Object> properties, Map<String, Object> lenientProperties) {
             this.uri = uri;
             this.originalUri = originalUri;
             this.properties = properties;
@@ -140,5 +141,4 @@ public interface SendDynamicAware extends Service, CamelContextAware {
      * @throws Exception is thrown if error creating the post processor.
      */
     Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception;
-
 }

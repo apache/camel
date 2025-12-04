@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
@@ -43,14 +44,19 @@ public class ResponseMessageDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "200")
     private String code;
+
     @XmlAttribute
     private String contentType;
+
     @XmlAttribute(required = true)
     private String message;
+
     @XmlAttribute
     private String responseModel;
+
     @XmlElement(name = "header")
     private List<ResponseHeaderDefinition> headers;
+
     @XmlElement(name = "examples")
     private List<RestPropertyDefinition> examples;
 
@@ -190,5 +196,4 @@ public class ResponseMessageDefinition {
         verb.getResponseMsgs().add(this);
         return verb.getRest();
     }
-
 }

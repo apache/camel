@@ -46,8 +46,7 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
 
     private boolean renewTokenOnForbidden = true;
 
-    public KnativeOidcClientOptions() {
-    }
+    public KnativeOidcClientOptions() {}
 
     public KnativeOidcClientOptions(CamelContext camelContext) {
         super(camelContext);
@@ -70,13 +69,15 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
             Optional<String> oidcTokenPath = propertiesComponent.resolveProperty(PROPERTY_PREFIX + "token.path");
             oidcTokenPath.ifPresent(token -> this.oidcTokenPath = token);
 
-            boolean renewTokenOnForbidden = Boolean.parseBoolean(
-                    propertiesComponent.resolveProperty(PROPERTY_PREFIX + "renew.tokens.on.forbidden").orElse("true"));
+            boolean renewTokenOnForbidden = Boolean.parseBoolean(propertiesComponent
+                    .resolveProperty(PROPERTY_PREFIX + "renew.tokens.on.forbidden")
+                    .orElse("true"));
 
             setRenewTokenOnForbidden(renewTokenOnForbidden);
 
-            boolean cacheTokens = Boolean.parseBoolean(
-                    propertiesComponent.resolveProperty(PROPERTY_PREFIX + "cache.tokens").orElse("true"));
+            boolean cacheTokens = Boolean.parseBoolean(propertiesComponent
+                    .resolveProperty(PROPERTY_PREFIX + "cache.tokens")
+                    .orElse("true"));
             setCacheTokens(cacheTokens);
         }
     }
@@ -87,8 +88,8 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
     public String retrieveOidcToken() {
         if (oidcToken == null || !cacheTokens) {
             try {
-                oidcToken = IOHelper
-                        .loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), oidcTokenPath))
+                oidcToken = IOHelper.loadText(
+                                ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), oidcTokenPath))
                         .trim();
             } catch (IOException e) {
                 throw new RuntimeException(e);

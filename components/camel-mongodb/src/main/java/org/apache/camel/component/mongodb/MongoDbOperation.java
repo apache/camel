@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
 
 public enum MongoDbOperation {
@@ -37,7 +38,7 @@ public enum MongoDbOperation {
     // delete operations
     remove,
 
-    //Bulk operations
+    // Bulk operations
     bulkWrite,
 
     // aggregate
@@ -48,5 +49,4 @@ public enum MongoDbOperation {
     getColStats,
     count,
     command
-
 }

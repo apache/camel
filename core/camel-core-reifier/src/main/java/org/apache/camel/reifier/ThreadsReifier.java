@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.concurrent.ExecutorService;
@@ -63,17 +64,22 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
             profile.setMaxPoolSize(definition.getMaxPoolSize() != null ? parseInt(definition.getMaxPoolSize()) : null);
             profile.setKeepAliveTime(
                     definition.getKeepAliveTime() != null ? parseDuration(definition.getKeepAliveTime()) : null);
-            profile.setTimeUnit(definition.getTimeUnit() != null ? parse(TimeUnit.class, definition.getTimeUnit()) : null);
-            profile.setMaxQueueSize(definition.getMaxQueueSize() != null ? parseInt(definition.getMaxQueueSize()) : null);
+            profile.setTimeUnit(
+                    definition.getTimeUnit() != null ? parse(TimeUnit.class, definition.getTimeUnit()) : null);
+            profile.setMaxQueueSize(
+                    definition.getMaxQueueSize() != null ? parseInt(definition.getMaxQueueSize()) : null);
             profile.setRejectedPolicy(policy);
-            profile.setAllowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut() != null
-                    ? parseBoolean(definition.getAllowCoreThreadTimeOut(), false) : null);
+            profile.setAllowCoreThreadTimeOut(
+                    definition.getAllowCoreThreadTimeOut() != null
+                            ? parseBoolean(definition.getAllowCoreThreadTimeOut(), false)
+                            : null);
 
             ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
             threadPool = manager.newThreadPool(definition, name, profile);
             shutdownThreadPool = true;
         } else {
-            if (definition.getThreadName() != null && !definition.getThreadName().equals("Threads")) {
+            if (definition.getThreadName() != null
+                    && !definition.getThreadName().equals("Threads")) {
                 throw new IllegalArgumentException("ThreadName and executorService options cannot be used together.");
             }
             if (definition.getPoolSize() != null) {
@@ -83,7 +89,8 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
                 throw new IllegalArgumentException("MaxPoolSize and executorService options cannot be used together.");
             }
             if (definition.getKeepAliveTime() != null) {
-                throw new IllegalArgumentException("KeepAliveTime and executorService options cannot be used together.");
+                throw new IllegalArgumentException(
+                        "KeepAliveTime and executorService options cannot be used together.");
             }
             if (definition.getTimeUnit() != null) {
                 throw new IllegalArgumentException("TimeUnit and executorService options cannot be used together.");
@@ -92,7 +99,8 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
                 throw new IllegalArgumentException("MaxQueueSize and executorService options cannot be used together.");
             }
             if (definition.getRejectedPolicy() != null) {
-                throw new IllegalArgumentException("RejectedPolicy and executorService options cannot be used together.");
+                throw new IllegalArgumentException(
+                        "RejectedPolicy and executorService options cannot be used together.");
             }
             if (definition.getAllowCoreThreadTimeOut() != null) {
                 throw new IllegalArgumentException(
@@ -108,13 +116,12 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
     protected ThreadPoolRejectedPolicy resolveRejectedPolicy() {
         String ref = parseString(definition.getExecutorService());
         if (ref != null && definition.getRejectedPolicy() == null) {
-            ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager()
-                    .getThreadPoolProfile(ref);
+            ThreadPoolProfile threadPoolProfile =
+                    camelContext.getExecutorServiceManager().getThreadPoolProfile(ref);
             if (threadPoolProfile != null) {
                 return threadPoolProfile.getRejectedPolicy();
             }
         }
         return parse(ThreadPoolRejectedPolicy.class, definition.getRejectedPolicy());
     }
-
 }

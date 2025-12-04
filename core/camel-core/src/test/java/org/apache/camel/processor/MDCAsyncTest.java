@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -31,8 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MDCAsyncTest extends ContextTestSupport {
 
@@ -58,15 +59,21 @@ public class MDCAsyncTest extends ContextTestSupport {
 
                 MdcCheckerProcessor checker = new MdcCheckerProcessor();
 
-                from("direct:a").routeId("route-async").process(e -> {
-                    // custom is propagated
-                    MDC.put("custom.hello", "World");
-                    // foo is not propagated
-                    MDC.put("foo", "Bar");
-                    // myKey is propagated
-                    MDC.put("myKey", "Baz");
-                }).process(checker).to("log:foo").process(new MyAsyncProcessor()).process(checker).to("mock:end");
-
+                from("direct:a")
+                        .routeId("route-async")
+                        .process(e -> {
+                            // custom is propagated
+                            MDC.put("custom.hello", "World");
+                            // foo is not propagated
+                            MDC.put("foo", "Bar");
+                            // myKey is propagated
+                            MDC.put("myKey", "Baz");
+                        })
+                        .process(checker)
+                        .to("log:foo")
+                        .process(new MyAsyncProcessor())
+                        .process(checker)
+                        .to("mock:end");
             }
         };
     }
@@ -93,8 +100,8 @@ public class MDCAsyncTest extends ContextTestSupport {
 
         @Override
         public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-            AsyncCallbackToCompletableFutureAdapter<Exchange> callback
-                    = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                    new AsyncCallbackToCompletableFutureAdapter<>(exchange);
             process(exchange, callback);
             return callback.getFuture();
         }
@@ -170,8 +177,6 @@ public class MDCAsyncTest extends ContextTestSupport {
                 contextId = MDC.get("camel.contextId");
                 assertTrue(contextId != null && !contextId.isEmpty());
             }
-
         }
     }
-
 }

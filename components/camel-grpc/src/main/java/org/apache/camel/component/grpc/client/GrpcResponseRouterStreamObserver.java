@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.client;
 
 import java.util.Objects;
@@ -37,11 +38,12 @@ public class GrpcResponseRouterStreamObserver implements StreamObserver<Object> 
     private final Exchange exchange;
     private final AsyncCallback callback;
 
-    public GrpcResponseRouterStreamObserver(GrpcConfiguration configuration,
-                                            Endpoint sourceEndpoint,
-                                            AsyncProducer producer,
-                                            Exchange exchange,
-                                            AsyncCallback callback) {
+    public GrpcResponseRouterStreamObserver(
+            GrpcConfiguration configuration,
+            Endpoint sourceEndpoint,
+            AsyncProducer producer,
+            Exchange exchange,
+            AsyncCallback callback) {
         this.configuration = configuration;
         this.sourceEndpoint = sourceEndpoint;
         this.producer = producer;
@@ -75,7 +77,9 @@ public class GrpcResponseRouterStreamObserver implements StreamObserver<Object> 
         if (configuration.isForwardOnCompleted()) {
             Exchange newExchange = sourceEndpoint.createExchange();
             inherit(newExchange);
-            newExchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
+            newExchange
+                    .getIn()
+                    .setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
             doSend(newExchange);
         }
         callback.done(true);
@@ -95,10 +99,8 @@ public class GrpcResponseRouterStreamObserver implements StreamObserver<Object> 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         GrpcResponseRouterStreamObserver that = (GrpcResponseRouterStreamObserver) o;
         return Objects.equals(sourceEndpoint, that.sourceEndpoint) && Objects.equals(producer, that.producer);
     }

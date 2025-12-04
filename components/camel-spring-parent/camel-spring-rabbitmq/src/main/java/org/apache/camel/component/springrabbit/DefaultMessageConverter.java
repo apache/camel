@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
 
 import java.io.UnsupportedEncodingException;
@@ -58,8 +59,7 @@ public class DefaultMessageConverter extends AbstractMessageConverter implements
                 data = camelContext.getTypeConverter().mandatoryConvertTo(byte[].class, body);
             }
         } catch (NoTypeConversionAvailableException | UnsupportedEncodingException e) {
-            throw new MessageConversionException(
-                    "failed to convert to byte[] for rabbitmq message", e);
+            throw new MessageConversionException("failed to convert to byte[] for rabbitmq message", e);
         }
         messageProperties.setContentLength(data.length);
         Message answer = new Message(data, messageProperties);
@@ -83,8 +83,7 @@ public class DefaultMessageConverter extends AbstractMessageConverter implements
                 try {
                     content = new String(message.getBody(), encoding);
                 } catch (UnsupportedEncodingException e) {
-                    throw new MessageConversionException(
-                            "failed to convert text-based Message content", e);
+                    throw new MessageConversionException("failed to convert text-based Message content", e);
                 }
             }
         }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 /**
@@ -30,5 +31,4 @@ public interface GenericFileFilter<T> {
      * @return      <code>true</code> if and only if <code>file</code> should be included
      */
     boolean accept(GenericFile<T> file);
-
 }

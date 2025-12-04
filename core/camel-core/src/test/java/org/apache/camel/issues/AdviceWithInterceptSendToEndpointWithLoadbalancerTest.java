@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,7 +43,9 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Conte
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             public void configure() {
-                interceptSendToEndpoint("seda:end1").skipSendToOriginalEndpoint().to("mock:end");
+                interceptSendToEndpoint("seda:end1")
+                        .skipSendToOriginalEndpoint()
+                        .to("mock:end");
             }
         });
         context.start();
@@ -53,5 +56,4 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Conte
 
         assertMockEndpointsSatisfied();
     }
-
 }

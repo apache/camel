@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -24,14 +27,13 @@ import org.apache.camel.component.debezium.configuration.FileConnectorEmbeddedDe
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class DebeziumComponentTest extends CamelTestSupport {
 
     @Test
     void testIfSetsAdditionalProperties() throws Exception {
         final DebeziumTestComponent component = new DebeziumTestComponent(context);
-        final FileConnectorEmbeddedDebeziumConfiguration configuration = new FileConnectorEmbeddedDebeziumConfiguration();
+        final FileConnectorEmbeddedDebeziumConfiguration configuration =
+                new FileConnectorEmbeddedDebeziumConfiguration();
 
         final Map<String, Object> params = new HashMap<>();
         params.put("extra.1", 789);
@@ -44,13 +46,17 @@ public class DebeziumComponentTest extends CamelTestSupport {
 
         component.setConfiguration(configuration);
 
-        final DebeziumTestEndpoint endpoint = (DebeziumTestEndpoint) component
-                .createEndpoint("debezium-dummy:test_name?additionalProperties.extra.1=123&additionalProperties.extra.2=test");
+        final DebeziumTestEndpoint endpoint = (DebeziumTestEndpoint) component.createEndpoint(
+                "debezium-dummy:test_name?additionalProperties.extra.1=123&additionalProperties.extra.2=test");
 
         assertEquals("test_name", endpoint.getConfiguration().getName());
         assertEquals("test_conf", endpoint.getConfiguration().getTopicConfig());
-        assertEquals("123", endpoint.getConfiguration().getAdditionalProperties().get("extra.1"));
-        assertEquals("test", endpoint.getConfiguration().getAdditionalProperties().get("extra.2"));
-        assertEquals("test.extra.3", endpoint.getConfiguration().getAdditionalProperties().get("extra.3"));
+        assertEquals(
+                "123", endpoint.getConfiguration().getAdditionalProperties().get("extra.1"));
+        assertEquals(
+                "test", endpoint.getConfiguration().getAdditionalProperties().get("extra.2"));
+        assertEquals(
+                "test.extra.3",
+                endpoint.getConfiguration().getAdditionalProperties().get("extra.3"));
     }
 }

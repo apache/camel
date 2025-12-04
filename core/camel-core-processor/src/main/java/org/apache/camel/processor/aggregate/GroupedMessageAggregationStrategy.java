@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 import java.util.List;
@@ -31,11 +32,13 @@ import org.apache.camel.support.DefaultExchange;
  * This aggregation strategy can be used in combination with {@link org.apache.camel.processor.Splitter} to batch
  * messages
  */
-@Metadata(label = "bean",
-          description = "Aggregate all Message into a single combined Exchange holding all the aggregated messages in a List"
+@Metadata(
+        label = "bean",
+        description =
+                "Aggregate all Message into a single combined Exchange holding all the aggregated messages in a List"
                         + " of Message as the message body. This aggregation strategy can be used in combination with"
                         + " Splitter to batch messages.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class GroupedMessageAggregationStrategy extends AbstractListAggregationStrategy<Message> {
 

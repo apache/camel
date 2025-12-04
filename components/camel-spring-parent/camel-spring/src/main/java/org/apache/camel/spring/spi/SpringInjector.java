@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 import java.lang.reflect.Method;
@@ -53,13 +54,15 @@ public class SpringInjector implements Injector {
         try {
             // lookup factory method
             Method fm = target.getMethod(factoryMethod);
-            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers())
+            if (Modifier.isStatic(fm.getModifiers())
+                    && Modifier.isPublic(fm.getModifiers())
                     && fm.getReturnType() != Void.class) {
                 Object obj = fm.invoke(null);
                 answer = type.cast(obj);
             }
         } catch (Exception e) {
-            throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + target, e);
+            throw new RuntimeCamelException(
+                    "Error invoking factory method: " + factoryMethod + " on class: " + target, e);
         }
         return answer;
     }

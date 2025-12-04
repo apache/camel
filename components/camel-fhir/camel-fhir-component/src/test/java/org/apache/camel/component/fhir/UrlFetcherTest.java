@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -33,6 +34,9 @@ public class UrlFetcherTest {
         // URL will be logged in console, see log4j2.properties
         client.registerInterceptor(new LoggingInterceptor(true));
 
-        client.search().forResource("Patient").where(Patient.IDENTIFIER.exactly().identifier("this/is/my/id")).execute();
+        client.search()
+                .forResource("Patient")
+                .where(Patient.IDENTIFIER.exactly().identifier("this/is/my/id"))
+                .execute();
     }
 }

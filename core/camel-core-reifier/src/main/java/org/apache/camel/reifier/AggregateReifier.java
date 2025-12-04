@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.concurrent.ExecutorService;
@@ -80,8 +81,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             shutdownThreadPool = true;
         }
 
-        AggregateProcessor answer
-                = new AggregateProcessor(camelContext, target, correlation, strategy, threadPool, shutdownThreadPool);
+        AggregateProcessor answer =
+                new AggregateProcessor(camelContext, target, correlation, strategy, threadPool, shutdownThreadPool);
         answer.setDisabled(isDisabled(camelContext, definition));
 
         AggregationRepository repository = createAggregationRepository();
@@ -99,18 +100,21 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         ScheduledExecutorService timeoutThreadPool = definition.getTimeoutCheckerExecutorServiceBean();
         if (timeoutThreadPool == null && definition.getTimeoutCheckerExecutorService() != null) {
             // lookup existing thread pool
-            timeoutThreadPool
-                    = lookupByNameAndType(definition.getTimeoutCheckerExecutorService(), ScheduledExecutorService.class);
+            timeoutThreadPool =
+                    lookupByNameAndType(definition.getTimeoutCheckerExecutorService(), ScheduledExecutorService.class);
             if (timeoutThreadPool == null) {
                 // then create a thread pool assuming the ref is a thread pool
                 // profile id
-                timeoutThreadPool = camelContext.getExecutorServiceManager().newScheduledThreadPool(this,
-                        AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER,
-                        definition.getTimeoutCheckerExecutorService());
+                timeoutThreadPool = camelContext
+                        .getExecutorServiceManager()
+                        .newScheduledThreadPool(
+                                this,
+                                AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER,
+                                definition.getTimeoutCheckerExecutorService());
                 if (timeoutThreadPool == null) {
                     throw new IllegalArgumentException(
                             "ExecutorServiceRef " + definition.getTimeoutCheckerExecutorService()
-                                                       + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
+                                    + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
                 }
                 shutdownTimeoutThreadPool = true;
             }
@@ -249,5 +253,4 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
         return controller;
     }
-
 }

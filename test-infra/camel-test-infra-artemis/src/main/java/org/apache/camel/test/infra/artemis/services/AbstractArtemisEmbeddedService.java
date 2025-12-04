@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
 
 import java.io.File;
@@ -112,7 +113,8 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     private static String getRandomSubPath() {
         final int size = 12;
 
-        return ThreadLocalRandom.current().ints(97, 122)
+        return ThreadLocalRandom.current()
+                .ints(97, 122)
                 .limit(size)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
@@ -126,7 +128,9 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
 
     @Override
     public long countMessages(String queue) throws Exception {
-        QueueControl coreQueueControl = (QueueControl) embeddedBrokerService.getActiveMQServer().getManagementService()
+        QueueControl coreQueueControl = (QueueControl) embeddedBrokerService
+                .getActiveMQServer()
+                .getManagementService()
                 .getResource(ResourceNames.QUEUE + queue);
 
         return coreQueueControl.countMessages();
@@ -143,14 +147,13 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     }
 
     @Override
-    public void restart() {
-
-    }
+    public void restart() {}
 
     @Override
     public synchronized void initialize() {
         try {
-            if (embeddedBrokerService.getActiveMQServer() == null || !embeddedBrokerService.getActiveMQServer().isStarted()) {
+            if (embeddedBrokerService.getActiveMQServer() == null
+                    || !embeddedBrokerService.getActiveMQServer().isStarted()) {
                 embeddedBrokerService.setConfiguration(configure(port));
 
                 embeddedBrokerService.start();

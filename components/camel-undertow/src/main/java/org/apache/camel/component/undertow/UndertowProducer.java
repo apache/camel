@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
@@ -99,7 +100,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
         try {
             final String exchangeUri = UndertowHelper.createURL(camelExchange, getEndpoint());
             uri = UndertowHelper.createURI(camelExchange, exchangeUri, getEndpoint());
-            method = UndertowHelper.createMethod(camelExchange, endpoint, camelExchange.getIn().getBody() != null);
+            method = UndertowHelper.createMethod(
+                    camelExchange, endpoint, camelExchange.getIn().getBody() != null);
         } catch (final URISyntaxException e) {
             camelExchange.setException(e);
             callback.done(true);
@@ -149,8 +151,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
             // For streaming, make it chunked encoding instead of specifying content length
             requestHeaders.put(Headers.TRANSFER_ENCODING, "chunked");
             clientCallback = new UndertowStreamingClientCallback(
-                    camelExchange, callback, getEndpoint(),
-                    request, (InputStream) body);
+                    camelExchange, callback, getEndpoint(), request, (InputStream) body);
         } else {
             final TypeConverter tc = endpoint.getCamelContext().getTypeConverter();
             final ByteBuffer bodyAsByte = tc.tryConvertTo(ByteBuffer.class, body);
@@ -164,12 +165,10 @@ public class UndertowProducer extends DefaultAsyncProducer {
             if (streaming) {
                 // response may receive streaming
                 clientCallback = new UndertowStreamingClientCallback(
-                        camelExchange, callback, getEndpoint(),
-                        request, bodyAsByte);
+                        camelExchange, callback, getEndpoint(), request, bodyAsByte);
             } else {
-                clientCallback = new UndertowClientCallback(
-                        camelExchange, callback, getEndpoint(),
-                        request, bodyAsByte);
+                clientCallback =
+                        new UndertowClientCallback(camelExchange, callback, getEndpoint(), request, bodyAsByte);
             }
         }
 
@@ -193,7 +192,9 @@ public class UndertowProducer extends DefaultAsyncProducer {
         final Message in = camelExchange.getIn();
         try {
             Object message = in.getBody();
-            if (!(message instanceof String || message instanceof byte[] || message instanceof Reader
+            if (!(message instanceof String
+                    || message instanceof byte[]
+                    || message instanceof Reader
                     || message instanceof InputStream)) {
                 message = in.getBody(String.class);
             }
@@ -206,19 +207,27 @@ public class UndertowProducer extends DefaultAsyncProducer {
                 final List<String> connectionKeys = in.getHeader(UndertowConstants.CONNECTION_KEY_LIST, List.class);
                 if (connectionKeys != null) {
                     return webSocketHandler.send(
-                            peer -> connectionKeys.contains(peer.getAttribute(UndertowConstants.CONNECTION_KEY)), message,
-                            timeout, camelExchange, camelCallback);
+                            peer -> connectionKeys.contains(peer.getAttribute(UndertowConstants.CONNECTION_KEY)),
+                            message,
+                            timeout,
+                            camelExchange,
+                            camelCallback);
                 }
                 final String connectionKey = in.getHeader(UndertowConstants.CONNECTION_KEY, String.class);
                 if (connectionKey != null) {
                     return webSocketHandler.send(
-                            peer -> connectionKey.equals(peer.getAttribute(UndertowConstants.CONNECTION_KEY)), message,
-                            timeout, camelExchange, camelCallback);
+                            peer -> connectionKey.equals(peer.getAttribute(UndertowConstants.CONNECTION_KEY)),
+                            message,
+                            timeout,
+                            camelExchange,
+                            camelCallback);
                 }
-                throw new IllegalStateException(
-                        String.format("Cannot process message which has none of the headers %s, %s or %s set: %s",
-                                UndertowConstants.SEND_TO_ALL, UndertowConstants.CONNECTION_KEY_LIST,
-                                UndertowConstants.CONNECTION_KEY, in));
+                throw new IllegalStateException(String.format(
+                        "Cannot process message which has none of the headers %s, %s or %s set: %s",
+                        UndertowConstants.SEND_TO_ALL,
+                        UndertowConstants.CONNECTION_KEY_LIST,
+                        UndertowConstants.CONNECTION_KEY,
+                        in));
             } else {
                 /* nothing to do for a null body */
                 camelCallback.done(true);
@@ -249,8 +258,12 @@ public class UndertowProducer extends DefaultAsyncProducer {
         client = UndertowClient.getInstance();
 
         if (endpoint.isWebSocket()) {
-            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(null,
-                    endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent()
+                    .registerEndpoint(
+                            null,
+                            endpoint.getHttpHandlerRegistrationInfo(),
+                            endpoint.getSslContext(),
+                            new CamelWebSocketHandler());
         }
 
         LOG.debug("Created worker: {} with options: {}", worker, options);
@@ -261,8 +274,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
         super.doStop();
 
         if (endpoint.isWebSocket()) {
-            endpoint.getComponent().unregisterEndpoint(null, endpoint.getHttpHandlerRegistrationInfo(),
-                    endpoint.getSslContext());
+            endpoint.getComponent()
+                    .unregisterEndpoint(null, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
         }
 
         if (worker != null && !worker.isShutdown()) {
@@ -270,5 +283,4 @@ public class UndertowProducer extends DefaultAsyncProducer {
             worker.shutdown();
         }
     }
-
 }

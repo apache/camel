@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,8 +43,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyConcurrentTest extends BaseNettyTest {
 
@@ -80,8 +81,8 @@ public class NettyConcurrentTest extends BaseNettyTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() {
-                    String reply = template.requestBody("netty:tcp://localhost:{{port}}?encoders=#encoder&decoders=#decoder",
-                            index, String.class);
+                    String reply = template.requestBody(
+                            "netty:tcp://localhost:{{port}}?encoders=#encoder&decoders=#decoder", index, String.class);
                     LOG.debug("Sent {} received {}", index, reply);
                     assertEquals("Bye " + index, reply);
                     return reply;
@@ -124,14 +125,15 @@ public class NettyConcurrentTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder&decoders=#decoder").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getMessage().setBody("Bye " + body);
-                    }
-                }).to("log:progress?groupSize=1000");
+                from("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder&decoders=#decoder")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                exchange.getMessage().setBody("Bye " + body);
+                            }
+                        })
+                        .to("log:progress?groupSize=1000");
             }
         };
     }
-
 }

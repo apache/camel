@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.loadbalancer;
 
 import org.apache.camel.Route;
@@ -32,5 +33,4 @@ public class TopicLoadBalancerReifier extends LoadBalancerReifier<TopicLoadBalan
     public LoadBalancer createLoadBalancer() {
         return new TopicLoadBalancer();
     }
-
 }

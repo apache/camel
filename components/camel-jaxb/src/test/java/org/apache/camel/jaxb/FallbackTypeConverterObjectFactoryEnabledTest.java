@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jaxb;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -45,8 +46,6 @@ public class FallbackTypeConverterObjectFactoryEnabledTest extends CamelTestSupp
                 from("direct:a").convertBodyTo(String.class).to("direct:b");
                 from("direct:b").convertBodyTo(Message.class).to("mock:a");
             }
-
         };
     }
-
 }

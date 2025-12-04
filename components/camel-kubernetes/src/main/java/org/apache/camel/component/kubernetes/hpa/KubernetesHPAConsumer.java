@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.hpa;
 
 import java.util.concurrent.ExecutorService;
@@ -86,37 +87,52 @@ public class KubernetesHPAConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            FilterWatchListDeletable<HorizontalPodAutoscaler, HorizontalPodAutoscalerList, Resource<HorizontalPodAutoscaler>> w;
+            FilterWatchListDeletable<
+                            HorizontalPodAutoscaler, HorizontalPodAutoscalerList, Resource<HorizontalPodAutoscaler>>
+                    w;
 
             /*
-                Valid options are (according to how the client can be constructed):
-                - inAnyNamespace
-                - inAnyNamespace + withLabel
-                - inNamespace
-                - inNamespace + withLabel
-                - inNamespace + withName
-             */
+               Valid options are (according to how the client can be constructed):
+               - inAnyNamespace
+               - inAnyNamespace + withLabel
+               - inNamespace
+               - inNamespace + withLabel
+               - inNamespace + withName
+            */
             String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
             String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
             String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
             String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
 
             if (ObjectHelper.isEmpty(namespace)) {
-                w = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inAnyNamespace();
+                w = getEndpoint()
+                        .getKubernetesClient()
+                        .autoscaling()
+                        .v1()
+                        .horizontalPodAutoscalers()
+                        .inAnyNamespace();
 
                 if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
                     w = w.withLabel(labelKey, labelValue);
                 }
             } else {
-                final NonNamespaceOperation<HorizontalPodAutoscaler, HorizontalPodAutoscalerList, Resource<HorizontalPodAutoscaler>> client
-                        = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers()
+                final NonNamespaceOperation<
+                                HorizontalPodAutoscaler, HorizontalPodAutoscalerList, Resource<HorizontalPodAutoscaler>>
+                        client = getEndpoint()
+                                .getKubernetesClient()
+                                .autoscaling()
+                                .v1()
+                                .horizontalPodAutoscalers()
                                 .inNamespace(namespace);
                 w = client;
                 if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
                     w = client.withLabel(labelKey, labelValue);
                 } else if (ObjectHelper.isNotEmpty(resourceName)) {
-                    w = (FilterWatchListDeletable<HorizontalPodAutoscaler, HorizontalPodAutoscalerList, Resource<HorizontalPodAutoscaler>>) client
-                            .withName(resourceName);
+                    w = (FilterWatchListDeletable<
+                                    HorizontalPodAutoscaler,
+                                    HorizontalPodAutoscalerList,
+                                    Resource<HorizontalPodAutoscaler>>)
+                            client.withName(resourceName);
                 }
             }
 
@@ -127,7 +143,8 @@ public class KubernetesHPAConsumer extends DefaultConsumer {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                    exchange.getIn()
+                            .setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);
                     } catch (Exception e) {
@@ -142,7 +159,6 @@ public class KubernetesHPAConsumer extends DefaultConsumer {
                     if (cause != null) {
                         LOG.error(cause.getMessage(), cause);
                     }
-
                 }
             });
         }

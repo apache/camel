@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonpatch;
 
 import org.apache.camel.Category;
@@ -28,16 +29,21 @@ import org.apache.camel.spi.UriParam;
 /**
  * Transforms JSON using JSON patch (RFC 6902).
  */
-@UriEndpoint(firstVersion = "3.12.0", scheme = "json-patch", title = "JsonPatch", syntax = "json-patch:resourceUri",
-             remote = false, producerOnly = true,
-             category = { Category.TRANSFORMATION }, headersClass = JsonPatchConstants.class)
+@UriEndpoint(
+        firstVersion = "3.12.0",
+        scheme = "json-patch",
+        title = "JsonPatch",
+        syntax = "json-patch:resourceUri",
+        remote = false,
+        producerOnly = true,
+        category = {Category.TRANSFORMATION},
+        headersClass = JsonPatchConstants.class)
 public class JsonPatchEndpoint extends ResourceEndpoint {
 
     @UriParam
     private boolean allowTemplateFromHeader;
 
-    public JsonPatchEndpoint() {
-    }
+    public JsonPatchEndpoint() {}
 
     public JsonPatchEndpoint(String uri, JsonPatchComponent component, String resourceUri) {
         super(uri, component, resourceUri);

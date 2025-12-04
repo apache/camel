@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
 
 import java.util.Date;
@@ -26,8 +27,7 @@ public class Header implements BeanIOHeader {
     String recordType;
     Date headerDate;
 
-    public Header() {
-    }
+    public Header() {}
 
     public Header(String identifier, Date headerDate, String recordType) {
         this.identifier = identifier;

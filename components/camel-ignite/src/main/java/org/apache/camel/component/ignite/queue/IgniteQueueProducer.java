@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.queue;
 
 import java.util.ArrayList;
@@ -52,9 +53,9 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
         Long millis;
 
         switch (queueOperationFor(exchange)) {
-
             case ADD:
-                if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
+                if (Collection.class.isAssignableFrom(body.getClass())
+                        && !endpoint.isTreatCollectionsAsCacheObjects()) {
                     out.setBody(queue.addAll((Collection<? extends Object>) body));
                 } else {
                     out.setBody(queue.add(body));
@@ -62,7 +63,8 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
                 break;
 
             case CONTAINS:
-                if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
+                if (Collection.class.isAssignableFrom(body.getClass())
+                        && !endpoint.isTreatCollectionsAsCacheObjects()) {
                     out.setBody(queue.containsAll((Collection<? extends Object>) body));
                 } else {
                     out.setBody(queue.contains(body));
@@ -74,7 +76,8 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
                 break;
 
             case REMOVE:
-                if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
+                if (Collection.class.isAssignableFrom(body.getClass())
+                        && !endpoint.isTreatCollectionsAsCacheObjects()) {
                     out.setBody(queue.removeAll((Collection<? extends Object>) body));
                 } else {
                     out.setBody(queue.remove(body));
@@ -130,7 +133,8 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
                 break;
 
             case OFFER:
-                millis = in.getHeader(IgniteConstants.IGNITE_QUEUE_TIMEOUT_MILLIS, endpoint.getTimeoutMillis(), Long.class);
+                millis = in.getHeader(
+                        IgniteConstants.IGNITE_QUEUE_TIMEOUT_MILLIS, endpoint.getTimeoutMillis(), Long.class);
                 boolean result = millis == null ? queue.offer(body) : queue.offer(body, millis, TimeUnit.MILLISECONDS);
                 out.setBody(result);
                 break;
@@ -140,7 +144,8 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
                 break;
 
             case POLL:
-                millis = in.getHeader(IgniteConstants.IGNITE_QUEUE_TIMEOUT_MILLIS, endpoint.getTimeoutMillis(), Long.class);
+                millis = in.getHeader(
+                        IgniteConstants.IGNITE_QUEUE_TIMEOUT_MILLIS, endpoint.getTimeoutMillis(), Long.class);
                 out.setBody(millis == null ? queue.poll() : queue.poll(millis, TimeUnit.MILLISECONDS));
                 break;
 
@@ -156,7 +161,8 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
                 break;
 
             default:
-                exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Queue producer."));
+                exchange.setException(
+                        new UnsupportedOperationException("Operation not supported by Ignite Queue producer."));
                 break;
         }
 
@@ -165,8 +171,7 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
     }
 
     private IgniteQueueOperation queueOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_QUEUE_OPERATION, endpoint.getOperation(),
-                IgniteQueueOperation.class);
+        return exchange.getIn()
+                .getHeader(IgniteConstants.IGNITE_QUEUE_OPERATION, endpoint.getOperation(), IgniteQueueOperation.class);
     }
-
 }

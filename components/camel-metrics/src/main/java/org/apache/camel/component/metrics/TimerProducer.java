@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
+
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -22,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
 
 public class TimerProducer extends AbstractMetricsProducer {
 
@@ -72,10 +73,7 @@ public class TimerProducer extends AbstractMetricsProducer {
     }
 
     String getPropertyName(String metricsName) {
-        return new StringBuilder("timer")
-                .append(":")
-                .append(metricsName)
-                .toString();
+        return new StringBuilder("timer").append(":").append(metricsName).toString();
     }
 
     Timer.Context getTimerContextFromExchange(Exchange exchange, String propertyName) {

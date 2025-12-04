@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import java.util.Map;
@@ -27,8 +28,7 @@ public final class ServiceNowExceptionModel {
     private final Map<String, String> error;
 
     public ServiceNowExceptionModel(
-                                    @JsonProperty("status") String status,
-                                    @JsonProperty("error") Map<String, String> error) {
+            @JsonProperty("status") String status, @JsonProperty("error") Map<String, String> error) {
         this.status = status;
         this.error = error;
     }

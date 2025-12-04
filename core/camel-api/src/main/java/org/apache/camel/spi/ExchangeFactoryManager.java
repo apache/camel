@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Collection;
@@ -84,5 +85,4 @@ public interface ExchangeFactoryManager extends StaticService {
      * Aggregated statistics for all the managed exchange factories
      */
     ExchangeFactory.Statistics getStatistics();
-
 }

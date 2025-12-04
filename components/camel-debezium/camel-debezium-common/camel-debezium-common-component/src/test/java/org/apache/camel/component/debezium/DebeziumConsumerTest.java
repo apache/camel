@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
 
 import java.io.File;
@@ -45,9 +46,10 @@ public class DebeziumConsumerTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DebeziumConsumerTest.class);
     private static final int NUMBER_OF_LINES = 5;
     private static final String DEFAULT_DATA_TESTING_FOLDER = "target/data";
-    private static final Path TEST_FILE_PATH = createTestingPath("camel-debezium-test-file-input.txt").toAbsolutePath();
-    private static final Path TEST_OFFSET_STORE_PATH
-            = createTestingPath("camel-debezium-test-offset-store.txt").toAbsolutePath();
+    private static final Path TEST_FILE_PATH =
+            createTestingPath("camel-debezium-test-file-input.txt").toAbsolutePath();
+    private static final Path TEST_OFFSET_STORE_PATH =
+            createTestingPath("camel-debezium-test-offset-store.txt").toAbsolutePath();
     private static final String DEFAULT_TOPIC_NAME = "test_name_dummy";
     private static final String DEFAULT_ROUTE_ID = "foo";
 
@@ -131,7 +133,6 @@ public class DebeziumConsumerTest extends CamelTestSupport {
         to.expectedBodiesReceivedInAnyOrder("message-6", "message-7", "message-8", "message-9", "message-10");
 
         to.assertIsSatisfied(50);
-
     }
 
     @Override
@@ -152,8 +153,7 @@ public class DebeziumConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("debezium:dummy")
-                        .to(to);
+                from("debezium:dummy").to(to);
             }
         };
     }
@@ -175,10 +175,12 @@ public class DebeziumConsumerTest extends CamelTestSupport {
     }
 
     private EmbeddedDebeziumConfiguration initConfiguration() {
-        final FileConnectorEmbeddedDebeziumConfiguration configuration = new FileConnectorEmbeddedDebeziumConfiguration();
+        final FileConnectorEmbeddedDebeziumConfiguration configuration =
+                new FileConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_name_dummy");
         configuration.setTopicConfig(DEFAULT_TOPIC_NAME);
-        configuration.setOffsetStorageFileName(TEST_OFFSET_STORE_PATH.toAbsolutePath().toString());
+        configuration.setOffsetStorageFileName(
+                TEST_OFFSET_STORE_PATH.toAbsolutePath().toString());
         configuration.setTestFilePath(TEST_FILE_PATH);
         configuration.setOffsetFlushIntervalMs(0);
 
@@ -190,8 +192,8 @@ public class DebeziumConsumerTest extends CamelTestSupport {
         for (int i = 0; i != numberOfLines; ++i) {
             lines[i] = generateLine(linesAdded + i + 1);
         }
-        java.nio.file.Files.write(inputFile.toPath(), Collect.arrayListOf(lines), StandardCharsets.UTF_8,
-                StandardOpenOption.APPEND);
+        java.nio.file.Files.write(
+                inputFile.toPath(), Collect.arrayListOf(lines), StandardCharsets.UTF_8, StandardOpenOption.APPEND);
         linesAdded += numberOfLines;
     }
 

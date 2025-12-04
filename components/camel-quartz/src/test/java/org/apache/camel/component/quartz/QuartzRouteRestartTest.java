@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import java.util.concurrent.TimeUnit;
@@ -38,8 +39,7 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
         mock.expectedMessageCount(0);
 
         // wait a bit
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         // start route, and we got messages again
         mock.reset();
@@ -54,10 +54,10 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("quartz://groupName/timerName?cron=0/1+*+*+*+*+?").routeId("trigger")
+                from("quartz://groupName/timerName?cron=0/1+*+*+*+*+?")
+                        .routeId("trigger")
                         .to("mock:result");
             }
         };
     }
-
 }

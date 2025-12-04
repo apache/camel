@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -28,11 +34,6 @@ import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for Camel Registry implementation for Consul
@@ -118,7 +119,8 @@ public class ConsulRegistryIT implements Serializable {
         ConsulTestClass consulTestClassTwo = new ConsulTestClass();
         registry.put("testClassOne", consulTestClassOne);
         registry.put("testClassTwo", consulTestClassTwo);
-        Map<String, ? extends ConsulTestClass> consulTestClassMap = registry.findByTypeWithName(consulTestClassOne.getClass());
+        Map<String, ? extends ConsulTestClass> consulTestClassMap =
+                registry.findByTypeWithName(consulTestClassOne.getClass());
         registry.remove("testClassOne");
         registry.remove("testClassTwo");
         HashMap<String, ConsulTestClass> emptyHashMap = new HashMap<>();
@@ -151,9 +153,7 @@ public class ConsulRegistryIT implements Serializable {
         assertEquals(2, results.size());
     }
 
-    public void notFindByType() {
-
-    }
+    public void notFindByType() {}
 
     @Test
     public void deleteNonExisting() {

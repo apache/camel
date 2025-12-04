@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.Collections;
@@ -66,12 +67,13 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         this(id, name, host, port, meta, DEFAULT_SERVICE_HEALTH);
     }
 
-    public DefaultServiceDefinition(String name, String host, int port, Map<String, String> meta, ServiceHealth health) {
+    public DefaultServiceDefinition(
+            String name, String host, int port, Map<String, String> meta, ServiceHealth health) {
         this(null, name, host, port, meta, health);
     }
 
-    public DefaultServiceDefinition(String id, String name, String host, int port, Map<String, String> meta,
-                                    ServiceHealth health) {
+    public DefaultServiceDefinition(
+            String id, String name, String host, int port, Map<String, String> meta, ServiceHealth health) {
         this.id = id;
         this.name = name;
         this.host = host;
@@ -161,11 +163,13 @@ public class DefaultServiceDefinition implements ServiceDefinition {
                     String servicePort = StringHelper.after(part, ":");
 
                     if (ObjectHelper.isNotEmpty(serviceHost) && ObjectHelper.isNotEmpty(servicePort)) {
-                        return new DefaultServiceDefinition(serviceId, serviceName, serviceHost, Integer.parseInt(servicePort));
+                        return new DefaultServiceDefinition(
+                                serviceId, serviceName, serviceHost, Integer.parseInt(servicePort));
                     }
 
                     return null;
-                }).filter(Objects::nonNull);
+                })
+                .filter(Objects::nonNull);
     }
 
     public static Builder builder() {

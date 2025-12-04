@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,8 +35,7 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
     @XmlAttribute(required = true)
     private String name;
 
-    public RemoveHeaderDefinition() {
-    }
+    public RemoveHeaderDefinition() {}
 
     protected RemoveHeaderDefinition(RemoveHeaderDefinition source) {
         super(source);
@@ -76,5 +76,4 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
     public void setName(String name) {
         this.name = name;
     }
-
 }

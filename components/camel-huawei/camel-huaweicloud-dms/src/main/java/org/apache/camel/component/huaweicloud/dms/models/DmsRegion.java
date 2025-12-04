@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms.models;
 
 import java.util.Collections;
@@ -34,14 +35,17 @@ public final class DmsRegion {
     public static final Region CN_EAST_2 = new Region("cn-east-2", "https://dms.cn-east-2.myhuaweicloud.com");
     public static final Region CN_EAST_3 = new Region("cn-east-3", "https://dms.cn-east-3.myhuaweicloud.com");
     public static final Region CN_SOUTH_1 = new Region("cn-south-1", "https://dms.cn-south-1.myhuaweicloud.com");
-    public static final Region CN_SOUTHWEST_2 = new Region("cn-southwest-2", "https://dms.cn-southwest-2.myhuaweicloud.com");
-    public static final Region AP_SOUTHEAST_2 = new Region("ap-southeast-2", "https://dms.ap-southeast-2.myhuaweicloud.com");
-    public static final Region AP_SOUTHEAST_1 = new Region("ap-southeast-1", "https://dms.ap-southeast-1.myhuaweicloud.com");
-    public static final Region AP_SOUTHEAST_3 = new Region("ap-southeast-3", "https://dms.ap-southeast-3.myhuaweicloud.com");
+    public static final Region CN_SOUTHWEST_2 =
+            new Region("cn-southwest-2", "https://dms.cn-southwest-2.myhuaweicloud.com");
+    public static final Region AP_SOUTHEAST_2 =
+            new Region("ap-southeast-2", "https://dms.ap-southeast-2.myhuaweicloud.com");
+    public static final Region AP_SOUTHEAST_1 =
+            new Region("ap-southeast-1", "https://dms.ap-southeast-1.myhuaweicloud.com");
+    public static final Region AP_SOUTHEAST_3 =
+            new Region("ap-southeast-3", "https://dms.ap-southeast-3.myhuaweicloud.com");
     private static final Map<String, Region> STATIC_FIELDS = createStaticFields();
 
-    private DmsRegion() {
-    }
+    private DmsRegion() {}
 
     private static Map<String, Region> createStaticFields() {
         Map<String, Region> map = new HashMap<>();

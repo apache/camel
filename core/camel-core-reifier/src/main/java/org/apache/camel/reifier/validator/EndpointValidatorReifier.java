@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.validator;
 
 import org.apache.camel.CamelContext;
@@ -35,13 +36,14 @@ public class EndpointValidatorReifier extends ValidatorReifier<EndpointValidator
     // Validator implements AutoCloseable and must be closed by this method client.
     protected Validator doCreateValidator() {
         Endpoint endpoint = definition.getUri() != null
-                ? camelContext.getEndpoint(definition.getUri()) : lookupByNameAndType(definition.getRef(), Endpoint.class);
+                ? camelContext.getEndpoint(definition.getUri())
+                : lookupByNameAndType(definition.getRef(), Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
         @SuppressWarnings("resource")
         // NOTE: the client must take care of closing this resource.
-        Validator v = new ProcessorValidator(camelContext).setProcessor(processor).setType(parseString(definition.getType()));
+        Validator v =
+                new ProcessorValidator(camelContext).setProcessor(processor).setType(parseString(definition.getType()));
 
         return v;
     }
-
 }

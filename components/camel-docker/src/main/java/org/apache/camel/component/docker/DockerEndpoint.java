@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker;
 
 import java.util.Map;
@@ -35,16 +36,20 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Manage Docker containers.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "docker", title = "Docker", syntax = "docker:operation",
-             category = { Category.CLOUD, Category.CONTAINER }, lenientProperties = true,
-             headersClass = DockerConstants.class)
+@UriEndpoint(
+        firstVersion = "2.15.0",
+        scheme = "docker",
+        title = "Docker",
+        syntax = "docker:operation",
+        category = {Category.CLOUD, Category.CONTAINER},
+        lenientProperties = true,
+        headersClass = DockerConstants.class)
 public class DockerEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private DockerConfiguration configuration;
 
-    public DockerEndpoint() {
-    }
+    public DockerEndpoint() {}
 
     public DockerEndpoint(String uri, DockerComponent component, DockerConfiguration configuration) {
         super(uri, component);
@@ -108,5 +113,4 @@ public class DockerEndpoint extends DefaultEndpoint implements EndpointServiceLo
     public boolean isLenientProperties() {
         return true;
     }
-
 }

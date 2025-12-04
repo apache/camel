@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.ByteArrayInputStream;
@@ -33,8 +34,7 @@ import org.apache.camel.util.StringHelper;
  */
 public final class GZIPHelper {
 
-    private GZIPHelper() {
-    }
+    private GZIPHelper() {}
 
     public static InputStream uncompressGzip(String contentEncoding, InputStream in) throws IOException {
         if (isGzip(contentEncoding)) {

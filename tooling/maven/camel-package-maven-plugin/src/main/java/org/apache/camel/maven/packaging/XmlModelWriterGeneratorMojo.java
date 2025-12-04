@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -34,8 +35,11 @@ import org.codehaus.plexus.build.BuildContext;
 /**
  * Generate Model lightweight XML Writer source code.
  */
-@Mojo(name = "generate-xml-writer", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(
+        name = "generate-xml-writer",
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class XmlModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
 
     public static final String WRITER_PACKAGE = "org.apache.camel.xml.out";
@@ -51,7 +55,8 @@ public class XmlModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
     @Override
     public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
-        generateXmlWriter = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-xml-writer", "false"));
+        generateXmlWriter =
+                Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-xml-writer", "false"));
         super.execute(project);
     }
 

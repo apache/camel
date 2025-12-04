@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.transform;
 
 import java.io.ByteArrayInputStream;
@@ -35,8 +36,7 @@ import org.apache.camel.spi.Transformer;
 /**
  * Data type uses Jackson data format to unmarshal Exchange body to a generic JsonNode representation.
  */
-@DataTypeTransformer(name = "application-x-struct",
-                     description = "Transforms to generic JSonNode using Jackson")
+@DataTypeTransformer(name = "application-x-struct", description = "Transforms to generic JSonNode using Jackson")
 public class JsonStructDataTypeTransformer extends Transformer {
 
     private static final byte[] EMPTY = "{}".getBytes(StandardCharsets.UTF_8);
@@ -51,9 +51,11 @@ public class JsonStructDataTypeTransformer extends Transformer {
             Object unmarshalled;
             String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), null);
             if (contentClass != null) {
-                Class<?> contentType
-                        = message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
-                unmarshalled = Json.mapper().reader().forType(JsonNode.class)
+                Class<?> contentType =
+                        message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
+                unmarshalled = Json.mapper()
+                        .reader()
+                        .forType(JsonNode.class)
                         .readValue(Json.mapper().writerFor(contentType).writeValueAsString(message.getBody()));
             } else {
                 unmarshalled = Json.mapper().reader().forType(JsonNode.class).readValue(getBodyAsStream(message));
@@ -63,7 +65,8 @@ public class JsonStructDataTypeTransformer extends Transformer {
 
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.STRUCT.type());
         } catch (InvalidPayloadException | IOException | ClassNotFoundException e) {
-            throw new CamelExecutionException("Failed to apply Json input data type on exchange", message.getExchange(), e);
+            throw new CamelExecutionException(
+                    "Failed to apply Json input data type on exchange", message.getExchange(), e);
         }
     }
 

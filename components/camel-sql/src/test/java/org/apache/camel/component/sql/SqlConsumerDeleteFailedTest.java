@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -30,9 +34,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  *
  */
@@ -46,7 +47,8 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
 
         jdbcTemplate = new JdbcTemplate(db);
     }
@@ -76,7 +78,9 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
 
         await("Should have deleted 2 rows, keeping 1")
                 .until(() -> jdbcTemplate.queryForObject("select count(*) from projects", Integer.class) == 1);
-        assertEquals("AMQ", jdbcTemplate.queryForObject("select PROJECT from projects where license = 'BAD'", String.class),
+        assertEquals(
+                "AMQ",
+                jdbcTemplate.queryForObject("select PROJECT from projects where license = 'BAD'", String.class),
                 "Should be AMQ project that is BAD");
     }
 
@@ -88,13 +92,14 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects where license <> 'BAD' order by id"
-                     + "?initialDelay=0&delay=50"
-                     + "&consumer.onConsume=delete from projects where id = :#id"
-                     + "&consumer.onConsumeFailed=update projects set license = 'BAD' where id = :#id")
+                                + "?initialDelay=0&delay=50"
+                                + "&consumer.onConsume=delete from projects where id = :#id"
+                                + "&consumer.onConsumeFailed=update projects set license = 'BAD' where id = :#id")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                Object project = exchange.getIn().getBody(Map.class).get("PROJECT");
+                                Object project =
+                                        exchange.getIn().getBody(Map.class).get("PROJECT");
                                 if ("AMQ".equals(project)) {
                                     throw new IllegalArgumentException("Cannot handled AMQ");
                                 }

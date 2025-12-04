@@ -23,7 +23,5 @@ public final class ArangoDBProperties {
     public static final String ARANGODB_HOST = "arangodb.host";
     public static final String ARANGODB_PORT = "arangodb.port";
 
-    private ArangoDBProperties() {
-
-    }
+    private ArangoDBProperties() {}
 }

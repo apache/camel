@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +28,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExpressionListComparator;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExpressionListComparatorTest extends ContextTestSupport {
 

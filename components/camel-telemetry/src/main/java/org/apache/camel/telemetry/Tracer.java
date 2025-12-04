@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
 
 import java.util.HashMap;
@@ -125,8 +126,9 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
      */
     public void init(CamelContext camelContext) {
         if (hasOtherTracerType(camelContext)) {
-            LOG.warn("Could not add {} tracer type. Another tracer type, {}, was already registered. " +
-                     "Make sure to include only one tracing dependency type.",
+            LOG.warn(
+                    "Could not add {} tracer type. Another tracer type, {}, was already registered. "
+                            + "Make sure to include only one tracing dependency type.",
                     this.getClass(),
                     camelContext.hasService(Tracer.class).getClass());
             return;
@@ -200,13 +202,17 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         public void notify(CamelEvent event) throws Exception {
             try {
                 if (event instanceof CamelEvent.ExchangeSendingEvent ese) {
-                    if (exclude(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
+                    if (exclude(
+                            ese.getEndpoint().getEndpointUri(),
+                            ese.getExchange().getContext())) {
                         LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
                     } else {
                         beginEventSpan(ese.getExchange(), ese.getEndpoint(), Op.EVENT_SENT);
                     }
                 } else if (event instanceof CamelEvent.ExchangeSentEvent ese) {
-                    if (exclude(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
+                    if (exclude(
+                            ese.getEndpoint().getEndpointUri(),
+                            ese.getExchange().getContext())) {
                         LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
                     } else {
                         endEventSpan(ese.getExchange(), ese.getEndpoint());
@@ -319,5 +325,4 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         spanLifecycleManager.close(span);
         LOG.debug("Stopped processor span: {}", span);
     }
-
 }

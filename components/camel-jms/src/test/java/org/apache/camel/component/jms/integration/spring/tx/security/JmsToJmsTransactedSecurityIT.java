@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx.security;
 
 import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
@@ -46,11 +47,12 @@ public class JmsToJmsTransactedSecurityIT extends CamelSpringTestSupport {
         securityConfig.addRole("scott", "user");
         securityConfig.addRole("admin", "admin");
         securityConfig.addRole("admin", "user");
-        ActiveMQJAASSecurityManager securityManager
-                = new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), securityConfig);
+        ActiveMQJAASSecurityManager securityManager =
+                new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), securityConfig);
 
         activeMQServer = ActiveMQServers.newActiveMQServer(
-                "org/apache/camel/component/jms/integration/spring/tx/security/artemis-security.xml", null,
+                "org/apache/camel/component/jms/integration/spring/tx/security/artemis-security.xml",
+                null,
                 securityManager);
         activeMQServer.start();
     }
@@ -107,9 +109,7 @@ public class JmsToJmsTransactedSecurityIT extends CamelSpringTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("log:start")
-                        .to("activemq:queue:JmsToJmsTransactedSecurityTest");
+                from("direct:start").to("log:start").to("activemq:queue:JmsToJmsTransactedSecurityTest");
 
                 from("activemq:queue:JmsToJmsTransactedSecurityTest").to("mock:foo");
             }
@@ -121,7 +121,5 @@ public class JmsToJmsTransactedSecurityIT extends CamelSpringTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
-
     }
-
 }

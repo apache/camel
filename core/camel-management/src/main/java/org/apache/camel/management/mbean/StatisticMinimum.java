@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,7 +26,8 @@ public class StatisticMinimum extends Statistic {
     @Override
     public void updateValue(long newValue) {
         // its okay its not 100% thread safe (these jmx counters are not guaranteed to be accurate for min/max values)
-        // if we use the atomic operation updateAndGet then the JVM creates a new lambda per call which creates a new object
+        // if we use the atomic operation updateAndGet then the JVM creates a new lambda per call which creates a new
+        // object
         // in the JVM and causes higher memory footprint
         long current = value.get();
         if (current == -1 || current > newValue) {
@@ -53,5 +55,4 @@ public class StatisticMinimum extends Statistic {
     public void reset() {
         value.set(-1);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto;
 
 /**
@@ -35,9 +36,18 @@ public abstract class AbstractDescribedSObjectBase extends AbstractSObjectBase {
 
     @SuppressWarnings("boxing")
     protected static SObjectField createField(
-            String name, String label, String type, String soapType, int length, boolean unique, boolean nillable,
+            String name,
+            String label,
+            String type,
+            String soapType,
+            int length,
+            boolean unique,
+            boolean nillable,
             boolean nameField,
-            boolean externalId, boolean custom, boolean caseSensitive, boolean idLookup) {
+            boolean externalId,
+            boolean custom,
+            boolean caseSensitive,
+            boolean idLookup) {
         final SObjectField field = new SObjectField();
 
         field.setName(name);

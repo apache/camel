@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
 
 import java.util.Arrays;
@@ -32,8 +33,8 @@ public class JpaTransactedTest extends AbstractJpaTest {
     @Test
     public void testTransactedSplit() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
-        template.sendBody("direct:split", Arrays.asList(
-                new SendEmail("test1@example.org"), new SendEmail("test2@example.org")));
+        template.sendBody(
+                "direct:split", Arrays.asList(new SendEmail("test1@example.org"), new SendEmail("test2@example.org")));
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -58,20 +59,25 @@ public class JpaTransactedTest extends AbstractJpaTest {
             @Override
             public void configure() {
                 from("direct:split")
-                        .transacted().split().body()
+                        .transacted()
+                        .split()
+                        .body()
                         .to("jpa://" + SendEmail.class.getName())
                         .to("mock:result");
 
                 from("direct:multicast")
-                        .transacted().multicast()
+                        .transacted()
+                        .multicast()
                         .to("jpa://" + SendEmail.class.getName(), "jpa://" + SendEmail.class.getName());
 
                 from("direct:recipient")
-                        .transacted().recipientList(
-                                constant("jpa://" + SendEmail.class.getName() + "," + "jpa://" + SendEmail.class.getName()));
+                        .transacted()
+                        .recipientList(constant(
+                                "jpa://" + SendEmail.class.getName() + "," + "jpa://" + SendEmail.class.getName()));
 
                 from("direct:enrich")
-                        .transacted().enrich("jpa://" + SendEmail.class.getName(), new AggregationStrategy() {
+                        .transacted()
+                        .enrich("jpa://" + SendEmail.class.getName(), new AggregationStrategy() {
                             @Override
                             public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                                 JpaHelper.copyEntityManagers(oldExchange, newExchange);

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.stt.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,8 +53,6 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration tests for Watson Speech to Text operations. These tests require valid IBM Watson credentials to be
  * provided as system properties: - camel.ibm.watson.stt.apiKey - IBM Cloud API key - camel.ibm.watson.stt.serviceUrl -
@@ -61,10 +62,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * -Dcamel.ibm.watson.stt.serviceUrl=YOUR_SERVICE_URL
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.stt.apiKey", matches = ".+",
-                                 disabledReason = "IBM Watson STT API Key not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.stt.serviceUrl", matches = ".+",
-                                 disabledReason = "IBM Watson STT Service URL not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.watson.stt.apiKey",
+            matches = ".+",
+            disabledReason = "IBM Watson STT API Key not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.watson.stt.serviceUrl",
+            matches = ".+",
+            disabledReason = "IBM Watson STT Service URL not provided")
 })
 public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
 
@@ -150,7 +155,8 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
                     .accept("audio/wav") // WAV format for compatibility
                     .build();
 
-            InputStream audioStream = ttsService.synthesize(synthesizeOptions).execute().getResult();
+            InputStream audioStream =
+                    ttsService.synthesize(synthesizeOptions).execute().getResult();
 
             // Save to file
             File outputFile = new File(INPUT_DIR, filename);
@@ -168,7 +174,10 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
             return true;
 
         } catch (Exception e) {
-            LOG.warn("Failed to generate real speech audio: {} - {}", e.getClass().getSimpleName(), e.getMessage());
+            LOG.warn(
+                    "Failed to generate real speech audio: {} - {}",
+                    e.getClass().getSimpleName(),
+                    e.getMessage());
             LOG.debug("Full exception:", e);
             return false;
         }
@@ -201,8 +210,8 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         // Create AudioInputStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(audioData);
-        AudioInputStream audioInputStream
-                = new AudioInputStream(new java.io.ByteArrayInputStream(audioData), format, numSamples);
+        AudioInputStream audioInputStream =
+                new AudioInputStream(new java.io.ByteArrayInputStream(audioData), format, numSamples);
 
         // Write to WAV file
         AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, outputFile);
@@ -242,7 +251,9 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         assertNotNull(transcript, "Transcript header should be set");
 
         LOG.info("Successfully transcribed audio file. Transcript: '{}'", transcript);
-        LOG.info("Number of results: {}", results.getResults() != null ? results.getResults().size() : 0);
+        LOG.info(
+                "Number of results: {}",
+                results.getResults() != null ? results.getResults().size() : 0);
     }
 
     @Test
@@ -279,9 +290,14 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
                 if (result.getAlternatives() != null) {
                     result.getAlternatives().forEach(alt -> {
                         if (alt.getTimestamps() != null) {
-                            LOG.info("Found {} word timestamps", alt.getTimestamps().size());
+                            LOG.info(
+                                    "Found {} word timestamps",
+                                    alt.getTimestamps().size());
                             alt.getTimestamps().stream().limit(3).forEach(ts -> {
-                                LOG.info("  Word: {} - Start: {} - End: {}", ts.getWord(), ts.getStartTime(),
+                                LOG.info(
+                                        "  Word: {} - Start: {} - End: {}",
+                                        ts.getWord(),
+                                        ts.getStartTime(),
                                         ts.getEndTime());
                             });
                         }
@@ -325,7 +341,9 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
                 if (result.getAlternatives() != null) {
                     result.getAlternatives().forEach(alt -> {
                         if (alt.getWordConfidence() != null) {
-                            LOG.info("Found {} word confidence scores", alt.getWordConfidence().size());
+                            LOG.info(
+                                    "Found {} word confidence scores",
+                                    alt.getWordConfidence().size());
                             alt.getWordConfidence().stream().limit(3).forEach(wc -> {
                                 LOG.info("  Word: {} - Confidence: {}", wc.getWord(), wc.getConfidence());
                             });
@@ -359,13 +377,16 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
 
         // Log first few models for verification
         models.stream().limit(5).forEach(model -> {
-            LOG.info("  Model: {} - Language: {} - Description: {}", model.getName(), model.getLanguage(),
+            LOG.info(
+                    "  Model: {} - Language: {} - Description: {}",
+                    model.getName(),
+                    model.getLanguage(),
                     model.getDescription());
         });
 
         // Verify some expected models exist
-        boolean hasEnglishModel
-                = models.stream().anyMatch(m -> m.getName() != null && m.getName().startsWith("en-US"));
+        boolean hasEnglishModel =
+                models.stream().anyMatch(m -> m.getName() != null && m.getName().startsWith("en-US"));
         assertTrue(hasEnglishModel, "Should have at least one US English model");
     }
 
@@ -392,8 +413,12 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         assertNotNull(model.getLanguage(), "Model should have a language");
         assertNotNull(model.getDescription(), "Model should have a description");
 
-        LOG.info("Retrieved model: {} - Language: {} - Rate: {} - Description: {}", model.getName(), model.getLanguage(),
-                model.getRate(), model.getDescription());
+        LOG.info(
+                "Retrieved model: {} - Language: {} - Rate: {} - Description: {}",
+                model.getName(),
+                model.getLanguage(),
+                model.getRate(),
+                model.getDescription());
     }
 
     @Test
@@ -490,15 +515,22 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         // Verify we got the enhanced results
         if (results.getResults() != null && !results.getResults().isEmpty()) {
             results.getResults().forEach(result -> {
-                if (result.getAlternatives() != null && !result.getAlternatives().isEmpty()) {
-                    LOG.info("Alternatives available: {}", result.getAlternatives().size());
+                if (result.getAlternatives() != null
+                        && !result.getAlternatives().isEmpty()) {
+                    LOG.info(
+                            "Alternatives available: {}",
+                            result.getAlternatives().size());
                     result.getAlternatives().stream().limit(1).forEach(alt -> {
                         LOG.info("  Transcript: {}", alt.getTranscript());
                         if (alt.getTimestamps() != null) {
-                            LOG.info("  Timestamps available: {}", alt.getTimestamps().size());
+                            LOG.info(
+                                    "  Timestamps available: {}",
+                                    alt.getTimestamps().size());
                         }
                         if (alt.getWordConfidence() != null) {
-                            LOG.info("  Word confidence scores available: {}", alt.getWordConfidence().size());
+                            LOG.info(
+                                    "  Word confidence scores available: {}",
+                                    alt.getWordConfidence().size());
                         }
                     });
                 }
@@ -532,10 +564,11 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         assertNotNull(content, "Content should not be null");
         assertFalse(content.isBlank(), "Content should not be blank");
 
-        LOG.info("Successfully saved transcript to file: {} (size: {} bytes)", outputFile.getAbsolutePath(),
+        LOG.info(
+                "Successfully saved transcript to file: {} (size: {} bytes)",
+                outputFile.getAbsolutePath(),
                 outputFile.length());
-        LOG.info("Transcript content (first 200 chars): '{}'",
-                content.substring(0, Math.min(200, content.length())));
+        LOG.info("Transcript content (first 200 chars): '{}'", content.substring(0, Math.min(200, content.length())));
     }
 
     @Test
@@ -562,7 +595,9 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         String content = Files.readString(outputFile.toPath());
         assertNotNull(content);
 
-        LOG.info("Successfully saved transcript with timestamps to: {} (size: {} bytes)", outputFile.getAbsolutePath(),
+        LOG.info(
+                "Successfully saved transcript with timestamps to: {} (size: {} bytes)",
+                outputFile.getAbsolutePath(),
                 outputFile.length());
         LOG.info("Content preview: {}", content.substring(0, Math.min(200, content.length())));
     }
@@ -593,7 +628,9 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         String content = Files.readString(outputFile.toPath());
         assertNotNull(content);
 
-        LOG.info("Successfully saved detailed transcript to: {} (size: {} bytes)", outputFile.getAbsolutePath(),
+        LOG.info(
+                "Successfully saved detailed transcript to: {} (size: {} bytes)",
+                outputFile.getAbsolutePath(),
                 outputFile.length());
         // Check if detailed information is present
         LOG.info("Detailed results saved with timestamps and confidence scores");
@@ -604,9 +641,9 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         mockResult.expectedMinimumMessageCount(3);
 
         String[][] audioTests = {
-                { TEST_AUDIO_FILE, "transcript-file1.txt" },
-                { TEST_AUDIO_TIMESTAMPS_FILE, "transcript-file2.txt" },
-                { TEST_AUDIO_CONFIDENCE_FILE, "transcript-file3.txt" }
+            {TEST_AUDIO_FILE, "transcript-file1.txt"},
+            {TEST_AUDIO_TIMESTAMPS_FILE, "transcript-file2.txt"},
+            {TEST_AUDIO_CONFIDENCE_FILE, "transcript-file3.txt"}
         };
 
         for (String[] audioTest : audioTests) {
@@ -629,7 +666,9 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
 
             // File should have content (even if it's the fallback message)
             long fileSize = outputFile.length();
-            assertTrue(fileSize > 0, "Transcript file should have content: " + outputFilename + " (size: " + fileSize + ")");
+            assertTrue(
+                    fileSize > 0,
+                    "Transcript file should have content: " + outputFilename + " (size: " + fileSize + ")");
 
             LOG.info("Created transcript file: {} (size: {} bytes)", outputFilename, fileSize);
         }
@@ -646,7 +685,7 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         if (!realSpeechFile.exists()) {
             LOG.info("Skipping real speech test - audio file not generated (TTS credentials not provided)");
             LOG.info("To run this test, provide Watson TTS credentials: "
-                     + "-Dcamel.ibm.watson.tts.apiKey=YOUR_KEY -Dcamel.ibm.watson.tts.serviceUrl=YOUR_URL");
+                    + "-Dcamel.ibm.watson.tts.apiKey=YOUR_KEY -Dcamel.ibm.watson.tts.serviceUrl=YOUR_URL");
             return;
         }
 
@@ -678,7 +717,10 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
 
         // Check if transcript contains key words from expected text
         String transcriptLower = transcript.toLowerCase();
-        assertTrue(transcriptLower.contains("watson") || transcriptLower.contains("speech") || transcriptLower.contains("text"),
+        assertTrue(
+                transcriptLower.contains("watson")
+                        || transcriptLower.contains("speech")
+                        || transcriptLower.contains("text"),
                 "Transcript should contain at least one key word from the expected text. Got: " + transcript);
 
         // Calculate simple similarity (for informational purposes)
@@ -687,10 +729,15 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         boolean containsSpeech = transcriptLower.contains("speech");
         boolean containsText = transcriptLower.contains("text");
 
-        int matchCount = (containsHello ? 1 : 0) + (containsWatson ? 1 : 0) + (containsSpeech ? 1 : 0)
-                         + (containsText ? 1 : 0);
-        LOG.info("Key word matches: {}/4 (hello={}, watson={}, speech={}, text={})", matchCount, containsHello,
-                containsWatson, containsSpeech, containsText);
+        int matchCount =
+                (containsHello ? 1 : 0) + (containsWatson ? 1 : 0) + (containsSpeech ? 1 : 0) + (containsText ? 1 : 0);
+        LOG.info(
+                "Key word matches: {}/4 (hello={}, watson={}, speech={}, text={})",
+                matchCount,
+                containsHello,
+                containsWatson,
+                containsSpeech,
+                containsText);
 
         // This demonstrates successful round-trip: TTS -> audio file -> STT -> text
         LOG.info("Successfully demonstrated TTS→STT integration: real speech audio was accurately transcribed!");
@@ -701,9 +748,7 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:recognize")
-                        .to(buildEndpointUri("recognize"))
-                        .to("mock:result");
+                from("direct:recognize").to(buildEndpointUri("recognize")).to("mock:result");
 
                 from("direct:recognizeTimestamps")
                         .to(buildEndpointUri("recognize"))
@@ -721,27 +766,23 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
                         .to(buildEndpointUri("recognize"))
                         .to("mock:result");
 
-                from("direct:listModels")
-                        .to(buildEndpointUri("listModels"))
-                        .to("mock:result");
+                from("direct:listModels").to(buildEndpointUri("listModels")).to("mock:result");
 
-                from("direct:getModel")
-                        .to(buildEndpointUri("getModel"))
-                        .to("mock:result");
+                from("direct:getModel").to(buildEndpointUri("getModel")).to("mock:result");
 
                 // Routes that save transcription results to files
                 from("direct:recognizeToFile")
                         .to(buildEndpointUri("recognize"))
                         .process(exchange -> {
                             // Extract transcript from header and set as body for file component
-                            String transcript = exchange.getIn().getHeader(WatsonSpeechToTextConstants.TRANSCRIPT,
-                                    String.class);
+                            String transcript =
+                                    exchange.getIn().getHeader(WatsonSpeechToTextConstants.TRANSCRIPT, String.class);
                             // If transcript is null or empty, use recognition results
                             if (transcript == null || transcript.isBlank()) {
-                                SpeechRecognitionResults results = exchange.getIn()
-                                        .getBody(SpeechRecognitionResults.class);
+                                SpeechRecognitionResults results =
+                                        exchange.getIn().getBody(SpeechRecognitionResults.class);
                                 transcript = "[No transcript available - Audio may not contain recognizable speech]\n"
-                                             + "Recognition results: " + (results != null ? results.toString() : "null");
+                                        + "Recognition results: " + (results != null ? results.toString() : "null");
                             }
                             exchange.getIn().setBody(transcript);
                         })
@@ -754,8 +795,8 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
                             // Get detailed results and format for output
                             SpeechRecognitionResults results = exchange.getIn().getBody(SpeechRecognitionResults.class);
                             StringBuilder output = new StringBuilder();
-                            String transcript = exchange.getIn().getHeader(WatsonSpeechToTextConstants.TRANSCRIPT,
-                                    String.class);
+                            String transcript =
+                                    exchange.getIn().getHeader(WatsonSpeechToTextConstants.TRANSCRIPT, String.class);
 
                             output.append("TRANSCRIPT:\n");
                             output.append(transcript).append("\n\n");
@@ -773,8 +814,8 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
                             // Get detailed results with timestamps and confidence
                             SpeechRecognitionResults results = exchange.getIn().getBody(SpeechRecognitionResults.class);
                             StringBuilder output = new StringBuilder();
-                            String transcript = exchange.getIn().getHeader(WatsonSpeechToTextConstants.TRANSCRIPT,
-                                    String.class);
+                            String transcript =
+                                    exchange.getIn().getHeader(WatsonSpeechToTextConstants.TRANSCRIPT, String.class);
 
                             output.append("TRANSCRIPT:\n");
                             output.append(transcript).append("\n\n");

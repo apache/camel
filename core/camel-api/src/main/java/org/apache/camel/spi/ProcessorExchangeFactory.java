@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Endpoint;
@@ -34,7 +35,8 @@ import org.apache.camel.Processor;
  * @see ExchangeFactory
  * @see org.apache.camel.PooledExchange
  */
-public interface ProcessorExchangeFactory extends PooledObjectFactory<Exchange>, NonManagedService, RouteIdAware, IdAware {
+public interface ProcessorExchangeFactory
+        extends PooledObjectFactory<Exchange>, NonManagedService, RouteIdAware, IdAware {
 
     /**
      * Service factory key.
@@ -81,5 +83,4 @@ public interface ProcessorExchangeFactory extends PooledObjectFactory<Exchange>,
      * @return          true if released into the pool, or false if something went wrong and the exchange was discarded
      */
     boolean release(Exchange exchange);
-
 }

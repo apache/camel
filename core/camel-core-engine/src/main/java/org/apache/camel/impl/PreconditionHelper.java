@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
@@ -35,8 +36,7 @@ final class PreconditionHelper {
      */
     private static final Logger LOG = LoggerFactory.getLogger(PreconditionHelper.class);
 
-    private PreconditionHelper() {
-    }
+    private PreconditionHelper() {}
 
     /**
      * Indicates whether the given {@link PreconditionContainer} should be included according to the precondition.
@@ -59,7 +59,10 @@ final class PreconditionHelper {
 
         boolean matches = predicate.matches(new DefaultExchange(context));
         if (LOG.isTraceEnabled()) {
-            LOG.trace("The precondition has been evaluated to {}, consequently the {} is {}", matches, container.getLabel(),
+            LOG.trace(
+                    "The precondition has been evaluated to {}, consequently the {} is {}",
+                    matches,
+                    container.getLabel(),
                     matches ? "included" : "excluded");
         }
         return matches;

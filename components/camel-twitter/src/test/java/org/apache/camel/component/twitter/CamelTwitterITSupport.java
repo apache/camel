@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
 
 import java.util.HashMap;
@@ -27,8 +28,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
-                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+@EnabledIfSystemProperty(
+        named = "enable.twitter.itests",
+        matches = "true",
+        disabledReason = "Likely has API limits, so it's better to keep it off by default")
 public class CamelTwitterITSupport extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -68,9 +71,9 @@ public class CamelTwitterITSupport extends CamelTestSupport {
 
     protected String getUriTokens() {
         return "consumerKey=" + consumerKey
-               + "&consumerSecret=" + consumerSecret
-               + "&accessToken=" + accessToken
-               + "&accessTokenSecret=" + accessTokenSecret;
+                + "&consumerSecret=" + consumerSecret
+                + "&accessToken=" + accessToken
+                + "&accessTokenSecret=" + accessTokenSecret;
     }
 
     protected Map<String, Object> getParameters() {

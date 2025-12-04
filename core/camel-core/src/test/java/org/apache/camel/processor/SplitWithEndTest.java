@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -25,8 +28,6 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitWithEndTest extends ContextTestSupport {
 
@@ -67,17 +68,25 @@ public class SplitWithEndTest extends ContextTestSupport {
 
                 MySplitBean bean = new MySplitBean();
 
-                from("direct:start").to("mock:start").split(body().tokenize(","), new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
-                        String body = oldExchange.getIn().getBody(String.class);
-                        String newBody = newExchange.getIn().getBody(String.class);
-                        newExchange.getIn().setBody(body + "@" + newBody);
-                        return newExchange;
-                    }
-                }).bean(bean, "hi").to("mock:split").to("log:foo").end().transform(body().prepend("last ")).to("mock:last");
+                from("direct:start")
+                        .to("mock:start")
+                        .split(body().tokenize(","), new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
+                                String body = oldExchange.getIn().getBody(String.class);
+                                String newBody = newExchange.getIn().getBody(String.class);
+                                newExchange.getIn().setBody(body + "@" + newBody);
+                                return newExchange;
+                            }
+                        })
+                        .bean(bean, "hi")
+                        .to("mock:split")
+                        .to("log:foo")
+                        .end()
+                        .transform(body().prepend("last "))
+                        .to("mock:last");
             }
         };
     }
@@ -87,7 +96,5 @@ public class SplitWithEndTest extends ContextTestSupport {
         public String hi(String s) {
             return "hi " + s;
         }
-
     }
-
 }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultClassResolverTest {
 
@@ -51,8 +52,8 @@ public class DefaultClassResolverTest {
     @Test
     public void testResolveClassClassLoaderType() {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class<Integer> clazz
-                = resolver.resolveClass("java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
+        Class<Integer> clazz = resolver.resolveClass(
+                "java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
@@ -108,15 +109,16 @@ public class DefaultClassResolverTest {
     @Test
     public void testResolveMandatoryClassClassLoader() throws Exception {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class<?> clazz = resolver.resolveMandatoryClass("java.lang.Integer", DefaultClassResolverTest.class.getClassLoader());
+        Class<?> clazz =
+                resolver.resolveMandatoryClass("java.lang.Integer", DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
     @Test
     public void testResolveMandatoryClassClassLoaderType() throws Exception {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class<Integer> clazz = resolver.resolveMandatoryClass("java.lang.Integer", Integer.class,
-                DefaultClassResolverTest.class.getClassLoader());
+        Class<Integer> clazz = resolver.resolveMandatoryClass(
+                "java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
@@ -124,7 +126,8 @@ public class DefaultClassResolverTest {
     public void testResolveMandatoryClassNotFound() {
         DefaultClassResolver resolver = new DefaultClassResolver();
 
-        assertThrows(ClassNotFoundException.class,
+        assertThrows(
+                ClassNotFoundException.class,
                 () -> resolver.resolveMandatoryClass("com.FooBar"),
                 "Should thrown an exception");
     }
@@ -149,5 +152,4 @@ public class DefaultClassResolverTest {
         Class<?> clazz = resolver.resolveClass("java.lang.Math");
         assertNotNull(clazz);
     }
-
 }

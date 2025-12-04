@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.core;
 
 public final class LangChain4j {
     public static final String METADATA_PREFIX = "langchain4j.metadata.";
     public static final int METADATA_PREFIX_LEN = METADATA_PREFIX.length();
 
-    private LangChain4j() {
-    }
+    private LangChain4j() {}
 }

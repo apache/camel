@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.converter;
+
+import static org.apache.camel.TypeConverter.MISS_VALUE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,8 +37,6 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.message.MessageContentsList;
-
-import static org.apache.camel.TypeConverter.MISS_VALUE;
 
 /**
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a> for CXF related types' converting .
@@ -104,7 +105,8 @@ public final class CxfConverter {
             return null;
         }
 
-        Object answer = convertTo(String.class, exchange, value, exchange.getContext().getTypeConverterRegistry());
+        Object answer =
+                convertTo(String.class, exchange, value, exchange.getContext().getTypeConverterRegistry());
         if (answer != null && answer != MISS_VALUE) {
             return answer.toString();
         }
@@ -125,17 +127,15 @@ public final class CxfConverter {
      */
     @SuppressWarnings("unchecked")
     @Converter(fallback = true)
-    public static <T> T convertTo(
-            Class<T> type, Exchange exchange, Object value,
-            TypeConverterRegistry registry) {
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
 
         // CXF-WS MessageContentsList class
         if (MessageContentsList.class.isAssignableFrom(value.getClass())) {
             MessageContentsList list = (MessageContentsList) value;
 
             if (list.size() > 1 && type == String.class) {
-                //to check if the MessageContentsList is used in CXF context
-                //If not, use the general way to convert from List.class to String.class
+                // to check if the MessageContentsList is used in CXF context
+                // If not, use the general way to convert from List.class to String.class
                 boolean foundHolder = false;
                 for (Object embedded : list) {
                     if (embedded != null && embedded.getClass().getName().equals("javax.xml.ws.Holder")) {

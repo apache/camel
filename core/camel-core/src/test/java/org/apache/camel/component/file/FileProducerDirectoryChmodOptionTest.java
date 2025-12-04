@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -31,8 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.WINDOWS)
 public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
@@ -66,15 +67,15 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:write" + routeSuffix, testFileContent, Exchange.FILE_NAME, testFilePath);
 
         if (expectedDirectoryPermissions != null) {
-            Set<PosixFilePermission> permissions
-                    = Files.getPosixFilePermissions(testDirectory(SUBDIR_NAME), LinkOption.NOFOLLOW_LINKS);
+            Set<PosixFilePermission> permissions =
+                    Files.getPosixFilePermissions(testDirectory(SUBDIR_NAME), LinkOption.NOFOLLOW_LINKS);
             assertEquals(expectedDirectoryPermissions, PosixFilePermissions.toString(permissions));
             assertEquals(expectedDirectoryPermissions.replace("-", "").length(), permissions.size());
         }
 
         if (expectedPermissions != null) {
-            Set<PosixFilePermission> permissions
-                    = Files.getPosixFilePermissions(testFile(testFilePath), LinkOption.NOFOLLOW_LINKS);
+            Set<PosixFilePermission> permissions =
+                    Files.getPosixFilePermissions(testFile(testFilePath), LinkOption.NOFOLLOW_LINKS);
             assertEquals(expectedPermissions, PosixFilePermissions.toString(permissions));
             assertEquals(expectedPermissions.replace("-", "").length(), permissions.size());
         }
@@ -87,12 +88,15 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // Valid chmod values
-                from("direct:write666").to(fileUri("?chmodDirectory=777&chmod=666")).to("mock:chmod666");
+                from("direct:write666")
+                        .to(fileUri("?chmodDirectory=777&chmod=666"))
+                        .to("mock:chmod666");
 
-                from("direct:write0755").to(fileUri("?chmodDirectory=777&chmod=0755")).to("mock:chmod0755");
+                from("direct:write0755")
+                        .to(fileUri("?chmodDirectory=777&chmod=0755"))
+                        .to("mock:chmod0755");
 
                 from("direct:writeNoDir").to(fileUri("?chmod=0755")).to("mock:chmodNoDir");
-
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl.model.tabular;
 
 import ai.djl.Model;
@@ -44,11 +45,11 @@ public class CustomTabularPredictor extends AbstractPredictor {
         exchange.getIn().setBody(result);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Object predict(Exchange exchange, Object input) {
         Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
-        Translator translator
-                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
+        Translator translator =
+                exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
 
         exchange.getIn().setHeader(DJLConstants.INPUT, input);
         try (Predictor predictor = model.newPredictor(translator)) {

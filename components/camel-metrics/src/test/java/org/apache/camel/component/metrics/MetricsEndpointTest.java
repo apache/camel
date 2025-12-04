@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
@@ -30,10 +35,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class MetricsEndpointTest {
@@ -85,8 +86,7 @@ public class MetricsEndpointTest {
 
     @Test
     public void testCreateConsumer() {
-        assertThrows(RuntimeCamelException.class,
-                () -> endpoint.createConsumer(processor));
+        assertThrows(RuntimeCamelException.class, () -> endpoint.createConsumer(processor));
     }
 
     @Test

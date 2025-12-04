@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -28,9 +32,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for batch consumer.
@@ -92,8 +93,8 @@ public class MailBatchConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(jones.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100"
-                     + "&delete=true").to("mock:result");
+                from(jones.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100" + "&delete=true")
+                        .to("mock:result");
             }
         };
     }

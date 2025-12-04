@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -31,8 +34,6 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.awaitility.Awaitility.await;
-
 /**
  * Testing the monitor functionality for item
  */
@@ -43,9 +44,8 @@ public class MonitorItemTest extends AbstractMiloServerTest {
     private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
     private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
-                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "myitem1")
-                                                        + "&allowedSecurityPolicies=None&overrideHost=true";
+            + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1")
+            + "&allowedSecurityPolicies=None&overrideHost=true";
 
     private static final String MOCK_TEST_1 = "mock:test1";
 
@@ -104,14 +104,11 @@ public class MonitorItemTest extends AbstractMiloServerTest {
 
         // set server values
         this.producer1.sendBody("Foo");
-        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
-        });
+        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {});
         this.producer1.sendBody("Bar");
-        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
-        });
+        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {});
         this.producer1.sendBody("Baz");
-        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
-        });
+        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {});
 
         // tests
         testBody(this.test1Endpoint.message(0), assertGoodValue("Foo"));

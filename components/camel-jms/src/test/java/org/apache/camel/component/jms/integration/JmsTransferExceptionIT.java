@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -31,15 +36,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class JmsTransferExceptionIT extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final MyErrorLogger ERROR_LOGGER = new MyErrorLogger();
     private static int counter;
     protected CamelContext context;
@@ -69,7 +71,9 @@ public class JmsTransferExceptionIT extends AbstractJMSTest {
         // then we expect our producer template to throw
         // an exception with the remote exception as cause
         String uri = getUri();
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> template.requestBody(uri, "Kaboom"),
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
+                () -> template.requestBody(uri, "Kaboom"),
                 "Should have thrown an exception");
 
         assertEquals("Boom", e.getCause().getMessage());
@@ -99,16 +103,15 @@ public class JmsTransferExceptionIT extends AbstractJMSTest {
             public void configure() {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(4).logger(ERROR_LOGGER));
 
-                from(getUri())
-                        .process(exchange -> {
-                            counter++;
+                from(getUri()).process(exchange -> {
+                    counter++;
 
-                            String body = exchange.getIn().getBody(String.class);
-                            if (body.equals("Kaboom")) {
-                                throw new IllegalArgumentException("Boom");
-                            }
-                            exchange.getMessage().setBody("Bye World");
-                        });
+                    String body = exchange.getIn().getBody(String.class);
+                    if (body.equals("Kaboom")) {
+                        throw new IllegalArgumentException("Boom");
+                    }
+                    exchange.getMessage().setBody("Bye World");
+                });
             }
         };
     }

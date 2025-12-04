@@ -14,35 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es;
 
 import org.apache.camel.spi.Metadata;
 
 public interface ElasticsearchConstants {
 
-    @Metadata(description = "The operation to perform",
-              javaType = "org.apache.camel.component.es.ElasticsearchOperation")
+    @Metadata(
+            description = "The operation to perform",
+            javaType = "org.apache.camel.component.es.ElasticsearchOperation")
     String PARAM_OPERATION = "operation";
+
     @Metadata(description = "The id of the indexed document.", javaType = "String")
     String PARAM_INDEX_ID = "indexId";
+
     @Metadata(description = "The name of the index to act against", javaType = "String")
     String PARAM_INDEX_NAME = "indexName";
-    @Metadata(description = "The full qualified name of the class of the document to unmarshall", javaType = "Class",
-              defaultValue = "ObjectNode")
+
+    @Metadata(
+            description = "The full qualified name of the class of the document to unmarshall",
+            javaType = "Class",
+            defaultValue = "ObjectNode")
     String PARAM_DOCUMENT_CLASS = "documentClass";
-    @Metadata(description = "The index creation waits for the write consistency number of shards to be available",
-              javaType = "Integer")
+
+    @Metadata(
+            description = "The index creation waits for the write consistency number of shards to be available",
+            javaType = "Integer")
     String PARAM_WAIT_FOR_ACTIVE_SHARDS = "waitForActiveShards";
+
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
     String PARAM_SCROLL_KEEP_ALIVE_MS = "scrollKeepAliveMs";
+
     @Metadata(description = "Set to true to enable scroll usage", javaType = "Boolean")
     String PARAM_SCROLL = "useScroll";
+
     @Metadata(description = "The size of the response.", javaType = "Integer")
     String PARAM_SIZE = "size";
+
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
     String PARAM_FROM = "from";
-    @Metadata(description = "Indicates whether the body of the message contains only documents.", javaType = "Boolean",
-              defaultValue = "false")
+
+    @Metadata(
+            description = "Indicates whether the body of the message contains only documents.",
+            javaType = "Boolean",
+            defaultValue = "false")
     String PARAM_DOCUMENT_MODE = "enableDocumentOnlyMode";
 
     String PROPERTY_SCROLL_ES_QUERY_COUNT = "CamelElasticsearchScrollQueryCount";
@@ -54,5 +70,6 @@ public interface ElasticsearchConstants {
     int DEFAULT_CONNECTION_TIMEOUT = 30000; // Meaning how many seconds before it timeout when establish connection
     int DEFAULT_SNIFFER_INTERVAL = 60000 * 5; // Meaning how often it should search for elasticsearch nodes
     int DEFAULT_AFTER_FAILURE_DELAY = 60000; // Meaning when should the sniff execution scheduled after a failure
-    int DEFAULT_SCROLL_KEEP_ALIVE_MS = 60000; // Meaning how many milliseconds elasticsearch will keep the search context
+    int DEFAULT_SCROLL_KEEP_ALIVE_MS =
+            60000; // Meaning how many milliseconds elasticsearch will keep the search context
 }

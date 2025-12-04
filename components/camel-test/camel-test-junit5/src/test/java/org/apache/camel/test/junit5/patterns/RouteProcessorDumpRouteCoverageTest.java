@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5.patterns;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,10 +28,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestReporter;
-
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
 
@@ -66,5 +67,4 @@ public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
             }
         };
     }
-
 }

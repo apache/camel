@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.integration;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -37,13 +45,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 /**
  * This test verifies basic functionality with the Dynamic Router in synchronous mode. This configuration is entirely
@@ -69,26 +70,21 @@ public class DynamicRouterBasicSynchronousIT {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("directToDynamicRouter")
-                        .toD("dynamic-router://test?synchronous=true");
+                from("direct:start").routeId("directToDynamicRouter").toD("dynamic-router://test?synchronous=true");
                 from("direct:list")
                         .routeId("directToControlList")
-                        .toD("dynamic-router-control://list" +
-                             "?subscribeChannel=${header.subscribeChannel}");
+                        .toD("dynamic-router-control://list" + "?subscribeChannel=${header.subscribeChannel}");
                 from("direct://subscribe")
                         .routeId("subscribeRoute")
-                        .toD("dynamic-router-control://subscribe" +
-                             "?subscribeChannel=${header.subscribeChannel}" +
-                             "&subscriptionId=${header.subscriptionId}" +
-                             "&destinationUri=${header.destinationUri}" +
-                             "&priority=${header.priority}" +
-                             "&predicateBean=${header.predicateBean}");
+                        .toD("dynamic-router-control://subscribe" + "?subscribeChannel=${header.subscribeChannel}"
+                                + "&subscriptionId=${header.subscriptionId}"
+                                + "&destinationUri=${header.destinationUri}"
+                                + "&priority=${header.priority}"
+                                + "&predicateBean=${header.predicateBean}");
                 from("direct://unsubscribe")
                         .routeId("unsubscribeRoute")
-                        .toD("dynamic-router-control://unsubscribe" +
-                             "?subscribeChannel=${header.subscribeChannel}" +
-                             "&subscriptionId=${header.subscriptionId}");
+                        .toD("dynamic-router-control://unsubscribe" + "?subscribeChannel=${header.subscribeChannel}"
+                                + "&subscriptionId=${header.subscriptionId}");
             }
         });
     }
@@ -116,12 +112,20 @@ public class DynamicRouterBasicSynchronousIT {
     void testDynamicRouter() throws Exception {
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeaders("direct:subscribe", "",
-                Map.of("subscribeChannel", "test",
-                        "subscriptionId", "testSubscription1",
-                        "destinationUri", mock.getEndpointUri(),
-                        "priority", "1",
-                        "predicateBean", "spyPredicate"));
+        template.sendBodyAndHeaders(
+                "direct:subscribe",
+                "",
+                Map.of(
+                        "subscribeChannel",
+                        "test",
+                        "subscriptionId",
+                        "testSubscription1",
+                        "destinationUri",
+                        mock.getEndpointUri(),
+                        "priority",
+                        "1",
+                        "predicateBean",
+                        "spyPredicate"));
 
         // Trigger events to subscribers
         template.sendBody("direct:start", "testMessage");
@@ -193,12 +197,20 @@ public class DynamicRouterBasicSynchronousIT {
     void testUnsubscribe() throws Exception {
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeaders("direct:subscribe", "",
-                Map.of("subscribeChannel", "test",
-                        "subscriptionId", "testSubscription1",
-                        "destinationUri", mock.getEndpointUri(),
-                        "priority", "1",
-                        "predicateBean", "spyPredicate"));
+        template.sendBodyAndHeaders(
+                "direct:subscribe",
+                "",
+                Map.of(
+                        "subscribeChannel",
+                        "test",
+                        "subscriptionId",
+                        "testSubscription1",
+                        "destinationUri",
+                        mock.getEndpointUri(),
+                        "priority",
+                        "1",
+                        "predicateBean",
+                        "spyPredicate"));
 
         // Trigger events to subscribers
         template.sendBody("direct:start", "testMessage");
@@ -214,9 +226,8 @@ public class DynamicRouterBasicSynchronousIT {
         mock.expectedMessageCount(0);
 
         // Now unsubscribe
-        template.sendBodyAndHeaders("direct:unsubscribe", "",
-                Map.of("subscribeChannel", "test",
-                        "subscriptionId", "testSubscription1"));
+        template.sendBodyAndHeaders(
+                "direct:unsubscribe", "", Map.of("subscribeChannel", "test", "subscriptionId", "testSubscription1"));
 
         // Sends another message that should not be received
         template.sendBody("direct:start", "testMessage");

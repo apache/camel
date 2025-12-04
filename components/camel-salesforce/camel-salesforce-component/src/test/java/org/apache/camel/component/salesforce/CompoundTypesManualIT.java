@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
@@ -23,9 +27,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test support for Salesforce compound data types. This test requires a custom field in the <code>Account</code> object
@@ -70,8 +71,8 @@ public class CompoundTypesManualIT extends AbstractSalesforceTestBase {
         account.setShipping_Location__Latitude__s(37.793779);
         account.setShipping_Location__Longitude__s(-122.39448);
 
-        CreateSObjectResult result
-                = template().requestBody("direct:createSObject" + suffix, account, CreateSObjectResult.class);
+        CreateSObjectResult result =
+                template().requestBody("direct:createSObject" + suffix, account, CreateSObjectResult.class);
         assertNotNull(result);
         assertTrue(result.getSuccess(), "Create success");
         LOG.debug("Create: {}", result);
@@ -85,7 +86,9 @@ public class CompoundTypesManualIT extends AbstractSalesforceTestBase {
             assertNotNull(account.getShippingAddress(), "Shipping Address");
             assertNotNull(account.getShippingAddress(), "Shipping Location");
 
-            LOG.debug("Retrieved fields billing address: {}, shipping location: {}", account.getBillingAddress(),
+            LOG.debug(
+                    "Retrieved fields billing address: {}, shipping location: {}",
+                    account.getBillingAddress(),
                     account.getShipping_Location__c());
 
         } finally {
@@ -107,11 +110,13 @@ public class CompoundTypesManualIT extends AbstractSalesforceTestBase {
                 from("direct:createSObjectXml").to("salesforce:createSObject?format=XML&sObjectName=Account");
 
                 // testGetSObject
-                from("direct:getSObject").to(
-                        "salesforce:getSObject?sObjectName=Account&sObjectFields=Id,BillingAddress,ShippingAddress,Shipping_Location__c");
+                from("direct:getSObject")
+                        .to(
+                                "salesforce:getSObject?sObjectName=Account&sObjectFields=Id,BillingAddress,ShippingAddress,Shipping_Location__c");
 
-                from("direct:getSObjectXml").to(
-                        "salesforce:getSObject?format=XML&sObjectName=Account&sObjectFields=Id,BillingAddress,ShippingAddress,Shipping_Location__c");
+                from("direct:getSObjectXml")
+                        .to(
+                                "salesforce:getSObject?format=XML&sObjectName=Account&sObjectFields=Id,BillingAddress,ShippingAddress,Shipping_Location__c");
 
                 // testDeleteSObject
                 from("direct:deleteSObject").to("salesforce:deleteSObject?sObjectName=Account");
@@ -120,5 +125,4 @@ public class CompoundTypesManualIT extends AbstractSalesforceTestBase {
             }
         };
     }
-
 }

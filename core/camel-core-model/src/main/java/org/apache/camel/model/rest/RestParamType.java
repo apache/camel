@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import jakarta.xml.bind.annotation.XmlEnum;
@@ -28,11 +29,9 @@ import org.apache.camel.spi.Metadata;
 @XmlType
 @XmlEnum
 public enum RestParamType {
-
     body,
     formData,
     header,
     path,
     query
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api;
 
 import java.util.List;
@@ -25,5 +26,4 @@ public final class NoSuchSObjectException extends SalesforceException {
     public NoSuchSObjectException(final List<RestError> restErrors) {
         super(restErrors, 404);
     }
-
 }

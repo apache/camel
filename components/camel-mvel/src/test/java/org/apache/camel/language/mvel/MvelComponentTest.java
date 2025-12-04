@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.mvel;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -38,7 +39,8 @@ public class MvelComponentTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("\n{ \"text\": \"The result is 14\" }", exchange.getMessage().getBody());
+        assertEquals(
+                "\n{ \"text\": \"The result is 14\" }", exchange.getMessage().getBody());
     }
 
     @Test
@@ -47,8 +49,10 @@ public class MvelComponentTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody(7);
-                exchange.getIn().setHeader(MvelConstants.MVEL_TEMPLATE,
-                        "{ \"text\": \"@{\"The result is \" + request.body * 3}\" }");
+                exchange.getIn()
+                        .setHeader(
+                                MvelConstants.MVEL_TEMPLATE,
+                                "{ \"text\": \"@{\"The result is \" + request.body * 3}\" }");
             }
         });
 
@@ -61,12 +65,19 @@ public class MvelComponentTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(7);
-                exchange.getIn().setHeader(MvelConstants.MVEL_RESOURCE_URI,
-                        getClass().getClassLoader().getResource("template2.mvel").toURI().toString());
+                exchange.getIn()
+                        .setHeader(
+                                MvelConstants.MVEL_RESOURCE_URI,
+                                getClass()
+                                        .getClassLoader()
+                                        .getResource("template2.mvel")
+                                        .toURI()
+                                        .toString());
             }
         });
 
-        assertEquals("\n{ \"text\": \"The result is 28\" }", exchange.getMessage().getBody());
+        assertEquals(
+                "\n{ \"text\": \"The result is 28\" }", exchange.getMessage().getBody());
     }
 
     @Override

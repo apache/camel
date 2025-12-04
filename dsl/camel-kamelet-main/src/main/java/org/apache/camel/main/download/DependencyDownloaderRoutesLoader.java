@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
@@ -62,8 +63,7 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
         if ("java".equals(extension)) {
             downloadLoader("camel-java-joor-dsl");
             downloadLoader("camel-endpointdsl");
-        } else if ("xml".equals(extension)
-                || "camel.xml".equals(extension)) {
+        } else if ("xml".equals(extension) || "camel.xml".equals(extension)) {
             downloadLoader("camel-xml-io-dsl");
         } else if ("yaml".equals(extension)
                 || "kamelet.yaml".equals(extension)
@@ -86,8 +86,10 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
         if (loader == null) {
             // need to use regular factory finder as bootstrap has already marked the loader as a miss
             final CamelContext ecc = getCamelContext();
-            final FactoryFinder finder = ecc.getCamelContextExtension().getFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
-            loader = ResolverHelper.resolveService(ecc, finder, extension, RoutesBuilderLoader.class).orElse(null);
+            final FactoryFinder finder =
+                    ecc.getCamelContextExtension().getFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
+            loader = ResolverHelper.resolveService(ecc, finder, extension, RoutesBuilderLoader.class)
+                    .orElse(null);
             if (loader != null) {
                 CamelContextAware.trySetCamelContext(loader, getCamelContext());
                 // allows for custom initialization
@@ -111,5 +113,4 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
             downloader.downloadDependency("org.apache.camel", artifactId, resolvedCamelVersion);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail.stream;
 
 import java.nio.charset.StandardCharsets;
@@ -51,7 +52,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
     private String unreadLabelId;
     private List<String> labelsIds;
 
-    public GoogleMailStreamConsumer(Endpoint endpoint, Processor processor, String unreadLabelId, List<String> labelsIds) {
+    public GoogleMailStreamConsumer(
+            Endpoint endpoint, Processor processor, String unreadLabelId, List<String> labelsIds) {
         super(endpoint, processor);
         this.unreadLabelId = unreadLabelId;
         this.labelsIds = labelsIds;
@@ -72,7 +74,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected int poll() throws Exception {
-        com.google.api.services.gmail.Gmail.Users.Messages.List request = getClient().users().messages().list("me");
+        com.google.api.services.gmail.Gmail.Users.Messages.List request =
+                getClient().users().messages().list("me");
         if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
             request.setQ(getConfiguration().getQuery());
         }
@@ -92,7 +95,12 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
         if (c.getMessages() != null) {
             for (Message message : c.getMessages()) {
-                Message mess = getClient().users().messages().get("me", message.getId()).setFormat("FULL").execute();
+                Message mess = getClient()
+                        .users()
+                        .messages()
+                        .get("me", message.getId())
+                        .setFormat("FULL")
+                        .execute();
                 Exchange exchange = createExchange(getEndpoint().getExchangePattern(), mess);
                 answer.add(exchange);
             }
@@ -151,16 +159,18 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
                 List<String> remove = new ArrayList<>();
                 remove.add(unreadLabelId);
                 ModifyMessageRequest mods = new ModifyMessageRequest().setRemoveLabelIds(remove);
-                getClient().users().messages()
+                getClient()
+                        .users()
+                        .messages()
                         .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods)
                         .execute();
 
                 LOG.trace("Marked email {} as read", id);
             }
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
+            getExceptionHandler()
+                    .handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
         }
-
     }
 
     /**
@@ -173,10 +183,14 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             List<String> add = new ArrayList<>();
             add.add(unreadLabelId);
             ModifyMessageRequest mods = new ModifyMessageRequest().setAddLabelIds(add);
-            getClient().users().messages()
-                    .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
+            getClient()
+                    .users()
+                    .messages()
+                    .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods)
+                    .execute();
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
+            getExceptionHandler()
+                    .handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
         }
     }
 
@@ -190,7 +204,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         } else {
             List<MessagePart> parts = mail.getPayload().getParts();
             if (parts != null && parts.get(0).getBody().getData() != null) {
-                byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim());
+                byte[] bodyBytes =
+                        Base64.decodeBase64(parts.get(0).getBody().getData().trim());
                 String body = new String(bodyBytes, StandardCharsets.UTF_8);
                 message.setBody(body);
             }
@@ -219,5 +234,4 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             }
         }
     }
-
 }

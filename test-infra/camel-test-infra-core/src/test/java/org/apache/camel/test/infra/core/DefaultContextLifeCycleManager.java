@@ -34,8 +34,7 @@ public class DefaultContextLifeCycleManager implements ContextLifeCycleManager {
     /**
      * Creates a new instance of this class
      */
-    public DefaultContextLifeCycleManager() {
-    }
+    public DefaultContextLifeCycleManager() {}
 
     /**
      * Creates a new instance of this class

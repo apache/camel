@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openai.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -27,15 +31,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenAIMockConversationHistoryTest {
 
     private final AtomicBoolean secondAssertionExecuted = new AtomicBoolean(false);
 
     @RegisterExtension
-    public OpenAIMock openAIMock = new OpenAIMock().builder()
+    public OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("What's his preferred vehicle type?")
             .assertRequest(request -> {
                 secondAssertionExecuted.set(true);
@@ -51,12 +53,11 @@ public class OpenAIMockConversationHistoryTest {
         HttpClient client = HttpClient.newHttpClient();
 
         // Send request with conversation history
-        String requestBody = "{\"messages\": [" +
-                             "{\"role\": \"user\", \"content\": \"Hi! Can you look up user 123 and tell me about our rental policies?\"},"
-                             +
-                             "{\"role\": \"assistant\", \"content\": \"Previous response\"}," +
-                             "{\"role\": \"user\", \"content\": \"What's his preferred vehicle type?\"}" +
-                             "]}";
+        String requestBody = "{\"messages\": ["
+                + "{\"role\": \"user\", \"content\": \"Hi! Can you look up user 123 and tell me about our rental policies?\"},"
+                + "{\"role\": \"assistant\", \"content\": \"Previous response\"},"
+                + "{\"role\": \"user\", \"content\": \"What's his preferred vehicle type?\"}"
+                + "]}";
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))

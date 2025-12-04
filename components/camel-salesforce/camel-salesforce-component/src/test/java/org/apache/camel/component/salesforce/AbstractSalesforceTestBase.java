@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.util.HashMap;
@@ -40,8 +41,7 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
     protected RouteBuilder doCreateRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-            }
+            public void configure() throws Exception {}
         };
     }
 

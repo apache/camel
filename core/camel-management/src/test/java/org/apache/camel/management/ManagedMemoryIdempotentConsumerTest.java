@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -31,10 +36,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
@@ -86,7 +87,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
         assertEquals(4, size.intValue());
 
         // remove one from repo
-        mbeanServer.invoke(on, "remove", new Object[] { "1" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "remove", new Object[] {"1"}, new String[] {"java.lang.String"});
 
         // there should be 3 now
         size = (Integer) mbeanServer.getAttribute(on, "CacheSize");

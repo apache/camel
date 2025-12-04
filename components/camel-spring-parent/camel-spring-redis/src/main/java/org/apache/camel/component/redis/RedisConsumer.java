@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
 
 import java.nio.charset.StandardCharsets;
@@ -33,8 +34,7 @@ import org.springframework.data.redis.listener.Topic;
 public class RedisConsumer extends DefaultConsumer implements MessageListener {
     private final RedisConfiguration redisConfiguration;
 
-    public RedisConsumer(RedisEndpoint redisEndpoint, Processor processor,
-                         RedisConfiguration redisConfiguration) {
+    public RedisConsumer(RedisEndpoint redisEndpoint, Processor processor, RedisConfiguration redisConfiguration) {
         super(redisEndpoint, processor);
         this.redisConfiguration = redisConfiguration;
     }

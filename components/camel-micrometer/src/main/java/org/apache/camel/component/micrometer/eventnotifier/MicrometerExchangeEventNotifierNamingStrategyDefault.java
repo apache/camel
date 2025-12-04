@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.eventnotifier;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME;
-
-public class MicrometerExchangeEventNotifierNamingStrategyDefault implements MicrometerExchangeEventNotifierNamingStrategy {
+public class MicrometerExchangeEventNotifierNamingStrategyDefault
+        implements MicrometerExchangeEventNotifierNamingStrategy {
 
     private boolean endpointBaseURI = true;
 
-    public MicrometerExchangeEventNotifierNamingStrategyDefault() {
-    }
+    public MicrometerExchangeEventNotifierNamingStrategyDefault() {}
 
     public MicrometerExchangeEventNotifierNamingStrategyDefault(boolean endpointBaseURI) {
         this.endpointBaseURI = endpointBaseURI;
@@ -41,5 +42,4 @@ public class MicrometerExchangeEventNotifierNamingStrategyDefault implements Mic
     public boolean isBaseEndpointURI() {
         return endpointBaseURI;
     }
-
 }

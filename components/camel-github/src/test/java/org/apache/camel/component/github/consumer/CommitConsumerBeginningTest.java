@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.Exchange;
@@ -32,7 +33,8 @@ public class CommitConsumerBeginningTest extends GitHubComponentTestBase {
             @Override
             public void configure() {
                 from("github://commit/master?startingSha=beginning&repoOwner=anotherguy&repoName=somerepo")
-                        .routeId("foo").noAutoStartup()
+                        .routeId("foo")
+                        .noAutoStartup()
                         .process(new GitHubCommitProcessor())
                         .to(mockResultEndpoint);
             }

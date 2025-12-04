@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.java.joor;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,6 @@ public class DummyRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:dummy")
-                .to("mock:end");
+        from("direct:dummy").to("mock:end");
     }
 }

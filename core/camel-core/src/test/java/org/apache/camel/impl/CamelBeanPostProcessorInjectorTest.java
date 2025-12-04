@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import java.lang.reflect.Field;
@@ -67,6 +68,7 @@ public class CamelBeanPostProcessorInjectorTest extends ContextTestSupport {
 
         @PropertyInject(value = "myName", defaultValue = "Donald Duck")
         private String name;
+
         @PropertyInject(value = "myFoo", defaultValue = "myDefault")
         private String foo;
 
@@ -96,5 +98,4 @@ public class CamelBeanPostProcessorInjectorTest extends ContextTestSupport {
         CamelLogger logger = (CamelLogger) context.getRegistry().lookupByName("createLogger");
         Assertions.assertNotNull(logger);
     }
-
 }

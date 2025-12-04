@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
  * Marker for indicating the {@link Service} is a static service (only one instance per {@link CamelContext}).
  */
-public interface StaticService extends Service {
-}
+public interface StaticService extends Service {}

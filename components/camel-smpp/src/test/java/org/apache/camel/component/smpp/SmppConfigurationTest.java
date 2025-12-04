@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,10 +34,6 @@ import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConfiguration</code>
@@ -192,46 +193,46 @@ public class SmppConfigurationTest {
     @Test
     public void toStringShouldListAllInstanceVariables() {
         String expected = "SmppConfiguration["
-                          + "usingSSL=false, "
-                          + "enquireLinkTimer=60000, "
-                          + "host=localhost, "
-                          + "password=null, "
-                          + "port=2775, "
-                          + "systemId=smppclient, "
-                          + "systemType=, "
-                          + "dataCoding=0, "
-                          + "alphabet=0, "
-                          + "encoding=ISO-8859-1, "
-                          + "transactionTimer=10000, "
-                          + "pduProcessorQueueCapacity=100, "
-                          + "pduProcessorDegree=3, "
-                          + "registeredDelivery=1, "
-                          + "singleDLR=false, "
-                          + "serviceType=CMT, "
-                          + "sourceAddrTon=0, "
-                          + "destAddrTon=0, "
-                          + "sourceAddrNpi=0, "
-                          + "destAddrNpi=0, "
-                          + "addressRange=, "
-                          + "protocolId=0, "
-                          + "priorityFlag=1, "
-                          + "replaceIfPresentFlag=0, "
-                          + "sourceAddr=1616, "
-                          + "destAddr=1717, "
-                          + "typeOfNumber=0, "
-                          + "numberingPlanIndicator=0, "
-                          + "initialReconnectDelay=5000, "
-                          + "reconnectDelay=5000, "
-                          + "maxReconnect=2147483647, "
-                          + "lazySessionCreation=false, "
-                          + "messageReceiverRouteId=null, "
-                          + "httpProxyHost=null, "
-                          + "httpProxyPort=3128, "
-                          + "httpProxyUsername=null, "
-                          + "httpProxyPassword=null, "
-                          + "splittingPolicy=ALLOW, "
-                          + "proxyHeaders=null, "
-                          + "interfaceVersion=3.4]";
+                + "usingSSL=false, "
+                + "enquireLinkTimer=60000, "
+                + "host=localhost, "
+                + "password=null, "
+                + "port=2775, "
+                + "systemId=smppclient, "
+                + "systemType=, "
+                + "dataCoding=0, "
+                + "alphabet=0, "
+                + "encoding=ISO-8859-1, "
+                + "transactionTimer=10000, "
+                + "pduProcessorQueueCapacity=100, "
+                + "pduProcessorDegree=3, "
+                + "registeredDelivery=1, "
+                + "singleDLR=false, "
+                + "serviceType=CMT, "
+                + "sourceAddrTon=0, "
+                + "destAddrTon=0, "
+                + "sourceAddrNpi=0, "
+                + "destAddrNpi=0, "
+                + "addressRange=, "
+                + "protocolId=0, "
+                + "priorityFlag=1, "
+                + "replaceIfPresentFlag=0, "
+                + "sourceAddr=1616, "
+                + "destAddr=1717, "
+                + "typeOfNumber=0, "
+                + "numberingPlanIndicator=0, "
+                + "initialReconnectDelay=5000, "
+                + "reconnectDelay=5000, "
+                + "maxReconnect=2147483647, "
+                + "lazySessionCreation=false, "
+                + "messageReceiverRouteId=null, "
+                + "httpProxyHost=null, "
+                + "httpProxyPort=3128, "
+                + "httpProxyUsername=null, "
+                + "httpProxyPassword=null, "
+                + "splittingPolicy=ALLOW, "
+                + "proxyHeaders=null, "
+                + "interfaceVersion=3.4]";
 
         assertEquals(expected, configuration.toString());
     }
@@ -266,8 +267,7 @@ public class SmppConfigurationTest {
         config.setHttpProxyUsername("user");
         config.setHttpProxyPassword("secret");
         config.setSessionStateListener(new SessionStateListener() {
-            public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
-            }
+            public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {}
         });
         Map<String, String> proxyHeaders = new HashMap<>();
         proxyHeaders.put("X-Proxy-Header", "1");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 import java.util.Map;
@@ -21,8 +22,7 @@ import java.util.Map;
 public final class AddonsBuilder {
     private Map<String, Object> additionalProperties;
 
-    public AddonsBuilder() {
-    }
+    public AddonsBuilder() {}
 
     public AddonsBuilder(Addons other) {
         this.additionalProperties = other.getAdditionalProperties();

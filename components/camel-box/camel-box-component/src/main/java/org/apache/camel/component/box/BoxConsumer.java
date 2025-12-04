@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
 
 import java.util.HashMap;
@@ -106,5 +107,4 @@ public class BoxConsumer extends AbstractApiConsumer<BoxApiName, BoxConfiguratio
         }
         super.doStop();
     }
-
 }

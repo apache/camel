@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq6;
 
 import org.apache.camel.component.jms.JmsSendDynamicAware;
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("activemq6")
-public class ActiveMQSendDynamicAware extends JmsSendDynamicAware {
-
-}
+public class ActiveMQSendDynamicAware extends JmsSendDynamicAware {}

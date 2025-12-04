@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.runtime;
 
 import java.util.Map;
@@ -43,8 +44,8 @@ public class BedrockComponent extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        BedrockConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new BedrockConfiguration();
+        BedrockConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new BedrockConfiguration();
         BedrockEndpoint endpoint = new BedrockEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

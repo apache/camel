@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.key.vault.integration.operations;
 
 import org.apache.camel.EndpointInject;
@@ -29,14 +30,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@EnabledIfSystemProperty(named = "vaultName", matches = ".*",
-                         disabledReason = "Make sure to supply azure key vault Vault Name, e.g:  mvn verify -DvaultName=string")
-@EnabledIfSystemProperty(named = "clientId", matches = ".*",
-                         disabledReason = "Make sure to supply azure key vault Client Id, e.g:  mvn verify -DclientId=string")
-@EnabledIfSystemProperty(named = "clientSecret", matches = ".*",
-                         disabledReason = "Make sure to supply azure key vault Client Secret, e.g:  mvn verify -DclientSecret=string")
-@EnabledIfSystemProperty(named = "tenantId", matches = ".*",
-                         disabledReason = "Make sure to supply azure key vault Tenant Id, e.g:  mvn verify -DtenantId=string")
+@EnabledIfSystemProperty(
+        named = "vaultName",
+        matches = ".*",
+        disabledReason = "Make sure to supply azure key vault Vault Name, e.g:  mvn verify -DvaultName=string")
+@EnabledIfSystemProperty(
+        named = "clientId",
+        matches = ".*",
+        disabledReason = "Make sure to supply azure key vault Client Id, e.g:  mvn verify -DclientId=string")
+@EnabledIfSystemProperty(
+        named = "clientSecret",
+        matches = ".*",
+        disabledReason = "Make sure to supply azure key vault Client Secret, e.g:  mvn verify -DclientSecret=string")
+@EnabledIfSystemProperty(
+        named = "tenantId",
+        matches = ".*",
+        disabledReason = "Make sure to supply azure key vault Tenant Id, e.g:  mvn verify -DtenantId=string")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KeyVaultOperationsTest extends CamelTestSupport {
 
@@ -94,15 +103,18 @@ public class KeyVaultOperationsTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:createSecret")
-                        .to("azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})")
+                        .to(
+                                "azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})")
                         .to("mock:createSecret");
 
                 from("direct:getSecret")
-                        .to("azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=getSecret")
+                        .to(
+                                "azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=getSecret")
                         .to("mock:getSecret");
 
                 from("direct:deleteSecret")
-                        .to("azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=deleteSecret")
+                        .to(
+                                "azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=deleteSecret")
                         .to("mock:deleteSecret");
             }
         };

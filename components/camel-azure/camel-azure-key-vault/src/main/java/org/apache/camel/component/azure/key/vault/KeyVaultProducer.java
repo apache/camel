@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.key.vault;
 
 import com.azure.core.util.polling.SyncPoller;
@@ -64,7 +65,8 @@ public class KeyVaultProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(secretName)) {
             throw new IllegalArgumentException(MISSING_SECRET_NAME);
         }
-        KeyVaultSecret p = getEndpoint().getSecretClient()
+        KeyVaultSecret p = getEndpoint()
+                .getSecretClient()
                 .setSecret(new KeyVaultSecret(secretName, exchange.getMessage().getMandatoryBody(String.class)));
         Message message = getMessageForResponse(exchange);
         message.setBody(p);
@@ -75,20 +77,18 @@ public class KeyVaultProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(secretName)) {
             throw new IllegalArgumentException(MISSING_SECRET_NAME);
         }
-        KeyVaultSecret p = getEndpoint().getSecretClient()
-                .getSecret(secretName);
+        KeyVaultSecret p = getEndpoint().getSecretClient().getSecret(secretName);
         Message message = getMessageForResponse(exchange);
         message.setBody(p.getValue());
     }
 
     private void updateSecretProperties(Exchange exchange) {
-        final SecretProperties secretProperties
-                = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_PROPERTIES, SecretProperties.class);
+        final SecretProperties secretProperties =
+                exchange.getMessage().getHeader(KeyVaultConstants.SECRET_PROPERTIES, SecretProperties.class);
         if (ObjectHelper.isEmpty(secretProperties)) {
             throw new IllegalArgumentException(MISSING_SECRET_NAME);
         }
-        SecretProperties p = getEndpoint().getSecretClient()
-                .updateSecretProperties(secretProperties);
+        SecretProperties p = getEndpoint().getSecretClient().updateSecretProperties(secretProperties);
         Message message = getMessageForResponse(exchange);
         message.setBody(p);
     }
@@ -98,8 +98,7 @@ public class KeyVaultProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(secretName)) {
             throw new IllegalArgumentException(MISSING_SECRET_NAME);
         }
-        SyncPoller<DeletedSecret, Void> p = getEndpoint().getSecretClient()
-                .beginDeleteSecret(secretName);
+        SyncPoller<DeletedSecret, Void> p = getEndpoint().getSecretClient().beginDeleteSecret(secretName);
         p.waitForCompletion();
         Message message = getMessageForResponse(exchange);
         message.setBody(p.getFinalResult());
@@ -110,8 +109,7 @@ public class KeyVaultProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(secretName)) {
             throw new IllegalArgumentException(MISSING_SECRET_NAME);
         }
-        getEndpoint().getSecretClient()
-                .purgeDeletedSecret(secretName);
+        getEndpoint().getSecretClient().purgeDeletedSecret(secretName);
     }
 
     @Override

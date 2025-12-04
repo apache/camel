@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isFormUrlEncoded;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,9 +31,6 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Message;
 import org.apache.camel.converter.stream.CachedOutputStream;
-
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isFormUrlEncoded;
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
 
 /**
  * A {@link HttpRequestBodyHandler} that can handle large request bodies via {@link CachedOutputStream}.

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ollama.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
@@ -21,5 +22,4 @@ import org.apache.camel.test.infra.common.services.TestService;
 /**
  * Test infra service for Ollama
  */
-public interface OllamaService extends TestService, OllamaInfraService {
-}
+public interface OllamaService extends TestService, OllamaInfraService {}

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,8 +50,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
@@ -60,15 +61,16 @@ public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
     @Produce("direct:sign")
     protected ProducerTemplate templateSign;
 
-    public PQCSignatureSLHDSAKeystoreTest() throws NoSuchAlgorithmException {
-    }
+    public PQCSignatureSLHDSAKeystoreTest() throws NoSuchAlgorithmException {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:sign").to("pqc:sign?operation=sign&keyPairAlias=mykey&keyStorePassword=changeit").to("mock:sign")
+                from("direct:sign")
+                        .to("pqc:sign?operation=sign&keyPairAlias=mykey&keyStorePassword=changeit")
+                        .to("mock:sign")
                         .to("pqc:verify?operation=verify&keyPairAlias=mykey&keyStorePassword=changeit")
                         .to("mock:verify");
             }
@@ -97,10 +99,11 @@ public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
 
     @BindToRegistry("Keystore")
     public KeyStore setKeyStore()
-            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException,
-            CertificateException, IOException, OperatorCreationException, UnrecoverableKeyException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SLHDSA.getAlgorithm(),
-                PQCSignatureAlgorithms.SLHDSA.getBcProvider());
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException,
+                    KeyStoreException, CertificateException, IOException, OperatorCreationException,
+                    UnrecoverableKeyException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.SLHDSA.getAlgorithm(), PQCSignatureAlgorithms.SLHDSA.getBcProvider());
         kpGen.initialize(SLHDSAParameterSpec.slh_dsa_shake_192s);
         KeyPair kp = kpGen.generateKeyPair();
 
@@ -113,26 +116,20 @@ public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
 
         X500Name dnName = new X500Name("CN=Test User");
         // Build the certificate
-        X509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(
-                dnName,
-                serialNumber,
-                startDate,
-                endDate,
-                dnName,
-                kp.getPublic());
+        X509v3CertificateBuilder certBuilder =
+                new JcaX509v3CertificateBuilder(dnName, serialNumber, startDate, endDate, dnName, kp.getPublic());
 
         ContentSigner contentSigner = new JcaContentSignerBuilder(PQCSignatureAlgorithms.SLHDSA.getAlgorithm())
                 .setProvider(PQCSignatureAlgorithms.SLHDSA.getBcProvider())
                 .build(kp.getPrivate());
 
-        X509Certificate certificate = new JcaX509CertificateConverter()
-                .setProvider("BC")
-                .getCertificate(certBuilder.build(contentSigner));
+        X509Certificate certificate =
+                new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(contentSigner));
 
         KeyStore keyStore = KeyStore.getInstance("JKS");
         char[] password = "changeit".toCharArray();
         keyStore.load(null, password); // initialize new keystore
-        keyStore.setKeyEntry("mykey", kp.getPrivate(), password, new Certificate[] { certificate });
+        keyStore.setKeyEntry("mykey", kp.getPrivate(), password, new Certificate[] {certificate});
 
         // Save keystore to file
         try (FileOutputStream fos = new FileOutputStream("keystore.jks")) {
@@ -143,8 +140,8 @@ public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
 
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
-        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.SLHDSA.getAlgorithm(),
-                PQCSignatureAlgorithms.SLHDSA.getBcProvider());
+        Signature mlDsa = Signature.getInstance(
+                PQCSignatureAlgorithms.SLHDSA.getAlgorithm(), PQCSignatureAlgorithms.SLHDSA.getBcProvider());
         return mlDsa;
     }
 }

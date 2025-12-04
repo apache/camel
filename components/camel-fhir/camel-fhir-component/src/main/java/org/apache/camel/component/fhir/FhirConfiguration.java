@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -41,61 +42,97 @@ public class FhirConfiguration {
     @UriPath
     @Metadata(required = true)
     private FhirApiName apiName;
+
     @UriPath
     @Metadata(required = true)
     private String methodName;
+
     @UriParam(description = "The FHIR server base URL")
     private String serverUrl;
+
     @UriParam(description = "The FHIR Version to use", defaultValue = "R4", javaType = "java.lang.String")
     private FhirVersionEnum fhirVersion = FhirVersionEnum.R4;
+
     @UriParam(description = "Pretty print all request")
     private boolean prettyPrint;
+
     @UriParam(description = "Encoding to use for all request", enums = "JSON, XML", javaType = "java.lang.String")
     private EncodingEnum encoding;
+
     @UriParam(description = "Username to use for basic authentication", label = "security", secret = true)
     private String username;
+
     @UriParam(description = "Password to use for basic authentication", label = "security", secret = true)
     private String password;
+
     @UriParam(description = "OAuth access token", label = "security", secret = true)
     private String accessToken;
+
     @UriParam(description = "Will log every requests and responses")
     private boolean log;
+
     @UriParam(description = "Compresses outgoing (POST/PUT) contents to the GZIP format", label = "advanced")
     private boolean compress;
-    @UriParam(description = "Request that the server modify the response using the <code>_summary</code> param",
-              label = "advanced", javaType = "java.lang.String")
+
+    @UriParam(
+            description = "Request that the server modify the response using the <code>_summary</code> param",
+            label = "advanced",
+            javaType = "java.lang.String")
     private SummaryEnum summary;
+
     @UriParam(description = "HTTP session cookie to add to every request", label = "advanced")
     private String sessionCookie;
-    @UriParam(description = "FhirContext is an expensive object to create. To avoid creating multiple instances,"
-                            + " it can be set directly.",
-              label = "advanced")
+
+    @UriParam(
+            description = "FhirContext is an expensive object to create. To avoid creating multiple instances,"
+                    + " it can be set directly.",
+            label = "advanced")
     private FhirContext fhirContext;
+
     @UriParam(description = "Force conformance check", label = "advanced")
     private boolean forceConformanceCheck;
-    @UriParam(description = "When should Camel validate the FHIR Server's conformance statement",
-              defaultValue = "ONCE", label = "advanced", javaType = "java.lang.String")
+
+    @UriParam(
+            description = "When should Camel validate the FHIR Server's conformance statement",
+            defaultValue = "ONCE",
+            label = "advanced",
+            javaType = "java.lang.String")
     private ServerValidationModeEnum validationMode;
-    @UriParam(description = "When this option is set, model classes will not be scanned for children until the"
-                            + " child list for the given type is actually accessed.",
-              defaultValue = "false", label = "advanced")
+
+    @UriParam(
+            description = "When this option is set, model classes will not be scanned for children until the"
+                    + " child list for the given type is actually accessed.",
+            defaultValue = "false",
+            label = "advanced")
     private boolean deferModelScanning;
-    @UriParam(description = "How long to try and establish the initial TCP connection (in ms)", label = "advanced",
-              defaultValue = "10000")
+
+    @UriParam(
+            description = "How long to try and establish the initial TCP connection (in ms)",
+            label = "advanced",
+            defaultValue = "10000")
     private Integer connectionTimeout;
-    @UriParam(description = "How long to block for individual read/write operations (in ms)", label = "advanced",
-              defaultValue = "10000")
+
+    @UriParam(
+            description = "How long to block for individual read/write operations (in ms)",
+            label = "advanced",
+            defaultValue = "10000")
     private Integer socketTimeout;
+
     @UriParam(label = "proxy", description = "The proxy host")
     private String proxyHost;
+
     @UriParam(label = "proxy", description = "The proxy port")
     private Integer proxyPort;
+
     @UriParam(label = "proxy", description = "The proxy username", secret = true)
     private String proxyUser;
+
     @UriParam(label = "proxy", description = "The proxy password", secret = true)
     private String proxyPassword;
+
     @UriParam(label = "advanced", description = "To use the custom client")
     private IGenericClient client;
+
     @UriParam(label = "advanced", description = "To use the custom client factory")
     private IRestfulClientFactory clientFactory;
 

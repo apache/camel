@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.loadbalancer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,13 +40,12 @@ public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
 
-    public StickyLoadBalancerDefinition() {
-    }
+    public StickyLoadBalancerDefinition() {}
 
     protected StickyLoadBalancerDefinition(StickyLoadBalancerDefinition source) {
         super(source);
-        this.correlationExpression
-                = source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
+        this.correlationExpression =
+                source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
     }
 
     @Override

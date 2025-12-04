@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.feed;
 
 import java.util.Map;
@@ -25,11 +26,9 @@ import org.apache.camel.support.DefaultComponent;
  */
 public abstract class FeedComponent extends DefaultComponent {
 
-    protected FeedComponent() {
-    }
+    protected FeedComponent() {}
 
     @Override
     protected abstract FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception;
-
 }

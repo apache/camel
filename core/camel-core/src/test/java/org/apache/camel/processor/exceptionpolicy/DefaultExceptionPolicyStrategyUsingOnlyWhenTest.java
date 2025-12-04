@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.exceptionpolicy;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for the when expression on the exception type.
@@ -72,22 +73,27 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0).redeliveryDelay(100));
+                errorHandler(
+                        deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0).redeliveryDelay(100));
 
-                onException(MyUserException.class).onWhen(header("user").isNotNull()).maximumRedeliveries(1).redeliveryDelay(0)
+                onException(MyUserException.class)
+                        .onWhen(header("user").isNotNull())
+                        .maximumRedeliveries(1)
+                        .redeliveryDelay(0)
                         .to(ERROR_USER_QUEUE);
 
-                from("direct:a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String s = exchange.getIn().getBody(String.class);
-                        if ("Hello Camel".equals(s)) {
-                            throw new MyUserException("Forced for testing");
-                        }
-                        exchange.getMessage().setBody("Hello World");
-                    }
-                }).to("mock:result");
+                from("direct:a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String s = exchange.getIn().getBody(String.class);
+                                if ("Hello Camel".equals(s)) {
+                                    throw new MyUserException("Forced for testing");
+                                }
+                                exchange.getMessage().setBody("Hello World");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

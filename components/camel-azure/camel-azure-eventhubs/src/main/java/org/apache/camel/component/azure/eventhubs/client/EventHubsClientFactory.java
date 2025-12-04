@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs.client;
 
 import java.util.Locale;
@@ -41,10 +42,10 @@ public final class EventHubsClientFactory {
     private static final String SERVICE_URI_SEGMENT = "servicebus.windows.net";
     private static final String BLOB_SERVICE_URI_SEGMENT = ".blob.core.windows.net";
 
-    private EventHubsClientFactory() {
-    }
+    private EventHubsClientFactory() {}
 
-    public static EventHubProducerAsyncClient createEventHubProducerAsyncClient(final EventHubsConfiguration configuration) {
+    public static EventHubProducerAsyncClient createEventHubProducerAsyncClient(
+            final EventHubsConfiguration configuration) {
         EventHubClientBuilder eventHubClientBuilder = new EventHubClientBuilder()
                 .transportType(configuration.getAmqpTransportType())
                 .retryOptions(configuration.getAmqpRetryOptions());
@@ -73,7 +74,8 @@ public final class EventHubsClientFactory {
                 .buildAsyncProducerClient();
     }
 
-    public static EventHubConsumerAsyncClient createEventHubConsumerAsyncClient(final EventHubsConfiguration configuration) {
+    public static EventHubConsumerAsyncClient createEventHubConsumerAsyncClient(
+            final EventHubsConfiguration configuration) {
         EventHubClientBuilder eventHubClientBuilder = new EventHubClientBuilder()
                 .consumerGroup(configuration.getConsumerGroupName())
                 .prefetchCount(configuration.getPrefetchCount())
@@ -105,7 +107,8 @@ public final class EventHubsClientFactory {
     }
 
     public static EventProcessorClient createEventProcessorClient(
-            final EventHubsConfiguration configuration, final Consumer<EventContext> processEvent,
+            final EventHubsConfiguration configuration,
+            final Consumer<EventContext> processEvent,
             final Consumer<ErrorContext> processError) {
         EventProcessorClientBuilder eventProcessorClientBuilder = new EventProcessorClientBuilder()
                 .initialPartitionEventPosition(configuration.getEventPosition())
@@ -150,8 +153,10 @@ public final class EventHubsClientFactory {
     }
 
     private static void checkTokenCredentialConfiguration(final EventHubsConfiguration configuration) {
-        if (ObjectHelper.isEmpty(configuration.getNamespace()) || ObjectHelper.isEmpty(configuration.getEventHubName())) {
-            throw new IllegalArgumentException("EventHub's namespace and name is required for the Azure-AD authentication");
+        if (ObjectHelper.isEmpty(configuration.getNamespace())
+                || ObjectHelper.isEmpty(configuration.getEventHubName())) {
+            throw new IllegalArgumentException(
+                    "EventHub's namespace and name is required for the Azure-AD authentication");
         }
     }
 
@@ -164,7 +169,7 @@ public final class EventHubsClientFactory {
         if (ObjectHelper.isEmpty(configuration.getBlobContainerName()) || !isCredentialsSet(configuration)) {
             throw new IllegalArgumentException(
                     "Since there is no provided CheckpointStore, you will need to set blobAccountName, blobAccessName"
-                                               + " or blobContainerName in order to use the default BlobCheckpointStore");
+                            + " or blobContainerName in order to use the default BlobCheckpointStore");
         }
 
         // second build the BlobContainerAsyncClient
@@ -185,8 +190,12 @@ public final class EventHubsClientFactory {
             return configuration.getConnectionString();
         }
 
-        return String.format(Locale.ROOT, "Endpoint=sb://%s.%s/;SharedAccessKeyName=%s;SharedAccessKey=%s;EntityPath=%s",
-                configuration.getNamespace(), SERVICE_URI_SEGMENT, configuration.getSharedAccessName(),
+        return String.format(
+                Locale.ROOT,
+                "Endpoint=sb://%s.%s/;SharedAccessKeyName=%s;SharedAccessKey=%s;EntityPath=%s",
+                configuration.getNamespace(),
+                SERVICE_URI_SEGMENT,
+                configuration.getSharedAccessName(),
                 configuration.getSharedAccessKey(),
                 configuration.getEventHubName());
     }

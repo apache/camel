@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rss;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -41,9 +42,11 @@ public class RssMultipleEndpointsIssueTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("rss:http://www.iafrica.com/pls/cms/grapevine.xml?initialDelay=2000").to("mock:a");
+                from("rss:http://www.iafrica.com/pls/cms/grapevine.xml?initialDelay=2000")
+                        .to("mock:a");
 
-                from("rss:http://www.iafrica.com/pls/cms/grapevine.xml?p_section=world_news&initialDelay=3000").to("mock:b");
+                from("rss:http://www.iafrica.com/pls/cms/grapevine.xml?p_section=world_news&initialDelay=3000")
+                        .to("mock:b");
             }
         };
     }

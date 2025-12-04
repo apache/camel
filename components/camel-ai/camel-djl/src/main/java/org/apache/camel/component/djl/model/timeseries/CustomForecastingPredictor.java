@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl.model.timeseries;
 
 import ai.djl.Model;
@@ -53,8 +54,8 @@ public class CustomForecastingPredictor extends AbstractPredictor {
     protected Forecast predict(Exchange exchange, TimeSeriesData input) {
         Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
         @SuppressWarnings("unchecked")
-        Translator<TimeSeriesData, Forecast> translator
-                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
+        Translator<TimeSeriesData, Forecast> translator =
+                exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
 
         exchange.getIn().setHeader(DJLConstants.INPUT, input);
         try (Predictor<TimeSeriesData, Forecast> predictor = model.newPredictor(translator)) {

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -37,9 +41,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test that we can do file over JMS to file.
  */
@@ -48,6 +49,7 @@ public class FileRouteToJmsToFileIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -56,7 +58,10 @@ public class FileRouteToJmsToFileIT extends AbstractJMSTest {
     @Test
     public void testRouteFileToFile() throws Exception {
         deleteDirectory("target/file2file");
-        NotifyBuilder notify = new NotifyBuilder(context).from("activemq:queue:FileRouteToJmsToFileIT").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("activemq:queue:FileRouteToJmsToFileIT")
+                .whenDone(1)
+                .create();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

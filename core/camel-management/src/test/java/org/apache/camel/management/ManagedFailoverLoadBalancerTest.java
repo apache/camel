@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -29,11 +35,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
@@ -96,10 +97,14 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .loadBalance().failover(3, false, true, true, IOException.class, SQLException.class).id("mysend")
-                        .to("mock:foo").id("foo").to("mock:bar").id("bar");
+                        .loadBalance()
+                        .failover(3, false, true, true, IOException.class, SQLException.class)
+                        .id("mysend")
+                        .to("mock:foo")
+                        .id("foo")
+                        .to("mock:bar")
+                        .id("bar");
             }
         };
     }
-
 }

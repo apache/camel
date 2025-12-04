@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(NettyUdpWithInOutUsingPlainSocketTest.class);
@@ -73,12 +74,12 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
                         LOG.debug("Server got: {}", s);
                         exchange.getMessage().setBody("Hello " + s);
                         // just make the remote address is there
-                        assertNotNull(exchange.getIn().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS),
+                        assertNotNull(
+                                exchange.getIn().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS),
                                 "The remote address header should not be Null");
                     }
                 });
             }
         };
     }
-
 }

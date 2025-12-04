@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.lang.reflect.Method;
@@ -61,8 +62,12 @@ public interface BeanProcessorFactory {
      * @throws Exception    is thrown if error creating the processor
      */
     Processor createBeanProcessor(
-            CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
-            String method, BeanScope scope)
+            CamelContext camelContext,
+            Object bean,
+            String beanType,
+            Class<?> beanClass,
+            String ref,
+            String method,
+            BeanScope scope)
             throws Exception;
-
 }

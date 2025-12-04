@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -38,8 +39,7 @@ public class Chat implements Serializable {
     @JsonProperty("all_members_are_administrators")
     private boolean allMembersAreAdministrators;
 
-    public Chat() {
-    }
+    public Chat() {}
 
     public String getId() {
         return id;
@@ -79,7 +79,9 @@ public class Chat implements Serializable {
         sb.append("id='").append(id).append('\'');
         sb.append(", title='").append(title).append('\'');
         sb.append(", type='").append(type).append('\'');
-        sb.append(", all_members_are_administrators='").append(allMembersAreAdministrators).append('\'');
+        sb.append(", all_members_are_administrators='")
+                .append(allMembersAreAdministrators)
+                .append('\'');
         sb.append('}');
         return sb.toString();
     }

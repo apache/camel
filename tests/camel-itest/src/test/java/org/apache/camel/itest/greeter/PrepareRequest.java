@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.greeter;
 
 import java.util.ArrayList;
@@ -37,5 +38,4 @@ public class PrepareRequest implements Processor {
         LOG.info("The operation name is {}", operation);
         exchange.getMessage().setHeader(CxfConstants.OPERATION_NAME, operation);
     }
-
 }

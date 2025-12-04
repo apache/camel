@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.IOException;
@@ -41,8 +42,8 @@ public abstract class MultipartMimeEntity extends MimeEntity {
         this(signer.createMultipartSignedContentType(boundary), null, isMainBody, boundary);
     }
 
-    protected MultipartMimeEntity(ContentType contentType, String contentTransferEncoding, boolean isMainBody,
-                                  String boundary) {
+    protected MultipartMimeEntity(
+            ContentType contentType, String contentTransferEncoding, boolean isMainBody, String boundary) {
         super(contentType, contentTransferEncoding);
         setMainBody(isMainBody);
 
@@ -51,7 +52,6 @@ public abstract class MultipartMimeEntity extends MimeEntity {
         } else {
             this.boundary = EntityUtils.createBoundaryValue();
         }
-
     }
 
     public String getBoundary() {
@@ -114,8 +114,6 @@ public abstract class MultipartMimeEntity extends MimeEntity {
 
             // Write out closing boundary delimiter line
             canonicalOutstream.writeln(boundary + "--");
-
         }
     }
-
 }

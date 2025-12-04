@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dns;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -24,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DnsIpHeaderTransferTest extends CamelTestSupport {
 
@@ -41,7 +42,10 @@ public class DnsIpHeaderTransferTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("foo", constant("bar")).to("dns:ip").to("mock:result");
+                from("direct:start")
+                        .setHeader("foo", constant("bar"))
+                        .to("dns:ip")
+                        .to("mock:result");
             }
         };
     }

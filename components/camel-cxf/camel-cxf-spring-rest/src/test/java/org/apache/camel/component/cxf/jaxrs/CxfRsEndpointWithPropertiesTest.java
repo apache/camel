@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -28,13 +31,11 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfRsEndpointWithPropertiesTest extends AbstractSpringBeanTestSupport {
 
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[] { "org/apache/camel/component/cxf/jaxrs/CxfRsEndpointWithProperties.xml" };
+        return new String[] {"org/apache/camel/component/cxf/jaxrs/CxfRsEndpointWithProperties.xml"};
     }
 
     @Test
@@ -54,9 +55,8 @@ public class CxfRsEndpointWithPropertiesTest extends AbstractSpringBeanTestSuppo
         HttpGet get = new HttpGet(testEndpoint.getAddress());
 
         try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-             CloseableHttpResponse response = httpclient.execute(get)) {
+                CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(404, response.getCode());
         }
     }
-
 }

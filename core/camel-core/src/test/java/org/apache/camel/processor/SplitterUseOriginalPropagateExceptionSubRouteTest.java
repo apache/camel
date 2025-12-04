@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -25,10 +30,6 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitterUseOriginalPropagateExceptionSubRouteTest extends ContextTestSupport {
 
@@ -67,25 +68,29 @@ public class SplitterUseOriginalPropagateExceptionSubRouteTest extends ContextTe
             @Override
             public void configure() {
                 from("direct:start")
-                        .onCompletion().process(e -> {
+                        .onCompletion()
+                        .process(e -> {
                             Exception caught = e.getException();
                             assertNull(caught);
                             caught = e.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                             assertIsInstanceOf(IllegalArgumentException.class, caught);
                             assertEquals("Forced error", caught.getMessage());
-                        }).end()
-                        .split(body()).aggregationStrategy(AggregationStrategies.useOriginal(true))
+                        })
+                        .end()
+                        .split(body())
+                        .aggregationStrategy(AggregationStrategies.useOriginal(true))
                         .to("direct:sub")
                         .end()
                         .to("mock:result");
 
                 from("direct:sub")
-                    // simulate retrying error handler
-                    .errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0))
-                    .filter(simple("${body} == 'Kaboom'"))
+                        // simulate retrying error handler
+                        .errorHandler(
+                                defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0))
+                        .filter(simple("${body} == 'Kaboom'"))
                         .throwException(new IllegalArgumentException("Forced error"))
-                    .end()
-                    .to("mock:line");
+                        .end()
+                        .to("mock:line");
             }
         };
     }

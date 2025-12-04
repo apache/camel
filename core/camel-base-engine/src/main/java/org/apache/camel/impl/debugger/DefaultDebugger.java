@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.debugger;
 
 import java.util.ArrayList;
@@ -80,8 +81,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
         }
     }
 
-    public DefaultDebugger() {
-    }
+    public DefaultDebugger() {}
 
     public DefaultDebugger(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -285,7 +285,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
         return match;
     }
 
-    protected void onBeforeProcess(Exchange exchange, Processor processor, NamedNode definition, Breakpoint breakpoint) {
+    protected void onBeforeProcess(
+            Exchange exchange, Processor processor, NamedNode definition, Breakpoint breakpoint) {
         try {
             breakpoint.beforeProcess(exchange, processor, definition);
         } catch (Exception e) {
@@ -329,7 +330,11 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
     }
 
     private boolean matchConditions(
-            Exchange exchange, Processor processor, NamedNode definition, BreakpointConditions breakpoint, boolean before) {
+            Exchange exchange,
+            Processor processor,
+            NamedNode definition,
+            BreakpointConditions breakpoint,
+            boolean before) {
         for (Condition condition : breakpoint.getConditions()) {
             if (!condition.matchProcess(exchange, processor, definition, before)) {
                 return false;
@@ -405,5 +410,4 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
             return event instanceof ExchangeEvent;
         }
     }
-
 }

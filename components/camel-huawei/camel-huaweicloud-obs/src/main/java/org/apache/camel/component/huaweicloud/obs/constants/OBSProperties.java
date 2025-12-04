@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs.constants;
 
 /**
@@ -26,6 +27,5 @@ public final class OBSProperties {
     public static final String BUCKET_EXISTS = "CamelHwCloudObsBucketExists";
     public static final String OBJECT_NAME = "CamelHwCloudObsObjectName";
 
-    private OBSProperties() {
-    }
+    private OBSProperties() {}
 }

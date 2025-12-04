@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.lock;
 
 import java.util.Set;
@@ -68,12 +69,12 @@ public interface KubernetesLeaseResourceManager<T extends HasMetadata> {
     /**
      * Create a new lease resource matching the given {@link LeaderInfo}.
      */
-    T createNewLeaseResource(KubernetesClient client, String namespace, String leaseResourceName, LeaderInfo leaderInfo);
+    T createNewLeaseResource(
+            KubernetesClient client, String namespace, String leaseResourceName, LeaderInfo leaderInfo);
 
     /**
      * Update information on the lease resource to increase the renew time (if last renewal has occurred more than
      * minUpdateIntervalSeconds seconds ago).
      */
     T refreshLeaseRenewTime(KubernetesClient client, T leaseResource, int minUpdateIntervalSeconds);
-
 }

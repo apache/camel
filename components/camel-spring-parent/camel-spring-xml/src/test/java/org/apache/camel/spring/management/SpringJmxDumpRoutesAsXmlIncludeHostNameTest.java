@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,9 +29,6 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class SpringJmxDumpRoutesAsXmlIncludeHostNameTest extends SpringTestSupport {
@@ -51,9 +52,8 @@ public class SpringJmxDumpRoutesAsXmlIncludeHostNameTest extends SpringTestSuppo
     public void testJmxDumpRoutesAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=localhost/" + context.getManagementName() + ",type=context,name=\""
-                             + context.getName() + "\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + context.getManagementName()
+                + ",type=context,name=\"" + context.getName() + "\"");
         String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         assertNotNull(xml);
         log.info(xml);
@@ -66,5 +66,4 @@ public class SpringJmxDumpRoutesAsXmlIncludeHostNameTest extends SpringTestSuppo
         assertTrue(xml.contains("seda:bar"));
         assertTrue(xml.contains("mock:bar"));
     }
-
 }

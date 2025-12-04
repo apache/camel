@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.avro.transform;
 
 import java.io.ByteArrayInputStream;
@@ -36,8 +37,9 @@ import org.apache.camel.spi.Transformer;
  * Data type uses Avro Jackson data format to unmarshal Exchange body to generic JsonNode. Uses given Avro schema from
  * the Exchange properties when unmarshalling the payload (usually already resolved via schema resolver).
  */
-@DataTypeTransformer(name = "avro-x-struct",
-                     description = "Transforms to generic JSonNode using Jackson Avro (supports content schema)")
+@DataTypeTransformer(
+        name = "avro-x-struct",
+        description = "Transforms to generic JSonNode using Jackson Avro (supports content schema)")
 public class AvroStructDataTypeTransformer extends Transformer {
 
     @Override
@@ -45,26 +47,38 @@ public class AvroStructDataTypeTransformer extends Transformer {
         AvroSchema schema = message.getExchange().getProperty(SchemaHelper.CONTENT_SCHEMA, AvroSchema.class);
 
         if (schema == null) {
-            throw new CamelExecutionException("Missing proper avro schema for data type processing", message.getExchange());
+            throw new CamelExecutionException(
+                    "Missing proper avro schema for data type processing", message.getExchange());
         }
 
         try {
             Object unmarshalled;
             String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), null);
             if (contentClass != null) {
-                Class<?> contentType
-                        = message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
-                unmarshalled = Avro.mapper().reader().forType(JsonNode.class).with(schema)
-                        .readValue(Avro.mapper().writerFor(contentType).with(schema).writeValueAsBytes(message.getBody()));
+                Class<?> contentType =
+                        message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
+                unmarshalled = Avro.mapper()
+                        .reader()
+                        .forType(JsonNode.class)
+                        .with(schema)
+                        .readValue(Avro.mapper()
+                                .writerFor(contentType)
+                                .with(schema)
+                                .writeValueAsBytes(message.getBody()));
             } else {
-                unmarshalled = Avro.mapper().reader().forType(JsonNode.class).with(schema).readValue(getBodyAsStream(message));
+                unmarshalled = Avro.mapper()
+                        .reader()
+                        .forType(JsonNode.class)
+                        .with(schema)
+                        .readValue(getBodyAsStream(message));
             }
 
             message.setBody(unmarshalled);
 
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.STRUCT.type());
         } catch (InvalidPayloadException | IOException | ClassNotFoundException e) {
-            throw new CamelExecutionException("Failed to apply Avro x-struct data type on exchange", message.getExchange(), e);
+            throw new CamelExecutionException(
+                    "Failed to apply Avro x-struct data type on exchange", message.getExchange(), e);
         }
     }
 

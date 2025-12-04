@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
+
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
@@ -31,20 +37,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterControlEndpointTest {
 
-    static final String CONTROL_ENDPOINT_URI = "dynamic-router-control:subscribe?" +
-                                               "subscriptionId=testSubscription" +
-                                               "&subscribeChannel=testChannel" +
-                                               "&destinationUri=testDestination" +
-                                               "&priority=10" +
-                                               "&predicate=${true}";
+    static final String CONTROL_ENDPOINT_URI = "dynamic-router-control:subscribe?" + "subscriptionId=testSubscription"
+            + "&subscribeChannel=testChannel"
+            + "&destinationUri=testDestination"
+            + "&priority=10"
+            + "&predicate=${true}";
 
     @RegisterExtension
     static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
@@ -82,13 +82,18 @@ class DynamicRouterControlEndpointTest {
         producerFactory = new DynamicRouterControlProducerFactory() {
             @Override
             public DynamicRouterControlProducer getInstance(
-                    DynamicRouterControlEndpoint endpoint, DynamicRouterControlService dynamicRouterControlService,
+                    DynamicRouterControlEndpoint endpoint,
+                    DynamicRouterControlService dynamicRouterControlService,
                     DynamicRouterControlConfiguration configuration) {
                 return producer;
             }
         };
         endpoint = new DynamicRouterControlEndpoint(
-                CONTROL_ENDPOINT_URI, component, CONTROL_ACTION_SUBSCRIBE, configuration, () -> producerFactory,
+                CONTROL_ENDPOINT_URI,
+                component,
+                CONTROL_ACTION_SUBSCRIBE,
+                configuration,
+                () -> producerFactory,
                 () -> controlServiceFactory);
         endpoint.setCamelContext(context);
     }

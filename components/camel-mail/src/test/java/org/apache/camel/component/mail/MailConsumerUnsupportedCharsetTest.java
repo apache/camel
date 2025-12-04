@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.io.UnsupportedEncodingException;
@@ -47,11 +48,11 @@ public class MailConsumerUnsupportedCharsetTest extends CamelTestSupport {
         mime.setContent("Bye World", "text/plain; charset=ThisIsNotAKnownCharset");
         msg[0] = mime;
         try {
-            Assertions.assertThatThrownBy(() -> folder.appendMessages(msg)).isInstanceOf(MessagingException.class)
+            Assertions.assertThatThrownBy(() -> folder.appendMessages(msg))
+                    .isInstanceOf(MessagingException.class)
                     .hasCauseInstanceOf(UnsupportedEncodingException.class);
         } finally {
             folder.close(true);
         }
     }
-
 }

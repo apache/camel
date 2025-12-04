@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
 
 import java.util.Map;
@@ -33,61 +34,87 @@ public class PahoMqtt5Configuration implements Cloneable {
 
     @UriParam
     private String clientId;
+
     @UriParam(defaultValue = PahoMqtt5Constants.DEFAULT_BROKER_URL)
     private String brokerUrl = PahoMqtt5Constants.DEFAULT_BROKER_URL;
+
     @UriParam(defaultValue = "2")
     private int qos = PahoMqtt5Constants.DEFAULT_QOS;
+
     @UriParam
     private boolean retained;
+
     @UriParam(defaultValue = "MEMORY")
     private PahoMqtt5Persistence persistence = PahoMqtt5Persistence.MEMORY;
+
     @UriParam
     private String filePersistenceDirectory;
 
     @UriParam(defaultValue = "60")
     private int keepAliveInterval = 60;
+
     @UriParam(defaultValue = "65535")
     private int receiveMaximum = 65535;
+
     @UriParam
     private String willTopic;
+
     @UriParam
     private String willPayload;
+
     @UriParam(defaultValue = "1")
     private int willQos = 1;
+
     @UriParam(defaultValue = "false")
     private boolean willRetained;
+
     @UriParam
     private MqttProperties willMqttProperties;
+
     @UriParam(label = "security")
     @Metadata(secret = true)
     private String userName;
+
     @UriParam(label = "security")
     @Metadata(secret = true)
     private String password;
+
     @UriParam(label = "security")
     private SocketFactory socketFactory;
+
     @UriParam(label = "security")
     private Properties sslClientProps;
+
     @UriParam(label = "security", defaultValue = "true")
     private boolean httpsHostnameVerificationEnabled = true;
+
     @UriParam(label = "security")
     private HostnameVerifier sslHostnameVerifier;
+
     @UriParam(defaultValue = "true")
     private boolean cleanStart = true;
+
     @UriParam(defaultValue = "30")
     private int connectionTimeout = 30;
+
     @UriParam
     private String serverURIs;
+
     @UriParam(defaultValue = "true")
     private boolean automaticReconnect = true;
+
     @UriParam(defaultValue = "128000")
     private int maxReconnectDelay = 128000;
+
     @UriParam(label = "advanced")
     private Map<String, String> customWebSocketHeaders;
+
     @UriParam(label = "advanced", defaultValue = "1")
     private int executorServiceTimeout = 1;
+
     @UriParam(defaultValue = "-1")
     private long sessionExpiryInterval = -1;
+
     @UriParam(label = "consumer")
     private boolean manualAcksEnabled;
 

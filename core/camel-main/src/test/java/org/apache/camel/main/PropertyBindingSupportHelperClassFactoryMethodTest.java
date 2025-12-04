@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
@@ -22,8 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -42,10 +43,13 @@ public class PropertyBindingSupportHelperClassFactoryMethodTest {
                 .withCamelContext(context)
                 .withTarget(target)
                 .withProperty("name", "Donald")
-                .withProperty("myDriver", "#class:" + MyDriver.class.getName()
-                                          + "#" + MyDriverHelper.class.getName()
-                                          + ":createDriver('localhost:2121', 'scott', 'tiger')")
-                .withRemoveParameters(false).bind();
+                .withProperty(
+                        "myDriver",
+                        "#class:" + MyDriver.class.getName()
+                                + "#" + MyDriverHelper.class.getName()
+                                + ":createDriver('localhost:2121', 'scott', 'tiger')")
+                .withRemoveParameters(false)
+                .bind();
 
         assertEquals("Donald", target.getName());
         assertEquals("localhost:2121", target.getMyDriver().getUrl());
@@ -73,11 +77,13 @@ public class PropertyBindingSupportHelperClassFactoryMethodTest {
                 .withCamelContext(context)
                 .withTarget(target)
                 .withProperty("name", "Donald")
-                .withProperty("myDriver",
+                .withProperty(
+                        "myDriver",
                         "#class:" + MyDriver.class.getName()
-                                          + "#" + MyDriverHelper.class.getName()
-                                          + ":createDriver('{{myUrl}}', '{{myUsername}}', '{{myPassword}}')")
-                .withRemoveParameters(false).bind();
+                                + "#" + MyDriverHelper.class.getName()
+                                + ":createDriver('{{myUrl}}', '{{myUsername}}', '{{myPassword}}')")
+                .withRemoveParameters(false)
+                .bind();
 
         assertEquals("Donald", target.getName());
         assertEquals("localhost:2121", target.getMyDriver().getUrl());
@@ -101,9 +107,12 @@ public class PropertyBindingSupportHelperClassFactoryMethodTest {
                 .withCamelContext(context)
                 .withTarget(target)
                 .withProperty("name", "Donald")
-                .withProperty("myDriver", "#class:" + MyDriver.class.getName()
-                                          + "#myDriverHelper:createDriver('localhost:2121', 'scott', 'tiger')")
-                .withRemoveParameters(false).bind();
+                .withProperty(
+                        "myDriver",
+                        "#class:" + MyDriver.class.getName()
+                                + "#myDriverHelper:createDriver('localhost:2121', 'scott', 'tiger')")
+                .withRemoveParameters(false)
+                .bind();
 
         assertEquals("Donald", target.getName());
         assertEquals("localhost:2121", target.getMyDriver().getUrl());
@@ -144,7 +153,6 @@ public class PropertyBindingSupportHelperClassFactoryMethodTest {
             driver.password = password;
             return driver;
         }
-
     }
 
     public static class MyDriver {
@@ -165,5 +173,4 @@ public class PropertyBindingSupportHelperClassFactoryMethodTest {
             return password;
         }
     }
-
 }

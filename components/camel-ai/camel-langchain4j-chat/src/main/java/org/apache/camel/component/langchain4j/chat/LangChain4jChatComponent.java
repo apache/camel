@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.chat;
+
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME;
 
 import java.util.Map;
 
@@ -23,8 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
-import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME;
 
 @Component(SCHEME)
 public class LangChain4jChatComponent extends DefaultComponent {
@@ -39,7 +40,6 @@ public class LangChain4jChatComponent extends DefaultComponent {
     public LangChain4jChatComponent(CamelContext context) {
         super(context);
         this.configuration = new LangChain4jChatConfiguration();
-
     }
 
     public LangChain4jChatConfiguration getConfiguration() {

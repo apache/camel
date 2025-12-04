@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.qdrant.services;
 
 import java.net.http.HttpResponse;
@@ -24,9 +25,7 @@ import org.apache.camel.test.infra.common.services.SingletonService;
 import org.apache.camel.test.infra.qdrant.common.QdrantProperties;
 
 public final class QdrantServiceFactory {
-    private QdrantServiceFactory() {
-
-    }
+    private QdrantServiceFactory() {}
 
     public static class SingletonQdrantService extends SingletonService<QdrantService> implements QdrantService {
         public SingletonQdrantService(QdrantService service, String name) {
@@ -82,14 +81,12 @@ public final class QdrantServiceFactory {
 
     public static QdrantService createSingletonService() {
         return builder()
-                .addLocalMapping(
-                        () -> new SingletonQdrantService(new QdrantLocalContainerService(), QdrantProperties.INFRA_TYPE))
+                .addLocalMapping(() ->
+                        new SingletonQdrantService(new QdrantLocalContainerService(), QdrantProperties.INFRA_TYPE))
                 .build();
     }
 
-    public static class QdrantLocalContainerService extends QdrantLocalContainerInfraService implements QdrantService {
-    }
+    public static class QdrantLocalContainerService extends QdrantLocalContainerInfraService implements QdrantService {}
 
-    public static class QdrantRemoteService extends QdrantRemoteInfraService implements QdrantService {
-    }
+    public static class QdrantRemoteService extends QdrantRemoteInfraService implements QdrantService {}
 }

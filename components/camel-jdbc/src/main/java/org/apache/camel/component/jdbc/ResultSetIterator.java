@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import java.sql.Connection;
@@ -44,7 +45,8 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
     private final boolean useGetBytes;
     private final AtomicBoolean closed = new AtomicBoolean();
 
-    public ResultSetIterator(Connection conn, ResultSet resultSet, boolean isJDBC4, boolean useGetBytes) throws SQLException {
+    public ResultSetIterator(Connection conn, ResultSet resultSet, boolean isJDBC4, boolean useGetBytes)
+            throws SQLException {
         this.resultSet = resultSet;
         this.statement = this.resultSet.getStatement();
         this.connection = conn;
@@ -153,7 +155,8 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         }
     }
 
-    private static String getColumnName(ResultSetMetaData metaData, int columnNumber, boolean isJDBC4) throws SQLException {
+    private static String getColumnName(ResultSetMetaData metaData, int columnNumber, boolean isJDBC4)
+            throws SQLException {
         if (isJDBC4) {
             // jdbc 4 should use label to get the name
             return metaData.getColumnLabel(columnNumber);

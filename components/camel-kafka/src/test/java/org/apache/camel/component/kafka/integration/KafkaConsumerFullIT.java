@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Map;
@@ -49,25 +55,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
-    public static final String TOPIC = "test-full-" + Uuid.randomUuid(); //CAMEL-20722: a more unique name to avoid clash
-    public static final String ROUTE = "full-it-" + Uuid.randomUuid();   //CAMEL-20722: a more unique name to avoid clash
+    public static final String TOPIC =
+            "test-full-" + Uuid.randomUuid(); // CAMEL-20722: a more unique name to avoid clash
+    public static final String ROUTE = "full-it-" + Uuid.randomUuid(); // CAMEL-20722: a more unique name to avoid clash
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerFullIT.class);
 
     private static final String FROM_URI = "kafka:" + TOPIC
-                                           + "?groupId=KafkaConsumerFullIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
-                                           + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                                           + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
+            + "?groupId=KafkaConsumerFullIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+            + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+            + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+
     @BindToRegistry("myHeaderDeserializer")
     private final MyKafkaHeaderDeserializer bean = new MyKafkaHeaderDeserializer();
 
@@ -91,7 +94,6 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
                 .timeout(60, TimeUnit.SECONDS)
                 .pollDelay(3, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(r.all().isDone()));
-
     }
 
     @RouteFixture
@@ -104,8 +106,11 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
             @Override
             public void configure() {
                 from(FROM_URI)
-                        .process(exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
-                        .routeId(ROUTE).to(KafkaTestUtil.MOCK_RESULT);
+                        .process(exchange -> LOG.trace(
+                                "Captured on the processor: {}",
+                                exchange.getMessage().getBody()))
+                        .routeId(ROUTE)
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
@@ -123,7 +128,8 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
         // exchange because autoCommitEnable=true
-        to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
+        to.expectedHeaderValuesReceivedInAnyOrder(
+                KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
         to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
 
         for (int k = 0; k < 5; k++) {
@@ -136,8 +142,11 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
-                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
+        assertEquals(
+                5,
+                MockConsumerInterceptor.recordsCaptured.stream()
+                        .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false))
+                        .count());
 
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertFalse(headers.containsKey(skippedHeaderKey), "Should not receive skipped header");
@@ -160,7 +169,8 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
         to.assertIsSatisfied(3000);
 
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
-        assertTrue(headers.containsKey(KafkaConstants.TOPIC), "Should receive KafkaEndpoint populated kafka.TOPIC header");
+        assertTrue(
+                headers.containsKey(KafkaConstants.TOPIC), "Should receive KafkaEndpoint populated kafka.TOPIC header");
         assertEquals(TOPIC, headers.get(KafkaConstants.TOPIC), "Topic name received");
     }
 
@@ -231,9 +241,11 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
     public void headerDeserializerCouldBeOverridden() {
         CamelContext context = contextExtension.getContext();
 
-        KafkaEndpoint kafkaEndpoint
-                = context.getEndpoint("kafka:random_topic?headerDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
-        assertInstanceOf(MyKafkaHeaderDeserializer.class, kafkaEndpoint.getConfiguration().getHeaderDeserializer());
+        KafkaEndpoint kafkaEndpoint =
+                context.getEndpoint("kafka:random_topic?headerDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
+        assertInstanceOf(
+                MyKafkaHeaderDeserializer.class,
+                kafkaEndpoint.getConfiguration().getHeaderDeserializer());
     }
 
     @Order(6)
@@ -252,8 +264,11 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
-                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
+        assertEquals(
+                5,
+                MockConsumerInterceptor.recordsCaptured.stream()
+                        .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false))
+                        .count());
 
         // suspend route
         CamelContext context = contextExtension.getContext();
@@ -282,10 +297,12 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5 + 3, MockConsumerInterceptor.recordsCaptured.stream()
-                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
+        assertEquals(
+                5 + 3,
+                MockConsumerInterceptor.recordsCaptured.stream()
+                        .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false))
+                        .count());
     }
 
-    private static class MyKafkaHeaderDeserializer extends DefaultKafkaHeaderDeserializer {
-    }
+    private static class MyKafkaHeaderDeserializer extends DefaultKafkaHeaderDeserializer {}
 }

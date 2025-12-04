@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -40,14 +41,15 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
 
     @XmlTransient
     private ProcessorDefinition<?> parent;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String fallbackViaNetwork;
+
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
-    public OnFallbackDefinition() {
-    }
+    public OnFallbackDefinition() {}
 
     protected OnFallbackDefinition(OnFallbackDefinition source) {
         super(source);
@@ -95,7 +97,8 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
         } else {
             name = "onFallback(viaNetwork=" + fallbackViaNetwork + ")";
         }
-        return getOutputs().stream().map(ProcessorDefinition::getLabel)
+        return getOutputs().stream()
+                .map(ProcessorDefinition::getLabel)
                 .collect(Collectors.joining(",", name + "[", "]"));
     }
 
@@ -127,5 +130,4 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
     public void addOutput(ProcessorDefinition<?> output) {
         outputs.add(output);
     }
-
 }

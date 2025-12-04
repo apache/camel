@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class QueryBuilderTest extends CamelTestSupport {
 
@@ -65,5 +66,4 @@ public class QueryBuilderTest extends CamelTestSupport {
         q.parameters(map);
         assertEquals("Query: select x from SendEmail x where x.id = :a Parameters: {a=1}", q.toString());
     }
-
 }

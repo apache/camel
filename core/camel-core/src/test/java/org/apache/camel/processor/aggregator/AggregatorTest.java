@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.HashMap;
@@ -85,23 +86,34 @@ public class AggregatorTest extends ContextTestSupport {
                 // START SNIPPET: ex
                 // in this route we aggregate all from direct:state based on the
                 // header id cheese
-                from("direct:many").aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(2000)
-                        .completionTimeoutCheckerInterval(100).to("mock:result");
+                from("direct:many")
+                        .aggregate(header("cheese"), new UseLatestAggregationStrategy())
+                        .completionTimeout(2000)
+                        .completionTimeoutCheckerInterval(100)
+                        .to("mock:result");
 
-                from("direct:start").aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(100)
-                        .completionTimeoutCheckerInterval(10).to("mock:result");
+                from("direct:start")
+                        .aggregate(header("cheese"), new UseLatestAggregationStrategy())
+                        .completionTimeout(100)
+                        .completionTimeoutCheckerInterval(10)
+                        .to("mock:result");
 
-                from("seda:header").setHeader("visited", constant(true))
-                        .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(100)
-                        .completionTimeoutCheckerInterval(10).to("mock:result");
+                from("seda:header")
+                        .setHeader("visited", constant(true))
+                        .aggregate(header("cheese"), new UseLatestAggregationStrategy())
+                        .completionTimeout(100)
+                        .completionTimeoutCheckerInterval(10)
+                        .to("mock:result");
 
                 // in this sample we aggregate with a completion predicate
-                from("direct:predicate").aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(100)
+                from("direct:predicate")
+                        .aggregate(header("cheese"), new UseLatestAggregationStrategy())
+                        .completionTimeout(100)
                         .completionTimeoutCheckerInterval(10)
-                        .completionPredicate(header("cheese").isEqualTo(123)).to("mock:result");
+                        .completionPredicate(header("cheese").isEqualTo(123))
+                        .to("mock:result");
                 // END SNIPPET: ex
             }
         };
     }
-
 }

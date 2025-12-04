@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 
@@ -24,8 +27,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SplitterStreamCacheTest extends ContextTestSupport {
 
@@ -49,10 +50,14 @@ public class SplitterStreamCacheTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // ensure stream is spooled to disk
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy()
+                        .setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(-1);
 
-                from("seda:parallel?concurrentConsumers=5").streamCaching().split(xpath("//person/city")).to("mock:result");
+                from("seda:parallel?concurrentConsumers=5")
+                        .streamCaching()
+                        .split(xpath("//person/city"))
+                        .to("mock:result");
             }
         };
     }

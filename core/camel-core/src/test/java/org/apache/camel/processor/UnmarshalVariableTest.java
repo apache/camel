@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.InputStream;
@@ -74,11 +75,15 @@ public class UnmarshalVariableTest extends ContextTestSupport {
                 from("direct:send")
                         .setVariable("hello", simple("Camel"))
                         .to("mock:before")
-                        .unmarshal().variableSend("hello").custom("myDF")
+                        .unmarshal()
+                        .variableSend("hello")
+                        .custom("myDF")
                         .to("mock:result");
 
                 from("direct:receive")
-                        .unmarshal().variableReceive("bye").custom("myDF")
+                        .unmarshal()
+                        .variableReceive("bye")
+                        .custom("myDF")
                         .to("mock:after")
                         .setBody(simple("${variable:bye}"))
                         .to("mock:result");
@@ -86,7 +91,10 @@ public class UnmarshalVariableTest extends ContextTestSupport {
                 from("direct:sendAndReceive")
                         .setVariable("hello", simple("Camel"))
                         .to("mock:before")
-                        .unmarshal().variableSend("hello").variableReceive("bye").custom("myDF")
+                        .unmarshal()
+                        .variableSend("hello")
+                        .variableReceive("bye")
+                        .custom("myDF")
                         .to("mock:result");
             }
         };

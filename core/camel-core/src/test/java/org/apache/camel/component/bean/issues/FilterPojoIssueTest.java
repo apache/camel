@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -52,8 +53,12 @@ public class FilterPojoIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(FilterPojoIssueTest.class, "doSomething").to("log:foo").filter(body().isNotNull())
-                        .to("mock:filter").end();
+                from("direct:start")
+                        .bean(FilterPojoIssueTest.class, "doSomething")
+                        .to("log:foo")
+                        .filter(body().isNotNull())
+                        .to("mock:filter")
+                        .end();
             }
         };
     }

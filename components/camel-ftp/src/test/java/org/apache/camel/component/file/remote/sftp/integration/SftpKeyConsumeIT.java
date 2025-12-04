@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
 
 import java.io.IOException;
@@ -27,7 +28,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpKeyConsumeIT extends SftpServerTestSupport {
 
     @Test
@@ -35,7 +38,8 @@ public class SftpKeyConsumeIT extends SftpServerTestSupport {
         String expected = "Hello World";
 
         // create file using regular file
-        template.sendBodyAndHeader("file://" + service.getFtpRootDir().toString(), expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://" + service.getFtpRootDir().toString(), expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -69,8 +73,10 @@ public class SftpKeyConsumeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&knownHosts=#knownHosts&privateKey=#privateKey&privateKeyPassphrase=secret&delay=10000&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
-                        .routeId("foo").noAutoStartup().to("mock:result");
+                                + "?username=admin&knownHosts=#knownHosts&privateKey=#privateKey&privateKeyPassphrase=secret&delay=10000&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
+                        .routeId("foo")
+                        .noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

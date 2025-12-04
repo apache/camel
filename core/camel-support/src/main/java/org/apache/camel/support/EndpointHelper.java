@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.apache.camel.util.StringHelper.after;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -41,8 +44,6 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.StringHelper.after;
-
 /**
  * Some helper methods for working with {@link Endpoint} instances
  */
@@ -52,7 +53,7 @@ public final class EndpointHelper {
     private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong();
 
     private EndpointHelper() {
-        //Utility Class
+        // Utility Class
     }
 
     /**
@@ -276,11 +277,14 @@ public final class EndpointHelper {
         boolean match = regexp ? PatternHelper.matchRegex(uri, pattern) : PatternHelper.matchPattern(uri, pattern);
         if (!match) {
             toggleUri = toggleUriSchemeSeparators(uri);
-            match = regexp ? PatternHelper.matchRegex(toggleUri, pattern) : PatternHelper.matchPattern(toggleUri, pattern);
+            match = regexp
+                    ? PatternHelper.matchRegex(toggleUri, pattern)
+                    : PatternHelper.matchPattern(toggleUri, pattern);
         }
         if (!match && !regexp && pattern != null && pattern.contains("?")) {
             // this is only need to be done once (in fast mode when regexp=false)
-            // try normalizing the pattern as an uri for exact matching, so parameters are ordered the same as in the endpoint uri
+            // try normalizing the pattern as an uri for exact matching, so parameters are ordered the same as in the
+            // endpoint uri
             try {
                 pattern = URISupport.normalizeUri(pattern);
                 // try both with and without scheme separators (//)
@@ -321,7 +325,9 @@ public final class EndpointHelper {
      * @return           <tt>true</tt> if it's a reference parameter
      */
     public static boolean isReferenceParameter(String parameter) {
-        return parameter != null && parameter.trim().startsWith("#") && parameter.trim().length() > 1;
+        return parameter != null
+                && parameter.trim().startsWith("#")
+                && parameter.trim().length() > 1;
     }
 
     /**
@@ -349,7 +355,8 @@ public final class EndpointHelper {
      *                             <code>false</code>).
      * @throws NoSuchBeanException if object was not found in registry and <code>mandatory</code> is <code>true</code>.
      */
-    public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
+    public static <T> T resolveReferenceParameter(
+            CamelContext context, String value, Class<T> type, boolean mandatory) {
         Object answer;
         if (value.startsWith("#class:")) {
             try {
@@ -429,7 +436,8 @@ public final class EndpointHelper {
 
         if (factoryMethod != null && parameters != null) {
             Class<?> target = factoryClass != null ? factoryClass : clazz;
-            answer = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, target, factoryMethod, parameters);
+            answer = PropertyBindingSupport.newInstanceFactoryParameters(
+                    camelContext, target, factoryMethod, parameters);
         } else if (factoryMethod != null) {
             answer = camelContext.getInjector().newInstance(type, factoryClass, factoryMethod);
         } else if (parameters != null) {
@@ -458,7 +466,7 @@ public final class EndpointHelper {
      * @return                          list of lookup results, will always return a list.
      * @throws IllegalArgumentException if any referenced object was not found in registry.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> List<T> resolveReferenceListParameter(CamelContext context, String value, Class<T> elementType) {
         if (value == null) {
             return new ArrayList<>();
@@ -578,5 +586,4 @@ public final class EndpointHelper {
         }
         return null;
     }
-
 }

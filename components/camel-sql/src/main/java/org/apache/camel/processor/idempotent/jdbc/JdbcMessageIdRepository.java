@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
@@ -29,51 +30,60 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Default implementation of {@link AbstractJdbcMessageIdRepository}
  */
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses a SQL database to store message ids.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "Idempotent repository that uses a SQL database to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
 
     protected static final String DEFAULT_TABLENAME = "CAMEL_MESSAGEPROCESSED";
     protected static final String DEFAULT_TABLE_EXISTS_STRING = "SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0";
-    protected static final String DEFAULT_CREATE_STRING
-            = "CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), "
-              + "createdAt TIMESTAMP, PRIMARY KEY (processorName, messageId))";
-    protected static final String DEFAULT_QUERY_STRING
-            = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
-    protected static final String DEFAULT_INSERT_STRING
-            = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
-    protected static final String DEFAULT_DELETE_STRING
-            = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
+    protected static final String DEFAULT_CREATE_STRING =
+            "CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), "
+                    + "createdAt TIMESTAMP, PRIMARY KEY (processorName, messageId))";
+    protected static final String DEFAULT_QUERY_STRING =
+            "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
+    protected static final String DEFAULT_INSERT_STRING =
+            "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
+    protected static final String DEFAULT_DELETE_STRING =
+            "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
     protected static final String DEFAULT_CLEAR_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
 
     @Metadata(description = "The name of the table to use in the database", defaultValue = "CAMEL_MESSAGEPROCESSED")
     private String tableName;
-    @Metadata(description = "Whether to create the table in the database if none exists on startup", defaultValue = "true")
+
+    @Metadata(
+            description = "Whether to create the table in the database if none exists on startup",
+            defaultValue = "true")
     private boolean createTableIfNotExists = true;
 
     @Metadata(label = "advanced", description = "SQL query to use for checking if table exists")
     private String tableExistsString = DEFAULT_TABLE_EXISTS_STRING;
+
     @Metadata(label = "advanced", description = "SQL query to use for creating table")
     private String createString = DEFAULT_CREATE_STRING;
+
     @Metadata(label = "advanced", description = "SQL query to use for check if message id already exists")
     private String queryString = DEFAULT_QUERY_STRING;
+
     @Metadata(label = "advanced", description = "SQL query to use for inserting a new message id in the table")
     private String insertString = DEFAULT_INSERT_STRING;
+
     @Metadata(label = "advanced", description = "SQL query to use for deleting message id from the table")
     private String deleteString = DEFAULT_DELETE_STRING;
+
     @Metadata(label = "advanced", description = "SQL query to delete all message ids from the table")
     private String clearString = DEFAULT_CLEAR_STRING;
 
-    public JdbcMessageIdRepository() {
-    }
+    public JdbcMessageIdRepository() {}
 
     public JdbcMessageIdRepository(DataSource dataSource, String processorName) {
         super(dataSource, processorName);
     }
 
-    public JdbcMessageIdRepository(DataSource dataSource, TransactionTemplate transactionTemplate, String processorName) {
+    public JdbcMessageIdRepository(
+            DataSource dataSource, TransactionTemplate transactionTemplate, String processorName) {
         super(dataSource, transactionTemplate, processorName);
     }
 
@@ -123,7 +133,8 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
                     // we will fail if we cannot create it
                     log.error(
                             "Can't create table for JdbcMessageIdRepository with query '{}' because of: {}. This may be a permissions problem. Please create this table and try again.",
-                            getCreateString(), dae.getMessage());
+                            getCreateString(),
+                            dae.getMessage());
                     throw dae;
                 }
             });

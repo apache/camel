@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OpenTelemetrySharedRoutePolicyTest extends AbstractOpenTelemetryRoutePolicyTest {
 
@@ -38,10 +39,8 @@ public class OpenTelemetrySharedRoutePolicyTest extends AbstractOpenTelemetryRou
 
     @Test
     public void testSharedPolicy() throws Exception {
-        template.request("direct:foo", x -> {
-        });
-        template.request("direct:bar", x -> {
-        });
+        template.request("direct:foo", x -> {});
+        template.request("direct:bar", x -> {});
 
         LongPointData lpd = getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME, "foo");
         assertEquals(2L, lpd.getValue());
@@ -55,11 +54,9 @@ public class OpenTelemetrySharedRoutePolicyTest extends AbstractOpenTelemetryRou
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo").routePolicy(singletonPolicy)
-                        .to("mock:result");
+                from("direct:foo").routeId("foo").routePolicy(singletonPolicy).to("mock:result");
 
-                from("direct:bar").routeId("bar").routePolicy(singletonPolicy)
-                        .to("mock:result");
+                from("direct:bar").routeId("bar").routePolicy(singletonPolicy).to("mock:result");
             }
         };
     }

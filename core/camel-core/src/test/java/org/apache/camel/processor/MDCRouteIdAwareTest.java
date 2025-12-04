@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,9 +48,7 @@ public class MDCRouteIdAwareTest extends ContextTestSupport {
                 context.setUseMDCLogging(true);
                 context.getRegistry().bind("myFilter", new MyFilter());
 
-                from(fileUri("?filter=#myFilter")).routeId("myRoute")
-                        .to("mock:result");
-
+                from(fileUri("?filter=#myFilter")).routeId("myRoute").to("mock:result");
             }
         };
     }

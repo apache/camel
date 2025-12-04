@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.util.Map;
@@ -36,8 +37,9 @@ public class InstrumentationInterceptStrategy implements ManagementInterceptStra
     private final Map<NamedNode, PerformanceCounter> registeredCounters;
     private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors;
 
-    public InstrumentationInterceptStrategy(Map<NamedNode, PerformanceCounter> registeredCounters,
-                                            Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors) {
+    public InstrumentationInterceptStrategy(
+            Map<NamedNode, PerformanceCounter> registeredCounters,
+            Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors) {
         this.registeredCounters = registeredCounters;
         this.wrappedProcessors = wrappedProcessors;
     }
@@ -49,17 +51,16 @@ public class InstrumentationInterceptStrategy implements ManagementInterceptStra
 
     @Override
     public InstrumentationProcessor<?> createProcessor(NamedNode definition, Processor target) {
-        InstrumentationProcessor<?> instrumentationProcessor
-                = new DefaultInstrumentationProcessor(definition.getShortName(), target);
+        InstrumentationProcessor<?> instrumentationProcessor =
+                new DefaultInstrumentationProcessor(definition.getShortName(), target);
         PerformanceCounter counter = registeredCounters.get(definition);
         if (counter != null) {
             // add it to the mapping of wrappers so we can later change it to a
             // decorated counter when we register the processor
-            KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder
-                    = new KeyValueHolder<>(definition, instrumentationProcessor);
+            KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder =
+                    new KeyValueHolder<>(definition, instrumentationProcessor);
             wrappedProcessors.put(target, holder);
         }
         return instrumentationProcessor;
     }
-
 }

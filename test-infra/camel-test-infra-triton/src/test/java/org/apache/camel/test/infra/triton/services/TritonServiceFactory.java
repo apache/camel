@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.triton.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class TritonServiceFactory {
-    private TritonServiceFactory() {
-    }
+    private TritonServiceFactory() {}
 
     public static SimpleTestServiceBuilder<TritonService> builder() {
         return new SimpleTestServiceBuilder<>("triton");
@@ -33,10 +33,7 @@ public final class TritonServiceFactory {
                 .build();
     }
 
-    public static class TritonLocalContainerService extends TritonLocalContainerInfraService
-            implements TritonService {
-    }
+    public static class TritonLocalContainerService extends TritonLocalContainerInfraService implements TritonService {}
 
-    public static class TritonRemoteService extends TritonRemoteInfraService implements TritonService {
-    }
+    public static class TritonRemoteService extends TritonRemoteInfraService implements TritonService {}
 }

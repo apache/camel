@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
 
 import org.apache.camel.Category;
@@ -33,8 +34,12 @@ import org.flowable.eventregistry.model.CamelOutboundChannelModel;
 /**
  * Send and receive messages from the Flowable BPMN and CMMN engines.
  */
-@UriEndpoint(firstVersion = "4.9.0", scheme = "flowable", title = "Flowable", syntax = "flowable:channelKey",
-             category = { Category.WORKFLOW })
+@UriEndpoint(
+        firstVersion = "4.9.0",
+        scheme = "flowable",
+        title = "Flowable",
+        syntax = "flowable:channelKey",
+        category = {Category.WORKFLOW})
 public class FlowableEndpoint extends DefaultEndpoint {
 
     private EventRegistryEngineConfiguration eventRegistryEngineConfiguration;
@@ -43,6 +48,7 @@ public class FlowableEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String channelKey;
+
     private CamelInboundChannelModel camelInboundChannel;
     private CamelOutboundChannelModel camelOutboundChannel;
 
@@ -50,14 +56,16 @@ public class FlowableEndpoint extends DefaultEndpoint {
         this.channelKey = channelKey;
     }
 
-    public FlowableEndpoint(CamelInboundChannelModel camelInboundChannel,
-                            EventRegistryEngineConfiguration eventRegistryEngineConfiguration) {
+    public FlowableEndpoint(
+            CamelInboundChannelModel camelInboundChannel,
+            EventRegistryEngineConfiguration eventRegistryEngineConfiguration) {
         this.camelInboundChannel = camelInboundChannel;
         this.eventRegistryEngineConfiguration = eventRegistryEngineConfiguration;
     }
 
-    public FlowableEndpoint(CamelOutboundChannelModel camelOutboundChannel,
-                            EventRegistryEngineConfiguration eventRegistryEngineConfiguration) {
+    public FlowableEndpoint(
+            CamelOutboundChannelModel camelOutboundChannel,
+            EventRegistryEngineConfiguration eventRegistryEngineConfiguration) {
         this.camelOutboundChannel = camelOutboundChannel;
         this.eventRegistryEngineConfiguration = eventRegistryEngineConfiguration;
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.sql;
 
 import java.util.ArrayList;
@@ -58,8 +59,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
     private String query;
     private Set<String> queryParameterNames;
 
-    public GoogleBigQuerySQLProducer(BigQuery bigquery, GoogleBigQuerySQLEndpoint endpoint,
-                                     GoogleBigQuerySQLConfiguration configuration) {
+    public GoogleBigQuerySQLProducer(
+            BigQuery bigquery, GoogleBigQuerySQLEndpoint endpoint, GoogleBigQuerySQLConfiguration configuration) {
         super(endpoint);
         this.bigquery = bigquery;
         this.configuration = configuration;
@@ -96,7 +97,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         if (isSelectQueryJob(job)) {
             processSelectQueryJob(message, job);
         } else {
-            long affectedRows = job.<JobStatistics.QueryStatistics> getStatistics().getNumDmlAffectedRows();
+            long affectedRows =
+                    job.<JobStatistics.QueryStatistics>getStatistics().getNumDmlAffectedRows();
             LOG.debug("The query {} affected {} rows", query, affectedRows);
             message.setBody(affectedRows);
         }
@@ -109,7 +111,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
      */
     private void processSelectQueryJob(Message message, Job job) throws Exception {
         long pageSize = configuration.getPageSize();
-        String pageToken = message.getHeader(GoogleBigQueryConstants.PAGE_TOKEN, configuration::getPageToken, String.class);
+        String pageToken =
+                message.getHeader(GoogleBigQueryConstants.PAGE_TOKEN, configuration::getPageToken, String.class);
 
         TableResult result = getTableResult(job, pageSize, pageToken);
         Schema schema = result.getSchema();
@@ -142,8 +145,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
      * retrieves the existing job; otherwise creates a new query job. Waits for the job to complete before returning.
      */
     private Job executeJob(JobId jobId, String translatedQuery, Map<String, Object> queryParameters) throws Exception {
-        QueryJobConfiguration.Builder builder = QueryJobConfiguration.newBuilder(translatedQuery)
-                .setUseLegacySql(false);
+        QueryJobConfiguration.Builder builder =
+                QueryJobConfiguration.newBuilder(translatedQuery).setUseLegacySql(false);
 
         setQueryParameters(queryParameters, builder);
 
@@ -179,9 +182,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
     /**
      * Retrieves query results from a completed job with optional pagination.
      */
-    private TableResult getTableResult(Job job, long pageSize, String pageToken)
-            throws Exception {
-        String translatedQuery = job.<QueryJobConfiguration> getConfiguration().getQuery();
+    private TableResult getTableResult(Job job, long pageSize, String pageToken) throws Exception {
+        String translatedQuery = job.<QueryJobConfiguration>getConfiguration().getQuery();
         try {
             QueryResultsOption[] queryResultsOptions = getQueryResultsOptions(pageSize, pageToken);
             return job.getQueryResults(queryResultsOptions);
@@ -261,7 +263,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
                 parameterValue = QueryParameterValue.of(value, (Class<Object>) value.getClass());
             } catch (IllegalArgumentException e) {
                 LOG.warn("{} Fallback to *.toString() value.", e.getMessage());
-                //use String representation
+                // use String representation
                 parameterValue = QueryParameterValue.of(value.toString(), StandardSQLTypeName.STRING);
             }
             builder.addNamedParameter(key, parameterValue);

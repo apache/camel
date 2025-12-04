@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.Message;
@@ -83,8 +84,8 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
         if (template instanceof JmsTemplate jmsTemplate) {
             jmsTemplate.setReceiveTimeout(timeout);
         } else {
-            throw new IllegalArgumentException(
-                    "Cannot set the receiveTimeout property on unknown JmsOperations type: " + template.getClass().getName());
+            throw new IllegalArgumentException("Cannot set the receiveTimeout property on unknown JmsOperations type: "
+                    + template.getClass().getName());
         }
     }
 }

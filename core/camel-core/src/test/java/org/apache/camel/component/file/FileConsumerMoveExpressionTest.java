@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for expression option for file consumer.
@@ -51,7 +52,8 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&exclude=.*bak" + "&move=${id}.bak"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -154,8 +156,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bean Language Rules The World");
         mock.expectedFileExists(testFile("123"));
 
-        template.sendBodyAndHeader(fileUri(), "Bean Language Rules The World", Exchange.FILE_NAME,
-                "report5.txt");
+        template.sendBodyAndHeader(fileUri(), "Bean Language Rules The World", Exchange.FILE_NAME, "report5.txt");
         assertMockEndpointsSatisfied();
     }
 
@@ -164,5 +165,4 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
             return "123";
         }
     }
-
 }

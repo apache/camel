@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.Message;
 
@@ -23,8 +26,6 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailComponentRecipientSetTest extends CamelTestSupport {
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
@@ -47,22 +48,30 @@ public class MailComponentRecipientSetTest extends CamelTestSupport {
         assertEquals("Hello a", boxA.get(0).getSubject());
         assertEquals("Hello World", boxA.get(0).getContent());
         assertEquals("me@me.com", boxA.get(0).getFrom()[0].toString());
-        assertEquals("spy@spy.com", boxA.get(0).getRecipients(Message.RecipientType.CC)[0].toString());
+        assertEquals(
+                "spy@spy.com",
+                boxA.get(0).getRecipients(Message.RecipientType.CC)[0].toString());
 
         Mailbox boxB = b.getInbox();
         assertEquals(1, boxB.getMessageCount());
         assertEquals("Hello b", boxB.get(0).getSubject());
         assertEquals("Bye World", boxB.get(0).getContent());
         assertEquals("you@you.com", boxB.get(0).getFrom()[0].toString());
-        assertEquals("spy@spy.com", boxB.get(0).getRecipients(Message.RecipientType.CC)[0].toString());
+        assertEquals(
+                "spy@spy.com",
+                boxB.get(0).getRecipients(Message.RecipientType.CC)[0].toString());
 
         Mailbox boxC = c.getInbox();
         assertEquals(1, boxC.getMessageCount());
         assertEquals("Hello c", boxC.get(0).getSubject());
         assertEquals("Hi World", boxC.get(0).getContent());
         assertEquals("me@me.com", boxC.get(0).getFrom()[0].toString());
-        assertEquals("you@you.com", boxC.get(0).getRecipients(Message.RecipientType.CC)[0].toString());
-        assertEquals("them@them.com", boxC.get(0).getRecipients(Message.RecipientType.CC)[1].toString());
+        assertEquals(
+                "you@you.com",
+                boxC.get(0).getRecipients(Message.RecipientType.CC)[0].toString());
+        assertEquals(
+                "them@them.com",
+                boxC.get(0).getRecipients(Message.RecipientType.CC)[1].toString());
         // no spy as its overridden by endpoint
     }
 

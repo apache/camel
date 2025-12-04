@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Set;
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the behaviour of the consumer side when using a different number of consumer threads.
@@ -90,13 +91,14 @@ public class ConcurrentConsumersTest extends BaseReactiveTest {
             public void configure() {
 
                 from("reactive-streams:singleConsumer")
-                        .process(x -> x.getIn().setHeader("thread", Thread.currentThread().getId()))
+                        .process(x -> x.getIn()
+                                .setHeader("thread", Thread.currentThread().getId()))
                         .to("mock:singleBucket");
 
                 from("reactive-streams:multipleConsumers?concurrentConsumers=3")
-                        .process(x -> x.getIn().setHeader("thread", Thread.currentThread().getId()))
+                        .process(x -> x.getIn()
+                                .setHeader("thread", Thread.currentThread().getId()))
                         .to("mock:multipleBucket");
-
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.runtime;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.bedrock.runtime.client.BedrockClientFactory;
 import org.apache.camel.component.aws2.bedrock.runtime.client.BedrockRuntimeInternalClient;
@@ -23,8 +26,6 @@ import org.apache.camel.component.aws2.bedrock.runtime.client.impl.BedrockRuntim
 import org.apache.camel.component.aws2.bedrock.runtime.client.impl.BedrockRuntimeClientSessionTokenImpl;
 import org.apache.camel.component.aws2.bedrock.runtime.client.impl.BedrockRuntimeClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BedrockRuntimeClientFactoryTest {
 

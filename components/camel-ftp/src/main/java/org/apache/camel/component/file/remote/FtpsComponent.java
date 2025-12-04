@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.net.URI;
@@ -38,16 +39,15 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
-    public FtpsComponent() {
-    }
+    public FtpsComponent() {}
 
     public FtpsComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(
+            String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String baseUri = getBaseUri(uri);
 
         // lets make sure we create a new configuration as each endpoint can
@@ -106,5 +106,4 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
-
 }

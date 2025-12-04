@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.util.List;
@@ -65,7 +66,8 @@ public final class DependencyDownloaderTransformerResolver extends DefaultTransf
             List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findTransformerNames(), name);
             if (suggestion != null && !suggestion.isEmpty()) {
                 String s = String.join(", ", suggestion);
-                throw new IllegalArgumentException("Cannot find transformer with name: " + name + ". Did you mean: " + s);
+                throw new IllegalArgumentException(
+                        "Cannot find transformer with name: " + name + ". Did you mean: " + s);
             }
         }
         return answer;
@@ -85,5 +87,4 @@ public final class DependencyDownloaderTransformerResolver extends DefaultTransf
         boolean stubbed = PatternHelper.matchPatterns(name, stubPattern.split(","));
         return !stubbed;
     }
-
 }

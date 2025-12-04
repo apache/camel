@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io.beans;
 
 public class MyBeanBuilder {
@@ -40,5 +41,4 @@ public class MyBeanBuilder {
     public MyBean createTheBean() {
         return new MyBean(field1, field2, age);
     }
-
 }

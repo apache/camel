@@ -33,7 +33,8 @@ public class X2JInputStreamTest extends CamelTestSupport {
         mock.expectedBodiesReceived("{\"hello\":\"world!\"}");
         mock.message(0).body().isInstanceOf(String.class);
 
-        template.sendBody("direct:start", new ByteArrayInputStream("<hello>world!</hello>".getBytes(StandardCharsets.UTF_8)));
+        template.sendBody(
+                "direct:start", new ByteArrayInputStream("<hello>world!</hello>".getBytes(StandardCharsets.UTF_8)));
 
         MockEndpoint.assertIsSatisfied(context);
     }

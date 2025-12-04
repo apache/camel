@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.beanclass;
 
 import org.apache.camel.Category;
@@ -24,12 +25,17 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Invoke methods of Java beans specified by class name.
  */
-@UriEndpoint(firstVersion = "2.4.0", scheme = "class", title = "Class", syntax = "class:beanName", producerOnly = true,
-             remote = false, category = { Category.CORE, Category.SCRIPT })
+@UriEndpoint(
+        firstVersion = "2.4.0",
+        scheme = "class",
+        title = "Class",
+        syntax = "class:beanName",
+        producerOnly = true,
+        remote = false,
+        category = {Category.CORE, Category.SCRIPT})
 public class ClassEndpoint extends BeanEndpoint {
 
     public ClassEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
-
 }

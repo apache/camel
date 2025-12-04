@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.language;
 
 import java.io.IOException;
@@ -46,39 +47,56 @@ import org.apache.camel.util.IOHelper;
  * the Routing Slip or Dynamic Router EIPs you can send messages to language endpoints where the script is dynamic
  * defined as well.
  */
-@UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri",
-             remote = false, producerOnly = true, category = { Category.CORE, Category.SCRIPT },
-             headersClass = LanguageConstants.class)
+@UriEndpoint(
+        firstVersion = "2.5.0",
+        scheme = "language",
+        title = "Language",
+        syntax = "language:languageName:resourceUri",
+        remote = false,
+        producerOnly = true,
+        category = {Category.CORE, Category.SCRIPT},
+        headersClass = LanguageConstants.class)
 public class LanguageEndpoint extends ResourceEndpoint {
 
     private Language language;
     private Expression expression;
     private boolean contentResolvedFromResource;
 
-    @UriPath(enums = "bean,constant,csimple,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,js,jsonpath"
-                     + ",mvel,ognl,python,ref,simple,spel,tokenize,variable,wasm,xpath,xquery,xtokenize")
+    @UriPath(
+            enums =
+                    "bean,constant,csimple,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,js,jsonpath"
+                            + ",mvel,ognl,python,ref,simple,spel,tokenize,variable,wasm,xpath,xquery,xtokenize")
     @Metadata(required = true)
     private String languageName;
     // resourceUri is optional in the language endpoint
-    @UriPath(description = "Path to the resource, or a reference to lookup a bean in the Registry to use as the resource")
+    @UriPath(
+            description =
+                    "Path to the resource, or a reference to lookup a bean in the Registry to use as the resource")
     @Metadata(supportFileReference = true)
     private String resourceUri;
+
     @UriParam
     private String script;
+
     @UriParam(defaultValue = "true")
     private boolean transform = true;
+
     @UriParam(label = "advanced")
     private boolean binary;
+
     @UriParam(label = "advanced")
     private boolean cacheScript;
+
     @UriParam(defaultValue = "false")
     private boolean allowTemplateFromHeader;
+
     @UriParam
     private String resultType;
+
     private volatile Class<?> resultTypeClass;
 
-    public LanguageEndpoint(String endpointUri, Component component, Language language, Expression expression,
-                            String resourceUri) {
+    public LanguageEndpoint(
+            String endpointUri, Component component, Language language, Expression expression, String resourceUri) {
         super(endpointUri, component, resourceUri);
         this.language = language;
         this.expression = expression;
@@ -102,7 +120,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
             if (!external) {
                 // we can pre optimize this as the script can be loaded from classpath or registry etc
                 script = resolveScript(script);
-                expression = language.createExpression(script, new Object[] { resultTypeClass });
+                expression = language.createExpression(script, new Object[] {resultTypeClass});
             }
         }
         if (expression != null) {
@@ -114,7 +132,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     public Producer createProducer() throws Exception {
         if (cacheScript && expression == null && script != null) {
             script = resolveScript(script);
-            expression = language.createExpression(script, new Object[] { resultTypeClass });
+            expression = language.createExpression(script, new Object[] {resultTypeClass});
             expression.init(getCamelContext());
         }
 
@@ -293,5 +311,4 @@ public class LanguageEndpoint extends ResourceEndpoint {
         expression = null;
         script = null;
     }
-
 }

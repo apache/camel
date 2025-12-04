@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.util.List;
@@ -30,11 +33,9 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class XsltDTDTest extends ContextTestSupport {
-    private static final String MESSAGE
-            = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
+    private static final String MESSAGE =
+            "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
 
     @Test
     public void testSendingStringMessage() throws Exception {
@@ -90,11 +91,14 @@ public class XsltDTDTest extends ContextTestSupport {
             @Override
             public void configure() {
 
-                from("direct:start1").to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl").to("mock:result");
+                from("direct:start1")
+                        .to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl")
+                        .to("mock:result");
 
-                from("direct:start2").to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl").to("mock:result");
+                from("direct:start2")
+                        .to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl")
+                        .to("mock:result");
             }
         };
     }
-
 }

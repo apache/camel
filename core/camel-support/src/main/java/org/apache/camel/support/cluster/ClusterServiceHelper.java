@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cluster;
 
 import java.util.Optional;
@@ -24,14 +25,14 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 
 public final class ClusterServiceHelper {
-    private ClusterServiceHelper() {
-    }
+    private ClusterServiceHelper() {}
 
     public static Optional<CamelClusterService> lookupService(CamelContext context) {
         return lookupService(context, ClusterServiceSelectors.DEFAULT_SELECTOR);
     }
 
-    public static Optional<CamelClusterService> lookupService(CamelContext context, CamelClusterService.Selector selector) {
+    public static Optional<CamelClusterService> lookupService(
+            CamelContext context, CamelClusterService.Selector selector) {
         ObjectHelper.notNull(context, "Camel Context");
         ObjectHelper.notNull(selector, "ClusterService selector");
 
@@ -48,7 +49,9 @@ public final class ClusterServiceHelper {
         return lookupService(context).orElseThrow(() -> new IllegalStateException("CamelCluster service not found"));
     }
 
-    public static CamelClusterService mandatoryLookupService(CamelContext context, CamelClusterService.Selector selector) {
-        return lookupService(context, selector).orElseThrow(() -> new IllegalStateException("CamelCluster service not found"));
+    public static CamelClusterService mandatoryLookupService(
+            CamelContext context, CamelClusterService.Selector selector) {
+        return lookupService(context, selector)
+                .orElseThrow(() -> new IllegalStateException("CamelCluster service not found"));
     }
 }

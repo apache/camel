@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XQueryComponentConfigurationTest extends CamelSpringTestSupport {
 
     @Test
     public void testComponentConfiguration() {
         XQueryComponent component = context.getComponent("xquery", XQueryComponent.class);
-        XQueryEndpoint endpoint
-                = context.getEndpoint("xquery:org/apache/camel/component/xquery/transform.xquery", XQueryEndpoint.class);
+        XQueryEndpoint endpoint =
+                context.getEndpoint("xquery:org/apache/camel/component/xquery/transform.xquery", XQueryEndpoint.class);
 
         assertNotNull(component.getConfiguration());
         assertNotNull(component.getConfigurationProperties());

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,7 +37,6 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MyBean.class, "hello(${body})").to("mock:result");
-
             }
         });
         context.start();
@@ -54,7 +54,6 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MyBean.class, "hello(*)").to("mock:result");
-
             }
         });
         context.start();
@@ -72,7 +71,9 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e2
-                from("direct:start").bean(MyBean.class, "hello(${body}, ${header.country})").to("mock:result");
+                from("direct:start")
+                        .bean(MyBean.class, "hello(${body}, ${header.country})")
+                        .to("mock:result");
                 // END SNIPPET: e2
             }
         });
@@ -90,8 +91,9 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "hello(*, ${header.country})").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "hello(*, ${header.country})")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -109,7 +111,6 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MyBean.class, "times(${body},3)").to("mock:result");
-
             }
         });
         context.start();
@@ -126,8 +127,9 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "times(${body},${header.times})").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "times(${body},${header.times})")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -144,8 +146,9 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "times(byte[].class, ${header.times})").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "times(byte[].class, ${header.times})")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -162,8 +165,9 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "times(byte[].class,${header.times})").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "times(byte[].class,${header.times})")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -216,7 +220,6 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             }
             return sb.toString();
         }
-
     }
     // END SNIPPET: e1
 

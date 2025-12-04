@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar;
 
 import org.apache.camel.Category;
@@ -34,9 +35,13 @@ import org.apache.pulsar.client.api.PulsarClient;
 /**
  * Send and receive messages from/to Apache Pulsar messaging system.
  */
-@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar",
-             syntax = "pulsar:persistence://tenant/namespace/topic", category = { Category.MESSAGING },
-             headersClass = PulsarMessageHeaders.class)
+@UriEndpoint(
+        scheme = "pulsar",
+        firstVersion = "2.24.0",
+        title = "Pulsar",
+        syntax = "pulsar:persistence://tenant/namespace/topic",
+        category = {Category.MESSAGING},
+        headersClass = PulsarMessageHeaders.class)
 public class PulsarEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private PulsarClient pulsarClient;
@@ -44,12 +49,15 @@ public class PulsarEndpoint extends DefaultEndpoint implements EndpointServiceLo
     @UriPath(enums = "persistent,non-persistent")
     @Metadata(required = true)
     private String persistence;
+
     @UriPath
     @Metadata(required = true)
     private String tenant;
+
     @UriPath
     @Metadata(required = true)
     private String namespace;
+
     @UriPath
     @Metadata(required = true)
     private String topic;
@@ -169,8 +177,8 @@ public class PulsarEndpoint extends DefaultEndpoint implements EndpointServiceLo
             }
             if (ObjectHelper.isNotEmpty(pulsarConfiguration.getAuthenticationClass())
                     && ObjectHelper.isNotEmpty(pulsarConfiguration.getAuthenticationParams())) {
-                builder = builder.authentication(pulsarConfiguration.getAuthenticationClass(),
-                        pulsarConfiguration.getAuthenticationParams());
+                builder = builder.authentication(
+                        pulsarConfiguration.getAuthenticationClass(), pulsarConfiguration.getAuthenticationParams());
             }
             pulsarClient = builder.build();
         }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ApprovalExamplesManualIT extends AbstractApprovalManualIT {
 
@@ -77,18 +78,19 @@ public class ApprovalExamplesManualIT extends AbstractApprovalManualIT {
             @Override
             public void configure() throws Exception {
                 // tag::example1Route[]
-                from("direct:example1")//
+                from("direct:example1") //
                         .setHeader("approval.ContextId", simple("${body['contextId']}"))
                         .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
-                        .to("salesforce:approval?"//
-                            + "approvalActionType=Submit"//
-                            + "&approvalComments=this is a test"//
-                            + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
-                            + "&approvalSkipEntryCriteria=true");
+                        .to(
+                                "salesforce:approval?" //
+                                        + "approvalActionType=Submit" //
+                                        + "&approvalComments=this is a test" //
+                                        + "&approvalProcessDefinitionNameOrId=Test_Account_Process" //
+                                        + "&approvalSkipEntryCriteria=true");
                 // end::example1Route[]
 
                 // tag::example2Route[]
-                from("direct:example2")//
+                from("direct:example2") //
                         .setHeader("approval.ContextId", simple("${body['contextId']}"))
                         .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
                         .to("salesforce:approval?approval=#approvalTemplate");
@@ -96,5 +98,4 @@ public class ApprovalExamplesManualIT extends AbstractApprovalManualIT {
             }
         };
     }
-
 }

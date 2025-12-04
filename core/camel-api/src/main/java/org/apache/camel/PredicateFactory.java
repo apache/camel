@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -29,5 +30,4 @@ public interface PredicateFactory {
      * @return              the created predicate.
      */
     Predicate createPredicate(CamelContext camelContext);
-
 }

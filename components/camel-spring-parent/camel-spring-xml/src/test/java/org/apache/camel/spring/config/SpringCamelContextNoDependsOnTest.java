@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SpringCamelContextNoDependsOnTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextNoDependsOnTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/SpringCamelContextNoDependsOnTest.xml");
     }
 
     @Test
@@ -38,11 +40,15 @@ public class SpringCamelContextNoDependsOnTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // in this example the depends on bean is created first, and then the route builder, and CamelContext is started last.
-        long time1 = context.getRegistry().lookupByNameAndType("myDependsOnBean", MyDependsOnBean.class).getTime();
-        long time2 = context.getRegistry().lookupByNameAndType("myRouteBuilder", MyDependsOnRouteBuilder.class).getTime();
+        // in this example the depends on bean is created first, and then the route builder, and CamelContext is started
+        // last.
+        long time1 = context.getRegistry()
+                .lookupByNameAndType("myDependsOnBean", MyDependsOnBean.class)
+                .getTime();
+        long time2 = context.getRegistry()
+                .lookupByNameAndType("myRouteBuilder", MyDependsOnRouteBuilder.class)
+                .getTime();
 
         assertTrue(time2 > time1, "myDependsOnBean should be created before myRouteBuilder");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack.io;
 
 import javax.net.ssl.SSLContext;
@@ -30,8 +31,10 @@ final class LumberjackChannelInitializer extends ChannelInitializer<Channel> {
     private final EventExecutorGroup messageExecutorService;
     private final LumberjackMessageProcessor messageProcessor;
 
-    LumberjackChannelInitializer(SSLContext sslContext, EventExecutorGroup messageExecutorService,
-                                 LumberjackMessageProcessor messageProcessor) {
+    LumberjackChannelInitializer(
+            SSLContext sslContext,
+            EventExecutorGroup messageExecutorService,
+            LumberjackMessageProcessor messageProcessor) {
         this.sslContext = sslContext;
         this.messageExecutorService = messageExecutorService;
         this.messageProcessor = messageProcessor;
@@ -52,6 +55,7 @@ final class LumberjackChannelInitializer extends ChannelInitializer<Channel> {
         pipeline.addLast(new LumberjackAckEncoder());
 
         // Add the lumberjack frame decoder and bridge to Camel
-        pipeline.addLast(messageExecutorService, new LumberjackFrameDecoder(), new LumberjackMessageHandler(messageProcessor));
+        pipeline.addLast(
+                messageExecutorService, new LumberjackFrameDecoder(), new LumberjackMessageHandler(messageProcessor));
     }
 }

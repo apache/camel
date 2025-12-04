@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -22,8 +25,6 @@ import javax.management.ObjectName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test that verifies JMX is enabled by default.
@@ -38,12 +39,16 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     @Test
     public void testQueryMbeans() throws Exception {
         // whats the numbers before, because the JVM can have left overs when unit testing
-        int before = getMBeanConnection().queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+        int before = getMBeanConnection()
+                .queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null)
+                .size();
 
         // start route should enlist the consumer to JMX
         context.getRouteController().startRoute("foo");
 
-        int after = getMBeanConnection().queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+        int after = getMBeanConnection()
+                .queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null)
+                .size();
 
         assertTrue(after > before, "Should have added consumer to JMX, before: " + before + ", after: " + after);
     }
@@ -56,5 +61,4 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es;
 
 import org.apache.camel.Category;
@@ -29,9 +30,14 @@ import org.elasticsearch.client.RestClient;
 /**
  * Send requests to ElasticSearch via Java Client API.
  */
-@UriEndpoint(firstVersion = "3.19.0", scheme = "elasticsearch", title = "Elasticsearch",
-             syntax = "elasticsearch:clusterName", producerOnly = true,
-             category = { Category.SEARCH, Category.MONITORING }, headersClass = ElasticsearchConstants.class)
+@UriEndpoint(
+        firstVersion = "3.19.0",
+        scheme = "elasticsearch",
+        title = "Elasticsearch",
+        syntax = "elasticsearch:clusterName",
+        producerOnly = true,
+        category = {Category.SEARCH, Category.MONITORING},
+        headersClass = ElasticsearchConstants.class)
 public class ElasticsearchEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -39,8 +45,8 @@ public class ElasticsearchEndpoint extends DefaultEndpoint implements EndpointSe
 
     private final RestClient client;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config,
-                                 RestClient client) {
+    public ElasticsearchEndpoint(
+            String uri, ElasticsearchComponent component, ElasticsearchConfiguration config, RestClient client) {
         super(uri, component);
         this.configuration = config;
         this.client = client;

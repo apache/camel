@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import java.io.IOException;
@@ -56,8 +57,8 @@ public class StreamMessageInputStream extends InputStream {
         try {
             int num = message.readBytes(array);
             if (num < 0) {
-                //the first 128K(FileUtil.BUFFER_SIZE/128K is used when sending JMS StreamMessage)
-                //buffer reached, give a chance to see if there is the next 128K buffer
+                // the first 128K(FileUtil.BUFFER_SIZE/128K is used when sending JMS StreamMessage)
+                // buffer reached, give a chance to see if there is the next 128K buffer
                 num = message.readBytes(array);
             }
             eof = num < 0;

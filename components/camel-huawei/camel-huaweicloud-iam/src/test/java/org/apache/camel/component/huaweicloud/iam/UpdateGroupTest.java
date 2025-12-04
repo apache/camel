@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.huaweicloud.sdk.iam.v3.model.KeystoneUpdateGroupOption;
 import org.apache.camel.BindToRegistry;
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class UpdateGroupTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateGroupTest.class.getName());
 
@@ -38,9 +39,8 @@ public class UpdateGroupTest extends CamelTestSupport {
     IAMMockClient mockClient = new IAMMockClient(null);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -48,11 +48,10 @@ public class UpdateGroupTest extends CamelTestSupport {
             public void configure() {
                 from("direct:update_group")
                         .setProperty("CamelHwCloudIamGroupId", constant(testConfiguration.getProperty("groupId")))
-                        .to("hwcloud-iam:updateGroup?" +
-                            "region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&iamClient=#iamClient" +
-                            "&serviceKeys=#serviceKeys")
+                        .to("hwcloud-iam:updateGroup?" + "region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&iamClient=#iamClient"
+                                + "&serviceKeys=#serviceKeys")
                         .log("update group successful")
                         .to("mock:update_group_result");
             }
@@ -72,7 +71,8 @@ public class UpdateGroupTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"description\":\"Group description\",\"domainId\":\"123\",\"name\":\"Group 43\"}",
+        assertEquals(
+                "{\"description\":\"Group description\",\"domainId\":\"123\",\"name\":\"Group 43\"}",
                 responseExchange.getIn().getBody(String.class));
     }
 }

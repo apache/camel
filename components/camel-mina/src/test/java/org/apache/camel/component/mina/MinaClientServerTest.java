@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class MinaClientServerTest extends BaseMinaTest {
 
     @Test
     public void testSendToServer() {
         // START SNIPPET: e3
-        String out = (String) template.requestBody(String.format("mina:tcp://localhost:%1$s?textline=true", getPort()), "Chad");
+        String out = (String)
+                template.requestBody(String.format("mina:tcp://localhost:%1$s?textline=true", getPort()), "Chad");
         assertEquals("Hello Chad", out);
         // END SNIPPET: e3
     }
@@ -42,7 +44,8 @@ public class MinaClientServerTest extends BaseMinaTest {
                 // START SNIPPET: e1
                 // lets setup a server on port %1$s
                 // and we let the request-reply be processed in the MyServerProcessor
-                from(String.format("mina:tcp://localhost:%1$s?textline=true", getPort())).process(new MyServerProcessor());
+                from(String.format("mina:tcp://localhost:%1$s?textline=true", getPort()))
+                        .process(new MyServerProcessor());
                 // END SNIPPET: e1
             }
         };

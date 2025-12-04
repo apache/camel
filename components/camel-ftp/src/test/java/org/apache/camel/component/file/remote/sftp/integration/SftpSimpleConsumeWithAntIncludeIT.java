@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
 
 import org.apache.camel.Exchange;
@@ -23,7 +24,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
 
     @BeforeEach
@@ -37,10 +40,11 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true"
-                     + "&recursive=true&antInclude=hello.txt"
-                     + "&knownHostsFile="
-                     + service.getKnownHostsFile()).to("mock:result");
+                                + "?username=admin&password=admin&delay=10000&disconnect=true"
+                                + "&recursive=true&antInclude=hello.txt"
+                                + "&knownHostsFile="
+                                + service.getKnownHostsFile())
+                        .to("mock:result");
             }
         });
         context.start();
@@ -68,10 +72,11 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true"
-                     + "&recursive=true&antInclude=hello.txt"
-                     + "&knownHostsFile="
-                     + service.getKnownHostsFile()).to("mock:result");
+                                + "?username=admin&password=admin&delay=10000&disconnect=true"
+                                + "&recursive=true&antInclude=hello.txt"
+                                + "&knownHostsFile="
+                                + service.getKnownHostsFile())
+                        .to("mock:result");
             }
         });
         context.start();
@@ -99,10 +104,11 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true"
-                     + "&recursive=true&antInclude=subdir/hello.txt"
-                     + "&knownHostsFile="
-                     + service.getKnownHostsFile()).to("mock:result");
+                                + "?username=admin&password=admin&delay=10000&disconnect=true"
+                                + "&recursive=true&antInclude=subdir/hello.txt"
+                                + "&knownHostsFile="
+                                + service.getKnownHostsFile())
+                        .to("mock:result");
             }
         });
         context.start();
@@ -111,7 +117,8 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
             String expected = "Hello World";
 
             // create file using regular file
-            template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "subdir/hello.txt");
+            template.sendBodyAndHeader(
+                    "file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "subdir/hello.txt");
 
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMessageCount(1);

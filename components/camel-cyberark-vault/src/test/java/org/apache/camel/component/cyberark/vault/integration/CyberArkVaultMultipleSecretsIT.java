@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cyberark.vault.integration;
 
 import java.net.URI;
@@ -43,14 +44,22 @@ import org.slf4j.LoggerFactory;
 // -Dcamel.cyberark.username=admin
 // -Dcamel.cyberark.apiKey=your-api-key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.cyberark.url", matches = ".*",
-                                 disabledReason = "CyberArk Conjur URL not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.account", matches = ".*",
-                                 disabledReason = "CyberArk Conjur account not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.username", matches = ".*",
-                                 disabledReason = "CyberArk Conjur username not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.apiKey", matches = ".*",
-                                 disabledReason = "CyberArk Conjur API key not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.cyberark.url",
+            matches = ".*",
+            disabledReason = "CyberArk Conjur URL not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.cyberark.account",
+            matches = ".*",
+            disabledReason = "CyberArk Conjur account not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.cyberark.username",
+            matches = ".*",
+            disabledReason = "CyberArk Conjur username not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.cyberark.apiKey",
+            matches = ".*",
+            disabledReason = "CyberArk Conjur API key not provided")
 })
 public class CyberArkVaultMultipleSecretsIT extends CamelTestSupport {
 
@@ -61,9 +70,8 @@ public class CyberArkVaultMultipleSecretsIT extends CamelTestSupport {
 
     @BeforeAll
     public static void setupSecrets() throws Exception {
-        httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
+        httpClient =
+                HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
         // Authenticate
         authToken = authenticate();
@@ -76,7 +84,8 @@ public class CyberArkVaultMultipleSecretsIT extends CamelTestSupport {
     }
 
     private static String authenticate() throws Exception {
-        String url = String.format("%s/authn/%s/%s/authenticate",
+        String url = String.format(
+                "%s/authn/%s/%s/authenticate",
                 System.getProperty("camel.cyberark.url"),
                 System.getProperty("camel.cyberark.account"),
                 System.getProperty("camel.cyberark.username"));
@@ -93,15 +102,17 @@ public class CyberArkVaultMultipleSecretsIT extends CamelTestSupport {
 
     private static void createSecret(String secretId, String secretValue) {
         try {
-            String url = String.format("%s/secrets/%s/variable/%s",
-                    System.getProperty("camel.cyberark.url"),
-                    System.getProperty("camel.cyberark.account"),
-                    secretId);
+            String url = String.format(
+                    "%s/secrets/%s/variable/%s",
+                    System.getProperty("camel.cyberark.url"), System.getProperty("camel.cyberark.account"), secretId);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
-                    .header("Authorization", "Token token=\"" + Base64.getEncoder()
-                            .encodeToString(authToken.getBytes(StandardCharsets.UTF_8)) + "\"")
+                    .header(
+                            "Authorization",
+                            "Token token=\""
+                                    + Base64.getEncoder().encodeToString(authToken.getBytes(StandardCharsets.UTF_8))
+                                    + "\"")
                     .header("Content-Type", "application/octet-stream")
                     .POST(HttpRequest.BodyPublishers.ofString(secretValue))
                     .build();

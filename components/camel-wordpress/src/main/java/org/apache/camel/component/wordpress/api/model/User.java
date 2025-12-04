@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import java.io.Serializable;
@@ -33,10 +34,13 @@ public class User implements Serializable {
     private Integer id;
     private String username;
     private String name;
+
     @JsonProperty("first_name")
     private String firstName;
+
     @JsonProperty("last_name")
     private String lastName;
+
     private String email;
     private String url;
     private String description;
@@ -44,20 +48,23 @@ public class User implements Serializable {
     private String locale;
     private String nickname;
     private String slug;
+
     @JsonProperty("registered_date")
     private String registeredDate;
+
     private List<String> roles;
     private Map<String, String> capabilities;
+
     @JsonProperty("extra_capabilities")
     private Map<String, String> extraCapabilities;
+
     @JsonProperty("avatar_urls")
     private Map<String, String> avatarUrls;
+
     @JsonProperty("meta")
     private List<Map<String, String>> meta;
 
-    public User() {
-
-    }
+    public User() {}
 
     public Integer getId() {
         return id;
@@ -207,5 +214,4 @@ public class User implements Serializable {
     public String toString() {
         return "User{" + id + ", " + username + ", " + email + ", " + name + "}";
     }
-
 }

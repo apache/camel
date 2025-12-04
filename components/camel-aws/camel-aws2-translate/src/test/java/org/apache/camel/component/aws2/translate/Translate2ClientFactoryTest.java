@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.translate;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.translate.client.Translate2ClientFactory;
 import org.apache.camel.component.aws2.translate.client.Translate2InternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientIAM
 import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Translate2ClientFactoryTest {
 

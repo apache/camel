@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
@@ -104,7 +105,9 @@ public class DefaultUndertowHost implements UndertowHost {
                 } else {
                     undertow = registerHandler(consumer, builder, rootHandler);
                 }
-                LOG.info("Starting Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http",
+                LOG.info(
+                        "Starting Undertow server on {}://{}:{}",
+                        key.getSslContext() != null ? "https" : "http",
                         key.getHost(),
                         key.getPort());
 
@@ -115,8 +118,12 @@ public class DefaultUndertowHost implements UndertowHost {
                     // start the Undertow instance as undertow is not null.
                     undertow.start();
                 } catch (RuntimeException e) {
-                    LOG.warn("Failed to start Undertow server on {}://{}:{}, reason: {}",
-                            key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort(), e.getMessage());
+                    LOG.warn(
+                            "Failed to start Undertow server on {}://{}:{}, reason: {}",
+                            key.getSslContext() != null ? "https" : "http",
+                            key.getHost(),
+                            key.getPort(),
+                            e.getMessage());
 
                     // Cleanup any resource that may have been created during start
                     // and reset the instance so a subsequent start will trigger the
@@ -131,8 +138,11 @@ public class DefaultUndertowHost implements UndertowHost {
                 restHandler.addConsumer(consumer);
                 return restHandler;
             } else {
-                return rootHandler.add(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(),
-                        registrationInfo.isMatchOnUriPrefix(), handler);
+                return rootHandler.add(
+                        registrationInfo.getUri().getPath(),
+                        registrationInfo.getMethodRestrict(),
+                        registrationInfo.isMatchOnUriPrefix(),
+                        handler);
             }
         } finally {
             lock.unlock();
@@ -144,15 +154,15 @@ public class DefaultUndertowHost implements UndertowHost {
                 ? null
                 : consumer.getEndpoint().getComponent().getSecurityProvider() != null
                         ? consumer.getEndpoint().getComponent().getSecurityProvider()
-                : consumer.getEndpoint().getSecurityProvider();
-        //if security provider needs servlet context, start empty servlet
+                        : consumer.getEndpoint().getSecurityProvider();
+        // if security provider needs servlet context, start empty servlet
         if (securityProvider != null && securityProvider.requireServletContext()) {
             DeploymentInfo deployment = Servlets.deployment()
                     .setContextPath("")
                     .setDisplayName("application")
                     .setDeploymentName("camel-undertow")
                     .setClassLoader(getClass().getClassLoader())
-                    //httpHandler for servlet is ignored, camel handler is used instead of it
+                    // httpHandler for servlet is ignored, camel handler is used instead of it
                     .addOuterHandlerChainWrapper(h -> handler);
 
             deploymentManager = Servlets.newContainer().addDeployment(deployment);
@@ -160,12 +170,15 @@ public class DefaultUndertowHost implements UndertowHost {
             try {
                 return builder.setHandler(deploymentManager.start()).build();
             } catch (ServletException e) {
-                LOG.warn("Failed to start Undertow server on {}://{}:{}, reason: {}",
-                        key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort(), e.getMessage());
+                LOG.warn(
+                        "Failed to start Undertow server on {}://{}:{}, reason: {}",
+                        key.getSslContext() != null ? "https" : "http",
+                        key.getHost(),
+                        key.getPort(),
+                        e.getMessage());
 
                 throw new RuntimeException(e);
             }
-
         }
 
         return builder.setHandler(handler).build();
@@ -184,7 +197,9 @@ public class DefaultUndertowHost implements UndertowHost {
                 restHandler.removeConsumer(consumer);
                 stop = restHandler.consumers() <= 0;
             } else {
-                rootHandler.remove(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(),
+                rootHandler.remove(
+                        registrationInfo.getUri().getPath(),
+                        registrationInfo.getMethodRestrict(),
                         registrationInfo.isMatchOnUriPrefix());
                 stop = rootHandler.isEmpty();
             }
@@ -193,7 +208,9 @@ public class DefaultUndertowHost implements UndertowHost {
             }
 
             if (stop) {
-                LOG.info("Stopping Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http",
+                LOG.info(
+                        "Stopping Undertow server on {}://{}:{}",
+                        key.getSslContext() != null ? "https" : "http",
                         key.getHost(),
                         key.getPort());
                 undertow.stop();
@@ -207,8 +224,9 @@ public class DefaultUndertowHost implements UndertowHost {
     @Override
     public String toString() {
         if (hostString == null) {
-            hostString = String.format("DefaultUndertowHost[%s://%s:%s]", key.getSslContext() != null ? "https" : "http",
-                    key.getHost(), key.getPort());
+            hostString = String.format(
+                    "DefaultUndertowHost[%s://%s:%s]",
+                    key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort());
         }
         return hostString;
     }

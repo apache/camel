@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -44,8 +47,6 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 /**
  * Implements a dynamic <a href="http://camel.apache.org/splitter.html">Splitter</a> pattern where an expression is
  * evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
@@ -57,24 +58,70 @@ public class Splitter extends MulticastProcessor {
     private final Expression expression;
     private final String delimiter;
 
-    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
-                    AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
-                    boolean stopOnException, long timeout, Processor onPrepare,
-                    boolean shareUnitOfWork, boolean parallelAggregate) {
-        this(camelContext, route, expression, destination, aggregationStrategy, parallelProcessing, executorService,
-             shutdownExecutorService, streaming, stopOnException, timeout,
-             onPrepare, shareUnitOfWork, parallelAggregate, ",");
+    public Splitter(
+            CamelContext camelContext,
+            Route route,
+            Expression expression,
+            Processor destination,
+            AggregationStrategy aggregationStrategy,
+            boolean parallelProcessing,
+            ExecutorService executorService,
+            boolean shutdownExecutorService,
+            boolean streaming,
+            boolean stopOnException,
+            long timeout,
+            Processor onPrepare,
+            boolean shareUnitOfWork,
+            boolean parallelAggregate) {
+        this(
+                camelContext,
+                route,
+                expression,
+                destination,
+                aggregationStrategy,
+                parallelProcessing,
+                executorService,
+                shutdownExecutorService,
+                streaming,
+                stopOnException,
+                timeout,
+                onPrepare,
+                shareUnitOfWork,
+                parallelAggregate,
+                ",");
     }
 
-    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
-                    AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
-                    boolean stopOnException, long timeout, Processor onPrepare,
-                    boolean shareUnitOfWork, boolean parallelAggregate, String delimiter) {
-        super(camelContext, route, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
-              shutdownExecutorService, streaming, stopOnException,
-              timeout, onPrepare, shareUnitOfWork, parallelAggregate, 0);
+    public Splitter(
+            CamelContext camelContext,
+            Route route,
+            Expression expression,
+            Processor destination,
+            AggregationStrategy aggregationStrategy,
+            boolean parallelProcessing,
+            ExecutorService executorService,
+            boolean shutdownExecutorService,
+            boolean streaming,
+            boolean stopOnException,
+            long timeout,
+            Processor onPrepare,
+            boolean shareUnitOfWork,
+            boolean parallelAggregate,
+            String delimiter) {
+        super(
+                camelContext,
+                route,
+                Collections.singleton(destination),
+                aggregationStrategy,
+                parallelProcessing,
+                executorService,
+                shutdownExecutorService,
+                streaming,
+                stopOnException,
+                timeout,
+                onPrepare,
+                shareUnitOfWork,
+                parallelAggregate,
+                0);
         this.expression = expression;
         StringHelper.notEmpty(delimiter, "delimiter");
         this.delimiter = delimiter;
@@ -127,8 +174,7 @@ public class Splitter extends MulticastProcessor {
     }
 
     @Override
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange)
-            throws Exception {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
 
         Object value = expression.evaluate(exchange, Object.class);
         if (exchange.getException() != null) {
@@ -148,7 +194,8 @@ public class Splitter extends MulticastProcessor {
         return answer;
     }
 
-    private Iterable<ProcessorExchangePair> createProcessorExchangePairsIterable(final Exchange exchange, final Object value) {
+    private Iterable<ProcessorExchangePair> createProcessorExchangePairsIterable(
+            final Exchange exchange, final Object value) {
         return new SplitterIterable(exchange, value);
     }
 
@@ -214,9 +261,11 @@ public class Splitter extends MulticastProcessor {
                         // and do not share the unit of work
                         Exchange newExchange = processorExchangeFactory.createCorrelatedCopy(copy, false);
                         newExchange.getExchangeExtension().setTransacted(original.isTransacted());
-                        // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share txData
+                        // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share
+                        // txData
                         // during the transaction.
-                        if (original.isTransacted() && newExchange.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
+                        if (original.isTransacted()
+                                && newExchange.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
                             if (txData == null) {
                                 txData = new ConcurrentHashMap<>();
                             }
@@ -225,10 +274,13 @@ public class Splitter extends MulticastProcessor {
                         // If the splitter has an aggregation strategy
                         // then the StreamCache created by the child routes must not be
                         // closed by the unit of work of the child route, but by the unit of
-                        // work of the parent route or grand parent route or grand grand parent route... (in case of nesting).
-                        // Therefore, set the unit of work of the parent route as stream cache unit of work, if not already set.
+                        // work of the parent route or grand parent route or grand grand parent route... (in case of
+                        // nesting).
+                        // Therefore, set the unit of work of the parent route as stream cache unit of work, if not
+                        // already set.
                         if (newExchange.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK) == null) {
-                            newExchange.setProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
+                            newExchange.setProperty(
+                                    ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
                         }
                         // if we share unit of work, we need to prepare the child exchange
                         if (isShareUnitOfWork()) {
@@ -262,7 +314,6 @@ public class Splitter extends MulticastProcessor {
                 IOHelper.closeIterator(value);
             }
         }
-
     }
 
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {
@@ -286,7 +337,8 @@ public class Splitter extends MulticastProcessor {
     }
 
     @Override
-    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
+    protected void updateNewExchange(
+            Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
         exchange.setProperty(ExchangePropertyKey.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
             // non-streaming mode, so we know the total size already
@@ -320,8 +372,8 @@ public class Splitter extends MulticastProcessor {
         }
 
         if (isParallelProcessing()) {
-            //we do not want to copy JPA entityManager (which is not meant for concurrent use) in parallel mode
-            //jpa component takes care of the entityManager if property is removed
+            // we do not want to copy JPA entityManager (which is not meant for concurrent use) in parallel mode
+            // jpa component takes care of the entityManager if property is removed
             answer.removeProperty(Exchange.JPA_ENTITY_MANAGER);
         }
         return answer;

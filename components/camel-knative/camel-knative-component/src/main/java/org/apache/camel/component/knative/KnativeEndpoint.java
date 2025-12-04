@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
 
 import java.util.ArrayList;
@@ -50,14 +51,16 @@ import org.slf4j.LoggerFactory;
 /**
  * Send and receive events from Knative.
  */
-@UriEndpoint(firstVersion = "3.15.0",
-             scheme = "knative",
-             syntax = "knative:type/typeId",
-             title = "Knative",
-             category = Category.CLOUD)
-@Metadata(annotations = {
-        "protocol=http",
-})
+@UriEndpoint(
+        firstVersion = "3.15.0",
+        scheme = "knative",
+        syntax = "knative:type/typeId",
+        title = "Knative",
+        category = Category.CLOUD)
+@Metadata(
+        annotations = {
+            "protocol=http",
+        })
 public class KnativeEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KnativeEndpoint.class);
@@ -74,8 +77,12 @@ public class KnativeEndpoint extends DefaultEndpoint {
     @UriParam
     private KnativeConfiguration configuration;
 
-    public KnativeEndpoint(String uri, KnativeComponent component, Knative.Type type, String name,
-                           KnativeConfiguration configuration) {
+    public KnativeEndpoint(
+            String uri,
+            KnativeComponent component,
+            Knative.Type type,
+            String name,
+            KnativeConfiguration configuration) {
         super(uri, component);
         this.type = type;
         this.typeId = name;
@@ -94,9 +101,9 @@ public class KnativeEndpoint extends DefaultEndpoint {
         KnativeResource service = lookupServiceDefinition(Knative.EndpointKind.sink);
 
         final Processor ceProcessor = cloudEventProcessor.producer(this, service);
-        final Producer producer
-                = getComponent().getOrCreateProducerFactory().createProducer(this, createTransportConfiguration(service),
-                        service);
+        final Producer producer = getComponent()
+                .getOrCreateProducerFactory()
+                .createProducer(this, createTransportConfiguration(service), service);
 
         PropertyBindingSupport.build()
                 .withCamelContext(getCamelContext())
@@ -114,8 +121,8 @@ public class KnativeEndpoint extends DefaultEndpoint {
         KnativeResource service = lookupServiceDefinition(Knative.EndpointKind.source);
 
         Processor ceProcessor = cloudEventProcessor.consumer(this, service);
-        Processor replyProcessor
-                = configuration.isReplyWithCloudEvent() ? cloudEventProcessor.producer(this, service) : null;
+        Processor replyProcessor =
+                configuration.isReplyWithCloudEvent() ? cloudEventProcessor.producer(this, service) : null;
 
         List<Processor> list = new ArrayList<>();
         list.add(ceProcessor);
@@ -124,12 +131,12 @@ public class KnativeEndpoint extends DefaultEndpoint {
             list.add(replyProcessor);
         }
         CamelContext camelContext = getCamelContext();
-        Processor pipeline
-                = PluginHelper.getProcessorFactory(camelContext).createProcessor(camelContext, "Pipeline",
-                        new Object[] { list });
+        Processor pipeline = PluginHelper.getProcessorFactory(camelContext)
+                .createProcessor(camelContext, "Pipeline", new Object[] {list});
 
-        Consumer consumer = getComponent().getOrCreateConsumerFactory().createConsumer(this,
-                createTransportConfiguration(service), service, pipeline);
+        Consumer consumer = getComponent()
+                .getOrCreateConsumerFactory()
+                .createConsumer(this, createTransportConfiguration(service), service, pipeline);
 
         PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
@@ -172,7 +179,9 @@ public class KnativeEndpoint extends DefaultEndpoint {
 
     KnativeResource lookupServiceDefinition(Knative.EndpointKind endpointKind) {
         final String resourceName;
-        if (type == Knative.Type.event && configuration.getName() != null && endpointKind.equals(Knative.EndpointKind.sink)) {
+        if (type == Knative.Type.event
+                && configuration.getName() != null
+                && endpointKind.equals(Knative.EndpointKind.sink)) {
             resourceName = configuration.getName();
         } else if (configuration.getTypeId() != null) {
             resourceName = configuration.getTypeId();
@@ -183,12 +192,14 @@ public class KnativeEndpoint extends DefaultEndpoint {
 
         KnativeResource resource = lookupServiceDefinition(resourceName, endpointKind)
                 .or(() -> {
-                    LOG.debug("Knative resource \"{}\" of type \"{}\" not found, trying the default named: \"default\"",
-                            resourceName, type);
+                    LOG.debug(
+                            "Knative resource \"{}\" of type \"{}\" not found, trying the default named: \"default\"",
+                            resourceName,
+                            type);
                     return lookupServiceDefinition("default", endpointKind);
                 })
-                .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("Unable to find a resource definition for %s/%s/%s", type, endpointKind, resourceName)));
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                        "Unable to find a resource definition for %s/%s/%s", type, endpointKind, resourceName)));
 
         //
         // We need to create a new resource as we need to inject additional data from the component

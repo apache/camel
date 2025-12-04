@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,9 +35,12 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                            .when(header("number").isEqualTo("one")).to("mock:one")
-                            .when(header("number").isEqualTo("two")).to("mock:two")
-                            .when(header("number").isEqualTo("three")).to("mock:three")
+                        .when(header("number").isEqualTo("one"))
+                        .to("mock:one")
+                        .when(header("number").isEqualTo("two"))
+                        .to("mock:two")
+                        .when(header("number").isEqualTo("three"))
+                        .to("mock:three")
                         .end()
                         .to("mock:finally");
             }
@@ -62,9 +66,13 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                            .when(header("number").isEqualTo("one")).to("mock:one")
-                            .when(header("number").isEqualTo("two")).to("mock:two")
-                            .when(header("number").isEqualTo("three")).to("mock:three").endChoice()
+                        .when(header("number").isEqualTo("one"))
+                        .to("mock:one")
+                        .when(header("number").isEqualTo("two"))
+                        .to("mock:two")
+                        .when(header("number").isEqualTo("three"))
+                        .to("mock:three")
+                        .endChoice()
                         .end()
                         .to("mock:finally");
             }
@@ -82,5 +90,4 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

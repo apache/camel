@@ -17,6 +17,8 @@
 
 package org.apache.camel.test.infra.core;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.net.URISyntaxException;
 
 import org.apache.camel.CamelContext;
@@ -26,12 +28,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.URISupport;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public final class MockUtils {
-    private MockUtils() {
-
-    }
+    private MockUtils() {}
 
     /**
      * Resolves an endpoint and asserts that it is found.
@@ -47,8 +45,8 @@ public final class MockUtils {
     /**
      * Resolves an endpoint and asserts that it is found.
      */
-    public static <
-            T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String endpointUri, Class<T> endpointType) {
+    public static <T extends Endpoint> T resolveMandatoryEndpoint(
+            CamelContext context, String endpointUri, Class<T> endpointType) {
         T endpoint = context.getEndpoint(endpointUri, endpointType);
 
         assertNotNull(endpoint, "No endpoint found for URI: " + endpointUri);
@@ -87,7 +85,8 @@ public final class MockUtils {
 
         // lookup endpoints in registry and try to find it
         MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream()
-                .filter(e -> e instanceof MockEndpoint).filter(e -> {
+                .filter(e -> e instanceof MockEndpoint)
+                .filter(e -> {
                     String t = e.getEndpointUri();
                     // strip query
                     int idx2 = t.indexOf('?');
@@ -95,7 +94,9 @@ public final class MockUtils {
                         t = t.substring(0, idx2);
                     }
                     return t.equals(target);
-                }).findFirst().orElse(null);
+                })
+                .findFirst()
+                .orElse(null);
 
         if (found != null) {
             return found;

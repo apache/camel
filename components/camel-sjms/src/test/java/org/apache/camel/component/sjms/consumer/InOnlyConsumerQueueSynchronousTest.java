@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +24,8 @@ import org.junit.jupiter.api.Test;
 
 public class InOnlyConsumerQueueSynchronousTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue.InOnlyConsumerQueueSynchronousTest";
+    private static final String SJMS_QUEUE_NAME =
+            "sjms:queue:in.only.consumer.queue.InOnlyConsumerQueueSynchronousTest";
     private static final String MOCK_RESULT = "mock:result";
 
     @Test
@@ -42,10 +44,8 @@ public class InOnlyConsumerQueueSynchronousTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(SJMS_QUEUE_NAME)
-                        .to(MOCK_RESULT);
+                from(SJMS_QUEUE_NAME).to(MOCK_RESULT);
             }
         };
     }
-
 }

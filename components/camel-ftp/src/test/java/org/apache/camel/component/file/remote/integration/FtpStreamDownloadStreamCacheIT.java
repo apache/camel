@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -34,8 +35,7 @@ public class FtpStreamDownloadStreamCacheIT extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() {
-        template.sendBodyAndHeader(getFtpUrl(), "World", Exchange.FILE_NAME,
-                "world.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "World", Exchange.FILE_NAME, "world.txt");
     }
 
     @Test
@@ -53,8 +53,7 @@ public class FtpStreamDownloadStreamCacheIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl())
-                        .to("mock:received_send");
+                from(getFtpUrl()).to("mock:received_send");
             }
         };
     }

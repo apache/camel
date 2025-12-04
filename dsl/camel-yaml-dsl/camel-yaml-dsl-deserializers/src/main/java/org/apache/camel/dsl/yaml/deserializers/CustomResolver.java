@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
@@ -38,9 +39,9 @@ public class CustomResolver implements YamlDeserializerResolver {
     @Override
     public ConstructNode resolve(String id) {
         switch (id) {
-            //
-            // Route
-            //
+                //
+                // Route
+                //
             case "from":
                 return new RouteFromDefinitionDeserializer();
             case "org.apache.camel.model.FromDefinition":
@@ -60,18 +61,18 @@ public class CustomResolver implements YamlDeserializerResolver {
             case "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition":
                 return new OutputAwareFromDefinitionDeserializer();
 
-            //
-            // Expression
-            //
+                //
+                // Expression
+                //
             case "expression":
             case "org.apache.camel.model.language.ExpressionDefinition":
                 return new ExpressionDeserializers.ExpressionDefinitionDeserializers();
             case "org.apache.camel.model.ExpressionSubElementDefinition":
                 return new ExpressionDeserializers.ExpressionSubElementDefinitionDeserializers();
 
-            //
-            // Misc
-            //
+                //
+                // Misc
+                //
             case "beans":
                 return beansDeserializer;
             case "dataFormats":

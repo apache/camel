@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common.exception;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,14 +27,15 @@ import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
-
 public class DuplicateKeyException extends MarkedYamlEngineException {
 
     public DuplicateKeyException(Node node, List<NodeTuple> nodes) {
-        super(null, Optional.empty(), "Node should have only have 1 key, was: " + nodes.size() + " keys: [" + keyNames(nodes)
-                                      + "] (Maybe this is an indent problem in the YAML source).",
-              node.getStartMark());
+        super(
+                null,
+                Optional.empty(),
+                "Node should have only have 1 key, was: " + nodes.size() + " keys: [" + keyNames(nodes)
+                        + "] (Maybe this is an indent problem in the YAML source).",
+                node.getStartMark());
     }
 
     private static String keyNames(List<NodeTuple> nodes) {
@@ -42,5 +46,4 @@ public class DuplicateKeyException extends MarkedYamlEngineException {
         }
         return sj.toString();
     }
-
 }

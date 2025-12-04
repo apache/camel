@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
 
 import java.util.concurrent.CompletableFuture;
@@ -74,17 +75,20 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
 
         // only if JMX is enabled
-        if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.extendedStatistics
-                    = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+        if (camelContext.getManagementStrategy() != null
+                && camelContext.getManagementStrategy().getManagementAgent() != null) {
+            this.extendedStatistics = camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
+                    .getStatisticsLevel()
+                    .isExtended();
         } else {
             this.extendedStatistics = false;
         }
 
         // internal processor used for sending
-        sharedInternalProcessor
-                = PluginHelper.getInternalProcessorFactory(this.camelContext)
-                        .createSharedCamelInternalProcessor(camelContext);
+        sharedInternalProcessor = PluginHelper.getInternalProcessorFactory(this.camelContext)
+                .createSharedCamelInternalProcessor(camelContext);
     }
 
     protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
@@ -128,7 +132,9 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         // triggering cases of false sharing
         // copy reference to avoid need for synchronization and be thread safe
         AsyncProducer lastUsedProducerRef = lastUsedProducer;
-        if (lastUsedProducerRef != null && endpoint == lastUsedProducerRef.getEndpoint() && endpoint.isSingletonProducer()) {
+        if (lastUsedProducerRef != null
+                && endpoint == lastUsedProducerRef.getEndpoint()
+                && endpoint.isSingletonProducer()) {
             return lastUsedProducerRef;
         }
 
@@ -169,7 +175,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             // send the exchange using the processor
             StopWatch watch = null;
             try {
-                if (eventNotifierEnabled && camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
+                if (eventNotifierEnabled
+                        && camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
                     boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
                     if (sending) {
                         watch = new StopWatch();
@@ -219,7 +226,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         AsyncProducerCallback cb = (p, e, c) -> asyncDispatchExchange(endpoint, p, resultProcessor, e, c);
         try {
             if (processor instanceof AsyncProcessor asyncProcessor) {
-                asyncProcessor.process(exchange,
+                asyncProcessor.process(
+                        exchange,
                         doneSync -> doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb));
             } else {
                 if (processor != null) {
@@ -237,10 +245,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
     @Override
     public boolean doInAsyncProducer(
-            Endpoint endpoint,
-            Exchange exchange,
-            AsyncCallback callback,
-            AsyncProducerCallback producerCallback) {
+            Endpoint endpoint, Exchange exchange, AsyncCallback callback, AsyncProducerCallback producerCallback) {
 
         AsyncProducer producer;
         try {
@@ -305,8 +310,11 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     protected boolean asyncDispatchExchange(
-            Endpoint endpoint, AsyncProducer producer,
-            Processor resultProcessor, Exchange exchange, AsyncCallback callback) {
+            Endpoint endpoint,
+            AsyncProducer producer,
+            Processor resultProcessor,
+            Exchange exchange,
+            AsyncCallback callback) {
         // now lets dispatch
         LOG.debug(">>>> {} {}", endpoint, exchange);
 
@@ -410,5 +418,4 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     public String toString() {
         return "ProducerCache for source: " + source + ", capacity: " + getCapacity();
     }
-
 }

@@ -14,35 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfRsHeaderFilterStrategyTest {
     @Test
     public void testFilterContentType() throws Exception {
         HeaderFilterStrategy filter = new CxfRsHeaderFilterStrategy();
-        assertTrue(filter.applyFilterToCamelHeaders("content-type", "just a test", null), "Get a wrong filtered result");
-        assertTrue(filter.applyFilterToCamelHeaders("Content-Type", "just a test", null), "Get a wrong filtered result");
+        assertTrue(
+                filter.applyFilterToCamelHeaders("content-type", "just a test", null), "Get a wrong filtered result");
+        assertTrue(
+                filter.applyFilterToCamelHeaders("Content-Type", "just a test", null), "Get a wrong filtered result");
     }
 
     @Test
     public void testFilterCamelHeaders() throws Exception {
         HeaderFilterStrategy filter = new CxfRsHeaderFilterStrategy();
-        assertTrue(filter.applyFilterToCamelHeaders(Exchange.CHARSET_NAME, "just a test", null), "Get a wrong filtered result");
-        assertTrue(filter.applyFilterToCamelHeaders(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, "just a test", null),
+        assertTrue(
+                filter.applyFilterToCamelHeaders(Exchange.CHARSET_NAME, "just a test", null),
                 "Get a wrong filtered result");
-        assertTrue(filter.applyFilterToCamelHeaders("CamelHeader", "just a test", null),
+        assertTrue(
+                filter.applyFilterToCamelHeaders(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, "just a test", null),
                 "Get a wrong filtered result");
+        assertTrue(filter.applyFilterToCamelHeaders("CamelHeader", "just a test", null), "Get a wrong filtered result");
         assertTrue(filter.applyFilterToCamelHeaders("CamelResult", "just a test", null), "Get a wrong filtered result");
 
         assertFalse(filter.applyFilterToCamelHeaders("MyWorld", "just a test", null), "Get a wrong filtered result");
     }
-
 }

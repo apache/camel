@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
 
 import java.util.ArrayList;
@@ -261,7 +262,8 @@ public abstract class FhirDataFormat extends ServiceSupport
         if (preferTypes == null && preferTypesNames != null) {
             preferTypes = new ArrayList<>();
             for (String name : preferTypesNames.split(",")) {
-                Class<IBaseResource> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, IBaseResource.class);
+                Class<IBaseResource> clazz =
+                        camelContext.getClassResolver().resolveMandatoryClass(name, IBaseResource.class);
                 preferTypes.add(clazz);
             }
         }
@@ -284,5 +286,4 @@ public abstract class FhirDataFormat extends ServiceSupport
     protected void doStop() throws Exception {
         // noop
     }
-
 }

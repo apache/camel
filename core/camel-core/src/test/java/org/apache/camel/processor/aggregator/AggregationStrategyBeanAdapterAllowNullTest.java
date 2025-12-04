@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +28,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupport {
 
@@ -42,7 +43,11 @@ public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupp
 
         assertMockEndpointsSatisfied();
 
-        List<?> names = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> names = getMockEndpoint("mock:result")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(List.class);
         assertEquals("Claus", names.get(0));
         assertEquals("James", names.get(1));
         assertEquals("Jonathan", names.get(2));
@@ -53,8 +58,10 @@ public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(constant(true), AggregationStrategies.beanAllowNull(appender, "addUsers"))
-                        .completionSize(3).to("mock:result");
+                from("direct:start")
+                        .aggregate(constant(true), AggregationStrategies.beanAllowNull(appender, "addUsers"))
+                        .completionSize(3)
+                        .to("mock:result");
             }
         };
     }
@@ -85,5 +92,4 @@ public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupp
             return name;
         }
     }
-
 }

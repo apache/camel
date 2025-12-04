@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -43,12 +44,14 @@ public class ReplyKeyboardMarkup implements Serializable, ReplyMarkup {
 
     private List<List<InlineKeyboardButton>> keyboard;
 
-    public ReplyKeyboardMarkup() {
+    public ReplyKeyboardMarkup() {}
 
-    }
-
-    public ReplyKeyboardMarkup(Boolean oneTimeKeyboard, Boolean removeKeyboard, Boolean resizeKeyboard,
-                               Boolean selective, List<List<InlineKeyboardButton>> keyboard) {
+    public ReplyKeyboardMarkup(
+            Boolean oneTimeKeyboard,
+            Boolean removeKeyboard,
+            Boolean resizeKeyboard,
+            Boolean selective,
+            List<List<InlineKeyboardButton>> keyboard) {
         this.oneTimeKeyboard = oneTimeKeyboard;
         this.removeKeyboard = removeKeyboard;
         this.resizeKeyboard = resizeKeyboard;
@@ -168,7 +171,7 @@ public class ReplyKeyboardMarkup implements Serializable, ReplyMarkup {
 
             public KeyboardBuilder addOneRowByEachButton(List<InlineKeyboardButton> inlineKeyboardButtons) {
 
-                for (Iterator<InlineKeyboardButton> iterator = inlineKeyboardButtons.iterator(); iterator.hasNext();) {
+                for (Iterator<InlineKeyboardButton> iterator = inlineKeyboardButtons.iterator(); iterator.hasNext(); ) {
 
                     keyboard.add(Arrays.asList(iterator.next()));
                 }

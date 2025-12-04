@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.graphql;
 
 import java.net.URI;
@@ -31,8 +32,12 @@ public class GraphqlComponent extends HeaderFilterStrategyComponent {
 
     @Metadata(label = "advanced")
     private HttpClient httpClient;
-    @Metadata(label = "producer", defaultValue = "true",
-              description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.")
+
+    @Metadata(
+            label = "producer",
+            defaultValue = "true",
+            description =
+                    "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.")
     private boolean throwExceptionOnFailure = true;
 
     @Override

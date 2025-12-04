@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.java.joor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -27,63 +32,45 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JavaMainRestsTest {
 
     @Test
     public void testMainRestsCollector() {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/java/MyRoutesWithRest.java",
-                null);
+        doTestMain("org/apache/camel/main/java/MyRoutesWithRest.java", null);
     }
 
     @Test
     public void testMainRestsCollectorScan() {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/java/MyRoutesWithRes*.java",
-                null);
+        doTestMain("org/apache/camel/main/java/MyRoutesWithRes*.java", null);
     }
 
     @Test
     public void testMainRestsCollectorScanWildcardDirClasspathPath() {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/**/MyRoutesWithRes*.java",
-                null);
+        doTestMain("org/apache/camel/main/**/MyRoutesWithRes*.java", null);
     }
 
     @Test
     public void testMainRestsCollectorScanClasspathPrefix() {
         // will load XML from target/classes when testing
-        doTestMain(
-                "classpath:org/apache/camel/main/java/MyRoutesWithRes*.java",
-                null);
+        doTestMain("classpath:org/apache/camel/main/java/MyRoutesWithRes*.java", null);
     }
 
     @Test
     public void testMainRestsCollectorScanInDir() {
-        doTestMain(
-                "file:src/test/resources/org/apache/camel/main/java/MyRoutesWithRes*.java",
-                null);
+        doTestMain("file:src/test/resources/org/apache/camel/main/java/MyRoutesWithRes*.java", null);
     }
 
     @Test
     public void testMainRestsCollectorScanWildcardDirFilePath() {
-        doTestMain(
-                "file:src/test/resources/org/**/MyRoutesWithRes*.java",
-                null);
+        doTestMain("file:src/test/resources/org/**/MyRoutesWithRes*.java", null);
     }
 
     @Test
     public void testMainRestsCollectorFile() {
-        doTestMain(
-                "file:src/test/resources/org/apache/camel/main/java/MyRoutesWithRest.java,",
-                null);
+        doTestMain("file:src/test/resources/org/apache/camel/main/java/MyRoutesWithRest.java,", null);
     }
 
     protected void doTestMain(String includes, String excludes) {

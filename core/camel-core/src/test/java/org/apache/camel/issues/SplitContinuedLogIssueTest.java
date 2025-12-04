@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitContinuedLogIssueTest extends ContextTestSupport {
 
@@ -57,9 +58,16 @@ public class SplitContinuedLogIssueTest extends ContextTestSupport {
             public void configure() {
                 onException(Exception.class).continued(true).logContinued(false).to("log:error", "mock:error");
 
-                from("direct:start").split(body(), new SplitAggregationStrategy()).shareUnitOfWork().to("mock:line")
+                from("direct:start")
+                        .split(body(), new SplitAggregationStrategy())
+                        .shareUnitOfWork()
+                        .to("mock:line")
                         .filter(simple("${body} == 'bar'"))
-                        .throwException(new IllegalArgumentException("Forced")).end().end().to("log:result").to("mock:result");
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .end()
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }
@@ -78,5 +86,4 @@ public class SplitContinuedLogIssueTest extends ContextTestSupport {
             return oldExchange;
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.discovery;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,12 +37,11 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class JmsDiscoveryTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final MyRegistry myRegistry = new MyRegistry();
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -56,8 +58,8 @@ public class JmsDiscoveryTest extends AbstractJMSTest {
         MockEndpoint.assertIsSatisfied(context);
 
         // sleep a little
-        Awaitility.await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(myRegistry.getServices()).hasSizeGreaterThanOrEqualTo(1));
+        Awaitility.await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertThat(myRegistry.getServices())
+                .hasSizeGreaterThanOrEqualTo(1));
     }
 
     @Override

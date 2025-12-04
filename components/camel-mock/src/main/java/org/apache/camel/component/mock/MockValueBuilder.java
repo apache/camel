@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
 
 import java.util.ArrayList;
@@ -84,20 +85,19 @@ public class MockValueBuilder implements Expression, Predicate {
         // in the onNewPredicate where the actual matching is executed
         final AtomicReference<Expression> ref = new AtomicReference<>();
 
-        final MockExpressionClause<Predicate> answer = new MockExpressionClause<>(
-                onNewPredicate(new Predicate() {
-                    @Override
-                    public boolean matches(Exchange exchange) {
-                        Expression left = expression;
-                        Expression right = ref.get();
-                        return PredicateBuilder.isEqualTo(left, right).matches(exchange);
-                    }
+        final MockExpressionClause<Predicate> answer = new MockExpressionClause<>(onNewPredicate(new Predicate() {
+            @Override
+            public boolean matches(Exchange exchange) {
+                Expression left = expression;
+                Expression right = ref.get();
+                return PredicateBuilder.isEqualTo(left, right).matches(exchange);
+            }
 
-                    @Override
-                    public String toString() {
-                        return expression + " == " + ref.get();
-                    }
-                }));
+            @Override
+            public String toString() {
+                return expression + " == " + ref.get();
+            }
+        }));
 
         final Expression right = new ExpressionAdapter() {
             @Override

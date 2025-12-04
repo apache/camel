@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -34,15 +35,15 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         this.camelContext = camelContext;
         this.streamCachingStrategy = streamCachingStrategy;
         if (streamCachingStrategy.getAllowClasses() != null) {
-            this.allowClasses = streamCachingStrategy.getAllowClasses()
-                    .stream().map(Class::getName)
+            this.allowClasses = streamCachingStrategy.getAllowClasses().stream()
+                    .map(Class::getName)
                     .toArray(String[]::new);
         } else {
             this.allowClasses = null;
         }
         if (streamCachingStrategy.getDenyClasses() != null) {
-            this.denyClasses = streamCachingStrategy.getDenyClasses()
-                    .stream().map(Class::getName)
+            this.denyClasses = streamCachingStrategy.getDenyClasses().stream()
+                    .map(Class::getName)
                     .toArray(String[]::new);
         } else {
             this.denyClasses = null;
@@ -212,5 +213,4 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
     public void resetStatistics() {
         streamCachingStrategy.getStatistics().reset();
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class FileDelayTest extends BaseEndpointDslTest {
     private static final String TEST_DATA_DIR = BaseEndpointDslTest.generateUniquePath(BaseEndpointDslTest.class);
@@ -52,11 +53,14 @@ public class FileDelayTest extends BaseEndpointDslTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
-                from(file(TEST_DATA_DIR).delay(2).timeUnit(TimeUnit.SECONDS).delete(true).maxMessagesPerPoll(1))
+                from(file(TEST_DATA_DIR)
+                                .delay(2)
+                                .timeUnit(TimeUnit.SECONDS)
+                                .delete(true)
+                                .maxMessagesPerPoll(1))
                         .convertBodyTo(String.class)
                         .to(mock("result"));
             }
         };
     }
-
 }

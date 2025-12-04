@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
@@ -45,9 +46,10 @@ import org.jline.widget.TailTipWidgets;
 import picocli.CommandLine;
 import picocli.shell.jline3.PicocliCommands;
 
-@CommandLine.Command(name = "shell",
-                     description = "Interactive Camel JBang shell. Hit @|magenta <TAB>|@ to see available commands.",
-                     footer = "Press Ctrl-C to exit.")
+@CommandLine.Command(
+        name = "shell",
+        description = "Interactive Camel JBang shell. Hit @|magenta <TAB>|@ to see available commands.",
+        footer = "Press Ctrl-C to exit.")
 public class Shell extends CamelCommand {
 
     public Shell(CamelJBangMain main) {
@@ -58,7 +60,8 @@ public class Shell extends CamelCommand {
     public Integer doCall() throws Exception {
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         // set up JLine built-in commands
-        Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass()).getParent();
+        Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass())
+                .getParent();
         Builtins builtins = new Builtins(workDir, new ConfigurationPath(appConfig, workDir.get()), null) {
             @Override
             public String name() {
@@ -76,13 +79,14 @@ public class Shell extends CamelCommand {
             systemRegistry.setCommandRegistries(builtins, commands);
             systemRegistry.register("help", commands);
 
-            String history = Paths.get(System.getProperty("user.home"), ".camel-jbang-history").toString();
+            String history = Paths.get(System.getProperty("user.home"), ".camel-jbang-history")
+                    .toString();
             LineReader reader = LineReaderBuilder.builder()
                     .terminal(terminal)
                     .completer(systemRegistry.completer())
                     .parser(parser)
                     .highlighter(new ReplHighlighter())
-                    .variable(LineReader.LIST_MAX, 50)   // max tab completion candidates
+                    .variable(LineReader.LIST_MAX, 50) // max tab completion candidates
                     .variable(LineReader.HISTORY_FILE, history)
                     .variable(LineReader.OTHERS_GROUP_NAME, "Others")
                     .variable(LineReader.COMPLETION_STYLE_GROUP, "fg:blue,bold")
@@ -91,8 +95,8 @@ public class Shell extends CamelCommand {
                     .build();
             builtins.setLineReader(reader);
             factory.setTerminal(terminal);
-            TailTipWidgets widgets
-                    = new TailTipWidgets(reader, systemRegistry::commandDescription, 5, TailTipWidgets.TipType.COMPLETER);
+            TailTipWidgets widgets =
+                    new TailTipWidgets(reader, systemRegistry::commandDescription, 5, TailTipWidgets.TipType.COMPLETER);
             widgets.enable();
             KeyMap<Binding> keyMap = reader.getKeyMaps().get("main");
             keyMap.bind(new Reference("tailtip-toggle"), KeyMap.alt("s"));

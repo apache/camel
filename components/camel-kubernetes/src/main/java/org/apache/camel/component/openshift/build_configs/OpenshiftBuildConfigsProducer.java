@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openshift.build_configs;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.Map;
 
@@ -30,8 +33,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class OpenshiftBuildConfigsProducer extends DefaultProducer {
 
@@ -51,7 +52,6 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
-
             case KubernetesOperations.LIST_BUILD_CONFIGS:
                 doList(exchange);
                 break;
@@ -70,27 +70,43 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        BuildConfigList buildConfigsList
-                = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs().inAnyNamespace().list();
+        BuildConfigList buildConfigsList = getEndpoint()
+                .getKubernetesClient()
+                .adapt(OpenShiftClient.class)
+                .buildConfigs()
+                .inAnyNamespace()
+                .list();
         exchange.getMessage().setBody(buildConfigsList.getItems());
     }
 
     protected void doListBuildConfigsByLabels(Exchange exchange) {
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, Map.class);
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         BuildConfigList buildConfigsList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            buildConfigsList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
-                    .inNamespace(namespaceName).withLabels(labels).list();
+            buildConfigsList = getEndpoint()
+                    .getKubernetesClient()
+                    .adapt(OpenShiftClient.class)
+                    .buildConfigs()
+                    .inNamespace(namespaceName)
+                    .withLabels(labels)
+                    .list();
         } else {
-            buildConfigsList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
-                    .inAnyNamespace().withLabels(labels).list();
+            buildConfigsList = getEndpoint()
+                    .getKubernetesClient()
+                    .adapt(OpenShiftClient.class)
+                    .buildConfigs()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         }
         prepareOutboundMessage(exchange, buildConfigsList.getItems());
     }
 
     protected void doGetBuildConfig(Exchange exchange) {
-        String buildConfigName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIG_NAME, String.class);
+        String buildConfigName =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIG_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(buildConfigName)) {
             LOG.error("Get a specific Build Config require specify a Build Config name");
@@ -100,9 +116,13 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
             LOG.error("Get a specific Build Config require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Build Config require specify a namespace name");
         }
-        BuildConfig buildConfig
-                = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs().inNamespace(namespaceName)
-                        .withName(buildConfigName).get();
+        BuildConfig buildConfig = getEndpoint()
+                .getKubernetesClient()
+                .adapt(OpenShiftClient.class)
+                .buildConfigs()
+                .inNamespace(namespaceName)
+                .withName(buildConfigName)
+                .get();
 
         prepareOutboundMessage(exchange, buildConfig);
     }

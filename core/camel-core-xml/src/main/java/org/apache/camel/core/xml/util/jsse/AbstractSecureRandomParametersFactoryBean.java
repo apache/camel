@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml.util.jsse;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -25,16 +26,21 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SecureRandomParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractSecureRandomParametersFactoryBean extends AbstractJsseUtilFactoryBean<SecureRandomParameters> {
+public abstract class AbstractSecureRandomParametersFactoryBean
+        extends AbstractJsseUtilFactoryBean<SecureRandomParameters> {
 
     @XmlAttribute(required = true)
-    @Metadata(description = "The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's configuration."
+    @Metadata(
+            description =
+                    "The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's configuration."
                             + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
     protected String algorithm;
 
     @XmlAttribute
-    @Metadata(label = "advanced", description = "The provider identifier for the SecureRandom factory"
-                                                + " method used to create the SecureRandom represented by this object's configuration.")
+    @Metadata(
+            label = "advanced",
+            description = "The provider identifier for the SecureRandom factory"
+                    + " method used to create the SecureRandom represented by this object's configuration.")
     protected String provider;
 
     @XmlTransient

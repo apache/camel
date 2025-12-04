@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -23,18 +27,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class PreservePostFormUrlEncodedBodyTest extends BaseUndertowTest {
 
     @Test
     public void testSendToUndertow() {
-        Exchange exchange = template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", exchange1 -> {
-            exchange1.getIn().setBody("b1=x&b2=y");
-            exchange1.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
-            exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
-        });
+        Exchange exchange =
+                template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", exchange1 -> {
+                    exchange1.getIn().setBody("b1=x&b2=y");
+                    exchange1.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
+                    exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
+                });
         // convert the response to a String
         String body = exchange.getMessage().getBody(String.class);
         assertEquals("Request message is OK", body);
@@ -62,5 +64,4 @@ public class PreservePostFormUrlEncodedBodyTest extends BaseUndertowTest {
             }
         };
     }
-
 }

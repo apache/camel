@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,8 +30,6 @@ import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
 import org.infinispan.notifications.cachelistener.event.CacheEntryCreatedEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InfinispanEmbeddedCustomListenerTest extends InfinispanEmbeddedTestSupport
         implements InfinispanConsumerTestSupport {
@@ -73,7 +74,6 @@ public class InfinispanEmbeddedCustomListenerTest extends InfinispanEmbeddedTest
             public void configure() {
                 fromF("infinispan-embedded:%s?sync=true&customListener=#myCustomListener", getCacheName())
                         .to("mock:result");
-
             }
         };
     }
@@ -91,15 +91,15 @@ public class InfinispanEmbeddedCustomListenerTest extends InfinispanEmbeddedTest
 
         @CacheEntryCreated
         public void entryCreated(CacheEntryCreatedEvent<?, ?> event) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    null,
-                    e -> e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre()));
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            null,
+                            e -> e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre()));
 
             assertEquals(getCacheName(), event.getCache().getName());
         }
     }
-
 }

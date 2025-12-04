@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import io.opentelemetry.api.trace.Span;
@@ -43,8 +44,7 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
 
     @Override
     public Processor wrapProcessorInInterceptors(
-            CamelContext camelContext,
-            NamedNode processorDefinition, Processor target, Processor nextTarget)
+            CamelContext camelContext, NamedNode processorDefinition, Processor target, Processor nextTarget)
             throws Exception {
         if (shouldTrace(processorDefinition)) {
             return new PropagateContextAndCreateSpan(processorDefinition, target);
@@ -85,7 +85,8 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
                 return;
             }
 
-            final Span processorSpan = tracer.getTracer().spanBuilder(getOperationName(processorDefinition))
+            final Span processorSpan = tracer.getTracer()
+                    .spanBuilder(getOperationName(processorDefinition))
                     .setParent(Context.current().with(span))
                     .setAttribute("component", getComponentName(processorDefinition))
                     .startSpan();

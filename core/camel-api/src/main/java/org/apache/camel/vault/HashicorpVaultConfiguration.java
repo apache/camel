@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
@@ -25,20 +26,28 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
     private String token;
+
     @Metadata
     private String host;
+
     @Metadata
     private String port;
+
     @Metadata
     private String scheme;
+
     @Metadata
     private boolean cloud;
+
     @Metadata
     private String namespace;
+
     @Metadata
     private boolean refreshEnabled;
+
     @Metadata(defaultValue = "60000")
     private long refreshPeriod = 60000;
+
     @Metadata
     private String secrets;
 

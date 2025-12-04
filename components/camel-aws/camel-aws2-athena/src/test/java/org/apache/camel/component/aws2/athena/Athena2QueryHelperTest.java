@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,11 +33,6 @@ import software.amazon.awssdk.services.athena.model.GetQueryExecutionResponse;
 import software.amazon.awssdk.services.athena.model.QueryExecution;
 import software.amazon.awssdk.services.athena.model.QueryExecutionState;
 import software.amazon.awssdk.services.athena.model.QueryExecutionStatus;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Athena2QueryHelperTest {
 
@@ -133,9 +134,8 @@ public class Athena2QueryHelperTest {
         configuration.setInitialDelay(1);
         configuration.setDelay(1);
 
-        Athena2QueryHelper helper = new Athena2QueryHelper(
-                new DefaultExchange(new DefaultCamelContext()),
-                configuration);
+        Athena2QueryHelper helper =
+                new Athena2QueryHelper(new DefaultExchange(new DefaultCamelContext()), configuration);
 
         assertTrue(helper.shouldAttempt());
 
@@ -229,7 +229,8 @@ public class Athena2QueryHelperTest {
     @Test
     public void shouldRetryReturnsFalseWhenRetryIsNever() {
         Athena2QueryHelper helper = athena2QueryHelperWithRetry("never");
-        assertFalse(helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "GENERIC_INTERNAL_ERROR")));
+        assertFalse(
+                helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "GENERIC_INTERNAL_ERROR")));
     }
 
     @Test
@@ -241,7 +242,8 @@ public class Athena2QueryHelperTest {
     @Test
     public void shouldRetryReturnsTrueForGenericInternalError() {
         Athena2QueryHelper helper = athena2QueryHelperWithRetry("retryable");
-        assertTrue(helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "GENERIC_INTERNAL_ERROR")));
+        assertTrue(
+                helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "GENERIC_INTERNAL_ERROR")));
     }
 
     @Test
@@ -258,18 +260,14 @@ public class Athena2QueryHelperTest {
     }
 
     private Athena2QueryHelper defaultAthena2QueryHelper() {
-        return new Athena2QueryHelper(
-                new DefaultExchange(new DefaultCamelContext()),
-                new Athena2Configuration());
+        return new Athena2QueryHelper(new DefaultExchange(new DefaultCamelContext()), new Athena2Configuration());
     }
 
     private Athena2QueryHelper athena2QueryHelperWithRetry(String retry) {
         Athena2Configuration configuration = new Athena2Configuration();
         configuration.setRetry(retry);
 
-        return new Athena2QueryHelper(
-                new DefaultExchange(new DefaultCamelContext()),
-                configuration);
+        return new Athena2QueryHelper(new DefaultExchange(new DefaultCamelContext()), configuration);
     }
 
     private GetQueryExecutionResponse newGetQueryExecutionResponse(QueryExecutionState queryExecutionState) {
@@ -277,8 +275,7 @@ public class Athena2QueryHelperTest {
     }
 
     private GetQueryExecutionResponse newGetQueryExecutionResponse(
-            QueryExecutionState queryExecutionState,
-            String stateChangeReason) {
+            QueryExecutionState queryExecutionState, String stateChangeReason) {
         return GetQueryExecutionResponse.builder()
                 .queryExecution(QueryExecution.builder()
                         .status(QueryExecutionStatus.builder()

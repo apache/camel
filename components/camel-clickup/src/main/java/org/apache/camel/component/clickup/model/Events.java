@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.model;
 
 import java.util.Set;
@@ -52,8 +53,7 @@ public final class Events {
     public static final String KEY_RESULT_DELETED = "keyResultDeleted";
 
     public static Set<String> supportedEvents() {
-        return Set.of(
-                TASK_TIME_TRACKED_UPDATED);
+        return Set.of(TASK_TIME_TRACKED_UPDATED);
     }
 
     public static boolean areAllEventsSupported(Set<String> events) {
@@ -63,5 +63,4 @@ public final class Events {
     public static Set<String> computeUnsupportedEvents(Set<String> events) {
         return Sets.difference(events, Events.supportedEvents());
     }
-
 }

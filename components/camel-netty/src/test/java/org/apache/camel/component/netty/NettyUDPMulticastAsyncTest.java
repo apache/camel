@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.io.File;
@@ -50,8 +51,9 @@ public class NettyUDPMulticastAsyncTest extends BaseNettyTest {
     private void sendFile(String uri) {
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                byte[] buffer = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class,
-                        new File("src/test/resources/test.txt"));
+                byte[] buffer = exchange.getContext()
+                        .getTypeConverter()
+                        .mandatoryConvertTo(byte[].class, new File("src/test/resources/test.txt"));
                 exchange.setProperty(Exchange.CHARSET_NAME, "ASCII");
                 exchange.getIn().setBody(buffer);
             }
@@ -81,5 +83,4 @@ public class NettyUDPMulticastAsyncTest extends BaseNettyTest {
             }
         };
     }
-
 }

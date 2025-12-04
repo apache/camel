@@ -38,8 +38,8 @@ import org.apache.camel.util.URISupport;
  */
 public class ObjectReferenceBindingProvider implements BindingProvider {
 
-    private static final Pattern OBJECT_REFERENCE_URI_PATTERN
-            = Pattern.compile("^([a-z.]+/[alphbetv0-9]+):([A-Z][a-z]+):([a-z][a-z-]*/?[a-z][a-z-]*)\\??[^?]*", Pattern.DOTALL);
+    private static final Pattern OBJECT_REFERENCE_URI_PATTERN = Pattern.compile(
+            "^([a-z.]+/[alphbetv0-9]+):([A-Z][a-z]+):([a-z][a-z-]*/?[a-z][a-z-]*)\\??[^?]*", Pattern.DOTALL);
 
     private final String apiVersion;
     private final String kind;
@@ -60,7 +60,10 @@ public class ObjectReferenceBindingProvider implements BindingProvider {
 
     @Override
     public String getEndpoint(
-            EndpointType type, String uriExpression, Map<String, Object> endpointProperties, TemplateProvider templateProvider)
+            EndpointType type,
+            String uriExpression,
+            Map<String, Object> endpointProperties,
+            TemplateProvider templateProvider)
             throws Exception {
 
         String apiVersionValue;
@@ -86,8 +89,8 @@ public class ObjectReferenceBindingProvider implements BindingProvider {
             namespace = getNamespace(uriExpression);
         }
 
-        Map<String, Object> endpointUriProperties
-                = getEndpointUriProperties(type, objectName, uriExpression, endpointProperties);
+        Map<String, Object> endpointUriProperties =
+                getEndpointUriProperties(type, objectName, uriExpression, endpointProperties);
 
         InputStream is;
         if (type == EndpointType.STEP) {
@@ -108,8 +111,8 @@ public class ObjectReferenceBindingProvider implements BindingProvider {
         context = context.replaceFirst("\\{\\{ \\.Kind }}", kindValue);
         context = context.replaceFirst("\\{\\{ \\.Name }}", objectName);
         context = context.replaceFirst("\\{\\{ \\.Namespace }}\n", namespaceContext);
-        context = context.replaceFirst("\\{\\{ \\.EndpointProperties }}\n",
-                templateProvider.asEndpointProperties(endpointUriProperties));
+        context = context.replaceFirst(
+                "\\{\\{ \\.EndpointProperties }}\n", templateProvider.asEndpointProperties(endpointUriProperties));
 
         return context;
     }

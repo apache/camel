@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
+
+import static org.apache.camel.tooling.model.Strings.wrapWords;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.util.stream.Stream;
 
@@ -23,15 +28,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.apache.camel.tooling.model.Strings.wrapWords;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
 public class StringsTest {
 
     static Stream<Arguments> getClassShortNameTypeVariations() {
-        return Stream.of(arguments("String", "String"), arguments("String", "java.lang.String"),
-                arguments("List", "List<String>"), arguments("List", "java.util.List<String>"),
+        return Stream.of(
+                arguments("String", "String"),
+                arguments("String", "java.lang.String"),
+                arguments("List", "List<String>"),
+                arguments("List", "java.util.List<String>"),
                 arguments("List", "List<java.lang.String>"),
                 arguments("List", "java.util.List.List<org.apache.camel.Exchange>"),
                 arguments("List", "java.util.List<Map<String,Integer>>"),
@@ -62,11 +66,23 @@ public class StringsTest {
 
     @Test
     public void testWrapWords() throws Exception {
-        assertEquals("Setting something up for a night out\nthat is going to last a long time",
-                wrapWords("Setting something up for a night out that is going to last a long time", " ", "\n", 40, false));
+        assertEquals(
+                "Setting something up for a night out\nthat is going to last a long time",
+                wrapWords(
+                        "Setting something up for a night out that is going to last a long time",
+                        " ",
+                        "\n",
+                        40,
+                        false));
 
-        assertEquals("Setting something up for a night out\n  that is going to last a long time",
-                wrapWords("Setting something up for a night out that is going to last a long time", " ", "\n  ", 40, false));
+        assertEquals(
+                "Setting something up for a night out\n  that is going to last a long time",
+                wrapWords(
+                        "Setting something up for a night out that is going to last a long time",
+                        " ",
+                        "\n  ",
+                        40,
+                        false));
     }
 
     private String wrap(String str, int watermark) {

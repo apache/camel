@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
@@ -80,7 +81,11 @@ public interface RestClient {
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
     void getSObject(
-            String sObjectName, String id, String[] fields, Map<String, List<String>> headers, ResponseCallback callback);
+            String sObjectName,
+            String id,
+            String[] fields,
+            Map<String, List<String>> headers,
+            ResponseCallback callback);
 
     /**
      * Creates a record for the specified object.
@@ -90,7 +95,8 @@ public interface RestClient {
      * @param sObject     request entity
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void createSObject(String sObjectName, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback);
+    void createSObject(
+            String sObjectName, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Creates multipart SObject using multipart/form-data for blob fields, with automatic binary field detection.
@@ -102,8 +108,11 @@ public interface RestClient {
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
     void createSObjectMultipart(
-            String sObjectName, Object sObjectDto, InputStream sObject,
-            Map<String, List<String>> headers, ResponseCallback callback);
+            String sObjectName,
+            Object sObjectDto,
+            InputStream sObject,
+            Map<String, List<String>> headers,
+            ResponseCallback callback);
 
     /**
      * Updates a record for the specified object ID.
@@ -115,7 +124,11 @@ public interface RestClient {
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
     void updateSObject(
-            String sObjectName, String id, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback);
+            String sObjectName,
+            String id,
+            InputStream sObject,
+            Map<String, List<String>> headers,
+            ResponseCallback callback);
 
     /**
      * Updates multipart SObject using multipart/form-data for blob fields, with automatic binary field detection.
@@ -128,8 +141,12 @@ public interface RestClient {
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
     void updateSObjectMultipart(
-            String sObjectName, String id, Object sObjectDto, InputStream sObject,
-            Map<String, List<String>> headers, ResponseCallback callback);
+            String sObjectName,
+            String id,
+            Object sObjectDto,
+            InputStream sObject,
+            Map<String, List<String>> headers,
+            ResponseCallback callback);
 
     /**
      * Deletes a record for the specified object ID.
@@ -151,7 +168,10 @@ public interface RestClient {
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
     void getSObjectWithId(
-            String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers,
+            String sObjectName,
+            String fieldName,
+            String fieldValue,
+            Map<String, List<String>> headers,
             ResponseCallback callback);
 
     /**
@@ -165,7 +185,11 @@ public interface RestClient {
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
     void upsertSObject(
-            String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers, InputStream sObject,
+            String sObjectName,
+            String fieldName,
+            String fieldValue,
+            Map<String, List<String>> headers,
+            InputStream sObject,
             ResponseCallback callback);
 
     /**
@@ -178,7 +202,10 @@ public interface RestClient {
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
     void deleteSObjectWithId(
-            String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers,
+            String sObjectName,
+            String fieldName,
+            String fieldValue,
+            Map<String, List<String>> headers,
             ResponseCallback callback);
 
     /**
@@ -191,7 +218,11 @@ public interface RestClient {
      * @param callback      {@link ResponseCallback} to handle response or exception
      */
     void getBlobField(
-            String sObjectName, String id, String blobFieldName, Map<String, List<String>> headers, ResponseCallback callback);
+            String sObjectName,
+            String id,
+            String blobFieldName,
+            Map<String, List<String>> headers,
+            ResponseCallback callback);
 
     /**
      * Executes the specified SOQL query.
@@ -240,8 +271,12 @@ public interface RestClient {
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
     void apexCall(
-            String httpMethod, String apexUrl, Map<String, Object> queryParams, InputStream requestDto,
-            Map<String, List<String>> headers, ResponseCallback callback);
+            String httpMethod,
+            String apexUrl,
+            Map<String, Object> queryParams,
+            InputStream requestDto,
+            Map<String, List<String>> headers,
+            ResponseCallback callback);
 
     /**
      * Fetches recently viewed records.

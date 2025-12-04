@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -85,8 +86,7 @@ public class RoutesHealthCheckRepository extends ServiceSupport
         // }
         //
         return this.context != null && enabled
-                ? this.context.getRoutes()
-                        .stream()
+                ? this.context.getRoutes().stream()
                         .filter(route -> route.getId() != null)
                         .map(this::toRouteHealthCheck)
                 : Stream.empty();
@@ -103,5 +103,4 @@ public class RoutesHealthCheckRepository extends ServiceSupport
             return rhc;
         });
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import javax.net.ssl.SSLContext;
@@ -49,9 +50,10 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
     private final CamelContext camelContext;
     private SSLContext sslContext;
 
-    public HttpServerSharedInitializerFactory(NettySharedHttpServerBootstrapConfiguration configuration,
-                                              HttpServerConsumerChannelFactory channelFactory,
-                                              CamelContext camelContext) {
+    public HttpServerSharedInitializerFactory(
+            NettySharedHttpServerBootstrapConfiguration configuration,
+            HttpServerConsumerChannelFactory channelFactory,
+            CamelContext camelContext) {
         this.configuration = configuration;
         this.channelFactory = channelFactory;
         // fallback and use default resolver
@@ -80,12 +82,18 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
 
         SslHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
-            LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
+            LOG.debug(
+                    "Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}",
+                    sslHandler);
             pipeline.addLast("ssl", sslHandler);
         }
 
-        pipeline.addLast("decoder", new HttpRequestDecoder(
-                configuration.getMaxInitialLineLength(), configuration.getMaxHeaderSize(), configuration.getMaxChunkSize()));
+        pipeline.addLast(
+                "decoder",
+                new HttpRequestDecoder(
+                        configuration.getMaxInitialLineLength(),
+                        configuration.getMaxHeaderSize(),
+                        configuration.getMaxChunkSize()));
         pipeline.addLast("encoder", new HttpResponseEncoder());
         if (configuration.isChunked()) {
             pipeline.addLast("inbound-streamer", new HttpInboundStreamHandler());
@@ -110,10 +118,13 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         if (configuration.getSslContextParameters() != null) {
             answer = configuration.getSslContextParameters().createSSLContext(null);
         } else {
-            char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
+            char[] pw = configuration.getPassphrase() != null
+                    ? configuration.getPassphrase().toCharArray()
+                    : null;
 
             SSLEngineFactory sslEngineFactory = new SSLEngineFactory();
-            answer = sslEngineFactory.createSSLContext(camelContext,
+            answer = sslEngineFactory.createSSLContext(
+                    camelContext,
                     configuration.getKeyStoreFormat(),
                     configuration.getSecurityProvider(),
                     configuration.getKeyStoreResource(),
@@ -144,5 +155,4 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
 
         return null;
     }
-
 }

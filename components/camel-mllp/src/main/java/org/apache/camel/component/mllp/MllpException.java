@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import org.apache.camel.component.mllp.internal.Hl7Util;
@@ -50,8 +51,8 @@ public class MllpException extends Exception {
         this(message, hl7MessageBytes, hl7AcknowledgementBytes, (Throwable) null, logPhi);
     }
 
-    public MllpException(String message, byte[] hl7MessageBytes, byte[] hl7AcknowledgementBytes, Throwable cause,
-                         boolean logPhi) {
+    public MllpException(
+            String message, byte[] hl7MessageBytes, byte[] hl7AcknowledgementBytes, Throwable cause, boolean logPhi) {
         super(message, cause);
         this.logPhi = logPhi;
         this.hl7Util = new Hl7Util(5120, logPhi);
@@ -120,16 +121,15 @@ public class MllpException extends Exception {
         if (hasHl7MessageBytes() || hasHl7AcknowledgementBytes()) {
             String parentMessage = super.getMessage();
 
-            StringBuilder messageBuilder = new StringBuilder(
-                    parentMessage.length()
-                                                             + (hasHl7MessageBytes() ? hl7MessageBytes.length : 0)
-                                                             + (hasHl7AcknowledgementBytes()
-                                                                     ? hl7AcknowledgementBytes.length : 0));
+            StringBuilder messageBuilder = new StringBuilder(parentMessage.length()
+                    + (hasHl7MessageBytes() ? hl7MessageBytes.length : 0)
+                    + (hasHl7AcknowledgementBytes() ? hl7AcknowledgementBytes.length : 0));
 
             messageBuilder.append(parentMessage);
 
             if (hasHl7MessageBytes()) {
-                messageBuilder.append("\n\t{hl7Message [")
+                messageBuilder
+                        .append("\n\t{hl7Message [")
                         .append(hl7MessageBytes.length)
                         .append("] = ");
 
@@ -139,12 +139,13 @@ public class MllpException extends Exception {
             }
 
             if (hasHl7AcknowledgementBytes()) {
-                messageBuilder.append("\n\t{hl7Acknowledgement [")
+                messageBuilder
+                        .append("\n\t{hl7Acknowledgement [")
                         .append(hl7AcknowledgementBytes.length)
                         .append("] = ");
 
-                hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7AcknowledgementBytes, 0,
-                        hl7AcknowledgementBytes.length);
+                hl7Util.appendBytesAsPrintFriendlyString(
+                        messageBuilder, hl7AcknowledgementBytes, 0, hl7AcknowledgementBytes.length);
 
                 messageBuilder.append('}');
             }
@@ -156,5 +157,4 @@ public class MllpException extends Exception {
 
         return answer;
     }
-
 }

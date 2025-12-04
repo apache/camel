@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.camel.util.json.Jsoner;
@@ -21,8 +22,7 @@ import org.apache.camel.util.json.Jsoner;
 public final class CamelCommandHelper {
     public static final String CAMEL_INSTANCE_TYPE = "camel.jbang";
 
-    private CamelCommandHelper() {
-    }
+    private CamelCommandHelper() {}
 
     public static String extractState(int status) {
         if (status <= 4) {
@@ -87,5 +87,4 @@ public final class CamelCommandHelper {
         }
         return s;
     }
-
 }

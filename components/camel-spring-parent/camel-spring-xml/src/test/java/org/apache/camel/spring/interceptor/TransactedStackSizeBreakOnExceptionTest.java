@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import java.util.StringJoiner;
@@ -46,8 +47,11 @@ public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDa
 
         int[] sizes = new int[failAt];
         for (int i = 0; i < failAt; i++) {
-            int size = getMockEndpoint("mock:line").getReceivedExchanges().get(i).getMessage().getHeader("stackSize",
-                    int.class);
+            int size = getMockEndpoint("mock:line")
+                    .getReceivedExchanges()
+                    .get(i)
+                    .getMessage()
+                    .getHeader("stackSize", int.class);
             sizes[i] = size;
             Assertions.assertTrue(size < 110, "Stackframe should be < 110");
             log.debug("#{} size {}", i, size);
@@ -67,20 +71,21 @@ public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDa
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .transacted()
-                    .setHeader("stackSize", TransactedStackSizeBreakOnExceptionTest::currentStackSize)
-                    .log("BEGIN: ${body} stack-size ${header.stackSize}")
-                    .split(body()).stopOnException()
+                        .transacted()
+                        .setHeader("stackSize", TransactedStackSizeBreakOnExceptionTest::currentStackSize)
+                        .log("BEGIN: ${body} stack-size ${header.stackSize}")
+                        .split(body())
+                        .stopOnException()
                         .setHeader("stackSize", TransactedStackSizeBreakOnExceptionTest::currentStackSize)
                         .log("LINE: ${body} stack-size ${header.stackSize}")
                         .to("mock:line")
                         .filter(header(Exchange.SPLIT_INDEX).isEqualTo(failAt))
-                            .throwException(new IllegalStateException("Forced"))
+                        .throwException(new IllegalStateException("Forced"))
                         .end()
-                    .end()
-                    .setHeader("stackSize", TransactedStackSizeBreakOnExceptionTest::currentStackSize)
-                    .log("RESULT: ${body} stack-size ${header.stackSize}")
-                    .to("mock:result");
+                        .end()
+                        .setHeader("stackSize", TransactedStackSizeBreakOnExceptionTest::currentStackSize)
+                        .log("RESULT: ${body} stack-size ${header.stackSize}")
+                        .to("mock:result");
             }
         };
     }
@@ -92,5 +97,4 @@ public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDa
         }
         return depth;
     }
-
 }

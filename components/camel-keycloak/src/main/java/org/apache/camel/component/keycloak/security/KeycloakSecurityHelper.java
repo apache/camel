@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
 
 import java.io.IOException;
@@ -156,8 +157,7 @@ public final class KeycloakSecurityHelper {
      * @throws IOException       if introspection fails
      */
     public static KeycloakTokenIntrospector.IntrospectionResult introspectToken(
-            String token, KeycloakTokenIntrospector tokenIntrospector)
-            throws IOException {
+            String token, KeycloakTokenIntrospector tokenIntrospector) throws IOException {
         return tokenIntrospector.introspect(token);
     }
 
@@ -170,8 +170,7 @@ public final class KeycloakSecurityHelper {
      * @return                     set of roles
      */
     public static Set<String> extractRolesFromIntrospection(
-            KeycloakTokenIntrospector.IntrospectionResult introspectionResult,
-            String realm, String clientId) {
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult, String realm, String clientId) {
         Set<String> roles = new HashSet<>();
 
         // Extract roles from realm_access claim

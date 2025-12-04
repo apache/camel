@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,8 +56,6 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 /**
  * Creates a <a href="http://camel.apache.org/processor.html">Processor</a> which performs an XSLT transformation of the
  * IN message body.
@@ -81,8 +82,7 @@ public class XsltBuilder implements Processor {
     private final XMLConverterHelper converter = new XMLConverterHelper();
     private final Lock sourceHandlerFactoryLock = new ReentrantLock();
 
-    public XsltBuilder() {
-    }
+    public XsltBuilder() {}
 
     public XsltBuilder(Templates templates) {
         this.template = templates;
@@ -333,7 +333,8 @@ public class XsltBuilder implements Processor {
         this.resultHandlerFactory = resultHandlerFactory;
     }
 
-    protected Templates createTemplates(TransformerFactory factory, Source source) throws TransformerConfigurationException {
+    protected Templates createTemplates(TransformerFactory factory, Source source)
+            throws TransformerConfigurationException {
         return factory.newTemplates(source);
     }
 
@@ -362,10 +363,9 @@ public class XsltBuilder implements Processor {
         if (templates != null) {
             setTemplate(templates);
         } else {
-            throw new TransformerConfigurationException(
-                    "Error creating XSLT template. "
-                                                        + "This is most likely be caused by a XML parse error. "
-                                                        + "Please verify your XSLT file configured.");
+            throw new TransformerConfigurationException("Error creating XSLT template. "
+                    + "This is most likely be caused by a XML parse error. "
+                    + "Please verify your XSLT file configured.");
         }
     }
 
@@ -460,7 +460,7 @@ public class XsltBuilder implements Processor {
     }
 
     private void tryAddEntityResolver(SAXSource source) {
-        //expecting source to have not null XMLReader
+        // expecting source to have not null XMLReader
         if (this.entityResolver != null && source != null) {
             source.getXMLReader().setEntityResolver(this.entityResolver);
         }
@@ -529,5 +529,4 @@ public class XsltBuilder implements Processor {
             return "XsltBuilderOnCompletion";
         }
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ldap;
+
+import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 
@@ -40,18 +48,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredContext;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @ExtendWith(DirectoryExtension.class)
-@CreateLdapServer(transports = { @CreateTransport(protocol = "LDAP") })
+@CreateLdapServer(transports = {@CreateTransport(protocol = "LDAP")})
 @ApplyLdifFiles("org/apache/camel/component/ldap/LdapRouteTest.ldif")
-@EnabledIfSystemProperty(named = "enable.ldap.itests", matches = "true",
-                         disabledReason = "the tests does not work due to complex ldap server environment")
+@EnabledIfSystemProperty(
+        named = "enable.ldap.itests",
+        matches = "true",
+        disabledReason = "the tests does not work due to complex ldap server environment")
 public class LdapRouteManualIT extends AbstractLdapTestUnit {
 
     private CamelContext camel;
@@ -168,7 +171,10 @@ public class LdapRouteManualIT extends AbstractLdapTestUnit {
         assertNotNull(out);
         assertNotNull(out.getMessage());
         Collection<SearchResult> data = out.getMessage().getBody(Collection.class);
-        assertNotNull(data, "out body could not be converted to a Collection - was: " + out.getMessage().getBody());
+        assertNotNull(
+                data,
+                "out body could not be converted to a Collection - was: "
+                        + out.getMessage().getBody());
         return data;
     }
 

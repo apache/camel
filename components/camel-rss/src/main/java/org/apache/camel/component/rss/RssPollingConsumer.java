@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rss;
 
 import org.apache.camel.Processor;
@@ -32,5 +33,4 @@ public class RssPollingConsumer extends FeedPollingConsumer {
     protected Object createFeed() throws Exception {
         return RssUtils.createFeed(endpoint.getFeedUri());
     }
-
 }

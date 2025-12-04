@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.consumer.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,19 +47,18 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
-    private static final String TEST_SERVICE_NAME = "test" + ThreadLocalRandom.current().nextInt(1, 100);
+    private static final String TEST_SERVICE_NAME =
+            "test" + ThreadLocalRandom.current().nextInt(1, 100);
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
@@ -112,12 +117,13 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createService").toF("kubernetes-services://%s?oauthToken=%s&operation=createService", host,
-                        authToken);
-                from("direct:deleteService").toF("kubernetes-services://%s?oauthToken=%s&operation=deleteService", host,
-                        authToken);
+                from("direct:createService")
+                        .toF("kubernetes-services://%s?oauthToken=%s&operation=createService", host, authToken);
+                from("direct:deleteService")
+                        .toF("kubernetes-services://%s?oauthToken=%s&operation=deleteService", host, authToken);
                 fromF("kubernetes-services://%s?oauthToken=%s&labelKey=this&labelValue=rocks", host, authToken)
-                        .process(new KubernetesProcessor()).to(mockResultEndpoint);
+                        .process(new KubernetesProcessor())
+                        .to(mockResultEndpoint);
             }
         };
     }
@@ -126,7 +132,9 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
         @Override
         public void process(Exchange exchange) {
             Message in = exchange.getIn();
-            log.info("Got event with body: {} and action {}", in.getBody(),
+            log.info(
+                    "Got event with body: {} and action {}",
+                    in.getBody(),
                     in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }

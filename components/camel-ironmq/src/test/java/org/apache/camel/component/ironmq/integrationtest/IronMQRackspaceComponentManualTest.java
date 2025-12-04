@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq.integrationtest;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Must be manually tested. Provide your own projectId and token!")
 public class IronMQRackspaceComponentManualTest extends CamelTestSupport {
@@ -51,7 +52,7 @@ public class IronMQRackspaceComponentManualTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token
-                                      + "&ironMQCloud=https://mq-rackspace-lon.iron.io";
+                + "&ironMQCloud=https://mq-rackspace-lon.iron.io";
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to(ironMQEndpoint);

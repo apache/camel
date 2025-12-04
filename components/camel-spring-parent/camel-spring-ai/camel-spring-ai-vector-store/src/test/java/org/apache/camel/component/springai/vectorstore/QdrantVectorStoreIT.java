@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.vectorstore;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -42,8 +45,6 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
  * Integration test for Spring AI Vector Store component using Qdrant and Ollama.
  */
@@ -57,8 +58,8 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
     static QdrantService QDRANT = QdrantServiceFactory.createSingletonService();
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonServiceWithConfiguration(
-            new OllamaServiceConfiguration() {
+    static OllamaService OLLAMA =
+            OllamaServiceFactory.createSingletonServiceWithConfiguration(new OllamaServiceConfiguration() {
                 @Override
                 public String modelName() {
                     return "embeddinggemma:300m";
@@ -79,19 +80,22 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
         super.setupResources();
 
         String collectionName = "test_collection_" + System.currentTimeMillis();
-        QdrantClient client
-                = new QdrantClient(QdrantGrpcClient.newBuilder(QDRANT.getGrpcHost(), QDRANT.getGrpcPort(), false).build());
-        client.createCollectionAsync(collectionName,
-                Collections.VectorParams.newBuilder().setDistance(distance).setSize(dimension).build()).get();
+        QdrantClient client =
+                new QdrantClient(QdrantGrpcClient.newBuilder(QDRANT.getGrpcHost(), QDRANT.getGrpcPort(), false)
+                        .build());
+        client.createCollectionAsync(
+                        collectionName,
+                        Collections.VectorParams.newBuilder()
+                                .setDistance(distance)
+                                .setSize(dimension)
+                                .build())
+                .get();
 
         // Create Ollama embedding model
-        OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(OLLAMA.baseUrl())
-                .build();
+        OllamaApi ollamaApi = OllamaApi.builder().baseUrl(OLLAMA.baseUrl()).build();
 
-        OllamaEmbeddingOptions ollamaOptions = OllamaEmbeddingOptions.builder()
-                .model(OLLAMA.modelName())
-                .build();
+        OllamaEmbeddingOptions ollamaOptions =
+                OllamaEmbeddingOptions.builder().model(OLLAMA.modelName()).build();
 
         embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi)
@@ -99,11 +103,8 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 .build();
 
         // Create Qdrant client
-        qdrantClient = new QdrantClient(
-                QdrantGrpcClient.newBuilder(
-                        QDRANT.getGrpcHost(),
-                        QDRANT.getGrpcPort(),
-                        false).build());
+        qdrantClient = new QdrantClient(QdrantGrpcClient.newBuilder(QDRANT.getGrpcHost(), QDRANT.getGrpcPort(), false)
+                .build());
 
         // Create Qdrant vector store with Ollama embeddings
         vectorStore = QdrantVectorStore.builder(qdrantClient, embeddingModel)
@@ -117,7 +118,8 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 .pollDelay(500, TimeUnit.MILLISECONDS)
                 .until(() -> {
                     try {
-                        List<String> collections = qdrantClient.listCollectionsAsync().get();
+                        List<String> collections =
+                                qdrantClient.listCollectionsAsync().get();
                         return collections.contains(collectionName);
                     } catch (Exception e) {
                         return false;
@@ -143,11 +145,10 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 .atMost(10, TimeUnit.SECONDS)
                 .pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
-                    List<Document> results = vectorStore.similaritySearch(
-                            SearchRequest.builder()
-                                    .query("integration framework")
-                                    .topK(5)
-                                    .build());
+                    List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
+                            .query("integration framework")
+                            .topK(5)
+                            .build());
                     assertThat(results).isNotEmpty();
                     assertThat(results.get(0).getText()).contains("Camel");
                 });
@@ -166,29 +167,26 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 .pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
                     // Search for integration-related documents
-                    List<Document> integrationResults = vectorStore.similaritySearch(
-                            SearchRequest.builder()
-                                    .query("integration tools")
-                                    .topK(5)
-                                    .build());
+                    List<Document> integrationResults = vectorStore.similaritySearch(SearchRequest.builder()
+                            .query("integration tools")
+                            .topK(5)
+                            .build());
 
                     assertThat(integrationResults).isNotEmpty();
 
                     // Search for AI-related documents
-                    List<Document> aiResults = vectorStore.similaritySearch(
-                            SearchRequest.builder()
-                                    .query("artificial intelligence")
-                                    .topK(5)
-                                    .build());
+                    List<Document> aiResults = vectorStore.similaritySearch(SearchRequest.builder()
+                            .query("artificial intelligence")
+                            .topK(5)
+                            .build());
 
                     assertThat(aiResults).isNotEmpty();
 
                     // Search for database-related documents
-                    List<Document> dbResults = vectorStore.similaritySearch(
-                            SearchRequest.builder()
-                                    .query("database systems")
-                                    .topK(5)
-                                    .build());
+                    List<Document> dbResults = vectorStore.similaritySearch(SearchRequest.builder()
+                            .query("database systems")
+                            .topK(5)
+                            .build());
 
                     assertThat(dbResults).isNotEmpty();
                 });
@@ -207,10 +205,7 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 .pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
                     // Use the vector store component to perform similarity search
-                    List<Document> results = template.requestBody(
-                            "direct:search",
-                            "feline animals",
-                            List.class);
+                    List<Document> results = template.requestBody("direct:search", "feline animals", List.class);
 
                     assertThat(results).isNotEmpty();
                     // The "cat" document should be more relevant to "feline animals"
@@ -229,9 +224,8 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
             e.getIn().setBody(text);
         });
 
-        Integer documentsAdded = exchange.getMessage().getHeader(
-                SpringAiVectorStoreHeaders.DOCUMENTS_ADDED,
-                Integer.class);
+        Integer documentsAdded =
+                exchange.getMessage().getHeader(SpringAiVectorStoreHeaders.DOCUMENTS_ADDED, Integer.class);
 
         assertThat(documentsAdded).isEqualTo(1);
 
@@ -241,15 +235,14 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 .pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
                     // Verify the document was added
-                    List<Document> results = vectorStore.similaritySearch(
-                            SearchRequest.builder()
-                                    .query("semantic search")
-                                    .topK(5)
-                                    .build());
+                    List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
+                            .query("semantic search")
+                            .topK(5)
+                            .build());
 
                     assertThat(results).isNotEmpty();
-                    boolean foundDocument = results.stream()
-                            .anyMatch(doc -> doc.getText().contains("semantic search"));
+                    boolean foundDocument =
+                            results.stream().anyMatch(doc -> doc.getText().contains("semantic search"));
                     assertThat(foundDocument).isTrue();
                 });
     }
@@ -278,9 +271,8 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                     assertThat(results).isNotEmpty();
 
                     // Verify header contains similar documents
-                    List<Document> similarDocuments = exchange.getMessage().getHeader(
-                            SpringAiVectorStoreHeaders.SIMILAR_DOCUMENTS,
-                            List.class);
+                    List<Document> similarDocuments =
+                            exchange.getMessage().getHeader(SpringAiVectorStoreHeaders.SIMILAR_DOCUMENTS, List.class);
                     assertThat(similarDocuments).isNotNull();
                     assertThat(similarDocuments).isEqualTo(results);
 
@@ -308,32 +300,23 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 .pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
                     List<Document> results = vectorStore.similaritySearch(
-                            SearchRequest.builder()
-                                    .query("deleted")
-                                    .topK(10)
-                                    .build());
+                            SearchRequest.builder().query("deleted").topK(10).build());
                     assertThat(results).hasSizeGreaterThanOrEqualTo(2);
                 });
 
         // Get the document IDs for the first two documents
         List<Document> docsToDelete = vectorStore.similaritySearch(
-                SearchRequest.builder()
-                        .query("deleted")
-                        .topK(2)
-                        .build());
+                SearchRequest.builder().query("deleted").topK(2).build());
 
-        List<String> idsToDelete = docsToDelete.stream()
-                .map(Document::getId)
-                .toList();
+        List<String> idsToDelete = docsToDelete.stream().map(Document::getId).toList();
 
         // Delete documents using the component
         var exchange = template.request("direct:delete", e -> {
             e.getIn().setHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, idsToDelete);
         });
 
-        Integer documentsDeleted = exchange.getMessage().getHeader(
-                SpringAiVectorStoreHeaders.DOCUMENTS_DELETED,
-                Integer.class);
+        Integer documentsDeleted =
+                exchange.getMessage().getHeader(SpringAiVectorStoreHeaders.DOCUMENTS_DELETED, Integer.class);
         assertThat(documentsDeleted).isEqualTo(2);
 
         // Wait and verify documents were deleted
@@ -341,15 +324,14 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 .atMost(10, TimeUnit.SECONDS)
                 .pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
-                    List<Document> afterDeleteResults = vectorStore.similaritySearch(
-                            SearchRequest.builder()
-                                    .query("deleted keep")
-                                    .topK(10)
-                                    .build());
+                    List<Document> afterDeleteResults = vectorStore.similaritySearch(SearchRequest.builder()
+                            .query("deleted keep")
+                            .topK(10)
+                            .build());
 
                     // Deleted documents should not be present
-                    boolean hasDeletedDocs = afterDeleteResults.stream()
-                            .anyMatch(doc -> idsToDelete.contains(doc.getId()));
+                    boolean hasDeletedDocs =
+                            afterDeleteResults.stream().anyMatch(doc -> idsToDelete.contains(doc.getId()));
                     assertThat(hasDeletedDocs).isFalse();
                 });
     }
@@ -365,33 +347,26 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 .atMost(10, TimeUnit.SECONDS)
                 .pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
-                    List<Document> results = vectorStore.similaritySearch(
-                            SearchRequest.builder()
-                                    .query("list deletion")
-                                    .topK(10)
-                                    .build());
+                    List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
+                            .query("list deletion")
+                            .topK(10)
+                            .build());
                     assertThat(results).hasSizeGreaterThanOrEqualTo(2);
                 });
 
         // Get document IDs
         List<Document> docs = vectorStore.similaritySearch(
-                SearchRequest.builder()
-                        .query("list deletion")
-                        .topK(2)
-                        .build());
+                SearchRequest.builder().query("list deletion").topK(2).build());
 
-        List<String> idsToDelete = docs.stream()
-                .map(Document::getId)
-                .toList();
+        List<String> idsToDelete = docs.stream().map(Document::getId).toList();
 
         // Delete using body as list of IDs
         var exchange = template.request("direct:delete", e -> {
             e.getIn().setBody(idsToDelete);
         });
 
-        Integer documentsDeleted = exchange.getMessage().getHeader(
-                SpringAiVectorStoreHeaders.DOCUMENTS_DELETED,
-                Integer.class);
+        Integer documentsDeleted =
+                exchange.getMessage().getHeader(SpringAiVectorStoreHeaders.DOCUMENTS_DELETED, Integer.class);
         assertThat(documentsDeleted).isEqualTo(2);
     }
 
@@ -412,7 +387,8 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
                 // Route for similarity search with parameters
                 from("direct:searchWithParams")
                         .log("direct:searchWithParams")
-                        .to("spring-ai-vector-store:test?vectorStore=#vectorStore&operation=SIMILARITY_SEARCH&topK=5&similarityThreshold=0.7")
+                        .to(
+                                "spring-ai-vector-store:test?vectorStore=#vectorStore&operation=SIMILARITY_SEARCH&topK=5&similarityThreshold=0.7")
                         .log("Found ${header.CamelSpringAiVectorStoreSimilarDocuments.size()} similar documents");
 
                 // Route for adding documents directly to vector store

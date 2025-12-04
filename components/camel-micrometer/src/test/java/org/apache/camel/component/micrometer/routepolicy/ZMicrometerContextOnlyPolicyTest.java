@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Must run last
@@ -57,9 +58,10 @@ public class ZMicrometerContextOnlyPolicyTest extends AbstractMicrometerRoutePol
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Timer contextTimer
-                = meterRegistry.find(formatMetricName(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME)).tag(EVENT_TYPE_TAG, "context")
-                        .timer();
+        Timer contextTimer = meterRegistry
+                .find(formatMetricName(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME))
+                .tag(EVENT_TYPE_TAG, "context")
+                .timer();
         assertEquals(count, contextTimer.count());
     }
 
@@ -68,13 +70,9 @@ public class ZMicrometerContextOnlyPolicyTest extends AbstractMicrometerRoutePol
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .delay(DELAY_FOO)
-                        .to("mock:result");
+                from("direct:foo").routeId("foo").delay(DELAY_FOO).to("mock:result");
 
-                from("direct:bar").routeId("bar")
-                        .delay(DELAY_BAR)
-                        .to("mock:result");
+                from("direct:bar").routeId("bar").delay(DELAY_BAR).to("mock:result");
             }
         };
     }

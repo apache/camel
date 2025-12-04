@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,9 +30,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  *
  */
@@ -36,8 +37,8 @@ public class DumpModelAsXmlRouteTemplateTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context,
-                context.getRouteTemplateDefinition("myTemplate"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteTemplateDefinition("myTemplate"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -72,8 +73,12 @@ public class DumpModelAsXmlRouteTemplateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("greeting").templateParameter("whereto")
-                        .from("direct:start").transform(simple("{{greeting}}")).to("mock:{{whereto}}");
+                routeTemplate("myTemplate")
+                        .templateParameter("greeting")
+                        .templateParameter("whereto")
+                        .from("direct:start")
+                        .transform(simple("{{greeting}}"))
+                        .to("mock:{{whereto}}");
             }
         };
     }

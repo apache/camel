@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.util.concurrent.ThreadPoolExecutor;
@@ -277,8 +278,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
 
     @Override
     public Object getManagedObjectForThreadPool(
-            CamelContext context, ThreadPoolExecutor threadPool,
-            String id, String sourceId, String routeId, String threadPoolProfileId) {
+            CamelContext context,
+            ThreadPoolExecutor threadPool,
+            String id,
+            String sourceId,
+            String routeId,
+            String threadPoolProfileId) {
         ManagedThreadPool mtp = new ManagedThreadPool(context, threadPool, id, sourceId, routeId, threadPoolProfileId);
         mtp.init(context.getManagementStrategy());
         return mtp;
@@ -325,9 +330,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    public Object getManagedObjectForProcessor(
-            CamelContext context, Processor processor,
-            NamedNode node, Route route) {
+    public Object getManagedObjectForProcessor(CamelContext context, Processor processor, NamedNode node, Route route) {
         ManagedProcessor answer = null;
 
         ProcessorDefinition<?> definition = (ProcessorDefinition<?>) node;
@@ -386,22 +389,17 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof UnmarshalProcessor) {
                 answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, cast(definition));
             } else if (target instanceof FailOverLoadBalancer) {
-                answer = new ManagedFailoverLoadBalancer(
-                        context, (FailOverLoadBalancer) target, cast(definition));
+                answer = new ManagedFailoverLoadBalancer(context, (FailOverLoadBalancer) target, cast(definition));
             } else if (target instanceof RandomLoadBalancer) {
-                answer = new ManagedRandomLoadBalancer(
-                        context, (RandomLoadBalancer) target, cast(definition));
+                answer = new ManagedRandomLoadBalancer(context, (RandomLoadBalancer) target, cast(definition));
             } else if (target instanceof RoundRobinLoadBalancer) {
-                answer = new ManagedRoundRobinLoadBalancer(
-                        context, (RoundRobinLoadBalancer) target, cast(definition));
+                answer = new ManagedRoundRobinLoadBalancer(context, (RoundRobinLoadBalancer) target, cast(definition));
             } else if (target instanceof StickyLoadBalancer) {
-                answer = new ManagedStickyLoadBalancer(
-                        context, (StickyLoadBalancer) target, cast(definition));
+                answer = new ManagedStickyLoadBalancer(context, (StickyLoadBalancer) target, cast(definition));
             } else if (target instanceof TopicLoadBalancer) {
                 answer = new ManagedTopicLoadBalancer(context, (TopicLoadBalancer) target, cast(definition));
             } else if (target instanceof WeightedLoadBalancer) {
-                answer = new ManagedWeightedLoadBalancer(
-                        context, (WeightedLoadBalancer) target, cast(definition));
+                answer = new ManagedWeightedLoadBalancer(context, (WeightedLoadBalancer) target, cast(definition));
             } else if (target instanceof RecipientList) {
                 answer = new ManagedRecipientList(context, (RecipientList) target, cast(definition));
             } else if (target instanceof Splitter) {
@@ -472,8 +470,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof BeanProcessor) {
                 answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
             } else if (target instanceof IdempotentConsumer) {
-                answer = new ManagedIdempotentConsumer(
-                        context, (IdempotentConsumer) target, cast(definition));
+                answer = new ManagedIdempotentConsumer(context, (IdempotentConsumer) target, cast(definition));
             } else if (target instanceof AggregateProcessor) {
                 answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, cast(definition));
             } else if (target instanceof Enricher) {
@@ -487,7 +484,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             // special for custom load balancer
             if (definition instanceof LoadBalanceDefinition lb) {
                 if (lb.getLoadBalancerType() instanceof CustomLoadBalancerDefinition) {
-                    answer = new ManagedCustomLoadBalancer(context, (LoadBalancer) target, (LoadBalanceDefinition) definition);
+                    answer = new ManagedCustomLoadBalancer(
+                            context, (LoadBalancer) target, (LoadBalanceDefinition) definition);
                 }
             }
 
@@ -521,5 +519,4 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     private <T extends ProcessorDefinition<?>> T cast(ProcessorDefinition<?> definition) {
         return (T) definition;
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,10 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirTransaction} APIs. The class source won't be generated
  * again if the generator MOJO finds it under src/test/java.
@@ -45,8 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FhirTransactionIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirTransactionIT.class);
-    private static final String PATH_PREFIX
-            = FhirApiCollection.getCollection().getApiName(FhirTransactionApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirTransactionApiMethod.class)
+            .getName();
 
     @Test
     public void testWithBundle() {
@@ -74,7 +76,8 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
     @Test
     public void testWithResources() {
         Patient oscar = new Patient().addName(new HumanName().addGiven("Oscar").setFamily("Peterson"));
-        Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
+        Patient bobbyHebb =
+                new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         List<IBaseResource> patients = new ArrayList<>(2);
         patients.add(oscar);
         patients.add(bobbyHebb);
@@ -90,7 +93,8 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
     @Test
     public void testWithResourcesSummaryEnum() {
         Patient oscar = new Patient().addName(new HumanName().addGiven("Oscar").setFamily("Peterson"));
-        Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
+        Patient bobbyHebb =
+                new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         List<IBaseResource> patients = new ArrayList<>(2);
         patients.add(oscar);
         patients.add(bobbyHebb);
@@ -110,17 +114,13 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for withBundle
-                from("direct://WITH_BUNDLE")
-                        .to("fhir://" + PATH_PREFIX + "/withBundle?inBody=bundle");
+                from("direct://WITH_BUNDLE").to("fhir://" + PATH_PREFIX + "/withBundle?inBody=bundle");
 
                 // test route for withBundle
-                from("direct://WITH_STRING_BUNDLE")
-                        .to("fhir://" + PATH_PREFIX + "/withBundle?inBody=stringBundle");
+                from("direct://WITH_STRING_BUNDLE").to("fhir://" + PATH_PREFIX + "/withBundle?inBody=stringBundle");
 
                 // test route for withResources
-                from("direct://WITH_RESOURCES")
-                        .to("fhir://" + PATH_PREFIX + "/withResources?inBody=resources");
-
+                from("direct://WITH_RESOURCES").to("fhir://" + PATH_PREFIX + "/withResources?inBody=resources");
             }
         };
     }
@@ -129,10 +129,10 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         Bundle input = new Bundle();
         input.setType(Bundle.BundleType.TRANSACTION);
         input.addEntry()
-                .setResource(new Patient().addName(new HumanName().addGiven("Art").setFamily("Tatum")))
+                .setResource(
+                        new Patient().addName(new HumanName().addGiven("Art").setFamily("Tatum")))
                 .getRequest()
                 .setMethod(Bundle.HTTPVerb.POST);
         return input;
     }
-
 }

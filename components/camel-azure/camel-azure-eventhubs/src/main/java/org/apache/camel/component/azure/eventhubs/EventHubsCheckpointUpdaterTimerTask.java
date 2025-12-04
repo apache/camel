@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
 
 import java.util.TimerTask;
@@ -39,8 +40,10 @@ public class EventHubsCheckpointUpdaterTimerTask extends TimerTask {
     public void run() {
         if (processedEvents.get() > 0) {
             LOG.debug("checkpointing offset after reaching timeout, with a batch of {}", processedEvents.get());
-            eventContext.updateCheckpointAsync()
-                    .subscribe(unused -> LOG.debug("Processed one event..."),
+            eventContext
+                    .updateCheckpointAsync()
+                    .subscribe(
+                            unused -> LOG.debug("Processed one event..."),
                             error -> LOG.debug("Error when updating Checkpoint: {}", error.getMessage()),
                             () -> {
                                 LOG.debug("Checkpoint updated.");

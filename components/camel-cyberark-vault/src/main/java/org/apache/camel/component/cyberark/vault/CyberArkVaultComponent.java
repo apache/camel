@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cyberark.vault;
 
 import java.util.Map;
@@ -33,13 +34,12 @@ public class CyberArkVaultComponent extends DefaultComponent {
     @Metadata
     private CyberArkVaultConfiguration configuration = new CyberArkVaultConfiguration();
 
-    public CyberArkVaultComponent() {
-    }
+    public CyberArkVaultComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        CyberArkVaultConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new CyberArkVaultConfiguration();
+        CyberArkVaultConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new CyberArkVaultConfiguration();
 
         CyberArkVaultEndpoint endpoint = new CyberArkVaultEndpoint(uri, this, configuration);
         endpoint.getConfiguration().setSecretId(remaining);

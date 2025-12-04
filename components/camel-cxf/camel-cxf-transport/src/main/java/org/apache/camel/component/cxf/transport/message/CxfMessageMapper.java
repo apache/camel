@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport.message;
 
 import org.apache.camel.Exchange;
@@ -28,15 +29,11 @@ public interface CxfMessageMapper {
     /**
      * Create a CXF {@link Message} from a Camel exchange.
      */
-    Message createCxfMessageFromCamelExchange(
-            Exchange camelExchange,
-            HeaderFilterStrategy headerFilterStrategy);
+    Message createCxfMessageFromCamelExchange(Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy);
 
     /**
      * Given a CXF out/response Message, this method propagates response headers to a Camel exchange.
      */
     void propagateResponseHeadersToCamel(
-            Message cxfMessage, Exchange camelExchange,
-            HeaderFilterStrategy headerFilterStrategy);
-
+            Message cxfMessage, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy);
 }

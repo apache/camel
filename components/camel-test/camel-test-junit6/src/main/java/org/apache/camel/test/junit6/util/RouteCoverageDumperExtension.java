@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6.util;
 
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -40,15 +41,16 @@ public class RouteCoverageDumperExtension {
 
         CamelRouteCoverageDumper routeCoverageDumper = new CamelRouteCoverageDumper();
 
-        ManagedCamelContext mc
-                = context != null ? context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class) : null;
+        ManagedCamelContext mc =
+                context != null ? context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class) : null;
         ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
         if (managedCamelContext == null) {
-            LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
-                     + "Add camel-management JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
+            LOG.warn(
+                    "Cannot dump route coverage to file as JMX is not enabled. "
+                            + "Add camel-management JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
         } else {
-            routeCoverageDumper.dump(managedCamelContext, context, dir, name, getClass().getName(), currentTestName,
-                    taken);
+            routeCoverageDumper.dump(
+                    managedCamelContext, context, dir, name, getClass().getName(), currentTestName, taken);
         }
     }
 }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ibm.watson.language;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.ibm.watson.language;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class WatsonLanguageComponentTest extends CamelTestSupport {
 
@@ -39,8 +40,8 @@ public class WatsonLanguageComponentTest extends CamelTestSupport {
         config.setApiKey("test-api-key");
         component.setConfiguration(config);
 
-        WatsonLanguageEndpoint endpoint
-                = (WatsonLanguageEndpoint) component.createEndpoint("ibm-watson-language://default");
+        WatsonLanguageEndpoint endpoint =
+                (WatsonLanguageEndpoint) component.createEndpoint("ibm-watson-language://default");
         assertNotNull(endpoint);
         assertEquals("test-api-key", endpoint.getConfiguration().getApiKey());
     }

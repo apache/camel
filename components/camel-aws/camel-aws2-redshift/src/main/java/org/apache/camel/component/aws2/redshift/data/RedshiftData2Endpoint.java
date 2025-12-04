@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data;
 
 import org.apache.camel.Category;
@@ -32,12 +33,17 @@ import software.amazon.awssdk.services.redshiftdata.RedshiftDataClient;
 /**
  * Perform operations on AWS Redshift using Redshift Data API.
  */
-@UriEndpoint(firstVersion = "4.1.0", scheme = "aws2-redshift-data", title = "AWS RedshiftData",
-             syntax = "aws2-redshift-data:label",
-             producerOnly = true, category = {
-                     Category.CLOUD, Category.SERVERLESS,
-                     Category.DATABASE, Category.BIGDATA },
-             headersClass = RedshiftData2Constants.class)
+@UriEndpoint(
+        firstVersion = "4.1.0",
+        scheme = "aws2-redshift-data",
+        title = "AWS RedshiftData",
+        syntax = "aws2-redshift-data:label",
+        producerOnly = true,
+        category = {
+            Category.CLOUD, Category.SERVERLESS,
+            Category.DATABASE, Category.BIGDATA
+        },
+        headersClass = RedshiftData2Constants.class)
 public class RedshiftData2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private RedshiftDataClient awsRedshiftDataClient;
@@ -70,7 +76,8 @@ public class RedshiftData2Endpoint extends DefaultEndpoint implements EndpointSe
         super.doStart();
         awsRedshiftDataClient = configuration.getAwsRedshiftDataClient() != null
                 ? configuration.getAwsRedshiftDataClient()
-                : RedshiftData2ClientFactory.getRedshiftDataClient(configuration).getRedshiftDataClient();
+                : RedshiftData2ClientFactory.getRedshiftDataClient(configuration)
+                        .getRedshiftDataClient();
     }
 
     @Override
@@ -108,5 +115,4 @@ public class RedshiftData2Endpoint extends DefaultEndpoint implements EndpointSe
     public String getServiceProtocol() {
         return "redshift";
     }
-
 }

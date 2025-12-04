@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,8 +58,6 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration test for Keycloak token binding security features.
  * <p>
@@ -72,16 +73,21 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
     static KeycloakService keycloakService = KeycloakServiceFactory.createService();
 
     // Test data - use unique names
-    private static final String TEST_REALM_NAME = "token-binding-realm-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_CLIENT_ID = "token-binding-client-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_REALM_NAME =
+            "token-binding-realm-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_CLIENT_ID =
+            "token-binding-client-" + UUID.randomUUID().toString().substring(0, 8);
     private static String TEST_CLIENT_SECRET = null;
 
     // Test users
-    private static final String ADMIN_USER = "admin-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String ADMIN_USER =
+            "admin-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String ADMIN_PASSWORD = "admin123";
-    private static final String NORMAL_USER = "user-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String NORMAL_USER =
+            "user-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String NORMAL_PASSWORD = "user123";
-    private static final String ATTACKER_USER = "attacker-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String ATTACKER_USER =
+            "attacker-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String ATTACKER_PASSWORD = "attacker123";
 
     // Test roles
@@ -150,8 +156,8 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
 
         Response response = realmResource.clients().create(client);
         if (response.getStatus() == 201) {
-            String clientId
-                    = response.getHeaderString("Location").substring(response.getHeaderString("Location").lastIndexOf('/') + 1);
+            String clientId = response.getHeaderString("Location")
+                    .substring(response.getHeaderString("Location").lastIndexOf('/') + 1);
             ClientResource clientResource = realmResource.clients().get(clientId);
             TEST_CLIENT_SECRET = clientResource.getSecret().getValue();
             log.info("Created test client: {} with secret", TEST_CLIENT_ID);
@@ -188,8 +194,8 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
 
         Response response = realmResource.users().create(user);
         if (response.getStatus() == 201) {
-            String userId
-                    = response.getHeaderString("Location").substring(response.getHeaderString("Location").lastIndexOf('/') + 1);
+            String userId = response.getHeaderString("Location")
+                    .substring(response.getHeaderString("Location").lastIndexOf('/') + 1);
             UserResource userResource = realmResource.users().get(userId);
 
             CredentialRepresentation credential = new CredentialRepresentation();
@@ -236,7 +242,8 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
 
                 from("direct:secure-default")
                         .policy(securePolicy)
-                        .transform().constant("Access granted - secure default");
+                        .transform()
+                        .constant("Access granted - secure default");
 
                 // Route 2: Maximum security - headers disabled
                 KeycloakSecurityPolicy maxSecurityPolicy = new KeycloakSecurityPolicy();
@@ -248,7 +255,8 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
 
                 from("direct:max-security")
                         .policy(maxSecurityPolicy)
-                        .transform().constant("Access granted - max security");
+                        .transform()
+                        .constant("Access granted - max security");
 
                 // Route 3: Admin-only route
                 KeycloakSecurityPolicy adminPolicy = new KeycloakSecurityPolicy();
@@ -259,9 +267,7 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
                 adminPolicy.setRequiredRoles(Arrays.asList(ADMIN_ROLE));
                 adminPolicy.setPreferPropertyOverHeader(true);
 
-                from("direct:admin-only")
-                        .policy(adminPolicy)
-                        .transform().constant("Admin access granted");
+                from("direct:admin-only").policy(adminPolicy).transform().constant("Admin access granted");
             }
         };
     }
@@ -279,9 +285,11 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
         String normalToken = getAccessToken(NORMAL_USER, NORMAL_PASSWORD);
 
         String result = template.send("direct:secure-default", exchange -> {
-            exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
-            exchange.getIn().setBody("test");
-        }).getMessage().getBody(String.class);
+                    exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
+                    exchange.getIn().setBody("test");
+                })
+                .getMessage()
+                .getBody(String.class);
 
         assertEquals("Access granted - secure default", result);
         log.info("✓ Property token works");
@@ -292,8 +300,12 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
     void testHeaderTokenWorks() {
         String normalToken = getAccessToken(NORMAL_USER, NORMAL_PASSWORD);
 
-        String result = template.requestBodyAndHeader("direct:secure-default", "test",
-                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, normalToken, String.class);
+        String result = template.requestBodyAndHeader(
+                "direct:secure-default",
+                "test",
+                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                normalToken,
+                String.class);
 
         assertEquals("Access granted - secure default", result);
         log.info("✓ Header token works");
@@ -306,10 +318,12 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
         String attackerToken = getAccessToken(ATTACKER_USER, ATTACKER_PASSWORD);
 
         String result = template.send("direct:secure-default", exchange -> {
-            exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
-            exchange.getIn().setHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, attackerToken);
-            exchange.getIn().setBody("test");
-        }).getMessage().getBody(String.class);
+                    exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
+                    exchange.getIn().setHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, attackerToken);
+                    exchange.getIn().setBody("test");
+                })
+                .getMessage()
+                .getBody(String.class);
 
         assertEquals("Access granted - secure default", result);
         log.info("✓ Property token preferred over header token");
@@ -321,10 +335,12 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
         String normalToken = getAccessToken(NORMAL_USER, NORMAL_PASSWORD);
 
         String result = template.send("direct:secure-default", exchange -> {
-            exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
-            exchange.getIn().setHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, "invalid.token");
-            exchange.getIn().setBody("test");
-        }).getMessage().getBody(String.class);
+                    exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
+                    exchange.getIn().setHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, "invalid.token");
+                    exchange.getIn().setBody("test");
+                })
+                .getMessage()
+                .getBody(String.class);
 
         assertEquals("Access granted - secure default", result);
         log.info("✓ Invalid header ignored when property valid");
@@ -336,8 +352,12 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
         String normalToken = getAccessToken(NORMAL_USER, NORMAL_PASSWORD);
 
         CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
-            template.requestBodyAndHeader("direct:max-security", "test",
-                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, normalToken, String.class);
+            template.requestBodyAndHeader(
+                    "direct:max-security",
+                    "test",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                    normalToken,
+                    String.class);
         });
 
         assertTrue(ex.getCause() instanceof CamelAuthorizationException);
@@ -350,9 +370,11 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
         String normalToken = getAccessToken(NORMAL_USER, NORMAL_PASSWORD);
 
         String result = template.send("direct:max-security", exchange -> {
-            exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
-            exchange.getIn().setBody("test");
-        }).getMessage().getBody(String.class);
+                    exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
+                    exchange.getIn().setBody("test");
+                })
+                .getMessage()
+                .getBody(String.class);
 
         assertEquals("Access granted - max security", result);
         log.info("✓ Property works when headers disabled");
@@ -365,10 +387,12 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
         String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
 
         String result = template.send("direct:secure-default", exchange -> {
-            exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
-            exchange.getIn().setHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken);
-            exchange.getIn().setBody("test");
-        }).getMessage().getBody(String.class);
+                    exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, normalToken);
+                    exchange.getIn().setHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken);
+                    exchange.getIn().setBody("test");
+                })
+                .getMessage()
+                .getBody(String.class);
 
         assertEquals("Access granted - secure default", result);
         log.info("✓ Property token preferred - attack vector mitigated");
@@ -381,10 +405,12 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
         String attackerToken = getAccessToken(ATTACKER_USER, ATTACKER_PASSWORD);
 
         String result = template.send("direct:secure-default", exchange -> {
-            exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, victimToken);
-            exchange.getIn().setHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, attackerToken);
-            exchange.getIn().setBody("hijack attempt");
-        }).getMessage().getBody(String.class);
+                    exchange.setProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, victimToken);
+                    exchange.getIn().setHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, attackerToken);
+                    exchange.getIn().setBody("hijack attempt");
+                })
+                .getMessage()
+                .getBody(String.class);
 
         assertEquals("Access granted - secure default", result);
         log.info("✓ BLOCKED: Session hijacking prevented");
@@ -395,8 +421,8 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
     void testAuthorizationHeaderFormat() {
         String normalToken = getAccessToken(NORMAL_USER, NORMAL_PASSWORD);
 
-        String result = template.requestBodyAndHeader("direct:secure-default", "test",
-                "Authorization", "Bearer " + normalToken, String.class);
+        String result = template.requestBodyAndHeader(
+                "direct:secure-default", "test", "Authorization", "Bearer " + normalToken, String.class);
 
         assertEquals("Access granted - secure default", result);
         log.info("✓ Authorization Bearer header works");
@@ -417,7 +443,7 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
     private String getAccessToken(String username, String password) {
         try (Client client = ClientBuilder.newClient()) {
             String tokenUrl = keycloakService.getKeycloakServerUrl() + "/realms/" + TEST_REALM_NAME
-                              + "/protocol/openid-connect/token";
+                    + "/protocol/openid-connect/token";
 
             Form form = new Form()
                     .param("grant_type", "password")
@@ -436,11 +462,13 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
                     return (String) tokenResponse.get("access_token");
                 } else {
                     String errorBody = response.readEntity(String.class);
-                    log.error("Failed to obtain token for user {}. Status: {}, Response: {}", username,
-                            response.getStatus(), errorBody);
-                    throw new RuntimeException(
-                            "Failed to obtain access token for " + username + ". Status: " + response.getStatus() + ", Error: "
-                                               + errorBody);
+                    log.error(
+                            "Failed to obtain token for user {}. Status: {}, Response: {}",
+                            username,
+                            response.getStatus(),
+                            errorBody);
+                    throw new RuntimeException("Failed to obtain access token for " + username + ". Status: "
+                            + response.getStatus() + ", Error: " + errorBody);
                 }
             }
         } catch (Exception e) {

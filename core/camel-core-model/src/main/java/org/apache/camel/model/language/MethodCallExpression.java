@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,24 +36,28 @@ public class MethodCallExpression extends TypedExpressionDefinition {
 
     @XmlTransient
     private Class<?> beanType;
+
     @XmlTransient
     private Object instance;
 
     @XmlAttribute
     private String ref;
+
     @XmlAttribute
     private String method;
+
     @XmlAttribute(name = "beanType")
     private String beanTypeName;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
     private String scope;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String validate;
 
-    public MethodCallExpression() {
-    }
+    public MethodCallExpression() {}
 
     protected MethodCallExpression(MethodCallExpression source) {
         super(source);

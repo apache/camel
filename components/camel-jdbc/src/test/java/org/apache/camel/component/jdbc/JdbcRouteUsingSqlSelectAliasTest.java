@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -23,9 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
 
@@ -45,7 +46,10 @@ public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
         // assertions of the response
         assertNotNull(out);
         List<Map<String, Object>> data = out.getMessage().getBody(List.class);
-        assertNotNull(data, "out body could not be converted to a List - was: " + out.getMessage().getBody());
+        assertNotNull(
+                data,
+                "out body could not be converted to a List - was: "
+                        + out.getMessage().getBody());
         assertEquals(3, data.size());
         Map<String, Object> row = data.get(0);
         assertEquals("cust1", row.get("IDENTIFIER"));

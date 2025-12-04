@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -45,19 +46,18 @@ public class KameletLocalBeanGroovyTest extends CamelTestSupport {
             @Override
             public void configure() {
                 routeTemplate("whereTo")
-                        .templateBean("myBar", "groovy",
+                        .templateBean(
+                                "myBar",
+                                "groovy",
                                 "def bean = new org.apache.camel.component.kamelet.MyInjectBar()\n"
-                                                         + "bean.bar = 'Gr8t'\n"
-                                                         + "return bean")
+                                        + "bean.bar = 'Gr8t'\n"
+                                        + "return bean")
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");
 
-                from("direct:start")
-                        .kamelet("whereTo")
-                        .to("mock:result");
+                from("direct:start").kamelet("whereTo").to("mock:result");
             }
         };
     }
-
 }

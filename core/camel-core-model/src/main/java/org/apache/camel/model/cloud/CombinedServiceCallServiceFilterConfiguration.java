@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.ArrayList;
@@ -38,10 +39,11 @@ import org.apache.camel.spi.Metadata;
 @Deprecated(since = "3.19.0")
 public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     @XmlElements({
-            @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
-            @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
-            @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
-            @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class) })
+        @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)
+    })
     private List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations;
 
     public CombinedServiceCallServiceFilterConfiguration() {
@@ -65,7 +67,8 @@ public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallSe
      *
      * @param serviceFilterConfigurations
      */
-    public void setServiceFilterConfigurations(List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations) {
+    public void setServiceFilterConfigurations(
+            List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations) {
         this.serviceFilterConfigurations = serviceFilterConfigurations;
     }
 

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -35,10 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test which checks leaking connections when FTP server returns correct status for NOOP operation.
  */
@@ -56,7 +57,7 @@ public class FtpBadLoginMockNoopConnectionLeakIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:{{ftp.server.port}}/badlogin?password=cantremeber&maximumReconnectAttempts=3"
-               + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
+                + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
     }
 
     @Override
@@ -122,7 +123,7 @@ public class FtpBadLoginMockNoopConnectionLeakIT extends FtpServerTestSupport {
         @Override
         public Socket createSocket() {
             AuditingSocket socket = new AuditingSocket();
-            socketAudits.put(System.identityHashCode(socket), new boolean[] { false, false });
+            socketAudits.put(System.identityHashCode(socket), new boolean[] {false, false});
             return socket;
         }
 
@@ -153,5 +154,4 @@ public class FtpBadLoginMockNoopConnectionLeakIT extends FtpServerTestSupport {
             value[1] = true;
         }
     }
-
 }

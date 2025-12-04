@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.transformer;
 
 import org.apache.camel.CamelContext;
@@ -42,13 +43,13 @@ public class CustomTransformerReifier extends TransformerReifier<CustomTransform
                 throw new IllegalArgumentException("Cannot find transformer with ref:" + definition.getRef());
             }
             if (transformer.getName() != null || transformer.getFrom() != null || transformer.getTo() != null) {
-                throw new IllegalArgumentException(
-                        String.format("Transformer '%s' is already in use. Please check if duplicate transformer exists.",
-                                definition.getRef()));
+                throw new IllegalArgumentException(String.format(
+                        "Transformer '%s' is already in use. Please check if duplicate transformer exists.",
+                        definition.getRef()));
             }
         } else {
-            Class<Transformer> transformerClass
-                    = camelContext.getClassResolver().resolveClass(definition.getClassName(), Transformer.class);
+            Class<Transformer> transformerClass =
+                    camelContext.getClassResolver().resolveClass(definition.getClassName(), Transformer.class);
             if (transformerClass == null) {
                 throw new IllegalArgumentException("Cannot find transformer class: " + definition.getClassName());
             }
@@ -56,8 +57,9 @@ public class CustomTransformerReifier extends TransformerReifier<CustomTransform
             transformer = camelContext.getInjector().newInstance(transformerClass, false); // NOSONAR
         }
         transformer.setCamelContext(camelContext);
-        return transformer.setName(definition.getScheme(), definition.getName()).setFrom(definition.getFromType())
+        return transformer
+                .setName(definition.getScheme(), definition.getName())
+                .setFrom(definition.getFromType())
                 .setTo(definition.getToType());
     }
-
 }

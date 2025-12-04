@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.spi;
 
 import org.apache.camel.spi.Configurer;
@@ -59,11 +60,10 @@ public class KnativeSinkBinding {
 
     @Override
     public String toString() {
-        return "KnativeSinkBinding{" +
-               "name='" + name + '\'' +
-               ", type=" + type +
-               ", objectKind='" + objectKind + '\'' +
-               ", objectApiVersion='" + objectApiVersion + '\'' +
-               '}';
+        return "KnativeSinkBinding{" + "name='"
+                + name + '\'' + ", type="
+                + type + ", objectKind='"
+                + objectKind + '\'' + ", objectApiVersion='"
+                + objectApiVersion + '\'' + '}';
     }
 }

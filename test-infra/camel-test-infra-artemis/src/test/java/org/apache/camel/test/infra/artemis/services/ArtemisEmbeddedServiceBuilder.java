@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
 
 import java.util.function.Consumer;
@@ -25,8 +26,7 @@ public class ArtemisEmbeddedServiceBuilder {
     private boolean isPersistent;
     private Consumer<Configuration> customConfigurator;
 
-    public ArtemisEmbeddedServiceBuilder() {
-    }
+    public ArtemisEmbeddedServiceBuilder() {}
 
     public ArtemisEmbeddedServiceBuilder withPersistent(boolean persistent) {
         isPersistent = persistent;

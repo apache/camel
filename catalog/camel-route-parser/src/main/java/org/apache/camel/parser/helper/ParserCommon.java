@@ -41,9 +41,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 public final class ParserCommon {
 
-    private ParserCommon() {
-
-    }
+    private ParserCommon() {}
 
     public static Expression evalExpression(Expression exp) {
         if (exp instanceof SingleMemberAnnotation singleMemberAnnotation) {
@@ -121,8 +119,10 @@ public final class ParserCommon {
         } else if (expression instanceof SimpleName) {
             FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) expression);
             if (field != null) {
-                return field.getType().isType("int") || field.getType().isType("long")
-                        || field.getType().isType("Integer") || field.getType().isType("Long");
+                return field.getType().isType("int")
+                        || field.getType().isType("long")
+                        || field.getType().isType("Integer")
+                        || field.getType().isType("Long");
             }
         }
         return false;
@@ -135,7 +135,10 @@ public final class ParserCommon {
         if (name.equals("onWhen") || name.equals("when") || name.equals("handled") || name.equals("continued")) {
             return true;
         }
-        if (name.equals("retryWhile") || name.equals("filter") || name.equals("validate") || name.equals("loopDoWhile")) {
+        if (name.equals("retryWhile")
+                || name.equals("filter")
+                || name.equals("validate")
+                || name.equals("loopDoWhile")) {
             return true;
         }
         return false;

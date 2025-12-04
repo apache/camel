@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues.contextscan3;
 
 import jakarta.annotation.Resource;
@@ -31,9 +32,6 @@ public class MyHelloRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:start")
-                .bean("myHelloBean", "hello")
-                .to("mock:result");
+        from("direct:start").bean("myHelloBean", "hello").to("mock:result");
     }
-
 }

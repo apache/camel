@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.spi;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Mockito.times;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,12 +42,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class InstrumentedThreadPoolFactoryTest {
@@ -104,8 +105,8 @@ public class InstrumentedThreadPoolFactoryTest {
 
     @Test
     public void testNewScheduledThreadPool() {
-        final ScheduledExecutorService scheduledExecutorService
-                = instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
+        final ScheduledExecutorService scheduledExecutorService =
+                instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
 
         assertThat(scheduledExecutorService, is(notNullValue()));
         assertThat(scheduledExecutorService, is(instanceOf(TimedExecutorService.class)));
@@ -113,5 +114,4 @@ public class InstrumentedThreadPoolFactoryTest {
         Tags tags = Tags.of("name", METRICS_NAME + "1");
         inOrder.verify(registry, times(1)).timer("executor", tags);
     }
-
 }

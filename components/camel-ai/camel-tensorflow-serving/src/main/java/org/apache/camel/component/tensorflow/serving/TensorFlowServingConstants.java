@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tensorflow.serving;
 
 import org.apache.camel.spi.Metadata;
@@ -23,8 +24,10 @@ import org.apache.camel.spi.Metadata;
  */
 public interface TensorFlowServingConstants {
 
-    @Metadata(description = "The target of the client. See: https://grpc.github.io/grpc-java/javadoc/io/grpc/Grpc.html#newChannelBuilder%28java.lang.String,io.grpc.ChannelCredentials%29",
-              javaType = "String")
+    @Metadata(
+            description =
+                    "The target of the client. See: https://grpc.github.io/grpc-java/javadoc/io/grpc/Grpc.html#newChannelBuilder%28java.lang.String,io.grpc.ChannelCredentials%29",
+            javaType = "String")
     String TARGET = "CamelTensorFlowServingTarget";
 
     @Metadata(description = "The credentials of the client.", javaType = "io.grpc.ChannelCredentials")
@@ -33,16 +36,19 @@ public interface TensorFlowServingConstants {
     @Metadata(description = "Required servable name.", javaType = "String")
     String MODEL_NAME = "CamelTensorFlowServingModelName";
 
-    @Metadata(description = "Optional choice of which version of the model to use. Use this specific version number.",
-              javaType = "long")
+    @Metadata(
+            description = "Optional choice of which version of the model to use. Use this specific version number.",
+            javaType = "long")
     String MODEL_VERSION = "CamelTensorFlowServingModelVersion";
 
-    @Metadata(description = "Optional choice of which version of the model to use. Use the version associated with the given label.",
-              javaType = "String")
+    @Metadata(
+            description =
+                    "Optional choice of which version of the model to use. Use the version associated with the given label.",
+            javaType = "String")
     String MODEL_VERSION_LABEL = "CamelTensorFlowServingModelVersionLabel";
 
-    @Metadata(description = "A named signature to evaluate. If unspecified, the default signature will be used.",
-              javaType = "String")
+    @Metadata(
+            description = "A named signature to evaluate. If unspecified, the default signature will be used.",
+            javaType = "String")
     String SIGNATURE_NAME = "CamelTensorFlowServingSignatureName";
-
 }

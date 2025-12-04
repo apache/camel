@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.jaxb.definition;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
@@ -23,15 +26,12 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
 
     @Test
     public void testLoadRouteWithNamespaceFromXml() throws Exception {
-        Resource resource
-                = PluginHelper.getResourceLoader(context)
-                        .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/routeWithNamespace.xml");
+        Resource resource = PluginHelper.getResourceLoader(context)
+                .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/routeWithNamespace.xml");
         PluginHelper.getRoutesLoader(context).loadRoutes(resource);
         context.start();
 
@@ -43,8 +43,8 @@ public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
 
         // Make sure loaded route can process a XML payload with namespaces
         // attached
-        context.createProducerTemplate().sendBody("direct:foo",
-                "<?xml version='1.0'?><foo xmlns='http://foo'><bar>cheese</bar></foo>");
+        context.createProducerTemplate()
+                .sendBody("direct:foo", "<?xml version='1.0'?><foo xmlns='http://foo'><bar>cheese</bar></foo>");
 
         bar.assertIsSatisfied();
     }

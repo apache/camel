@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.reply;
 
 import jakarta.jms.Connection;
@@ -49,7 +50,8 @@ public class ExclusiveQueueMessageListenerContainer extends SimpleMessageListene
 
     @Override
     protected MessageConsumer createMessageConsumer(Session session) throws Exception {
-        Destination destination = getDestinationCreationStrategy().createDestination(session, getDestinationName(), false);
+        Destination destination =
+                getDestinationCreationStrategy().createDestination(session, getDestinationName(), false);
         return getEndpoint().getJmsObjectFactory().createQueueMessageConsumer(session, destination);
     }
 }

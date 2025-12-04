@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
 
 import java.util.List;
@@ -73,5 +74,4 @@ public interface WebhookCapableEndpoint extends Endpoint {
      * @return the HTTP methods supported by the endpoint
      */
     List<String> getWebhookMethods();
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.filter;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -116,7 +117,8 @@ public class PrioritizedFilterStatistics {
      */
     @Override
     public String toString() {
-        return String.format("PrioritizedFilterStatistics [id: %s, count: %d, first: %d, last: %d]",
+        return String.format(
+                "PrioritizedFilterStatistics [id: %s, count: %d, first: %d, last: %d]",
                 getFilterId(), getCount(), getFirst(), getLast());
     }
 }

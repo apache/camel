@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -54,12 +55,12 @@ public class KameletAggregateTest extends CamelTestSupport {
                 routeTemplate("my-aggregate")
                         .templateParameter("count")
                         .from("kamelet:source")
-                    .aggregate(constant(true))
+                        .aggregate(constant(true))
                         .completionSize("{{count}}")
                         .aggregationStrategy(AggregationStrategies.string(","))
                         .to("log:aggregate")
                         .to("kamelet:sink")
-                    .end();
+                        .end();
 
                 from("direct:start")
                         // this is not possible, you must use kamelet EIP instead

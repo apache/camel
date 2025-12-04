@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
+
+import static org.apache.camel.component.weather.WeatherLanguage.en;
+import static org.apache.camel.component.weather.WeatherMode.JSON;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.List;
 import java.util.Scanner;
@@ -28,63 +33,77 @@ import org.apache.camel.spi.UriPath;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 
-import static org.apache.camel.component.weather.WeatherLanguage.en;
-import static org.apache.camel.component.weather.WeatherMode.JSON;
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 @UriParams
 public class WeatherConfiguration {
 
     @UriPath(description = "The name value is not used.")
     @Metadata(required = true)
     private String name;
+
     @UriParam
     @Metadata(required = true)
     private String appid;
+
     @UriParam
     private WeatherApi weatherApi;
+
     @UriParam(label = "filter")
     private String location = "";
+
     @UriParam(label = "filter")
     private String lat;
+
     @UriParam(label = "filter")
     private String lon;
+
     @UriParam(label = "filter")
     private String rightLon;
+
     @UriParam(label = "filter")
     private String topLat;
+
     @UriParam(label = "filter")
     private Integer zoom;
+
     @UriParam
     private String period = "";
+
     @UriParam(defaultValue = "JSON")
     private WeatherMode mode = JSON;
+
     @UriParam
     private WeatherUnits units;
+
     @UriParam(defaultValue = "en")
     private WeatherLanguage language = en;
+
     @UriParam
     private String headerName;
+
     @UriParam(label = "filter")
     private String zip;
+
     @UriParam(label = "filter", javaType = "java.lang.String")
     private String ids;
+
     @UriParam(label = "filter")
     private Integer cnt;
+
     @UriParam(label = "security")
     @Metadata(required = true)
     private String geolocationAccessKey;
+
     @UriParam(label = "security")
     @Metadata(required = true)
     private String geolocationRequestHostIP;
+
     @UriParam(label = "advanced")
     private CloseableHttpClient httpClient = HttpClients.createDefault();
+
     @UriParam(label = "advanced")
     private GeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(this);
 
-    public WeatherConfiguration() {
-
-    }
+    public WeatherConfiguration() {}
 
     public String getPeriod() {
         return period;

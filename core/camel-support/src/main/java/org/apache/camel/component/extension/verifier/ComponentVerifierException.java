@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.extension.verifier;
 
 import org.apache.camel.CamelException;
 
 public class ComponentVerifierException extends CamelException {
-    public ComponentVerifierException() {
-    }
+    public ComponentVerifierException() {}
 
     public ComponentVerifierException(String message) {
         super(message);

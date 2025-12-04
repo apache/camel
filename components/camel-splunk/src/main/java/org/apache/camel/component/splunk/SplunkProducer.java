@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
 
 import java.util.Optional;
@@ -76,21 +77,24 @@ public class SplunkProducer extends DefaultProducer {
                 ((TcpDataWriter) dataWriter).setPort(endpoint.getConfiguration().getTcpReceiverPort());
                 ((TcpDataWriter) dataWriter).setHost(endpoint.getConfiguration().getHost());
                 ((TcpDataWriter) dataWriter)
-                        .setLocalPort(Optional.ofNullable(endpoint.getConfiguration().getTcpReceiverLocalPort()));
+                        .setLocalPort(
+                                Optional.ofNullable(endpoint.getConfiguration().getTcpReceiverLocalPort()));
                 LOG.debug("TcpDataWriter created for endpoint {}", endpoint);
                 break;
             }
             case SUBMIT: {
                 LOG.debug("Creating SubmitDataWriter");
                 dataWriter = new SubmitDataWriter(endpoint, buildSplunkArgs());
-                ((SubmitDataWriter) dataWriter).setIndex(endpoint.getConfiguration().getIndex());
+                ((SubmitDataWriter) dataWriter)
+                        .setIndex(endpoint.getConfiguration().getIndex());
                 LOG.debug("SubmitDataWriter created for endpoint {}", endpoint);
                 break;
             }
             case STREAM: {
                 LOG.debug("Creating StreamDataWriter");
                 dataWriter = new StreamDataWriter(endpoint, buildSplunkArgs());
-                ((StreamDataWriter) dataWriter).setIndex(endpoint.getConfiguration().getIndex());
+                ((StreamDataWriter) dataWriter)
+                        .setIndex(endpoint.getConfiguration().getIndex());
                 LOG.debug("StreamDataWriter created for endpoint {}", endpoint);
                 break;
             }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,8 +31,6 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindySimpleCsvFunctionWithClassMethodTest extends CamelTestSupport {
 
@@ -49,8 +50,8 @@ public class BindySimpleCsvFunctionWithClassMethodTest extends CamelTestSupport 
     public void testUnMarshallMessage() throws Exception {
 
         mockEndPointMarshal1.expectedMessageCount(1);
-        mockEndPointMarshal1
-                .expectedBodiesReceived("\"123\",\"\"\"foo\"\"\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+        mockEndPointMarshal1.expectedBodiesReceived(
+                "\"123\",\"\"\"foo\"\"\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         BindyCsvRowFormat7621 body = new BindyCsvRowFormat7621();
         body.setFirstField("123");
@@ -60,8 +61,8 @@ public class BindySimpleCsvFunctionWithClassMethodTest extends CamelTestSupport 
 
         MockEndpoint.assertIsSatisfied(context);
 
-        BindyCsvRowFormat7621 model
-                = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat7621.class);
+        BindyCsvRowFormat7621 model =
+                mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat7621.class);
 
         assertEquals("123", model.getFirstField());
         assertEquals("\"FOO\"", model.getSecondField());
@@ -80,9 +81,7 @@ public class BindySimpleCsvFunctionWithClassMethodTest extends CamelTestSupport 
                         .to("mock:resultMarshal1")
                         .to("direct:middle1");
 
-                from("direct:middle1")
-                        .unmarshal(camelDataFormat1)
-                        .to("mock:resultUnMarshal1");
+                from("direct:middle1").unmarshal(camelDataFormat1).to("mock:resultUnMarshal1");
             }
         };
     }

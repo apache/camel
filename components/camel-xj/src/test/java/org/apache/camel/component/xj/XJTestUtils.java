@@ -38,6 +38,9 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Comment;
 
+import org.xmlunit.assertj3.XmlAssert;
+import org.xmlunit.builder.Input;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -45,8 +48,6 @@ import org.apache.commons.io.IOUtils;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xmlunit.assertj3.XmlAssert;
-import org.xmlunit.builder.Input;
 
 final class XJTestUtils {
 
@@ -55,8 +56,7 @@ final class XJTestUtils {
     private static final Map<String, Templates> XSL_TEMPLATES = Collections.synchronizedMap(new HashMap<>());
     private static final JsonFactory JSON_FACTORY = new JsonFactory();
 
-    private XJTestUtils() {
-    }
+    private XJTestUtils() {}
 
     /**
      * creates an "identity" transformer
@@ -77,7 +77,8 @@ final class XJTestUtils {
         if (XSL_TEMPLATES.containsKey(xsl)) {
             transformer = XSL_TEMPLATES.get(xsl).newTransformer();
         } else {
-            final InputStream xslInputStream = XJTestUtils.class.getClassLoader().getResourceAsStream(xsl);
+            final InputStream xslInputStream =
+                    XJTestUtils.class.getClassLoader().getResourceAsStream(xsl);
             final Templates templates = TRANSFORMER_FACTORY.newTemplates(new StreamSource(xslInputStream));
             XSL_TEMPLATES.put(xsl, templates);
 

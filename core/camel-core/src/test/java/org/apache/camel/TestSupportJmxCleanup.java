@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.lang.management.ManagementFactory;
@@ -60,5 +61,4 @@ public final class TestSupportJmxCleanup {
     private static String getDomainName(String domain) {
         return domain == null ? DEFAULT_DOMAIN : domain;
     }
-
 }

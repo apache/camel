@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -46,9 +47,9 @@ public class NettyUDPProducerOptionsTest extends BaseNettyTest {
 
                 from("direct:sendMessage")
                         .log("Sending message: ${body}")
-                        .to("netty:udp://230.0.0.5:{{port}}?sync=false&networkInterface=lo&option.IP_MULTICAST_TTL=188");
+                        .to(
+                                "netty:udp://230.0.0.5:{{port}}?sync=false&networkInterface=lo&option.IP_MULTICAST_TTL=188");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -62,9 +63,15 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&moveFailed=error&move=ok")).onException(Exception.class)
-                        .to("mock:error").end().choice().when().xpath("/hello")
-                        .to("mock:result").end();
+                from(fileUri("?initialDelay=0&delay=10&moveFailed=error&move=ok"))
+                        .onException(Exception.class)
+                        .to("mock:error")
+                        .end()
+                        .choice()
+                        .when()
+                        .xpath("/hello")
+                        .to("mock:result")
+                        .end();
             }
         };
     }

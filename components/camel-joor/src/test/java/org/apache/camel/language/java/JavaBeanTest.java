@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.java;
 
 import org.apache.camel.Header;
@@ -31,7 +32,8 @@ public class JavaBeanTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().method(JavaBeanTest.class, "priority")
+                        .transform()
+                        .method(JavaBeanTest.class, "priority")
                         .to("mock:result");
             }
         };
@@ -39,8 +41,8 @@ public class JavaBeanTest extends CamelTestSupport {
 
     @Test
     public void testBean() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("User tony is a high roller", "Regular user",
-                "User scott is a high roller");
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived("User tony is a high roller", "Regular user", "User scott is a high roller");
 
         template.sendBodyAndHeader("direct:start", 123, "user", "tony");
         template.sendBodyAndHeader("direct:start", 18, "user", "mickey");
@@ -56,5 +58,4 @@ public class JavaBeanTest extends CamelTestSupport {
             return "Regular user";
         }
     }
-
 }

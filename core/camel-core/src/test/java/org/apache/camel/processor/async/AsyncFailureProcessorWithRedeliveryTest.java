@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncFailureProcessorWithRedeliveryTest extends ContextTestSupport {
 
@@ -54,20 +55,26 @@ public class AsyncFailureProcessorWithRedeliveryTest extends ContextTestSupport 
                 // use redelivery up till 5 times
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5));
 
-                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                })
+                from("direct:start")
+                        .to("mock:before")
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
                         // invoking the async endpoint could also cause a failure so
                         // test that we can do redelivery
-                        .to("async:bye:camel?failFirstAttempts=2").process(new Processor() {
+                        .to("async:bye:camel?failFirstAttempts=2")
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
-                        }).to("log:after").to("mock:after").to("mock:result");
+                        })
+                        .to("log:after")
+                        .to("mock:after")
+                        .to("mock:result");
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.events;
+
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_EVENTS;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -40,8 +43,6 @@ import org.apache.ignite.events.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_EVENTS;
-
 /**
  * <a href="https://apacheignite.readme.io/docs/events">Receive events</a> from an Ignite cluster by creating a local
  * event listener.
@@ -49,9 +50,13 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_EVENTS;
  * This endpoint only supports consumers. The Exchanges created by this consumer put the received Event object into the
  * body of the IN message.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_EVENTS, title = "Ignite Events", syntax = "ignite-events:endpointId",
-             category = { Category.MESSAGING, Category.CACHE, Category.CLUSTERING },
-             consumerOnly = true)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_EVENTS,
+        title = "Ignite Events",
+        syntax = "ignite-events:endpointId",
+        category = {Category.MESSAGING, Category.CACHE, Category.CLUSTERING},
+        consumerOnly = true)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteEventsEndpoint.class);
@@ -65,8 +70,8 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "consumer")
     private ClusterGroupExpression clusterGroupExpression;
 
-    public IgniteEventsEndpoint(String uri, String remaining, Map<String, Object> parameters,
-                                IgniteEventsComponent igniteComponent) {
+    public IgniteEventsEndpoint(
+            String uri, String remaining, Map<String, Object> parameters, IgniteEventsComponent igniteComponent) {
         super(uri, igniteComponent);
     }
 
@@ -138,7 +143,8 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
                 answer.add(eventType);
             }
         } else {
-            Set<String> requestedEvents = new HashSet<>(Arrays.asList(events.toUpperCase().split(",")));
+            Set<String> requestedEvents =
+                    new HashSet<>(Arrays.asList(events.toUpperCase().split(",")));
             Field[] fields = EventType.class.getDeclaredFields();
             for (Field field : fields) {
                 if (!requestedEvents.contains(field.getName())) {
@@ -168,5 +174,4 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
     public void setClusterGroupExpression(ClusterGroupExpression clusterGroupExpression) {
         this.clusterGroupExpression = clusterGroupExpression;
     }
-
 }

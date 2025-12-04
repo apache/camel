@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws.secretsmanager;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +32,6 @@ import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class SecretsManagerProducerHealthCheckProfileCredsTest extends CamelTestSupport {
 
@@ -66,7 +66,8 @@ public class SecretsManagerProducerHealthCheckProfileCredsTest extends CamelTest
             @Override
             public void configure() {
                 from("direct:listClusters")
-                        .to("aws-secrets-manager://test?operation=listSecrets&region=l&useDefaultCredentialsProvider=true");
+                        .to(
+                                "aws-secrets-manager://test?operation=listSecrets&region=l&useDefaultCredentialsProvider=true");
             }
         };
     }
@@ -84,12 +85,11 @@ public class SecretsManagerProducerHealthCheckProfileCredsTest extends CamelTest
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAwsSecretsManagerHealthCheck = res2.stream()
                     .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws-secrets-manager"));
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
+            boolean hasRegionMessage =
+                    res2.stream().anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAwsSecretsManagerHealthCheck, "aws-secrets-manager check");
             Assertions.assertTrue(hasRegionMessage, "aws-secrets-manager check error message");
         });
-
     }
 }

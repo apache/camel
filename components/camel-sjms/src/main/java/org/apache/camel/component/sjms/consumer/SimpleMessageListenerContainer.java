@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
+
+import static org.apache.camel.component.sjms.SjmsHelper.*;
 
 import java.time.Duration;
 import java.util.HashSet;
@@ -44,8 +47,6 @@ import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.sjms.SjmsHelper.*;
 
 public class SimpleMessageListenerContainer extends ServiceSupport
         implements org.apache.camel.component.sjms.MessageListenerContainer, ExceptionListener {
@@ -168,7 +169,6 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             // success then commit if we need to
             commitIfNeeded(session, message);
         }
-
     }
 
     @Override
@@ -208,7 +208,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             return false;
         } catch (Exception e) {
             String message = "Failed to recover JMS Connection (attempt: " + task.iteration() + "). Will try again in "
-                             + endpoint.getRecoveryInterval() + " millis";
+                    + endpoint.getRecoveryInterval() + " millis";
             LOG.warn(message);
             // make the task runner aware of the exception (will retry)
             throw new TaskRunFailureException(message, e);
@@ -219,8 +219,9 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         connectionLock.lock();
         try {
             if (recoverPool == null) {
-                recoverPool = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                        "SjmsConnectionRecovery");
+                recoverPool = endpoint.getCamelContext()
+                        .getExecutorServiceManager()
+                        .newSingleThreadScheduledExecutor(this, "SjmsConnectionRecovery");
             }
             if (recoverTask == null) {
                 recoverTask = createTask();
@@ -276,7 +277,9 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         consumerLock.lock();
         try {
             if (consumers == null) {
-                LOG.debug("Initializing {} concurrent consumers as JMS listener on destination: {}", concurrentConsumers,
+                LOG.debug(
+                        "Initializing {} concurrent consumers as JMS listener on destination: {}",
+                        concurrentConsumers,
                         destinationName);
                 sessions = new HashSet<>(concurrentConsumers);
                 consumers = new HashSet<>(concurrentConsumers);
@@ -294,7 +297,8 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     }
 
     protected Session createSession(Connection connection, SjmsEndpoint endpoint) throws Exception {
-        return connection.createSession(endpoint.isTransacted(), endpoint.getAcknowledgementMode().intValue());
+        return connection.createSession(
+                endpoint.isTransacted(), endpoint.getAcknowledgementMode().intValue());
     }
 
     protected MessageConsumer createMessageConsumer(Session session) throws Exception {
@@ -390,5 +394,4 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             connectionLock.unlock();
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.reply;
 
 import jakarta.jms.Destination;
@@ -38,7 +39,10 @@ public class QueueReplyManager extends ReplyManagerSupport {
 
     @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
-        log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
+        log.trace(
+                "Updated provisional correlationId [{}] to expected correlationId [{}]",
+                correlationId,
+                newCorrelationId);
 
         ReplyHandler handler = correlation.remove(correlationId);
         if (handler == null) {
@@ -59,7 +63,10 @@ public class QueueReplyManager extends ReplyManagerSupport {
             // log a warn and then ignore the message
             log.warn(
                     "Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
-                    correlationID, replyTo, correlation.size(), message);
+                    correlationID,
+                    replyTo,
+                    correlation.size(),
+                    message);
         }
     }
 
@@ -72,7 +79,8 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
 
         @Override
-        public Destination createDestination(Session session, String destinationName, boolean topic) throws JMSException {
+        public Destination createDestination(Session session, String destinationName, boolean topic)
+                throws JMSException {
             QueueReplyManager.this.lock.lock();
             try {
                 // resolve the reply to destination
@@ -111,7 +119,8 @@ public class QueueReplyManager extends ReplyManagerSupport {
         answer.setMessageListener(this);
 
         answer.setConcurrentConsumers(endpoint.getReplyToConcurrentConsumers());
-        answer.setDestinationCreationStrategy(new DestinationResolverDelegate(endpoint.getDestinationCreationStrategy()));
+        answer.setDestinationCreationStrategy(
+                new DestinationResolverDelegate(endpoint.getDestinationCreationStrategy()));
         answer.setDestinationName(endpoint.getReplyTo());
 
         String clientId = endpoint.getClientId();
@@ -122,5 +131,4 @@ public class QueueReplyManager extends ReplyManagerSupport {
 
         return answer;
     }
-
 }

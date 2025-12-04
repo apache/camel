@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
 
 import org.apache.camel.Category;
@@ -30,10 +31,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * LangChain4j Embeddings
  */
-@UriEndpoint(firstVersion = "4.5.0", scheme = LangChain4jEmbeddings.SCHEME, title = "LangChain4j Embeddings",
-             syntax = "langchain4j-embeddings:embeddingId", producerOnly = true, category = {
-                     Category.AI
-             }, headersClass = LangChain4jEmbeddingsHeaders.class)
+@UriEndpoint(
+        firstVersion = "4.5.0",
+        scheme = LangChain4jEmbeddings.SCHEME,
+        title = "LangChain4j Embeddings",
+        syntax = "langchain4j-embeddings:embeddingId",
+        producerOnly = true,
+        category = {Category.AI},
+        headersClass = LangChain4jEmbeddingsHeaders.class)
 public class LangChain4jEmbeddingsEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id")
@@ -43,10 +48,10 @@ public class LangChain4jEmbeddingsEndpoint extends DefaultEndpoint {
     private LangChain4jEmbeddingsConfiguration configuration;
 
     public LangChain4jEmbeddingsEndpoint(
-                                         String endpointUri,
-                                         Component component,
-                                         String embeddingId,
-                                         LangChain4jEmbeddingsConfiguration configuration) {
+            String endpointUri,
+            Component component,
+            String embeddingId,
+            LangChain4jEmbeddingsConfiguration configuration) {
 
         super(endpointUri, component);
 

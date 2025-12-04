@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.TimeUnit;
@@ -40,7 +41,8 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
         mock.expectedMessageCount(0);
 
         // sleep a bit to ensure its properly suspended
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+        Awaitility.await()
+                .atMost(2, TimeUnit.SECONDS)
                 .until(context.getRouteController().getRouteStatus("JmsSuspendResumeTest")::isSuspended);
 
         template.sendBody("activemq:queue:JmsSuspendResumeTest", "Bye World");
@@ -59,7 +61,9 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:JmsSuspendResumeTest").routeId("JmsSuspendResumeTest").to("mock:JmsSuspendResumeTest");
+                from("activemq:queue:JmsSuspendResumeTest")
+                        .routeId("JmsSuspendResumeTest")
+                        .to("mock:JmsSuspendResumeTest");
             }
         };
     }

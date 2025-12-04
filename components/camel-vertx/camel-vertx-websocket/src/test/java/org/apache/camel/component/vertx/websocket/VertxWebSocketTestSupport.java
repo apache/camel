@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.util.Map;
@@ -47,8 +48,7 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
     public int getVertxServerRandomPort() {
         VertxWebsocketComponent component = context.getComponent("vertx-websocket", VertxWebsocketComponent.class);
         Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = component.getVertxHostRegistry();
-        return registry.values()
-                .stream()
+        return registry.values().stream()
                 .filter(wsHost -> wsHost.getPort() != port)
                 .filter(wsHost -> wsHost.getPort() != port2)
                 .findFirst()
@@ -56,11 +56,11 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
                 .getPort();
     }
 
-    public WebSocket openWebSocketConnection(String host, int port, String path, Consumer<String> handler) throws Exception {
+    public WebSocket openWebSocketConnection(String host, int port, String path, Consumer<String> handler)
+            throws Exception {
         HttpClient client = Vertx.vertx().createHttpClient();
-        CompletableFuture<WebSocket> future = client.webSocket(port, host, path)
-                .toCompletionStage()
-                .toCompletableFuture();
+        CompletableFuture<WebSocket> future =
+                client.webSocket(port, host, path).toCompletionStage().toCompletableFuture();
         WebSocket webSocket = future.get(5, TimeUnit.SECONDS);
         webSocket.textMessageHandler(handler::accept);
         return webSocket;
@@ -75,7 +75,8 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
         Route route = router.route(path);
 
         if (handler == null) {
-            handler = (RoutingContext ctx) -> ctx.request().toWebSocket()
+            handler = (RoutingContext ctx) -> ctx.request()
+                    .toWebSocket()
                     .onSuccess(webSocket -> webSocket.textMessageHandler(message -> {
                         webSocket.writeTextMessage("Hello world");
                         latch.countDown();

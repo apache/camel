@@ -31,10 +31,10 @@ public class MultipleMessagesSameTopicIT extends AbstractPersistentJMSTest {
 
     @Test
     public void testMultipleMessagesOnSameTopic() throws Exception {
-        getMockEndpoint("mock:a").expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3",
-                "Hello Camel 4");
-        getMockEndpoint("mock:b").expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3",
-                "Hello Camel 4");
+        getMockEndpoint("mock:a")
+                .expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3", "Hello Camel 4");
+        getMockEndpoint("mock:b")
+                .expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3", "Hello Camel 4");
 
         template.sendBody("activemq:topic:MultipleMessagesSameTopicIT", "Hello Camel 1");
         template.sendBody("activemq:topic:MultipleMessagesSameTopicIT", "Hello Camel 2");
@@ -55,11 +55,9 @@ public class MultipleMessagesSameTopicIT extends AbstractPersistentJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:topic:MultipleMessagesSameTopicIT").routeId("a")
-                        .to("log:a", "mock:a");
+                from("activemq:topic:MultipleMessagesSameTopicIT").routeId("a").to("log:a", "mock:a");
 
-                from("activemq:topic:MultipleMessagesSameTopicIT").routeId("b")
-                        .to("log:b", "mock:b");
+                from("activemq:topic:MultipleMessagesSameTopicIT").routeId("b").to("log:b", "mock:b");
             }
         };
     }

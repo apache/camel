@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -29,14 +38,6 @@ import org.eclipse.jetty.client.ContentResponse;
 import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class SalesforceSessionTest {
 
@@ -53,11 +54,11 @@ public class SalesforceSessionTest {
 
     @Test
     public void shouldGenerateJwtTokens() throws IOException {
-        final SalesforceLoginConfig config
-                = new SalesforceLoginConfig("https://login.salesforce.com", "ABCD", "username", parameters, true);
+        final SalesforceLoginConfig config =
+                new SalesforceLoginConfig("https://login.salesforce.com", "ABCD", "username", parameters, true);
 
-        try (final SalesforceSession session
-                = new SalesforceSession(new DefaultCamelContext(), mock(SalesforceHttpClient.class), TIMEOUT, config)) {
+        try (final SalesforceSession session =
+                new SalesforceSession(new DefaultCamelContext(), mock(SalesforceHttpClient.class), TIMEOUT, config)) {
             final String jwtAssertion = session.generateJwtAssertion();
             assertNotNull(jwtAssertion);
         }
@@ -91,7 +92,8 @@ public class SalesforceSessionTest {
         final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), client, TIMEOUT, config);
 
         final Request request = mock(Request.class);
-        when(client.POST(eq("https://login.salesforce.com/services/oauth2/token"))).thenReturn(request);
+        when(client.POST(eq("https://login.salesforce.com/services/oauth2/token")))
+                .thenReturn(request);
 
         when(request.body(any())).thenReturn(request);
         when(request.timeout(anyLong(), any())).thenReturn(request);
@@ -100,15 +102,14 @@ public class SalesforceSessionTest {
         when(request.send()).thenReturn(response);
 
         when(response.getStatus()).thenReturn(HttpStatus.OK_200);
-        when(response.getContentAsString()).thenReturn("{\n" +
-                                                       "  \"access_token\": \"00D4100000xxxxx!faketoken\",\n" +
-                                                       "  \"instance_url\": \"https://eu11.salesforce.com\",\n" +
-                                                       "  \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\",\n"
-                                                       +
-                                                       "  \"token_type\": \"Bearer\",\n" +
-                                                       "  \"issued_at\": \"1674496911543\",\n" +
-                                                       "  \"signature\": \"/ai5/F+LXEocLQZKdO4uwLblDszPUibL/Dfcn82R9VI=\"\n" +
-                                                       "}");
+        when(response.getContentAsString())
+                .thenReturn("{\n" + "  \"access_token\": \"00D4100000xxxxx!faketoken\",\n"
+                        + "  \"instance_url\": \"https://eu11.salesforce.com\",\n"
+                        + "  \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\",\n"
+                        + "  \"token_type\": \"Bearer\",\n"
+                        + "  \"issued_at\": \"1674496911543\",\n"
+                        + "  \"signature\": \"/ai5/F+LXEocLQZKdO4uwLblDszPUibL/Dfcn82R9VI=\"\n"
+                        + "}");
 
         session.login(null);
         return session;

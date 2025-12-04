@@ -36,7 +36,8 @@ public class SyncCommitManager extends AbstractCommitManager {
     private final Consumer<?, ?> consumer;
     private final StateRepository<String, String> offsetRepository;
 
-    public SyncCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
+    public SyncCommitManager(
+            Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         super(consumer, kafkaConsumer, threadId, printableTopic);
 
         this.consumer = consumer;
@@ -69,8 +70,8 @@ public class SyncCommitManager extends AbstractCommitManager {
 
         final long lastOffset = offset + 1;
 
-        final Map<TopicPartition, OffsetAndMetadata> offsets
-                = Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset));
+        final Map<TopicPartition, OffsetAndMetadata> offsets =
+                Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset));
         long timeout = configuration.getCommitTimeoutMs();
         consumer.commitSync(offsets, Duration.ofMillis(timeout));
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.util;
 
 import java.util.HashSet;
@@ -42,10 +43,10 @@ public class EnvelopingXmlSignatureChecker implements XmlSignatureChecker {
     @Override
     public void checkBeforeCoreValidation(Input input) throws Exception {
 
-        if (!"Signature".equals(input.getMessageBodyDocument().getDocumentElement().getLocalName())) {
+        if (!"Signature"
+                .equals(input.getMessageBodyDocument().getDocumentElement().getLocalName())) {
             throw new XmlSignatureInvalidException(
                     "XML signature is not enveloping. Only enveloping XML signatures are allowed.");
         }
     }
-
 }

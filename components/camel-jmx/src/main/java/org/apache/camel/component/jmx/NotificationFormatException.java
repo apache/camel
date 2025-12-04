@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 /**
@@ -26,5 +27,4 @@ public class NotificationFormatException extends Exception {
     public NotificationFormatException(Exception aCausedBy) {
         super(aCausedBy);
     }
-
 }

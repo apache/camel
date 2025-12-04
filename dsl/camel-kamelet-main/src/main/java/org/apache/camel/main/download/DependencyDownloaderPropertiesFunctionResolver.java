@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
@@ -37,44 +38,72 @@ public class DependencyDownloaderPropertiesFunctionResolver extends DefaultPrope
     public PropertiesFunction resolvePropertiesFunction(String name) {
         DependencyDownloader downloader = getCamelContext().hasService(DependencyDownloader.class);
         if ("base64".equals(name)) {
-            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-base64",
-                    getCamelContext().getVersion())) {
-                downloader.downloadDependency("org.apache.camel", "camel-base64",
-                        getCamelContext().getVersion());
+            if (downloader != null
+                    && !downloader.alreadyOnClasspath(
+                            "org.apache.camel",
+                            "camel-base64",
+                            getCamelContext().getVersion())) {
+                downloader.downloadDependency(
+                        "org.apache.camel", "camel-base64", getCamelContext().getVersion());
             }
         }
         if ("configmap".equals(name) || "secret".equals(name)) {
-            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-kubernetes",
-                    getCamelContext().getVersion())) {
-                downloader.downloadDependency("org.apache.camel", "camel-kubernetes",
+            if (downloader != null
+                    && !downloader.alreadyOnClasspath(
+                            "org.apache.camel",
+                            "camel-kubernetes",
+                            getCamelContext().getVersion())) {
+                downloader.downloadDependency(
+                        "org.apache.camel",
+                        "camel-kubernetes",
                         getCamelContext().getVersion());
             }
         }
         if ("aws".equals(name)) {
-            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-aws-secrets-manager",
-                    getCamelContext().getVersion())) {
-                downloader.downloadDependency("org.apache.camel", "camel-aws-secrets-manager",
+            if (downloader != null
+                    && !downloader.alreadyOnClasspath(
+                            "org.apache.camel",
+                            "camel-aws-secrets-manager",
+                            getCamelContext().getVersion())) {
+                downloader.downloadDependency(
+                        "org.apache.camel",
+                        "camel-aws-secrets-manager",
                         getCamelContext().getVersion());
             }
         }
         if ("azure".equals(name)) {
-            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-azure-key-vault",
-                    getCamelContext().getVersion())) {
-                downloader.downloadDependency("org.apache.camel", "camel-azure-key-vault",
+            if (downloader != null
+                    && !downloader.alreadyOnClasspath(
+                            "org.apache.camel",
+                            "camel-azure-key-vault",
+                            getCamelContext().getVersion())) {
+                downloader.downloadDependency(
+                        "org.apache.camel",
+                        "camel-azure-key-vault",
                         getCamelContext().getVersion());
             }
         }
         if ("gcp".equals(name)) {
-            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-google-secret-manager",
-                    getCamelContext().getVersion())) {
-                downloader.downloadDependency("org.apache.camel", "camel-google-secret-manager",
+            if (downloader != null
+                    && !downloader.alreadyOnClasspath(
+                            "org.apache.camel",
+                            "camel-google-secret-manager",
+                            getCamelContext().getVersion())) {
+                downloader.downloadDependency(
+                        "org.apache.camel",
+                        "camel-google-secret-manager",
                         getCamelContext().getVersion());
             }
         }
         if ("hashicorp".equals(name)) {
-            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-hashicorp-vault",
-                    getCamelContext().getVersion())) {
-                downloader.downloadDependency("org.apache.camel", "camel-hashicorp-vault",
+            if (downloader != null
+                    && !downloader.alreadyOnClasspath(
+                            "org.apache.camel",
+                            "camel-hashicorp-vault",
+                            getCamelContext().getVersion())) {
+                downloader.downloadDependency(
+                        "org.apache.camel",
+                        "camel-hashicorp-vault",
                         getCamelContext().getVersion());
             }
         }
@@ -123,5 +152,4 @@ public class DependencyDownloaderPropertiesFunctionResolver extends DefaultPrope
             return true;
         }
     }
-
 }

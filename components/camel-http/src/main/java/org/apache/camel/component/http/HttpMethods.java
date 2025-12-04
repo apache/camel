@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.net.URI;
@@ -32,7 +33,6 @@ import org.apache.hc.client5.http.classic.methods.HttpTrace;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 
 public enum HttpMethods implements Expression {
-
     GET(false),
     PATCH(true),
     POST(true),
@@ -73,5 +73,4 @@ public enum HttpMethods implements Expression {
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         return ExpressionBuilder.constantExpression(name()).evaluate(exchange, type);
     }
-
 }

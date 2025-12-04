@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -34,9 +38,6 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test showing how you can use pipeline to group together statistics and implement your own event listener.
@@ -76,7 +77,12 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").pipeline().id("step-a").to("mock:a").delay(constant(10)).end() // a
+                from("direct:start")
+                        .pipeline()
+                        .id("step-a")
+                        .to("mock:a")
+                        .delay(constant(10))
+                        .end() // a
                         // bit
                         // ugly
                         // by
@@ -84,7 +90,13 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
                         // to
                         // end
                         // delay
-                        .to("mock:a2").end().pipeline().id("step-b").to("mock:b").delay(constant(20)).end() // a
+                        .to("mock:a2")
+                        .end()
+                        .pipeline()
+                        .id("step-b")
+                        .to("mock:b")
+                        .delay(constant(20))
+                        .end() // a
                         // bit
                         // ugly
                         // by
@@ -92,7 +104,9 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
                         // to
                         // end
                         // delay
-                        .to("mock:b2").end().to("mock:result");
+                        .to("mock:b2")
+                        .end()
+                        .to("mock:result");
             }
         };
     }
@@ -111,7 +125,6 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
         void beforeStep(BeforeStepEvent event);
 
         void afterStep(AfterStepEvent event);
-
     }
 
     private static class MyStepEventListener extends ServiceSupport implements StepEventListener {
@@ -174,7 +187,6 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
                 callback.done(doneSync);
             });
         }
-
     }
 
     private static class BeforeStepEvent extends AbstractExchangeEvent {

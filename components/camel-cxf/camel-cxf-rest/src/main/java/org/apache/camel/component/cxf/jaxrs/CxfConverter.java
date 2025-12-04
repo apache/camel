@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.apache.camel.TypeConverter.MISS_VALUE;
+import static org.apache.camel.component.cxf.converter.CxfConverter.tryCoerceFirstArrayElement;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,9 +40,6 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.message.MessageContentsList;
-
-import static org.apache.camel.TypeConverter.MISS_VALUE;
-import static org.apache.camel.component.cxf.converter.CxfConverter.tryCoerceFirstArrayElement;
 
 /**
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a> for CXF related types' converting .
@@ -151,9 +152,7 @@ public final class CxfConverter {
      */
     @SuppressWarnings("unchecked")
     @Converter(fallback = true)
-    public static <T> T convertTo(
-            Class<T> type, Exchange exchange, Object value,
-            TypeConverterRegistry registry) {
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
 
         // CXF-WS MessageContentsList class
         if (MessageContentsList.class.isAssignableFrom(value.getClass())) {

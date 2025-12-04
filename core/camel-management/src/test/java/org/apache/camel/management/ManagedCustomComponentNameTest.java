@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -27,10 +32,6 @@ import org.apache.camel.component.mock.MockComponent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCustomComponentNameTest extends ManagementTestSupport {
@@ -65,11 +66,8 @@ public class ManagedCustomComponentNameTest extends ManagementTestSupport {
             public void configure() {
                 context.addComponent("foo", new MockComponent());
 
-                from("direct:start")
-                        .to("foo:foo")
-                        .to("mock:result");
+                from("direct:start").to("foo:foo").to("mock:result");
             }
         };
     }
-
 }

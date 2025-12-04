@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite;
 
 import java.util.Iterator;
@@ -48,15 +49,21 @@ public class IgniteSetTest extends AbstractIgniteTest {
     public void testOperations() {
         boolean result = template.requestBody("ignite-set:" + resourceUid + "?operation=ADD", "hello", boolean.class);
         Assertions.assertThat(result).isTrue();
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains("hello")).isTrue();
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).contains("hello"))
+                .isTrue();
 
         result = template.requestBody("ignite-set:" + resourceUid + "?operation=CONTAINS", "hello", boolean.class);
         Assertions.assertThat(result).isTrue();
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains("hello")).isTrue();
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).contains("hello"))
+                .isTrue();
 
         result = template.requestBody("ignite-set:" + resourceUid + "?operation=REMOVE", "hello", boolean.class);
         Assertions.assertThat(result).isTrue();
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains("hello")).isFalse();
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).contains("hello"))
+                .isFalse();
 
         result = template.requestBody("ignite-set:" + resourceUid + "?operation=CONTAINS", "hello", boolean.class);
         Assertions.assertThat(result).isFalse();
@@ -72,7 +79,9 @@ public class IgniteSetTest extends AbstractIgniteTest {
         // SIZE
         int size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
         Assertions.assertThat(size).isEqualTo(100);
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(100);
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).size())
+                .isEqualTo(100);
 
         List<String> toRetain = Lists.newArrayList();
         for (int i = 0; i < 50; i++) {
@@ -80,34 +89,44 @@ public class IgniteSetTest extends AbstractIgniteTest {
         }
 
         // RETAIN_ALL
-        boolean retained = template.requestBodyAndHeader("ignite-set:" + resourceUid + "?operation=CLEAR", toRetain,
+        boolean retained = template.requestBodyAndHeader(
+                "ignite-set:" + resourceUid + "?operation=CLEAR",
+                toRetain,
                 IgniteConstants.IGNITE_SETS_OPERATION,
-                IgniteSetOperation.RETAIN_ALL, boolean.class);
+                IgniteSetOperation.RETAIN_ALL,
+                boolean.class);
         Assertions.assertThat(retained).isTrue();
 
         // SIZE
         size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
         Assertions.assertThat(size).isEqualTo(50);
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(50);
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).size())
+                .isEqualTo(50);
 
         // ITERATOR
-        Iterator<String> iterator
-                = template.requestBody("ignite-set:" + resourceUid + "?operation=ITERATOR", "hello", Iterator.class);
+        Iterator<String> iterator =
+                template.requestBody("ignite-set:" + resourceUid + "?operation=ITERATOR", "hello", Iterator.class);
         Assertions.assertThat(Iterators.toArray(iterator, String.class)).containsAll(toRetain);
 
         // ARRAY
-        String[] array = template.requestBody("ignite-set:" + resourceUid + "?operation=ARRAY", "hello", String[].class);
+        String[] array =
+                template.requestBody("ignite-set:" + resourceUid + "?operation=ARRAY", "hello", String[].class);
         Assertions.assertThat(array).containsAll(toRetain);
 
         // CLEAR
         Object result = template.requestBody("ignite-set:" + resourceUid + "?operation=CLEAR", "hello", String.class);
         Assertions.assertThat(result).isEqualTo("hello");
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(0);
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).size())
+                .isEqualTo(0);
 
         // SIZE
         size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
         Assertions.assertThat(size).isEqualTo(0);
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(0);
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).size())
+                .isEqualTo(0);
     }
 
     @Test
@@ -117,12 +136,13 @@ public class IgniteSetTest extends AbstractIgniteTest {
             template.requestBody("ignite-set:" + resourceUid + "?operation=ADD", "hello" + i);
         }
 
-        boolean retained
-                = template.requestBody("ignite-set:" + resourceUid + "?operation=RETAIN_ALL", "hello10", boolean.class);
+        boolean retained =
+                template.requestBody("ignite-set:" + resourceUid + "?operation=RETAIN_ALL", "hello10", boolean.class);
         Assertions.assertThat(retained).isTrue();
 
         // ARRAY
-        String[] array = template.requestBody("ignite-set:" + resourceUid + "?operation=ARRAY", "hello", String[].class);
+        String[] array =
+                template.requestBody("ignite-set:" + resourceUid + "?operation=ARRAY", "hello", String[].class);
         Assertions.assertThat(array).containsExactly("hello10");
     }
 
@@ -140,23 +160,33 @@ public class IgniteSetTest extends AbstractIgniteTest {
         // Size must be 101, not 103.
         int size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
         Assertions.assertThat(size).isEqualTo(101);
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(101);
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains(toAdd)).isTrue();
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).size())
+                .isEqualTo(101);
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).contains(toAdd))
+                .isTrue();
 
         // Check whether the Set contains the Set.
         boolean contains = template.requestBody(
-                "ignite-set:" + resourceUid + "?operation=CONTAINS&treatCollectionsAsCacheObjects=true", toAdd, boolean.class);
+                "ignite-set:" + resourceUid + "?operation=CONTAINS&treatCollectionsAsCacheObjects=true",
+                toAdd,
+                boolean.class);
         Assertions.assertThat(contains).isTrue();
 
         // Delete the Set.
-        template.requestBody("ignite-set:" + resourceUid + "?operation=REMOVE&treatCollectionsAsCacheObjects=true", toAdd);
+        template.requestBody(
+                "ignite-set:" + resourceUid + "?operation=REMOVE&treatCollectionsAsCacheObjects=true", toAdd);
 
         // Size must be 100 again.
         size = template.requestBody("ignite-set:" + resourceUid + "?operation=SIZE", "hello", int.class);
         Assertions.assertThat(size).isEqualTo(100);
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(100);
-        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains(toAdd)).isFalse();
-
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).size())
+                .isEqualTo(100);
+        Assertions.assertThat(
+                        ignite().set(resourceUid, new CollectionConfiguration()).contains(toAdd))
+                .isFalse();
     }
 
     @Test

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +29,6 @@ import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for Spring AI Chat multiple messages (conversation history) operation.
@@ -41,7 +42,8 @@ public class SpringAiChatMultipleMessagesIT extends OllamaTestSupport {
         conversation.add(new SystemMessage("You are a helpful assistant that answers questions about geography."));
         conversation.add(new UserMessage("What is the capital of Italy?"));
         conversation.add(new AssistantMessage("Rome"));
-        conversation.add(new UserMessage("What is its population? Answer with just the approximate number in millions."));
+        conversation.add(
+                new UserMessage("What is its population? Answer with just the approximate number in millions."));
 
         String response = template().requestBody("direct:conversation", conversation, String.class);
 

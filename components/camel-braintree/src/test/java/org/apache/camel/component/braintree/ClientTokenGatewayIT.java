@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.ClientTokenGatewayApiMethod;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class ClientTokenGatewayIT extends AbstractBraintreeTestSupport {
@@ -39,8 +40,7 @@ public class ClientTokenGatewayIT extends AbstractBraintreeTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://GENERATE")
-                        .to("braintree://" + PATH_PREFIX + "/generate");
+                from("direct://GENERATE").to("braintree://" + PATH_PREFIX + "/generate");
             }
         };
     }

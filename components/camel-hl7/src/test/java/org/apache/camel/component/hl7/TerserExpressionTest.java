@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
+
+import static org.apache.camel.component.hl7.HL7.hl7terser;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.hl7.HL7.hl7terser;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TerserExpressionTest extends CamelTestSupport {
 
@@ -61,16 +62,14 @@ public class TerserExpressionTest extends CamelTestSupport {
     public void testTerserInvalidExpression() throws Exception {
         final Message adt01Message = createADT01Message();
 
-        assertThrows(CamelExecutionException.class,
-                () -> {
-                    template.sendBody("direct:test4", adt01Message);
-                });
+        assertThrows(CamelExecutionException.class, () -> {
+            template.sendBody("direct:test4", adt01Message);
+        });
     }
 
     @Test
     public void testTerserInvalidMessage() {
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:test4", "text instead of message"));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:test4", "text instead of message"));
     }
 
     @Test
@@ -90,7 +89,9 @@ public class TerserExpressionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:test1").transform(hl7terser("PID-3-1")).to("mock:test1");
-                from("direct:test2").filter(hl7terser("PID-3-1").isEqualTo(PATIENT_ID)).to("mock:test2");
+                from("direct:test2")
+                        .filter(hl7terser("PID-3-1").isEqualTo(PATIENT_ID))
+                        .to("mock:test2");
                 from("direct:test3").filter(hl7terser("PID-4-1").isNull()).to("mock:test3");
                 from("direct:test4").filter(hl7terser("blorg gablorg").isNull()).to("mock:test3");
                 from("direct:test5").bean(terserBean).to("mock:test5");

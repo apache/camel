@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.saga;
 
 import org.apache.camel.AsyncCallback;
@@ -28,11 +29,16 @@ import org.apache.camel.saga.CamelSagaStep;
  */
 public class NotSupportedSagaProcessor extends SagaProcessor {
 
-    public NotSupportedSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
-                                     SagaCompletionMode completionMode, CamelSagaStep step) {
+    public NotSupportedSagaProcessor(
+            CamelContext camelContext,
+            Processor childProcessor,
+            CamelSagaService sagaService,
+            SagaCompletionMode completionMode,
+            CamelSagaStep step) {
         super(camelContext, childProcessor, sagaService, completionMode, step);
         if (!step.isEmpty()) {
-            throw new IllegalArgumentException("Saga configuration is not allowed when propagation is set to NOT_SUPPORTED");
+            throw new IllegalArgumentException(
+                    "Saga configuration is not allowed when propagation is set to NOT_SUPPORTED");
         }
         if (completionMode != null && completionMode != SagaCompletionMode.defaultCompletionMode()) {
             throw new IllegalArgumentException("CompletionMode cannot be specified when propagation is NOT_SUPPORTED");
@@ -41,15 +47,16 @@ public class NotSupportedSagaProcessor extends SagaProcessor {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        getCurrentSagaCoordinator(exchange).whenComplete((coordinator, ex) -> ifNotException(ex, exchange, callback, () -> {
-            setCurrentSagaCoordinator(exchange, null);
+        getCurrentSagaCoordinator(exchange)
+                .whenComplete((coordinator, ex) -> ifNotException(ex, exchange, callback, () -> {
+                    setCurrentSagaCoordinator(exchange, null);
 
-            super.process(exchange, doneSync -> {
-                // Restore existing coordinator
-                setCurrentSagaCoordinator(exchange, coordinator);
-                callback.done(false);
-            });
-        }));
+                    super.process(exchange, doneSync -> {
+                        // Restore existing coordinator
+                        setCurrentSagaCoordinator(exchange, coordinator);
+                        callback.done(false);
+                    });
+                }));
         return false;
     }
 }

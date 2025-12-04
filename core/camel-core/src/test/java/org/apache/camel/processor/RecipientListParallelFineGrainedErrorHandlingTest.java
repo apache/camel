@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
@@ -23,9 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTestSupport {
 
@@ -45,7 +46,11 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
             public void configure() {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException().parallelProcessing();
+                from("direct:start")
+                        .to("mock:a")
+                        .recipientList(header("foo"))
+                        .stopOnException()
+                        .parallelProcessing();
             }
         });
         context.start();
@@ -69,7 +74,11 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
             public void configure() {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException().parallelProcessing();
+                from("direct:start")
+                        .to("mock:a")
+                        .recipientList(header("foo"))
+                        .stopOnException()
+                        .parallelProcessing();
             }
         });
         context.start();

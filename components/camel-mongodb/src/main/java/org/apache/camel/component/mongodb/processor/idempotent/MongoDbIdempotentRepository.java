@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.processor.idempotent;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
 import com.mongodb.ErrorCategory;
 import com.mongodb.client.MongoClient;
@@ -30,27 +34,26 @@ import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses MongoDB to store message ids.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "Idempotent repository that uses MongoDB to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "MongoDB based message id repository")
 public class MongoDbIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     @Metadata(description = "The MongoClient to use for connecting to the MongoDB server", required = true)
     private MongoClient mongoClient;
+
     @Metadata(description = "The Database name", required = true)
     private String dbName;
+
     @Metadata(description = "The collection name", required = true)
     private String collectionName;
 
     private MongoCollection<Document> collection;
 
-    public MongoDbIdempotentRepository() {
-    }
+    public MongoDbIdempotentRepository() {}
 
     public MongoDbIdempotentRepository(MongoClient mongoClient, String collectionName, String dbName) {
         this.mongoClient = mongoClient;

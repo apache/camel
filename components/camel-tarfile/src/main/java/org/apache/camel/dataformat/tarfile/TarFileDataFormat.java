@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
+
+import static org.apache.camel.Exchange.FILE_LENGTH;
+import static org.apache.camel.Exchange.FILE_NAME;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -37,9 +41,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
-import static org.apache.camel.Exchange.FILE_LENGTH;
-import static org.apache.camel.Exchange.FILE_NAME;
-
 /**
  * Tar file data format. Based on ZipFileDataFormat from camel-zipfile component
  */
@@ -49,6 +50,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
      * The default maximum decompressed size (in bytes), which corresponds to 1G.
      */
     private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824;
+
     private boolean usingIterator;
     private boolean allowEmptyDirectory;
     private boolean preservePathElements;
@@ -105,8 +107,8 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
             return tarIterator;
         } else {
             BufferedInputStream bis = new BufferedInputStream(stream);
-            TarArchiveInputStream tis = (TarArchiveInputStream) new ArchiveStreamFactory()
-                    .createArchiveInputStream(ArchiveStreamFactory.TAR, bis);
+            TarArchiveInputStream tis = (TarArchiveInputStream)
+                    new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, bis);
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             try {

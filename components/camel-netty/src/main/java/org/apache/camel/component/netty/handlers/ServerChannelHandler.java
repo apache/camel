@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.handlers;
 
 import java.net.SocketAddress;
@@ -73,7 +74,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
             // let the exception handler deal with it
-            consumer.getExceptionHandler().handleException("Closing channel as an exception was thrown from Netty", cause);
+            consumer.getExceptionHandler()
+                    .handleException("Closing channel as an exception was thrown from Netty", cause);
             // close channel in case an exception was thrown
             NettyHelper.close(ctx.channel());
         }
@@ -92,7 +94,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
         // set the exchange charset property for converting
         if (consumer.getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
+            exchange.setProperty(
+                    ExchangePropertyKey.CHARSET_NAME,
                     IOHelper.normalizeCharset(consumer.getConfiguration().getCharsetName()));
         }
         if (consumer.getConfiguration().isReuseChannel()) {
@@ -170,24 +173,33 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
                 // must close session if no data to write otherwise client will never receive a response
                 // and wait forever (if not timing out)
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Closing channel as no payload to send as reply at address: {}", ctx.channel().remoteAddress());
+                    LOG.trace(
+                            "Closing channel as no payload to send as reply at address: {}",
+                            ctx.channel().remoteAddress());
                 }
                 NettyHelper.close(ctx.channel());
             }
         } else {
             // if textline enabled then covert to a String which must be used for textline
             if (consumer.getConfiguration().isTextline()) {
-                body = NettyHelper.getTextlineBody(body, exchange, consumer.getConfiguration().getDelimiter(),
+                body = NettyHelper.getTextlineBody(
+                        body,
+                        exchange,
+                        consumer.getConfiguration().getDelimiter(),
                         consumer.getConfiguration().isAutoAppendDelimiter());
             }
 
             // we got a body to write
-            ChannelFutureListener listener = createResponseFutureListener(consumer, exchange, ctx.channel().remoteAddress());
+            ChannelFutureListener listener = createResponseFutureListener(
+                    consumer, exchange, ctx.channel().remoteAddress());
             if (consumer.getConfiguration().isTcp()) {
                 NettyHelper.writeBodyAsync(LOG, ctx.channel(), null, body, listener);
             } else {
-                NettyHelper.writeBodyAsync(LOG, ctx.channel(),
-                        exchange.getProperty(NettyConstants.NETTY_REMOTE_ADDRESS, SocketAddress.class), body,
+                NettyHelper.writeBodyAsync(
+                        LOG,
+                        ctx.channel(),
+                        exchange.getProperty(NettyConstants.NETTY_REMOTE_ADDRESS, SocketAddress.class),
+                        body,
                         listener);
             }
         }
@@ -202,7 +214,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
      */
     protected Object getResponseBody(Exchange exchange) throws Exception {
         // if there was an exception then use that as response body
-        boolean exception = exchange.getException() != null && !consumer.getEndpoint().getConfiguration().isTransferExchange();
+        boolean exception = exchange.getException() != null
+                && !consumer.getEndpoint().getConfiguration().isTransferExchange();
         if (exception) {
             return exchange.getException();
         }
@@ -225,5 +238,4 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
             NettyConsumer consumer, Exchange exchange, SocketAddress remoteAddress) {
         return new ServerResponseFutureListener(consumer, exchange, remoteAddress);
     }
-
 }

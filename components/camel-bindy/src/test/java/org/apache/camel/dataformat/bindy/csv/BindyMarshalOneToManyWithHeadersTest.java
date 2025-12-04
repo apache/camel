@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.util.Arrays;
@@ -51,8 +52,8 @@ public class BindyMarshalOneToManyWithHeadersTest {
     @DirtiesContext
     public void testMarshallMessage() throws Exception {
         expected = "orderNumber,customerName,sku,quantity,unitPrice\r\n"
-                   + "11111,Joe Blow,abc,1,3\r\n"
-                   + "11111,Joe Blow,cde,3,2\r\n";
+                + "11111,Joe Blow,abc,1,3\r\n"
+                + "11111,Joe Blow,cde,3,2\r\n";
 
         result.expectedBodiesReceived(expected);
 
@@ -98,7 +99,5 @@ public class BindyMarshalOneToManyWithHeadersTest {
 
             from(URI_DIRECT_START).marshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
-
     }
-
 }

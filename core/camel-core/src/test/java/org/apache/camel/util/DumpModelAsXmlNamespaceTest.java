@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,9 +30,6 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.builder.Namespaces;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
 
     private static final String URL_FOO = "http://foo.com";
@@ -36,7 +37,8 @@ public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
 
         Document dom = context.getTypeConverter().convertTo(Document.class, xml);
@@ -68,8 +70,13 @@ public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
                 Namespaces foo = new Namespaces("foo", URL_FOO);
                 Namespaces bar = new Namespaces("bar", URL_BAR);
 
-                from("direct:start").routeId("myRoute").choice().when(xpath("/foo:customer", foo)).to("mock:foo")
-                        .when(xpath("/bar:customer", bar)).to("mock:bar");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .choice()
+                        .when(xpath("/foo:customer", foo))
+                        .to("mock:foo")
+                        .when(xpath("/bar:customer", bar))
+                        .to("mock:bar");
             }
         };
     }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.undertow.handlers;
 
-import io.undertow.server.HttpHandler;
-import io.undertow.server.handlers.RedirectHandler;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.undertow.handlers;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.RedirectHandler;
+import org.junit.jupiter.api.Test;
 
 public class CamelRootHandlerTest {
 
@@ -40,7 +41,8 @@ public class CamelRootHandlerTest {
 
         CamelWebSocketHandler camelWebSocketHandler1 = new CamelWebSocketHandler();
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> root.add("/app1", null, false, camelWebSocketHandler1),
                 "IllegalArgumentException expected");
 
@@ -51,7 +53,8 @@ public class CamelRootHandlerTest {
         /* now the other way round: register wsHandler and try to register httpHandler for the same path */
         root.add("/app2", null, false, new CamelWebSocketHandler());
         CamelWebSocketHandler camelWebSocketHandler2 = new CamelWebSocketHandler();
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> root.add("/app2", null, false, httpHandler),
                 "IllegalArgumentException expected");
     }
@@ -74,7 +77,5 @@ public class CamelRootHandlerTest {
         assertFalse(root.isEmpty());
         root.remove("/app1", null, false);
         assertTrue(root.isEmpty());
-
     }
-
 }

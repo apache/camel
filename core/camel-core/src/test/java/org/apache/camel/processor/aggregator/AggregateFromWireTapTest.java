@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -22,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregateFromWireTapTest extends ContextTestSupport {
 
@@ -60,8 +61,11 @@ public class AggregateFromWireTapTest extends ContextTestSupport {
                         // fire when we
                         // have aggregated 2 messages, if not the timeout of 5 sec
                         // will kick in
-                        .aggregate(constant(true), new MyAggregationStrategy()).completionSize(2).completionTimeout(5000L)
-                        .to("direct:aggregated").end();
+                        .aggregate(constant(true), new MyAggregationStrategy())
+                        .completionSize(2)
+                        .completionTimeout(5000L)
+                        .to("direct:aggregated")
+                        .end();
 
                 from("direct:aggregated").to("mock:aggregated");
             }
@@ -81,5 +85,4 @@ public class AggregateFromWireTapTest extends ContextTestSupport {
             return oldExchange;
         }
     }
-
 }

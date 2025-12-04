@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xchange;
+
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod;
 import org.apache.camel.support.DefaultProducer;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
-
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 
 public class XChangeMetaDataProducer extends DefaultProducer {
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import java.util.*;
@@ -33,8 +34,7 @@ public class ValueToKey {
         List<String> splittedFields = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNodeBody = ex.getMessage().getBody(JsonNode.class);
-        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
-        });
+        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {});
         if (ObjectHelper.isNotEmpty(fields)) {
             splittedFields = Arrays.stream(fields.split(",")).collect(Collectors.toList());
         }

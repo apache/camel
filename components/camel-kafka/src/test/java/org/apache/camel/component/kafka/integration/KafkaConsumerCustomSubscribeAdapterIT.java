@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Properties;
@@ -33,8 +36,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class KafkaConsumerCustomSubscribeAdapterIT extends BaseKafkaTestSupport {
 
     public static final String TOPIC = "test-subscribe-adapter";
@@ -45,7 +46,8 @@ public class KafkaConsumerCustomSubscribeAdapterIT extends BaseKafkaTestSupport 
         private volatile boolean subscribeCalled = false;
 
         @Override
-        public void subscribe(Consumer<?, ?> consumer, ConsumerRebalanceListener reBalanceListener, TopicInfo topicInfo) {
+        public void subscribe(
+                Consumer<?, ?> consumer, ConsumerRebalanceListener reBalanceListener, TopicInfo topicInfo) {
             try {
                 super.subscribe(consumer, reBalanceListener, topicInfo);
             } finally {
@@ -80,9 +82,11 @@ public class KafkaConsumerCustomSubscribeAdapterIT extends BaseKafkaTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("kafka:%s?brokers=%s&autoOffsetReset=earliest&consumersCount=1",
-                        TOPIC, service.getBootstrapServers())
-                        .routeId("subadapter").to(KafkaTestUtil.MOCK_RESULT);
+                fromF(
+                                "kafka:%s?brokers=%s&autoOffsetReset=earliest&consumersCount=1",
+                                TOPIC, service.getBootstrapServers())
+                        .routeId("subadapter")
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }

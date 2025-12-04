@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -35,7 +36,5 @@ public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
         // filter headers begin with "Camel" or "org.apache.camel"
         setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
-
     }
-
 }

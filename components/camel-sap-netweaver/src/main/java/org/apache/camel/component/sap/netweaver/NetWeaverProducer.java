@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sap.netweaver;
 
 import java.util.Map;
@@ -79,7 +80,7 @@ public class NetWeaverProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         String url = getEndpoint().getUrl() + "?authUsername=" + getEndpoint().getUsername() + "&authPassword="
-                     + getEndpoint().getPassword() + "&authMethod=Basic";
+                + getEndpoint().getPassword() + "&authMethod=Basic";
         if (LOG.isInfoEnabled()) {
             LOG.info("Creating NetWeaverProducer using url: {}", URISupport.sanitizeUri(url));
         }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs.mock;
 
 import java.util.*;
@@ -61,38 +62,46 @@ public class FrsClientMock extends FrsClient {
 
     @Override
     public CompareFaceByBase64Response compareFaceByBase64(CompareFaceByBase64Request request) {
-        return new CompareFaceByBase64Response().withImage1Face(MockResult.getCompareFaceResult())
-                .withImage2Face(MockResult.getCompareFaceResult()).withSimilarity(1.0);
+        return new CompareFaceByBase64Response()
+                .withImage1Face(MockResult.getCompareFaceResult())
+                .withImage2Face(MockResult.getCompareFaceResult())
+                .withSimilarity(1.0);
     }
 
     @Override
     public CompareFaceByUrlResponse compareFaceByUrl(CompareFaceByUrlRequest request) {
-        return new CompareFaceByUrlResponse().withImage1Face(MockResult.getCompareFaceResult())
-                .withImage2Face(MockResult.getCompareFaceResult()).withSimilarity(1.0);
+        return new CompareFaceByUrlResponse()
+                .withImage1Face(MockResult.getCompareFaceResult())
+                .withImage2Face(MockResult.getCompareFaceResult())
+                .withSimilarity(1.0);
     }
 
     @Override
     public CompareFaceByFileResponse compareFaceByFile(CompareFaceByFileRequest request) {
-        return new CompareFaceByFileResponse().withImage1Face(MockResult.getCompareFaceResult())
-                .withImage2Face(MockResult.getCompareFaceResult()).withSimilarity(1.0);
+        return new CompareFaceByFileResponse()
+                .withImage1Face(MockResult.getCompareFaceResult())
+                .withImage2Face(MockResult.getCompareFaceResult())
+                .withSimilarity(1.0);
     }
 
     @Override
     public DetectLiveByBase64Response detectLiveByBase64(DetectLiveByBase64Request request) {
-        return new DetectLiveByBase64Response().withVideoResult(MockResult.getLiveDetectResult())
+        return new DetectLiveByBase64Response()
+                .withVideoResult(MockResult.getLiveDetectResult())
                 .withWarningList(Collections.emptyList());
     }
 
     @Override
     public DetectLiveByUrlResponse detectLiveByUrl(DetectLiveByUrlRequest request) {
-        return new DetectLiveByUrlResponse().withVideoResult(MockResult.getLiveDetectResult())
+        return new DetectLiveByUrlResponse()
+                .withVideoResult(MockResult.getLiveDetectResult())
                 .withWarningList(Collections.emptyList());
     }
 
     @Override
     public DetectLiveByFileResponse detectLiveByFile(DetectLiveByFileRequest request) {
-        return new DetectLiveByFileResponse().withVideoResult(MockResult.getLiveDetectResult())
+        return new DetectLiveByFileResponse()
+                .withVideoResult(MockResult.getLiveDetectResult())
                 .withWarningList(Collections.emptyList());
     }
-
 }

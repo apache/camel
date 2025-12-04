@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulkv2;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class AbstractBulkDTO extends AbstractDTOBase {
-}
+public abstract class AbstractBulkDTO extends AbstractDTOBase {}

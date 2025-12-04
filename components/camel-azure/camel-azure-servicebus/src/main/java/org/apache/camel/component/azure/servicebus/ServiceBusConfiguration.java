@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
 
 import java.time.OffsetDateTime;
@@ -36,61 +37,90 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
 
     @UriPath
     private String topicOrQueueName;
+
     @UriParam(label = "common", defaultValue = "queue")
     @Metadata(required = true)
     private ServiceBusType serviceBusType = ServiceBusType.queue;
+
     @UriParam(label = "security", secret = true)
     private String connectionString;
+
     @UriParam(label = "security")
     private String fullyQualifiedNamespace;
+
     @Metadata(autowired = true)
     @UriParam(label = "security", secret = true)
     private TokenCredential tokenCredential;
+
     @UriParam(label = "common")
     private ClientOptions clientOptions;
+
     @UriParam(label = "common")
     private ProxyOptions proxyOptions;
+
     @UriParam(label = "common")
     private AmqpRetryOptions amqpRetryOptions;
+
     @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
-    @UriParam(label = "common",
-              description = "To use a custom HeaderFilterStrategy to filter Service Bus application properties to and from Camel message headers.")
+
+    @UriParam(
+            label = "common",
+            description =
+                    "To use a custom HeaderFilterStrategy to filter Service Bus application properties to and from Camel message headers.")
     private HeaderFilterStrategy headerFilterStrategy = new ServiceBusHeaderFilterStrategy();
+
     @UriParam(label = "consumer")
     @Metadata(autowired = true)
     private ServiceBusProcessorClient processorClient;
+
     @UriParam(label = "consumer")
     private String subscriptionName;
+
     @UriParam(label = "consumer")
     private boolean enableDeadLettering;
+
     @UriParam(label = "consumer", defaultValue = "PEEK_LOCK")
     private ServiceBusReceiveMode serviceBusReceiveMode = ServiceBusReceiveMode.PEEK_LOCK;
+
     @UriParam(label = "consumer", defaultValue = "300000", javaType = "java.time.Duration")
     private long maxAutoLockRenewDuration = 300000L;
+
     @UriParam(label = "consumer")
     private int prefetchCount;
+
     @UriParam(label = "consumer")
     private SubQueue subQueue;
+
     @UriParam(label = "consumer", defaultValue = "1")
     private int maxConcurrentCalls = 1;
+
     @UriParam(label = "producer", defaultValue = "sendMessages")
-    private ServiceBusProducerOperationDefinition producerOperation = ServiceBusProducerOperationDefinition.sendMessages;
+    private ServiceBusProducerOperationDefinition producerOperation =
+            ServiceBusProducerOperationDefinition.sendMessages;
+
     @UriParam(label = "producer")
     @Metadata(autowired = true)
     private ServiceBusSenderClient senderClient;
+
     @UriParam(label = "producer")
     private ServiceBusTransactionContext serviceBusTransactionContext;
+
     @UriParam(label = "producer")
     private OffsetDateTime scheduledEnqueueTime;
+
     @UriParam(label = "producer")
     private boolean binary;
-    @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
-              defaultValue = "CONNECTION_STRING")
+
+    @UriParam(
+            label = "security",
+            enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
+            defaultValue = "CONNECTION_STRING")
     private CredentialType credentialType;
     // New fields for session support
     @UriParam(label = "consumer", defaultValue = "false", description = "Enable session support")
     private boolean sessionEnabled;
+
     @UriParam(label = "producer", description = "Session ID for session-enabled queues or topics.")
     private String sessionId;
 

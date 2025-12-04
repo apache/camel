@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,15 +35,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Checks that a static soap request is unmarshalled to the correct java objects
  */
 public class SoapUnMarshalTest extends CamelTestSupport {
-    private static final String SERVICE_PACKAGE = GetCustomersByName.class
-            .getPackage().getName();
+    private static final String SERVICE_PACKAGE =
+            GetCustomersByName.class.getPackage().getName();
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -79,12 +80,11 @@ public class SoapUnMarshalTest extends CamelTestSupport {
             public void configure() throws Exception {
                 SoapDataFormat dataFormate = new SoapDataFormat();
                 dataFormate.setContextPath(SERVICE_PACKAGE);
-                dataFormate.setSchema("classpath:org/apache/camel/dataformat/soap/CustomerService.xsd,classpath:soap.xsd");
+                dataFormate.setSchema(
+                        "classpath:org/apache/camel/dataformat/soap/CustomerService.xsd,classpath:soap.xsd");
 
-                from("direct:start").unmarshal(dataFormate)
-                        .to("mock:result");
+                from("direct:start").unmarshal(dataFormate).to("mock:result");
             }
         };
     }
-
 }

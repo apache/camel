@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.io.File;
@@ -43,12 +44,14 @@ public class JMXMonitorTypeCounterTest extends SimpleBeanFixture {
         simpleBean.setMonitorNumber(4);
         simpleBean.setMonitorNumber(5);
         getMockFixture().waitForMessages();
-        getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/monitorNotification-2.xml"));
+        getMockFixture()
+                .assertMessageReceived(new File("src/test/resources/monitor-consumer/monitorNotification-2.xml"));
     }
 
     @Override
     protected JMXUriBuilder buildFromURI() {
-        return super.buildFromURI().withMonitorType("counter")
+        return super.buildFromURI()
+                .withMonitorType("counter")
                 .withGranularityPeriod(500)
                 .withObservedAttribute("MonitorNumber")
                 .withInitThreshold(2)

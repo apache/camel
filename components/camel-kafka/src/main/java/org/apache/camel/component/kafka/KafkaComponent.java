@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 import java.util.HashMap;
@@ -38,41 +39,50 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
 
     @Metadata
     private KafkaConfiguration configuration = new KafkaConfiguration();
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+
     @Metadata(autowired = true, label = "consumer,advanced")
     private KafkaManualCommitFactory kafkaManualCommitFactory;
+
     @Metadata(autowired = true, label = "advanced")
     private KafkaClientFactory kafkaClientFactory;
+
     @Metadata(autowired = true, label = "consumer,advanced")
     private PollExceptionStrategy pollExceptionStrategy;
+
     @Metadata(label = "consumer,advanced")
     private int createConsumerBackoffMaxAttempts;
+
     @Metadata(label = "consumer,advanced", defaultValue = "5000")
     private long createConsumerBackoffInterval = 5000;
+
     @Metadata(label = "consumer,advanced")
     private int subscribeConsumerBackoffMaxAttempts;
+
     @Metadata(label = "consumer,advanced", defaultValue = "5000")
     private long subscribeConsumerBackoffInterval = 5000;
+
     @Metadata(label = "consumer,advanced")
     private boolean subscribeConsumerTopicMustExists;
 
-    public KafkaComponent() {
-    }
+    public KafkaComponent() {}
 
     public KafkaComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         if (ObjectHelper.isEmpty(remaining)) {
             throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
         }
 
         // extract the endpoint additional properties map
-        final Map<String, Object> endpointAdditionalProperties
-                = PropertiesHelper.extractProperties(parameters, "additionalProperties.");
+        final Map<String, Object> endpointAdditionalProperties =
+                PropertiesHelper.extractProperties(parameters, "additionalProperties.");
 
         KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
 

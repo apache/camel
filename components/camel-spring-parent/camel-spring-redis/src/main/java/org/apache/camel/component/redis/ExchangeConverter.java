@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
 
 import java.util.Collection;
@@ -157,5 +158,4 @@ public class ExchangeConverter {
     private static <T> T getInHeaderValue(Exchange exchange, String key, Class<T> aClass) {
         return exchange.getIn().getHeader(key, aClass);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.errorhandler;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -55,9 +56,13 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
         Processor deadLetterProcessor = createDeadLetterChannelProcessor(uri);
 
         DeadLetterChannel answer = new DeadLetterChannel(
-                camelContext, processor, logger,
+                camelContext,
+                processor,
+                logger,
                 getProcessor(definition.getOnRedeliveryProcessor(), definition.getOnRedeliveryRef()),
-                redeliveryPolicy, deadLetterProcessor, uri,
+                redeliveryPolicy,
+                deadLetterProcessor,
+                uri,
                 parseBoolean(definition.getDeadLetterHandleNewException(), true),
                 parseBoolean(definition.getUseOriginalMessage(), false),
                 parseBoolean(definition.getUseOriginalBody(), false),
@@ -106,7 +111,8 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
         return new FatalFallbackErrorHandler(child, true);
     }
 
-    private RedeliveryPolicy resolveRedeliveryPolicy(DeadLetterChannelDefinition definition, CamelContext camelContext) {
+    private RedeliveryPolicy resolveRedeliveryPolicy(
+            DeadLetterChannelDefinition definition, CamelContext camelContext) {
         if (definition.hasRedeliveryPolicy() && definition.getRedeliveryPolicyRef() != null) {
             throw new IllegalArgumentException(
                     "Cannot have both redeliveryPolicy and redeliveryPolicyRef set at the same time.");
@@ -145,7 +151,8 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
                         executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
                     }
                     if (executorService == null) {
-                        throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");
+                        throw new IllegalArgumentException(
+                                "ExecutorService " + executorServiceRef + " not found in registry.");
                     }
                 } else {
                     // no explicit configured thread pool, so leave it up to the
@@ -159,5 +166,4 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
             lock.unlock();
         }
     }
-
 }

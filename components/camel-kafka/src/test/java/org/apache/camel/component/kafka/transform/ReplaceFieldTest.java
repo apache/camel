@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,10 +34,8 @@ class ReplaceFieldTest {
 
     private ReplaceField processor;
 
-    private final String baseJson = "{" + "\n" +
-                                    "  \"name\" : \"Rajesh Koothrappali\"," + "\n" +
-                                    "  \"age\" : \"29\"" + "\n" +
-                                    "}";
+    private final String baseJson =
+            "{" + "\n" + "  \"name\" : \"Rajesh Koothrappali\"," + "\n" + "  \"age\" : \"29\"" + "\n" + "}";
 
     @BeforeEach
     void setup() {
@@ -52,10 +51,8 @@ class ReplaceFieldTest {
 
         JsonNode node = processor.process("all", "none", "name:firstName,age:years", exchange);
 
-        Assertions.assertEquals(node.toString(), "{" +
-                                                 "\"firstName\":\"Rajesh Koothrappali\"," +
-                                                 "\"years\":\"29\"" +
-                                                 "}");
+        Assertions.assertEquals(
+                node.toString(), "{" + "\"firstName\":\"Rajesh Koothrappali\"," + "\"years\":\"29\"" + "}");
     }
 
     @Test
@@ -66,10 +63,8 @@ class ReplaceFieldTest {
 
         JsonNode node = processor.process("name,age", "none", "name:firstName", exchange);
 
-        Assertions.assertEquals(node.toString(), "{" +
-                                                 "\"firstName\":\"Rajesh Koothrappali\"," +
-                                                 "\"age\":\"29\"" +
-                                                 "}");
+        Assertions.assertEquals(
+                node.toString(), "{" + "\"firstName\":\"Rajesh Koothrappali\"," + "\"age\":\"29\"" + "}");
     }
 
     @Test
@@ -80,9 +75,7 @@ class ReplaceFieldTest {
 
         JsonNode node = processor.process("name", "none", "name:firstName", exchange);
 
-        Assertions.assertEquals(node.toString(), "{" +
-                                                 "\"firstName\":\"Rajesh Koothrappali\"" +
-                                                 "}");
+        Assertions.assertEquals(node.toString(), "{" + "\"firstName\":\"Rajesh Koothrappali\"" + "}");
     }
 
     @Test
@@ -93,10 +86,7 @@ class ReplaceFieldTest {
 
         JsonNode node = processor.process("all", "name,age", "name:firstName", exchange);
 
-        Assertions.assertEquals(node.toString(), "{" +
-                                                 "\"name\":\"Rajesh Koothrappali\"," +
-                                                 "\"age\":\"29\"" +
-                                                 "}");
+        Assertions.assertEquals(node.toString(), "{" + "\"name\":\"Rajesh Koothrappali\"," + "\"age\":\"29\"" + "}");
     }
 
     @Test
@@ -107,9 +97,6 @@ class ReplaceFieldTest {
 
         JsonNode node = processor.process("none", "all", "name:firstName", exchange);
 
-        Assertions.assertEquals(node.toString(), "{" +
-                                                 "\"name\":\"Rajesh Koothrappali\"," +
-                                                 "\"age\":\"29\"" +
-                                                 "}");
+        Assertions.assertEquals(node.toString(), "{" + "\"name\":\"Rajesh Koothrappali\"," + "\"age\":\"29\"" + "}");
     }
 }

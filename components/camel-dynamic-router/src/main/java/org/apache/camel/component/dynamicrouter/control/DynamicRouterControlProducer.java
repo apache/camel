@@ -14,19 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
-
-import java.util.Map;
-import java.util.Optional;
-
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint;
-import org.apache.camel.spi.InvokeOnHeader;
-import org.apache.camel.support.HeaderSelectorProducer;
-import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_HEADER;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_LIST;
@@ -43,6 +32,18 @@ import static org.apache.camel.component.dynamicrouter.control.DynamicRouterCont
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIPTION_ID;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_NO_PREDICATE_BEAN_FOUND;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.SIMPLE_LANGUAGE;
+
+import java.util.Map;
+import java.util.Optional;
+
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint;
+import org.apache.camel.spi.InvokeOnHeader;
+import org.apache.camel.support.HeaderSelectorProducer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link org.apache.camel.Producer} implementation to process control channel messages for the Dynamic Router.
@@ -66,9 +67,10 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
      * @param dynamicRouterControlService the {@link DynamicRouterControlService}
      * @param configuration               the configuration for the Dynamic Router
      */
-    public DynamicRouterControlProducer(final DynamicRouterControlEndpoint endpoint,
-                                        final DynamicRouterControlService dynamicRouterControlService,
-                                        final DynamicRouterControlConfiguration configuration) {
+    public DynamicRouterControlProducer(
+            final DynamicRouterControlEndpoint endpoint,
+            final DynamicRouterControlService dynamicRouterControlService,
+            final DynamicRouterControlConfiguration configuration) {
         super(endpoint, CONTROL_ACTION_HEADER, configuration::getControlActionOrDefault);
         this.dynamicRouterControlService = dynamicRouterControlService;
         this.configuration = configuration;
@@ -84,7 +86,8 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
      */
     static String subscribeFromMessage(
             final DynamicRouterControlService dynamicRouterControlService,
-            final Message message, final boolean update) {
+            final Message message,
+            final boolean update) {
         DynamicRouterControlMessage messageBody = message.getBody(DynamicRouterControlMessage.class);
         String subscriptionId = messageBody.getSubscriptionId();
         String subscribeChannel = messageBody.getSubscribeChannel();
@@ -94,11 +97,22 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
         String predicateBean = messageBody.getPredicateBean();
         String expressionLanguage = messageBody.getExpressionLanguage();
         if (ObjectHelper.isNotEmpty(predicateBean)) {
-            return dynamicRouterControlService.subscribeWithPredicateBean(subscribeChannel, subscriptionId,
-                    destinationUri, Integer.parseInt(priority), predicateBean, update);
+            return dynamicRouterControlService.subscribeWithPredicateBean(
+                    subscribeChannel,
+                    subscriptionId,
+                    destinationUri,
+                    Integer.parseInt(priority),
+                    predicateBean,
+                    update);
         } else if (ObjectHelper.isNotEmpty(predicate) && ObjectHelper.isNotEmpty(expressionLanguage)) {
-            return dynamicRouterControlService.subscribeWithPredicateExpression(subscribeChannel, subscriptionId,
-                    destinationUri, Integer.parseInt(priority), predicate, expressionLanguage, update);
+            return dynamicRouterControlService.subscribeWithPredicateExpression(
+                    subscribeChannel,
+                    subscriptionId,
+                    destinationUri,
+                    Integer.parseInt(priority),
+                    predicate,
+                    expressionLanguage,
+                    update);
         } else {
             throw new IllegalStateException(ERROR_NO_PREDICATE_BEAN_FOUND);
         }
@@ -114,7 +128,8 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
      */
     static String subscribeFromHeaders(
             final DynamicRouterControlService dynamicRouterControlService,
-            final Message message, final boolean update) {
+            final Message message,
+            final boolean update) {
         Map<String, Object> headers = message.getHeaders();
         String subscriptionId = (String) headers.get(CONTROL_SUBSCRIPTION_ID);
         String subscribeChannel = (String) headers.get(CONTROL_SUBSCRIBE_CHANNEL);
@@ -125,14 +140,30 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
         String expressionLanguage = Optional.ofNullable((String) headers.get(CONTROL_EXPRESSION_LANGUAGE))
                 .orElse(SIMPLE_LANGUAGE);
         if (ObjectHelper.isNotEmpty(predicateBean)) {
-            return dynamicRouterControlService.subscribeWithPredicateBean(subscribeChannel, subscriptionId,
-                    destinationUri, Integer.parseInt(priority), predicateBean, update);
+            return dynamicRouterControlService.subscribeWithPredicateBean(
+                    subscribeChannel,
+                    subscriptionId,
+                    destinationUri,
+                    Integer.parseInt(priority),
+                    predicateBean,
+                    update);
         } else if (ObjectHelper.isNotEmpty(predicate) && ObjectHelper.isNotEmpty(expressionLanguage)) {
-            return dynamicRouterControlService.subscribeWithPredicateExpression(subscribeChannel, subscriptionId,
-                    destinationUri, Integer.parseInt(priority), predicate, expressionLanguage, update);
+            return dynamicRouterControlService.subscribeWithPredicateExpression(
+                    subscribeChannel,
+                    subscriptionId,
+                    destinationUri,
+                    Integer.parseInt(priority),
+                    predicate,
+                    expressionLanguage,
+                    update);
         } else {
-            return dynamicRouterControlService.subscribeWithPredicateInstance(subscribeChannel, subscriptionId,
-                    destinationUri, Integer.parseInt(priority), message.getBody(), update);
+            return dynamicRouterControlService.subscribeWithPredicateInstance(
+                    subscribeChannel,
+                    subscriptionId,
+                    destinationUri,
+                    Integer.parseInt(priority),
+                    message.getBody(),
+                    update);
         }
     }
 
@@ -171,8 +202,10 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
             subscriptionId = controlMessage.getSubscriptionId();
             subscribeChannel = controlMessage.getSubscribeChannel();
         } else {
-            subscriptionId = message.getHeader(CONTROL_SUBSCRIPTION_ID, configuration.getSubscriptionId(), String.class);
-            subscribeChannel = message.getHeader(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel(), String.class);
+            subscriptionId =
+                    message.getHeader(CONTROL_SUBSCRIPTION_ID, configuration.getSubscriptionId(), String.class);
+            subscribeChannel =
+                    message.getHeader(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel(), String.class);
         }
         boolean result = dynamicRouterControlService.removeSubscription(subscribeChannel, subscriptionId);
         message.setBody(result, boolean.class);
@@ -210,7 +243,8 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
     public void performList(final Exchange exchange, AsyncCallback callback) {
         Message message = exchange.getMessage();
         Map<String, Object> headers = message.getHeaders();
-        String subscribeChannel = (String) headers.getOrDefault(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel());
+        String subscribeChannel =
+                (String) headers.getOrDefault(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel());
         try {
             String filters = dynamicRouterControlService.getSubscriptionsForChannel(subscribeChannel);
             message.setBody(filters, String.class);
@@ -233,7 +267,8 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
     public void performStats(final Exchange exchange, AsyncCallback callback) {
         Message message = exchange.getMessage();
         Map<String, Object> headers = message.getHeaders();
-        String subscribeChannel = (String) headers.getOrDefault(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel());
+        String subscribeChannel =
+                (String) headers.getOrDefault(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel());
         try {
             String stats = dynamicRouterControlService.getStatisticsForChannel(subscribeChannel);
             message.setBody(stats, String.class);

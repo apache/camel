@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.jaxb.definition;
+
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -32,9 +36,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.xml.jaxb.JaxbHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateModelFromXmlTest extends ContextTestSupport {
 

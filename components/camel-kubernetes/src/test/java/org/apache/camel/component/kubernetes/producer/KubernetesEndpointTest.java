@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.producer;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
@@ -25,9 +29,6 @@ import org.apache.camel.component.kubernetes.pods.KubernetesPodsEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class KubernetesEndpointTest extends CamelTestSupport {
     @BindToRegistry
     KubernetesClient client = new KubernetesClientBuilder().build();
@@ -35,16 +36,16 @@ public class KubernetesEndpointTest extends CamelTestSupport {
     @Test
     void endpointStopDoesNotCloseAutowiredKubernetesClient() {
         assertFalse(client.getHttpClient().isClosed());
-        KubernetesPodsEndpoint endpoint
-                = context.getEndpoint("kubernetes-pods:local?operation=listPods", KubernetesPodsEndpoint.class);
+        KubernetesPodsEndpoint endpoint =
+                context.getEndpoint("kubernetes-pods:local?operation=listPods", KubernetesPodsEndpoint.class);
         endpoint.stop();
         assertFalse(client.getHttpClient().isClosed());
     }
 
     @Test
     void endpointStopClosesNonAutowiredKubernetesClient() {
-        KubernetesPodsEndpoint endpoint
-                = context.getEndpoint("kubernetes-no-autowired-pods:local?operation=listPods", KubernetesPodsEndpoint.class);
+        KubernetesPodsEndpoint endpoint = context.getEndpoint(
+                "kubernetes-no-autowired-pods:local?operation=listPods", KubernetesPodsEndpoint.class);
         assertFalse(endpoint.getKubernetesClient().getHttpClient().isClosed());
         endpoint.stop();
         assertTrue(endpoint.getKubernetesClient().getHttpClient().isClosed());

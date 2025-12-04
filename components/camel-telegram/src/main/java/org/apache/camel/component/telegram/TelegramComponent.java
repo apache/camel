@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import java.net.http.HttpClient;
@@ -34,12 +35,14 @@ public class TelegramComponent extends HealthCheckComponent {
     @Metadata(label = "advanced")
     private HttpClient client;
 
-    @Metadata(label = "advanced", defaultValue = BOT_API_DEFAULT_URL,
-              description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
+    @Metadata(
+            label = "advanced",
+            defaultValue = BOT_API_DEFAULT_URL,
+            description =
+                    "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
     private String baseUri = BOT_API_DEFAULT_URL;
 
-    public TelegramComponent() {
-    }
+    public TelegramComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -102,5 +105,4 @@ public class TelegramComponent extends HealthCheckComponent {
     public void setBaseUri(String telegramBaseUri) {
         this.baseUri = telegramBaseUri;
     }
-
 }

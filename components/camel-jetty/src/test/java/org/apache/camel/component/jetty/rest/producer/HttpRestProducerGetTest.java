@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpRestProducerGetTest extends BaseJettyTest {
 
@@ -43,7 +44,10 @@ public class HttpRestProducerGetTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("jetty").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
                         // use camel-http as rest client
                         .producerComponent("http");
 
@@ -60,5 +64,4 @@ public class HttpRestProducerGetTest extends BaseJettyTest {
             }
         };
     }
-
 }

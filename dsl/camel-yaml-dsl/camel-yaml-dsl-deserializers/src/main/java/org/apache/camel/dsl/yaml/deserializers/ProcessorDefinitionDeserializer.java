@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
@@ -23,11 +26,7 @@ import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
-
-@YamlType(
-          types = ProcessorDefinition.class,
-          order = YamlDeserializerResolver.ORDER_DEFAULT)
+@YamlType(types = ProcessorDefinition.class, order = YamlDeserializerResolver.ORDER_DEFAULT)
 public class ProcessorDefinitionDeserializer implements ConstructNode {
 
     @Override

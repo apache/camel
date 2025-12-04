@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 import java.util.Arrays;
@@ -88,11 +89,12 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         params.put("port", 4444);
         params.put("amount", "123");
 
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException e = Assertions.assertThrows(
+                IllegalArgumentException.class,
                 () -> assembler.buildUri("acme", params),
                 "Should have thrown an exception");
-        Assertions.assertEquals("Option name is required when creating endpoint uri with syntax acme:name:port",
-                e.getMessage());
+        Assertions.assertEquals(
+                "Option name is required when creating endpoint uri with syntax acme:name:port", e.getMessage());
     }
 
     @Test
@@ -242,14 +244,12 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         params.put("cql", "add(4 + 5)");
 
         Assertions.assertEquals(
-                "cql:localhost/test?cql=add%284+%2B+5%29",
-                assembler.buildUri("cql", new LinkedHashMap<>(params)));
+                "cql:localhost/test?cql=add%284+%2B+5%29", assembler.buildUri("cql", new LinkedHashMap<>(params)));
         Assertions.assertEquals(
                 "cql:localhost/test?cql=add%284+%2B+5%29",
                 assembler.buildUri("cql", new LinkedHashMap<>(params), true));
         Assertions.assertEquals(
-                "cql:localhost/test?cql=add(4 + 5)",
-                assembler.buildUri("cql", new LinkedHashMap<>(params), false));
+                "cql:localhost/test?cql=add(4 + 5)", assembler.buildUri("cql", new LinkedHashMap<>(params), false));
     }
 
     @Test
@@ -323,7 +323,6 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         public boolean isLenientProperties() {
             return false;
         }
-
     }
 
     private static class MySecondAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
@@ -369,7 +368,6 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         public boolean isLenientProperties() {
             return false;
         }
-
     }
 
     private static class MyJmsAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
@@ -410,7 +408,6 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         public boolean isLenientProperties() {
             return false;
         }
-
     }
 
     private static class MyJmsxAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
@@ -450,7 +447,6 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         public boolean isLenientProperties() {
             return false;
         }
-
     }
 
     private static class MyCQLAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
@@ -490,7 +486,5 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         public boolean isLenientProperties() {
             return false;
         }
-
     }
-
 }

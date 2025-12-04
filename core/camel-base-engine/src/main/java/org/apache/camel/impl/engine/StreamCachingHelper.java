@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.Exchange;
@@ -29,8 +30,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 final class StreamCachingHelper {
 
-    private StreamCachingHelper() {
-    }
+    private StreamCachingHelper() {}
 
     public static StreamCache convertToStreamCache(StreamCachingStrategy strategy, Exchange exchange, Message message) {
         // check if body is already cached
@@ -88,5 +88,4 @@ final class StreamCachingHelper {
         // so mark as redelivery exhausted
         exchange.getExchangeExtension().setRedeliveryExhausted(true);
     }
-
 }

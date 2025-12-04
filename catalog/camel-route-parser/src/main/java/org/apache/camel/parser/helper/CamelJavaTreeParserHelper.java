@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.helper;
+
+import static org.apache.camel.parser.helper.CamelJavaParserHelper.endpointTypeCheck;
+import static org.apache.camel.parser.helper.ParserCommon.findLineNumber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +49,6 @@ import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
-import static org.apache.camel.parser.helper.CamelJavaParserHelper.endpointTypeCheck;
-import static org.apache.camel.parser.helper.ParserCommon.findLineNumber;
-
 /**
  * A Camel Java tree parser that only depends on the Roaster API.
  * <p/>
@@ -60,8 +61,7 @@ public final class CamelJavaTreeParserHelper {
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public List<CamelNodeDetails> parseCamelRouteTree(
-            JavaClassSource clazz, String fullyQualifiedFileName,
-            MethodSource<JavaClassSource> configureMethod) {
+            JavaClassSource clazz, String fullyQualifiedFileName, MethodSource<JavaClassSource> configureMethod) {
 
         // find any from which is the start of the route
         CamelNodeDetailsFactory nodeFactory = CamelNodeDetailsFactory.newInstance();
@@ -78,7 +78,8 @@ public final class CamelJavaTreeParserHelper {
                         Expression exp = es.getExpression();
                         boolean valid = isFromCamelRoute(exp);
                         if (valid) {
-                            parseExpression(nodeFactory, fullyQualifiedFileName, clazz, configureMethod, block, exp, route);
+                            parseExpression(
+                                    nodeFactory, fullyQualifiedFileName, clazz, configureMethod, block, exp, route);
                         }
                     }
                 }
@@ -110,7 +111,9 @@ public final class CamelJavaTreeParserHelper {
             } else if ("routeId".equals(name)) {
                 // should be set on the parent
                 parent.setRouteId(node.getRouteId());
-            } else if ("end".equals(name) || "endParent".equals(name) || "endRest".equals(name)
+            } else if ("end".equals(name)
+                    || "endParent".equals(name)
+                    || "endRest".equals(name)
                     || "endDoTry".equals(name)) {
                 // parent should be grand parent
                 if (parent.getParent() != null) {
@@ -204,9 +207,13 @@ public final class CamelJavaTreeParserHelper {
     }
 
     private void parseExpression(
-            CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
-            JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
-            Expression exp, CamelNodeDetails node) {
+            CamelNodeDetailsFactory nodeFactory,
+            String fullyQualifiedFileName,
+            JavaClassSource clazz,
+            MethodSource<JavaClassSource> configureMethod,
+            Block block,
+            Expression exp,
+            CamelNodeDetails node) {
         if (exp == null) {
             return;
         }
@@ -219,14 +226,21 @@ public final class CamelJavaTreeParserHelper {
     }
 
     private CamelNodeDetails doParseCamelModels(
-            CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
-            JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
-            MethodInvocation mi, CamelNodeDetails node) {
+            CamelNodeDetailsFactory nodeFactory,
+            String fullyQualifiedFileName,
+            JavaClassSource clazz,
+            MethodSource<JavaClassSource> configureMethod,
+            Block block,
+            MethodInvocation mi,
+            CamelNodeDetails node) {
         String name = mi.getName().getIdentifier();
 
         // special for Java DSL having some endXXX
-        boolean isEnd = "end".equals(name) || "endChoice".equals(name) || "endDoTry".equals(name)
-                || "endParent".equals(name) || "endRest".equals(name);
+        boolean isEnd = "end".equals(name)
+                || "endChoice".equals(name)
+                || "endDoTry".equals(name)
+                || "endParent".equals(name)
+                || "endRest".equals(name);
         boolean isRoute = "route".equals(name) || "from".equals(name) || "routeId".equals(name);
         // must be an eip model that has either input or output as we only want to track processors (also accept from)
         boolean isEip = camelCatalog.findModelNames().contains(name) && (hasInput(name) || hasOutput(name));
@@ -290,7 +304,8 @@ public final class CamelJavaTreeParserHelper {
             return textBlock.getLiteralValue();
         }
 
-        // if it's a method invocation then add a dummy value assuming the method invocation will return a valid response
+        // if it's a method invocation then add a dummy value assuming the method invocation will return a valid
+        // response
         if (expression instanceof MethodInvocation) {
             String name = ((MethodInvocation) expression).getName().getIdentifier();
             return "{{" + name + "}}";
@@ -335,7 +350,8 @@ public final class CamelJavaTreeParserHelper {
                 // is the field an org.apache.camel.Endpoint type?
                 return endpointTypeCheck(clazz, block, field);
             } else {
-                // we could not find the field in this class/method, so its maybe from some other super class, so insert a dummy value
+                // we could not find the field in this class/method, so its maybe from some other super class, so insert
+                // a dummy value
                 final String fieldName = ((SimpleName) expression).getIdentifier();
                 return "{{" + fieldName + "}}";
             }

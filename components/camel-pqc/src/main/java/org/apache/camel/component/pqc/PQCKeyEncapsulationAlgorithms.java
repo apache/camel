@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
 
 public enum PQCKeyEncapsulationAlgorithms {
@@ -47,5 +48,4 @@ public enum PQCKeyEncapsulationAlgorithms {
     public String getBcProvider() {
         return bcProvider;
     }
-
 }

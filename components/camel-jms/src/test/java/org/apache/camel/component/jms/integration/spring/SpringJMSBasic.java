@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring;
 
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
@@ -31,7 +32,6 @@ public abstract class SpringJMSBasic extends AbstractSpringJMSITSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                new String[] {
-                        "classpath:org/apache/camel/component/jms/integration/spring/SpringJMSBasic.xml" });
+                new String[] {"classpath:org/apache/camel/component/jms/integration/spring/SpringJMSBasic.xml"});
     }
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RoutesBuilder;
@@ -22,9 +26,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ObjectHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeCoerceCompareTest extends ContextTestSupport {
 
@@ -308,23 +309,23 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setProperty("left", simple("${body}"))
-                    .setProperty("right", simple("7.5"))
-                    .choice()
+                        .setProperty("left", simple("${body}"))
+                        .setProperty("right", simple("7.5"))
+                        .choice()
                         .when(simple("${exchangeProperty.left} >= ${exchangeProperty.right}"))
-                            .to("mock:match")
+                        .to("mock:match")
                         .otherwise()
-                            .to("mock:other")
+                        .to("mock:other")
                         .end();
 
                 from("direct:start2")
-                    .setProperty("left", simple("${body}"))
-                    .setProperty("right", simple("7"))
-                    .choice()
+                        .setProperty("left", simple("${body}"))
+                        .setProperty("right", simple("7"))
+                        .choice()
                         .when(simple("${exchangeProperty.left} >= ${exchangeProperty.right}"))
-                            .to("mock:match2")
+                        .to("mock:match2")
                         .otherwise()
-                            .to("mock:other2")
+                        .to("mock:other2")
                         .end();
             }
         };

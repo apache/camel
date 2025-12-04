@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,14 +40,12 @@ import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
 
-    private final static Long WORKSPACE_ID = 12345L;
-    private final static String AUTHORIZATION_TOKEN = "mock-authorization-token";
-    private final static String WEBHOOK_SECRET = "mock-webhook-secret";
-    private final static Set<String> EVENTS = new HashSet<>(List.of("taskTimeTrackedUpdated"));
+    private static final Long WORKSPACE_ID = 12345L;
+    private static final String AUTHORIZATION_TOKEN = "mock-authorization-token";
+    private static final String WEBHOOK_SECRET = "mock-webhook-secret";
+    private static final Set<String> EVENTS = new HashSet<>(List.of("taskTimeTrackedUpdated"));
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
     public static final String WEBHOOK_CREATED_JSON = "messages/webhook-created.json";
@@ -58,8 +59,8 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
 
     @Test
     public void testAutomaticRegistration() throws Exception {
-        final ClickUpMockRoutes.MockProcessor<String> mockProcessor
-                = getMockRoutes().getMock("POST", "team/" + WORKSPACE_ID + "/webhook");
+        final ClickUpMockRoutes.MockProcessor<String> mockProcessor =
+                getMockRoutes().getMock("POST", "team/" + WORKSPACE_ID + "/webhook");
         mockProcessor.clearRecordedMessages();
 
         try (final DefaultCamelContext mockContext = new DefaultCamelContext()) {
@@ -92,7 +93,8 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
 
     @Test
     public void testAutomaticUnregistration() throws Exception {
-        final ClickUpMockRoutes.MockProcessor<String> mockProcessor = getMockRoutes().getMock("DELETE", "webhook/");
+        final ClickUpMockRoutes.MockProcessor<String> mockProcessor =
+                getMockRoutes().getMock("DELETE", "webhook/");
         mockProcessor.clearRecordedMessages();
 
         try (final DefaultCamelContext mockContext = new DefaultCamelContext()) {
@@ -121,16 +123,16 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
 
     private static void waitForClickUpMockAPI() {
         /* Make sure the ClickUp mock API is up and running */
-        Awaitility.await()
-                .atMost(5, TimeUnit.SECONDS)
-                .until(() -> {
-                    HttpClient client = HttpClient.newBuilder().build();
-                    HttpRequest request = HttpRequest.newBuilder()
-                            .uri(URI.create("http://localhost:" + port + "/clickup-api-mock/health")).GET().build();
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
+            HttpClient client = HttpClient.newBuilder().build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:" + port + "/clickup-api-mock/health"))
+                    .GET()
+                    .build();
 
-                    final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                    return response.statusCode() == 200;
-                });
+            final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.statusCode() == 200;
+        });
     }
 
     private void setupContextRoutes() throws Exception {
@@ -139,9 +141,11 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
             public void configure() {
                 String apiMockBaseUrl = "http://localhost:" + port + "/clickup-api-mock";
 
-                from("webhook:clickup:" + WORKSPACE_ID + "?authorizationToken=" + AUTHORIZATION_TOKEN + "&webhookSecret="
-                     + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS) + "&webhookAutoRegister=true&baseUrl="
-                     + apiMockBaseUrl)
+                from("webhook:clickup:" + WORKSPACE_ID + "?authorizationToken=" + AUTHORIZATION_TOKEN
+                                + "&webhookSecret="
+                                + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS)
+                                + "&webhookAutoRegister=true&baseUrl="
+                                + apiMockBaseUrl)
                         .id("webhook")
                         .to("mock:endpoint");
             }
@@ -152,12 +156,7 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
     protected ClickUpMockRoutes createMockRoutes() {
         ClickUpMockRoutes clickUpMockRoutes = new ClickUpMockRoutes(port);
 
-        clickUpMockRoutes.addEndpoint(
-                "health",
-                "GET",
-                true,
-                String.class,
-                () -> "");
+        clickUpMockRoutes.addEndpoint("health", "GET", true, String.class, () -> "");
 
         try (InputStream content = getClass().getClassLoader().getResourceAsStream(WEBHOOK_CREATED_JSON)) {
             assert content != null;
@@ -165,21 +164,12 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
             String responseBody = new String(content.readAllBytes());
 
             clickUpMockRoutes.addEndpoint(
-                    "team/" + WORKSPACE_ID + "/webhook",
-                    "POST",
-                    true,
-                    String.class,
-                    () -> responseBody);
+                    "team/" + WORKSPACE_ID + "/webhook", "POST", true, String.class, () -> responseBody);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        clickUpMockRoutes.addEndpoint(
-                "webhook/",
-                "DELETE",
-                false,
-                String.class,
-                () -> "{}");
+        clickUpMockRoutes.addEndpoint("webhook/", "DELETE", false, String.class, () -> "{}");
 
         return clickUpMockRoutes;
     }

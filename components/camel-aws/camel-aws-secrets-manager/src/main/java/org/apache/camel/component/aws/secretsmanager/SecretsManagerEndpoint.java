@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager;
 
 import org.apache.camel.Category;
@@ -33,12 +34,18 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 /**
  * Manage secrets using AWS Secrets Manager.
  */
-@UriEndpoint(firstVersion = "3.9.0", scheme = "aws-secrets-manager", title = "AWS Secrets Manager",
-             syntax = "aws-secrets-manager:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
-             headersClass = SecretsManagerConstants.class)
-@Metadata(annotations = {
-        "vault=aws-secrets-manager",
-})
+@UriEndpoint(
+        firstVersion = "3.9.0",
+        scheme = "aws-secrets-manager",
+        title = "AWS Secrets Manager",
+        syntax = "aws-secrets-manager:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = SecretsManagerConstants.class)
+@Metadata(
+        annotations = {
+            "vault=aws-secrets-manager",
+        })
 public class SecretsManagerEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private SecretsManagerClient secretsManagerClient;
@@ -72,7 +79,8 @@ public class SecretsManagerEndpoint extends ScheduledPollEndpoint implements End
 
         secretsManagerClient = configuration.getSecretsManagerClient() != null
                 ? configuration.getSecretsManagerClient()
-                : SecretsManagerClientFactory.getSecretsManagerClient(configuration).getSecretsManagerClient();
+                : SecretsManagerClientFactory.getSecretsManagerClient(configuration)
+                        .getSecretsManagerClient();
     }
 
     @Override

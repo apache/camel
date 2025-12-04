@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp.integration;
 
 import java.io.IOException;
@@ -45,7 +46,8 @@ public class XmppBaseIT extends CamelTestSupport {
 
             logger.warn(
                     "Unable to setup JUL-to-slf4j logging bridge. The test execution should result in a log of bogus output. Error: {}",
-                    e.getMessage(), e);
+                    e.getMessage(),
+                    e);
         }
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 /**
@@ -26,8 +27,7 @@ public final class CamelURIParser {
 
     public static final String[] URI_ALREADY_NORMALIZED = new String[] {};
 
-    private CamelURIParser() {
-    }
+    private CamelURIParser() {}
 
     /**
      * Parses the URI (in fast mode).
@@ -138,6 +138,6 @@ public final class CamelURIParser {
             query = uri.substring(queryStart);
         }
 
-        return new String[] { scheme, path, query };
+        return new String[] {scheme, path, query};
     }
 }

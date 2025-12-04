@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.http.base.HttpOperationFailedException;
@@ -23,9 +27,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Ignored test because of external dependency.")
 public class HttpSNIHostNameTest extends CamelSpringTestSupport {
@@ -58,6 +59,7 @@ public class HttpSNIHostNameTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/component/http/CamelHttpContext.xml" });
+        return new ClassPathXmlApplicationContext(
+                new String[] {"org/apache/camel/component/http/CamelHttpContext.xml"});
     }
 }

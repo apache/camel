@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.util.HashSet;
@@ -36,10 +41,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -73,14 +74,16 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
     }
 
     void execute(String endpointUri, String directStart) throws InterruptedException {
-        InputStream payloud = XsltUriResolverFactoryTest.class.getClassLoader().getResourceAsStream("xslt/staff/staff.xml");
+        InputStream payloud =
+                XsltUriResolverFactoryTest.class.getClassLoader().getResourceAsStream("xslt/staff/staff.xml");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
         sendBody(directStart, payloud);
 
         // wait until endpoint is resolved
-        await().atMost(1, TimeUnit.SECONDS).until(() -> resolveMandatoryEndpoint(endpointUri, XsltEndpoint.class) != null);
+        await().atMost(1, TimeUnit.SECONDS)
+                .until(() -> resolveMandatoryEndpoint(endpointUri, XsltEndpoint.class) != null);
 
         assertMockEndpointsSatisfied();
 
@@ -94,23 +97,27 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
-        return new RouteBuilder[] { new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:start") //
-                        .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
-                        .recipientList(new SimpleExpression("xslt:${header.xslt_file}?uriResolverFactory=#uriResolverFactory")) //
-                        .to("mock:result");
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start") //
+                            .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
+                            .recipientList(new SimpleExpression(
+                                    "xslt:${header.xslt_file}?uriResolverFactory=#uriResolverFactory")) //
+                            .to("mock:result");
+                }
+            },
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:startComponent") //
+                            .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
+                            .recipientList(new SimpleExpression("xslt:${header.xslt_file}")) //
+                            .to("mock:result");
+                }
             }
-        }, new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:startComponent") //
-                        .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
-                        .recipientList(new SimpleExpression("xslt:${header.xslt_file}")) //
-                        .to("mock:result");
-            }
-        } };
+        };
     }
 
     @Override
@@ -118,7 +125,6 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
         jndiContext = createJndiContext();
         jndiContext.bind("uriResolverFactory", new CustomXsltUriResolverFactory());
         return new DefaultRegistry(new JndiBeanRepository(jndiContext));
-
     }
 
     void checkResourceUri(Set<String> uris, String resourceUri) {

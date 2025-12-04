@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.ShutdownRoute.Defer;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,9 +32,6 @@ import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.ShutdownRoute.Defer;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ShutdownDeferTest extends ContextTestSupport {
 
@@ -76,7 +77,9 @@ public class ShutdownDeferTest extends ContextTestSupport {
                 from(defer)
                         // defer shutting down this route as the 1st route depends
                         // upon it
-                        .startupOrder(2).shutdownRoute(Defer).to("mock:bar");
+                        .startupOrder(2)
+                        .shutdownRoute(Defer)
+                        .to("mock:bar");
             }
             // END SNIPPET: e1
         };

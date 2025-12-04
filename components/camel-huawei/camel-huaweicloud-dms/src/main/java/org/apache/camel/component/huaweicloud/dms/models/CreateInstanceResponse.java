@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -44,8 +45,6 @@ public class CreateInstanceResponse extends SdkResponse {
 
     @Override
     public String toString() {
-        return "CreateInstanceResponse{" +
-               "instanceId='" + instanceId + '\'' +
-               '}';
+        return "CreateInstanceResponse{" + "instanceId='" + instanceId + '\'' + '}';
     }
 }

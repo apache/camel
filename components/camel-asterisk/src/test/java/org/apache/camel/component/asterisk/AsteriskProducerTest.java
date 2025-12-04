@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.asterisk;
 
 import java.util.concurrent.TimeUnit;
@@ -48,7 +49,7 @@ public class AsteriskProducerTest extends CamelTestSupport {
             public void configure() {
                 from("direct:in")
                         .to("asterisk://myVoIP?hostname=" + hostname + "&username=" + username + "&password=" + password
-                            + "&action=" + action)
+                                + "&action=" + action)
                         .log("${body}")
                         .to("mock:result");
             }

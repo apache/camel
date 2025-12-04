@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
+
+import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getAclListFromMessage;
+import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
+import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;
+import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getNodeFromMessage;
+import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getPayloadFromExchange;
+import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getVersionFromMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -33,13 +41,6 @@ import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getAclListFromMessage;
-import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
-import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;
-import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getNodeFromMessage;
-import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getPayloadFromExchange;
-import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getVersionFromMessage;
 
 /**
  * <code>ZooKeeperProducer</code> attempts to set the content of nodes in the {@link ZooKeeper} cluster with the
@@ -99,7 +100,6 @@ public class ZooKeeperProducer extends DefaultProducer {
                 asynchronouslySetDataOnNode(connection, context);
             }
         }
-
     }
 
     @Override
@@ -123,7 +123,6 @@ public class ZooKeeperProducer extends DefaultProducer {
         LOG.debug("Deleting node '{}', not waiting for confirmation", context.node);
 
         connection.delete(context.node, context.version, new AsyncDeleteCallback(), context);
-
     }
 
     private void asynchronouslySetDataOnNode(ZooKeeper connection, ProductionContext context) {

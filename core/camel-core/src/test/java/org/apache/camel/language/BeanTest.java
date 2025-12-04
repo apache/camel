@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -26,8 +29,6 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanTest extends LanguageTestSupport {
 
@@ -54,9 +55,8 @@ public class BeanTest extends LanguageTestSupport {
     @Test
     public void testDoubleColon() {
         assertPredicate("foo::isFooHeaderAbc");
-        NoSuchBeanException e = assertThrows(NoSuchBeanException.class,
-                () -> assertPredicateFails("foo:isFooHeaderAbc"),
-                "Should throw exception");
+        NoSuchBeanException e = assertThrows(
+                NoSuchBeanException.class, () -> assertPredicateFails("foo:isFooHeaderAbc"), "Should throw exception");
 
         assertEquals("foo:isFooHeaderAbc", e.getName());
     }
@@ -95,10 +95,13 @@ public class BeanTest extends LanguageTestSupport {
     @Test
     public void testNoMethod() {
         MyUser user = new MyUser();
-        Exception e = assertThrows(Exception.class, () -> {
-            Expression exp = new BeanExpression(user, "unknown");
-            exp.init(context);
-        }, "Should throw exception");
+        Exception e = assertThrows(
+                Exception.class,
+                () -> {
+                    Expression exp = new BeanExpression(user, "unknown");
+                    exp.init(context);
+                },
+                "Should throw exception");
 
         MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e);
         assertSame(user, mnfe.getBean());
@@ -107,10 +110,13 @@ public class BeanTest extends LanguageTestSupport {
 
     @Test
     public void testNoMethodBeanLookup() {
-        MethodNotFoundException e = assertThrows(MethodNotFoundException.class, () -> {
-            Expression exp = new BeanExpression("foo", "cake");
-            exp.init(context);
-        }, "Should throw exception");
+        MethodNotFoundException e = assertThrows(
+                MethodNotFoundException.class,
+                () -> {
+                    Expression exp = new BeanExpression("foo", "cake");
+                    exp.init(context);
+                },
+                "Should throw exception");
 
         assertEquals("cake", e.getMethodName());
     }

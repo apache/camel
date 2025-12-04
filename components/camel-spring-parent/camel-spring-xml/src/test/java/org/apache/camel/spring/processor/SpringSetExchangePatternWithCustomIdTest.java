@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.SetExchangePatternTest;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringSetExchangePatternWithCustomIdTest extends SetExchangePatternTest {
 
@@ -31,12 +32,12 @@ public class SpringSetExchangePatternWithCustomIdTest extends SetExchangePattern
         super.testToWithInOnlyParam();
 
         // just assert one of the routes has the correct id on the <to> with the exchange pattern
-        assertEquals("q", context.getRouteDefinitions().get(6).getOutputs().get(0).getId());
+        assertEquals(
+                "q", context.getRouteDefinitions().get(6).getOutputs().get(0).getId());
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/setExchangePatternWithCustomId.xml");
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to verify unit of work with disruptor. That the UnitOfWork is able to route using disruptor but keeping the
@@ -63,17 +64,20 @@ public class DisruptorUnitOfWorkTest extends CamelTestSupport {
 
                 from("direct:start").process(new MyUOWProcessor("A")).to("disruptor:foo");
 
-                from("disruptor:foo").process(new Processor() {
-                    @Override
-                    public void process(final Exchange exchange) {
-                        assertNull(sync);
-                    }
-                }).process(new Processor() {
-                    @Override
-                    public void process(final Exchange exchange) {
-                        lastOne = "processor";
-                    }
-                }).to("mock:result");
+                from("disruptor:foo")
+                        .process(new Processor() {
+                            @Override
+                            public void process(final Exchange exchange) {
+                                assertNull(sync);
+                            }
+                        })
+                        .process(new Processor() {
+                            @Override
+                            public void process(final Exchange exchange) {
+                                lastOne = "processor";
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
@@ -103,5 +107,4 @@ public class DisruptorUnitOfWorkTest extends CamelTestSupport {
             });
         }
     }
-
 }

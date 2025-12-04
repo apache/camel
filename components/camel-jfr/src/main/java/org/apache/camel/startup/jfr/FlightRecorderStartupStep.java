@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.startup.jfr;
 
 import jdk.jfr.Category;
@@ -35,14 +36,19 @@ public class FlightRecorderStartupStep extends Event implements StartupStep {
 
     @Label("Event Source")
     public final String name;
+
     @Label("Event Id")
     public final int id;
+
     @Label("Event Parent Id")
     public final int parentId;
+
     @Label("Event Depth")
     public final int depth;
+
     @Label("Event Type")
     public final String type;
+
     @Label("Event Description")
     public final String description;
 

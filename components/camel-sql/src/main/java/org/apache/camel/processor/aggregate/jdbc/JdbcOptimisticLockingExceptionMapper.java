@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 /**
@@ -31,5 +32,4 @@ public interface JdbcOptimisticLockingExceptionMapper {
      *               {@link JdbcAggregationRepository.OptimisticLockingException}.
      */
     boolean isOptimisticLocking(Exception cause);
-
 }

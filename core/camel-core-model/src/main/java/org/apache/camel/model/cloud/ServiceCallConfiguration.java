@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.ArrayList;
@@ -117,8 +118,7 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
                 }
             }
         } else {
-            PluginHelper.getBeanIntrospection(context).getProperties(target, answer,
-                    null, false);
+            PluginHelper.getBeanIntrospection(context).getProperties(target, answer, null, false);
         }
 
         return answer;
@@ -128,6 +128,6 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
     // Utilities
     // *************************************************************************
 
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
-    }
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters)
+            throws Exception {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,7 +31,9 @@ public class MainStartupConditionEnvTest {
     public void testCustomCondition() {
         Main main = new Main();
         try {
-            main.configure().startupCondition().withEnabled(true)
+            main.configure()
+                    .startupCondition()
+                    .withEnabled(true)
                     .withCustomClassNames("org.apache.camel.main.MainStartupConditionEnvTest$MyEnvCondition");
             main.start();
 

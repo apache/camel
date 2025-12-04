@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.utils;
+
+import static org.apache.camel.support.LanguageSupport.hasSimpleFunction;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,12 +34,9 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
 
-import static org.apache.camel.support.LanguageSupport.hasSimpleFunction;
-
 public final class AWS2S3Utils {
 
-    private AWS2S3Utils() {
-    }
+    private AWS2S3Utils() {}
 
     /**
      * Reads the bucket name from the header of the given exchange. If not provided, it's read from the endpoint

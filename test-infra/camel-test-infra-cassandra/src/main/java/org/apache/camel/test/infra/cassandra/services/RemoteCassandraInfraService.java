@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.cassandra.services;
 
 import org.apache.camel.test.infra.cassandra.common.CassandraProperties;

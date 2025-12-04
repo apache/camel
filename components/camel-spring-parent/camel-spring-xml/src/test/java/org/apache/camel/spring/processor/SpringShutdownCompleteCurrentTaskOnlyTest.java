@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.ShutdownCompleteCurrentTaskOnlyTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringShutdownCompleteCurrentTaskOnlyTest extends ShutdownCompleteCurrentTaskOnlyTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/ShutdownCompleteCurrentTaskOnlyTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/ShutdownCompleteCurrentTaskOnlyTest.xml");
     }
 }

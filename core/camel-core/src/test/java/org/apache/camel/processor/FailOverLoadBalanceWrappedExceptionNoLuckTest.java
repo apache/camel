@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -27,9 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FailOverLoadBalanceWrappedExceptionNoLuckTest extends ContextTestSupport {
 
@@ -81,5 +82,4 @@ public class FailOverLoadBalanceWrappedExceptionNoLuckTest extends ContextTestSu
 
         assertMockEndpointsSatisfied();
     }
-
 }

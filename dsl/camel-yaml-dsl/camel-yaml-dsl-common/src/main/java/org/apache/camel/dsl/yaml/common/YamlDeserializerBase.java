@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common;
 
 import org.apache.camel.CamelContextAware;
@@ -154,5 +155,4 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
             }
         }
     }
-
 }

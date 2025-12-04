@@ -14,29 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
-
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.AdviceWith;
-import org.apache.camel.builder.AdviceWithRouteBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.exec.impl.ProvokeExceptionExecCommandExecutor;
-import org.apache.camel.component.exec.internal.ExecutableJavaProgram;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
@@ -59,6 +38,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.AdviceWith;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.exec.impl.ProvokeExceptionExecCommandExecutor;
+import org.apache.camel.component.exec.internal.ExecutableJavaProgram;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the functionality of the {@link ExecComponent}, executing<br>
@@ -248,9 +249,11 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         output.setExpectedMessageCount(1);
         Exchange exchange = sendExchange(THREADS, NO_TIMEOUT);
 
-        String err = IOUtils.toString(exchange.getIn().getHeader(EXEC_STDERR, InputStream.class), Charset.defaultCharset());
+        String err =
+                IOUtils.toString(exchange.getIn().getHeader(EXEC_STDERR, InputStream.class), Charset.defaultCharset());
         ExecResult result = exchange.getIn().getBody(ExecResult.class);
-        String[] outs = IOUtils.toString(result.getStdout(), Charset.defaultCharset()).split(System.lineSeparator());
+        String[] outs =
+                IOUtils.toString(result.getStdout(), Charset.defaultCharset()).split(System.lineSeparator());
         String[] errs = err.split(System.lineSeparator());
 
         output.assertIsSatisfied();
@@ -306,8 +309,8 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
                 // use string for args
                 String classpath = System.getProperty("java.class.path");
-                String args
-                        = "-cp \"" + classpath + "\" " + EXECUTABLE_PROGRAM_ARG + " " + PRINT_ARGS_STDOUT + " \"Hello World\"";
+                String args = "-cp \"" + classpath + "\" " + EXECUTABLE_PROGRAM_ARG + " " + PRINT_ARGS_STDOUT
+                        + " \"Hello World\"";
 
                 exchange.getIn().setBody("hello");
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
@@ -340,7 +343,8 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
                 // use string for args
                 String classpath = System.getProperty("java.class.path");
-                String args = "-cp \"" + classpath + "\" " + EXECUTABLE_PROGRAM_ARG + " " + PRINT_ARGS_STDOUT + " Hello World";
+                String args = "-cp \"" + classpath + "\" " + EXECUTABLE_PROGRAM_ARG + " " + PRINT_ARGS_STDOUT
+                        + " Hello World";
 
                 exchange.getIn().setBody("hello");
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
@@ -414,7 +418,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
         Exchange out = sendFailExchange(EXIT_WITH_VALUE_0, NO_TIMEOUT);
 
-        //test if exitValue and stderr are accessible through thrown ExecException
+        // test if exitValue and stderr are accessible through thrown ExecException
         ExecException ee = (ExecException) out.getException();
         assertTrue(ee.getExitValue() > 0);
         assertNotNull(ee.getStderr());
@@ -436,7 +440,10 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     }
 
     protected Exchange sendExchange(
-            final Object commandArgument, final List<String> args, final long timeout, final String body,
+            final Object commandArgument,
+            final List<String> args,
+            final long timeout,
+            final String body,
             final boolean useStderrOnEmptyStdout) {
         final String javaAbsolutePath = buildJavaExecutablePath();
 
@@ -484,5 +491,4 @@ public class ExecJavaProcessTest extends CamelTestSupport {
             }
         };
     }
-
 }

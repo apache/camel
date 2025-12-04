@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis.client.impl;
 
 import java.net.URI;
@@ -43,7 +44,8 @@ public class KinesisAsyncClientIAMOptimizedImpl implements KinesisAsyncInternalC
      * Constructor that uses the config file.
      */
     public KinesisAsyncClientIAMOptimizedImpl(Kinesis2Configuration configuration) {
-        LOG.trace("Creating an AWS Kinesis Async client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
+        LOG.trace(
+                "Creating an AWS Kinesis Async client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
         this.configuration = configuration;
     }
 
@@ -57,16 +59,14 @@ public class KinesisAsyncClientIAMOptimizedImpl implements KinesisAsyncInternalC
         var clientBuilder = KinesisAsyncClient.builder();
         SdkAsyncHttpClient.Builder httpClientBuilder = null;
 
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            var proxyConfig = ProxyConfiguration
-                    .builder()
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost())
+                && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            var proxyConfig = ProxyConfiguration.builder()
                     .scheme(configuration.getProxyProtocol().toString())
                     .host(configuration.getProxyHost())
                     .port(configuration.getProxyPort())
                     .build();
-            httpClientBuilder = NettyNioAsyncHttpClient
-                    .builder()
-                    .proxyConfiguration(proxyConfig);
+            httpClientBuilder = NettyNioAsyncHttpClient.builder().proxyConfiguration(proxyConfig);
             clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
@@ -79,18 +79,13 @@ public class KinesisAsyncClientIAMOptimizedImpl implements KinesisAsyncInternalC
             if (httpClientBuilder == null) {
                 httpClientBuilder = NettyNioAsyncHttpClient.builder();
             }
-            SdkAsyncHttpClient ahc = httpClientBuilder
-                    .buildWithDefaults(AttributeMap
-                            .builder()
-                            .put(
-                                    SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                                    Boolean.TRUE)
-                            .build());
+            SdkAsyncHttpClient ahc = httpClientBuilder.buildWithDefaults(AttributeMap.builder()
+                    .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE)
+                    .build());
             // set created http client to use instead of builder
             clientBuilder.httpClient(ahc);
             clientBuilder.httpClientBuilder(null);
         }
         return clientBuilder.build();
     }
-
 }

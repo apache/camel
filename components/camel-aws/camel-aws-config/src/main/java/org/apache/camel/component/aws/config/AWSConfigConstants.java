@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.config;
 
 import org.apache.camel.spi.Metadata;
@@ -24,11 +25,16 @@ import org.apache.camel.spi.Metadata;
 public interface AWSConfigConstants {
     @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsConfigOperation";
+
     @Metadata(description = "The Managed rule source identifier", javaType = "String")
     String RULE_SOURCE_IDENTIFIER = "CamelAwsConfigRuleSourceIdentifier";
-    @Metadata(description = "The source object for the rule. The owner of the rule could be AWS, CUSTOM_LAMBDA or CUSTOM_POLICY",
-              javaType = "String")
+
+    @Metadata(
+            description =
+                    "The source object for the rule. The owner of the rule could be AWS, CUSTOM_LAMBDA or CUSTOM_POLICY",
+            javaType = "String")
     String SOURCE = "CamelAwsConfigRuleSource";
+
     @Metadata(description = "The Managed rule name", javaType = "String")
     String RULE_NAME = "CamelAwsConfigRuleName";
 

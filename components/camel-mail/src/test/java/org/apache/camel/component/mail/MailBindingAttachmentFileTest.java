@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -35,8 +38,6 @@ import org.apache.camel.attachment.Attachment;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class MailBindingAttachmentFileTest {
 
@@ -82,5 +83,4 @@ public class MailBindingAttachmentFileTest {
         binding.extractAttachmentsFromMail(message, attachments);
         assertThat(attachments).isEmpty();
     }
-
 }

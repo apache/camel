@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,14 +57,17 @@ import org.quartz.spi.OperableTrigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-
 /**
  * Schedule sending of messages using the Quartz 2.x scheduler.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/triggerName",
-             remote = false, consumerOnly = true, category = { Category.SCHEDULING })
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = "quartz",
+        title = "Quartz",
+        syntax = "quartz:groupName/triggerName",
+        remote = false,
+        consumerOnly = true,
+        category = {Category.SCHEDULING})
 public class QuartzEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
@@ -73,38 +80,57 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private final AtomicBoolean jobAdded = new AtomicBoolean();
     private final AtomicBoolean jobPaused = new AtomicBoolean();
 
-    @UriPath(description = "The quartz group name to use. The combination of group name and trigger name should be unique.",
-             defaultValue = "Camel")
+    @UriPath(
+            description =
+                    "The quartz group name to use. The combination of group name and trigger name should be unique.",
+            defaultValue = "Camel")
     private String groupName;
-    @UriPath(description = "The quartz trigger name to use. The combination of group name and trigger name should be unique.")
+
+    @UriPath(
+            description =
+                    "The quartz trigger name to use. The combination of group name and trigger name should be unique.")
     @Metadata(required = true)
     private String triggerName;
+
     @UriParam
     private String cron;
+
     @UriParam
     private boolean stateful;
+
     @UriParam(label = "advanced")
     private boolean ignoreExpiredNextFireTime;
+
     @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
+
     @UriParam
     private boolean pauseJob;
+
     @UriParam
     private boolean durableJob;
+
     @UriParam
     private boolean recoverableJob;
+
     @UriParam(label = "scheduler", defaultValue = "500", javaType = "java.time.Duration")
     private long triggerStartDelay = 500;
+
     @UriParam(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;
+
     @UriParam(label = "advanced")
     private boolean usingFixedCamelContextName;
+
     @UriParam(label = "advanced")
     private boolean prefixJobNameWithEndpointId;
+
     @UriParam(prefix = "trigger.", multiValue = true, label = "advanced")
     private Map<String, Object> triggerParameters;
+
     @UriParam(prefix = "job.", multiValue = true, label = "advanced")
     private Map<String, Object> jobParameters;
+
     @UriParam(label = "advanced")
     private Calendar customCalendar;
 
@@ -328,8 +354,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Cannot have both options deleteJob and pauseJob enabled");
         }
         if (ObjectHelper.isNotEmpty(customCalendar)) {
-            getComponent().getScheduler().addCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR, customCalendar, true,
-                    false);
+            getComponent()
+                    .getScheduler()
+                    .addCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR, customCalendar, true, false);
         }
         addJobInScheduler();
     }
@@ -391,7 +418,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
                     scheduled = false;
                     LOG.warn(
                             "Job {} (cron={}, triggerType={}, jobClass={}) not scheduled, because it will never fire in the future",
-                            trigger.getKey(), cron, trigger.getClass().getSimpleName(),
+                            trigger.getKey(),
+                            cron,
+                            trigger.getClass().getSimpleName(),
                             jobDetail.getJobClass().getSimpleName());
                 } else {
                     // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
@@ -416,9 +445,13 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 if (nextFireTime != null) {
                     nextFireTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(nextFireTime);
                 }
-                LOG.info("Job {} (cron={}, triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                        trigger.getKey(), cron, trigger.getClass().getSimpleName(),
-                        jobDetail.getJobClass().getSimpleName(), nextFireTime);
+                LOG.info(
+                        "Job {} (cron={}, triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+                        trigger.getKey(),
+                        cron,
+                        trigger.getClass().getSimpleName(),
+                        jobDetail.getJobClass().getSimpleName(),
+                        nextFireTime);
             }
         }
 
@@ -468,7 +501,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
                 TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
                 if (triggerKey.equals(checkTriggerKey)) {
-                    throw new IllegalArgumentException("Trigger key " + triggerKey + " is already in use by " + quartzEndpoint);
+                    throw new IllegalArgumentException(
+                            "Trigger key " + triggerKey + " is already in use by " + quartzEndpoint);
                 }
             }
         }
@@ -478,7 +512,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
         // use a defensive copy to keep the trigger parameters on the endpoint
         final Map<String, Object> copy = new HashMap<>(triggerParameters);
 
-        final TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger().withIdentity(triggerKey);
+        final TriggerBuilder<Trigger> triggerBuilder =
+                TriggerBuilder.newTrigger().withIdentity(triggerKey);
 
         if (getComponent().getScheduler().isStarted() || triggerStartDelay < 0) {
             triggerBuilder.startAt(new Date(System.currentTimeMillis() + triggerStartDelay));
@@ -494,7 +529,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
             if (endAt != null) {
                 Date endDate = dateFormat.parse(endAt);
                 if (endDate.before(new Date()) && startAt == null && isIgnoreExpiredNextFireTime()) {
-                    // Trigger Builder sets startAt to current time. Hence if startAt is null, necessary to add a valid value to honor ignoreExpiredNextFireTime
+                    // Trigger Builder sets startAt to current time. Hence if startAt is null, necessary to add a valid
+                    // value to honor ignoreExpiredNextFireTime
                     triggerBuilder.startAt(Date.from(endDate.toInstant().minusSeconds(1)));
                 }
                 triggerBuilder.endAt(endDate);
@@ -508,22 +544,18 @@ public class QuartzEndpoint extends DefaultEndpoint {
                                     .inTimeZone(TimeZone.getTimeZone(timeZone)))
                             .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
                 } else {
-                    triggerBuilder
-                            .withSchedule(cronSchedule(cron)
-                                    .withMisfireHandlingInstructionFireAndProceed()
-                                    .inTimeZone(TimeZone.getTimeZone(timeZone)));
+                    triggerBuilder.withSchedule(cronSchedule(cron)
+                            .withMisfireHandlingInstructionFireAndProceed()
+                            .inTimeZone(TimeZone.getTimeZone(timeZone)));
                 }
                 jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
             } else {
                 if (ObjectHelper.isNotEmpty(customCalendar)) {
                     triggerBuilder
-                            .withSchedule(cronSchedule(cron)
-                                    .withMisfireHandlingInstructionFireAndProceed())
+                            .withSchedule(cronSchedule(cron).withMisfireHandlingInstructionFireAndProceed())
                             .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
                 } else {
-                    triggerBuilder
-                            .withSchedule(cronSchedule(cron)
-                                    .withMisfireHandlingInstructionFireAndProceed());
+                    triggerBuilder.withSchedule(cronSchedule(cron).withMisfireHandlingInstructionFireAndProceed());
                 }
             }
 
@@ -550,19 +582,24 @@ public class QuartzEndpoint extends DefaultEndpoint {
             }
             if (ObjectHelper.isNotEmpty(customCalendar)) {
                 triggerBuilder
-                        .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()
-                                .withRepeatCount(repeat).withIntervalInMilliseconds(interval))
+                        .withSchedule(simpleSchedule()
+                                .withMisfireHandlingInstructionFireNow()
+                                .withRepeatCount(repeat)
+                                .withIntervalInMilliseconds(interval))
                         .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
             } else {
-                triggerBuilder
-                        .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()
-                                .withRepeatCount(repeat).withIntervalInMilliseconds(interval));
+                triggerBuilder.withSchedule(simpleSchedule()
+                        .withMisfireHandlingInstructionFireNow()
+                        .withRepeatCount(repeat)
+                        .withIntervalInMilliseconds(interval));
             }
 
             // enrich job map with details
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "simple");
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER, String.valueOf(repeat));
-            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, String.valueOf(interval));
+            jobDetail
+                    .getJobDataMap()
+                    .put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, String.valueOf(interval));
         }
 
         final Trigger result = triggerBuilder.build();
@@ -583,8 +620,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         Class<? extends Job> jobClass = stateful ? StatefulCamelJob.class : CamelJob.class;
         LOG.debug("Creating new {}.", jobClass.getSimpleName());
 
-        JobBuilder builder = JobBuilder.newJob(jobClass)
-                .withIdentity(name, group);
+        JobBuilder builder = JobBuilder.newJob(jobClass).withIdentity(name, group);
 
         if (durableJob) {
             builder = builder.storeDurably();

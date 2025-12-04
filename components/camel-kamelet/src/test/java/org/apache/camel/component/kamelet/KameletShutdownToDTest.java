@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -45,10 +46,13 @@ public class KameletShutdownToDTest extends CamelTestSupport {
                 routeTemplate("echo")
                         .templateParameter("prefix")
                         .from("kamelet:source")
-                        .setBody().simple("{{prefix}}-${body}");
+                        .setBody()
+                        .simple("{{prefix}}-${body}");
 
-                from("timer:tick?repeatCount=1").routeId("test")
-                        .setBody().constant("Hello")
+                from("timer:tick?repeatCount=1")
+                        .routeId("test")
+                        .setBody()
+                        .constant("Hello")
                         .process(e -> {
                             new Thread(() -> context.stop()).start();
                             Thread.sleep(500);

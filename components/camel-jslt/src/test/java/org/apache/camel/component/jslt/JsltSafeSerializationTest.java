@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import java.util.List;
@@ -32,25 +33,24 @@ public class JsltSafeSerializationTest extends CamelTestSupport {
     @Test
     public void testSafeHeaderSerialization() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/serialization/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jslt/serialization/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
-        final Exchange resultExchange = template().send("direct://start",
-                exchange -> {
-                    exchange.getIn().setBody(IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+        final Exchange resultExchange = template().send("direct://start", exchange -> {
+            exchange.getIn()
+                    .setBody(IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                             context, "org/apache/camel/component/jslt/serialization/input.json")));
-                    exchange.getIn().setHeader("unsafe", new UnsafeBean());
-                    exchange.getIn().setHeader("safe", new SafeBean());
-                    exchange.getIn().setHeader("array", List.of(1, 2, 3));
-                    exchange.getIn().setHeader("map", Map.of("a", new UnsafeBean()));
-                });
+            exchange.getIn().setHeader("unsafe", new UnsafeBean());
+            exchange.getIn().setHeader("safe", new SafeBean());
+            exchange.getIn().setHeader("array", List.of(1, 2, 3));
+            exchange.getIn().setHeader("map", Map.of("a", new UnsafeBean()));
+        });
 
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Override
@@ -63,5 +63,4 @@ public class JsltSafeSerializationTest extends CamelTestSupport {
             }
         };
     }
-
 }

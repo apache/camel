@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks;
 
 import java.util.Map;
@@ -41,12 +42,10 @@ public class SmooksComponent extends DefaultComponent {
     }
 
     protected void configureSmooksProcessor(
-            SmooksProcessor smooksProcessor, String uri, String remaining,
-            Map<String, Object> parameters)
+            SmooksProcessor smooksProcessor, String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
         smooksProcessor.setSmooksFactory(smooksFactory);
         setProperties(smooksProcessor, parameters);
-
     }
 
     public SmooksFactory getSmooksFactory() {

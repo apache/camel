@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
@@ -98,13 +99,22 @@ public class OnExceptionFromChoiceTest extends ContextTestSupport {
 
                 errorHandler(deadLetterChannel("mock:error"));
 
-                onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true).to("mock:tech");
-                onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("mock:func");
+                onException(MyTechnicalException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .to("mock:tech");
+                onException(MyFunctionalException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .to("mock:func");
 
-                from("direct:start").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise()
+                from("direct:start")
+                        .choice()
+                        .when(method("myServiceBean").isEqualTo("James"))
+                        .to("mock:when")
+                        .otherwise()
                         .to("mock:otherwise");
             }
         };
     }
-
 }

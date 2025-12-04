@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools.integration;
 
 import org.apache.camel.component.langchain4j.tools.LangChain4jToolMultipleCallsTest;
@@ -35,5 +36,4 @@ public class LangChain4jToolMultipleCallsIT extends LangChain4jToolMultipleCalls
 
         chatModel = ToolsHelper.createModel(OLLAMA);
     }
-
 }

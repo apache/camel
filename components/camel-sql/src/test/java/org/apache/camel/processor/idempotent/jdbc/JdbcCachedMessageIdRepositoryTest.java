@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Timestamp;
 
@@ -28,12 +31,10 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JdbcCachedMessageIdRepositoryTest extends CamelSpringTestSupport {
 
-    protected static final String INSERT_STRING
-            = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
+    protected static final String INSERT_STRING =
+            "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected JdbcTemplate jdbcTemplate;
@@ -52,7 +53,8 @@ public class JdbcCachedMessageIdRepositoryTest extends CamelSpringTestSupport {
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.update(INSERT_STRING, PROCESSOR_NAME, "1", new Timestamp(System.currentTimeMillis()));
         jdbcTemplate.update(INSERT_STRING, PROCESSOR_NAME, "2", new Timestamp(System.currentTimeMillis()));
-        repository = context.getRegistry().lookupByNameAndType("messageIdRepository", JdbcCachedMessageIdRepository.class);
+        repository =
+                context.getRegistry().lookupByNameAndType("messageIdRepository", JdbcCachedMessageIdRepository.class);
         repository.reload();
     }
 

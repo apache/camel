@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
 
 import java.net.URI;
@@ -32,11 +33,13 @@ import org.junit.jupiter.api.Disabled;
 @Disabled("Run this test manually")
 public class CometdProducerConsumerInOutInteractiveManualTest {
 
-    private static final String URI = "cometd://127.0.0.1:9091/service/test?baseResource=file:./src/test/resources/webapp&"
-                                      + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+    private static final String URI =
+            "cometd://127.0.0.1:9091/service/test?baseResource=file:./src/test/resources/webapp&"
+                    + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-    private static final String URI2 = "cometds://127.0.0.1:9443/service/test?baseResource=file:./src/test/resources/webapp&"
-                                       + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+    private static final String URI2 =
+            "cometds://127.0.0.1:9443/service/test?baseResource=file:./src/test/resources/webapp&"
+                    + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private CamelContext context;
 
@@ -59,8 +62,9 @@ public class CometdProducerConsumerInOutInteractiveManualTest {
                 CometdComponent component = (CometdComponent) context.getComponent("cometds");
                 component.setSslPassword(pwd);
                 component.setSslKeyPassword(pwd);
-                URI keyStoreUrl
-                        = CometdProducerConsumerInOutInteractiveManualTest.class.getResource("/jsse/localhost.p12").toURI();
+                URI keyStoreUrl = CometdProducerConsumerInOutInteractiveManualTest.class
+                        .getResource("/jsse/localhost.p12")
+                        .toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
 
                 from(URI).setExchangePattern(ExchangePattern.InOut).process(new Processor() {
@@ -80,5 +84,4 @@ public class CometdProducerConsumerInOutInteractiveManualTest {
             }
         };
     }
-
 }

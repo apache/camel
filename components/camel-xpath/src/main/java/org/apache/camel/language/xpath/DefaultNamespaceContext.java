@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xpath;
 
 import java.util.HashMap;
@@ -119,7 +120,11 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
 
         sb.append("[me: ");
         for (Entry<String, String> nsEntry : map.entrySet()) {
-            sb.append('{').append(nsEntry.getKey()).append(" -> ").append(nsEntry.getValue()).append("},");
+            sb.append('{')
+                    .append(nsEntry.getKey())
+                    .append(" -> ")
+                    .append(nsEntry.getValue())
+                    .append("},");
         }
         if (!map.isEmpty()) {
             // remove the last comma
@@ -135,5 +140,4 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         }
         return sb.toString();
     }
-
 }

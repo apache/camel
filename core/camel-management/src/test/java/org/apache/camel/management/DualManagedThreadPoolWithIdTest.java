@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,11 +29,10 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
-                          disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
+@DisabledIfSystemProperty(
+        named = "camel.threads.virtual.enabled",
+        matches = "true",
+        disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
 @DisabledOnOs(OS.AIX)
 public class DualManagedThreadPoolWithIdTest extends ManagementTestSupport {
 
@@ -83,5 +86,4 @@ public class DualManagedThreadPoolWithIdTest extends ManagementTestSupport {
             }
         };
     }
-
 }

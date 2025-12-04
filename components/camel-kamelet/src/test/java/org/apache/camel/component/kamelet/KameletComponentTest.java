@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.apache.camel.util.CollectionHelper.mapOf;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.CollectionHelper.mapOf;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class KameletComponentTest {
     @Test

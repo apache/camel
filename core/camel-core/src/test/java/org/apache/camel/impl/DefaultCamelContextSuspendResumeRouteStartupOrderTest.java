@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,11 +29,9 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class DefaultCamelContextSuspendResumeRouteStartupOrderTest extends ContextTestSupport {
 
     @Test
@@ -51,7 +53,8 @@ public class DefaultCamelContextSuspendResumeRouteStartupOrderTest extends Conte
         context.suspend();
 
         // need to give seda consumer thread time to idle
-        Awaitility.await().atMost(100, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(100, TimeUnit.MILLISECONDS)
                 .pollDelay(10, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> template.sendBody("seda:foo", "B"));
 

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -31,10 +36,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for File Language.
@@ -73,7 +74,8 @@ public class FileLanguageTest extends LanguageTestSupport {
     @Test
     public void testInvalidSyntax() {
         assertExpression("${file:onlyname}", file.getName());
-        ExpressionIllegalSyntaxException e = assertThrows(ExpressionIllegalSyntaxException.class,
+        ExpressionIllegalSyntaxException e = assertThrows(
+                ExpressionIllegalSyntaxException.class,
                 () -> assertExpression("${file:onlyName}", file.getName()),
                 "Should have thrown exception");
 
@@ -99,7 +101,9 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:size}", file.length());
 
         // modified is a long object
-        Long modified = context.resolveLanguage("simple").createExpression("${file:modified}").evaluate(exchange, Long.class);
+        Long modified = context.resolveLanguage("simple")
+                .createExpression("${file:modified}")
+                .evaluate(exchange, Long.class);
         assertEquals(file.lastModified(), modified.longValue());
     }
 
@@ -119,7 +123,9 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("$simple{file:size}", file.length());
 
         // modified is a long object
-        long modified = context.resolveLanguage("simple").createExpression("${file:modified}").evaluate(exchange, long.class);
+        long modified = context.resolveLanguage("simple")
+                .createExpression("${file:modified}")
+                .evaluate(exchange, long.class);
         assertEquals(file.lastModified(), modified);
     }
 
@@ -132,9 +138,11 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("backup-${date:file:yyyyMMdd}", "backup-" + expected);
 
         assertExpression("backup-${date:header.birthday:yyyyMMdd}", "backup-19740420");
-        assertExpression(TEST_FILE_NAME_NOEXT_1 + "-${date:header.special:yyyyMMdd}", TEST_FILE_NAME_NOEXT_1 + "-20080808");
+        assertExpression(
+                TEST_FILE_NAME_NOEXT_1 + "-${date:header.special:yyyyMMdd}", TEST_FILE_NAME_NOEXT_1 + "-20080808");
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> this.assertExpression("nodate-${date:header.xxx:yyyyMMdd}", null),
                 "Should have thrown IllegalArgumentException");
     }
@@ -148,26 +156,32 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("backup-$simple{date:file:yyyyMMdd}", "backup-" + expected);
 
         assertExpression("backup-$simple{date:header.birthday:yyyyMMdd}", "backup-19740420");
-        assertExpression(TEST_FILE_NAME_NOEXT_1 + "-$simple{date:header.special:yyyyMMdd}",
+        assertExpression(
+                TEST_FILE_NAME_NOEXT_1 + "-$simple{date:header.special:yyyyMMdd}",
                 TEST_FILE_NAME_NOEXT_1 + "-20080808");
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> this.assertExpression("nodate-$simple{date:header.xxx:yyyyMMdd}", null),
                 "Should have thrown IllegalArgumentException");
     }
 
     @Test
     public void testSimpleAndFile() {
-        assertExpression("backup-${in.header.foo}-${file:name.noext}.bak",
+        assertExpression(
+                "backup-${in.header.foo}-${file:name.noext}.bak",
                 "backup-abc-test" + File.separator + TEST_FILE_NAME_NOEXT_1 + ".bak");
-        assertExpression("backup-${in.header.foo}-${file:onlyname.noext}.bak", "backup-abc-" + TEST_FILE_NAME_NOEXT_1 + ".bak");
+        assertExpression(
+                "backup-${in.header.foo}-${file:onlyname.noext}.bak", "backup-abc-" + TEST_FILE_NAME_NOEXT_1 + ".bak");
     }
 
     @Test
     public void testSimpleAndFileAndBean() {
-        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak",
+        assertExpression(
+                "backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak",
                 "backup-abc-generatorbybean-test" + File.separator + TEST_FILE_NAME_NOEXT_1 + ".bak");
-        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:onlyname.noext}.bak",
+        assertExpression(
+                "backup-${in.header.foo}-${bean:generator}-${file:onlyname.noext}.bak",
                 "backup-abc-generatorbybean-" + TEST_FILE_NAME_NOEXT_1 + ".bak");
     }
 
@@ -226,19 +240,22 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     @Test
     public void testIllegalSyntax() {
-        ExpressionIllegalSyntaxException e1 = assertThrows(ExpressionIllegalSyntaxException.class,
+        ExpressionIllegalSyntaxException e1 = assertThrows(
+                ExpressionIllegalSyntaxException.class,
                 () -> assertExpression("${file.name}", ""),
                 "Should have thrown an exception");
 
         assertTrue(e1.getMessage().startsWith("Unknown function: file.name at location 0"));
 
-        ExpressionIllegalSyntaxException e2 = assertThrows(ExpressionIllegalSyntaxException.class,
+        ExpressionIllegalSyntaxException e2 = assertThrows(
+                ExpressionIllegalSyntaxException.class,
                 () -> assertExpression("hey ${xxx} how are you?", ""),
                 "Should have thrown an exception");
 
         assertTrue(e2.getMessage().startsWith("Unknown function: xxx at location 4"));
 
-        ExpressionIllegalSyntaxException e3 = assertThrows(ExpressionIllegalSyntaxException.class,
+        ExpressionIllegalSyntaxException e3 = assertThrows(
+                ExpressionIllegalSyntaxException.class,
                 () -> assertExpression("${xxx}", ""),
                 "Should have thrown an exception");
 

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -41,7 +42,6 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MyBean.class, "order(MyOrder.class)").to("mock:result");
-
             }
         });
         context.start();
@@ -59,17 +59,17 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MyBean.class, "order(Unknown.class)").to("mock:result");
-
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", new MyOrder()),
                 "Should have thrown an exception");
 
-        NoTypeConversionAvailableException cause
-                = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
+        NoTypeConversionAvailableException cause = assertIsInstanceOf(
+                NoTypeConversionAvailableException.class, e.getCause().getCause());
         assertEquals("Unknown.class", cause.getValue());
     }
 
@@ -78,8 +78,9 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "order(MyOrder.class,Boolean.class)").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "order(MyOrder.class,Boolean.class)")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -97,9 +98,10 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .bean(MyBean.class, "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$MyOrder.class)")
+                        .bean(
+                                MyBean.class,
+                                "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$MyOrder.class)")
                         .to("mock:result");
-
             }
         });
         context.start();
@@ -117,19 +119,21 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .bean(MyBean.class, "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown.class)")
+                        .bean(
+                                MyBean.class,
+                                "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown.class)")
                         .to("mock:result");
-
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", new MyOrder()),
                 "Should have thrown an exception");
 
-        NoTypeConversionAvailableException cause
-                = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
+        NoTypeConversionAvailableException cause = assertIsInstanceOf(
+                NoTypeConversionAvailableException.class, e.getCause().getCause());
         assertEquals("org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown.class", cause.getValue());
     }
 
@@ -139,10 +143,10 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .bean(MyBean.class,
+                        .bean(
+                                MyBean.class,
                                 "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$MyOrder.class,Boolean.class)")
                         .to("mock:result");
-
             }
         });
         context.start();
@@ -154,8 +158,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public static final class MyOrder {
-    }
+    public static final class MyOrder {}
 
     public static final class MyBean {
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
 
 import java.io.InputStream;
@@ -74,8 +75,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private volatile CsvMarshaller marshaller;
     private volatile CsvUnmarshaller unmarshaller;
 
-    public CsvDataFormat() {
-    }
+    public CsvDataFormat() {}
 
     public CsvDataFormat(CSVFormat format) {
         csvFormat = format;
@@ -202,7 +202,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         return answer;
     }
 
-    //region Getters/Setters
+    // region Getters/Setters
 
     /**
      * Sets the {@link CsvMarshaller} factory. If {@code null}, then {@link CsvMarshallerFactory#DEFAULT} is used
@@ -730,7 +730,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         return this;
     }
 
-    //endregion
+    // endregion
     /**
      * Sets whether to trim leading and trailing blanks.
      * <p>

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import java.util.Collection;
@@ -32,15 +33,17 @@ public class JsltComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
+
     @Metadata
     private boolean allowTemplateFromHeader;
+
     @Metadata(label = "advanced")
     private Collection<Function> functions;
+
     @Metadata(label = "advanced")
     private JsonFilter objectFilter;
 
-    public JsltComponent() {
-    }
+    public JsltComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

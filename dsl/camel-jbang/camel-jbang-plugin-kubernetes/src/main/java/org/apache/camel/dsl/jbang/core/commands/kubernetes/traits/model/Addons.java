@@ -30,9 +30,7 @@ public class Addons {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<>();
 
-    public Addons() {
-
-    }
+    public Addons() {}
 
     public Addons(Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;

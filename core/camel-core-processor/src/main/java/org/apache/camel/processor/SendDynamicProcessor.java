@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Map;
@@ -140,7 +141,9 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
                         postAwareProcessor = dynamicAware.createPostProcessor(exchange, entry);
                         if (staticUri != null) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme,
+                                LOG.debug(
+                                        "Optimising toD via SendDynamicAware component: {} to use static uri: {}",
+                                        scheme,
                                         URISupport.sanitizeUri(staticUri));
                             }
                         }
@@ -278,7 +281,8 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
         return ExchangeHelper.resolveScheme(uri);
     }
 
-    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+    protected static Object prepareRecipient(Exchange exchange, Object recipient)
+            throws NoTypeConversionAvailableException {
         if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
             return recipient;
         } else if (recipient instanceof String string) {
@@ -354,7 +358,9 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
                     }
                     if (dynamicAware != null) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Detected SendDynamicAware component: {} optimising toD: {}", scheme,
+                            LOG.debug(
+                                    "Detected SendDynamicAware component: {} optimising toD: {}",
+                                    scheme,
                                     URISupport.sanitizeUri(uri));
                         }
                     }
@@ -364,7 +370,9 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(
                             "Error creating optimised SendDynamicAwareResolver for uri: {} due to {}. This exception is ignored",
-                            URISupport.sanitizeUri(uri), e.getMessage(), e);
+                            URISupport.sanitizeUri(uri),
+                            e.getMessage(),
+                            e);
                 }
             }
         }
@@ -377,8 +385,8 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
     protected void doStart() throws Exception {
         // ensure the component is started
         if (autoStartupComponents && scheme != null && uri != null) {
-            OptimisedComponentResolver resolver
-                    = camelContext.getCamelContextExtension().getContextPlugin(OptimisedComponentResolver.class);
+            OptimisedComponentResolver resolver =
+                    camelContext.getCamelContextExtension().getContextPlugin(OptimisedComponentResolver.class);
             resolver.resolveComponent(uri);
         }
 

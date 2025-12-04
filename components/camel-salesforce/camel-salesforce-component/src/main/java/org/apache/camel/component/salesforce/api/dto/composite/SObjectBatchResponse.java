@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.io.Serializable;
@@ -35,8 +36,9 @@ public final class SObjectBatchResponse implements Serializable {
     private final List<SObjectBatchResult> results;
 
     @JsonCreator
-    public SObjectBatchResponse(@JsonProperty("hasErrors") final boolean hasErrors,
-                                @JsonProperty("results") final List<SObjectBatchResult> results) {
+    public SObjectBatchResponse(
+            @JsonProperty("hasErrors") final boolean hasErrors,
+            @JsonProperty("results") final List<SObjectBatchResult> results) {
         this.hasErrors = hasErrors;
         this.results = results;
     }

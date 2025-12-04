@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,10 +30,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 
 class InferenceTest extends TorchServeTestSupport {
 
@@ -47,8 +48,7 @@ class InferenceTest extends TorchServeTestSupport {
 
     @Test
     void testPing() throws Exception {
-        mockServer.stubFor(get("/ping")
-                .willReturn(okJson("{ \"status\": \"Healthy\" }")));
+        mockServer.stubFor(get("/ping").willReturn(okJson("{ \"status\": \"Healthy\" }")));
         var mock = getMockEndpoint("mock:result");
         mock.expectedBodyReceived().constant("Healthy");
 
@@ -60,12 +60,9 @@ class InferenceTest extends TorchServeTestSupport {
 
     @Test
     void testPredictions() throws Exception {
-        mockServer.stubFor(post("/predictions/" + TEST_MODEL)
-                .willReturn(okJson("{ \"cat\": 1.0 }")));
+        mockServer.stubFor(post("/predictions/" + TEST_MODEL).willReturn(okJson("{ \"cat\": 1.0 }")));
         var mock = getMockEndpoint("mock:result");
-        mock.expectedBodyReceived()
-                .body(Map.class)
-                .isEqualTo(Map.of("cat", 1.0));
+        mock.expectedBodyReceived().body(Map.class).isEqualTo(Map.of("cat", 1.0));
 
         var body = Files.readAllBytes(Path.of(TEST_DATA));
         template.sendBody("direct:predictions", body);
@@ -76,12 +73,9 @@ class InferenceTest extends TorchServeTestSupport {
 
     @Test
     void testPredictions_headers() throws Exception {
-        mockServer.stubFor(post("/predictions/" + TEST_MODEL)
-                .willReturn(okJson("{ \"cat\": 1.0 }")));
+        mockServer.stubFor(post("/predictions/" + TEST_MODEL).willReturn(okJson("{ \"cat\": 1.0 }")));
         var mock = getMockEndpoint("mock:result");
-        mock.expectedBodyReceived()
-                .body(Map.class)
-                .isEqualTo(Map.of("cat", 1.0));
+        mock.expectedBodyReceived().body(Map.class).isEqualTo(Map.of("cat", 1.0));
 
         var body = Files.readAllBytes(Path.of(TEST_DATA));
         template.send("direct:predictions_headers", exchange -> {
@@ -95,12 +89,10 @@ class InferenceTest extends TorchServeTestSupport {
 
     @Test
     void testPredictions_version() throws Exception {
-        mockServer.stubFor(post("/predictions/" + TEST_MODEL + "/" + TEST_MODEL_VERSION)
-                .willReturn(okJson("{ \"cat\": 1.0 }")));
+        mockServer.stubFor(
+                post("/predictions/" + TEST_MODEL + "/" + TEST_MODEL_VERSION).willReturn(okJson("{ \"cat\": 1.0 }")));
         var mock = getMockEndpoint("mock:result");
-        mock.expectedBodyReceived()
-                .body(Map.class)
-                .isEqualTo(Map.of("cat", 1.0));
+        mock.expectedBodyReceived().body(Map.class).isEqualTo(Map.of("cat", 1.0));
 
         var body = Files.readAllBytes(Path.of(TEST_DATA));
         template.sendBody("direct:predictions_version", body);
@@ -111,12 +103,10 @@ class InferenceTest extends TorchServeTestSupport {
 
     @Test
     void testPredictions_versionHeaders() throws Exception {
-        mockServer.stubFor(post("/predictions/" + TEST_MODEL + "/" + TEST_MODEL_VERSION)
-                .willReturn(okJson("{ \"cat\": 1.0 }")));
+        mockServer.stubFor(
+                post("/predictions/" + TEST_MODEL + "/" + TEST_MODEL_VERSION).willReturn(okJson("{ \"cat\": 1.0 }")));
         var mock = getMockEndpoint("mock:result");
-        mock.expectedBodyReceived()
-                .body(Map.class)
-                .isEqualTo(Map.of("cat", 1.0));
+        mock.expectedBodyReceived().body(Map.class).isEqualTo(Map.of("cat", 1.0));
 
         var body = Files.readAllBytes(Path.of(TEST_DATA));
         template.send("direct:predictions_headers", exchange -> {
@@ -134,14 +124,14 @@ class InferenceTest extends TorchServeTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:ping")
-                        .to("torchserve:inference/ping")
-                        .to("mock:result");
+                from("direct:ping").to("torchserve:inference/ping").to("mock:result");
                 from("direct:predictions")
                         .toF("torchserve:inference/predictions?modelName=%s", TEST_MODEL)
                         .to("mock:result");
                 from("direct:predictions_version")
-                        .toF("torchserve:inference/predictions?modelName=%s&modelVersion=%s", TEST_MODEL, TEST_MODEL_VERSION)
+                        .toF(
+                                "torchserve:inference/predictions?modelName=%s&modelVersion=%s",
+                                TEST_MODEL, TEST_MODEL_VERSION)
                         .to("mock:result");
                 from("direct:predictions_headers")
                         .to("torchserve:inference/predictions")

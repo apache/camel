@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import java.io.IOException;
@@ -50,7 +51,9 @@ public class ErrorHandlerSuppressExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).maximumRedeliveries(3).redeliveryDelay(0)
+                onException(Exception.class)
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
@@ -61,15 +64,13 @@ public class ErrorHandlerSuppressExceptionTest extends ContextTestSupport {
                             }
                         });
 
-                from("direct:start")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                throw new IOException("Root exception");
-                            }
-                        });
+                from("direct:start").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IOException("Root exception");
+                    }
+                });
             }
         };
     }
-
 }

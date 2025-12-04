@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.loadbalancer;
 
 import java.util.HashMap;
@@ -37,8 +38,10 @@ import org.apache.camel.util.StringHelper;
 public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends AbstractReifier {
 
     // for custom reifiers
-    private static final Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> LOAD_BALANCERS
-            = new HashMap<>(0);
+    private static final Map<
+                    Class<?>,
+                    BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>>
+            LOAD_BALANCERS = new HashMap<>(0);
 
     protected final T definition;
 
@@ -62,8 +65,8 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
         LoadBalancerReifier<? extends LoadBalancerDefinition> answer = null;
         if (!LOAD_BALANCERS.isEmpty()) {
             // custom take precedence
-            BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> reifier
-                    = LOAD_BALANCERS.get(definition.getClass());
+            BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> reifier =
+                    LOAD_BALANCERS.get(definition.getClass());
             if (reifier != null) {
                 answer = reifier.apply(route, definition);
             }
@@ -119,5 +122,4 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
 
         return answer;
     }
-
 }

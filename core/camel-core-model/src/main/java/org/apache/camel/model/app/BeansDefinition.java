@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.app;
 
 import java.util.ArrayList;
@@ -50,22 +51,24 @@ import org.apache.camel.spi.annotations.ExternalSchemaElement;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "beans")
-@XmlType(propOrder = {
-        "componentScanning",
-        "beans",
-        "springOrBlueprintBeans",
-        "dataFormats",
-        "restConfigurations",
-        "rests",
-        "routeConfigurations",
-        "routeTemplates",
-        "templatedRoutes",
-        "routes"
-})
+@XmlType(
+        propOrder = {
+            "componentScanning",
+            "beans",
+            "springOrBlueprintBeans",
+            "dataFormats",
+            "restConfigurations",
+            "rests",
+            "routeConfigurations",
+            "routeTemplates",
+            "templatedRoutes",
+            "routes"
+        })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeansDefinition {
 
-    // This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods
+    // This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser
+    // methods
 
     @XmlElement(name = "component-scan")
     private List<ComponentScanDefinition> componentScanning = new ArrayList<>();
@@ -78,11 +81,13 @@ public class BeansDefinition {
     // support for legacy spring <beans> and blueprint <bean> files to be parsed and loaded
     // for migration and tooling effort (need to be in a single @XmlAnyElement as otherwise
     // this causes camel-spring-xml to generate an invalid XSD
-    @ExternalSchemaElement(names = { "beans", "bean", "alias" }, names2 = "bean",
-                           namespace = "http://www.springframework.org/schema/beans",
-                           namespace2 = "http://www.osgi.org/xmlns/blueprint/v1.0.0",
-                           documentElement = "beans",
-                           documentElement2 = "blueprint")
+    @ExternalSchemaElement(
+            names = {"beans", "bean", "alias"},
+            names2 = "bean",
+            namespace = "http://www.springframework.org/schema/beans",
+            namespace2 = "http://www.osgi.org/xmlns/blueprint/v1.0.0",
+            documentElement = "beans",
+            documentElement2 = "blueprint")
     @XmlAnyElement
     private List<Element> springOrBlueprintBeans = new ArrayList<>();
 
@@ -98,16 +103,22 @@ public class BeansDefinition {
     @DslProperty(name = "dataFormats") // yaml-dsl
     @Description("Camel data formats")
     private List<DataFormatDefinition> dataFormats;
+
     @XmlElement(name = "restConfiguration")
     private List<RestConfigurationDefinition> restConfigurations = new ArrayList<>();
+
     @XmlElement(name = "rest")
     private List<RestDefinition> rests = new ArrayList<>();
+
     @XmlElement(name = "routeConfiguration")
     private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
+
     @XmlElement(name = "routeTemplate")
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
+
     @XmlElement(name = "templatedRoute")
     private List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
+
     @XmlElement(name = "route")
     private List<RouteDefinition> routes = new ArrayList<>();
 
@@ -221,5 +232,4 @@ public class BeansDefinition {
     public void setDataFormats(List<DataFormatDefinition> dataFormats) {
         this.dataFormats = dataFormats;
     }
-
 }

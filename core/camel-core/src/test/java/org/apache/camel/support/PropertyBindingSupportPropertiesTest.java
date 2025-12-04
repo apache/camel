@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Locale;
 import java.util.Map;
@@ -25,8 +28,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -124,7 +125,8 @@ public class PropertyBindingSupportPropertiesTest extends ContextTestSupport {
 
     private static class BarConfigurer implements PropertyConfigurer, PropertyConfigurerGetter {
         @Override
-        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        public boolean configure(
+                CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             if (ignoreCase) {
                 name = name.toLowerCase(Locale.ENGLISH);
             }
@@ -164,12 +166,14 @@ public class PropertyBindingSupportPropertiesTest extends ContextTestSupport {
 
     private static class BarWithMapConfigurer implements PropertyConfigurer, PropertyConfigurerGetter {
         @Override
-        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        public boolean configure(
+                CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             if (ignoreCase) {
                 name = name.toLowerCase(Locale.ENGLISH);
             }
             if (target instanceof PropertyBindingSupportPropertiesTest.BarWithMap) {
-                PropertyBindingSupportPropertiesTest.BarWithMap bar = (PropertyBindingSupportPropertiesTest.BarWithMap) target;
+                PropertyBindingSupportPropertiesTest.BarWithMap bar =
+                        (PropertyBindingSupportPropertiesTest.BarWithMap) target;
                 if ("works".equals(name)) {
                     bar.setWorks((Map) value);
                     return true;
@@ -193,7 +197,8 @@ public class PropertyBindingSupportPropertiesTest extends ContextTestSupport {
                 name = name.toLowerCase(Locale.ENGLISH);
             }
             if (target instanceof PropertyBindingSupportPropertiesTest.BarWithMap) {
-                PropertyBindingSupportPropertiesTest.BarWithMap bar = (PropertyBindingSupportPropertiesTest.BarWithMap) target;
+                PropertyBindingSupportPropertiesTest.BarWithMap bar =
+                        (PropertyBindingSupportPropertiesTest.BarWithMap) target;
                 if ("works".equals(name)) {
                     return bar.getWorks();
                 }
@@ -210,5 +215,4 @@ public class PropertyBindingSupportPropertiesTest extends ContextTestSupport {
             return null;
         }
     }
-
 }

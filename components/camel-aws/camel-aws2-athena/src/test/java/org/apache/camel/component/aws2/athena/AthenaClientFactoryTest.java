@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.athena.client.Athena2ClientFactory;
 import org.apache.camel.component.aws2.athena.client.Athena2InternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientIAMOptimi
 import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AthenaClientFactoryTest {
 

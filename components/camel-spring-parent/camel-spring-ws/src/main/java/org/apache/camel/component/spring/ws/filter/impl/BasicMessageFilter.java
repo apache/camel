@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.filter.impl;
 
 import java.util.HashSet;
@@ -74,7 +75,9 @@ public class BasicMessageFilter implements MessageFilter {
      * If applicable this method adds a SOAP header.
      */
     protected void processSoapHeader(AttachmentMessage inOrOut, SoapMessage soapMessage) {
-        boolean isHeaderAvailable = inOrOut != null && inOrOut.getHeaders() != null && !inOrOut.getHeaders().isEmpty();
+        boolean isHeaderAvailable = inOrOut != null
+                && inOrOut.getHeaders() != null
+                && !inOrOut.getHeaders().isEmpty();
 
         if (isHeaderAvailable) {
             doProcessSoapHeader(inOrOut, soapMessage);
@@ -139,5 +142,4 @@ public class BasicMessageFilter implements MessageFilter {
             }
         }
     }
-
 }

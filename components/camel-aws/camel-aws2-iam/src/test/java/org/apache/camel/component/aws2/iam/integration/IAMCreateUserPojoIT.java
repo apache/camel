@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.iam.model.CreateUserRequest;
 import software.amazon.awssdk.services.iam.model.CreateUserResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IAMCreateUserPojoIT extends Aws2IAMBase {
 
@@ -42,7 +43,8 @@ public class IAMCreateUserPojoIT extends Aws2IAMBase {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
-                exchange.getIn().setBody(CreateUserRequest.builder().userName("test").build());
+                exchange.getIn()
+                        .setBody(CreateUserRequest.builder().userName("test").build());
             }
         });
 
@@ -60,7 +62,6 @@ public class IAMCreateUserPojoIT extends Aws2IAMBase {
                 from("direct:createUserPojo")
                         .to("aws2-iam://test?operation=createUser&pojoRequest=true")
                         .to("mock:result");
-
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.io.File;
@@ -37,7 +38,8 @@ public class JMXMonitorTypeStringMatchesTest extends SimpleBeanFixture {
 
     @Override
     protected JMXUriBuilder buildFromURI() {
-        return super.buildFromURI().withMonitorType("string")
+        return super.buildFromURI()
+                .withMonitorType("string")
                 .withGranularityPeriod(500)
                 .withObservedAttribute("StringValue")
                 .withStringToCompare("initial")

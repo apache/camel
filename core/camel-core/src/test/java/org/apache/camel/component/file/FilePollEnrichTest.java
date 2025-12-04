@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.nio.file.Files;
 import java.util.UUID;
@@ -24,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FilePollEnrichTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
@@ -50,9 +51,13 @@ public class FilePollEnrichTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:foo?period=1000").routeId("foo").log("Trigger timer foo")
-                        .pollEnrich(fileUri("?move=done"), 5000).convertBodyTo(String.class)
-                        .log("Polled filed ${file:name}").to("mock:result");
+                from("timer:foo?period=1000")
+                        .routeId("foo")
+                        .log("Trigger timer foo")
+                        .pollEnrich(fileUri("?move=done"), 5000)
+                        .convertBodyTo(String.class)
+                        .log("Polled filed ${file:name}")
+                        .to("mock:result");
             }
         };
     }

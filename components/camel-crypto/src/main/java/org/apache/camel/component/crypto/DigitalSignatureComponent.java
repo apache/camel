@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.crypto;
 
 import java.net.MalformedURLException;
@@ -33,8 +34,7 @@ public class DigitalSignatureComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private DigitalSignatureConfiguration configuration = new DigitalSignatureConfiguration();
 
-    public DigitalSignatureComponent() {
-    }
+    public DigitalSignatureComponent() {}
 
     public DigitalSignatureComponent(CamelContext context) {
         super(context);
@@ -50,10 +50,10 @@ public class DigitalSignatureComponent extends DefaultComponent {
         try {
             config.setCryptoOperation(new URI(remaining).getScheme());
         } catch (Exception e) {
-            throw new MalformedURLException(
-                    String.format("An invalid crypto uri was provided '%s'."
-                                  + " Check the uri matches the format crypto:sign or crypto:verify",
-                            uri));
+            throw new MalformedURLException(String.format(
+                    "An invalid crypto uri was provided '%s'."
+                            + " Check the uri matches the format crypto:sign or crypto:verify",
+                    uri));
         }
         Endpoint endpoint = new DigitalSignatureEndpoint(uri, this, config);
         setProperties(endpoint, parameters);

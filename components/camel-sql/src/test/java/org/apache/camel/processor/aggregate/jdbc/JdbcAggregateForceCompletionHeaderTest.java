@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class JdbcAggregateForceCompletionHeaderTest extends AbstractJdbcAggregat
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
-        //now send the signal message to trigger completion of all groups, message should NOT be aggregated
+        // now send the signal message to trigger completion of all groups, message should NOT be aggregated
         template.sendBodyAndProperty("direct:start", "test5", Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -67,7 +68,7 @@ public class JdbcAggregateForceCompletionHeaderTest extends AbstractJdbcAggregat
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4", "test5");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
-        //now send a message to trigger completion of all groups, message should be aggregated
+        // now send a message to trigger completion of all groups, message should be aggregated
         Map<String, Object> headers = new HashMap<>();
         headers.put("id", "3");
         headers.put(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE, true);
@@ -87,7 +88,8 @@ public class JdbcAggregateForceCompletionHeaderTest extends AbstractJdbcAggregat
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         // use our created jdbc repo as aggregation repository
-                        .completionSize(10).aggregationRepository(repo)
+                        .completionSize(10)
+                        .aggregationRepository(repo)
                         .to("mock:aggregated");
             }
         };

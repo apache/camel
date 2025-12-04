@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.UUID;
 
@@ -32,17 +38,11 @@ import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class InOutQueueProducerTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.InOutQueueProducerTest";
 
-    public InOutQueueProducerTest() {
-    }
+    public InOutQueueProducerTest() {}
 
     @Test
     public void testInOutQueueProducer() throws Exception {
@@ -66,8 +66,8 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         final String responseText = "How are you";
         mc.setMessageListener(new MyMessageListener(requestText, responseText));
 
-        Object responseObject
-                = template.requestBodyAndHeader("direct:start", requestText, SjmsConstants.JMS_DESTINATION_NAME, "foo");
+        Object responseObject =
+                template.requestBodyAndHeader("direct:start", requestText, SjmsConstants.JMS_DESTINATION_NAME, "foo");
         assertNotNull(responseObject);
         assertTrue(responseObject instanceof String);
         assertEquals(responseText, responseObject);
@@ -91,7 +91,6 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         assertEquals(responseText, exchange.getIn().getBody());
         assertEquals(correlationId, exchange.getIn().getHeader("JMSCorrelationID", String.class));
         mc.close();
-
     }
 
     /*
@@ -107,8 +106,10 @@ public class InOutQueueProducerTest extends JmsTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:" + TEST_DESTINATION_NAME + ".in.log.1?showBody=true")
-                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo="
-                                                   + TEST_DESTINATION_NAME + ".response")
+                        .to(
+                                ExchangePattern.InOut,
+                                "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo=" + TEST_DESTINATION_NAME
+                                        + ".response")
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
             }
         };

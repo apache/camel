@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 import java.security.Key;
@@ -47,7 +48,8 @@ public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
         generator = KeyGenerator.getInstance("AES");
         aeskey = generator.generateKey();
         return SpringCamelContext.springCamelContext(
-                new ClassPathXmlApplicationContext("/org/apache/camel/component/crypto/SpringCryptoDataFormatTest.xml"), true);
+                new ClassPathXmlApplicationContext("/org/apache/camel/component/crypto/SpringCryptoDataFormatTest.xml"),
+                true);
     }
 
     public static Key getDesKey() {
@@ -63,7 +65,7 @@ public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
     }
 
     public static byte[] getIV() {
-        return new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+        return new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
     }
 
     public static GCMParameterSpec getGCMParameterSpec() {

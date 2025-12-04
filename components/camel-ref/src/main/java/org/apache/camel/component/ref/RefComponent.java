@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ref;
 
 import java.util.Map;
@@ -30,8 +31,7 @@ import org.apache.camel.support.DefaultComponent;
 @org.apache.camel.spi.annotations.Component("ref")
 public class RefComponent extends DefaultComponent {
 
-    public RefComponent() {
-    }
+    public RefComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -50,5 +50,4 @@ public class RefComponent extends DefaultComponent {
         setProperties(answer, parameters);
         return answer;
     }
-
 }

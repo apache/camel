@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.persistent_volumes;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_PERSISTENT_VOLUMES;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,19 +28,21 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_PERSISTENT_VOLUMES;
-
 /**
  * Perform operations on Kubernetes Persistent Volumes and get notified on Persistent Volume changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_PERSISTENT_VOLUMES, title = "Kubernetes Persistent Volume",
-             syntax = "kubernetes-persistent-volumes:masterUrl",
-             producerOnly = true, category = { Category.CONTAINER, Category.CLOUD },
-             headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_PERSISTENT_VOLUMES,
+        title = "Kubernetes Persistent Volume",
+        syntax = "kubernetes-persistent-volumes:masterUrl",
+        producerOnly = true,
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesPersistentVolumesEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesPersistentVolumesEndpoint(String uri, KubernetesPersistentVolumesComponent component,
-                                               KubernetesConfiguration config) {
+    public KubernetesPersistentVolumesEndpoint(
+            String uri, KubernetesPersistentVolumesComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -50,5 +55,4 @@ public class KubernetesPersistentVolumesEndpoint extends AbstractKubernetesEndpo
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new IllegalArgumentException("The kubernetes-persistent-volumes doesn't support consumer");
     }
-
 }

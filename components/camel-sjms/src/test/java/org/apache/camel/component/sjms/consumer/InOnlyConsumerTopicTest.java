@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.Exchange;
@@ -42,16 +43,19 @@ public class InOnlyConsumerTopicTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:topic:in.only.InOnlyConsumerTopicTest.topic").to("log:request").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = (String) exchange.getIn().getBody();
-                        if (body.contains("Camel")) {
-                            Thread.sleep(2000);
-                        }
-                    }
-                }).to("log:response").to("mock:result");
+                from("sjms:topic:in.only.InOnlyConsumerTopicTest.topic")
+                        .to("log:request")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = (String) exchange.getIn().getBody();
+                                if (body.contains("Camel")) {
+                                    Thread.sleep(2000);
+                                }
+                            }
+                        })
+                        .to("log:response")
+                        .to("mock:result");
             }
         };
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -27,9 +31,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class TwoManagedCamelContextTest extends TestSupport {
@@ -51,7 +52,8 @@ public class TwoManagedCamelContextTest extends TestSupport {
         camel1.start();
         camel2.start();
 
-        MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on = getContextObjectName(camel1);
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
@@ -67,9 +69,8 @@ public class TwoManagedCamelContextTest extends TestSupport {
     }
 
     private static ObjectName getContextObjectName(CamelContext context) throws MalformedObjectNameException {
-        return ObjectName
-                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=context,name=\""
-                             + context.getName() + "\"");
+        return ObjectName.getInstance("org.apache.camel:context=" + context.getManagementName()
+                + ",type=context,name=\"" + context.getName() + "\"");
     }
 
     @Override
@@ -83,5 +84,4 @@ public class TwoManagedCamelContextTest extends TestSupport {
         }
         super.tearDown();
     }
-
 }

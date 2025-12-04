@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
 
@@ -52,9 +53,9 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
             public void configure() {
                 rest("/").get("/issues/{isin}/{sedol}").to("direct:issues");
 
-                from("direct:issues").routeId("issues")
-                        .process(e -> e.getMessage().setBody(
-                                "Here's your issue " + e.getIn().getHeader("isin") + ":" + e.getIn().getHeader("sedol")));
+                from("direct:issues").routeId("issues").process(e -> e.getMessage()
+                        .setBody("Here's your issue " + e.getIn().getHeader("isin") + ":"
+                                + e.getIn().getHeader("sedol")));
             }
         }.addRoutesToCamelContext(context);
         // exception here since we have 2 rest configurations
@@ -75,12 +76,15 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
                 restConfiguration().host("localhost").port(getPort());
 
                 rest("/")
-                        .get("/issues/{isin}").to("direct:issues")
-                        .get("/listings").to("direct:listings");
+                        .get("/issues/{isin}")
+                        .to("direct:issues")
+                        .get("/listings")
+                        .to("direct:listings");
 
-                from("direct:listings").routeId("listings").process(e -> e.getMessage().setBody("some listings"));
-                from("direct:issues").routeId("issues")
-                        .process(e -> e.getMessage().setBody("Here's your issue " + e.getIn().getHeader("isin")));
+                from("direct:listings").routeId("listings").process(e -> e.getMessage()
+                        .setBody("some listings"));
+                from("direct:issues").routeId("issues").process(e -> e.getMessage()
+                        .setBody("Here's your issue " + e.getIn().getHeader("isin")));
             }
         };
     }

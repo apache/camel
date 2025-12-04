@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.cxf.endpoint.Server;
@@ -24,12 +25,9 @@ public final class ChainedCxfRsConfigurer implements CxfRsConfigurer {
     private CxfRsConfigurer parent;
     private CxfRsConfigurer child;
 
-    private ChainedCxfRsConfigurer() {
-    }
+    private ChainedCxfRsConfigurer() {}
 
-    public static ChainedCxfRsConfigurer create(
-            CxfRsConfigurer parent,
-            CxfRsConfigurer child) {
+    public static ChainedCxfRsConfigurer create(CxfRsConfigurer parent, CxfRsConfigurer child) {
         ChainedCxfRsConfigurer result = new ChainedCxfRsConfigurer();
         result.parent = parent;
         result.child = child;
@@ -64,15 +62,12 @@ public final class ChainedCxfRsConfigurer implements CxfRsConfigurer {
     public static class NullCxfRsConfigurer implements CxfRsConfigurer {
 
         @Override
-        public void configure(AbstractJAXRSFactoryBean factoryBean) {
-        }
+        public void configure(AbstractJAXRSFactoryBean factoryBean) {}
 
         @Override
-        public void configureClient(Client client) {
-        }
+        public void configureClient(Client client) {}
 
         @Override
-        public void configureServer(Server server) {
-        }
+        public void configureServer(Server server) {}
     }
 }

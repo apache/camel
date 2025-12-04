@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.pizza.Pizza;
@@ -32,5 +33,4 @@ public class PizzaImpl implements Pizza {
         }
         return resp;
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.propagation;
+
+import static org.apache.camel.tracing.propagation.CamelMessagingHeadersInjectAdapter.JMS_DASH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,10 +27,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.tracing.propagation.CamelMessagingHeadersInjectAdapter.JMS_DASH;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class CamelMessagingHeadersExtractAdapterTest {
 

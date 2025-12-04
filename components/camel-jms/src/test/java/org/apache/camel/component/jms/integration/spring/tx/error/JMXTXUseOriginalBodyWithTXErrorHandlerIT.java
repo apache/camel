@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx.error;
 
 import org.apache.camel.Body;
@@ -30,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class JMXTXUseOriginalBodyWithTXErrorHandlerIT extends JMXTXUseOriginalBodyIT {
 
     @EndpointInject("mock:end")
@@ -117,7 +118,6 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerIT extends JMXTXUseOriginalBo
                     .to("mock:checkpoint2")
                     .throwException(new Exception("boo"))
                     .to("mock:end");
-
         }
     }
 }

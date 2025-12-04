@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,11 +48,6 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.SelinuxContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class GroupIT {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
@@ -62,8 +63,8 @@ public class GroupIT {
             boolean master = group.isMaster();
             if (connected) {
                 Collection<NodeState> members = group.members().values();
-                LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=" + master + ", members=" + members
-                            + ")");
+                LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=" + master + ", members="
+                        + members + ")");
             } else {
                 LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=false)");
             }
@@ -92,9 +93,10 @@ public class GroupIT {
             LOGGER.debug("data: {}", data);
             LOGGER.debug("datalog: {}", datalog);
 
-            container.addFileSystemBind(data.toAbsolutePath().toString(), "/data", BindMode.READ_WRITE, SelinuxContext.SHARED);
-            container.addFileSystemBind(datalog.toAbsolutePath().toString(), "/datalog", BindMode.READ_WRITE,
-                    SelinuxContext.SHARED);
+            container.addFileSystemBind(
+                    data.toAbsolutePath().toString(), "/data", BindMode.READ_WRITE, SelinuxContext.SHARED);
+            container.addFileSystemBind(
+                    datalog.toAbsolutePath().toString(), "/datalog", BindMode.READ_WRITE, SelinuxContext.SHARED);
         }
 
         container.start();
@@ -178,7 +180,6 @@ public class GroupIT {
 
             deleteDirectory(dataDir.toFile());
         }
-
     }
 
     @Test
@@ -191,8 +192,8 @@ public class GroupIT {
                 .build();
         curator.start();
 
-        final Group<NodeState> group
-                = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+        final Group<NodeState> group =
+                new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
         group.add(listener);
         group.start();
 
@@ -241,8 +242,8 @@ public class GroupIT {
                 .build();
         curator.start();
 
-        Group<NodeState> group
-                = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+        Group<NodeState> group =
+                new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
         group.add(listener);
         group.start();
 
@@ -290,8 +291,8 @@ public class GroupIT {
 
         try {
             container = startZooKeeper(port, dataDir);
-            Group<NodeState> group
-                    = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+            Group<NodeState> group =
+                    new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
             group.add(listener);
             group.update(new NodeState("foo"));
             group.start();
@@ -332,8 +333,8 @@ public class GroupIT {
         }
     }
 
-    //Tests that if close() is executed right after start(), there are no left over entries.
-    //(see  https://github.com/jboss-fuse/fuse/issues/133)
+    // Tests that if close() is executed right after start(), there are no left over entries.
+    // (see  https://github.com/jboss-fuse/fuse/issues/133)
     @Test
     public void testGroupClose() throws Exception {
         int port = AvailablePortFinder.getNextRandomAvailable();
@@ -427,11 +428,13 @@ public class GroupIT {
             assertTrue(group.isMaster());
 
             int attempts = 0;
-            while (attempts++ < 5 && version == group.getCurrentData().get(0).getStat().getVersion()) {
+            while (attempts++ < 5
+                    && version == group.getCurrentData().get(0).getStat().getVersion()) {
                 TimeUnit.SECONDS.sleep(1);
             }
 
-            assertNotEquals(version, group.getCurrentData().get(0).getStat().getVersion(), "We see the updated version");
+            assertNotEquals(
+                    version, group.getCurrentData().get(0).getStat().getVersion(), "We see the updated version");
 
             LOGGER.info("CurrentData:" + group.getCurrentData());
 
@@ -481,5 +484,4 @@ public class GroupIT {
             return master.await(time, timeUnit);
         }
     }
-
 }

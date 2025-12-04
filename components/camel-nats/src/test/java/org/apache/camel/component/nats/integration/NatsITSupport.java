@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats.integration;
 
 import java.io.IOException;
@@ -41,7 +42,8 @@ public class NatsITSupport extends CamelTestSupport {
 
             logger.warn(
                     "Unable to setup JUL-to-slf4j logging bridge. The test execution should result in a log of bogus output. Error: {}",
-                    e.getMessage(), e);
+                    e.getMessage(),
+                    e);
         }
     }
 

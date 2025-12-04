@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.util.ArrayList;
@@ -72,14 +73,12 @@ public class BindySimpleCsvBooleanTrueMarshallTest {
 
         @Override
         public void configure() {
-            BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
-                    org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
+            BindyCsvDataFormat camelDataFormat =
+                    new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
 
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");
         }
-
     }
-
 }

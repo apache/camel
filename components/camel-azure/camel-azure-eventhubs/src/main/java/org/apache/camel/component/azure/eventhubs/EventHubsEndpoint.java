@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
 
 import java.util.Map;
@@ -32,10 +33,13 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send and receive events to/from Azure Event Hubs using AMQP protocol.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "azure-eventhubs", title = "Azure Event Hubs",
-             syntax = "azure-eventhubs:namespace/eventHubName", category = {
-                     Category.CLOUD, Category.MESSAGING },
-             headersClass = EventHubsConstants.class)
+@UriEndpoint(
+        firstVersion = "3.5.0",
+        scheme = "azure-eventhubs",
+        title = "Azure Event Hubs",
+        syntax = "azure-eventhubs:namespace/eventHubName",
+        category = {Category.CLOUD, Category.MESSAGING},
+        headersClass = EventHubsConstants.class)
 public class EventHubsEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -90,5 +94,4 @@ public class EventHubsEndpoint extends DefaultEndpoint implements EndpointServic
         }
         return null;
     }
-
 }

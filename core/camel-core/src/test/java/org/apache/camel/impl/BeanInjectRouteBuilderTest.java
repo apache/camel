@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.BeanInject;
@@ -65,13 +66,15 @@ public class BeanInjectRouteBuilderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        String out = foo.hello(exchange.getIn().getBody(String.class));
-                        exchange.getIn().setBody(out);
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String out = foo.hello(exchange.getIn().getBody(String.class));
+                                exchange.getIn().setBody(out);
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

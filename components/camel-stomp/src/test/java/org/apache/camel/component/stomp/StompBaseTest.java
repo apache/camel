@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
 
 import javax.net.ssl.SSLContext;
@@ -44,17 +45,17 @@ public abstract class StompBaseTest extends CamelTestSupport {
                 try {
                     configuration.setJMXManagementEnabled(true);
 
-                    configuration.addAcceptorConfiguration("stomp-ssl-acceptor",
-                            String.format("tcp://0.0.0.0:%s?" +
-                                          "sslEnabled=true;" +
-                                          "keyStorePath=jsse/server-side-keystore.jks;" +
-                                          "keyStorePassword=password;" +
-                                          "protocols=STOMP",
+                    configuration.addAcceptorConfiguration(
+                            "stomp-ssl-acceptor",
+                            String.format(
+                                    "tcp://0.0.0.0:%s?" + "sslEnabled=true;"
+                                            + "keyStorePath=jsse/server-side-keystore.jks;"
+                                            + "keyStorePassword=password;"
+                                            + "protocols=STOMP",
                                     sslServicePort));
 
-                    configuration.addAcceptorConfiguration("stomp-tcp-acceptor",
-                            String.format("tcp://0.0.0.0:%s?protocols=STOMP",
-                                    servicePort));
+                    configuration.addAcceptorConfiguration(
+                            "stomp-tcp-acceptor", String.format("tcp://0.0.0.0:%s?protocols=STOMP", servicePort));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -95,8 +96,8 @@ public abstract class StompBaseTest extends CamelTestSupport {
 
     protected SSLContextParameters getClientSSLContextParameters() {
         if (clientSslContextParameters == null) {
-            clientSslContextParameters
-                    = getSSLContextParameters("jsse/client-side-keystore.jks", "jsse/client-side-truststore.jks", "password");
+            clientSslContextParameters = getSSLContextParameters(
+                    "jsse/client-side-keystore.jks", "jsse/client-side-truststore.jks", "password");
         }
 
         return clientSslContextParameters;

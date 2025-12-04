@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3;
 
 import java.util.ArrayList;
@@ -38,20 +39,32 @@ public class AWS2S3Console extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        List<Consumer> list = getCamelContext().getRoutes()
-                .stream().map(Route::getConsumer)
+        List<Consumer> list = getCamelContext().getRoutes().stream()
+                .map(Route::getConsumer)
                 .filter(c -> AWS2S3Consumer.class.getName().equals(c.getClass().getName()))
                 .collect(Collectors.toList());
 
-        sb.append(String.format("    %s:%s:%s:%s:%s:%s:%s\n", "bucket", "accessKeys", "defaultCredentialsProvider",
-                "profileCredentialsProvider", "maxMessages", "moveAfterRead", "deleteAfterRead"));
+        sb.append(String.format(
+                "    %s:%s:%s:%s:%s:%s:%s\n",
+                "bucket",
+                "accessKeys",
+                "defaultCredentialsProvider",
+                "profileCredentialsProvider",
+                "maxMessages",
+                "moveAfterRead",
+                "deleteAfterRead"));
         for (Consumer c : list) {
             AWS2S3Consumer nc = (AWS2S3Consumer) c;
             AWS2S3Configuration conf = nc.getEndpoint().getConfiguration();
-            sb.append(String.format("    %s:%s:%s:%s:%s:%s:%s\n", conf.getBucketName(),
+            sb.append(String.format(
+                    "    %s:%s:%s:%s:%s:%s:%s\n",
+                    conf.getBucketName(),
                     (!conf.isUseDefaultCredentialsProvider() && !conf.isUseProfileCredentialsProvider()),
-                    conf.isUseDefaultCredentialsProvider(), conf.isUseProfileCredentialsProvider(), nc.getMaxMessagesPerPoll(),
-                    conf.isMoveAfterRead(), conf.isDeleteAfterRead()));
+                    conf.isUseDefaultCredentialsProvider(),
+                    conf.isUseProfileCredentialsProvider(),
+                    nc.getMaxMessagesPerPoll(),
+                    conf.isMoveAfterRead(),
+                    conf.isDeleteAfterRead()));
         }
         return sb.toString();
     }
@@ -60,8 +73,8 @@ public class AWS2S3Console extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        List<Consumer> list = getCamelContext().getRoutes()
-                .stream().map(Route::getConsumer)
+        List<Consumer> list = getCamelContext().getRoutes().stream()
+                .map(Route::getConsumer)
                 .filter(c -> AWS2S3Consumer.class.getName().equals(c.getClass().getName()))
                 .collect(Collectors.toList());
 

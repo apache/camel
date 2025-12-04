@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.js;
+
+import static org.graalvm.polyglot.Source.newBuilder;
 
 import java.util.Map;
 
@@ -26,8 +29,6 @@ import org.apache.camel.support.TypedLanguageSupport;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
-
-import static org.graalvm.polyglot.Source.newBuilder;
 
 @Language("js")
 public class JavaScriptLanguage extends TypedLanguageSupport implements ScriptingLanguage {
@@ -49,7 +50,8 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
             Value b = cx.getBindings("js");
             bindings.forEach(b::putMember);
             Source source = newBuilder("js", script, "Unnamed")
-                    .mimeType("application/javascript+module").buildLiteral();
+                    .mimeType("application/javascript+module")
+                    .buildLiteral();
             Value o = cx.eval(source);
             Object answer = o != null ? o.as(resultType) : null;
             return resultType.cast(answer);

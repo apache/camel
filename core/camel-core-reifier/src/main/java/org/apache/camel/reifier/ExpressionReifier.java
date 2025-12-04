@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Predicate;
@@ -47,5 +48,4 @@ abstract class ExpressionReifier<T extends ExpressionNode> extends ProcessorReif
     protected Predicate createPredicate() {
         return createPredicate(definition.getExpression());
     }
-
 }

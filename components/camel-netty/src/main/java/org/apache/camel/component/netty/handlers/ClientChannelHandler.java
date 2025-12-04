@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.handlers;
 
 import io.netty.channel.ChannelHandler;
@@ -125,7 +126,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             if (configuration.isSync() && !doneUoW && !messageReceived && !exceptionHandled) {
                 // To avoid call the callback.done twice
                 exceptionHandled = true;
-                // session was closed but no message received. This could be because the remote server had an internal error
+                // session was closed but no message received. This could be because the remote server had an internal
+                // error
                 // and could not return a response. We should count down to stop waiting for a response
                 String address = configuration.getAddress();
                 if (LOG.isDebugEnabled()) {
@@ -133,8 +135,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                 }
                 // don't fail the exchange if we actually specify to disconnect
                 if (!configuration.isDisconnect()) {
-                    exchange.setException(
-                            new CamelExchangeException("No response received from remote server: " + address, exchange));
+                    exchange.setException(new CamelExchangeException(
+                            "No response received from remote server: " + address, exchange));
                 }
                 // signal callback
                 state.callbackDoneOnce(false);
@@ -214,7 +216,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             // we should not close if we are reusing the channel
             if (!producer.getConfiguration().isReuseChannel() && disconnect) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Closing channel when complete at address: {}", producer.getConfiguration().getAddress());
+                    LOG.trace(
+                            "Closing channel when complete at address: {}",
+                            producer.getConfiguration().getAddress());
                 }
                 // flag to know we are forcing a disconnect
                 disconnecting = true;
@@ -243,7 +247,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
      * @return           the Camel {@link Message} to set on the current {@link Exchange} as the response message.
      * @throws Exception is thrown if error getting the response message
      */
-    protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message) throws Exception {
+    protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message)
+            throws Exception {
         Object body = message;
 
         if (LOG.isDebugEnabled()) {
@@ -272,5 +277,4 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     private NettyCamelState getState(ChannelHandlerContext ctx, Throwable cause) {
         return producer.getCorrelationManager().getState(ctx, ctx.channel(), cause);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,10 +29,7 @@ import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBAggregateRecoverDeadLetterChannelFailedTest extends LevelDBTestSupport {
 
     @Override
@@ -53,8 +54,14 @@ public class LevelDBAggregateRecoverDeadLetterChannelFailedTest extends LevelDBT
         getMockEndpoint("mock:dead").expectedMinimumMessageCount(2);
         // all the details should be the same about redelivered and redelivered 2 times
         getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
-        getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
+        getMockEndpoint("mock:dead")
+                .message(0)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(2);
+        getMockEndpoint("mock:dead")
+                .message(1)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(2);
         getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
@@ -82,18 +89,16 @@ public class LevelDBAggregateRecoverDeadLetterChannelFailedTest extends LevelDBT
             public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
-                        .completionSize(5).aggregationRepository(getRepo())
+                        .completionSize(5)
+                        .aggregationRepository(getRepo())
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .throwException(new IllegalArgumentException("Damn"))
                         .to("mock:result")
                         .end();
 
-                from("direct:dead")
-                        .to("mock:dead")
-                        .throwException(new IllegalArgumentException("We are dead"));
+                from("direct:dead").to("mock:dead").throwException(new IllegalArgumentException("We are dead"));
             }
         };
     }
-
 }

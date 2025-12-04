@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +30,8 @@ public class JacksonMarshalUnmarshalTypeHeaderNotAllowedTest extends CamelTestSu
         mock.expectedMessageCount(1);
 
         String json = "<pojo name=\"Camel\"/>";
-        template.sendBodyAndHeader("direct:backPojo", json, JacksonXMLConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
+        template.sendBodyAndHeader(
+                "direct:backPojo", json, JacksonXMLConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -43,9 +45,7 @@ public class JacksonMarshalUnmarshalTypeHeaderNotAllowedTest extends CamelTestSu
                 JacksonXMLDataFormat format = new JacksonXMLDataFormat();
 
                 from("direct:backPojo").unmarshal(format).to("mock:reversePojo");
-
             }
         };
     }
-
 }

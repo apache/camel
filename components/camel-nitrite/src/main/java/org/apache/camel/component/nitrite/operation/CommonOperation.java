@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite.operation;
 
-public interface CommonOperation extends RepositoryOperation, CollectionOperation {
-}
+public interface CommonOperation extends RepositoryOperation, CollectionOperation {}

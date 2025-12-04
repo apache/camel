@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -51,5 +52,4 @@ public interface SimpleLanguageFunctionFactory {
      * @return              the source code or <tt>null</tt> if not supported by this factory.
      */
     String createCode(CamelContext camelContext, String function, int index);
-
 }

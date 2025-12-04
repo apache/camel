@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.executor;
 
 import java.util.List;
@@ -43,7 +44,9 @@ public class TestExecutor {
             if (runnable instanceof TestRunnable) {
                 log.info(((TestRunnable) runnable).status());
             } else {
-                log.warn("Runnable is not instance of TestRunnable: {}", runnable.getClass().getName());
+                log.warn(
+                        "Runnable is not instance of TestRunnable: {}",
+                        runnable.getClass().getName());
             }
         }
     }

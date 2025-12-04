@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
 
@@ -41,12 +42,15 @@ public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
         }
 
         try {
-            createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryCatchMisconfiguredFinallyTest.xml");
+            createSpringCamelContext(
+                    this, "org/apache/camel/spring/processor/SpringTryCatchMisconfiguredFinallyTest.xml");
             fail("Should have thrown exception");
         } catch (Exception e) {
             FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftcre.getCause());
-            assertEquals("This doFinally should have a doTry as its parent on DoFinally[[to[mock:finally]]]", iae.getMessage());
+            assertEquals(
+                    "This doFinally should have a doTry as its parent on DoFinally[[to[mock:finally]]]",
+                    iae.getMessage());
         }
 
         // return a working context instead, to let this test pass
@@ -57,5 +61,4 @@ public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
     public void testTryCatchMisconfigured() {
         // noop
     }
-
 }

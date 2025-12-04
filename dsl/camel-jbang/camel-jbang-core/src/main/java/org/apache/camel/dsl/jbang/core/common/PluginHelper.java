@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.IOException;
@@ -57,8 +58,8 @@ public final class PluginHelper {
     public static final String PLUGIN_CONFIG = ".camel-jbang-plugins.json";
     public static final String PLUGIN_SERVICE_DIR = "META-INF/services/org/apache/camel/camel-jbang-plugin/";
 
-    private static final FactoryFinder FACTORY_FINDER
-            = new DefaultFactoryFinder(new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
+    private static final FactoryFinder FACTORY_FINDER =
+            new DefaultFactoryFinder(new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
 
     private PluginHelper() {
         // prevent instantiation of utility class
@@ -130,7 +131,8 @@ public final class PluginHelper {
 
                 final String name = properties.getOrDefault("name", pluginKey).toString();
                 final String command = properties.getOrDefault("command", name).toString();
-                final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
+                final String firstVersion =
+                        properties.getOrDefault("firstVersion", "").toString();
                 final String gav = properties.getOrDefault("dependency", "").toString();
 
                 // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
@@ -180,20 +182,22 @@ public final class PluginHelper {
         }
         boolean accept = VersionHelper.isGE(source, firstVersion);
         if (!accept) {
-            main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
-                                  + " because plugin has first version: " + firstVersion + ". Exit");
+            main.getOut()
+                    .println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
+                            + " because plugin has first version: " + firstVersion + ". Exit");
             main.quit(1);
         }
     }
 
     private static Optional<Plugin> downloadPlugin(String command, String version, String group, Printer printer) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
-        DependencyDownloaderClassLoader ddlcl = new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
+        DependencyDownloaderClassLoader ddlcl =
+                new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
         downloader.setClassLoader(ddlcl);
         downloader.start();
         // downloads and adds to the classpath
-        downloader.downloadDependencyWithParent("org.apache.camel:camel-jbang-parent:" + version, group,
-                "camel-jbang-plugin-" + command, version);
+        downloader.downloadDependencyWithParent(
+                "org.apache.camel:camel-jbang-parent:" + version, group, "camel-jbang-plugin-" + command, version);
         Optional<Plugin> instance = Optional.empty();
         InputStream in = null;
         String path = FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/camel-jbang-plugin-" + command;
@@ -247,7 +251,9 @@ public final class PluginHelper {
         Path f = CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
         JsonObject config = Jsoner.deserialize("{ \"plugins\": {} }", new JsonObject());
         try {
-            Files.writeString(f, config.toJson(),
+            Files.writeString(
+                    f,
+                    config.toJson(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE,
                     StandardOpenOption.TRUNCATE_EXISTING);
@@ -261,7 +267,9 @@ public final class PluginHelper {
     public static void savePluginConfig(JsonObject plugins) {
         Path f = CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
         try {
-            Files.writeString(f, plugins.toJson(),
+            Files.writeString(
+                    f,
+                    plugins.toJson(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE,
                     StandardOpenOption.TRUNCATE_EXISTING);
@@ -349,8 +357,7 @@ public final class PluginHelper {
     }
 
     private static boolean scanJarForPlugins(
-            CommandLine commandLine, CamelJBangMain main, String target,
-            ClassLoader classLoader, URL jarUrl) {
+            CommandLine commandLine, CamelJBangMain main, String target, ClassLoader classLoader, URL jarUrl) {
         boolean foundAny = false;
         try {
             String jarPath = jarUrl.getPath();
@@ -366,8 +373,7 @@ public final class PluginHelper {
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
                     String entryName = entry.getName();
-                    if (entryName.startsWith(PLUGIN_SERVICE_DIR)
-                            && !entryName.endsWith("/")) {
+                    if (entryName.startsWith(PLUGIN_SERVICE_DIR) && !entryName.endsWith("/")) {
                         String pluginName = entryName.substring(entryName.lastIndexOf("/") + 1);
                         URL serviceUrl = classLoader.getResource(entryName);
                         if (serviceUrl != null) {
@@ -385,8 +391,12 @@ public final class PluginHelper {
     }
 
     private static boolean loadPluginFromService(
-            CommandLine commandLine, CamelJBangMain main, String target,
-            ClassLoader classLoader, URL serviceUrl, String pluginName) {
+            CommandLine commandLine,
+            CamelJBangMain main,
+            String target,
+            ClassLoader classLoader,
+            URL serviceUrl,
+            String pluginName) {
         try (InputStream is = serviceUrl.openStream()) {
             Properties prop = new Properties();
             prop.load(is);

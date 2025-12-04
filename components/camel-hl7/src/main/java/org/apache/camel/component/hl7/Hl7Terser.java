@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import java.lang.annotation.Documented;
@@ -26,7 +27,7 @@ import org.apache.camel.support.language.LanguageAnnotation;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "hl7terser", factory = Hl7TerserAnnotationExpressionFactory.class)
 public @interface Hl7Terser {
 
@@ -46,5 +47,4 @@ public @interface Hl7Terser {
      * message body.
      */
     String source() default "";
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
@@ -46,7 +47,11 @@ public class OnExceptionLoadBalancerDoubleIssueTest extends ContextTestSupport {
             @Override
             public void configure() {
                 onException(Exception.class).handled(true).to("direct:error");
-                from("direct:error").loadBalance().roundRobin().id("round").to("mock:error", "mock:error2", "mock:error3");
+                from("direct:error")
+                        .loadBalance()
+                        .roundRobin()
+                        .id("round")
+                        .to("mock:error", "mock:error2", "mock:error3");
 
                 from("direct:foo").throwException(new IllegalArgumentException("Forced"));
 

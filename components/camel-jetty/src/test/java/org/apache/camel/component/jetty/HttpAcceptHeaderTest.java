@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test HTTP client sends Accept header in HTTP GET
@@ -28,8 +29,8 @@ public class HttpAcceptHeaderTest extends BaseJettyTest {
 
     @Test
     public void testAccept() {
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/myaccept", null, "Accept", "application/myjson",
-                String.class);
+        String out = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/myaccept", null, "Accept", "application/myjson", String.class);
         assertEquals("You called me as GET and accepted: application/myjson", out);
     }
 
@@ -37,10 +38,10 @@ public class HttpAcceptHeaderTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:{{port}}/myaccept").transform()
+                from("jetty:http://localhost:{{port}}/myaccept")
+                        .transform()
                         .simple("You called me as ${header.CamelHttpMethod} and accepted: ${header.Accept}");
             }
         };
     }
-
 }

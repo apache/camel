@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
 
 import java.io.FilterReader;
@@ -43,5 +44,4 @@ public class NonXmlFilterReader extends FilterReader {
         }
         return read;
     }
-
 }

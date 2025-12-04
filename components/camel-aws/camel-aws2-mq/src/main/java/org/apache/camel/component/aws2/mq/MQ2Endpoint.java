@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.mq;
 
 import org.apache.camel.Category;
@@ -32,8 +33,14 @@ import software.amazon.awssdk.services.mq.MqClient;
 /**
  * Send messages to AWS MQ.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-mq", title = "AWS MQ", syntax = "aws2-mq:label", producerOnly = true,
-             category = { Category.CLOUD, Category.MESSAGING }, headersClass = MQ2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-mq",
+        title = "AWS MQ",
+        syntax = "aws2-mq:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MESSAGING},
+        headersClass = MQ2Constants.class)
 public class MQ2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private MqClient mqClient;

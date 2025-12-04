@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.List;
@@ -29,22 +30,16 @@ import org.snakeyaml.engine.v2.nodes.Node;
 
 @YamlIn
 @YamlType(
-          nodes = { "templatedRoute" },
-          types = TemplatedRouteDefinition.class,
-          order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-          properties = {
-                  @YamlProperty(name = "routeId",
-                                type = "string"),
-                  @YamlProperty(name = "prefixId",
-                                type = "string"),
-                  @YamlProperty(name = "routeTemplateRef",
-                                type = "string",
-                                required = true),
-                  @YamlProperty(name = "parameters",
-                                type = "array:org.apache.camel.model.TemplatedRouteParameterDefinition"),
-                  @YamlProperty(name = "beans",
-                                type = "array:org.apache.camel.model.BeanFactoryDefinition")
-          })
+        nodes = {"templatedRoute"},
+        types = TemplatedRouteDefinition.class,
+        order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+        properties = {
+            @YamlProperty(name = "routeId", type = "string"),
+            @YamlProperty(name = "prefixId", type = "string"),
+            @YamlProperty(name = "routeTemplateRef", type = "string", required = true),
+            @YamlProperty(name = "parameters", type = "array:org.apache.camel.model.TemplatedRouteParameterDefinition"),
+            @YamlProperty(name = "beans", type = "array:org.apache.camel.model.BeanFactoryDefinition")
+        })
 public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<TemplatedRouteDefinition> {
 
     public TemplatedRouteDefinitionDeserializer() {
@@ -57,8 +52,7 @@ public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<T
     }
 
     @Override
-    protected boolean setProperty(
-            TemplatedRouteDefinition target, String propertyKey, String propertyName, Node node) {
+    protected boolean setProperty(TemplatedRouteDefinition target, String propertyKey, String propertyName, Node node) {
 
         propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
         switch (propertyKey) {
@@ -75,13 +69,14 @@ public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<T
                 break;
             }
             case "parameters": {
-                List<TemplatedRouteParameterDefinition> items = asFlatList(node, TemplatedRouteParameterDefinition.class);
+                List<TemplatedRouteParameterDefinition> items =
+                        asFlatList(node, TemplatedRouteParameterDefinition.class);
                 target.setParameters(items);
                 break;
             }
             case "beans": {
-                List<BeanFactoryDefinition<TemplatedRouteDefinition>> items
-                        = (List) asFlatList(node, BeanFactoryDefinition.class);
+                List<BeanFactoryDefinition<TemplatedRouteDefinition>> items =
+                        (List) asFlatList(node, BeanFactoryDefinition.class);
                 target.setBeans(items);
                 break;
             }

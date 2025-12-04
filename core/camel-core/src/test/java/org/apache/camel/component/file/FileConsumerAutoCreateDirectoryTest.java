@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 
@@ -24,10 +29,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
@@ -105,18 +106,19 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
     public void testStartingDirectoryMustExistDirectory() {
         Endpoint endpoint = context.getEndpoint(fileUri("foo?autoCreate=false&startingDirectoryMustExist=true"));
 
-        Exception e = assertThrows(Exception.class,
+        Exception e = assertThrows(
+                Exception.class,
                 () -> {
                     Consumer c = endpoint.createConsumer(exchange -> {
                         // noop
                     });
                     c.start();
-                }, "Should have thrown an exception");
+                },
+                "Should have thrown an exception");
 
         assertTrue(e.getCause().getMessage().startsWith("Starting directory does not exist"));
 
         // the directory should NOT exists
         assertFalse(Files.exists(testDirectory("foo")), "Directory should NOT be created");
     }
-
 }

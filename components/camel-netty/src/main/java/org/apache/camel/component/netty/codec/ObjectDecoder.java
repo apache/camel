@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.codec;
 
 import io.netty.buffer.ByteBuf;
@@ -33,5 +34,4 @@ public class ObjectDecoder extends io.netty.handler.codec.serialization.ObjectDe
     public Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
         return super.decode(ctx, in);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
 
 import java.io.IOException;
@@ -125,7 +126,7 @@ public abstract class CsvMarshaller {
      */
     protected abstract Iterable<?> getMapRecordValues(Map<?, ?> map);
 
-    //region Implementations
+    // region Implementations
 
     /**
      * This marshaller has fixed columns
@@ -164,5 +165,5 @@ public abstract class CsvMarshaller {
             return result;
         }
     }
-    //endregion
+    // endregion
 }

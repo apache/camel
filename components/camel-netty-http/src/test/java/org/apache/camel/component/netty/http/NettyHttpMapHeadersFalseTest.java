@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -23,9 +27,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NettyHttpMapHeadersFalseTest extends BaseNettyTest {
 
@@ -37,7 +38,7 @@ public class NettyHttpMapHeadersFalseTest extends BaseNettyTest {
         method.addHeader("OTHER", "123");
         method.addHeader("beer", "Carlsberg");
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(method)) {
+                CloseableHttpResponse response = client.execute(method)) {
             String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
             assertEquals("Bye World", responseString);
             assertEquals("aBc123", response.getFirstHeader("MyCaseHeader").getValue());
@@ -49,24 +50,38 @@ public class NettyHttpMapHeadersFalseTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty-http:http://localhost:{{port}}/myapp/mytest?mapHeaders=false").process(exchange -> {
-                    // these headers is not mapped
-                    assertNull(exchange.getIn().getHeader("clientHeader"));
-                    assertNull(exchange.getIn().getHeader("OTHER"));
-                    assertNull(exchange.getIn().getHeader("beer"));
+                from("netty-http:http://localhost:{{port}}/myapp/mytest?mapHeaders=false")
+                        .process(exchange -> {
+                            // these headers is not mapped
+                            assertNull(exchange.getIn().getHeader("clientHeader"));
+                            assertNull(exchange.getIn().getHeader("OTHER"));
+                            assertNull(exchange.getIn().getHeader("beer"));
 
-                    // but we can find them in the http request from netty
-                    assertEquals("fooBAR",
-                            exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("clientHeader"));
-                    assertEquals("123", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("OTHER"));
-                    assertEquals("Carlsberg", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("beer"));
+                            // but we can find them in the http request from netty
+                            assertEquals(
+                                    "fooBAR",
+                                    exchange.getIn(NettyHttpMessage.class)
+                                            .getHttpRequest()
+                                            .headers()
+                                            .get("clientHeader"));
+                            assertEquals(
+                                    "123",
+                                    exchange.getIn(NettyHttpMessage.class)
+                                            .getHttpRequest()
+                                            .headers()
+                                            .get("OTHER"));
+                            assertEquals(
+                                    "Carlsberg",
+                                    exchange.getIn(NettyHttpMessage.class)
+                                            .getHttpRequest()
+                                            .headers()
+                                            .get("beer"));
 
-                    exchange.getMessage().setBody("Bye World");
-                    exchange.getMessage().setHeader("MyCaseHeader", "aBc123");
-                    exchange.getMessage().setHeader("otherCaseHeader", "456DEf");
-                });
+                            exchange.getMessage().setBody("Bye World");
+                            exchange.getMessage().setHeader("MyCaseHeader", "aBc123");
+                            exchange.getMessage().setHeader("otherCaseHeader", "456DEf");
+                        });
             }
         };
     }
-
 }

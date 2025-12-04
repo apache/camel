@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.joor;
 
-import org.apache.camel.test.junit5.LanguageTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.language.joor;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class JoorCompileErrorTest extends LanguageTestSupport {
 
@@ -40,5 +41,4 @@ public class JoorCompileErrorTest extends LanguageTestSupport {
             assertTrue(e.getCause().getMessage().contains("Compilation error"));
         }
     }
-
 }

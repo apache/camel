@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import java.util.List;
@@ -46,10 +47,10 @@ public interface ManagedRuntimeEndpointRegistryMBean extends ManagedServiceMBean
     @ManagedOperation(description = "Gets all the endpoint urls captured during runtime that are in-use")
     List<String> getAllEndpoints(boolean includeInputs);
 
-    @ManagedOperation(description = "Gets all the endpoint urls captured during runtime that are in-use for the given route")
+    @ManagedOperation(
+            description = "Gets all the endpoint urls captured during runtime that are in-use for the given route")
     List<String> getEndpointsPerRoute(String routeId, boolean includeInputs);
 
     @ManagedOperation(description = "Lists statistics about all the endpoints in the registry")
     TabularData endpointStatistics();
-
 }

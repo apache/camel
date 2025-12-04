@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -46,7 +47,10 @@ public class AggregateGroupedExchangeCompletionSizeTest extends ContextTestSuppo
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(3)
+                from("direct:start")
+                        .aggregate(new GroupedExchangeAggregationStrategy())
+                        .constant(true)
+                        .completionSize(3)
                         .to("mock:result");
             }
         };

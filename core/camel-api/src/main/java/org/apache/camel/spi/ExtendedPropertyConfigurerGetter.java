@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -41,5 +42,4 @@ public interface ExtendedPropertyConfigurerGetter extends PropertyConfigurerGett
      * @return        configurable options from the target as a Map name -> class type.
      */
     Map<String, Object> getAllOptions(Object target);
-
 }

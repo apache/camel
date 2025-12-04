@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.IOException;
@@ -67,9 +68,15 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").doTry().process(new ProcessorFail()).to("mock:result")
-                        .doCatch(IOException.class, IllegalStateException.class).to("mock:catch").doFinally()
-                        .to("mock:finally").end();
+                from("direct:start")
+                        .doTry()
+                        .process(new ProcessorFail())
+                        .to("mock:result")
+                        .doCatch(IOException.class, IllegalStateException.class)
+                        .to("mock:catch")
+                        .doFinally()
+                        .to("mock:finally")
+                        .end();
                 // END SNIPPET: e1
             }
         };
@@ -87,5 +94,4 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
             }
         }
     }
-
 }

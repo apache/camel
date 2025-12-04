@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb;
 
 import java.util.Map;
@@ -25,15 +26,15 @@ import org.apache.camel.support.DefaultComponent;
 @Component("couchdb")
 public class CouchDbComponent extends DefaultComponent {
 
-    public CouchDbComponent() {
-    }
+    public CouchDbComponent() {}
 
     public CouchDbComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected CouchDbEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
+    protected CouchDbEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params)
+            throws Exception {
         CouchDbEndpoint endpoint = new CouchDbEndpoint(uri, remaining, this);
         setProperties(endpoint, params);
         return endpoint;

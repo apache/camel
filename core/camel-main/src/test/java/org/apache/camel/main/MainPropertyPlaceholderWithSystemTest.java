@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
@@ -22,8 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Isolated
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
@@ -107,7 +108,8 @@ public class MainPropertyPlaceholderWithSystemTest {
         try {
             System.setProperty(MainConstants.INITIAL_PROPERTIES_LOCATION, "classpath:initial.properties");
             System.setProperty(MainConstants.OVERRIDE_PROPERTIES_LOCATION, "classpath:override.properties");
-            System.setProperty(MainConstants.PROPERTY_PLACEHOLDER_LOCATION,
+            System.setProperty(
+                    MainConstants.PROPERTY_PLACEHOLDER_LOCATION,
                     "classpath:default.properties,classpath:user.properties");
 
             main.start();

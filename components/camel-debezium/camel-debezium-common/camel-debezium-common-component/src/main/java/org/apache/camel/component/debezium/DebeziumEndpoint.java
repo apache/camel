@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
 
 import java.util.Map;
@@ -42,14 +43,11 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         super(uri, component);
     }
 
-    protected DebeziumEndpoint() {
-    }
+    protected DebeziumEndpoint() {}
 
     @Override
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException(
-                "Cannot produce from a DebeziumEndpoint: "
-                                                + getEndpointUri());
+        throw new UnsupportedOperationException("Cannot produce from a DebeziumEndpoint: " + getEndpointUri());
     }
 
     @Override
@@ -60,8 +58,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
     }
 
     public ExecutorService createExecutor(Object source) {
-        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(source,
-                "DebeziumConsumer");
+        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(source, "DebeziumConsumer");
     }
 
     public Exchange createDbzExchange(DebeziumConsumer consumer, final SourceRecord sourceRecord) {
@@ -104,7 +101,8 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
     public abstract void setConfiguration(C configuration);
 
     protected Object extractBodyValueFromValueStruct(final Schema schema, final Object value) {
-        // by default, we will extract the value from field `after`, however if other connector needs different field, this method needs to be overriden
+        // by default, we will extract the value from field `after`, however if other connector needs different field,
+        // this method needs to be overriden
         return extractFieldValueFromValueStruct(schema, value, Envelope.FieldName.AFTER);
     }
 
@@ -112,14 +110,16 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         // first we try with normal extraction from value struct
         final Object valueExtracted = extractValueFromValueStruct(schema, value, fieldName);
 
-        if (valueExtracted == null && !isSchemaAStructSchema(schema)) { // we could have anything other than struct, we just return that
+        if (valueExtracted == null
+                && !isSchemaAStructSchema(schema)) { // we could have anything other than struct, we just return that
             return value;
         }
         return valueExtracted;
     }
 
     private Map<String, Object> extractSourceMetadataValueFromValueStruct(final Schema schema, final Object value) {
-        // we want to convert metadata to map since it facilitate usage and also struct structure is not needed for the metadata
+        // we want to convert metadata to map since it facilitate usage and also struct structure is not needed for the
+        // metadata
         final Object valueExtracted = extractValueFromValueStruct(schema, value, Envelope.FieldName.SOURCE);
 
         if (valueExtracted != null) {

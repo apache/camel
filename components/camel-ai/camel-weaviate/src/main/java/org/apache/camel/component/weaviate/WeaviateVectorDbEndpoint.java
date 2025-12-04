@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weaviate;
 
 import io.weaviate.client.Config;
@@ -36,16 +37,13 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform operations on the Weaviate Vector Database.
  */
 @UriEndpoint(
-             firstVersion = "4.12.0",
-             scheme = WeaviateVectorDb.SCHEME,
-             title = "weaviate",
-             syntax = "weaviate:collection",
-             producerOnly = true,
-             category = {
-                     Category.DATABASE,
-                     Category.AI
-             },
-             headersClass = WeaviateVectorDbHeaders.class)
+        firstVersion = "4.12.0",
+        scheme = WeaviateVectorDb.SCHEME,
+        title = "weaviate",
+        syntax = "weaviate:collection",
+        producerOnly = true,
+        category = {Category.DATABASE, Category.AI},
+        headersClass = WeaviateVectorDbHeaders.class)
 public class WeaviateVectorDbEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
@@ -58,10 +56,7 @@ public class WeaviateVectorDbEndpoint extends DefaultEndpoint {
     private WeaviateClient client;
 
     public WeaviateVectorDbEndpoint(
-                                    String endpointUri,
-                                    Component component,
-                                    String collection,
-                                    WeaviateVectorDbConfiguration configuration) {
+            String endpointUri, Component component, String collection, WeaviateVectorDbConfiguration configuration) {
 
         super(endpointUri, component);
 
@@ -121,7 +116,9 @@ public class WeaviateVectorDbEndpoint extends DefaultEndpoint {
         if (configuration.getProxyHost() != null
                 && configuration.getProxyPort() != null
                 && configuration.getProxyScheme() != null) {
-            config.setProxy(configuration.getProxyHost(), configuration.getProxyPort().intValue(),
+            config.setProxy(
+                    configuration.getProxyHost(),
+                    configuration.getProxyPort().intValue(),
                     configuration.getProxyScheme());
         }
 

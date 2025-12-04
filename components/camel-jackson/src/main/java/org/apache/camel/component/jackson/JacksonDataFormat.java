@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
 
 import com.fasterxml.jackson.core.StreamReadConstraints;
@@ -35,8 +36,7 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Object}
      */
-    public JacksonDataFormat() {
-    }
+    public JacksonDataFormat() {}
 
     /**
      * Use the default Jackson {@link ObjectMapper} and with a custom unmarshal type
@@ -89,7 +89,9 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
         int len = getMaxStringLength();
         if (len > 0) {
             LOG.debug("Creating ObjectMapper with maxStringLength: {}", len);
-            om.getFactory().setStreamReadConstraints(StreamReadConstraints.builder().maxStringLength(len).build());
+            om.getFactory()
+                    .setStreamReadConstraints(
+                            StreamReadConstraints.builder().maxStringLength(len).build());
         }
         return om;
     }
@@ -103,5 +105,4 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
     protected String getDefaultContentType() {
         return "application/json";
     }
-
 }

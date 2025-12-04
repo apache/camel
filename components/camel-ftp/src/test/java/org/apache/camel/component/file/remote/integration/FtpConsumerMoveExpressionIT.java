@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.awaitility.Awaitility.await;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,9 +28,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Unit test for FTP using expression (file language)
@@ -52,14 +53,16 @@ public class FtpConsumerMoveExpressionIT extends FtpServerTestSupport {
         // give time for consumer to rename file
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
         await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertFileExists(service.ftpFile("filelanguage/backup/" + now + "/123-report2.bak")));
+                .untilAsserted(
+                        () -> assertFileExists(service.ftpFile("filelanguage/backup/" + now + "/123-report2.bak")));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}" + "-${file:name.noext}.bak")
+                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}"
+                                + "-${file:name.noext}.bak")
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 public class Reply {
@@ -21,8 +22,7 @@ public class Reply {
     private String title;
     private String id;
 
-    public Reply() {
-    }
+    public Reply() {}
 
     public String getTitle() {
         return title;

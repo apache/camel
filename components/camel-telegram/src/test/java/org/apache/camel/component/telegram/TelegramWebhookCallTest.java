@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import java.io.InputStream;
@@ -37,8 +38,8 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
 
     @Test
     public void testWebhookCall() throws Exception {
-        WebhookConfiguration config
-                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+        WebhookConfiguration config =
+                ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
         String url = config.computeFullExternalUrl();
 
         try (InputStream content = getClass().getClassLoader().getResourceAsStream("messages/webhook-call.json")) {
@@ -61,9 +62,7 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration()
-                        .host("localhost")
-                        .port(port);
+                restConfiguration().host("localhost").port(port);
 
                 from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false")
                         .id("webhook")

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security.cache;
 
 import org.apache.camel.component.keycloak.security.KeycloakTokenIntrospector;
@@ -110,7 +111,8 @@ public interface TokenCache {
 
         @Override
         public String toString() {
-            return String.format("CacheStats{hits=%d, misses=%d, hitRate=%.2f%%, evictions=%d}",
+            return String.format(
+                    "CacheStats{hits=%d, misses=%d, hitRate=%.2f%%, evictions=%d}",
                     hitCount, missCount, hitRate * 100, evictionCount);
         }
     }

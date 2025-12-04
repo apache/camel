@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,10 +38,13 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "GZIP", enums = "UNCOMPRESSED,SNAPPY,GZIP,LZO,BROTLI,LZ4,ZSTD,LZ4_RAW")
     private String compressionCodecName;
+
     @XmlTransient
     private Class<?> unmarshalType;
+
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String lazyLoad;
@@ -186,5 +190,4 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
             return new ParquetAvroDataFormat(this);
         }
     }
-
 }

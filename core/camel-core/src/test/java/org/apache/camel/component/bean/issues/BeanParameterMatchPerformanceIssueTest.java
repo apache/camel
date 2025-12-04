@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,17 +46,13 @@ public class BeanParameterMatchPerformanceIssueTest extends ContextTestSupport {
             public void configure() {
                 context.getRegistry().bind("myBean", new MyBean());
 
-                from("direct:a")
-                        .to("bean:myBean?method=myMethod(slow)");
+                from("direct:a").to("bean:myBean?method=myMethod(slow)");
 
-                from("direct:b")
-                        .to("bean:myBean?method=myMethod('fast')");
+                from("direct:b").to("bean:myBean?method=myMethod('fast')");
 
-                from("direct:c")
-                        .to("bean:myBean?method=myMethod(\"fast\")");
+                from("direct:c").to("bean:myBean?method=myMethod(\"fast\")");
 
-                from("direct:d")
-                        .to("bean:myBean?method=myMethod(\"'fast'\")");
+                from("direct:d").to("bean:myBean?method=myMethod(\"'fast'\")");
             }
         };
     }

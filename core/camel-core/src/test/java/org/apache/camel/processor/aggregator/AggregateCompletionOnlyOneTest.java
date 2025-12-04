@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 import java.util.Set;
@@ -28,8 +31,6 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.spi.AggregationRepository;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AggregateCompletionOnlyOneTest extends ContextTestSupport {
 
@@ -47,15 +48,13 @@ public class AggregateCompletionOnlyOneTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Awaitility.await().atMost(Duration.ofSeconds(2))
-                .untilAsserted(
-                        () -> {
-                            assertEquals(4, repo.getGet());
-                            // add and remove is not in use as we are completed immediately
-                            assertEquals(0, repo.getAdd());
-                            assertEquals(0, repo.getRemove());
-                            assertEquals(4, repo.getConfirm());
-                        });
+        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
+            assertEquals(4, repo.getGet());
+            // add and remove is not in use as we are completed immediately
+            assertEquals(0, repo.getAdd());
+            assertEquals(0, repo.getRemove());
+            assertEquals(4, repo.getConfirm());
+        });
     }
 
     @Override
@@ -63,8 +62,11 @@ public class AggregateCompletionOnlyOneTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(repo)
-                        .completionSize(1).to("mock:aggregated");
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(repo)
+                        .completionSize(1)
+                        .to("mock:aggregated");
             }
         };
     }

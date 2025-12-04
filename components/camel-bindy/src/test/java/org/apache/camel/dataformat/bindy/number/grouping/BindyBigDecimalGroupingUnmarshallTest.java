@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.number.grouping;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
@@ -29,8 +32,6 @@ import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
 
@@ -71,22 +72,21 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
                         .classType(NumberModel.class)
                         .locale("en");
 
-                from(URI_DIRECT_START)
-                        .unmarshal(bindy)
-                        .to(URI_MOCK_RESULT);
+                from(URI_DIRECT_START).unmarshal(bindy).to(URI_MOCK_RESULT);
             }
-
         };
     }
 
     @CsvRecord(separator = ",", quote = "'")
     public static class NumberModel {
 
-        @DataField(pos = 1, precision = 2,
-                   rounding = "CEILING",
-                   pattern = "###,###.###",
-                   decimalSeparator = ",",
-                   groupingSeparator = ".")
+        @DataField(
+                pos = 1,
+                precision = 2,
+                rounding = "CEILING",
+                pattern = "###,###.###",
+                decimalSeparator = ",",
+                groupingSeparator = ".")
         private BigDecimal grouping;
 
         public BigDecimal getGrouping() {

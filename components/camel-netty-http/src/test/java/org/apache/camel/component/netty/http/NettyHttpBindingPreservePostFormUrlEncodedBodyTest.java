@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.Exchange;
@@ -22,14 +25,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class NettyHttpBindingPreservePostFormUrlEncodedBodyTest extends BaseNettyTest {
 
     @Test
     public void testSendToNetty() {
-        Exchange exchange
-                = template.request("netty-http:http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", exchange1 -> {
+        Exchange exchange = template.request(
+                "netty-http:http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", exchange1 -> {
                     exchange1.getIn().setBody("b1=x&b2=y");
                     exchange1.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
                     exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
@@ -48,13 +49,25 @@ public class NettyHttpBindingPreservePostFormUrlEncodedBodyTest extends BaseNett
 
                     // for unit testing make sure we got right message
                     assertEquals("b1=x&b2=y", body, "The body message is wrong");
-                    assertEquals("a", exchange.getIn().getHeader("query1"),
+                    assertEquals(
+                            "a",
+                            exchange.getIn().getHeader("query1"),
                             "Get a wrong query parameter from the message header");
-                    assertEquals("b", exchange.getIn().getHeader("query2"),
+                    assertEquals(
+                            "b",
+                            exchange.getIn().getHeader("query2"),
                             "Get a wrong query parameter from the message header");
-                    assertEquals("x", exchange.getIn().getHeader("b1"), "Get a wrong form parameter from the message header");
-                    assertEquals("y", exchange.getIn().getHeader("b2"), "Get a wrong form parameter from the message header");
-                    assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"),
+                    assertEquals(
+                            "x",
+                            exchange.getIn().getHeader("b1"),
+                            "Get a wrong form parameter from the message header");
+                    assertEquals(
+                            "y",
+                            exchange.getIn().getHeader("b2"),
+                            "Get a wrong form parameter from the message header");
+                    assertEquals(
+                            "localhost:" + getPort(),
+                            exchange.getIn().getHeader("host"),
                             "Get a wrong form parameter from the message header");
 
                     NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
@@ -69,5 +82,4 @@ public class NettyHttpBindingPreservePostFormUrlEncodedBodyTest extends BaseNett
             }
         };
     }
-
 }

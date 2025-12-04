@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.Map;
@@ -165,8 +166,8 @@ public final class TemplatedRouteBuilder {
     public String add() {
         try {
             if (handler != null) {
-                RouteTemplateDefinition def
-                        = ((ModelCamelContext) camelContext).getRouteTemplateDefinition(routeTemplateId);
+                RouteTemplateDefinition def =
+                        ((ModelCamelContext) camelContext).getRouteTemplateDefinition(routeTemplateId);
                 if (def == null) {
                     throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
                 }

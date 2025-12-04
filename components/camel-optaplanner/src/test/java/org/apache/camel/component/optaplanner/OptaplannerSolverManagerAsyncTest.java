@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.optaplanner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -30,11 +36,6 @@ import org.optaplanner.core.config.solver.SolverManagerConfig;
 import org.optaplanner.examples.cloudbalancing.domain.CloudBalance;
 import org.optaplanner.examples.cloudbalancing.persistence.CloudBalancingGenerator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OptaplannerSolverManagerAsyncTest extends CamelTestSupport {
 
     private static SolverManager solverManager;
@@ -42,8 +43,8 @@ public class OptaplannerSolverManagerAsyncTest extends CamelTestSupport {
     @BeforeEach
     public void beforeEach() {
         ClassLoader classLoader = this.context().getApplicationContextClassLoader();
-        SolverConfig solverConfig
-                = SolverConfig.createFromXmlResource("org/apache/camel/component/optaplanner/solverConfig.xml", classLoader);
+        SolverConfig solverConfig = SolverConfig.createFromXmlResource(
+                "org/apache/camel/component/optaplanner/solverConfig.xml", classLoader);
         SolverFactory solverFactory = SolverFactory.create(solverConfig);
         solverManager = SolverManager.create(solverFactory, new SolverManagerConfig());
     }
@@ -52,10 +53,12 @@ public class OptaplannerSolverManagerAsyncTest extends CamelTestSupport {
     public void testWithSolverManagerInHeader() throws Exception {
         final CloudBalance planningProblem = getCloudBalance();
 
-        CompletableFuture<CloudBalance> solution
-                = template.asyncRequestBodyAndHeader("optaplanner:doesntmatter?async=true", planningProblem,
-                        OptaPlannerConstants.SOLVER_MANAGER, solverManager,
-                        CloudBalance.class);
+        CompletableFuture<CloudBalance> solution = template.asyncRequestBodyAndHeader(
+                "optaplanner:doesntmatter?async=true",
+                planningProblem,
+                OptaPlannerConstants.SOLVER_MANAGER,
+                solverManager,
+                CloudBalance.class);
 
         assertResults(solution);
     }
@@ -67,7 +70,8 @@ public class OptaplannerSolverManagerAsyncTest extends CamelTestSupport {
         this.context.getRegistry().bind("mySolverManager", solverManager);
 
         CompletableFuture<CloudBalance> solution = template.asyncRequestBody(
-                "optaplanner:doesntmatter?async=true&solverManager=#mySolverManager", planningProblem,
+                "optaplanner:doesntmatter?async=true&solverManager=#mySolverManager",
+                planningProblem,
                 CloudBalance.class);
 
         assertResults(solution);
@@ -78,13 +82,13 @@ public class OptaplannerSolverManagerAsyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from("optaplanner:doesntmatter")
-                        .to("mock:result");
+                from("optaplanner:doesntmatter").to("mock:result");
             }
         };
     }
 
-    private void assertResults(CompletableFuture<CloudBalance> solution) throws InterruptedException, ExecutionException {
+    private void assertResults(CompletableFuture<CloudBalance> solution)
+            throws InterruptedException, ExecutionException {
         // consumer
         getMockEndpoint("mock:result").assertIsSatisfied();
 

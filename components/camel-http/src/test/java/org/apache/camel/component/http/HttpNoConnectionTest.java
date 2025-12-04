@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.http.common.HttpMethods.GET;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.ConnectException;
 
@@ -26,11 +32,6 @@ import org.apache.hc.core5.util.TimeValue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.http.common.HttpMethods.GET;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class HttpNoConnectionTest extends BaseHttpTest {
 
@@ -41,10 +42,13 @@ public class HttpNoConnectionTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
 
         endpointUrl = "http://localhost:" + localServer.getLocalPort();
@@ -60,8 +64,7 @@ public class HttpNoConnectionTest extends BaseHttpTest {
 
     @Test
     public void httpConnectionOk() {
-        Exchange exchange = template.request(endpointUrl + "/search", exchange1 -> {
-        });
+        Exchange exchange = template.request(endpointUrl + "/search", exchange1 -> {});
 
         assertExchange(exchange);
     }
@@ -79,5 +82,4 @@ public class HttpNoConnectionTest extends BaseHttpTest {
         ConnectException cause = assertIsInstanceOf(ConnectException.class, e);
         assertTrue(cause.getMessage().contains("failed"));
     }
-
 }

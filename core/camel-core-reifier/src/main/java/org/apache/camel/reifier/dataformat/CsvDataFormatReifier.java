@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -59,5 +60,4 @@ public class CsvDataFormatReifier extends DataFormatReifier<CsvDataFormat> {
         properties.put("recordConverter", asRef(definition.getRecordConverterRef()));
         properties.put("marshallerFactory", asRef(definition.getMarshallerFactoryRef()));
     }
-
 }

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +41,6 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
@@ -117,13 +118,8 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                transformer()
-                        .fromType("xml:foo")
-                        .toType("json:bar")
-                        .withUri("direct:transformer");
-                transformer()
-                        .name("custom")
-                        .withJava(MyTransformer.class);
+                transformer().fromType("xml:foo").toType("json:bar").withUri("direct:transformer");
+                transformer().name("custom").withJava(MyTransformer.class);
 
                 from("direct:start").to("mock:result");
             }

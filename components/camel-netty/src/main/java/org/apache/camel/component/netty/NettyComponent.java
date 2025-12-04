@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.net.URI;
@@ -42,23 +43,26 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
 
     @Metadata(description = "To use the NettyConfiguration as configuration when creating endpoints")
     private NettyConfiguration configuration = new NettyConfiguration();
-    @Metadata(label = "consumer,advanced",
-              description = "Sets a maximum thread pool size for the netty consumer ordered thread pool. The default size is 2 x cpu_core plus"
+
+    @Metadata(
+            label = "consumer,advanced",
+            description =
+                    "Sets a maximum thread pool size for the netty consumer ordered thread pool. The default size is 2 x cpu_core plus"
                             + " 1. Setting this value to eg 10 will then use 10 threads unless 2 x cpu_core plus 1 is a higher value, which then"
                             + " will override and be used. For example if there are 8 cores, then the consumer thread pool will be 17."
                             + " This thread pool is used to route messages received from Netty by Camel. We use a separate thread pool to ensure"
                             + " ordering of messages and also in case some messages will block, then nettys worker threads (event loop) wont be affected.")
     private int maximumPoolSize;
+
     @Metadata(label = "consumer,advanced", description = "To use the given custom EventExecutorGroup.")
     private volatile EventExecutorGroup executorService;
+
     @Metadata(label = "security", description = "Enable usage of global SSL context parameters.")
     private boolean useGlobalSslContextParameters;
 
-    public NettyComponent() {
-    }
+    public NettyComponent() {}
 
-    public NettyComponent(Class<? extends Endpoint> endpointClass) {
-    }
+    public NettyComponent(Class<? extends Endpoint> endpointClass) {}
 
     public NettyComponent(CamelContext context) {
         super(context);
@@ -87,8 +91,8 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
         config = parseConfiguration(config, remaining, parameters);
 
         // merge any custom bootstrap configuration on the config
-        NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters,
-                "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
+        NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(
+                parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
         if (bootstrapConfiguration != null) {
             Map<String, Object> options = new HashMap<>();
             BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(getCamelContext());
@@ -115,8 +119,7 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
      * @return the parsed and valid configuration to use
      */
     protected NettyConfiguration parseConfiguration(
-            NettyConfiguration configuration, String remaining, Map<String, Object> parameters)
-            throws Exception {
+            NettyConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
         configuration.parseURI(new URI(remaining), parameters, this, "tcp", "udp");
         return configuration;
     }
@@ -158,11 +161,12 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
 
     @Override
     protected void doStart() throws Exception {
-        //Only setup the executorService if it is needed
+        // Only setup the executorService if it is needed
         if (configuration.isUsingExecutorService() && executorService == null) {
             int netty = SystemPropertyUtil.getInt("io.netty.eventLoopThreads", NettyRuntime.availableProcessors() * 2);
             // we want one more thread than netty uses for its event loop
-            // and if there is a custom size for maximum pool size then use it, unless netty event loops has more threads
+            // and if there is a custom size for maximum pool size then use it, unless netty event loops has more
+            // threads
             // and therefore we use math.max to find the highest value
             int threads = Math.max(maximumPoolSize, netty + 1);
             executorService = NettyHelper.createExecutorGroup(getCamelContext(), "NettyConsumerExecutorGroup", threads);
@@ -174,18 +178,17 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
 
     @Override
     protected void doStop() throws Exception {
-        //Only shutdown the executorService if it is created by netty component
+        // Only shutdown the executorService if it is created by netty component
         if (configuration.isUsingExecutorService() && executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
         }
 
-        //shutdown workerPool if configured
+        // shutdown workerPool if configured
         if (configuration.getWorkerGroup() != null) {
             configuration.getWorkerGroup().shutdownGracefully();
         }
 
         super.doStop();
     }
-
 }

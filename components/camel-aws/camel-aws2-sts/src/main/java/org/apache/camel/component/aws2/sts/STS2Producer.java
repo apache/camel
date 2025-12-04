@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts;
 
 import org.apache.camel.Endpoint;
@@ -80,7 +81,8 @@ public class STS2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (stsProducerToString == null) {
-            stsProducerToString = "STSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            stsProducerToString =
+                    "STSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return stsProducerToString;
     }
@@ -99,7 +101,9 @@ public class STS2Producer extends DefaultProducer {
                     AssumeRoleRequest request = (AssumeRoleRequest) payload;
                     result = stsClient.assumeRole(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Assume Role command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -120,15 +124,17 @@ public class STS2Producer extends DefaultProducer {
                 throw new IllegalArgumentException("Role Session Name needs to be specified for assumeRole operation");
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(STS2Constants.ASSUME_ROLE_DURATION_SECONDS))) {
-                Integer durationInSeconds
-                        = exchange.getIn().getHeader(STS2Constants.ASSUME_ROLE_DURATION_SECONDS, Integer.class);
+                Integer durationInSeconds =
+                        exchange.getIn().getHeader(STS2Constants.ASSUME_ROLE_DURATION_SECONDS, Integer.class);
                 builder.durationSeconds(durationInSeconds);
             }
             AssumeRoleResponse result;
             try {
                 result = stsClient.assumeRole(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Assume Role command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -145,7 +151,9 @@ public class STS2Producer extends DefaultProducer {
                     GetSessionTokenRequest request = (GetSessionTokenRequest) payload;
                     result = stsClient.getSessionToken(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Session Token command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Get Session Token command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -157,7 +165,9 @@ public class STS2Producer extends DefaultProducer {
             try {
                 result = stsClient.getSessionToken(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Session Token command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Get Session Token command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -174,7 +184,9 @@ public class STS2Producer extends DefaultProducer {
                     GetFederationTokenRequest request = (GetFederationTokenRequest) payload;
                     result = stsClient.getFederationToken(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Federation Token command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Get Federation Token command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -192,7 +204,9 @@ public class STS2Producer extends DefaultProducer {
             try {
                 result = stsClient.getFederationToken(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Federation Token command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Get Federation Token command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

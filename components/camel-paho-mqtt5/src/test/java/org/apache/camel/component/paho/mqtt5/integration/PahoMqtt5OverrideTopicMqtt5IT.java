@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -47,10 +48,10 @@ public class PahoMqtt5OverrideTopicMqtt5IT extends PahoMqtt5ITSupport {
         getMockEndpoint("mock:test").expectedMessageCount(1);
 
         // When
-        template.sendBodyAndHeader("direct:test", "Hello World", PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC, "myoverride");
+        template.sendBodyAndHeader(
+                "direct:test", "Hello World", PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC, "myoverride");
 
         // Then
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

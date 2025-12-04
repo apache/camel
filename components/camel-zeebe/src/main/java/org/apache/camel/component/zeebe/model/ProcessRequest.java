@@ -29,7 +29,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Contains information about a Zeebe process
  */
-
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessRequest implements ZeebeMessage {
@@ -109,8 +108,10 @@ public class ProcessRequest implements ZeebeMessage {
             return false;
         }
         ProcessRequest that = (ProcessRequest) o;
-        return processVersion == that.processVersion && processKey == that.processKey
-                && processInstanceKey == that.processInstanceKey && processId.equals(that.processId)
+        return processVersion == that.processVersion
+                && processKey == that.processKey
+                && processInstanceKey == that.processInstanceKey
+                && processId.equals(that.processId)
                 && variables.equals(that.variables);
     }
 

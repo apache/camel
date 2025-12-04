@@ -14,7 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.operations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -47,20 +62,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -98,7 +99,8 @@ class BlobOperationsTest extends CamelTestSupport {
         assertNotNull(response.getBody());
         assertNotNull(response.getHeaders());
         assertNotNull(response.getHeaders().get(BlobConstants.CREATION_TIME));
-        assertEquals("testInput", new BufferedReader(new InputStreamReader((InputStream) response.getBody())).readLine());
+        assertEquals(
+                "testInput", new BufferedReader(new InputStreamReader((InputStream) response.getBody())).readLine());
 
         // second: test with exchange provided
         configuration.setBlobType(BlobType.blockblob);
@@ -112,8 +114,13 @@ class BlobOperationsTest extends CamelTestSupport {
         // third: test with exchange provided but with outputstream set
         // mocking
         final ResponseBase<BlobDownloadHeaders, Void> mockedResults2 = new ResponseBase<>(
-                null, 200, new HttpHeaders().set("x-test-header", "123"), null, new BlobDownloadHeaders().setETag("tag1"));
-        when(client.downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any())).thenReturn(mockedResults2);
+                null,
+                200,
+                new HttpHeaders().set("x-test-header", "123"),
+                null,
+                new BlobDownloadHeaders().setETag("tag1"));
+        when(client.downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any()))
+                .thenReturn(mockedResults2);
         exchange.getIn().setBody(new ByteArrayOutputStream());
 
         final BlobOperationResponse response3 = operations.getBlob(exchange);
@@ -145,8 +152,11 @@ class BlobOperationsTest extends CamelTestSupport {
         assertTrue((boolean) operationResponse.getBody());
         assertNotNull(operationResponse.getHeaders());
         assertEquals("testTag", operationResponse.getHeaders().get(BlobConstants.E_TAG));
-        assertEquals("123", ((HttpHeaders) operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
-                .get("x-test-header").getValue());
+        assertEquals(
+                "123",
+                ((HttpHeaders) operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                        .get("x-test-header")
+                        .getValue());
     }
 
     @Test
@@ -173,8 +183,11 @@ class BlobOperationsTest extends CamelTestSupport {
         assertTrue((boolean) operationResponse.getBody());
         assertNotNull(operationResponse.getHeaders());
         assertEquals("testTag", operationResponse.getHeaders().get(BlobConstants.E_TAG));
-        assertEquals("123", ((HttpHeaders) operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
-                .get("x-test-header").getValue());
+        assertEquals(
+                "123",
+                ((HttpHeaders) operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                        .get("x-test-header")
+                        .getValue());
 
         verify(client, times(1)).getLeaseClient();
         verify(leaseClient, times(1)).acquireLease(-1);
@@ -183,7 +196,8 @@ class BlobOperationsTest extends CamelTestSupport {
     @Test
     void testStageBlockBlobList() throws Exception {
         final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");
-        when(client.stageBlockBlob(anyString(), any(), anyLong(), any(), any(), any())).thenReturn(httpHeaders);
+        when(client.stageBlockBlob(anyString(), any(), anyLong(), any(), any(), any()))
+                .thenReturn(httpHeaders);
 
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("test");
@@ -207,9 +221,36 @@ class BlobOperationsTest extends CamelTestSupport {
 
     private BlobProperties createBlobProperties() {
         return new BlobProperties(
-                OffsetDateTime.now(), null, null, 0L, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null,
-                null, null, null, null);
+                OffsetDateTime.now(),
+                null,
+                null,
+                0L,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.dynamic;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -32,10 +37,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * This test validates the marshalling / unmarshalling of a fixed-length data field for which the length of the field is
  * defined by the value of another field in the record.
@@ -48,8 +49,8 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
     public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
 
     private static final String TEST_RECORD = "10A9Pauline^M^ISIN10XD12345678BUYShare000002500.45USD01-08-2009\r\n";
-    private static final String TEST_RECORD_WITH_EXTRA_CHARS
-            = "10A9Pauline^M^ISIN10XD12345678BUYShare000002500.45USD01-08-2009x\r\n";
+    private static final String TEST_RECORD_WITH_EXTRA_CHARS =
+            "10A9Pauline^M^ISIN10XD12345678BUYShare000002500.45USD01-08-2009x\r\n";
 
     @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
@@ -70,8 +71,8 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
         unmarshallResult.assertIsSatisfied();
 
         // check the model
-        BindyFixedLengthDynamicFieldTest.Order order
-                = (BindyFixedLengthDynamicFieldTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
+        BindyFixedLengthDynamicFieldTest.Order order = (BindyFixedLengthDynamicFieldTest.Order)
+                unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         assertEquals("Pauline", order.getFirstName());
@@ -114,7 +115,7 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
         order.setOrderDate(calendar.getTime());
 
         marshallResult.expectedMessageCount(1);
-        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { TEST_RECORD }));
+        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] {TEST_RECORD}));
         template.sendBody(URI_DIRECT_MARSHALL, order);
         marshallResult.assertIsSatisfied();
     }
@@ -134,12 +135,11 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
                         .classType(BindyFixedLengthDynamicFieldTest.Order.class)
                         .fixed();
 
-                from(URI_DIRECT_MARSHALL)
-                        .marshal(bindy)
-                        .to(URI_MOCK_MARSHALL_RESULT);
+                from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
 
                 from(URI_DIRECT_UNMARSHALL)
-                        .unmarshal().bindy(BindyType.Fixed, BindyFixedLengthDynamicFieldTest.Order.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, BindyFixedLengthDynamicFieldTest.Order.class)
                         .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };
@@ -288,11 +288,11 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

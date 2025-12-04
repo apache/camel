@@ -28,7 +28,5 @@ public final class InfinispanProperties {
     public static final String INFINISPAN_CONTAINER_NETWORK_MODE_HOST = "infinispan.service.network.mode.host";
     public static final boolean INFINISPAN_CONTAINER_NETWORK_MODE_HOST_DEFAULT = false;
 
-    private InfinispanProperties() {
-
-    }
+    private InfinispanProperties() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.hivemq.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -24,30 +25,31 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = HiveMQInfraService.class,
-              description = "MQTT Platform HiveMQ",
-              serviceAlias = "hive-mq",
-              serviceImplementationAlias = "sparkplug")
-public class LocalHiveMQSparkplugTCKInfraService extends AbstractLocalHiveMQService<LocalHiveMQSparkplugTCKInfraService> {
+@InfraService(
+        service = HiveMQInfraService.class,
+        description = "MQTT Platform HiveMQ",
+        serviceAlias = "hive-mq",
+        serviceImplementationAlias = "sparkplug")
+public class LocalHiveMQSparkplugTCKInfraService
+        extends AbstractLocalHiveMQService<LocalHiveMQSparkplugTCKInfraService> {
 
     public LocalHiveMQSparkplugTCKInfraService() {
-        super(LocalPropertyResolver.getProperty(LocalHiveMQSparkplugTCKInfraService.class,
-                HiveMQProperties.HIVEMQ_SPARKPLUG_CONTAINER));
+        super(LocalPropertyResolver.getProperty(
+                LocalHiveMQSparkplugTCKInfraService.class, HiveMQProperties.HIVEMQ_SPARKPLUG_CONTAINER));
     }
 
     @Override
     protected HiveMQContainer initContainer(String imageName) {
-        String dockerfileResourcePath = LocalPropertyResolver.getProperty(LocalHiveMQSparkplugTCKInfraService.class,
-                HiveMQProperties.HIVEMQ_RESOURCE_PATH);
+        String dockerfileResourcePath = LocalPropertyResolver.getProperty(
+                LocalHiveMQSparkplugTCKInfraService.class, HiveMQProperties.HIVEMQ_RESOURCE_PATH);
 
-        ImageFromDockerfile newImage
-                = new ImageFromDockerfile(imageName, false).withFileFromClasspath(".", dockerfileResourcePath);
+        ImageFromDockerfile newImage =
+                new ImageFromDockerfile(imageName, false).withFileFromClasspath(".", dockerfileResourcePath);
         String newImageName = newImage.get();
 
         class TestInfraHiveMQContainer extends HiveMQContainer {
             public TestInfraHiveMQContainer(boolean fixedPort) {
-                super(DockerImageName.parse(newImageName)
-                        .asCompatibleSubstituteFor("hivemq/hivemq-ce"));
+                super(DockerImageName.parse(newImageName).asCompatibleSubstituteFor("hivemq/hivemq-ce"));
 
                 if (fixedPort) {
                     addFixedExposedPort(1883, 1883);

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
+
+import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
+import static org.apache.camel.component.springrabbit.SpringRabbitMQEndpoint.ARG_PREFIX;
+import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_PREFETCH_COUNT;
+import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_SHUTDOWN_TIMEOUT;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,95 +36,172 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 import org.springframework.util.ErrorHandler;
 
-import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
-import static org.apache.camel.component.springrabbit.SpringRabbitMQEndpoint.ARG_PREFIX;
-import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_PREFETCH_COUNT;
-import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_SHUTDOWN_TIMEOUT;
-
 @Component("spring-rabbitmq")
 public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
 
-    @Metadata(autowired = true,
-              description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
+    @Metadata(
+            autowired = true,
+            description =
+                    "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
-    @Metadata(autowired = true,
-              description = "Optional AMQP Admin service to use for auto declaring elements (queues, exchanges, bindings)")
+
+    @Metadata(
+            autowired = true,
+            description =
+                    "Optional AMQP Admin service to use for auto declaring elements (queues, exchanges, bindings)")
     private AmqpAdmin amqpAdmin;
-    @Metadata(description = "Specifies whether to test the connection on startup."
-                            + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
-                            + " If a connection cannot be granted then Camel throws an exception on startup."
-                            + " This ensures that Camel is not started with failed connections."
-                            + " The JMS producers is tested as well.")
+
+    @Metadata(
+            description = "Specifies whether to test the connection on startup."
+                    + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
+                    + " If a connection cannot be granted then Camel throws an exception on startup."
+                    + " This ensures that Camel is not started with failed connections."
+                    + " The JMS producers is tested as well.")
     private boolean testConnectionOnStartup;
-    @Metadata(label = "consumer", defaultValue = "true",
-              description = "Specifies whether the consumer container should auto-startup.")
+
+    @Metadata(
+            label = "consumer",
+            defaultValue = "true",
+            description = "Specifies whether the consumer container should auto-startup.")
     private boolean autoStartup = true;
-    @Metadata(label = "consumer", defaultValue = "true",
-              description = "Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting."
+
+    @Metadata(
+            label = "consumer",
+            defaultValue = "true",
+            description =
+                    "Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting."
                             + " Enabling this can be good for development to make it easy to standup exchanges, queues and bindings on the broker.")
     private boolean autoDeclare = true;
-    @Metadata(label = "producer", defaultValue = "false",
-              description = "Specifies whether the producer should auto declare binding between exchange, queue and routing key when starting."
+
+    @Metadata(
+            label = "producer",
+            defaultValue = "false",
+            description =
+                    "Specifies whether the producer should auto declare binding between exchange, queue and routing key when starting."
                             + " Enabling this can be good for development to make it easy to standup exchanges, queues and bindings on the broker.")
     private boolean autoDeclareProducer;
-    @Metadata(label = "advanced",
-              description = "To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message.")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message.")
     private MessageConverter messageConverter;
-    @Metadata(label = "advanced",
-              description = "To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties.")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties.")
     private MessagePropertiesConverter messagePropertiesConverter;
-    @Metadata(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
-              description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
+
+    @Metadata(
+            label = "producer",
+            javaType = "java.time.Duration",
+            defaultValue = "5000",
+            description =
+                    "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
                             + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
     private long replyTimeout = 5000;
+
     @Metadata(label = "consumer", description = "The name of the dead letter exchange")
     private String deadLetterExchange;
+
     @Metadata(label = "consumer", description = "The name of the dead letter queue")
     private String deadLetterQueue;
+
     @Metadata(label = "consumer", description = "The routing key for the dead letter exchange")
     private String deadLetterRoutingKey;
-    @Metadata(label = "consumer", defaultValue = "direct", enums = "direct,fanout,headers,topic",
-              description = "The type of the dead letter exchange")
+
+    @Metadata(
+            label = "consumer",
+            defaultValue = "direct",
+            enums = "direct,fanout,headers,topic",
+            description = "The type of the dead letter exchange")
     private String deadLetterExchangeType = "direct";
-    @Metadata(label = "consumer,advanced",
-              description = "To use a custom ErrorHandler for handling exceptions from the message listener (consumer)")
+
+    @Metadata(
+            label = "consumer,advanced",
+            description = "To use a custom ErrorHandler for handling exceptions from the message listener (consumer)")
     private ErrorHandler errorHandler;
-    @Metadata(label = "consumer,advanced", defaultValue = "" + DEFAULT_PREFETCH_COUNT,
-              description = "Tell the broker how many messages to send to each consumer in a single request. Often this can be set quite high to improve throughput.")
+
+    @Metadata(
+            label = "consumer,advanced",
+            defaultValue = "" + DEFAULT_PREFETCH_COUNT,
+            description =
+                    "Tell the broker how many messages to send to each consumer in a single request. Often this can be set quite high to improve throughput.")
     private int prefetchCount = DEFAULT_PREFETCH_COUNT;
-    @Metadata(label = "consumer,advanced", javaType = "java.time.Duration", defaultValue = "" + DEFAULT_SHUTDOWN_TIMEOUT,
-              description = "The time to wait for workers in milliseconds after the container is stopped. If any workers are active when the shutdown signal comes"
+
+    @Metadata(
+            label = "consumer,advanced",
+            javaType = "java.time.Duration",
+            defaultValue = "" + DEFAULT_SHUTDOWN_TIMEOUT,
+            description =
+                    "The time to wait for workers in milliseconds after the container is stopped. If any workers are active when the shutdown signal comes"
                             + " they will be allowed to finish processing as long as they can finish within this timeout.")
     private long shutdownTimeout = DEFAULT_SHUTDOWN_TIMEOUT;
-    @Metadata(label = "consumer,advanced",
-              description = "To use a custom factory for creating and configuring ListenerContainer to be used by the consumer for receiving messages")
+
+    @Metadata(
+            label = "consumer,advanced",
+            description =
+                    "To use a custom factory for creating and configuring ListenerContainer to be used by the consumer for receiving messages")
     private ListenerContainerFactory listenerContainerFactory = new DefaultListenerContainerFactory();
-    @Metadata(label = "advanced", description = "Switch on ignore exceptions such as mismatched properties when declaring")
+
+    @Metadata(
+            label = "advanced",
+            description = "Switch on ignore exceptions such as mismatched properties when declaring")
     private boolean ignoreDeclarationExceptions;
-    @Metadata(label = "consumer,advanced", defaultValue = DIRECT_MESSAGE_LISTENER_CONTAINER, enums = "DMLC,SMLC",
-              description = "The type of the MessageListenerContainer")
+
+    @Metadata(
+            label = "consumer,advanced",
+            defaultValue = DIRECT_MESSAGE_LISTENER_CONTAINER,
+            enums = "DMLC,SMLC",
+            description = "The type of the MessageListenerContainer")
     private String messageListenerContainerType = DIRECT_MESSAGE_LISTENER_CONTAINER;
+
     @Metadata(label = "consumer,advanced", defaultValue = "1", description = "The number of consumers")
     private int concurrentConsumers = 1;
+
     @Metadata(label = "consumer,advanced", description = "The maximum number of consumers (available only with SMLC)")
     private Integer maxConcurrentConsumers;
-    @Metadata(label = "consumer,advanced", description = "Custom retry configuration to use. "
-                                                         + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
+
+    @Metadata(
+            label = "consumer,advanced",
+            description =
+                    "Custom retry configuration to use. "
+                            + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
     private RetryOperationsInterceptor retry;
-    @Metadata(label = "consumer", defaultValue = "5",
-              description = "How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message")
+
+    @Metadata(
+            label = "consumer",
+            defaultValue = "5",
+            description =
+                    "How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message")
     private int maximumRetryAttempts = 5;
-    @Metadata(label = "consumer", defaultValue = "1000",
-              description = "Delay in msec a Rabbitmq consumer will wait before redelivering a message that Camel failed to process")
+
+    @Metadata(
+            label = "consumer",
+            defaultValue = "1000",
+            description =
+                    "Delay in msec a Rabbitmq consumer will wait before redelivering a message that Camel failed to process")
     private int retryDelay = 1000;
-    @Metadata(label = "consumer", defaultValue = "true",
-              description = "Whether a Rabbitmq consumer should reject the message without requeuing. This enables failed messages to be sent to a Dead Letter Exchange/Queue, if the broker is so configured.")
+
+    @Metadata(
+            label = "consumer",
+            defaultValue = "true",
+            description =
+                    "Whether a Rabbitmq consumer should reject the message without requeuing. This enables failed messages to be sent to a Dead Letter Exchange/Queue, if the broker is so configured.")
     private boolean rejectAndDontRequeue = true;
-    @Metadata(label = "producer", defaultValue = "false",
-              description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown.")
+
+    @Metadata(
+            label = "producer",
+            defaultValue = "false",
+            description =
+                    "Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown.")
     private boolean allowNullBody;
-    @Metadata(label = "advanced",
-              description = "Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each element:"
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each element:"
                             + " consumer. exchange. queue. binding. dlq.exchange. dlq.queue. dlq.binding."
                             + " For example to declare a queue with message ttl argument: queue.x-message-ttl=60000")
     private Map<String, Object> args;

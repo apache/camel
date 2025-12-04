@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
 
 import java.io.ByteArrayOutputStream;
@@ -29,8 +30,7 @@ import org.apache.camel.component.huaweicloud.obs.constants.OBSHeaders;
 import org.apache.camel.util.IOHelper;
 
 public final class OBSUtils {
-    private OBSUtils() {
-    }
+    private OBSUtils() {}
 
     /**
      * Convert input stream to a byte array

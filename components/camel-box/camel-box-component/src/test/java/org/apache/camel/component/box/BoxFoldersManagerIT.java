@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,25 +38,23 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link BoxFoldersManager} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxFoldersManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxFoldersManagerApiMethod.class).getName();
+            .getApiName(BoxFoldersManagerApiMethod.class)
+            .getName();
     private static final String CAMEL_TEST_FOLDER = "CamelTestFolder";
     private static final String CAMEL_TEST_FOLDER_DESCRIPTION = "This is a description of CamelTestFolder";
     private static final String CAMEL_TEST_COPY_FOLDER = BoxFoldersManagerIT.CAMEL_TEST_FOLDER + "_Copy";
     private static final String CAMEL_TEST_MOVE_FOLDER = BoxFoldersManagerIT.CAMEL_TEST_FOLDER + "_Move";
-    private static final String CAMEL_TEST_RENAME_FOLDER = BoxFoldersManagerIT.CAMEL_TEST_FOLDER
-                                                           + "_Rename";
+    private static final String CAMEL_TEST_RENAME_FOLDER = BoxFoldersManagerIT.CAMEL_TEST_FOLDER + "_Rename";
     private static final String CAMEL_TEST_ROOT_FOLDER_ID = "0";
     private static final String CAMEL_TEST_DESTINATION_FOLDER_ID = "0";
 
@@ -85,7 +87,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
         // parameter type is String
         headers.put("CamelBox.parentFolderId", "0");
         // parameter type is String[]
-        headers.put("CamelBox.path", new String[] { CAMEL_TEST_FOLDER });
+        headers.put("CamelBox.path", new String[] {CAMEL_TEST_FOLDER});
 
         testFolder = requestBodyAndHeaders("direct://CREATEFOLDER", null, headers);
 
@@ -137,8 +139,8 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
         // parameter type is com.box.sdk.BoxSharedLink.Permissions
         headers.put("CamelBox.permissions", new BoxSharedLink.Permissions());
 
-        final com.box.sdk.BoxSharedLink result = requestBodyAndHeaders("direct://CREATEFOLDERSHAREDLINK", null,
-                headers);
+        final com.box.sdk.BoxSharedLink result =
+                requestBodyAndHeaders("direct://CREATEFOLDERSHAREDLINK", null, headers);
 
         assertNotNull(result, "createFolderSharedLink result");
         LOG.debug("createFolderSharedLink: {}", result);
@@ -147,7 +149,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     @Test
     public void testGetFolder() {
         // using String[] message body for single parameter "path"
-        final com.box.sdk.BoxFolder result = requestBody("direct://GETFOLDER", new String[] { CAMEL_TEST_FOLDER });
+        final com.box.sdk.BoxFolder result = requestBody("direct://GETFOLDER", new String[] {CAMEL_TEST_FOLDER});
 
         assertNotNull(result, "getFolder result");
         assertEquals(testFolder.getID(), result.getID(), "getFolder folder id");
@@ -160,7 +162,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
         // parameter type is String
         headers.put("CamelBox.folderId", testFolder.getID());
         // parameter type is String[]
-        headers.put("CamelBox.fields", new String[] { "name" });
+        headers.put("CamelBox.fields", new String[] {"name"});
 
         final com.box.sdk.BoxFolder.Info result = requestBodyAndHeaders("direct://GETFOLDERINFO", null, headers);
 
@@ -243,7 +245,8 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
         final com.box.sdk.BoxFolder result = requestBodyAndHeaders("direct://UPDATEFOLDERINFO", null, headers);
 
         assertNotNull(result, "updateInfo result");
-        assertEquals(CAMEL_TEST_FOLDER_DESCRIPTION, result.getInfo().getDescription(), "update folder info description");
+        assertEquals(
+                CAMEL_TEST_FOLDER_DESCRIPTION, result.getInfo().getDescription(), "update folder info description");
         LOG.debug("updateInfo: {}", result);
     }
 
@@ -283,7 +286,6 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
                 // test route for updateFolderInfo
                 from("direct://UPDATEFOLDERINFO").to("box://" + PATH_PREFIX + "/updateFolderInfo");
-
             }
         };
     }
@@ -313,13 +315,10 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
             return ((Collection<?>) it).size();
         } else {
             int i = 0;
-            for (@SuppressWarnings("unused")
-            Object obj : it) {
+            for (@SuppressWarnings("unused") Object obj : it) {
                 i++;
             }
             return i;
         }
-
     }
-
 }

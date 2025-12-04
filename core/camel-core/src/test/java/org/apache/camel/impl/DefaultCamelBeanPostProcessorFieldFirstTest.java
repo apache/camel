@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Properties;
 
@@ -25,9 +29,6 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultCamelBeanPostProcessorFieldFirstTest extends ContextTestSupport {
 
@@ -78,6 +79,5 @@ public class DefaultCamelBeanPostProcessorFieldFirstTest extends ContextTestSupp
             myBean.setName(foo);
             return myBean;
         }
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.io.Closeable;
@@ -23,6 +24,4 @@ import java.io.Closeable;
  * bootstrap is complete the {@link #close()} method is invoked which allows to do some cleanup processes such as
  * clearing internal caches, maps etc to clear up memory etc.
  */
-public interface BootstrapCloseable extends Closeable {
-
-}
+public interface BootstrapCloseable extends Closeable {}

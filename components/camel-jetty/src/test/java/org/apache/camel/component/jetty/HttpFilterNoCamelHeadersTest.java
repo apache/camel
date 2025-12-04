@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
 
@@ -60,13 +61,16 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader(Exchange.FILE_NAME, constant("test.txt"))
-                        .to("http://localhost:{{port}}/test/filter").to("mock:result");
+                from("direct:start")
+                        .setHeader(Exchange.FILE_NAME, constant("test.txt"))
+                        .to("http://localhost:{{port}}/test/filter")
+                        .to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/test/filter").to("mock:input").setHeader("CamelDummy", constant("dummy"))
+                from("jetty:http://localhost:{{port}}/test/filter")
+                        .to("mock:input")
+                        .setHeader("CamelDummy", constant("dummy"))
                         .transform(simple("Bye ${body}"));
             }
         };
     }
-
 }

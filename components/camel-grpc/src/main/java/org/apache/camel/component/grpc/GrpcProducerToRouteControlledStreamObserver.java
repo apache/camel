@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
 
 import io.grpc.stub.StreamObserver;
@@ -28,14 +29,15 @@ public class GrpcProducerToRouteControlledStreamObserver extends DefaultProducer
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        StreamObserver<Object> observer = exchange.getProperty(
-                GrpcConstants.GRPC_RESPONSE_OBSERVER, StreamObserver.class);
-        String eventType = exchange.getMessage().getHeader(
-                GrpcConstants.GRPC_EVENT_TYPE_HEADER, String.class);
+        StreamObserver<Object> observer =
+                exchange.getProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, StreamObserver.class);
+        String eventType = exchange.getMessage().getHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, String.class);
         switch (eventType) {
-            case GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT -> observer.onNext(exchange.getMessage().getBody());
+            case GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT -> observer.onNext(
+                    exchange.getMessage().getBody());
             case GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED -> observer.onCompleted();
-            case GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR -> observer.onError((Throwable) exchange.getMessage().getBody());
+            case GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR -> observer.onError(
+                    (Throwable) exchange.getMessage().getBody());
             default -> {
                 // NO-OP
             }

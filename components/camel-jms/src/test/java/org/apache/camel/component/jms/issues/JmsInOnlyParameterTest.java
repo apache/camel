@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -31,14 +34,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Timeout(30)
 public class JmsInOnlyParameterTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -69,7 +71,8 @@ public class JmsInOnlyParameterTest extends AbstractJMSTest {
         getMockEndpoint("mock:in").message(0).header("JMSCorrelationID").isEqualTo("foobar");
         getMockEndpoint("mock:in").message(0).exchangePattern().isEqualTo(ExchangePattern.InOnly);
 
-        String out = template.requestBodyAndHeader("direct:start", "Hello World", "JMSCorrelationID", "foobar", String.class);
+        String out = template.requestBodyAndHeader(
+                "direct:start", "Hello World", "JMSCorrelationID", "foobar", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -86,11 +89,11 @@ public class JmsInOnlyParameterTest extends AbstractJMSTest {
             public void configure() {
                 from("direct:start")
                         .to("activemq:queue:JmsInOnlyParameterTest.in?exchangePattern=InOnly")
-                        .transform().constant("Bye World")
+                        .transform()
+                        .constant("Bye World")
                         .to("mock:result");
 
-                from("activemq:queue:JmsInOnlyParameterTest.in")
-                        .to("mock:in");
+                from("activemq:queue:JmsInOnlyParameterTest.in").to("mock:in");
             }
         };
     }

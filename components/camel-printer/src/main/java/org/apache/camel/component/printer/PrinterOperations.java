@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.printer;
 
 import java.io.File;
@@ -58,8 +59,8 @@ public class PrinterOperations implements PrinterOperationsInterface {
         printRequestAttributeSet.add(Sides.ONE_SIDED);
     }
 
-    public PrinterOperations(PrintService printService, DocFlavor flavor,
-                             PrintRequestAttributeSet printRequestAttributeSet) {
+    public PrinterOperations(
+            PrintService printService, DocFlavor flavor, PrintRequestAttributeSet printRequestAttributeSet) {
         this.setPrintService(printService);
         this.setFlavor(flavor);
         this.setPrintRequestAttributeSet(printRequestAttributeSet);
@@ -140,5 +141,4 @@ public class PrinterOperations implements PrinterOperationsInterface {
     public void setDoc(Doc doc) {
         this.doc = doc;
     }
-
 }

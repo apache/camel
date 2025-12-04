@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,14 +28,11 @@ public class RouteRefCamelContextFactoryBeanTest extends RoutingUsingCamelContex
         @Override
         public void configure() throws Exception {
             from("seda:start").to("mock:result");
-
         }
-
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/routeRefCamelContextFactory.xml");
     }
-
 }

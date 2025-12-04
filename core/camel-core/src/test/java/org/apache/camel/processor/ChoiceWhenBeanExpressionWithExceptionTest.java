@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Body;
 import org.apache.camel.CamelExecutionException;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSupport {
     private MockEndpoint gradeA;
@@ -86,10 +87,21 @@ public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSuppor
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:expression").choice().when(method(MyBean.class, "isGradeA")).to("mock:gradeA").otherwise()
-                        .to("mock:otherGrade").end();
+                from("direct:expression")
+                        .choice()
+                        .when(method(MyBean.class, "isGradeA"))
+                        .to("mock:gradeA")
+                        .otherwise()
+                        .to("mock:otherGrade")
+                        .end();
 
-                from("direct:method").choice().when().method(MyBean.class).to("mock:gradeA").otherwise().to("mock:otherGrade")
+                from("direct:method")
+                        .choice()
+                        .when()
+                        .method(MyBean.class)
+                        .to("mock:gradeA")
+                        .otherwise()
+                        .to("mock:otherGrade")
                         .end();
             }
         };
@@ -112,5 +124,4 @@ public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSuppor
             return grade;
         }
     }
-
 }

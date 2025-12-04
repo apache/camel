@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,34 +37,44 @@ public class CBORDataFormat extends DataFormatDefinition {
 
     @XmlTransient
     private Class<?> collectionType;
+
     @XmlTransient
     private Class<?> unmarshalType;
 
     @XmlAttribute
     @Metadata(label = "advanced")
     private String objectMapper;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String useDefaultObjectMapper;
+
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
+
     @XmlAttribute(name = "collectionType")
     @Metadata(label = "advanced")
     private String collectionTypeName;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String useList;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String allowUnmarshallType;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String prettyPrint;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String allowJmsType;
+
     @XmlAttribute
     private String enableFeatures;
+
     @XmlAttribute
     private String disableFeatures;
 

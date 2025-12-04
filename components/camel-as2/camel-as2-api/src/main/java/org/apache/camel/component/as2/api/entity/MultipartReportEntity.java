@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.IOException;
@@ -22,18 +23,14 @@ import org.apache.hc.core5.http.ContentType;
 
 public class MultipartReportEntity extends MultipartMimeEntity {
 
-    public MultipartReportEntity(ContentType contentType,
-                                 String contentTransferEncoding,
-                                 boolean isMainBody,
-                                 String boundary) {
+    public MultipartReportEntity(
+            ContentType contentType, String contentTransferEncoding, boolean isMainBody, String boundary) {
 
         super(contentType, contentTransferEncoding, isMainBody, boundary);
-
     }
 
     @Override
     public void close() throws IOException {
         // do nothing
     }
-
 }

@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.onexception;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.onexception.OnExceptionWithRouteAndContinueTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringOnExceptionWithRouteAndContinueTest extends OnExceptionWithRouteAndContinueTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/onexception/OnExceptionWithRouteAndContinueTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/onexception/OnExceptionWithRouteAndContinueTest.xml");
     }
-
 }

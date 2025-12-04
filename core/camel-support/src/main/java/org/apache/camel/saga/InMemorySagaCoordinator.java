@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.saga;
 
 import java.util.ArrayList;
@@ -107,12 +108,17 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         }
 
         if (step.getTimeoutInMilliseconds().isPresent()) {
-            sagaService.getExecutorService().schedule(() -> {
-                boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPENSATING);
-                if (doAction) {
-                    doCompensate(exchange);
-                }
-            }, step.getTimeoutInMilliseconds().get(), TimeUnit.MILLISECONDS);
+            sagaService
+                    .getExecutorService()
+                    .schedule(
+                            () -> {
+                                boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPENSATING);
+                                if (doAction) {
+                                    doCompensate(exchange);
+                                }
+                            },
+                            step.getTimeoutInMilliseconds().get(),
+                            TimeUnit.MILLISECONDS);
         }
 
         return CompletableFuture.completedFuture(null);
@@ -163,23 +169,22 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     public CompletableFuture<Boolean> doComplete(final Exchange exchange) {
-        return doFinalize(exchange, CamelSagaStep::getCompletion, "completion")
-                .thenApply(res -> {
-                    currentStatus.set(Status.COMPLETED);
-                    return res;
-                });
+        return doFinalize(exchange, CamelSagaStep::getCompletion, "completion").thenApply(res -> {
+            currentStatus.set(Status.COMPLETED);
+            return res;
+        });
     }
 
     public CompletableFuture<Boolean> doFinalize(
             final Exchange exchange,
-            Function<CamelSagaStep, Optional<Endpoint>> endpointExtractor, String description) {
+            Function<CamelSagaStep, Optional<Endpoint>> endpointExtractor,
+            String description) {
         CompletableFuture<Boolean> result = CompletableFuture.completedFuture(true);
         for (CamelSagaStep step : reversed(steps)) {
             Optional<Endpoint> endpoint = endpointExtractor.apply(step);
             if (endpoint.isPresent()) {
-                result = result.thenCompose(
-                        prevResult -> doFinalize(exchange, endpoint.get(), step, 0, description)
-                                .thenApply(res -> prevResult && res));
+                result = result.thenCompose(prevResult -> doFinalize(exchange, endpoint.get(), step, 0, description)
+                        .thenApply(res -> prevResult && res));
             }
         }
         return result.whenComplete((done, ex) -> {
@@ -195,37 +200,56 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             Exchange exchange, Endpoint endpoint, CamelSagaStep step, int doneAttempts, String description) {
         Exchange target = createExchange(exchange, endpoint, step);
 
-        return CompletableFuture.supplyAsync(() -> {
-            Exchange res = camelContext.createFluentProducerTemplate().to(endpoint).withExchange(target).send();
-            Exception ex = res.getException();
-            if (ex != null) {
-                throw new RuntimeCamelException(res.getException());
-            }
-            return true;
-        }, sagaService.getExecutorService()).exceptionally(ex -> {
-            LOG.warn("Exception thrown during {} at {}. Attempt {} of {}", description, endpoint.getEndpointUri(),
-                    doneAttempts + 1, sagaService.getMaxRetryAttempts(), ex);
-            return false;
-        }).thenCompose(executed -> {
-            int currentAttempt = doneAttempts + 1;
-            if (executed) {
-                return CompletableFuture.completedFuture(true);
-            } else if (currentAttempt >= sagaService.getMaxRetryAttempts()) {
-                return CompletableFuture.completedFuture(false);
-            } else {
-                CompletableFuture<Boolean> future = new CompletableFuture<>();
-                sagaService.getExecutorService().schedule(() -> {
-                    doFinalize(target, endpoint, step, currentAttempt, description).whenComplete((res, ex) -> {
-                        if (ex != null) {
-                            future.completeExceptionally(ex);
-                        } else {
-                            future.complete(res);
-                        }
-                    });
-                }, sagaService.getRetryDelayInMilliseconds(), TimeUnit.MILLISECONDS);
-                return future;
-            }
-        });
+        return CompletableFuture.supplyAsync(
+                        () -> {
+                            Exchange res = camelContext
+                                    .createFluentProducerTemplate()
+                                    .to(endpoint)
+                                    .withExchange(target)
+                                    .send();
+                            Exception ex = res.getException();
+                            if (ex != null) {
+                                throw new RuntimeCamelException(res.getException());
+                            }
+                            return true;
+                        },
+                        sagaService.getExecutorService())
+                .exceptionally(ex -> {
+                    LOG.warn(
+                            "Exception thrown during {} at {}. Attempt {} of {}",
+                            description,
+                            endpoint.getEndpointUri(),
+                            doneAttempts + 1,
+                            sagaService.getMaxRetryAttempts(),
+                            ex);
+                    return false;
+                })
+                .thenCompose(executed -> {
+                    int currentAttempt = doneAttempts + 1;
+                    if (executed) {
+                        return CompletableFuture.completedFuture(true);
+                    } else if (currentAttempt >= sagaService.getMaxRetryAttempts()) {
+                        return CompletableFuture.completedFuture(false);
+                    } else {
+                        CompletableFuture<Boolean> future = new CompletableFuture<>();
+                        sagaService
+                                .getExecutorService()
+                                .schedule(
+                                        () -> {
+                                            doFinalize(target, endpoint, step, currentAttempt, description)
+                                                    .whenComplete((res, ex) -> {
+                                                        if (ex != null) {
+                                                            future.completeExceptionally(ex);
+                                                        } else {
+                                                            future.complete(res);
+                                                        }
+                                                    });
+                                        },
+                                        sagaService.getRetryDelayInMilliseconds(),
+                                        TimeUnit.MILLISECONDS);
+                        return future;
+                    }
+                });
     }
 
     private Exchange createExchange(Exchange parent, Endpoint endpoint, CamelSagaStep step) {

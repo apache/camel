@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -26,16 +27,15 @@ import jakarta.xml.bind.annotation.XmlType;
 public class Address {
 
     @XmlElement(namespace = "http://www.camel.apache.org/jaxb/example/address/1")
-
     private String street;
-    @XmlElement(namespace = "http://www.camel.apache.org/jaxb/example/address/1")
 
+    @XmlElement(namespace = "http://www.camel.apache.org/jaxb/example/address/1")
     private String streetNumber;
-    @XmlElement(namespace = "http://www.camel.apache.org/jaxb/example/address/1")
 
+    @XmlElement(namespace = "http://www.camel.apache.org/jaxb/example/address/1")
     private String zip;
-    @XmlElement(namespace = "http://www.camel.apache.org/jaxb/example/address/1")
 
+    @XmlElement(namespace = "http://www.camel.apache.org/jaxb/example/address/1")
     private String city;
 
     public String getStreet() {

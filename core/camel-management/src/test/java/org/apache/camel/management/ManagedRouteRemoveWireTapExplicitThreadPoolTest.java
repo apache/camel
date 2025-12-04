@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -28,10 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementTestSupport {
@@ -103,10 +104,13 @@ public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementT
                 // create a new thread pool to use for wire tap
                 myThreadPool = Executors.newFixedThreadPool(1);
 
-                from("seda:foo").routeId("foo").wireTap("direct:tap").executorService(myThreadPool).to("mock:result");
+                from("seda:foo")
+                        .routeId("foo")
+                        .wireTap("direct:tap")
+                        .executorService(myThreadPool)
+                        .to("mock:result");
                 from("direct:tap").routeId("tap").to("mock:tap");
             }
         };
     }
-
 }

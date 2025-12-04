@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.util.List;
@@ -30,8 +31,11 @@ public class CamelUnitOfWorkException extends CamelExchangeException {
 
     public CamelUnitOfWorkException(Exchange exchange, List<Exception> causes) {
         // just provide the first exception as cause, as it will be logged in the stacktraces
-        super("Unit of work failed on exchange with " + causes.size()
-              + " caused exceptions. First exception provided as cause to this exception.", exchange, causes.get(0));
+        super(
+                "Unit of work failed on exchange with " + causes.size()
+                        + " caused exceptions. First exception provided as cause to this exception.",
+                exchange,
+                causes.get(0));
         this.causes = causes;
     }
 

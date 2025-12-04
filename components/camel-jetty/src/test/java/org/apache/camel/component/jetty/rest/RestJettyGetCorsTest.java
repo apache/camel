@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -23,8 +26,6 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestJettyGetCorsTest extends BaseJettyTest {
 
@@ -40,13 +41,17 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
             }
         });
 
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN,
                 out.getMessage().getHeader("Access-Control-Allow-Origin"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS,
                 out.getMessage().getHeader("Access-Control-Allow-Methods"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS,
                 out.getMessage().getHeader("Access-Control-Allow-Headers"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
+        assertEquals(
+                RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -67,7 +72,11 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort()).enableCORS(true);
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .enableCORS(true);
 
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/basic").to("direct:basic");
@@ -80,5 +89,4 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
             }
         };
     }
-
 }

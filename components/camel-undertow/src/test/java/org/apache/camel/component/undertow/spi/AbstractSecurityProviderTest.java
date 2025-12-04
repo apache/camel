@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.spi;
 
 import java.io.File;
@@ -59,7 +60,8 @@ public abstract class AbstractSecurityProviderTest extends BaseUndertowTest {
 
         @Override
         public int authenticate(HttpServerExchange httpExchange, List<String> allowedRoles) {
-            if (configuration.getRoleToAssign() != null && allowedRoles != null
+            if (configuration.getRoleToAssign() != null
+                    && allowedRoles != null
                     && allowedRoles.contains(configuration.getRoleToAssign())) {
                 httpExchange.putAttachment(PRINCIPAL_KEY, configuration.getRoleToAssign());
                 return StatusCodes.OK;
@@ -130,7 +132,8 @@ public abstract class AbstractSecurityProviderTest extends BaseUndertowTest {
 
     @BeforeAll
     public static void createSecurtyProviderConfigurationFile() throws Exception {
-        URL location = MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
+        URL location =
+                MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
         File file = new File(location.getPath() + "META-INF/services/" + UndertowSecurityProvider.class.getName());
         file.getParentFile().mkdirs();
 
@@ -152,5 +155,4 @@ public abstract class AbstractSecurityProviderTest extends BaseUndertowTest {
             }
         };
     }
-
 }

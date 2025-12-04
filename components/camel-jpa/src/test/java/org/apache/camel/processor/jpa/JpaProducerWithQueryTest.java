@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Timeout(30)
 public class JpaProducerWithQueryTest {
@@ -130,21 +131,22 @@ public class JpaProducerWithQueryTest {
             public void configure() {
                 from("direct:query")
                         .to("jpa://" + MultiSteps.class.getName() + "?query=select o from " + MultiSteps.class.getName()
-                            + " o where o.step = 1");
+                                + " o where o.step = 1");
                 from("direct:namedQuery")
-                        .to("jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName&parameters=#params");
+                        .to("jpa://" + Customer.class.getName()
+                                + "?namedQuery=findAllCustomersWithName&parameters=#params");
                 from("direct:nativeQuery")
-                        .to("jpa://" + MultiSteps.class.getName() + "?nativeQuery=select * from MultiSteps where step = 1");
-                from("direct:nativeQueryWithResultClass")
                         .to("jpa://" + MultiSteps.class.getName()
-                            + "?resultClass=org.apache.camel.examples.MultiSteps&nativeQuery=select * from MultiSteps where step = 1");
+                                + "?nativeQuery=select * from MultiSteps where step = 1");
+                from("direct:nativeQueryWithResultClass")
+                        .to(
+                                "jpa://" + MultiSteps.class.getName()
+                                        + "?resultClass=org.apache.camel.examples.MultiSteps&nativeQuery=select * from MultiSteps where step = 1");
 
-                from("direct:addCustomer")
-                        .to("jpa://" + Customer.class.getName());
+                from("direct:addCustomer").to("jpa://" + Customer.class.getName());
                 from("direct:deleteCustomers")
                         .to("jpa://" + Customer.class.getName() + "?query=delete from " + Customer.class.getName());
-                from("direct:addMultiSteps")
-                        .to("jpa://" + MultiSteps.class.getName());
+                from("direct:addMultiSteps").to("jpa://" + MultiSteps.class.getName());
                 from("direct:deleteMultiSteps")
                         .to("jpa://" + MultiSteps.class.getName() + "?nativeQuery=delete from MultiSteps");
             }

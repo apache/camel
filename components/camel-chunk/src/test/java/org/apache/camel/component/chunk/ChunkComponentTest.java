@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chunk;
 
 import org.apache.camel.EndpointInject;
@@ -83,7 +84,6 @@ public class ChunkComponentTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         LoggerFactory.getLogger(getClass())
                 .info("Chunk performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
-
     }
 
     @Override
@@ -91,9 +91,7 @@ public class ChunkComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:startSimple")
-                        .to("chunk://file")
-                        .to("mock:endSimple");
+                from("direct:startSimple").to("chunk://file").to("mock:endSimple");
             }
         };
     }

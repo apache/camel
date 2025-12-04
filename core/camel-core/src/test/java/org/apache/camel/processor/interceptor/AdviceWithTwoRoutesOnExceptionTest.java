@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,14 +33,17 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint()
+                interceptSendToEndpoint("mock://a")
+                        .skipSendToOriginalEndpoint()
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:error")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
@@ -53,14 +57,17 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint()
+                interceptSendToEndpoint("mock://b")
+                        .skipSendToOriginalEndpoint()
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
         getMockEndpoint("mock:b").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:error")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:b", "Hello World");
@@ -74,7 +81,8 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint()
+                interceptSendToEndpoint("mock://a")
+                        .skipSendToOriginalEndpoint()
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -83,7 +91,8 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint()
+                interceptSendToEndpoint("mock://b")
+                        .skipSendToOriginalEndpoint()
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -91,9 +100,13 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(2);
-        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:error")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
-        getMockEndpoint("mock:error").message(1).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:error")
+                .message(1)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
@@ -107,13 +120,24 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").routeId("a").onException(Exception.class).handled(true).to("mock:error").end().to("log:a")
+                from("direct:a")
+                        .routeId("a")
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:error")
+                        .end()
+                        .to("log:a")
                         .to("mock:a");
 
-                from("direct:b").routeId("b").onException(Exception.class).handled(true).to("mock:error").end().to("log:b")
+                from("direct:b")
+                        .routeId("b")
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:error")
+                        .end()
+                        .to("log:b")
                         .to("mock:b");
             }
         };
     }
-
 }

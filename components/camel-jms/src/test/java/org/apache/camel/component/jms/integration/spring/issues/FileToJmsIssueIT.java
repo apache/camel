@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.issues;
 
 import org.apache.camel.EndpointInject;
@@ -26,7 +27,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class FileToJmsIssueIT extends SpringJMSBasic {
 
     @EndpointInject("mock:result")
@@ -42,9 +43,9 @@ public class FileToJmsIssueIT extends SpringJMSBasic {
     void testFileToJms() throws Exception {
         result.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/jmsfile?fileExist=Override", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/jmsfile?fileExist=Override", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         result.assertIsSatisfied();
     }
-
 }

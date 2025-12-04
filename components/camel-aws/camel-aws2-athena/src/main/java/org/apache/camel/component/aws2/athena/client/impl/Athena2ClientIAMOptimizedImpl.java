@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena.client.impl;
 
 import java.net.URI;
@@ -41,7 +42,8 @@ public class Athena2ClientIAMOptimizedImpl implements Athena2InternalClient {
      * Constructor that uses the config file.
      */
     public Athena2ClientIAMOptimizedImpl(Athena2Configuration configuration) {
-        LOG.trace("Creating an AWS Athena client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
+        LOG.trace(
+                "Creating an AWS Athena client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
         this.configuration = configuration;
     }
 
@@ -56,10 +58,11 @@ public class Athena2ClientIAMOptimizedImpl implements Athena2InternalClient {
         AthenaClientBuilder clientBuilder = AthenaClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost())
+                && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
+                    + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);

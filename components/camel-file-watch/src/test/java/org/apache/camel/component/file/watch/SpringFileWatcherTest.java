@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.watch;
 
 import java.io.File;
@@ -38,8 +39,10 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
     public void createTestFiles() throws Exception {
         Files.createDirectories(Paths.get("target/fileWatchSpringTest"));
         Files.createDirectories(Paths.get("target/fileWatchSpringTestCustomHasher"));
-        springTestFile = new File("target/fileWatchSpringTest", UUID.randomUUID().toString());
-        springTestCustomHasherFile = new File("target/fileWatchSpringTestCustomHasher", UUID.randomUUID().toString());
+        springTestFile =
+                new File("target/fileWatchSpringTest", UUID.randomUUID().toString());
+        springTestCustomHasherFile = new File(
+                "target/fileWatchSpringTestCustomHasher", UUID.randomUUID().toString());
         springTestFile.createNewFile();
         springTestCustomHasherFile.createNewFile();
     }
@@ -52,23 +55,26 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
 
         Files.write(springTestFile.toPath(), "modification".getBytes(), StandardOpenOption.SYNC);
         // Adding few millis to avoid flaky tests
-        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file could be done before hashing is done
+        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file
+        // could be done before hashing is done
         Thread.sleep(50);
         Files.write(springTestFile.toPath(), "modification 2".getBytes(), StandardOpenOption.SYNC);
 
         mock.assertIsSatisfied();
-
     }
 
     @Test
     public void testCustomHasher() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:springTestCustomHasher");
-        mock.setExpectedCount(1); // We passed dummy TestHasher which returns constant hashcode. This should cause, that second MODIFY event is discarded
+        mock.setExpectedCount(
+                1); // We passed dummy TestHasher which returns constant hashcode. This should cause, that second MODIFY
+        // event is discarded
         mock.setResultWaitTime(1000);
 
         Files.write(springTestCustomHasherFile.toPath(), "first modification".getBytes(), StandardOpenOption.SYNC);
         // Adding few millis to avoid flaky tests
-        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file could be done before hashing is done
+        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file
+        // could be done before hashing is done
         Thread.sleep(50);
         Files.write(springTestCustomHasherFile.toPath(), "second modification".getBytes(), StandardOpenOption.SYNC);
 
@@ -77,7 +83,7 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/file/watch/SpringFileWatchComponentTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/file/watch/SpringFileWatchComponentTest.xml");
     }
-
 }

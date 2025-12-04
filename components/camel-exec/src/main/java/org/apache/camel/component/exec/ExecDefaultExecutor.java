@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
 
 import java.io.File;
@@ -27,8 +28,7 @@ public class ExecDefaultExecutor extends DefaultExecutor {
 
     private transient Process process;
 
-    public ExecDefaultExecutor() {
-    }
+    public ExecDefaultExecutor() {}
 
     @Override
     protected Process launch(CommandLine command, Map<String, String> env, File dir) throws IOException {

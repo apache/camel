@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail.stream;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -21,8 +22,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
-           disabledReason = "Google Mail credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
+        disabledReason = "Google Mail credentials were not provided")
 public class GoogleMailStreamConsumerIT extends AbstractGoogleMailStreamTestSupport {
 
     @Test
@@ -38,8 +40,8 @@ public class GoogleMailStreamConsumerIT extends AbstractGoogleMailStreamTestSupp
             @Override
             public void configure() {
 
-                from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=30").to("mock:result");
-
+                from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=30")
+                        .to("mock:result");
             }
         };
     }

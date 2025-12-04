@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sts;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.sts;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class STS2ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -51,7 +52,8 @@ public class STS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
         context.getRegistry().bind("amazonStsClient", clientMock);
         STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
-        STS2Endpoint endpoint = (STS2Endpoint) component.createEndpoint("aws2-sts://TestDomain?accessKey=xxx&secretKey=yyy");
+        STS2Endpoint endpoint =
+                (STS2Endpoint) component.createEndpoint("aws2-sts://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getStsClient());
     }

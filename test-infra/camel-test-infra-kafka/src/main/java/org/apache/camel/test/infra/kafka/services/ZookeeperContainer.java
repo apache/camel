@@ -49,5 +49,4 @@ public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
     public int getZookeeperPort() {
         return getMappedPort(ZOOKEEPER_PORT);
     }
-
 }

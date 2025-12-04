@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +38,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ListBucketsTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ListBucketsTest.class.getName());
 
@@ -46,21 +47,19 @@ public class ListBucketsTest extends CamelTestSupport {
     ObsClient mockClient = Mockito.mock(ObsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:list_buckets")
-                        .to("hwcloud-obs:listBuckets?" +
-                            "accessKey=" + testConfiguration.getProperty("accessKey") +
-                            "&secretKey=" + testConfiguration.getProperty("secretKey") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&obsClient=#obsClient")
+                        .to("hwcloud-obs:listBuckets?" + "accessKey="
+                                + testConfiguration.getProperty("accessKey") + "&secretKey="
+                                + testConfiguration.getProperty("secretKey") + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&obsClient=#obsClient")
                         .log("List buckets successful")
                         .to("mock:list_buckets_result");
             }
@@ -74,7 +73,8 @@ public class ListBucketsTest extends CamelTestSupport {
         buckets.add(new ObsBucket("bucket2", "location-2"));
         Owner owner = new Owner();
         ListBucketsResult response = new ListBucketsResult(buckets, owner, false, null, 10, null);
-        Mockito.when(mockClient.listBucketsV2(Mockito.any(ListBucketsRequest.class))).thenReturn(response);
+        Mockito.when(mockClient.listBucketsV2(Mockito.any(ListBucketsRequest.class)))
+                .thenReturn(response);
 
         MockEndpoint mock = getMockEndpoint("mock:list_buckets_result");
         mock.expectedMinimumMessageCount(1);

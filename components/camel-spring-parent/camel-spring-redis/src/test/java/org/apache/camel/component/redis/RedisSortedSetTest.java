@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,20 +36,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @MockitoSettings
 public class RedisSortedSetTest extends RedisTestSupport {
 
     @Mock
     private RedisTemplate<String, String> redisTemplate;
+
     @Mock
     private ZSetOperations<String, String> zSetOperations;
 
@@ -62,7 +64,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
         verify(zSetOperations).add("key", "value", 1.0);
         assertEquals(false, result);
-
     }
 
     @Test
@@ -82,10 +83,14 @@ public class RedisSortedSetTest extends RedisTestSupport {
         when(zSetOperations.count(anyString(), anyDouble(), anyDouble())).thenReturn(3L);
 
         Object result = sendHeaders(
-                RedisConstants.COMMAND, "ZCOUNT",
-                RedisConstants.KEY, "key",
-                RedisConstants.MIN, 1.0,
-                RedisConstants.MAX, 2.0);
+                RedisConstants.COMMAND,
+                "ZCOUNT",
+                RedisConstants.KEY,
+                "key",
+                RedisConstants.MIN,
+                1.0,
+                RedisConstants.MAX,
+                2.0);
 
         verify(zSetOperations).count("key", 1.0, 2.0);
         assertEquals(3L, result);
@@ -93,7 +98,8 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZINCRBY() {
-        when(zSetOperations.incrementScore(anyString(), anyString(), anyDouble())).thenReturn(3.0);
+        when(zSetOperations.incrementScore(anyString(), anyString(), anyDouble()))
+                .thenReturn(3.0);
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "ZINCRBY",
                 RedisConstants.KEY, "key",
@@ -102,7 +108,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
         verify(zSetOperations).incrementScore("key", "value", 2.0);
         assertEquals(3.0, result);
-
     }
 
     @Test
@@ -127,10 +132,14 @@ public class RedisSortedSetTest extends RedisTestSupport {
         when(zSetOperations.range(anyString(), anyLong(), anyLong())).thenReturn(keys);
 
         Object result = sendHeaders(
-                RedisConstants.COMMAND, "ZRANGE",
-                RedisConstants.KEY, "key",
-                RedisConstants.START, 1,
-                RedisConstants.END, 3);
+                RedisConstants.COMMAND,
+                "ZRANGE",
+                RedisConstants.KEY,
+                "key",
+                RedisConstants.START,
+                1,
+                RedisConstants.END,
+                3);
 
         verify(zSetOperations).range("key", 1, 3);
         assertEquals(keys, result);
@@ -141,11 +150,16 @@ public class RedisSortedSetTest extends RedisTestSupport {
         when(zSetOperations.rangeWithScores(anyString(), anyLong(), anyLong())).thenReturn(null);
 
         Object result = sendHeaders(
-                RedisConstants.COMMAND, "ZRANGE",
-                RedisConstants.KEY, "key",
-                RedisConstants.WITHSCORE, true,
-                RedisConstants.START, 1,
-                RedisConstants.END, 3);
+                RedisConstants.COMMAND,
+                "ZRANGE",
+                RedisConstants.KEY,
+                "key",
+                RedisConstants.WITHSCORE,
+                true,
+                RedisConstants.START,
+                1,
+                RedisConstants.END,
+                3);
 
         verify(zSetOperations).rangeWithScores("key", 1, 3);
         assertNull(result);
@@ -159,10 +173,14 @@ public class RedisSortedSetTest extends RedisTestSupport {
         when(zSetOperations.rangeByScore(anyString(), anyDouble(), anyDouble())).thenReturn(keys);
 
         Object result = sendHeaders(
-                RedisConstants.COMMAND, "ZRANGEBYSCORE",
-                RedisConstants.KEY, "key",
-                RedisConstants.MIN, 1.0,
-                RedisConstants.MAX, 2.0);
+                RedisConstants.COMMAND,
+                "ZRANGEBYSCORE",
+                RedisConstants.KEY,
+                "key",
+                RedisConstants.MIN,
+                1.0,
+                RedisConstants.MAX,
+                2.0);
 
         verify(zSetOperations).rangeByScore("key", 1.0, 2.0);
         assertEquals(keys, result);
@@ -197,10 +215,14 @@ public class RedisSortedSetTest extends RedisTestSupport {
     @Test
     public void shouldExecuteZREMRANGEBYRANK() {
         sendHeaders(
-                RedisConstants.COMMAND, "ZREMRANGEBYRANK",
-                RedisConstants.KEY, "key",
-                RedisConstants.START, 1,
-                RedisConstants.END, 2);
+                RedisConstants.COMMAND,
+                "ZREMRANGEBYRANK",
+                RedisConstants.KEY,
+                "key",
+                RedisConstants.START,
+                1,
+                RedisConstants.END,
+                2);
 
         verify(zSetOperations).removeRange("key", 1, 2);
     }
@@ -208,10 +230,14 @@ public class RedisSortedSetTest extends RedisTestSupport {
     @Test
     public void shouldExecuteZREMRANGEBYSCORE() {
         sendHeaders(
-                RedisConstants.COMMAND, "ZREMRANGEBYSCORE",
-                RedisConstants.KEY, "key",
-                RedisConstants.START, 1,
-                RedisConstants.END, 2);
+                RedisConstants.COMMAND,
+                "ZREMRANGEBYSCORE",
+                RedisConstants.KEY,
+                "key",
+                RedisConstants.START,
+                1,
+                RedisConstants.END,
+                2);
 
         verify(zSetOperations).removeRangeByScore("key", 1.0, 2.0);
     }
@@ -224,10 +250,14 @@ public class RedisSortedSetTest extends RedisTestSupport {
         when(zSetOperations.reverseRange(anyString(), anyLong(), anyLong())).thenReturn(keys);
 
         Object result = sendHeaders(
-                RedisConstants.COMMAND, "ZREVRANGE",
-                RedisConstants.KEY, "key",
-                RedisConstants.START, 1,
-                RedisConstants.END, 3);
+                RedisConstants.COMMAND,
+                "ZREVRANGE",
+                RedisConstants.KEY,
+                "key",
+                RedisConstants.START,
+                1,
+                RedisConstants.END,
+                3);
 
         verify(zSetOperations).reverseRange("key", 1, 3);
         assertEquals(keys, result);
@@ -235,14 +265,20 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZREVRANGEWithScores() {
-        when(zSetOperations.reverseRangeWithScores(anyString(), anyLong(), anyLong())).thenReturn(null);
+        when(zSetOperations.reverseRangeWithScores(anyString(), anyLong(), anyLong()))
+                .thenReturn(null);
 
         Object result = sendHeaders(
-                RedisConstants.COMMAND, "ZREVRANGE",
-                RedisConstants.KEY, "key",
-                RedisConstants.WITHSCORE, true,
-                RedisConstants.START, 1,
-                RedisConstants.END, 3);
+                RedisConstants.COMMAND,
+                "ZREVRANGE",
+                RedisConstants.KEY,
+                "key",
+                RedisConstants.WITHSCORE,
+                true,
+                RedisConstants.START,
+                1,
+                RedisConstants.END,
+                3);
 
         verify(zSetOperations).reverseRangeWithScores("key", 1, 3);
         assertNull(result);
@@ -253,13 +289,18 @@ public class RedisSortedSetTest extends RedisTestSupport {
         Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
-        when(zSetOperations.reverseRangeByScore(anyString(), anyDouble(), anyDouble())).thenReturn(keys);
+        when(zSetOperations.reverseRangeByScore(anyString(), anyDouble(), anyDouble()))
+                .thenReturn(keys);
 
         Object result = sendHeaders(
-                RedisConstants.COMMAND, "ZREVRANGEBYSCORE",
-                RedisConstants.KEY, "key",
-                RedisConstants.MIN, 1.0,
-                RedisConstants.MAX, 2.0);
+                RedisConstants.COMMAND,
+                "ZREVRANGEBYSCORE",
+                RedisConstants.KEY,
+                "key",
+                RedisConstants.MIN,
+                1.0,
+                RedisConstants.MAX,
+                2.0);
 
         verify(zSetOperations).reverseRangeByScore("key", 1.0, 2.0);
         assertEquals(keys, result);

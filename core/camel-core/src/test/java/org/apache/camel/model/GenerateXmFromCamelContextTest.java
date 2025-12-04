@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.StringWriter;
 import java.util.List;
@@ -25,8 +28,6 @@ import jakarta.xml.bind.Marshaller;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class GenerateXmFromCamelContextTest extends ContextTestSupport {
 
@@ -62,6 +63,5 @@ public class GenerateXmFromCamelContextTest extends ContextTestSupport {
                 from("direct:start").filter().xpath("/foo/bar = 'abc'").to("mock:result");
             }
         };
-
     }
 }

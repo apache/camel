@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grape;
 
 import java.io.File;
@@ -33,7 +34,8 @@ public class FilePatchesRepository implements PatchesRepository {
     private final File repository;
 
     public FilePatchesRepository() {
-        this(Paths.get(SystemUtils.getUserHome().getAbsolutePath(), ".camel", "patches").toFile());
+        this(Paths.get(SystemUtils.getUserHome().getAbsolutePath(), ".camel", "patches")
+                .toFile());
     }
 
     public FilePatchesRepository(File repository) {
@@ -78,5 +80,4 @@ public class FilePatchesRepository implements PatchesRepository {
             throw new IOError(e);
         }
     }
-
 }

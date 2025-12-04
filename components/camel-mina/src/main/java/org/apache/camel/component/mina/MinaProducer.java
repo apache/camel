@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import java.io.IOException;
@@ -132,7 +133,8 @@ public class MinaProducer extends DefaultProducer {
 
         // set the exchange encoding property
         if (getEndpoint().getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
+            exchange.setProperty(
+                    ExchangePropertyKey.CHARSET_NAME,
                     IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
         }
 
@@ -279,7 +281,11 @@ public class MinaProducer extends DefaultProducer {
             setSocketAddress(this.configuration.getProtocol());
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating connector to address: {} using connector: {} timeout: {} millis.", address, connector, timeout);
+            LOG.debug(
+                    "Creating connector to address: {} using connector: {} timeout: {} millis.",
+                    address,
+                    connector,
+                    timeout);
         }
         // connect and wait until the connection is established
         if (connectorConfig != null) {
@@ -292,7 +298,7 @@ public class MinaProducer extends DefaultProducer {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected void setupVmProtocol() {
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
@@ -306,8 +312,9 @@ public class MinaProducer extends DefaultProducer {
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            LOG.warn("Using vm protocol"
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+            LOG.warn(
+                    "Using vm protocol"
+                            + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
         configureCodecFactory("MinaProducer", connector);
     }
@@ -336,8 +343,9 @@ public class MinaProducer extends DefaultProducer {
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            SslFilter filter = new SslFilter(
-                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()));
+            SslFilter filter = new SslFilter(configuration
+                    .getSslContextParameters()
+                    .createSSLContext(getEndpoint().getCamelContext()));
             connector.getFilterChain().addFirst("sslFilter", filter);
         }
         configureCodecFactory("MinaProducer", connector);
@@ -364,10 +372,17 @@ public class MinaProducer extends DefaultProducer {
                 codecFactory.setDecoderMaxLineLength(configuration.getDecoderMaxLineLength());
             }
             addCodecFactory(service, codecFactory);
-            LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                    type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter);
-            LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
-                    codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
+            LOG.debug(
+                    "{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
+                    type,
+                    codecFactory,
+                    charset,
+                    configuration.getTextlineDelimiter(),
+                    delimiter);
+            LOG.debug(
+                    "Encoder maximum line length: {}. Decoder maximum line length: {}",
+                    codecFactory.getEncoderMaxLineLength(),
+                    codecFactory.getDecoderMaxLineLength());
         } else {
             ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();
             if (configuration.getObjectCodecPattern() != null) {
@@ -404,8 +419,9 @@ public class MinaProducer extends DefaultProducer {
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            LOG.warn("Using datagram protocol, {}, but an SSLContextParameters instance was provided. "
-                     + "SSLContextParameters is only supported on the TCP protocol.",
+            LOG.warn(
+                    "Using datagram protocol, {}, but an SSLContextParameters instance was provided. "
+                            + "SSLContextParameters is only supported on the TCP protocol.",
                     configuration.getProtocol());
         }
         configureDataGramCodecFactory("MinaProducer", connector, configuration);
@@ -511,9 +527,11 @@ public class MinaProducer extends DefaultProducer {
         @Override
         public void sessionClosed(IoSession session) throws Exception {
             if (sync && !messageReceived) {
-                // sync=true (InOut mode) so we expected a message as reply but did not get one before the session is closed
+                // sync=true (InOut mode) so we expected a message as reply but did not get one before the session is
+                // closed
                 LOG.debug("Session closed but no message received from address: {}", address);
-                // session was closed but no message received. This could be because the remote server had an internal error
+                // session was closed but no message received. This could be because the remote server had an internal
+                // error
                 // and could not return a response. We should count down to stop waiting for a response
                 notifyResultAvailable();
             }

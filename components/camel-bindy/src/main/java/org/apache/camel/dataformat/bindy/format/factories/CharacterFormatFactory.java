@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.text.ParseException;
@@ -45,10 +46,10 @@ public class CharacterFormatFactory extends AbstractFormatFactory {
         @Override
         public Character parse(String string) throws Exception {
             if (string.length() > 1) {
-                throw new ParseException("The string \"" + string + "\" cannot be parsed to a character (size > 1).", 1);
+                throw new ParseException(
+                        "The string \"" + string + "\" cannot be parsed to a character (size > 1).", 1);
             }
             return string.charAt(0);
         }
-
     }
 }

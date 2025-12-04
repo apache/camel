@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
 
 import java.util.Date;
@@ -113,7 +114,8 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
 
             predicate.init(endpoint.getCamelContext());
 
-            PredicateAssertHelper.assertMatches(predicate,
+            PredicateAssertHelper.assertMatches(
+                    predicate,
                     "Assertion error at index " + index + " on mock " + endpoint.getEndpointUri() + " with predicate: ",
                     exchange);
         }
@@ -129,7 +131,9 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             Date answer = null;
             if (currentIndex > 0 && mock.getReceivedCounter() > 0) {
-                answer = mock.getReceivedExchanges().get(currentIndex - 1).getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
+                answer = mock.getReceivedExchanges()
+                        .get(currentIndex - 1)
+                        .getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
             }
             return (T) answer;
         }
@@ -141,7 +145,9 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             Date answer = null;
             if (currentIndex < mock.getReceivedCounter() - 1) {
-                answer = mock.getReceivedExchanges().get(currentIndex + 1).getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
+                answer = mock.getReceivedExchanges()
+                        .get(currentIndex + 1)
+                        .getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
             }
             return (T) answer;
         }

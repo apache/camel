@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2;
 
 import java.util.ArrayList;
@@ -96,7 +97,9 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
             // Allow consumer idle properties to properly handle an empty
             // polling response
             //
-            if (result[0] == null || result[0] instanceof ODataFeed && (((ODataFeed) result[0]).getEntries().isEmpty())) {
+            if (result[0] == null
+                    || result[0] instanceof ODataFeed
+                            && (((ODataFeed) result[0]).getEntries().isEmpty())) {
                 return 0;
             } else {
                 return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
@@ -150,7 +153,8 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
                     // If $inlinecount was set to true in the query then
                     // need to include the count in the entities
                     //
-                    entry.getProperties().put("ResultCount", odataFeed.getFeedMetadata().getInlineCount());
+                    entry.getProperties()
+                            .put("ResultCount", odataFeed.getFeedMetadata().getInlineCount());
                 }
                 splitResult.add(entry);
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.ArrayList;
@@ -37,8 +38,7 @@ public final class StringHelper {
     /**
      * Constructor of utility class should be private.
      */
-    private StringHelper() {
-    }
+    private StringHelper() {}
 
     /**
      * Ensures that <code>s</code> is friendly for a URL or file system.
@@ -63,9 +63,7 @@ public final class StringHelper {
      * @throws NullPointerException if <code>s</code> is <code>null</code>.
      */
     public static String removeCRLF(String s) {
-        return s
-                .replace("\r", "")
-                .replace("\n", "");
+        return s.replace("\r", "").replace("\n", "");
     }
 
     /**
@@ -148,8 +146,7 @@ public final class StringHelper {
             return s;
         }
 
-        return s.replace("'", "")
-                .replace("\"", "");
+        return s.replace("'", "").replace("\"", "");
     }
 
     /**
@@ -1424,5 +1421,4 @@ public final class StringHelper {
         }
         return sb.toString();
     }
-
 }

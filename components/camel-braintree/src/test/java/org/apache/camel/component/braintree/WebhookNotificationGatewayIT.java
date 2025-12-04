@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -32,14 +37,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class WebhookNotificationGatewayIT extends AbstractBraintreeTestSupport {
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(WebhookNotificationGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection()
+            .getApiName(WebhookNotificationGatewayApiMethod.class)
+            .getName();
 
     @BeforeEach
     public void checkAuthenticationType() {
@@ -133,14 +135,13 @@ public class WebhookNotificationGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testParseConnectedMerchantStatusTransitioned() {
         final WebhookNotification result = sendSampleNotification(
-                WebhookNotification.Kind.CONNECTED_MERCHANT_STATUS_TRANSITIONED,
-                "my_merchant_public_id");
+                WebhookNotification.Kind.CONNECTED_MERCHANT_STATUS_TRANSITIONED, "my_merchant_public_id");
 
         assertNotNull(result, "parse result");
         assertEquals(WebhookNotification.Kind.CONNECTED_MERCHANT_STATUS_TRANSITIONED, result.getKind());
 
-        ConnectedMerchantStatusTransitioned connectedMerchantStatusTransitioned
-                = result.getConnectedMerchantStatusTransitioned();
+        ConnectedMerchantStatusTransitioned connectedMerchantStatusTransitioned =
+                result.getConnectedMerchantStatusTransitioned();
         assertEquals("my_merchant_public_id", connectedMerchantStatusTransitioned.getMerchantPublicId());
         assertEquals("oauth_application_client_id", connectedMerchantStatusTransitioned.getOAuthApplicationClientId());
         assertEquals("new_status", connectedMerchantStatusTransitioned.getStatus());
@@ -149,14 +150,13 @@ public class WebhookNotificationGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testParseConnectedMerchantPayPalStatusChanged() {
         final WebhookNotification result = sendSampleNotification(
-                WebhookNotification.Kind.CONNECTED_MERCHANT_PAYPAL_STATUS_CHANGED,
-                "my_merchant_public_id");
+                WebhookNotification.Kind.CONNECTED_MERCHANT_PAYPAL_STATUS_CHANGED, "my_merchant_public_id");
 
         assertNotNull(result, "parse result");
         assertEquals(WebhookNotification.Kind.CONNECTED_MERCHANT_PAYPAL_STATUS_CHANGED, result.getKind());
 
-        ConnectedMerchantPayPalStatusChanged connectedMerchantPayPalStatusChanged
-                = result.getConnectedMerchantPayPalStatusChanged();
+        ConnectedMerchantPayPalStatusChanged connectedMerchantPayPalStatusChanged =
+                result.getConnectedMerchantPayPalStatusChanged();
         assertEquals("my_merchant_public_id", connectedMerchantPayPalStatusChanged.getMerchantPublicId());
         assertEquals("oauth_application_client_id", connectedMerchantPayPalStatusChanged.getOAuthApplicationClientId());
         assertEquals("link", connectedMerchantPayPalStatusChanged.getAction());
@@ -173,7 +173,9 @@ public class WebhookNotificationGatewayIT extends AbstractBraintreeTestSupport {
         assertEquals(kind, result.getKind());
         assertEquals("link-to-csv-report", result.getAccountUpdaterDailyReport().getReportUrl());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        assertEquals("2016-01-14", sdf.format(result.getAccountUpdaterDailyReport().getReportDate().getTime()));
+        assertEquals(
+                "2016-01-14",
+                sdf.format(result.getAccountUpdaterDailyReport().getReportDate().getTime()));
     }
 
     /* see https://issues.apache.org/jira/browse/CAMEL-12180
@@ -216,11 +218,9 @@ public class WebhookNotificationGatewayIT extends AbstractBraintreeTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for parse
-                from("direct://PARSE")
-                        .to("braintree://" + PATH_PREFIX + "/parse");
+                from("direct://PARSE").to("braintree://" + PATH_PREFIX + "/parse");
                 // test route for verify
-                from("direct://VERIFY")
-                        .to("braintree://" + PATH_PREFIX + "/verify?inBody=challenge");
+                from("direct://VERIFY").to("braintree://" + PATH_PREFIX + "/verify?inBody=challenge");
             }
         };
     }

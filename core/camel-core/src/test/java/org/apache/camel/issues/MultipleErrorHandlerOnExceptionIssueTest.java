@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import java.io.IOException;
@@ -62,12 +63,18 @@ public class MultipleErrorHandlerOnExceptionIssueTest extends ContextTestSupport
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 from("seda:a")
-                        .errorHandler(deadLetterChannel("mock:dead.a").maximumRedeliveries(3).redeliveryDelay(0)
-                                .retryAttemptedLogLevel(LoggingLevel.WARN).asyncDelayedRedelivery())
-                        .to("mock:a").throwException(new IllegalArgumentException("Forced A"));
+                        .errorHandler(deadLetterChannel("mock:dead.a")
+                                .maximumRedeliveries(3)
+                                .redeliveryDelay(0)
+                                .retryAttemptedLogLevel(LoggingLevel.WARN)
+                                .asyncDelayedRedelivery())
+                        .to("mock:a")
+                        .throwException(new IllegalArgumentException("Forced A"));
 
                 from("seda:b")
-                        .errorHandler(deadLetterChannel("mock:dead.b").maximumRedeliveries(2).redeliveryDelay(0)
+                        .errorHandler(deadLetterChannel("mock:dead.b")
+                                .maximumRedeliveries(2)
+                                .redeliveryDelay(0)
                                 .retryAttemptedLogLevel(LoggingLevel.WARN))
                         .to("mock:b")
                         .throwException(new IOException("Some IO error"));

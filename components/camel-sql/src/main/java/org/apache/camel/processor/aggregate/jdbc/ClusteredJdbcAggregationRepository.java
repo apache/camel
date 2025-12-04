@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.sql.PreparedStatement;
@@ -53,14 +54,13 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
     /**
      * Creates an aggregation repository
      */
-    public ClusteredJdbcAggregationRepository() {
-    }
+    public ClusteredJdbcAggregationRepository() {}
 
     /**
      * Creates an aggregation repository with the three mandatory parameters
      */
-    public ClusteredJdbcAggregationRepository(PlatformTransactionManager transactionManager, String repositoryName,
-                                              DataSource dataSource) {
+    public ClusteredJdbcAggregationRepository(
+            PlatformTransactionManager transactionManager, String repositoryName, DataSource dataSource) {
         this.setRepositoryName(repositoryName);
         this.setTransactionManager(transactionManager);
         this.setDataSource(dataSource);
@@ -75,8 +75,10 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
                 try {
                     LOG.debug("Removing key {}", correlationId);
 
-                    jdbcTemplate.update("DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ? AND " + VERSION + " = ?",
-                            correlationId, version);
+                    jdbcTemplate.update(
+                            "DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ? AND " + VERSION + " = ?",
+                            correlationId,
+                            version);
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version, true);
 
@@ -98,8 +100,12 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
      * @param version        Version identifier
      */
     protected void insert(
-            final CamelContext camelContext, final String correlationId, final Exchange exchange,
-            final String repositoryName, final Long version, final boolean completed)
+            final CamelContext camelContext,
+            final String correlationId,
+            final Exchange exchange,
+            final String repositoryName,
+            final Long version,
+            final boolean completed)
             throws Exception {
         // The default totalParameterIndex is 3 for ID, Exchange and version. Depending
         // on logic this will be increased.
@@ -140,12 +146,16 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
     }
 
     protected int insertHelper(
-            final CamelContext camelContext, final String key, final Exchange exchange,
-            final String sql, final Long version, final boolean completed)
+            final CamelContext camelContext,
+            final String key,
+            final Exchange exchange,
+            final String sql,
+            final Long version,
+            final boolean completed)
             throws Exception {
         final byte[] data = jdbcCamelCodec.marshallExchange(exchange, isAllowSerializedHeaders());
-        Integer insertCount = super.jdbcTemplate.execute(sql,
-                new AbstractLobCreatingPreparedStatementCallback(getLobHandler()) {
+        Integer insertCount =
+                super.jdbcTemplate.execute(sql, new AbstractLobCreatingPreparedStatementCallback(getLobHandler()) {
                     @Override
                     protected void setValues(PreparedStatement ps, LobCreator lobCreator) throws SQLException {
                         int totalParameterIndex = 0;
@@ -175,8 +185,7 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
             public LinkedHashSet<String> doInTransaction(final TransactionStatus status) {
                 final List<String> keys = jdbcTemplate.query(
                         "SELECT " + ID + " FROM " + getRepositoryNameCompleted()
-                                                             + (isRecoveryByInstance()
-                                                                     ? " WHERE INSTANCE_ID='" + instanceId + "'" : ""),
+                                + (isRecoveryByInstance() ? " WHERE INSTANCE_ID='" + instanceId + "'" : ""),
                         new RowMapper<String>() {
                             public String mapRow(final ResultSet rs, final int rowNum) throws SQLException {
                                 final String id = rs.getString(ID);
@@ -204,5 +213,4 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
     public void setRecoveryByInstance(final boolean recoveryByInstance) {
         this.recoveryByInstance = recoveryByInstance;
     }
-
 }

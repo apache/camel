@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.HashMap;
@@ -50,7 +51,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultFluentProducerTemplate extends ServiceSupport implements FluentProducerTemplate {
 
-    // transient state of endpoint, headers, exchange properties, variables, and body which needs to be thread local scoped to be thread-safe
+    // transient state of endpoint, headers, exchange properties, variables, and body which needs to be thread local
+    // scoped to be thread-safe
     private Map<String, Object> headers;
     private Map<String, Object> exchangeProperties;
     private Map<String, Object> variables;
@@ -81,10 +83,15 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         };
     }
 
-    private DefaultFluentProducerTemplate(CamelContext context,
-                                          ClassValue<Processor> resultProcessors,
-                                          Endpoint defaultEndpoint, int maximumCacheSize, boolean eventNotifierEnabled,
-                                          ProducerTemplate template, Endpoint endpoint, String endpointUri) {
+    private DefaultFluentProducerTemplate(
+            CamelContext context,
+            ClassValue<Processor> resultProcessors,
+            Endpoint defaultEndpoint,
+            int maximumCacheSize,
+            boolean eventNotifierEnabled,
+            ProducerTemplate template,
+            Endpoint endpoint,
+            String endpointUri) {
         this.context = context;
         this.resultProcessors = resultProcessors;
         this.defaultEndpoint = defaultEndpoint;
@@ -98,7 +105,13 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     private DefaultFluentProducerTemplate newClone() {
         return new DefaultFluentProducerTemplate(
-                context, resultProcessors, defaultEndpoint, maximumCacheSize, eventNotifierEnabled, template, endpoint,
+                context,
+                resultProcessors,
+                defaultEndpoint,
+                maximumCacheSize,
+                eventNotifierEnabled,
+                template,
+                endpoint,
                 endpointUri);
     }
 
@@ -179,7 +192,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withHeaders and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException(
+                    "Cannot use both withHeaders and withProcessor with FluentProducerTemplate");
         }
 
         Map<String, Object> map = clone.headers;
@@ -196,7 +210,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withHeader and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException(
+                    "Cannot use both withHeader and withProcessor with FluentProducerTemplate");
         }
 
         Map<String, Object> map = clone.headers;
@@ -249,7 +264,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withVariables and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException(
+                    "Cannot use both withVariables and withProcessor with FluentProducerTemplate");
         }
 
         Map<String, Object> map = clone.variables;
@@ -266,7 +282,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withVariable and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException(
+                    "Cannot use both withVariable and withProcessor with FluentProducerTemplate");
         }
 
         Map<String, Object> map = clone.variables;
@@ -283,7 +300,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException(
+                    "Cannot use both withBody and withProcessor with FluentProducerTemplate");
         }
         clone.body = body;
         return clone;
@@ -294,12 +312,11 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withBodyAs and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException(
+                    "Cannot use both withBodyAs and withProcessor with FluentProducerTemplate");
         }
 
-        clone.body = type != null
-                ? clone.context.getTypeConverter().convertTo(type, body)
-                : body;
+        clone.body = type != null ? clone.context.getTypeConverter().convertTo(type, body) : body;
         return clone;
     }
 
@@ -370,7 +387,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.body != null) {
-            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException(
+                    "Cannot use both withBody and withProcessor with FluentProducerTemplate");
         }
         clone.processorSupplier = processorSupplier;
         return clone;
@@ -428,15 +446,12 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
             Exchange exchange = clone.template().request(target, processorSupplier);
             result = (T) exchange.getMessage();
         } else {
-            Exchange exchange = clone.template().send(
-                    target,
-                    ExchangePattern.InOut,
-                    processorSupplier,
-                    clone.resultProcessors.get(type));
+            Exchange exchange = clone.template()
+                    .send(target, ExchangePattern.InOut, processorSupplier, clone.resultProcessors.get(type));
 
-            result = clone.context.getTypeConverter().convertTo(
-                    type,
-                    ExchangeHelper.extractResultBody(exchange, exchange.getPattern()));
+            result = clone.context
+                    .getTypeConverter()
+                    .convertTo(type, ExchangeHelper.extractResultBody(exchange, exchange.getPattern()));
         }
 
         // reset cloned flag so when we use it again it has to set values again
@@ -458,23 +473,25 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         // Determine the target endpoint
         final Endpoint target = clone.target();
 
-        Future<T> result = clone.template().asyncSend(target, exchange -> {
-            // Make a copy of the headers and body so that async processing won't
-            // be invalidated by subsequent reuse of the template
-            Object bodyCopy = clone.body;
+        Future<T> result = clone.template()
+                .asyncSend(target, exchange -> {
+                    // Make a copy of the headers and body so that async processing won't
+                    // be invalidated by subsequent reuse of the template
+                    Object bodyCopy = clone.body;
 
-            exchange.setPattern(ExchangePattern.InOut);
-            exchange.getMessage().setBody(bodyCopy);
-            if (clone.headers != null) {
-                exchange.getMessage().setHeaders(new HashMap<>(clone.headers));
-            }
-            if (clone.exchangeProperties != null) {
-                exchange.getProperties().putAll(clone.exchangeProperties);
-            }
-            if (clone.variables != null) {
-                clone.variables.forEach((k, v) -> ExchangeHelper.setVariable(exchange, k, v));
-            }
-        }).thenApply(answer -> answer.getMessage().getBody(type));
+                    exchange.setPattern(ExchangePattern.InOut);
+                    exchange.getMessage().setBody(bodyCopy);
+                    if (clone.headers != null) {
+                        exchange.getMessage().setHeaders(new HashMap<>(clone.headers));
+                    }
+                    if (clone.exchangeProperties != null) {
+                        exchange.getProperties().putAll(clone.exchangeProperties);
+                    }
+                    if (clone.variables != null) {
+                        clone.variables.forEach((k, v) -> ExchangeHelper.setVariable(exchange, k, v));
+                    }
+                })
+                .thenApply(answer -> answer.getMessage().getBody(type));
 
         // reset cloned flag so when we use it again it has to set values again
         cloned = false;
@@ -623,11 +640,12 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     private Processor defaultAsyncProcessor() {
-        final Map<String, Object> headersCopy = ObjectHelper.isNotEmpty(this.headers) ? new HashMap<>(this.headers) : null;
-        final Map<String, Object> propertiesCopy
-                = ObjectHelper.isNotEmpty(this.exchangeProperties) ? new HashMap<>(this.exchangeProperties) : null;
-        final Map<String, Object> variablesCopy
-                = ObjectHelper.isNotEmpty(this.variables) ? new HashMap<>(this.variables) : null;
+        final Map<String, Object> headersCopy =
+                ObjectHelper.isNotEmpty(this.headers) ? new HashMap<>(this.headers) : null;
+        final Map<String, Object> propertiesCopy =
+                ObjectHelper.isNotEmpty(this.exchangeProperties) ? new HashMap<>(this.exchangeProperties) : null;
+        final Map<String, Object> variablesCopy =
+                ObjectHelper.isNotEmpty(this.variables) ? new HashMap<>(this.variables) : null;
         final Object bodyCopy = this.body;
         return exchange -> {
             if (headersCopy != null) {

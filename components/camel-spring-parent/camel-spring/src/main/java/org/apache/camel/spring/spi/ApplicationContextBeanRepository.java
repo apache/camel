@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 import java.util.HashSet;
@@ -54,8 +55,8 @@ public class ApplicationContextBeanRepository implements BeanRepository {
         try {
             return type.cast(answer);
         } catch (Exception e) {
-            String msg = "Found bean: " + name + " in ApplicationContext: " + applicationContext
-                         + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+            String msg = "Found bean: " + name + " in ApplicationContext: " + applicationContext + " of type: "
+                    + answer.getClass().getName() + " expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);
         }
     }
@@ -89,11 +90,11 @@ public class ApplicationContextBeanRepository implements BeanRepository {
         try {
             // this API allows to support @Primary beans that should take precedence in
             // case there are 2+ beans of the same type.
-            NamedBeanHolder<T> holder = applicationContext.getAutowireCapableBeanFactory().resolveNamedBean(type);
+            NamedBeanHolder<T> holder =
+                    applicationContext.getAutowireCapableBeanFactory().resolveNamedBean(type);
             return holder.getBeanInstance();
         } catch (NoSuchBeanDefinitionException e) {
             return null;
         }
     }
-
 }

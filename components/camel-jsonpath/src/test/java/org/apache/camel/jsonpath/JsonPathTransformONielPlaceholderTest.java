@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.List;
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonPathTransformONielPlaceholderTest extends CamelTestSupport {
 
@@ -50,7 +51,8 @@ public class JsonPathTransformONielPlaceholderTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().jsonpath("$.store.book[?(@.author == '{{who}}' || @.title == '{{search}}')].title")
+                        .transform()
+                        .jsonpath("$.store.book[?(@.author == '{{who}}' || @.title == '{{search}}')].title")
                         .to("mock:authors");
             }
         };
@@ -64,10 +66,13 @@ public class JsonPathTransformONielPlaceholderTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<?> titles = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> titles = getMockEndpoint("mock:authors")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(List.class);
         assertEquals(2, titles.size());
         assertEquals("Sword's of Honour", titles.get(0));
         assertEquals("Camels in Space", titles.get(1));
     }
-
 }

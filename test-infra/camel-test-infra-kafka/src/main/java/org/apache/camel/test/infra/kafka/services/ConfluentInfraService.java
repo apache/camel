@@ -26,9 +26,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 
-@InfraService(service = KafkaInfraService.class,
-              description = "Apache Kafka, Distributed event streaming platform",
-              serviceAlias = "kafka", serviceImplementationAlias = "confluent")
+@InfraService(
+        service = KafkaInfraService.class,
+        description = "Apache Kafka, Distributed event streaming platform",
+        serviceAlias = "kafka",
+        serviceImplementationAlias = "confluent")
 public class ConfluentInfraService implements KafkaInfraService, ContainerService<ConfluentContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ConfluentInfraService.class);
 
@@ -58,7 +60,8 @@ public class ConfluentInfraService implements KafkaInfraService, ContainerServic
             }
         }
 
-        return new TestInfraConfluentContainer(network, instanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        return new TestInfraConfluentContainer(
+                network, instanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     protected Integer getKafkaPort() {

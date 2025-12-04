@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -29,14 +38,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
 
@@ -59,10 +60,12 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
 
     @BeforeEach
     public void startGrpcChannels() {
-        interceptRequestChannel
-                = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_INTERCEPT_TEST_PORT).usePlaintext().build();
-        nointerceptRequestChannel
-                = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_NO_INTERCEPT_TEST_PORT).usePlaintext().build();
+        interceptRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_INTERCEPT_TEST_PORT)
+                .usePlaintext()
+                .build();
+        nointerceptRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_NO_INTERCEPT_TEST_PORT)
+                .usePlaintext()
+                .build();
         interceptBlockingStub = PingPongGrpc.newBlockingStub(interceptRequestChannel);
         nointerceptBlockingStub = PingPongGrpc.newBlockingStub(nointerceptRequestChannel);
     }
@@ -78,8 +81,10 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
         when(mockServerInterceptor.interceptCall(any(), any(), any())).thenCallRealMethod();
         when(mockServerInterceptor2.interceptCall(any(), any(), any())).thenCallRealMethod();
         LOG.info("gRPC pingSyncSync method blocking test start");
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         PongResponse pongResponse = interceptBlockingStub.pingSyncSync(pingRequest);
 
         assertNotNull(pongResponse);
@@ -94,8 +99,10 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
         when(mockServerInterceptor.interceptCall(any(), any(), any())).thenCallRealMethod();
         when(mockServerInterceptor2.interceptCall(any(), any(), any())).thenCallRealMethod();
         LOG.info("gRPC pingSyncSync method blocking test start");
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         PongResponse pongResponse = nointerceptBlockingStub.pingSyncSync(pingRequest);
 
         assertNotNull(pongResponse);
@@ -113,12 +120,12 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("grpc://localhost:" + GRPC_REQUEST_INTERCEPT_TEST_PORT
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                                + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
                         .bean(new GrpcMessageBuilder(), "buildPongResponse");
 
                 from("grpc://localhost:" + GRPC_REQUEST_NO_INTERCEPT_TEST_PORT
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION"
-                     + "&autoDiscoverServerInterceptors=false")
+                                + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION"
+                                + "&autoDiscoverServerInterceptors=false")
                         .bean(new GrpcMessageBuilder(), "buildPongResponse");
             }
         };
@@ -126,13 +133,17 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
 
     static class GrpcMessageBuilder {
         public PongResponse buildPongResponse(PingRequest pingRequest) {
-            return PongResponse.newBuilder().setPongName(pingRequest.getPingName() + GRPC_TEST_PONG_VALUE)
-                    .setPongId(pingRequest.getPingId()).build();
+            return PongResponse.newBuilder()
+                    .setPongName(pingRequest.getPingName() + GRPC_TEST_PONG_VALUE)
+                    .setPongId(pingRequest.getPingId())
+                    .build();
         }
 
         public PongResponse buildAsyncPongResponse(List<PingRequest> pingRequests) {
-            return PongResponse.newBuilder().setPongName(pingRequests.get(0).getPingName() + GRPC_TEST_PONG_VALUE)
-                    .setPongId(pingRequests.get(0).getPingId()).build();
+            return PongResponse.newBuilder()
+                    .setPongName(pingRequests.get(0).getPingName() + GRPC_TEST_PONG_VALUE)
+                    .setPongId(pingRequests.get(0).getPingId())
+                    .build();
         }
     }
 }

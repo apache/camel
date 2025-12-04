@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.mtom;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -51,9 +55,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test for exercising MTOM feature of a CxfConsumer in PAYLOAD mode
  */
@@ -79,16 +80,20 @@ public class CxfMtomConsumerPayloadModeTest {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 List<Source> elements = new ArrayList<>();
-                elements.add(new DOMSource(StaxUtils.read(new StringReader(getRequestMessage())).getDocumentElement()));
-                CxfPayload<SoapHeader> body = new CxfPayload<>(
-                        new ArrayList<SoapHeader>(),
-                        elements, null);
+                elements.add(new DOMSource(
+                        StaxUtils.read(new StringReader(getRequestMessage())).getDocumentElement()));
+                CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(), elements, null);
                 exchange.getIn().setBody(body);
-                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
-                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
+                exchange.getIn(AttachmentMessage.class)
+                        .addAttachment(
+                                MtomTestHelper.REQ_PHOTO_CID,
+                                new DataHandler(new ByteArrayDataSource(
+                                        MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
 
-                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
-                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
+                exchange.getIn(AttachmentMessage.class)
+                        .addAttachment(
+                                MtomTestHelper.REQ_IMAGE_CID,
+                                new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
             }
         });
     }
@@ -110,13 +115,11 @@ public class CxfMtomConsumerPayloadModeTest {
 
             XPathUtils xu = new XPathUtils(ns);
             Element body = new XmlConverter().toDOMElement(in.getBody().get(0));
-            Element ele = (Element) xu.getValue("//ns:Detail/ns:photo/xop:Include", body,
-                    XPathConstants.NODE);
+            Element ele = (Element) xu.getValue("//ns:Detail/ns:photo/xop:Include", body, XPathConstants.NODE);
             String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
             assertEquals(MtomTestHelper.REQ_PHOTO_CID, photoId);
 
-            ele = (Element) xu.getValue("//ns:Detail/ns:image/xop:Include", body,
-                    XPathConstants.NODE);
+            ele = (Element) xu.getValue("//ns:Detail/ns:image/xop:Include", body, XPathConstants.NODE);
             String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
             assertEquals(MtomTestHelper.REQ_IMAGE_CID, imageId);
 
@@ -130,17 +133,20 @@ public class CxfMtomConsumerPayloadModeTest {
 
             // create response
             List<Source> elements = new ArrayList<>();
-            elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.RESP_MESSAGE)).getDocumentElement()));
-            CxfPayload<SoapHeader> sbody = new CxfPayload<>(
-                    new ArrayList<SoapHeader>(),
-                    elements, null);
+            elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.RESP_MESSAGE))
+                    .getDocumentElement()));
+            CxfPayload<SoapHeader> sbody = new CxfPayload<>(new ArrayList<SoapHeader>(), elements, null);
             exchange.getMessage().setBody(sbody);
-            exchange.getMessage(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_PHOTO_CID,
-                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
+            exchange.getMessage(AttachmentMessage.class)
+                    .addAttachment(
+                            MtomTestHelper.RESP_PHOTO_CID,
+                            new DataHandler(new ByteArrayDataSource(
+                                    MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
 
-            exchange.getMessage(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_IMAGE_CID,
-                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.responseJpeg, "image/jpeg")));
-
+            exchange.getMessage(AttachmentMessage.class)
+                    .addAttachment(
+                            MtomTestHelper.RESP_IMAGE_CID,
+                            new DataHandler(new ByteArrayDataSource(MtomTestHelper.responseJpeg, "image/jpeg")));
         }
     }
     // END SNIPPET: consumer
@@ -148,5 +154,4 @@ public class CxfMtomConsumerPayloadModeTest {
     protected String getRequestMessage() {
         return MtomTestHelper.REQ_MESSAGE;
     }
-
 }

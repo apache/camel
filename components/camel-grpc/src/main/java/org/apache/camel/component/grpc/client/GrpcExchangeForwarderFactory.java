@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.client;
 
 import org.apache.camel.component.grpc.GrpcConfiguration;
@@ -24,8 +25,7 @@ import org.apache.camel.component.grpc.GrpcProducerStrategy;
  */
 public final class GrpcExchangeForwarderFactory {
 
-    private GrpcExchangeForwarderFactory() {
-    }
+    private GrpcExchangeForwarderFactory() {}
 
     public static GrpcExchangeForwarder createExchangeForwarder(GrpcConfiguration configuration, Object grpcStub) {
         if (configuration.getProducerStrategy() == GrpcProducerStrategy.SIMPLE) {
@@ -36,5 +36,4 @@ public final class GrpcExchangeForwarderFactory {
             throw new IllegalStateException("Unsupported producer strategy: " + configuration.getProducerStrategy());
         }
     }
-
 }

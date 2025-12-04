@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.io.IOException;
@@ -83,7 +84,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
         validationExecutor = Executors.newCachedThreadPool();
         consumerExecutor = new ThreadPoolExecutor(
-                1, getConfiguration().getMaxConcurrentConsumers(), getConfiguration().getAcceptTimeout(), TimeUnit.MILLISECONDS,
+                1,
+                getConfiguration().getMaxConcurrentConsumers(),
+                getConfiguration().getAcceptTimeout(),
+                TimeUnit.MILLISECONDS,
                 new SynchronousQueue<>());
     }
 
@@ -161,11 +165,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.debug("doStart() - starting bind thread");
                 bindThread.start();
             } else {
-                log.debug("doStart() - attempting to bind to port {}", getEndpoint().getPort());
+                log.debug(
+                        "doStart() - attempting to bind to port {}",
+                        getEndpoint().getPort());
                 bindThread.run();
 
                 if (this.acceptThread == null) {
-                    throw new BindException("Failed to bind to port " + getEndpoint().getPort());
+                    throw new BindException(
+                            "Failed to bind to port " + getEndpoint().getPort());
                 }
             }
         }
@@ -201,7 +208,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     public void validateConsumer(Socket clientSocket) {
         MllpSocketBuffer mllpBuffer = new MllpSocketBuffer(getEndpoint());
-        TcpServerConsumerValidationRunnable client = new TcpServerConsumerValidationRunnable(this, clientSocket, mllpBuffer);
+        TcpServerConsumerValidationRunnable client =
+                new TcpServerConsumerValidationRunnable(this, clientSocket, mllpBuffer);
 
         try {
             log.debug("validateConsumer({}) - submitting client for validation", clientSocket);
@@ -218,8 +226,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer) {
-        TcpSocketConsumerRunnable client = new TcpSocketConsumerRunnable(
-                this, clientSocket, mllpBuffer, hl7Util, logPhi);
+        TcpSocketConsumerRunnable client =
+                new TcpSocketConsumerRunnable(this, clientSocket, mllpBuffer, hl7Util, logPhi);
 
         consumerRunnables.put(client, System.currentTimeMillis());
         try {
@@ -239,18 +247,22 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         consumerRunnables.put(consumerRunnable, now);
 
         // Send the message on to Camel for processing and wait for the response
-        log.debug("processMessage(hl7MessageBytes[{}], {}) - populating the exchange with received payload",
-                hl7MessageBytes == null ? -1 : hl7MessageBytes.length, consumerRunnable.getSocket());
+        log.debug(
+                "processMessage(hl7MessageBytes[{}], {}) - populating the exchange with received payload",
+                hl7MessageBytes == null ? -1 : hl7MessageBytes.length,
+                consumerRunnable.getSocket());
         Exchange exchange = createExchange(false);
         exchange.setPattern(ExchangePattern.InOut);
         if (getConfiguration().hasCharsetName()) {
-            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getConfiguration().getCharsetName());
+            exchange.setProperty(
+                    ExchangePropertyKey.CHARSET_NAME, getConfiguration().getCharsetName());
         }
         try {
             createUoW(exchange);
 
             if (exchange.hasProperties() || exchange.getProperty(MllpConstants.MLLP_AUTO_ACKNOWLEDGE) == null) {
-                exchange.setProperty(MllpConstants.MLLP_AUTO_ACKNOWLEDGE, getConfiguration().isAutoAck());
+                exchange.setProperty(
+                        MllpConstants.MLLP_AUTO_ACKNOWLEDGE, getConfiguration().isAutoAck());
             }
 
             Message message = exchange.getIn();
@@ -273,10 +285,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             if (getConfiguration().isStringPayload()) {
                 if (hl7MessageBytes != null && hl7MessageBytes.length > 0) {
-                    message.setBody(
-                            new String(
-                                    hl7MessageBytes,
-                                    MllpCharsetHelper.getCharset(exchange, hl7MessageBytes, hl7Util, charset)));
+                    message.setBody(new String(
+                            hl7MessageBytes,
+                            MllpCharsetHelper.getCharset(exchange, hl7MessageBytes, hl7Util, charset)));
                 } else {
                     message.setBody("", String.class);
                 }
@@ -284,21 +295,25 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 message.setBody(hl7MessageBytes, byte[].class);
             }
 
-            log.debug("processMessage(hl7MessageBytes[{}], {}) - calling processor",
-                    hl7MessageBytes == null ? -1 : hl7MessageBytes.length, consumerRunnable.getSocket());
+            log.debug(
+                    "processMessage(hl7MessageBytes[{}], {}) - calling processor",
+                    hl7MessageBytes == null ? -1 : hl7MessageBytes.length,
+                    consumerRunnable.getSocket());
             try {
                 getProcessor().process(exchange);
                 sendAcknowledgement(hl7MessageBytes, exchange, consumerRunnable);
             } catch (Exception unexpectedEx) {
-                String resetMessage
-                        = "processMessage(byte[], TcpSocketConsumerRunnable) - Unexpected exception processing exchange";
+                String resetMessage =
+                        "processMessage(byte[], TcpSocketConsumerRunnable) - Unexpected exception processing exchange";
                 consumerRunnable.resetSocket(resetMessage);
                 getExceptionHandler().handleException(resetMessage, exchange, unexpectedEx);
             }
         } catch (Exception uowEx) {
-            getExceptionHandler().handleException(
-                    "processMessage(byte[], TcpSocketConsumerRunnable) - Unexpected exception creating Unit of Work", exchange,
-                    uowEx);
+            getExceptionHandler()
+                    .handleException(
+                            "processMessage(byte[], TcpSocketConsumerRunnable) - Unexpected exception creating Unit of Work",
+                            exchange,
+                            uowEx);
         } finally {
             doneUoW(exchange);
             releaseExchange(exchange, false);
@@ -314,13 +329,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             // Find the end of the MSH and indexes of the fields in the MSH to populate message headers
             final byte fieldSeparator = hl7MessageBytes[3];
             int endOfMSH = -1;
-            List<Integer> fieldSeparatorIndexes = new ArrayList<>(10);  // We should have at least 10 fields
+            List<Integer> fieldSeparatorIndexes = new ArrayList<>(10); // We should have at least 10 fields
 
             for (int i = 0; i < hl7MessageBytes.length; ++i) {
                 if (fieldSeparator == hl7MessageBytes[i]) {
                     fieldSeparatorIndexes.add(i);
                 } else if (MllpProtocolConstants.SEGMENT_DELIMITER == hl7MessageBytes[i]) {
-                    // If the MSH Segment doesn't have a trailing field separator, add one so the field can be extracted into a header
+                    // If the MSH Segment doesn't have a trailing field separator, add one so the field can be extracted
+                    // into a header
                     if (fieldSeparator != hl7MessageBytes[i - 1]) {
                         fieldSeparatorIndexes.add(i);
                     }
@@ -385,8 +401,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         String headerValue = (i == 17 && getConfiguration().hasCharsetName())
                                 ? getConfiguration().getCharsetName()
                                 : new String(
-                                        hl7MessageBytes, startingFieldSeparatorIndex + 1,
-                                        endingFieldSeparatorIndex - startingFieldSeparatorIndex - 1, charset);
+                                        hl7MessageBytes,
+                                        startingFieldSeparatorIndex + 1,
+                                        endingFieldSeparatorIndex - startingFieldSeparatorIndex - 1,
+                                        charset);
 
                         message.setHeader(headerName, headerValue);
 
@@ -406,12 +424,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         } else {
             log.trace("HL7 Message headers disabled");
         }
-
     }
 
-    void sendAcknowledgement(byte[] originalHl7MessageBytes, Exchange exchange, TcpSocketConsumerRunnable consumerRunnable) {
-        log.trace("sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - entering",
-                originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length, exchange.getExchangeId(),
+    void sendAcknowledgement(
+            byte[] originalHl7MessageBytes, Exchange exchange, TcpSocketConsumerRunnable consumerRunnable) {
+        log.trace(
+                "sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - entering",
+                originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length,
+                exchange.getExchangeId(),
                 consumerRunnable.getSocket());
 
         getEndpoint().checkBeforeSendProperties(exchange, consumerRunnable.getSocket(), log);
@@ -428,26 +448,30 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             boolean autoAck = exchange.getProperty(MllpConstants.MLLP_AUTO_ACKNOWLEDGE, true, boolean.class);
             if (!autoAck) {
                 if (getConfiguration().getExchangePattern() == ExchangePattern.InOut) {
-                    final Object acknowledgementBytesProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT);
-                    Object acknowledgementStringProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING);
-                    final String exceptionMessage
-                            = (acknowledgementBytesProperty == null && acknowledgementStringProperty == null)
+                    final Object acknowledgementBytesProperty =
+                            exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT);
+                    Object acknowledgementStringProperty =
+                            exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING);
+                    final String exceptionMessage =
+                            (acknowledgementBytesProperty == null && acknowledgementStringProperty == null)
                                     ? "Automatic Acknowledgement is disabled and the "
-                                      + MllpConstants.MLLP_ACKNOWLEDGEMENT + " and " + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING
-                                      + " exchange properties are null"
+                                            + MllpConstants.MLLP_ACKNOWLEDGEMENT + " and "
+                                            + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING
+                                            + " exchange properties are null"
                                     : "Automatic Acknowledgement is disabled and neither the "
-                                      + MllpConstants.MLLP_ACKNOWLEDGEMENT + "(type = "
-                                      + getTypeOrNullString(acknowledgementBytesProperty) + ") nor the"
-                                      + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING + "(type = "
-                                      + getTypeOrNullString(acknowledgementBytesProperty)
-                                      + ") exchange properties can be converted to byte[]";
+                                            + MllpConstants.MLLP_ACKNOWLEDGEMENT + "(type = "
+                                            + getTypeOrNullString(acknowledgementBytesProperty) + ") nor the"
+                                            + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING + "(type = "
+                                            + getTypeOrNullString(acknowledgementBytesProperty)
+                                            + ") exchange properties can be converted to byte[]";
                     MllpInvalidAcknowledgementException invalidAckEx = new MllpInvalidAcknowledgementException(
                             exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes, logPhi);
                     exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, invalidAckEx);
                     getExceptionHandler().handleException(invalidAckEx);
                 }
             } else {
-                String acknowledgmentTypeProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
+                String acknowledgmentTypeProperty =
+                        exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
                 String msa3 = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_MSA_TEXT, String.class);
                 Exception exchangeEx = exchange.getException();
 
@@ -480,14 +504,16 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                 break;
                             default:
                                 exchange.setException(new Hl7AcknowledgementGenerationException(
-                                        hl7Util,
-                                        "Unsupported acknowledgment type: " + acknowledgmentTypeProperty));
+                                        hl7Util, "Unsupported acknowledgment type: " + acknowledgmentTypeProperty));
                                 return;
                         }
                     }
 
-                    hl7Util.generateAcknowledgementPayload(consumerRunnable.getMllpBuffer(), originalHl7MessageBytes,
-                            acknowledgementMessageType, msa3);
+                    hl7Util.generateAcknowledgementPayload(
+                            consumerRunnable.getMllpBuffer(),
+                            originalHl7MessageBytes,
+                            acknowledgementMessageType,
+                            msa3);
 
                 } catch (MllpAcknowledgementGenerationException ackGenerationException) {
                     exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, ackGenerationException);
@@ -508,8 +534,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             for (int i = 0; i < originalHl7MessageBytes.length; ++i) {
                 if (MllpProtocolConstants.SEGMENT_DELIMITER == i) {
                     if (i + 7 < originalHl7MessageBytes.length // Make sure we don't run off the end of the message
-                            && bM == originalHl7MessageBytes[i + 1] && bS == originalHl7MessageBytes[i + 2]
-                            && bA == originalHl7MessageBytes[i + 3] && fieldSeparator == originalHl7MessageBytes[i + 4]) {
+                            && bM == originalHl7MessageBytes[i + 1]
+                            && bS == originalHl7MessageBytes[i + 2]
+                            && bA == originalHl7MessageBytes[i + 3]
+                            && fieldSeparator == originalHl7MessageBytes[i + 4]) {
                         if (fieldSeparator != originalHl7MessageBytes[i + 7]) {
                             log.warn("MSA-1 is longer than 2-bytes - ignoring trailing bytes");
                         }
@@ -518,10 +546,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         acknowledgmentTypeBytes[0] = originalHl7MessageBytes[i + 5];
                         acknowledgmentTypeBytes[1] = originalHl7MessageBytes[i + 6];
                         try {
-                            acknowledgementMessageType
-                                    = new String(acknowledgmentTypeBytes, ExchangeHelper.getCharsetName(exchange));
+                            acknowledgementMessageType =
+                                    new String(acknowledgmentTypeBytes, ExchangeHelper.getCharsetName(exchange));
                         } catch (IOException ioEx) {
-                            throw new RuntimeCamelException("Failed to convert acknowledgement message to string", ioEx);
+                            throw new RuntimeCamelException(
+                                    "Failed to convert acknowledgement message to string", ioEx);
                         }
 
                         // Verify it's a valid acknowledgement code
@@ -532,19 +561,22 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                 case bE:
                                     break;
                                 default:
-                                    log.warn("Invalid acknowledgement type [{}] found in message - should be AA, AE or AR",
+                                    log.warn(
+                                            "Invalid acknowledgement type [{}] found in message - should be AA, AE or AR",
                                             acknowledgementMessageType);
                             }
                         }
 
                         // if the MLLP_ACKNOWLEDGEMENT_TYPE property is set on the exchange, make sure it matches
-                        String acknowledgementTypeProperty
-                                = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
+                        String acknowledgementTypeProperty =
+                                exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
                         if (null != acknowledgementTypeProperty
                                 && !acknowledgementTypeProperty.equals(acknowledgementMessageType)) {
-                            log.warn("Acknowledgement type found in message [{}] does not match {} exchange property "
-                                     + "value [{}] - using value found in message",
-                                    acknowledgementMessageType, MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE,
+                            log.warn(
+                                    "Acknowledgement type found in message [{}] does not match {} exchange property "
+                                            + "value [{}] - using value found in message",
+                                    acknowledgementMessageType,
+                                    MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE,
                                     acknowledgementTypeProperty);
                         }
                     }
@@ -562,13 +594,19 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         // TODO:  re-evaluate this - it seems that the MLLP buffer should be populated by now
         if (consumerRunnable.getMllpBuffer().hasCompleteEnvelope()) {
             // The mllpBuffer will be used if bufferWrites is set or if auto acknowledgement is used
-            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT, consumerRunnable.getMllpBuffer().toMllpPayload());
-            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, consumerRunnable.getMllpBuffer().toHl7String(charset));
+            message.setHeader(
+                    MllpConstants.MLLP_ACKNOWLEDGEMENT,
+                    consumerRunnable.getMllpBuffer().toMllpPayload());
+            message.setHeader(
+                    MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING,
+                    consumerRunnable.getMllpBuffer().toHl7String(charset));
 
             // Send the acknowledgement
             if (log.isDebugEnabled()) {
-                log.debug("sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - Sending Acknowledgement: {}",
-                        originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length, exchange.getExchangeId(),
+                log.debug(
+                        "sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - Sending Acknowledgement: {}",
+                        originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length,
+                        exchange.getExchangeId(),
                         consumerRunnable.getSocket(),
                         consumerRunnable.getMllpBuffer().toPrintFriendlyHl7String());
             }
@@ -577,8 +615,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 consumerRunnable.getMllpBuffer().writeTo(consumerRunnable.getSocket());
             } catch (MllpSocketException acknowledgementDeliveryEx) {
                 Exception exchangeEx = new MllpAcknowledgementDeliveryException(
-                        "Failure delivering acknowledgment", originalHl7MessageBytes, acknowledgementMessageBytes,
-                        acknowledgementDeliveryEx, logPhi);
+                        "Failure delivering acknowledgment",
+                        originalHl7MessageBytes,
+                        acknowledgementMessageBytes,
+                        acknowledgementDeliveryEx,
+                        logPhi);
                 exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, acknowledgementDeliveryEx);
                 exchange.setException(exchangeEx);
             } finally {
@@ -591,8 +632,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             // Send the acknowledgement
             if (log.isDebugEnabled()) {
-                log.debug("sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - Sending Acknowledgement: {}",
-                        originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length, exchange.getExchangeId(),
+                log.debug(
+                        "sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - Sending Acknowledgement: {}",
+                        originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length,
+                        exchange.getExchangeId(),
                         consumerRunnable.getSocket(),
                         hl7Util.convertToPrintFriendlyString(acknowledgementMessageBytes));
             }
@@ -602,8 +645,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 consumerRunnable.getMllpBuffer().writeTo(consumerRunnable.getSocket());
             } catch (MllpSocketException acknowledgementDeliveryEx) {
                 Exception exchangeEx = new MllpAcknowledgementDeliveryException(
-                        "Failure delivering acknowledgment", originalHl7MessageBytes, acknowledgementMessageBytes,
-                        acknowledgementDeliveryEx, logPhi);
+                        "Failure delivering acknowledgment",
+                        originalHl7MessageBytes,
+                        acknowledgementMessageBytes,
+                        acknowledgementDeliveryEx,
+                        logPhi);
                 exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, acknowledgementDeliveryEx);
                 exchange.setException(exchangeEx);
             }
@@ -619,5 +665,4 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
         return "null";
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,8 +29,8 @@ public class MinaTcpTest extends BaseMinaTest {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader(String.format("mina:tcp://localhost:%1$s?sync=false&minaLogger=true", getPort()), body,
-                "cheese", 123);
+        template.sendBodyAndHeader(
+                String.format("mina:tcp://localhost:%1$s?sync=false&minaLogger=true", getPort()), body, "cheese", 123);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -40,8 +41,8 @@ public class MinaTcpTest extends BaseMinaTest {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader(String.format("mina:tcp://localhost:%1$s?sync=false&minaLogger=true", getPort()), body,
-                "cheese", 123);
+        template.sendBodyAndHeader(
+                String.format("mina:tcp://localhost:%1$s?sync=false&minaLogger=true", getPort()), body, "cheese", 123);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -52,7 +53,9 @@ public class MinaTcpTest extends BaseMinaTest {
 
             public void configure() {
                 fromF("mina:tcp://0.0.0.0:%1$s?sync=false&minaLogger=true", getPort())
-                        .to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
+                        .to("log:before?showAll=true")
+                        .to("mock:result")
+                        .to("log:after?showAll=true");
             }
         };
     }

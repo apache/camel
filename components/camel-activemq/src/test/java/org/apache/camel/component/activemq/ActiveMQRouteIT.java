@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -24,8 +27,6 @@ import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActiveMQRouteIT extends ActiveMQITSupport {
 
@@ -91,29 +92,17 @@ public class ActiveMQRouteIT extends ActiveMQITSupport {
     private static RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:jmsQueue")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("activemq:queue:jmsQueue").to("log:routing").to("mock:result");
 
-                from("activemq:queue:inOut")
-                        .setBody()
-                        .constant("response");
+                from("activemq:queue:inOut").setBody().constant("response");
 
-                from("activemq:topic:jmsTopic")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("activemq:topic:jmsTopic").to("log:routing").to("mock:result");
 
-                from("activemq:topic:jmsTopic")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("activemq:topic:jmsTopic").to("log:routing").to("mock:result");
 
-                from("activemq:queue:wildcard.>")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("activemq:queue:wildcard.>").to("log:routing").to("mock:result");
 
-                from("activemq:queue:uriEndpoint")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("activemq:queue:uriEndpoint").to("log:routing").to("mock:result");
             }
         };
     }

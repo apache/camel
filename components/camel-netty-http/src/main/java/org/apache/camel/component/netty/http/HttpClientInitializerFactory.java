@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.net.URI;
@@ -86,9 +87,11 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
 
         SslHandler sslHandler = configureClientSSLOnDemand();
         if (sslHandler != null) {
-            //TODO must close on SSL exception
-            //sslHandler.setCloseOnSSLException(true);
-            LOG.debug("Client SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
+            // TODO must close on SSL exception
+            // sslHandler.setCloseOnSSLException(true);
+            LOG.debug(
+                    "Client SSL handler configured and added as an interceptor against the ChannelPipeline: {}",
+                    sslHandler);
             pipeline.addLast("ssl", sslHandler);
         }
 
@@ -105,10 +108,12 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
 
         if (producer.getConfiguration().getRequestTimeout() > 0) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Using request timeout {} millis", producer.getConfiguration().getRequestTimeout());
+                LOG.trace(
+                        "Using request timeout {} millis",
+                        producer.getConfiguration().getRequestTimeout());
             }
-            ChannelHandler timeout
-                    = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+            ChannelHandler timeout =
+                    new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
             pipeline.addLast("timeout", timeout);
         }
 
@@ -144,12 +149,15 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
                 sniServerNames = answer.getSupportedSSLParameters().getServerNames();
             }
         } else {
-            char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
+            char[] pw = configuration.getPassphrase() != null
+                    ? configuration.getPassphrase().toCharArray()
+                    : null;
 
             SSLEngineFactory sslEngineFactory;
             if (configuration.getKeyStoreResource() != null || configuration.getTrustStoreResource() != null) {
                 sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(producer.getContext(),
+                answer = sslEngineFactory.createSSLContext(
+                        producer.getContext(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         configuration.getKeyStoreResource(),
@@ -175,20 +183,20 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             SSLEngine engine = sslContext.createSSLEngine(uri.getHost(), uri.getPort());
             engine.setUseClientMode(true);
             SSLParameters sslParameters = engine.getSSLParameters();
-            sslParameters
-                    .setServerNames(sniServerNames != null ? sniServerNames : List.of(new SNIHostName(uri.getHost())));
+            sslParameters.setServerNames(
+                    sniServerNames != null ? sniServerNames : List.of(new SNIHostName(uri.getHost())));
             if (producer.getConfiguration().isHostnameVerification()) {
                 sslParameters.setEndpointIdentificationAlgorithm("HTTPS");
             }
             engine.setSSLParameters(sslParameters);
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
-                engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
+                engine.setEnabledProtocols(
+                        producer.getConfiguration().getEnabledProtocols().split(","));
             }
             return new SslHandler(engine);
         }
 
         return null;
     }
-
 }

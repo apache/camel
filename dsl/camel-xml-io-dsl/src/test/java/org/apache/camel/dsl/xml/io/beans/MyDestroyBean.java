@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io.beans;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -59,5 +60,4 @@ public class MyDestroyBean {
     public void destroyMe() {
         destroyCalled.set(true);
     }
-
 }

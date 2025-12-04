@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
+
+import static org.junit.jupiter.api.condition.OS.LINUX;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -38,8 +41,6 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.condition.OS.LINUX;
-
 public class RunCommandITCase extends JBangTestSupport {
 
     @Test
@@ -62,8 +63,8 @@ public class RunCommandITCase extends JBangTestSupport {
     public void runRoutesFromMultipleFilesTest() throws IOException {
         initFileInDataFolder("route1.yaml");
         copyResourceInDataFolder(TestResources.ROUTE2);
-        executeBackground(String.format("run %s/route1.yaml %s/%s",
-                mountPoint(), mountPoint(), TestResources.ROUTE2.getName()));
+        executeBackground(
+                String.format("run %s/route1.yaml %s/%s", mountPoint(), mountPoint(), TestResources.ROUTE2.getName()));
 
         checkLogContains(DEFAULT_MSG);
         checkLogContains("Hello Camel from custom integration");
@@ -137,10 +138,10 @@ public class RunCommandITCase extends JBangTestSupport {
 
     @Test
     public void runDownloadedInDirectoryFromGithubTest() {
-        execute("init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection --directory="
-                + mountPoint());
-        Assertions
-                .assertThat(Paths.get(getDataFolder()).toFile().listFiles())
+        execute(
+                "init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection --directory="
+                        + mountPoint());
+        Assertions.assertThat(Paths.get(getDataFolder()).toFile().listFiles())
                 .as("custom route directory")
                 .extracting("name")
                 .containsExactlyInAnyOrder("Echo.java", "Hello.java", "README.adoc", "application.properties");
@@ -149,11 +150,15 @@ public class RunCommandITCase extends JBangTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "4.0.0", "4.2.0" })
-    @DisabledIfSystemProperty(named = CliProperties.FORCE_RUN_VERSION, matches = ".+", disabledReason = "Due to CAMEL-20426")
+    @ValueSource(strings = {"4.0.0", "4.2.0"})
+    @DisabledIfSystemProperty(
+            named = CliProperties.FORCE_RUN_VERSION,
+            matches = ".+",
+            disabledReason = "Due to CAMEL-20426")
     public void runSpecificVersionTest(String version) {
         initFileInDataFolder("cheese.xml");
-        final String pid = executeBackground(String.format("run %s/cheese.xml --camel-version=%s", mountPoint(), version));
+        final String pid =
+                executeBackground(String.format("run %s/cheese.xml --camel-version=%s", mountPoint(), version));
         checkLogContainsPattern(String.format(" Apache Camel %s .* started", version));
         checkLogContains(DEFAULT_MSG);
         execute("stop " + pid);
@@ -162,8 +167,7 @@ public class RunCommandITCase extends JBangTestSupport {
     @Test
     public void runCamelKCRDTest() throws IOException {
         copyResourceInDataFolder(TestResources.JOKE);
-        executeBackground(String.format("run %s/%s",
-                mountPoint(), TestResources.JOKE.getName()));
+        executeBackground(String.format("run %s/%s", mountPoint(), TestResources.JOKE.getName()));
         checkLogContainsAllOf("timer://chuck", "log-sink");
     }
 
@@ -174,22 +178,29 @@ public class RunCommandITCase extends JBangTestSupport {
         Assumptions.assumeTrue(execInHost("command -v ssh").contains("ssh"));
         Assumptions.assumeTrue(execInHost("command -v sshpass").contains("sshpass"));
         final String msg = "Hello World " + new Date();
-        Toolkit.getDefaultToolkit().getSystemClipboard()
-                .setContents(new StringSelection(
-                        String.format("<route><from uri=\"timer:foo\"/><log message=\"%s\"/></route>", msg)), null);
+        Toolkit.getDefaultToolkit()
+                .getSystemClipboard()
+                .setContents(
+                        new StringSelection(
+                                String.format("<route><from uri=\"timer:foo\"/><log message=\"%s\"/></route>", msg)),
+                        null);
         final ProcessBuilder builder = new ProcessBuilder(
-                "/bin/bash", "-c",
-                "sshpass -p '" + containerService.getSshPassword()
-                                   + "' ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -X jbang@localhost -p "
-                                   + containerService.getSshPort()
-                                   + " \"camel run clipboard.xml --background && camel log\"")
+                        "/bin/bash",
+                        "-c",
+                        "sshpass -p '" + containerService.getSshPassword()
+                                + "' ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -X jbang@localhost -p "
+                                + containerService.getSshPort()
+                                + " \"camel run clipboard.xml --background && camel log\"")
                 .redirectErrorStream(true);
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(builder.start().getInputStream()))) {
+        try (BufferedReader input =
+                new BufferedReader(new InputStreamReader(builder.start().getInputStream()))) {
             Assertions.assertThatCode(() -> Awaitility.await()
-                    .pollInterval(Duration.ofSeconds(1))
-                    .atMost(Duration.ofMinutes(1))
-                    .untilAsserted(() -> Assertions.assertThat(input.lines()
-                            .anyMatch(line -> line.contains("generated-clipboard.xml") && line.contains(msg))).isTrue()))
+                            .pollInterval(Duration.ofSeconds(1))
+                            .atMost(Duration.ofMinutes(1))
+                            .untilAsserted(() -> Assertions.assertThat(input.lines()
+                                            .anyMatch(line ->
+                                                    line.contains("generated-clipboard.xml") && line.contains(msg)))
+                                    .isTrue()))
                     .as("Check application log")
                     .doesNotThrowAnyException();
         }

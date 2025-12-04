@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github;
 
 import org.apache.camel.BindToRegistry;
@@ -36,12 +37,16 @@ public abstract class GitHubComponentTestBase extends CamelTestSupport {
 
     @BindToRegistry(GitHubConstants.GITHUB_COMMIT_SERVICE)
     protected MockCommitService commitService = new MockCommitService();
+
     @BindToRegistry(GitHubConstants.GITHUB_REPOSITORY_SERVICE)
     protected MockRepositoryService repositoryService = new MockRepositoryService();
+
     @BindToRegistry(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE)
     protected MockPullRequestService pullRequestService = new MockPullRequestService();
+
     @BindToRegistry(GitHubConstants.GITHUB_ISSUE_SERVICE)
     protected MockIssueService issueService = new MockIssueService(pullRequestService);
+
     @BindToRegistry(GitHubConstants.GITHUB_EVENT_SERVICE)
     protected MockEventService eventService = new MockEventService();
 

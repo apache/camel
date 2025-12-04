@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,8 +37,6 @@ import org.apache.camel.support.DefaultDataFormat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests if the default camel context is able to resolve components and data formats using both their real names and/or
@@ -226,5 +227,4 @@ public class DefaultCamelContextResolverTest {
             this.fallback = fallback;
         }
     }
-
 }

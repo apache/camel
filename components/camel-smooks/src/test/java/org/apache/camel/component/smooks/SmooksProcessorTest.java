@@ -14,7 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks;
+
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -26,6 +43,8 @@ import java.util.Map;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
+
+import org.xmlunit.builder.DiffBuilder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
@@ -53,23 +72,6 @@ import org.smooks.io.sink.StringSink;
 import org.smooks.io.source.StreamSource;
 import org.smooks.io.source.StringSource;
 import org.smooks.support.StreamUtils;
-import org.xmlunit.builder.DiffBuilder;
-
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SmooksProcessorTest extends CamelTestSupport {
 
@@ -93,10 +95,15 @@ public class SmooksProcessorTest extends CamelTestSupport {
         assertIsSatisfied();
 
         Exchange exchange = result.assertExchangeReceived(0);
-        assertNotNull(exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class));
+        assertNotNull(
+                exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class));
         assertIsInstanceOf(InputStreamCache.class, exchange.getIn().getBody());
-        assertFalse(DiffBuilder.compare(getExpectedOrderXml()).withTest(exchange.getIn().getBody(String.class)).ignoreComments()
-                .ignoreWhitespace().build().hasDifferences());
+        assertFalse(DiffBuilder.compare(getExpectedOrderXml())
+                .withTest(exchange.getIn().getBody(String.class))
+                .ignoreComments()
+                .ignoreWhitespace()
+                .build()
+                .hasDifferences());
     }
 
     @Test
@@ -107,8 +114,9 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessUsesExistingExecutionContextWhenExecutionContextIsInHeaderAndAllowExecutionContextFromHeaderIsTrue()
-            throws Exception {
+    public void
+            testProcessUsesExistingExecutionContextWhenExecutionContextIsInHeaderAndAllowExecutionContextFromHeaderIsTrue()
+                    throws Exception {
         Smooks smooks = new Smooks();
         SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
         processor.setSmooksFactory(new SmooksFactory() {
@@ -141,7 +149,6 @@ public class SmooksProcessorTest extends CamelTestSupport {
                         .process(processor)
                         .to("mock:result");
             }
-
         });
         context.start();
         template.sendBody("direct://input", getOrderEdi());
@@ -151,8 +158,9 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessDoesNotUseExistingExecutionContextWhenExecutionContextIsInHeaderAndAllowExecutionContextFromHeaderIsFalse()
-            throws Exception {
+    public void
+            testProcessDoesNotUseExistingExecutionContextWhenExecutionContextIsInHeaderAndAllowExecutionContextFromHeaderIsFalse()
+                    throws Exception {
         Smooks smooks = new Smooks();
         SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
         processor.setSmooksFactory(new SmooksFactory() {
@@ -185,7 +193,6 @@ public class SmooksProcessorTest extends CamelTestSupport {
                         .process(processor)
                         .to("mock:result");
             }
-
         });
         context.start();
         template.sendBody("direct://input", getOrderEdi());
@@ -195,8 +202,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessWhenLazyStartProducerIsFalse()
-            throws Exception {
+    public void testProcessWhenLazyStartProducerIsFalse() throws Exception {
         Smooks smooks = new Smooks();
         SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
         processor.setSmooksFactory(new SmooksFactory() {
@@ -220,18 +226,20 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:input")
-                        .process(processor);
+                from("direct:input").process(processor);
             }
-
         });
         context.start();
-        assertEquals(1, smooks.getApplicationContext().getRegistry().lookup(new InstanceLookup<>(EdiParser.class)).size());
+        assertEquals(
+                1,
+                smooks.getApplicationContext()
+                        .getRegistry()
+                        .lookup(new InstanceLookup<>(EdiParser.class))
+                        .size());
     }
 
     @Test
-    public void testProcessWhenLazyStartProducerIsTrue()
-            throws Exception {
+    public void testProcessWhenLazyStartProducerIsTrue() throws Exception {
         Smooks smooks = new Smooks();
         SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
         processor.setSmooksFactory(new SmooksFactory() {
@@ -255,13 +263,16 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:input")
-                        .process(processor);
+                from("direct:input").process(processor);
             }
-
         });
         context.start();
-        assertEquals(0, smooks.getApplicationContext().getRegistry().lookup(new InstanceLookup<>(EdiParser.class)).size());
+        assertEquals(
+                0,
+                smooks.getApplicationContext()
+                        .getRegistry()
+                        .lookup(new InstanceLookup<>(EdiParser.class))
+                        .size());
     }
 
     @Test
@@ -276,8 +287,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
 
         template.send("direct://input", exchange);
 
-        final DataHandler datahandler
-                = result.assertExchangeReceived(0).getIn(AttachmentMessage.class).getAttachment(attachmentId);
+        final DataHandler datahandler =
+                result.assertExchangeReceived(0).getIn(AttachmentMessage.class).getAttachment(attachmentId);
         assertThat(datahandler, is(notNullValue()));
         assertThat(datahandler.getContent(), is(instanceOf(ByteArrayInputStream.class)));
 
@@ -305,10 +316,11 @@ public class SmooksProcessorTest extends CamelTestSupport {
                 from("direct:a")
                         .process(new SmooksProcessor(smooks, context)
                                 .addVisitor(new Value(
-                                        "customer", "/order/header/customer", String.class,
+                                        "customer",
+                                        "/order/header/customer",
+                                        String.class,
                                         smooks.getApplicationContext().getRegistry())));
             }
-
         });
         enableJMX();
         context.start();
@@ -338,9 +350,11 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(createEdiToXmlRouteBuilder());
         context.start();
 
-        RuntimeException runtimeException
-                = assertThrows(RuntimeException.class, () -> template.sendBody("direct://input", new Object()));
-        assertEquals(InvalidPayloadException.class, runtimeException.getCause().getCause().getClass());
+        RuntimeException runtimeException =
+                assertThrows(RuntimeException.class, () -> template.sendBody("direct://input", new Object()));
+        assertEquals(
+                InvalidPayloadException.class,
+                runtimeException.getCause().getCause().getClass());
     }
 
     @Test
@@ -352,14 +366,17 @@ public class SmooksProcessorTest extends CamelTestSupport {
         template.sendBody("direct://input", getOrderEdi());
 
         Exchange exchange = result.assertExchangeReceived(0);
-        ExecutionContext executionContext
-                = exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class);
-        Object camelContextRef
-                = executionContext.getApplicationContext().getRegistry()
-                        .lookup(registryEntries -> registryEntries.entrySet().stream()
-                                .filter(e -> e.getKey().equals(CamelContext.class)).findFirst().get().getValue());
+        ExecutionContext executionContext =
+                exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class);
+        Object camelContextRef = executionContext
+                .getApplicationContext()
+                .getRegistry()
+                .lookup(registryEntries -> registryEntries.entrySet().stream()
+                        .filter(e -> e.getKey().equals(CamelContext.class))
+                        .findFirst()
+                        .get()
+                        .getValue());
         assertInstanceOf(NotAppContextScoped.Ref.class, camelContextRef);
-
     }
 
     @Test
@@ -392,13 +409,16 @@ public class SmooksProcessorTest extends CamelTestSupport {
                 from("direct:a")
                         .process(new SmooksProcessor(smooks, context)
                                 .addVisitor(new Value(
-                                        "x", "/coord/@x", Integer.class, smooks.getApplicationContext().getRegistry())));
+                                        "x",
+                                        "/coord/@x",
+                                        Integer.class,
+                                        smooks.getApplicationContext().getRegistry())));
             }
         });
         enableJMX();
         context.start();
-        Exchange response
-                = template.request("direct:a", exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' />")));
+        Exchange response = template.request(
+                "direct:a", exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' />")));
         assertEquals(1234, response.getMessage().getBody(Integer.class));
     }
 
@@ -408,14 +428,23 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:b").process(new SmooksProcessor(smooks, context)
-                        .addVisitor(new Value("x", "/coord/@x", Integer.class, smooks.getApplicationContext().getRegistry()))
-                        .addVisitor(new Value("y", "/coord/@y", Double.class, smooks.getApplicationContext().getRegistry())));
+                from("direct:b")
+                        .process(new SmooksProcessor(smooks, context)
+                                .addVisitor(new Value(
+                                        "x",
+                                        "/coord/@x",
+                                        Integer.class,
+                                        smooks.getApplicationContext().getRegistry()))
+                                .addVisitor(new Value(
+                                        "y",
+                                        "/coord/@y",
+                                        Double.class,
+                                        smooks.getApplicationContext().getRegistry())));
             }
         });
         context.start();
-        Exchange response = template.request("direct:b",
-                exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' y='98765.76' />")));
+        Exchange response = template.request(
+                "direct:b", exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' y='98765.76' />")));
         Map javaResult = response.getOut().getBody(Map.class);
         Integer x = (Integer) javaResult.get("x");
         assertEquals(1234, (int) x);
@@ -429,14 +458,19 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:c").process(new SmooksProcessor(smooks, context)
-                        .addVisitor(new Bean(Coordinate.class, "coordinate", smooks.getApplicationContext().getRegistry())
-                                .bindTo("x", "/coord/@x").bindTo("y", "/coord/@y")));
+                from("direct:c")
+                        .process(new SmooksProcessor(smooks, context)
+                                .addVisitor(new Bean(
+                                                Coordinate.class,
+                                                "coordinate",
+                                                smooks.getApplicationContext().getRegistry())
+                                        .bindTo("x", "/coord/@x")
+                                        .bindTo("y", "/coord/@y")));
             }
         });
         context.start();
-        Exchange response = template.request("direct:c",
-                exchange -> exchange.getIn().setBody(new StringSource("<coord x='111' y='222' />")));
+        Exchange response = template.request(
+                "direct:c", exchange -> exchange.getIn().setBody(new StringSource("<coord x='111' y='222' />")));
 
         Coordinate coord = response.getMessage().getBody(Coordinate.class);
 
@@ -504,7 +538,6 @@ public class SmooksProcessorTest extends CamelTestSupport {
 
         private StringDataSource(final String string) {
             this.string = string;
-
         }
 
         public String getContentType() {
@@ -522,6 +555,5 @@ public class SmooksProcessorTest extends CamelTestSupport {
         public OutputStream getOutputStream() throws IOException {
             throw new IOException("Method 'getOutputStream' is not implemented");
         }
-
     }
 }

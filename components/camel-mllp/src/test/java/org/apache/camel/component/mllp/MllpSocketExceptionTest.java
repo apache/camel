@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mllp;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mllp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the class.
@@ -53,5 +54,4 @@ public class MllpSocketExceptionTest extends MllpExceptionTestSupport {
         assertNotNull(instance.getCause());
         assertEquals(TEST_EXCEPTION_MESSAGE, instance.getMessage());
     }
-
 }

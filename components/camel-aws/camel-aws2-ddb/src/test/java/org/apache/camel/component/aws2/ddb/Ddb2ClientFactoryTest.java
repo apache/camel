@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
 import org.apache.camel.component.aws2.ddb.client.Ddb2InternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws2.ddb.client.impl.Ddb2ClientIAMOptimizedImp
 import org.apache.camel.component.aws2.ddb.client.impl.Ddb2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.ddb.client.impl.Ddb2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Ddb2ClientFactoryTest {
 

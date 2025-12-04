@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -38,14 +39,14 @@ public class ZipSplitterRouteTest extends CamelTestSupport {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data?delay=1000&noop=true")
                         .log("Start processing big file: ${header.CamelFileName}")
-                        .split(new ZipSplitter()).streaming()
+                        .split(new ZipSplitter())
+                        .streaming()
                         .to("log:entry")
-                        .convertBodyTo(String.class).to("mock:processZipEntry")
+                        .convertBodyTo(String.class)
+                        .to("mock:processZipEntry")
                         .end()
                         .log("Done processing big file: ${header.CamelFileName}");
             }
         };
-
     }
-
 }

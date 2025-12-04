@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -33,10 +38,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.WINDOWS)
 public class FileProducerChmodOptionTest extends ContextTestSupport {
@@ -60,7 +61,8 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:write" + routeSuffix, testFileContent, Exchange.FILE_NAME, testFileName);
 
-        Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(testFile(testFileName), LinkOption.NOFOLLOW_LINKS);
+        Set<PosixFilePermission> permissions =
+                Files.getPosixFilePermissions(testFile(testFileName), LinkOption.NOFOLLOW_LINKS);
         assertEquals(expectedPermissions, PosixFilePermissions.toString(permissions));
         assertEquals(expectedPermissions.replace("-", "").length(), permissions.size());
 
@@ -69,18 +71,24 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
 
     @Test
     public void testInvalidChmod() {
-        FailedToCreateRouteException e = assertThrows(FailedToCreateRouteException.class, () -> {
-            context.addRoutes(new RouteBuilder() {
+        FailedToCreateRouteException e = assertThrows(
+                FailedToCreateRouteException.class,
+                () -> {
+                    context.addRoutes(new RouteBuilder() {
 
-                @Override
-                public void configure() {
-                    from("direct:writeBadChmod1").to(fileUri("?chmod=abc")).to("mock:badChmod1");
-                }
-            });
-        }, "Expected FailedToCreateRouteException");
+                        @Override
+                        public void configure() {
+                            from("direct:writeBadChmod1")
+                                    .to(fileUri("?chmod=abc"))
+                                    .to("mock:badChmod1");
+                        }
+                    });
+                },
+                "Expected FailedToCreateRouteException");
 
         assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-        PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
+        PropertyBindingException pbe =
+                assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
         assertEquals("chmod", pbe.getPropertyName());
         IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, pbe.getCause());
         assertTrue(iae.getMessage().contains("chmod option [abc] is not valid"));

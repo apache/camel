@@ -32,7 +32,5 @@ public class NoOpPartitionAssignmentAdapter implements PartitionAssignmentAdapte
 
     @SuppressWarnings("unused")
     @Override
-    public void handlePartitionAssignment() {
-
-    }
+    public void handlePartitionAssignment() {}
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
 
@@ -65,8 +66,12 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(5).maximumRedeliveryDelay(1000)
-                        .backOffMultiplier(1).asyncDelayedRedelivery();
+                onException(Exception.class)
+                        .redeliveryDelay(10)
+                        .maximumRedeliveries(5)
+                        .maximumRedeliveryDelay(1000)
+                        .backOffMultiplier(1)
+                        .asyncDelayedRedelivery();
 
                 from("seda://input").bean(ProblematicBean.class).to("seda://output");
             }
@@ -83,5 +88,4 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
             }
         }
     }
-
 }

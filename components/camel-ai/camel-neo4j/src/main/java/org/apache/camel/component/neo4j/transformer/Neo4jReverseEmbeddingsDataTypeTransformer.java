@@ -29,8 +29,10 @@ import org.apache.camel.spi.Transformer;
 /**
  * Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG
  **/
-@DataTypeTransformer(name = "neo4j:rag",
-                     description = "Prepares the similarity search LangChain4j embeddings to become a List of String for LangChain4j RAG")
+@DataTypeTransformer(
+        name = "neo4j:rag",
+        description =
+                "Prepares the similarity search LangChain4j embeddings to become a List of String for LangChain4j RAG")
 public class Neo4jReverseEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
@@ -42,6 +44,5 @@ public class Neo4jReverseEmbeddingsDataTypeTransformer extends Transformer {
                 .collect(Collectors.toList());
 
         message.setBody(result);
-
     }
 }

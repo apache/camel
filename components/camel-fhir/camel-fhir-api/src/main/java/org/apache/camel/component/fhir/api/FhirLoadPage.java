@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.Map;
@@ -73,10 +74,10 @@ public class FhirLoadPage {
      * @param  returnType      the return type
      * @return                 the {@link IBaseBundle} page
      */
-    public <T extends IBaseBundle> T byUrl(String url, Class<T> returnType, Map<ExtraParameters, Object> extraParameters) {
+    public <T extends IBaseBundle> T byUrl(
+            String url, Class<T> returnType, Map<ExtraParameters, Object> extraParameters) {
         IGetPageTyped<T> getPageTyped = client.loadPage().byUrl(url).andReturnBundle(returnType);
         ExtraParameters.process(extraParameters, getPageTyped);
         return getPageTyped.execute();
     }
-
 }

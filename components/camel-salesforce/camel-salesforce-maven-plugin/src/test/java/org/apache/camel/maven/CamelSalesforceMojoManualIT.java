@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -33,9 +37,6 @@ import com.google.testing.compile.JavaFileObjects;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CamelSalesforceMojoManualIT {
 
@@ -56,12 +57,13 @@ public class CamelSalesforceMojoManualIT {
         // test that the generated sources can be compiled
         try (Stream<Path> list = Files.list(packagePath)) {
             final List<JavaFileObject> sources = list.map(p -> {
-                try {
-                    return JavaFileObjects.forResource(p.toUri().toURL());
-                } catch (final MalformedURLException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }).collect(Collectors.toList());
+                        try {
+                            return JavaFileObjects.forResource(p.toUri().toURL());
+                        } catch (final MalformedURLException e) {
+                            throw new IllegalArgumentException(e);
+                        }
+                    })
+                    .collect(Collectors.toList());
             final Compilation compilation = Compiler.javac().compile(sources);
             assertThat(compilation.status()).isEqualTo(Status.SUCCESS);
         }

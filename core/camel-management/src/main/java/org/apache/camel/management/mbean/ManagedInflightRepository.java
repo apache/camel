@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
@@ -78,8 +79,8 @@ public class ManagedInflightRepository extends ManagedService implements Managed
     public TabularData browse(String routeId, int limit, boolean sortByLongestDuration) {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listInflightExchangesTabularType());
-            Collection<InflightRepository.InflightExchange> exchanges
-                    = inflightRepository.browse(routeId, limit, sortByLongestDuration);
+            Collection<InflightRepository.InflightExchange> exchanges =
+                    inflightRepository.browse(routeId, limit, sortByLongestDuration);
 
             for (InflightRepository.InflightExchange entry : exchanges) {
                 CompositeType ct = CamelOpenMBeanTypes.listInflightExchangesCompositeType();
@@ -103,7 +104,7 @@ public class ManagedInflightRepository extends ManagedService implements Managed
 
         return new CompositeDataSupport(
                 ct,
-                new String[] { "exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration" },
-                new Object[] { exchangeId, fromRouteId, atRouteId, nodeId, elapsed, duration });
+                new String[] {"exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration"},
+                new Object[] {exchangeId, fromRouteId, atRouteId, nodeId, elapsed, duration});
     }
 }

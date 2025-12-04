@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.w3c.dom.NodeList;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XPathFunctionTest extends ContextTestSupport {
 
@@ -62,11 +63,11 @@ public class XPathFunctionTest extends ContextTestSupport {
 
     @Test
     public void testSetXpathProperty() throws Exception {
-        String body
-                = "<soapenv:Body xmlns:ns=\"http://myNamespace\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                  + "<ns:Addresses> <Address>address1</Address>"
-                  + " <Address>address2</Address> <Address>address3</Address>"
-                  + " <Address>address4</Address> </ns:Addresses> </soapenv:Body>";
+        String body =
+                "<soapenv:Body xmlns:ns=\"http://myNamespace\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                        + "<ns:Addresses> <Address>address1</Address>"
+                        + " <Address>address2</Address> <Address>address3</Address>"
+                        + " <Address>address4</Address> </ns:Addresses> </soapenv:Body>";
         end.reset();
         end.expectedMessageCount(1);
         template.sendBody("direct:setProperty", body);
@@ -74,7 +75,6 @@ public class XPathFunctionTest extends ContextTestSupport {
         Exchange exchange = end.getExchanges().get(0);
         NodeList nodeList = exchange.getProperty("Addresses", NodeList.class);
         assertNotNull(nodeList, "The node list should not be null");
-
     }
 
     protected void sendMessage(final Object headerValue, final Object body) {
@@ -98,13 +98,23 @@ public class XPathFunctionTest extends ContextTestSupport {
             public void configure() {
 
                 // START SNIPPET: ex
-                from("direct:start").choice().when().xpath("in:header('foo') = 'bar'").to("mock:x").when()
-                        .xpath("in:body() = '<two/>'").to("mock:y").otherwise().to("mock:z");
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .xpath("in:header('foo') = 'bar'")
+                        .to("mock:x")
+                        .when()
+                        .xpath("in:body() = '<two/>'")
+                        .to("mock:y")
+                        .otherwise()
+                        .to("mock:z");
                 // END SNIPPET: ex
 
-                from("direct:setProperty").setProperty("Addresses").xpath("//Address", NodeList.class).to("mock:end");
+                from("direct:setProperty")
+                        .setProperty("Addresses")
+                        .xpath("//Address", NodeList.class)
+                        .to("mock:end");
             }
         };
     }
-
 }

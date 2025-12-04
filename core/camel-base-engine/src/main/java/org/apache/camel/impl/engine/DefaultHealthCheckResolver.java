@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
@@ -68,9 +69,8 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver {
             if (HealthCheck.class.isAssignableFrom(type)) {
                 return (HealthCheck) camelContext.getInjector().newInstance(type, false);
             } else {
-                throw new IllegalArgumentException(
-                        "Resolving health-check: " + id + " detected type conflict: Not a HealthCheck implementation. Found: "
-                                                   + type.getName());
+                throw new IllegalArgumentException("Resolving health-check: " + id
+                        + " detected type conflict: Not a HealthCheck implementation. Found: " + type.getName());
             }
         }
 
@@ -80,8 +80,9 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver {
     @Override
     public HealthCheckRepository resolveHealthCheckRepository(String id) {
         // lookup in registry first
-        HealthCheckRepository answer
-                = camelContext.getRegistry().lookupByNameAndType(id + "-health-check-repository", HealthCheckRepository.class);
+        HealthCheckRepository answer = camelContext
+                .getRegistry()
+                .lookupByNameAndType(id + "-health-check-repository", HealthCheckRepository.class);
         if (answer == null) {
             answer = camelContext.getRegistry().lookupByNameAndType(id, HealthCheckRepository.class);
         }
@@ -102,10 +103,9 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver {
             if (HealthCheckRepository.class.isAssignableFrom(type)) {
                 return (HealthCheckRepository) camelContext.getInjector().newInstance(type, false);
             } else {
-                throw new IllegalArgumentException(
-                        "Resolving health-check-repository: " + id
-                                                   + " detected type conflict: Not a HealthCheckRepository implementation. Found: "
-                                                   + type.getName());
+                throw new IllegalArgumentException("Resolving health-check-repository: " + id
+                        + " detected type conflict: Not a HealthCheckRepository implementation. Found: "
+                        + type.getName());
             }
         }
 
@@ -125,5 +125,4 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver {
         }
         return healthCheckFactory.findOptionalClass(name + "-repository").orElse(null);
     }
-
 }

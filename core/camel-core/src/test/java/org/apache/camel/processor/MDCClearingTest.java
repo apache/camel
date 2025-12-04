@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,9 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MDCClearingTest extends ContextTestSupport {
 
@@ -92,11 +93,9 @@ public class MDCClearingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test-sync")
-                        .process(new MySyncProcessor("STEP 1"));
+                from("direct:test-sync").process(new MySyncProcessor("STEP 1"));
 
-                from("direct:test-async")
-                        .process(new MyAsyncProcessor("STEP 2"));
+                from("direct:test-async").process(new MyAsyncProcessor("STEP 2"));
 
                 from("direct:test-mixed")
                         .process(new MyAsyncProcessor("STEP 3"))

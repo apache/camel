@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.univocity;
+
+import static java.lang.System.lineSeparator;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static java.lang.System.lineSeparator;
 
 /**
  * This class provides utility methods for the unit tests

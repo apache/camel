@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,20 +31,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlProducerAndInTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class SqlProducerAndInTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        template.requestBodyAndHeader("direct:query", "ASF", "names", new String[] { "Camel", "AMQ" });
+        template.requestBodyAndHeader("direct:query", "ASF", "names", new String[] {"Camel", "AMQ"});
 
         MockEndpoint.assertIsSatisfied(context);
 

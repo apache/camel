@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.saga;
 
 import org.apache.camel.CamelContext;
@@ -38,8 +39,7 @@ public class SagaProcessorBuilder {
 
     private SagaCompletionMode completionMode;
 
-    public SagaProcessorBuilder() {
-    }
+    public SagaProcessorBuilder() {}
 
     public SagaProcessorBuilder camelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -93,5 +93,4 @@ public class SagaProcessorBuilder {
                 throw new IllegalStateException("Unsupported propagation mode: " + propagation);
         }
     }
-
 }

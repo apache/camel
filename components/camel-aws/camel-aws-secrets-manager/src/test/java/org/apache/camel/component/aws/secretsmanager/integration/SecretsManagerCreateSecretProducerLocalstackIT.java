@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class SecretsManagerCreateSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {

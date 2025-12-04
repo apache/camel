@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,12 +46,18 @@ public class RouteNodePrefixIdDuplicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo").nodePrefixId("aaa")
-                        .to("mock:foo").id("myMock")
+                from("direct:foo")
+                        .routeId("foo")
+                        .nodePrefixId("aaa")
+                        .to("mock:foo")
+                        .id("myMock")
                         .to("seda:foo");
 
-                from("direct:bar").nodePrefixId("bbb").routeId("bar")
-                        .to("mock:bar").id("myMock")
+                from("direct:bar")
+                        .nodePrefixId("bbb")
+                        .routeId("bar")
+                        .to("mock:bar")
+                        .id("myMock")
                         .to("seda:bar");
             }
         };

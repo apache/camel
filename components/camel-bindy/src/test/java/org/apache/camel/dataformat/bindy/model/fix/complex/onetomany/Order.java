@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.fix.complex.onetomany;
 
 import java.util.Date;
@@ -130,5 +131,4 @@ public class Order {
         }
         return temp.toString();
     }
-
 }

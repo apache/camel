@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -25,7 +26,7 @@ public class FtpConsumerNotEagerMaxMessagesPerPollIT extends FtpServerTestSuppor
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/poll/?password=admin&delay=6000&delete=true"
-               + "&sortBy=file:name&maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false";
+                + "&sortBy=file:name&maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false";
     }
 
     @Override

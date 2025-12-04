@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -39,17 +40,12 @@ public class KameletSinkDeadLetterChannelTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("fail")
-                        .from("kamelet:source")
-                        .throwException(new IllegalArgumentException("Forced"));
+                routeTemplate("fail").from("kamelet:source").throwException(new IllegalArgumentException("Forced"));
 
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").routeId("start")
-                        .to("kamelet:fail")
-                        .to("mock:result");
+                from("direct:start").routeId("start").to("kamelet:fail").to("mock:result");
             }
         };
     }
-
 }

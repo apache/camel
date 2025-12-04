@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.StringReader;
 import java.net.URI;
@@ -35,8 +38,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslXmlGeneratorV3Test {
 
@@ -62,7 +63,8 @@ public class RestDslXmlGeneratorV3Test {
 
             final Document document = builder.parse(new InputSource(new StringReader(xml)));
 
-            assertThat(document.isDefaultNamespace("http://camel.apache.org/schema/xml-io")).isTrue();
+            assertThat(document.isDefaultNamespace("http://camel.apache.org/schema/xml-io"))
+                    .isTrue();
         }
     }
 
@@ -71,7 +73,9 @@ public class RestDslXmlGeneratorV3Test {
         try (CamelContext context = new DefaultCamelContext()) {
             final String xml = RestDslGenerator.toXml(document).generate(context);
 
-            final URI file = RestDslXmlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreXml.txt").toURI();
+            final URI file = RestDslXmlGeneratorV3Test.class
+                    .getResource("/OpenApiV3PetstoreXml.txt")
+                    .toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
             assertThat(xml).isXmlEqualTo(expectedContent);
@@ -86,7 +90,9 @@ public class RestDslXmlGeneratorV3Test {
                     .withRestContextPath("/foo")
                     .generate(context);
 
-            final URI file = RestDslXmlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponentXml.txt").toURI();
+            final URI file = RestDslXmlGeneratorV3Test.class
+                    .getResource("/OpenApiV3PetstoreWithRestComponentXml.txt")
+                    .toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             assertThat(xml).isXmlEqualTo(expectedContent);
         }
@@ -94,7 +100,7 @@ public class RestDslXmlGeneratorV3Test {
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        document = new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/openapi-spec.json");
+        document =
+                new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/openapi-spec.json");
     }
-
 }

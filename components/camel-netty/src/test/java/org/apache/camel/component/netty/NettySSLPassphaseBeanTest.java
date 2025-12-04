@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettySSLPassphaseBeanTest extends BaseNettyTest {
@@ -43,20 +44,19 @@ public class NettySSLPassphaseBeanTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
-                                exchange.getMessage().setBody(
-                                        "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                                exchange.getMessage()
+                                        .setBody(
+                                                "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             }
                         });
             }
         });
         context.start();
 
-        String response = template
-                .requestBody(
-                        "netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks",
-                        "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
-                        String.class);
+        String response = template.requestBody(
+                "netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks",
+                "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
+                String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
-
 }

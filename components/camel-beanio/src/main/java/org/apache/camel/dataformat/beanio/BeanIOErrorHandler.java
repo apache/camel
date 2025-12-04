@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
 
 import java.util.List;
@@ -42,8 +43,7 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
     private List<Object> results;
     private BeanIOIterator iterator;
 
-    public BeanIOErrorHandler() {
-    }
+    public BeanIOErrorHandler() {}
 
     public void init() {
         // any custom init code here
@@ -92,7 +92,8 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
 
     @Override
     public void invalidRecord(InvalidRecordException ex) throws Exception {
-        String msg = LOG_PREFIX + "InvalidRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
+        String msg = LOG_PREFIX + "InvalidRecord: " + ex.getMessage() + ": "
+                + ex.getRecordContext().getRecordText();
         if (getConfiguration().isIgnoreInvalidRecords()) {
             LOG.debug(msg);
         } else {
@@ -103,7 +104,8 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
 
     @Override
     public void unexpectedRecord(UnexpectedRecordException ex) throws Exception {
-        String msg = LOG_PREFIX + "UnexpectedRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
+        String msg = LOG_PREFIX + "UnexpectedRecord: " + ex.getMessage() + ": "
+                + ex.getRecordContext().getRecordText();
         if (getConfiguration().isIgnoreUnexpectedRecords()) {
             LOG.debug(msg);
         } else {
@@ -114,7 +116,8 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
 
     @Override
     public void unidentifiedRecord(UnidentifiedRecordException ex) throws Exception {
-        String msg = LOG_PREFIX + "UnidentifiedRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
+        String msg = LOG_PREFIX + "UnidentifiedRecord: " + ex.getMessage() + ": "
+                + ex.getRecordContext().getRecordText();
         if (getConfiguration().isIgnoreUnidentifiedRecords()) {
             LOG.debug(msg);
         } else {
@@ -122,5 +125,4 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
             throw ex;
         }
     }
-
 }

@@ -14,16 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp.internal;
-
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
-import org.apache.camel.component.mllp.MllpProtocolConstants;
-import org.apache.camel.test.stub.camel.MllpEndpointStub;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mllp.MllpExceptionTestSupport.LOG_PHI_TRUE;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -35,80 +27,89 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
+import org.apache.camel.component.mllp.MllpProtocolConstants;
+import org.apache.camel.test.stub.camel.MllpEndpointStub;
+import org.junit.jupiter.api.Test;
+
 public class Hl7UtilTest {
 
     // @formatter:off
-    static final String TEST_MESSAGE
-            = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + '\r'
-              + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
-              + '\r'
-              + "NTE|1||Free text for entering clinical details|" + '\r'
-              + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
-              + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
-              + '\r'
-              + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r';
+    static final String TEST_MESSAGE =
+            "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + '\r'
+                    + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
+                    + '\r'
+                    + "NTE|1||Free text for entering clinical details|" + '\r'
+                    + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
+                    + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
+                    + '\r'
+                    + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r';
 
-    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START
-            = MllpProtocolConstants.START_OF_BLOCK + "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|";
+    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START =
+            MllpProtocolConstants.START_OF_BLOCK + "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|";
 
     static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END = "||ACK^O01|00001A|D|2.3|||||||" + '\r'
-                                                               + "MSA|AA|00001" + '\r'
-                                                               + MllpProtocolConstants.END_OF_BLOCK
-                                                               + MllpProtocolConstants.END_OF_DATA;
+            + "MSA|AA|00001" + '\r'
+            + MllpProtocolConstants.END_OF_BLOCK
+            + MllpProtocolConstants.END_OF_DATA;
 
     static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD = MllpProtocolConstants.START_OF_BLOCK
-                                                           + "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001A|D|2.3|||||||"
-                                                           + '\r'
-                                                           + "MSA|AA|00001" + '\r'
-                                                           + MllpProtocolConstants.END_OF_BLOCK
-                                                           + MllpProtocolConstants.END_OF_DATA;
+            + "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001A|D|2.3|||||||"
+            + '\r'
+            + "MSA|AA|00001" + '\r'
+            + MllpProtocolConstants.END_OF_BLOCK
+            + MllpProtocolConstants.END_OF_DATA;
 
-    static final String EXPECTED_MESSAGE
-            = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + "<0x0D CR>"
-              + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
-              + "<0x0D CR>"
-              + "NTE|1||Free text for entering clinical details|" + "<0x0D CR>"
-              + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + "<0x0D CR>"
-              + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
-              + "<0x0D CR>"
-              + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + "<0x0D CR>"
-              + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + "<0x0D CR>"
-              + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + "<0x0D CR>";
+    static final String EXPECTED_MESSAGE =
+            "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + "<0x0D CR>"
+                    + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
+                    + "<0x0D CR>"
+                    + "NTE|1||Free text for entering clinical details|" + "<0x0D CR>"
+                    + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + "<0x0D CR>"
+                    + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
+                    + "<0x0D CR>"
+                    + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + "<0x0D CR>"
+                    + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + "<0x0D CR>"
+                    + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + "<0x0D CR>";
     // @formatter:on
 
     static final String MSH_SEGMENT = "MSH|^~\\&|0|90100053675|INHOUSE|RTH00|20131125122938||ORM|28785|D|2.3";
 
     // @formatter:off
-    static final String REMAINING_SEGMENTS
-            = "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
-              + '\r'
-              + "NTE|1||Free text for entering clinical details|" + '\r'
-              + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
-              + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
-              + '\r'
-              + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r';
+    static final String REMAINING_SEGMENTS =
+            "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
+                    + '\r'
+                    + "NTE|1||Free text for entering clinical details|" + '\r'
+                    + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
+                    + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
+                    + '\r'
+                    + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r';
     // @formatter:on
 
     static final String MSH_SEGMENT_BEFORE_MSH9 = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20250912193919||";
     static final String MSH_SEGMENT_AFTER_MSH9 = "|00001|D|2.5" + '\r';
 
     static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH = "|00001A|D|2.5" + '\r'
-                                                                   + "MSA|AA|00001" + '\r'
-                                                                   + MllpProtocolConstants.END_OF_BLOCK
-                                                                   + MllpProtocolConstants.END_OF_DATA;
+            + "MSA|AA|00001" + '\r'
+            + MllpProtocolConstants.END_OF_BLOCK
+            + MllpProtocolConstants.END_OF_DATA;
 
     static final byte[] TEST_MESSAGE_BYTES = TEST_MESSAGE.getBytes();
 
@@ -151,11 +152,13 @@ public class Hl7UtilTest {
         byte[] invalidStartingSegment = "MSA|AA|00001|\r".getBytes();
         byte[] basePayload = TEST_MESSAGE.getBytes();
 
-        ByteArrayOutputStream payloadStream = new ByteArrayOutputStream(invalidStartingSegment.length + basePayload.length);
+        ByteArrayOutputStream payloadStream =
+                new ByteArrayOutputStream(invalidStartingSegment.length + basePayload.length);
         payloadStream.write(invalidStartingSegment);
         payloadStream.write(basePayload.length);
 
-        assertEquals("The first segment of the HL7 payload {MSA} is not an MSH segment",
+        assertEquals(
+                "The first segment of the HL7 payload {MSA} is not an MSH segment",
                 hl7util.generateInvalidPayloadExceptionMessage(payloadStream.toByteArray()));
     }
 
@@ -178,8 +181,8 @@ public class Hl7UtilTest {
         payloadStream.write(MllpProtocolConstants.START_OF_BLOCK);
         payloadStream.write(basePayload, embeddedStartOfBlockIndex, basePayload.length - embeddedStartOfBlockIndex);
 
-        String expected
-                = "HL7 payload contains an embedded START_OF_BLOCK {0xb, ASCII <VT>} at index " + embeddedStartOfBlockIndex;
+        String expected = "HL7 payload contains an embedded START_OF_BLOCK {0xb, ASCII <VT>} at index "
+                + embeddedStartOfBlockIndex;
 
         assertEquals(expected, hl7util.generateInvalidPayloadExceptionMessage(payloadStream.toByteArray()));
     }
@@ -195,8 +198,8 @@ public class Hl7UtilTest {
         payloadStream.write(MllpProtocolConstants.END_OF_BLOCK);
         payloadStream.write(basePayload, embeddedEndOfBlockIndex, basePayload.length - embeddedEndOfBlockIndex);
 
-        String expected
-                = "HL7 payload contains an embedded END_OF_BLOCK {0x1c, ASCII <FS>} at index " + embeddedEndOfBlockIndex;
+        String expected =
+                "HL7 payload contains an embedded END_OF_BLOCK {0x1c, ASCII <FS>} at index " + embeddedEndOfBlockIndex;
 
         assertEquals(expected, hl7util.generateInvalidPayloadExceptionMessage(payloadStream.toByteArray()));
     }
@@ -234,7 +237,8 @@ public class Hl7UtilTest {
     @Test
     public void testGenerateAcknowledgementPayloadFromNullMessage() {
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
-        assertThrows(MllpAcknowledgementGenerationException.class,
+        assertThrows(
+                MllpAcknowledgementGenerationException.class,
                 () -> hl7util.generateAcknowledgementPayload(mllpSocketBuffer, null, "AA"));
     }
 
@@ -245,7 +249,8 @@ public class Hl7UtilTest {
     @Test
     public void testGenerateAcknowledgementPayloadFromEmptyMessage() {
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
-        assertThrows(MllpAcknowledgementGenerationException.class,
+        assertThrows(
+                MllpAcknowledgementGenerationException.class,
                 () -> hl7util.generateAcknowledgementPayload(mllpSocketBuffer, new byte[0], "AA"));
     }
 
@@ -255,10 +260,12 @@ public class Hl7UtilTest {
      */
     @Test
     public void testGenerateAcknowledgementPayloadWithoutEnoughFields() {
-        final byte[] testMessage = TEST_MESSAGE.replace("||ORM^O01|00001|D|2.3|||||||", "").getBytes();
+        final byte[] testMessage =
+                TEST_MESSAGE.replace("||ORM^O01|00001|D|2.3|||||||", "").getBytes();
 
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
-        assertThrows(MllpAcknowledgementGenerationException.class,
+        assertThrows(
+                MllpAcknowledgementGenerationException.class,
                 () -> hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage, "AA"));
     }
 
@@ -270,7 +277,7 @@ public class Hl7UtilTest {
     @Test
     public void testGenerateAcknowledgementPayloadWithoutEndOfSegment() throws Exception {
         String junkMessage = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||"
-                             + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||";
+                + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||";
 
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         hl7util.generateAcknowledgementPayload(mllpSocketBuffer, junkMessage.getBytes(), "AA");
@@ -278,10 +285,12 @@ public class Hl7UtilTest {
         String actual = mllpSocketBuffer.toString();
 
         assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
-        assertThat(actual, endsWith(
-                "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2|||||||||||||\r"
-                                    + "MSA|AA|00001\r"
-                                    + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA));
+        assertThat(
+                actual,
+                endsWith(
+                        "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2|||||||||||||\r"
+                                + "MSA|AA|00001\r"
+                                + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA));
     }
 
     /**
@@ -336,10 +345,13 @@ public class Hl7UtilTest {
         assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 200, -1000));
         assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], -200, -1000));
 
-        assertEquals(EXPECTED_MESSAGE, hl7util.convertToPrintFriendlyString(TEST_MESSAGE_BYTES, 0, TEST_MESSAGE_BYTES.length));
+        assertEquals(
+                EXPECTED_MESSAGE,
+                hl7util.convertToPrintFriendlyString(TEST_MESSAGE_BYTES, 0, TEST_MESSAGE_BYTES.length));
         assertEquals("", hl7util.convertToPrintFriendlyString(TEST_MESSAGE_BYTES, 0, 0));
 
-        assertEquals(EXPECTED_MESSAGE,
+        assertEquals(
+                EXPECTED_MESSAGE,
                 hl7util.convertToPrintFriendlyString(TEST_MESSAGE_BYTES, -14, TEST_MESSAGE_BYTES.length));
 
         assertEquals("", hl7util.convertToPrintFriendlyString(TEST_MESSAGE_BYTES, -14, 0));
@@ -363,9 +375,15 @@ public class Hl7UtilTest {
      */
     @Test
     public void testBytesToPrintFriendlyStringBuilder() {
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null).toString());
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder(new byte[0]).toString());
-        assertEquals(EXPECTED_MESSAGE, hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES).toString());
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null).toString());
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0]).toString());
+        assertEquals(
+                EXPECTED_MESSAGE,
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES).toString());
     }
 
     /**
@@ -374,68 +392,134 @@ public class Hl7UtilTest {
      */
     @Test
     public void testBytesToPrintFriendlyStringBuilderWithStartAndEndPositions() {
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, 1000).toString());
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 200, 1000).toString());
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, -200, 1000).toString());
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, 1000)
+                        .toString());
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 200, 1000)
+                        .toString());
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, -200, 1000)
+                        .toString());
 
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, 0).toString());
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, 0).toString());
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 200, 0).toString());
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, -200, 0).toString());
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, -200, 0)
+                        .toString());
 
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, -1000).toString());
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 200, -1000).toString());
-        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, -200, -1000).toString());
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, -1000)
+                        .toString());
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 200, -1000)
+                        .toString());
+        assertEquals(
+                Hl7Util.NULL_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, -200, -1000)
+                        .toString());
 
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 0, 1000).toString());
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 200, 1000).toString());
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], -200, 1000).toString());
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 200, 1000)
+                        .toString());
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], -200, 1000)
+                        .toString());
 
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 0, 0).toString());
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 0, 0).toString());
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 200, 0).toString());
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], -200, 0).toString());
 
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 0, -1000).toString());
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 200, -1000).toString());
-        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
-                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], -200, -1000).toString());
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 200, -1000)
+                        .toString());
+        assertEquals(
+                Hl7Util.EMPTY_REPLACEMENT_VALUE,
+                hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], -200, -1000)
+                        .toString());
 
-        assertEquals(EXPECTED_MESSAGE,
-                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 0, TEST_MESSAGE_BYTES.length).toString());
-        assertEquals("", hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 0, 0).toString());
+        assertEquals(
+                EXPECTED_MESSAGE,
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 0, TEST_MESSAGE_BYTES.length)
+                        .toString());
+        assertEquals(
+                "",
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 0, 0)
+                        .toString());
 
-        assertEquals(EXPECTED_MESSAGE,
-                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, -14, TEST_MESSAGE_BYTES.length).toString());
+        assertEquals(
+                EXPECTED_MESSAGE,
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, -14, TEST_MESSAGE_BYTES.length)
+                        .toString());
 
-        assertEquals("", hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, -14, 0).toString());
-        assertEquals("", hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, -14, -14).toString());
-        assertEquals(EXPECTED_MESSAGE, hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, -14, 1000000).toString());
+        assertEquals(
+                "",
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, -14, 0)
+                        .toString());
+        assertEquals(
+                "",
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, -14, -14)
+                        .toString());
+        assertEquals(
+                EXPECTED_MESSAGE,
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, -14, 1000000)
+                        .toString());
 
-        assertEquals("", hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 0, -14).toString());
-        assertEquals(EXPECTED_MESSAGE, hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 0, 1000000).toString());
+        assertEquals(
+                "",
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 0, -14)
+                        .toString());
+        assertEquals(
+                EXPECTED_MESSAGE,
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 0, 1000000)
+                        .toString());
 
-        assertEquals("",
-                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, TEST_MESSAGE_BYTES.length).toString());
-        assertEquals("", hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, 0).toString());
-        assertEquals("", hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, -14).toString());
-        assertEquals("", hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, 1000000).toString());
+        assertEquals(
+                "",
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, TEST_MESSAGE_BYTES.length)
+                        .toString());
+        assertEquals(
+                "",
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, 0)
+                        .toString());
+        assertEquals(
+                "",
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, -14)
+                        .toString());
+        assertEquals(
+                "",
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, 1000000)
+                        .toString());
 
-        assertEquals("ORM^O01|00001|D|2.3|||||||<0x0D CR>PID|1||ICE999999^^^",
-                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 54, 100).toString());
+        assertEquals(
+                "ORM^O01|00001|D|2.3|||||||<0x0D CR>PID|1||ICE999999^^^",
+                hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 54, 100)
+                        .toString());
     }
 
     /**
@@ -765,5 +849,4 @@ public class Hl7UtilTest {
         assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
         assertThat(actual, endsWith("||ACK^T01^ACK" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
     }
-
 }

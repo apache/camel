@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import org.apache.camel.spring.SpringCamelContext;
@@ -87,7 +88,9 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
 
     @Override
     public void beforeTestMethod(TestContext testContext) throws Exception {
-        LOG.info("CamelSpringBootExecutionListener before: {}.{}", testContext.getTestClass(),
+        LOG.info(
+                "CamelSpringBootExecutionListener before: {}.{}",
+                testContext.getTestClass(),
                 testContext.getTestMethod().getName());
 
         Class<?> testClass = testContext.getTestClass();
@@ -109,7 +112,9 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
 
     @Override
     public void afterTestMethod(TestContext testContext) throws Exception {
-        LOG.info("CamelSpringBootExecutionListener after: {}.{}", testContext.getTestClass(),
+        LOG.info(
+                "CamelSpringBootExecutionListener after: {}.{}",
+                testContext.getTestClass(),
                 testContext.getTestMethod().getName());
 
         Class<?> testClass = testContext.getTestClass();

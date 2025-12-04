@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.Collections;
@@ -53,141 +54,150 @@ public abstract class InfinispanEmbeddedEventListener extends InfinispanEventLis
     @CacheEntryActivated
     public void processEvent(CacheEntryActivatedEvent<?, ?> event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    event.getValue(),
-                    e -> {
-                        e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
-                    });
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            event.getValue(),
+                            e -> {
+                                e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
+                            });
         }
     }
 
     @CacheEntryCreated
     public void processEvent(CacheEntryCreatedEvent<?, ?> event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    event.getValue(),
-                    e -> {
-                        e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
-                        e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());
-                    });
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            event.getValue(),
+                            e -> {
+                                e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
+                                e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());
+                            });
         }
     }
 
     @CacheEntryInvalidated
     public void processEvent(CacheEntryInvalidatedEvent<?, ?> event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    event.getValue(),
-                    e -> {
-                        e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
-                    });
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            event.getValue(),
+                            e -> {
+                                e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
+                            });
         }
     }
 
     @CacheEntryLoaded
     public void processEvent(CacheEntryLoadedEvent<?, ?> event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    event.getValue(),
-                    e -> {
-                        e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
-                    });
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            event.getValue(),
+                            e -> {
+                                e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
+                            });
         }
     }
 
     @CacheEntryModified
     public void processEvent(CacheEntryModifiedEvent<?, ?> event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    event.getNewValue(),
-                    e -> {
-                        e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
-                        e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());
-                        e.getMessage().setHeader(InfinispanConstants.ENTRY_CREATED, event.isCreated());
-                        e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
-                        e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
-                    });
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            event.getNewValue(),
+                            e -> {
+                                e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
+                                e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());
+                                e.getMessage().setHeader(InfinispanConstants.ENTRY_CREATED, event.isCreated());
+                                e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
+                                e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
+                            });
         }
     }
 
     @CacheEntryPassivated
     public void processEvent(CacheEntryPassivatedEvent<?, ?> event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    event.getValue(),
-                    e -> {
-                        e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
-                        e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
-                        e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
-                    });
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            event.getValue(),
+                            e -> {
+                                e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
+                                e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
+                                e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
+                            });
         }
     }
 
     @CacheEntryRemoved
     public void processEvent(CacheEntryRemovedEvent<?, ?> event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    event.getValue(),
-                    e -> {
-                        e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
-                        e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());
-                        e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
-                        e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
-                        e.getMessage().setHeader(InfinispanConstants.OLD_VALUE, event.getOldValue());
-                    });
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            event.getValue(),
+                            e -> {
+                                e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
+                                e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());
+                                e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
+                                e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
+                                e.getMessage().setHeader(InfinispanConstants.OLD_VALUE, event.getOldValue());
+                            });
         }
     }
 
     @CacheEntryVisited
     public void processEvent(CacheEntryVisitedEvent<?, ?> event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    event.getValue(),
-                    e -> {
-                        e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
-                        e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
-                        e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
-                    });
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            event.getValue(),
+                            e -> {
+                                e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
+                                e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
+                                e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
+                            });
         }
     }
 
     @CacheEntryExpired
     public void processEvent(CacheEntryExpiredEvent<?, ?> event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    event.getCache().getName(),
-                    event.getKey(),
-                    event.getValue(),
-                    e -> {
-                        e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
-                        e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
-                        e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
-                    });
+            getEventProcessor()
+                    .processEvent(
+                            event.getType().toString(),
+                            event.getCache().getName(),
+                            event.getKey(),
+                            event.getValue(),
+                            e -> {
+                                e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
+                                e.getMessage().setHeader(InfinispanConstants.ORIGIN_LOCAL, event.isOriginLocal());
+                                e.getMessage().setHeader(InfinispanConstants.CURRENT_STATE, event.isCurrentState());
+                            });
         }
     }
 }

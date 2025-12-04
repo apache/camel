@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
 
 import org.apache.camel.component.as2.api.AS2MediaType;
@@ -22,8 +23,7 @@ import org.apache.hc.core5.http.ContentType;
 
 public final class ContentTypeUtils {
 
-    private ContentTypeUtils() {
-    }
+    private ContentTypeUtils() {}
 
     public static boolean isEDIMessageContentType(ContentType ediMessageContentType) {
         switch (ediMessageContentType.getMimeType().toLowerCase()) {
@@ -46,5 +46,4 @@ public final class ContentTypeUtils {
                 return false;
         }
     }
-
 }

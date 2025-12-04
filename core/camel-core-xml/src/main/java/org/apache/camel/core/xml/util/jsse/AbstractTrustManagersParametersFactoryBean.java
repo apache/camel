@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml.util.jsse;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -28,22 +29,29 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractTrustManagersParametersFactoryBean extends AbstractJsseUtilFactoryBean<TrustManagersParameters> {
+public abstract class AbstractTrustManagersParametersFactoryBean
+        extends AbstractJsseUtilFactoryBean<TrustManagersParameters> {
 
     @XmlAttribute
-    @Metadata(label = "advanced", description = "The provider identifier for the TrustManagerFactory used to create"
-                                                + " TrustManagers represented by this object's configuration.")
+    @Metadata(
+            label = "advanced",
+            description = "The provider identifier for the TrustManagerFactory used to create"
+                    + " TrustManagers represented by this object's configuration.")
     protected String provider;
 
     @XmlAttribute
-    @Metadata(label = "advanced", description = "The optional algorithm name for the TrustManagerFactory used to"
-                                                + " create the TrustManagers represented by this objects configuration."
-                                                + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+    @Metadata(
+            label = "advanced",
+            description = "The optional algorithm name for the TrustManagerFactory used to"
+                    + " create the TrustManagers represented by this objects configuration."
+                    + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
     protected String algorithm;
 
     @XmlAttribute
-    @Metadata(label = "advanced",
-              description = "To use a existing configured trust manager instead of using TrustManagerFactory to get the TrustManager.")
+    @Metadata(
+            label = "advanced",
+            description =
+                    "To use a existing configured trust manager instead of using TrustManagerFactory to get the TrustManager.")
     protected String trustManager;
 
     @XmlTransient

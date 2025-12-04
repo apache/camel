@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.obs.services.model.CreateBucketRequest;
 import org.apache.camel.BindToRegistry;
@@ -25,9 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateBucketPojoFunctionalTest extends CamelTestSupport {
 
@@ -44,10 +45,9 @@ public class CreateBucketPojoFunctionalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:create_bucket")
-                        .to("hwcloud-obs:createBucket?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-obs:createBucket?" + "serviceKeys=#serviceKeys"
+                                + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Create bucket successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:create_bucket_result");
@@ -67,7 +67,8 @@ public class CreateBucketPojoFunctionalTest extends CamelTestSupport {
     public void testCreateBucket() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:create_bucket_result");
         mock.expectedMinimumMessageCount(1);
-        // More parameters can be added to the CreateBucketRequest below. E.g. setAcl, setAvailableZone, setBucketStorageClass
+        // More parameters can be added to the CreateBucketRequest below. E.g. setAcl, setAvailableZone,
+        // setBucketStorageClass
         CreateBucketRequest newBucket = new CreateBucketRequest(BUCKET_NAME, BUCKET_LOCATION);
         template.sendBody("direct:create_bucket", newBucket);
         Exchange responseExchange = mock.getExchanges().get(0);

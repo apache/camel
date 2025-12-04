@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -25,10 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class MailCollectionHeaderTest extends CamelTestSupport {
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
@@ -36,7 +37,7 @@ public class MailCollectionHeaderTest extends CamelTestSupport {
     public void testMailHeaderWithCollection() throws Exception {
         Mailbox.clearAll();
 
-        String[] foo = new String[] { "Carlsberg", "Heineken" };
+        String[] foo = new String[] {"Carlsberg", "Heineken"};
         template.sendBodyAndHeader("direct:a", "Hello World", "beers", foo);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -60,9 +61,9 @@ public class MailCollectionHeaderTest extends CamelTestSupport {
                 from("direct:a").to(james.uriPrefix(Protocol.smtp));
 
                 from("pop3://localhost:" + Mailbox.getPort(Protocol.pop3)
-                     + "?username=james&password=secret&initialDelay=100&delay=100").to("mock:result");
+                                + "?username=james&password=secret&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }
-
 }

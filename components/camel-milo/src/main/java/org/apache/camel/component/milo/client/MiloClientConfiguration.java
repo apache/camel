@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client;
 
 import java.io.IOException;
@@ -110,8 +111,7 @@ public class MiloClientConfiguration implements Cloneable {
     @UriParam(label = "client", defaultValue = "1_000.0")
     private Double requestedPublishingInterval = DEFAULT_REQUESTED_PUBLISHING_INTERVAL;
 
-    public MiloClientConfiguration() {
-    }
+    public MiloClientConfiguration() {}
 
     public MiloClientConfiguration(final MiloClientConfiguration other) {
         this.endpointUri = other.endpointUri;
@@ -375,7 +375,6 @@ public class MiloClientConfiguration implements Cloneable {
 
             this.allowedSecurityPolicies.add(adding);
         }
-
     }
 
     public Set<String> getAllowedSecurityPolicies() {
@@ -424,7 +423,8 @@ public class MiloClientConfiguration implements Cloneable {
     private static OpcUaClientConfigBuilder mapToClientConfiguration(final MiloClientConfiguration configuration) {
         final OpcUaClientConfigBuilder builder = new OpcUaClientConfigBuilder();
 
-        whenHasText(configuration::getApplicationName, value -> builder.setApplicationName(LocalizedText.english(value)));
+        whenHasText(
+                configuration::getApplicationName, value -> builder.setApplicationName(LocalizedText.english(value)));
         whenHasText(configuration::getApplicationUri, builder::setApplicationUri);
         whenHasText(configuration::getProductUri, builder::setProductUri);
 
@@ -489,5 +489,4 @@ public class MiloClientConfiguration implements Cloneable {
             valueConsumer.accept(value);
         }
     }
-
 }

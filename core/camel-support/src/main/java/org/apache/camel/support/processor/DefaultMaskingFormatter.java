@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.Locale;
@@ -54,7 +55,10 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
     public DefaultMaskingFormatter(CamelContext camelContext) {
         this.keywords = new TreeSet<>(SensitiveUtils.getSensitiveKeys());
         if (camelContext.getCamelContextExtension().getAdditionalSensitiveKeywords() != null) {
-            for (String key : camelContext.getCamelContextExtension().getAdditionalSensitiveKeywords().split(",")) {
+            for (String key : camelContext
+                    .getCamelContextExtension()
+                    .getAdditionalSensitiveKeywords()
+                    .split(",")) {
                 key = key.toLowerCase(Locale.ROOT).trim();
                 this.keywords.add(key);
             }
@@ -70,7 +74,8 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
         this(SensitiveUtils.getSensitiveKeys(), maskKeyValue, maskXml, maskJson);
     }
 
-    public DefaultMaskingFormatter(Set<String> keywords, boolean maskKeyValue, boolean maskXmlElement, boolean maskJson) {
+    public DefaultMaskingFormatter(
+            Set<String> keywords, boolean maskKeyValue, boolean maskXmlElement, boolean maskJson) {
         this.keywords = new TreeSet<>(keywords);
         setMaskKeyValue(maskKeyValue);
         setMaskXmlElement(maskXmlElement);

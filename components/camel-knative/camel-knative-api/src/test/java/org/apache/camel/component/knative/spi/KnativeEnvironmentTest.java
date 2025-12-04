@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.spi;
+
+import static org.apache.camel.util.CollectionHelper.mapOf;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
@@ -26,19 +30,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.util.CollectionHelper.mapOf;
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class KnativeEnvironmentTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "{\"services\":[{\"type\":\"endpoint\",\"name\":\"knative3\",\"metadata\":{\"camel.endpoint.kind\":\"source\",\"knative.apiVersion\":\"serving.knative.dev/v1\",\"knative.kind\":\"Service\",\"service.path\":\"/\"}}]}",
-            "{\"resources\":[{\"type\":\"endpoint\",\"name\":\"knative3\",\"metadata\":{\"camel.endpoint.kind\":\"source\",\"knative.apiVersion\":\"serving.knative.dev/v1\",\"knative.kind\":\"Service\",\"service.path\":\"/\"}}]}"
-    })
+    @ValueSource(
+            strings = {
+                "{\"services\":[{\"type\":\"endpoint\",\"name\":\"knative3\",\"metadata\":{\"camel.endpoint.kind\":\"source\",\"knative.apiVersion\":\"serving.knative.dev/v1\",\"knative.kind\":\"Service\",\"service.path\":\"/\"}}]}",
+                "{\"resources\":[{\"type\":\"endpoint\",\"name\":\"knative3\",\"metadata\":{\"camel.endpoint.kind\":\"source\",\"knative.apiVersion\":\"serving.knative.dev/v1\",\"knative.kind\":\"Service\",\"service.path\":\"/\"}}]}"
+            })
     public void testKnativeEnvironmentDeserializationFromString(String content) throws Exception {
         KnativeEnvironment env = KnativeEnvironment.mandatoryLoadFromSerializedString(content);
-        List<KnativeResource> res = env.lookup(Knative.Type.endpoint, "knative3").toList();
+        List<KnativeResource> res =
+                env.lookup(Knative.Type.endpoint, "knative3").toList();
 
         assertThat(res).hasSize(1);
         assertThat(res).first().satisfies(resource -> {
@@ -63,7 +66,8 @@ public class KnativeEnvironmentTest {
 
         CamelContext context = new DefaultCamelContext();
         KnativeEnvironment env = KnativeEnvironment.mandatoryLoadFromProperties(context, properties);
-        List<KnativeResource> res = env.lookup(Knative.Type.endpoint, "knative3").collect(Collectors.toList());
+        List<KnativeResource> res =
+                env.lookup(Knative.Type.endpoint, "knative3").collect(Collectors.toList());
 
         assertThat(res).hasSize(1);
         assertThat(res).first().satisfies(resource -> {

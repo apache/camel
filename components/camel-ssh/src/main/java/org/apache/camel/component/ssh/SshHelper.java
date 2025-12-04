@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.io.ByteArrayInputStream;
@@ -46,11 +47,10 @@ public final class SshHelper {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SshHelper.class);
 
-    private SshHelper() {
-    }
+    private SshHelper() {}
 
-    public static SshResult sendExecCommand(Map<String, Object> headers, String command, SshEndpoint endpoint, SshClient client)
-            throws Exception {
+    public static SshResult sendExecCommand(
+            Map<String, Object> headers, String command, SshEndpoint endpoint, SshClient client) throws Exception {
         SshConfiguration configuration = endpoint.getConfiguration();
 
         if (configuration == null) {
@@ -69,9 +69,8 @@ public final class SshHelper {
         connectFuture.await(configuration.getTimeout());
 
         if (!connectFuture.isDone() || !connectFuture.isConnected()) {
-            throw new RuntimeCamelException(
-                    "Failed to connect to " + configuration.getHost() + ":" + configuration.getPort() + " within timeout "
-                                            + configuration.getTimeout() + "ms");
+            throw new RuntimeCamelException("Failed to connect to " + configuration.getHost() + ":"
+                    + configuration.getPort() + " within timeout " + configuration.getTimeout() + "ms");
         }
 
         LOG.debug("Connected to {}:{}", configuration.getHost(), configuration.getPort());
@@ -88,12 +87,13 @@ public final class SshHelper {
             if (certResource != null) {
                 LOG.debug("Attempting to authenticate using ResourceKey '{}'...", certResource);
                 if (endpoint.getCertResourcePassword() != null) {
-                    Supplier<char[]> passwordFinder = () -> endpoint.getCertResourcePassword().toCharArray();
+                    Supplier<char[]> passwordFinder =
+                            () -> endpoint.getCertResourcePassword().toCharArray();
                     keyPairProvider = new ResourceHelperKeyPairProvider(
-                            new String[] { certResource }, passwordFinder, endpoint.getCamelContext());
+                            new String[] {certResource}, passwordFinder, endpoint.getCamelContext());
                 } else {
-                    keyPairProvider
-                            = new ResourceHelperKeyPairProvider(new String[] { certResource }, endpoint.getCamelContext());
+                    keyPairProvider =
+                            new ResourceHelperKeyPairProvider(new String[] {certResource}, endpoint.getCamelContext());
                 }
             } else {
                 keyPairProvider = configuration.getKeyPairProvider();
@@ -105,7 +105,8 @@ public final class SshHelper {
                 KeyPair pair = null;
                 // If we have no configured key type then just use the first keypair
                 if (configuration.getKeyType() == null) {
-                    Iterator<KeyPair> iterator = keyPairProvider.loadKeys(session).iterator();
+                    Iterator<KeyPair> iterator =
+                            keyPairProvider.loadKeys(session).iterator();
                     if (iterator.hasNext()) {
                         pair = iterator.next();
                     }
@@ -143,9 +144,10 @@ public final class SshHelper {
             // may need further maintainance for further use cases
             if (Channel.CHANNEL_EXEC.equals(endpoint.getChannelType())) {
                 channel = session.createChannel(Channel.CHANNEL_EXEC, command);
-                in = new ByteArrayInputStream(new byte[] { 0 });
+                in = new ByteArrayInputStream(new byte[] {0});
             } else if (Channel.CHANNEL_SHELL.equals(endpoint.getChannelType())) {
-                // PipedOutputStream and PipedInputStream both are connected to each other to create a communication pipe
+                // PipedOutputStream and PipedInputStream both are connected to each other to create a communication
+                // pipe
                 // this approach is used to send the command and evaluate the response
                 channel = session.createChannel(Channel.CHANNEL_SHELL);
                 in = new PipedInputStream(reply);
@@ -166,7 +168,8 @@ public final class SshHelper {
                     Set<ClientChannelEvent> events = channel.waitFor(Arrays.asList(ClientChannelEvent.CLOSED), 0);
                     if (!events.contains(ClientChannelEvent.TIMEOUT)) {
                         result = new SshResult(
-                                command, channel.getExitStatus(),
+                                command,
+                                channel.getExitStatus(),
                                 new ByteArrayInputStream(out.toByteArray()),
                                 new ByteArrayInputStream(err.toByteArray()));
                     }
@@ -177,7 +180,8 @@ public final class SshHelper {
                 reply.write(System.lineSeparator().getBytes());
                 String response = getPrompt(channel, out, endpoint);
                 result = new SshResult(
-                        command, channel.getExitStatus(),
+                        command,
+                        channel.getExitStatus(),
                         new ByteArrayInputStream(response.getBytes()),
                         new ByteArrayInputStream(err.toByteArray()));
             }
@@ -191,7 +195,6 @@ public final class SshHelper {
                 session.close(false);
             }
         }
-
     }
 
     private static String getPrompt(ClientChannel channel, ByteArrayOutputStream output, SshEndpoint endpoint)
@@ -202,7 +205,8 @@ public final class SshHelper {
             String response = output.toString(StandardCharsets.UTF_8);
             if (response.trim().endsWith(endpoint.getShellPrompt())) {
                 output.reset();
-                return SshShellOutputStringHelper.betweenBeforeLast(response, System.lineSeparator(), System.lineSeparator());
+                return SshShellOutputStringHelper.betweenBeforeLast(
+                        response, System.lineSeparator(), System.lineSeparator());
             }
 
             // avoid cpu burning cycles

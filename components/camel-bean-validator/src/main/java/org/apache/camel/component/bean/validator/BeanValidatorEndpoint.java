@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
+
+import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
 
 import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.MessageInterpolator;
@@ -33,32 +36,43 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
-
 /**
  * Validate the message body using the Java Bean Validation API.
  *
  * Camel uses the reference implementation, which is Hibernate Validator.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "bean-validator", title = "Bean Validator", syntax = "bean-validator:label",
-             remote = false, producerOnly = true, category = { Category.VALIDATION })
+@UriEndpoint(
+        firstVersion = "2.3.0",
+        scheme = "bean-validator",
+        title = "Bean Validator",
+        syntax = "bean-validator:label",
+        remote = false,
+        producerOnly = true,
+        category = {Category.VALIDATION})
 public class BeanValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Where label is an arbitrary text value describing the endpoint")
     @Metadata(required = true)
     private String label;
+
     @UriParam(defaultValue = "jakarta.validation.groups.Default")
     private String group;
+
     @UriParam
     private boolean ignoreXmlConfiguration;
+
     @UriParam(label = "advanced")
     private ValidationProviderResolver validationProviderResolver;
+
     @UriParam(label = "advanced")
     private MessageInterpolator messageInterpolator;
+
     @UriParam(label = "advanced")
     private TraversableResolver traversableResolver;
+
     @UriParam(label = "advanced")
     private ConstraintValidatorFactory constraintValidatorFactory;
+
     @UriParam(label = "advanced")
     private ValidatorFactory validatorFactory;
 
@@ -80,8 +94,13 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
 
         ValidatorFactory validatorFactory = this.validatorFactory;
         if (validatorFactory == null) {
-            validatorFactory = buildValidatorFactory(getCamelContext(), isIgnoreXmlConfiguration(),
-                    validationProviderResolver, messageInterpolator, traversableResolver, constraintValidatorFactory);
+            validatorFactory = buildValidatorFactory(
+                    getCamelContext(),
+                    isIgnoreXmlConfiguration(),
+                    validationProviderResolver,
+                    messageInterpolator,
+                    traversableResolver,
+                    constraintValidatorFactory);
         }
 
         producer.setValidatorFactory(validatorFactory);

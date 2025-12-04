@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -34,5 +35,4 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
     public void sendFile(String url, Object body, String fileName) {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, new SimpleExpression(fileName));
     }
-
 }

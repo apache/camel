@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -39,6 +40,7 @@ public class JmsBatchResequencerJMSPriorityIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -46,22 +48,22 @@ public class JmsBatchResequencerJMSPriorityIT extends AbstractJMSTest {
     @BeforeEach
     void sendMessages() {
         // must use preserveMessageQos=true to be able to specify the JMSPriority to be used
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "A", "JMSPriority",
-                6);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "B", "JMSPriority",
-                6);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "C", "JMSPriority",
-                4);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "D", "JMSPriority",
-                4);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "E", "JMSPriority",
-                6);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "F", "JMSPriority",
-                4);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "G", "JMSPriority",
-                8);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "H", "JMSPriority",
-                6);
+        template.sendBodyAndHeader(
+                "jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "A", "JMSPriority", 6);
+        template.sendBodyAndHeader(
+                "jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "B", "JMSPriority", 6);
+        template.sendBodyAndHeader(
+                "jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "C", "JMSPriority", 4);
+        template.sendBodyAndHeader(
+                "jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "D", "JMSPriority", 4);
+        template.sendBodyAndHeader(
+                "jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "E", "JMSPriority", 6);
+        template.sendBodyAndHeader(
+                "jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "F", "JMSPriority", 4);
+        template.sendBodyAndHeader(
+                "jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "G", "JMSPriority", 8);
+        template.sendBodyAndHeader(
+                "jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "H", "JMSPriority", 6);
     }
 
     @Test
@@ -87,7 +89,11 @@ public class JmsBatchResequencerJMSPriorityIT extends AbstractJMSTest {
                         // sort by JMSPriority by allowing duplicates (message can have same JMSPriority)
                         // and use reverse ordering so 9 is first output (most important), and 0 is last
                         // use batch mode and fire every 3rd second
-                        .resequence(header("JMSPriority")).batch().timeout(3000).allowDuplicates().reverse()
+                        .resequence(header("JMSPriority"))
+                        .batch()
+                        .timeout(3000)
+                        .allowDuplicates()
+                        .reverse()
                         .to("mock:result");
                 // END SNIPPET: e1
             }

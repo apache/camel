@@ -14,11 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry.metrics.routepolicy;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.opentelemetry.metrics.routepolicy;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
@@ -26,6 +23,10 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFA
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
 public class OpenTelemetryRoutePolicyExchangeStatusTest extends AbstractOpenTelemetryRoutePolicyTest {
 
@@ -44,20 +45,30 @@ public class OpenTelemetryRoutePolicyExchangeStatusTest extends AbstractOpenTele
         MockEndpoint.assertIsSatisfied(context);
 
         // total meter
-        assertEquals(count / 2,
-                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME, "completing").getValue());
-        assertEquals(count / 2,
-                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME, "failing").getValue());
+        assertEquals(
+                count / 2,
+                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME, "completing")
+                        .getValue());
+        assertEquals(
+                count / 2,
+                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME, "failing")
+                        .getValue());
 
         // succeeded meter
-        assertEquals(count / 2,
-                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME, "completing").getValue());
-        assertTrue(getAllPointDataForRouteId(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME, "failing").isEmpty());
+        assertEquals(
+                count / 2,
+                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME, "completing")
+                        .getValue());
+        assertTrue(getAllPointDataForRouteId(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME, "failing")
+                .isEmpty());
 
         // failed meter
-        assertTrue(getAllPointDataForRouteId(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME, "completing").isEmpty());
-        assertEquals(count / 2,
-                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME, "failing").getValue());
+        assertTrue(getAllPointDataForRouteId(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME, "completing")
+                .isEmpty());
+        assertEquals(
+                count / 2,
+                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME, "failing")
+                        .getValue());
     }
 
     @Override
@@ -65,10 +76,10 @@ public class OpenTelemetryRoutePolicyExchangeStatusTest extends AbstractOpenTele
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:completing").routeId("completing")
-                        .to("mock:result");
+                from("direct:completing").routeId("completing").to("mock:result");
 
-                from("direct:failing").routeId("failing")
+                from("direct:failing")
+                        .routeId("failing")
                         .throwException(RuntimeException.class, "Failing")
                         .to("mock:result");
             }

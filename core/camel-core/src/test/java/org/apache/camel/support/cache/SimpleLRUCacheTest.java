@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
+
+import static org.apache.camel.support.cache.SimpleLRUCache.MINIMUM_QUEUE_SIZE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -30,20 +39,14 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.support.cache.SimpleLRUCache.MINIMUM_QUEUE_SIZE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * The test class for {@link SimpleLRUCache}.
  */
 @Isolated("Some of these tests creates a lot of threads")
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Apache CI nodes are too resource constrained for this test")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Apache CI nodes are too resource constrained for this test")
 class SimpleLRUCacheTest {
 
     private final List<String> consumed = new ArrayList<>();
@@ -66,7 +69,9 @@ class SimpleLRUCacheTest {
         assertEquals(1, map.size());
         assertEquals(2, map.getQueueSize());
         assertEquals("bar", map.get("1"));
-        assertThrows(NullPointerException.class, () -> map.entrySet().iterator().next().setValue(null));
+        assertThrows(
+                NullPointerException.class,
+                () -> map.entrySet().iterator().next().setValue(null));
     }
 
     @Test
@@ -472,59 +477,64 @@ class SimpleLRUCacheTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 0, -1 })
+    @ValueSource(ints = {0, -1})
     void validateCacheSize(int maximumCacheSize) {
-        assertThrows(IllegalArgumentException.class, () -> new SimpleLRUCache<>(16, maximumCacheSize, x -> {
-        }));
+        assertThrows(IllegalArgumentException.class, () -> new SimpleLRUCache<>(16, maximumCacheSize, x -> {}));
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 1, 2, 5, 10, 20, 50, 100, 1_000 })
+    @ValueSource(ints = {1, 2, 5, 10, 20, 50, 100, 1_000})
     void concurrentPut(int maximumCacheSize) throws Exception {
         int threads = Runtime.getRuntime().availableProcessors();
         int totalKeysPerThread = 1_000;
         AtomicInteger counter = new AtomicInteger();
-        SimpleLRUCache<String, String> cache = new SimpleLRUCache<>(16, maximumCacheSize, v -> counter.incrementAndGet());
+        SimpleLRUCache<String, String> cache =
+                new SimpleLRUCache<>(16, maximumCacheSize, v -> counter.incrementAndGet());
 
         CountDownLatch latch = new CountDownLatch(threads);
         for (int i = 0; i < threads; i++) {
             int threadId = i;
             new Thread(() -> {
-                try {
-                    for (int j = 0; j < totalKeysPerThread; j++) {
-                        cache.put(threadId + "-" + j, Integer.toString(j));
-                    }
-                } finally {
-                    latch.countDown();
-                }
-            }).start();
+                        try {
+                            for (int j = 0; j < totalKeysPerThread; j++) {
+                                cache.put(threadId + "-" + j, Integer.toString(j));
+                            }
+                        } finally {
+                            latch.countDown();
+                        }
+                    })
+                    .start();
         }
-        assertTrue(latch.await(20, TimeUnit.SECONDS),
+        assertTrue(
+                latch.await(20, TimeUnit.SECONDS),
                 "Should have completed within a reasonable timeframe. Latch at: " + latch.getCount());
         assertEquals(maximumCacheSize, cache.size());
         assertEquals(totalKeysPerThread * threads - maximumCacheSize, counter.get());
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 1, 2, 5, 10, 20, 50, 100, 500 })
+    @ValueSource(ints = {1, 2, 5, 10, 20, 50, 100, 500})
     void concurrentPutWithCollisions(int maximumCacheSize) throws Exception {
         int threads = Runtime.getRuntime().availableProcessors();
         int totalKeys = 1_000;
         AtomicInteger counter = new AtomicInteger();
-        SimpleLRUCache<String, String> cache = new SimpleLRUCache<>(16, maximumCacheSize, v -> counter.incrementAndGet());
+        SimpleLRUCache<String, String> cache =
+                new SimpleLRUCache<>(16, maximumCacheSize, v -> counter.incrementAndGet());
         CountDownLatch latch = new CountDownLatch(threads);
         for (int i = 0; i < threads; i++) {
             new Thread(() -> {
-                try {
-                    for (int j = 0; j < totalKeys; j++) {
-                        cache.put(Integer.toString(j), Integer.toString(j));
-                    }
-                } finally {
-                    latch.countDown();
-                }
-            }).start();
+                        try {
+                            for (int j = 0; j < totalKeys; j++) {
+                                cache.put(Integer.toString(j), Integer.toString(j));
+                            }
+                        } finally {
+                            latch.countDown();
+                        }
+                    })
+                    .start();
         }
-        assertTrue(latch.await(20, TimeUnit.SECONDS),
+        assertTrue(
+                latch.await(20, TimeUnit.SECONDS),
                 "Should have completed within a reasonable timeframe. Latch at: " + latch.getCount());
         assertEquals(maximumCacheSize, cache.size());
         counter.set(0);

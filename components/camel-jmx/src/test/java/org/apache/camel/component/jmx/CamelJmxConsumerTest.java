@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import org.apache.camel.RoutesBuilder;
@@ -37,8 +38,9 @@ public class CamelJmxConsumerTest extends CamelTestSupport {
         getMockEndpoint("mock:result").message(0).body().contains("<newValue>true</newValue>");
 
         // change the attribute so JMX triggers
-        ManagedRouteMBean mr
-                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
+        ManagedRouteMBean mr = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedRoute("foo");
         mr.setTracing(true);
 
         MockEndpoint.assertIsSatisfied(context);

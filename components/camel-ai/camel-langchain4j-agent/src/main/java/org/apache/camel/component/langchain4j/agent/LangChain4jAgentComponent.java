@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent;
+
+import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHEME;
 
 import java.util.Map;
 
@@ -23,8 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
-import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHEME;
 
 @Component(SCHEME)
 public class LangChain4jAgentComponent extends DefaultComponent {

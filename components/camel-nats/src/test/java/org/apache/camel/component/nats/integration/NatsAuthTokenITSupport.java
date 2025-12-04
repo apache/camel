@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats.integration;
 
 import org.apache.camel.CamelContext;
@@ -33,5 +34,4 @@ public class NatsAuthTokenITSupport extends CamelTestSupport {
         nats.setServers(service.getServiceAddress());
         return context;
     }
-
 }

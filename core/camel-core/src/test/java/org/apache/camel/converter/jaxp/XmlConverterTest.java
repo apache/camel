@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.InputStream;
@@ -43,13 +51,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.xml.BytesSource;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlConverterTest extends ContextTestSupport {
 
@@ -208,8 +209,7 @@ public class XmlConverterTest extends ContextTestSupport {
                 return null;
             }
 
-            public void setSystemId(String s) {
-            }
+            public void setSystemId(String s) {}
         };
 
         DOMSource out = conv.toDOMSource(dummy, null);
@@ -291,8 +291,7 @@ public class XmlConverterTest extends ContextTestSupport {
                 return null;
             }
 
-            public void setSystemId(String s) {
-            }
+            public void setSystemId(String s) {}
         };
 
         SAXSource out = conv.toSAXSource(dummy, null);
@@ -361,8 +360,7 @@ public class XmlConverterTest extends ContextTestSupport {
                 return null;
             }
 
-            public void setSystemId(String s) {
-            }
+            public void setSystemId(String s) {}
         };
 
         StreamSource out = conv.toStreamSource(dummy, null);
@@ -456,8 +454,8 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToDomElementFromDocumentNode() throws Exception {
         XmlConverter conv = new XmlConverter();
-        Document doc = context.getTypeConverter().convertTo(Document.class,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        Document doc = context.getTypeConverter()
+                .convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
         Element out = conv.toDOMElement(doc);
         assertNotNull(out);
@@ -467,8 +465,8 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToDomElementFromElementNode() throws Exception {
         XmlConverter conv = new XmlConverter();
-        Document doc = context.getTypeConverter().convertTo(Document.class,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        Document doc = context.getTypeConverter()
+                .convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
         Element out = conv.toDOMElement(doc.getDocumentElement());
         assertNotNull(out);
@@ -488,8 +486,8 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToDocumentFromInputStream() throws Exception {
         XmlConverter conv = new XmlConverter();
-        InputStream is = context.getTypeConverter().convertTo(InputStream.class,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        InputStream is = context.getTypeConverter()
+                .convertTo(InputStream.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
         Document out = conv.toDOMDocument(is, null);
         assertNotNull(out);
@@ -499,8 +497,8 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToInputStreamFromDocument() throws Exception {
         XmlConverter conv = new XmlConverter();
-        Document doc = context.getTypeConverter().convertTo(Document.class,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        Document doc = context.getTypeConverter()
+                .convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
         InputStream is = conv.toInputStream(doc, null);
         assertNotNull(is);
@@ -510,12 +508,13 @@ public class XmlConverterTest extends ContextTestSupport {
     @Test
     public void testToInputStreamNonAsciiFromDocument() throws Exception {
         XmlConverter conv = new XmlConverter();
-        Document doc = context.getTypeConverter().convertTo(Document.class,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>\u99f1\u99ddb\u00e4r</foo>");
+        Document doc = context.getTypeConverter()
+                .convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>\u99f1\u99ddb\u00e4r</foo>");
 
         InputStream is = conv.toInputStream(doc, null);
         assertNotNull(is);
-        assertEquals("<foo>\u99f1\u99ddb\u00e4r</foo>", context.getTypeConverter().convertTo(String.class, is));
+        assertEquals(
+                "<foo>\u99f1\u99ddb\u00e4r</foo>", context.getTypeConverter().convertTo(String.class, is));
     }
 
     @Test
@@ -586,14 +585,17 @@ public class XmlConverterTest extends ContextTestSupport {
         DOMSource out = conv.toDOMSource(source, exchange);
         assertNotSame(source, out);
 
-        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><foo>bar</foo>",
+        assertEquals(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><foo>bar</foo>",
                 conv.toString(out, exchange));
     }
 
     @Test
     public void testNodeListToNode() {
-        Document document = context.getTypeConverter().convertTo(Document.class,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello></foo>");
+        Document document = context.getTypeConverter()
+                .convertTo(
+                        Document.class,
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello></foo>");
 
         NodeList nl = document.getElementsByTagName("hello");
         assertEquals(1, nl.getLength());
@@ -601,8 +603,11 @@ public class XmlConverterTest extends ContextTestSupport {
         Node node = context.getTypeConverter().convertTo(Node.class, nl);
         assertNotNull(node);
 
-        document = context.getTypeConverter().convertTo(Document.class,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello><hello>Hello Camel</hello></foo>");
+        document = context.getTypeConverter()
+                .convertTo(
+                        Document.class,
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                + "<foo><hello>Hello World</hello><hello>Hello Camel</hello></foo>");
 
         nl = document.getElementsByTagName("hello");
         assertEquals(2, nl.getLength());
@@ -612,8 +617,10 @@ public class XmlConverterTest extends ContextTestSupport {
         assertNull(node);
 
         // and we can convert with 1 again
-        document = context.getTypeConverter().convertTo(Document.class,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello></foo>");
+        document = context.getTypeConverter()
+                .convertTo(
+                        Document.class,
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello></foo>");
 
         nl = document.getElementsByTagName("hello");
         assertEquals(1, nl.getLength());
@@ -621,5 +628,4 @@ public class XmlConverterTest extends ContextTestSupport {
         node = context.getTypeConverter().convertTo(Node.class, nl);
         assertNotNull(node);
     }
-
 }

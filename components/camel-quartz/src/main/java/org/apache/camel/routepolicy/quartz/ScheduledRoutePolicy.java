@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
 
 import java.util.LinkedHashMap;
@@ -55,8 +56,10 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
 
     protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<>();
     private Scheduler scheduler;
+
     @Metadata(description = "Timeout (in millis) when stopping routes.", defaultValue = "10000")
     private int routeStopGracePeriod;
+
     private TimeUnit timeUnit;
 
     protected abstract Trigger createTrigger(Action action, Route route) throws Exception;
@@ -76,14 +79,17 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
             if (routeStatus == ServiceStatus.Started || routeStatus == ServiceStatus.Suspended) {
                 stopRoute(route, getRouteStopGracePeriod(), getTimeUnit());
             } else {
-                LOG.warn("Route is not in a started/suspended state and cannot be stopped. The current route state is {}",
+                LOG.warn(
+                        "Route is not in a started/suspended state and cannot be stopped. The current route state is {}",
                         routeStatus);
             }
         } else if (action == Action.SUSPEND) {
             if (routeStatus == ServiceStatus.Started) {
                 suspendOrStopConsumer(route.getConsumer());
             } else {
-                LOG.warn("Route is not in a started state and cannot be suspended. The current route state is {}", routeStatus);
+                LOG.warn(
+                        "Route is not in a started state and cannot be suspended. The current route state is {}",
+                        routeStatus);
             }
         } else if (action == Action.RESUME) {
             if (routeStatus == ServiceStatus.Started) {
@@ -93,7 +99,9 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
                     LOG.warn("The Consumer {} is not suspended and cannot be resumed.", route.getConsumer());
                 }
             } else {
-                LOG.warn("Route is not in a started state and cannot be resumed. The current route state is {}", routeStatus);
+                LOG.warn(
+                        "Route is not in a started state and cannot be resumed. The current route state is {}",
+                        routeStatus);
             }
         }
     }
@@ -115,14 +123,19 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
 
         loadCallbackDataIntoSchedulerContext(jobDetail, action, route);
 
-        boolean isClustered = route.getCamelContext().getComponent("quartz", QuartzComponent.class).isClustered();
+        boolean isClustered = route.getCamelContext()
+                .getComponent("quartz", QuartzComponent.class)
+                .isClustered();
         if (isClustered) {
             // check to see if the same job has already been setup through another node of the cluster
             JobDetail existingJobDetail = getScheduler().getJobDetail(jobDetail.getKey());
             if (jobDetail.equals(existingJobDetail)) {
                 LOG.info(
                         "Skipping to schedule the job: {} for action: {} on route {} as the job: {} already existing inside the cluster",
-                        jobDetail.getKey(), action, route.getId(), existingJobDetail.getKey());
+                        jobDetail.getKey(),
+                        action,
+                        route.getId(),
+                        existingJobDetail.getKey());
 
                 // skip scheduling the same job again as one is already existing for the same routeId and action
                 return;
@@ -184,17 +197,21 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
         JobDetail jobDetail = null;
 
         if (action == Action.START) {
-            jobDetail = JobBuilder.newJob(ScheduledJob.class).withIdentity(JOB_START + route.getId(), JOB_GROUP + route.getId())
+            jobDetail = JobBuilder.newJob(ScheduledJob.class)
+                    .withIdentity(JOB_START + route.getId(), JOB_GROUP + route.getId())
                     .build();
         } else if (action == Action.STOP) {
-            jobDetail = JobBuilder.newJob(ScheduledJob.class).withIdentity(JOB_STOP + route.getId(), JOB_GROUP + route.getId())
+            jobDetail = JobBuilder.newJob(ScheduledJob.class)
+                    .withIdentity(JOB_STOP + route.getId(), JOB_GROUP + route.getId())
                     .build();
         } else if (action == Action.SUSPEND) {
             jobDetail = JobBuilder.newJob(ScheduledJob.class)
-                    .withIdentity(JOB_SUSPEND + route.getId(), JOB_GROUP + route.getId()).build();
+                    .withIdentity(JOB_SUSPEND + route.getId(), JOB_GROUP + route.getId())
+                    .build();
         } else if (action == Action.RESUME) {
             jobDetail = JobBuilder.newJob(ScheduledJob.class)
-                    .withIdentity(JOB_RESUME + route.getId(), JOB_GROUP + route.getId()).build();
+                    .withIdentity(JOB_RESUME + route.getId(), JOB_GROUP + route.getId())
+                    .build();
         }
 
         return jobDetail;
@@ -287,5 +304,4 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
-
 }

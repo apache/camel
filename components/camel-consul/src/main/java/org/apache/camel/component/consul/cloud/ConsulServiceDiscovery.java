@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cloud;
 
 import java.util.Collections;
@@ -46,10 +47,9 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     private final QueryOptions queryOptions;
 
     public ConsulServiceDiscovery(ConsulConfiguration configuration) {
-        this.client = Suppliers.memorize(() -> configuration.createConsulClient(getCamelContext()),
-                e -> {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                });
+        this.client = Suppliers.memorize(() -> configuration.createConsulClient(getCamelContext()), e -> {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        });
 
         ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
         ObjectHelper.ifNotEmpty(configuration.getDatacenter(), builder::datacenter);
@@ -61,10 +61,16 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     @Override
     public List<ServiceDefinition> getServices(String name) {
         try {
-            List<CatalogService> services = client.get().catalogClient().getService(name, queryOptions).getResponse();
-            List<ServiceHealth> healths = client.get().healthClient().getAllServiceInstances(name, queryOptions).getResponse();
+            List<CatalogService> services =
+                    client.get().catalogClient().getService(name, queryOptions).getResponse();
+            List<ServiceHealth> healths = client.get()
+                    .healthClient()
+                    .getAllServiceInstances(name, queryOptions)
+                    .getResponse();
 
-            return services.stream().map(service -> newService(name, service, healths)).toList();
+            return services.stream()
+                    .map(service -> newService(name, service, healths))
+                    .toList();
         } catch (Exception e) {
             LOGGER.warn("Error getting '{}' services from consul.", name, e);
             return Collections.emptyList();
@@ -76,10 +82,12 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     // *************************
 
     private boolean isHealthy(ServiceHealth serviceHealth) {
-        return serviceHealth.getChecks().stream().allMatch(check -> ObjectHelper.equal(check.getStatus(), "passing", true));
+        return serviceHealth.getChecks().stream()
+                .allMatch(check -> ObjectHelper.equal(check.getStatus(), "passing", true));
     }
 
-    private ServiceDefinition newService(String serviceName, CatalogService service, List<ServiceHealth> serviceHealthList) {
+    private ServiceDefinition newService(
+            String serviceName, CatalogService service, List<ServiceHealth> serviceHealthList) {
         Map<String, String> meta = new HashMap<>();
         ObjectHelper.ifNotEmpty(service.getServiceId(), val -> meta.put(ServiceDefinition.SERVICE_META_ID, val));
         ObjectHelper.ifNotEmpty(service.getServiceName(), val -> meta.put(ServiceDefinition.SERVICE_META_NAME, val));
@@ -99,10 +107,12 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
         }
 
         return new DefaultServiceDefinition(
-                serviceName, service.getServiceAddress(), service.getServicePort(), meta,
-                new DefaultServiceHealth(
-                        serviceHealthList.stream()
-                                .filter(h -> ObjectHelper.equal(h.getService().getId(), service.getServiceId()))
-                                .allMatch(this::isHealthy)));
+                serviceName,
+                service.getServiceAddress(),
+                service.getServicePort(),
+                meta,
+                new DefaultServiceHealth(serviceHealthList.stream()
+                        .filter(h -> ObjectHelper.equal(h.getService().getId(), service.getServiceId()))
+                        .allMatch(this::isHealthy)));
     }
 }

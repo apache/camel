@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class XPathChoiceTest extends ContextTestSupport {
     protected MockEndpoint x;
@@ -80,11 +81,18 @@ public class XPathChoiceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice().when().xpath("/body[@id='a']").setHeader("name", constant("a")).to("mock:x")
-                        .when().xpath("/body[@id='b']").to("mock:y").otherwise()
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .xpath("/body[@id='a']")
+                        .setHeader("name", constant("a"))
+                        .to("mock:x")
+                        .when()
+                        .xpath("/body[@id='b']")
+                        .to("mock:y")
+                        .otherwise()
                         .to("mock:z");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.extension.verifier;
 
 import java.util.Collection;
@@ -34,8 +35,7 @@ public final class ResultErrorBuilder {
     private Set<String> parameters;
     private Map<VerificationError.Attribute, Object> attributes;
 
-    public ResultErrorBuilder() {
-    }
+    public ResultErrorBuilder() {}
 
     // **********************************
     // Accessors
@@ -142,8 +142,7 @@ public final class ResultErrorBuilder {
     }
 
     public static ResultErrorBuilder withHttpCode(int code) {
-        return withCode(convertHttpCodeToErrorCode(code))
-                .detail(VerificationError.HttpAttribute.HTTP_CODE, code);
+        return withCode(convertHttpCodeToErrorCode(code)).detail(VerificationError.HttpAttribute.HTTP_CODE, code);
     }
 
     public static ResultErrorBuilder withHttpCodeAndText(int code, String text) {
@@ -154,7 +153,8 @@ public final class ResultErrorBuilder {
 
     private static VerificationError.StandardCode convertHttpCodeToErrorCode(int code) {
         return code >= 400 && code < 500
-                ? VerificationError.StandardCode.AUTHENTICATION : VerificationError.StandardCode.GENERIC;
+                ? VerificationError.StandardCode.AUTHENTICATION
+                : VerificationError.StandardCode.GENERIC;
     }
 
     public static ResultErrorBuilder withCodeAndDescription(VerificationError.Code code, String description) {
@@ -178,7 +178,9 @@ public final class ResultErrorBuilder {
                 .code(VerificationError.StandardCode.EXCEPTION)
                 .description(exception.getMessage())
                 .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, exception)
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, exception.getClass().getName());
+                .detail(
+                        VerificationError.ExceptionAttribute.EXCEPTION_CLASS,
+                        exception.getClass().getName());
     }
 
     public static ResultErrorBuilder withMissingOption(String optionName) {

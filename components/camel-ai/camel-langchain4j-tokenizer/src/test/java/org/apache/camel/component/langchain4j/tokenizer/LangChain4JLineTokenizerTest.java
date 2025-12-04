@@ -43,11 +43,12 @@ public class LangChain4JLineTokenizerTest extends LangChain4JTokenizerTestSuppor
                 from("direct:start")
                         .tokenize(tokenizer()
                                 .byLine()
-                                    .maxTokens(1024, "gpt-4o-mini")
-                                    .maxOverlap(10)
-                                    .using(LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI)
-                                    .end())
-                        .split().body()
+                                .maxTokens(1024, "gpt-4o-mini")
+                                .maxOverlap(10)
+                                .using(LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI)
+                                .end())
+                        .split()
+                        .body()
                         .to("mock:result");
             }
         };

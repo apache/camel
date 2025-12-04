@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.swift.mt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -29,10 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * The unit test for {@link SwiftMtDataFormat} testing the XML DSL.
  */
@@ -43,8 +44,8 @@ class SpringSwiftMtDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:unmarshal");
         mockEndpoint.expectedMessageCount(1);
 
-        Object result
-                = template.requestBody("direct:unmarshal", Files.readAllBytes(Paths.get("src/test/resources/mt/message1.txt")));
+        Object result = template.requestBody(
+                "direct:unmarshal", Files.readAllBytes(Paths.get("src/test/resources/mt/message1.txt")));
         assertNotNull(result);
         assertInstanceOf(MT515.class, result);
         mockEndpoint.assertIsSatisfied();
@@ -77,7 +78,8 @@ class SpringSwiftMtDataFormatTest extends CamelSpringTestSupport {
         assertInstanceOf(InputStream.class, result);
 
         ObjectMapper mapper = new ObjectMapper();
-        assertEquals(mapper.readTree(Files.readString(Paths.get("src/test/resources/mt/message2.json"))),
+        assertEquals(
+                mapper.readTree(Files.readString(Paths.get("src/test/resources/mt/message2.json"))),
                 mapper.readTree((InputStream) result));
         mockEndpoint.assertIsSatisfied();
     }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
 
 public class ExpressionFunctionTest extends ContextTestSupport {
 
@@ -50,9 +51,17 @@ public class ExpressionFunctionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:function").transform().message(m -> m.getExchange().getIn().getHeader("type")).to("mock:function");
-                from("direct:inFunction").transform().message(m -> m.getHeader("type")).to("mock:inFunction");
-                from("direct:inFunction2").transform(messageExpression(m -> m.getHeader("type"))).to("mock:inFunction2");
+                from("direct:function")
+                        .transform()
+                        .message(m -> m.getExchange().getIn().getHeader("type"))
+                        .to("mock:function");
+                from("direct:inFunction")
+                        .transform()
+                        .message(m -> m.getHeader("type"))
+                        .to("mock:inFunction");
+                from("direct:inFunction2")
+                        .transform(messageExpression(m -> m.getHeader("type")))
+                        .to("mock:inFunction2");
             }
         };
     }

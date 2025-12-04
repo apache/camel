@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -40,7 +41,12 @@ public class FtpProducerConnectErrorsHeaderIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().to(getFtpUrl()).doCatch(Exception.class).to("mock:result").endDoTry();
+                from("direct:start")
+                        .doTry()
+                        .to(getFtpUrl())
+                        .doCatch(Exception.class)
+                        .to("mock:result")
+                        .endDoTry();
             }
         };
     }

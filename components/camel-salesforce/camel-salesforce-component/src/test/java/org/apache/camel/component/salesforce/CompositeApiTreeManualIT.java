@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 
@@ -27,8 +30,6 @@ import org.apache.camel.test.junit5.params.Parameter;
 import org.apache.camel.test.junit5.params.Parameterized;
 import org.apache.camel.test.junit5.params.Parameters;
 import org.apache.camel.test.junit5.params.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Parameterized
 public class CompositeApiTreeManualIT extends AbstractSalesforceTestBase {
@@ -83,8 +84,8 @@ public class CompositeApiTreeManualIT extends AbstractSalesforceTestBase {
 
         tree.addObject(simpleAccount3).addChild("Contacts", contact).addChild("Assets", asset);
 
-        final SObjectTree response
-                = template.requestBody("salesforce:composite-tree?format=" + format, tree, SObjectTree.class);
+        final SObjectTree response =
+                template.requestBody("salesforce:composite-tree?format=" + format, tree, SObjectTree.class);
 
         assertNotNull(response, "Response should be provided");
 

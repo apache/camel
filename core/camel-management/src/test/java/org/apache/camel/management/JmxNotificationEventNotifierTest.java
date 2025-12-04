@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_EVENT_NOTIFIER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.management.Notification;
 import javax.management.NotificationFilter;
@@ -27,10 +32,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_EVENT_NOTIFIER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
@@ -58,15 +59,20 @@ public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
         // register the NotificationListener
         ObjectName on = getCamelObjectName(TYPE_EVENT_NOTIFIER, "JmxEventNotifier");
         MyNotificationListener listener = new MyNotificationListener();
-        context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
-                listener,
-                new NotificationFilter() {
-                    private static final long serialVersionUID = 1L;
+        context.getManagementStrategy()
+                .getManagementAgent()
+                .getMBeanServer()
+                .addNotificationListener(
+                        on,
+                        listener,
+                        new NotificationFilter() {
+                            private static final long serialVersionUID = 1L;
 
-                    public boolean isNotificationEnabled(Notification notification) {
-                        return notification.getSource().equals("MyCamel");
-                    }
-                }, null);
+                            public boolean isNotificationEnabled(Notification notification) {
+                                return notification.getSource().equals("MyCamel");
+                            }
+                        },
+                        null);
 
         // END SNIPPET: e2
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -85,14 +91,20 @@ public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
         ObjectName on = getCamelObjectName(TYPE_EVENT_NOTIFIER, "JmxEventNotifier");
 
         MyNotificationListener listener = new MyNotificationListener();
-        context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
-                listener, new NotificationFilter() {
-                    private static final long serialVersionUID = 1L;
+        context.getManagementStrategy()
+                .getManagementAgent()
+                .getMBeanServer()
+                .addNotificationListener(
+                        on,
+                        listener,
+                        new NotificationFilter() {
+                            private static final long serialVersionUID = 1L;
 
-                    public boolean isNotificationEnabled(Notification notification) {
-                        return true;
-                    }
-                }, null);
+                            public boolean isNotificationEnabled(Notification notification) {
+                                return true;
+                            }
+                        },
+                        null);
 
         try {
             template.sendBody("direct:fail", "Hello World");
@@ -132,7 +144,5 @@ public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
         public int getEventCounter() {
             return eventCounter;
         }
-
     }
-
 }

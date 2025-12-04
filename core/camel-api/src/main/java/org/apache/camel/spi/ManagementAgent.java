@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import javax.management.JMException;
@@ -364,5 +365,4 @@ public interface ManagementAgent extends Service {
      * Sets whether updating routes via JMX is allowed (is default disabled).
      */
     void setUpdateRouteEnabled(Boolean updateRouteEnabled);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.util.Collections;
@@ -53,11 +54,10 @@ public class UndertowBasicAuthHandler implements CamelUndertowHttpHandler {
         HttpHandler handler = this.next;
         handler = new AuthenticationCallHandler(handler);
         handler = new AuthenticationConstraintHandler(handler);
-        final List<AuthenticationMechanism> mechanisms
-                = Collections.<AuthenticationMechanism> singletonList(new BasicAuthenticationMechanism("My Realm"));
+        final List<AuthenticationMechanism> mechanisms =
+                Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("My Realm"));
         handler = new AuthenticationMechanismsHandler(handler, mechanisms);
         this.securityHandler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
-
     }
 
     private void buildIdMgr() {
@@ -70,5 +70,4 @@ public class UndertowBasicAuthHandler implements CamelUndertowHttpHandler {
     public void setNext(HttpHandler nextHandler) {
         this.next = nextHandler;
     }
-
 }

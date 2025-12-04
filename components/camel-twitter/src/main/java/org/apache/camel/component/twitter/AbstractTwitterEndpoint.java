@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.Consumer;
@@ -29,8 +30,11 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
 
     public static final long DEFAULT_CONSUMER_DELAY = 30 * 1000L;
 
-    @UriParam(defaultValue = "" + DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration", label = "consumer,scheduler",
-              description = "Milliseconds before the next poll.")
+    @UriParam(
+            defaultValue = "" + DEFAULT_CONSUMER_DELAY,
+            javaType = "java.time.Duration",
+            label = "consumer,scheduler",
+            description = "Milliseconds before the next poll.")
     private long delay = DEFAULT_CONSUMER_DELAY;
 
     @UriParam
@@ -129,5 +133,4 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
         super.setDelay(delay);
         this.delay = delay;
     }
-
 }

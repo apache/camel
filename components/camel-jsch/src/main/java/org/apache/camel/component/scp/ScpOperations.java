@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scp;
 
 import java.io.BufferedInputStream;
@@ -106,7 +107,9 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
         int timeout = cfg.getConnectTimeout();
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Opening channel to {} with {} timeout...", cfg.remoteServerInformation(),
+            LOG.trace(
+                    "Opening channel to {} with {} timeout...",
+                    cfg.remoteServerInformation(),
                     timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");
         }
         String file = getRemoteFile(name, cfg);
@@ -188,7 +191,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     public boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
             throws GenericFileOperationFailedException {
         if (!isConnected()) {
-            session = createSession(configuration instanceof ScpConfiguration ? (ScpConfiguration) configuration : null);
+            session =
+                    createSession(configuration instanceof ScpConfiguration ? (ScpConfiguration) configuration : null);
             // TODO: deal with reconnection attempts
             if (!isConnected()) {
                 session = null;
@@ -256,7 +260,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 if (!name.startsWith("classpath:")) {
                     name = "file:" + name;
                 }
-                try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), name)) {
+                try (InputStream is =
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), name)) {
                     byte[] data = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
                     jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
                 } catch (Exception e) {
@@ -293,8 +298,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                     knownHostsFile = "file:" + knownHostsFile;
                 }
                 try {
-                    InputStream is
-                            = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), knownHostsFile);
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                            endpoint.getCamelContext(), knownHostsFile);
                     jsch.setKnownHosts(is);
                 } catch (Exception e) {
                     throw new GenericFileOperationFailedException("Cannot load known host file: " + knownHostsFile, e);
@@ -319,7 +324,9 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             int timeout = config.getConnectTimeout();
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Connecting to {} with {} timeout...", config.remoteServerInformation(),
+                LOG.debug(
+                        "Connecting to {} with {} timeout...",
+                        config.remoteServerInformation(),
                         timeout > 0 ? (timeout + " ms") : "no");
             }
             if (timeout > 0) {
@@ -512,8 +519,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
         @Override
         public String[] promptKeyboardInteractive(
-                String destination, String name,
-                String instruction, String[] prompt, boolean[] echo) {
+                String destination, String name, String instruction, String[] prompt, boolean[] echo) {
             LOG.debug(instruction);
             // Called for either SSH_MSG_USERAUTH_INFO_REQUEST or SSH_MSG_USERAUTH_PASSWD_CHANGEREQ
             // The most secure choice (especially for the second case) is to return null

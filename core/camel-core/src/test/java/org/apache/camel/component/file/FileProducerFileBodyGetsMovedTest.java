@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 
@@ -23,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Checks that body of type {@link java.io.File} is simply moved avoiding copying using IO streams.
@@ -38,8 +39,8 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         File temporaryFile = File.createTempFile("camel", "test");
 
-        template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH,
-                temporaryFile.getAbsolutePath());
+        template.requestBodyAndHeader(
+                "direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH, temporaryFile.getAbsolutePath());
 
         mock.assertIsSatisfied();
         assertFalse(temporaryFile.exists(), "Temporary body file should have been moved, not copied");
@@ -52,8 +53,8 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         File temporaryFile = File.createTempFile("camel", "test");
 
-        template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH,
-                temporaryFile.getAbsolutePath());
+        template.requestBodyAndHeader(
+                "direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH, temporaryFile.getAbsolutePath());
 
         mock.assertIsSatisfied();
         assertFalse(temporaryFile.exists(), "Temporary body file should have been moved, not copied");
@@ -67,5 +68,4 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
             }
         };
     }
-
 }

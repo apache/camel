@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kms;
 
 import org.apache.camel.Endpoint;
@@ -99,7 +100,8 @@ public class KMS2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (kmsProducerToString == null) {
-            kmsProducerToString = "KMSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            kmsProducerToString =
+                    "KMSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return kmsProducerToString;
     }
@@ -117,7 +119,9 @@ public class KMS2Producer extends DefaultProducer {
                 try {
                     result = kmsClient.listKeys((ListKeysRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Keys command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Keys command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -133,7 +137,9 @@ public class KMS2Producer extends DefaultProducer {
             try {
                 result = kmsClient.listKeys(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Keys command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Keys command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -149,7 +155,9 @@ public class KMS2Producer extends DefaultProducer {
                 try {
                     result = kmsClient.createKey((CreateKeyRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Key command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -165,7 +173,9 @@ public class KMS2Producer extends DefaultProducer {
             try {
                 result = kmsClient.createKey(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Key command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -181,7 +191,9 @@ public class KMS2Producer extends DefaultProducer {
                 try {
                     result = kmsClient.disableKey((DisableKeyRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Disable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Disable Key command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -199,7 +211,9 @@ public class KMS2Producer extends DefaultProducer {
             try {
                 result = kmsClient.disableKey(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Disable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Disable Key command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -215,7 +229,9 @@ public class KMS2Producer extends DefaultProducer {
                 try {
                     result = kmsClient.scheduleKeyDeletion((ScheduleKeyDeletionRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Schedule Key Deletion command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Schedule Key Deletion command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -237,7 +253,9 @@ public class KMS2Producer extends DefaultProducer {
             try {
                 result = kmsClient.scheduleKeyDeletion(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Schedule Key Deletion command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Schedule Key Deletion command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -253,7 +271,9 @@ public class KMS2Producer extends DefaultProducer {
                 try {
                     result = kmsClient.describeKey((DescribeKeyRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Key command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -271,7 +291,9 @@ public class KMS2Producer extends DefaultProducer {
             try {
                 result = kmsClient.describeKey(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Key command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -287,7 +309,9 @@ public class KMS2Producer extends DefaultProducer {
                 try {
                     result = kmsClient.enableKey((EnableKeyRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Enable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Enable Key command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -305,7 +329,9 @@ public class KMS2Producer extends DefaultProducer {
             try {
                 result = kmsClient.enableKey(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Enable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Enable Key command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

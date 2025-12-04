@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
 
 import java.util.function.Function;
 
@@ -23,8 +26,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import org.apache.camel.Exchange;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
-
 public class DistributionSummaryProducer extends AbstractMicrometerProducer<DistributionSummary> {
 
     public DistributionSummaryProducer(MicrometerEndpoint endpoint) {
@@ -32,8 +33,12 @@ public class DistributionSummaryProducer extends AbstractMicrometerProducer<Dist
     }
 
     @Override
-    protected Function<MeterRegistry, DistributionSummary> registrar(String name, String description, Iterable<Tag> tags) {
-        return meterRegistry -> DistributionSummary.builder(name).description(description).tags(tags).register(meterRegistry);
+    protected Function<MeterRegistry, DistributionSummary> registrar(
+            String name, String description, Iterable<Tag> tags) {
+        return meterRegistry -> DistributionSummary.builder(name)
+                .description(description)
+                .tags(tags)
+                .register(meterRegistry);
     }
 
     @Override

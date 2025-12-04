@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,11 +34,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedKameletRouteDisabledTest extends CamelTestSupport {
 
@@ -49,8 +50,8 @@ public class ManagedKameletRouteDisabledTest extends CamelTestSupport {
     public void testKameletRouteMBeanDisabled() throws Exception {
         String body = UUID.randomUUID().toString();
 
-        assertThat(
-                fluentTemplate.toF("direct:single").withBody(body).request(String.class)).isEqualTo("a-" + body);
+        assertThat(fluentTemplate.toF("direct:single").withBody(body).request(String.class))
+                .isEqualTo("a-" + body);
 
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -76,9 +77,11 @@ public class ManagedKameletRouteDisabledTest extends CamelTestSupport {
                 routeTemplate("echo")
                         .templateParameter("prefix")
                         .from("kamelet:source")
-                        .setBody().simple("{{prefix}}-${body}");
+                        .setBody()
+                        .simple("{{prefix}}-${body}");
 
-                from("direct:single").routeId("test")
+                from("direct:single")
+                        .routeId("test")
                         .to("kamelet:echo?prefix=a")
                         .log("${body}");
             }

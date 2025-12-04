@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
@@ -67,5 +68,4 @@ public class WickedHeaderWithCommaCsv {
         result = 31 * result + (bar != null ? bar.hashCode() : 0);
         return result;
     }
-
 }

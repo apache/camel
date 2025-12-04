@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -67,8 +68,8 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
      * @param      collection    The collection of API methods
      */
     @Deprecated(since = "4.2.0")
-    public AbstractApiComponent(CamelContext context, Class<? extends Endpoint> endpointClass, Class<E> apiNameClass,
-                                S collection) {
+    public AbstractApiComponent(
+            CamelContext context, Class<? extends Endpoint> endpointClass, Class<E> apiNameClass, S collection) {
         this(context, apiNameClass, collection);
     }
 
@@ -110,9 +111,8 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
                 methodName = pathElements[1];
                 break;
             default:
-                throw new CamelException(
-                        "Invalid URI path [" + remaining
-                                         + "], must be of the format " + collection.getApiNames() + "/<operation-name>");
+                throw new CamelException("Invalid URI path [" + remaining + "], must be of the format "
+                        + collection.getApiNames() + "/<operation-name>");
         }
 
         try {
@@ -131,8 +131,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof IllegalArgumentException) {
                 throw new CamelException(
-                        "Invalid URI path prefix [" + remaining
-                                         + "], must be one of " + collection.getApiNames());
+                        "Invalid URI path prefix [" + remaining + "], must be one of " + collection.getApiNames());
             }
             throw e;
         }
@@ -161,8 +160,8 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
                     }
                 }
             } else {
-                PluginHelper.getBeanIntrospection(getCamelContext()).getProperties(configuration,
-                        componentProperties, null, false);
+                PluginHelper.getBeanIntrospection(getCamelContext())
+                        .getProperties(configuration, componentProperties, null, false);
             }
         }
 
@@ -184,5 +183,4 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
     public void setConfiguration(T configuration) {
         this.configuration = configuration;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -32,9 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
 
@@ -46,9 +47,8 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA =
+            ModelHelper.hasEnvironmentConfiguration() ? null : OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -62,15 +62,12 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody(
-                "direct:agent-with-user-tools",
-                "What is the name of user ID 123?",
-                String.class);
+        String response =
+                template.requestBody("direct:agent-with-user-tools", "What is the name of user ID 123?", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains(USER_DB_NAME),
-                "Response should contain the user name from the database tool");
+        assertTrue(response.contains(USER_DB_NAME), "Response should contain the user name from the database tool");
     }
 
     @Test
@@ -79,15 +76,15 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         String response = template.requestBody(
-                "direct:agent-with-weather-tools",
-                "What's the weather like in New York?",
-                String.class);
+                "direct:agent-with-weather-tools", "What's the weather like in New York?", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains(WEATHER_INFO_1),
+        assertTrue(
+                response.toLowerCase().contains(WEATHER_INFO_1),
                 "Response should contain weather information from the weather tool");
-        assertTrue(response.toLowerCase().contains(WEATHER_INFO_2),
+        assertTrue(
+                response.toLowerCase().contains(WEATHER_INFO_2),
                 "Response should contain weather information from the weather tool");
     }
 
@@ -96,24 +93,22 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String systemMessage = "You are a helpful assistant that can access user database and weather information. " +
-                               "Use the available tools to provide accurate information.";
+        String systemMessage = "You are a helpful assistant that can access user database and weather information. "
+                + "Use the available tools to provide accurate information.";
         String userMessage = "Can you tell me the name of user 123 and the weather in New York?";
 
         AiAgentBody<?> aiAgentBody = new AiAgentBody<>(systemMessage, userMessage, null);
 
-        String response = template.requestBody(
-                "direct:agent-with-multiple-tools",
-                aiAgentBody,
-                String.class);
+        String response = template.requestBody("direct:agent-with-multiple-tools", aiAgentBody, String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains(USER_DB_NAME),
-                "Response should contain the user name from the database tool");
-        assertTrue(response.toLowerCase().contains(WEATHER_INFO_1),
+        assertTrue(response.contains(USER_DB_NAME), "Response should contain the user name from the database tool");
+        assertTrue(
+                response.toLowerCase().contains(WEATHER_INFO_1),
                 "Response should contain weather information from the weather tool");
-        assertTrue(response.toLowerCase().contains(WEATHER_INFO_2),
+        assertTrue(
+                response.toLowerCase().contains(WEATHER_INFO_2),
                 "Response should contain weather information from the weather tool");
     }
 
@@ -122,16 +117,16 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody(
-                "direct:agent-with-configured-tags",
-                "What's the weather in Paris?",
-                String.class);
+        String response =
+                template.requestBody("direct:agent-with-configured-tags", "What's the weather in Paris?", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains(WEATHER_INFO_1),
+        assertTrue(
+                response.toLowerCase().contains(WEATHER_INFO_1),
                 "Response should contain weather information from the weather tool");
-        assertTrue(response.toLowerCase().contains(WEATHER_INFO_2),
+        assertTrue(
+                response.toLowerCase().contains(WEATHER_INFO_2),
                 "Response should contain weather information from the weather tool");
     }
 
@@ -140,15 +135,11 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody(
-                "direct:agent-without-tools",
-                "What is Apache Camel?",
-                String.class);
+        String response = template.requestBody("direct:agent-without-tools", "What is Apache Camel?", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains("Apache Camel"),
-                "Response should contain information about Apache Camel");
+        assertTrue(response.contains("Apache Camel"), "Response should contain information about Apache Camel");
     }
 
     @Override

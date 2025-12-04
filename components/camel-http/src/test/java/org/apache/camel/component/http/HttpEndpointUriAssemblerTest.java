@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,10 +28,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpEndpointUriAssemblerTest {
 
@@ -53,7 +54,6 @@ public class HttpEndpointUriAssemblerTest {
             assertEquals(
                     "https://www.google.com?proxyAuthPassword=RAW(pwd)&proxyAuthUsername=RAW(usr)&proxyHost=myotherproxy&proxyPort=2345",
                     uri);
-
         }
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.model;
 
 import java.time.Month;
@@ -25,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class SampleComplexResponseTypeWithSchemaAnnotation {
     @JsonProperty(required = true)
     private String responseField1 = "Response Field 1";
+
     private String responseField2 = "Response Field 2";
     private String[] arrayOfStrings;
     private Month month;

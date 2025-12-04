@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Date;
 import java.util.Map;
@@ -29,10 +34,6 @@ import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.CommitStatus;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class PullRequestStateProducerTest extends GitHubComponentTestBase {
     private String commitsha;
 
@@ -46,7 +47,6 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
                         .process(new MockPullRequestStateProducerProcessor())
                         .to("github://pullRequestState?state=success&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
-
         };
     }
 
@@ -86,5 +86,4 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, commitsha);
         }
     }
-
 }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The unit test for {@link CompilationUnit}.

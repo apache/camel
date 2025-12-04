@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi.validator.client;
 
 import java.io.IOException;
@@ -37,7 +38,8 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
 
     @BeforeAll
     static void setup() throws IOException {
-        String data = IOHelper.loadText(OpenApiRestClientRequestValidatorTest.class.getResourceAsStream("/petstore-v3.json"));
+        String data =
+                IOHelper.loadText(OpenApiRestClientRequestValidatorTest.class.getResourceAsStream("/petstore-v3.json"));
         OpenAPIV3Parser parser = new OpenAPIV3Parser();
         SwaggerParseResult out = parser.readContents(data);
         openAPI = out.getOpenAPI();
@@ -53,28 +55,35 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         exchange.getMessage().setHeader("Accept", "application/json");
         exchange.getMessage().setBody("");
 
-        RestClientRequestValidator.ValidationError error
-                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+        RestClientRequestValidator.ValidationError error = validator.validate(
+                exchange,
+                new RestClientRequestValidator.ValidationContext(
                         "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNotNull(error);
         Assertions.assertTrue(error.body().contains("A request body is required but none found"));
 
         exchange.getMessage().setBody("{ \"name\": \"tiger\" }");
-        error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-                "application/json", "application/json", true, null, null, null, null));
+        error = validator.validate(
+                exchange,
+                new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNotNull(error);
         Assertions.assertTrue(error.body().contains("Object has missing required properties ([\\\"photoUrls\\\"])"));
 
         exchange.getMessage().setBody("{ \"name\": \"tiger\", \"photoUrls\": [\"image.jpg\"] }");
-        error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-                "application/json", "application/json", true, null, null, null, null));
+        error = validator.validate(
+                exchange,
+                new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
 
         // turn off required validator
         exchange.getMessage().setBody("{ \"name\": \"tiger\" }");
         context.getRestConfiguration().setValidationLevels(Map.of("validation.request.body.schema.required", "INFO"));
-        error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-                "application/json", "application/json", true, null, null, null, null));
+        error = validator.validate(
+                exchange,
+                new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
         context.getRestConfiguration().setValidationLevels(null);
     }
@@ -87,8 +96,9 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         exchange.getMessage().setHeader("Accept", "application/json");
         exchange.getMessage().setBody("");
 
-        RestClientRequestValidator.ValidationError error
-                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+        RestClientRequestValidator.ValidationError error = validator.validate(
+                exchange,
+                new RestClientRequestValidator.ValidationContext(
                         "application/json", "application/json", true, null, null, null, null));
 
         Assertions.assertNotNull(error);
@@ -96,8 +106,10 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
 
         exchange.getMessage().setHeader(Exchange.HTTP_QUERY, "status=available");
 
-        error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-                "application/json", "application/json", true, null, null, null, null));
+        error = validator.validate(
+                exchange,
+                new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
     }
 
@@ -110,8 +122,9 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         exchange.getMessage().setHeader("Accept", "application/json");
         exchange.getMessage().setBody("");
 
-        RestClientRequestValidator.ValidationError error
-                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+        RestClientRequestValidator.ValidationError error = validator.validate(
+                exchange,
+                new RestClientRequestValidator.ValidationContext(
                         "application/json", "application/json", true, null, null, null, null));
 
         Assertions.assertNotNull(error);
@@ -119,8 +132,10 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
 
         exchange.getMessage().setHeader("tags", "dog");
 
-        error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-                "application/json", "application/json", true, null, null, null, null));
+        error = validator.validate(
+                exchange,
+                new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
     }
 }

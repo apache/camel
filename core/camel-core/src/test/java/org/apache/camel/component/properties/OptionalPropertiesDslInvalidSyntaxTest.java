@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test that placeholder DSL is working as expected.
@@ -34,14 +35,16 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").multicast().stopOnException("{{xxx}}").to("mock:a")
-                        .throwException(new IllegalAccessException("Damn")).to("mock:b");
+                from("direct:start")
+                        .multicast()
+                        .stopOnException("{{xxx}}")
+                        .to("mock:a")
+                        .throwException(new IllegalAccessException("Damn"))
+                        .to("mock:b");
             }
         });
 
-        Exception e = assertThrows(Exception.class,
-                () -> context.start(),
-                "Should have thrown exception");
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Property with key [xxx] not found in properties from text: {{xxx}}", cause.getMessage());
@@ -55,8 +58,8 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
-
 }

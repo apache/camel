@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Endpoint;
@@ -36,5 +37,4 @@ public interface EndpointStrategy {
      * @return          the real endpoint to register, for instance a wrapped/enhanced endpoint.
      */
     Endpoint registerEndpoint(String uri, Endpoint endpoint);
-
 }

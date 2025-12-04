@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.io.StringWriter;
@@ -65,27 +66,32 @@ public class NotificationXmlFormatter extends ServiceSupport {
         if (aNotification instanceof AttributeChangeNotification) {
             AttributeChangeNotification ac = (AttributeChangeNotification) aNotification;
 
-            jaxb = mObjectFactory.createAttributeChangeNotification()
+            jaxb = mObjectFactory
+                    .createAttributeChangeNotification()
                     .withAttributeName(ac.getAttributeName())
                     .withAttributeType(ac.getAttributeType())
                     .withNewValue(ac.getNewValue() == null ? null : String.valueOf(ac.getNewValue()))
                     .withOldValue(ac.getOldValue() == null ? null : String.valueOf(ac.getOldValue()));
         } else if (aNotification instanceof JMXConnectionNotification) {
-            jaxb = mObjectFactory.createJMXConnectionNotification()
+            jaxb = mObjectFactory
+                    .createJMXConnectionNotification()
                     .withConnectionId(((JMXConnectionNotification) aNotification).getConnectionId());
         } else if (aNotification instanceof MBeanServerNotification) {
-            jaxb = mObjectFactory.createMBeanServerNotification()
+            jaxb = mObjectFactory
+                    .createMBeanServerNotification()
                     .withMBeanName(String.valueOf(((MBeanServerNotification) aNotification).getMBeanName()));
         } else if (aNotification instanceof MonitorNotification) {
             MonitorNotification mn = (MonitorNotification) aNotification;
-            jaxb = mObjectFactory.createMonitorNotification()
+            jaxb = mObjectFactory
+                    .createMonitorNotification()
                     .withDerivedGauge(String.valueOf(mn.getDerivedGauge()))
                     .withObservedAttribute(mn.getObservedAttribute())
                     .withObservedObject(String.valueOf(mn.getObservedObject()))
                     .withTrigger(String.valueOf(mn.getTrigger()));
         } else if (aNotification instanceof RelationNotification) {
             RelationNotification rn = (RelationNotification) aNotification;
-            jaxb = mObjectFactory.createRelationNotification()
+            jaxb = mObjectFactory
+                    .createRelationNotification()
                     .withObjectName(String.valueOf(rn.getObjectName()))
                     .withRelationId(rn.getRelationId())
                     .withRelationTypeName(rn.getRelationTypeName())
@@ -103,7 +109,8 @@ public class NotificationXmlFormatter extends ServiceSupport {
                 ((org.apache.camel.component.jmx.jaxb.RelationNotification) jaxb).withMBeansToUnregister(ont);
             }
         } else if (aNotification instanceof TimerNotification) {
-            jaxb = mObjectFactory.createTimerNotification()
+            jaxb = mObjectFactory
+                    .createTimerNotification()
                     .withNotificationId(((TimerNotification) aNotification).getNotificationID());
         } else {
             jaxb = mObjectFactory.createNotificationEventType();
@@ -183,7 +190,5 @@ public class NotificationXmlFormatter extends ServiceSupport {
     }
 
     @Override
-    protected void doStop() throws Exception {
-    }
-
+    protected void doStop() throws Exception {}
 }

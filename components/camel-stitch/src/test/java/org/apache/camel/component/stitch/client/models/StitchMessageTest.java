@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client.models;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.component.stitch.client.JsonUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StitchMessageTest {
 
@@ -41,8 +42,9 @@ class StitchMessageTest {
 
         final String messageAsJson = JsonUtils.convertMapToJson(message.toMap());
 
-        assertEquals("{\"action\":\"upsert\",\"sequence\":1565881320,\"data\":"
-                     + "{\"id\":2,\"name\":\"Jake\",\"age\":6,\"has_magic\":true,\"modified_at\":\"2020-01-13T21:25:03+0000\"}}",
+        assertEquals(
+                "{\"action\":\"upsert\",\"sequence\":1565881320,\"data\":"
+                        + "{\"id\":2,\"name\":\"Jake\",\"age\":6,\"has_magic\":true,\"modified_at\":\"2020-01-13T21:25:03+0000\"}}",
                 messageAsJson);
     }
 
@@ -53,8 +55,7 @@ class StitchMessageTest {
         data.put(StitchMessage.DATA, 1);
         data.put(StitchMessage.SEQUENCE, 1122544L);
 
-        assertThrows(IllegalArgumentException.class, () -> StitchMessage
-                .fromMap(data));
+        assertThrows(IllegalArgumentException.class, () -> StitchMessage.fromMap(data));
     }
 
     @Test
@@ -67,9 +68,7 @@ class StitchMessageTest {
         message.put(StitchMessage.SEQUENCE, 123456L);
         message.put(StitchMessage.DATA, data);
 
-        final StitchMessage stitchMessage = StitchMessage
-                .fromMap(message)
-                .build();
+        final StitchMessage stitchMessage = StitchMessage.fromMap(message).build();
 
         assertEquals(StitchMessage.Action.UPSERT, stitchMessage.getAction());
         assertEquals(data, stitchMessage.getData());

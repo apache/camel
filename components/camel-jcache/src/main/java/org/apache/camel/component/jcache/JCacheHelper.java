@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 import java.lang.reflect.Method;
@@ -23,10 +24,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.support.CamelContextHelper;
 
 public final class JCacheHelper {
-    private JCacheHelper() {
-    }
+    private JCacheHelper() {}
 
-    public static <K, V> JCacheManager<K, V> createManager(CamelContext camelContext, JCacheConfiguration configuration) {
+    public static <K, V> JCacheManager<K, V> createManager(
+            CamelContext camelContext, JCacheConfiguration configuration) {
         JCacheManagerFactory factory = CamelContextHelper.findSingleByType(camelContext, JCacheManagerFactory.class);
         if (factory == null) {
             factory = new DefaultJCacheManagerFactory();
@@ -38,9 +39,7 @@ public final class JCacheHelper {
     public static <T> T tcclProxy(final T instance, Class<T> type, final ClassLoader classLoader) {
         return (T) Proxy.newProxyInstance(
                 JCacheHelper.class.getClassLoader(),
-                new Class<?>[] {
-                        type
-                },
+                new Class<?>[] {type},
                 (Object proxy, Method method, Object[] args) -> {
                     final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
                     try {
@@ -51,5 +50,4 @@ public final class JCacheHelper {
                     }
                 });
     }
-
 }

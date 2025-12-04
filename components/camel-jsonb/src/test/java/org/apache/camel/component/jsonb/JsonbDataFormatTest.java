@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -27,8 +30,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.johnzon.mapper.reflection.JohnzonParameterizedType;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonbDataFormatTest {
 
@@ -45,8 +46,11 @@ public class JsonbDataFormatTest {
     @Test
     public void testList() throws Exception {
         JohnzonParameterizedType type = new JohnzonParameterizedType(List.class, Map.class);
-        testJson("[{\"value\":123}]",
-                new ArrayList<>(Collections.singletonList(Collections.singletonMap("value", 123))), null, type);
+        testJson(
+                "[{\"value\":123}]",
+                new ArrayList<>(Collections.singletonList(Collections.singletonMap("value", 123))),
+                null,
+                type);
     }
 
     private void testJson(String json, Object expected, Class<?> unmarshalType, JohnzonParameterizedType customType)

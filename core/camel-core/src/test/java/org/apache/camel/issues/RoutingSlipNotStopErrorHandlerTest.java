@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,9 +50,13 @@ public class RoutingSlipNotStopErrorHandlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:result").maximumRedeliveries(1).redeliveryDelay(10)
+                errorHandler(deadLetterChannel("mock:result")
+                        .maximumRedeliveries(1)
+                        .redeliveryDelay(10)
                         .retriesExhaustedLogLevel(LoggingLevel.ERROR)
-                        .retryAttemptedLogLevel(LoggingLevel.WARN).logStackTrace(true).logRetryStackTrace(true));
+                        .retryAttemptedLogLevel(LoggingLevel.WARN)
+                        .logStackTrace(true)
+                        .logRetryStackTrace(true));
 
                 from(DIRECT_START).routingSlip(method(CustomRoutingSlip.class, "router"));
 

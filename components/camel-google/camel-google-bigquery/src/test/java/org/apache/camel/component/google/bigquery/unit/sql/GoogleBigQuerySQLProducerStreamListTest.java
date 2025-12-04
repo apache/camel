@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.unit.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,13 +43,6 @@ import org.apache.camel.Message;
 import org.apache.camel.component.google.bigquery.sql.OutputType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 public class GoogleBigQuerySQLProducerStreamListTest extends GoogleBigQuerySQLProducerBaseTest {
 
@@ -126,9 +127,11 @@ public class GoogleBigQuerySQLProducerStreamListTest extends GoogleBigQuerySQLPr
         producer.process(exchange);
 
         Message message = exchange.getMessage();
-        assertFalse(message.getHeaders().containsKey("CamelGoogleBigQueryNextPageToken"),
+        assertFalse(
+                message.getHeaders().containsKey("CamelGoogleBigQueryNextPageToken"),
                 "STREAM_LIST mode should not set NextPageToken header");
-        assertFalse(message.getHeaders().containsKey("CamelGoogleBigQueryJobId"),
+        assertFalse(
+                message.getHeaders().containsKey("CamelGoogleBigQueryJobId"),
                 "STREAM_LIST mode should not set JobId header");
     }
 

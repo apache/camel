@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.robotframework;
 
 import org.apache.camel.spi.Metadata;
@@ -22,9 +23,10 @@ public interface RobotFrameworkCamelConstants {
 
     @Metadata(description = "The robot variables.", javaType = "List<String>")
     String CAMEL_ROBOT_VARIABLES = "CamelRobotVariables";
+
     @Metadata(description = "The return code.", javaType = "Integer")
     String CAMEL_ROBOT_RETURN_CODE = "CamelRobotReturnCode";
+
     @Metadata(description = "The new resource URI.", javaType = "String")
     String CAMEL_ROBOT_RESOURCE_URI = "CamelRobotResourceUri";
-
 }

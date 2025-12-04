@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -26,10 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteGroupTest extends ManagementTestSupport {
@@ -79,7 +80,9 @@ public class ManagedRouteGroupTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("start").routeGroup("first")
+                from("direct:start")
+                        .routeId("start")
+                        .routeGroup("first")
                         .to("direct:a", "direct:b", "direct:c", "direct:d", "direct:e")
                         .to("mock:result");
                 from("direct:a").routeId("a").routeGroup("first").to("log:a");
@@ -90,5 +93,4 @@ public class ManagedRouteGroupTest extends ManagementTestSupport {
             }
         };
     }
-
 }

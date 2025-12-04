@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.impl;
 
 import java.io.BufferedReader;
@@ -39,8 +40,7 @@ import org.apache.camel.util.URISupport;
 public final class CatalogHelper {
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
-    private CatalogHelper() {
-    }
+    private CatalogHelper() {}
 
     /**
      * Loads the entire stream into memory as a String and returns it.
@@ -51,7 +51,7 @@ public final class CatalogHelper {
      */
     public static void loadLines(InputStream in, List<String> lines) throws IOException {
         try (final InputStreamReader isr = new InputStreamReader(in);
-             final BufferedReader reader = new LineNumberReader(isr)) {
+                final BufferedReader reader = new LineNumberReader(isr)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
@@ -170,8 +170,9 @@ public final class CatalogHelper {
         // must check for trailing & as the uri.split("&") will ignore those
         if (uri.endsWith("&")) {
             throw new URISyntaxException(
-                    uri, "Invalid uri syntax: Trailing & marker found. "
-                         + "Check the uri and remove the trailing & marker.");
+                    uri,
+                    "Invalid uri syntax: Trailing & marker found. "
+                            + "Check the uri and remove the trailing & marker.");
         }
 
         // need to parse the uri query parameters manually as we cannot rely on splitting by &,
@@ -228,7 +229,6 @@ public final class CatalogHelper {
         }
 
         return rc;
-
     }
 
     private static boolean isRaw(boolean isRaw, StringBuilder value) {
@@ -288,9 +288,7 @@ public final class CatalogHelper {
             if (s != null) {
                 list.add(s);
             }
-
         }
         return list;
     }
-
 }

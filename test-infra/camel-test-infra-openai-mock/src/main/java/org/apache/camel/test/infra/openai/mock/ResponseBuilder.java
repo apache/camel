@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openai.mock;
 
 import java.io.IOException;
@@ -147,7 +148,8 @@ public class ResponseBuilder {
 
     private Optional<String> extractLastToolContent(JsonNode messagesNode) {
         return StreamSupport.stream(messagesNode.spliterator(), false)
-                .filter(entry -> entry.has("role") && "tool".equals(entry.get("role").asText()))
+                .filter(entry ->
+                        entry.has("role") && "tool".equals(entry.get("role").asText()))
                 .reduce((first, second) -> second) // Get the last one
                 .map(entry -> entry.get("content"))
                 .map(JsonNode::asText);

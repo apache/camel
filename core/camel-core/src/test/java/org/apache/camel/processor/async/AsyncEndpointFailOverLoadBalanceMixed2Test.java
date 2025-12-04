@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSupport {
 
@@ -52,19 +53,29 @@ public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSuppo
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).loadBalance().failover()
+                from("direct:start")
+                        .to("mock:before")
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .loadBalance()
+                        .failover()
                         // first is sync, the 2nd is async based
-                        .to("direct:fail", "async:bye:world").end().process(new Processor() {
+                        .to("direct:fail", "async:bye:world")
+                        .end()
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 // because the first is a sync then it will wait and
                                 // thus use the same thread to continue
                                 afterThreadName = Thread.currentThread().getName();
                             }
-                        }).to("log:after").to("mock:after").to("mock:result");
+                        })
+                        .to("log:after")
+                        .to("mock:after")
+                        .to("mock:result");
 
                 from("direct:fail").to("log:fail").to("mock:fail").throwException(new IllegalArgumentException("Damn"));
             }

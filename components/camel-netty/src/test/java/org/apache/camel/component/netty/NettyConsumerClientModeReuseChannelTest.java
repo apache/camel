@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +45,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(NettyConsumerClientModeReuseChannelTest.class);
@@ -84,10 +85,12 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true&reuseChannel=true").id("client")
+                from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true&reuseChannel=true")
+                        .id("client")
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
-                                final Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
+                                final Channel channel =
+                                        exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
                                 channels.add(channel);
                                 assertTrue(channel.isActive(), "Should be active");
 
@@ -117,7 +120,9 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
             workerGroup = new NioEventLoopGroup();
 
             bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+            bootstrap
+                    .group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
                     .childHandler(new ServerInitializer());
 
             ChannelFuture cf = bootstrap.bind(port).sync();
@@ -129,7 +134,6 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-
     }
 
     private static class ServerHandler extends SimpleChannelInboundHandler<String> {
@@ -167,8 +171,7 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
             ChannelPipeline pipeline = ch.pipeline();
 
             // Add the text line codec combination first,
-            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-                    8192, Delimiters.lineDelimiter()));
+            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
             // the encoder and decoder are static as these are sharable
             pipeline.addLast("decoder", DECODER);
             pipeline.addLast("encoder", ENCODER);
@@ -177,5 +180,4 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
             pipeline.addLast("handler", SERVERHANDLER);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,10 +45,16 @@ public class CBRSimpleTypeTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").choice().when()
-                        .simple("${header.customer} == ${type:org.apache.camel.processor.Customer.GOLD}").to("mock:gold").when()
-                        .simple("${header.customer} == ${type:org.apache.camel.processor.Customer.SILVER}").to("mock:silver")
-                        .otherwise().to("mock:other");
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .simple("${header.customer} == ${type:org.apache.camel.processor.Customer.GOLD}")
+                        .to("mock:gold")
+                        .when()
+                        .simple("${header.customer} == ${type:org.apache.camel.processor.Customer.SILVER}")
+                        .to("mock:silver")
+                        .otherwise()
+                        .to("mock:other");
                 // END SNIPPET: e1
             }
         };

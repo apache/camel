@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,7 +42,10 @@ public class OnExceptionHandledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalArgumentException.class).handled(true).to("log:foo?showAll=true").to("mock:handled");
+                onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("log:foo?showAll=true")
+                        .to("mock:handled");
 
                 from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }

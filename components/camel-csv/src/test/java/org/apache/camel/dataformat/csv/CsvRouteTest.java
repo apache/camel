@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,10 +34,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CsvRouteTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CsvRouteTest.class);
@@ -66,8 +67,7 @@ public class CsvRouteTest extends CamelTestSupport {
 
     @Test
     void testMultipleMessages() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMulti",
-                MockEndpoint.class);
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMulti", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
         Map<String, Object> body1 = new LinkedHashMap<>();
         body1.put("foo", "abc");
@@ -104,8 +104,7 @@ public class CsvRouteTest extends CamelTestSupport {
 
     @Test
     void testPresetConfig() {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMultiCustom",
-                MockEndpoint.class);
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMultiCustom", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
         Map<String, Object> body1 = new LinkedHashMap<>();
         body1.put("foo", "abc");
@@ -132,7 +131,6 @@ public class CsvRouteTest extends CamelTestSupport {
 
         LOG.debug("Received {}", text2);
         assertEquals("def;789;456", text2.trim(), "Second CSV body has wrong value");
-
     }
 
     @SuppressWarnings("unchecked")
@@ -145,8 +143,7 @@ public class CsvRouteTest extends CamelTestSupport {
         // START SNIPPET : unmarshalResult
         List<List<String>> data = (List<List<String>>) exchange.getIn().getBody();
         for (List<String> line : data) {
-            LOG.debug(String.format("%s has an IQ of %s and is currently %s",
-                    line.get(0), line.get(1), line.get(2)));
+            LOG.debug(String.format("%s has an IQ of %s and is currently %s", line.get(0), line.get(1), line.get(2)));
         }
         // END SNIPPET : unmarshalResult
     }
@@ -163,13 +160,16 @@ public class CsvRouteTest extends CamelTestSupport {
 
                 CsvDataFormat customCsv = new CsvDataFormat()
                         .setDelimiter(';')
-                        .setHeader(new String[] { "foo", "baz", "bar" })
+                        .setHeader(new String[] {"foo", "baz", "bar"})
                         .setSkipHeaderRecord(true);
 
                 from("direct:startMultiCustom").marshal(customCsv).to("mock:resultMultiCustom");
 
                 // START SNIPPET: unmarshalRoute
-                from("file:src/test/resources/?fileName=daltons.csv&noop=true").unmarshal().csv().to("mock:daltons");
+                from("file:src/test/resources/?fileName=daltons.csv&noop=true")
+                        .unmarshal()
+                        .csv()
+                        .to("mock:daltons");
                 // END SNIPPET: unmarshalRoute
             }
         };

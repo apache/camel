@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.qdrant;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -24,15 +26,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public final class QdrantCommonTest extends CamelTestSupport {
 
     @DisplayName("Tests that trying to run actions with a null body triggers a failure")
     @ParameterizedTest
     @EnumSource(QdrantAction.class)
     public void upsertWithNullBody(QdrantAction action) {
-        Exchange result = fluentTemplate.to("qdrant:test")
+        Exchange result = fluentTemplate
+                .to("qdrant:test")
                 .withHeader(QdrantHeaders.ACTION, action)
                 .withBody(null)
                 .request(Exchange.class);
@@ -47,6 +48,5 @@ public final class QdrantCommonTest extends CamelTestSupport {
             assertThat(result.getException()).isInstanceOf(InvalidPayloadException.class);
             assertThat(result.getException().getMessage()).contains("No body available of type");
         }
-
     }
 }

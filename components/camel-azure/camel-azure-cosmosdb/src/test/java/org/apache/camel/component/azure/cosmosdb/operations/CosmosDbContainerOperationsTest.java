@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.operations;
+
+import static org.mockito.Mockito.mock;
 
 import com.azure.cosmos.CosmosAsyncContainer;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 
-import static org.mockito.Mockito.mock;
-
 class CosmosDbContainerOperationsTest {
 
     @Test
     void testCreateItem() {
-        final CosmosDbContainerOperations operations
-                = new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
+        final CosmosDbContainerOperations operations =
+                new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
 
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.createItem(null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.createItem("", null, null));
@@ -37,8 +38,8 @@ class CosmosDbContainerOperationsTest {
 
     @Test
     void upsertItem() {
-        final CosmosDbContainerOperations operations
-                = new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
+        final CosmosDbContainerOperations operations =
+                new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
 
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.upsertItem(null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.upsertItem("", null, null));
@@ -47,8 +48,8 @@ class CosmosDbContainerOperationsTest {
 
     @Test
     void deleteItem() {
-        final CosmosDbContainerOperations operations
-                = new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
+        final CosmosDbContainerOperations operations =
+                new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
 
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.deleteItem(null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.deleteItem("", null, null));
@@ -57,8 +58,8 @@ class CosmosDbContainerOperationsTest {
 
     @Test
     void replaceItem() {
-        final CosmosDbContainerOperations operations
-                = new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
+        final CosmosDbContainerOperations operations =
+                new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
 
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.replaceItem(null, null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.replaceItem("test", null, null, null));
@@ -68,8 +69,8 @@ class CosmosDbContainerOperationsTest {
 
     @Test
     void readItem() {
-        final CosmosDbContainerOperations operations
-                = new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
+        final CosmosDbContainerOperations operations =
+                new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
 
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.readItem(null, null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.readItem("test", null, null, null));
@@ -77,8 +78,8 @@ class CosmosDbContainerOperationsTest {
 
     @Test
     void readAllItems() {
-        final CosmosDbContainerOperations operations
-                = new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
+        final CosmosDbContainerOperations operations =
+                new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
 
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.readAllItems(null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.readAllItems(null, null, Object.class));
@@ -86,8 +87,8 @@ class CosmosDbContainerOperationsTest {
 
     @Test
     void queryItems() {
-        final CosmosDbContainerOperations operations
-                = new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
+        final CosmosDbContainerOperations operations =
+                new CosmosDbContainerOperations(Mono.just(mock(CosmosAsyncContainer.class)));
 
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.queryItems(null, null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.queryItems(null, null, Object.class));

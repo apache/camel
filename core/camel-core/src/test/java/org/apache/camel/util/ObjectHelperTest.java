@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.InputStream;
@@ -55,23 +65,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class ObjectHelperTest {
 
     @Test
     void testLoadResourceAsStream() throws Exception {
-        try (InputStream res1 = org.apache.camel.util.ObjectHelper
-                .loadResourceAsStream("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
-             InputStream res2 = org.apache.camel.util.ObjectHelper
-                     .loadResourceAsStream("/org/apache/camel/util/ObjectHelperResourceTestFile.properties")) {
+        try (InputStream res1 = org.apache.camel.util.ObjectHelper.loadResourceAsStream(
+                        "org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+                InputStream res2 = org.apache.camel.util.ObjectHelper.loadResourceAsStream(
+                        "/org/apache/camel/util/ObjectHelperResourceTestFile.properties")) {
 
             assertNotNull(res1, "Cannot load resource without leading \"/\"");
             assertNotNull(res2, "Cannot load resource with leading \"/\"");
@@ -80,10 +81,10 @@ public class ObjectHelperTest {
 
     @Test
     void testLoadResource() {
-        URL url1 = org.apache.camel.util.ObjectHelper
-                .loadResourceAsURL("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
-        URL url2 = org.apache.camel.util.ObjectHelper
-                .loadResourceAsURL("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+        URL url1 = org.apache.camel.util.ObjectHelper.loadResourceAsURL(
+                "org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+        URL url2 = org.apache.camel.util.ObjectHelper.loadResourceAsURL(
+                "/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
 
         assertNotNull(url1, "Cannot load resource without leading \"/\"");
         assertNotNull(url2, "Cannot load resource with leading \"/\"");
@@ -109,7 +110,7 @@ public class ObjectHelperTest {
             context.start();
             TypeConverter tc = context.getTypeConverter();
 
-            String[] array = { "foo", "bar" };
+            String[] array = {"foo", "bar"};
             Collection<String> collection = Arrays.asList(array);
 
             assertTrue(ObjectHelper.typeCoerceContains(tc, array, "foo", true));
@@ -231,12 +232,12 @@ public class ObjectHelperTest {
         assertFalse(org.apache.camel.util.ObjectHelper.equal(true, false));
         assertFalse(org.apache.camel.util.ObjectHelper.equal(new Object(), new Object()));
 
-        byte[] a = new byte[] { 40, 50, 60 };
-        byte[] b = new byte[] { 40, 50, 60 };
+        byte[] a = new byte[] {40, 50, 60};
+        byte[] b = new byte[] {40, 50, 60};
         assertTrue(org.apache.camel.util.ObjectHelper.equal(a, b));
 
-        a = new byte[] { 40, 50, 60 };
-        b = new byte[] { 40, 50, 60, 70 };
+        a = new byte[] {40, 50, 60};
+        b = new byte[] {40, 50, 60, 70};
         assertFalse(org.apache.camel.util.ObjectHelper.equal(a, b));
     }
 
@@ -245,39 +246,39 @@ public class ObjectHelperTest {
         assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray("Hello".getBytes(), "Hello".getBytes()));
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray("Hello".getBytes(), "World".getBytes()));
 
-        assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray("Hello Thai Elephant \u0E08".getBytes(),
-                "Hello Thai Elephant \u0E08".getBytes()));
+        assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray(
+                "Hello Thai Elephant \u0E08".getBytes(), "Hello Thai Elephant \u0E08".getBytes()));
         assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray(null, null));
 
         byte[] empty = new byte[0];
         assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray(empty, empty));
 
-        byte[] a = new byte[] { 40, 50, 60 };
-        byte[] b = new byte[] { 40, 50, 60 };
+        byte[] a = new byte[] {40, 50, 60};
+        byte[] b = new byte[] {40, 50, 60};
         assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] { 40, 50, 60 };
-        b = new byte[] { 40, 50, 60, 70 };
+        a = new byte[] {40, 50, 60};
+        b = new byte[] {40, 50, 60, 70};
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] { 40, 50, 60, 70 };
-        b = new byte[] { 40, 50, 60 };
+        a = new byte[] {40, 50, 60, 70};
+        b = new byte[] {40, 50, 60};
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] { 40, 50, 60 };
+        a = new byte[] {40, 50, 60};
         b = new byte[0];
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
         a = new byte[0];
-        b = new byte[] { 40, 50, 60 };
+        b = new byte[] {40, 50, 60};
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] { 40, 50, 60 };
+        a = new byte[] {40, 50, 60};
         b = null;
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
         a = null;
-        b = new byte[] { 40, 50, 60 };
+        b = new byte[] {40, 50, 60};
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
         a = null;
@@ -360,7 +361,7 @@ public class ObjectHelperTest {
 
     @Test
     void testCreateIteratorWithPrimitiveArrayTypes() {
-        Iterator<?> it = ObjectHelper.createIterator(new byte[] { 13, Byte.MAX_VALUE, 7, Byte.MIN_VALUE }, null);
+        Iterator<?> it = ObjectHelper.createIterator(new byte[] {13, Byte.MAX_VALUE, 7, Byte.MIN_VALUE}, null);
         assertTrue(it.hasNext());
         assertEquals((byte) 13, it.next());
         assertTrue(it.hasNext());
@@ -390,7 +391,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new short[] { 13, Short.MAX_VALUE, 7, Short.MIN_VALUE }, null);
+        it = ObjectHelper.createIterator(new short[] {13, Short.MAX_VALUE, 7, Short.MIN_VALUE}, null);
         assertTrue(it.hasNext());
         assertEquals((short) 13, it.next());
         assertTrue(it.hasNext());
@@ -420,7 +421,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new int[] { 13, Integer.MAX_VALUE, 7, Integer.MIN_VALUE }, null);
+        it = ObjectHelper.createIterator(new int[] {13, Integer.MAX_VALUE, 7, Integer.MIN_VALUE}, null);
         assertTrue(it.hasNext());
         assertEquals(13, it.next());
         assertTrue(it.hasNext());
@@ -450,7 +451,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new long[] { 13L, Long.MAX_VALUE, 7L, Long.MIN_VALUE }, null);
+        it = ObjectHelper.createIterator(new long[] {13L, Long.MAX_VALUE, 7L, Long.MIN_VALUE}, null);
         assertTrue(it.hasNext());
         assertEquals(13L, it.next());
         assertTrue(it.hasNext());
@@ -480,7 +481,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new float[] { 13.7F, Float.MAX_VALUE, 7.13F, Float.MIN_VALUE }, null);
+        it = ObjectHelper.createIterator(new float[] {13.7F, Float.MAX_VALUE, 7.13F, Float.MIN_VALUE}, null);
         assertTrue(it.hasNext());
         assertEquals(13.7F, it.next());
         assertTrue(it.hasNext());
@@ -510,7 +511,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new double[] { 13.7D, Double.MAX_VALUE, 7.13D, Double.MIN_VALUE }, null);
+        it = ObjectHelper.createIterator(new double[] {13.7D, Double.MAX_VALUE, 7.13D, Double.MIN_VALUE}, null);
         assertTrue(it.hasNext());
         assertEquals(13.7D, it.next());
         assertTrue(it.hasNext());
@@ -540,7 +541,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new char[] { 'C', 'a', 'm', 'e', 'l' }, null);
+        it = ObjectHelper.createIterator(new char[] {'C', 'a', 'm', 'e', 'l'}, null);
         assertTrue(it.hasNext());
         assertEquals('C', it.next());
         assertTrue(it.hasNext());
@@ -572,7 +573,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new boolean[] { false, true, false, true, true }, null);
+        it = ObjectHelper.createIterator(new boolean[] {false, true, false, true, true}, null);
         assertTrue(it.hasNext());
         assertEquals(Boolean.FALSE, it.next());
         assertTrue(it.hasNext());
@@ -607,7 +608,7 @@ public class ObjectHelperTest {
 
     @Test
     void testArrayAsIterator() {
-        String[] data = { "a", "b" };
+        String[] data = {"a", "b"};
 
         Iterator<?> iter = ObjectHelper.createIterator(data);
         assertTrue(iter.hasNext(), "should have next");
@@ -728,7 +729,9 @@ public class ObjectHelperTest {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage().startsWith("no more element available for 'org.apache.camel.util.ObjectHelperTest$"),
+            assertTrue(
+                    nsee.getMessage()
+                            .startsWith("no more element available for 'org.apache.camel.util.ObjectHelperTest$"),
                     nsee.getMessage());
             assertTrue(nsee.getMessage().endsWith("at the index 1"), nsee.getMessage());
         }
@@ -799,30 +802,48 @@ public class ObjectHelperTest {
 
     @Test
     void testConvertPrimitiveTypeToWrapper() {
-        assertEquals("java.lang.Integer",
-                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(int.class).getName());
-        assertEquals("java.lang.Long",
-                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(long.class).getName());
-        assertEquals("java.lang.Double",
-                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(double.class).getName());
-        assertEquals("java.lang.Float",
-                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(float.class).getName());
-        assertEquals("java.lang.Short",
-                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(short.class).getName());
-        assertEquals("java.lang.Byte",
-                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(byte.class).getName());
-        assertEquals("java.lang.Boolean",
-                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(boolean.class).getName());
-        assertEquals("java.lang.Character",
-                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(char.class).getName());
+        assertEquals(
+                "java.lang.Integer",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(int.class)
+                        .getName());
+        assertEquals(
+                "java.lang.Long",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(long.class)
+                        .getName());
+        assertEquals(
+                "java.lang.Double",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(double.class)
+                        .getName());
+        assertEquals(
+                "java.lang.Float",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(float.class)
+                        .getName());
+        assertEquals(
+                "java.lang.Short",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(short.class)
+                        .getName());
+        assertEquals(
+                "java.lang.Byte",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(byte.class)
+                        .getName());
+        assertEquals(
+                "java.lang.Boolean",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(boolean.class)
+                        .getName());
+        assertEquals(
+                "java.lang.Character",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(char.class)
+                        .getName());
         // non primitive just fall through
-        assertEquals("java.lang.Object",
-                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(Object.class).getName());
+        assertEquals(
+                "java.lang.Object",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(Object.class)
+                        .getName());
     }
 
     @Test
     void testAsString() {
-        String[] args = new String[] { "foo", "bar" };
+        String[] args = new String[] {"foo", "bar"};
         String out = org.apache.camel.util.ObjectHelper.asString(args);
         assertNotNull(out);
         assertEquals("{foo, bar}", out);
@@ -951,7 +972,9 @@ public class ObjectHelperTest {
 
     @Test
     void testLookupConstantFieldValue() {
-        assertEquals("CamelFileName", org.apache.camel.util.ObjectHelper.lookupConstantFieldValue(Exchange.class, "FILE_NAME"));
+        assertEquals(
+                "CamelFileName",
+                org.apache.camel.util.ObjectHelper.lookupConstantFieldValue(Exchange.class, "FILE_NAME"));
         assertNull(org.apache.camel.util.ObjectHelper.lookupConstantFieldValue(Exchange.class, "XXX"));
         assertNull(org.apache.camel.util.ObjectHelper.lookupConstantFieldValue(null, "FILE_NAME"));
     }
@@ -1069,7 +1092,7 @@ public class ObjectHelperTest {
         boolean b1 = out1.isEmpty();
         assertTrue(b1);
 
-        String[] args = new String[] { "foo", "bar" };
+        String[] args = new String[] {"foo", "bar"};
         List<Object> out2 = org.apache.camel.util.ObjectHelper.asList(args);
         assertNotNull(out2);
         boolean b = out2.size() == 2;
@@ -1080,52 +1103,79 @@ public class ObjectHelperTest {
 
     @Test
     void testIterableWithNullContent() {
-        assertEquals("", StreamSupport.stream(ObjectHelper.createIterable(null, ";;").spliterator(), false)
-                .collect(Collectors.joining("-")));
+        assertEquals(
+                "",
+                StreamSupport.stream(ObjectHelper.createIterable(null, ";;").spliterator(), false)
+                        .collect(Collectors.joining("-")));
     }
 
     @Test
     void testIterableWithEmptyContent() {
-        assertEquals("", StreamSupport.stream(ObjectHelper.createIterable("", ";;").spliterator(), false)
-                .collect(Collectors.joining("-")));
+        assertEquals(
+                "",
+                StreamSupport.stream(ObjectHelper.createIterable("", ";;").spliterator(), false)
+                        .collect(Collectors.joining("-")));
     }
 
     @Test
     void testIterableWithOneElement() {
-        assertEquals("foo", StreamSupport.stream(ObjectHelper.createIterable("foo", ";;").spliterator(), false)
-                .collect(Collectors.joining("-")));
+        assertEquals(
+                "foo",
+                StreamSupport.stream(ObjectHelper.createIterable("foo", ";;").spliterator(), false)
+                        .collect(Collectors.joining("-")));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "foo;;bar", ";;foo;;bar", "foo;;bar;;", ";;foo;;bar;;" })
+    @ValueSource(strings = {"foo;;bar", ";;foo;;bar", "foo;;bar;;", ";;foo;;bar;;"})
     void testIterableWithTwoElements(String content) {
-        assertEquals("foo-bar", StreamSupport.stream(ObjectHelper.createIterable(content, ";;").spliterator(), false)
-                .collect(Collectors.joining("-")));
+        assertEquals(
+                "foo-bar",
+                StreamSupport.stream(ObjectHelper.createIterable(content, ";;").spliterator(), false)
+                        .collect(Collectors.joining("-")));
     }
 
     @Test
     void testIterableUsingPatternWithNullContent() {
-        assertEquals("", StreamSupport.stream(ObjectHelper.createIterable(null, ";+", false, true).spliterator(), false)
-                .collect(Collectors.joining("-")));
+        assertEquals(
+                "",
+                StreamSupport.stream(
+                                ObjectHelper.createIterable(null, ";+", false, true)
+                                        .spliterator(),
+                                false)
+                        .collect(Collectors.joining("-")));
     }
 
     @Test
     void testIterableUsingPatternWithEmptyContent() {
-        assertEquals("", StreamSupport.stream(ObjectHelper.createIterable("", ";+", false, true).spliterator(), false)
-                .collect(Collectors.joining("-")));
+        assertEquals(
+                "",
+                StreamSupport.stream(
+                                ObjectHelper.createIterable("", ";+", false, true)
+                                        .spliterator(),
+                                false)
+                        .collect(Collectors.joining("-")));
     }
 
     @Test
     void testIterableUsingPatternWithOneElement() {
-        assertEquals("foo", StreamSupport.stream(ObjectHelper.createIterable("foo", ";+", false, true).spliterator(), false)
-                .collect(Collectors.joining("-")));
+        assertEquals(
+                "foo",
+                StreamSupport.stream(
+                                ObjectHelper.createIterable("foo", ";+", false, true)
+                                        .spliterator(),
+                                false)
+                        .collect(Collectors.joining("-")));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "foo;;bar", ";;foo;;bar", "foo;;bar;;", ";;foo;;bar;;" })
+    @ValueSource(strings = {"foo;;bar", ";;foo;;bar", "foo;;bar;;", ";;foo;;bar;;"})
     void testIterableUsingPatternWithTwoElements(String content) {
-        assertEquals("foo-bar",
-                StreamSupport.stream(ObjectHelper.createIterable(content, ";+", false, true).spliterator(), false)
+        assertEquals(
+                "foo-bar",
+                StreamSupport.stream(
+                                ObjectHelper.createIterable(content, ";+", false, true)
+                                        .spliterator(),
+                                false)
                         .collect(Collectors.joining("-")));
     }
 

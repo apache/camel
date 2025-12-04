@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.onexception;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for onException with expresion classname with a trailing \n the spring DSL.
@@ -45,7 +46,7 @@ public class SpringOnExceptionNotNormalizedClassNameTest extends ContextTestSupp
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "/org/apache/camel/spring/processor/onexception/onExceptionNotNormalizedClassNameTest.xml");
+        return createSpringCamelContext(
+                this, "/org/apache/camel/spring/processor/onexception/onExceptionNotNormalizedClassNameTest.xml");
     }
 }

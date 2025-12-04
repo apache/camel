@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,8 +37,7 @@ public class IncomingMessageEntity {
 
     private User user;
 
-    public IncomingMessageEntity() {
-    }
+    public IncomingMessageEntity() {}
 
     public String getType() {
         return type;
@@ -82,11 +82,11 @@ public class IncomingMessageEntity {
     @Override
     public String toString() {
         return "MessageEntity{"
-               + "type='" + type + '\''
-               + ", offset=" + offset
-               + ", length=" + length
-               + ", url='" + url + '\''
-               + ", user=" + user
-               + '}';
+                + "type='" + type + '\''
+                + ", offset=" + offset
+                + ", length=" + length
+                + ", url='" + url + '\''
+                + ", user=" + user
+                + '}';
     }
 }

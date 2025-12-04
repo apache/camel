@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
 
 import java.io.InputStream;
@@ -43,30 +44,28 @@ public class CamelDatasonnetJavaDslTest extends CamelTestSupport {
 
     @Test
     public void testTransform() throws Exception {
-        runCamelTest(loadResourceAsString("simpleMapping_payload.json"),
+        runCamelTest(
+                loadResourceAsString("simpleMapping_payload.json"),
                 loadResourceAsString("simpleMapping_result.json"),
                 "direct:basicTransform");
     }
 
     @Test
     public void testTransformXML() throws Exception {
-        runCamelTest(loadResourceAsString("payload.xml"),
+        runCamelTest(
+                loadResourceAsString("payload.xml"),
                 loadResourceAsString("readXMLExtTest.json"),
                 "direct:transformXML");
     }
 
     @Test
     public void testTransformCSV() throws Exception {
-        runCamelTest(loadResourceAsString("payload.csv"),
-                "{\"account\":\"123\"}",
-                "direct:transformCSV");
+        runCamelTest(loadResourceAsString("payload.csv"), "{\"account\":\"123\"}", "direct:transformCSV");
     }
 
     @Test
     public void testRegistryLibraries() throws Exception {
-        runCamelTest("{}",
-                "{ \"test\":\"Hello, World\"}",
-                "direct:registryLibraries");
+        runCamelTest("{}", "{ \"test\":\"Hello, World\"}", "direct:registryLibraries");
     }
 
     @Override
@@ -80,28 +79,39 @@ public class CamelDatasonnetJavaDslTest extends CamelTestSupport {
                         .setProperty("count", simple("1", Integer.class))
                         .setProperty("isActive", simple("true", Boolean.class))
                         .setProperty("1. Full Name", constant("DataSonnet"))
-                        .transform(datasonnet("resource:classpath:simpleMapping.ds", String.class,
-                                MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
+                        .transform(datasonnet(
+                                "resource:classpath:simpleMapping.ds",
+                                String.class,
+                                MediaTypes.APPLICATION_JSON_VALUE,
+                                MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:direct:end");
 
                 from("direct:transformXML")
                         .routeId("transformXML")
-                        .transform(datasonnet("resource:classpath:readXMLExtTest.ds", String.class,
-                                MediaTypes.APPLICATION_XML_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
+                        .transform(datasonnet(
+                                "resource:classpath:readXMLExtTest.ds",
+                                String.class,
+                                MediaTypes.APPLICATION_XML_VALUE,
+                                MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:direct:end");
 
                 from("direct:transformCSV")
                         .routeId("transformCSV")
-                        .transform(datasonnet("resource:classpath:readCSVTest.ds", String.class,
-                                MediaTypes.APPLICATION_CSV_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
+                        .transform(datasonnet(
+                                "resource:classpath:readCSVTest.ds",
+                                String.class,
+                                MediaTypes.APPLICATION_CSV_VALUE,
+                                MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:direct:end");
 
                 from("direct:registryLibraries")
                         .routeId("registryLibraries")
-                        .transform(datasonnet("{test: testlib.sayHello()}", String.class,
-                                MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
+                        .transform(datasonnet(
+                                "{test: testlib.sayHello()}",
+                                String.class,
+                                MediaTypes.APPLICATION_JSON_VALUE,
+                                MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:direct:end");
-
             }
         };
     }
@@ -116,7 +126,6 @@ public class CamelDatasonnetJavaDslTest extends CamelTestSupport {
             response = ExchangeHelper.convertToMandatoryType(exchange, String.class, ((Document<?>) body).getContent());
         } else {
             response = exchange.getMessage().getBody(String.class);
-
         }
         JSONAssert.assertEquals(expectedJson, response, true);
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import java.util.concurrent.ExecutorService;
@@ -63,8 +64,13 @@ import org.apache.camel.util.StringHelper;
  *
  * This component uses plain JMS API, whereas the jms component uses Spring JMS.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName",
-             category = { Category.MESSAGING }, headersClass = SjmsConstants.class)
+@UriEndpoint(
+        firstVersion = "2.11.0",
+        scheme = "sjms",
+        title = "Simple JMS",
+        syntax = "sjms:destinationType:destinationName",
+        category = {Category.MESSAGING},
+        headersClass = SjmsConstants.class)
 public class SjmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
 
@@ -73,171 +79,286 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     @UriPath(enums = "queue,topic", defaultValue = "queue", description = "The kind of destination to use")
     private String destinationType;
-    @UriPath(description = "DestinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name.")
+
+    @UriPath(
+            description =
+                    "DestinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name.")
     @Metadata(required = true)
     private String destinationName;
-    @UriParam(label = "advanced",
-              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+
+    @UriParam(
+            label = "advanced",
+            description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam(label = "advanced",
-              description = "Whether to include all JMSXxxx properties when mapping from JMS to Camel Message."
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "Whether to include all JMSXxxx properties when mapping from JMS to Camel Message."
                             + " Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.")
     private boolean includeAllJMSXProperties;
-    @UriParam(label = "transaction",
-              description = "Specifies whether to use transacted mode")
+
+    @UriParam(label = "transaction", description = "Specifies whether to use transacted mode")
     private boolean transacted;
-    @UriParam(label = "common",
-              description = "Provides an explicit ReplyTo destination (overrides any incoming value of Message.getJMSReplyTo() in consumer).")
+
+    @UriParam(
+            label = "common",
+            description =
+                    "Provides an explicit ReplyTo destination (overrides any incoming value of Message.getJMSReplyTo() in consumer).")
     private String replyTo;
-    @UriParam(label = "producer",
-              description = "Allows for explicitly specifying which kind of strategy to use for replyTo queues when doing request/reply over JMS."
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Allows for explicitly specifying which kind of strategy to use for replyTo queues when doing request/reply over JMS."
                             + " Possible values are: Temporary or Exclusive."
                             + " By default Camel will use temporary queues. However if replyTo has been configured, then Exclusive is used.")
     private ReplyToType replyToType;
-    @UriParam(defaultValue = "AUTO_ACKNOWLEDGE",
-              enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE",
-              description = "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")
+
+    @UriParam(
+            defaultValue = "AUTO_ACKNOWLEDGE",
+            enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE",
+            description =
+                    "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")
     private SessionAcknowledgementType acknowledgementMode = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
-    @UriParam(defaultValue = "1", label = "consumer",
-              description = "Specifies the default number of concurrent consumers when consuming from JMS (not for request/reply over JMS)."
+
+    @UriParam(
+            defaultValue = "1",
+            label = "consumer",
+            description =
+                    "Specifies the default number of concurrent consumers when consuming from JMS (not for request/reply over JMS)."
                             + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads."
                             + " When doing request/reply over JMS then the option replyToConcurrentConsumers is used to control number"
                             + " of concurrent consumers on the reply message listener.")
     private int concurrentConsumers = 1;
-    @UriParam(defaultValue = "1", label = "producer",
-              description = "Specifies the default number of concurrent consumers when doing request/reply over JMS."
-                            + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.")
+
+    @UriParam(
+            defaultValue = "1",
+            label = "producer",
+            description = "Specifies the default number of concurrent consumers when doing request/reply over JMS."
+                    + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.")
     private int replyToConcurrentConsumers = 1;
-    @UriParam(label = "producer,advanced", defaultValue = "false",
-              description = "Set if the deliveryMode, priority or timeToLive qualities of service should be used when sending messages."
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "false",
+            description =
+                    "Set if the deliveryMode, priority or timeToLive qualities of service should be used when sending messages."
                             + " This option is based on Spring's JmsTemplate. The deliveryMode, priority and timeToLive options are applied to the current endpoint."
                             + " This contrasts with the preserveMessageQos option, which operates at message granularity,"
                             + " reading QoS properties exclusively from the Camel In message headers.")
     private Boolean explicitQosEnabled;
-    @UriParam(label = "producer,advanced",
-              description = "Set to true, if you want to send message using the QoS settings specified on the message,"
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "Set to true, if you want to send message using the QoS settings specified on the message,"
                             + " instead of the QoS settings on the JMS endpoint. The following three headers are considered JMSPriority, JMSDeliveryMode,"
                             + " and JMSExpiration. You can provide all or only some of them. If not provided, Camel will fall back to use the"
                             + " values from the endpoint instead. So, when using this option, the headers override the values from the endpoint."
                             + " The explicitQosEnabled option, by contrast, will only use options set on the endpoint, and not values from the message header.")
     private boolean preserveMessageQos;
-    @UriParam(defaultValue = "" + Message.DEFAULT_PRIORITY, enums = "1,2,3,4,5,6,7,8,9", label = "producer",
-              description = "Values greater than 1 specify the message priority when sending (where 1 is the lowest priority and 9 is the highest)."
+
+    @UriParam(
+            defaultValue = "" + Message.DEFAULT_PRIORITY,
+            enums = "1,2,3,4,5,6,7,8,9",
+            label = "producer",
+            description =
+                    "Values greater than 1 specify the message priority when sending (where 1 is the lowest priority and 9 is the highest)."
                             + " The explicitQosEnabled option must also be enabled in order for this option to have any effect.")
     private int priority = Message.DEFAULT_PRIORITY;
-    @UriParam(defaultValue = "true", label = "producer",
-              description = "Specifies whether persistent delivery is used by default.")
+
+    @UriParam(
+            defaultValue = "true",
+            label = "producer",
+            description = "Specifies whether persistent delivery is used by default.")
     private boolean deliveryPersistent = true;
-    @UriParam(description = "Specifies whether Camel ignores the JMSReplyTo header in messages. If true, Camel does not send a reply back to"
+
+    @UriParam(
+            description =
+                    "Specifies whether Camel ignores the JMSReplyTo header in messages. If true, Camel does not send a reply back to"
                             + " the destination specified in the JMSReplyTo header. You can use this option if you want Camel to consume from a"
                             + " route and you do not want Camel to automatically send back a reply message because another component in your code"
                             + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
                             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
-    @UriParam(label = "producer",
-              description = "Provides an explicit ReplyTo destination in the JMS message, which overrides the setting of replyTo."
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Provides an explicit ReplyTo destination in the JMS message, which overrides the setting of replyTo."
                             + " It is useful if you want to forward the message to a remote Queue and receive the reply message from the ReplyTo destination.")
     private String replyToOverride;
-    @UriParam(defaultValue = "true", label = "consumer",
-              description = "Specifies whether to use persistent delivery by default for replies.")
+
+    @UriParam(
+            defaultValue = "true",
+            label = "consumer",
+            description = "Specifies whether to use persistent delivery by default for replies.")
     private boolean replyToDeliveryPersistent = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message due to ${exception.message}",
-              description = "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
+
+    @UriParam(
+            label = "consumer,advanced",
+            defaultValue = "Poison JMS message due to ${exception.message}",
+            description =
+                    "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
                             + " then set this text as the message body instead so the message can be processed"
                             + " (the cause of the poison are already stored as exception on the Exchange)."
                             + " This can be turned off by setting eagerPoisonBody=false."
                             + " See also the option eagerLoadingOfProperties.")
     private String eagerPoisonBody = "Poison JMS message payload: ${exception.message}";
-    @UriParam(label = "consumer,advanced",
-              description = "Enables eager loading of JMS properties and payload as soon as a message is loaded"
-                            + " which generally is inefficient as the JMS properties may not be required"
-                            + " but sometimes can catch early any issues with the underlying JMS provider"
-                            + " and the use of JMS properties. See also the option eagerPoisonBody.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description = "Enables eager loading of JMS properties and payload as soon as a message is loaded"
+                    + " which generally is inefficient as the JMS properties may not be required"
+                    + " but sometimes can catch early any issues with the underlying JMS provider"
+                    + " and the use of JMS properties. See also the option eagerPoisonBody.")
     private boolean eagerLoadingOfProperties;
-    @UriParam(enums = "1,2", label = "producer",
-              description = "Specifies the delivery mode to be used."
-                            + " Possible values are those defined by jakarta.jms.DeliveryMode."
-                            + " NON_PERSISTENT = 1 and PERSISTENT = 2.")
+
+    @UriParam(
+            enums = "1,2",
+            label = "producer",
+            description = "Specifies the delivery mode to be used."
+                    + " Possible values are those defined by jakarta.jms.DeliveryMode."
+                    + " NON_PERSISTENT = 1 and PERSISTENT = 2.")
     private Integer deliveryMode;
-    @UriParam(defaultValue = "-1", label = "producer",
-              description = "When sending messages, specifies the time-to-live of the message (in milliseconds).")
+
+    @UriParam(
+            defaultValue = "-1",
+            label = "producer",
+            description = "When sending messages, specifies the time-to-live of the message (in milliseconds).")
     private long timeToLive = -1;
-    @UriParam(label = "consumer",
-              description = "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
                             + " It is typically only required for durable topic subscriptions."
                             + " If using Apache ActiveMQ you may prefer to use Virtual Topics instead.")
     private String clientId;
-    @UriParam(label = "consumer",
-              description = "The durable subscriber name for specifying durable topic subscriptions. The clientId option must be configured as well.")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "The durable subscriber name for specifying durable topic subscriptions. The clientId option must be configured as well.")
     private String durableSubscriptionName;
-    @UriParam(defaultValue = "20000", label = "producer", javaType = "java.time.Duration",
-              description = "The timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds)."
-                            + " The default is 20 seconds. You can include the header \"CamelJmsRequestTimeout\" to override this endpoint configured"
-                            + " timeout value, and thus have per message individual timeout values."
-                            + " See also the requestTimeoutCheckerInterval option.")
+
+    @UriParam(
+            defaultValue = "20000",
+            label = "producer",
+            javaType = "java.time.Duration",
+            description = "The timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds)."
+                    + " The default is 20 seconds. You can include the header \"CamelJmsRequestTimeout\" to override this endpoint configured"
+                    + " timeout value, and thus have per message individual timeout values."
+                    + " See also the requestTimeoutCheckerInterval option.")
     private long requestTimeout = 20000L;
-    @UriParam(label = "consumer,advanced",
-              description = "Sets the JMS Message selector syntax.")
+
+    @UriParam(label = "consumer,advanced", description = "Sets the JMS Message selector syntax.")
     private String messageSelector;
-    @UriParam(description = "Specifies whether to test the connection on startup."
-                            + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
-                            + " If a connection cannot be granted then Camel throws an exception on startup."
-                            + " This ensures that Camel is not started with failed connections."
-                            + " The JMS producers is tested as well.")
+
+    @UriParam(
+            description = "Specifies whether to test the connection on startup."
+                    + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
+                    + " If a connection cannot be granted then Camel throws an exception on startup."
+                    + " This ensures that Camel is not started with failed connections."
+                    + " The JMS producers is tested as well.")
     private boolean testConnectionOnStartup;
-    @UriParam(label = "advanced",
-              description = "Whether to startup the consumer message listener asynchronously, when starting a route."
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "Whether to startup the consumer message listener asynchronously, when starting a route."
                             + " For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or fail over."
                             + " This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker"
                             + " using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level,"
                             + " and the consumer will not be able to receive messages; You can then restart the route to retry.")
     private boolean asyncStartListener;
-    @UriParam(label = "advanced",
-              description = "Whether to stop the consumer message listener asynchronously, when stopping a route.")
+
+    @UriParam(
+            label = "advanced",
+            description = "Whether to stop the consumer message listener asynchronously, when stopping a route.")
     private boolean asyncStopListener;
-    @UriParam(label = "consumer", defaultValue = "true",
-              description = "Specifies whether the consumer container should auto-startup.")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "true",
+            description = "Specifies whether the consumer container should auto-startup.")
     private boolean autoStartup = true;
-    @UriParam(label = "consumer,advanced",
-              description = "Whether a JMS consumer is allowed to send a reply message to the same destination that the consumer is using to"
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Whether a JMS consumer is allowed to send a reply message to the same destination that the consumer is using to"
                             + " consume from. This prevents an endless loop by consuming and sending back the same message to itself.")
     private boolean replyToSameDestinationAllowed;
-    @UriParam(label = "producer,advanced", defaultValue = "true",
-              description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown.")
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "true",
+            description =
+                    "Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown.")
     private boolean allowNullBody = true;
-    @UriParam(label = "advanced", defaultValue = "true",
-              description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as jakarta.jms.TextMessage to a String etc."
+
+    @UriParam(
+            label = "advanced",
+            defaultValue = "true",
+            description =
+                    "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as jakarta.jms.TextMessage to a String etc."
                             + " See section about how mapping works below for more details.")
     private boolean mapJmsMessage = true;
-    @UriParam(label = "advanced", enums = "Bytes,Map,Object,Stream,Text",
-              description = "Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages."
+
+    @UriParam(
+            label = "advanced",
+            enums = "Bytes,Map,Object,Stream,Text",
+            description =
+                    "Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages."
                             + " Possible values are: Bytes, Map, Object, Stream, Text."
                             + " By default, Camel would determine which JMS message type to use from the In body type. This option allows you to specify it.")
     private JmsMessageType jmsMessageType;
-    @UriParam(label = "advanced",
-              description = "To use a custom DestinationCreationStrategy.")
+
+    @UriParam(label = "advanced", description = "To use a custom DestinationCreationStrategy.")
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
-    @UriParam(label = "advanced",
-              description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>jakarta.jms.Message</tt> objects when Camel is sending a JMS message.")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>jakarta.jms.Message</tt> objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
-    @UriParam(label = "advanced",
-              description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
                             + " Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -)."
                             + " The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters."
                             + " You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
-    @UriParam(label = "common",
-              description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
+
+    @UriParam(
+            label = "common",
+            description =
+                    "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
-    @UriParam(label = "advanced",
-              description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
     private ExceptionListener exceptionListener;
-    @UriParam(defaultValue = "5000", label = "advanced", javaType = "java.time.Duration",
-              description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
+
+    @UriParam(
+            defaultValue = "5000",
+            label = "advanced",
+            javaType = "java.time.Duration",
+            description =
+                    "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
                             + " The default is 5000 ms, that is, 5 seconds.")
     private long recoveryInterval = 5000;
-    @UriParam(label = "advanced",
-              description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
                             + " then the caused Exception will be send back in response as a jakarta.jms.ObjectMessage."
                             + " If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge"
                             + " in your routing - for example, using persistent queues to enable robust routing."
@@ -248,31 +369,38 @@ public class SjmsEndpoint extends DefaultEndpoint
                             + " Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level, "
                             + " which forces a strong coupling between the producers and consumer!")
     private boolean transferException;
-    @UriParam(label = "producer,advanced",
-              description = "Use this option to force disabling time to live."
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "Use this option to force disabling time to live."
                             + " For example when you do request/reply over JMS, then Camel will by default use the requestTimeout value"
                             + " as time to live on the message being sent. The problem is that the sender and receiver systems have"
                             + " to have their clocks synchronized, so they are in sync. This is not always so easy to archive."
                             + " So you can use disableTimeToLive=true to not set a time to live value on the sent message."
                             + " Then the message will not expire on the receiver system. See below in section About time to live for more details.")
     private boolean disableTimeToLive;
-    @UriParam(label = "consumer",
-              description = "Whether the JmsConsumer processes the Exchange asynchronously."
-                            + " If enabled then the JmsConsumer may pickup the next message from the JMS queue,"
-                            + " while the previous message is being processed asynchronously (by the Asynchronous Routing Engine)."
-                            + " This means that messages may be processed not 100% strictly in order. If disabled (as default)"
-                            + " then the Exchange is fully processed before the JmsConsumer will pickup the next message from the JMS queue."
-                            + " Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as transaction"
-                            + "  must be executed synchronously (Camel 3.0 may support async transactions).")
+
+    @UriParam(
+            label = "consumer",
+            description = "Whether the JmsConsumer processes the Exchange asynchronously."
+                    + " If enabled then the JmsConsumer may pickup the next message from the JMS queue,"
+                    + " while the previous message is being processed asynchronously (by the Asynchronous Routing Engine)."
+                    + " This means that messages may be processed not 100% strictly in order. If disabled (as default)"
+                    + " then the Exchange is fully processed before the JmsConsumer will pickup the next message from the JMS queue."
+                    + " Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as transaction"
+                    + "  must be executed synchronously (Camel 3.0 may support async transactions).")
     private boolean asyncConsumer;
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+
+    @UriParam(
+            defaultValue = "false",
+            label = "advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
     private JmsObjectFactory jmsObjectFactory = new Jms11ObjectFactory();
 
-    public SjmsEndpoint() {
-    }
+    public SjmsEndpoint() {}
 
     public SjmsEndpoint(String uri, Component component, String remaining) {
         super(uri, component);
@@ -380,7 +508,8 @@ public class SjmsEndpoint extends DefaultEndpoint
      * Factory method for creating a new template for InOnly message exchanges
      */
     public SjmsTemplate createInOnlyTemplate() {
-        SjmsTemplate template = new SjmsTemplate(getConnectionFactory(), isTransacted(), getAcknowledgementMode().intValue());
+        SjmsTemplate template = new SjmsTemplate(
+                getConnectionFactory(), isTransacted(), getAcknowledgementMode().intValue());
 
         // configure qos if enabled
         if (isExplicitQosEnabled()) {
@@ -463,8 +592,12 @@ public class SjmsEndpoint extends DefaultEndpoint
      */
     protected JmsBinding createBinding() {
         return new JmsBinding(
-                isMapJmsMessage(), isAllowNullBody(), getHeaderFilterStrategy(), getJmsKeyFormatStrategy(),
-                getMessageCreatedStrategy(), getJmsMessageType());
+                isMapJmsMessage(),
+                isAllowNullBody(),
+                getHeaderFilterStrategy(),
+                getJmsKeyFormatStrategy(),
+                getMessageCreatedStrategy(),
+                getJmsMessageType());
     }
 
     public void setBinding(JmsBinding binding) {

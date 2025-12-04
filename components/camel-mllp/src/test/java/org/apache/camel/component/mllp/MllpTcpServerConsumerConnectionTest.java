@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.apache.camel.test.junit5.ThrottlingExecutor.slowly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,11 +35,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.test.junit5.ThrottlingExecutor.slowly;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     static final int RECEIVE_TIMEOUT = 1000;
@@ -81,7 +82,8 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         addTestRouteWithIdleTimeout(-1);
 
-        slowly().repeat(connectionCount).awaiting(connectionMillis, TimeUnit.MILLISECONDS)
+        slowly().repeat(connectionCount)
+                .awaiting(connectionMillis, TimeUnit.MILLISECONDS)
                 .beforeEach((i) -> mllpClient.connect())
                 .afterEach((i) -> mllpClient.reset())
                 .execute();
@@ -103,7 +105,8 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         addTestRouteWithIdleTimeout(-1);
 
-        slowly().repeat(connectionCount).awaiting(connectionMillis, TimeUnit.MILLISECONDS)
+        slowly().repeat(connectionCount)
+                .awaiting(connectionMillis, TimeUnit.MILLISECONDS)
                 .beforeEach((i) -> mllpClient.connect())
                 .afterEach((i) -> mllpClient.reset())
                 .execute();
@@ -123,7 +126,8 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     @Test
     public void testIdleConnection() throws Exception {
         final int idleTimeout = RECEIVE_TIMEOUT * 3;
-        String testMessage = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
+        String testMessage =
+                "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
 
         result.setExpectedCount(1);
         result.setAssertPeriod(1000);
@@ -134,8 +138,9 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage);
 
         Awaitility.await().untilAsserted(() -> {
-
-            MllpJUnitResourceException ex = assertThrows(MllpJUnitResourceException.class, () -> mllpClient.checkConnection(),
+            MllpJUnitResourceException ex = assertThrows(
+                    MllpJUnitResourceException.class,
+                    () -> mllpClient.checkConnection(),
                     "The MllpClientResource should have thrown an exception when writing to the reset socket");
 
             assertEquals("checkConnection failed - read() returned END_OF_STREAM", ex.getMessage());
@@ -150,8 +155,13 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             String routeId = "mllp-receiver-with-timeout";
 
             public void configure() {
-                fromF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&idleTimeout=%d", mllpClient.getMllpHost(),
-                        mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT, idleTimeout)
+                fromF(
+                                "mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&idleTimeout=%d",
+                                mllpClient.getMllpHost(),
+                                mllpClient.getMllpPort(),
+                                RECEIVE_TIMEOUT,
+                                READ_TIMEOUT,
+                                idleTimeout)
                         .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
                         .to(result);
@@ -161,5 +171,4 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         context.addRoutes(builder);
         context.start();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools;
 
 import java.util.ArrayList;
@@ -38,18 +39,18 @@ public class LangChain4jToolMultipleMatchingGroupsTest extends CamelTestSupport 
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OpenAIMock openAIMock = new OpenAIMock().builder()
+    static OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("What is the name of the user 1 and what department he is part of?\n")
             .assertRequest(request -> {
                 // The tools has to be included in the request
-                Assertions.assertThat(request).contains(
-                        "QueryUserByNumberUsingTheInternalDB",
-                        "QueryUserInformationByNumberUsingTheExternalDB");
+                Assertions.assertThat(request)
+                        .contains(
+                                "QueryUserByNumberUsingTheInternalDB",
+                                "QueryUserInformationByNumberUsingTheExternalDB");
 
                 // The NOT included in the request
-                Assertions.assertThat(request).doesNotContain(
-                        "DoesNotReallyDoAnything",
-                        "QueryCarInformationByPlate");
+                Assertions.assertThat(request).doesNotContain("DoesNotReallyDoAnything", "QueryCarInformationByPlate");
             })
             .invokeTool("{\"name\": \"Paul McFly\", \"department\": \"engineering\"}")
             .withParam("number", 1)
@@ -66,8 +67,8 @@ public class LangChain4jToolMultipleMatchingGroupsTest extends CamelTestSupport 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        LangChain4jToolsComponent component
-                = context.getComponent(LangChain4jTools.SCHEME, LangChain4jToolsComponent.class);
+        LangChain4jToolsComponent component =
+                context.getComponent(LangChain4jTools.SCHEME, LangChain4jToolsComponent.class);
 
         component.getConfiguration().setChatModel(chatModel);
 
@@ -101,11 +102,14 @@ public class LangChain4jToolMultipleMatchingGroupsTest extends CamelTestSupport 
     @Test
     public void testSimpleInvocation() {
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new SystemMessage(
-                """
+        messages.add(
+                new SystemMessage(
+                        """
                         You provide the requested information using the functions you hava available. You can invoke the functions to obtain the information you need to complete the answer.
                         """));
-        messages.add(new UserMessage("""
+        messages.add(
+                new UserMessage(
+                        """
                 What is the name of the user 1 and what department he is part of?
                 """));
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.nio.charset.StandardCharsets;
@@ -31,41 +32,58 @@ import org.apache.hc.core5.http.HttpResponse;
 
 public class DispositionNotificationMultipartReportEntity extends MultipartReportEntity {
 
-    protected DispositionNotificationMultipartReportEntity(String boundary, String contentTransferEncoding,
-                                                           boolean isMainBody) {
-        super(ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
-                                + "report-type=disposition-notification; boundary=\"" + boundary + "\""),
-              contentTransferEncoding, isMainBody, boundary);
+    protected DispositionNotificationMultipartReportEntity(
+            String boundary, String contentTransferEncoding, boolean isMainBody) {
+        super(
+                ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
+                        + "report-type=disposition-notification; boundary=\"" + boundary + "\""),
+                contentTransferEncoding,
+                isMainBody,
+                boundary);
     }
 
-    public DispositionNotificationMultipartReportEntity(ClassicHttpRequest request,
-                                                        HttpResponse response,
-                                                        DispositionMode dispositionMode,
-                                                        AS2DispositionType dispositionType,
-                                                        AS2DispositionModifier dispositionModifier,
-                                                        String[] failureFields,
-                                                        String[] errorFields,
-                                                        String[] warningFields,
-                                                        Map<String, String> extensionFields,
-                                                        String charset,
-                                                        String boundary,
-                                                        boolean isMainBody,
-                                                        PrivateKey decryptingPrivateKey,
-                                                        String mdnMessage,
-                                                        Certificate[] validateSigningCertificateChain)
-                                                                                                       throws HttpException {
-        super(ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
-                                + "report-type=disposition-notification; boundary=\"" + boundary + "\""),
-              null, isMainBody, boundary);
+    public DispositionNotificationMultipartReportEntity(
+            ClassicHttpRequest request,
+            HttpResponse response,
+            DispositionMode dispositionMode,
+            AS2DispositionType dispositionType,
+            AS2DispositionModifier dispositionModifier,
+            String[] failureFields,
+            String[] errorFields,
+            String[] warningFields,
+            Map<String, String> extensionFields,
+            String charset,
+            String boundary,
+            boolean isMainBody,
+            PrivateKey decryptingPrivateKey,
+            String mdnMessage,
+            Certificate[] validateSigningCertificateChain)
+            throws HttpException {
+        super(
+                ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
+                        + "report-type=disposition-notification; boundary=\"" + boundary + "\""),
+                null,
+                isMainBody,
+                boundary);
         ObjectHelper.notNull(dispositionMode, "dispositionMode");
         ObjectHelper.notNull(dispositionType, "dispositionType");
         ObjectHelper.notNull(mdnMessage, "mdnMessageTemplate");
 
         addPart(buildPlainTextReport(mdnMessage));
         addPart(new AS2MessageDispositionNotificationEntity(
-                request, response, dispositionMode, dispositionType,
-                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false,
-                decryptingPrivateKey, validateSigningCertificateChain));
+                request,
+                response,
+                dispositionMode,
+                dispositionType,
+                dispositionModifier,
+                failureFields,
+                errorFields,
+                warningFields,
+                extensionFields,
+                charset,
+                false,
+                decryptingPrivateKey,
+                validateSigningCertificateChain));
     }
 
     public String getMainMessageContentType() {
@@ -75,5 +93,4 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
     protected TextPlainEntity buildPlainTextReport(String mdnMessage) {
         return new TextPlainEntity(mdnMessage, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.SEVENBIT, false);
     }
-
 }

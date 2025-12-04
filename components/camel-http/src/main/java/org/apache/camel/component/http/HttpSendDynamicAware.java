@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("http,https")
-public class HttpSendDynamicAware extends org.apache.camel.http.base.HttpSendDynamicAware {
-
-}
+public class HttpSendDynamicAware extends org.apache.camel.http.base.HttpSendDynamicAware {}

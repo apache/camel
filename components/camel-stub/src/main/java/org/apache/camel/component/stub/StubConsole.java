@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stub;
 
 import java.util.ArrayList;
@@ -68,8 +69,7 @@ public class StubConsole extends AbstractDevConsole {
 
         StringBuilder sb = new StringBuilder();
 
-        List<StubEndpoint> list = getCamelContext().getEndpoints()
-                .stream()
+        List<StubEndpoint> list = getCamelContext().getEndpoints().stream()
                 .filter(e -> e instanceof StubEndpoint)
                 .map(StubEndpoint.class::cast)
                 .filter(e -> accept(e.getName(), filter))
@@ -129,8 +129,8 @@ public class StubConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
         JsonArray queues = new JsonArray();
 
-        List<StubEndpoint> list = getCamelContext().getEndpoints()
-                .stream().filter(e -> e instanceof StubEndpoint)
+        List<StubEndpoint> list = getCamelContext().getEndpoints().stream()
+                .filter(e -> e instanceof StubEndpoint)
                 .map(StubEndpoint.class::cast)
                 .filter(e -> accept(e.getName(), filter))
                 .toList();
@@ -164,9 +164,8 @@ public class StubConsole extends AbstractDevConsole {
                 }
                 for (Exchange exchange : copy) {
                     try {
-                        JsonObject msg
-                                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, true, true, true, false, true,
-                                        128 * 1024);
+                        JsonObject msg = MessageHelper.dumpAsJSonObject(
+                                exchange.getMessage(), false, true, true, true, false, true, 128 * 1024);
                         arr.add(msg);
                     } catch (Exception e) {
                         // ignore
@@ -190,5 +189,4 @@ public class StubConsole extends AbstractDevConsole {
 
         return PatternHelper.matchPattern(name, filter);
     }
-
 }

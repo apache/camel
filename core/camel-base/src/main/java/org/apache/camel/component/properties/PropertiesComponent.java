@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.util.ArrayList;
@@ -113,7 +114,8 @@ public class PropertiesComponent extends ServiceSupport
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesLookupListener> propertiesLookupListeners = new ArrayList<>();
     private final PropertiesSourceFactory propertiesSourceFactory = new DefaultPropertiesSourceFactory(this);
-    private final DefaultPropertiesLookupListener defaultPropertiesLookupListener = new DefaultPropertiesLookupListener();
+    private final DefaultPropertiesLookupListener defaultPropertiesLookupListener =
+            new DefaultPropertiesLookupListener();
     private final List<PropertiesSource> sources = new ArrayList<>();
     private List<PropertiesLocation> locations = new ArrayList<>();
     private String location;
@@ -124,7 +126,8 @@ public class PropertiesComponent extends ServiceSupport
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
     private Properties overrideProperties;
-    private final Stack<Properties> localProperties = new Stack<>();;
+    private final Stack<Properties> localProperties = new Stack<>();
+    ;
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
@@ -215,7 +218,7 @@ public class PropertiesComponent extends ServiceSupport
             // sources are ordered according to {@link org.apache.camel.support.OrderComparator} so
             // it is needed to iterate them in reverse order otherwise lower priority sources may
             // override properties from higher priority ones
-            for (int i = sources.size(); i-- > 0;) {
+            for (int i = sources.size(); i-- > 0; ) {
                 PropertiesSource ps = sources.get(i);
                 if (ps instanceof LoadablePropertiesSource lps) {
                     Properties p = lps.loadProperties();
@@ -282,7 +285,7 @@ public class PropertiesComponent extends ServiceSupport
             // sources are ordered according to {@link org.apache.camel.support.OrderComparator} so
             // it is needed to iterate them in reverse order otherwise lower priority sources may
             // override properties from higher priority ones
-            for (int i = sources.size(); i-- > 0;) {
+            for (int i = sources.size(); i-- > 0; ) {
                 PropertiesSource ps = sources.get(i);
                 if (ps instanceof LoadablePropertiesSource lps) {
                     Properties p = lps.loadProperties(filter);
@@ -340,8 +343,8 @@ public class PropertiesComponent extends ServiceSupport
             key = PREFIX_TOKEN + key.substring(NEGATE_PREFIX.length());
         }
 
-        String answer
-                = propertiesParser.parseUri(key, properties, defaultFallbackEnabled, keepUnresolvedOptional, nestedPlaceholder);
+        String answer = propertiesParser.parseUri(
+                key, properties, defaultFallbackEnabled, keepUnresolvedOptional, nestedPlaceholder);
         if (negate) {
             if ("true".equalsIgnoreCase(answer)) {
                 answer = "false";
@@ -564,7 +567,6 @@ public class PropertiesComponent extends ServiceSupport
             this.overrideProperties = new OrderedProperties();
         }
         this.overrideProperties.setProperty(key, value);
-
     }
 
     @Override
@@ -721,7 +723,8 @@ public class PropertiesComponent extends ServiceSupport
         // find sources with this location to reload
         for (PropertiesSource source : sources) {
             if (source instanceof LocationPropertiesSource loc && source instanceof LoadablePropertiesSource loadable) {
-                String schemeAndPath = loc.getLocation().getResolver() + ":" + loc.getLocation().getPath();
+                String schemeAndPath = loc.getLocation().getResolver() + ":"
+                        + loc.getLocation().getPath();
                 String path = loc.getLocation().getPath();
                 if (PatternHelper.matchPattern(schemeAndPath, pattern) || PatternHelper.matchPattern(path, pattern)) {
                     loadable.reloadProperties(schemeAndPath);
@@ -755,12 +758,14 @@ public class PropertiesComponent extends ServiceSupport
         if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
                 && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
                 && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
-            throw new IllegalArgumentException("Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
+            throw new IllegalArgumentException(
+                    "Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
         }
         if (environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_NEVER
                 && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_FALLBACK
                 && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
-            throw new IllegalArgumentException("Option environmentVariableMode has invalid value: " + environmentVariableMode);
+            throw new IllegalArgumentException(
+                    "Option environmentVariableMode has invalid value: " + environmentVariableMode);
         }
 
         // inject the component to the parser
@@ -776,9 +781,10 @@ public class PropertiesComponent extends ServiceSupport
                     LOG.debug("PropertiesComponent added custom PropertiesSource (registry): {}", source);
                 }
 
-                FactoryFinder factoryFinder = getCamelContext().getCamelContextExtension()
-                        .getBootstrapFactoryFinder();
-                Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
+                FactoryFinder factoryFinder =
+                        getCamelContext().getCamelContextExtension().getBootstrapFactoryFinder();
+                Class<?> type =
+                        factoryFinder.findClass("properties-source-factory").orElse(null);
                 if (type != null) {
                     Object obj = getCamelContext().getInjector().newInstance(type, false);
                     if (obj instanceof PropertiesSource ps) {
@@ -787,12 +793,15 @@ public class PropertiesComponent extends ServiceSupport
                     } else if (obj != null) {
                         LOG.warn(
                                 "PropertiesComponent cannot add custom PropertiesSource as the type is not a {} but: {}",
-                                PropertiesSource.class.getName(), type.getName());
+                                PropertiesSource.class.getName(),
+                                type.getName());
                     }
                 }
             } catch (Exception e) {
-                LOG.debug("Error discovering and using custom PropertiesSource due to {}. This exception is ignored",
-                        e.getMessage(), e);
+                LOG.debug(
+                        "Error discovering and using custom PropertiesSource due to {}. This exception is ignored",
+                        e.getMessage(),
+                        e);
             }
         }
 
@@ -841,9 +850,7 @@ public class PropertiesComponent extends ServiceSupport
                 LOG.debug("Parsed location: {}", path);
                 if (ObjectHelper.isNotEmpty(path)) {
                     answer.add(new PropertiesLocation(
-                            propertiesLocation.getResolver(),
-                            path,
-                            propertiesLocation.isOptional()));
+                            propertiesLocation.getResolver(), path, propertiesLocation.isOptional()));
                 }
             } catch (IllegalArgumentException e) {
                 if (!ignoreMissingLocation && !propertiesLocation.isOptional()) {

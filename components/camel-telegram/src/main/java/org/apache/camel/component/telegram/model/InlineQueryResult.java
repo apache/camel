@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,8 +34,7 @@ public abstract class InlineQueryResult {
     @JsonProperty("reply_markup")
     private InlineKeyboardMarkup replyMarkup;
 
-    public InlineQueryResult() {
-    }
+    public InlineQueryResult() {}
 
     public InlineQueryResult(String type) {
         this.type = type;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,18 +45,16 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSupport {
 
     public static final String NEO4J_URI = "neo4j:neo4j?vectorIndexName=myIndex&label=Test";
+
     @RegisterExtension
     static Neo4jService NEO4J = Neo4jServiceFactory.createSingletonService();
 
     @Override
-
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
@@ -70,7 +71,8 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
     @Test
     @Order(0)
     void createVectorIndex() {
-        Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=myIndex&alias=m&label=Test&dimension=384")
+        Exchange result = fluentTemplate
+                .to("neo4j:neo4j?vectorIndexName=myIndex&alias=m&label=Test&dimension=384")
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.CREATE_VECTOR_INDEX)
                 .request(Exchange.class);
 
@@ -80,40 +82,36 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
         Assertions.assertNotNull(in);
 
         Assertions.assertEquals(Neo4Operation.CREATE_VECTOR_INDEX, in.getHeader(Neo4jHeaders.OPERATION));
-        Assertions.assertTrue(in.getHeader(Neo4jHeaders.QUERY_RESULT, String.class)
-                .contains("CREATE VECTOR INDEX myIndex IF NOT EXISTS"),
+        Assertions.assertTrue(
+                in.getHeader(Neo4jHeaders.QUERY_RESULT, String.class)
+                        .contains("CREATE VECTOR INDEX myIndex IF NOT EXISTS"),
                 "The executed request should contain the create vector index");
-
     }
 
     @Test
     @Order(1)
     public void insert() {
 
-        Exchange result = fluentTemplate.to("direct:in")
-                .withBody("hi")
-                .request(Exchange.class);
+        Exchange result = fluentTemplate.to("direct:in").withBody("hi").request(Exchange.class);
 
         assertThat(result).isNotNull();
 
         Message in = result.getMessage();
         Assertions.assertNotNull(in);
 
-        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jHeaders.OPERATION),
-                "Operation is create Vector");
-        Assertions.assertEquals(1, in.getHeader(Neo4jHeaders.QUERY_RESULT_NODES_CREATED),
-                "A node creation is expected ");
-
+        Assertions.assertEquals(
+                Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jHeaders.OPERATION), "Operation is create Vector");
+        Assertions.assertEquals(
+                1, in.getHeader(Neo4jHeaders.QUERY_RESULT_NODES_CREATED), "A node creation is expected ");
     }
 
     @Test
     @Order(2)
     void testSearchEmbedding() {
-        var cypherQuery = "MATCH " +
-                          "(m:Test {id: '1'})" +
-                          "RETURN m";
+        var cypherQuery = "MATCH " + "(m:Test {id: '1'})" + "RETURN m";
 
-        Exchange result = fluentTemplate.to(NEO4J_URI)
+        Exchange result = fluentTemplate
+                .to(NEO4J_URI)
                 .withBodyAs(cypherQuery, String.class)
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY)
                 .request(Exchange.class);
@@ -122,9 +120,11 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
 
         Message in = result.getMessage();
         Assertions.assertNotNull(in);
-        Assertions.assertEquals(Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY,
-                in.getHeader(Neo4jHeaders.OPERATION));
-        Assertions.assertEquals(1, in.getHeader(Neo4jHeaders.QUERY_RETRIEVE_SIZE),
+        Assertions.assertEquals(
+                Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY, in.getHeader(Neo4jHeaders.OPERATION));
+        Assertions.assertEquals(
+                1,
+                in.getHeader(Neo4jHeaders.QUERY_RETRIEVE_SIZE),
                 "The database should retrieve the node with id =1 that was created by previous test");
 
         List resultList = in.getBody(List.class);
@@ -138,21 +138,20 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
         Assertions.assertEquals("1", map.get("id"), "The id should be equal to 1");
         Assertions.assertTrue(map.containsKey("embedding"), "The map should contain an embedding");
         List<Float> embedding = (List) map.get("embedding");
-        Assertions.assertTrue(true, "The list of embeddings should be a list of float. if no erreor, this assert is valid");
-
+        Assertions.assertTrue(
+                true, "The list of embeddings should be a list of float. if no erreor, this assert is valid");
     }
 
     @Test
     @Order(3)
     public void rag_similarity_search() {
-        Exchange result = fluentTemplate.to("direct:search")
-                .withBody("hi")
-                .request(Exchange.class);
+        Exchange result = fluentTemplate.to("direct:search").withBody("hi").request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
+        assertThat(result.getIn().getBody())
+                .isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
         Assertions.assertTrue(result.getIn().getBody(List.class).contains("hi"));
     }
 
@@ -162,24 +161,24 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
             public void configure() {
                 from("direct:in")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(Neo4jHeaders.OPERATION).constant(Neo4Operation.CREATE_VECTOR)
-                        .setHeader(Neo4jHeaders.VECTOR_ID).constant("1")
-                        .setHeader(Neo4jHeaders.LABEL).constant("Test")
+                        .setHeader(Neo4jHeaders.OPERATION)
+                        .constant(Neo4Operation.CREATE_VECTOR)
+                        .setHeader(Neo4jHeaders.VECTOR_ID)
+                        .constant("1")
+                        .setHeader(Neo4jHeaders.LABEL)
+                        .constant("Test")
                         .transformDataType(new org.apache.camel.spi.DataType("neo4j:embeddings"))
                         .to(NEO4J_URI);
 
                 from("direct:search")
                         .to("langchain4j-embeddings:test")
                         // transform prompt into embeddings for search
-                        .transformDataType(
-                                new DataType("neo4j:embeddings"))
+                        .transformDataType(new DataType("neo4j:embeddings"))
                         .setHeader(Neo4jHeaders.OPERATION, constant(Neo4Operation.VECTOR_SIMILARITY_SEARCH))
                         .to(NEO4J_URI)
                         // decode retrieved embeddings for RAG
-                        .transformDataType(
-                                new DataType("neo4j:rag"));
+                        .transformDataType(new DataType("neo4j:rag"));
             }
         };
     }
-
 }

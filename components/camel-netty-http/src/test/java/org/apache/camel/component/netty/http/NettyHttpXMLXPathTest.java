@@ -14,27 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpXMLXPathTest extends BaseNettyTest {
 
     @Test
     public void testHttpXML() {
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Claus</name></person>",
-                String.class);
+        String out = template.requestBody(
+                "netty-http:http://localhost:{{port}}/foo", "<person><name>Claus</name></person>", String.class);
         assertEquals("<quote>Camel rocks</quote>", out);
 
-        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>James</name></person>",
-                String.class);
+        out = template.requestBody(
+                "netty-http:http://localhost:{{port}}/foo", "<person><name>James</name></person>", String.class);
         assertEquals("<quote>Camel really rocks</quote>", out);
 
-        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Jonathan</name></person>",
-                String.class);
+        out = template.requestBody(
+                "netty-http:http://localhost:{{port}}/foo", "<person><name>Jonathan</name></person>", String.class);
         assertEquals("<quote>Try Camel now</quote>", out);
     }
 
@@ -45,14 +46,15 @@ public class NettyHttpXMLXPathTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .choice()
-                        .when().xpath("/person/name = 'Claus'")
+                        .when()
+                        .xpath("/person/name = 'Claus'")
                         .transform(constant("<quote>Camel rocks</quote>"))
-                        .when().xpath("/person/name = 'James'")
+                        .when()
+                        .xpath("/person/name = 'James'")
                         .transform(constant("<quote>Camel really rocks</quote>"))
                         .otherwise()
                         .transform(constant("<quote>Try Camel now</quote>"));
             }
         };
     }
-
 }

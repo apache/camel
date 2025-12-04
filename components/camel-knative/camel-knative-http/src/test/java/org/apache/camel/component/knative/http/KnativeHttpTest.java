@@ -14,7 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
+
+import static io.restassured.RestAssured.config;
+import static io.restassured.RestAssured.given;
+import static io.restassured.config.EncoderConfig.encoderConfig;
+import static org.apache.camel.component.knative.KnativeEnvironmentSupport.*;
+import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.configureKnativeComponent;
+import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.configurePlatformHttpComponent;
+import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.httpAttribute;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.is;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -55,18 +68,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static io.restassured.RestAssured.config;
-import static io.restassured.RestAssured.given;
-import static io.restassured.config.EncoderConfig.encoderConfig;
-import static org.apache.camel.component.knative.KnativeEnvironmentSupport.*;
-import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.configureKnativeComponent;
-import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.configurePlatformHttpComponent;
-import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.httpAttribute;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.hamcrest.Matchers.emptyOrNullString;
-import static org.hamcrest.Matchers.is;
-
 public class KnativeHttpTest {
 
     private CamelContext context;
@@ -90,7 +91,8 @@ public class KnativeHttpTest {
         configurePlatformHttpComponent(context, this.platformHttpPort);
 
         RestAssured.port = platformHttpPort;
-        RestAssured.config = config().encoderConfig(encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false));
+        RestAssured.config =
+                config().encoderConfig(encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false));
     }
 
     @AfterEach
@@ -124,8 +126,7 @@ public class KnativeHttpTest {
         }
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:endpoint/myEndpoint")
-                    .to("mock:ce");
+            b.from("knative:endpoint/myEndpoint").to("mock:ce");
         });
 
         context.start();
@@ -145,13 +146,13 @@ public class KnativeHttpTest {
             targetPath = basePath + targetPath;
         }
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -201,12 +202,8 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:source")
-                    .routeId("my-source")
-                    .to("knative:endpoint/myEndpoint");
-            b.from("platform-http:/a/path")
-                    .convertBodyTo(String.class)
-                    .to("mock:ce");
+            b.from("direct:source").routeId("my-source").to("knative:endpoint/myEndpoint");
+            b.from("platform-http:/a/path").convertBodyTo(String.class).to("mock:ce");
         });
 
         context.start();
@@ -244,12 +241,8 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:source")
-                    .routeId("my-source")
-                    .to("knative:endpoint/myEndpoint");
-            b.from("platform-http:/a/path")
-                    .convertBodyTo(String.class)
-                    .to("mock:ce");
+            b.from("direct:source").routeId("my-source").to("knative:endpoint/myEndpoint");
+            b.from("platform-http:/a/path").convertBodyTo(String.class).to("mock:ce");
         });
 
         context.start();
@@ -288,9 +281,7 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:source")
-                    .routeId("my-source")
-                    .to("knative:endpoint/myEndpoint");
+            b.from("direct:source").routeId("my-source").to("knative:endpoint/myEndpoint");
             b.from("platform-http:/a/path/with/subpath")
                     .convertBodyTo(String.class)
                     .to("mock:ce");
@@ -328,8 +319,7 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:endpoint/myEndpoint")
-                    .to("mock:ce");
+            b.from("knative:endpoint/myEndpoint").to("mock:ce");
         });
 
         context.start();
@@ -347,8 +337,7 @@ public class KnativeHttpTest {
         if (Objects.equals(CloudEvents.v1_0.version(), ce.version())
                 || Objects.equals(CloudEvents.v1_0_1.version(), ce.version())
                 || Objects.equals(CloudEvents.v1_0_2.version(), ce.version())) {
-            given()
-                    .contentType(Knative.MIME_STRUCTURED_CONTENT_MODE)
+            given().contentType(Knative.MIME_STRUCTURED_CONTENT_MODE)
                     .body(
                             Map.of(
                                     "specversion", ce.version(),
@@ -383,8 +372,7 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:endpoint/myEndpoint")
-                    .to("mock:ce");
+            b.from("knative:endpoint/myEndpoint").to("mock:ce");
         });
 
         context.start();
@@ -399,13 +387,13 @@ public class KnativeHttpTest {
         mock.expectedBodiesReceived("test");
         mock.expectedMessageCount(1);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -425,14 +413,19 @@ public class KnativeHttpTest {
                 sourceEndpoint(
                         "ep1",
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
-                                Knative.KNATIVE_FILTER_PREFIX + httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "CE1")),
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
+                                Knative.KNATIVE_FILTER_PREFIX + httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE),
+                                "CE1")),
                 sourceEndpoint(
                         "ep2",
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
                                 Knative.KNATIVE_FILTER_PREFIX + httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE),
                                 "CE2")));
 
@@ -467,13 +460,13 @@ public class KnativeHttpTest {
         mock2.expectedBodiesReceived("test");
         mock2.expectedMessageCount(1);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID1")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "CE1")
                 .when()
@@ -481,13 +474,13 @@ public class KnativeHttpTest {
                 .then()
                 .statusCode(200);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID2")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "CE2")
                 .when()
@@ -508,15 +501,19 @@ public class KnativeHttpTest {
                 sourceEndpoint(
                         "ep1",
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
                                 Knative.KNATIVE_FILTER_PREFIX + httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE),
                                 "CE[01234]")),
                 sourceEndpoint(
                         "ep2",
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
                                 Knative.KNATIVE_FILTER_PREFIX + httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE),
                                 "CE[56789]")));
 
@@ -551,13 +548,13 @@ public class KnativeHttpTest {
         mock2.expectedBodiesReceived("test");
         mock2.expectedMessageCount(1);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID1")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "CE0")
                 .when()
@@ -565,13 +562,13 @@ public class KnativeHttpTest {
                 .then()
                 .statusCode(200);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID2")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "CE5")
                 .when()
@@ -586,10 +583,7 @@ public class KnativeHttpTest {
     @ParameterizedTest
     @EnumSource(CloudEvents.class)
     void testConsumeEventContent(CloudEvent ce) throws Exception {
-        configureKnativeComponent(
-                context,
-                ce,
-                sourceEvent("default"));
+        configureKnativeComponent(context, ce, sourceEvent("default"));
 
         RouteBuilder.addRoutes(context, b -> {
             b.from("knative:event/event1")
@@ -622,13 +616,13 @@ public class KnativeHttpTest {
         mock2.expectedBodiesReceived("test");
         mock2.expectedMessageCount(1);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "event1")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID1")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "CE1")
                 .when()
@@ -636,13 +630,13 @@ public class KnativeHttpTest {
                 .then()
                 .statusCode(200);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "event2")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID2")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "CE2")
                 .when()
@@ -680,10 +674,7 @@ public class KnativeHttpTest {
                     .constant("consumer")
                     .setHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE)
                     .constant("custom");
-            b.from("direct:source")
-                    .to("knative://endpoint/to")
-                    .log("${body}")
-                    .to("mock:to");
+            b.from("direct:source").to("knative://endpoint/to").log("${body}").to("mock:to");
         });
 
         MockEndpoint mock = context.getEndpoint("mock:to", MockEndpoint.class);
@@ -723,10 +714,7 @@ public class KnativeHttpTest {
                     .constant("consumer")
                     .setHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE)
                     .constant("custom");
-            b.from("direct:source")
-                    .to("knative://endpoint/to")
-                    .log("${body}")
-                    .to("mock:to");
+            b.from("direct:source").to("knative://endpoint/to").log("${body}").to("mock:to");
         });
 
         MockEndpoint mock = context.getEndpoint("mock:to", MockEndpoint.class);
@@ -755,9 +743,7 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:endpoint/test")
-                    .to("mock:start");
+            b.from("direct:start").to("knative:endpoint/test").to("mock:start");
         });
 
         assertThatExceptionOfType(FailedToStartRouteException.class)
@@ -780,9 +766,7 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:endpoint/test")
-                    .to("mock:start");
+            b.from("direct:start").to("knative:endpoint/test").to("mock:start");
         });
 
         context.start();
@@ -803,28 +787,28 @@ public class KnativeHttpTest {
                 sourceEndpoint(
                         "ep1",
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
-                                Knative.KNATIVE_FILTER_PREFIX + "h", "h1")),
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
+                                Knative.KNATIVE_FILTER_PREFIX + "h",
+                                "h1")),
                 sourceEndpoint(
                         "ep2",
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
-                                Knative.KNATIVE_FILTER_PREFIX + "h", "h2")));
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
+                                Knative.KNATIVE_FILTER_PREFIX + "h",
+                                "h2")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:endpoint/ep1")
-                    .routeId("r1")
-                    .setBody().simple("${routeId}");
-            b.from("knative:endpoint/ep2")
-                    .routeId("r2")
-                    .setBody().simple("${routeId}");
+            b.from("knative:endpoint/ep1").routeId("r1").setBody().simple("${routeId}");
+            b.from("knative:endpoint/ep2").routeId("r2").setBody().simple("${routeId}");
         });
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .setHeader("h").body()
-                    .toF("http://localhost:%d", platformHttpPort);
+            b.from("direct:start").setHeader("h").body().toF("http://localhost:%d", platformHttpPort);
         });
 
         context.start();
@@ -834,10 +818,11 @@ public class KnativeHttpTest {
 
         context.getRouteController().stopRoute("r2");
 
-        assertThat(template.request("direct:start", e -> e.getMessage().setBody("h2"))).satisfies(e -> {
-            assertThat(e.isFailed()).isTrue();
-            assertThat(e.getException()).isInstanceOf(HttpOperationFailedException.class);
-        });
+        assertThat(template.request("direct:start", e -> e.getMessage().setBody("h2")))
+                .satisfies(e -> {
+                    assertThat(e.isFailed()).isTrue();
+                    assertThat(e.getException()).isInstanceOf(HttpOperationFailedException.class);
+                });
     }
 
     @ParameterizedTest
@@ -849,39 +834,40 @@ public class KnativeHttpTest {
                 sourceEndpoint(
                         "ep1",
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
-                                Knative.KNATIVE_FILTER_PREFIX + "h", "h1")),
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
+                                Knative.KNATIVE_FILTER_PREFIX + "h",
+                                "h1")),
                 sourceEndpoint(
                         "ep2",
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
-                                Knative.KNATIVE_FILTER_PREFIX + "h", "h2")));
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
+                                Knative.KNATIVE_FILTER_PREFIX + "h",
+                                "h2")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:endpoint/ep1")
-                    .routeId("r1")
-                    .setBody().simple("${routeId}");
+            b.from("knative:endpoint/ep1").routeId("r1").setBody().simple("${routeId}");
         });
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .setHeader("h").body()
-                    .toF("http://localhost:%d", platformHttpPort);
+            b.from("direct:start").setHeader("h").body().toF("http://localhost:%d", platformHttpPort);
         });
 
         context.start();
 
         assertThat(template.requestBody("direct:start", "h1", String.class)).isEqualTo("r1");
-        assertThat(template.request("direct:start", e -> e.getMessage().setBody("h2"))).satisfies(e -> {
-            assertThat(e.isFailed()).isTrue();
-            assertThat(e.getException()).isInstanceOf(HttpOperationFailedException.class);
-        });
+        assertThat(template.request("direct:start", e -> e.getMessage().setBody("h2")))
+                .satisfies(e -> {
+                    assertThat(e.isFailed()).isTrue();
+                    assertThat(e.getException()).isInstanceOf(HttpOperationFailedException.class);
+                });
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:endpoint/ep2")
-                    .routeId("r2")
-                    .setBody().simple("${routeId}");
+            b.from("knative:endpoint/ep2").routeId("r2").setBody().simple("${routeId}");
         });
 
         assertThat(template.requestBody("direct:start", "h1", String.class)).isEqualTo("r1");
@@ -903,14 +889,10 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:endpoint/ep")
-                    .to("mock:start");
-            b.fromF("platform-http:/")
-                    .routeId("endpoint")
-                    .process(e -> {
-                        throw new RuntimeException("endpoint error");
-                    });
+            b.from("direct:start").to("knative:endpoint/ep").to("mock:start");
+            b.fromF("platform-http:/").routeId("endpoint").process(e -> {
+                throw new RuntimeException("endpoint error");
+            });
         });
 
         context.start();
@@ -919,7 +901,8 @@ public class KnativeHttpTest {
         assertThat(exchange.isFailed()).isTrue();
         assertThat(exchange.getException()).isInstanceOf(CamelException.class);
         assertThat(exchange.getException()).hasMessageStartingWith("HTTP operation failed invoking");
-        assertThat(exchange.getException()).hasMessageContaining("with statusCode: 500, statusMessage: Internal Server Error");
+        assertThat(exchange.getException())
+                .hasMessageContaining("with statusCode: 500, statusMessage: Internal Server Error");
     }
 
     @ParameterizedTest
@@ -942,10 +925,8 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:source")
-                    .to("knative:event/myEvent");
-            b.from("knative:event/myEvent")
-                    .to("mock:ce");
+            b.from("direct:source").to("knative:event/myEvent");
+            b.from("knative:event/myEvent").to("mock:ce");
         });
 
         context.start();
@@ -974,18 +955,12 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("http://%s:%d", platformHttpHost, platformHttpPort),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")),
-                sourceEvent(
-                        "default",
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")),
+                sourceEvent("default", Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:source")
-                    .to("knative:event");
-            b.from("knative:event")
-                    .to("mock:ce");
+            b.from("direct:source").to("knative:event");
+            b.from("knative:event").to("mock:ce");
         });
 
         context.start();
@@ -1030,23 +1005,24 @@ public class KnativeHttpTest {
                                 Knative.KNATIVE_OBJECT_NAME, "myName2")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:source")
-                    .to("knative:event/myEvent?kind=MyObject&apiVersion=v1&name=myName1");
+            b.from("direct:source").to("knative:event/myEvent?kind=MyObject&apiVersion=v1&name=myName1");
             b.from("knative:event/myEvent?kind=MyOtherObject&apiVersion=v2&name=myName2")
                     .to("mock:ce");
         });
 
         context.start();
 
-        assertThat(context.getEndpoint("knative:event/myEvent?kind=MyObject&apiVersion=v1&name=myName1", KnativeEndpoint.class))
+        assertThat(context.getEndpoint(
+                        "knative:event/myEvent?kind=MyObject&apiVersion=v1&name=myName1", KnativeEndpoint.class))
                 .satisfies(e -> {
                     assertThat(e.getType()).isEqualTo(Knative.Type.event);
                     assertThat(e.getTypeId()).isEqualTo("myEvent");
                     assertThat(e.getConfiguration().getTypeId()).isEqualTo("myEvent");
                     assertThat(e.getConfiguration().getName()).isEqualTo("myName1");
                 });
-        assertThat(context.getEndpoint("knative:event/myEvent?kind=MyOtherObject&apiVersion=v2&name=myName2",
-                KnativeEndpoint.class)).satisfies(e -> {
+        assertThat(context.getEndpoint(
+                        "knative:event/myEvent?kind=MyOtherObject&apiVersion=v2&name=myName2", KnativeEndpoint.class))
+                .satisfies(e -> {
                     assertThat(e.getType()).isEqualTo(Knative.Type.event);
                     assertThat(e.getTypeId()).isEqualTo("myEvent");
                     assertThat(e.getConfiguration().getTypeId()).isEqualTo("myEvent");
@@ -1097,8 +1073,9 @@ public class KnativeHttpTest {
 
         context.start();
 
-        assertThat(context.getEndpoint("knative:endpoint/myEndpoint?kind=MyObject&apiVersion=v2&name=myName2",
-                KnativeEndpoint.class)).satisfies(e -> {
+        assertThat(context.getEndpoint(
+                        "knative:endpoint/myEndpoint?kind=MyObject&apiVersion=v2&name=myName2", KnativeEndpoint.class))
+                .satisfies(e -> {
                     assertThat(e.getType()).isEqualTo(Knative.Type.endpoint);
                     assertThat(e.getTypeId()).isEqualTo("myEndpoint");
                     assertThat(e.getConfiguration().getTypeId()).isEqualTo("myEndpoint");
@@ -1115,13 +1092,13 @@ public class KnativeHttpTest {
         mock.expectedBodiesReceived("test");
         mock.expectedMessageCount(1);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -1145,14 +1122,12 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:endpoint/myEndpoint")
-                    .to("mock:ce");
+            b.from("knative:endpoint/myEndpoint").to("mock:ce");
         });
 
         context.start();
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .when()
                 .get()
@@ -1175,8 +1150,7 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:endpoint/myEndpoint");
+            b.from("direct:start").to("knative:endpoint/myEndpoint");
         });
 
         context.start();
@@ -1225,14 +1199,16 @@ public class KnativeHttpTest {
 
             RouteBuilder.addRoutes(context, b -> {
                 b.from("knative:channel/messages")
-                        .transform().simple("transformed ${body}")
+                        .transform()
+                        .simple("transformed ${body}")
                         .log("${body}")
                         .to("knative:channel/words");
             });
 
             context.start();
 
-            Exchange exchange = template.request("knative:channel/messages", e -> e.getMessage().setBody("message"));
+            Exchange exchange = template.request(
+                    "knative:channel/messages", e -> e.getMessage().setBody("message"));
             assertThat(exchange.getMessage().getHeaders()).containsEntry(Exchange.HTTP_RESPONSE_CODE, 204);
             assertThat(exchange.getMessage().getBody()).isNull();
         } finally {
@@ -1253,19 +1229,18 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:channel/channel?reply=false")
-                    .setBody().constant(Map.of());
+            b.from("knative:channel/channel?reply=false").setBody().constant(Map.of());
         });
 
         context.start();
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -1289,19 +1264,18 @@ public class KnativeHttpTest {
                                 Knative.KNATIVE_REPLY, "false")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:channel/channel")
-                    .setBody().constant(Map.of());
+            b.from("knative:channel/channel").setBody().constant(Map.of());
         });
 
         context.start();
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -1325,19 +1299,18 @@ public class KnativeHttpTest {
                                 Knative.KNATIVE_REPLY, "true")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:channel/channel?reply=false")
-                    .setBody().constant(Map.of());
+            b.from("knative:channel/channel?reply=false").setBody().constant(Map.of());
         });
 
         context.start();
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -1366,11 +1339,11 @@ public class KnativeHttpTest {
 
         RouteBuilder.addRoutes(context, b -> {
             b.from("direct:start")
-                    .setHeader("CamelDummyHeader").constant("test")
+                    .setHeader("CamelDummyHeader")
+                    .constant("test")
                     .to("knative:endpoint/ep")
                     .to("direct:mock");
-            b.from("direct:mock")
-                    .to("mock:ep");
+            b.from("direct:mock").to("mock:ep");
         });
 
         context.start();
@@ -1387,11 +1360,14 @@ public class KnativeHttpTest {
             mock.assertIsSatisfied();
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1416,7 +1392,8 @@ public class KnativeHttpTest {
 
         RouteBuilder.addRoutes(context, b -> {
             b.from("direct:start")
-                    .setHeader("CamelDummyHeader").constant("test")
+                    .setHeader("CamelDummyHeader")
+                    .constant("test")
                     .to("knative:endpoint/ep");
         });
 
@@ -1429,7 +1406,8 @@ public class KnativeHttpTest {
 
             server.start();
 
-            Exchange exchange = template.request("direct:start", e -> e.getMessage().setBody("test"));
+            Exchange exchange =
+                    template.request("direct:start", e -> e.getMessage().setBody("test"));
             assertThat(exchange.getMessage().getHeaders()).containsEntry("CamelDummyHeader", "test");
         } finally {
             server.stop();
@@ -1453,14 +1431,17 @@ public class KnativeHttpTest {
                         "ep",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
-                                Knative.KNATIVE_CE_OVERRIDE_PREFIX + typeHeaderKey, typeHeaderVal,
-                                Knative.KNATIVE_CE_OVERRIDE_PREFIX + sourceHeaderKey, sourceHeaderVal)));
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
+                                Knative.KNATIVE_CE_OVERRIDE_PREFIX + typeHeaderKey,
+                                typeHeaderVal,
+                                Knative.KNATIVE_CE_OVERRIDE_PREFIX + sourceHeaderKey,
+                                sourceHeaderVal)));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:endpoint/ep");
+            b.from("direct:start").to("knative:endpoint/ep");
         });
 
         context.start();
@@ -1469,10 +1450,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))).isEqualTo(typeHeaderVal);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isEqualTo(sourceHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo(typeHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isEqualTo(sourceHeaderVal);
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1496,16 +1481,17 @@ public class KnativeHttpTest {
                         "ep",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
                         Map.of(
-                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
-                                Knative.CONTENT_TYPE, "text/plain",
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE,
+                                "org.apache.camel.event",
+                                Knative.CONTENT_TYPE,
+                                "text/plain",
                                 Knative.KNATIVE_CE_OVERRIDE_PREFIX + typeHeaderKey,
                                 "{{someProperty:%s}}".formatted(typeHeaderVal),
                                 Knative.KNATIVE_CE_OVERRIDE_PREFIX + sourceHeaderKey,
                                 "{{someProperty:%s}}".formatted(sourceHeaderVal))));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:endpoint/ep");
+            b.from("direct:start").to("knative:endpoint/ep");
         });
 
         context.start();
@@ -1514,10 +1500,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))).isEqualTo(typeHeaderVal);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isEqualTo(sourceHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo(typeHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isEqualTo(sourceHeaderVal);
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1546,9 +1536,12 @@ public class KnativeHttpTest {
 
         RouteBuilder.addRoutes(context, b -> {
             b.from("direct:start")
-                    .toF("knative:endpoint/ep?%s=%s&%s=%s",
-                            Knative.KNATIVE_CE_OVERRIDE_PREFIX + typeHeaderKey, typeHeaderVal,
-                            Knative.KNATIVE_CE_OVERRIDE_PREFIX + sourceHeaderKey, sourceHeaderVal);
+                    .toF(
+                            "knative:endpoint/ep?%s=%s&%s=%s",
+                            Knative.KNATIVE_CE_OVERRIDE_PREFIX + typeHeaderKey,
+                            typeHeaderVal,
+                            Knative.KNATIVE_CE_OVERRIDE_PREFIX + sourceHeaderKey,
+                            sourceHeaderVal);
         });
 
         context.start();
@@ -1557,10 +1550,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))).isEqualTo(typeHeaderVal);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isEqualTo(sourceHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo(typeHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isEqualTo(sourceHeaderVal);
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1587,13 +1584,14 @@ public class KnativeHttpTest {
                                 Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
                                 Knative.CONTENT_TYPE, "text/plain")));
 
-        component.getConfiguration().setCeOverride(Map.of(
-                Knative.KNATIVE_CE_OVERRIDE_PREFIX + typeHeaderKey, typeHeaderVal,
-                Knative.KNATIVE_CE_OVERRIDE_PREFIX + sourceHeaderKey, sourceHeaderVal));
+        component
+                .getConfiguration()
+                .setCeOverride(Map.of(
+                        Knative.KNATIVE_CE_OVERRIDE_PREFIX + typeHeaderKey, typeHeaderVal,
+                        Knative.KNATIVE_CE_OVERRIDE_PREFIX + sourceHeaderKey, sourceHeaderVal));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:endpoint/ep");
+            b.from("direct:start").to("knative:endpoint/ep");
         });
 
         context.start();
@@ -1602,10 +1600,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))).isEqualTo(typeHeaderVal);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isEqualTo(sourceHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo(typeHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isEqualTo(sourceHeaderVal);
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1618,7 +1620,8 @@ public class KnativeHttpTest {
         final KnativeHttpServer server = new KnativeHttpServer(context);
         final String typeHeaderKey = StringHelper.dashToCamelCase(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
         final String typeHeaderVal = UUID.randomUUID().toString();
-        final String sourceHeaderKey = StringHelper.dashToCamelCase(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+        final String sourceHeaderKey =
+                StringHelper.dashToCamelCase(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
         final String sourceHeaderVal = UUID.randomUUID().toString();
 
         KnativeComponent component = configureKnativeComponent(
@@ -1632,13 +1635,14 @@ public class KnativeHttpTest {
                                 Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
                                 Knative.CONTENT_TYPE, "text/plain")));
 
-        component.getConfiguration().setCeOverride(Map.of(
-                Knative.KNATIVE_CE_OVERRIDE_PREFIX + typeHeaderKey, typeHeaderVal,
-                Knative.KNATIVE_CE_OVERRIDE_PREFIX + sourceHeaderKey, sourceHeaderVal));
+        component
+                .getConfiguration()
+                .setCeOverride(Map.of(
+                        Knative.KNATIVE_CE_OVERRIDE_PREFIX + typeHeaderKey, typeHeaderVal,
+                        Knative.KNATIVE_CE_OVERRIDE_PREFIX + sourceHeaderKey, sourceHeaderVal));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:endpoint/ep");
+            b.from("direct:start").to("knative:endpoint/ep");
         });
 
         context.start();
@@ -1647,10 +1651,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))).isEqualTo(typeHeaderVal);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isEqualTo(sourceHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo(typeHeaderVal);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isEqualTo(sourceHeaderVal);
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1676,7 +1684,8 @@ public class KnativeHttpTest {
         RouteBuilder.addRoutes(context, b -> {
             b.from("direct:start")
                     .routeId("my-source")
-                    .setHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).constant("myType")
+                    .setHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE)
+                    .constant("myType")
                     .to("knative:endpoint/ep");
         });
 
@@ -1686,10 +1695,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))).isEqualTo("myType");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isEqualTo("my-source");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("myType");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isEqualTo("my-source");
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1715,8 +1728,10 @@ public class KnativeHttpTest {
         RouteBuilder.addRoutes(context, b -> {
             b.from("direct:start")
                     .routeId("my-source-x")
-                    .setHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)).constant("fromCEHeader")
-                    .setHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).constant("fromCamelHeader")
+                    .setHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))
+                    .constant("fromCEHeader")
+                    .setHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE)
+                    .constant("fromCamelHeader")
                     .to("knative:endpoint/ep");
         });
 
@@ -1726,10 +1741,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))).isEqualTo("fromCEHeader");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isEqualTo("my-source-x");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("fromCEHeader");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isEqualTo("my-source-x");
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1748,16 +1767,11 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "event.sink",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")),
-                sourceEvent(
-                        "event.source",
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")),
+                sourceEvent("event.source", Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:event/event.source")
-                    .to("knative:event/event.sink");
+            b.from("knative:event/event.source").to("knative:event/event.sink");
         });
 
         context.start();
@@ -1765,13 +1779,13 @@ public class KnativeHttpTest {
         try {
             server.start();
 
-            given()
-                    .body("test")
+            given().body("test")
                     .header(Exchange.CONTENT_TYPE, "text/plain")
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "event.source")
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                    .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                    .header(
+                            httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                             DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                     .when()
@@ -1780,8 +1794,10 @@ public class KnativeHttpTest {
                     .statusCode(204);
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))).isEqualTo("event.sink");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("event.sink");
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1800,16 +1816,13 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")),
-                sourceEvent(
-                        "event.source",
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")),
+                sourceEvent("event.source", Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
             b.from("knative:event/event.source")
-                    .setHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).constant("event.sink")
+                    .setHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE)
+                    .constant("event.sink")
                     .to("knative:event");
         });
 
@@ -1818,13 +1831,13 @@ public class KnativeHttpTest {
         try {
             server.start();
 
-            given()
-                    .body("test")
+            given().body("test")
                     .header(Exchange.CONTENT_TYPE, "text/plain")
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "event.source")
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                    .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                    .header(
+                            httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                             DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                     .when()
@@ -1833,8 +1846,10 @@ public class KnativeHttpTest {
                     .statusCode(204);
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE))).isEqualTo("event.sink");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("event.sink");
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1853,12 +1868,10 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -1867,11 +1880,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1882,15 +1898,18 @@ public class KnativeHttpTest {
     @EnumSource(CloudEvents.class)
     void testSlowConsumer(CloudEvent ce) throws Exception {
         final KnativeHttpServer server = new KnativeHttpServer(context, event -> {
-            event.vertx().executeBlocking(() -> {
-                try {
-                    Thread.sleep(5000);
-                    return null;
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw e;
-                }
-            }, false)
+            event.vertx()
+                    .executeBlocking(
+                            () -> {
+                                try {
+                                    Thread.sleep(5000);
+                                    return null;
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                    throw e;
+                                }
+                            },
+                            false)
                     .onComplete(result -> {
                         event.response().setStatusCode(200);
                         event.response().end("");
@@ -1917,13 +1936,13 @@ public class KnativeHttpTest {
 
             context.start();
 
-            given()
-                    .body("test")
+            given().body("test")
                     .header(Exchange.CONTENT_TYPE, "text/plain")
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                    .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                    .header(
+                            httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                             DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                     .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                     .when()
@@ -1947,8 +1966,7 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("https://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         KnativeSslClientOptions clientOptions = new KnativeSslClientOptions(context);
         clientOptions.setSslEnabled(true);
@@ -1962,8 +1980,7 @@ public class KnativeHttpTest {
         }
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -1972,11 +1989,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "test");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -1995,8 +2015,7 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("https://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         KnativeSslClientOptions clientOptions = new KnativeSslClientOptions(context);
         clientOptions.setSslEnabled(true);
@@ -2009,8 +2028,7 @@ public class KnativeHttpTest {
         }
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -2019,11 +2037,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "test");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -2042,8 +2063,7 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("https://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         KnativeSslClientOptions clientOptions = new KnativeSslClientOptions(context);
         clientOptions.setSslEnabled(true);
@@ -2058,8 +2078,7 @@ public class KnativeHttpTest {
         }
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -2068,11 +2087,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "test");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -2091,8 +2113,7 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("https://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         KnativeSslClientOptions sslClientOptions = new KnativeSslClientOptions(context);
         sslClientOptions.setSslEnabled(true);
@@ -2104,8 +2125,7 @@ public class KnativeHttpTest {
         context.getRegistry().bind("sslClientOptions", sslClientOptions);
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -2114,11 +2134,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "test");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -2133,7 +2156,8 @@ public class KnativeHttpTest {
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.enabled", "true");
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.verify.hostname", "false");
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.key.path", "keystore/client.pem");
-        context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.key.cert.path", "keystore/client.crt");
+        context.getPropertiesComponent()
+                .addInitialProperty("camel.knative.client.ssl.key.cert.path", "keystore/client.crt");
 
         KnativeComponent component = configureKnativeComponent(
                 context,
@@ -2142,15 +2166,17 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("https://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
-        PropertyBindingSupport.build().bind(context, component,
-                "camel.component.knative.producerFactory.clientOptions", "#class:" + KnativeSslClientOptions.class.getName());
+        PropertyBindingSupport.build()
+                .bind(
+                        context,
+                        component,
+                        "camel.component.knative.producerFactory.clientOptions",
+                        "#class:" + KnativeSslClientOptions.class.getName());
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -2159,11 +2185,14 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "test");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -2182,8 +2211,7 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         KnativeOidcClientOptions clientOptions = new KnativeOidcClientOptions(context);
         clientOptions.setOidcEnabled(true);
@@ -2194,8 +2222,7 @@ public class KnativeHttpTest {
         }
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -2204,12 +2231,16 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString()))
+                    .isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -2244,16 +2275,14 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
             httpProducerFactory.setClientOptions(clientOptions);
         }
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -2266,12 +2295,16 @@ public class KnativeHttpTest {
 
             // 1st request that has been forbidden
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString()))
+                    .isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
 
             // assert one more request
@@ -2283,11 +2316,14 @@ public class KnativeHttpTest {
             // 2nd request after token renewal
             request = server.poll(30, TimeUnit.SECONDS);
             assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer the_renewed_token");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -2321,16 +2357,14 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
             httpProducerFactory.setClientOptions(clientOptions);
         }
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -2340,12 +2374,16 @@ public class KnativeHttpTest {
 
             // 1st request
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString()))
+                    .isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
 
             template.sendBody("direct:start", "2nd");
@@ -2356,11 +2394,14 @@ public class KnativeHttpTest {
             // 2nd request with new token
             request = server.poll(30, TimeUnit.SECONDS);
             assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer the_renewed_token");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -2388,8 +2429,7 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
         KnativeOidcClientOptions clientOptions = new KnativeOidcClientOptions(context);
         clientOptions.setOidcEnabled(true);
@@ -2400,8 +2440,7 @@ public class KnativeHttpTest {
         }
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -2418,12 +2457,16 @@ public class KnativeHttpTest {
 
             // 1st request that has been forbidden
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString()))
+                    .isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
 
             // assert no more requests
@@ -2439,7 +2482,8 @@ public class KnativeHttpTest {
         final KnativeHttpServer server = new KnativeHttpServer(context);
 
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.oidc.enabled", "true");
-        context.getPropertiesComponent().addInitialProperty("camel.knative.client.oidc.token.path", "classpath:oidc/token.txt");
+        context.getPropertiesComponent()
+                .addInitialProperty("camel.knative.client.oidc.token.path", "classpath:oidc/token.txt");
 
         KnativeComponent component = configureKnativeComponent(
                 context,
@@ -2448,15 +2492,17 @@ public class KnativeHttpTest {
                         Knative.EndpointKind.sink,
                         "default",
                         String.format("http://%s:%d", server.getHost(), server.getPort()),
-                        Map.of(
-                                Knative.CONTENT_TYPE, "text/plain")));
+                        Map.of(Knative.CONTENT_TYPE, "text/plain")));
 
-        PropertyBindingSupport.build().bind(context, component,
-                "camel.component.knative.producerFactory.clientOptions", "#class:" + KnativeOidcClientOptions.class.getName());
+        PropertyBindingSupport.build()
+                .bind(
+                        context,
+                        component,
+                        "camel.component.knative.producerFactory.clientOptions",
+                        "#class:" + KnativeOidcClientOptions.class.getName());
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:start")
-                    .to("knative:event");
+            b.from("direct:start").to("knative:event");
         });
 
         context.start();
@@ -2465,12 +2511,16 @@ public class KnativeHttpTest {
             template.sendBody("direct:start", "");
 
             HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
-            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString()))
+                    .isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION)))
+                    .isEqualTo(ce.version());
             assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
                     .isEqualTo("org.apache.camel.event");
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
-            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID)))
+                    .isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE)))
+                    .isNotNull();
             assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
@@ -2498,8 +2548,7 @@ public class KnativeHttpTest {
         }
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:event/myEvent")
-                    .to("mock:ce");
+            b.from("knative:event/myEvent").to("mock:ce");
         });
 
         context.start();
@@ -2514,13 +2563,13 @@ public class KnativeHttpTest {
         mock.expectedBodiesReceived("test");
         mock.expectedMessageCount(1);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -2528,14 +2577,14 @@ public class KnativeHttpTest {
                 .then()
                 .statusCode(401); // forbidden - missing token
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header("Authorization", "Bearer wrong_token")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -2543,14 +2592,14 @@ public class KnativeHttpTest {
                 .then()
                 .statusCode(401); // forbidden - wrong token
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header("Authorization", "Bearer whatever_the_token_is")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -2565,8 +2614,8 @@ public class KnativeHttpTest {
     @EnumSource(CloudEvents.class)
     void testOidcServiceOptionsPropertyConf(CloudEvent ce) throws Exception {
         context.getPropertiesComponent().addInitialProperty("camel.knative.service.oidc.enabled", "true");
-        context.getPropertiesComponent().addInitialProperty("camel.knative.service.oidc.token.path",
-                "classpath:oidc/token.txt");
+        context.getPropertiesComponent()
+                .addInitialProperty("camel.knative.service.oidc.token.path", "classpath:oidc/token.txt");
 
         KnativeComponent component = configureKnativeComponent(
                 context,
@@ -2578,13 +2627,15 @@ public class KnativeHttpTest {
                                 Knative.CONTENT_TYPE, "text/plain")));
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("knative:event/myEvent")
-                    .to("mock:ce");
+            b.from("knative:event/myEvent").to("mock:ce");
         });
 
-        PropertyBindingSupport.build().bind(context, component,
-                "camel.component.knative.consumerFactory.serviceOptions",
-                "#class:" + KnativeOidcServiceOptions.class.getName());
+        PropertyBindingSupport.build()
+                .bind(
+                        context,
+                        component,
+                        "camel.component.knative.consumerFactory.serviceOptions",
+                        "#class:" + KnativeOidcServiceOptions.class.getName());
 
         context.start();
 
@@ -2598,14 +2649,14 @@ public class KnativeHttpTest {
         mock.expectedBodiesReceived("test");
         mock.expectedMessageCount(1);
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header("Authorization", "Bearer wrong_token")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()
@@ -2613,14 +2664,14 @@ public class KnativeHttpTest {
                 .then()
                 .statusCode(401); // forbidden - wrong token
 
-        given()
-                .body("test")
+        given().body("test")
                 .header(Exchange.CONTENT_TYPE, "text/plain")
                 .header("Authorization", "Bearer whatever_the_token_is")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
-                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                .header(
+                        httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
                 .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
                 .when()

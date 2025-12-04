@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
@@ -36,15 +37,16 @@ import org.apache.camel.spi.ResourceAware;
 @Metadata(label = "rest")
 @XmlRootElement(name = "rests")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer, ResourceAware {
+public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition>
+        implements RestContainer, ResourceAware {
 
     @XmlElementRef
     private List<RestDefinition> rests = new ArrayList<>();
+
     @XmlTransient
     private Resource resource;
 
-    public RestsDefinition() {
-    }
+    public RestsDefinition() {}
 
     @Override
     public String toString() {
@@ -125,5 +127,4 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
         }
         return rest;
     }
-
 }

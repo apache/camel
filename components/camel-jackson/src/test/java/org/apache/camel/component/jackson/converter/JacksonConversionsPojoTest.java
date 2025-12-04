@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonConversionsPojoTest extends CamelTestSupport {
     @Test
@@ -43,8 +44,10 @@ public class JacksonConversionsPojoTest extends CamelTestSupport {
     public void shouldConvertJAXBPojoToString() {
         context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
-        context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES,
-                JakartaXmlBindAnnotationModule.class.getName());
+        context.getGlobalOptions()
+                .put(
+                        JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES,
+                        JakartaXmlBindAnnotationModule.class.getName());
 
         Order order = new Order();
         order.setAmount(1);
@@ -64,5 +67,4 @@ public class JacksonConversionsPojoTest extends CamelTestSupport {
             }
         };
     }
-
 }

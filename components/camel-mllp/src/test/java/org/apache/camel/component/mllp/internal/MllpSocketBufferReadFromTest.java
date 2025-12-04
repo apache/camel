@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp.internal;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.SocketTimeoutException;
 
@@ -22,9 +26,6 @@ import org.apache.camel.test.stub.tcp.SocketInputStreamStub;
 import org.apache.camel.test.stub.tcp.SocketStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for the class.
@@ -49,8 +50,7 @@ public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
      */
     @Test
     public void testReadFromWithTimeoutExceptionOnInitialRead() throws Exception {
-        inputStreamStub
-                .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
+        inputStreamStub.addPacket(new SocketTimeoutException("Fake Timeout Exception"));
 
         try {
             endpoint.setReceiveTimeout(500);

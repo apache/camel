@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +28,6 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 public final class LoginConfigHelper {
 
@@ -44,10 +45,11 @@ public final class LoginConfigHelper {
             // ignoring if missing
         }
 
-        System.getenv().keySet().stream()//
+        System.getenv().keySet().stream() //
                 .filter(k -> k.startsWith("SALESFORCE_") && isNotEmpty(System.getenv(k)))
                 .forEach(k -> configuration.put(fromEnvName(k), System.getenv(k)));
-        System.getProperties().keySet().stream().map(String.class::cast)
+        System.getProperties().keySet().stream()
+                .map(String.class::cast)
                 .filter(k -> k.startsWith("salesforce.") && isNotEmpty(System.getProperty(k)))
                 .forEach(k -> configuration.put(k, System.getProperty(k)));
     }
@@ -147,5 +149,4 @@ public final class LoginConfigHelper {
     public static SalesforceLoginConfig getLoginConfig() {
         return INSTANCE.createLoginConfig();
     }
-
 }

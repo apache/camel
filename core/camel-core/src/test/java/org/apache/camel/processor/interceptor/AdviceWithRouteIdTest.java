@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.builder.AdviceWith;
@@ -29,7 +30,10 @@ public class AdviceWithRouteIdTest extends AdviceWithTest {
         AdviceWith.adviceWith(context.getRouteDefinition("myRoute"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+                interceptSendToEndpoint("mock:foo")
+                        .skipSendToOriginalEndpoint()
+                        .to("log:foo")
+                        .to("mock:advised");
             }
         });
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -31,8 +32,10 @@ public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest
 
                 from(fileUri("okay?initialDelay=0&delay=10"))
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 from(fileUri("fail?initialDelay=0&delay=10&moveFailed=../failed"))
                         .onException(IllegalArgumentException.class)
@@ -40,10 +43,11 @@ public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest
                         .to("mock:error")
                         .end()
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
             }
         };
     }
-
 }

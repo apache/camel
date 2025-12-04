@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
@@ -54,7 +55,6 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
-
     }
 
     private void createTag(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -80,8 +80,13 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
     }
 
     private void getTags(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        Tags tags = getEndpoint().getDigitalOceanClient().getAvailableTags(configuration.getPage(), configuration.getPerPage());
-        LOG.trace("All Tags : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+        Tags tags = getEndpoint()
+                .getDigitalOceanClient()
+                .getAvailableTags(configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "All Tags : page {} / {} per page [{}] ",
+                configuration.getPage(),
+                configuration.getPerPage(),
                 tags.getTags());
         exchange.getMessage().setBody(tags.getTags());
     }
@@ -96,5 +101,4 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
         LOG.trace("Delete Tag [{}] ", delete);
         exchange.getMessage().setBody(delete);
     }
-
 }

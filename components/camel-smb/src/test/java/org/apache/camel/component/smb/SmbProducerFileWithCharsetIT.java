@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
@@ -22,9 +26,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmbProducerFileWithCharsetIT extends SmbServerTestSupport {
 
@@ -59,8 +60,11 @@ public class SmbProducerFileWithCharsetIT extends SmbServerTestSupport {
         sendFile(getSmbUrl(), payload, "iso.txt");
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(payload,
-                        new String(copyFileContentFromContainer("/data/rw/charset/iso.txt"), StandardCharsets.ISO_8859_1)));
+                .untilAsserted(() -> assertEquals(
+                        payload,
+                        new String(
+                                copyFileContentFromContainer("/data/rw/charset/iso.txt"),
+                                StandardCharsets.ISO_8859_1)));
 
         byte[] data = copyFileContentFromContainer("/data/rw/charset/iso.txt");
 

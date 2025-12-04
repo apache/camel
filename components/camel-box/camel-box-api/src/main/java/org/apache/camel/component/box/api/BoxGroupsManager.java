@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
 
 import java.util.ArrayList;
@@ -64,8 +65,7 @@ public class BoxGroupsManager {
             }
             return groups;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -85,9 +85,12 @@ public class BoxGroupsManager {
      * @return                        The newly created group.
      */
     public BoxGroup createGroup(
-            String name, String provenance,
-            String externalSyncIdentifier, String description,
-            String invitabilityLevel, String memberViewabilityLevel) {
+            String name,
+            String provenance,
+            String externalSyncIdentifier,
+            String description,
+            String invitabilityLevel,
+            String memberViewabilityLevel) {
 
         try {
             LOG.debug("Creating group name={}", name);
@@ -95,11 +98,17 @@ public class BoxGroupsManager {
                 throw new IllegalArgumentException("Parameter 'name' can not be null");
             }
 
-            return BoxGroup.createGroup(boxConnection, name, provenance, externalSyncIdentifier, description,
-                    invitabilityLevel, memberViewabilityLevel).getResource();
+            return BoxGroup.createGroup(
+                            boxConnection,
+                            name,
+                            provenance,
+                            externalSyncIdentifier,
+                            description,
+                            invitabilityLevel,
+                            memberViewabilityLevel)
+                    .getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -116,8 +125,7 @@ public class BoxGroupsManager {
             BoxGroup group = new BoxGroup(boxConnection, groupId);
             group.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -136,8 +144,7 @@ public class BoxGroupsManager {
 
             return group.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -158,8 +165,7 @@ public class BoxGroupsManager {
             group.updateInfo(groupInfo);
             return group;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -178,8 +184,7 @@ public class BoxGroupsManager {
 
             return group.getMemberships();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -193,8 +198,11 @@ public class BoxGroupsManager {
      */
     public BoxGroupMembership addGroupMembership(String groupId, String userId, BoxGroupMembership.GroupRole role) {
         try {
-            LOG.debug("Adding user(id={}) as member to group(id={} {})",
-                    userId, groupId, role == null ? "" : "with role=" + role.name());
+            LOG.debug(
+                    "Adding user(id={}) as member to group(id={} {})",
+                    userId,
+                    groupId,
+                    role == null ? "" : "with role=" + role.name());
             BoxHelper.notNull(groupId, BoxHelper.GROUP_ID);
             BoxHelper.notNull(userId, BoxHelper.USER_ID);
 
@@ -203,8 +211,7 @@ public class BoxGroupsManager {
 
             return group.addMembership(user, role).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -222,8 +229,7 @@ public class BoxGroupsManager {
 
             groupMembership.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -242,8 +248,7 @@ public class BoxGroupsManager {
 
             return group.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -265,8 +270,7 @@ public class BoxGroupsManager {
             groupMembership.updateInfo(info);
             return groupMembership;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 }

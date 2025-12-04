@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,10 +43,12 @@ public class SplitGroupMultiLinesTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                         // split by new line and group by 3
-                        .split().tokenize("\n", 3).streaming().to("mock:group");
+                        .split()
+                        .tokenize("\n", 3)
+                        .streaming()
+                        .to("mock:group");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

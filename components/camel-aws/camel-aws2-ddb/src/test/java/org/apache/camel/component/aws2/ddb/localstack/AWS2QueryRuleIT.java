@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb.localstack;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 
@@ -37,8 +40,6 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class AWS2QueryRuleIT extends Aws2DDBBase {
 
     @EndpointInject("direct:start")
@@ -54,9 +55,8 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
     protected void cleanupResources() throws Exception {
         super.cleanupResources();
 
-        DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName(tableName)
-                .build();
+        DeleteTableRequest deleteTableRequest =
+                DeleteTableRequest.builder().tableName(tableName).build();
         ddbClient.deleteTable(deleteTableRequest);
     }
 
@@ -75,10 +75,11 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
                                 .attributeName(secondaryAttributeName)
                                 .keyType(KeyType.RANGE)
                                 .build())
-                .attributeDefinitions(AttributeDefinition.builder()
-                        .attributeType(ScalarAttributeType.S)
-                        .attributeName(secondaryAttributeName)
-                        .build(),
+                .attributeDefinitions(
+                        AttributeDefinition.builder()
+                                .attributeType(ScalarAttributeType.S)
+                                .attributeName(secondaryAttributeName)
+                                .build(),
                         AttributeDefinition.builder()
                                 .attributeType(ScalarAttributeType.S)
                                 .attributeName(attributeName)
@@ -104,10 +105,13 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
             e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Query);
             e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
             Map<String, Condition> keyConditions = new HashMap<>();
-            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
-                    ComparisonOperator.EQ.toString())
-                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
-                    .build());
+            keyConditions.put(
+                    attributeName,
+                    Condition.builder()
+                            .comparisonOperator(ComparisonOperator.EQ.toString())
+                            .attributeValueList(
+                                    AttributeValue.builder().s(retrieveValue).build())
+                            .build());
             e.getIn().setHeader(Ddb2Constants.KEY_CONDITIONS, keyConditions);
         });
 
@@ -128,10 +132,13 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
             e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Query);
             e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
             Map<String, Condition> keyConditions = new HashMap<>();
-            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
-                    ComparisonOperator.EQ.toString())
-                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
-                    .build());
+            keyConditions.put(
+                    attributeName,
+                    Condition.builder()
+                            .comparisonOperator(ComparisonOperator.EQ.toString())
+                            .attributeValueList(
+                                    AttributeValue.builder().s(retrieveValue).build())
+                            .build());
             e.getIn().setHeader(Ddb2Constants.KEY_CONDITIONS, keyConditions);
             Collection<String> coll = new ArrayList<>();
             coll.add("clave");
@@ -162,10 +169,13 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
             e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Scan);
             e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
             Map<String, Condition> keyConditions = new HashMap<>();
-            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
-                    ComparisonOperator.EQ.toString())
-                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
-                    .build());
+            keyConditions.put(
+                    attributeName,
+                    Condition.builder()
+                            .comparisonOperator(ComparisonOperator.EQ.toString())
+                            .attributeValueList(
+                                    AttributeValue.builder().s(retrieveValue).build())
+                            .build());
             Collection<String> coll = new ArrayList<>();
             coll.add("clave");
             e.getIn().setHeader(Ddb2Constants.FILTER_EXPRESSION, "#v <> :num");
@@ -179,9 +189,13 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
         List<Map<String, AttributeValue>> items = exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class);
         assertTrue(items.get(0).containsKey("clave"));
         assertTrue(items.get(0).containsKey("secondary_attribute"));
-        assertTrue(items.get(0).get("clave").equals(AttributeValue.builder().s("ignore").build()));
+        assertTrue(items.get(0)
+                .get("clave")
+                .equals(AttributeValue.builder().s("ignore").build()));
         assertTrue(items.get(1).containsKey("clave"));
-        assertTrue(items.get(1).get("clave").equals(AttributeValue.builder().s("ignore").build()));
+        assertTrue(items.get(1)
+                .get("clave")
+                .equals(AttributeValue.builder().s("ignore").build()));
         assertTrue(items.get(1).containsKey("secondary_attribute"));
         assertEquals(2, exchange.getIn().getHeader(Ddb2Constants.COUNT));
     }
@@ -199,10 +213,13 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
             e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Scan);
             e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
             Map<String, Condition> keyConditions = new HashMap<>();
-            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
-                    ComparisonOperator.EQ.toString())
-                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
-                    .build());
+            keyConditions.put(
+                    attributeName,
+                    Condition.builder()
+                            .comparisonOperator(ComparisonOperator.EQ.toString())
+                            .attributeValueList(
+                                    AttributeValue.builder().s(retrieveValue).build())
+                            .build());
             Collection<String> coll = new ArrayList<>();
             coll.add("clave");
             e.getIn().setHeader(Ddb2Constants.PROJECT_EXPRESSION, "secondary_attribute");
@@ -211,14 +228,17 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
         assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ITEMS));
         List<Map<String, AttributeValue>> items = exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class);
         assertTrue(items.get(0).containsKey("secondary_attribute"));
-        assertTrue(items.get(0).get("secondary_attribute").equals(AttributeValue.builder().s("dos").build()));
+        assertTrue(items.get(0)
+                .get("secondary_attribute")
+                .equals(AttributeValue.builder().s("dos").build()));
         assertEquals(5, exchange.getIn().getHeader(Ddb2Constants.COUNT));
     }
 
     private void putItem(String value1, String value2) {
         final Map<String, AttributeValue> attributeMap = new HashMap<>();
         attributeMap.put(attributeName, AttributeValue.builder().s(value1).build());
-        attributeMap.put(secondaryAttributeName, AttributeValue.builder().s(value2).build());
+        attributeMap.put(
+                secondaryAttributeName, AttributeValue.builder().s(value2).build());
 
         Exchange ex = template.send("direct:start", e -> {
             e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.PutItem);
@@ -234,8 +254,7 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(
-                        "aws2-ddb://" + tableName);
+                from("direct:start").to("aws2-ddb://" + tableName);
             }
         };
     }

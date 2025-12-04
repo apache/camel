@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,9 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class JMSTXInOutPersistentQueueIT extends AbstractSpringJMSITSupport {
 
     private static int counter;
@@ -70,16 +71,21 @@ public class JMSTXInOutPersistentQueueIT extends AbstractSpringJMSITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(ExchangePattern.InOut,
-                        "activemq:queue:JMSTXInOutPersistentQueueTest?replyTo=JmsInOutPersistentReplyQueueTest.myReplies")
+                from("direct:start")
+                        .to(
+                                ExchangePattern.InOut,
+                                "activemq:queue:JMSTXInOutPersistentQueueTest?replyTo=JmsInOutPersistentReplyQueueTest.myReplies")
                         .to("mock:reply")
                         .process(exchange -> {
                             if (counter++ < 2) {
                                 throw new IllegalArgumentException("Damn");
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
 
-                from("activemq:queue:JMSTXInOutPersistentQueueTest").to("mock:foo").transform(body().prepend("Bye "));
+                from("activemq:queue:JMSTXInOutPersistentQueueTest")
+                        .to("mock:foo")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5.annotation.other;
 
 import org.apache.camel.BindToRegistry;
@@ -35,5 +36,4 @@ public class MyOtherConfiguration implements CamelConfiguration {
     public void configure(CamelContext camelContext) {
         // this method is optional and can be removed if no additional configuration is needed.
     }
-
 }

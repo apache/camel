@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.lang.reflect.Array;
@@ -88,9 +89,15 @@ public class RecipientListProcessor extends MulticastProcessor {
         private volatile ExchangePattern originalPattern;
         private final boolean prototypeEndpoint;
 
-        private RecipientProcessorExchangePair(int index, ProducerCache producerCache, Endpoint endpoint, Producer producer,
-                                               Processor prepared, Exchange exchange, ExchangePattern pattern,
-                                               boolean prototypeEndpoint) {
+        private RecipientProcessorExchangePair(
+                int index,
+                ProducerCache producerCache,
+                Endpoint endpoint,
+                Producer producer,
+                Processor prepared,
+                Exchange exchange,
+                ExchangePattern pattern,
+                boolean prototypeEndpoint) {
             this.index = index;
             this.producerCache = producerCache;
             this.endpoint = endpoint;
@@ -154,19 +161,40 @@ public class RecipientListProcessor extends MulticastProcessor {
                 LOG.debug("Error releasing producer: {}. This exception will be ignored.", producer, e);
             }
         }
-
     }
 
-    public RecipientListProcessor(CamelContext camelContext, Route route, Expression expression, String delimiter,
-                                  ProducerCache producerCache,
-                                  AggregationStrategy aggregationStrategy,
-                                  boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
-                                  boolean streaming, boolean stopOnException,
-                                  long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate,
-                                  int cacheSize) {
-        super(camelContext, route, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
-              streaming, stopOnException, timeout, onPrepare,
-              shareUnitOfWork, parallelAggregate, cacheSize);
+    public RecipientListProcessor(
+            CamelContext camelContext,
+            Route route,
+            Expression expression,
+            String delimiter,
+            ProducerCache producerCache,
+            AggregationStrategy aggregationStrategy,
+            boolean parallelProcessing,
+            ExecutorService executorService,
+            boolean shutdownExecutorService,
+            boolean streaming,
+            boolean stopOnException,
+            long timeout,
+            Processor onPrepare,
+            boolean shareUnitOfWork,
+            boolean parallelAggregate,
+            int cacheSize) {
+        super(
+                camelContext,
+                route,
+                null,
+                aggregationStrategy,
+                parallelProcessing,
+                executorService,
+                shutdownExecutorService,
+                streaming,
+                stopOnException,
+                timeout,
+                onPrepare,
+                shareUnitOfWork,
+                parallelAggregate,
+                cacheSize);
         this.expression = expression;
         this.delimiter = delimiter;
         this.producerCache = producerCache;
@@ -189,8 +217,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     @Override
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange)
-            throws Exception {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
 
         // use the evaluate expression result if exists
         Object recipientList = exchange.removeProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT);
@@ -282,8 +309,12 @@ public class RecipientListProcessor extends MulticastProcessor {
      * This logic is similar to MulticastProcessor but we have to return a RecipientProcessorExchangePair instead
      */
     protected ProcessorExchangePair createProcessorExchangePair(
-            int index, Endpoint endpoint, Producer producer,
-            Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint) {
+            int index,
+            Endpoint endpoint,
+            Producer producer,
+            Exchange exchange,
+            ExchangePattern pattern,
+            boolean prototypeEndpoint) {
         // copy exchange, and do not share the unit of work
         Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
         copy.getExchangeExtension().setTransacted(exchange.isTransacted());
@@ -323,7 +354,8 @@ public class RecipientListProcessor extends MulticastProcessor {
                 index, producerCache, endpoint, producer, prepared, copy, pattern, prototypeEndpoint);
     }
 
-    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+    protected static Object prepareRecipient(Exchange exchange, Object recipient)
+            throws NoTypeConversionAvailableException {
         return ProcessorHelper.prepareRecipient(exchange, recipient);
     }
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.config;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Properties;
 
@@ -30,8 +33,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
 
@@ -57,7 +58,8 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
                 .withSources(pcs)
                 .build();
 
-        ConfigProviderResolver.instance().registerConfig(config, CamelMicroProfilePropertiesSourceTest.class.getClassLoader());
+        ConfigProviderResolver.instance()
+                .registerConfig(config, CamelMicroProfilePropertiesSourceTest.class.getClassLoader());
 
         return super.createCamelContext();
     }
@@ -98,7 +100,8 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
     public void testActiveConfigProfiles() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Profile A :: Profile B");
 
-        template.sendBody("direct:start", context.resolvePropertyPlaceholders("{{test-profile-a}} :: {{test-profile-b}}"));
+        template.sendBody(
+                "direct:start", context.resolvePropertyPlaceholders("{{test-profile-a}} :: {{test-profile-b}}"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -106,8 +109,9 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
     @Test
     public void testInactiveConfigProfiles() throws Exception {
         assertThatThrownBy(() -> {
-            template.sendBody("direct:start", context.resolvePropertyPlaceholders("{{test-non-active-profile}}"));
-        })
+                    template.sendBody(
+                            "direct:start", context.resolvePropertyPlaceholders("{{test-non-active-profile}}"));
+                })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Property with key [test-non-active-profile] not found");
     }
@@ -117,8 +121,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("{{start}}")
-                        .to("mock:{{my-mock}}");
+                from("{{start}}").to("mock:{{my-mock}}");
             }
         };
     }

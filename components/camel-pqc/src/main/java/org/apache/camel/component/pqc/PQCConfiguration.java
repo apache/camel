@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
 
 import java.security.KeyPair;
@@ -34,39 +35,53 @@ public class PQCConfiguration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
+
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private KeyPair keyPair;
+
     @UriParam
     @Metadata(required = true)
     private PQCOperations operation;
+
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private Signature signer;
+
     @UriParam(enums = "MLDSA,SLHDSA,LMS,HSS,XMSS,XMSSMT,DILITHIUM,FALCON,PICNIC,SNOVA,MAYO,SPHINCSPLUS")
     @Metadata(label = "advanced")
     private String signatureAlgorithm;
+
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private KeyGenerator keyGenerator;
+
     @UriParam(enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER")
     @Metadata(label = "advanced")
     private String keyEncapsulationAlgorithm;
-    @UriParam(enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
+
+    @UriParam(
+            enums =
+                    "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
     @Metadata(label = "advanced")
     private String symmetricKeyAlgorithm;
+
     @UriParam
     @Metadata(label = "advanced", defaultValue = "128")
     private int symmetricKeyLength = 128;
+
     @UriParam
     @Metadata(label = "advanced", defaultValue = "false")
     private boolean storeExtractedSecretKeyAsHeader = false;
+
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private KeyStore keyStore;
+
     @UriParam
     @Metadata(label = "advanced")
     private String keyPairAlias;
+
     @UriParam
     @Metadata(label = "advanced", secret = true)
     private String keyStorePassword;

@@ -55,7 +55,6 @@ public class TokenizerProcessor extends BaseProcessorSupport
 
         exchange.getMessage().setBody(tokenized);
         return processor.process(exchange, callback);
-
     }
 
     @Override

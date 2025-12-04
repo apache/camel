@@ -14,13 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
-
-import java.util.List;
-import java.util.Map;
-
-import org.apache.camel.support.RoutePolicySupport;
-import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
@@ -29,6 +24,12 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.support.RoutePolicySupport;
+import org.junit.jupiter.api.Test;
+
 class RouteTemplateDefinitionTest {
 
     @Test
@@ -36,12 +37,9 @@ class RouteTemplateDefinitionTest {
         RouteDefinition route = new RouteDefinition();
         route.setTemplateParameters(Map.of("parameter", "parameterValue"));
         route.setRouteProperties(List.of(new PropertyDefinition("property", "propertyValue")));
-        route.setRoutePolicies(List.of(new RoutePolicySupport() {
-        }));
+        route.setRoutePolicies(List.of(new RoutePolicySupport() {}));
         route.setInput(new FromDefinition("direct://fromEndpoint"));
-        route.setOutputs(List.of(
-                new CopyableDefinitionProcessDefinition(),
-                new NonCopyableProcessDefinition()));
+        route.setOutputs(List.of(new CopyableDefinitionProcessDefinition(), new NonCopyableProcessDefinition()));
         RouteTemplateDefinition routeTemplate = new RouteTemplateDefinition();
         routeTemplate.setRoute(route);
         RouteDefinition routeCopy = routeTemplate.asRouteDefinition();
@@ -55,9 +53,12 @@ class RouteTemplateDefinitionTest {
         assertEquals(route.getInput().getUri(), routeCopy.getInput().getUri());
         assertNotSame(route.getOutputs(), routeCopy.getOutputs());
         assertEquals(2, routeCopy.getOutputs().size());
-        assertInstanceOf(CopyableDefinitionProcessDefinition.class, routeCopy.getOutputs().get(0));
+        assertInstanceOf(
+                CopyableDefinitionProcessDefinition.class,
+                routeCopy.getOutputs().get(0));
         assertNotSame(route.getOutputs().get(0), routeCopy.getOutputs().get(0));
-        assertEquals(route.getOutputs().get(0).getId(), routeCopy.getOutputs().get(0).getId());
+        assertEquals(
+                route.getOutputs().get(0).getId(), routeCopy.getOutputs().get(0).getId());
         assertSame(route.getOutputs().get(1), routeCopy.getOutputs().get(1));
     }
 

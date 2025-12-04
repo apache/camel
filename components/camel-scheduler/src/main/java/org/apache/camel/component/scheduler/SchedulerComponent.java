@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scheduler;
 
 import java.util.Collection;
@@ -33,11 +34,11 @@ public class SchedulerComponent extends HealthCheckComponent {
 
     @Metadata
     private boolean includeMetadata;
+
     @Metadata(defaultValue = "1", label = "scheduler")
     private int poolSize = 1;
 
-    public SchedulerComponent() {
-    }
+    public SchedulerComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -75,15 +76,16 @@ public class SchedulerComponent extends HealthCheckComponent {
     protected ScheduledExecutorService addConsumer(SchedulerConsumer consumer) {
         String name = consumer.getEndpoint().getName();
         return executors.compute(name, (k, v) -> {
-            if (v == null) {
-                int poolSize = consumer.getEndpoint().getPoolSize();
-                return new ScheduledExecutorServiceHolder(
-                        getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, "scheduler://" + name,
-                                poolSize));
-            }
-            v.refCount.incrementAndGet();
-            return v;
-        }).executorService;
+                    if (v == null) {
+                        int poolSize = consumer.getEndpoint().getPoolSize();
+                        return new ScheduledExecutorServiceHolder(getCamelContext()
+                                .getExecutorServiceManager()
+                                .newScheduledThreadPool(this, "scheduler://" + name, poolSize));
+                    }
+                    v.refCount.incrementAndGet();
+                    return v;
+                })
+                .executorService;
     }
 
     protected void removeConsumer(SchedulerConsumer consumer) {

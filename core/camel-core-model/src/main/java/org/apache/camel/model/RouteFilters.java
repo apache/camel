@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.function.Function;
@@ -65,7 +66,13 @@ public final class RouteFilters implements Function<RouteDefinition, Boolean> {
         String uri = route.getInput() != null ? route.getInput().getEndpointUri() : null;
 
         boolean answer = filter(id, uri);
-        LOG.debug("Route filter: include={}, exclude={}, id={}, from={} -> {}", includesText, excludesText, id, uri, answer);
+        LOG.debug(
+                "Route filter: include={}, exclude={}, id={}, from={} -> {}",
+                includesText,
+                excludesText,
+                id,
+                uri,
+                answer);
         return answer;
     }
 
@@ -96,5 +103,4 @@ public final class RouteFilters implements Function<RouteDefinition, Boolean> {
 
         return match;
     }
-
 }

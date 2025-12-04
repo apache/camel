@@ -19,7 +19,5 @@ package org.apache.camel.test.infra.ignite.common;
 
 public final class IgniteProperties {
 
-    private IgniteProperties() {
-
-    }
+    private IgniteProperties() {}
 }

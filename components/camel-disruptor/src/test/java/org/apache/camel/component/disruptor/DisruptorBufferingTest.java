@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test suite is testing different scenarios where a disruptor is forced to buffer exchanges locally until a
@@ -35,8 +36,7 @@ public class DisruptorBufferingTest extends CamelTestSupport {
         template.sendBody("disruptor:foo", "B");
         template.sendBody("disruptor:foo", "C");
 
-        final DisruptorEndpoint disruptorEndpoint = getMandatoryEndpoint("disruptor:foo",
-                DisruptorEndpoint.class);
+        final DisruptorEndpoint disruptorEndpoint = getMandatoryEndpoint("disruptor:foo", DisruptorEndpoint.class);
 
         assertEquals(5, disruptorEndpoint.getDisruptor().getRemainingCapacity());
 
@@ -61,8 +61,7 @@ public class DisruptorBufferingTest extends CamelTestSupport {
         template.sendBody("disruptor:foo", "B");
         template.sendBody("disruptor:foo", "C");
 
-        final DisruptorEndpoint disruptorEndpoint = getMandatoryEndpoint("disruptor:foo",
-                DisruptorEndpoint.class);
+        final DisruptorEndpoint disruptorEndpoint = getMandatoryEndpoint("disruptor:foo", DisruptorEndpoint.class);
 
         assertEquals(5, disruptorEndpoint.getDisruptor().getRemainingCapacity());
 
@@ -115,6 +114,5 @@ public class DisruptorBufferingTest extends CamelTestSupport {
                 from("direct:start").routeId("foo").to("disruptor:foo?size=8");
             }
         };
-
     }
 }

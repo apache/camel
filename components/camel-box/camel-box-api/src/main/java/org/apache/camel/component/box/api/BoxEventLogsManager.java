@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -29,8 +32,6 @@ import com.box.sdk.EventLog;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to read Box enterprise (admin) event logs.
@@ -67,9 +68,14 @@ public class BoxEventLogsManager {
      */
     public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.EventType... types) {
         try {
-            LOG.debug("Getting all enterprise events occurring between {} and {} {}",
-                    after == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(after),
-                    before == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(before),
+            LOG.debug(
+                    "Getting all enterprise events occurring between {} and {} {}",
+                    after == null
+                            ? "unspecified date"
+                            : DateFormat.getDateTimeInstance().format(after),
+                    before == null
+                            ? "unspecified date"
+                            : DateFormat.getDateTimeInstance().format(before),
                     position == null ? "" : (" starting at " + position));
 
             BoxHelper.notNull(after, "after");
@@ -90,8 +96,7 @@ public class BoxEventLogsManager {
 
             return results;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 }

@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.utils.cassandra;
 
 import com.datastax.oss.driver.api.core.type.codec.ExtraTypeCodecs;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
 
 public enum CassandraExtraCodecs {
-
     BLOB_TO_ARRAY(ExtraTypeCodecs.BLOB_TO_ARRAY),
     BOOLEAN_LIST_TO_ARRAY(ExtraTypeCodecs.BOOLEAN_LIST_TO_ARRAY),
     BYTE_LIST_TO_ARRAY(ExtraTypeCodecs.BYTE_LIST_TO_ARRAY),

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -60,7 +61,9 @@ public class ClassicUuidGenerator implements UuidGenerator {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot generate unique stub by using DNS", e);
                 } else {
-                    LOG.warn("Cannot generate unique stub by using DNS due {}. This exception is ignored.", e.getMessage());
+                    LOG.warn(
+                            "Cannot generate unique stub by using DNS due {}. This exception is ignored.",
+                            e.getMessage());
                 }
             }
         }

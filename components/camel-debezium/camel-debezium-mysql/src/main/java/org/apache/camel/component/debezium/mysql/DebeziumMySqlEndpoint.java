@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.mysql;
 
 import java.util.Map;
@@ -29,23 +30,29 @@ import org.apache.camel.spi.UriParam;
 /**
  * Capture changes from a MySQL database.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mysql", title = "Debezium MySQL Connector",
-             syntax = "debezium-mysql:name", category = { Category.DATABASE }, consumerOnly = true,
-             headersClass = DebeziumConstants.class)
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "debezium-mysql",
+        title = "Debezium MySQL Connector",
+        syntax = "debezium-mysql:name",
+        category = {Category.DATABASE},
+        consumerOnly = true,
+        headersClass = DebeziumConstants.class)
 public final class DebeziumMySqlEndpoint extends DebeziumEndpoint<MySqlConnectorEmbeddedDebeziumConfiguration>
         implements EndpointServiceLocation {
 
     @UriParam
     private MySqlConnectorEmbeddedDebeziumConfiguration configuration;
 
-    public DebeziumMySqlEndpoint(final String uri, final DebeziumMySqlComponent component,
-                                 final MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
+    public DebeziumMySqlEndpoint(
+            final String uri,
+            final DebeziumMySqlComponent component,
+            final MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
-    public DebeziumMySqlEndpoint() {
-    }
+    public DebeziumMySqlEndpoint() {}
 
     @Override
     public String getServiceUrl() {

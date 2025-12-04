@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery;
 
 import java.io.InputStream;
@@ -45,8 +46,7 @@ public class GoogleBigQueryConnectionFactory {
     private CamelContext camelContext;
     private final Lock lock = new ReentrantLock();
 
-    public GoogleBigQueryConnectionFactory() {
-    }
+    public GoogleBigQueryConnectionFactory() {}
 
     public GoogleBigQueryConnectionFactory(BigQuery client) {
         this.client = client;
@@ -69,7 +69,8 @@ public class GoogleBigQueryConnectionFactory {
         GoogleCredentials credentials = null;
 
         if (!Strings.isNullOrEmpty(serviceAccountKeyFile)) {
-            logger.debug("Key File Name has been set explicitly. Initialising BigQuery using Key File {}",
+            logger.debug(
+                    "Key File Name has been set explicitly. Initialising BigQuery using Key File {}",
                     // limit the output as the value could be a long base64 string, we don't want to show it whole
                     StringHelper.limitLength(serviceAccountKeyFile, 70));
 
@@ -83,8 +84,7 @@ public class GoogleBigQueryConnectionFactory {
             credentials = createDefault();
         }
 
-        BigQueryOptions.Builder builder = BigQueryOptions.newBuilder()
-                .setCredentials(credentials);
+        BigQueryOptions.Builder builder = BigQueryOptions.newBuilder().setCredentials(credentials);
 
         if (ObjectHelper.isNotEmpty(serviceURL)) {
             builder.setHost(serviceURL);
@@ -95,10 +95,11 @@ public class GoogleBigQueryConnectionFactory {
 
     private GoogleCredentials createFromFile() throws Exception {
         if (camelContext == null) {
-            throw new CamelException("CamelContext is null, but must be set when creating GoogleBigQueryConnectionFactory.");
+            throw new CamelException(
+                    "CamelContext is null, but must be set when creating GoogleBigQueryConnectionFactory.");
         }
-        try (InputStream is
-                = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKeyFile);) {
+        try (InputStream is =
+                ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKeyFile); ) {
             GoogleCredentials credentials = GoogleCredentials.fromStream(is);
 
             if (credentials.createScopedRequired()) {

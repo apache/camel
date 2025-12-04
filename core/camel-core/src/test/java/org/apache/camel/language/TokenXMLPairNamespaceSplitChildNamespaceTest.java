@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,13 +32,19 @@ public class TokenXMLPairNamespaceSplitChildNamespaceTest extends ContextTestSup
     public void testTokenXMLPair() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(4);
-        mock.message(0).body()
-                .isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">Camel in Action</order>");
-        mock.message(1).body()
-                .isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">ActiveMQ in Action</order>");
-        mock.message(2).body()
+        mock.message(0)
+                .body()
+                .isEqualTo(
+                        "<order id=\"1\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">Camel in Action</order>");
+        mock.message(1)
+                .body()
+                .isEqualTo(
+                        "<order id=\"2\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">ActiveMQ in Action</order>");
+        mock.message(2)
+                .body()
                 .isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">DSL in Action</order>");
-        mock.message(3).body()
+        mock.message(3)
+                .body()
                 .isEqualTo("<order id=\"4\" xmlns:foo=\"http:foo.com\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
@@ -51,13 +58,19 @@ public class TokenXMLPairNamespaceSplitChildNamespaceTest extends ContextTestSup
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(4);
 
-        mock.message(0).body()
-                .isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">Camel in Action</order>");
-        mock.message(1).body()
-                .isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">ActiveMQ in Action</order>");
-        mock.message(2).body()
+        mock.message(0)
+                .body()
+                .isEqualTo(
+                        "<order id=\"1\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">Camel in Action</order>");
+        mock.message(1)
+                .body()
+                .isEqualTo(
+                        "<order id=\"2\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">ActiveMQ in Action</order>");
+        mock.message(2)
+                .body()
                 .isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">DSL in Action</order>");
-        mock.message(3).body()
+        mock.message(3)
+                .body()
                 .isEqualTo("<order id=\"4\" xmlns:foo=\"http:foo.com\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
@@ -88,13 +101,16 @@ public class TokenXMLPairNamespaceSplitChildNamespaceTest extends ContextTestSup
                 from(fileUri("pair?initialDelay=0&delay=10"))
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
-                        .split().tokenizeXML("order", "orders").to("mock:split");
+                        .split()
+                        .tokenizeXML("order", "orders")
+                        .to("mock:split");
                 // END SNIPPET: e1
 
                 from(fileUri("pair2?initialDelay=0&delay=10"))
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
-                        .split(body().tokenizeXML("order", "orders")).to("mock:split");
+                        .split(body().tokenizeXML("order", "orders"))
+                        .to("mock:split");
             }
         };
     }

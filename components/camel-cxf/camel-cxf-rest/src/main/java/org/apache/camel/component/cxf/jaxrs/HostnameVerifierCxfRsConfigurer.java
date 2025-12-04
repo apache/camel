@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import javax.net.ssl.HostnameVerifier;
@@ -41,8 +42,7 @@ public final class HostnameVerifierCxfRsConfigurer extends AbstractHostnameVerif
     }
 
     @Override
-    public void configure(AbstractJAXRSFactoryBean factoryBean) {
-    }
+    public void configure(AbstractJAXRSFactoryBean factoryBean) {}
 
     @Override
     public void configureClient(Client client) {
@@ -51,6 +51,5 @@ public final class HostnameVerifierCxfRsConfigurer extends AbstractHostnameVerif
     }
 
     @Override
-    public void configureServer(Server server) {
-    }
+    public void configureServer(Server server) {}
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flatpack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -30,9 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @CamelSpringTest
 @ContextConfiguration
 public class FixedLengthAllowLongTest {
@@ -47,7 +48,7 @@ public class FixedLengthAllowLongTest {
     @EndpointInject("mock:results-xml")
     protected MockEndpoint resultsxml;
 
-    protected String[] expectedFirstName = { "JOHN-LONG", "JIMMY-LONG", "JANE-LONG", "FRED-LONG" };
+    protected String[] expectedFirstName = {"JOHN-LONG", "JIMMY-LONG", "JANE-LONG", "FRED-LONG"};
 
     @Test
     public void testCamel() throws Exception {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.schematron.processor;
 
 import java.io.InputStream;
@@ -37,8 +38,8 @@ import org.apache.camel.component.schematron.exception.SchematronConfigException
 public final class TemplatesFactory {
 
     private static final TemplatesFactory INSTANCE = new TemplatesFactory();
-    private static final String[] PIPELINE
-            = new String[] { "iso_dsdl_include.xsl", "iso_abstract_expand.xsl", "iso_svrl_for_xslt2.xsl" };
+    private static final String[] PIPELINE =
+            new String[] {"iso_dsdl_include.xsl", "iso_abstract_expand.xsl", "iso_svrl_for_xslt2.xsl"};
 
     /**
      * Singleton constructor
@@ -59,8 +60,8 @@ public final class TemplatesFactory {
         Source source = new StreamSource(rules);
         try {
             for (String template : PIPELINE) {
-                String path = Constants.SCHEMATRON_TEMPLATES_ROOT_DIR
-                        .concat("/").concat(template);
+                String path =
+                        Constants.SCHEMATRON_TEMPLATES_ROOT_DIR.concat("/").concat(template);
                 InputStream xsl = org.apache.camel.util.ObjectHelper.loadResourceAsStream(path);
                 if (xsl == null) {
                     xsl = this.getClass().getClassLoader().getResourceAsStream(path);

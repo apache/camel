@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,9 +28,6 @@ import org.apache.camel.component.aws.secretsmanager.SecretsManagerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SecretsManagerGetSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
@@ -57,7 +58,6 @@ public class SecretsManagerGetSecretProducerLocalstackIT extends AwsSecretsManag
 
         String secret = exchange.getIn().getBody(String.class);
         assertEquals("Body", secret);
-
     }
 
     @Override
@@ -65,8 +65,7 @@ public class SecretsManagerGetSecretProducerLocalstackIT extends AwsSecretsManag
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret");
+                from("direct:createSecret").to("aws-secrets-manager://test?operation=createSecret");
 
                 from("direct:getSecret")
                         .to("aws-secrets-manager://test?operation=getSecret")

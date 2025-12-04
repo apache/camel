@@ -42,13 +42,12 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Requires too much network resources")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class CvImageEnhancementLocalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CvImageEnhancementLocalTest.class);
 
-    private static final String MODEL_URL
-            = "https://www.kaggle.com/api/v1/models/kaggle/esrgan-tf2/tensorFlow2/esrgan-tf2/1/download";
+    private static final String MODEL_URL =
+            "https://www.kaggle.com/api/v1/models/kaggle/esrgan-tf2/tensorFlow2/esrgan-tf2/1/download";
     private static final String MODEL_NAME = "esrgan-tf2";
 
     @BeforeAll
@@ -74,7 +73,8 @@ public class CvImageEnhancementLocalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("file:src/test/resources/data/enhance?recursive=true&noop=true")
-                        .routeId("image_enhancement").autoStartup(false)
+                        .routeId("image_enhancement")
+                        .autoStartup(false)
                         .to("djl:cv/image_enhancement?model=MyModel&translator=MyTranslator")
                         .log("${header.CamelFileName} = ${body}")
                         .process(exchange -> {

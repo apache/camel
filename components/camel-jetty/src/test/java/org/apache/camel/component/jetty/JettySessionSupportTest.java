@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JettySessionSupportTest extends BaseJettyTest {
 
@@ -44,7 +45,8 @@ class JettySessionSupportTest extends BaseJettyTest {
         assertThrows(
                 IllegalStateException.class,
                 () -> context.addRoutes(routeBuilder),
-                "Server has already been started. Cannot enabled sessionSupport on http:localhost:%d".formatted(getPort()));
+                "Server has already been started. Cannot enabled sessionSupport on http:localhost:%d"
+                        .formatted(getPort()));
 
         if (context.isStarted()) {
             context.stop();
@@ -56,7 +58,8 @@ class JettySessionSupportTest extends BaseJettyTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://localhost:{{port}}/hello?sessionSupport=true").transform(simple("Bye ${body}"));
+                from("jetty:http://localhost:{{port}}/hello?sessionSupport=true")
+                        .transform(simple("Bye ${body}"));
             }
         });
         context.start();

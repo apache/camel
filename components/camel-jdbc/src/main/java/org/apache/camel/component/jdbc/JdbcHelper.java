@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import java.sql.SQLException;
@@ -25,12 +26,10 @@ import org.apache.camel.support.PropertyBindingSupport;
 
 public final class JdbcHelper {
 
-    private JdbcHelper() {
-    }
+    private JdbcHelper() {}
 
     public static Object newBeanInstance(
-            CamelContext camelContext, String outputClass,
-            BeanRowMapper beanRowMapper, Map<String, Object> row)
+            CamelContext camelContext, String outputClass, BeanRowMapper beanRowMapper, Map<String, Object> row)
             throws SQLException {
         Class<?> clazz = camelContext.getClassResolver().resolveClass(outputClass);
         Object answer = camelContext.getInjector().newInstance(clazz);
@@ -51,11 +50,9 @@ public final class JdbcHelper {
 
         // check we could map all properties to the bean
         if (!properties.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Cannot map all properties to bean of type " + outputClass + ". There are " + properties.size()
-                                               + " unmapped properties. " + properties);
+            throw new IllegalArgumentException("Cannot map all properties to bean of type " + outputClass
+                    + ". There are " + properties.size() + " unmapped properties. " + properties);
         }
         return answer;
     }
-
 }

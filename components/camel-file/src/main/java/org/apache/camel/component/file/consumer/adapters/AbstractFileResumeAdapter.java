@@ -31,8 +31,7 @@ import org.apache.camel.resume.cache.ResumeCache;
 abstract class AbstractFileResumeAdapter implements FileResumeAdapter, Cacheable {
     protected ResumeCache<File> cache;
 
-    protected AbstractFileResumeAdapter() {
-    }
+    protected AbstractFileResumeAdapter() {}
 
     @SuppressWarnings("unchecked")
     @Override

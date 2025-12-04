@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpMethodHelperTest {
 
@@ -51,5 +52,4 @@ public class HttpMethodHelperTest {
         Mockito.when(endpoint.getEndpointUri()).thenReturn("http://localhost:8080/endpoint");
         assertNull(HttpMethodHelper.getHttpMethodFromParameters(exchange, endpoint));
     }
-
 }

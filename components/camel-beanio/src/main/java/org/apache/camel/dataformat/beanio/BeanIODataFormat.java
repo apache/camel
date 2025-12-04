@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
+
+import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanReaderErrorHandler;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -45,8 +48,6 @@ import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
 import org.beanio.Unmarshaller;
 
-import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanReaderErrorHandler;
-
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ( {@link DataFormat}) for beanio data.
  */
@@ -68,8 +69,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
     private String beanReaderErrorHandlerType;
     private boolean unmarshalSingleObject;
 
-    public BeanIODataFormat() {
-    }
+    public BeanIODataFormat() {}
 
     public BeanIODataFormat(String mapping, String streamName) {
         setMapping(mapping);
@@ -197,7 +197,8 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
         BufferedReader streamReader = IOHelper.buffered(new InputStreamReader(stream, getEncoding()));
 
         try (BeanReader in = factory.createReader(getStreamName(), streamReader)) {
-            BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange, results, null);
+            BeanReaderErrorHandler errorHandler =
+                    getOrCreateBeanReaderErrorHandler(configuration, exchange, results, null);
             in.setErrorHandler(errorHandler);
             Object readObject;
             while ((readObject = in.read()) != null) {
@@ -214,7 +215,8 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
     private Object readSingleModel(Exchange exchange, InputStream stream) throws NoTypeConversionAvailableException {
         BufferedReader streamReader = IOHelper.buffered(new InputStreamReader(stream, getEncoding()));
         try {
-            String data = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, streamReader);
+            String data =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, streamReader);
             Unmarshaller unmarshaller = factory.createUnmarshaller(getStreamName());
             return unmarshaller.unmarshal(data);
         } finally {

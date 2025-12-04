@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.okForContentType;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,9 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.okForContentType;
 
 class MetricsTest extends TorchServeTestSupport {
 
@@ -39,8 +40,8 @@ class MetricsTest extends TorchServeTestSupport {
 
     @Test
     void testMetrics() throws Exception {
-        mockServer.stubFor(get("/metrics")
-                .willReturn(okForContentType("text/plain", "# HELP test\n# TYPE test counter\n")));
+        mockServer.stubFor(
+                get("/metrics").willReturn(okForContentType("text/plain", "# HELP test\n# TYPE test counter\n")));
         var mock = getMockEndpoint("mock:result");
         mock.expectedBodyReceived().constant("# HELP test\n# TYPE test counter\n");
 
@@ -55,9 +56,7 @@ class MetricsTest extends TorchServeTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:metrics")
-                        .to("torchserve:metrics/metrics")
-                        .to("mock:result");
+                from("direct:metrics").to("torchserve:metrics/metrics").to("mock:result");
             }
         };
     }

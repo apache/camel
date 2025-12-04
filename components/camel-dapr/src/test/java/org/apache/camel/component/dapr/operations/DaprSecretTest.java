@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
@@ -34,18 +42,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class DaprSecretTest extends CamelTestSupport {
 
     @Mock
     private DaprClient client;
+
     @Mock
     private DaprEndpoint endpoint;
 
@@ -73,8 +75,8 @@ public class DaprSecretTest extends CamelTestSupport {
 
     @Test
     void testGetBulkSecret() throws Exception {
-        final Map<String, Map<String, String>> mockResponse = Map.of("secretKey1", Map.of("myKey1", "myVal1"),
-                "secretKey2", Map.of("myKey2", "myVal2"));
+        final Map<String, Map<String, String>> mockResponse =
+                Map.of("secretKey1", Map.of("myKey1", "myVal1"), "secretKey2", Map.of("myKey2", "myVal2"));
 
         when(endpoint.getClient()).thenReturn(client);
         when(client.getBulkSecret(any(GetBulkSecretRequest.class))).thenReturn(Mono.just(mockResponse));

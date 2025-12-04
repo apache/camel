@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.disruptor;
 
-import com.lmax.disruptor.WaitStrategy;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.disruptor;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import com.lmax.disruptor.WaitStrategy;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests correct creation of all supposedly possible wait strategies.

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -42,9 +43,9 @@ public class AtomHttpConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("atom:http://feeds2.feedburner.com/ApacheCamel.atom?splitEntries=false").to("mock:result");
+                from("atom:http://feeds2.feedburner.com/ApacheCamel.atom?splitEntries=false")
+                        .to("mock:result");
             }
         };
     }
-
 }

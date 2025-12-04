@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,17 +29,15 @@ import java.nio.file.Paths;
 import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.BeforeAll;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-
 public class RestOpenApiGlobalHttpsV31Test extends HttpsV3Test {
 
     @BeforeAll
     public static void setupStubForSpec() throws IOException, URISyntaxException {
-        petstore.stubFor(get(urlEqualTo("/petstore-3.1-ssl.yaml")).willReturn(aResponse().withBody(
-                Files.readAllBytes(
-                        Paths.get(RestOpenApiGlobalHttpsV3Test.class.getResource("/petstore-3.1-ssl.yaml").toURI())))));
+        petstore.stubFor(get(urlEqualTo("/petstore-3.1-ssl.yaml"))
+                .willReturn(aResponse()
+                        .withBody(Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsV3Test.class
+                                .getResource("/petstore-3.1-ssl.yaml")
+                                .toURI())))));
     }
 
     @Override

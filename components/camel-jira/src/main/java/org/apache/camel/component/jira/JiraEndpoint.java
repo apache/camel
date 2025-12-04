@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira;
+
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 
 import java.net.URI;
 import java.util.Map;
@@ -52,8 +55,6 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
-
 /**
  * Interact with JIRA issue tracker.
  * <p>
@@ -76,8 +77,13 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
  * polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not
  * publicly accessible where a webhook would fail
  */
-@UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type",
-             category = { Category.DOCUMENT }, headersClass = JiraConstants.class)
+@UriEndpoint(
+        firstVersion = "3.0",
+        scheme = "jira",
+        title = "Jira",
+        syntax = "jira:type",
+        category = {Category.DOCUMENT},
+        headersClass = JiraConstants.class)
 public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);
@@ -85,14 +91,19 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
     @UriPath
     @Metadata(required = true)
     private JiraType type;
+
     @UriParam(label = "consumer")
     private String jql;
+
     @UriParam(label = "consumer", defaultValue = "Status,Priority")
     private String watchedFields = "Status,Priority";
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean sendOnlyUpdatedField = true;
+
     @UriParam(label = "consumer", defaultValue = "50")
     private Integer maxResults = 50;
+
     @UriParam
     private JiraConfiguration configuration;
 
@@ -142,16 +153,16 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
         try {
             if (client == null) {
                 Registry registry = getCamelContext().getRegistry();
-                JiraRestClientFactory factory
-                        = registry.lookupByNameAndType(JIRA_REST_CLIENT_FACTORY, JiraRestClientFactory.class);
+                JiraRestClientFactory factory =
+                        registry.lookupByNameAndType(JIRA_REST_CLIENT_FACTORY, JiraRestClientFactory.class);
                 if (factory == null) {
                     factory = new OAuthAsynchronousJiraRestClientFactory();
                 }
                 final URI jiraServerUri = URI.create(configuration.getJiraUrl());
                 if (configuration.getUsername() != null) {
                     LOG.debug("Connecting to JIRA with Basic authentication with username/password");
-                    client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(),
-                            configuration.getPassword());
+                    client = factory.createWithBasicHttpAuthentication(
+                            jiraServerUri, configuration.getUsername(), configuration.getPassword());
                 } else if (configuration.getAccessToken() != null
                         && configuration.getVerificationCode() == null
                         && configuration.getPrivateKey() == null
@@ -163,7 +174,8 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
                     LOG.debug("Connecting to JIRA with OAuth authentication");
                     JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
                             configuration.getConsumerKey(),
-                            configuration.getVerificationCode(), configuration.getPrivateKey(),
+                            configuration.getVerificationCode(),
+                            configuration.getPrivateKey(),
                             configuration.getAccessToken(),
                             configuration.getJiraUrl());
                     client = factory.create(jiraServerUri, oAuthHandler);
@@ -295,5 +307,4 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
     public void setSendOnlyUpdatedField(boolean sendOnlyUpdatedField) {
         this.sendOnlyUpdatedField = sendOnlyUpdatedField;
     }
-
 }

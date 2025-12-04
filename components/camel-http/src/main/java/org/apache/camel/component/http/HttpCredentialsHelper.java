@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.nio.charset.StandardCharsets;
@@ -37,11 +38,8 @@ public final class HttpCredentialsHelper {
         this.credentialsProvider = new BasicCredentialsProvider();
     }
 
-    public CredentialsProvider getCredentialsProvider(
-            String host, Integer port, Credentials credentials) {
-        this.credentialsProvider.setCredentials(new AuthScope(
-                host,
-                Objects.requireNonNullElse(port, -1)), credentials);
+    public CredentialsProvider getCredentialsProvider(String host, Integer port, Credentials credentials) {
+        this.credentialsProvider.setCredentials(new AuthScope(host, Objects.requireNonNullElse(port, -1)), credentials);
         return credentialsProvider;
     }
 
@@ -65,5 +63,4 @@ public final class HttpCredentialsHelper {
         }
         return null;
     }
-
 }

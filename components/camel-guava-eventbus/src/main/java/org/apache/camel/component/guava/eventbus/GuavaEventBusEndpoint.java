@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.EventBus;
@@ -32,20 +33,28 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send and receive messages to/from Guava EventBus.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "guava-eventbus", title = "Guava EventBus",
-             remote = false, syntax = "guava-eventbus:eventBusRef", category = { Category.MESSAGING })
+@UriEndpoint(
+        firstVersion = "2.10.0",
+        scheme = "guava-eventbus",
+        title = "Guava EventBus",
+        remote = false,
+        syntax = "guava-eventbus:eventBusRef",
+        category = {Category.MESSAGING})
 public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private EventBus eventBus;
 
     @UriPath
     private String eventBusRef;
+
     @UriParam
     private Class<?> eventClass;
+
     @UriParam
     private Class<?> listenerInterface;
 
-    public GuavaEventBusEndpoint(String endpointUri, Component component, EventBus eventBus, Class<?> listenerInterface) {
+    public GuavaEventBusEndpoint(
+            String endpointUri, Component component, EventBus eventBus, Class<?> listenerInterface) {
         super(endpointUri, component);
         this.eventBus = eventBus;
         this.listenerInterface = listenerInterface;
@@ -63,7 +72,8 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        GuavaEventBusConsumer answer = new GuavaEventBusConsumer(this, processor, eventBus, eventClass, listenerInterface);
+        GuavaEventBusConsumer answer =
+                new GuavaEventBusConsumer(this, processor, eventBus, eventClass, listenerInterface);
         configureConsumer(answer);
         return answer;
     }

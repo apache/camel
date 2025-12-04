@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.api.utils;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.salesforce.api.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 public class VersionTest {
 
@@ -47,14 +48,12 @@ public class VersionTest {
 
     @Test
     public void shouldObserveApiLimitsOnMajorVersions() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> V35_0.requireAtLeast(36, 0));
+        assertThrows(UnsupportedOperationException.class, () -> V35_0.requireAtLeast(36, 0));
     }
 
     @Test
     public void shouldObserveApiLimitsOnMinorVersions() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> V35_0.requireAtLeast(35, 1));
+        assertThrows(UnsupportedOperationException.class, () -> V35_0.requireAtLeast(35, 1));
     }
 
     @Test

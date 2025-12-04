@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -50,13 +51,13 @@ class FileProducerCharsetUTFtoISOTest extends ContextTestSupport {
 
         assertFileExists(testFile("output.FileProducerCharsetUTFtoISOTest.txt"));
 
-        // The file may have been created, but hasn't fully flushed to disk, which means reading data will return nothing
+        // The file may have been created, but hasn't fully flushed to disk, which means reading data will return
+        // nothing
         Awaitility.await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             byte[] data = Files.readAllBytes(testFile("output.FileProducerCharsetUTFtoISOTest.txt"));
 
             assertEquals(DATA, new String(data, StandardCharsets.ISO_8859_1));
         });
-
     }
 
     @Override

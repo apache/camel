@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath.easypredicate;
 
 import java.io.File;
@@ -32,9 +33,11 @@ public class EasyJsonPathWithSimpleCBRTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                        .when().jsonpath("store.book.price < ${header.cheap}")
+                        .when()
+                        .jsonpath("store.book.price < ${header.cheap}")
                         .to("mock:cheap")
-                        .when().jsonpath("store.book.price < ${header.average}")
+                        .when()
+                        .jsonpath("store.book.price < ${header.average}")
                         .to("mock:average")
                         .otherwise()
                         .to("mock:expensive");
@@ -48,8 +51,12 @@ public class EasyJsonPathWithSimpleCBRTest extends CamelTestSupport {
         getMockEndpoint("mock:average").expectedMessageCount(0);
         getMockEndpoint("mock:expensive").expectedMessageCount(0);
 
-        fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/cheap.json"))
-                .to("direct:start").send();
+        fluentTemplate
+                .withHeader("cheap", 10)
+                .withHeader("average", 30)
+                .withBody(new File("src/test/resources/cheap.json"))
+                .to("direct:start")
+                .send();
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -60,8 +67,12 @@ public class EasyJsonPathWithSimpleCBRTest extends CamelTestSupport {
         getMockEndpoint("mock:average").expectedMessageCount(1);
         getMockEndpoint("mock:expensive").expectedMessageCount(0);
 
-        fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/average.json"))
-                .to("direct:start").send();
+        fluentTemplate
+                .withHeader("cheap", 10)
+                .withHeader("average", 30)
+                .withBody(new File("src/test/resources/average.json"))
+                .to("direct:start")
+                .send();
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -72,10 +83,13 @@ public class EasyJsonPathWithSimpleCBRTest extends CamelTestSupport {
         getMockEndpoint("mock:average").expectedMessageCount(0);
         getMockEndpoint("mock:expensive").expectedMessageCount(1);
 
-        fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/expensive.json"))
-                .to("direct:start").send();
+        fluentTemplate
+                .withHeader("cheap", 10)
+                .withHeader("average", 30)
+                .withBody(new File("src/test/resources/expensive.json"))
+                .to("direct:start")
+                .send();
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

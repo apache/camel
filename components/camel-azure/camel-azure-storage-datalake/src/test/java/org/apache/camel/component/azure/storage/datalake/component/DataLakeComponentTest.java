@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.component;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.datalake.DataLakeServiceClientBuilder;
@@ -27,26 +33,27 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 class DataLakeComponentTest extends CamelTestSupport {
 
     @Test
     public void testWithServiceClient() {
         final DataLakeConfiguration configuration = new DataLakeConfiguration();
         DataLakeServiceClientBuilder builder = new DataLakeServiceClientBuilder();
-        context.getRegistry().bind("azureDataLakeClient", builder.credential(storageSharedKeyCredentials())
-                .endpoint("https://cameltesting.dfs.core.windows.net").buildClient());
-        final DataLakeEndpoint endpoint = (DataLakeEndpoint) context
-                .getEndpoint(
+        context.getRegistry()
+                .bind(
+                        "azureDataLakeClient",
+                        builder.credential(storageSharedKeyCredentials())
+                                .endpoint("https://cameltesting.dfs.core.windows.net")
+                                .buildClient());
+        final DataLakeEndpoint endpoint = (DataLakeEndpoint)
+                context.getEndpoint(
                         "azure-storage-datalake:cameltesting/abc?serviceClient=#azureDataLakeClient&operation=listPaths&credentialType=SERVICE_CLIENT_INSTANCE");
         assertEquals("cameltesting", endpoint.getConfiguration().getAccountName());
         assertEquals("abc", endpoint.getConfiguration().getFileSystemName());
         assertNotNull(endpoint.getConfiguration().getServiceClient());
-        assertEquals(DataLakeOperationsDefinition.listPaths, endpoint.getConfiguration().getOperation());
+        assertEquals(
+                DataLakeOperationsDefinition.listPaths,
+                endpoint.getConfiguration().getOperation());
         assertNull(endpoint.getConfiguration().getDirectoryName());
     }
 
@@ -54,30 +61,34 @@ class DataLakeComponentTest extends CamelTestSupport {
     public void testWithSharedKeyCredentials() {
         context.getRegistry().bind("credentials", storageSharedKeyCredentials());
 
-        final DataLakeEndpoint endpoint = (DataLakeEndpoint) context
-                .getEndpoint(
+        final DataLakeEndpoint endpoint = (DataLakeEndpoint)
+                context.getEndpoint(
                         "azure-storage-datalake:cameltesting/abc?sharedKeyCredential=#credentials&operation=upload&fileName=test.txt&credentialType=SHARED_KEY_CREDENTIAL");
 
         assertEquals("cameltesting", endpoint.getConfiguration().getAccountName());
         assertEquals("abc", endpoint.getConfiguration().getFileSystemName());
         assertNotNull(endpoint.getConfiguration().getSharedKeyCredential());
         assertNull(endpoint.getConfiguration().getServiceClient());
-        assertEquals(DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
+        assertEquals(
+                DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
         assertEquals("test.txt", endpoint.getConfiguration().getFileName());
-        assertEquals(CredentialType.SHARED_KEY_CREDENTIAL, endpoint.getConfiguration().getCredentialType());
+        assertEquals(
+                CredentialType.SHARED_KEY_CREDENTIAL,
+                endpoint.getConfiguration().getCredentialType());
     }
 
     @Test
     public void testWithAzureIdentity() {
 
-        final DataLakeEndpoint endpoint = (DataLakeEndpoint) context
-                .getEndpoint(
+        final DataLakeEndpoint endpoint = (DataLakeEndpoint)
+                context.getEndpoint(
                         "azure-storage-datalake:cameltesting/abc?operation=upload&fileName=test.txt&credentialType=AZURE_IDENTITY");
 
         assertEquals("cameltesting", endpoint.getConfiguration().getAccountName());
         assertEquals("abc", endpoint.getConfiguration().getFileSystemName());
         assertNull(endpoint.getConfiguration().getServiceClient());
-        assertEquals(DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
+        assertEquals(
+                DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
         assertEquals("test.txt", endpoint.getConfiguration().getFileName());
         assertEquals(CredentialType.AZURE_IDENTITY, endpoint.getConfiguration().getCredentialType());
     }
@@ -85,14 +96,14 @@ class DataLakeComponentTest extends CamelTestSupport {
     @Test
     public void testWithAzureSAS() {
 
-        final DataLakeEndpoint endpoint = (DataLakeEndpoint) context
-                .getEndpoint(
-                        "azure-storage-datalake:cameltesting/abc?operation=upload&fileName=test.txt&credentialType=AZURE_SAS");
+        final DataLakeEndpoint endpoint = (DataLakeEndpoint) context.getEndpoint(
+                "azure-storage-datalake:cameltesting/abc?operation=upload&fileName=test.txt&credentialType=AZURE_SAS");
 
         assertEquals("cameltesting", endpoint.getConfiguration().getAccountName());
         assertEquals("abc", endpoint.getConfiguration().getFileSystemName());
         assertNull(endpoint.getConfiguration().getServiceClient());
-        assertEquals(DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
+        assertEquals(
+                DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
         assertEquals("test.txt", endpoint.getConfiguration().getFileName());
         assertEquals(CredentialType.AZURE_SAS, endpoint.getConfiguration().getCredentialType());
     }
@@ -100,8 +111,8 @@ class DataLakeComponentTest extends CamelTestSupport {
     @Test
     public void testProducerWithoutFileName() throws Exception {
         context.getRegistry().bind("credentials", storageSharedKeyCredentials());
-        final DataLakeEndpoint endpoint = (DataLakeEndpoint) context
-                .getEndpoint(
+        final DataLakeEndpoint endpoint = (DataLakeEndpoint)
+                context.getEndpoint(
                         "azure-storage-datalake:cameltesting/abc?sharedKeyCredential=#credentials&operation=deleteFile&credentialType=SHARED_KEY_CREDENTIAL");
 
         DefaultExchange exchange = new DefaultExchange(context);

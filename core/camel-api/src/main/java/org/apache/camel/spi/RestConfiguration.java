@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -26,11 +27,11 @@ import java.util.Map;
 public class RestConfiguration {
 
     public static final String CORS_ACCESS_CONTROL_ALLOW_ORIGIN = "*";
-    public static final String CORS_ACCESS_CONTROL_ALLOW_METHODS
-            = "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH";
+    public static final String CORS_ACCESS_CONTROL_ALLOW_METHODS =
+            "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH";
     public static final String CORS_ACCESS_CONTROL_MAX_AGE = "3600";
-    public static final String CORS_ACCESS_CONTROL_ALLOW_HEADERS
-            = "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers";
+    public static final String CORS_ACCESS_CONTROL_ALLOW_HEADERS =
+            "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers";
 
     public static final String DEFAULT_REST_CONFIGURATION_ID = "rest-configuration";
 

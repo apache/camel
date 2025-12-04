@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
@@ -67,13 +68,28 @@ class LanguageFluentSyntaxTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").split(
-                    expression().tokenize().token("\n").end()
-                ).to("mock:a");
+                from("direct:a")
+                        .split(expression().tokenize().token("\n").end())
+                        .to("mock:a");
 
-                from("direct:b").setBody().expression(expression().simple().expression("Hello World Out").end()).to("mock:b");
-                from("direct:c").setBody(expression().simple().expression("Hello World In").end()).to("mock:c");
-                from("direct:d").filter(expression(expression().header().expression("foo").end()).isEqualTo("bar")).to("mock:d");
+                from("direct:b")
+                        .setBody()
+                        .expression(expression()
+                                .simple()
+                                .expression("Hello World Out")
+                                .end())
+                        .to("mock:b");
+                from("direct:c")
+                        .setBody(expression()
+                                .simple()
+                                .expression("Hello World In")
+                                .end())
+                        .to("mock:c");
+                from("direct:d")
+                        .filter(expression(
+                                        expression().header().expression("foo").end())
+                                .isEqualTo("bar"))
+                        .to("mock:d");
             }
         };
     }

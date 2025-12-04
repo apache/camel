@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,9 +30,7 @@ public abstract class JqTestSupport extends CamelTestSupport {
         answer.put(key, value);
 
         for (int i = 0; i < keyVals.length; i += 2) {
-            answer.put(
-                    keyVals[i],
-                    keyVals[i + 1]);
+            answer.put(keyVals[i], keyVals[i + 1]);
         }
 
         return answer;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.cli.services;
 
 import java.io.IOException;
@@ -71,17 +72,19 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
 
     public CliBuiltContainer(CliBuiltContainerParams params) {
         super(new ImageFromDockerfile(
-                "localhost/camel-cli:" + params.getCamelRef() + "-" + params.getCamelJBangVersion()
-                                      + (params.getKeepContainerRunning() ? "-R" : ""),
-                false)
-                .withFileFromPath("Dockerfile", StringUtils.isNotBlank(params.getDockerFile())
-                        ? Path.of(params.getDockerFile())
-                        : Path.of(MountableFile.forClasspathResource("org/apache/camel/test/infra/cli/services/Dockerfile")
-                                .getResolvedPath()))
-                .withFileFromClasspath("entrypoint.sh",
-                        "org/apache/camel/test/infra/cli/services/entrypoint.sh")
-                .withFileFromClasspath("99-ssh-jbang.conf",
-                        "org/apache/camel/test/infra/cli/services/99-ssh-jbang.conf")
+                        "localhost/camel-cli:" + params.getCamelRef() + "-" + params.getCamelJBangVersion()
+                                + (params.getKeepContainerRunning() ? "-R" : ""),
+                        false)
+                .withFileFromPath(
+                        "Dockerfile",
+                        StringUtils.isNotBlank(params.getDockerFile())
+                                ? Path.of(params.getDockerFile())
+                                : Path.of(MountableFile.forClasspathResource(
+                                                "org/apache/camel/test/infra/cli/services/Dockerfile")
+                                        .getResolvedPath()))
+                .withFileFromClasspath("entrypoint.sh", "org/apache/camel/test/infra/cli/services/entrypoint.sh")
+                .withFileFromClasspath(
+                        "99-ssh-jbang.conf", "org/apache/camel/test/infra/cli/services/99-ssh-jbang.conf")
                 .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME))
                 .withBuildArg(CAMEL_REF_ARG, params.getCamelRef())
                 .withBuildArg(KEEP_RUNNING_ARG, String.valueOf(params.getKeepContainerRunning()))
@@ -104,7 +107,8 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
         if (Objects.nonNull(params.getTrustedCertPaths())) {
             params.getTrustedCertPaths().forEach(t -> {
                 final Path path = Paths.get(t);
-                withCopyToContainer(MountableFile.forHostPath(path),
+                withCopyToContainer(
+                        MountableFile.forHostPath(path),
                         String.format("%s/%s", TRUSTED_CERT_FOLDER, path.getFileName()));
             });
         }

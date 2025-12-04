@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage.localstorage;
 
 import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 
-//this class has been extended from
-//https://github.com/googleapis/java-storage-nio/blob/master/google-cloud-nio/src/main/java/com/google/cloud/storage/contrib/nio/testing/LocalStorageHelper.java
+// this class has been extended from
+// https://github.com/googleapis/java-storage-nio/blob/master/google-cloud-nio/src/main/java/com/google/cloud/storage/contrib/nio/testing/LocalStorageHelper.java
 /**
  * Utility to create an in-memory storage configuration for testing. Storage options can be obtained via the
  * {@link #getOptions()} method. Returned options will point to FakeStorageRpc.
@@ -62,8 +63,7 @@ public final class LocalStorageHelper {
     // used for testing. Will throw if you pass it an option.
     private static final FakeStorageRpc INSTANCE = new FakeStorageRpc(true);
 
-    private LocalStorageHelper() {
-    }
+    private LocalStorageHelper() {}
 
     /**
      * Returns a {@link StorageOptions} that use the static FakeStorageRpc instance, and resets it first so you start
@@ -73,13 +73,12 @@ public final class LocalStorageHelper {
         INSTANCE.reset();
         return StorageOptions.newBuilder()
                 .setProjectId("dummy-project-for-testing")
-                .setServiceRpcFactory(
-                        new ServiceRpcFactory<StorageOptions>() {
-                            @Override
-                            public StorageRpc create(StorageOptions options) {
-                                return INSTANCE;
-                            }
-                        })
+                .setServiceRpcFactory(new ServiceRpcFactory<StorageOptions>() {
+                    @Override
+                    public StorageRpc create(StorageOptions options) {
+                        return INSTANCE;
+                    }
+                })
                 .build();
     }
 
@@ -89,14 +88,12 @@ public final class LocalStorageHelper {
     public static StorageOptions customOptions(final boolean throwIfOptions) {
         return StorageOptions.newBuilder()
                 .setProjectId("dummy-project-for-testing")
-                .setServiceRpcFactory(
-                        new ServiceRpcFactory<StorageOptions>() {
-                            @Override
-                            public StorageRpc create(StorageOptions options) {
-                                return new FakeStorageRpc(throwIfOptions);
-                            }
-                        })
+                .setServiceRpcFactory(new ServiceRpcFactory<StorageOptions>() {
+                    @Override
+                    public StorageRpc create(StorageOptions options) {
+                        return new FakeStorageRpc(throwIfOptions);
+                    }
+                })
                 .build();
     }
-
 }

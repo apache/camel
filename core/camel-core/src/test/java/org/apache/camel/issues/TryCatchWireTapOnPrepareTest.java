@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,17 +43,20 @@ public class TryCatchWireTapOnPrepareTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .doTry()
+                        .doTry()
                         .to("direct:validator")
-                        .wireTap("mock:wireTap").onPrepare(exchange -> exchange.setProperty("valid", "true")).endDoTry()
+                        .wireTap("mock:wireTap")
+                        .onPrepare(exchange -> exchange.setProperty("valid", "true"))
+                        .endDoTry()
                         .to("mock:valid")
-                    .doCatch(IllegalArgumentException.class)
-                        .wireTap("mock:wireTap").onPrepare(exchange -> exchange.setProperty("valid", "false")).endDoCatch()
+                        .doCatch(IllegalArgumentException.class)
+                        .wireTap("mock:wireTap")
+                        .onPrepare(exchange -> exchange.setProperty("valid", "false"))
+                        .endDoCatch()
                         .to("mock:invalid")
-                    .end();
+                        .end();
 
-                from("direct:validator")
-                        .throwException(new IllegalArgumentException("Not Valid"));
+                from("direct:validator").throwException(new IllegalArgumentException("Not Valid"));
             }
         };
     }

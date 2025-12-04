@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.couchdb.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
@@ -41,9 +42,7 @@ public final class CouchDbServiceFactory {
         }
     }
 
-    private CouchDbServiceFactory() {
-
-    }
+    private CouchDbServiceFactory() {}
 
     public static SimpleTestServiceBuilder<CouchDbService> builder() {
         return new SimpleTestServiceBuilder<>("couchdb");
@@ -62,19 +61,20 @@ public final class CouchDbServiceFactory {
 
     private static class SingletonServiceHolder {
         static final CouchDbService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<CouchDbService> instance = builder();
 
-            instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerTestService(), "couchdb"))
+            instance.addLocalMapping(
+                            () -> new SingletonCouchDbService(new CouchDbLocalContainerTestService(), "couchdb"))
                     .addRemoteMapping(CouchDbRemoteTestService::new);
 
             INSTANCE = instance.build();
         }
     }
 
-    public static class CouchDbLocalContainerTestService extends CouchDbLocalContainerInfraService implements CouchDbService {
-    }
+    public static class CouchDbLocalContainerTestService extends CouchDbLocalContainerInfraService
+            implements CouchDbService {}
 
-    public static class CouchDbRemoteTestService extends CouchDbRemoteInfraService implements CouchDbService {
-    }
+    public static class CouchDbRemoteTestService extends CouchDbRemoteInfraService implements CouchDbService {}
 }

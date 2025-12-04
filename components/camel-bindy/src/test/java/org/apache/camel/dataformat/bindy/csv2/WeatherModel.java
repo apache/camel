@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv2;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
@@ -27,8 +28,10 @@ public class WeatherModel {
 
     @DataField(pos = 1)
     private int id;
+
     @DataField(pos = 2)
     private String date;
+
     @DataField(pos = 3, defaultValue = "North Pole")
     private String place;
 

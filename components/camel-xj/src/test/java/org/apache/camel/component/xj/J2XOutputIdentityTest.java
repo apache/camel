@@ -28,9 +28,9 @@ public class J2XOutputIdentityTest extends CamelTestSupport {
     public void testOutput() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                    + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
-                                    + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
-                                    + "</object>");
+                + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
+                + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
+                + "</object>");
         mock.message(0).body().isInstanceOf(String.class);
 
         template.sendBody("direct:start", "{\"hello\": \"world!\"}");
@@ -42,9 +42,9 @@ public class J2XOutputIdentityTest extends CamelTestSupport {
     public void testOutputSourceHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:sourceHeader");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                    + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
-                                    + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
-                                    + "</object>");
+                + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
+                + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
+                + "</object>");
         mock.message(0).body().isInstanceOf(String.class);
 
         template.send("direct:sourceHeader", exchange -> {
@@ -58,9 +58,9 @@ public class J2XOutputIdentityTest extends CamelTestSupport {
     public void testOutputSourceVariable() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:sourceVariable");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                    + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
-                                    + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
-                                    + "</object>");
+                + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
+                + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
+                + "</object>");
         mock.message(0).body().isInstanceOf(String.class);
 
         template.send("direct:sourceVariable", exchange -> {
@@ -74,9 +74,9 @@ public class J2XOutputIdentityTest extends CamelTestSupport {
     public void testOutputSourceProperty() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:sourceProperty");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                    + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
-                                    + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
-                                    + "</object>");
+                + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
+                + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
+                + "</object>");
         mock.message(0).body().isInstanceOf(String.class);
 
         template.send("direct:sourceProperty", exchange -> {

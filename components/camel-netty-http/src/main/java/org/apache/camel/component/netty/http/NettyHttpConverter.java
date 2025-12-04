@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.io.InputStream;
@@ -35,19 +36,20 @@ import org.apache.camel.support.http.HttpUtil;
 @Converter(generateLoader = true)
 public final class NettyHttpConverter {
 
-    private NettyHttpConverter() {
-    }
+    private NettyHttpConverter() {}
 
     /**
      * A fallback converter that allows us to easily call Java beans and use the raw Netty {@link HttpRequest} as
      * parameter types.
      */
     @Converter(fallback = true)
-    public static Object convertToHttpRequest(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+    public static Object convertToHttpRequest(
+            Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // if we want to covert to HttpRequest
         if (value != null && HttpRequest.class.isAssignableFrom(type)) {
 
-            // okay we may need to cheat a bit when we want to grab the HttpRequest as its stored on the NettyHttpMessage
+            // okay we may need to cheat a bit when we want to grab the HttpRequest as its stored on the
+            // NettyHttpMessage
             // so if the message instance is a NettyHttpMessage and its body is the value, then we can grab the
             // HttpRequest from the NettyHttpMessage
             NettyHttpMessage msg = exchange.getMessage(NettyHttpMessage.class);
@@ -68,11 +70,13 @@ public final class NettyHttpConverter {
      * parameter types.
      */
     @Converter(fallback = true)
-    public static Object convertToHttpResponse(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+    public static Object convertToHttpResponse(
+            Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // if we want to covert to convertToHttpResponse
         if (value != null && HttpResponse.class.isAssignableFrom(type)) {
 
-            // okay we may need to cheat a bit when we want to grab the HttpRequest as its stored on the NettyHttpMessage
+            // okay we may need to cheat a bit when we want to grab the HttpRequest as its stored on the
+            // NettyHttpMessage
             // so if the message instance is a NettyHttpMessage and its body is the value, then we can grab the
             // HttpRequest from the NettyHttpMessage
             NettyHttpMessage msg = exchange.getMessage(NettyHttpMessage.class);
@@ -118,5 +122,4 @@ public final class NettyHttpConverter {
         buf.writeBytes(cache, len);
         return buf;
     }
-
 }

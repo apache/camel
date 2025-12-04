@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.link;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,13 +31,11 @@ import org.apache.camel.dataformat.bindy.model.fixed.link.MyModel;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 /** Test for CAMEL-19833 **/
 public class BindyRaceConditionLinkTest extends CamelTestSupport {
 
-    private static final String SOURCE_CSV_FILE_PATH
-            = "org/apache/camel/dataformat/bindy/fixed/link/bindyRaceConditionLinkTest.csv";
+    private static final String SOURCE_CSV_FILE_PATH =
+            "org/apache/camel/dataformat/bindy/fixed/link/bindyRaceConditionLinkTest.csv";
 
     private static final int EXPECTED_SUCCESSFUL_MESSAGE_COUNT = 1500;
     private static final int EXPECTED_FAILED_MESSAGE_COUNT = 0;
@@ -51,7 +52,8 @@ public class BindyRaceConditionLinkTest extends CamelTestSupport {
 
     @Test
     public void raceConditionTest() throws Exception {
-        Path filePath = Path.of(ClassLoader.getSystemResource(SOURCE_CSV_FILE_PATH).toURI());
+        Path filePath =
+                Path.of(ClassLoader.getSystemResource(SOURCE_CSV_FILE_PATH).toURI());
         String csv = Files.readString(filePath);
         template.sendBody(begin, csv);
         fail.expectedMessageCount(EXPECTED_FAILED_MESSAGE_COUNT);
@@ -68,9 +70,7 @@ public class BindyRaceConditionLinkTest extends CamelTestSupport {
             public void configure() {
                 BindyCsvDataFormat bindy = new BindyCsvDataFormat(MyModel.class);
 
-                onException(UnsupportedOperationException.class)
-                        .handled(true)
-                        .to(fail);
+                onException(UnsupportedOperationException.class).handled(true).to(fail);
 
                 from(begin)
                         .routeId("bindy-link-test")

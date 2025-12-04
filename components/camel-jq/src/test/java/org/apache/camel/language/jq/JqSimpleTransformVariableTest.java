@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -22,7 +23,8 @@ import org.junit.jupiter.api.Test;
 
 public class JqSimpleTransformVariableTest extends JqTestSupport {
 
-    private static String EXPECTED = """
+    private static String EXPECTED =
+            """
             {
               "roll": 123,
               "country": "se",
@@ -36,7 +38,9 @@ public class JqSimpleTransformVariableTest extends JqTestSupport {
             public void configure() {
                 from("direct:start")
                         .setVariable("place", constant("{ \"name\": \"sweden\", \"iso\": \"se\" }"))
-                        .transform().simple("""
+                        .transform()
+                        .simple(
+                                """
                                 {
                                   "roll": ${jq(.id)},
                                   "country": "${jq(variable:place,.iso)}",

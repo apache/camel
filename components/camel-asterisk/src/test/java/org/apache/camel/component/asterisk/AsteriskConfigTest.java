@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.asterisk;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsteriskConfigTest extends CamelTestSupport {
 
@@ -33,7 +34,7 @@ public class AsteriskConfigTest extends CamelTestSupport {
     @Test
     void asteriskEndpointData() {
         Endpoint endpoint = context.getEndpoint("asterisk://myVoIP?hostname=" + hostname + "&username=" + username
-                                                + "&password=" + password + "&action=" + action);
+                + "&password=" + password + "&action=" + action);
         assertTrue(endpoint instanceof AsteriskEndpoint, "Endpoint not an AsteriskEndpoint: " + endpoint);
         AsteriskEndpoint asteriskEndpoint = (AsteriskEndpoint) endpoint;
 

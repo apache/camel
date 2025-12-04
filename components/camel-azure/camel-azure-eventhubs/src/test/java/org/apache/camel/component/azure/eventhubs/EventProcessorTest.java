@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.Consumer;
 
@@ -24,62 +28,61 @@ import com.azure.messaging.eventhubs.models.EventContext;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class EventProcessorTest {
 
     @Test
     public void testCreateEventProcessorWithNonValidOptions() {
         final EventHubsConfiguration configuration = new EventHubsConfiguration();
-        final Consumer<EventContext> onEvent = event -> {
-        };
-        final Consumer<ErrorContext> onError = error -> {
-        };
+        final Consumer<EventContext> onEvent = event -> {};
+        final Consumer<ErrorContext> onError = error -> {};
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setBlobContainerName("testContainer");
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setBlobAccountName("testAccount");
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setBlobAccessKey("testAccess");
         assertNotNull(EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setBlobContainerName(null);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
     }
 
     @Test
     public void testCreateEventProcessorWithTokenCredential() {
         final EventHubsConfiguration configuration = new EventHubsConfiguration();
-        final Consumer<EventContext> onEvent = event -> {
-        };
-        final Consumer<ErrorContext> onError = error -> {
-        };
+        final Consumer<EventContext> onEvent = event -> {};
+        final Consumer<ErrorContext> onError = error -> {};
 
         configuration.setBlobContainerName("testContainer");
         configuration.setBlobAccountName("testAccount");
         configuration.setBlobAccessKey("testAccess");
         assertNotNull(EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
-        configuration.setTokenCredential(new IntelliJCredentialBuilder().tenantId("tenantId").build());
+        configuration.setTokenCredential(
+                new IntelliJCredentialBuilder().tenantId("tenantId").build());
         configuration.setCredentialType(CredentialType.TOKEN_CREDENTIAL);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setNamespace("namespace");
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setEventHubName("eventHubName");
         assertNotNull(EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
     }
-
 }

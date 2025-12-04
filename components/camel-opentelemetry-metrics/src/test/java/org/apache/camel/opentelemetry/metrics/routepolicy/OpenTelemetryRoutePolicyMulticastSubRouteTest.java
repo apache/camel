@@ -14,15 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
-
-import java.util.List;
-
-import io.opentelemetry.sdk.metrics.data.HistogramPointData;
-import io.opentelemetry.sdk.metrics.data.LongPointData;
-import io.opentelemetry.sdk.metrics.data.PointData;
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME;
@@ -31,6 +24,14 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFA
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
+import java.util.List;
+
+import io.opentelemetry.sdk.metrics.data.HistogramPointData;
+import io.opentelemetry.sdk.metrics.data.LongPointData;
+import io.opentelemetry.sdk.metrics.data.PointData;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 public class OpenTelemetryRoutePolicyMulticastSubRouteTest extends AbstractOpenTelemetryRoutePolicyTest {
 
@@ -58,7 +59,8 @@ public class OpenTelemetryRoutePolicyMulticastSubRouteTest extends AbstractOpenT
             template.sendBody("direct:multicast", "Hello World");
         }
         for (String route : List.of("foo", "multicast", "bar", "failureHandled")) {
-            LongPointData lpd = getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME, route);
+            LongPointData lpd =
+                    getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME, route);
             assertEquals(count, lpd.getValue(), "count for route " + route);
         }
     }
@@ -71,7 +73,8 @@ public class OpenTelemetryRoutePolicyMulticastSubRouteTest extends AbstractOpenT
             template.sendBody("direct:multicast", "Hello World");
         }
         for (String route : List.of("multicast", "failureHandled")) {
-            LongPointData lpd = getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME, route);
+            LongPointData lpd =
+                    getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME, route);
             assertEquals(count, lpd.getValue(), "count for route " + route);
         }
     }
@@ -106,19 +109,22 @@ public class OpenTelemetryRoutePolicyMulticastSubRouteTest extends AbstractOpenT
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalStateException.class)
-                        .handled(true);
+                onException(IllegalStateException.class).handled(true);
 
                 from("direct:foo").routeId("foo").to("mock:foo");
 
                 from("direct:bar").routeId("bar").multicast().to("mock:bar1", "mock:bar2");
 
-                from("direct:multicast").routeId("multicast").multicast().to("direct:foo", "direct:bar",
-                        "direct:failureHandled");
+                from("direct:multicast")
+                        .routeId("multicast")
+                        .multicast()
+                        .to("direct:foo", "direct:bar", "direct:failureHandled");
 
                 from("direct:failure").routeId("failure").throwException(new Exception("forced"));
 
-                from("direct:failureHandled").routeId("failureHandled").throwException(new IllegalStateException("forced"));
+                from("direct:failureHandled")
+                        .routeId("failureHandled")
+                        .throwException(new IllegalStateException("forced"));
             }
         };
     }

@@ -30,8 +30,8 @@ public class PlatformHttpITCase extends JBangTestSupport {
         copyResourceInDataFolder(TestResources.SERVER_ROUTE);
         executeBackground(String.format("run %s/server.yaml", mountPoint()));
         checkLogContains("http://0.0.0.0:8080/hello");
-        Assertions.assertThat(
-                execInHost(String.format("curl http://localhost:%s/hello", containerService.getDevConsolePort())))
+        Assertions.assertThat(execInHost(
+                        String.format("curl http://localhost:%s/hello", containerService.getDevConsolePort())))
                 .as("server should reply \"Hello World\"")
                 .contains("Hello World");
     }

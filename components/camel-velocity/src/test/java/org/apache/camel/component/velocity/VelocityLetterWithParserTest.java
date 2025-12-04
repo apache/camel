@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,11 +24,11 @@ public class VelocityLetterWithParserTest extends VelocityLetterTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").to(
-                        "velocity:org/apache/camel/component/velocity/letterWithParser.vm?propertiesFile=org/apache/camel/component/velocity/velocity.properties")
+                from("direct:a")
+                        .to(
+                                "velocity:org/apache/camel/component/velocity/letterWithParser.vm?propertiesFile=org/apache/camel/component/velocity/velocity.properties")
                         .to("mock:result");
             }
         };
     }
-
 }

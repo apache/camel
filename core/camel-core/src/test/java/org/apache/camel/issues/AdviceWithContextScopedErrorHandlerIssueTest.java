@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,7 +33,8 @@ public class AdviceWithContextScopedErrorHandlerIssueTest extends ContextTestSup
         AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
-                interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint()
+                interceptSendToEndpoint("direct:bar")
+                        .skipSendToOriginalEndpoint()
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });

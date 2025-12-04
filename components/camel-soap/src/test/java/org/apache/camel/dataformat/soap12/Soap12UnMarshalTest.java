@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap12;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,15 +35,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Checks that a static soap request is unmarshalled to the correct java objects
  */
 public class Soap12UnMarshalTest extends CamelTestSupport {
-    private static final String SERVICE_PACKAGE = GetCustomersByName.class
-            .getPackage().getName();
+    private static final String SERVICE_PACKAGE =
+            GetCustomersByName.class.getPackage().getName();
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -77,10 +78,8 @@ public class Soap12UnMarshalTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                from("direct:start").unmarshal().soap12(SERVICE_PACKAGE)
-                        .to("mock:result");
+                from("direct:start").unmarshal().soap12(SERVICE_PACKAGE).to("mock:result");
             }
         };
     }
-
 }

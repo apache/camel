@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,10 +28,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
 
     public static final String FILE_QUERY = "?initialDelay=0&delay=10&synchronous=true";
@@ -70,12 +72,13 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
             public void configure() {
                 from(url)
                         // let it complete only current task so we shutdown faster
-                        .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed()
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
+                        .delay(1000)
+                        .syncDelayed()
                         .to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }
         };
     }
-
 }

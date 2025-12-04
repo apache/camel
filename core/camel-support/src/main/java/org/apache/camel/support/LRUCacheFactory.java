@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.InputStream;
@@ -287,7 +288,8 @@ public abstract class LRUCacheFactory {
      * @param  stopOnEviction           whether to stop service on eviction.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
-    public abstract <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction);
+    public abstract <K, V> Map<K, V> createLRUSoftCache(
+            int initialCapacity, int maximumCacheSize, boolean stopOnEviction);
 
     /**
      * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
@@ -320,6 +322,6 @@ public abstract class LRUCacheFactory {
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Deprecated(since = "4.2.0")
-    public abstract <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction);
-
+    public abstract <K, V> Map<K, V> createLRUWeakCache(
+            int initialCapacity, int maximumCacheSize, boolean stopOnEviction);
 }

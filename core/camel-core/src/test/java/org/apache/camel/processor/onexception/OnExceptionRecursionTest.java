@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test that exceptions in an onException handler route do not go into recursion
@@ -41,9 +42,14 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
             public void configure() {
                 onException(Throwable.class).to("mock:c").to("direct:handle");
 
-                from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");
+                from("direct:test")
+                        .to("mock:a")
+                        .throwException(new IllegalStateException("Bad state"))
+                        .to("mock:b");
 
-                from("direct:handle").to("mock:d").log("Handling exception")
+                from("direct:handle")
+                        .to("mock:d")
+                        .log("Handling exception")
                         .throwException(new NullPointerException("A NPE error here"));
             }
         });
@@ -77,9 +83,15 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
             public void configure() {
                 onException(Throwable.class).to("mock:c").to("direct:handle");
 
-                from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");
+                from("direct:test")
+                        .to("mock:a")
+                        .throwException(new IllegalStateException("Bad state"))
+                        .to("mock:b");
 
-                from("direct:handle").errorHandler(noErrorHandler()).to("mock:d").log("Handling exception")
+                from("direct:handle")
+                        .errorHandler(noErrorHandler())
+                        .to("mock:d")
+                        .log("Handling exception")
                         .throwException(new NullPointerException("A NPE error here"));
             }
         });
@@ -106,5 +118,4 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

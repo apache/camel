@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -22,8 +25,6 @@ import java.util.Base64;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.Resource;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResourceConverterTest extends ContextTestSupport {
 
@@ -63,5 +64,4 @@ public class ResourceConverterTest extends ContextTestSupport {
         String out = context.getTypeConverter().convertTo(String.class, res);
         assertEquals("Hello Foo", out);
     }
-
 }

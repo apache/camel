@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,8 +40,12 @@ public class FailOverLoadBalanceAutoStartupFalseTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").routeId("foo").autoStartup(false).loadBalance().failover(3, true, true).to("direct:x",
-                        "direct:y", "direct:z");
+                from("direct:start")
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .loadBalance()
+                        .failover(3, true, true)
+                        .to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").to("mock:x").throwException(new IllegalArgumentException("Forced"));
                 from("direct:y").to("mock:y").throwException(new IllegalArgumentException("Also Forced"));
@@ -48,5 +53,4 @@ public class FailOverLoadBalanceAutoStartupFalseTest extends ContextTestSupport 
             }
         };
     }
-
 }

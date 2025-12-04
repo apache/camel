@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats;
 
 import java.io.IOException;
@@ -43,8 +44,13 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send and receive messages from <a href="http://nats.io/">NATS</a> messaging system.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", category = { Category.MESSAGING },
-             headersClass = NatsConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = "nats",
+        title = "Nats",
+        syntax = "nats:topic",
+        category = {Category.MESSAGING},
+        headersClass = NatsConstants.class)
 public class NatsEndpoint extends DefaultEndpoint
         implements MultipleConsumersSupport, HeaderFilterStrategyAware, EndpointServiceLocation {
 
@@ -84,8 +90,9 @@ public class NatsEndpoint extends DefaultEndpoint
     }
 
     public ExecutorService createExecutor(Object source) {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source,
-                "NatsTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
+        return getCamelContext()
+                .getExecutorServiceManager()
+                .newFixedThreadPool(source, "NatsTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
     }
 
     public NatsConfiguration getConfiguration() {
@@ -95,14 +102,16 @@ public class NatsEndpoint extends DefaultEndpoint
     public Connection getConnection()
             throws InterruptedException, IllegalArgumentException, GeneralSecurityException, IOException {
         Builder builder = getConfiguration().createOptions();
-        if (getConfiguration().getSslContextParameters() != null && getConfiguration().isSecure()) {
+        if (getConfiguration().getSslContextParameters() != null
+                && getConfiguration().isSecure()) {
             SSLContext sslCtx = getConfiguration().getSslContextParameters().createSSLContext(getCamelContext());
             builder.sslContext(sslCtx);
         }
         if (ObjectHelper.isNotEmpty(getConfiguration().getCredentialsFilePath())) {
-            builder.authHandler(Nats.staticCredentials(
-                    ResourceHelper.resolveResource(getCamelContext(), getConfiguration().getCredentialsFilePath())
-                            .getInputStream().readAllBytes()));
+            builder.authHandler(Nats.staticCredentials(ResourceHelper.resolveResource(
+                            getCamelContext(), getConfiguration().getCredentialsFilePath())
+                    .getInputStream()
+                    .readAllBytes()));
         }
         Options options = builder.build();
         return Nats.connect(options);

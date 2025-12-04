@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,19 +38,22 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
 
     @XmlAttribute(required = true)
     private String name;
+
     @XmlAttribute(required = true)
     private String type;
+
     @XmlAttribute
     private String toName;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String mandatory;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String charset;
 
-    public ConvertVariableDefinition() {
-    }
+    public ConvertVariableDefinition() {}
 
     protected ConvertVariableDefinition(ConvertVariableDefinition source) {
         super(source);

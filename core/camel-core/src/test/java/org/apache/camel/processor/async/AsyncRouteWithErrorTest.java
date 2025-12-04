@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AsyncRouteWithErrorTest extends ContextTestSupport {
 
@@ -103,7 +104,8 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
                         // work
                         // so we do a bit of delay to simulate heavy work that takes
                         // time
-                        .to("mock:foo").delay(100)
+                        .to("mock:foo")
+                        .delay(100)
                         // and we also work with the message so we can prepare a
                         // response
                         .process(new MyProcessor())
@@ -115,8 +117,7 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
-        public MyProcessor() {
-        }
+        public MyProcessor() {}
 
         @Override
         public void process(Exchange exchange) {

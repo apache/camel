@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,7 +42,13 @@ public class SplitTokenizerRegexpGroupTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                var token = expression().tokenize().token("\r\n|\n").regex(true).group(2).groupDelimiter("\n").skipFirst(true)
+                var token = expression()
+                        .tokenize()
+                        .token("\r\n|\n")
+                        .regex(true)
+                        .group(2)
+                        .groupDelimiter("\n")
+                        .skipFirst(true)
                         .end();
                 from("direct:start").split(token).to("mock:line");
             }

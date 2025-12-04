@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -141,8 +142,7 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static String genericFileToString(GenericFile<?> file, Exchange exchange)
-            throws IOException {
+    public static String genericFileToString(GenericFile<?> file, Exchange exchange) throws IOException {
         // use reader first as it supports the file charset
         Reader reader = genericFileToReader(file, exchange);
         if (reader != null) {
@@ -207,5 +207,4 @@ public final class GenericFileConverter {
         }
         return null;
     }
-
 }

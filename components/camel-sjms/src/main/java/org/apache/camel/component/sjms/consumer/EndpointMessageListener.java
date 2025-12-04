@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
+
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,8 +51,6 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * A JMS {@link MessageListener} which can be used to delegate processing to a Camel endpoint.
@@ -149,9 +150,12 @@ public class EndpointMessageListener implements SessionMessageListener {
 
             // we should also not send back reply to ourself if this destination and replyDestination is the same
             Destination destination = JmsMessageHelper.getJMSDestination(message);
-            if (destination != null && sendReply && !endpoint.isReplyToSameDestinationAllowed()
+            if (destination != null
+                    && sendReply
+                    && !endpoint.isReplyToSameDestinationAllowed()
                     && destination.equals(replyDestination)) {
-                LOG.debug("JMSDestination and JMSReplyTo is the same, will skip sending a reply message to itself: {}",
+                LOG.debug(
+                        "JMSDestination and JMSReplyTo is the same, will skip sending a reply message to itself: {}",
                         destination);
                 sendReply = false;
             }
@@ -166,8 +170,10 @@ public class EndpointMessageListener implements SessionMessageListener {
                     exchange.setException(e);
                     String text = eagerPoisonBody;
                     try {
-                        text = endpoint.getCamelContext().resolveLanguage("simple")
-                                .createExpression(eagerPoisonBody).evaluate(exchange, String.class);
+                        text = endpoint.getCamelContext()
+                                .resolveLanguage("simple")
+                                .createExpression(eagerPoisonBody)
+                                .evaluate(exchange, String.class);
                     } catch (Exception t) {
                         // ignore
                     }
@@ -185,9 +191,8 @@ public class EndpointMessageListener implements SessionMessageListener {
 
             // process the exchange either asynchronously or synchronous
             LOG.trace("onMessage.process START");
-            AsyncCallback callback
-                    = new EndpointMessageListenerAsyncCallback(
-                            session, message, exchange, endpoint, sendReply, replyDestination);
+            AsyncCallback callback = new EndpointMessageListenerAsyncCallback(
+                    session, message, exchange, endpoint, sendReply, replyDestination);
 
             // async is by default false, which mean we by default will process the exchange synchronously
             // to keep backwards compatible, as well ensure this consumer will pickup messages in order
@@ -276,14 +281,22 @@ public class EndpointMessageListener implements SessionMessageListener {
 
     protected void sendReply(
             Session session,
-            Destination replyDestination, final Message message, final Exchange exchange,
-            final org.apache.camel.Message out, final Exception cause) {
+            Destination replyDestination,
+            final Message message,
+            final Exchange exchange,
+            final org.apache.camel.Message out,
+            final Exception cause) {
         if (replyDestination == null) {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
         }
         try {
-            SessionCallback callback = createSessionCallback(replyDestination, message, exchange, out, cause,
+            SessionCallback callback = createSessionCallback(
+                    replyDestination,
+                    message,
+                    exchange,
+                    out,
+                    cause,
                     endpoint.getJmsObjectFactory()::createMessageProducer);
 
             getTemplate().execute(session, callback);
@@ -299,7 +312,11 @@ public class EndpointMessageListener implements SessionMessageListener {
     }
 
     private <T> SessionCallback createSessionCallback(
-            T replyDestination, Message message, Exchange exchange, org.apache.camel.Message out, Exception cause,
+            T replyDestination,
+            Message message,
+            Exchange exchange,
+            org.apache.camel.Message out,
+            Exception cause,
             MessageProducerCreator<T> messageProducerCreator) {
         return new SessionCallback() {
             @Override
@@ -311,7 +328,8 @@ public class EndpointMessageListener implements SessionMessageListener {
                     reply.setJMSCorrelationID(correlationID);
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
+                        LOG.debug(
+                                "{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
                     }
 
                     producer = messageProducerCreator.create(session, endpoint, replyDestination);
@@ -333,14 +351,22 @@ public class EndpointMessageListener implements SessionMessageListener {
 
     protected void sendReply(
             Session session,
-            String replyDestination, final Message message, final Exchange exchange,
-            final org.apache.camel.Message out, final Exception cause) {
+            String replyDestination,
+            final Message message,
+            final Exchange exchange,
+            final org.apache.camel.Message out,
+            final Exception cause) {
         if (replyDestination == null) {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
         }
         try {
-            SessionCallback callback = createSessionCallback(replyDestination, message, exchange, out, cause,
+            SessionCallback callback = createSessionCallback(
+                    replyDestination,
+                    message,
+                    exchange,
+                    out,
+                    cause,
                     endpoint.getJmsObjectFactory()::createMessageProducer);
 
             getTemplate().execute(session, callback);
@@ -391,8 +417,13 @@ public class EndpointMessageListener implements SessionMessageListener {
         private final boolean sendReply;
         private final Object replyDestination;
 
-        private EndpointMessageListenerAsyncCallback(Session session, Message message, Exchange exchange, SjmsEndpoint endpoint,
-                                                     boolean sendReply, Object replyDestination) {
+        private EndpointMessageListenerAsyncCallback(
+                Session session,
+                Message message,
+                Exchange exchange,
+                SjmsEndpoint endpoint,
+                boolean sendReply,
+                Object replyDestination) {
             this.session = session;
             this.message = message;
             this.exchange = exchange;
@@ -470,5 +501,4 @@ public class EndpointMessageListener implements SessionMessageListener {
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
 
 import java.util.Date;
@@ -27,5 +28,4 @@ public interface CustomMultiEventListener {
 
     @Subscribe
     void dateReceived(Date dateEvent);
-
 }

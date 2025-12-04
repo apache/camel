@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.multibytes;
 
 import java.nio.charset.StandardCharsets;
@@ -75,7 +76,8 @@ public class BindyCountGraphemeTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:in").setHeader(Exchange.CHARSET_NAME, constant(StandardCharsets.UTF_8.name()))
+                from("direct:in")
+                        .setHeader(Exchange.CHARSET_NAME, constant(StandardCharsets.UTF_8.name()))
                         .unmarshal(new BindyFixedLengthDataFormat(TestRecord.class))
                         .to("mock:result");
             }

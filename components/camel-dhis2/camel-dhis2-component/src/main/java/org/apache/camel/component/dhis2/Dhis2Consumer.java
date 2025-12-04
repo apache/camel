@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2;
 
 import org.apache.camel.Processor;
@@ -25,5 +26,4 @@ public class Dhis2Consumer extends AbstractApiConsumer<Dhis2ApiName, Dhis2Config
     public Dhis2Consumer(Dhis2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
-
 }

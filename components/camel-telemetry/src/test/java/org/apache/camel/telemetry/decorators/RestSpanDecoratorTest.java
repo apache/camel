@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
@@ -25,9 +29,6 @@ import org.apache.camel.telemetry.SpanDecorator;
 import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestSpanDecoratorTest {
 
@@ -54,7 +55,8 @@ public class RestSpanDecoratorTest {
 
     @Test
     public void testGetParametersNone() {
-        assertTrue(RestSpanDecorator.getParameters("rest://put:/persons/hello/world?routeId=route4").isEmpty());
+        assertTrue(RestSpanDecorator.getParameters("rest://put:/persons/hello/world?routeId=route4")
+                .isEmpty());
     }
 
     @Test
@@ -77,7 +79,8 @@ public class RestSpanDecoratorTest {
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
 
-        Mockito.when(endpoint.getEndpointUri()).thenReturn("rest://put:/context:/%7B" + paramName + "%7D?routeId=route4");
+        Mockito.when(endpoint.getEndpointUri())
+                .thenReturn("rest://put:/context:/%7B" + paramName + "%7D?routeId=route4");
         Mockito.when(exchange.getFromEndpoint()).thenReturn(endpoint);
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(paramName, String.class)).thenReturn(paramValue);
@@ -93,6 +96,7 @@ public class RestSpanDecoratorTest {
 
     @Test
     public void testGetPath() {
-        assertEquals("/persons/{personId}", RestSpanDecorator.getPath("rest://put:/persons:/%7BpersonId%7D?routeId=route4"));
+        assertEquals(
+                "/persons/{personId}", RestSpanDecorator.getPath("rest://put:/persons:/%7BpersonId%7D?routeId=route4"));
     }
 }

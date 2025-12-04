@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import java.io.IOException;
@@ -41,15 +42,21 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
     static class MyAdviceWithRouteBuilder extends AdviceWithRouteBuilder {
         @Override
         public void configure() {
-            onException(SQLException.class).handled(true).transform(constant("Intercepted SQL!")).log("sending ${body}")
+            onException(SQLException.class)
+                    .handled(true)
+                    .transform(constant("Intercepted SQL!"))
+                    .log("sending ${body}")
                     .to("mock:b");
 
-            interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint().log("intercepted message").bean(new Processor() {
-                @Override
-                public void process(Exchange exchange) throws Exception {
-                    throw new SQLException();
-                }
-            });
+            interceptSendToEndpoint("mock:a")
+                    .skipSendToOriginalEndpoint()
+                    .log("intercepted message")
+                    .bean(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            throw new SQLException();
+                        }
+                    });
         }
     }
 
@@ -58,7 +65,12 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").loadBalance().failover(IOException.class).to("mock:a").to("mock:b").end();
+                from("direct:a")
+                        .loadBalance()
+                        .failover(IOException.class)
+                        .to("mock:a")
+                        .to("mock:b")
+                        .end();
             }
         });
 
@@ -73,5 +85,4 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

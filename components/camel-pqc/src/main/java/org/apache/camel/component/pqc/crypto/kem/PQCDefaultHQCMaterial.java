@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto.kem;
 
 import java.security.*;
@@ -49,15 +50,15 @@ public class PQCDefaultHQCMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.HQC.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.HQC.getBcProvider());
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.HQC.getAlgorithm(), PQCKeyEncapsulationAlgorithms.HQC.getBcProvider());
         kpg.initialize(HQCParameterSpec.hqc192, new SecureRandom());
         return kpg;
     }
 
     protected static KeyGenerator prepareKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.HQC.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.HQC.getBcProvider());
+        KeyGenerator kg = KeyGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.HQC.getAlgorithm(), PQCKeyEncapsulationAlgorithms.HQC.getBcProvider());
         return kg;
     }
 }

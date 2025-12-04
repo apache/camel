@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,7 +28,8 @@ public class SpringLogTest extends SpringTestSupport {
     protected String uri = "direct:start";
 
     @Test
-    public void testSendingCamelExchangeToEndpointResultsInValidApplicationEventAfterTheRefreshEvent() throws Exception {
+    public void testSendingCamelExchangeToEndpointResultsInValidApplicationEventAfterTheRefreshEvent()
+            throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(1);
 

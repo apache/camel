@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.complex.generateheader;
 
 import org.apache.camel.dataformat.bindy.annotation.DataField;
@@ -48,5 +49,4 @@ public class Security {
     public String toString() {
         return "Model : " + Security.class.getName() + " : " + this.instrumentNumber + ", " + this.instrumentCode;
     }
-
 }

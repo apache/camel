@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -26,8 +29,6 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
 
 public class JaxbConcurrentDataFormatTest extends CamelTestSupport {
 
@@ -77,5 +78,4 @@ public class JaxbConcurrentDataFormatTest extends CamelTestSupport {
             }
         };
     }
-
 }

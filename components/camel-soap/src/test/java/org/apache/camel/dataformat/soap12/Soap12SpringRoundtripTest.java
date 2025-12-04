@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap12;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Works like SoapRoundTripTest but uses a spring configuration instead of the java dsl
@@ -52,8 +53,7 @@ public class Soap12SpringRoundtripTest {
         producer.sendBody(request);
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getExchanges().get(0);
-        GetCustomersByName received = exchange.getIn().getBody(
-                GetCustomersByName.class);
+        GetCustomersByName received = exchange.getIn().getBody(GetCustomersByName.class);
         assertNotNull(received);
         assertEquals("Mueller", received.getName());
     }

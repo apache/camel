@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.Exchange.HTTP_QUERY;
+import static org.apache.camel.Exchange.HTTP_RAW_QUERY;
+import static org.apache.camel.Exchange.HTTP_URI;
+import static org.apache.camel.http.common.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicRawQueryValidationHandler;
@@ -22,12 +29,6 @@ import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.Exchange.HTTP_QUERY;
-import static org.apache.camel.Exchange.HTTP_RAW_QUERY;
-import static org.apache.camel.Exchange.HTTP_URI;
-import static org.apache.camel.http.common.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpBridgeEndpointTest extends BaseHttpTest {
 
@@ -37,8 +38,10 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
                 .register("/query", new BasicRawQueryValidationHandler(GET.name(), "x=%3B", null, getExpectedContent()))
@@ -58,7 +61,8 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
 
     @Test
     public void notBridgeEndpoint() {
-        Exchange exchange = template.request("http://host/?bridgeEndpoint=false",
+        Exchange exchange = template.request(
+                "http://host/?bridgeEndpoint=false",
                 exchange1 -> exchange1.getIn().setHeader(HTTP_URI, url + "/"));
 
         assertExchange(exchange);
@@ -66,8 +70,8 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
 
     @Test
     public void bridgeEndpoint() {
-        Exchange exchange = template.request(url + "/?bridgeEndpoint=true",
-                exchange1 -> exchange1.getIn().setHeader(HTTP_URI, "http://host:8080/"));
+        Exchange exchange = template.request(
+                url + "/?bridgeEndpoint=true", exchange1 -> exchange1.getIn().setHeader(HTTP_URI, "http://host:8080/"));
 
         assertExchange(exchange);
     }
@@ -95,11 +99,10 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
 
     @Test
     public void unsafeCharsInHttpURIHeader() {
-        Exchange exchange
-                = template.request(url + "/?bridgeEndpoint=true", exchange1 -> exchange1.getIn().setHeader(HTTP_URI, "/<>{}"));
+        Exchange exchange = template.request(
+                url + "/?bridgeEndpoint=true", exchange1 -> exchange1.getIn().setHeader(HTTP_URI, "/<>{}"));
 
         assertNull(exchange.getException());
         assertExchange(exchange);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.ExchangePattern;
@@ -50,25 +51,15 @@ public class DisruptorVmMultipleConsumersIssueTest extends CamelTestSupport {
                         .to(ExchangePattern.InOut, "disruptor-vm:foo?timeout=5000")
                         .to("mock:done");
 
-                from("disruptor-vm:foo?multipleConsumers=true")
-                        .to("log:a")
-                        .to("mock:a");
+                from("disruptor-vm:foo?multipleConsumers=true").to("log:a").to("mock:a");
 
-                from("disruptor-vm:foo?multipleConsumers=true")
-                        .to("log:b")
-                        .to("mock:b");
+                from("disruptor-vm:foo?multipleConsumers=true").to("log:b").to("mock:b");
 
-                from("disruptor-vm:foo?multipleConsumers=true")
-                        .to("log:c")
-                        .to("mock:c");
+                from("disruptor-vm:foo?multipleConsumers=true").to("log:c").to("mock:c");
 
-                from("disruptor-vm:foo?multipleConsumers=true")
-                        .to("log:d")
-                        .to("mock:d");
+                from("disruptor-vm:foo?multipleConsumers=true").to("log:d").to("mock:d");
 
-                from("disruptor-vm:foo?multipleConsumers=true")
-                        .to("log:e")
-                        .to("mock:e");
+                from("disruptor-vm:foo?multipleConsumers=true").to("log:e").to("mock:e");
             }
         };
     }

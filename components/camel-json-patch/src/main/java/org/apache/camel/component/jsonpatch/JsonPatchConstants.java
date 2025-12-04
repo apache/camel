@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonpatch;
 
 import org.apache.camel.spi.Metadata;
@@ -23,6 +24,5 @@ public final class JsonPatchConstants {
     @Metadata(label = "producer", description = "The resource URI", javaType = "String")
     public static final String JSON_PATCH_RESOURCE_URI = "CamelJsonPatchResourceUri";
 
-    private JsonPatchConstants() {
-    }
+    private JsonPatchConstants() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.HashMap;
@@ -42,11 +43,11 @@ public class PulsarProducerHeadersInIT extends PulsarITSupport {
     private ProducerTemplate producerTemplate;
 
     @EndpointInject("pulsar:" + TOPIC_URI
-                    + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription"
-                    + "&consumerQueueSize=1"
-                    + "&consumerName=camel-consumer"
-                    + "&producerName=" + PRODUCER)
+            + "?numberOfConsumers=1&subscriptionType=Exclusive"
+            + "&subscriptionName=camel-subscription"
+            + "&consumerQueueSize=1"
+            + "&consumerName=camel-consumer"
+            + "&producerName=" + PRODUCER)
     private Endpoint pulsar;
 
     @EndpointInject("mock:result")

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -29,9 +33,6 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
 
 public class VertxPlatformHttpEngineWithTypeConverterTest {
 
@@ -48,18 +49,14 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
                 public void configure() {
                     from("platform-http:/bytebuffer")
                             .routeId("bytebuffer")
-                            .setBody().constant(Collections.singletonMap("bb", "my-test"));
+                            .setBody()
+                            .constant(Collections.singletonMap("bb", "my-test"));
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/bytebuffer")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("ByteBuffer:my-test"));
+            given().when().get("/bytebuffer").then().statusCode(200).body(equalTo("ByteBuffer:my-test"));
         } finally {
             context.stop();
         }
@@ -78,18 +75,14 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
                 public void configure() {
                     from("platform-http:/inputstream")
                             .routeId("inputstream")
-                            .setBody().constant(Collections.singletonMap("is", "my-test"));
+                            .setBody()
+                            .constant(Collections.singletonMap("is", "my-test"));
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/inputstream")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("InputStream:my-test"));
+            given().when().get("/inputstream").then().statusCode(200).body(equalTo("InputStream:my-test"));
         } finally {
             context.stop();
         }
@@ -112,7 +105,6 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
                 byte[] out = ("InputStream:" + ((Map) value).get("is")).getBytes(StandardCharsets.UTF_8);
                 return type.cast(new ByteArrayInputStream(out));
             }
-
         };
     }
 
@@ -133,14 +125,12 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
         }
 
         @Override
-        public <T> T mandatoryConvertTo(Class<T> type, Object value)
-                throws TypeConversionException {
+        public <T> T mandatoryConvertTo(Class<T> type, Object value) throws TypeConversionException {
             return null;
         }
 
         @Override
-        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value)
-                throws TypeConversionException {
+        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
             return null;
         }
 

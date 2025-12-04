@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import java.util.Optional;
@@ -25,43 +26,48 @@ import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "add",
-                     description = "Add new plugin.", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(name = "add", description = "Add new plugin.", sortOptions = false, showDefaultValues = true)
 public class PluginAdd extends PluginBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel plugin to add.",
-                            paramLabel = "<name>")
+    @CommandLine.Parameters(description = "The Camel plugin to add.", paramLabel = "<name>")
     String name;
 
-    @CommandLine.Option(names = { "--command" },
-                        description = "The command that the plugin uses.")
+    @CommandLine.Option(
+            names = {"--command"},
+            description = "The command that the plugin uses.")
     String command;
 
-    @CommandLine.Option(names = { "--description" },
-                        description = "A short description of the plugin.")
+    @CommandLine.Option(
+            names = {"--description"},
+            description = "A short description of the plugin.")
     String description;
 
-    @CommandLine.Option(names = { "--artifactId" },
-                        description = "Maven artifactId.")
+    @CommandLine.Option(
+            names = {"--artifactId"},
+            description = "Maven artifactId.")
     String artifactId;
 
-    @CommandLine.Option(names = { "--groupId" },
-                        defaultValue = "org.apache.camel",
-                        description = "Maven groupId.")
+    @CommandLine.Option(
+            names = {"--groupId"},
+            defaultValue = "org.apache.camel",
+            description = "Maven groupId.")
     String groupId = "org.apache.camel";
 
-    @CommandLine.Option(names = { "--version" },
-                        defaultValue = "${camel-version}",
-                        description = "Maven artifact version.")
+    @CommandLine.Option(
+            names = {"--version"},
+            defaultValue = "${camel-version}",
+            description = "Maven artifact version.")
     String version;
 
-    @CommandLine.Option(names = { "--first-version" },
-                        defaultValue = "${camel-version}",
-                        description = "First version of this plugin.")
+    @CommandLine.Option(
+            names = {"--first-version"},
+            defaultValue = "${camel-version}",
+            description = "First version of this plugin.")
     String firstVersion;
 
-    @CommandLine.Option(names = { "--gav" },
-                        description = "Maven group and artifact coordinates.")
+    @CommandLine.Option(
+            names = {"--gav"},
+            description = "Maven group and artifact coordinates.")
     String gav;
 
     public PluginAdd(CamelJBangMain main) {
@@ -102,7 +108,8 @@ public class PluginAdd extends PluginBaseCommand {
         if (firstVersion != null) {
             plugin.put("firstVersion", firstVersion);
         }
-        plugin.put("description",
+        plugin.put(
+                "description",
                 description != null ? description : "Plugin %s called with command %s".formatted(name, command));
 
         if (gav == null && (groupId != null && artifactId != null)) {
@@ -123,5 +130,4 @@ public class PluginAdd extends PluginBaseCommand {
         saveConfig(pluginConfig);
         return 0;
     }
-
 }

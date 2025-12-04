@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.concurrent.TimeUnit;
@@ -63,10 +64,10 @@ public class FilerConsumerShouldSkipDoneFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?doneFileName=done&initialDelay=0&delay=10")).convertBodyTo(String.class)
+                from(fileUri("?doneFileName=done&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
     }
-
 }

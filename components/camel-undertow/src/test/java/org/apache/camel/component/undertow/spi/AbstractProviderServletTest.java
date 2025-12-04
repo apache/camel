@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.spi;
 
 import java.io.File;
@@ -50,10 +51,11 @@ public abstract class AbstractProviderServletTest extends BaseUndertowTest {
 
         @Override
         public int authenticate(HttpServerExchange httpExchange, List<String> allowedRoles) {
-            ServletRequestContext servletRequestContext = httpExchange.getAttachment(ServletRequestContext.ATTACHMENT_KEY);
+            ServletRequestContext servletRequestContext =
+                    httpExchange.getAttachment(ServletRequestContext.ATTACHMENT_KEY);
             assertServletContext(servletRequestContext);
 
-            //put some information into servletContext
+            // put some information into servletContext
             httpExchange.putAttachment(PRINCIPAL_NAME_KEY, "user");
             return StatusCodes.OK;
         }
@@ -70,7 +72,8 @@ public abstract class AbstractProviderServletTest extends BaseUndertowTest {
     }
 
     static void createSecurtyProviderConfigurationFile(Class<? extends MockSecurityProvider> clazz) throws Exception {
-        URL location = MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
+        URL location =
+                MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
         File file = new File(location.getPath() + "META-INF/services/" + UndertowSecurityProvider.class.getName());
         file.getParentFile().mkdirs();
 
@@ -86,7 +89,7 @@ public abstract class AbstractProviderServletTest extends BaseUndertowTest {
         CamelContext camelContext = super.createCamelContext();
         UndertowComponent component = camelContext.getComponent("undertow", UndertowComponent.class);
 
-        //put mock object asconfiguration, it is not used
+        // put mock object asconfiguration, it is not used
         component.setSecurityConfiguration(new Object());
         return camelContext;
     }
@@ -102,5 +105,4 @@ public abstract class AbstractProviderServletTest extends BaseUndertowTest {
             }
         };
     }
-
 }

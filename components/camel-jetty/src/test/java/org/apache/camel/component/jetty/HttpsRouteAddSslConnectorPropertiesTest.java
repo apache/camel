@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,8 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.api.parallel.ResourceLock;
-
-import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 
 @Isolated
 @ResourceLock(SSL_SYSPROPS)
@@ -55,7 +56,6 @@ public class HttpsRouteAddSslConnectorPropertiesTest extends HttpsRouteTest {
 
                 from("jetty:https://localhost:" + port2 + "/test").to("mock:b");
             }
-
         };
     }
 }

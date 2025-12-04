@@ -27,9 +27,7 @@ import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class AWSServiceFactory {
-    private AWSServiceFactory() {
-
-    }
+    private AWSServiceFactory() {}
 
     private static class SingletonAWSService extends SingletonService<AWSService> implements AWSService {
         public SingletonAWSService(AWSService service, String name) {
@@ -144,7 +142,8 @@ public final class AWSServiceFactory {
     }
 
     public static AWSService createSingletonDynamoDBService() {
-        return SingletonServiceHolder.getInstance(new AWSTestServices.AWSDynamodbLocalContainerTestService(), "dynamoDB");
+        return SingletonServiceHolder.getInstance(
+                new AWSTestServices.AWSDynamodbLocalContainerTestService(), "dynamoDB");
     }
 
     public static AWSService createSingletonS3Service() {
@@ -156,7 +155,8 @@ public final class AWSServiceFactory {
     }
 
     public static AWSService createSingletonEventBridgeService() {
-        return SingletonServiceHolder.getInstance(new AWSTestServices.AWSEventBridgeLocalContainerTestService(), "eventBridge");
+        return SingletonServiceHolder.getInstance(
+                new AWSTestServices.AWSEventBridgeLocalContainerTestService(), "eventBridge");
     }
 
     public static AWSService createSingletonKinesisService() {
@@ -164,13 +164,14 @@ public final class AWSServiceFactory {
     }
 
     public static AWSService createSingletonTranscribeService() {
-        return SingletonServiceHolder.getInstance(new AWSTestServices.AWSTranscribeLocalContainerTestService(), "transcribe");
+        return SingletonServiceHolder.getInstance(
+                new AWSTestServices.AWSTranscribeLocalContainerTestService(), "transcribe");
     }
 
     private static class SingletonServiceHolder {
         private static final Map<String, AWSService> INSTANCES_HOLDER = new ConcurrentHashMap<>();
 
-        public synchronized static AWSService getInstance(AWSService service, String name) {
+        public static synchronized AWSService getInstance(AWSService service, String name) {
             if (INSTANCES_HOLDER.get(name) == null) {
                 SimpleTestServiceBuilder<AWSService> instance = builder();
                 instance.addLocalMapping(() -> new SingletonAWSService(service, name))

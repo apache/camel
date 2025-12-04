@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport {
 
@@ -48,8 +49,10 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
     }
 
     private void sendAndVerify(String delimiter, MockEndpoint mock) throws InterruptedException {
-        template.sendBody("direct:start", "123" + delimiter + "Camel in Action" + delimiter + "1\n124" + delimiter
-                                          + "ActiveMQ in Action" + delimiter + "2");
+        template.sendBody(
+                "direct:start",
+                "123" + delimiter + "Camel in Action" + delimiter + "1\n124" + delimiter + "ActiveMQ in Action"
+                        + delimiter + "2");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -72,16 +75,11 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
                 CsvDataFormat csv = new CsvDataFormat().setDelimiter('|');
                 CsvDataFormat csv2 = new CsvDataFormat().setDelimiter(';');
 
-                from("direct:start")
-                        .multicast().parallelProcessing().to("direct:csv", "direct:csv2");
+                from("direct:start").multicast().parallelProcessing().to("direct:csv", "direct:csv2");
 
-                from("direct:csv")
-                        .unmarshal(csv)
-                        .to("mock:result");
+                from("direct:csv").unmarshal(csv).to("mock:result");
 
-                from("direct:csv2")
-                        .unmarshal(csv2)
-                        .to("mock:result2");
+                from("direct:csv2").unmarshal(csv2).to("mock:result2");
             }
         };
     }

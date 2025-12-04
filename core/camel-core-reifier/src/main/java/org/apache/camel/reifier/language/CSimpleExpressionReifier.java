@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
@@ -31,5 +32,4 @@ public class CSimpleExpressionReifier extends TypedExpressionReifier<CSimpleExpr
         // csimple language will handle to resolve external scripts as they can be dynamic using simple language itself
         return false;
     }
-
 }

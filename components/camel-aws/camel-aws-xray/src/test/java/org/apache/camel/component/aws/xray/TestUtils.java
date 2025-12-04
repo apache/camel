@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,22 +32,12 @@ import org.apache.camel.component.aws.xray.TestDataBuilder.TestSegment;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestSubsegment;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestTrace;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public final class TestUtils {
 
-    private TestUtils() {
-
-    }
+    private TestUtils() {}
 
     public static void checkData(Map<String, TestTrace> receivedData, List<TestTrace> testData) {
-        assertThat("Incorrect number of traces",
-                receivedData.size(), is(equalTo(testData.size())));
+        assertThat("Incorrect number of traces", receivedData.size(), is(equalTo(testData.size())));
         int i = 0;
         for (TestTrace trace : receivedData.values()) {
             verifyTraces(testData.get(i++), trace);
@@ -47,10 +45,13 @@ public final class TestUtils {
     }
 
     private static void verifyTraces(TestTrace expected, TestTrace actual) {
-        assertThat("Incorrect number of segment for trace. Expected traces: "
-                   + expected.getSegments().stream().map(s -> s.name).toList()
-                   + " but found " + actual.getSegments().stream().map(s -> s.name).toList(),
-                actual.getSegments().size(), is(equalTo(expected.getSegments().size())));
+        assertThat(
+                "Incorrect number of segment for trace. Expected traces: "
+                        + expected.getSegments().stream().map(s -> s.name).toList()
+                        + " but found "
+                        + actual.getSegments().stream().map(s -> s.name).toList(),
+                actual.getSegments().size(),
+                is(equalTo(expected.getSegments().size())));
         List<TestSegment> expectedSegments = new ArrayList<>(expected.getSegments());
         List<TestSegment> actualSegments = new ArrayList<>(actual.getSegments());
 
@@ -78,9 +79,11 @@ public final class TestUtils {
     }
 
     private static void verifySegments(TestSegment expected, TestSegment actual) {
-        assertThat("Incorrect name of segment. Expected segment name: "
-                   + expected.getName() + " but found: " + actual.getName(),
-                actual.getName(), is(equalTo(expected.getName())));
+        assertThat(
+                "Incorrect name of segment. Expected segment name: " + expected.getName() + " but found: "
+                        + actual.getName(),
+                actual.getName(),
+                is(equalTo(expected.getName())));
 
         boolean randomOrder = expected.isRandomOrder();
         if (!expected.getSubsegments().isEmpty()) {
@@ -89,9 +92,15 @@ public final class TestUtils {
             } else {
                 for (int i = 0; i < expected.getSubsegments().size(); i++) {
                     if (actual.getName().equals(expected.getName())) {
-                        assertThat("An expected subsegment is missing in the actual payload of segment " + actual.getName(),
-                                actual.getSubsegments().size(), is(greaterThanOrEqualTo(expected.getSubsegments().size())));
-                        verifySubsegments(expected.getSubsegments().get(i), actual.getSubsegments().get(i));
+                        assertThat(
+                                "An expected subsegment is missing in the actual payload of segment "
+                                        + actual.getName(),
+                                actual.getSubsegments().size(),
+                                is(greaterThanOrEqualTo(
+                                        expected.getSubsegments().size())));
+                        verifySubsegments(
+                                expected.getSubsegments().get(i),
+                                actual.getSubsegments().get(i));
                     }
                 }
             }
@@ -105,19 +114,24 @@ public final class TestUtils {
     }
 
     private static void verifySubsegments(TestSubsegment expected, TestSubsegment actual) {
-        assertThat("Incorrect name of subsegment. Expected " + actual.getName()
-                   + " but found: " + actual.getName(),
-                actual.getName(), is(equalTo(expected.getName())));
+        assertThat(
+                "Incorrect name of subsegment. Expected " + actual.getName() + " but found: " + actual.getName(),
+                actual.getName(),
+                is(equalTo(expected.getName())));
 
         boolean randomOrder = expected.isRandomOrder();
         if (!expected.getSubsegments().isEmpty()) {
             if (randomOrder) {
                 checkSubsegmentInRandomOrder(expected.getSubsegments(), actual.getSubsegments());
             } else {
-                assertThat("Incorrect number of subsegments found in " + actual,
-                        actual.getSubsegments().size(), is(equalTo(expected.getSubsegments().size())));
+                assertThat(
+                        "Incorrect number of subsegments found in " + actual,
+                        actual.getSubsegments().size(),
+                        is(equalTo(expected.getSubsegments().size())));
                 for (int i = 0; i < expected.getSubsegments().size(); i++) {
-                    verifySubsegments(expected.getSubsegments().get(i), actual.getSubsegments().get(i));
+                    verifySubsegments(
+                            expected.getSubsegments().get(i),
+                            actual.getSubsegments().get(i));
                 }
             }
         }
@@ -129,7 +143,8 @@ public final class TestUtils {
         }
     }
 
-    private static void checkSubsegmentInRandomOrder(List<TestSubsegment> expectedSubs, List<TestSubsegment> actualSubs) {
+    private static void checkSubsegmentInRandomOrder(
+            List<TestSubsegment> expectedSubs, List<TestSubsegment> actualSubs) {
         for (TestSubsegment expectedSub : expectedSubs) {
             boolean found = false;
             for (TestSubsegment actualSub : actualSubs) {
@@ -150,26 +165,25 @@ public final class TestUtils {
         for (Map.Entry<String, Object> entry : expected.entrySet()) {
             String key = entry.getKey();
             assertTrue(actual.containsKey(key), "Annotation " + key + " is missing");
-            assertThat("Annotation value of " + key + " is different",
-                    actual.get(key), is(equalTo(entry.getValue())));
+            assertThat("Annotation value of " + key + " is different", actual.get(key), is(equalTo(entry.getValue())));
         }
     }
 
     private static void verifyMetadata(
-            Map<String, Map<String, Object>> expected,
-            Map<String, Map<String, Object>> actual) {
+            Map<String, Map<String, Object>> expected, Map<String, Map<String, Object>> actual) {
 
-        assertThat("Insufficient number of metadata found",
-                actual.size(), is(greaterThanOrEqualTo(expected.size())));
+        assertThat("Insufficient number of metadata found", actual.size(), is(greaterThanOrEqualTo(expected.size())));
         for (Map.Entry<String, Map<String, Object>> entry : expected.entrySet()) {
             String namespace = entry.getKey();
-            assertTrue(actual.containsKey(namespace),
-                    "Namespace " + namespace + " not found in metadata");
+            assertTrue(actual.containsKey(namespace), "Namespace " + namespace + " not found in metadata");
             for (String key : entry.getValue().keySet()) {
-                assertTrue(actual.get(namespace).containsKey(key),
+                assertTrue(
+                        actual.get(namespace).containsKey(key),
                         "Key " + key + " of namespace + " + namespace + " not found");
-                assertThat("Incorrect value of key " + key + " in namespace " + namespace,
-                        actual.get(namespace).get(key), is(equalTo(entry.getValue().get(key))));
+                assertThat(
+                        "Incorrect value of key " + key + " in namespace " + namespace,
+                        actual.get(namespace).get(key),
+                        is(equalTo(entry.getValue().get(key))));
             }
         }
     }

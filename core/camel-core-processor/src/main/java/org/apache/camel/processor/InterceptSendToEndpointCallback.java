@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
@@ -38,8 +39,13 @@ public class InterceptSendToEndpointCallback implements EndpointStrategy {
     private final String matchURI;
     private final boolean skip;
 
-    public InterceptSendToEndpointCallback(CamelContext camelContext, Processor before, Processor after,
-                                           String matchURI, boolean skip, Predicate onWhen) {
+    public InterceptSendToEndpointCallback(
+            CamelContext camelContext,
+            Processor before,
+            Processor after,
+            String matchURI,
+            boolean skip,
+            Predicate onWhen) {
         this.camelContext = camelContext;
         this.before = before;
         this.after = after;
@@ -86,5 +92,4 @@ public class InterceptSendToEndpointCallback implements EndpointStrategy {
         }
         return match;
     }
-
 }

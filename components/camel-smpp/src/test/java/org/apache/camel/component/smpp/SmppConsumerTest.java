@@ -14,7 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -38,18 +51,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.MockedStatic;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConsumer</code>
@@ -84,10 +85,7 @@ public class SmppConsumerTest {
         when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
 
         // the construction of SmppConsumer will trigger the getCamelContext call
-        consumer = new SmppConsumer(
-                endpoint,
-                configuration,
-                processor) {
+        consumer = new SmppConsumer(endpoint, configuration, processor) {
 
             SMPPSession createSMPPSession() {
                 return session;
@@ -97,8 +95,7 @@ public class SmppConsumerTest {
 
     @Test
     public void doStartShouldStartANewSmppSession() throws Exception {
-        when(endpoint.getConnectionString())
-                .thenReturn("smpp://smppclient@localhost:2775");
+        when(endpoint.getConnectionString()).thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
                 BindType.BIND_RX,
                 "smppclient",
@@ -121,8 +118,7 @@ public class SmppConsumerTest {
 
     @Test
     public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
-        when(endpoint.getConnectionString())
-                .thenReturn("smpp://smppclient@localhost:2775");
+        when(endpoint.getConnectionString()).thenReturn("smpp://smppclient@localhost:2775");
 
         consumer.doStop();
     }
@@ -132,8 +128,7 @@ public class SmppConsumerTest {
         doStartShouldStartANewSmppSession();
         reset(endpoint, processor, session);
 
-        when(endpoint.getConnectionString())
-                .thenReturn("smpp://smppclient@localhost:2775");
+        when(endpoint.getConnectionString()).thenReturn("smpp://smppclient@localhost:2775");
 
         consumer.doStop();
 
@@ -152,16 +147,12 @@ public class SmppConsumerTest {
                 TypeOfNumber.UNKNOWN,
                 NumberingPlanIndicator.UNKNOWN,
                 "(111*|222*|333*)");
-        when(session.connectAndBind("localhost",
-                Integer.valueOf(2775),
-                expectedBindParameter))
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
                 .thenReturn("1");
 
         consumer.doStart();
 
-        verify(session).connectAndBind("localhost",
-                Integer.valueOf(2775),
-                expectedBindParameter);
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter);
     }
 
     @Test
@@ -171,15 +162,16 @@ public class SmppConsumerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = SessionState.class, names = { "UNBOUND", "CLOSED" })
+    @EnumSource(
+            value = SessionState.class,
+            names = {"UNBOUND", "CLOSED"})
     public void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
         try (MockedStatic<SmppUtils> smppUtilsMock = mockStatic(SmppUtils.class)) {
-            SessionStateListener sessionStateListener = (SessionStateListener) ReflectionHelper
-                    .getField(SmppConsumer.class.getDeclaredField("internalSessionStateListener"), consumer);
-            ScheduledExecutorService reconnectService = (ScheduledExecutorService) ReflectionHelper
-                    .getField(SmppConsumer.class.getDeclaredField("reconnectService"), consumer);
-            when(endpoint.getConnectionString())
-                    .thenReturn("smpp://smppclient@localhost:2775");
+            SessionStateListener sessionStateListener = (SessionStateListener) ReflectionHelper.getField(
+                    SmppConsumer.class.getDeclaredField("internalSessionStateListener"), consumer);
+            ScheduledExecutorService reconnectService = (ScheduledExecutorService)
+                    ReflectionHelper.getField(SmppConsumer.class.getDeclaredField("reconnectService"), consumer);
+            when(endpoint.getConnectionString()).thenReturn("smpp://smppclient@localhost:2775");
             BindParameter expectedBindParameter = new BindParameter(
                     BindType.BIND_RX,
                     "smppclient",
@@ -191,9 +183,12 @@ public class SmppConsumerTest {
             when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
                     .thenReturn("1");
             when(endpoint.getCamelContext()).thenReturn(null);
-            smppUtilsMock.when(() -> SmppUtils.newReconnectTask(any(), anyString(), anyLong(), anyLong(), anyInt()))
-                    .thenReturn(new BackgroundTask.BackgroundTaskBuilder().withScheduledExecutor(reconnectService)
-                            .withBudget(Budgets.timeBudget().build()).build());
+            smppUtilsMock
+                    .when(() -> SmppUtils.newReconnectTask(any(), anyString(), anyLong(), anyLong(), anyInt()))
+                    .thenReturn(new BackgroundTask.BackgroundTaskBuilder()
+                            .withScheduledExecutor(reconnectService)
+                            .withBudget(Budgets.timeBudget().build())
+                            .build());
 
             consumer.doStart();
 
@@ -201,5 +196,4 @@ public class SmppConsumerTest {
             verify(session).unbindAndClose();
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.common;
 
 import org.apache.camel.test.AvailablePortFinder;
@@ -34,8 +35,8 @@ public final class CXFTestSupport {
     static final int SSL_PORT = AvailablePortFinder.getNextRandomAvailable();
 
     static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("CXFTestSupport.port1", Integer.toString(PORT1));
         System.setProperty("CXFTestSupport.port2", Integer.toString(PORT2));
         System.setProperty("CXFTestSupport.port3", Integer.toString(PORT3));
@@ -47,8 +48,7 @@ public final class CXFTestSupport {
         System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", "true");
     }
 
-    private CXFTestSupport() {
-    }
+    private CXFTestSupport() {}
 
     public static int getPort(String name) {
         int port = AvailablePortFinder.getNextRandomAvailable();

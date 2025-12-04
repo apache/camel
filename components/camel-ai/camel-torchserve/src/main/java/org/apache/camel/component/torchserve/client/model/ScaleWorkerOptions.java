@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.model;
 
 public class ScaleWorkerOptions {
@@ -40,8 +41,7 @@ public class ScaleWorkerOptions {
      */
     private Integer timeout = null;
 
-    private ScaleWorkerOptions() {
-    }
+    private ScaleWorkerOptions() {}
 
     public static ScaleWorkerOptions empty() {
         return new ScaleWorkerOptions();

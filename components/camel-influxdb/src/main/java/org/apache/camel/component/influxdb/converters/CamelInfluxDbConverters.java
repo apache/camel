@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb.converters;
 
 import java.util.Map;
@@ -26,14 +27,15 @@ import org.influxdb.dto.Point;
 @Converter(generateLoader = true)
 public final class CamelInfluxDbConverters {
 
-    private CamelInfluxDbConverters() {
-    }
+    private CamelInfluxDbConverters() {}
 
     @Converter
     public static Point fromMapToPoint(Map<String, Object> map) {
         Object measurementName = map.get(InfluxDbConstants.MEASUREMENT_NAME);
         if (measurementName == null) {
-            String format = String.format("Unable to find the header for the measurement in: %s", map.keySet().toString());
+            String format = String.format(
+                    "Unable to find the header for the measurement in: %s",
+                    map.keySet().toString());
             throw new CamelInfluxDbException(format);
         }
 
@@ -44,5 +46,4 @@ public final class CamelInfluxDbConverters {
         map.put(InfluxDbConstants.MEASUREMENT_NAME, measurementName);
         return pointBuilder.build();
     }
-
 }

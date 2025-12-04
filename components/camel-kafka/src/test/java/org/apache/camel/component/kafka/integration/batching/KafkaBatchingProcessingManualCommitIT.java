@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration.batching;
 
 import java.util.List;
@@ -44,38 +45,41 @@ public class KafkaBatchingProcessingManualCommitIT extends BatchingProcessingITS
     protected RouteBuilder createRouteBuilder() {
         // allowManualCommit=true&autoOffsetReset=earliest
         String from = "kafka:" + TOPIC
-                      + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true&allowManualCommit=true"
-                      + "&maxPollRecords=10&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
+                + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true&allowManualCommit=true"
+                + "&maxPollRecords=10&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
 
         return new RouteBuilder() {
 
             @Override
             public void configure() {
-                from(from).routeId("batching").process(e -> {
-                    // The received records are stored as exchanges in a list. This gets the list of those exchanges
-                    final List<?> exchanges = e.getMessage().getBody(List.class);
+                from(from)
+                        .routeId("batching")
+                        .process(e -> {
+                            // The received records are stored as exchanges in a list. This gets the list of those
+                            // exchanges
+                            final List<?> exchanges = e.getMessage().getBody(List.class);
 
-                    // Ensure we are actually receiving what we are asking for
-                    if (exchanges == null || exchanges.isEmpty()) {
-                        return;
-                    }
+                            // Ensure we are actually receiving what we are asking for
+                            if (exchanges == null || exchanges.isEmpty()) {
+                                return;
+                            }
 
-                    /*
-                    Every exchange in that list should contain a reference to the manual commit object. We use the reference
-                    for the last exchange in the list to commit the whole batch
-                     */
-                    final Object tmp = exchanges.get(exchanges.size() - 1);
-                    if (tmp instanceof Exchange exchange) {
-                        KafkaManualCommit manual
-                                = exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-                        LOG.debug("Performing manual commit");
-                        manual.commit();
-                        LOG.debug("Done performing manual commit");
-                    } else {
-                        invalidExchangeFormat = true;
-                    }
-
-                }).to(KafkaTestUtil.MOCK_RESULT);
+                            /*
+                            Every exchange in that list should contain a reference to the manual commit object. We use the reference
+                            for the last exchange in the list to commit the whole batch
+                             */
+                            final Object tmp = exchanges.get(exchanges.size() - 1);
+                            if (tmp instanceof Exchange exchange) {
+                                KafkaManualCommit manual = exchange.getMessage()
+                                        .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                                LOG.debug("Performing manual commit");
+                                manual.commit();
+                                LOG.debug("Done performing manual commit");
+                            } else {
+                                invalidExchangeFormat = true;
+                            }
+                        })
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
@@ -86,5 +90,4 @@ public class KafkaBatchingProcessingManualCommitIT extends BatchingProcessingITS
 
         Assertions.assertFalse(invalidExchangeFormat, "The exchange list should be composed of exchanges");
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.oauth;
+
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_SECRET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.undertow.Undertow;
 import org.apache.camel.CamelContext;
@@ -29,13 +37,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_SECRET;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OAuthClientCredentialsServletTest extends AbstractOAuthClientCredentialsTest {
 
@@ -95,9 +96,7 @@ public class OAuthClientCredentialsServletTest extends AbstractOAuthClientCreden
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("servlet:/plain")
-                        .routeId("plain")
-                        .setBody(simple("${body} - No auth"));
+                from("servlet:/plain").routeId("plain").setBody(simple("${body} - No auth"));
                 from("servlet:/creds")
                         .routeId("creds")
                         // Obtain an Authorization Token

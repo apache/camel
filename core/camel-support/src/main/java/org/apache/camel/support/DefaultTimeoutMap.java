@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static java.util.Comparator.comparing;
+import static org.apache.camel.TimeoutMap.Listener.Type.Evict;
+import static org.apache.camel.TimeoutMap.Listener.Type.Put;
+import static org.apache.camel.TimeoutMap.Listener.Type.Remove;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +38,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Comparator.comparing;
-import static org.apache.camel.TimeoutMap.Listener.Type.Evict;
-import static org.apache.camel.TimeoutMap.Listener.Type.Put;
-import static org.apache.camel.TimeoutMap.Listener.Type.Remove;
 
 /**
  * Default implementation of the {@link TimeoutMap}.
@@ -121,7 +122,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         lock.lock();
         try {
             updateExpireTime(entry);
-            //Just make sure we don't override the old entry
+            // Just make sure we don't override the old entry
             result = map.putIfAbsent(key, entry);
             return unwrap(result);
         } finally {
@@ -288,5 +289,4 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         // clear map if we stop
         map.clear();
     }
-
 }

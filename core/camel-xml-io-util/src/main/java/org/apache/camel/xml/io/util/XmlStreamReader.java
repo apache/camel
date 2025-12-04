@@ -15,23 +15,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2004 Sun Microsystems, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
 package org.apache.camel.xml.io.util;
 
 import java.io.BufferedInputStream;
@@ -79,12 +62,12 @@ public class XmlStreamReader extends Reader {
     private static final String UTF_16 = "UTF-16";
     private static final String CP1047 = "CP1047";
     private static final Pattern CHARSET_PATTERN = Pattern.compile("charset=([.[^; ]]*)");
-    private static final Pattern ENCODING_PATTERN
-            = Pattern.compile("<\\?xml.*encoding[\\s]*=[\\s]*(\".[^\"]*\"|'.[^']*')", Pattern.MULTILINE);
-    private static final MessageFormat RAW_EX_1
-            = new MessageFormat("Invalid encoding, BOM [{0}] XML guess [{1}] XML prolog [{2}] encoding mismatch");
-    private static final MessageFormat RAW_EX_2
-            = new MessageFormat("Invalid encoding, BOM [{0}] XML guess [{1}] XML prolog [{2}] unknown BOM");
+    private static final Pattern ENCODING_PATTERN =
+            Pattern.compile("<\\?xml.*encoding[\\s]*=[\\s]*(\".[^\"]*\"|'.[^']*')", Pattern.MULTILINE);
+    private static final MessageFormat RAW_EX_1 =
+            new MessageFormat("Invalid encoding, BOM [{0}] XML guess [{1}] XML prolog [{2}] encoding mismatch");
+    private static final MessageFormat RAW_EX_2 =
+            new MessageFormat("Invalid encoding, BOM [{0}] XML guess [{1}] XML prolog [{2}] unknown BOM");
     private static final MessageFormat HTTP_EX_1 = new MessageFormat(
             "Invalid encoding, CT-MIME [{0}] CT-Enc [{1}] BOM [{2}] XML guess [{3}] XML prolog [{4}], BOM must be NULL");
     private static final MessageFormat HTTP_EX_2 = new MessageFormat(
@@ -155,8 +138,8 @@ public class XmlStreamReader extends Reader {
      * @throws IOException              thrown if there is a problem reading the stream.
      * @throws XmlStreamReaderException thrown if the charset encoding could not be determined according to the specs.
      */
-    public XmlStreamReader(final InputStream is, final boolean lenient, final String defaultEncoding) throws IOException,
-                                                                                                      XmlStreamReaderException {
+    public XmlStreamReader(final InputStream is, final boolean lenient, final String defaultEncoding)
+            throws IOException, XmlStreamReaderException {
         if (defaultEncoding == null) {
             this.defaultEncoding = staticDefaultEncoding;
         } else {
@@ -346,8 +329,9 @@ public class XmlStreamReader extends Reader {
      * @throws IOException              thrown if there is a problem reading the file.
      * @throws XmlStreamReaderException thrown if the charset encoding could not be determined according to the specs.
      */
-    public XmlStreamReader(final InputStream is, final String httpContentType, final boolean lenient,
-                           final String defaultEncoding) throws IOException, XmlStreamReaderException {
+    public XmlStreamReader(
+            final InputStream is, final String httpContentType, final boolean lenient, final String defaultEncoding)
+            throws IOException, XmlStreamReaderException {
         if (defaultEncoding == null) {
             this.defaultEncoding = staticDefaultEncoding;
         } else {
@@ -391,8 +375,8 @@ public class XmlStreamReader extends Reader {
      * @throws IOException              thrown if there is a problem reading the file.
      * @throws XmlStreamReaderException thrown if the charset encoding could not be determined according to the specs.
      */
-    public XmlStreamReader(final InputStream is, final String httpContentType, final boolean lenient) throws IOException,
-                                                                                                      XmlStreamReaderException {
+    public XmlStreamReader(final InputStream is, final String httpContentType, final boolean lenient)
+            throws IOException, XmlStreamReaderException {
         this(is, httpContentType, lenient, null);
     }
 
@@ -488,14 +472,16 @@ public class XmlStreamReader extends Reader {
         prepareReader(pis, calculatedEncoding);
     }
 
-    private void doHttpStream(final InputStream is, final String httpContentType, final boolean lenient) throws IOException {
+    private void doHttpStream(final InputStream is, final String httpContentType, final boolean lenient)
+            throws IOException {
         final BufferedInputStream pis = new BufferedInputStream(is, BUFFER_SIZE);
         final String cTMime = getContentTypeMime(httpContentType);
         final String cTEnc = getContentTypeEncoding(httpContentType);
         final String bomEnc = getBOMEncoding(pis);
         final String xmlGuessEnc = getXMLGuessEncoding(pis);
         final String xmlEnc = getXmlProlog(pis, xmlGuessEnc);
-        final String calculatedHttpEncoding = calculateHttpEncoding(cTMime, cTEnc, bomEnc, xmlGuessEnc, xmlEnc, pis, lenient);
+        final String calculatedHttpEncoding =
+                calculateHttpEncoding(cTMime, cTEnc, bomEnc, xmlGuessEnc, xmlEnc, pis, lenient);
         prepareReader(pis, calculatedHttpEncoding);
     }
 
@@ -524,25 +510,25 @@ public class XmlStreamReader extends Reader {
         } else if (bomEnc.equals(UTF_8)) {
             if (xmlGuessEnc != null && !xmlGuessEnc.equals(UTF_8)) {
                 throw new XmlStreamReaderException(
-                        RAW_EX_1.format(new Object[] { bomEnc, xmlGuessEnc, xmlEnc }), bomEnc, xmlGuessEnc, xmlEnc, is);
+                        RAW_EX_1.format(new Object[] {bomEnc, xmlGuessEnc, xmlEnc}), bomEnc, xmlGuessEnc, xmlEnc, is);
             }
             if (xmlEnc != null && !xmlEnc.equals(UTF_8)) {
                 throw new XmlStreamReaderException(
-                        RAW_EX_1.format(new Object[] { bomEnc, xmlGuessEnc, xmlEnc }), bomEnc, xmlGuessEnc, xmlEnc, is);
+                        RAW_EX_1.format(new Object[] {bomEnc, xmlGuessEnc, xmlEnc}), bomEnc, xmlGuessEnc, xmlEnc, is);
             }
             retEncoding = UTF_8;
         } else if (bomEnc.equals(UTF_16BE) || bomEnc.equals(UTF_16LE)) {
             if (xmlGuessEnc != null && !xmlGuessEnc.equals(bomEnc)) {
-                throw new IOException(RAW_EX_1.format(new Object[] { bomEnc, xmlGuessEnc, xmlEnc }));
+                throw new IOException(RAW_EX_1.format(new Object[] {bomEnc, xmlGuessEnc, xmlEnc}));
             }
             if (xmlEnc != null && !xmlEnc.equals(UTF_16) && !xmlEnc.equals(bomEnc)) {
                 throw new XmlStreamReaderException(
-                        RAW_EX_1.format(new Object[] { bomEnc, xmlGuessEnc, xmlEnc }), bomEnc, xmlGuessEnc, xmlEnc, is);
+                        RAW_EX_1.format(new Object[] {bomEnc, xmlGuessEnc, xmlEnc}), bomEnc, xmlGuessEnc, xmlEnc, is);
             }
             retEncoding = bomEnc;
         } else {
             throw new XmlStreamReaderException(
-                    RAW_EX_2.format(new Object[] { bomEnc, xmlGuessEnc, xmlEnc }), bomEnc, xmlGuessEnc, xmlEnc, is);
+                    RAW_EX_2.format(new Object[] {bomEnc, xmlGuessEnc, xmlEnc}), bomEnc, xmlGuessEnc, xmlEnc, is);
         }
         return retEncoding;
     }
@@ -550,7 +536,8 @@ public class XmlStreamReader extends Reader {
     private void setRequestHeader(final URLConnection conn, final Map<String, String> requestHeaders) {
         final Package pckg = this.getClass().getPackage();
         if (pckg.getImplementationTitle() != null && pckg.getImplementationVersion() != null) {
-            conn.setRequestProperty("User-Agent", pckg.getImplementationTitle() + "/" + pckg.getImplementationVersion());
+            conn.setRequestProperty(
+                    "User-Agent", pckg.getImplementationTitle() + "/" + pckg.getImplementationVersion());
         } else {
             conn.setRequestProperty("User-Agent", "ROME");
         }
@@ -563,7 +550,11 @@ public class XmlStreamReader extends Reader {
 
     // InputStream is passed for XmlStreamReaderException creation only
     private String calculateHttpEncoding(
-            final String cTMime, final String cTEnc, final String bomEnc, final String xmlGuessEnc, final String xmlEnc,
+            final String cTMime,
+            final String cTEnc,
+            final String bomEnc,
+            final String xmlGuessEnc,
+            final String xmlEnc,
             final InputStream is,
             final boolean lenient)
             throws IOException {
@@ -586,15 +577,24 @@ public class XmlStreamReader extends Reader {
                     }
                 } else if (bomEnc != null && (cTEnc.equals(UTF_16BE) || cTEnc.equals(UTF_16LE))) {
                     throw new XmlStreamReaderException(
-                            HTTP_EX_1.format(new Object[] { cTMime, cTEnc, bomEnc, xmlGuessEnc, xmlEnc }), cTMime, cTEnc,
-                            bomEnc, xmlGuessEnc, xmlEnc, is);
+                            HTTP_EX_1.format(new Object[] {cTMime, cTEnc, bomEnc, xmlGuessEnc, xmlEnc}),
+                            cTMime,
+                            cTEnc,
+                            bomEnc,
+                            xmlGuessEnc,
+                            xmlEnc,
+                            is);
                 } else if (cTEnc.equals(UTF_16)) {
                     if (bomEnc != null && bomEnc.startsWith(UTF_16)) {
                         retEncoding = bomEnc;
                     } else {
                         throw new XmlStreamReaderException(
-                                HTTP_EX_2.format(new Object[] { cTMime, cTEnc, bomEnc, xmlGuessEnc, xmlEnc }), cTMime, cTEnc,
-                                bomEnc, xmlGuessEnc, xmlEnc,
+                                HTTP_EX_2.format(new Object[] {cTMime, cTEnc, bomEnc, xmlGuessEnc, xmlEnc}),
+                                cTMime,
+                                cTEnc,
+                                bomEnc,
+                                xmlGuessEnc,
+                                xmlEnc,
                                 is);
                     }
                 } else {
@@ -602,8 +602,13 @@ public class XmlStreamReader extends Reader {
                 }
             } else {
                 throw new XmlStreamReaderException(
-                        HTTP_EX_3.format(new Object[] { cTMime, cTEnc, bomEnc, xmlGuessEnc, xmlEnc }), cTMime, cTEnc, bomEnc,
-                        xmlGuessEnc, xmlEnc, is);
+                        HTTP_EX_3.format(new Object[] {cTMime, cTEnc, bomEnc, xmlGuessEnc, xmlEnc}),
+                        cTMime,
+                        cTEnc,
+                        bomEnc,
+                        xmlGuessEnc,
+                        xmlEnc,
+                        is);
             }
         }
         return retEncoding;
@@ -639,8 +644,9 @@ public class XmlStreamReader extends Reader {
                     encoding = encoding.toUpperCase(Locale.ENGLISH);
                 }
             }
-            if (encoding != null && (encoding.startsWith("\"") && encoding.endsWith("\"")
-                    || encoding.startsWith("'") && encoding.endsWith("'"))) {
+            if (encoding != null
+                    && (encoding.startsWith("\"") && encoding.endsWith("\"")
+                            || encoding.startsWith("'") && encoding.endsWith("'"))) {
                 encoding = encoding.substring(1, encoding.length() - 1);
             }
         }
@@ -739,15 +745,18 @@ public class XmlStreamReader extends Reader {
 
     // indicates if the MIME type belongs to the APPLICATION XML family
     private static boolean isAppXml(final String mime) {
-        return mime != null && (mime.equals("application/xml") || mime.equals("application/xml-dtd")
-                || mime.equals("application/xml-external-parsed-entity")
-                || mime.startsWith("application/") && mime.endsWith("+xml"));
+        return mime != null
+                && (mime.equals("application/xml")
+                        || mime.equals("application/xml-dtd")
+                        || mime.equals("application/xml-external-parsed-entity")
+                        || mime.startsWith("application/") && mime.endsWith("+xml"));
     }
 
     // indicates if the MIME type belongs to the TEXT XML family
     private static boolean isTextXml(final String mime) {
-        return mime != null && (mime.equals("text/xml") || mime.equals("text/xml-external-parsed-entity")
-                || mime.startsWith("text/") && mime.endsWith("+xml"));
+        return mime != null
+                && (mime.equals("text/xml")
+                        || mime.equals("text/xml-external-parsed-entity")
+                        || mime.startsWith("text/") && mime.endsWith("+xml"));
     }
-
 }

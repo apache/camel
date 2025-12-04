@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpSpanDecoratorTest {
 
@@ -45,8 +46,7 @@ public class HttpSpanDecoratorTest {
         Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class))
                 .thenReturn("http://localhost:8080/endpoint?httpMethod=POST");
 
-        assertEquals(AbstractHttpSpanDecorator.POST_METHOD,
-                decorator.getHttpMethod(exchange, endpoint));
+        assertEquals(AbstractHttpSpanDecorator.POST_METHOD, decorator.getHttpMethod(exchange, endpoint));
     }
 
     @Test
@@ -61,7 +61,6 @@ public class HttpSpanDecoratorTest {
         Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class))
                 .thenReturn("http://localhost:8080/endpoint?httpMethod=POST");
 
-        assertEquals(AbstractHttpSpanDecorator.POST_METHOD,
-                decorator.getHttpMethod(exchange, endpoint));
+        assertEquals(AbstractHttpSpanDecorator.POST_METHOD, decorator.getHttpMethod(exchange, endpoint));
     }
 }

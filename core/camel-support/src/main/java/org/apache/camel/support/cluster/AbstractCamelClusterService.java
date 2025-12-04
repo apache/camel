@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cluster;
 
 import java.util.Collection;
@@ -86,13 +87,11 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
 
-        LockHelper.doWithWriteLock(
-                lock,
-                () -> {
-                    for (ViewHolder<T> holder : views.values()) {
-                        holder.get().setCamelContext(camelContext);
-                    }
-                });
+        LockHelper.doWithWriteLock(lock, () -> {
+            for (ViewHolder<T> holder : views.values()) {
+                holder.get().setCamelContext(camelContext);
+            }
+        });
     }
 
     @Override
@@ -116,118 +115,102 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
 
     @Override
     protected void doStart() throws Exception {
-        LockHelper.doWithReadLockT(
-                lock,
-                () -> {
-                    for (ViewHolder<T> holder : views.values()) {
-                        holder.get().start();
-                    }
-                });
+        LockHelper.doWithReadLockT(lock, () -> {
+            for (ViewHolder<T> holder : views.values()) {
+                holder.get().start();
+            }
+        });
     }
 
     @Override
     protected void doStop() throws Exception {
-        LockHelper.doWithReadLockT(
-                lock,
-                () -> {
-                    for (ViewHolder<T> holder : views.values()) {
-                        holder.get().stop();
-                    }
-                });
+        LockHelper.doWithReadLockT(lock, () -> {
+            for (ViewHolder<T> holder : views.values()) {
+                holder.get().stop();
+            }
+        });
     }
 
     @Override
     public CamelClusterView getView(String namespace) throws Exception {
-        return LockHelper.callWithWriteLock(
-                lock,
-                () -> {
-                    ViewHolder<T> holder = views.get(namespace);
+        return LockHelper.callWithWriteLock(lock, () -> {
+            ViewHolder<T> holder = views.get(namespace);
 
-                    if (holder == null) {
-                        T view = createView(namespace);
-                        view.setCamelContext(this.camelContext);
+            if (holder == null) {
+                T view = createView(namespace);
+                view.setCamelContext(this.camelContext);
 
-                        holder = new ViewHolder<>(view);
+                holder = new ViewHolder<>(view);
 
-                        views.put(namespace, holder);
-                    }
+                views.put(namespace, holder);
+            }
 
-                    // Add reference and eventually start the route.
-                    return holder.retain();
-                });
+            // Add reference and eventually start the route.
+            return holder.retain();
+        });
     }
 
     @Override
     public void releaseView(CamelClusterView view) throws Exception {
-        LockHelper.doWithWriteLock(
-                lock,
-                () -> {
-                    ViewHolder<T> holder = views.get(view.getNamespace());
+        LockHelper.doWithWriteLock(lock, () -> {
+            ViewHolder<T> holder = views.get(view.getNamespace());
 
-                    if (holder != null) {
-                        holder.release();
-                    }
-                });
+            if (holder != null) {
+                holder.release();
+            }
+        });
     }
 
     @Override
     public Collection<String> getNamespaces() {
-        return LockHelper.supplyWithReadLock(
-                lock,
-                () -> {
-                    // copy the key set so it is not modifiable and thread safe
-                    // thus a little inefficient.
-                    return new HashSet<>(views.keySet());
-                });
+        return LockHelper.supplyWithReadLock(lock, () -> {
+            // copy the key set so it is not modifiable and thread safe
+            // thus a little inefficient.
+            return new HashSet<>(views.keySet());
+        });
     }
 
     @Override
     public void startView(String namespace) throws Exception {
-        LockHelper.doWithWriteLockT(
-                lock,
-                () -> {
-                    ViewHolder<T> holder = views.get(namespace);
+        LockHelper.doWithWriteLockT(lock, () -> {
+            ViewHolder<T> holder = views.get(namespace);
 
-                    if (holder != null) {
-                        LOG.info("Force start of view {}", namespace);
-                        holder.startView();
-                    } else {
-                        LOG.warn("Error forcing start of view {}: it does not exist", namespace);
-                    }
-                });
+            if (holder != null) {
+                LOG.info("Force start of view {}", namespace);
+                holder.startView();
+            } else {
+                LOG.warn("Error forcing start of view {}: it does not exist", namespace);
+            }
+        });
     }
 
     @Override
     public void stopView(String namespace) throws Exception {
-        LockHelper.doWithWriteLockT(
-                lock,
-                () -> {
-                    ViewHolder<T> holder = views.get(namespace);
+        LockHelper.doWithWriteLockT(lock, () -> {
+            ViewHolder<T> holder = views.get(namespace);
 
-                    if (holder != null) {
-                        LOG.info("Force stop of view {}", namespace);
-                        holder.stopView();
-                    } else {
-                        LOG.warn("Error forcing stop of view {}: it does not exist", namespace);
-                    }
-                });
+            if (holder != null) {
+                LOG.info("Force stop of view {}", namespace);
+                holder.stopView();
+            } else {
+                LOG.warn("Error forcing stop of view {}: it does not exist", namespace);
+            }
+        });
     }
 
     @Override
     public boolean isLeader(String namespace) {
-        return LockHelper.supplyWithReadLock(
-                lock,
-                () -> {
-                    ViewHolder<T> holder = views.get(namespace);
-                    if (holder != null) {
-                        CamelClusterMember member = holder.get().getLocalMember();
-                        if (member != null) {
-                            return member.isLeader();
-                        }
-                    }
+        return LockHelper.supplyWithReadLock(lock, () -> {
+            ViewHolder<T> holder = views.get(namespace);
+            if (holder != null) {
+                CamelClusterMember member = holder.get().getLocalMember();
+                if (member != null) {
+                    return member.isLeader();
+                }
+            }
 
-                    return false;
-                });
+            return false;
+        });
     }
 
     // **********************************
@@ -286,7 +269,8 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
                 LOG.debug("Start view {}", view.getNamespace());
                 view.start();
             } else {
-                LOG.debug("Can't start view {} as cluster service is not running, view will be started on service start-up",
+                LOG.debug(
+                        "Can't start view {} as cluster service is not running, view will be started on service start-up",
                         view.getNamespace());
             }
         }

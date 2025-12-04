@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks.converter;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Map;
 
@@ -24,9 +28,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smooks.io.source.JavaSourceWithoutEventStream;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class SourceConverterTest {
 
@@ -41,7 +42,8 @@ public class SourceConverterTest {
     @Test
     public void convertStringToJavaSourceWithoutEventStream() {
         final String payload = "dummyPayload";
-        final JavaSourceWithoutEventStream javaSource = typeConverter.convertTo(JavaSourceWithoutEventStream.class, payload);
+        final JavaSourceWithoutEventStream javaSource =
+                typeConverter.convertTo(JavaSourceWithoutEventStream.class, payload);
         final Map<String, Object> beans = javaSource.getBeans();
         final String actualPayload = (String) beans.get("string");
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PutItemCommandTest {
 
@@ -53,7 +54,11 @@ public class PutItemCommandTest {
         exchange.getIn().setHeader(Ddb2Constants.ITEM, attributeMap);
 
         Map<String, ExpectedAttributeValue> expectedAttributeValueMap = new HashMap<>();
-        expectedAttributeValueMap.put("name", ExpectedAttributeValue.builder().attributeValueList(attributeValue).build());
+        expectedAttributeValueMap.put(
+                "name",
+                ExpectedAttributeValue.builder()
+                        .attributeValueList(attributeValue)
+                        .build());
         exchange.getIn().setHeader(Ddb2Constants.UPDATE_CONDITION, expectedAttributeValueMap);
 
         command.execute();
@@ -61,7 +66,8 @@ public class PutItemCommandTest {
         assertEquals("DOMAIN1", ddbClient.putItemRequest.tableName());
         assertEquals(attributeMap, ddbClient.putItemRequest.item());
         assertEquals(expectedAttributeValueMap, ddbClient.putItemRequest.expected());
-        assertEquals(AttributeValue.builder().s("attrValue").build(),
+        assertEquals(
+                AttributeValue.builder().s("attrValue").build(),
                 exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

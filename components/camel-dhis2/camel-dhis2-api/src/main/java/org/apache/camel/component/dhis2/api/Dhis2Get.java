@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2.api;
 
 import java.io.InputStream;
@@ -33,7 +34,10 @@ public class Dhis2Get {
     }
 
     public InputStream resource(
-            String path, String fields, List<String> filter, RootJunctionEnum rootJunction,
+            String path,
+            String fields,
+            List<String> filter,
+            RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
         GetOperation getOperation = newGetOperation(path, fields, filter, rootJunction, queryParams);
 
@@ -41,7 +45,10 @@ public class Dhis2Get {
     }
 
     protected GetOperation newGetOperation(
-            String path, String fields, List<String> filters, RootJunctionEnum rootJunction,
+            String path,
+            String fields,
+            List<String> filters,
+            RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
         GetOperation getOperation = dhis2Client.get(path);
         if (fields != null) {
@@ -78,7 +85,11 @@ public class Dhis2Get {
     }
 
     public Iterator<Dhis2Resource> collection(
-            String path, String arrayName, Boolean paging, String fields, List<String> filter,
+            String path,
+            String arrayName,
+            Boolean paging,
+            String fields,
+            List<String> filter,
             RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
         GetOperation getOperation = newGetOperation(path, fields, filter, rootJunction, queryParams);
@@ -92,5 +103,4 @@ public class Dhis2Get {
 
         return iteratorDhis2Response.returnAs(Dhis2Resource.class, arrayName).iterator();
     }
-
 }

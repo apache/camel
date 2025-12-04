@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FileNotFoundException;
 
@@ -22,8 +25,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 class SourceHelperTest {
 

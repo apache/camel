@@ -38,7 +38,8 @@ class ConfigListTest extends BaseConfigTest {
 
     @Test
     public void shouldListUserConfig() throws Exception {
-        UserConfigHelper.createUserConfig("""
+        UserConfigHelper.createUserConfig(
+                """
                 camel-version=latest
                 kamelets-version=greatest
                 foo=bar
@@ -57,10 +58,12 @@ class ConfigListTest extends BaseConfigTest {
 
     @Test
     public void shouldListLocalUserConfig() throws Exception {
-        UserConfigHelper.createUserConfig("""
+        UserConfigHelper.createUserConfig(
+                """
                 camel-version=local
                 kamelets-version=local
-                """, true);
+                """,
+                true);
 
         ConfigList command = new ConfigList(new CamelJBangMain().withPrinter(printer));
         command.global = false;

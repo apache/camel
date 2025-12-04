@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.util.Arrays;
@@ -32,8 +33,13 @@ public final class OutgoingStickerMessage extends OutgoingMessage {
 
     private String filenameWithExtension;
 
-    private OutgoingStickerMessage(String sticker, byte[] stickerImage, String filenameWithExtension,
-                                   String chatId, Boolean disableNotification, Long replyToMessageId) {
+    private OutgoingStickerMessage(
+            String sticker,
+            byte[] stickerImage,
+            String filenameWithExtension,
+            String chatId,
+            Boolean disableNotification,
+            Long replyToMessageId) {
         this.sticker = sticker;
         this.stickerImage = stickerImage;
         this.filenameWithExtension = filenameWithExtension;
@@ -53,8 +59,11 @@ public final class OutgoingStickerMessage extends OutgoingMessage {
      * @return                       Sticker message.
      */
     public static OutgoingStickerMessage createWithImage(
-            byte[] image, String filenameWithExtension,
-            String chatId, Boolean disableNotification, Long replyToMessageId) {
+            byte[] image,
+            String filenameWithExtension,
+            String chatId,
+            Boolean disableNotification,
+            Long replyToMessageId) {
         Objects.requireNonNull(image);
         Objects.requireNonNull(filenameWithExtension);
         return new OutgoingStickerMessage(
@@ -87,8 +96,7 @@ public final class OutgoingStickerMessage extends OutgoingMessage {
      * @return                     Sticker message.
      */
     public static OutgoingStickerMessage createWithFileId(
-            String fileId, String chatId, Boolean disableNotification,
-            Long replyToMessageId) {
+            String fileId, String chatId, Boolean disableNotification, Long replyToMessageId) {
         Objects.requireNonNull(fileId);
         return new OutgoingStickerMessage(fileId, null, null, chatId, disableNotification, replyToMessageId);
     }
@@ -108,12 +116,12 @@ public final class OutgoingStickerMessage extends OutgoingMessage {
     @Override
     public String toString() {
         return "OutgoingStickerMessage{"
-               + "sticker='" + sticker + '\''
-               + ", stickerImage=" + Arrays.toString(stickerImage)
-               + ", filenameWithExtension='" + filenameWithExtension + '\''
-               + ", chatId='" + chatId + '\''
-               + ", disableNotification=" + disableNotification
-               + ", replyToMessageId=" + replyToMessageId
-               + '}';
+                + "sticker='" + sticker + '\''
+                + ", stickerImage=" + Arrays.toString(stickerImage)
+                + ", filenameWithExtension='" + filenameWithExtension + '\''
+                + ", chatId='" + chatId + '\''
+                + ", disableNotification=" + disableNotification
+                + ", replyToMessageId=" + replyToMessageId
+                + '}';
     }
 }

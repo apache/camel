@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
 
 import java.time.Duration;
@@ -99,7 +100,8 @@ public class QueueExchangeHeaders {
         return getObjectFromHeaders(exchange, QueueConstants.QUEUE_NAME, String.class);
     }
 
-    private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
+    private static <T> T getObjectFromHeaders(
+            final Exchange exchange, final String headerName, final Class<T> classType) {
         return exchange.getIn().getHeader(headerName, classType);
     }
 

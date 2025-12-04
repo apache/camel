@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.concurrent.TimeUnit;
@@ -32,7 +33,6 @@ public interface MainShutdownStrategy {
          * Callback on shutdown
          */
         void onShutdown();
-
     }
 
     /**
@@ -95,5 +95,4 @@ public interface MainShutdownStrategy {
      * is shutdown (extraShutdownTimeout).
      */
     void setExtraShutdownTimeout(int extraShutdownTimeout);
-
 }

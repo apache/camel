@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.functions;
 
 import com.google.cloud.functions.v1.CloudFunctionsServiceClient;
@@ -33,10 +34,14 @@ import org.apache.camel.util.ObjectHelper;
  * Google Functions Endpoint definition represents a function within the GCP and contains configuration to customize the
  * behavior of Producer.
  */
-@UriEndpoint(firstVersion = "3.9.0", scheme = "google-functions", title = "Google Cloud Functions",
-             syntax = "google-functions:functionName", category = {
-                     Category.CLOUD },
-             producerOnly = true, headersClass = GoogleCloudFunctionsConstants.class)
+@UriEndpoint(
+        firstVersion = "3.9.0",
+        scheme = "google-functions",
+        title = "Google Cloud Functions",
+        syntax = "google-functions:functionName",
+        category = {Category.CLOUD},
+        producerOnly = true,
+        headersClass = GoogleCloudFunctionsConstants.class)
 public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -44,8 +49,8 @@ public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint implements End
 
     private CloudFunctionsServiceClient cloudFunctionsClient;
 
-    public GoogleCloudFunctionsEndpoint(String uri, GoogleCloudFunctionsComponent component,
-                                        GoogleCloudFunctionsConfiguration configuration) {
+    public GoogleCloudFunctionsEndpoint(
+            String uri, GoogleCloudFunctionsComponent component, GoogleCloudFunctionsConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -94,10 +99,11 @@ public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint implements End
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(configuration.getFunctionName()) && ObjectHelper.isNotEmpty(
-                ObjectHelper.isNotEmpty(configuration.getProject()) && ObjectHelper.isNotEmpty(configuration.getLocation()))) {
+        if (ObjectHelper.isNotEmpty(configuration.getFunctionName())
+                && ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getProject())
+                        && ObjectHelper.isNotEmpty(configuration.getLocation()))) {
             return getServiceProtocol() + ":" + configuration.getProject() + ":" + configuration.getFunctionName() + ":"
-                   + configuration.getLocation();
+                    + configuration.getLocation();
         }
         return null;
     }

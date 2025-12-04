@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -33,75 +34,96 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     @XmlAttribute
     @Metadata(label = "advanced")
     private String circuitBreaker;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String config;
+
     @XmlAttribute
     @Metadata(defaultValue = "50", javaType = "java.lang.Float")
     private String failureRateThreshold;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String permittedNumberOfCallsInHalfOpenState;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String throwExceptionWhenHalfOpenOrOpenState;
+
     @XmlAttribute
     @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
     private String slidingWindowSize;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "COUNT_BASED", enums = "TIME_BASED,COUNT_BASED")
     private String slidingWindowType;
+
     @XmlAttribute
     @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
     private String minimumNumberOfCalls;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String writableStackTraceEnabled;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer")
     private String waitDurationInOpenState;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String automaticTransitionFromOpenToHalfOpenEnabled;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "100", javaType = "java.lang.Float")
     private String slowCallRateThreshold;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer")
     private String slowCallDurationThreshold;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String bulkheadEnabled;
+
     @XmlAttribute
     @Metadata(defaultValue = "25", javaType = "java.lang.Integer")
     private String bulkheadMaxConcurrentCalls;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "0", javaType = "java.lang.Integer")
     private String bulkheadMaxWaitDuration;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String timeoutEnabled;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String timeoutExecutorService;
+
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.lang.Integer")
     private String timeoutDuration;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String timeoutCancelRunningFuture;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String micrometerEnabled;
+
     @XmlElement(name = "recordException")
     @Metadata(label = "advanced")
     private List<String> recordExceptions = new ArrayList<>();
+
     @XmlElement(name = "ignoreException")
     @Metadata(label = "advanced")
     private List<String> ignoreExceptions = new ArrayList<>();
 
-    public Resilience4jConfigurationCommon() {
-    }
+    public Resilience4jConfigurationCommon() {}
 
     protected Resilience4jConfigurationCommon(Resilience4jConfigurationCommon source) {
         this.circuitBreaker = source.circuitBreaker;

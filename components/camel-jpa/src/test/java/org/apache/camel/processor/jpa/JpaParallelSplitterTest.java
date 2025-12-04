@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.concurrent.Future;
@@ -24,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JpaParallelSplitterTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -41,7 +42,8 @@ public class JpaParallelSplitterTest extends AbstractJpaTest {
 
     private void assertCorrectEmails() {
         List<?> results = entityManager
-                .createQuery("select e from " + SendEmail.class.getName() + " e WHERE e.address = 'something@correct.org'")
+                .createQuery(
+                        "select e from " + SendEmail.class.getName() + " e WHERE e.address = 'something@correct.org'")
                 .getResultList();
         assertEquals(50, results.size());
     }
@@ -61,7 +63,7 @@ public class JpaParallelSplitterTest extends AbstractJpaTest {
                         })
                         .to("jpa://" + SendEmail.class.getName())
                         .end()
-                        //select all
+                        // select all
                         .to("jpa://" + SendEmail.class.getName() + "?query=SELECT e FROM SendEmail e")
                         .split(body())
                         .parallelProcessing()
@@ -71,7 +73,6 @@ public class JpaParallelSplitterTest extends AbstractJpaTest {
                             se.setAddress("something@correct.org");
                         })
                         .to("jpa://" + SendEmail.class.getName());
-
             }
         };
     }

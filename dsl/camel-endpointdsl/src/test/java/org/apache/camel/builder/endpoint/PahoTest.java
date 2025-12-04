@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory;
 import org.apache.camel.component.paho.PahoEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PahoTest extends BaseEndpointDslTest {
 
@@ -39,8 +40,10 @@ public class PahoTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                PahoEndpointBuilderFactory.PahoEndpointBuilder builder
-                        = paho("mytopic").brokerUrl("mybroker:1234").userName("myUser").password("myPassword");
+                PahoEndpointBuilderFactory.PahoEndpointBuilder builder = paho("mytopic")
+                        .brokerUrl("mybroker:1234")
+                        .userName("myUser")
+                        .password("myPassword");
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 PahoEndpoint pe = assertIsInstanceOf(PahoEndpoint.class, endpoint);
@@ -53,5 +56,4 @@ public class PahoTest extends BaseEndpointDslTest {
 
         context.stop();
     }
-
 }

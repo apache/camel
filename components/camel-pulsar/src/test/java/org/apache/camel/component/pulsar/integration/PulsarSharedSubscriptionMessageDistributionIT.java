@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -45,11 +46,13 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
     private static final int NUMBER_OF_CONSUMERS = 1;
     private static final int NUMBER_OF_MESSAGES = 10;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=" + NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
+    @EndpointInject(
+            "pulsar:" + TOPIC_URI + "?numberOfConsumers=" + NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer1-&messageListener=false&numberOfConsumerThreads=2")
     private Endpoint from1;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=" + NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
+    @EndpointInject(
+            "pulsar:" + TOPIC_URI + "?numberOfConsumers=" + NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer2-&messageListener=false&numberOfConsumerThreads=2")
     private Endpoint from2;
 
@@ -66,7 +69,9 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
             Processor processor = new Processor() {
                 @Override
                 public void process(final Exchange exchange) {
-                    LOGGER.info("Processing message {} on Thread {}", exchange.getIn().getHeader("message_id"),
+                    LOGGER.info(
+                            "Processing message {} on Thread {}",
+                            exchange.getIn().getHeader("message_id"),
                             Thread.currentThread());
                     try {
                         Thread.sleep(1000);
@@ -93,11 +98,14 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
     private void registerPulsarBeans(Registry registry) throws PulsarClientException {
         PulsarClient pulsarClient = concurrentPulsarClient();
         registerPulsarBeans(registry, pulsarClient, context);
-
     }
 
     private PulsarClient concurrentPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(5).listenerThreads(5).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(5)
+                .listenerThreads(5)
+                .build();
     }
 
     @Test
@@ -106,8 +114,11 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
         // both should handle messages
         context().getRouteController().stopRoute(ROUTE_2);
 
-        Producer<String> producer
-                = concurrentPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer = concurrentPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(TOPIC_URI)
+                .create();
 
         to1.expectedMinimumMessageCount(1);
         to2.expectedMinimumMessageCount(1);

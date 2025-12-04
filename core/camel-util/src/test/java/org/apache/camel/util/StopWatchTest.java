@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StopWatchTest {
     @Test
@@ -71,5 +72,4 @@ class StopWatchTest {
         assertTrue(taken >= 1000, "Elapsed time should be equal to or greater than 1000 ms but was " + taken);
         assertTrue(taken < 1500, "Elapsed time should be smaller than 1500 ms but was " + taken);
     }
-
 }

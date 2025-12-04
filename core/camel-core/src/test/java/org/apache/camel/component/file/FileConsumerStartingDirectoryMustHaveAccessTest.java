@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -25,9 +29,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTestSupport {
 
@@ -49,16 +50,18 @@ public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTest
 
     @Test
     public void testStartingDirectoryMustHaveAccess() {
-        Endpoint endpoint = context.getEndpoint(
-                fileUri("noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true"));
+        Endpoint endpoint = context.getEndpoint(fileUri(
+                "noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true"));
 
-        Exception e = assertThrows(Exception.class,
+        Exception e = assertThrows(
+                Exception.class,
                 () -> {
                     Consumer c = endpoint.createConsumer(exchange -> {
                         // noop
                     });
                     c.start();
-                }, "Should have thrown an exception");
+                },
+                "Should have thrown an exception");
 
         assertTrue(e.getCause().getMessage().startsWith("Starting directory permission denied"), e.getMessage());
     }

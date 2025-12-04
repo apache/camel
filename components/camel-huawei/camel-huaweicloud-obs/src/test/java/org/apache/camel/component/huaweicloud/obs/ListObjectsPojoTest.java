@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +35,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ListObjectsPojoTest extends CamelTestSupport {
 
     TestConfiguration testConfiguration = new TestConfiguration();
@@ -42,20 +43,18 @@ public class ListObjectsPojoTest extends CamelTestSupport {
     ObsClient mockClient = Mockito.mock(ObsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:list_objects")
-                        .to("hwcloud-obs:listObjects?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&obsClient=#obsClient")
+                        .to("hwcloud-obs:listObjects?" + "serviceKeys=#serviceKeys"
+                                + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&obsClient=#obsClient")
                         .log("List objects successful")
                         .to("mock:list_objects_result");
             }
@@ -74,7 +73,8 @@ public class ListObjectsPojoTest extends CamelTestSupport {
         objects.add(object1);
         objects.add(object2);
         ObjectListing listing = new ObjectListing(objects, null, null, false, null, null, 0, null, null, null);
-        Mockito.when(mockClient.listObjects(Mockito.any(ListObjectsRequest.class))).thenReturn(listing);
+        Mockito.when(mockClient.listObjects(Mockito.any(ListObjectsRequest.class)))
+                .thenReturn(listing);
 
         MockEndpoint mock = getMockEndpoint("mock:list_objects_result");
         mock.expectedMinimumMessageCount(1);

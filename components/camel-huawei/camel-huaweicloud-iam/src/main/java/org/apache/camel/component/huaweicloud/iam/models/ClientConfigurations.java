@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam.models;
 
 /**
@@ -25,8 +26,7 @@ public class ClientConfigurations {
     private String userId;
     private String groupId;
 
-    public ClientConfigurations() {
-    }
+    public ClientConfigurations() {}
 
     public String getOperation() {
         return operation;

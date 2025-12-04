@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.lang.annotation.Annotation;
@@ -31,7 +32,9 @@ public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpression
 
     @Override
     public Expression createExpression(
-            CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
+            CamelContext camelContext,
+            Annotation annotation,
+            LanguageAnnotation languageAnnotation,
             Class<?> expressionReturnType) {
         String beanName = getFromAnnotation(annotation, "ref");
         String method = getFromAnnotation(annotation, "method");
@@ -57,14 +60,14 @@ public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpression
             Method method = annotation.annotationType().getDeclaredMethod(attribute);
             Object value = ObjectHelper.invokeMethod(method, annotation);
             if (value == null) {
-                throw new IllegalArgumentException("Cannot determine the " + attribute + " from the annotation: " + annotation);
+                throw new IllegalArgumentException(
+                        "Cannot determine the " + attribute + " from the annotation: " + annotation);
             }
             return value.toString();
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(
-                    "Cannot determine the " + attribute
-                                               + " of the annotation: " + annotation + " as it does not have a " + attribute
-                                               + "() method");
+            throw new IllegalArgumentException("Cannot determine the " + attribute
+                    + " of the annotation: " + annotation + " as it does not have a " + attribute
+                    + "() method");
         }
     }
 }

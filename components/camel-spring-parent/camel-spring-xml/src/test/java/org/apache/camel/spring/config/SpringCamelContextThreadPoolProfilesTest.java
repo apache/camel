@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -27,9 +31,6 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport {
 
@@ -80,5 +81,4 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
         assertEquals("Abort", tp.getRejectedExecutionHandler().toString());
     }
-
 }

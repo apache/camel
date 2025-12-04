@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -25,9 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.transcribe.model.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Transcribe2ProducerTest extends CamelTestSupport {
 
@@ -51,10 +52,12 @@ public class Transcribe2ProducerTest extends CamelTestSupport {
             }
         });
 
-        StartTranscriptionJobResponse resultGet = (StartTranscriptionJobResponse) exchange.getIn().getBody();
+        StartTranscriptionJobResponse resultGet =
+                (StartTranscriptionJobResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
         assertEquals("test-job", resultGet.transcriptionJob().transcriptionJobName());
-        assertEquals(TranscriptionJobStatus.IN_PROGRESS, resultGet.transcriptionJob().transcriptionJobStatus());
+        assertEquals(
+                TranscriptionJobStatus.IN_PROGRESS, resultGet.transcriptionJob().transcriptionJobStatus());
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -69,10 +72,12 @@ public class Transcribe2ProducerTest extends CamelTestSupport {
             }
         });
 
-        GetTranscriptionJobResponse resultGet = (GetTranscriptionJobResponse) exchange.getIn().getBody();
+        GetTranscriptionJobResponse resultGet =
+                (GetTranscriptionJobResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
         assertEquals("test-job", resultGet.transcriptionJob().transcriptionJobName());
-        assertEquals(TranscriptionJobStatus.COMPLETED, resultGet.transcriptionJob().transcriptionJobStatus());
+        assertEquals(
+                TranscriptionJobStatus.COMPLETED, resultGet.transcriptionJob().transcriptionJobStatus());
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -87,7 +92,8 @@ public class Transcribe2ProducerTest extends CamelTestSupport {
             }
         });
 
-        ListTranscriptionJobsResponse resultGet = (ListTranscriptionJobsResponse) exchange.getIn().getBody();
+        ListTranscriptionJobsResponse resultGet =
+                (ListTranscriptionJobsResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
         assertEquals(1, resultGet.transcriptionJobSummaries().size());
         assertEquals("test-job", resultGet.transcriptionJobSummaries().get(0).transcriptionJobName());
@@ -120,7 +126,8 @@ public class Transcribe2ProducerTest extends CamelTestSupport {
             }
         });
 
-        CreateVocabularyResponse resultGet = (CreateVocabularyResponse) exchange.getIn().getBody();
+        CreateVocabularyResponse resultGet =
+                (CreateVocabularyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
         assertEquals("test-vocabulary", resultGet.vocabularyName());
         assertEquals(VocabularyState.PENDING, resultGet.vocabularyState());
@@ -138,7 +145,8 @@ public class Transcribe2ProducerTest extends CamelTestSupport {
             }
         });
 
-        GetVocabularyResponse resultGet = (GetVocabularyResponse) exchange.getIn().getBody();
+        GetVocabularyResponse resultGet =
+                (GetVocabularyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
         assertEquals("test-vocabulary", resultGet.vocabularyName());
         assertEquals(VocabularyState.READY, resultGet.vocabularyState());
@@ -151,27 +159,33 @@ public class Transcribe2ProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:startTranscriptionJob")
-                        .to("aws2-transcribe://transcribe?operation=startTranscriptionJob&transcribeClient=#amazonTranscribeClient")
+                        .to(
+                                "aws2-transcribe://transcribe?operation=startTranscriptionJob&transcribeClient=#amazonTranscribeClient")
                         .to("mock:result");
 
                 from("direct:getTranscriptionJob")
-                        .to("aws2-transcribe://transcribe?operation=getTranscriptionJob&transcribeClient=#amazonTranscribeClient")
+                        .to(
+                                "aws2-transcribe://transcribe?operation=getTranscriptionJob&transcribeClient=#amazonTranscribeClient")
                         .to("mock:result");
 
                 from("direct:listTranscriptionJobs")
-                        .to("aws2-transcribe://transcribe?operation=listTranscriptionJobs&transcribeClient=#amazonTranscribeClient")
+                        .to(
+                                "aws2-transcribe://transcribe?operation=listTranscriptionJobs&transcribeClient=#amazonTranscribeClient")
                         .to("mock:result");
 
                 from("direct:deleteTranscriptionJob")
-                        .to("aws2-transcribe://transcribe?operation=deleteTranscriptionJob&transcribeClient=#amazonTranscribeClient")
+                        .to(
+                                "aws2-transcribe://transcribe?operation=deleteTranscriptionJob&transcribeClient=#amazonTranscribeClient")
                         .to("mock:result");
 
                 from("direct:createVocabulary")
-                        .to("aws2-transcribe://transcribe?operation=createVocabulary&transcribeClient=#amazonTranscribeClient")
+                        .to(
+                                "aws2-transcribe://transcribe?operation=createVocabulary&transcribeClient=#amazonTranscribeClient")
                         .to("mock:result");
 
                 from("direct:getVocabulary")
-                        .to("aws2-transcribe://transcribe?operation=getVocabulary&transcribeClient=#amazonTranscribeClient")
+                        .to(
+                                "aws2-transcribe://transcribe?operation=getVocabulary&transcribeClient=#amazonTranscribeClient")
                         .to("mock:result");
             }
         };

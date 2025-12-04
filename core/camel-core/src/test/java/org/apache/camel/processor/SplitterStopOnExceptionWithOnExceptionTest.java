@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSupport {
 
@@ -84,9 +85,16 @@ public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
+                onException(Exception.class)
+                        .handled(true)
+                        .to("mock:handled")
+                        .transform(simple("Damn ${exception.message}"));
 
-                from("direct:start").split(body().tokenize(",")).stopOnException().process(new MyProcessor()).to("mock:split");
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .stopOnException()
+                        .process(new MyProcessor())
+                        .to("mock:split");
             }
         };
     }

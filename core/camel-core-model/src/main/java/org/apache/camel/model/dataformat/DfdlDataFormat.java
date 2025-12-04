@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -38,10 +39,14 @@ public class DfdlDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(required = true, description = "The path to the DFDL schema file.")
     private String schemaUri;
+
     @XmlAttribute
-    @Metadata(description = "The root element name of the schema to use. If not specified, the first root element in the schema will be used.",
-              label = "advanced")
+    @Metadata(
+            description =
+                    "The root element name of the schema to use. If not specified, the first root element in the schema will be used.",
+            label = "advanced")
     private String rootElement;
+
     @XmlAttribute
     @Metadata(description = "The root namespace of the schema to use.", label = "advanced")
     private String rootNamespace;

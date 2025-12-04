@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail;
 
 import java.io.IOException;
@@ -39,7 +40,11 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
 
     @Override
     public Gmail makeClient(
-            String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
+            String clientId,
+            String clientSecret,
+            Collection<String> scopes,
+            String applicationName,
+            String refreshToken,
             String accessToken) {
         if (clientId == null || clientSecret == null) {
             throw new IllegalArgumentException("clientId and clientSecret are required to create Gmail client.");
@@ -53,7 +58,9 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
             if (accessToken != null && !accessToken.isEmpty()) {
                 credential.setAccessToken(accessToken);
             }
-            return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
+            return new Gmail.Builder(transport, jsonFactory, credential)
+                    .setApplicationName(applicationName)
+                    .build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Gmail client.", e);
         }
@@ -62,20 +69,28 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     // Authorizes the installed application to access user's protected data.
     private Credential authorize(String clientId, String clientSecret) {
         // authorize
-        return new GoogleCredential.Builder().setJsonFactory(jsonFactory).setTransport(transport)
-                .setClientSecrets(clientId, clientSecret).build();
+        return new GoogleCredential.Builder()
+                .setJsonFactory(jsonFactory)
+                .setTransport(transport)
+                .setClientSecrets(clientId, clientSecret)
+                .build();
     }
 
     @Override
     public Gmail makeClient(
-            CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
+            CamelContext camelContext,
+            String serviceAccountKey,
+            Collection<String> scopes,
+            String applicationName,
             String delegate) {
         if (serviceAccountKey == null) {
             throw new IllegalArgumentException("serviceAccountKey is required to create Gmail client.");
         }
         try {
             Credential credential = authorizeServiceAccount(camelContext, serviceAccountKey, delegate, scopes);
-            return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
+            return new Gmail.Builder(transport, jsonFactory, credential)
+                    .setApplicationName(applicationName)
+                    .build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Gmail client.", e);
         }
@@ -85,8 +100,8 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
             CamelContext camelContext, String serviceAccountKey, String delegate, Collection<String> scopes) {
         // authorize
         try {
-            GoogleCredential cred = GoogleCredential
-                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKey),
+            GoogleCredential cred = GoogleCredential.fromStream(
+                            ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKey),
                             transport,
                             jsonFactory)
                     .createScoped(scopes != null && !scopes.isEmpty() ? scopes : null)

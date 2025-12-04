@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,13 +29,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -44,21 +46,31 @@ public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
         // shared is more slower than exclusive, due it need to use a JMS Message Selector
         // and has a receiveTimeout of 1 sec per default, so it react slower to new messages
 
-        assertEquals("Hello A", template.requestBody(
-                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
-                "A"));
-        assertEquals("Hello B", template.requestBody(
-                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
-                "B"));
-        assertEquals("Hello C", template.requestBody(
-                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
-                "C"));
-        assertEquals("Hello D", template.requestBody(
-                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
-                "D"));
-        assertEquals("Hello E", template.requestBody(
-                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
-                "E"));
+        assertEquals(
+                "Hello A",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                        "A"));
+        assertEquals(
+                "Hello B",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                        "B"));
+        assertEquals(
+                "Hello C",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                        "C"));
+        assertEquals(
+                "Hello D",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                        "D"));
+        assertEquals(
+                "Hello E",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                        "E"));
 
         long delta = watch.taken();
         assertTrue(delta > 2000, "Should be slower than about 2 seconds, was: " + delta);
@@ -70,18 +82,19 @@ public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
      * the 'replyCorrelationProperty' option would instead allow to change that reply listener's selector to
      * '<replyCorrelationProperty>=<correlation id>'
      */
-
     String correlationProperty = "CustomID";
+
     String replyCorrelationProperty = "CustomCorrelationID";
 
     @Test
     public void testCustomCorrelation() throws Exception {
 
         Exchange out = template.request(
-                "activemq:queue:JmsRequestReplySharedReplyToWithCustomCorrelationTest" +
-                                        "?replyTo=JmsRequestReplySharedReplyToWithCustomCorrelationTest.reply" +
-                                        "&correlationProperty=" + correlationProperty +
-                                        "&replyCorrelationProperty=" + replyCorrelationProperty,
+                "activemq:queue:JmsRequestReplySharedReplyToWithCustomCorrelationTest"
+                        + "?replyTo=JmsRequestReplySharedReplyToWithCustomCorrelationTest.reply"
+                        + "&correlationProperty="
+                        + correlationProperty + "&replyCorrelationProperty="
+                        + replyCorrelationProperty,
                 exchange -> {
                     Message in = exchange.getIn();
                     in.setBody("A");
@@ -89,7 +102,9 @@ public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
 
         assertNotNull(out);
         assertNotNull(out.getMessage().getHeader(replyCorrelationProperty));
-        assertEquals(out.getMessage().getHeader(replyCorrelationProperty), out.getMessage().getHeader(correlationProperty));
+        assertEquals(
+                out.getMessage().getHeader(replyCorrelationProperty),
+                out.getMessage().getHeader(correlationProperty));
         assertEquals("Hello A", out.getMessage().getBody());
     }
 
@@ -103,8 +118,7 @@ public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsRequestReplySharedReplyToTest")
-                        .transform(body().prepend("Hello "));
+                from("activemq:queue:JmsRequestReplySharedReplyToTest").transform(body().prepend("Hello "));
 
                 from("activemq:queue:JmsRequestReplySharedReplyToWithCustomCorrelationTest")
                         .transform(body().prepend("Hello "))

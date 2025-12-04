@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pdf;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,11 +44,6 @@ import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class PdfAppendTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
@@ -64,8 +65,8 @@ public class PdfAppendTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody();
                 assertThat(body, instanceOf(ByteArrayOutputStream.class));
                 try {
-                    PDDocument doc = Loader.loadPDF(
-                            new RandomAccessReadBuffer(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())));
+                    PDDocument doc = Loader.loadPDF(new RandomAccessReadBuffer(
+                            new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())));
                     PDFTextStripper pdfTextStripper = new PDFTextStripper();
                     String text = pdfTextStripper.getText(doc);
                     assertEquals(2, doc.getNumberOfPages());
@@ -78,7 +79,6 @@ public class PdfAppendTest extends CamelTestSupport {
             }
         });
         resultEndpoint.assertIsSatisfied();
-
     }
 
     @Test
@@ -100,8 +100,8 @@ public class PdfAppendTest extends CamelTestSupport {
         document.save(output);
 
         // Encryption happens after saving.
-        PDDocument encryptedDocument
-                = Loader.loadPDF(new RandomAccessReadBuffer(new ByteArrayInputStream(output.toByteArray())), userPass);
+        PDDocument encryptedDocument =
+                Loader.loadPDF(new RandomAccessReadBuffer(new ByteArrayInputStream(output.toByteArray())), userPass);
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME, encryptedDocument);
@@ -116,9 +116,10 @@ public class PdfAppendTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody();
                 assertThat(body, instanceOf(ByteArrayOutputStream.class));
                 try {
-                    PDDocument doc
-                            = Loader.loadPDF(new RandomAccessReadBuffer(
-                                    new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())), userPass);
+                    PDDocument doc = Loader.loadPDF(
+                            new RandomAccessReadBuffer(
+                                    new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())),
+                            userPass);
                     PDFTextStripper pdfTextStripper = new PDFTextStripper();
                     String text = pdfTextStripper.getText(doc);
                     assertEquals(2, doc.getNumberOfPages());
@@ -131,7 +132,6 @@ public class PdfAppendTest extends CamelTestSupport {
             }
         });
         resultEndpoint.assertIsSatisfied();
-
     }
 
     @Override
@@ -139,9 +139,7 @@ public class PdfAppendTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("pdf:append")
-                        .to("mock:result");
+                from("direct:start").to("pdf:append").to("mock:result");
             }
         };
     }

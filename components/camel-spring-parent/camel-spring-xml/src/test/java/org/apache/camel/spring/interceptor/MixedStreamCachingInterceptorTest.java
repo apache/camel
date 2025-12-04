@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.io.StringReader;
 
@@ -26,10 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class MixedStreamCachingInterceptorTest extends ContextTestSupport {
 
@@ -44,7 +45,8 @@ public class MixedStreamCachingInterceptorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = a.getExchanges().get(0);
-        StreamCache cache = assertIsInstanceOf(StreamCache.class, exchange.getIn().getBody());
+        StreamCache cache =
+                assertIsInstanceOf(StreamCache.class, exchange.getIn().getBody());
         assertNotNull(cache);
 
         assertNotSame(message, cache);
@@ -61,13 +63,14 @@ public class MixedStreamCachingInterceptorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = b.getExchanges().get(0);
-        StreamSource stream = assertIsInstanceOf(StreamSource.class, exchange.getIn().getBody());
+        StreamSource stream =
+                assertIsInstanceOf(StreamSource.class, exchange.getIn().getBody());
         assertNotNull(stream);
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/interceptor/mixedStreamCachingInterceptorTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/interceptor/mixedStreamCachingInterceptorTest.xml");
     }
-
 }

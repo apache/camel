@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs.real;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.huaweicloud.sdk.frs.v2.model.CompareFaceByBase64Response;
 import org.apache.camel.Exchange;
@@ -26,8 +29,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FaceVerificationWithImageBae64Test extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -35,16 +36,18 @@ public class FaceVerificationWithImageBae64Test extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
+                        .setProperty(
+                                FaceRecognitionProperties.FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("imageBase64")))
-                        .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64,
+                        .setProperty(
+                                FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("anotherImageBase64")))
                         .to("hwcloud-frs:faceVerification?"
-                            + "accessKey=" + testConfiguration.getProperty("accessKey")
-                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                            + "&projectId=" + testConfiguration.getProperty("projectId")
-                            + "&region=" + testConfiguration.getProperty("region")
-                            + "&ignoreSslVerification=true")
+                                + "accessKey=" + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                                + "&projectId=" + testConfiguration.getProperty("projectId")
+                                + "&region=" + testConfiguration.getProperty("region")
+                                + "&ignoreSslVerification=true")
                         .log("perform faceVerification successfully")
                         .to("mock:perform_face_verification_result");
             }
@@ -70,5 +73,4 @@ public class FaceVerificationWithImageBae64Test extends CamelTestSupport {
 
         assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByBase64Response);
     }
-
 }

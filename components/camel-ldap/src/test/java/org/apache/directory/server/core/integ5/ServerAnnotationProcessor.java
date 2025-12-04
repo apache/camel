@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.directory.server.core.integ5;
 
 import java.io.IOException;
@@ -58,8 +59,7 @@ import org.slf4j.LoggerFactory;
 public final class ServerAnnotationProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ServerAnnotationProcessor.class);
 
-    private ServerAnnotationProcessor() {
-    }
+    private ServerAnnotationProcessor() {}
 
     private static void createTransports(LdapServer ldapServer, CreateTransport[] transportBuilders) {
         if (transportBuilders.length != 0) {
@@ -100,7 +100,8 @@ public final class ServerAnnotationProcessor {
      * @return                  The created LdapServer
      * @see                     #createLdapServer(CreateLdapServer, DirectoryService)
      */
-    public static LdapServer instantiateLdapServer(CreateLdapServer createLdapServer, DirectoryService directoryService) {
+    public static LdapServer instantiateLdapServer(
+            CreateLdapServer createLdapServer, DirectoryService directoryService) {
         if (createLdapServer != null) {
             LdapServer ldapServer = new LdapServer();
 
@@ -126,8 +127,8 @@ public final class ServerAnnotationProcessor {
 
             for (Class<?> extOpClass : createLdapServer.extendedOpHandlers()) {
                 try {
-                    ExtendedOperationHandler extOpHandler = (ExtendedOperationHandler) extOpClass
-                            .getDeclaredConstructor().newInstance();
+                    ExtendedOperationHandler extOpHandler = (ExtendedOperationHandler)
+                            extOpClass.getDeclaredConstructor().newInstance();
                     ldapServer.addExtendedOperationHandler(extOpHandler);
                 } catch (Exception e) {
                     throw new RuntimeCamelException(I18n.err(I18n.ERR_690, extOpClass.getName()), e);
@@ -136,25 +137,29 @@ public final class ServerAnnotationProcessor {
 
             for (SaslMechanism saslMech : createLdapServer.saslMechanisms()) {
                 try {
-                    MechanismHandler handler = (MechanismHandler) saslMech.implClass()
-                            .getDeclaredConstructor().newInstance();
+                    MechanismHandler handler = (MechanismHandler)
+                            saslMech.implClass().getDeclaredConstructor().newInstance();
                     ldapServer.addSaslMechanismHandler(saslMech.name(), handler);
                 } catch (Exception e) {
                     throw new RuntimeCamelException(
-                            I18n.err(I18n.ERR_691, saslMech.name(), saslMech.implClass().getName()), e);
+                            I18n.err(
+                                    I18n.ERR_691,
+                                    saslMech.name(),
+                                    saslMech.implClass().getName()),
+                            e);
                 }
             }
 
-            NtlmMechanismHandler ntlmHandler = (NtlmMechanismHandler) ldapServer.getSaslMechanismHandlers().get(
-                    SupportedSaslMechanisms.NTLM);
+            NtlmMechanismHandler ntlmHandler =
+                    (NtlmMechanismHandler) ldapServer.getSaslMechanismHandlers().get(SupportedSaslMechanisms.NTLM);
 
             if (ntlmHandler != null) {
                 Class<?> ntlmProviderClass = createLdapServer.ntlmProvider();
                 // default value is a invalid Object.class
                 if (ntlmProviderClass != null && ntlmProviderClass != Object.class) {
                     try {
-                        ntlmHandler.setNtlmProvider((NtlmProvider) ntlmProviderClass
-                                .getDeclaredConstructor().newInstance());
+                        ntlmHandler.setNtlmProvider((NtlmProvider)
+                                ntlmProviderClass.getDeclaredConstructor().newInstance());
                     } catch (Exception e) {
                         throw new RuntimeCamelException(I18n.err(I18n.ERR_692), e);
                     }
@@ -356,5 +361,4 @@ public final class ServerAnnotationProcessor {
 
         return port;
     }
-
 }

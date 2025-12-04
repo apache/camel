@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.converter.ListOutputConverter;
 import org.springframework.ai.converter.MapOutputConverter;
 import org.springframework.core.convert.support.DefaultConversionService;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test demonstrating Spring AI's Structured Output Converter with Camel.
@@ -146,8 +147,8 @@ public class SpringAiChatStructuredOutputIT extends OllamaTestSupport {
         assertThat(rawResponse).isNotNull().isNotEmpty();
 
         // Get structured output from header as well
-        ActorFilms alsoStructured
-                = exchange.getMessage().getHeader(SpringAiChatConstants.STRUCTURED_OUTPUT, ActorFilms.class);
+        ActorFilms alsoStructured =
+                exchange.getMessage().getHeader(SpringAiChatConstants.STRUCTURED_OUTPUT, ActorFilms.class);
         assertThat(alsoStructured).isNotNull().isEqualTo(structured);
     }
 
@@ -199,8 +200,7 @@ public class SpringAiChatStructuredOutputIT extends OllamaTestSupport {
                 this.getCamelContext().getRegistry().bind("listConverter", listConverter);
 
                 // Simple route for header-based conversion
-                from("direct:chat")
-                        .to("spring-ai-chat:test?chatModel=#chatModel");
+                from("direct:chat").to("spring-ai-chat:test?chatModel=#chatModel");
 
                 // Route with pre-configured bean converter
                 from("direct:bean-output")
@@ -217,18 +217,15 @@ public class SpringAiChatStructuredOutputIT extends OllamaTestSupport {
                 // Routes using endpoint configuration for outputFormat and outputClass
                 from("direct:bean-output-via-config")
                         .to("spring-ai-chat:test?chatModel=#chatModel&outputFormat=BEAN&outputClass="
-                            + ActorFilms.class.getName());
+                                + ActorFilms.class.getName());
 
-                from("direct:map-output-via-config")
-                        .to("spring-ai-chat:test?chatModel=#chatModel&outputFormat=MAP");
+                from("direct:map-output-via-config").to("spring-ai-chat:test?chatModel=#chatModel&outputFormat=MAP");
 
-                from("direct:list-output-via-config")
-                        .to("spring-ai-chat:test?chatModel=#chatModel&outputFormat=LIST");
+                from("direct:list-output-via-config").to("spring-ai-chat:test?chatModel=#chatModel&outputFormat=LIST");
             }
         };
     }
 
-    @JsonPropertyOrder({ "actor", "movies" })
-    public record ActorFilms(String actor, List<String> movies) {
-    }
+    @JsonPropertyOrder({"actor", "movies"})
+    public record ActorFilms(String actor, List<String> movies) {}
 }

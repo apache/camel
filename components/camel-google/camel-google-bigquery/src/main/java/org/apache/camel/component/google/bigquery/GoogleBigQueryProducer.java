@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery;
 
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     private final GoogleBigQueryConfiguration configuration;
     private BigQuery bigquery;
 
-    public GoogleBigQueryProducer(BigQuery bigquery, GoogleBigQueryEndpoint endpoint,
-                                  GoogleBigQueryConfiguration configuration) {
+    public GoogleBigQueryProducer(
+            BigQuery bigquery, GoogleBigQueryEndpoint endpoint, GoogleBigQueryConfiguration configuration) {
         super(endpoint);
         this.bigquery = bigquery;
         this.configuration = configuration;
@@ -89,7 +90,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         int totalProcessed = 0;
 
         for (Exchange ex : exchanges) {
-            String tmpPartitionDecorator = ex.getIn().getHeader(GoogleBigQueryConstants.PARTITION_DECORATOR, "", String.class);
+            String tmpPartitionDecorator =
+                    ex.getIn().getHeader(GoogleBigQueryConstants.PARTITION_DECORATOR, "", String.class);
             String tmpSuffix = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_SUFFIX, "", String.class);
             String tmpTableId = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_ID, tableId, String.class);
 
@@ -99,9 +101,12 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             }
 
             // Ensure all rows of same request goes to same table and suffix
-            if (!tmpPartitionDecorator.equals(partitionDecorator) || !tmpSuffix.equals(suffix) || !tmpTableId.equals(tableId)) {
+            if (!tmpPartitionDecorator.equals(partitionDecorator)
+                    || !tmpSuffix.equals(suffix)
+                    || !tmpTableId.equals(tableId)) {
                 if (!processGroup.isEmpty()) {
-                    totalProcessed += process(tableId, partitionDecorator, suffix, processGroup, exchange.getExchangeId());
+                    totalProcessed +=
+                            process(tableId, partitionDecorator, suffix, processGroup, exchange.getExchangeId());
                 }
                 processGroup.clear();
                 partitionDecorator = tmpPartitionDecorator;
@@ -119,11 +124,11 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         }
     }
 
-    private int process(String tableId, String partitionDecorator, String suffix, List<Exchange> exchanges, String exchangeId)
+    private int process(
+            String tableId, String partitionDecorator, String suffix, List<Exchange> exchanges, String exchangeId)
             throws Exception {
-        String tableIdWithPartition = Strings.isNullOrEmpty(partitionDecorator)
-                ? tableId
-                : (tableId + "$" + partitionDecorator);
+        String tableIdWithPartition =
+                Strings.isNullOrEmpty(partitionDecorator) ? tableId : (tableId + "$" + partitionDecorator);
 
         List<InsertAllRequest.RowToInsert> apiRequestRows = new ArrayList<>();
         for (Exchange ex : exchanges) {
@@ -143,7 +148,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             return 0;
         }
 
-        InsertAllRequest.Builder builder = InsertAllRequest.newBuilder(configuration.getDatasetId(), tableIdWithPartition)
+        InsertAllRequest.Builder builder = InsertAllRequest.newBuilder(
+                        configuration.getDatasetId(), tableIdWithPartition)
                 .setRows(apiRequestRows);
 
         if (ObjectHelper.isNotEmpty(suffix)) {
@@ -153,24 +159,37 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         InsertAllRequest insertAllRequest = builder.build();
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Sending {} messages to bigquery table {}, suffix {}, partition {}",
-                    apiRequestRows.size(), tableId, suffix, partitionDecorator);
+            LOG.trace(
+                    "Sending {} messages to bigquery table {}, suffix {}, partition {}",
+                    apiRequestRows.size(),
+                    tableId,
+                    suffix,
+                    partitionDecorator);
         }
 
         InsertAllResponse apiResponse = bigquery.insertAll(insertAllRequest);
 
-        if (apiResponse.getInsertErrors() != null && !apiResponse.getInsertErrors().isEmpty()) {
+        if (apiResponse.getInsertErrors() != null
+                && !apiResponse.getInsertErrors().isEmpty()) {
             throw new Exception("InsertAll into " + tableId + " failed: " + apiResponse.getInsertErrors());
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Sent {} messages to bigquery table {}, suffix {}, partition {}",
-                    apiRequestRows.size(), tableId, suffix, partitionDecorator);
+            LOG.trace(
+                    "Sent {} messages to bigquery table {}, suffix {}, partition {}",
+                    apiRequestRows.size(),
+                    tableId,
+                    suffix,
+                    partitionDecorator);
         }
         if (LOG.isDebugEnabled()) {
             // TODO Update once baseline is Java 21
-            //            LOG.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().threadId(), exchangeId);
-            LOG.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
+            //            LOG.debug("uploader thread/id: {} / {} . api call completed.",
+            // Thread.currentThread().threadId(), exchangeId);
+            LOG.debug(
+                    "uploader thread/id: {} / {} . api call completed.",
+                    Thread.currentThread().getId(),
+                    exchangeId);
         }
         return insertAllRequest.getRows().size();
     }
@@ -194,5 +213,4 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     public GoogleBigQueryEndpoint getEndpoint() {
         return (GoogleBigQueryEndpoint) super.getEndpoint();
     }
-
 }

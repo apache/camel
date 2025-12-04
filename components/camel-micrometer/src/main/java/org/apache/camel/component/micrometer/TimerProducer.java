@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
 
 import java.util.function.Function;
 
@@ -24,8 +27,6 @@ import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
-
 public class TimerProducer extends AbstractMicrometerProducer<Timer> {
 
     public TimerProducer(MicrometerEndpoint endpoint) {
@@ -34,7 +35,8 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
 
     @Override
     protected Function<MeterRegistry, Timer> registrar(String name, String description, Iterable<Tag> tags) {
-        return meterRegistry -> Timer.builder(name).description(description).tags(tags).register(meterRegistry);
+        return meterRegistry ->
+                Timer.builder(name).description(description).tags(tags).register(meterRegistry);
     }
 
     @Override

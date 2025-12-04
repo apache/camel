@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hashicorp.vault;
 
 import java.util.Map;
@@ -49,7 +50,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        HashicorpVaultConfiguration hashicorp = getCamelContext().getVaultConfiguration().getHashicorpVaultConfiguration();
+        HashicorpVaultConfiguration hashicorp =
+                getCamelContext().getVaultConfiguration().getHashicorpVaultConfiguration();
         sb.append("Hashicorp Vault Secrets:");
         if (hashicorp != null) {
             sb.append(String.format("\n    Host: %s", hashicorp.getHost()));
@@ -64,7 +66,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
-        HashicorpVaultConfiguration hashicorp = getCamelContext().getVaultConfiguration().getHashicorpVaultConfiguration();
+        HashicorpVaultConfiguration hashicorp =
+                getCamelContext().getVaultConfiguration().getHashicorpVaultConfiguration();
         if (hashicorp != null) {
             root.put("host", hashicorp.getHost());
             root.put("port", hashicorp.getPort());

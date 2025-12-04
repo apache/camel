@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +30,6 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for Mail using camel headers to set recipient subject.
@@ -71,7 +72,9 @@ public class MailUsingHeadersTest extends CamelTestSupport {
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
         template.sendBodyAndHeaders(
-                davsclaus.uriPrefix(Protocol.smtp) + "&from=James Strachan <jstrachan@apache.org>&to=davsclaus@localhost", body,
+                davsclaus.uriPrefix(Protocol.smtp)
+                        + "&from=James Strachan <jstrachan@apache.org>&to=davsclaus@localhost",
+                body,
                 map);
 
         Mailbox box = davsclaus.getInbox();
@@ -79,7 +82,6 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         assertEquals("davsclaus@localhost", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("James Strachan <jstrachan@apache.org>", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
-
     }
 
     @Override

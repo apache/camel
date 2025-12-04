@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.wssecurity.camel;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URL;
 
@@ -32,8 +35,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WSSecurityRouteTest extends CamelSpringTestSupport {
     static final int PORT = CXFTestSupport.getPort1();
@@ -61,10 +62,11 @@ public class WSSecurityRouteTest extends CamelSpringTestSupport {
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterSignaturePort();
 
-        ((BindingProvider) greeter).getRequestContext().put(
-                BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2()
-                                                           + "/WSSecurityRouteTest/GreeterSignaturePort");
+        ((BindingProvider) greeter)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + CXFTestSupport.getPort2() + "/WSSecurityRouteTest/GreeterSignaturePort");
 
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
@@ -81,10 +83,12 @@ public class WSSecurityRouteTest extends CamelSpringTestSupport {
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterUsernameTokenPort();
 
-        ((BindingProvider) greeter).getRequestContext().put(
-                BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2()
-                                                           + "/WSSecurityRouteTest/GreeterUsernameTokenPort");
+        ((BindingProvider) greeter)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + CXFTestSupport.getPort2()
+                                + "/WSSecurityRouteTest/GreeterUsernameTokenPort");
 
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
@@ -101,10 +105,11 @@ public class WSSecurityRouteTest extends CamelSpringTestSupport {
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterEncryptionPort();
 
-        ((BindingProvider) greeter).getRequestContext().put(
-                BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2()
-                                                           + "/WSSecurityRouteTest/GreeterEncryptionPort");
+        ((BindingProvider) greeter)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + CXFTestSupport.getPort2() + "/WSSecurityRouteTest/GreeterEncryptionPort");
 
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
@@ -121,12 +126,13 @@ public class WSSecurityRouteTest extends CamelSpringTestSupport {
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterSecurityPolicyPort();
 
-        ((BindingProvider) greeter).getRequestContext().put(
-                BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2()
-                                                           + "/WSSecurityRouteTest/GreeterSecurityPolicyPort");
+        ((BindingProvider) greeter)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + CXFTestSupport.getPort2()
+                                + "/WSSecurityRouteTest/GreeterSecurityPolicyPort");
 
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
-
 }

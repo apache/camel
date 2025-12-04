@@ -30,7 +30,8 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 /**
  * A JUnit 5 extension that allows you to include a {@link CamelContext} in your test code.
  */
-public interface CamelContextExtension extends BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
+public interface CamelContextExtension
+        extends BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
 
     /**
      * Gets the {@link CamelContext} created by this extension

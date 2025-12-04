@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ollama.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
@@ -75,9 +76,7 @@ public final class OllamaServiceFactory {
         }
     }
 
-    private OllamaServiceFactory() {
-
-    }
+    private OllamaServiceFactory() {}
 
     public static SimpleTestServiceBuilder<OllamaService> builder() {
         return new SimpleTestServiceBuilder<>("ollama");
@@ -137,12 +136,14 @@ public final class OllamaServiceFactory {
         return SingletonServiceHolder.INSTANCE;
     }
 
-    public static OllamaService createSingletonServiceWithConfiguration(OllamaServiceConfiguration serviceConfiguration) {
+    public static OllamaService createSingletonServiceWithConfiguration(
+            OllamaServiceConfiguration serviceConfiguration) {
         return SingletonServiceWithConfigurationHolder.getInstance(serviceConfiguration);
     }
 
     private static class SingletonServiceHolder {
         static final OllamaService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<OllamaService> instance = builder();
 

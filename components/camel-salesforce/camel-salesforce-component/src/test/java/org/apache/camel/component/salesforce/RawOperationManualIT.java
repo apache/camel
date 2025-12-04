@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RawOperationManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void testCreate() {
-        String body = "{\n" +
-                      "    \"LastName\" : \"TestLast\"\n" +
-                      "}";
+        String body = "{\n" + "    \"LastName\" : \"TestLast\"\n" + "}";
 
-        Exchange exchange = fluentTemplate.withBody(body)
+        Exchange exchange = fluentTemplate
+                .withBody(body)
                 .to("salesforce:raw?rawMethod=POST&rawPath=/services/data/v" + SalesforceEndpointConfig.DEFAULT_VERSION
-                    + "/sobjects/Contact")
+                        + "/sobjects/Contact")
                 .send();
 
         String response = exchange.getIn().getBody(String.class);
@@ -43,13 +43,12 @@ public class RawOperationManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void testCreateXml() {
-        String body = "<Contact>\n" +
-                      "    <LastName>TestLast</LastName>\n" +
-                      "</Contact>";
+        String body = "<Contact>\n" + "    <LastName>TestLast</LastName>\n" + "</Contact>";
 
-        Exchange exchange = fluentTemplate.withBody(body)
+        Exchange exchange = fluentTemplate
+                .withBody(body)
                 .to("salesforce:raw?format=XML&rawMethod=POST&rawPath=/services/data/v"
-                    + SalesforceEndpointConfig.DEFAULT_VERSION + "/sobjects/Contact")
+                        + SalesforceEndpointConfig.DEFAULT_VERSION + "/sobjects/Contact")
                 .send();
 
         String response = exchange.getIn().getBody(String.class);
@@ -63,7 +62,7 @@ public class RawOperationManualIT extends AbstractSalesforceTestBase {
         Exchange exchange = fluentTemplate
                 .withHeader("q", "SELECT Id FROM Contact LIMIT 10")
                 .to("salesforce:raw?format=JSON&rawMethod=GET&rawQueryParameters=q&rawPath=/services/data/v"
-                    + SalesforceEndpointConfig.DEFAULT_VERSION + "/query")
+                        + SalesforceEndpointConfig.DEFAULT_VERSION + "/query")
                 .send();
 
         String response = exchange.getIn().getBody(String.class);
@@ -75,8 +74,7 @@ public class RawOperationManualIT extends AbstractSalesforceTestBase {
     protected RouteBuilder doCreateRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-            }
+            public void configure() throws Exception {}
         };
     }
 }

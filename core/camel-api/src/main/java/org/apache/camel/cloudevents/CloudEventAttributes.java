@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cloudevents;
 
 import java.util.Arrays;
@@ -30,13 +31,11 @@ final class CloudEventAttributes {
             CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "ce-source", "source"),
             CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, "ce-specversion", "specversion"),
             CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "ce-type", "type"),
-            CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE, "ce-datacontenttype",
-                    "datacontenttype"),
+            CloudEvent.Attribute.simple(
+                    CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE, "ce-datacontenttype", "datacontenttype"),
             CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SCHEMA_URL, "ce-dataschema", "dataschema"),
             CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, "ce-subject", "subject"),
             CloudEvent.Attribute.simple(CloudEvent.CAMEL_CLOUD_EVENT_TIME, "ce-time", "time"));
 
-    private CloudEventAttributes() {
-    }
-
+    private CloudEventAttributes() {}
 }

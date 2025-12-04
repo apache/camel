@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.asn1;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,9 +33,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupport {
 
@@ -88,16 +89,33 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
                 asn1 = new ASN1DataFormat();
                 asn1.setUsingIterator(true);
 
-                from("direct:unmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().to("mock:unmarshal");
-                from("direct:unmarshalthenmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().marshal(asn1)
+                from("direct:unmarshal")
+                        .unmarshal(asn1)
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
+                        .to("mock:unmarshal");
+                from("direct:unmarshalthenmarshal")
+                        .unmarshal(asn1)
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
+                        .marshal(asn1)
                         .to("mock:marshal");
 
-                from("direct:unmarshaldsl").unmarshal().asn1(true).split(bodyAs(Iterator.class)).streaming()
+                from("direct:unmarshaldsl")
+                        .unmarshal()
+                        .asn1(true)
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
                         .to("mock:unmarshaldsl");
-                from("direct:unmarshalthenmarshaldsl").unmarshal().asn1(true).split(bodyAs(Iterator.class)).streaming()
-                        .marshal().asn1(true).to("mock:marshaldsl");
+                from("direct:unmarshalthenmarshaldsl")
+                        .unmarshal()
+                        .asn1(true)
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
+                        .marshal()
+                        .asn1(true)
+                        .to("mock:marshaldsl");
             }
         };
     }
-
 }

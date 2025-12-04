@@ -31,8 +31,10 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts Google Sheets Stream consumer response to CloudEvent v1_0 data format. The data type
  * sets Camel specific CloudEvent headers with values extracted from Google Sheets Stream consumer response.
  */
-@DataTypeTransformer(name = "google-sheets-stream:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with Google Sheets Stream consumer response details")
+@DataTypeTransformer(
+        name = "google-sheets-stream:application-cloudevents",
+        description =
+                "Adds CloudEvent headers to the Camel message with Google Sheets Stream consumer response details")
 public class GoogleSheetsStreamCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,16 +42,20 @@ public class GoogleSheetsStreamCloudEventDataTypeTransformer extends Transformer
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.google.sheets.stream.consume");
 
         if (message.getHeaders().containsKey(GoogleSheetsStreamConstants.SPREADSHEET_ID)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                    "google.sheets.stream." + message.getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID, String.class));
+            headers.put(
+                    CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
+                    "google.sheets.stream."
+                            + message.getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID, String.class));
         }
 
-        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(GoogleSheetsStreamConstants.SPREADSHEET_URL));
+        headers.put(
+                CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(GoogleSheetsStreamConstants.SPREADSHEET_URL));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
     }

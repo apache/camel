@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,10 +25,11 @@ public class MySimpleRouteBuilder extends RouteBuilder {
     public void configure() {
         from("timer:foo")
                 .filter(simple("${body} > 100"))
-                    .toD("log:a")
+                .toD("log:a")
                 .end()
-                .filter().simple("${body} > 200")
-                    .to("log:b")
+                .filter()
+                .simple("${body} > 200")
+                .to("log:b")
                 .end()
                 .to("log:c");
     }

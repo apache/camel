@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.embeddings;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for Spring AI Embeddings component using Ollama.
@@ -85,7 +86,8 @@ public class SpringAiEmbeddingsIT extends OllamaTestSupport {
             e.getIn().setBody("test embedding");
         });
 
-        Integer embeddingIndex = exchange.getMessage().getHeader(SpringAiEmbeddingsHeaders.EMBEDDING_INDEX, Integer.class);
+        Integer embeddingIndex =
+                exchange.getMessage().getHeader(SpringAiEmbeddingsHeaders.EMBEDDING_INDEX, Integer.class);
         assertThat(embeddingIndex).isNotNull();
         assertThat(embeddingIndex).isEqualTo(0);
     }
@@ -120,8 +122,7 @@ public class SpringAiEmbeddingsIT extends OllamaTestSupport {
             public void configure() throws Exception {
                 this.getCamelContext().getRegistry().bind("embeddingModel", embeddingModel);
 
-                from("direct:embeddings")
-                        .to("spring-ai-embeddings:test?embeddingModel=#embeddingModel");
+                from("direct:embeddings").to("spring-ai-embeddings:test?embeddingModel=#embeddingModel");
             }
         };
     }

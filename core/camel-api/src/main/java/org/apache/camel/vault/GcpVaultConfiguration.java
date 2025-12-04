@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
@@ -25,16 +26,22 @@ public class GcpVaultConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
     private String serviceAccountKey;
+
     @Metadata
     private String projectId;
+
     @Metadata
     private boolean useDefaultInstance;
+
     @Metadata
     private String subscriptionName;
+
     @Metadata
     private boolean refreshEnabled;
+
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
+
     @Metadata
     private String secrets;
 

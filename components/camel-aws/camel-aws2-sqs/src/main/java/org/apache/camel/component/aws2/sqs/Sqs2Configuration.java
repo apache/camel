@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
 
 import org.apache.camel.RuntimeCamelException;
@@ -28,93 +29,136 @@ public class Sqs2Configuration implements Cloneable {
 
     // common properties
     private String queueName;
+
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private SqsClient amazonSQSClient;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
+
     @UriParam(label = "security", secret = true)
     private String secretKey;
+
     @UriParam(label = "security", secret = true)
     private String sessionToken;
+
     @UriParam(defaultValue = "amazonaws.com")
     private String amazonAWSHost = "amazonaws.com";
+
     @UriParam(secret = true)
     private String queueOwnerAWSAccountId;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
+
+    @UriParam(
+            enums =
+                    "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
     private String region;
+
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
+
     @UriParam(label = "proxy")
     private String proxyHost;
+
     @UriParam(label = "proxy")
     private Integer proxyPort;
+
     @UriParam
     private boolean autoCreateQueue;
+
     @UriParam(label = "security")
     private boolean trustAllCertificates;
+
     @UriParam
     private boolean overrideEndpoint;
+
     @UriParam
     private String uriEndpointOverride;
+
     @UriParam(label = "producer")
     private Integer delaySeconds;
+
     @UriParam(label = "advanced")
     private boolean delayQueue;
 
     // consumer properties
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteIfFiltered = true;
+
     @UriParam(label = "consumer")
     private Integer visibilityTimeout;
+
     @UriParam(label = "consumer")
     private String attributeNames;
+
     @UriParam(label = "consumer")
     private String messageAttributeNames;
+
     @UriParam(label = "consumer")
     private Integer waitTimeSeconds;
+
     @UriParam(label = "consumer")
     private Integer defaultVisibilityTimeout;
+
     @UriParam(label = "consumer")
     private boolean extendMessageVisibility;
+
     @UriParam(label = "consumer")
     private String kmsMasterKeyId;
+
     @UriParam(label = "consumer")
     private Integer kmsDataKeyReusePeriodSeconds;
+
     @UriParam(label = "consumer")
     private boolean serverSideEncryptionEnabled;
+
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
+
     @UriParam(label = "consumer", defaultValue = "50")
     private int concurrentRequestLimit = 50;
+
     @UriParam(label = "consumer")
     private String sortAttributeName;
 
     // producer properties
     @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue")
     private MessageGroupIdStrategy messageGroupIdStrategy;
-    @UriParam(label = "producer", javaType = "java.lang.String", defaultValue = "useExchangeId",
-              enums = "useExchangeId,useContentBasedDeduplication")
-    private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
+
+    @UriParam(
+            label = "producer",
+            javaType = "java.lang.String",
+            defaultValue = "useExchangeId",
+            enums = "useExchangeId,useContentBasedDeduplication")
+    private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy =
+            new ExchangeIdMessageDeduplicationIdStrategy();
+
     @UriParam(label = "producer")
     private Sqs2Operations operation;
+
     @UriParam(label = "producer", defaultValue = ",")
     private String batchSeparator = ",";
+
     @UriParam(label = "producer", defaultValue = "WARN", enums = "WARN,WARN_ONCE,IGNORE,FAIL")
     private String messageHeaderExceededLimit = "WARN";
 
     // queue properties
     @UriParam(label = "queue")
     private Integer maximumMessageSize;
+
     @UriParam(label = "queue")
     private Integer messageRetentionPeriod;
+
     @UriParam(label = "queue")
     private Integer receiveMessageWaitTimeSeconds;
+
     @UriParam(label = "queue")
     @Metadata(supportFileReference = true)
     private String policy;
+
     @UriParam(label = "queue")
     private String queueUrl;
 
@@ -128,10 +172,13 @@ public class Sqs2Configuration implements Cloneable {
 
     @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
+
     @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
+
     @UriParam(label = "security")
     private boolean useSessionCredentials;
+
     @UriParam(label = "security")
     private String profileCredentialsName;
 

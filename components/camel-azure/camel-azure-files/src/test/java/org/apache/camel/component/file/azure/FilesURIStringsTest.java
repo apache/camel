@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("static-method")
 public class FilesURIStringsTest {
@@ -34,5 +35,4 @@ public class FilesURIStringsTest {
         // e.g. for the se param on SAS token the encoding style must preserve ':'
         assertEquals("11:55:01", FilesURIStrings.encodeTokenValue("11:55:01"));
     }
-
 }

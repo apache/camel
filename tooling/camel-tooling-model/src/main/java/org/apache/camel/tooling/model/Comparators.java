@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.util.Comparator;
 
 public final class Comparators {
 
-    private Comparators() {
-    }
+    private Comparators() {}
 
     public static Comparator<ApiModel> apiModelComparator() {
         return (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());

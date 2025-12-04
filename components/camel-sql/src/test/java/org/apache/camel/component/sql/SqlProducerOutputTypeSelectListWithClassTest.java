@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -26,21 +30,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlProducerOutputTypeSelectListWithClassTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -60,7 +60,8 @@ public class SqlProducerOutputTypeSelectListWithClassTest extends CamelTestSuppo
 
         mock.assertIsSatisfied();
 
-        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(3, received.size());
 
         ProjectModel row = assertIsInstanceOf(ProjectModel.class, received.get(0));
@@ -86,7 +87,8 @@ public class SqlProducerOutputTypeSelectListWithClassTest extends CamelTestSuppo
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                        .to("sql:select * from projects order by id?outputType=SelectList&outputClass=org.apache.camel.component.sql.ProjectModel")
+                        .to(
+                                "sql:select * from projects order by id?outputType=SelectList&outputClass=org.apache.camel.component.sql.ProjectModel")
                         .to("mock:result");
             }
         };

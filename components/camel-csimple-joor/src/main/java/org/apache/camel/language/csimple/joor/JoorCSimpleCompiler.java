@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple.joor;
 
 import java.util.Map;
@@ -186,5 +187,4 @@ public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompil
             LOG.info("csimple-joor compiled {} scripts in {}", counter, TimeUtils.printDuration(taken, true));
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-
 /**
  *
  */
@@ -33,7 +34,7 @@ public class FtpProducerToDMoveExistingIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/${header.myDir}?password=admin&fileExist=Move&moveExisting=old-${file:onlyname}";
+                + "/${header.myDir}?password=admin&fileExist=Move&moveExisting=old-${file:onlyname}";
     }
 
     @Test
@@ -61,5 +62,4 @@ public class FtpProducerToDMoveExistingIT extends FtpServerTestSupport {
             }
         };
     }
-
 }

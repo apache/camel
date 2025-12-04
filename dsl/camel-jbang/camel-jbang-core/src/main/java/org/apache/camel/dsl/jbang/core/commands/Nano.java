@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
@@ -28,14 +29,16 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "nano",
-                     description = "Nano editor to edit file",
-                     footer = "Press Ctrl-X to exit.")
+@CommandLine.Command(name = "nano", description = "Nano editor to edit file", footer = "Press Ctrl-X to exit.")
 public class Nano extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of file", arity = "1",
-                            paramLabel = "<file>", parameterConsumer = FileConsumer.class)
+    @CommandLine.Parameters(
+            description = "Name of file",
+            arity = "1",
+            paramLabel = "<file>",
+            parameterConsumer = FileConsumer.class)
     private Path filePath; // Defined only for file path completion; the field never used
+
     private String file;
 
     public Nano(CamelJBangMain main) {
@@ -46,9 +49,10 @@ public class Nano extends CamelCommand {
     public Integer doCall() throws Exception {
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         try (Terminal terminal = TerminalBuilder.builder().build()) {
-            Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass()).getParent();
+            Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass())
+                    .getParent();
             ConfigurationPath configPath = new ConfigurationPath(appConfig, null);
-            Commands.nano(terminal, System.out, System.err, workDir.get(), new String[] { file }, configPath);
+            Commands.nano(terminal, System.out, System.err, workDir.get(), new String[] {file}, configPath);
         }
         return 0;
     }

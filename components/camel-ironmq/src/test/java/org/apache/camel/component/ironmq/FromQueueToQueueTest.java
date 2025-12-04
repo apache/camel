@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FromQueueToQueueTest extends CamelTestSupport {
 
@@ -91,5 +92,4 @@ public class FromQueueToQueueTest extends CamelTestSupport {
             }
         };
     }
-
 }

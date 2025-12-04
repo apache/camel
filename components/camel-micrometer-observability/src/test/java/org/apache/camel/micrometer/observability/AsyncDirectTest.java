@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,9 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncDirectTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
@@ -54,7 +55,6 @@ public class AsyncDirectTest extends MicrometerObservabilityTracerPropagationTes
         for (OtelTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(OtelTrace trace, String expectedBody) {
@@ -88,17 +88,23 @@ public class AsyncDirectTest extends MicrometerObservabilityTracerPropagationTes
         // Validate same Exchange ID
         // As it's a "direct" component, we expect the logic to happen within the same
         // Exchange boundary
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 direct.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 newDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 newDirectFrom.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 log.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 newLog.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 newMock.getAttributes().get(AttributeKey.stringKey("exchangeId")));
 
         // // Validate hierarchy
@@ -151,5 +157,4 @@ public class AsyncDirectTest extends MicrometerObservabilityTracerPropagationTes
             }
         };
     }
-
 }

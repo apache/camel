@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.util.ArrayList;
@@ -42,8 +43,8 @@ public class HttpRestServletResolveConsumerStrategy extends HttpServletResolveCo
             paths.add(new HttpRestConsumerPath(entry.getValue()));
         }
 
-        RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer> best
-                = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
+        RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer> best =
+                RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
         if (best != null) {
             answer = best.getConsumer();
         }

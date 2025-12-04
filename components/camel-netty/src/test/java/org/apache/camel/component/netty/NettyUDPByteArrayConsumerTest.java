@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -22,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
 
@@ -33,7 +34,8 @@ public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
         mock.expectedMessageCount(1);
         mock.message(0).body().isEqualTo("***Camel rocks ?=)".getBytes());
 
-        template.sendBody("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true", "***Camel rocks ?=)".getBytes());
+        template.sendBody(
+                "netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true", "***Camel rocks ?=)".getBytes());
 
         mock.assertIsSatisfied();
     }
@@ -43,7 +45,8 @@ public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);
 
-        String toSend = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
+        String toSend =
+                "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
                         + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
         byte[] in = fromHexString(toSend);
         template.sendBody("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true", in);

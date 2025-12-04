@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
@@ -26,8 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
 
@@ -64,13 +65,21 @@ public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy()
+                        .setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().addSpoolRule(spoolRule);
                 context.getStreamCachingStrategy().setAnySpoolRules(true);
                 context.setStreamCaching(true);
 
-                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo"))
-                        .to("mock:dutch", "mock:german").otherwise().to("mock:french").end()
+                from("direct:a")
+                        .choice()
+                        .when(xpath("//hello"))
+                        .to("mock:english")
+                        .when(xpath("//hallo"))
+                        .to("mock:dutch", "mock:german")
+                        .otherwise()
+                        .to("mock:french")
+                        .end()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
@@ -81,7 +90,6 @@ public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
                                 }
                             }
                         });
-
             }
         };
     }

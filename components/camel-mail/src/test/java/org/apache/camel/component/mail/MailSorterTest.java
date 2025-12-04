@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
@@ -28,9 +32,6 @@ import org.eclipse.angus.mail.imap.SortTerm;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.mockito.Mockito.when;
-
 /**
  * Tests mail sort util
  */
@@ -42,10 +43,11 @@ public class MailSorterTest extends CamelTestSupport {
      * All possible sort terms
      */
     private static final SortTerm[] POSSIBLE_TERMS = new SortTerm[] {
-            SortTerm.ARRIVAL, SortTerm.CC,
-            SortTerm.DATE, SortTerm.FROM,
-            SortTerm.SIZE, SortTerm.TO,
-            SortTerm.SUBJECT };
+        SortTerm.ARRIVAL, SortTerm.CC,
+        SortTerm.DATE, SortTerm.FROM,
+        SortTerm.SIZE, SortTerm.TO,
+        SortTerm.SUBJECT
+    };
 
     static {
         try {
@@ -63,12 +65,13 @@ public class MailSorterTest extends CamelTestSupport {
     /**
      * Create a new message with the specified data
      */
-    private static Message createMessage(String to, String cc, String from, Date received, Date sent, int size, String subject)
+    private static Message createMessage(
+            String to, String cc, String from, Date received, Date sent, int size, String subject)
             throws MessagingException {
         final Message msg = Mockito.mock(Message.class);
-        when(msg.getFrom()).thenReturn(new Address[] { new InternetAddress(from) });
-        when(msg.getRecipients(Message.RecipientType.TO)).thenReturn(new Address[] { new InternetAddress(to) });
-        when(msg.getRecipients(Message.RecipientType.CC)).thenReturn(new Address[] { new InternetAddress(cc) });
+        when(msg.getFrom()).thenReturn(new Address[] {new InternetAddress(from)});
+        when(msg.getRecipients(Message.RecipientType.TO)).thenReturn(new Address[] {new InternetAddress(to)});
+        when(msg.getRecipients(Message.RecipientType.CC)).thenReturn(new Address[] {new InternetAddress(cc)});
         when(msg.getSentDate()).thenReturn(sent);
         when(msg.getReceivedDate()).thenReturn(received);
         when(msg.getSize()).thenReturn(size);
@@ -78,52 +81,51 @@ public class MailSorterTest extends CamelTestSupport {
 
     @Test
     public void testSortMessages() {
-        Message[] expected = new Message[] { MESSAGES[0], MESSAGES[1], MESSAGES[2] };
+        Message[] expected = new Message[] {MESSAGES[0], MESSAGES[1], MESSAGES[2]};
 
         // Sort using all the terms. Message order should be the same no matter what term is used
         for (SortTerm term : POSSIBLE_TERMS) {
             Message[] actual = MESSAGES.clone();
-            MailSorter.sortMessages(actual, new SortTerm[] { term });
+            MailSorter.sortMessages(actual, new SortTerm[] {term});
             assertArrayEquals(actual, expected, "Term: " + term.toString());
         }
     }
 
     @Test
     public void testSortMessagesReverse() {
-        Message[] expected = new Message[] { MESSAGES[2], MESSAGES[1], MESSAGES[0] };
+        Message[] expected = new Message[] {MESSAGES[2], MESSAGES[1], MESSAGES[0]};
 
         // Sort using all the terms. Message order should be the same no matter what term is used
         for (SortTerm term : POSSIBLE_TERMS) {
             Message[] actual = MESSAGES.clone();
-            MailSorter.sortMessages(actual, new SortTerm[] { SortTerm.REVERSE, term });
+            MailSorter.sortMessages(actual, new SortTerm[] {SortTerm.REVERSE, term});
             assertArrayEquals(actual, expected, "Term: " + term.toString());
         }
     }
 
     @Test
     public void testSortMessagesMulti() {
-        Message[] expected = new Message[] { MESSAGES[0], MESSAGES[1], MESSAGES[2] };
+        Message[] expected = new Message[] {MESSAGES[0], MESSAGES[1], MESSAGES[2]};
 
         // Sort using all the terms. Message order should be the same no matter what term is used. The second term
         // should be ignored since it is already the decider.
         for (SortTerm term1 : POSSIBLE_TERMS) {
             for (SortTerm term2 : POSSIBLE_TERMS) {
                 Message[] actual = MESSAGES.clone();
-                MailSorter.sortMessages(actual, new SortTerm[] { term1, SortTerm.REVERSE, term2 });
+                MailSorter.sortMessages(actual, new SortTerm[] {term1, SortTerm.REVERSE, term2});
                 assertArrayEquals(actual, expected, String.format("Terms: %s, %s", term1.toString(), term2.toString()));
             }
-
         }
     }
 
     @Test
     public void testSortMessagesWithTie() {
-        Message[] given = new Message[] { MESSAGES[2], TIE_BREAKER };
+        Message[] given = new Message[] {MESSAGES[2], TIE_BREAKER};
 
         // Sort according to the whole list. Only the last element breaks the tie
         Message[] actual1 = given.clone();
         MailSorter.sortMessages(actual1, POSSIBLE_TERMS);
-        assertArrayEquals(actual1, new Message[] { TIE_BREAKER, MESSAGES[2] });
+        assertArrayEquals(actual1, new Message[] {TIE_BREAKER, MESSAGES[2]});
 
         // now reverse the last element (the tie breaker)
         SortTerm[] reversed = new SortTerm[POSSIBLE_TERMS.length + 1];
@@ -133,6 +135,6 @@ public class MailSorterTest extends CamelTestSupport {
         // And check again
         Message[] actual2 = given.clone();
         MailSorter.sortMessages(actual2, reversed);
-        assertArrayEquals(actual2, new Message[] { MESSAGES[2], TIE_BREAKER });
+        assertArrayEquals(actual2, new Message[] {MESSAGES[2], TIE_BREAKER});
     }
 }

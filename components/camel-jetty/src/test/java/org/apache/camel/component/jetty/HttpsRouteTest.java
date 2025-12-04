@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -47,18 +55,12 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @Isolated
 @ResourceLock(SSL_SYSPROPS)
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
-             architectures = { "amd64", "aarch64", "ppc64le" },
-             disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD},
+        architectures = {"amd64", "aarch64", "ppc64le"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class HttpsRouteTest extends BaseJettyTest {
 
     public static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
@@ -143,9 +145,10 @@ public class HttpsRouteTest extends BaseJettyTest {
     @Test
     public void testEndpointWithoutHttps() {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
-        assertThrows(RuntimeCamelException.class,
-                () -> template.sendBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type",
-                        "application/xml"),
+        assertThrows(
+                RuntimeCamelException.class,
+                () -> template.sendBodyAndHeader(
+                        "http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml"),
                 "expect exception on access to https endpoint via http");
         assertTrue(mockEndpoint.getExchanges().isEmpty(), "mock endpoint was not called");
     }
@@ -167,15 +170,22 @@ public class HttpsRouteTest extends BaseJettyTest {
 
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
-        assertThrows(SocketException.class,
+        assertThrows(
+                SocketException.class,
                 () -> new URL("http://localhost:" + port1 + "/hello").openStream(),
                 "expected SocketException on use of http");
     }
 
     protected void invokeHttpEndpoint() {
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type",
+        template.sendBodyAndHeader(
+                getHttpProducerScheme() + "localhost:" + port1 + "/test",
+                expectedBody,
+                "Content-Type",
                 "application/xml");
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type",
+        template.sendBodyAndHeader(
+                getHttpProducerScheme() + "localhost:" + port2 + "/test",
+                expectedBody,
+                "Content-Type",
                 "application/xml");
     }
 

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.TypeConverterSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * Unit test to test that onException handles wrapped exceptions
@@ -45,8 +46,8 @@ public class OnExceptionWrappedExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                context.getTypeConverterRegistry().addTypeConverter(LocalDateTime.class, String.class,
-                        new MyLocalDateTimeConverter());
+                context.getTypeConverterRegistry()
+                        .addTypeConverter(LocalDateTime.class, String.class, new MyLocalDateTimeConverter());
 
                 errorHandler(deadLetterChannel("mock:error"));
 
@@ -57,8 +58,7 @@ public class OnExceptionWrappedExceptionTest extends ContextTestSupport {
         };
     }
 
-    public static class LocalDateTime {
-    }
+    public static class LocalDateTime {}
 
     private static class MyLocalDateTimeConverter extends TypeConverterSupport {
 
@@ -68,7 +68,5 @@ public class OnExceptionWrappedExceptionTest extends ContextTestSupport {
             // RuntimeCamelException
             throw wrapRuntimeCamelException(new IllegalArgumentException("Bad Data"));
         }
-
     }
-
 }

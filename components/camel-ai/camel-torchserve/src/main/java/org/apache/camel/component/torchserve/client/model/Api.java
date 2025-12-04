@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.model;
 
 import java.util.HashMap;
@@ -25,8 +26,7 @@ public class Api {
     private Map<String, String> info = new HashMap<>();
     private Map<String, Object> paths = new HashMap<>();
 
-    public Api() {
-    }
+    public Api() {}
 
     @SuppressWarnings("unchecked")
     public static Api from(org.apache.camel.component.torchserve.client.inference.model.ApiDescription200Response src) {
@@ -38,7 +38,8 @@ public class Api {
     }
 
     @SuppressWarnings("unchecked")
-    public static Api from(org.apache.camel.component.torchserve.client.management.model.ApiDescription200Response src) {
+    public static Api from(
+            org.apache.camel.component.torchserve.client.management.model.ApiDescription200Response src) {
         Api api = new Api();
         api.setOpenapi(src.getOpenapi());
         api.setInfo((Map<String, String>) src.getInfo());
@@ -72,10 +73,9 @@ public class Api {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {\n" +
-               "    openapi: " + openapi + "\n" +
-               "    info: " + info + "\n" +
-               "    paths: " + paths + "\n" +
-               "}";
+        return getClass().getSimpleName() + " {\n" + "    openapi: "
+                + openapi + "\n" + "    info: "
+                + info + "\n" + "    paths: "
+                + paths + "\n" + "}";
     }
 }

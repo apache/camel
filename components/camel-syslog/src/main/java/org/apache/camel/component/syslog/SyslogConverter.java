@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.syslog;
+
+import static org.apache.camel.util.BufferCaster.cast;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -29,8 +32,6 @@ import jakarta.xml.bind.DatatypeConverter;
 import org.apache.camel.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.BufferCaster.cast;
 
 @Converter(generateLoader = true)
 public final class SyslogConverter {
@@ -331,7 +332,6 @@ public final class SyslogConverter {
          * (hh) is represented in a 24-hour format. Valid entries are between 00 and 23, inclusive. The minute (mm) and
          * second (ss) entries are between 00 and 59 inclusive.
          */
-
         char[] month = new char[3];
         for (int i = 0; i < 3; i++) {
             month[i] = (char) (byteBuffer.get() & 0xff);
@@ -376,7 +376,9 @@ public final class SyslogConverter {
         }
 
         Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.MONTH, monthValueMap.get(String.valueOf(month).toLowerCase()).ordinal());
+        calendar.set(
+                Calendar.MONTH,
+                monthValueMap.get(String.valueOf(month).toLowerCase()).ordinal());
         calendar.set(Calendar.DAY_OF_MONTH, day);
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);

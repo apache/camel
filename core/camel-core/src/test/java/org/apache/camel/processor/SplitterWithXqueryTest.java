@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitterWithXqueryTest extends ContextTestSupport {
 
@@ -44,10 +45,10 @@ public class SplitterWithXqueryTest extends ContextTestSupport {
         result.reset();
         result.expectedMessageCount(4);
         String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
-                         + "xmlns:two=\"http://camel.apache.org/schema/two\">"
-                         + "<person><name>Willem</name></person> " + "<other><two:test>One</two:test></other>"
-                         + "<other><two:test>Two</two:test></other>"
-                         + "<other><test>Three</test></other>" + "<other><test>Foure</test></other></workflow>";
+                + "xmlns:two=\"http://camel.apache.org/schema/two\">"
+                + "<person><name>Willem</name></person> " + "<other><two:test>One</two:test></other>"
+                + "<other><two:test>Two</two:test></other>"
+                + "<other><test>Three</test></other>" + "<other><test>Foure</test></other></workflow>";
         template.sendBody("direct:endpoint", xmlData);
         assertMockEndpointsSatisfied();
         for (Exchange exchange : result.getExchanges()) {
@@ -55,7 +56,5 @@ public class SplitterWithXqueryTest extends ContextTestSupport {
             log.debug("The message is {}", message);
             assertEquals(0, message.indexOf("<other"), "The split message should start with <other");
         }
-
     }
-
 }

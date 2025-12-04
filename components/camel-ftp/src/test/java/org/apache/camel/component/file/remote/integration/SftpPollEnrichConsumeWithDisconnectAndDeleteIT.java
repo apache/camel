@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -27,11 +32,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 class SftpPollEnrichConsumeWithDisconnectAndDeleteIT extends SftpServerTestSupport {
 
     @Test
@@ -67,8 +70,9 @@ class SftpPollEnrichConsumeWithDisconnectAndDeleteIT extends SftpServerTestSuppo
             public void configure() {
                 from("seda:trigger")
                         .pollEnrich("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                    + "?username=admin&password=admin&delay=10000&disconnect=true&delete=true")
-                        .routeId("foo").to("mock:result");
+                                + "?username=admin&password=admin&delay=10000&disconnect=true&delete=true")
+                        .routeId("foo")
+                        .to("mock:result");
             }
         };
     }

@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.embeddings;
 
 import org.apache.camel.spi.Metadata;
 
 public class SpringAiEmbeddingsHeaders {
 
-    @Metadata(description = "The embedding response metadata",
-              javaType = "org.springframework.ai.embedding.EmbeddingResponseMetadata")
+    @Metadata(
+            description = "The embedding response metadata",
+            javaType = "org.springframework.ai.embedding.EmbeddingResponseMetadata")
     public static final String EMBEDDING_METADATA = "CamelSpringAiEmbeddingMetadata";
 
     @Metadata(description = "The index of the embedding in the response", javaType = "Integer")
@@ -33,8 +35,9 @@ public class SpringAiEmbeddingsHeaders {
     @Metadata(description = "The input text that was embedded", javaType = "String")
     public static final String INPUT_TEXT = "CamelSpringAiEmbeddingInputText";
 
-    @Metadata(description = "List of Embedding objects",
-              javaType = "java.util.List<org.springframework.ai.embedding.Embedding>")
+    @Metadata(
+            description = "List of Embedding objects",
+            javaType = "java.util.List<org.springframework.ai.embedding.Embedding>")
     public static final String EMBEDDINGS = "CamelSpringAiEmbeddings";
 
     @Metadata(description = "List of input texts that were embedded", javaType = "java.util.List<String>")

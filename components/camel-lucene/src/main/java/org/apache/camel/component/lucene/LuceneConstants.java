@@ -14,21 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lucene;
 
 import org.apache.camel.spi.Metadata;
 
 public final class LuceneConstants {
 
-    @Metadata(description = "The Lucene Query to performed on the index. The query may include\n" +
-                            "wildcards and phrases.",
-              javaType = "String")
+    @Metadata(
+            description =
+                    "The Lucene Query to performed on the index. The query may include\n" + "wildcards and phrases.",
+            javaType = "String")
     public static final String HEADER_QUERY = "QUERY";
-    @Metadata(description = "Set this header to true to include the actual Lucene\n" +
-                            "documentation when returning hit information.",
-              javaType = "String")
+
+    @Metadata(
+            description = "Set this header to true to include the actual Lucene\n"
+                    + "documentation when returning hit information.",
+            javaType = "String")
     public static final String HEADER_RETURN_LUCENE_DOCS = "RETURN_LUCENE_DOCS";
 
-    private LuceneConstants() {
-    }
+    private LuceneConstants() {}
 }

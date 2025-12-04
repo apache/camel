@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import org.apache.camel.impl.DefaultCamelContext;
@@ -31,6 +32,5 @@ public class DataFormatReifierTest {
         Assertions.assertInstanceOf(MyDataFormat.class, ref.definition);
     }
 
-    public static class MyDataFormat extends CustomDataFormat {
-    }
+    public static class MyDataFormat extends CustomDataFormat {}
 }

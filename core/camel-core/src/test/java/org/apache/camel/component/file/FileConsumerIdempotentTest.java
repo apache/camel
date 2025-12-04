@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
@@ -27,9 +31,6 @@ import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Unit test for the idempotent=true option.
  */
@@ -40,7 +41,8 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri("?idempotent=true&move=done/${file:name}&initialDelay=0&delay=10"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
@@ -74,5 +76,4 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) fe.getInProgressRepository();
         assertEquals(0, repo.getCacheSize(), "Should be no in-progress files");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ses;
 
 import software.amazon.awssdk.services.ses.SesClient;
@@ -27,8 +28,7 @@ public class AmazonSESClientMock implements SesClient {
     private SendEmailRequest sendEmailRequest;
     private SendRawEmailRequest sendRawEmailRequest;
 
-    public AmazonSESClientMock() {
-    }
+    public AmazonSESClientMock() {}
 
     @Override
     public SendEmailResponse sendEmail(SendEmailRequest sendEmailRequest) {

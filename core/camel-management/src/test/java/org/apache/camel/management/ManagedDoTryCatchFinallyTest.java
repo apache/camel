@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -29,10 +34,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedDoTryCatchFinallyTest extends ManagementTestSupport {
@@ -89,18 +90,20 @@ public class ManagedDoTryCatchFinallyTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .doTry().id("myDoTry1")
+                        .doTry()
+                        .id("myDoTry1")
                         .to("mock:start")
                         .throwException(new IllegalArgumentException("Forced"))
-                    .doCatch(IOException.class).id("myDoCatch1")
+                        .doCatch(IOException.class)
+                        .id("myDoCatch1")
                         .to("mock:io")
-                    .doCatch(IllegalArgumentException.class).id("myDoCatch2")
+                        .doCatch(IllegalArgumentException.class)
+                        .id("myDoCatch2")
                         .to("mock:iae")
-                    .doFinally()
+                        .doFinally()
                         .to("mock:finally")
-                    .end();
+                        .end();
             }
         };
     }
-
 }

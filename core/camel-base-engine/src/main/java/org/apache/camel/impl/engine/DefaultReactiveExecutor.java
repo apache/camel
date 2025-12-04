@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayDeque;
@@ -106,8 +107,11 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     @Override
     protected void doStop() throws Exception {
         if (LOG.isDebugEnabled() && statisticsEnabled) {
-            LOG.debug("Stopping DefaultReactiveExecutor [createdWorkers: {}, runningWorkers: {}, pendingTasks: {}]",
-                    getCreatedWorkers(), getRunningWorkers(), getPendingTasks());
+            LOG.debug(
+                    "Stopping DefaultReactiveExecutor [createdWorkers: {}, runningWorkers: {}, pendingTasks: {}]",
+                    getCreatedWorkers(),
+                    getRunningWorkers(),
+                    getPendingTasks());
         }
     }
 
@@ -176,7 +180,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         }
 
         private void executeReactiveWork() {
-            for (;;) {
+            for (; ; ) {
                 final Runnable polled = queue.pollFirst();
                 if (polled == null) {
                     if (back != null && !back.isEmpty()) {
@@ -198,8 +202,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                 }
                 polled.run();
             } catch (Exception t) {
-                LOG.warn("Error executing reactive work due to {}. This exception is ignored.",
-                        t.getMessage(), t);
+                LOG.warn("Error executing reactive work due to {}. This exception is ignored.", t.getMessage(), t);
             }
         }
 
@@ -244,7 +247,5 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             }
             return true;
         }
-
     }
-
 }

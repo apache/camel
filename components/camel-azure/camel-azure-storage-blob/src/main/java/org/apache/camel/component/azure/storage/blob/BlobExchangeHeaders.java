@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import java.time.Duration;
@@ -130,13 +131,36 @@ public class BlobExchangeHeaders {
 
     private static BlobProperties buildBlobProperties(final BlobDownloadHeaders hd) {
         return new BlobProperties(
-                null, hd.getLastModified(), hd.getETag(),
-                hd.getContentLength() == null ? 0 : hd.getContentLength(), hd.getContentType(), null,
-                hd.getContentEncoding(), hd.getContentDisposition(), hd.getContentLanguage(), hd.getCacheControl(),
-                hd.getBlobSequenceNumber(), hd.getBlobType(), hd.getLeaseStatus(), hd.getLeaseState(),
-                hd.getLeaseDuration(), hd.getCopyId(), hd.getCopyStatus(), hd.getCopySource(), hd.getCopyProgress(),
-                hd.getCopyCompletionTime(), hd.getCopyStatusDescription(), hd.isServerEncrypted(),
-                null, null, null, null, null, hd.getEncryptionKeySha256(), null, hd.getMetadata(),
+                null,
+                hd.getLastModified(),
+                hd.getETag(),
+                hd.getContentLength() == null ? 0 : hd.getContentLength(),
+                hd.getContentType(),
+                null,
+                hd.getContentEncoding(),
+                hd.getContentDisposition(),
+                hd.getContentLanguage(),
+                hd.getCacheControl(),
+                hd.getBlobSequenceNumber(),
+                hd.getBlobType(),
+                hd.getLeaseStatus(),
+                hd.getLeaseState(),
+                hd.getLeaseDuration(),
+                hd.getCopyId(),
+                hd.getCopyStatus(),
+                hd.getCopySource(),
+                hd.getCopyProgress(),
+                hd.getCopyCompletionTime(),
+                hd.getCopyStatusDescription(),
+                hd.isServerEncrypted(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                hd.getEncryptionKeySha256(),
+                null,
+                hd.getMetadata(),
                 hd.getBlobCommittedBlockCount());
     }
 
@@ -218,11 +242,13 @@ public class BlobExchangeHeaders {
     }
 
     public static DeleteSnapshotsOptionType getDeleteSnapshotsOptionTypeFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, BlobConstants.DELETE_SNAPSHOT_OPTION_TYPE, DeleteSnapshotsOptionType.class);
+        return getObjectFromHeaders(
+                exchange, BlobConstants.DELETE_SNAPSHOT_OPTION_TYPE, DeleteSnapshotsOptionType.class);
     }
 
     public static ListBlobContainersOptions getListBlobContainersOptionsFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, BlobConstants.LIST_BLOB_CONTAINERS_OPTIONS, ListBlobContainersOptions.class);
+        return getObjectFromHeaders(
+                exchange, BlobConstants.LIST_BLOB_CONTAINERS_OPTIONS, ListBlobContainersOptions.class);
     }
 
     public static ParallelTransferOptions getParallelTransferOptionsFromHeaders(final Exchange exchange) {
@@ -269,7 +295,8 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.LEASE_DURATION_IN_SECONDS, Integer.class);
     }
 
-    private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
+    private static <T> T getObjectFromHeaders(
+            final Exchange exchange, final String headerName, final Class<T> classType) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.dsl.yaml.support;
 
 import java.io.File;
@@ -24,8 +25,7 @@ import java.util.TreeSet;
 import java.util.stream.Stream;
 
 public final class ToolingSupport {
-    private ToolingSupport() {
-    }
+    private ToolingSupport() {}
 
     /**
      * Combines the given items assuming they can be also composed by comma separated elements.

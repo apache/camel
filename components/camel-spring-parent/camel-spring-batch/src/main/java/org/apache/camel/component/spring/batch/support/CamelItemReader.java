@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.batch.support;
 
 import org.apache.camel.ConsumerTemplate;
@@ -71,5 +72,4 @@ public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>,
     public String getEndpointUri() {
         return endpointUri;
     }
-
 }

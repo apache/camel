@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -40,9 +41,13 @@ public class DisruptorFromRouteIdTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("foo", foo.getReceivedExchanges().get(0).getFromRouteId());
-        assertEquals("disruptor://foo", foo.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
+        assertEquals(
+                "disruptor://foo",
+                foo.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
         assertEquals("bar", bar.getReceivedExchanges().get(0).getFromRouteId());
-        assertEquals("disruptor://bar", bar.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
+        assertEquals(
+                "disruptor://bar",
+                bar.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
     }
 
     @Override

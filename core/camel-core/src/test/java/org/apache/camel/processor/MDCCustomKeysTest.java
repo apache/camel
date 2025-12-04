@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,11 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MDCCustomKeysTest extends ContextTestSupport {
 
@@ -73,19 +74,21 @@ public class MDCCustomKeysTest extends ContextTestSupport {
                 context.setUseBreadcrumb(true);
                 context.setMDCLoggingKeysPattern("custom*,my*");
 
-                from("direct:a").process(e -> {
+                from("direct:a")
+                        .process(e -> {
 
-                    // custom should be empty
-                    String hello = MDC.get("custom.hello");
-                    assertNull(hello);
+                            // custom should be empty
+                            String hello = MDC.get("custom.hello");
+                            assertNull(hello);
 
-                    // custom is propagated
-                    MDC.put("custom.hello", "N/A");
-                    // foo is propagated due we use the same thread
-                    MDC.put("foo", "Bar");
-                    // myKey is propagated
-                    MDC.put("myKey", "Baz");
-                }).process(checker1)
+                            // custom is propagated
+                            MDC.put("custom.hello", "N/A");
+                            // foo is propagated due we use the same thread
+                            MDC.put("foo", "Bar");
+                            // myKey is propagated
+                            MDC.put("myKey", "Baz");
+                        })
+                        .process(checker1)
                         .to("log:foo")
                         .process(e -> {
                             MDC.put("custom.hello", "World");
@@ -171,5 +174,4 @@ public class MDCCustomKeysTest extends ContextTestSupport {
             }
         }
     }
-
 }

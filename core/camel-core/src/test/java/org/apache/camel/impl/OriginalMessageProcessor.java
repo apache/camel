@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
@@ -33,8 +34,8 @@ public class OriginalMessageProcessor implements Processor {
         } else {
             exchange.getIn().setHeader("HasOriginal", "true");
             exchange.getIn().setHeader("OriginalBody", original.getBody());
-            exchange.getIn().setHeader("OriginalExchangeId", original.getExchange().getExchangeId());
+            exchange.getIn()
+                    .setHeader("OriginalExchangeId", original.getExchange().getExchangeId());
         }
     }
-
 }

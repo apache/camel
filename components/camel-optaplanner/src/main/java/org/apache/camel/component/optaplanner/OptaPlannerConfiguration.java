@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.optaplanner;
 
 import org.apache.camel.spi.Metadata;
@@ -28,16 +29,22 @@ public class OptaPlannerConfiguration {
     @UriPath
     @Metadata(required = true)
     private String problemName;
+
     @UriParam(label = "common", defaultValue = "DEFAULT_SOLVER")
     private String solverId = OptaPlannerConstants.DEFAULT_SOLVER_ID;
+
     @UriParam(label = "producer", defaultValue = "10")
     private int threadPoolSize = 10;
+
     @UriParam(label = "producer")
     private boolean async;
+
     @UriParam(label = "common", defaultValue = "1")
     private long problemId = 1;
+
     @UriParam(label = "common")
     private String configFile;
+
     @UriParam(label = "advanced")
     private SolverManager solverManager;
 

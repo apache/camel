@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
 
 import java.util.Map;
@@ -35,9 +36,14 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage files in Google Drive.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive",
-             syntax = "google-drive:apiName/methodName", apiSyntax = "apiName/methodName",
-             consumerPrefix = "consumer", category = { Category.FILE, Category.CLOUD, Category.API })
+@UriEndpoint(
+        firstVersion = "2.14.0",
+        scheme = "google-drive",
+        title = "Google Drive",
+        syntax = "google-drive:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        consumerPrefix = "consumer",
+        category = {Category.FILE, Category.CLOUD, Category.API})
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration>
         implements EndpointServiceLocation {
     private Object apiProxy;
@@ -48,10 +54,19 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     @UriParam
     private GoogleDriveClientFactory clientFactory;
 
-    public GoogleDriveEndpoint(String uri, GoogleDriveComponent component,
-                               GoogleDriveApiName apiName, String methodName, GoogleDriveConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, GoogleDriveApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public GoogleDriveEndpoint(
+            String uri,
+            GoogleDriveComponent component,
+            GoogleDriveApiName apiName,
+            String methodName,
+            GoogleDriveConfiguration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                GoogleDriveApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 

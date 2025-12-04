@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.math.BigDecimal;
@@ -41,9 +42,9 @@ import org.springframework.test.context.ContextConfiguration;
 public class BindyComplexCsvGenerateHeaderMarshallTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
-    private String result
-            = "Order Nr,Client Nr,First Name,Last Name,Instrument Code,Instrument Nr,Order Type,Instrument Type,amount,currency,Order Date\r\n"
-              + "10,A1,Julia,Roberts,ISIN,LU123456789,BUY,Share,150.00,USD,14-01-2009\r\n";
+    private String result =
+            "Order Nr,Client Nr,First Name,Last Name,Instrument Code,Instrument Nr,Order Type,Instrument Type,amount,currency,Order Date\r\n"
+                    + "10,A1,Julia,Roberts,ISIN,LU123456789,BUY,Share,150.00,USD,14-01-2009\r\n";
 
     @Produce("direct:start")
     private ProducerTemplate template;
@@ -100,12 +101,11 @@ public class BindyComplexCsvGenerateHeaderMarshallTest {
 
         @Override
         public void configure() {
-            BindyCsvDataFormat camelDataFormat
-                    = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.complex.generateheader.Order.class);
+            BindyCsvDataFormat camelDataFormat =
+                    new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.complex.generateheader.Order.class);
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");
         }
     }
-
 }

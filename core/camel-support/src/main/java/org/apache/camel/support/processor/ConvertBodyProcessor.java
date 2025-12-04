@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.concurrent.CompletableFuture;
@@ -38,7 +39,8 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * If the conversion fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
  */
-public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor, IdAware, RouteIdAware, DisabledAware {
+public class ConvertBodyProcessor extends ServiceSupport
+        implements AsyncProcessor, IdAware, RouteIdAware, DisabledAware {
     private String id;
     private String routeId;
     private boolean disabled;
@@ -160,7 +162,8 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
 
     @Override
     public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                new AsyncCallbackToCompletableFutureAdapter<>(exchange);
         process(exchange, callback);
         return callback.getFuture();
     }

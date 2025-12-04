@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.cinder.producer;
 
 import java.util.List;
@@ -72,8 +73,8 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.SNAPSHOT_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(CinderConstants.SNAPSHOT_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Snapshot ID");
         final VolumeSnapshot out = os.blockStorage().snapshots().get(id);
         msg.setBody(out);
@@ -86,8 +87,8 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
 
     private void doUpdate(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.SNAPSHOT_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(CinderConstants.SNAPSHOT_ID, String.class), String.class);
         final VolumeSnapshot vs = messageToSnapshot(msg);
         StringHelper.notEmpty(id, "Cinder Snapshot ID");
 
@@ -97,8 +98,8 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.SNAPSHOT_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(CinderConstants.SNAPSHOT_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Cinder Snapshot ID");
 
         final ActionResponse out = os.blockStorage().snapshots().delete(id);

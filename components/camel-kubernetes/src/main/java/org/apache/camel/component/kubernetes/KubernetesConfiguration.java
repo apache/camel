@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -498,16 +499,18 @@ public class KubernetesConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient="
-               + kubernetesClient + ", username=" + username + ", password="
-               + password + ", operation=" + operation + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData
-               + ", caCertFile=" + caCertFile + ", clientCertData="
-               + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo + ", clientKeyData="
-               + clientKeyData + ", clientKeyFile="
-               + clientKeyFile + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
-               + trustCerts + ", namespace=" + namespace
-               + ", labelKey=" + labelKey + ", labelValue=" + labelValue + ", resourceName=" + resourceName + ", portName="
-               + portName + ", dnsDomain=" + dnsDomain + ", poolSize="
-               + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
+                + kubernetesClient + ", username=" + username + ", password="
+                + password + ", operation=" + operation + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData
+                + ", caCertFile=" + caCertFile + ", clientCertData="
+                + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo
+                + ", clientKeyData="
+                + clientKeyData + ", clientKeyFile="
+                + clientKeyFile + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken
+                + ", trustCerts="
+                + trustCerts + ", namespace=" + namespace
+                + ", labelKey=" + labelKey + ", labelValue=" + labelValue + ", resourceName=" + resourceName
+                + ", portName="
+                + portName + ", dnsDomain=" + dnsDomain + ", poolSize="
+                + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
     }
-
 }

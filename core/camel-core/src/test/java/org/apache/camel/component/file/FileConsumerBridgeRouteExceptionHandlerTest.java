@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +28,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -62,7 +63,10 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
             @Override
             public void configure() {
                 // to handle any IOException being thrown
-                onException(IOException.class).handled(true).log("IOException occurred due: ${exception.message}").transform()
+                onException(IOException.class)
+                        .handled(true)
+                        .log("IOException occurred due: ${exception.message}")
+                        .transform()
                         .simple("Error ${exception.message}")
                         .to("mock:error");
 
@@ -70,7 +74,8 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
                 // bridge the consumer to use the Camel routing error handler
                 // the exclusiveReadLockStrategy is only configured because this
                 // is from an unit test, so we use that to simulate exceptions
-                from(fileUri("?exclusiveReadLockStrategy=#myReadLockStrategy&bridgeErrorHandler=true&initialDelay=0&delay=10"))
+                from(fileUri(
+                                "?exclusiveReadLockStrategy=#myReadLockStrategy&bridgeErrorHandler=true&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }
@@ -90,8 +95,7 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
 
         @Override
         public boolean acquireExclusiveReadLock(
-                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-                throws Exception {
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
             if (file.getFileNameOnly().equals("bye.txt")) {
                 if (counter++ == 0) {
                     // force an exception on acquire attempt for the bye.txt

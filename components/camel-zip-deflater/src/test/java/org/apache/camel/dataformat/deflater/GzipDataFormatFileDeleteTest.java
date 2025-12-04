@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.deflater;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -24,10 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
 
@@ -62,7 +63,8 @@ public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
-                        .marshal().gzipDeflater()
+                        .marshal()
+                        .gzipDeflater()
                         .to("file:target/data/gzip/out?fileName=${file:name}.gz")
                         .to("mock:result");
             }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +34,6 @@ import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.Tag;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class S3ObjectTaggingOperationIT extends Aws2S3Base {
 
@@ -117,20 +118,15 @@ public class S3ObjectTaggingOperationIT extends Aws2S3Base {
             public void configure() {
                 String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
 
-                from("direct:putObject")
-                        .to(awsEndpoint);
+                from("direct:putObject").to(awsEndpoint);
 
-                from("direct:putObjectTagging")
-                        .to(awsEndpoint);
+                from("direct:putObjectTagging").to(awsEndpoint);
 
-                from("direct:putObjectTagging2")
-                        .to(awsEndpoint);
+                from("direct:putObjectTagging2").to(awsEndpoint);
 
-                from("direct:getObjectTagging")
-                        .to(awsEndpoint);
+                from("direct:getObjectTagging").to(awsEndpoint);
 
-                from("direct:deleteObjectTagging")
-                        .to(awsEndpoint);
+                from("direct:deleteObjectTagging").to(awsEndpoint);
             }
         };
     }

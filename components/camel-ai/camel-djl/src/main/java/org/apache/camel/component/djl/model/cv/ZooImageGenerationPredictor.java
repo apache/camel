@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl.model.cv;
 
 import java.io.IOException;
@@ -38,8 +39,8 @@ public class ZooImageGenerationPredictor extends AbstractPredictor {
 
     protected ZooModel<int[], Image[]> model;
 
-    public ZooImageGenerationPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException,
-                                                             IOException {
+    public ZooImageGenerationPredictor(DJLEndpoint endpoint)
+            throws ModelNotFoundException, MalformedModelException, IOException {
         super(endpoint);
 
         Criteria.Builder<int[], Image[]> builder = Criteria.builder()

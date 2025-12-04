@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,8 +40,10 @@ public class BeanSimpleLanguageStaticMethodIssueTest extends ContextTestSupport 
             @Override
             public void configure() {
                 from("direct:start")
-                        .setProperty("foo").method(System.class, "currentTimeMillis")
-                        .setProperty("bar").simple("${bean:type:java.lang.System?method=currentTimeMillis}")
+                        .setProperty("foo")
+                        .method(System.class, "currentTimeMillis")
+                        .setProperty("bar")
+                        .simple("${bean:type:java.lang.System?method=currentTimeMillis}")
                         .to("mock:result");
             }
         };

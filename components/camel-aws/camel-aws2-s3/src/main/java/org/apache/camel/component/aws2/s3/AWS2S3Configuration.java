@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3;
 
 import org.apache.camel.Exchange;
@@ -31,123 +32,182 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 public class AWS2S3Configuration implements Cloneable {
 
     private String bucketName;
+
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private S3Client amazonS3Client;
+
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private S3Presigner amazonS3Presigner;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
+
     @UriParam(label = "security", secret = true)
     private String secretKey;
+
     @UriParam(label = "security", secret = true)
     private String sessionToken;
+
     @UriParam(label = "consumer")
     private String fileName;
+
     @UriParam
     private String prefix;
+
     @UriParam
     private String delimiter;
+
     @UriParam(label = "consumer")
     private String doneFileName;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeFolders = true;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
+
+    @UriParam(
+            enums =
+                    "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
     private String region;
+
     @UriParam
     private boolean forcePathStyle;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
+
     @UriParam(label = "consumer")
     private boolean moveAfterRead;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean removePrefixOnMove;
+
     @UriParam(label = "consumer")
     private String destinationBucket;
+
     @UriParam(label = "consumer")
     private String destinationBucketPrefix;
+
     @UriParam(label = "consumer")
     private String destinationBucketSuffix;
+
     @UriParam(label = "producer")
     private boolean deleteAfterWrite;
+
     @UriParam(label = "producer")
     private boolean multiPartUpload;
+
     @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
     private long partSize = (long) 25 * 1024 * 1024;
+
     @UriParam
     private String policy;
+
     @UriParam(label = "producer")
     private String storageClass;
 
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
+
     @UriParam(label = "proxy")
     private String proxyHost;
+
     @UriParam(label = "proxy")
     private Integer proxyPort;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean ignoreBody;
+
     @UriParam(label = "producer")
     private AWS2S3Operations operation;
+
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean autoCreateBucket;
+
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useAwsKMS;
+
     @UriParam(label = "producer,advanced")
     private String awsKMSKeyId;
+
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useCustomerKey;
+
     @UriParam(label = "common,advanced")
     private String customerKeyId;
+
     @UriParam(label = "common,advanced")
     private String customerKeyMD5;
+
     @UriParam(label = "common,advanced")
     private String customerAlgorithm;
+
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useSSES3;
+
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean conditionalWritesEnabled;
+
     @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
+
     @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
+
     @UriParam(label = "security")
     private boolean useSessionCredentials;
+
     @UriParam(label = "security")
     private String profileCredentialsName;
+
     @UriParam(label = "producer")
     private String keyName;
+
     @UriParam
     private boolean overrideEndpoint;
+
     @UriParam(label = "security")
     private boolean trustAllCertificates;
+
     @UriParam
     private String uriEndpointOverride;
+
     @UriParam
     private boolean pojoRequest;
+
     @UriParam(label = "producer")
     private boolean streamingUploadMode;
+
     @UriParam(defaultValue = "10", label = "producer")
     private int batchMessageNumber = 10;
+
     @UriParam(defaultValue = "1000000", label = "producer")
     private int batchSize = 1000000;
+
     @UriParam(defaultValue = "1000000", label = "producer")
     private int bufferSize = 1000000;
+
     @UriParam(defaultValue = "progressive", label = "producer")
     private AWSS3NamingStrategyEnum namingStrategy = AWSS3NamingStrategyEnum.progressive;
+
     @UriParam(label = "producer")
     private long streamingUploadTimeout;
+
     @UriParam(defaultValue = "override", label = "producer")
     private AWSS3RestartingPolicyEnum restartingPolicy = AWSS3RestartingPolicyEnum.override;
+
     @UriParam(label = "producer")
     private boolean timestampGroupingEnabled;
+
     @UriParam(defaultValue = "300000", label = "producer")
     private long timestampWindowSizeMillis = 300000; // 5 minutes default
+
     @UriParam(defaultValue = "CamelMessageTimestamp", label = "producer")
     private String timestampHeaderName = Exchange.MESSAGE_TIMESTAMP;
 

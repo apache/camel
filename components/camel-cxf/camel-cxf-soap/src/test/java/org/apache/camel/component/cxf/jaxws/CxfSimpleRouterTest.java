@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfSimpleRouterTest extends CamelTestSupport {
 
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
@@ -40,19 +41,20 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
     private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
 
     protected String getRouterAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/router";
+        return "http://localhost:" + CXFTestSupport.getPort1() + "/"
+                + getClass().getSimpleName() + "/router";
     }
 
     protected String getServiceAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/helloworld";
+        return "http://localhost:" + CXFTestSupport.getPort2() + "/"
+                + getClass().getSimpleName() + "/helloworld";
     }
 
-    protected void configureFactory(ServerFactoryBean svrBean) {
-    }
+    protected void configureFactory(ServerFactoryBean svrBean) {}
 
     @BeforeEach
     public void startService() {
-        //start a service
+        // start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 
         svrBean.setAddress(getServiceAddress());
@@ -75,9 +77,7 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
-                from(routerEndpointURI)
-                        .to("log:org.apache.camel?level=DEBUG")
-                        .to(serviceEndpointURI);
+                from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG").to(serviceEndpointURI);
             }
         };
     }
@@ -102,7 +102,6 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
         assertEquals("echo hello world", result, "we should get the right answer from router");
-
     }
 
     @Test
@@ -110,8 +109,7 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         HelloService client = getCXFClient();
         int count = client.getInvocationCount();
         client.ping();
-        //oneway ping invoked, so invocationCount ++
+        // oneway ping invoked, so invocationCount ++
         assertEquals(client.getInvocationCount(), ++count, "The ping should be invocated");
     }
-
 }

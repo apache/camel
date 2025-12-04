@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.task.task;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
@@ -24,11 +30,6 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ForegroundTimeTaskTest extends TaskTestSupport {
 
@@ -56,7 +57,8 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
         assertTrue(duration.toMillis() > 0);
     }
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier and an initial delay")
+    @DisplayName(
+            "Test that the task does not run for more than the max iterations when using a supplier and an initial delay")
     @Test
     @Timeout(10)
     void testRunNoMoreSupplierWithDelay() {
@@ -74,7 +76,8 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
         assertEquals(maxIterations, taskCount.intValue());
     }
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a predicate and an initial delay")
+    @DisplayName(
+            "Test that the task does not run for more than the max iterations when using a predicate and an initial delay")
     @Test
     @Timeout(10)
     void testRunNoMorePredicate() {
@@ -92,7 +95,8 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
         assertEquals(maxIterations, taskCount.intValue());
     }
 
-    @DisplayName("Test that the task does not run for more than the max duration when using a predicate and an initial delay")
+    @DisplayName(
+            "Test that the task does not run for more than the max duration when using a predicate and an initial delay")
     @Test
     @Timeout(10)
     void testRunNoMorePredicateMaxDuration() {

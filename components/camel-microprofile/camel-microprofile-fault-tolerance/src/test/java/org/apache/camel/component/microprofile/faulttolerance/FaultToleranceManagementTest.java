@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FaultToleranceManagementTest extends CamelTestSupport {
 
@@ -53,8 +54,8 @@ public class FaultToleranceManagementTest extends CamelTestSupport {
         String name = context.getManagementName();
 
         // get the object name for the delayer
-        ObjectName on
-                = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myFaultTolerance\"");
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=" + name + ",type=processors,name=\"myFaultTolerance\"");
 
         // should be on start
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
@@ -69,13 +70,19 @@ public class FaultToleranceManagementTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("start").circuitBreaker().id("myFaultTolerance").to("direct:foo").onFallback()
-                        .transform().constant("Fallback message").end()
+                from("direct:start")
+                        .routeId("start")
+                        .circuitBreaker()
+                        .id("myFaultTolerance")
+                        .to("direct:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
                         .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
         };
     }
-
 }

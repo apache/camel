@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.routingslip;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class RoutingSlipDataModificationTest extends ContextTestSupport {
     protected static final String ANSWER = "answer";
@@ -77,8 +78,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        public MyBean() {
-        }
+        public MyBean() {}
 
         public String modifyData(@Body String body) {
             return body + body;

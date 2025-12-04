@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
@@ -25,8 +26,7 @@ import org.slf4j.Logger;
  */
 public final class PipelineHelper {
 
-    private PipelineHelper() {
-    }
+    private PipelineHelper() {}
 
     /**
      * Should we continue processing the exchange?
@@ -38,7 +38,9 @@ public final class PipelineHelper {
      *                  occurred.
      */
     public static boolean continueProcessing(Exchange exchange, String message, Logger log) {
-        boolean stop = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()
+        boolean stop = exchange.isFailed()
+                || exchange.isRollbackOnly()
+                || exchange.isRollbackOnlyLast()
                 || exchange.getExchangeExtension().isErrorHandlerHandledSet()
                         && exchange.getExchangeExtension().isErrorHandlerHandled();
         if (stop) {
@@ -46,7 +48,10 @@ public final class PipelineHelper {
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
                 StringBuilder sb = new StringBuilder(256);
-                sb.append("Message exchange has failed: ").append(message).append(" for exchange: ").append(exchange);
+                sb.append("Message exchange has failed: ")
+                        .append(message)
+                        .append(" for exchange: ")
+                        .append(exchange);
                 if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
                     sb.append(" Marked as rollback only.");
                 }
@@ -73,5 +78,4 @@ public final class PipelineHelper {
 
         return true;
     }
-
 }

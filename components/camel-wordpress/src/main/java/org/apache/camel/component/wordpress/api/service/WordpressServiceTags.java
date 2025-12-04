@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service;
 
 import org.apache.camel.component.wordpress.api.model.Tag;
 import org.apache.camel.component.wordpress.api.model.TagSearchCriteria;
 
-public interface WordpressServiceTags extends WordpressCrudService<Tag, TagSearchCriteria> {
-}
+public interface WordpressServiceTags extends WordpressCrudService<Tag, TagSearchCriteria> {}

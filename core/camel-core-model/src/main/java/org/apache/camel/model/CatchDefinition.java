@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -45,13 +46,13 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
+
     @Metadata(description = "Used for triggering doCatch in specific situations")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;
 
-    public CatchDefinition() {
-    }
+    public CatchDefinition() {}
 
     protected CatchDefinition(CatchDefinition source) {
         super(source);
@@ -148,7 +149,8 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
      * @return            the builder
      */
     public CatchDefinition exception(
-            Class<? extends Throwable> exception1, Class<? extends Throwable> exception2,
+            Class<? extends Throwable> exception1,
+            Class<? extends Throwable> exception2,
             Class<? extends Throwable> exception3) {
         return exception(List.of(exception1, exception2, exception3));
     }
@@ -210,5 +212,4 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     public void setOnWhen(OnWhenDefinition onWhen) {
         this.onWhen = onWhen;
     }
-
 }

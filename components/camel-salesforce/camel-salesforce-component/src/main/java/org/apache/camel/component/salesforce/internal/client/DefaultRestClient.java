@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.ByteArrayInputStream;
@@ -55,9 +56,12 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private static final String SERVICES_APEXREST = "/services/apexrest/";
     private static final String GET_SCHEMA_MINIMUM_VERSION = "40.0";
 
-    public DefaultRestClient(final SalesforceHttpClient httpClient, final String version,
-                             final SalesforceSession session,
-                             final SalesforceLoginConfig loginConfig) throws SalesforceException {
+    public DefaultRestClient(
+            final SalesforceHttpClient httpClient,
+            final String version,
+            final SalesforceSession session,
+            final SalesforceLoginConfig loginConfig)
+            throws SalesforceException {
         super(version, session, httpClient, loginConfig);
     }
 
@@ -72,7 +76,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void approval(final InputStream request, Map<String, List<String>> headers, final ResponseCallback callback) {
+    public void approval(
+            final InputStream request, Map<String, List<String>> headers, final ResponseCallback callback) {
         final Request post = getRequest(HttpMethod.POST, versionUrl() + "process/approvals/", headers);
 
         // authorization
@@ -141,7 +146,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void getSObject(
-            String sObjectName, String id, String[] fields, Map<String, List<String>> headers, ResponseCallback callback) {
+            String sObjectName,
+            String id,
+            String[] fields,
+            Map<String, List<String>> headers,
+            ResponseCallback callback) {
 
         // parse fields if set
         String params = "";
@@ -180,8 +189,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void createSObjectMultipart(
-            String sObjectName, Object sObjectDto, InputStream sObject,
-            Map<String, List<String>> headers, ResponseCallback callback) {
+            String sObjectName,
+            Object sObjectDto,
+            InputStream sObject,
+            Map<String, List<String>> headers,
+            ResponseCallback callback) {
         try {
             final Request post = getRequest(HttpMethod.POST, sobjectsUrl(sObjectName), headers);
 
@@ -207,7 +219,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                         // non-binary json data must be the first part of the multipart request
                         String cleanJsonString = objectMapper.writeValueAsString(cleanJson);
                         multipartContent.addPart(new MultiPart.ContentSourcePart(
-                                "entity", null,
+                                "entity",
+                                null,
                                 HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
                                 new InputStreamRequestContent(
                                         new ByteArrayInputStream(cleanJsonString.getBytes(StandardCharsets.UTF_8)))));
@@ -218,20 +231,25 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                             InputStream binaryData = entry.getValue();
 
                             multipartContent.addPart(new MultiPart.ContentSourcePart(
-                                    fieldName, "temp-file-name.doc",
+                                    fieldName,
+                                    "temp-file-name.doc",
                                     HttpFields.build().add(HttpHeader.CONTENT_TYPE, "application/octet-stream"),
                                     new InputStreamRequestContent(binaryData)));
                         }
                     } else {
                         // No multipart data found - this shouldn't happen as processor should handle this case
-                        callback.onResponse(null, Collections.emptyMap(),
-                                new SalesforceException("createSObjectMultipart called but no binary fields found", null));
+                        callback.onResponse(
+                                null,
+                                Collections.emptyMap(),
+                                new SalesforceException(
+                                        "createSObjectMultipart called but no binary fields found", null));
                         return;
                     }
                 } else {
                     // If not a JSON object, send as-is
                     multipartContent.addPart(new MultiPart.ContentSourcePart(
-                            "entity", null,
+                            "entity",
+                            null,
                             HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
                             new InputStreamRequestContent(sObject)));
                 }
@@ -242,7 +260,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             doHttpRequest(post, new DelegatingClientCallback(callback));
         } catch (Exception e) {
             // If JSON parsing fails, fall back to regular processing
-            callback.onResponse(null, Collections.emptyMap(),
+            callback.onResponse(
+                    null,
+                    Collections.emptyMap(),
                     new SalesforceException("Failed to process multipart request: " + e.getMessage(), e));
         }
     }
@@ -279,7 +299,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void updateSObject(
-            String sObjectName, String id, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback) {
+            String sObjectName,
+            String id,
+            InputStream sObject,
+            Map<String, List<String>> headers,
+            ResponseCallback callback) {
         final Request patch = getRequest("PATCH", sobjectsUrl(sObjectName + "/" + id), headers);
         // requires authorization token
         setAccessToken(patch);
@@ -293,8 +317,12 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void updateSObjectMultipart(
-            String sObjectName, String id, Object sObjectDto, InputStream sObject,
-            Map<String, List<String>> headers, ResponseCallback callback) {
+            String sObjectName,
+            String id,
+            Object sObjectDto,
+            InputStream sObject,
+            Map<String, List<String>> headers,
+            ResponseCallback callback) {
         try {
             final Request patch = getRequest("PATCH", sobjectsUrl(sObjectName + "/" + id), headers);
             setAccessToken(patch);
@@ -319,7 +347,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                         // non-binary json data must be the first part of the multipart request
                         String cleanJsonString = objectMapper.writeValueAsString(cleanJson);
                         multipartContent.addPart(new MultiPart.ContentSourcePart(
-                                "entity", null,
+                                "entity",
+                                null,
                                 HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
                                 new InputStreamRequestContent(
                                         new ByteArrayInputStream(cleanJsonString.getBytes(StandardCharsets.UTF_8)))));
@@ -330,20 +359,25 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                             InputStream binaryData = entry.getValue();
 
                             multipartContent.addPart(new MultiPart.ContentSourcePart(
-                                    fieldName, "temp-file-name.doc",
+                                    fieldName,
+                                    "temp-file-name.doc",
                                     HttpFields.build().add(HttpHeader.CONTENT_TYPE, "application/octet-stream"),
                                     new InputStreamRequestContent(binaryData)));
                         }
                     } else {
                         // No multipart data found - this shouldn't happen as processor should handle this case
-                        callback.onResponse(null, Collections.emptyMap(),
-                                new SalesforceException("updateSObjectMultipart called but no binary fields found", null));
+                        callback.onResponse(
+                                null,
+                                Collections.emptyMap(),
+                                new SalesforceException(
+                                        "updateSObjectMultipart called but no binary fields found", null));
                         return;
                     }
                 } else {
                     // If not a JSON object, send as-is
                     multipartContent.addPart(new MultiPart.ContentSourcePart(
-                            "entity", null,
+                            "entity",
+                            null,
                             HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
                             new InputStreamRequestContent(sObject)));
                 }
@@ -354,13 +388,16 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             doHttpRequest(patch, new DelegatingClientCallback(callback));
         } catch (Exception e) {
             // If JSON parsing fails, fall back to regular processing
-            callback.onResponse(null, Collections.emptyMap(),
+            callback.onResponse(
+                    null,
+                    Collections.emptyMap(),
                     new SalesforceException("Failed to process multipart update request: " + e.getMessage(), e));
         }
     }
 
     @Override
-    public void deleteSObject(String sObjectName, String id, Map<String, List<String>> headers, ResponseCallback callback) {
+    public void deleteSObject(
+            String sObjectName, String id, Map<String, List<String>> headers, ResponseCallback callback) {
         final Request delete = getRequest(HttpMethod.DELETE, sobjectsUrl(sObjectName + "/" + id), headers);
 
         // requires authorization token
@@ -371,9 +408,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void getSObjectWithId(
-            String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers,
+            String sObjectName,
+            String fieldName,
+            String fieldValue,
+            Map<String, List<String>> headers,
             ResponseCallback callback) {
-        final Request get = getRequest(HttpMethod.GET, sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue), headers);
+        final Request get =
+                getRequest(HttpMethod.GET, sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue), headers);
 
         // requires authorization token
         setAccessToken(get);
@@ -383,7 +424,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void upsertSObject(
-            String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers, InputStream sObject,
+            String sObjectName,
+            String fieldName,
+            String fieldValue,
+            Map<String, List<String>> headers,
+            InputStream sObject,
             ResponseCallback callback) {
         final Request patch = getRequest("PATCH", sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue), headers);
 
@@ -400,10 +445,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void deleteSObjectWithId(
-            String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers,
+            String sObjectName,
+            String fieldName,
+            String fieldValue,
+            Map<String, List<String>> headers,
             ResponseCallback callback) {
-        final Request delete
-                = getRequest(HttpMethod.DELETE, sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue), headers);
+        final Request delete =
+                getRequest(HttpMethod.DELETE, sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue), headers);
 
         // requires authorization token
         setAccessToken(delete);
@@ -413,8 +461,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void getBlobField(
-            String sObjectName, String id, String blobFieldName, Map<String, List<String>> headers, ResponseCallback callback) {
-        final Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/" + id + "/" + blobFieldName), headers);
+            String sObjectName,
+            String id,
+            String blobFieldName,
+            Map<String, List<String>> headers,
+            ResponseCallback callback) {
+        final Request get =
+                getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/" + id + "/" + blobFieldName), headers);
         // TODO this doesn't seem to be required, the response is always the
         // content binary stream
         // get.header(HttpHeader.ACCEPT_ENCODING, "base64");
@@ -491,8 +544,12 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void apexCall(
-            String httpMethod, String apexUrl, Map<String, Object> queryParams, InputStream requestDto,
-            Map<String, List<String>> headers, ResponseCallback callback) {
+            String httpMethod,
+            String apexUrl,
+            Map<String, Object> queryParams,
+            InputStream requestDto,
+            Map<String, List<String>> headers,
+            ResponseCallback callback) {
         // create APEX call request
         final Request request;
         try {
@@ -527,8 +584,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             String eventName, String payloadFormat, Map<String, List<String>> headers, ResponseCallback callback) {
         validateMinimumVersion(GET_SCHEMA_MINIMUM_VERSION);
         final Request request;
-        request = getRequest(HttpMethod.GET, sobjectsUrl(eventName) + "/eventSchema" + "?payloadFormat=" + payloadFormat,
-                headers);
+        request = getRequest(
+                HttpMethod.GET, sobjectsUrl(eventName) + "/eventSchema" + "?payloadFormat=" + payloadFormat, headers);
 
         // requires authorization token
         setAccessToken(request);
@@ -541,7 +598,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             String schemaId, String payloadFormat, Map<String, List<String>> headers, ResponseCallback callback) {
         validateMinimumVersion(GET_SCHEMA_MINIMUM_VERSION);
         final Request request;
-        request = getRequest(HttpMethod.GET, versionUrl() + "event/eventSchema/" + schemaId + "?payloadFormat=" + payloadFormat,
+        request = getRequest(
+                HttpMethod.GET,
+                versionUrl() + "event/eventSchema/" + schemaId + "?payloadFormat=" + payloadFormat,
                 headers);
 
         // requires authorization token
@@ -561,7 +620,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void recent(final Integer limit, Map<String, List<String>> headers, final ResponseCallback responseCallback) {
+    public void recent(
+            final Integer limit, Map<String, List<String>> headers, final ResponseCallback responseCallback) {
         final String param = Optional.ofNullable(limit).map(v -> "?limit=" + v).orElse("");
 
         final Request get = getRequest(HttpMethod.GET, versionUrl() + "recent/" + param, headers);
@@ -588,8 +648,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     private void validateMinimumVersion(String minimumVersion) {
         if (Version.create(version).compareTo(Version.create(minimumVersion)) < 0) {
-            throw new IllegalArgumentException(
-                    "Salesforce API version " + minimumVersion + " or newer is required, version " + version + " was detected");
+            throw new IllegalArgumentException("Salesforce API version " + minimumVersion
+                    + " or newer is required, version " + version + " was detected");
         }
     }
 

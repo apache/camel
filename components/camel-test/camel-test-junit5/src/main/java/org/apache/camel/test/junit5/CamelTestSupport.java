@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -45,8 +48,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes along with a
  * {@link org.apache.camel.ProducerTemplate} for use in the test case Do <tt>not</tt> use this class for Spring Boot
@@ -62,11 +63,13 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     @RegisterExtension
     protected CamelTestSupport camelTestSupportExtension = this;
+
     private final StopWatch watch = new StopWatch();
 
     @RegisterExtension
     @Order(1)
     public final ContextManagerExtension contextManagerExtension;
+
     private CamelContextManager contextManager;
 
     protected CamelTestSupport() {
@@ -99,7 +102,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
         String dump = CamelContextTestHelper.getRouteDump(getDumpRoute());
         boolean jmx = coverage || useJmx(); // route coverage requires JMX
 
-        testExecutionConfiguration.withJMX(jmx)
+        testExecutionConfiguration
+                .withJMX(jmx)
                 .withUseRouteBuilder(isUseRouteBuilder())
                 .withUseAdviceWith(isUseAdviceWith())
                 .withDumpRouteCoverage(coverage)
@@ -182,8 +186,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      */
     @Deprecated(since = "4.7.0")
     protected void doSpringBootCheck() {
-        boolean springBoot
-                = ExtensionHelper.hasClassAnnotation(getClass(), "org.springframework.boot.test.context.SpringBootTest");
+        boolean springBoot =
+                ExtensionHelper.hasClassAnnotation(getClass(), "org.springframework.boot.test.context.SpringBootTest");
         if (springBoot) {
             throw new RuntimeException(
                     "Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot.");
@@ -196,8 +200,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      */
     @Deprecated(since = "4.7.0")
     protected void doQuarkusCheck() {
-        boolean quarkus = ExtensionHelper.hasClassAnnotation(getClass(), "io.quarkus.test.junit.QuarkusTest",
-                "org.apache.camel.quarkus.test.CamelQuarkusTest");
+        boolean quarkus = ExtensionHelper.hasClassAnnotation(
+                getClass(), "io.quarkus.test.junit.QuarkusTest", "org.apache.camel.quarkus.test.CamelQuarkusTest");
         if (quarkus) {
             throw new RuntimeException(
                     "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
@@ -236,7 +240,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
         } else {
             LOG.warn(
                     "A context manager is required to dump the route coverage for the Camel context but it's not available (it's null). "
-                     + "It's likely that the test is misconfigured!");
+                            + "It's likely that the test is misconfigured!");
         }
 
         doPostTearDown();
@@ -288,9 +292,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      * to inject this
      */
     @Deprecated(since = "4.7.0")
-    protected void applyCamelPostProcessor() throws Exception {
-
-    }
+    protected void applyCamelPostProcessor() throws Exception {}
 
     /**
      * Does this test class have any of the following annotations on the class-level.
@@ -366,7 +368,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      * @see #createRouteBuilder()
      */
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
-        return new RoutesBuilder[] { createRouteBuilder() };
+        return new RoutesBuilder[] {createRouteBuilder()};
     }
 
     /**
@@ -465,7 +467,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      * Asserts that the given language name and expression evaluates to the given value on a specific exchange
      */
     @Deprecated(since = "4.7.0")
-    protected final void assertExpression(Exchange exchange, String languageName, String expressionText, Object expectedValue) {
+    protected final void assertExpression(
+            Exchange exchange, String languageName, String expressionText, Object expectedValue) {
         TestSupport.assertExpression(context, exchange, languageName, expressionText, expectedValue);
     }
 
@@ -474,7 +477,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      * exchange
      */
     @Deprecated(since = "4.7.0")
-    protected final void assertPredicate(String languageName, String expressionText, Exchange exchange, boolean expected) {
+    protected final void assertPredicate(
+            String languageName, String expressionText, Exchange exchange, boolean expected) {
         TestSupport.assertPredicate(context, languageName, expressionText, exchange, expected);
     }
 
@@ -512,8 +516,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      */
     @Deprecated(since = "4.7.0")
     protected void debugBefore(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {
-    }
+            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {}
 
     /**
      * Single step debugs and Camel invokes this method after processing the given processor. This method is NOOP.
@@ -522,7 +525,10 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      */
     @Deprecated(since = "4.7.0")
     protected void debugAfter(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
-            long timeTaken) {
-    }
+            Exchange exchange,
+            Processor processor,
+            ProcessorDefinition<?> definition,
+            String id,
+            String label,
+            long timeTaken) {}
 }

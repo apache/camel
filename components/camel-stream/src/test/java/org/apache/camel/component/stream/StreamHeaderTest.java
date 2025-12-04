@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
+
+import static org.apache.camel.component.stream.StreamGroupLinesTest.LS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.OutputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.stream.StreamGroupLinesTest.LS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test when using custom output stream.

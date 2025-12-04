@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -27,8 +30,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test with poll enrich
@@ -98,5 +99,4 @@ public class MailPollEnrichTest extends CamelTestSupport {
             }
         };
     }
-
 }

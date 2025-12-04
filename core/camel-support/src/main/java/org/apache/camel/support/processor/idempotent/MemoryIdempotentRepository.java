@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor.idempotent;
 
 import java.util.Map;
@@ -36,9 +37,10 @@ import org.apache.camel.support.service.ServiceSupport;
  * <p/>
  * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a memory leak.
  */
-@Metadata(label = "bean",
-          description = "A memory based IdempotentRepository.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "A memory based IdempotentRepository.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Memory based idempotent repository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {
@@ -51,8 +53,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "" + MAX_CACHE_SIZE)
     private int cacheSize;
 
-    public MemoryIdempotentRepository() {
-    }
+    public MemoryIdempotentRepository() {}
 
     public MemoryIdempotentRepository(Map<String, Object> set) {
         this.cache = set;

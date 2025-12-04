@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -27,9 +31,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to verify that we can pool a BINARY file in a directory from the FTP Server and store it on a local file
@@ -46,7 +47,7 @@ public class FromFtpDirectoryToBinaryFilesIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/incoming/?password=admin"
-               + "&binary=true&useFixedDelay=false&recursive=false&delay=5000";
+                + "&binary=true&useFixedDelay=false&recursive=false&delay=5000";
     }
 
     @BeforeAll
@@ -74,8 +75,8 @@ public class FromFtpDirectoryToBinaryFilesIT extends FtpServerTestSupport {
 
         Exchange ex = resultEndpoint.getExchanges().get(0);
         byte[] bytes = ex.getIn().getBody(byte[].class);
-        assertTrue(bytes.length > 10000, "Logo size is only: " + bytes.length
-                                         + " but should have been bigger than 10000");
+        assertTrue(
+                bytes.length > 10000, "Logo size is only: " + bytes.length + " but should have been bigger than 10000");
 
         // assert the file
         File logo1DestFile = testDirectory.resolve("logo1.jpeg").toFile();

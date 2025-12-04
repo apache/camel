@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -23,10 +28,6 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FtpProducerFileExistFailIT extends FtpServerTestSupport {
 
@@ -46,11 +47,12 @@ public class FtpProducerFileExistFailIT extends FtpServerTestSupport {
         mock.expectedFileExists(service.ftpFile("exist/hello.txt"), "Hello World");
 
         String uri = getFtpUrl();
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));
 
-        GenericFileOperationFailedException cause
-                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        GenericFileOperationFailedException cause =
+                assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertEquals("File already exist: exist/hello.txt. Cannot write new file.", cause.getMessage());
 
         MockEndpoint.assertIsSatisfied(context);

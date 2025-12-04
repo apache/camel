@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,7 +24,8 @@ import org.junit.jupiter.api.Test;
 
 public class SimpleXPathTransformTest extends ContextTestSupport {
 
-    private static final String EXPECTED = """
+    private static final String EXPECTED =
+            """
             <user>
               <rool>123</rool>
               <country>sweden</country>
@@ -36,7 +38,9 @@ public class SimpleXPathTransformTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().simple("""
+                        .transform()
+                        .simple(
+                                """
                                 <user>
                                   <rool>${xpath(/order/@id)}</rool>
                                   <country>${xpath(/order/address/co/text())}</country>
@@ -51,7 +55,9 @@ public class SimpleXPathTransformTest extends ContextTestSupport {
     public void testTransform() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(EXPECTED);
 
-        template.sendBody("direct:start", """
+        template.sendBody(
+                "direct:start",
+                """
                 <order id="123">
                   <item>Brake</item>
                   <first>scott</first>
@@ -65,5 +71,4 @@ public class SimpleXPathTransformTest extends ContextTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

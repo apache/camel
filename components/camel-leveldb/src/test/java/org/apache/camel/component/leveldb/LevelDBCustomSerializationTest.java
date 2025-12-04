@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,10 +45,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBCustomSerializationTest extends CamelTestSupport {
 
     @Override
@@ -59,7 +60,8 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
         ObjectWithBinaryField objectB = new ObjectWithBinaryField("b", "byteArray2".getBytes());
         ObjectWithBinaryField objectC = new ObjectWithBinaryField("c", "byteArray3".getBytes());
 
-        mock.expectedBodiesReceived(objectA.aggregateWith(objectB).aggregateWith(objectC).withA("a+b+c"));
+        mock.expectedBodiesReceived(
+                objectA.aggregateWith(objectB).aggregateWith(objectC).withA("a+b+c"));
 
         template.sendBodyAndHeader("direct:start", objectA, "id", 123);
         template.sendBodyAndHeader("direct:start", objectB, "id", 123);
@@ -68,7 +70,9 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // from endpoint should be preserved
-        assertEquals("direct://start", mock.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
+        assertEquals(
+                "direct://start",
+                mock.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
     }
 
     @Override
@@ -78,7 +82,8 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
             // START SNIPPET: e1
             public void configure() {
                 // create the leveldb repo
-                LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
+                LevelDBAggregationRepository repo =
+                        new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
 
                 SimpleModule simpleModule = new SimpleModule();
                 simpleModule.addSerializer(ObjectWithBinaryField.class, new ObjectWithBinaryFieldSerializer());
@@ -90,7 +95,8 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         // use our created leveldb repo as aggregation repository
-                        .completionSize(3).aggregationRepository(repo)
+                        .completionSize(3)
+                        .aggregationRepository(repo)
                         .to("mock:aggregated");
             }
             // END SNIPPET: e1
@@ -115,7 +121,7 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
             try {
                 oldExchange.getIn().setBody(oldObject.aggregateWith(newObject));
             } catch (IOException e) {
-                //ignore
+                // ignore
             }
 
             return oldExchange;
@@ -126,8 +132,7 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
         private String a;
         private byte[] b;
 
-        public ObjectWithBinaryField() {
-        }
+        public ObjectWithBinaryField() {}
 
         public ObjectWithBinaryField(String a, byte[] b) {
             this.a = a;
@@ -151,10 +156,7 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
 
         @Override
         public String toString() {
-            return "ObjectWithBinaryField{" +
-                   "a='" + a + '\'' +
-                   ", b=" + Arrays.toString(b) +
-                   '}';
+            return "ObjectWithBinaryField{" + "a='" + a + '\'' + ", b=" + Arrays.toString(b) + '}';
         }
 
         @Override
@@ -166,8 +168,7 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
                 return false;
             }
             ObjectWithBinaryField that = (ObjectWithBinaryField) o;
-            return Objects.equals(a, that.a) &&
-                    Arrays.equals(b, that.b);
+            return Objects.equals(a, that.a) && Arrays.equals(b, that.b);
         }
 
         @Override
@@ -184,7 +185,8 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
         }
 
         @Override
-        public void serialize(ObjectWithBinaryField value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        public void serialize(ObjectWithBinaryField value, JsonGenerator gen, SerializerProvider provider)
+                throws IOException {
             gen.writeString(value.a + "+:" + new String(value.b));
         }
     }
@@ -195,13 +197,14 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
         }
 
         @Override
-        public ObjectWithBinaryField deserialize(JsonParser p, DeserializationContext ctxt)
-                throws IOException {
+        public ObjectWithBinaryField deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             JsonNode treeNode = p.getCodec().readTree(p);
 
             String s = treeNode.textValue();
 
-            return new ObjectWithBinaryField(s.substring(0, s.indexOf(":")), s.substring(s.indexOf(":") + 1).getBytes());
+            return new ObjectWithBinaryField(
+                    s.substring(0, s.indexOf(":")),
+                    s.substring(s.indexOf(":") + 1).getBytes());
         }
     }
 }

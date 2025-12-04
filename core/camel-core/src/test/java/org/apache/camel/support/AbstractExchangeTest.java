@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -23,9 +27,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * The unit test for the class {@link AbstractExchange}.
@@ -76,5 +77,4 @@ public class AbstractExchangeTest {
         assertInstanceOf(DataTypeAware.class, e2.getMessage());
         assertSame(type2, ((DataTypeAware) e2.getMessage()).getDataType());
     }
-
 }

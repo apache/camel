@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.nio.file.Files;
@@ -40,27 +41,36 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "kafka",
-         description = "List Kafka consumers of Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "kafka",
+        description = "List Kafka consumers of Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListKafka extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--committed" },
-                        description = "Show committed offset (slower due to sync call to Kafka brokers)")
+    @CommandLine.Option(
+            names = {"--committed"},
+            description = "Show committed offset (slower due to sync call to Kafka brokers)")
     boolean committed;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @CommandLine.Option(
+            names = {"--short-uri"},
+            description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @CommandLine.Option(
+            names = {"--wide-uri"},
+            description = "List endpoint URI in full details")
     boolean wideUri;
 
     public ListKafka(CamelJBangMain main) {
@@ -77,98 +87,96 @@ public class ListKafka extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row copy = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row copy = new Row();
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                copy.name = context.getString("name");
+                if ("CamelJBang".equals(copy.name)) {
+                    copy.name = ProcessHelper.extractName(root, ph);
+                }
+                copy.pid = Long.toString(ph.pid());
+                copy.uptime = extractSince(ph);
+                copy.age = TimeUtils.printSince(copy.uptime);
+
+                JsonObject jo = (JsonObject) root.get("kafka");
+                if (jo != null) {
+                    if (committed) {
+                        // we ask for committed so need to do an action on-demand to get data
+                        // ensure output file is deleted before executing action
+                        Path outputFile = getOutputFile(Long.toString(ph.pid()));
+                        PathUtils.deleteFile(outputFile);
+
+                        JsonObject root2 = new JsonObject();
+                        root2.put("action", "kafka");
+                        Path file = getActionFile(Long.toString(ph.pid()));
+                        try {
+                            PathUtils.writeTextSafely(root2.toJson(), file);
+                        } catch (Exception e) {
+                            // ignore
                         }
-                        copy.name = context.getString("name");
-                        if ("CamelJBang".equals(copy.name)) {
-                            copy.name = ProcessHelper.extractName(root, ph);
-                        }
-                        copy.pid = Long.toString(ph.pid());
-                        copy.uptime = extractSince(ph);
-                        copy.age = TimeUtils.printSince(copy.uptime);
+                        jo = waitForOutputFile(outputFile);
+                    }
+                    JsonArray arr = jo != null ? (JsonArray) jo.get("kafkaConsumers") : null;
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            Row row = copy.copy();
+                            jo = (JsonObject) arr.get(i);
+                            row.routeId = jo.getString("routeId");
+                            row.uri = jo.getString("uri");
+                            row.state = jo.getString("state");
 
-                        JsonObject jo = (JsonObject) root.get("kafka");
-                        if (jo != null) {
-                            if (committed) {
-                                // we ask for committed so need to do an action on-demand to get data
-                                // ensure output file is deleted before executing action
-                                Path outputFile = getOutputFile(Long.toString(ph.pid()));
-                                PathUtils.deleteFile(outputFile);
-
-                                JsonObject root2 = new JsonObject();
-                                root2.put("action", "kafka");
-                                Path file = getActionFile(Long.toString(ph.pid()));
-                                try {
-                                    PathUtils.writeTextSafely(root2.toJson(), file);
-                                } catch (Exception e) {
-                                    // ignore
-                                }
-                                jo = waitForOutputFile(outputFile);
-                            }
-                            JsonArray arr = jo != null ? (JsonArray) jo.get("kafkaConsumers") : null;
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    Row row = copy.copy();
-                                    jo = (JsonObject) arr.get(i);
-                                    row.routeId = jo.getString("routeId");
-                                    row.uri = jo.getString("uri");
-                                    row.state = jo.getString("state");
-
-                                    JsonArray wa = (JsonArray) jo.get("workers");
-                                    if (wa != null) {
-                                        for (int j = 0; j < wa.size(); j++) {
-                                            JsonObject wo = (JsonObject) wa.get(j);
-                                            row.threadId = wo.getString("threadId");
-                                            row.state = wo.getString("state");
-                                            row.lastError = wo.getString("lastError");
-                                            row.groupId = wo.getString("groupId");
-                                            row.groupInstanceId = wo.getString("groupInstanceId");
-                                            row.memberId = wo.getString("memberId");
-                                            row.generationId = wo.getIntegerOrDefault("generationId", 0);
-                                            row.lastTopic = wo.getString("lastTopic");
-                                            row.lastPartition = wo.getIntegerOrDefault("lastPartition", 0);
-                                            row.lastOffset = wo.getLongOrDefault("lastOffset", 0);
-                                            if (committed) {
-                                                JsonArray ca = (JsonArray) wo.get("committed");
-                                                if (ca != null) {
-                                                    JsonObject found = null;
-                                                    for (int k = 0; k < ca.size(); k++) {
-                                                        JsonObject co = (JsonObject) ca.get(k);
-                                                        if (row.lastTopic == null
-                                                                || (row.lastTopic.equals(co.getString("topic"))
-                                                                        && row.lastPartition == co.getInteger("partition"))) {
-                                                            found = co;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (found != null) {
-                                                        row.lastTopic = found.getString("topic");
-                                                        row.lastPartition = found.getIntegerOrDefault("partition", 0);
-                                                        row.committedOffset = found.getLongOrDefault("offset", 0);
-                                                        row.committedEpoch = found.getLongOrDefault("epoch", 0);
-                                                    }
+                            JsonArray wa = (JsonArray) jo.get("workers");
+                            if (wa != null) {
+                                for (int j = 0; j < wa.size(); j++) {
+                                    JsonObject wo = (JsonObject) wa.get(j);
+                                    row.threadId = wo.getString("threadId");
+                                    row.state = wo.getString("state");
+                                    row.lastError = wo.getString("lastError");
+                                    row.groupId = wo.getString("groupId");
+                                    row.groupInstanceId = wo.getString("groupInstanceId");
+                                    row.memberId = wo.getString("memberId");
+                                    row.generationId = wo.getIntegerOrDefault("generationId", 0);
+                                    row.lastTopic = wo.getString("lastTopic");
+                                    row.lastPartition = wo.getIntegerOrDefault("lastPartition", 0);
+                                    row.lastOffset = wo.getLongOrDefault("lastOffset", 0);
+                                    if (committed) {
+                                        JsonArray ca = (JsonArray) wo.get("committed");
+                                        if (ca != null) {
+                                            JsonObject found = null;
+                                            for (int k = 0; k < ca.size(); k++) {
+                                                JsonObject co = (JsonObject) ca.get(k);
+                                                if (row.lastTopic == null
+                                                        || (row.lastTopic.equals(co.getString("topic"))
+                                                                && row.lastPartition == co.getInteger("partition"))) {
+                                                    found = co;
+                                                    break;
                                                 }
                                             }
-                                            rows.add(row);
-                                            row = row.copy();
+                                            if (found != null) {
+                                                row.lastTopic = found.getString("topic");
+                                                row.lastPartition = found.getIntegerOrDefault("partition", 0);
+                                                row.committedOffset = found.getLongOrDefault("offset", 0);
+                                                row.committedEpoch = found.getLongOrDefault("epoch", 0);
+                                            }
                                         }
-                                    } else {
-                                        rows.add(row);
                                     }
+                                    rows.add(row);
+                                    row = row.copy();
                                 }
+                            } else {
+                                rows.add(row);
                             }
                         }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -179,27 +187,66 @@ public class ListKafka extends ProcessWatchCommand {
         }
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(this::getRouteId),
-                    new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).with(this::getState),
-                    new Column().header("GROUP-ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.groupId),
-                    new Column().header("TOPIC").dataAlign(HorizontalAlign.RIGHT).with(r -> r.lastTopic),
-                    new Column().header("PARTITION").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastPartition),
-                    new Column().header("OFFSET").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastOffset),
-                    new Column().header("COMMITTED").visible(committed).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getCommitted),
-                    new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(60, OverflowBehaviour.NEWLINE)
-                            .with(this::getLastError),
-                    new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getUri),
-                    new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(140, OverflowBehaviour.NEWLINE)
-                            .with(this::getUri))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("ROUTE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getRouteId),
+                                    new Column()
+                                            .header("STATUS")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getState),
+                                    new Column()
+                                            .header("GROUP-ID")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.groupId),
+                                    new Column()
+                                            .header("TOPIC")
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> r.lastTopic),
+                                    new Column()
+                                            .header("PARTITION")
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> "" + r.lastPartition),
+                                    new Column()
+                                            .header("OFFSET")
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> "" + r.lastOffset),
+                                    new Column()
+                                            .header("COMMITTED")
+                                            .visible(committed)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getCommitted),
+                                    new Column()
+                                            .header("ERROR")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(60, OverflowBehaviour.NEWLINE)
+                                            .with(this::getLastError),
+                                    new Column()
+                                            .header("ENDPOINT")
+                                            .visible(!wideUri)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(this::getUri),
+                                    new Column()
+                                            .header("ENDPOINT")
+                                            .visible(wideUri)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                            .with(this::getUri))));
         }
 
         return 0;
@@ -310,5 +357,4 @@ public class ListKafka extends ProcessWatchCommand {
         }
         return answer;
     }
-
 }

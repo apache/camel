@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
@@ -27,11 +28,13 @@ import org.apache.camel.spi.Metadata;
  * status messages have no real value. Another example is things like market data prices, where old stock prices are not
  * that relevant, only the current price is.
  */
-@Metadata(label = "bean",
-          description = "An AggregationStrategy which just uses the latest exchange which is useful for status messages where old"
+@Metadata(
+        label = "bean",
+        description =
+                "An AggregationStrategy which just uses the latest exchange which is useful for status messages where old"
                         + " status messages have no real value. Another example is things like market data prices, where old stock prices are not"
                         + " that relevant, only the current price is.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 
@@ -68,7 +71,8 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         // propagate exception from old exchange if there isn't already an exception
         if (newExchange.getException() == null) {
             newExchange.setException(oldExchange.getException());
-            newExchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+            newExchange.setProperty(
+                    ExchangePropertyKey.FAILURE_ENDPOINT,
                     oldExchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT));
         }
     }
@@ -79,7 +83,9 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         }
 
         // propagate exception from old exchange if there isn't already an exception
-        if (oldExchange.isFailed() || oldExchange.isRollbackOnly() || oldExchange.isRollbackOnlyLast()
+        if (oldExchange.isFailed()
+                || oldExchange.isRollbackOnly()
+                || oldExchange.isRollbackOnlyLast()
                 || oldExchange.getExchangeExtension().isErrorHandlerHandledSet()
                         && oldExchange.getExchangeExtension().isErrorHandlerHandled()) {
             // propagate failure by using old exchange as the answer

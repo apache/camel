@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.dsl.yaml;
 
 import java.lang.reflect.Modifier;
@@ -52,134 +53,109 @@ import org.jboss.jandex.Type;
 
 public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
-    public static final DotName LIST_CLASS
-            = DotName.createSimple("java.util.List");
-    public static final DotName SET_CLASS
-            = DotName.createSimple("java.util.Set");
-    public static final DotName STRING_CLASS
-            = DotName.createSimple("java.lang.String");
-    public static final DotName CLASS_CLASS
-            = DotName.createSimple("java.lang.Class");
+    public static final DotName LIST_CLASS = DotName.createSimple("java.util.List");
+    public static final DotName SET_CLASS = DotName.createSimple("java.util.Set");
+    public static final DotName STRING_CLASS = DotName.createSimple("java.lang.String");
+    public static final DotName CLASS_CLASS = DotName.createSimple("java.lang.Class");
 
-    public static final DotName DEPRECATED_ANNOTATION_CLASS
-            = DotName.createSimple("java.lang.Deprecated");
+    public static final DotName DEPRECATED_ANNOTATION_CLASS = DotName.createSimple("java.lang.Deprecated");
 
-    public static final DotName XML_ROOT_ELEMENT_ANNOTATION_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlRootElement");
-    public static final DotName XML_TYPE_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlType");
-    public static final DotName XML_ENUM_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlEnum");
-    public static final DotName XML_VALUE_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlValue");
-    public static final DotName XML_ATTRIBUTE_ANNOTATION_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlAttribute");
-    public static final DotName XML_VALUE_ANNOTATION_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlValue");
-    public static final DotName XML_ELEMENT_ANNOTATION_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlElement");
-    public static final DotName XML_ELEMENT_REF_ANNOTATION_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlElementRef");
-    public static final DotName XML_ELEMENTS_ANNOTATION_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlElements");
-    public static final DotName XML_TRANSIENT_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlTransient");
-    public static final DotName XML_ANY_ELEMENT_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.XmlAnyElement");
-    public static final DotName XML_JAVA_TYPE_ADAPTER_CLASS
-            = DotName.createSimple("jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter");
+    public static final DotName XML_ROOT_ELEMENT_ANNOTATION_CLASS =
+            DotName.createSimple("jakarta.xml.bind.annotation.XmlRootElement");
+    public static final DotName XML_TYPE_CLASS = DotName.createSimple("jakarta.xml.bind.annotation.XmlType");
+    public static final DotName XML_ENUM_CLASS = DotName.createSimple("jakarta.xml.bind.annotation.XmlEnum");
+    public static final DotName XML_VALUE_CLASS = DotName.createSimple("jakarta.xml.bind.annotation.XmlValue");
+    public static final DotName XML_ATTRIBUTE_ANNOTATION_CLASS =
+            DotName.createSimple("jakarta.xml.bind.annotation.XmlAttribute");
+    public static final DotName XML_VALUE_ANNOTATION_CLASS =
+            DotName.createSimple("jakarta.xml.bind.annotation.XmlValue");
+    public static final DotName XML_ELEMENT_ANNOTATION_CLASS =
+            DotName.createSimple("jakarta.xml.bind.annotation.XmlElement");
+    public static final DotName XML_ELEMENT_REF_ANNOTATION_CLASS =
+            DotName.createSimple("jakarta.xml.bind.annotation.XmlElementRef");
+    public static final DotName XML_ELEMENTS_ANNOTATION_CLASS =
+            DotName.createSimple("jakarta.xml.bind.annotation.XmlElements");
+    public static final DotName XML_TRANSIENT_CLASS = DotName.createSimple("jakarta.xml.bind.annotation.XmlTransient");
+    public static final DotName XML_ANY_ELEMENT_CLASS =
+            DotName.createSimple("jakarta.xml.bind.annotation.XmlAnyElement");
+    public static final DotName XML_JAVA_TYPE_ADAPTER_CLASS =
+            DotName.createSimple("jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter");
 
-    public static final DotName METADATA_ANNOTATION_CLASS
-            = DotName.createSimple("org.apache.camel.spi.Metadata");
-    public static final DotName EXPRESSION_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.language.ExpressionDefinition");
-    public static final DotName EXPRESSION_SUBELEMENT_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.ExpressionSubElementDefinition");
-    public static final DotName HAS_EXPRESSION_TYPE_CLASS
-            = DotName.createSimple("org.apache.camel.model.HasExpressionType");
-    public static final DotName OUTPUT_NODE_CLASS
-            = DotName.createSimple("org.apache.camel.model.OutputNode");
-    public static final DotName PROCESSOR_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.ProcessorDefinition");
-    public static final DotName SEND_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.SendDefinition");
-    public static final DotName TO_DYNAMIC_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.ToDynamicDefinition");
-    public static final DotName POLL_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.PollDefinition");
-    public static final DotName ERROR_HANDLER_BUILDER_CLASS
-            = DotName.createSimple("org.apache.camel.builder.ErrorHandlerBuilder");
-    public static final DotName VERB_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.rest.VerbDefinition");
-    public static final DotName ID_AWARE_CLASS
-            = DotName.createSimple("org.apache.camel.spi.IdAware");
-    public static final DotName ERROR_HANDLER_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.errorhandler.BaseErrorHandlerDefinition");
-    public static final DotName REF_ERROR_HANDLER_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.errorhandler.RefErrorHandlerDefinition");
+    public static final DotName METADATA_ANNOTATION_CLASS = DotName.createSimple("org.apache.camel.spi.Metadata");
+    public static final DotName EXPRESSION_DEFINITION_CLASS =
+            DotName.createSimple("org.apache.camel.model.language.ExpressionDefinition");
+    public static final DotName EXPRESSION_SUBELEMENT_DEFINITION_CLASS =
+            DotName.createSimple("org.apache.camel.model.ExpressionSubElementDefinition");
+    public static final DotName HAS_EXPRESSION_TYPE_CLASS =
+            DotName.createSimple("org.apache.camel.model.HasExpressionType");
+    public static final DotName OUTPUT_NODE_CLASS = DotName.createSimple("org.apache.camel.model.OutputNode");
+    public static final DotName PROCESSOR_DEFINITION_CLASS =
+            DotName.createSimple("org.apache.camel.model.ProcessorDefinition");
+    public static final DotName SEND_DEFINITION_CLASS = DotName.createSimple("org.apache.camel.model.SendDefinition");
+    public static final DotName TO_DYNAMIC_DEFINITION_CLASS =
+            DotName.createSimple("org.apache.camel.model.ToDynamicDefinition");
+    public static final DotName POLL_DEFINITION_CLASS = DotName.createSimple("org.apache.camel.model.PollDefinition");
+    public static final DotName ERROR_HANDLER_BUILDER_CLASS =
+            DotName.createSimple("org.apache.camel.builder.ErrorHandlerBuilder");
+    public static final DotName VERB_DEFINITION_CLASS =
+            DotName.createSimple("org.apache.camel.model.rest.VerbDefinition");
+    public static final DotName ID_AWARE_CLASS = DotName.createSimple("org.apache.camel.spi.IdAware");
+    public static final DotName ERROR_HANDLER_DEFINITION_CLASS =
+            DotName.createSimple("org.apache.camel.model.errorhandler.BaseErrorHandlerDefinition");
+    public static final DotName REF_ERROR_HANDLER_DEFINITION_CLASS =
+            DotName.createSimple("org.apache.camel.model.errorhandler.RefErrorHandlerDefinition");
 
-    public static final DotName YAML_TYPE_ANNOTATION
-            = DotName.createSimple("org.apache.camel.spi.annotations.YamlType");
-    public static final DotName YAML_IN_ANNOTATION
-            = DotName.createSimple("org.apache.camel.spi.annotations.YamlIn");
-    public static final DotName YAML_OUT_ANNOTATION
-            = DotName.createSimple("org.apache.camel.spi.annotations.YamlOut");
-    public static final DotName DSL_PROPERTY_ANNOTATION
-            = DotName.createSimple("org.apache.camel.spi.annotations.DslProperty");
+    public static final DotName YAML_TYPE_ANNOTATION =
+            DotName.createSimple("org.apache.camel.spi.annotations.YamlType");
+    public static final DotName YAML_IN_ANNOTATION = DotName.createSimple("org.apache.camel.spi.annotations.YamlIn");
+    public static final DotName YAML_OUT_ANNOTATION = DotName.createSimple("org.apache.camel.spi.annotations.YamlOut");
+    public static final DotName DSL_PROPERTY_ANNOTATION =
+            DotName.createSimple("org.apache.camel.spi.annotations.DslProperty");
 
-    public static final ClassName CN_DESERIALIZER_RESOLVER
-            = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerResolver");
-    public static final ClassName CN_DESERIALIZER_SUPPORT
-            = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerSupport");
-    public static final ClassName CN_DESERIALIZER_BASE
-            = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerBase");
-    public static final ClassName CN_ENDPOINT_AWARE_DESERIALIZER_BASE
-            = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerEndpointAwareBase");
-    public static final ClassName CN_DESERIALIZATION_CONTEXT
-            = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializationContext");
-    public static final ClassName CN_YAML_SUPPORT
-            = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlSupport");
-    public static final ClassName CN_YAML_TYPE
-            = ClassName.get("org.apache.camel.spi.annotations", "YamlType");
-    public static final ClassName CN_YAML_PROPERTY
-            = ClassName.get("org.apache.camel.spi.annotations", "YamlProperty");
+    public static final ClassName CN_DESERIALIZER_RESOLVER =
+            ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerResolver");
+    public static final ClassName CN_DESERIALIZER_SUPPORT =
+            ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerSupport");
+    public static final ClassName CN_DESERIALIZER_BASE =
+            ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerBase");
+    public static final ClassName CN_ENDPOINT_AWARE_DESERIALIZER_BASE =
+            ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerEndpointAwareBase");
+    public static final ClassName CN_DESERIALIZATION_CONTEXT =
+            ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializationContext");
+    public static final ClassName CN_YAML_SUPPORT = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlSupport");
+    public static final ClassName CN_YAML_TYPE = ClassName.get("org.apache.camel.spi.annotations", "YamlType");
+    public static final ClassName CN_YAML_PROPERTY = ClassName.get("org.apache.camel.spi.annotations", "YamlProperty");
 
-    public static final ClassName CN_YAML_PROPERTY_GROUP
-            = ClassName.get("org.apache.camel.spi.annotations", "YamlPropertyGroup");
-    public static final ClassName CN_YAML_IN
-            = ClassName.get("org.apache.camel.spi.annotations", "YamlIn");
-    public static final ClassName CN_EXPRESSION_DEFINITION
-            = ClassName.get("org.apache.camel.model.language", "ExpressionDefinition");
-    public static final ClassName CN_NODE
-            = ClassName.get("org.snakeyaml.engine.v2.nodes", "Node");
-    public static final ClassName CN_MAPPING_NODE
-            = ClassName.get("org.snakeyaml.engine.v2.nodes", "MappingNode");
-    public static final ClassName CN_NODE_TUPLE
-            = ClassName.get("org.snakeyaml.engine.v2.nodes", "NodeTuple");
-    public static final ClassName CN_SEQUENCE_NODE
-            = ClassName.get("org.snakeyaml.engine.v2.nodes", "SequenceNode");
-    public static final ClassName CN_PROCESSOR_DEFINITION
-            = ClassName.get("org.apache.camel.model", "ProcessorDefinition");
+    public static final ClassName CN_YAML_PROPERTY_GROUP =
+            ClassName.get("org.apache.camel.spi.annotations", "YamlPropertyGroup");
+    public static final ClassName CN_YAML_IN = ClassName.get("org.apache.camel.spi.annotations", "YamlIn");
+    public static final ClassName CN_EXPRESSION_DEFINITION =
+            ClassName.get("org.apache.camel.model.language", "ExpressionDefinition");
+    public static final ClassName CN_NODE = ClassName.get("org.snakeyaml.engine.v2.nodes", "Node");
+    public static final ClassName CN_MAPPING_NODE = ClassName.get("org.snakeyaml.engine.v2.nodes", "MappingNode");
+    public static final ClassName CN_NODE_TUPLE = ClassName.get("org.snakeyaml.engine.v2.nodes", "NodeTuple");
+    public static final ClassName CN_SEQUENCE_NODE = ClassName.get("org.snakeyaml.engine.v2.nodes", "SequenceNode");
+    public static final ClassName CN_PROCESSOR_DEFINITION =
+            ClassName.get("org.apache.camel.model", "ProcessorDefinition");
 
-    public static final Set<String> PRIMITIVE_CLASSES = new HashSet<>(
-            Arrays.asList(
-                    String.class.getName(),
-                    Character.class.getName(),
-                    Boolean.class.getName(),
-                    Byte.class.getName(),
-                    Short.class.getName(),
-                    Integer.class.getName(),
-                    Long.class.getName(),
-                    Float.class.getName(),
-                    Double.class.getName(),
-                    char.class.getName(),
-                    boolean.class.getName(),
-                    byte.class.getName(),
-                    short.class.getName(),
-                    int.class.getName(),
-                    long.class.getName(),
-                    float.class.getName(),
-                    double.class.getName()));
+    public static final Set<String> PRIMITIVE_CLASSES = new HashSet<>(Arrays.asList(
+            String.class.getName(),
+            Character.class.getName(),
+            Boolean.class.getName(),
+            Byte.class.getName(),
+            Short.class.getName(),
+            Integer.class.getName(),
+            Long.class.getName(),
+            Float.class.getName(),
+            Double.class.getName(),
+            char.class.getName(),
+            boolean.class.getName(),
+            byte.class.getName(),
+            short.class.getName(),
+            int.class.getName(),
+            long.class.getName(),
+            float.class.getName(),
+            double.class.getName()));
     /**
      * The default value the String attributes of all the JAXB annotations.
      */
@@ -189,8 +165,10 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
+
     @Parameter
     protected List<String> bannedDefinitions;
+
     @Parameter
     protected List<String> additionalDefinitions;
 
@@ -218,33 +196,25 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         if (target == null) {
             return false;
         }
-        return annotationValue(
-                target.declaredAnnotation(annotationName),
-                name).isPresent();
+        return annotationValue(target.declaredAnnotation(annotationName), name).isPresent();
     }
 
     protected static Optional<AnnotationValue> annotationValue(AnnotationInstance instance, String name) {
-        return instance != null
-                ? Optional.ofNullable(instance.value(name))
-                : Optional.empty();
+        return instance != null ? Optional.ofNullable(instance.value(name)) : Optional.empty();
     }
 
     protected static Optional<AnnotationValue> annotationValue(ClassInfo target, DotName annotationName, String name) {
         if (target == null) {
             return Optional.empty();
         }
-        return annotationValue(
-                target.declaredAnnotation(annotationName),
-                name);
+        return annotationValue(target.declaredAnnotation(annotationName), name);
     }
 
     protected static Optional<AnnotationValue> annotationValue(FieldInfo target, DotName annotationName, String name) {
         if (target == null) {
             return Optional.empty();
         }
-        return annotationValue(
-                target.annotation(annotationName),
-                name);
+        return annotationValue(target.annotation(annotationName), name);
     }
 
     private static Optional<AnnotationInstance> annotation(FieldInfo target, DotName annotationName) {
@@ -283,7 +253,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         return yamlProperty(name, type, false, false, "");
     }
 
-    protected static AnnotationSpec yamlProperty(String name, String type, boolean required, boolean deprecated, String oneOf) {
+    protected static AnnotationSpec yamlProperty(
+            String name, String type, boolean required, boolean deprecated, String oneOf) {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
         builder.addMember("name", "$S", name);
         builder.addMember("type", "$S", type);
@@ -343,7 +314,9 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     // **************************
 
     protected static int getYamlTypeOrder(ClassInfo ci) {
-        return annotationValue(ci, YAML_TYPE_ANNOTATION, "order").map(AnnotationValue::asInt).orElse(Integer.MAX_VALUE);
+        return annotationValue(ci, YAML_TYPE_ANNOTATION, "order")
+                .map(AnnotationValue::asInt)
+                .orElse(Integer.MAX_VALUE);
     }
 
     @Override
@@ -421,40 +394,37 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     protected Map<String, ClassInfo> models() {
         Map<String, ClassInfo> answer = new TreeMap<>();
 
-        annotated(XML_ROOT_ELEMENT_ANNOTATION_CLASS)
-                .forEach(
-                        i -> {
-                            AnnotationInstance meta = i.declaredAnnotation(METADATA_ANNOTATION_CLASS);
-                            AnnotationInstance root = i.declaredAnnotation(XML_ROOT_ELEMENT_ANNOTATION_CLASS);
+        annotated(XML_ROOT_ELEMENT_ANNOTATION_CLASS).forEach(i -> {
+            AnnotationInstance meta = i.declaredAnnotation(METADATA_ANNOTATION_CLASS);
+            AnnotationInstance root = i.declaredAnnotation(XML_ROOT_ELEMENT_ANNOTATION_CLASS);
 
-                            if (meta == null || root == null) {
-                                return;
-                            }
+            if (meta == null || root == null) {
+                return;
+            }
 
-                            AnnotationValue name = root.value("name");
-                            AnnotationValue label = meta.value("label");
+            AnnotationValue name = root.value("name");
+            AnnotationValue label = meta.value("label");
 
-                            if (name == null || label == null) {
-                                return;
-                            }
+            if (name == null || label == null) {
+                return;
+            }
 
-                            if (bannedDefinitions != null) {
-                                for (String bannedDefinition : bannedDefinitions) {
-                                    if (AntPathMatcher.INSTANCE.match(bannedDefinition.replace('.', '/'),
-                                            i.name().toString('/'))) {
-                                        getLog().debug("Skipping definition: " + i.name().toString());
-                                        return;
-                                    }
-                                }
-                            }
+            if (bannedDefinitions != null) {
+                for (String bannedDefinition : bannedDefinitions) {
+                    if (AntPathMatcher.INSTANCE.match(
+                            bannedDefinition.replace('.', '/'), i.name().toString('/'))) {
+                        getLog().debug("Skipping definition: " + i.name().toString());
+                        return;
+                    }
+                }
+            }
 
-                            Set<String> labels = new TreeSet<>(
-                                    Arrays.asList(label.asString().split(",")));
+            Set<String> labels = new TreeSet<>(Arrays.asList(label.asString().split(",")));
 
-                            if (labels.contains("eip")) {
-                                answer.put(name.asString(), i);
-                            }
-                        });
+            if (labels.contains("eip")) {
+                answer.put(name.asString(), i);
+            }
+        });
 
         return answer;
     }
@@ -485,7 +455,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
         for (FieldInfo fi : ci.fields()) {
             if (hasAnnotation(fi, XML_ELEMENTS_ANNOTATION_CLASS)) {
-                AnnotationInstance[] elements = fi.annotation(XML_ELEMENTS_ANNOTATION_CLASS).value().asNestedArray();
+                AnnotationInstance[] elements =
+                        fi.annotation(XML_ELEMENTS_ANNOTATION_CLASS).value().asNestedArray();
 
                 for (AnnotationInstance element : elements) {
                     AnnotationValue type = element.value("type");
@@ -500,8 +471,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                 }
             }
 
-            if (!hasAnnotation(fi, XML_ELEMENT_ANNOTATION_CLASS) &&
-                    !hasAnnotation(fi, XML_ELEMENTS_ANNOTATION_CLASS)) {
+            if (!hasAnnotation(fi, XML_ELEMENT_ANNOTATION_CLASS) && !hasAnnotation(fi, XML_ELEMENTS_ANNOTATION_CLASS)) {
                 continue;
             }
             if (fi.type().name().toString().startsWith("java.")) {
@@ -601,7 +571,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     /**
      * @return the name from the given annotation or from the annotation {@code @XmlRootElement} of the provided class.
      */
-    private Optional<String> getNameFromAnnotationOrRef(AnnotationInstance annotation, ClassInfo refClass, String emptyValue) {
+    private Optional<String> getNameFromAnnotationOrRef(
+            AnnotationInstance annotation, ClassInfo refClass, String emptyValue) {
         return annotationValue(annotation, "name")
                 .map(AnnotationValue::asString)
                 .filter(value -> !emptyValue.equals(value))
@@ -612,23 +583,25 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
     protected boolean isRequired(FieldInfo fi) {
         return firstPresent(
-                annotationValue(fi, METADATA_ANNOTATION_CLASS, "required")
-                        .map(AnnotationValue::asBoolean),
-                annotationValue(fi, XML_VALUE_ANNOTATION_CLASS, "required")
-                        .map(AnnotationValue::asBoolean),
-                annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "required")
-                        .map(AnnotationValue::asBoolean))
+                        annotationValue(fi, METADATA_ANNOTATION_CLASS, "required")
+                                .map(AnnotationValue::asBoolean),
+                        annotationValue(fi, XML_VALUE_ANNOTATION_CLASS, "required")
+                                .map(AnnotationValue::asBoolean),
+                        annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "required")
+                                .map(AnnotationValue::asBoolean))
                 .orElse(false);
     }
 
     protected String getEnums(FieldInfo fi) {
         return annotationValue(fi, METADATA_ANNOTATION_CLASS, "enums")
-                .map(AnnotationValue::asString).orElse("");
+                .map(AnnotationValue::asString)
+                .orElse("");
     }
 
     protected String getJavaType(FieldInfo fi) {
         return annotationValue(fi, METADATA_ANNOTATION_CLASS, "javaType")
-                .map(AnnotationValue::asString).orElse("");
+                .map(AnnotationValue::asString)
+                .orElse("");
     }
 
     protected boolean isEnum(FieldInfo fi) {
@@ -640,9 +613,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     }
 
     protected boolean extendsType(Type type, DotName superType) {
-        return extendsType(
-                view.getClassByName(type.name()),
-                superType);
+        return extendsType(view.getClassByName(type.name()), superType);
     }
 
     protected boolean extendsType(ClassInfo ci, DotName superType) {
@@ -655,18 +626,14 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
         DotName superName = ci.superName();
         if (superName != null) {
-            return extendsType(
-                    view.getClassByName(superName),
-                    superType);
+            return extendsType(view.getClassByName(superName), superType);
         }
 
         return false;
     }
 
     protected boolean implementType(Type type, DotName interfaceType) {
-        return implementType(
-                view.getClassByName(type.name()),
-                interfaceType);
+        return implementType(view.getClassByName(type.name()), interfaceType);
     }
 
     protected boolean implementType(ClassInfo ci, DotName interfaceType) {
@@ -685,9 +652,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
         DotName superName = ci.superName();
         if (superName != null) {
-            return implementType(
-                    view.getClassByName(superName),
-                    interfaceType);
+            return implementType(view.getClassByName(superName), interfaceType);
         }
 
         return false;
@@ -696,7 +661,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     protected boolean isBanned(ClassInfo ci) {
         if (bannedDefinitions != null) {
             for (String bannedDefinition : bannedDefinitions) {
-                if (AntPathMatcher.INSTANCE.match(bannedDefinition.replace('.', '/'), ci.name().toString('/'))) {
+                if (AntPathMatcher.INSTANCE.match(
+                        bannedDefinition.replace('.', '/'), ci.name().toString('/'))) {
                     getLog().debug("Skipping definition: " + ci.name().toString());
                     return true;
                 }
@@ -708,8 +674,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
     protected Stream<ClassInfo> implementsOrExtends(Type ci) {
         return Stream.concat(
-                view.getAllKnownSubclasses(ci.name()).stream(),
-                view.getAllKnownSubclasses(ci.name()).stream())
+                        view.getAllKnownSubclasses(ci.name()).stream(), view.getAllKnownSubclasses(ci.name()).stream())
                 .distinct()
                 .sorted(Comparator.comparing(ClassInfo::name));
     }
@@ -726,16 +691,17 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
      */
     protected String fieldName(ClassInfo ci, FieldInfo fi) {
         return firstPresent(
-                annotation(fi, DSL_PROPERTY_ANNOTATION)
-                        .flatMap(annotation -> getNameFromAnnotationOrRef(annotation, ci, "")),
-                annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "name")
-                        .map(AnnotationValue::asString)
-                        .filter(value -> !XML_ANNOTATION_DEFAULT_VALUE.equals(value)),
-                annotationValue(fi, XML_ELEMENT_ANNOTATION_CLASS, "name")
-                        .map(AnnotationValue::asString)
-                        .filter(value -> !XML_ANNOTATION_DEFAULT_VALUE.equals(value)),
-                annotation(fi, XML_ELEMENT_REF_ANNOTATION_CLASS)
-                        .flatMap(annotation -> getNameFromAnnotationOrRef(annotation, ci, XML_ANNOTATION_DEFAULT_VALUE)))
+                        annotation(fi, DSL_PROPERTY_ANNOTATION)
+                                .flatMap(annotation -> getNameFromAnnotationOrRef(annotation, ci, "")),
+                        annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "name")
+                                .map(AnnotationValue::asString)
+                                .filter(value -> !XML_ANNOTATION_DEFAULT_VALUE.equals(value)),
+                        annotationValue(fi, XML_ELEMENT_ANNOTATION_CLASS, "name")
+                                .map(AnnotationValue::asString)
+                                .filter(value -> !XML_ANNOTATION_DEFAULT_VALUE.equals(value)),
+                        annotation(fi, XML_ELEMENT_REF_ANNOTATION_CLASS)
+                                .flatMap(annotation ->
+                                        getNameFromAnnotationOrRef(annotation, ci, XML_ANNOTATION_DEFAULT_VALUE)))
                 .orElseGet(fi::name);
     }
 }

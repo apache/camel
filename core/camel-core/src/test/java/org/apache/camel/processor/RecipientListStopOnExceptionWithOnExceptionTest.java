@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RecipientListStopOnExceptionWithOnExceptionTest extends ContextTestSupport {
 
@@ -31,8 +32,8 @@ public class RecipientListStopOnExceptionWithOnExceptionTest extends ContextTest
         getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:c").expectedMessageCount(0);
 
-        String out = template.requestBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c",
-                String.class);
+        String out = template.requestBodyAndHeader(
+                "direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c", String.class);
         assertEquals("Damn Forced", out);
 
         assertMockEndpointsSatisfied();
@@ -43,9 +44,15 @@ public class RecipientListStopOnExceptionWithOnExceptionTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
+                onException(Exception.class)
+                        .handled(true)
+                        .to("mock:handled")
+                        .transform(simple("Damn ${exception.message}"));
 
-                from("direct:start").recipientList(header("foo")).stopOnException().to("mock:result");
+                from("direct:start")
+                        .recipientList(header("foo"))
+                        .stopOnException()
+                        .to("mock:result");
 
                 from("direct:a").to("mock:a");
                 from("direct:b").to("mock:b").throwException(new IllegalArgumentException("Forced"));

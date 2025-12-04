@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple.joor;
 
 import java.io.File;
@@ -38,8 +39,8 @@ public class CSimpleAttachmentsTest extends LanguageTestSupport {
     protected void populateExchange(Exchange exchange) {
         super.populateExchange(exchange);
 
-        DefaultAttachment da
-                = new DefaultAttachment(new DataHandler(new CamelFileDataSource(new File("src/test/data/message1.xml"))));
+        DefaultAttachment da =
+                new DefaultAttachment(new DataHandler(new CamelFileDataSource(new File("src/test/data/message1.xml"))));
         da.addHeader("orderId", "123");
         exchange.getIn(AttachmentMessage.class).addAttachmentObject("message1.xml", da);
 
@@ -103,5 +104,4 @@ public class CSimpleAttachmentsTest extends LanguageTestSupport {
         assertExpression("${attachmentContentType(message2.xml)}", "application/xml");
         assertExpression("${attachmentContentType(123.txt)}", "text/plain");
     }
-
 }

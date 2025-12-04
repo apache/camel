@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.secret.manager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,11 +33,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@EnabledIfEnvironmentVariable(named = "GOOGLE_APPLICATION_CREDENTIALS", matches = ".*",
-                              disabledReason = "Application credentials were not provided")
+@EnabledIfEnvironmentVariable(
+        named = "GOOGLE_APPLICATION_CREDENTIALS",
+        matches = ".*",
+        disabledReason = "Application credentials were not provided")
 public class GoogleSecretManagerIT extends CamelTestSupport {
 
     final String serviceAccountKeyFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
@@ -41,10 +44,13 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
 
     @EndpointInject("mock:createSecret")
     private MockEndpoint mockSecret;
+
     @EndpointInject("mock:getSecret")
     private MockEndpoint mockGetSecret;
+
     @EndpointInject("mock:deleteSecret")
     private MockEndpoint mockDeleteSecret;
+
     @EndpointInject("mock:listSecrets")
     private MockEndpoint listSecrets;
 
@@ -55,22 +61,24 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
             public void configure() {
 
                 from("direct:createSecret")
-                        .to("google-secret-manager://" + project + "?serviceAccountKey="
-                            + serviceAccountKeyFile + "&operation=createSecret")
+                        .to("google-secret-manager://" + project + "?serviceAccountKey=" + serviceAccountKeyFile
+                                + "&operation=createSecret")
                         .to("mock:createSecret");
 
-                from("direct:getSecretVersion").to("google-secret-manager://" + project + "?serviceAccountKey="
-                                                   + serviceAccountKeyFile + "&operation=getSecretVersion")
+                from("direct:getSecretVersion")
+                        .to("google-secret-manager://" + project + "?serviceAccountKey=" + serviceAccountKeyFile
+                                + "&operation=getSecretVersion")
                         .to("mock:getSecret");
 
-                from("direct:listSecrets").to("google-secret-manager://" + project + "?serviceAccountKey="
-                                              + serviceAccountKeyFile + "&operation=listSecrets")
+                from("direct:listSecrets")
+                        .to("google-secret-manager://" + project + "?serviceAccountKey=" + serviceAccountKeyFile
+                                + "&operation=listSecrets")
                         .to("mock:listSecrets");
 
-                from("direct:deleteSecret").to("google-secret-manager://" + project + "?serviceAccountKey="
-                                               + serviceAccountKeyFile + "&operation=deleteSecret")
+                from("direct:deleteSecret")
+                        .to("google-secret-manager://" + project + "?serviceAccountKey=" + serviceAccountKeyFile
+                                + "&operation=deleteSecret")
                         .to("mock:deleteSecret");
-
             }
         };
     }
@@ -111,19 +119,15 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
 
         ex = template.request("direct:listSecrets", new Processor() {
             @Override
-            public void process(Exchange exchange) {
-            }
+            public void process(Exchange exchange) {}
         });
 
-        SecretManagerServiceClient.ListSecretsPagedResponse response
-                = ex.getMessage().getBody(SecretManagerServiceClient.ListSecretsPagedResponse.class);
+        SecretManagerServiceClient.ListSecretsPagedResponse response =
+                ex.getMessage().getBody(SecretManagerServiceClient.ListSecretsPagedResponse.class);
         AtomicInteger totalSecret = new AtomicInteger();
-        response
-                .iterateAll()
-                .forEach(
-                        secret -> {
-                            totalSecret.getAndIncrement();
-                        });
+        response.iterateAll().forEach(secret -> {
+            totalSecret.getAndIncrement();
+        });
 
         assertEquals(1, totalSecret.get());
         ex = template.request("direct:deleteSecret", new Processor() {
@@ -135,5 +139,4 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
 
         assertNotNull(ex.getMessage());
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,8 +25,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class QuartzTwoCamelContextTest {
 
@@ -45,7 +46,8 @@ public class QuartzTwoCamelContextTest {
         camel2.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("quartz://myOtherGroup/myOtherTimerName?cron=0/1+*+*+*+*+?").to("mock:two");
+                from("quartz://myOtherGroup/myOtherTimerName?cron=0/1+*+*+*+*+?")
+                        .to("mock:two");
             }
         });
         camel2.start();
@@ -83,7 +85,8 @@ public class QuartzTwoCamelContextTest {
         camel3.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("quartz://myThirdGroup/myThirdTimerName?cron=0/1+*+*+*+*+?").to("mock:three");
+                from("quartz://myThirdGroup/myThirdTimerName?cron=0/1+*+*+*+*+?")
+                        .to("mock:three");
             }
         });
         assertDoesNotThrow(camel3::start);
@@ -94,5 +97,4 @@ public class QuartzTwoCamelContextTest {
         mock3.assertIsSatisfied();
         assertDoesNotThrow(camel3::stop);
     }
-
 }

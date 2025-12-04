@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.consumer.integration.namespaces;
 
 import java.util.List;
@@ -29,9 +30,12 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 public class KubernetesNamespacesConsumerLabelsIT extends KubernetesConsumerTestSupport {
     @Test
@@ -48,7 +52,8 @@ public class KubernetesNamespacesConsumerLabelsIT extends KubernetesConsumerTest
     public void cleanup() {
         List.of("ns1", "ns2", "ns3").forEach(ns -> {
             CLIENT.namespaces().withName(ns).delete();
-            Awaitility.await().atMost(10, TimeUnit.SECONDS)
+            Awaitility.await()
+                    .atMost(10, TimeUnit.SECONDS)
                     .until(() -> CLIENT.namespaces().withName(ns).get() == null);
         });
     }
@@ -58,12 +63,12 @@ public class KubernetesNamespacesConsumerLabelsIT extends KubernetesConsumerTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("kubernetes-namespaces://%s?oauthToken=%s&namespace=%s&labelKey=%s&labelValue=%s",
-                        host, authToken, ns2, "testkey", "testvalue")
+                fromF(
+                                "kubernetes-namespaces://%s?oauthToken=%s&namespace=%s&labelKey=%s&labelValue=%s",
+                                host, authToken, ns2, "testkey", "testvalue")
                         .process(new KubernetesProcessor())
                         .to(result);
             }
         };
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.xml;
 
 import java.io.IOException;
@@ -50,7 +51,8 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
             setSystemId(source.getSystemId());
             setInputStream((InputStream) streamCache);
         } else if (source.getReader() != null) {
-            String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, source.getReader());
+            String data =
+                    exchange.getContext().getTypeConverter().convertTo(String.class, exchange, source.getReader());
             readCache = new ReaderCache(data);
             streamCache = null;
             setReader(readCache);

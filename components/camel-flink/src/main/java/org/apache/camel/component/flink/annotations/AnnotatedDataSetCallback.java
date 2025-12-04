@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink.annotations;
+
+import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
+import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,9 +29,6 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.flink.api.java.DataSet;
-
-import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
-import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 
 /**
  * Provides facade for working with annotated DataSet callbacks i.e. POJO classes with an appropriate annotations on
@@ -73,8 +74,11 @@ public class AnnotatedDataSetCallback implements org.apache.camel.component.flin
 
             if (camelContext != null) {
                 for (int i = 1; i < arguments.size(); i++) {
-                    arguments.set(i,
-                            camelContext.getTypeConverter().convertTo(callbackMethod.getParameterTypes()[i], arguments.get(i)));
+                    arguments.set(
+                            i,
+                            camelContext
+                                    .getTypeConverter()
+                                    .convertTo(callbackMethod.getParameterTypes()[i], arguments.get(i)));
                 }
             }
 

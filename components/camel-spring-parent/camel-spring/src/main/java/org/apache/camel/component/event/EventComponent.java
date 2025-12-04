@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.event;
 
 import java.util.LinkedHashSet;
@@ -39,8 +40,7 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
     private ApplicationContext applicationContext;
     private final Set<EventEndpoint> endpoints = new LinkedHashSet<>();
 
-    public EventComponent() {
-    }
+    public EventComponent() {}
 
     public EventComponent(ApplicationContext applicationContext) {
         setApplicationContext(applicationContext);
@@ -65,12 +65,13 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
         } else {
             throw new IllegalArgumentException(
                     "Class: " + applicationContext.getClass().getName()
-                                               + " is not an instanceof ConfigurableApplicationContext.");
+                            + " is not an instanceof ConfigurableApplicationContext.");
         }
     }
 
     @Override
-    protected EventEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected EventEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         EventEndpoint answer = new EventEndpoint(uri, this, remaining);
         setProperties(answer, parameters);
         return answer;

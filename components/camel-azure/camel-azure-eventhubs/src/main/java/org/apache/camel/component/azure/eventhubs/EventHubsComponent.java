@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
 
 import java.util.Map;
@@ -38,8 +39,7 @@ public class EventHubsComponent extends DefaultComponent {
     @Metadata
     private EventHubsConfiguration configuration = new EventHubsConfiguration();
 
-    public EventHubsComponent() {
-    }
+    public EventHubsComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -82,8 +82,10 @@ public class EventHubsComponent extends DefaultComponent {
     }
 
     private void validateConfigurations(final EventHubsConfiguration configuration) {
-        if (!isAccessKeyAndAccessNameSet(configuration) && !isProducerAsyncClientSet(configuration)
-                && !isConnectionStringSet(configuration) && !isTokenCredentialSet(configuration)
+        if (!isAccessKeyAndAccessNameSet(configuration)
+                && !isProducerAsyncClientSet(configuration)
+                && !isConnectionStringSet(configuration)
+                && !isTokenCredentialSet(configuration)
                 && !isAzureIdentitySet(configuration)) {
             throw new IllegalArgumentException(
                     "Azure EventHubs SharedAccessName/SharedAccessKey, ProducerAsyncClient, ConnectionString or TokenCredential must be specified.");
@@ -127,5 +129,4 @@ public class EventHubsComponent extends DefaultComponent {
         configuration.setNamespace(parts[0]);
         configuration.setEventHubName(parts[1]);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.Comparator;
@@ -48,7 +49,9 @@ public class FileSorterRefTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&sorter=#mySorter")).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10&sorter=#mySorter"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         });
 

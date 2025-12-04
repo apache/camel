@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -34,30 +35,41 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "producer", description = "Get status of Camel producers", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "producer",
+        description = "Get status of Camel producers",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListProducer extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter producers by limiting to the given number of rows")
+    @CommandLine.Option(
+            names = {"--limit"},
+            description = "Filter producers by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter producers by URI")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter producers by URI")
     String filter;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @CommandLine.Option(
+            names = {"--short-uri"},
+            description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @CommandLine.Option(
+            names = {"--wide-uri"},
+            description = "List endpoint URI in full details")
     boolean wideUri;
 
     public ListProducer(CamelJBangMain main) {
@@ -74,56 +86,54 @@ public class ListProducer extends ProcessWatchCommand {
         }
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        JsonObject jo = (JsonObject) root.get("producers");
-                        if (context != null && jo != null) {
-                            JsonArray array = (JsonArray) jo.get("producers");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
-                                Row row = new Row();
-                                row.name = context.getString("name");
-                                if ("CamelJBang".equals(row.name)) {
-                                    row.name = ProcessHelper.extractName(root, ph);
-                                }
-                                row.pid = Long.toString(ph.pid());
-                                row.uri = o.getString("uri");
-                                row.id = o.getString("routeId");
-                                row.state = o.getString("state");
-                                row.className = o.getString("class");
-                                row.singleton = o.getBoolean("singleton");
-                                row.remote = o.getBoolean("remote");
-                                row.uptime = extractSince(ph);
-                                row.age = TimeUtils.printSince(row.uptime);
-                                boolean add = true;
-                                if (filter != null) {
-                                    String f = filter;
-                                    boolean negate = filter.startsWith("-");
-                                    if (negate) {
-                                        f = f.substring(1);
-                                    }
-                                    boolean match = PatternHelper.matchPattern(row.uri, f);
-                                    if (negate) {
-                                        match = !match;
-                                    }
-                                    if (!match) {
-                                        add = false;
-                                    }
-                                }
-                                if (limit > 0 && rows.size() >= limit) {
-                                    add = false;
-                                }
-                                if (add) {
-                                    rows.add(row);
-                                }
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            if (root != null) {
+                JsonObject context = (JsonObject) root.get("context");
+                JsonObject jo = (JsonObject) root.get("producers");
+                if (context != null && jo != null) {
+                    JsonArray array = (JsonArray) jo.get("producers");
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject o = (JsonObject) array.get(i);
+                        Row row = new Row();
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = ProcessHelper.extractName(root, ph);
+                        }
+                        row.pid = Long.toString(ph.pid());
+                        row.uri = o.getString("uri");
+                        row.id = o.getString("routeId");
+                        row.state = o.getString("state");
+                        row.className = o.getString("class");
+                        row.singleton = o.getBoolean("singleton");
+                        row.remote = o.getBoolean("remote");
+                        row.uptime = extractSince(ph);
+                        row.age = TimeUtils.printSince(row.uptime);
+                        boolean add = true;
+                        if (filter != null) {
+                            String f = filter;
+                            boolean negate = filter.startsWith("-");
+                            if (negate) {
+                                f = f.substring(1);
+                            }
+                            boolean match = PatternHelper.matchPattern(row.uri, f);
+                            if (negate) {
+                                match = !match;
+                            }
+                            if (!match) {
+                                add = false;
                             }
                         }
+                        if (limit > 0 && rows.size() >= limit) {
+                            add = false;
+                        }
+                        if (add) {
+                            rows.add(row);
+                        }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -136,22 +146,50 @@ public class ListProducer extends ProcessWatchCommand {
     }
 
     protected void printTable(List<Row> rows) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.id),
-                new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER).with(this::getState),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getType),
-                new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getUri),
-                new Column().header("URI").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(140, OverflowBehaviour.NEWLINE)
-                        .with(this::getUri))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("PID")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.pid),
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column()
+                                        .header("AGE")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.age),
+                                new Column()
+                                        .header("ID")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.id),
+                                new Column()
+                                        .header("STATUS")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(this::getState),
+                                new Column()
+                                        .header("TYPE")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getType),
+                                new Column()
+                                        .header("URI")
+                                        .visible(!wideUri)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getUri),
+                                new Column()
+                                        .header("URI")
+                                        .visible(wideUri)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                        .with(this::getUri))));
     }
 
     private String getUri(Row r) {
@@ -208,5 +246,4 @@ public class ListProducer extends ProcessWatchCommand {
         boolean singleton;
         boolean remote;
     }
-
 }

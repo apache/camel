@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.apache.camel.util.CollectionHelper.mapOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,11 +30,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyBindingException;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.CollectionHelper.mapOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -137,16 +138,24 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
     public void testPropertiesArrayNestedSimple() {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.build().bind(context, foo, mapOf(
-                "bar.works[0].id", "666",
-                "bar.works[1].name", "I changed this"));
+        PropertyBindingSupport.build()
+                .bind(
+                        context,
+                        foo,
+                        mapOf(
+                                "bar.works[0].id", "666",
+                                "bar.works[1].name", "I changed this"));
 
         assertEquals(666, foo.bar.works[0].getId());
         assertEquals("I changed this", foo.bar.works[1].getName());
 
-        PropertyBindingSupport.build().bind(context, foo, mapOf(
-                "bar.works[0].id", "999",
-                "bar.works[1].name", "I changed this again"));
+        PropertyBindingSupport.build()
+                .bind(
+                        context,
+                        foo,
+                        mapOf(
+                                "bar.works[0].id", "999",
+                                "bar.works[1].name", "I changed this again"));
 
         assertEquals(999, foo.bar.works[0].getId());
         assertEquals("I changed this again", foo.bar.works[1].getName());
@@ -186,8 +195,10 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("gold-customer[]", e.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().startsWith(
-                    "Cannot set property: gold-customer[] as either a Map/List/array because target bean is not a Map, List or array type"));
+            assertTrue(
+                    iae.getMessage()
+                            .startsWith(
+                                    "Cannot set property: gold-customer[] as either a Map/List/array because target bean is not a Map, List or array type"));
         }
     }
 
@@ -250,5 +261,4 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
             this.goldCustomer = goldCustomer;
         }
     }
-
 }

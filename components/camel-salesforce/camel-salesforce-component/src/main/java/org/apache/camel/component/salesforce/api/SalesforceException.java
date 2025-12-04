@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api;
 
 import java.io.InputStream;
@@ -71,8 +72,8 @@ public class SalesforceException extends CamelException {
         this(errors, statusCode, message, null, cause);
     }
 
-    public SalesforceException(List<RestError> errors, int statusCode, String message, InputStream responseContent,
-                               Throwable cause) {
+    public SalesforceException(
+            List<RestError> errors, int statusCode, String message, InputStream responseContent, Throwable cause) {
         super(message == null ? toErrorMessage(errors, statusCode) : message, cause);
         this.errors = errors;
         this.statusCode = statusCode;

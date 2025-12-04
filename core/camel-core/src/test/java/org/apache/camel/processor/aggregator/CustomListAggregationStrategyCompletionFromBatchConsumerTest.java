@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AbstractListAggregationStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -60,9 +61,13 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&sortBy=file:name")).routeId("foo").autoStartup(false)
-                        .aggregate(new MyListOfNumbersStrategy()).constant(true)
-                        .completionFromBatchConsumer().to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10&sortBy=file:name"))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .aggregate(new MyListOfNumbersStrategy())
+                        .constant(true)
+                        .completionFromBatchConsumer()
+                        .to("mock:result");
             }
         };
     }
@@ -78,5 +83,4 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
             return Integer.valueOf(s);
         }
     }
-
 }

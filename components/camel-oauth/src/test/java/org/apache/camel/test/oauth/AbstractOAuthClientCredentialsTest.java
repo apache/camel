@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.oauth;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.oauth.OAuth;
-import org.apache.camel.oauth.OAuthFactory;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.test.oauth;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.oauth.OAuth;
+import org.apache.camel.oauth.OAuthFactory;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 public abstract class AbstractOAuthClientCredentialsTest extends AbstractKeycloakTest {
 
@@ -43,16 +44,14 @@ public abstract class AbstractOAuthClientCredentialsTest extends AbstractKeycloa
             var factory = OAuthFactory.lookupFactory(context);
             assertInstanceOf(OAuth.class, factory.createOAuth());
 
-            given()
-                    .body("Hello Kermit")
+            given().body("Hello Kermit")
                     .when()
                     .post("/plain")
                     .then()
                     .statusCode(200)
                     .body(equalTo("Hello Kermit - No auth"));
 
-            given()
-                    .body("Hello Kermit")
+            given().body("Hello Kermit")
                     .when()
                     .post("/creds")
                     .then()

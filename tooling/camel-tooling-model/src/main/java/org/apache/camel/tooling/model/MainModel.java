@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
@@ -46,8 +47,7 @@ public class MainModel {
         private String description;
         private String sourceType;
 
-        public MainGroupModel() {
-        }
+        public MainGroupModel() {}
 
         public MainGroupModel(String name, String description, String sourceType) {
             this.name = name;

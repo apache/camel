@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Same route but not transacted
@@ -54,14 +55,17 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 from("direct:okay")
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 from("direct:fail")
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
             }
         };
     }
-
 }

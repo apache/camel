@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -27,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -45,7 +46,8 @@ public class StopRouteFromRouteTest {
         context.addRoutes(createMyRoutes());
         context.start();
 
-        assertTrue(context.getRouteController().getRouteStatus("myRoute").isStarted(), "Route myRoute should be started");
+        assertTrue(
+                context.getRouteController().getRouteStatus("myRoute").isStarted(), "Route myRoute should be started");
         assertTrue(context.getRouteController().getRouteStatus("bar").isStarted(), "Route bar should be started");
 
         // setup mock expectations for unit test
@@ -62,7 +64,8 @@ public class StopRouteFromRouteTest {
         latch.await(5, TimeUnit.SECONDS);
 
         // the route should now be stopped
-        assertTrue(context.getRouteController().getRouteStatus("myRoute").isStopped(), "Route myRoute should be stopped");
+        assertTrue(
+                context.getRouteController().getRouteStatus("myRoute").isStopped(), "Route myRoute should be stopped");
         assertTrue(context.getRouteController().getRouteStatus("bar").isStarted(), "Route bar should be started");
 
         // stop camel
@@ -79,33 +82,39 @@ public class StopRouteFromRouteTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").to("mock:start").process(new Processor() {
-                    Thread stop;
+                from("direct:start")
+                        .routeId("myRoute")
+                        .to("mock:start")
+                        .process(new Processor() {
+                            Thread stop;
 
-                    @Override
-                    public void process(final Exchange exchange) {
-                        // stop this route using a thread that will stop
-                        // this route gracefully while we are still running
-                        if (stop == null) {
-                            stop = new Thread() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        exchange.getContext().getRouteController().stopRoute("myRoute");
-                                    } catch (Exception e) {
-                                        // ignore
-                                    } finally {
-                                        // signal we stopped the route
-                                        latch.countDown();
-                                    }
+                            @Override
+                            public void process(final Exchange exchange) {
+                                // stop this route using a thread that will stop
+                                // this route gracefully while we are still running
+                                if (stop == null) {
+                                    stop = new Thread() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                exchange.getContext()
+                                                        .getRouteController()
+                                                        .stopRoute("myRoute");
+                                            } catch (Exception e) {
+                                                // ignore
+                                            } finally {
+                                                // signal we stopped the route
+                                                latch.countDown();
+                                            }
+                                        }
+                                    };
                                 }
-                            };
-                        }
 
-                        // start the thread that stops this route
-                        stop.start();
-                    }
-                }).to("mock:done");
+                                // start the thread that stops this route
+                                stop.start();
+                            }
+                        })
+                        .to("mock:done");
 
                 from("direct:bar").routeId("bar").to("mock:bar");
             }

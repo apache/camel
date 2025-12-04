@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.loadbalancer;
 
 import java.lang.reflect.Array;
@@ -140,5 +141,4 @@ public abstract class LoadBalancerSupport extends BaseProcessorSupport
     public String toString() {
         return getClass().getSimpleName();
     }
-
 }

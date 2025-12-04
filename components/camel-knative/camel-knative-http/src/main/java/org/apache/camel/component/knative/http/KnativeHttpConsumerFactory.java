@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
 
 import java.util.Objects;
@@ -35,8 +36,7 @@ public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelC
     private CamelContext camelContext;
     private KnativeHttpServiceOptions serviceOptions;
 
-    public KnativeHttpConsumerFactory() {
-    }
+    public KnativeHttpConsumerFactory() {}
 
     public KnativeHttpConsumerFactory(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -45,8 +45,7 @@ public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelC
     @Override
     protected void doInit() throws Exception {
         if (serviceOptions == null) {
-            KnativeHttpSupport.lookupServiceOptions(camelContext)
-                    .ifPresent(options -> serviceOptions = options);
+            KnativeHttpSupport.lookupServiceOptions(camelContext).ifPresent(options -> serviceOptions = options);
         }
     }
 
@@ -88,13 +87,7 @@ public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelC
     @Override
     public Consumer createConsumer(
             Endpoint endpoint, KnativeTransportConfiguration config, KnativeResource service, Processor processor) {
-        return new KnativeHttpConsumer(
-                config,
-                endpoint,
-                service,
-                this::lookupRouter,
-                serviceOptions,
-                processor);
+        return new KnativeHttpConsumer(config, endpoint, service, this::lookupRouter, serviceOptions, processor);
     }
 
     /**
@@ -110,5 +103,4 @@ public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelC
 
         return router;
     }
-
 }

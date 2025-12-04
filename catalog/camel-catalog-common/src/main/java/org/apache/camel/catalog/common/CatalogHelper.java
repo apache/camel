@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.common;
 
 import java.io.File;
@@ -25,8 +26,7 @@ import org.apache.maven.project.MavenProject;
 
 public final class CatalogHelper {
 
-    private CatalogHelper() {
-    }
+    private CatalogHelper() {}
 
     public static String asRelativeFile(String name, MavenProject project) {
         String answer = name;
@@ -78,7 +78,8 @@ public final class CatalogHelper {
             fileName = fileName.trim();
             // try both with and without directory in the name
             String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath(), project), project);
-            boolean match = PatternHelper.matchPattern(fqn, fileName) || PatternHelper.matchPattern(file.getName(), fileName);
+            boolean match =
+                    PatternHelper.matchPattern(fqn, fileName) || PatternHelper.matchPattern(file.getName(), fileName);
             if (match) {
                 return true;
             }
@@ -125,7 +126,8 @@ public final class CatalogHelper {
         }
     }
 
-    public static void findXmlRouters(Set<File> xmlFiles, boolean includeXml, boolean includeTest, MavenProject project) {
+    public static void findXmlRouters(
+            Set<File> xmlFiles, boolean includeXml, boolean includeTest, MavenProject project) {
         if (includeXml) {
             for (Resource dir : project.getResources()) {
                 findXmlFiles(new File(dir.getDirectory()), xmlFiles);

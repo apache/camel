@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,8 +44,6 @@ import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
 
 class ExportSpringBoot extends Export {
 
@@ -103,9 +104,15 @@ class ExportSpringBoot extends Export {
         copyApplicationPropertiesFiles(srcResourcesDir);
 
         // copy source files
-        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir,
-                srcResourcesDir, srcCamelResourcesDir,
-                srcKameletsResourcesDir, srcPackageName);
+        copySourceFiles(
+                settings,
+                profile,
+                srcJavaDirRoot,
+                srcJavaDir,
+                srcResourcesDir,
+                srcCamelResourcesDir,
+                srcKameletsResourcesDir,
+                srcPackageName);
 
         // create main class
         createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
@@ -206,7 +213,8 @@ class ExportSpringBoot extends Export {
         context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
         context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
-        context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}",
+        context = context.replaceAll(
+                "\\{\\{ \\.CamelSpringBootVersion }}",
                 Objects.requireNonNullElseGet(camelSpringBootVersion, () -> camelVersion));
         context = context.replaceFirst("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());
 
@@ -262,8 +270,11 @@ class ExportSpringBoot extends Export {
             if ("lib".equals(gav.getPackaging())) {
                 // special for lib JARs
                 sb.append("            <scope>system</scope>\n");
-                sb.append("            <systemPath>\\$\\{project.basedir}/lib/").append(gav.getArtifactId()).append("-")
-                        .append(gav.getVersion()).append(".jar</systemPath>\n");
+                sb.append("            <systemPath>\\$\\{project.basedir}/lib/")
+                        .append(gav.getArtifactId())
+                        .append("-")
+                        .append(gav.getVersion())
+                        .append(".jar</systemPath>\n");
             } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
                 // special for camel-kamelets-utils
                 sb.append("            <exclusions>\n");
@@ -298,7 +309,8 @@ class ExportSpringBoot extends Export {
         context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
-        context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}",
+        context = context.replaceFirst(
+                "\\{\\{ \\.CamelSpringBootVersion }}",
                 Objects.requireNonNullElse(camelSpringBootVersion, camelVersion));
 
         if (repos == null || repos.isEmpty()) {
@@ -347,8 +359,11 @@ class ExportSpringBoot extends Export {
         for (MavenGav gav : gavs) {
             if ("lib".equals(gav.getPackaging())) {
                 // special for lib JARs
-                sb.append("    implementation files('lib/").append(gav.getArtifactId())
-                        .append("-").append(gav.getVersion()).append(".jar')\n");
+                sb.append("    implementation files('lib/")
+                        .append(gav.getArtifactId())
+                        .append("-")
+                        .append(gav.getVersion())
+                        .append(".jar')\n");
             } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
                 // special for camel-kamelets-utils
                 sb.append("    implementation ('").append(gav).append("') {\n");
@@ -384,16 +399,14 @@ class ExportSpringBoot extends Export {
 
         context = context.replaceFirst("\\{\\{ \\.PackageName }}", packageName);
         context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
-        IOHelper.writeText(context,
-                Files.newOutputStream(srcJavaDir.resolve(mainClassname + ".java")));
+        IOHelper.writeText(context, Files.newOutputStream(srcJavaDir.resolve(mainClassname + ".java")));
     }
 
     @Override
     protected void adjustJavaSourceFileLine(String line, OutputStream fos) throws Exception {
         if (line.startsWith("public class")
                 && (line.contains("RouteBuilder") || line.contains("EndpointRouteBuilder"))) {
-            fos.write("import org.springframework.stereotype.Component;\n\n"
-                    .getBytes(StandardCharsets.UTF_8));
+            fos.write("import org.springframework.stereotype.Component;\n\n".getBytes(StandardCharsets.UTF_8));
             fos.write("@Component\n".getBytes(StandardCharsets.UTF_8));
         }
     }
@@ -420,5 +433,4 @@ class ExportSpringBoot extends Export {
         IOHelper.close(is);
         return text;
     }
-
 }

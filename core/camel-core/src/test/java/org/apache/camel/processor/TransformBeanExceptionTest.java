@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,7 +25,8 @@ public class TransformBeanExceptionTest extends ContextTestSupport {
 
     @Test
     public void testTransformBeanException() throws Exception {
-        getMockEndpoint("mock:dead").expectedBodiesReceived("Hello World", "Bye World", "Hi World", "Hi Camel", "Bye Camel");
+        getMockEndpoint("mock:dead")
+                .expectedBodiesReceived("Hello World", "Bye World", "Hi World", "Hi Camel", "Bye Camel");
 
         template.sendBody("direct:transform", "Hello World");
         template.sendBody("direct:bean", "Bye World");

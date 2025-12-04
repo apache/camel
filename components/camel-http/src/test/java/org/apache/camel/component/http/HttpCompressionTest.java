@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.http.common.HttpMethods.POST;
+import static org.apache.hc.core5.http.ContentType.TEXT_PLAIN;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_ENCODING;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,13 +58,6 @@ import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.http.protocol.RequestValidateHost;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.http.common.HttpMethods.POST;
-import static org.apache.hc.core5.http.ContentType.TEXT_PLAIN;
-import static org.apache.hc.core5.http.HttpHeaders.CONTENT_ENCODING;
-import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class HttpCompressionTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -68,11 +69,15 @@ public class HttpCompressionTest extends BaseHttpTest {
         expectedHeaders.put(CONTENT_ENCODING, "gzip");
 
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/",
-                        new HeaderValidationHandler(POST.name(), null, getBody(), getExpectedContent(), expectedHeaders))
+                .register(
+                        "/",
+                        new HeaderValidationHandler(
+                                POST.name(), null, getBody(), getExpectedContent(), expectedHeaders))
                 .create();
         localServer.start();
     }
@@ -87,12 +92,11 @@ public class HttpCompressionTest extends BaseHttpTest {
 
     @Test
     public void compressedHttpPost() {
-        Exchange exchange = template.request(
-                "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
-                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                    exchange1.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
-                    exchange1.getIn().setBody(getBody());
-                });
+        Exchange exchange = template.request("http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
+            exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            exchange1.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
+            exchange1.getIn().setBody(getBody());
+        });
 
         assertNotNull(exchange);
 
@@ -127,8 +131,7 @@ public class HttpCompressionTest extends BaseHttpTest {
         public void process(HttpRequest request, EntityDetails details, HttpContext context) throws HttpException {
             Header contentEncoding = request.getFirstHeader(CONTENT_ENCODING);
 
-            if (contentEncoding != null
-                    && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
+            if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
                 ClassicHttpRequest classicHttpRequest = (ClassicHttpRequest) request;
                 HttpEntity entity = classicHttpRequest.getEntity();
                 classicHttpRequest.setEntity(new GzipDecompressingEntity(entity));
@@ -142,9 +145,7 @@ public class HttpCompressionTest extends BaseHttpTest {
             }
 
             @Override
-            public InputStream getContent()
-                    throws IOException,
-                    IllegalStateException {
+            public InputStream getContent() throws IOException, IllegalStateException {
                 return new GZIPInputStream(super.getContent());
             }
 
@@ -163,8 +164,7 @@ public class HttpCompressionTest extends BaseHttpTest {
     static class ResponseCompressingInterceptor implements HttpResponseInterceptor {
 
         @Override
-        public void process(HttpResponse response, EntityDetails details, HttpContext context)
-                throws HttpException {
+        public void process(HttpResponse response, EntityDetails details, HttpContext context) throws HttpException {
             response.setHeader(CONTENT_ENCODING, "gzip");
             ClassicHttpResponse classicHttpResponse = (ClassicHttpResponse) response;
             HttpEntity entity = classicHttpResponse.getEntity();

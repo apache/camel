@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedThreadsMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Whether or not the caller should run the task when it was rejected by the thread pool")
+    @ManagedAttribute(
+            description = "Whether or not the caller should run the task when it was rejected by the thread pool")
     Boolean isCallerRunsWhenRejected();
 
     @ManagedAttribute(description = "How to handle tasks which cannot be accepted by the thread pool")
@@ -55,5 +57,4 @@ public interface ManagedThreadsMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Whether core threads is allowed to timeout if no tasks in queue to process")
     boolean isAllowCoreThreadTimeout();
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
@@ -116,13 +117,19 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).logStackTrace(false));
 
                 // shared for both routes
-                onException(MyTechnicalException.class).handled(true).maximumRedeliveries(2).to("mock:tech.error");
+                onException(MyTechnicalException.class)
+                        .handled(true)
+                        .maximumRedeliveries(2)
+                        .to("mock:tech.error");
 
                 from("direct:start")
                         // route specific on exception for MyFunctionalException
                         // we MUST use .end() to indicate that this sub block is
                         // ended
-                        .onException(MyFunctionalException.class).maximumRedeliveries(0).end().to("bean:myServiceBean")
+                        .onException(MyFunctionalException.class)
+                        .maximumRedeliveries(0)
+                        .end()
+                        .to("bean:myServiceBean")
                         .to("mock:result");
 
                 from("direct:start2")
@@ -132,8 +139,13 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
                         // destination mock:handled
                         // we MUST use .end() to indicate that this sub block is
                         // ended
-                        .onException(MyFunctionalException.class).handled(true).maximumRedeliveries(0).to("mock:handled").end()
-                        .to("bean:myServiceBean").to("mock:result");
+                        .onException(MyFunctionalException.class)
+                        .handled(true)
+                        .maximumRedeliveries(0)
+                        .to("mock:handled")
+                        .end()
+                        .to("bean:myServiceBean")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

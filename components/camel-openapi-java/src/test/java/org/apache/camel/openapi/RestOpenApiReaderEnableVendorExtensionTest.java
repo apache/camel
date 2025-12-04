@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
@@ -26,10 +31,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport {
 
@@ -50,31 +51,50 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
                 restConfiguration().apiVendorExtension(true);
 
                 // this user REST service is json only
-                rest("/user").tag("dude").description("User rest service").consumes("application/json")
+                rest("/user")
+                        .tag("dude")
+                        .description("User rest service")
+                        .consumes("application/json")
                         .produces("application/json")
-
-                        .get("/{id}").description("Find user by id").outType(User.class).responseMessage()
-                        .message("The user returned").endResponseMessage().param().name("id")
-                        .type(RestParamType.path).description("The id of the user to get").dataType("integer").endParam()
+                        .get("/{id}")
+                        .description("Find user by id")
+                        .outType(User.class)
+                        .responseMessage()
+                        .message("The user returned")
+                        .endResponseMessage()
+                        .param()
+                        .name("id")
+                        .type(RestParamType.path)
+                        .description("The id of the user to get")
+                        .dataType("integer")
+                        .endParam()
                         .to("bean:userService?method=getUser(${header.id})")
-
-                        .put().description("Updates or create a user").type(User.class).param().name("body")
-                        .type(RestParamType.body).description("The user to update or create")
-                        .endParam().to("bean:userService?method=updateUser")
-
-                        .get("/findAll").description("Find all users").outType(User[].class).responseMessage()
-                        .message("All the found users").endResponseMessage()
+                        .put()
+                        .description("Updates or create a user")
+                        .type(User.class)
+                        .param()
+                        .name("body")
+                        .type(RestParamType.body)
+                        .description("The user to update or create")
+                        .endParam()
+                        .to("bean:userService?method=updateUser")
+                        .get("/findAll")
+                        .description("Find all users")
+                        .outType(User[].class)
+                        .responseMessage()
+                        .message("All the found users")
+                        .endResponseMessage()
                         .to("bean:userService?method=listUsers");
             }
         };
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0" })
+    @ValueSource(strings = {"3.1", "3.0"})
     public void testEnableVendorExtension(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -82,8 +102,8 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
@@ -99,5 +119,4 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
 
         context.stop();
     }
-
 }

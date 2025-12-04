@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.eventnotifier;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_EXCHANGE;
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,10 +32,6 @@ import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.service.ServiceHelper;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_EXCHANGE;
-import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 
 public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> extends EventNotifierSupport
         implements CamelContextAware {
@@ -103,7 +104,8 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
         }
 
         try {
-            MicrometerEventNotifierService registryService = camelContext.hasService(MicrometerEventNotifierService.class);
+            MicrometerEventNotifierService registryService =
+                    camelContext.hasService(MicrometerEventNotifierService.class);
             if (registryService == null) {
                 registryService = new MicrometerEventNotifierService();
                 registryService.setMeterRegistry(getMeterRegistry());
@@ -119,5 +121,4 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

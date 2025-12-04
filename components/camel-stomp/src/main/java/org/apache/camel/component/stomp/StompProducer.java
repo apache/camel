@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
 
 import org.apache.camel.AsyncCallback;
@@ -42,5 +43,4 @@ public class StompProducer extends DefaultAsyncProducer implements Processor {
         callback.done(true);
         return true;
     }
-
 }

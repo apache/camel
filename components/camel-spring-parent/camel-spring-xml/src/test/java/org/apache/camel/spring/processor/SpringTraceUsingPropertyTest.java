@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
 
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration
-public class SpringTraceUsingPropertyTest extends SpringTraceTest {
-
-}
+public class SpringTraceUsingPropertyTest extends SpringTraceTest {}

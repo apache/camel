@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,19 +28,18 @@ import org.junit.jupiter.api.Test;
 import org.opensearch.client.opensearch.core.search.HitsMetadata;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class OpensearchSizeLimitIT extends OpensearchTestSupport {
 
     @Test
     void testSize() throws Exception {
-        //put 4
+        // put 4
         template().requestBody("direct:index", getContent("content"), String.class);
         template().requestBody("direct:index", getContent("content1"), String.class);
         template().requestBody("direct:index", getContent("content2"), String.class);
         String response = template().requestBody("direct:index", getContent("content3"), String.class);
 
-        String query = """
+        String query =
+                """
                 {
                    "query" : {
                       "match_all": {}
@@ -47,7 +49,8 @@ class OpensearchSizeLimitIT extends OpensearchTestSupport {
 
         // Delay the execution, because the search is getting stale results
         Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
-            HitsMetadata<?> searchWithSizeTwo = template().requestBody("direct:searchWithSizeTwo", query, HitsMetadata.class);
+            HitsMetadata<?> searchWithSizeTwo =
+                    template().requestBody("direct:searchWithSizeTwo", query, HitsMetadata.class);
             HitsMetadata<?> searchFrom3 = template().requestBody("direct:searchFrom3", query, HitsMetadata.class);
             assertEquals(2, searchWithSizeTwo.hits().size());
             assertEquals(1, searchFrom3.hits().size());
@@ -59,12 +62,10 @@ class OpensearchSizeLimitIT extends OpensearchTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:index")
-                        .to("opensearch://opensearch?operation=Index&indexName=size-limit");
+                from("direct:index").to("opensearch://opensearch?operation=Index&indexName=size-limit");
                 from("direct:searchWithSizeTwo")
                         .to("opensearch://opensearch?operation=Search&indexName=size-limit&size=2");
-                from("direct:searchFrom3")
-                        .to("opensearch://opensearch?operation=Search&indexName=size-limit&from=3");
+                from("direct:searchFrom3").to("opensearch://opensearch?operation=Search&indexName=size-limit&from=3");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jolt;
 
 import java.io.InputStream;
@@ -41,8 +42,15 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * JSON to JSON transformation using JOLT.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true,
-             remote = false, category = { Category.TRANSFORMATION }, headersClass = JoltConstants.class)
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = "jolt",
+        title = "JOLT",
+        syntax = "jolt:resourceUri",
+        producerOnly = true,
+        remote = false,
+        category = {Category.TRANSFORMATION},
+        headersClass = JoltConstants.class)
 @Metadata(excludeProperties = "allowContextMapAll")
 public class JoltEndpoint extends ResourceEndpoint {
 
@@ -60,8 +68,7 @@ public class JoltEndpoint extends ResourceEndpoint {
     @UriParam(defaultValue = "false")
     private boolean allowTemplateFromHeader;
 
-    public JoltEndpoint() {
-    }
+    public JoltEndpoint() {}
 
     public JoltEndpoint(String uri, JoltComponent component, String resourceUri) {
         super(uri, component, resourceUri);
@@ -94,7 +101,10 @@ public class JoltEndpoint extends ResourceEndpoint {
             if (transform == null) {
                 if (log.isDebugEnabled()) {
                     String path = getResourceUri();
-                    log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
+                    log.debug(
+                            "Jolt content read from resource {} with resourceUri: {} for endpoint {}",
+                            getResourceUri(),
+                            path,
                             getEndpointUri());
                 }
 
@@ -120,7 +130,6 @@ public class JoltEndpoint extends ResourceEndpoint {
                             break;
                     }
                 }
-
             }
             return transform;
         } finally {
@@ -199,7 +208,10 @@ public class JoltEndpoint extends ResourceEndpoint {
         }
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(JoltConstants.JOLT_RESOURCE_URI);
-            log.debug("{} set to {} creating new endpoint to handle exchange", JoltConstants.JOLT_RESOURCE_URI, newResourceUri);
+            log.debug(
+                    "{} set to {} creating new endpoint to handle exchange",
+                    JoltConstants.JOLT_RESOURCE_URI,
+                    newResourceUri);
             JoltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
             newEndpoint.onExchange(exchange);
             return;
@@ -230,5 +242,4 @@ public class JoltEndpoint extends ResourceEndpoint {
         }
         ExchangeHelper.setInOutBodyPatternAware(exchange, body);
     }
-
 }

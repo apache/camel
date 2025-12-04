@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Path;
@@ -37,82 +38,109 @@ import org.apache.camel.util.json.JsonObject;
 import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "browse",
-                     description = "Browse pending messages on endpoints", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "browse",
+        description = "Browse pending messages on endpoints",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelBrowseAction extends ActionBaseCommand {
 
     public static class UriSizeCompletionCandidates implements Iterable<String> {
 
-        public UriSizeCompletionCandidates() {
-        }
+        public UriSizeCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("uri", "size").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--endpoint" },
-                        description = "Endpoint to browse messages from (can be uri, pattern, or refer to a route id)")
+    @CommandLine.Option(
+            names = {"--endpoint"},
+            description = "Endpoint to browse messages from (can be uri, pattern, or refer to a route id)")
     String endpoint;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @CommandLine.Option(
+            names = {"--short-uri"},
+            description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @CommandLine.Option(
+            names = {"--wide-uri"},
+            description = "List endpoint URI in full details")
     boolean wideUri;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @CommandLine.Option(
+            names = {"--mask"},
+            description =
+                    "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--dump" }, defaultValue = "false",
-                        description = "Whether to include message dumps")
+    @CommandLine.Option(
+            names = {"--dump"},
+            defaultValue = "false",
+            description = "Whether to include message dumps")
     boolean dump;
 
-    @CommandLine.Option(names = { "--limit" }, defaultValue = "100",
-                        description = "Limits the number of messages to dump per endpoint")
+    @CommandLine.Option(
+            names = {"--limit"},
+            defaultValue = "100",
+            description = "Limits the number of messages to dump per endpoint")
     int limit;
 
-    @CommandLine.Option(names = { "--tail" },
-                        description = "The number of messages from the end (latest) to dump")
+    @CommandLine.Option(
+            names = {"--tail"},
+            description = "The number of messages from the end (latest) to dump")
     int tail;
 
-    @CommandLine.Option(names = { "--fresh-size" }, defaultValue = "false",
-                        description = "Whether to calculate fresh queue size information (performance overhead)")
+    @CommandLine.Option(
+            names = {"--fresh-size"},
+            defaultValue = "false",
+            description = "Whether to calculate fresh queue size information (performance overhead)")
     boolean freshSize;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = UriSizeCompletionCandidates.class,
-                        description = "Sort by uri, or size", defaultValue = "uri")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = UriSizeCompletionCandidates.class,
+            description = "Sort by uri, or size",
+            defaultValue = "uri")
     String sort;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers in browsed messages")
+    @CommandLine.Option(
+            names = {"--show-headers"},
+            defaultValue = "true",
+            description = "Show message headers in browsed messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body in browsed messages")
+    @CommandLine.Option(
+            names = {"--show-body"},
+            defaultValue = "true",
+            description = "Show message body in browsed messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--only-body" }, defaultValue = "false",
-                        description = "Show only message body in browsed messages")
+    @CommandLine.Option(
+            names = {"--only-body"},
+            defaultValue = "false",
+            description = "Show only message body in browsed messages")
     boolean onlyBody;
 
-    @CommandLine.Option(names = { "--body-max-chars" },
-                        description = "Maximum size of the message body to include in the dump")
+    @CommandLine.Option(
+            names = {"--body-max-chars"},
+            description = "Maximum size of the message body to include in the dump")
     int bodyMaxChars;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(
+            names = {"--logging-color"},
+            defaultValue = "true",
+            description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @CommandLine.Option(
+            names = {"--pretty"},
+            description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
     private volatile long pid;
@@ -127,8 +155,9 @@ public class CamelBrowseAction extends ActionBaseCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -241,10 +270,11 @@ public class CamelBrowseAction extends ActionBaseCommand {
                     JsonObject ep = new JsonObject();
                     ep.put("endpoint", row.uri);
                     String table = tableHelper.getDataAsTable(exchangeId, null, null, ep, null, message, null);
-                    String header = String.format("Browse Message: (%s/%s)", row.position + i + 1,
-                            row.position + row.messages.size());
+                    String header = String.format(
+                            "Browse Message: (%s/%s)", row.position + i + 1, row.position + row.messages.size());
                     if (loggingColor) {
-                        printer().println(Ansi.ansi().fgGreen().a(header).reset().toString());
+                        printer()
+                                .println(Ansi.ansi().fgGreen().a(header).reset().toString());
                     } else {
                         printer().println(header);
                     }
@@ -255,21 +285,45 @@ public class CamelBrowseAction extends ActionBaseCommand {
     }
 
     protected void tableStatus(List<Row> rows) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                new Column().header("SIZE").headerAlign(HorizontalAlign.RIGHT).with(this::getQueueSize),
-                new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.LEFT)
-                        .with(this::getMessageAgo),
-                new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getEndpointUri),
-                new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(140, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.uri))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("PID")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.pid),
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column()
+                                        .header("AGE")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.ago),
+                                new Column()
+                                        .header("SIZE")
+                                        .headerAlign(HorizontalAlign.RIGHT)
+                                        .with(this::getQueueSize),
+                                new Column()
+                                        .header("SINCE")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .with(this::getMessageAgo),
+                                new Column()
+                                        .header("ENDPOINT")
+                                        .visible(!wideUri)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getEndpointUri),
+                                new Column()
+                                        .header("ENDPOINT")
+                                        .visible(wideUri)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                        .with(r -> r.uri))));
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -342,5 +396,4 @@ public class CamelBrowseAction extends ActionBaseCommand {
             }
         }
     }
-
 }

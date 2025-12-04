@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 import java.util.*;
@@ -90,7 +91,8 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     }
 
     private static String getComponentName(Endpoint endpoint) {
-        String answer = endpoint.getComponent() != null ? endpoint.getComponent().getDefaultName() : null;
+        String answer =
+                endpoint.getComponent() != null ? endpoint.getComponent().getDefaultName() : null;
         if (answer == null) {
             return getSchemeName(endpoint);
         }

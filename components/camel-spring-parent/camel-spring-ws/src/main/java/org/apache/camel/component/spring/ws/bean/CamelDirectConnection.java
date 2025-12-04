@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.bean;
 
 import java.io.IOException;
@@ -77,9 +78,7 @@ public class CamelDirectConnection implements WebServiceConnection {
     }
 
     @Override
-    public void close() throws IOException {
-
-    }
+    public void close() throws IOException {}
 
     public CamelContext getCamelContext() {
         return camelContext;
@@ -88,5 +87,4 @@ public class CamelDirectConnection implements WebServiceConnection {
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
-
 }

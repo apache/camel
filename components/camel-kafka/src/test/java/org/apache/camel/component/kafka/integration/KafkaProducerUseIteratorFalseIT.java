@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,16 +31,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class KafkaProducerUseIteratorFalseIT extends BaseKafkaTestSupport {
 
     private static final String TOPIC = "use-iterator-false";
 
     private static final String FROM_URI = "kafka:" + TOPIC
-                                           + "?groupId=KafkaProducerUseIteratorFalseIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
-                                           + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                                           + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
+            + "?groupId=KafkaProducerUseIteratorFalseIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+            + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+            + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
 
     @BeforeEach
     public void init() {
@@ -63,8 +64,11 @@ public class KafkaProducerUseIteratorFalseIT extends BaseKafkaTestSupport {
 
         mock.assertIsSatisfied(5000);
 
-        assertEquals(1, MockConsumerInterceptor.recordsCaptured.stream()
-                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
+        assertEquals(
+                1,
+                MockConsumerInterceptor.recordsCaptured.stream()
+                        .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false))
+                        .count());
     }
 
     @Override
@@ -72,12 +76,11 @@ public class KafkaProducerUseIteratorFalseIT extends BaseKafkaTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("kafka:" + TOPIC + "?groupId=KafkaProducerUseIteratorFalseIT&useIterator=false");
+                from("direct:start")
+                        .to("kafka:" + TOPIC + "?groupId=KafkaProducerUseIteratorFalseIT&useIterator=false");
 
-                from(FROM_URI)
-                        .to("mock:result");
+                from(FROM_URI).to("mock:result");
             }
         };
     }
-
 }

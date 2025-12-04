@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -31,10 +32,13 @@ public class OnExceptionFromChoiceWithDefaultErrorHandlerTest extends OnExceptio
                 onException(MyTechnicalException.class).handled(true).to("mock:tech");
                 onException(MyFunctionalException.class).handled(true).to("mock:func");
 
-                from("direct:start").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise()
+                from("direct:start")
+                        .choice()
+                        .when(method("myServiceBean").isEqualTo("James"))
+                        .to("mock:when")
+                        .otherwise()
                         .to("mock:otherwise");
             }
         };
     }
-
 }

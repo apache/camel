@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.File;
@@ -87,8 +88,12 @@ public class LoadOnDemandReloadStrategy extends RouteOnDemandReloadStrategy {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("On-demand reload scanned {} files (properties: {}, routes: {}, groovy: {})",
-                    properties.size() + routes.size(), properties.size(), routes.size(), groovy.size());
+            LOG.debug(
+                    "On-demand reload scanned {} files (properties: {}, routes: {}, groovy: {})",
+                    properties.size() + routes.size(),
+                    properties.size(),
+                    routes.size(),
+                    groovy.size());
         }
 
         // reload properties first
@@ -131,5 +136,4 @@ public class LoadOnDemandReloadStrategy extends RouteOnDemandReloadStrategy {
 
         return answer;
     }
-
 }

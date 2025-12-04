@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main;
 
 import org.apache.camel.CamelContext;
@@ -133,5 +134,4 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
             auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
         }
     }
-
 }

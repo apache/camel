@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.xml.namespace.QName;
 
@@ -26,8 +29,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JaxbDataFormatPartClassTest extends CamelTestSupport {
 
@@ -73,12 +74,11 @@ public class JaxbDataFormatPartClassTest extends CamelTestSupport {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
                 jaxbDataFormat.setContextPath(Address.class.getPackage().getName());
                 jaxbDataFormat.setPartClass(Address.class);
-                jaxbDataFormat.setPartNamespace(new QName("http://www.camel.apache.org/jaxb/example/address/1", "address"));
+                jaxbDataFormat.setPartNamespace(
+                        new QName("http://www.camel.apache.org/jaxb/example/address/1", "address"));
                 jaxbDataFormat.setPrettyPrint(true);
 
-                from("direct:marshall")
-                        .marshal(jaxbDataFormat)
-                        .to("mock:marshall");
+                from("direct:marshall").marshal(jaxbDataFormat).to("mock:marshall");
             }
         };
     }

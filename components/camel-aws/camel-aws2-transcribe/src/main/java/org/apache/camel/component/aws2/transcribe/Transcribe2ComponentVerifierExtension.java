@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe;
 
 import java.util.Map;
@@ -66,18 +67,22 @@ public class Transcribe2ComponentVerifierExtension extends DefaultComponentVerif
 
         try {
             Transcribe2Configuration configuration = setProperties(new Transcribe2Configuration(), parameters);
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            AwsBasicCredentials cred =
+                    AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             TranscribeClient client = TranscribeClient.builder()
                     .credentialsProvider(StaticCredentialsProvider.create(cred))
-                    .region(Region.of(configuration.getRegion())).build();
+                    .region(Region.of(configuration.getRegion()))
+                    .build();
             client.listTranscriptionJobs();
             client.close();
         } catch (Exception e) {
-            ResultErrorBuilder errorBuilder
-                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                            .detail("transcribe_exception_message", e.getMessage())
-                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
+                            VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                    .detail("transcribe_exception_message", e.getMessage())
+                    .detail(
+                            VerificationError.ExceptionAttribute.EXCEPTION_CLASS,
+                            e.getClass().getName())
+                    .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         }

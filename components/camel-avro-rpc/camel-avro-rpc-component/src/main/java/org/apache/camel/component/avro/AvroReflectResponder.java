@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 import org.apache.avro.Protocol;
@@ -32,5 +33,4 @@ public class AvroReflectResponder extends ReflectResponder {
     public Object respond(Protocol.Message message, Object request) throws Exception {
         return listener.respond(message, request, ReflectData.get());
     }
-
 }

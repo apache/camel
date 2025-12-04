@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,9 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /*
  */
@@ -53,23 +54,31 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
             public void configure() {
                 // on exception to catch all IO exceptions and handle them
                 // specially
-                onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3).to("mock:b").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        ON_EXCEPTION_RETRY.incrementAndGet();
-                        throw new IOException("Some other IOException");
-                    }
-                }).to("mock:c");
+                onException(IOException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
+                        .to("mock:b")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ON_EXCEPTION_RETRY.incrementAndGet();
+                                throw new IOException("Some other IOException");
+                            }
+                        })
+                        .to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
-                from("direct:intermediate").to("mock:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        RETRY.incrementAndGet();
-                        throw new IOException("IO error");
-                    }
-                }).to("mock:end");
+                from("direct:intermediate")
+                        .to("mock:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                RETRY.incrementAndGet();
+                                throw new IOException("IO error");
+                            }
+                        })
+                        .to("mock:end");
             }
         });
         context.start();
@@ -80,9 +89,10 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
-        CamelExecutionException e
-                = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Hello World"),
-                        "Should have thrown an exception");
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"),
+                "Should have thrown an exception");
 
         IOException cause = assertIsInstanceOf(IOException.class, e.getCause());
         assertEquals("Some other IOException", cause.getMessage());
@@ -103,25 +113,33 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
             public void configure() {
                 // on exception to catch all IO exceptions and handle them
                 // specially
-                onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
+                onException(IOException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
                         // this time we handle the exception
-                        .handled(true).to("mock:b").process(new Processor() {
+                        .handled(true)
+                        .to("mock:b")
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 ON_EXCEPTION_RETRY.incrementAndGet();
                                 throw new IOException("Some other IOException");
                             }
-                        }).to("mock:c");
+                        })
+                        .to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
-                from("direct:intermediate").to("mock:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        RETRY.incrementAndGet();
-                        throw new IOException("IO error");
-                    }
-                }).to("mock:end");
+                from("direct:intermediate")
+                        .to("mock:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                RETRY.incrementAndGet();
+                                throw new IOException("IO error");
+                            }
+                        })
+                        .to("mock:end");
             }
         });
         context.start();
@@ -132,9 +150,10 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
-        CamelExecutionException e
-                = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Hello World"),
-                        "Should have thrown an exception");
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"),
+                "Should have thrown an exception");
 
         IOException cause = assertIsInstanceOf(IOException.class, e.getCause());
         assertEquals("Some other IOException", cause.getMessage());
@@ -158,23 +177,31 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them
                 // specially
-                onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3).to("mock:b").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        ON_EXCEPTION_RETRY.incrementAndGet();
-                        throw new IOException("Some other IOException");
-                    }
-                }).to("mock:c");
+                onException(IOException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
+                        .to("mock:b")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ON_EXCEPTION_RETRY.incrementAndGet();
+                                throw new IOException("Some other IOException");
+                            }
+                        })
+                        .to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
-                from("direct:intermediate").to("mock:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        RETRY.incrementAndGet();
-                        throw new IOException("IO error");
-                    }
-                }).to("mock:end");
+                from("direct:intermediate")
+                        .to("mock:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                RETRY.incrementAndGet();
+                                throw new IOException("IO error");
+                            }
+                        })
+                        .to("mock:end");
             }
         });
         context.start();
@@ -189,7 +216,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         // so the exchange will throw an exception
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Hello World"),
                 "Should have thrown an exception");
 
@@ -215,25 +243,33 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them
                 // specially
-                onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
+                onException(IOException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
                         // this time we handle the exception
-                        .handled(true).to("mock:b").process(new Processor() {
+                        .handled(true)
+                        .to("mock:b")
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 ON_EXCEPTION_RETRY.incrementAndGet();
                                 throw new IOException("Some other IOException");
                             }
-                        }).to("mock:c");
+                        })
+                        .to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
-                from("direct:intermediate").to("mock:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        RETRY.incrementAndGet();
-                        throw new IOException("IO error");
-                    }
-                }).to("mock:end");
+                from("direct:intermediate")
+                        .to("mock:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                RETRY.incrementAndGet();
+                                throw new IOException("IO error");
+                            }
+                        })
+                        .to("mock:end");
             }
         });
         context.start();
@@ -248,7 +284,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         // so the exchange will throw an exception
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Hello World"),
                 "Should have thrown an exception");
 
@@ -274,23 +311,31 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them
                 // specially
-                onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3).to("mock:b").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        ON_EXCEPTION_RETRY.incrementAndGet();
-                        // no exception is thrown this time
-                    }
-                }).to("mock:c");
+                onException(IOException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
+                        .to("mock:b")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                ON_EXCEPTION_RETRY.incrementAndGet();
+                                // no exception is thrown this time
+                            }
+                        })
+                        .to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
-                from("direct:intermediate").to("mock:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        RETRY.incrementAndGet();
-                        throw new IOException("IO error");
-                    }
-                }).to("mock:end");
+                from("direct:intermediate")
+                        .to("mock:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                RETRY.incrementAndGet();
+                                throw new IOException("IO error");
+                            }
+                        })
+                        .to("mock:end");
             }
         });
         context.start();
@@ -306,7 +351,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         // and this time there was no exception thrown from onException,
         // but the caller still fails since handled is false on onException
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Hello World"),
                 "Should have thrown an exception");
 
@@ -332,25 +378,33 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them
                 // specially
-                onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
+                onException(IOException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
                         // we now handle the exception
-                        .handled(true).to("mock:b").process(new Processor() {
+                        .handled(true)
+                        .to("mock:b")
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
                                 ON_EXCEPTION_RETRY.incrementAndGet();
                                 // no exception is thrown this time
                             }
-                        }).to("mock:c");
+                        })
+                        .to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
-                from("direct:intermediate").to("mock:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        RETRY.incrementAndGet();
-                        throw new IOException("IO error");
-                    }
-                }).to("mock:end");
+                from("direct:intermediate")
+                        .to("mock:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                RETRY.incrementAndGet();
+                                throw new IOException("IO error");
+                            }
+                        })
+                        .to("mock:end");
             }
         });
         context.start();
@@ -372,5 +426,4 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals(4, RETRY.get(), "Should try 4 times (1 first, 3 retry)");
         assertEquals(1, ON_EXCEPTION_RETRY.get(), "Should only invoke onException once");
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -38,9 +42,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * A simple request/reply using custom reply to header.
  */
@@ -49,6 +50,7 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsSimpleRequestCustomReplyToTest.class);
     private static String myReplyTo;
     protected final String componentName = "activemq";
@@ -76,9 +78,9 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
         result.assertIsSatisfied();
         assertNotNull(out);
         /*
-          The getMessage returns the In message if the Out one is not present. Therefore, we check if
-          the body of the returned message equals to the In one and infer that the out one was null.
-         */
+         The getMessage returns the In message if the Out one is not present. Therefore, we check if
+         the body of the returned message equals to the In one and infer that the out one was null.
+        */
         assertEquals("Hello World", out.getMessage().getBody(), "There shouldn't be an out message");
 
         // get the reply from the special reply queue
@@ -86,7 +88,6 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
         final Consumer consumer = end.createConsumer(exchange -> {
             assertEquals("Late reply", exchange.getIn().getBody());
             latch.countDown();
-
         });
         // reset latch
         latch = new CountDownLatch(1);
@@ -146,15 +147,17 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(componentName + ":queue:JmsSimpleRequestCustomReplyToTest").process(exchange -> {
-                    assertEquals("Hello World", exchange.getIn().getBody());
+                from(componentName + ":queue:JmsSimpleRequestCustomReplyToTest")
+                        .process(exchange -> {
+                            assertEquals("Hello World", exchange.getIn().getBody());
 
-                    myReplyTo = exchange.getIn().getHeader("MyReplyQeueue", String.class);
-                    LOG.debug("ReplyTo: {}", myReplyTo);
+                            myReplyTo = exchange.getIn().getHeader("MyReplyQeueue", String.class);
+                            LOG.debug("ReplyTo: {}", myReplyTo);
 
-                    LOG.debug("Ahh I cannot send a reply. Someone else must do it.");
-                    latch.countDown();
-                }).to("mock:result");
+                            LOG.debug("Ahh I cannot send a reply. Someone else must do it.");
+                            latch.countDown();
+                        })
+                        .to("mock:result");
             }
         };
     }

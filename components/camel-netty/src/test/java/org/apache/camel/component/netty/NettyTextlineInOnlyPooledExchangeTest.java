@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import org.apache.camel.CamelContext;
@@ -55,8 +56,7 @@ public class NettyTextlineInOnlyPooledExchangeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?textline=true&sync=false")
-                        .to("mock:result");
+                from("netty:tcp://localhost:{{port}}?textline=true&sync=false").to("mock:result");
             }
         };
     }

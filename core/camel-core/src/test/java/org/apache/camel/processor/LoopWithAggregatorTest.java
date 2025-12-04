@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AggregationStrategy;
@@ -47,8 +48,12 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
                         // copy of the input exchange
                         // for each loop iteration, instead of keep using the same
                         // exchange all over
-                        .loop(3).copy().enrich("direct:getTimeStamp", new ExampleAggregationStrategy()).to(ExchangePattern.InOnly,"mock:loop")
-                        .end().to("mock:result");
+                        .loop(3)
+                        .copy()
+                        .enrich("direct:getTimeStamp", new ExampleAggregationStrategy())
+                        .to(ExchangePattern.InOnly, "mock:loop")
+                        .end()
+                        .to("mock:result");
                 // END SNIPPET: e1
 
                 from("direct:getTimeStamp").process(new Processor() {
@@ -57,9 +62,7 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
                     public void process(Exchange exchange) {
                         // set the response directly
                         exchange.getIn().setBody("B");
-
                     }
-
                 });
             }
         };
@@ -82,7 +85,5 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
             }
             return original;
         }
-
     }
-
 }

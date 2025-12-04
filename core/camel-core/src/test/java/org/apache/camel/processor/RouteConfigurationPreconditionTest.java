@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Properties;
@@ -81,12 +82,16 @@ class RouteConfigurationPreconditionTest extends ContextTestSupport {
         return new RouteConfigurationBuilder() {
             @Override
             public void configuration() {
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Foo"));
-                routeConfiguration().precondition("{{activate}}").onException(IllegalArgumentException.class).handled(true)
+                from("direct:start").throwException(new IllegalArgumentException("Foo"));
+                routeConfiguration()
+                        .precondition("{{activate}}")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
                         .transform(constant("Activated"))
                         .to("mock:error");
-                routeConfiguration().onException(Exception.class).handled(true)
+                routeConfiguration()
+                        .onException(Exception.class)
+                        .handled(true)
                         .transform(constant("Default"))
                         .to("mock:error");
             }

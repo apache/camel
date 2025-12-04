@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -41,21 +42,24 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
     @XmlAttribute(required = true)
     @Metadata(javaType = "org.apache.camel.spi.IdempotentRepository")
     private String idempotentRepository;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String eager;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String completionEager;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String skipDuplicate;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String removeOnFailure;
 
-    public IdempotentConsumerDefinition() {
-    }
+    public IdempotentConsumerDefinition() {}
 
     protected IdempotentConsumerDefinition(IdempotentConsumerDefinition source) {
         super(source);
@@ -236,5 +240,4 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
     public void setCompletionEager(String completionEager) {
         this.completionEager = completionEager;
     }
-
 }

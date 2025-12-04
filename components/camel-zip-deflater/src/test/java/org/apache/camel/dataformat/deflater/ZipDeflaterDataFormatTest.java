@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.deflater;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -32,27 +37,23 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Unit test of the zip data format.
  */
 public class ZipDeflaterDataFormatTest extends CamelTestSupport {
     private static final String TEXT = "The Cow in Apple Time \n"
-                                       + "by: Robert Frost \n\n"
-                                       + "Something inspires the only cow of late\n"
-                                       + "To make no more of a wall than an open gate,\n"
-                                       + "And think no more of wall-builders than fools.\n"
-                                       + "Her face is flecked with pomace and she drools\n"
-                                       + "A cider syrup. Having tasted fruit,\n"
-                                       + "She scorns a pasture withering to the root.\n"
-                                       + "She runs from tree to tree where lie and sweeten.\n"
-                                       + "The windfalls spiked with stubble and worm-eaten.\n"
-                                       + "She leaves them bitten when she has to fly.\n"
-                                       + "She bellows on a knoll against the sky.\n"
-                                       + "Her udder shrivels and the milk goes dry.";
+            + "by: Robert Frost \n\n"
+            + "Something inspires the only cow of late\n"
+            + "To make no more of a wall than an open gate,\n"
+            + "And think no more of wall-builders than fools.\n"
+            + "Her face is flecked with pomace and she drools\n"
+            + "A cider syrup. Having tasted fruit,\n"
+            + "She scorns a pasture withering to the root.\n"
+            + "She runs from tree to tree where lie and sweeten.\n"
+            + "The windfalls spiked with stubble and worm-eaten.\n"
+            + "She leaves them bitten when she has to fly.\n"
+            + "She bellows on a knoll against the sky.\n"
+            + "Her udder shrivels and the milk goes dry.";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -76,7 +77,8 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal().zipDeflater(Deflater.BEST_COMPRESSION)
+                        .marshal()
+                        .zipDeflater(Deflater.BEST_COMPRESSION)
                         .process(new ZippedMessageProcessor());
             }
         });
@@ -89,15 +91,12 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
     public void testMarshalTextToZipBestSpeed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .marshal().zipDeflater(Deflater.BEST_SPEED)
-                        .process(new ZippedMessageProcessor());
+                from("direct:start").marshal().zipDeflater(Deflater.BEST_SPEED).process(new ZippedMessageProcessor());
             }
         });
         context.start();
 
         sendText();
-
     }
 
     @Test
@@ -105,7 +104,8 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal().zipDeflater(Deflater.DEFAULT_COMPRESSION)
+                        .marshal()
+                        .zipDeflater(Deflater.DEFAULT_COMPRESSION)
                         .process(new ZippedMessageProcessor());
             }
         });
@@ -119,8 +119,10 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal().zipDeflater()
-                        .unmarshal().zipDeflater()
+                        .marshal()
+                        .zipDeflater()
+                        .unmarshal()
+                        .zipDeflater()
                         .to("mock:result");
             }
         });
@@ -140,8 +142,10 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .streamCaching()
-                        .marshal().zipDeflater()
-                        .unmarshal().zipDeflater()
+                        .marshal()
+                        .zipDeflater()
+                        .unmarshal()
+                        .zipDeflater()
                         .to("mock:result");
             }
         });

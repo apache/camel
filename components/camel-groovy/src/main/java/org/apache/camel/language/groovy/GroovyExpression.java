@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import java.util.Collections;
@@ -68,7 +69,8 @@ public class GroovyExpression extends ExpressionSupport {
     protected Script instantiateScript(Exchange exchange, Map<String, Object> globalVariables) {
         // Get the script from the cache, or create a new instance
         GroovyLanguage language = (GroovyLanguage) exchange.getContext().resolveLanguage("groovy");
-        Set<GroovyShellFactory> shellFactories = exchange.getContext().getRegistry().findByType(GroovyShellFactory.class);
+        Set<GroovyShellFactory> shellFactories =
+                exchange.getContext().getRegistry().findByType(GroovyShellFactory.class);
         GroovyShellFactory shellFactory = null;
         String fileName = null;
         if (shellFactories.size() == 1) {
@@ -80,11 +82,14 @@ public class GroovyExpression extends ExpressionSupport {
         Class<Script> scriptClass = language.getScriptFromCache(key);
         if (scriptClass == null) {
             // prefer to use classloader from groovy script compiler, and if not fallback to app context
-            ClassLoader cl = exchange.getContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
-            GroovyShell shell = shellFactory != null ? shellFactory.createGroovyShell(exchange)
+            ClassLoader cl =
+                    exchange.getContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
+            GroovyShell shell = shellFactory != null
+                    ? shellFactory.createGroovyShell(exchange)
                     : cl != null ? new GroovyShell(cl) : new GroovyShell();
             scriptClass = fileName != null
-                    ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
+                    ? shell.getClassLoader().parseClass(text, fileName)
+                    : shell.getClassLoader().parseClass(text);
             language.addScriptToCache(key, scriptClass);
         }
         // New instance of the script

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
 
@@ -44,7 +45,9 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("bean:myBean?method=concat(${body}, ${header.foo})").to("mock:result");
+                from("direct:start")
+                        .to("bean:myBean?method=concat(${body}, ${header.foo})")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -59,12 +62,15 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("bean:myBean?method=concat(${body}, ${header.foo}").to("mock:result");
+                from("direct:start")
+                        .to("bean:myBean?method=concat(${body}, ${header.foo}")
+                        .to("mock:result");
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start", "Hello", "foo", "Camel"),
                 "Should throw exception");
 
@@ -77,12 +83,15 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("bean:myBean?method=--concat(${body}, ${header.foo})").to("mock:result");
+                from("direct:start")
+                        .to("bean:myBean?method=--concat(${body}, ${header.foo})")
+                        .to("mock:result");
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start", "Hello", "foo", "Camel"),
                 "Should throw exception");
 
@@ -92,5 +101,4 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
     public String doSomething(String body, String header) {
         return body + "=" + header;
     }
-
 }

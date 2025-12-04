@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.json;
 
 import java.io.IOException;
@@ -42,8 +43,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     private static final long serialVersionUID = 1L;
 
     /** Instantiates an empty JsonObject. */
-    public JsonObject() {
-    }
+    public JsonObject() {}
 
     /**
      * Instantiate a new JsonObject by accepting a map's entries, which could lead to de/serialization issues of the
@@ -384,7 +384,8 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * @see                             Enum#valueOf(Class, String)
      */
     @SuppressWarnings("unchecked")
-    public <T extends Enum<T>> T getEnumOrDefault(final String key, final T defaultValue) throws ClassNotFoundException {
+    public <T extends Enum<T>> T getEnumOrDefault(final String key, final T defaultValue)
+            throws ClassNotFoundException {
         /*
          * Supressing the unchecked warning because the returnType is
          * dynamically identified and could lead to a ClassCastException when

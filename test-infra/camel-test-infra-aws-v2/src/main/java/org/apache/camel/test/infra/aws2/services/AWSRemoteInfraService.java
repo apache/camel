@@ -66,9 +66,7 @@ public class AWSRemoteInfraService implements AWSInfraService {
     }
 
     @Override
-    public void registerProperties() {
-
-    }
+    public void registerProperties() {}
 
     @Override
     public void initialize() {
@@ -76,7 +74,5 @@ public class AWSRemoteInfraService implements AWSInfraService {
     }
 
     @Override
-    public void shutdown() {
-
-    }
+    public void shutdown() {}
 }

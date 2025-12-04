@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSupport {
 
@@ -67,10 +68,20 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(body().tokenize(",")).stopOnException().doTry().process(new MyProcessor())
-                        .to("mock:split").doCatch(IllegalArgumentException.class)
-                        .bean(new MyLoggerBean()).bean(new MyErrorHandlerBean()).to("mock:ile").doCatch(Exception.class)
-                        .to("mock:exception").rollback().end();
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .stopOnException()
+                        .doTry()
+                        .process(new MyProcessor())
+                        .to("mock:split")
+                        .doCatch(IllegalArgumentException.class)
+                        .bean(new MyLoggerBean())
+                        .bean(new MyErrorHandlerBean())
+                        .to("mock:ile")
+                        .doCatch(Exception.class)
+                        .to("mock:exception")
+                        .rollback()
+                        .end();
             }
         };
     }
@@ -80,7 +91,6 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
         public void logError(String body) {
             logged = body;
         }
-
     }
 
     public static class MyErrorHandlerBean {
@@ -88,7 +98,6 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
         public String handleError(String body, @ExchangeException Exception e) {
             return "Handled " + body + " Cause by " + e.getMessage();
         }
-
     }
 
     public static class MyProcessor implements Processor {
@@ -103,5 +112,4 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
             }
         }
     }
-
 }

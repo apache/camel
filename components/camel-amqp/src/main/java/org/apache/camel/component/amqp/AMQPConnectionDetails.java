@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
+
+import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
+import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PropertiesComponent;
-
-import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
-import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
 
 @Deprecated(since = "4.9.0")
 public class AMQPConnectionDetails {
@@ -98,5 +99,4 @@ public class AMQPConnectionDetails {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

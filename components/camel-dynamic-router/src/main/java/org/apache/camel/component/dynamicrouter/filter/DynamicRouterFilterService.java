@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.filter;
+
+import static org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.PrioritizedFilterFactory;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FILTER_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.ORIGINAL_BODY_HEADER;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,10 +40,6 @@ import org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter.PrioritizedFilterFactory;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FILTER_FACTORY_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.ORIGINAL_BODY_HEADER;
 
 /**
  * A service that manages the {@link PrioritizedFilter}s for dynamic router subscriptions.
@@ -139,7 +140,10 @@ public class DynamicRouterFilterService {
      * @return           a {@link PrioritizedFilter} built from the supplied parameters
      */
     public PrioritizedFilter createFilter(
-            final String id, final int priority, final Predicate predicate, final String endpoint,
+            final String id,
+            final int priority,
+            final Predicate predicate,
+            final String endpoint,
             final PrioritizedFilterStatistics statistics) {
         return filterFactorySupplier.get().getInstance(id, priority, predicate, endpoint, statistics);
     }
@@ -157,10 +161,14 @@ public class DynamicRouterFilterService {
      * @return           the ID of the added filter
      */
     public String addFilterForChannel(
-            final String id, final int priority, final Predicate predicate, final String endpoint,
-            final String channel, final boolean update) {
-        return addFilterForChannel(createFilter(id, priority, predicate, endpoint, new PrioritizedFilterStatistics(id)),
-                channel, update);
+            final String id,
+            final int priority,
+            final Predicate predicate,
+            final String endpoint,
+            final String channel,
+            final boolean update) {
+        return addFilterForChannel(
+                createFilter(id, priority, predicate, endpoint, new PrioritizedFilterStatistics(id)), channel, update);
     }
 
     /**
@@ -170,20 +178,21 @@ public class DynamicRouterFilterService {
      * @return        the ID of the added filter
      */
     public String addFilterForChannel(final PrioritizedFilter filter, final String channel, final boolean update) {
-        boolean filterExists = !filterMap.isEmpty() &&
-                filterMap.get(channel).stream().anyMatch(f -> filter.id().equals(f.id()));
+        boolean filterExists = !filterMap.isEmpty()
+                && filterMap.get(channel).stream().anyMatch(f -> filter.id().equals(f.id()));
         boolean okToAdd = update == filterExists;
         if (okToAdd) {
-            Set<PrioritizedFilter> filters = filterMap.computeIfAbsent(channel,
-                    c -> new ConcurrentSkipListSet<>(DynamicRouterConstants.FILTER_COMPARATOR));
+            Set<PrioritizedFilter> filters = filterMap.computeIfAbsent(
+                    channel, c -> new ConcurrentSkipListSet<>(DynamicRouterConstants.FILTER_COMPARATOR));
             filters.add(filter);
-            List<PrioritizedFilterStatistics> filterStatistics = filterStatisticsMap.computeIfAbsent(channel,
-                    c -> Collections.synchronizedList(new ArrayList<>()));
+            List<PrioritizedFilterStatistics> filterStatistics =
+                    filterStatisticsMap.computeIfAbsent(channel, c -> Collections.synchronizedList(new ArrayList<>()));
             filterStatistics.add(filter.statistics());
             LOG.debug("Added subscription: {}", filter);
             return filter.id();
         }
-        return String.format("Error: Filter could not be %s -- existing filter found with matching ID: %b",
+        return String.format(
+                "Error: Filter could not be %s -- existing filter found with matching ID: %b",
                 update ? "updated" : "added", filterExists);
     }
 
@@ -196,7 +205,8 @@ public class DynamicRouterFilterService {
      */
     public PrioritizedFilter getFilterById(final String filterId, final String channel) {
         return (ObjectHelper.isEmpty(channel)
-                ? filterMap.values().stream().flatMap(Collection::stream) : filterMap.get(channel).stream())
+                        ? filterMap.values().stream().flatMap(Collection::stream)
+                        : filterMap.get(channel).stream())
                 .filter(f -> filterId.equals(f.id()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No filter exists with ID: " + filterId));
@@ -262,11 +272,14 @@ public class DynamicRouterFilterService {
         if (ObjectHelper.isEmpty(recipients)) {
             Message message = exchange.getMessage();
             message.setHeader(ORIGINAL_BODY_HEADER, message.getBody());
-            recipients = String.format(DynamicRouterConstants.LOG_ENDPOINT, this.getClass().getCanonicalName(), channel,
+            recipients = String.format(
+                    DynamicRouterConstants.LOG_ENDPOINT,
+                    this.getClass().getCanonicalName(),
+                    channel,
                     warnDroppedMessage ? LoggingLevel.WARN : LoggingLevel.DEBUG);
             String error = String.format(
-                    "DynamicRouter channel '%s': no filters matched for an exchange from route: '%s'.  " +
-                                         "The 'originalBody' header contains the original message body.",
+                    "DynamicRouter channel '%s': no filters matched for an exchange from route: '%s'.  "
+                            + "The 'originalBody' header contains the original message body.",
                     channel, exchange.getFromEndpoint());
             message.setBody(error, String.class);
         }

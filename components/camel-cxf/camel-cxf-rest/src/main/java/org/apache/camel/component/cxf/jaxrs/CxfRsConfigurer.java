@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.cxf.endpoint.Server;
@@ -45,5 +46,4 @@ public interface CxfRsConfigurer {
      * @param server the CXF server
      */
     void configureServer(Server server);
-
 }

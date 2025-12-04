@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -64,58 +65,50 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
      * Location of generated DTO files, defaults to target/generated-sources/camel-salesforce.
      */
     @Parameter(
-               property = "camel.servicenow.output.directory",
-               defaultValue = "${project.build.directory}/generated-sources/camel-servicenow")
+            property = "camel.servicenow.output.directory",
+            defaultValue = "${project.build.directory}/generated-sources/camel-servicenow")
     protected File outputDirectory;
 
     /**
      * Java package name for generated DTOs.
      */
-    @Parameter(
-               property = "camel.servicenow.output.package",
-               defaultValue = "org.apache.camel.servicenow.dto")
+    @Parameter(property = "camel.servicenow.output.package", defaultValue = "org.apache.camel.servicenow.dto")
     protected String packageName;
 
     /**
      * ServiceNow instance name.
      */
-    @Parameter(
-               property = "camel.servicenow.instance.name", required = true)
+    @Parameter(property = "camel.servicenow.instance.name", required = true)
     protected String instanceName;
 
     /**
      * ServiceName user name.
      */
-    @Parameter(
-               property = "camel.servicenow.user.name", required = true)
+    @Parameter(property = "camel.servicenow.user.name", required = true)
     protected String userName;
 
     /**
      * ServiceNow user password.
      */
-    @Parameter(
-               property = "camel.servicenow.user.password", required = true)
+    @Parameter(property = "camel.servicenow.user.password", required = true)
     protected String userPassword;
 
     /**
      * ServiceNow OAuth2 client id.
      */
-    @Parameter(
-               property = "camel.servicenow.oauth2.client.id")
+    @Parameter(property = "camel.servicenow.oauth2.client.id")
     protected String oauthClientId;
 
     /**
      * ServiceNow OAuth2 client secret.
      */
-    @Parameter(
-               property = "camel.servicenow.oauth2.client.secret")
+    @Parameter(property = "camel.servicenow.oauth2.client.secret")
     protected String oauthClientSecret;
 
     /**
      * SSL Context parameters.
      */
-    @Parameter(
-               property = "camel.servicenow.ssl.parameters")
+    @Parameter(property = "camel.servicenow.ssl.parameters")
     protected SSLContextParameters sslParameters;
 
     /**
@@ -161,10 +154,12 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
                     parameters.put("object." + entry.getKey() + ".fields.exclude.pattern", entry.getValue());
                 }
 
-                JsonNode schema = component.getExtension(MetaDataExtension.class)
+                JsonNode schema = component
+                        .getExtension(MetaDataExtension.class)
                         .flatMap(e -> e.meta(parameters))
                         .flatMap(m -> Optional.ofNullable(m.getPayload(JsonNode.class)))
-                        .orElseThrow(() -> new MojoExecutionException("Unable to get grab MetaData for object: " + objectName));
+                        .orElseThrow(() ->
+                                new MojoExecutionException("Unable to get grab MetaData for object: " + objectName));
 
                 validateSchema(schema);
 
@@ -197,8 +192,10 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
                             .addMember("value", "$L", "JsonInclude.Include.NON_NULL")
                             .build());
 
-            schema.get("properties").fields().forEachRemaining(
-                    entry -> generateBeanProperty(typeBuilder, schema, entry.getKey(), entry.getValue()));
+            schema.get("properties")
+                    .fields()
+                    .forEachRemaining(
+                            entry -> generateBeanProperty(typeBuilder, schema, entry.getKey(), entry.getValue()));
 
             JavaFile.builder(packageName, typeBuilder.build())
                     .indent("    ")

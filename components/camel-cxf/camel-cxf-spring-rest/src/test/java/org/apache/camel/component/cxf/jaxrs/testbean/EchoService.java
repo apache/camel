@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs.testbean;
 
 import jakarta.ws.rs.POST;
@@ -36,6 +37,8 @@ public class EchoService {
         if (fooCookie != null && "bar".equals(fooCookie.getValue())) {
             return Response.ok("Old " + string).build();
         }
-        return Response.ok("New " + string).cookie(new NewCookie("foo", "bar", "/", null, 1, null, -1, false)).build();
+        return Response.ok("New " + string)
+                .cookie(new NewCookie("foo", "bar", "/", null, 1, null, -1, false))
+                .build();
     }
 }

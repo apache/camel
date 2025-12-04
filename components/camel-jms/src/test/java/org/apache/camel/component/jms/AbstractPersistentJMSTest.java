@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.jms;
 
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -28,9 +30,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
-@Tags({ @Tag("jms") })
+@Tags({@Tag("jms")})
 public abstract class AbstractPersistentJMSTest extends CamelTestSupport {
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createSingletonPersistentVMService();

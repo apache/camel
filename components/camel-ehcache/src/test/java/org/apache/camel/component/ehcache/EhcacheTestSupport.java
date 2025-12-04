@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
 
 import java.net.URL;
@@ -112,8 +113,9 @@ public class EhcacheTestSupport extends CamelTestSupport {
     }
 
     protected static Map<String, String> generateRandomMapOfString(int size) {
-        return IntStream.range(0, size).boxed().collect(Collectors.toMap(
-                i -> i + "-" + generateRandomString(),
-                i -> i + "-" + generateRandomString()));
+        return IntStream.range(0, size)
+                .boxed()
+                .collect(
+                        Collectors.toMap(i -> i + "-" + generateRandomString(), i -> i + "-" + generateRandomString()));
     }
 }

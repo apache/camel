@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jndi;
 
 import java.io.Serial;
@@ -377,7 +378,8 @@ public class JndiContext implements Context, Serializable {
     }
 
     private abstract class LocalNamingEnumeration implements NamingEnumeration<Object> {
-        private final Iterator<Map.Entry<String, Object>> i = bindings.entrySet().iterator();
+        private final Iterator<Map.Entry<String, Object>> i =
+                bindings.entrySet().iterator();
 
         @Override
         public boolean hasMore() throws NamingException {
@@ -394,13 +396,11 @@ public class JndiContext implements Context, Serializable {
         }
 
         @Override
-        public void close() throws NamingException {
-        }
+        public void close() throws NamingException {}
     }
 
     private class ListEnumeration extends LocalNamingEnumeration {
-        ListEnumeration() {
-        }
+        ListEnumeration() {}
 
         @Override
         public Object next() throws NamingException {
@@ -415,8 +415,7 @@ public class JndiContext implements Context, Serializable {
     }
 
     private class ListBindingEnumeration extends LocalNamingEnumeration {
-        ListBindingEnumeration() {
-        }
+        ListBindingEnumeration() {}
 
         @Override
         public Object next() throws NamingException {
@@ -429,5 +428,4 @@ public class JndiContext implements Context, Serializable {
             return new Binding(entry.getKey(), entry.getValue());
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -65,5 +66,4 @@ public class IBMSecretsManagerVaultConfigurationProperties extends IBMSecretsMan
         setServiceUrl(serviceUrl);
         return this;
     }
-
 }

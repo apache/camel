@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.tck;
 
 import org.apache.camel.CamelContext;
@@ -44,8 +45,7 @@ public class CamelSubscriberVerificationTest extends SubscriberBlackboxVerificat
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:sub?maxInflightExchanges=20")
-                        .to("log:INFO");
+                from("reactive-streams:sub?maxInflightExchanges=20").to("log:INFO");
             }
         };
 

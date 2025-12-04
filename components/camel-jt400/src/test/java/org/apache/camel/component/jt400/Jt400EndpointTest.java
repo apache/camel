@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jt400;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.jt400;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link Jt400Endpoint}
@@ -30,8 +31,9 @@ public class Jt400EndpointTest extends Jt400TestSupport {
 
     @Override
     public void doPostSetup() throws Exception {
-        endpoint = (Jt400Endpoint) resolveMandatoryEndpoint(
-                "jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true&connectionPool=#mockPool");
+        endpoint = (Jt400Endpoint)
+                resolveMandatoryEndpoint(
+                        "jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true&connectionPool=#mockPool");
     }
 
     /**
@@ -45,5 +47,4 @@ public class Jt400EndpointTest extends Jt400TestSupport {
         assertEquals(Jt400Configuration.Format.binary, endpoint.getFormat());
         assertTrue(endpoint.getSystem().isGuiAvailable());
     }
-
 }

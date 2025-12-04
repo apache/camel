@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +33,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CreateInstancePojoFunctionalTest extends CamelTestSupport {
     private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
@@ -45,11 +46,10 @@ public class CreateInstancePojoFunctionalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:operation")
-                        .to("hwcloud-dms:createInstance?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + PROJECT_ID +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-dms:createInstance?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + PROJECT_ID + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Operation successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:operation_result");
@@ -80,8 +80,8 @@ public class CreateInstancePojoFunctionalTest extends CamelTestSupport {
                 .withEngine("replace_with_instance_information")
                 .withEngineVersion("replace_with_instance_information")
                 .withSpecification("replace_with_instance_information")
-                .withStorageSpace(0/*replace_with_instance_information*/)
-                .withPartitionNum(0/*replace_with_instance_information*/)
+                .withStorageSpace(0 /*replace_with_instance_information*/)
+                .withPartitionNum(0 /*replace_with_instance_information*/)
                 .withAccessUser("replace_with_instance_information")
                 .withPassword("replace_with_instance_information")
                 .withVpcId("replace_with_instance_information")
@@ -93,13 +93,13 @@ public class CreateInstancePojoFunctionalTest extends CamelTestSupport {
                 .withKafkaManagerPassword("replace_with_instance_information")
                 .withMaintainBegin("replace_with_instance_information")
                 .withMaintainEnd("replace_with_instance_information")
-                .withEnablePublicip(false/*replace_with_instance_information*/)
+                .withEnablePublicip(false /*replace_with_instance_information*/)
                 .withPublicBandwidth("replace_with_instance_information")
                 .withPublicipId("replace_with_instance_information")
-                .withSslEnable(false/*replace_with_instance_information*/)
+                .withSslEnable(false /*replace_with_instance_information*/)
                 .withRetentionPolicy("replace_with_instance_information")
-                .withConnectorEnable(false/*replace_with_instance_information*/)
-                .withEnableAutoTopic(false/*replace_with_instance_information*/)
+                .withConnectorEnable(false /*replace_with_instance_information*/)
+                .withEnableAutoTopic(false /*replace_with_instance_information*/)
                 .withStorageSpecCode("replace_with_instance_information")
                 .withEnterpriseProjectId("replace_with_instance_information");
 

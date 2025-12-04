@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
 
 import java.util.Locale;
@@ -50,7 +51,9 @@ public class Aws2S3Base extends CamelTestSupport {
     }
 
     protected String createKmsKey() {
-        return AWSSDKClientUtils.newKMSClient().createKey(CreateKeyRequest.builder().description("Test_key").build())
-                .keyMetadata().keyId();
+        return AWSSDKClientUtils.newKMSClient()
+                .createKey(CreateKeyRequest.builder().description("Test_key").build())
+                .keyMetadata()
+                .keyId();
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.netty.channel.EventLoopGroup;
 import org.apache.camel.BindToRegistry;
@@ -24,16 +27,18 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyUseSharedWorkerThreadPoolManyRoutesTest.class);
 
     @BindToRegistry("sharedWorker")
-    private EventLoopGroup sharedBoosGroup = new NettyWorkerPoolBuilder().withWorkerCount(10).build();
+    private EventLoopGroup sharedBoosGroup =
+            new NettyWorkerPoolBuilder().withWorkerCount(10).build();
+
     @BindToRegistry("sharedBoss")
-    private EventLoopGroup sharedWorkerGroup = new NettyServerBossPoolBuilder().withBossCount(20).build();
+    private EventLoopGroup sharedWorkerGroup =
+            new NettyServerBossPoolBuilder().withBossCount(20).build();
+
     private int before;
     private AvailablePortFinder.Port[] ports;
 
@@ -76,9 +81,12 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
             public void configure() {
 
                 for (AvailablePortFinder.Port port : ports) {
-                    from("netty:tcp://localhost:" + port.getPort() + "?textline=true&sync=true&usingExecutorService=false"
-                         + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
-                            .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
+                    from("netty:tcp://localhost:" + port.getPort()
+                                    + "?textline=true&sync=true&usingExecutorService=false"
+                                    + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
+                            .validate(body().isInstanceOf(String.class))
+                            .to("log:result")
+                            .to("mock:result")
                             .transform(body().regexReplaceAll("Hello", "Bye"));
                 }
             }

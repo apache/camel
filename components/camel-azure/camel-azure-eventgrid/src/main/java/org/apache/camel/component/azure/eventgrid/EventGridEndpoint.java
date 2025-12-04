@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventgrid;
 
 import java.util.Map;
@@ -32,10 +33,14 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send events to Azure Event Grid topics.
  */
-@UriEndpoint(firstVersion = "4.17.0", scheme = "azure-eventgrid", title = "Azure Event Grid",
-             syntax = "azure-eventgrid:topicEndpoint", producerOnly = true, category = {
-                     Category.CLOUD, Category.MESSAGING },
-             headersClass = EventGridConstants.class)
+@UriEndpoint(
+        firstVersion = "4.17.0",
+        scheme = "azure-eventgrid",
+        title = "Azure Event Grid",
+        syntax = "azure-eventgrid:topicEndpoint",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MESSAGING},
+        headersClass = EventGridConstants.class)
 public class EventGridEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

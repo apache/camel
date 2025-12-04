@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SplitWithInterceptorTest extends ContextTestSupport {
 
     private final MyInterceptStrategy interceptStrategy = new MyInterceptStrategy();
@@ -42,7 +43,10 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) {
+                final CamelContext context,
+                final NamedNode definition,
+                final Processor target,
+                final Processor nextTarget) {
             if (definition instanceof SplitDefinition) {
                 final DelegateAsyncProcessor delegateAsyncProcessor = new DelegateAsyncProcessor() {
 
@@ -102,7 +106,12 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
             public void configure() {
                 context.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
 
-                from("direct:start").split(body().tokenize(",")).to("log:line").to("mock:line").end().to("mock:result");
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .to("log:line")
+                        .to("mock:line")
+                        .end()
+                        .to("mock:result");
             }
         };
     }

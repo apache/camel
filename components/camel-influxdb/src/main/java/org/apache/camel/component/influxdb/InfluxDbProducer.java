@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb;
 
 import org.apache.camel.Exchange;
@@ -71,7 +72,8 @@ public class InfluxDbProducer extends DefaultProducer {
         }
     }
 
-    private void doInsert(Exchange exchange, String dataBaseName, String retentionPolicy) throws InvalidPayloadException {
+    private void doInsert(Exchange exchange, String dataBaseName, String retentionPolicy)
+            throws InvalidPayloadException {
         if (!endpoint.isBatch()) {
             Point p = exchange.getIn().getMandatoryBody(Point.class);
             try {
@@ -137,5 +139,4 @@ public class InfluxDbProducer extends DefaultProducer {
         }
         return query;
     }
-
 }

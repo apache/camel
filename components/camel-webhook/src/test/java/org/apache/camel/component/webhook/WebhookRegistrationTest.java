@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,8 +28,6 @@ import org.apache.camel.spi.Registry;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebhookRegistrationTest extends WebhookTestBase {
 
@@ -45,12 +46,9 @@ public class WebhookRegistrationTest extends WebhookTestBase {
         context().addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration()
-                        .host("0.0.0.0")
-                        .port(port);
+                restConfiguration().host("0.0.0.0").port(port);
 
-                from("webhook:wb-delegate://xx")
-                        .transform(body().prepend("msg: "));
+                from("webhook:wb-delegate://xx").transform(body().prepend("msg: "));
 
                 from("webhook:wb-delegate://xx?webhookPath=/p2&webhookAutoRegister=false")
                         .transform(body().prepend("uri: "));

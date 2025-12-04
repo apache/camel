@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xpath;
 
 import java.lang.annotation.Annotation;
@@ -32,7 +33,9 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
 
     @Override
     public Expression createExpression(
-            CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
+            CamelContext camelContext,
+            Annotation annotation,
+            LanguageAnnotation languageAnnotation,
             Class<?> expressionReturnType) {
         String xpath = getExpressionFromAnnotation(annotation);
 

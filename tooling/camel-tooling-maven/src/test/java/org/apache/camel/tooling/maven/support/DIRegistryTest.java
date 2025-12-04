@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.maven.support;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -27,11 +33,6 @@ import jakarta.inject.Named;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DIRegistryTest {
 
@@ -83,8 +84,7 @@ public class DIRegistryTest {
             registry.bind(MyComplexishBean.class);
 
             MyComplexishBean bean = registry.lookupByClass(MyComplexishBean.class);
-            assertSame(bean, registry.lookupByClass(MyComplexishBean.class),
-                    "supplier should be called only once");
+            assertSame(bean, registry.lookupByClass(MyComplexishBean.class), "supplier should be called only once");
             assertSame(bean.getSimpleBean(), registry.lookupByClass(MySimpleBean.class));
             assertSame(bean.getNamedBean(), registry.lookupByClass(MyNamedBean.class));
         }
@@ -194,14 +194,12 @@ public class DIRegistryTest {
 
     public static class MyBean1 {
         @Inject
-        public MyBean1(MyBean2 bean) {
-        }
+        public MyBean1(MyBean2 bean) {}
     }
 
     public static class MyBean2 {
         @Inject
-        public MyBean2(MyBean1 bean) {
-        }
+        public MyBean2(MyBean1 bean) {}
     }
 
     public static class MyBrokenBean {
@@ -216,5 +214,4 @@ public class DIRegistryTest {
             return value;
         }
     }
-
 }

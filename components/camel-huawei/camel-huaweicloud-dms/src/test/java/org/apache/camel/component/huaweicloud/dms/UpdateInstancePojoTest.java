@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -29,8 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class UpdateInstancePojoTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -38,22 +39,20 @@ public class UpdateInstancePojoTest extends CamelTestSupport {
     DmsClient mockClient = Mockito.mock(DmsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:operation")
-                        .to("hwcloud-dms:updateInstance?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + testConfiguration.getProperty("projectId") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&instanceId=" + testConfiguration.getProperty("instanceId") +
-                            "&ignoreSslVerification=true" +
-                            "&dmsClient=#dmsClient")
+                        .to("hwcloud-dms:updateInstance?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + testConfiguration.getProperty("projectId") + "&region="
+                                + testConfiguration.getProperty("region") + "&instanceId="
+                                + testConfiguration.getProperty("instanceId") + "&ignoreSslVerification=true"
+                                + "&dmsClient=#dmsClient")
                         .log("Operation successful")
                         .to("mock:operation_result");
             }
@@ -64,7 +63,8 @@ public class UpdateInstancePojoTest extends CamelTestSupport {
     public void testOperation() throws Exception {
         UpdateInstanceResponse response = new UpdateInstanceResponse();
 
-        Mockito.when(mockClient.updateInstance(Mockito.any(UpdateInstanceRequest.class))).thenReturn(response);
+        Mockito.when(mockClient.updateInstance(Mockito.any(UpdateInstanceRequest.class)))
+                .thenReturn(response);
 
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);

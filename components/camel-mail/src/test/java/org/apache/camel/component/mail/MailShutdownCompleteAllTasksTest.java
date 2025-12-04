@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -29,8 +32,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for shutdown.
@@ -55,10 +56,12 @@ public class MailShutdownCompleteAllTasksTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(jones.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").routeId("route1")
+                from(jones.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .routeId("route1")
                         // let it complete all tasks during shutdown
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                        .delay(500).to("mock:bar");
+                        .delay(500)
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -97,5 +100,4 @@ public class MailShutdownCompleteAllTasksTest extends CamelTestSupport {
         folder.appendMessages(messages);
         folder.close(true);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -25,9 +29,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Wait Container Request headers are applied properly
@@ -51,7 +52,6 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).waitContainerCmd(containerId);
-
     }
 
     @Override
@@ -64,5 +64,4 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
     protected DockerOperation getOperation() {
         return DockerOperation.WAIT_CONTAINER;
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml.handler;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Processor;
 import org.apache.camel.builder.LegacyDeadLetterChannelBuilder;
@@ -27,10 +32,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
 @SuppressWarnings("deprecation")
 public class ErrorHandlerDefinitionParserTest {
@@ -38,7 +39,8 @@ public class ErrorHandlerDefinitionParserTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        ctx = new ClassPathXmlApplicationContext("org/apache/camel/spring/xml/handler/ErrorHandlerDefinitionParser.xml");
+        ctx = new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/xml/handler/ErrorHandlerDefinitionParser.xml");
     }
 
     @AfterEach
@@ -48,8 +50,8 @@ public class ErrorHandlerDefinitionParserTest {
 
     @Test
     public void testDefaultErrorHandler() {
-        LegacyDefaultErrorHandlerBuilder errorHandler
-                = ctx.getBean("defaultErrorHandler", LegacyDefaultErrorHandlerBuilder.class);
+        LegacyDefaultErrorHandlerBuilder errorHandler =
+                ctx.getBean("defaultErrorHandler", LegacyDefaultErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
         assertNotNull(policy);
@@ -63,8 +65,8 @@ public class ErrorHandlerDefinitionParserTest {
 
     @Test
     public void testTransactionErrorHandler() {
-        LegacyTransactionErrorHandlerBuilder errorHandler
-                = ctx.getBean("transactionErrorHandler", LegacyTransactionErrorHandlerBuilder.class);
+        LegacyTransactionErrorHandlerBuilder errorHandler =
+                ctx.getBean("transactionErrorHandler", LegacyTransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
         Processor processor = errorHandler.getOnRedelivery();
@@ -73,15 +75,16 @@ public class ErrorHandlerDefinitionParserTest {
 
     @Test
     public void testTXErrorHandler() {
-        LegacyTransactionErrorHandlerBuilder errorHandler = ctx.getBean("txEH", LegacyTransactionErrorHandlerBuilder.class);
+        LegacyTransactionErrorHandlerBuilder errorHandler =
+                ctx.getBean("txEH", LegacyTransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
     }
 
     @Test
     public void testDeadLetterErrorHandler() {
-        LegacyDeadLetterChannelBuilder errorHandler
-                = ctx.getBean("deadLetterErrorHandler", LegacyDeadLetterChannelBuilder.class);
+        LegacyDeadLetterChannelBuilder errorHandler =
+                ctx.getBean("deadLetterErrorHandler", LegacyDeadLetterChannelBuilder.class);
         assertNotNull(errorHandler);
         assertEquals("log:dead", errorHandler.getDeadLetterUri(), "Get wrong deadletteruri");
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
@@ -91,5 +94,4 @@ public class ErrorHandlerDefinitionParserTest {
         assertEquals(true, policy.isLogHandled(), "Wrong logStackTrace");
         assertEquals(true, policy.isAsyncDelayedRedelivery(), "Wrong asyncRedeliveryDelayed");
     }
-
 }

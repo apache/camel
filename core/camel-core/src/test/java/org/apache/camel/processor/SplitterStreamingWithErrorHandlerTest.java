@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Iterator;
@@ -37,8 +38,7 @@ public class SplitterStreamingWithErrorHandlerTest extends ContextTestSupport {
         template.sendBody("direct:start", new Iterator<String>() {
 
             @Override
-            public void remove() {
-            }
+            public void remove() {}
 
             @Override
             public boolean hasNext() {
@@ -49,7 +49,6 @@ public class SplitterStreamingWithErrorHandlerTest extends ContextTestSupport {
             public String next() {
                 throw new RuntimeException("Uhoh.");
             }
-
         });
 
         assertMockEndpointsSatisfied();

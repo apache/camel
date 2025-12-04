@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,8 +29,7 @@ public class DefaultMethodCalledFromSimpleExpressionTest extends ContextTestSupp
     public void testDefaultMethodFromSimpleExpression() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(DEFAULT_METHOD_CONTENT);
 
-        template.sendBodyAndProperty("direct:defaultMethod", "", "myObject", new B() {
-        });
+        template.sendBodyAndProperty("direct:defaultMethod", "", "myObject", new B() {});
 
         assertMockEndpointsSatisfied();
     }
@@ -39,7 +39,9 @@ public class DefaultMethodCalledFromSimpleExpressionTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:defaultMethod").setBody(simple("${exchangeProperty.myObject.defaultMethod}")).to("mock:result");
+                from("direct:defaultMethod")
+                        .setBody(simple("${exchangeProperty.myObject.defaultMethod}"))
+                        .to("mock:result");
             }
         };
     }
@@ -50,6 +52,5 @@ public class DefaultMethodCalledFromSimpleExpressionTest extends ContextTestSupp
         }
     }
 
-    public interface B extends A {
-    }
+    public interface B extends A {}
 }

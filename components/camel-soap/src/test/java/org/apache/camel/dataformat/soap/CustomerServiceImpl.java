@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
 
 import com.example.customerservice.Customer;
@@ -86,5 +87,4 @@ public class CustomerServiceImpl implements CustomerService {
     public void saveCustomer(SaveCustomer request) {
         lastSavedCustomer = request.getCustomer();
     }
-
 }

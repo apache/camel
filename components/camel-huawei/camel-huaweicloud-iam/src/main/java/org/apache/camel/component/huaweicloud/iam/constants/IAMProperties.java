@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam.constants;
 
 /**
@@ -24,6 +25,5 @@ public final class IAMProperties {
     public static final String USER_ID = "CamelHwCloudIamUserId";
     public static final String GROUP_ID = "CamelHwCloudIamGroupId";
 
-    private IAMProperties() {
-    }
+    private IAMProperties() {}
 }

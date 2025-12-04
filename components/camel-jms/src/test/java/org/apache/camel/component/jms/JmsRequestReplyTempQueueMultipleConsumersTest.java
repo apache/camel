@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,16 +44,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.junit5.TestSupport.body;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Reliability tests for JMS TempQueue Reply Manager with multiple consumers.
  */
 @Isolated("Creates multiple threads")
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Multiple problems: requires too much resources and spam logs with Session is closed warnings")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Multiple problems: requires too much resources and spam logs with Session is closed warnings")
 public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupport {
 
     @RegisterExtension
@@ -61,21 +64,23 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
     @Test
     public void testMultipleConsumingThreadsStrict() throws Exception {
         /*
-         This test is meant to be run locally, on developer machines where
-         the system resources are plentiful.
-         */
+        This test is meant to be run locally, on developer machines where
+        the system resources are plentiful.
+        */
         executorService = context.getExecutorServiceManager().newFixedThreadPool(this, "test", 5);
 
         doSendMessages(1000, 1000);
 
-        assertTrue(msgsPerThread.keySet().size() > 1,
-                "Expected multiple consuming threads, but only found: " + msgsPerThread.keySet().size());
+        assertTrue(
+                msgsPerThread.keySet().size() > 1,
+                "Expected multiple consuming threads, but only found: "
+                        + msgsPerThread.keySet().size());
 
         context.getExecutorServiceManager().shutdown(executorService);
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 500, 100, 100 })
+    @ValueSource(ints = {500, 100, 100})
     public void testTempQueueRefreshed(int numSend) throws Exception {
         executorService = context.getExecutorServiceManager().newFixedThreadPool(this, "test", 5);
 
@@ -121,8 +126,10 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(ExchangePattern.InOut,
-                        "jms:queue:JmsRequestReplyTempQueueMultipleConsumersTest?replyToConcurrentConsumers=10&replyToMaxConcurrentConsumers=20&recoveryInterval=10")
+                from("direct:start")
+                        .to(
+                                ExchangePattern.InOut,
+                                "jms:queue:JmsRequestReplyTempQueueMultipleConsumersTest?replyToConcurrentConsumers=10&replyToMaxConcurrentConsumers=20&recoveryInterval=10")
                         .process(exchange -> {
                             String threadName = Thread.currentThread().getName();
                             synchronized (msgsPerThread) {
@@ -133,7 +140,8 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
                                 }
                                 count.incrementAndGet();
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
 
                 from("jms:queue:JmsRequestReplyTempQueueMultipleConsumersTest?concurrentConsumers=10&recoveryInterval=10")
                         .setBody(simple("Reply >>> ${body}"));

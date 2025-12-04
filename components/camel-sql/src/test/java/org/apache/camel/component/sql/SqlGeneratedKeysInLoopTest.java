@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +33,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SqlGeneratedKeysInLoopTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
@@ -42,9 +43,11 @@ public class SqlGeneratedKeysInLoopTest extends CamelTestSupport {
         // Only HSQLDB seem to handle:
         // - more than one generated column in row
         // - return all keys generated in batch insert
-        db = new EmbeddedDatabaseBuilder().generateUniqueName(true)
-                .setType(EmbeddedDatabaseType.HSQL).addScript("sql/createAndPopulateDatabase3.sql").build();
-
+        db = new EmbeddedDatabaseBuilder()
+                .generateUniqueName(true)
+                .setType(EmbeddedDatabaseType.HSQL)
+                .addScript("sql/createAndPopulateDatabase3.sql")
+                .build();
     }
 
     @Override
@@ -62,7 +65,8 @@ public class SqlGeneratedKeysInLoopTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
-                from("direct:batchinloop").loop(2)
+                from("direct:batchinloop")
+                        .loop(2)
                         .to("sql:insert into projects (project, license, description) values (#, #, #)?batch=true")
                         .process(out -> {
                             results[(Integer) out.getProperty(Exchange.LOOP_INDEX)] = out.copy();
@@ -79,8 +83,8 @@ public class SqlGeneratedKeysInLoopTest extends CamelTestSupport {
 
         Exchange exchange = endpoint.createExchange();
         List<Object[]> payload = new ArrayList<>(4);
-        payload.add(new Object[] { "project 1", "ASF", "new project 1" });
-        payload.add(new Object[] { "project 2", "ASF", "new project 2" });
+        payload.add(new Object[] {"project 1", "ASF", "new project 1"});
+        payload.add(new Object[] {"project 2", "ASF", "new project 2"});
         exchange.getIn().setBody(payload);
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
 
@@ -93,17 +97,20 @@ public class SqlGeneratedKeysInLoopTest extends CamelTestSupport {
             Exchange out = results[i];
             int id = (Integer) out.getProperty(Exchange.LOOP_INDEX) * 2 + 3;
             @SuppressWarnings("unchecked")
-            List<Map<String, Object>> generatedKeys
-                    = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
-            assertNotNull(generatedKeys,
-                    "out body could not be converted to a List - was: " + out.getMessage().getBody());
+            List<Map<String, Object>> generatedKeys =
+                    out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+            assertNotNull(
+                    generatedKeys,
+                    "out body could not be converted to a List - was: "
+                            + out.getMessage().getBody());
             assertEquals(2, generatedKeys.size());
             for (Map<String, Object> row : generatedKeys) {
                 assertEquals(id++, row.get("ID"), "auto increment value should be " + (id - 1));
             }
-            assertEquals(2, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT),
+            assertEquals(
+                    2,
+                    out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT),
                     "generated keys row count should be two");
         }
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.config;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,17 +38,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ConnectorConfigGeneratorTest {
 
     @Test
     void testIfCorrectlyGeneratedMySQLFile() {
-        final Set<String> requiredFields = new HashSet<>(
-                Arrays.asList(MySqlConnectorConfig.PASSWORD.name(), RelationalDatabaseConnectorConfig.TOPIC_PREFIX.name()));
+        final Set<String> requiredFields = new HashSet<>(Arrays.asList(
+                MySqlConnectorConfig.PASSWORD.name(), RelationalDatabaseConnectorConfig.TOPIC_PREFIX.name()));
         final Map<String, Object> overrideFields = new HashMap<>();
         overrideFields.put(MySqlConnectorConfig.SCHEMA_HISTORY.name(), FileSchemaHistory.class);
         overrideFields.put(CommonConnectorConfig.TOMBSTONES_ON_DELETE.name(), false);
@@ -54,7 +55,10 @@ public class ConnectorConfigGeneratorTest {
     @Test
     void testIfIgnoreUnWantedFieldsWithIllegal() {
         final Map<String, ConnectorConfigField> fields = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(
-                new MySqlConnector().config(), MySqlConnectorConfig.class, Collections.EMPTY_SET, Collections.EMPTY_MAP);
+                new MySqlConnector().config(),
+                MySqlConnectorConfig.class,
+                Collections.EMPTY_SET,
+                Collections.EMPTY_MAP);
 
         fields.forEach((name, connectorConfigField) -> assertFalse(
                 StringUtils.containsAny(name, "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~"),
@@ -69,17 +73,21 @@ public class ConnectorConfigGeneratorTest {
 
         Class<?> clazz = getClass();
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> ConnectorConfigGenerator.create(connector, clazz, null, requiredFields, overridenDefaultValues));
     }
 
     private void testIfCorrectlyGeneratedFile(
-            final SourceConnector connector, final Class<?> configClass, final Set<String> requiredFields,
+            final SourceConnector connector,
+            final Class<?> configClass,
+            final Set<String> requiredFields,
             final Map<String, Object> overrideFields) {
-        final ConnectorConfigGenerator connectorConfigGenerator
-                = ConnectorConfigGenerator.create(connector, configClass, null, requiredFields, overrideFields);
-        final Map<String, ConnectorConfigField> connectorConfigFields = ConnectorConfigFieldsFactory
-                .createConnectorFieldsAsMap(connector.config(), configClass, requiredFields, overrideFields);
+        final ConnectorConfigGenerator connectorConfigGenerator =
+                ConnectorConfigGenerator.create(connector, configClass, null, requiredFields, overrideFields);
+        final Map<String, ConnectorConfigField> connectorConfigFields =
+                ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(
+                        connector.config(), configClass, requiredFields, overrideFields);
 
         final String connectorFieldsAsString = connectorConfigGenerator.printClassAsString();
 
@@ -92,11 +100,13 @@ public class ConnectorConfigGeneratorTest {
                 assertTrue(connectorFieldsAsString.contains(field.getFieldName()), field.getFieldName());
 
                 // check setters
-                assertTrue(connectorFieldsAsString.contains(field.getFieldSetterMethodName()),
+                assertTrue(
+                        connectorFieldsAsString.contains(field.getFieldSetterMethodName()),
                         field.getFieldSetterMethodName());
 
                 // check getters
-                assertTrue(connectorFieldsAsString.contains(field.getFieldGetterMethodName()),
+                assertTrue(
+                        connectorFieldsAsString.contains(field.getFieldGetterMethodName()),
                         field.getFieldGetterMethodName());
             }
         });

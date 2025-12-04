@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.scan;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import java.io.Closeable;
 import java.util.HashMap;
@@ -34,16 +38,12 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PluginHelper;
 
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-
 /**
  * Helper for Camel package scanning.
  */
 public class PackageScanHelper {
 
-    private PackageScanHelper() {
-    }
+    private PackageScanHelper() {}
 
     /**
      * Scans the given Java packages for custom beans annotated with {@link BindToRegistry} and create new instances of
@@ -56,8 +56,8 @@ public class PackageScanHelper {
         if (packages != null && !packages.isEmpty()) {
             Registry registry = camelContext.getRegistry();
             if (registry != null) {
-                PackageScanClassResolver scanner
-                        = camelContext.getCamelContextExtension().getContextPlugin(PackageScanClassResolver.class);
+                PackageScanClassResolver scanner =
+                        camelContext.getCamelContextExtension().getContextPlugin(PackageScanClassResolver.class);
                 Injector injector = camelContext.getInjector();
                 if (scanner != null && injector != null) {
                     Map<Class<?>, Object> created = new HashMap<>();
@@ -91,8 +91,8 @@ public class PackageScanHelper {
                                     Object answer = injector.newInstance(c);
                                     if (answer != null && ann.beanPostProcess()) {
                                         try {
-                                            final CamelBeanPostProcessor beanPostProcessor
-                                                    = PluginHelper.getBeanPostProcessor(camelContext);
+                                            final CamelBeanPostProcessor beanPostProcessor =
+                                                    PluginHelper.getBeanPostProcessor(camelContext);
                                             beanPostProcessor.postProcessBeforeInitialization(answer, beanName);
                                             beanPostProcessor.postProcessAfterInitialization(answer, beanName);
                                         } catch (Exception e) {
@@ -133,7 +133,8 @@ public class PackageScanHelper {
                                 // use dependency injection factory to perform the task of binding the bean to registry
                                 // use null for init method as we need to defer calling it at a late phase
                                 Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                                        .createBindToRegistryFactory(name, bean, c, beanName, false, null, destroyMethod);
+                                        .createBindToRegistryFactory(
+                                                name, bean, c, beanName, false, null, destroyMethod);
                                 // defer calling init methods until dependency injection in phase-4 is complete
                                 if (isNotEmpty(initMethod)) {
                                     initMethods.put(bean, initMethod);
@@ -149,10 +150,10 @@ public class PackageScanHelper {
                             try {
                                 // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessBeforeInitialization
                                 // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessAfterInitialization
-                                PluginHelper.getBeanPostProcessor(camelContext).postProcessBeforeInitialization(bean,
-                                        beanName);
-                                PluginHelper.getBeanPostProcessor(camelContext).postProcessAfterInitialization(bean,
-                                        beanName);
+                                PluginHelper.getBeanPostProcessor(camelContext)
+                                        .postProcessBeforeInitialization(bean, beanName);
+                                PluginHelper.getBeanPostProcessor(camelContext)
+                                        .postProcessAfterInitialization(bean, beanName);
                             } catch (Exception e) {
                                 throw new RuntimeCamelException("Error post-processing bean: " + beanName, e);
                             }

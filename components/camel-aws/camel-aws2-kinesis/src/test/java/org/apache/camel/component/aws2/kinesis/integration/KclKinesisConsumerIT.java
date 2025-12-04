@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,8 +29,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("Must be manually tested.")
 public class KclKinesisConsumerIT extends CamelTestSupport {
@@ -43,8 +44,10 @@ public class KclKinesisConsumerIT extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:start").delay(10000)
-                        .to("aws2-kinesis://pippo?useDefaultCredentialsProvider=true&region=eu-west-1").startupOrder(2);
+                from("direct:start")
+                        .delay(10000)
+                        .to("aws2-kinesis://pippo?useDefaultCredentialsProvider=true&region=eu-west-1")
+                        .startupOrder(2);
 
                 from("aws2-kinesis://pippo?useDefaultCredentialsProvider=true&useKclConsumers=true&region=eu-west-1&asyncClient=true")
                         .startupOrder(1)
@@ -67,7 +70,8 @@ public class KclKinesisConsumerIT extends CamelTestSupport {
             exchange.getIn().setBody("Kinesis Event 2.");
         });
 
-        Awaitility.await().atMost(20, TimeUnit.SECONDS)
+        Awaitility.await()
+                .atMost(20, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(2, result.getExchanges().size()));
     }
 }

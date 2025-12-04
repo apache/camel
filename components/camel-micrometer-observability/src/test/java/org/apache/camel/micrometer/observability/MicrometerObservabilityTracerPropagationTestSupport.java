@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
 
 import java.util.List;
@@ -43,15 +44,13 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
         CamelContext context = super.createCamelContext();
 
         ContextPropagators propagators = otelExtension.getPropagators();
-        io.opentelemetry.api.trace.Tracer otelTracer = otelExtension.getOpenTelemetry().getTracer("traceTest");
+        io.opentelemetry.api.trace.Tracer otelTracer =
+                otelExtension.getOpenTelemetry().getTracer("traceTest");
 
         OtelPropagator otelPropagator = new OtelPropagator(propagators, otelTracer);
         OtelCurrentTraceContext currentTraceContext = new OtelCurrentTraceContext();
         // We must convert the Otel Tracer into a micrometer Tracer
-        io.micrometer.tracing.Tracer micrometerTracer = new OtelTracer(
-                otelTracer,
-                currentTraceContext,
-                null);
+        io.micrometer.tracing.Tracer micrometerTracer = new OtelTracer(otelTracer, currentTraceContext, null);
 
         context.getRegistry().bind("MicrometerObservabilityTracer", micrometerTracer);
         context.getRegistry().bind("OpentelemetryPropagators", otelPropagator);
@@ -73,5 +72,4 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
         }
         throw new IllegalArgumentException("Trying to get a non existing span!");
     }
-
 }

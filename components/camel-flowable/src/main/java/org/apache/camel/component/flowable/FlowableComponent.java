@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
 
 import java.util.Map;
@@ -25,8 +26,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("flowable")
 public class FlowableComponent extends DefaultComponent {
 
-    public FlowableComponent() {
-    }
+    public FlowableComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

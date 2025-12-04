@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.CamelContext;
@@ -39,6 +40,7 @@ public class JmsOnCompletionIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -105,8 +107,7 @@ public class JmsOnCompletionIT extends AbstractJMSTest {
 
     public static class MyProcessor implements Processor {
 
-        public MyProcessor() {
-        }
+        public MyProcessor() {}
 
         @Override
         public void process(Exchange exchange) {
@@ -121,5 +122,4 @@ public class JmsOnCompletionIT extends AbstractJMSTest {
     protected String getComponentName() {
         return "activemq";
     }
-
 }

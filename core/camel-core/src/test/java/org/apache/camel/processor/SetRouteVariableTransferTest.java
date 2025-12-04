@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,14 +49,15 @@ public class SetRouteVariableTransferTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // stored as route variable
-                from("direct:start").routeId("myRoute")
+                from("direct:start")
+                        .routeId("myRoute")
                         // sets variable in another route
-                        .setVariable("route:myRoute2:" + variableName).constant(expectedVariableValue)
+                        .setVariable("route:myRoute2:" + variableName)
+                        .constant(expectedVariableValue)
                         .to("direct:bar")
                         .to("mock:end");
 
-                from("direct:bar").routeId("myRoute2")
-                        .setBody().variable("route:" + variableName);
+                from("direct:bar").routeId("myRoute2").setBody().variable("route:" + variableName);
             }
         };
     }

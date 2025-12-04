@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.handlers;
 
 import java.net.URI;
@@ -47,7 +48,8 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
     }
 
     @Override
-    protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message) throws Exception {
+    protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message)
+            throws Exception {
         HttpResponse response;
         Message answer;
 
@@ -55,13 +57,15 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             FullHttpResponse fullHttpResponse = (FullHttpResponse) message;
             response = fullHttpResponse;
             // use the binding
-            answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(fullHttpResponse, exchange,
-                    producer.getConfiguration());
+            answer = producer.getEndpoint()
+                    .getNettyHttpBinding()
+                    .toCamelMessage(fullHttpResponse, exchange, producer.getConfiguration());
         } else {
             InboundStreamHttpResponse streamHttpResponse = (InboundStreamHttpResponse) message;
             response = streamHttpResponse.getHttpResponse();
-            answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(streamHttpResponse, exchange,
-                    producer.getConfiguration());
+            answer = producer.getEndpoint()
+                    .getNettyHttpBinding()
+                    .toCamelMessage(streamHttpResponse, exchange, producer.getConfiguration());
         }
 
         if (response.status().equals(HttpResponseStatus.CONTINUE)) {
@@ -86,5 +90,4 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
 
         return answer;
     }
-
 }

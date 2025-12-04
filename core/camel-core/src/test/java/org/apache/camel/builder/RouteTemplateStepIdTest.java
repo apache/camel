@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -23,14 +26,13 @@ import org.apache.camel.processor.StepProcessor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RouteTemplateStepIdTest extends ContextTestSupport {
 
     @Test
     public void testStepId() throws Exception {
         context.addRouteFromTemplate("one", "myTemplate", Map.of("name", "one", "greeting", "Hello"));
-        context.addRouteFromTemplate("deux", "myTemplate", Map.of("name", "deux", "greeting", "Bonjour", "myPeriod", "5s"));
+        context.addRouteFromTemplate(
+                "deux", "myTemplate", Map.of("name", "deux", "greeting", "Bonjour", "myPeriod", "5s"));
 
         assertEquals(2, context.getRoutes().size());
 
@@ -52,12 +54,14 @@ public class RouteTemplateStepIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("name").templateParameter("greeting")
+                routeTemplate("myTemplate")
+                        .templateParameter("name")
+                        .templateParameter("greeting")
                         .templateParameter("myPeriod", "3s")
                         .from("timer:{{name}}?period={{myPeriod}}")
                         .step("{{name}}")
-                            .setBody(simple("{{greeting}} {{name}}"))
-                            .log("${body}")
+                        .setBody(simple("{{greeting}} {{name}}"))
+                        .log("${body}")
                         .end();
             }
         };

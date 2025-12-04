@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -22,8 +25,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SetBodyTryCatchIssueTest extends ContextTestSupport {
 
@@ -43,11 +44,17 @@ public class SetBodyTryCatchIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("foo", constant("123")).doTry().setHeader("bar", constant("456")).to("mock:bar")
+                from("direct:start")
+                        .setHeader("foo", constant("123"))
+                        .doTry()
+                        .setHeader("bar", constant("456"))
+                        .to("mock:bar")
                         .bean(SetBodyTryCatchIssueTest.class, "doSomething")
                         .doCatch(IllegalArgumentException.class)
                         // empty block
-                        .end().setBody(header("foo")).to("mock:result");
+                        .end()
+                        .setBody(header("foo"))
+                        .to("mock:result");
             }
         };
     }
@@ -66,5 +73,4 @@ public class SetBodyTryCatchIssueTest extends ContextTestSupport {
 
         throw new IllegalArgumentException("Forced");
     }
-
 }

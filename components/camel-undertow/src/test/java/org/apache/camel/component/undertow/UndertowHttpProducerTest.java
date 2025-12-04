@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHttpProducerTest extends BaseUndertowTest {
 
@@ -39,8 +40,8 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
     public void testHttpSimpleHeader() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "POST",
-                String.class);
+        String out = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -52,8 +53,8 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo", "Hello World", Exchange.HTTP_METHOD, "POST",
-                String.class);
+        String out = template.requestBodyAndHeader(
+                "http://localhost:{{port}}/foo", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -66,7 +67,8 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/foo")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }

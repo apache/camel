@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.xml.namespace.QName;
 
@@ -31,26 +38,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfEndpointUtilsWithSpringTest extends CamelSpringTestSupport {
     // set up the port name and service name
     protected static final QName SERVICE_NAME = new QName("http://www.example.com/test", "ServiceName");
     protected static final QName PORT_NAME = new QName("http://www.example.com/test", "PortName");
 
     private static final String CXF_BASE_URI = "cxf://http://www.example.com/testaddress"
-                                               + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-                                               + "&portName={http://www.example.com/test}PortName"
-                                               + "&serviceName={http://www.example.com/test}ServiceName"
-                                               + "&defaultBus=true";
+            + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+            + "&portName={http://www.example.com/test}PortName"
+            + "&serviceName={http://www.example.com/test}ServiceName"
+            + "&defaultBus=true";
 
     private static final String NO_SERVICE_CLASS_URI = "cxf://http://www.example.com/testaddress"
-                                                       + "?portName={http://www.example.com/test}PortName"
-                                                       + "&serviceName={http://www.example.com/test}ServiceName";
+            + "?portName={http://www.example.com/test}PortName"
+            + "&serviceName={http://www.example.com/test}ServiceName";
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -68,7 +69,8 @@ public class CxfEndpointUtilsWithSpringTest extends CamelSpringTestSupport {
     @Test
     public void testGetServiceClass() throws Exception {
         CxfEndpoint endpoint = createEndpoint("cxf:bean:helloServiceEndpoint?serviceClass=#helloServiceImpl");
-        assertEquals("org.apache.camel.component.cxf.HelloServiceImpl",
+        assertEquals(
+                "org.apache.camel.component.cxf.HelloServiceImpl",
                 endpoint.getServiceClass().getName());
     }
 

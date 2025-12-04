@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Remove Container Request headers are applied properly
@@ -53,7 +54,6 @@ public class RemoveContainerCmdHeaderTest extends BaseDockerHeaderTest<RemoveCon
         Mockito.verify(dockerClient, Mockito.times(1)).removeContainerCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withForce(eq(force));
         Mockito.verify(mockObject, Mockito.times(1)).withRemoveVolumes(eq(removeVolumes));
-
     }
 
     @Override
@@ -65,5 +65,4 @@ public class RemoveContainerCmdHeaderTest extends BaseDockerHeaderTest<RemoveCon
     protected DockerOperation getOperation() {
         return DockerOperation.REMOVE_CONTAINER;
     }
-
 }

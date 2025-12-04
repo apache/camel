@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 public class LogSpanDecorator extends AbstractSpanDecorator {
@@ -32,5 +33,4 @@ public class LogSpanDecorator extends AbstractSpanDecorator {
     public boolean newSpan() {
         return false;
     }
-
 }

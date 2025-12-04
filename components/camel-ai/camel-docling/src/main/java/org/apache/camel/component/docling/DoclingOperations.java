@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 public enum DoclingOperations {
@@ -82,5 +83,4 @@ public enum DoclingOperations {
      * Extract document metadata (author, title, page count, creation date, etc.)
      */
     EXTRACT_METADATA
-
 }

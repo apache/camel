@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -32,18 +33,25 @@ import org.apache.camel.spi.Metadata;
 public class ZooKeeperServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute(required = true)
     private String nodes;
+
     @XmlAttribute
     private String namespace;
+
     @XmlAttribute
     private String reconnectBaseSleepTime;
+
     @XmlAttribute
     private String reconnectMaxSleepTime;
+
     @XmlAttribute
     private String reconnectMaxRetries;
+
     @XmlAttribute
     private String sessionTimeout;
+
     @XmlAttribute
     private String connectionTimeout;
+
     @XmlAttribute(required = true)
     private String basePath;
 

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import jakarta.annotation.Resource;
 
@@ -22,9 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class EndpointUriSetFromSpringTest extends SpringRunWithTestSupport {
@@ -38,5 +39,4 @@ public class EndpointUriSetFromSpringTest extends SpringRunWithTestSupport {
         assertEquals("foo:bar", endpoint.getEndpointUri(), "foo.getEndpointUri()");
         log.info("Found endpoint {} with URI: {}", endpoint, endpoint.getEndpointUri());
     }
-
 }

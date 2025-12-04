@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -28,9 +32,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlDataSourceTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
@@ -42,7 +43,8 @@ public class SqlDataSourceTest extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
 
         registry.bind("dataSource", db);
     }
@@ -57,7 +59,8 @@ public class SqlDataSourceTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // the result is a List
-        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
 
         // and each row in the list is a Map
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));

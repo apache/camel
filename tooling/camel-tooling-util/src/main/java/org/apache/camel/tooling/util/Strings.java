@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util;
 
 import java.util.Collection;
@@ -24,7 +25,7 @@ import java.util.Collection;
 public final class Strings {
 
     private Strings() {
-        //Helper class
+        // Helper class
     }
 
     public static boolean isEmpty(String s) {
@@ -280,5 +281,4 @@ public final class Strings {
         chars[0] = Character.toUpperCase(chars[0]);
         return new String(chars);
     }
-
 }

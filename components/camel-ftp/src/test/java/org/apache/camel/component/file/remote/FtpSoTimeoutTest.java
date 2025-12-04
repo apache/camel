@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +31,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.net.ftp.FTPClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class used to demonstrate the problematic disconnect sequence of the {@link FtpOperations}.
@@ -71,16 +72,19 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("direct:with").to("ftp://localhost:" + serverSocket.getLocalPort()
-                                       + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
+                from("direct:with")
+                        .to("ftp://localhost:" + serverSocket.getLocalPort()
+                                + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
 
-                from("direct:without").to("ftp://localhost:" + serverSocket.getLocalPort()
-                                          + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
+                from("direct:without")
+                        .to("ftp://localhost:" + serverSocket.getLocalPort()
+                                + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
 
-                // using soTimeout=0 could potentially cause the ftp producer to dead-lock doing endless reconnection attempts
+                // using soTimeout=0 could potentially cause the ftp producer to dead-lock doing endless reconnection
+                // attempts
                 // this is a test to ensure we have fixed that; see CAMEL-8088
-                from("direct:soTimeoutZero").to("ftp://localhost:" + serverSocket.getLocalPort()
-                                                + "?connectTimeout=300&soTimeout=0")
+                from("direct:soTimeoutZero")
+                        .to("ftp://localhost:" + serverSocket.getLocalPort() + "?connectTimeout=300&soTimeout=0")
                         .to("mock:done")
                         .errorHandler(deadLetterChannel("mock:dead"));
             }

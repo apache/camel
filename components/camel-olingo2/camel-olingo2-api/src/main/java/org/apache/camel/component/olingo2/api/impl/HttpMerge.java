@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2.api.impl;
 
 import java.net.URI;
@@ -27,8 +28,7 @@ public class HttpMerge extends HttpEntityEnclosingRequestBase {
 
     public static final String METHOD_NAME = "MERGE";
 
-    public HttpMerge() {
-    }
+    public HttpMerge() {}
 
     public HttpMerge(final URI uri) {
         setURI(uri);

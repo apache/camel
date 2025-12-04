@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.ByteArrayInputStream;
@@ -47,20 +48,27 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
             public void configure() {
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy()
+                        .setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(5L);
 
-                from("direct:start").multicast().parallelProcessing().stopOnException().to("direct:a", "direct:b").end()
+                from("direct:start")
+                        .multicast()
+                        .parallelProcessing()
+                        .stopOnException()
+                        .to("direct:a", "direct:b")
+                        .end()
                         .to("mock:result");
 
                 from("direct:a") //
                         // read stream
-                        .process(new SimpleProcessor(false)).to("mock:resulta");
+                        .process(new SimpleProcessor(false))
+                        .to("mock:resulta");
 
                 from("direct:b") //
                         // read stream concurrently, because of parallel processing
-                        .process(new SimpleProcessor(true)).to("mock:resultb");
-
+                        .process(new SimpleProcessor(true))
+                        .to("mock:resultb");
             }
         };
     }
@@ -104,7 +112,6 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
             } else {
                 throw new RuntimeException("Type " + body.getClass().getName() + " not supported");
             }
-
         }
     }
 
@@ -139,7 +146,8 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         mock = getMockEndpoint("mock:resultb");
         mock.expectedBodiesReceived("James,Guillaume,Hiram,Rob,Roman");
 
-        InputStream in = MultiCastParallelAndStreamCachingTest.class.getClassLoader()
+        InputStream in = MultiCastParallelAndStreamCachingTest.class
+                .getClassLoader()
                 .getResourceAsStream("org/apache/camel/processor/simple.txt");
         template.sendBody("direct:start", in);
 
@@ -160,7 +168,8 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         MockEndpoint mockb = getMockEndpoint("mock:resultb");
         mockb.expectedBodiesReceived("A");
 
-        InputStream in = MultiCastParallelAndStreamCachingTest.class.getClassLoader()
+        InputStream in = MultiCastParallelAndStreamCachingTest.class
+                .getClassLoader()
                 .getResourceAsStream("org/apache/camel/processor/oneCharacter.txt");
         // The body is only one character. Therefore InputStreamCache is used
         // for stream caching
@@ -184,10 +193,9 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         mock = getMockEndpoint("mock:resultb");
         mock.expectedBodiesReceived(abcScharpS);
 
-        InputStreamReader isr
-                = new InputStreamReader(
-                        new ByteArrayInputStream(abcScharpS.getBytes(StandardCharsets.ISO_8859_1)),
-                        StandardCharsets.ISO_8859_1);
+        InputStreamReader isr = new InputStreamReader(
+                new ByteArrayInputStream(abcScharpS.getBytes(StandardCharsets.ISO_8859_1)),
+                StandardCharsets.ISO_8859_1);
         template.sendBody("direct:start", isr);
 
         assertMockEndpointsSatisfied();
@@ -218,8 +226,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         mock.expectedBodiesReceived(input);
 
         InputStreamReader isr = new InputStreamReader(
-                new ByteArrayInputStream(input.getBytes(StandardCharsets.ISO_8859_1)),
-                StandardCharsets.ISO_8859_1);
+                new ByteArrayInputStream(input.getBytes(StandardCharsets.ISO_8859_1)), StandardCharsets.ISO_8859_1);
         StreamSource ss = new StreamSource(isr);
         template.sendBody("direct:start", ss);
 
@@ -241,5 +248,4 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

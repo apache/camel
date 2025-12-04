@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics.routepolicy;
 
 import org.apache.camel.api.management.ManagedOperation;
@@ -25,5 +26,4 @@ public interface MetricsRegistryMBean {
 
     @ManagedOperation(description = "Dumps the statistics as json using seconds for time units")
     String dumpStatisticsAsJsonTimeUnitSeconds();
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ollama.services;
 
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
@@ -101,5 +102,4 @@ public class OllamaLocalHostInfraService implements OllamaInfraService {
     public String apiKey() {
         return configuration.apiKey();
     }
-
 }

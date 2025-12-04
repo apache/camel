@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
+
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -48,8 +51,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-
 /**
  * A servlet to use as a Camel route as entry.
  */
@@ -57,8 +58,8 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
     public static final String ASYNC_PARAM = "async";
     public static final String FORCE_AWAIT_PARAM = "forceAwait";
     public static final String EXECUTOR_REF_PARAM = "executorRef";
-    public static final List<String> METHODS
-            = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
+    public static final List<String> METHODS =
+            Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     private static final long serialVersionUID = -7061982839117697829L;
 
@@ -69,6 +70,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
      * the init method
      */
     private String servletName;
+
     private boolean async;
     private boolean forceAwait;
     private String executorRef;
@@ -153,10 +155,10 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
     }
 
     private void onError(HttpServletResponse resp, Exception e) {
-        //An error shouldn't occur as we should handle most error in doService
+        // An error shouldn't occur as we should handle most error in doService
         log.error("Error processing request", e);
         sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        //Need to wrap it in RuntimeException as it occurs in a Runnable
+        // Need to wrap it in RuntimeException as it occurs in a Runnable
         throw new RuntimeCamelException(e);
     }
 
@@ -177,9 +179,10 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
         ExecutorService es = manager.newThreadPool(this, getClass().getSimpleName() + "Executor", executorRef);
         if (es == null) {
-            getServletContext().log(
-                    "ExecutorServiceRef " + executorRef + " not found in registry (as an ExecutorService instance) " +
-                                    "or as a thread pool profile, will default for " + ctx.getName() + ".");
+            getServletContext()
+                    .log("ExecutorServiceRef " + executorRef
+                            + " not found in registry (as an ExecutorService instance) "
+                            + "or as a thread pool profile, will default for " + ctx.getName() + ".");
             es = manager.newDefaultThreadPool(this, getClass().getSimpleName() + "Executor");
         }
         ctx.addLifecycleStrategy(createLifecycleStrategy());
@@ -214,7 +217,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         try {
             doService(request, response);
         } catch (Exception e) {
-            //An error shouldn't occur as we should handle most of error in doService
+            // An error shouldn't occur as we should handle most of error in doService
             onError(response, e);
         } finally {
             context.complete();
@@ -285,10 +288,8 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
 
         String httpPath = (String) exchange.getIn().getHeader(Exchange.HTTP_PATH);
         // here we just remove the CamelServletContextPath part from the HTTP_PATH
-        if (contextPath != null
-                && httpPath.startsWith(contextPath)) {
-            exchange.getIn().setHeader(Exchange.HTTP_PATH,
-                    httpPath.substring(contextPath.length()));
+        if (contextPath != null && httpPath.startsWith(contextPath)) {
+            exchange.getIn().setHeader(Exchange.HTTP_PATH, httpPath.substring(contextPath.length()));
         }
 
         // we want to handle the UoW
@@ -329,19 +330,17 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
     private CompletionStage<?> tryAsyncProcess(
             HttpServletResponse res, HttpConsumer consumer, Processor processor, Exchange exchange) {
         CompletionStage<?> result;
-        result = AsyncProcessor.class.cast(processor)
-                .processAsync(exchange)
-                .whenComplete((r, ex) -> {
-                    if (ex != null) {
-                        exchange.setException(ex);
-                    } else {
-                        try {
-                            afterProcess(res, consumer, exchange, false);
-                        } catch (Exception e) {
-                            exchange.setException(e);
-                        }
-                    }
-                });
+        result = AsyncProcessor.class.cast(processor).processAsync(exchange).whenComplete((r, ex) -> {
+            if (ex != null) {
+                exchange.setException(ex);
+            } else {
+                try {
+                    afterProcess(res, consumer, exchange, false);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+            }
+        });
         return result;
     }
 
@@ -363,9 +362,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         res.setStatus(HttpServletResponse.SC_OK);
     }
 
-    protected void afterProcess(
-            HttpServletResponse res, HttpConsumer consumer, Exchange exchange,
-            boolean rethrow)
+    protected void afterProcess(HttpServletResponse res, HttpConsumer consumer, Exchange exchange, boolean rethrow)
             throws Exception {
         try {
             // now lets output to the res
@@ -411,11 +408,13 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
         if (consumer == null) {
             // okay we cannot process this requires so return either 404 or 405.
-            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same"
+            // request
             boolean hasAnyMethod = METHODS.stream()
                     .anyMatch(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers()));
             if (hasAnyMethod) {
-                log.debug("No consumer to service request {} as method {} is not allowed", request, request.getMethod());
+                log.debug(
+                        "No consumer to service request {} as method {} is not allowed", request, request.getMethod());
                 sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
                 return null;
             } else {
@@ -497,8 +496,11 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         if (!oldClassLoader.equals(appCtxCl)) {
             Thread.currentThread().setContextClassLoader(appCtxCl);
             if (log.isTraceEnabled()) {
-                log.trace("Overrode TCCL for exchangeId {} to {} on thread {}",
-                        exchange.getExchangeId(), appCtxCl, Thread.currentThread().getName());
+                log.trace(
+                        "Overrode TCCL for exchangeId {} to {} on thread {}",
+                        exchange.getExchangeId(),
+                        appCtxCl,
+                        Thread.currentThread().getName());
             }
             return oldClassLoader;
         }
@@ -514,9 +516,11 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         }
         Thread.currentThread().setContextClassLoader(oldTccl);
         if (log.isTraceEnabled()) {
-            log.trace("Restored TCCL for exchangeId {} to {} on thread {}",
-                    exchange.getExchangeId(), oldTccl, Thread.currentThread().getName());
+            log.trace(
+                    "Restored TCCL for exchangeId {} to {} on thread {}",
+                    exchange.getExchangeId(),
+                    oldTccl,
+                    Thread.currentThread().getName());
         }
     }
-
 }

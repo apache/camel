@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kms;
 
 import org.apache.camel.Category;
@@ -32,9 +33,14 @@ import software.amazon.awssdk.services.kms.KmsClient;
 /**
  * Manage keys stored in AWS KMS instances.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-kms", title = "AWS Key Management Service (KMS)",
-             syntax = "aws2-kms:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
-             headersClass = KMS2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-kms",
+        title = "AWS Key Management Service (KMS)",
+        syntax = "aws2-kms:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = KMS2Constants.class)
 public class KMS2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private KmsClient kmsClient;

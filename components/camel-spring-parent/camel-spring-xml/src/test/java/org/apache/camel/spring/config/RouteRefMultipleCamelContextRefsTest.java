@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -23,12 +26,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-
 public class RouteRefMultipleCamelContextRefsTest {
 
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteRefMultipleCamelContextRefsTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/RouteRefMultipleCamelContextRefsTest.xml");
     }
 
     @Test
@@ -57,5 +59,4 @@ public class RouteRefMultipleCamelContextRefsTest {
 
         ac.stop();
     }
-
 }

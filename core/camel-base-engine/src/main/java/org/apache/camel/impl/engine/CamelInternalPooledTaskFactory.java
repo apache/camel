@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.support.PooledObjectFactorySupport;
@@ -43,5 +44,4 @@ final class CamelInternalPooledTaskFactory extends PooledObjectFactorySupport<Ca
     public String toString() {
         return "CamelInternalPooledTaskFactory[capacity: " + getCapacity() + "]";
     }
-
 }

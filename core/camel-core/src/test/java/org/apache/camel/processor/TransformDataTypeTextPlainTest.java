@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,10 +40,11 @@ public class TransformDataTypeTextPlainTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").transformDataType(new DataType("text/plain")).to("mock:result");
+                from("direct:start")
+                        .transformDataType(new DataType("text/plain"))
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.support;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -71,5 +72,4 @@ public abstract class JmsExclusiveTestSupport extends JmsCommonTestSupport {
 
         connect();
     }
-
 }

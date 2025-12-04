@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Processor;
@@ -44,5 +45,4 @@ public interface ErrorHandlerRedeliveryCustomizer {
      * and therefore need to change the output on the error handler.
      */
     void changeOutput(Processor output);
-
 }

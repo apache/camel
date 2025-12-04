@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty.http;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
 
 public class SecurityConstraintMappingTest {
 
@@ -114,5 +115,4 @@ public class SecurityConstraintMappingTest {
         assertNull(matcher.restricted("/index"));
         assertNull(matcher.restricted("/index.html"));
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,18 +34,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
 @MockitoSettings
 public class RedisSetTest extends RedisTestSupport {
 
     @Mock
     private RedisTemplate<String, String> redisTemplate;
+
     @Mock
     private SetOperations<String, String> setOperations;
 
@@ -59,7 +61,6 @@ public class RedisSetTest extends RedisTestSupport {
 
         verify(setOperations).add("key", "value");
         assertNull(result);
-
     }
 
     @Test

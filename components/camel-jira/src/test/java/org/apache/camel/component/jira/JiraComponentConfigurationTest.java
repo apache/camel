@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.google.common.base.Joiner;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JiraComponentConfigurationTest extends CamelTestSupport {
 
@@ -48,10 +49,11 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithBasicAuthentication() throws Exception {
         JiraComponent component = new JiraComponent(context);
         component.start();
-        String query = Joiner.on("&").join(
-                concat(JIRA_URL, JIRA_URL_VALUE),
-                concat(USERNAME, USERNAME_VALUE),
-                concat(PASSWORD, PASSWORD_VALUE));
+        String query = Joiner.on("&")
+                .join(
+                        concat(JIRA_URL, JIRA_URL_VALUE),
+                        concat(USERNAME, USERNAME_VALUE),
+                        concat(PASSWORD, PASSWORD_VALUE));
         JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://newIssues?" + query);
 
         assertEquals("newissues", endpoint.getType().name().toLowerCase());
@@ -64,12 +66,13 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithOAuthentication() throws Exception {
         JiraComponent component = new JiraComponent(context);
         component.start();
-        String query = Joiner.on("&").join(
-                concat(JIRA_URL, JIRA_URL_VALUE),
-                concat(VERIF_CODE, VERIF_CODE_VALUE),
-                concat(ACCESS_TOKEN, ACCESS_TOKEN_VALUE),
-                concat(CONS_KEY, CONS_KEY_VALUE),
-                concat(PRIV_KEY, PRIV_KEY_VALUE));
+        String query = Joiner.on("&")
+                .join(
+                        concat(JIRA_URL, JIRA_URL_VALUE),
+                        concat(VERIF_CODE, VERIF_CODE_VALUE),
+                        concat(ACCESS_TOKEN, ACCESS_TOKEN_VALUE),
+                        concat(CONS_KEY, CONS_KEY_VALUE),
+                        concat(PRIV_KEY, PRIV_KEY_VALUE));
         JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://newComments?" + query);
 
         assertEquals("newcomments", endpoint.getType().name().toLowerCase());
@@ -84,9 +87,7 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithPersonalAccessTokenAuthentication() throws Exception {
         JiraComponent component = new JiraComponent(context);
         component.start();
-        String query = Joiner.on("&").join(
-                concat(JIRA_URL, JIRA_URL_VALUE),
-                concat(ACCESS_TOKEN, ACCESS_TOKEN_VALUE));
+        String query = Joiner.on("&").join(concat(JIRA_URL, JIRA_URL_VALUE), concat(ACCESS_TOKEN, ACCESS_TOKEN_VALUE));
         JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://updateIssue?" + query);
 
         assertEquals("updateissue", endpoint.getType().name().toLowerCase());
@@ -101,12 +102,13 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
     public void createWatchChangesEndpoint() throws Exception {
         JiraComponent component = new JiraComponent(context);
         component.start();
-        String query = Joiner.on("&").join(
-                concat(JIRA_URL, JIRA_URL_VALUE),
-                concat(USERNAME, USERNAME_VALUE),
-                concat(PASSWORD, PASSWORD_VALUE),
-                concat(SEND_ONLY_CHANGED_FIELD, SEND_ONLY_CHANGED_FIELD_VALUE + ""),
-                concat(WATCHED_FIELDS, WATCHED_FIELDS_VALUE));
+        String query = Joiner.on("&")
+                .join(
+                        concat(JIRA_URL, JIRA_URL_VALUE),
+                        concat(USERNAME, USERNAME_VALUE),
+                        concat(PASSWORD, PASSWORD_VALUE),
+                        concat(SEND_ONLY_CHANGED_FIELD, SEND_ONLY_CHANGED_FIELD_VALUE + ""),
+                        concat(WATCHED_FIELDS, WATCHED_FIELDS_VALUE));
         JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://watchUpdates?" + query);
 
         assertEquals("watchupdates", endpoint.getType().name().toLowerCase());

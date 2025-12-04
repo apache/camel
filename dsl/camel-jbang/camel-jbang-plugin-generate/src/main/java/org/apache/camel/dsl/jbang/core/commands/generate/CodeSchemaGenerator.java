@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.generate;
 
 import java.io.File;
@@ -51,34 +52,41 @@ import picocli.CommandLine;
  * Exit Codes: - 0: Success - 1: Component not found or dependency download failed - 2: Class not found - 3: Schema
  * generation failed - 4: General error
  */
-@CommandLine.Command(name = "schema",
-                     description = "Create a JSON schema for a given Camel component and Java Object")
+@CommandLine.Command(name = "schema", description = "Create a JSON schema for a given Camel component and Java Object")
 public class CodeSchemaGenerator extends CamelCommand {
 
     @CommandLine.Parameters(description = "Camel component name (e.g., 'fhir', 'http', 'jms')", arity = "1")
     private String camelComponent;
 
-    @CommandLine.Parameters(description = "Fully qualified class name (e.g., 'org.hl7.fhir.r4.model.Patient')", arity = "1")
+    @CommandLine.Parameters(
+            description = "Fully qualified class name (e.g., 'org.hl7.fhir.r4.model.Patient')",
+            arity = "1")
     private String fullyQualifiedName;
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "Camel version to use")
+    @CommandLine.Option(
+            names = {"--camel-version"},
+            description = "Camel version to use")
     private String camelVersion;
 
-    @CommandLine.Option(names = { "--output" },
-                        description = "Output file path (default: stdout)")
+    @CommandLine.Option(
+            names = {"--output"},
+            description = "Output file path (default: stdout)")
     private String outputFile;
 
-    @CommandLine.Option(names = { "--verbose" },
-                        description = "Enable verbose logging")
+    @CommandLine.Option(
+            names = {"--verbose"},
+            description = "Enable verbose logging")
     private boolean verbose;
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    @CommandLine.Option(
+            names = {"--download"},
+            defaultValue = "true",
+            description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 
     public CodeSchemaGenerator(CamelJBangMain main) {
@@ -117,8 +125,8 @@ public class CodeSchemaGenerator extends CamelCommand {
             // Set context class loader
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             // Download dependencies and create class loader
-            try (DependencyDownloaderClassLoader cl
-                    = getDependencyDownloaderClassLoader(camelComponent, camelVersion, verbose)) {
+            try (DependencyDownloaderClassLoader cl =
+                    getDependencyDownloaderClassLoader(camelComponent, camelVersion, verbose)) {
                 if (cl == null) {
                     return 1; // Error already reported
                 }
@@ -192,8 +200,8 @@ public class CodeSchemaGenerator extends CamelCommand {
                 printer().println("Creating dependency downloader class loader...");
             }
 
-            DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(
-                    CodeSchemaGenerator.class.getClassLoader());
+            DependencyDownloaderClassLoader cl =
+                    new DependencyDownloaderClassLoader(CodeSchemaGenerator.class.getClassLoader());
 
             try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
                 downloader.setClassLoader(cl);
@@ -205,15 +213,13 @@ public class CodeSchemaGenerator extends CamelCommand {
                     printer().println("Downloading artifacts for camel-" + camelComponent + ":" + version);
                 }
 
-                List<MavenArtifact> artifacts = downloader.downloadArtifacts(
-                        "org.apache.camel",
-                        "camel-" + camelComponent,
-                        version,
-                        true);
+                List<MavenArtifact> artifacts =
+                        downloader.downloadArtifacts("org.apache.camel", "camel-" + camelComponent, version, true);
 
                 if (artifacts == null || artifacts.isEmpty()) {
-                    printer().printErr(
-                            "Error: No artifacts found for component 'camel-" + camelComponent + "' version '" + version + "'");
+                    printer()
+                            .printErr("Error: No artifacts found for component 'camel-" + camelComponent + "' version '"
+                                    + version + "'");
                     printer().printErr("Please verify that the component name is correct and the version exists.");
                     printer().printErr("Available components can be found at: https://camel.apache.org/components/");
                     return null;
@@ -221,7 +227,8 @@ public class CodeSchemaGenerator extends CamelCommand {
 
                 if (verbose) {
                     printer().println("Downloaded " + artifacts.size() + " artifact(s)");
-                    artifacts.forEach(artifact -> printer().println("  - " + artifact.getFile().getName()));
+                    artifacts.forEach(artifact ->
+                            printer().println("  - " + artifact.getFile().getName()));
                 }
 
                 artifacts.forEach(artifact -> cl.addFile(artifact.getFile()));
@@ -274,8 +281,10 @@ public class CodeSchemaGenerator extends CamelCommand {
             printer().printErr(System.lineSeparator());
             printer().printErr("To find available classes, you can:");
             printer().printErr("  - Check the component documentation");
-            printer().printErr("  - Browse the Maven artifact at: https://mvnrepository.com/artifact/org/apache/camel/camel-"
-                               + camelComponent);
+            printer()
+                    .printErr(
+                            "  - Browse the Maven artifact at: https://mvnrepository.com/artifact/org/apache/camel/camel-"
+                                    + camelComponent);
 
             if (verbose) {
                 e.printStackTrace();
@@ -334,8 +343,7 @@ public class CodeSchemaGenerator extends CamelCommand {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValue(new File(outputFile), schema);
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputFile), schema);
 
         printer().println("Schema saved to: " + outputFile);
     }

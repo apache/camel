@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.avro;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,8 +33,7 @@ public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
     /**
      * Use the default Jackson {@link AvroMapper} and {@link Object}
      */
-    public JacksonAvroDataFormat() {
-    }
+    public JacksonAvroDataFormat() {}
 
     /**
      * Use the default Jackson {@link AvroMapper} and with a custom unmarshal type
@@ -94,5 +94,4 @@ public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
     protected Class<? extends ObjectMapper> getObjectMapperClass() {
         return AvroMapper.class;
     }
-
 }

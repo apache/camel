@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jooq;
+
+import static org.apache.camel.component.jooq.db.Tables.BOOK_STORE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
@@ -26,9 +30,6 @@ import org.jooq.Result;
 import org.jooq.ResultQuery;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jooq.db.Tables.BOOK_STORE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JooqProducerTest extends BaseJooqTest {
 
     @Test
@@ -39,8 +40,8 @@ public class JooqProducerTest extends BaseJooqTest {
         BookStoreRecord bookStoreRecord = new BookStoreRecord("test");
         producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, bookStoreRecord);
         ResultQuery querySelect = create.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq("test"));
-        Result actual
-                = (Result) producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
+        Result actual = (Result)
+                producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
         assertEquals(1, actual.size());
         assertEquals(bookStoreRecord, actual.get(0));
 
@@ -49,7 +50,8 @@ public class JooqProducerTest extends BaseJooqTest {
         Query query = create.update(BOOK_STORE).set(BOOK_STORE.NAME, newName).where(BOOK_STORE.NAME.eq("test"));
         producerTemplate.sendBody(context.getEndpoint("direct:update"), ExchangePattern.InOut, query);
         querySelect = create.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq(newName));
-        actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
+        actual = (Result)
+                producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
         assertEquals(1, actual.size());
         assertEquals(newName, ((BookStoreRecord) actual.get(0)).getName());
 
@@ -57,7 +59,8 @@ public class JooqProducerTest extends BaseJooqTest {
         query = create.delete(BOOK_STORE).where(BOOK_STORE.NAME.eq(newName));
         producerTemplate.sendBody(context.getEndpoint("direct:delete"), ExchangePattern.InOut, query);
         querySelect = create.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq(newName));
-        actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
+        actual = (Result)
+                producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
         assertEquals(0, actual.size());
     }
 
@@ -71,19 +74,19 @@ public class JooqProducerTest extends BaseJooqTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:insert")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
+                from("direct:insert").to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
 
                 from("direct:update")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute");
+                        .to(
+                                "jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute");
 
                 from("direct:delete")
-                        .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute");
+                        .to(
+                                "jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute");
 
                 from("direct:select")
                         .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch");
             }
         };
     }
-
 }

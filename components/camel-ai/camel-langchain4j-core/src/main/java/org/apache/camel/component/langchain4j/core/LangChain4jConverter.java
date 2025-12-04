@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.core;
 
 import java.util.HashMap;
@@ -32,9 +33,7 @@ public class LangChain4jConverter {
 
     @Converter
     public static Document toDocument(String value, Exchange exchange) {
-        return Document.document(
-                value,
-                toMetadata(exchange));
+        return Document.document(value, toMetadata(exchange));
     }
 
     private static Metadata toMetadata(Exchange exchange) {
@@ -57,9 +56,7 @@ public class LangChain4jConverter {
                 metadata = new HashMap<>();
             }
 
-            metadata.put(
-                    entry.getKey().substring(LangChain4j.METADATA_PREFIX_LEN),
-                    entry.getValue());
+            metadata.put(entry.getKey().substring(LangChain4j.METADATA_PREFIX_LEN), entry.getValue());
         }
 
         return metadata != null ? Metadata.from(metadata) : new Metadata();

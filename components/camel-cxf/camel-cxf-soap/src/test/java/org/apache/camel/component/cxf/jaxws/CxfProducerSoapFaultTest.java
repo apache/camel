@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +40,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfProducerSoapFaultTest {
-    private static final String JAXWS_SERVER_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSoapFaultTest/test";
-    private static final String JAXWS_ENDPOINT_URI
-            = "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
+    private static final String JAXWS_SERVER_ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSoapFaultTest/test";
+    private static final String JAXWS_ENDPOINT_URI =
+            "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
 
     protected CamelContext camelContext;
     protected ProducerTemplate template;
@@ -104,5 +105,4 @@ public class CxfProducerSoapFaultTest {
         });
         return exchange;
     }
-
 }

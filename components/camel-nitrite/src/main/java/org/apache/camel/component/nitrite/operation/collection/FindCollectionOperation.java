@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite.operation.collection;
 
 import org.apache.camel.Exchange;
@@ -32,8 +33,7 @@ public class FindCollectionOperation extends AbstractNitriteOperation implements
     private Filter filter;
     private FindOptions findOptions;
 
-    public FindCollectionOperation() {
-    }
+    public FindCollectionOperation() {}
 
     public FindCollectionOperation(Filter filter) {
         this.filter = filter;
@@ -54,6 +54,5 @@ public class FindCollectionOperation extends AbstractNitriteOperation implements
         } else {
             exchange.getMessage().setBody(collection.find());
         }
-
     }
 }

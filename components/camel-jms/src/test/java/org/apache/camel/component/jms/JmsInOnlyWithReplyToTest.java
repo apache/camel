@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +34,7 @@ public class JmsInOnlyWithReplyToTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -59,7 +61,8 @@ public class JmsInOnlyWithReplyToTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:JmsInOnlyWithReplyToTest.foo?replyTo=queue:JmsInOnlyWithReplyToTest.bar&preserveMessageQos=true")
+                        .to(
+                                "activemq:queue:JmsInOnlyWithReplyToTest.foo?replyTo=queue:JmsInOnlyWithReplyToTest.bar&preserveMessageQos=true")
                         .to("mock:done");
 
                 from("activemq:queue:JmsInOnlyWithReplyToTest.foo")

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,9 +50,14 @@ public class SplitTokenizerGroupDynamicTest extends ContextTestSupport {
             @Override
             public void configure() {
 
-                from("direct:a").split().tokenize(",", false, "${header.groups}").to("mock:split");
+                from("direct:a")
+                        .split()
+                        .tokenize(",", false, "${header.groups}")
+                        .to("mock:split");
 
-                from("direct:b").split(bodyAs(String.class).tokenize(",", "${header.groups}", true)).to("mock:split");
+                from("direct:b")
+                        .split(bodyAs(String.class).tokenize(",", "${header.groups}", true))
+                        .to("mock:split");
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -24,8 +27,6 @@ import java.util.Collections;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonDataFormatTest {
 
@@ -41,7 +42,9 @@ public class JacksonDataFormatTest {
 
     @Test
     public void testList() throws Exception {
-        testJson("[{\"value\":123}]", new ArrayList<>(Collections.singletonList(Collections.singletonMap("value", 123))));
+        testJson(
+                "[{\"value\":123}]",
+                new ArrayList<>(Collections.singletonList(Collections.singletonMap("value", 123))));
     }
 
     private void testJson(String json, Object expected) throws Exception {

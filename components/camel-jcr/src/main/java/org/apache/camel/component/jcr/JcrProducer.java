@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
 
 import java.io.InputStream;
@@ -52,7 +53,8 @@ public class JcrProducer extends DefaultProducer {
         String operation = determineOperation(message);
         try {
             if (JcrConstants.JCR_INSERT.equals(operation)) {
-                Node base = findOrCreateNode(session.getRootNode(), getJcrEndpoint().getBase(), "");
+                Node base =
+                        findOrCreateNode(session.getRootNode(), getJcrEndpoint().getBase(), "");
                 Node node = findOrCreateNode(base, getNodeName(message), getNodeType(message));
                 Map<String, Object> headers = filterComponentHeaders(message.getHeaders());
                 for (String key : headers.keySet()) {
@@ -69,8 +71,7 @@ public class JcrProducer extends DefaultProducer {
                 exchange.getOut().setBody(node.getIdentifier());
                 session.save();
             } else if (JcrConstants.JCR_GET_BY_ID.equals(operation)) {
-                Node node = session.getNodeByIdentifier(exchange.getIn()
-                        .getMandatoryBody(String.class));
+                Node node = session.getNodeByIdentifier(exchange.getIn().getMandatoryBody(String.class));
                 PropertyIterator properties = node.getProperties();
                 while (properties.hasNext()) {
                     Property property = properties.nextProperty();
@@ -97,7 +98,8 @@ public class JcrProducer extends DefaultProducer {
         Map<String, Object> result = new HashMap<>(properties.size());
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
-            if (!key.equals(JcrConstants.JCR_NODE_NAME) && !key.equals(JcrConstants.JCR_OPERATION)
+            if (!key.equals(JcrConstants.JCR_NODE_NAME)
+                    && !key.equals(JcrConstants.JCR_OPERATION)
                     && !key.equals(JcrConstants.JCR_NODE_TYPE)) {
                 result.put(entry.getKey(), entry.getValue());
             }
@@ -176,8 +178,9 @@ public class JcrProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) {
             return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
         } else {
-            return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials(),
-                    getJcrEndpoint().getWorkspaceName());
+            return getJcrEndpoint()
+                    .getRepository()
+                    .login(getJcrEndpoint().getCredentials(), getJcrEndpoint().getWorkspaceName());
         }
     }
 

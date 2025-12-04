@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ibm.watson.tts;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.ibm.watson.tts;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class WatsonTextToSpeechComponentTest extends CamelTestSupport {
 
@@ -32,16 +33,16 @@ public class WatsonTextToSpeechComponentTest extends CamelTestSupport {
 
     @Test
     public void testEndpointCreation() throws Exception {
-        WatsonTextToSpeechComponent component
-                = context.getComponent("ibm-watson-text-to-speech", WatsonTextToSpeechComponent.class);
+        WatsonTextToSpeechComponent component =
+                context.getComponent("ibm-watson-text-to-speech", WatsonTextToSpeechComponent.class);
         assertNotNull(component);
 
         WatsonTextToSpeechConfiguration config = new WatsonTextToSpeechConfiguration();
         config.setApiKey("test-api-key");
         component.setConfiguration(config);
 
-        WatsonTextToSpeechEndpoint endpoint
-                = (WatsonTextToSpeechEndpoint) component.createEndpoint("ibm-watson-text-to-speech://default");
+        WatsonTextToSpeechEndpoint endpoint =
+                (WatsonTextToSpeechEndpoint) component.createEndpoint("ibm-watson-text-to-speech://default");
         assertNotNull(endpoint);
         assertEquals("test-api-key", endpoint.getConfiguration().getApiKey());
     }

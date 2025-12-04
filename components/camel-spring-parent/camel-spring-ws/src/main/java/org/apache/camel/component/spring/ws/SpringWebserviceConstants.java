@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
 
 import org.apache.camel.Exchange;
@@ -23,10 +24,13 @@ public final class SpringWebserviceConstants {
 
     @Metadata(label = "producer", description = "The endpoint URI", javaType = "String")
     public static final String SPRING_WS_ENDPOINT_URI = "CamelSpringWebserviceEndpointUri";
-    @Metadata(label = "producer",
-              description = "SOAP action to include inside a SOAP request when accessing remote web services",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "SOAP action to include inside a SOAP request when accessing remote web services",
+            javaType = "String")
     public static final String SPRING_WS_SOAP_ACTION = "CamelSpringWebserviceSoapAction";
+
     @Metadata(label = "producer", description = "The soap header source", javaType = "javax.xml.transform.Source")
     public static final String SPRING_WS_SOAP_HEADER = "CamelSpringWebserviceSoapHeader";
     /**
@@ -51,11 +55,14 @@ public final class SpringWebserviceConstants {
      */
     @Metadata(label = "producer", javaType = "java.net.URI")
     public static final String SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO = "CamelSpringWebserviceAddressingReplyTo";
-    public static final String SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION = "CamelSpringWebserviceAddressingOutputAction";
-    public static final String SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION = "CamelSpringWebserviceAddressingFaultAction";
+
+    public static final String SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION =
+            "CamelSpringWebserviceAddressingOutputAction";
+    public static final String SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION =
+            "CamelSpringWebserviceAddressingFaultAction";
+
     @Metadata(label = "consumer", description = "The breadcrumb id.", javaType = "String")
     public static final String BREADCRUMB_ID = Exchange.BREADCRUMB_ID;
 
-    private SpringWebserviceConstants() {
-    }
+    private SpringWebserviceConstants() {}
 }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RefTest extends LanguageTestSupport {
 
@@ -41,7 +42,8 @@ public class RefTest extends LanguageTestSupport {
 
     @Test
     public void testRefExpressionsNotFound() {
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class,
                 () -> assertExpression("foo", "Hello World"),
                 "Should have thrown an exception");
 
@@ -57,7 +59,8 @@ public class RefTest extends LanguageTestSupport {
     @Test
     public void testRefDynamicExpressionsNotFound() {
         exchange.getMessage().setHeader("foo", "myExp2");
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class,
                 () -> assertExpression("${header.foo}", "Hello World"),
                 "Should have thrown an exception");
 

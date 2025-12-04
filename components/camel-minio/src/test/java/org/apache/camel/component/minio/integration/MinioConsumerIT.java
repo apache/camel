@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio.integration;
 
 import io.minio.MinioClient;
@@ -70,8 +71,8 @@ class MinioConsumerIT extends MinioIntegrationTestSupport {
 
                 from("direct:putObject").startupOrder(1).to(minioEndpoint);
                 from(minioEndpoint + "&deleteAfterRead=false&destinationBucketName=camel-kafka-connector&repeatCount=2")
-                        .startupOrder(2).to("mock:result");
-
+                        .startupOrder(2)
+                        .to("mock:result");
             }
         };
     }

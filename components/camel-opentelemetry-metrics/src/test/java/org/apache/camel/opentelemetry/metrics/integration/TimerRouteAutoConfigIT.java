@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -32,12 +39,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for OpenTelemetry Timer metric autoconfiguration in a Camel route.
@@ -80,7 +81,8 @@ public class TimerRouteAutoConfigIT extends CamelTestSupport {
                 MetricData metricData = (MetricData) log.getParameters()[0];
                 assertEquals("A", metricData.getName());
 
-                PointData pd = metricData.getData().getPoints().stream().findFirst().orElse(null);
+                PointData pd =
+                        metricData.getData().getPoints().stream().findFirst().orElse(null);
                 assertInstanceOf(HistogramPointData.class, pd, "Expected LongPointData");
                 assertEquals(1L, ((HistogramPointData) pd).getCount());
                 assertTrue(((HistogramPointData) pd).getMin() >= DELAY);

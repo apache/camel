@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -26,10 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InstanceFallbackConverterTest extends ContextTestSupport {
 
@@ -60,7 +61,8 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
     public void testInstanceFallbackMandatoryFailed() {
         Exchange exchange = new DefaultExchange(context);
 
-        assertThrows(NoTypeConversionAvailableException.class,
+        assertThrows(
+                NoTypeConversionAvailableException.class,
                 () -> context.getTypeConverter().mandatoryConvertTo(Date.class, exchange, new Timestamp(0)),
                 "Should have thrown an exception");
     }
@@ -72,5 +74,4 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         Date out = context.getTypeConverter().convertTo(Date.class, exchange, new Timestamp(0));
         assertNull(out);
     }
-
 }

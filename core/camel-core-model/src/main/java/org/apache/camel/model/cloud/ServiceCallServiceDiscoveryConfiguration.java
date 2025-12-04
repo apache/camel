@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.Map;
@@ -40,9 +41,11 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
 @Deprecated(since = "3.19.0")
-public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfiguration implements ServiceDiscoveryFactory {
+public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfiguration
+        implements ServiceDiscoveryFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;
+
     @XmlTransient
     private final String factoryKey;
 
@@ -60,7 +63,8 @@ public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfigu
     }
 
     public ProcessorDefinition<?> endParent() {
-        return Optional.ofNullable(parent).map(ServiceCallDefinition::end)
+        return Optional.ofNullable(parent)
+                .map(ServiceCallDefinition::end)
                 .orElseThrow(() -> new IllegalStateException("Parent definition is not set"));
     }
 
@@ -84,7 +88,8 @@ public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfigu
         ServiceDiscovery answer;
 
         // First try to find the factory from the registry.
-        ServiceDiscoveryFactory factory = CamelContextHelper.lookup(camelContext, factoryKey, ServiceDiscoveryFactory.class);
+        ServiceDiscoveryFactory factory =
+                CamelContextHelper.lookup(camelContext, factoryKey, ServiceDiscoveryFactory.class);
         if (factory != null) {
             // If a factory is found in the registry do not re-configure it as
             // it should be pre-configured.
@@ -93,20 +98,23 @@ public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfigu
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.getCamelContextExtension()
-                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
+                type = camelContext
+                        .getCamelContextExtension()
+                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH)
+                        .findClass(factoryKey)
+                        .orElse(null);
             } catch (Exception e) {
                 throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }
 
             if (type != null) {
                 if (ServiceDiscoveryFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceDiscoveryFactory) camelContext.getInjector().newInstance(type, false);
+                    factory =
+                            (ServiceDiscoveryFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new IllegalArgumentException(
-                            "Resolving ServiceDiscovery: " + factoryKey
-                                                       + " detected type conflict: Not a ServiceDiscoveryFactory implementation. Found: "
-                                                       + type.getName());
+                    throw new IllegalArgumentException("Resolving ServiceDiscovery: " + factoryKey
+                            + " detected type conflict: Not a ServiceDiscoveryFactory implementation. Found: "
+                            + type.getName());
                 }
             }
 
@@ -148,5 +156,4 @@ public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfigu
 
         return answer;
     }
-
 }

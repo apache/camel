@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.saga;
 
 import java.util.Map;
@@ -28,8 +29,7 @@ import org.apache.camel.support.DefaultComponent;
 @org.apache.camel.spi.annotations.Component("saga")
 public class SagaComponent extends DefaultComponent {
 
-    public SagaComponent() {
-    }
+    public SagaComponent() {}
 
     public SagaComponent(CamelContext camelContext) {
         super(camelContext);

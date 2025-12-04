@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.xmpp.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class XmppServiceFactory {
-    private XmppServiceFactory() {
-
-    }
+    private XmppServiceFactory() {}
 
     public static SimpleTestServiceBuilder<XmppService> builder() {
         return new SimpleTestServiceBuilder<>("xmpp");
@@ -34,9 +33,7 @@ public final class XmppServiceFactory {
                 .build();
     }
 
-    public static class XmppLocalContainerService extends XmppLocalContainerInfraService implements XmppService {
-    }
+    public static class XmppLocalContainerService extends XmppLocalContainerInfraService implements XmppService {}
 
-    public static class XmppRemoteService extends XmppRemoteInfraService implements XmppService {
-    }
+    public static class XmppRemoteService extends XmppRemoteInfraService implements XmppService {}
 }

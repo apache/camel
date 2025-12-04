@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
 
 /**
@@ -29,5 +30,4 @@ public interface SequenceSender<E> {
      * @throws Exception if delivery fails.
      */
     void sendElement(E o) throws Exception;
-
 }

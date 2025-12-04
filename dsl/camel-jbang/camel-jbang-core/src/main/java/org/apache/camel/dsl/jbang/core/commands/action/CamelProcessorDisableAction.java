@@ -14,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "disable-processor",
-                     description = "Disable Camel processor", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "disable-processor",
+        description = "Disable Camel processor",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelProcessorDisableAction extends CamelProcessorAction {
 
     public CamelProcessorDisableAction(CamelJBangMain main) {
@@ -32,5 +36,4 @@ public class CamelProcessorDisableAction extends CamelProcessorAction {
     protected void onAction(JsonObject root) {
         root.put("command", "disable");
     }
-
 }

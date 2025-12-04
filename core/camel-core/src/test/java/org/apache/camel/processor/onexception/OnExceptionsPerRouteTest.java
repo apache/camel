@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import java.io.IOException;
@@ -48,10 +49,17 @@ public class OnExceptionsPerRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").onException(IllegalArgumentException.class, IOException.class).handled(true)
-                        .to("mock:error").end().choice().when(body().contains("Damn"))
-                        .throwException(new IllegalArgumentException("Damn")).when(body().contains("Connect"))
-                        .throwException(new ConnectException("Cannot connect")).end();
+                from("direct:start")
+                        .onException(IllegalArgumentException.class, IOException.class)
+                        .handled(true)
+                        .to("mock:error")
+                        .end()
+                        .choice()
+                        .when(body().contains("Damn"))
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .when(body().contains("Connect"))
+                        .throwException(new ConnectException("Cannot connect"))
+                        .end();
             }
         };
     }

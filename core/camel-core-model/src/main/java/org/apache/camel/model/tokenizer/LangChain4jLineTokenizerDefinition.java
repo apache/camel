@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.tokenizer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -31,8 +32,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LangChain4jLineTokenizerDefinition extends LangChain4jTokenizerDefinition {
 
-    public LangChain4jLineTokenizerDefinition() {
-    }
+    public LangChain4jLineTokenizerDefinition() {}
 
     public LangChain4jLineTokenizerDefinition(LangChain4jTokenizerDefinition source) {
         super(source);

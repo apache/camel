@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -26,10 +27,11 @@ public interface ManagedConsumerMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Current number of inflight Exchanges")
     Integer getInflightExchanges();
 
-    @ManagedAttribute(description = "Whether this consumer hosts a service such as acting as a HTTP server (only available for some components)")
+    @ManagedAttribute(
+            description =
+                    "Whether this consumer hosts a service such as acting as a HTTP server (only available for some components)")
     boolean isHostedService();
 
     @ManagedAttribute(description = "Whether this consumer connects to remote or local systems")
     boolean isRemoteEndpoint();
-
 }

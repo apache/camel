@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
 
-import org.apache.zookeeper.ZooKeeper;
-
 import static java.lang.String.format;
+
+import org.apache.zookeeper.ZooKeeper;
 
 /**
  * <code>setdataOperation</code> sets the content of a ZooKeeper node. An optional version may be specified that the
@@ -26,7 +27,6 @@ import static java.lang.String.format;
  *
  * @see {@link ZooKeeper#setData(String, byte[], int)}
  */
-
 public class DeleteOperation extends ZooKeeperOperation<Boolean> {
 
     private int version = -1;
@@ -65,5 +65,4 @@ public class DeleteOperation extends ZooKeeperOperation<Boolean> {
         copy.version = -1; // set the version to -1 for 'any version'
         return copy;
     }
-
 }

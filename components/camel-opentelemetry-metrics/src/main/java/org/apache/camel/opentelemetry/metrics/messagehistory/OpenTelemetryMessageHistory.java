@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.messagehistory;
 
 import java.util.concurrent.TimeUnit;
@@ -31,8 +32,13 @@ public class OpenTelemetryMessageHistory extends DefaultMessageHistory {
     private final TimeUnit timeUnit;
     private final LongHistogram timer;
 
-    public OpenTelemetryMessageHistory(LongHistogram timer, TimeUnit timeUnit, Route route, NamedNode namedNode,
-                                       OpenTelemetryHistoryNamingStrategy namingStrategy, Message message) {
+    public OpenTelemetryMessageHistory(
+            LongHistogram timer,
+            TimeUnit timeUnit,
+            Route route,
+            NamedNode namedNode,
+            OpenTelemetryHistoryNamingStrategy namingStrategy,
+            Message message) {
         super(route.getId(), namedNode, message);
         this.timer = timer;
         this.timeUnit = timeUnit;
@@ -43,12 +49,13 @@ public class OpenTelemetryMessageHistory extends DefaultMessageHistory {
     @Override
     public void nodeProcessingDone() {
         super.nodeProcessingDone();
-        this.timer.record(timeUnit.convert(getElapsed(), TimeUnit.MILLISECONDS),
-                namingStrategy.getAttributes(route, getNode()));
+        this.timer.record(
+                timeUnit.convert(getElapsed(), TimeUnit.MILLISECONDS), namingStrategy.getAttributes(route, getNode()));
     }
 
     @Override
     public String toString() {
-        return "OpenTelemetryMessageHistory[routeId=" + getRouteId() + ", node=" + getNode().getId() + ']';
+        return "OpenTelemetryMessageHistory[routeId=" + getRouteId() + ", node="
+                + getNode().getId() + ']';
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests that mbeans for routes and processors are NOT added after addition of a 2nd route after CamelContext has been
@@ -51,7 +52,7 @@ public class ManagedMBeansLevelContextOnlyWithAddedRouteTest extends ManagedMBea
     @Override
     public void test() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        //test state after before adding a new route
+        // test state after before adding a new route
         assertMBeans(mbeanServer);
 
         log.info(">>>>>>>>>>>>>>>>> adding 2nd route <<<<<<<<<<<<<<");
@@ -64,8 +65,7 @@ public class ManagedMBeansLevelContextOnlyWithAddedRouteTest extends ManagedMBea
         });
         log.info(">>>>>>>>>>>>>>>>> adding 2nd route DONE <<<<<<<<<<<<<<");
 
-        //no route or processor MBean should be created
+        // no route or processor MBean should be created
         assertMBeans(mbeanServer);
     }
-
 }

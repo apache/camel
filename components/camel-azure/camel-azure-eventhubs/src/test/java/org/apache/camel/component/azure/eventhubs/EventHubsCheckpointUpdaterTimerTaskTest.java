@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,8 +25,6 @@ import com.azure.messaging.eventhubs.models.EventContext;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EventHubsCheckpointUpdaterTimerTaskTest {
 
@@ -47,8 +48,7 @@ class EventHubsCheckpointUpdaterTimerTaskTest {
         var processedEvents = new AtomicInteger(1);
         var eventContext = Mockito.mock(EventContext.class);
 
-        Mockito.when(eventContext.updateCheckpointAsync())
-                .thenReturn(Mono.error(new RuntimeException()));
+        Mockito.when(eventContext.updateCheckpointAsync()).thenReturn(Mono.error(new RuntimeException()));
 
         var timerTask = new EventHubsCheckpointUpdaterTimerTask(eventContext, processedEvents);
 
@@ -56,5 +56,4 @@ class EventHubsCheckpointUpdaterTimerTaskTest {
 
         assertEquals(1, processedEvents.get());
     }
-
 }

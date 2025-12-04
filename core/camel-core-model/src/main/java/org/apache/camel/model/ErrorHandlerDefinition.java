@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -40,12 +41,13 @@ import org.apache.camel.spi.Metadata;
 public class ErrorHandlerDefinition extends IdentifiedType {
 
     @XmlElements({
-            @XmlElement(name = "deadLetterChannel", type = DeadLetterChannelDefinition.class),
-            @XmlElement(name = "defaultErrorHandler", type = DefaultErrorHandlerDefinition.class),
-            @XmlElement(name = "noErrorHandler", type = NoErrorHandlerDefinition.class),
-            @XmlElement(name = "refErrorHandler", type = RefErrorHandlerDefinition.class),
-            @XmlElement(name = "jtaTransactionErrorHandler", type = JtaTransactionErrorHandlerDefinition.class),
-            @XmlElement(name = "springTransactionErrorHandler", type = SpringTransactionErrorHandlerDefinition.class) })
+        @XmlElement(name = "deadLetterChannel", type = DeadLetterChannelDefinition.class),
+        @XmlElement(name = "defaultErrorHandler", type = DefaultErrorHandlerDefinition.class),
+        @XmlElement(name = "noErrorHandler", type = NoErrorHandlerDefinition.class),
+        @XmlElement(name = "refErrorHandler", type = RefErrorHandlerDefinition.class),
+        @XmlElement(name = "jtaTransactionErrorHandler", type = JtaTransactionErrorHandlerDefinition.class),
+        @XmlElement(name = "springTransactionErrorHandler", type = SpringTransactionErrorHandlerDefinition.class)
+    })
     private ErrorHandlerFactory errorHandlerType;
 
     public ErrorHandlerFactory getErrorHandlerType() {
@@ -67,5 +69,4 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     protected String description() {
         return errorHandlerType != null ? errorHandlerType.toString() : "";
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.ByteArrayInputStream;
@@ -41,8 +42,7 @@ public class JsonPathBeanStreamCachingTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").streamCaching()
-                        .bean(FullNameBean.class).to("mock:result");
+                from("direct:start").streamCaching().bean(FullNameBean.class).to("mock:result");
             }
         };
     }

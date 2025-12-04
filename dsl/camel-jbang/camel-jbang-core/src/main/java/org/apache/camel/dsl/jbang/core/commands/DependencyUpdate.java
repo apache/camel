@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
@@ -37,18 +38,22 @@ import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.apache.logging.log4j.util.Strings;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "update",
-                     description = "Updates dependencies in Maven pom.xml or Java source file (JBang style)",
-                     sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "update",
+        description = "Updates dependencies in Maven pom.xml or Java source file (JBang style)",
+        sortOptions = false,
+        showDefaultValues = true)
 public class DependencyUpdate extends DependencyList {
 
-    @CommandLine.Parameters(description = "Maven pom.xml or Java source files (JBang Style with //DEPS) to have dependencies updated",
-                            arity = "1")
+    @CommandLine.Parameters(
+            description = "Maven pom.xml or Java source files (JBang Style with //DEPS) to have dependencies updated",
+            arity = "1")
     public Path file;
 
-    @CommandLine.Option(names = { "--clean" },
-                        description = "Regenerate list of dependencies (do not keep existing dependencies). Not supported for pom.xml")
+    @CommandLine.Option(
+            names = {"--clean"},
+            description =
+                    "Regenerate list of dependencies (do not keep existing dependencies). Not supported for pom.xml")
     protected boolean clean;
 
     private final List<String> deps = new ArrayList<>();
@@ -83,7 +88,8 @@ public class DependencyUpdate extends DependencyList {
             } else if (pomContent.contains("camel-main")) {
                 runtime = RuntimeType.main;
             } else {
-                // In case no specific word found, we keep the runtime type unset even if the fallback is currently on Main Runtime type
+                // In case no specific word found, we keep the runtime type unset even if the fallback is currently on
+                // Main Runtime type
             }
         }
 
@@ -199,7 +205,8 @@ public class DependencyUpdate extends DependencyList {
                 // must be child at <project/dependencyManagement> or <project/dependencies>
                 String p = node.getParentNode().getNodeName();
                 String p2 = node.getParentNode().getParentNode().getNodeName();
-                boolean accept = ("dependencyManagement".equals(p2) || "project".equals(p2)) && (p.equals("dependencies"));
+                boolean accept =
+                        ("dependencyManagement".equals(p2) || "project".equals(p2)) && (p.equals("dependencies"));
                 if (!accept) {
                     continue;
                 }
@@ -327,5 +334,4 @@ public class DependencyUpdate extends DependencyList {
             outPrinter().println("pom.xml not found " + pom.toAbsolutePath());
         }
     }
-
 }

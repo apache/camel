@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Date;
 import java.util.Properties;
@@ -32,9 +36,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Object Serialization is not allowed by default. However it can be enabled by adding specific encoders/decoders.
  */
@@ -51,7 +52,8 @@ public class ObjectSerializationTest extends BaseNettyTest {
     public void testObjectSerializationFailureByDefault() {
         Date date = new Date();
         try {
-            Object o = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder", date, Date.class);
+            Object o = template.requestBody(
+                    "netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder", date, Date.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             // expected
@@ -61,8 +63,8 @@ public class ObjectSerializationTest extends BaseNettyTest {
     @Test
     public void testObjectSerializationAllowedViaDecoder() {
         Date date = new Date();
-        Date receivedDate = template
-                .requestBody("netty:tcp://localhost:{{port2}}?sync=true&encoders=#encoder&decoders=#decoder", date, Date.class);
+        Date receivedDate = template.requestBody(
+                "netty:tcp://localhost:{{port2}}?sync=true&encoders=#encoder&decoders=#decoder", date, Date.class);
         assertEquals(date, receivedDate);
     }
 
@@ -97,13 +99,12 @@ public class ObjectSerializationTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?sync=true")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                Object obj = exchange.getIn().getBody();
-                                exchange.getMessage().setBody(obj);
-                            }
-                        });
+                from("netty:tcp://localhost:{{port}}?sync=true").process(new Processor() {
+                    public void process(Exchange exchange) {
+                        Object obj = exchange.getIn().getBody();
+                        exchange.getMessage().setBody(obj);
+                    }
+                });
 
                 from("netty:tcp://localhost:{{port2}}?sync=true&decoders=#decoder&encoders=#encoder")
                         .process(new Processor() {
@@ -115,5 +116,4 @@ public class ObjectSerializationTest extends BaseNettyTest {
             }
         };
     }
-
 }

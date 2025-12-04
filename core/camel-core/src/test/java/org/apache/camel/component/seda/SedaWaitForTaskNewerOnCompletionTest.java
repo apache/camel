@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -27,11 +31,9 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class SedaWaitForTaskNewerOnCompletionTest extends ContextTestSupport {
 
     private static String done = "";
@@ -56,32 +58,41 @@ public class SedaWaitForTaskNewerOnCompletionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(
+                        deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                from("direct:start")
+                        .process(new Processor() {
                             @Override
-                            public void onDone(Exchange exchange) {
-                                done = done + "A";
-                                latch.countDown();
+                            public void process(Exchange exchange) {
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                    @Override
+                                    public void onDone(Exchange exchange) {
+                                        done = done + "A";
+                                        latch.countDown();
+                                    }
+                                });
                             }
-                        });
-                    }
-                }).to("seda:foo?waitForTaskToComplete=Never").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        done = done + "B";
-                    }
-                }).to("mock:result");
+                        })
+                        .to("seda:foo?waitForTaskToComplete=Never")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                done = done + "B";
+                            }
+                        })
+                        .to("mock:result");
 
-                from("seda:foo").errorHandler(noErrorHandler()).delay(1000).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        done = done + "C";
-                    }
-                }).throwException(new IllegalArgumentException("Forced"));
+                from("seda:foo")
+                        .errorHandler(noErrorHandler())
+                        .delay(1000)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                done = done + "C";
+                            }
+                        })
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

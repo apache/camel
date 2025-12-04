@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -29,14 +34,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test that the existence of a outMessage in an exchange will not break the move-file post-processing
  */
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 @Disabled
 public class SftpMoveWithOutMessageTest extends SftpServerTestSupport {
 
@@ -58,7 +61,8 @@ public class SftpMoveWithOutMessageTest extends SftpServerTestSupport {
 
         File fileInArchive2 = ftpFile("archive/hello2.txt").toFile();
         await().atMost(15, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertTrue(fileInArchive2.exists(), "The file should exist in the archive folder"));
+                .untilAsserted(
+                        () -> assertTrue(fileInArchive2.exists(), "The file should exist in the archive folder"));
 
         File originalFile = ftpFile("hello1.txt").toFile();
         await().atMost(15, TimeUnit.SECONDS)
@@ -72,21 +76,23 @@ public class SftpMoveWithOutMessageTest extends SftpServerTestSupport {
     @Override
     protected RouteBuilder[] createRouteBuilders() {
         TestProcessor processor = new TestProcessor();
-        return new RouteBuilder[] { new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("seda:trigger")
-                        .pollEnrich(
-                                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay="
-                                    + "10000&disconnect=true&move=archive&knownHostsFile="
-                                    + service.getKnownHostsFile())
-                        .pollEnrich(
-                                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay="
-                                    + "10000&disconnect=true&move=archive&knownHostsFile="
-                                    + service.getKnownHostsFile())
-                        .process(processor);
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("seda:trigger")
+                            .pollEnrich(
+                                    "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay="
+                                            + "10000&disconnect=true&move=archive&knownHostsFile="
+                                            + service.getKnownHostsFile())
+                            .pollEnrich(
+                                    "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay="
+                                            + "10000&disconnect=true&move=archive&knownHostsFile="
+                                            + service.getKnownHostsFile())
+                            .process(processor);
+                }
             }
-        } };
+        };
     }
 
     private static class TestProcessor implements Processor {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.process;
 
 import java.io.File;
@@ -101,7 +102,7 @@ public class FileUtil {
 
     public String readFileFromClassPath(String path) throws IOException {
 
-        return IOUtils.resourceToString(FilenameUtils.separatorsToUnix(path), Charset.defaultCharset(),
-                FileUtil.class.getClassLoader());
+        return IOUtils.resourceToString(
+                FilenameUtils.separatorsToUnix(path), Charset.defaultCharset(), FileUtil.class.getClassLoader());
     }
 }

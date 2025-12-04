@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -43,7 +44,7 @@ public class PulsarConcurrentConsumerInIT extends PulsarITSupport {
     private static final int NUMBER_OF_CONSUMERS = 5;
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=5&subscriptionType=Shared"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-")
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -56,7 +57,10 @@ public class PulsarConcurrentConsumerInIT extends PulsarITSupport {
             Processor processor = new Processor() {
                 @Override
                 public void process(final Exchange exchange) {
-                    LOGGER.info("Processing message {} on Thread {}", exchange.getIn().getBody(), Thread.currentThread());
+                    LOGGER.info(
+                            "Processing message {} on Thread {}",
+                            exchange.getIn().getBody(),
+                            Thread.currentThread());
                 }
             };
 
@@ -78,15 +82,22 @@ public class PulsarConcurrentConsumerInIT extends PulsarITSupport {
     }
 
     private PulsarClient concurrentPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(5).listenerThreads(5).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(5)
+                .listenerThreads(5)
+                .build();
     }
 
     @Test
     public void testMultipleMessageConsumedByClusterwithConcurrentConfiguration() throws Exception {
         to.expectedMinimumMessageCount(1);
 
-        Producer<String> producer
-                = concurrentPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer = concurrentPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(TOPIC_URI)
+                .create();
 
         for (int i = 0; i < NUMBER_OF_CONSUMERS; i++) {
             producer.send("Hello World!");

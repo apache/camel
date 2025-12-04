@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.redis.RedisConstants;
 import org.apache.camel.component.redis.RedisTestSupport;
@@ -27,21 +30,18 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RedisProducerManualIT extends RedisTestSupport {
 
     @RegisterExtension
     static RedisService service = RedisServiceFactory.createService();
+
     private static JedisConnectionFactory connectionFactory;
 
     @BeforeAll
     public static void beforeAll() {
         connectionFactory = new JedisConnectionFactory();
-        connectionFactory.getStandaloneConfiguration()
-                .setHostName(service.host());
-        connectionFactory.getStandaloneConfiguration()
-                .setPort(service.port());
+        connectionFactory.getStandaloneConfiguration().setHostName(service.host());
+        connectionFactory.getStandaloneConfiguration().setPort(service.port());
 
         connectionFactory.afterPropertiesSet();
     }

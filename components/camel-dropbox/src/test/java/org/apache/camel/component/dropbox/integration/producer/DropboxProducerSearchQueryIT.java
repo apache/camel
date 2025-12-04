@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
 
 import java.io.IOException;
@@ -53,7 +54,9 @@ public class DropboxProducerSearchQueryIT extends DropboxTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.message(0).header(DropboxResultHeader.FOUND_FILES.name()).contains(String.format("%s/%s", workdir, FILE_NAME));
+        mock.message(0)
+                .header(DropboxResultHeader.FOUND_FILES.name())
+                .contains(String.format("%s/%s", workdir, FILE_NAME));
         mock.assertIsSatisfied();
     }
 
@@ -62,22 +65,20 @@ public class DropboxProducerSearchQueryIT extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(String.format("dropbox://search?accessToken={{accessToken}}" +
-                                          "&expireIn={{expireIn}}" +
-                                          "&refreshToken={{refreshToken}}" +
-                                          "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
-                                          "&remotePath=%s&query=%s",
-                                workdir,
-                                FILE_NAME))
+                        .to(String.format(
+                                "dropbox://search?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                        + "&refreshToken={{refreshToken}}"
+                                        + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}"
+                                        + "&remotePath=%s&query=%s",
+                                workdir, FILE_NAME))
                         .to("mock:result");
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
                         .setHeader(DropboxConstants.HEADER_QUERY, constant(FILE_NAME))
-                        .to("dropbox://search?accessToken={{accessToken}}" +
-                            "&expireIn={{expireIn}}" +
-                            "&refreshToken={{refreshToken}}" +
-                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}")
+                        .to("dropbox://search?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                + "&refreshToken={{refreshToken}}"
+                                + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}")
                         .to("mock:result");
             }
         };

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,8 +46,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * <b>Camel</b> based test cases for {@link CsvDataFormat}.
@@ -76,8 +77,7 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         body.put("first_name", "Max");
         body.put("last_name", "Mustermann");
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
-        try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI()))
-                .filter(l -> !l.isBlank())) {
+        try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI())).filter(l -> !l.isBlank())) {
             List<String> lines = stream.toList();
             assertEquals(3, lines.size());
         }
@@ -88,8 +88,9 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String uri
-                        = String.format("file:%s?charset=utf-8&fileExist=Append", outputFile.getParentFile().getAbsolutePath());
+                String uri = String.format(
+                        "file:%s?charset=utf-8&fileExist=Append",
+                        outputFile.getParentFile().getAbsolutePath());
                 from("direct:start").marshal(createCsvDataFormat()).to(uri);
             }
         };
@@ -143,7 +144,8 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
                     Map map = (Map) object;
                     printer.printRecord(getMapRecordValues(map));
                 } else {
-                    Iterator<Map<String, String>> it = (Iterator<Map<String, String>>) ObjectHelper.createIterator(object);
+                    Iterator<Map<String, String>> it =
+                            (Iterator<Map<String, String>>) ObjectHelper.createIterator(object);
                     while (it.hasNext()) {
                         printer.printRecord(getMapRecordValues(it.next()));
                     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import java.util.HashSet;
@@ -35,18 +36,17 @@ public class SplitterParallelAsyncProcessorIssueTest extends ContextTestSupport 
     public void testSplitParallelProcessingMaxThreads() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(10);
 
-        String xmlBody = "<employees>" +
-                         "<employee><id>1</id><name>John</name></employee>" +
-                         "<employee><id>2</id><name>Jane</name></employee>" +
-                         "<employee><id>3</id><name>Jim</name></employee>" +
-                         "<employee><id>4</id><name>Jack</name></employee>" +
-                         "<employee><id>5</id><name>Jill</name></employee>" +
-                         "<employee><id>6</id><name>opi</name></employee>" +
-                         "<employee><id>7</id><name>ds</name></employee>" +
-                         "<employee><id>8</id><name>hhh</name></employee>" +
-                         "<employee><id>9</id><name>fki</name></employee>" +
-                         "<employee><id>10</id><name>abc</name></employee>" +
-                         "</employees> ";
+        String xmlBody = "<employees>" + "<employee><id>1</id><name>John</name></employee>"
+                + "<employee><id>2</id><name>Jane</name></employee>"
+                + "<employee><id>3</id><name>Jim</name></employee>"
+                + "<employee><id>4</id><name>Jack</name></employee>"
+                + "<employee><id>5</id><name>Jill</name></employee>"
+                + "<employee><id>6</id><name>opi</name></employee>"
+                + "<employee><id>7</id><name>ds</name></employee>"
+                + "<employee><id>8</id><name>hhh</name></employee>"
+                + "<employee><id>9</id><name>fki</name></employee>"
+                + "<employee><id>10</id><name>abc</name></employee>"
+                + "</employees> ";
 
         template.sendBody("direct:start", xmlBody);
 
@@ -75,8 +75,7 @@ public class SplitterParallelAsyncProcessorIssueTest extends ContextTestSupport 
 
                 AsyncProcessor asyncProcessor = new AsyncProcessor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
-                    }
+                    public void process(Exchange exchange) throws Exception {}
 
                     @Override
                     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -106,17 +105,20 @@ public class SplitterParallelAsyncProcessorIssueTest extends ContextTestSupport 
                 };
 
                 from("direct:start")
-                    .split()
-                    .xpath("/employees/employee")
-                    .parallelProcessing().stopOnException().timeout(10000).executorService("threadPoolProfile").synchronous()
+                        .split()
+                        .xpath("/employees/employee")
+                        .parallelProcessing()
+                        .stopOnException()
+                        .timeout(10000)
+                        .executorService("threadPoolProfile")
+                        .synchronous()
                         .process(e -> threads.add(Thread.currentThread().getName()))
                         .process(asyncProcessor)
                         .process(e -> threads.add(Thread.currentThread().getName()))
                         .delay(250)
-                    .end()
-                    .to("mock:split");
+                        .end()
+                        .to("mock:split");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.secret.manager;
 
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
@@ -33,8 +34,7 @@ public class GoogleSecretManagerConfiguration implements Cloneable {
     @UriParam(label = "common", description = "Service account key to authenticate an application as a service account")
     private String serviceAccountKey;
 
-    @UriParam(label = "producer",
-              enums = "createSecret")
+    @UriParam(label = "producer", enums = "createSecret")
     private GoogleSecretManagerOperations operation;
 
     @UriParam(defaultValue = "false", description = "Specifies if the request is a pojo request")
@@ -112,5 +112,4 @@ public class GoogleSecretManagerConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

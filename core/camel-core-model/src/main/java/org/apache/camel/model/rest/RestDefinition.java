@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
+
+import static org.apache.camel.support.CamelContextHelper.parseBoolean;
+import static org.apache.camel.support.CamelContextHelper.parseText;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,9 +57,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
-import static org.apache.camel.support.CamelContextHelper.parseBoolean;
-import static org.apache.camel.support.CamelContextHelper.parseText;
-
 /**
  * Defines a rest service using the rest-dsl
  */
@@ -68,47 +69,63 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @XmlAttribute
     private String path;
+
     @XmlAttribute
     private String consumes;
+
     @XmlAttribute
     private String produces;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
+
     @XmlAttribute
     @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientResponseValidation;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableNoContentResponse;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String apiDocs;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String tag;
+
     @XmlElement
     private OpenApiDefinition openApi;
+
     @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
     @Metadata(label = "security")
     private RestSecuritiesDefinition securityDefinitions;
+
     @XmlElement
     @Metadata(label = "security")
     private List<SecurityDefinition> securityRequirements = new ArrayList<>();
+
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
+
     @XmlTransient
     private Resource resource;
 
@@ -772,8 +789,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public RestDefinition security(String key, String scopes) {
         // add to last verb
         if (getVerbs().isEmpty()) {
-            SecurityDefinition requirement = securityRequirements
-                    .stream().filter(r -> key.equals(r.getKey())).findFirst().orElse(null);
+            SecurityDefinition requirement = securityRequirements.stream()
+                    .filter(r -> key.equals(r.getKey()))
+                    .findFirst()
+                    .orElse(null);
             if (requirement == null) {
                 requirement = new SecurityDefinition();
                 securityRequirements.add(requirement);
@@ -940,8 +959,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             addRouteDefinition(camelContext, filter, answer, config.getComponent(), config.getProducerComponent());
         }
         if (openApi != null) {
-            addRouteDefinition(camelContext, openApi, answer, config.getComponent(), config.getProducerComponent(),
-                    config.getApiContextPath(), config.isClientRequestValidation(), config.isClientResponseValidation());
+            addRouteDefinition(
+                    camelContext,
+                    openApi,
+                    answer,
+                    config.getComponent(),
+                    config.getProducerComponent(),
+                    config.getApiContextPath(),
+                    config.isClientRequestValidation(),
+                    config.isClientResponseValidation());
         }
 
         return answer;
@@ -1012,7 +1038,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         // append options
         Map<String, Object> options = new HashMap<>();
-        if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
+        if (configuration.getComponent() != null
+                && !configuration.getComponent().isEmpty()) {
             options.put("consumerComponentName", configuration.getComponent());
         }
         if (!options.isEmpty()) {
@@ -1034,9 +1061,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     private void addRouteDefinition(
-            CamelContext camelContext, OpenApiDefinition openApi, List<RouteDefinition> answer,
-            String component, String producerComponent, String apiContextPath,
-            boolean clientRequestValidation, boolean clientResponseValidation) {
+            CamelContext camelContext,
+            OpenApiDefinition openApi,
+            List<RouteDefinition> answer,
+            String component,
+            String producerComponent,
+            String apiContextPath,
+            boolean clientRequestValidation,
+            boolean clientResponseValidation) {
 
         RouteDefinition route = new RouteDefinition();
         route.setResource(getResource());
@@ -1056,8 +1088,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             clientResponseValidation = parseBoolean(camelContext, getClientResponseValidation());
         }
 
-        final RestBindingDefinition binding
-                = getRestBindingDefinition(camelContext, component, clientRequestValidation, clientResponseValidation);
+        final RestBindingDefinition binding =
+                getRestBindingDefinition(camelContext, component, clientRequestValidation, clientResponseValidation);
         route.setRestBindingDefinition(binding);
 
         // append options
@@ -1114,8 +1146,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     private RestBindingDefinition getRestBindingDefinition(
-            CamelContext camelContext, String component,
-            boolean clientRequestValidation, boolean clientResponseValidation) {
+            CamelContext camelContext,
+            String component,
+            boolean clientRequestValidation,
+            boolean clientResponseValidation) {
         String mode = getBindingMode();
         if (mode == null) {
             mode = camelContext.getRestConfiguration().getBindingMode().name();
@@ -1147,8 +1181,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     private void addRouteDefinition(
-            CamelContext camelContext, List<VerbDefinition> verbs, List<RouteDefinition> answer,
-            String component, String producerComponent) {
+            CamelContext camelContext,
+            List<VerbDefinition> verbs,
+            List<RouteDefinition> answer,
+            String component,
+            String producerComponent) {
         for (VerbDefinition verb : verbs) {
             // use a route as facade for this REST service
             RouteDefinition route = new RouteDefinition();
@@ -1338,7 +1375,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 ParamDefinition param = findParam(verb, RestParamType.body.name());
                 if (param == null) {
                     // must be body type and set the model class as data type
-                    param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
+                    param(verb)
+                            .name(RestParamType.body.name())
+                            .type(RestParamType.body)
+                            .dataType(bodyType)
+                            .endParam();
                 } else {
                     // must be body type and set the model class as data type
                     param.type(RestParamType.body).dataType(bodyType);
@@ -1393,9 +1434,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return description;
     }
 
-    private Set<String> uriTemplating(
-            CamelContext camelContext, VerbDefinition verb,
-            String path, boolean query) {
+    private Set<String> uriTemplating(CamelContext camelContext, VerbDefinition verb, String path, boolean query) {
 
         if (path == null) {
             return null;
@@ -1434,7 +1473,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     }
                 }
                 if (!found) {
-                    param(verb).name(key).type(query ? RestParamType.query : RestParamType.path).endParam();
+                    param(verb)
+                            .name(key)
+                            .type(query ? RestParamType.query : RestParamType.path)
+                            .endParam();
                 }
             }
         }
@@ -1463,5 +1505,4 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         return null;
     }
-
 }

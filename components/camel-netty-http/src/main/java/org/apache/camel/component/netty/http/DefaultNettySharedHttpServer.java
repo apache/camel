@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.util.concurrent.ThreadFactory;
@@ -94,7 +95,8 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(configuration,
+        ObjectHelper.notNull(
+                configuration,
                 "setNettyServerBootstrapConfiguration() must be called with a NettyServerBootstrapConfiguration instance",
                 this);
 
@@ -117,8 +119,8 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         channelFactory = new HttpServerMultiplexChannelHandler();
         channelFactory.init(configuration.getPort());
 
-        ChannelInitializer<Channel> pipelineFactory
-                = new HttpServerSharedInitializerFactory(configuration, channelFactory, camelContext);
+        ChannelInitializer<Channel> pipelineFactory =
+                new HttpServerSharedInitializerFactory(configuration, channelFactory, camelContext);
 
         // thread factory and pattern
         String port = Matcher.quoteReplacement(Integer.toString(configuration.getPort()));

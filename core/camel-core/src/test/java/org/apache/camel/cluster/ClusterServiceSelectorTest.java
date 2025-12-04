@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cluster;
+
+import static org.apache.camel.support.cluster.ClusterServiceHelper.lookupService;
+import static org.apache.camel.support.cluster.ClusterServiceHelper.mandatoryLookupService;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,14 +36,6 @@ import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.apache.camel.support.cluster.ClusterServiceSelectors;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.support.cluster.ClusterServiceHelper.lookupService;
-import static org.apache.camel.support.cluster.ClusterServiceHelper.mandatoryLookupService;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClusterServiceSelectorTest {
 
@@ -154,9 +155,12 @@ public class ClusterServiceSelectorTest {
             context.addService(new DummyClusterService1());
             context.addService(new DummyClusterService2());
 
-            assertTrue(lookupService(context, ClusterServiceSelectors.type(DummyClusterService1.class)).isPresent());
-            assertTrue(lookupService(context, ClusterServiceSelectors.type(DummyClusterService2.class)).isPresent());
-            assertFalse(lookupService(context, ClusterServiceSelectors.type(FileLockClusterService.class)).isPresent());
+            assertTrue(lookupService(context, ClusterServiceSelectors.type(DummyClusterService1.class))
+                    .isPresent());
+            assertTrue(lookupService(context, ClusterServiceSelectors.type(DummyClusterService2.class))
+                    .isPresent());
+            assertFalse(lookupService(context, ClusterServiceSelectors.type(FileLockClusterService.class))
+                    .isPresent());
 
         } finally {
             if (context != null) {
@@ -314,7 +318,8 @@ public class ClusterServiceSelectorTest {
         try {
             CamelContext ctx = context = new DefaultCamelContext();
 
-            assertThrows(IllegalStateException.class, () -> mandatoryLookupService(ctx, ClusterServiceSelectors.single()));
+            assertThrows(
+                    IllegalStateException.class, () -> mandatoryLookupService(ctx, ClusterServiceSelectors.single()));
         } finally {
             if (context != null) {
                 context.stop();
@@ -344,8 +349,7 @@ public class ClusterServiceSelectorTest {
     // **************************************
 
     private static final class DummyClusterService1 extends AbstractCamelClusterService {
-        public DummyClusterService1() {
-        }
+        public DummyClusterService1() {}
 
         @Override
         protected CamelClusterView createView(String namespace) {
@@ -354,8 +358,7 @@ public class ClusterServiceSelectorTest {
     }
 
     private static final class DummyClusterService2 extends AbstractCamelClusterService {
-        public DummyClusterService2() {
-        }
+        public DummyClusterService2() {}
 
         @Override
         protected CamelClusterView createView(String namespace) {

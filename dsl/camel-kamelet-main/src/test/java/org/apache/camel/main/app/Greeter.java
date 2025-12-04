@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.app;
 
 import org.apache.camel.CamelContext;
@@ -51,12 +52,11 @@ public class Greeter implements Processor {
     public void process(Exchange exchange) throws Exception {
         String msg = exchange.getIn().getBody(String.class);
         if (camelContext != null) {
-            exchange.getIn().setBody(message.getMsg() + " " + StringHelper.after(msg, "I'm ")
-                                     + " (" + System.identityHashCode(camelContext) + ")");
+            exchange.getIn()
+                    .setBody(message.getMsg() + " " + StringHelper.after(msg, "I'm ") + " ("
+                            + System.identityHashCode(camelContext) + ")");
         } else {
-            exchange.getIn().setBody(message.getMsg() + " " + StringHelper.after(msg, "I'm ")
-                                     + " (" + number + ")");
+            exchange.getIn().setBody(message.getMsg() + " " + StringHelper.after(msg, "I'm ") + " (" + number + ")");
         }
     }
-
 }

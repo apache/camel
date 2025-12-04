@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.CamelContext;
@@ -37,6 +38,7 @@ public class JmsDeadLetterQueueUsingTransferExchangeIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -77,12 +79,14 @@ public class JmsDeadLetterQueueUsingTransferExchangeIT extends AbstractJMSTest {
             public void configure() {
                 errorHandler(deadLetterChannel(getUri()).disableRedelivery());
 
-                from("direct:start").process(exchange -> {
-                    String body = exchange.getIn().getBody(String.class);
-                    if ("Kaboom".equals(body)) {
-                        throw new IllegalArgumentException("Kaboom");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("Kaboom".equals(body)) {
+                                throw new IllegalArgumentException("Kaboom");
+                            }
+                        })
+                        .to("mock:result");
 
                 from(getUri()).to("mock:JmsDeadLetterQueueUsingTransferExchangeIT.dead");
             }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -22,8 +25,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SedaTimeoutDisabledTest extends ContextTestSupport {
 
@@ -39,7 +40,11 @@ public class SedaTimeoutDisabledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").to("mock:before").delay(500).transform(body().prepend("Bye ")).to("mock:result");
+                from("seda:foo")
+                        .to("mock:before")
+                        .delay(500)
+                        .transform(body().prepend("Bye "))
+                        .to("mock:result");
             }
         };
     }

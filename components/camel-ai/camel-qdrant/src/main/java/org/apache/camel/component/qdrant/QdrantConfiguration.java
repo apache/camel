@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant;
 
 import java.time.Duration;
@@ -33,20 +34,27 @@ public class QdrantConfiguration implements Cloneable {
     @Metadata(defaultValue = "localhost")
     @UriParam
     private String host = "localhost";
+
     @Metadata(defaultValue = "6334")
     @UriParam
     private int port = 6334;
+
     @Metadata(defaultValue = "false", label = "security")
     @UriParam
     private boolean tls;
+
     @UriParam(label = "security", secret = true)
     private String apiKey;
+
     @UriParam
     private Duration timeout;
+
     @Metadata(autowired = true)
     private QdrantClient client;
+
     @UriParam(defaultValue = "3")
     private int maxResults = 3;
+
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private Common.Filter filter;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -25,13 +28,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class BeanIOUnmarshalSingleObjectTest extends CamelTestSupport {
 
     private static final String NEW_LINE = "\n";
-    private static final String INPUT
-            = "1234:Content starts from here" + NEW_LINE + "then continues" + NEW_LINE + "and ends here.";
+    private static final String INPUT =
+            "1234:Content starts from here" + NEW_LINE + "then continues" + NEW_LINE + "and ends here.";
 
     @Test
     void testMultiLineContentUnmarshal() throws Exception {
@@ -53,16 +54,19 @@ public class BeanIOUnmarshalSingleObjectTest extends CamelTestSupport {
                 // turn on single mode
                 format.setUnmarshalSingleObject(true);
 
-                from("direct:unmarshal").unmarshal(format).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Map body = (Map) exchange.getIn().getBody();
-                        assertEquals(":", body.get("separator"));
-                        assertEquals("1234", body.get("key"));
-                        assertEquals(INPUT.substring(5), body.get("value"));
-                    }
-                }).marshal(format).to("mock:result");
+                from("direct:unmarshal")
+                        .unmarshal(format)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Map body = (Map) exchange.getIn().getBody();
+                                assertEquals(":", body.get("separator"));
+                                assertEquals("1234", body.get("key"));
+                                assertEquals(INPUT.substring(5), body.get("value"));
+                            }
+                        })
+                        .marshal(format)
+                        .to("mock:result");
             }
         };
     }
-
 }

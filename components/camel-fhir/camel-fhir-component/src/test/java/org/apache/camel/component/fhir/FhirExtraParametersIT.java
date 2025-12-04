@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirSearch} APIs. The class source won't be generated again
  * if the generator MOJO finds it under src/test/java.
@@ -39,7 +40,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FhirExtraParametersIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirExtraParametersIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirSearchApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirSearchApiMethod.class)
+            .getName();
 
     @Test
     public void testEncodeRequestToXml() {
@@ -62,9 +65,7 @@ public class FhirExtraParametersIT extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for searchByUrl
-                from("direct://SEARCH_BY_URL")
-                        .to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
-
+                from("direct://SEARCH_BY_URL").to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api;
 
 import java.util.List;
@@ -33,33 +34,27 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportIns
  */
 public final class TypeReferences {
 
-    public static final TypeReference<Map<String, Usage>> USAGES_TYPE = new TypeReference<Map<String, Usage>>() {
-    };
+    public static final TypeReference<Map<String, Usage>> USAGES_TYPE = new TypeReference<Map<String, Usage>>() {};
 
-    public static final TypeReference<List<RestError>> REST_ERROR_LIST_TYPE = new TypeReference<List<RestError>>() {
-    };
+    public static final TypeReference<List<RestError>> REST_ERROR_LIST_TYPE = new TypeReference<List<RestError>>() {};
 
-    public static final TypeReference<List<ReportInstance>> REPORT_INSTANCE_LIST_TYPE
-            = new TypeReference<List<ReportInstance>>() {
-            };
+    public static final TypeReference<List<ReportInstance>> REPORT_INSTANCE_LIST_TYPE =
+            new TypeReference<List<ReportInstance>>() {};
 
-    public static final TypeReference<List<RecentReport>> RECENT_REPORT_LIST_TYPE = new TypeReference<List<RecentReport>>() {
-    };
+    public static final TypeReference<List<RecentReport>> RECENT_REPORT_LIST_TYPE =
+            new TypeReference<List<RecentReport>>() {};
 
-    public static final TypeReference<List<String>> STRING_LIST_TYPE = new TypeReference<List<String>>() {
-    };
+    public static final TypeReference<List<String>> STRING_LIST_TYPE = new TypeReference<List<String>>() {};
 
-    public static final TypeReference<List<Version>> VERSION_LIST_TYPE = new TypeReference<List<Version>>() {
-    };
+    public static final TypeReference<List<Version>> VERSION_LIST_TYPE = new TypeReference<List<Version>>() {};
 
-    public static final TypeReference<List<SearchResult>> SEARCH_RESULT_TYPE = new TypeReference<List<SearchResult>>() {
-    };
+    public static final TypeReference<List<SearchResult>> SEARCH_RESULT_TYPE =
+            new TypeReference<List<SearchResult>>() {};
 
-    public static final TypeReference<List<RecentItem>> RECENT_ITEM_LIST_TYPE = new TypeReference<List<RecentItem>>() {
-    };
+    public static final TypeReference<List<RecentItem>> RECENT_ITEM_LIST_TYPE =
+            new TypeReference<List<RecentItem>>() {};
 
     private TypeReferences() {
         // not meant for instantiation, only for TypeReference constants
     }
-
 }

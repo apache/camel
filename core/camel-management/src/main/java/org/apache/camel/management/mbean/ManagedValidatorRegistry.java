@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
@@ -89,8 +90,9 @@ public class ManagedValidatorRegistry extends ManagedService implements ManagedV
                 boolean isDynamic = validatorRegistry.isDynamic(type);
 
                 CompositeData data = new CompositeDataSupport(
-                        ct, new String[] { "type", "static", "dynamic", "description" },
-                        new Object[] { type.toString(), isStatic, isDynamic, desc });
+                        ct,
+                        new String[] {"type", "static", "dynamic", "description"},
+                        new Object[] {type.toString(), isStatic, isDynamic, desc});
                 answer.put(data);
             }
             return answer;
@@ -98,5 +100,4 @@ public class ManagedValidatorRegistry extends ManagedService implements ManagedV
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

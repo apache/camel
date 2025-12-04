@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eks;
 
 import java.util.ArrayList;
@@ -34,13 +35,15 @@ import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 
 public class AmazonEKSClientMock implements EksClient {
 
-    public AmazonEKSClientMock() {
-    }
+    public AmazonEKSClientMock() {}
 
     @Override
     public CreateClusterResponse createCluster(CreateClusterRequest request) {
         CreateClusterResponse.Builder res = CreateClusterResponse.builder();
-        Cluster cluster = Cluster.builder().name("Test").status(ClusterStatus.ACTIVE.name()).build();
+        Cluster cluster = Cluster.builder()
+                .name("Test")
+                .status(ClusterStatus.ACTIVE.name())
+                .build();
         res.cluster(cluster);
         return res.build();
     }
@@ -48,7 +51,10 @@ public class AmazonEKSClientMock implements EksClient {
     @Override
     public DeleteClusterResponse deleteCluster(DeleteClusterRequest request) {
         DeleteClusterResponse.Builder res = DeleteClusterResponse.builder();
-        Cluster cluster = Cluster.builder().name("Test").status(ClusterStatus.DELETING.name()).build();
+        Cluster cluster = Cluster.builder()
+                .name("Test")
+                .status(ClusterStatus.DELETING.name())
+                .build();
         res.cluster(cluster);
         return res.build();
     }
@@ -56,7 +62,10 @@ public class AmazonEKSClientMock implements EksClient {
     @Override
     public DescribeClusterResponse describeCluster(DescribeClusterRequest request) {
         DescribeClusterResponse.Builder res = DescribeClusterResponse.builder();
-        Cluster cluster = Cluster.builder().name("Test").status(ClusterStatus.ACTIVE.name()).build();
+        Cluster cluster = Cluster.builder()
+                .name("Test")
+                .status(ClusterStatus.ACTIVE.name())
+                .build();
         res.cluster(cluster);
         return res.build();
     }

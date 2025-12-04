@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ServiceCallServiceFilterConfiguration extends ServiceCallConfiguration implements ServiceFilterFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;
+
     @XmlTransient
     private final String factoryKey;
 
@@ -98,8 +100,11 @@ public class ServiceCallServiceFilterConfiguration extends ServiceCallConfigurat
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.getCamelContextExtension()
-                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
+                type = camelContext
+                        .getCamelContextExtension()
+                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH)
+                        .findClass(factoryKey)
+                        .orElse(null);
             } catch (Exception e) {
                 throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }
@@ -108,10 +113,9 @@ public class ServiceCallServiceFilterConfiguration extends ServiceCallConfigurat
                 if (ServiceFilterFactory.class.isAssignableFrom(type)) {
                     factory = (ServiceFilterFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new NoFactoryAvailableException(
-                            "Resolving ServiceFilter: " + factoryKey
-                                                          + " detected type conflict: Not a ServiceFilterFactory implementation. Found: "
-                                                          + type.getName());
+                    throw new NoFactoryAvailableException("Resolving ServiceFilter: " + factoryKey
+                            + " detected type conflict: Not a ServiceFilterFactory implementation. Found: "
+                            + type.getName());
                 }
             }
 
@@ -153,5 +157,4 @@ public class ServiceCallServiceFilterConfiguration extends ServiceCallConfigurat
 
         return answer;
     }
-
 }

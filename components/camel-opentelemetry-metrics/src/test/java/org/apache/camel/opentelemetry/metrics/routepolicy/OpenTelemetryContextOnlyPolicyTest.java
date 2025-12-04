@@ -14,15 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
-
-import java.util.List;
-
-import io.opentelemetry.sdk.metrics.data.HistogramPointData;
-import io.opentelemetry.sdk.metrics.data.PointData;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
 
 import static io.opentelemetry.api.common.AttributeKey.stringKey;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
@@ -34,6 +27,14 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUT
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import io.opentelemetry.sdk.metrics.data.HistogramPointData;
+import io.opentelemetry.sdk.metrics.data.PointData;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verifies that there are only context point data when only context metrics are enabled.
@@ -89,8 +90,7 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
         MockEndpoint out = getMockEndpoint("mock:baz");
         out.expectedMessageCount(1);
 
-        template.asyncSend("direct:baz", x -> {
-        });
+        template.asyncSend("direct:baz", x -> {});
 
         long maxDuration = pollLongTimer(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION);
         assertTrue(maxDuration >= 0L && maxDuration < DELAY_BAZ + TOLERANCE, "max duration of long task");
@@ -106,8 +106,7 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
         out.expectedMessageCount(messageCnt);
 
         for (int i = 0; i < messageCnt; i++) {
-            template.asyncSend("direct:baz", x -> {
-            });
+            template.asyncSend("direct:baz", x -> {});
         }
         long maxActive = pollLongTimer(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE);
         assertEquals(messageCnt, maxActive, "max active long tasks");
@@ -120,13 +119,9 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .delay(DELAY_FOO)
-                        .to("mock:result");
+                from("direct:foo").routeId("foo").delay(DELAY_FOO).to("mock:result");
 
-                from("direct:bar").routeId("bar")
-                        .delay(DELAY_BAR)
-                        .to("mock:result");
+                from("direct:bar").routeId("bar").delay(DELAY_BAR).to("mock:result");
 
                 from("direct:baz").routeId("baz").delay(DELAY_BAZ).to("mock:baz");
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security.config;
 
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
@@ -24,5 +25,4 @@ public class NamespaceHandler extends NamespaceHandlerSupport {
     public void init() {
         registerBeanDefinitionParser("authorizationPolicy", new SpringSecurityAuthorizationPolicyParser());
     }
-
 }

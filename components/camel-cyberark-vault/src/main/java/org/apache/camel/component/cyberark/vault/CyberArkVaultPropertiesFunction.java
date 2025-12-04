@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cyberark.vault;
 
 import java.util.HashSet;
@@ -108,7 +109,8 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
         String authToken = System.getenv(CAMEL_CYBERARK_VAULT_AUTH_TOKEN);
 
         if (ObjectHelper.isEmpty(url) && ObjectHelper.isEmpty(account)) {
-            CyberArkVaultConfiguration cyberArkVaultConfiguration = getCamelContext().getVaultConfiguration().cyberark();
+            CyberArkVaultConfiguration cyberArkVaultConfiguration =
+                    getCamelContext().getVaultConfiguration().cyberark();
             if (ObjectHelper.isNotEmpty(cyberArkVaultConfiguration)) {
                 url = cyberArkVaultConfiguration.getUrl();
                 account = cyberArkVaultConfiguration.getAccount();
@@ -206,7 +208,8 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
                 returnValue = getSecretFromSource(key, subkey, defaultValue, version);
             } catch (Exception e) {
                 throw new RuntimeCamelException(
-                        "Error getting secret from CyberArk Conjur vault using key: " + key + " due to: " + e.getMessage(),
+                        "Error getting secret from CyberArk Conjur vault using key: " + key + " due to: "
+                                + e.getMessage(),
                         e);
             }
         }
@@ -214,8 +217,7 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
         return returnValue;
     }
 
-    private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version)
+    private String getSecretFromSource(String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
 
         // capture name of secret

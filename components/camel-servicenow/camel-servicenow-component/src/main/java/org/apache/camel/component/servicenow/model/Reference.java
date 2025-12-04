@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -33,9 +34,9 @@ public class Reference {
 
     @JsonCreator
     public Reference(
-                     @JsonProperty(value = "link", required = false) String link,
-                     @JsonProperty(value = "value", required = true) String value,
-                     @JsonProperty(value = "display_value", required = false) String displayValue) {
+            @JsonProperty(value = "link", required = false) String link,
+            @JsonProperty(value = "value", required = true) String value,
+            @JsonProperty(value = "display_value", required = false) String displayValue) {
 
         this.link = link;
         this.value = value;

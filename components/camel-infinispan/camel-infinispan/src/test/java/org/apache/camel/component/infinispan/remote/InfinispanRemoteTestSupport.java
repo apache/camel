@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import java.time.Duration;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanRemoteTestSupport.class);
+
     @RegisterExtension
     public static InfinispanService service = InfinispanServiceFactory.createSingletonInfinispanService();
 
@@ -54,10 +56,12 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
 
         cacheContainer = getCacheContainer();
         if (cacheContainer != null) {
-            final IterationBoundedBudget budget
-                    = Budgets.iterationBudget().withInterval(Duration.ofSeconds(1)).withMaxIterations(10).build();
-            final ForegroundTask task = Tasks.foregroundTask()
-                    .withBudget(budget).build();
+            final IterationBoundedBudget budget = Budgets.iterationBudget()
+                    .withInterval(Duration.ofSeconds(1))
+                    .withMaxIterations(10)
+                    .build();
+            final ForegroundTask task =
+                    Tasks.foregroundTask().withBudget(budget).build();
 
             final boolean cacheCreated = task.run(null, this::createCache);
             Assumptions.assumeTrue(cacheCreated, "The container cache is not running healthily");
@@ -79,12 +83,14 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
     }
 
     protected void getOrCreateCache() {
-        cacheContainer.administration()
+        cacheContainer
+                .administration()
                 .getOrCreateCache(
                         getCacheName(),
                         new org.infinispan.configuration.cache.ConfigurationBuilder()
                                 .clustering()
-                                .cacheMode(CacheMode.DIST_SYNC).build());
+                                .cacheMode(CacheMode.DIST_SYNC)
+                                .build());
     }
 
     @Override
@@ -108,14 +114,10 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
 
         // for default tests, we force return value for all the
         // operations
-        clientBuilder
-                .forceReturnValues(true);
+        clientBuilder.forceReturnValues(true);
 
         // add server from the test infra service
-        clientBuilder
-                .addServer()
-                .host(service.host())
-                .port(service.port());
+        clientBuilder.addServer().host(service.host()).port(service.port());
 
         // add security info
         clientBuilder

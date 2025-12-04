@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,7 +39,8 @@ public class BeanStaticMethodTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .setBody()
-                        .simple("The host is ${bean:type:org.apache.camel.util.InetAddressUtil?method=getLocalHostNameSafe}")
+                        .simple(
+                                "The host is ${bean:type:org.apache.camel.util.InetAddressUtil?method=getLocalHostNameSafe}")
                         .to("mock:result");
             }
         };

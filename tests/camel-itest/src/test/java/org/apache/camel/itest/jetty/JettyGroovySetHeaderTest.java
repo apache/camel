@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.jetty;
+
+import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyGroovySetHeaderTest extends CamelTestSupport {
 

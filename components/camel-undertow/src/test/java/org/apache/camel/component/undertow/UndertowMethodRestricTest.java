@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,8 +30,6 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowMethodRestricTest extends BaseUndertowTest {
 
@@ -45,7 +46,7 @@ public class UndertowMethodRestricTest extends BaseUndertowTest {
         httpPost.setEntity(new StringEntity("This is a test"));
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                CloseableHttpResponse response = httpClient.execute(httpPost)) {
 
             assertEquals(200, response.getCode());
             String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
@@ -58,7 +59,7 @@ public class UndertowMethodRestricTest extends BaseUndertowTest {
         HttpGet httpGet = new HttpGet(url);
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(httpGet)) {
+                CloseableHttpResponse response = httpClient.execute(httpGet)) {
             int status = response.getCode();
 
             assertEquals(405, status, "Get a wrong response status");
@@ -70,11 +71,12 @@ public class UndertowMethodRestricTest extends BaseUndertowTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("undertow://http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(exchange -> {
-                    Message in = exchange.getIn();
-                    String request = in.getBody(String.class);
-                    exchange.getMessage().setBody(request + " response");
-                });
+                from("undertow://http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST")
+                        .process(exchange -> {
+                            Message in = exchange.getIn();
+                            String request = in.getBody(String.class);
+                            exchange.getMessage().setBody(request + " response");
+                        });
             }
         };
     }

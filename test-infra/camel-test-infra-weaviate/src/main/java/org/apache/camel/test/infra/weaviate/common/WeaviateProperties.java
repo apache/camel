@@ -23,7 +23,5 @@ public final class WeaviateProperties {
     public static final String WEAVIATE_ENDPOINT_PORT = "weaviate.endpoint.port";
     public static final String WEAVIATE_CONTAINER = "weaviate.container";
 
-    private WeaviateProperties() {
-
-    }
+    private WeaviateProperties() {}
 }

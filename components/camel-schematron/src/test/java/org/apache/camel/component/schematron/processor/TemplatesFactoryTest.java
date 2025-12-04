@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.schematron.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
@@ -22,8 +25,6 @@ import javax.xml.transform.TransformerFactory;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * TemplateFactory Unit Test.
@@ -40,6 +41,5 @@ public class TemplatesFactoryTest {
         factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, null));
         Templates templates = fac.getTemplates(ClassLoader.getSystemResourceAsStream(rules), factory);
         assertNotNull(templates);
-
     }
 }

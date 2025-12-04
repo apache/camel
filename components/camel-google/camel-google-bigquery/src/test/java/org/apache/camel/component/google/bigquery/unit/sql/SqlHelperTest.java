@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.unit.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 import java.util.Set;
 
@@ -27,21 +34,16 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 public class SqlHelperTest {
 
     String query = "INSERT INTO ${report}.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n"
-                   + "  region\n" + "FROM\n" + "  ${import}.test\n" + "WHERE\n"
-                   + "  rec_date = @date AND id = @id\n";
+            + "  region\n" + "FROM\n" + "  ${import}.test\n" + "WHERE\n"
+            + "  rec_date = @date AND id = @id\n";
 
-    String expected = "INSERT INTO report_data.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n"
-                      + "  region\n" + "FROM\n" + "  import_data.test\n"
-                      + "WHERE\n" + "  rec_date = @date AND id = @id\n";
+    String expected =
+            "INSERT INTO report_data.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n"
+                    + "  region\n" + "FROM\n" + "  import_data.test\n"
+                    + "WHERE\n" + "  rec_date = @date AND id = @id\n";
 
     Exchange exchange = Mockito.mock(Exchange.class);
     Message message = Mockito.mock(Message.class);
@@ -85,8 +87,7 @@ public class SqlHelperTest {
     public void testTranslateQueryWithoutParam() {
         when(exchange.getMessage()).thenReturn(message);
         when(message.getHeader(eq("report"), eq(String.class))).thenReturn("report_data");
-        assertThrows(RuntimeExchangeException.class,
-                () -> SqlHelper.translateQuery(query, exchange));
+        assertThrows(RuntimeExchangeException.class, () -> SqlHelper.translateQuery(query, exchange));
     }
 
     @Test

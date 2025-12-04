@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
@@ -78,7 +79,10 @@ public interface BulkApiV2Client {
     void getQueryJob(String jobId, Map<String, List<String>> headers, QueryJobResponseCallback callback);
 
     void getQueryJobResults(
-            String jobId, String locator, Integer maxRecords, Map<String, List<String>> headers,
+            String jobId,
+            String locator,
+            Integer maxRecords,
+            Map<String, List<String>> headers,
             StreamResponseCallback callback);
 
     void changeQueryJobState(

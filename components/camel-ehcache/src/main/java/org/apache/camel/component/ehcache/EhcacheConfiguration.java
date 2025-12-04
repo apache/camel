@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
 
 import java.util.HashMap;
@@ -38,33 +39,44 @@ import org.ehcache.event.EventType;
 public class EhcacheConfiguration implements Cloneable {
     @UriParam(defaultValue = "true")
     private boolean createCacheIfNotExist = true;
+
     @UriParam(label = "producer")
     private String action;
+
     @UriParam(label = "producer")
     private Object key;
+
     @UriParam
     private CacheManager cacheManager;
+
     @UriParam
     private Configuration cacheManagerConfiguration;
+
     @UriParam
     private String configurationUri;
+
     @UriParam(label = "advanced")
     private CacheConfiguration configuration;
+
     @UriParam(label = "advanced")
     private Map<String, CacheConfiguration> configurations;
+
     @UriParam(label = "advanced")
     private String keyType;
+
     @UriParam(label = "advanced")
     private String valueType;
+
     @UriParam(label = "consumer", defaultValue = "ORDERED")
     private EventOrdering eventOrdering = EventOrdering.ORDERED;
+
     @UriParam(label = "consumer", defaultValue = "ASYNCHRONOUS")
     private EventFiring eventFiring = EventFiring.ASYNCHRONOUS;
+
     @UriParam(label = "consumer", enums = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED")
     private String eventTypes;
 
-    public EhcacheConfiguration() {
-    }
+    public EhcacheConfiguration() {}
 
     /**
      * URI pointing to the Ehcache XML configuration file's location

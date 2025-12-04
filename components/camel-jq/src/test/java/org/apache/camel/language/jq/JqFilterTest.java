@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,16 +27,15 @@ public class JqFilterTest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .filter().jq(".foo == \"bar\"")
-                        .to("mock:result");
+                from("direct:start").filter().jq(".foo == \"bar\"").to("mock:result");
             }
         };
     }
 
     @Test
     public void testFilter() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "bar"));
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "bar"));
 
         template.sendBody("direct:start", MAPPER.createObjectNode().put("foo", "baz"));
         template.sendBody("direct:start", MAPPER.createObjectNode().put("foo", "bar"));

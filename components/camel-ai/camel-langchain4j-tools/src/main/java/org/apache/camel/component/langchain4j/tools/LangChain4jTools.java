@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools;
 
 public final class LangChain4jTools {
@@ -21,6 +22,5 @@ public final class LangChain4jTools {
     public static final String SCHEME = "langchain4j-tools";
     public static final String NO_TOOLS_CALLED_HEADER = "LangChain4jToolsNoToolsCalled";
 
-    private LangChain4jTools() {
-    }
+    private LangChain4jTools() {}
 }

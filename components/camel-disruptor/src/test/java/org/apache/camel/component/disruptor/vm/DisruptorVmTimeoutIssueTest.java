@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -22,10 +27,6 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
 
@@ -35,8 +36,7 @@ public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
             template2.requestBody("disruptor-vm:start1?timeout=4000", "Hello");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
-                    e.getCause());
+            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
             assertEquals(2000, cause.getTimeout());
         }
     }
@@ -47,8 +47,7 @@ public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
             template2.requestBody("disruptor-vm:start2?timeout=4000", "Hello");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
-                    e.getCause());
+            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
             assertEquals(2000, cause.getTimeout());
         }
     }
@@ -58,8 +57,7 @@ public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor-vm:end")
-                        .delay(3000).transform().constant("Bye World");
+                from("disruptor-vm:end").delay(3000).transform().constant("Bye World");
             }
         };
     }

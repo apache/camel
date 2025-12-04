@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.stepfunctions;
 
 import org.apache.camel.*;
@@ -28,10 +29,14 @@ import software.amazon.awssdk.services.sfn.SfnClient;
 /**
  * Manage and invoke AWS Step functions.
  */
-@UriEndpoint(firstVersion = "4.0.0", scheme = "aws2-step-functions", title = "AWS StepFunctions",
-             syntax = "aws2-step-functions:label",
-             producerOnly = true, category = { Category.CLOUD, Category.SERVERLESS },
-             headersClass = StepFunctions2Constants.class)
+@UriEndpoint(
+        firstVersion = "4.0.0",
+        scheme = "aws2-step-functions",
+        title = "AWS StepFunctions",
+        syntax = "aws2-step-functions:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.SERVERLESS},
+        headersClass = StepFunctions2Constants.class)
 public class StepFunctions2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SfnClient awsSfnClient;
@@ -102,5 +107,4 @@ public class StepFunctions2Endpoint extends DefaultEndpoint implements EndpointS
     public String getServiceProtocol() {
         return "step-functions";
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
+
+import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.*;
 
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
@@ -24,8 +27,6 @@ import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.NeverRetryPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
-
-import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.*;
 
 /**
  * Default {@link ListenerContainerFactory}.
@@ -89,5 +90,4 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
 
         return listener;
     }
-
 }

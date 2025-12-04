@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
@@ -23,8 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test for delayer interceptor configured in spring XML.
  */
@@ -32,8 +33,7 @@ public class DelayerInterceptorTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "/org/apache/camel/spring/interceptor/delayerInterceptorTest.xml");
+        return new ClassPathXmlApplicationContext("/org/apache/camel/spring/interceptor/delayerInterceptorTest.xml");
     }
 
     @Test
@@ -53,5 +53,4 @@ public class DelayerInterceptorTest extends SpringTestSupport {
         // some OS boxes are slow
         assertTrue(delta < 5000, "Should not take that long to run: " + delta);
     }
-
 }

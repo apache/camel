@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
 
 import java.lang.reflect.Method;
@@ -33,8 +34,7 @@ import org.apache.camel.util.ReflectionHelper;
  */
 public final class GrpcUtils {
 
-    private GrpcUtils() {
-    }
+    private GrpcUtils() {}
 
     public static String extractServiceName(String service) {
         return service.contains(".") ? service.substring(service.lastIndexOf('.') + 1) : service;
@@ -45,34 +45,48 @@ public final class GrpcUtils {
     }
 
     public static Object constructGrpcAsyncStub(
-            String packageName, String serviceName, Channel channel, final CallCredentials creds, final CamelContext context) {
-        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_ASYNC_STUB_METHOD, channel, creds,
-                context);
+            String packageName,
+            String serviceName,
+            Channel channel,
+            final CallCredentials creds,
+            final CamelContext context) {
+        return constructGrpcStubClass(
+                packageName, serviceName, GrpcConstants.GRPC_SERVICE_ASYNC_STUB_METHOD, channel, creds, context);
     }
 
     public static Object constructGrpcBlockingStub(
-            String packageName, String serviceName, Channel channel, final CallCredentials creds, final CamelContext context) {
-        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_SYNC_STUB_METHOD, channel, creds,
-                context);
+            String packageName,
+            String serviceName,
+            Channel channel,
+            final CallCredentials creds,
+            final CamelContext context) {
+        return constructGrpcStubClass(
+                packageName, serviceName, GrpcConstants.GRPC_SERVICE_SYNC_STUB_METHOD, channel, creds, context);
     }
 
     /**
      * Get gRPC stub class instance depends on the invocation style newBlockingStub - for sync style newStub - for async
      * style newFutureStub - for ListenableFuture-style (not implemented yet)
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     private static Object constructGrpcStubClass(
-            String packageName, String serviceName, String stubMethod, Channel channel, final CallCredentials creds,
+            String packageName,
+            String serviceName,
+            String stubMethod,
+            Channel channel,
+            final CallCredentials creds,
             final CamelContext context) {
-        Class[] paramChannel = { Channel.class };
+        Class[] paramChannel = {Channel.class};
         Object grpcStub = null;
 
-        String serviceClassName = constructFullClassName(packageName, serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX);
+        String serviceClassName =
+                constructFullClassName(packageName, serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX);
         try {
             Class grpcServiceClass = context.getClassResolver().resolveMandatoryClass(serviceClassName);
             Method grpcMethod = ReflectionHelper.findMethod(grpcServiceClass, stubMethod, paramChannel);
             if (grpcMethod == null) {
-                throw new IllegalArgumentException("gRPC service method not found: " + serviceClassName + "." + stubMethod);
+                throw new IllegalArgumentException(
+                        "gRPC service method not found: " + serviceClassName + "." + stubMethod);
             }
             grpcStub = ObjectHelper.invokeMethod(grpcMethod, grpcServiceClass, channel);
 
@@ -88,11 +102,11 @@ public final class GrpcUtils {
 
     @SuppressWarnings("rawtypes")
     public static Object addClientCallCredentials(Object grpcStub, final CallCredentials creds) {
-        Class[] paramCallCreds = { CallCredentials.class };
+        Class[] paramCallCreds = {CallCredentials.class};
         Object grpcStubWithCreds = null;
 
-        Method callCredsMethod = ReflectionHelper.findMethod(grpcStub.getClass(),
-                GrpcConstants.GRPC_SERVICE_STUB_CALL_CREDS_METHOD, paramCallCreds);
+        Method callCredsMethod = ReflectionHelper.findMethod(
+                grpcStub.getClass(), GrpcConstants.GRPC_SERVICE_STUB_CALL_CREDS_METHOD, paramCallCreds);
         grpcStubWithCreds = ObjectHelper.invokeMethod(callCredsMethod, grpcStub, creds);
 
         return grpcStubWithCreds;
@@ -102,8 +116,10 @@ public final class GrpcUtils {
     public static Class constructGrpcImplBaseClass(String packageName, String serviceName, final CamelContext context) {
         Class grpcServerImpl;
 
-        String serverBaseImpl = constructFullClassName(packageName, serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX + "$"
-                                                                    + serviceName + GrpcConstants.GRPC_SERVER_IMPL_POSTFIX);
+        String serverBaseImpl = constructFullClassName(
+                packageName,
+                serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX + "$" + serviceName
+                        + GrpcConstants.GRPC_SERVER_IMPL_POSTFIX);
         try {
             grpcServerImpl = context.getClassResolver().resolveMandatoryClass(serverBaseImpl);
 
@@ -113,19 +129,19 @@ public final class GrpcUtils {
         return grpcServerImpl;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static void invokeAsyncMethod(
             Object asyncStubClass, String invokeMethod, Object request, StreamObserver responseObserver) {
         Class[] paramMethod = null;
 
         Method method = ReflectionHelper.findMethod(asyncStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
-            throw new IllegalArgumentException(
-                    "gRPC service method not found: " + asyncStubClass.getClass().getName() + "." + invokeMethod);
+            throw new IllegalArgumentException("gRPC service method not found: "
+                    + asyncStubClass.getClass().getName() + "." + invokeMethod);
         }
         if (method.getReturnType().equals(StreamObserver.class)) {
-            StreamObserver<Object> requestObserver
-                    = (StreamObserver<Object>) ObjectHelper.invokeMethod(method, asyncStubClass, responseObserver);
+            StreamObserver<Object> requestObserver =
+                    (StreamObserver<Object>) ObjectHelper.invokeMethod(method, asyncStubClass, responseObserver);
             if (request instanceof List) {
                 List<Object> requestList = (List<Object>) request;
                 requestList.forEach(requestObserver::onNext);
@@ -138,35 +154,36 @@ public final class GrpcUtils {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static StreamObserver<Object> invokeAsyncMethodStreaming(
             Object asyncStubClass, String invokeMethod, StreamObserver<?> responseObserver) {
         Class[] paramMethod = null;
         Method method = ReflectionHelper.findMethod(asyncStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
-            throw new IllegalArgumentException(
-                    "gRPC service method not found: " + asyncStubClass.getClass().getName() + "." + invokeMethod);
+            throw new IllegalArgumentException("gRPC service method not found: "
+                    + asyncStubClass.getClass().getName() + "." + invokeMethod);
         }
         if (!StreamObserver.class.isAssignableFrom(method.getReturnType())) {
             throw new IllegalArgumentException(
                     "gRPC service method does not declare an input of type stream (cannot be used in streaming mode): "
-                                               + asyncStubClass.getClass().getName() + "." + invokeMethod);
+                            + asyncStubClass.getClass().getName() + "." + invokeMethod);
         }
 
         return (StreamObserver<Object>) ObjectHelper.invokeMethod(method, asyncStubClass, responseObserver);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static Object invokeSyncMethod(Object blockingStubClass, String invokeMethod, Object request) {
         Class[] paramMethod = null;
 
         Method method = ReflectionHelper.findMethod(blockingStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
-            throw new IllegalArgumentException(
-                    "gRPC service method not found: " + blockingStubClass.getClass().getName() + "." + invokeMethod);
+            throw new IllegalArgumentException("gRPC service method not found: "
+                    + blockingStubClass.getClass().getName() + "." + invokeMethod);
         }
         if (method.getReturnType().equals(Iterator.class)) {
-            Iterator<Object> responseObjects = (Iterator<Object>) ObjectHelper.invokeMethod(method, blockingStubClass, request);
+            Iterator<Object> responseObjects =
+                    (Iterator<Object>) ObjectHelper.invokeMethod(method, blockingStubClass, request);
             List<Object> objectList = new ArrayList<>();
             while (responseObjects.hasNext()) {
                 objectList.add(responseObjects.next());

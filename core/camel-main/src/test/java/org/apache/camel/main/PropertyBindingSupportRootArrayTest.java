@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -22,8 +25,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -47,7 +48,8 @@ public class PropertyBindingSupportRootArrayTest {
                 .withProperty("bars[0]", "#class:" + MySecondBar.class.getName())
                 .withProperty("bars[0].names[0]", "a")
                 .withProperty("bars[0].names[1]", "b")
-                .withRemoveParameters(false).bind();
+                .withRemoveParameters(false)
+                .bind();
 
         assertEquals(1, target.getBars().size());
         assertEquals(2, target.getBars().get(0).getNames().size());
@@ -59,5 +61,4 @@ public class PropertyBindingSupportRootArrayTest {
 
         context.stop();
     }
-
 }

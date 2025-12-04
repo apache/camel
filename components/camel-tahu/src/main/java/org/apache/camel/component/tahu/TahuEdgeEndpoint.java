@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.Arrays;
@@ -39,14 +40,15 @@ import org.eclipse.tahu.message.model.SparkplugBPayloadMap;
 /**
  * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
  */
-@UriEndpoint(firstVersion = "4.8.0",
-             scheme = TahuConstants.EDGE_NODE_SCHEME,
-             title = "Tahu Edge Node / Device",
-             syntax = TahuConstants.EDGE_NODE_ENDPOINT_URI_SYNTAX,
-             alternativeSyntax = TahuConstants.DEVICE_ENDPOINT_URI_SYNTAX,
-             producerOnly = true,
-             category = { Category.MESSAGING, Category.IOT, Category.MONITORING },
-             headersClass = TahuConstants.class)
+@UriEndpoint(
+        firstVersion = "4.8.0",
+        scheme = TahuConstants.EDGE_NODE_SCHEME,
+        title = "Tahu Edge Node / Device",
+        syntax = TahuConstants.EDGE_NODE_ENDPOINT_URI_SYNTAX,
+        alternativeSyntax = TahuConstants.DEVICE_ENDPOINT_URI_SYNTAX,
+        producerOnly = true,
+        category = {Category.MESSAGING, Category.IOT, Category.MONITORING},
+        headersClass = TahuConstants.class)
 public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilterStrategyAware {
 
     @UriPath(label = "producer", description = "ID of the group")
@@ -61,48 +63,65 @@ public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilte
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private final String deviceId;
 
-    @UriParam(label = "producer (edge node only)", description = "Host ID of the primary host application for this edge node")
+    @UriParam(
+            label = "producer (edge node only)",
+            description = "Host ID of the primary host application for this edge node")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String primaryHostId;
 
-    @UriParam(label = "producer (edge node only)",
-              description = "ID of each device connected to this edge node, as a comma-separated list")
+    @UriParam(
+            label = "producer (edge node only)",
+            description = "ID of each device connected to this edge node, as a comma-separated list")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String deviceIds;
 
-    @UriParam(label = "producer",
-              description = "Tahu SparkplugBPayloadMap to configure metric data types for this edge node or device. Note that this payload is used exclusively as a Sparkplug B spec-compliant configuration for all possible edge node or device metric names, aliases, and data types. This configuration is required to publish proper Sparkplug B NBIRTH and DBIRTH payloads.")
+    @UriParam(
+            label = "producer",
+            description =
+                    "Tahu SparkplugBPayloadMap to configure metric data types for this edge node or device. Note that this payload is used exclusively as a Sparkplug B spec-compliant configuration for all possible edge node or device metric names, aliases, and data types. This configuration is required to publish proper Sparkplug B NBIRTH and DBIRTH payloads.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME, required = true)
     private SparkplugBPayloadMap metricDataTypePayloadMap;
 
-    @UriParam(label = "producer (edge node only),advanced", description = "Flag enabling support for metric aliases",
-              defaultValue = "false")
+    @UriParam(
+            label = "producer (edge node only),advanced",
+            description = "Flag enabling support for metric aliases",
+            defaultValue = "false")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private boolean useAliases = false;
 
-    @UriParam(label = "producer,advanced",
-              description = "To use a custom HeaderFilterStrategy to filter headers used as Sparkplug metrics",
-              defaultValueNote = "Defaults to sending all Camel Message headers with name prefixes of \""
-                                 + TahuConstants.METRIC_HEADER_PREFIX + "\", including those with null values")
+    @UriParam(
+            label = "producer,advanced",
+            description = "To use a custom HeaderFilterStrategy to filter headers used as Sparkplug metrics",
+            defaultValueNote = "Defaults to sending all Camel Message headers with name prefixes of \""
+                    + TahuConstants.METRIC_HEADER_PREFIX + "\", including those with null values")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private volatile HeaderFilterStrategy headerFilterStrategy;
 
-    @UriParam(label = "producer (edge node only),advanced",
-              description = "To use a specific org.eclipse.tahu.message.BdSeqManager implementation to manage edge node birth-death sequence numbers",
-              defaultValue = "org.apache.camel.component.tahu.CamelBdSeqManager")
+    @UriParam(
+            label = "producer (edge node only),advanced",
+            description =
+                    "To use a specific org.eclipse.tahu.message.BdSeqManager implementation to manage edge node birth-death sequence numbers",
+            defaultValue = "org.apache.camel.component.tahu.CamelBdSeqManager")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private volatile BdSeqManager bdSeqManager;
 
-    @UriParam(label = "producer (edge node only),advanced",
-              description = "Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files. This path will contain files named as \"<Edge Node ID>-bdSeqNum\" and must be writable by the executing process' user",
-              defaultValue = "${sys:java.io.tmpdir}/CamelTahuTemp")
+    @UriParam(
+            label = "producer (edge node only),advanced",
+            description =
+                    "Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files. This path will contain files named as \"<Edge Node ID>-bdSeqNum\" and must be writable by the executing process' user",
+            defaultValue = "${sys:java.io.tmpdir}/CamelTahuTemp")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String bdSeqNumPath;
 
     private final EdgeNodeDescriptor edgeNodeDescriptor;
 
-    TahuEdgeEndpoint(String uri, TahuDefaultComponent component, TahuConfiguration configuration, String groupId,
-                     String edgeNode, String deviceId) {
+    TahuEdgeEndpoint(
+            String uri,
+            TahuDefaultComponent component,
+            TahuConfiguration configuration,
+            String groupId,
+            String edgeNode,
+            String deviceId) {
         super(uri, component, configuration);
 
         this.groupId = ObjectHelper.notNullOrEmpty(groupId, "groupId");

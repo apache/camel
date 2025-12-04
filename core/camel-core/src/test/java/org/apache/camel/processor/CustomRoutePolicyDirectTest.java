@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CustomRoutePolicyDirectTest extends ContextTestSupport {
 
@@ -80,7 +81,9 @@ public class CustomRoutePolicyDirectTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo").routePolicy(policy)
+                from("direct:foo")
+                        .routeId("foo")
+                        .routePolicy(policy)
                         .process(e -> {
                             Assertions.assertEquals(1, policy.getInflight1());
                             Assertions.assertEquals(0, policy.getInflight2());
@@ -92,13 +95,14 @@ public class CustomRoutePolicyDirectTest extends ContextTestSupport {
                         })
                         .to("mock:result");
 
-                from("direct:bar").routeId("bar").routePolicy(policy)
+                from("direct:bar")
+                        .routeId("bar")
+                        .routePolicy(policy)
                         .process(e -> {
                             Assertions.assertEquals(1, policy.getInflight1());
                             Assertions.assertEquals(1, policy.getInflight2());
                         })
                         .to("mock:b");
-
             }
         };
     }

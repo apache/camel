@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KnownDependenciesResolverTest {
 
@@ -43,7 +44,8 @@ public class KnownDependenciesResolverTest {
         KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
         resolver.loadKnownDependencies();
 
-        MavenGav dependency = resolver.mavenGavForClass(SomeClass.class.getPackage().getName());
+        MavenGav dependency =
+                resolver.mavenGavForClass(SomeClass.class.getPackage().getName());
 
         assertNotNull(dependency);
         assertEquals(dependency.getGroupId(), "org.example");
@@ -51,6 +53,5 @@ public class KnownDependenciesResolverTest {
         assertEquals(dependency.getVersion(), "2.0.0");
     }
 
-    public static class SomeClass {
-    }
+    public static class SomeClass {}
 }

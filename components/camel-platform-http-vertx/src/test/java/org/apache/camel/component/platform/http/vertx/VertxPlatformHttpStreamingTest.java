@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,11 +37,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.emptyOrNullString;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class VertxPlatformHttpStreamingTest {
 
     @Test
@@ -47,19 +48,15 @@ public class VertxPlatformHttpStreamingTest {
                 @Override
                 public void configure() {
                     from("platform-http:/streaming?useStreaming=true")
-                            .transform().simple("Hello ${body}");
+                            .transform()
+                            .simple("Hello ${body}");
                 }
             });
 
             context.start();
 
             String requestBody = "Vert.x Platform HTTP";
-            given()
-                    .body(requestBody)
-                    .post("/streaming")
-                    .then()
-                    .statusCode(200)
-                    .body(is("Hello " + requestBody));
+            given().body(requestBody).post("/streaming").then().statusCode(200).body(is("Hello " + requestBody));
         } finally {
             context.stop();
         }
@@ -76,15 +73,13 @@ public class VertxPlatformHttpStreamingTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/streaming?useStreaming=true")
-                            .log("Done processing request");
+                    from("platform-http:/streaming?useStreaming=true").log("Done processing request");
                 }
             });
 
             context.start();
 
-            given()
-                    .body(testFile.toFile())
+            given().body(testFile.toFile())
                     .post("/streaming")
                     .then()
                     .statusCode(200)
@@ -102,15 +97,13 @@ public class VertxPlatformHttpStreamingTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/form?populateBodyWithForm=false")
-                            .log("Done processing request");
+                    from("platform-http:/form?populateBodyWithForm=false").log("Done processing request");
                 }
             });
 
             context.start();
 
-            given()
-                    .contentType(ContentType.URLENC)
+            given().contentType(ContentType.URLENC)
                     .formParam("foo", "bar")
                     .post("/form")
                     .then()
@@ -129,15 +122,13 @@ public class VertxPlatformHttpStreamingTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/streaming?useStreaming=true")
-                            .setBody().simple("foo = ${header.foo}");
+                    from("platform-http:/streaming?useStreaming=true").setBody().simple("foo = ${header.foo}");
                 }
             });
 
             context.start();
 
-            given()
-                    .contentType(ContentType.URLENC)
+            given().contentType(ContentType.URLENC)
                     .formParam("foo", "bar")
                     .post("/streaming")
                     .then()
@@ -155,8 +146,8 @@ public class VertxPlatformHttpStreamingTest {
         Files.writeString(testFile, content);
 
         final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(configuration -> {
-            VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler
-                    = new VertxPlatformHttpServerConfiguration.BodyHandler();
+            VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler =
+                    new VertxPlatformHttpServerConfiguration.BodyHandler();
             // turn on file uploads
             bodyHandler.setHandleFileUploads(true);
             bodyHandler.setUploadsDirectory(testFile.toFile().getParent());
@@ -168,17 +159,14 @@ public class VertxPlatformHttpStreamingTest {
                 @Override
                 public void configure() {
                     from("platform-http:/streaming?useStreaming=true")
-                            .setBody().constant("multipart request should have been rejected");
+                            .setBody()
+                            .constant("multipart request should have been rejected");
                 }
             });
 
             context.start();
 
-            given()
-                    .multiPart(testFile.toFile())
-                    .post("/streaming")
-                    .then()
-                    .statusCode(500);
+            given().multiPart(testFile.toFile()).post("/streaming").then().statusCode(500);
         } finally {
             context.stop();
             Files.deleteIfExists(testFile);
@@ -205,8 +193,7 @@ public class VertxPlatformHttpStreamingTest {
 
             context.start();
 
-            InputStream response = given()
-                    .body(new FileInputStream(input.toFile()))
+            InputStream response = given().body(new FileInputStream(input.toFile()))
                     .post("/streaming")
                     .then()
                     .statusCode(200)
@@ -231,28 +218,25 @@ public class VertxPlatformHttpStreamingTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/streaming?useStreaming=true")
-                            .process(new Processor() {
-                                @Override
-                                public void process(Exchange exchange) throws Exception {
-                                    // Simulate an error processing an input stream by closing it ahead of the response being written
-                                    // Verifies the response promise.fail is called correctly
-                                    InputStream stream = getClass().getResourceAsStream("/authentication/auth.properties");
-                                    if (stream != null) {
-                                        stream.close();
-                                    }
-                                    exchange.getMessage().setBody(stream);
-                                }
-                            });
+                    from("platform-http:/streaming?useStreaming=true").process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            // Simulate an error processing an input stream by closing it ahead of the response being
+                            // written
+                            // Verifies the response promise.fail is called correctly
+                            InputStream stream = getClass().getResourceAsStream("/authentication/auth.properties");
+                            if (stream != null) {
+                                stream.close();
+                            }
+                            exchange.getMessage().setBody(stream);
+                        }
+                    });
                 }
             });
 
             context.start();
 
-            given()
-                    .get("/streaming")
-                    .then()
-                    .statusCode(500);
+            given().get("/streaming").then().statusCode(500);
         } finally {
             context.stop();
         }
@@ -265,28 +249,24 @@ public class VertxPlatformHttpStreamingTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/streaming?useStreaming=true")
-                            .process(new Processor() {
-                                @Override
-                                public void process(Exchange exchange) {
-                                    // Force a type conversion exception and verify the response promise.fail is called correctly
-                                    exchange.getMessage().setBody(new TestBean());
-                                }
-                            });
+                    from("platform-http:/streaming?useStreaming=true").process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) {
+                            // Force a type conversion exception and verify the response promise.fail is called
+                            // correctly
+                            exchange.getMessage().setBody(new TestBean());
+                        }
+                    });
                 }
             });
 
             context.start();
 
-            given()
-                    .get("/streaming")
-                    .then()
-                    .statusCode(500);
+            given().get("/streaming").then().statusCode(500);
         } finally {
             context.stop();
         }
     }
 
-    static final class TestBean {
-    }
+    static final class TestBean {}
 }

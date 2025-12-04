@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import java.util.Map;
@@ -38,19 +39,23 @@ public class XsltComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private URIResolver uriResolver;
+
     @Metadata(label = "advanced")
     private XsltUriResolverFactory uriResolverFactory;
+
     @Metadata
     private boolean allowTemplateFromHeader;
+
     @Metadata(defaultValue = "true")
     private boolean contentCache = true;
+
     @Metadata(label = "advanced")
     private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
+
     @Metadata(label = "advanced")
     private String transformerFactoryClass;
 
-    public XsltComponent() {
-    }
+    public XsltComponent() {}
 
     public XsltUriResolverFactory getUriResolverFactory() {
         return uriResolverFactory;
@@ -126,7 +131,8 @@ public class XsltComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters)
+            throws Exception {
         XsltEndpoint endpoint = createXsltEndpoint(uri);
         configureEndpoint(endpoint, remaining, parameters);
 
@@ -151,8 +157,8 @@ public class XsltComponent extends DefaultComponent {
         }
         if (resolver == null) {
             // lookup custom resolver factory to use
-            XsltUriResolverFactory resolverFactory
-                    = resolveAndRemoveReferenceParameter(parameters, "uriResolverFactory", XsltUriResolverFactory.class);
+            XsltUriResolverFactory resolverFactory =
+                    resolveAndRemoveReferenceParameter(parameters, "uriResolverFactory", XsltUriResolverFactory.class);
             if (resolverFactory == null) {
                 // not in endpoint then use component specific resolver factory
                 resolverFactory = getUriResolverFactory();
@@ -177,7 +183,8 @@ public class XsltComponent extends DefaultComponent {
         xslt.setResourceUri(resourceUri);
 
         if (!parameters.isEmpty()) {
-            // additional parameters need to be stored on endpoint as they can be used to configure xslt builder additionally
+            // additional parameters need to be stored on endpoint as they can be used to configure xslt builder
+            // additionally
             xslt.setParameters(parameters);
         }
     }

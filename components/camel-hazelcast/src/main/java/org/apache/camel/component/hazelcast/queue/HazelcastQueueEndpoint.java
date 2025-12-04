@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.queue;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_QUEUE;
 
 import java.util.concurrent.ExecutorService;
 
@@ -31,21 +34,27 @@ import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_QUEUE;
-
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed queue.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_QUEUE, title = "Hazelcast Queue",
-             syntax = "hazelcast-queue:cacheName", category = { Category.CACHE, Category.CLUSTERING, Category.MESSAGING },
-             headersClass = HazelcastConstants.class)
+@UriEndpoint(
+        firstVersion = "2.7.0",
+        scheme = SCHEME_QUEUE,
+        title = "Hazelcast Queue",
+        syntax = "hazelcast-queue:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING, Category.MESSAGING},
+        headersClass = HazelcastConstants.class)
 public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
 
     @UriParam
     private final HazelcastQueueConfiguration configuration;
 
-    public HazelcastQueueEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
-                                  String cacheName, final HazelcastQueueConfiguration configuration) {
+    public HazelcastQueueEndpoint(
+            HazelcastInstance hazelcastInstance,
+            String endpointUri,
+            Component component,
+            String cacheName,
+            final HazelcastQueueConfiguration configuration) {
         super(hazelcastInstance, endpointUri, component, cacheName);
         this.configuration = configuration;
         setCommand(HazelcastCommand.queue);
@@ -58,8 +67,8 @@ public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        HazelcastQueueConsumer answer
-                = new HazelcastQueueConsumer(hazelcastInstance, this, processor, cacheName, configuration);
+        HazelcastQueueConsumer answer =
+                new HazelcastQueueConsumer(hazelcastInstance, this, processor, cacheName, configuration);
         configureConsumer(answer);
         return answer;
     }
@@ -70,8 +79,8 @@ public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
     }
 
     public ExecutorService createExecutor(Object source) {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source, "QueueConsumer",
-                configuration.getPoolSize());
+        return getCamelContext()
+                .getExecutorServiceManager()
+                .newFixedThreadPool(source, "QueueConsumer", configuration.getPoolSize());
     }
-
 }

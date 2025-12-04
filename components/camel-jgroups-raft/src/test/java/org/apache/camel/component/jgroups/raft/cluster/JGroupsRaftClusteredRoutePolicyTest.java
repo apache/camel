@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft.cluster;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 
@@ -27,8 +30,6 @@ import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstractTest {
 

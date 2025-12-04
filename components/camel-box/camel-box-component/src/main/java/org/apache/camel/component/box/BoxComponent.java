@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
 
 import com.box.sdk.BoxAPIConnection;
@@ -75,8 +76,7 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
 
     @Override
     protected Endpoint createEndpoint(
-            String uri, String methodName, BoxApiName apiName,
-            BoxConfiguration endpointConfiguration) {
+            String uri, String methodName, BoxApiName apiName, BoxConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new BoxEndpoint(uri, this, apiName, methodName, endpointConfiguration);

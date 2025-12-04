@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb2.data;
 
 import java.util.ArrayList;
@@ -28,8 +29,7 @@ import java.util.stream.Collectors;
 public final class Measurements {
     private List<Measurement> measurements = new ArrayList<>();
 
-    private Measurements() {
-    }
+    private Measurements() {}
 
     private Measurements(List<Measurement> measurements) {
         this.measurements = measurements;

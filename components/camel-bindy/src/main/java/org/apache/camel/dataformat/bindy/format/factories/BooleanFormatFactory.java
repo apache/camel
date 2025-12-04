@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import org.apache.camel.dataformat.bindy.Format;
@@ -44,6 +45,5 @@ public class BooleanFormatFactory extends AbstractFormatFactory {
         public Boolean parse(String string) throws Exception {
             return Boolean.valueOf(string);
         }
-
     }
 }

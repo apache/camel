@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -29,10 +34,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class JettyFreemarkerTest extends CamelTestSupport {
 
     private int port;
@@ -43,8 +44,8 @@ public class JettyFreemarkerTest extends CamelTestSupport {
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
-        String response
-                = template.requestBodyAndHeaders("freemarker:org/apache/camel/itest/jetty/header.ftl", "", map, String.class);
+        String response = template.requestBodyAndHeaders(
+                "freemarker:org/apache/camel/itest/jetty/header.ftl", "", map, String.class);
 
         assertEquals("Dear Doe, John", response);
     }
@@ -56,7 +57,8 @@ public class JettyFreemarkerTest extends CamelTestSupport {
             map.put("firstName", "John");
             map.put("lastName", "Doe");
 
-            template.requestBodyAndHeaders("freemarker:org/apache/camel/itest/jetty/?name=header.ftl", "", map, String.class);
+            template.requestBodyAndHeaders(
+                    "freemarker:org/apache/camel/itest/jetty/?name=header.ftl", "", map, String.class);
             fail("Should have thrown exception");
         } catch (ResolveEndpointFailedException e) {
             assertTrue(e.getMessage().endsWith("Unknown parameters=[{name=header.ftl}]"));
@@ -69,8 +71,8 @@ public class JettyFreemarkerTest extends CamelTestSupport {
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
-        String response = template.requestBodyAndHeaders("freemarker://http://localhost:" + port + "/test?name=header", "",
-                map, String.class);
+        String response = template.requestBodyAndHeaders(
+                "freemarker://http://localhost:" + port + "/test?name=header", "", map, String.class);
 
         assertEquals("Dear Doe, John", response);
     }
@@ -81,21 +83,18 @@ public class JettyFreemarkerTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:" + port + "/test")
-                        .process(exchange -> {
-                            String name = exchange.getIn().getHeader("name", String.class);
-                            ObjectHelper.notNull(name, "name");
+                from("jetty:http://localhost:" + port + "/test").process(exchange -> {
+                    String name = exchange.getIn().getHeader("name", String.class);
+                    ObjectHelper.notNull(name, "name");
 
-                            name = "org/apache/camel/itest/jetty/" + name + ".ftl";
-                            InputStream is
-                                    = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
-                            String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
+                    name = "org/apache/camel/itest/jetty/" + name + ".ftl";
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
+                    String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
-                            exchange.getMessage().setBody(xml);
-                            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                        });
+                    exchange.getMessage().setBody(xml);
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                });
             }
         };
     }
-
 }

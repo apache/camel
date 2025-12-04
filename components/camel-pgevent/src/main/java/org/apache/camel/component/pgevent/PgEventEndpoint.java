@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pgevent;
 
 import java.sql.DriverManager;
@@ -43,9 +44,13 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This requires using PostgreSQL 8.3 or newer.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event",
-             syntax = "pgevent:host:port/database/channel",
-             category = { Category.DATABASE }, headersClass = PgEventConstants.class)
+@UriEndpoint(
+        firstVersion = "2.15.0",
+        scheme = "pgevent",
+        title = "PostgresSQL Event",
+        syntax = "pgevent:host:port/database/channel",
+        category = {Category.DATABASE},
+        headersClass = PgEventConstants.class)
 public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
@@ -57,26 +62,36 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
 
     @UriPath(defaultValue = "localhost")
     private String host = "localhost";
+
     @UriPath(defaultValue = "5432")
     private Integer port = 5432;
+
     @UriPath
     @Metadata(required = true)
     private String database;
+
     @UriPath
     @Metadata(required = true)
     private String channel;
+
     @UriParam(defaultValue = "postgres", label = "security", secret = true)
     private String user = "postgres";
+
     @UriParam(label = "security", secret = true)
     private String pass;
+
     @UriParam(label = "advanced")
     private DataSource datasource;
+
     @UriParam(label = "consumer,advanced", defaultValue = "5000")
     private int reconnectDelay = 5000;
+
     @UriParam(label = "consumer,advanced")
     private ExecutorService workerPool;
+
     @UriParam(label = "consumer,advanced", defaultValue = "1")
     private int workerPoolCoreSize = 1;
+
     @UriParam(label = "consumer,advanced", defaultValue = "10")
     private int workerPoolMaxSize = 10;
 
@@ -125,7 +140,8 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
             ClassResolver classResolver = getCamelContext().getClassResolver();
             classResolver.resolveMandatoryClass(PGDriver.class.getName(), PgEventComponent.class.getClassLoader());
             conn = (PGConnection) DriverManager.getConnection(
-                    "jdbc:pgsql://" + this.getHost() + ":" + this.getPort() + "/" + this.getDatabase(), this.getUser(),
+                    "jdbc:pgsql://" + this.getHost() + ":" + this.getPort() + "/" + this.getDatabase(),
+                    this.getUser(),
                     this.getPass());
         }
         return conn;
@@ -177,13 +193,13 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
 
     private void validateInputs() throws IllegalArgumentException {
         if (getChannel() == null || getChannel().isEmpty()) {
-            throw new IllegalArgumentException("A required parameter was not set when creating this Endpoint (channel)");
+            throw new IllegalArgumentException(
+                    "A required parameter was not set when creating this Endpoint (channel)");
         }
 
         if (datasource == null && user == null) {
             throw new IllegalArgumentException(
-                    "A required parameter was "
-                                               + "not set when creating this Endpoint (pgUser or pgDataSource)");
+                    "A required parameter was " + "not set when creating this Endpoint (pgUser or pgDataSource)");
         }
     }
 
@@ -196,8 +212,9 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     ExecutorService createWorkerPool(Object source) {
-        return getCamelContext().getExecutorServiceManager().newThreadPool(source,
-                "PgEventConsumer[" + channel + "]", workerPoolCoreSize, workerPoolMaxSize);
+        return getCamelContext()
+                .getExecutorServiceManager()
+                .newThreadPool(source, "PgEventConsumer[" + channel + "]", workerPoolCoreSize, workerPoolMaxSize);
     }
 
     public String getHost() {

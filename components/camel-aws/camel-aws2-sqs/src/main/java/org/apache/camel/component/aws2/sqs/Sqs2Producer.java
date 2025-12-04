@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
 
 import java.util.ArrayList;
@@ -56,8 +57,8 @@ public class Sqs2Producer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Producer.class);
 
     private static final int MAX_ATTRIBUTES = 10;
-    private static final String MAX_MESSAGE
-            = "Number of message headers exceeded. At most " + MAX_ATTRIBUTES + " headers is allowed when sending to AWS SQS.";
+    private static final String MAX_MESSAGE = "Number of message headers exceeded. At most " + MAX_ATTRIBUTES
+            + " headers is allowed when sending to AWS SQS.";
 
     private transient String sqsProducerToString;
 
@@ -99,7 +100,8 @@ public class Sqs2Producer extends DefaultProducer {
 
     public void processSingleMessage(final Exchange exchange) {
         String body = exchange.getIn().getBody(String.class);
-        SendMessageRequest.Builder request = SendMessageRequest.builder().queueUrl(getQueueUrl()).messageBody(body);
+        SendMessageRequest.Builder request =
+                SendMessageRequest.builder().queueUrl(getQueueUrl()).messageBody(body);
         request.messageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
         addDelay(request, exchange);
         configureFifoAttributes(request, exchange);
@@ -116,7 +118,8 @@ public class Sqs2Producer extends DefaultProducer {
     }
 
     private void sendBatchMessage(SqsClient amazonSQS, Exchange exchange) {
-        SendMessageBatchRequest.Builder request = SendMessageBatchRequest.builder().queueUrl(getQueueUrl());
+        SendMessageBatchRequest.Builder request =
+                SendMessageBatchRequest.builder().queueUrl(getQueueUrl());
         Collection<SendMessageBatchRequestEntry> entries = new ArrayList<>();
         if (exchange.getIn().getBody() instanceof Iterable) {
             Iterable c = exchange.getIn().getBody(Iterable.class);
@@ -201,33 +204,33 @@ public class Sqs2Producer extends DefaultProducer {
         if (getEndpoint().getConfiguration().isFifoQueue()) {
             // use strategies
             if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
-                MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+                MessageGroupIdStrategy messageGroupIdStrategy =
+                        getEndpoint().getConfiguration().getMessageGroupIdStrategy();
                 String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
                 request.messageGroupId(messageGroupId);
             }
 
             if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy())) {
-                MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
-                        = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+                MessageDeduplicationIdStrategy messageDeduplicationIdStrategy =
+                        getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
                 String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
                 request.messageDeduplicationId(messageDeduplicationId);
             }
-
         }
     }
 
     private void configureFifoAttributes(SendMessageBatchRequestEntry.Builder request, Exchange exchange) {
         if (getEndpoint().getConfiguration().isFifoQueue()) {
             // use strategies
-            MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+            MessageGroupIdStrategy messageGroupIdStrategy =
+                    getEndpoint().getConfiguration().getMessageGroupIdStrategy();
             String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
             request.messageGroupId(messageGroupId);
 
-            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
-                    = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy =
+                    getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
             String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
             request.messageDeduplicationId(messageDeduplicationId);
-
         }
     }
 
@@ -283,7 +286,8 @@ public class Sqs2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (sqsProducerToString == null) {
-            sqsProducerToString = "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            sqsProducerToString =
+                    "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return sqsProducerToString;
     }
@@ -295,7 +299,8 @@ public class Sqs2Producer extends DefaultProducer {
             // only put the message header which is not filtered into the
             // message attribute
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                // We are going to put the first MAX_ATTRIBUTES headers, because this is the maximum Attributes an SQS Message could accept
+                // We are going to put the first MAX_ATTRIBUTES headers, because this is the maximum Attributes an SQS
+                // Message could accept
                 if (result.size() < MAX_ATTRIBUTES) {
                     MessageAttributeValue mav = Sqs2MessageHelper.toMessageAttributeValue(entry.getValue());
                     if (mav != null) {

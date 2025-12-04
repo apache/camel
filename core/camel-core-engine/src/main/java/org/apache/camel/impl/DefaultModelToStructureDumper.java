@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
@@ -40,12 +41,16 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
 
         String loc = def.getSourceLocationShort();
         answer.add(new ModelDumpLine(loc, "route", def.getRouteId(), 0, "route[" + def.getRouteId() + "]"));
-        String uri = brief ? def.getEndpoint().getEndpointBaseUri() : def.getEndpoint().getEndpointUri();
+        String uri = brief
+                ? def.getEndpoint().getEndpointBaseUri()
+                : def.getEndpoint().getEndpointUri();
         answer.add(new ModelDumpLine(loc, "from", def.getRouteId(), 1, "from[" + uri + "]"));
 
-        MBeanServer server = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer server =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
-            String jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
+            String jmxDomain =
+                    context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
             // get all the processor mbeans and sort them accordingly to their index
             String prefix = context.getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
             ObjectName query = ObjectName.getInstance(
@@ -53,8 +58,9 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
             Set<ObjectName> names = server.queryNames(query, null);
             List<ManagedProcessorMBean> mps = new ArrayList<>();
             for (ObjectName on : names) {
-                ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
-                        ManagedProcessorMBean.class);
+                ManagedProcessorMBean processor = context.getManagementStrategy()
+                        .getManagementAgent()
+                        .newProxyClient(on, ManagedProcessorMBean.class);
                 // the processor must belong to this route
                 if (def.getRouteId().equals(processor.getRouteId())) {
                     mps.add(processor);
@@ -87,5 +93,4 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
             return o1.getIndex().compareTo(o2.getIndex());
         }
     }
-
 }

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm.exceptions;
 
 public class XMLConstructionException extends CMDirectException {
 
-    public XMLConstructionException() {
-    }
+    public XMLConstructionException() {}
 
     public XMLConstructionException(final String message) {
         super(message);
@@ -33,8 +33,11 @@ public class XMLConstructionException extends CMDirectException {
         super(message, cause);
     }
 
-    public XMLConstructionException(final String message, final Throwable cause, final boolean enableSuppression,
-                                    final boolean writableStackTrace) {
+    public XMLConstructionException(
+            final String message,
+            final Throwable cause,
+            final boolean enableSuppression,
+            final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

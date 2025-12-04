@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class JdbcAggregateNotLostRemovedWhenConfirmedTest extends AbstractJdbcAggregationTestSupport {
 
@@ -39,7 +40,8 @@ public class JdbcAggregateNotLostRemovedWhenConfirmedTest extends AbstractJdbcAg
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
-        String exchangeId = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getExchangeId();
+        String exchangeId =
+                getMockEndpoint("mock:result").getReceivedExchanges().get(0).getExchangeId();
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> {
             // the exchange should NOT be in the completed repo as it was confirmed
@@ -57,7 +59,8 @@ public class JdbcAggregateNotLostRemovedWhenConfirmedTest extends AbstractJdbcAg
 
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
+                        .completionSize(5)
+                        .aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:result")
                         .end();

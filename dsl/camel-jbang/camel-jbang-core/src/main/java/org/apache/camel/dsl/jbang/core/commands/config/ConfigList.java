@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.config;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -21,10 +22,16 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays user configuration", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "list",
+        description = "Displays user configuration",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ConfigList extends CamelCommand {
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(
+            names = {"--global"},
+            description = "Use global or local configuration")
     boolean global = true;
 
     public ConfigList(CamelJBangMain main) {
@@ -43,8 +50,8 @@ public class ConfigList extends CamelCommand {
     }
 
     private void listConfigurations(boolean local) {
-        CommandLineHelper
-                .loadProperties(p -> {
+        CommandLineHelper.loadProperties(
+                p -> {
                     if (!p.stringPropertyNames().isEmpty()) {
                         String configurationType = local ? "Local" : "Global";
                         printer().println("----- " + configurationType + " -----");
@@ -53,6 +60,7 @@ public class ConfigList extends CamelCommand {
                         String v = p.getProperty(k);
                         printer().printf("%s = %s%n", k, v);
                     }
-                }, local);
+                },
+                local);
     }
 }

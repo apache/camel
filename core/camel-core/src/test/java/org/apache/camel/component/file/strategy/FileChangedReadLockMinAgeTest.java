@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -28,8 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockMinAgeTest.class);
@@ -39,8 +40,9 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists(testFile("out/slowfile.dat"));
-        mock.expectedMessagesMatches(
-                exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isGreaterThan(new Date().getTime() + 500));
+        mock.expectedMessagesMatches(exchangeProperty(Exchange.RECEIVED_TIMESTAMP)
+                .convertTo(long.class)
+                .isGreaterThan(new Date().getTime() + 500));
 
         writeSlowFile();
 
@@ -74,7 +76,7 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        "in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinAge=1000&readLockTimeout=1500"))
+                                "in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinAge=1000&readLockTimeout=1500"))
                         .to(fileUri("out"), "mock:result");
             }
         };

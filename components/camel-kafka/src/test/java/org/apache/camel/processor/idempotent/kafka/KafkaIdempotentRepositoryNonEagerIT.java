@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.kafka;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +38,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Test for non-eager idempotentRepository usage.
  */
@@ -51,8 +52,8 @@ public class KafkaIdempotentRepositoryNonEagerIT extends SimpleIdempotentTest {
     }
 
     @BindToRegistry("kafkaIdempotentRepositoryNonEager")
-    private final KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository(REPOSITORY_TOPIC, service.getBootstrapServers());
+    private final KafkaIdempotentRepository kafkaIdempotentRepository =
+            new KafkaIdempotentRepository(REPOSITORY_TOPIC, service.getBootstrapServers());
 
     @ContextFixture
     public void configureKafka(CamelContext context) {
@@ -64,9 +65,13 @@ public class KafkaIdempotentRepositoryNonEagerIT extends SimpleIdempotentTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in").to("mock:before")
-                        .idempotentConsumer(header("id")).idempotentRepository("kafkaIdempotentRepositoryNonEager").eager(false)
-                        .to("mock:out").end();
+                from("direct:in")
+                        .to("mock:before")
+                        .idempotentConsumer(header("id"))
+                        .idempotentRepository("kafkaIdempotentRepositoryNonEager")
+                        .eager(false)
+                        .to("mock:out")
+                        .end();
             }
         };
     }
@@ -81,8 +86,7 @@ public class KafkaIdempotentRepositoryNonEagerIT extends SimpleIdempotentTest {
         }
 
         MockEndpoint mockOut = contextExtension.getMockEndpoint("mock:out");
-        await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(5, mockOut.getReceivedCounter()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(5, mockOut.getReceivedCounter()));
 
         MockEndpoint mockBefore = contextExtension.getMockEndpoint("mock:before");
         assertEquals(10, mockBefore.getReceivedCounter());
@@ -109,12 +113,15 @@ public class KafkaIdempotentRepositoryNonEagerIT extends SimpleIdempotentTest {
             }
         }
 
-        assertEquals(5, mockOut.getReceivedCounter(),
+        assertEquals(
+                5,
+                mockOut.getReceivedCounter(),
                 "Only the 5 messages from the previous test should have been received ");
         MockEndpoint mockBefore = contextExtension.getMockEndpoint("mock:before");
 
-        assertEquals(20, mockBefore.getReceivedCounter(),
+        assertEquals(
+                20,
+                mockBefore.getReceivedCounter(),
                 "Test should have received 20 messages in total from all the tests");
     }
-
 }

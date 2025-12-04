@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift.impl;
 
 import java.nio.ByteBuffer;
@@ -32,8 +33,7 @@ import org.apache.thrift.TException;
 public class CalculatorSyncServerImpl implements Calculator.Iface {
 
     @Override
-    public void ping() {
-    }
+    public void ping() {}
 
     @Override
     public int add(int num1, int num2) {
@@ -73,8 +73,7 @@ public class CalculatorSyncServerImpl implements Calculator.Iface {
     }
 
     @Override
-    public void zip() {
-    }
+    public void zip() {}
 
     @Override
     public Work echo(Work w) {
@@ -83,8 +82,18 @@ public class CalculatorSyncServerImpl implements Calculator.Iface {
 
     @Override
     public int alltypes(
-            boolean v1, byte v2, short v3, int v4, long v5, double v6, String v7, ByteBuffer v8, Work v9, List<Integer> v10,
-            Set<String> v11, Map<String, Long> v12) {
+            boolean v1,
+            byte v2,
+            short v3,
+            int v4,
+            long v5,
+            double v6,
+            String v7,
+            ByteBuffer v8,
+            Work v9,
+            List<Integer> v10,
+            Set<String> v11,
+            Map<String, Long> v12) {
         return 1;
     }
 }

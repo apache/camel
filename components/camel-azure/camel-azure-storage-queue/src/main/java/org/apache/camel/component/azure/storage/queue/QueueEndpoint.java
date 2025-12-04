@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
 
 import java.util.Map;
@@ -34,9 +35,13 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Stores and retrieves messages to/from Azure Storage Queue.
  */
-@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service",
-             syntax = "azure-storage-queue:accountName/queueName", category = { Category.CLOUD, Category.MESSAGING },
-             headersClass = QueueConstants.class)
+@UriEndpoint(
+        firstVersion = "3.3.0",
+        scheme = "azure-storage-queue",
+        title = "Azure Storage Queue Service",
+        syntax = "azure-storage-queue:accountName/queueName",
+        category = {Category.CLOUD, Category.MESSAGING},
+        headersClass = QueueConstants.class)
 public class QueueEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private QueueServiceClient queueServiceClient;
@@ -69,7 +74,8 @@ public class QueueEndpoint extends ScheduledPollEndpoint implements EndpointServ
         super.doStart();
 
         queueServiceClient = configuration.getServiceClient() != null
-                ? configuration.getServiceClient() : QueueClientFactory.createQueueServiceClient(configuration);
+                ? configuration.getServiceClient()
+                : QueueClientFactory.createQueueServiceClient(configuration);
     }
 
     /**
@@ -89,7 +95,8 @@ public class QueueEndpoint extends ScheduledPollEndpoint implements EndpointServ
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(configuration.getAccountName()) && ObjectHelper.isNotEmpty(configuration.getQueueName())) {
+        if (ObjectHelper.isNotEmpty(configuration.getAccountName())
+                && ObjectHelper.isNotEmpty(configuration.getQueueName())) {
             return "azure-storage-queue:" + configuration.getAccountName() + "/" + configuration.getQueueName();
         }
         return null;

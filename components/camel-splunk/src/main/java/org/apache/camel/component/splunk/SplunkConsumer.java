@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
 
 import java.util.LinkedList;
@@ -122,5 +123,4 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
         }
         return total;
     }
-
 }

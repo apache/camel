@@ -39,8 +39,7 @@ public class OpenApiTrait extends BaseTrait {
         if (openApiTrait.getConfigmaps() != null) {
             for (String resource : openApiTrait.getConfigmaps()) {
                 if (!resource.startsWith("configmap:")) {
-                    throw new RuntimeCamelException(
-                            "Unsupported resource %s, must be a configmap".formatted(resource));
+                    throw new RuntimeCamelException("Unsupported resource %s, must be a configmap".formatted(resource));
                 }
             }
         }
@@ -55,7 +54,9 @@ public class OpenApiTrait extends BaseTrait {
         if (ObjectHelper.isNotEmpty(openApiTrait.getConfigmaps())) {
             MountTrait delegate = new MountTrait();
             delegate.apply(
-                    TraitsBuilder.traits().withMount(MountBuilder.mount().withResources(openApiTrait.getConfigmaps())).build(),
+                    TraitsBuilder.traits()
+                            .withMount(MountBuilder.mount().withResources(openApiTrait.getConfigmaps()))
+                            .build(),
                     context);
         }
     }

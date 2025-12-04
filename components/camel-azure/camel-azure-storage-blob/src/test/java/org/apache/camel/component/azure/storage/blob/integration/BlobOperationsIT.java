@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -55,13 +63,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class BlobOperationsIT extends Base {
 
     private BlobContainerClientWrapper blobContainerClientWrapper;
@@ -80,9 +81,10 @@ class BlobOperationsIT extends Base {
 
         // create test blob
         final InputStream inputStream = new ByteArrayInputStream("awesome camel!".getBytes());
-        blobContainerClientWrapper.getBlobClientWrapper(randomBlobName).uploadBlockBlob(inputStream,
-                BlobUtils.getInputStreamLength(inputStream), null, null, null, null,
-                null, null);
+        blobContainerClientWrapper
+                .getBlobClientWrapper(randomBlobName)
+                .uploadBlockBlob(
+                        inputStream, BlobUtils.getInputStreamLength(inputStream), null, null, null, null, null, null);
     }
 
     @AfterAll
@@ -157,12 +159,14 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testUploadBlockBlob() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
+        final BlobClientWrapper blobClientWrapper =
+                blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         // first: test as file provided
-        final File fileToUpload
-                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file.txt")).getFile());
+        final File fileToUpload =
+                new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file.txt"))
+                        .getFile());
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(fileToUpload);
 
@@ -177,7 +181,8 @@ class BlobOperationsIT extends Base {
         // check content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
-        assertEquals("awesome camel to upload!",
+        assertEquals(
+                "awesome camel to upload!",
                 IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
 
         blobClientWrapper.delete(null, null, null);
@@ -205,11 +210,13 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testUploadBlockBlobAsCachedStream() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
+        final BlobClientWrapper blobClientWrapper =
+                blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
-        final File fileToUpload
-                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file.txt")).getFile());
+        final File fileToUpload =
+                new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file.txt"))
+                        .getFile());
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new FileInputStreamCache(fileToUpload));
 
@@ -224,7 +231,8 @@ class BlobOperationsIT extends Base {
         // check content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
-        assertEquals("awesome camel to upload!",
+        assertEquals(
+                "awesome camel to upload!",
                 IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
 
         blobClientWrapper.delete(null, null, null);
@@ -232,11 +240,13 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testUploadBlockBlobAsStreamWithBlobSizeHeader() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
+        final BlobClientWrapper blobClientWrapper =
+                blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
-        final File fileToUpload
-                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file.txt")).getFile());
+        final File fileToUpload =
+                new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file.txt"))
+                        .getFile());
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new FileInputStream(fileToUpload));
         exchange.getIn().setHeader(BlobConstants.BLOB_UPLOAD_SIZE, fileToUpload.length());
@@ -255,7 +265,8 @@ class BlobOperationsIT extends Base {
         // check content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
-        assertEquals("awesome camel to upload!",
+        assertEquals(
+                "awesome camel to upload!",
                 IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
 
         blobClientWrapper.delete(null, null, null);
@@ -263,7 +274,8 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testCommitAndStageBlockBlob() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
+        final BlobClientWrapper blobClientWrapper =
+                blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         final List<BlobBlock> blocks = new LinkedList<>();
@@ -284,7 +296,8 @@ class BlobOperationsIT extends Base {
 
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
-        assertEquals("HelloFromCamel", IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
+        assertEquals(
+                "HelloFromCamel", IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
 
         blobClientWrapper.delete(null, null, null);
     }
@@ -303,7 +316,8 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testCreateAndUpdateAppendBlob() throws IOException {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
+        final BlobClientWrapper blobClientWrapper =
+                blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         final String data = "Hello world from my awesome tests!";
@@ -331,7 +345,8 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testCreateAndUploadPageBlob() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
+        final BlobClientWrapper blobClientWrapper =
+                blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
@@ -362,7 +377,8 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testResizePageBlob() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
+        final BlobClientWrapper blobClientWrapper =
+                blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[1024]; // we set range for the page from 0-511
@@ -397,7 +413,8 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testClearPages() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
+        final BlobClientWrapper blobClientWrapper =
+                blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
@@ -420,14 +437,17 @@ class BlobOperationsIT extends Base {
 
         // The string returned here is a 512 long sequence of null code points (U+000) which is considered a space for
         // trim(), but not for isBlank.
-        assertTrue(IOUtils.toString((InputStream) getBlobResponse.getBody(), StandardCharsets.UTF_8).trim().isEmpty());
+        assertTrue(IOUtils.toString((InputStream) getBlobResponse.getBody(), StandardCharsets.UTF_8)
+                .trim()
+                .isEmpty());
 
         blobClientWrapper.delete(null, null, null);
     }
 
     @Test
     void testGetPageBlobRanges() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
+        final BlobClientWrapper blobClientWrapper =
+                blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511

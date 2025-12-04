@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -21,13 +22,13 @@ import jakarta.xml.bind.annotation.XmlTransient;
 /**
  * Balances message processing among a number of nodes
  */
-public abstract class LoadBalancerDefinition extends IdentifiedType implements CopyableDefinition<LoadBalancerDefinition> {
+public abstract class LoadBalancerDefinition extends IdentifiedType
+        implements CopyableDefinition<LoadBalancerDefinition> {
 
     @XmlTransient
     private String loadBalancerTypeName;
 
-    public LoadBalancerDefinition() {
-    }
+    public LoadBalancerDefinition() {}
 
     protected LoadBalancerDefinition(LoadBalancerDefinition source) {
         this.loadBalancerTypeName = source.loadBalancerTypeName;

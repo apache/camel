@@ -17,6 +17,10 @@
 
 package org.apache.camel.component.debezium.oracle.configuration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.connector.oracle.OracleConnector;
@@ -26,16 +30,12 @@ import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OracleConnectorEmbeddedDebeziumConfigurationTest {
 
     // @Test
     void testIfCreatesConfig() {
-        final OracleConnectorEmbeddedDebeziumConfiguration configuration
-                = new OracleConnectorEmbeddedDebeziumConfiguration();
+        final OracleConnectorEmbeddedDebeziumConfiguration configuration =
+                new OracleConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_user");
         configuration.setMaxQueueSize(1212);
@@ -46,14 +46,15 @@ public class OracleConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("test_user", dbzConfigurations.getString(OracleConnectorConfig.USER));
         assertEquals(1212, dbzConfigurations.getInteger(CommonConnectorConfig.MAX_QUEUE_SIZE));
         assertEquals(OracleConnector.class.getName(), dbzConfigurations.getString(AsyncEmbeddedEngine.CONNECTOR_CLASS));
-        assertEquals(DebeziumConstants.DEFAULT_OFFSET_STORAGE,
+        assertEquals(
+                DebeziumConstants.DEFAULT_OFFSET_STORAGE,
                 dbzConfigurations.getString(AsyncEmbeddedEngine.OFFSET_STORAGE));
     }
 
     @Test
     void testIfValidatesConfigurationCorrectly() {
-        final OracleConnectorEmbeddedDebeziumConfiguration configuration
-                = new OracleConnectorEmbeddedDebeziumConfiguration();
+        final OracleConnectorEmbeddedDebeziumConfiguration configuration =
+                new OracleConnectorEmbeddedDebeziumConfiguration();
 
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
@@ -71,8 +72,8 @@ public class OracleConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testValidateConfigurationsForAllRequiredFields() {
-        final OracleConnectorEmbeddedDebeziumConfiguration configuration
-                = new OracleConnectorEmbeddedDebeziumConfiguration();
+        final OracleConnectorEmbeddedDebeziumConfiguration configuration =
+                new OracleConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabaseHostname("localhost");
@@ -92,5 +93,4 @@ public class OracleConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("/offset/file", configuration.getOffsetStorageFileName());
         assertEquals("/database_history/file", configuration.getSchemaHistoryInternalFileFilename());
     }
-
 }

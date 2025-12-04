@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi.validator;
 
 import java.util.Set;
@@ -50,5 +51,4 @@ public interface RequestValidator {
     default Set<String> validate(Exchange exchange) {
         return validate(exchange, getOperation());
     }
-
 }

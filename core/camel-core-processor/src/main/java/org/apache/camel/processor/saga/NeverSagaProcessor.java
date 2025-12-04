@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.saga;
 
 import org.apache.camel.AsyncCallback;
@@ -29,8 +30,12 @@ import org.apache.camel.saga.CamelSagaStep;
  */
 public class NeverSagaProcessor extends SagaProcessor {
 
-    public NeverSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
-                              SagaCompletionMode completionMode, CamelSagaStep step) {
+    public NeverSagaProcessor(
+            CamelContext camelContext,
+            Processor childProcessor,
+            CamelSagaService sagaService,
+            SagaCompletionMode completionMode,
+            CamelSagaStep step) {
         super(camelContext, childProcessor, sagaService, completionMode, step);
         if (!step.isEmpty()) {
             throw new IllegalArgumentException("Saga configuration is not allowed when propagation is set to NEVER");
@@ -42,15 +47,16 @@ public class NeverSagaProcessor extends SagaProcessor {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        getCurrentSagaCoordinator(exchange).whenComplete((coordinator, ex) -> ifNotException(ex, exchange, callback, () -> {
-            if (coordinator != null) {
-                exchange.setException(
-                        new CamelExchangeException("Route cannot handle exchanges that are joining a saga", exchange));
-                callback.done(false);
-            } else {
-                super.process(exchange, doneSync -> callback.done(false));
-            }
-        }));
+        getCurrentSagaCoordinator(exchange)
+                .whenComplete((coordinator, ex) -> ifNotException(ex, exchange, callback, () -> {
+                    if (coordinator != null) {
+                        exchange.setException(new CamelExchangeException(
+                                "Route cannot handle exchanges that are joining a saga", exchange));
+                        callback.done(false);
+                    } else {
+                        super.process(exchange, doneSync -> callback.done(false));
+                    }
+                }));
         return false;
     }
 }

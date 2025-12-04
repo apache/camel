@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,9 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentConsumerLoadStoreTest extends ContextTestSupport {
 
@@ -86,7 +87,9 @@ public class FileIdempotentConsumerLoadStoreTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").idempotentConsumer(header("messageId"), repo).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock:result");
             }
         };
     }

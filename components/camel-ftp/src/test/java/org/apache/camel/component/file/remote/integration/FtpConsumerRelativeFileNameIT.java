@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertDirectoryEquals;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,14 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertDirectoryEquals;
-import static org.awaitility.Awaitility.await;
-
 public class FtpConsumerRelativeFileNameIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/out/filename-consumer?password=admin&recursive=true&sortBy=file:name";
+                + "/out/filename-consumer?password=admin&recursive=true&sortBy=file:name";
     }
 
     @Override
@@ -66,8 +67,7 @@ public class FtpConsumerRelativeFileNameIT extends FtpServerTestSupport {
     }
 
     private void isExpectedFile(MockEndpoint mock, String s, int exchangeNumber) {
-        assertDirectoryEquals(s,
-                mock.getReceivedExchanges().get(exchangeNumber).getIn().getHeader(Exchange.FILE_NAME, String.class));
+        assertDirectoryEquals(
+                s, mock.getReceivedExchanges().get(exchangeNumber).getIn().getHeader(Exchange.FILE_NAME, String.class));
     }
-
 }

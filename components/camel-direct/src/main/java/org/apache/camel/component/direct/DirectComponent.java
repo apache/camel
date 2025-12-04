@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.direct;
 
 import java.util.HashMap;
@@ -49,11 +50,11 @@ public class DirectComponent extends DefaultComponent {
 
     @Metadata(label = "producer", defaultValue = "true")
     private boolean block = true;
+
     @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
 
-    public DirectComponent() {
-    }
+    public DirectComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -102,9 +103,8 @@ public class DirectComponent extends DefaultComponent {
         consumersLock.lock();
         try {
             if (consumers.putIfAbsent(key, consumer) != null) {
-                throw new IllegalArgumentException(
-                        "Cannot add a 2nd consumer to the same endpoint: " + key
-                                                   + ". DirectEndpoint only allows one consumer.");
+                throw new IllegalArgumentException("Cannot add a 2nd consumer to the same endpoint: " + key
+                        + ". DirectEndpoint only allows one consumer.");
             }
             // state changed so inc counter
             stateCounter++;
@@ -132,7 +132,7 @@ public class DirectComponent extends DefaultComponent {
             DirectConsumer answer = consumers.get(key);
             if (answer == null && block) {
                 StopWatch watch = new StopWatch();
-                for (;;) {
+                for (; ; ) {
                     answer = consumers.get(key);
                     if (answer != null) {
                         break;
@@ -149,5 +149,4 @@ public class DirectComponent extends DefaultComponent {
             consumersLock.unlock();
         }
     }
-
 }

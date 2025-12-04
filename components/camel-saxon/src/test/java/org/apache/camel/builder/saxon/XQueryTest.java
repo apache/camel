@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.saxon;
+
+import static org.apache.camel.component.xquery.XQueryBuilder.xquery;
+import static org.apache.camel.util.ObjectHelper.className;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.w3c.dom.Document;
 
@@ -25,11 +31,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.xquery.XQueryBuilder.xquery;
-import static org.apache.camel.util.ObjectHelper.className;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class XQueryTest {
     @Test
     public void testXQuery() {
@@ -37,8 +38,9 @@ public class XQueryTest {
         context.start();
 
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody(
-                "<products><product type='food'><pizza/></product><product type='beer'><stella/></product></products>");
+        exchange.getIn()
+                .setBody(
+                        "<products><product type='food'><pizza/></product><product type='beer'><stella/></product></products>");
 
         XQueryBuilder xquery = xquery(".//product[@type = 'beer']/*");
         xquery.init(context);

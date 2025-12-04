@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
@@ -23,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MulticastStopOnExceptionTest extends ContextTestSupport {
 
@@ -66,7 +67,11 @@ public class MulticastStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").multicast().stopOnException().to("direct:foo", "direct:bar", "direct:baz").end()
+                from("direct:start")
+                        .multicast()
+                        .stopOnException()
+                        .to("direct:foo", "direct:bar", "direct:baz")
+                        .end()
                         .to("mock:result");
 
                 from("direct:foo").to("mock:foo");

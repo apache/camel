@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -35,10 +36,17 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
         // org.apache.camel.builder.ExpressionBuilder.headerExpression(java.lang.String) is going to property fallback
         // the test (without the fix) will fail into error:
         // java.lang.AssertionError: Assertion error at index 0 on mock mock://aggregated with predicate:
-        // header(CamelAggregationCompleteCurrentGroup) is null evaluated as: true is null on Exchange[ID-MacBook-Pro-1578822701664-0-2]
-        getMockEndpoint("mock:aggregated").allMessages().header(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP).isNull();
+        // header(CamelAggregationCompleteCurrentGroup) is null evaluated as: true is null on
+        // Exchange[ID-MacBook-Pro-1578822701664-0-2]
+        getMockEndpoint("mock:aggregated")
+                .allMessages()
+                .header(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP)
+                .isNull();
         // according to manual
-        getMockEndpoint("mock:aggregated").allMessages().exchangeProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP).isNull();
+        getMockEndpoint("mock:aggregated")
+                .allMessages()
+                .exchangeProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP)
+                .isNull();
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -55,7 +63,9 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).completionTimeout(1000)
+                from("direct:start")
+                        .aggregate(header("id"), new MyCompletionStrategy())
+                        .completionTimeout(1000)
                         .to("mock:aggregated");
             }
         };
@@ -69,7 +79,8 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
                 return newExchange;
             }
 
-            String body = oldExchange.getIn().getBody(String.class) + "+" + newExchange.getIn().getBody(String.class);
+            String body = oldExchange.getIn().getBody(String.class) + "+"
+                    + newExchange.getIn().getBody(String.class);
             oldExchange.getIn().setBody(body);
             if (body.length() >= 5) {
                 oldExchange.setProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP, true);

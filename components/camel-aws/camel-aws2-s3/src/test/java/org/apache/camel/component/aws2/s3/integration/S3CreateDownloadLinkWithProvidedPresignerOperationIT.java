@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -32,15 +35,13 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class S3CreateDownloadLinkWithProvidedPresignerOperationIT extends Aws2S3Base {
 
     @BindToRegistry("amazonS3Presigner")
-    S3Presigner presigner
-            = S3Presigner.builder()
-                    .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
-                    .region(Region.of(Region.EU_WEST_1.toString())).build();
+    S3Presigner presigner = S3Presigner.builder()
+            .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
+            .region(Region.of(Region.EU_WEST_1.toString()))
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -92,9 +93,7 @@ public class S3CreateDownloadLinkWithProvidedPresignerOperationIT extends Aws2S3
 
                 from("direct:addObject").to(awsEndpoint);
 
-                from("direct:createDownloadLink").to(awsEndpoint)
-                        .to("mock:result");
-
+                from("direct:createDownloadLink").to(awsEndpoint).to("mock:result");
             }
         };
     }

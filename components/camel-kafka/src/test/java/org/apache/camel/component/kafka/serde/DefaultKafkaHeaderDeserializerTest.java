@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.serde;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.kafka.serde;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.Test;
 
 public class DefaultKafkaHeaderDeserializerTest {
 
@@ -28,12 +29,11 @@ public class DefaultKafkaHeaderDeserializerTest {
 
     @Test
     public void shouldDeserializeAsIs() {
-        byte[] value = new byte[] { 0, 4, -2, 54, 126 };
+        byte[] value = new byte[] {0, 4, -2, 54, 126};
 
         Object deserializedValue = deserializer.deserialize("someKey", value);
 
         assertThat(deserializedValue, CoreMatchers.instanceOf(byte[].class));
         assertArrayEquals(value, (byte[]) deserializedValue);
     }
-
 }

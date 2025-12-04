@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import java.time.Duration;
@@ -60,11 +61,12 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         // create the regular and fallback processors
         Processor processor = createChildProcessor(true);
         Processor fallback = null;
-        if (definition.getOnFallback() != null && !definition.getOnFallback().getOutputs().isEmpty()) {
+        if (definition.getOnFallback() != null
+                && !definition.getOnFallback().getOutputs().isEmpty()) {
             fallback = createOutputsProcessor(definition.getOnFallback().getOutputs());
         }
-        boolean fallbackViaNetwork
-                = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
+        boolean fallbackViaNetwork = definition.getOnFallback() != null
+                && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
             throw new UnsupportedOperationException("camel-resilience4j does not support onFallbackViaNetwork");
         }
@@ -87,7 +89,13 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         }
 
         ResilienceProcessor answer = new ResilienceProcessor(
-                cbConfig, bhConfig, tlConfig, processor, fallback, throwExceptionWhenHalfOpenOrOpenState, recordPredicate,
+                cbConfig,
+                bhConfig,
+                tlConfig,
+                processor,
+                fallback,
+                throwExceptionWhenHalfOpenOrOpenState,
+                recordPredicate,
                 ignorePredicate);
         answer.setDisabled(isDisabled(camelContext, definition));
         configureTimeoutExecutorService(answer, config);
@@ -101,7 +109,8 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     }
 
     private void configureResilience4jRegistries(CamelContext camelContext, ResilienceProcessor processor) {
-        CircuitBreakerRegistry registry = CamelContextHelper.findSingleByType(camelContext, CircuitBreakerRegistry.class);
+        CircuitBreakerRegistry registry =
+                CamelContextHelper.findSingleByType(camelContext, CircuitBreakerRegistry.class);
         if (registry == null) {
             registry = camelContext.getCamelContextExtension().getContextPlugin(CircuitBreakerRegistry.class);
         }
@@ -130,7 +139,8 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         processor.setBulkheadRegistry(registry3);
     }
 
-    private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config) throws ClassNotFoundException {
+    private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config)
+            throws ClassNotFoundException {
         CircuitBreakerConfig.Builder builder = CircuitBreakerConfig.custom();
         if (config.getAutomaticTransitionFromOpenToHalfOpenEnabled() != null) {
             builder.automaticTransitionFromOpenToHalfOpenEnabled(
@@ -207,7 +217,8 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         return builder.build();
     }
 
-    private void configureTimeoutExecutorService(ResilienceProcessor processor, Resilience4jConfigurationCommon config) {
+    private void configureTimeoutExecutorService(
+            ResilienceProcessor processor, Resilience4jConfigurationCommon config) {
         if (!parseBoolean(config.getTimeoutEnabled(), false)) {
             return;
         }
@@ -237,20 +248,30 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
-        loadProperties(properties, Suppliers.firstNotNull(
-                () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class).getResilience4jConfiguration(null),
-                () -> lookupByNameAndType(ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID,
-                        Resilience4jConfigurationDefinition.class)),
+        loadProperties(
+                properties,
+                Suppliers.firstNotNull(
+                        () -> camelContext
+                                .getCamelContextExtension()
+                                .getContextPlugin(Model.class)
+                                .getResilience4jConfiguration(null),
+                        () -> lookupByNameAndType(
+                                ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID,
+                                Resilience4jConfigurationDefinition.class)),
                 configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfiguration() != null) {
             final String ref = parseString(definition.getConfiguration());
-            loadProperties(properties, Suppliers.firstNotNull(
-                    () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class)
-                            .getResilience4jConfiguration(ref),
-                    () -> mandatoryLookup(ref, Resilience4jConfigurationDefinition.class)),
+            loadProperties(
+                    properties,
+                    Suppliers.firstNotNull(
+                            () -> camelContext
+                                    .getCamelContextExtension()
+                                    .getContextPlugin(Model.class)
+                                    .getResilience4jConfiguration(ref),
+                            () -> mandatoryLookup(ref, Resilience4jConfigurationDefinition.class)),
                     configurer);
         }
 
@@ -321,5 +342,4 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             return false;
         };
     }
-
 }

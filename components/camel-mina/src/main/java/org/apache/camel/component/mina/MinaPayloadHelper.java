@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.Exchange;
@@ -29,7 +30,7 @@ import org.apache.camel.support.DefaultExchangeHolder;
 public final class MinaPayloadHelper {
 
     private MinaPayloadHelper() {
-        //Utility Class
+        // Utility Class
     }
 
     public static Object getIn(MinaEndpoint endpoint, Exchange exchange) {

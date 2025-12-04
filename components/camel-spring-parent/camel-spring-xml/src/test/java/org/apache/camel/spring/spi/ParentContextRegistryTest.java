@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ParentContextRegistryTest extends SpringTestSupport {
     private static final List<String> EXPECTED_BEAN = Collections.singletonList("TestValue");
 
@@ -34,8 +35,7 @@ public class ParentContextRegistryTest extends SpringTestSupport {
         ClassPathXmlApplicationContext parentContext = new ClassPathXmlApplicationContext(
                 "parentContextRegistryTestParent.xml", ParentContextRegistryTest.class);
         return new ClassPathXmlApplicationContext(
-                new String[] { "parentContextRegistryTestChild.xml" },
-                ParentContextRegistryTest.class, parentContext);
+                new String[] {"parentContextRegistryTestChild.xml"}, ParentContextRegistryTest.class, parentContext);
     }
 
     @Test
@@ -55,7 +55,8 @@ public class ParentContextRegistryTest extends SpringTestSupport {
 
     @Test
     public void testFindByTypeWithName() {
-        assertEquals(Collections.singletonMap("testParentBean", EXPECTED_BEAN),
+        assertEquals(
+                Collections.singletonMap("testParentBean", EXPECTED_BEAN),
                 context.getRegistry().findByTypeWithName(List.class));
     }
 }

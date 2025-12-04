@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mail.Mailbox.MailboxUser;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for testing mail polling is happening according to the default poll interval.
@@ -65,8 +66,7 @@ public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // we overrule the default of 60 sec to 1 so the unit test is faster
-                from(bond.uriPrefix(Protocol.imap) + "&delay=1000")
-                        .to("mock:result");
+                from(bond.uriPrefix(Protocol.imap) + "&delay=1000").to("mock:result");
             }
         };
     }

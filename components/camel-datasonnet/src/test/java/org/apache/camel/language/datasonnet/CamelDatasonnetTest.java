@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -33,8 +36,6 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CamelDatasonnetTest extends CamelSpringTestSupport {
     private MockEndpoint mock;
 
@@ -45,68 +46,57 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
 
     @Test
     public void testTransform() throws Exception {
-        runCamelTest(loadResourceAsString("simpleMapping_payload.json"),
+        runCamelTest(
+                loadResourceAsString("simpleMapping_payload.json"),
                 loadResourceAsString("simpleMapping_result.json"),
                 "direct:basicTransform");
     }
 
     @Test
     public void testTransformXML() throws Exception {
-        runCamelTest(loadResourceAsString("payload.xml"),
+        runCamelTest(
+                loadResourceAsString("payload.xml"),
                 loadResourceAsString("readXMLExtTest.json"),
                 "direct:transformXML");
     }
 
     @Test
     public void testTransformCSV() throws Exception {
-        runCamelTest(loadResourceAsString("payload.csv"),
-                "{\"account\":\"123\"}",
-                "direct:transformCSV");
+        runCamelTest(loadResourceAsString("payload.csv"), "{\"account\":\"123\"}", "direct:transformCSV");
     }
 
     @Test
     public void testDatasonnetScript() throws Exception {
-        runCamelTest(loadResourceAsString("simpleMapping_payload.json"),
+        runCamelTest(
+                loadResourceAsString("simpleMapping_payload.json"),
                 loadResourceAsString("simpleMapping_result.json"),
                 "direct:datasonnetScript");
     }
 
     @Test
     public void testNamedImports() throws Exception {
-        runCamelTest("{}",
-                loadResourceAsString("namedImports_result.json"),
-                "direct:namedImports");
+        runCamelTest("{}", loadResourceAsString("namedImports_result.json"), "direct:namedImports");
     }
 
     @Test
     public void testExpressionLanguage() throws Exception {
-        runCamelTest("World",
-                "{ \"test\":\"Hello, World\"}",
-                "direct:expressionLanguage");
+        runCamelTest("World", "{ \"test\":\"Hello, World\"}", "direct:expressionLanguage");
     }
 
     @Test
     public void testVariable() throws Exception {
-        runCamelTest("World",
-                "{ \"test\":\"Hello, World\"}",
-                "direct:variable");
+        runCamelTest("World", "{ \"test\":\"Hello, World\"}", "direct:variable");
     }
 
     @Test
     public void testNullInput() throws Exception {
-        runCamelTest("",
-                "{ \"test\":\"Hello, World\"}",
-                "direct:nullInput");
-        runCamelTest(null,
-                "{ \"test\":\"Hello, World\"}",
-                "direct:nullInput");
+        runCamelTest("", "{ \"test\":\"Hello, World\"}", "direct:nullInput");
+        runCamelTest(null, "{ \"test\":\"Hello, World\"}", "direct:nullInput");
     }
 
     @Test
     public void testRegistryLibraries() throws Exception {
-        runCamelTest("",
-                "{ \"test\":\"Hello, World\"}",
-                "direct:registryLibraries");
+        runCamelTest("", "{ \"test\":\"Hello, World\"}", "direct:registryLibraries");
     }
 
     @Test
@@ -126,9 +116,7 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         theGizmo.setDate(df.parse("2020-01-06"));
 
-        runCamelTest(theGizmo,
-                loadResourceAsString("javaTest.json"),
-                "direct:readJava");
+        runCamelTest(theGizmo, loadResourceAsString("javaTest.json"), "direct:readJava");
     }
 
     @Test
@@ -148,9 +136,7 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         theGizmo.setDate(df.parse("2020-01-06"));
 
-        runCamelTest(theGizmo,
-                loadResourceAsString("javaTest.json"),
-                "direct:readJavaDatasonnetHeader");
+        runCamelTest(theGizmo, loadResourceAsString("javaTest.json"), "direct:readJavaDatasonnetHeader");
     }
 
     @Test
@@ -190,7 +176,6 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
             response = ExchangeHelper.convertToMandatoryType(exchange, String.class, ((Document<?>) body).getContent());
         } else {
             response = exchange.getMessage().getBody(String.class);
-
         }
         JSONAssert.assertEquals(expectedJson, response, true);
     }

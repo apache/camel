@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import java.io.IOException;
@@ -85,9 +86,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
 
         String attachmentMeta = response.getHeaderString(ServiceNowConstants.ATTACHMENT_META_HEADER);
         if (ObjectHelper.isNotEmpty(attachmentMeta)) {
-            message.setHeader(
-                    ServiceNowConstants.CONTENT_META,
-                    mapper.readValue(attachmentMeta, Map.class));
+            message.setHeader(ServiceNowConstants.CONTENT_META, mapper.readValue(attachmentMeta, Map.class));
         }
 
         copyHeader(response, HttpHeaders.CONTENT_TYPE, message, ServiceNowConstants.CONTENT_TYPE);
@@ -217,16 +216,11 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     // *********************************
 
     protected Object getRequestParamFromHeader(ServiceNowParam sysParam, Message message) {
-        return message.getHeader(
-                sysParam.getHeader(),
-                sysParam.getDefaultValue(config),
-                sysParam.getType());
+        return message.getHeader(sysParam.getHeader(), sysParam.getDefaultValue(config), sysParam.getType());
     }
 
     protected Object getMandatoryRequestParamFromHeader(ServiceNowParam sysParam, Message message) {
-        return ObjectHelper.notNull(
-                getRequestParamFromHeader(sysParam, message),
-                sysParam.getHeader());
+        return ObjectHelper.notNull(getRequestParamFromHeader(sysParam, message), sysParam.getHeader());
     }
 
     protected void copyHeader(Response from, String fromId, Message to, String toId) {

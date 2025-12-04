@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
@@ -24,7 +25,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.LifecycleStrategySupport;
 
-class DefaultAutowiredLifecycleStrategy extends LifecycleStrategySupport implements AutowiredLifecycleStrategy, Ordered {
+class DefaultAutowiredLifecycleStrategy extends LifecycleStrategySupport
+        implements AutowiredLifecycleStrategy, Ordered {
     private final CamelContext camelContext;
 
     public DefaultAutowiredLifecycleStrategy(CamelContext camelContext) {
@@ -79,5 +81,4 @@ class DefaultAutowiredLifecycleStrategy extends LifecycleStrategySupport impleme
     private void autowire(String name, String kind, Object target) {
         doAutoWire(name, kind, target, camelContext);
     }
-
 }

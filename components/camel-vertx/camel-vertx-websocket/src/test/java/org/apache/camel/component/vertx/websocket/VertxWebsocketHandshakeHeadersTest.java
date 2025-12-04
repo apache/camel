@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -34,10 +39,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSupport {
 
@@ -100,7 +101,8 @@ public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSuppor
 
         HttpServerOptions options = new HttpServerOptions();
 
-        VertxWebsocketHostConfiguration configuration = new VertxWebsocketHostConfiguration(vertx, router, options, null);
+        VertxWebsocketHostConfiguration configuration =
+                new VertxWebsocketHostConfiguration(vertx, router, options, null);
         VertxWebsocketHostKey key = new VertxWebsocketHostKey("localhost", 0);
         VertxWebsocketHost host = new VertxWebsocketHost(context, configuration, key);
         host.start();
@@ -110,9 +112,7 @@ public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .toD("vertx-websocket:localhost:${header.port}/ws?" + handshakeHeaders);
-
+                from("direct:start").toD("vertx-websocket:localhost:${header.port}/ws?" + handshakeHeaders);
             }
         });
 
@@ -187,7 +187,8 @@ public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSuppor
 
         HttpServerOptions options = new HttpServerOptions();
 
-        VertxWebsocketHostConfiguration configuration = new VertxWebsocketHostConfiguration(vertx, router, options, null);
+        VertxWebsocketHostConfiguration configuration =
+                new VertxWebsocketHostConfiguration(vertx, router, options, null);
         VertxWebsocketHostKey key = new VertxWebsocketHostKey("localhost", 0);
         VertxWebsocketHost host = new VertxWebsocketHost(context, configuration, key);
         host.start();
@@ -221,6 +222,5 @@ public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSuppor
     }
 
     @Override
-    protected void startCamelContext() {
-    }
+    protected void startCamelContext() {}
 }

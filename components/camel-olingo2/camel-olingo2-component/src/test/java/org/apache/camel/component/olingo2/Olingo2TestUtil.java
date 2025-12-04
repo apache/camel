@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2;
 
 import java.io.IOException;
@@ -28,9 +29,7 @@ import org.slf4j.LoggerFactory;
 public final class Olingo2TestUtil {
     private static final Logger LOG = LoggerFactory.getLogger(Olingo2TestUtil.class);
 
-    private Olingo2TestUtil() {
-
-    }
+    private Olingo2TestUtil() {}
 
     static void generateSampleData(String serviceUrl) throws IOException {
         try {

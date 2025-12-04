@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.tts;
 
 import org.apache.camel.spi.Metadata;
@@ -29,22 +30,27 @@ public interface WatsonTextToSpeechConstants {
     // Synthesis headers
     @Metadata(description = "The text to synthesize into speech", javaType = "String")
     String TEXT = "CamelIBMWatsonTTSText";
+
     @Metadata(description = "The voice to use for synthesis", javaType = "String")
     String VOICE = "CamelIBMWatsonTTSVoice";
+
     @Metadata(description = "The audio format (e.g., audio/wav, audio/mp3, audio/ogg)", javaType = "String")
     String ACCEPT = "CamelIBMWatsonTTSAccept";
+
     @Metadata(description = "The customization ID for a custom voice model", javaType = "String")
     String CUSTOMIZATION_ID = "CamelIBMWatsonTTSCustomizationId";
 
     // Pronunciation headers
     @Metadata(description = "The word for which to get pronunciation", javaType = "String")
     String WORD = "CamelIBMWatsonTTSWord";
+
     @Metadata(description = "The pronunciation format (ipa or ibm)", javaType = "String")
     String FORMAT = "CamelIBMWatsonTTSFormat";
 
     // Custom model headers
     @Metadata(description = "The language for filtering custom models", javaType = "String")
     String LANGUAGE = "CamelIBMWatsonTTSLanguage";
+
     @Metadata(description = "The custom model ID", javaType = "String")
     String MODEL_ID = "CamelIBMWatsonTTSModelId";
 

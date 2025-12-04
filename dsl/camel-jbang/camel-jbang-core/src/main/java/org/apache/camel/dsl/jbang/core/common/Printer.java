@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.StringJoiner;
@@ -86,20 +87,16 @@ public interface Printer {
         }
 
         @Override
-        public void println() {
-        }
+        public void println() {}
 
         @Override
-        public void println(String line) {
-        }
+        public void println(String line) {}
 
         @Override
-        public void print(String output) {
-        }
+        public void print(String output) {}
 
         @Override
-        public void printf(String format, Object... args) {
-        }
+        public void printf(String format, Object... args) {}
 
         public void printErr(String message) {
             delegate.printErr(message);

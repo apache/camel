@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xj;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -32,8 +33,15 @@ import org.apache.camel.spi.UriParam;
  * Transform JSON and XML message using a XSLT.
  */
 @ManagedResource(description = "Managed XJEndpoint")
-@UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true,
-             remote = false, category = { Category.TRANSFORMATION }, headersClass = XJConstants.class)
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "xj",
+        title = "XJ",
+        syntax = "xj:resourceUri",
+        producerOnly = true,
+        remote = false,
+        category = {Category.TRANSFORMATION},
+        headersClass = XJConstants.class)
 public class XJEndpoint extends XsltSaxonEndpoint {
 
     private final JsonFactory jsonFactory = new JsonFactory();
@@ -93,7 +101,8 @@ public class XJEndpoint extends XsltSaxonEndpoint {
             sourceHandlerFactory.setFailOnNullBody(isFailOnNullBody());
             xsltBuilder.setSourceHandlerFactory(sourceHandlerFactory);
         }
-        // in the other direction, XML2JSON, the default org.apache.camel.component.xslt.XmlSourceHandlerFactoryImpl will be used
+        // in the other direction, XML2JSON, the default org.apache.camel.component.xslt.XmlSourceHandlerFactoryImpl
+        // will be used
     }
 
     /**

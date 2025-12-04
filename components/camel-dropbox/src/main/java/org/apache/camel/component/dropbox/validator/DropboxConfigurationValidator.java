@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.validator;
 
 import java.io.File;
@@ -26,8 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class DropboxConfigurationValidator {
 
-    private DropboxConfigurationValidator() {
-    }
+    private DropboxConfigurationValidator() {}
 
     public static void validateCommonProperties(DropboxConfiguration configuration) throws DropboxException {
         if (ObjectHelper.isEmpty(configuration.getAccessToken())) {
@@ -57,10 +57,10 @@ public final class DropboxConfigurationValidator {
     public static void validatePutOp(String localPath, String remotePath, DropboxUploadMode uploadMode)
             throws DropboxException {
         validateLocalPath(localPath);
-        //remote path is optional
+        // remote path is optional
         if (remotePath != null) {
             validateRemotePathForPut(remotePath);
-        } else {  //in case remote path is not set, local path is even the remote path so it must be validated as UNIX
+        } else { // in case remote path is not set, local path is even the remote path so it must be validated as UNIX
             validatePathInUnix(localPath);
         }
         if (uploadMode == null) {
@@ -109,5 +109,4 @@ public final class DropboxConfigurationValidator {
             throw new DropboxException(path + " must not contain Windows path separator, use UNIX path separator!");
         }
     }
-
 }

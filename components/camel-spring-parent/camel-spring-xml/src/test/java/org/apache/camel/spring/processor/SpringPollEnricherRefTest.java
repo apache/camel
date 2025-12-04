@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.enricher.PollEnricherTest;
 import org.junit.jupiter.api.Disabled;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 @Disabled
 public class SpringPollEnricherRefTest extends PollEnricherTest {
@@ -29,5 +30,4 @@ public class SpringPollEnricherRefTest extends PollEnricherTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/pollEnricherRef.xml");
     }
-
 }

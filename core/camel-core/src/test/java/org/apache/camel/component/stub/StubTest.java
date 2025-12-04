@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stub;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,9 +29,15 @@ public class StubTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:InOnly").setExchangePattern(ExchangePattern.InOnly).to("stub:foo").to("mock:result");
+                from("direct:InOnly")
+                        .setExchangePattern(ExchangePattern.InOnly)
+                        .to("stub:foo")
+                        .to("mock:result");
 
-                from("direct:InOut").setExchangePattern(ExchangePattern.InOut).to("stub:foo").to("mock:result");
+                from("direct:InOut")
+                        .setExchangePattern(ExchangePattern.InOut)
+                        .to("stub:foo")
+                        .to("mock:result");
             }
         };
     }
@@ -53,5 +60,4 @@ public class StubTest extends ContextTestSupport {
     public void testInOut() throws InterruptedException {
         test(ExchangePattern.InOut);
     }
-
 }

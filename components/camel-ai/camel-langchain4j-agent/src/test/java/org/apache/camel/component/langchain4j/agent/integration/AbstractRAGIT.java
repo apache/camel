@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
 
 import java.util.List;
@@ -36,9 +37,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public abstract class AbstractRAGIT extends BaseLangChain4jAgent {
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA =
+            ModelHelper.hasEnvironmentConfiguration() ? null : OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -57,9 +57,8 @@ public abstract class AbstractRAGIT extends BaseLangChain4jAgent {
         List<TextSegment> segments = DocumentSplitters.recursive(300, 100).split(document);
 
         // Create embeddings
-        EmbeddingModel embeddingModel = OLLAMA != null
-                ? ModelHelper.loadEmbeddingModel(OLLAMA)
-                : ModelHelper.createEmbeddingModel();
+        EmbeddingModel embeddingModel =
+                OLLAMA != null ? ModelHelper.loadEmbeddingModel(OLLAMA) : ModelHelper.createEmbeddingModel();
 
         List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
 
@@ -80,5 +79,4 @@ public abstract class AbstractRAGIT extends BaseLangChain4jAgent {
                 .contentRetriever(contentRetriever)
                 .build();
     }
-
 }

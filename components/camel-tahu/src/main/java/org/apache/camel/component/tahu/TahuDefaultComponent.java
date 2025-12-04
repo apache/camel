@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.Arrays;
@@ -53,12 +54,13 @@ public abstract class TahuDefaultComponent extends DefaultComponent implements S
     }
 
     protected abstract TahuDefaultEndpoint doCreateEndpoint(
-            String uri, List<String> descriptorSegments, TahuConfiguration tahuConfig)
-            throws Exception;
+            String uri, List<String> descriptorSegments, TahuConfiguration tahuConfig) throws Exception;
 
     private List<String> getDescriptorSegments(String remaining) {
-        return Arrays.stream(remaining.split(TahuConstants.MAJOR_SEPARATOR, 3)).map(String::trim)
-                .filter(ObjectHelper::isNotEmpty).toList();
+        return Arrays.stream(remaining.split(TahuConstants.MAJOR_SEPARATOR, 3))
+                .map(String::trim)
+                .filter(ObjectHelper::isNotEmpty)
+                .toList();
     }
 
     @Override
@@ -126,5 +128,4 @@ public abstract class TahuDefaultComponent extends DefaultComponent implements S
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
-
 }

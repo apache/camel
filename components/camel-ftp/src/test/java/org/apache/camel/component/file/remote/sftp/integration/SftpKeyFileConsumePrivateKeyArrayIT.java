@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
 
 import java.nio.file.Files;
@@ -25,7 +26,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpKeyFileConsumePrivateKeyArrayIT extends SftpServerTestSupport {
 
     @Test
@@ -54,9 +57,11 @@ public class SftpKeyFileConsumePrivateKeyArrayIT extends SftpServerTestSupport {
                 context.getRegistry().bind("myKey", arr);
 
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&knownHostsFile="
-                     + service.getKnownHostsFile()
-                     + "&privateKey=#myKey&privateKeyPassphrase=secret&delay=10000&disconnect=true")
-                        .routeId("foo").noAutoStartup().to("mock:result");
+                                + service.getKnownHostsFile()
+                                + "&privateKey=#myKey&privateKeyPassphrase=secret&delay=10000&disconnect=true")
+                        .routeId("foo")
+                        .noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

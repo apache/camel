@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import org.apache.camel.test.AvailablePortFinder;
@@ -32,5 +33,4 @@ public abstract class HL7TestSupport extends CamelTestSupport {
     protected static int getPort() {
         return port;
     }
-
 }

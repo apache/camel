@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.elytron;
 
 import java.io.File;
@@ -62,7 +63,10 @@ public abstract class BaseElytronTest extends CamelTestSupport {
         port = AvailablePortFinder.getNextAvailable();
         keyPair = null;
 
-        URL location = ElytronSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
+        URL location = ElytronSecurityProvider.class
+                .getProtectionDomain()
+                .getCodeSource()
+                .getLocation();
         File file = new File(location.getPath() + "META-INF/services/" + UndertowSecurityProvider.class.getName());
         file.getParentFile().mkdirs();
 
@@ -91,34 +95,32 @@ public abstract class BaseElytronTest extends CamelTestSupport {
 
         context.getPropertiesComponent().setLocation("ref:prop");
 
-        context.getComponent("undertow", UndertowComponent.class).setSecurityConfiguration(new ElytronSercurityConfiguration() {
-            @Override
-            public WildFlyElytronBaseProvider getElytronProvider() {
-                return BaseElytronTest.this.getElytronProvider();
-            }
+        context.getComponent("undertow", UndertowComponent.class)
+                .setSecurityConfiguration(new ElytronSercurityConfiguration() {
+                    @Override
+                    public WildFlyElytronBaseProvider getElytronProvider() {
+                        return BaseElytronTest.this.getElytronProvider();
+                    }
 
-            @Override
-            public String getMechanismName() {
-                return BaseElytronTest.this.getMechanismName();
-            }
+                    @Override
+                    public String getMechanismName() {
+                        return BaseElytronTest.this.getMechanismName();
+                    }
 
-            @Override
-            public SecurityDomain.Builder getDomainBuilder() {
-                return getSecurityDomainBuilder();
-            }
-
-        });
+                    @Override
+                    public SecurityDomain.Builder getDomainBuilder() {
+                        return getSecurityDomainBuilder();
+                    }
+                });
 
         return context;
     }
 
     SecurityDomain.Builder getSecurityDomainBuilder() {
 
-        SecurityDomain.Builder builder = SecurityDomain.builder()
-                .setDefaultRealmName("realm");
+        SecurityDomain.Builder builder = SecurityDomain.builder().setDefaultRealmName("realm");
 
-        builder.addRealm("realm", createBearerRealm())
-                .build();
+        builder.addRealm("realm", createBearerRealm()).build();
 
         builder.setPermissionMapper((principal, roles) -> PermissionVerifier.from(new LoginPermission()));
         builder.setRoleMapper(RoleMapper.constant(Roles.of("guest")).or(roles -> roles));
@@ -138,5 +140,4 @@ public abstract class BaseElytronTest extends CamelTestSupport {
         generator.initialize(2048);
         return generator.generateKeyPair();
     }
-
 }

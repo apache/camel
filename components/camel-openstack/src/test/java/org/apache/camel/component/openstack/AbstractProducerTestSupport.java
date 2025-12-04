@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack;
+
+import static org.mockito.Mockito.when;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -28,8 +31,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.openstack4j.api.OSClient.OSClientV3;
-
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public abstract class AbstractProducerTestSupport {

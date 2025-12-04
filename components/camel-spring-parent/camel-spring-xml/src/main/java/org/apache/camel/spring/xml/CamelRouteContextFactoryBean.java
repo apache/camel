@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
 
 import java.util.ArrayList;
@@ -63,5 +64,4 @@ public class CamelRouteContextFactoryBean extends IdentifiedType implements Fact
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
     }
-
 }

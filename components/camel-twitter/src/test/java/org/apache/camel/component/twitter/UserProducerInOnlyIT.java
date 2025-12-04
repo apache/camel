@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Date;
 import java.util.List;
@@ -29,15 +34,13 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Tests posting a twitter update with the default In Message Exchange Pattern
  */
-@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
-                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+@EnabledIfSystemProperty(
+        named = "enable.twitter.itests",
+        matches = "true",
+        disabledReason = "Likely has API limits, so it's better to keep it off by default")
 public class UserProducerInOnlyIT extends CamelTwitterITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOnlyIT.class);
@@ -72,9 +75,9 @@ public class UserProducerInOnlyIT extends CamelTwitterITSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:tweets")
-                        //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
+                        // .to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         .to("twitter-timeline://user?" + getUriTokens())
-                        //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
+                        // .to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
             }
         };

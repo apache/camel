@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
+
+import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -26,8 +29,6 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import com.squareup.javapoet.MethodSpec;
-
-import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
 
 class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
 
@@ -157,7 +158,7 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
 
     static Object[] extend(final Object first, final Object... others) {
         if (others == null || others.length == 0) {
-            return new Object[] { first };
+            return new Object[] {first};
         }
 
         final Object[] ret = new Object[1 + others.length];
@@ -167,5 +168,4 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
 
         return ret;
     }
-
 }

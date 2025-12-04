@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,7 +31,10 @@ public class StepTest extends ContextTestSupport {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedPropertyReceived(Exchange.STEP_ID, "bar");
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").message(0).exchangeProperty(Exchange.STEP_ID).isNull();
+        getMockEndpoint("mock:result")
+                .message(0)
+                .exchangeProperty(Exchange.STEP_ID)
+                .isNull();
 
         template.sendBody("direct:start", "Hello World");
 
@@ -42,8 +46,16 @@ public class StepTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").step("foo").to("log:foo").to("mock:foo").end().step("bar").to("log:bar").to("mock:bar")
-                        .end().to("mock:result");
+                from("direct:start")
+                        .step("foo")
+                        .to("log:foo")
+                        .to("mock:foo")
+                        .end()
+                        .step("bar")
+                        .to("log:bar")
+                        .to("mock:bar")
+                        .end()
+                        .to("mock:result");
             }
         };
     }

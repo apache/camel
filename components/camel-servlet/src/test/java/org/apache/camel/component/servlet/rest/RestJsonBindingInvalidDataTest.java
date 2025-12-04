@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -27,8 +30,6 @@ import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RestJsonBindingInvalidDataTest extends ServletCamelRouterTestSupport {
 
     @Test
@@ -37,7 +38,8 @@ public class RestJsonBindingInvalidDataTest extends ServletCamelRouterTestSuppor
 
         WebRequest req = new PutMethodWebRequest(
                 contextUrl + "/services/test/fail",
-                new ByteArrayInputStream("This is not JSON format".getBytes()), "application/json");
+                new ByteArrayInputStream("This is not JSON format".getBytes()),
+                "application/json");
 
         WebResponse response = query(req, false);
         assertEquals(400, response.getResponseCode());
@@ -64,12 +66,11 @@ public class RestJsonBindingInvalidDataTest extends ServletCamelRouterTestSuppor
                         .handled(true)
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
                         .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
-                        .setBody().constant("Invalid json data says Camel");
+                        .setBody()
+                        .constant("Invalid json data says Camel");
 
-                rest("/test")
-                        .put("/fail").to("mock:test");
+                rest("/test").put("/fail").to("mock:test");
             }
         };
     }
-
 }

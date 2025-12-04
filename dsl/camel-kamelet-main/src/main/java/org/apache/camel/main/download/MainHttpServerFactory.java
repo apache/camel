@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
@@ -31,7 +32,8 @@ public class MainHttpServerFactory {
         // if we only use management then there is no main server already
         MainHttpServer server = camelContext.hasService(MainHttpServer.class);
         ManagementHttpServer managementHttpServer = camelContext.hasService(ManagementHttpServer.class);
-        // but if none has already been created, and we are using platform-http, then we need an embedded default http server
+        // but if none has already been created, and we are using platform-http, then we need an embedded default http
+        // server
         if (server == null && managementHttpServer == null) {
             // set up a default http server on configured port if not already done
             HttpServerConfigurationProperties config = new HttpServerConfigurationProperties(null);
@@ -39,8 +41,8 @@ public class MainHttpServerFactory {
             if (port != null) {
                 config.setPort(CamelContextHelper.parseInt(camelContext, port));
             } else {
-                CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.server.port",
-                        String.valueOf(config.getPort()));
+                CamelJBangSettingsHelper.writeSettingsIfNotExists(
+                        "camel.server.port", String.valueOf(config.getPort()));
             }
             if (!silent) {
                 try {
@@ -59,15 +61,17 @@ public class MainHttpServerFactory {
     private static org.apache.camel.main.MainHttpServerFactory resolveMainHttpServerFactory(CamelContext camelContext)
             throws Exception {
         // lookup in service registry first
-        org.apache.camel.main.MainHttpServerFactory answer
-                = camelContext.getRegistry().findSingleByType(org.apache.camel.main.MainHttpServerFactory.class);
+        org.apache.camel.main.MainHttpServerFactory answer =
+                camelContext.getRegistry().findSingleByType(org.apache.camel.main.MainHttpServerFactory.class);
         if (answer == null) {
-            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+            answer = camelContext
+                    .getCamelContextExtension()
+                    .getBootstrapFactoryFinder()
                     .newInstance(MainConstants.PLATFORM_HTTP_SERVER, org.apache.camel.main.MainHttpServerFactory.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find MainHttpServerFactory on classpath. Add camel-platform-http-main to classpath."));
+                    .orElseThrow(
+                            () -> new IllegalArgumentException(
+                                    "Cannot find MainHttpServerFactory on classpath. Add camel-platform-http-main to classpath."));
         }
         return answer;
     }
-
 }

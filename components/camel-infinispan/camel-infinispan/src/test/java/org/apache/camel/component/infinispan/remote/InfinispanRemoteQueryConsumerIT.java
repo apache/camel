@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
@@ -36,21 +40,18 @@ import org.infinispan.query.remote.client.impl.MarshallerRegistration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InfinispanRemoteQueryConsumerIT extends InfinispanRemoteQueryTestSupport {
     @BindToRegistry("continuousQueryBuilder")
-    private InfinispanQueryBuilder continuousQueryBuilder
-            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE 'CQ%'");
+    private InfinispanQueryBuilder continuousQueryBuilder =
+            qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE 'CQ%'");
 
     @BindToRegistry("continuousQueryBuilderNoMatch")
-    private InfinispanQueryBuilder continuousQueryBuilderNoMatch
-            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%TEST%'");
+    private InfinispanQueryBuilder continuousQueryBuilderNoMatch =
+            qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%TEST%'");
 
     @BindToRegistry("continuousQueryBuilderAll")
-    private InfinispanQueryBuilder continuousQueryBuilderAll
-            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%Q0%'");
+    private InfinispanQueryBuilder continuousQueryBuilderAll =
+            qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%Q0%'");
 
     // *****************************
     //
@@ -69,16 +70,32 @@ public class InfinispanRemoteQueryConsumerIT extends InfinispanRemoteQueryTestSu
 
         for (int i = 0; i < 4; i++) {
             continuousQuery.message(i).header(InfinispanConstants.KEY).isEqualTo(createKey(CQ_USERS[i % 2]));
-            continuousQuery.message(i).header(InfinispanConstants.CACHE_NAME).isEqualTo(getCache().getName());
+            continuousQuery
+                    .message(i)
+                    .header(InfinispanConstants.CACHE_NAME)
+                    .isEqualTo(getCache().getName());
             if (i >= 2) {
-                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE)
+                continuousQuery
+                        .message(i)
+                        .header(InfinispanConstants.EVENT_TYPE)
                         .isEqualTo(InfinispanConstants.CACHE_ENTRY_LEAVING);
-                continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isNull();
+                continuousQuery
+                        .message(i)
+                        .header(InfinispanConstants.EVENT_DATA)
+                        .isNull();
             } else {
-                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE)
+                continuousQuery
+                        .message(i)
+                        .header(InfinispanConstants.EVENT_TYPE)
                         .isEqualTo(InfinispanConstants.CACHE_ENTRY_JOINING);
-                continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isNotNull();
-                continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isInstanceOf(User.class);
+                continuousQuery
+                        .message(i)
+                        .header(InfinispanConstants.EVENT_DATA)
+                        .isNotNull();
+                continuousQuery
+                        .message(i)
+                        .header(InfinispanConstants.EVENT_DATA)
+                        .isInstanceOf(User.class);
             }
         }
 
@@ -107,7 +124,8 @@ public class InfinispanRemoteQueryConsumerIT extends InfinispanRemoteQueryTestSu
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        cacheContainer.administration()
+        cacheContainer
+                .administration()
                 .schemas()
                 .create(FileDescriptorSource.fromResources("sample_bank_account/bank.proto"));
 

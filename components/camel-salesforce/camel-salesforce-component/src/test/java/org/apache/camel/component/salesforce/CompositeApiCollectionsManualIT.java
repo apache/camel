@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.apache.camel.language.constant.ConstantLanguage.constant;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,17 +43,12 @@ import org.apache.camel.test.junit5.params.Parameters;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.AfterEach;
 
-import static org.apache.camel.language.constant.ConstantLanguage.constant;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @SuppressWarnings("unchecked")
 @Parameterized
 public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase {
 
-    private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("46.0", SalesforceEndpointConfig.DEFAULT_VERSION));
+    private static final Set<String> VERSIONS =
+            new HashSet<>(Arrays.asList("46.0", SalesforceEndpointConfig.DEFAULT_VERSION));
 
     @Parameter
     private String version;
@@ -60,12 +62,12 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
     public void retrieve() {
         final String accountId = createAccount();
 
-        List<AbstractDescribedSObjectBase> result
-                = (List<AbstractDescribedSObjectBase>) fluentTemplate.to("salesforce:compositeRetrieveSObjectCollections")
-                        .withHeader("sObjectIds", Collections.singletonList(accountId))
-                        .withHeader("sObjectFields", Arrays.asList("Id", "Name"))
-                        .withHeader("sObjectName", "Account")
-                        .request();
+        List<AbstractDescribedSObjectBase> result = (List<AbstractDescribedSObjectBase>) fluentTemplate
+                .to("salesforce:compositeRetrieveSObjectCollections")
+                .withHeader("sObjectIds", Collections.singletonList(accountId))
+                .withHeader("sObjectFields", Arrays.asList("Id", "Name"))
+                .withHeader("sObjectName", "Account")
+                .request();
         assertNotNull(result, "Response was null.");
         assertEquals(1, result.size());
     }
@@ -75,10 +77,10 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
         final String accountId = createAccount();
         final String account2Id = createAccount();
         final List<String> ids = Arrays.asList(accountId, account2Id, "001000000000000000");
-        List<DeleteSObjectResult> result
-                = (List<DeleteSObjectResult>) fluentTemplate.to("salesforce:compositeDeleteSObjectCollections")
-                        .withHeader("sObjectIds", ids)
-                        .request();
+        List<DeleteSObjectResult> result = (List<DeleteSObjectResult>) fluentTemplate
+                .to("salesforce:compositeDeleteSObjectCollections")
+                .withHeader("sObjectIds", ids)
+                .request();
         assertNotNull(result, "Response was null.");
         assertEquals(3, result.size());
         assertTrue(result.get(0).getSuccess());
@@ -90,11 +92,11 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
     public void deleteAllOrNone() {
         final String accountId = createAccount();
         final List<String> ids = Arrays.asList(accountId, "001000000000000000");
-        List<DeleteSObjectResult> result
-                = (List<DeleteSObjectResult>) fluentTemplate.to("salesforce:compositeDeleteSObjectCollections")
-                        .withHeader("sObjectIds", ids)
-                        .withHeader("allOrNone", constant(true))
-                        .request();
+        List<DeleteSObjectResult> result = (List<DeleteSObjectResult>) fluentTemplate
+                .to("salesforce:compositeDeleteSObjectCollections")
+                .withHeader("sObjectIds", ids)
+                .withHeader("allOrNone", constant(true))
+                .request();
         assertNotNull(result, "Response was null.");
         assertEquals(2, result.size());
         assertFalse(result.get(0).getSuccess());
@@ -109,9 +111,8 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
         Account account2 = new Account();
         final List<Account> accounts = Arrays.asList(account1, account2);
 
-        List<SaveSObjectResult> result
-                = (List<SaveSObjectResult>) template.requestBody(
-                        "salesforce:compositeCreateSObjectCollections", accounts);
+        List<SaveSObjectResult> result = (List<SaveSObjectResult>)
+                template.requestBody("salesforce:compositeCreateSObjectCollections", accounts);
         assertNotNull(result, "Response was null.");
         assertEquals(2, result.size());
         assertTrue(result.get(0).getSuccess());
@@ -126,9 +127,8 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
         Account account2 = new Account();
         final List<Account> accounts = Arrays.asList(account1, account2);
 
-        List<SaveSObjectResult> result
-                = (List<SaveSObjectResult>) template.requestBody(
-                        "salesforce:compositeCreateSObjectCollections", accounts);
+        List<SaveSObjectResult> result = (List<SaveSObjectResult>)
+                template.requestBody("salesforce:compositeCreateSObjectCollections", accounts);
         assertNotNull(result, "Response was null.");
         assertEquals(2, result.size());
         assertTrue(result.get(0).getSuccess());
@@ -142,8 +142,8 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
         account.setId(accountId);
         final List<Account> accounts = Collections.singletonList(account);
 
-        List<SaveSObjectResult> result = (List<SaveSObjectResult>) template.requestBody(
-                "salesforce:compositeUpdateSObjectCollections", accounts);
+        List<SaveSObjectResult> result = (List<SaveSObjectResult>)
+                template.requestBody("salesforce:compositeUpdateSObjectCollections", accounts);
         assertNotNull(result, "Response was null.");
         assertTrue(result.get(0).getSuccess());
     }
@@ -168,24 +168,27 @@ public class CompositeApiCollectionsManualIT extends AbstractSalesforceTestBase 
             @Override
             public void configure() {
                 from("direct:deleteCompositeAccounts")
-                        .to("salesforce:query?sObjectClass=" + Account.class.getName()
-                                + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite Collections API'")
-                        .split(simple("${body.records}")).setHeader("sObjectId", simple("${body.id}"))
-                        .to("salesforce:deleteSObject?sObjectName=Account").end();
+                        .to(
+                                "salesforce:query?sObjectClass=" + Account.class.getName()
+                                        + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite Collections API'")
+                        .split(simple("${body.records}"))
+                        .setHeader("sObjectId", simple("${body.id}"))
+                        .to("salesforce:deleteSObject?sObjectName=Account")
+                        .end();
             }
         };
     }
 
     @Parameters(name = "version = {0}")
     public static Iterable<Object[]> versions() {
-        return VERSIONS.stream().map(v -> new Object[] { v }).collect(Collectors.toList());
+        return VERSIONS.stream().map(v -> new Object[] {v}).collect(Collectors.toList());
     }
 
     private String createAccount() {
         Account account = new Account();
         account.setName("Account created from Composite Collections API");
-        final CreateSObjectResult createResult
-                = template.requestBody("salesforce:createSObject", account, CreateSObjectResult.class);
+        final CreateSObjectResult createResult =
+                template.requestBody("salesforce:createSObject", account, CreateSObjectResult.class);
         return createResult.getId();
     }
 }

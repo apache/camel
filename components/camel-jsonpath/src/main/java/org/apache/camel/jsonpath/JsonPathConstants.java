@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 public final class JsonPathConstants {
@@ -24,5 +25,4 @@ public final class JsonPathConstants {
     private JsonPathConstants() {
         // no instance
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
 
@@ -82,9 +83,9 @@ public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
                 from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");
 
                 from("aws2-s3://" + name.get()
-                     + "?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)&includeBody=false")
-                        .startupOrder(2).to("mock:result");
-
+                                + "?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)&includeBody=false")
+                        .startupOrder(2)
+                        .to("mock:result");
             }
         };
     }

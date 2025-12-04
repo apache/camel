@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory;
 import org.apache.camel.component.quartz.QuartzEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class QuartzTest extends BaseEndpointDslTest {
 
@@ -39,7 +40,8 @@ public class QuartzTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                QuartzEndpointBuilderFactory.QuartzEndpointBuilder builder = quartz("myGroup/myTrigger").cron("0/1+*+*+*+*+?");
+                QuartzEndpointBuilderFactory.QuartzEndpointBuilder builder =
+                        quartz("myGroup/myTrigger").cron("0/1+*+*+*+*+?");
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 QuartzEndpoint qe = assertIsInstanceOf(QuartzEndpoint.class, endpoint);
@@ -59,5 +61,4 @@ public class QuartzTest extends BaseEndpointDslTest {
 
         context.stop();
     }
-
 }

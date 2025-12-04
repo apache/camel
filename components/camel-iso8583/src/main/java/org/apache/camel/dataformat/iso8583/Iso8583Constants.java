@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.iso8583;
 
 import org.apache.camel.spi.Metadata;
@@ -22,5 +23,4 @@ public final class Iso8583Constants {
 
     @Metadata(description = "The ISO-Type", javaType = "String")
     public static final String ISO_TYPE = "CamelIso8583IsoType";
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.activemq.artemis.api.core.SimpleString;
@@ -41,7 +42,8 @@ public class ArtemisPersistentVMInfraService extends AbstractArtemisEmbeddedServ
             LOG.warn(e.getMessage(), e);
             throw new ArtemisRunException("vm acceptor cannot be configured", e);
         }
-        configuration.addAddressSetting("#",
+        configuration.addAddressSetting(
+                "#",
                 new AddressSettings()
                         .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
                         .setAutoDeleteQueues(false)

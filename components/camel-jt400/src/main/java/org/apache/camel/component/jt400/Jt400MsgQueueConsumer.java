@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400Message;
@@ -106,13 +107,16 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         try {
             QueuedMessage entry;
             int seconds = (timeout >= 0) ? (int) timeout / 1000 : -1;
-            LOG.trace("Reading from message queue: {} with {} seconds timeout", queue.getPath(),
+            LOG.trace(
+                    "Reading from message queue: {} with {} seconds timeout",
+                    queue.getPath(),
                     -1 == seconds ? "infinite" : seconds);
 
             Jt400Configuration.MessageAction messageAction = getEndpoint().getMessageAction();
-            entry = queue.receive(messageKey, //message key
-                    seconds,    //timeout
-                    messageAction.getJt400Value(),  // message action
+            entry = queue.receive(
+                    messageKey, // message key
+                    seconds, // timeout
+                    messageAction.getJt400Value(), // message action
                     null == messageKey ? MessageQueue.ANY : MessageQueue.NEXT); // types of messages
 
             if (null == entry) {
@@ -125,8 +129,10 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
             }
 
             Exchange exchange = createExchange(true);
-            exchange.getIn().setHeader(Jt400Constants.SENDER_INFORMATION,
-                    entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
+            exchange.getIn()
+                    .setHeader(
+                            Jt400Constants.SENDER_INFORMATION,
+                            entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
             setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_ID, entry.getID());
             setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_FILE, entry.getFileName());
             setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_TYPE, entry.getType());

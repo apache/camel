@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import jakarta.xml.ws.Provider;
@@ -31,5 +32,4 @@ public class ServiceProvider implements Provider<Source> {
     public Source invoke(Source m) {
         throw new UnsupportedOperationException("Place holder method");
     }
-
 }

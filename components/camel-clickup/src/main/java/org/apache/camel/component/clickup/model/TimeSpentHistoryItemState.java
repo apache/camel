@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.model;
 
 import java.io.Serial;
@@ -83,14 +84,12 @@ public class TimeSpentHistoryItemState implements Serializable {
 
     @Override
     public String toString() {
-        return "TimeSpentHistoryItemState{" +
-               "id='" + id + '\'' +
-               ", start=" + start +
-               ", end=" + end +
-               ", time='" + time + '\'' +
-               ", source='" + source + '\'' +
-               ", dateAdded=" + dateAdded +
-               '}';
+        return "TimeSpentHistoryItemState{" + "id='"
+                + id + '\'' + ", start="
+                + start + ", end="
+                + end + ", time='"
+                + time + '\'' + ", source='"
+                + source + '\'' + ", dateAdded="
+                + dateAdded + '}';
     }
-
 }

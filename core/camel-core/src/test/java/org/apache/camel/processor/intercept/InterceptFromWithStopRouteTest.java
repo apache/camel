@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,7 +25,9 @@ public class InterceptFromWithStopRouteTest extends InterceptFromRouteTestSuppor
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                interceptFrom().filter(header("foo").isEqualTo("bar")).to("mock:b")
+                interceptFrom()
+                        .filter(header("foo").isEqualTo("bar"))
+                        .to("mock:b")
                         // need end to end filter
                         .end()
                         // stop continue routing no matter what

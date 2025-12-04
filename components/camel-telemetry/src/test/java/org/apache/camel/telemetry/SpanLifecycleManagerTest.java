@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +34,6 @@ import org.apache.camel.telemetry.mock.MockTrace;
 import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SpanLifecycleManagerTest extends ExchangeTestSupport {
 
@@ -71,7 +72,6 @@ public class SpanLifecycleManagerTest extends ExchangeTestSupport {
         for (MockTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(MockTrace trace, String expectedBody) {
@@ -112,7 +112,6 @@ public class SpanLifecycleManagerTest extends ExchangeTestSupport {
                     "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
                     log.logEntries().get(0).fields().get("message"));
         }
-
     }
 
     @Override
@@ -120,12 +119,8 @@ public class SpanLifecycleManagerTest extends ExchangeTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("log:info");
+                from("direct:start").routeId("start").log("A message").to("log:info");
             }
         };
     }
-
 }

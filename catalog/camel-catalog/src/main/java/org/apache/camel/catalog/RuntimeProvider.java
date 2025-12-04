@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 import java.util.List;
@@ -119,5 +120,4 @@ public interface RuntimeProvider {
      * Find all the pojo beans names from the Camel catalog supported by the provider
      */
     List<String> findBeansNames();
-
 }

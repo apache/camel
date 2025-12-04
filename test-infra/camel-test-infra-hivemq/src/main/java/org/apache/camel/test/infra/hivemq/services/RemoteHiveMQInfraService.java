@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.hivemq.services;
 
 import java.util.Optional;
@@ -58,7 +59,8 @@ public class RemoteHiveMQInfraService implements HiveMQInfraService {
 
     @Override
     public char[] getUserPassword() {
-        return Optional.ofNullable(System.getProperty(HiveMQProperties.HIVEMQ_SERVICE_USER_PASSWORD)).map(String::toCharArray)
+        return Optional.ofNullable(System.getProperty(HiveMQProperties.HIVEMQ_SERVICE_USER_PASSWORD))
+                .map(String::toCharArray)
                 .orElse(null);
     }
 
@@ -66,5 +68,4 @@ public class RemoteHiveMQInfraService implements HiveMQInfraService {
     public boolean isRunning() {
         return running;
     }
-
 }

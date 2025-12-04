@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for verifying that error handler is wrapped each individual node in a pipeline. Based on CAMEL-1548.
@@ -58,9 +59,14 @@ public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // use dead letter channel that supports redeliveries
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(3).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false));
 
-                from("direct:start").pipeline("bean:foo?method=hi", "bean:foo?method=kaboom").to("mock:result");
+                from("direct:start")
+                        .pipeline("bean:foo?method=hi", "bean:foo?method=kaboom")
+                        .to("mock:result");
             }
         };
     }

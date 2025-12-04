@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.sql.DataSource;
 
@@ -23,9 +27,6 @@ import org.apache.camel.builder.endpoint.dsl.SqlEndpointBuilderFactory;
 import org.apache.camel.component.sql.SqlEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SqlTest extends BaseEndpointDslTest {
 
@@ -44,8 +45,8 @@ public class SqlTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                SqlEndpointBuilderFactory.SqlEndpointBuilder builder
-                        = sql("SELECT * FROM FOO").dataSource(ds);
+                SqlEndpointBuilderFactory.SqlEndpointBuilder builder =
+                        sql("SELECT * FROM FOO").dataSource(ds);
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 SqlEndpoint se = assertIsInstanceOf(SqlEndpoint.class, endpoint);
@@ -67,8 +68,8 @@ public class SqlTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                SqlEndpointBuilderFactory.SqlEndpointBuilder builder
-                        = sql("SELECT * FROM FOO").dataSource("#myDS");
+                SqlEndpointBuilderFactory.SqlEndpointBuilder builder =
+                        sql("SELECT * FROM FOO").dataSource("#myDS");
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 SqlEndpoint se = assertIsInstanceOf(SqlEndpoint.class, endpoint);
@@ -90,8 +91,8 @@ public class SqlTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                SqlEndpointBuilderFactory.SqlEndpointBuilder builder
-                        = sql("SELECT * FROM FOO").dataSource("#bean:myDS");
+                SqlEndpointBuilderFactory.SqlEndpointBuilder builder =
+                        sql("SELECT * FROM FOO").dataSource("#bean:myDS");
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 SqlEndpoint se = assertIsInstanceOf(SqlEndpoint.class, endpoint);
@@ -113,8 +114,8 @@ public class SqlTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                SqlEndpointBuilderFactory.SqlEndpointBuilder builder
-                        = sql("SELECT * FROM FOO").dataSource("#type:javax.sql.DataSource");
+                SqlEndpointBuilderFactory.SqlEndpointBuilder builder =
+                        sql("SELECT * FROM FOO").dataSource("#type:javax.sql.DataSource");
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 SqlEndpoint se = assertIsInstanceOf(SqlEndpoint.class, endpoint);
@@ -125,5 +126,4 @@ public class SqlTest extends BaseEndpointDslTest {
 
         context.stop();
     }
-
 }

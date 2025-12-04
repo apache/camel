@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import java.security.SecureRandom;
@@ -58,7 +59,8 @@ public class ConsulKeyValueWatchIT extends ConsulTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("consul:kv?key=%s&valueAsString=true", key)
-                        .to("log:org.apache.camel.component.consul?level=INFO&showAll=true").to("mock:kv-watch");
+                        .to("log:org.apache.camel.component.consul?level=INFO&showAll=true")
+                        .to("mock:kv-watch");
             }
         };
     }

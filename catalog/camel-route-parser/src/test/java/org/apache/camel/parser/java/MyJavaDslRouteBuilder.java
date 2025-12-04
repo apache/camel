@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,17 +26,19 @@ public class MyJavaDslRouteBuilder extends RouteBuilder {
         // setProperty is also a model name but this should not be parsed as part of a Camel route
         System.setProperty("ENV", "src/test/resources/");
 
-        from("direct:start").routeId("bar")
+        from("direct:start")
+                .routeId("bar")
                 .log("I was here")
                 .setHeader("foo", constant("123"))
                 .choice()
-                    .when(header("foo"))
-                        .to("log:a")
-                        .toD("log:a2")
-                    .when().header("bar")
-                        .toD("log:b")
-                    .otherwise()
-                        .log("none")
+                .when(header("foo"))
+                .to("log:a")
+                .toD("log:a2")
+                .when()
+                .header("bar")
+                .toD("log:b")
+                .otherwise()
+                .log("none")
                 .end()
                 .to("mock:result");
     }

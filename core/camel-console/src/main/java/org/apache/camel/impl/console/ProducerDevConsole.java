@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -41,13 +42,20 @@ public class ProducerDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        MBeanServer mbeanServer = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (mbeanServer != null) {
             try {
-                String jmxDomain
-                        = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
-                String prefix
-                        = getCamelContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                String jmxDomain = getCamelContext()
+                        .getManagementStrategy()
+                        .getManagementAgent()
+                        .getMBeanObjectDomainName();
+                String prefix = getCamelContext()
+                                .getManagementStrategy()
+                                .getManagementAgent()
+                                .getIncludeHostName()
+                        ? "*/"
+                        : "";
                 ObjectName query = ObjectName.getInstance(
                         jmxDomain + ":context=" + prefix + getCamelContext().getManagementName() + ",type=producers,*");
                 Set<ObjectName> set = mbeanServer.queryNames(query, null);
@@ -80,13 +88,20 @@ public class ProducerDevConsole extends AbstractDevConsole {
         final List<JsonObject> list = new ArrayList<>();
         root.put("producers", list);
 
-        MBeanServer mbeanServer = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (mbeanServer != null) {
             try {
-                String jmxDomain
-                        = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
-                String prefix
-                        = getCamelContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                String jmxDomain = getCamelContext()
+                        .getManagementStrategy()
+                        .getManagementAgent()
+                        .getMBeanObjectDomainName();
+                String prefix = getCamelContext()
+                                .getManagementStrategy()
+                                .getManagementAgent()
+                                .getIncludeHostName()
+                        ? "*/"
+                        : "";
                 ObjectName query = ObjectName.getInstance(
                         jmxDomain + ":context=" + prefix + getCamelContext().getManagementName() + ",type=producers,*");
                 Set<ObjectName> set = mbeanServer.queryNames(query, null);
@@ -115,5 +130,4 @@ public class ProducerDevConsole extends AbstractDevConsole {
     private static ManagedProducerMBean getManagedProducer(CamelContext camelContext, ObjectName on) {
         return camelContext.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProducerMBean.class);
     }
-
 }

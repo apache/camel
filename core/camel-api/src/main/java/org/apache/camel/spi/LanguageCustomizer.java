@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.function.BiPredicate;
@@ -169,7 +170,8 @@ public interface LanguageCustomizer extends Ordered {
 
         public LanguageCustomizer build(ThrowingBiConsumer<String, T, Exception> consumer) {
             final int order = this.order;
-            final BiPredicate<String, Language> condition = this.condition != null ? this.condition : (name, target) -> true;
+            final BiPredicate<String, Language> condition =
+                    this.condition != null ? this.condition : (name, target) -> true;
 
             return new LanguageCustomizer() {
                 @SuppressWarnings("unchecked")

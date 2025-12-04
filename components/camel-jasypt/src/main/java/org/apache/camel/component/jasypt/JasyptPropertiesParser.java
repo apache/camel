@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jasypt;
 
 import java.util.concurrent.locks.Lock;
@@ -41,8 +42,8 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     public static final String JASYPT_PREFIX_TOKEN = "ENC(";
     public static final String JASYPT_SUFFIX_TOKEN = ")";
 
-    private static final String JASYPT_REGEX
-            = JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
+    private static final String JASYPT_REGEX =
+            JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
     private static final Pattern PATTERN = Pattern.compile(JASYPT_REGEX);
 
     private final Lock lock = new ReentrantLock();

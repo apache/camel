@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.saxon;
 
 import org.apache.camel.Endpoint;
@@ -48,7 +49,10 @@ public class XQueryTransformTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").transform().xquery("/people/person[@name='Jonathan']").to("mock:result");
+                from("direct:start")
+                        .transform()
+                        .xquery("/people/person[@name='Jonathan']")
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

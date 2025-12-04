@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.producer;
+
+import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
 
 import java.io.InputStream;
 
@@ -72,8 +75,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
-
 /**
  * The Docker producer.
  */
@@ -101,7 +102,7 @@ public class DockerProducer extends DefaultProducer {
 
         switch (operation) {
 
-            /** General **/
+                /** General **/
             case AUTH:
                 try (AuthCmd cmd = executeAuthRequest(client)) {
                     result = safeExec(cmd);
@@ -341,12 +342,14 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Create Image Request");
 
-        String repository = DockerHelper.getProperty(DockerConstants.DOCKER_REPOSITORY, configuration, message, String.class);
+        String repository =
+                DockerHelper.getProperty(DockerConstants.DOCKER_REPOSITORY, configuration, message, String.class);
 
         InputStream inputStream = message.getBody(InputStream.class);
 
         if (repository == null || inputStream == null) {
-            throw new IllegalArgumentException("Inputstream must be present on message body and repository must be specified");
+            throw new IllegalArgumentException(
+                    "Inputstream must be present on message body and repository must be specified");
         }
 
         return client.createImageCmd(repository, inputStream);
@@ -363,7 +366,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Inspect Image Request");
 
-        String imageId = DockerHelper.getProperty(DockerConstants.DOCKER_IMAGE_ID, configuration, message, String.class);
+        String imageId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_IMAGE_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(imageId, "Image ID must be specified");
 
@@ -389,14 +393,14 @@ public class DockerProducer extends DefaultProducer {
             listImagesCmd.withLabelFilter(filter);
         }
 
-        Boolean showAll = DockerHelper.getProperty(DockerConstants.DOCKER_SHOW_ALL, configuration, message, Boolean.class);
+        Boolean showAll =
+                DockerHelper.getProperty(DockerConstants.DOCKER_SHOW_ALL, configuration, message, Boolean.class);
 
         if (showAll != null) {
             listImagesCmd.withShowAll(showAll);
         }
 
         return listImagesCmd;
-
     }
 
     /**
@@ -410,7 +414,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Remove Image Request");
 
-        String imageId = DockerHelper.getProperty(DockerConstants.DOCKER_IMAGE_ID, configuration, message, String.class);
+        String imageId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_IMAGE_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(imageId, "Image ID must be specified");
 
@@ -422,14 +427,14 @@ public class DockerProducer extends DefaultProducer {
             removeImagesCmd.withForce(force);
         }
 
-        Boolean noPrune = DockerHelper.getProperty(DockerConstants.DOCKER_NO_PRUNE, configuration, message, Boolean.class);
+        Boolean noPrune =
+                DockerHelper.getProperty(DockerConstants.DOCKER_NO_PRUNE, configuration, message, Boolean.class);
 
         if (noPrune != null) {
             removeImagesCmd.withNoPrune(noPrune);
         }
 
         return removeImagesCmd;
-
     }
 
     /**
@@ -461,9 +466,11 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Tag Image Request");
 
-        String imageId = DockerHelper.getProperty(DockerConstants.DOCKER_IMAGE_ID, configuration, message, String.class);
+        String imageId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_IMAGE_ID, configuration, message, String.class);
 
-        String repository = DockerHelper.getProperty(DockerConstants.DOCKER_REPOSITORY, configuration, message, String.class);
+        String repository =
+                DockerHelper.getProperty(DockerConstants.DOCKER_REPOSITORY, configuration, message, String.class);
 
         String tag = DockerHelper.getProperty(DockerConstants.DOCKER_TAG, configuration, message, String.class);
 
@@ -480,7 +487,6 @@ public class DockerProducer extends DefaultProducer {
         }
 
         return tagImageCmd;
-
     }
 
     /*********************
@@ -499,8 +505,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Commit Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
@@ -512,22 +518,22 @@ public class DockerProducer extends DefaultProducer {
             commitCmd.withAuthor(author);
         }
 
-        Boolean attachStdErr
-                = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_ERR, configuration, message, Boolean.class);
+        Boolean attachStdErr =
+                DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_ERR, configuration, message, Boolean.class);
 
         if (attachStdErr != null) {
             commitCmd.withAttachStderr(attachStdErr);
         }
 
-        Boolean attachStdIn
-                = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_IN, configuration, message, Boolean.class);
+        Boolean attachStdIn =
+                DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_IN, configuration, message, Boolean.class);
 
         if (attachStdIn != null) {
             commitCmd.withAttachStdin(attachStdIn);
         }
 
-        Boolean attachStdOut
-                = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_OUT, configuration, message, Boolean.class);
+        Boolean attachStdOut =
+                DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_OUT, configuration, message, Boolean.class);
 
         if (attachStdOut != null) {
             commitCmd.withAttachStdout(attachStdOut);
@@ -539,8 +545,8 @@ public class DockerProducer extends DefaultProducer {
             commitCmd.withCmd(cmds);
         }
 
-        Boolean disableNetwork
-                = DockerHelper.getProperty(DockerConstants.DOCKER_DISABLE_NETWORK, configuration, message, Boolean.class);
+        Boolean disableNetwork =
+                DockerHelper.getProperty(DockerConstants.DOCKER_DISABLE_NETWORK, configuration, message, Boolean.class);
 
         if (disableNetwork != null) {
             commitCmd.withDisableNetwork(disableNetwork);
@@ -552,14 +558,15 @@ public class DockerProducer extends DefaultProducer {
             commitCmd.withEnv(envs);
         }
 
-        ExposedPorts exposedPorts
-                = DockerHelper.getProperty(DockerConstants.DOCKER_EXPOSED_PORTS, configuration, message, ExposedPorts.class);
+        ExposedPorts exposedPorts = DockerHelper.getProperty(
+                DockerConstants.DOCKER_EXPOSED_PORTS, configuration, message, ExposedPorts.class);
 
         if (exposedPorts != null) {
             commitCmd.withExposedPorts(exposedPorts);
         }
 
-        String hostname = DockerHelper.getProperty(DockerConstants.DOCKER_HOSTNAME, configuration, message, String.class);
+        String hostname =
+                DockerHelper.getProperty(DockerConstants.DOCKER_HOSTNAME, configuration, message, String.class);
 
         if (hostname != null) {
             commitCmd.withHostname(hostname);
@@ -571,8 +578,8 @@ public class DockerProducer extends DefaultProducer {
             commitCmd.withMemory(memory);
         }
 
-        Integer memorySwap
-                = DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_SWAP, configuration, message, Integer.class);
+        Integer memorySwap =
+                DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_SWAP, configuration, message, Integer.class);
 
         if (memorySwap != null) {
             commitCmd.withMemorySwap(memorySwap);
@@ -584,7 +591,8 @@ public class DockerProducer extends DefaultProducer {
             commitCmd.withMessage(msg);
         }
 
-        Boolean openStdIn = DockerHelper.getProperty(DockerConstants.DOCKER_OPEN_STD_IN, configuration, message, Boolean.class);
+        Boolean openStdIn =
+                DockerHelper.getProperty(DockerConstants.DOCKER_OPEN_STD_IN, configuration, message, Boolean.class);
 
         if (openStdIn != null) {
             commitCmd.withOpenStdin(openStdIn);
@@ -602,13 +610,15 @@ public class DockerProducer extends DefaultProducer {
             commitCmd.withPortSpecs(portSpecs);
         }
 
-        String repository = DockerHelper.getProperty(DockerConstants.DOCKER_REPOSITORY, configuration, message, String.class);
+        String repository =
+                DockerHelper.getProperty(DockerConstants.DOCKER_REPOSITORY, configuration, message, String.class);
 
         if (repository != null) {
             commitCmd.withRepository(repository);
         }
 
-        Boolean stdInOnce = DockerHelper.getProperty(DockerConstants.DOCKER_STD_IN_ONCE, configuration, message, Boolean.class);
+        Boolean stdInOnce =
+                DockerHelper.getProperty(DockerConstants.DOCKER_STD_IN_ONCE, configuration, message, Boolean.class);
 
         if (stdInOnce != null) {
             commitCmd.withStdinOnce(stdInOnce);
@@ -632,20 +642,21 @@ public class DockerProducer extends DefaultProducer {
             commitCmd.withUser(user);
         }
 
-        Volumes volumes = DockerHelper.getProperty(DockerConstants.DOCKER_VOLUMES, configuration, message, Volumes.class);
+        Volumes volumes =
+                DockerHelper.getProperty(DockerConstants.DOCKER_VOLUMES, configuration, message, Volumes.class);
 
         if (volumes != null) {
             commitCmd.withVolumes(volumes);
         }
 
-        String workingDir = DockerHelper.getProperty(DockerConstants.DOCKER_WORKING_DIR, configuration, message, String.class);
+        String workingDir =
+                DockerHelper.getProperty(DockerConstants.DOCKER_WORKING_DIR, configuration, message, String.class);
 
         if (workingDir != null) {
             commitCmd.withWorkingDir(workingDir);
         }
 
         return commitCmd;
-
     }
 
     /**
@@ -659,24 +670,26 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Copy File/Folder Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
-        String resource = DockerHelper.getProperty(DockerConstants.DOCKER_RESOURCE, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String resource =
+                DockerHelper.getProperty(DockerConstants.DOCKER_RESOURCE, configuration, message, String.class);
 
         if (containerId == null || resource == null) {
             throw new IllegalArgumentException("Container ID and Resource must be specified");
         }
 
-        CopyArchiveFromContainerCmd copyArchiveFromContainerCmd = client.copyArchiveFromContainerCmd(containerId, resource);
+        CopyArchiveFromContainerCmd copyArchiveFromContainerCmd =
+                client.copyArchiveFromContainerCmd(containerId, resource);
 
-        String hostPath = DockerHelper.getProperty(DockerConstants.DOCKER_HOST_PATH, configuration, message, String.class);
+        String hostPath =
+                DockerHelper.getProperty(DockerConstants.DOCKER_HOST_PATH, configuration, message, String.class);
 
         if (hostPath != null) {
             copyArchiveFromContainerCmd.withHostPath(hostPath);
         }
 
         return copyArchiveFromContainerCmd;
-
     }
 
     /**
@@ -697,22 +710,22 @@ public class DockerProducer extends DefaultProducer {
         CreateContainerCmd createContainerCmd = client.createContainerCmd(image);
         createContainerCmd.withHostConfig(newHostConfig());
 
-        Boolean attachStdErr
-                = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_ERR, configuration, message, Boolean.class);
+        Boolean attachStdErr =
+                DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_ERR, configuration, message, Boolean.class);
 
         if (attachStdErr != null) {
             createContainerCmd.withAttachStderr(attachStdErr);
         }
 
-        Boolean attachStdIn
-                = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_IN, configuration, message, Boolean.class);
+        Boolean attachStdIn =
+                DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_IN, configuration, message, Boolean.class);
 
         if (attachStdIn != null) {
             createContainerCmd.withAttachStdin(attachStdIn);
         }
 
-        Boolean attachStdOut
-                = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_OUT, configuration, message, Boolean.class);
+        Boolean attachStdOut =
+                DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_OUT, configuration, message, Boolean.class);
 
         if (attachStdOut != null) {
             createContainerCmd.withAttachStdout(attachStdOut);
@@ -724,7 +737,8 @@ public class DockerProducer extends DefaultProducer {
             createContainerCmd.getHostConfig().withCapAdd(capAdd);
         }
 
-        Capability[] capDrop = DockerHelper.getArrayProperty(DockerConstants.DOCKER_CAP_DROP, message, Capability.class);
+        Capability[] capDrop =
+                DockerHelper.getArrayProperty(DockerConstants.DOCKER_CAP_DROP, message, Capability.class);
 
         if (capDrop != null) {
             createContainerCmd.getHostConfig().withCapDrop(capDrop);
@@ -736,14 +750,15 @@ public class DockerProducer extends DefaultProducer {
             createContainerCmd.withCmd(cmd);
         }
 
-        Integer cpuShares = DockerHelper.getProperty(DockerConstants.DOCKER_CPU_SHARES, configuration, message, Integer.class);
+        Integer cpuShares =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CPU_SHARES, configuration, message, Integer.class);
 
         if (cpuShares != null) {
             createContainerCmd.getHostConfig().withCpuShares(cpuShares);
         }
 
-        Boolean disableNetwork
-                = DockerHelper.getProperty(DockerConstants.DOCKER_DISABLE_NETWORK, configuration, message, Boolean.class);
+        Boolean disableNetwork =
+                DockerHelper.getProperty(DockerConstants.DOCKER_DISABLE_NETWORK, configuration, message, Boolean.class);
 
         if (disableNetwork != null) {
             createContainerCmd.withNetworkDisabled(disableNetwork);
@@ -755,7 +770,8 @@ public class DockerProducer extends DefaultProducer {
             createContainerCmd.getHostConfig().withDns(dns);
         }
 
-        String domainName = DockerHelper.getProperty(DockerConstants.DOCKER_DOMAIN_NAME, configuration, message, String.class);
+        String domainName =
+                DockerHelper.getProperty(DockerConstants.DOCKER_DOMAIN_NAME, configuration, message, String.class);
 
         if (domainName != null) {
             createContainerCmd.withDomainName(domainName);
@@ -773,33 +789,36 @@ public class DockerProducer extends DefaultProducer {
             createContainerCmd.withEntrypoint(entrypoint);
         }
 
-        ExposedPort[] exposedPorts
-                = DockerHelper.getArrayProperty(DockerConstants.DOCKER_EXPOSED_PORTS, message, ExposedPort.class);
+        ExposedPort[] exposedPorts =
+                DockerHelper.getArrayProperty(DockerConstants.DOCKER_EXPOSED_PORTS, message, ExposedPort.class);
 
         if (exposedPorts != null) {
             createContainerCmd.withExposedPorts(exposedPorts);
         }
 
-        HostConfig hostConfig
-                = DockerHelper.getProperty(DockerConstants.DOCKER_HOST_CONFIG, configuration, message, HostConfig.class);
+        HostConfig hostConfig =
+                DockerHelper.getProperty(DockerConstants.DOCKER_HOST_CONFIG, configuration, message, HostConfig.class);
 
         if (hostConfig != null) {
             createContainerCmd.withHostConfig(hostConfig);
         }
 
-        String hostName = DockerHelper.getProperty(DockerConstants.DOCKER_HOSTNAME, configuration, message, String.class);
+        String hostName =
+                DockerHelper.getProperty(DockerConstants.DOCKER_HOSTNAME, configuration, message, String.class);
 
         if (hostName != null) {
             createContainerCmd.withHostName(hostName);
         }
 
-        Long memoryLimit = DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_LIMIT, configuration, message, Long.class);
+        Long memoryLimit =
+                DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_LIMIT, configuration, message, Long.class);
 
         if (memoryLimit != null) {
             createContainerCmd.getHostConfig().withMemory(memoryLimit);
         }
 
-        Long memorySwap = DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_SWAP, configuration, message, Long.class);
+        Long memorySwap =
+                DockerHelper.getProperty(DockerConstants.DOCKER_MEMORY_SWAP, configuration, message, Long.class);
 
         if (memorySwap != null) {
             createContainerCmd.getHostConfig().withMemorySwap(memorySwap);
@@ -817,13 +836,15 @@ public class DockerProducer extends DefaultProducer {
             createContainerCmd.withPortSpecs(portSpecs);
         }
 
-        Boolean stdInOpen = DockerHelper.getProperty(DockerConstants.DOCKER_STD_IN_OPEN, configuration, message, Boolean.class);
+        Boolean stdInOpen =
+                DockerHelper.getProperty(DockerConstants.DOCKER_STD_IN_OPEN, configuration, message, Boolean.class);
 
         if (stdInOpen != null) {
             createContainerCmd.withStdinOpen(stdInOpen);
         }
 
-        Boolean stdInOnce = DockerHelper.getProperty(DockerConstants.DOCKER_STD_IN_ONCE, configuration, message, Boolean.class);
+        Boolean stdInOnce =
+                DockerHelper.getProperty(DockerConstants.DOCKER_STD_IN_ONCE, configuration, message, Boolean.class);
 
         if (stdInOnce != null) {
             createContainerCmd.withStdInOnce(stdInOnce);
@@ -853,21 +874,21 @@ public class DockerProducer extends DefaultProducer {
             createContainerCmd.getHostConfig().withBinds(binds);
         }
 
-        VolumesFrom[] volumesFrom
-                = DockerHelper.getArrayProperty(DockerConstants.DOCKER_VOLUMES_FROM, message, VolumesFrom.class);
+        VolumesFrom[] volumesFrom =
+                DockerHelper.getArrayProperty(DockerConstants.DOCKER_VOLUMES_FROM, message, VolumesFrom.class);
 
         if (volumesFrom != null) {
             createContainerCmd.getHostConfig().withVolumesFrom(volumesFrom);
         }
 
-        String workingDir = DockerHelper.getProperty(DockerConstants.DOCKER_WORKING_DIR, configuration, message, String.class);
+        String workingDir =
+                DockerHelper.getProperty(DockerConstants.DOCKER_WORKING_DIR, configuration, message, String.class);
 
         if (workingDir != null) {
             createContainerCmd.withWorkingDir(workingDir);
         }
 
         return createContainerCmd;
-
     }
 
     /**
@@ -881,22 +902,21 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Diff Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
         ContainerDiffCmd diffContainerCmd = client.containerDiffCmd(containerId);
 
-        String containerIdDiff
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID_DIFF, configuration, message, String.class);
+        String containerIdDiff = DockerHelper.getProperty(
+                DockerConstants.DOCKER_CONTAINER_ID_DIFF, configuration, message, String.class);
 
         if (containerIdDiff != null) {
             diffContainerCmd.withContainerId(containerIdDiff);
         }
 
         return diffContainerCmd;
-
     }
 
     /**
@@ -910,8 +930,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Inspect Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
@@ -929,8 +949,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Kill Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
@@ -943,7 +963,6 @@ public class DockerProducer extends DefaultProducer {
         }
 
         return killContainerCmd;
-
     }
 
     /**
@@ -971,13 +990,15 @@ public class DockerProducer extends DefaultProducer {
             listContainersCmd.withLimit(limit);
         }
 
-        Boolean showAll = DockerHelper.getProperty(DockerConstants.DOCKER_SHOW_ALL, configuration, message, Boolean.class);
+        Boolean showAll =
+                DockerHelper.getProperty(DockerConstants.DOCKER_SHOW_ALL, configuration, message, Boolean.class);
 
         if (showAll != null) {
             listContainersCmd.withShowAll(showAll);
         }
 
-        Boolean showSize = DockerHelper.getProperty(DockerConstants.DOCKER_SHOW_SIZE, configuration, message, Boolean.class);
+        Boolean showSize =
+                DockerHelper.getProperty(DockerConstants.DOCKER_SHOW_SIZE, configuration, message, Boolean.class);
 
         if (showSize != null) {
             listContainersCmd.withShowSize(showSize);
@@ -990,7 +1011,6 @@ public class DockerProducer extends DefaultProducer {
         }
 
         return listContainersCmd;
-
     }
 
     /**
@@ -1004,8 +1024,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Pause Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
@@ -1023,8 +1043,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Remove Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
@@ -1036,15 +1056,14 @@ public class DockerProducer extends DefaultProducer {
             removeContainerCmd.withForce(force);
         }
 
-        Boolean removeVolumes
-                = DockerHelper.getProperty(DockerConstants.DOCKER_REMOVE_VOLUMES, configuration, message, Boolean.class);
+        Boolean removeVolumes =
+                DockerHelper.getProperty(DockerConstants.DOCKER_REMOVE_VOLUMES, configuration, message, Boolean.class);
 
         if (removeVolumes != null) {
             removeContainerCmd.withRemoveVolumes(removeVolumes);
         }
 
         return removeContainerCmd;
-
     }
 
     /**
@@ -1059,19 +1078,19 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Restart Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         RestartContainerCmd restartContainerCmd = client.restartContainerCmd(containerId);
 
-        Integer timeout = DockerHelper.getProperty(DockerConstants.DOCKER_TIMEOUT, configuration, message, Integer.class);
+        Integer timeout =
+                DockerHelper.getProperty(DockerConstants.DOCKER_TIMEOUT, configuration, message, Integer.class);
 
         if (timeout != null) {
             restartContainerCmd.withtTimeout(timeout);
         }
 
         return restartContainerCmd;
-
     }
 
     /**
@@ -1085,8 +1104,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Start Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
@@ -1104,19 +1123,19 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Stop Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         StopContainerCmd stopContainerCmd = client.stopContainerCmd(containerId);
 
-        Integer timeout = DockerHelper.getProperty(DockerConstants.DOCKER_TIMEOUT, configuration, message, Integer.class);
+        Integer timeout =
+                DockerHelper.getProperty(DockerConstants.DOCKER_TIMEOUT, configuration, message, Integer.class);
 
         if (timeout != null) {
             stopContainerCmd.withTimeout(timeout);
         }
 
         return stopContainerCmd;
-
     }
 
     /**
@@ -1130,8 +1149,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Top Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
@@ -1144,7 +1163,6 @@ public class DockerProducer extends DefaultProducer {
         }
 
         return topContainerCmd;
-
     }
 
     /**
@@ -1158,8 +1176,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Unpause Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
@@ -1176,7 +1194,8 @@ public class DockerProducer extends DefaultProducer {
     private CreateNetworkCmd executeCreateNetworkRequest(DockerClient client, Message message) {
         LOGGER.debug("Executing Docker Network Create Request");
 
-        String networkName = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
+        String networkName =
+                DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
 
         ObjectHelper.notNull(networkName, "Network Name must be specified");
 
@@ -1195,7 +1214,8 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Network Remove Request");
 
-        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
+        String networkId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
 
         ObjectHelper.notNull(networkId, "Network ID must be specified");
 
@@ -1213,15 +1233,15 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Network Connect Request");
 
-        String networkId = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String networkId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(networkId, "Network ID must be specified");
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
         return client.connectToNetworkCmd().withNetworkId(networkId).withContainerId(containerId);
-
     }
 
     /*********************
@@ -1239,18 +1259,18 @@ public class DockerProducer extends DefaultProducer {
 
         LOGGER.debug("Executing Docker Exec Create Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
         ExecCreateCmd execCreateCmd = client.execCreateCmd(containerId);
 
-        Boolean attachStdIn
-                = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_IN, configuration, message, Boolean.class);
+        Boolean attachStdIn =
+                DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_IN, configuration, message, Boolean.class);
 
-        Boolean attachStdErr
-                = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_ERR, configuration, message, Boolean.class);
+        Boolean attachStdErr =
+                DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_ERR, configuration, message, Boolean.class);
 
         if (attachStdErr != null) {
             execCreateCmd.withAttachStderr(attachStdErr);
@@ -1260,8 +1280,8 @@ public class DockerProducer extends DefaultProducer {
             execCreateCmd.withAttachStdin(attachStdIn);
         }
 
-        Boolean attachStdOut
-                = DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_OUT, configuration, message, Boolean.class);
+        Boolean attachStdOut =
+                DockerHelper.getProperty(DockerConstants.DOCKER_ATTACH_STD_OUT, configuration, message, Boolean.class);
 
         if (attachStdOut != null) {
             execCreateCmd.withAttachStdout(attachStdOut);
@@ -1280,6 +1300,5 @@ public class DockerProducer extends DefaultProducer {
         }
 
         return execCreateCmd;
-
     }
 }

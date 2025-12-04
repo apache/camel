@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.concurrent.CompletableFuture;
@@ -36,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A processor which converts the message header to be of the given type
  */
-public class ConvertHeaderProcessor extends ServiceSupport implements AsyncProcessor, IdAware, RouteIdAware, DisabledAware {
+public class ConvertHeaderProcessor extends ServiceSupport
+        implements AsyncProcessor, IdAware, RouteIdAware, DisabledAware {
 
     private String id;
     private String routeId;
@@ -49,8 +51,14 @@ public class ConvertHeaderProcessor extends ServiceSupport implements AsyncProce
     private final String charset;
     private final boolean mandatory;
 
-    public ConvertHeaderProcessor(String name, Expression headerName, String toName, Expression toHeaderName,
-                                  Class<?> type, String charset, boolean mandatory) {
+    public ConvertHeaderProcessor(
+            String name,
+            Expression headerName,
+            String toName,
+            Expression toHeaderName,
+            Class<?> type,
+            String charset,
+            boolean mandatory) {
         ObjectHelper.notNull(headerName, "headerName");
         ObjectHelper.notNull(type, "type", this);
         this.name = name;
@@ -148,7 +156,8 @@ public class ConvertHeaderProcessor extends ServiceSupport implements AsyncProce
 
     @Override
     public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                new AsyncCallbackToCompletableFutureAdapter<>(exchange);
         process(exchange, callback);
         return callback.getFuture();
     }

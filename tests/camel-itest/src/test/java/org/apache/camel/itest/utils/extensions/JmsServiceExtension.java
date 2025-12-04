@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.utils.extensions;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +38,6 @@ import org.apache.camel.itest.CamelJmsTestHelper;
 import org.junit.jupiter.api.extension.Extension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public final class JmsServiceExtension implements Extension {
 
@@ -61,7 +62,8 @@ public final class JmsServiceExtension implements Extension {
             LOG.warn(e.getMessage(), e);
             fail("vm acceptor cannot be configured");
         }
-        artemisConfiguration.addAddressSetting("#",
+        artemisConfiguration.addAddressSetting(
+                "#",
                 new AddressSettings()
                         .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
                         .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));

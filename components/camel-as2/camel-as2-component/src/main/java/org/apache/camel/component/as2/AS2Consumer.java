@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
+
+import static java.util.Optional.ofNullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +44,6 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * The AS2 consumer.
@@ -91,18 +92,20 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
         as2ServerConnection = getEndpoint().getAS2ServerConnection();
         apiProxy = new AS2ServerManager(as2ServerConnection);
 
-        String uri = properties.computeIfAbsent("requestUriPattern", param -> "/").toString();
+        String uri =
+                properties.computeIfAbsent("requestUriPattern", param -> "/").toString();
 
         // Check if the configuration for this specific URI path has already been registered
         // (e.g., by the default "/" fallback or another consumer).
         // If not, create and register it now using the endpoint's configured keys/certs.
         if (as2ServerConnection.getConfigurationForPath(uri).isEmpty()) {
-            AS2ServerConnection.AS2ConsumerConfiguration consumerConfig = new AS2ServerConnection.AS2ConsumerConfiguration(
-                    getEndpoint().getSigningAlgorithm(),
-                    getEndpoint().getSigningCertificateChain(),
-                    getEndpoint().getSigningPrivateKey(),
-                    getEndpoint().getDecryptingPrivateKey(),
-                    getEndpoint().getValidateSigningCertificateChain());
+            AS2ServerConnection.AS2ConsumerConfiguration consumerConfig =
+                    new AS2ServerConnection.AS2ConsumerConfiguration(
+                            getEndpoint().getSigningAlgorithm(),
+                            getEndpoint().getSigningCertificateChain(),
+                            getEndpoint().getSigningPrivateKey(),
+                            getEndpoint().getDecryptingPrivateKey(),
+                            getEndpoint().getValidateSigningCertificateChain());
             as2ServerConnection.registerConsumerConfiguration(uri, consumerConfig);
         }
 
@@ -114,7 +117,9 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
 
         if (as2ServerConnection != null) {
             // Resolve the unique URI pattern for this consumer
-            String uri = properties.computeIfAbsent("requestUriPattern", param -> "/").toString();
+            String uri = properties
+                    .computeIfAbsent("requestUriPattern", param -> "/")
+                    .toString();
 
             // Unregister this consumer from the shared AS2ServerConnection
             as2ServerConnection.unlisten(uri);
@@ -130,14 +135,17 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
         try {
             if (request instanceof HttpEntityContainer) {
                 EntityParser.parseAS2MessageEntity(request);
-                apiProxy.handleMDNResponse(context, getEndpoint().getSubject(),
-                        ofNullable(getEndpoint().getFrom()).orElse(getEndpoint().getConfiguration().getServer()));
+                apiProxy.handleMDNResponse(
+                        context,
+                        getEndpoint().getSubject(),
+                        ofNullable(getEndpoint().getFrom())
+                                .orElse(getEndpoint().getConfiguration().getServer()));
             }
-            ApplicationEntity ediEntity
-                    = HttpMessageUtils.extractEdiPayload(request,
-                            new HttpMessageUtils.DecrpytingAndSigningInfo(
-                                    getEndpoint().getValidateSigningCertificateChain(),
-                                    getEndpoint().getDecryptingPrivateKey()));
+            ApplicationEntity ediEntity = HttpMessageUtils.extractEdiPayload(
+                    request,
+                    new HttpMessageUtils.DecrpytingAndSigningInfo(
+                            getEndpoint().getValidateSigningCertificateChain(),
+                            getEndpoint().getDecryptingPrivateKey()));
 
             // Set AS2 Interchange property and EDI message into body of input message.
             Exchange exchange = createExchange(false);
@@ -165,5 +173,4 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
             throw new HttpException("Failed to process AS2 message: " + exception.getMessage(), exception);
         }
     }
-
 }

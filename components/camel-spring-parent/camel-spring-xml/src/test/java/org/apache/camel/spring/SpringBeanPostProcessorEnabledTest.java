@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.apache.camel.Produce;
@@ -48,7 +49,5 @@ public class SpringBeanPostProcessorEnabledTest extends SpringTestSupport {
         public void somewhere(String input) {
             bar.sendBody("Hello " + input);
         }
-
     }
-
 }

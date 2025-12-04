@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.Optional;
@@ -28,8 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Deprecated(since = "4.7")
 public final class ServiceRegistryHelper {
-    private ServiceRegistryHelper() {
-    }
+    private ServiceRegistryHelper() {}
 
     public static Optional<ServiceRegistry> lookupService(CamelContext context) {
         return lookupService(context, ServiceRegistrySelectors.DEFAULT_SELECTOR);

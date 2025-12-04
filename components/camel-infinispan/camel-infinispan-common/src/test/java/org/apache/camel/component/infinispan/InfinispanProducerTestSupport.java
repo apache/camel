@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.SecureRandom;
 import java.util.concurrent.Callable;
@@ -28,11 +34,6 @@ import org.apache.camel.util.CollectionHelper;
 import org.awaitility.Awaitility;
 import org.infinispan.commons.api.BasicCache;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public interface InfinispanProducerTestSupport {
     String KEY_ONE = "keyOne";
@@ -191,7 +192,10 @@ public interface InfinispanProducerTestSupport {
         assertEquals(VALUE_ONE, getCache().get(KEY_ONE));
         assertEquals(VALUE_TWO, getCache().get(KEY_TWO));
 
-        wait(LIFESPAN_TIME, 5000, () -> !getCache().containsKey(KEY_ONE) && !getCache().containsKey(KEY_TWO));
+        wait(
+                LIFESPAN_TIME,
+                5000,
+                () -> !getCache().containsKey(KEY_ONE) && !getCache().containsKey(KEY_TWO));
     }
 
     @Test
@@ -209,7 +213,10 @@ public interface InfinispanProducerTestSupport {
         assertEquals(VALUE_ONE, getCache().get(KEY_ONE));
         assertEquals(VALUE_TWO, getCache().get(KEY_TWO));
 
-        wait(MAX_IDLE_TIME, 5000, () -> !getCache().containsKey(KEY_ONE) && !getCache().containsKey(KEY_TWO));
+        wait(
+                MAX_IDLE_TIME,
+                5000,
+                () -> !getCache().containsKey(KEY_ONE) && !getCache().containsKey(KEY_TWO));
     }
 
     @Test
@@ -239,7 +246,10 @@ public interface InfinispanProducerTestSupport {
         assertEquals(VALUE_ONE, getCache().get(KEY_ONE));
         assertEquals(VALUE_TWO, getCache().get(KEY_TWO));
 
-        wait(LIFESPAN_TIME, 5000, () -> !getCache().containsKey(KEY_ONE) && !getCache().containsKey(KEY_TWO));
+        wait(
+                LIFESPAN_TIME,
+                5000,
+                () -> !getCache().containsKey(KEY_ONE) && !getCache().containsKey(KEY_TWO));
     }
 
     @Test
@@ -258,7 +268,10 @@ public interface InfinispanProducerTestSupport {
         assertEquals(VALUE_ONE, getCache().get(KEY_ONE));
         assertEquals(VALUE_TWO, getCache().get(KEY_TWO));
 
-        wait(MAX_IDLE_TIME, 5000, () -> !getCache().containsKey(KEY_ONE) && !getCache().containsKey(KEY_TWO));
+        wait(
+                MAX_IDLE_TIME,
+                5000,
+                () -> !getCache().containsKey(KEY_ONE) && !getCache().containsKey(KEY_TWO));
     }
 
     @Test

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita;
 
 import java.util.Map;
@@ -33,15 +34,19 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Communicate with a remote Bonita BPM process engine.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true,
-             category = { Category.WORKFLOW })
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "bonita",
+        title = "Bonita",
+        syntax = "bonita:operation",
+        producerOnly = true,
+        category = {Category.WORKFLOW})
 public class BonitaEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private BonitaConfiguration configuration;
 
-    public BonitaEndpoint(String uri, BonitaComponent component,
-                          BonitaConfiguration configuration) {
+    public BonitaEndpoint(String uri, BonitaComponent component, BonitaConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -85,5 +90,4 @@ public class BonitaEndpoint extends DefaultEndpoint implements EndpointServiceLo
     public BonitaConfiguration getConfiguration() {
         return configuration;
     }
-
 }

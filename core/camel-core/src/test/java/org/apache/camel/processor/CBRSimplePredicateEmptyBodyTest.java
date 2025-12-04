@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,10 +41,15 @@ public class CBRSimplePredicateEmptyBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when().simple("${header.name} == null").to("mock:unknown").otherwise()
-                        .to("mock:known").end();
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .simple("${header.name} == null")
+                        .to("mock:unknown")
+                        .otherwise()
+                        .to("mock:known")
+                        .end();
             }
         };
     }
-
 }

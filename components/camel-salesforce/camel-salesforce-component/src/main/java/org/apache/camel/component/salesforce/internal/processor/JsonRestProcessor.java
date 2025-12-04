@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.processor;
+
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,8 +50,6 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 
-import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE;
-
 public class JsonRestProcessor extends AbstractRestProcessor {
 
     // it is ok to use a single thread safe ObjectMapper
@@ -75,8 +76,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
             case GET_RESOURCES:
                 // handle in built response types
-                exchange.setProperty(RESPONSE_TYPE, new TypeReference<Map<String, String>>() {
-                });
+                exchange.setProperty(RESPONSE_TYPE, new TypeReference<Map<String, String>>() {});
                 break;
 
             case GET_GLOBAL_OBJECTS:
@@ -152,7 +152,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 // if all else fails, get body as String
                 final String body = in.getBody(String.class);
                 if (null == body) {
-                    String msg = "Unsupported request message body " + (in.getBody() == null ? null : in.getBody().getClass());
+                    String msg = "Unsupported request message body "
+                            + (in.getBody() == null ? null : in.getBody().getClass());
                     throw new SalesforceException(msg, null);
                 } else {
                     request = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
@@ -178,7 +179,10 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
     @Override
     protected void processResponse(
-            Exchange exchange, InputStream responseEntity, Map<String, String> headers, SalesforceException ex,
+            Exchange exchange,
+            InputStream responseEntity,
+            Map<String, String> headers,
+            SalesforceException ex,
             AsyncCallback callback) {
 
         // process JSON response for TypeReference
@@ -234,7 +238,6 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             // notify callback that exchange is done
             callback.done(false);
         }
-
     }
 
     private Class<?> detectResponseClass(Exchange exchange, InputStream responseEntity) throws IOException {
@@ -261,7 +264,10 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
     @Override
     protected void processStreamResultResponse(
-            Exchange exchange, InputStream responseEntity, Map<String, String> headers, SalesforceException ex,
+            Exchange exchange,
+            InputStream responseEntity,
+            Map<String, String> headers,
+            SalesforceException ex,
             AsyncCallback callback) {
         // process JSON response for TypeReference
         try {
@@ -283,9 +289,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 response = (AbstractQueryRecordsBase<?>) objectMapper.readValue(responseEntity, responseClass);
                 out.setHeader(HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE, response.getTotalSize());
-                QueryResultIterator<?> iterator
-                        = new QueryResultIterator(
-                                objectMapper, responseClass, restClient, determineHeaders(exchange), response);
+                QueryResultIterator<?> iterator = new QueryResultIterator(
+                        objectMapper, responseClass, restClient, determineHeaders(exchange), response);
                 out.setBody(iterator);
             }
         } catch (Exception e) {

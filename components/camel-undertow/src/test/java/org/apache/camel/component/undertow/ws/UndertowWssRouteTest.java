@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.ws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 
@@ -36,9 +40,6 @@ import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWssRouteTest extends BaseUndertowTest {
     @BeforeAll
@@ -85,9 +86,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
         SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, InsecureTrustManagerFactory.INSTANCE.getTrustManagers(), new java.security.SecureRandom());
 
-        WebsocketTestClient testClient = new WebsocketTestClient(
-                "wss://localhost:" + getPort() + "/test",
-                10, sc);
+        WebsocketTestClient testClient = new WebsocketTestClient("wss://localhost:" + getPort() + "/test", 10, sc);
         testClient.connect();
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
@@ -113,7 +112,8 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
                         .log(">>> Message received from WebSocket Client : ${body}")
                         .to("mock:client")
                         .loop(10)
-                        .setBody().constant(">> Welcome on board!")
+                        .setBody()
+                        .constant(">> Welcome on board!")
                         .to("undertow:ws://localhost:" + getPort() + "/test");
             }
         };

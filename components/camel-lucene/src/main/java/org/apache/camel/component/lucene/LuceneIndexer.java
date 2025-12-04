@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lucene;
 
 import java.io.ByteArrayOutputStream;
@@ -147,8 +148,9 @@ public class LuceneIndexer {
                 LOG.trace("Added {} successfully", file);
             }
         } else {
-            LOG.warn("Directory/File {} could not be read."
-                     + " This directory will not be indexed. Please check permissions and rebuild indexes.",
+            LOG.warn(
+                    "Directory/File {} could not be read."
+                            + " This directory will not be indexed. Please check permissions and rebuild indexes.",
                     file.getAbsolutePath());
         }
     }
@@ -175,5 +177,4 @@ public class LuceneIndexer {
 
         return answer;
     }
-
 }

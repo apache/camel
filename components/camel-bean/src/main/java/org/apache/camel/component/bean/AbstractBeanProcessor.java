@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.concurrent.locks.Lock;
@@ -90,7 +91,11 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     }
 
     private static boolean useMethodInvocation(
-            Exchange exchange, AsyncCallback callback, String explicitMethodName, BeanInfo beanInfo, Object beanInstance) {
+            Exchange exchange,
+            AsyncCallback callback,
+            String explicitMethodName,
+            BeanInfo beanInfo,
+            Object beanInstance) {
         final Message in = exchange.getIn();
 
         // set explicit method name to invoke as a exchange property, which is how BeanInfo can detect it
@@ -135,7 +140,9 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
                     try {
                         lookupProcessorDone = true;
                         // so if there is a custom type converter for the bean to processor
-                        target = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, beanTmp);
+                        target = exchange.getContext()
+                                .getTypeConverter()
+                                .tryConvertTo(Processor.class, exchange, beanTmp);
                         processor = target;
                     } finally {
                         lock.unlock();
@@ -220,7 +227,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     protected void doInit() throws Exception {

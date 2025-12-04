@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.spel;
 
 import java.util.Map;
@@ -85,5 +86,4 @@ public final class RootObject {
     public <T> T getHeader(String name, Class<T> type) {
         return exchange.getMessage().getHeader(name, type);
     }
-
 }

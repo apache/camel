@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.util.Arrays;
@@ -37,12 +38,10 @@ import org.apache.camel.tooling.model.OtherModel;
 public final class DependencyDownloaderComponentResolver extends DefaultComponentResolver {
 
     private static final String[] ACCEPTED_STUB_NAMES = {
-            "stub", "bean", "class", "direct", "kamelet", "log", "platform-http", "rest", "seda"
+        "stub", "bean", "class", "direct", "kamelet", "log", "platform-http", "rest", "seda"
     };
 
-    private static final String[] ACCEPTED_TRANSFORM_NAMES = {
-            "stub", "direct", "kamelet", "log", "seda"
-    };
+    private static final String[] ACCEPTED_TRANSFORM_NAMES = {"stub", "direct", "kamelet", "log", "seda"};
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final CamelContext camelContext;
@@ -51,8 +50,8 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
     private final boolean silent;
     private final boolean transform;
 
-    public DependencyDownloaderComponentResolver(CamelContext camelContext, String stubPattern, boolean silent,
-                                                 boolean transform) {
+    public DependencyDownloaderComponentResolver(
+            CamelContext camelContext, String stubPattern, boolean silent, boolean transform) {
         this.camelContext = camelContext;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.stubPattern = stubPattern;
@@ -155,5 +154,4 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
         }
         return !stubbed;
     }
-
 }

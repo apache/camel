@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.file;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.FileConsumerPreMoveTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringFileConsumerPreMoveTest extends FileConsumerPreMoveTest {
 
@@ -28,7 +29,5 @@ public class SpringFileConsumerPreMoveTest extends FileConsumerPreMoveTest {
         return createSpringCamelContext(this, "org/apache/camel/spring/file/SpringFileConsumerPreMoveTest.xml");
     }
 
-    public static class MyPreMoveCheckerProcessor extends FileConsumerPreMoveTest.MyPreMoveCheckerProcessor {
-    }
-
+    public static class MyPreMoveCheckerProcessor extends FileConsumerPreMoveTest.MyPreMoveCheckerProcessor {}
 }

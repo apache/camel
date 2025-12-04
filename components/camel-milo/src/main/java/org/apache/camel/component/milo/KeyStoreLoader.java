@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo;
 
 import java.io.IOException;
@@ -59,8 +60,7 @@ public class KeyStoreLoader {
         }
     }
 
-    public KeyStoreLoader() {
-    }
+    public KeyStoreLoader() {}
 
     public void setType(final String type) {
         this.type = type != null ? type : DEFAULT_KEY_STORE_TYPE;
@@ -128,8 +128,8 @@ public class KeyStoreLoader {
             }
         }
 
-        final Key privateKey
-                = keyStore.getKey(effectiveKeyAlias, this.keyPassword != null ? this.keyPassword.toCharArray() : null);
+        final Key privateKey =
+                keyStore.getKey(effectiveKeyAlias, this.keyPassword != null ? this.keyPassword.toCharArray() : null);
 
         if (privateKey instanceof PrivateKey) {
             final X509Certificate certificate = (X509Certificate) keyStore.getCertificate(effectiveKeyAlias);

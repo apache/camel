@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.wsdl_first;
 
 import jakarta.jws.WebService;
 
-@WebService(serviceName = "PersonService12",
-            targetNamespace = "http://camel.apache.org/wsdl-first",
-            endpointInterface = "org.apache.camel.wsdl_first.Person",
-            wsdlLocation = "classpath:/person.wsdl")
-
+@WebService(
+        serviceName = "PersonService12",
+        targetNamespace = "http://camel.apache.org/wsdl-first",
+        endpointInterface = "org.apache.camel.wsdl_first.Person",
+        wsdlLocation = "classpath:/person.wsdl")
 @jakarta.xml.ws.BindingType(value = "http://www.w3.org/2003/05/soap/bindings/HTTP/")
-public class PersonImpl12 extends PersonImpl {
-
-}
+public class PersonImpl12 extends PersonImpl {}

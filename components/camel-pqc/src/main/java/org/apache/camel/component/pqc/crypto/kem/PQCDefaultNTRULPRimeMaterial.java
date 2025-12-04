@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto.kem;
 
 import java.security.*;
@@ -49,14 +50,16 @@ public class PQCDefaultNTRULPRimeMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRULPRime.getAlgorithm(),
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.NTRULPRime.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.NTRULPRime.getBcProvider());
         kpg.initialize(NTRULPRimeParameterSpec.ntrulpr761, new SecureRandom());
         return kpg;
     }
 
     protected static KeyGenerator prepareKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRULPRime.getAlgorithm(),
+        KeyGenerator kg = KeyGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.NTRULPRime.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.NTRULPRime.getBcProvider());
         return kg;
     }

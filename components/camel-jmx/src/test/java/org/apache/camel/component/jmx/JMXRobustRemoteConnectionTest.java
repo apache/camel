@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.rmi.registry.LocateRegistry;
@@ -30,10 +35,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test to verify:
@@ -76,14 +77,18 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
         // create MBean server
         server = MBeanServerFactory.createMBeanServer(DOMAIN);
         // create JMXConnectorServer MBean
-        connector = JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.<String, Object> emptyMap(), server);
+        connector =
+                JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.<String, Object>emptyMap(), server);
         connector.start();
     }
 
     @Override
     protected JMXUriBuilder buildFromURI() {
         String uri = url.toString();
-        return super.buildFromURI().withServerName(uri).withTestConnectionOnStartup(false).withReconnectDelay(1)
+        return super.buildFromURI()
+                .withServerName(uri)
+                .withTestConnectionOnStartup(false)
+                .withReconnectDelay(1)
                 .withReconnectOnConnectionFailure(true);
     }
 
@@ -123,5 +128,4 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/consumer-test/touched.xml"));
     }
-
 }

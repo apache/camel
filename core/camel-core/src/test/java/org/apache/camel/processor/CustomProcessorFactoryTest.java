@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
@@ -69,7 +70,12 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").setBody().constant("body not altered").to("mock:foo");
 
-                from("direct:foo").split(body()).setBody().constant("body not altered").to("mock:split").end()
+                from("direct:foo")
+                        .split(body())
+                        .setBody()
+                        .constant("body not altered")
+                        .to("mock:split")
+                        .end()
                         .to("mock:result");
             }
         };
@@ -95,7 +101,6 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
             // before the processor was created
             return super.createProcessor(route, definition);
         }
-
     }
     // END SNIPPET: e3
 

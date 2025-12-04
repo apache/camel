@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -26,9 +30,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to test preMove with noop option.
@@ -54,8 +55,7 @@ public class FromFtpPreMoveNoopIT extends FtpServerTestSupport {
 
         // and file should be kept there
         File file = service.ftpFile("movefile/work/hello.txt").toFile();
-        await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertTrue(file.exists(), "The file should exists"));
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(file.exists(), "The file should exists"));
     }
 
     private void prepareFtpServer() throws Exception {
@@ -76,13 +76,16 @@ public class FromFtpPreMoveNoopIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // assert the file is pre moved
-                        File file = service.ftpFile("movefile/work/hello.txt").toFile();
-                        assertTrue(file.exists(), "The file should have been moved");
-                    }
-                }).to("mock:result");
+                from(getFtpUrl())
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // assert the file is pre moved
+                                File file = service.ftpFile("movefile/work/hello.txt")
+                                        .toFile();
+                                assertTrue(file.exists(), "The file should have been moved");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

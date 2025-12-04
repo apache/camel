@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.io.Serial;
@@ -45,8 +46,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     /**
      * Creates a new thread pool profile, with no id set.
      */
-    public ThreadPoolProfile() {
-    }
+    public ThreadPoolProfile() {}
 
     /**
      * Creates a new thread pool profile
@@ -268,8 +268,13 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     }
 
     public boolean isEmpty() {
-        return poolSize == null && maxPoolSize == null && keepAliveTime == null && timeUnit == null
-                && maxQueueSize == null && allowCoreThreadTimeOut == null && rejectedPolicy == null;
+        return poolSize == null
+                && maxPoolSize == null
+                && keepAliveTime == null
+                && timeUnit == null
+                && maxQueueSize == null
+                && allowCoreThreadTimeOut == null
+                && rejectedPolicy == null;
     }
 
     @Override
@@ -290,8 +295,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     @Override
     public String toString() {
         return "ThreadPoolProfile[" + id + " (" + defaultProfile + ") size:" + poolSize + "-" + maxPoolSize
-               + ", keepAlive:" + keepAliveTime + " " + timeUnit + ", maxQueue:" + maxQueueSize
-               + ", allowCoreThreadTimeOut:" + allowCoreThreadTimeOut + ", rejectedPolicy:" + rejectedPolicy + "]";
+                + ", keepAlive:" + keepAliveTime + " " + timeUnit + ", maxQueue:" + maxQueueSize
+                + ", allowCoreThreadTimeOut:" + allowCoreThreadTimeOut + ", rejectedPolicy:" + rejectedPolicy + "]";
     }
-
 }

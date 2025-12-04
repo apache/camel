@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.cluster;
+
+import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createCache;
+import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createConfiguration;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +49,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createCache;
-import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createConfiguration;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AbstractInfinispanRemoteClusteredIT {
     @RegisterExtension
@@ -71,7 +72,8 @@ public class AbstractInfinispanRemoteClusteredIT {
     }
 
     public void runTest(Function<RunnerEnv, RouteBuilder> routeBuilderFunction) throws Exception {
-        final List<String> clients = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
+        final List<String> clients =
+                IntStream.range(0, 3).mapToObj(Integer::toString).toList();
         final List<String> results = new ArrayList<>();
 
         final CountDownLatch latch = new CountDownLatch(clients.size());
@@ -102,7 +104,7 @@ public class AbstractInfinispanRemoteClusteredIT {
         assertThat(results).containsAll(clients);
     }
 
-    //Set up a single node cluster.
+    // Set up a single node cluster.
     private InfinispanRemoteClusterService getInfinispanRemoteClusterService(String id) {
         InfinispanRemoteClusterService clusterService = new InfinispanRemoteClusterService();
 

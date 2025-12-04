@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanExcludedMethodTest extends ContextTestSupport {
 
@@ -53,7 +54,6 @@ public class BeanExcludedMethodTest extends ContextTestSupport {
             fail("Should not call equals");
             return true;
         }
-
     }
 
     public static class MyOtherDummyBean {
@@ -73,5 +73,4 @@ public class BeanExcludedMethodTest extends ContextTestSupport {
             return "Hello " + hi;
         }
     }
-
 }

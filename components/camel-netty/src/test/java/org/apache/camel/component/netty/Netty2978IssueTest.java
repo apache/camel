@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,9 +38,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("This test can cause CI servers to hang")
 public class Netty2978IssueTest extends BaseNettyTest {
@@ -91,13 +92,12 @@ public class Netty2978IssueTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?sync=true")
-                        .process(new Processor() {
-                            public void process(final Exchange exchange) {
-                                String body = exchange.getIn().getBody(String.class);
-                                exchange.getMessage().setBody("Bye " + body);
-                            }
-                        });
+                from("netty:tcp://localhost:{{port}}?sync=true").process(new Processor() {
+                    public void process(final Exchange exchange) {
+                        String body = exchange.getIn().getBody(String.class);
+                        exchange.getMessage().setBody("Bye " + body);
+                    }
+                });
             }
         };
     }
@@ -119,5 +119,4 @@ public class Netty2978IssueTest extends BaseNettyTest {
             return producerTemplate.requestBody(endpoint, num, String.class);
         }
     }
-
 }

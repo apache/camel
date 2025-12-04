@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -26,9 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.athena.AthenaClient;
 import software.amazon.awssdk.services.athena.model.EncryptionOption;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 public class AthenaEndpointTest {
@@ -47,30 +48,29 @@ public class AthenaEndpointTest {
 
     @Test
     public void allTheEndpointParams() {
-        Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-                "aws2-athena://label"
-                                                                                         + "?amazonAthenaClient=#athenaClient"
-                                                                                         + "&operation=startQueryExecution"
-                                                                                         + "&database=db"
-                                                                                         + "&queryExecutionId=id"
-                                                                                         + "&workGroup=wg"
-                                                                                         + "&nextToken=nt"
-                                                                                         + "&maxResults=42"
-                                                                                         + "&includeTrace=true"
-                                                                                         + "&outputLocation=bucket"
-                                                                                         + "&outputType=SelectList"
-                                                                                         + "&clientRequestToken=crt"
-                                                                                         + "&queryString=select"
-                                                                                         + "&encryptionOption=SSE_S3"
-                                                                                         + "&kmsKey=key"
-                                                                                         + "&waitTimeout=1"
-                                                                                         + "&initialDelay=2"
-                                                                                         + "&delay=3"
-                                                                                         + "&maxAttempts=4"
-                                                                                         + "&retry=always"
-                                                                                         + "&accessKey=unused"
-                                                                                         + "&secretKey=unused"
-                                                                                         + "&resetWaitTimeoutOnRetry=false"))
+        Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint("aws2-athena://label"
+                        + "?amazonAthenaClient=#athenaClient"
+                        + "&operation=startQueryExecution"
+                        + "&database=db"
+                        + "&queryExecutionId=id"
+                        + "&workGroup=wg"
+                        + "&nextToken=nt"
+                        + "&maxResults=42"
+                        + "&includeTrace=true"
+                        + "&outputLocation=bucket"
+                        + "&outputType=SelectList"
+                        + "&clientRequestToken=crt"
+                        + "&queryString=select"
+                        + "&encryptionOption=SSE_S3"
+                        + "&kmsKey=key"
+                        + "&waitTimeout=1"
+                        + "&initialDelay=2"
+                        + "&delay=3"
+                        + "&maxAttempts=4"
+                        + "&retry=always"
+                        + "&accessKey=unused"
+                        + "&secretKey=unused"
+                        + "&resetWaitTimeoutOnRetry=false"))
                 .getConfiguration();
 
         assertEquals(amazonAthenaClient, configuration.getAmazonAthenaClient());
@@ -97,8 +97,9 @@ public class AthenaEndpointTest {
 
     @Test
     public void defaultEndpointParams() {
-        Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-                "aws2-athena://label?accessKey=unused&secretKey=unused")).getConfiguration();
+        Athena2Configuration configuration = ((Athena2Endpoint)
+                        camelContext.getEndpoint("aws2-athena://label?accessKey=unused&secretKey=unused"))
+                .getConfiguration();
 
         assertEquals(amazonAthenaClient, configuration.getAmazonAthenaClient());
         assertEquals(Athena2Operations.startQueryExecution, configuration.getOperation());
@@ -124,12 +125,11 @@ public class AthenaEndpointTest {
 
     @Test
     public void getQueryExecutionOperationParams() {
-        Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-                "aws2-athena://label"
-                                                                                         + "?operation=getQueryExecution"
-                                                                                         + "&accessKey=unused"
-                                                                                         + "&secretKey=unused"
-                                                                                         + "&queryExecutionId=123"))
+        Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint("aws2-athena://label"
+                        + "?operation=getQueryExecution"
+                        + "&accessKey=unused"
+                        + "&secretKey=unused"
+                        + "&queryExecutionId=123"))
                 .getConfiguration();
 
         assertEquals(Athena2Operations.getQueryExecution, configuration.getOperation());
@@ -138,15 +138,14 @@ public class AthenaEndpointTest {
 
     @Test
     public void getQueryResultsOperationParams() {
-        Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-                "aws2-athena://label"
-                                                                                         + "?operation=getQueryResults"
-                                                                                         + "&queryExecutionId=123"
-                                                                                         + "&outputType=SelectList"
-                                                                                         + "&maxResults=1"
-                                                                                         + "&accessKey=unused"
-                                                                                         + "&secretKey=unused"
-                                                                                         + "&nextToken=nt"))
+        Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint("aws2-athena://label"
+                        + "?operation=getQueryResults"
+                        + "&queryExecutionId=123"
+                        + "&outputType=SelectList"
+                        + "&maxResults=1"
+                        + "&accessKey=unused"
+                        + "&secretKey=unused"
+                        + "&nextToken=nt"))
                 .getConfiguration();
 
         assertEquals(Athena2Operations.getQueryResults, configuration.getOperation());
@@ -158,14 +157,13 @@ public class AthenaEndpointTest {
 
     @Test
     public void listQueryExecutionsOperationParams() {
-        Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-                "aws2-athena://label"
-                                                                                         + "?operation=listQueryExecutions"
-                                                                                         + "&maxResults=1"
-                                                                                         + "&nextToken=nt"
-                                                                                         + "&accessKey=unused"
-                                                                                         + "&secretKey=unused"
-                                                                                         + "&workGroup=wg"))
+        Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint("aws2-athena://label"
+                        + "?operation=listQueryExecutions"
+                        + "&maxResults=1"
+                        + "&nextToken=nt"
+                        + "&accessKey=unused"
+                        + "&secretKey=unused"
+                        + "&workGroup=wg"))
                 .getConfiguration();
 
         assertEquals(Athena2Operations.listQueryExecutions, configuration.getOperation());
@@ -173,5 +171,4 @@ public class AthenaEndpointTest {
         assertEquals("nt", configuration.getNextToken());
         assertEquals("wg", configuration.getWorkGroup());
     }
-
 }

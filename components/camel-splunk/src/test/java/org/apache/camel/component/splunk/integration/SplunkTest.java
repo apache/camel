@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk.integration;
 
 import org.apache.camel.component.splunk.event.SplunkEvent;
@@ -38,5 +39,4 @@ public abstract class SplunkTest extends CamelTestSupport {
         splunkEvent.addPair("key3", "value3");
         template.sendBody("direct:submit", splunkEvent);
     }
-
 }

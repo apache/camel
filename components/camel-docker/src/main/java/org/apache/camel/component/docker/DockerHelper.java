@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker;
 
 import java.lang.reflect.Array;
@@ -80,8 +81,8 @@ public final class DockerHelper {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <
-            T> T getProperty(String name, DockerConfiguration configuration, Message message, Class<T> clazz, T defaultValue) {
+    public static <T> T getProperty(
+            String name, DockerConfiguration configuration, Message message, Class<T> clazz, T defaultValue) {
         // First attempt to locate property from Message Header, then fallback
         // to Endpoint property
 
@@ -132,7 +133,6 @@ public final class DockerHelper {
                     T[] headerArray = (T[]) Array.newInstance(clazz, 1);
                     headerArray[0] = (T) header;
                     return headerArray;
-
                 }
 
                 if (header.getClass().isArray()) {
@@ -142,7 +142,6 @@ public final class DockerHelper {
                     }
                 }
             }
-
         }
 
         return null;
@@ -170,5 +169,4 @@ public final class DockerHelper {
 
         return null;
     }
-
 }

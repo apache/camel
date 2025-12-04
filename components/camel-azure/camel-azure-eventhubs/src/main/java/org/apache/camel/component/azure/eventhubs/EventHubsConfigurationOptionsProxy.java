@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
 
 import java.util.function.Supplier;
@@ -33,7 +34,8 @@ public class EventHubsConfigurationOptionsProxy {
         this.configuration = configuration;
     }
 
-    private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
+    private static <T> T getObjectFromHeaders(
+            final Exchange exchange, final String headerName, final Class<T> classType) {
         return exchange.getIn().getHeader(headerName, classType);
     }
 
@@ -51,10 +53,10 @@ public class EventHubsConfigurationOptionsProxy {
 
     private <R> R getOption(
             final Exchange exchange, final String headerName, final Supplier<R> fallbackFn, final Class<R> type) {
-        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
+        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a
+        // function or constant
         return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(getObjectFromHeaders(exchange, headerName, type))
                 ? fallbackFn.get()
                 : getObjectFromHeaders(exchange, headerName, type);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.util.Map;
@@ -40,7 +41,8 @@ public class DefaultPropertiesLookupListener extends ServiceSupport implements P
         var p = properties.get(name);
         if (p != null) {
             String source = newSource != null ? newSource : p.source();
-            properties.put(name, new PropertiesResolvedValue(p.name(), p.originalValue(), newValue, p.defaultValue(), source));
+            properties.put(
+                    name, new PropertiesResolvedValue(p.name(), p.originalValue(), newValue, p.defaultValue(), source));
         }
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
@@ -35,8 +36,11 @@ public interface CamelDependencyInjectionAnnotationFactory {
      * @return                 the created task to use for binding the bean
      */
     Runnable createBindToRegistryFactory(
-            String id, Object bean, Class<?> beanType,
-            String beanName, boolean beanPostProcess,
-            String initMethod, String destroyMethod);
-
+            String id,
+            Object bean,
+            Class<?> beanType,
+            String beanName,
+            boolean beanPostProcess,
+            String initMethod,
+            String destroyMethod);
 }

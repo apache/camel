@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.streaming;
+
+import static java.util.Collections.emptySet;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.cometd.bayeux.Channel.META_CONNECT;
+import static org.cometd.bayeux.Channel.META_HANDSHAKE;
+import static org.cometd.bayeux.Channel.META_SUBSCRIBE;
+import static org.cometd.bayeux.Message.ERROR_FIELD;
+import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
 import java.io.IOException;
 import java.net.CookieManager;
@@ -54,15 +64,6 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.emptySet;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.cometd.bayeux.Channel.META_CONNECT;
-import static org.cometd.bayeux.Channel.META_HANDSHAKE;
-import static org.cometd.bayeux.Channel.META_SUBSCRIBE;
-import static org.cometd.bayeux.Message.ERROR_FIELD;
-import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
-
 public class SubscriptionHelper extends ServiceSupport {
 
     static final ReplayExtension REPLAY_EXTENSION = new ReplayExtension();
@@ -96,8 +97,8 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private final Map<String, Set<StreamingApiConsumer>> channelToConsumers = new ConcurrentHashMap<>();
 
-    private final Map<StreamingApiConsumer, ClientSessionChannel.MessageListener> consumerToListener
-            = new ConcurrentHashMap<>();
+    private final Map<StreamingApiConsumer, ClientSessionChannel.MessageListener> consumerToListener =
+            new ConcurrentHashMap<>();
 
     private final Set<String> channelsToSubscribe = ConcurrentHashMap.newKeySet();
 
@@ -126,8 +127,7 @@ public class SubscriptionHelper extends ServiceSupport {
                     if (handshakeError.startsWith("403::")) {
                         String failureReason = getFailureReason(message);
                         if (failureReason.equals(AUTHENTICATION_INVALID)) {
-                            LOG.debug(
-                                    "attempting login due to handshake error: 403 -> 401::Authentication invalid");
+                            LOG.debug("attempting login due to handshake error: 403 -> 401::Authentication invalid");
                             session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
                         }
                     }
@@ -157,7 +157,8 @@ public class SubscriptionHelper extends ServiceSupport {
                     LOG.debug("Attempting login...");
                     session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
                 }
-                if (message.getAdvice() == null || "none".equals(message.getAdvice().get("reconnect"))) {
+                if (message.getAdvice() == null
+                        || "none".equals(message.getAdvice().get("reconnect"))) {
                     LOG.debug("Advice == none, so handshaking");
                     client.handshake();
                 }
@@ -179,7 +180,9 @@ public class SubscriptionHelper extends ServiceSupport {
             if (!message.isSuccessful()) {
                 LOG.warn("Subscription failure: {}", message);
                 var consumers = channelToConsumers.getOrDefault(channelName, emptySet());
-                consumers.stream().findFirst().ifPresent(salesforceConsumer -> subscriptionFailed(salesforceConsumer, message));
+                consumers.stream()
+                        .findFirst()
+                        .ifPresent(salesforceConsumer -> subscriptionFailed(salesforceConsumer, message));
             } else {
                 // remember subscription
                 LOG.info("Subscribed to channel {}", channelName);
@@ -201,8 +204,9 @@ public class SubscriptionHelper extends ServiceSupport {
         }
 
         Exception failure = getFailure(message);
-        String msg = String.format("Error subscribing to %s: %s", firstConsumer.getTopicName(),
-                failure != null ? failure.getMessage() : error);
+        String msg = String.format(
+                "Error subscribing to %s: %s",
+                firstConsumer.getTopicName(), failure != null ? failure.getMessage() : error);
         boolean abort = true;
 
         LOG.warn(msg);
@@ -227,8 +231,8 @@ public class SubscriptionHelper extends ServiceSupport {
             }
         } else if (error.matches(INVALID_REPLAY_ID_PATTERN)) {
             abort = false;
-            long fallBackReplayId
-                    = firstConsumer.getEndpoint().getConfiguration().getFallBackReplayId();
+            long fallBackReplayId =
+                    firstConsumer.getEndpoint().getConfiguration().getFallBackReplayId();
             LOG.warn(error);
             LOG.warn("Falling back to replayId {} for channel {}", fallBackReplayId, channelName);
             REPLAY_EXTENSION.setReplayId(channelName, fallBackReplayId);
@@ -273,7 +277,8 @@ public class SubscriptionHelper extends ServiceSupport {
         if (!client.waitFor(waitMs, BayeuxClient.State.CONNECTED)) {
             if (handshakeException != null) {
                 throw new CamelException(
-                        String.format("Exception during HANDSHAKE: %s", handshakeException.getMessage()), handshakeException);
+                        String.format("Exception during HANDSHAKE: %s", handshakeException.getMessage()),
+                        handshakeException);
             } else if (handshakeError != null) {
                 throw new CamelException(String.format("Error during HANDSHAKE: %s", handshakeError));
             } else if (connectException != null) {
@@ -283,8 +288,7 @@ public class SubscriptionHelper extends ServiceSupport {
                 throw new CamelException(String.format("Error during CONNECT: %s", connectError));
             } else {
                 throw new CamelException(
-                        String.format("Handshake request timeout after %s seconds",
-                                HANDSHAKE_TIMEOUT_SEC));
+                        String.format("Handshake request timeout after %s seconds", HANDSHAKE_TIMEOUT_SEC));
             }
         }
     }
@@ -370,7 +374,7 @@ public class SubscriptionHelper extends ServiceSupport {
             protected void customize(Request request) {
                 super.customize(request);
 
-                //accessToken might be null due to lazy login
+                // accessToken might be null due to lazy login
                 String accessToken = session.getAccessToken();
                 if (accessToken == null) {
                     try {
@@ -389,7 +393,8 @@ public class SubscriptionHelper extends ServiceSupport {
                     CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL);
                     cookieManager.put(uri, cookies);
 
-                    for (java.net.HttpCookie httpCookie : cookieManager.getCookieStore().getCookies()) {
+                    for (java.net.HttpCookie httpCookie :
+                            cookieManager.getCookieStore().getCookies()) {
                         httpCookieStore.add(uri, HttpCookie.from(httpCookie));
                     }
                 } catch (IOException x) {
@@ -418,7 +423,9 @@ public class SubscriptionHelper extends ServiceSupport {
         try {
             // create subscription for consumer
             final String channelName = getChannelName(consumer.getTopicName());
-            channelToConsumers.computeIfAbsent(channelName, key -> ConcurrentHashMap.newKeySet()).add(consumer);
+            channelToConsumers
+                    .computeIfAbsent(channelName, key -> ConcurrentHashMap.newKeySet())
+                    .add(consumer);
             channelsToSubscribe.add(channelName);
 
             setReplayIdIfAbsent(consumer.getEndpoint());
@@ -448,7 +455,8 @@ public class SubscriptionHelper extends ServiceSupport {
         String failureReason = null;
         if (message.getExt() != null) {
             @SuppressWarnings("unchecked")
-            Map<String, Object> sfdcFields = (Map<String, Object>) message.getExt().get(SFDC_FIELD);
+            Map<String, Object> sfdcFields =
+                    (Map<String, Object>) message.getExt().get(SFDC_FIELD);
             if (sfdcFields != null) {
                 failureReason = (String) sfdcFields.get(FAILURE_REASON_FIELD);
             }
@@ -478,21 +486,27 @@ public class SubscriptionHelper extends ServiceSupport {
 
         final SalesforceEndpointConfig endpointConfiguration = endpoint.getConfiguration();
         final Map<String, Long> endpointInitialReplayIdMap = endpointConfiguration.getInitialReplayIdMap();
-        final Long endpointReplayId
-                = endpointInitialReplayIdMap.getOrDefault(topicName, endpointInitialReplayIdMap.get(channelName));
+        final Long endpointReplayId =
+                endpointInitialReplayIdMap.getOrDefault(topicName, endpointInitialReplayIdMap.get(channelName));
         final Long endpointDefaultReplayId = endpointConfiguration.getDefaultReplayId();
 
         final SalesforceEndpointConfig componentConfiguration = component.getConfig();
         final Map<String, Long> componentInitialReplayIdMap = componentConfiguration.getInitialReplayIdMap();
-        final Long componentReplayId
-                = componentInitialReplayIdMap.getOrDefault(topicName, componentInitialReplayIdMap.get(channelName));
+        final Long componentReplayId =
+                componentInitialReplayIdMap.getOrDefault(topicName, componentInitialReplayIdMap.get(channelName));
         final Long componentDefaultReplayId = componentConfiguration.getDefaultReplayId();
 
         // the endpoint values have priority over component values, and the
         // default values priority
         // over give topic values
-        return Stream.of(replayId, endpointReplayId, componentReplayId, endpointDefaultReplayId, componentDefaultReplayId)
-                .filter(Objects::nonNull).findFirst();
+        return Stream.of(
+                        replayId,
+                        endpointReplayId,
+                        componentReplayId,
+                        endpointDefaultReplayId,
+                        componentDefaultReplayId)
+                .filter(Objects::nonNull)
+                .findFirst();
     }
 
     static String getChannelName(final String topicName) {
@@ -545,9 +559,11 @@ public class SubscriptionHelper extends ServiceSupport {
             boolean replayOptionsPresent = component.getConfig().getDefaultReplayId() != null
                     || !component.getConfig().getInitialReplayIdMap().isEmpty();
             if (replayOptionsPresent) {
-                return component.getSession().getInstanceUrl() + "/cometd/replay/" + component.getConfig().getApiVersion();
+                return component.getSession().getInstanceUrl() + "/cometd/replay/"
+                        + component.getConfig().getApiVersion();
             }
         }
-        return component.getSession().getInstanceUrl() + "/cometd/" + component.getConfig().getApiVersion();
+        return component.getSession().getInstanceUrl() + "/cometd/"
+                + component.getConfig().getApiVersion();
     }
 }

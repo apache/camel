@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kudu;
 
 import java.util.ArrayList;
@@ -38,8 +39,7 @@ public final class KuduUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduUtils.class);
 
-    private KuduUtils() {
-    }
+    private KuduUtils() {}
 
     /**
      * Convert results to a more Java friendly type
@@ -64,8 +64,7 @@ public final class KuduUtils {
     }
 
     public static List<Map<String, Object>> doScan(
-            String tableName, KuduClient connection, List<String> columnNames,
-            KuduPredicate predicate, long limit)
+            String tableName, KuduClient connection, List<String> columnNames, KuduPredicate predicate, long limit)
             throws KuduException {
         LOG.trace("Scanning table {}", tableName);
         KuduTable table = connection.openTable(tableName);
@@ -77,8 +76,10 @@ public final class KuduUtils {
         if (-1 < limit) {
             builder.limit(limit);
         }
-        List<String> projectColumns = Optional.ofNullable(columnNames).orElse(
-                table.getSchema().getColumns().stream().map(ColumnSchema::getName).collect(Collectors.toList()));
+        List<String> projectColumns = Optional.ofNullable(columnNames)
+                .orElse(table.getSchema().getColumns().stream()
+                        .map(ColumnSchema::getName)
+                        .collect(Collectors.toList()));
         KuduScanner scanner = builder.setProjectedColumnNames(projectColumns).build();
         return KuduUtils.scannerToList(scanner);
     }

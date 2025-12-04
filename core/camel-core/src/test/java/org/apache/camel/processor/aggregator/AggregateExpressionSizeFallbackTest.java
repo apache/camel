@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.HashMap;
@@ -45,9 +46,12 @@ public class AggregateExpressionSizeFallbackTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
                         // if no mySize header it will fallback to the 3 in size
-                        .completionSize(header("mySize")).completionSize(3).to("mock:aggregated");
+                        .completionSize(header("mySize"))
+                        .completionSize(3)
+                        .to("mock:aggregated");
             }
         };
     }

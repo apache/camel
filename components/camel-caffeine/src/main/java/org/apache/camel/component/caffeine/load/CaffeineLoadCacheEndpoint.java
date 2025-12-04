@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.load;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -34,19 +35,27 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform caching operations using Caffeine Cache with an attached CacheLoader.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-loadcache", title = "Caffeine LoadCache",
-             remote = false, syntax = "caffeine-loadcache:cacheName", category = { Category.CACHE, Category.CLUSTERING },
-             producerOnly = true, headersClass = CaffeineConstants.class)
+@UriEndpoint(
+        firstVersion = "2.20.0",
+        scheme = "caffeine-loadcache",
+        title = "Caffeine LoadCache",
+        remote = false,
+        syntax = "caffeine-loadcache:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        producerOnly = true,
+        headersClass = CaffeineConstants.class)
 public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
     @Metadata(required = true)
     private final String cacheName;
+
     @UriParam
     private final CaffeineConfiguration configuration;
 
     private volatile LoadingCache<?, ?> cache;
 
-    public CaffeineLoadCacheEndpoint(String uri, Component component, String cacheName, CaffeineConfiguration configuration) {
+    public CaffeineLoadCacheEndpoint(
+            String uri, Component component, String cacheName, CaffeineConfiguration configuration) {
         super(uri, component);
         this.cacheName = cacheName;
         this.configuration = configuration;
@@ -75,8 +84,8 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
             if (configuration.isCreateCacheIfNotExist()) {
                 cache = getComponent().getOrCreateCache(cacheName, configuration);
             } else {
-                throw new IllegalArgumentException(
-                        "LoadingCache instance '" + cacheName + "' not found and createCacheIfNotExist is set to false");
+                throw new IllegalArgumentException("LoadingCache instance '" + cacheName
+                        + "' not found and createCacheIfNotExist is set to false");
             }
         }
     }

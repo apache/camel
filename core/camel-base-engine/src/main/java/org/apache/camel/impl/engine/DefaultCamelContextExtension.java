@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
@@ -144,6 +145,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Deprecated(since = "3.17.0")
     private ErrorHandlerFactory errorHandlerFactory;
+
     private String basePackageScan;
     private String additionalSensitiveKeywords;
 
@@ -199,7 +201,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setManagementNameStrategy(ManagementNameStrategy managementNameStrategy) {
-        this.managementNameStrategy = camelContext.getInternalServiceManager().addService(camelContext, managementNameStrategy);
+        this.managementNameStrategy =
+                camelContext.getInternalServiceManager().addService(camelContext, managementNameStrategy);
     }
 
     PropertiesComponent getPropertiesComponent() {
@@ -217,7 +220,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setPropertiesComponent(PropertiesComponent propertiesComponent) {
-        this.propertiesComponent = camelContext.getInternalServiceManager().addService(camelContext, propertiesComponent);
+        this.propertiesComponent =
+                camelContext.getInternalServiceManager().addService(camelContext, propertiesComponent);
     }
 
     @Override
@@ -289,13 +293,12 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         // catch-up.
         if (camelContext.getEndpointStrategies().add(strategy)) {
             for (Endpoint endpoint : camelContext.getEndpoints()) {
-                Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(),
-                        endpoint);
+                Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
                 if (newEndpoint != null) {
                     // put will replace existing endpoint with the new endpoint
-                    camelContext.getEndpointRegistry()
-                            .put(camelContext.getEndpointKey(endpoint.getEndpointUri()),
-                                    newEndpoint);
+                    camelContext
+                            .getEndpointRegistry()
+                            .put(camelContext.getEndpointKey(endpoint.getEndpointUri()), newEndpoint);
                 }
             }
         }
@@ -374,7 +377,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
                 logger().debug("Resolved constant: {} -> {}", text, constant);
                 return constant;
             } else {
-                throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
+                throw new IllegalArgumentException(
+                        "Constant field with name: " + field + " not found on Exchange.class");
             }
         }
 
@@ -389,8 +393,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
-        this.managementMBeanAssembler
-                = camelContext.getInternalServiceManager().addService(camelContext, managementMBeanAssembler, false);
+        this.managementMBeanAssembler =
+                camelContext.getInternalServiceManager().addService(camelContext, managementMBeanAssembler, false);
     }
 
     void stopRegistry() {
@@ -506,9 +510,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             lock.lock();
             try {
                 if (bootstrapFactoryFinder == null) {
-                    bootstrapFactoryFinder
-                            = PluginHelper.getFactoryFinderResolver(this)
-                                    .resolveBootstrapFactoryFinder(camelContext.getClassResolver());
+                    bootstrapFactoryFinder = PluginHelper.getFactoryFinderResolver(this)
+                            .resolveBootstrapFactoryFinder(camelContext.getClassResolver());
                 }
             } finally {
                 lock.unlock();
@@ -540,9 +543,11 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         if (!camelContext.isJMXDisabled()) {
             try {
                 // create a one time factory as we dont need this anymore
-                FactoryFinder finder = camelContext.createFactoryFinder("META-INF/services/org/apache/camel/management/");
+                FactoryFinder finder =
+                        camelContext.createFactoryFinder("META-INF/services/org/apache/camel/management/");
                 if (finder != null) {
-                    Object object = finder.newInstance("ManagementStrategyFactory").orElse(null);
+                    Object object =
+                            finder.newInstance("ManagementStrategyFactory").orElse(null);
                     if (object instanceof ManagementStrategyFactory managementStrategyFactory) {
                         factory = managementStrategyFactory;
                     }
@@ -666,7 +671,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager) {
-        this.exchangeFactoryManager = camelContext.getInternalServiceManager().addService(camelContext, exchangeFactoryManager);
+        this.exchangeFactoryManager =
+                camelContext.getInternalServiceManager().addService(camelContext, exchangeFactoryManager);
     }
 
     @Override
@@ -710,7 +716,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
-        this.reactiveExecutor = camelContext.getInternalServiceManager().addService(camelContext, reactiveExecutor, false);
+        this.reactiveExecutor =
+                camelContext.getInternalServiceManager().addService(camelContext, reactiveExecutor, false);
     }
 
     RestRegistryFactory getRestRegistryFactory() {
@@ -728,7 +735,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setRestRegistryFactory(RestRegistryFactory restRegistryFactory) {
-        this.restRegistryFactory = camelContext.getInternalServiceManager().addService(camelContext, restRegistryFactory);
+        this.restRegistryFactory =
+                camelContext.getInternalServiceManager().addService(camelContext, restRegistryFactory);
     }
 
     RestRegistry getRestRegistry() {
@@ -800,7 +808,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
-        this.messageHistoryFactory = camelContext.getInternalServiceManager().addService(camelContext, messageHistoryFactory);
+        this.messageHistoryFactory =
+                camelContext.getInternalServiceManager().addService(camelContext, messageHistoryFactory);
     }
 
     StreamCachingStrategy getStreamCachingStrategy() {
@@ -818,8 +827,9 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
-        this.streamCachingStrategy
-                = camelContext.getInternalServiceManager().addService(camelContext, streamCachingStrategy, true, false, true);
+        this.streamCachingStrategy = camelContext
+                .getInternalServiceManager()
+                .addService(camelContext, streamCachingStrategy, true, false, true);
     }
 
     InflightRepository getInflightRepository() {
@@ -891,7 +901,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setTransformerRegistry(TransformerRegistry transformerRegistry) {
-        this.transformerRegistry = camelContext.getInternalServiceManager().addService(camelContext, transformerRegistry);
+        this.transformerRegistry =
+                camelContext.getInternalServiceManager().addService(camelContext, transformerRegistry);
     }
 
     @Override
@@ -911,8 +922,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setEndpointServiceRegistry(EndpointServiceRegistry endpointServiceRegistry) {
-        this.endpointServiceRegistry
-                = camelContext.getInternalServiceManager().addService(camelContext, endpointServiceRegistry);
+        this.endpointServiceRegistry =
+                camelContext.getInternalServiceManager().addService(camelContext, endpointServiceRegistry);
     }
 
     ValidatorRegistry getValidatorRegistry() {
@@ -956,7 +967,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
-        this.typeConverterRegistry = camelContext.getInternalServiceManager().addService(camelContext, typeConverterRegistry);
+        this.typeConverterRegistry =
+                camelContext.getInternalServiceManager().addService(camelContext, typeConverterRegistry);
         // some registries are also a type converter implementation
         if (typeConverterRegistry instanceof TypeConverter newTypeConverter) {
             setTypeConverter(newTypeConverter);
@@ -1072,8 +1084,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
-        this.executorServiceManager
-                = camelContext.getInternalServiceManager().addService(camelContext, executorServiceManager, false);
+        this.executorServiceManager =
+                camelContext.getInternalServiceManager().addService(camelContext, executorServiceManager, false);
     }
 
     @Override

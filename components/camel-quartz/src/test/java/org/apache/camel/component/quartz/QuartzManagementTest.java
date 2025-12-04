@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -24,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class QuartzManagementTest extends BaseQuartzTest {
@@ -43,7 +44,8 @@ public class QuartzManagementTest extends BaseQuartzTest {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        String name = String.format("quartz:type=QuartzScheduler,name=DefaultQuartzScheduler-%s,instance=NON_CLUSTERED",
+        String name = String.format(
+                "quartz:type=QuartzScheduler,name=DefaultQuartzScheduler-%s,instance=NON_CLUSTERED",
                 context.getManagementName());
 
         ObjectName on = ObjectName.getInstance(name);
@@ -58,7 +60,8 @@ public class QuartzManagementTest extends BaseQuartzTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1")
+                        .routeId("myRoute")
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -44,14 +45,14 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends Context
         mock.expectedFileExists(testFile("bar/davs.txt"));
         mock.expectedFileExists(testFile("bar/davs.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX));
 
-        template.sendBodyAndHeader(fileUri(), "locked", Exchange.FILE_NAME,
-                "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader(
+                fileUri(), "locked", Exchange.FILE_NAME, "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUri("foo"), "locked", Exchange.FILE_NAME,
-                "gooday.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader(
+                fileUri("foo"), "locked", Exchange.FILE_NAME, "gooday.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader(fileUri("foo"), "Hi World", Exchange.FILE_NAME, "hi.txt");
-        template.sendBodyAndHeader(fileUri("bar"), "locked", Exchange.FILE_NAME,
-                "davs.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader(
+                fileUri("bar"), "locked", Exchange.FILE_NAME, "davs.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader(fileUri("bar"), "Davs World", Exchange.FILE_NAME, "davs.txt");
 
         // start the route
@@ -70,7 +71,9 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends Context
             @Override
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&recursive=true&sortBy=file:name&filter=#myFilter"))
-                        .routeId("foo").autoStartup(false).convertBodyTo(String.class)
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import java.sql.Connection;
@@ -28,5 +29,4 @@ public interface ConnectionStrategy {
     Connection getConnection(DataSource dataSource) throws Exception;
 
     boolean isConnectionTransactional(Connection connection, DataSource dataSource);
-
 }

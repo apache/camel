@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.util.Map;
@@ -31,16 +32,20 @@ import org.apache.sshd.common.keyprovider.KeyPairProvider;
 /**
  * Execute commands on remote hosts using SSH.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port",
-             alternativeSyntax = "ssh:username:password@host:port", category = { Category.FILE },
-             headersClass = SshConstants.class)
+@UriEndpoint(
+        firstVersion = "2.10.0",
+        scheme = "ssh",
+        title = "SSH",
+        syntax = "ssh:host:port",
+        alternativeSyntax = "ssh:username:password@host:port",
+        category = {Category.FILE},
+        headersClass = SshConstants.class)
 public class SshEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private SshConfiguration configuration;
 
-    public SshEndpoint() {
-    }
+    public SshEndpoint() {}
 
     public SshEndpoint(String uri, SshComponent component) {
         super(uri, component);
@@ -215,5 +220,4 @@ public class SshEndpoint extends ScheduledPollEndpoint implements EndpointServic
     public void setSleepForShellPrompt(long sleepForShellPrompt) {
         getConfiguration().setSleepForShellPrompt(sleepForShellPrompt);
     }
-
 }

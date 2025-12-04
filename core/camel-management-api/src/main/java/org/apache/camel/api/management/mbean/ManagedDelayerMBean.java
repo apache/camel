@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -33,7 +34,7 @@ public interface ManagedDelayerMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Enables asynchronous delay which means the thread will not block while delaying")
     Boolean isAsyncDelayed();
 
-    @ManagedAttribute(description = "Whether or not the caller should run the task when it was rejected by the thread pool")
+    @ManagedAttribute(
+            description = "Whether or not the caller should run the task when it was rejected by the thread pool")
     Boolean isCallerRunsWhenRejected();
-
 }

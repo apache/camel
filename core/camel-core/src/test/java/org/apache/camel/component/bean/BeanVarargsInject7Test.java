@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.Map;
@@ -32,7 +33,9 @@ public class BeanVarargsInject7Test extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("bean:myBean?method=doSomething(${header.myArr},1,2,3)").to("mock:finish");
+                from("direct:start")
+                        .to("bean:myBean?method=doSomething(${header.myArr},1,2,3)")
+                        .to("mock:finish");
             }
         };
     }
@@ -42,7 +45,7 @@ public class BeanVarargsInject7Test extends ContextTestSupport {
         MockEndpoint end = getMockEndpoint("mock:finish");
         end.expectedBodiesReceived("Bye Camel with 3 args (sum=6)");
 
-        Object[] arr = new Object[] { "Cam", "el" };
+        Object[] arr = new Object[] {"Cam", "el"};
         sendBody("direct:start", "World", Map.of("myArr", arr));
 
         assertMockEndpointsSatisfied();

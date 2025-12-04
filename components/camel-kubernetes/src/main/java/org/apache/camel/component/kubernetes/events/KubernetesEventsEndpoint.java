@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.events;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_EVENTS;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,14 +28,16 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_EVENTS;
-
 /**
  * Perform operations on Kubernetes Events and get notified on Events changes.
  */
-@UriEndpoint(firstVersion = "3.20.0", scheme = SCHEME_EVENTS, title = "Kubernetes Event",
-             syntax = "kubernetes-events:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "3.20.0",
+        scheme = SCHEME_EVENTS,
+        title = "Kubernetes Event",
+        syntax = "kubernetes-events:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesEventsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesEventsEndpoint(String uri, KubernetesEventsComponent component, KubernetesConfiguration config) {
@@ -49,7 +54,5 @@ public class KubernetesEventsEndpoint extends AbstractKubernetesEndpoint {
         Consumer consumer = new KubernetesEventsConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-
     }
-
 }

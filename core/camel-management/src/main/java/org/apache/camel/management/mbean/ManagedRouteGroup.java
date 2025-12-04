@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.List;
@@ -48,8 +49,8 @@ public class ManagedRouteGroup extends ManagedPerformanceCounter implements Time
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        boolean enabled
-                = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel()
+                != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }
 
@@ -69,7 +70,8 @@ public class ManagedRouteGroup extends ManagedPerformanceCounter implements Time
 
     @Override
     public String[] getGroupIds() {
-        List<String> list = context.getRoutesByGroup(group).stream().map(Route::getRouteId).toList();
+        List<String> list =
+                context.getRoutesByGroup(group).stream().map(Route::getRouteId).toList();
         return list.toArray(new String[0]);
     }
 
@@ -180,5 +182,4 @@ public class ManagedRouteGroup extends ManagedPerformanceCounter implements Time
     public void stop() throws Exception {
         context.getRouteController().stopRouteGroup(group);
     }
-
 }

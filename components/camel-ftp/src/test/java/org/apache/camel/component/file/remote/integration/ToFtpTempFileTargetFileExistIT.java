@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -25,13 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ToFtpTempFileTargetFileExistIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/tempfile?password=admin&binary=false"
-               + "&fileName=./foo/bar/message.txt&tempFileName=${file:onlyname.noext}.tmp";
+                + "&fileName=./foo/bar/message.txt&tempFileName=${file:onlyname.noext}.tmp";
     }
 
     @Override

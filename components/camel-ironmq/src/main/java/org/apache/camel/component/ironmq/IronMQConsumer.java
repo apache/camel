@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq;
 
 import java.util.LinkedList;
@@ -63,7 +64,8 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ironQueue = getEndpoint().getClient().queue(getEndpoint().getConfiguration().getQueueName());
+        ironQueue =
+                getEndpoint().getClient().queue(getEndpoint().getConfiguration().getQueueName());
     }
 
     @Override
@@ -73,9 +75,13 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
         try {
             Messages messages;
-            LOG.trace("Receiving messages with request [messagePerPoll {}, timeout {}]...", getMaxMessagesPerPoll(),
+            LOG.trace(
+                    "Receiving messages with request [messagePerPoll {}, timeout {}]...",
+                    getMaxMessagesPerPoll(),
                     getEndpoint().getConfiguration().getTimeout());
-            messages = this.ironQueue.reserve(getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout(),
+            messages = this.ironQueue.reserve(
+                    getMaxMessagesPerPoll(),
+                    getEndpoint().getConfiguration().getTimeout(),
                     getEndpoint().getConfiguration().getWait());
             LOG.trace("Received {} messages", messages.getSize());
 
@@ -125,10 +131,10 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
             // if batchDelete is not enabled
             if (!getEndpoint().getConfiguration().isBatchDelete()) {
                 exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
-                    final String reservationId
-                            = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_RESERVATION_ID, String.class);
-                    final String messageid
-                            = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_ID, String.class);
+                    final String reservationId = ExchangeHelper.getMandatoryHeader(
+                            exchange, IronMQConstants.MESSAGE_RESERVATION_ID, String.class);
+                    final String messageid =
+                            ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_ID, String.class);
 
                     public void onComplete(Exchange exchange) {
                         processCommit(exchange, messageid, reservationId);
@@ -164,8 +170,9 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
             this.ironQueue.deleteMessage(messageid, reservationId);
             LOG.trace("Message deleted");
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error occurred during delete of message. This exception is ignored.",
-                    exchange, e);
+            getExceptionHandler()
+                    .handleException(
+                            "Error occurred during delete of message. This exception is ignored.", exchange, e);
         }
     }
 
@@ -202,5 +209,4 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
         message.setHeader(IronMQConstants.MESSAGE_RESERVED_COUNT, msg.getReservedCount());
         return exchange;
     }
-
 }

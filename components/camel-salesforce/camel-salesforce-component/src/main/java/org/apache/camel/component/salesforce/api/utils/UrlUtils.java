@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.UnsupportedEncodingException;
@@ -22,8 +23,7 @@ import java.nio.charset.StandardCharsets;
 
 public final class UrlUtils {
 
-    private UrlUtils() {
-    }
+    private UrlUtils() {}
 
     // Encode the URL up to the point of the query. Do not pass the query portion into this method.
     public static String encodePath(String path) throws UnsupportedEncodingException {

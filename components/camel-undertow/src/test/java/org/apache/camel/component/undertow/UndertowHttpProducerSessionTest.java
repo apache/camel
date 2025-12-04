@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import org.apache.camel.BindToRegistry;
@@ -96,24 +97,23 @@ public class UndertowHttpProducerSessionTest extends CamelTestSupport {
                         .to("undertow:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
                         .to("mock:result");
 
-                from(getTestServerEndpointSessionUri())
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                Message message = exchange.getIn();
-                                String body = message.getBody(String.class);
-                                // Undertow servers do not support sessions or
-                                // cookies, so we fake them
-                                if (message.getHeader("Cookie") != null
-                                        && message.getHeader("Cookie", String.class).contains("JSESSIONID")) {
-                                    message.setBody("Old " + body);
-                                } else {
-                                    message.setHeader("Set-Cookie", "JSESSIONID=nxojb3aum8i5100j6lyvxdpn6;Path=/");
-                                    message.setHeader("Expires", "Thu, 01 Jan 1970 00:00:00 GMT");
-                                    message.setBody("New " + body);
-                                }
-                            }
-                        });
+                from(getTestServerEndpointSessionUri()).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                        Message message = exchange.getIn();
+                        String body = message.getBody(String.class);
+                        // Undertow servers do not support sessions or
+                        // cookies, so we fake them
+                        if (message.getHeader("Cookie") != null
+                                && message.getHeader("Cookie", String.class).contains("JSESSIONID")) {
+                            message.setBody("Old " + body);
+                        } else {
+                            message.setHeader("Set-Cookie", "JSESSIONID=nxojb3aum8i5100j6lyvxdpn6;Path=/");
+                            message.setHeader("Expires", "Thu, 01 Jan 1970 00:00:00 GMT");
+                            message.setBody("New " + body);
+                        }
+                    }
+                });
             }
         };
     }

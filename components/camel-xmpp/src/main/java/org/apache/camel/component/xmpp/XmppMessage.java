@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import java.util.Map;
@@ -83,7 +84,8 @@ public class XmppMessage extends DefaultMessage {
             XmppBinding binding = ExchangeHelper.getBinding(getExchange(), XmppBinding.class);
             if (binding != null) {
                 return (getHeader(XmppConstants.DOC_HEADER) == null)
-                        ? binding.extractBodyFromXmpp(getExchange(), xmppPacket) : getHeader(XmppConstants.DOC_HEADER);
+                        ? binding.extractBodyFromXmpp(getExchange(), xmppPacket)
+                        : getHeader(XmppConstants.DOC_HEADER);
             }
         }
         return null;

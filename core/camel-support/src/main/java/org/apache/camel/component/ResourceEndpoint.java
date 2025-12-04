@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component;
 
 import java.io.ByteArrayInputStream;
@@ -43,26 +44,31 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private volatile byte[] buffer;
 
-    @UriPath(description = "Path to the resource."
-                           + " You can prefix with: classpath, file, http, ref, or bean."
-                           + " classpath, file and http loads the resource using these protocols (classpath is default)."
-                           + " ref will lookup the resource in the registry."
-                           + " bean will call a method on a bean to be used as the resource."
-                           + " For bean you can specify the method name after dot, eg bean:myBean.myMethod.")
+    @UriPath(
+            description = "Path to the resource."
+                    + " You can prefix with: classpath, file, http, ref, or bean."
+                    + " classpath, file and http loads the resource using these protocols (classpath is default)."
+                    + " ref will lookup the resource in the registry."
+                    + " bean will call a method on a bean to be used as the resource."
+                    + " For bean you can specify the method name after dot, eg bean:myBean.myMethod.")
     @Metadata(required = true, supportFileReference = true)
     private String resourceUri;
+
     @UriParam(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache;
-    @UriParam(defaultValue = "false", description = "Sets whether the context map should allow access to all details."
-                                                    + " By default only the message body and headers can be accessed."
-                                                    + " This option can be enabled for full access to the current Exchange and CamelContext."
-                                                    + " Doing so impose a potential security risk as this opens access to the full power of CamelContext API.")
+
+    @UriParam(
+            defaultValue = "false",
+            description =
+                    "Sets whether the context map should allow access to all details."
+                            + " By default only the message body and headers can be accessed."
+                            + " This option can be enabled for full access to the current Exchange and CamelContext."
+                            + " Doing so impose a potential security risk as this opens access to the full power of CamelContext API.")
     private boolean allowContextMapAll;
 
     private final Lock lock = new ReentrantLock();
 
-    public ResourceEndpoint() {
-    }
+    public ResourceEndpoint() {}
 
     public ResourceEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component);

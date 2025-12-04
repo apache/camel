@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 public final class JolokiaBuilder {
@@ -24,8 +25,7 @@ public final class JolokiaBuilder {
     private Long servicePort;
     private String servicePortName;
 
-    private JolokiaBuilder() {
-    }
+    private JolokiaBuilder() {}
 
     public static JolokiaBuilder jolokia() {
         return new JolokiaBuilder();

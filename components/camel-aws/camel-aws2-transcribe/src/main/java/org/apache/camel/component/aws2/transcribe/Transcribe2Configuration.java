@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe;
 
 import org.apache.camel.RuntimeCamelException;
@@ -30,44 +31,64 @@ public class Transcribe2Configuration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
+
     @UriParam
     private TranscribeClient transcribeClient;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
+
     @UriParam(label = "security", secret = true)
     private String secretKey;
+
     @UriParam(label = "security", secret = true)
     private String sessionToken;
+
     @UriParam
     private String region;
+
     @UriParam(defaultValue = "false")
     private boolean overrideEndpoint;
+
     @UriParam
     private String uriEndpointOverride;
+
     @UriParam(defaultValue = "true")
     private boolean trustAllCertificates;
+
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
+
     @UriParam(defaultValue = "false")
     private boolean useProfileCredentialsProvider;
+
     @UriParam(defaultValue = "false")
     private boolean useSessionCredentials;
+
     @UriParam
     private String profileCredentialsName;
+
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol protocol = Protocol.HTTPS;
+
     @UriParam(label = "producer")
     private Transcribe2Operations operation;
+
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
+
     @UriParam
     private String proxyHost;
+
     @UriParam
     private Integer proxyPort;
+
     @UriParam(defaultValue = "HTTPS")
     private String proxyProtocol = "HTTPS";
+
     @UriParam(label = "security", secret = true)
     private String proxyUsername;
+
     @UriParam(label = "security", secret = true)
     private String proxyPassword;
 

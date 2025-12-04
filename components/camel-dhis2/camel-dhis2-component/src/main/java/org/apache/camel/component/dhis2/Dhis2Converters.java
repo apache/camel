@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,9 +27,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 public final class Dhis2Converters {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private Dhis2Converters() {
-
-    }
+    private Dhis2Converters() {}
 
     @Converter(fallback = true)
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object resource, TypeConverterRegistry registry) {

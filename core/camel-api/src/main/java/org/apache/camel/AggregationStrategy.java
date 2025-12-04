@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import org.slf4j.LoggerFactory;
@@ -117,8 +118,7 @@ public interface AggregationStrategy {
      * @param exchange the current aggregated exchange, or the original {@link org.apache.camel.Exchange} if no
      *                 aggregation has been done before the completion occurred
      */
-    default void onCompletion(Exchange exchange) {
-    }
+    default void onCompletion(Exchange exchange) {}
 
     /**
      * The aggregated {@link Exchange} has completed
@@ -144,8 +144,7 @@ public interface AggregationStrategy {
      * @param total    the total, may be <tt>-1</tt> if not possible to determine the total
      * @param timeout  the timeout value in millis, may be <tt>-1</tt> if not possible to determine the timeout
      */
-    default void timeout(Exchange exchange, int index, int total, long timeout) {
-    }
+    default void timeout(Exchange exchange, int index, int total, long timeout) {}
 
     /**
      * Callback when the aggregated {@link Exchange} fails to add in the
@@ -166,9 +165,11 @@ public interface AggregationStrategy {
      * @see java.util.concurrent.ConcurrentHashMap
      */
     default void onOptimisticLockFailure(Exchange oldExchange, Exchange newExchange) {
-        LoggerFactory.getLogger(getClass()).trace(
-                "onOptimisticLockFailure with AggregationStrategy: {}, oldExchange: {}, newExchange: {}", this, oldExchange,
-                newExchange);
+        LoggerFactory.getLogger(getClass())
+                .trace(
+                        "onOptimisticLockFailure with AggregationStrategy: {}, oldExchange: {}, newExchange: {}",
+                        this,
+                        oldExchange,
+                        newExchange);
     }
-
 }

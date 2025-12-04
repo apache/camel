@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -64,5 +65,4 @@ public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClien
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/spring/interceptor/transactionalClientWithAnnotatedBeanTest.xml");
     }
-
 }

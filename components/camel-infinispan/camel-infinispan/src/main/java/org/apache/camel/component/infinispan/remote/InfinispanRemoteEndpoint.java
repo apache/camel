@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
+
+import static org.apache.camel.component.infinispan.InfinispanConstants.SCHEME_INFINISPAN;
 
 import java.util.Map;
 
@@ -32,25 +35,31 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.service.ServiceHelper;
 
-import static org.apache.camel.component.infinispan.InfinispanConstants.SCHEME_INFINISPAN;
-
 /**
  * Read and write from/to Infinispan distributed key/value store and data grid.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = SCHEME_INFINISPAN, title = "Infinispan", syntax = "infinispan:cacheName",
-             category = { Category.CACHE, Category.CLUSTERING }, headersClass = InfinispanConstants.class)
+@UriEndpoint(
+        firstVersion = "2.13.0",
+        scheme = SCHEME_INFINISPAN,
+        title = "Infinispan",
+        syntax = "infinispan:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = InfinispanConstants.class)
 public class InfinispanRemoteEndpoint extends InfinispanEndpoint implements EndpointServiceLocation {
 
-    @UriPath(description = "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")
+    @UriPath(
+            description =
+                    "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")
     @Metadata(required = true)
     private final String cacheName;
+
     @UriParam
     private final InfinispanRemoteConfiguration configuration;
 
     private final InfinispanRemoteManager manager;
 
-    public InfinispanRemoteEndpoint(String uri, String cacheName, InfinispanComponent component,
-                                    InfinispanRemoteConfiguration configuration) {
+    public InfinispanRemoteEndpoint(
+            String uri, String cacheName, InfinispanComponent component, InfinispanRemoteConfiguration configuration) {
         super(uri, component);
 
         this.cacheName = cacheName;
@@ -98,7 +107,8 @@ public class InfinispanRemoteEndpoint extends InfinispanEndpoint implements Endp
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        InfinispanRemoteConsumer consumer = new InfinispanRemoteConsumer(this, processor, cacheName, manager, configuration);
+        InfinispanRemoteConsumer consumer =
+                new InfinispanRemoteConsumer(this, processor, cacheName, manager, configuration);
 
         configureConsumer(consumer);
         return consumer;

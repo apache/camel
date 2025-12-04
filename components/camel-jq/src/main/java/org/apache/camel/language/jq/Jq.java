@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import java.lang.annotation.Documented;
@@ -29,7 +30,7 @@ import org.apache.camel.support.language.LanguageAnnotation;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "jq", factory = JqAnnotationExpressionFactory.class)
 public @interface Jq {
 
@@ -46,5 +47,4 @@ public @interface Jq {
      * message body.
      */
     String source() default "";
-
 }

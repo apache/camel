@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -23,8 +26,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultExchangeFormatterTest {
     private DefaultCamelContext camelContext;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -28,8 +31,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for shutdown.
@@ -85,14 +86,15 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(jones.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").routeId("route1")
+                from(jones.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .routeId("route1")
                         // let it complete only current task so we shutdown faster
                         .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
-                        .delay(1000).to("seda:foo");
+                        .delay(1000)
+                        .to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }
         };
     }
-
 }

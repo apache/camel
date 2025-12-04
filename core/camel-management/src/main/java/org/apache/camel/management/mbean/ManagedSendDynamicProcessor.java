@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Map;
@@ -40,15 +41,17 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
     private String uri;
     private boolean sanitize;
 
-    public ManagedSendDynamicProcessor(CamelContext context, SendDynamicProcessor processor,
-                                       ProcessorDefinition<?> definition) {
+    public ManagedSendDynamicProcessor(
+            CamelContext context, SendDynamicProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
 
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        this.sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
+        this.sanitize = strategy.getManagementAgent().getMask() != null
+                ? strategy.getManagementAgent().getMask()
+                : true;
         if (sanitize) {
             uri = URISupport.sanitizeUri(getProcessor().getUri());
         } else {
@@ -142,8 +145,8 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
                         hits = 0L;
                     }
 
-                    CompositeData data
-                            = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
+                    CompositeData data =
+                            new CompositeDataSupport(ct, new String[] {"url", "hits"}, new Object[] {url, hits});
                     answer.put(data);
                 }
             }
@@ -152,5 +155,4 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

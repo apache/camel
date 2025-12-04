@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,8 +25,6 @@ import java.util.Date;
 
 import org.apache.camel.BindToRegistry;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 
 /**
  * Unit test for FTP using expression (file language)
@@ -71,7 +72,8 @@ public class FtpProducerExpressionIT extends FtpServerTestSupport {
     public void testProducerComplexByExpression() {
         // need one extra subdirectory (=foo) to be able to start with .. in the
         // fileName option
-        String url = "ftp://admin@localhost:{{ftp.server.port}}/filelanguage/foo?password=admin&jailStartingDirectory=false";
+        String url =
+                "ftp://admin@localhost:{{ftp.server.port}}/filelanguage/foo?password=admin&jailStartingDirectory=false";
 
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
         template.sendBody(url + "&fileName=" + expression, "Hello World");
@@ -93,8 +95,11 @@ public class FtpProducerExpressionIT extends FtpServerTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader(getFtpUrl() + "&fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt", "Hello World",
-                "birthday", date);
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt",
+                "Hello World",
+                "birthday",
+                date);
 
         assertFileExists(service.ftpFile("filelanguage/mybirthday-19740420.txt"));
     }

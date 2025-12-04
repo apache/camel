@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,11 +40,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailRouteTest extends CamelTestSupport {
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
@@ -95,8 +96,9 @@ public class MailRouteTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertFalse(mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments(), "Should not have attachements");
-
+        assertFalse(
+                mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments(),
+                "Should not have attachements");
     }
 
     protected void assertMailboxReceivedMessages(MailboxUser name) throws IOException, MessagingException {
@@ -120,7 +122,8 @@ public class MailRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(james.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100").to("direct:a");
+                from(james.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100")
+                        .to("direct:a");
 
                 // must use fixed to option to send the mail to the given
                 // receiver, as we have polled
@@ -133,10 +136,10 @@ public class MailRouteTest extends CamelTestSupport {
                         .setHeader("to", constant("result@localhost; copy@localhost"))
                         .to(result.uriPrefix(Protocol.smtp));
 
-                from(result.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100").convertBodyTo(String.class)
+                from(result.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100")
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
     }
-
 }

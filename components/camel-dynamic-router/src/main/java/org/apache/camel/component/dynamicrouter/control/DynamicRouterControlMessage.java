@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
 
 import org.apache.camel.Endpoint;
@@ -78,9 +79,14 @@ public final class DynamicRouterControlMessage {
      * @param predicate          the predicate expression
      * @param expressionLanguage the subscription predicate language
      */
-    public DynamicRouterControlMessage(String subscribeChannel, String subscriptionId,
-                                       String destinationUri, int priority, String predicateBean, String predicate,
-                                       String expressionLanguage) {
+    public DynamicRouterControlMessage(
+            String subscribeChannel,
+            String subscriptionId,
+            String destinationUri,
+            int priority,
+            String predicateBean,
+            String predicate,
+            String expressionLanguage) {
         this.subscribeChannel = subscribeChannel;
         this.subscriptionId = subscriptionId;
         this.destinationUri = destinationUri;
@@ -88,7 +94,8 @@ public final class DynamicRouterControlMessage {
         this.predicateBean = predicateBean;
         this.predicate = predicate;
         this.expressionLanguage = (ObjectHelper.isEmpty(expressionLanguage) && ObjectHelper.isNotEmpty(predicate))
-                ? "simple" : expressionLanguage;
+                ? "simple"
+                : expressionLanguage;
     }
 
     /**
@@ -193,8 +200,7 @@ public final class DynamicRouterControlMessage {
         /**
          * Instantiates a new {@code DynamicRouterControlMessage.Builder}.
          */
-        private Builder() {
-        }
+        private Builder() {}
 
         /**
          * Returns a {@code DynamicRouterControlMessage.Builder} object that can be used to create a new

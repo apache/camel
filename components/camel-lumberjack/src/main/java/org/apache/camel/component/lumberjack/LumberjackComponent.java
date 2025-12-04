@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack;
 
 import java.util.Map;
@@ -34,6 +35,7 @@ public class LumberjackComponent extends DefaultComponent implements SSLContextP
 
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
@@ -41,8 +43,7 @@ public class LumberjackComponent extends DefaultComponent implements SSLContextP
         this(LumberjackEndpoint.class);
     }
 
-    protected LumberjackComponent(Class<? extends LumberjackEndpoint> endpointClass) {
-    }
+    protected LumberjackComponent(Class<? extends LumberjackEndpoint> endpointClass) {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -93,5 +94,4 @@ public class LumberjackComponent extends DefaultComponent implements SSLContextP
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
-
 }

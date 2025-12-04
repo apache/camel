@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,17 +27,13 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class RouteConcurrentTest extends CamelAwsXRayTestSupport {
 
     public RouteConcurrentTest() {
-        super(
-              TestDataBuilder.createTrace().inRandomOrder()
-                      .withSegment(TestDataBuilder.createSegment("foo"))
-                      .withSegment(TestDataBuilder.createSegment("bar")));
+        super(TestDataBuilder.createTrace()
+                .inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("foo"))
+                .withSegment(TestDataBuilder.createSegment("bar")));
     }
 
     @Test
@@ -41,8 +42,7 @@ public class RouteConcurrentTest extends CamelAwsXRayTestSupport {
 
         template.sendBody("seda:foo", "Hello World");
 
-        assertThat("Not all exchanges were fully processed",
-                notify.matches(10, TimeUnit.SECONDS), is(equalTo(true)));
+        assertThat("Not all exchanges were fully processed", notify.matches(10, TimeUnit.SECONDS), is(equalTo(true)));
 
         verify();
     }
@@ -52,12 +52,14 @@ public class RouteConcurrentTest extends CamelAwsXRayTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?concurrentConsumers=5").routeId("foo")
+                from("seda:foo?concurrentConsumers=5")
+                        .routeId("foo")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"))
                         .to("seda:bar");
 
-                from("seda:bar?concurrentConsumers=5").routeId("bar")
+                from("seda:bar?concurrentConsumers=5")
+                        .routeId("bar")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(0,500)}"));
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,9 +44,7 @@ public class InterceptSendToRecipientListTest extends ContextTestSupport {
             public void configure() {
                 interceptSendToEndpoint("seda:b*").skipSendToOriginalEndpoint().to("mock:intercepted");
 
-                from("direct:start")
-                        .recipientList().header("whereTo").to("mock:result");
-
+                from("direct:start").recipientList().header("whereTo").to("mock:result");
             }
         };
     }

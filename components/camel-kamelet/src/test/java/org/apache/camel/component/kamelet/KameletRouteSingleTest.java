@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
 
@@ -23,15 +26,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class KameletRouteSingleTest extends CamelTestSupport {
     @Test
     public void testSingle() {
         String body = UUID.randomUUID().toString();
 
-        assertThat(
-                fluentTemplate.toF("direct:single").withBody(body).request(String.class)).isEqualTo("a-" + body);
+        assertThat(fluentTemplate.toF("direct:single").withBody(body).request(String.class))
+                .isEqualTo("a-" + body);
     }
 
     // **********************************************
@@ -48,9 +49,11 @@ public class KameletRouteSingleTest extends CamelTestSupport {
                 routeTemplate("echo")
                         .templateParameter("prefix")
                         .from("kamelet:source")
-                        .setBody().simple("{{prefix}}-${body}");
+                        .setBody()
+                        .simple("{{prefix}}-${body}");
 
-                from("direct:single").routeId("test")
+                from("direct:single")
+                        .routeId("test")
                         .to("kamelet:echo?prefix=a")
                         .log("${body}");
             }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.List;
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JsonPathTransformHeaderNameTest extends CamelTestSupport {
 
     @Override
@@ -33,11 +34,13 @@ public class JsonPathTransformHeaderNameTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                var jp = expression().jsonpath().expression("$.store.book[*].author").source("header:myHeader").end();
+                var jp = expression()
+                        .jsonpath()
+                        .expression("$.store.book[*].author")
+                        .source("header:myHeader")
+                        .end();
 
-                from("direct:start")
-                        .transform(jp)
-                        .to("mock:authors");
+                from("direct:start").transform(jp).to("mock:authors");
             }
         };
     }
@@ -51,9 +54,12 @@ public class JsonPathTransformHeaderNameTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<?> authors = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> authors = getMockEndpoint("mock:authors")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(List.class);
         assertEquals("Nigel Rees", authors.get(0));
         assertEquals("Evelyn Waugh", authors.get(1));
     }
-
 }

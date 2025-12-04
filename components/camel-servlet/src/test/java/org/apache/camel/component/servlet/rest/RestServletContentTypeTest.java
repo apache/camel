@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.component.servlet.ServletRestHttpBinding;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
 
@@ -78,25 +79,33 @@ public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("servlet").host("localhost")
+                restConfiguration()
+                        .component("servlet")
+                        .host("localhost")
                         // turn on client request validation
                         .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users").post("/{id}/update").consumes("application/json").produces("application/json").to("direct:update");
-                from("direct:update")
-                        .setBody(constant("{ \"status\": \"ok\" }"));
+                rest("/users")
+                        .post("/{id}/update")
+                        .consumes("application/json")
+                        .produces("application/json")
+                        .to("direct:update");
+                from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
 
-                rest("/users").get().produces("application/json,application/csv").to("direct:users");
+                rest("/users")
+                        .get()
+                        .produces("application/json,application/csv")
+                        .to("direct:users");
                 from("direct:users")
                         .choice()
                         .when(simple("${header.Accept} == 'application/csv'"))
                         .setBody(constant("Email,FirstName,LastName\ndonald.duck@disney.com,Donald,Duck"))
                         .setHeader(Exchange.CONTENT_TYPE, constant("application/csv"))
                         .otherwise()
-                        .setBody(constant(
-                                "{\"email\": \"donald.duck@disney.com\", \"firstname\": \"Donald\", \"lastname\": \"Duck\"}"));
-
+                        .setBody(
+                                constant(
+                                        "{\"email\": \"donald.duck@disney.com\", \"firstname\": \"Donald\", \"lastname\": \"Duck\"}"));
             }
         };
     }

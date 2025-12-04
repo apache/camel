@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util;
 
 import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
@@ -22,8 +23,7 @@ public final class JavadocHelper {
 
     private static final String VALID_CHARS = ".,-='/\\!&%():;#${}";
 
-    private JavadocHelper() {
-    }
+    private JavadocHelper() {}
 
     /**
      * Sanitizes the javadoc to removed invalid characters so it can be used as json description
@@ -79,7 +79,8 @@ public final class JavadocHelper {
             boolean haveText = !sb.isEmpty();
 
             if (haveText && summary && (empty || endWithDot)) {
-                // if we only want a summary, then skip at first empty line we encounter, or if the sentence ends with a dot
+                // if we only want a summary, then skip at first empty line we encounter, or if the sentence ends with a
+                // dot
                 break;
             }
 
@@ -136,5 +137,4 @@ public final class JavadocHelper {
         text = text.replace(">", "&gt;");
         return text;
     }
-
 }

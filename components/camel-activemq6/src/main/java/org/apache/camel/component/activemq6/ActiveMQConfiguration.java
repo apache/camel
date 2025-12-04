@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq6;
 
 import java.lang.reflect.Constructor;
@@ -40,8 +41,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     private boolean usePooledConnection = true;
     private boolean trustAllPackages;
 
-    public ActiveMQConfiguration() {
-    }
+    public ActiveMQConfiguration() {}
 
     public String getBrokerURL() {
         return brokerURL;
@@ -168,8 +168,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
 
     @Override
     protected ConnectionFactory createConnectionFactory() {
-        org.apache.activemq.ActiveMQConnectionFactory answer
-                = new org.apache.activemq.ActiveMQConnectionFactory();
+        org.apache.activemq.ActiveMQConnectionFactory answer = new org.apache.activemq.ActiveMQConnectionFactory();
         answer.setTrustAllPackages(trustAllPackages);
         if (getUsername() != null) {
             answer.setUserName(getUsername());
@@ -199,23 +198,27 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     protected ConnectionFactory createPooledConnectionFactory(
             CamelContext camelContext, ActiveMQConnectionFactory connectionFactory) {
         try {
-            Class<?> type = loadClass(camelContext, "org.messaginghub.pooled.jms.JmsPoolConnectionFactory",
+            Class<?> type = loadClass(
+                    camelContext,
+                    "org.messaginghub.pooled.jms.JmsPoolConnectionFactory",
                     getClass().getClassLoader());
 
             Constructor<?> constructor = type.getConstructor();
             ConnectionFactory cf = (ConnectionFactory) constructor.newInstance();
-            ObjectHelper.invokeMethod(type.getDeclaredMethod("setConnectionFactory", Object.class), cf,
-                    connectionFactory);
+            ObjectHelper.invokeMethod(
+                    type.getDeclaredMethod("setConnectionFactory", Object.class), cf, connectionFactory);
             return cf;
         } catch (Exception e) {
             throw new RuntimeCamelException("Failed to instantiate PooledConnectionFactory: " + e, e);
         }
     }
 
-    public static Class<?> loadClass(CamelContext camelContext, String name, ClassLoader loader) throws ClassNotFoundException {
+    public static Class<?> loadClass(CamelContext camelContext, String name, ClassLoader loader)
+            throws ClassNotFoundException {
         // if camel then use it to load the class
         if (camelContext != null) {
-            return camelContext.getClassResolver()
+            return camelContext
+                    .getClassResolver()
                     .resolveMandatoryClass("org.messaginghub.pooled.jms.JmsPoolConnectionFactory");
         }
 

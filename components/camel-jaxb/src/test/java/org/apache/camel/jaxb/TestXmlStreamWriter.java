@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jaxb;
 
 import javax.xml.namespace.NamespaceContext;
@@ -185,6 +186,6 @@ public class TestXmlStreamWriter implements JaxbXmlStreamWriterWrapper {
             public Object getProperty(String s) throws IllegalArgumentException {
                 return writer.getProperty(s);
             }
-        };  //To change body of implemented methods use File | Settings | File Templates.
+        }; // To change body of implemented methods use File | Settings | File Templates.
     }
 }

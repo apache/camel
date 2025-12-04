@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,14 +30,12 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CollectionHelperTest {
 
     @Test
     public void testCollectionAsCommaDelimitedString() {
-        assertEquals("Claus,Willem,Jonathan",
+        assertEquals(
+                "Claus,Willem,Jonathan",
                 CollectionHelper.collectionAsCommaDelimitedString(Arrays.asList("Claus", "Willem", "Jonathan")));
 
         assertEquals("", CollectionHelper.collectionAsCommaDelimitedString(null));
@@ -49,7 +51,7 @@ public class CollectionHelperTest {
 
         assertEquals(2, CollectionHelper.size(map).intValue());
 
-        String[] array = new String[] { "Claus", "Willem" };
+        String[] array = new String[] {"Claus", "Willem"};
         assertEquals(2, CollectionHelper.size(array).intValue());
     }
 
@@ -102,5 +104,4 @@ public class CollectionHelperTest {
         assertEquals("My cool API", flattern.get("api.title"));
         assertEquals("Apache Software Foundation", flattern.get("api.contact.organization"));
     }
-
 }

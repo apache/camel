@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
@@ -30,8 +33,6 @@ import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
  * Integration test for VectorStore automatic RAG retrieval.
  */
@@ -45,9 +46,7 @@ public class SpringAiChatVectorStoreIT extends OllamaTestSupport {
         super.setupResources();
 
         // Create embedding model for vector store
-        OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(OLLAMA.baseUrl())
-                .build();
+        OllamaApi ollamaApi = OllamaApi.builder().baseUrl(OLLAMA.baseUrl()).build();
 
         EmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi)
@@ -57,16 +56,12 @@ public class SpringAiChatVectorStoreIT extends OllamaTestSupport {
                 .build();
 
         // Create and populate vector store
-        vectorStore = SimpleVectorStore.builder(embeddingModel)
-                .build();
+        vectorStore = SimpleVectorStore.builder(embeddingModel).build();
 
         List<Document> documents = List.of(
                 new Document(
-                        "Apache Camel is an integration framework created in 2007.",
-                        Map.of("source", "camel-docs")),
-                new Document(
-                        "Camel supports Enterprise Integration Patterns.",
-                        Map.of("source", "camel-docs")),
+                        "Apache Camel is an integration framework created in 2007.", Map.of("source", "camel-docs")),
+                new Document("Camel supports Enterprise Integration Patterns.", Map.of("source", "camel-docs")),
                 new Document(
                         "Spring AI provides AI integration for Spring applications.",
                         Map.of("source", "spring-ai-docs")),
@@ -79,8 +74,9 @@ public class SpringAiChatVectorStoreIT extends OllamaTestSupport {
 
     @Test
     public void testVectorStoreAutoRetrieval() {
-        String response = template().requestBody("direct:vector-rag",
-                "When was Apache Camel created? Answer with just the year.", String.class);
+        String response = template()
+                .requestBody(
+                        "direct:vector-rag", "When was Apache Camel created? Answer with just the year.", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response).contains("2007");
@@ -88,8 +84,11 @@ public class SpringAiChatVectorStoreIT extends OllamaTestSupport {
 
     @Test
     public void testVectorStoreWithCustomTopK() {
-        String response = template().requestBody("direct:vector-rag-top-k",
-                "What patterns does Camel support? Answer in 3 words.", String.class);
+        String response = template()
+                .requestBody(
+                        "direct:vector-rag-top-k",
+                        "What patterns does Camel support? Answer in 3 words.",
+                        String.class);
 
         assertThat(response).isNotNull();
         assertThat(response.toLowerCase()).containsAnyOf("integration", "enterprise", "pattern");
@@ -98,8 +97,11 @@ public class SpringAiChatVectorStoreIT extends OllamaTestSupport {
     @Test
     public void testVectorStoreDoesNotRetrieveIrrelevantContext() {
         // Query about something not in the vector store
-        String response = template().requestBody("direct:vector-rag",
-                "What is quantum computing? If you don't know, say 'I don't know'.", String.class);
+        String response = template()
+                .requestBody(
+                        "direct:vector-rag",
+                        "What is quantum computing? If you don't know, say 'I don't know'.",
+                        String.class);
 
         assertThat(response).isNotNull();
         // The response might still try to answer, but should not contain specific details from our docs
@@ -114,10 +116,12 @@ public class SpringAiChatVectorStoreIT extends OllamaTestSupport {
                 this.getCamelContext().getRegistry().bind("vectorStore", vectorStore);
 
                 from("direct:vector-rag")
-                        .to("spring-ai-chat:vectorstore?chatModel=#chatModel&vectorStore=#vectorStore&similarityThreshold=0.4");
+                        .to(
+                                "spring-ai-chat:vectorstore?chatModel=#chatModel&vectorStore=#vectorStore&similarityThreshold=0.4");
 
                 from("direct:vector-rag-top-k")
-                        .to("spring-ai-chat:vectorstore?chatModel=#chatModel&vectorStore=#vectorStore&topK=2&similarityThreshold=0.4");
+                        .to(
+                                "spring-ai-chat:vectorstore?chatModel=#chatModel&vectorStore=#vectorStore&topK=2&similarityThreshold=0.4");
             }
         };
     }

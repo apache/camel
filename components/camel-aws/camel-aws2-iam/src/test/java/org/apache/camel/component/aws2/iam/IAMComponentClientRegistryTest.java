@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.iam;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.iam;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class IAMComponentClientRegistryTest extends CamelTestSupport {
 
@@ -51,7 +52,8 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
         AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
         context.getRegistry().bind("amazonIamClient", clientMock);
         IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
-        IAM2Endpoint endpoint = (IAM2Endpoint) component.createEndpoint("aws2-iam://TestDomain?accessKey=xxx&secretKey=yyy");
+        IAM2Endpoint endpoint =
+                (IAM2Endpoint) component.createEndpoint("aws2-iam://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getIamClient());
     }

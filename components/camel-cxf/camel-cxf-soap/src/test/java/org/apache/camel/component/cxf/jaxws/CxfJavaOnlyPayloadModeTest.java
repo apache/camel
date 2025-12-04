@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.w3c.dom.Document;
 
@@ -26,9 +30,6 @@ import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * A unit test for java only CXF in payload mode
  */
@@ -36,11 +37,11 @@ public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
 
     private String url = "cxf://http://localhost:" + port1 + "/CxfJavaOnlyPayloadModeTest/helloworld"
-                         + "?wsdlURL=classpath:person.wsdl"
-                         + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
-                         + "&portName={http://camel.apache.org/wsdl-first}soap"
-                         + "&dataFormat=PAYLOAD"
-                         + "&properties.exceptionMessageCauseEnabled=true&properties.faultStackTraceEnabled=true";
+            + "?wsdlURL=classpath:person.wsdl"
+            + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
+            + "&portName={http://camel.apache.org/wsdl-first}soap"
+            + "&dataFormat=PAYLOAD"
+            + "&properties.exceptionMessageCauseEnabled=true&properties.faultStackTraceEnabled=true";
 
     @Test
     public void testCxfJavaOnly() throws Exception {
@@ -54,7 +55,8 @@ public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
         CxfPayload<?> payload = (CxfPayload<?>) output;
 
         // convert the payload body to string
-        String reply = context.getTypeConverter().convertTo(String.class, payload.getBody().get(0));
+        String reply = context.getTypeConverter()
+                .convertTo(String.class, payload.getBody().get(0));
         assertNotNull(reply);
 
         assertTrue(reply.contains("<personId>123</personId"));
@@ -71,8 +73,8 @@ public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         String s = "<GetPersonResponse xmlns=\"http://camel.apache.org/wsdl-first/types\">"
-                                   + "<personId>123</personId><ssn>456</ssn><name>Donald Duck</name>"
-                                   + "</GetPersonResponse>";
+                                + "<personId>123</personId><ssn>456</ssn><name>Donald Duck</name>"
+                                + "</GetPersonResponse>";
 
                         Document xml = context.getTypeConverter().convertTo(Document.class, s);
                         exchange.getMessage().setBody(xml);

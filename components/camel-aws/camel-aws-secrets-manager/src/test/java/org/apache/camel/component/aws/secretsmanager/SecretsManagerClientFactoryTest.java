@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws.secretsmanager.client.SecretsManagerClientFactory;
 import org.apache.camel.component.aws.secretsmanager.client.SecretsManagerInternalClient;
@@ -23,15 +26,13 @@ import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerC
 import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SecretsManagerClientFactoryTest {
 
     @Test
     public void getStandardSecretsManagerClientDefault() {
         SecretsManagerConfiguration secretsManagerConfiguration = new SecretsManagerConfiguration();
-        SecretsManagerInternalClient secretsManagerClient
-                = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
+        SecretsManagerInternalClient secretsManagerClient =
+                SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
         assertTrue(secretsManagerClient instanceof SecretsManagerClientStandardImpl);
     }
 
@@ -39,8 +40,8 @@ public class SecretsManagerClientFactoryTest {
     public void getStandardSecretsManagerClient() {
         SecretsManagerConfiguration secretsManagerConfiguration = new SecretsManagerConfiguration();
         secretsManagerConfiguration.setUseDefaultCredentialsProvider(false);
-        SecretsManagerInternalClient secretsManagerClient
-                = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
+        SecretsManagerInternalClient secretsManagerClient =
+                SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
         assertTrue(secretsManagerClient instanceof SecretsManagerClientStandardImpl);
     }
 
@@ -48,8 +49,8 @@ public class SecretsManagerClientFactoryTest {
     public void getSecretsManagerOptimizedIAMClient() {
         SecretsManagerConfiguration secretsManagerConfiguration = new SecretsManagerConfiguration();
         secretsManagerConfiguration.setUseDefaultCredentialsProvider(true);
-        SecretsManagerInternalClient secretsManagerClient
-                = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
+        SecretsManagerInternalClient secretsManagerClient =
+                SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
         assertTrue(secretsManagerClient instanceof SecretsManagerClientIAMOptimized);
     }
 
@@ -57,8 +58,8 @@ public class SecretsManagerClientFactoryTest {
     public void getSecretsManagerSessionTokenClient() {
         SecretsManagerConfiguration secretsManagerConfiguration = new SecretsManagerConfiguration();
         secretsManagerConfiguration.setUseSessionCredentials(true);
-        SecretsManagerInternalClient secretsManagerClient
-                = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
+        SecretsManagerInternalClient secretsManagerClient =
+                SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
         assertTrue(secretsManagerClient instanceof SecretsManagerClientSessionTokenImpl);
     }
 }

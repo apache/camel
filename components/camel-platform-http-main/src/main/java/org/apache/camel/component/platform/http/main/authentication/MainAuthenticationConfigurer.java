@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main.authentication;
 
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
@@ -25,9 +26,9 @@ import org.apache.camel.main.HttpServerConfigurationProperties;
  */
 public interface MainAuthenticationConfigurer {
 
-    void configureAuthentication(AuthenticationConfig authenticationConfig, HttpServerConfigurationProperties properties);
+    void configureAuthentication(
+            AuthenticationConfig authenticationConfig, HttpServerConfigurationProperties properties);
 
     void configureAuthentication(
             AuthenticationConfig authenticationConfig, HttpManagementServerConfigurationProperties properties);
-
 }

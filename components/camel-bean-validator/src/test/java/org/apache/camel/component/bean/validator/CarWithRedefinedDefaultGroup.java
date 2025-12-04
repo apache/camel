@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
 
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-@GroupSequence({ CarWithRedefinedDefaultGroup.class, OptionalChecks.class })
+@GroupSequence({CarWithRedefinedDefaultGroup.class, OptionalChecks.class})
 public class CarWithRedefinedDefaultGroup implements Car {
 
     @NotNull(groups = RequiredChecks.class)

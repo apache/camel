@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
@@ -32,6 +33,7 @@ public class JmsQosRouteTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -92,7 +94,6 @@ public class JmsQosRouteTest extends AbstractJMSTest {
                 from(componentName + ":queue:regular-1").to("mock:regular-1");
                 from(componentName + ":queue:r2").to(componentName + ":queue:regular-2");
                 from(componentName + ":queue:regular-2").to("mock:regular-2");
-
             }
         };
     }

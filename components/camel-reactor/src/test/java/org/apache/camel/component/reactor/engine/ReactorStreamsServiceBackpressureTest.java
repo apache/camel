@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactor.engine;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -27,9 +31,6 @@ import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureSt
 import org.apache.camel.component.reactor.engine.suport.TestSubscriber;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsServiceTestSupport {
 
@@ -155,7 +156,8 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
 
         Thread.sleep(200); // add other time to ensure no other items arrive
 
-        // TODO: the chain caches two elements instead of one: change it if you find an EmitterProcessor without prefetch
+        // TODO: the chain caches two elements instead of one: change it if you find an EmitterProcessor without
+        // prefetch
         // assertEquals(2, queue.size());
         assertEquals(3, queue.size());
 

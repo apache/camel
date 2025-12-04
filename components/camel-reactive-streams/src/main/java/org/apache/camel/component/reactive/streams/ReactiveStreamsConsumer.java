@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import java.util.concurrent.ExecutorService;
@@ -38,7 +39,8 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
     private final CamelReactiveStreamsService service;
     private ExecutorService executor;
 
-    public ReactiveStreamsConsumer(ReactiveStreamsEndpoint endpoint, Processor processor, CamelReactiveStreamsService service) {
+    public ReactiveStreamsConsumer(
+            ReactiveStreamsEndpoint endpoint, Processor processor, CamelReactiveStreamsService service) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.service = ObjectHelper.notNull(service, "service");
@@ -50,8 +52,10 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
 
         int poolSize = endpoint.getConcurrentConsumers();
         if (executor == null) {
-            executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                    getEndpoint().getEndpointUri(), poolSize);
+            executor = getEndpoint()
+                    .getCamelContext()
+                    .getExecutorServiceManager()
+                    .newFixedThreadPool(this, getEndpoint().getEndpointUri(), poolSize);
         }
 
         this.service.attachCamelConsumer(endpoint.getStream(), this);
@@ -78,8 +82,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
             Exchange exchange = endpoint.createExchange();
             exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onComplete");
 
-            doSend(exchange, done -> {
-            });
+            doSend(exchange, done -> {});
         }
     }
 
@@ -89,8 +92,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
             exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onError");
             exchange.getIn().setBody(error);
 
-            doSend(exchange, done -> {
-            });
+            doSend(exchange, done -> {});
         }
     }
 
@@ -100,7 +102,8 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
 
             executorService.execute(() -> this.getAsyncProcessor().process(exchange, doneSync -> {
                 if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                    getExceptionHandler()
+                            .handleException("Error processing exchange", exchange, exchange.getException());
                 }
 
                 callback.done(doneSync);
@@ -118,5 +121,4 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
     public ReactiveStreamsEndpoint getEndpoint() {
         return endpoint;
     }
-
 }

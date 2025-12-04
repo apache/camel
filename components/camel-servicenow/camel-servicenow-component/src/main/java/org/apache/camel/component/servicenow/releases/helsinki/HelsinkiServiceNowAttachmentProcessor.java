@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.releases.helsinki;
+
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CONTENT;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_DELETE;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_RETRIEVE;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_UPLOAD;
 
 import java.io.InputStream;
 
@@ -29,11 +35,6 @@ import org.apache.camel.component.servicenow.ServiceNowConstants;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
 import org.apache.camel.component.servicenow.ServiceNowParams;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CONTENT;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_DELETE;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_RETRIEVE;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_UPLOAD;
 
 public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowProcessor {
     protected HelsinkiServiceNowAttachmentProcessor(ServiceNowEndpoint endpoint) throws Exception {
@@ -132,8 +133,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
 
         Response response = client.reset()
                 .type(ObjectHelper.notNull(
-                        in.getHeader(ServiceNowConstants.CONTENT_TYPE, String.class),
-                        ServiceNowConstants.CONTENT_TYPE))
+                        in.getHeader(ServiceNowConstants.CONTENT_TYPE, String.class), ServiceNowConstants.CONTENT_TYPE))
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .path("now")
                 .path(apiVersion)

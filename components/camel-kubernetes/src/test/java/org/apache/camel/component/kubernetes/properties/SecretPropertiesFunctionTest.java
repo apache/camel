@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.properties;
 
 import java.nio.charset.StandardCharsets;
@@ -35,9 +36,12 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SecretPropertiesFunctionTest extends KubernetesTestSupport {
@@ -49,12 +53,20 @@ public class SecretPropertiesFunctionTest extends KubernetesTestSupport {
         builder.withOauthToken(authToken);
         builder.withMasterUrl(host);
 
-        KubernetesClient client = new KubernetesClientBuilder().withConfig(builder.build()).build();
+        KubernetesClient client =
+                new KubernetesClientBuilder().withConfig(builder.build()).build();
 
-        Map<String, String> data
-                = Map.of("myuser", Base64.getEncoder().encodeToString("scott".getBytes(StandardCharsets.UTF_8)),
-                        "mypass", Base64.getEncoder().encodeToString("tiger".getBytes(StandardCharsets.UTF_8)));
-        Secret sec = new SecretBuilder().editOrNewMetadata().withName("mysecret").endMetadata().withData(data).build();
+        Map<String, String> data = Map.of(
+                "myuser",
+                Base64.getEncoder().encodeToString("scott".getBytes(StandardCharsets.UTF_8)),
+                "mypass",
+                Base64.getEncoder().encodeToString("tiger".getBytes(StandardCharsets.UTF_8)));
+        Secret sec = new SecretBuilder()
+                .editOrNewMetadata()
+                .withName("mysecret")
+                .endMetadata()
+                .withData(data)
+                .build();
         client.resource(sec).serverSideApply();
 
         try (SecretPropertiesFunction cmf = new SecretPropertiesFunction()) {
@@ -80,5 +92,4 @@ public class SecretPropertiesFunctionTest extends KubernetesTestSupport {
             client.resource(sec).delete();
         }
     }
-
 }

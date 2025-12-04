@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 /**
@@ -24,7 +25,6 @@ public class FromFtpPreMoveFilePostfixNotStepwiseIT extends FromFtpPreMoveFilePo
     @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/movefile?password=admin&binary=false"
-               + "&preMove=${file:name}.old&stepwise=false";
+                + "&preMove=${file:name}.old&stepwise=false";
     }
-
 }

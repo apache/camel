@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.mllp;
 
 import org.apache.camel.component.mllp.internal.Hl7Util;
@@ -37,7 +38,8 @@ public class Hl7AcknowledgementGenerationException extends Exception {
         this.hl7MessageBytes = hl7MessageBytes;
     }
 
-    public Hl7AcknowledgementGenerationException(Hl7Util hl7Util, String message, byte[] hl7MessageBytes, Throwable cause) {
+    public Hl7AcknowledgementGenerationException(
+            Hl7Util hl7Util, String message, byte[] hl7MessageBytes, Throwable cause) {
         super(message, cause);
         this.hl7Util = hl7Util;
         this.hl7MessageBytes = hl7MessageBytes;
@@ -63,7 +65,9 @@ public class Hl7AcknowledgementGenerationException extends Exception {
 
             StringBuilder messageBuilder = new StringBuilder(parentMessage.length() + hl7MessageBytes.length);
 
-            messageBuilder.append(parentMessage).append("\n\t{hl7MessageBytes [")
+            messageBuilder
+                    .append(parentMessage)
+                    .append("\n\t{hl7MessageBytes [")
                     .append(hl7MessageBytes.length)
                     .append("] = ");
 

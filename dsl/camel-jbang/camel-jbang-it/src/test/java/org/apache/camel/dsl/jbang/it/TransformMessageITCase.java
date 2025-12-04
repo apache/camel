@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -48,7 +49,8 @@ public class TransformMessageITCase extends JBangTestSupport {
     @Test
     public void testTransformUsingDataFormats() throws IOException {
         copyResourceInDataFolder(TestResources.FORMATS_MAPPING_DATA);
-        runTransformation(String.format("transform message --output=%s/out.json --body=file:%s/data.csv --dataformat=csv",
+        runTransformation(String.format(
+                "transform message --output=%s/out.json --body=file:%s/data.csv --dataformat=csv",
                 mountPoint(), mountPoint()));
         checkOutputFile("[[Jack Dalton,  115,  mad at Averell]");
     }
@@ -56,8 +58,8 @@ public class TransformMessageITCase extends JBangTestSupport {
     @Test
     public void testTransformRouteDSL() throws IOException {
         copyResourceInDataFolder(TestResources.ROUTE2);
-        execute(String.format("transform route --format=xml %s/route2.yaml --output=%s/route2.xml", mountPoint(),
-                mountPoint()));
+        execute(String.format(
+                "transform route --format=xml %s/route2.yaml --output=%s/route2.xml", mountPoint(), mountPoint()));
         assertFileInDataFolderContains("route2.xml", "<constant>Hello Camel from custom integration</constant>");
     }
 

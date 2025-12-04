@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
+
+import static java.util.Optional.ofNullable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.*;
 
@@ -25,20 +32,13 @@ import org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguratio
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static java.util.Optional.ofNullable;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
 @SuppressWarnings("deprecation")
 public class CombinedServiceFilterTest extends ContextTestSupport {
     @Test
     public void testMultiServiceFilterConfiguration() throws Exception {
-        CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration()
-                .healthy()
-                .passThrough();
+        CombinedServiceCallServiceFilterConfiguration conf =
+                new CombinedServiceCallServiceFilterConfiguration().healthy().passThrough();
 
         CombinedServiceFilter filter = (CombinedServiceFilter) conf.newInstance(context);
         assertEquals(2, filter.getDelegates().size());
@@ -50,15 +50,23 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
     public void testMultiServiceFilter() throws Exception {
         CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration()
                 .healthy()
-                .custom((exchange, services) -> services.stream().filter(s -> s.getPort() < 2000).toList());
+                .custom((exchange, services) ->
+                        services.stream().filter(s -> s.getPort() < 2000).toList());
 
         Exchange exchange = new DefaultExchange(context);
-        List<ServiceDefinition> services = conf.newInstance(context).apply(exchange, Arrays.asList(
-                new DefaultServiceDefinition("no-name", "127.0.0.1", 1000),
-                new DefaultServiceDefinition("no-name", "127.0.0.1", 1001, new DefaultServiceHealth(false)),
-                new DefaultServiceDefinition("no-name", "127.0.0.1", 1002, new DefaultServiceHealth(true)),
-                new DefaultServiceDefinition("no-name", "127.0.0.1", 2001, new DefaultServiceHealth(true)),
-                new DefaultServiceDefinition("no-name", "127.0.0.1", 2001, new DefaultServiceHealth(false))));
+        List<ServiceDefinition> services = conf.newInstance(context)
+                .apply(
+                        exchange,
+                        Arrays.asList(
+                                new DefaultServiceDefinition("no-name", "127.0.0.1", 1000),
+                                new DefaultServiceDefinition(
+                                        "no-name", "127.0.0.1", 1001, new DefaultServiceHealth(false)),
+                                new DefaultServiceDefinition(
+                                        "no-name", "127.0.0.1", 1002, new DefaultServiceHealth(true)),
+                                new DefaultServiceDefinition(
+                                        "no-name", "127.0.0.1", 2001, new DefaultServiceHealth(true)),
+                                new DefaultServiceDefinition(
+                                        "no-name", "127.0.0.1", 2001, new DefaultServiceHealth(false))));
 
         assertEquals(2, services.size());
         assertFalse(services.stream().anyMatch(s -> !s.getHealth().isHealthy()));
@@ -72,8 +80,8 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
         CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration()
                 .healthy()
                 .custom((exchange, services) -> services.stream()
-                        .filter(serviceDefinition -> ofNullable(serviceDefinition.getMetadata()
-                                .get("supports"))
+                        .filter(serviceDefinition -> ofNullable(
+                                        serviceDefinition.getMetadata().get("supports"))
                                 .orElse("")
                                 .contains(exchange.getProperty("needs", String.class)))
                         .toList());
@@ -83,9 +91,14 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty("needs", "foo");
 
-        List<ServiceDefinition> services = conf.newInstance(context).apply(exchange, Arrays.asList(
-                new DefaultServiceDefinition("no-name", "127.0.0.1", 2001, metadata, new DefaultServiceHealth(true)),
-                new DefaultServiceDefinition("no-name", "127.0.0.1", 2002, metadata, new DefaultServiceHealth(false))));
+        List<ServiceDefinition> services = conf.newInstance(context)
+                .apply(
+                        exchange,
+                        Arrays.asList(
+                                new DefaultServiceDefinition(
+                                        "no-name", "127.0.0.1", 2001, metadata, new DefaultServiceHealth(true)),
+                                new DefaultServiceDefinition(
+                                        "no-name", "127.0.0.1", 2002, metadata, new DefaultServiceHealth(false))));
 
         assertEquals(1, services.size());
         assertFalse(services.stream().anyMatch(s -> !s.getHealth().isHealthy()));

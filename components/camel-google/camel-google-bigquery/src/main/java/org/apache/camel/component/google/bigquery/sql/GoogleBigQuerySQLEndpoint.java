@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.sql;
+
+import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY_SQL;
 
 import com.google.cloud.bigquery.BigQuery;
 import org.apache.camel.Category;
@@ -26,8 +29,6 @@ import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-
-import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY_SQL;
 
 /**
  * Access Google Cloud BigQuery service using SQL queries.
@@ -41,10 +42,14 @@ import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants
  * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be
  * handled by Camel.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = SCHEME_BIGQUERY_SQL, title = "Google BigQuery Standard SQL",
-             syntax = "google-bigquery-sql:projectId:queryString", category = { Category.CLOUD, Category.MESSAGING },
-             producerOnly = true,
-             headersClass = GoogleBigQueryConstants.class)
+@UriEndpoint(
+        firstVersion = "2.23.0",
+        scheme = SCHEME_BIGQUERY_SQL,
+        title = "Google BigQuery Standard SQL",
+        syntax = "google-bigquery-sql:projectId:queryString",
+        category = {Category.CLOUD, Category.MESSAGING},
+        producerOnly = true,
+        headersClass = GoogleBigQueryConstants.class)
 public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -52,8 +57,8 @@ public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
 
     private BigQuery bigQuery;
 
-    protected GoogleBigQuerySQLEndpoint(String endpointUri, GoogleBigQuerySQLComponent component,
-                                        GoogleBigQuerySQLConfiguration configuration) {
+    protected GoogleBigQuerySQLEndpoint(
+            String endpointUri, GoogleBigQuerySQLComponent component, GoogleBigQuerySQLConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
     }
@@ -89,5 +94,4 @@ public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
     public GoogleBigQuerySQLComponent getComponent() {
         return (GoogleBigQuerySQLComponent) super.getComponent();
     }
-
 }

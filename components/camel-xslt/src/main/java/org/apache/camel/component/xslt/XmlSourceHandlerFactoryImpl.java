@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import java.io.InputStream;
@@ -63,7 +64,9 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
             InputStream is = exchange.getIn().getBody(InputStream.class);
             return getSource(exchange, is);
         } else {
-            Object body = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+            Object body = source != null
+                    ? source.evaluate(exchange, Object.class)
+                    : exchange.getMessage().getBody();
             return getSource(exchange, body);
         }
     }
@@ -94,7 +97,7 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
         } else if (body instanceof Node) {
             return false;
         } else if (exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass()) != null) {
-            //there is a direct and hopefully optimized converter to Source
+            // there is a direct and hopefully optimized converter to Source
             return false;
         }
         // yes an input stream is needed
@@ -129,10 +132,12 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
                 // and fallback to DOM
                 source = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, body);
             }
-            // as the TypeConverterRegistry will look up source the converter differently if the type converter is loaded different
+            // as the TypeConverterRegistry will look up source the converter differently if the type converter is
+            // loaded different
             // now we just put the call of source converter at last
             if (source == null) {
-                TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass());
+                TypeConverter tc =
+                        exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass());
                 if (tc != null) {
                     source = tc.convertTo(Source.class, exchange, body);
                 }

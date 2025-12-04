@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -29,9 +33,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedDualCamelContextTest extends TestSupport {
@@ -51,13 +52,15 @@ public class ManagedDualCamelContextTest extends TestSupport {
         camel2.start();
 
         // Ensure JMX is enabled for this test so the ManagedManagementStrategy.class
-        // If other tests cleaned up the environment properly the following assertions will be true with the default settings
+        // If other tests cleaned up the environment properly the following assertions will be true with the default
+        // settings
         assertIsInstanceOf(JmxManagementStrategy.class, camel1.getManagementStrategy());
         assertIsInstanceOf(JmxManagementStrategy.class, camel2.getManagementStrategy());
 
-        MBeanServer mbeanServer1 = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        Set<ObjectName> set = mbeanServer1
-                .queryNames(new ObjectName("*:context=" + camel1.getManagementName() + ",type=components,*"), null);
+        MBeanServer mbeanServer1 =
+                camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
+        Set<ObjectName> set = mbeanServer1.queryNames(
+                new ObjectName("*:context=" + camel1.getManagementName() + ",type=components,*"), null);
         assertEquals(2, set.size());
         ObjectName on = set.iterator().next();
         assertTrue(mbeanServer1.isRegistered(on), "Should be registered");
@@ -66,8 +69,10 @@ public class ManagedDualCamelContextTest extends TestSupport {
         String id = (String) mbeanServer1.getAttribute(on, "CamelId");
         assertEquals(camel1.getManagementName(), id);
 
-        MBeanServer mbeanServer2 = camel2.getManagementStrategy().getManagementAgent().getMBeanServer();
-        set = mbeanServer1.queryNames(new ObjectName("*:context=" + camel2.getManagementName() + ",type=components,*"), null);
+        MBeanServer mbeanServer2 =
+                camel2.getManagementStrategy().getManagementAgent().getMBeanServer();
+        set = mbeanServer1.queryNames(
+                new ObjectName("*:context=" + camel2.getManagementName() + ",type=components,*"), null);
         assertEquals(2, set.size());
         on = set.iterator().next();
         assertTrue(mbeanServer2.isRegistered(on), "Should be registered");
@@ -88,5 +93,4 @@ public class ManagedDualCamelContextTest extends TestSupport {
             }
         };
     }
-
 }

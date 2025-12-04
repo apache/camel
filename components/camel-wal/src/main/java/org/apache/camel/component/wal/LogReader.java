@@ -151,8 +151,12 @@ public class LogReader implements AutoCloseable {
         EntryInfo entryInfo = EntryInfo.createForPersisted(fileChannel.position());
 
         return new PersistedLogEntry(
-                entryInfo, LogEntry.EntryState.fromInt(state), keySlot.metadata, keySlot.data,
-                valueSlot.metadata, valueSlot.data);
+                entryInfo,
+                LogEntry.EntryState.fromInt(state),
+                keySlot.metadata,
+                keySlot.data,
+                valueSlot.metadata,
+                valueSlot.data);
     }
 
     /**

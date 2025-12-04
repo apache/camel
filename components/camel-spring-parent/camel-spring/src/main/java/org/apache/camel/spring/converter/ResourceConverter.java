@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.converter;
 
 import java.io.IOException;
@@ -25,12 +26,10 @@ import org.springframework.core.io.Resource;
 @Converter(generateLoader = true)
 public final class ResourceConverter {
 
-    private ResourceConverter() {
-    }
+    private ResourceConverter() {}
 
     @Converter
     public static InputStream convertToInputStream(Resource resource) throws IOException {
         return resource.getInputStream();
     }
-
 }

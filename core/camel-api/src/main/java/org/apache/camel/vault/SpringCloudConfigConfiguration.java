@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
@@ -25,18 +26,25 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
     private String password;
+
     @Metadata(secret = true, defaultValue = "user")
     private String username = "user";
+
     @Metadata(secret = true)
     private String token;
+
     @Metadata(defaultValue = "http://localhost:8888", description = "Comma separated list of Spring Config Server URIs")
     private String uris = "http://localhost:8888";
+
     @Metadata
     private String label;
+
     @Metadata
     private String profile;
+
     @Metadata
     private boolean refreshEnabled;
+
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
 

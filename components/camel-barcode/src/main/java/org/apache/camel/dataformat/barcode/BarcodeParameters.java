@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.barcode;
 
 import com.google.zxing.BarcodeFormat;
@@ -73,9 +74,7 @@ public class BarcodeParameters {
      * <li>format: QR-Code</li>
      * </ul>
      */
-    public BarcodeParameters() {
-
-    }
+    public BarcodeParameters() {}
 
     /**
      * Constructor with parameters.
@@ -85,8 +84,8 @@ public class BarcodeParameters {
      * @param height
      * @param format
      */
-    public BarcodeParameters(final BarcodeImageType type, final int width,
-                             final int height, final BarcodeFormat format) {
+    public BarcodeParameters(
+            final BarcodeImageType type, final int width, final int height, final BarcodeFormat format) {
         this.height = height;
         this.width = width;
         this.type = type;

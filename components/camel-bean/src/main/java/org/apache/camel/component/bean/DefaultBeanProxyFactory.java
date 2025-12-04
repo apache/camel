@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.Endpoint;
@@ -23,8 +24,7 @@ import org.apache.camel.spi.annotations.JdkService;
 @JdkService(BeanProxyFactory.FACTORY)
 public final class DefaultBeanProxyFactory implements BeanProxyFactory {
 
-    public DefaultBeanProxyFactory() {
-    }
+    public DefaultBeanProxyFactory() {}
 
     @SafeVarargs
     @Override

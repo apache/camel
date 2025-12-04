@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.ArrayList;
@@ -75,8 +76,8 @@ public final class AsyncProcessorConverterHelper {
 
         @Override
         public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-            AsyncCallbackToCompletableFutureAdapter<Exchange> callback
-                    = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                    new AsyncCallbackToCompletableFutureAdapter<>(exchange);
             process(exchange, callback);
             return callback.getFuture();
         }
@@ -168,7 +169,8 @@ public final class AsyncProcessorConverterHelper {
         }
     }
 
-    private static class ProducerToAsyncProducerBridge extends ProcessorToAsyncProcessorBridge implements AsyncProducer {
+    private static class ProducerToAsyncProducerBridge extends ProcessorToAsyncProcessorBridge
+            implements AsyncProducer {
         ProducerToAsyncProducerBridge(Producer producer) {
             super(producer);
         }

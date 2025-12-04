@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.security.*;
 
@@ -35,9 +39,6 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class PQCMLKEMGenerateEncapsulationCryptoRoundTripAESAsHeaderTest extends CamelTestSupport {
 
     @EndpointInject("mock:encapsulate")
@@ -52,8 +53,7 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripAESAsHeaderTest extends
     @EndpointInject("mock:unencrypted")
     protected MockEndpoint resultDecrypted;
 
-    public PQCMLKEMGenerateEncapsulationCryptoRoundTripAESAsHeaderTest() throws NoSuchAlgorithmException {
-    }
+    public PQCMLKEMGenerateEncapsulationCryptoRoundTripAESAsHeaderTest() throws NoSuchAlgorithmException {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -61,10 +61,12 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripAESAsHeaderTest extends
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+                from("direct:encapsulate")
+                        .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
                         .to("mock:encapsulate")
                         .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
-                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES&storeExtractedSecretKeyAsHeader=true")
+                        .to(
+                                "pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES&storeExtractedSecretKeyAsHeader=true")
                         .setHeader(CryptoDataFormat.KEY, header(PQCConstants.SECRET_KEY))
                         .log("${headers}")
                         .setBody(constant("Hello"))
@@ -93,15 +95,23 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripAESAsHeaderTest extends
         templateEncapsulate.sendBody("Hello");
         resultEncapsulate.assertIsSatisfied();
         assertNotNull(resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
-        assertEquals(PQCSymmetricAlgorithms.AES.getAlgorithm(),
-                resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
+        assertEquals(
+                PQCSymmetricAlgorithms.AES.getAlgorithm(),
+                resultEncapsulate
+                        .getExchanges()
+                        .get(0)
+                        .getMessage()
+                        .getBody(SecretKeyWithEncapsulation.class)
+                        .getAlgorithm());
         assertNotNull(resultEncrypted.getExchanges().get(0).getMessage().getBody());
         assertEquals("Hello", resultDecrypted.getExchanges().get(0).getMessage().getBody(String.class));
     }
 
     @BindToRegistry("Keypair")
-    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+    public KeyPair setKeyPair()
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
         kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
@@ -111,7 +121,8 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripAESAsHeaderTest extends
     @BindToRegistry("KeyGenerator")
     public KeyGenerator setKeyGenerator()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+        KeyGenerator kg = KeyGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
         return kg;
     }

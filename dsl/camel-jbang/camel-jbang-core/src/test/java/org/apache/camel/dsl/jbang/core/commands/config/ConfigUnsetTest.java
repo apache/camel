@@ -27,7 +27,8 @@ class ConfigUnsetTest extends BaseConfigTest {
 
     @Test
     public void shouldUnsetConfig() throws Exception {
-        UserConfigHelper.createUserConfig("""
+        UserConfigHelper.createUserConfig(
+                """
                 camel-version=latest
                 foo=bar
                 kamelets-version=greatest
@@ -48,7 +49,8 @@ class ConfigUnsetTest extends BaseConfigTest {
 
     @Test
     public void shouldHandleMissingKeyToUnset() throws Exception {
-        UserConfigHelper.createUserConfig("""
+        UserConfigHelper.createUserConfig(
+                """
                 camel-version=latest
                 kamelets-version=greatest
                 """);
@@ -68,7 +70,8 @@ class ConfigUnsetTest extends BaseConfigTest {
 
     @Test
     public void unsetLocalConfig() throws Exception {
-        UserConfigHelper.createUserConfig("""
+        UserConfigHelper.createUserConfig(
+                """
                 camel-version=local
                 foo=bar
                 """, true);
@@ -80,9 +83,11 @@ class ConfigUnsetTest extends BaseConfigTest {
 
         Assertions.assertEquals("", printer.getOutput());
 
-        CommandLineHelper.loadProperties(properties -> {
-            Assertions.assertEquals(1, properties.size());
-            Assertions.assertEquals("local", properties.get("camel-version"));
-        }, true);
+        CommandLineHelper.loadProperties(
+                properties -> {
+                    Assertions.assertEquals(1, properties.size());
+                    Assertions.assertEquals("local", properties.get("camel-version"));
+                },
+                true);
     }
 }

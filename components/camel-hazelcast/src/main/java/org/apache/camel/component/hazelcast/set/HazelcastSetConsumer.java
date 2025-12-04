@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.set;
 
 import java.util.UUID;
@@ -34,7 +35,8 @@ public class HazelcastSetConsumer extends HazelcastDefaultConsumer {
 
     private UUID listener;
 
-    public HazelcastSetConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
+    public HazelcastSetConsumer(
+            HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
         set = hazelcastInstance.getSet(cacheName);

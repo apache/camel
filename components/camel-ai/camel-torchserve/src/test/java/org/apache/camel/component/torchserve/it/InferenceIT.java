@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.it;
 
 import java.nio.file.Files;
@@ -46,9 +47,7 @@ class InferenceIT extends TorchServeITSupport {
     @Test
     void testPredictions() throws Exception {
         var mock = getMockEndpoint("mock:result");
-        mock.expectedBodyReceived()
-                .body(Map.class)
-                .isEqualTo(Map.of("cat", 1.0));
+        mock.expectedBodyReceived().body(Map.class).isEqualTo(Map.of("cat", 1.0));
 
         var body = Files.readAllBytes(Path.of(TEST_DATA));
         template.sendBody("direct:predictions", body);
@@ -60,9 +59,7 @@ class InferenceIT extends TorchServeITSupport {
     @Test
     void testPredictions_headers() throws Exception {
         var mock = getMockEndpoint("mock:result");
-        mock.expectedBodyReceived()
-                .body(Map.class)
-                .isEqualTo(Map.of("cat", 1.0));
+        mock.expectedBodyReceived().body(Map.class).isEqualTo(Map.of("cat", 1.0));
 
         var body = Files.readAllBytes(Path.of(TEST_DATA));
         template.send("direct:predictions_headers", exchange -> {
@@ -77,9 +74,7 @@ class InferenceIT extends TorchServeITSupport {
     @Test
     void testPredictions_version() throws Exception {
         var mock = getMockEndpoint("mock:result");
-        mock.expectedBodyReceived()
-                .body(Map.class)
-                .isEqualTo(Map.of("cat", 1.0));
+        mock.expectedBodyReceived().body(Map.class).isEqualTo(Map.of("cat", 1.0));
 
         var body = Files.readAllBytes(Path.of(TEST_DATA));
         template.sendBody("direct:predictions_version", body);
@@ -91,9 +86,7 @@ class InferenceIT extends TorchServeITSupport {
     @Test
     void testPredictions_versionHeaders() throws Exception {
         var mock = getMockEndpoint("mock:result");
-        mock.expectedBodyReceived()
-                .body(Map.class)
-                .isEqualTo(Map.of("cat", 1.0));
+        mock.expectedBodyReceived().body(Map.class).isEqualTo(Map.of("cat", 1.0));
 
         var body = Files.readAllBytes(Path.of(TEST_DATA));
         template.send("direct:predictions_headers", exchange -> {
@@ -111,14 +104,14 @@ class InferenceIT extends TorchServeITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:ping")
-                        .to("torchserve:inference/ping")
-                        .to("mock:result");
+                from("direct:ping").to("torchserve:inference/ping").to("mock:result");
                 from("direct:predictions")
                         .toF("torchserve:inference/predictions?modelName=%s", TEST_MODEL)
                         .to("mock:result");
                 from("direct:predictions_version")
-                        .toF("torchserve:inference/predictions?modelName=%s&modelVersion=%s", TEST_MODEL, TEST_MODEL_VERSION)
+                        .toF(
+                                "torchserve:inference/predictions?modelName=%s&modelVersion=%s",
+                                TEST_MODEL, TEST_MODEL_VERSION)
                         .to("mock:result");
                 from("direct:predictions_headers")
                         .to("torchserve:inference/predictions")

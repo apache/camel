@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static io.restassured.matcher.RestAssuredMatchers.detailedCookie;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 
@@ -35,13 +43,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.matcher.RestAssuredMatchers.detailedCookie;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.*;
-
 public class VertxPlatformHttpSessionTest {
 
     @Test
@@ -53,16 +54,14 @@ public class VertxPlatformHttpSessionTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/disabled")
-                        .setBody().constant("disabled");
+                from("platform-http:/disabled").setBody().constant("disabled");
             }
         });
 
         try {
             context.start();
 
-            given()
-                    .when()
+            given().when()
                     .get("/disabled")
                     .then()
                     .statusCode(200)
@@ -83,28 +82,29 @@ public class VertxPlatformHttpSessionTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/session")
-                        .setBody().constant("session");
+                from("platform-http:/session").setBody().constant("session");
             }
         });
 
         try {
             context.start();
 
-            String sessionCookieValue = given()
-                    .when()
+            String sessionCookieValue = given().when()
                     .get("/session")
                     .then()
                     .statusCode(200)
-                    .cookie("vertx-web.session",
+                    .cookie(
+                            "vertx-web.session",
                             detailedCookie()
-                                    .path("/").value(notNullValue())
+                                    .path("/")
+                                    .value(notNullValue())
                                     .httpOnly(false)
                                     .secured(false)
                                     .sameSite("Strict"))
                     .header("cookie", nullValue())
                     .body(equalTo("session"))
-                    .extract().cookie("vertx-web.session");
+                    .extract()
+                    .cookie("vertx-web.session");
 
             assertTrue(sessionCookieValue.length() >= SessionHandler.DEFAULT_SESSIONID_MIN_LENGTH);
 
@@ -128,28 +128,29 @@ public class VertxPlatformHttpSessionTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/session")
-                        .setBody().constant("session");
+                from("platform-http:/session").setBody().constant("session");
             }
         });
 
         try {
             context.start();
 
-            String sessionCookieValue = given()
-                    .when()
+            String sessionCookieValue = given().when()
                     .get("/session")
                     .then()
                     .statusCode(200)
-                    .cookie("vertx-session",
+                    .cookie(
+                            "vertx-session",
                             detailedCookie()
-                                    .path("/session").value(notNullValue())
+                                    .path("/session")
+                                    .value(notNullValue())
                                     .httpOnly(true)
                                     .secured(true)
                                     .sameSite("Lax"))
                     .header("cookie", nullValue())
                     .body(equalTo("session"))
-                    .extract().cookie("vertx-session");
+                    .extract()
+                    .cookie("vertx-session");
 
             assertTrue(sessionCookieValue.length() >= 64);
 
@@ -161,10 +162,9 @@ public class VertxPlatformHttpSessionTest {
     @Test
     public void testSessionHandling() throws Exception {
         int port = AvailablePortFinder.getNextAvailable();
-        CamelContext context = createCamelContext(port,
-                sessionConfig -> {
-                    sessionConfig.setEnabled(true);
-                });
+        CamelContext context = createCamelContext(port, sessionConfig -> {
+            sessionConfig.setEnabled(true);
+        });
         addPlatformHttpEngineHandler(context, new HitCountHandler());
         context.getRegistry().bind("instanceCookieHander", new InstanceCookieHandler());
 
@@ -173,11 +173,10 @@ public class VertxPlatformHttpSessionTest {
                 @Override
                 public void configure() {
                     from("platform-http:/session")
-                            .setBody().simple("Received cookie from platform-http:/session endpoint: ${header.cookie}");
+                            .setBody()
+                            .simple("Received cookie from platform-http:/session endpoint: ${header.cookie}");
 
-                    from("direct:session")
-                            .toF("http://localhost:%d/session?cookieHandler=#instanceCookieHander",
-                                    port);
+                    from("direct:session").toF("http://localhost:%d/session?cookieHandler=#instanceCookieHander", port);
                 }
             });
 
@@ -186,7 +185,8 @@ public class VertxPlatformHttpSessionTest {
             // initial call establishes session
             ProducerTemplate template = context.createProducerTemplate();
             Exchange exchange = template.request("direct:session", null);
-            // 'set-cookie' header for new session, e.g. 'vertx-web.session=735944d69685aaf63421fb5b3c116b84; Path=/; SameSite=Strict'
+            // 'set-cookie' header for new session, e.g. 'vertx-web.session=735944d69685aaf63421fb5b3c116b84; Path=/;
+            // SameSite=Strict'
             String sessionCookie = getHeader("set-cookie", exchange);
             assertNotNull(getHeader("set-cookie", exchange));
             assertEquals("1", getHeader("hitcount", exchange));
@@ -194,7 +194,8 @@ public class VertxPlatformHttpSessionTest {
             // subsequent call reuses session
             exchange = template.request("direct:session", null);
             // 'cookie' header for existing session, e.g. 'vertx-web.session=735944d69685aaf63421fb5b3c116b84'
-            String receivedCookie = exchange.getMessage().getBody(String.class)
+            String receivedCookie = exchange.getMessage()
+                    .getBody(String.class)
                     .replace("Received cookie from platform-http:/session endpoint: ", "");
             assertEquals(receivedCookie, sessionCookie.substring(0, sessionCookie.indexOf(';')));
             assertNull(getHeader("set-cookie", exchange));
@@ -209,20 +210,18 @@ public class VertxPlatformHttpSessionTest {
         return (String) exchange.getMessage().getHeader(header);
     }
 
-    private CamelContext createCamelContext(SessionConfigCustomizer customizer)
-            throws Exception {
+    private CamelContext createCamelContext(SessionConfigCustomizer customizer) throws Exception {
         int bindPort = AvailablePortFinder.getNextAvailable();
         RestAssured.port = bindPort;
         return createCamelContext(bindPort, customizer);
     }
 
-    private CamelContext createCamelContext(int bindPort, SessionConfigCustomizer customizer)
-            throws Exception {
+    private CamelContext createCamelContext(int bindPort, SessionConfigCustomizer customizer) throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
         conf.setBindPort(bindPort);
 
-        VertxPlatformHttpServerConfiguration.SessionConfig sessionConfig
-                = new VertxPlatformHttpServerConfiguration.SessionConfig();
+        VertxPlatformHttpServerConfiguration.SessionConfig sessionConfig =
+                new VertxPlatformHttpServerConfiguration.SessionConfig();
         customizer.customize(sessionConfig);
         conf.setSessionConfig(sessionConfig);
 

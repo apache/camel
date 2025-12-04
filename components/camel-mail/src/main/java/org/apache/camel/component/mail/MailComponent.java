@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.net.URI;
@@ -39,20 +40,25 @@ import org.eclipse.angus.mail.imap.SortTerm;
  * Component for JavaMail.
  */
 @Component("imap,imaps,pop3,pop3s,smtp,smtps")
-public class MailComponent extends HealthCheckComponent implements HeaderFilterStrategyAware, SSLContextParametersAware {
+public class MailComponent extends HealthCheckComponent
+        implements HeaderFilterStrategyAware, SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private MailConfiguration configuration;
+
     @Metadata(label = "advanced")
     private ContentTypeResolver contentTypeResolver;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "filter",
-              description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
+
+    @Metadata(
+            label = "filter",
+            description =
+                    "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
 
-    public MailComponent() {
-    }
+    public MailComponent() {}
 
     public MailComponent(MailConfiguration configuration) {
         this.configuration = configuration;
@@ -207,5 +213,4 @@ public class MailComponent extends HealthCheckComponent implements HeaderFilterS
             ((HeaderFilterStrategyAware) endpoint).setHeaderFilterStrategy(headerFilterStrategy);
         }
     }
-
 }

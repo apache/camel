@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 
@@ -24,17 +29,16 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class HttpBridgeRouteTest extends BaseJettyTest {
 
     @Test
     public void testHttpClient() {
-        String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello",
-                new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
-                "application/xml", String.class);
+        String response = template.requestBodyAndHeader(
+                "http://localhost:" + port2 + "/test/hello",
+                new ByteArrayInputStream("This is a test".getBytes()),
+                "Content-Type",
+                "application/xml",
+                String.class);
         assertEquals("/", response, "Get a wrong response");
 
         response = template.requestBody("http://localhost:" + port1 + "/hello/world", "hello", String.class);
@@ -64,9 +68,9 @@ public class HttpBridgeRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port2 + "/test/hello")
                         .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
-                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
+                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true")
+                        .process(serviceProc);
             }
         };
     }
-
 }

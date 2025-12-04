@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.language;
 
 import com.ibm.watson.natural_language_understanding.v1.NaturalLanguageUnderstanding;
@@ -62,8 +63,8 @@ public class WatsonLanguageProducer extends DefaultProducer {
     }
 
     private WatsonLanguageOperations determineOperation(Exchange exchange) {
-        WatsonLanguageOperations operation
-                = exchange.getIn().getHeader(WatsonLanguageConstants.OPERATION, WatsonLanguageOperations.class);
+        WatsonLanguageOperations operation =
+                exchange.getIn().getHeader(WatsonLanguageConstants.OPERATION, WatsonLanguageOperations.class);
 
         if (operation == null) {
             operation = getEndpoint().getConfiguration().getOperation();
@@ -95,10 +96,8 @@ public class WatsonLanguageProducer extends DefaultProducer {
 
         Features features = buildFeatures(exchange);
 
-        AnalyzeOptions options = new AnalyzeOptions.Builder()
-                .text(text)
-                .features(features)
-                .build();
+        AnalyzeOptions options =
+                new AnalyzeOptions.Builder().text(text).features(features).build();
 
         AnalysisResults result = nlu.analyze(options).execute().getResult();
 
@@ -109,8 +108,12 @@ public class WatsonLanguageProducer extends DefaultProducer {
 
         // Set convenience headers for commonly used values
         if (result.getSentiment() != null && result.getSentiment().getDocument() != null) {
-            message.setHeader(WatsonLanguageConstants.SENTIMENT_SCORE, result.getSentiment().getDocument().getScore());
-            message.setHeader(WatsonLanguageConstants.SENTIMENT_LABEL, result.getSentiment().getDocument().getLabel());
+            message.setHeader(
+                    WatsonLanguageConstants.SENTIMENT_SCORE,
+                    result.getSentiment().getDocument().getScore());
+            message.setHeader(
+                    WatsonLanguageConstants.SENTIMENT_LABEL,
+                    result.getSentiment().getDocument().getLabel());
         }
         if (result.getLanguage() != null) {
             message.setHeader(WatsonLanguageConstants.LANGUAGE, result.getLanguage());
@@ -136,10 +139,8 @@ public class WatsonLanguageProducer extends DefaultProducer {
 
         Features features = buildFeatures(exchange);
 
-        AnalyzeOptions options = new AnalyzeOptions.Builder()
-                .url(url)
-                .features(features)
-                .build();
+        AnalyzeOptions options =
+                new AnalyzeOptions.Builder().url(url).features(features).build();
 
         AnalysisResults result = nlu.analyze(options).execute().getResult();
 
@@ -150,8 +151,12 @@ public class WatsonLanguageProducer extends DefaultProducer {
 
         // Set convenience headers for commonly used values
         if (result.getSentiment() != null && result.getSentiment().getDocument() != null) {
-            message.setHeader(WatsonLanguageConstants.SENTIMENT_SCORE, result.getSentiment().getDocument().getScore());
-            message.setHeader(WatsonLanguageConstants.SENTIMENT_LABEL, result.getSentiment().getDocument().getLabel());
+            message.setHeader(
+                    WatsonLanguageConstants.SENTIMENT_SCORE,
+                    result.getSentiment().getDocument().getScore());
+            message.setHeader(
+                    WatsonLanguageConstants.SENTIMENT_LABEL,
+                    result.getSentiment().getDocument().getLabel());
         }
         if (result.getLanguage() != null) {
             message.setHeader(WatsonLanguageConstants.LANGUAGE, result.getLanguage());
@@ -161,18 +166,36 @@ public class WatsonLanguageProducer extends DefaultProducer {
     private Features buildFeatures(Exchange exchange) {
         Features.Builder builder = new Features.Builder();
 
-        boolean analyzeSentiment = exchange.getIn().getHeader(WatsonLanguageConstants.ANALYZE_SENTIMENT,
-                getEndpoint().getConfiguration().isAnalyzeSentiment(), Boolean.class);
-        boolean analyzeEmotion = exchange.getIn().getHeader(WatsonLanguageConstants.ANALYZE_EMOTION,
-                getEndpoint().getConfiguration().isAnalyzeEmotion(), Boolean.class);
-        boolean analyzeEntities = exchange.getIn().getHeader(WatsonLanguageConstants.ANALYZE_ENTITIES,
-                getEndpoint().getConfiguration().isAnalyzeEntities(), Boolean.class);
-        boolean analyzeKeywords = exchange.getIn().getHeader(WatsonLanguageConstants.ANALYZE_KEYWORDS,
-                getEndpoint().getConfiguration().isAnalyzeKeywords(), Boolean.class);
-        boolean analyzeConcepts = exchange.getIn().getHeader(WatsonLanguageConstants.ANALYZE_CONCEPTS,
-                getEndpoint().getConfiguration().isAnalyzeConcepts(), Boolean.class);
-        boolean analyzeCategories = exchange.getIn().getHeader(WatsonLanguageConstants.ANALYZE_CATEGORIES,
-                getEndpoint().getConfiguration().isAnalyzeCategories(), Boolean.class);
+        boolean analyzeSentiment = exchange.getIn()
+                .getHeader(
+                        WatsonLanguageConstants.ANALYZE_SENTIMENT,
+                        getEndpoint().getConfiguration().isAnalyzeSentiment(),
+                        Boolean.class);
+        boolean analyzeEmotion = exchange.getIn()
+                .getHeader(
+                        WatsonLanguageConstants.ANALYZE_EMOTION,
+                        getEndpoint().getConfiguration().isAnalyzeEmotion(),
+                        Boolean.class);
+        boolean analyzeEntities = exchange.getIn()
+                .getHeader(
+                        WatsonLanguageConstants.ANALYZE_ENTITIES,
+                        getEndpoint().getConfiguration().isAnalyzeEntities(),
+                        Boolean.class);
+        boolean analyzeKeywords = exchange.getIn()
+                .getHeader(
+                        WatsonLanguageConstants.ANALYZE_KEYWORDS,
+                        getEndpoint().getConfiguration().isAnalyzeKeywords(),
+                        Boolean.class);
+        boolean analyzeConcepts = exchange.getIn()
+                .getHeader(
+                        WatsonLanguageConstants.ANALYZE_CONCEPTS,
+                        getEndpoint().getConfiguration().isAnalyzeConcepts(),
+                        Boolean.class);
+        boolean analyzeCategories = exchange.getIn()
+                .getHeader(
+                        WatsonLanguageConstants.ANALYZE_CATEGORIES,
+                        getEndpoint().getConfiguration().isAnalyzeCategories(),
+                        Boolean.class);
 
         if (analyzeSentiment) {
             builder.sentiment(new SentimentOptions.Builder().build());

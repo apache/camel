@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer.support.streaming;
 
 import org.apache.camel.Exchange;
@@ -40,7 +41,8 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
     private final Processor processor;
     private final CommitManager commitManager;
 
-    public KafkaRecordStreamingProcessor(KafkaConfiguration configuration, Processor processor, CommitManager commitManager) {
+    public KafkaRecordStreamingProcessor(
+            KafkaConfiguration configuration, Processor processor, CommitManager commitManager) {
         this.autoCommitEnabled = configuration.isAutoCommitEnable();
         this.configuration = configuration;
         this.processor = processor;
@@ -48,8 +50,11 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
     }
 
     public ProcessingResult processExchange(
-            KafkaConsumer camelKafkaConsumer, TopicPartition topicPartition, boolean partitionHasNext,
-            boolean recordHasNext, ConsumerRecord<Object, Object> consumerRecord) {
+            KafkaConsumer camelKafkaConsumer,
+            TopicPartition topicPartition,
+            boolean partitionHasNext,
+            boolean recordHasNext,
+            ConsumerRecord<Object, Object> consumerRecord) {
 
         final Exchange exchange = camelKafkaConsumer.createExchange(false);
 
@@ -81,16 +86,25 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
         ProcessingResult result;
         if (exchange.getException() != null) {
-            LOG.debug("An exception was thrown for consumerRecord at partition {} and offset {}",
-                    consumerRecord.partition(), consumerRecord.offset());
+            LOG.debug(
+                    "An exception was thrown for consumerRecord at partition {} and offset {}",
+                    consumerRecord.partition(),
+                    consumerRecord.offset());
             final ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
 
             boolean breakOnErrorExit = processException(exchange, topicPartition, consumerRecord, exceptionHandler);
             result = new ProcessingResult(
-                    breakOnErrorExit, true, consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset());
+                    breakOnErrorExit,
+                    true,
+                    consumerRecord.topic(),
+                    consumerRecord.partition(),
+                    consumerRecord.offset());
         } else {
             result = new ProcessingResult(
-                    false, exchange.getException() != null, consumerRecord.topic(), consumerRecord.partition(),
+                    false,
+                    exchange.getException() != null,
+                    consumerRecord.topic(),
+                    consumerRecord.partition(),
                     consumerRecord.offset());
         }
 
@@ -105,18 +119,25 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
     }
 
     private boolean processException(
-            Exchange exchange, TopicPartition topicPartition,
-            ConsumerRecord<Object, Object> consumerRecord, ExceptionHandler exceptionHandler) {
+            Exchange exchange,
+            TopicPartition topicPartition,
+            ConsumerRecord<Object, Object> consumerRecord,
+            ExceptionHandler exceptionHandler) {
 
         // processing failed due to an unhandled exception, what should we do
         if (configuration.isBreakOnFirstError()) {
             // we are failing and we should break out
             if (LOG.isWarnEnabled()) {
                 Exception exc = exchange.getException();
-                LOG.warn("Error during processing {} from topic: {} due to {}", exchange, topicPartition.topic(),
+                LOG.warn(
+                        "Error during processing {} from topic: {} due to {}",
+                        exchange,
+                        topicPartition.topic(),
                         exc.getMessage());
-                LOG.warn("Will seek consumer to offset {} on partition {} and start polling again.",
-                        consumerRecord.offset(), consumerRecord.partition());
+                LOG.warn(
+                        "Will seek consumer to offset {} on partition {} and start polling again.",
+                        consumerRecord.offset(),
+                        consumerRecord.partition());
             }
 
             // we should just do a commit (vs the original forceCommit)

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.service;
 
 import java.util.Set;
@@ -28,5 +29,4 @@ public interface ClickUpService {
     Set<Webhook> getWebhooks(Long workspaceId);
 
     void deleteWebhook(String webhookId);
-
 }

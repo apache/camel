@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.converter;
+
+import static org.apache.camel.impl.converter.TypeResolverHelper.tryAssignableFrom;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,8 +47,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.impl.converter.TypeResolverHelper.tryAssignableFrom;
 
 public abstract class CoreTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
 
@@ -130,10 +131,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         } else if (type == String.class) {
             // okay its a primitive -> string then return as-is for some common types
             Class<?> cls = value.getClass();
-            if (cls.isPrimitive()
-                    || cls == Boolean.class
-                    || cls == Integer.class
-                    || cls == Long.class) {
+            if (cls.isPrimitive() || cls == Boolean.class || cls == Integer.class || cls == Long.class) {
                 return (T) value.toString();
             }
         } else if (type.isEnum()) {
@@ -189,7 +187,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value)
+            throws NoTypeConversionAvailableException {
         // optimize for a few common conversions
         if (value != null) {
             T ret = fastConvertTo(type, exchange, value);
@@ -241,10 +240,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             } else if (type == String.class) {
                 // okay its a primitive -> string then return as-is for some common types
                 Class<?> cls = value.getClass();
-                if (cls.isPrimitive()
-                        || cls == Boolean.class
-                        || cls == Integer.class
-                        || cls == Long.class) {
+                if (cls.isPrimitive() || cls == Boolean.class || cls == Integer.class || cls == Long.class) {
                     return (T) value.toString();
                 }
             } else if (type.isEnum()) {
@@ -270,14 +266,15 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     private static <T> void requireNonNullBoolean(Class<T> type, Object value, Object answer) {
         if (answer == null) {
             throw new TypeConversionException(
-                    value, type,
-                    new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
+                    value,
+                    type,
+                    new IllegalArgumentException(
+                            "Cannot convert type: " + value.getClass().getName() + " to boolean"));
         }
     }
 
     protected Object doConvertToAndStat(
-            final Class<?> type, final Exchange exchange, final Object value,
-            final boolean tryConvert) {
+            final Class<?> type, final Exchange exchange, final Object value, final boolean tryConvert) {
 
         Object answer = null;
         try {
@@ -351,8 +348,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     }
 
     protected Object doConvertTo(
-            final Class<?> type, final Exchange exchange, final Object value,
-            final boolean tryConvert) {
+            final Class<?> type, final Exchange exchange, final Object value, final boolean tryConvert) {
 
         if (value == null) {
             // no type conversion was needed
@@ -403,7 +399,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             return assignableConverter.convertTo(type, exchange, value);
         }
 
-        // This is the last resort: if nothing else works, try to find something that converts from an Object to the target type
+        // This is the last resort: if nothing else works, try to find something that converts from an Object to the
+        // target type
         final TypeConverter objConverter = converters.get(new TypeConvertible<>(Object.class, type));
         if (objConverter != null) {
             converters.put(typeConvertible, objConverter);
@@ -418,7 +415,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         return TypeConverter.MISS_VALUE;
     }
 
-    private Object tryCachedConverters(Class<?> type, Exchange exchange, Object value, TypeConvertible<?, ?> typeConvertible) {
+    private Object tryCachedConverters(
+            Class<?> type, Exchange exchange, Object value, TypeConvertible<?, ?> typeConvertible) {
         final TypeConverter typeConverter = converters.get(typeConvertible);
         if (typeConverter != null) {
             final Object ret = typeConverter.convertTo(type, exchange, value);
@@ -440,7 +438,10 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     }
 
     private Object tryFallback(
-            final Class<?> type, final Exchange exchange, final Object value, boolean tryConvert,
+            final Class<?> type,
+            final Exchange exchange,
+            final Object value,
+            boolean tryConvert,
             TypeConvertible<?, ?> typeConvertible) {
         for (FallbackTypeConverter fallback : fallbackConverters) {
             TypeConverter tc = fallback.getFallbackTypeConverter();
@@ -677,5 +678,4 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             return fallbackTypeConverter;
         }
     }
-
 }

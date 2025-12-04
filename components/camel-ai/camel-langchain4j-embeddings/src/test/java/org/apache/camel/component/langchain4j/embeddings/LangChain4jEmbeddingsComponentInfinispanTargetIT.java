@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
 import java.util.List;
@@ -55,43 +58,45 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestSupport {
     @RegisterExtension
     private static final InfinispanService service = InfinispanServiceFactory.createSingletonInfinispanService();
+
     private static final String CACHE_NAME = "camel-infinispan-embeddings";
     private static final String INFINISPAN_URI = "infinispan:" + CACHE_NAME;
     private static final String TEXT_EMBEDDING_1 = "The quick brown fox jumps over the lazy dog";
-    private static final String TEXT_EMBEDDING_2 = "Quantum mechanics explains the behavior of particles at atomic scales";
+    private static final String TEXT_EMBEDDING_2 =
+            "Quantum mechanics explains the behavior of particles at atomic scales";
     private static final String TEXT_EMBEDDING_3 = "Some test content";
     private static final String TEXT_EMBEDDING_4 = TEXT_EMBEDDING_3 + " modified";
 
     @BindToRegistry
     private final AllMiniLmL6V2EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
+
     private RemoteCacheManager cacheContainer;
 
     @Test
     @Order(1)
     public void put() {
-        Stream.of(TEXT_EMBEDDING_1, TEXT_EMBEDDING_2)
-                .forEach(string -> {
-                    Exchange result = fluentTemplate.to("direct:start")
-                            .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT)
-                            .withBody(string)
-                            .request(Exchange.class);
+        Stream.of(TEXT_EMBEDDING_1, TEXT_EMBEDDING_2).forEach(string -> {
+            Exchange result = fluentTemplate
+                    .to("direct:start")
+                    .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT)
+                    .withBody(string)
+                    .request(Exchange.class);
 
-                    assertThat(result).isNotNull();
-                    assertThat(result.getException()).isNull();
-                });
+            assertThat(result).isNotNull();
+            assertThat(result.getException()).isNull();
+        });
     }
 
     @Test
     @Order(2)
     public void replace() {
-        Exchange putResult = fluentTemplate.to("direct:start")
+        Exchange putResult = fluentTemplate
+                .to("direct:start")
                 .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT)
                 .withBody(TEXT_EMBEDDING_3)
                 .request(Exchange.class);
@@ -99,16 +104,15 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
         assertThat(putResult).isNotNull();
         assertThat(putResult.getException()).isNull();
 
-        Optional<InfinispanRemoteEmbedding> original = cacheContainer.getCache(CACHE_NAME)
-                .values()
-                .stream()
+        Optional<InfinispanRemoteEmbedding> original = cacheContainer.getCache(CACHE_NAME).values().stream()
                 .map(obj -> (InfinispanRemoteEmbedding) obj)
                 .filter(embedding -> embedding.getText().equals(TEXT_EMBEDDING_3))
                 .findFirst();
 
         assertThat(original).isPresent();
 
-        Exchange replaceResult = fluentTemplate.to("direct:start")
+        Exchange replaceResult = fluentTemplate
+                .to("direct:start")
                 .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACE)
                 .withHeader(InfinispanConstants.OLD_VALUE, original.get())
                 .withBody(TEXT_EMBEDDING_4)
@@ -122,9 +126,7 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
     @Test
     @Order(3)
     public void remove() {
-        Optional<Map.Entry<Object, Object>> entry = cacheContainer.getCache(CACHE_NAME)
-                .entrySet()
-                .stream()
+        Optional<Map.Entry<Object, Object>> entry = cacheContainer.getCache(CACHE_NAME).entrySet().stream()
                 .filter(e -> {
                     InfinispanRemoteEmbedding embedding = (InfinispanRemoteEmbedding) e.getValue();
                     return embedding.getText().equals(TEXT_EMBEDDING_4);
@@ -134,7 +136,8 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
         assertThat(entry).isPresent();
 
         Map.Entry<Object, Object> itemToRemove = entry.get();
-        Exchange result = fluentTemplate.to(INFINISPAN_URI)
+        Exchange result = fluentTemplate
+                .to(INFINISPAN_URI)
                 .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.REMOVE)
                 .withHeader(InfinispanConstants.KEY, itemToRemove.getKey())
                 .request(Exchange.class);
@@ -147,7 +150,8 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
     @Test
     @Order(4)
     public void query() {
-        Exchange result = fluentTemplate.to("direct:start")
+        Exchange result = fluentTemplate
+                .to("direct:start")
                 .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.QUERY)
                 .withBody("The study of particles and their properties at atomic levels")
                 .request(Exchange.class);
@@ -190,13 +194,11 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
 
     @BindToRegistry
     public ComponentCustomizer infinispanComponentCustomizer() {
-        return ComponentCustomizer.forType(
-                InfinispanRemoteComponent.class,
-                component -> {
-                    InfinispanRemoteConfiguration configuration = component.getConfiguration();
-                    configuration.setCacheContainer(cacheContainer);
-                    configuration.setEmbeddingStoreDimension(model.dimension());
-                });
+        return ComponentCustomizer.forType(InfinispanRemoteComponent.class, component -> {
+            InfinispanRemoteConfiguration configuration = component.getConfiguration();
+            configuration.setCacheContainer(cacheContainer);
+            configuration.setEmbeddingStoreDimension(model.dimension());
+        });
     }
 
     @Override
@@ -205,10 +207,12 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
 
         if (cacheContainer == null) {
             cacheContainer = getCacheContainer();
-            final IterationBoundedBudget budget
-                    = Budgets.iterationBudget().withInterval(Duration.ofSeconds(1)).withMaxIterations(10).build();
-            final ForegroundTask task = Tasks.foregroundTask()
-                    .withBudget(budget).build();
+            final IterationBoundedBudget budget = Budgets.iterationBudget()
+                    .withInterval(Duration.ofSeconds(1))
+                    .withMaxIterations(10)
+                    .build();
+            final ForegroundTask task =
+                    Tasks.foregroundTask().withBudget(budget).build();
 
             final boolean cacheCreated = task.run(null, this::createCache);
             Assumptions.assumeTrue(cacheCreated, "The container cache is not running healthily");
@@ -234,13 +238,13 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
 
     private void getOrCreateCache() {
         String configuration = "<distributed-cache name=\"" + CACHE_NAME + "\">\n"
-                               + "<indexing storage=\"local-heap\">\n"
-                               + "<indexed-entities>\n"
-                               + "<indexed-entity>" + EmbeddingStoreUtil.DEFAULT_TYPE_NAME_PREFIX + model.dimension()
-                               + "</indexed-entity>\n"
-                               + "</indexed-entities>\n"
-                               + "</indexing>\n"
-                               + "</distributed-cache>";
+                + "<indexing storage=\"local-heap\">\n"
+                + "<indexed-entities>\n"
+                + "<indexed-entity>" + EmbeddingStoreUtil.DEFAULT_TYPE_NAME_PREFIX + model.dimension()
+                + "</indexed-entity>\n"
+                + "</indexed-entities>\n"
+                + "</indexing>\n"
+                + "</distributed-cache>";
 
         cacheContainer.administration().getOrCreateCache(CACHE_NAME, new StringConfiguration(configuration));
     }
@@ -248,11 +252,10 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
     private ConfigurationBuilder getConfiguration() {
         ConfigurationBuilder clientBuilder = new ConfigurationBuilder();
         clientBuilder.forceReturnValues(true);
-        clientBuilder.addServer()
-                .host(service.host())
-                .port(service.port());
+        clientBuilder.addServer().host(service.host()).port(service.port());
 
-        clientBuilder.security()
+        clientBuilder
+                .security()
                 .authentication()
                 .username(service.username())
                 .password(service.password())

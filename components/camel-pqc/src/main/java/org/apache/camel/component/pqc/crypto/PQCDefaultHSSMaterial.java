@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
@@ -41,8 +42,8 @@ public class PQCDefaultHSSMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.HSS.getAlgorithm(),
-                    PQCSignatureAlgorithms.HSS.getBcProvider());
+            signer = Signature.getInstance(
+                    PQCSignatureAlgorithms.HSS.getAlgorithm(), PQCSignatureAlgorithms.HSS.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -50,11 +51,11 @@ public class PQCDefaultHSSMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.HSS.getAlgorithm(),
-                PQCSignatureAlgorithms.HSS.getBcProvider());
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.HSS.getAlgorithm(), PQCSignatureAlgorithms.HSS.getBcProvider());
         LMSKeyGenParameterSpec[] lmsSpecs = new LMSKeyGenParameterSpec[] {
-                new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2),
-                new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2)
+            new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2),
+            new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2)
         };
         kpGen.initialize(new LMSHSSKeyGenParameterSpec(lmsSpecs));
         return kpGen;

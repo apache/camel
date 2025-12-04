@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase;
+
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_RESUME_ACTION;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_DESIGN_DOCUMENT_NAME;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_KEY;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_VIEWNAME;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -38,12 +45,6 @@ import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.resume.ResumeStrategyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_RESUME_ACTION;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_DESIGN_DOCUMENT_NAME;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_KEY;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_VIEWNAME;
 
 public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements ResumeAware<ResumeStrategy> {
 
@@ -121,7 +122,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
     protected int poll() throws Exception {
         lock.lock();
         try {
-            ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
+            ViewResult result =
+                    bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
 
             // okay we have some response from CouchBase so lets mark the consumer as ready
             forceConsumerAsReady();
@@ -137,8 +139,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
                 Object doc;
                 String id = row.id().get();
                 if (endpoint.isFullDocument()) {
-                    doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout(),
-                            endpoint.getConsumerRetryPause());
+                    doc = CouchbaseCollectionOperation.getDocument(
+                            collection, id, endpoint.getQueryTimeout(), endpoint.getConsumerRetryPause());
                 } else {
                     doc = row.valueAs(Object.class);
                 }
@@ -158,8 +160,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Deleting doc with ID {}", id);
                     }
-                    CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
-                            endpoint.getConsumerRetryPause());
+                    CouchbaseCollectionOperation.removeDocument(
+                            collection, id, endpoint.getWriteQueryTimeout(), endpoint.getConsumerRetryPause());
                 } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Filtering out ID {}", id);
@@ -184,8 +186,10 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
         int total = exchanges.size();
         int answer = total;
         if (this.maxMessagesPerPoll > 0 && total > this.maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
-                    this.maxMessagesPerPoll, total);
+            LOG.debug(
+                    "Limiting to maximum messages to poll {} as there were {} messages in this poll.",
+                    this.maxMessagesPerPoll,
+                    total);
             total = this.maxMessagesPerPoll;
         }
 
@@ -201,7 +205,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
         return answer;
     }
 
-    private void logDetails(String id, Object doc, String key, String designDocumentName, String viewName, Exchange exchange) {
+    private void logDetails(
+            String id, Object doc, String key, String designDocumentName, String viewName, Exchange exchange) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Created exchange = {}", exchange);
             LOG.trace("Added Document in body = {}", doc);

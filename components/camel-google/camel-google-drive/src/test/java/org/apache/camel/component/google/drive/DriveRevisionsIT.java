@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,18 +28,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for com.google.api.services.drive.Drive$Revisions APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
-           disabledReason = "Google Drive credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+        disabledReason = "Google Drive credentials were not provided")
 public class DriveRevisionsIT extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveRevisionsIT.class);
-    private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveRevisionsApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection()
+            .getApiName(DriveRevisionsApiMethod.class)
+            .getName();
 
     @Test
     public void testList() {
@@ -55,28 +58,22 @@ public class DriveRevisionsIT extends AbstractGoogleDriveTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for delete
-                from("direct://DELETE")
-                        .to("google-drive://" + PATH_PREFIX + "/delete");
+                from("direct://DELETE").to("google-drive://" + PATH_PREFIX + "/delete");
 
                 // test route for get
-                from("direct://GET")
-                        .to("google-drive://" + PATH_PREFIX + "/get");
+                from("direct://GET").to("google-drive://" + PATH_PREFIX + "/get");
 
                 // test route for list
-                from("direct://LIST")
-                        .to("google-drive://" + PATH_PREFIX + "/list?inBody=fileId");
+                from("direct://LIST").to("google-drive://" + PATH_PREFIX + "/list?inBody=fileId");
 
                 // test route for patch
-                from("direct://PATCH")
-                        .to("google-drive://" + PATH_PREFIX + "/patch");
+                from("direct://PATCH").to("google-drive://" + PATH_PREFIX + "/patch");
 
                 // test route for update
-                from("direct://UPDATE")
-                        .to("google-drive://" + PATH_PREFIX + "/update");
+                from("direct://UPDATE").to("google-drive://" + PATH_PREFIX + "/update");
 
                 // just used to upload file for test
-                from("direct://INSERT_1")
-                        .to("google-drive://drive-files/insert");
+                from("direct://INSERT_1").to("google-drive://drive-files/insert");
             }
         };
     }

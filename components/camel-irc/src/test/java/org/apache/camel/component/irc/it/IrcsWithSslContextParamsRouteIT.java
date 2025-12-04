@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc.it;
 
 import org.apache.camel.BindToRegistry;
@@ -60,5 +61,4 @@ public class IrcsWithSslContextParamsRouteIT extends IrcRouteIT {
     protected String fromUri() {
         return "ircs://camel-con-user@localhost:6669/#camel-test?nickname=camel-con&password=password&sslContextParameters=#sslContextParameters";
     }
-
 }

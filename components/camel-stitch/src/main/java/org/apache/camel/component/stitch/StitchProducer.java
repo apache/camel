@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch;
 
 import org.apache.camel.AsyncCallback;
@@ -42,14 +43,13 @@ public class StitchProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            return operations.sendEvents(exchange.getMessage(),
-                    response -> setDataOnExchange(response, exchange), callback);
+            return operations.sendEvents(
+                    exchange.getMessage(), response -> setDataOnExchange(response, exchange), callback);
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
         }
-
     }
 
     @Override

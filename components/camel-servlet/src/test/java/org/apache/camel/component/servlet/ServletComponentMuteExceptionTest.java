@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ServletComponentMuteExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testMuteException() throws Exception {
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/mute",
-                new ByteArrayInputStream("".getBytes()), "text/plain");
+                contextUrl + "/services/mute", new ByteArrayInputStream("".getBytes()), "text/plain");
         WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
@@ -40,8 +40,7 @@ public class ServletComponentMuteExceptionTest extends ServletCamelRouterTestSup
     @Test
     public void testMuteWithTransferException() throws Exception {
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/muteWithTransfer",
-                new ByteArrayInputStream("".getBytes()), "text/plain");
+                contextUrl + "/services/muteWithTransfer", new ByteArrayInputStream("".getBytes()), "text/plain");
         WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
@@ -57,8 +56,7 @@ public class ServletComponentMuteExceptionTest extends ServletCamelRouterTestSup
                 ServletComponent sc = context.getComponent("servlet", ServletComponent.class);
                 sc.setMuteException(true);
 
-                from("servlet:mute")
-                        .throwException(new IllegalArgumentException("Damn"));
+                from("servlet:mute").throwException(new IllegalArgumentException("Damn"));
 
                 from("servlet:muteWithTransfer?transferException=true")
                         .throwException(new IllegalArgumentException("Damn"));

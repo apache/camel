@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -22,11 +28,6 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PlatformHttpRestOpenApiConsumerRestDslRouteMetricsTest {
 
@@ -38,31 +39,41 @@ public class PlatformHttpRestOpenApiConsumerRestDslRouteMetricsTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    rest().openApi().specification("openapi-v3.json").missingOperation("ignore").routeId("myRest");
+                    rest().openApi()
+                            .specification("openapi-v3.json")
+                            .missingOperation("ignore")
+                            .routeId("myRest");
 
-                    from("direct:getPetById").routeId("getPetById")
+                    from("direct:getPetById")
+                            .routeId("getPetById")
                             .process(e -> {
                                 assertEquals("123", e.getMessage().getHeader("petId"));
                             })
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                            .setBody()
+                            .constant("{\"pet\": \"tony the tiger\"}");
 
-                    from("direct:findPetsByStatus").routeId("findPetsByStatus")
+                    from("direct:findPetsByStatus")
+                            .routeId("findPetsByStatus")
                             .process(e -> {
                                 assertEquals("sold", e.getMessage().getHeader("status"));
                             })
-                            .setBody().constant("{\"pet\": \"jack the lion\"}");
+                            .setBody()
+                            .constant("{\"pet\": \"jack the lion\"}");
                 }
             });
 
             context.start();
 
-            ManagedRouteMBean mr
-                    = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("myRest");
+            ManagedRouteMBean mr = context.getCamelContextExtension()
+                    .getContextPlugin(ManagedCamelContext.class)
+                    .getManagedRoute("myRest");
             assertNotNull(mr);
-            ManagedRouteMBean mr2 = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+            ManagedRouteMBean mr2 = context.getCamelContextExtension()
+                    .getContextPlugin(ManagedCamelContext.class)
                     .getManagedRoute("getPetById");
             assertNotNull(mr2);
-            ManagedRouteMBean mr3 = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+            ManagedRouteMBean mr3 = context.getCamelContextExtension()
+                    .getContextPlugin(ManagedCamelContext.class)
                     .getManagedRoute("findPetsByStatus");
             assertNotNull(mr3);
 
@@ -70,19 +81,13 @@ public class PlatformHttpRestOpenApiConsumerRestDslRouteMetricsTest {
             Assertions.assertEquals(0, mr2.getExchangesTotal());
             Assertions.assertEquals(0, mr3.getExchangesTotal());
 
-            given()
-                    .when()
-                    .get("/api/v3/pet/123")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+            given().when().get("/api/v3/pet/123").then().statusCode(200).body(equalTo("{\"pet\": \"tony the tiger\"}"));
 
             Assertions.assertEquals(1, mr.getExchangesTotal());
             Assertions.assertEquals(1, mr2.getExchangesTotal());
             Assertions.assertEquals(0, mr3.getExchangesTotal());
 
-            given()
-                    .when()
+            given().when()
                     .get("/api/v3/pet/findByStatus?status=sold")
                     .then()
                     .statusCode(200)
@@ -96,5 +101,4 @@ public class PlatformHttpRestOpenApiConsumerRestDslRouteMetricsTest {
             context.stop();
         }
     }
-
 }

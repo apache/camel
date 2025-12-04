@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class LogComponentOptionsTest extends ContextTestSupport {
 
@@ -42,9 +43,12 @@ public class LogComponentOptionsTest extends ContextTestSupport {
         LogComponent log = context.getComponent("log", LogComponent.class);
         assertNull(log.getExchangeFormatter());
 
-        new PropertyBindingSupport.Builder().withCamelContext(context).withTarget(log)
+        new PropertyBindingSupport.Builder()
+                .withCamelContext(context)
+                .withTarget(log)
                 .withConfigurer(log.getComponentPropertyConfigurer())
-                .withProperty("exchangeFormatter", myFormatter).bind();
+                .withProperty("exchangeFormatter", myFormatter)
+                .bind();
 
         assertSame(myFormatter, log.getExchangeFormatter());
 
@@ -64,10 +68,13 @@ public class LogComponentOptionsTest extends ContextTestSupport {
         LogComponent log = context.getComponent("log", LogComponent.class);
         assertNull(log.getExchangeFormatter());
 
-        new PropertyBindingSupport.Builder().withCamelContext(context).withTarget(log)
+        new PropertyBindingSupport.Builder()
+                .withCamelContext(context)
+                .withTarget(log)
                 .withConfigurer(log.getComponentPropertyConfigurer())
                 .withProperty("exchangeFormatter", myFormatter)
-                .withProperty("exchangeFormatter.showExchangeId", "true").bind();
+                .withProperty("exchangeFormatter.showExchangeId", "true")
+                .bind();
 
         assertSame(myFormatter, log.getExchangeFormatter());
 
@@ -90,9 +97,12 @@ public class LogComponentOptionsTest extends ContextTestSupport {
         LogComponent log = context.getComponent("log", LogComponent.class);
         assertNull(log.getExchangeFormatter());
 
-        new PropertyBindingSupport.Builder().withCamelContext(context).withTarget(log)
+        new PropertyBindingSupport.Builder()
+                .withCamelContext(context)
+                .withTarget(log)
                 .withConfigurer(log.getComponentPropertyConfigurer())
-                .withProperty("exchangeFormatter", "#bean:myGreatFormatter").bind();
+                .withProperty("exchangeFormatter", "#bean:myGreatFormatter")
+                .bind();
 
         assertSame(myFormatter, log.getExchangeFormatter());
 
@@ -112,9 +122,12 @@ public class LogComponentOptionsTest extends ContextTestSupport {
         LogComponent log = context.getComponent("log", LogComponent.class);
         assertNull(log.getExchangeFormatter());
 
-        new PropertyBindingSupport.Builder().withCamelContext(context).withTarget(log)
+        new PropertyBindingSupport.Builder()
+                .withCamelContext(context)
+                .withTarget(log)
                 .withProperty("exchangeFormatter", myFormatter)
-                .withProperty("exchangeFormatter.showExchangeId", "true").bind();
+                .withProperty("exchangeFormatter.showExchangeId", "true")
+                .bind();
 
         assertSame(myFormatter, log.getExchangeFormatter());
         assertTrue(myFormatter.isShowExchangeId());
@@ -138,9 +151,12 @@ public class LogComponentOptionsTest extends ContextTestSupport {
         LogComponent log = context.getComponent("log", LogComponent.class);
         assertNull(log.getExchangeFormatter());
 
-        new PropertyBindingSupport.Builder().withCamelContext(context).withTarget(log)
+        new PropertyBindingSupport.Builder()
+                .withCamelContext(context)
+                .withTarget(log)
                 .withProperty("exchangeFormatter", "#bean:myGreatFormatter")
-                .withProperty("exchangeFormatter.showExchangeId", "true").bind();
+                .withProperty("exchangeFormatter.showExchangeId", "true")
+                .bind();
 
         assertSame(myFormatter, log.getExchangeFormatter());
         assertTrue(myFormatter.isShowExchangeId());

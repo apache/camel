@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.IOException;
@@ -59,11 +60,16 @@ public class WebsocketConsumer extends ServletConsumer {
         initializer.configureFramework(config, false, false, AtmosphereFramework.class);
         this.framework = initializer.framework();
         this.framework.setUseNativeImplementation(false);
-        this.framework.addInitParameter(ApplicationConfig.JSR356_MAPPING_PATH, this.getEndpoint().getHttpUri().getPath());
+        this.framework.addInitParameter(
+                ApplicationConfig.JSR356_MAPPING_PATH,
+                this.getEndpoint().getHttpUri().getPath());
         this.framework.addInitParameter(ApplicationConfig.ANALYTICS, "false");
         this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_SUPPORT, "true");
-        this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_PROTOCOL,
-                getEndpoint().isUseStreaming() ? WebsocketStreamHandler.class.getName() : WebsocketHandler.class.getName());
+        this.framework.addInitParameter(
+                ApplicationConfig.WEBSOCKET_PROTOCOL,
+                getEndpoint().isUseStreaming()
+                        ? WebsocketStreamHandler.class.getName()
+                        : WebsocketHandler.class.getName());
         this.framework.init(config);
 
         WebSocketProtocol wsp = this.framework.getWebSocketProtocol();

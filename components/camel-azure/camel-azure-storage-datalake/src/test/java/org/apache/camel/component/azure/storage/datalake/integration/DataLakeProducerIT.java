@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -29,8 +32,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 public class DataLakeProducerIT extends Base {
@@ -51,26 +52,23 @@ public class DataLakeProducerIT extends Base {
         {
             @SuppressWarnings("unchecked")
             List<FileSystemItem> filesystems = template.requestBody(
-                    componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem),
-                    null,
-                    List.class);
+                    componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem), null, List.class);
 
-            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).isNotEmpty();
-            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).doesNotContain(fileSystemName);
+            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName))
+                    .isNotEmpty();
+            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName))
+                    .doesNotContain(fileSystemName);
         }
 
-        template.sendBody(
-                componentUri(fileSystemName, DataLakeOperationsDefinition.createFileSystem),
-                null);
+        template.sendBody(componentUri(fileSystemName, DataLakeOperationsDefinition.createFileSystem), null);
 
         {
             @SuppressWarnings("unchecked")
             List<FileSystemItem> filesystems = template.requestBody(
-                    componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem),
-                    null,
-                    List.class);
+                    componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem), null, List.class);
 
-            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).contains(fileSystemName);
+            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName))
+                    .contains(fileSystemName);
         }
 
         try {
@@ -90,36 +88,33 @@ public class DataLakeProducerIT extends Base {
             Assertions.assertThat(actual).containsExactly(fileContent);
         } finally {
             /* Cleanup */
-            template.sendBody(
-                    componentUri(fileSystemName, DataLakeOperationsDefinition.deleteFileSystem),
-                    null);
+            template.sendBody(componentUri(fileSystemName, DataLakeOperationsDefinition.deleteFileSystem), null);
 
             @SuppressWarnings("unchecked")
             List<FileSystemItem> filesystems = template.requestBody(
-                    componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem),
-                    null,
-                    List.class);
+                    componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem), null, List.class);
 
-            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).isNotEmpty();
-            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).doesNotContain(fileSystemName);
+            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName))
+                    .isNotEmpty();
+            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName))
+                    .doesNotContain(fileSystemName);
         }
-
     }
 
     @Test
     void testHeaderPreservation() {
-        Exchange result = template.send(componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem),
-                exchange -> {
+        Exchange result =
+                template.send(componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem), exchange -> {
                     exchange.getIn().setHeader("DoNotDelete", "keep me");
                 });
         assertEquals("keep me", result.getMessage().getHeader("DoNotDelete"));
     }
 
     private String componentUri(final String filesystem, final DataLakeOperationsDefinition operation) {
-        return String.format("azure-storage-datalake://%s%s?operation=%s",
+        return String.format(
+                "azure-storage-datalake://%s%s?operation=%s",
                 service.azureCredentials().accountName(),
                 filesystem == null ? "" : ("/" + filesystem),
                 operation.name());
     }
-
 }

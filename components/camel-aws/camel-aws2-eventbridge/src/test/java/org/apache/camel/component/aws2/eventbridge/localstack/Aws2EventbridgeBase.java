@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge.localstack;
 
 import org.apache.camel.CamelContext;
@@ -34,7 +35,8 @@ public class Aws2EventbridgeBase extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        EventbridgeComponent eventbridgeComponent = context.getComponent("aws2-eventbridge", EventbridgeComponent.class);
+        EventbridgeComponent eventbridgeComponent =
+                context.getComponent("aws2-eventbridge", EventbridgeComponent.class);
         eventbridgeComponent.getConfiguration().setEventbridgeClient(AWSSDKClientUtils.newEventBridgeClient());
         return context;
     }

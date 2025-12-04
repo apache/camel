@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.it;
 
 import java.util.concurrent.TimeUnit;
@@ -27,7 +28,10 @@ class MetricsIT extends TorchServeITSupport {
     @Test
     void testMetrics() throws Exception {
         var mock = getMockEndpoint("mock:result");
-        mock.expectedBodyReceived().body().startsWith("""
+        mock.expectedBodyReceived()
+                .body()
+                .startsWith(
+                        """
                 # HELP MemoryUsed Torchserve prometheus gauge metric with unit: Megabytes
                 # TYPE MemoryUsed gauge
                 MemoryUsed""");
@@ -43,9 +47,7 @@ class MetricsIT extends TorchServeITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:metrics")
-                        .to("torchserve:metrics/metrics")
-                        .to("mock:result");
+                from("direct:metrics").to("torchserve:metrics/metrics").to("mock:result");
             }
         };
     }

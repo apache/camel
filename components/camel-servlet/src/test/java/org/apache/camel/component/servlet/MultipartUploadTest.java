@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +32,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MultipartUploadTest extends ServletCamelRouterTestSupport {
 
@@ -47,9 +48,8 @@ public class MultipartUploadTest extends ServletCamelRouterTestSupport {
     void testMultipartUpload() throws IOException {
         String content = "Hello World";
         InputStream inputStream = context.getTypeConverter().convertTo(InputStream.class, content);
-        PostMethodWebRequest request
-                = new PostMethodWebRequest(
-                        contextUrl + "/services/multipartUpload", inputStream, "multipart/form-data; boundary=----Boundary");
+        PostMethodWebRequest request = new PostMethodWebRequest(
+                contextUrl + "/services/multipartUpload", inputStream, "multipart/form-data; boundary=----Boundary");
         WebResponse response = query(request);
         assertEquals(content, response.getText());
     }
@@ -59,19 +59,18 @@ public class MultipartUploadTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("servlet:multipartUpload?attachmentMultipartBinding=true")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
-                                DataHandler file = message.getAttachment("file");
-                                if (file != null) {
-                                    exchange.getMessage().setBody(file.getContent());
-                                } else {
-                                    exchange.getMessage().setBody(null);
-                                }
-                            }
-                        });
+                from("servlet:multipartUpload?attachmentMultipartBinding=true").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
+                        DataHandler file = message.getAttachment("file");
+                        if (file != null) {
+                            exchange.getMessage().setBody(file.getContent());
+                        } else {
+                            exchange.getMessage().setBody(null);
+                        }
+                    }
+                });
             }
         };
     }

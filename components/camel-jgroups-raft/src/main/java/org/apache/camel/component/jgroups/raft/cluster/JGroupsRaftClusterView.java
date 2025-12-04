@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft.cluster;
 
 import java.util.ArrayList;
@@ -40,8 +41,13 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
     private String raftId;
     private volatile boolean isMaster;
 
-    protected JGroupsRaftClusterView(CamelClusterService cluster, String namespace, String jgroupsConfig,
-                                     String jgroupsClusterName, RaftHandle raftHandle, String raftId) {
+    protected JGroupsRaftClusterView(
+            CamelClusterService cluster,
+            String namespace,
+            String jgroupsConfig,
+            String jgroupsClusterName,
+            RaftHandle raftHandle,
+            String raftId) {
         super(cluster, namespace);
 
         this.jgroupsConfig = jgroupsConfig;
@@ -78,7 +84,8 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
         if (raftHandle == null && jgroupsConfig != null && !jgroupsConfig.isEmpty()) {
             raftHandle = new RaftHandle(new JChannel(jgroupsConfig), new NopStateMachine()).raftId(raftId);
         } else if (raftHandle == null) {
-            raftHandle = new RaftHandle(new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG), new NopStateMachine())
+            raftHandle = new RaftHandle(
+                            new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG), new NopStateMachine())
                     .raftId(raftId);
         }
         fireLeadershipChangedEvent((CamelClusterMember) null);

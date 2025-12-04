@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
@@ -34,9 +35,7 @@ public class DependencyDownloaderStrategy implements DependencyStrategy {
     public void onDependency(String dependency) {
         MavenGav gav = MavenGav.parseGav(dependency, camelContext.getVersion());
         if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
-            downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
-                    gav.getVersion());
+            downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
         }
     }
-
 }

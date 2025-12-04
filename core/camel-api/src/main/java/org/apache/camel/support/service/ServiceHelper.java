@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.service;
 
 import java.util.Arrays;
@@ -43,8 +44,7 @@ public final class ServiceHelper {
     /**
      * Utility classes should not have a public constructor.
      */
-    private ServiceHelper() {
-    }
+    private ServiceHelper() {}
 
     /**
      * Builds the given {@code value} if it's a {@link Service} or a collection of it.
@@ -608,5 +608,4 @@ public final class ServiceHelper {
             }
         }
     }
-
 }

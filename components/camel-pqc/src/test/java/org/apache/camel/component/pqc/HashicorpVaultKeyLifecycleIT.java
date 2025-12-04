@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.security.KeyPair;
 import java.security.Security;
@@ -38,8 +41,6 @@ import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * End-to-end integration test for HashicorpVaultKeyLifecycleManager. Tests key generation, storage, retrieval,
@@ -90,7 +91,8 @@ public class HashicorpVaultKeyLifecycleIT extends CamelTestSupport {
     @Test
     public void testGenerateAndStoreKeyInVault() throws Exception {
         // Generate a Dilithium key
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "test-dilithium-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair =
+                keyManager.generateKeyPair("DILITHIUM", "test-dilithium-key", DilithiumParameterSpec.dilithium2);
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());

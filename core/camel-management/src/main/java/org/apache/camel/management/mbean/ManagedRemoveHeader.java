@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,8 @@ import org.apache.camel.processor.RemoveHeaderProcessor;
 @ManagedResource(description = "Managed RemoveHeader")
 public class ManagedRemoveHeader extends ManagedProcessor implements ManagedRemoveHeaderMBean {
 
-    public ManagedRemoveHeader(CamelContext context, RemoveHeaderProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedRemoveHeader(
+            CamelContext context, RemoveHeaderProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
 
@@ -38,5 +40,4 @@ public class ManagedRemoveHeader extends ManagedProcessor implements ManagedRemo
     public String getHeaderName() {
         return getProcessor().getHeaderName();
     }
-
 }

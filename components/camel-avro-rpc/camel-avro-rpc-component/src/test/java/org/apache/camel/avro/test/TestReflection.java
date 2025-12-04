@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.avro.test;
 
 public interface TestReflection {
@@ -31,5 +32,4 @@ public interface TestReflection {
     void setTestPojo(TestPojo testPojo);
 
     TestPojo getTestPojo();
-
 }

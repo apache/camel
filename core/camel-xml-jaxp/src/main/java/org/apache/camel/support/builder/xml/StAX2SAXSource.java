@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.builder.xml;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -64,7 +65,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         try {
             while (true) {
                 switch (streamReader.getEventType()) {
-                    // Attributes are handled in START_ELEMENT
+                        // Attributes are handled in START_ELEMENT
                     case XMLStreamConstants.ATTRIBUTE:
                         break;
                     case XMLStreamConstants.CDATA: {
@@ -158,9 +159,12 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
             SAXParseException spe;
             if (e.getLocation() != null) {
                 spe = new SAXParseException(
-                        e.getMessage(), null, null,
+                        e.getMessage(),
+                        null,
+                        null,
                         e.getLocation().getLineNumber(),
-                        e.getLocation().getColumnNumber(), e);
+                        e.getLocation().getColumnNumber(),
+                        e);
             } else {
                 spe = new SAXParseException(e.getMessage(), null, null, -1, -1, e);
             }
@@ -290,9 +294,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     }
 
     @Override
-    public void setFeature(String name, boolean value)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
-    }
+    public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {}
 
     @Override
     public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
@@ -300,8 +302,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     }
 
     @Override
-    public void setProperty(String name, Object value)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
+    public void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
         if ("http://xml.org/sax/properties/lexical-handler".equals(name)) {
             lexicalHandler = (LexicalHandler) value;
         } else {
@@ -310,8 +311,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     }
 
     @Override
-    public void setEntityResolver(EntityResolver resolver) {
-    }
+    public void setEntityResolver(EntityResolver resolver) {}
 
     @Override
     public EntityResolver getEntityResolver() {
@@ -319,8 +319,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     }
 
     @Override
-    public void setDTDHandler(DTDHandler handler) {
-    }
+    public void setDTDHandler(DTDHandler handler) {}
 
     @Override
     public DTDHandler getDTDHandler() {
@@ -330,8 +329,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     @Override
     public void setContentHandler(ContentHandler handler) {
         this.contentHandler = handler;
-        if (handler instanceof LexicalHandler
-                && lexicalHandler == null) {
+        if (handler instanceof LexicalHandler && lexicalHandler == null) {
             lexicalHandler = (LexicalHandler) handler;
         }
     }
@@ -342,8 +340,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     }
 
     @Override
-    public void setErrorHandler(ErrorHandler handler) {
-    }
+    public void setErrorHandler(ErrorHandler handler) {}
 
     @Override
     public ErrorHandler getErrorHandler() {
@@ -359,5 +356,4 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     public void parse(String systemId) throws SAXException {
         parse();
     }
-
 }

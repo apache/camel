@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jolt;
 
 import java.util.Map;
@@ -30,13 +31,14 @@ public class JoltComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
+
     @Metadata
     private boolean allowTemplateFromHeader;
+
     @Metadata(label = "advanced")
     private Transform transform;
 
-    public JoltComponent() {
-    }
+    public JoltComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -92,5 +94,4 @@ public class JoltComponent extends DefaultComponent {
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
-
 }

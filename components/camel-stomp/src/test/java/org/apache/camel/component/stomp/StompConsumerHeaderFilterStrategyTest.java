@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
+
+import static org.fusesource.hawtbuf.UTF8Buffer.utf8;
+import static org.fusesource.stomp.client.Constants.DESTINATION;
+import static org.fusesource.stomp.client.Constants.MESSAGE_ID;
+import static org.fusesource.stomp.client.Constants.SEND;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,11 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
-import static org.fusesource.hawtbuf.UTF8Buffer.utf8;
-import static org.fusesource.stomp.client.Constants.DESTINATION;
-import static org.fusesource.stomp.client.Constants.MESSAGE_ID;
-import static org.fusesource.stomp.client.Constants.SEND;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @Disabled("Starting with Artmis 2.43, test can be played only one by one")
 public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
@@ -47,7 +48,8 @@ public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
         context.addRoutes(createRouteBuilder());
         context.start();
 
-        Awaitility.await().until(() -> context.getRoute("headerFilterStrategyRoute").getUptimeMillis() > 100);
+        Awaitility.await()
+                .until(() -> context.getRoute("headerFilterStrategyRoute").getUptimeMillis() > 100);
 
         Stomp stomp = createStompClient();
         final BlockingConnection producerConnection = stomp.connectBlocking();
@@ -72,8 +74,9 @@ public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("stomp:test?brokerURL=tcp://localhost:%s&headerFilterStrategy=#customHeaderFilterStrategy",
-                        servicePort)
+                fromF(
+                                "stomp:test?brokerURL=tcp://localhost:%s&headerFilterStrategy=#customHeaderFilterStrategy",
+                                servicePort)
                         .id("headerFilterStrategyRoute")
                         .transform(body().convertToString())
                         .to("mock:result");

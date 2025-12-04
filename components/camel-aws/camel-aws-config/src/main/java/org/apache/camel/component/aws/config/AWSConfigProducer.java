@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.config;
 
 import org.apache.camel.Endpoint;
@@ -72,7 +73,8 @@ public class AWSConfigProducer extends DefaultProducer {
     }
 
     private AWSConfigOperations determineOperation(Exchange exchange) {
-        AWSConfigOperations operation = exchange.getIn().getHeader(AWSConfigConstants.OPERATION, AWSConfigOperations.class);
+        AWSConfigOperations operation =
+                exchange.getIn().getHeader(AWSConfigConstants.OPERATION, AWSConfigOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -86,7 +88,8 @@ public class AWSConfigProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (configProducerToString == null) {
-            configProducerToString = "AWSConfigProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            configProducerToString =
+                    "AWSConfigProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return configProducerToString;
     }
@@ -105,7 +108,9 @@ public class AWSConfigProducer extends DefaultProducer {
                     PutConfigRuleRequest request = (PutConfigRuleRequest) payload;
                     result = configClient.putConfigRule(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Put Config rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Put Config rule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -132,10 +137,13 @@ public class AWSConfigProducer extends DefaultProducer {
             configRule.source(source.build());
             PutConfigRuleResponse result;
             try {
-                PutConfigRuleRequest request = builder.configRule(configRule.build()).build();
+                PutConfigRuleRequest request =
+                        builder.configRule(configRule.build()).build();
                 result = configClient.putConfigRule(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Put Config Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Put Config Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -152,7 +160,9 @@ public class AWSConfigProducer extends DefaultProducer {
                     DeleteConfigRuleRequest request = (DeleteConfigRuleRequest) payload;
                     result = configClient.deleteConfigRule(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Config rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Config rule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -171,7 +181,9 @@ public class AWSConfigProducer extends DefaultProducer {
                 DeleteConfigRuleRequest request = builder.build();
                 result = configClient.deleteConfigRule(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Config Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Config Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -188,7 +200,8 @@ public class AWSConfigProducer extends DefaultProducer {
                     DescribeComplianceByConfigRuleRequest request = (DescribeComplianceByConfigRuleRequest) payload;
                     result = configClient.describeComplianceByConfigRule(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Compliance by Config rule command returned the error code {}",
+                    LOG.trace(
+                            "Describe Compliance by Config rule command returned the error code {}",
                             ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
@@ -206,7 +219,8 @@ public class AWSConfigProducer extends DefaultProducer {
                 DescribeComplianceByConfigRuleRequest request = builder.build();
                 result = configClient.describeComplianceByConfigRule(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Compliance by Config Rule command returned the error code {}",
+                LOG.trace(
+                        "Describe Compliance by Config Rule command returned the error code {}",
                         ase.awsErrorDetails().errorCode());
                 throw ase;
             }
@@ -224,7 +238,9 @@ public class AWSConfigProducer extends DefaultProducer {
                     PutConformancePackRequest request = (PutConformancePackRequest) payload;
                     result = configClient.putConformancePack(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Put Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Put Conformance Pack command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -233,32 +249,38 @@ public class AWSConfigProducer extends DefaultProducer {
         } else {
             PutConformancePackRequest.Builder builder = PutConformancePackRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_NAME))) {
-                String conformancePackName = exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_NAME, String.class);
+                String conformancePackName =
+                        exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_NAME, String.class);
                 builder.conformancePackName(conformancePackName);
             } else {
                 throw new IllegalArgumentException("Rule Name must be specified");
             }
             String conformancePackS3TemplateUri = null;
             String conformancePackTemplateBody = null;
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_S3_TEMPLATE_URI))) {
-                conformancePackS3TemplateUri
-                        = exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_S3_TEMPLATE_URI, String.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_S3_TEMPLATE_URI))) {
+                conformancePackS3TemplateUri =
+                        exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_S3_TEMPLATE_URI, String.class);
                 builder.templateS3Uri(conformancePackS3TemplateUri);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_TEMPLATE_BODY))) {
-                conformancePackTemplateBody
-                        = exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_TEMPLATE_BODY, String.class);
+                conformancePackTemplateBody =
+                        exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_TEMPLATE_BODY, String.class);
                 builder.templateBody(conformancePackTemplateBody);
             }
-            if (ObjectHelper.isEmpty(conformancePackS3TemplateUri) && ObjectHelper.isEmpty(conformancePackTemplateBody)) {
-                throw new IllegalArgumentException("One of Conformace Pack S3 Template URI or Template Body must be specified");
+            if (ObjectHelper.isEmpty(conformancePackS3TemplateUri)
+                    && ObjectHelper.isEmpty(conformancePackTemplateBody)) {
+                throw new IllegalArgumentException(
+                        "One of Conformace Pack S3 Template URI or Template Body must be specified");
             }
             PutConformancePackResponse result;
             try {
                 PutConformancePackRequest request = builder.build();
                 result = configClient.putConformancePack(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Put Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Put Conformance Pack command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -275,7 +297,8 @@ public class AWSConfigProducer extends DefaultProducer {
                     DeleteConformancePackRequest request = (DeleteConformancePackRequest) payload;
                     result = configClient.deleteConformancePack(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Remove Conformance Pack rule command returned the error code {}",
+                    LOG.trace(
+                            "Remove Conformance Pack rule command returned the error code {}",
                             ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
@@ -295,7 +318,9 @@ public class AWSConfigProducer extends DefaultProducer {
                 DeleteConformancePackRequest request = builder.build();
                 result = configClient.deleteConformancePack(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Remove Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Remove Conformance Pack command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -311,9 +336,7 @@ public class AWSConfigProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -330,5 +353,4 @@ public class AWSConfigProducer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

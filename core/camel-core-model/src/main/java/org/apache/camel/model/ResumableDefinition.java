@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -38,22 +39,27 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
 
     @XmlTransient
     private ResumeStrategy resumeStrategyBean;
+
     @XmlTransient
     private ResumeStrategyConfiguration resumeStrategyConfiguration;
 
     @XmlAttribute(required = true)
     @Metadata(required = true, javaType = "org.apache.camel.resume.ResumeStrategy")
     private String resumeStrategy;
+
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
-              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(
+            label = "advanced",
+            javaType = "org.apache.camel.LoggingLevel",
+            defaultValue = "ERROR",
+            enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String intermittent;
 
-    public ResumableDefinition() {
-    }
+    public ResumableDefinition() {}
 
     protected ResumableDefinition(ResumableDefinition source) {
         super(source);
@@ -160,7 +166,9 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
      * Uses a configuration builder to auto-instantiate the resume strategy
      */
     public ResumableDefinition configuration(
-            ResumeStrategyConfigurationBuilder<? extends ResumeStrategyConfigurationBuilder, ? extends ResumeStrategyConfiguration> builder) {
+            ResumeStrategyConfigurationBuilder<
+                            ? extends ResumeStrategyConfigurationBuilder, ? extends ResumeStrategyConfiguration>
+                    builder) {
         setResumeStrategyConfiguration(builder.build());
         return this;
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -21,7 +22,8 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedSendProcessorMBean extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
+public interface ManagedSendProcessorMBean
+        extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
 
     @ManagedAttribute(description = "Destination as Endpoint URI", mask = true)
     String getDestination();
@@ -38,5 +40,4 @@ public interface ManagedSendProcessorMBean extends ManagedProcessorMBean, Manage
     @Override
     @ManagedOperation(description = "Statistics of the endpoint which has been sent to")
     TabularData extendedInformation();
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,9 +36,11 @@ import org.apache.camel.support.service.ServiceHelper;
 public abstract class AbstractCamelProducerTemplateFactoryBean extends AbstractCamelFactoryBean<ProducerTemplate> {
     @XmlTransient
     private ProducerTemplate template;
+
     @XmlAttribute
     @Metadata(description = "Sets the default endpoint URI used by default for sending message exchanges")
     private String defaultEndpoint;
+
     @XmlAttribute
     @Metadata(description = "Sets a custom maximum cache size to use in the backing cache pools.")
     private Integer maximumCacheSize;
@@ -102,5 +105,4 @@ public abstract class AbstractCamelProducerTemplateFactoryBean extends AbstractC
     public void setMaximumCacheSize(Integer maximumCacheSize) {
         this.maximumCacheSize = maximumCacheSize;
     }
-
 }

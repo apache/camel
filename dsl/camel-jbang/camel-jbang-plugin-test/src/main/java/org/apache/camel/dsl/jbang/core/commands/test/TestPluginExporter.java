@@ -90,12 +90,14 @@ public class TestPluginExporter implements PluginExporter {
 
         Path testDir = Path.of(".").resolve("test");
         if (Files.exists(testDir.resolve("jbang.properties"))) {
-            try (FileInputStream fis = new FileInputStream(testDir.resolve("jbang.properties").toFile())) {
+            try (FileInputStream fis =
+                    new FileInputStream(testDir.resolve("jbang.properties").toFile())) {
                 Properties props = new Properties();
                 props.load(fis);
 
                 // read runtime dependencies from jbang-.properties
-                String[] dependencies = props.getOrDefault("run.deps", "").toString().split(",");
+                String[] dependencies =
+                        props.getOrDefault("run.deps", "").toString().split(",");
                 for (String dependency : dependencies) {
                     if (dependency.startsWith("org.citrusframework:")) {
                         // construct proper Citrus Maven GAV from just the artifact id
@@ -137,56 +139,69 @@ public class TestPluginExporter implements PluginExporter {
 
         try (Stream<Path> paths = Files.list(testDir)) {
             // Add all supported test sources
-            Set<Path> testSources = paths
-                    .filter(path -> !path.getFileName().toString().startsWith("."))
+            Set<Path> testSources = paths.filter(
+                            path -> !path.getFileName().toString().startsWith("."))
                     .filter(path -> {
-                        String ext = FileUtils.getFileExtension(path.getFileName().toString());
-                        return CitrusSettings.getTestFileNamePattern(ext)
-                                .stream()
+                        String ext =
+                                FileUtils.getFileExtension(path.getFileName().toString());
+                        return CitrusSettings.getTestFileNamePattern(ext).stream()
                                 .map(Pattern::compile)
-                                .anyMatch(pattern -> pattern.matcher(path.getFileName().toString()).matches());
-                    }).collect(Collectors.toSet());
+                                .anyMatch(pattern -> pattern.matcher(
+                                                path.getFileName().toString())
+                                        .matches());
+                    })
+                    .collect(Collectors.toSet());
 
             for (Path testSource : testSources) {
                 String ext = FileUtils.getFileExtension(testSource.getFileName().toString());
                 if (ext.equals("java")) {
                     Path javaSource;
                     if (packageName != null) {
-                        javaSource = srcTestSrcDir.resolve(packageName.replaceAll("\\.", "/") + "/" + testSource.getFileName());
+                        javaSource = srcTestSrcDir.resolve(
+                                packageName.replaceAll("\\.", "/") + "/" + testSource.getFileName());
                     } else {
                         javaSource = srcTestSrcDir.resolve(testSource.getFileName());
                     }
 
-                    ExportHelper.safeCopy(new ByteArrayInputStream(
-                            readTestSource(testSource).getBytes(StandardCharsets.UTF_8)), javaSource);
+                    ExportHelper.safeCopy(
+                            new ByteArrayInputStream(readTestSource(testSource).getBytes(StandardCharsets.UTF_8)),
+                            javaSource);
                 } else {
                     Path resource = srcTestResourcesDir.resolve(testSource.getFileName());
-                    ExportHelper.safeCopy(new ByteArrayInputStream(
-                            readTestSource(testSource).getBytes(StandardCharsets.UTF_8)), resource);
+                    ExportHelper.safeCopy(
+                            new ByteArrayInputStream(readTestSource(testSource).getBytes(StandardCharsets.UTF_8)),
+                            resource);
 
-                    String javaClassName = getJavaClassName(FileUtils.getBaseName(testSource.getFileName().toString()));
+                    String javaClassName = getJavaClassName(
+                            FileUtils.getBaseName(testSource.getFileName().toString()));
                     Path javaSource;
                     if (packageName != null) {
-                        javaSource = srcTestSrcDir.resolve(packageName.replaceAll("\\.", "/") + "/" + javaClassName + ".java");
+                        javaSource = srcTestSrcDir.resolve(
+                                packageName.replaceAll("\\.", "/") + "/" + javaClassName + ".java");
                     } else {
                         javaSource = srcTestSrcDir.resolve(javaClassName + ".java");
                     }
 
-                    try (InputStream is = TestPlugin.class.getClassLoader().getResourceAsStream("templates/junit-test.tmpl")) {
+                    try (InputStream is =
+                            TestPlugin.class.getClassLoader().getResourceAsStream("templates/junit-test.tmpl")) {
                         String context = IOHelper.loadText(is);
 
-                        context = context.replaceAll("\\{\\{ \\.PackageDeclaration }}", getPackageDeclaration(packageName));
+                        context = context.replaceAll(
+                                "\\{\\{ \\.PackageDeclaration }}", getPackageDeclaration(packageName));
                         context = context.replaceAll("\\{\\{ \\.Type }}", ext);
                         context = context.replaceAll("\\{\\{ \\.Name }}", javaClassName);
-                        context = context.replaceAll("\\{\\{ \\.MethodName }}", StringHelper.decapitalize(javaClassName));
-                        context = context.replaceAll("\\{\\{ \\.ResourcePath }}", testSource.getFileName().toString());
+                        context =
+                                context.replaceAll("\\{\\{ \\.MethodName }}", StringHelper.decapitalize(javaClassName));
+                        context = context.replaceAll(
+                                "\\{\\{ \\.ResourcePath }}",
+                                testSource.getFileName().toString());
 
-                        ExportHelper.safeCopy(new ByteArrayInputStream(context.getBytes(StandardCharsets.UTF_8)), javaSource);
+                        ExportHelper.safeCopy(
+                                new ByteArrayInputStream(context.getBytes(StandardCharsets.UTF_8)), javaSource);
                     }
                 }
             }
         }
-
     }
 
     /**

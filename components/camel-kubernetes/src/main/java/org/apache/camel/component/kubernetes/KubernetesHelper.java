@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes;
 
 import java.util.function.Supplier;
@@ -36,8 +37,7 @@ public final class KubernetesHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesHelper.class);
 
-    private KubernetesHelper() {
-    }
+    private KubernetesHelper() {}
 
     public static KubernetesClient getKubernetesClient(KubernetesConfiguration configuration) {
         if (configuration.getKubernetesClient() != null) {
@@ -57,7 +57,8 @@ public final class KubernetesHelper {
 
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
-        if (ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword())
+        if (ObjectHelper.isNotEmpty(configuration.getUsername())
+                && ObjectHelper.isNotEmpty(configuration.getPassword())
                 && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
@@ -100,7 +101,8 @@ public final class KubernetesHelper {
         }
 
         if (ObjectHelper.isEmpty(operation)) {
-            throw new IllegalArgumentException("The kubernetes producer for this component requires a operation to proceed");
+            throw new IllegalArgumentException(
+                    "The kubernetes producer for this component requires a operation to proceed");
         }
 
         return operation;
@@ -110,5 +112,4 @@ public final class KubernetesHelper {
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getMessage(), true);
         exchange.getMessage().setBody(body);
     }
-
 }

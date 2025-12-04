@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.seda;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SEDA;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -31,14 +34,17 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SEDA;
-
 /**
  * Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by
  * Hazelcast {@link BlockingQueue}.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_SEDA, title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName",
-             category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
+@UriEndpoint(
+        firstVersion = "2.7.0",
+        scheme = SCHEME_SEDA,
+        title = "Hazelcast SEDA",
+        syntax = "hazelcast-seda:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = HazelcastConstants.class)
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
     private final BlockingQueue<Object> queue;
@@ -46,8 +52,11 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
     @UriParam
     private final HazelcastSedaConfiguration configuration;
 
-    public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri,
-                                 final HazelcastDefaultComponent component, final HazelcastSedaConfiguration configuration) {
+    public HazelcastSedaEndpoint(
+            final HazelcastInstance hazelcastInstance,
+            final String uri,
+            final HazelcastDefaultComponent component,
+            final HazelcastSedaConfiguration configuration) {
         super(hazelcastInstance, uri, component);
         this.queue = hazelcastInstance.getQueue(configuration.getQueueName());
         this.configuration = configuration;
@@ -76,5 +85,4 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
     public HazelcastSedaConfiguration getConfiguration() {
         return configuration;
     }
-
 }

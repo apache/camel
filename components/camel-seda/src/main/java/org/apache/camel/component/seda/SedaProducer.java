@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import java.io.IOException;
@@ -42,8 +43,13 @@ public class SedaProducer extends DefaultAsyncProducer {
     private final boolean discardWhenFull;
     private final long offerTimeout;
 
-    public SedaProducer(SedaEndpoint endpoint, WaitForTaskToComplete waitForTaskToComplete,
-                        long timeout, boolean blockWhenFull, boolean discardWhenFull, long offerTimeout) {
+    public SedaProducer(
+            SedaEndpoint endpoint,
+            WaitForTaskToComplete waitForTaskToComplete,
+            long timeout,
+            boolean blockWhenFull,
+            boolean discardWhenFull,
+            long offerTimeout) {
         super(endpoint);
         this.endpoint = endpoint;
         this.waitForTaskToComplete = waitForTaskToComplete;
@@ -76,7 +82,10 @@ public class SedaProducer extends DefaultAsyncProducer {
                     // check for timeout, which then already would have invoked the latch
                     if (latch.getCount() == 0) {
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("{}. Timeout occurred so response will be ignored: {}", this, response.getMessage());
+                            LOG.trace(
+                                    "{}. Timeout occurred so response will be ignored: {}",
+                                    this,
+                                    response.getMessage());
                         }
                         return;
                     } else {
@@ -95,7 +104,8 @@ public class SedaProducer extends DefaultAsyncProducer {
                 @Override
                 public boolean allowHandover() {
                     // do not allow handover as we want to seda producer to have its completion triggered
-                    // at this point in the routing (at this leg), instead of at the very last (this ensure timeout is honored)
+                    // at this point in the routing (at this leg), instead of at the very last (this ensure timeout is
+                    // honored)
                     return false;
                 }
 
@@ -116,7 +126,9 @@ public class SedaProducer extends DefaultAsyncProducer {
 
             if (timeout > 0) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Waiting for task to complete using timeout (ms): {} at [{}]", timeout,
+                    LOG.trace(
+                            "Waiting for task to complete using timeout (ms): {} at [{}]",
+                            timeout,
                             endpoint.getEndpointUri());
                 }
                 // lets see if we can get the task done before the timeout
@@ -202,7 +214,8 @@ public class SedaProducer extends DefaultAsyncProducer {
         boolean empty = !queueReference.hasConsumers();
         if (empty) {
             if (endpoint.isFailIfNoConsumers()) {
-                throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+                throw new SedaConsumerNotAvailableException(
+                        "No consumers available on endpoint: " + endpoint, exchange);
             } else if (endpoint.isDiscardIfNoConsumers()) {
                 LOG.debug("Discard message as no active consumers on endpoint: {}", endpoint);
                 return;
@@ -245,9 +258,8 @@ public class SedaProducer extends DefaultAsyncProducer {
             try {
                 boolean added = queue.offer(target, offerTimeout, TimeUnit.MILLISECONDS);
                 if (!added) {
-                    throw new IllegalStateException(
-                            "Fails to insert element into queue, "
-                                                    + "after timeout of " + offerTimeout + " milliseconds");
+                    throw new IllegalStateException("Fails to insert element into queue, " + "after timeout of "
+                            + offerTimeout + " milliseconds");
                 }
             } catch (InterruptedException e) {
                 // ignore
@@ -258,5 +270,4 @@ public class SedaProducer extends DefaultAsyncProducer {
             queue.add(target);
         }
     }
-
 }

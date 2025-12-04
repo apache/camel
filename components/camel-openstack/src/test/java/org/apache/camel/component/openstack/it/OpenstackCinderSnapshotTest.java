@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.openstack.cinder.CinderConstants;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.junit.jupiter.api.Test;
 import org.openstack4j.model.storage.block.VolumeSnapshot;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenstackCinderSnapshotTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-cinder://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + CinderConstants.SNAPSHOTS;
+    private static final String URI_FORMAT =
+            "openstack-cinder://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + CinderConstants.SNAPSHOTS;
 
     @Test
     void getAllShouldSucceed() {
@@ -44,5 +45,4 @@ public class OpenstackCinderSnapshotTest extends OpenstackWiremockTestSupport {
         assertEquals("6489c55f-b9f4-442e-8d0a-5a87349d2d07", volumeSnapshots[1].getId());
         assertEquals("7f47ab73-303c-4a19-b311-6123bb115775", volumeSnapshots[1].getVolumeId());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.printer;
 
 import java.net.URI;
@@ -26,9 +27,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("lpr")
 public class PrinterComponent extends DefaultComponent {
 
-    public PrinterComponent() {
-
-    }
+    public PrinterComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

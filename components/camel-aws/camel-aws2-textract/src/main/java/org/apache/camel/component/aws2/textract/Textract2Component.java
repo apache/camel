@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.textract;
 
 import java.util.Map;
@@ -43,8 +44,8 @@ public class Textract2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Textract2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new Textract2Configuration();
+        Textract2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new Textract2Configuration();
 
         Textract2Endpoint endpoint = new Textract2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

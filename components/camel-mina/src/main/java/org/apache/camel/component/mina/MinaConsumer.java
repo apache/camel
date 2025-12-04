@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import java.io.IOException;
@@ -108,7 +109,10 @@ public class MinaConsumer extends DefaultConsumer {
             ConnectFuture future = connector.connect(address);
             future.awaitUninterruptibly();
             session = future.getSession();
-            LOG.info("Connected to server address: {} using connector: {} timeout: {} millis.", address, connector,
+            LOG.info(
+                    "Connected to server address: {} using connector: {} timeout: {} millis.",
+                    address,
+                    connector,
                     configuration.getTimeout());
         } else {
             acceptor.setHandler(new ReceiveHandler());
@@ -155,7 +159,7 @@ public class MinaConsumer extends DefaultConsumer {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected void setupVmProtocol(MinaConfiguration configuration) {
 
         boolean minaLogger = configuration.isMinaLogger();
@@ -171,8 +175,9 @@ public class MinaConsumer extends DefaultConsumer {
         }
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            LOG.warn("Using vm protocol"
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+            LOG.warn(
+                    "Using vm protocol"
+                            + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
     }
 
@@ -191,8 +196,9 @@ public class MinaConsumer extends DefaultConsumer {
         ((NioSocketAcceptor) acceptor).setReuseAddress(true);
         setupNioSocketAcceptor(configuration, minaLogger, filters);
         if (configuration.getSslContextParameters() != null) {
-            SslFilter filter = new SslFilter(
-                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()));
+            SslFilter filter = new SslFilter(configuration
+                    .getSslContextParameters()
+                    .createSSLContext(getEndpoint().getCamelContext()));
             acceptor.getFilterChain().addFirst("sslFilter", filter);
         }
     }
@@ -233,8 +239,9 @@ public class MinaConsumer extends DefaultConsumer {
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            SslFilter filter = new SslFilter(
-                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()));
+            SslFilter filter = new SslFilter(configuration
+                    .getSslContextParameters()
+                    .createSSLContext(getEndpoint().getCamelContext()));
             connector.getFilterChain().addFirst("sslFilter", filter);
         }
         configureCodecFactory("MinaConsumer", connector, configuration);
@@ -262,10 +269,17 @@ public class MinaConsumer extends DefaultConsumer {
             }
             addCodecFactory(service, codecFactory);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                        type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter);
-                LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
-                        codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
+                LOG.debug(
+                        "{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
+                        type,
+                        codecFactory,
+                        charset,
+                        configuration.getTextlineDelimiter(),
+                        delimiter);
+                LOG.debug(
+                        "Encoder maximum line length: {}. Decoder maximum line length: {}",
+                        codecFactory.getEncoderMaxLineLength(),
+                        codecFactory.getDecoderMaxLineLength());
             }
         } else {
             ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();
@@ -289,8 +303,9 @@ public class MinaConsumer extends DefaultConsumer {
         configureDataGramCodecFactory("MinaConsumer", acceptor, configuration);
         setupNioSocketAcceptor(configuration, minaLogger, filters);
         if (configuration.getSslContextParameters() != null) {
-            LOG.warn("Using datagram protocol, {}, but an SSLContextParameters instance was provided. "
-                     + "SSLContextParameters is only supported on the TCP protocol.",
+            LOG.warn(
+                    "Using datagram protocol, {}, but an SSLContextParameters instance was provided. "
+                            + "SSLContextParameters is only supported on the TCP protocol.",
                     configuration.getProtocol());
         }
     }
@@ -423,10 +438,12 @@ public class MinaConsumer extends DefaultConsumer {
             }
 
             Exchange exchange = createExchange(session, object);
-            //Set the exchange charset property for converting
+            // Set the exchange charset property for converting
             if (getEndpoint().getConfiguration().getCharsetName() != null) {
-                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
-                        IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
+                exchange.setProperty(
+                        ExchangePropertyKey.CHARSET_NAME,
+                        IOHelper.normalizeCharset(
+                                getEndpoint().getConfiguration().getCharsetName()));
             }
 
             try {

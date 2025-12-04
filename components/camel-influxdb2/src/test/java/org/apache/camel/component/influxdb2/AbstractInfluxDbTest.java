@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb2;
+
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
 
 import com.influxdb.client.InfluxDBClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
-
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
 
 public abstract class AbstractInfluxDbTest extends CamelTestSupport {
 
@@ -34,5 +35,4 @@ public abstract class AbstractInfluxDbTest extends CamelTestSupport {
         context.getPropertiesComponent().setLocation("classpath:influxdb2.test.properties");
         return context;
     }
-
 }

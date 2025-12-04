@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
 
 import java.util.Map;
@@ -28,8 +29,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("stream")
 public class StreamComponent extends DefaultComponent {
 
-    public StreamComponent() {
-    }
+    public StreamComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

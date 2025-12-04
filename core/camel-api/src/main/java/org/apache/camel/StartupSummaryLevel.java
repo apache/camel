@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import jakarta.xml.bind.annotation.XmlEnum;
@@ -23,11 +24,9 @@ import jakarta.xml.bind.annotation.XmlEnum;
  */
 @XmlEnum
 public enum StartupSummaryLevel {
-
     Verbose,
     Default,
     Brief,
     Oneline,
     Off
-
 }

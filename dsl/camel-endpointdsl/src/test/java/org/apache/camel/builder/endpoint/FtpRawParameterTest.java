@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.remote.FtpEndpoint;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.builder.endpoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.remote.FtpEndpoint;
+import org.junit.jupiter.api.Test;
+
 public class FtpRawParameterTest extends BaseEndpointDslTest {
 
     @Test
     public void testRaw() throws Exception {
-        FtpEndpoint ftp = (FtpEndpoint) context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("ftp"))
-                .findFirst().get();
+        FtpEndpoint ftp = (FtpEndpoint) context.getEndpoints().stream()
+                .filter(e -> e.getEndpointUri().startsWith("ftp"))
+                .findFirst()
+                .get();
         assertNotNull(ftp);
         assertEquals(5000L, ftp.getDelay());
         assertTrue(ftp.getConfiguration().isBinary());
@@ -41,12 +44,16 @@ public class FtpRawParameterTest extends BaseEndpointDslTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
-                from(ftp("localhost:2121/inbox").username("scott").password("RAW(sec+%ret)").binary(true).delay(5000))
-                        .routeId("myroute").noAutoStartup()
+                from(ftp("localhost:2121/inbox")
+                                .username("scott")
+                                .password("RAW(sec+%ret)")
+                                .binary(true)
+                                .delay(5000))
+                        .routeId("myroute")
+                        .noAutoStartup()
                         .convertBodyTo(String.class)
                         .to(mock("result"));
             }
         };
     }
-
 }

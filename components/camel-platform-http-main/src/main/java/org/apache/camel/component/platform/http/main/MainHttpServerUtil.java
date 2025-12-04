@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main;
 
 import java.util.HashSet;
@@ -69,12 +70,14 @@ public class MainHttpServerUtil {
                         }
                         String formattedMediaTypes = "";
                         if (u.getConsumes() != null || u.getProduces() != null) {
-                            formattedMediaTypes = String.format("(%s%s%s)",
+                            formattedMediaTypes = String.format(
+                                    "(%s%s%s)",
                                     u.getConsumes() != null ? "accept:" + u.getConsumes() : "",
                                     u.getProduces() != null && u.getConsumes() != null ? " " : "",
                                     u.getProduces() != null ? "produce:" + u.getProduces() : "");
                         }
-                        LOG.info("    {}", String.format(formatTemplate, endpoint, formattedVerbs, formattedMediaTypes));
+                        LOG.info(
+                                "    {}", String.format(formatTemplate, endpoint, formattedVerbs, formattedMediaTypes));
                     }
                 }
 
@@ -114,5 +117,4 @@ public class MainHttpServerUtil {
             }
         });
     }
-
 }

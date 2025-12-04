@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.swift;
+
+import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_SWIFT;
 
 import org.apache.camel.Category;
 import org.apache.camel.Producer;
@@ -27,23 +30,30 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
-import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_SWIFT;
-
 /**
  * Access OpenStack Swift object/blob store.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_SWIFT, title = "OpenStack Swift", syntax = "openstack-swift:host",
-             category = { Category.CONTAINER }, producerOnly = true, headersClass = SwiftConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = SCHEME_SWIFT,
+        title = "OpenStack Swift",
+        syntax = "openstack-swift:host",
+        category = {Category.CONTAINER},
+        producerOnly = true,
+        headersClass = SwiftConstants.class)
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "objects,containers")
     @Metadata(required = true)
     String subsystem;
+
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriParam(defaultValue = "default")
     private String domain = "default";
+
     @UriParam
     @Metadata(required = true)
     private String project;

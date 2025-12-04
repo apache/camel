@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.CharConversionException;
@@ -32,19 +33,19 @@ import java.util.Arrays;
  */
 public class JsonStream extends FilterInputStream {
 
-    private static final byte[] BOM_UTF_32BE = new byte[] { 0x00, 0x00, (byte) 0xFE, (byte) 0xFF };
+    private static final byte[] BOM_UTF_32BE = new byte[] {0x00, 0x00, (byte) 0xFE, (byte) 0xFF};
 
-    private static final byte[] BOM_UTF_32LE = new byte[] { (byte) 0xFF, (byte) 0xFE, 0x00, 0x00 };
+    private static final byte[] BOM_UTF_32LE = new byte[] {(byte) 0xFF, (byte) 0xFE, 0x00, 0x00};
 
-    private static final byte[] BOM_UTF_32_2143 = new byte[] { 0x00, 0x00, (byte) 0xFF, (byte) 0xFE };
+    private static final byte[] BOM_UTF_32_2143 = new byte[] {0x00, 0x00, (byte) 0xFF, (byte) 0xFE};
 
-    private static final byte[] BOM_UTF_32_3412 = new byte[] { (byte) 0xFE, (byte) 0xFF, 0x00, 0x00 };
+    private static final byte[] BOM_UTF_32_3412 = new byte[] {(byte) 0xFE, (byte) 0xFF, 0x00, 0x00};
 
-    private static final byte[] BOM_UTF_16BE = new byte[] { (byte) 0xFE, (byte) 0xFF };
+    private static final byte[] BOM_UTF_16BE = new byte[] {(byte) 0xFE, (byte) 0xFF};
 
-    private static final byte[] BOM_UTF_16LE = new byte[] { (byte) 0xFF, (byte) 0xFE };
+    private static final byte[] BOM_UTF_16LE = new byte[] {(byte) 0xFF, (byte) 0xFE};
 
-    private static final byte[] BOM_UTF_8 = new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
+    private static final byte[] BOM_UTF_8 = new byte[] {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
 
     private final byte[] fourByteBuffer = new byte[4];
 
@@ -149,7 +150,7 @@ public class JsonStream extends FilterInputStream {
     }
 
     private Charset getUTF32EncodingFromNullPattern() throws IOException {
-        //content without BOM
+        // content without BOM
         if (fourByteBuffer[0] == 0 && fourByteBuffer[1] == 0 && fourByteBuffer[2] == 0) {
             //  00 00 00 xx
             return Charset.forName("UTF-32BE");
@@ -160,7 +161,7 @@ public class JsonStream extends FilterInputStream {
             // 00 xx 00 00
             throw getExceptionUnsupportedUCS4("3412");
         } else if (fourByteBuffer[0] == 0 && fourByteBuffer[1] == 0 && fourByteBuffer[3] == 0) {
-            //00 00 xx 00
+            // 00 00 xx 00
             throw getExceptionUnsupportedUCS4("2143");
         } else {
             // Cannot be valid UTF-32 encoded JSON...
@@ -283,5 +284,4 @@ public class JsonStream extends FilterInputStream {
     public boolean markSupported() {
         return false;
     }
-
 }

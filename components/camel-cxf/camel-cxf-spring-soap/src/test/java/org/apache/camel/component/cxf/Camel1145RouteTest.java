@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.net.URL;
 
@@ -31,10 +35,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
-@ContextConfiguration(locations = { "/org/apache/camel/component/cxf/context-camel-1145.xml" })
+@ContextConfiguration(locations = {"/org/apache/camel/component/cxf/context-camel-1145.xml"})
 @ExtendWith(SpringExtension.class)
 public class Camel1145RouteTest {
     private static int port;
@@ -52,7 +53,8 @@ public class Camel1145RouteTest {
     @Test
     public void testCamel1145Route() throws Exception {
         URL wsdlURL = new URL(String.format("http://localhost:%d/PersonService/?wsdl", port));
-        PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/non-wrapper", "PersonService"));
+        PersonService ss =
+                new PersonService(wsdlURL, new QName("http://camel.apache.org/non-wrapper", "PersonService"));
         Person client = ss.getSoap();
         GetPerson request = new GetPerson();
         request.setPersonId("hello");
@@ -61,6 +63,5 @@ public class Camel1145RouteTest {
         assertEquals("Bill", response.getName(), "we should get the right answer from router");
         assertEquals("Test", response.getSsn(), "we should get the right answer from router");
         assertEquals("hello world!", response.getPersonId(), "we should get the right answer from router");
-
     }
 }

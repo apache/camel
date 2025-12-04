@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.net.URI;
@@ -31,10 +32,13 @@ public class FtpConfiguration extends RemoteFileConfiguration {
 
     @UriParam(label = "security", secret = true)
     private String account;
+
     @UriParam(label = "advanced")
     private String activePortRange;
+
     @UriParam(label = "producer,advanced")
     private String chmod;
+
     @UriParam(label = "consumer,advanced")
     private boolean handleDirectoryParserAbsoluteResult;
 

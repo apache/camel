@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 
@@ -23,17 +28,12 @@ import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testTransferException() throws Exception {
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/hello",
-                new ByteArrayInputStream("".getBytes()), "text/plain");
+                contextUrl + "/services/hello", new ByteArrayInputStream("".getBytes()), "text/plain");
         WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());

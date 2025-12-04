@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import java.time.LocalDate;
@@ -27,14 +28,14 @@ public class ContactMessage {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
+
     private List<Email> emails;
     private Name name;
     private Org org;
     private List<Phone> phones;
     private List<Url> urls;
 
-    public ContactMessage() {
-    }
+    public ContactMessage() {}
 
     public List<Address> getAddresses() {
         return addresses;

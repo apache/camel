@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
 
 import java.net.URL;
@@ -55,7 +56,8 @@ public class LRASagaServiceTest extends CamelTestSupport {
         LRAClient client = sagaService.getClient();
         Assertions.assertNotNull(client, "lraClient must not be null");
 
-        Assertions.assertInstanceOf(AlternativeLRAClient.class, client, "client must be an instance of AlternativeLRAClient");
+        Assertions.assertInstanceOf(
+                AlternativeLRAClient.class, client, "client must be an instance of AlternativeLRAClient");
     }
 
     @DisplayName("Tests whether newSaga(Exchange) is passing on Exchange to the client")
@@ -106,5 +108,4 @@ public class LRASagaServiceTest extends CamelTestSupport {
             return client;
         }
     }
-
 }

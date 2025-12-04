@@ -27,8 +27,7 @@ public class KinesisResumeAction implements ResumeAction {
     private String streamName;
     private String shardId;
 
-    public KinesisResumeAction() {
-    }
+    public KinesisResumeAction() {}
 
     public KinesisResumeAction(GetShardIteratorRequest.Builder builder) {
         this.builder = builder;

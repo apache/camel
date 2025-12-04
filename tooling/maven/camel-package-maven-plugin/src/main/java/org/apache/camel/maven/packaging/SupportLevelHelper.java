@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import org.apache.camel.tooling.model.SupportLevel;
@@ -22,8 +23,7 @@ import org.apache.camel.tooling.util.Version;
 
 public final class SupportLevelHelper {
 
-    private SupportLevelHelper() {
-    }
+    private SupportLevelHelper() {}
 
     public static SupportLevel defaultSupportLevel(String firstVersion, String currentVersion) {
         if (firstVersion == null || firstVersion.isEmpty()) {

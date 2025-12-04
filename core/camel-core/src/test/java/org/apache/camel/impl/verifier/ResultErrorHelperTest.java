@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.verifier;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,23 +32,23 @@ import org.apache.camel.component.extension.verifier.OptionsGroup;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ResultErrorHelperTest {
 
     final OptionsGroup[] groups = new OptionsGroup[] {
-            OptionsGroup.withName("optionA").options("param1", "param2", "!param3"),
-            OptionsGroup.withName("optionB").options("param1", "!param2", "param3"),
-            OptionsGroup.withName("optionC").options("!param1", "!param2", "param4") };
+        OptionsGroup.withName("optionA").options("param1", "param2", "!param3"),
+        OptionsGroup.withName("optionB").options("param1", "!param2", "param3"),
+        OptionsGroup.withName("optionC").options("!param1", "!param2", "param4")
+    };
 
     @Test
     public void shouldValidateCorrectParameters() {
         // just giving param1 and param2 is OK
-        assertTrue(ResultErrorHelper.requiresAny(map("param1", "param2"), groups).isEmpty());
+        assertTrue(
+                ResultErrorHelper.requiresAny(map("param1", "param2"), groups).isEmpty());
 
         // just giving param1 and param3 is OK
-        assertTrue(ResultErrorHelper.requiresAny(map("param1", "param3"), groups).isEmpty());
+        assertTrue(
+                ResultErrorHelper.requiresAny(map("param1", "param3"), groups).isEmpty());
 
         // just giving param4 is OK
         assertTrue(ResultErrorHelper.requiresAny(map("param4"), groups).isEmpty());
@@ -53,8 +57,8 @@ public class ResultErrorHelperTest {
     @Test
     public void shouldValidateParameterExclusions() {
         // combining param2 and param3 is not OK
-        final List<ComponentVerifierExtension.VerificationError> results
-                = ResultErrorHelper.requiresAny(map("param1", "param2", "param3"), groups);
+        final List<ComponentVerifierExtension.VerificationError> results =
+                ResultErrorHelper.requiresAny(map("param1", "param2", "param3"), groups);
 
         assertEquals(3, results.size());
 

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
@@ -53,8 +54,13 @@ public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
             public void configure() {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start").to("mock:a").multicast().stopOnException().to("mock:foo", "mock:bar")
-                        .throwException(new IllegalArgumentException("Damn")).to("mock:baz");
+                from("direct:start")
+                        .to("mock:a")
+                        .multicast()
+                        .stopOnException()
+                        .to("mock:foo", "mock:bar")
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .to("mock:baz");
             }
         });
         context.start();

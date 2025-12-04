@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled // on purpose to ignore
 public class MyNettyTest extends CamelTestSupport {
@@ -47,7 +48,8 @@ public class MyNettyTest extends CamelTestSupport {
                         .to("netty-http:http://0.0.0.0:" + port2 + "/bar");
                 from("netty-http:http://0.0.0.0:" + port2 + "/bar")
                         .to("mock:input2")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }

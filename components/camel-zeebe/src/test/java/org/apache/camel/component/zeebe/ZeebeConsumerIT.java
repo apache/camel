@@ -17,6 +17,10 @@
 
 package org.apache.camel.component.zeebe;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.time.Duration;
 import java.util.List;
 
@@ -41,14 +45,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @MockitoSettings(strictness = Strictness.LENIENT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfSystemProperty(named = "zeebe.test.integration.enable", matches = "true",
-                         disabledReason = "Requires locally installed test system")
+@EnabledIfSystemProperty(
+        named = "zeebe.test.integration.enable",
+        matches = "true",
+        disabledReason = "Requires locally installed test system")
 class ZeebeConsumerIT extends CamelTestSupport {
 
     public static final String TEST_1_DEFINITION_BPMN = "test1_definition.bpmn";
@@ -63,8 +65,10 @@ class ZeebeConsumerIT extends CamelTestSupport {
 
         DeploymentRequest deployProcessMessage = new DeploymentRequest();
         deployProcessMessage.setName(TEST_1_DEFINITION_BPMN);
-        deployProcessMessage
-                .setContent(this.getClass().getClassLoader().getResourceAsStream("data/test1_definition.bpmn").readAllBytes());
+        deployProcessMessage.setContent(this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("data/test1_definition.bpmn")
+                .readAllBytes());
 
         DeploymentResponse deploymentResponse = component.getZeebeService().deployResource(deployProcessMessage);
 
@@ -115,8 +119,8 @@ class ZeebeConsumerIT extends CamelTestSupport {
             String jobWorkerMessageString = exchange.getMessage().getBody(String.class);
             assertNotNull(jobWorkerMessageString);
 
-            JobWorkerMessage jobWorkerMessage
-                    = assertDoesNotThrow(() -> objectMapper.readValue(jobWorkerMessageString, JobWorkerMessage.class));
+            JobWorkerMessage jobWorkerMessage =
+                    assertDoesNotThrow(() -> objectMapper.readValue(jobWorkerMessageString, JobWorkerMessage.class));
 
             assertTrue(jobWorkerMessage.getKey() > 0);
             assertTrue(jobWorkerMessage.getProcessInstanceKey() > 0);
@@ -139,8 +143,7 @@ class ZeebeConsumerIT extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("zeebe://worker?jobKey=consumerTest&timeOut=3")
-                        .to("mock:jobWorker");
+                from("zeebe://worker?jobKey=consumerTest&timeOut=3").to("mock:jobWorker");
 
                 from("zeebe://worker?jobKey=consumerTestJSON&timeOut=3&formatJSON=true")
                         .to("mock:jobWorker_JSON");

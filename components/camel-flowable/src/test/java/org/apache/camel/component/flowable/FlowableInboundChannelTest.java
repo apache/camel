@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -24,14 +28,13 @@ import org.flowable.task.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class FlowableInboundChannelTest extends CamelFlowableTestCase {
 
     @BeforeEach
     public void deployEventRegistryModels() throws Exception {
-        eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
+        eventRegistryEngineConfiguration
+                .getEventRepositoryService()
+                .createDeployment()
                 .addClasspathResource("channel/userChannel.channel")
                 .addClasspathResource("event/userEvent.event")
                 .deploy();
@@ -48,14 +51,19 @@ public class FlowableInboundChannelTest extends CamelFlowableTestCase {
             exchange.getIn().setBody(bodyNode);
             template.send("direct:start", exchange);
 
-            ProcessInstance processInstance
-                    = runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").singleResult();
+            ProcessInstance processInstance = runtimeService
+                    .createProcessInstanceQuery()
+                    .processDefinitionKey("camelProcess")
+                    .singleResult();
             assertNotNull(processInstance);
 
             assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
             assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
 
-            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
+            Task task = taskService
+                    .createTaskQuery()
+                    .processInstanceId(processInstance.getId())
+                    .singleResult();
             assertNotNull(task);
 
         } finally {

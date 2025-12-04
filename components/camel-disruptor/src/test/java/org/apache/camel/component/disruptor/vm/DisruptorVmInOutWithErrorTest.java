@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorVmInOutWithErrorTest extends AbstractVmTestSupport {
 
@@ -47,7 +48,8 @@ public class DisruptorVmInOutWithErrorTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor-vm:foo").transform(constant("Bye World"))
+                from("disruptor-vm:foo")
+                        .transform(constant("Bye World"))
                         .throwException(new IllegalArgumentException("Damn I cannot do this"))
                         .to("mock:result");
             }

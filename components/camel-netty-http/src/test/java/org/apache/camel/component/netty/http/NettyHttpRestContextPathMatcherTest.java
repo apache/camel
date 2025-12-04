@@ -14,37 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty.http;
 
 import static org.apache.camel.Exchange.HTTP_METHOD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 public class NettyHttpRestContextPathMatcherTest extends BaseNettyTest {
 
     @Test
     public void shouldReturnCustomResponseForOptions() {
-        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS",
-                String.class);
+        String response = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS", String.class);
         assertEquals("expectedOptionsResponse", response);
     }
 
     @Test
     public void shouldPreferStrictMatchOverPrefixMatch() {
-        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path2/foo", "", HTTP_METHOD,
-                "GET", String.class);
+        String response = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/path2/foo", "", HTTP_METHOD, "GET", String.class);
         assertEquals("exact", response);
     }
 
     @Test
     public void shouldPreferOptionsForEqualPaths() {
-        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path3", "", HTTP_METHOD, "POST",
-                String.class);
+        String response = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/path3", "", HTTP_METHOD, "POST", String.class);
         assertEquals("postPath3", response);
-        response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path3", "", HTTP_METHOD, "OPTIONS",
-                String.class);
+        response = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/path3", "", HTTP_METHOD, "OPTIONS", String.class);
         assertEquals("optionsPath3", response);
     }
 
@@ -53,17 +54,25 @@ public class NettyHttpRestContextPathMatcherTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://0.0.0.0:{{port}}/path1?httpMethodRestrict=POST").setBody().constant("somePostResponse");
-                from("netty-http:http://0.0.0.0:{{port}}?matchOnUriPrefix=true&httpMethodRestrict=OPTIONS").setBody()
+                from("netty-http:http://0.0.0.0:{{port}}/path1?httpMethodRestrict=POST")
+                        .setBody()
+                        .constant("somePostResponse");
+                from("netty-http:http://0.0.0.0:{{port}}?matchOnUriPrefix=true&httpMethodRestrict=OPTIONS")
+                        .setBody()
                         .constant("expectedOptionsResponse");
 
                 from("netty-http:http://0.0.0.0:{{port}}/path2/foo").setBody().constant("exact");
-                from("netty-http:http://0.0.0.0:{{port}}/path2?matchOnUriPrefix=true").setBody().constant("wildcard");
+                from("netty-http:http://0.0.0.0:{{port}}/path2?matchOnUriPrefix=true")
+                        .setBody()
+                        .constant("wildcard");
 
-                from("netty-http:http://0.0.0.0:{{port}}/path3?httpMethodRestrict=POST").setBody().constant("postPath3");
-                from("netty-http:http://0.0.0.0:{{port}}/path3?httpMethodRestrict=OPTIONS").setBody().constant("optionsPath3");
+                from("netty-http:http://0.0.0.0:{{port}}/path3?httpMethodRestrict=POST")
+                        .setBody()
+                        .constant("postPath3");
+                from("netty-http:http://0.0.0.0:{{port}}/path3?httpMethodRestrict=OPTIONS")
+                        .setBody()
+                        .constant("optionsPath3");
             }
         };
     }
-
 }

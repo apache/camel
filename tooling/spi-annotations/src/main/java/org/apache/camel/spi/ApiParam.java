@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.lang.annotation.Documented;
@@ -30,7 +31,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD })
+@Target({ElementType.FIELD})
 public @interface ApiParam {
 
     /**
@@ -49,5 +50,4 @@ public @interface ApiParam {
      * This is used for documentation and tooling only.
      */
     String description() default "";
-
 }

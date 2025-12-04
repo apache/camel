@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.HashMap;
@@ -34,13 +35,17 @@ public abstract class DefaultConfigurationProperties<T> {
 
     private String name;
     private String description;
+
     @Metadata(defaultValue = "Default", enums = "Verbose,Default,Brief,Oneline,Off")
     private StartupSummaryLevel startupSummaryLevel;
+
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
+
     @Metadata(defaultValue = "shutdown", enums = "shutdown,stop")
     private String durationMaxAction = "shutdown";
+
     private int shutdownTimeout = 45;
     private boolean shutdownSuppressLoggingOnTimeout;
     private boolean shutdownNowOnTimeout = true;
@@ -49,8 +54,10 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean inflightRepositoryBrowseEnabled;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
+
     @Metadata(enums = "classic,default,short,simple,off", defaultValue = "default")
     private String uuidGenerator = "default";
+
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
     private boolean loadTypeConverters;
@@ -76,8 +83,10 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean tracingStandby;
     private boolean tracingTemplates;
     private String tracingPattern;
+
     @Metadata(defaultValue = "%-4.4s [%-12.12s] [%-33.33s]")
     private String tracingLoggingFormat;
+
     private boolean sourceLocationEnabled;
     private boolean messageHistory;
     private boolean logMask;
@@ -97,10 +106,13 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean useDataType;
     private boolean useBreadcrumb;
     private boolean beanPostProcessorEnabled = true;
+
     @Metadata(defaultValue = "Default", enums = "ContextOnly,RoutesOnly,Default")
     private ManagementMBeansLevel jmxManagementMBeansLevel = ManagementMBeansLevel.Default;
+
     @Metadata(defaultValue = "Default", enums = "Extended,Default,RoutesOnly,Off")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
+
     private String jmxManagementNamePattern = "#name#";
     private boolean jmxUpdateRouteEnabled;
     private boolean jmxManagementRegisterRoutesCreateByKamelet;
@@ -116,29 +128,40 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean contextReloadEnabled;
     private boolean routesCollectorEnabled = true;
     private boolean routesCollectorIgnoreLoadingError;
+
     @Metadata(label = "advanced")
     private String compileWorkDir;
+
     private String javaRoutesIncludePattern;
     private String javaRoutesExcludePattern;
     private String routesIncludePattern = "classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*";
     private String routesExcludePattern;
     private boolean routesReloadEnabled;
+
     @Metadata(defaultValue = "src/main/resources/camel")
     private String routesReloadDirectory = "src/main/resources/camel";
+
     private boolean routesReloadDirectoryRecursive;
     private String routesReloadPattern;
+
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
+
     private boolean routesReloadRestartDuration;
     private String groovyScriptPattern = "classpath:camel-groovy/*,classpath:camel-groovy-compiled/*";
+
     @Metadata(label = "advanced")
     private boolean groovyPreloadCompiled;
+
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
+
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
+
     @Metadata(enums = "xml,yaml")
     private String dumpRoutes;
+
     private String dumpRoutesInclude = "routes";
     private boolean dumpRoutesLog = true;
     private boolean dumpRoutesResolvePlaceholders = true;
@@ -149,6 +172,7 @@ public abstract class DefaultConfigurationProperties<T> {
     // startup recorder
     @Metadata(enums = "false,off,java-flight-recorder,jfr,logging,backlog")
     private String startupRecorder;
+
     private int startupRecorderMaxDepth = -1;
     private boolean startupRecorderRecording;
     private String startupRecorderProfile = "default";
@@ -604,7 +628,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Whether to remove stream caching temporary directory when stopping. This option is default true.
      */
-    public void setStreamCachingRemoveSpoolDirectoryWhenStopping(boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
+    public void setStreamCachingRemoveSpoolDirectoryWhenStopping(
+            boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
         this.streamCachingRemoveSpoolDirectoryWhenStopping = streamCachingRemoveSpoolDirectoryWhenStopping;
     }
 
@@ -2856,5 +2881,4 @@ public abstract class DefaultConfigurationProperties<T> {
         this.cloudPropertiesLocation = cloudPropertiesLocation;
         return (T) this;
     }
-
 }

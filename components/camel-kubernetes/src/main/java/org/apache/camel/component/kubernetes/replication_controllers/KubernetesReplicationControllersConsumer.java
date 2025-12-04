@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.replication_controllers;
 
 import java.util.concurrent.ExecutorService;
@@ -86,16 +87,20 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            FilterWatchListDeletable<ReplicationController, ReplicationControllerList, RollableScalableResource<ReplicationController>> w;
+            FilterWatchListDeletable<
+                            ReplicationController,
+                            ReplicationControllerList,
+                            RollableScalableResource<ReplicationController>>
+                    w;
 
             /*
-                Valid options are (according to how the client can be constructed):
-                - inAnyNamespace
-                - inAnyNamespace + withLabel
-                - inNamespace
-                - inNamespace + withLabel
-                - inNamespace + withName
-             */
+               Valid options are (according to how the client can be constructed):
+               - inAnyNamespace
+               - inAnyNamespace + withLabel
+               - inNamespace
+               - inNamespace + withLabel
+               - inNamespace + withName
+            */
             String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
             String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
             String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
@@ -108,14 +113,23 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
                     w = w.withLabel(labelKey, labelValue);
                 }
             } else {
-                final NonNamespaceOperation<ReplicationController, ReplicationControllerList, RollableScalableResource<ReplicationController>> client
-                        = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespace);
+                final NonNamespaceOperation<
+                                ReplicationController,
+                                ReplicationControllerList,
+                                RollableScalableResource<ReplicationController>>
+                        client = getEndpoint()
+                                .getKubernetesClient()
+                                .replicationControllers()
+                                .inNamespace(namespace);
                 w = client;
                 if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
                     w = client.withLabel(labelKey, labelValue);
                 } else if (ObjectHelper.isNotEmpty(resourceName)) {
-                    w = (FilterWatchListDeletable<ReplicationController, ReplicationControllerList, RollableScalableResource<ReplicationController>>) client
-                            .withName(resourceName);
+                    w = (FilterWatchListDeletable<
+                                    ReplicationController,
+                                    ReplicationControllerList,
+                                    RollableScalableResource<ReplicationController>>)
+                            client.withName(resourceName);
                 }
             }
 
@@ -126,7 +140,8 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                    exchange.getIn()
+                            .setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);
                     } catch (Exception e) {
@@ -142,7 +157,6 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
                         LOG.error(cause.getMessage(), cause);
                     }
                 }
-
             });
         }
 

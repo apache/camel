@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -26,89 +29,88 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.xmlunit.assertj3.XmlAssert;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.xmlunit.assertj3.XmlAssert;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XMLTokenizeExpressionIteratorWModeTest {
 
     private static final String XML_BEFORE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                             + "<root>\n"
-                                             + "    <Level1>\n"
-                                             + "        <Level2preceding>Included</Level2preceding>\n"
-                                             + "        <Level2following>Not Included</Level2following>\n"
-                                             + "        <Level2>\n"
-                                             + "            <data>Hello, World!</data>\n"
-                                             + "            <data>Hello, Camel!</data>\n"
-                                             + "            <data>Hello, Apache Foundation!</data>\n"
-                                             + "        </Level2>\n"
-                                             + "    </Level1>\n"
-                                             + "</root>";
+            + "<root>\n"
+            + "    <Level1>\n"
+            + "        <Level2preceding>Included</Level2preceding>\n"
+            + "        <Level2following>Not Included</Level2following>\n"
+            + "        <Level2>\n"
+            + "            <data>Hello, World!</data>\n"
+            + "            <data>Hello, Camel!</data>\n"
+            + "            <data>Hello, Apache Foundation!</data>\n"
+            + "        </Level2>\n"
+            + "    </Level1>\n"
+            + "</root>";
 
     private static final String XML_AFTER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                            + "<root>\n"
-                                            + "    <Level1>\n"
-                                            + "        <Level2preceding>Included</Level2preceding>\n"
-                                            + "        <Level2>\n"
-                                            + "            <data>Hello, World!</data>\n"
-                                            + "            <data>Hello, Camel!</data>\n"
-                                            + "            <data>Hello, Apache Foundation!</data>\n"
-                                            + "        </Level2>\n"
-                                            + "        <Level2following>Not Included</Level2following>\n"
-                                            + "    </Level1>\n"
-                                            + "</root>";
+            + "<root>\n"
+            + "    <Level1>\n"
+            + "        <Level2preceding>Included</Level2preceding>\n"
+            + "        <Level2>\n"
+            + "            <data>Hello, World!</data>\n"
+            + "            <data>Hello, Camel!</data>\n"
+            + "            <data>Hello, Apache Foundation!</data>\n"
+            + "        </Level2>\n"
+            + "        <Level2following>Not Included</Level2following>\n"
+            + "    </Level1>\n"
+            + "</root>";
 
     private static final String RS1_BEFORE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                             + "<root>\n"
-                                             + "    <Level1>\n"
-                                             + "        <Level2preceding>Included</Level2preceding>\n"
-                                             + "        <Level2following>Not Included</Level2following>\n"
-                                             + "        <Level2>\n"
-                                             + "            <data>Hello, World!</data></Level2></Level1></root>";
+            + "<root>\n"
+            + "    <Level1>\n"
+            + "        <Level2preceding>Included</Level2preceding>\n"
+            + "        <Level2following>Not Included</Level2following>\n"
+            + "        <Level2>\n"
+            + "            <data>Hello, World!</data></Level2></Level1></root>";
 
     private static final String RS2_BEFORE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                             + "<root>\n"
-                                             + "    <Level1>\n"
-                                             + "        <Level2preceding>Included</Level2preceding>\n"
-                                             + "        <Level2following>Not Included</Level2following>\n"
-                                             + "        <Level2>\n"
-                                             + "            <data>Hello, Camel!</data></Level2></Level1></root>";
+            + "<root>\n"
+            + "    <Level1>\n"
+            + "        <Level2preceding>Included</Level2preceding>\n"
+            + "        <Level2following>Not Included</Level2following>\n"
+            + "        <Level2>\n"
+            + "            <data>Hello, Camel!</data></Level2></Level1></root>";
 
     private static final String RS3_BEFORE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                             + "<root>\n"
-                                             + "    <Level1>\n"
-                                             + "        <Level2preceding>Included</Level2preceding>\n"
-                                             + "        <Level2following>Not Included</Level2following>\n"
-                                             + "        <Level2>\n"
-                                             + "            <data>Hello, Apache Foundation!</data></Level2></Level1></root>";
+            + "<root>\n"
+            + "    <Level1>\n"
+            + "        <Level2preceding>Included</Level2preceding>\n"
+            + "        <Level2following>Not Included</Level2following>\n"
+            + "        <Level2>\n"
+            + "            <data>Hello, Apache Foundation!</data></Level2></Level1></root>";
 
-    private static final String[] RS_BEFORE = { RS1_BEFORE, RS2_BEFORE, RS3_BEFORE };
+    private static final String[] RS_BEFORE = {RS1_BEFORE, RS2_BEFORE, RS3_BEFORE};
 
     private static final String RS1_AFTER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                            + "<root>\n"
-                                            + "    <Level1>\n"
-                                            + "        <Level2preceding>Included</Level2preceding>\n"
-                                            + "        <Level2>\n"
-                                            + "            <data>Hello, World!</data><Level2following>Not Included</Level2following></Level2></Level1></root>";
+            + "<root>\n"
+            + "    <Level1>\n"
+            + "        <Level2preceding>Included</Level2preceding>\n"
+            + "        <Level2>\n"
+            + "            <data>Hello, World!</data><Level2following>Not Included</Level2following></Level2></Level1></root>";
 
     private static final String RS2_AFTER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                            + "<root>\n"
-                                            + "    <Level1>\n"
-                                            + "        <Level2preceding>Included</Level2preceding>\n"
-                                            + "        <Level2>\n"
-                                            + "            <data>Hello, Camel!</data><Level2following>Not Included</Level2following></Level2></Level1></root>";
+            + "<root>\n"
+            + "    <Level1>\n"
+            + "        <Level2preceding>Included</Level2preceding>\n"
+            + "        <Level2>\n"
+            + "            <data>Hello, Camel!</data><Level2following>Not Included</Level2following></Level2></Level1></root>";
 
     private static final String RS3_AFTER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                            + "<root>\n"
-                                            + "    <Level1>\n"
-                                            + "        <Level2preceding>Included</Level2preceding>\n"
-                                            + "        <Level2>\n"
-                                            + "            <data>Hello, Apache Foundation!</data><Level2following>Not Included</Level2following></Level2></Level1></root>";
+            + "<root>\n"
+            + "    <Level1>\n"
+            + "        <Level2preceding>Included</Level2preceding>\n"
+            + "        <Level2>\n"
+            + "            <data>Hello, Apache Foundation!</data><Level2following>Not Included</Level2following></Level2></Level1></root>";
 
-    private static final String[] RS_AFTER = { RS1_AFTER, RS2_AFTER, RS3_AFTER };
+    private static final String[] RS_AFTER = {RS1_AFTER, RS2_AFTER, RS3_AFTER};
 
     private Map<String, String> nsmap;
 
@@ -152,5 +154,4 @@ public class XMLTokenizeExpressionIteratorWModeTest {
             }
         }
     }
-
 }

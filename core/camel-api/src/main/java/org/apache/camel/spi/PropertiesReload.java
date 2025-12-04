@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Properties;
@@ -32,5 +33,4 @@ public interface PropertiesReload {
      * @throws Exception  error reloading properties
      */
     void onReload(String name, Properties properties) throws Exception;
-
 }

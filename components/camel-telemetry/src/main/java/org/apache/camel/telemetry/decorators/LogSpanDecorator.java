@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 public class LogSpanDecorator extends AbstractSpanDecorator {
@@ -27,5 +28,4 @@ public class LogSpanDecorator extends AbstractSpanDecorator {
     public String getComponentClassName() {
         return "org.apache.camel.component.log.LogComponent";
     }
-
 }

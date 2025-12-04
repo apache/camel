@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.util;
+
+import static org.apache.camel.util.BufferCaster.cast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +28,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
-
-import static org.apache.camel.util.BufferCaster.cast;
 
 /**
  * {@link InputStream} implementation that reads a character stream from a {@link Reader} and transforms it to a byte
@@ -129,11 +130,12 @@ public class ReaderInputStream extends InputStream {
      * @param bufferSize the size of the input buffer in number of characters
      */
     public ReaderInputStream(Reader reader, Charset charset, int bufferSize) {
-        this(reader,
-             charset.newEncoder()
-                     .onMalformedInput(CodingErrorAction.REPLACE)
-                     .onUnmappableCharacter(CodingErrorAction.REPLACE),
-             bufferSize);
+        this(
+                reader,
+                charset.newEncoder()
+                        .onMalformedInput(CodingErrorAction.REPLACE)
+                        .onUnmappableCharacter(CodingErrorAction.REPLACE),
+                bufferSize);
     }
 
     /**
@@ -217,9 +219,7 @@ public class ReaderInputStream extends InputStream {
             throw new NullPointerException("Byte array must not be null");
         }
         if (len < 0 || off < 0 || (off + len) > b.length) {
-            throw new IndexOutOfBoundsException(
-                    "Array Size=" + b.length
-                                                + ", offset=" + off + ", length=" + len);
+            throw new IndexOutOfBoundsException("Array Size=" + b.length + ", offset=" + off + ", length=" + len);
         }
         int read = 0;
         if (len == 0) {
@@ -262,7 +262,7 @@ public class ReaderInputStream extends InputStream {
      */
     @Override
     public int read() throws IOException {
-        for (;;) {
+        for (; ; ) {
             if (encoderOut.hasRemaining()) {
                 return encoderOut.get() & 0xFF;
             } else {

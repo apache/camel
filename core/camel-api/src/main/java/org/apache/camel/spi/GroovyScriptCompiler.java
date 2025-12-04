@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -69,8 +70,8 @@ public interface GroovyScriptCompiler {
      */
     static boolean existsSourceFiles(CamelContext context, String scriptPattern) throws Exception {
         boolean exists = false;
-        PackageScanResourceResolver resolver
-                = context.getCamelContextExtension().getContextPlugin(PackageScanResourceResolver.class);
+        PackageScanResourceResolver resolver =
+                context.getCamelContextExtension().getContextPlugin(PackageScanResourceResolver.class);
         for (String pattern : scriptPattern.split(",")) {
             // include all kind of resources
             for (Resource resource : resolver.findResources(pattern, n -> true)) {

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -25,9 +29,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxHttpProducerTest extends VertxHttpTestSupport {
 
@@ -75,22 +76,20 @@ public class VertxHttpProducerTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri())
-                        .setBody(constant("Hello World"));
+                from(getTestServerUri()).setBody(constant("Hello World"));
 
-                from(getTestServerUri() + "/content/type")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                String contentType = ExchangeHelper.getContentType(exchange);
-                                if (!contentType.startsWith("application/json")) {
-                                    throw new IllegalStateException("Unexpected Content-Type header");
-                                }
+                from(getTestServerUri() + "/content/type").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                        String contentType = ExchangeHelper.getContentType(exchange);
+                        if (!contentType.startsWith("application/json")) {
+                            throw new IllegalStateException("Unexpected Content-Type header");
+                        }
 
-                                Message message = exchange.getMessage();
-                                message.setBody("{\"foo\": \"bar\"}");
-                            }
-                        });
+                        Message message = exchange.getMessage();
+                        message.setBody("{\"foo\": \"bar\"}");
+                    }
+                });
             }
         };
     }

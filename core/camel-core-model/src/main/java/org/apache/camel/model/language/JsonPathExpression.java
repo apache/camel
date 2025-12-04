@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import java.util.Arrays;
@@ -39,25 +40,30 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String suppressExceptions;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowSimple;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowEasyPredicate;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String writeAsString;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String unpackArray;
+
     @XmlAttribute
-    @Metadata(label = "advanced",
-              enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
+    @Metadata(
+            label = "advanced",
+            enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
     private String option;
 
-    public JsonPathExpression() {
-    }
+    public JsonPathExpression() {}
 
     private JsonPathExpression(JsonPathExpression source) {
         super(source);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus.operations;
 
 import java.time.OffsetDateTime;
@@ -63,12 +64,11 @@ public class ServiceBusSenderOperations {
         }
 
         if (data instanceof Iterable<?>) {
-            return scheduleMessages((Iterable<?>) data, scheduledEnqueueTime, context, applicationProperties, correlationId,
-                    sessionId);
+            return scheduleMessages(
+                    (Iterable<?>) data, scheduledEnqueueTime, context, applicationProperties, correlationId, sessionId);
         }
 
-        return scheduleMessage(data, scheduledEnqueueTime, context, applicationProperties, correlationId,
-                sessionId);
+        return scheduleMessage(data, scheduledEnqueueTime, context, applicationProperties, correlationId, sessionId);
     }
 
     private void sendMessages(
@@ -77,9 +77,8 @@ public class ServiceBusSenderOperations {
             final Map<String, Object> applicationProperties,
             final String correlationId,
             final String sessionId) {
-        final Iterable<ServiceBusMessage> messages
-                = ServiceBusUtils.createServiceBusMessages(data, applicationProperties, correlationId,
-                        sessionId);
+        final Iterable<ServiceBusMessage> messages =
+                ServiceBusUtils.createServiceBusMessages(data, applicationProperties, correlationId, sessionId);
 
         if (ObjectHelper.isEmpty(context)) {
             client.sendMessages(messages);
@@ -94,8 +93,8 @@ public class ServiceBusSenderOperations {
             final Map<String, Object> applicationProperties,
             final String correlationId,
             final String sessionId) {
-        final ServiceBusMessage message = ServiceBusUtils.createServiceBusMessage(data, applicationProperties, correlationId,
-                sessionId);
+        final ServiceBusMessage message =
+                ServiceBusUtils.createServiceBusMessage(data, applicationProperties, correlationId, sessionId);
 
         if (ObjectHelper.isEmpty(context)) {
             client.sendMessage(message);
@@ -111,8 +110,8 @@ public class ServiceBusSenderOperations {
             final Map<String, Object> applicationProperties,
             final String correlationId,
             final String sessionId) {
-        final ServiceBusMessage message = ServiceBusUtils.createServiceBusMessage(data, applicationProperties, correlationId,
-                sessionId);
+        final ServiceBusMessage message =
+                ServiceBusUtils.createServiceBusMessage(data, applicationProperties, correlationId, sessionId);
 
         if (ObjectHelper.isEmpty(context)) {
             return Collections.singletonList(client.scheduleMessage(message, scheduledEnqueueTime));
@@ -122,20 +121,27 @@ public class ServiceBusSenderOperations {
     }
 
     private List<Long> scheduleMessages(
-            final Iterable<?> data, final OffsetDateTime scheduledEnqueueTime,
+            final Iterable<?> data,
+            final OffsetDateTime scheduledEnqueueTime,
             final ServiceBusTransactionContext context,
             final Map<String, Object> applicationProperties,
             final String correlationId,
             final String sessionId) {
-        final Iterable<ServiceBusMessage> messages
-                = ServiceBusUtils.createServiceBusMessages(data, applicationProperties, correlationId,
-                        sessionId);
+        final Iterable<ServiceBusMessage> messages =
+                ServiceBusUtils.createServiceBusMessages(data, applicationProperties, correlationId, sessionId);
 
         if (ObjectHelper.isEmpty(context)) {
-            return StreamSupport.stream(client.scheduleMessages(messages, scheduledEnqueueTime).spliterator(), false).toList();
+            return StreamSupport.stream(
+                            client.scheduleMessages(messages, scheduledEnqueueTime)
+                                    .spliterator(),
+                            false)
+                    .toList();
         }
 
-        return StreamSupport.stream(client.scheduleMessages(messages, scheduledEnqueueTime, context).spliterator(), false)
+        return StreamSupport.stream(
+                        client.scheduleMessages(messages, scheduledEnqueueTime, context)
+                                .spliterator(),
+                        false)
                 .toList();
     }
 }

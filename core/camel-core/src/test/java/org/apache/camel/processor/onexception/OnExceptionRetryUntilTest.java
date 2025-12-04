@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
@@ -25,9 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the retry until predicate
@@ -50,7 +51,10 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
             public void configure() {
                 // as its based on a unit test we do not have any delays between
                 // and do not log the stack trace
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(1)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false));
 
                 // START SNIPPET: e1
                 // we want to use a predicate for retries so we can determine in
@@ -60,7 +64,10 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
                 // where we defined at most 1 redelivery attempt. Here we will
                 // continue until
                 // the predicate returns false
-                onException(MyFunctionalException.class).retryWhile(method("myRetryHandler")).handled(true).transform()
+                onException(MyFunctionalException.class)
+                        .retryWhile(method("myRetryHandler"))
+                        .handled(true)
+                        .transform()
                         .constant("Sorry");
                 // END SNIPPET: e1
 
@@ -83,7 +90,8 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
         // using bean binding we can bind the information from the exchange to
         // the types we have in our method signature
         public boolean retry(
-                @Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body,
+                @Header(Exchange.REDELIVERY_COUNTER) Integer counter,
+                @Body String body,
                 @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked++;

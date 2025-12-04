@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.netty.handler.codec.http.HttpResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpProducerSimpleTest extends BaseNettyTest {
 
@@ -42,8 +43,8 @@ public class NettyHttpProducerSimpleTest extends BaseNettyTest {
     public void testHttpSimpleExchange() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        Exchange out = template.request("netty-http:http://localhost:{{port}}/foo",
-                exchange -> exchange.getIn().setBody("Hello World"));
+        Exchange out = template.request("netty-http:http://localhost:{{port}}/foo", exchange -> exchange.getIn()
+                .setBody("Hello World"));
         assertNotNull(out);
         assertTrue(out.hasOut());
 
@@ -66,9 +67,9 @@ public class NettyHttpProducerSimpleTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://localhost:{{port}}/foo")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

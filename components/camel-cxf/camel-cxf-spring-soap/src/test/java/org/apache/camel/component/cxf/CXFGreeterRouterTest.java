@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import jakarta.xml.ws.Endpoint;
@@ -45,5 +46,4 @@ public class CXFGreeterRouterTest extends AbstractCXFGreeterRouterTest {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointsRouterContext.xml");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
 
 import org.apache.camel.BindToRegistry;
@@ -72,7 +73,8 @@ public class SqsBatchConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=5000&maxMessagesPerPoll=5").to("mock:result");
+                from("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=5000&maxMessagesPerPoll=5")
+                        .to("mock:result");
             }
         };
     }

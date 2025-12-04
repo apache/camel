@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -30,9 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @DisabledOnOs(OS.AIX)
 public class BacklogTracerAggregateTest extends ManagementTestSupport {
 
@@ -40,8 +41,8 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
     @Test
     public void testBacklogTracerAggregate() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on
-                = new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -58,8 +59,8 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<BacklogTracerEventMessage> events
-                = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+        List<BacklogTracerEventMessage> events =
+                (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
         assertEquals(19, events.size());
@@ -70,13 +71,17 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
         Assertions.assertFalse(event.isLast());
         Assertions.assertEquals("direct://start", event.getEndpointUri());
         JsonObject jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=A}", jo.getMap("message").get("body").toString());
+        Assertions.assertEquals(
+                "{type=java.lang.String, value=A}",
+                jo.getMap("message").get("body").toString());
         event = events.get(4);
         Assertions.assertFalse(event.isFirst());
         Assertions.assertTrue(event.isLast());
         Assertions.assertEquals("direct://start", event.getEndpointUri());
         jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=A}", jo.getMap("message").get("body").toString());
+        Assertions.assertEquals(
+                "{type=java.lang.String, value=A}",
+                jo.getMap("message").get("body").toString());
 
         // this is the 2nd incoming message
         event = events.get(5);
@@ -84,13 +89,17 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
         Assertions.assertFalse(event.isLast());
         Assertions.assertEquals("direct://start", event.getEndpointUri());
         jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=B}", jo.getMap("message").get("body").toString());
+        Assertions.assertEquals(
+                "{type=java.lang.String, value=B}",
+                jo.getMap("message").get("body").toString());
         event = events.get(9);
         Assertions.assertFalse(event.isFirst());
         Assertions.assertTrue(event.isLast());
         Assertions.assertEquals("direct://start", event.getEndpointUri());
         jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=B}", jo.getMap("message").get("body").toString());
+        Assertions.assertEquals(
+                "{type=java.lang.String, value=B}",
+                jo.getMap("message").get("body").toString());
 
         // this is the 3rd incoming message
         event = events.get(10);
@@ -98,13 +107,17 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
         Assertions.assertFalse(event.isLast());
         Assertions.assertEquals("direct://start", event.getEndpointUri());
         jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=C}", jo.getMap("message").get("body").toString());
+        Assertions.assertEquals(
+                "{type=java.lang.String, value=C}",
+                jo.getMap("message").get("body").toString());
         event = events.get(14);
         Assertions.assertFalse(event.isFirst());
         Assertions.assertTrue(event.isLast());
         Assertions.assertEquals("direct://start", event.getEndpointUri());
         jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=C}", jo.getMap("message").get("body").toString());
+        Assertions.assertEquals(
+                "{type=java.lang.String, value=C}",
+                jo.getMap("message").get("body").toString());
 
         // this is the outgoing aggregation result
         event = events.get(15);
@@ -112,13 +125,17 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
         Assertions.assertFalse(event.isLast());
         Assertions.assertNull(event.getEndpointUri());
         jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=A,B,C}", jo.getMap("message").get("body").toString());
+        Assertions.assertEquals(
+                "{type=java.lang.String, value=A,B,C}",
+                jo.getMap("message").get("body").toString());
         event = events.get(18);
         Assertions.assertFalse(event.isFirst());
         Assertions.assertTrue(event.isLast());
         Assertions.assertNull(event.getEndpointUri());
         jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=A,B,C}", jo.getMap("message").get("body").toString());
+        Assertions.assertEquals(
+                "{type=java.lang.String, value=A,B,C}",
+                jo.getMap("message").get("body").toString());
     }
 
     @Override
@@ -128,15 +145,22 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
             public void configure() {
                 context.setBacklogTracing(true);
 
-                from("direct:start").routeId("myRoute")
-                        .to("mock:input").id("input")
-                        .aggregate(constant(true)).completionSize(3).aggregationStrategy(AggregationStrategies.string(",")).id("aggregate")
-                            .log("aggregated ${body}").id("log")
-                            .to("mock:result").id("result")
+                from("direct:start")
+                        .routeId("myRoute")
+                        .to("mock:input")
+                        .id("input")
+                        .aggregate(constant(true))
+                        .completionSize(3)
+                        .aggregationStrategy(AggregationStrategies.string(","))
+                        .id("aggregate")
+                        .log("aggregated ${body}")
+                        .id("log")
+                        .to("mock:result")
+                        .id("result")
                         .end()
-                        .to("mock:output").id("output");
+                        .to("mock:output")
+                        .id("output");
             }
         };
     }
-
 }

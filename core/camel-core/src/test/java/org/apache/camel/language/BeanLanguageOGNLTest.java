@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanLanguageOGNLTest extends ContextTestSupport {
 
@@ -47,7 +48,6 @@ public class BeanLanguageOGNLTest extends ContextTestSupport {
         public MyOtherReallyCoolBean getOther() {
             return other;
         }
-
     }
 
     public static class MyOtherReallyCoolBean {
@@ -55,6 +55,5 @@ public class BeanLanguageOGNLTest extends ContextTestSupport {
         public String greet(String name) {
             return "Hello " + name;
         }
-
     }
 }

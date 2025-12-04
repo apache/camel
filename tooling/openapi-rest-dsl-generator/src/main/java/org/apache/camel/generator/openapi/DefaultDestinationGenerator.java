@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
 
 import java.util.Optional;
@@ -47,5 +48,4 @@ public class DefaultDestinationGenerator implements DestinationGenerator {
     String generateDirectName() {
         return "rest" + counter.incrementAndGet();
     }
-
 }

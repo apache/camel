@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
 
 import org.apache.camel.Endpoint;
@@ -36,9 +37,12 @@ public class QueueProducer extends DefaultProducer {
 
     public QueueProducer(final Endpoint endpoint) {
         super(endpoint);
-        this.queueServiceClientWrapper = new QueueServiceClientWrapper(getEndpoint().getQueueServiceClient());
-        this.queueServiceOperations = new QueueServiceOperations(getEndpoint().getConfiguration(), queueServiceClientWrapper);
-        this.configurationOptionsProxy = new QueueConfigurationOptionsProxy(getEndpoint().getConfiguration());
+        this.queueServiceClientWrapper =
+                new QueueServiceClientWrapper(getEndpoint().getQueueServiceClient());
+        this.queueServiceOperations =
+                new QueueServiceOperations(getEndpoint().getConfiguration(), queueServiceClientWrapper);
+        this.configurationOptionsProxy =
+                new QueueConfigurationOptionsProxy(getEndpoint().getConfiguration());
     }
 
     @Override
@@ -50,11 +54,11 @@ public class QueueProducer extends DefaultProducer {
         }
 
         switch (operation) {
-            // service operations
+                // service operations
             case listQueues:
                 setResponse(exchange, queueServiceOperations.listQueues(exchange));
                 break;
-            // queue operations
+                // queue operations
             case createQueue:
                 setResponse(exchange, getQueueOperations(exchange).createQueue(exchange));
                 break;

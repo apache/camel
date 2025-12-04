@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.key.vault;
 
 import java.time.Instant;
@@ -32,7 +33,10 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.vault.AzureVaultConfiguration;
 
-@DevConsole(name = "azure-secrets", displayName = "Azure Key Vault Secrets", description = "Azure Key Vault Secret Manager")
+@DevConsole(
+        name = "azure-secrets",
+        displayName = "Azure Key Vault Secrets",
+        description = "Azure Key Vault Secret Manager")
 public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
 
     private KeyVaultPropertiesFunction propertiesFunction;
@@ -52,7 +56,8 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
                 propertiesFunction = (KeyVaultPropertiesFunction) pf;
             }
         }
-        AzureVaultConfiguration azure = getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
+        AzureVaultConfiguration azure =
+                getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
         if (azure != null && azure.isRefreshEnabled()) {
             PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
             secretsRefreshTask = scheduler.getTaskByType(EventhubsReloadTriggerTask.class);
@@ -66,7 +71,8 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
         if (propertiesFunction != null) {
             sb.append("Azure Key Vault Secret Manager:");
             sb.append("\n    Login: Client Id/Client Secret");
-            AzureVaultConfiguration azure = getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
+            AzureVaultConfiguration azure =
+                    getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
             if (azure != null) {
                 sb.append(String.format("\n    Refresh Enabled: %s", azure.isRefreshEnabled()));
                 sb.append(String.format("\n    Refresh Period: %s", azure.getRefreshPeriod()));
@@ -85,7 +91,9 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
             Collections.sort(sorted);
 
             for (String sec : sorted) {
-                Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
+                Instant last = secretsRefreshTask != null
+                        ? secretsRefreshTask.getUpdates().get(sec)
+                        : null;
                 String age = last != null ? TimeUtils.printSince(last.toEpochMilli()) : null;
                 if (age != null) {
                     sb.append(String.format("\n    %s (age: %s)", sec, age));
@@ -103,7 +111,8 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
         if (propertiesFunction != null) {
             root.put("login", "Client Id/Client Secret");
-            AzureVaultConfiguration azure = getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
+            AzureVaultConfiguration azure =
+                    getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
             if (azure != null) {
                 root.put("refreshEnabled", azure.isRefreshEnabled());
                 root.put("refreshPeriod", azure.getRefreshPeriod());
@@ -131,7 +140,9 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
             for (String sec : sorted) {
                 JsonObject jo = new JsonObject();
                 jo.put("name", sec);
-                Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
+                Instant last = secretsRefreshTask != null
+                        ? secretsRefreshTask.getUpdates().get(sec)
+                        : null;
                 if (last != null) {
                     long timestamp = last.toEpochMilli();
                     jo.put("timestamp", timestamp);

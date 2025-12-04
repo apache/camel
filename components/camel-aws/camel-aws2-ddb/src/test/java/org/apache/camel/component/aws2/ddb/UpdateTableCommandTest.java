@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UpdateTableCommandTest {
 
@@ -48,7 +49,11 @@ public class UpdateTableCommandTest {
         command.execute();
 
         assertEquals("DOMAIN1", ddbClient.updateTableRequest.tableName());
-        assertEquals(Long.valueOf(20), ddbClient.updateTableRequest.provisionedThroughput().readCapacityUnits());
-        assertEquals(Long.valueOf(30), ddbClient.updateTableRequest.provisionedThroughput().writeCapacityUnits());
+        assertEquals(
+                Long.valueOf(20),
+                ddbClient.updateTableRequest.provisionedThroughput().readCapacityUnits());
+        assertEquals(
+                Long.valueOf(30),
+                ddbClient.updateTableRequest.provisionedThroughput().writeCapacityUnits());
     }
 }

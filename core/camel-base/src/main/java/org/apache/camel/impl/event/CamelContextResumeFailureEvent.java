@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
 
 import java.io.Serial;
@@ -21,7 +22,8 @@ import java.io.Serial;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
 
-public class CamelContextResumeFailureEvent extends AbstractContextEvent implements CamelEvent.CamelContextResumeFailureEvent {
+public class CamelContextResumeFailureEvent extends AbstractContextEvent
+        implements CamelEvent.CamelContextResumeFailureEvent {
     private static final @Serial long serialVersionUID = -4271899927507894566L;
 
     private final Throwable cause;

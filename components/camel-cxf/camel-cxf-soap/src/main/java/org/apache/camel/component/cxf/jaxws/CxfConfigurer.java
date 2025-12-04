@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.cxf.endpoint.Client;
@@ -45,5 +46,4 @@ public interface CxfConfigurer {
      * @param server the CXF server
      */
     void configureServer(Server server);
-
 }

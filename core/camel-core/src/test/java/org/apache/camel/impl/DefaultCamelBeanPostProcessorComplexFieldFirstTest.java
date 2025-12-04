@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -30,9 +34,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultCamelBeanPostProcessorComplexFieldFirstTest extends ContextTestSupport {
 
@@ -81,7 +82,6 @@ public class DefaultCamelBeanPostProcessorComplexFieldFirstTest extends ContextT
             myBean.setName(ctx.getClass().getName());
             return myBean;
         }
-
     }
 
     private static class DummyDataSource implements DataSource {
@@ -102,14 +102,10 @@ public class DefaultCamelBeanPostProcessorComplexFieldFirstTest extends ContextT
         }
 
         @Override
-        public void setLogWriter(PrintWriter out) {
-
-        }
+        public void setLogWriter(PrintWriter out) {}
 
         @Override
-        public void setLoginTimeout(int seconds) {
-
-        }
+        public void setLoginTimeout(int seconds) {}
 
         @Override
         public int getLoginTimeout() {

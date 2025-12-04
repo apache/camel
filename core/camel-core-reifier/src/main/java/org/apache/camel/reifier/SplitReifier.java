@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.concurrent.ExecutorService;
@@ -67,14 +68,37 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         Splitter answer;
         if (delimiter != null) {
             answer = new Splitter(
-                    camelContext, route, exp, childProcessor, strategy, isParallelProcessing,
-                    threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, prepare,
-                    isShareUnitOfWork, isParallelAggregate, delimiter);
+                    camelContext,
+                    route,
+                    exp,
+                    childProcessor,
+                    strategy,
+                    isParallelProcessing,
+                    threadPool,
+                    shutdownThreadPool,
+                    isStreaming,
+                    isStopOnException,
+                    timeout,
+                    prepare,
+                    isShareUnitOfWork,
+                    isParallelAggregate,
+                    delimiter);
         } else {
             answer = new Splitter(
-                    camelContext, route, exp, childProcessor, strategy, isParallelProcessing,
-                    threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, prepare,
-                    isShareUnitOfWork, isParallelAggregate);
+                    camelContext,
+                    route,
+                    exp,
+                    childProcessor,
+                    strategy,
+                    isParallelProcessing,
+                    threadPool,
+                    shutdownThreadPool,
+                    isStreaming,
+                    isStopOnException,
+                    timeout,
+                    prepare,
+                    isShareUnitOfWork,
+                    isParallelAggregate);
         }
         answer.setSynchronous(isSynchronous);
         answer.setDisabled(isDisabled(camelContext, definition));
@@ -88,26 +112,29 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
                 strategy = aggregationStrategy;
             } else if (aggStrategy instanceof BiFunction biFunction) {
-                AggregationStrategyBiFunctionAdapter adapter
-                        = new AggregationStrategyBiFunctionAdapter(biFunction);
+                AggregationStrategyBiFunctionAdapter adapter = new AggregationStrategyBiFunctionAdapter(biFunction);
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullNewExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else if (aggStrategy != null) {
                 @SuppressWarnings("resource")
                 // NOTE: the adapter holds no leaking resources, so we can safely ignore its closure.
-                AggregationStrategyBeanAdapter adapter
-                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter =
+                        new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullNewExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
-                throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
+                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: "
+                        + definition.getAggregationStrategy());
             }
         }
 
@@ -119,5 +146,4 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
         return strategy;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.oauth;
 
 import java.security.KeyFactory;
@@ -39,8 +40,8 @@ public class JiraOAuthAuthenticationHandler implements AuthenticationHandler {
 
     private OAuthParameters parameters;
 
-    public JiraOAuthAuthenticationHandler(String consumerKey, String verificationCode, String privateKey, String accessToken,
-                                          String jiraUrl) {
+    public JiraOAuthAuthenticationHandler(
+            String consumerKey, String verificationCode, String privateKey, String accessToken, String jiraUrl) {
         String accessTokenUrl = jiraUrl + "/plugins/servlet/oauth/access-token";
         JiraOAuthGetAccessToken jiraAccessToken = new JiraOAuthGetAccessToken(accessTokenUrl);
         jiraAccessToken.consumerKey = consumerKey;
@@ -58,8 +59,8 @@ public class JiraOAuthAuthenticationHandler implements AuthenticationHandler {
     @Override
     public void configure(Request.Builder builder) {
         try {
-            OAuthHttpClientDecorator.OAuthAuthenticatedRequestBuilder oauthBuilder
-                    = (OAuthHttpClientDecorator.OAuthAuthenticatedRequestBuilder) builder;
+            OAuthHttpClientDecorator.OAuthAuthenticatedRequestBuilder oauthBuilder =
+                    (OAuthHttpClientDecorator.OAuthAuthenticatedRequestBuilder) builder;
             parameters.computeNonce();
             parameters.computeTimestamp();
             parameters.computeSignature(oauthBuilder.method.name(), new GenericUrl(oauthBuilder.getUri()));
@@ -69,7 +70,8 @@ public class JiraOAuthAuthenticationHandler implements AuthenticationHandler {
         }
     }
 
-    private OAuthRsaSigner getOAuthRsaSigner(String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private OAuthRsaSigner getOAuthRsaSigner(String privateKey)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] privateBytes = Base64.getDecoder().decode(privateKey);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
         KeyFactory kf = KeyFactory.getInstance("RSA");

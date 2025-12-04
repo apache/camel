@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -32,8 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmppUtilsTest {
 
@@ -84,23 +85,30 @@ public class SmppUtilsTest {
 
     @Test
     void testDecodeBodyWhenBodyIs8bitShouldReturnNull() throws UnsupportedEncodingException {
-        byte[] body = new byte[] { 0, 1, 2, 3, 4 };
+        byte[] body = new byte[] {0, 1, 2, 3, 4};
         Assertions.assertNull(SmppUtils.decodeBody(body, Alphabet.ALPHA_8_BIT.value(), "X-Gsm7Bit"));
     }
 
     @Test
     void testDecodeBodyWithUnsupportedDefaultEncodingShouldThrow() throws UnsupportedEncodingException {
         Assertions.assertThrows(UnsupportedEncodingException.class, () -> {
-            SmppUtils.decodeBody(new byte[] { 0 }, Alphabet.ALPHA_DEFAULT.value(), "X-Gsm7Bit");
+            SmppUtils.decodeBody(new byte[] {0}, Alphabet.ALPHA_DEFAULT.value(), "X-Gsm7Bit");
         });
     }
 
     private static Stream<Arguments> decodeBodyProvider() {
         return Stream.of(
-                Arguments.of("This is an ascii test !", StandardCharsets.US_ASCII, Alphabet.ALPHA_IA5.value(), "X-Gsm7Bit"),
-                Arguments.of("This is a latin1 test ®", StandardCharsets.ISO_8859_1, Alphabet.ALPHA_LATIN1.value(),
+                Arguments.of(
+                        "This is an ascii test !", StandardCharsets.US_ASCII, Alphabet.ALPHA_IA5.value(), "X-Gsm7Bit"),
+                Arguments.of(
+                        "This is a latin1 test ®",
+                        StandardCharsets.ISO_8859_1,
+                        Alphabet.ALPHA_LATIN1.value(),
                         "X-Gsm7Bit"),
-                Arguments.of("This is a utf-16 test \uD83D\uDE00", StandardCharsets.UTF_16BE, Alphabet.ALPHA_UCS2.value(),
+                Arguments.of(
+                        "This is a utf-16 test \uD83D\uDE00",
+                        StandardCharsets.UTF_16BE,
+                        Alphabet.ALPHA_UCS2.value(),
                         "X-Gsm7Bit"));
     }
 }

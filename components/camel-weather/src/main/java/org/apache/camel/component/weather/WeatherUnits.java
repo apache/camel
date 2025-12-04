@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
 
 /**
  * The possible units for temperature measurement
  */
 public enum WeatherUnits {
-
     IMPERIAL,
     METRIC
-
 }

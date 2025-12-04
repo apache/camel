@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,8 +28,6 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventHelperTest {
 
@@ -40,7 +41,6 @@ public class EventHelperTest {
             public void configure() {
                 from("direct:start").routeId("route-1").to("mock:end");
             }
-
         });
 
         camelContext.getManagementStrategy().addEventNotifier(en1);
@@ -70,7 +70,6 @@ public class EventHelperTest {
             public void configure() {
                 from("direct:start").routeId("route-1").to("mock:end");
             }
-
         });
 
         camelContext.getManagementStrategy().addEventNotifier(en1);
@@ -100,7 +99,6 @@ public class EventHelperTest {
             public void configure() {
                 from("direct:start").routeId("route-1").to("mock:end");
             }
-
         });
 
         camelContext.getManagementStrategy().addEventNotifier(en1);

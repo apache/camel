@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks;
 
 public class Coordinate {
@@ -21,8 +22,7 @@ public class Coordinate {
     private Integer x;
     private Integer y;
 
-    public Coordinate() {
-    }
+    public Coordinate() {}
 
     public Coordinate(final int x, final int y) {
         this.x = x;
@@ -56,22 +56,16 @@ public class Coordinate {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         Coordinate other = (Coordinate) obj;
-        if (!x.equals(other.x))
-            return false;
-        if (!y.equals(other.y))
-            return false;
+        if (!x.equals(other.x)) return false;
+        if (!y.equals(other.y)) return false;
         return true;
     }
 
     public String toString() {
         return "Coordinate [x=" + x + ", y=" + y + "]";
     }
-
 }

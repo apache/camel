@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,9 +26,6 @@ import java.util.Set;
 import org.apache.camel.Expression;
 import org.apache.camel.TestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SetVariablesDefinitionTest extends TestSupport {
 
@@ -43,8 +44,7 @@ class SetVariablesDefinitionTest extends TestSupport {
     @Test
     void testSetFromMapOf() {
         SetVariablesDefinition def = new SetVariablesDefinition(
-                Map.of("fromBody", body(),
-                        "isCamel", body().contains("Camel"), "isHorse", body().contains("Horse")));
+                Map.of("fromBody", body(), "isCamel", body().contains("Camel"), "isHorse", body().contains("Horse")));
         assertNotNull(def.getVariables());
         assertEquals(3, def.getVariables().size());
         Set<String> names = new java.util.HashSet<>();
@@ -72,5 +72,4 @@ class SetVariablesDefinitionTest extends TestSupport {
         assertEquals(1, def.getVariables().size());
         assertEquals("fromBody", def.getVariables().get(0).getName());
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.impl.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.impl.converter.Country;
 import org.apache.camel.spring.SpringTestSupport;
@@ -22,14 +26,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SpringTypeConvertersTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/impl/converter/SpringTypeConvertersTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/impl/converter/SpringTypeConvertersTest.xml");
     }
 
     @Test
@@ -42,5 +44,4 @@ public class SpringTypeConvertersTest extends SpringTestSupport {
         assertNotNull(iso);
         assertEquals("en", iso);
     }
-
 }

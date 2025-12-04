@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,10 +33,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.SagaPropagation;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class LRACreditIT extends AbstractLRATestSupport {
 
@@ -96,7 +97,8 @@ public class LRACreditIT extends AbstractLRATestSupport {
                 creditService = new CreditService(100);
 
                 from("direct:saga")
-                        .saga().propagation(SagaPropagation.REQUIRES_NEW)
+                        .saga()
+                        .propagation(SagaPropagation.REQUIRES_NEW)
                         .log("Creating a new order")
                         .to("direct:newOrder")
                         .log("Taking the credit")
@@ -111,12 +113,14 @@ public class LRACreditIT extends AbstractLRATestSupport {
                         .saga()
                         .propagation(SagaPropagation.MANDATORY)
                         .compensation("direct:cancelOrder")
-                        .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
+                        .transform()
+                        .header(Exchange.SAGA_LONG_RUNNING_ACTION)
                         .bean(orderManagerService, "newOrder")
                         .log("Order ${body} created");
 
                 from("direct:cancelOrder")
-                        .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
+                        .transform()
+                        .header(Exchange.SAGA_LONG_RUNNING_ACTION)
                         .bean(orderManagerService, "cancelOrder")
                         .log("Order ${body} cancelled");
 
@@ -126,25 +130,27 @@ public class LRACreditIT extends AbstractLRATestSupport {
                         .saga()
                         .propagation(SagaPropagation.MANDATORY)
                         .compensation("direct:refundCredit")
-                        .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
+                        .transform()
+                        .header(Exchange.SAGA_LONG_RUNNING_ACTION)
                         .bean(creditService, "reserveCredit")
                         .log("Credit ${header.amount} reserved in action ${body}");
 
                 from("direct:refundCredit")
-                        .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
+                        .transform()
+                        .header(Exchange.SAGA_LONG_RUNNING_ACTION)
                         .bean(creditService, "refundCredit")
                         .log("Credit for action ${body} refunded");
 
                 // Final actions
                 from("direct:finalize")
-                        .saga().propagation(SagaPropagation.NOT_SUPPORTED)
+                        .saga()
+                        .propagation(SagaPropagation.NOT_SUPPORTED)
                         .choice()
                         .when(header("fail").isEqualTo(true))
                         .process(x -> {
                             throw new RuntimeCamelException("fail");
                         })
                         .end();
-
             }
         };
     }

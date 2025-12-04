@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RecipientListBeanTest extends ContextTestSupport {
 
@@ -67,7 +68,8 @@ public class RecipientListBeanTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").recipientList(method("myBean", "foo")).to("mock:result");
-                from("direct:params").recipientList(method("myBean", "bar(${header.one}, ${header.two})"), ",")
+                from("direct:params")
+                        .recipientList(method("myBean", "bar(${header.one}, ${header.two})"), ",")
                         .to("mock:result");
 
                 from("direct:a").transform(constant("Hello a"));
@@ -89,5 +91,4 @@ public class RecipientListBeanTest extends ContextTestSupport {
             return "direct:c,direct:b";
         }
     }
-
 }

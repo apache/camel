@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +27,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.HasId;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteTemplateDuplicateIdIssueTest extends ContextTestSupport {
 
@@ -42,7 +43,8 @@ public class RouteTemplateDuplicateIdIssueTest extends ContextTestSupport {
                 routeTemplate("myTemplate")
                         .templateParameter("input")
                         .from("direct:{{input}}")
-                        .recipientList(constant("mock:a,mock:b")).parallelProcessing()
+                        .recipientList(constant("mock:a,mock:b"))
+                        .parallelProcessing()
                         .to("mock:result");
             }
         });
@@ -69,5 +71,4 @@ public class RouteTemplateDuplicateIdIssueTest extends ContextTestSupport {
 
         context.stop();
     }
-
 }

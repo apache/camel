@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,9 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  * Tests to ensure that arbitrary headers can be stored as raw text within a dataSource Tests to ensure the body can be
  * stored as readable text within a dataSource
@@ -44,14 +45,14 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return newAppContext(
-                "JdbcSpringDataSource.xml", "JdbcSpringAggregateStoreAsText.xml");
+        return newAppContext("JdbcSpringDataSource.xml", "JdbcSpringAggregateStoreAsText.xml");
     }
 
     @BeforeEach
     public void configureJdbcAggregationRepository() throws Exception {
         repo = applicationContext.getBean("repo3", JdbcAggregationRepository.class);
-        dataSource = context.getRegistry().lookupByNameAndType(getClass().getSimpleName() + "-dataSource3", DataSource.class);
+        dataSource = context.getRegistry()
+                .lookupByNameAndType(getClass().getSimpleName() + "-dataSource3", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
 
@@ -148,6 +149,7 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
     }
 
     public String getAggregationRepositoryColumn(int id, String columnName) {
-        return jdbcTemplate.queryForObject("SELECT " + columnName + " from aggregationRepo3 where id = ?", String.class, id);
+        return jdbcTemplate.queryForObject(
+                "SELECT " + columnName + " from aggregationRepo3 where id = ?", String.class, id);
     }
 }

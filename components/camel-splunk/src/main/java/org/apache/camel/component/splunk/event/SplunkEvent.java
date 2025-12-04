@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk.event;
 
 import java.io.Serializable;
@@ -187,12 +188,14 @@ public class SplunkEvent implements Serializable {
      * Event prefix fields
      */
     private static final String PREFIX_NAME = "name";
+
     private static final String PREFIX_EVENT_ID = "event_id";
 
     /**
      * Java Throwable type fields
      */
     private static final String THROWABLE_CLASS = "throwable_class";
+
     private static final String THROWABLE_MESSAGE = "throwable_message";
     private static final String THROWABLE_STACKTRACE_ELEMENTS = "stacktrace_elements";
 
@@ -248,7 +251,6 @@ public class SplunkEvent implements Serializable {
         if (eventID != null) {
             addPair(PREFIX_EVENT_ID, eventID);
         }
-
     }
 
     /**
@@ -342,7 +344,6 @@ public class SplunkEvent implements Serializable {
      * @param throwable       the Throwable object to add to the event
      * @param stackTraceDepth maximum number of stacktrace elements to log, -1 for all
      */
-
     private void addThrowableObject(Throwable throwable, int stackTraceDepth) {
         addPair(THROWABLE_CLASS, throwable.getClass().getCanonicalName());
         addPair(THROWABLE_MESSAGE, throwable.getMessage());
@@ -508,5 +509,4 @@ public class SplunkEvent implements Serializable {
     public void setUpdatePackage(String updatePackage) {
         addPair(UPDATE_PACKAGE, updatePackage);
     }
-
 }

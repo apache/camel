@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 public interface ResilienceConstants {
 
     String DEFAULT_RESILIENCE_CONFIGURATION_ID = "resilience4j-configuration";
-
 }

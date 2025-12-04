@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -38,24 +42,26 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test breakOnFirstError functionality and the issue reported in CAMEL-20563 regarding leaking resources, mainly
  * heartbeat-threads, while reconnecting.
  *
  */
-@Tags({ @Tag("breakOnFirstError") })
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64" },
-             disabledReason = "This test does not run reliably on some platforms")
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "CAMEL-20722: Too unreliable on most of the CI environments")
+@Tags({@Tag("breakOnFirstError")})
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS},
+        architectures = {"amd64", "aarch64"},
+        disabledReason = "This test does not run reliably on some platforms")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "CAMEL-20722: Too unreliable on most of the CI environments")
 class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
-    public static final String ROUTE_ID = "breakOnFirstError-20563" + Thread.currentThread().hashCode(); //CAMEL-20722 - added for similar reason as CAMEL-20686:
-    public static final String TOPIC = "breakOnFirstError-20563" + Thread.currentThread().hashCode(); //CAMEL-20722 - added for similar reason as CAMEL-20686:
+    public static final String ROUTE_ID = "breakOnFirstError-20563"
+            + Thread.currentThread().hashCode(); // CAMEL-20722 - added for similar reason as CAMEL-20686:
+    public static final String TOPIC = "breakOnFirstError-20563"
+            + Thread.currentThread().hashCode(); // CAMEL-20722 - added for similar reason as CAMEL-20686:
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorReleaseResourcesIT.class);
     private static final int CONSUMER_COUNT = 3;
@@ -98,8 +104,7 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
     void testCamel20563TestFix() throws Exception {
         to.reset();
         to.expectedMessageCount(13);
-        to.expectedBodiesReceivedInAnyOrder("1", "2", "3", "4", "5", "ERROR",
-                "6", "7", "ERROR", "8", "9", "10", "11");
+        to.expectedBodiesReceivedInAnyOrder("1", "2", "3", "4", "5", "ERROR", "6", "7", "ERROR", "8", "9", "10", "11");
 
         contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
 
@@ -109,7 +114,7 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
         // let test run for awhile
         Awaitility.await()
-                .timeout(30, TimeUnit.SECONDS)  // changed to 30 sec for CAMEL-20722
+                .timeout(30, TimeUnit.SECONDS) // changed to 30 sec for CAMEL-20722
                 .pollDelay(8, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(true));
 
@@ -118,14 +123,13 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
         int heartbeatThreadCount = countHeartbeatThreads();
         assertEquals(CONSUMER_COUNT, heartbeatThreadCount, "Heartbeat-thread count should match consumer count");
         LOG.info("Number of heartbeat-threads is: {}", heartbeatThreadCount);
-
     }
 
     protected int countHeartbeatThreads() throws ClassNotFoundException {
         Set<Thread> threads = Thread.getAllStackTraces().keySet();
         int count = 0;
 
-        for (Thread t : threads) { //CAMEL-20722: Look for more specific heartbeat thread, log the full thread name.
+        for (Thread t : threads) { // CAMEL-20722: Look for more specific heartbeat thread, log the full thread name.
             if (t.getName().contains("heartbeat") && t.getName().contains("breakOnFirstError-20563")) {
                 LOG.info(" Thread name: {}", t.getName());
                 count++;
@@ -148,17 +152,17 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
                         .end();
 
                 from("kafka:" + TOPIC
-                     + "?groupId=" + ROUTE_ID
-                     + "&autoOffsetReset=earliest"
-                     + "&autoCommitEnable=false"
-                     + "&allowManualCommit=true"
-                     + "&breakOnFirstError=true"
-                     + "&maxPollRecords=1"
-                     + "&consumersCount=" + CONSUMER_COUNT
-                     + "&pollTimeoutMs=1000"
-                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                                + "?groupId=" + ROUTE_ID
+                                + "&autoOffsetReset=earliest"
+                                + "&autoCommitEnable=false"
+                                + "&allowManualCommit=true"
+                                + "&breakOnFirstError=true"
+                                + "&maxPollRecords=1"
+                                + "&consumersCount=" + CONSUMER_COUNT
+                                + "&pollTimeoutMs=1000"
+                                + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
                         .autoStartup(false)
                         .process(exchange -> {
@@ -185,25 +189,23 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
     }
 
     private void publishMessagesToKafka() {
-        final List<String> producedRecords = List.of("1", "2", "3", "4", "5", "ERROR",
-                "6", "7", "ERROR", "8", "9", "10", "11");
+        final List<String> producedRecords =
+                List.of("1", "2", "3", "4", "5", "ERROR", "6", "7", "ERROR", "8", "9", "10", "11");
 
         producedRecords.forEach(v -> {
             ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, null, v);
             producer.send(data);
         });
-
     }
 
     private void doCommitOffset(Exchange exchange) {
         LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Committing", exchange, true));
-        KafkaManualCommit manual = exchange.getMessage()
-                .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+        KafkaManualCommit manual =
+                exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
         if (Objects.nonNull(manual)) {
             manual.commit();
         } else {
             LOG.error("KafkaManualCommit is MISSING");
         }
     }
-
 }

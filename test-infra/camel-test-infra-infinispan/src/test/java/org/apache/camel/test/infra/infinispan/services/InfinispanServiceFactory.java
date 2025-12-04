@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.infinispan.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
@@ -65,26 +66,23 @@ public final class InfinispanServiceFactory {
         public void afterAll(ExtensionContext extensionContext) {
             // NO-OP
         }
-
     }
 
     private static class SingletonServiceHolder {
         static final InfinispanService INSTANCE;
 
         static {
-            SimpleTestServiceBuilder<InfinispanService> serviceSimpleTestServiceBuilder
-                    = new SimpleTestServiceBuilder<>("infinispan");
+            SimpleTestServiceBuilder<InfinispanService> serviceSimpleTestServiceBuilder =
+                    new SimpleTestServiceBuilder<>("infinispan");
 
-            serviceSimpleTestServiceBuilder
-                    .addLocalMapping(() -> new SingletonInfinispanceService(new InfinispanLocalContainerService()));
+            serviceSimpleTestServiceBuilder.addLocalMapping(
+                    () -> new SingletonInfinispanceService(new InfinispanLocalContainerService()));
 
             INSTANCE = serviceSimpleTestServiceBuilder.build();
         }
     }
 
-    private InfinispanServiceFactory() {
-
-    }
+    private InfinispanServiceFactory() {}
 
     public static SimpleTestServiceBuilder<InfinispanService> builder() {
         return new SimpleTestServiceBuilder<>("infinispan");
@@ -102,9 +100,7 @@ public final class InfinispanServiceFactory {
     }
 
     public static class InfinispanLocalContainerService extends InfinispanLocalContainerInfraService
-            implements InfinispanService {
-    }
+            implements InfinispanService {}
 
-    public static class InfinispanRemoteService extends InfinispanRemoteInfraService implements InfinispanService {
-    }
+    public static class InfinispanRemoteService extends InfinispanRemoteInfraService implements InfinispanService {}
 }

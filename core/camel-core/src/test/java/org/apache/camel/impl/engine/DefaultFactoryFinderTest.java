@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -23,19 +27,13 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 public class DefaultFactoryFinderTest {
 
-    public static class TestImplA implements TestType {
-    }
+    public static class TestImplA implements TestType {}
 
-    public static class TestImplB implements TestType {
-    }
+    public static class TestImplB implements TestType {}
 
-    public interface TestType {
-    }
+    public interface TestType {}
 
     private static final String TEST_RESOURCE_PATH = "/org/apache/camel/impl/";
 
@@ -83,7 +81,8 @@ public class DefaultFactoryFinderTest {
         final TestImplA expected = new TestImplA();
         when(injector.newInstance(TestImplA.class, false)).thenReturn(expected);
 
-        Exception e = assertThrows(Exception.class,
+        Exception e = assertThrows(
+                Exception.class,
                 () -> factoryFinder.newInstance("TestImplA", TestImplB.class),
                 "Exception should have been thrown");
 
@@ -97,7 +96,8 @@ public class DefaultFactoryFinderTest {
 
     @Test
     public void shouldComplainNoClassKeyInPropertyFile() {
-        Exception e = assertThrows(Exception.class,
+        Exception e = assertThrows(
+                Exception.class,
                 () -> factoryFinder.findClass("TestImplNoProperty"),
                 "NoFactoryAvailableException should have been thrown");
 
@@ -119,8 +119,8 @@ public class DefaultFactoryFinderTest {
     }
 
     URL urlFor(final Class<?> clazz) {
-        final String resourceName
-                = clazz.getPackage().getName().replace('.', '/') + "/" + clazz.getSimpleName() + ".properties";
+        final String resourceName =
+                clazz.getPackage().getName().replace('.', '/') + "/" + clazz.getSimpleName() + ".properties";
         final ClassLoader classLoader = clazz.getClassLoader();
 
         return classLoader.getResource(resourceName);

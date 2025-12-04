@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class STS2ProducerTest extends CamelTestSupport {
 
@@ -70,7 +71,8 @@ public class STS2ProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        GetSessionTokenResponse resultGet = (GetSessionTokenResponse) exchange.getIn().getBody();
+        GetSessionTokenResponse resultGet =
+                (GetSessionTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
 
@@ -88,7 +90,8 @@ public class STS2ProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        GetFederationTokenResponse resultGet = (GetFederationTokenResponse) exchange.getIn().getBody();
+        GetFederationTokenResponse resultGet =
+                (GetFederationTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
 
@@ -97,11 +100,14 @@ public class STS2ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:assumeRole").to("aws2-sts://test?stsClient=#amazonStsClient&operation=assumeRole")
+                from("direct:assumeRole")
+                        .to("aws2-sts://test?stsClient=#amazonStsClient&operation=assumeRole")
                         .to("mock:result");
-                from("direct:getSessionToken").to("aws2-sts://test?stsClient=#amazonStsClient&operation=getSessionToken")
+                from("direct:getSessionToken")
+                        .to("aws2-sts://test?stsClient=#amazonStsClient&operation=getSessionToken")
                         .to("mock:result");
-                from("direct:getFederationToken").to("aws2-sts://test?stsClient=#amazonStsClient&operation=getFederationToken")
+                from("direct:getFederationToken")
+                        .to("aws2-sts://test?stsClient=#amazonStsClient&operation=getFederationToken")
                         .to("mock:result");
             }
         };

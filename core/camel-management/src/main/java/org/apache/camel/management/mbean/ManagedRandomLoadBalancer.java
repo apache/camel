@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -26,7 +27,8 @@ import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 @ManagedResource(description = "Managed Random LoadBalancer")
 public class ManagedRandomLoadBalancer extends ManagedProcessor implements ManagedRandomLoadBalancerMBean {
 
-    public ManagedRandomLoadBalancer(CamelContext context, RandomLoadBalancer processor, LoadBalanceDefinition definition) {
+    public ManagedRandomLoadBalancer(
+            CamelContext context, RandomLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
     }
 
@@ -57,5 +59,4 @@ public class ManagedRandomLoadBalancer extends ManagedProcessor implements Manag
         }
         return null;
     }
-
 }

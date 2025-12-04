@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openai.mock;
 
 import java.util.function.BiFunction;
@@ -124,7 +125,8 @@ public class MockExpectation {
 
     @Override
     public String toString() {
-        return String.format("MockExpectation{input='%s', response='%s', toolSteps=%d}",
+        return String.format(
+                "MockExpectation{input='%s', response='%s', toolSteps=%d}",
                 expectedInput, expectedResponse, toolSequence.getTotalSteps());
     }
 }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpSimpleUriParametersTest extends BaseNettyTest {
 
@@ -28,7 +29,8 @@ public class NettyHttpSimpleUriParametersTest extends BaseNettyTest {
     public void testHttpSimple() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?name=bar", "Hello World", String.class);
+        String out =
+                template.requestBody("netty-http:http://localhost:{{port}}/foo?name=bar", "Hello World", String.class);
         assertEquals("Bye bar", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -41,9 +43,9 @@ public class NettyHttpSimpleUriParametersTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
-                        .transform().simple("Bye ${header.name}");
+                        .transform()
+                        .simple("Bye ${header.name}");
             }
         };
     }
-
 }

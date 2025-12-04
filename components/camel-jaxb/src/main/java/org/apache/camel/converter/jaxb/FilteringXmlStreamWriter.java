@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
 
 import javax.xml.namespace.NamespaceContext;
@@ -69,8 +70,7 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
      * This method applies filtering before delegating call to {@link #writer}.
      */
     @Override
-    public void writeAttribute(String namespaceURI, String localName, String value)
-            throws XMLStreamException {
+    public void writeAttribute(String namespaceURI, String localName, String value) throws XMLStreamException {
         String filteredValue = nonXmlCharFilterer.filter(value);
         writer.writeAttribute(namespaceURI, localName, filteredValue);
     }
@@ -171,8 +171,7 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
     }
 
     @Override
-    public void writeEmptyElement(String prefix, String localName, String namespaceURI)
-            throws XMLStreamException {
+    public void writeEmptyElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
         writer.writeEmptyElement(prefix, localName, namespaceURI);
     }
 
@@ -240,8 +239,7 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
     }
 
     @Override
-    public void writeStartElement(String prefix, String localName, String namespaceURI)
-            throws XMLStreamException {
+    public void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
         writer.writeStartElement(prefix, localName, namespaceURI);
     }
 
@@ -254,5 +252,4 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
     public void writeStartElement(String localName) throws XMLStreamException {
         writer.writeStartElement(localName);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -24,9 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TimerNegativeNoRepeatCountDelayTest extends ContextTestSupport {
 
@@ -52,7 +53,8 @@ public class TimerNegativeNoRepeatCountDelayTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer://negativeDelay?delay=-1&repeatCount=10&includeMetadata=true").routeId("routeTest")
+                from("timer://negativeDelay?delay=-1&repeatCount=10&includeMetadata=true")
+                        .routeId("routeTest")
                         .to("mock:result");
             }
         };

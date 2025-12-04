@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client;
 
 import org.apache.camel.component.torchserve.client.model.ApiException;
@@ -32,5 +33,4 @@ public interface Metrics {
      * Get TorchServe application metrics in prometheus format.
      */
     String metrics(String name) throws ApiException;
-
 }

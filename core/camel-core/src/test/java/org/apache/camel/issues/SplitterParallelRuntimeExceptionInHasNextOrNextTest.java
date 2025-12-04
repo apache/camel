@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -25,9 +29,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends ContextTestSupport {
 
@@ -52,7 +53,9 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
     private void execute(String from) throws InterruptedException {
         for (int i = 0; i < 10; i++) {
 
-            Exception e = assertThrows(Exception.class, () -> template.sendBody(from, "some content"),
+            Exception e = assertThrows(
+                    Exception.class,
+                    () -> template.sendBody(from, "some content"),
                     "expected due to runtime exception in hasNext method");
 
             assertTrue(e.getMessage().startsWith("Exception occurred"));
@@ -66,11 +69,19 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:errorInHasNext").split().method(SplitterImpl.class, "errorInHasNext").streaming()
-                        .parallelProcessing(true).to("mock:split1");
+                from("direct:errorInHasNext")
+                        .split()
+                        .method(SplitterImpl.class, "errorInHasNext")
+                        .streaming()
+                        .parallelProcessing(true)
+                        .to("mock:split1");
 
-                from("direct:errorInNext").split().method(SplitterImpl.class, "errorInNext").streaming()
-                        .parallelProcessing(true).to("mock:split2");
+                from("direct:errorInNext")
+                        .split()
+                        .method(SplitterImpl.class, "errorInNext")
+                        .streaming()
+                        .parallelProcessing(true)
+                        .to("mock:split2");
             }
         };
     }
@@ -86,7 +97,6 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
 
             return new CustomIterator(exchange, request, false);
         }
-
     }
 
     static class CustomIterator implements Iterator<String>, Closeable {
@@ -98,7 +108,6 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
         CustomIterator(Exchange exchange, InputStream request, boolean errorInHasNext) {
             this.request = request;
             this.errorInHasNext = errorInHasNext;
-
         }
 
         @Override
@@ -137,5 +146,4 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
             request.close();
         }
     }
-
 }

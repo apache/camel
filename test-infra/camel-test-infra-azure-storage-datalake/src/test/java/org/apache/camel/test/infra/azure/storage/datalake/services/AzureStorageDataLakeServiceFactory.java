@@ -22,9 +22,7 @@ import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class AzureStorageDataLakeServiceFactory {
 
-    private AzureStorageDataLakeServiceFactory() {
-
-    }
+    private AzureStorageDataLakeServiceFactory() {}
 
     public static SimpleTestServiceBuilder<AzureService> builder() {
         return new SimpleTestServiceBuilder<>("azure");
@@ -36,6 +34,6 @@ public final class AzureStorageDataLakeServiceFactory {
                 .build();
     }
 
-    static class AzureStorageDataLakeRemoteService extends AzureStorageDataLakeRemoteInfraService implements AzureService {
-    }
+    static class AzureStorageDataLakeRemoteService extends AzureStorageDataLakeRemoteInfraService
+            implements AzureService {}
 }

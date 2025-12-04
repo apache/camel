@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.*;
 
 import java.util.function.Predicate;
 
@@ -23,8 +26,6 @@ import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.component.micrometer.MicrometerUtils;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.*;
 
 /**
  * Provides a strategy to derive a meter name and tags
@@ -85,33 +86,49 @@ public interface MicrometerRoutePolicyNamingStrategy {
 
     default Tags getTags(Route route) {
         return Tags.of(
-                CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
-                KIND, KIND_ROUTE,
-                ROUTE_ID_TAG, route.getId(),
-                EVENT_TYPE_TAG, "route");
+                CAMEL_CONTEXT_TAG,
+                route.getCamelContext().getName(),
+                KIND,
+                KIND_ROUTE,
+                ROUTE_ID_TAG,
+                route.getId(),
+                EVENT_TYPE_TAG,
+                "route");
     }
 
     default Tags getTags(CamelContext camelContext) {
         return Tags.of(
-                CAMEL_CONTEXT_TAG, camelContext.getName(),
-                KIND, KIND_ROUTE,
-                ROUTE_ID_TAG, "",
-                EVENT_TYPE_TAG, "context");
+                CAMEL_CONTEXT_TAG,
+                camelContext.getName(),
+                KIND,
+                KIND_ROUTE,
+                ROUTE_ID_TAG,
+                "",
+                EVENT_TYPE_TAG,
+                "context");
     }
 
     default Tags getExchangeStatusTags(Route route) {
         return Tags.of(
-                CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
-                KIND, KIND_ROUTE,
-                ROUTE_ID_TAG, route.getId(),
-                EVENT_TYPE_TAG, "route");
+                CAMEL_CONTEXT_TAG,
+                route.getCamelContext().getName(),
+                KIND,
+                KIND_ROUTE,
+                ROUTE_ID_TAG,
+                route.getId(),
+                EVENT_TYPE_TAG,
+                "route");
     }
 
     default Tags getExchangeStatusTags(CamelContext camelContext) {
         return Tags.of(
-                CAMEL_CONTEXT_TAG, camelContext.getName(),
-                KIND, KIND_ROUTE,
-                ROUTE_ID_TAG, "",
-                EVENT_TYPE_TAG, "context");
+                CAMEL_CONTEXT_TAG,
+                camelContext.getName(),
+                KIND,
+                KIND_ROUTE,
+                ROUTE_ID_TAG,
+                "",
+                EVENT_TYPE_TAG,
+                "context");
     }
 }

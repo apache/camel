@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import java.util.Arrays;
@@ -47,14 +48,21 @@ import org.slf4j.LoggerFactory;
 /**
  * Read and write files to Server Message Block (SMB) file shares.
  */
-@UriEndpoint(firstVersion = "4.3.0", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName/path",
-             headersClass = SmbConstants.class, category = { Category.FILE })
-@Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
-                              + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
-                              + "directoryMustExist,extendedAttributes,probeContentType,"
-                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,"
-                              + "synchronous")
-public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformation> implements EndpointServiceLocation {
+@UriEndpoint(
+        firstVersion = "4.3.0",
+        scheme = "smb",
+        title = "SMB",
+        syntax = "smb:hostname:port/shareName/path",
+        headersClass = SmbConstants.class,
+        category = {Category.FILE})
+@Metadata(
+        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+                + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                + "directoryMustExist,extendedAttributes,probeContentType,"
+                + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,"
+                + "synchronous")
+public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformation>
+        implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbEndpoint.class);
 
@@ -147,7 +155,9 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
 
         // if idempotent and no repository set then create a default one
         if (isIdempotentSet() && Boolean.TRUE.equals(isIdempotent()) && idempotentRepository == null) {
-            LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            LOG.info(
+                    "Using default memory based idempotent repository with cache max size: {}",
+                    DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
@@ -156,7 +166,9 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
         }
 
         SmbConsumer consumer = new SmbConsumer(
-                this, processor, createOperations(),
+                this,
+                processor,
+                createOperations(),
                 processStrategy != null ? processStrategy : createGenericFileStrategy());
         // set max messages per poll
         consumer.setMaxMessagesPerPoll(this.getMaxMessagesPerPoll());
@@ -190,8 +202,10 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
-                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(),
+            LOG.debug(
+                    "Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    getPollingConsumerQueueSize(),
+                    isPollingConsumerBlockWhenFull(),
                     getPollingConsumerBlockTimeout());
         }
         GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);

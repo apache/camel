@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cloud;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -25,8 +28,6 @@ import org.kiwiproject.consul.CatalogClient;
 import org.kiwiproject.consul.HealthClient;
 import org.kiwiproject.consul.model.catalog.CatalogService;
 import org.kiwiproject.consul.model.health.ServiceHealth;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConsulServiceRegistryIT extends ConsulTestSupport {
     @Override
@@ -44,8 +45,12 @@ public class ConsulServiceRegistryIT extends ConsulTestSupport {
         registry.setOverrideServiceHost(true);
         registry.start();
 
-        registry.register(DefaultServiceDefinition.builder().withId("my-id").withName("service-name").withHost("my-host")
-                .withPort(9091).build());
+        registry.register(DefaultServiceDefinition.builder()
+                .withId("my-id")
+                .withName("service-name")
+                .withHost("my-host")
+                .withPort(9091)
+                .build());
 
         final CatalogClient catalog = getConsul().catalogClient();
         final HealthClient health = getConsul().healthClient();
@@ -57,7 +62,8 @@ public class ConsulServiceRegistryIT extends ConsulTestSupport {
         assertEquals("service-host", services.get(0).getServiceAddress());
         assertEquals("my-id", services.get(0).getServiceId());
 
-        List<ServiceHealth> checks = health.getHealthyServiceInstances("service-name").getResponse();
+        List<ServiceHealth> checks =
+                health.getHealthyServiceInstances("service-name").getResponse();
         assertEquals(1, checks.size());
         assertEquals(9091, checks.get(0).getService().getPort());
         assertEquals("service-host", checks.get(0).getService().getAddress());

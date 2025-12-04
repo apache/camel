@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
 
 import java.util.Map;
@@ -44,12 +45,19 @@ import org.slf4j.LoggerFactory;
 /**
  * Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "rest-api", title = "REST API", syntax = "rest-api:path",
-             remote = false, consumerOnly = true, category = { Category.CORE, Category.REST }, lenientProperties = true)
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = "rest-api",
+        title = "REST API",
+        syntax = "rest-api:path",
+        remote = false,
+        consumerOnly = true,
+        category = {Category.CORE, Category.REST},
+        lenientProperties = true)
 public class RestApiEndpoint extends DefaultEndpoint {
 
-    public static final String[] DEFAULT_REST_API_CONSUMER_COMPONENTS
-            = new String[] { "platform-http", "servlet", "jetty", "undertow", "netty-http" };
+    public static final String[] DEFAULT_REST_API_CONSUMER_COMPONENTS =
+            new String[] {"platform-http", "servlet", "jetty", "undertow", "netty-http"};
 
     public static final String DEFAULT_API_COMPONENT_NAME = "openapi";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/restapi/";
@@ -59,8 +67,10 @@ public class RestApiEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String path;
+
     @UriParam
     private String consumerComponentName;
+
     @UriParam
     private String apiComponentName;
 
@@ -132,10 +142,12 @@ public class RestApiEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         RestApiProcessorFactory factory = null;
 
-        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), getConsumerComponentName());
+        RestConfiguration config =
+                CamelContextHelper.getRestConfiguration(getCamelContext(), getConsumerComponentName());
 
         // lookup in registry
-        Set<RestApiProcessorFactory> factories = getCamelContext().getRegistry().findByType(RestApiProcessorFactory.class);
+        Set<RestApiProcessorFactory> factories =
+                getCamelContext().getRegistry().findByType(RestApiProcessorFactory.class);
         if (factories != null && factories.size() == 1) {
             factory = factories.iterator().next();
         }
@@ -144,7 +156,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
         if (factory == null) {
             String name = apiComponentName != null ? apiComponentName : config.getApiComponent();
             if (name == null) {
-                name = DEFAULT_API_COMPONENT_NAME; //use openapi first
+                name = DEFAULT_API_COMPONENT_NAME; // use openapi first
             }
             FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
             factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
@@ -153,7 +165,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
         if (factory == null) {
             String name = apiComponentName != null ? apiComponentName : config.getApiComponent();
             if (name == null) {
-                name = "swagger"; //use swagger as fallback
+                name = "swagger"; // use swagger as fallback
             }
             FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
             factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
@@ -248,7 +260,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
         // lookup in registry
         if (factory == null) {
-            Set<RestApiConsumerFactory> factories = getCamelContext().getRegistry().findByType(RestApiConsumerFactory.class);
+            Set<RestApiConsumerFactory> factories =
+                    getCamelContext().getRegistry().findByType(RestApiConsumerFactory.class);
             if (factories != null && factories.size() == 1) {
                 factory = factories.iterator().next();
             }

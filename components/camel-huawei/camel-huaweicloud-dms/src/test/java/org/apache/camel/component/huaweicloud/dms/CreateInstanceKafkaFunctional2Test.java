@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CreateInstanceKafkaFunctional2Test extends CamelTestSupport {
     private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
@@ -39,8 +40,8 @@ public class CreateInstanceKafkaFunctional2Test extends CamelTestSupport {
     private static final String NAME = "replace_this_with_name";
     private static final String ENGINE_VERSION = "replace_this_with_engine_version";
     private static final String SPECIFICATION = "replace_this_with_specification";
-    private static final int STORAGE_SPACE = 0/*replace_this_with_storage_space*/;
-    private static final int PARTITION_NUM = 0/*replace_this_with_partition_num*/;
+    private static final int STORAGE_SPACE = 0 /*replace_this_with_storage_space*/;
+    private static final int PARTITION_NUM = 0 /*replace_this_with_partition_num*/;
     private static final String VPC_ID = "replace_this_with_vpc_id";
     private static final String SECURITY_GROUP_ID = "replace_this_with_security_group_id";
     private static final String SUBNET_ID = "replace_this_with_subnet_id";
@@ -74,11 +75,10 @@ public class CreateInstanceKafkaFunctional2Test extends CamelTestSupport {
                         .setProperty(DMSProperties.KAFKA_MANAGER_USER, constant(KAFKA_MANAGER_USER))
                         .setProperty(DMSProperties.KAFKA_MANAGER_PASSWORD, constant(KAFKA_MANAGER_PASSWORD))
                         .setProperty(DMSProperties.STORAGE_SPEC_CODE, constant(STORAGE_SPEC_CODE))
-                        .to("hwcloud-dms:createInstance?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + PROJECT_ID +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-dms:createInstance?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + PROJECT_ID + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Operation successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:operation_result");

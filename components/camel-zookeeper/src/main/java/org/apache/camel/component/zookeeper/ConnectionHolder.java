@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
 
 import java.util.concurrent.CountDownLatch;
@@ -94,8 +95,10 @@ public class ConnectionHolder implements Watcher {
                 LOG.debug("Shutting down connection to Zookeeper cluster {}", configuration.getConnectString());
             }
         } catch (InterruptedException e) {
-            LOG.warn("Error closing zookeeper connection {}. This exception will be ignored.",
-                    configuration.getConnectString(), e);
+            LOG.warn(
+                    "Error closing zookeeper connection {}. This exception will be ignored.",
+                    configuration.getConnectString(),
+                    e);
             Thread.currentThread().interrupt();
         }
     }

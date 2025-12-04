@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,7 +48,9 @@ public class AggregatorExceptionTest extends ContextTestSupport {
                 final String exceptionString = "This is an Error not an Exception";
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).completionSize(5)
+                from("direct:start")
+                        .aggregate(header("id"), new UseLatestAggregationStrategy())
+                        .completionSize(5)
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 throw new java.lang.NoSuchMethodError(exceptionString);

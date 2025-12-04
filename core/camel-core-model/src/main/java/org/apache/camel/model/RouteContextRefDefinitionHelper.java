@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -27,8 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public final class RouteContextRefDefinitionHelper {
 
-    private RouteContextRefDefinitionHelper() {
-    }
+    private RouteContextRefDefinitionHelper() {}
 
     /**
      * Lookup the routes from the {@link RouteContextRefDefinition}.
@@ -48,5 +48,4 @@ public final class RouteContextRefDefinitionHelper {
         }
         return answer;
     }
-
 }

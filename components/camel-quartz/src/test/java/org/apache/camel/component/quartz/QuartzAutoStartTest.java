@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class QuartzAutoStartTest extends BaseQuartzTest {
 
@@ -35,8 +36,7 @@ public class QuartzAutoStartTest extends BaseQuartzTest {
         QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
         assertFalse(quartz.getScheduler().isStarted(), "Should not have started scheduler");
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -55,7 +55,8 @@ public class QuartzAutoStartTest extends BaseQuartzTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?&autoStartScheduler=false").to("mock:one");
+                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?&autoStartScheduler=false")
+                        .to("mock:one");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,11 +41,15 @@ public class SimpleRouteExpressionAsPredicateTest extends ContextTestSupport {
             public void configure() {
                 from("direct:foo")
                         // evaluate as predicate because the result type is boolean
-                        .setBody().simple("${header.foo} == ${header.foo}", boolean.class).to("mock:foo");
+                        .setBody()
+                        .simple("${header.foo} == ${header.foo}", boolean.class)
+                        .to("mock:foo");
 
                 from("direct:bar")
                         // evaluate as expression as no boolean as result type
-                        .setBody().simple("${header.bar} == ${header.bar}").to("mock:bar");
+                        .setBody()
+                        .simple("${header.bar} == ${header.bar}")
+                        .to("mock:bar");
             }
         };
     }

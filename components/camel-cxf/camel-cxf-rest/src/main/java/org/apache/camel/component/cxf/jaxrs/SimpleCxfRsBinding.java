@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.io.InputStream;
@@ -108,23 +109,16 @@ import org.apache.cxf.message.MessageContentsList;
 public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
     /** The JAX-RS annotations to be injected as headers in the IN message */
-    private static final Set<Class<?>> HEADER_ANNOTATIONS = Collections.unmodifiableSet(
-            new HashSet<>(
-                    Arrays.asList(
-                            CookieParam.class,
-                            FormParam.class,
-                            PathParam.class,
-                            HeaderParam.class,
-                            MatrixParam.class,
-                            QueryParam.class)));
+    private static final Set<Class<?>> HEADER_ANNOTATIONS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            CookieParam.class,
+            FormParam.class,
+            PathParam.class,
+            HeaderParam.class,
+            MatrixParam.class,
+            QueryParam.class)));
 
     private static final Set<Class<?>> BINARY_ATTACHMENT_TYPES = Collections.unmodifiableSet(
-            new HashSet<>(
-                    Arrays.asList(
-                            Attachment.class,
-                            DataHandler.class,
-                            DataSource.class,
-                            InputStream.class)));
+            new HashSet<>(Arrays.asList(Attachment.class, DataHandler.class, DataSource.class, InputStream.class)));
 
     private static final Class<?>[] NO_PARAMETER_TYPES = null;
     private static final Object[] NO_PARAMETERS = null;
@@ -134,8 +128,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
     @Override
     public void populateExchangeFromCxfRsRequest(
-            Exchange cxfExchange, org.apache.camel.Exchange camelExchange,
-            Method method, Object[] paramArray) {
+            Exchange cxfExchange, org.apache.camel.Exchange camelExchange, Method method, Object[] paramArray) {
         super.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
         Message in = camelExchange.getIn();
         bindHeadersFromSubresourceLocators(cxfExchange, camelExchange);
@@ -186,7 +179,8 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
             }
         }
 
-        // Compute which headers to transfer by applying the HeaderFilterStrategy, and transfer them to the JAX-RS Response
+        // Compute which headers to transfer by applying the HeaderFilterStrategy, and transfer them to the JAX-RS
+        // Response
         Map<String, String> headersToPropagate = filterCamelHeadersForResponseHeaders(m.getHeaders(), camelExchange);
         for (Entry<String, String> entry : headersToPropagate.entrySet()) {
             response.header(entry.getKey(), entry.getValue());
@@ -201,8 +195,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      * {@link HeaderFilterStrategy}, so we handle this task in this binding.
      */
     protected Map<String, String> filterCamelHeadersForResponseHeaders(
-            Map<String, Object> headers,
-            org.apache.camel.Exchange camelExchange) {
+            Map<String, Object> headers, org.apache.camel.Exchange camelExchange) {
         Map<String, String> answer = new HashMap<>();
         for (Map.Entry<String, Object> entry : headers.entrySet()) {
             if (getHeaderFilterStrategy().applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
@@ -224,8 +217,8 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      */
     @SuppressWarnings("unchecked")
     protected void bindHeadersFromSubresourceLocators(Exchange cxfExchange, org.apache.camel.Exchange camelExchange) {
-        MultivaluedMap<String, String> pathParams
-                = (MultivaluedMap<String, String>) cxfExchange.getInMessage().get(URITemplate.TEMPLATE_PARAMETERS);
+        MultivaluedMap<String, String> pathParams =
+                (MultivaluedMap<String, String>) cxfExchange.getInMessage().get(URITemplate.TEMPLATE_PARAMETERS);
 
         // return immediately if we have no path parameters
         if (pathParams == null || pathParams.size() == 1 && pathParams.containsKey(URITemplate.FINAL_MATCH_GROUP)) {
@@ -289,7 +282,8 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
         }
     }
 
-    private void transferBinaryMultipartParameter(Object toMap, String parameterName, String multipartType, Message in) {
+    private void transferBinaryMultipartParameter(
+            Object toMap, String parameterName, String multipartType, Message in) {
         org.apache.camel.attachment.Attachment dh = null;
         if (toMap instanceof Attachment) {
             dh = createCamelAttachment((Attachment) toMap);
@@ -298,9 +292,8 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
         } else if (toMap instanceof DataHandler) {
             dh = new DefaultAttachment((DataHandler) toMap);
         } else if (toMap instanceof InputStream) {
-            dh = new DefaultAttachment(
-                    new InputStreamDataSource(
-                            (InputStream) toMap, multipartType == null ? "application/octet-stream" : multipartType));
+            dh = new DefaultAttachment(new InputStreamDataSource(
+                    (InputStream) toMap, multipartType == null ? "application/octet-stream" : multipartType));
         }
         if (dh != null) {
             in.getExchange().getMessage(AttachmentMessage.class).addAttachmentObject(parameterName, dh);
@@ -345,7 +338,8 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
                 rememberParameter(annotations, i, answer);
             }
 
-            // if we are not multipart and the number of detected JAX-RS parameters (query, headers, etc.) is less than the number of method parameters
+            // if we are not multipart and the number of detected JAX-RS parameters (query, headers, etc.) is less than
+            // the number of method parameters
             // there's one parameter that will serve as message body
             if (!answer.multipart && answer.numberParameters < method.getParameterTypes().length) {
                 for (int i = 0; i < answer.paramNames.length; i++) {
@@ -365,8 +359,9 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
                 // am I a header?
                 if (HEADER_ANNOTATIONS.contains(a.annotationType())) {
                     try {
-                        answer.paramNames[i] = (String) a.annotationType().getMethod("value", NO_PARAMETER_TYPES).invoke(a,
-                                NO_PARAMETERS);
+                        answer.paramNames[i] = (String) a.annotationType()
+                                .getMethod("value", NO_PARAMETER_TYPES)
+                                .invoke(a, NO_PARAMETERS);
                         answer.numberParameters++;
                     } catch (Exception e) {
                     }
@@ -384,7 +379,5 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
             answer.multipartNames[i] = multipart.value();
             answer.multipartTypes[i] = multipart.type();
         }
-
     }
-
 }

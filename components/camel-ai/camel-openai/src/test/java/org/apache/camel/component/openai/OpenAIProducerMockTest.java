@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openai;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,14 +28,11 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenAIProducerMockTest extends CamelTestSupport {
 
     @RegisterExtension
-    public OpenAIMock openAIMock = new OpenAIMock().builder()
+    public OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("hello")
             .replyWith("Hi from mock")
             .end()
@@ -47,12 +49,12 @@ public class OpenAIProducerMockTest extends CamelTestSupport {
                 // Basic chat route using the mock server
                 from("direct:chat")
                         .to("openai:chat-completion?model=gpt-5&apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl()
-                            + "/v1");
+                                + "/v1");
 
                 // Streaming chat route using the mock server
                 from("direct:chat-stream")
                         .to("openai:chat-completion?model=gpt-5&apiKey=dummy&streaming=true&baseUrl="
-                            + openAIMock.getBaseUrl() + "/v1");
+                                + openAIMock.getBaseUrl() + "/v1");
             }
         };
     }
@@ -69,8 +71,10 @@ public class OpenAIProducerMockTest extends CamelTestSupport {
     void jsonSchemaHeaderParsesJsonContent() {
         Exchange result = template.request("direct:chat", e -> {
             e.getIn().setBody("json please");
-            e.getIn().setHeader(OpenAIConstants.JSON_SCHEMA,
-                    "{\"type\":\"object\",\"properties\":{\"ok\":{\"type\":\"boolean\"}}}");
+            e.getIn()
+                    .setHeader(
+                            OpenAIConstants.JSON_SCHEMA,
+                            "{\"type\":\"object\",\"properties\":{\"ok\":{\"type\":\"boolean\"}}}");
         });
         String body = result.getMessage().getBody(String.class);
         assertNotNull(body);
@@ -85,5 +89,4 @@ public class OpenAIProducerMockTest extends CamelTestSupport {
         assertNotNull(body);
         assertTrue(body instanceof java.util.Iterator);
     }
-
 }

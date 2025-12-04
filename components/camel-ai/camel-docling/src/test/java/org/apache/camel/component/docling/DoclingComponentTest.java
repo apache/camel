@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DoclingComponentTest extends CamelTestSupport {
 
@@ -32,19 +33,24 @@ public class DoclingComponentTest extends CamelTestSupport {
 
         DoclingEndpoint doclingEndpoint = (DoclingEndpoint) endpoint;
         assertEquals("convert", doclingEndpoint.getOperationId());
-        assertEquals(DoclingOperations.CONVERT_TO_MARKDOWN, doclingEndpoint.getConfiguration().getOperation());
+        assertEquals(
+                DoclingOperations.CONVERT_TO_MARKDOWN,
+                doclingEndpoint.getConfiguration().getOperation());
         assertTrue(doclingEndpoint.getConfiguration().isEnableOCR()); // OCR is enabled by default
     }
 
     @Test
     public void testCreateEndpointWithParameters() throws Exception {
-        Endpoint endpoint = context.getEndpoint("docling:process?operation=CONVERT_TO_HTML&enableOCR=false&ocrLanguage=es");
+        Endpoint endpoint =
+                context.getEndpoint("docling:process?operation=CONVERT_TO_HTML&enableOCR=false&ocrLanguage=es");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof DoclingEndpoint);
 
         DoclingEndpoint doclingEndpoint = (DoclingEndpoint) endpoint;
         assertEquals("process", doclingEndpoint.getOperationId());
-        assertEquals(DoclingOperations.CONVERT_TO_HTML, doclingEndpoint.getConfiguration().getOperation());
+        assertEquals(
+                DoclingOperations.CONVERT_TO_HTML,
+                doclingEndpoint.getConfiguration().getOperation());
         assertFalse(doclingEndpoint.getConfiguration().isEnableOCR());
         assertEquals("es", doclingEndpoint.getConfiguration().getOcrLanguage());
     }
@@ -54,5 +60,4 @@ public class DoclingComponentTest extends CamelTestSupport {
         DoclingEndpoint endpoint = (DoclingEndpoint) context.getEndpoint("docling:convert");
         assertNotNull(endpoint.createProducer());
     }
-
 }

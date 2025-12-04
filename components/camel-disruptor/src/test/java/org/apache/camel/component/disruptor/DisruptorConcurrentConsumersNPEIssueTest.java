@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,9 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
     @Test
@@ -37,11 +38,11 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         RouteController routeController = context.getRouteController();
 
-        Exception ex = assertThrows(FailedToStartRouteException.class,
-                () -> routeController.startRoute("first"));
+        Exception ex = assertThrows(FailedToStartRouteException.class, () -> routeController.startRoute("first"));
 
-        assertEquals("Failed to start route: first because: Multiple consumers for the same endpoint is not "
-                     + "allowed: disruptor://foo?concurrentConsumers=5",
+        assertEquals(
+                "Failed to start route: first because: Multiple consumers for the same endpoint is not "
+                        + "allowed: disruptor://foo?concurrentConsumers=5",
                 ex.getMessage());
     }
 
@@ -59,11 +60,11 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
 
         RouteController routeController = context.getRouteController();
 
-        Exception ex = assertThrows(FailedToStartRouteException.class,
-                () -> routeController.startRoute("first"));
+        Exception ex = assertThrows(FailedToStartRouteException.class, () -> routeController.startRoute("first"));
 
-        assertEquals("Failed to start route: first because: Multiple consumers for the same endpoint is not allowed:"
-                     + " disruptor://foo?concurrentConsumers=5",
+        assertEquals(
+                "Failed to start route: first because: Multiple consumers for the same endpoint is not allowed:"
+                        + " disruptor://foo?concurrentConsumers=5",
                 ex.getMessage());
     }
 
@@ -72,7 +73,9 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor:foo?concurrentConsumers=5").routeId("first").noAutoStartup()
+                from("disruptor:foo?concurrentConsumers=5")
+                        .routeId("first")
+                        .noAutoStartup()
                         .to("mock:result");
 
                 from("disruptor:foo?concurrentConsumers=5").routeId("second").to("mock:result");

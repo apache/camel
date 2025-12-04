@@ -30,7 +30,11 @@ public interface ReplyManager {
     void setReplyToTopic(String replyToTopic);
 
     String registerReply(
-            ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String messageKey, long requestTimeout);
+            ReplyManager replyManager,
+            Exchange exchange,
+            AsyncCallback callback,
+            String messageKey,
+            long requestTimeout);
 
     void setScheduledExecutorService(ScheduledExecutorService executorService);
 

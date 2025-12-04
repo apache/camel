@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.neo4j.common;
 
 public final class Neo4jProperties {
@@ -23,7 +24,5 @@ public final class Neo4jProperties {
     public static final String NEO4J_DATABASE_PASSWORD = "neo4j.database.password";
     public static final String NEO4J_CONTAINER = "neo4j.container";
 
-    private Neo4jProperties() {
-
-    }
+    private Neo4jProperties() {}
 }

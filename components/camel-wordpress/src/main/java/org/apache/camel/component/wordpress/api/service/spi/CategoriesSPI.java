@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.spi;
 
 import java.util.List;
@@ -47,19 +48,26 @@ public interface CategoriesSPI {
     @Path("/v{apiVersion}/categories")
     @Produces(MediaType.APPLICATION_JSON)
     List<Category> list(
-            @PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context,
-            @QueryParam("page") Integer page, @QueryParam("per_page") Integer perPage,
-            @QueryParam("search") String search, @QueryParam("exclude") List<Integer> exclude,
-            @QueryParam("include") List<Integer> include, @QueryParam("order") Order order,
-            @QueryParam("orderby") CategoryOrderBy orderBy, @QueryParam("hide_empty") Boolean hideEmpty,
-            @QueryParam("parent") Integer parent, @QueryParam("post") Integer post,
+            @PathParam("apiVersion") String apiVersion,
+            @QueryParam("context") Context context,
+            @QueryParam("page") Integer page,
+            @QueryParam("per_page") Integer perPage,
+            @QueryParam("search") String search,
+            @QueryParam("exclude") List<Integer> exclude,
+            @QueryParam("include") List<Integer> include,
+            @QueryParam("order") Order order,
+            @QueryParam("orderby") CategoryOrderBy orderBy,
+            @QueryParam("hide_empty") Boolean hideEmpty,
+            @QueryParam("parent") Integer parent,
+            @QueryParam("post") Integer post,
             @QueryParam("slug") String slug);
 
     @GET
     @Path("/v{apiVersion}/categories/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     Category retrieve(
-            @PathParam("apiVersion") String apiVersion, @PathParam("id") int categoryId,
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("id") int categoryId,
             @QueryParam("context") Context context);
 
     @POST
@@ -77,6 +85,7 @@ public interface CategoriesSPI {
     @DELETE
     @Path("/v{apiVersion}/categories/{id}")
     Category delete(
-            @PathParam("apiVersion") String apiVersion, @PathParam("id") int categoryId, @QueryParam("force") boolean force);
-
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("id") int categoryId,
+            @QueryParam("force") boolean force);
 }

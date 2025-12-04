@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
@@ -67,7 +68,8 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     @Override
     public void init(
-            CamelContext camelContext, NettyServerBootstrapConfiguration configuration,
+            CamelContext camelContext,
+            NettyServerBootstrapConfiguration configuration,
             ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
@@ -76,7 +78,8 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     @Override
     public void init(
-            ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration,
+            ThreadFactory threadFactory,
+            NettyServerBootstrapConfiguration configuration,
             ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
@@ -144,7 +147,8 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
 
         // only set this if user has specified
         if (configuration.getReceiveBufferSizePredictor() > 0) {
-            bootstrap.option(ChannelOption.RCVBUF_ALLOCATOR,
+            bootstrap.option(
+                    ChannelOption.RCVBUF_ALLOCATOR,
                     new FixedRecvByteBufAllocator(configuration.getReceiveBufferSizePredictor()));
         }
 
@@ -157,8 +161,8 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             for (Map.Entry<String, Object> entry : options.entrySet()) {
                 String value = entry.getValue().toString();
                 ChannelOption<Object> option = ChannelOption.valueOf(entry.getKey());
-                //For all netty options that aren't of type String
-                //TODO: find a way to add primitive Netty options without having to add them to the Camel registry.
+                // For all netty options that aren't of type String
+                // TODO: find a way to add primitive Netty options without having to add them to the Camel registry.
                 if (EndpointHelper.isReferenceParameter(value)) {
                     String name = value.substring(1);
                     Object o = CamelContextHelper.mandatoryLookup(camelContext, name);
@@ -177,15 +181,21 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         SubnetUtils multicastSubnet = new SubnetUtils(MULTICAST_SUBNET);
 
         if (multicastSubnet.getInfo().isInRange(configuration.getHost())) {
-            ChannelFuture channelFuture = bootstrap.bind(configuration.getPort()).sync();
+            ChannelFuture channelFuture =
+                    bootstrap.bind(configuration.getPort()).sync();
             channel = channelFuture.channel();
             DatagramChannel datagramChannel = (DatagramChannel) channel;
-            String networkInterface
-                    = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
+            String networkInterface = configuration.getNetworkInterface() == null
+                    ? LOOPBACK_INTERFACE
+                    : configuration.getNetworkInterface();
             multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
-            ObjectHelper.notNull(multicastNetworkInterface, "No network interface found for '" + networkInterface + "'.");
-            LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", configuration.getHost(),
-                    configuration.getPort(), multicastNetworkInterface.getName());
+            ObjectHelper.notNull(
+                    multicastNetworkInterface, "No network interface found for '" + networkInterface + "'.");
+            LOG.info(
+                    "ConnectionlessBootstrap joining {}:{} using network interface: {}",
+                    configuration.getHost(),
+                    configuration.getPort(),
+                    multicastNetworkInterface.getName());
             datagramChannel.joinGroup(hostAddress, multicastNetworkInterface).syncUninterruptibly();
             allChannels.add(datagramChannel);
         } else {
@@ -209,5 +219,4 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             workerGroup = null;
         }
     }
-
 }

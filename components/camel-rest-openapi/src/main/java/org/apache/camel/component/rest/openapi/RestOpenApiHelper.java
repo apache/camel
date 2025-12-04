@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.StringHelper.notEmpty;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,14 +39,11 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.StringHelper.notEmpty;
-
 public final class RestOpenApiHelper {
 
     private static final Pattern HOST_PATTERN = Pattern.compile("https?://[^:]+(:\\d+)?", Pattern.CASE_INSENSITIVE);
-    private static final List<String> YAML_CONTENT_TYPES = Arrays.asList("application/yaml", "application/yml",
-            "text/yaml", "text/yml", "text/x-yaml");
+    private static final List<String> YAML_CONTENT_TYPES =
+            Arrays.asList("application/yaml", "application/yml", "text/yaml", "text/yml", "text/x-yaml");
 
     private RestOpenApiHelper() {
         // utility class
@@ -86,9 +87,7 @@ public final class RestOpenApiHelper {
         if (ObjectHelper.isEmpty(contentType)) {
             return false;
         }
-        return Stream.of(contentType.split(";"))
-                .map(String::trim)
-                .anyMatch(YAML_CONTENT_TYPES::contains);
+        return Stream.of(contentType.split(";")).map(String::trim).anyMatch(YAML_CONTENT_TYPES::contains);
     }
 
     private static boolean isYamlResourceLocation(String location) {
@@ -115,8 +114,7 @@ public final class RestOpenApiHelper {
         }
 
         String cn = endpoint != null ? endpoint.determineComponentName() : null;
-        RestConfiguration restConfiguration
-                = CamelContextHelper.getRestConfiguration(camelContext, null, cn);
+        RestConfiguration restConfiguration = CamelContextHelper.getRestConfiguration(camelContext, null, cn);
         String restConfigurationBasePath = restConfiguration.getContextPath();
 
         if (isNotEmpty(restConfigurationBasePath)) {
@@ -155,7 +153,7 @@ public final class RestOpenApiHelper {
                             basePath = "";
                         }
                     } catch (URISyntaxException e) {
-                        //not a valid whole url, just the basePath
+                        // not a valid whole url, just the basePath
                         basePath = server.getUrl();
                     }
                 }
@@ -170,12 +168,13 @@ public final class RestOpenApiHelper {
         while (m.find()) {
 
             String variable = m.group(1);
-            if (server != null && server.getVariables() != null && server.getVariables().get(variable) != null) {
+            if (server != null
+                    && server.getVariables() != null
+                    && server.getVariables().get(variable) != null) {
                 String varValue = server.getVariables().get(variable).getDefault();
                 url = url.replace("{" + variable + "}", varValue);
             }
         }
         return url;
     }
-
 }

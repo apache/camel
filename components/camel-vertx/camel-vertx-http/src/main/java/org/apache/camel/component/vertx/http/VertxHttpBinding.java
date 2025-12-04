@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import io.vertx.core.AsyncResult;
@@ -47,7 +48,8 @@ public interface VertxHttpBinding {
      * Populates response headers on the exchange from the {@link HttpResponse} using the supplied
      * {@link HeaderFilterStrategy}
      */
-    void populateResponseHeaders(Exchange exchange, HttpResponse<Buffer> response, HeaderFilterStrategy headerFilterStrategy);
+    void populateResponseHeaders(
+            Exchange exchange, HttpResponse<Buffer> response, HeaderFilterStrategy headerFilterStrategy);
 
     /**
      * Processes the received {@link Buffer} response body in the {@link HttpResponse}
@@ -61,5 +63,4 @@ public interface VertxHttpBinding {
      */
     Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result)
             throws Exception;
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.util.Map;
@@ -40,32 +41,49 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileEndpoint.class);
 
-    @UriParam(label = "advanced", description = "Specifies the maximum reconnect attempts Camel performs when it "
-                                                + "tries to connect to the remote FTP server. Use 0 to disable this behavior.")
+    @UriParam(
+            label = "advanced",
+            description = "Specifies the maximum reconnect attempts Camel performs when it "
+                    + "tries to connect to the remote FTP server. Use 0 to disable this behavior.")
     private int maximumReconnectAttempts = 3;
-    @UriParam(label = "advanced", defaultValue = "1000",
-              description = "Delay in millis Camel will wait before performing a reconnect attempt.",
-              javaType = "java.time.Duration")
+
+    @UriParam(
+            label = "advanced",
+            defaultValue = "1000",
+            description = "Delay in millis Camel will wait before performing a reconnect attempt.",
+            javaType = "java.time.Duration")
     private long reconnectDelay = 1000;
-    @UriParam(label = "common", description = "Whether or not to disconnect from remote FTP server right after use. "
-                                              + "Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which "
-                                              + "you want to stop, then you need to stop the consumer/route instead.")
+
+    @UriParam(
+            label = "common",
+            description = "Whether or not to disconnect from remote FTP server right after use. "
+                    + "Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which "
+                    + "you want to stop, then you need to stop the consumer/route instead.")
     private boolean disconnect;
-    @UriParam(label = "producer,advanced", description = "Whether or not to disconnect from remote FTP server right "
-                                                         + "after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection "
-                                                         + "to the FTP server.")
+
+    @UriParam(
+            label = "producer,advanced",
+            description = "Whether or not to disconnect from remote FTP server right "
+                    + "after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection "
+                    + "to the FTP server.")
     private boolean disconnectOnBatchComplete;
-    @UriParam(label = "common,advanced", description = "If set this option to be true, camel-ftp will use the list "
-                                                       + "file directly to check if the file exists. Since some FTP server may not support to list the file "
-                                                       + "directly, if the option is false, camel-ftp will use the old way to list the directory and check if the "
-                                                       + "file exists. This option also influences readLock=changed to control whether it performs a fast check "
-                                                       + "to update file information or not. This can be used to speed up the process if the FTP server has a lot "
-                                                       + "of files.")
+
+    @UriParam(
+            label = "common,advanced",
+            description = "If set this option to be true, camel-ftp will use the list "
+                    + "file directly to check if the file exists. Since some FTP server may not support to list the file "
+                    + "directly, if the option is false, camel-ftp will use the old way to list the directory and check if the "
+                    + "file exists. This option also influences readLock=changed to control whether it performs a fast check "
+                    + "to update file information or not. This can be used to speed up the process if the FTP server has a lot "
+                    + "of files.")
     private boolean fastExistsCheck;
-    @UriParam(label = "consumer,advanced", description = "Whether the FTP consumer should download the file. If this "
-                                                         + "option is set to false, then the message body will be null, but the consumer will still trigger a Camel "
-                                                         + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
-                                                         + "not be downloaded.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description = "Whether the FTP consumer should download the file. If this "
+                    + "option is set to false, then the message body will be null, but the consumer will still trigger a Camel "
+                    + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
+                    + "not be downloaded.")
     private boolean download = true;
 
     protected RemoteFileEndpoint() {
@@ -107,7 +125,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
 
     @Override
     public String getServiceUrl() {
-        return getConfiguration().getProtocol() + ":" + getConfiguration().getHost() + ":" + getConfiguration().getPort();
+        return getConfiguration().getProtocol() + ":" + getConfiguration().getHost() + ":"
+                + getConfiguration().getPort();
     }
 
     @Override
@@ -138,7 +157,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
 
         // you cannot use temp file and file exists append
         if (getFileExist() == GenericFileExist.Append && (getTempPrefix() != null || getTempFileName() != null)) {
-            throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix/tempFileName options");
+            throw new IllegalArgumentException(
+                    "You cannot set both fileExist=Append and tempPrefix/tempFileName options");
         }
         // ensure fileExist and moveExisting is configured correctly if in use
         if (getFileExist() == GenericFileExist.Move && getMoveExisting() == null) {
@@ -167,7 +187,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
 
         // if idempotent and no repository set then create a default one
         if (isIdempotentSet() && Boolean.TRUE.equals(isIdempotent()) && idempotentRepository == null) {
-            LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            LOG.info(
+                    "Using default memory based idempotent repository with cache max size: {}",
+                    DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
@@ -192,8 +214,10 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
-                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(),
+            LOG.debug(
+                    "Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    getPollingConsumerQueueSize(),
+                    isPollingConsumerBlockWhenFull(),
                     getPollingConsumerBlockTimeout());
         }
         GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
@@ -342,5 +366,4 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
     public void setDownload(boolean download) {
         this.download = download;
     }
-
 }

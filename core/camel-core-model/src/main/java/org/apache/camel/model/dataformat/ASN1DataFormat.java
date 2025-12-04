@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,6 +40,7 @@ public class ASN1DataFormat extends DataFormatDefinition {
 
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String usingIterator;

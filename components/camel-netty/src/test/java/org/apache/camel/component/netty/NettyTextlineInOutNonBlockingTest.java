@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NettyTextlineInOutNonBlockingTest extends BaseNettyTest {
 
@@ -75,7 +76,8 @@ public class NettyTextlineInOutNonBlockingTest extends BaseNettyTest {
                         // body should be a String when using textline codec
                         .validate(body().isInstanceOf(String.class))
                         // async delayed is non blocking
-                        .delay(100).asyncDelayed()
+                        .delay(100)
+                        .asyncDelayed()
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 afterThreadName2 = Thread.currentThread().getName();

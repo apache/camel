@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
 
 import java.io.IOException;
@@ -34,5 +35,4 @@ final class PathGenerator extends RestDslSourceCodeGenerator<Path> {
 
         javaFile.writeTo(destination);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twilio;
 
 import java.util.Map;
@@ -37,8 +38,7 @@ public class TwilioProducer extends AbstractApiProducer<TwilioApiName, TwilioCon
     }
 
     @Override
-    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
-            throws RuntimeCamelException {
+    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         Object executor = super.doInvokeMethod(method, properties);
         return endpoint.execute(executor, method, properties);
     }

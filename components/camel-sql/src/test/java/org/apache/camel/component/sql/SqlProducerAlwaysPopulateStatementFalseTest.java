@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -31,34 +36,31 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
     @BindToRegistry("myStrategy")
     private SqlPrepareStatementStrategy strategy;
+
     private volatile boolean invoked;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
 
         strategy = new DefaultSqlPrepareStatementStrategy() {
             @Override
-            public void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
+            public void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams)
+                    throws SQLException {
                 invoked = true;
                 super.populateStatement(ps, iterator, expectedParams);
             }
         };
-
     }
 
     @Override
@@ -78,7 +80,8 @@ public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSuppor
 
         mock.assertIsSatisfied();
 
-        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(2, received.size());
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Camel", row.get("PROJECT"));
@@ -96,7 +99,8 @@ public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSuppor
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                        .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=false&prepareStatementStrategy=#myStrategy&initialDelay=0&delay=50")
+                        .to(
+                                "sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=false&prepareStatementStrategy=#myStrategy&initialDelay=0&delay=50")
                         .to("mock:result");
             }
         };

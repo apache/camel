@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -41,10 +46,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @SuppressWarnings("BusyWait")
 public class BulkApiV2QueryJobManualIT extends AbstractSalesforceTestBase {
 
@@ -69,21 +70,19 @@ public class BulkApiV2QueryJobManualIT extends AbstractSalesforceTestBase {
         job = template().requestBody("salesforce:bulk2CreateQueryJob", job, QueryJob.class);
         assertNotNull(job.getId(), "JobId");
 
-        job = template().requestBodyAndHeader("salesforce:bulk2GetQueryJob", "", "jobId",
-                job.getId(), QueryJob.class);
+        job = template().requestBodyAndHeader("salesforce:bulk2GetQueryJob", "", "jobId", job.getId(), QueryJob.class);
 
         // wait for job to finish
         while (job.getState() != JobStateEnum.JOB_COMPLETE) {
             Thread.sleep(2000);
-            job = template().requestBodyAndHeader("salesforce:bulk2GetQueryJob", "", "jobId",
-                    job.getId(), QueryJob.class);
+            job = template()
+                    .requestBodyAndHeader("salesforce:bulk2GetQueryJob", "", "jobId", job.getId(), QueryJob.class);
         }
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("jobId", job.getId());
         exchange.getIn().setHeader("maxRecords", 1);
-        template().send("salesforce:bulk2GetQueryJobResults?maxRecords=1",
-                exchange);
+        template().send("salesforce:bulk2GetQueryJobResults?maxRecords=1", exchange);
         InputStream is = exchange.getIn().getBody(InputStream.class);
         assertNotNull(is, "Query Job results");
         List<String> results = IOUtils.readLines(is, StandardCharsets.UTF_8);
@@ -95,8 +94,7 @@ public class BulkApiV2QueryJobManualIT extends AbstractSalesforceTestBase {
         exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("jobId", job.getId());
         exchange.getIn().setHeader("locator", locator);
-        template().send("salesforce:bulk2GetQueryJobResults",
-                exchange);
+        template().send("salesforce:bulk2GetQueryJobResults", exchange);
         is = exchange.getIn().getBody(InputStream.class);
         assertNotNull(is, "Query Job results");
         results = IOUtils.readLines(is, StandardCharsets.UTF_8);
@@ -113,18 +111,18 @@ public class BulkApiV2QueryJobManualIT extends AbstractSalesforceTestBase {
         job = template().requestBody("salesforce:bulk2CreateQueryJob", job, QueryJob.class);
         assertNotNull(job.getId(), "JobId");
 
-        job = template().requestBodyAndHeader("salesforce:bulk2GetQueryJob", "", "jobId",
-                job.getId(), QueryJob.class);
+        job = template().requestBodyAndHeader("salesforce:bulk2GetQueryJob", "", "jobId", job.getId(), QueryJob.class);
 
         // wait for job to finish
         while (job.getState() != JobStateEnum.JOB_COMPLETE) {
             Thread.sleep(2000);
-            job = template().requestBodyAndHeader("salesforce:bulk2GetQueryJob", "", "jobId",
-                    job.getId(), QueryJob.class);
+            job = template()
+                    .requestBodyAndHeader("salesforce:bulk2GetQueryJob", "", "jobId", job.getId(), QueryJob.class);
         }
 
-        InputStream is = template().requestBodyAndHeader("salesforce:bulk2GetQueryJobResults",
-                "", "jobId", job.getId(), InputStream.class);
+        InputStream is = template()
+                .requestBodyAndHeader(
+                        "salesforce:bulk2GetQueryJobResults", "", "jobId", job.getId(), InputStream.class);
         assertNotNull(is, "Query Job results");
         List<String> results = IOUtils.readLines(is, StandardCharsets.UTF_8);
         assertTrue(results.size() > 0, "Query Job results");
@@ -142,7 +140,8 @@ public class BulkApiV2QueryJobManualIT extends AbstractSalesforceTestBase {
         template().sendBodyAndHeader("salesforce:bulk2AbortQueryJob", "", "jobId", job.getId());
 
         job = template().requestBody("salesforce:bulk2GetQueryJob", job, QueryJob.class);
-        assertTrue(job.getState() == JobStateEnum.ABORTED || job.getState() == JobStateEnum.FAILED,
+        assertTrue(
+                job.getState() == JobStateEnum.ABORTED || job.getState() == JobStateEnum.FAILED,
                 "Expected job to be aborted or failed.");
     }
 
@@ -169,8 +168,8 @@ public class BulkApiV2QueryJobManualIT extends AbstractSalesforceTestBase {
         template().sendBodyAndHeader("salesforce:bulk2DeleteQueryJob", "", "jobId", job.getId());
 
         final QueryJob finalJob = job;
-        CamelExecutionException ex = Assertions.assertThrows(CamelExecutionException.class,
-                () -> template().requestBody("salesforce:bulk2GetQueryJob", finalJob, QueryJob.class));
+        CamelExecutionException ex = Assertions.assertThrows(CamelExecutionException.class, () -> template()
+                .requestBody("salesforce:bulk2GetQueryJob", finalJob, QueryJob.class));
         assertEquals(SalesforceException.class, ex.getCause().getClass());
         SalesforceException sfEx = (SalesforceException) ex.getCause();
         assertEquals(404, sfEx.getStatusCode());
@@ -178,8 +177,7 @@ public class BulkApiV2QueryJobManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void testGetAll() {
-        QueryJobs jobs = template().requestBody("salesforce:bulk2GetAllQueryJobs", "",
-                QueryJobs.class);
+        QueryJobs jobs = template().requestBody("salesforce:bulk2GetAllQueryJobs", "", QueryJobs.class);
         assertNotNull(jobs);
     }
 
@@ -191,18 +189,20 @@ public class BulkApiV2QueryJobManualIT extends AbstractSalesforceTestBase {
             c.setFirstName("TestFirst");
             contacts.add(c);
         });
-        final List<SaveSObjectResult> results = (List<SaveSObjectResult>) template.requestBody(
-                "salesforce:compositeCreateSObjectCollections", contacts);
+        final List<SaveSObjectResult> results = (List<SaveSObjectResult>)
+                template.requestBody("salesforce:compositeCreateSObjectCollections", contacts);
         results.forEach(r -> assertTrue(r.getSuccess()));
     }
 
     private void deleteContacts() {
-        final List<Contact> records
-                = template.requestBody("salesforce:query?sObjectClass=" + QueryRecordsContact.class.getName(),
-                        "SELECT Id FROM Contact WHERE LastName = '" + LAST_NAME + "'", QueryRecordsContact.class).getRecords();
-        final List<DeleteSObjectResult> results
-                = (List<DeleteSObjectResult>) template.requestBody("salesforce:compositeDeleteSObjectCollections",
-                        records.stream().map(contact -> contact.getId()).collect(Collectors.toList()));
+        final List<Contact> records = template.requestBody(
+                        "salesforce:query?sObjectClass=" + QueryRecordsContact.class.getName(),
+                        "SELECT Id FROM Contact WHERE LastName = '" + LAST_NAME + "'",
+                        QueryRecordsContact.class)
+                .getRecords();
+        final List<DeleteSObjectResult> results = (List<DeleteSObjectResult>) template.requestBody(
+                "salesforce:compositeDeleteSObjectCollections",
+                records.stream().map(contact -> contact.getId()).collect(Collectors.toList()));
         results.forEach(r -> assertTrue(r.getSuccess()));
     }
 }

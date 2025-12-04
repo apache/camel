@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanPropagateHeaderTest extends ContextTestSupport {
 
@@ -51,8 +52,12 @@ public class BeanPropagateHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("foo", constant("bar")).convertBodyTo(Integer.class).to("bean:order")
-                        .to(ExchangePattern.InOnly, "seda:foo").transform(constant("OK"));
+                from("direct:start")
+                        .setHeader("foo", constant("bar"))
+                        .convertBodyTo(Integer.class)
+                        .to("bean:order")
+                        .to(ExchangePattern.InOnly, "seda:foo")
+                        .transform(constant("OK"));
 
                 from("seda:foo").to("mock:result");
             }
@@ -65,5 +70,4 @@ public class BeanPropagateHeaderTest extends ContextTestSupport {
             return "Order OK for id: " + id;
         }
     }
-
 }

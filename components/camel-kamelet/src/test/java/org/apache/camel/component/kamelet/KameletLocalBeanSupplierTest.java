@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,13 +58,9 @@ public class KameletLocalBeanSupplierTest extends CamelTestSupport {
                         .setBody(simple("{{foo}} ${body}"))
                         .to("bean:{{myBar}}");
 
-                from("direct:hi")
-                        .kamelet("whereTo?foo=Hi")
-                        .to("mock:result");
+                from("direct:hi").kamelet("whereTo?foo=Hi").to("mock:result");
 
-                from("direct:hello")
-                        .kamelet("whereTo?foo=Hello")
-                        .to("mock:result");
+                from("direct:hello").kamelet("whereTo?foo=Hello").to("mock:result");
             }
         };
     }
@@ -79,7 +76,5 @@ public class KameletLocalBeanSupplierTest extends CamelTestSupport {
         public String whereTo(String name) {
             return name + " go to number " + number;
         }
-
     }
-
 }

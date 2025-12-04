@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.nio.charset.Charset;
@@ -39,8 +40,7 @@ import org.apache.camel.component.netty.codec.DelimiterBasedFrameDecoder;
  */
 public final class ChannelHandlerFactories {
 
-    private ChannelHandlerFactories() {
-    }
+    private ChannelHandlerFactories() {}
 
     public static ChannelHandlerFactory newStringEncoder(Charset charset, String protocol) {
         if ("udp".equalsIgnoreCase(protocol)) {
@@ -91,8 +91,10 @@ public final class ChannelHandlerFactories {
     }
 
     public static ChannelHandlerFactory newLengthFieldBasedFrameDecoder(
-            final int maxFrameLength, final int lengthFieldOffset,
-            final int lengthFieldLength, final int lengthAdjustment,
+            final int maxFrameLength,
+            final int lengthFieldOffset,
+            final int lengthFieldLength,
+            final int lengthAdjustment,
             final int initialBytesToStrip) {
         return new DefaultChannelHandlerFactory() {
             @Override
@@ -123,5 +125,4 @@ public final class ChannelHandlerFactories {
             return new ShareableChannelHandlerFactory(new ByteArrayEncoder());
         }
     }
-
 }

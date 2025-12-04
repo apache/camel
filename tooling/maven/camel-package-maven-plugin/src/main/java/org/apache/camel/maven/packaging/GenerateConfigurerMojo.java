@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -33,9 +34,12 @@ import org.codehaus.plexus.build.BuildContext;
 /**
  * Generate configurer classes from @Configurer annotated classes for main sources.
  */
-@Mojo(name = "generate-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
-      requiresDependencyCollection = ResolutionScope.COMPILE,
-      requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "generate-configurer",
+        threadSafe = true,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        requiresDependencyCollection = ResolutionScope.COMPILE,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 // must include runtime dependencies to generate configurer source
 public class GenerateConfigurerMojo extends AbstractGenerateConfigurerMojo {
 
@@ -78,5 +82,4 @@ public class GenerateConfigurerMojo extends AbstractGenerateConfigurerMojo {
 
         doExecute(sourcesOutputDir, resourcesOutputDir, classes, false);
     }
-
 }

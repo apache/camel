@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.util.ArrayList;
@@ -117,9 +118,8 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
                 return formatFactory;
             }
         }
-        throw new IllegalArgumentException(
-                "Can not findForFormattingOptions a suitable formatter for the type: "
-                                           + formattingOptions.getClazz().getCanonicalName());
+        throw new IllegalArgumentException("Can not findForFormattingOptions a suitable formatter for the type: "
+                + formattingOptions.getClazz().getCanonicalName());
     }
 
     private List<FormatFactoryInterface> getByClass(Class<?> clazz) {

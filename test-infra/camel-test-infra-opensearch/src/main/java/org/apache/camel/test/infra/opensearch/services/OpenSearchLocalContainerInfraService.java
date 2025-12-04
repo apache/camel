@@ -30,17 +30,17 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.utility.DockerImageName;
 
-public class OpenSearchLocalContainerInfraService implements OpenSearchInfraService, ContainerService<OpensearchContainer> {
+public class OpenSearchLocalContainerInfraService
+        implements OpenSearchInfraService, ContainerService<OpensearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(OpenSearchLocalContainerInfraService.class);
     private static final int OPEN_SEARCH_PORT = 9200;
     private static final String USER_NAME = "admin";
-    // NOTE: default value used for testing purposes only.
-    private static final String PASSWORD = "admin"; // NOSONAR
+    private static final String PASSWORD = "admin";
     private final OpensearchContainer container;
 
     public OpenSearchLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(OpenSearchLocalContainerInfraService.class,
-                OpenSearchProperties.OPEN_SEARCH_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                OpenSearchLocalContainerInfraService.class, OpenSearchProperties.OPEN_SEARCH_CONTAINER));
     }
 
     public OpenSearchLocalContainerInfraService(String imageName) {
@@ -54,15 +54,13 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
     protected OpensearchContainer initContainer(String imageName) {
         class TestInfraOpensearchContainer extends OpensearchContainer {
             public TestInfraOpensearchContainer(boolean fixedPort) {
-                super(DockerImageName.parse(imageName)
-                        .asCompatibleSubstituteFor("opensearchproject/opensearch"));
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("opensearchproject/opensearch"));
 
                 // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
                 // on the build pipeline
-                setWaitStrategy(
-                        new LogMessageWaitStrategy()
-                                .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
-                                .withStartupTimeout(Duration.ofSeconds(90)));
+                setWaitStrategy(new LogMessageWaitStrategy()
+                        .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
+                        .withStartupTimeout(Duration.ofSeconds(90)));
 
                 withLogConsumer(new Slf4jLogConsumer(LOG));
 
@@ -99,8 +97,8 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
     @Override
     public void initialize() {
         LOG.info("Trying to start the OpenSearch container");
-        ContainerEnvironmentUtil.configureContainerStartup(container, OpenSearchProperties.OPEN_SEARCH_CONTAINER_STARTUP,
-                2);
+        ContainerEnvironmentUtil.configureContainerStartup(
+                container, OpenSearchProperties.OPEN_SEARCH_CONTAINER_STARTUP, 2);
 
         container.start();
 

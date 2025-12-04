@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
 
 import java.net.URI;
@@ -39,9 +40,14 @@ import org.apache.camel.util.StringHelper;
 /**
  * Read and write nodes to/from a JCR compliant content repository.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "jcr", title = "JCR", syntax = "jcr:host/base",
-             alternativeSyntax = "jcr:username:password@host/base",
-             category = { Category.DATABASE, Category.CMS }, headersClass = JcrConstants.class)
+@UriEndpoint(
+        firstVersion = "1.3.0",
+        scheme = "jcr",
+        title = "JCR",
+        syntax = "jcr:host/base",
+        alternativeSyntax = "jcr:username:password@host/base",
+        category = {Category.DATABASE, Category.CMS},
+        headersClass = JcrConstants.class)
 public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;
@@ -50,26 +56,37 @@ public class JcrEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath
     private String base;
+
     @UriParam
     private String username;
+
     @UriParam
     private String password;
+
     @UriParam
     private int eventTypes;
+
     @UriParam
     private boolean deep;
+
     @UriParam
     private String uuids;
+
     @UriParam
     private String nodeTypeNames;
+
     @UriParam
     private boolean noLocal;
+
     @UriParam(defaultValue = "3000", javaType = "java.time.Duration")
     private long sessionLiveCheckIntervalOnStart = 3000L;
+
     @UriParam(defaultValue = "60000", javaType = "java.time.Duration")
     private long sessionLiveCheckInterval = 60000L;
+
     @UriParam
     private String workspaceName;
 

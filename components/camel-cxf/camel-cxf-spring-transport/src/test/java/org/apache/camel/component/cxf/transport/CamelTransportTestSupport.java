@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,9 +37,6 @@ import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public abstract class CamelTransportTestSupport extends CamelTestSupport {
 
     protected Bus bus;
@@ -47,11 +48,11 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
     @Override
     public void doPostSetup() {
         BusFactory bf = BusFactory.newInstance();
-        //setup the camel transport for the bus
+        // setup the camel transport for the bus
         bus = bf.createBus();
         DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
         CamelTransportFactory camelTransportFactory = new CamelTransportFactory();
-        //set the context here to the transport factory;
+        // set the context here to the transport factory;
         camelTransportFactory.setCamelContext(context);
         ConduitInitiatorManager cim = bus.getExtension(ConduitInitiatorManager.class);
         dfm.registerDestinationFactory(CamelTransportFactory.TRANSPORT_ID, camelTransportFactory);
@@ -87,7 +88,8 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
         return camelConduit;
     }
 
-    protected void sendoutMessage(Conduit conduit, Message message, Boolean isOneWay, String content) throws IOException {
+    protected void sendoutMessage(Conduit conduit, Message message, Boolean isOneWay, String content)
+            throws IOException {
         Exchange cxfExchange = message.getExchange();
         if (cxfExchange == null) {
             cxfExchange = new ExchangeImpl();
@@ -105,5 +107,4 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
         os.write(content.getBytes());
         os.close();
     }
-
 }

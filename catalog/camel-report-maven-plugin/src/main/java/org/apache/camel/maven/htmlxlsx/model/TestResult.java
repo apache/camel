@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
 
 public class TestResult {
@@ -45,9 +46,6 @@ public class TestResult {
     @Override
     public String toString() {
 
-        return "TestResult{" +
-               "test=" + test +
-               ", camelContextRouteCoverage=" + camelContextRouteCoverage +
-               '}';
+        return "TestResult{" + "test=" + test + ", camelContextRouteCoverage=" + camelContextRouteCoverage + '}';
     }
 }

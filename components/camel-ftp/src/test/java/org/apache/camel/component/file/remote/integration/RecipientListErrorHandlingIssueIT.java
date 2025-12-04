@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.util.HashMap;
@@ -87,7 +88,10 @@ public class RecipientListErrorHandlingIssueIT extends FtpServerTestSupport {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").message(0).header(Exchange.TO_ENDPOINT).isEqualTo("mock://foo");
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).header(Exchange.FAILURE_ENDPOINT).isEqualTo(getFtpUrl());
+        getMockEndpoint("mock:error")
+                .message(0)
+                .header(Exchange.FAILURE_ENDPOINT)
+                .isEqualTo(getFtpUrl());
 
         String foo = "direct:foo," + getFtpUrl();
 

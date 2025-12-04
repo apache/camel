@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.web.search;
 
 import java.util.Map;
@@ -41,16 +42,22 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
     @Metadata(required = true, defaultValue = "1")
     @UriParam
     private Integer maxResults = 1;
+
     @UriParam
     private String language;
+
     @UriParam
     private String geoLocation;
+
     @UriParam
     private Integer startPage;
+
     @UriParam
     private Integer startIndex;
+
     @UriParam
     private Boolean safeSearch;
+
     @UriParam
     @Metadata(autowired = true)
     private Map<String, Object> additionalParams;

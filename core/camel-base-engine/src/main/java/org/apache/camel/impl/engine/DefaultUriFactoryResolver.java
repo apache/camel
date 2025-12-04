@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Set;
@@ -57,7 +58,8 @@ public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryR
 
         // lookup in registry first
         Set<EndpointUriFactory> assemblers = context.getRegistry().findByType(EndpointUriFactory.class);
-        EndpointUriFactory answer = assemblers.stream().filter(a -> a.isEnabled(name)).findFirst().orElse(null);
+        EndpointUriFactory answer =
+                assemblers.stream().filter(a -> a.isEnabled(name)).findFirst().orElse(null);
         if (answer != null) {
             answer.setCamelContext(context);
             return answer;
@@ -73,7 +75,10 @@ public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryR
 
         if (type != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found EndpointUriFactory: {} via type: {} via: {}{}", name, type.getName(),
+                LOG.debug(
+                        "Found EndpointUriFactory: {} via type: {} via: {}{}",
+                        name,
+                        type.getName(),
                         factoryFinder.getResourcePath(),
                         name);
             }
@@ -98,5 +103,4 @@ public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryR
         }
         return factoryFinder.findClass(name).orElse(null);
     }
-
 }

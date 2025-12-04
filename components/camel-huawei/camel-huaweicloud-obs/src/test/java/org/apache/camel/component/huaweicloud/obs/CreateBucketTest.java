@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.obs.services.ObsClient;
 import com.obs.services.model.CreateBucketRequest;
@@ -30,8 +33,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CreateBucketTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CreateBucketTest.class.getName());
 
@@ -41,22 +42,20 @@ public class CreateBucketTest extends CamelTestSupport {
     ObsClient mockClient = Mockito.mock(ObsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:create_bucket")
-                        .to("hwcloud-obs:createBucket?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&bucketName=" + testConfiguration.getProperty("bucketName") +
-                            "&bucketLocation=" + testConfiguration.getProperty("bucketLocation") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&obsClient=#obsClient")
+                        .to("hwcloud-obs:createBucket?" + "serviceKeys=#serviceKeys"
+                                + "&bucketName="
+                                + testConfiguration.getProperty("bucketName") + "&bucketLocation="
+                                + testConfiguration.getProperty("bucketLocation") + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&obsClient=#obsClient")
                         .log("Create bucket successful")
                         .to("mock:create_bucket_result");
             }
@@ -66,7 +65,8 @@ public class CreateBucketTest extends CamelTestSupport {
     @Test
     public void testCreateBucket() throws Exception {
         ObsBucket bucket = new ObsBucket("New bucket", "location-3");
-        Mockito.when(mockClient.createBucket(Mockito.any(CreateBucketRequest.class))).thenReturn(bucket);
+        Mockito.when(mockClient.createBucket(Mockito.any(CreateBucketRequest.class)))
+                .thenReturn(bucket);
 
         MockEndpoint mock = getMockEndpoint("mock:create_bucket_result");
         mock.expectedMinimumMessageCount(1);
@@ -75,7 +75,8 @@ public class CreateBucketTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"bucketName\":\"New bucket\",\"location\":\"location-3\",\"metadata\":{},\"statusCode\":0}",
+        assertEquals(
+                "{\"bucketName\":\"New bucket\",\"location\":\"location-3\",\"metadata\":{},\"statusCode\":0}",
                 responseExchange.getIn().getBody(String.class));
     }
 }

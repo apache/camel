@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,9 +29,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestOpenApiModelApiSecurityRequirementsTest extends CamelTestSupport {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -37,26 +38,26 @@ public class RestOpenApiModelApiSecurityRequirementsTest extends CamelTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                rest()
-                    .securityDefinitions()
+                rest().securityDefinitions()
                         .oauth2("petstore_auth")
-                            .authorizationUrl("https://petstore.swagger.io/oauth/dialog")
+                        .authorizationUrl("https://petstore.swagger.io/oauth/dialog")
                         .end()
-                    .apiKey("api_key")
-                        .withHeader("myHeader").end()
-                    .end()
-                    .security("petstore_auth", "read, write")
-                    .security("api_key");
+                        .apiKey("api_key")
+                        .withHeader("myHeader")
+                        .end()
+                        .end()
+                        .security("petstore_auth", "read, write")
+                        .security("api_key");
             }
         };
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0" })
+    @ValueSource(strings = {"3.1", "3.0"})
     public void testReaderReadV3(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -64,8 +65,8 @@ public class RestOpenApiModelApiSecurityRequirementsTest extends CamelTestSuppor
         config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);

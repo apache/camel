@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms.constants;
 
 /**
@@ -23,6 +24,5 @@ public final class DMSConstants {
     public static final String KAFKA = "kafka";
     public static final String RABBITMQ = "rabbitmq";
 
-    private DMSConstants() {
-    }
+    private DMSConstants() {}
 }

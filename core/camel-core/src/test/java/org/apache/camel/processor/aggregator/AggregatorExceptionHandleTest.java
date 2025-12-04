@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -64,7 +65,9 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
             public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
-                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
+                from("direct:start")
+                        .aggregate(header("id"), new UseLatestAggregationStrategy())
+                        .completionTimeout(100)
                         .completionTimeoutCheckerInterval(10)
                         .process(new Processor() {
                             public void process(Exchange exchange) {
@@ -74,8 +77,8 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
                                 }
                                 exchange.getMessage().setBody("Bye World");
                             }
-                        }).to("mock:result");
-
+                        })
+                        .to("mock:result");
             }
         };
     }

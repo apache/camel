@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FileConsumeCharsetTest extends BaseEndpointDslTest {
     private static final String TEST_DATA_DIR = BaseEndpointDslTest.generateUniquePath(FileConsumeCharsetTest.class);
@@ -37,7 +38,10 @@ public class FileConsumeCharsetTest extends BaseEndpointDslTest {
 
     @Override
     protected void doPostSetup() {
-        template.sendBodyAndHeader("file://" + TEST_DATA_DIR + "?charset=UTF-8", "Hello World \u4f60\u597d", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                "file://" + TEST_DATA_DIR + "?charset=UTF-8",
+                "Hello World \u4f60\u597d",
+                Exchange.FILE_NAME,
                 "report.txt");
     }
 
@@ -60,11 +64,15 @@ public class FileConsumeCharsetTest extends BaseEndpointDslTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
-                from(file(TEST_DATA_DIR).initialDelay(0).delay(10).fileName("report.txt").delete(true).charset("UTF-8"))
+                from(file(TEST_DATA_DIR)
+                                .initialDelay(0)
+                                .delay(10)
+                                .fileName("report.txt")
+                                .delete(true)
+                                .charset("UTF-8"))
                         .convertBodyTo(String.class)
                         .to(mock("result"));
             }
         };
     }
-
 }

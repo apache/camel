@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FtpProducerJailStartingDirectoryIT extends FtpServerTestSupport {
 
@@ -62,7 +63,10 @@ public class FtpProducerJailStartingDirectoryIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader(Exchange.FILE_NAME, simple("../${file:name}")).to(getFtpUrl()).to("mock:result");
+                from("direct:start")
+                        .setHeader(Exchange.FILE_NAME, simple("../${file:name}"))
+                        .to(getFtpUrl())
+                        .to("mock:result");
             }
         };
     }

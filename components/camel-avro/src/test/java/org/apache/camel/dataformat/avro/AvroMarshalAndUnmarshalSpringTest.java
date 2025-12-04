@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.avro;
 
 import org.apache.camel.CamelContext;
@@ -27,7 +28,8 @@ public class AvroMarshalAndUnmarshalSpringTest extends AvroMarshalAndUnmarshalTe
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/dataformat/avro/springDataFormat.xml");
+        applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/dataformat/avro/springDataFormat.xml");
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
@@ -35,5 +37,4 @@ public class AvroMarshalAndUnmarshalSpringTest extends AvroMarshalAndUnmarshalTe
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

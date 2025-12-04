@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.json;
 
 import java.util.Date;
@@ -36,6 +37,5 @@ public class JSonerTest {
 
         s = Jsoner.trySerialize(new Date());
         Assertions.assertNull(s);
-
     }
 }

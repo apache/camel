@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi.annotations;
 
 import java.lang.annotation.Documented;
@@ -27,9 +28,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 public @interface ConstantProvider {
 
     String value();
-
 }

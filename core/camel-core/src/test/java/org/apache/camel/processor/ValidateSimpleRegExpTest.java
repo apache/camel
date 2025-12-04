@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,7 +25,9 @@ public class ValidateSimpleRegExpTest extends ValidateRegExpTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").validate().simple("${bodyAs(java.lang.String)} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'")
+                from("direct:start")
+                        .validate()
+                        .simple("${bodyAs(java.lang.String)} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'")
                         .to("mock:result");
             }
         };

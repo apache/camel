@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy;
 
 import java.util.List;
@@ -56,5 +57,4 @@ public interface BindyFactory {
      * @throws Exception can be thrown
      */
     String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception;
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,8 +45,12 @@ public class FileMoveErrorOnExceptionNotHandledTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri("?moveFailed=error&initialDelay=0&delay=10"))
-                        .onException(IllegalArgumentException.class).to("mock:damn").end().to("mock:before")
-                        .throwException(new IllegalArgumentException("Damn")).to("mock:after");
+                        .onException(IllegalArgumentException.class)
+                        .to("mock:damn")
+                        .end()
+                        .to("mock:before")
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .to("mock:after");
             }
         };
     }

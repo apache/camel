@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +36,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CxfComponentEnableMtomTest.TestConfig.class)
@@ -120,7 +121,6 @@ public class CxfComponentEnableMtomTest {
 
             endpoint.setProperties(properties);
             return endpoint;
-
         }
 
         @Bean("mtomByBeanSetter")
@@ -128,7 +128,6 @@ public class CxfComponentEnableMtomTest {
             CxfEndpoint endpoint = new CxfEndpoint();
             endpoint.setMtomEnabled(true);
             return endpoint;
-
         }
     }
 }

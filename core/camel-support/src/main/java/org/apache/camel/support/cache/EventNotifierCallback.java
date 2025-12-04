@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
 
 import org.apache.camel.AsyncCallback;
@@ -31,8 +32,7 @@ class EventNotifierCallback implements AsyncCallback {
     private final Exchange exchange;
     private final Endpoint endpoint;
 
-    public EventNotifierCallback(AsyncCallback originalCallback, Exchange exchange,
-                                 Endpoint endpoint) {
+    public EventNotifierCallback(AsyncCallback originalCallback, Exchange exchange, Endpoint endpoint) {
         this.originalCallback = originalCallback;
         this.exchange = exchange;
         this.endpoint = endpoint;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.validator;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,7 +37,9 @@ public class BeanValidatorInputValidateTest extends ContextTestSupport {
             public void configure() {
                 validator().type("toValidate").withBean("testValidator");
 
-                onException(ValidationException.class).handled(true).log("Invalid validation: ${exception.message}")
+                onException(ValidationException.class)
+                        .handled(true)
+                        .log("Invalid validation: ${exception.message}")
                         .to("mock:invalid");
 
                 from("direct:in").inputTypeWithValidate("toValidate").to("mock:out");

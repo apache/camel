@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,9 +26,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
-             architectures = { "amd64", "aarch64", "ppc64le" },
-             disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD},
+        architectures = {"amd64", "aarch64", "ppc64le"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTestSupport {
 
     private final String url = "seda:foo?concurrentConsumers=20";
@@ -107,9 +109,12 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(url).routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
+                from(url)
+                        .routePolicy(policy)
+                        .log("${body}")
+                        .to("log:foo?groupSize=10")
+                        .to("mock:result");
             }
         };
     }
-
 }

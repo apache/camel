@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.app;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,8 +35,10 @@ public class BeanPropertyDefinition {
 
     @XmlAttribute
     private String key;
+
     @XmlAttribute
     private String value;
+
     @XmlElement(name = "properties")
     private BeanPropertiesDefinition properties;
 
@@ -71,5 +74,4 @@ public class BeanPropertyDefinition {
     public void setProperties(BeanPropertiesDefinition properties) {
         this.properties = properties;
     }
-
 }

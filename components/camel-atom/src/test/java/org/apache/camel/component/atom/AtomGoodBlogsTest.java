@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
 
 import com.apptasticsoftware.rssreader.Item;
@@ -68,7 +69,8 @@ public class AtomGoodBlogsTest {
                 // and restart - but as Camel by default uses the UpdatedDateFilter it will only deliver new
                 // blog entries to "seda:feeds". So only when James Straham updates his blog with a new entry
                 // Camel will create an exchange for the seda:feeds.
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=1000").to("seda:feeds");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=1000")
+                        .to("seda:feeds");
 
                 // From the feeds we filter each blot entry by using our blog service class
                 from("seda:feeds").filter().method("blogService", "isGoodBlog").to("seda:goodBlogs");
@@ -120,7 +122,6 @@ public class AtomGoodBlogsTest {
             // We like blogs about Camel
             return title.toLowerCase().contains("camel");
         }
-
     }
 
     // END SNIPPET: e1

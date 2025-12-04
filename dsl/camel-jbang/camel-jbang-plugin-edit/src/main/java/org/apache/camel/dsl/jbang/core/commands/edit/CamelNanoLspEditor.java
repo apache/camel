@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.edit;
 
 import java.nio.file.Path;
@@ -83,9 +84,11 @@ public class CamelNanoLspEditor extends Nano {
             text.append(line);
             text.append('\n');
         }
-        TextDocumentItem textDocumentItem = new TextDocumentItem(fileName, CamelLanguageServer.LANGUAGE_ID, 0, text.toString());
-        CompletableFuture<Either<List<CompletionItem>, CompletionList>> eitherCompletableFuture = this.camelDocumentService
-                .completionLocal(textDocumentItem,
+        TextDocumentItem textDocumentItem =
+                new TextDocumentItem(fileName, CamelLanguageServer.LANGUAGE_ID, 0, text.toString());
+        CompletableFuture<Either<List<CompletionItem>, CompletionList>> eitherCompletableFuture =
+                this.camelDocumentService.completionLocal(
+                        textDocumentItem,
                         new Position(buffer.getLine(), buffer.getOffsetInLine() + buffer.getColumn()));
         if (eitherCompletableFuture.isCompletedExceptionally()) {
             return suggestions;
@@ -129,9 +132,11 @@ public class CamelNanoLspEditor extends Nano {
             text.append('\n');
         }
         // TODO store completions so we don't recompute them when inserting
-        TextDocumentItem textDocumentItem = new TextDocumentItem(fileName, CamelLanguageServer.LANGUAGE_ID, 0, text.toString());
-        CompletableFuture<Either<List<CompletionItem>, CompletionList>> eitherCompletableFuture = this.camelDocumentService
-                .completionLocal(textDocumentItem,
+        TextDocumentItem textDocumentItem =
+                new TextDocumentItem(fileName, CamelLanguageServer.LANGUAGE_ID, 0, text.toString());
+        CompletableFuture<Either<List<CompletionItem>, CompletionList>> eitherCompletableFuture =
+                this.camelDocumentService.completionLocal(
+                        textDocumentItem,
                         new Position(buffer.getLine(), buffer.getOffsetInLine() + buffer.getColumn()));
         List<CompletionItem> lines;
         try {
@@ -213,13 +218,14 @@ public class CamelNanoLspEditor extends Nano {
         private List<Diagnostic> computeDiagnostic(TextDocumentItem documentItem) {
             String uri = documentItem.getUri();
             String camelText = documentItem.getText();
-            Map<CamelEndpointDetails, EndpointValidationResult> endpointErrors
-                    = endpointDiagnosticService.computeCamelEndpointErrors(camelText, uri);
-            List<org.eclipse.lsp4j.Diagnostic> diagnostics
-                    = endpointDiagnosticService.converToLSPDiagnostics(camelText, endpointErrors, documentItem);
-            Map<String, ConfigurationPropertiesValidationResult> configurationPropertiesErrors
-                    = configurationPropertiesDiagnosticService.computeCamelConfigurationPropertiesErrors(camelText, uri);
-            diagnostics.addAll(configurationPropertiesDiagnosticService.converToLSPDiagnostics(configurationPropertiesErrors));
+            Map<CamelEndpointDetails, EndpointValidationResult> endpointErrors =
+                    endpointDiagnosticService.computeCamelEndpointErrors(camelText, uri);
+            List<org.eclipse.lsp4j.Diagnostic> diagnostics =
+                    endpointDiagnosticService.converToLSPDiagnostics(camelText, endpointErrors, documentItem);
+            Map<String, ConfigurationPropertiesValidationResult> configurationPropertiesErrors =
+                    configurationPropertiesDiagnosticService.computeCamelConfigurationPropertiesErrors(camelText, uri);
+            diagnostics.addAll(
+                    configurationPropertiesDiagnosticService.converToLSPDiagnostics(configurationPropertiesErrors));
             diagnostics.addAll(camelKModelineDiagnosticService.compute(camelText, documentItem));
             diagnostics.addAll(connectedModeDiagnosticService.compute(camelText, documentItem));
             diagnostics.addAll(connectedModeDiagnosticService.compute(camelText, documentItem));

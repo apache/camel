@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,8 +27,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringMDCTransactedTest extends CamelTestSupport {
 
@@ -54,29 +55,39 @@ public class SpringMDCTransactedTest extends CamelTestSupport {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("direct:a").routeId("route-a").transacted().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        assertEquals("route-a", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                        assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
-                    }
-                }).to("log:foo-before").to("direct:b").to("log:foo-after").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        assertEquals("route-a", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                        assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
-                    }
-                });
+                from("direct:a")
+                        .routeId("route-a")
+                        .transacted()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                            }
+                        })
+                        .to("log:foo-before")
+                        .to("direct:b")
+                        .to("log:foo-after")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                            }
+                        });
 
-                from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        assertEquals("route-b", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                        assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
-                    }
-                }).to("log:bar").to("mock:result");
+                from("direct:b")
+                        .routeId("route-b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals("route-b", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                            }
+                        })
+                        .to("log:bar")
+                        .to("mock:result");
             }
         };
     }
-
 }

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jt400;
 
-import com.ibm.as400.access.AS400ConnectionPool;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.jt400;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import com.ibm.as400.access.AS400ConnectionPool;
+import org.junit.jupiter.api.Test;
 
 public class Jt400ComponentDefaultSecureConnectionPoolTest extends Jt400TestSupport {
     private Jt400Component component;

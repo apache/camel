@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -35,10 +40,6 @@ import org.apache.camel.test.infra.mosquitto.services.MosquittoService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
 
@@ -65,8 +66,7 @@ public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
 
         // Broker will be started later, after camel context is started,
         // to ensure first consumer connection fails
-        service = MosquittoServiceFactory
-                .builder()
+        service = MosquittoServiceFactory.builder()
                 .addLocalMapping(PahoMqtt5ReconnectAfterFailureIT::createLocalService)
                 .addRemoteMapping(PahoMqtt5ReconnectAfterFailureIT::createRemoteService)
                 .build();
@@ -112,14 +112,18 @@ public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
     public void startConsumerShouldReconnectMqttClientAfterFailures() throws Exception {
         RouteController routeController = context.getRouteController();
 
-        assertNotEquals(ServiceStatus.Started, routeController.getRouteStatus(TESTING_ROUTE_ID),
+        assertNotEquals(
+                ServiceStatus.Started,
+                routeController.getRouteStatus(TESTING_ROUTE_ID),
                 "Broker down, expecting  route not to be started");
 
         // Start broker and wait for supervisor to restart route
         // consumer should now connect
         startBroker();
         routeStartedLatch.await(30, TimeUnit.SECONDS);
-        assertEquals(ServiceStatus.Started, routeController.getRouteStatus(TESTING_ROUTE_ID),
+        assertEquals(
+                ServiceStatus.Started,
+                routeController.getRouteStatus(TESTING_ROUTE_ID),
                 "Expecting consumer connected to broker and route started");
 
         // Given
@@ -131,7 +135,6 @@ public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
 
         // Then
         mock.assertIsSatisfied();
-
     }
 
     @Test

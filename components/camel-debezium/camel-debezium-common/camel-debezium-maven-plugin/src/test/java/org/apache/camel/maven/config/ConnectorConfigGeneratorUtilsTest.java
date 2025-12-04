@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 
 import org.apache.camel.util.TimeUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConnectorConfigGeneratorUtilsTest {
 
@@ -35,7 +36,13 @@ public class ConnectorConfigGeneratorUtilsTest {
         assertEquals("5m10s300ms", ConnectorConfigGeneratorUtils.toTimeAsString(310300));
         assertEquals("5s500ms", ConnectorConfigGeneratorUtils.toTimeAsString(5500));
         assertEquals("1h50m", ConnectorConfigGeneratorUtils.toTimeAsString(6600000));
-        assertEquals("2d3h4m", ConnectorConfigGeneratorUtils.toTimeAsString(Duration.parse("P2DT3H4M").toMillis()));
-        assertEquals("2d4m", ConnectorConfigGeneratorUtils.toTimeAsString(Duration.parse("P2DT4M").toMillis()));
+        assertEquals(
+                "2d3h4m",
+                ConnectorConfigGeneratorUtils.toTimeAsString(
+                        Duration.parse("P2DT3H4M").toMillis()));
+        assertEquals(
+                "2d4m",
+                ConnectorConfigGeneratorUtils.toTimeAsString(
+                        Duration.parse("P2DT4M").toMillis()));
     }
 }

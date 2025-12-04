@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.iso8583;
 
 import java.io.File;
@@ -32,11 +33,27 @@ public class Iso8583DataFormatGroovyTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).body().isInstanceOf(Map.class);
         getMockEndpoint("mock:result").message(0).body().simple("${body[op]}").isEqualTo("650000");
-        getMockEndpoint("mock:result").message(0).body().simple("${body[amount]}").isEqualTo("30.00");
+        getMockEndpoint("mock:result")
+                .message(0)
+                .body()
+                .simple("${body[amount]}")
+                .isEqualTo("30.00");
         getMockEndpoint("mock:result").message(0).body().simple("${body[ref]}").isEqualTo("001234425791");
-        getMockEndpoint("mock:result").message(0).body().simple("${body[response]}").isEqualTo("00");
-        getMockEndpoint("mock:result").message(0).body().simple("${body[terminal]}").isEqualTo("614209027600TéST");
-        getMockEndpoint("mock:result").message(0).body().simple("${body[currency]}").isEqualTo("484");
+        getMockEndpoint("mock:result")
+                .message(0)
+                .body()
+                .simple("${body[response]}")
+                .isEqualTo("00");
+        getMockEndpoint("mock:result")
+                .message(0)
+                .body()
+                .simple("${body[terminal]}")
+                .isEqualTo("614209027600TéST");
+        getMockEndpoint("mock:result")
+                .message(0)
+                .body()
+                .simple("${body[currency]}")
+                .isEqualTo("484");
 
         template.sendBody("direct:unmarshal", new File("src/test/resources/parse1.txt"));
 
@@ -48,8 +65,11 @@ public class Iso8583DataFormatGroovyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:unmarshal").unmarshal().iso8583("0210")
-                        .transform().groovy(
+                from("direct:unmarshal")
+                        .unmarshal()
+                        .iso8583("0210")
+                        .transform()
+                        .groovy(
                                 """
                                           [
                                             "op": body[3].value,

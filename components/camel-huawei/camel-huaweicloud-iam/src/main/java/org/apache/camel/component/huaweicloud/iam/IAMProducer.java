@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -127,8 +128,7 @@ public class IAMProducer extends DefaultProducer {
         }
 
         // invoke get user method and map return object to exchange body
-        ShowUserRequest request = new ShowUserRequest()
-                .withUserId(clientConfigurations.getUserId());
+        ShowUserRequest request = new ShowUserRequest().withUserId(clientConfigurations.getUserId());
         ShowUserResponse response = iamClient.showUser(request);
         exchange.getMessage().setBody(gson.toJson(response.getUser()));
     }
@@ -140,7 +140,8 @@ public class IAMProducer extends DefaultProducer {
      * @param clientConfigurations
      */
     private void updateUser(Exchange exchange, ClientConfigurations clientConfigurations) {
-        // checking for valid exchange body containing user information. Body must be an UpdateUserOption object or a JSON string
+        // checking for valid exchange body containing user information. Body must be an UpdateUserOption object or a
+        // JSON string
         Object body = exchange.getMessage().getBody();
         UpdateUserOption userOption;
         if (body instanceof UpdateUserOption) {
@@ -166,11 +167,9 @@ public class IAMProducer extends DefaultProducer {
         }
 
         // invoke update user method and map return object to exchange body
-        UpdateUserRequestBody requestBody = new UpdateUserRequestBody()
-                .withUser(userOption);
-        UpdateUserRequest request = new UpdateUserRequest()
-                .withBody(requestBody)
-                .withUserId(clientConfigurations.getUserId());
+        UpdateUserRequestBody requestBody = new UpdateUserRequestBody().withUser(userOption);
+        UpdateUserRequest request =
+                new UpdateUserRequest().withBody(requestBody).withUserId(clientConfigurations.getUserId());
         UpdateUserResponse response = iamClient.updateUser(request);
         exchange.getMessage().setBody(gson.toJson(response.getUser()));
     }
@@ -203,8 +202,8 @@ public class IAMProducer extends DefaultProducer {
         }
 
         // invoke list group users method and map return object to exchange body
-        KeystoneListUsersForGroupByAdminRequest request = new KeystoneListUsersForGroupByAdminRequest()
-                .withGroupId(clientConfigurations.getGroupId());
+        KeystoneListUsersForGroupByAdminRequest request =
+                new KeystoneListUsersForGroupByAdminRequest().withGroupId(clientConfigurations.getGroupId());
         KeystoneListUsersForGroupByAdminResponse response = iamClient.keystoneListUsersForGroupByAdmin(request);
         exchange.getMessage().setBody(gson.toJson(response.getUsers()));
     }
@@ -216,7 +215,8 @@ public class IAMProducer extends DefaultProducer {
      * @param clientConfigurations
      */
     private void updateGroup(Exchange exchange, ClientConfigurations clientConfigurations) {
-        // checking for valid exchange body containing group information. Body must be an KeystoneUpdateGroupOption object or a JSON string
+        // checking for valid exchange body containing group information. Body must be an KeystoneUpdateGroupOption
+        // object or a JSON string
         Object body = exchange.getMessage().getBody();
         KeystoneUpdateGroupOption groupOption;
         if (body instanceof KeystoneUpdateGroupOption) {
@@ -242,11 +242,9 @@ public class IAMProducer extends DefaultProducer {
         }
 
         // invoke update group method and map return object to exchange body
-        KeystoneUpdateGroupRequestBody requestBody = new KeystoneUpdateGroupRequestBody()
-                .withGroup(groupOption);
-        KeystoneUpdateGroupRequest request = new KeystoneUpdateGroupRequest()
-                .withBody(requestBody)
-                .withGroupId(clientConfigurations.getGroupId());
+        KeystoneUpdateGroupRequestBody requestBody = new KeystoneUpdateGroupRequestBody().withGroup(groupOption);
+        KeystoneUpdateGroupRequest request =
+                new KeystoneUpdateGroupRequest().withBody(requestBody).withGroupId(clientConfigurations.getGroupId());
         KeystoneUpdateGroupResponse response = iamClient.keystoneUpdateGroup(request);
         exchange.getMessage().setBody(gson.toJson(response.getGroup()));
     }

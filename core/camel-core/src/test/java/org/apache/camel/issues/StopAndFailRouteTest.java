@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RouteError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StopAndFailRouteTest extends ContextTestSupport {
 
@@ -34,7 +35,8 @@ public class StopAndFailRouteTest extends ContextTestSupport {
 
         context.getRouteController().stopRoute("foo");
 
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         RouteError re = route.getLastError();
         Assertions.assertNull(re);
@@ -48,7 +50,8 @@ public class StopAndFailRouteTest extends ContextTestSupport {
         Throwable cause = new IllegalArgumentException("Forced");
         context.getRouteController().stopRoute("bar", cause);
 
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("bar").name());
 
         RouteError re = route.getLastError();
         Assertions.assertNotNull(re);
@@ -62,11 +65,9 @@ public class StopAndFailRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .to("mock:foo");
+                from("direct:foo").routeId("foo").to("mock:foo");
 
-                from("direct:bar").routeId("bar")
-                        .to("mock:bar");
+                from("direct:bar").routeId("bar").to("mock:bar");
             }
         };
     }

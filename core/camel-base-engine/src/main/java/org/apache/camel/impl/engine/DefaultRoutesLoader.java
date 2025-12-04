@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
@@ -103,7 +104,8 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     }
 
     @Override
-    public Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources, boolean optional) throws Exception {
+    public Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources, boolean optional)
+            throws Exception {
         List<RoutesBuilder> answer = new ArrayList<>(resources.size());
 
         // sort groups so java is first
@@ -154,7 +156,10 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                     extLoader.preParseRoutes(files);
                 } catch (Exception e) {
                     if (isIgnoreLoadingError()) {
-                        LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", files, e.getMessage());
+                        LOG.warn(
+                                "Loading resources error: {} due to: {}. This exception is ignored.",
+                                files,
+                                e.getMessage());
                     } else {
                         throw e;
                     }
@@ -165,7 +170,9 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                         loader.preParseRoute(resource);
                     } catch (Exception e) {
                         if (isIgnoreLoadingError()) {
-                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource,
+                            LOG.warn(
+                                    "Loading resources error: {} due to: {}. This exception is ignored.",
+                                    resource,
                                     e.getMessage());
                         } else {
                             throw e;
@@ -188,7 +195,10 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                     }
                 } catch (Exception e) {
                     if (isIgnoreLoadingError()) {
-                        LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", files, e.getMessage());
+                        LOG.warn(
+                                "Loading resources error: {} due to: {}. This exception is ignored.",
+                                files,
+                                e.getMessage());
                     } else {
                         throw e;
                     }
@@ -202,7 +212,9 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                         }
                     } catch (Exception e) {
                         if (isIgnoreLoadingError()) {
-                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource,
+                            LOG.warn(
+                                    "Loading resources error: {} due to: {}. This exception is ignored.",
+                                    resource,
                                     e.getMessage());
                         } else {
                             throw e;
@@ -227,14 +239,15 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     public RoutesBuilderLoader getRoutesLoader(String extension) throws Exception {
         ObjectHelper.notNull(extension, "extension");
 
-        RoutesBuilderLoader answer = getCamelContext().getRegistry().lookupByNameAndType(
-                ROUTES_LOADER_KEY_PREFIX + extension,
-                RoutesBuilderLoader.class);
+        RoutesBuilderLoader answer = getCamelContext()
+                .getRegistry()
+                .lookupByNameAndType(ROUTES_LOADER_KEY_PREFIX + extension, RoutesBuilderLoader.class);
 
         if (answer == null) {
             answer = loaders.values().stream()
                     // find existing loader that support this extension
-                    .filter(l -> l.isSupportedExtension(extension)).findFirst()
+                    .filter(l -> l.isSupportedExtension(extension))
+                    .findFirst()
                     // or resolve loader from classpath
                     .orElse(loaders.computeIfAbsent(extension, this::resolveService));
         }
@@ -258,17 +271,20 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
             }
         }
 
-        final FactoryFinder finder = ecc.getCamelContextExtension().getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
+        final FactoryFinder finder =
+                ecc.getCamelContextExtension().getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
         // the marker files are generated with dot as dash
         String sanitized = extension.replace(".", "-");
-        RoutesBuilderLoader answer
-                = ResolverHelper.resolveService(getCamelContext(), finder, sanitized, RoutesBuilderLoader.class).orElse(null);
+        RoutesBuilderLoader answer = ResolverHelper.resolveService(
+                        getCamelContext(), finder, sanitized, RoutesBuilderLoader.class)
+                .orElse(null);
 
         // if it's a multi-extension then fallback to parent
         if (answer == null && extension.contains(".")) {
             String single = FileUtil.onlyExt(extension, true);
-            answer = ResolverHelper.resolveService(getCamelContext(), finder, single, RoutesBuilderLoader.class).orElse(null);
+            answer = ResolverHelper.resolveService(getCamelContext(), finder, single, RoutesBuilderLoader.class)
+                    .orElse(null);
             if (answer != null && !answer.isSupportedExtension(extension)) {
                 // okay we cannot support this extension as fallback
                 answer = null;
@@ -307,7 +323,8 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                 if (answer.contains(id)) {
                     throw new FailedToStartRouteException(
                             id,
-                            "duplicate route id detected " + id + ". Please correct ids to be unique among all your routes.");
+                            "duplicate route id detected " + id
+                                    + ". Please correct ids to be unique among all your routes.");
                 }
             }
             answer.addAll(ids);
@@ -331,5 +348,4 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         }
         return answer;
     }
-
 }

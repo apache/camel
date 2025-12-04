@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.tools;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +29,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Consumer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonSchemaTest extends CamelTestSupport {
 
@@ -50,18 +51,14 @@ public class JsonSchemaTest extends CamelTestSupport {
         // Create endpoint and test schema generation
         SpringAiToolsComponent component = new SpringAiToolsComponent(context);
         SpringAiToolsEndpoint endpoint = new SpringAiToolsEndpoint(
-                "spring-ai-tools:test",
-                component,
-                "test-tool",
-                "test-tag",
-                new SpringAiToolsConfiguration());
+                "spring-ai-tools:test", component, "test-tool", "test-tag", new SpringAiToolsConfiguration());
 
         endpoint.setParameters(parameters);
         endpoint.setDescription("Test tool");
 
         // Access the private method via reflection for testing
-        java.lang.reflect.Method method
-                = SpringAiToolsEndpoint.class.getDeclaredMethod("buildJsonSchemaFromParameters", Map.class);
+        java.lang.reflect.Method method =
+                SpringAiToolsEndpoint.class.getDeclaredMethod("buildJsonSchemaFromParameters", Map.class);
         method.setAccessible(true);
         String schema = (String) method.invoke(endpoint, parameters);
 
@@ -79,7 +76,9 @@ public class JsonSchemaTest extends CamelTestSupport {
         JsonNode locationProp = schemaNode.get("properties").get("location");
         assertNotNull(locationProp);
         assertEquals("string", locationProp.get("type").asText());
-        assertEquals("The city and state e.g. San Francisco, CA", locationProp.get("description").asText());
+        assertEquals(
+                "The city and state e.g. San Francisco, CA",
+                locationProp.get("description").asText());
 
         // Verify unit property with enum
         JsonNode unitProp = schemaNode.get("properties").get("unit");
@@ -114,18 +113,14 @@ public class JsonSchemaTest extends CamelTestSupport {
         // Create endpoint and test schema generation
         SpringAiToolsComponent component = new SpringAiToolsComponent(context);
         SpringAiToolsEndpoint endpoint = new SpringAiToolsEndpoint(
-                "spring-ai-tools:test",
-                component,
-                "test-tool",
-                "test-tag",
-                new SpringAiToolsConfiguration());
+                "spring-ai-tools:test", component, "test-tool", "test-tag", new SpringAiToolsConfiguration());
 
         endpoint.setParameters(parameters);
         endpoint.setDescription("Test tool");
 
         // Access the private method via reflection for testing
-        java.lang.reflect.Method method
-                = SpringAiToolsEndpoint.class.getDeclaredMethod("buildJsonSchemaFromParameters", Map.class);
+        java.lang.reflect.Method method =
+                SpringAiToolsEndpoint.class.getDeclaredMethod("buildJsonSchemaFromParameters", Map.class);
         method.setAccessible(true);
         String schema = (String) method.invoke(endpoint, parameters);
 
@@ -150,7 +145,8 @@ public class JsonSchemaTest extends CamelTestSupport {
 
         // Verify no required array (since no required=true was specified)
         // In JSON, if required is empty, it might not be present or be an empty array
-        assertTrue(schemaNode.get("required") == null || schemaNode.get("required").size() == 0);
+        assertTrue(
+                schemaNode.get("required") == null || schemaNode.get("required").size() == 0);
     }
 
     @Test
@@ -183,11 +179,7 @@ public class JsonSchemaTest extends CamelTestSupport {
         // Create endpoint without returnDirect (should default to false)
         SpringAiToolsComponent component = new SpringAiToolsComponent(context);
         SpringAiToolsEndpoint endpoint = new SpringAiToolsEndpoint(
-                "spring-ai-tools:normalTool",
-                component,
-                "normalTool",
-                "test-tag",
-                new SpringAiToolsConfiguration());
+                "spring-ai-tools:normalTool", component, "normalTool", "test-tag", new SpringAiToolsConfiguration());
 
         endpoint.setDescription("Normal tool");
 

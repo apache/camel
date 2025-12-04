@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
 
 public class BaseClass implements MyMessageListener {
@@ -22,5 +23,4 @@ public class BaseClass implements MyMessageListener {
     public void onMessage(MyMessage message) {
         // noop
     }
-
 }

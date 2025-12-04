@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +34,7 @@ public class JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest extend
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -61,7 +63,8 @@ public class JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest extend
             public void configure() {
                 from("direct:start")
                         // must use preserveMessageQos to include JMSReplyTo
-                        .to("activemq:queue:JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest?replyTo=queue:bar&preserveMessageQos=true")
+                        .to(
+                                "activemq:queue:JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest?replyTo=queue:bar&preserveMessageQos=true")
                         .to("mock:done");
 
                 // and disable reply to as we do not want to send back a reply message in this route

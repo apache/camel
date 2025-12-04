@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,12 +36,6 @@ import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastQueueConsumerPollTest.class);
@@ -44,7 +45,7 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String> getQueue("foo")).thenReturn(queue);
+        when(hazelcastInstance.<String>getQueue("foo")).thenReturn(queue);
     }
 
     @Override
@@ -97,5 +98,4 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
         assertNotEquals(HazelcastConstants.CACHE_LISTENER, headers.get(HazelcastConstants.LISTENER_TYPE));
         assertNull(headers.get(HazelcastConstants.LISTENER_TIME));
     }
-
 }

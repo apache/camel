@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.cluster;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.time.Duration;
@@ -25,15 +35,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTestBase {
     @Test
@@ -151,7 +152,8 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
             Awaitility.await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> {
                 assertTrue(getClusterMember(clusterFollower).isLeader());
 
-                FileLockClusterLeaderInfo updatedClusterLeaderInfo = FileLockClusterUtils.readClusterLeaderInfo(dataFile);
+                FileLockClusterLeaderInfo updatedClusterLeaderInfo =
+                        FileLockClusterUtils.readClusterLeaderInfo(dataFile);
                 assertNotNull(updatedClusterLeaderInfo);
 
                 String newLeaderId = updatedClusterLeaderInfo.getId();
@@ -205,7 +207,8 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
             Awaitility.await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> {
                 assertTrue(getClusterMember(clusterLeader).isLeader());
 
-                FileLockClusterLeaderInfo recoveredClusterLeaderInfo = FileLockClusterUtils.readClusterLeaderInfo(dataFile);
+                FileLockClusterLeaderInfo recoveredClusterLeaderInfo =
+                        FileLockClusterUtils.readClusterLeaderInfo(dataFile);
                 assertNotNull(recoveredClusterLeaderInfo);
 
                 String recoveredLeaderId = recoveredClusterLeaderInfo.getId();

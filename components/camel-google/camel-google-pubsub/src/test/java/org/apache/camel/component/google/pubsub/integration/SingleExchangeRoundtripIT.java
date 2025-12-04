@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,9 +35,6 @@ import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SingleExchangeRoundtripIT extends PubsubTestSupport {
 
@@ -100,8 +101,10 @@ public class SingleExchangeRoundtripIT extends PubsubTestSupport {
 
         Exchange sentExchange = sentExchanges.get(0);
 
-        assertEquals(exchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
-                sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "Sent ID");
+        assertEquals(
+                exchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
+                sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
+                "Sent ID");
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -111,14 +114,17 @@ public class SingleExchangeRoundtripIT extends PubsubTestSupport {
 
         Exchange receivedExchange = receivedExchanges.get(0);
 
-        assertNotNull(receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "PUBSUB Message ID Property");
+        assertNotNull(
+                receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "PUBSUB Message ID Property");
         assertNotNull(receivedExchange.getIn().getHeader(GooglePubsubConstants.PUBLISH_TIME), "PUBSUB Published Time");
 
-        assertEquals(attributeValue,
+        assertEquals(
+                attributeValue,
                 ((Map) receivedExchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES)).get(attributeKey),
                 "PUBSUB Header Attribute");
 
-        assertEquals(sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
+        assertEquals(
+                sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
                 receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
     }
 }

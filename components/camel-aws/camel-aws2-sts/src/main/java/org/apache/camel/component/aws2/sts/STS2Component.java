@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts;
 
 import java.util.Map;
@@ -42,7 +43,8 @@ public class STS2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        STS2Configuration configurationClone = this.configuration != null ? this.configuration.copy() : new STS2Configuration();
+        STS2Configuration configurationClone =
+                this.configuration != null ? this.configuration.copy() : new STS2Configuration();
         STS2Endpoint endpoint = new STS2Endpoint(uri, this, configurationClone);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configurationClone.isUseDefaultCredentialsProvider())

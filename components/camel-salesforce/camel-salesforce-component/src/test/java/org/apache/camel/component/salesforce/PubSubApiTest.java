@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -38,13 +46,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class PubSubApiTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(PubSubApiTest.class);
@@ -67,9 +68,8 @@ public class PubSubApiTest {
                 .build();
         grpcServer.start();
 
-        PubSubApiClient client = Mockito.spy(new PubSubApiClient(
-                session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000, true));
+        PubSubApiClient client = Mockito.spy(
+                new PubSubApiClient(session, new SalesforceLoginConfig(), "localhost", port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.LATEST, null, true);
@@ -97,9 +97,8 @@ public class PubSubApiTest {
                 .build();
         grpcServer.start();
 
-        PubSubApiClient client = Mockito.spy(new PubSubApiClient(
-                session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000, true));
+        PubSubApiClient client = Mockito.spy(
+                new PubSubApiClient(session, new SalesforceLoginConfig(), "localhost", port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.CUSTOM, "initial", true);
@@ -126,9 +125,8 @@ public class PubSubApiTest {
                 .build();
         grpcServer.start();
 
-        PubSubApiClient client = Mockito.spy(new PubSubApiClient(
-                session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000, true));
+        PubSubApiClient client = Mockito.spy(
+                new PubSubApiClient(session, new SalesforceLoginConfig(), "localhost", port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.LATEST, null, true);
@@ -157,9 +155,8 @@ public class PubSubApiTest {
                 .build();
         grpcServer.start();
 
-        PubSubApiClient client = Mockito.spy(new PubSubApiClient(
-                session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000, true));
+        PubSubApiClient client = Mockito.spy(
+                new PubSubApiClient(session, new SalesforceLoginConfig(), "localhost", port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
         String replayId = encodeReplayId("123");
@@ -173,7 +170,8 @@ public class PubSubApiTest {
     }
 
     @Test
-    public void testInvokesExceptionHandlerWhenReplayIdIsCorruptedAndFallbackToLatestReplayIdIsDisabled() throws Exception {
+    public void testInvokesExceptionHandlerWhenReplayIdIsCorruptedAndFallbackToLatestReplayIdIsDisabled()
+            throws Exception {
         final SalesforceSession session = mock(SalesforceSession.class);
         when(session.getAccessToken()).thenReturn("faketoken");
         when(session.getInstanceUrl()).thenReturn("https://myinstance");
@@ -192,9 +190,8 @@ public class PubSubApiTest {
                 .build();
         grpcServer.start();
 
-        PubSubApiClient client = Mockito.spy(new PubSubApiClient(
-                session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000, true));
+        PubSubApiClient client = Mockito.spy(
+                new PubSubApiClient(session, new SalesforceLoginConfig(), "localhost", port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
         final String replayId = encodeReplayId("123");
@@ -214,7 +211,8 @@ public class PubSubApiTest {
     }
 
     private String encodeReplayId(String replayId) {
-        return Base64.getEncoder().encodeToString(ByteString.copyFromUtf8(replayId).toByteArray());
+        return Base64.getEncoder()
+                .encodeToString(ByteString.copyFromUtf8(replayId).toByteArray());
     }
 
     @Test
@@ -235,9 +233,8 @@ public class PubSubApiTest {
                 .build();
         grpcServer.start();
 
-        try (PubSubApiClient client = new PubSubApiClient(
-                session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000, true)) {
+        try (PubSubApiClient client =
+                new PubSubApiClient(session, new SalesforceLoginConfig(), "localhost", port, 1000, 10000, true)) {
             client.setUsePlainTextConnection(true);
             client.start();
             client.subscribe(consumer, ReplayPreset.LATEST, null, true);

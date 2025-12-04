@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.unit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -24,10 +29,6 @@ import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PubsubEndpointTest extends PubsubTestSupport {
 
@@ -48,8 +49,10 @@ public class PubsubEndpointTest extends PubsubTestSupport {
 
         // :1 identifies the first registered endpoint fo a type in the context
         Endpoint endpoint = context.hasEndpoint(String.format("google-pubsub:%s:%s", PROJECT_ID, SUBSCRIPTION_URI));
-        assertNotNull(endpoint,
-                String.format("Endpoint 'google-pubsub:%s:%s' is not found in Camel Context", PROJECT_ID, SUBSCRIPTION_URI));
+        assertNotNull(
+                endpoint,
+                String.format(
+                        "Endpoint 'google-pubsub:%s:%s' is not found in Camel Context", PROJECT_ID, SUBSCRIPTION_URI));
 
         assertTrue(endpoint instanceof GooglePubsubEndpoint);
         GooglePubsubEndpoint pubsubEndpoint = (GooglePubsubEndpoint) endpoint;
@@ -61,7 +64,6 @@ public class PubsubEndpointTest extends PubsubTestSupport {
         assertEquals(TEST_SUBSCRIPTION_NAME, pubsubEndpoint.getDestinationName());
         assertEquals(Integer.valueOf(5), pubsubEndpoint.getConcurrentConsumers());
         assertEquals(GooglePubsubConstants.AckMode.NONE, pubsubEndpoint.getAckMode());
-
     }
 
     @Override

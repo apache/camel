@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.atomic.LongAdder;
@@ -55,25 +56,32 @@ public class RedeliveryOnExceptionBlockedDelayTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // will by default block
-                onException(IllegalArgumentException.class).maximumRedeliveries(5).redeliveryDelay(0);
+                onException(IllegalArgumentException.class)
+                        .maximumRedeliveries(5)
+                        .redeliveryDelay(0);
 
-                from("seda:start").to("log:before").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        LOG.info("Processing at attempt {} {}", attempt, exchange);
+                from("seda:start")
+                        .to("log:before")
+                        .to("mock:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                LOG.info("Processing at attempt {} {}", attempt, exchange);
 
-                        String body = exchange.getIn().getBody(String.class);
-                        if (body.contains("World")) {
-                            attempt.increment();
-                            if (attempt.intValue() <= 2) {
-                                LOG.info("Processing failed will thrown an exception");
-                                throw new IllegalArgumentException("Damn");
+                                String body = exchange.getIn().getBody(String.class);
+                                if (body.contains("World")) {
+                                    attempt.increment();
+                                    if (attempt.intValue() <= 2) {
+                                        LOG.info("Processing failed will thrown an exception");
+                                        throw new IllegalArgumentException("Damn");
+                                    }
+                                }
+
+                                exchange.getIn().setBody("Hello " + body);
+                                LOG.info("Processing at attempt {} complete {}", attempt, exchange);
                             }
-                        }
-
-                        exchange.getIn().setBody("Hello " + body);
-                        LOG.info("Processing at attempt {} complete {}", attempt, exchange);
-                    }
-                }).to("log:after").to("mock:result");
+                        })
+                        .to("log:after")
+                        .to("mock:result");
             }
         };
     }

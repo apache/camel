@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -34,11 +40,6 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test verifies JMX is enabled by default and it uses local mbean server to conduct the test as connector server
@@ -104,50 +105,68 @@ public class JmxInstrumentationUsingDefaultsTest extends ManagementTestSupport {
         ObjectName pcob = iter.next();
 
         Long valueofNumExchanges = (Long) beanServer.getAttribute(pcob, "ExchangesTotal");
-        assertNotNull(valueofNumExchanges, "Expected attribute found. MBean registered under a "
-                                           + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
+        assertNotNull(
+                valueofNumExchanges,
+                "Expected attribute found. MBean registered under a "
+                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertEquals(Long.valueOf(1), valueofNumExchanges);
 
         Long valueofNumCompleted = (Long) beanServer.getAttribute(pcob, "ExchangesCompleted");
-        assertNotNull(valueofNumCompleted, "Expected attribute found. MBean registered under a "
-                                           + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
+        assertNotNull(
+                valueofNumCompleted,
+                "Expected attribute found. MBean registered under a "
+                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertEquals(Long.valueOf(1), valueofNumCompleted);
 
         Long valueofNumFailed = (Long) beanServer.getAttribute(pcob, "ExchangesFailed");
-        assertNotNull(valueofNumFailed, "Expected attribute found. MBean registered under a "
-                                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
+        assertNotNull(
+                valueofNumFailed,
+                "Expected attribute found. MBean registered under a "
+                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertEquals(Long.valueOf(0), valueofNumFailed);
 
         Long valueofMinProcessingTime = (Long) beanServer.getAttribute(pcob, "MinProcessingTime");
-        assertNotNull(valueofMinProcessingTime, "Expected attribute found. MBean registered under a "
-                                                + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
+        assertNotNull(
+                valueofMinProcessingTime,
+                "Expected attribute found. MBean registered under a "
+                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(valueofMinProcessingTime >= 0);
 
         Long valueofMaxProcessingTime = (Long) beanServer.getAttribute(pcob, "MaxProcessingTime");
-        assertNotNull(valueofMaxProcessingTime, "Expected attribute found. MBean registered under a "
-                                                + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
+        assertNotNull(
+                valueofMaxProcessingTime,
+                "Expected attribute found. MBean registered under a "
+                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(valueofMaxProcessingTime >= 0);
 
         Long valueofMeanProcessingTime = (Long) beanServer.getAttribute(pcob, "MeanProcessingTime");
-        assertNotNull(valueofMeanProcessingTime, "Expected attribute found. MBean registered under a "
-                                                 + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
+        assertNotNull(
+                valueofMeanProcessingTime,
+                "Expected attribute found. MBean registered under a "
+                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime
                 && valueofMeanProcessingTime <= valueofMaxProcessingTime);
 
         Long totalProcessingTime = (Long) beanServer.getAttribute(pcob, "TotalProcessingTime");
-        assertNotNull(totalProcessingTime, "Expected attribute found. MBean registered under a "
-                                           + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
+        assertNotNull(
+                totalProcessingTime,
+                "Expected attribute found. MBean registered under a "
+                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(totalProcessingTime >= 0);
 
         Long lastProcessingTime = (Long) beanServer.getAttribute(pcob, "LastProcessingTime");
-        assertNotNull(lastProcessingTime, "Expected attribute found. MBean registered under a "
-                                          + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
+        assertNotNull(
+                lastProcessingTime,
+                "Expected attribute found. MBean registered under a "
+                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(lastProcessingTime >= 0);
 
-        assertNotNull(beanServer.getAttribute(pcob, "FirstExchangeCompletedTimestamp"),
+        assertNotNull(
+                beanServer.getAttribute(pcob, "FirstExchangeCompletedTimestamp"),
                 "Expected first completion time to be available");
 
-        assertNotNull(beanServer.getAttribute(pcob, "LastExchangeCompletedTimestamp"),
+        assertNotNull(
+                beanServer.getAttribute(pcob, "LastExchangeCompletedTimestamp"),
                 "Expected last completion time to be available");
     }
 

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,10 +33,6 @@ import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Asset;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SObjectTreeTest extends CompositeTestBase {
 
@@ -49,7 +50,7 @@ public class SObjectTreeTest extends CompositeTestBase {
         final Class[] types = tree.objectTypes();
         Arrays.sort(types, (final Class l, final Class r) -> l.getName().compareTo(r.getName()));
 
-        assertArrayEquals(new Class[] { Account.class, Asset.class, Contact.class }, types);
+        assertArrayEquals(new Class[] {Account.class, Asset.class, Contact.class}, types);
     }
 
     @Test
@@ -70,22 +71,23 @@ public class SObjectTreeTest extends CompositeTestBase {
         tree.addNode(account2);
 
         final String json = writer.writeValueAsString(tree);
-        final String expected = "{" + "\"records\":[" + "{" + "\"Industry\":\"Banking\"," + "\"Name\":\"SampleAccount\","
-                                + "\"NumberOfEmployees\":100,"
-                                + "\"Phone\":\"1234567890\"," + "\"Website\":\"www.salesforce.com\"," + "\"attributes\":{"
-                                + "\"referenceId\":\"ref1\"," + "\"type\":\"Account\","
-                                + "\"url\":null" + "}," + "\"Contacts\":{" + "\"records\":[" + "{"
-                                + "\"Email\":\"sample@salesforce.com\"," + "\"LastName\":\"Smith\","
-                                + "\"Title\":\"President\"," + "\"attributes\":{" + "\"referenceId\":\"ref2\","
-                                + "\"type\":\"Contact\"," + "\"url\":null" + "}" + "}," + "{"
-                                + "\"Email\":\"sample@salesforce.com\"," + "\"LastName\":\"Evans\","
-                                + "\"Title\":\"Vice President\"," + "\"attributes\":{"
-                                + "\"referenceId\":\"ref3\"," + "\"type\":\"Contact\"," + "\"url\":null" + "}" + "}" + "]" + "}"
-                                + "}," + "{" + "\"Industry\":\"Banking\","
-                                + "\"Name\":\"SampleAccount2\"," + "\"NumberOfEmployees\":100," + "\"Phone\":\"1234567890\","
-                                + "\"Website\":\"www.salesforce2.com\","
-                                + "\"attributes\":{" + "\"referenceId\":\"ref4\"," + "\"type\":\"Account\"," + "\"url\":null"
-                                + "}" + "}" + "]" + "}";
+        final String expected =
+                "{" + "\"records\":[" + "{" + "\"Industry\":\"Banking\"," + "\"Name\":\"SampleAccount\","
+                        + "\"NumberOfEmployees\":100,"
+                        + "\"Phone\":\"1234567890\"," + "\"Website\":\"www.salesforce.com\"," + "\"attributes\":{"
+                        + "\"referenceId\":\"ref1\"," + "\"type\":\"Account\","
+                        + "\"url\":null" + "}," + "\"Contacts\":{" + "\"records\":[" + "{"
+                        + "\"Email\":\"sample@salesforce.com\"," + "\"LastName\":\"Smith\","
+                        + "\"Title\":\"President\"," + "\"attributes\":{" + "\"referenceId\":\"ref2\","
+                        + "\"type\":\"Contact\"," + "\"url\":null" + "}" + "}," + "{"
+                        + "\"Email\":\"sample@salesforce.com\"," + "\"LastName\":\"Evans\","
+                        + "\"Title\":\"Vice President\"," + "\"attributes\":{"
+                        + "\"referenceId\":\"ref3\"," + "\"type\":\"Contact\"," + "\"url\":null" + "}" + "}" + "]" + "}"
+                        + "}," + "{" + "\"Industry\":\"Banking\","
+                        + "\"Name\":\"SampleAccount2\"," + "\"NumberOfEmployees\":100," + "\"Phone\":\"1234567890\","
+                        + "\"Website\":\"www.salesforce2.com\","
+                        + "\"attributes\":{" + "\"referenceId\":\"ref4\"," + "\"type\":\"Account\"," + "\"url\":null"
+                        + "}" + "}" + "]" + "}";
         assertEquals(expected, json, "Should serialize to JSON as in Salesforce example");
     }
 
@@ -158,9 +160,12 @@ public class SObjectTreeTest extends CompositeTestBase {
         final SObjectNode simpleAccountFromTree = tree.records.get(0);
         assertEquals("ref1", simpleAccountFromTree.getObject().getAttributes().getReferenceId());
 
-        final Iterator<SObjectNode> simpleAccountNodes = simpleAccountFromTree.getChildNodes().iterator();
-        assertEquals("ref2", simpleAccountNodes.next().getObject().getAttributes().getReferenceId());
-        assertEquals("ref3", simpleAccountNodes.next().getObject().getAttributes().getReferenceId());
+        final Iterator<SObjectNode> simpleAccountNodes =
+                simpleAccountFromTree.getChildNodes().iterator();
+        assertEquals(
+                "ref2", simpleAccountNodes.next().getObject().getAttributes().getReferenceId());
+        assertEquals(
+                "ref3", simpleAccountNodes.next().getObject().getAttributes().getReferenceId());
 
         assertEquals("ref4", account2.getObject().getAttributes().getReferenceId());
     }
@@ -177,7 +182,8 @@ public class SObjectTreeTest extends CompositeTestBase {
         assertSame(simpleAccount, firstAccountFromTree.getObject());
         assertEquals("Account", firstAccountFromTree.getObjectType());
 
-        final Iterator<SObjectNode> simpleAccountNodes = firstAccountFromTree.getChildNodes().iterator();
+        final Iterator<SObjectNode> simpleAccountNodes =
+                firstAccountFromTree.getChildNodes().iterator();
 
         final SObjectNode smithNode = simpleAccountNodes.next();
         assertSame(smith, smithNode.getObject());

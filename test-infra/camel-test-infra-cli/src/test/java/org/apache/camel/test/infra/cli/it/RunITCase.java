@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.cli.it;
 
 import org.apache.camel.support.ObjectHelper;
@@ -30,8 +31,10 @@ public class RunITCase extends AbstractTestSupport {
 
     @Test
     @ReadsSystemProperty
-    @EnabledIfSystemProperty(named = "currentProjectVersion", matches = "^(?!\\s*$).+",
-                             disabledReason = "currentProjectVersion system property must be set")
+    @EnabledIfSystemProperty(
+            named = "currentProjectVersion",
+            matches = "^(?!\\s*$).+",
+            disabledReason = "currentProjectVersion system property must be set")
     public void readPidFromBackgroundExecutionInCurrentVersionTest() {
         String currentCamelVersion = System.getProperty("currentProjectVersion");
         System.setProperty("cli.service.version", currentCamelVersion);

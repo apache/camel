@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -30,13 +31,13 @@ public class SoapDataFormatReifier extends DataFormatReifier<SoapDataFormat> {
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("elementNameStrategy", or(definition.getElementNameStrategyObject(),
-                asRef(definition.getElementNameStrategy())));
+        properties.put(
+                "elementNameStrategy",
+                or(definition.getElementNameStrategyObject(), asRef(definition.getElementNameStrategy())));
         properties.put("encoding", definition.getEncoding());
         properties.put("version", definition.getVersion());
         properties.put("namespacePrefix", asRef(definition.getNamespacePrefix()));
         properties.put("schema", definition.getSchema());
         properties.put("contextPath", definition.getContextPath());
     }
-
 }

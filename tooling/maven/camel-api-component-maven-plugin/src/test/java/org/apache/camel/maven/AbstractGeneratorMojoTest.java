@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.util.Collections;
@@ -26,10 +31,6 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Base class for Generator MOJO tests.
@@ -119,20 +120,23 @@ public abstract class AbstractGeneratorMojoTest {
         File srcDir = new File(OUT_DIR.replace("-test-", ""));
         File testDir = new File(OUT_DIR);
         File[] empty = new File[0];
-        assertCompilationRootsByConfiguration(AbstractSourceGeneratorMojo.CompileRoots.source, srcDir, testDir,
-                new File[] { srcDir, testDir }, empty);
-        assertCompilationRootsByConfiguration(AbstractSourceGeneratorMojo.CompileRoots.test, srcDir, testDir,
-                empty, new File[] { srcDir, testDir });
-        assertCompilationRootsByConfiguration(AbstractSourceGeneratorMojo.CompileRoots.all, srcDir, testDir,
-                new File[] { srcDir }, new File[] { testDir });
-        assertCompilationRootsByConfiguration(AbstractSourceGeneratorMojo.CompileRoots.none, srcDir, testDir,
-                empty, empty);
+        assertCompilationRootsByConfiguration(
+                AbstractSourceGeneratorMojo.CompileRoots.source, srcDir, testDir, new File[] {srcDir, testDir}, empty);
+        assertCompilationRootsByConfiguration(
+                AbstractSourceGeneratorMojo.CompileRoots.test, srcDir, testDir, empty, new File[] {srcDir, testDir});
+        assertCompilationRootsByConfiguration(
+                AbstractSourceGeneratorMojo.CompileRoots.all, srcDir, testDir, new File[] {srcDir}, new File[] {testDir
+                });
+        assertCompilationRootsByConfiguration(
+                AbstractSourceGeneratorMojo.CompileRoots.none, srcDir, testDir, empty, empty);
     }
 
     private void assertCompilationRootsByConfiguration(
             AbstractSourceGeneratorMojo.CompileRoots compileRoots,
-            File srcDir, File testDir,
-            File[] expectedSource, File[] expectedTest)
+            File srcDir,
+            File testDir,
+            File[] expectedSource,
+            File[] expectedTest)
             throws Exception {
         AbstractSourceGeneratorMojo mojo = createGeneratorMojo();
         assumeTrue(mojo != null, "Ignored because createGeneratorMojo is not implemented");
@@ -150,5 +154,4 @@ public abstract class AbstractGeneratorMojoTest {
         assertEquals(expectedSources.length, compileSourceRoots.size());
         assertEquals(Stream.of(expectedSources).map(File::getAbsolutePath).toList(), compileSourceRoots);
     }
-
 }

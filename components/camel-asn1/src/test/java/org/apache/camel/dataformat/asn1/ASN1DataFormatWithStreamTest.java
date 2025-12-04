@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.asn1;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
 
@@ -48,7 +49,8 @@ public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
 
         assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
-            assertTrue(Arrays.equals(FileUtils.readFileToByteArray(testFile), exchange.getIn().getBody(byte[].class)));
+            assertTrue(Arrays.equals(
+                    FileUtils.readFileToByteArray(testFile), exchange.getIn().getBody(byte[].class)));
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -83,12 +85,19 @@ public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
                 asn1 = new ASN1DataFormat();
 
                 from("direct:unmarshal").unmarshal(asn1).to("mock:unmarshal");
-                from("direct:unmarshalthenmarshal").unmarshal(asn1).marshal(asn1).to("mock:marshal");
+                from("direct:unmarshalthenmarshal")
+                        .unmarshal(asn1)
+                        .marshal(asn1)
+                        .to("mock:marshal");
 
                 from("direct:unmarshaldsl").unmarshal().asn1().to("mock:unmarshaldsl");
-                from("direct:unmarshalthenmarshaldsl").unmarshal().asn1().marshal().asn1().to("mock:marshaldsl");
+                from("direct:unmarshalthenmarshaldsl")
+                        .unmarshal()
+                        .asn1()
+                        .marshal()
+                        .asn1()
+                        .to("mock:marshaldsl");
             }
         };
     }
-
 }

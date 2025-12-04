@@ -46,8 +46,8 @@ public final class JettyConfigurationBuilder {
         public ServletConfigurationBuilder(JettyConfigurationBuilder builder, JettyConfiguration jettyConfiguration) {
             this.jettyConfigurationBuilder = builder;
             this.jettyConfiguration = jettyConfiguration;
-            servletHandlerConfiguration
-                    = new JettyConfiguration.ServletHandlerConfiguration(jettyConfiguration.getContextPath());
+            servletHandlerConfiguration =
+                    new JettyConfiguration.ServletHandlerConfiguration(jettyConfiguration.getContextPath());
         }
 
         public ServletConfigurationBuilder customize(Consumer<ServletContextHandler> customizer) {
@@ -87,8 +87,8 @@ public final class JettyConfigurationBuilder {
         public WebSocketConfigurationBuilder(JettyConfigurationBuilder builder, JettyConfiguration jettyConfiguration) {
             this.jettyConfigurationBuilder = builder;
             this.jettyConfiguration = jettyConfiguration;
-            wsHandlerConfiguration
-                    = new JettyConfiguration.WebSocketContextHandlerConfiguration(jettyConfiguration.getContextPath());
+            wsHandlerConfiguration =
+                    new JettyConfiguration.WebSocketContextHandlerConfiguration(jettyConfiguration.getContextPath());
         }
 
         @Override
@@ -110,11 +110,12 @@ public final class JettyConfigurationBuilder {
 
         private final JettyConfiguration.WebContextConfiguration webContextConfiguration;
 
-        public WebAppContextConfigurationBuilder(JettyConfigurationBuilder jettyConfigurationBuilder,
-                                                 JettyConfiguration jettyConfiguration) {
+        public WebAppContextConfigurationBuilder(
+                JettyConfigurationBuilder jettyConfigurationBuilder, JettyConfiguration jettyConfiguration) {
             this.jettyConfigurationBuilder = jettyConfigurationBuilder;
             this.jettyConfiguration = jettyConfiguration;
-            this.webContextConfiguration = new JettyConfiguration.WebContextConfiguration(jettyConfiguration.getContextPath());
+            this.webContextConfiguration =
+                    new JettyConfiguration.WebContextConfiguration(jettyConfiguration.getContextPath());
         }
 
         public WebAppContextConfigurationBuilder withWebApp(String webApp) {
@@ -136,12 +137,12 @@ public final class JettyConfigurationBuilder {
         private final JettyConfiguration.ContextHandlerConfiguration contextHandlerConfiguration;
         private Consumer<ContextHandler> contextHandlerCustomizer;
 
-        public ContextHandlerConfigurationBuilder(JettyConfigurationBuilder jettyConfigurationBuilder,
-                                                  JettyConfiguration jettyConfiguration) {
+        public ContextHandlerConfigurationBuilder(
+                JettyConfigurationBuilder jettyConfigurationBuilder, JettyConfiguration jettyConfiguration) {
             this.jettyConfiguration = jettyConfiguration;
             this.jettyConfigurationBuilder = jettyConfigurationBuilder;
-            contextHandlerConfiguration
-                    = new JettyConfiguration.ContextHandlerConfiguration(jettyConfiguration.getContextPath());
+            contextHandlerConfiguration =
+                    new JettyConfiguration.ContextHandlerConfiguration(jettyConfiguration.getContextPath());
         }
 
         public ContextHandlerConfigurationBuilder withErrorHandler(ErrorHandler errorHandler) {
@@ -171,12 +172,12 @@ public final class JettyConfigurationBuilder {
         private final JettyConfigurationBuilder jettyConfigurationBuilder;
         private final JettyConfiguration.HandlerCollectionConfiguration handlerCollectionConfiguration;
 
-        public HandlerContextConfigurationBuilder(JettyConfigurationBuilder jettyConfigurationBuilder,
-                                                  JettyConfiguration jettyConfiguration) {
+        public HandlerContextConfigurationBuilder(
+                JettyConfigurationBuilder jettyConfigurationBuilder, JettyConfiguration jettyConfiguration) {
             this.jettyConfiguration = jettyConfiguration;
             this.jettyConfigurationBuilder = jettyConfigurationBuilder;
-            handlerCollectionConfiguration
-                    = new JettyConfiguration.HandlerCollectionConfiguration(jettyConfiguration.getContextPath());
+            handlerCollectionConfiguration =
+                    new JettyConfiguration.HandlerCollectionConfiguration(jettyConfiguration.getContextPath());
         }
 
         public HandlerContextConfigurationBuilder addHandlers(Handler handler) {
@@ -184,7 +185,8 @@ public final class JettyConfigurationBuilder {
             return this;
         }
 
-        public HandlerContextConfigurationBuilder withCustomizer(Consumer<ContextHandlerCollection> contextHandlerCustomizer) {
+        public HandlerContextConfigurationBuilder withCustomizer(
+                Consumer<ContextHandlerCollection> contextHandlerCustomizer) {
             handlerCollectionConfiguration.customize(contextHandlerCustomizer);
             return this;
         }
@@ -198,8 +200,7 @@ public final class JettyConfigurationBuilder {
 
     private JettyConfiguration jettyConfiguration = new JettyConfiguration();
 
-    private JettyConfigurationBuilder() {
-    }
+    private JettyConfigurationBuilder() {}
 
     public JettyConfigurationBuilder withPort(int port) {
         jettyConfiguration.setPort(port);
@@ -246,9 +247,7 @@ public final class JettyConfigurationBuilder {
 
     public static JettyConfigurationBuilder bareTemplate() {
         // Setups a very basic Jetty server with a randomly allocated port
-        return emptyTemplate()
-                .withPort(0)
-                .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH);
+        return emptyTemplate().withPort(0).withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH);
     }
 
     public static JettyConfiguration bare() {

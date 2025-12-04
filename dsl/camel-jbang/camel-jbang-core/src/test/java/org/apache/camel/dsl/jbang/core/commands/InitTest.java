@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,9 +31,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InitTest {
 
@@ -90,8 +91,8 @@ class InitTest {
 
     @Test
     void initJavaWithPackageName() throws Exception {
-        Path packageFolderInsideMavenProject
-                = Files.createDirectories(workingDir.resolve("src/main/java/com/acme/demo"));
+        Path packageFolderInsideMavenProject =
+                Files.createDirectories(workingDir.resolve("src/main/java/com/acme/demo"));
 
         Init initCommand = new Init(new CamelJBangMain());
         CommandLine.populateCommand(initCommand, "MyRoute.java", "--dir=" + packageFolderInsideMavenProject);

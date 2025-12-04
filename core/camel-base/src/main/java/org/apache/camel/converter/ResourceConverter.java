@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
 
 import java.io.IOException;
@@ -31,8 +32,7 @@ public final class ResourceConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private ResourceConverter() {
-    }
+    private ResourceConverter() {}
 
     @Converter(order = 1)
     public static InputStream toInputStream(Resource resource) throws IOException {
@@ -60,5 +60,4 @@ public final class ResourceConverter {
     public static Resource toResource(String uri, CamelContext camelContext) {
         return PluginHelper.getResourceLoader(camelContext).resolveResource(uri);
     }
-
 }

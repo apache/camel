@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonvalidator;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -25,9 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileValidatorRouteTest extends CamelTestSupport {
 
@@ -41,9 +42,11 @@ public class FileValidatorRouteTest extends CamelTestSupport {
         invalidEndpoint.expectedMessageCount(0);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/validator",
+        template.sendBodyAndHeader(
+                "file:target/validator",
                 "{ \"name\": \"Joe Doe\", \"id\": 1, \"price\": 12.5 }",
-                Exchange.FILE_NAME, "valid.json");
+                Exchange.FILE_NAME,
+                "valid.json");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
@@ -56,9 +59,11 @@ public class FileValidatorRouteTest extends CamelTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/validator",
+        template.sendBodyAndHeader(
+                "file:target/validator",
                 "{ \"name\": \"Joe Doe\", \"id\": \"AA1\", \"price\": 12.5 }",
-                Exchange.FILE_NAME, "invalid.json");
+                Exchange.FILE_NAME,
+                "invalid.json");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
@@ -95,5 +100,4 @@ public class FileValidatorRouteTest extends CamelTestSupport {
             }
         };
     }
-
 }

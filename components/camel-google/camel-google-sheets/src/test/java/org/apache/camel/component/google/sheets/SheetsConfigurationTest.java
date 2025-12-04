@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,15 +28,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SheetsConfigurationTest extends CamelTestSupport {
 
-    private static final String PATH_PREFIX
-            = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleSheetsApiCollection.getCollection()
+            .getApiName(SheetsSpreadsheetsApiMethod.class)
+            .getName();
     private static final String TEST_URI = "google-sheets://" + PATH_PREFIX
-                                           + "/create?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
+            + "/create?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

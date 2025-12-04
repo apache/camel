@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
@@ -23,8 +26,6 @@ import org.apache.camel.Route;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateInterceptFromAndInterceptSendToEndpointWithPlaceholderTest extends ContextTestSupport {
 
@@ -38,13 +39,18 @@ public class RouteTemplateInterceptFromAndInterceptSendToEndpointWithPlaceholder
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
+                        .templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("mock:{{bar}}");
 
                 RouteConfigurationDefinition routeConfigurationDefinition = new RouteConfigurationDefinition();
-                routeConfigurationDefinition.interceptFrom("direct:intercepted-from").to("mock:intercepted-from");
-                routeConfigurationDefinition.interceptSendToEndpoint("mock:intercepted-send")
+                routeConfigurationDefinition
+                        .interceptFrom("direct:intercepted-from")
+                        .to("mock:intercepted-from");
+                routeConfigurationDefinition
+                        .interceptSendToEndpoint("mock:intercepted-send")
                         .to("mock:intercepted-send-to-before")
                         .afterUri("mock:intercepted-send-to-after");
 
@@ -73,7 +79,9 @@ public class RouteTemplateInterceptFromAndInterceptSendToEndpointWithPlaceholder
 
         assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("intercepted").name());
+        assertEquals(
+                "Started",
+                context.getRouteController().getRouteStatus("intercepted").name());
         assertEquals("true", context.getRoute("intercepted").getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:intercepted-from", "Hello Intercepted");
@@ -82,5 +90,4 @@ public class RouteTemplateInterceptFromAndInterceptSendToEndpointWithPlaceholder
 
         context.stop();
     }
-
 }

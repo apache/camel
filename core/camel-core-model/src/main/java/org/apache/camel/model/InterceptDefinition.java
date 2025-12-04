@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -41,8 +42,7 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     @AsPredicate
     private OnWhenDefinition onWhen;
 
-    public InterceptDefinition() {
-    }
+    public InterceptDefinition() {}
 
     protected InterceptDefinition(InterceptDefinition source) {
         super(source);
@@ -120,5 +120,4 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
         setOnWhen(new OnWhenDefinition(predicate));
         return this;
     }
-
 }

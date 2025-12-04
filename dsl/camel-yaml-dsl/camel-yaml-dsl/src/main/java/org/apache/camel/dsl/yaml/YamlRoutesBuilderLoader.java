@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMap;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asSequenceNode;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.isSequenceNode;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -76,20 +85,12 @@ import org.snakeyaml.engine.v2.parser.Parser;
 import org.snakeyaml.engine.v2.parser.ParserImpl;
 import org.snakeyaml.engine.v2.scanner.StreamReader;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMap;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asSequenceNode;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.isSequenceNode;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
-
 @ManagedResource(description = "Managed YAML RoutesBuilderLoader")
 @RoutesLoader(YamlRoutesBuilderLoader.EXTENSION)
 public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "yaml";
-    public static final String[] SUPPORTED_EXTENSION = { EXTENSION, "camel.yaml", "pipe.yaml" };
+    public static final String[] SUPPORTED_EXTENSION = {EXTENSION, "camel.yaml", "pipe.yaml"};
 
     private static final Logger LOG = LoggerFactory.getLogger(YamlRoutesBuilderLoader.class);
 
@@ -97,6 +98,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     // we are lenient so lets just assume we can work with any of the v1 even if they evolve
     @Deprecated
     private static final String PIPE_VERSION = "camel.apache.org/v1";
+
     private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1beta2";
     private static final String KNATIVE_MESSAGING_VERSION = "messaging.knative.dev/v1";
     private static final String KNATIVE_EVENTING_VERSION = "eventing.knative.dev/v1";
@@ -248,9 +250,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     getRestCollection().rest(definition);
                     return true;
                 } else if (item instanceof RestConfigurationDefinition) {
-                    ((RestConfigurationDefinition) item).asRestConfiguration(
-                            getCamelContext(),
-                            getCamelContext().getRestConfiguration());
+                    ((RestConfigurationDefinition) item)
+                            .asRestConfiguration(
+                                    getCamelContext(), getCamelContext().getRestConfiguration());
                     return true;
                 }
 
@@ -283,7 +285,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                                         String key = asText(nt.getKeyNode());
                                         // only accept route-configuration
                                         if ("route-configuration".equals(key) || "routeConfiguration".equals(key)) {
-                                            Object item = ctx.mandatoryResolve(node).construct(node);
+                                            Object item =
+                                                    ctx.mandatoryResolve(node).construct(node);
                                             boolean accepted = doConfiguration(item);
                                             if (accepted && idx != -1) {
                                                 indexes.add(idx);
@@ -318,8 +321,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         if (Objects.equals(root.getNodeType(), NodeType.MAPPING)) {
             final MappingNode mn = YamlDeserializerSupport.asMappingNode(root);
             // pipe
-            boolean pipe = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(PIPE_VERSION)) &&
-                    anyTupleMatches(mn.getValue(), "kind", "Pipe");
+            boolean pipe = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(PIPE_VERSION))
+                    && anyTupleMatches(mn.getValue(), "kind", "Pipe");
             if (pipe) {
                 target = preConfigurePipe(root, ctx, target, preParse);
             }
@@ -545,13 +548,17 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         // extract uri is different if kamelet or not
         boolean kamelet = mn != null && anyTupleMatches(mn.getValue(), "kind", "Kamelet");
-        boolean strimzi = !kamelet && mn != null
+        boolean strimzi = !kamelet
+                && mn != null
                 && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(STRIMZI_VERSION))
                 && anyTupleMatches(mn.getValue(), "kind", "KafkaTopic");
-        boolean knativeBroker = !kamelet && mn != null
+        boolean knativeBroker = !kamelet
+                && mn != null
                 && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_EVENTING_VERSION))
                 && anyTupleMatches(mn.getValue(), "kind", "Broker");
-        boolean knativeChannel = !kamelet && !strimzi && mn != null
+        boolean knativeChannel = !kamelet
+                && !strimzi
+                && mn != null
                 && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_MESSAGING_VERSION));
         String uri;
         if (knativeBroker) {
@@ -611,16 +618,17 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         }
 
         try (InputStream is = resourceInputStream(resource)) {
-            LoadSettings local = LoadSettings.builder().setLabel(resource.getLocation()).build();
+            LoadSettings local =
+                    LoadSettings.builder().setLabel(resource.getLocation()).build();
             YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource);
             StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
             Parser parser = new ParserImpl(local, reader);
             Composer composer = new Composer(local, parser);
             try {
-                composer.getSingleNode()
-                        .map(node -> preParseNode(ctx, node));
+                composer.getSingleNode().map(node -> preParseNode(ctx, node));
             } catch (Exception e) {
-                throw new RuntimeCamelException("Error pre-parsing resource: " + ctx.getResource().getLocation(), e);
+                throw new RuntimeCamelException(
+                        "Error pre-parsing resource: " + ctx.getResource().getLocation(), e);
             } finally {
                 ctx.close();
             }
@@ -645,5 +653,4 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         return null;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
 
 import java.util.Objects;
@@ -35,8 +36,7 @@ public class KnativeHttpProducerFactory extends ServiceSupport implements CamelC
     private WebClientOptions vertxHttpClientOptions;
     private CamelContext camelContext;
 
-    public KnativeHttpProducerFactory() {
-    }
+    public KnativeHttpProducerFactory() {}
 
     public KnativeHttpProducerFactory(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -80,8 +80,7 @@ public class KnativeHttpProducerFactory extends ServiceSupport implements CamelC
         }
 
         if (vertxHttpClientOptions == null) {
-            KnativeHttpSupport.lookupClientOptions(camelContext)
-                    .ifPresent(options -> vertxHttpClientOptions = options);
+            KnativeHttpSupport.lookupClientOptions(camelContext).ifPresent(options -> vertxHttpClientOptions = options);
         }
     }
 
@@ -89,10 +88,6 @@ public class KnativeHttpProducerFactory extends ServiceSupport implements CamelC
     public Producer createProducer(Endpoint endpoint, KnativeTransportConfiguration config, KnativeResource service) {
         Objects.requireNonNull(this.vertx, "vertx");
 
-        return new KnativeHttpProducer(
-                endpoint,
-                service,
-                this.vertx,
-                this.vertxHttpClientOptions);
+        return new KnativeHttpProducer(endpoint, service, this.vertx, this.vertxHttpClientOptions);
     }
 }

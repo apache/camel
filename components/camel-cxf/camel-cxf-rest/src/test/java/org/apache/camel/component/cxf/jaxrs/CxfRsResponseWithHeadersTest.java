@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,25 +32,21 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfRsResponseWithHeadersTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsResponseWithHeadersTest";
-    private static final String CXF_RS_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT
+            + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(CXF_RS_ENDPOINT_URI)
-                        .process(e -> {
-                            e.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                            e.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                            e.getMessage().setBody("Cannot find customer");
-                        });
+                from(CXF_RS_ENDPOINT_URI).process(e -> {
+                    e.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                    e.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    e.getMessage().setBody("Cannot find customer");
+                });
             }
         };
     }
@@ -59,10 +58,9 @@ public class CxfRsResponseWithHeadersTest extends CamelTestSupport {
         put.setEntity(entity);
 
         try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-             CloseableHttpResponse response = httpclient.execute(put)) {
+                CloseableHttpResponse response = httpclient.execute(put)) {
             assertEquals(404, response.getCode());
             assertEquals("Cannot find customer", EntityUtils.toString(response.getEntity()));
         }
     }
-
 }

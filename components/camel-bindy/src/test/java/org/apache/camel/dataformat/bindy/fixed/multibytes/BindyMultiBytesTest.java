@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.multibytes;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 
@@ -29,8 +32,6 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyMultiBytesTest extends CamelTestSupport {
 
@@ -57,7 +58,8 @@ public class BindyMultiBytesTest extends CamelTestSupport {
         byte[] testAsBytes = test.getBytes(StandardCharsets.UTF_8);
         assertEquals(11, testAsBytes.length, "A\u00DF takes 11 bytes, because \u00DF takes 2");
 
-        result.expectedMessagesMatches(exchange -> test.equals(exchange.getIn().getBody(TestRecord.class).getField1()));
+        result.expectedMessagesMatches(exchange ->
+                test.equals(exchange.getIn().getBody(TestRecord.class).getField1()));
 
         producer.sendBody(test);
 
@@ -97,6 +99,5 @@ public class BindyMultiBytesTest extends CamelTestSupport {
         public void setField1(String field1) {
             this.field1 = field1;
         }
-
     }
 }

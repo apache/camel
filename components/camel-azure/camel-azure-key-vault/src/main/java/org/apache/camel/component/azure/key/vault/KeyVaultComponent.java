@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.key.vault;
 
 import java.util.Map;
@@ -33,8 +34,7 @@ public class KeyVaultComponent extends DefaultComponent {
     @Metadata
     private KeyVaultConfiguration configuration = new KeyVaultConfiguration();
 
-    public KeyVaultComponent() {
-    }
+    public KeyVaultComponent() {}
 
     public KeyVaultComponent(final CamelContext context) {
         super(context);
@@ -47,8 +47,8 @@ public class KeyVaultComponent extends DefaultComponent {
             throw new IllegalArgumentException("A vault name must be specified.");
         }
 
-        final KeyVaultConfiguration epConfiguration
-                = this.configuration != null ? this.configuration.copy() : new KeyVaultConfiguration();
+        final KeyVaultConfiguration epConfiguration =
+                this.configuration != null ? this.configuration.copy() : new KeyVaultConfiguration();
 
         // set account or topic name
         epConfiguration.setVaultName(remaining);
@@ -56,8 +56,10 @@ public class KeyVaultComponent extends DefaultComponent {
         final KeyVaultEndpoint endpoint = new KeyVaultEndpoint(uri, this, epConfiguration);
         setProperties(endpoint, parameters);
 
-        if (CredentialType.CLIENT_SECRET == epConfiguration.getCredentialType() && epConfiguration.getSecretClient() == null
-                && (epConfiguration.getClientId() == null || epConfiguration.getClientSecret() == null
+        if (CredentialType.CLIENT_SECRET == epConfiguration.getCredentialType()
+                && epConfiguration.getSecretClient() == null
+                && (epConfiguration.getClientId() == null
+                        || epConfiguration.getClientSecret() == null
                         || epConfiguration.getTenantId() == null)) {
             throw new IllegalArgumentException(
                     "Azure Secret Client or client Id, client secret and tenant Id must be specified if credential type is set to clientSecret");

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.apache.camel.openapi.OpenApiHelper.clearVendorExtensions;
+import static org.apache.camel.openapi.RestDefinitionsResolver.JMX_REST_DEFINITION_RESOLVER;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -52,9 +56,6 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.openapi.OpenApiHelper.clearVendorExtensions;
-import static org.apache.camel.openapi.RestDefinitionsResolver.JMX_REST_DEFINITION_RESOLVER;
-
 /**
  * A support class for that allows SPI to plugin and offer OpenApi API service listings as part of the Camel component.
  * This allows rest-dsl components such as servlet/jetty/netty-http to offer OpenApi API listings with minimal effort.
@@ -62,6 +63,7 @@ import static org.apache.camel.openapi.RestDefinitionsResolver.JMX_REST_DEFINITI
 public class RestOpenApiSupport {
 
     private static final DateFormat DEFAULT_DATE_FORMAT;
+
     static {
         final SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
         f.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -142,11 +144,10 @@ public class RestOpenApiSupport {
 
     public static String getHostFromOasDocument(final OpenAPI openapi) {
         String host = null;
-        if (openapi.getServers() != null
-                && openapi.getServers().get(0) != null) {
+        if (openapi.getServers() != null && openapi.getServers().get(0) != null) {
             try {
-                URL serverUrl = URI.create(
-                        parseVariables(openapi.getServers().get(0).getUrl(),
+                URL serverUrl = URI.create(parseVariables(
+                                openapi.getServers().get(0).getUrl(),
                                 openapi.getServers().get(0)))
                         .toURL();
                 host = serverUrl.getHost();
@@ -159,8 +160,7 @@ public class RestOpenApiSupport {
 
     public static String getBasePathFromOasDocument(final OpenAPI openapi) {
         String basePath = null;
-        if (openapi.getServers() != null
-                && openapi.getServers().get(0) != null) {
+        if (openapi.getServers() != null && openapi.getServers().get(0) != null) {
             try {
                 Server server = openapi.getServers().get(0);
                 if (server.getVariables() != null && server.getVariables().get("basePath") != null) {
@@ -168,8 +168,8 @@ public class RestOpenApiSupport {
                 }
                 if (basePath == null) {
                     // parse server url as fallback
-                    URL serverUrl = URI.create(
-                            parseVariables(openapi.getServers().get(0).getUrl(),
+                    URL serverUrl = URI.create(parseVariables(
+                                    openapi.getServers().get(0).getUrl(),
                                     openapi.getServers().get(0)))
                             .toURL();
                     // strip off the first "/" if double "/" exists
@@ -180,7 +180,7 @@ public class RestOpenApiSupport {
                 }
 
             } catch (MalformedURLException e) {
-                //not a valid whole url, just the basePath
+                // not a valid whole url, just the basePath
                 basePath = openapi.getServers().get(0).getUrl();
             }
         }
@@ -193,7 +193,9 @@ public class RestOpenApiSupport {
         Matcher m = p.matcher(url);
         while (m.find()) {
             String variable = m.group(1);
-            if (server != null && server.getVariables() != null && server.getVariables().get(variable) != null) {
+            if (server != null
+                    && server.getVariables() != null
+                    && server.getVariables().get(variable) != null) {
                 String varValue = server.getVariables().get(variable).getDefault();
                 url = url.replace("{" + variable + "}", varValue);
             }
@@ -229,7 +231,7 @@ public class RestOpenApiSupport {
             openApiConfig.setSchemes(schemes);
         } else {
             // assume http by default
-            openApiConfig.setSchemes(new String[] { "http" });
+            openApiConfig.setSchemes(new String[] {"http"});
         }
 
         String defaultConsumes = (String) config.get("api.default.consumes");
@@ -252,8 +254,17 @@ public class RestOpenApiSupport {
         String contactUrl = (String) config.get("api.contact.url");
         String contactEmail = (String) config.get("api.contact.email");
 
-        setInfo(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
-                contactName, contactUrl, contactEmail);
+        setInfo(
+                openApiConfig,
+                version,
+                title,
+                description,
+                termsOfService,
+                licenseName,
+                licenseUrl,
+                contactName,
+                contactUrl,
+                contactEmail);
 
         String externalDocsDescription = (String) config.get("externalDocs.description");
         String externalDocsUrl = (String) config.get("externalDocs.url");
@@ -261,7 +272,8 @@ public class RestOpenApiSupport {
         setExternalDocs(openApiConfig, externalDocsUrl, externalDocsDescription);
     }
 
-    private static void setExternalDocs(BeanConfig openApiConfig, String externalDocsUrl, String externalDocsDescription) {
+    private static void setExternalDocs(
+            BeanConfig openApiConfig, String externalDocsUrl, String externalDocsDescription) {
         if (externalDocsUrl != null) {
             ExternalDocumentation externalDocumentation = new ExternalDocumentation();
             externalDocumentation.setDescription(externalDocsDescription);
@@ -271,10 +283,21 @@ public class RestOpenApiSupport {
     }
 
     private void setInfo(
-            BeanConfig openApiConfig, String version, String title, String description,
-            String termsOfService, String licenseName, String licenseUrl,
-            String contactName, String contactUrl, String contactEmail) {
-        Info info = new Info().version(version).title(title).description(description).termsOfService(termsOfService);
+            BeanConfig openApiConfig,
+            String version,
+            String title,
+            String description,
+            String termsOfService,
+            String licenseName,
+            String licenseUrl,
+            String contactName,
+            String contactUrl,
+            String contactEmail) {
+        Info info = new Info()
+                .version(version)
+                .title(title)
+                .description(description)
+                .termsOfService(termsOfService);
 
         if (licenseName != null || licenseUrl != null) {
             License license = new License().name(licenseName).url(licenseUrl);
@@ -301,12 +324,11 @@ public class RestOpenApiSupport {
 
     protected RestDefinitionsResolver createJmxRestDefinitionsResolver(CamelContext camelContext) {
         return ResolverHelper.resolveService(
-                camelContext,
-                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
-                JMX_REST_DEFINITION_RESOLVER,
-                RestDefinitionsResolver.class)
-                .orElseThrow(
-                        () -> new IllegalArgumentException("Cannot find camel-openapi-java on classpath."));
+                        camelContext,
+                        camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                        JMX_REST_DEFINITION_RESOLVER,
+                        RestDefinitionsResolver.class)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find camel-openapi-java on classpath."));
     }
 
     public void setupXForwardHeaders(RestApiResponseAdapter response, Exchange exchange) {
@@ -314,8 +336,10 @@ public class RestOpenApiSupport {
     }
 
     public void renderResourceListing(
-            CamelContext camelContext, RestApiResponseAdapter response,
-            BeanConfig openApiConfig, boolean json,
+            CamelContext camelContext,
+            RestApiResponseAdapter response,
+            BeanConfig openApiConfig,
+            boolean json,
             ClassResolver classResolver,
             RestConfiguration configuration,
             Exchange exchange)
@@ -329,8 +353,8 @@ public class RestOpenApiSupport {
 
         List<RestDefinition> rests = getRestDefinitions(camelContext);
         if (rests != null) {
-            final Map<String, Object> apiProperties = configuration.getApiProperties() != null
-                    ? configuration.getApiProperties() : new HashMap<>();
+            final Map<String, Object> apiProperties =
+                    configuration.getApiProperties() != null ? configuration.getApiProperties() : new HashMap<>();
             String key = json ? "api.specification.contentType.json" : "api.specification.contentType.yaml";
             String defaultValue = json ? "application/json" : "text/yaml";
             response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties.getOrDefault(key, defaultValue));
@@ -363,7 +387,8 @@ public class RestOpenApiSupport {
         if (config.isOpenApi2()) {
             throw new IllegalArgumentException("OpenAPI 2.x is not supported");
         } else {
-            ObjectMapper mapper = json ? config.isOpenApi31() ? Json31.mapper() : Json.mapper()
+            ObjectMapper mapper = json
+                    ? config.isOpenApi31() ? Json31.mapper() : Json.mapper()
                     : config.isOpenApi31() ? Yaml31.mapper() : Yaml.mapper();
             String result = getFromOpenAPI3(openApi, mapper);
             if (type.equals(byte[].class)) {

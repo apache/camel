@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -31,12 +38,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("BusyWait")
 public class BulkApiV2IngestJobManualIT extends AbstractSalesforceTestBase {
@@ -62,32 +63,32 @@ public class BulkApiV2IngestJobManualIT extends AbstractSalesforceTestBase {
         job = template().requestBody("salesforce:bulk2GetJob", job, Job.class);
         assertSame(JobStateEnum.OPEN, job.getState(), "Job state");
 
-        job = template().requestBodyAndHeader("salesforce:bulk2CloseJob", "", "jobId", job.getId(),
-                Job.class);
+        job = template().requestBodyAndHeader("salesforce:bulk2CloseJob", "", "jobId", job.getId(), Job.class);
         assertEquals(JobStateEnum.UPLOAD_COMPLETE, job.getState(), "Job state");
 
         // wait for job to finish
         while (job.getState() != JobStateEnum.JOB_COMPLETE) {
             Thread.sleep(2000);
-            job = template().requestBodyAndHeader("salesforce:bulk2GetJob", "", "jobId",
-                    job.getId(), Job.class);
+            job = template().requestBodyAndHeader("salesforce:bulk2GetJob", "", "jobId", job.getId(), Job.class);
         }
 
-        InputStream is = template().requestBodyAndHeader("salesforce:bulk2GetSuccessfulResults",
-                "", "jobId", job.getId(), InputStream.class);
+        InputStream is = template()
+                .requestBodyAndHeader(
+                        "salesforce:bulk2GetSuccessfulResults", "", "jobId", job.getId(), InputStream.class);
         assertNotNull(is, "Successful results");
         List<String> successful = IOUtils.readLines(is, StandardCharsets.UTF_8);
         assertEquals(2, successful.size());
         assertTrue(successful.get(1).contains("TestFirst"));
 
-        is = template().requestBodyAndHeader("salesforce:bulk2GetFailedResults",
-                "", "jobId", job.getId(), InputStream.class);
+        is = template()
+                .requestBodyAndHeader("salesforce:bulk2GetFailedResults", "", "jobId", job.getId(), InputStream.class);
         assertNotNull(is, "Failed results");
         List<String> failed = IOUtils.readLines(is, StandardCharsets.UTF_8);
         assertEquals(1, failed.size());
 
-        is = template().requestBodyAndHeader("salesforce:bulk2GetUnprocessedRecords",
-                "", "jobId", job.getId(), InputStream.class);
+        is = template()
+                .requestBodyAndHeader(
+                        "salesforce:bulk2GetUnprocessedRecords", "", "jobId", job.getId(), InputStream.class);
         assertNotNull(is, "Unprocessed records");
         List<String> unprocessed = IOUtils.readLines(is, StandardCharsets.UTF_8);
         assertEquals(1, unprocessed.size());
@@ -128,8 +129,8 @@ public class BulkApiV2IngestJobManualIT extends AbstractSalesforceTestBase {
         template().sendBodyAndHeader("salesforce:bulk2DeleteJob", "", "jobId", job.getId());
 
         final Job finalJob = job;
-        CamelExecutionException ex = Assertions.assertThrows(CamelExecutionException.class,
-                () -> template().requestBody("salesforce:bulk2GetJob", finalJob, Job.class));
+        CamelExecutionException ex = Assertions.assertThrows(CamelExecutionException.class, () -> template()
+                .requestBody("salesforce:bulk2GetJob", finalJob, Job.class));
         assertEquals(SalesforceException.class, ex.getCause().getClass());
         SalesforceException sfEx = (SalesforceException) ex.getCause();
         assertEquals(404, sfEx.getStatusCode());

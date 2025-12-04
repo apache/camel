@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.saga;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,8 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.SagaCompletionMode;
 import org.apache.camel.saga.InMemorySagaService;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -85,7 +86,9 @@ public class SagaComponentTest extends ContextTestSupport {
         MockEndpoint compensated = getMockEndpoint("mock:compensated");
         compensated.expectedMessageCount(1);
 
-        assertThrows(Exception.class, () -> template.sendBody("direct:auto-workflow", "auto-compensate"),
+        assertThrows(
+                Exception.class,
+                () -> template.sendBody("direct:auto-workflow", "auto-compensate"),
                 "Should throw an exception");
 
         completed.assertIsNotSatisfied();
@@ -101,19 +104,33 @@ public class SagaComponentTest extends ContextTestSupport {
                 context.addService(new InMemorySagaService());
 
                 // Manual complete/compensate
-                from("direct:manual-workflow").saga().compensation("mock:compensated").completion("mock:completed")
-                        .completionMode(SagaCompletionMode.MANUAL).to("seda:async");
+                from("direct:manual-workflow")
+                        .saga()
+                        .compensation("mock:compensated")
+                        .completion("mock:completed")
+                        .completionMode(SagaCompletionMode.MANUAL)
+                        .to("seda:async");
 
-                from("seda:async").choice().when(body().isEqualTo(constant("manual-complete"))).to("saga:complete")
+                from("seda:async")
+                        .choice()
+                        .when(body().isEqualTo(constant("manual-complete")))
+                        .to("saga:complete")
                         .when(body().isEqualTo(constant("manual-compensate")))
-                        .to("saga:compensate").end();
+                        .to("saga:compensate")
+                        .end();
 
                 // Auto complete/compensate
-                from("direct:auto-workflow").saga().completion("mock:completed").compensation("mock:compensated").choice()
+                from("direct:auto-workflow")
+                        .saga()
+                        .completion("mock:completed")
+                        .compensation("mock:compensated")
+                        .choice()
                         .when(body().isEqualTo(constant("auto-compensate")))
                         .process(x -> {
                             throw new RuntimeException("mock exception");
-                        }).end().to("seda:async");
+                        })
+                        .end()
+                        .to("seda:async");
             }
         };
     }

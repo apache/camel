@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.console;
 
 import java.util.Map;
@@ -86,7 +87,6 @@ public class BeanModelDevConsole extends AbstractDevConsole {
                         if (rv == null) {
                             if (nulls) {
                                 sb.append(String.format("        %s = null%n", k));
-
                             }
                         } else {
                             type = rv.getClass().getName();
@@ -213,5 +213,4 @@ public class BeanModelDevConsole extends AbstractDevConsole {
 
         return PatternHelper.matchPattern(name, filter);
     }
-
 }

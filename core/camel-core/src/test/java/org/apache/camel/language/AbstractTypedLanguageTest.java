@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import java.util.function.Function;
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.Test;
  * @param <E> the type of the target expression
  */
 public abstract class AbstractTypedLanguageTest<
-        T extends TypedExpressionDefinition.AbstractBuilder<T, E>, E extends TypedExpressionDefinition>
+                T extends TypedExpressionDefinition.AbstractBuilder<T, E>, E extends TypedExpressionDefinition>
         extends ContextTestSupport {
 
     protected final String expression;
@@ -55,8 +56,12 @@ public abstract class AbstractTypedLanguageTest<
         template.sendBody(String.format("direct:%s", uriSuffix), context.getContentToSend());
         assertMockEndpointsSatisfied();
 
-        assertTypeInstanceOf(context.getBodyReceivedType(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
-        assertBodyReceived(context.getBodyReceived(), mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+        assertTypeInstanceOf(
+                context.getBodyReceivedType(),
+                mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
+        assertBodyReceived(
+                context.getBodyReceived(),
+                mockEndpoint.getReceivedExchanges().get(0).getIn().getBody());
     }
 
     protected void assertTypeInstanceOf(Class<?> expected, Object body) {
@@ -90,14 +95,11 @@ public abstract class AbstractTypedLanguageTest<
             @Override
             public void configure() {
                 from("direct:expression-only")
-                    .setBody()
-                    .expression(
-                        expression(
-                            factory.apply(expression())
+                        .setBody()
+                        .expression(expression(factory.apply(expression())
                                 .expression(expression)
-                                .end()
-                        )
-                    ).to("mock:expression-only");
+                                .end()))
+                        .to("mock:expression-only");
             }
         });
         context.start();
@@ -115,15 +117,12 @@ public abstract class AbstractTypedLanguageTest<
             @Override
             public void configure() {
                 from("direct:typed-with-class")
-                    .setBody()
-                    .expression(
-                        expression(
-                            factory.apply(expression())
+                        .setBody()
+                        .expression(expression(factory.apply(expression())
                                 .expression(expression)
                                 .resultType(testContext.getBodyReceivedType())
-                                .end()
-                        )
-                    ).to("mock:typed-with-class");
+                                .end()))
+                        .to("mock:typed-with-class");
             }
         });
         context.start();
@@ -137,14 +136,12 @@ public abstract class AbstractTypedLanguageTest<
             @Override
             public void configure() {
                 from("direct:typed-with-name")
-                    .split(
-                        expression(
-                            factory.apply(expression())
+                        .split(expression(factory.apply(expression())
                                 .expression(expression)
-                                .resultTypeName(testContext.getBodyReceivedType().getName())
-                                .end()
-                        )
-                    ).to("mock:typed-with-name");
+                                .resultTypeName(
+                                        testContext.getBodyReceivedType().getName())
+                                .end()))
+                        .to("mock:typed-with-name");
             }
         });
         context.start();

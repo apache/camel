@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.loadbalancer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -40,8 +41,7 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlAttribute(required = true)
     private String ref;
 
-    public CustomLoadBalancerDefinition() {
-    }
+    public CustomLoadBalancerDefinition() {}
 
     protected CustomLoadBalancerDefinition(CustomLoadBalancerDefinition source) {
         super(source);
@@ -88,5 +88,4 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
             return "CustomLoadBalancer[" + ref + "]";
         }
     }
-
 }

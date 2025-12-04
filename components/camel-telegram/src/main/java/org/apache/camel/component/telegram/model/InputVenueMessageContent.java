@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -42,11 +43,10 @@ public class InputVenueMessageContent implements InputMessageContent {
     @JsonProperty("foursquare_type")
     private String foursquareType;
 
-    public InputVenueMessageContent() {
-    }
+    public InputVenueMessageContent() {}
 
-    public InputVenueMessageContent(Float latitude, Float longitude, String title, String address, String foursquareId,
-                                    String foursquareType) {
+    public InputVenueMessageContent(
+            Float latitude, Float longitude, String title, String address, String foursquareId, String foursquareType) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.title = title;
@@ -67,8 +67,7 @@ public class InputVenueMessageContent implements InputMessageContent {
         private String foursquareId;
         private String foursquareType;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder latitude(Float latitude) {
             this.latitude = latitude;

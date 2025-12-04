@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSupport {
 
@@ -64,5 +65,4 @@ public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSu
             }
         };
     }
-
 }

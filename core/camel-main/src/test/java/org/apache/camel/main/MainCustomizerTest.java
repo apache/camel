@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelConfiguration;
@@ -25,10 +30,6 @@ import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.support.CustomizersSupport;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class MainCustomizerTest {
     @Test
@@ -119,6 +120,5 @@ public class MainCustomizerTest {
         }
     }
 
-    public static class MyFormatter extends DefaultExchangeFormatter {
-    }
+    public static class MyFormatter extends DefaultExchangeFormatter {}
 }

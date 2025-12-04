@@ -17,16 +17,15 @@
 
 package org.apache.camel.component.langchain4j.tools;
 
+import static java.time.Duration.ofSeconds;
+
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 
-import static java.time.Duration.ofSeconds;
-
 public final class ToolsHelper {
 
-    private ToolsHelper() {
-    }
+    private ToolsHelper() {}
 
     public static ChatModel createModel(OllamaService service) {
         return OpenAiChatModel.builder()

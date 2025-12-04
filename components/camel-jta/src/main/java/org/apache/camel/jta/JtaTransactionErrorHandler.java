@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jta;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,17 +43,32 @@ public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
     private final JtaTransactionPolicy transactionPolicy;
     private final LoggingLevel rollbackLoggingLevel;
 
-    public JtaTransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
-                                      Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
-                                      JtaTransactionPolicy transactionPolicy,
-                                      Predicate retryWhile, ScheduledExecutorService executorService,
-                                      LoggingLevel rollbackLoggingLevel,
-                                      Processor onExceptionOccurredProcessor) {
-        super(camelContext,
-              new TransactionErrorHandler(camelContext, output, transactionPolicy, rollbackLoggingLevel),
-              logger, redeliveryProcessor, redeliveryPolicy,
-              null, null, false, false, false,
-              retryWhile, executorService, null, onExceptionOccurredProcessor);
+    public JtaTransactionErrorHandler(
+            CamelContext camelContext,
+            Processor output,
+            CamelLogger logger,
+            Processor redeliveryProcessor,
+            RedeliveryPolicy redeliveryPolicy,
+            JtaTransactionPolicy transactionPolicy,
+            Predicate retryWhile,
+            ScheduledExecutorService executorService,
+            LoggingLevel rollbackLoggingLevel,
+            Processor onExceptionOccurredProcessor) {
+        super(
+                camelContext,
+                new TransactionErrorHandler(camelContext, output, transactionPolicy, rollbackLoggingLevel),
+                logger,
+                redeliveryProcessor,
+                redeliveryPolicy,
+                null,
+                null,
+                false,
+                false,
+                false,
+                retryWhile,
+                executorService,
+                null,
+                onExceptionOccurredProcessor);
         this.transactionPolicy = transactionPolicy;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
     }
@@ -60,8 +76,16 @@ public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
     @Override
     public ErrorHandler clone(Processor output) {
         JtaTransactionErrorHandler answer = new JtaTransactionErrorHandler(
-                camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, transactionPolicy, retryWhilePolicy,
-                executorService, rollbackLoggingLevel, onExceptionProcessor);
+                camelContext,
+                output,
+                logger,
+                redeliveryProcessor,
+                redeliveryPolicy,
+                transactionPolicy,
+                retryWhilePolicy,
+                executorService,
+                rollbackLoggingLevel,
+                onExceptionProcessor);
         // shallow clone is okay as we do not mutate these
         if (exceptionPolicies != null) {
             answer.exceptionPolicies = exceptionPolicies;

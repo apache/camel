@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.util.concurrent.ExecutorService;
@@ -36,29 +37,36 @@ import org.slf4j.LoggerFactory;
 /**
  * Communicate with Salesforce using Java DTOs.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce",
-             syntax = "salesforce:operationName:topicName", category = { Category.CLOUD, Category.SAAS },
-             headersClass = SalesforceConstants.class)
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = "salesforce",
+        title = "Salesforce",
+        syntax = "salesforce:operationName:topicName",
+        category = {Category.CLOUD, Category.SAAS},
+        headersClass = SalesforceConstants.class)
 public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
 
-    @UriPath(label = "common", description = "The operation to use", enums = "getVersions,"
-                                                                             + "getResources,getGlobalObjects,getBasicInfo,getDescription,getSObject,createSObject,"
-                                                                             + "updateSObject,deleteSObject,getSObjectWithId,upsertSObject,deleteSObjectWithId,"
-                                                                             + "getBlobField,query,queryMore,queryAll,search,apexCall,recent,getEventSchema,createJob,"
-                                                                             + "getJob,closeJob,abortJob,createBatch,getBatch,getAllBatches,getRequest,getResults,"
-                                                                             + "createBatchQuery,getQueryResultIds,getQueryResult,getRecentReports,"
-                                                                             + "getReportDescription,executeSyncReport,executeAsyncReport,getReportInstances,"
-                                                                             + "getReportResults,limits,approval,approvals,composite-tree,composite-batch,composite,"
-                                                                             + "compositeRetrieveSObjectCollections,compositeCreateSObjectCollections,"
-                                                                             + "compositeUpdateSObjectCollections,compositeUpsertSObjectCollections,"
-                                                                             + "compositeDeleteSObjectCollections,"
-                                                                             + "bulk2GetAllJobs,bulk2CreateJob,bulk2GetJob,bulk2CreateBatch,bulk2CloseJob,"
-                                                                             + "bulk2AbortJob,bulk2DeleteJob,bulk2GetSuccessfulResults,bulk2GetFailedResults,"
-                                                                             + "bulk2GetUnprocessedRecords,bulk2CreateQueryJob,bulk2GetQueryJob,"
-                                                                             + "bulk2GetAllQueryJobs,bulk2GetQueryJobResults,bulk2AbortQueryJob,bulk2DeleteQueryJob,"
-                                                                             + "raw,subscribe,pubSubSubscribe,pubSubPublish")
+    @UriPath(
+            label = "common",
+            description = "The operation to use",
+            enums = "getVersions,"
+                    + "getResources,getGlobalObjects,getBasicInfo,getDescription,getSObject,createSObject,"
+                    + "updateSObject,deleteSObject,getSObjectWithId,upsertSObject,deleteSObjectWithId,"
+                    + "getBlobField,query,queryMore,queryAll,search,apexCall,recent,getEventSchema,createJob,"
+                    + "getJob,closeJob,abortJob,createBatch,getBatch,getAllBatches,getRequest,getResults,"
+                    + "createBatchQuery,getQueryResultIds,getQueryResult,getRecentReports,"
+                    + "getReportDescription,executeSyncReport,executeAsyncReport,getReportInstances,"
+                    + "getReportResults,limits,approval,approvals,composite-tree,composite-batch,composite,"
+                    + "compositeRetrieveSObjectCollections,compositeCreateSObjectCollections,"
+                    + "compositeUpdateSObjectCollections,compositeUpsertSObjectCollections,"
+                    + "compositeDeleteSObjectCollections,"
+                    + "bulk2GetAllJobs,bulk2CreateJob,bulk2GetJob,bulk2CreateBatch,bulk2CloseJob,"
+                    + "bulk2AbortJob,bulk2DeleteJob,bulk2GetSuccessfulResults,bulk2GetFailedResults,"
+                    + "bulk2GetUnprocessedRecords,bulk2CreateQueryJob,bulk2GetQueryJob,"
+                    + "bulk2GetAllQueryJobs,bulk2GetQueryJobResults,bulk2AbortQueryJob,bulk2DeleteQueryJob,"
+                    + "raw,subscribe,pubSubSubscribe,pubSubPublish")
     @Metadata(required = true)
     private final OperationName operationName;
 
@@ -74,21 +82,36 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", description = "The replayId value to use when subscribing to the Pub/Sub API.")
     private String pubSubReplayId;
 
-    @UriParam(label = "consumer,advanced",
-              description = "Use thread pool for processing received Salesforce events, for example to process events in parallel.")
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Use thread pool for processing received Salesforce events, for example to process events in parallel.")
     private boolean consumerWorkerPoolEnabled;
-    @UriParam(label = "consumer,advanced",
-              description = "To use a custom thread pool for processing received Salesforce events, for example to process events in parallel.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "To use a custom thread pool for processing received Salesforce events, for example to process events in parallel.")
     private ExecutorService consumerWorkerPoolExecutorService;
-    @UriParam(label = "consumer,advanced", description = "Core thread pool size size for consumer worker pool.",
-              defaultValue = "10")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description = "Core thread pool size size for consumer worker pool.",
+            defaultValue = "10")
     private int consumerWorkerPoolSize = 10;
-    @UriParam(label = "consumer,advanced", description = "Maximum thread pool size size for consumer worker pool.",
-              defaultValue = "20")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description = "Maximum thread pool size size for consumer worker pool.",
+            defaultValue = "20")
     private int consumerWorkerPoolMaxSize = 20;
 
-    public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent, SalesforceEndpointConfig configuration,
-                              OperationName operationName, String topicName) {
+    public SalesforceEndpoint(
+            String uri,
+            SalesforceComponent salesforceComponent,
+            SalesforceEndpointConfig configuration,
+            OperationName operationName,
+            String topicName) {
         super(uri, salesforceComponent);
 
         this.configuration = configuration;
@@ -108,8 +131,9 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     }
 
     protected ExecutorService createExecutorService(Object source) {
-        return getCamelContext().getExecutorServiceManager().newThreadPool(source, "SalesforceConsumerWorker",
-                consumerWorkerPoolSize, consumerWorkerPoolMaxSize);
+        return getCamelContext()
+                .getExecutorServiceManager()
+                .newThreadPool(source, "SalesforceConsumerWorker", consumerWorkerPoolSize, consumerWorkerPoolMaxSize);
     }
 
     @Override

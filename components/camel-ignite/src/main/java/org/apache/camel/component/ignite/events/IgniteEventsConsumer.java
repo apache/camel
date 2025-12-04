@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.events;
 
 import java.util.Arrays;
@@ -93,5 +94,4 @@ public class IgniteEventsConsumer extends DefaultConsumer {
 
         LOG.info("Stopped local Ignite Events consumer for events: {}.", Arrays.asList(eventTypes));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe;
 
 import java.util.Map;
@@ -51,8 +52,8 @@ public class Transcribe2Component extends DefaultComponent {
             throw new IllegalArgumentException("Label must be specified.");
         }
 
-        Transcribe2Configuration configuration
-                = this.configuration != null ? this.configuration.clone() : new Transcribe2Configuration();
+        Transcribe2Configuration configuration =
+                this.configuration != null ? this.configuration.clone() : new Transcribe2Configuration();
         configuration.setLabel(remaining);
         Transcribe2Endpoint endpoint = new Transcribe2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
@@ -66,7 +67,8 @@ public class Transcribe2Component extends DefaultComponent {
             setRegionOnEndpoint(endpoint);
         }
         if (endpoint.getConfiguration().getTranscribeClient() == null
-                && (endpoint.getConfiguration().getAccessKey() == null || endpoint.getConfiguration().getSecretKey() == null)) {
+                && (endpoint.getConfiguration().getAccessKey() == null
+                        || endpoint.getConfiguration().getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon transcribe client or accessKey and secretKey must be specified");
         }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
 
 import io.dapr.client.DaprPreviewClient;
@@ -85,12 +86,12 @@ public class DaprLockHandler implements DaprOperationHandler {
         Integer expiryInSeconds = configurationOptionsProxy.getExpiryInSeconds(exchange);
 
         if (ObjectHelper.isEmpty(storeName) || ObjectHelper.isEmpty(resourceId) || ObjectHelper.isEmpty(lockOwner)) {
-            throw new IllegalArgumentException("Store Name, Resource Id and Lock Owner must not be empty for lock operations");
+            throw new IllegalArgumentException(
+                    "Store Name, Resource Id and Lock Owner must not be empty for lock operations");
         }
 
         if (LockOperation.tryLock.equals(lockOperation) && ObjectHelper.isEmpty(expiryInSeconds)) {
             throw new IllegalArgumentException("Expiry time must not be empty for 'tryLock' operation");
         }
     }
-
 }

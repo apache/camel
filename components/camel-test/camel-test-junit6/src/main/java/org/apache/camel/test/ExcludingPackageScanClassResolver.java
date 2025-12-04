@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test;
 
 import java.util.Collections;
@@ -29,5 +30,4 @@ public class ExcludingPackageScanClassResolver extends DefaultPackageScanClassRe
         Set<Class<?>> parents = excludedClasses == null ? Collections.emptySet() : excludedClasses;
         addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(parents)));
     }
-
 }

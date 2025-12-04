@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util;
 
 import java.io.IOException;
@@ -29,8 +30,7 @@ public final class FileUtil {
 
     private static final ConcurrentMap<String, Object> LOCKS = new ConcurrentHashMap<>();
 
-    private FileUtil() {
-    }
+    private FileUtil() {}
 
     /**
      * Update a file with the given string content if neeed. The file won't be modified if the content is already the
@@ -88,8 +88,12 @@ public final class FileUtil {
                 return false;
             }
             Files.createDirectories(path.getParent());
-            Files.write(path, newdata, StandardOpenOption.WRITE,
-                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(
+                    path,
+                    newdata,
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
             return true;
         }
     }
@@ -112,5 +116,4 @@ public final class FileUtil {
     public static void updateFile(Path from, Path to) throws IOException {
         updateFile(to, Files.readAllBytes(from));
     }
-
 }

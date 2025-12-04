@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
@@ -23,6 +24,5 @@ public class SomeCommonConstants {
     @Metadata
     public static final String KEY_FROM_COMMON = "KEY_FROM_COMMON";
 
-    protected SomeCommonConstants() {
-    }
+    protected SomeCommonConstants() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import java.util.ArrayList;
@@ -47,7 +48,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Result", propOrder = { "errors", "id", "success", "created" })
+@XmlType(
+        name = "Result",
+        propOrder = {"errors", "id", "success", "created"})
 public class Result {
 
     protected List<ResultError> errors;
@@ -126,5 +129,4 @@ public class Result {
     public void setCreated(boolean value) {
         this.created = value;
     }
-
 }

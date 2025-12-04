@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 import java.util.List;
@@ -33,8 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
     protected static final Logger LOG = LoggerFactory.getLogger(PullRequestCommentProducerTest.class);
     private long latestPullRequestId;
@@ -49,7 +50,6 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
                         .process(new MockPullRequestCommentProducerProcessor())
                         .to("github://pullRequestComment?repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
-
         };
     }
 
@@ -82,5 +82,4 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestId);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.lang.reflect.Method;
@@ -37,25 +38,33 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "kamelet",
-                     description = "List Kamelets from the Kamelet Catalog", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "kamelet",
+        description = "List Kamelets from the Kamelet Catalog",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CatalogKamelet extends CamelCommand {
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by name, type, support-level, or description", defaultValue = "name")
+    @CommandLine.Option(
+            names = {"--sort"},
+            description = "Sort by name, type, support-level, or description",
+            defaultValue = "name")
     String sort;
 
-    @CommandLine.Option(names = { "--type", "--filter-type" },
-                        description = "Filter by type: source, sink, or action")
+    @CommandLine.Option(
+            names = {"--type", "--filter-type"},
+            description = "Filter by type: source, sink, or action")
     String filterType;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter by name or description")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter by name or description")
     String filterName;
 
-    @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = RuntimeType.KAMELETS_VERSION)
+    @CommandLine.Option(
+            names = {"--kamelets-version"},
+            description = "Apache Camel Kamelets version",
+            defaultValue = RuntimeType.KAMELETS_VERSION)
     String kameletsVersion = RuntimeType.KAMELETS_VERSION;
 
     public CatalogKamelet(CamelJBangMain main) {
@@ -96,12 +105,15 @@ public class CatalogKamelet extends CamelCommand {
         }
 
         if (filterType != null) {
-            rows = rows.stream().filter(r -> r.type.equalsIgnoreCase(filterType)).collect(Collectors.toList());
+            rows = rows.stream()
+                    .filter(r -> r.type.equalsIgnoreCase(filterType))
+                    .collect(Collectors.toList());
         }
         if (filterName != null) {
             filterName = filterName.toLowerCase(Locale.ROOT);
-            rows = rows.stream().filter(
-                    r -> r.name.equalsIgnoreCase(filterName) || r.description.toLowerCase(Locale.ROOT).contains(filterName))
+            rows = rows.stream()
+                    .filter(r -> r.name.equalsIgnoreCase(filterName)
+                            || r.description.toLowerCase(Locale.ROOT).contains(filterName))
                     .collect(Collectors.toList());
         }
 
@@ -109,11 +121,29 @@ public class CatalogKamelet extends CamelCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).minWidth(10).with(r -> r.type),
-                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).minWidth(12).with(r -> r.supportLevel),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("TYPE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .minWidth(10)
+                                            .with(r -> r.type),
+                                    new Column()
+                                            .header("LEVEL")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .minWidth(12)
+                                            .with(r -> r.supportLevel),
+                                    new Column()
+                                            .header("DESCRIPTION")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getDescription))));
         }
 
         return 0;
@@ -163,5 +193,4 @@ public class CatalogKamelet extends CamelCommand {
         }
         return d;
     }
-
 }

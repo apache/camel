@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID;
+import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -62,10 +67,6 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
-import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID;
-import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
-
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and from a Mail
  * {@link MimeMessage}
@@ -86,29 +87,59 @@ public class MailBinding {
     }
 
     @Deprecated
-    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
-                       boolean decodeFilename) {
-        this(headerFilterStrategy, contentTypeResolver, decodeFilename, true, false,
-             MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER, MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
+    public MailBinding(
+            HeaderFilterStrategy headerFilterStrategy,
+            ContentTypeResolver contentTypeResolver,
+            boolean decodeFilename) {
+        this(
+                headerFilterStrategy,
+                contentTypeResolver,
+                decodeFilename,
+                true,
+                false,
+                MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER,
+                MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
     }
 
-    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
-                       boolean decodeFilename, boolean mapMailMessage) {
-        this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, false,
-             MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER, MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
+    public MailBinding(
+            HeaderFilterStrategy headerFilterStrategy,
+            ContentTypeResolver contentTypeResolver,
+            boolean decodeFilename,
+            boolean mapMailMessage) {
+        this(
+                headerFilterStrategy,
+                contentTypeResolver,
+                decodeFilename,
+                mapMailMessage,
+                false,
+                MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER,
+                MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
     }
 
-    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
-                       boolean decodeFilename, boolean mapMailMessage,
-                       boolean failOnDuplicateAttachment) {
-        this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, failOnDuplicateAttachment,
-             MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER, MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
+    public MailBinding(
+            HeaderFilterStrategy headerFilterStrategy,
+            ContentTypeResolver contentTypeResolver,
+            boolean decodeFilename,
+            boolean mapMailMessage,
+            boolean failOnDuplicateAttachment) {
+        this(
+                headerFilterStrategy,
+                contentTypeResolver,
+                decodeFilename,
+                mapMailMessage,
+                failOnDuplicateAttachment,
+                MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER,
+                MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
     }
 
-    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
-                       boolean decodeFilename, boolean mapMailMessage,
-                       boolean failOnDuplicateAttachment, String generateMissingAttachmentNames,
-                       String handleDuplicateAttachmentNames) {
+    public MailBinding(
+            HeaderFilterStrategy headerFilterStrategy,
+            ContentTypeResolver contentTypeResolver,
+            boolean decodeFilename,
+            boolean mapMailMessage,
+            boolean failOnDuplicateAttachment,
+            String generateMissingAttachmentNames,
+            String handleDuplicateAttachmentNames) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.contentTypeResolver = contentTypeResolver;
         this.decodeFilename = decodeFilename;
@@ -146,8 +177,8 @@ public class MailBinding {
         if (replyTo != null) {
             List<InternetAddress> replyToAddresses = new ArrayList<>();
             for (String reply : splitRecipients(replyTo)) {
-                replyToAddresses
-                        .add(asEncodedInternetAddress(reply.trim(), determineCharSet(endpoint.getConfiguration(), exchange)));
+                replyToAddresses.add(asEncodedInternetAddress(
+                        reply.trim(), determineCharSet(endpoint.getConfiguration(), exchange)));
             }
             mimeMessage.setReplyTo(replyToAddresses.toArray(new InternetAddress[0]));
         }
@@ -170,7 +201,8 @@ public class MailBinding {
         if (empty(mimeMessage.getFrom())) {
             // lets default the address to the endpoint destination
             String from = endpoint.getConfiguration().getFrom();
-            mimeMessage.setFrom(asEncodedInternetAddress(from, determineCharSet(endpoint.getConfiguration(), exchange)));
+            mimeMessage.setFrom(
+                    asEncodedInternetAddress(from, determineCharSet(endpoint.getConfiguration(), exchange)));
         }
 
         // if there is an alternative body provided, set up a mime multipart alternative message
@@ -237,7 +269,9 @@ public class MailBinding {
                 } else if (!configuration.isIgnoreUnsupportedCharset()) {
                     return charset;
                 } else if (configuration.isIgnoreUnsupportedCharset()) {
-                    LOG.warn("Charset: {} is not supported and cannot be used as charset in Content-Type header.", charset);
+                    LOG.warn(
+                            "Charset: {} is not supported and cannot be used as charset in Content-Type header.",
+                            charset);
                     return null;
                 }
             }
@@ -278,7 +312,9 @@ public class MailBinding {
             LOG.trace("Using Content-Type {} for BodyPart: {}", contentType, part);
 
             // always store content in a byte array data store to avoid various content type and charset issues
-            String data = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange.getIn().getBody());
+            String data = exchange.getContext()
+                    .getTypeConverter()
+                    .tryConvertTo(String.class, exchange.getIn().getBody());
             // use empty data if the body was null for some reason (otherwise there is a NPE)
             data = data != null ? data : "";
 
@@ -304,8 +340,8 @@ public class MailBinding {
             return message; // raw message
         } catch (Exception e) {
             // try to fix message in case it has an unsupported encoding in the Content-Type header
-            UnsupportedEncodingException uee
-                    = org.apache.camel.util.ObjectHelper.getException(UnsupportedEncodingException.class, e);
+            UnsupportedEncodingException uee =
+                    org.apache.camel.util.ObjectHelper.getException(UnsupportedEncodingException.class, e);
             if (uee != null) {
                 LOG.debug("Unsupported encoding detected: {}", uee.getMessage());
                 try {
@@ -329,8 +365,8 @@ public class MailBinding {
             }
 
             throw new RuntimeCamelException(
-                    "Failed to extract body due to: " + e.getMessage()
-                                            + ". Exchange: " + exchange + ". Message: " + message,
+                    "Failed to extract body due to: " + e.getMessage() + ". Exchange: " + exchange + ". Message: "
+                            + message,
                     e);
         }
     }
@@ -350,7 +386,9 @@ public class MailBinding {
         if (content instanceof Multipart) {
             extractAttachmentsFromMultipart((Multipart) content, map);
         } else if (content != null) {
-            LOG.trace("No attachments to extract as content is not Multipart: {}", content.getClass().getName());
+            LOG.trace(
+                    "No attachments to extract as content is not Multipart: {}",
+                    content.getClass().getName());
         }
 
         LOG.trace("Extracting attachments +++ done +++");
@@ -376,7 +414,8 @@ public class MailBinding {
 
                 if (isAttachment(disposition) && (fileName == null || fileName.isEmpty())) {
                     if (generateMissingAttachmentNames != null
-                            && generateMissingAttachmentNames.equalsIgnoreCase(MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID)) {
+                            && generateMissingAttachmentNames.equalsIgnoreCase(
+                                    MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID)) {
                         fileName = UUID.randomUUID().toString();
                     }
                 }
@@ -402,11 +441,11 @@ public class MailBinding {
                 if (validDisposition(disposition, fileName) || (fileName != null && !fileName.isEmpty())) {
                     LOG.debug("Mail contains file attachment: {}", fileName);
                     if (handleDuplicateAttachmentNames != null) {
-                        if (handleDuplicateAttachmentNames
-                                .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)) {
+                        if (handleDuplicateAttachmentNames.equalsIgnoreCase(
+                                MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)) {
                             fileName = prefixDuplicateFilenames(map, fileName);
-                        } else if (handleDuplicateAttachmentNames
-                                .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_SUFFIX)) {
+                        } else if (handleDuplicateAttachmentNames.equalsIgnoreCase(
+                                MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_SUFFIX)) {
                             fileName = suffixDuplicateFilenames(map, fileName);
                         }
                     }
@@ -487,7 +526,9 @@ public class MailBinding {
 
     private String suffixWithUUID(String string) {
         if (string.lastIndexOf(".") > 0) {
-            string = new StringBuilder(string).insert(string.lastIndexOf("."), "_" + UUID.randomUUID()).toString();
+            string = new StringBuilder(string)
+                    .insert(string.lastIndexOf("."), "_" + UUID.randomUUID())
+                    .toString();
         } else {
             string = string + "_" + UUID.randomUUID();
         }
@@ -509,7 +550,8 @@ public class MailBinding {
     /**
      * Appends the Mail headers from the Camel {@link MailMessage}
      */
-    protected void appendHeadersFromCamelMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
+    protected void appendHeadersFromCamelMessage(
+            MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
             throws MessagingException, IOException {
 
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
@@ -519,17 +561,18 @@ public class MailBinding {
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                     if (headerName.equalsIgnoreCase("subject")) {
-                        mimeMessage.setSubject(asString(exchange, headerValue), determineCharSet(configuration, exchange));
+                        mimeMessage.setSubject(
+                                asString(exchange, headerValue), determineCharSet(configuration, exchange));
                         continue;
                     }
                     if (headerName.equalsIgnoreCase("from")) {
-                        mimeMessage.setFrom(asEncodedInternetAddress(asString(exchange, headerValue),
-                                determineCharSet(configuration, exchange)));
+                        mimeMessage.setFrom(asEncodedInternetAddress(
+                                asString(exchange, headerValue), determineCharSet(configuration, exchange)));
                         continue;
                     }
                     if (headerName.equalsIgnoreCase("sender")) {
-                        mimeMessage.setSender(asEncodedInternetAddress(asString(exchange, headerValue),
-                                determineCharSet(configuration, exchange)));
+                        mimeMessage.setSender(asEncodedInternetAddress(
+                                asString(exchange, headerValue), determineCharSet(configuration, exchange)));
                         continue;
                     }
                     if (isRecipientHeader(headerName)) {
@@ -558,7 +601,8 @@ public class MailBinding {
         }
     }
 
-    private void setRecipientFromCamelMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
+    private void setRecipientFromCamelMessage(
+            MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
             throws MessagingException, IOException {
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             String headerName = entry.getKey();
@@ -569,12 +613,20 @@ public class MailBinding {
                     Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                     while (iter.hasNext()) {
                         Object recipient = iter.next();
-                        appendRecipientToMimeMessage(mimeMessage, configuration, exchange,
-                                StringHelper.removeCRLF(headerName), asString(exchange, recipient));
+                        appendRecipientToMimeMessage(
+                                mimeMessage,
+                                configuration,
+                                exchange,
+                                StringHelper.removeCRLF(headerName),
+                                asString(exchange, recipient));
                     }
                 } else {
-                    appendRecipientToMimeMessage(mimeMessage, configuration, exchange,
-                            StringHelper.removeCRLF(headerName), asString(exchange, headerValue));
+                    appendRecipientToMimeMessage(
+                            mimeMessage,
+                            configuration,
+                            exchange,
+                            StringHelper.removeCRLF(headerName),
+                            asString(exchange, headerValue));
                 }
             }
         }
@@ -583,28 +635,42 @@ public class MailBinding {
     /**
      * Appends the Mail headers from the endpoint configuration.
      */
-    protected void setRecipientFromEndpointConfiguration(MimeMessage mimeMessage, MailEndpoint endpoint, Exchange exchange)
-            throws MessagingException, IOException {
+    protected void setRecipientFromEndpointConfiguration(
+            MimeMessage mimeMessage, MailEndpoint endpoint, Exchange exchange) throws MessagingException, IOException {
 
-        Map<Message.RecipientType, String> recipients = endpoint.getConfiguration().getRecipients();
+        Map<Message.RecipientType, String> recipients =
+                endpoint.getConfiguration().getRecipients();
         if (recipients.containsKey(Message.RecipientType.TO)) {
-            appendRecipientToMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange,
-                    Message.RecipientType.TO.toString(), recipients.get(Message.RecipientType.TO));
+            appendRecipientToMimeMessage(
+                    mimeMessage,
+                    endpoint.getConfiguration(),
+                    exchange,
+                    Message.RecipientType.TO.toString(),
+                    recipients.get(Message.RecipientType.TO));
         }
         if (recipients.containsKey(Message.RecipientType.CC)) {
-            appendRecipientToMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange,
-                    Message.RecipientType.CC.toString(), recipients.get(Message.RecipientType.CC));
+            appendRecipientToMimeMessage(
+                    mimeMessage,
+                    endpoint.getConfiguration(),
+                    exchange,
+                    Message.RecipientType.CC.toString(),
+                    recipients.get(Message.RecipientType.CC));
         }
         if (recipients.containsKey(Message.RecipientType.BCC)) {
-            appendRecipientToMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange,
-                    Message.RecipientType.BCC.toString(), recipients.get(Message.RecipientType.BCC));
+            appendRecipientToMimeMessage(
+                    mimeMessage,
+                    endpoint.getConfiguration(),
+                    exchange,
+                    Message.RecipientType.BCC.toString(),
+                    recipients.get(Message.RecipientType.BCC));
         }
     }
 
     /**
      * Appends the Mail attachments from the Camel {@link MailMessage}
      */
-    protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
+    protected void appendAttachmentsFromCamel(
+            MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
             throws MessagingException, IOException {
 
         // Put parts in message
@@ -619,8 +685,8 @@ public class MailBinding {
         multipart.setSubType("mixed");
         addBodyToMultipart(configuration, multipart, exchange);
         String partDisposition = configuration.isUseInlineAttachments() ? Part.INLINE : Part.ATTACHMENT;
-        AttachmentsContentTransferEncodingResolver contentTransferEncodingResolver
-                = configuration.getAttachmentsContentTransferEncodingResolver();
+        AttachmentsContentTransferEncodingResolver contentTransferEncodingResolver =
+                configuration.getAttachmentsContentTransferEncodingResolver();
         if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
             addAttachmentsToMultipart(multipart, partDisposition, contentTransferEncodingResolver, exchange);
         }
@@ -628,12 +694,15 @@ public class MailBinding {
     }
 
     protected void addAttachmentsToMultipart(
-            MimeMultipart multipart, String partDisposition,
-            AttachmentsContentTransferEncodingResolver encodingResolver, Exchange exchange)
+            MimeMultipart multipart,
+            String partDisposition,
+            AttachmentsContentTransferEncodingResolver encodingResolver,
+            Exchange exchange)
             throws MessagingException {
         LOG.trace("Adding attachments +++ start +++");
         int i = 0;
-        for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
+        for (Map.Entry<String, Attachment> entry :
+                exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
             String attachmentFilename = entry.getKey();
             Attachment attachment = entry.getValue();
 
@@ -674,8 +743,11 @@ public class MailBinding {
 
                     if (contentTypeResolver != null) {
                         String contentType = contentTypeResolver.resolveContentType(attachmentFilename);
-                        LOG.trace("Attachment #{}: Using content type resolver: {} resolved content type as: {}", i,
-                                contentTypeResolver, contentType);
+                        LOG.trace(
+                                "Attachment #{}: Using content type resolver: {} resolved content type as: {}",
+                                i,
+                                contentTypeResolver,
+                                contentType);
                         if (contentType != null) {
                             String value = contentType + "; name=" + attachmentFilename;
                             messageBodyPart.setHeader("Content-Type", value);
@@ -705,8 +777,11 @@ public class MailBinding {
             throws MessagingException {
         if (resolver != null) {
             String contentTransferEncoding = resolver.resolveContentTransferEncoding(messageBodyPart);
-            LOG.trace("Attachment #{}: Using content transfer encoding resolver: {} resolved content transfer encoding as: {}",
-                    i, resolver, contentTransferEncoding);
+            LOG.trace(
+                    "Attachment #{}: Using content transfer encoding resolver: {} resolved content transfer encoding as: {}",
+                    i,
+                    resolver,
+                    contentTransferEncoding);
             if (contentTransferEncoding != null) {
                 messageBodyPart.setHeader("Content-Transfer-Encoding", contentTransferEncoding);
             }
@@ -746,8 +821,8 @@ public class MailBinding {
                 multipartAlternative.addBodyPart(related);
 
                 addBodyToMultipart(configuration, multipartRelated, exchange);
-                AttachmentsContentTransferEncodingResolver resolver
-                        = configuration.getAttachmentsContentTransferEncodingResolver();
+                AttachmentsContentTransferEncodingResolver resolver =
+                        configuration.getAttachmentsContentTransferEncodingResolver();
                 addAttachmentsToMultipart(multipartRelated, Part.INLINE, resolver, exchange);
             }
         }
@@ -822,8 +897,7 @@ public class MailBinding {
     }
 
     private static void appendRecipientToMimeMessage(
-            MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange,
-            String type, String recipient)
+            MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange, String type, String recipient)
             throws MessagingException, IOException {
         List<InternetAddress> recipientsAddresses = new ArrayList<>();
         for (String line : splitRecipients(recipient)) {
@@ -834,8 +908,7 @@ public class MailBinding {
             }
         }
 
-        mimeMessage.addRecipients(asRecipientType(type),
-                recipientsAddresses.toArray(new InternetAddress[0]));
+        mimeMessage.addRecipients(asRecipientType(type), recipientsAddresses.toArray(new InternetAddress[0]));
     }
 
     private static String[] splitRecipients(String recipients) {

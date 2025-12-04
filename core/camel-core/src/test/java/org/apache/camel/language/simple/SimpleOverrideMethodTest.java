@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 import java.io.File;
@@ -35,5 +36,4 @@ public class SimpleOverrideMethodTest extends LanguageTestSupport {
         exchange.getIn().setBody(path);
         assertExpression("${body.getFileName.toString}", path.getFileName().toString());
     }
-
 }

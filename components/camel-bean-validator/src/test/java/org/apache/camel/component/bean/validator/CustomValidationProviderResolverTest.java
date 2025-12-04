@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
+
+import static java.util.Arrays.asList;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
@@ -26,12 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.jupiter.api.Test;
-
-import static java.util.Arrays.asList;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class CustomValidationProviderResolverTest extends CamelTestSupport {
 
@@ -52,8 +53,9 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test").to(
-                        "bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
+                from("direct:test")
+                        .to(
+                                "bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
             }
         };
     }
@@ -64,5 +66,4 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
     void shouldResolveCustomValidationProviderResolver() {
         verify(validationProviderResolver, atLeastOnce()).getValidationProviders();
     }
-
 }

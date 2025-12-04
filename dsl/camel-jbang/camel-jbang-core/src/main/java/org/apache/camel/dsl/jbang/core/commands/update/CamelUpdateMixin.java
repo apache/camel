@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.update;
 
 import java.util.List;
@@ -28,64 +29,77 @@ public class CamelUpdateMixin {
     @CommandLine.Parameters(description = "The version to which the Camel project should be updated.", arity = "1")
     String version;
 
-    @CommandLine.Option(names = { "--openRewriteVersion" },
-                        description = "The version of OpenRewrite to use during the update process.",
-                        defaultValue = "6.0.4")
+    @CommandLine.Option(
+            names = {"--openRewriteVersion"},
+            description = "The version of OpenRewrite to use during the update process.",
+            defaultValue = "6.0.4")
     String openRewriteVersion;
 
-    @CommandLine.Option(names = { "--camelArtifact" },
-                        description = "The Maven artifact coordinates for the Camel upgrade recipes.",
-                        defaultValue = "camel-upgrade-recipes")
+    @CommandLine.Option(
+            names = {"--camelArtifact"},
+            description = "The Maven artifact coordinates for the Camel upgrade recipes.",
+            defaultValue = "camel-upgrade-recipes")
     String camelArtifactCoordinates;
 
-    @CommandLine.Option(names = { "--camelSpringBootArtifact" },
-                        description = "The Maven artifact coordinates for the Camel Spring Boot upgrade recipes.",
-                        defaultValue = "camel-spring-boot-upgrade-recipes")
+    @CommandLine.Option(
+            names = {"--camelSpringBootArtifact"},
+            description = "The Maven artifact coordinates for the Camel Spring Boot upgrade recipes.",
+            defaultValue = "camel-spring-boot-upgrade-recipes")
     String camelSpringBootArtifactCoordinates;
 
-    @CommandLine.Option(names = { "--debug" },
-                        defaultValue = "false",
-                        description = "Enables debug logging if set to true.")
+    @CommandLine.Option(
+            names = {"--debug"},
+            defaultValue = "false",
+            description = "Enables debug logging if set to true.")
     boolean debug;
 
-    @CommandLine.Option(names = { "--quarkusMavenPluginVersion" },
-                        description = "The version of the Quarkus Maven plugin to use.",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
+    @CommandLine.Option(
+            names = {"--quarkusMavenPluginVersion"},
+            description = "The version of the Quarkus Maven plugin to use.",
+            defaultValue = RuntimeType.QUARKUS_VERSION)
     String quarkusMavenPluginVersion;
 
-    @CommandLine.Option(names = { "--quarkusMavenPluginGroupId" },
-                        description = "The group ID of the Quarkus Maven plugin.",
-                        defaultValue = "io.quarkus")
+    @CommandLine.Option(
+            names = {"--quarkusMavenPluginGroupId"},
+            description = "The group ID of the Quarkus Maven plugin.",
+            defaultValue = "io.quarkus")
     String quarkusMavenPluginGroupId;
 
-    @CommandLine.Option(names = { "--dryRun" },
-                        description = "If set to true, performs a dry run of the update process without making any changes.",
-                        defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--dryRun"},
+            description = "If set to true, performs a dry run of the update process without making any changes.",
+            defaultValue = "false")
     boolean dryRun;
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        defaultValue = "camel-main",
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @CommandLine.Option(
+            names = {"--runtime"},
+            completionCandidates = RuntimeCompletionCandidates.class,
+            defaultValue = "camel-main",
+            converter = RuntimeTypeConverter.class,
+            description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime = RuntimeType.main;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description =
+                    "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @CommandLine.Option(names = { "--extraActiveRecipes" },
-                        description = "Comma separated list of recipes to be executed after the Camel one, " +
-                                      "make sure the artifact containing the recipes is added via extraRecipeArtifactCoordinates")
+    @CommandLine.Option(
+            names = {"--extraActiveRecipes"},
+            description = "Comma separated list of recipes to be executed after the Camel one, "
+                    + "make sure the artifact containing the recipes is added via extraRecipeArtifactCoordinates")
     List<String> extraActiveRecipes;
 
-    @CommandLine.Option(names = { "--extraRecipeArtifactCoordinates" },
-                        description = "Comma separated list of artifact coordinates containing extraActiveRecipes, " +
-                                      "ex.my.org:recipes:1.0.0")
+    @CommandLine.Option(
+            names = {"--extraRecipeArtifactCoordinates"},
+            description = "Comma separated list of artifact coordinates containing extraActiveRecipes, "
+                    + "ex.my.org:recipes:1.0.0")
     List<String> extraRecipeArtifactCoordinates;
 
-    @CommandLine.Option(names = { "--upgradeTimeout" },
-                        description = "Time to wait, in seconds, before shutting down the upgrade process",
-                        defaultValue = "240")
+    @CommandLine.Option(
+            names = {"--upgradeTimeout"},
+            description = "Time to wait, in seconds, before shutting down the upgrade process",
+            defaultValue = "240")
     int upgradeTimeout;
 }

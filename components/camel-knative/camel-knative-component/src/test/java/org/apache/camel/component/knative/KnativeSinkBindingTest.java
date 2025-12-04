@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.knative.spi.Knative;
@@ -26,17 +29,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.health.ProducersHealthCheckRepository;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class KnativeSinkBindingTest {
 
     @Test
     void testSinkBindingHealthCheckUP() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             HealthCheckRepository producersHc = HealthCheckHelper.getHealthCheckRepository(
-                    context,
-                    ProducersHealthCheckRepository.REPOSITORY_ID,
-                    HealthCheckRepository.class);
+                    context, ProducersHealthCheckRepository.REPOSITORY_ID, HealthCheckRepository.class);
 
             producersHc.setEnabled(true);
 
@@ -58,7 +57,8 @@ public class KnativeSinkBindingTest {
             KnativeEndpoint endpoint = context.getEndpoint("knative:channel/sb", KnativeEndpoint.class);
             assertThat(endpoint).isNotNull();
             assertThat(endpoint.lookupServiceDefinition("sb", Knative.EndpointKind.sink))
-                    .isPresent().get()
+                    .isPresent()
+                    .get()
                     .satisfies(res -> {
                         assertThat(res.getObjectKind()).isEqualTo(sb.getObjectKind());
                         assertThat(res.getObjectApiVersion()).isEqualTo(sb.getObjectApiVersion());
@@ -74,9 +74,9 @@ public class KnativeSinkBindingTest {
             assertThat(producersHc).isNotNull();
 
             assertThat(producersHc.getCheck(endpoint.getId()).map(HealthCheck::call))
-                    .isPresent().get()
+                    .isPresent()
+                    .get()
                     .hasFieldOrPropertyWithValue("state", HealthCheck.State.UP);
-
         }
     }
 
@@ -84,9 +84,7 @@ public class KnativeSinkBindingTest {
     void testSinkBindingHealthCheckDown() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             HealthCheckRepository producersHc = HealthCheckHelper.getHealthCheckRepository(
-                    context,
-                    ProducersHealthCheckRepository.REPOSITORY_ID,
-                    HealthCheckRepository.class);
+                    context, ProducersHealthCheckRepository.REPOSITORY_ID, HealthCheckRepository.class);
 
             producersHc.setEnabled(true);
 
@@ -107,7 +105,9 @@ public class KnativeSinkBindingTest {
             KnativeEndpoint endpoint = context.getEndpoint("knative:channel/sb", KnativeEndpoint.class);
             assertThat(endpoint).isNotNull();
             assertThat(endpoint.lookupServiceDefinition("sb", Knative.EndpointKind.sink))
-                    .isPresent().get().satisfies(res -> {
+                    .isPresent()
+                    .get()
+                    .satisfies(res -> {
                         assertThat(res.getObjectKind()).isEqualTo(sb.getObjectKind());
                         assertThat(res.getObjectApiVersion()).isEqualTo(sb.getObjectApiVersion());
                         assertThat(res.getType()).isEqualTo(sb.getType());
@@ -122,9 +122,9 @@ public class KnativeSinkBindingTest {
             assertThat(producersHc).isNotNull();
 
             assertThat(producersHc.getCheck(endpoint.getId()).map(HealthCheck::call))
-                    .isPresent().get()
+                    .isPresent()
+                    .get()
                     .hasFieldOrPropertyWithValue("state", HealthCheck.State.DOWN);
-
         }
     }
 }

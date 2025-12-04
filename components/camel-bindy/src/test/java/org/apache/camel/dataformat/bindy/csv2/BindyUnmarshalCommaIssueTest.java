@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -25,8 +28,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -95,7 +96,8 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Map<?, ?> map = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        Map<?, ?> map = (Map<?, ?>)
+                mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
         WeatherModel model = (WeatherModel) map.values().iterator().next();
 
         assertEquals(123, model.getId());
@@ -109,7 +111,8 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .unmarshal()
+                        .bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
                         .to("mock:result");
             }
         };

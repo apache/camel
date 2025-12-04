@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
+
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-
-@EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
-                         disabledReason = "Disabled to avoid hitting API limits")
+@EnabledIfSystemProperty(
+        named = "enable.weather.tests",
+        matches = "true",
+        disabledReason = "Disabled to avoid hitting API limits")
 public class CurrentWeatherConsumerIT extends BaseWeatherConsumerIT {
 
     @Override
     protected void checkWeatherContent(String weather) {
         log.debug("The weather in {} format is {}{}", WeatherMode.XML, LS, weather);
 
-        //assertStringContains(weather, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        // assertStringContains(weather, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         assertStringContains(weather, "<coord");
         assertStringContains(weather, "<temperature");
     }
@@ -39,9 +42,9 @@ public class CurrentWeatherConsumerIT extends BaseWeatherConsumerIT {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("weather:foo?appid=9162755b2efa555823cfe0451d7fff38&lon=4&lat=52&mode=xml").to("mock:result");
+                from("weather:foo?appid=9162755b2efa555823cfe0451d7fff38&lon=4&lat=52&mode=xml")
+                        .to("mock:result");
             }
         };
     }
-
 }

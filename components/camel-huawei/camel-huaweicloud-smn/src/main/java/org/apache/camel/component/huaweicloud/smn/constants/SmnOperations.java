@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn.constants;
 
 public final class SmnOperations {
@@ -21,7 +22,5 @@ public final class SmnOperations {
     public static final String PUBLISH_AS_TEMPLATED_MESSAGE = "publishAsTemplatedMessage";
     public static final String PUBLISH_AS_TEXT_MESSAGE = "publishAsTextMessage";
 
-    private SmnOperations() {
-    }
-
+    private SmnOperations() {}
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -24,9 +28,6 @@ import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractHttpSpanDecoratorTest {
 
@@ -98,8 +99,7 @@ public class AbstractHttpSpanDecoratorTest {
         Mockito.when(endpoint.getEndpointUri()).thenReturn("http://localhost:8080/endpoint");
         Mockito.when(message.getHeader(Exchange.HTTP_QUERY)).thenReturn("MyQuery");
 
-        assertEquals(AbstractHttpSpanDecorator.GET_METHOD,
-                decorator.getHttpMethod(exchange, endpoint));
+        assertEquals(AbstractHttpSpanDecorator.GET_METHOD, decorator.getHttpMethod(exchange, endpoint));
     }
 
     @Test
@@ -113,8 +113,7 @@ public class AbstractHttpSpanDecoratorTest {
         Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class))
                 .thenReturn("http://localhost:8080/endpoint?query=hello");
 
-        assertEquals(AbstractHttpSpanDecorator.GET_METHOD,
-                decorator.getHttpMethod(exchange, endpoint));
+        assertEquals(AbstractHttpSpanDecorator.GET_METHOD, decorator.getHttpMethod(exchange, endpoint));
     }
 
     @Test
@@ -128,8 +127,7 @@ public class AbstractHttpSpanDecoratorTest {
         Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class)).thenReturn(TEST_URI);
         Mockito.when(message.getBody()).thenReturn("Message Body");
 
-        assertEquals(AbstractHttpSpanDecorator.POST_METHOD,
-                decorator.getHttpMethod(exchange, endpoint));
+        assertEquals(AbstractHttpSpanDecorator.POST_METHOD, decorator.getHttpMethod(exchange, endpoint));
     }
 
     @Test
@@ -142,8 +140,7 @@ public class AbstractHttpSpanDecoratorTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn(TEST_URI);
 
-        assertEquals(AbstractHttpSpanDecorator.GET_METHOD,
-                decorator.getHttpMethod(exchange, endpoint));
+        assertEquals(AbstractHttpSpanDecorator.GET_METHOD, decorator.getHttpMethod(exchange, endpoint));
     }
 
     @Test
@@ -221,7 +218,8 @@ public class AbstractHttpSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getMessage()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class)).thenReturn(200);
+        Mockito.when(message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class))
+                .thenReturn(200);
 
         MockSpanAdapter span = new MockSpanAdapter();
 
@@ -229,5 +227,4 @@ public class AbstractHttpSpanDecoratorTest {
 
         assertEquals(200, span.tags().get(TagConstants.HTTP_STATUS));
     }
-
 }

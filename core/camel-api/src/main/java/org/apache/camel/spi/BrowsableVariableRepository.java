@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -48,5 +49,4 @@ public interface BrowsableVariableRepository extends VariableRepository {
      * Removes all variables
      */
     void clear();
-
 }

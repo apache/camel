@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import java.io.IOException;
@@ -33,7 +34,8 @@ public final class BlobBlock {
     }
 
     public static BlobBlock createBlobBlock(final InputStream inputStream) throws IOException {
-        return createBlobBlock(Base64Util.encodeToString(UUID.randomUUID().toString().getBytes()), inputStream);
+        return createBlobBlock(
+                Base64Util.encodeToString(UUID.randomUUID().toString().getBytes()), inputStream);
     }
 
     public static BlobBlock createBlobBlock(final String blockId, final InputStream inputStream) throws IOException {

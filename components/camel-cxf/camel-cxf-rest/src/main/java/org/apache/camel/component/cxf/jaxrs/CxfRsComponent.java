@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.HashMap;
@@ -44,12 +45,14 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(defaultValue = "false", label = "producer,advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+
+    @Metadata(
+            defaultValue = "false",
+            label = "producer,advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
-    public CxfRsComponent() {
-    }
+    public CxfRsComponent() {}
 
     public CxfRsComponent(CamelContext context) {
         super(context);
@@ -116,22 +119,26 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
         }
 
         CxfRsEndpoint answer;
-        AbstractJAXRSFactoryBean bean = CamelContextHelper.lookup(getCamelContext(), beanId,
-                AbstractJAXRSFactoryBean.class);
+        AbstractJAXRSFactoryBean bean =
+                CamelContextHelper.lookup(getCamelContext(), beanId, AbstractJAXRSFactoryBean.class);
 
         if (bean != null) {
             CxfRsEndpointFactoryBean factory = null;
             if (bean.getClass().getName().contains("blueprint")) {
                 // use blueprint
-                Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(
-                        "org.apache.camel.component.cxf.jaxrs.blueprint.CxfRsBlueprintEndpointFactoryBean",
-                        CxfRsEndpointFactoryBean.class);
+                Class<CxfRsEndpointFactoryBean> clazz = getCamelContext()
+                        .getClassResolver()
+                        .resolveMandatoryClass(
+                                "org.apache.camel.component.cxf.jaxrs.blueprint.CxfRsBlueprintEndpointFactoryBean",
+                                CxfRsEndpointFactoryBean.class);
                 factory = getCamelContext().getInjector().newInstance(clazz);
             } else {
                 try {
-                    //try spring first
-                    Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver()
-                            .resolveMandatoryClass("org.apache.camel.component.cxf.spring.jaxrs.SpringCxfRsEndpointFactoryBean",
+                    // try spring first
+                    Class<CxfRsEndpointFactoryBean> clazz = getCamelContext()
+                            .getClassResolver()
+                            .resolveMandatoryClass(
+                                    "org.apache.camel.component.cxf.spring.jaxrs.SpringCxfRsEndpointFactoryBean",
                                     CxfRsEndpointFactoryBean.class);
                     factory = getCamelContext().getInjector().newInstance(clazz);
                 } catch (Exception ex) {
@@ -150,8 +157,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
             }
             // setup the skipFaultLogging
         } else {
-            answer = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId,
-                    CxfRsEndpoint.class);
+            answer = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfRsEndpoint.class);
         }
 
         answer.setBeanId(beanId);

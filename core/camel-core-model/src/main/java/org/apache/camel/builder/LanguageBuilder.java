@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -29,5 +30,4 @@ public interface LanguageBuilder<T extends ExpressionDefinition> {
      * @return the expression fully built.
      */
     T end();
-
 }

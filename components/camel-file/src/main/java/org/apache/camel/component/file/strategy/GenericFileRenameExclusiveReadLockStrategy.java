@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import java.io.IOException;
@@ -42,7 +43,8 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
     private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
 
     @Override
-    public void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception {
+    public void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint)
+            throws Exception {
         // noop
     }
 
@@ -68,7 +70,9 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel,
+                    CamelLogger.log(
+                            LOG,
+                            readLockLoggingLevel,
                             "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
                     // we could not get the lock within the timeout period, so
                     // return false
@@ -103,20 +107,20 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
     }
 
     @Override
-    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange)
-            throws Exception {
+    public void releaseExclusiveReadLockOnAbort(
+            GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
         // noop
     }
 
     @Override
-    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange)
-            throws Exception {
+    public void releaseExclusiveReadLockOnRollback(
+            GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
         // noop
     }
 
     @Override
-    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange)
-            throws Exception {
+    public void releaseExclusiveReadLockOnCommit(
+            GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
         // noop
     }
 

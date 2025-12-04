@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
@@ -67,12 +68,19 @@ public class DefaultUnitOfWork implements UnitOfWork {
     private Set<Object> transactedBy;
 
     public DefaultUnitOfWork(Exchange exchange) {
-        this(exchange, exchange.getContext().getInflightRepository(), exchange.getContext().isAllowUseOriginalMessage(),
-             exchange.getContext().isUseBreadcrumb());
+        this(
+                exchange,
+                exchange.getContext().getInflightRepository(),
+                exchange.getContext().isAllowUseOriginalMessage(),
+                exchange.getContext().isUseBreadcrumb());
     }
 
-    protected DefaultUnitOfWork(Exchange exchange, Logger logger, InflightRepository inflightRepository,
-                                boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+    protected DefaultUnitOfWork(
+            Exchange exchange,
+            Logger logger,
+            InflightRepository inflightRepository,
+            boolean allowUseOriginalMessage,
+            boolean useBreadcrumb) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
         this.useBreadcrumb = useBreadcrumb;
         this.context = exchange.getContext();
@@ -83,10 +91,12 @@ public class DefaultUnitOfWork implements UnitOfWork {
         doOnPrepare(exchange);
     }
 
-    public DefaultUnitOfWork(Exchange exchange, InflightRepository inflightRepository, boolean allowUseOriginalMessage,
-                             boolean useBreadcrumb) {
+    public DefaultUnitOfWork(
+            Exchange exchange,
+            InflightRepository inflightRepository,
+            boolean allowUseOriginalMessage,
+            boolean useBreadcrumb) {
         this(exchange, LOG, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
-
     }
 
     UnitOfWork newInstance(Exchange exchange) {
@@ -125,9 +135,10 @@ public class DefaultUnitOfWork implements UnitOfWork {
         if (allowUseOriginalMessage) {
             this.originalInMessage = exchange.getIn().copy();
             if (isStreamCacheInUse(exchange)) {
-                // if the input body is streaming we need to cache it, so we can access the original input message (like stream caching advice does)
-                StreamCache cache
-                        = StreamCachingHelper.convertToStreamCache(streamCachingStrategy, exchange, this.originalInMessage);
+                // if the input body is streaming we need to cache it, so we can access the original input message (like
+                // stream caching advice does)
+                StreamCache cache = StreamCachingHelper.convertToStreamCache(
+                        streamCachingStrategy, exchange, this.originalInMessage);
                 if (cache != null) {
                     this.originalInMessage.setBody(cache);
                     // replace original incoming message with stream cache
@@ -175,8 +186,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
     }
 
     @Override
-    public void setParentUnitOfWork(UnitOfWork parentUnitOfWork) {
-    }
+    public void setParentUnitOfWork(UnitOfWork parentUnitOfWork) {}
 
     @Override
     public UnitOfWork createChildUnitOfWork(Exchange childExchange) {
@@ -313,7 +323,10 @@ public class DefaultUnitOfWork implements UnitOfWork {
     @Override
     public void beforeRoute(Exchange exchange, Route route) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(),
+            log.trace(
+                    "UnitOfWork beforeRoute: {} for ExchangeId: {} with {}",
+                    route.getId(),
+                    exchange.getExchangeId(),
                     exchange);
         }
         if (synchronizations != null && !synchronizations.isEmpty()) {
@@ -324,7 +337,10 @@ public class DefaultUnitOfWork implements UnitOfWork {
     @Override
     public void afterRoute(Exchange exchange, Route route) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(),
+            log.trace(
+                    "UnitOfWork afterRoute: {} for ExchangeId: {} with {}",
+                    route.getId(),
+                    exchange.getExchangeId(),
                     exchange);
         }
         if (synchronizations != null && !synchronizations.isEmpty()) {

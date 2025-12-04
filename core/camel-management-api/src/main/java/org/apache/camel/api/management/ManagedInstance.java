@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management;
 
 /**
@@ -27,5 +28,4 @@ public interface ManagedInstance {
      * @return the resource, such as a {@link org.apache.camel.Processor}, {@link org.apache.camel.Consumer} etc.
      */
     Object getInstance();
-
 }

@@ -27,16 +27,18 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = MongoDBInfraService.class,
-              description = "MongoDB NoSql Database",
-              serviceAlias = { "mongodb" })
+@InfraService(
+        service = MongoDBInfraService.class,
+        description = "MongoDB NoSql Database",
+        serviceAlias = {"mongodb"})
 public class MongoDBLocalContainerInfraService implements MongoDBInfraService, ContainerService<MongoDBContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLocalContainerInfraService.class);
     private static final int DEFAULT_MONGODB_PORT = 27017;
     private final MongoDBContainer container;
 
     public MongoDBLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(MongoDBLocalContainerInfraService.class, MongoDBProperties.MONGODB_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                MongoDBLocalContainerInfraService.class, MongoDBProperties.MONGODB_CONTAINER));
     }
 
     public MongoDBLocalContainerInfraService(String imageName) {
@@ -74,8 +76,7 @@ public class MongoDBLocalContainerInfraService implements MongoDBInfraService, C
 
     @Override
     public String getReplicaSetUrl() {
-        return String.format("mongodb://%s:%s", container.getHost(),
-                container.getMappedPort(DEFAULT_MONGODB_PORT));
+        return String.format("mongodb://%s:%s", container.getHost(), container.getMappedPort(DEFAULT_MONGODB_PORT));
     }
 
     @Override

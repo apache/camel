@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.routingslip;
 
 import org.apache.camel.ContextTestSupport;
@@ -84,7 +85,6 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         template.sendBody("direct:d", "mock:x, mock:y,mock:z");
         assertMockEndpointsSatisfied();
-
     }
 
     @Test

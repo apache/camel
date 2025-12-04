@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -32,9 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class CustomProcessorWithNamespacesTest extends TestSupport {
     protected String body = "<hello>world!</hello>";
     protected AbstractXmlApplicationContext applicationContext;
@@ -43,7 +44,11 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
     public void testXMLRouteLoading() throws Exception {
         applicationContext = createApplicationContext();
 
-        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext context = applicationContext
+                .getBeansOfType(SpringCamelContext.class)
+                .values()
+                .iterator()
+                .next();
         assertValidContext(context);
 
         // now lets send a message
@@ -72,7 +77,8 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
         Route route = routes.get(0);
         log.debug("Found route: {}", route);
 
-        ProcessorDefinition<?> def = context.getRouteDefinitions().get(0).getOutputs().get(0);
+        ProcessorDefinition<?> def =
+                context.getRouteDefinitions().get(0).getOutputs().get(0);
         assertEquals("Some description here", def.getDescription());
         assertEquals("Some note here", def.getNote());
     }

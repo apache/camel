@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 public class OtherModel extends ArtifactModel<BaseOptionModel> {
 
-    public OtherModel() {
-    }
+    public OtherModel() {}
 
     @Override
     public Kind getKind() {
         return Kind.other;
     }
-
 }

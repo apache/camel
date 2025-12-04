@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -64,7 +65,9 @@ public class PredicateAggregatorCollectionTest extends ContextTestSupport {
                 from("direct:start")
                         // we use the collection based aggregator we already have
                         // configured
-                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionSize(3).to("mock:result");
+                        .aggregate(header("id"), new UseLatestAggregationStrategy())
+                        .completionSize(3)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -14,27 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.functions;
 
 import org.apache.camel.spi.Metadata;
 
 public interface GoogleCloudFunctionsConstants {
-    @Metadata(description = "The operation to perform",
-              javaType = "org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations")
+    @Metadata(
+            description = "The operation to perform",
+            javaType = "org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations")
     String OPERATION = "GoogleCloudFunctionsOperation";
-    @Metadata(description = "The name of the function (as defined in source code) that will be executed. Used for createFunction operation",
-              javaType = "String")
+
+    @Metadata(
+            description =
+                    "The name of the function (as defined in source code) that will be executed. Used for createFunction operation",
+            javaType = "String")
     String ENTRY_POINT = "GoogleCloudFunctionsEntryPoint";
-    @Metadata(description = "The runtime in which to run the function.\n\nPossible values are:\n\n" +
-                            "* `nodejs10`\n* `nodejs12`\n* `nodejs14`\n* `python37`\n* `python38`\n* `python39`\n* `go111`\n* `go113`\n"
-                            +
-                            "* `java11`\n* `dotnet3`\n* `ruby26`\n* `nodejs6`\n* `nodejs8`\n" +
-                            "\nUsed for createFunction operation.",
-              javaType = "String")
+
+    @Metadata(
+            description = "The runtime in which to run the function.\n\nPossible values are:\n\n"
+                    + "* `nodejs10`\n* `nodejs12`\n* `nodejs14`\n* `python37`\n* `python38`\n* `python39`\n* `go111`\n* `go113`\n"
+                    + "* `java11`\n* `dotnet3`\n* `ruby26`\n* `nodejs6`\n* `nodejs8`\n"
+                    + "\nUsed for createFunction operation.",
+            javaType = "String")
     String RUNTIME = "GoogleCloudFunctionsRuntime";
-    @Metadata(description = "The Google Cloud Storage URL, starting with `gs://`, pointing to the zip archive which contains the function. Used for createFunction operation.",
-              javaType = "String")
+
+    @Metadata(
+            description =
+                    "The Google Cloud Storage URL, starting with `gs://`, pointing to the zip archive which contains the function. Used for createFunction operation.",
+            javaType = "String")
     String SOURCE_ARCHIVE_URL = "GoogleCloudFunctionsSourceArchiveUrl";
-    @Metadata(description = "The response object resulting from the Google Functions Client invocation", javaType = "Object")
+
+    @Metadata(
+            description = "The response object resulting from the Google Functions Client invocation",
+            javaType = "Object")
     String RESPONSE_OBJECT = "GoogleCloudFunctionsResponseObject";
 }

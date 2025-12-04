@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -41,21 +47,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Test class for {@link BoxFilesManager} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxFilesManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxFilesManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxFilesManagerApiMethod.class).getName();
+            .getApiName(BoxFilesManagerApiMethod.class)
+            .getName();
 
     private static final String CAMEL_TEST_FILE = "/CamelTestFile.txt";
     private static final String CAMEL_TEST_FILE_NAME = "CamelTestFile.txt";
@@ -150,7 +153,6 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
             }
         }
         fail("deleteFileMetadata metadata");
-
     }
 
     @Disabled // Requires premium user account to test.
@@ -204,8 +206,8 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
         // parameter type is com.box.sdk.ProgressListener
         headers.put("CamelBox.listener", null);
 
-        final java.io.OutputStream result = requestBodyAndHeaders("direct://DOWNLOADPREVIOUSFILEVERSION", null,
-                headers);
+        final java.io.OutputStream result =
+                requestBodyAndHeaders("direct://DOWNLOADPREVIOUSFILEVERSION", null, headers);
 
         assertNotNull(result, "downloadPreviousFileVersion result");
         LOG.debug("downloadPreviousFileVersion: {}", result);
@@ -386,7 +388,7 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
         // parameter type is com.box.sdk.Metadata
         headers.put("CamelBox.metadata", metadata);
 
-        //metada has to contain some value, otherwise response result will be error code 400
+        // metada has to contain some value, otherwise response result will be error code 400
         metadata.add("/foo", "bar");
 
         final com.box.sdk.Metadata result = requestBodyAndHeaders("direct://UPDATEFILEMETADATA", null, headers);
@@ -555,7 +557,6 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
 
                 // test route for uploadNewFileVersion
                 from("direct://UPLOADNEWFILEVERSION").to("box://" + PATH_PREFIX + "/uploadNewFileVersion");
-
             }
         };
     }
@@ -586,12 +587,10 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
             return ((Collection<?>) it).size();
         } else {
             int i = 0;
-            for (@SuppressWarnings("unused")
-            Object obj : it) {
+            for (@SuppressWarnings("unused") Object obj : it) {
                 i++;
             }
             return i;
         }
-
     }
 }

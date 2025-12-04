@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,18 +35,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class IronMQBatchProducerTest extends CamelTestSupport {
 
     private IronMQEndpoint endpoint;
 
     @Test
     public void testProduceBatch() throws Exception {
-        String[] messages = new String[] { "{foo:bar}", "{foo2:bar2}" };
+        String[] messages = new String[] {"{foo:bar}", "{foo2:bar2}"};
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         template.sendBody("direct:start", messages);
@@ -55,8 +56,7 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
     public void testProduceBatchWithIllegalPayload() {
         final List<String> body = Arrays.asList("foo", "bar");
 
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:start", body));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", body));
     }
 
     @Override

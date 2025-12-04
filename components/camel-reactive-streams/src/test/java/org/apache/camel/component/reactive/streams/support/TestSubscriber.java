@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.support;
 
 import org.reactivestreams.Subscriber;
@@ -28,8 +29,7 @@ public class TestSubscriber<T> implements Subscriber<T> {
 
     private long initiallyRequested;
 
-    public TestSubscriber() {
-    }
+    public TestSubscriber() {}
 
     public long getInitiallyRequested() {
         return initiallyRequested;
@@ -57,17 +57,11 @@ public class TestSubscriber<T> implements Subscriber<T> {
     }
 
     @Override
-    public void onNext(T t) {
-
-    }
+    public void onNext(T t) {}
 
     @Override
-    public void onError(Throwable throwable) {
-
-    }
+    public void onError(Throwable throwable) {}
 
     @Override
-    public void onComplete() {
-
-    }
+    public void onComplete() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonvalidator;
 
 import org.apache.camel.EndpointInject;
@@ -31,7 +32,8 @@ public class LocalRefSchemaTest extends CamelTestSupport {
     public void testValidMessage() throws Exception {
         endpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
+        template.sendBody(
+                "direct:start",
                 "{ \"customer\": \"Donald \\\"Duck\\\" Dunn\", \"orderItems\": [{ \"product\": \"bass guitar\", \"quantity\": 1 }] }");
 
         MockEndpoint.assertIsSatisfied(endpoint);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.util.HashMap;
@@ -32,17 +33,17 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
     private Map<String, Integer> cache = new HashMap<>();
     private int hitCount;
     private int missCount;
-    private String queryAllString
-            = "SELECT messageId, COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? GROUP BY messageId";
+    private String queryAllString =
+            "SELECT messageId, COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? GROUP BY messageId";
 
-    public JdbcCachedMessageIdRepository() {
-    }
+    public JdbcCachedMessageIdRepository() {}
 
     public JdbcCachedMessageIdRepository(DataSource dataSource, String processorName) {
         super(dataSource, processorName);
     }
 
-    public JdbcCachedMessageIdRepository(DataSource dataSource, TransactionTemplate transactionTemplate, String processorName) {
+    public JdbcCachedMessageIdRepository(
+            DataSource dataSource, TransactionTemplate transactionTemplate, String processorName) {
         super(dataSource, transactionTemplate, processorName);
     }
 
@@ -120,23 +121,22 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
     public void reload() {
         transactionTemplate.execute(status -> {
             try {
-                cache = jdbcTemplate.query(getQueryAllString(), resultSet -> {
-                    Map<String, Integer> messageIdCount = new HashMap<>();
-                    while (resultSet.next()) {
-                        messageIdCount.put(resultSet.getString(1), resultSet.getInt(2));
-                    }
-                    return messageIdCount;
-                }, getProcessorName());
+                cache = jdbcTemplate.query(
+                        getQueryAllString(),
+                        resultSet -> {
+                            Map<String, Integer> messageIdCount = new HashMap<>();
+                            while (resultSet.next()) {
+                                messageIdCount.put(resultSet.getString(1), resultSet.getInt(2));
+                            }
+                            return messageIdCount;
+                        },
+                        getProcessorName());
                 log.info("JdbcCachedMessageIdRepository cache loaded with {} entries", cache.size());
             } catch (DataAccessException dae) {
-                log.error(
-                        "Unable to populate JdbcCachedMessageIdRepository cache because of: {}.",
-                        dae.getMessage());
+                log.error("Unable to populate JdbcCachedMessageIdRepository cache because of: {}.", dae.getMessage());
                 throw dae;
             }
             return Boolean.TRUE;
-
         });
     }
-
 }

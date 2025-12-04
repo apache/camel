@@ -24,26 +24,20 @@ import org.testcontainers.containers.GenericContainer;
 
 public final class MessagingServiceFactory {
 
-    private MessagingServiceFactory() {
-
-    }
+    private MessagingServiceFactory() {}
 
     public static SimpleTestServiceBuilder<MessagingService> builder() {
         return new SimpleTestServiceBuilder<>("messaging");
     }
 
     public static MessagingService createService() {
-        return builder()
-                .addRemoteMapping(MessagingRemoteService::new)
-                .build();
+        return builder().addRemoteMapping(MessagingRemoteService::new).build();
     }
 
-    public static class MessagingRemoteService extends MessagingRemoteInfraService implements MessagingService {
-    }
+    public static class MessagingRemoteService extends MessagingRemoteInfraService implements MessagingService {}
 
     public static class MessagingLocalContainerService<T extends GenericContainer<T>>
-            extends MessagingLocalContainerInfraService
-            implements MessagingService {
+            extends MessagingLocalContainerInfraService implements MessagingService {
         public MessagingLocalContainerService(GenericContainer container, Function endpointFunction) {
             super(container, endpointFunction);
         }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,9 +33,15 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
         mock.allMessages().header(Exchange.FILE_NAME).isNotNull();
 
         // the file name is also starting with filename-consumer
-        template.sendBodyAndHeader(fileUri("filename-consumer"), "Hello World", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                fileUri("filename-consumer"),
+                "Hello World",
+                Exchange.FILE_NAME,
                 testFile("filename-consumer-hello.txt").getFileName().toString());
-        template.sendBodyAndHeader(fileUri("filename-consumer"), "Bye World", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                fileUri("filename-consumer"),
+                "Bye World",
+                Exchange.FILE_NAME,
                 testFile("filename-consumer-bye.txt").getFileName().toString());
 
         context.getRouteController().startAllRoutes();
@@ -42,9 +49,11 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // and expect name to contain filename-consumer-XXX.txt
-        assertDirectoryEquals(testFile("filename-consumer-bye.txt").getFileName().toString(),
+        assertDirectoryEquals(
+                testFile("filename-consumer-bye.txt").getFileName().toString(),
                 mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME, String.class));
-        assertDirectoryEquals(testFile("filename-consumer-hello.txt").getFileName().toString(),
+        assertDirectoryEquals(
+                testFile("filename-consumer-hello.txt").getFileName().toString(),
                 mock.getReceivedExchanges().get(1).getIn().getHeader(Exchange.FILE_NAME, String.class));
     }
 
@@ -54,7 +63,8 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri("filename-consumer?initialDelay=0&delay=10&recursive=true&sortBy=file:name"))
-                        .autoStartup(false).to("mock:result");
+                        .autoStartup(false)
+                        .to("mock:result");
             }
         };
     }

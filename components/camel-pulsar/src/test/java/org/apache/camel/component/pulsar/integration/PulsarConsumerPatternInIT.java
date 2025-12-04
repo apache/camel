@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -44,15 +45,15 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_PATTERN_URI + "?topicsPattern=true"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=5&consumerName=camel-consumer")
+            + "&subscriptionName=camel-subscription&consumerQueueSize=5&consumerName=camel-consumer")
     private Endpoint from;
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint fromOne;
 
     @EndpointInject("pulsar:" + TOPIC_TWO_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint fromTwo;
 
     @EndpointInject("mock:result")
@@ -74,7 +75,11 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     private PulsarAdmin givenPulsarAdmin() throws PulsarClientException {
@@ -97,12 +102,18 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
         getMockEndpoint("mock:one").expectedMessageCount(1);
         getMockEndpoint("mock:two").expectedMessageCount(1);
 
-        Producer<String> producer
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(TOPIC_URI)
+                .create();
         producer.send("Hello One");
 
-        Producer<String> producer2
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_TWO_URI).create();
+        Producer<String> producer2 = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(TOPIC_TWO_URI)
+                .create();
         producer2.send("Hello Two");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -116,7 +127,10 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(from).to(to).process(e -> LOGGER.info("Processing message {}", e.getIn().getBody(String.class)));
+                from(from)
+                        .to(to)
+                        .process(e ->
+                                LOGGER.info("Processing message {}", e.getIn().getBody(String.class)));
             }
         });
 

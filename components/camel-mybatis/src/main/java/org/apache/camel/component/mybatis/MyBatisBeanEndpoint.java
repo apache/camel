@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS_BEAN;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -25,25 +28,28 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS_BEAN;
-
 /**
  * Perform queries, inserts, updates or deletes in a relational database using MyBatis.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = SCHEME_MYBATIS_BEAN, title = "MyBatis Bean",
-             syntax = "mybatis-bean:beanName:methodName", producerOnly = true, category = { Category.DATABASE },
-             headersClass = MyBatisConstants.class)
+@UriEndpoint(
+        firstVersion = "2.22.0",
+        scheme = SCHEME_MYBATIS_BEAN,
+        title = "MyBatis Bean",
+        syntax = "mybatis-bean:beanName:methodName",
+        producerOnly = true,
+        category = {Category.DATABASE},
+        headersClass = MyBatisConstants.class)
 public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private String beanName;
+
     @UriPath
     @Metadata(required = true)
     private String methodName;
 
-    public MyBatisBeanEndpoint() {
-    }
+    public MyBatisBeanEndpoint() {}
 
     public MyBatisBeanEndpoint(String endpointUri, Component component, String beanName, String methodName) {
         super(endpointUri, component);
@@ -58,7 +64,8 @@ public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new IllegalArgumentException("Consumer not support on this component (mybatis-bean), use mybatis instead.");
+        throw new IllegalArgumentException(
+                "Consumer not support on this component (mybatis-bean), use mybatis instead.");
     }
 
     public String getBeanName() {
@@ -82,5 +89,4 @@ public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
     public void setMethodName(String methodName) {
         this.methodName = methodName;
     }
-
 }

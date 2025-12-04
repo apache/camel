@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.weather;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.weather;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class CurrentWeatherConsumerGeolocationProviderTest extends CamelTestSupport {
 
@@ -30,11 +31,13 @@ public class CurrentWeatherConsumerGeolocationProviderTest extends CamelTestSupp
 
     @Test
     public void checkGeolocationProviderConfig() {
-        WeatherEndpoint endpoint = context().getEndpoint("weather:foo?"
-                                                         + "geolocationRequestHostIP=" + GEOLOCATION_REQUEST_HOST_IP
-                                                         + "&geolocationAccessKey=" + GEOLOCATION_ACCESS_KEY
-                                                         + "&appid=" + APPID,
-                WeatherEndpoint.class);
+        WeatherEndpoint endpoint = context()
+                .getEndpoint(
+                        "weather:foo?"
+                                + "geolocationRequestHostIP=" + GEOLOCATION_REQUEST_HOST_IP
+                                + "&geolocationAccessKey=" + GEOLOCATION_ACCESS_KEY
+                                + "&appid=" + APPID,
+                        WeatherEndpoint.class);
 
         WeatherConfiguration configuration = endpoint.getConfiguration();
         assertEquals(APPID, configuration.getAppid());
@@ -42,5 +45,4 @@ public class CurrentWeatherConsumerGeolocationProviderTest extends CamelTestSupp
         assertEquals(GEOLOCATION_REQUEST_HOST_IP, configuration.getGeolocationRequestHostIP());
         assertNotNull(configuration.getGeoLocationProvider());
     }
-
 }

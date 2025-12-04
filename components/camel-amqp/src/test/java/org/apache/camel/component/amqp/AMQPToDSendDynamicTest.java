@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
+
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -26,9 +30,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class AMQPToDSendDynamicTest extends AMQPTestSupport {
     private ProducerTemplate template;
     private ConsumerTemplate consumer;
@@ -39,7 +40,8 @@ public class AMQPToDSendDynamicTest extends AMQPTestSupport {
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
         // there should only be one amqp endpoint
-        long count = contextExtension.getContext().getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("amqp:"))
+        long count = contextExtension.getContext().getEndpoints().stream()
+                .filter(e -> e.getEndpointUri().startsWith("amqp:"))
                 .count();
         assertEquals(1, count, "There should only be 1 amqp endpoint");
 

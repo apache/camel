@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
@@ -24,10 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
 
@@ -59,8 +60,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
         reply = template.requestBody("direct:a", "Earth", String.class);
         assertEquals("Bye Earth", reply);
 
-        Exception ex = assertThrows(Exception.class,
-                () -> template.requestBody("direct:b", "Moon", String.class));
+        Exception ex = assertThrows(Exception.class, () -> template.requestBody("direct:b", "Moon", String.class));
         assertInstanceOf(IOException.class, ex.getCause(), "Should get the IOException");
     }
 
@@ -82,5 +82,4 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
             }
         };
     }
-
 }

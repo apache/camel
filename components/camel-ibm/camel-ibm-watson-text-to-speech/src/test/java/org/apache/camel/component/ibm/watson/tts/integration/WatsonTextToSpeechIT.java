@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.tts.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -40,8 +43,6 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration tests for Watson Text to Speech operations. These tests require valid IBM Watson credentials to be
  * provided as system properties: - camel.ibm.watson.tts.apiKey - IBM Cloud API key - camel.ibm.watson.tts.serviceUrl -
@@ -51,10 +52,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * -Dcamel.ibm.watson.tts.serviceUrl=YOUR_SERVICE_URL
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.tts.apiKey", matches = ".+",
-                                 disabledReason = "IBM Watson TTS API Key not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.tts.serviceUrl", matches = ".+",
-                                 disabledReason = "IBM Watson TTS Service URL not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.watson.tts.apiKey",
+            matches = ".+",
+            disabledReason = "IBM Watson TTS API Key not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.watson.tts.serviceUrl",
+            matches = ".+",
+            disabledReason = "IBM Watson TTS Service URL not provided")
 })
 public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
 
@@ -195,13 +200,13 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
 
         // Log first few voices for verification
         voices.stream().limit(5).forEach(voice -> {
-            LOG.info("  Voice: {} - Language: {} - Gender: {}", voice.getName(), voice.getLanguage(),
-                    voice.getGender());
+            LOG.info(
+                    "  Voice: {} - Language: {} - Gender: {}", voice.getName(), voice.getLanguage(), voice.getGender());
         });
 
         // Verify some expected voices exist
-        boolean hasEnglishVoice
-                = voices.stream().anyMatch(v -> v.getLanguage() != null && v.getLanguage().startsWith("en"));
+        boolean hasEnglishVoice = voices.stream()
+                .anyMatch(v -> v.getLanguage() != null && v.getLanguage().startsWith("en"));
         assertTrue(hasEnglishVoice, "Should have at least one English voice");
     }
 
@@ -228,8 +233,12 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
         assertNotNull(voice.getLanguage(), "Voice should have a language");
         assertNotNull(voice.getGender(), "Voice should have a gender");
 
-        LOG.info("Retrieved voice: {} - Language: {} - Gender: {} - Description: {}", voice.getName(),
-                voice.getLanguage(), voice.getGender(), voice.getDescription());
+        LOG.info(
+                "Retrieved voice: {} - Language: {} - Gender: {} - Description: {}",
+                voice.getName(),
+                voice.getLanguage(),
+                voice.getGender(),
+                voice.getDescription());
     }
 
     @Test
@@ -289,9 +298,9 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
         mockResult.expectedMessageCount(1);
 
         final String longText = "IBM Watson Text to Speech is a cloud-based service that converts written text "
-                                + "into natural-sounding speech. The service supports multiple languages and voices, "
-                                + "allowing you to create engaging audio experiences for your applications. "
-                                + "You can customize the pronunciation, add pauses, and control the speaking rate.";
+                + "into natural-sounding speech. The service supports multiple languages and voices, "
+                + "allowing you to create engaging audio experiences for your applications. "
+                + "You can customize the pronunciation, add pauses, and control the speaking rate.";
 
         template.sendBody("direct:synthesize", longText);
 
@@ -322,7 +331,7 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
         mockResult.expectedMessageCount(1);
 
         final String text = "This is a test of IBM Watson Text to Speech being saved to an MP3 file. "
-                            + "The audio quality should be excellent and the file should be playable.";
+                + "The audio quality should be excellent and the file should be playable.";
         final String filename = "test-output.mp3";
 
         template.send("direct:synthesizeToMP3File", new Processor() {
@@ -357,7 +366,7 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
         mockResult.expectedMessageCount(1);
 
         final String text = "This is a test of saving audio as a WAV file. "
-                            + "WAV is an uncompressed audio format with excellent quality.";
+                + "WAV is an uncompressed audio format with excellent quality.";
         final String filename = "test-output.wav";
 
         template.send("direct:synthesizeToWAVFile", new Processor() {
@@ -382,8 +391,14 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
         Files.newInputStream(outputFile.toPath()).read(header);
 
         // WAV files start with "RIFF" followed by file size, then "WAVE"
-        boolean isValidWAV = header[0] == 'R' && header[1] == 'I' && header[2] == 'F' && header[3] == 'F'
-                && header[8] == 'W' && header[9] == 'A' && header[10] == 'V' && header[11] == 'E';
+        boolean isValidWAV = header[0] == 'R'
+                && header[1] == 'I'
+                && header[2] == 'F'
+                && header[3] == 'F'
+                && header[8] == 'W'
+                && header[9] == 'A'
+                && header[10] == 'V'
+                && header[11] == 'E';
 
         assertTrue(isValidWAV, "File should have valid WAV/RIFF header");
     }
@@ -394,9 +409,9 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
 
         // Test multiple voices and save each to a file
         String[][] voiceTests = {
-                { "en-US_MichaelV3Voice", "Hello from Michael!", "michael.mp3" },
-                { "en-US_AllisonV3Voice", "Hello from Allison!", "allison.mp3" },
-                { "en-GB_KateV3Voice", "Hello from Kate!", "kate.mp3" }
+            {"en-US_MichaelV3Voice", "Hello from Michael!", "michael.mp3"},
+            {"en-US_AllisonV3Voice", "Hello from Allison!", "allison.mp3"},
+            {"en-GB_KateV3Voice", "Hello from Kate!", "kate.mp3"}
         };
 
         for (String[] voiceTest : voiceTests) {
@@ -430,10 +445,10 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
 
         // Test multiple languages
         String[][] languageTests = {
-                { "en-US_MichaelV3Voice", "Hello, this is a test in English.", "english.mp3" },
-                { "es-ES_EnriqueV3Voice", "Hola, esta es una prueba en español.", "spanish.mp3" },
-                { "fr-FR_NicolasV3Voice", "Bonjour, ceci est un test en français.", "french.mp3" },
-                { "de-DE_DieterV3Voice", "Hallo, das ist ein Test auf Deutsch.", "german.mp3" }
+            {"en-US_MichaelV3Voice", "Hello, this is a test in English.", "english.mp3"},
+            {"es-ES_EnriqueV3Voice", "Hola, esta es una prueba en español.", "spanish.mp3"},
+            {"fr-FR_NicolasV3Voice", "Bonjour, ceci est un test en français.", "french.mp3"},
+            {"de-DE_DieterV3Voice", "Hallo, das ist ein Test auf Deutsch.", "german.mp3"}
         };
 
         for (String[] languageTest : languageTests) {
@@ -465,9 +480,7 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:synthesize")
-                        .to(buildEndpointUri("synthesize"))
-                        .to("mock:result");
+                from("direct:synthesize").to(buildEndpointUri("synthesize")).to("mock:result");
 
                 from("direct:synthesizeCustom")
                         .to(buildEndpointUri("synthesize"))
@@ -481,13 +494,9 @@ public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
                         .to(buildEndpointUri("synthesize") + "&voice=fr-FR_NicolasV3Voice")
                         .to("mock:result");
 
-                from("direct:listVoices")
-                        .to(buildEndpointUri("listVoices"))
-                        .to("mock:result");
+                from("direct:listVoices").to(buildEndpointUri("listVoices")).to("mock:result");
 
-                from("direct:getVoice")
-                        .to(buildEndpointUri("getVoice"))
-                        .to("mock:result");
+                from("direct:getVoice").to(buildEndpointUri("getVoice")).to("mock:result");
 
                 from("direct:getPronunciation")
                         .to(buildEndpointUri("getPronunciation"))

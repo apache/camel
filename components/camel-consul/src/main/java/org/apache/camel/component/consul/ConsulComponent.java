@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import java.util.Map;
@@ -42,11 +43,11 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
 
     @Metadata(label = "advanced")
     private ConsulConfiguration configuration = new ConsulConfiguration();
+
     @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
 
-    public ConsulComponent() {
-    }
+    public ConsulComponent() {}
 
     public ConsulComponent(CamelContext context) {
         super(context);
@@ -82,18 +83,28 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        ConsulConfiguration configuration = Optional.ofNullable(this.configuration).orElseGet(ConsulConfiguration::new).copy();
+        ConsulConfiguration configuration = Optional.ofNullable(this.configuration)
+                .orElseGet(ConsulConfiguration::new)
+                .copy();
 
         ConsulEndpoint endpoint;
         switch (remaining) {
             case "kv":
                 endpoint = new ConsulEndpoint(
-                        remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new),
+                        remaining,
+                        uri,
+                        this,
+                        configuration,
+                        Optional.of(ConsulKeyValueProducer::new),
                         Optional.of(ConsulKeyValueConsumer::new));
                 break;
             case "event":
                 endpoint = new ConsulEndpoint(
-                        remaining, uri, this, configuration, Optional.of(ConsulEventProducer::new),
+                        remaining,
+                        uri,
+                        this,
+                        configuration,
+                        Optional.of(ConsulEventProducer::new),
                         Optional.of(ConsulEventConsumer::new));
                 break;
             case "agent":
@@ -102,7 +113,12 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
                 break;
             case "coordinates":
                 endpoint = new ConsulEndpoint(
-                        remaining, uri, this, configuration, Optional.of(ConsulCoordinatesProducer::new), Optional.empty());
+                        remaining,
+                        uri,
+                        this,
+                        configuration,
+                        Optional.of(ConsulCoordinatesProducer::new),
+                        Optional.empty());
                 break;
             case "health":
                 endpoint = new ConsulEndpoint(
@@ -114,7 +130,12 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
                 break;
             case "preparedQuery":
                 endpoint = new ConsulEndpoint(
-                        remaining, uri, this, configuration, Optional.of(ConsulPreparedQueryProducer::new), Optional.empty());
+                        remaining,
+                        uri,
+                        this,
+                        configuration,
+                        Optional.of(ConsulPreparedQueryProducer::new),
+                        Optional.empty());
                 break;
             case "catalog":
                 endpoint = new ConsulEndpoint(
@@ -126,7 +147,11 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
                 break;
             default:
                 endpoint = new ConsulEndpoint(
-                        remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new),
+                        remaining,
+                        uri,
+                        this,
+                        configuration,
+                        Optional.of(ConsulKeyValueProducer::new),
                         Optional.of(ConsulKeyValueConsumer::new));
         }
 
@@ -137,5 +162,4 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
         }
         return endpoint;
     }
-
 }

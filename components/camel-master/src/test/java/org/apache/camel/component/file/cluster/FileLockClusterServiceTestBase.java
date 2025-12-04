@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.cluster;
 
 import java.nio.file.Path;
@@ -33,6 +34,7 @@ abstract class FileLockClusterServiceTestBase {
 
     @TempDir
     protected Path clusterDir;
+
     protected Path lockFile;
     protected Path dataFile;
 
@@ -52,7 +54,9 @@ abstract class FileLockClusterServiceTestBase {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("master:%s:timer:clustered?delay=1&period=100&repeatCount=%d", NAMESPACE, config.getTimerRepeatCount())
+                fromF(
+                                "master:%s:timer:clustered?delay=1&period=100&repeatCount=%d",
+                                NAMESPACE, config.getTimerRepeatCount())
                         .routeId("clustered")
                         .log(LoggingLevel.DEBUG, "Timer fired for ${camelId}")
                         .to("mock:result");

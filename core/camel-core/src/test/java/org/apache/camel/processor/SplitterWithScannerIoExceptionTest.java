@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 @DisabledOnOs(OS.AIX)
 public class SplitterWithScannerIoExceptionTest extends ContextTestSupport {
@@ -47,8 +48,12 @@ public class SplitterWithScannerIoExceptionTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 // wrong encoding to force the scanner to fail
-                from("file://src/test/data?fileName=crm.sample.csv&noop=true&charset=UTF-8").split(body().tokenize("\n"))
-                        .streaming().to("mock:a").end().to("mock:b");
+                from("file://src/test/data?fileName=crm.sample.csv&noop=true&charset=UTF-8")
+                        .split(body().tokenize("\n"))
+                        .streaming()
+                        .to("mock:a")
+                        .end()
+                        .to("mock:b");
             }
         };
     }

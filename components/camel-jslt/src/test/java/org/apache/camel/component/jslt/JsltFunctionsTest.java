@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import java.util.Collection;
@@ -44,8 +45,7 @@ public class JsltFunctionsTest extends CamelTestSupport {
     }
 
     private Collection<Function> createFunctions() throws ClassNotFoundException {
-        return Collections.singleton(
-                FunctionUtils.wrapStaticMethod("power", "java.lang.Math", "pow"));
+        return Collections.singleton(FunctionUtils.wrapStaticMethod("power", "java.lang.Math", "pow"));
     }
 
     @Test
@@ -65,11 +65,8 @@ public class JsltFunctionsTest extends CamelTestSupport {
                 JsltComponent js = context.getComponent("jslt", JsltComponent.class);
                 js.setAllowTemplateFromHeader(true);
 
-                from("direct://start")
-                        .to("jslt:dummy")
-                        .to("mock:result");
+                from("direct://start").to("jslt:dummy").to("mock:result");
             }
         };
     }
-
 }

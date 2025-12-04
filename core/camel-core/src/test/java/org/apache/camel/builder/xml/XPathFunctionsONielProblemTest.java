@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
 
 import org.apache.camel.ContextTestSupport;
@@ -63,23 +64,31 @@ public class XPathFunctionsONielProblemTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: ex
                 // setup properties component
-                context.getPropertiesComponent().setLocation("classpath:org/apache/camel/builder/xml/myprop.properties");
+                context.getPropertiesComponent()
+                        .setLocation("classpath:org/apache/camel/builder/xml/myprop.properties");
 
                 // myprop.properties contains the following properties
                 // foo=Camel
                 // bar=Kong
 
-                from("direct:in").choice()
+                from("direct:in")
+                        .choice()
                         // $type is a variable for the header with key type
                         // here we use the properties function to lookup foo from
                         // the properties files
                         // which at runtime will be evaluated to 'Camel'
-                        .when().xpath("$type = function:properties('foo')").to("mock:camel")
+                        .when()
+                        .xpath("$type = function:properties('foo')")
+                        .to("mock:camel")
                         // here we use the simple language to evaluate the
                         // expression
                         // which at runtime will be evaluated to 'Donkey Kong'
-                        .when().xpath("//name = function:simple('{{bar}}')").to("mock:donkey").otherwise()
-                        .to("mock:other").end();
+                        .when()
+                        .xpath("//name = function:simple('{{bar}}')")
+                        .to("mock:donkey")
+                        .otherwise()
+                        .to("mock:other")
+                        .end();
                 // END SNIPPET: ex
             }
         };

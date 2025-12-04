@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,20 +44,18 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfProducerRouterTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CxfProducerRouterTest.class);
-    private static final String SIMPLE_SERVER_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerRouterTest/test";
-    private static final String REQUEST_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                                                  + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                                  + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0>"
-                                                  + "</ns1:echo></soap:Body></soap:Envelope>";
-    private static final String REQUEST_PAYLOAD = "<ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                                  + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
+    private static final String SIMPLE_SERVER_ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerRouterTest/test";
+    private static final String REQUEST_MESSAGE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                    + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                    + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0>"
+                    + "</ns1:echo></soap:Body></soap:Envelope>";
+    private static final String REQUEST_PAYLOAD =
+            "<ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                    + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
 
     private static final String ECHO_OPERATION = "echo";
     private static final String TEST_MESSAGE = "Hello World!";
@@ -78,7 +81,8 @@ public class CxfProducerRouterTest extends CamelTestSupport {
                 // This route is for checking camel-cxf producer throwing exception
                 from("direct:start")
                         .doTry()
-                        .to("cxf://http://localhost:10000/false?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService")
+                        .to(
+                                "cxf://http://localhost:10000/false?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService")
                         .doCatch(java.net.ConnectException.class)
                         .to("mock:error");
             }
@@ -106,9 +110,10 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         assertEquals(getSimpleEndpointUri(), endpoint.getEndpointUri(), "Get a wrong endpoint uri");
 
         endpoint = context.getEndpoint(getSimpleEndpointUri() + "&dataFormat=RAW", CxfEndpoint.class);
-        assertEquals(URISupport.normalizeUri(getSimpleEndpointUri() + "&dataFormat=RAW"), endpoint.getEndpointUri(),
+        assertEquals(
+                URISupport.normalizeUri(getSimpleEndpointUri() + "&dataFormat=RAW"),
+                endpoint.getEndpointUri(),
                 "Get a wrong endpoint uri");
-
     }
 
     @Test
@@ -124,14 +129,17 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         Exchange exchange = template.send("direct:EndpointA", senderExchange);
 
         org.apache.camel.Message out = exchange.getMessage();
-        // The response message's body is an MessageContentsList which first element is the return value of the operation,
+        // The response message's body is an MessageContentsList which first element is the return value of the
+        // operation,
         // If there are some holder parameters, the holder parameter will be filled in the reset of List.
         // The result will be extract from the MessageContentsList with the String class type
         MessageContentsList result = (MessageContentsList) out.getBody();
         LOG.info("Received output text: {}", result.get(0));
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
-        assertEquals("UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING),
+        assertEquals(
+                "UTF-8",
+                responseContext.get(org.apache.cxf.message.Message.ENCODING),
                 "We should get the response context here");
         assertEquals("echo " + TEST_MESSAGE, result.get(0), "Reply body on Camel is wrong");
         // END SNIPPET: sending
@@ -147,7 +155,6 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         String response = out.getBody(String.class);
         assertTrue(response.indexOf("echo " + TEST_MESSAGE) > 0, "It should has the echo message");
         assertTrue(response.indexOf("echoResponse") > 0, "It should has the echoResponse tag");
-
     }
 
     @Test
@@ -157,9 +164,12 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         Exchange exchange = template.send("direct:EndpointB", senderExchange);
 
         org.apache.camel.Message out = exchange.getMessage();
-        final List<String> pseudoHeaders
-                = out.getHeaders().keySet().stream().filter(key -> key.startsWith(":")).toList();
-        assertTrue(pseudoHeaders.isEmpty(), "Pseudo-headers such as :status should be filtered out; found: " + pseudoHeaders);
+        final List<String> pseudoHeaders = out.getHeaders().keySet().stream()
+                .filter(key -> key.startsWith(":"))
+                .toList();
+        assertTrue(
+                pseudoHeaders.isEmpty(),
+                "Pseudo-headers such as :status should be filtered out; found: " + pseudoHeaders);
     }
 
     @Test
@@ -182,12 +192,9 @@ public class CxfProducerRouterTest extends CamelTestSupport {
 
         assertNotNull(exchange.getException(), "Expect exception here.");
         assertTrue(exchange.getException() instanceof IllegalArgumentException);
-
     }
 
     private String getSimpleEndpointUri() {
-        return "cxf://" + SIMPLE_SERVER_ADDRESS
-               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
+        return "cxf://" + SIMPLE_SERVER_ADDRESS + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
     }
-
 }

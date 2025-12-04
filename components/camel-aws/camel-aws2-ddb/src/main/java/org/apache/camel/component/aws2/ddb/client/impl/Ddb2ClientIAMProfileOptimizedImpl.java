@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb.client.impl;
 
 import java.net.URI;
@@ -45,7 +46,8 @@ public class Ddb2ClientIAMProfileOptimizedImpl implements Ddb2InternalClient {
      * Constructor that uses the config file.
      */
     public Ddb2ClientIAMProfileOptimizedImpl(Ddb2Configuration configuration) {
-        LOG.trace("Creating an AWS DynamoDB client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
+        LOG.trace(
+                "Creating an AWS DynamoDB client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
         this.configuration = configuration;
     }
 
@@ -60,16 +62,18 @@ public class Ddb2ClientIAMProfileOptimizedImpl implements Ddb2InternalClient {
         DynamoDbClientBuilder clientBuilder = DynamoDbClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost())
+                && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
+                    + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
         }
         if (configuration.getProfileCredentialsName() != null) {
-            clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+            clientBuilder = clientBuilder
+                    .httpClientBuilder(httpClientBuilder)
                     .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
@@ -82,11 +86,8 @@ public class Ddb2ClientIAMProfileOptimizedImpl implements Ddb2InternalClient {
             if (httpClientBuilder == null) {
                 httpClientBuilder = ApacheHttpClient.builder();
             }
-            SdkHttpClient ahc = httpClientBuilder.buildWithDefaults(AttributeMap
-                    .builder()
-                    .put(
-                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE)
+            SdkHttpClient ahc = httpClientBuilder.buildWithDefaults(AttributeMap.builder()
+                    .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE)
                     .build());
             // set created http client to use instead of builder
             clientBuilder.httpClient(ahc);

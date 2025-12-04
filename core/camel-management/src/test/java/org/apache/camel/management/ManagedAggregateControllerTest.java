@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -33,10 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @DisabledOnOs(OS.AIX)
@@ -126,8 +127,8 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(2, pending.intValue());
 
-        Integer groups = (Integer) mbeanServer.invoke(on, "forceCompletionOfGroup", new Object[] { "1" },
-                new String[] { "java.lang.String" });
+        Integer groups = (Integer)
+                mbeanServer.invoke(on, "forceCompletionOfGroup", new Object[] {"1"}, new String[] {"java.lang.String"});
         assertEquals(1, groups.intValue());
 
         assertMockEndpointsSatisfied();
@@ -163,7 +164,8 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         assertEquals(1, pending.intValue());
 
         // we can also use the client mbean
-        ManagedAggregateProcessorMBean client = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+        ManagedAggregateProcessorMBean client = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
                 .getManagedProcessor("myAggregator", ManagedAggregateProcessorMBean.class);
         assertNotNull(client);
 
@@ -178,7 +180,9 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .aggregate(header("id"), new MyAggregationStrategy()).aggregateController(controller).id("myAggregator")
+                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregateController(controller)
+                        .id("myAggregator")
                         .completionSize(10)
                         .to("mock:aggregated");
             }

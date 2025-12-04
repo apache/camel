@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -33,8 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CamelSpringTest
 @ContextConfiguration
@@ -64,7 +65,8 @@ public class MasterEndpointIT {
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
 
-        MasterConsumer masterConsumer = (MasterConsumer) camelContext.getRoute("zookeeper-master-to-direct").getConsumer();
+        MasterConsumer masterConsumer = (MasterConsumer)
+                camelContext.getRoute("zookeeper-master-to-direct").getConsumer();
         Awaitility.await().until(() -> masterConsumer.isMaster() && masterConsumer.isConnected());
 
         template.sendBodyAndHeader(expectedBody, "foo", "bar");
@@ -74,12 +76,13 @@ public class MasterEndpointIT {
 
     @Test
     public void testRawPropertiesOnChild() {
-        final String uri
-                = "zookeeper-master://name:sftp://myhost/inbox?password=RAW(_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_)&username=jdoe";
+        final String uri =
+                "zookeeper-master://name:sftp://myhost/inbox?password=RAW(_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_)&username=jdoe";
 
         MasterEndpoint master = (MasterEndpoint) camelContext.getEndpoint(uri);
         SftpEndpoint sftp = (SftpEndpoint) master.getEndpoint();
 
-        assertEquals("_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_", sftp.getConfiguration().getPassword());
+        assertEquals(
+                "_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_", sftp.getConfiguration().getPassword());
     }
 }

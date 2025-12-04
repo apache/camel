@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.util.Collections;
@@ -23,13 +27,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.transform.Source;
 
+import org.xmlunit.xpath.JAXPXPathEngine;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.xmlunit.xpath.JAXPXPathEngine;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Waits for messages to arrive on the mock endpoint and performs assertions on the message bodies.
@@ -47,7 +49,9 @@ public class MockEndpointFixture {
 
     protected void waitForMessages(MockEndpoint aMockEndpoint) throws InterruptedException {
         mMockEndpoint.await(10, TimeUnit.SECONDS);
-        assertEquals(aMockEndpoint.getExpectedCount(), aMockEndpoint.getReceivedCounter(),
+        assertEquals(
+                aMockEndpoint.getExpectedCount(),
+                aMockEndpoint.getReceivedCounter(),
                 "Expected number of messages didn't arrive before timeout");
     }
 
@@ -75,9 +79,7 @@ public class MockEndpointFixture {
     protected void assertMessageReceived(Source aExpectedDoc, Source aActual) throws Exception {
         Source noTime = XmlFixture.stripTimestamp(aActual);
         Source noUUID = XmlFixture.stripUUID(noTime);
-        XmlFixture.assertXMLIgnorePrefix("failed to match",
-                aExpectedDoc,
-                noUUID);
+        XmlFixture.assertXMLIgnorePrefix("failed to match", aExpectedDoc, noUUID);
         // assert that we have a timestamp and datetime
         // can't rely on the datetime being the same due to timezone differences
         // instead, we'll assert that the values exist.

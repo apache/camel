@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import org.apache.camel.CamelContext;
@@ -42,8 +43,8 @@ public class TelegramConsumerHealthCheckOkTest extends TelegramTestSupport {
 
         // enabling consumers health check is a bit cumbersome via low-level Java code
         HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
-        HealthCheckRepository repo
-                = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
+        HealthCheckRepository repo =
+                hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
         repo.setEnabled(true);
         hcr.register(repo);
 
@@ -60,21 +61,24 @@ public class TelegramConsumerHealthCheckOkTest extends TelegramTestSupport {
 
         endpoint.assertIsSatisfied(5000);
 
-        repo.stream().forEach(h -> Assertions.assertEquals(HealthCheck.State.UP, h.call().getState()));
+        repo.stream()
+                .forEach(h ->
+                        Assertions.assertEquals(HealthCheck.State.UP, h.call().getState()));
     }
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token")
-                                .convertBodyTo(String.class)
-                                .to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token")
+                            .convertBodyTo(String.class)
+                            .to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override

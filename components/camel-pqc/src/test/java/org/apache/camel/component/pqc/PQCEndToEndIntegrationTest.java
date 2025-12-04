@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.file.Path;
 import java.security.KeyPair;
@@ -38,8 +41,6 @@ import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * End-to-end integration tests demonstrating complete lifecycle from key generation to actual usage.
@@ -88,7 +89,8 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
         if (keyManager == null && tempDir != null) {
             keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
             // Pre-generate keys needed for binding
-            dilithiumKeyPair = keyManager.generateKeyPair("DILITHIUM", "setup-dilithium", DilithiumParameterSpec.dilithium2);
+            dilithiumKeyPair =
+                    keyManager.generateKeyPair("DILITHIUM", "setup-dilithium", DilithiumParameterSpec.dilithium2);
             ntruKeyPair = keyManager.generateKeyPair("NTRU", "setup-ntru", NTRUParameterSpec.ntruhps2048509);
         }
     }
@@ -137,8 +139,8 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     @Test
     void testEndToEndSignatureWithGeneratedKey() throws Exception {
         // Step 1: Generate a Dilithium key pair using lifecycle manager
-        dilithiumKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-dilithium-key",
-                DilithiumParameterSpec.dilithium2);
+        dilithiumKeyPair =
+                keyManager.generateKeyPair("DILITHIUM", "e2e-dilithium-key", DilithiumParameterSpec.dilithium2);
         assertNotNull(dilithiumKeyPair);
 
         // Verify metadata was created
@@ -160,11 +162,13 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
 
         // Verify signature was created
         assertNotNull(mockSigned.getExchanges().get(0).getMessage().getHeader(PQCConstants.SIGNATURE));
-        byte[] signature = mockSigned.getExchanges().get(0).getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class);
+        byte[] signature =
+                mockSigned.getExchanges().get(0).getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class);
         assertTrue(signature.length > 0);
 
         // Verify signature verification succeeded
-        Boolean verified = mockVerified.getExchanges().get(0).getMessage().getHeader(PQCConstants.VERIFY, Boolean.class);
+        Boolean verified =
+                mockVerified.getExchanges().get(0).getMessage().getHeader(PQCConstants.VERIFY, Boolean.class);
         assertTrue(verified);
 
         // Step 3: Update key metadata to track usage
@@ -215,15 +219,16 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
         mockVerified.assertIsSatisfied();
 
         // Verify signature with new key works
-        Boolean verified = mockVerified.getExchanges().get(0).getMessage().getHeader(PQCConstants.VERIFY, Boolean.class);
+        Boolean verified =
+                mockVerified.getExchanges().get(0).getMessage().getHeader(PQCConstants.VERIFY, Boolean.class);
         assertTrue(verified);
     }
 
     @Test
     void testEndToEndKeyExportImportAndUse() throws Exception {
         // Step 1: Generate a key
-        KeyPair originalKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-export-key",
-                DilithiumParameterSpec.dilithium2);
+        KeyPair originalKeyPair =
+                keyManager.generateKeyPair("DILITHIUM", "e2e-export-key", DilithiumParameterSpec.dilithium2);
 
         // Step 2: Export the key to PEM format
         byte[] exportedPublicKey = keyManager.exportPublicKey(originalKeyPair, KeyLifecycleManager.KeyFormat.PEM);
@@ -233,13 +238,15 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
         assertTrue(pemString.contains("-----BEGIN PUBLIC KEY-----"));
 
         // Step 3: Import the key back
-        KeyPair importedKeyPair = keyManager.importKey(exportedPublicKey, KeyLifecycleManager.KeyFormat.PEM,
-                "DILITHIUM");
+        KeyPair importedKeyPair =
+                keyManager.importKey(exportedPublicKey, KeyLifecycleManager.KeyFormat.PEM, "DILITHIUM");
         assertNotNull(importedKeyPair);
         assertNotNull(importedKeyPair.getPublic());
 
         // Step 4: Verify imported key matches original
-        assertArrayEquals(originalKeyPair.getPublic().getEncoded(), importedKeyPair.getPublic().getEncoded());
+        assertArrayEquals(
+                originalKeyPair.getPublic().getEncoded(),
+                importedKeyPair.getPublic().getEncoded());
 
         // Step 5: Use the key for signing
         dilithiumKeyPair = originalKeyPair;
@@ -253,7 +260,8 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
         mockSigned.assertIsSatisfied();
         mockVerified.assertIsSatisfied();
 
-        Boolean verified = mockVerified.getExchanges().get(0).getMessage().getHeader(PQCConstants.VERIFY, Boolean.class);
+        Boolean verified =
+                mockVerified.getExchanges().get(0).getMessage().getHeader(PQCConstants.VERIFY, Boolean.class);
         assertTrue(verified);
 
         // Cleanup
@@ -263,8 +271,8 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     @Test
     void testEndToEndMultipleSignaturesWithMetadataTracking() throws Exception {
         // Step 1: Generate a key
-        dilithiumKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-multi-sig-key",
-                DilithiumParameterSpec.dilithium2);
+        dilithiumKeyPair =
+                keyManager.generateKeyPair("DILITHIUM", "e2e-multi-sig-key", DilithiumParameterSpec.dilithium2);
 
         KeyMetadata metadata = keyManager.getKeyMetadata("e2e-multi-sig-key");
         assertEquals(0, metadata.getUsageCount());
@@ -401,13 +409,13 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("Signer")
     public Signature getSigner() throws Exception {
-        return Signature.getInstance(PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
-                PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
+        return Signature.getInstance(
+                PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(), PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
     }
 
     @BindToRegistry("KeyGenerator")
     public javax.crypto.KeyGenerator getKeyGenerator() throws Exception {
-        return javax.crypto.KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRU.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider());
+        return javax.crypto.KeyGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.NTRU.getAlgorithm(), PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider());
     }
 }

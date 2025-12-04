@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,11 +28,11 @@ public class FileConsumerIdempotentKeyTest extends FileConsumerIdempotentTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?idempotent=true&idempotentKey=${file:onlyname}&move=done/${file:name}&initialDelay=0&delay=10"))
+                from(fileUri(
+                                "?idempotent=true&idempotentKey=${file:onlyname}&move=done/${file:name}&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
     }
-
 }

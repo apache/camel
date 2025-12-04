@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage;
 
 import java.util.Map;
@@ -41,8 +42,13 @@ import org.slf4j.LoggerFactory;
  * Google Storage Endpoint definition represents a bucket within the storage and contains configuration to customize the
  * behavior of Consumer and Producer.
  */
-@UriEndpoint(firstVersion = "3.9.0", scheme = "google-storage", title = "Google Storage", syntax = "google-storage:bucketName",
-             category = { Category.CLOUD }, headersClass = GoogleCloudStorageConstants.class)
+@UriEndpoint(
+        firstVersion = "3.9.0",
+        scheme = "google-storage",
+        title = "Google Storage",
+        syntax = "google-storage:bucketName",
+        category = {Category.CLOUD},
+        headersClass = GoogleCloudStorageConstants.class)
 public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudStorageEndpoint.class);
@@ -52,8 +58,8 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint implements
 
     private Storage storageClient;
 
-    public GoogleCloudStorageEndpoint(String uri, GoogleCloudStorageComponent component,
-                                      GoogleCloudStorageConfiguration configuration) {
+    public GoogleCloudStorageEndpoint(
+            String uri, GoogleCloudStorageComponent component, GoogleCloudStorageConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -100,9 +106,8 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint implements
         final String location = conf.getStorageLocation();
         final StorageClass storageClass = conf.getStorageClass();
 
-        Builder bucketBuilder = BucketInfo.newBuilder(bucketName)
-                .setStorageClass(storageClass)
-                .setLocation(location);
+        Builder bucketBuilder =
+                BucketInfo.newBuilder(bucketName).setStorageClass(storageClass).setLocation(location);
         BucketInfo bucketInfo = bucketBuilder.build();
         Bucket bucket = storage.create(bucketInfo);
         LOG.trace("Bucket [{}] has been created", bucket.getName());
@@ -129,7 +134,7 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint implements
         if (ObjectHelper.isNotEmpty(configuration.getBucketName())
                 && ObjectHelper.isNotEmpty(configuration.getStorageLocation())) {
             return getServiceProtocol() + ":" + configuration.getStorageLocation() + ":"
-                   + configuration.getBucketName();
+                    + configuration.getBucketName();
         }
         return null;
     }
@@ -146,5 +151,4 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint implements
         }
         return null;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flatpack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -30,9 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @CamelSpringTest
 @ContextConfiguration
 public class HeaderAndTrailerTest {
@@ -41,7 +42,7 @@ public class HeaderAndTrailerTest {
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedFirstName = { "JOHN", "JIMMY", "JANE", "FRED" };
+    protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
 
     @Test
     public void testHeaderAndTrailer() throws Exception {
@@ -71,5 +72,4 @@ public class HeaderAndTrailerTest {
         assertEquals("FBT", trailer.get("INDICATOR"));
         assertEquals("SUCCESS", trailer.get("STATUS"));
     }
-
 }

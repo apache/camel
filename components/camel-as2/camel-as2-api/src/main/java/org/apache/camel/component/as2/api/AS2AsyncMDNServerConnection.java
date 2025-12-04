@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
@@ -58,8 +59,7 @@ public class AS2AsyncMDNServerConnection {
     private RequestListenerThread listenerThread;
     private final Lock lock = new ReentrantLock();
 
-    public AS2AsyncMDNServerConnection(Integer portNumber, SSLContext sslContext)
-                                                                                  throws IOException {
+    public AS2AsyncMDNServerConnection(Integer portNumber, SSLContext sslContext) throws IOException {
         final Integer parserPortNumber = ObjectHelper.notNull(portNumber, "portNumber");
         listenerThread = new RequestListenerThread(parserPortNumber, sslContext);
         listenerThread.setDaemon(true);
@@ -148,7 +148,8 @@ public class AS2AsyncMDNServerConnection {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Incoming connection from {}", inSocket.getInetAddress());
             }
-            Http1Config cfg = Http1Config.custom().setBufferSize(DEFAULT_BUFFER_SIZE).build();
+            Http1Config cfg =
+                    Http1Config.custom().setBufferSize(DEFAULT_BUFFER_SIZE).build();
             // parses the received AS2MessageEntity
             // NOTE: the connection will be closed after the execution of the process.
             AS2BHttpServerConnection inConn = new AS2BHttpServerConnection(cfg); // NOSONAR

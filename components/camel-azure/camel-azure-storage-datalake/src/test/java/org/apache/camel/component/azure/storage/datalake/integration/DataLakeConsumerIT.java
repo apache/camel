@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -45,10 +50,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 public class DataLakeConsumerIT extends Base {
 
@@ -57,11 +58,13 @@ public class DataLakeConsumerIT extends Base {
 
     @EndpointInject("direct:createFile")
     private ProducerTemplate templateStart;
+
     private String batchFileSystemName;
     private String batchFileSystemName1;
     private String batchFileSystemName2;
     private String fileName;
-    private final String baseURI = String.format("azure-storage-datalake:%s/", service.azureCredentials().accountName());
+    private final String baseURI = String.format(
+            "azure-storage-datalake:%s/", service.azureCredentials().accountName());
     private final String regex = ".*\\.pdf";
 
     private DataLakeFileSystemClient fileSystemClient;
@@ -89,26 +92,34 @@ public class DataLakeConsumerIT extends Base {
 
         try {
             fileSystemClient.getFileClient(fileName).upload(new ByteArrayInputStream("file data".getBytes()), 9L);
-            batchFileSystemClient.getFileClient("batch_file_1").upload(new ByteArrayInputStream("Batch file 1".getBytes()),
-                    12L);
-            batchFileSystemClient.getFileClient("batch_file_2").upload(new ByteArrayInputStream("Batch file 2".getBytes()),
-                    12L);
-            batchFileSystemClient1.getFileClient("batch_file_A").upload(new ByteArrayInputStream("Batch file A".getBytes()),
-                    12L);
-            batchFileSystemClient1.getFileClient("batch_file_B").upload(new ByteArrayInputStream("Batch file B".getBytes()),
-                    12L);
+            batchFileSystemClient
+                    .getFileClient("batch_file_1")
+                    .upload(new ByteArrayInputStream("Batch file 1".getBytes()), 12L);
+            batchFileSystemClient
+                    .getFileClient("batch_file_2")
+                    .upload(new ByteArrayInputStream("Batch file 2".getBytes()), 12L);
+            batchFileSystemClient1
+                    .getFileClient("batch_file_A")
+                    .upload(new ByteArrayInputStream("Batch file A".getBytes()), 12L);
+            batchFileSystemClient1
+                    .getFileClient("batch_file_B")
+                    .upload(new ByteArrayInputStream("Batch file B".getBytes()), 12L);
             for (int i = 0; i < 3; i++) {
                 final int index = i;
-                batchFileSystemClient2.getFileClient(generateRandomFileName("pdf")).upload(
-                        new ByteArrayInputStream(("PDF with regex :" + Integer.toString(index)).getBytes()),
-                        17L);
+                batchFileSystemClient2
+                        .getFileClient(generateRandomFileName("pdf"))
+                        .upload(
+                                new ByteArrayInputStream(("PDF with regex :" + Integer.toString(index)).getBytes()),
+                                17L);
             }
 
             for (int i = 0; i < 3; i++) {
                 final int index = i;
-                batchFileSystemClient2.getFileClient(generateRandomFileName("docx")).upload(
-                        new ByteArrayInputStream(("DOCX with regex :" + Integer.toString(index)).getBytes()),
-                        18L);
+                batchFileSystemClient2
+                        .getFileClient(generateRandomFileName("docx"))
+                        .upload(
+                                new ByteArrayInputStream(("DOCX with regex :" + Integer.toString(index)).getBytes()),
+                                18L);
             }
 
         } catch (UncheckedIOException e) {
@@ -136,18 +147,25 @@ public class DataLakeConsumerIT extends Base {
         mockEndpointForStreams.expectedMessageCount(2);
         mockEndpointForStreams.assertIsSatisfied();
 
-        final InputStream fileStream1
-                = mockEndpointForStreams.getExchanges().get(0).getIn().getBody(InputStream.class);
-        final InputStream fileStream2
-                = mockEndpointForStreams.getExchanges().get(1).getIn().getBody(InputStream.class);
+        final InputStream fileStream1 =
+                mockEndpointForStreams.getExchanges().get(0).getIn().getBody(InputStream.class);
+        final InputStream fileStream2 =
+                mockEndpointForStreams.getExchanges().get(1).getIn().getBody(InputStream.class);
 
-        final String text1 = context().getTypeConverter().convertTo(String.class, fileStream1).trim();
-        final String text2 = context().getTypeConverter().convertTo(String.class, fileStream2).trim();
+        final String text1 = context()
+                .getTypeConverter()
+                .convertTo(String.class, fileStream1)
+                .trim();
+        final String text2 = context()
+                .getTypeConverter()
+                .convertTo(String.class, fileStream2)
+                .trim();
 
         final List<String> expectedList = Arrays.asList(text1, text2);
         final List<String> actualList = Arrays.asList("Batch file 1", "Batch file 2");
         assertTrue(expectedList.size() == actualList.size()
-                && expectedList.containsAll(actualList) && actualList.containsAll(expectedList));
+                && expectedList.containsAll(actualList)
+                && actualList.containsAll(expectedList));
     }
 
     @Test
@@ -162,9 +180,12 @@ public class DataLakeConsumerIT extends Base {
         assertTrue(file1.exists(), "File was not created in local filesystem: batch_file_A");
         assertTrue(file2.exists(), "File was not created in local filesystem: batch_file_B");
 
-        assertEquals("Batch file A", context().getTypeConverter().convertTo(String.class, file1).trim());
-        assertEquals("Batch file B", context().getTypeConverter().convertTo(String.class, file2).trim());
-
+        assertEquals(
+                "Batch file A",
+                context().getTypeConverter().convertTo(String.class, file1).trim());
+        assertEquals(
+                "Batch file B",
+                context().getTypeConverter().convertTo(String.class, file2).trim());
     }
 
     @Test
@@ -191,17 +212,19 @@ public class DataLakeConsumerIT extends Base {
                 context.getRegistry().bind("openOptions", configuration.getOpenOptions());
 
                 from(baseURI + fileSystemName + "?fileName=" + fileName
-                     + "&dataLakeServiceClient=#serviceClient&fileDir=" + testDir + "&openOptions=#openOptions")
+                                + "&dataLakeServiceClient=#serviceClient&fileDir=" + testDir
+                                + "&openOptions=#openOptions")
                         .to("mock:result");
 
                 from(baseURI + batchFileSystemName + "?dataLakeServiceClient=#serviceClient&openOptions=#openOptions")
                         .to("mock:resultBatch");
 
-                from(baseURI + batchFileSystemName1 + "?dataLakeServiceClient=#serviceClient&fileDir="
-                     + testDir + "&openOptions=#openOptions").to("mock:resultBatchFile");
+                from(baseURI + batchFileSystemName1 + "?dataLakeServiceClient=#serviceClient&fileDir=" + testDir
+                                + "&openOptions=#openOptions")
+                        .to("mock:resultBatchFile");
 
                 from(baseURI + batchFileSystemName2 + "?dataLakeServiceClient=#serviceClient&regex=" + regex
-                     + "&openOptions=#openOptions")
+                                + "&openOptions=#openOptions")
                         .idempotentConsumer(body(), new MemoryIdempotentRepository())
                         .to("mock:resultRegex");
             }
@@ -219,5 +242,4 @@ public class DataLakeConsumerIT extends Base {
     private String generateRandomFileName(String extension) {
         return RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT) + "." + extension;
     }
-
 }

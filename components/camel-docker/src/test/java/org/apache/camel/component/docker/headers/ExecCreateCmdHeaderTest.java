@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Exec Create Request headers are parsed properly
@@ -60,8 +61,7 @@ public class ExecCreateCmdHeaderTest extends BaseDockerHeaderTest<ExecCreateCmd>
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(eq(stdErr));
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdout(eq(stdOut));
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdin(eq(stdIn));
-        Mockito.verify(mockObject, Mockito.times(1)).withCmd(new String[] { "date", "whoami" });
-
+        Mockito.verify(mockObject, Mockito.times(1)).withCmd(new String[] {"date", "whoami"});
     }
 
     @Override
@@ -73,5 +73,4 @@ public class ExecCreateCmdHeaderTest extends BaseDockerHeaderTest<ExecCreateCmd>
     protected DockerOperation getOperation() {
         return DockerOperation.EXEC_CREATE;
     }
-
 }

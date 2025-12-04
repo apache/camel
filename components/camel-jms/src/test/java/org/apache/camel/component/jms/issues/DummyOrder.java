@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
 
 import java.io.Serializable;
@@ -87,13 +88,6 @@ public class DummyOrder implements Serializable {
 
     @Override
     public String toString() {
-        return "DummyOrder{"
-               + "orderId="
-               + orderId
-               + ", itemId="
-               + itemId
-               + ", quantity="
-               + quantity
-               + '}';
+        return "DummyOrder{" + "orderId=" + orderId + ", itemId=" + itemId + ", quantity=" + quantity + '}';
     }
 }

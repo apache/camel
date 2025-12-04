@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -42,18 +43,14 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
      * Debezium connector's class name, this has to be fully name with the package, e.g:
      * 'io.debezium.connector.mysql.MySqlConnector'
      */
-    @Parameter(
-               property = "camel.debezium.connector.class",
-               required = true)
+    @Parameter(property = "camel.debezium.connector.class", required = true)
     private String connectorClassName;
 
     /**
      * Debezium connector's config class name, this has to be fully name with the package, e.g:
      * 'io.debezium.connector.mysql.MySqlConnectorConfig'
      */
-    @Parameter(
-               property = "camel.debezium.connector.config.class",
-               required = true)
+    @Parameter(property = "camel.debezium.connector.config.class", required = true)
     private String connectorConfigClassName;
 
     /**
@@ -86,10 +83,12 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
         }
 
         try {
-            final ConnectorConfigGenerator connectorConfigGenerator
-                    = ConnectorConfigGenerator.create(getConnector(), configClazz, packageName, requiredFields, overrideFields);
-            final File parentPath = new File(generatedSrcDir, connectorConfigGenerator.getPackageName().replace(".", "/"));
-            final File connectorConfigClassFile = new File(parentPath, connectorConfigGenerator.getClassName() + ".java");
+            final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(
+                    getConnector(), configClazz, packageName, requiredFields, overrideFields);
+            final File parentPath = new File(
+                    generatedSrcDir, connectorConfigGenerator.getPackageName().replace(".", "/"));
+            final File connectorConfigClassFile =
+                    new File(parentPath, connectorConfigGenerator.getClassName() + ".java");
             if (!connectorConfigClassFile.exists()) {
                 connectorConfigClassFile.getParentFile().mkdirs();
                 connectorConfigClassFile.createNewFile();
@@ -101,8 +100,8 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
     }
 
     private SourceConnector getConnector() {
-        return org.apache.camel.support.ObjectHelper.newInstance(ObjectHelper.loadClass(connectorClassName),
-                SourceConnector.class);
+        return org.apache.camel.support.ObjectHelper.newInstance(
+                ObjectHelper.loadClass(connectorClassName), SourceConnector.class);
     }
 
     public void setGeneratedSrcDir(final File generatedSrcDir) {

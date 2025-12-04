@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap.name;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -66,5 +67,4 @@ public class TypeNameStrategy implements ElementNameStrategy {
     public Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName) {
         throw new UnsupportedOperationException("Exception lookup is not supported for TypeNameStrategy");
     }
-
 }

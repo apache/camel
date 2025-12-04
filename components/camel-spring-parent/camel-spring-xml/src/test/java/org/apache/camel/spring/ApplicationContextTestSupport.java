@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class ApplicationContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.mtom;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -35,9 +39,6 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfConsumer in PAYLOAD mode. That is, testing
@@ -72,19 +73,20 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
 
             // create response
             List<Source> elements = new ArrayList<>();
-            elements.add(new DOMSource(
-                    StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_RESP_MESSAGE)).getDocumentElement()));
-            CxfPayload<SoapHeader> body = new CxfPayload<>(
-                    new ArrayList<SoapHeader>(),
-                    elements, null);
+            elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_RESP_MESSAGE))
+                    .getDocumentElement()));
+            CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(), elements, null);
             exchange.getMessage().setBody(body);
-            exchange.getMessage(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_PHOTO_CID,
-                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
+            exchange.getMessage(AttachmentMessage.class)
+                    .addAttachment(
+                            MtomTestHelper.RESP_PHOTO_CID,
+                            new DataHandler(new ByteArrayDataSource(
+                                    MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
 
-            exchange.getMessage(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_IMAGE_CID,
-                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.responseJpeg, "image/jpeg")));
-
+            exchange.getMessage(AttachmentMessage.class)
+                    .addAttachment(
+                            MtomTestHelper.RESP_IMAGE_CID,
+                            new DataHandler(new ByteArrayDataSource(MtomTestHelper.responseJpeg, "image/jpeg")));
         }
     }
-
 }

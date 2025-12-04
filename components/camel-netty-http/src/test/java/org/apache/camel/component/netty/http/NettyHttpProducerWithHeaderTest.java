@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpProducerWithHeaderTest extends BaseNettyTest {
 
@@ -30,8 +31,8 @@ public class NettyHttpProducerWithHeaderTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
         getMockEndpoint("mock:input").expectedHeaderReceived("myTraceId", "mockCorrelationID");
 
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", null, "myTraceId",
-                "mockCorrelationID", String.class);
+        String out = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/foo", null, "myTraceId", "mockCorrelationID", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -43,8 +44,12 @@ public class NettyHttpProducerWithHeaderTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived("myTraceId", "mockCorrelationID");
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "myTraceId",
-                "mockCorrelationID", String.class);
+        String out = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/foo",
+                "Hello World",
+                "myTraceId",
+                "mockCorrelationID",
+                String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -57,9 +62,9 @@ public class NettyHttpProducerWithHeaderTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

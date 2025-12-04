@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 import java.util.Properties;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class KafkaConsumerTopicIsPatternIT extends BaseKafkaTestSupport {
 
     public static final String TOPIC = "vess123d";
@@ -44,7 +45,6 @@ public class KafkaConsumerTopicIsPatternIT extends BaseKafkaTestSupport {
         Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
-
     }
 
     @AfterEach
@@ -63,8 +63,8 @@ public class KafkaConsumerTopicIsPatternIT extends BaseKafkaTestSupport {
             @Override
             public void configure() {
                 from("kafka:" + TOPIC_PATTERN
-                     + "?topicIsPattern=true&groupId=KafkaConsumerTopicIsPatternIT&autoOffsetReset=earliest"
-                     + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor&metadataMaxAgeMs=1000")
+                                + "?topicIsPattern=true&groupId=KafkaConsumerTopicIsPatternIT&autoOffsetReset=earliest"
+                                + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor&metadataMaxAgeMs=1000")
                         .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
@@ -79,7 +79,8 @@ public class KafkaConsumerTopicIsPatternIT extends BaseKafkaTestSupport {
         to.allMessages().header(KafkaConstants.TOPIC).isEqualTo(TOPIC);
         // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
         // exchange because autoCommitEnable=true
-        to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
+        to.expectedHeaderValuesReceivedInAnyOrder(
+                KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
 
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
@@ -88,8 +89,10 @@ public class KafkaConsumerTopicIsPatternIT extends BaseKafkaTestSupport {
         }
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
-                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
+        assertEquals(
+                5,
+                MockConsumerInterceptor.recordsCaptured.stream()
+                        .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false))
+                        .count());
     }
-
 }

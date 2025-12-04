@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class BedrockModelsTest {
 
@@ -124,7 +125,8 @@ class BedrockModelsTest {
     void testStabilityAIModels() {
         assertEquals("stability.sd3-5-large-v1:0", BedrockModels.STABLE_DIFFUSION_3_5_LARGE.model);
         assertEquals("stability.stable-image-control-sketch-v1:0", BedrockModels.STABLE_IMAGE_CONTROL_SKETCH.model);
-        assertEquals("stability.stable-image-control-structure-v1:0", BedrockModels.STABLE_IMAGE_CONTROL_STRUCTURE.model);
+        assertEquals(
+                "stability.stable-image-control-structure-v1:0", BedrockModels.STABLE_IMAGE_CONTROL_STRUCTURE.model);
         assertEquals("stability.stable-image-core-v1:1", BedrockModels.STABLE_IMAGE_CORE.model);
     }
 
@@ -142,7 +144,9 @@ class BedrockModelsTest {
     @Test
     void testEnumCountAndNewModels() {
         BedrockModels[] allModels = BedrockModels.values();
-        assertEquals(60, allModels.length,
+        assertEquals(
+                60,
+                allModels.length,
                 "Should have exactly 60 models (including deprecated models with @Deprecated annotations)");
 
         boolean hasNovaModels = false;

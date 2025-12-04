@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteWatcherReloadStrategyTest extends ContextTestSupport {
 
@@ -81,7 +82,8 @@ public class RouteWatcherReloadStrategyTest extends ContextTestSupport {
 
     @Test
     public void testNullPattern() throws Exception {
-        RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy("./src/test/resources/org/apache/camel/model");
+        RouteWatcherReloadStrategy strategy =
+                new RouteWatcherReloadStrategy("./src/test/resources/org/apache/camel/model");
         strategy.setPattern(null);
         strategy.setCamelContext(context);
         strategy.doStart();
@@ -96,5 +98,4 @@ public class RouteWatcherReloadStrategyTest extends ContextTestSupport {
         // null goes back to default
         assertEquals("*.yaml,*.xml", strategy.getPattern());
     }
-
 }

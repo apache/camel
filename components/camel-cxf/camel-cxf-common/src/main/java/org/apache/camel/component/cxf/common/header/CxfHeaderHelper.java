@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.common.header;
 
 import java.util.ArrayList;
@@ -56,8 +57,7 @@ public final class CxfHeaderHelper {
     /**
      * Utility class does not have public constructor
      */
-    private CxfHeaderHelper() {
-    }
+    private CxfHeaderHelper() {}
 
     private static void defineMapping(String camelHeader, String cxfHeader) {
         CAMEL_TO_CXF_HEADERS.put(camelHeader, cxfHeader);
@@ -74,7 +74,8 @@ public final class CxfHeaderHelper {
      */
     public static void propagateCamelHeadersToCxfHeaders(
             HeaderFilterStrategy strategy,
-            Map<String, Object> camelHeaders, Map<String, List<String>> requestHeaders,
+            Map<String, Object> camelHeaders,
+            Map<String, List<String>> requestHeaders,
             Exchange camelExchange) {
         if (strategy == null) {
             return;
@@ -117,12 +118,12 @@ public final class CxfHeaderHelper {
      * @param exchange     provides context for filtering
      */
     public static void propagateCamelToCxf(
-            HeaderFilterStrategy strategy,
-            Map<String, Object> camelHeaders, Message cxfMessage, Exchange exchange) {
+            HeaderFilterStrategy strategy, Map<String, Object> camelHeaders, Message cxfMessage, Exchange exchange) {
 
         // use copyProtocolHeadersFromCxfToCamel treemap to keep ordering and ignore key case
         cxfMessage.putIfAbsent(Message.PROTOCOL_HEADERS, new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
-        final Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>) cxfMessage.get(Message.PROTOCOL_HEADERS));
+        final Map<String, List<String>> cxfHeaders =
+                CastUtils.cast((Map<?, ?>) cxfMessage.get(Message.PROTOCOL_HEADERS));
 
         if (strategy == null) {
             return;
@@ -175,7 +176,8 @@ public final class CxfHeaderHelper {
      */
     public static void propagateCxfHeadersToCamelHeaders(
             HeaderFilterStrategy strategy,
-            Map<String, List<Object>> responseHeaders, Map<String, Object> camelHeaders,
+            Map<String, List<Object>> responseHeaders,
+            Map<String, Object> camelHeaders,
             Exchange camelExchange) {
         if (strategy == null) {
             return;
@@ -190,7 +192,7 @@ public final class CxfHeaderHelper {
 
             LOG.trace("Populate external header: {}={} as {}", entry.getKey(), entry.getValue(), camelHeaderName);
             if (!camelHeaderName.startsWith(":")) {
-                ///* Ignore HTTP/2 pseudo headers such as :status */
+                /// * Ignore HTTP/2 pseudo headers such as :status */
                 camelHeaders.put(camelHeaderName, entry.getValue().get(0));
             }
         });
@@ -205,8 +207,10 @@ public final class CxfHeaderHelper {
      * @param exchange     provides context for filtering
      */
     public static void propagateCxfToCamel(
-            HeaderFilterStrategy strategy, Message cxfMessage,
-            org.apache.camel.Message camelMessage, Exchange exchange) {
+            HeaderFilterStrategy strategy,
+            Message cxfMessage,
+            org.apache.camel.Message camelMessage,
+            Exchange exchange) {
 
         if (strategy == null) {
             return;
@@ -226,14 +230,17 @@ public final class CxfHeaderHelper {
     }
 
     private static void copyProtocolHeadersFromCxfToCamel(
-            HeaderFilterStrategy strategy, Exchange exchange,
-            Message cxfMessage, org.apache.camel.Message camelMessage) {
-        Map<String, List<String>> cxfHeaders
-                = CastUtils.cast((Map<?, ?>) cxfMessage.getOrDefault(Message.PROTOCOL_HEADERS, Collections.emptyMap()));
+            HeaderFilterStrategy strategy,
+            Exchange exchange,
+            Message cxfMessage,
+            org.apache.camel.Message camelMessage) {
+        Map<String, List<String>> cxfHeaders =
+                CastUtils.cast((Map<?, ?>) cxfMessage.getOrDefault(Message.PROTOCOL_HEADERS, Collections.emptyMap()));
         cxfHeaders.entrySet().forEach(cxfHeader -> {
             String camelHeaderName = CXF_TO_CAMEL_HEADERS.getOrDefault(cxfHeader.getKey(), cxfHeader.getKey());
             Object value = convertCxfProtocolHeaderValues(cxfHeader.getValue(), exchange);
-            copyCxfHeaderToCamel(strategy, exchange, cxfMessage, camelMessage, cxfHeader.getKey(), camelHeaderName, value);
+            copyCxfHeaderToCamel(
+                    strategy, exchange, cxfMessage, camelMessage, cxfHeader.getKey(), camelHeaderName, value);
         });
     }
 
@@ -241,8 +248,8 @@ public final class CxfHeaderHelper {
         if (values.size() == 1) {
             return values.get(0);
         }
-        final boolean headersMerged
-                = exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE, Boolean.class);
+        final boolean headersMerged =
+                exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE, Boolean.class);
         if (headersMerged) {
             return String.join(", ", values);
         }
@@ -250,27 +257,42 @@ public final class CxfHeaderHelper {
     }
 
     public static void copyHttpHeadersFromCxfToCamel(
-            HeaderFilterStrategy strategy, Message cxfMessage,
-            org.apache.camel.Message camelMessage, Exchange exchange) {
-        CXF_TO_CAMEL_HEADERS.entrySet().forEach(
-                entry -> copyCxfHeaderToCamel(strategy, exchange, cxfMessage, camelMessage, entry.getKey(), entry.getValue()));
+            HeaderFilterStrategy strategy,
+            Message cxfMessage,
+            org.apache.camel.Message camelMessage,
+            Exchange exchange) {
+        CXF_TO_CAMEL_HEADERS
+                .entrySet()
+                .forEach(entry -> copyCxfHeaderToCamel(
+                        strategy, exchange, cxfMessage, camelMessage, entry.getKey(), entry.getValue()));
     }
 
     private static void copyCxfHeaderToCamel(
-            HeaderFilterStrategy strategy, Exchange exchange,
-            Message cxfMessage, org.apache.camel.Message camelMessage, String key) {
+            HeaderFilterStrategy strategy,
+            Exchange exchange,
+            Message cxfMessage,
+            org.apache.camel.Message camelMessage,
+            String key) {
         copyCxfHeaderToCamel(strategy, exchange, cxfMessage, camelMessage, key, key);
     }
 
     private static void copyCxfHeaderToCamel(
-            HeaderFilterStrategy strategy, Exchange exchange,
-            Message cxfMessage, org.apache.camel.Message camelMessage, String cxfKey, String camelKey) {
+            HeaderFilterStrategy strategy,
+            Exchange exchange,
+            Message cxfMessage,
+            org.apache.camel.Message camelMessage,
+            String cxfKey,
+            String camelKey) {
         copyCxfHeaderToCamel(strategy, exchange, cxfMessage, camelMessage, cxfKey, camelKey, cxfMessage.get(cxfKey));
     }
 
     private static void copyCxfHeaderToCamel(
-            HeaderFilterStrategy strategy, Exchange exchange,
-            Message cxfMessage, org.apache.camel.Message camelMessage, String cxfKey, String camelKey,
+            HeaderFilterStrategy strategy,
+            Exchange exchange,
+            Message cxfMessage,
+            org.apache.camel.Message camelMessage,
+            String cxfKey,
+            String camelKey,
             Object initialValue) {
         Object value = initialValue;
         if (Message.PATH_INFO.equals(cxfKey)) {
@@ -300,9 +322,7 @@ public final class CxfHeaderHelper {
         String enc = findHeaderValue(message, Message.ENCODING);
 
         if (null != ct) {
-            if (enc != null
-                    && !ct.contains("charset=")
-                    && !ct.toLowerCase().contains("multipart/related")) {
+            if (enc != null && !ct.contains("charset=") && !ct.toLowerCase().contains("multipart/related")) {
                 ct = ct + "; charset=" + enc;
             }
         } else if (enc != null) {
@@ -320,9 +340,10 @@ public final class CxfHeaderHelper {
         if (value != null) {
             return value;
         }
-        Map<String, List<String>> protocolHeaders
-                = CastUtils.cast((Map<?, ?>) message.getOrDefault(Message.PROTOCOL_HEADERS, Collections.emptyMap()));
-        return protocolHeaders.getOrDefault(key, Collections.singletonList(null)).get(0);
+        Map<String, List<String>> protocolHeaders =
+                CastUtils.cast((Map<?, ?>) message.getOrDefault(Message.PROTOCOL_HEADERS, Collections.emptyMap()));
+        return protocolHeaders
+                .getOrDefault(key, Collections.singletonList(null))
+                .get(0);
     }
-
 }

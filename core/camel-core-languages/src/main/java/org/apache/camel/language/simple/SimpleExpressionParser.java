@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 import java.util.ArrayList;
@@ -46,15 +47,20 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     private final Map<String, Expression> cacheExpression;
     private boolean skipFileFunctions;
 
-    public SimpleExpressionParser(CamelContext camelContext, String expression,
-                                  boolean allowEscape,
-                                  Map<String, Expression> cacheExpression) {
+    public SimpleExpressionParser(
+            CamelContext camelContext,
+            String expression,
+            boolean allowEscape,
+            Map<String, Expression> cacheExpression) {
         this(camelContext, expression, allowEscape, false, cacheExpression);
     }
 
-    public SimpleExpressionParser(CamelContext camelContext, String expression,
-                                  boolean allowEscape, boolean skipFileFunctions,
-                                  Map<String, Expression> cacheExpression) {
+    public SimpleExpressionParser(
+            CamelContext camelContext,
+            String expression,
+            boolean allowEscape,
+            boolean skipFileFunctions,
+            Map<String, Expression> cacheExpression) {
         super(camelContext, expression, allowEscape);
         this.cacheExpression = cacheExpression;
         this.skipFileFunctions = skipFileFunctions;
@@ -271,7 +277,9 @@ public class SimpleExpressionParser extends BaseSimpleParser {
 
     protected void templateText() {
         // for template, we accept anything but functions
-        while (!token.getType().isFunctionStart() && !token.getType().isFunctionEnd() && !token.getType().isEol()) {
+        while (!token.getType().isFunctionStart()
+                && !token.getType().isFunctionEnd()
+                && !token.getType().isEol()) {
             nextToken();
         }
     }

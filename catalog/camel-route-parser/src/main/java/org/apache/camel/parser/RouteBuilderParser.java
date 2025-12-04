@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser;
 
 import java.io.BufferedReader;
@@ -49,8 +50,7 @@ public final class RouteBuilderParser {
 
     public static final String METHOD_NAME = "configure";
 
-    private RouteBuilderParser() {
-    }
+    private RouteBuilderParser() {}
 
     /**
      * Parses the java source class and build a route model (tree) of the discovered routes in the java source class.
@@ -60,8 +60,7 @@ public final class RouteBuilderParser {
      * @return                        a list of route model (tree) of each discovered route
      */
     public static List<CamelNodeDetails> parseRouteBuilderTree(
-            JavaClassSource clazz, String fullyQualifiedFileName,
-            boolean includeInlinedRouteBuilders) {
+            JavaClassSource clazz, String fullyQualifiedFileName, boolean includeInlinedRouteBuilders) {
 
         List<MethodSource<JavaClassSource>> methods = findAllConfigureMethods(clazz, includeInlinedRouteBuilders);
 
@@ -69,8 +68,7 @@ public final class RouteBuilderParser {
         List<CamelNodeDetails> list = new ArrayList<>();
         for (MethodSource<JavaClassSource> configureMethod : methods) {
             // there may be multiple route builder configure methods
-            List<CamelNodeDetails> details
-                    = parser.parseCamelRouteTree(clazz, fullyQualifiedFileName, configureMethod);
+            List<CamelNodeDetails> details = parser.parseCamelRouteTree(clazz, fullyQualifiedFileName, configureMethod);
             list.addAll(details);
         }
         // we end up parsing bottom->up so reverse list
@@ -88,7 +86,9 @@ public final class RouteBuilderParser {
      * @param endpoints              list to add discovered and parsed endpoints
      */
     public static void parseRouteBuilderEndpoints(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            JavaClassSource clazz,
+            String baseDir,
+            String fullyQualifiedFileName,
             List<CamelEndpointDetails> endpoints) {
         parseRouteBuilderEndpoints(clazz, baseDir, fullyQualifiedFileName, endpoints, null, false);
     }
@@ -104,8 +104,12 @@ public final class RouteBuilderParser {
      * @param includeInlinedRouteBuilders whether to include inlined route builders in the parsing
      */
     public static void parseRouteBuilderEndpoints(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
-            List<CamelEndpointDetails> endpoints, List<String> unparsable, boolean includeInlinedRouteBuilders) {
+            JavaClassSource clazz,
+            String baseDir,
+            String fullyQualifiedFileName,
+            List<CamelEndpointDetails> endpoints,
+            List<String> unparsable,
+            boolean includeInlinedRouteBuilders) {
 
         collectFieldsEndpointsNotInRoute(clazz, baseDir, fullyQualifiedFileName, endpoints);
 
@@ -117,19 +121,24 @@ public final class RouteBuilderParser {
         for (MethodSource<JavaClassSource> configureMethod : methods) {
             // consumers only
             List<ParserResult> uris = CamelJavaParserHelper.parseCamelConsumerUris(configureMethod, true, true);
-            collectMethodEndpointByPattern(clazz, baseDir, fullyQualifiedFileName, endpoints, unparsable, configureMethod, uris,
-                    true);
+            collectMethodEndpointByPattern(
+                    clazz, baseDir, fullyQualifiedFileName, endpoints, unparsable, configureMethod, uris, true);
 
             // producer only
             uris = CamelJavaParserHelper.parseCamelProducerUris(configureMethod, true, true);
-            collectMethodEndpointByPattern(clazz, baseDir, fullyQualifiedFileName, endpoints, unparsable, configureMethod, uris,
-                    false);
+            collectMethodEndpointByPattern(
+                    clazz, baseDir, fullyQualifiedFileName, endpoints, unparsable, configureMethod, uris, false);
         }
     }
 
     private static void collectMethodEndpointByPattern(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName, List<CamelEndpointDetails> endpoints,
-            List<String> unparsable, MethodSource<JavaClassSource> configureMethod, List<ParserResult> uris,
+            JavaClassSource clazz,
+            String baseDir,
+            String fullyQualifiedFileName,
+            List<CamelEndpointDetails> endpoints,
+            List<String> unparsable,
+            MethodSource<JavaClassSource> configureMethod,
+            List<ParserResult> uris,
             boolean consumerOnly) {
         for (ParserResult result : uris) {
             if (!result.isParsed()) {
@@ -148,14 +157,18 @@ public final class RouteBuilderParser {
     }
 
     private static void collectFieldsEndpointsNotInRoute(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName, List<CamelEndpointDetails> endpoints) {
+            JavaClassSource clazz,
+            String baseDir,
+            String fullyQualifiedFileName,
+            List<CamelEndpointDetails> endpoints) {
         // look for fields which are not used in the route
         for (FieldSource<JavaClassSource> field : clazz.getFields()) {
 
             EndpointUri endpointUri = findEndpointFromAnnotations(clazz, field);
 
             // we only want to add fields which are not used in the route
-            if (endpointUri != null && !Strings.isNullOrEmpty(endpointUri.getValue())
+            if (endpointUri != null
+                    && !Strings.isNullOrEmpty(endpointUri.getValue())
                     && findEndpointByUri(endpoints, endpointUri.getValue()) == null) {
 
                 String uri = endpointUri.getValue();
@@ -182,7 +195,8 @@ public final class RouteBuilderParser {
         }
     }
 
-    private static void addInternalPositionDetails(JavaClassSource clazz, CamelEndpointDetails detail, Object internal) {
+    private static void addInternalPositionDetails(
+            JavaClassSource clazz, CamelEndpointDetails detail, Object internal) {
         // find position of field/expression
         if (internal instanceof ASTNode astNode) {
             int pos = astNode.getStartPosition();
@@ -249,7 +263,8 @@ public final class RouteBuilderParser {
             methods.add(method);
         }
         if (includeInlinedRouteBuilders) {
-            List<MethodSource<JavaClassSource>> inlinedMethods = CamelJavaParserHelper.findInlinedConfigureMethods(clazz);
+            List<MethodSource<JavaClassSource>> inlinedMethods =
+                    CamelJavaParserHelper.findInlinedConfigureMethods(clazz);
             if (!inlinedMethods.isEmpty()) {
                 methods.addAll(inlinedMethods);
             }
@@ -258,7 +273,10 @@ public final class RouteBuilderParser {
     }
 
     private static CamelEndpointDetails buildCamelEndpointDetails(
-            JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, ParserResult result, String fileName) {
+            JavaClassSource clazz,
+            MethodSource<JavaClassSource> configureMethod,
+            ParserResult result,
+            String fileName) {
         CamelEndpointDetails detail = new CamelEndpointDetails();
         detail.setFileName(fileName);
         detail.setClassName(clazz.getQualifiedName());
@@ -299,7 +317,9 @@ public final class RouteBuilderParser {
      * @param simpleExpressions      list to add discovered and parsed simple expressions
      */
     public static void parseRouteBuilderSimpleExpressions(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            JavaClassSource clazz,
+            String baseDir,
+            String fullyQualifiedFileName,
             List<CamelSimpleExpressionDetails> simpleExpressions) {
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
         if (method != null) {
@@ -311,8 +331,11 @@ public final class RouteBuilderParser {
     }
 
     private static void parseRouteBuilderSimpleExpression(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
-            List<CamelSimpleExpressionDetails> simpleExpressions, ParserResult result) {
+            JavaClassSource clazz,
+            String baseDir,
+            String fullyQualifiedFileName,
+            List<CamelSimpleExpressionDetails> simpleExpressions,
+            ParserResult result) {
         if (result.isParsed()) {
             String fileName = parseFileName(baseDir, fullyQualifiedFileName);
 
@@ -358,7 +381,9 @@ public final class RouteBuilderParser {
      * @param csimpleExpressions     list to add discovered and parsed simple expressions
      */
     public static void parseRouteBuilderCSimpleExpressions(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            JavaClassSource clazz,
+            String baseDir,
+            String fullyQualifiedFileName,
             List<CamelCSimpleExpressionDetails> csimpleExpressions) {
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
         if (method != null) {
@@ -372,8 +397,11 @@ public final class RouteBuilderParser {
     }
 
     private static void checkParsedResult(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
-            List<CamelCSimpleExpressionDetails> csimpleExpressions, ParserResult result) {
+            JavaClassSource clazz,
+            String baseDir,
+            String fullyQualifiedFileName,
+            List<CamelCSimpleExpressionDetails> csimpleExpressions,
+            ParserResult result) {
         String fileName = parseFileName(baseDir, fullyQualifiedFileName);
 
         CamelCSimpleExpressionDetails detail = new CamelCSimpleExpressionDetails();
@@ -412,8 +440,7 @@ public final class RouteBuilderParser {
      * @param routes                 list to add discovered and parsed routes
      */
     public static void parseRouteBuilderRouteIds(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
-            List<CamelRouteDetails> routes) {
+            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName, List<CamelRouteDetails> routes) {
 
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
         if (method != null) {
@@ -431,7 +458,8 @@ public final class RouteBuilderParser {
                     if (line > -1) {
                         detail.setLineNumber(Integer.toString(line));
                     }
-                    int endLine = findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
+                    int endLine =
+                            findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
                     if (endLine > -1) {
                         detail.setLineNumberEnd(Integer.toString(endLine));
                     }
@@ -529,5 +557,4 @@ public final class RouteBuilderParser {
             return expression;
         }
     }
-
 }

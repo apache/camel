@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
@@ -21,13 +22,12 @@ import java.util.List;
 
 public class EipModel extends BaseModel<EipModel.EipOptionModel> {
 
-    protected boolean abstractModel;  // used in models from camel-core-engine
-    protected boolean input;          // used in models from camel-core-engine
-    protected boolean output;         // used in models from camel-core-engine
+    protected boolean abstractModel; // used in models from camel-core-engine
+    protected boolean input; // used in models from camel-core-engine
+    protected boolean output; // used in models from camel-core-engine
     protected final List<EipModel.EipOptionModel> exchangeProperties = new ArrayList<>();
 
-    public EipModel() {
-    }
+    public EipModel() {}
 
     @Override
     public Kind getKind() {
@@ -71,7 +71,5 @@ public class EipModel extends BaseModel<EipModel.EipOptionModel> {
         return "src/main/docs/eips/";
     }
 
-    public static class EipOptionModel extends BaseOptionModel {
-
-    }
+    public static class EipOptionModel extends BaseOptionModel {}
 }

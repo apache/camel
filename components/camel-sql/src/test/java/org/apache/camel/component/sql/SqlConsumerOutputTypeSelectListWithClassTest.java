@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -26,10 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -43,7 +44,8 @@ public class SqlConsumerOutputTypeSelectListWithClassTest extends CamelTestSuppo
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -64,17 +66,20 @@ public class SqlConsumerOutputTypeSelectListWithClassTest extends CamelTestSuppo
         List<Exchange> exchanges = mock.getReceivedExchanges();
         assertTrue(exchanges.size() >= 3);
 
-        ProjectModel row = assertIsInstanceOf(ProjectModel.class, exchanges.get(0).getIn().getBody());
+        ProjectModel row =
+                assertIsInstanceOf(ProjectModel.class, exchanges.get(0).getIn().getBody());
         assertEquals(1, row.getId());
         assertEquals("Camel", row.getProject());
         assertEquals("ASF", row.getLicense());
 
-        ProjectModel row2 = assertIsInstanceOf(ProjectModel.class, exchanges.get(1).getIn().getBody());
+        ProjectModel row2 =
+                assertIsInstanceOf(ProjectModel.class, exchanges.get(1).getIn().getBody());
         assertEquals(2, row2.getId());
         assertEquals("AMQ", row2.getProject());
         assertEquals("ASF", row2.getLicense());
 
-        ProjectModel row3 = assertIsInstanceOf(ProjectModel.class, exchanges.get(2).getIn().getBody());
+        ProjectModel row3 =
+                assertIsInstanceOf(ProjectModel.class, exchanges.get(2).getIn().getBody());
         assertEquals(3, row3.getId());
         assertEquals("Linux", row3.getProject());
         assertEquals("XXX", row3.getLicense());

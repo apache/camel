@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -28,8 +31,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedNonManagedServiceTest extends ManagementTestSupport {
@@ -77,18 +78,12 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result");
+                from("direct:start").to("mock:result");
             }
         };
     }
 
-    private static final class MyService extends ServiceSupport {
+    private static final class MyService extends ServiceSupport {}
 
-    }
-
-    private static final class MyNonService extends ServiceSupport implements NonManagedService {
-
-    }
-
+    private static final class MyNonService extends ServiceSupport implements NonManagedService {}
 }

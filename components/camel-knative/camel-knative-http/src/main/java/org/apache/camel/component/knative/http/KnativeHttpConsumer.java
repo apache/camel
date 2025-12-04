@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
+
+import static org.apache.camel.util.CollectionHelper.appendEntry;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -52,8 +55,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.CollectionHelper.appendEntry;
-
 @ManagedResource(description = "Managed KnativeHttpConsumer")
 public class KnativeHttpConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(KnativeHttpConsumer.class);
@@ -71,12 +72,13 @@ public class KnativeHttpConsumer extends DefaultConsumer {
     private BigInteger maxBodySize;
     private boolean preallocateBodyBuffer;
 
-    public KnativeHttpConsumer(KnativeTransportConfiguration configuration,
-                               Endpoint endpoint,
-                               KnativeResource resource,
-                               Supplier<Router> router,
-                               KnativeHttpServiceOptions serviceOptions,
-                               Processor processor) {
+    public KnativeHttpConsumer(
+            KnativeTransportConfiguration configuration,
+            Endpoint endpoint,
+            KnativeResource resource,
+            Supplier<Router> router,
+            KnativeHttpServiceOptions serviceOptions,
+            Processor processor) {
         super(endpoint, processor);
         this.configuration = configuration;
         this.resource = resource;
@@ -137,9 +139,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
 
             LOGGER.debug("Creating route for path: {}", path);
 
-            route = router.get().route(
-                    HttpMethod.POST,
-                    path);
+            route = router.get().route(HttpMethod.POST, path);
 
             BodyHandler bodyHandler = BodyHandler.create();
             bodyHandler.setPreallocateBodyBuffer(this.preallocateBodyBuffer);
@@ -148,8 +148,8 @@ public class KnativeHttpConsumer extends DefaultConsumer {
             }
 
             // add OIDC token verification handler
-            if (serviceOptions instanceof KnativeOidcServiceOptions oidcServiceOptions &&
-                    oidcServiceOptions.isOidcEnabled()) {
+            if (serviceOptions instanceof KnativeOidcServiceOptions oidcServiceOptions
+                    && oidcServiceOptions.isOidcEnabled()) {
                 route.handler(routingContext -> {
                     if (routingContext.request().headers().contains(HttpHeaders.AUTHORIZATION)) {
                         String auth = routingContext.request().getHeader(HttpHeaders.AUTHORIZATION);
@@ -157,12 +157,14 @@ public class KnativeHttpConsumer extends DefaultConsumer {
                         if (("Bearer " + token).equals(auth)) {
                             routingContext.next();
                         } else {
-                            routingContext.fail(401, new RuntimeCamelException("OIDC request verification failed - forbidden"));
+                            routingContext.fail(
+                                    401, new RuntimeCamelException("OIDC request verification failed - forbidden"));
                         }
                     } else {
-                        routingContext.fail(401, new RuntimeCamelException(
-                                "OIDC request verification failed - " +
-                                                                           "missing proper authorization token"));
+                        routingContext.fail(
+                                401,
+                                new RuntimeCamelException(
+                                        "OIDC request verification failed - " + "missing proper authorization token"));
                     }
                 });
             }
@@ -180,7 +182,8 @@ public class KnativeHttpConsumer extends DefaultConsumer {
                 if (filter.test(routingContext.request())) {
                     handleRequest(routingContext);
                 } else {
-                    LOGGER.debug("Cannot handle request on {}, next", getEndpoint().getEndpointUri());
+                    LOGGER.debug(
+                            "Cannot handle request on {}, next", getEndpoint().getEndpointUri());
                     routingContext.next();
                 }
             });
@@ -234,12 +237,15 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         // from("knative:event/my.event")
         //        .to("http://{{env:PROJECT}}.{{env:NAMESPACE}}.svc.cluster.local/service");
         //
-        routingContext.vertx().executeBlocking(() -> {
-            createUoW(exchange);
-            getAsyncProcessor().process(exchange);
-            return null;
-        },
-                false)
+        routingContext
+                .vertx()
+                .executeBlocking(
+                        () -> {
+                            createUoW(exchange);
+                            getAsyncProcessor().process(exchange);
+                            return null;
+                        },
+                        false)
                 .onComplete(result -> {
                     try {
                         Throwable failure = null;
@@ -365,11 +371,11 @@ public class KnativeHttpConsumer extends DefaultConsumer {
             // and mark the exception as failure handled, as we handled it by returning
             // it as the response
             ExchangeHelper.setFailureHandled(message.getExchange());
-
         }
 
         return body != null
-                ? Buffer.buffer(message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(byte[].class, body))
+                ? Buffer.buffer(
+                        message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(byte[].class, body))
                 : null;
     }
 }

@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -33,14 +42,6 @@ import org.apache.camel.test.infra.hazelcast.services.HazelcastServiceFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HazelcastConfigurationTest {
 
@@ -68,10 +69,10 @@ class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1
-                    = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + instanceName);
-            HazelcastDefaultEndpoint endpoint2
-                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastInstanceName=" + instanceName);
+            HazelcastDefaultEndpoint endpoint1 =
+                    getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + instanceName);
+            HazelcastDefaultEndpoint endpoint2 =
+                    getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastInstanceName=" + instanceName);
 
             assertNotNull(endpoint1.getHazelcastInstance());
             assertNotNull(endpoint2.getHazelcastInstance());
@@ -83,9 +84,21 @@ class HazelcastConfigurationTest {
             for (HazelcastDefaultEndpoint endpoint : Arrays.asList(endpoint1, endpoint2)) {
                 HazelcastInstance hz = endpoint.getHazelcastInstance();
                 assertEquals(instanceName, hz.getName());
-                assertFalse(hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
-                assertTrue(hz.getConfig().getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-                assertFalse(hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
+                assertFalse(hz.getConfig()
+                        .getNetworkConfig()
+                        .getJoin()
+                        .getAwsConfig()
+                        .isEnabled());
+                assertTrue(hz.getConfig()
+                        .getNetworkConfig()
+                        .getJoin()
+                        .getMulticastConfig()
+                        .isEnabled());
+                assertFalse(hz.getConfig()
+                        .getNetworkConfig()
+                        .getJoin()
+                        .getTcpIpConfig()
+                        .isEnabled());
                 assertEquals(port.getPort(), hz.getConfig().getNetworkConfig().getPort());
             }
         } finally {
@@ -115,9 +128,21 @@ class HazelcastConfigurationTest {
 
             for (HazelcastDefaultEndpoint endpoint : Arrays.asList(endpoint1, endpoint2)) {
                 HazelcastInstance hz = endpoint.getHazelcastInstance();
-                assertFalse(hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
-                assertFalse(hz.getConfig().getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-                assertFalse(hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
+                assertFalse(hz.getConfig()
+                        .getNetworkConfig()
+                        .getJoin()
+                        .getAwsConfig()
+                        .isEnabled());
+                assertFalse(hz.getConfig()
+                        .getNetworkConfig()
+                        .getJoin()
+                        .getMulticastConfig()
+                        .isEnabled());
+                assertFalse(hz.getConfig()
+                        .getNetworkConfig()
+                        .getJoin()
+                        .getTcpIpConfig()
+                        .isEnabled());
                 assertEquals(5701, hz.getConfig().getNetworkConfig().getPort());
             }
         } finally {
@@ -135,10 +160,10 @@ class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1
-                    = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-named.xml");
-            HazelcastDefaultEndpoint endpoint2
-                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-named.xml");
+            HazelcastDefaultEndpoint endpoint1 =
+                    getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-named.xml");
+            HazelcastDefaultEndpoint endpoint2 =
+                    getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-named.xml");
 
             assertNotNull(endpoint1.getHazelcastInstance());
             assertNotNull(endpoint2.getHazelcastInstance());
@@ -148,9 +173,15 @@ class HazelcastConfigurationTest {
             assertNull(component.getHazelcastInstance());
 
             HazelcastInstance hz = endpoint1.getHazelcastInstance();
-            assertFalse(hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
-            assertFalse(hz.getConfig().getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-            assertFalse(hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
+            assertFalse(
+                    hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
+            assertFalse(hz.getConfig()
+                    .getNetworkConfig()
+                    .getJoin()
+                    .getMulticastConfig()
+                    .isEnabled());
+            assertFalse(
+                    hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
             assertEquals(9876, hz.getConfig().getNetworkConfig().getPort());
 
         } finally {
@@ -168,10 +199,10 @@ class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1
-                    = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-custom.xml");
-            HazelcastDefaultEndpoint endpoint2
-                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-custom.xml");
+            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(
+                    context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-custom.xml");
+            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(
+                    context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-custom.xml");
 
             assertNotNull(endpoint1.getHazelcastInstance());
             assertNotNull(endpoint2.getHazelcastInstance());
@@ -182,9 +213,21 @@ class HazelcastConfigurationTest {
 
             for (HazelcastDefaultEndpoint endpoint : Arrays.asList(endpoint1, endpoint2)) {
                 HazelcastInstance hz = endpoint.getHazelcastInstance();
-                assertFalse(hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
-                assertFalse(hz.getConfig().getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-                assertFalse(hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
+                assertFalse(hz.getConfig()
+                        .getNetworkConfig()
+                        .getJoin()
+                        .getAwsConfig()
+                        .isEnabled());
+                assertFalse(hz.getConfig()
+                        .getNetworkConfig()
+                        .getJoin()
+                        .getMulticastConfig()
+                        .isEnabled());
+                assertFalse(hz.getConfig()
+                        .getNetworkConfig()
+                        .getJoin()
+                        .getTcpIpConfig()
+                        .isEnabled());
                 assertEquals(9876, hz.getConfig().getNetworkConfig().getPort());
             }
 
@@ -209,16 +252,23 @@ class HazelcastConfigurationTest {
             context.start();
             context.getEndpoint("hazelcast-map:my-cache?hazelcastConfig=#my-config");
 
-            HazelcastDefaultEndpoint endpoint = getHzEndpoint(context, "hazelcast-map:my-cache?hazelcastConfig=#my-config");
+            HazelcastDefaultEndpoint endpoint =
+                    getHzEndpoint(context, "hazelcast-map:my-cache?hazelcastConfig=#my-config");
             assertNotNull(endpoint.getHazelcastInstance());
 
             HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             assertNull(component.getHazelcastInstance());
 
             HazelcastInstance hz = endpoint.getHazelcastInstance();
-            assertFalse(hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
-            assertTrue(hz.getConfig().getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-            assertFalse(hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
+            assertFalse(
+                    hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
+            assertTrue(hz.getConfig()
+                    .getNetworkConfig()
+                    .getJoin()
+                    .getMulticastConfig()
+                    .isEnabled());
+            assertFalse(
+                    hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
             assertEquals(port.getPort(), hz.getConfig().getNetworkConfig().getPort());
 
         } finally {
@@ -233,9 +283,9 @@ class HazelcastConfigurationTest {
         DefaultCamelContext context = null;
 
         try (AvailablePortFinder.Port port1 = AvailablePortFinder.find();
-             AvailablePortFinder.Port port2 = AvailablePortFinder.find();
-             AvailablePortFinder.Port port3 = AvailablePortFinder.find();
-             AvailablePortFinder.Port port4 = AvailablePortFinder.find()) {
+                AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+                AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+                AvailablePortFinder.Port port4 = AvailablePortFinder.find()) {
             int portNumber1 = port1.getPort();
             int portNumber2 = port2.getPort();
             int portNumber3 = port3.getPort();
@@ -252,7 +302,8 @@ class HazelcastConfigurationTest {
             sharedConfig = hazelcastService.createConfiguration("shared", portNumber3, instanceName, "configuration");
 
             Config componentConfig = new Config();
-            componentConfig = hazelcastService.createConfiguration("component", portNumber4, instanceName, "configuration");
+            componentConfig =
+                    hazelcastService.createConfiguration("component", portNumber4, instanceName, "configuration");
 
             HazelcastInstance hzNamed = Hazelcast.newHazelcastInstance(namedConfig);
             HazelcastInstance hzShared = Hazelcast.newHazelcastInstance(sharedConfig);
@@ -269,12 +320,12 @@ class HazelcastConfigurationTest {
             context.addComponent("hazelcast-map", component);
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1
-                    = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + namedConfig.getInstanceName());
-            HazelcastDefaultEndpoint endpoint2
-                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfig=#" + customConfig.getInstanceName());
-            HazelcastDefaultEndpoint endpoint3
-                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastInstance=#" + sharedConfig.getInstanceName());
+            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(
+                    context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + namedConfig.getInstanceName());
+            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(
+                    context, "hazelcast-map:my-cache-2?hazelcastConfig=#" + customConfig.getInstanceName());
+            HazelcastDefaultEndpoint endpoint3 = getHzEndpoint(
+                    context, "hazelcast-map:my-cache-2?hazelcastInstance=#" + sharedConfig.getInstanceName());
             HazelcastDefaultEndpoint endpoint4 = getHzEndpoint(context, "hazelcast-map:my-cache-4");
 
             assertNotNull(endpoint1.getHazelcastInstance());
@@ -285,7 +336,9 @@ class HazelcastConfigurationTest {
             assertEquals(4, Hazelcast.getAllHazelcastInstances().size());
 
             assertSame(hzNamed, endpoint1.getHazelcastInstance());
-            assertSame(Hazelcast.getHazelcastInstanceByName(customConfig.getInstanceName()), endpoint2.getHazelcastInstance());
+            assertSame(
+                    Hazelcast.getHazelcastInstanceByName(customConfig.getInstanceName()),
+                    endpoint2.getHazelcastInstance());
             assertSame(hzShared, endpoint3.getHazelcastInstance());
             assertSame(hzComponent, endpoint4.getHazelcastInstance());
 

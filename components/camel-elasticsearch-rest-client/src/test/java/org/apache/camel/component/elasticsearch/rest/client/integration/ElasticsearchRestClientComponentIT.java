@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.elasticsearch.rest.client.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,11 +36,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientITSupport {
 
     @Override
@@ -43,33 +44,39 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
         return new RouteBuilder() {
             public void configure() {
                 from("direct:create-index")
-                        .to("elasticsearch-rest-client:my-cluster?operation=CREATE_INDEX&restClient=#restClient&indexName=my_index");
+                        .to(
+                                "elasticsearch-rest-client:my-cluster?operation=CREATE_INDEX&restClient=#restClient&indexName=my_index");
 
                 from("direct:create-index-settings")
-                        .to("elasticsearch-rest-client:my-cluster?operation=CREATE_INDEX&restClient=#restClient&indexName=my_index_2");
+                        .to(
+                                "elasticsearch-rest-client:my-cluster?operation=CREATE_INDEX&restClient=#restClient&indexName=my_index_2");
 
                 from("direct:delete-index")
                         .to("elasticsearch-rest-client:my-cluster?operation=DELETE_INDEX&restClient=#restClient");
 
                 from("direct:index")
-                        .to("elasticsearch-rest-client:my-cluster?operation=INDEX_OR_UPDATE&restClient=#restClient&indexName=my_index");
+                        .to(
+                                "elasticsearch-rest-client:my-cluster?operation=INDEX_OR_UPDATE&restClient=#restClient&indexName=my_index");
 
                 from("direct:get-by-id")
                         .onException(Exception.class)
-                            .handled(true) // Marks the exception as handled
-                            .to("direct:errorHandler")
+                        .handled(true) // Marks the exception as handled
+                        .to("direct:errorHandler")
                         .end()
-                        .to("elasticsearch-rest-client:my-cluster?operation=GET_BY_ID&restClient=#restClient&indexName=my_index");
+                        .to(
+                                "elasticsearch-rest-client:my-cluster?operation=GET_BY_ID&restClient=#restClient&indexName=my_index");
 
                 from("direct:search")
-                        .to("elasticsearch-rest-client:my-cluster?operation=SEARCH&restClient=#restClient&indexName=my_index");
+                        .to(
+                                "elasticsearch-rest-client:my-cluster?operation=SEARCH&restClient=#restClient&indexName=my_index");
 
                 from("direct:delete")
                         .onException(Exception.class)
-                            .handled(true) // Marks the exception as handled
-                            .to("direct:errorHandler")
+                        .handled(true) // Marks the exception as handled
+                        .to("direct:errorHandler")
                         .end()
-                        .setHeader(ElasticSearchRestClientConstant.OPERATION).constant(ElasticsearchRestClientOperation.DELETE)
+                        .setHeader(ElasticSearchRestClientConstant.OPERATION)
+                        .constant(ElasticsearchRestClientOperation.DELETE)
                         .to("elasticsearch-rest-client:my-cluster?restClient=#restClient&indexName=my_index");
 
                 from("direct:errorHandler")
@@ -104,8 +111,8 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
         // index a second document, with specifying id
         var id2 = "123456";
         var document2 = " {\"title\": \"Elastic is awesome\",  \"tag\": [\"elastic\" ]}";
-        response = template.asyncRequestBodyAndHeader("direct:index", document2, ElasticSearchRestClientConstant.ID, id2,
-                String.class);
+        response = template.asyncRequestBodyAndHeader(
+                "direct:index", document2, ElasticSearchRestClientConstant.ID, id2, String.class);
         // get id from response document
         response.get();
 
@@ -130,8 +137,8 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
             var future = template.asyncRequestBody("direct:search", null, String.class);
             var allDocuments = future.get();
             assertNotNull(allDocuments);
-            var expectedResult
-                    = "[{\"title\":\"Elastic is funny\",\"tag\":[\"lucene\"]},{\"title\":\"Elastic is awesome\",\"tag\":[\"elastic\"]}]";
+            var expectedResult =
+                    "[{\"title\":\"Elastic is funny\",\"tag\":[\"lucene\"]},{\"title\":\"Elastic is awesome\",\"tag\":[\"elastic\"]}]";
             assertEquals(expectedResult, allDocuments);
         });
 
@@ -154,8 +161,8 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
             var future = template.asyncRequestBody("direct:search", criterias, String.class);
             var allDocuments = future.get();
             assertNotNull(allDocuments);
-            var expectedResult
-                    = "[{\"title\":\"Elastic is funny\",\"tag\":[\"lucene\"]},{\"title\":\"Elastic is awesome\",\"tag\":[\"elastic\"]}]";
+            var expectedResult =
+                    "[{\"title\":\"Elastic is funny\",\"tag\":[\"lucene\"]},{\"title\":\"Elastic is awesome\",\"tag\":[\"elastic\"]}]";
             assertEquals(expectedResult, allDocuments);
         });
 
@@ -172,8 +179,8 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
 
         // Update a document, with specifying id
         document2 = "{\"title\": \"Elastic is awesome with Apache Camel\",  \"tag\": [\"elastic\" ]}";
-        response = template.asyncRequestBodyAndHeader("direct:index", document2, ElasticSearchRestClientConstant.ID, id2,
-                String.class);
+        response = template.asyncRequestBodyAndHeader(
+                "direct:index", document2, ElasticSearchRestClientConstant.ID, id2, String.class);
         response.get();
 
         // fetch again with title = Apache
@@ -189,11 +196,10 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
 
         // fetch with Passed JSON QUERY - Advanced Elasticsearch QUERY that returns one value
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            var query
-                    = "{\"query\": {\"bool\": {\"must\": [{\"match\": {\"tag\": \"elastic\"} },{\"match\": { \"title\": \"Apache\"}}]}}}";
-            var future = template.asyncRequestBodyAndHeader("direct:search", null, ElasticSearchRestClientConstant.SEARCH_QUERY,
-                    query,
-                    String.class);
+            var query =
+                    "{\"query\": {\"bool\": {\"must\": [{\"match\": {\"tag\": \"elastic\"} },{\"match\": { \"title\": \"Apache\"}}]}}}";
+            var future = template.asyncRequestBodyAndHeader(
+                    "direct:search", null, ElasticSearchRestClientConstant.SEARCH_QUERY, query, String.class);
             var allDocuments = future.get();
             assertNotNull(allDocuments);
             var expectedResult = "[{\"title\":\"Elastic is awesome with Apache Camel\",\"tag\":[\"elastic\"]}]";
@@ -202,11 +208,10 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
 
         // fetch with Passed JSON QUERY - Advanced Elasticsearch QUERY that returns no value
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            var query
-                    = "{\"query\": {\"bool\": {\"must\": [{\"match\": {\"tag\": \"lucene\"} },{\"match\": { \"title\": \"HelloWorld\"}}]}}}";
-            var future = template.asyncRequestBodyAndHeader("direct:search", null, ElasticSearchRestClientConstant.SEARCH_QUERY,
-                    query,
-                    String.class);
+            var query =
+                    "{\"query\": {\"bool\": {\"must\": [{\"match\": {\"tag\": \"lucene\"} },{\"match\": { \"title\": \"HelloWorld\"}}]}}}";
+            var future = template.asyncRequestBodyAndHeader(
+                    "direct:search", null, ElasticSearchRestClientConstant.SEARCH_QUERY, query, String.class);
             var allDocuments = future.get();
             assertNotNull(allDocuments);
             var expectedResult = "[]";
@@ -214,17 +219,16 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
         });
 
         // DELETE one document by existing ID
-        ack = template.asyncRequestBodyAndHeader("direct:delete", null, ElasticSearchRestClientConstant.ID, id2,
-                Boolean.class);
+        ack = template.asyncRequestBodyAndHeader(
+                "direct:delete", null, ElasticSearchRestClientConstant.ID, id2, Boolean.class);
         assertTrue(ack.get());
 
         // check is not visible in search anymore
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            var query
-                    = "{\"query\": {\"bool\": {\"must\": [{\"match\": {\"tag\": \"elastic\"} },{\"match\": { \"title\": \"Apache\"}}]}}}";
-            var future = template.asyncRequestBodyAndHeader("direct:search", null, ElasticSearchRestClientConstant.SEARCH_QUERY,
-                    query,
-                    String.class);
+            var query =
+                    "{\"query\": {\"bool\": {\"must\": [{\"match\": {\"tag\": \"elastic\"} },{\"match\": { \"title\": \"Apache\"}}]}}}";
+            var future = template.asyncRequestBodyAndHeader(
+                    "direct:search", null, ElasticSearchRestClientConstant.SEARCH_QUERY, query, String.class);
             var allDocuments = future.get();
             assertNotNull(allDocuments);
             var expectedResult = "[]";
@@ -242,26 +246,31 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
         });
 
         // Create an index with settings and Mappings
-        var indexSettings
-                = "{\"settings\":{\"number_of_replicas\": 1,\"number_of_shards\": 3,\"analysis\": {},\"refresh_interval\": \"1s\"},\"mappings\":{\"dynamic\": false,\"properties\": {\"title\": {\"type\": \"text\", \"analyzer\": \"english\"}}}}";
-        ack = template.asyncRequestBodyAndHeader("direct:create-index-settings", null,
-                ElasticSearchRestClientConstant.INDEX_SETTINGS, indexSettings, Boolean.class);
+        var indexSettings =
+                "{\"settings\":{\"number_of_replicas\": 1,\"number_of_shards\": 3,\"analysis\": {},\"refresh_interval\": \"1s\"},\"mappings\":{\"dynamic\": false,\"properties\": {\"title\": {\"type\": \"text\", \"analyzer\": \"english\"}}}}";
+        ack = template.asyncRequestBodyAndHeader(
+                "direct:create-index-settings",
+                null,
+                ElasticSearchRestClientConstant.INDEX_SETTINGS,
+                indexSettings,
+                Boolean.class);
         assertTrue(ack.get());
 
         // delete index my_index
-        ack = template.asyncRequestBodyAndHeader("direct:delete-index", null, ElasticSearchRestClientConstant.INDEX_NAME,
-                "my_index", Boolean.class);
+        ack = template.asyncRequestBodyAndHeader(
+                "direct:delete-index", null, ElasticSearchRestClientConstant.INDEX_NAME, "my_index", Boolean.class);
         assertTrue(ack.get());
 
         // delete index my_index_2
-        ack = template.asyncRequestBodyAndHeader("direct:delete-index", null, ElasticSearchRestClientConstant.INDEX_NAME,
-                "my_index_2", Boolean.class);
+        ack = template.asyncRequestBodyAndHeader(
+                "direct:delete-index", null, ElasticSearchRestClientConstant.INDEX_NAME, "my_index_2", Boolean.class);
         assertTrue(ack.get());
     }
 
     @Test
     void operationUndefined() {
-        Exchange exchange = template.request("elasticsearch-rest-client:my-cluster?restClient=#restClient&indexName=my_index",
+        Exchange exchange = template.request(
+                "elasticsearch-rest-client:my-cluster?restClient=#restClient&indexName=my_index",
                 e -> e.getMessage().setBody("test"));
         assertNotNull(exchange);
 

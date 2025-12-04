@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonata;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,7 +26,8 @@ import org.junit.jupiter.api.Test;
 
 class JsonataRefTest extends CamelTestSupport {
 
-    private static String TEMP = """
+    private static String TEMP =
+            """
             {
                 "name": Surname & " " & FirstName,
                 "mobile": Phone[type = "mobile"].number
@@ -34,14 +36,15 @@ class JsonataRefTest extends CamelTestSupport {
 
     @Test
     void testRef() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jsonata/firstSample/output2.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jsonata/firstSample/output2.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
-        sendBody("direct://start",
+        sendBody(
+                "direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jsonata/firstSample/input.json"));
 

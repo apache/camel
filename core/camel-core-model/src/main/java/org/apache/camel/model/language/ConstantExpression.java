@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -32,8 +33,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConstantExpression extends TypedExpressionDefinition {
 
-    public ConstantExpression() {
-    }
+    public ConstantExpression() {}
 
     protected ConstantExpression(ConstantExpression source) {
         super(source);

@@ -17,6 +17,10 @@
 
 package org.apache.camel.test.infra.core;
 
+import static org.apache.camel.test.infra.core.ExtensionUtils.commonProviderMessage;
+import static org.apache.camel.test.infra.core.ExtensionUtils.illegalAccessMessage;
+import static org.apache.camel.test.infra.core.ExtensionUtils.invocationTargetMessage;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -36,10 +40,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.infra.core.ExtensionUtils.commonProviderMessage;
-import static org.apache.camel.test.infra.core.ExtensionUtils.illegalAccessMessage;
-import static org.apache.camel.test.infra.core.ExtensionUtils.invocationTargetMessage;
 
 /**
  * The default implementation of the annotation processor
@@ -76,29 +76,36 @@ public class DefaultAnnotationProcessor implements AnnotationProcessor {
 
     @Override
     public void evalMethod(
-            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance,
+            ExtensionContext extensionContext,
+            Class<? extends Annotation> annotationClass,
+            Object instance,
             CamelContext context) {
         final Class<?> testClass = extensionContext.getTestClass().get();
 
-        Arrays.stream(testClass.getMethods()).filter(m -> m.isAnnotationPresent(annotationClass))
+        Arrays.stream(testClass.getMethods())
+                .filter(m -> m.isAnnotationPresent(annotationClass))
                 .forEach(m -> doInvokeFixture(annotationClass, m, instance, context));
     }
 
     @Override
     public void evalField(
-            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance,
+            ExtensionContext extensionContext,
+            Class<? extends Annotation> annotationClass,
+            Object instance,
             CamelContext context) {
         final Class<?> testClass = extensionContext.getTestClass().get();
 
         var superClass = testClass.getSuperclass();
         while (superClass != null) {
-            Arrays.stream(superClass.getDeclaredFields()).filter(m -> m.isAnnotationPresent(annotationClass))
+            Arrays.stream(superClass.getDeclaredFields())
+                    .filter(m -> m.isAnnotationPresent(annotationClass))
                     .forEach(f -> doInvokeFixture(f.getAnnotation(annotationClass), f, instance, context));
 
             superClass = superClass.getSuperclass();
         }
 
-        Arrays.stream(testClass.getDeclaredFields()).filter(f -> f.isAnnotationPresent(annotationClass))
+        Arrays.stream(testClass.getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(annotationClass))
                 .forEach(f -> doInvokeFixture(f.getAnnotation(annotationClass), f, instance, context));
     }
 
@@ -106,8 +113,8 @@ public class DefaultAnnotationProcessor implements AnnotationProcessor {
         var methodName = method.getName();
         LOG.trace("Checking instance method: {}", methodName);
         if (method.getReturnType() == null) {
-            throw new RuntimeException(
-                    commonProviderMessage(annotationClass, method.getDeclaringClass()) + " provider does not return any value");
+            throw new RuntimeException(commonProviderMessage(annotationClass, method.getDeclaringClass())
+                    + " provider does not return any value");
         }
 
         try {

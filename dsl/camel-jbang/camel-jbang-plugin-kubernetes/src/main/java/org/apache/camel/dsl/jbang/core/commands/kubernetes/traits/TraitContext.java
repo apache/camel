@@ -189,7 +189,9 @@ public class TraitContext {
     }
 
     public List<KubernetesResource> buildItems() {
-        return this.resourceRegistry.stream().map(Builder::build).map(it -> (KubernetesResource) it)
+        return this.resourceRegistry.stream()
+                .map(Builder::build)
+                .map(it -> (KubernetesResource) it)
                 .collect(Collectors.toList());
     }
 
@@ -283,11 +285,11 @@ public class TraitContext {
     }
 
     public void addOrAppendConfigurationResource(String name, String content) {
-        this.configurationResources.merge(name, content, (content1, content2) -> content1 + System.lineSeparator() + content2);
+        this.configurationResources.merge(
+                name, content, (content1, content2) -> content1 + System.lineSeparator() + content2);
     }
 
     public void doWithConfigurationResources(BiConsumer<String, String> consumer) {
         configurationResources.forEach(consumer);
     }
-
 }

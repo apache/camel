@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.HashMap;
@@ -28,7 +29,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.LifecycleStrategySupport;
 
-public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport implements AutowiredLifecycleStrategy, Ordered {
+public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport
+        implements AutowiredLifecycleStrategy, Ordered {
 
     // provisional maps to hold components, dataformats, languages that are created during
     // starting camel, but need to defer autowiring until later in case additional configuration
@@ -131,5 +133,4 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
     private void autowire(String name, String kind, Object target) {
         doAutoWire(name, kind, target, camelContext);
     }
-
 }

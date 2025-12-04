@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2;
 
 import org.apache.camel.AsyncEndpoint;
@@ -30,20 +31,28 @@ import org.apache.camel.spi.UriParam;
  *
  * This component uses plain JMS 2.x API, whereas the jms component uses Spring JMS.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "sjms2", extendsScheme = "sjms", title = "Simple JMS2",
-             syntax = "sjms2:destinationType:destinationName", category = { Category.MESSAGING },
-             headersClass = SjmsConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "sjms2",
+        extendsScheme = "sjms",
+        title = "Simple JMS2",
+        syntax = "sjms2:destinationType:destinationName",
+        category = {Category.MESSAGING},
+        headersClass = SjmsConstants.class)
 public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
 
-    @UriParam(label = "consumer", description = "Sets the topic subscription id, required for durable or shared topics.")
+    @UriParam(
+            label = "consumer",
+            description = "Sets the topic subscription id, required for durable or shared topics.")
     private String subscriptionId;
+
     @UriParam(label = "consumer", description = "Sets the topic to be durable")
     private boolean durable;
+
     @UriParam(label = "consumer", description = "Sets the topic to be shared")
     private boolean shared;
 
-    public Sjms2Endpoint() {
-    }
+    public Sjms2Endpoint() {}
 
     public Sjms2Endpoint(String uri, Component component, String remaining) {
         super(uri, component, remaining);
@@ -85,5 +94,4 @@ public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
     public void setShared(boolean shared) {
         this.shared = shared;
     }
-
 }

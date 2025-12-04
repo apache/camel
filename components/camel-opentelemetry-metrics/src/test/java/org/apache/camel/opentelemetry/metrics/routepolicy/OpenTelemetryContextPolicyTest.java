@@ -14,15 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
-
-import java.util.List;
-
-import io.opentelemetry.sdk.metrics.data.HistogramPointData;
-import io.opentelemetry.sdk.metrics.data.PointData;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
 
 import static io.opentelemetry.api.common.AttributeKey.stringKey;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
@@ -32,6 +25,14 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUT
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import io.opentelemetry.sdk.metrics.data.HistogramPointData;
+import io.opentelemetry.sdk.metrics.data.PointData;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
 public class OpenTelemetryContextPolicyTest extends AbstractOpenTelemetryRoutePolicyTest {
 
@@ -76,7 +77,8 @@ public class OpenTelemetryContextPolicyTest extends AbstractOpenTelemetryRoutePo
         PointData pd = pdList.get(0);
         assertEquals(routeId, pd.getAttributes().get(stringKey(ROUTE_ID_ATTRIBUTE)));
         assertEquals("CamelRoute", pd.getAttributes().get(stringKey(KIND_ATTRIBUTE)));
-        assertEquals("".equals(routeId) ? "context" : "route", pd.getAttributes().get(stringKey(EVENT_TYPE_ATTRIBUTE)));
+        assertEquals(
+                "".equals(routeId) ? "context" : "route", pd.getAttributes().get(stringKey(EVENT_TYPE_ATTRIBUTE)));
 
         assertInstanceOf(HistogramPointData.class, pd);
         HistogramPointData hpd = (HistogramPointData) pd;
@@ -90,13 +92,9 @@ public class OpenTelemetryContextPolicyTest extends AbstractOpenTelemetryRoutePo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .delay(DELAY_FOO)
-                        .to("mock:result");
+                from("direct:foo").routeId("foo").delay(DELAY_FOO).to("mock:result");
 
-                from("direct:bar").routeId("bar")
-                        .delay(DELAY_BAR)
-                        .to("mock:result");
+                from("direct:bar").routeId("bar").delay(DELAY_BAR).to("mock:result");
             }
         };
     }

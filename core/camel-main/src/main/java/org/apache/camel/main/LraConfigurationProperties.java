@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -30,10 +31,14 @@ public class LraConfigurationProperties implements BootstrapCloseable {
 
     @Metadata(defaultValue = "false")
     private boolean enabled;
+
     private String coordinatorUrl;
+
     @Metadata(defaultValue = "/lra-coordinator")
     private String coordinatorContextPath = "/lra-coordinator";
+
     private String localParticipantUrl;
+
     @Metadata(defaultValue = "/lra-participant")
     private String localParticipantContextPath = "/lra-participant";
 
@@ -148,5 +153,4 @@ public class LraConfigurationProperties implements BootstrapCloseable {
         this.localParticipantContextPath = localParticipantContextPath;
         return this;
     }
-
 }

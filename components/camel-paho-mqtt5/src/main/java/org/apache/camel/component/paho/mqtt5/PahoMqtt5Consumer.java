@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
 
 import org.apache.camel.AsyncCallback;
@@ -70,10 +71,12 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     getEndpoint().getConfiguration().getBrokerUrl(),
                     clientId,
                     PahoMqtt5Endpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
-            LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug(
+                    "Connecting client: {} to broker: {}",
+                    clientId,
+                    getEndpoint().getConfiguration().getBrokerUrl());
             if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
                 client.setManualAcks(true);
-
             }
             client.connect(connectionOptions);
         }
@@ -84,7 +87,9 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             public void connectComplete(boolean reconnect, String serverURI) {
                 if (reconnect) {
                     try {
-                        client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+                        client.subscribe(
+                                getEndpoint().getTopic(),
+                                getEndpoint().getConfiguration().getQos());
                     } catch (MqttException e) {
                         LOG.error("MQTT resubscribe failed {}", e.getMessage(), e);
                     }
@@ -123,7 +128,8 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         });
 
         LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
-        client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+        client.subscribe(
+                getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
     }
 
     @Override
@@ -139,7 +145,10 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             } else {
                 LOG.debug("Client: {} is durable so will not unsubscribe from topic: {}", clientId, topic);
             }
-            LOG.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug(
+                    "Disconnecting client: {} from broker: {}",
+                    clientId,
+                    getEndpoint().getConfiguration().getBrokerUrl());
             client.disconnect();
         }
         client = null;
@@ -167,7 +176,11 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     try {
                         PahoMqtt5Consumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
-                        LOG.warn("Failed to commit message with ID: {} due to {}", mqttMessage.getId(), e.getMessage(), e);
+                        LOG.warn(
+                                "Failed to commit message with ID: {} due to {}",
+                                mqttMessage.getId(),
+                                e.getMessage(),
+                                e);
                     }
                 }
 
@@ -179,5 +192,4 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         }
         return exchange;
     }
-
 }

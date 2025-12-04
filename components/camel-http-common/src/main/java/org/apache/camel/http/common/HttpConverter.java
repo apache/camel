@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.io.BufferedReader;
@@ -36,8 +37,7 @@ import org.apache.camel.support.GZIPHelper;
 @Converter(generateLoader = true)
 public final class HttpConverter {
 
-    private HttpConverter() {
-    }
+    private HttpConverter() {}
 
     @Converter
     public static HttpServletRequest toServletRequest(Message message) {
@@ -95,5 +95,4 @@ public final class HttpConverter {
             return is;
         }
     }
-
 }

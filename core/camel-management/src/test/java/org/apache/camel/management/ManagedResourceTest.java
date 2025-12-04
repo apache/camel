@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,11 +33,6 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedResourceTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedResourceTest.class);
@@ -42,7 +43,8 @@ public class ManagedResourceTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .bean(MyManagedBean.class).id("myManagedBean")
+                        .bean(MyManagedBean.class)
+                        .id("myManagedBean")
                         .log("${body}")
                         .to("seda:foo")
                         .to("mock:result");

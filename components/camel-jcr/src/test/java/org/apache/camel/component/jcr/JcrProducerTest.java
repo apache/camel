@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -22,9 +26,6 @@ import javax.jcr.Session;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JcrProducerTest extends JcrRouteTestSupport {
 
@@ -41,7 +42,9 @@ public class JcrProducerTest extends JcrRouteTestSupport {
             Node node = session.getNodeByIdentifier(uuid);
             assertNotNull(node);
             assertEquals("/home/test/node", node.getPath());
-            assertEquals("<hello>world!</hello>", node.getProperty("my.contents.property").getString());
+            assertEquals(
+                    "<hello>world!</hello>",
+                    node.getProperty("my.contents.property").getString());
         } finally {
             if (session != null && session.isLive()) {
                 session.logout();
@@ -52,7 +55,7 @@ public class JcrProducerTest extends JcrRouteTestSupport {
     @Test
     public void testNodeTypeIsSpecified() throws Exception {
         Exchange exchange = createExchangeWithBody("Test");
-        exchange.getIn().removeHeader("testClass"); //there is no definition of such property in nt:resource
+        exchange.getIn().removeHeader("testClass"); // there is no definition of such property in nt:resource
         exchange.getIn().setHeader(JcrConstants.JCR_NODE_NAME, "typedNode");
         exchange.getIn().setHeader(JcrConstants.JCR_NODE_TYPE, "nt:folder");
         Exchange out = template.send("direct:a", exchange);
@@ -79,11 +82,9 @@ public class JcrProducerTest extends JcrRouteTestSupport {
                 // START SNIPPET: jcr-create-node
                 context.setUseBreadcrumb(false);
 
-                from("direct:a")
-                        .to("jcr://user:pass@repository/home/test");
+                from("direct:a").to("jcr://user:pass@repository/home/test");
                 // END SNIPPET: jcr-create-node
             }
         };
     }
-
 }

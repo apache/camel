@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine.Command;
 
-@Command(name = "processor", description = "Top performing processors",
-         sortOptions = false, showDefaultValues = true)
+@Command(name = "processor", description = "Top performing processors", sortOptions = false, showDefaultValues = true)
 public class CamelProcessorTop extends CamelProcessorStatus {
 
     public CamelProcessorTop(CamelJBangMain main) {
@@ -47,5 +47,4 @@ public class CamelProcessorTop extends CamelProcessorStatus {
         }
         return answer;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.IOException;
@@ -38,24 +39,42 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
             public void configure() {
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy()
+                        .setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(1L);
 
-                from("direct:startIterable").split(body().tokenize(",")).streaming()
-                        .aggregationStrategy(new InternalAggregationStrategy()).stopOnException().parallelProcessing()
-                        .to("direct:sub").end().to("mock:result");
+                from("direct:startIterable")
+                        .split(body().tokenize(","))
+                        .streaming()
+                        .aggregationStrategy(new InternalAggregationStrategy())
+                        .stopOnException()
+                        .parallelProcessing()
+                        .to("direct:sub")
+                        .end()
+                        .to("mock:result");
 
-                from("direct:start").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy())
-                        .stopOnException().parallelProcessing().to("direct:sub")
-                        .end().to("mock:result");
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .aggregationStrategy(new InternalAggregationStrategy())
+                        .stopOnException()
+                        .parallelProcessing()
+                        .to("direct:sub")
+                        .end()
+                        .to("mock:result");
 
-                from("direct:sub").process(new InputProcessorWithStreamCache(22)).to("mock:resultsub");
+                from("direct:sub")
+                        .process(new InputProcessorWithStreamCache(22))
+                        .to("mock:resultsub");
 
-                from("direct:startNested").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy())
-                        .stopOnException().parallelProcessing()
-                        .to("direct:start").end().to("mock:resultNested");
+                from("direct:startNested")
+                        .split(body().tokenize(","))
+                        .aggregationStrategy(new InternalAggregationStrategy())
+                        .stopOnException()
+                        .parallelProcessing()
+                        .to("direct:start")
+                        .end()
+                        .to("mock:resultNested");
             }
-
         };
     }
 
@@ -129,5 +148,4 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
             }
         }
     }
-
 }

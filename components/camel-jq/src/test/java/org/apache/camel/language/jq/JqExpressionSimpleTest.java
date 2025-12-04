@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -27,9 +28,7 @@ public class JqExpressionSimpleTest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .transform().jq(".foo")
-                        .to("mock:result");
+                from("direct:start").transform().jq(".foo").to("mock:result");
             }
         };
     }

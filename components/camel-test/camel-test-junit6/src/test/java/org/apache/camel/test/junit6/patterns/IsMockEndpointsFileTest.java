@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6.patterns;
+
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,8 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 public class IsMockEndpointsFileTest extends CamelTestSupport {
 
@@ -61,8 +62,12 @@ public class IsMockEndpointsFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:target/input").choice().when(bodyAs(String.class).contains("Camel")).to("file:target/messages/camel")
-                        .otherwise().to("file:target/messages/others");
+                from("file:target/input")
+                        .choice()
+                        .when(bodyAs(String.class).contains("Camel"))
+                        .to("file:target/messages/camel")
+                        .otherwise()
+                        .to("file:target/messages/others");
             }
         };
     }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,10 +46,6 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
     @BindToRegistry("myMultipartFilter")
@@ -67,18 +68,20 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         File file = new File("src/test/resources/log4j2.properties");
         HttpPost httppost = new HttpPost("http://localhost:" + getPort() + "/test");
 
-        HttpEntity entity = MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind")
-                .addBinaryBody(file.getName(), file).build();
+        HttpEntity entity = MultipartEntityBuilder.create()
+                .addTextBody("comment", "A binary file of some kind")
+                .addBinaryBody(file.getName(), file)
+                .build();
         httppost.setEntity(entity);
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(httppost)) {
+                CloseableHttpResponse response = client.execute(httppost)) {
             assertEquals(200, response.getCode(), "Get a wrong response status");
             String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
             assertEquals("A binary file of some kind", responseString, "Get a wrong result");
-            assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
-
+            assertNotNull(
+                    response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
         }
     }
 
@@ -88,15 +91,18 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         File file = new File("src/test/resources/log4j2.properties");
 
         HttpPost httppost = new HttpPost("http://localhost:" + getPort() + "/test2");
-        HttpEntity entity = MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind")
-                .addBinaryBody(file.getName(), file).build();
+        HttpEntity entity = MultipartEntityBuilder.create()
+                .addTextBody("comment", "A binary file of some kind")
+                .addBinaryBody(file.getName(), file)
+                .build();
         httppost.setEntity(entity);
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(httppost)) {
+                CloseableHttpResponse response = client.execute(httppost)) {
 
             assertEquals(200, response.getCode(), "Get a wrong response status");
-            assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
+            assertNotNull(
+                    response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
         }
     }
 
@@ -112,33 +118,34 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 // The option works rightly from Camel 2.4.0
                 getContext().getGlobalOptions().put("CamelJettyTempDir", "target");
 
-                from("jetty://http://localhost:{{port}}/test?multipartFilterRef=myMultipartFilter").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
-                        assertEquals(2, in.getAttachments().size(), "Get a wrong attachement size");
-                        // The file name is attachment id
-                        DataHandler data = in.getAttachment("log4j2.properties");
+                from("jetty://http://localhost:{{port}}/test?multipartFilterRef=myMultipartFilter")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
+                                assertEquals(2, in.getAttachments().size(), "Get a wrong attachement size");
+                                // The file name is attachment id
+                                DataHandler data = in.getAttachment("log4j2.properties");
 
-                        assertNotNull(data, "Should get the DataHandle log4j2.properties");
-                        // This assert is wrong, but the correct content-type
-                        // (application/octet-stream)
-                        // will not be returned until Jetty makes it available -
-                        // currently the content-type
-                        // returned is just the default for FileDataHandler (for
-                        // the implentation being used)
-                        // assertEquals("Get a wrong content type",
-                        // "text/plain", data.getContentType());
-                        assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
+                                assertNotNull(data, "Should get the DataHandle log4j2.properties");
+                                // This assert is wrong, but the correct content-type
+                                // (application/octet-stream)
+                                // will not be returned until Jetty makes it available -
+                                // currently the content-type
+                                // returned is just the default for FileDataHandler (for
+                                // the implentation being used)
+                                // assertEquals("Get a wrong content type",
+                                // "text/plain", data.getContentType());
+                                assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        String fileContent = new String(data.getDataSource().getInputStream().readAllBytes());
-                        assertTrue(fileContent.length() > 0,
-                                "We should get the data from the DataHandle");
+                                String fileContent = new String(
+                                        data.getDataSource().getInputStream().readAllBytes());
+                                assertTrue(fileContent.length() > 0, "We should get the data from the DataHandle");
 
-                        // The other form date can be get from the message
-                        // header
-                        exchange.getMessage().setBody(in.getHeader("comment"));
-                    }
-                });
+                                // The other form date can be get from the message
+                                // header
+                                exchange.getMessage().setBody(in.getHeader("comment"));
+                            }
+                        });
                 // END SNIPPET: e1
 
                 // Test to ensure that setting a multipartFilterRef overrides

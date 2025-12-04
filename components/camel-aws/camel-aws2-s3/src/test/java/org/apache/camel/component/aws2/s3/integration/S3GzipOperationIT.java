@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.UUID;
 
@@ -23,9 +27,6 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class S3GzipOperationIT extends Aws2S3Base {
     @Test
@@ -45,7 +46,7 @@ public class S3GzipOperationIT extends Aws2S3Base {
 
         assertNotNull(putResult);
 
-        //retrieve it from a producer
+        // retrieve it from a producer
         Object getResult = fluentTemplate()
                 .to("direct:getObject")
                 .withHeader(AWS2S3Constants.KEY, "hello.txt.gz")
@@ -54,7 +55,7 @@ public class S3GzipOperationIT extends Aws2S3Base {
 
         assertEquals(content, getResult);
 
-        //retrieve it from a polling consumer
+        // retrieve it from a polling consumer
         poll.assertIsSatisfied();
 
         // delete the content
@@ -71,14 +72,17 @@ public class S3GzipOperationIT extends Aws2S3Base {
             @Override
             public void configure() {
                 from("direct:putObject")
-                        .marshal().gzipDeflater()
+                        .marshal()
+                        .gzipDeflater()
                         .to("aws2-s3://" + name.get() + "?autoCreateBucket=true");
                 from("direct:getObject")
                         .to("aws2-s3://" + name.get() + "?autoCreateBucket=true&deleteAfterRead=false&includeBody=true")
-                        .unmarshal().gzipDeflater();
+                        .unmarshal()
+                        .gzipDeflater();
                 from("aws2-s3://" + name.get()
-                     + "?autoCreateBucket=true&deleteAfterRead=false&includeBody=true&prefix=hello.txt.gz")
-                        .unmarshal().gzipDeflater()
+                                + "?autoCreateBucket=true&deleteAfterRead=false&includeBody=true&prefix=hello.txt.gz")
+                        .unmarshal()
+                        .gzipDeflater()
                         .to("mock:poll");
             }
         };

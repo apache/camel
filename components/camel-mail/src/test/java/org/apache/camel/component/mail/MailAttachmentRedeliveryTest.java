@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +39,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for Camel attachments and Mail attachments.
@@ -77,7 +78,8 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
         assertEquals("Hello World", out.getIn().getBody(String.class));
 
         // attachment
-        Map<String, DataHandler> attachments = out.getIn(AttachmentMessage.class).getAttachments();
+        Map<String, DataHandler> attachments =
+                out.getIn(AttachmentMessage.class).getAttachments();
         assertNotNull(attachments, "Should have attachments");
         assertEquals(1, attachments.size());
 
@@ -103,7 +105,9 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0);
+                onException(IllegalArgumentException.class)
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0);
 
                 from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
                         .process(new Processor() {
@@ -111,7 +115,8 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
 
                             @Override
                             public void process(Exchange exchange) {
-                                Map<String, DataHandler> map = exchange.getIn(AttachmentMessage.class).getAttachments();
+                                Map<String, DataHandler> map =
+                                        exchange.getIn(AttachmentMessage.class).getAttachments();
                                 assertNotNull(map);
                                 assertEquals(1, map.size());
                                 names.add(map.keySet().iterator().next());
@@ -119,9 +124,9 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
                                 if (counter++ < 2) {
                                     throw new IllegalArgumentException("Forced");
                                 }
-
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

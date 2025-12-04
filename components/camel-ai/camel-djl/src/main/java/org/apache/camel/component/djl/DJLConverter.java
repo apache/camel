@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl;
 
 import java.io.ByteArrayInputStream;
@@ -78,17 +79,19 @@ public class DJLConverter {
 
     @Converter
     public static Image[] toImages(DetectedObjects detectedObjects, Exchange exchange) {
-        return detectedObjects.<DetectedObjects.DetectedObject> items().stream()
+        return detectedObjects.<DetectedObjects.DetectedObject>items().stream()
                 .map(obj -> toImage(obj, exchange))
                 .toArray(Image[]::new);
     }
 
     @Converter
     public static byte[] toBytes(Image image, Exchange exchange) throws IOException {
-        if (exchange == null || exchange.getMessage() == null
+        if (exchange == null
+                || exchange.getMessage() == null
                 || exchange.getMessage().getHeader(DJLConstants.FILE_TYPE) == null) {
             throw new TypeConversionException(
-                    image, Image.class,
+                    image,
+                    Image.class,
                     new IllegalStateException("File type must be provided via " + DJLConstants.FILE_TYPE + " header"));
         }
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -22,8 +25,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProxyReturnFutureTest extends ContextTestSupport {
 
@@ -73,7 +74,6 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
 
         // returning a Future indicate asynchronous invocation
         Future<String> asText(int number);
-
     }
     // END SNIPPET: e1
 

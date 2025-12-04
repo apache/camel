@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 
@@ -31,8 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class MailSearchTermUriConfigLast24HoursTest extends CamelTestSupport {
     private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
@@ -48,8 +49,8 @@ public class MailSearchTermUriConfigLast24HoursTest extends CamelTestSupport {
 
         // should only get the 4 latest emails that was sent within the last 24 hours
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("Ordering ActiveMQ in Action", "This is spam",
-                "We meet at 7pm the usual place", "I am attaching you");
+        mock.expectedBodiesReceivedInAnyOrder(
+                "Ordering ActiveMQ in Action", "This is spam", "We meet at 7pm the usual place", "I am attaching you");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -126,5 +127,4 @@ public class MailSearchTermUriConfigLast24HoursTest extends CamelTestSupport {
             }
         };
     }
-
 }

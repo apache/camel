@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
 
 import java.util.Map;
@@ -36,8 +37,7 @@ public class QueueComponent extends HealthCheckComponent {
     @Metadata
     private QueueConfiguration configuration = new QueueConfiguration();
 
-    public QueueComponent() {
-    }
+    public QueueComponent() {}
 
     public QueueComponent(final CamelContext camelContext) {
         super(camelContext);
@@ -50,8 +50,8 @@ public class QueueComponent extends HealthCheckComponent {
             throw new IllegalArgumentException("At least the account name must be specified.");
         }
 
-        final QueueConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new QueueConfiguration();
+        final QueueConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new QueueConfiguration();
 
         final String[] parts = remaining.split("/");
 
@@ -94,12 +94,13 @@ public class QueueComponent extends HealthCheckComponent {
     private void checkCredentials(final QueueConfiguration configuration) {
         final QueueServiceClient client = configuration.getServiceClient();
 
-        //if no QueueServiceClient is provided fallback to credentials
+        // if no QueueServiceClient is provided fallback to credentials
         if (client == null) {
-            Set<StorageSharedKeyCredential> storageSharedKeyCredentials
-                    = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
+            Set<StorageSharedKeyCredential> storageSharedKeyCredentials =
+                    getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
             if (storageSharedKeyCredentials.size() == 1) {
-                configuration.setCredentials(storageSharedKeyCredentials.stream().findFirst().get());
+                configuration.setCredentials(
+                        storageSharedKeyCredentials.stream().findFirst().get());
             }
         }
     }

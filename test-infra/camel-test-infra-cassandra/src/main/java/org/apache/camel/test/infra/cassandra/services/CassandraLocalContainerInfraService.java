@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.cassandra.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -29,18 +30,19 @@ import org.testcontainers.utility.DockerImageName;
 /**
  * A service for a local instance of Apache Cassandra running with TestContainers
  */
-@InfraService(service = CassandraInfraService.class,
-              description = "Apache Cassandra NoSQL Database",
-              serviceAlias = { "cassandra" })
-public class CassandraLocalContainerInfraService implements CassandraInfraService, ContainerService<CassandraContainer> {
+@InfraService(
+        service = CassandraInfraService.class,
+        description = "Apache Cassandra NoSQL Database",
+        serviceAlias = {"cassandra"})
+public class CassandraLocalContainerInfraService
+        implements CassandraInfraService, ContainerService<CassandraContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLocalContainerInfraService.class);
 
     private final CassandraContainer container;
 
     public CassandraLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
-                CassandraLocalContainerInfraService.class,
-                CassandraProperties.CASSANDRA_CONTAINER));
+                CassandraLocalContainerInfraService.class, CassandraProperties.CASSANDRA_CONTAINER));
     }
 
     public CassandraLocalContainerInfraService(String imageName) {

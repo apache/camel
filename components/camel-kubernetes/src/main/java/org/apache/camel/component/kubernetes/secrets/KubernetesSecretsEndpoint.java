@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.secrets;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SECRETS;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,14 +28,17 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SECRETS;
-
 /**
  * Perform operations on Kubernetes Secrets.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SECRETS, title = "Kubernetes Secrets",
-             syntax = "kubernetes-secrets:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_SECRETS,
+        title = "Kubernetes Secrets",
+        syntax = "kubernetes-secrets:masterUrl",
+        producerOnly = true,
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesSecretsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesSecretsEndpoint(String uri, KubernetesSecretsComponent component, KubernetesConfiguration config) {
@@ -48,5 +54,4 @@ public class KubernetesSecretsEndpoint extends AbstractKubernetesEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new IllegalArgumentException("The kubernetes-secrets doesn't support consumer");
     }
-
 }

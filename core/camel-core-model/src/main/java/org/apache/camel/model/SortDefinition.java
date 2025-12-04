@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.Comparator;
@@ -38,12 +39,12 @@ public class SortDefinition<T> extends ExpressionNode {
 
     @XmlTransient
     private Comparator<? super T> comparatorBean;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.Comparator")
     private String comparator;
 
-    public SortDefinition() {
-    }
+    public SortDefinition() {}
 
     protected SortDefinition(SortDefinition source) {
         super(source);

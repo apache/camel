@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 @Timeout(60)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsInOutSynchronousFalseTest extends AbstractJMSTest {
@@ -39,6 +40,7 @@ public class JmsInOutSynchronousFalseTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static String beforeThreadName;
     private static String afterThreadName;
     protected CamelContext context;
@@ -72,9 +74,11 @@ public class JmsInOutSynchronousFalseTest extends AbstractJMSTest {
             public void configure() {
                 from("direct:start")
                         .to("log:before")
-                        .process(exchange -> beforeThreadName = Thread.currentThread().getName())
+                        .process(exchange ->
+                                beforeThreadName = Thread.currentThread().getName())
                         .to(url)
-                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
+                        .process(exchange ->
+                                afterThreadName = Thread.currentThread().getName())
                         .to("log:after")
                         .to("mock:result");
 

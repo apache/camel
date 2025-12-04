@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.util.Map;
@@ -46,5 +47,4 @@ public interface ServletResolveConsumerStrategy {
      *                   client.
      */
     boolean isHttpMethodAllowed(HttpServletRequest request, String method, Map<String, HttpConsumer> consumers);
-
 }

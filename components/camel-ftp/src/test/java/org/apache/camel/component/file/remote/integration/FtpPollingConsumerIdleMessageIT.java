@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
@@ -50,9 +51,9 @@ public class FtpPollingConsumerIdleMessageIT extends FtpServerTestSupport {
             @Override
             public void configure() {
                 from("ftp://admin@localhost:{{ftp.server.port}}/polling?password=admin&delay=50"
-                     + "&sendEmptyMessageWhenIdle=true").to("mock:result");
+                                + "&sendEmptyMessageWhenIdle=true")
+                        .to("mock:result");
             }
         };
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.activemq;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -41,16 +46,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @Timeout(60)
 public class ActiveMQOriginalDestinationIT extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -124,7 +126,8 @@ public class ActiveMQOriginalDestinationIT extends AbstractJMSTest {
      */
     private static class OriginalDestinationPropagateStrategy implements MessageCreatedStrategy {
 
-        // TODO: This is supported out of the box from ActiveMQ 5.14 onwards, and hence remove OriginalDestinationPropagateStrategy
+        // TODO: This is supported out of the box from ActiveMQ 5.14 onwards, and hence remove
+        // OriginalDestinationPropagateStrategy
 
         @Override
         public void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause) {

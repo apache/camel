@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.cw.client;
 
 import org.apache.camel.component.aws2.cw.Cw2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientStandardImpl;
  */
 public final class Cw2ClientFactory {
 
-    private Cw2ClientFactory() {
-    }
+    private Cw2ClientFactory() {}
 
     /**
      * Return the correct AWS Cloud Watch client (based on remote vs local).

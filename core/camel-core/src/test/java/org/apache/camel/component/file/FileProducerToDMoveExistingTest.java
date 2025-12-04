@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.HashMap;
@@ -48,8 +49,8 @@ public class FileProducerToDMoveExistingTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toD(fileUri("${header.myDir}?fileExist=Move&moveExisting=" + testDirectory("out").toString()
-                                     + "/old-${file:onlyname}"))
+                        .toD(fileUri("${header.myDir}?fileExist=Move&moveExisting="
+                                + testDirectory("out").toString() + "/old-${file:onlyname}"))
                         .to("mock:result");
             }
         };

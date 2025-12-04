@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
 
 import org.springframework.amqp.core.AmqpAdmin;
@@ -21,5 +22,4 @@ import org.springframework.amqp.core.AmqpAdmin;
 public interface MessageListenerContainer {
 
     AmqpAdmin getAmqpAdmin();
-
 }

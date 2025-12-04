@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Locale;
 import java.util.Map;
@@ -32,10 +37,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for Camel html attachments and Mail attachments.
@@ -74,10 +75,12 @@ public class MailHtmlAttachmentTest extends CamelTestSupport {
         mock.assertIsSatisfied(5000);
         Exchange out = mock.getReceivedExchanges().get(0);
         // plain text
-        assertEquals("<html><body><h1>Hello</h1>World</body></html>", out.getIn().getBody(String.class));
+        assertEquals(
+                "<html><body><h1>Hello</h1>World</body></html>", out.getIn().getBody(String.class));
 
         // attachment
-        Map<String, DataHandler> attachments = out.getIn(AttachmentMessage.class).getAttachments();
+        Map<String, DataHandler> attachments =
+                out.getIn(AttachmentMessage.class).getAttachments();
         assertNotNull(attachments, "Should have attachments");
         assertEquals(1, attachments.size());
 
@@ -88,8 +91,10 @@ public class MailHtmlAttachmentTest extends CamelTestSupport {
         assertTrue(bytes.length > 1000, "logo should be more than 1000 bytes");
 
         // content type should match
-        boolean match1 = "image/jpeg; name=logo.jpeg".equals(handler.getContentType().toLowerCase(Locale.ROOT));
-        boolean match2 = "application/octet-stream; name=logo.jpeg".equals(handler.getContentType().toLowerCase(Locale.ROOT));
+        boolean match1 =
+                "image/jpeg; name=logo.jpeg".equals(handler.getContentType().toLowerCase(Locale.ROOT));
+        boolean match2 = "application/octet-stream; name=logo.jpeg"
+                .equals(handler.getContentType().toLowerCase(Locale.ROOT));
         assertTrue(match1 || match2, "Should match 1 or 2");
 
         // save logo for visual inspection
@@ -102,7 +107,8 @@ public class MailHtmlAttachmentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(james.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100&closeFolder=false").to("mock:result");
+                from(james.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100&closeFolder=false")
+                        .to("mock:result");
             }
         };
     }

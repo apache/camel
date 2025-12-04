@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -52,7 +53,9 @@ public class AdviceWithTransactedTest extends ContextTestSupport {
             public void configure() {
                 from("direct:advice")
                         // use policy instead of transacted (but its similar)
-                        .policy(new MyDummyPolicy()).log("Advice ${body}").to("mock:result");
+                        .policy(new MyDummyPolicy())
+                        .log("Advice ${body}")
+                        .to("mock:result");
             }
         };
     }
@@ -69,5 +72,4 @@ public class AdviceWithTransactedTest extends ContextTestSupport {
             return processor;
         }
     }
-
 }

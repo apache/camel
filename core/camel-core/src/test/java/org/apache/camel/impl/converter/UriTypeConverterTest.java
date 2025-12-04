@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.net.URI;
 
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.UriTypeConverter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UriTypeConverterTest {
 
@@ -47,5 +48,4 @@ public class UriTypeConverterTest {
     public void shouldConvertFromUrisToStrings() {
         assertEquals(EXAMPLE, UriTypeConverter.toString(EXAMPLE_URI));
     }
-
 }

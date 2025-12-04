@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -22,9 +26,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.file.remote.FtpEndpoint;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Test to ensure the FtpEndpoint URI is sanitized.

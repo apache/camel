@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
 
 import org.apache.camel.Endpoint;
@@ -27,9 +28,6 @@ public class MyRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:start").routeId("foo")
-                .to(foo)
-                .to("mock:result");
-
+        from("direct:start").routeId("foo").to(foo).to("mock:result");
     }
 }

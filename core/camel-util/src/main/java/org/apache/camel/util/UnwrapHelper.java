@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.lang.reflect.Method;
@@ -25,7 +26,8 @@ public final class UnwrapHelper {
 
     public static <T> T unwrapClientProxy(T obj) {
         try {
-            Method method = ReflectionHelper.findMethod(Class.forName("io.quarkus.arc.ClientProxy"), "unwrap", Object.class);
+            Method method =
+                    ReflectionHelper.findMethod(Class.forName("io.quarkus.arc.ClientProxy"), "unwrap", Object.class);
             if (method != null) {
                 return (T) method.invoke(null, obj);
             }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.addressing;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,8 +35,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Provides abstract test for fault and output params for spring-ws:to: and spring-ws:action: endpoints
@@ -58,7 +59,6 @@ public class CamelDirectSenderTest extends AbstractWSATests {
      *
      * @return
      */
-
     private MessageAddressingProperties customChannelParams() {
         assertNotNull(customChannel);
         assertNotNull(customChannel.getMessageContext());
@@ -104,7 +104,8 @@ public class CamelDirectSenderTest extends AbstractWSATests {
 
     @Test
     public void camelInvalid() throws Exception {
-        ActionCallback requestCallback = toAndReplyTo("http://sender-camel.com", "mailto:not-mappped-address@chocolatejar.eu");
+        ActionCallback requestCallback =
+                toAndReplyTo("http://sender-camel.com", "mailto:not-mappped-address@chocolatejar.eu");
 
         webServiceTemplate.sendSourceAndReceiveToResult(source, requestCallback, result);
         Assertions.assertThat(endpointCamelDirect.getReceivedCounter()).isZero();
@@ -140,7 +141,6 @@ public class CamelDirectSenderTest extends AbstractWSATests {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                new String[] { "org/apache/camel/component/spring/ws/addresing/CamelDirectSenderTest-context.xml" });
+                new String[] {"org/apache/camel/component/spring/ws/addresing/CamelDirectSenderTest-context.xml"});
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,18 +37,22 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
 
     @XmlTransient
     private Object writeConfigObject;
+
     @XmlTransient
     private Object readConfigObject;
 
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String writeInJson;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "com.prowidesoftware.swift.model.MxId")
     private String readMessageId;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "com.prowidesoftware.swift.model.mx.MxReadConfiguration")
     private String readConfig;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "com.prowidesoftware.swift.model.mx.MxWriteConfiguration")
     private String writeConfig;

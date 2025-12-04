@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
 
 import java.util.HashSet;
@@ -33,9 +34,11 @@ import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-@InfraService(service = ArtemisInfraService.class,
-              description = "Apache Artemis is an open source message broker",
-              serviceAlias = "artemis", serviceImplementationAlias = "amqp")
+@InfraService(
+        service = ArtemisInfraService.class,
+        description = "Apache Artemis is an open source message broker",
+        serviceAlias = "artemis",
+        serviceImplementationAlias = "amqp")
 public class ArtemisAMQPInfraService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;
@@ -50,10 +53,10 @@ public class ArtemisAMQPInfraService extends AbstractArtemisEmbeddedService {
         String trustStorePath = System.getProperty(ArtemisProperties.ARTEMIS_SSL_TRUSTSTORE_PATH, "");
         String trustStorePassword = System.getProperty(ArtemisProperties.ARTEMIS_SSL_TRUSTSTORE_PASSWORD, "");
         brokerURL = "tcp://0.0.0.0:" + amqpPort
-                    + "?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300"
-                    + String.format(
-                            ";sslEnabled=%s;keyStorePath=%s;keyStorePassword=%s;trustStorePath=%s;trustStorePassword=%s",
-                            sslEnabled, keyStorePath, keyStorePassword, trustStorePath, trustStorePassword);
+                + "?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300"
+                + String.format(
+                        ";sslEnabled=%s;keyStorePath=%s;keyStorePassword=%s;trustStorePath=%s;trustStorePassword=%s",
+                        sslEnabled, keyStorePath, keyStorePassword, trustStorePath, trustStorePassword);
 
         AddressSettings addressSettings = new AddressSettings();
         addressSettings.setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL);
@@ -75,7 +78,8 @@ public class ArtemisAMQPInfraService extends AbstractArtemisEmbeddedService {
             String pw = System.getProperty(ArtemisProperties.ARTEMIS_PASSWORD, "rider");
             sc.addUser(user, pw);
             sc.addRole(user, "ALLOW_ALL");
-            ActiveMQSecurityManager securityManager = new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), sc);
+            ActiveMQSecurityManager securityManager =
+                    new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), sc);
             embeddedBrokerService.setSecurityManager(securityManager);
 
             // any user can have full control of generic topics

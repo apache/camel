@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MDCWireTapTest extends ContextTestSupport {
 
@@ -45,27 +46,38 @@ public class MDCWireTapTest extends ContextTestSupport {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("direct:a").routeId("route-a").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-a", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                        MDC.put("custom.id", "1");
-                    }
-                }).to("log:before-wiretap").wireTap("direct:b").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-a", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                        assertEquals("1", MDC.get("custom.id"));
-                    }
-                }).to("log:a-done").to("mock:a");
+                from("direct:a")
+                        .routeId("route-a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                MDC.put("custom.id", "1");
+                            }
+                        })
+                        .to("log:before-wiretap")
+                        .wireTap("direct:b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals("1", MDC.get("custom.id"));
+                            }
+                        })
+                        .to("log:a-done")
+                        .to("mock:a");
 
-                from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-b", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                        assertEquals("1", MDC.get("custom.id"));
-                    }
-                }).to("log:b-done").to("mock:b");
+                from("direct:b")
+                        .routeId("route-b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-b", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals("1", MDC.get("custom.id"));
+                            }
+                        })
+                        .to("log:b-done")
+                        .to("mock:b");
             }
         };
     }

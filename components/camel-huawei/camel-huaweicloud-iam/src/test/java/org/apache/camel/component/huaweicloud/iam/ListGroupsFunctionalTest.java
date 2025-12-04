@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,9 +28,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ListGroupsFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ListGroupsFunctionalTest.class.getName());
@@ -39,11 +40,10 @@ public class ListGroupsFunctionalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:list_groups")
-                        .to("hwcloud-iam:listGroups?" +
-                            "accessKey=" + ACCESS_KEY +
-                            "&secretKey=" + SECRET_KEY +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-iam:listGroups?" + "accessKey="
+                                + ACCESS_KEY + "&secretKey="
+                                + SECRET_KEY + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("List groups successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:list_groups_result");

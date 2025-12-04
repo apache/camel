@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import java.sql.PreparedStatement;
@@ -45,10 +46,10 @@ import org.springframework.util.CompositeIterator;
 public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSqlPrepareStatementStrategy.class);
-    private static final Pattern REPLACE_IN_PATTERN
-            = Pattern.compile("\\:\\?in\\:(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\})", Pattern.MULTILINE);
-    private static final Pattern REPLACE_PATTERN
-            = Pattern.compile("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}|\\:\\?\\$simple\\{[^\\}]+\\}", Pattern.MULTILINE);
+    private static final Pattern REPLACE_IN_PATTERN =
+            Pattern.compile("\\:\\?in\\:(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\})", Pattern.MULTILINE);
+    private static final Pattern REPLACE_PATTERN =
+            Pattern.compile("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}|\\:\\?\\$simple\\{[^\\}]+\\}", Pattern.MULTILINE);
     private static final Pattern NAME_PATTERN = Pattern.compile(
             "\\:\\?((in\\:(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\}))|(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\}))",
             Pattern.MULTILINE);
@@ -63,7 +64,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     }
 
     @Override
-    public String prepareQuery(String query, boolean allowNamedParameters, final Exchange exchange) throws SQLException {
+    public String prepareQuery(String query, boolean allowNamedParameters, final Exchange exchange)
+            throws SQLException {
         String answer;
         if (allowNamedParameters && hasNamedParameters(query)) {
             if (exchange != null) {
@@ -80,8 +82,10 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                             replaceBuilder.add("\\?");
                         }
                         String replace = replaceBuilder.toString();
-                        String foundEscaped = found.replace("$", "\\$").replace("{", "\\{").replace("}", "\\}");
-                        Matcher paramMatcher = Pattern.compile("\\:\\?in\\:" + foundEscaped, Pattern.MULTILINE).matcher(query);
+                        String foundEscaped =
+                                found.replace("$", "\\$").replace("{", "\\{").replace("}", "\\}");
+                        Matcher paramMatcher = Pattern.compile("\\:\\?in\\:" + foundEscaped, Pattern.MULTILINE)
+                                .matcher(query);
                         query = paramMatcher.replaceAll(replace);
                     }
                 }
@@ -147,7 +151,10 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
     @Override
     public Iterator<?> createPopulateIterator(
-            final String query, final String preparedQuery, final int expectedParams, final Exchange exchange,
+            final String query,
+            final String preparedQuery,
+            final int expectedParams,
+            final Exchange exchange,
             final Object value)
             throws SQLException {
         if (hasNamedParameters(query)) {
@@ -211,7 +218,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
             }
         }
         if (argNumber - 1 != expectedParams) {
-            throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was: " + (argNumber - 1));
+            throw new SQLException(
+                    "Number of parameters mismatch. Expected: " + expectedParams + ", was: " + (argNumber - 1));
         }
 
         // use argument setter as it deals with various JDBC drivers setObject vs setLong/setInteger/setString etc.
@@ -331,8 +339,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     }
 
     private static final class PopulateIterator implements Iterator<Object> {
-        private static final String MISSING_PARAMETER_EXCEPTION
-                = "Cannot find key [%s] in message body or headers to use when setting named parameter in query [%s]";
+        private static final String MISSING_PARAMETER_EXCEPTION =
+                "Cannot find key [%s] in message body or headers to use when setting named parameter in query [%s]";
         private final String query;
         private final NamedQueryParser parser;
         private final Exchange exchange;
@@ -375,7 +383,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                         next = createInParameterIterator(next);
                     }
                 } else {
-                    throw new RuntimeExchangeException(String.format(MISSING_PARAMETER_EXCEPTION, nextParam, query), exchange);
+                    throw new RuntimeExchangeException(
+                            String.format(MISSING_PARAMETER_EXCEPTION, nextParam, query), exchange);
                 }
             } finally {
                 nextParam = parser.next();
@@ -388,6 +397,5 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         public void remove() {
             throw new UnsupportedOperationException();
         }
-
     }
 }

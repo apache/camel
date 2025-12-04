@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.util.Map;
@@ -35,14 +36,15 @@ final class SalesforceClientTemplate {
         T invoke(RestClient client);
     }
 
-    static RestClientSupplier restClientSupplier
-            = (camelContext, parameters) -> SalesforceComponent.createRestClient(camelContext, parameters);
+    static RestClientSupplier restClientSupplier =
+            (camelContext, parameters) -> SalesforceComponent.createRestClient(camelContext, parameters);
 
     private SalesforceClientTemplate() {
         // utility class
     }
 
-    static <T> T invoke(final CamelContext camelContext, final Map<String, Object> parameters, final WithClient<T> performer)
+    static <T> T invoke(
+            final CamelContext camelContext, final Map<String, Object> parameters, final WithClient<T> performer)
             throws Exception {
 
         final RestClient client = restClientSupplier.restClientWith(camelContext, parameters);

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.List;
 
@@ -25,10 +28,10 @@ import org.apache.camel.component.servicenow.model.Scorecard;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
-@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
-                              disabledReason = "Service now instance was not provided")
+@EnabledIfEnvironmentVariable(
+        named = "SERVICENOW_INSTANCE",
+        matches = ".*",
+        disabledReason = "Service now instance was not provided")
 public class ServiceNowScorecardIT extends ServiceNowITSupport {
     @Produce("direct:servicenow")
     ProducerTemplate template;
@@ -41,7 +44,9 @@ public class ServiceNowScorecardIT extends ServiceNowITSupport {
                 kvBuilder()
                         .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SCORECARDS)
                         .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                        .put(ServiceNowConstants.ACTION_SUBJECT, ServiceNowConstants.ACTION_SUBJECT_PERFORMANCE_ANALYTICS)
+                        .put(
+                                ServiceNowConstants.ACTION_SUBJECT,
+                                ServiceNowConstants.ACTION_SUBJECT_PERFORMANCE_ANALYTICS)
                         .put(ServiceNowConstants.MODEL, Scorecard.class)
                         .build(),
                 List.class);

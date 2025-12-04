@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
@@ -23,14 +24,15 @@ public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
     private final transient Class<?> type;
 
     public NoSuchHeaderOrPropertyException(Exchange exchange, String headerName, String propertyName, Class<?> type) {
-        super(String.format(
-                "No '%s' header or '%s' property available of type: %s (header: %s, property: %s)",
-                headerName,
-                propertyName,
-                type.getName(),
-                header(exchange, headerName),
-                property(exchange, headerName)),
-              exchange);
+        super(
+                String.format(
+                        "No '%s' header or '%s' property available of type: %s (header: %s, property: %s)",
+                        headerName,
+                        propertyName,
+                        type.getName(),
+                        header(exchange, headerName),
+                        property(exchange, headerName)),
+                exchange);
 
         this.headerName = headerName;
         this.propertyName = propertyName;

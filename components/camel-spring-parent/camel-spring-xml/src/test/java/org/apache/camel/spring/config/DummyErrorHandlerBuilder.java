@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
 
 import org.apache.camel.ErrorHandlerFactory;
@@ -37,8 +38,7 @@ public class DummyErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport i
 
     private String beanName;
 
-    public DummyErrorHandlerBuilder() {
-    }
+    public DummyErrorHandlerBuilder() {}
 
     @Override
     public void setBeanName(String beanName) {
@@ -73,5 +73,4 @@ public class DummyErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport i
             };
         }
     }
-
 }

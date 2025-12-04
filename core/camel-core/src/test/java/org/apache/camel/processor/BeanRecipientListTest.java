@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class BeanRecipientListTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRecipientListTest.class);
@@ -88,7 +89,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
         @org.apache.camel.RecipientList
         public String[] route(String body) {
             LOG.debug("Called {} with body: {}", this, body);
-            return new String[] { "mock:a", "mock:b" };
+            return new String[] {"mock:a", "mock:b"};
         }
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe.client.impl;
 
 import java.net.URI;
@@ -57,17 +58,14 @@ public class Transcribe2ClientIAMProfileOptimizedImpl implements Transcribe2Inte
             clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
         }
         if (ObjectHelper.isNotEmpty(configuration.getProfileCredentialsName())) {
-            clientBuilder = clientBuilder
-                    .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+            clientBuilder = clientBuilder.credentialsProvider(
+                    ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
         } else {
             clientBuilder = clientBuilder.credentialsProvider(ProfileCredentialsProvider.create());
         }
         if (configuration.isTrustAllCertificates()) {
-            httpClientBuilder.buildWithDefaults(AttributeMap
-                    .builder()
-                    .put(
-                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE)
+            httpClientBuilder.buildWithDefaults(AttributeMap.builder()
+                    .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE)
                     .build());
         }
         clientBuilder.httpClient(httpClientBuilder.build());

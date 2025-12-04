@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu.handlers;
 
 import java.util.Date;
@@ -56,7 +57,8 @@ class TahuEdgeMetricHandler implements MetricHandler {
     private TahuEdgeClient client;
 
     private final EdgeNodeDescriptor edgeNodeDescriptor;
-    private final ConcurrentMap<SparkplugDescriptor, SparkplugBPayloadMap> descriptorMetricMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<SparkplugDescriptor, SparkplugBPayloadMap> descriptorMetricMap =
+            new ConcurrentHashMap<>();
 
     private final Marker loggingMarker;
 
@@ -84,8 +86,8 @@ class TahuEdgeMetricHandler implements MetricHandler {
 
         SparkplugBPayload deathPayload = new SparkplugBPayload.SparkplugBPayloadBuilder()
                 .addMetric(new MetricBuilder(
-                        SparkplugMeta.SPARKPLUG_BD_SEQUENCE_NUMBER_KEY,
-                        MetricDataType.Int64, currentDeathBdSeq).createMetric())
+                                SparkplugMeta.SPARKPLUG_BD_SEQUENCE_NUMBER_KEY, MetricDataType.Int64, currentDeathBdSeq)
+                        .createMetric())
                 .createPayload();
 
         LOG.debug(loggingMarker, "Created death payload with bdSeq metric {}", currentDeathBdSeq);
@@ -114,25 +116,29 @@ class TahuEdgeMetricHandler implements MetricHandler {
                     .setTimestamp(timestamp)
                     .addMetrics(getCachedMetrics(edgeNodeDescriptor))
                     .addMetric(new MetricBuilder(
-                            SparkplugMeta.SPARKPLUG_BD_SEQUENCE_NUMBER_KEY,
-                            MetricDataType.Int64, currentBirthBdSeq).createMetric())
+                                    SparkplugMeta.SPARKPLUG_BD_SEQUENCE_NUMBER_KEY,
+                                    MetricDataType.Int64,
+                                    currentBirthBdSeq)
+                            .createMetric())
                     .createPayload();
 
             LOG.debug(loggingMarker, "Created birth payload with bdSeq metric {}", currentBirthBdSeq);
 
             client.publishNodeBirth(nBirthPayload);
 
-            descriptorMetricMap.keySet().stream().filter(sd -> sd.isDeviceDescriptor()).forEach(sd -> {
-                DeviceDescriptor deviceDescriptor = (DeviceDescriptor) sd;
-                String deviceId = deviceDescriptor.getDeviceId();
+            descriptorMetricMap.keySet().stream()
+                    .filter(sd -> sd.isDeviceDescriptor())
+                    .forEach(sd -> {
+                        DeviceDescriptor deviceDescriptor = (DeviceDescriptor) sd;
+                        String deviceId = deviceDescriptor.getDeviceId();
 
-                SparkplugBPayload dBirthPayload = new SparkplugBPayload.SparkplugBPayloadBuilder()
-                        .setTimestamp(timestamp)
-                        .addMetrics(getCachedMetrics(deviceDescriptor))
-                        .createPayload();
+                        SparkplugBPayload dBirthPayload = new SparkplugBPayload.SparkplugBPayloadBuilder()
+                                .setTimestamp(timestamp)
+                                .addMetrics(getCachedMetrics(deviceDescriptor))
+                                .createPayload();
 
-                client.publishDeviceBirth(deviceId, dBirthPayload);
-            });
+                        client.publishDeviceBirth(deviceId, dBirthPayload);
+                    });
 
         } catch (Exception e) {
             throw new TahuException(edgeNodeDescriptor, "Exception caught publishing birth sequence", e);
@@ -145,7 +151,9 @@ class TahuEdgeMetricHandler implements MetricHandler {
     }
 
     List<Metric> getCachedMetrics(SparkplugDescriptor sd) {
-        return Optional.ofNullable(descriptorMetricMap.get(sd)).map(SparkplugBPayloadMap::getMetrics).orElse(List.of());
+        return Optional.ofNullable(descriptorMetricMap.get(sd))
+                .map(SparkplugBPayloadMap::getMetrics)
+                .orElse(List.of());
     }
 
     SparkplugBPayloadMap getDescriptorMetricMap(SparkplugDescriptor sd) {
@@ -180,9 +188,11 @@ class TahuEdgeMetricHandler implements MetricHandler {
         if (!cmdDescriptor.isDeviceDescriptor()) {
             Map<Boolean, List<Metric>> groupedMetrics = receivedMetrics.stream()
                     .collect(Collectors.groupingBy(m -> (Boolean) SparkplugMeta.METRIC_NODE_REBIRTH.equals(m.getName())
-                            && m.getDataType() == MetricDataType.Boolean && (Boolean) m.getValue()));
+                            && m.getDataType() == MetricDataType.Boolean
+                            && (Boolean) m.getValue()));
 
-            if (groupedMetrics.containsKey(Boolean.TRUE) && !groupedMetrics.get(Boolean.TRUE).isEmpty()) {
+            if (groupedMetrics.containsKey(Boolean.TRUE)
+                    && !groupedMetrics.get(Boolean.TRUE).isEmpty()) {
                 client.handleRebirthRequest(true);
             }
 
@@ -195,17 +205,21 @@ class TahuEdgeMetricHandler implements MetricHandler {
         }
 
         return receivedMetrics.stream()
-                .map(m -> getCachedMetric(m.getName(), cachedMetrics, cmdDescriptor)).filter(Objects::nonNull).toList();
+                .map(m -> getCachedMetric(m.getName(), cachedMetrics, cmdDescriptor))
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     private Metric getCachedMetric(
-            String metricName, SparkplugBPayloadMap cachedMetrics,
-            SparkplugDescriptor cmdDescriptor) {
+            String metricName, SparkplugBPayloadMap cachedMetrics, SparkplugDescriptor cmdDescriptor) {
         Metric cachedMetric = cachedMetrics.getMetric(metricName);
 
         if (cachedMetric == null) {
-            LOG.warn(loggingMarker, "Received CMD request for {} metric {} not in configured metrics - skipping",
-                    cmdDescriptor, metricName);
+            LOG.warn(
+                    loggingMarker,
+                    "Received CMD request for {} metric {} not in configured metrics - skipping",
+                    cmdDescriptor,
+                    metricName);
             return null;
         }
 
@@ -216,9 +230,11 @@ class TahuEdgeMetricHandler implements MetricHandler {
 
             return responseMetric;
         } catch (Exception e) {
-            LOG.warn(loggingMarker,
+            LOG.warn(
+                    loggingMarker,
                     "Exception caught copying metric handling CMD request for {} metric {} - skipping",
-                    cmdDescriptor, metricName);
+                    cmdDescriptor,
+                    metricName);
             return null;
         }
     }

@@ -47,8 +47,10 @@ public class CouchbaseIntegrationTestBase extends CamelTestSupport {
         bucketName = "testBucket" + TestUtils.randomWithRange(0, 100);
         cluster = Cluster.connect(service.getConnectionString(), service.getUsername(), service.getPassword());
 
-        cluster.buckets().createBucket(
-                BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE).flushEnabled(true));
+        cluster.buckets()
+                .createBucket(BucketSettings.create(bucketName)
+                        .bucketType(BucketType.COUCHBASE)
+                        .flushEnabled(true));
 
         cluster.bucket(bucketName);
         DesignDocument designDoc = new DesignDocument(
@@ -69,8 +71,8 @@ public class CouchbaseIntegrationTestBase extends CamelTestSupport {
     }
 
     public String getConnectionUri() {
-        return String.format("couchbase:http://%s:%d?bucket=%s&username=%s&password=%s", service.getHostname(),
-                service.getPort(), bucketName, service.getUsername(), service.getPassword());
+        return String.format(
+                "couchbase:http://%s:%d?bucket=%s&username=%s&password=%s",
+                service.getHostname(), service.getPort(), bucketName, service.getUsername(), service.getPassword());
     }
-
 }

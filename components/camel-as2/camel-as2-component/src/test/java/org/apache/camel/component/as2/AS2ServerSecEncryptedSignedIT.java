@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import java.security.cert.Certificate;
@@ -44,8 +45,9 @@ public class AS2ServerSecEncryptedSignedIT extends AS2ServerSecTestBase {
 
     // verify message types that fail with insufficient security due to lack of encryption
     @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = { "PLAIN", "SIGNED", "PLAIN_COMPRESSED", "COMPRESSED_SIGNED", "SIGNED_COMPRESSED" })
+    @EnumSource(
+            value = AS2MessageStructure.class,
+            names = {"PLAIN", "SIGNED", "PLAIN_COMPRESSED", "COMPRESSED_SIGNED", "SIGNED_COMPRESSED"})
     public void insufficientEncryptionFailureTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = send(messageStructure);
         verifyOkResponse(context);
@@ -54,8 +56,9 @@ public class AS2ServerSecEncryptedSignedIT extends AS2ServerSecTestBase {
 
     // verify message types that fail with insufficient security due to lack of signature
     @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = { "ENCRYPTED", "ENCRYPTED_COMPRESSED" })
+    @EnumSource(
+            value = AS2MessageStructure.class,
+            names = {"ENCRYPTED", "ENCRYPTED_COMPRESSED"})
     public void noSignatureFailureTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = send(messageStructure);
         verifyOkResponse(context);
@@ -64,8 +67,9 @@ public class AS2ServerSecEncryptedSignedIT extends AS2ServerSecTestBase {
 
     // verify the message types that pass decryption and signature verification
     @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = { "SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED_SIGNED", "ENCRYPTED_SIGNED_COMPRESSED" })
+    @EnumSource(
+            value = AS2MessageStructure.class,
+            names = {"SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED_SIGNED", "ENCRYPTED_SIGNED_COMPRESSED"})
     public void successfullyProcessedTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = send(messageStructure);
         verifyOkResponse(context);
@@ -74,8 +78,9 @@ public class AS2ServerSecEncryptedSignedIT extends AS2ServerSecTestBase {
 
     // verify that message types with invalid signature fail authentication
     @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = { "SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED_SIGNED", "ENCRYPTED_SIGNED_COMPRESSED" })
+    @EnumSource(
+            value = AS2MessageStructure.class,
+            names = {"SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED_SIGNED", "ENCRYPTED_SIGNED_COMPRESSED"})
     public void invalidSigningCertFailureTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = sendWithInvalidSignature(messageStructure);
         verifyOkResponse(context);
@@ -84,8 +89,9 @@ public class AS2ServerSecEncryptedSignedIT extends AS2ServerSecTestBase {
 
     // verify that message types that fail decryption when encrypted with invalid cert
     @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = { "SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED_SIGNED", "ENCRYPTED_SIGNED_COMPRESSED" })
+    @EnumSource(
+            value = AS2MessageStructure.class,
+            names = {"SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED_SIGNED", "ENCRYPTED_SIGNED_COMPRESSED"})
     public void invalidEncryptionFailureTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = sendWithInvalidEncryption(messageStructure);
         verifyOkResponse(context);
@@ -95,8 +101,8 @@ public class AS2ServerSecEncryptedSignedIT extends AS2ServerSecTestBase {
     // utility method to reproduce the MIC and compare against the MIC received in MDN.
     @Override
     protected MicUtils.ReceivedContentMic createReceivedContentMic(HttpRequest request) throws HttpException {
-        return MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { signingCert },
-                signingKP.getPrivate());
+        return MicUtils.createReceivedContentMic(
+                (ClassicHttpRequest) request, new Certificate[] {signingCert}, signingKP.getPrivate());
     }
 
     @Override
@@ -107,7 +113,7 @@ public class AS2ServerSecEncryptedSignedIT extends AS2ServerSecTestBase {
         // decryption key
         configuration.setDecryptingPrivateKey(decryptingKP.getPrivate());
         // signature validation cert
-        configuration.setValidateSigningCertificateChain(new Certificate[] { signingCert });
+        configuration.setValidateSigningCertificateChain(new Certificate[] {signingCert});
         return context;
     }
 }

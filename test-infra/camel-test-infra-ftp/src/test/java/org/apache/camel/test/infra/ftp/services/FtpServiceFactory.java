@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ftp.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
@@ -23,18 +24,14 @@ import org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedService;
 
 public final class FtpServiceFactory {
 
-    private FtpServiceFactory() {
-
-    }
+    private FtpServiceFactory() {}
 
     public static SimpleTestServiceBuilder<FtpEmbeddedService> embeddedBuilder() {
         return new SimpleTestServiceBuilder<>("ftp");
     }
 
     public static FtpEmbeddedService createEmbeddedService() {
-        return embeddedBuilder()
-                .addLocalMapping(FtpEmbeddedService::new)
-                .build();
+        return embeddedBuilder().addLocalMapping(FtpEmbeddedService::new).build();
     }
 
     public static FtpsEmbeddedService createSecureEmbeddedService(

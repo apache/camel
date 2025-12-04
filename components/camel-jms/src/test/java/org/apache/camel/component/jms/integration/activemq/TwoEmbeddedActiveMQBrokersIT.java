@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.activemq;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class TwoEmbeddedActiveMQBrokersIT extends CamelSpringTestSupport {
 
     @RegisterExtension
@@ -65,5 +66,4 @@ public class TwoEmbeddedActiveMQBrokersIT extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext(
                 "classpath:org/apache/camel/component/jms/integration/activemq/twoActiveMQBrokers.xml");
     }
-
 }

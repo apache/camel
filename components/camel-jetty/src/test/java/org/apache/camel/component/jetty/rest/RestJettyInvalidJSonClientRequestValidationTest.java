@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -25,15 +30,12 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class RestJettyInvalidJSonClientRequestValidationTest extends BaseJettyTest {
 
     @Test
     public void testJettyInvalidJSon() {
-        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+        FluentProducerTemplate requestTemplate = fluentTemplate
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{\"name\": \"Donald\"") // the body is invalid as the ending } is missing
                 .to("http://localhost:" + getPort() + "/users/123/update");
@@ -51,18 +53,22 @@ public class RestJettyInvalidJSonClientRequestValidationTest extends BaseJettyTe
             @Override
             public void configure() {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
                         .bindingMode(RestBindingMode.json)
                         // turn on client request validation
                         .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("{id}/update")
-                        .consumes("application/json").produces("application/json")
+                rest("/users/")
+                        .post("{id}/update")
+                        .consumes("application/json")
+                        .produces("application/json")
                         .to("direct:update");
                 from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }
-
 }

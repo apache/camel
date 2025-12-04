@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 import java.util.List;
@@ -44,5 +45,4 @@ public interface PGPPublicKeyAccessor {
      * @return             public key or <code>null</code> if the key cannot be found
      */
     PGPPublicKey getPublicKey(Exchange exchange, long keyId, List<String> useridParts) throws Exception;
-
 }

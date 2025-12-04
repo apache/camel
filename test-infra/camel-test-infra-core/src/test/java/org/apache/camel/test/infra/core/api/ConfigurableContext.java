@@ -32,5 +32,4 @@ public interface ConfigurableContext {
      * @throws Exception if the context cannot be configured
      */
     void configureContext(CamelContext context) throws Exception;
-
 }

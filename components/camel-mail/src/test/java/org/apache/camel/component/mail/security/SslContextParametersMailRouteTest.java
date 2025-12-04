@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail.security;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +35,6 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test of integration between the mail component and JSSE Configuration Utility. This test does not easily automate.
@@ -58,7 +59,8 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
             public void configure() {
 
                 from("imaps://" + imapHost + "?username=" + username + "&password=" + password
-                     + "&delete=false&unseen=true&fetchSize=1&useFixedDelay=true&initialDelay=100&delay=100").to("mock:in");
+                                + "&delete=false&unseen=true&fetchSize=1&useFixedDelay=true&initialDelay=100&delay=100")
+                        .to("mock:in");
 
                 from("direct:in").to("smtps://" + smtpHost + "?username=" + username + "&password=" + password);
             }
@@ -86,8 +88,9 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
-                from("direct:in").to("smtps://" + smtpHost + "?username=" + username + "&password=" + password
-                                     + "&sslContextParameters=#sslContextParameters");
+                from("direct:in")
+                        .to("smtps://" + smtpHost + "?username=" + username + "&password=" + password
+                                + "&sslContextParameters=#sslContextParameters");
             }
         });
 
@@ -104,7 +107,9 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             assertTrue(e.getCause().getCause() instanceof SSLHandshakeException);
-            assertTrue(e.getCause().getCause().getMessage()
+            assertTrue(e.getCause()
+                    .getCause()
+                    .getMessage()
                     .contains("unable to find valid certification path to requested target"));
         }
     }

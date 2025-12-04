@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.soap.headers;
 
 import java.util.Iterator;
@@ -38,19 +39,19 @@ import org.apache.cxf.outofband.header.OutofBandHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@jakarta.jws.WebService(serviceName = "HeaderService",
-                        targetNamespace = "http://apache.org/camel/cxf/soap/headers",
-                        endpointInterface = "org.apache.camel.component.cxf.soap.headers.HeaderTester")
-
+@jakarta.jws.WebService(
+        serviceName = "HeaderService",
+        targetNamespace = "http://apache.org/camel/cxf/soap/headers",
+        endpointInterface = "org.apache.camel.component.cxf.soap.headers.HeaderTester")
 public class HeaderTesterImpl implements HeaderTester {
     private static final Logger LOG = LoggerFactory.getLogger(HeaderTesterImpl.class);
 
     @Resource
     protected WebServiceContext context;
+
     protected boolean relayHeaders = true;
 
-    public HeaderTesterImpl() {
-    }
+    public HeaderTesterImpl() {}
 
     public HeaderTesterImpl(boolean relayHeaders) {
         this.relayHeaders = relayHeaders;
@@ -164,7 +165,9 @@ public class HeaderTesterImpl implements HeaderTester {
                     ob.setHdrAttribute("testReturnHdrAttribute");
                     JAXBElement<OutofBandHeader> job = new JAXBElement<>(
                             new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_RESPONSE_ELEM),
-                            OutofBandHeader.class, null, ob);
+                            OutofBandHeader.class,
+                            null,
+                            ob);
                     Header hdr = new Header(
                             new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_RESPONSE_ELEM),
                             job,
@@ -181,10 +184,8 @@ public class HeaderTesterImpl implements HeaderTester {
     protected boolean validateOutOfBandHander() {
         MessageContext ctx = context == null ? null : context.getMessageContext();
         if (!relayHeaders) {
-            if (ctx != null
-                    && !ctx.containsKey(Header.HEADER_LIST)
-                    || ctx.containsKey(Header.HEADER_LIST)
-                            && ((List<?>) ctx.get(Header.HEADER_LIST)).size() == 0) {
+            if (ctx != null && !ctx.containsKey(Header.HEADER_LIST)
+                    || ctx.containsKey(Header.HEADER_LIST) && ((List<?>) ctx.get(Header.HEADER_LIST)).size() == 0) {
                 return true;
             }
             return false;
@@ -199,20 +200,19 @@ public class HeaderTesterImpl implements HeaderTester {
                 if (hdr instanceof Header && ((Header) hdr).getObject() instanceof Node) {
                     Header hdr1 = (Header) hdr;
                     try {
-                        JAXBElement<?> job
-                                = (JAXBElement<?>) JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
+                        JAXBElement<?> job = (JAXBElement<?>)
+                                JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
                                         .createUnmarshaller()
                                         .unmarshal((Node) hdr1.getObject());
                         OutofBandHeader ob = (OutofBandHeader) job.getValue();
-                        if ("testOobHeader".equals(ob.getName())
-                                && "testOobHeaderValue".equals(ob.getValue())) {
+                        if ("testOobHeader".equals(ob.getName()) && "testOobHeaderValue".equals(ob.getValue())) {
                             if ("testHdrAttribute".equals(ob.getHdrAttribute())) {
                                 success = true;
-                                iter.remove(); //mark it processed
+                                iter.remove(); // mark it processed
                             } else if ("dontProcess".equals(ob.getHdrAttribute())) {
-                                //we won't remove it so we won't let the runtime know
-                                //it's processed.   It SHOULD throw an exception
-                                //saying the mustunderstand wasn't processed
+                                // we won't remove it so we won't let the runtime know
+                                // it's processed.   It SHOULD throw an exception
+                                // saying the mustunderstand wasn't processed
                                 success = true;
                             }
                         } else {

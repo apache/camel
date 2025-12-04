@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
 
 import org.apache.camel.spi.Metadata;
@@ -23,14 +24,15 @@ import org.apache.camel.spi.Metadata;
  */
 public final class WeatherConstants {
 
-    @Metadata(label = "producer", description = "Used by the producer to override the endpoint location and use the\n" +
-                                                "location from this header instead.",
-              javaType = "String")
+    @Metadata(
+            label = "producer",
+            description = "Used by the producer to override the endpoint location and use the\n"
+                    + "location from this header instead.",
+            javaType = "String")
     public static final String WEATHER_LOCATION = "CamelWeatherLocation";
+
     @Metadata(description = "The original query URL sent to the Open Weather Map site", javaType = "String")
     public static final String WEATHER_QUERY = "CamelWeatherQuery";
 
-    private WeatherConstants() {
-    }
-
+    private WeatherConstants() {}
 }

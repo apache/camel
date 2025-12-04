@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_FORM_URLENCODED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,11 +47,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_FORM_URLENCODED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
 
     private static final String BODY_PAYLOAD = "Some Body";
@@ -58,7 +59,8 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
 
     @Test
     public void testPostBodyAsByteArray() {
-        String result = template.requestBody(getProducerUri(), BODY_PAYLOAD.getBytes(StandardCharsets.UTF_8), String.class);
+        String result =
+                template.requestBody(getProducerUri(), BODY_PAYLOAD.getBytes(StandardCharsets.UTF_8), String.class);
         assertEquals("Got body: " + BODY_PAYLOAD, result);
     }
 
@@ -81,7 +83,8 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
         form.entries().forEach(entry -> expectedBody.put(entry.getKey(), entry.getValue()));
         mockEndpoint.expectedBodiesReceived(expectedBody);
 
-        Exchange result = template.request(getProducerUri() + "/form", exchange -> exchange.getMessage().setBody(form));
+        Exchange result = template.request(
+                getProducerUri() + "/form", exchange -> exchange.getMessage().setBody(form));
 
         Message message = result.getMessage();
         assertEquals(CONTENT_TYPE_FORM_URLENCODED, message.getHeader(Exchange.CONTENT_TYPE));
@@ -98,7 +101,10 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
         mockEndpoint.expectedHeaderReceived("organization", "Apache");
         mockEndpoint.expectedHeaderReceived("project", "Camel");
 
-        template.sendBodyAndHeader(getProducerUri() + "/form", "organization=Apache&project=Camel", Exchange.CONTENT_TYPE,
+        template.sendBodyAndHeader(
+                getProducerUri() + "/form",
+                "organization=Apache&project=Camel",
+                Exchange.CONTENT_TYPE,
                 CONTENT_TYPE_FORM_URLENCODED);
 
         mockEndpoint.assertIsSatisfied();
@@ -115,7 +121,8 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
         MultipartForm form = MultipartForm.create();
         form.binaryFileUpload("test.txt", file.getName(), file.getPath(), "text/plain");
 
-        Exchange result = template.request(getProducerUri() + "/upload", exchange -> exchange.getMessage().setBody(form));
+        Exchange result = template.request(
+                getProducerUri() + "/upload", exchange -> exchange.getMessage().setBody(form));
 
         Message message = result.getMessage();
         assertTrue(message.getHeader(Exchange.CONTENT_TYPE, String.class).startsWith("multipart/form-data; boundary"));
@@ -162,16 +169,14 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
                         })
                         .to("mock:result");
 
-                from(getTestServerUri() + "/upload")
-                        .process(exchange -> {
-                            AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
-                            InputStream inputStream = in.getAttachment("test.txt").getInputStream();
-                            String fileContent = getContext().getTypeConverter().convertTo(String.class, inputStream);
-                            exchange.getMessage().setBody(fileContent);
-                        });
+                from(getTestServerUri() + "/upload").process(exchange -> {
+                    AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
+                    InputStream inputStream = in.getAttachment("test.txt").getInputStream();
+                    String fileContent = getContext().getTypeConverter().convertTo(String.class, inputStream);
+                    exchange.getMessage().setBody(fileContent);
+                });
 
-                from(getTestServerUri() + "/stream")
-                        .log("foo");
+                from(getTestServerUri() + "/stream").log("foo");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
@@ -21,14 +22,14 @@ import org.junit.jupiter.api.Test;
 
 public class CamelCatalogITCase extends JBangTestSupport {
 
-    private static final String COMPONENT_REGEX
-            = "^\\sNAME\\s+LEVEL\\s+SINCE\\s+DESCRIPTION\\s+\\n(\\s([a-z0-9]-?)+\\s*(Stable|Preview|Experimental)\\s*[1-9]+.[0-9]+\\s{2}(.*\\n.*)+\\n)+";
-    private static final String KAMELET_REGEX
-            = "^\\sNAME\\s+TYPE\\s+LEVEL\\s+DESCRIPTION\\s+\\n(\\s([a-z0-9]+-?)+\\s+(action|sink|source)\\s+(Stable|Preview|Experimental)\\s+(.*\\n)+)+";
-    private static final String TRANSFORMER_REGEX
-            = "^\\sNAME\\s+LEVEL\\s+SINCE\\s+DESCRIPTION\\s+\\n(\\s([a-z0-9]-?)+\\s*(.*\\n.*)+\\n)+";
-    private static final String DEV_CONSOLE_REGEX
-            = "^\\sNAME\\s+LEVEL\\s+SINCE\\s+DESCRIPTION\\s+\\n(\\s([a-z0-9]-?)+\\s*(Stable|Preview|Experimental)(.*\\n.*)+\\n)+";
+    private static final String COMPONENT_REGEX =
+            "^\\sNAME\\s+LEVEL\\s+SINCE\\s+DESCRIPTION\\s+\\n(\\s([a-z0-9]-?)+\\s*(Stable|Preview|Experimental)\\s*[1-9]+.[0-9]+\\s{2}(.*\\n.*)+\\n)+";
+    private static final String KAMELET_REGEX =
+            "^\\sNAME\\s+TYPE\\s+LEVEL\\s+DESCRIPTION\\s+\\n(\\s([a-z0-9]+-?)+\\s+(action|sink|source)\\s+(Stable|Preview|Experimental)\\s+(.*\\n)+)+";
+    private static final String TRANSFORMER_REGEX =
+            "^\\sNAME\\s+LEVEL\\s+SINCE\\s+DESCRIPTION\\s+\\n(\\s([a-z0-9]-?)+\\s*(.*\\n.*)+\\n)+";
+    private static final String DEV_CONSOLE_REGEX =
+            "^\\sNAME\\s+LEVEL\\s+SINCE\\s+DESCRIPTION\\s+\\n(\\s([a-z0-9]-?)+\\s*(Stable|Preview|Experimental)(.*\\n.*)+\\n)+";
 
     @Test
     public void testCatalogComponents() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.util.Set;
@@ -41,5 +42,4 @@ public class HttpHeaderFilterStrategy extends org.apache.camel.http.base.HttpHea
         setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
         setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
-
 }

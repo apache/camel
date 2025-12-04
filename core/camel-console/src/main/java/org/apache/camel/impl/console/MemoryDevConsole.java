@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
+
+import static org.apache.camel.util.UnitUtils.printUnitFromBytesDot;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -24,8 +27,6 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
-
-import static org.apache.camel.util.UnitUtils.printUnitFromBytesDot;
 
 @DevConsole(name = "memory", displayName = "JVM Memory", description = "Displays JVM memory information")
 @Configurer(extended = true)
@@ -41,15 +42,30 @@ public class MemoryDevConsole extends AbstractDevConsole {
 
         MemoryMXBean mb = ManagementFactory.getMemoryMXBean();
         if (mb != null) {
-            sb.append(String.format("Heap Init: %s\n", printUnitFromBytesDot(mb.getHeapMemoryUsage().getInit())));
-            sb.append(String.format("Heap Max: %s\n", printUnitFromBytesDot(mb.getHeapMemoryUsage().getMax())));
-            sb.append(String.format("Heap Used: %s\n", printUnitFromBytesDot(mb.getHeapMemoryUsage().getUsed())));
-            sb.append(String.format("Heap Committed: %s\n", printUnitFromBytesDot(mb.getHeapMemoryUsage().getCommitted())));
+            sb.append(String.format(
+                    "Heap Init: %s\n",
+                    printUnitFromBytesDot(mb.getHeapMemoryUsage().getInit())));
+            sb.append(String.format(
+                    "Heap Max: %s\n",
+                    printUnitFromBytesDot(mb.getHeapMemoryUsage().getMax())));
+            sb.append(String.format(
+                    "Heap Used: %s\n",
+                    printUnitFromBytesDot(mb.getHeapMemoryUsage().getUsed())));
+            sb.append(String.format(
+                    "Heap Committed: %s\n",
+                    printUnitFromBytesDot(mb.getHeapMemoryUsage().getCommitted())));
             sb.append("\n");
-            sb.append(String.format("Non-Heap Init: %s\n", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getInit())));
-            sb.append(String.format("Non-Heap Max: %s\n", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getMax())));
-            sb.append(String.format("Non-Heap Used: %s\n", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getUsed())));
-            sb.append(String.format("Non-Heap Committed: %s\n",
+            sb.append(String.format(
+                    "Non-Heap Init: %s\n",
+                    printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getInit())));
+            sb.append(String.format(
+                    "Non-Heap Max: %s\n",
+                    printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getMax())));
+            sb.append(String.format(
+                    "Non-Heap Used: %s\n",
+                    printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getUsed())));
+            sb.append(String.format(
+                    "Non-Heap Committed: %s\n",
                     printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getCommitted())));
         }
 
@@ -62,14 +78,30 @@ public class MemoryDevConsole extends AbstractDevConsole {
 
         MemoryMXBean mb = ManagementFactory.getMemoryMXBean();
         if (mb != null) {
-            root.put("heapMemoryInit", printUnitFromBytesDot(mb.getHeapMemoryUsage().getInit()));
-            root.put("heapMemoryMax", printUnitFromBytesDot(mb.getHeapMemoryUsage().getMax()));
-            root.put("heapMemoryUsed", printUnitFromBytesDot(mb.getHeapMemoryUsage().getUsed()));
-            root.put("heapMemoryCommitted", printUnitFromBytesDot(mb.getHeapMemoryUsage().getCommitted()));
-            root.put("nonHeapMemoryInit", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getInit()));
-            root.put("nonHeapMemoryMax", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getMax()));
-            root.put("nonHeapMemoryUsed", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getUsed()));
-            root.put("nonHeapMemoryCommitted", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getCommitted()));
+            root.put(
+                    "heapMemoryInit",
+                    printUnitFromBytesDot(mb.getHeapMemoryUsage().getInit()));
+            root.put(
+                    "heapMemoryMax",
+                    printUnitFromBytesDot(mb.getHeapMemoryUsage().getMax()));
+            root.put(
+                    "heapMemoryUsed",
+                    printUnitFromBytesDot(mb.getHeapMemoryUsage().getUsed()));
+            root.put(
+                    "heapMemoryCommitted",
+                    printUnitFromBytesDot(mb.getHeapMemoryUsage().getCommitted()));
+            root.put(
+                    "nonHeapMemoryInit",
+                    printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getInit()));
+            root.put(
+                    "nonHeapMemoryMax",
+                    printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getMax()));
+            root.put(
+                    "nonHeapMemoryUsed",
+                    printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getUsed()));
+            root.put(
+                    "nonHeapMemoryCommitted",
+                    printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getCommitted()));
         }
 
         return root;

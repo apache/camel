@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.foo.bar;
 
 import jakarta.xml.bind.JAXBElement;
@@ -41,8 +42,7 @@ public class ObjectFactory {
      * com.foo.bar
      *
      */
-    public ObjectFactory() {
-    }
+    public ObjectFactory() {}
 
     /**
      * Create an instance of {@link PersonType }
@@ -55,10 +55,8 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PersonType }{@code >}}
      */
-
     @XmlElementDecl(namespace = "", name = "Person")
     public JAXBElement<PersonType> createPerson(PersonType value) {
         return new JAXBElement<>(personQNAME, PersonType.class, null, value);
     }
-
 }

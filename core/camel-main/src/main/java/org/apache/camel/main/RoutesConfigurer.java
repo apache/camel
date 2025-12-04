@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.ArrayList;
@@ -197,8 +198,8 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
             String[] routeClasses = getRoutesBuilderClasses().split(",");
             for (String routeClass : routeClasses) {
                 try {
-                    Class<RoutesBuilder> routeClazz
-                            = camelContext.getClassResolver().resolveClass(routeClass, RoutesBuilder.class);
+                    Class<RoutesBuilder> routeClazz =
+                            camelContext.getClassResolver().resolveClass(routeClass, RoutesBuilder.class);
                     if (routeClazz == null) {
                         LOG.warn("Unable to resolve class: {}", routeClass);
                         continue;
@@ -233,11 +234,13 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
                 for (Class<?> routeClazz : set) {
                     // exclude take precedence over includes
                     String path = routeClazz.getName().replace(".", "/");
-                    if (excludes != null && !"false".equals(javaRoutesExcludePattern)
+                    if (excludes != null
+                            && !"false".equals(javaRoutesExcludePattern)
                             && AntPathMatcher.INSTANCE.anyMatch(excludes, path)) {
                         continue;
                     }
-                    if (includes != null && !"false".equals(javaRoutesIncludePattern)
+                    if (includes != null
+                            && !"false".equals(javaRoutesIncludePattern)
                             && !AntPathMatcher.INSTANCE.anyMatch(includes, path)) {
                         continue;
                     }
@@ -267,28 +270,30 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
                 LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
 
                 // add discovered routes from registry
-                Collection<RoutesBuilder> routesFromRegistry = getRoutesCollector().collectRoutesFromRegistry(
-                        camelContext,
-                        getJavaRoutesExcludePattern(),
-                        getJavaRoutesIncludePattern());
+                Collection<RoutesBuilder> routesFromRegistry = getRoutesCollector()
+                        .collectRoutesFromRegistry(
+                                camelContext, getJavaRoutesExcludePattern(), getJavaRoutesIncludePattern());
                 routes.addAll(routesFromRegistry);
 
                 if (LOG.isDebugEnabled() && !routesFromRegistry.isEmpty()) {
-                    LOG.debug("Discovered {} additional RoutesBuilder from registry: {}", routesFromRegistry.size(),
+                    LOG.debug(
+                            "Discovered {} additional RoutesBuilder from registry: {}",
+                            routesFromRegistry.size(),
                             getRoutesIncludePattern());
                 }
 
                 // add discovered routes from directories
                 StopWatch watch = new StopWatch();
-                Collection<RoutesBuilder> routesFromDirectory = getRoutesCollector().collectRoutesFromDirectory(
-                        camelContext,
-                        getRoutesExcludePattern(),
-                        getRoutesIncludePattern());
+                Collection<RoutesBuilder> routesFromDirectory = getRoutesCollector()
+                        .collectRoutesFromDirectory(camelContext, getRoutesExcludePattern(), getRoutesIncludePattern());
                 routes.addAll(routesFromDirectory);
 
                 if (LOG.isDebugEnabled() && !routesFromDirectory.isEmpty()) {
-                    LOG.debug("Loaded {} additional RoutesBuilder from: {} (took {})", routesFromDirectory.size(),
-                            getRoutesIncludePattern(), TimeUtils.printDuration(watch.taken(), true));
+                    LOG.debug(
+                            "Loaded {} additional RoutesBuilder from: {} (took {})",
+                            routesFromDirectory.size(),
+                            getRoutesIncludePattern(),
+                            TimeUtils.printDuration(watch.taken(), true));
                 }
             } catch (Exception e) {
                 if (isIgnoreLoadingError()) {
@@ -307,8 +312,12 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
             // so the instance has some support for dependency injection
             for (RoutesBuilder routeBuilder : routes) {
                 try {
-                    getBeanPostProcessor().postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
-                    getBeanPostProcessor().postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
+                    getBeanPostProcessor()
+                            .postProcessBeforeInitialization(
+                                    routeBuilder, routeBuilder.getClass().getName());
+                    getBeanPostProcessor()
+                            .postProcessAfterInitialization(
+                                    routeBuilder, routeBuilder.getClass().getName());
                 } catch (Exception e) {
                     if (isIgnoreLoadingError()) {
                         LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
@@ -337,7 +346,8 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
         for (RoutesBuilder builder : routes) {
             try {
                 if (builder instanceof RouteConfigurationsBuilder rcb) {
-                    LOG.debug("Adding routes configurations into CamelContext from RouteConfigurationsBuilder: {}", rcb);
+                    LOG.debug(
+                            "Adding routes configurations into CamelContext from RouteConfigurationsBuilder: {}", rcb);
                     camelContext.addRoutesConfigurations(rcb);
                 }
             } catch (Exception e) {
@@ -377,9 +387,7 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
 
         // check for duplicate route ids
         var ids = detector.getRouteIds();
-        var dups = ids.stream()
-                .filter(i -> Collections.frequency(ids, i) > 1)
-                .collect(Collectors.toSet());
+        var dups = ids.stream().filter(i -> Collections.frequency(ids, i) > 1).collect(Collectors.toSet());
         if (!dups.isEmpty()) {
             String id = String.join(",", dups);
             throw new FailedToCreateRouteException(
@@ -422,18 +430,18 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
             // we can only scan for modeline for routes that we can load from directory as modelines
             // are comments in the source files
             if (optionalPattern == null) {
-                resources = getRoutesCollector().findRouteResourcesFromDirectory(camelContext, getRoutesExcludePattern(),
-                        pattern);
+                resources = getRoutesCollector()
+                        .findRouteResourcesFromDirectory(camelContext, getRoutesExcludePattern(), pattern);
                 doConfigureModeline(camelContext, resources, false);
             } else {
                 // we have optional resources
-                resources = getRoutesCollector().findRouteResourcesFromDirectory(camelContext, getRoutesExcludePattern(),
-                        optionalPattern);
+                resources = getRoutesCollector()
+                        .findRouteResourcesFromDirectory(camelContext, getRoutesExcludePattern(), optionalPattern);
                 doConfigureModeline(camelContext, resources, true);
                 // and then mandatory after
                 if (pattern != null) {
-                    resources = getRoutesCollector().findRouteResourcesFromDirectory(camelContext, getRoutesExcludePattern(),
-                            pattern);
+                    resources = getRoutesCollector()
+                            .findRouteResourcesFromDirectory(camelContext, getRoutesExcludePattern(), pattern);
                     doConfigureModeline(camelContext, resources, false);
                 }
             }
@@ -465,7 +473,8 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
         Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
         for (Resource resource : sort) {
             final String extension = FileUtil.onlyExt(resource.getLocation(), false);
-            step = recorder.beginStep(RoutesConfigurer.class, "resolveRoutesBuilderLoader:" + extension, "Routes Configurer");
+            step = recorder.beginStep(
+                    RoutesConfigurer.class, "resolveRoutesBuilderLoader:" + extension, "Routes Configurer");
             try {
                 RoutesBuilderLoader loader = resolveRoutesBuilderLoader(camelContext, resource, optional);
                 if (loader != null) {
@@ -503,7 +512,10 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
                     extLoader.preParseRoutes(files);
                 } catch (Exception e) {
                     if (isIgnoreLoadingError()) {
-                        LOG.warn("Ignore loading error: {} due to: {}. This exception is ignored.", files, e.getMessage());
+                        LOG.warn(
+                                "Ignore loading error: {} due to: {}. This exception is ignored.",
+                                files,
+                                e.getMessage());
                     } else {
                         throw e;
                     }
@@ -512,13 +524,15 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
                 }
             } else {
                 for (Resource resource : entry.getValue()) {
-                    step = recorder.beginStep(RoutesConfigurer.class, "preParseRoute:" + resource.getLocation(),
-                            "Routes Configurer");
+                    step = recorder.beginStep(
+                            RoutesConfigurer.class, "preParseRoute:" + resource.getLocation(), "Routes Configurer");
                     try {
                         loader.preParseRoute(resource);
                     } catch (Exception e) {
                         if (isIgnoreLoadingError()) {
-                            LOG.warn("Ignore loading error: {} due to: {}. This exception is ignored.", resource,
+                            LOG.warn(
+                                    "Ignore loading error: {} due to: {}. This exception is ignored.",
+                                    resource,
                                     e.getMessage());
                         } else {
                             throw e;
@@ -532,9 +546,7 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
     }
 
     protected RoutesBuilderLoader resolveRoutesBuilderLoader(
-            CamelContext camelContext, Resource resource,
-            boolean optional)
-            throws Exception {
+            CamelContext camelContext, Resource resource, boolean optional) throws Exception {
 
         RoutesBuilderLoader answer = null;
 

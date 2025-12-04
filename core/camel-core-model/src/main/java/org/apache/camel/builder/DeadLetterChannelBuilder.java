@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.Endpoint;
@@ -24,8 +25,7 @@ import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
  */
 public class DeadLetterChannelBuilder extends DeadLetterChannelDefinition {
 
-    public DeadLetterChannelBuilder() {
-    }
+    public DeadLetterChannelBuilder() {}
 
     public DeadLetterChannelBuilder(String deadLetterUri) {
         super(deadLetterUri);

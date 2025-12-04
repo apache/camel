@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.support;
 
 import jakarta.jms.Destination;
@@ -33,5 +34,4 @@ public class MyDestinationResolver implements DestinationResolver {
             return session.createQueue(destinationName);
         }
     }
-
 }

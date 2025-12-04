@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.syslog;
 
 import java.io.IOException;
@@ -33,10 +34,10 @@ public class SyslogSpringMinaTest extends CamelSpringTestSupport {
 
     private static int serverPort;
     private final int messageCount = 1;
-    private final String message
-            = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
-              + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
-              + "         Conveyer1=OK, Conveyer2=OK # %%";
+    private final String message =
+            "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
+                    + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
+                    + "         Conveyer1=OK, Conveyer2=OK # %%";
 
     @BeforeAll
     public static void initPort() {

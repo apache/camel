@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -23,10 +28,6 @@ import java.util.Set;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConnectorConfigFieldsFactoryTest {
 
@@ -42,8 +43,8 @@ public class ConnectorConfigFieldsFactoryTest {
         final Set<String> requiredFields = new HashSet<>(Collections.singletonList("test.field.1"));
         final Map<String, Object> overridenFields = Collections.singletonMap("test.field.1", "I am overriden");
 
-        final Map<String, ConnectorConfigField> connectorConfigToField
-                = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(
+        final Map<String, ConnectorConfigField> connectorConfigToField =
+                ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(
                         configDef, deprecatedFields, requiredFields, overridenFields);
 
         assertEquals(4, connectorConfigToField.size());
@@ -59,5 +60,4 @@ public class ConnectorConfigFieldsFactoryTest {
         assertFalse(connectorConfigField2.isRequired());
         assertTrue(connectorConfigField2.isDeprecated());
     }
-
 }

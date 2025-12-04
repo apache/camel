@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -44,8 +45,12 @@ public class OutgoingGameMessage extends OutgoingMessage {
      *                            ‘Play game_title’ button will be shown. If not empty, the first button must launch the
      *                            game.
      */
-    public OutgoingGameMessage(String chatId, Long replyToMessageId, String gameShortName,
-                               Boolean disableNotification, InlineKeyboardMarkup replyMarkup) {
+    public OutgoingGameMessage(
+            String chatId,
+            Long replyToMessageId,
+            String gameShortName,
+            Boolean disableNotification,
+            InlineKeyboardMarkup replyMarkup) {
         super.setChatId(chatId);
         super.setReplyToMessageId(replyToMessageId);
         super.setDisableNotification(disableNotification);
@@ -54,8 +59,7 @@ public class OutgoingGameMessage extends OutgoingMessage {
         this.replyMarkup = replyMarkup;
     }
 
-    public OutgoingGameMessage() {
-    }
+    public OutgoingGameMessage() {}
 
     public void setGameShortName(String gameShortName) {
         this.gameShortName = gameShortName;
@@ -76,11 +80,11 @@ public class OutgoingGameMessage extends OutgoingMessage {
     @Override
     public String toString() {
         return "OutgoingSendGameMessage{"
-               + "gameShortName='" + gameShortName + '\''
-               + ", replyMarkup=" + replyMarkup
-               + ", chatId='" + chatId + '\''
-               + ", disableNotification=" + disableNotification
-               + ", replyToMessageId=" + replyToMessageId
-               + '}';
+                + "gameShortName='" + gameShortName + '\''
+                + ", replyMarkup=" + replyMarkup
+                + ", chatId='" + chatId + '\''
+                + ", disableNotification=" + disableNotification
+                + ", replyToMessageId=" + replyToMessageId
+                + '}';
     }
 }

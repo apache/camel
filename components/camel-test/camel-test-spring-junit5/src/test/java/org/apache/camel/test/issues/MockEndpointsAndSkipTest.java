@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.issues;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,5 +43,4 @@ public class MockEndpointsAndSkipTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

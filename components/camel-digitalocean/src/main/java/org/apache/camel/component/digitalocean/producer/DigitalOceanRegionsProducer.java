@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import com.myjeeva.digitalocean.pojo.Regions;
@@ -36,5 +37,4 @@ public class DigitalOceanRegionsProducer extends DigitalOceanProducer {
         LOG.trace("All Regions : page {} [{}] ", regions.getRegions(), configuration.getPage());
         exchange.getMessage().setBody(regions.getRegions());
     }
-
 }

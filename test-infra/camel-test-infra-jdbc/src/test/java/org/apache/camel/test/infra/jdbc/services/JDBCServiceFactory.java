@@ -21,17 +21,13 @@ import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class JDBCServiceFactory {
 
-    private JDBCServiceFactory() {
-
-    }
+    private JDBCServiceFactory() {}
 
     public static SimpleTestServiceBuilder<JDBCService> builder() {
         return new SimpleTestServiceBuilder<>("jdbc");
     }
 
     public static JDBCService createService() {
-        return builder()
-                .addRemoteMapping(JDBCRemoteService::new)
-                .build();
+        return builder().addRemoteMapping(JDBCRemoteService::new).build();
     }
 }

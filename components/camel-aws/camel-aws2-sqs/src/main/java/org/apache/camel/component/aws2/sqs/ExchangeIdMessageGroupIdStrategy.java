@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
 
 import org.apache.camel.Exchange;
@@ -24,5 +25,4 @@ public class ExchangeIdMessageGroupIdStrategy implements MessageGroupIdStrategy 
     public String getMessageGroupId(Exchange exchange) {
         return exchange.getExchangeId();
     }
-
 }

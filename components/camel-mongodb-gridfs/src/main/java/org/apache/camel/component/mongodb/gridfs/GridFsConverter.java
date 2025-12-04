@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.gridfs;
 
 import com.mongodb.ReadPreference;
@@ -24,8 +25,7 @@ import org.apache.camel.Exchange;
 @Converter(generateLoader = true)
 public final class GridFsConverter {
 
-    private GridFsConverter() {
-    }
+    private GridFsConverter() {}
 
     @Converter
     public static WriteConcern toWriteConcern(String value, Exchange exchange) {

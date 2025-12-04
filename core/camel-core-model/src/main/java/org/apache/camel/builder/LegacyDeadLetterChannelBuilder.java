@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.Endpoint;
@@ -29,7 +30,8 @@ import org.slf4j.LoggerFactory;
  * Legacy error handler for XML DSL in camel-spring-xml
  */
 @Deprecated(since = "3.17.0")
-public class LegacyDeadLetterChannelBuilder extends LegacyDefaultErrorHandlerBuilder implements DeadLetterChannelProperties {
+public class LegacyDeadLetterChannelBuilder extends LegacyDefaultErrorHandlerBuilder
+        implements DeadLetterChannelProperties {
 
     public LegacyDeadLetterChannelBuilder() {
         // no-arg constructor used by Spring DSL

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
 
 import java.math.BigInteger;
@@ -34,8 +35,7 @@ public final class ObjectConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private ObjectConverter() {
-    }
+    private ObjectConverter() {}
 
     /**
      * Converts the given value to a boolean, handling strings or Boolean objects; otherwise returning false if the
@@ -45,7 +45,8 @@ public final class ObjectConverter {
     public static boolean toBool(Object value) {
         Boolean answer = toBoolean(value);
         if (answer == null) {
-            throw new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean");
+            throw new IllegalArgumentException(
+                    "Cannot convert type: " + value.getClass().getName() + " to boolean");
         }
         return answer;
     }
@@ -348,5 +349,4 @@ public final class ObjectConverter {
         String str = new String(value, ExchangeHelper.getCharset(exchange));
         return toNumber(str);
     }
-
 }

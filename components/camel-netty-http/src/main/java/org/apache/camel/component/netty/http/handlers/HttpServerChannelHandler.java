@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.handlers;
+
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
+import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
+import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
@@ -55,12 +62,6 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
-import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
-import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
 /**
  * Netty HTTP {@link ServerChannelHandler} that handles the incoming HTTP requests and routes the received message in
  * Camel.
@@ -93,7 +94,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         DecoderResult decoderResult = request.decoderResult();
         if (decoderResult != null && decoderResult.cause() != null) {
             if (getConsumer().getConfiguration().isLogWarnOnBadRequest()) {
-                LOG.warn("Netty request decoder failure due: {} returning HTTP Status 400 to client",
+                LOG.warn(
+                        "Netty request decoder failure due: {} returning HTTP Status 400 to client",
                         decoderResult.cause().getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Netty request decoder failure (stacktrace)", decoderResult.cause());
@@ -119,7 +121,9 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
-                && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.method().name())) {
+                && !consumer.getEndpoint()
+                        .getHttpMethodRestrict()
+                        .contains(request.method().name())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
@@ -138,7 +142,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         // must include HOST header as required by HTTP 1.1
         if (!request.headers().contains(HttpHeaderNames.HOST.toString())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
-            //response.setChunked(false);
+            // response.setChunked(false);
             response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
@@ -163,7 +167,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             // is it a restricted resource?
             String roles;
             if (security.getSecurityConstraint() != null) {
-                // if restricted returns null, then the resource is not restricted and we should not authenticate the user
+                // if restricted returns null, then the resource is not restricted and we should not authenticate the
+                // user
                 roles = security.getSecurityConstraint().restricted(target);
             } else {
                 // assume any roles is valid if no security constraint has been configured
@@ -177,8 +182,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                 Subject subject = null;
                 boolean inRole = true;
                 if (principal != null) {
-                    subject = authenticate(security.getSecurityAuthenticator(), security.getLoginDeniedLoggingLevel(),
-                            principal);
+                    subject = authenticate(
+                            security.getSecurityAuthenticator(), security.getLoginDeniedLoggingLevel(), principal);
                     if (subject != null) {
                         String userRoles = security.getSecurityAuthenticator().getUserRoles(subject);
                         inRole = matchesRoles(roles, userRoles);
@@ -341,7 +346,9 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected Object getResponseBody(Exchange exchange) throws Exception {
-        return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getMessage(), consumer.getConfiguration());
+        return consumer.getEndpoint()
+                .getNettyHttpBinding()
+                .toNettyResponse(exchange.getMessage(), consumer.getConfiguration());
     }
 
     @Override
@@ -352,10 +359,14 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         Message in;
         if (message instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) message;
-            in = consumer.getEndpoint().getNettyHttpBinding().toCamelMessage(request, exchange, consumer.getConfiguration());
+            in = consumer.getEndpoint()
+                    .getNettyHttpBinding()
+                    .toCamelMessage(request, exchange, consumer.getConfiguration());
         } else {
             InboundStreamHttpRequest request = (InboundStreamHttpRequest) message;
-            in = consumer.getEndpoint().getNettyHttpBinding().toCamelMessage(request, exchange, consumer.getConfiguration());
+            in = consumer.getEndpoint()
+                    .getNettyHttpBinding()
+                    .toCamelMessage(request, exchange, consumer.getConfiguration());
         }
         exchange.setIn(in);
 

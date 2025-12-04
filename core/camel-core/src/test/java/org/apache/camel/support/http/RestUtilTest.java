@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.http;
 
 import org.junit.jupiter.api.Assertions;
@@ -29,22 +30,36 @@ public class RestUtilTest {
 
         Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml"));
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/json"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/json,application/xml"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/json, application/xml"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml,application/json"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml, application/json"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml,application/json"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml, application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json", "application/json,application/xml"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json", "application/json, application/xml"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json", "application/xml,application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json", "application/xml, application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json", "application/xml,application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json", "application/xml, application/json"));
 
         Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/xml", "application/json"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/xml", "application/json,application/xml"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/xml", "application/json, application/xml"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/xml", "application/xml,application/json"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/xml", "application/xml, application/json"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/xml", "application/xml,application/json"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/xml", "application/xml, application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/xml", "application/json,application/xml"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/xml", "application/json, application/xml"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/xml", "application/xml,application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/xml", "application/xml, application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/xml", "application/xml,application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/xml", "application/xml, application/json"));
 
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json,application/xml", "application/json"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json,application/xml", "application/xml"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json,application/xml", "application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json,application/xml", "application/xml"));
     }
 }

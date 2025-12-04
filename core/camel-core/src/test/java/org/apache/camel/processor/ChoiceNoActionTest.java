@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,10 +45,12 @@ public class ChoiceNoActionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice().when(body().isEqualTo("Hello World")).to("mock:world");
+                from("direct:start")
+                        .choice()
+                        .when(body().isEqualTo("Hello World"))
+                        .to("mock:world");
                 // other kind of messages take no action
             }
         };
     }
-
 }

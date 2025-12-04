@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Collection;
@@ -48,5 +49,4 @@ public interface ExtendedRoutesBuilderLoader extends RoutesBuilderLoader {
      * @return           a set of loaded {@link RoutesBuilder}s
      */
     Collection<RoutesBuilder> loadRoutesBuilders(Collection<Resource> resources) throws Exception;
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MDCWireTapCustomKeysTest extends ContextTestSupport {
 
@@ -52,7 +53,8 @@ public class MDCWireTapCustomKeysTest extends ContextTestSupport {
 
                 MdcCheckerProcessor checker = new MdcCheckerProcessor();
 
-                from("direct:a").routeId("route-async")
+                from("direct:a")
+                        .routeId("route-async")
                         .process(e -> {
                             // custom is propagated
                             MDC.put("custom.hello", "World");
@@ -61,14 +63,12 @@ public class MDCWireTapCustomKeysTest extends ContextTestSupport {
                             // myKey is propagated
                             MDC.put("myKey", "Baz");
                         })
-                        //.process(checker)
+                        // .process(checker)
                         .to("log:foo")
                         .wireTap("direct:tap")
                         .to("mock:a");
 
-                from("direct:tap").routeId("tap-route")
-                        .process(checker)
-                        .to("mock:end");
+                from("direct:tap").routeId("tap-route").process(checker).to("mock:end");
             }
         };
     }
@@ -137,8 +137,6 @@ public class MDCWireTapCustomKeysTest extends ContextTestSupport {
                 contextId = MDC.get("camel.contextId");
                 assertTrue(contextId != null && !contextId.isEmpty());
             }
-
         }
     }
-
 }

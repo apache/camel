@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -44,8 +45,12 @@ import org.apache.velocity.VelocityContext;
 /**
  * Generates Camel Component based on a collection of APIs.
  */
-@Mojo(name = "fromApis", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
-      defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
+@Mojo(
+        name = "fromApis",
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        requiresProject = true,
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+        threadSafe = true)
 public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
@@ -118,8 +123,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                 .toString();
         Instant newDate;
         try (Stream<File> stream = Stream.of(this.generatedSrcDir, generatedTestDir)) {
-            newDate = stream
-                    .map(File::toPath)
+            newDate = stream.map(File::toPath)
                     .flatMap(this::walk)
                     .filter(Files::isRegularFile)
                     .map(this::lastModified)
@@ -128,9 +132,14 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         }
 
         List<String> cache = readCacheFile();
-        String prevHash = cache.stream().filter(s -> s.startsWith("hash=")).findFirst()
-                .map(s -> s.substring("hash=".length())).orElse(null);
-        Instant prevDate = cache.stream().filter(s -> s.startsWith("date=")).findFirst()
+        String prevHash = cache.stream()
+                .filter(s -> s.startsWith("hash="))
+                .findFirst()
+                .map(s -> s.substring("hash=".length()))
+                .orElse(null);
+        Instant prevDate = cache.stream()
+                .filter(s -> s.startsWith("date="))
+                .findFirst()
                 .map(s -> s.substring("date=".length()))
                 .map(Instant::parse)
                 .orElse(Instant.ofEpochSecond(0));
@@ -154,7 +163,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                 // configure API method properties and generate Proxy classes
                 configureMethodGenerator(apiMethodGenerator, api);
                 try {
-                    apiMethodGenerator.setProjectClassLoader(getProjectClassLoader()); // supply pre-constructed ClassLoader
+                    apiMethodGenerator.setProjectClassLoader(
+                            getProjectClassLoader()); // supply pre-constructed ClassLoader
                     apiMethodGenerator.executeInternal(); // Call internal execute method
                 } catch (Exception e) {
                     final String msg = "Error generating source for " + api.getProxyClass() + ": " + e.getMessage();
@@ -172,8 +182,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                 }
                 if (!found) {
                     throw new MojoExecutionException(
-                            "Missing one of fromSignatureFile or fromJavadoc for "
-                                                     + proxyClass);
+                            "Missing one of fromSignatureFile or fromJavadoc for " + proxyClass);
                 }
             }
 
@@ -195,18 +204,15 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         mergeTemplate(getApiContext(), getApiNameFile(), "/api-name-enum.vm");
 
         try (Stream<File> stream = Stream.of(this.generatedSrcDir, generatedTestDir)) {
-            newDate = stream
-                    .map(File::toPath)
+            newDate = stream.map(File::toPath)
                     .flatMap(this::walk)
                     .filter(Files::isRegularFile)
                     .map(this::lastModified)
                     .max(Comparator.naturalOrder())
                     .orElse(Instant.now());
         }
-        writeCacheFile(Arrays.asList(
-                "# ApiComponentGenerator cache file",
-                "hash=" + newHash,
-                "date=" + newDate.toString()));
+        writeCacheFile(
+                Arrays.asList("# ApiComponentGenerator cache file", "hash=" + newHash, "date=" + newDate.toString()));
     }
 
     private Instant lastModified(Path path) {
@@ -240,14 +246,12 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         mojo.addCompileSourceRoots = addCompileSourceRoots;
 
         // set AbstractAPIMethodBaseMojo properties
-        mojo.substitutions = apiProxy.getSubstitutions().length != 0
-                ? apiProxy.getSubstitutions() : substitutions;
-        mojo.excludeConfigNames = apiProxy.getExcludeConfigNames() != null
-                ? apiProxy.getExcludeConfigNames() : excludeConfigNames;
-        mojo.excludeConfigTypes = apiProxy.getExcludeConfigTypes() != null
-                ? apiProxy.getExcludeConfigTypes() : excludeConfigTypes;
-        mojo.extraOptions = apiProxy.getExtraOptions() != null
-                ? apiProxy.getExtraOptions() : extraOptions;
+        mojo.substitutions = apiProxy.getSubstitutions().length != 0 ? apiProxy.getSubstitutions() : substitutions;
+        mojo.excludeConfigNames =
+                apiProxy.getExcludeConfigNames() != null ? apiProxy.getExcludeConfigNames() : excludeConfigNames;
+        mojo.excludeConfigTypes =
+                apiProxy.getExcludeConfigTypes() != null ? apiProxy.getExcludeConfigTypes() : excludeConfigTypes;
+        mojo.extraOptions = apiProxy.getExtraOptions() != null ? apiProxy.getExtraOptions() : extraOptions;
 
         // set AbstractAPIMethodGeneratorMojo properties
         mojo.proxyClass = apiProxy.getProxyClass();
@@ -265,17 +269,23 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         if (apiFromJavasource != null) {
             final JavaSourceApiMethodGeneratorMojo mojo = new JavaSourceApiMethodGeneratorMojo();
             mojo.excludePackages = apiFromJavasource.getExcludePackages() != null
-                    ? apiFromJavasource.getExcludePackages() : fromJavasource.getExcludePackages();
+                    ? apiFromJavasource.getExcludePackages()
+                    : fromJavasource.getExcludePackages();
             mojo.excludeClasses = apiFromJavasource.getExcludeClasses() != null
-                    ? apiFromJavasource.getExcludeClasses() : fromJavasource.getExcludeClasses();
+                    ? apiFromJavasource.getExcludeClasses()
+                    : fromJavasource.getExcludeClasses();
             mojo.includeMethods = apiFromJavasource.getIncludeMethods() != null
-                    ? apiFromJavasource.getIncludeMethods() : fromJavasource.getIncludeMethods();
+                    ? apiFromJavasource.getIncludeMethods()
+                    : fromJavasource.getIncludeMethods();
             mojo.excludeMethods = apiFromJavasource.getExcludeMethods() != null
-                    ? apiFromJavasource.getExcludeMethods() : fromJavasource.getExcludeMethods();
+                    ? apiFromJavasource.getExcludeMethods()
+                    : fromJavasource.getExcludeMethods();
             mojo.includeStaticMethods = apiFromJavasource.getIncludeStaticMethods() != null
-                    ? apiFromJavasource.getIncludeStaticMethods() : fromJavasource.getIncludeStaticMethods();
+                    ? apiFromJavasource.getIncludeStaticMethods()
+                    : fromJavasource.getIncludeStaticMethods();
             mojo.includeSetters = apiFromJavasource.getIncludeSetters() != null
-                    ? apiFromJavasource.getIncludeSetters() : fromJavasource.getIncludeSetters();
+                    ? apiFromJavasource.getIncludeSetters()
+                    : fromJavasource.getIncludeSetters();
             mojo.aliases = api.getAliases().isEmpty() ? aliases : api.getAliases();
             mojo.nullableOptions = api.getNullableOptions() != null ? api.getNullableOptions() : nullableOptions;
             apiMethodGenerator = mojo;
@@ -317,7 +327,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     private StringBuilder getFileBuilder() {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(outPackage.replace(".", Matcher.quoteReplacement(File.separator)))
+                .append(File.separator);
         return fileName;
     }
 
@@ -329,7 +340,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     public static String getApiMethod(String proxyClass, String classPrefix) {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
-        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
+                + "ApiMethod";
     }
 
     /*
@@ -341,7 +353,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
-               + "EndpointConfiguration";
+                + "EndpointConfiguration";
     }
 
     private static String getProxyClassWithCanonicalName(String proxyClass) {
@@ -414,7 +426,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
             }
         } else if (!this.cachedir.isDirectory()) {
             log.warn("Something strange here as the '" + this.cachedir
-                     + "' supposedly cache directory is not a directory.");
+                    + "' supposedly cache directory is not a directory.");
             return Collections.emptyList();
         }
 
@@ -430,5 +442,4 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
             return Collections.emptyList();
         }
     }
-
 }

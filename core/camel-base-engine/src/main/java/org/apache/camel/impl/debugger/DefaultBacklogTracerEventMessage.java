@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.debugger;
+
+import static org.apache.camel.support.MessageHelper.dumpExceptionAsJSonObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Map;
@@ -28,8 +31,6 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsonable;
 import org.apache.camel.util.json.Jsoner;
-
-import static org.apache.camel.support.MessageHelper.dumpExceptionAsJSonObject;
 
 /**
  * An event message holding the traced message by the {@link BacklogTracer}.
@@ -71,12 +72,26 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private long duration;
     private boolean done;
 
-    public DefaultBacklogTracerEventMessage(CamelContext camelContext, boolean first, boolean last, long uid, long timestamp,
-                                            String location, String routeId, String toNode, String toNodeParentId,
-                                            String toNodeParentWhenId, String toNodeParentWhenLabel,
-                                            String toNodeShortName, String toNodeLabel, int toNodeLevel, String exchangeId,
-                                            String correlationExchangeId,
-                                            boolean rest, boolean template, JsonObject data) {
+    public DefaultBacklogTracerEventMessage(
+            CamelContext camelContext,
+            boolean first,
+            boolean last,
+            long uid,
+            long timestamp,
+            String location,
+            String routeId,
+            String toNode,
+            String toNodeParentId,
+            String toNodeParentWhenId,
+            String toNodeParentWhenLabel,
+            String toNodeShortName,
+            String toNodeLabel,
+            int toNodeLevel,
+            String exchangeId,
+            String correlationExchangeId,
+            boolean rest,
+            boolean template,
+            JsonObject data) {
         this.camelContext = camelContext;
         this.watch = new StopWatch();
         this.first = first;
@@ -343,17 +358,26 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         String ts = new SimpleDateFormat(TIMESTAMP_FORMAT).format(timestamp);
         sb.append(prefix).append("  <timestamp>").append(ts).append("</timestamp>\n");
         sb.append(prefix).append("  <elapsed>").append(getElapsed()).append("</elapsed>\n");
-        sb.append(prefix).append("  <threadName>").append(getProcessingThreadName()).append("</threadName>\n");
+        sb.append(prefix)
+                .append("  <threadName>")
+                .append(getProcessingThreadName())
+                .append("</threadName>\n");
         sb.append(prefix).append("  <done>").append(isDone()).append("</done>\n");
         sb.append(prefix).append("  <failed>").append(isFailed()).append("</failed>\n");
         if (getLocation() != null) {
             sb.append(prefix).append("  <location>").append(getLocation()).append("</location>\n");
         }
         // route id is optional and we then use an empty value for no route id
-        sb.append(prefix).append("  <routeId>").append(routeId != null ? routeId : "").append("</routeId>\n");
+        sb.append(prefix)
+                .append("  <routeId>")
+                .append(routeId != null ? routeId : "")
+                .append("</routeId>\n");
         if (endpointUri != null) {
             sb.append(prefix).append("  <endpointUri>").append(endpointUri).append("</endpointUri>\n");
-            sb.append(prefix).append("  <remoteEndpoint>").append(remoteEndpoint).append("</remoteEndpoint>\n");
+            sb.append(prefix)
+                    .append("  <remoteEndpoint>")
+                    .append(remoteEndpoint)
+                    .append("</remoteEndpoint>\n");
         }
         if (toNode != null) {
             sb.append(prefix).append("  <toNode>").append(toNode).append("</toNode>\n");
@@ -364,15 +388,27 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         sb.append(prefix).append("  <exchangeId>").append(exchangeId).append("</exchangeId>\n");
         if (endpointServiceUrl != null) {
             sb.append(prefix).append("  <endpointService>\n");
-            sb.append(prefix).append("    <serviceUrl>").append(endpointServiceUrl).append("</serviceUrl>\n");
+            sb.append(prefix)
+                    .append("    <serviceUrl>")
+                    .append(endpointServiceUrl)
+                    .append("</serviceUrl>\n");
             if (endpointServiceProtocol != null) {
-                sb.append(prefix).append("    <serviceProtocol>").append(endpointServiceProtocol)
+                sb.append(prefix)
+                        .append("    <serviceProtocol>")
+                        .append(endpointServiceProtocol)
                         .append("</serviceProtocol>\n");
             }
             if (endpointServiceMetadata != null) {
                 sb.append(prefix).append("    <serviceMetadata>\n");
                 endpointServiceMetadata.forEach((k, v) -> {
-                    sb.append(prefix).append("      <").append(k).append(">").append(v).append("</").append(k).append(">\n");
+                    sb.append(prefix)
+                            .append("      <")
+                            .append(k)
+                            .append(">")
+                            .append(v)
+                            .append("</")
+                            .append(k)
+                            .append(">\n");
                 });
                 sb.append(prefix).append("    </serviceMetadata>\n");
             }
@@ -395,10 +431,15 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
         // include exchangeId/exchangePattern/type as attribute on the <message> tag
         sb.append(prefix);
-        sb.append("<message exchangeId=\"").append(root.getString("exchangeId"))
-                .append("\" exchangePattern=\"").append(root.getString("exchangePattern"))
-                .append("\" exchangeType=\"").append(root.getString("exchangeType"))
-                .append("\" messageType=\"").append(root.getString("messageType")).append("\">\n");
+        sb.append("<message exchangeId=\"")
+                .append(root.getString("exchangeId"))
+                .append("\" exchangePattern=\"")
+                .append(root.getString("exchangePattern"))
+                .append("\" exchangeType=\"")
+                .append(root.getString("exchangeType"))
+                .append("\" messageType=\"")
+                .append(root.getString("messageType"))
+                .append("\">\n");
 
         // exchange variables
         JsonArray arr = root.getCollection("exchangeVariables");
@@ -408,7 +449,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             for (var entry : arr) {
                 JsonObject jo = (JsonObject) entry;
                 sb.append(prefix);
-                sb.append("    <exchangeVariable key=\"").append(jo.getString("key")).append("\"");
+                sb.append("    <exchangeVariable key=\"")
+                        .append(jo.getString("key"))
+                        .append("\"");
                 String type = jo.getString("type");
                 if (type != null) {
                     sb.append(" type=\"").append(type).append("\"");
@@ -437,7 +480,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             for (var entry : arr) {
                 JsonObject jo = (JsonObject) entry;
                 sb.append(prefix);
-                sb.append("    <exchangeProperty key=\"").append(jo.getString("key")).append("\"");
+                sb.append("    <exchangeProperty key=\"")
+                        .append(jo.getString("key"))
+                        .append("\"");
                 String type = jo.getString("type");
                 if (type != null) {
                     sb.append(" type=\"").append(type).append("\"");

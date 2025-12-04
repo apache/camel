@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -37,7 +38,8 @@ public class MinaVMFileTcpTest extends BaseMinaTest {
 
             public void configure() {
                 // lets setup a server
-                fromF("mina:vm://localhost:%1$s?sync=false&textline=true", getPort()).to("mock:results");
+                fromF("mina:vm://localhost:%1$s?sync=false&textline=true", getPort())
+                        .to("mock:results");
 
                 from("file:src/test/data?noop=true&fileName=message1.txt")
                         .toF("mina:vm://localhost:%1$s?sync=false&textline=true", getPort());

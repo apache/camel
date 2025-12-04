@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,8 +32,6 @@ import com.box.sdk.EmailAlias;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to manage Box users.
@@ -64,8 +65,7 @@ public class BoxUsersManager {
 
             return BoxUser.getCurrentUser(boxConnection);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -96,8 +96,7 @@ public class BoxUsersManager {
             }
             return users;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -117,13 +116,13 @@ public class BoxUsersManager {
             BoxHelper.notNull(name, BoxHelper.NAME);
 
             if (params != null) {
-                return BoxUser.createEnterpriseUser(boxConnection, login, name, params).getResource();
+                return BoxUser.createEnterpriseUser(boxConnection, login, name, params)
+                        .getResource();
             } else {
                 return BoxUser.createEnterpriseUser(boxConnection, login, name).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -145,8 +144,7 @@ public class BoxUsersManager {
                 return BoxUser.createAppUser(boxConnection, name).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -165,8 +163,7 @@ public class BoxUsersManager {
 
             return user.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -187,8 +184,7 @@ public class BoxUsersManager {
             user.updateInfo(info);
             return user;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -207,8 +203,7 @@ public class BoxUsersManager {
             BoxUser file = new BoxUser(boxConnection, userId);
             file.delete(notifyUser, force);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -229,8 +224,7 @@ public class BoxUsersManager {
 
             return user.addEmailAlias(email);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -249,8 +243,7 @@ public class BoxUsersManager {
 
             return user.getEmailAliases();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -270,8 +263,7 @@ public class BoxUsersManager {
 
             user.deleteEmailAlias(emailAliasId);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -292,8 +284,7 @@ public class BoxUsersManager {
 
             return user.transferContent(userId);
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.ArrayList;
@@ -40,12 +41,16 @@ public class MainAddDynamicRouteTest {
                 @Override
                 public void configure() {
                     from("timer:one?repeatCount=1")
-                            .setBody().simple("{{prop}}").bean(lines, "add")
+                            .setBody()
+                            .simple("{{prop}}")
+                            .bean(lines, "add")
                             .process(e -> e.getContext().addRoutes(new RouteBuilder() {
                                 @Override
                                 public void configure() {
                                     from("timer:two?repeatCount=1")
-                                            .setBody().simple("{{prop}}").bean(lines, "add");
+                                            .setBody()
+                                            .simple("{{prop}}")
+                                            .bean(lines, "add");
                                 }
                             }));
                 }

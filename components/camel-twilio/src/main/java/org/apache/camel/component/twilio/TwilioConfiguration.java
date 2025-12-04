@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.RuntimeCamelException;
@@ -33,6 +34,7 @@ public class TwilioConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private TwilioApiName apiName;
+
     @UriPath(enums = "create,delete,fetch,read,update")
     @Metadata(required = true)
     private String methodName;

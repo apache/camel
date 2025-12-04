@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx;
 
 import java.util.Map;
@@ -42,19 +43,23 @@ public class VertxComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private VertxBuilder vertxFactory;
+
     @Metadata(autowired = true)
     private Vertx vertx;
+
     @Metadata
     private String host;
+
     @Metadata
     private int port;
+
     @Metadata(defaultValue = "60")
     private int timeout = 60;
+
     @Metadata
     private VertxOptions vertxOptions;
 
-    public VertxComponent() {
-    }
+    public VertxComponent() {}
 
     public VertxComponent(CamelContext context) {
         super(context);
@@ -166,13 +171,19 @@ public class VertxComponent extends DefaultComponent {
 
             // lets using a host / port if a host name is specified
             if (clustered) {
-                LOG.info("Creating Clustered Vertx {}:{}", vertxOptions.getEventBusOptions().getHost(),
+                LOG.info(
+                        "Creating Clustered Vertx {}:{}",
+                        vertxOptions.getEventBusOptions().getHost(),
                         vertxOptions.getEventBusOptions().getPort());
                 // use the async api as we want to wait for the eventbus to be ready before we are in started state
                 vertxFactory.clusteredVertx((AsyncResult<Vertx> event) -> {
                     if (event.cause() != null) {
-                        LOG.warn("Error creating Clustered Vertx {}:{} due {}", host, port,
-                                event.cause().getMessage(), event.cause());
+                        LOG.warn(
+                                "Error creating Clustered Vertx {}:{} due {}",
+                                host,
+                                port,
+                                event.cause().getMessage(),
+                                event.cause());
                     } else if (event.succeeded()) {
                         vertx = event.result();
                         LOG.info("EventBus is ready: {}", vertx);

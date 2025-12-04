@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 /**
-*
-*/
+ *
+ */
 public final class MyStaticClass {
 
-    private MyStaticClass() {
-    }
+    private MyStaticClass() {}
 
     public static String changeSomething(String s) {
         if ("Hello World".equals(s)) {
@@ -38,5 +38,4 @@ public final class MyStaticClass {
     public void doSomething() {
         // noop
     }
-
 }

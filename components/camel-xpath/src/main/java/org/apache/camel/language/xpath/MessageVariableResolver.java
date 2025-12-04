@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xpath;
+
+import static org.apache.camel.support.builder.Namespaces.ENVIRONMENT_VARIABLES;
+import static org.apache.camel.support.builder.Namespaces.EXCHANGE_PROPERTY;
+import static org.apache.camel.support.builder.Namespaces.IN_NAMESPACE;
+import static org.apache.camel.support.builder.Namespaces.OUT_NAMESPACE;
+import static org.apache.camel.support.builder.Namespaces.SYSTEM_PROPERTIES_NAMESPACE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +33,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.builder.Namespaces.ENVIRONMENT_VARIABLES;
-import static org.apache.camel.support.builder.Namespaces.EXCHANGE_PROPERTY;
-import static org.apache.camel.support.builder.Namespaces.IN_NAMESPACE;
-import static org.apache.camel.support.builder.Namespaces.OUT_NAMESPACE;
-import static org.apache.camel.support.builder.Namespaces.SYSTEM_PROPERTIES_NAMESPACE;
 
 /**
  * A variable resolver for XPath expressions which support properties on the message, exchange as well as making system
@@ -70,7 +71,8 @@ public class MessageVariableResolver implements XPathVariableResolver {
             try {
                 answer = System.getProperty(localPart);
             } catch (Exception e) {
-                LOG.debug("Security exception evaluating system property: {}. Reason: {}", localPart, e.getMessage(), e);
+                LOG.debug(
+                        "Security exception evaluating system property: {}. Reason: {}", localPart, e.getMessage(), e);
             }
         } else if (uri.equals(ENVIRONMENT_VARIABLES)) {
             answer = System.getenv().get(localPart);

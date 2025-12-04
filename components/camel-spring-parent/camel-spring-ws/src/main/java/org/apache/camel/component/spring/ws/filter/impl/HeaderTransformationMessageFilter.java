@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.filter.impl;
 
 import java.util.Map;
@@ -90,7 +91,9 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
 
                 addParameters(inOrOut, transformer);
 
-                transformer.transform(soapMessage.getSoapHeader().getSource(), soapMessage.getSoapHeader().getResult());
+                transformer.transform(
+                        soapMessage.getSoapHeader().getSource(),
+                        soapMessage.getSoapHeader().getResult());
             } catch (TransformerException e) {
                 throw new RuntimeException("Cannot transform the header of the soap message", e);
             }
@@ -180,7 +183,8 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
         final ClassResolver resolver = context.getClassResolver();
         try {
             Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(
-                    SAXON_TRANSFORMER_FACTORY_CLASS_NAME, TransformerFactory.class,
+                    SAXON_TRANSFORMER_FACTORY_CLASS_NAME,
+                    TransformerFactory.class,
                     XsltSaxonComponent.class.getClassLoader());
 
             if (factoryClass != null) {
@@ -209,5 +213,4 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
     public void setSaxon(boolean saxon) {
         this.saxon = saxon;
     }
-
 }

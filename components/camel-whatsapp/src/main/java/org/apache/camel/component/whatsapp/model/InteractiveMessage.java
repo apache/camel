@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 public class InteractiveMessage {
@@ -27,9 +28,7 @@ public class InteractiveMessage {
      */
     private String type;
 
-    public InteractiveMessage() {
-
-    }
+    public InteractiveMessage() {}
 
     public Action getAction() {
         return action;

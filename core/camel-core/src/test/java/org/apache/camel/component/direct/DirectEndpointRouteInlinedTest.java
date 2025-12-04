@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.direct;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
 
@@ -49,7 +50,8 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
     @Test
     public void testDirectExistingExists() {
 
-        FailedToStartRouteException e = assertThrows(FailedToStartRouteException.class,
+        FailedToStartRouteException e = assertThrows(
+                FailedToStartRouteException.class,
                 () -> {
                     context.addRoutes(new RouteBuilder() {
                         @Override
@@ -59,10 +61,12 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
                             from("direct:start").to("mock:bar");
                         }
                     });
-                }, "Should have thrown exception");
+                },
+                "Should have thrown exception");
 
-        assertTrue(e.getMessage().matches(
-                "Failed to start route: route[0-9]+ because: Multiple consumers for the same endpoint is not allowed: direct://start"));
+        assertTrue(
+                e.getMessage()
+                        .matches(
+                                "Failed to start route: route[0-9]+ because: Multiple consumers for the same endpoint is not allowed: direct://start"));
     }
-
 }

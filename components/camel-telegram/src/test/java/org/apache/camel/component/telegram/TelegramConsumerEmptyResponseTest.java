@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,8 +31,6 @@ import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 /**
  * Test the empty responses.
  */
@@ -41,8 +42,13 @@ public class TelegramConsumerEmptyResponseTest extends TelegramTestSupport {
     @Test
     public void testBehaviourWithEmptyUpdates() {
         /* First make sure the message containing zero updates was sent by the API */
-        Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .until(() -> getMockRoutes().getMock("getUpdates").getRecordedMessages().size() >= 1);
+        Awaitility.await()
+                .atMost(5, TimeUnit.SECONDS)
+                .until(() -> getMockRoutes()
+                                .getMock("getUpdates")
+                                .getRecordedMessages()
+                                .size()
+                        >= 1);
 
         endpoint.setResultWaitTime(500L);
         endpoint.expectedMinimumMessageCount(1);
@@ -56,13 +62,14 @@ public class TelegramConsumerEmptyResponseTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override
@@ -74,5 +81,4 @@ public class TelegramConsumerEmptyResponseTest extends TelegramTestSupport {
                         String.class,
                         TelegramTestUtil.stringResource("messages/updates-empty.json"));
     }
-
 }

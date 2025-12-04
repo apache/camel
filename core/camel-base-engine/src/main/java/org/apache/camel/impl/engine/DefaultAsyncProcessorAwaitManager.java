@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Collection;
@@ -85,7 +86,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     public void await(Exchange exchange, CountDownLatch latch) {
-        ReactiveExecutor reactiveExecutor = exchange.getContext().getCamelContextExtension().getReactiveExecutor();
+        ReactiveExecutor reactiveExecutor =
+                exchange.getContext().getCamelContextExtension().getReactiveExecutor();
         // Early exit for pending reactive queued work
         do {
             if (latch.getCount() <= 0) {
@@ -94,8 +96,10 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         } while (reactiveExecutor.executeFromQueue());
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
+            LOG.trace(
+                    "Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
+                    exchange.getExchangeId(),
+                    exchange);
         }
         try {
             if (statistics.isStatisticsEnabled()) {
@@ -104,16 +108,20 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             inflight.put(exchange, new AwaitThreadEntry(Thread.currentThread(), exchange, latch));
             latch.await();
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
-                        exchange.getExchangeId(), exchange);
+                LOG.trace(
+                        "Asynchronous callback received, will continue routing exchangeId: {} -> {}",
+                        exchange.getExchangeId(),
+                        exchange);
             }
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
-                        exchange.getExchangeId(), exchange);
+                LOG.trace(
+                        "Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
+                        exchange.getExchangeId(),
+                        exchange);
             }
             exchange.setException(e);
         } finally {
@@ -197,7 +205,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                     interruptedCounter.incrementAndGet();
                 }
                 exchange.setException(new RejectedExecutionException(
-                        "Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
+                        "Interrupted while waiting for asynchronous callback for exchangeId: "
+                                + exchange.getExchangeId()));
                 exchange.getExchangeExtension().setInterrupted(true);
                 entry.getLatch().countDown();
             }
@@ -232,12 +241,15 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             }
 
             if (isInterruptThreadsWhileStopping()) {
-                LOG.warn("The following threads are blocked and will be interrupted so the threads are released:\n{}", sb);
+                LOG.warn(
+                        "The following threads are blocked and will be interrupted so the threads are released:\n{}",
+                        sb);
                 for (AwaitThread entry : threads) {
                     try {
                         interrupt(entry.getExchange());
                     } catch (Exception e) {
-                        LOG.warn("Error while interrupting thread: {}. This exception is ignored.",
+                        LOG.warn(
+                                "Error while interrupting thread: {}. This exception is ignored.",
                                 entry.getBlockedThread().getName(),
                                 e);
                     }
@@ -385,9 +397,12 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         public String toString() {
             return String.format(
                     "AsyncProcessAwaitManager utilization[blocked=%s, interrupted=%s, total=%s min=%s, max=%s, mean=%s]",
-                    getThreadsBlocked(), getThreadsInterrupted(), getTotalDuration(), getMinDuration(), getMaxDuration(),
+                    getThreadsBlocked(),
+                    getThreadsInterrupted(),
+                    getTotalDuration(),
+                    getMinDuration(),
+                    getMaxDuration(),
                     getMeanDuration());
         }
     }
-
 }

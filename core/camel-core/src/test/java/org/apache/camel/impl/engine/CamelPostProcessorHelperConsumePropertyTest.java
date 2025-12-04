@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Method;
 
@@ -22,8 +25,6 @@ import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupport {
 
@@ -168,5 +169,4 @@ public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupp
             template.sendBody("mock:result", body);
         }
     }
-
 }

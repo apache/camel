@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.net.URI;
@@ -30,8 +31,7 @@ import org.apache.camel.util.FileUtil;
 
 public final class GitHubHelper {
 
-    private GitHubHelper() {
-    }
+    private GitHubHelper() {}
 
     public static String asGithubSingleUrl(String url) {
         // strip https://github.com/
@@ -56,8 +56,7 @@ public final class GitHubHelper {
     }
 
     private static void doFetchGithubUrls(
-            String url, StringJoiner routes, StringJoiner kamelets, StringJoiner properties,
-            StringJoiner all)
+            String url, StringJoiner routes, StringJoiner kamelets, StringJoiner properties, StringJoiner all)
             throws Exception {
 
         // this is a directory, so we need to query github which files are there and filter them
@@ -100,12 +99,20 @@ public final class GitHubHelper {
     }
 
     private static void resolveGithubAsRawFiles(
-            String url, String wildcard, StringJoiner routes, StringJoiner kamelets, StringJoiner properties, StringJoiner all)
+            String url,
+            String wildcard,
+            StringJoiner routes,
+            StringJoiner kamelets,
+            StringJoiner properties,
+            StringJoiner all)
             throws Exception {
 
         // use JDK http client to call github api
         HttpClient hc = HttpClient.newHttpClient();
-        HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(url)).timeout(Duration.ofSeconds(20)).build(),
+        HttpResponse<String> res = hc.send(
+                HttpRequest.newBuilder(new URI(url))
+                        .timeout(Duration.ofSeconds(20))
+                        .build(),
                 HttpResponse.BodyHandlers.ofString());
 
         if (res.statusCode() == 200) {
@@ -125,8 +132,10 @@ public final class GitHubHelper {
                         String u = asGithubSingleUrl(htmlUrl);
                         properties.add(u);
                     } else if (routes != null) {
-                        if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
-                                || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
+                        if ("java".equalsIgnoreCase(ext)
+                                || "xml".equalsIgnoreCase(ext)
+                                || "yaml".equalsIgnoreCase(ext)
+                                || "camel.yaml".equalsIgnoreCase(ext)) {
                             String htmlUrl = c.get("html_url").asText();
                             String u = asGithubSingleUrl(htmlUrl);
                             routes.add(u);
@@ -140,5 +149,4 @@ public final class GitHubHelper {
             }
         }
     }
-
 }

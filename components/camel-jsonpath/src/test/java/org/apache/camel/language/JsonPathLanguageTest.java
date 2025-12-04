@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.builder.LanguageBuilderFactory;
@@ -22,7 +23,8 @@ import org.apache.camel.model.language.JsonPathExpression;
 /**
  * Ensures that the "jsonpath" language is compliant with the single input / typed language expectations.
  */
-class JsonPathLanguageTest extends AbstractSingleInputTypedLanguageTest<JsonPathExpression.Builder, JsonPathExpression> {
+class JsonPathLanguageTest
+        extends AbstractSingleInputTypedLanguageTest<JsonPathExpression.Builder, JsonPathExpression> {
 
     JsonPathLanguageTest() {
         super("$.foo", LanguageBuilderFactory::jsonpath);

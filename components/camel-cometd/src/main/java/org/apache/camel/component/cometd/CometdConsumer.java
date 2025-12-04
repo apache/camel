@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
 
 import org.apache.camel.Exchange;
@@ -109,14 +110,13 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
                     ServerChannel channel = getBayeux().getChannel(channelName);
                     ServerSession serverSession = getServerSession();
 
-                    ServerMessage.Mutable outMessage = binding.createCometdMessage(channel, serverSession, exchange.getOut());
+                    ServerMessage.Mutable outMessage =
+                            binding.createCometdMessage(channel, serverSession, exchange.getOut());
                     remote.deliver(serverSession, outMessage, Promise.noop());
                 }
             } finally {
                 consumer.releaseExchange(exchange, false);
             }
         }
-
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport.header;
 
 import java.util.List;
@@ -39,5 +40,4 @@ public interface MessageHeaderFilter {
      * @param headers   the origin list of headers
      */
     void filter(Direction direction, List<Header> headers);
-
 }

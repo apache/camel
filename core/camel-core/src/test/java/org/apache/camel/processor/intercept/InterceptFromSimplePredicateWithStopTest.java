@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,7 +41,8 @@ public class InterceptFromSimplePredicateWithStopTest extends ContextTestSupport
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                interceptFrom().onWhen(header("usertype").isEqualTo("test"))
+                interceptFrom()
+                        .onWhen(header("usertype").isEqualTo("test"))
                         // here we use stop() to tell Camel to NOT continue routing
                         // the message.
                         // this let us act as a filter, to drop certain messages.
@@ -52,5 +54,4 @@ public class InterceptFromSimplePredicateWithStopTest extends ContextTestSupport
             }
         };
     }
-
 }

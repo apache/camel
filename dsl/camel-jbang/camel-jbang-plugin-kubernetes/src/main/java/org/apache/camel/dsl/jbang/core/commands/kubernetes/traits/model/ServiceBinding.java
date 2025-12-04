@@ -27,21 +27,19 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "enabled", "services" })
+@JsonPropertyOrder({"enabled", "services"})
 public class ServiceBinding {
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
+
     @JsonProperty("services")
     @JsonPropertyDescription("List of Services in the form [[apigroup/]version:]kind:[namespace/]name")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> services;
 
-    public ServiceBinding() {
-    }
+    public ServiceBinding() {}
 
     public Boolean getEnabled() {
         return this.enabled;

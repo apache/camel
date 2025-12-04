@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -29,10 +34,6 @@ import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledOnOs(OS.AIX)
 public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContextManagedTest {
 
@@ -46,7 +47,8 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
     @Test
     public void testDualCamelContextManaged() throws Exception {
 
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(2, set.size());
@@ -55,9 +57,13 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
         ObjectName on1 = it.next();
         ObjectName on2 = it.next();
 
-        assertTrue(on1.getCanonicalName().contains("route1") || on2.getCanonicalName().contains("route1"),
+        assertTrue(
+                on1.getCanonicalName().contains("route1")
+                        || on2.getCanonicalName().contains("route1"),
                 "Route 1 is missing");
-        assertTrue(on1.getCanonicalName().contains("route2") || on2.getCanonicalName().contains("route2"),
+        assertTrue(
+                on1.getCanonicalName().contains("route2")
+                        || on2.getCanonicalName().contains("route2"),
                 "Route 2 is missing");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
@@ -91,5 +97,4 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
         // should be different Camels
         assertNotEquals(camel1, camel2);
     }
-
 }

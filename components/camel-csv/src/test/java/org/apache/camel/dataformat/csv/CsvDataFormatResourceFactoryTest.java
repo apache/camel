@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CsvDataFormatResourceFactoryTest extends CamelSpringTestSupport {
     @Test
@@ -45,9 +46,7 @@ public class CsvDataFormatResourceFactoryTest extends CamelSpringTestSupport {
     }
 
     private List<List<String>> getData() {
-        return Arrays.asList(
-                Arrays.asList("A1", "B1", "C1"),
-                Arrays.asList("A2", "B2", "C2"));
+        return Arrays.asList(Arrays.asList("A1", "B1", "C1"), Arrays.asList("A2", "B2", "C2"));
     }
 
     @Override

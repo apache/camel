@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 import org.apache.camel.Category;
@@ -29,13 +30,19 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform caching operations against JSR107/JCache.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "jcache", title = "JCache", syntax = "jcache:cacheName",
-             category = { Category.CACHE, Category.CLUSTERING }, headersClass = JCacheConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = "jcache",
+        title = "JCache",
+        syntax = "jcache:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = JCacheConstants.class)
 public class JCacheEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The name of the cache")
     @Metadata(required = true)
     private final String cacheName;
+
     @UriParam
     private final JCacheConfiguration configuration;
 

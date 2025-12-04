@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.testfilters;
 
 import javax.xml.namespace.QName;
@@ -32,5 +33,4 @@ public class LocalMessageFilter extends BasicMessageFilter {
         super.doProcessSoapAttachments(inOrOut, response);
         response.getEnvelope().getHeader().addHeaderElement(new QName("http://virtualCheck/", "localFilter"));
     }
-
 }

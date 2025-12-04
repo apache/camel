@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.io.IOException;
@@ -84,146 +85,234 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
-    @Metadata(label = "advanced",
-              description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
+    @Metadata(
+            label = "advanced",
+            description =
+                    "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
     protected HttpClientConfigurer httpClientConfigurer;
-    @Metadata(label = "advanced", description = "To use a custom and shared HttpClientConnectionManager to manage connections."
-                                                + " If this has been configured then this is always used for all endpoints created by this component.")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "To use a custom and shared HttpClientConnectionManager to manage connections."
+                            + " If this has been configured then this is always used for all endpoints created by this component.")
     protected HttpClientConnectionManager clientConnectionManager;
-    @Metadata(label = "advanced",
-              description = "To use a custom org.apache.hc.core5.http.protocol.HttpContext when executing requests.")
+
+    @Metadata(
+            label = "advanced",
+            description = "To use a custom org.apache.hc.core5.http.protocol.HttpContext when executing requests.")
     protected HttpContext httpContext;
-    @Metadata(label = "security", description = "To configure security using SSLContextParameters."
-                                                + " Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent."
-                                                + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+
+    @Metadata(
+            label = "security",
+            description =
+                    "To configure security using SSLContextParameters."
+                            + " Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent."
+                            + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
     protected SSLContextParameters sslContextParameters;
-    @Metadata(label = "security",
-              description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
+
+    @Metadata(
+            label = "security",
+            description =
+                    "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
-    @Metadata(label = "advanced", defaultValue = "false",
-              description = "To use System Properties as fallback for configuration for configuring HTTP Client")
+
+    @Metadata(
+            label = "advanced",
+            defaultValue = "false",
+            description = "To use System Properties as fallback for configuration for configuring HTTP Client")
     private boolean useSystemProperties;
-    @Metadata(label = "producer,advanced", description = "To use a custom org.apache.hc.client5.http.cookie.CookieStore."
-                                                         + " By default the org.apache.hc.client5.http.cookie.BasicCookieStore is used which is an in-memory only cookie store."
-                                                         + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
-                                                         + " shouldn't be stored as we are just bridging (eg acting as a proxy).")
+
+    @Metadata(
+            label = "producer,advanced",
+            description = "To use a custom org.apache.hc.client5.http.cookie.CookieStore."
+                    + " By default the org.apache.hc.client5.http.cookie.BasicCookieStore is used which is an in-memory only cookie store."
+                    + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
+                    + " shouldn't be stored as we are just bridging (eg acting as a proxy).")
     protected CookieStore cookieStore;
 
     // timeout
-    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
-              description = "Returns the connection lease request timeout (in millis) used when requesting"
-                            + " a connection from the connection manager."
-                            + " A timeout value of zero is interpreted as a disabled timeout.")
+    @Metadata(
+            label = "timeout",
+            defaultValue = "" + 3 * 60 * 1000,
+            description = "Returns the connection lease request timeout (in millis) used when requesting"
+                    + " a connection from the connection manager."
+                    + " A timeout value of zero is interpreted as a disabled timeout.")
     protected long connectionRequestTimeout = 3 * 60 * 1000L;
-    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
-              description = "Determines the timeout (in millis) until a new connection is fully established."
-                            + " A timeout value of zero is interpreted as an infinite timeout.")
+
+    @Metadata(
+            label = "timeout",
+            defaultValue = "" + 3 * 60 * 1000,
+            description = "Determines the timeout (in millis) until a new connection is fully established."
+                    + " A timeout value of zero is interpreted as an infinite timeout.")
     protected long connectTimeout = 3 * 60 * 1000L;
-    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
-              description = "Determines the default socket timeout (in millis) value for blocking I/O operations.")
+
+    @Metadata(
+            label = "timeout",
+            defaultValue = "" + 3 * 60 * 1000,
+            description = "Determines the default socket timeout (in millis) value for blocking I/O operations.")
     protected long soTimeout = 3 * 60 * 1000L;
-    @Metadata(label = "timeout",
-              description = "Determines the timeout (in millis) until arrival of a response from the opposite"
-                            + " endpoint. A timeout value of zero is interpreted as an infinite timeout."
-                            + " Please note that response timeout may be unsupported by HTTP transports "
-                            + "with message multiplexing.")
+
+    @Metadata(
+            label = "timeout",
+            description = "Determines the timeout (in millis) until arrival of a response from the opposite"
+                    + " endpoint. A timeout value of zero is interpreted as an infinite timeout."
+                    + " Please note that response timeout may be unsupported by HTTP transports "
+                    + "with message multiplexing.")
     protected long responseTimeout;
 
     // proxy
     @Metadata(label = "producer,proxy", description = "Proxy server host")
     protected String proxyHost;
+
     @Metadata(label = "producer,proxy", description = "Proxy server port")
     protected Integer proxyPort;
-    @Metadata(label = "producer,proxy", description = "Comma-separated list of hosts that should bypass the proxy. "
-                                                      + "Supports wildcards, e.g., localhost,*.example.com,192.168.*.")
+
+    @Metadata(
+            label = "producer,proxy",
+            description = "Comma-separated list of hosts that should bypass the proxy. "
+                    + "Supports wildcards, e.g., localhost,*.example.com,192.168.*.")
     protected String nonProxyHosts;
-    @Metadata(label = "producer,proxy", enums = "http,https",
-              description = "Proxy server authentication protocol scheme to use")
+
+    @Metadata(
+            label = "producer,proxy",
+            enums = "http,https",
+            description = "Proxy server authentication protocol scheme to use")
     protected String proxyAuthScheme;
-    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM",
-              description = "Proxy authentication method to use (NTLM is deprecated)")
+
+    @Metadata(
+            label = "producer,proxy",
+            enums = "Basic,Digest,NTLM",
+            description = "Proxy authentication method to use (NTLM is deprecated)")
     protected String proxyAuthMethod;
+
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy server username")
     protected String proxyAuthUsername;
+
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy server password")
     protected String proxyAuthPassword;
+
     @Deprecated
     @Metadata(label = "producer,proxy", description = "Proxy server host")
     protected String proxyAuthHost;
+
     @Deprecated
     @Metadata(label = "producer,proxy", description = "Proxy server port")
     protected Integer proxyAuthPort;
+
     @Deprecated
     @Metadata(label = "producer,proxy", description = "Proxy authentication domain to use with NTLM")
     protected String proxyAuthDomain;
+
     @Deprecated
-    @Metadata(label = "producer,proxy",
-              description = "Proxy authentication domain (workstation name) to use with NTLM (NTLM is deprecated)")
+    @Metadata(
+            label = "producer,proxy",
+            description = "Proxy authentication domain (workstation name) to use with NTLM (NTLM is deprecated)")
     protected String proxyAuthNtHost;
 
     // options to the default created http connection manager
     @Metadata(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
     protected int maxTotalConnections = 200;
+
     @Metadata(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
     protected int connectionsPerRoute = 20;
     // It's MILLISECONDS, the default value is always keepAlive
-    @Metadata(label = "advanced",
-              description = "The time for connection to live, the time unit is millisecond, the default value is always keepAlive.")
+    @Metadata(
+            label = "advanced",
+            description =
+                    "The time for connection to live, the time unit is millisecond, the default value is always keepAlive.")
     protected long connectionTimeToLive = -1;
-    @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
+
+    @Metadata(
+            label = "security",
+            defaultValue = "false",
+            description = "Enable usage of global SSL context parameters.")
     protected boolean useGlobalSslContextParameters;
-    @Metadata(label = "producer,advanced", defaultValue = "8192",
-              description = "This threshold in bytes controls whether the response payload"
+
+    @Metadata(
+            label = "producer,advanced",
+            defaultValue = "8192",
+            description =
+                    "This threshold in bytes controls whether the response payload"
                             + " should be stored in memory as a byte array or be streaming based. Set this to -1 to always use streaming mode.")
     protected int responsePayloadStreamingThreshold = 8192;
+
     @Metadata(label = "advanced", description = "Disables automatic redirect handling")
     protected boolean redirectHandlingDisabled;
+
     @Metadata(label = "advanced", description = "Disables automatic request recovery and re-execution")
     protected boolean automaticRetriesDisabled;
+
     @Metadata(label = "advanced", description = "Disables automatic content decompression")
     protected boolean contentCompressionDisabled;
+
     @Metadata(label = "advanced", description = "Disables state (cookie) management")
     protected boolean cookieManagementDisabled;
+
     @Metadata(label = "advanced", description = "Disables authentication scheme caching")
     protected boolean authCachingDisabled;
+
     @Metadata(label = "advanced", description = "Disables connection state tracking")
     protected boolean connectionStateDisabled;
-    @Metadata(label = "advanced",
-              description = "Disables the default user agent set by this builder if none has been provided by the user")
+
+    @Metadata(
+            label = "advanced",
+            description = "Disables the default user agent set by this builder if none has been provided by the user")
     protected boolean defaultUserAgentDisabled;
-    @Metadata(label = "producer",
-              description = "Whether to skip Camel control headers (CamelHttp... headers) to influence this endpoint. Control headers from previous HTTP components can influence"
+
+    @Metadata(
+            label = "producer",
+            description =
+                    "Whether to skip Camel control headers (CamelHttp... headers) to influence this endpoint. Control headers from previous HTTP components can influence"
                             + " how this Camel component behaves such as CamelHttpPath, CamelHttpQuery, etc.")
     private boolean skipControlHeaders;
-    @Metadata(label = "producer",
-              description = "Whether to skip mapping all the Camel headers as HTTP request headers."
+
+    @Metadata(
+            label = "producer",
+            description =
+                    "Whether to skip mapping all the Camel headers as HTTP request headers."
                             + " This is useful when you know that calling the HTTP service should not include any custom headers.")
     protected boolean skipRequestHeaders;
-    @Metadata(label = "producer",
-              description = "Whether to skip mapping all the HTTP response headers to Camel headers.")
+
+    @Metadata(
+            label = "producer",
+            description = "Whether to skip mapping all the HTTP response headers to Camel headers.")
     protected boolean skipResponseHeaders;
-    @Metadata(label = "producer,advanced",
-              defaultValue = "true",
-              description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
+
+    @Metadata(
+            label = "producer,advanced",
+            defaultValue = "true",
+            description =
+                    "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
                             + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
     protected boolean copyHeaders = true;
-    @Metadata(label = "producer,advanced", defaultValue = "false",
-              description = "Whether to the HTTP request should follow redirects."
-                            + " By default the HTTP request does not follow redirects ")
+
+    @Metadata(
+            label = "producer,advanced",
+            defaultValue = "false",
+            description = "Whether to the HTTP request should follow redirects."
+                    + " By default the HTTP request does not follow redirects ")
     protected boolean followRedirects;
+
     @Metadata(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
     protected String userAgent;
+
     @Metadata(label = "producer,advanced", autowired = true, description = "To use a custom activity listener")
     protected HttpActivityListener httpActivityListener;
-    @Metadata(label = "producer",
-              description = "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
+
+    @Metadata(
+            label = "producer",
+            description =
+                    "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
     protected boolean logHttpActivity;
-    @Metadata(label = "producer,advanced", defaultValue = "true",
-              description = "Whether the Content-Type header should automatic include charset for string based content.")
+
+    @Metadata(
+            label = "producer,advanced",
+            defaultValue = "true",
+            description = "Whether the Content-Type header should automatic include charset for string based content.")
     protected boolean contentTypeCharsetEnabled = true;
 
-    public HttpComponent() {
-    }
+    public HttpComponent() {}
 
     /**
      * Creates the HttpClientConfigurer based on the given parameters
@@ -233,10 +322,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * @return            the configurer
      * @throws Exception  is thrown if error creating configurer
      */
-    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure) throws Exception {
+    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure)
+            throws Exception {
         // prefer to use endpoint configured over component configured
-        HttpClientConfigurer configurer
-                = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
+        HttpClientConfigurer configurer =
+                resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         if (configurer == null) {
             // fallback to component configured
             configurer = getHttpClientConfigurer();
@@ -258,11 +348,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String scope = getParameter(parameters, "oauth2Scope", String.class);
         String resourceIndicator = getParameter(parameters, "oauth2ResourceIndicator", String.class);
         HttpConfiguration configDefaults = new HttpConfiguration();
-        boolean cacheTokens = getParameter(
-                parameters,
-                "oauth2CacheTokens",
-                boolean.class,
-                configDefaults.isOauth2CacheTokens());
+        boolean cacheTokens =
+                getParameter(parameters, "oauth2CacheTokens", boolean.class, configDefaults.isOauth2CacheTokens());
         long cachedTokensDefaultExpirySeconds = getParameter(
                 parameters,
                 "oauth2CachedTokensDefaultExpirySeconds",
@@ -274,12 +361,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                 long.class,
                 configDefaults.getOauth2CachedTokensExpirationMarginSeconds());
         boolean useBodyAuthentication = getParameter(
-                parameters,
-                "oauth2BodyAuthentication",
-                boolean.class,
-                configDefaults.isOauth2BodyAuthentication());
+                parameters, "oauth2BodyAuthentication", boolean.class, configDefaults.isOauth2BodyAuthentication());
         if (clientId != null && clientSecret != null && tokenEndpoint != null) {
-            return CompositeHttpConfigurer.combineConfigurers(configurer,
+            return CompositeHttpConfigurer.combineConfigurers(
+                    configurer,
                     new OAuth2ClientConfigurer(
                             clientId,
                             clientSecret,
@@ -295,7 +380,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureBasicAuthentication(
-            Map<String, Object> parameters, HttpClientConfigurer configurer,
+            Map<String, Object> parameters,
+            HttpClientConfigurer configurer,
             HttpCredentialsHelper credentialsProvider) {
         String authUsername = getParameter(parameters, "authUsername", String.class);
         String authPassword = getParameter(parameters, "authPassword", String.class);
@@ -304,17 +390,21 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             String authDomain = getParameter(parameters, "authDomain", String.class);
             String authHost = getParameter(parameters, "authHost", String.class);
 
-            return CompositeHttpConfigurer.combineConfigurers(configurer,
+            return CompositeHttpConfigurer.combineConfigurers(
+                    configurer,
                     new DefaultAuthenticationHttpClientConfigurer(
                             authUsername, authPassword, authDomain, authHost, null, credentialsProvider));
         } else if (this.httpConfiguration != null) {
             if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())
                     || "bearer".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
-                return CompositeHttpConfigurer.combineConfigurers(configurer,
+                return CompositeHttpConfigurer.combineConfigurers(
+                        configurer,
                         new DefaultAuthenticationHttpClientConfigurer(
                                 this.httpConfiguration.getAuthUsername(),
-                                this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(),
-                                this.httpConfiguration.getAuthHost(), this.httpConfiguration.getAuthBearerToken(),
+                                this.httpConfiguration.getAuthPassword(),
+                                this.httpConfiguration.getAuthDomain(),
+                                this.httpConfiguration.getAuthHost(),
+                                this.httpConfiguration.getAuthBearerToken(),
                                 credentialsProvider));
             }
         }
@@ -323,7 +413,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureHttpProxy(
-            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure,
+            Map<String, Object> parameters,
+            HttpClientConfigurer configurer,
+            boolean secure,
             HttpCredentialsHelper credentialsProvider) {
 
         String nonProxyhosts = getParameter(parameters, "nonProxyHosts", String.class, getNonProxyHosts());
@@ -343,8 +435,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
 
         if (proxyAuthHost != null && proxyAuthPort != null) {
-            String proxyAuthUsername = getParameter(parameters, "proxyAuthUsername", String.class, getProxyAuthUsername());
-            String proxyAuthPassword = getParameter(parameters, "proxyAuthPassword", String.class, getProxyAuthPassword());
+            String proxyAuthUsername =
+                    getParameter(parameters, "proxyAuthUsername", String.class, getProxyAuthUsername());
+            String proxyAuthPassword =
+                    getParameter(parameters, "proxyAuthPassword", String.class, getProxyAuthPassword());
             String proxyAuthDomain = getParameter(parameters, "proxyAuthDomain", String.class, getProxyAuthDomain());
             String proxyAuthNtHost = getParameter(parameters, "proxyAuthNtHost", String.class, getProxyAuthNtHost());
 
@@ -354,10 +448,18 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                 return CompositeHttpConfigurer.combineConfigurers(
                         configurer,
                         new ProxyHttpClientConfigurer(
-                                proxyAuthHost, proxyAuthPort, proxyAuthScheme, proxyAuthUsername, proxyAuthPassword,
-                                proxyAuthDomain, proxyAuthNtHost, credentialsProvider, nonProxyhosts));
+                                proxyAuthHost,
+                                proxyAuthPort,
+                                proxyAuthScheme,
+                                proxyAuthUsername,
+                                proxyAuthPassword,
+                                proxyAuthDomain,
+                                proxyAuthNtHost,
+                                credentialsProvider,
+                                nonProxyhosts));
             } else {
-                return CompositeHttpConfigurer.combineConfigurers(configurer,
+                return CompositeHttpConfigurer.combineConfigurers(
+                        configurer,
                         new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthScheme, nonProxyhosts));
             }
         }
@@ -371,24 +473,27 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         final Map<String, Object> httpClientOptions = new HashMap<>();
 
         // timeout values can be configured on both component and endpoint level, where endpoint takes priority
-        Timeout valConnectionRequestTimeout
-                = getAndRemoveParameter(parameters, "connectionRequestTimeout", Timeout.class,
-                        Timeout.ofMilliseconds(connectionRequestTimeout));
+        Timeout valConnectionRequestTimeout = getAndRemoveParameter(
+                parameters,
+                "connectionRequestTimeout",
+                Timeout.class,
+                Timeout.ofMilliseconds(connectionRequestTimeout));
         if (!Timeout.ofMinutes(3).equals(valConnectionRequestTimeout)) {
             httpClientOptions.put("connectionRequestTimeout", valConnectionRequestTimeout);
         }
-        Timeout valResponseTimeout
-                = getAndRemoveParameter(parameters, "responseTimeout", Timeout.class, Timeout.ofMilliseconds(responseTimeout));
+        Timeout valResponseTimeout = getAndRemoveParameter(
+                parameters, "responseTimeout", Timeout.class, Timeout.ofMilliseconds(responseTimeout));
         if (!Timeout.ofMilliseconds(0).equals(valResponseTimeout)) {
             httpClientOptions.put("responseTimeout", valResponseTimeout);
         }
-        Timeout valConnectTimeout
-                = getAndRemoveParameter(parameters, "connectTimeout", Timeout.class, Timeout.ofMilliseconds(connectTimeout));
+        Timeout valConnectTimeout = getAndRemoveParameter(
+                parameters, "connectTimeout", Timeout.class, Timeout.ofMilliseconds(connectTimeout));
         if (!Timeout.ofMinutes(3).equals(valConnectTimeout)) {
             httpClientOptions.put("connectTimeout", valConnectTimeout);
         }
         final Map<String, Object> httpConnectionOptions = new HashMap<>();
-        Timeout valSoTimeout = getAndRemoveParameter(parameters, "soTimeout", Timeout.class, Timeout.ofMilliseconds(soTimeout));
+        Timeout valSoTimeout =
+                getAndRemoveParameter(parameters, "soTimeout", Timeout.class, Timeout.ofMilliseconds(soTimeout));
         if (!Timeout.ofMinutes(3).equals(valSoTimeout)) {
             httpConnectionOptions.put("soTimeout", valSoTimeout);
         }
@@ -396,8 +501,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContext", HttpContext.class);
 
-        SSLContextParameters sslContextParameters
-                = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
+        SSLContextParameters sslContextParameters =
+                resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         if (sslContextParameters == null) {
             sslContextParameters = getSslContextParameters();
         }
@@ -412,8 +517,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         boolean muteException = getAndRemoveParameter(parameters, "muteException", boolean.class, isMuteException());
 
-        HeaderFilterStrategy headerFilterStrategy
-                = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        HeaderFilterStrategy headerFilterStrategy =
+                resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
         // the actual protocol if present in the remainder part should take precedence
         String secureProtocol = uri;
@@ -456,10 +561,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String endpointUriString = endpointUri.toString();
 
         LOG.debug("Creating endpoint uri {}", endpointUriString);
-        final HttpClientConnectionManager localConnectionManager
-                = createConnectionManager(parameters, sslContextParameters, httpConnectionOptions);
+        final HttpClientConnectionManager localConnectionManager =
+                createConnectionManager(parameters, sslContextParameters, httpConnectionOptions);
         final HttpClientBuilder clientBuilder = createHttpClientBuilder(uri, parameters, httpClientOptions);
-        HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
+        HttpEndpoint endpoint =
+                new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
         endpoint.setResponseTimeout(valResponseTimeout.toMilliseconds());
         endpoint.setSoTimeout(valSoTimeout.toMilliseconds());
         endpoint.setConnectTimeout(valConnectTimeout.toMilliseconds());
@@ -525,15 +631,17 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     protected HttpClientConnectionManager createConnectionManager(
             final Map<String, Object> parameters,
-            final SSLContextParameters sslContextParameters, Map<String, Object> httpConnectionOptions)
+            final SSLContextParameters sslContextParameters,
+            Map<String, Object> httpConnectionOptions)
             throws GeneralSecurityException, IOException {
         if (clientConnectionManager != null) {
             return clientConnectionManager;
         }
 
-        final HostnameVerifier resolvedHostnameVerifier
-                = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", HostnameVerifier.class);
-        final HostnameVerifier hostnameVerifier = Optional.ofNullable(resolvedHostnameVerifier).orElse(x509HostnameVerifier);
+        final HostnameVerifier resolvedHostnameVerifier =
+                resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", HostnameVerifier.class);
+        final HostnameVerifier hostnameVerifier =
+                Optional.ofNullable(resolvedHostnameVerifier).orElse(x509HostnameVerifier);
 
         // need to check the parameters of maxTotalConnections and connectionsPerRoute
         final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
@@ -541,21 +649,20 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // do not remove as we set this later again
         final boolean sysProp = getParameter(parameters, "useSystemProperties", boolean.class, useSystemProperties);
 
-        final Registry<ConnectionSocketFactory> connectionRegistry
-                = createConnectionRegistry(hostnameVerifier, sslContextParameters, sysProp);
+        final Registry<ConnectionSocketFactory> connectionRegistry =
+                createConnectionRegistry(hostnameVerifier, sslContextParameters, sysProp);
 
         // allow the builder pattern
         httpConnectionOptions.putAll(PropertiesHelper.extractProperties(parameters, "httpConnection."));
         SocketConfig.Builder socketConfigBuilder = SocketConfig.custom();
         PropertyBindingSupport.bindProperties(getCamelContext(), socketConfigBuilder, httpConnectionOptions);
 
-        return createConnectionManager(connectionRegistry, maxTotalConnections, connectionsPerRoute,
-                socketConfigBuilder.build());
+        return createConnectionManager(
+                connectionRegistry, maxTotalConnections, connectionsPerRoute, socketConfigBuilder.build());
     }
 
     protected HttpClientBuilder createHttpClientBuilder(
-            final String uri, final Map<String, Object> parameters,
-            final Map<String, Object> httpClientOptions) {
+            final String uri, final Map<String, Object> parameters, final Map<String, Object> httpClientOptions) {
         // http client can be configured from URI options
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         // allow the builder pattern
@@ -601,25 +708,30 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     protected Registry<ConnectionSocketFactory> createConnectionRegistry(
-            HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams,
-            boolean useSystemProperties)
+            HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams, boolean useSystemProperties)
             throws GeneralSecurityException, IOException {
         // create the default connection registry to use
         RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.create();
         builder.register("http", PlainConnectionSocketFactory.getSocketFactory());
         if (sslContextParams != null) {
-            builder.register("https",
-                    new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
+            builder.register(
+                    "https",
+                    new SSLConnectionSocketFactory(
+                            sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
         } else {
-            builder.register("https", new SSLConnectionSocketFactory(
-                    useSystemProperties ? SSLContexts.createSystemDefault() : SSLContexts.createDefault(),
-                    x509HostnameVerifier));
+            builder.register(
+                    "https",
+                    new SSLConnectionSocketFactory(
+                            useSystemProperties ? SSLContexts.createSystemDefault() : SSLContexts.createDefault(),
+                            x509HostnameVerifier));
         }
         return builder.build();
     }
 
     protected HttpClientConnectionManager createConnectionManager(
-            Registry<ConnectionSocketFactory> registry, int maxTotalConnections, int connectionsPerRoute,
+            Registry<ConnectionSocketFactory> registry,
+            int maxTotalConnections,
+            int connectionsPerRoute,
             SocketConfig defaultSocketConfig) {
         // set up the connection live time
         PoolingHttpClientConnectionManager answer = new PoolingHttpClientConnectionManager(
@@ -652,9 +764,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @SuppressWarnings("unchecked")
     @Override
     public Producer createProducer(
-            CamelContext camelContext, String host,
-            String verb, String basePath, String uriTemplate, String queryParameters,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            String host,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String queryParameters,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
 
         // avoid leading slash
@@ -677,10 +796,12 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
         Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
-        if (config.getProducerComponent() == null || config.getProducerComponent().equals("http")) {
+        if (config.getProducerComponent() == null
+                || config.getProducerComponent().equals("http")) {
             // setup endpoint options
             map.put("httpMethod", verb);
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+            if (config.getEndpointProperties() != null
+                    && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
             }
         }
@@ -692,14 +813,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component, one such case is when we switch from "http" to "https" component name
-        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
+        RestProducerFactoryHelper.setupComponentFor(
+                url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
         HttpEndpoint endpoint = (HttpEndpoint) camelContext.getEndpoint(url, parameters);
 
         String path = uriTemplate != null ? uriTemplate : basePath;
 
-        HeaderFilterStrategy headerFilterStrategy
-                = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        HeaderFilterStrategy headerFilterStrategy =
+                resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {

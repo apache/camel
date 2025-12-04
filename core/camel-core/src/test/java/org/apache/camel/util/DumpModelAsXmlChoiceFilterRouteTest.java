@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -32,7 +33,8 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXmlNoEmptyLines() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -45,7 +47,8 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -70,13 +73,37 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").to("log:input").transform().header("dude").choice().when()
-                        .header("gold").to("mock:gold").filter().header("extra-gold")
-                        .to("mock:extra-gold").endChoice().when().simple("${body} contains 'Camel'").to("mock:camel")
-                        .otherwise().to("mock:other").end().to("mock:result");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .to("log:input")
+                        .transform()
+                        .header("dude")
+                        .choice()
+                        .when()
+                        .header("gold")
+                        .to("mock:gold")
+                        .filter()
+                        .header("extra-gold")
+                        .to("mock:extra-gold")
+                        .endChoice()
+                        .when()
+                        .simple("${body} contains 'Camel'")
+                        .to("mock:camel")
+                        .otherwise()
+                        .to("mock:other")
+                        .end()
+                        .to("mock:result");
 
-                from("seda:a").routeId("a").setProperty("foo").constant("bar").choice().when(header("test").isNotNull())
-                        .log("not null").when(xpath("/foo/bar")).log("xpath").end()
+                from("seda:a")
+                        .routeId("a")
+                        .setProperty("foo")
+                        .constant("bar")
+                        .choice()
+                        .when(header("test").isNotNull())
+                        .log("not null")
+                        .when(xpath("/foo/bar"))
+                        .log("xpath")
+                        .end()
                         .to("mock:a");
             }
         };

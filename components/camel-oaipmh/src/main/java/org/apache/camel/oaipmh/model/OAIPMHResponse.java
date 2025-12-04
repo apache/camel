@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh.model;
 
 import java.util.Optional;
@@ -69,5 +70,4 @@ public class OAIPMHResponse {
     public void setXmlResponse(Document xmlResponse) {
         this.xmlResponse = xmlResponse;
     }
-
 }

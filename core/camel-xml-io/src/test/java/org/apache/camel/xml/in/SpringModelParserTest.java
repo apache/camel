@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml.in;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.net.URL;
@@ -26,8 +29,6 @@ import java.util.stream.Stream;
 import org.apache.camel.model.RoutesDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SpringModelParserTest {
 
     public static final String SPRING_NAMESPACE = "http://camel.apache.org/schema/spring";
@@ -36,8 +37,10 @@ public class SpringModelParserTest {
     public void testSpringFiles() throws Exception {
         Path dir = getResourceFolder();
         try (Stream<Path> list = Files.list(dir)) {
-            List<Path> files = list.sorted().filter(Files::isRegularFile)
-                    .filter(f -> f.getFileName().toString().endsWith("xml")).toList();
+            List<Path> files = list.sorted()
+                    .filter(Files::isRegularFile)
+                    .filter(f -> f.getFileName().toString().endsWith("xml"))
+                    .toList();
             for (Path path : files) {
                 ModelParser parser = new ModelParser(Files.newInputStream(path), SPRING_NAMESPACE);
                 RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
@@ -50,8 +53,10 @@ public class SpringModelParserTest {
     public void testSpringFilesDefault() throws Exception {
         Path dir = getResourceFolder();
         try (Stream<Path> list = Files.list(dir)) {
-            List<Path> files = list.sorted().filter(Files::isRegularFile)
-                    .filter(f -> f.getFileName().toString().endsWith("xml")).toList();
+            List<Path> files = list.sorted()
+                    .filter(Files::isRegularFile)
+                    .filter(f -> f.getFileName().toString().endsWith("xml"))
+                    .toList();
             for (Path path : files) {
                 ModelParser parser = new ModelParser(Files.newInputStream(path));
                 RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);

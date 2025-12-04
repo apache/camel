@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.query;
 
 import java.time.Instant;
@@ -63,7 +64,8 @@ public class Timestream2QueryProducer extends DefaultProducer {
             case deleteScheduledQuery -> deleteScheduledQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
             case executeScheduledQuery -> executeScheduledQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
             case updateScheduledQuery -> updateScheduledQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
-            case describeScheduledQuery -> describeScheduledQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
+            case describeScheduledQuery -> describeScheduledQuery(
+                    getEndpoint().getAwsTimestreamQueryClient(), exchange);
             case listScheduledQueries -> listScheduledQueries(getEndpoint().getAwsTimestreamQueryClient(), exchange);
             case prepareQuery -> prepareQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
             case query -> query(getEndpoint().getAwsTimestreamQueryClient(), exchange);
@@ -73,8 +75,8 @@ public class Timestream2QueryProducer extends DefaultProducer {
     }
 
     private Timestream2Operations determineOperation(Exchange exchange) {
-        Timestream2Operations operation
-                = exchange.getIn().getHeader(Timestream2Constants.OPERATION, Timestream2Operations.class);
+        Timestream2Operations operation =
+                exchange.getIn().getHeader(Timestream2Constants.OPERATION, Timestream2Operations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -88,8 +90,8 @@ public class Timestream2QueryProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (timestreamQueryProducerToString == null) {
-            timestreamQueryProducerToString
-                    = "TimestreamQueryProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            timestreamQueryProducerToString = "TimestreamQueryProducer["
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return timestreamQueryProducerToString;
     }
@@ -108,7 +110,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.describeEndpoints(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Endpoints command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Endpoints command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -121,7 +125,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.describeEndpoints(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Endpoints command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Endpoints command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -138,7 +144,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.createScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Scheduled Query command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -156,13 +164,17 @@ public class Timestream2QueryProducer extends DefaultProducer {
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.SCHEDULE_EXPRESSION))) {
                 String scheduleExp = exchange.getIn().getHeader(Timestream2Constants.SCHEDULE_EXPRESSION, String.class);
-                builder.scheduleConfiguration(ScheduleConfiguration.builder().scheduleExpression(scheduleExp).build());
+                builder.scheduleConfiguration(ScheduleConfiguration.builder()
+                        .scheduleExpression(scheduleExp)
+                        .build());
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.NOTIFICATION_TOPIC_ARN))) {
                 String topicArn = exchange.getIn().getHeader(Timestream2Constants.NOTIFICATION_TOPIC_ARN, String.class);
-                SnsConfiguration snsConfiguration = SnsConfiguration.builder().topicArn(topicArn).build();
-                builder.notificationConfiguration(
-                        NotificationConfiguration.builder().snsConfiguration(snsConfiguration).build());
+                SnsConfiguration snsConfiguration =
+                        SnsConfiguration.builder().topicArn(topicArn).build();
+                builder.notificationConfiguration(NotificationConfiguration.builder()
+                        .snsConfiguration(snsConfiguration)
+                        .build());
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.KMS_KEY_ID))) {
                 String kmsKeyId = exchange.getIn().getHeader(Timestream2Constants.KMS_KEY_ID, String.class);
@@ -172,36 +184,40 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 String clientToken = exchange.getIn().getHeader(Timestream2Constants.CLIENT_TOKEN, String.class);
                 builder.clientToken(clientToken);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN))) {
-                String roleArn
-                        = exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN, String.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN))) {
+                String roleArn = exchange.getIn()
+                        .getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN, String.class);
                 builder.scheduledQueryExecutionRoleArn(roleArn);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.ERROR_REPORT_S3_BUCKET_NAME))) {
-                String s3BucketName
-                        = exchange.getIn().getHeader(Timestream2Constants.ERROR_REPORT_S3_BUCKET_NAME, String.class);
-                S3Configuration.Builder s3Configuration = S3Configuration.builder().bucketName(s3BucketName);
-                if (ObjectHelper
-                        .isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.ERROR_REPORT_S3_OBJECT_KEY_PREFIX))) {
-                    String objectKeyPrefix
-                            = exchange.getIn().getHeader(Timestream2Constants.ERROR_REPORT_S3_OBJECT_KEY_PREFIX, String.class);
+                String s3BucketName =
+                        exchange.getIn().getHeader(Timestream2Constants.ERROR_REPORT_S3_BUCKET_NAME, String.class);
+                S3Configuration.Builder s3Configuration =
+                        S3Configuration.builder().bucketName(s3BucketName);
+                if (ObjectHelper.isNotEmpty(
+                        exchange.getIn().getHeader(Timestream2Constants.ERROR_REPORT_S3_OBJECT_KEY_PREFIX))) {
+                    String objectKeyPrefix = exchange.getIn()
+                            .getHeader(Timestream2Constants.ERROR_REPORT_S3_OBJECT_KEY_PREFIX, String.class);
                     s3Configuration.objectKeyPrefix(objectKeyPrefix);
                 }
 
-                if (ObjectHelper
-                        .isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.ERROR_REPORT_S3_ENCRYPTION_OPTION))) {
-                    String encryptionOption
-                            = exchange.getIn().getHeader(Timestream2Constants.ERROR_REPORT_S3_ENCRYPTION_OPTION, String.class);
+                if (ObjectHelper.isNotEmpty(
+                        exchange.getIn().getHeader(Timestream2Constants.ERROR_REPORT_S3_ENCRYPTION_OPTION))) {
+                    String encryptionOption = exchange.getIn()
+                            .getHeader(Timestream2Constants.ERROR_REPORT_S3_ENCRYPTION_OPTION, String.class);
                     s3Configuration.encryptionOption(encryptionOption);
                 }
 
-                ErrorReportConfiguration errorReportConfiguration
-                        = ErrorReportConfiguration.builder().s3Configuration(s3Configuration.build()).build();
+                ErrorReportConfiguration errorReportConfiguration = ErrorReportConfiguration.builder()
+                        .s3Configuration(s3Configuration.build())
+                        .build();
                 builder.errorReportConfiguration(errorReportConfiguration);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN))) {
-                String roleArn
-                        = exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN, String.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN))) {
+                String roleArn = exchange.getIn()
+                        .getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN, String.class);
                 builder.scheduledQueryExecutionRoleArn(roleArn);
             }
 
@@ -220,23 +236,24 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 timestreamConfigBuilder.tableName(timeColumn);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.MEASURE_NAME_COLUMN))) {
-                String measureNameColumn = exchange.getIn().getHeader(Timestream2Constants.MEASURE_NAME_COLUMN, String.class);
+                String measureNameColumn =
+                        exchange.getIn().getHeader(Timestream2Constants.MEASURE_NAME_COLUMN, String.class);
                 timestreamConfigBuilder.measureNameColumn(measureNameColumn);
             }
 
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.DIMENSION_MAPPING_LIST))) {
-                List<DimensionMapping> dimensionMappingList
-                        = exchange.getIn().getHeader(Timestream2Constants.DIMENSION_MAPPING_LIST, List.class);
+                List<DimensionMapping> dimensionMappingList =
+                        exchange.getIn().getHeader(Timestream2Constants.DIMENSION_MAPPING_LIST, List.class);
                 timestreamConfigBuilder.dimensionMappings(dimensionMappingList);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.MULTI_MEASURE_MAPPINGS))) {
-                MultiMeasureMappings multiMeasureMappings
-                        = exchange.getIn().getHeader(Timestream2Constants.MULTI_MEASURE_MAPPINGS, MultiMeasureMappings.class);
+                MultiMeasureMappings multiMeasureMappings = exchange.getIn()
+                        .getHeader(Timestream2Constants.MULTI_MEASURE_MAPPINGS, MultiMeasureMappings.class);
                 timestreamConfigBuilder.multiMeasureMappings(multiMeasureMappings);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.MIXED_MEASURE_MAPPING_LIST))) {
-                List<MixedMeasureMapping> mixedMeasureMappings
-                        = exchange.getIn().getHeader(Timestream2Constants.MIXED_MEASURE_MAPPING_LIST, List.class);
+                List<MixedMeasureMapping> mixedMeasureMappings =
+                        exchange.getIn().getHeader(Timestream2Constants.MIXED_MEASURE_MAPPING_LIST, List.class);
                 timestreamConfigBuilder.mixedMeasureMappings(mixedMeasureMappings);
             }
             targetConfiguration.timestreamConfiguration(timestreamConfigBuilder.build());
@@ -246,7 +263,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.createScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Scheduled Query command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -263,7 +282,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.deleteScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Scheduled Query command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -281,13 +302,14 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.deleteScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Scheduled Query command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
-
     }
 
     private void executeScheduledQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange)
@@ -299,7 +321,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.executeScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Execute Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Execute Scheduled Query command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -318,9 +342,10 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 builder.clientToken(clientToken);
             }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_INVOCATION_TIME))) {
-                Instant invocationTime
-                        = exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_INVOCATION_TIME, Instant.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_INVOCATION_TIME))) {
+                Instant invocationTime =
+                        exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_INVOCATION_TIME, Instant.class);
                 builder.invocationTime(invocationTime);
             }
 
@@ -328,7 +353,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.executeScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Execute Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Execute Scheduled Query command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -345,7 +372,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.updateScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Update Scheduled Query command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -368,7 +397,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.updateScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Update Scheduled Query command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -385,7 +416,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.describeScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Scheduled Query command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -398,7 +431,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.describeScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Scheduled Query command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -415,7 +450,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.listScheduledQueries(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Scheduled Queries command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Scheduled Queries command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -433,7 +470,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.listScheduledQueries(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Scheduled Queries command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Scheduled Queries command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -441,7 +480,8 @@ public class Timestream2QueryProducer extends DefaultProducer {
         }
     }
 
-    private void prepareQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange) throws InvalidPayloadException {
+    private void prepareQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof PrepareQueryRequest request) {
@@ -449,7 +489,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.prepareQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Prepare Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Prepare Query command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -464,7 +506,8 @@ public class Timestream2QueryProducer extends DefaultProducer {
             }
 
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.QUERY_VALIDATE_ONLY))) {
-                Boolean validateFlag = exchange.getIn().getHeader(Timestream2Constants.QUERY_VALIDATE_ONLY, Boolean.class);
+                Boolean validateFlag =
+                        exchange.getIn().getHeader(Timestream2Constants.QUERY_VALIDATE_ONLY, Boolean.class);
                 builder.validateOnly(validateFlag);
             }
 
@@ -472,7 +515,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.prepareQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Prepare Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Prepare Query command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -488,7 +533,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.query(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Query command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -511,7 +558,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.query(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Query command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -519,7 +568,8 @@ public class Timestream2QueryProducer extends DefaultProducer {
         }
     }
 
-    private void cancelQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange) throws InvalidPayloadException {
+    private void cancelQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CancelQueryRequest request) {
@@ -527,7 +577,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.cancelQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Cancel Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Cancel Query command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -545,7 +597,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.cancelQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Cancel Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Cancel Query command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -561,9 +615,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -580,5 +632,4 @@ public class Timestream2QueryProducer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

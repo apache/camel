@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap12;
 
 import java.io.IOException;
@@ -69,8 +70,11 @@ public class Soap12MarshalTest extends CamelTestSupport {
     @Test
     public void testMarshalException() throws IOException, InterruptedException {
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).body(String.class).contains(
-                "<ns2:Envelope xmlns:ns2=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns3=\"http://customerservice.example.com/\">");
+        resultEndpoint
+                .message(0)
+                .body(String.class)
+                .contains(
+                        "<ns2:Envelope xmlns:ns2=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns3=\"http://customerservice.example.com/\">");
         resultEndpoint.message(0).body(String.class).contains("<ns2:Fault>");
         resultEndpoint.message(0).body(String.class).contains("<ns2:Value>ns2:Receiver</ns2:Value>");
         resultEndpoint.message(0).body(String.class).contains("<ns2:Text xml:lang=\"en\">No customer found</ns2:Text>");
@@ -107,5 +111,4 @@ public class Soap12MarshalTest extends CamelTestSupport {
             }
         };
     }
-
 }

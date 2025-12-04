@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 import org.apache.camel.Exchange;
@@ -28,7 +29,8 @@ public class ManualCommit implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        KafkaManualCommit manual = exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+        KafkaManualCommit manual =
+                exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
         if (manual != null) {
             LOG.debug("Performing Kafka manual commit: {}", manual);
             manual.commit();

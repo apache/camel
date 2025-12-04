@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,12 +43,11 @@ public class WireTapNoErrorHandlerTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .errorHandler(noErrorHandler())
-                        .to("log:foo").wireTap("direct:tap").to("mock:result");
+                        .to("log:foo")
+                        .wireTap("direct:tap")
+                        .to("mock:result");
 
-                from("direct:tap")
-                        .delay(1000)
-                        .setBody().constant("Tapped")
-                        .to("mock:result", "mock:tap");
+                from("direct:tap").delay(1000).setBody().constant("Tapped").to("mock:result", "mock:tap");
             }
         };
     }

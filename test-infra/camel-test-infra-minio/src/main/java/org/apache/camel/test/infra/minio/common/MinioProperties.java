@@ -27,7 +27,5 @@ public final class MinioProperties {
     public static final String SERVICE_PORT = "minio.service.port";
     public static final int DEFAULT_SERVICE_PORT = 9000;
 
-    private MinioProperties() {
-
-    }
+    private MinioProperties() {}
 }

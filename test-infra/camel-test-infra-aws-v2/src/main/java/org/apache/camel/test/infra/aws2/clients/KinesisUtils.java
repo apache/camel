@@ -51,9 +51,7 @@ import software.amazon.awssdk.services.kinesis.model.Shard;
 public final class KinesisUtils {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisUtils.class);
 
-    private KinesisUtils() {
-
-    }
+    private KinesisUtils() {}
 
     private static void doCreateStream(KinesisClient kinesisClient, String streamName, int shardCount) {
         CreateStreamRequest request = CreateStreamRequest.builder()
@@ -112,9 +110,8 @@ public final class KinesisUtils {
     }
 
     private static int getStreamStatus(KinesisClient kinesisClient, String streamName) {
-        DescribeStreamRequest request = DescribeStreamRequest.builder()
-                .streamName(streamName)
-                .build();
+        DescribeStreamRequest request =
+                DescribeStreamRequest.builder().streamName(streamName).build();
 
         DescribeStreamResponse response = kinesisClient.describeStream(request);
 
@@ -122,9 +119,8 @@ public final class KinesisUtils {
     }
 
     public static void doDeleteStream(KinesisClient kinesisClient, String streamName) {
-        DeleteStreamRequest request = DeleteStreamRequest.builder()
-                .streamName(streamName)
-                .build();
+        DeleteStreamRequest request =
+                DeleteStreamRequest.builder().streamName(streamName).build();
 
         DeleteStreamResponse response = kinesisClient.deleteStream(request);
 
@@ -140,9 +136,8 @@ public final class KinesisUtils {
         try {
             LOG.info("Checking whether the stream exists already");
 
-            DescribeStreamRequest request = DescribeStreamRequest.builder()
-                    .streamName(streamName)
-                    .build();
+            DescribeStreamRequest request =
+                    DescribeStreamRequest.builder().streamName(streamName).build();
 
             DescribeStreamResponse response = kinesisClient.describeStream(request);
 
@@ -163,8 +158,7 @@ public final class KinesisUtils {
     }
 
     public static List<PutRecordsResponse> putRecords(
-            KinesisClient kinesisClient, String streamName, int count,
-            Consumer<PutRecordsRequest.Builder> customizer) {
+            KinesisClient kinesisClient, String streamName, int count, Consumer<PutRecordsRequest.Builder> customizer) {
         List<PutRecordsRequestEntry> putRecordsRequestEntryList = new ArrayList<>();
 
         LOG.debug("Adding data to the Kinesis stream");
@@ -182,12 +176,9 @@ public final class KinesisUtils {
 
         LOG.debug("Done creating the data records");
 
-        final PutRecordsRequest.Builder requestBuilder = PutRecordsRequest
-                .builder();
+        final PutRecordsRequest.Builder requestBuilder = PutRecordsRequest.builder();
 
-        requestBuilder
-                .streamName(streamName)
-                .records(putRecordsRequestEntryList);
+        requestBuilder.streamName(streamName).records(putRecordsRequestEntryList);
 
         if (customizer != null) {
             customizer.accept(requestBuilder);
@@ -205,11 +196,11 @@ public final class KinesisUtils {
                 retries--;
 
                 /*
-                 This works around the "... Cannot deserialize instance of `...AmazonKinesisException` out of NOT_AVAILABLE token
+                This works around the "... Cannot deserialize instance of `...AmazonKinesisException` out of NOT_AVAILABLE token
 
-                 It may take some time for the local Kinesis backend to be fully up - even though the container is
-                 reportedly up and running. Therefore, it tries a few more times
-                 */
+                It may take some time for the local Kinesis backend to be fully up - even though the container is
+                reportedly up and running. Therefore, it tries a few more times
+                */
                 LOG.trace("Failed to put the records: {}. Retrying in 2 seconds ...", e.getMessage());
                 if (retries == 0) {
                     LOG.error("Failed to put the records: {}", e.getMessage(), e);
@@ -246,9 +237,8 @@ public final class KinesisUtils {
     }
 
     public static GetRecordsRequest getGetRecordsRequest(KinesisClient kinesisClient, String streamName) {
-        DescribeStreamRequest describeStreamRequest = DescribeStreamRequest.builder()
-                .streamName(streamName)
-                .build();
+        DescribeStreamRequest describeStreamRequest =
+                DescribeStreamRequest.builder().streamName(streamName).build();
 
         TestUtils.waitFor(() -> hasShards(kinesisClient, describeStreamRequest));
         List<Shard> shards = getAllShards(kinesisClient, describeStreamRequest);
@@ -261,8 +251,7 @@ public final class KinesisUtils {
 
         GetShardIteratorResponse iteratorResponse = kinesisClient.getShardIterator(iteratorRequest);
 
-        return GetRecordsRequest
-                .builder()
+        return GetRecordsRequest.builder()
                 .shardIterator(iteratorResponse.shardIterator())
                 .build();
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openai.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -27,16 +31,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenAIMockSimpleAssertionTest {
 
     private final AtomicBoolean firstAssertionExecuted = new AtomicBoolean(false);
     private final AtomicBoolean secondAssertionExecuted = new AtomicBoolean(false);
 
     @RegisterExtension
-    public OpenAIMock openAIMock = new OpenAIMock().builder()
+    public OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("first message")
             .assertRequest(request -> {
                 firstAssertionExecuted.set(true);
@@ -61,8 +63,8 @@ public class OpenAIMockSimpleAssertionTest {
         HttpRequest request1 = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"first message\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"first message\"}]}"))
                 .build();
 
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
@@ -84,8 +86,8 @@ public class OpenAIMockSimpleAssertionTest {
         HttpRequest request2 = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"second message\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"second message\"}]}"))
                 .build();
 
         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());

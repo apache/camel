@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.cassandra;
 
 import org.apache.camel.AggregationStrategy;
@@ -63,15 +64,19 @@ public class CassandraAggregationSerializedHeadersIT extends BaseCassandra {
                         return oldExchange;
                     }
                 };
-                from("direct:input").aggregate(header("aggregationId"), aggregationStrategy).completionSize(3)
-                        .completionTimeout(3000L).aggregationRepository(aggregationRepository)
+                from("direct:input")
+                        .aggregate(header("aggregationId"), aggregationStrategy)
+                        .completionSize(3)
+                        .completionTimeout(3000L)
+                        .aggregationRepository(aggregationRepository)
                         .to("mock:output");
             }
         };
     }
 
     private void send(HeaderDto aggregationId, String body) {
-        camelContextExtension.getProducerTemplate()
+        camelContextExtension
+                .getProducerTemplate()
                 .sendBodyAndHeader("direct:input", body, "aggregationId", aggregationId);
     }
 
@@ -91,6 +96,5 @@ public class CassandraAggregationSerializedHeadersIT extends BaseCassandra {
         send(dto1, "E");
         // Then
         mockOutput.assertIsSatisfied(4000L);
-
     }
 }

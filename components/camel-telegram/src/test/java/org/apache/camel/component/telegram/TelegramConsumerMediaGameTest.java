@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import org.apache.camel.EndpointInject;
@@ -54,7 +55,8 @@ public class TelegramConsumerMediaGameTest extends TelegramTestSupport {
         Assertions.assertEquals("test", game.getDescription());
         Assertions.assertEquals("game text", game.getText());
         Assertions.assertEquals(1, game.getPhoto().size());
-        Assertions.assertEquals("AgADBAADnrAxG1rhiVAsV1IghUpUwn4eqhsABAEAAwIAA20AA32sBQABFgQ",
+        Assertions.assertEquals(
+                "AgADBAADnrAxG1rhiVAsV1IghUpUwn4eqhsABAEAAwIAA20AA32sBQABFgQ",
                 game.getPhoto().get(0).getFileId());
         Assertions.assertEquals(2469, game.getPhoto().get(0).getFileSize());
         Assertions.assertEquals(180, game.getPhoto().get(0).getHeight());
@@ -62,21 +64,22 @@ public class TelegramConsumerMediaGameTest extends TelegramTestSupport {
         Assertions.assertEquals("AQADfh6qGwAEfawFAAE", game.getPhoto().get(0).getFileUniqueId());
 
         Assertions.assertNotNull(inlineKeyboardMarkup);
-        Assertions.assertEquals("Play test_game", inlineKeyboardMarkup.getInlineKeyboard().get(0).get(0).getText());
-
+        Assertions.assertEquals(
+                "Play test_game",
+                inlineKeyboardMarkup.getInlineKeyboard().get(0).get(0).getText());
     }
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token")
-                                .to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override

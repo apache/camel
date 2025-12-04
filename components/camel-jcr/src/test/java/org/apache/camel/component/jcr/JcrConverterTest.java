@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.util.Calendar;
@@ -33,9 +37,6 @@ import org.apache.jackrabbit.value.DateValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for JCR type conversions ({@link JcrConverter})
@@ -73,7 +74,9 @@ public class JcrConverterTest {
                     public boolean supportsAutoWiring() {
                         return false;
                     }
-                }, true, false);
+                },
+                true,
+                false);
         ServiceHelper.startService(converter);
     }
 
@@ -102,5 +105,4 @@ public class JcrConverterTest {
         assertNotNull(value);
         assertTrue(expected.isAssignableFrom(value.getClass()));
     }
-
 }

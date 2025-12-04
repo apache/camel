@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
@@ -43,15 +44,16 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String asyncDelayed;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String callerRunsWhenRejected;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
 
-    public DelayDefinition() {
-    }
+    public DelayDefinition() {}
 
     protected DelayDefinition(DelayDefinition source) {
         super(source);

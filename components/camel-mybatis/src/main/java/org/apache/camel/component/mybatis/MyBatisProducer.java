@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 import java.util.Collections;
@@ -249,11 +250,12 @@ public class MyBatisProducer extends DefaultProducer {
             // preserve headers
             answer.getHeaders().putAll(exchange.getIn().getHeaders());
             if (outputHeader != null) {
-                //if we put the MyBatis result into a header we should preserve the body as well
+                // if we put the MyBatis result into a header we should preserve the body as well
                 answer.setBody(exchange.getIn().getBody());
             }
         }
-        if (endpoint.getStatementType() == StatementType.SelectList || endpoint.getStatementType() == StatementType.SelectOne) {
+        if (endpoint.getStatementType() == StatementType.SelectList
+                || endpoint.getStatementType() == StatementType.SelectOne) {
             // we should not set the body if its a stored procedure as the result is already in its OUT parameter
             MappedStatement ms = session.getConfiguration().getMappedStatement(statement);
             if (ms != null && ms.getStatementType() == org.apache.ibatis.mapping.StatementType.CALLABLE) {
@@ -305,5 +307,4 @@ public class MyBatisProducer extends DefaultProducer {
             return exchange.getIn().getBody();
         }
     }
-
 }

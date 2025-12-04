@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Collection;
@@ -69,7 +70,6 @@ public interface InflightRepository extends StaticService {
          * Is <tt>null</tt> if message history is disabled.
          */
         String getAtRouteId();
-
     }
 
     /**
@@ -195,5 +195,4 @@ public interface InflightRepository extends StaticService {
      * @return             the oldest, or <tt>null</tt> if none inflight
      */
     InflightExchange oldest(String fromRouteId);
-
 }

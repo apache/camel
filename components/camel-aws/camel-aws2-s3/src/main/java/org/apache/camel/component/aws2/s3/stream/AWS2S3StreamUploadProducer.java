@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.stream;
 
 import java.io.ByteArrayOutputStream;
@@ -86,11 +87,14 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         if (getConfiguration().getStreamingUploadTimeout() > 0) {
-            timeoutCheckerExecutorService
-                    = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                            TIMEOUT_CHECKER_EXECUTOR_NAME);
-            timeoutCheckerExecutorService.scheduleAtFixedRate(new StreamingUploadTimeoutTask(),
-                    getConfiguration().getStreamingUploadTimeout(), getConfiguration().getStreamingUploadTimeout(),
+            timeoutCheckerExecutorService = getEndpoint()
+                    .getCamelContext()
+                    .getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, TIMEOUT_CHECKER_EXECUTOR_NAME);
+            timeoutCheckerExecutorService.scheduleAtFixedRate(
+                    new StreamingUploadTimeoutTask(),
+                    getConfiguration().getStreamingUploadTimeout(),
+                    getConfiguration().getStreamingUploadTimeout(),
                     TimeUnit.MILLISECONDS);
         }
         if (getConfiguration().getRestartingPolicy().equals(AWSS3RestartingPolicyEnum.lastPart)) {
@@ -123,7 +127,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             timeoutCheckerExecutorService = null;
         }
         super.doStop();
-
     }
 
     /**
@@ -176,34 +179,34 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         int totalSize = 0;
         byte[] b;
         int maxRead = (getConfiguration().isMultiPartUpload()
-                ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
+                ? Math.toIntExact(getConfiguration().getPartSize())
+                : getConfiguration().getBufferSize());
         if (uploadAggregate != null) {
             uploadAggregate.index++;
             maxRead -= uploadAggregate.buffer.size();
         }
 
-        while ((b = AWS2S3Utils.toByteArray(is, maxRead)).length
-               > 0) {
+        while ((b = AWS2S3Utils.toByteArray(is, maxRead)).length > 0) {
             totalSize += b.length;
-            if (getConfiguration().isMultiPartUpload())
-                maxRead -= b.length;
+            if (getConfiguration().isMultiPartUpload()) maxRead -= b.length;
             lock.lock();
             try {
                 // aggregate with previously received exchanges
                 if (ObjectHelper.isNotEmpty(uploadAggregate)) {
                     uploadAggregate.buffer.write(b);
-                    if (getConfiguration().isMultiPartUpload() &&
-                            uploadAggregate.buffer.size() >= getConfiguration().getPartSize()) {
+                    if (getConfiguration().isMultiPartUpload()
+                            && uploadAggregate.buffer.size()
+                                    >= getConfiguration().getPartSize()) {
                         uploadPart(uploadAggregate);
                         maxRead = Math.toIntExact(getConfiguration().getPartSize());
                         continue;
                     }
                     if (uploadAggregate.buffer.size() >= getConfiguration().getBatchSize()
                             || (uploadAggregate.index >= getConfiguration().getBatchMessageNumber()
-                                    && uploadAggregate.buffer.size() < getConfiguration().getPartSize())) {
+                                    && uploadAggregate.buffer.size()
+                                            < getConfiguration().getPartSize())) {
 
-                        if (uploadAggregate.buffer.size() > 0)
-                            uploadPart(uploadAggregate);
+                        if (uploadAggregate.buffer.size() > 0) uploadPart(uploadAggregate);
                         CompleteMultipartUploadResponse uploadResult = completeUpload(uploadAggregate);
                         this.uploadAggregate = null;
                         Message message = getMessageForResponse(exchange);
@@ -233,11 +236,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             if (state.index == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.timestamp)) {
                 state.timestamp = System.currentTimeMillis();
             }
-            state.dynamicKeyName = fileNameToUpload(fileName, getConfiguration().getNamingStrategy(), extension,
-                    state.part, state.id, state.timestamp);
-            CreateMultipartUploadRequest.Builder createMultipartUploadRequest
-                    = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
-                            .key(state.dynamicKeyName).checksumAlgorithm(algorithm);
+            state.dynamicKeyName = fileNameToUpload(
+                    fileName, getConfiguration().getNamingStrategy(), extension, state.part, state.id, state.timestamp);
+            CreateMultipartUploadRequest.Builder createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
+                    .bucket(getConfiguration().getBucketName())
+                    .key(state.dynamicKeyName)
+                    .checksumAlgorithm(algorithm);
 
             String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
             if (storageClass != null) {
@@ -262,8 +266,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
             LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
             if (state.index == 1) {
-                state.initResponse
-                        = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
+                state.initResponse =
+                        getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
             }
 
             try {
@@ -281,15 +285,20 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     state = null;
                     continue;
                 }
-                if (getConfiguration().isMultiPartUpload() && state.buffer.size() >= getConfiguration().getPartSize()) {
+                if (getConfiguration().isMultiPartUpload()
+                        && state.buffer.size() >= getConfiguration().getPartSize()) {
                     uploadPart(state);
                     maxRead = Math.toIntExact(getConfiguration().getPartSize());
                 }
 
             } catch (Exception e) {
-                getEndpoint().getS3Client()
-                        .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
-                                .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId()).build());
+                getEndpoint()
+                        .getS3Client()
+                        .abortMultipartUpload(AbortMultipartUploadRequest.builder()
+                                .bucket(getConfiguration().getBucketName())
+                                .key(state.dynamicKeyName)
+                                .uploadId(state.initResponse.uploadId())
+                                .build());
                 throw e;
             }
         }
@@ -316,7 +325,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         // Extract timestamp from exchange
         Long messageTimestamp = extractTimestampFromExchange(exchange);
         if (messageTimestamp == null) {
-            LOG.warn("No valid timestamp found in exchange header '{}', falling back to current time",
+            LOG.warn(
+                    "No valid timestamp found in exchange header '{}', falling back to current time",
                     getConfiguration().getTimestampHeaderName());
             messageTimestamp = System.currentTimeMillis();
         }
@@ -327,7 +337,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         byte[] b;
         int totalSize = 0;
         int maxRead = (getConfiguration().isMultiPartUpload()
-                ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
+                ? Math.toIntExact(getConfiguration().getPartSize())
+                : getConfiguration().getBufferSize());
 
         // Get or create upload state for this timestamp window
         UploadState state = timestampBasedUploads.get(timestampWindow);
@@ -338,8 +349,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
         while ((b = AWS2S3Utils.toByteArray(is, maxRead)).length > 0) {
             totalSize += b.length;
-            if (getConfiguration().isMultiPartUpload())
-                maxRead -= b.length;
+            if (getConfiguration().isMultiPartUpload()) maxRead -= b.length;
 
             lock.lock();
             try {
@@ -354,9 +364,11 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     newState.dynamicKeyName = generateTimestampBasedFileName(fileName, extension, timestampWindow);
 
                     // Initialize multipart upload
-                    CreateMultipartUploadRequest.Builder createMultipartUploadRequest
-                            = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
-                                    .key(newState.dynamicKeyName).checksumAlgorithm(algorithm);
+                    CreateMultipartUploadRequest.Builder createMultipartUploadRequest =
+                            CreateMultipartUploadRequest.builder()
+                                    .bucket(getConfiguration().getBucketName())
+                                    .key(newState.dynamicKeyName)
+                                    .checksumAlgorithm(algorithm);
 
                     String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
                     if (storageClass != null) {
@@ -376,10 +388,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
                     AWS2S3Utils.setEncryption(createMultipartUploadRequest, getConfiguration());
 
-                    LOG.trace("Initiating multipart upload [{}] for timestamp window {}", createMultipartUploadRequest,
+                    LOG.trace(
+                            "Initiating multipart upload [{}] for timestamp window {}",
+                            createMultipartUploadRequest,
                             timestampWindow);
-                    newState.initResponse
-                            = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
+                    newState.initResponse =
+                            getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
 
                     timestampBasedUploads.put(timestampWindow, newState);
                 }
@@ -387,7 +401,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
                 state.buffer.write(b);
 
-                if (getConfiguration().isMultiPartUpload() && state.buffer.size() >= getConfiguration().getPartSize()) {
+                if (getConfiguration().isMultiPartUpload()
+                        && state.buffer.size() >= getConfiguration().getPartSize()) {
                     uploadPart(state);
                     maxRead = Math.toIntExact(getConfiguration().getPartSize());
                     continue;
@@ -397,8 +412,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                         || (state.index >= getConfiguration().getBatchMessageNumber()
                                 && state.buffer.size() < getConfiguration().getPartSize())) {
 
-                    if (state.buffer.size() > 0)
-                        uploadPart(state);
+                    if (state.buffer.size() > 0) uploadPart(state);
                     CompleteMultipartUploadResponse uploadResult = completeUpload(state);
                     timestampBasedUploads.remove(timestampWindow);
 
@@ -411,10 +425,13 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
             } catch (Exception e) {
                 if (state != null && state.initResponse != null) {
-                    getEndpoint().getS3Client()
-                            .abortMultipartUpload(
-                                    AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
-                                            .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId()).build());
+                    getEndpoint()
+                            .getS3Client()
+                            .abortMultipartUpload(AbortMultipartUploadRequest.builder()
+                                    .bucket(getConfiguration().getBucketName())
+                                    .key(state.dynamicKeyName)
+                                    .uploadId(state.initResponse.uploadId())
+                                    .build());
                     timestampBasedUploads.remove(timestampWindow);
                 }
                 throw e;
@@ -425,21 +442,25 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     }
 
     private CompleteMultipartUploadResponse completeUpload(UploadState state) {
-        CompletedMultipartUpload completeMultipartUpload
-                = CompletedMultipartUpload.builder().parts(state.completedParts).build();
-        CompleteMultipartUploadRequest compRequest
-                = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
-                        .bucket(getConfiguration().getBucketName()).key(state.dynamicKeyName)
-                        .uploadId(state.initResponse.uploadId())
-                        .build();
+        CompletedMultipartUpload completeMultipartUpload =
+                CompletedMultipartUpload.builder().parts(state.completedParts).build();
+        CompleteMultipartUploadRequest compRequest = CompleteMultipartUploadRequest.builder()
+                .multipartUpload(completeMultipartUpload)
+                .bucket(getConfiguration().getBucketName())
+                .key(state.dynamicKeyName)
+                .uploadId(state.initResponse.uploadId())
+                .build();
 
         try {
-            final CompleteMultipartUploadResponse uploadResult
-                    = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
+            final CompleteMultipartUploadResponse uploadResult =
+                    getEndpoint().getS3Client().completeMultipartUpload(compRequest);
 
             // Converting the index to String can cause extra overhead
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Completed upload for the part {}, multipart {} with etag {} at index {}", part, state.multipartIndex,
+                LOG.debug(
+                        "Completed upload for the part {}, multipart {} with etag {} at index {}",
+                        part,
+                        state.multipartIndex,
                         uploadResult.eTag(),
                         state.index);
             }
@@ -447,25 +468,41 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             return uploadResult;
         } catch (Exception e) {
             LOG.warn("Error completing multipart upload - Multipart upload will be aborted", e);
-            getEndpoint().getS3Client()
-                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
-                            .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId()).build());
+            getEndpoint()
+                    .getS3Client()
+                    .abortMultipartUpload(AbortMultipartUploadRequest.builder()
+                            .bucket(getConfiguration().getBucketName())
+                            .key(state.dynamicKeyName)
+                            .uploadId(state.initResponse.uploadId())
+                            .build());
             throw e;
         }
     }
 
     private void uploadPart(UploadState state) {
-        UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
-                .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId())
-                .partNumber(state.multipartIndex).checksumAlgorithm(algorithm).build();
+        UploadPartRequest uploadRequest = UploadPartRequest.builder()
+                .bucket(getConfiguration().getBucketName())
+                .key(state.dynamicKeyName)
+                .uploadId(state.initResponse.uploadId())
+                .partNumber(state.multipartIndex)
+                .checksumAlgorithm(algorithm)
+                .build();
 
-        LOG.trace("Uploading part {}, multipart {} at index {} for {}", state.part, state.multipartIndex, state.index,
+        LOG.trace(
+                "Uploading part {}, multipart {} at index {} for {}",
+                state.part,
+                state.multipartIndex,
+                state.index,
                 getConfiguration().getKeyName());
 
-        UploadPartResponse partResponse = getEndpoint().getS3Client()
+        UploadPartResponse partResponse = getEndpoint()
+                .getS3Client()
                 .uploadPart(uploadRequest, RequestBody.fromBytes(state.buffer.toByteArray()));
-        CompletedPart partUpload = CompletedPart.builder().partNumber(state.multipartIndex)
-                .checksumCRC32(partResponse.checksumCRC32()).eTag(partResponse.eTag()).build();
+        CompletedPart partUpload = CompletedPart.builder()
+                .partNumber(state.multipartIndex)
+                .checksumCRC32(partResponse.checksumCRC32())
+                .eTag(partResponse.eTag())
+                .build();
         state.completedParts.add(partUpload);
         state.buffer.reset();
         state.multipartIndex++;
@@ -584,16 +621,17 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private void setStartingPart() {
         if (getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.progressive)) {
             ArrayList<S3Object> list = new ArrayList<>();
-            ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(getConfiguration().getBucketName())
-                    .prefix(AWS2S3Utils.determineFileName(getConfiguration().getKeyName())).build();
+            ListObjectsV2Request request = ListObjectsV2Request.builder()
+                    .bucket(getConfiguration().getBucketName())
+                    .prefix(AWS2S3Utils.determineFileName(getConfiguration().getKeyName()))
+                    .build();
             ListObjectsV2Iterable listRes = getEndpoint().getS3Client().listObjectsV2Paginator(request);
-            listRes.stream()
-                    .flatMap(r -> r.contents().stream())
-                    .forEach(content -> list.add(content));
+            listRes.stream().flatMap(r -> r.contents().stream()).forEach(content -> list.add(content));
             if (!list.isEmpty()) {
                 list.sort(Comparator.comparing(S3Object::lastModified));
                 int listSize = list.size();
-                String fileName = AWS2S3Utils.determineFileName(list.get(listSize - 1).key());
+                String fileName =
+                        AWS2S3Utils.determineFileName(list.get(listSize - 1).key());
                 int position = fileName.lastIndexOf("-");
                 if (position != -1) {
                     String partString = fileName.substring(position + 1);
@@ -616,7 +654,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (s3ProducerToString == null) {
-            s3ProducerToString = "AWS2S3StreamUploadProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            s3ProducerToString = "AWS2S3StreamUploadProducer["
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return s3ProducerToString;
     }

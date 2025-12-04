@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -23,9 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
 
@@ -71,8 +72,7 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a")
-                        .to("jcr://user:pass@repository/home/test");
+                from("direct:a").to("jcr://user:pass@repository/home/test");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import org.apache.camel.AggregationStrategy;
@@ -44,7 +45,8 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         // complete every 5th seconds
-                        .completionInterval(getCompletionInterval()).aggregationRepository(repo)
+                        .completionInterval(getCompletionInterval())
+                        .aggregationRepository(repo)
                         .to("mock:aggregated");
             }
             // END SNIPPET: e1
@@ -57,8 +59,7 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return newAppContext(
-                "JdbcSpringDataSource.xml", "JdbcSpringDataSource.xml");
+        return newAppContext("JdbcSpringDataSource.xml", "JdbcSpringDataSource.xml");
     }
 
     protected Exchange repoAddAndGet(String key, Exchange exchange) {
@@ -75,9 +76,8 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
                 return exchange;
             } catch (Exception e) {
                 if (optimistic) {
-                    OptimisticLockingAggregationRepository.OptimisticLockingException ole
-                            = ObjectHelper.getException(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
-                                    e);
+                    OptimisticLockingAggregationRepository.OptimisticLockingException ole = ObjectHelper.getException(
+                            OptimisticLockingAggregationRepository.OptimisticLockingException.class, e);
                     if (ole != null) {
                         // okay lets try again
                         try {

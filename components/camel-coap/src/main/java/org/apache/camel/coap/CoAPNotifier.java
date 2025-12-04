@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
 
 import java.net.URI;
@@ -59,10 +60,10 @@ public class CoAPNotifier extends DefaultProducer {
                 // resource path != notified path. This is true when the resource path contains
                 // {placeholders} while the notified path does not.
                 // Only notify a client if the requested path == notified uri.
-                String observedPath = observeRelation.getExchange().getRequest().getOptions().getUriPathString();
+                String observedPath =
+                        observeRelation.getExchange().getRequest().getOptions().getUriPathString();
                 return uri.getPath().equals(observedPath);
             }
         });
     }
-
 }

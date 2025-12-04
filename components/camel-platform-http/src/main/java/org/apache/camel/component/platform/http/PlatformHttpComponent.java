@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
 
 import java.util.ArrayList;
@@ -56,13 +57,19 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
 
     @Metadata(label = "advanced", description = "An HTTP Server engine implementation to serve the requests")
     private volatile PlatformHttpEngine engine;
-    @Metadata(label = "advanced,consumer", defaultValue = "false",
-              description = "When Camel is complete processing the message, and the HTTP server is writing response. This option controls whether Camel"
+
+    @Metadata(
+            label = "advanced,consumer",
+            defaultValue = "false",
+            description =
+                    "When Camel is complete processing the message, and the HTTP server is writing response. This option controls whether Camel"
                             + " should catch any failure during writing response and store this on the Exchange, which allows onCompletion/UnitOfWork to"
                             + " regard the Exchange as failed and have access to the caused exception from the HTTP server.")
     private boolean handleWriteResponseError;
-    @Metadata(label = "advanced,consumer",
-              description = "The period in milliseconds after which the request should be timed out.")
+
+    @Metadata(
+            label = "advanced,consumer",
+            description = "The period in milliseconds after which the request should be timed out.")
     private long requestTimeout;
 
     private final Set<HttpEndpointModel> httpEndpoints = new TreeSet<>();
@@ -91,33 +98,64 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
 
     @Override
     public Consumer createApiConsumer(
-            CamelContext camelContext, Processor processor, String contextPath,
-            RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            Processor processor,
+            String contextPath,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
 
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
-        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, "application/json,text/yaml",
+        return doCreateConsumer(
+                camelContext,
+                processor,
+                "GET",
+                contextPath,
+                null,
+                null,
+                "application/json,text/yaml",
                 configuration,
-                parameters, true, true);
+                parameters,
+                true,
+                true);
     }
 
     @Override
     public Consumer createConsumer(
-            CamelContext camelContext, Processor processor, String verb, String basePath,
+            CamelContext camelContext,
+            Processor processor,
+            String verb,
+            String basePath,
             String uriTemplate,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
-            throws Exception {
-        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
-                parameters, false, true);
-    }
-
-    @Override
-    public Consumer createConsumer(
-            CamelContext camelContext, Processor processor, String contextPath, RestConfiguration configuration,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
             Map<String, Object> parameters)
             throws Exception {
-        return doCreateConsumer(camelContext, processor, null, contextPath, null, null, null, configuration,
-                parameters, true, false);
+        return doCreateConsumer(
+                camelContext,
+                processor,
+                verb,
+                basePath,
+                uriTemplate,
+                consumes,
+                produces,
+                configuration,
+                parameters,
+                false,
+                true);
+    }
+
+    @Override
+    public Consumer createConsumer(
+            CamelContext camelContext,
+            Processor processor,
+            String contextPath,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
+            throws Exception {
+        return doCreateConsumer(
+                camelContext, processor, null, contextPath, null, null, null, configuration, parameters, true, false);
     }
 
     /**
@@ -130,12 +168,18 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
     /**
      * Adds a known http management endpoint managed by this component.
      */
-    public void addHttpManagementEndpoint(String uri, String verbs, String consumes, String produces, Consumer consumer) {
+    public void addHttpManagementEndpoint(
+            String uri, String verbs, String consumes, String produces, Consumer consumer) {
         this.addHttpEndpoint(this.httpManagementEndpoints, uri, verbs, consumes, produces, consumer);
     }
 
     private void addHttpEndpoint(
-            Set<HttpEndpointModel> endpoints, String uri, String verbs, String consumes, String produces, Consumer consumer) {
+            Set<HttpEndpointModel> endpoints,
+            String uri,
+            String verbs,
+            String consumes,
+            String produces,
+            Consumer consumer) {
         HttpEndpointModel model = new HttpEndpointModel(uri, verbs, consumes, produces, consumer);
         endpoints.add(model);
         for (PlatformHttpListener listener : listeners) {
@@ -249,10 +293,17 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
     }
 
     private Consumer doCreateConsumer(
-            CamelContext camelContext, Processor processor, String verb, String basePath,
+            CamelContext camelContext,
+            Processor processor,
+            String verb,
+            String basePath,
             String uriTemplate,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters,
-            boolean api, boolean register)
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters,
+            boolean api,
+            boolean register)
             throws Exception {
 
         String path = basePath;
@@ -269,8 +320,8 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = configuration;
         if (config == null) {
-            config = CamelContextHelper.getRestConfiguration(getCamelContext(),
-                    PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
+            config = CamelContextHelper.getRestConfiguration(
+                    getCamelContext(), PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
         }
 
         // prefix path with context-path if configured in rest-dsl configuration
@@ -283,8 +334,8 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
             }
         }
 
-        Map<String, Object> map
-                = RestComponentHelper.initRestEndpointProperties(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, config);
+        Map<String, Object> map = RestComponentHelper.initRestEndpointProperties(
+                PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, config);
 
         boolean cors = config.isEnableCORS();
 
@@ -304,7 +355,8 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
         // configure consumer properties
         DefaultPlatformHttpConsumer consumer = endpoint.createConsumer(processor);
         consumer.setRegister(register);
-        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null
+                && !config.getConsumerProperties().isEmpty()) {
             setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
@@ -318,8 +370,10 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
                 if (engine == null) {
                     LOG.debug("Lookup platform http engine from registry");
 
-                    engine = getCamelContext().getRegistry()
-                            .lookupByNameAndType(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
+                    engine = getCamelContext()
+                            .getRegistry()
+                            .lookupByNameAndType(
+                                    PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
 
                     if (engine == null) {
                         LOG.debug("Lookup platform http engine from factory");
@@ -327,9 +381,11 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
                         engine = getCamelContext()
                                 .getCamelContextExtension()
                                 .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
-                                .newInstance(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, PlatformHttpEngine.class)
-                                .orElseThrow(() -> new IllegalStateException(
-                                        "PlatformHttpEngine is neither set on this endpoint neither found in Camel Registry or FactoryFinder."));
+                                .newInstance(
+                                        PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, PlatformHttpEngine.class)
+                                .orElseThrow(
+                                        () -> new IllegalStateException(
+                                                "PlatformHttpEngine is neither set on this endpoint neither found in Camel Registry or FactoryFinder."));
 
                         localEngine = true;
                     }
@@ -353,7 +409,8 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "platform-http");
 
             // configure additional options on configuration
-            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            if (config.getComponentProperties() != null
+                    && !config.getComponentProperties().isEmpty()) {
                 setProperties(this, config.getComponentProperties());
             }
         } catch (IllegalArgumentException e) {
@@ -362,5 +419,4 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
             // safely ignored as it means there's no special conf for this component.
         }
     }
-
 }

@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty12;
 
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("jetty")
-public class HttpSendDynamicAware extends org.apache.camel.http.base.HttpSendDynamicAware {
-
-}
+public class HttpSendDynamicAware extends org.apache.camel.http.base.HttpSendDynamicAware {}

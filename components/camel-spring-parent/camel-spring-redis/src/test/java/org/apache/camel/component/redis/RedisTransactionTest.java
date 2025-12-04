@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
+
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.redis.core.RedisTemplate;
-
-import static org.mockito.Mockito.verify;
 
 @MockitoSettings
 public class RedisTransactionTest extends RedisTestSupport {
@@ -63,10 +64,7 @@ public class RedisTransactionTest extends RedisTestSupport {
         List<String> keys = new ArrayList<>();
         keys.add("key");
 
-        sendHeaders(
-                RedisConstants.COMMAND, "WATCH",
-                RedisConstants.KEYS, keys);
+        sendHeaders(RedisConstants.COMMAND, "WATCH", RedisConstants.KEYS, keys);
         verify(redisTemplate).watch(keys);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DisruptorWaitForTaskCompleteTest extends CamelTestSupport {
     @Test
@@ -62,7 +63,8 @@ public class DisruptorWaitForTaskCompleteTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start").to("disruptor:foo?waitForTaskToComplete=Always");
 
-                from("disruptor:foo?waitForTaskToComplete=Always").transform(constant("Bye World"))
+                from("disruptor:foo?waitForTaskToComplete=Always")
+                        .transform(constant("Bye World"))
                         .to("mock:result");
             }
         };

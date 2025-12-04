@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
 
 import java.util.List;
@@ -44,15 +45,25 @@ import quickfix.SessionID;
 /**
  * Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName",
-             category = { Category.MESSAGING }, headersClass = QuickfixjEndpoint.class)
+@UriEndpoint(
+        firstVersion = "2.1.0",
+        scheme = "quickfix",
+        title = "QuickFix",
+        syntax = "quickfix:configurationName",
+        category = {Category.MESSAGING},
+        headersClass = QuickfixjEndpoint.class)
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
-    @Metadata(description = "The event category.", javaType = "org.apache.camel.component.quickfixj.QuickfixjEventCategory")
+    @Metadata(
+            description = "The event category.",
+            javaType = "org.apache.camel.component.quickfixj.QuickfixjEventCategory")
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
+
     @Metadata(description = "The FIX message SessionID.", javaType = "quickfix.SessionID")
     public static final String SESSION_ID_KEY = "SessionID";
+
     @Metadata(description = "The FIX MsgType tag value.", javaType = "String")
     public static final String MESSAGE_TYPE_KEY = "MessageType";
+
     public static final String DATA_DICTIONARY_KEY = "DataDictionary";
 
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEndpoint.class);
@@ -64,9 +75,12 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     @UriPath
     @Metadata(required = true, supportFileReference = true)
     private String configurationName;
+
     @UriParam
     private String sessionID;
+
     private volatile SessionID sid;
+
     @UriParam
     private boolean lazyCreateEngine;
 
@@ -129,7 +143,9 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session",
+        LOG.info(
+                "Creating QuickFIX/J consumer: {}, ExchangePattern={}",
+                sessionID != null ? sessionID : "No Session",
                 getExchangePattern());
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
         configureConsumer(consumer);
@@ -140,7 +156,8 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public Producer createProducer() throws Exception {
         LOG.info("Creating QuickFIX/J producer: {}", sessionID != null ? sessionID : "No Session");
         if (isWildcarded()) {
-            throw new ResolveEndpointFailedException("Cannot create consumer on wildcarded session identifier: " + sessionID);
+            throw new ResolveEndpointFailedException(
+                    "Cannot create consumer on wildcarded session identifier: " + sessionID);
         }
         return new QuickfixjProducer(this);
     }
@@ -177,8 +194,8 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) throws Exception {
         if (this.sessionID == null || isMatching(sessionID)) {
             for (QuickfixjConsumer consumer : consumers) {
-                Exchange exchange
-                        = QuickfixjConverters.toExchange(consumer, sessionID, message, eventCategory, getExchangePattern());
+                Exchange exchange = QuickfixjConverters.toExchange(
+                        consumer, sessionID, message, eventCategory, getExchangePattern());
                 try {
                     consumer.onExchange(exchange);
                     Exception cause = exchange.getException();

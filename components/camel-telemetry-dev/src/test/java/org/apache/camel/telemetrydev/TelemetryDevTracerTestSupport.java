@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
 
 import java.io.IOException;
@@ -64,7 +65,8 @@ public class TelemetryDevTracerTestSupport extends ExchangeTestSupport {
     @AfterEach
     public synchronized void clearLogTraces() throws IOException {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        RollingFileAppender appender = (RollingFileAppender) ctx.getConfiguration().getAppenders().get("file2");
+        RollingFileAppender appender =
+                (RollingFileAppender) ctx.getConfiguration().getAppenders().get("file2");
         if (appender != null) {
             appender.getManager().rollover();
         }
@@ -80,5 +82,4 @@ public class TelemetryDevTracerTestSupport extends ExchangeTestSupport {
         }
         throw new IllegalArgumentException("Trying to get a non existing span!");
     }
-
 }

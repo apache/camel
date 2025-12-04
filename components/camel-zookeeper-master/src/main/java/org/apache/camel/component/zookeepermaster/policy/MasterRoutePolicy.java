@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.policy;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -216,7 +217,8 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         StringHelper.notEmpty("groupName", groupName);
 
         String path = getCamelClusterPath(groupName);
-        this.groupListener = new ZookeeperGroupListenerSupport(path, route.getEndpoint(), onLockOwned(), onDisconnected());
+        this.groupListener =
+                new ZookeeperGroupListenerSupport(path, route.getEndpoint(), onLockOwned(), onDisconnected());
         this.groupListener.setCamelContext(camelContext);
         this.groupListener.setCurator(curator);
         this.groupListener.setMaximumConnectionTimeout(maximumConnectionTimeout);
@@ -224,8 +226,11 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         this.groupListener.setZooKeeperPassword(zooKeeperPassword);
         ServiceHelper.startService(groupListener);
 
-        LOG.info("Attempting to become master for endpoint: {} in {} with singletonID: {}", route.getEndpoint(),
-                getCamelContext(), getGroupName());
+        LOG.info(
+                "Attempting to become master for endpoint: {} in {} with singletonID: {}",
+                route.getEndpoint(),
+                getCamelContext(),
+                getGroupName());
         thisNodeState = createNodeState();
         groupListener.updateState(thisNodeState);
     }
@@ -284,5 +289,4 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         state.setConsumer(route.getEndpoint().getEndpointUri());
         return state;
     }
-
 }

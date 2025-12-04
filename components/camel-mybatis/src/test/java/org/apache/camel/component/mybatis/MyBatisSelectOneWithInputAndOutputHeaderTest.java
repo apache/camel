@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisSelectOneWithInputAndOutputHeaderTest extends MyBatisTestSupport {
 
@@ -40,7 +41,8 @@ public class MyBatisSelectOneWithInputAndOutputHeaderTest extends MyBatisTestSup
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Account account = mock.getReceivedExchanges().get(0).getIn().getHeader(TEST_CASE_OUTPUT_HEADER_NAME, Account.class);
+        Account account =
+                mock.getReceivedExchanges().get(0).getIn().getHeader(TEST_CASE_OUTPUT_HEADER_NAME, Account.class);
         assertEquals("Claus", account.getFirstName());
     }
 
@@ -63,8 +65,8 @@ public class MyBatisSelectOneWithInputAndOutputHeaderTest extends MyBatisTestSup
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
-                        .to("mybatis:selectAccountById?statementType=SelectOne&inputHeader=" + TEST_CASE_INPUT_HEADER_NAME
-                            + "&outputHeader=" + TEST_CASE_OUTPUT_HEADER_NAME)
+                        .to("mybatis:selectAccountById?statementType=SelectOne&inputHeader="
+                                + TEST_CASE_INPUT_HEADER_NAME + "&outputHeader=" + TEST_CASE_OUTPUT_HEADER_NAME)
                         .to("mock:result");
                 // END SNIPPET: e1
             }

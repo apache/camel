@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.common;
 
 import java.io.Serializable;
@@ -31,13 +32,15 @@ public class CxfOperationException extends CamelException implements Serializabl
     private final Map<String, String> responseHeaders;
     private final String responseBody;
 
-    public CxfOperationException(String uri, int statusCode, String statusText, String location,
-                                 Map<String, String> responseHeaders,
-                                 String responseBody) {
+    public CxfOperationException(
+            String uri,
+            int statusCode,
+            String statusText,
+            String location,
+            Map<String, String> responseHeaders,
+            String responseBody) {
         super("JAXRS operation failed invoking " + uri + " with statusCode: " + statusCode
-              + (location != null
-                      ? ", redirectLocation: " + location
-                      : ""));
+                + (location != null ? ", redirectLocation: " + location : ""));
         this.uri = uri;
         this.statusCode = statusCode;
         this.statusText = statusText;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit.rule.mllp;
 
 /**
@@ -32,8 +33,8 @@ public class MllpJUnitResourceCorruptFrameException extends MllpJUnitResourceExc
         super(cause);
     }
 
-    public MllpJUnitResourceCorruptFrameException(String message, Throwable cause, boolean enableSuppression,
-                                                  boolean writableStackTrace) {
+    public MllpJUnitResourceCorruptFrameException(
+            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

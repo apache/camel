@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.List;
@@ -57,8 +58,11 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
     private final Predicate onWhen;
     private transient long matches;
 
-    public CatchProcessor(CamelContext camelContext, List<Class<? extends Throwable>> exceptions, Processor processor,
-                          Predicate onWhen) {
+    public CatchProcessor(
+            CamelContext camelContext,
+            List<Class<? extends Throwable>> exceptions,
+            Processor processor,
+            Predicate onWhen) {
         super(processor);
         this.camelContext = camelContext;
         this.exceptions = exceptions;
@@ -72,9 +76,13 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
             onWhen.init(camelContext);
         }
         // only if JMX is enabled
-        if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.extendedStatistics
-                    = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+        if (camelContext.getManagementStrategy() != null
+                && camelContext.getManagementStrategy().getManagementAgent() != null) {
+            this.extendedStatistics = camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
+                    .getStatisticsLevel()
+                    .isExtended();
             this.exceptionMatches = new ConcurrentHashMap<>();
         } else {
             this.extendedStatistics = false;
@@ -126,7 +134,9 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
             return true;
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(),
+            LOG.trace(
+                    "This CatchProcessor catches the exception: {} caused by: {}",
+                    caught.getClass().getName(),
                     e.getMessage());
         }
 
@@ -140,7 +150,8 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
 
         // store the last to endpoint as the failure endpoint
         if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
-            exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+            exchange.setProperty(
+                    ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
         }
         // and store the route id so we know in which route we failed
         String routeId = ExchangeHelper.getAtRouteId(exchange);
@@ -155,8 +166,10 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
         exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("The exception is handled for the exception: {} caused by: {}",
-                    e.getClass().getName(), e.getMessage());
+            LOG.debug(
+                    "The exception is handled for the exception: {} caused by: {}",
+                    e.getClass().getName(),
+                    e.getMessage());
         }
 
         // emit event that the failure is being handled

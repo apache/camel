@@ -60,7 +60,6 @@ public class MessageProcessor extends AbstractBaseProcessor {
         }
 
         setBody(exchange, resultMessage, endpoint.isFormatJSON());
-
     }
 
     private MessageResponse publishMessage(MessageRequest message) {

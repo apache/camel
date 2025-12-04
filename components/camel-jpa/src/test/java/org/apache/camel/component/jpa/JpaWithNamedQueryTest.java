@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -40,10 +45,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Timeout(30)
 public class JpaWithNamedQueryTest {
@@ -110,21 +111,23 @@ public class JpaWithNamedQueryTest {
 
         // lets now test that the database is updated
         // we need to sleep as we will be invoked from inside the transaction!
-        // org.apache.openjpa.persistence.InvalidStateException: This operation cannot be performed while a Transaction is active.
+        // org.apache.openjpa.persistence.InvalidStateException: This operation cannot be performed while a Transaction
+        // is active.
         Thread.sleep(2000);
 
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 // make use of the EntityManager having the relevant persistence-context
-                EntityManager entityManager2
-                        = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
+                EntityManager entityManager2 =
+                        receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
                 if (!entityManager2.isOpen()) {
                     entityManager2 = endpoint.getEntityManagerFactory().createEntityManager();
                 }
                 entityManager2.joinTransaction();
 
                 // now lets assert that there are still 2 entities left
-                List<?> rows = entityManager2.createQuery("select x from MultiSteps x").getResultList();
+                List<?> rows =
+                        entityManager2.createQuery("select x from MultiSteps x").getResultList();
                 assertEquals(2, rows.size(), "Number of entities: " + rows);
 
                 int counter = 1;

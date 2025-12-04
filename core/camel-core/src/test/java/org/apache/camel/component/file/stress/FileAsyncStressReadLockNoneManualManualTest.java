@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.stress;
 
 import java.util.Random;
@@ -35,17 +36,20 @@ public class FileAsyncStressReadLockNoneManualManualTest extends FileAsyncStress
                 // this will result in polling again and potentially picking up
                 // files
                 // that already are in progress
-                from(fileUri("?maxMessagesPerPoll=50&readLock=none")).routeId("foo").autoStartup(false)
-                        .threads(10).process(new Processor() {
+                from(fileUri("?maxMessagesPerPoll=50&readLock=none"))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .threads(10)
+                        .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // simulate some work with random time to complete
                                 Random ran = new Random();
                                 int delay = ran.nextInt(250) + 10;
                                 Thread.sleep(delay);
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

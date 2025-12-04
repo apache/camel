@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.key.vault.integration.operations;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,18 +27,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-// Must be manually tested. Provide your own accessKey and secretKey using -Dcamel.vault.azure.vaultName, -Dcamel.vault.azure.clientId, -Dcamel.vault.azure.clientSecret and -Dcamel.vault.azure.tenantId
+// Must be manually tested. Provide your own accessKey and secretKey using -Dcamel.vault.azure.vaultName,
+// -Dcamel.vault.azure.clientId, -Dcamel.vault.azure.clientSecret and -Dcamel.vault.azure.tenantId
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.vault.azure.vaultName", matches = ".*",
-                                 disabledReason = "Vault Name not provided"),
-        @EnabledIfSystemProperty(named = "camel.vault.azure.clientId", matches = ".*",
-                                 disabledReason = "Client Id not provided"),
-        @EnabledIfSystemProperty(named = "camel.vault.azure.clientSecret", matches = ".*",
-                                 disabledReason = "Client Secret not provided"),
-        @EnabledIfSystemProperty(named = "camel.vault.azure.tenantId", matches = ".*",
-                                 disabledReason = "Tenant Id not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.vault.azure.vaultName",
+            matches = ".*",
+            disabledReason = "Vault Name not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.vault.azure.clientId",
+            matches = ".*",
+            disabledReason = "Client Id not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.vault.azure.clientSecret",
+            matches = ".*",
+            disabledReason = "Client Secret not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.vault.azure.tenantId",
+            matches = ".*",
+            disabledReason = "Tenant Id not provided"),
 })
 public class KeyVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
 
@@ -90,7 +100,9 @@ public class KeyVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{azure:database#username}}")).to("mock:bar");
+                from("direct:start")
+                        .setBody(simple("{{azure:database#username}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -111,8 +123,12 @@ public class KeyVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{azure:dbsample#username:oscerd}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{azure:dbsample#password:password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{azure:dbsample#username:oscerd}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{azure:dbsample#password:password}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -134,8 +150,12 @@ public class KeyVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{azure:postgresql#additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{azure:postgresql#additional2}}")).to("mock:bar");
+                    from("direct:username")
+                            .setBody(simple("{{azure:postgresql#additional1}}"))
+                            .to("mock:bar");
+                    from("direct:password")
+                            .setBody(simple("{{azure:postgresql#additional2}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();

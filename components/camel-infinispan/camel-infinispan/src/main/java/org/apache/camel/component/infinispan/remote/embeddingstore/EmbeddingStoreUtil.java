@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.embeddingstore;
+
+import static org.apache.camel.impl.engine.DefaultComponentResolver.RESOURCE_PATH;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration;
@@ -27,8 +30,6 @@ import org.infinispan.protostream.FileDescriptorSource;
 import org.infinispan.protostream.SerializationContext;
 import org.infinispan.protostream.schema.Schema;
 import org.infinispan.protostream.schema.Type;
-
-import static org.apache.camel.impl.engine.DefaultComponentResolver.RESOURCE_PATH;
 
 public final class EmbeddingStoreUtil {
     public static final String DEFAULT_TYPE_NAME_PREFIX = "CamelInfinispanRemoteEmbedding";
@@ -44,10 +45,11 @@ public final class EmbeddingStoreUtil {
 
     public static boolean isEmbeddingStoreEnabled(CamelContext context, InfinispanRemoteConfiguration configuration) {
         return configuration.isEmbeddingStoreEnabled()
-                && (context.hasComponent("langchain4j-embeddings") != null || context.getCamelContextExtension()
-                        .getFactoryFinder(RESOURCE_PATH)
-                        .findClass("langchain4j-embeddings")
-                        .isPresent());
+                && (context.hasComponent("langchain4j-embeddings") != null
+                        || context.getCamelContextExtension()
+                                .getFactoryFinder(RESOURCE_PATH)
+                                .findClass("langchain4j-embeddings")
+                                .isPresent());
     }
 
     public static String getSchema(InfinispanRemoteConfiguration configuration) {
@@ -86,17 +88,16 @@ public final class EmbeddingStoreUtil {
     }
 
     public static void registerSchema(InfinispanRemoteConfiguration configuration, RemoteCacheManager cacheContainer) {
-        FileDescriptorSource fileDescriptorSource
-                = FileDescriptorSource.fromString(getSchemeFileName(configuration), getSchema(configuration));
-        cacheContainer.administration()
-                .schemas()
-                .create(fileDescriptorSource);
+        FileDescriptorSource fileDescriptorSource =
+                FileDescriptorSource.fromString(getSchemeFileName(configuration), getSchema(configuration));
+        cacheContainer.administration().schemas().create(fileDescriptorSource);
     }
 
     public static String getTypeName(InfinispanRemoteConfiguration configuration) {
         String embeddingStoreTypeName = configuration.getEmbeddingStoreTypeName();
         if (ObjectHelper.isEmpty(embeddingStoreTypeName)) {
-            embeddingStoreTypeName = "%s%d".formatted(DEFAULT_TYPE_NAME_PREFIX, configuration.getEmbeddingStoreDimension());
+            embeddingStoreTypeName =
+                    "%s%d".formatted(DEFAULT_TYPE_NAME_PREFIX, configuration.getEmbeddingStoreDimension());
         }
         return embeddingStoreTypeName;
     }

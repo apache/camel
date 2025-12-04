@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.greeter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
@@ -30,9 +34,6 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @Timeout(30)
 @Isolated
 @CamelSpringTest
@@ -42,9 +43,10 @@ public class CxfToJmsInOutTest {
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     private static int port = AvailablePortFinder.getNextAvailable();
+
     static {
-        //set them as system properties so Spring can use the property place holder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property place holder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("CxfToJmsInOutTest.port", Integer.toString(port));
     }
 
@@ -66,12 +68,11 @@ public class CxfToJmsInOutTest {
         inputEndpoint.expectedBodiesReceived("Willem");
         outputEndpoint.expectedBodiesReceived("Hello Willem");
 
-        String out = template.requestBodyAndHeader("cxf://bean:serviceEndpoint", "Willem", CxfConstants.OPERATION_NAME,
-                "greetMe", String.class);
+        String out = template.requestBodyAndHeader(
+                "cxf://bean:serviceEndpoint", "Willem", CxfConstants.OPERATION_NAME, "greetMe", String.class);
         assertEquals("Hello Willem", out);
 
         inputEndpoint.assertIsSatisfied();
         outputEndpoint.assertIsSatisfied();
     }
-
 }

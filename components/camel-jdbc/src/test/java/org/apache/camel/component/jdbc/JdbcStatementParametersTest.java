@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcStatementParametersTest extends AbstractJdbcTestSupport {
 
@@ -37,8 +38,10 @@ public class JdbcStatementParametersTest extends AbstractJdbcTestSupport {
     @SuppressWarnings("rawtypes")
     @Test
     public void testMax5Rows() {
-        List rows = template.requestBody("jdbc:testdb?statement.maxRows=5&statement.fetchSize=50",
-                "select * from customer order by id", List.class);
+        List rows = template.requestBody(
+                "jdbc:testdb?statement.maxRows=5&statement.fetchSize=50",
+                "select * from customer order by id",
+                List.class);
 
         assertEquals(3, rows.size());
         assertEquals(3, context.getEndpoints().size());

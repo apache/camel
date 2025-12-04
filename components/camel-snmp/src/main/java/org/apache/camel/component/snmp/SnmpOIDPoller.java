@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snmp;
 
 import java.util.List;
@@ -78,7 +79,8 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
         // listen to the transport
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting OID poller on {} using {} protocol", endpoint.getServerAddress(), endpoint.getProtocol());
+            LOG.debug(
+                    "Starting OID poller on {} using {} protocol", endpoint.getServerAddress(), endpoint.getProtocol());
         }
         this.transport.listen();
         if (LOG.isInfoEnabled()) {
@@ -154,7 +156,8 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         // check for valid response
         if (event.getRequest() == null || event.getResponse() == null) {
             // ignore null requests/responses
-            LOG.debug("Received invalid SNMP event. Request: {} / Response: {}", event.getRequest(), event.getResponse());
+            LOG.debug(
+                    "Received invalid SNMP event. Request: {} / Response: {}", event.getRequest(), event.getResponse());
             return;
         }
 
@@ -186,5 +189,4 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
             return PDU.GET;
         }
     }
-
 }

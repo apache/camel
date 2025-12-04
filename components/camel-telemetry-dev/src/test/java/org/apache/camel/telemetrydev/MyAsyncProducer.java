@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
 
 import java.util.concurrent.Callable;
@@ -47,7 +48,9 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         executor.submit(new Callable<Object>() {
             public Object call() throws Exception {
-                LOG.info("Simulating a task which takes {} millis to reply", getEndpoint().getDelay());
+                LOG.info(
+                        "Simulating a task which takes {} millis to reply",
+                        getEndpoint().getDelay());
                 Thread.sleep(getEndpoint().getDelay());
 
                 int count = counter.incrementAndGet();
@@ -68,8 +71,8 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
         });
 
         // indicate from this point forward its being routed asynchronously
-        LOG.info("Task submitted, now tell Camel routing engine to that this Exchange is being continued asynchronously");
+        LOG.info(
+                "Task submitted, now tell Camel routing engine to that this Exchange is being continued asynchronously");
         return false;
     }
-
 }

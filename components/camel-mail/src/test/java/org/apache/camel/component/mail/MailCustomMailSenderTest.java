@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Properties;
 
@@ -26,8 +29,6 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailCustomMailSenderTest extends CamelTestSupport {
     private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
@@ -57,16 +58,13 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         }
 
         @Override
-        public void addAdditionalJavaMailProperty(String key, String value) {
-        }
+        public void addAdditionalJavaMailProperty(String key, String value) {}
 
         @Override
-        public void setJavaMailProperties(Properties javaMailProperties) {
-        }
+        public void setJavaMailProperties(Properties javaMailProperties) {}
 
         @Override
-        public void setHost(String host) {
-        }
+        public void setHost(String host) {}
 
         @Override
         public String getHost() {
@@ -74,8 +72,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         }
 
         @Override
-        public void setPort(int port) {
-        }
+        public void setPort(int port) {}
 
         @Override
         public int getPort() {
@@ -83,8 +80,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         }
 
         @Override
-        public void setUsername(String username) {
-        }
+        public void setUsername(String username) {}
 
         @Override
         public String getUsername() {
@@ -92,8 +88,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         }
 
         @Override
-        public void setPassword(String password) {
-        }
+        public void setPassword(String password) {}
 
         @Override
         public String getPassword() {
@@ -101,8 +96,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         }
 
         @Override
-        public void setProtocol(String protocol) {
-        }
+        public void setProtocol(String protocol) {}
 
         @Override
         public String getProtocol() {
@@ -110,8 +104,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         }
 
         @Override
-        public void setSession(Session session) {
-        }
+        public void setSession(Session session) {}
 
         @Override
         public Session getSession() {
@@ -119,13 +112,11 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         }
 
         @Override
-        public void setAuthenticator(MailAuthenticator authenticator) {
-        }
+        public void setAuthenticator(MailAuthenticator authenticator) {}
 
         @Override
         public MailAuthenticator getAuthenticator() {
             return null;
         }
     }
-
 }

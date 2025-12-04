@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -33,11 +39,6 @@ import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Reque
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConnectionTest extends CamelTestSupport {
 
@@ -137,8 +138,9 @@ public class ConnectionTest extends CamelTestSupport {
         // assert
 
         MockEndpoint.assertIsSatisfied(context, 2_000, TimeUnit.MILLISECONDS);
-        LOG.debug("Received body: {}", testServer1Endpoint.getExchanges().get(0).getIn().getBody());
-
+        LOG.debug(
+                "Received body: {}",
+                testServer1Endpoint.getExchanges().get(0).getIn().getBody());
     }
 
     private <T> void expectValue(AssertionClause message, Consumer<Value<?>> consumer) {
@@ -174,5 +176,4 @@ public class ConnectionTest extends CamelTestSupport {
             assertEquals(expectedValue, value.getValue());
         };
     }
-
 }

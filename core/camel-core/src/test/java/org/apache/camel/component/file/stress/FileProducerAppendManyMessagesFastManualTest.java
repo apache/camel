@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.stress;
 
 import java.io.BufferedOutputStream;
@@ -64,29 +65,38 @@ public class FileProducerAppendManyMessagesFastManualTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("big?initialDelay=1000")).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        // store a output stream we use for writing
-                        FileOutputStream fos = new FileOutputStream(testFile("out/also-big.txt").toFile(), true);
-                        exchange.setProperty("myStream", fos);
-                    }
-                }).split(body().tokenize(LS)).streaming().to("log:processing?groupSize=1000").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        OutputStream fos = exchange.getProperty("myStream", OutputStream.class);
-                        byte[] data = exchange.getIn().getBody(byte[].class);
-                        fos.write(data);
-                        fos.write(LS.getBytes());
-                    }
-                }).end().process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        OutputStream fos = exchange.getProperty("myStream", OutputStream.class);
-                        fos.close();
-                        exchange.removeProperty("myStream");
-                    }
-                }).to("mock:done");
+                from(fileUri("big?initialDelay=1000"))
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // store a output stream we use for writing
+                                FileOutputStream fos = new FileOutputStream(
+                                        testFile("out/also-big.txt").toFile(), true);
+                                exchange.setProperty("myStream", fos);
+                            }
+                        })
+                        .split(body().tokenize(LS))
+                        .streaming()
+                        .to("log:processing?groupSize=1000")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                OutputStream fos = exchange.getProperty("myStream", OutputStream.class);
+                                byte[] data = exchange.getIn().getBody(byte[].class);
+                                fos.write(data);
+                                fos.write(LS.getBytes());
+                            }
+                        })
+                        .end()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                OutputStream fos = exchange.getProperty("myStream", OutputStream.class);
+                                fos.close();
+                                exchange.removeProperty("myStream");
+                            }
+                        })
+                        .to("mock:done");
             }
         };
     }

@@ -35,9 +35,7 @@ public final class ContainerEnvironmentUtil {
     private static boolean dockerAvailable;
     private static boolean environmentCheckState;
 
-    private ContainerEnvironmentUtil() {
-
-    }
+    private ContainerEnvironmentUtil() {}
 
     public static synchronized boolean isDockerAvailable() {
         if (!environmentCheckState) {
@@ -60,7 +58,8 @@ public final class ContainerEnvironmentUtil {
 
     public static boolean isPodman() {
         try {
-            Version version = DockerClientFactory.instance().client().versionCmd().exec();
+            Version version =
+                    DockerClientFactory.instance().client().versionCmd().exec();
             List<VersionComponent> components = version.getComponents();
             if (components != null) {
                 return components.stream()
@@ -94,8 +93,10 @@ public final class ContainerEnvironmentUtil {
     public static boolean isFixedPort(@SuppressWarnings("rawtypes") Class cls) {
         for (Class<?> i : cls.getInterfaces()) {
             if (i.getName().contains("InfraService")) {
-                LOG.debug("Service {} will use fixed ports (detected InfraService interface: {})",
-                        cls.getSimpleName(), i.getSimpleName());
+                LOG.debug(
+                        "Service {} will use fixed ports (detected InfraService interface: {})",
+                        cls.getSimpleName(),
+                        i.getSimpleName());
                 return true;
             }
         }

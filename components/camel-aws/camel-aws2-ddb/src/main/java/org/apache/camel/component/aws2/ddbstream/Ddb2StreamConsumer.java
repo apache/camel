@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
 
 import java.util.ArrayDeque;
@@ -62,8 +63,8 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         forceConsumerAsReady();
 
         for (Entry<String, String> shardIteratorEntry : shardIterators.entrySet()) {
-            int limitPerRecordsRequest = Math.max(1,
-                    getEndpoint().getConfiguration().getMaxResultsPerRequest() / shardIterators.size());
+            int limitPerRecordsRequest =
+                    Math.max(1, getEndpoint().getConfiguration().getMaxResultsPerRequest() / shardIterators.size());
             String shardId = shardIteratorEntry.getKey();
             String shardIterator = shardIteratorEntry.getValue();
             GetRecordsResponse result;
@@ -91,7 +92,8 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
             shardIteratorHandler.updateShardIterator(shardId, result.nextShardIterator());
             if (!records.isEmpty()) {
-                lastSeenSequenceNumbers.put(shardId, records.get(records.size() - 1).dynamodb().sequenceNumber());
+                lastSeenSequenceNumbers.put(
+                        shardId, records.get(records.size() - 1).dynamodb().sequenceNumber());
             }
         }
         return processedExchangeCount;

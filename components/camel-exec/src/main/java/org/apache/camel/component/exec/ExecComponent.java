@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
 
 import java.net.URLDecoder;
@@ -30,8 +31,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("exec")
 public class ExecComponent extends DefaultComponent {
 
-    public ExecComponent() {
-    }
+    public ExecComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

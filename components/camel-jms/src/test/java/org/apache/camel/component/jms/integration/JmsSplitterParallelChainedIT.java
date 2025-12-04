@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.CamelContext;
@@ -38,6 +39,7 @@ public class JmsSplitterParallelChainedIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -54,10 +56,10 @@ public class JmsSplitterParallelChainedIT extends AbstractJMSTest {
     public void testSplitParallel() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E");
         getMockEndpoint("mock:reply").expectedBodiesReceivedInAnyOrder("Hi A", "Hi B", "Hi C", "Hi D", "Hi E");
-        getMockEndpoint("mock:reply2").expectedBodiesReceivedInAnyOrder("Bye Hi A", "Bye Hi B", "Bye Hi C", "Bye Hi D",
-                "Bye Hi E");
-        getMockEndpoint("mock:split").expectedBodiesReceivedInAnyOrder("Bye Hi A", "Bye Hi B", "Bye Hi C", "Bye Hi D",
-                "Bye Hi E");
+        getMockEndpoint("mock:reply2")
+                .expectedBodiesReceivedInAnyOrder("Bye Hi A", "Bye Hi B", "Bye Hi C", "Bye Hi D", "Bye Hi E");
+        getMockEndpoint("mock:split")
+                .expectedBodiesReceivedInAnyOrder("Bye Hi A", "Bye Hi B", "Bye Hi C", "Bye Hi D", "Bye Hi E");
 
         template.sendBody("direct:start", "A,B,C,D,E");
 
@@ -75,7 +77,8 @@ public class JmsSplitterParallelChainedIT extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .split(body().tokenize(",")).parallelProcessing()
+                        .split(body().tokenize(","))
+                        .parallelProcessing()
                         .to("log:before")
                         .to(ExchangePattern.InOut, getUri())
                         .to("log:after")
@@ -83,14 +86,9 @@ public class JmsSplitterParallelChainedIT extends AbstractJMSTest {
                         .end()
                         .to("mock:result");
 
-                from(getUri())
-                        .transform(body().prepend("Hi "))
-                        .to("mock:reply")
-                        .to(ExchangePattern.InOut, getUri2());
+                from(getUri()).transform(body().prepend("Hi ")).to("mock:reply").to(ExchangePattern.InOut, getUri2());
 
-                from(getUri2())
-                        .transform(body().prepend("Bye "))
-                        .to("mock:reply2");
+                from(getUri2()).transform(body().prepend("Bye ")).to("mock:reply2");
             }
         };
     }

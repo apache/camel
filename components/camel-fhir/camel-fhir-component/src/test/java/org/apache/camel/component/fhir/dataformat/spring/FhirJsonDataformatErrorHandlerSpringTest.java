@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.dataformat.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import ca.uhn.fhir.parser.DataFormatException;
 import org.apache.camel.CamelExecutionException;
@@ -26,15 +32,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class FhirJsonDataformatErrorHandlerSpringTest extends CamelSpringTestSupport {
 
-    private static final String INPUT
-            = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
+    private static final String INPUT =
+            "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
     private MockEndpoint mockEndpoint;
 
     @Override
@@ -64,7 +65,9 @@ public class FhirJsonDataformatErrorHandlerSpringTest extends CamelSpringTestSup
         Patient patient = (Patient) exchange.getIn().getBody();
         assertEquals(1, patient.getExtension().size());
         assertNull(patient.getExtension().get(0).getUrl());
-        assertEquals("2011-01-02T11:13:15", patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());
+        assertEquals(
+                "2011-01-02T11:13:15",
+                patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());
     }
 
     @Override

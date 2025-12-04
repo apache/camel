@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.util.ArrayList;
@@ -137,10 +138,12 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
     // the wrapped processors is for performance counters, which are in use for the created routes
     // when a route is removed, we should remove the associated processors from this map
-    private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors = new HashMap<>();
+    private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors =
+            new HashMap<>();
     private final List<java.util.function.Consumer<JmxManagementLifecycleStrategy>> preServices = new ArrayList<>();
     private final TimerListenerManager loadTimer = new ManagedLoadTimer();
-    private final TimerListenerManagerStartupListener loadTimerStartupListener = new TimerListenerManagerStartupListener();
+    private final TimerListenerManagerStartupListener loadTimerStartupListener =
+            new TimerListenerManagerStartupListener();
     private volatile CamelContext camelContext;
     private volatile ManagedCamelContext camelContextMBean;
     private volatile boolean initialized;
@@ -149,8 +152,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     private final Map<DefaultBacklogDebugger, ManagedBacklogDebugger> managedBacklogDebuggers = new HashMap<>();
     private final Map<ThreadPoolExecutor, Object> managedThreadPools = new HashMap<>();
 
-    public JmxManagementLifecycleStrategy() {
-    }
+    public JmxManagementLifecycleStrategy() {}
 
     public JmxManagementLifecycleStrategy(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -192,13 +194,15 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         try {
             boolean done = false;
             while (!done) {
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
+                ObjectName on = getManagementStrategy()
+                        .getManagementObjectNameStrategy()
                         .getObjectNameForCamelContext(managementName, name);
                 boolean exists = getManagementStrategy().isManagedName(on);
                 if (!exists) {
                     done = true;
                 } else {
-                    // okay there exists already a CamelContext with this name, we can try to fix it by finding a free name
+                    // okay there exists already a CamelContext with this name, we can try to fix it by finding a free
+                    // name
                     boolean fixed = false;
                     // if we use the default name strategy we can find a free name to use
                     String newName = findFreeName(context.getManagementNameStrategy(), name);
@@ -211,13 +215,16 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                     // we could not fix it so veto starting camel
                     if (!fixed) {
                         throw new VetoCamelContextStartException(
-                                "CamelContext (" + context.getName() + ") with ObjectName[" + on + "] is already registered."
-                                                                 + " Make sure to use unique names on CamelContext when using multiple CamelContexts in the same MBeanServer.",
+                                "CamelContext (" + context.getName() + ") with ObjectName[" + on
+                                        + "] is already registered."
+                                        + " Make sure to use unique names on CamelContext when using multiple CamelContexts in the same MBeanServer.",
                                 context);
                     } else {
-                        LOG.warn("This CamelContext({}) will be registered using the name: {} due to clash with an "
-                                 + "existing name already registered in MBeanServer.",
-                                context.getName(), managementName);
+                        LOG.warn(
+                                "This CamelContext({}) will be registered using the name: {} due to clash with an "
+                                        + "existing name already registered in MBeanServer.",
+                                context.getName(),
+                                managementName);
                     }
                 }
             }
@@ -267,8 +274,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
 
         try {
-            Object me = getManagementObjectStrategy().getManagedObjectForRouteController(camelContext,
-                    camelContext.getRouteController());
+            Object me = getManagementObjectStrategy()
+                    .getManagedObjectForRouteController(camelContext, camelContext.getRouteController());
             if (me == null) {
                 // endpoint should not be managed
                 return;
@@ -291,8 +298,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         while (!done) {
             // compute the next name
             newName = strategy.getNextName();
-            ObjectName on
-                    = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(newName, name);
+            ObjectName on = getManagementStrategy()
+                    .getManagementObjectNameStrategy()
+                    .getObjectNameForCamelContext(newName, name);
             done = !getManagementStrategy().isManagedName(on);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
@@ -332,7 +340,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
 
         try {
-            Object mc = getManagementObjectStrategy().getManagedObjectForRouteController(context, context.getRouteController());
+            Object mc = getManagementObjectStrategy()
+                    .getManagedObjectForRouteController(context, context.getRouteController());
             // the context could have been removed already
             if (getManagementStrategy().isManaged(mc)) {
                 unmanageObject(mc);
@@ -424,7 +433,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             }
             manageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not register Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
+            LOG.warn(
+                    "Could not register Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
         }
     }
 
@@ -439,7 +449,10 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
             unmanageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not unregister Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
+            LOG.warn(
+                    "Could not unregister Endpoint MBean for endpoint: {}. This exception will be ignored.",
+                    endpoint,
+                    e);
         }
     }
 
@@ -512,7 +525,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
     private Object getManagedObjectForService(CamelContext context, Service service, Route route) {
         // skip channel, UoW and dont double wrap instrumentation
-        if (service instanceof Channel || service instanceof UnitOfWork || service instanceof InstrumentationProcessor) {
+        if (service instanceof Channel
+                || service instanceof UnitOfWork
+                || service instanceof InstrumentationProcessor) {
             return null;
         }
 
@@ -619,13 +634,14 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         // so the idea is now to only manage the processors from the map
         KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder = wrappedProcessors.get(processor);
         if (holder == null) {
-            // skip as it's not a well known processor we want to manage anyway, such as Channel/UnitOfWork/Pipeline etc.
+            // skip as it's not a well known processor we want to manage anyway, such as Channel/UnitOfWork/Pipeline
+            // etc.
             return null;
         }
 
         // get the managed object as it can be a specialized type such as a Delayer/Throttler etc.
-        Object managedObject
-                = getManagementObjectStrategy().getManagedObjectForProcessor(context, processor, holder.getKey(), route);
+        Object managedObject =
+                getManagementObjectStrategy().getManagedObjectForProcessor(context, processor, holder.getKey(), route);
         // only manage if we have a name for it as otherwise we do not want to manage it anyway
         if (managedObject != null) {
             // is it a performance counter then we need to set our counter
@@ -666,8 +682,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 LOG.trace("The route is already managed: {}", route);
                 continue;
             }
-            ManagedRouteGroup mrg = (ManagedRouteGroup) getManagementObjectStrategy()
-                    .getManagedObjectForRouteGroup(camelContext, route.getGroup());
+            ManagedRouteGroup mrg = (ManagedRouteGroup)
+                    getManagementObjectStrategy().getManagedObjectForRouteGroup(camelContext, route.getGroup());
 
             // get the wrapped instrumentation processor from this route
             // and set me as the counter
@@ -675,10 +691,11 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             if (processor instanceof InternalProcessor internal && mr instanceof ManagedRoute routeMBean) {
                 DefaultInstrumentationProcessor task = internal.getAdvice(DefaultInstrumentationProcessor.class);
                 if (task != null) {
-                    // we need to wrap the counter with the camel context, so we get stats updated on the context as well
+                    // we need to wrap the counter with the camel context, so we get stats updated on the context as
+                    // well
                     if (camelContextMBean != null) {
-                        CompositePerformanceCounter wrapper
-                                = new CompositePerformanceCounter(routeMBean, camelContextMBean, mrg);
+                        CompositePerformanceCounter wrapper =
+                                new CompositePerformanceCounter(routeMBean, camelContextMBean, mrg);
                         task.setCounter(wrapper);
                     } else {
                         task.setCounter(routeMBean);
@@ -737,8 +754,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 int size = camelContext.getRoutesByGroup(route.getGroup()).size();
                 // if size is 1 then it is because its ourselves that we are currently removing
                 if (size <= 1) {
-                    ManagedRouteGroup mrg = (ManagedRouteGroup) getManagementObjectStrategy()
-                            .getManagedObjectForRouteGroup(camelContext, route.getGroup());
+                    ManagedRouteGroup mrg = (ManagedRouteGroup)
+                            getManagementObjectStrategy().getManagedObjectForRouteGroup(camelContext, route.getGroup());
                     try {
                         unmanageObject(mrg);
                     } catch (Exception e) {
@@ -755,12 +772,17 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
     @Override
     public void onThreadPoolAdd(
-            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-            String sourceId, String routeId, String threadPoolProfileId) {
+            CamelContext camelContext,
+            ThreadPoolExecutor threadPool,
+            String id,
+            String sourceId,
+            String routeId,
+            String threadPoolProfileId) {
 
         if (!initialized) {
             // pre register so we can register later when we have been initialized
-            preServices.add(lf -> lf.onThreadPoolAdd(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId));
+            preServices.add(
+                    lf -> lf.onThreadPoolAdd(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId));
             return;
         }
 
@@ -769,8 +791,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             return;
         }
 
-        Object mtp = getManagementObjectStrategy().getManagedObjectForThreadPool(camelContext, threadPool, id, sourceId,
-                routeId, threadPoolProfileId);
+        Object mtp = getManagementObjectStrategy()
+                .getManagedObjectForThreadPool(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(mtp)) {
@@ -781,7 +803,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         try {
             manageObject(mtp);
             // store a reference so we can unmanage from JMX when the thread pool is removed
-            // we need to keep track here, as we cannot re-construct the thread pool ObjectName when removing the thread pool
+            // we need to keep track here, as we cannot re-construct the thread pool ObjectName when removing the thread
+            // pool
             managedThreadPools.put(threadPool, mtp);
         } catch (Exception e) {
             LOG.warn("Could not register thread pool: {} as ThreadPool MBean.", threadPool, e);
@@ -829,7 +852,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         // set this managed intercept strategy that executes the JMX instrumentation for performance metrics
         // so our registered counters can be used for fine-grained performance instrumentation
-        route.setManagementInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
+        route.setManagementInterceptStrategy(
+                new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
     }
 
     /**
@@ -844,7 +868,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         for (Route route : routes) {
             String id = route.getId();
 
-            Iterator<KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> it = wrappedProcessors.values().iterator();
+            Iterator<KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> it =
+                    wrappedProcessors.values().iterator();
             while (it.hasNext()) {
                 KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder = it.next();
                 RouteDefinition def = ProcessorDefinitionHelper.getRoute(holder.getKey());
@@ -856,8 +881,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     private void registerPerformanceCounters(
-            Route route, ProcessorDefinition<?> processor,
-            Map<NamedNode, PerformanceCounter> registeredCounters) {
+            Route route, ProcessorDefinition<?> processor, Map<NamedNode, PerformanceCounter> registeredCounters) {
 
         // traverse children if any exists
         List<ProcessorDefinition<?>> children = processor.getOutputs();
@@ -875,7 +899,11 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         // that then delegates to the real mbean which we register later in the onServiceAdd method
         DelegatePerformanceCounter pc = new DelegatePerformanceCounter();
         // set statistics enabled depending on the option
-        boolean enabled = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
+        boolean enabled = camelContext
+                .getManagementStrategy()
+                .getManagementAgent()
+                .getStatisticsLevel()
+                .isDefaultOrExtended();
         pc.setStatisticsEnabled(enabled);
 
         // and add it as a a registered counter that will be used lazy when Camel
@@ -889,7 +917,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      */
     protected boolean registerProcessor(ProcessorDefinition<?> processor) {
 
-        //skip processors according the ManagementMBeansLevel
+        // skip processors according the ManagementMBeansLevel
         if (!getManagementStrategy().getManagementAgent().getMBeansLevel().isProcessors()) {
             return false;
         }
@@ -976,7 +1004,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         LOG.trace("Checking whether to register {} from route: {}", service, route);
 
-        //skip route according the ManagementMBeansLevel
+        // skip route according the ManagementMBeansLevel
         if (!getManagementStrategy().getManagementAgent().getMBeansLevel().isRoutes()) {
             return false;
         }
@@ -1040,10 +1068,15 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         @Override
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             // we are disabled either if configured explicit, or if level is off
-            boolean load = camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled() != null
-                    && camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled();
-            boolean disabled = !load || camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel()
-                                        == ManagementStatisticsLevel.Off;
+            boolean load =
+                    camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled() != null
+                            && camelContext
+                                    .getManagementStrategy()
+                                    .getManagementAgent()
+                                    .getLoadStatisticsEnabled();
+            boolean disabled = !load
+                    || camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel()
+                            == ManagementStatisticsLevel.Off;
 
             LOG.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
             if (!disabled) {
@@ -1065,5 +1098,4 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         managedBacklogDebuggers.clear();
         managedThreadPools.clear();
     }
-
 }

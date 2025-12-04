@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,9 +37,6 @@ import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CachedCxfPayloadTest extends ExchangeTestSupport {
     private static final String PAYLOAD = "<foo>bar<![CDATA[ & a cdata section ]]></foo>";
@@ -79,7 +80,7 @@ public class CachedCxfPayloadTest extends ExchangeTestSupport {
         doTest(source, PAYLOAD);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void doTest(Object source, String payload) throws IOException {
         CxfPayload<?> originalPayload = context.getTypeConverter().convertTo(CxfPayload.class, source);
         CachedCxfPayload<?> cache = new CachedCxfPayload(originalPayload, exchange);

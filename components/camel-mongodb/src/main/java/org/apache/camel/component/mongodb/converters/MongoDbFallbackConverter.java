@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.converters;
 
 import java.math.BigDecimal;
@@ -35,8 +36,7 @@ public final class MongoDbFallbackConverter {
     // Jackson's ObjectMapper is thread-safe, so no need to create a pool nor synchronize access to it
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private MongoDbFallbackConverter() {
-    }
+    private MongoDbFallbackConverter() {}
 
     @Converter(fallback = true)
     @SuppressWarnings("unchecked")

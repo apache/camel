@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer.support.subcription;
 
 import org.apache.kafka.clients.consumer.Consumer;

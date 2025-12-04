@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -26,15 +29,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CamelSpringTestSupportTest {
 
     @Test
     public void testReplacement() throws IOException {
-        String input = "<camel id='{{myCamelContext}}'>\n" +
-                       "    <bean class='{{fooClass}}'/>\n" +
-                       "</camel>\n";
+        String input = "<camel id='{{myCamelContext}}'>\n" + "    <bean class='{{fooClass}}'/>\n" + "</camel>\n";
         Resource io = new ByteArrayResource(input.getBytes(StandardCharsets.UTF_8));
         Map<String, String> props = new HashMap<>();
         props.put("myCamelContext", "camel-context-id");
@@ -42,7 +41,8 @@ public class CamelSpringTestSupportTest {
         byte[] buf = new byte[1024];
         int l = tr.getInputStream().read(buf);
         String output = new String(buf, 0, l, StandardCharsets.UTF_8);
-        assertEquals("""
+        assertEquals(
+                """
                 <camel id='camel-context-id'>
                     <bean class='{{fooClass}}'/>
                 </camel>

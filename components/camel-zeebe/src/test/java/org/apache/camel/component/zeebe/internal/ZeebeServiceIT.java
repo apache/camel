@@ -17,6 +17,11 @@
 
 package org.apache.camel.component.zeebe.internal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 
 import org.apache.camel.component.zeebe.ZeebeConstants;
@@ -34,14 +39,11 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @TestInstance(Lifecycle.PER_CLASS)
-@EnabledIfSystemProperty(named = "zeebe.test.integration.enable", matches = "true",
-                         disabledReason = "Requires locally installed test system")
+@EnabledIfSystemProperty(
+        named = "zeebe.test.integration.enable",
+        matches = "true",
+        disabledReason = "Requires locally installed test system")
 public class ZeebeServiceIT {
 
     public static final String TEST_1_DEFINITION_BPMN = "test1_definition.bpmn";
@@ -67,8 +69,10 @@ public class ZeebeServiceIT {
     public void testDeployResource() throws IOException {
         DeploymentRequest deployProcessMessage = new DeploymentRequest();
         deployProcessMessage.setName(TEST_1_DEFINITION_BPMN);
-        deployProcessMessage
-                .setContent(this.getClass().getClassLoader().getResourceAsStream("data/test1_definition.bpmn").readAllBytes());
+        deployProcessMessage.setContent(this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("data/test1_definition.bpmn")
+                .readAllBytes());
 
         DeploymentResponse deploymentResponse = service.deployResource(deployProcessMessage);
         assertTrue(deploymentResponse.isSuccess());
@@ -85,8 +89,10 @@ public class ZeebeServiceIT {
 
         DeploymentRequest deployProcessMessage = new DeploymentRequest();
         deployProcessMessage.setName(TEST_1_DEFINITION_BPMN);
-        deployProcessMessage
-                .setContent(this.getClass().getClassLoader().getResourceAsStream("data/test1_definition.bpmn").readAllBytes());
+        deployProcessMessage.setContent(this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("data/test1_definition.bpmn")
+                .readAllBytes());
 
         DeploymentResponse deploymentResponse = service.deployResource(deployProcessMessage);
         assertTrue(deploymentResponse instanceof ProcessDeploymentResponse);

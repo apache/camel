@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.RoutesBuilder;
@@ -29,12 +30,11 @@ class EndpointQueryParamTest extends BaseEndpointDslTest {
             public void configure() {
                 int port = AvailablePortFinder.getNextAvailable();
                 restConfiguration().component("jetty").host("localhost").port(port);
-                rest().get("path/xyz")
-                    .to("mock:result");
+                rest().get("path/xyz").to("mock:result");
                 from(direct("test"))
-                        .to(http(String.format("localhost:%d/path/xyz?param1=1&param2=2", port)).httpMethod("GET"));
-                from(direct("test2"))
-                        .toF("http://localhost:%d/path/xyz?param1=1&param2=2&httpMethod=GET", port);
+                        .to(http(String.format("localhost:%d/path/xyz?param1=1&param2=2", port))
+                                .httpMethod("GET"));
+                from(direct("test2")).toF("http://localhost:%d/path/xyz?param1=1&param2=2&httpMethod=GET", port);
             }
         };
     }

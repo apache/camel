@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSupport {
 
@@ -56,7 +57,8 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
         Thread.sleep(1000L);
 
         // need to give seda consumer thread time to idle
-        Awaitility.await().atMost(200, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(200, TimeUnit.MILLISECONDS)
                 .pollDelay(100, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> Assertions.assertDoesNotThrow(() -> template.sendBody("seda:foo", "B")));
 

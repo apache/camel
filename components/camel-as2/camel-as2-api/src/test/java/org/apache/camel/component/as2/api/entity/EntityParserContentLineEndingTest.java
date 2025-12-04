@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
+
+import static org.apache.camel.component.as2.api.entity.EntityParserTest.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -60,9 +64,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.component.as2.api.entity.EntityParserTest.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 public class EntityParserContentLineEndingTest {
 
     private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
@@ -73,21 +74,19 @@ public class EntityParserContentLineEndingTest {
     int serialNo = 1;
 
     @BeforeEach
-    public void setUp() throws Exception {
-    }
+    public void setUp() throws Exception {}
 
     @AfterEach
-    public void tearDown() throws Exception {
-    }
+    public void tearDown() throws Exception {}
 
     @ParameterizedTest
-    @ValueSource(strings = { "\r", "" })
+    @ValueSource(strings = {"\r", ""})
     public void parseMessageDispositionNotificationReportMessageTest(String carriageReturn) throws Exception {
         HttpResponse response = new BasicClassicHttpResponse(
                 HttpStatus.SC_OK, EnglishReasonPhraseCatalog.INSTANCE.getReason(HttpStatus.SC_OK, null));
         response.setVersion(new ProtocolVersion("HTTP", 1, 1));
-        HttpMessageUtils.setHeaderValue(response, AS2Header.CONTENT_TRANSFER_ENCODING,
-                DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
+        HttpMessageUtils.setHeaderValue(
+                response, AS2Header.CONTENT_TRANSFER_ENCODING, DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
 
         InputStream is = new ByteArrayInputStream(
                 EntityParserContentProvider.dispositionNotificationReportContent(carriageReturn)
@@ -98,40 +97,47 @@ public class EntityParserContentLineEndingTest {
         EntityParser.parseAS2MessageEntity(response);
         HttpEntity parsedEntity = EntityUtils.getMessageEntity(response);
         assertNotNull(parsedEntity, "Unexpected Null message disposition notification report entity");
-        assertTrue(parsedEntity instanceof DispositionNotificationMultipartReportEntity,
+        assertTrue(
+                parsedEntity instanceof DispositionNotificationMultipartReportEntity,
                 "Unexpected type for message disposition notification report entity");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "\r", "" })
+    @ValueSource(strings = {"\r", ""})
     public void parseMessageDispositionNotificationReportBodyTest(String carriageReturn) throws Exception {
 
-        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity
-                = createMdnEntity(EntityParserContentProvider.dispositionNotificationReportContent(carriageReturn),
-                        DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
+        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = createMdnEntity(
+                EntityParserContentProvider.dispositionNotificationReportContent(carriageReturn),
+                DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
 
-        assertNotNull(dispositionNotificationMultipartReportEntity,
+        assertNotNull(
+                dispositionNotificationMultipartReportEntity,
                 "Unexpected Null disposition notification multipart entity");
         assertEquals(2, dispositionNotificationMultipartReportEntity.getPartCount(), "Unexpected number of body parts");
 
-        assertTrue(dispositionNotificationMultipartReportEntity.getPart(0) instanceof TextPlainEntity,
+        assertTrue(
+                dispositionNotificationMultipartReportEntity.getPart(0) instanceof TextPlainEntity,
                 "Unexpected type for first body part");
-        assertTrue(dispositionNotificationMultipartReportEntity.getPart(1) instanceof AS2MessageDispositionNotificationEntity,
+        assertTrue(
+                dispositionNotificationMultipartReportEntity.getPart(1)
+                        instanceof AS2MessageDispositionNotificationEntity,
                 "Unexpected type for second body part");
     }
 
     // verify that parsing the Disposition Notification Report has made no alteration to the entity's body part fields
     @ParameterizedTest
-    @ValueSource(strings = { "\r", "" })
+    @ValueSource(strings = {"\r", ""})
     public void messageDispositionNotificationReportBodyContentTest(String carriageReturn) throws Exception {
 
-        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity
-                = createMdnEntity(EntityParserContentProvider.dispositionNotificationReportContentUnfolded(carriageReturn),
-                        DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
+        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = createMdnEntity(
+                EntityParserContentProvider.dispositionNotificationReportContentUnfolded(carriageReturn),
+                DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
 
-        String expectedContent = String.format("%s\r\n%s\r\n%s",
+        String expectedContent = String.format(
+                "%s\r\n%s\r\n%s",
                 new BasicHeader(AS2Header.CONTENT_TYPE, REPORT_CONTENT_TYPE_VALUE),
-                new BasicHeader(AS2Header.CONTENT_TRANSFER_ENCODING, DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING),
+                new BasicHeader(
+                        AS2Header.CONTENT_TRANSFER_ENCODING, DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING),
                 EntityParserContentProvider.dispositionNotificationReportContentUnfolded(carriageReturn));
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -141,16 +147,20 @@ public class EntityParserContentLineEndingTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "\r", "" })
+    @ValueSource(strings = {"\r", ""})
     public void parseTextPlainBodyTest(String carriageReturn) throws Exception {
 
         InputStream is = new ByteArrayInputStream(
                 EntityParserContentProvider.textPlainContent(carriageReturn).getBytes(TEXT_PLAIN_CONTENT_CHARSET_NAME));
-        AS2SessionInputBuffer inbuffer
-                = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
+        AS2SessionInputBuffer inbuffer =
+                new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 
-        TextPlainEntity textPlainEntity = EntityParser.parseTextPlainEntityBody(inbuffer, is, TEXT_PLAIN_CONTENT_BOUNDARY,
-                TEXT_PLAIN_CONTENT_CHARSET_NAME, TEXT_PLAIN_CONTENT_TRANSFER_ENCODING);
+        TextPlainEntity textPlainEntity = EntityParser.parseTextPlainEntityBody(
+                inbuffer,
+                is,
+                TEXT_PLAIN_CONTENT_BOUNDARY,
+                TEXT_PLAIN_CONTENT_CHARSET_NAME,
+                TEXT_PLAIN_CONTENT_TRANSFER_ENCODING);
 
         String text = textPlainEntity.getText();
 
@@ -158,16 +168,20 @@ public class EntityParserContentLineEndingTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "\r", "" })
+    @ValueSource(strings = {"\r", ""})
     public void parseTextPlainBodyTestWithEntityMarshalling(String carriageReturn) throws Exception {
 
         InputStream is = new ByteArrayInputStream(
                 EntityParserContentProvider.textPlainContent(carriageReturn).getBytes(TEXT_PLAIN_CONTENT_CHARSET_NAME));
-        AS2SessionInputBuffer inbuffer
-                = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
+        AS2SessionInputBuffer inbuffer =
+                new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 
-        TextPlainEntity textPlainEntity = EntityParser.parseTextPlainEntityBody(inbuffer, is, TEXT_PLAIN_CONTENT_BOUNDARY,
-                TEXT_PLAIN_CONTENT_CHARSET_NAME, TEXT_PLAIN_CONTENT_TRANSFER_ENCODING);
+        TextPlainEntity textPlainEntity = EntityParser.parseTextPlainEntityBody(
+                inbuffer,
+                is,
+                TEXT_PLAIN_CONTENT_BOUNDARY,
+                TEXT_PLAIN_CONTENT_CHARSET_NAME,
+                TEXT_PLAIN_CONTENT_TRANSFER_ENCODING);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         textPlainEntity.setMainBody(true);
@@ -178,47 +192,71 @@ public class EntityParserContentLineEndingTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "\r", "" })
+    @ValueSource(strings = {"\r", ""})
     public void parseMessageDispositionNotificationBodyTest(String carriageReturn) throws Exception {
 
-        InputStream is = new ByteArrayInputStream(
-                EntityParserContentProvider.dispositionNotificationContent(carriageReturn)
+        InputStream is =
+                new ByteArrayInputStream(EntityParserContentProvider.dispositionNotificationContent(carriageReturn)
                         .getBytes(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME));
-        AS2SessionInputBuffer inbuffer
-                = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
+        AS2SessionInputBuffer inbuffer =
+                new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = EntityParser
-                .parseMessageDispositionNotificationEntityBody(inbuffer, is, DISPOSITION_NOTIFICATION_CONTENT_BOUNDARY,
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                EntityParser.parseMessageDispositionNotificationEntityBody(
+                        inbuffer,
+                        is,
+                        DISPOSITION_NOTIFICATION_CONTENT_BOUNDARY,
                         DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME);
 
-        assertEquals(EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA(),
+        assertEquals(
+                EXPECTED_REPORTING_UA,
+                messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected Reporting UA value");
         assertEquals(EXPECTED_MTN_NAME, messageDispositionNotificationEntity.getMtnName(), "Unexpected MTN Name");
-        assertEquals(EXPECTED_ORIGINAL_RECIPIENT,
+        assertEquals(
+                EXPECTED_ORIGINAL_RECIPIENT,
                 messageDispositionNotificationEntity.getExtensionFields().get("Original-Recipient"),
                 "Unexpected Original Recipient");
-        assertEquals(EXPECTED_FINAL_RECIPIENT, messageDispositionNotificationEntity.getFinalRecipient(),
+        assertEquals(
+                EXPECTED_FINAL_RECIPIENT,
+                messageDispositionNotificationEntity.getFinalRecipient(),
                 "Unexpected Final Reciptient");
-        assertEquals(EXPECTED_ORIGINAL_MESSAGE_ID, messageDispositionNotificationEntity.getOriginalMessageId(),
+        assertEquals(
+                EXPECTED_ORIGINAL_MESSAGE_ID,
+                messageDispositionNotificationEntity.getOriginalMessageId(),
                 "Unexpected Original Message ID");
-        assertEquals(EXPECTED_DISPOSITION_MODE, messageDispositionNotificationEntity.getDispositionMode(),
+        assertEquals(
+                EXPECTED_DISPOSITION_MODE,
+                messageDispositionNotificationEntity.getDispositionMode(),
                 "Unexpected Disposition Mode");
-        assertNotNull(messageDispositionNotificationEntity.getDispositionModifier(), "Unexpected Null Disposition Modifier");
-        assertEquals(EXPECTED_DISPOSITION_MODIFIER, messageDispositionNotificationEntity.getDispositionModifier().getModifier(),
+        assertNotNull(
+                messageDispositionNotificationEntity.getDispositionModifier(), "Unexpected Null Disposition Modifier");
+        assertEquals(
+                EXPECTED_DISPOSITION_MODIFIER,
+                messageDispositionNotificationEntity.getDispositionModifier().getModifier(),
                 "Unexpected Disposition Modifier");
-        assertEquals(EXPECTED_DISPOSITION_TYPE, messageDispositionNotificationEntity.getDispositionType(),
+        assertEquals(
+                EXPECTED_DISPOSITION_TYPE,
+                messageDispositionNotificationEntity.getDispositionType(),
                 "Unexpected Disposition Type");
-        assertArrayEquals(EXPECTED_FAILURE, messageDispositionNotificationEntity.getFailureFields(),
+        assertArrayEquals(
+                EXPECTED_FAILURE,
+                messageDispositionNotificationEntity.getFailureFields(),
                 "Unexpected Failure Array value");
-        assertArrayEquals(EXPECTED_ERROR, messageDispositionNotificationEntity.getErrorFields(),
-                "Unexpected Error Array value");
-        assertArrayEquals(EXPECTED_WARNING, messageDispositionNotificationEntity.getWarningFields(),
+        assertArrayEquals(
+                EXPECTED_ERROR, messageDispositionNotificationEntity.getErrorFields(), "Unexpected Error Array value");
+        assertArrayEquals(
+                EXPECTED_WARNING,
+                messageDispositionNotificationEntity.getWarningFields(),
                 "Unexpected Warning Array value");
-        assertNotNull(messageDispositionNotificationEntity.getReceivedContentMic(), "Unexpected Null Received Content MIC");
-        assertEquals(EXPECTED_ENCODED_MESSAGE_DIGEST,
+        assertNotNull(
+                messageDispositionNotificationEntity.getReceivedContentMic(), "Unexpected Null Received Content MIC");
+        assertEquals(
+                EXPECTED_ENCODED_MESSAGE_DIGEST,
                 messageDispositionNotificationEntity.getReceivedContentMic().getEncodedMessageDigest(),
                 "Unexpected Encoded Message Digest");
-        assertEquals(EXPECTED_DIGEST_ALGORITHM_ID,
+        assertEquals(
+                EXPECTED_DIGEST_ALGORITHM_ID,
                 messageDispositionNotificationEntity.getReceivedContentMic().getDigestAlgorithmId(),
                 "Unexpected Digest Algorithm ID");
     }
@@ -256,7 +294,8 @@ public class EntityParserContentLineEndingTest {
         //
         CMSEnvelopedDataGenerator cmsEnvelopeDataGenerator = new CMSEnvelopedDataGenerator();
 
-        JceKeyTransRecipientInfoGenerator recipientInfoGenerator = new JceKeyTransRecipientInfoGenerator(encryptionCertificate);
+        JceKeyTransRecipientInfoGenerator recipientInfoGenerator =
+                new JceKeyTransRecipientInfoGenerator(encryptionCertificate);
         cmsEnvelopeDataGenerator.addRecipientInfoGenerator(recipientInfoGenerator);
 
         //
@@ -268,13 +307,18 @@ public class EntityParserContentLineEndingTest {
         // Build Enveloped Entity
         //
         TextPlainEntity textEntity = new TextPlainEntity("This is a super secret messatge!", "US-ASCII", "7bit", false);
-        ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEnvelopedDataEntity(
-                textEntity, cmsEnvelopeDataGenerator, contentEncryptor, "binary", true);
+        ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEntity =
+                new ApplicationPkcs7MimeEnvelopedDataEntity(
+                        textEntity, cmsEnvelopeDataGenerator, contentEncryptor, "binary", true);
 
         MimeEntity decryptedMimeEntity = applicationPkcs7MimeEntity.getEncryptedEntity(encryptKP.getPrivate());
-        assertEquals("text/plain; charset=US-ASCII", decryptedMimeEntity.getContentType(),
+        assertEquals(
+                "text/plain; charset=US-ASCII",
+                decryptedMimeEntity.getContentType(),
                 "Decrypted entity has unexpected content type");
-        assertEquals("This is a super secret messatge!", ((TextPlainEntity) decryptedMimeEntity).getText(),
+        assertEquals(
+                "This is a super secret messatge!",
+                ((TextPlainEntity) decryptedMimeEntity).getText(),
                 "Decrypted entity has unexpected content");
     }
 
@@ -289,15 +333,21 @@ public class EntityParserContentLineEndingTest {
 
         X509v3CertificateBuilder v3CertGen = new JcaX509v3CertificateBuilder(
                 new X500Name(issDN),
-                BigInteger.valueOf(serialNo++), new Date(System.currentTimeMillis()),
-                new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 100)), new X500Name(subDN), subPub);
+                BigInteger.valueOf(serialNo++),
+                new Date(System.currentTimeMillis()),
+                new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 100)),
+                new X500Name(subDN),
+                subPub);
 
         v3CertGen.addExtension(Extension.subjectKeyIdentifier, false, createSubjectKeyId(subPub));
 
         v3CertGen.addExtension(Extension.authorityKeyIdentifier, false, createAuthorityKeyId(issPub));
 
-        return new JcaX509CertificateConverter().setProvider("BC").getCertificate(
-                v3CertGen.build(new JcaContentSignerBuilder("MD5withRSA").setProvider("BC").build(issPriv)));
+        return new JcaX509CertificateConverter()
+                .setProvider("BC")
+                .getCertificate(v3CertGen.build(new JcaContentSignerBuilder("MD5withRSA")
+                        .setProvider("BC")
+                        .build(issPriv)));
     }
 
     private AuthorityKeyIdentifier createAuthorityKeyId(PublicKey pub) throws IOException {
@@ -309,17 +359,21 @@ public class EntityParserContentLineEndingTest {
 
     private DispositionNotificationMultipartReportEntity createMdnEntity(String reportContent, String boundary)
             throws Exception {
-        InputStream is = new ByteArrayInputStream(
-                reportContent.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
-        AS2SessionInputBuffer inbuffer
-                = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
+        InputStream is =
+                new ByteArrayInputStream(reportContent.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
+        AS2SessionInputBuffer inbuffer =
+                new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 
-        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = EntityParser
-                .parseMultipartReportEntityBody(inbuffer, is, boundary,
+        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity =
+                EntityParser.parseMultipartReportEntityBody(
+                        inbuffer,
+                        is,
+                        boundary,
                         DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME,
                         DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
 
-        assertNotNull(dispositionNotificationMultipartReportEntity,
+        assertNotNull(
+                dispositionNotificationMultipartReportEntity,
                 "Unexpected Null disposition notification multipart entity");
 
         return dispositionNotificationMultipartReportEntity;

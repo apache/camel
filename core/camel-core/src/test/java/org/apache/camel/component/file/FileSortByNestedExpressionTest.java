@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,8 +33,7 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(folder), "Hello London", Exchange.FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader(fileUri(folder), "Hello Copenhagen", Exchange.FILE_NAME,
-                "copenhagen.xml");
+        template.sendBodyAndHeader(fileUri(folder), "Hello Copenhagen", Exchange.FILE_NAME, "copenhagen.xml");
 
         template.sendBodyAndHeader(fileUri(folder), "Hello Dublin", Exchange.FILE_NAME, "dublin.txt");
     }
@@ -45,7 +45,8 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("a/?initialDelay=0&delay=10&sortBy=file:ext;file:name")).convertBodyTo(String.class)
+                from(fileUri("a/?initialDelay=0&delay=10&sortBy=file:ext;file:name"))
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         });
@@ -64,7 +65,8 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("b/?initialDelay=0&delay=10&sortBy=file:ext;reverse:file:name")).convertBodyTo(String.class)
+                from(fileUri("b/?initialDelay=0&delay=10&sortBy=file:ext;reverse:file:name"))
+                        .convertBodyTo(String.class)
                         .to("mock:reverse");
             }
         });
@@ -75,5 +77,4 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

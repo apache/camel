@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -28,10 +33,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Log Container Request headers are applied properly
@@ -74,7 +75,6 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
         Mockito.verify(mockObject, Mockito.times(1)).withStdErr(eq(stdErr));
         Mockito.verify(mockObject, Mockito.times(1)).withStdOut(eq(stdOut));
         Mockito.verify(mockObject, Mockito.times(1)).withTimestamps(eq(timestamps));
-
     }
 
     @Override
@@ -92,5 +92,4 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
     protected DockerOperation getOperation() {
         return DockerOperation.LOG_CONTAINER;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.ArrayList;
@@ -43,7 +44,6 @@ public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean 
 
     public ManagedDoTry(CamelContext context, TryProcessor processor, TryDefinition definition) {
         super(context, processor, definition);
-
     }
 
     @Override
@@ -84,8 +84,8 @@ public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean 
 
                         CompositeData data = new CompositeDataSupport(
                                 ct,
-                                new String[] { "exception", "predicate", "language", "matches" },
-                                new Object[] { fqn, predicate, language, matches });
+                                new String[] {"exception", "predicate", "language", "matches"},
+                                new Object[] {fqn, predicate, language, matches});
                         answer.put(data);
                     }
                 }
@@ -114,7 +114,8 @@ public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean 
 
     private List<CatchProcessor> getCatchProcessors() {
         List<CatchProcessor> answer = new ArrayList<>();
-        if (getProcessor().getCatchClauses() != null && !getProcessor().getCatchClauses().isEmpty()) {
+        if (getProcessor().getCatchClauses() != null
+                && !getProcessor().getCatchClauses().isEmpty()) {
             for (Processor p : getProcessor().getCatchClauses()) {
                 Channel c = (Channel) p;
                 CatchProcessor caught = asCatchProcessor(c);
@@ -123,5 +124,4 @@ public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean 
         }
         return answer;
     }
-
 }

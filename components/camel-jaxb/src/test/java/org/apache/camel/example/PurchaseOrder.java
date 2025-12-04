@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -28,8 +29,10 @@ import org.apache.camel.util.ObjectHelper;
 public class PurchaseOrder {
     @XmlAttribute
     private String name;
+
     @XmlAttribute
     private double price;
+
     @XmlAttribute
     private double amount;
 
@@ -42,7 +45,8 @@ public class PurchaseOrder {
     public boolean equals(Object o) {
         if (o instanceof PurchaseOrder) {
             PurchaseOrder that = (PurchaseOrder) o;
-            return ObjectHelper.equal(this.name, that.name) && ObjectHelper.equal(this.amount, that.amount)
+            return ObjectHelper.equal(this.name, that.name)
+                    && ObjectHelper.equal(this.amount, that.amount)
                     && ObjectHelper.equal(this.price, that.price);
         }
         return false;

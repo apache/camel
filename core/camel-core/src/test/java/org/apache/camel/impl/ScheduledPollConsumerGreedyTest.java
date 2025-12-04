@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,8 +26,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
 
@@ -93,5 +94,4 @@ public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
 
         consumer.stop();
     }
-
 }

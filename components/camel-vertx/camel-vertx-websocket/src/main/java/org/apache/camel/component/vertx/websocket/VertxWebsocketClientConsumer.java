@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,31 +57,39 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
                 AtomicInteger reconnectAttempts = new AtomicInteger();
 
                 Vertx vertx = getEndpoint().getVertx();
-                vertx.setPeriodic(configuration.getReconnectInitialDelay(), configuration.getReconnectInterval(), timerId -> {
-                    vertx.executeBlocking(() -> {
-                        configureWebSocketHandlers(getEndpoint().getWebSocket());
-                        vertx.cancelTimer(timerId);
-                        return null;
-                    }, false)
-                            .onComplete(result -> {
-                                if (result.failed()) {
-                                    Throwable cause = result.cause();
-                                    if (cause != null) {
-                                        LOG.debug("WebSocket reconnect to {} failed due to {}", webSocket.remoteAddress(),
-                                                cause);
-                                    }
+                vertx.setPeriodic(
+                        configuration.getReconnectInitialDelay(), configuration.getReconnectInterval(), timerId -> {
+                            vertx.executeBlocking(
+                                            () -> {
+                                                configureWebSocketHandlers(
+                                                        getEndpoint().getWebSocket());
+                                                vertx.cancelTimer(timerId);
+                                                return null;
+                                            },
+                                            false)
+                                    .onComplete(result -> {
+                                        if (result.failed()) {
+                                            Throwable cause = result.cause();
+                                            if (cause != null) {
+                                                LOG.debug(
+                                                        "WebSocket reconnect to {} failed due to {}",
+                                                        webSocket.remoteAddress(),
+                                                        cause);
+                                            }
 
-                                    if (configuration.getMaxReconnectAttempts() > 0) {
-                                        if (reconnectAttempts.incrementAndGet() == configuration.getMaxReconnectAttempts()) {
-                                            LOG.warn(
-                                                    "Reconnect max attempts ({}) exhausted. Giving up trying to reconnect to {}",
-                                                    configuration.getMaxReconnectAttempts(), webSocket.remoteAddress());
-                                            vertx.cancelTimer(timerId);
+                                            if (configuration.getMaxReconnectAttempts() > 0) {
+                                                if (reconnectAttempts.incrementAndGet()
+                                                        == configuration.getMaxReconnectAttempts()) {
+                                                    LOG.warn(
+                                                            "Reconnect max attempts ({}) exhausted. Giving up trying to reconnect to {}",
+                                                            configuration.getMaxReconnectAttempts(),
+                                                            webSocket.remoteAddress());
+                                                    vertx.cancelTimer(timerId);
+                                                }
+                                            }
                                         }
-                                    }
-                                }
-                            });
-                });
+                                    });
+                        });
             }
         });
         webSocket.exceptionHandler(exception -> {
@@ -104,11 +113,13 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
 
     protected void processExchange(Exchange exchange) {
         Vertx vertx = getEndpoint().getVertx();
-        vertx.executeBlocking(() -> {
-            createUoW(exchange);
-            getProcessor().process(exchange);
-            return null;
-        }, false)
+        vertx.executeBlocking(
+                        () -> {
+                            createUoW(exchange);
+                            getProcessor().process(exchange);
+                            return null;
+                        },
+                        false)
                 .onComplete(result -> {
                     try {
                         if (result.failed()) {

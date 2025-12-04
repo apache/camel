@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openshift.builds;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
@@ -25,7 +26,8 @@ import org.apache.camel.spi.annotations.Component;
 public class OpenshiftBuildsComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected AbstractKubernetesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) {
+    protected AbstractKubernetesEndpoint doCreateEndpoint(
+            String uri, String remaining, KubernetesConfiguration config) {
         return new OpenshiftBuildsEndpoint(uri, this, config);
     }
 }

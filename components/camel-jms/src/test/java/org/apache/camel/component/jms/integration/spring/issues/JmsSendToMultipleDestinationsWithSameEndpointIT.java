@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.issues;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.jms.JmsConstants;
@@ -25,14 +28,13 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 // This one does not run well in parallel: it becomes flaky
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 public class JmsSendToMultipleDestinationsWithSameEndpointIT extends SpringJMSBasic {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsSendToMultipleDestinationsWithSameEndpointIT.class);
-    private static final String URI = "activemq:queue:JmsSendToMultipleDestinationsWithSameEndpointIT?autoStartup=false";
+    private static final String URI =
+            "activemq:queue:JmsSendToMultipleDestinationsWithSameEndpointIT?autoStartup=false";
 
     @Test
     public void testSendToAlotOfMessageToQueues() {
@@ -51,11 +53,14 @@ public class JmsSendToMultipleDestinationsWithSameEndpointIT extends SpringJMSBa
             if (i > 0 && i % 50 == 0) {
                 LOG.info("Sent {} messages so far", i);
             }
-            template.sendBodyAndHeader(URI, ExchangePattern.InOnly, "Hello " + i, JmsConstants.JMS_DESTINATION_NAME,
+            template.sendBodyAndHeader(
+                    URI,
+                    ExchangePattern.InOnly,
+                    "Hello " + i,
+                    JmsConstants.JMS_DESTINATION_NAME,
                     "JmsSendToMultipleDestinationsWithSameEndpointIT" + i);
         }
 
         LOG.info("Send complete use jconsole to view");
     }
-
 }

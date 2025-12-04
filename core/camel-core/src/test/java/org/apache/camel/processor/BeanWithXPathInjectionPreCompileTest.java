@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,8 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class BeanWithXPathInjectionPreCompileTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanWithXPathInjectionPreCompileTest.class);
     protected final MyBean myBean = new MyBean();
@@ -33,7 +34,7 @@ public class BeanWithXPathInjectionPreCompileTest extends ContextTestSupport {
     @Test
     public void testSendMessage() {
         String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
-                              + "<foo>bar</foo></env:Body></env:Envelope>";
+                + "<foo>bar</foo></env:Body></env:Envelope>";
 
         template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");
 
@@ -45,7 +46,7 @@ public class BeanWithXPathInjectionPreCompileTest extends ContextTestSupport {
     public void testSendTwoMessages() {
         // 1st message
         String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
-                              + "<foo>bar</foo></env:Body></env:Envelope>";
+                + "<foo>bar</foo></env:Body></env:Envelope>";
 
         template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");
 
@@ -54,7 +55,7 @@ public class BeanWithXPathInjectionPreCompileTest extends ContextTestSupport {
 
         // 2nd message
         String expectedBody2 = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
-                               + "<foo>baz</foo></env:Body></env:Envelope>";
+                + "<foo>baz</foo></env:Body></env:Envelope>";
 
         template.sendBodyAndHeader("direct:in", expectedBody2, "foo", "baz");
 
@@ -88,7 +89,8 @@ public class BeanWithXPathInjectionPreCompileTest extends ContextTestSupport {
             return "MyBean[foo: " + foo + " body: " + body + "]";
         }
 
-        public void read(String body, @XPath(value = "/soap:Envelope/soap:Body/foo/text()", preCompile = false) String foo) {
+        public void read(
+                String body, @XPath(value = "/soap:Envelope/soap:Body/foo/text()", preCompile = false) String foo) {
             this.foo = foo;
             this.body = body;
             LOG.info("read() method called on {}", this);

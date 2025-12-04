@@ -22,8 +22,7 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public final class TransactionSupport {
-    private TransactionSupport() {
-    }
+    private TransactionSupport() {}
 
     /**
      * Creates a transaction error handler.

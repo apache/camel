@@ -14,27 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class VertxHttpUriTest extends VertxHttpTestSupport {
 
     @Test
     public void testHttpUriFromHeader() {
-        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_URI,
-                getTestServerUrl() + "/alternate", String.class);
+        String result = template.requestBodyAndHeader(
+                getProducerUri(), null, Exchange.HTTP_URI, getTestServerUrl() + "/alternate", String.class);
         assertEquals("Overridden URI", result);
     }
 
     @Test
     public void testHttpUriAndPathFromHeader() {
-        String result = fluentTemplate.to(getProducerUri())
+        String result = fluentTemplate
+                .to(getProducerUri())
                 .withHeader(Exchange.HTTP_URI, getTestServerUrl() + "/alternate")
                 .withHeader(Exchange.HTTP_PATH, "/with/path")
                 .request(String.class);
@@ -46,15 +48,11 @@ public class VertxHttpUriTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri())
-                        .setBody(constant("Hello World"));
+                from(getTestServerUri()).setBody(constant("Hello World"));
 
-                from(getTestServerUri() + "/alternate")
-                        .setBody(constant("Overridden URI"));
+                from(getTestServerUri() + "/alternate").setBody(constant("Overridden URI"));
 
-                from(getTestServerUri() + "/alternate/with/path")
-                        .setBody(constant("Overridden URI + path"));
-
+                from(getTestServerUri() + "/alternate/with/path").setBody(constant("Overridden URI + path"));
             }
         };
     }

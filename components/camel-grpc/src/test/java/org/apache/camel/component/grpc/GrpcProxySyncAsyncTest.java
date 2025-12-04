@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +38,6 @@ import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class GrpcProxySyncAsyncTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProxySyncAsyncTest.class);
@@ -51,7 +52,10 @@ public class GrpcProxySyncAsyncTest extends CamelTestSupport {
 
     @BeforeAll
     public static void beforeAll() throws Exception {
-        grpcServer = ServerBuilder.forPort(GRPC_STUB_PORT).addService(new PingPongImpl()).build().start();
+        grpcServer = ServerBuilder.forPort(GRPC_STUB_PORT)
+                .addService(new PingPongImpl())
+                .build()
+                .start();
         LOG.info("gRPC server started on port {}", GRPC_STUB_PORT);
     }
 
@@ -65,7 +69,9 @@ public class GrpcProxySyncAsyncTest extends CamelTestSupport {
 
     @BeforeEach
     public void beforeEach() {
-        channel = ManagedChannelBuilder.forAddress("localhost", GRPC_ROUTE_PORT).usePlaintext().build();
+        channel = ManagedChannelBuilder.forAddress("localhost", GRPC_ROUTE_PORT)
+                .usePlaintext()
+                .build();
         stub = PingPongGrpc.newStub(channel);
     }
 
@@ -113,18 +119,15 @@ public class GrpcProxySyncAsyncTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class).process(e -> routeHasException.set(true));
-                from("grpc://localhost:" + GRPC_ROUTE_PORT +
-                     "/org.apache.camel.component.grpc.PingPong" +
-                     "?routeControlledStreamObserver=true")
-                        .toD("grpc://localhost:" + GRPC_STUB_PORT +
-                             "/org.apache.camel.component.grpc.PingPong" +
-                             "?method=${header.CamelGrpcMethodName}" +
-                             "&streamRepliesTo=direct:next" +
-                             "&forwardOnError=true" +
-                             "&forwardOnCompleted=true" +
-                             "&inheritExchangePropertiesForReplies=true");
-                from("direct:next")
-                        .to("grpc://dummy:80/?toRouteControlledStreamObserver=true");
+                from("grpc://localhost:" + GRPC_ROUTE_PORT + "/org.apache.camel.component.grpc.PingPong"
+                                + "?routeControlledStreamObserver=true")
+                        .toD("grpc://localhost:" + GRPC_STUB_PORT + "/org.apache.camel.component.grpc.PingPong"
+                                + "?method=${header.CamelGrpcMethodName}"
+                                + "&streamRepliesTo=direct:next"
+                                + "&forwardOnError=true"
+                                + "&forwardOnCompleted=true"
+                                + "&inheritExchangePropertiesForReplies=true");
+                from("direct:next").to("grpc://dummy:80/?toRouteControlledStreamObserver=true");
             }
         };
     }
@@ -133,13 +136,18 @@ public class GrpcProxySyncAsyncTest extends CamelTestSupport {
 
         @Override
         public void pingSyncAsync(PingRequest request, StreamObserver<PongResponse> responseObserver) {
-            LOG.info("gRPC server received data from PingAsyncResponse service PingId={} PingName={}",
+            LOG.info(
+                    "gRPC server received data from PingAsyncResponse service PingId={} PingName={}",
                     request.getPingId(),
                     request.getPingName());
-            PongResponse response01
-                    = PongResponse.newBuilder().setPongName(request.getPingName() + "-rs-1").setPongId(1).build();
-            PongResponse response02
-                    = PongResponse.newBuilder().setPongName(request.getPingName() + "-rs-2").setPongId(2).build();
+            PongResponse response01 = PongResponse.newBuilder()
+                    .setPongName(request.getPingName() + "-rs-1")
+                    .setPongId(1)
+                    .build();
+            PongResponse response02 = PongResponse.newBuilder()
+                    .setPongName(request.getPingName() + "-rs-2")
+                    .setPongId(2)
+                    .build();
             responseObserver.onNext(response01);
             responseObserver.onNext(response02);
             responseObserver.onCompleted();

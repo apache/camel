@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import java.util.HashMap;
@@ -32,7 +33,10 @@ public class DeleteTableCommand extends AbstractDdbCommand {
     @Override
     public void execute() {
         TableDescription tableDescription = ddbClient
-                .deleteTable(DeleteTableRequest.builder().tableName(determineTableName()).build()).tableDescription();
+                .deleteTable(DeleteTableRequest.builder()
+                        .tableName(determineTableName())
+                        .build())
+                .tableDescription();
 
         HashMap<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.PROVISIONED_THROUGHPUT, tableDescription.provisionedThroughput());

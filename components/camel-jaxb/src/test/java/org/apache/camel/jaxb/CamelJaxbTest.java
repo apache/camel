@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.xml.bind.JAXBElement;
 
@@ -26,10 +31,6 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelJaxbTest extends CamelTestSupport {
 
@@ -64,7 +65,6 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.expectedBodiesReceived(expected);
         template.sendBody("direct:unmarshalFilteringEnabled", xml);
         resultEndpoint.assertIsSatisfied();
-
     }
 
     @Test
@@ -174,7 +174,8 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(1);
         template.sendBody("direct:getJAXBElement", xml);
         resultEndpoint.assertIsSatisfied();
-        assertTrue(resultEndpoint.getExchanges().get(0).getIn().getBody() instanceof JAXBElement,
+        assertTrue(
+                resultEndpoint.getExchanges().get(0).getIn().getBody() instanceof JAXBElement,
                 "We should get the JAXBElement here");
 
         resultEndpoint.reset();
@@ -212,17 +213,13 @@ public class CamelJaxbTest extends CamelTestSupport {
                         .unmarshal(new JaxbDataFormat("org.apache.camel.foo.bar"))
                         .to("mock:result");
 
-                from("direct:getJAXBElement")
-                        .unmarshal(dataFormat)
-                        .to("mock:result");
+                from("direct:getJAXBElement").unmarshal(dataFormat).to("mock:result");
 
                 from("direct:unmarshalFilteringEnabled")
                         .unmarshal(filterEnabledFormat)
                         .to("mock:result");
 
-                from("direct:marshal")
-                        .marshal(dataFormat)
-                        .to("mock:result");
+                from("direct:marshal").marshal(dataFormat).to("mock:result");
 
                 from("direct:marshalWithoutContentType")
                         .marshal(dataFormatWithoutContentType)
@@ -232,9 +229,7 @@ public class CamelJaxbTest extends CamelTestSupport {
                         .marshal(filterEnabledFormat)
                         .to("mock:result");
 
-                from("direct:marshalCustomWriter")
-                        .marshal(customWriterFormat)
-                        .to("mock:result");
+                from("direct:marshalCustomWriter").marshal(customWriterFormat).to("mock:result");
                 from("direct:marshalCustomWriterAndFiltering")
                         .marshal(customWriterAndFilterFormat)
                         .to("mock:result");
@@ -243,9 +238,7 @@ public class CamelJaxbTest extends CamelTestSupport {
                         .unmarshal()
                         .jaxb(PersonType.class.getPackage().getName())
                         .to("mock:result");
-
             }
         };
     }
-
 }

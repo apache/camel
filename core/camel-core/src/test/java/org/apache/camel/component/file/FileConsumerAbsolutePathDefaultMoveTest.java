@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -52,7 +53,9 @@ public class FileConsumerAbsolutePathDefaultMoveTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(String.class).to("mock:report");
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
+                        .to("mock:report");
             }
         };
     }

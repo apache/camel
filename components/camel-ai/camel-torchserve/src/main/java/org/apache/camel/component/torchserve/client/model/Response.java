@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.model;
 
 import org.apache.camel.component.torchserve.client.inference.model.Ping200Response;
@@ -23,8 +24,7 @@ public class Response {
 
     private String status;
 
-    public Response() {
-    }
+    public Response() {}
 
     public static Response from(Ping200Response src) {
         Response response = new Response();
@@ -48,8 +48,6 @@ public class Response {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {\n" +
-               "    status: " + status + "\n" +
-               "}";
+        return getClass().getSimpleName() + " {\n" + "    status: " + status + "\n" + "}";
     }
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,9 +34,6 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.message.Message;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // We use context to change the producer's endpoint address here
 public class CxfProducerContextTest extends CxfProducerTest {
@@ -57,13 +58,13 @@ public class CxfProducerContextTest extends CxfProducerTest {
     @Override
     protected String getSimpleEndpointUri() {
         return "cxf://http://localhost:" + CXFTestSupport.getPort4()
-               + "/CxfProducerContextTest/simple?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
+                + "/CxfProducerContextTest/simple?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
     }
 
     @Override
     protected String getJaxwsEndpointUri() {
         return "cxf://http://localhost:" + CXFTestSupport.getPort4()
-               + "/CxfProducerContextTest/jaxws?serviceClass=org.apache.hello_world_soap_http.Greeter";
+                + "/CxfProducerContextTest/jaxws?serviceClass=org.apache.hello_world_soap_http.Greeter";
     }
 
     @Override
@@ -83,7 +84,6 @@ public class CxfProducerContextTest extends CxfProducerTest {
             }
         });
         return exchange;
-
     }
 
     @Override
@@ -102,5 +102,4 @@ public class CxfProducerContextTest extends CxfProducerTest {
         });
         return exchange;
     }
-
 }

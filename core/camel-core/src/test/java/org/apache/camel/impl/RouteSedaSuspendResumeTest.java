@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteSedaSuspendResumeTest extends ContextTestSupport {
 
@@ -47,7 +48,8 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
         context.getRouteController().suspendRoute("foo");
 
-        assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Suspended", context.getRouteController().getRouteStatus("foo").name());
         Route route = context.getRoute("foo");
         if (route instanceof StatefulService statefulService) {
             assertEquals("Suspended", statefulService.getStatus().name());
@@ -55,8 +57,9 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
 
         Thread.sleep(1000L);
         // need to give seda consumer thread time to idle
-        await().atMost(1, TimeUnit.SECONDS)
-                .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().isEmpty());
+        await().atMost(1, TimeUnit.SECONDS).until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class)
+                .getQueue()
+                .isEmpty());
 
         template.sendBody("seda:foo", "B");
 
@@ -70,7 +73,8 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         context.getRouteController().resumeRoute("foo");
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
         route = context.getRoute("foo");
         if (route instanceof StatefulService statefulService) {
             assertEquals("Started", statefulService.getStatus().name());

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.utils.message;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.Serializable;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PulsarMessageUtilsTest {
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.salesforce.LoginConfigHelper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
@@ -24,8 +27,6 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -45,8 +46,8 @@ public class SessionManualIT implements SalesforceSession.SalesforceSessionListe
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
         httpClient.setConnectTimeout(TIMEOUT);
 
-        final SalesforceSession session
-                = new SalesforceSession(new DefaultCamelContext(), httpClient, TIMEOUT, LoginConfigHelper.getLoginConfig());
+        final SalesforceSession session = new SalesforceSession(
+                new DefaultCamelContext(), httpClient, TIMEOUT, LoginConfigHelper.getLoginConfig());
         session.addListener(this);
         httpClient.setSession(session);
 

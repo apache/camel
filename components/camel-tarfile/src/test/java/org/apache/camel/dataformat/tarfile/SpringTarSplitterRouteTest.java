@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,5 +37,4 @@ class SpringTarSplitterRouteTest extends CamelSpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/tarfile/SpringTarSplitterRouteTest.xml");
     }
-
 }

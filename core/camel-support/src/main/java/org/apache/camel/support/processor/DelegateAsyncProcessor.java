@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.ArrayList;
@@ -45,8 +46,7 @@ public class DelegateAsyncProcessor extends AsyncProcessorSupport
     protected AsyncProcessor processor;
     private boolean disabled;
 
-    public DelegateAsyncProcessor() {
-    }
+    public DelegateAsyncProcessor() {}
 
     public DelegateAsyncProcessor(AsyncProcessor processor) {
         if (processor == this) {
@@ -131,5 +131,4 @@ public class DelegateAsyncProcessor extends AsyncProcessorSupport
         answer.add(processor);
         return answer;
     }
-
 }

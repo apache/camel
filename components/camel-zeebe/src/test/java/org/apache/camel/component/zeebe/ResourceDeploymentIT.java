@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.zeebe;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,11 +31,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIfSystemProperty(named = "zeebe.test.integration.enable", matches = "true",
-                         disabledReason = "Requires locally installed test system")
+@EnabledIfSystemProperty(
+        named = "zeebe.test.integration.enable",
+        matches = "true",
+        disabledReason = "Requires locally installed test system")
 public class ResourceDeploymentIT extends CamelTestSupport {
 
     public static final String RESOURCE_PATH = "data/";
@@ -53,8 +55,10 @@ public class ResourceDeploymentIT extends CamelTestSupport {
 
         DeploymentRequest deploymentRequest = new DeploymentRequest();
         deploymentRequest.setName(RESOURCE_NAME);
-        deploymentRequest
-                .setContent(this.getClass().getClassLoader().getResourceAsStream(RESOURCE_PATH + RESOURCE_NAME).readAllBytes());
+        deploymentRequest.setContent(this.getClass()
+                .getClassLoader()
+                .getResourceAsStream(RESOURCE_PATH + RESOURCE_NAME)
+                .readAllBytes());
 
         template.sendBody("direct:deployResource", deploymentRequest);
         MockEndpoint.assertIsSatisfied(context);
@@ -69,9 +73,14 @@ public class ResourceDeploymentIT extends CamelTestSupport {
         }
 
         // Deploy with resource name in header and resource as byte[] in body
-        template.sendBodyAndHeader("direct:deployResource",
-                this.getClass().getClassLoader().getResourceAsStream(RESOURCE_PATH + RESOURCE_NAME).readAllBytes(),
-                ZeebeConstants.RESOURCE_NAME, RESOURCE_NAME);
+        template.sendBodyAndHeader(
+                "direct:deployResource",
+                this.getClass()
+                        .getClassLoader()
+                        .getResourceAsStream(RESOURCE_PATH + RESOURCE_NAME)
+                        .readAllBytes(),
+                ZeebeConstants.RESOURCE_NAME,
+                RESOURCE_NAME);
         MockEndpoint.assertIsSatisfied(context);
         if (!mock.getExchanges().isEmpty()) {
             Exchange exchange = mock.getExchanges().get(0);
@@ -81,9 +90,14 @@ public class ResourceDeploymentIT extends CamelTestSupport {
         }
 
         // Deploy with resource name in header and resource as String in body
-        template.sendBodyAndHeader("direct:deployResource",
-                new String(this.getClass().getClassLoader().getResourceAsStream(RESOURCE_PATH + RESOURCE_NAME).readAllBytes()),
-                ZeebeConstants.RESOURCE_NAME, RESOURCE_NAME);
+        template.sendBodyAndHeader(
+                "direct:deployResource",
+                new String(this.getClass()
+                        .getClassLoader()
+                        .getResourceAsStream(RESOURCE_PATH + RESOURCE_NAME)
+                        .readAllBytes()),
+                ZeebeConstants.RESOURCE_NAME,
+                RESOURCE_NAME);
         MockEndpoint.assertIsSatisfied(context);
         if (!mock.getExchanges().isEmpty()) {
             Exchange exchange = mock.getExchanges().get(0);
@@ -100,8 +114,10 @@ public class ResourceDeploymentIT extends CamelTestSupport {
 
         DeploymentRequest deploymentRequest = new DeploymentRequest();
         deploymentRequest.setName(RESOURCE_NAME);
-        deploymentRequest
-                .setContent(this.getClass().getClassLoader().getResourceAsStream("data/test1_definition.bpmn").readAllBytes());
+        deploymentRequest.setContent(this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("data/test1_definition.bpmn")
+                .readAllBytes());
 
         template.sendBody("direct:deployResource_JSON", objectMapper.writeValueAsString(deploymentRequest));
         MockEndpoint.assertIsSatisfied(context);
@@ -121,8 +137,10 @@ public class ResourceDeploymentIT extends CamelTestSupport {
 
         DeploymentRequest deploymentRequest = new DeploymentRequest();
         deploymentRequest.setName(INVALID_RESOURCE_NAME);
-        deploymentRequest
-                .setContent(this.getClass().getClassLoader().getResourceAsStream(RESOURCE_PATH + RESOURCE_NAME).readAllBytes());
+        deploymentRequest.setContent(this.getClass()
+                .getClassLoader()
+                .getResourceAsStream(RESOURCE_PATH + RESOURCE_NAME)
+                .readAllBytes());
 
         template.sendBody("direct:deployResource", deploymentRequest);
         MockEndpoint.assertIsSatisfied(context);
@@ -140,9 +158,7 @@ public class ResourceDeploymentIT extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:deployResource")
-                        .to("zeebe://deployResource")
-                        .to("mock:deployResource");
+                from("direct:deployResource").to("zeebe://deployResource").to("mock:deployResource");
 
                 from("direct:deployResource_JSON")
                         .to("zeebe://deployResource?formatJSON=true")

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.StringReader;
 
@@ -26,9 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test case for enabling stream caching through XML
@@ -45,7 +46,8 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         Exchange exchange = a.getExchanges().get(0);
-        StreamCache streamCache = assertIsInstanceOf(StreamCache.class, exchange.getIn().getBody());
+        StreamCache streamCache =
+                assertIsInstanceOf(StreamCache.class, exchange.getIn().getBody());
         assertNotNull(streamCache);
     }
 
@@ -53,5 +55,4 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/interceptor/streamCachingOnRoute.xml");
     }
-
 }

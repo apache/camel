@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.huaweicloud.sdk.iam.v3.model.KeystoneUpdateGroupOption;
 import org.apache.camel.BindToRegistry;
@@ -27,9 +31,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UpdateGroupFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateGroupFunctionalTest.class.getName());
@@ -47,12 +48,11 @@ public class UpdateGroupFunctionalTest extends CamelTestSupport {
             public void configure() {
                 from("direct:update_group")
                         .setProperty("CamelHwCloudIamGroupId", constant(GROUP_ID))
-                        .to("hwcloud-iam:updateGroup?" +
-                            "accessKey=" + ACCESS_KEY +
-                            "&secretKey=" + SECRET_KEY +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true" +
-                            "&serviceKeys=#serviceKeys")
+                        .to("hwcloud-iam:updateGroup?" + "accessKey="
+                                + ACCESS_KEY + "&secretKey="
+                                + SECRET_KEY + "&region="
+                                + REGION + "&ignoreSslVerification=true"
+                                + "&serviceKeys=#serviceKeys")
                         .log("Update group successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:update_group_result");
@@ -72,7 +72,8 @@ public class UpdateGroupFunctionalTest extends CamelTestSupport {
     public void testUpdateGroup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:update_group_result");
         mock.expectedMinimumMessageCount(1);
-        // Add group options here. Example: new KeystoneUpdateGroupOption().withDescription("description").withName("name");
+        // Add group options here. Example: new
+        // KeystoneUpdateGroupOption().withDescription("description").withName("name");
         KeystoneUpdateGroupOption groupOption = new KeystoneUpdateGroupOption();
         template.sendBody("direct:update_group", groupOption);
         Exchange responseExchange = mock.getExchanges().get(0);

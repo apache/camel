@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ec2;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,9 +44,6 @@ import software.amazon.awssdk.services.ec2.model.StopInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.TerminateInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class EC2ProducerTest extends CamelTestSupport {
 
     @BindToRegistry("amazonEc2Client")
@@ -64,7 +65,8 @@ public class EC2ProducerTest extends CamelTestSupport {
             }
         });
 
-        RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
+        RunInstancesResponse resultGet =
+                (RunInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.instances().get(0).imageId());
         assertEquals(InstanceType.T2_MICRO, resultGet.instances().get(0).instanceType());
         assertEquals("instance-1", resultGet.instances().get(0).instanceId());
@@ -77,11 +79,15 @@ public class EC2ProducerTest extends CamelTestSupport {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2EC2Constants.OPERATION, AWS2EC2Operations.createAndRunInstances);
                 exchange.getIn()
-                        .setBody(RunInstancesRequest.builder().imageId("test-1").instanceType(InstanceType.T2_MICRO).build());
+                        .setBody(RunInstancesRequest.builder()
+                                .imageId("test-1")
+                                .instanceType(InstanceType.T2_MICRO)
+                                .build());
             }
         });
 
-        RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
+        RunInstancesResponse resultGet =
+                (RunInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.instances().get(0).imageId());
         assertEquals(InstanceType.T2_MICRO, resultGet.instances().get(0).instanceType());
         assertEquals("instance-1", resultGet.instances().get(0).instanceId());
@@ -102,13 +108,16 @@ public class EC2ProducerTest extends CamelTestSupport {
             }
         });
 
-        RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
+        RunInstancesResponse resultGet =
+                (RunInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.instances().get(0).imageId());
         assertEquals(InstanceType.T2_MICRO, resultGet.instances().get(0).instanceType());
         assertEquals("instance-1", resultGet.instances().get(0).instanceId());
         assertEquals(2, resultGet.instances().get(0).securityGroups().size());
-        assertEquals("id-3", resultGet.instances().get(0).securityGroups().get(0).groupId());
-        assertEquals("id-4", resultGet.instances().get(0).securityGroups().get(1).groupId());
+        assertEquals(
+                "id-3", resultGet.instances().get(0).securityGroups().get(0).groupId());
+        assertEquals(
+                "id-4", resultGet.instances().get(0).securityGroups().get(1).groupId());
     }
 
     @Test
@@ -123,10 +132,15 @@ public class EC2ProducerTest extends CamelTestSupport {
             }
         });
 
-        StartInstancesResponse resultGet = (StartInstancesResponse) exchange.getMessage().getBody();
+        StartInstancesResponse resultGet =
+                (StartInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.startingInstances().get(0).instanceId());
-        assertEquals(InstanceStateName.STOPPED, resultGet.startingInstances().get(0).previousState().name());
-        assertEquals(InstanceStateName.RUNNING, resultGet.startingInstances().get(0).currentState().name());
+        assertEquals(
+                InstanceStateName.STOPPED,
+                resultGet.startingInstances().get(0).previousState().name());
+        assertEquals(
+                InstanceStateName.RUNNING,
+                resultGet.startingInstances().get(0).currentState().name());
     }
 
     @Test
@@ -141,10 +155,15 @@ public class EC2ProducerTest extends CamelTestSupport {
             }
         });
 
-        StopInstancesResponse resultGet = (StopInstancesResponse) exchange.getMessage().getBody();
+        StopInstancesResponse resultGet =
+                (StopInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.stoppingInstances().get(0).instanceId());
-        assertEquals(InstanceStateName.RUNNING, resultGet.stoppingInstances().get(0).previousState().name());
-        assertEquals(InstanceStateName.STOPPED, resultGet.stoppingInstances().get(0).currentState().name());
+        assertEquals(
+                InstanceStateName.RUNNING,
+                resultGet.stoppingInstances().get(0).previousState().name());
+        assertEquals(
+                InstanceStateName.STOPPED,
+                resultGet.stoppingInstances().get(0).currentState().name());
     }
 
     @Test
@@ -159,10 +178,15 @@ public class EC2ProducerTest extends CamelTestSupport {
             }
         });
 
-        TerminateInstancesResponse resultGet = (TerminateInstancesResponse) exchange.getMessage().getBody();
+        TerminateInstancesResponse resultGet =
+                (TerminateInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.terminatingInstances().get(0).instanceId());
-        assertEquals(InstanceStateName.RUNNING, resultGet.terminatingInstances().get(0).previousState().name());
-        assertEquals(InstanceStateName.TERMINATED, resultGet.terminatingInstances().get(0).currentState().name());
+        assertEquals(
+                InstanceStateName.RUNNING,
+                resultGet.terminatingInstances().get(0).previousState().name());
+        assertEquals(
+                InstanceStateName.TERMINATED,
+                resultGet.terminatingInstances().get(0).currentState().name());
     }
 
     @Test
@@ -178,7 +202,8 @@ public class EC2ProducerTest extends CamelTestSupport {
             }
         });
 
-        DescribeInstancesResponse resultGet = (DescribeInstancesResponse) exchange.getMessage().getBody();
+        DescribeInstancesResponse resultGet =
+                (DescribeInstancesResponse) exchange.getMessage().getBody();
         assertEquals(1, resultGet.reservations().size());
         assertEquals(1, resultGet.reservations().get(0).instances().size());
     }
@@ -198,9 +223,12 @@ public class EC2ProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeInstanceStatusResponse resultGet = (DescribeInstanceStatusResponse) exchange.getMessage().getBody();
+        DescribeInstanceStatusResponse resultGet =
+                (DescribeInstanceStatusResponse) exchange.getMessage().getBody();
         assertEquals(1, resultGet.instanceStatuses().size());
-        assertEquals(InstanceStateName.RUNNING, resultGet.instanceStatuses().get(0).instanceState().name());
+        assertEquals(
+                InstanceStateName.RUNNING,
+                resultGet.instanceStatuses().get(0).instanceState().name());
     }
 
     @Test
@@ -229,11 +257,14 @@ public class EC2ProducerTest extends CamelTestSupport {
             }
         });
 
-        MonitorInstancesResponse resultGet = (MonitorInstancesResponse) exchange.getMessage().getBody();
+        MonitorInstancesResponse resultGet =
+                (MonitorInstancesResponse) exchange.getMessage().getBody();
 
         assertEquals(1, resultGet.instanceMonitorings().size());
         assertEquals("test-1", resultGet.instanceMonitorings().get(0).instanceId());
-        assertEquals(MonitoringState.ENABLED, resultGet.instanceMonitorings().get(0).monitoring().state());
+        assertEquals(
+                MonitoringState.ENABLED,
+                resultGet.instanceMonitorings().get(0).monitoring().state());
     }
 
     @Test
@@ -249,11 +280,14 @@ public class EC2ProducerTest extends CamelTestSupport {
             }
         });
 
-        UnmonitorInstancesResponse resultGet = (UnmonitorInstancesResponse) exchange.getMessage().getBody();
+        UnmonitorInstancesResponse resultGet =
+                (UnmonitorInstancesResponse) exchange.getMessage().getBody();
 
         assertEquals(1, resultGet.instanceMonitorings().size());
         assertEquals("test-1", resultGet.instanceMonitorings().get(0).instanceId());
-        assertEquals(MonitoringState.DISABLED, resultGet.instanceMonitorings().get(0).monitoring().state());
+        assertEquals(
+                MonitoringState.DISABLED,
+                resultGet.instanceMonitorings().get(0).monitoring().state());
     }
 
     @Override
@@ -265,28 +299,38 @@ public class EC2ProducerTest extends CamelTestSupport {
                         .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createAndRunInstances")
                         .to("mock:result");
                 from("direct:createAndRunPojo")
-                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createAndRunInstances&pojoRequest=true")
+                        .to(
+                                "aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createAndRunInstances&pojoRequest=true")
                         .to("mock:result");
-                from("direct:start").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=startInstances")
+                from("direct:start")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=startInstances")
                         .to("mock:result");
-                from("direct:stop").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=stopInstances")
+                from("direct:stop")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=stopInstances")
                         .to("mock:result");
-                from("direct:terminate").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=terminateInstances")
+                from("direct:terminate")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=terminateInstances")
                         .to("mock:result");
-                from("direct:describe").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=describeInstances")
+                from("direct:describe")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=describeInstances")
                         .to("mock:result");
                 from("direct:describeStatus")
                         .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=describeInstancesStatus")
                         .to("mock:result");
-                from("direct:reboot").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=rebootInstances")
+                from("direct:reboot")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=rebootInstances")
                         .to("mock:result");
-                from("direct:monitor").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=monitorInstances")
+                from("direct:monitor")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=monitorInstances")
                         .to("mock:result");
-                from("direct:unmonitor").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=unmonitorInstances")
+                from("direct:unmonitor")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=unmonitorInstances")
                         .to("mock:result");
-                from("direct:createTags").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createTags")
+                from("direct:createTags")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createTags")
                         .to("mock:result");
-                from("direct:deleteTags").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=deleteTags")
+                from("direct:deleteTags")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=deleteTags")
                         .to("mock:result");
             }
         };

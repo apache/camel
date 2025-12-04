@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.startup;
 
 import org.apache.camel.CamelContext;
@@ -57,5 +58,4 @@ public class EnvStartupCondition implements StartupCondition {
         String value = lookupEnvironmentVariable(env);
         return ObjectHelper.isNotEmpty(value);
     }
-
 }

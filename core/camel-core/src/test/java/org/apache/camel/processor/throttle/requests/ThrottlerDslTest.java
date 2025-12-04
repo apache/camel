@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle.requests;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.WINDOWS)
 public class ThrottlerDslTest extends ContextTestSupport {
@@ -60,8 +61,11 @@ public class ThrottlerDslTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").throttle().message(m -> m.getHeader("ThrottleCount", Integer.class))
-                        .timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+                from("direct:start")
+                        .throttle()
+                        .message(m -> m.getHeader("ThrottleCount", Integer.class))
+                        .timePeriodMillis(INTERVAL)
+                        .to("log:result", "mock:result");
             }
         };
     }

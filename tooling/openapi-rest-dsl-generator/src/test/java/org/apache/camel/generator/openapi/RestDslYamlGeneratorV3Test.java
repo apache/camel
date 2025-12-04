@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -28,8 +31,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class RestDslYamlGeneratorV3Test {
 
     static OpenAPI document;
@@ -39,7 +40,9 @@ public class RestDslYamlGeneratorV3Test {
         try (CamelContext context = new DefaultCamelContext()) {
             final String yaml = RestDslGenerator.toYaml(document).generate(context);
 
-            final URI file = RestDslYamlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreYaml.txt").toURI();
+            final URI file = RestDslYamlGeneratorV3Test.class
+                    .getResource("/OpenApiV3PetstoreYaml.txt")
+                    .toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
             assertThat(yaml).isEqualTo(expectedContent);
@@ -54,8 +57,9 @@ public class RestDslYamlGeneratorV3Test {
                     .withRestContextPath("/foo")
                     .generate(context);
 
-            final URI file
-                    = RestDslYamlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponentYaml.txt").toURI();
+            final URI file = RestDslYamlGeneratorV3Test.class
+                    .getResource("/OpenApiV3PetstoreWithRestComponentYaml.txt")
+                    .toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             assertThat(yaml).isEqualTo(expectedContent);
         }
@@ -68,7 +72,9 @@ public class RestDslYamlGeneratorV3Test {
                     .withDtoPackageName("model")
                     .generate(context);
 
-            final URI file = RestDslYamlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithModelYaml.txt").toURI();
+            final URI file = RestDslYamlGeneratorV3Test.class
+                    .getResource("/OpenApiV3PetstoreWithModelYaml.txt")
+                    .toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             assertThat(yaml).isEqualTo(expectedContent);
         }
@@ -76,7 +82,7 @@ public class RestDslYamlGeneratorV3Test {
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        document = new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/openapi-spec.json");
+        document =
+                new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/openapi-spec.json");
     }
-
 }

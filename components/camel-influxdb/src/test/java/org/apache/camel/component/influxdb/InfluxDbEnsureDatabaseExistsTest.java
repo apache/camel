@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb;
 
 import java.util.Collections;
@@ -46,9 +47,10 @@ public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
 
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
 
-                //test route
+                // test route
                 from("direct:test")
-                        .to("influxdb:influxDbBean?databaseName=dbName&checkDatabaseExistence=true&autoCreateDatabase=true")
+                        .to(
+                                "influxdb:influxDbBean?databaseName=dbName&checkDatabaseExistence=true&autoCreateDatabase=true")
                         .to("mock:test");
             }
         };
@@ -78,7 +80,7 @@ public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
 
         sendBody("direct:test", createPoint());
 
-        //if db exist, there will be only 1 call to show databases.
+        // if db exist, there will be only 1 call to show databases.
         Mockito.verify(mockedDbConnection, Mockito.times(2)).query(Mockito.any(Query.class));
 
         errorEndpoint.assertIsSatisfied();
@@ -96,7 +98,7 @@ public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
 
         sendBody("direct:test", createPoint());
 
-        //if db does not exist, there will be 2 queries (show databases and create database)
+        // if db does not exist, there will be 2 queries (show databases and create database)
         Mockito.verify(mockedDbConnection, Mockito.times(2)).query(Mockito.any(Query.class));
 
         errorEndpoint.assertIsSatisfied();
@@ -111,5 +113,4 @@ public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
                 .addField("system", 1L)
                 .build();
     }
-
 }

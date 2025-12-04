@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.controlbus;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ControlBusRestartRouteTest extends ContextTestSupport {
 
@@ -33,11 +34,13 @@ public class ControlBusRestartRouteTest extends ContextTestSupport {
         assertEquals(1, myRoutePolicy.getStart());
         assertEquals(0, myRoutePolicy.getStop());
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
 
         template.sendBody("controlbus:route?routeId=foo&action=restart&restartDelay=0", null);
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
 
         assertEquals(2, myRoutePolicy.getStart());
         assertEquals(1, myRoutePolicy.getStop());

@@ -65,8 +65,7 @@ public final class JandexStore {
     public static final String DEFAULT_NAME = "META-INF/jandex.idx";
     private static final Map<Path, Jandex> JANDEX_CACHE = new ConcurrentHashMap<>();
 
-    private JandexStore() {
-    }
+    private JandexStore() {}
 
     public static Jandex nonCachedRead(Path path) {
         try (InputStream is = Files.newInputStream(path)) {
@@ -90,5 +89,4 @@ public final class JandexStore {
 
         return JANDEX_CACHE.computeIfAbsent(path, k -> nonCachedRead(path));
     }
-
 }

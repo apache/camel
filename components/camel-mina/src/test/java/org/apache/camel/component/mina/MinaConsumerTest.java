@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for wiki documentation
@@ -45,7 +46,8 @@ public class MinaConsumerTest extends BaseMinaTest {
     @Test
     public void testSendTextlineSyncText() {
         // START SNIPPET: e4
-        String response = (String) template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
+        String response =
+                (String) template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
         assertEquals("Bye World", response);
         // END SNIPPET: e4
     }

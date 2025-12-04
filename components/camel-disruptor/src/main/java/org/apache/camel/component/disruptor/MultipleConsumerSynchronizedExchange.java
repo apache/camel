@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,12 +44,12 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
     @Override
     public void consumed(Exchange result) {
 
-        if (processedConsumers.incrementAndGet() == expectedConsumers || result.getException() != null
-                && !resultHandled.getAndSet(true)) {
+        if (processedConsumers.incrementAndGet() == expectedConsumers
+                || result.getException() != null && !resultHandled.getAndSet(true)) {
             // all consumers are done processing or an exception occurred
 
-            //SEDA Does not configure an aggregator in the internally used MulticastProcessor
-            //As a result, the behaviour of SEDA in case of multicast is to only copy the results on an error
+            // SEDA Does not configure an aggregator in the internally used MulticastProcessor
+            // As a result, the behaviour of SEDA in case of multicast is to only copy the results on an error
             if (result.getException() != null) {
                 ExchangeHelper.copyResults(getExchange(), result);
             }

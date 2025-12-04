@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
 
 import java.io.File;
@@ -221,7 +222,8 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
             answer = reader.readValue(n);
         } else {
             // fallback to input stream
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            InputStream is =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
             answer = reader.readValue(is);
         }
 
@@ -596,8 +598,8 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
 
         if (!objectMapperFoundRegistry) {
             if (include != null) {
-                JsonInclude.Include inc
-                        = getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
+                JsonInclude.Include inc =
+                        getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
                 objectMapper.setSerializationInclusion(inc);
             }
             if (prettyPrint) {
@@ -655,7 +657,8 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                                 set.size());
                     }
                 } else {
-                    LOG.debug("The option autoDiscoverObjectMapper is set to false, Camel won't search in the registry");
+                    LOG.debug(
+                            "The option autoDiscoverObjectMapper is set to false, Camel won't search in the registry");
                 }
             }
 
@@ -672,14 +675,14 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         while (it.hasNext()) {
             String enable = it.next().toString();
             // it can be different kind
-            SerializationFeature sf
-                    = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
+            SerializationFeature sf =
+                    getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
             if (sf != null) {
                 objectMapper.enable(sf);
                 continue;
             }
-            DeserializationFeature df
-                    = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
+            DeserializationFeature df =
+                    getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
             if (df != null) {
                 objectMapper.enable(df);
                 continue;
@@ -691,7 +694,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
             }
             throw new IllegalArgumentException(
                     "Enable feature: " + enable
-                                               + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                            + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
         }
     }
 
@@ -757,14 +760,14 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         while (it.hasNext()) {
             String disable = it.next().toString();
             // it can be different kind
-            SerializationFeature sf
-                    = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
+            SerializationFeature sf =
+                    getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
             if (sf != null) {
                 objectMapper.disable(sf);
                 continue;
             }
-            DeserializationFeature df
-                    = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
+            DeserializationFeature df =
+                    getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
             if (df != null) {
                 objectMapper.disable(df);
                 continue;
@@ -776,7 +779,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
             }
             throw new IllegalArgumentException(
                     "Disable feature: " + disable
-                                               + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                            + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
         }
     }
 
@@ -819,5 +822,4 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     protected abstract Class<? extends ObjectMapper> getObjectMapperClass();
 
     protected abstract String getDefaultContentType();
-
 }

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,12 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Check for duplicate name/group collision.
@@ -91,7 +92,8 @@ public class QuartzNameCollisionTest {
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("quartz://myGroup/myTimerName?stateful=true&cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
+                from("quartz://myGroup/myTimerName?stateful=true&cron=0/1+*+*+*+*+?")
+                        .to("log:one", "mock:one");
             }
         });
         camel1.start();
@@ -144,14 +146,18 @@ public class QuartzNameCollisionTest {
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").id("route-1").to("log:one", "mock:one");
+                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?")
+                        .id("route-1")
+                        .to("log:one", "mock:one");
             }
         });
 
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("quartz://myGroup2/myTimerName?cron=0/1+*+*+*+*+?").id("route-2").to("log:one", "mock:one");
+                from("quartz://myGroup2/myTimerName?cron=0/1+*+*+*+*+?")
+                        .id("route-2")
+                        .to("log:one", "mock:one");
             }
         });
 
@@ -182,5 +188,4 @@ public class QuartzNameCollisionTest {
             camel2 = null;
         }
     }
-
 }

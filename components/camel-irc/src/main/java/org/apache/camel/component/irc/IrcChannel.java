@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc;
 
 public final class IrcChannel {
     private String name;
     private String key;
 
-    public IrcChannel() {
-    }
+    public IrcChannel() {}
 
     public IrcChannel(String name, String key) {
         this.setName(name);

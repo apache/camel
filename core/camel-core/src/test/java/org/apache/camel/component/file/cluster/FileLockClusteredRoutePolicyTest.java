@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.cluster;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -34,9 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class FileLockClusteredRoutePolicyTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileLockClusteredRoutePolicyTest.class);
@@ -87,15 +88,18 @@ public final class FileLockClusteredRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:file-lock?delay=1000&period=1000").routeId("route-" + id)
-                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns")).log("From ${routeId}")
+                    from("timer:file-lock?delay=1000&period=1000")
+                            .routeId("route-" + id)
+                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
+                            .log("From ${routeId}")
                             .process(e -> contextLatch.countDown());
                 }
             });
 
             // Start the context after some random time so the startup order
             // changes for each test.
-            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
+            Awaitility.await()
+                    .pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
                     .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
 
             context.start();

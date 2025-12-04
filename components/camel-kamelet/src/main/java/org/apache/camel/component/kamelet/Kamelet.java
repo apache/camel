@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,8 +41,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
-
 public final class Kamelet {
     public static final String PROPERTIES_PREFIX = "camel.kamelet.";
     public static final String ENV_VAR_PREFIX = "CAMEL_KAMELET_";
@@ -59,8 +60,7 @@ public final class Kamelet {
     // use a running counter as uuid
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
-    private Kamelet() {
-    }
+    private Kamelet() {}
 
     public static Predicate<String> startsWith(String prefix) {
         return item -> item.startsWith(prefix);
@@ -91,7 +91,8 @@ public final class Kamelet {
         return UUID.generateUuid();
     }
 
-    public static String extractRouteId(CamelContext context, String remaining, Map<String, Object> parameters, String uuid) {
+    public static String extractRouteId(
+            CamelContext context, String remaining, Map<String, Object> parameters, String uuid) {
         Object param = parameters.get(PARAM_ROUTE_ID);
         if (param != null) {
             return CamelContextHelper.mandatoryConvertTo(context, String.class, param);
@@ -120,7 +121,8 @@ public final class Kamelet {
         return null;
     }
 
-    public static void extractKameletProperties(CamelContext context, Map<String, Object> properties, String... elements) {
+    public static void extractKameletProperties(
+            CamelContext context, Map<String, Object> properties, String... elements) {
         PropertiesComponent pc = context.getPropertiesComponent();
         StringBuilder prefixBuffer = new StringBuilder(Kamelet.PROPERTIES_PREFIX);
 
@@ -168,7 +170,9 @@ public final class Kamelet {
             if (element == null) {
                 continue;
             }
-            prefixBuffer.append(IOHelper.normalizeEnvironmentVariable(StringHelper.camelCaseToDash(element))).append('_');
+            prefixBuffer
+                    .append(IOHelper.normalizeEnvironmentVariable(StringHelper.camelCaseToDash(element)))
+                    .append('_');
 
             String prefix = prefixBuffer.toString();
             System.getenv().keySet().stream()
@@ -214,8 +218,9 @@ public final class Kamelet {
             // (if ppid is null then it is a source kamelet)
             if (ppid != null) {
                 ProcessorDefinition<?> pro = mcc.getProcessorDefinition(ppid);
-                wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(def.getCamelContext(), pro, null,
-                        pro.getInheritErrorHandler());
+                wrap = pro == null
+                        || ProcessorDefinitionHelper.shouldWrapInErrorHandler(
+                                def.getCamelContext(), pro, null, pro.getInheritErrorHandler());
             }
             if (wrap && parent != null && parent.isKamelet() == null) {
                 // do not wrap if the parent is also a kamelet
@@ -229,7 +234,8 @@ public final class Kamelet {
             throw new IllegalArgumentException("Camel route " + rid + " input does not exist.");
         }
 
-        // must make the source and sink endpoints are unique by appending the route id before we create the route from the template
+        // must make the source and sink endpoints are unique by appending the route id before we create the route from
+        // the template
         if (def.getInput().getEndpointUri().startsWith("kamelet:source")
                 || def.getInput().getEndpointUri().startsWith("kamelet://source")) {
             def.getInput().setUri("kamelet://source?" + PARAM_ROUTE_ID + "=" + rid);
@@ -252,7 +258,8 @@ public final class Kamelet {
         boolean sink = false;
         Collection<ToDefinition> col = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
         for (ToDefinition to : col) {
-            if (to.getEndpointUri().startsWith("kamelet:sink") || to.getEndpointUri().startsWith("kamelet://sink")) {
+            if (to.getEndpointUri().startsWith("kamelet:sink")
+                    || to.getEndpointUri().startsWith("kamelet://sink")) {
                 to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
                 sink = true;
             }

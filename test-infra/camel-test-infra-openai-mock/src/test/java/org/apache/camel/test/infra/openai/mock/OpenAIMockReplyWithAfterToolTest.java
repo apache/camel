@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openai.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -26,12 +29,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class OpenAIMockReplyWithAfterToolTest {
 
     @RegisterExtension
-    public OpenAIMock openAIMock = new OpenAIMock().builder()
+    public OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("What is the weather in london?")
             .invokeTool("FindsTheLatitudeAndLongitudeOfAGivenCity")
             .withParam("name", "London")
@@ -47,8 +49,8 @@ public class OpenAIMockReplyWithAfterToolTest {
         HttpRequest request1 = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"What is the weather in london?\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"What is the weather in london?\"}]}"))
                 .build();
 
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
@@ -69,8 +71,12 @@ public class OpenAIMockReplyWithAfterToolTest {
         JsonNode toolCall = toolCalls.get(0);
         String toolCallId = toolCall.path("id").asText();
         assertEquals("function", toolCall.path("type").asText());
-        assertEquals("FindsTheLatitudeAndLongitudeOfAGivenCity", toolCall.path("function").path("name").asText());
-        assertEquals("{\"name\":\"London\"}", toolCall.path("function").path("arguments").asText());
+        assertEquals(
+                "FindsTheLatitudeAndLongitudeOfAGivenCity",
+                toolCall.path("function").path("name").asText());
+        assertEquals(
+                "{\"name\":\"London\"}",
+                toolCall.path("function").path("arguments").asText());
 
         // Second request with tool result - should return custom reply
         String secondRequestBody = String.format(

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data;
 
 import java.util.List;
@@ -54,7 +55,8 @@ public class RedshiftData2Producer extends DefaultProducer {
             case listTables -> listTables(getConfiguration().getAwsRedshiftDataClient(), exchange);
             case describeTable -> describeTable(getConfiguration().getAwsRedshiftDataClient(), exchange);
             case executeStatement -> executeStatement(getConfiguration().getAwsRedshiftDataClient(), exchange);
-            case batchExecuteStatement -> batchExecuteStatement(getConfiguration().getAwsRedshiftDataClient(), exchange);
+            case batchExecuteStatement -> batchExecuteStatement(
+                    getConfiguration().getAwsRedshiftDataClient(), exchange);
             case cancelStatement -> cancelStatement(getConfiguration().getAwsRedshiftDataClient(), exchange);
             case describeStatement -> describeStatement(getConfiguration().getAwsRedshiftDataClient(), exchange);
             case getStatementResult -> getStatementResult(getConfiguration().getAwsRedshiftDataClient(), exchange);
@@ -63,8 +65,8 @@ public class RedshiftData2Producer extends DefaultProducer {
     }
 
     private RedshiftData2Operations determineOperation(Exchange exchange) {
-        RedshiftData2Operations operation
-                = exchange.getIn().getHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.class);
+        RedshiftData2Operations operation =
+                exchange.getIn().getHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -78,8 +80,8 @@ public class RedshiftData2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (redshiftDataProducerToString == null) {
-            redshiftDataProducerToString
-                    = "RedshiftDataProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            redshiftDataProducerToString = "RedshiftDataProducer["
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return redshiftDataProducerToString;
     }
@@ -89,7 +91,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         return (RedshiftData2Endpoint) super.getEndpoint();
     }
 
-    private void listDatabases(RedshiftDataClient redshiftDataClient, Exchange exchange) throws InvalidPayloadException {
+    private void listDatabases(RedshiftDataClient redshiftDataClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListDatabasesRequest request) {
@@ -97,7 +100,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.listDatabases(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Databases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Databases command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -106,7 +111,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         } else {
             ListDatabasesRequest.Builder builder = ListDatabasesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER))) {
-                String clusterIdentifier = exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
+                String clusterIdentifier =
+                        exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
                 builder.clusterIdentifier(clusterIdentifier);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.DATABASE))) {
@@ -121,9 +127,10 @@ public class RedshiftData2Producer extends DefaultProducer {
                 String secretArn = exchange.getIn().getHeader(RedshiftData2Constants.SECRET_ARN, String.class);
                 builder.secretArn(secretArn);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.LIST_DATABASES_MAX_RESULTS))) {
-                Integer maxResults
-                        = exchange.getIn().getHeader(RedshiftData2Constants.LIST_DATABASES_MAX_RESULTS, Integer.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(RedshiftData2Constants.LIST_DATABASES_MAX_RESULTS))) {
+                Integer maxResults =
+                        exchange.getIn().getHeader(RedshiftData2Constants.LIST_DATABASES_MAX_RESULTS, Integer.class);
                 builder.maxResults(maxResults);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.WORKGROUP_NAME))) {
@@ -135,7 +142,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.listDatabases(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Databases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Databases command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -151,7 +160,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.listSchemas(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Schemas command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Schemas command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -160,7 +171,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         } else {
             ListSchemasRequest.Builder builder = ListSchemasRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER))) {
-                String clusterIdentifier = exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
+                String clusterIdentifier =
+                        exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
                 builder.clusterIdentifier(clusterIdentifier);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.DATABASE))) {
@@ -176,7 +188,8 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.secretArn(secretArn);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.LIST_SCHEMAS_MAX_RESULTS))) {
-                Integer maxResults = exchange.getIn().getHeader(RedshiftData2Constants.LIST_SCHEMAS_MAX_RESULTS, Integer.class);
+                Integer maxResults =
+                        exchange.getIn().getHeader(RedshiftData2Constants.LIST_SCHEMAS_MAX_RESULTS, Integer.class);
                 builder.maxResults(maxResults);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.WORKGROUP_NAME))) {
@@ -184,7 +197,8 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.workgroupName(workgroupName);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CONNECTED_DATABASE))) {
-                String connectedDatabase = exchange.getIn().getHeader(RedshiftData2Constants.CONNECTED_DATABASE, String.class);
+                String connectedDatabase =
+                        exchange.getIn().getHeader(RedshiftData2Constants.CONNECTED_DATABASE, String.class);
                 builder.connectedDatabase(connectedDatabase);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SCHEMA_PATTERN))) {
@@ -196,7 +210,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.listSchemas(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Schemas command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Schemas command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -204,7 +220,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         }
     }
 
-    private void listStatements(RedshiftDataClient redshiftDataClient, Exchange exchange) throws InvalidPayloadException {
+    private void listStatements(RedshiftDataClient redshiftDataClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListStatementsRequest request) {
@@ -212,7 +229,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.listStatements(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Statements command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Statements command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -232,9 +251,10 @@ public class RedshiftData2Producer extends DefaultProducer {
                 String statementName = exchange.getIn().getHeader(RedshiftData2Constants.STATEMENT_NAME, String.class);
                 builder.statementName(statementName);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.LIST_STATEMENTS_MAX_RESULTS))) {
-                Integer maxResults
-                        = exchange.getIn().getHeader(RedshiftData2Constants.LIST_STATEMENTS_MAX_RESULTS, Integer.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(RedshiftData2Constants.LIST_STATEMENTS_MAX_RESULTS))) {
+                Integer maxResults =
+                        exchange.getIn().getHeader(RedshiftData2Constants.LIST_STATEMENTS_MAX_RESULTS, Integer.class);
                 builder.maxResults(maxResults);
             }
 
@@ -242,7 +262,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.listStatements(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Statements command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Statements command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -258,7 +280,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.listTables(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Tables command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Tables command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -267,7 +291,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         } else {
             ListTablesRequest.Builder builder = ListTablesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER))) {
-                String clusterIdentifier = exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
+                String clusterIdentifier =
+                        exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
                 builder.clusterIdentifier(clusterIdentifier);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.DATABASE))) {
@@ -283,7 +308,8 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.secretArn(secretArn);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.LIST_TABLES_MAX_RESULTS))) {
-                Integer maxResults = exchange.getIn().getHeader(RedshiftData2Constants.LIST_TABLES_MAX_RESULTS, Integer.class);
+                Integer maxResults =
+                        exchange.getIn().getHeader(RedshiftData2Constants.LIST_TABLES_MAX_RESULTS, Integer.class);
                 builder.maxResults(maxResults);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.WORKGROUP_NAME))) {
@@ -291,7 +317,8 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.workgroupName(workgroupName);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CONNECTED_DATABASE))) {
-                String connectedDatabase = exchange.getIn().getHeader(RedshiftData2Constants.CONNECTED_DATABASE, String.class);
+                String connectedDatabase =
+                        exchange.getIn().getHeader(RedshiftData2Constants.CONNECTED_DATABASE, String.class);
                 builder.connectedDatabase(connectedDatabase);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SCHEMA_PATTERN))) {
@@ -307,7 +334,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.listTables(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Tables command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Tables command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -315,7 +344,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         }
     }
 
-    private void describeTable(RedshiftDataClient redshiftDataClient, Exchange exchange) throws InvalidPayloadException {
+    private void describeTable(RedshiftDataClient redshiftDataClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DescribeTableRequest request) {
@@ -323,7 +353,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.describeTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Table command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -332,7 +364,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         } else {
             DescribeTableRequest.Builder builder = DescribeTableRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER))) {
-                String clusterIdentifier = exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
+                String clusterIdentifier =
+                        exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
                 builder.clusterIdentifier(clusterIdentifier);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.DATABASE))) {
@@ -347,9 +380,10 @@ public class RedshiftData2Producer extends DefaultProducer {
                 String secretArn = exchange.getIn().getHeader(RedshiftData2Constants.SECRET_ARN, String.class);
                 builder.secretArn(secretArn);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.DESCRIBE_TABLE_MAX_RESULTS))) {
-                Integer maxResults
-                        = exchange.getIn().getHeader(RedshiftData2Constants.DESCRIBE_TABLE_MAX_RESULTS, Integer.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(RedshiftData2Constants.DESCRIBE_TABLE_MAX_RESULTS))) {
+                Integer maxResults =
+                        exchange.getIn().getHeader(RedshiftData2Constants.DESCRIBE_TABLE_MAX_RESULTS, Integer.class);
                 builder.maxResults(maxResults);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.WORKGROUP_NAME))) {
@@ -357,7 +391,8 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.workgroupName(workgroupName);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CONNECTED_DATABASE))) {
-                String connectedDatabase = exchange.getIn().getHeader(RedshiftData2Constants.CONNECTED_DATABASE, String.class);
+                String connectedDatabase =
+                        exchange.getIn().getHeader(RedshiftData2Constants.CONNECTED_DATABASE, String.class);
                 builder.connectedDatabase(connectedDatabase);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.TABLE))) {
@@ -373,7 +408,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.describeTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Table command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -381,7 +418,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         }
     }
 
-    private void executeStatement(RedshiftDataClient redshiftDataClient, Exchange exchange) throws InvalidPayloadException {
+    private void executeStatement(RedshiftDataClient redshiftDataClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ExecuteStatementRequest request) {
@@ -389,7 +427,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.executeStatement(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Execute Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Execute Statement command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -398,7 +438,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         } else {
             ExecuteStatementRequest.Builder builder = ExecuteStatementRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER))) {
-                String clusterIdentifier = exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
+                String clusterIdentifier =
+                        exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
                 builder.clusterIdentifier(clusterIdentifier);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.DATABASE))) {
@@ -434,8 +475,8 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.sql(sqlStatement);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SQL_PARAMETER_LIST))) {
-                List<SqlParameter> sqlParameterList
-                        = exchange.getIn().getHeader(RedshiftData2Constants.SQL_PARAMETER_LIST, List.class);
+                List<SqlParameter> sqlParameterList =
+                        exchange.getIn().getHeader(RedshiftData2Constants.SQL_PARAMETER_LIST, List.class);
                 builder.parameters(sqlParameterList);
             }
 
@@ -443,7 +484,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.executeStatement(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Execute Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Execute Statement command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -460,7 +503,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.batchExecuteStatement(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Batch Execute Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Batch Execute Statement command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -469,7 +514,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         } else {
             BatchExecuteStatementRequest.Builder builder = BatchExecuteStatementRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER))) {
-                String clusterIdentifier = exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
+                String clusterIdentifier =
+                        exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
                 builder.clusterIdentifier(clusterIdentifier);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.DATABASE))) {
@@ -501,7 +547,8 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.clientToken(clientToken);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SQL_STATEMENT_LIST))) {
-                List<String> sqlStatements = exchange.getIn().getHeader(RedshiftData2Constants.SQL_STATEMENT_LIST, List.class);
+                List<String> sqlStatements =
+                        exchange.getIn().getHeader(RedshiftData2Constants.SQL_STATEMENT_LIST, List.class);
                 builder.sqls(sqlStatements);
             }
 
@@ -509,7 +556,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.batchExecuteStatement(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Batch Execute Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Batch Execute Statement command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -517,7 +566,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         }
     }
 
-    private void cancelStatement(RedshiftDataClient redshiftDataClient, Exchange exchange) throws InvalidPayloadException {
+    private void cancelStatement(RedshiftDataClient redshiftDataClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CancelStatementRequest request) {
@@ -525,7 +575,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.cancelStatement(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Cancel Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Cancel Statement command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -542,7 +594,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.cancelStatement(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Cancel Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Cancel Statement command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -550,7 +604,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         }
     }
 
-    private void describeStatement(RedshiftDataClient redshiftDataClient, Exchange exchange) throws InvalidPayloadException {
+    private void describeStatement(RedshiftDataClient redshiftDataClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DescribeStatementRequest request) {
@@ -558,7 +613,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.describeStatement(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Statement command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -575,7 +632,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.describeStatement(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Statement command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -583,7 +642,8 @@ public class RedshiftData2Producer extends DefaultProducer {
         }
     }
 
-    private void getStatementResult(RedshiftDataClient redshiftDataClient, Exchange exchange) throws InvalidPayloadException {
+    private void getStatementResult(RedshiftDataClient redshiftDataClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GetStatementResultRequest request) {
@@ -591,7 +651,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.getStatementResult(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Statement Result command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Get Statement Result command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -608,7 +670,9 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.getStatementResult(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Statement Result command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Get Statement Result command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -619,5 +683,4 @@ public class RedshiftData2Producer extends DefaultProducer {
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
-
 }

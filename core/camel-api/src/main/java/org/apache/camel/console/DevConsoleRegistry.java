@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.console;
 
 import java.util.Collection;
@@ -75,18 +76,14 @@ public interface DevConsoleRegistry extends CamelContextAware, StaticService, Id
      * A collection of dev console IDs.
      */
     default Collection<String> getConsoleIDs() {
-        return stream()
-                .map(DevConsole::getId)
-                .toList();
+        return stream().map(DevConsole::getId).toList();
     }
 
     /**
      * Returns the dev console identified by the given <code>id</code> if available.
      */
     default Optional<DevConsole> getConsole(String id) {
-        return stream()
-                .filter(r -> ObjectHelper.equal(r.getId(), id))
-                .findFirst();
+        return stream().filter(r -> ObjectHelper.equal(r.getId(), id)).findFirst();
     }
 
     /**
@@ -116,5 +113,4 @@ public interface DevConsoleRegistry extends CamelContextAware, StaticService, Id
      *              custom dev consoles
      */
     void loadDevConsoles(boolean force);
-
 }

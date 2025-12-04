@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.onexception;
 
 /**
@@ -26,5 +27,4 @@ public class OrderFailedException extends Exception {
     public OrderFailedException(String message) {
         super(message);
     }
-
 }

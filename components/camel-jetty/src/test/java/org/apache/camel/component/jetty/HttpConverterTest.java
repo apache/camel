@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.InputStream;
 
@@ -28,10 +33,6 @@ import org.apache.camel.http.common.HttpConverter;
 import org.apache.camel.http.common.HttpMessage;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class HttpConverterTest extends BaseJettyTest {
 
     @Override
@@ -44,19 +45,21 @@ public class HttpConverterTest extends BaseJettyTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        HttpMessage msg = exchange.getMessage(HttpMessage.class);
+                from("jetty://http://localhost:{{port}}/test")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                HttpMessage msg = exchange.getMessage(HttpMessage.class);
 
-                        // The ServletInputStream should be cached, and you can't read message here
-                        ServletInputStream sis = HttpConverter.toServletInputStream(msg);
-                        assertNotNull(sis);
-                        assertEquals(0, sis.available());
-                        String s = msg.getBody(String.class);
+                                // The ServletInputStream should be cached, and you can't read message here
+                                ServletInputStream sis = HttpConverter.toServletInputStream(msg);
+                                assertNotNull(sis);
+                                assertEquals(0, sis.available());
+                                String s = msg.getBody(String.class);
 
-                        assertEquals("Hello World", s);
-                    }
-                }).transform(constant("Bye World"));
+                                assertEquals("Hello World", s);
+                            }
+                        })
+                        .transform(constant("Bye World"));
             }
         });
         context.start();
@@ -70,19 +73,21 @@ public class HttpConverterTest extends BaseJettyTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty://http://localhost:{{port}}/test?disableStreamCache=true").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        HttpMessage msg = exchange.getMessage(HttpMessage.class);
+                from("jetty://http://localhost:{{port}}/test?disableStreamCache=true")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                HttpMessage msg = exchange.getMessage(HttpMessage.class);
 
-                        // The ServletInputStream should not be cached
-                        ServletInputStream sis = HttpConverter.toServletInputStream(msg);
-                        assertNotNull(sis);
-                        assertEquals(11, sis.available());
-                        String s = context.getTypeConverter().convertTo(String.class, sis);
+                                // The ServletInputStream should not be cached
+                                ServletInputStream sis = HttpConverter.toServletInputStream(msg);
+                                assertNotNull(sis);
+                                assertEquals(11, sis.available());
+                                String s = context.getTypeConverter().convertTo(String.class, sis);
 
-                        assertEquals("Hello World", s);
-                    }
-                }).transform(constant("Bye World"));
+                                assertEquals("Hello World", s);
+                            }
+                        })
+                        .transform(constant("Bye World"));
             }
         });
         context.setStreamCaching(false); // this test requires stream caching disabled to work with raw servlet
@@ -97,17 +102,20 @@ public class HttpConverterTest extends BaseJettyTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        HttpMessage msg = exchange.getMessage(HttpMessage.class);
+                from("jetty://http://localhost:{{port}}/test")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                HttpMessage msg = exchange.getMessage(HttpMessage.class);
 
-                        InputStream sis = msg.getBody(InputStream.class);
-                        assertNotNull(sis);
-                        String s = exchange.getContext().getTypeConverter().convertTo(String.class, sis);
+                                InputStream sis = msg.getBody(InputStream.class);
+                                assertNotNull(sis);
+                                String s =
+                                        exchange.getContext().getTypeConverter().convertTo(String.class, sis);
 
-                        assertEquals("Hello World", s);
-                    }
-                }).transform(constant("Bye World"));
+                                assertEquals("Hello World", s);
+                            }
+                        })
+                        .transform(constant("Bye World"));
             }
         });
         context.start();
@@ -127,5 +135,4 @@ public class HttpConverterTest extends BaseJettyTest {
         HttpServletRequest req = null;
         assertNull(HttpConverter.toInputStream(req, null));
     }
-
 }

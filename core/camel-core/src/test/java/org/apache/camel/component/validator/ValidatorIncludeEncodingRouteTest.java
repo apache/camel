@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,7 +44,7 @@ public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
         finallyEndpoint.expectedMessageCount(1);
 
         String body = "<t:text xmlns:t=\"org.text\">\n" + "  <t:sentence>J'aime les cam\u00E9lid\u00E9s</t:sentence>\n"
-                      + "</t:text>";
+                + "</t:text>";
 
         template.sendBody("direct:start", body);
 
@@ -65,16 +66,22 @@ public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/text.xsd").to("mock:valid")
+                from("direct:start")
+                        .doTry()
+                        .to("validator:org/apache/camel/component/validator/text.xsd")
+                        .to("mock:valid")
                         .doCatch(NumberFormatException.class)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
                                 LOG.error("helo", exchange.getException());
                             }
-                        }).to("mock:invalid").doFinally().to("mock:finally").end();
+                        })
+                        .to("mock:invalid")
+                        .doFinally()
+                        .to("mock:finally")
+                        .end();
             }
         };
     }
-
 }

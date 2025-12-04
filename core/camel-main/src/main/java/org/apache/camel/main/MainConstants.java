@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 public final class MainConstants {
@@ -26,11 +27,9 @@ public final class MainConstants {
     public static final String PLATFORM_HTTP_SERVER = "platform-http-server";
     public static final String PROFILE = "camel.main.profile";
 
-    private MainConstants() {
-    }
+    private MainConstants() {}
 
     static String profilePropertyPlaceholderLocation(String profile) {
         return "classpath:application-" + profile + ".properties;optional=true";
     }
-
 }

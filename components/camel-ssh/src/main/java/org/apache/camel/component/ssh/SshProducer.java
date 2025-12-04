@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
+
+import static org.apache.camel.component.ssh.SshUtils.*;
 
 import java.util.Map;
 
@@ -23,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.sshd.client.SshClient;
-
-import static org.apache.camel.component.ssh.SshUtils.*;
 
 public class SshProducer extends DefaultProducer {
     private SshEndpoint endpoint;
@@ -37,7 +38,8 @@ public class SshProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        if (this.endpoint.getConfiguration() == null || this.endpoint.getConfiguration().getClientBuilder() == null) {
+        if (this.endpoint.getConfiguration() == null
+                || this.endpoint.getConfiguration().getClientBuilder() == null) {
             client = SshClient.setUpDefaultClient();
         } else {
             client = this.endpoint.getConfiguration().getClientBuilder().build(true);
@@ -76,8 +78,7 @@ public class SshProducer extends DefaultProducer {
             String knownHostResource = endpoint.getKnownHostsResource();
             if (knownHostResource != null) {
                 client.setServerKeyVerifier(new ResourceBasedSSHKeyVerifier(
-                        exchange.getContext(), knownHostResource,
-                        endpoint.isFailOnUnknownHost()));
+                        exchange.getContext(), knownHostResource, endpoint.isFailOnUnknownHost()));
             }
             SshResult result = SshHelper.sendExecCommand(headers, command, endpoint, client);
 
@@ -91,6 +92,5 @@ public class SshProducer extends DefaultProducer {
         } catch (Exception e) {
             throw new CamelExchangeException("Cannot execute command: " + command, exchange, e);
         }
-
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,8 +25,6 @@ import java.util.Set;
 import org.apache.camel.Expression;
 import org.apache.camel.TestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SetHeadersDefinitionTest extends TestSupport {
 
@@ -42,8 +43,7 @@ class SetHeadersDefinitionTest extends TestSupport {
     @Test
     void testSetFromMapOf() {
         SetHeadersDefinition setHeadersDef = new SetHeadersDefinition(
-                Map.of("fromBody", body(),
-                        "isCamel", body().contains("Camel"), "isHorse", body().contains("Horse")));
+                Map.of("fromBody", body(), "isCamel", body().contains("Camel"), "isHorse", body().contains("Horse")));
         assertNotNull(setHeadersDef.getHeaders());
         assertEquals(3, setHeadersDef.getHeaders().size());
         Set<String> names = new java.util.HashSet<>();
@@ -71,5 +71,4 @@ class SetHeadersDefinitionTest extends TestSupport {
         assertEquals(1, setHeadersDef.getHeaders().size());
         assertEquals("fromBody", setHeadersDef.getHeaders().get(0).getName());
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.AcceptAllHeaderFilterStrategy;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AcceptAllHeaderFilterStrategyTest extends ContextTestSupport {
 
@@ -42,5 +43,4 @@ public class AcceptAllHeaderFilterStrategyTest extends ContextTestSupport {
         assertFalse(comp.applyFilterToExternalHeaders("CamelVersion", "3.7", exchange));
         assertFalse(comp.applyFilterToExternalHeaders("org.apache.camel.component.jetty.session", "true", exchange));
     }
-
 }

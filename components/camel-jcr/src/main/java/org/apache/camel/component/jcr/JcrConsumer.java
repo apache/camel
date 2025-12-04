@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
 
 import java.util.Arrays;
@@ -69,10 +70,14 @@ public class JcrConsumer extends DefaultConsumer {
             LOG.trace("createSessionAndRegisterListener START");
 
             if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) {
-                session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+                session =
+                        getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
             } else {
-                session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials(),
-                        getJcrEndpoint().getWorkspaceName());
+                session = getJcrEndpoint()
+                        .getRepository()
+                        .login(
+                                getJcrEndpoint().getCredentials(),
+                                getJcrEndpoint().getWorkspaceName());
             }
 
             int eventTypes = getJcrEndpoint().getEventTypes();
@@ -114,11 +119,17 @@ public class JcrConsumer extends DefaultConsumer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(
                         "Adding JCR Event Listener, {}, on {}. eventTypes={}, isDeep={}, uuid={}, nodeTypeName={}, noLocal={}",
-                        eventListener, absPath, eventTypes, isDeep, Arrays.toString(uuid), Arrays.toString(nodeTypeName),
+                        eventListener,
+                        absPath,
+                        eventTypes,
+                        isDeep,
+                        Arrays.toString(uuid),
+                        Arrays.toString(nodeTypeName),
                         noLocal);
             }
 
-            session.getWorkspace().getObservationManager()
+            session.getWorkspace()
+                    .getObservationManager()
                     .addEventListener(eventListener, eventTypes, absPath, isDeep, uuid, nodeTypeName, noLocal);
 
             LOG.trace("createSessionAndRegisterListener END");
@@ -164,13 +175,18 @@ public class JcrConsumer extends DefaultConsumer {
 
     private void scheduleSessionListenerChecker() {
         String name = "JcrConsumerSessionChecker[" + getJcrEndpoint().getEndpointConfiguredDestinationName() + "]";
-        ScheduledExecutorService executor = getJcrEndpoint().getCamelContext().getExecutorServiceManager()
+        ScheduledExecutorService executor = getJcrEndpoint()
+                .getCamelContext()
+                .getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, name);
         JcrConsumerSessionListenerChecker sessionListenerChecker = new JcrConsumerSessionListenerChecker();
         long sessionLiveCheckIntervalOnStart = JcrConsumer.this.getJcrEndpoint().getSessionLiveCheckIntervalOnStart();
         long sessionLiveCheckInterval = JcrConsumer.this.getJcrEndpoint().getSessionLiveCheckInterval();
-        sessionListenerCheckerScheduledFuture = executor.scheduleWithFixedDelay(sessionListenerChecker,
-                sessionLiveCheckIntervalOnStart, sessionLiveCheckInterval, TimeUnit.MILLISECONDS);
+        sessionListenerCheckerScheduledFuture = executor.scheduleWithFixedDelay(
+                sessionListenerChecker,
+                sessionLiveCheckIntervalOnStart,
+                sessionLiveCheckInterval,
+                TimeUnit.MILLISECONDS);
     }
 
     private class JcrConsumerSessionListenerChecker implements Runnable {
@@ -205,5 +221,4 @@ public class JcrConsumer extends DefaultConsumer {
             LOG.debug("JcrConsumerSessionListenerChecker stops.");
         }
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,10 +32,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfRsSslProducerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getSslPort();
@@ -67,7 +68,8 @@ public class CxfRsSslProducerTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct://noTrust", new MyProcessor());
         assertTrue(exchange.isFailed());
         Exception e = exchange.getException();
-        assertEquals("javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
+        assertEquals(
+                "javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
     }
 
     @Test
@@ -75,7 +77,8 @@ public class CxfRsSslProducerTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct://wrongTrust", new MyProcessor());
         assertTrue(exchange.isFailed());
         Exception e = exchange.getException();
-        assertEquals("javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
+        assertEquals(
+                "javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
     }
 
     private class MyProcessor implements Processor {

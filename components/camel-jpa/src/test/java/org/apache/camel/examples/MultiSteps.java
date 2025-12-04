@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.examples;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,8 +29,6 @@ import org.apache.camel.component.jpa.Consumed;
 import org.apache.camel.component.jpa.PreConsumed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Represents a task which has multiple steps so that it can move from stage to stage with the method annotated with
@@ -41,8 +42,7 @@ public class MultiSteps {
     private String address;
     private int step;
 
-    public MultiSteps() {
-    }
+    public MultiSteps() {}
 
     public MultiSteps(String address) {
         setAddress(address);
@@ -94,8 +94,10 @@ public class MultiSteps {
     @Override
     public String toString() {
         // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters:
-        // 115  camel  WARN   [main] openjpa.Enhance - Detected the following possible violations of the restrictions placed on property access persistent types:
-        // "org.apache.camel.examples.MultiSteps" uses property access, but its field "step" is accessed directly in method "toString" defined in "org.apache.camel.examples.MultiSteps".
+        // 115  camel  WARN   [main] openjpa.Enhance - Detected the following possible violations of the restrictions
+        // placed on property access persistent types:
+        // "org.apache.camel.examples.MultiSteps" uses property access, but its field "step" is accessed directly in
+        // method "toString" defined in "org.apache.camel.examples.MultiSteps".
         return "MultiSteps[id: " + getId() + ", address: " + getAddress() + ", step: " + getStep() + "]";
     }
 }

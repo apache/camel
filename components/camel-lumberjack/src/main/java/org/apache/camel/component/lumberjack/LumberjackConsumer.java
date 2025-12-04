@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack;
 
 import java.util.concurrent.ThreadFactory;
@@ -30,7 +31,8 @@ import org.apache.camel.util.concurrent.CamelThreadFactory;
 public class LumberjackConsumer extends DefaultConsumer {
     private final LumberjackServer lumberjackServer;
 
-    public LumberjackConsumer(LumberjackEndpoint endpoint, Processor processor, String host, int port, SSLContext sslContext) {
+    public LumberjackConsumer(
+            LumberjackEndpoint endpoint, Processor processor, String host, int port, SSLContext sslContext) {
         super(endpoint, processor);
         lumberjackServer = new LumberjackServer(host, port, sslContext, getThreadFactory(), this::onMessageReceived);
     }
@@ -60,7 +62,8 @@ public class LumberjackConsumer extends DefaultConsumer {
     }
 
     private ThreadFactory getThreadFactory() {
-        String threadNamePattern = getEndpoint().getCamelContext().getExecutorServiceManager().getThreadNamePattern();
+        String threadNamePattern =
+                getEndpoint().getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         return new CamelThreadFactory(threadNamePattern, "LumberjackNettyExecutor", true);
     }
 

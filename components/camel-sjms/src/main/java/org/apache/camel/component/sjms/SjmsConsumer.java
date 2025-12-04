@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
 
 import jakarta.jms.Connection;
 
@@ -26,8 +29,6 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
 
 public class SjmsConsumer extends DefaultConsumer implements Suspendable {
 
@@ -57,8 +58,10 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
                     try {
                         prepareAndStartListenerContainer();
                     } catch (Exception e) {
-                        LOG.warn("Error starting listener container on destination: {}. This exception will be ignored.",
-                                getDestinationName(), e);
+                        LOG.warn(
+                                "Error starting listener container on destination: {}. This exception will be ignored.",
+                                getDestinationName(),
+                                e);
                     }
                 }
 
@@ -86,8 +89,10 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
                         try {
                             stopAndDestroyListenerContainer();
                         } catch (Exception e) {
-                            LOG.warn("Error stopping listener container on destination: {}. This exception will be ignored.",
-                                    getDestinationName(), e);
+                            LOG.warn(
+                                    "Error stopping listener container on destination: {}. This exception will be ignored.",
+                                    getDestinationName(),
+                                    e);
                         }
                     }
 
@@ -157,5 +162,4 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
         }
         initialized = false;
     }
-
 }

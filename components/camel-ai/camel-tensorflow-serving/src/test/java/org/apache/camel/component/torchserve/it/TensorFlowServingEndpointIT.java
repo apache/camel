@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.it;
 
 import java.util.concurrent.TimeUnit;
@@ -46,7 +47,10 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
         var mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived().body(GetModelStatus.GetModelStatusResponse.class);
-        mock.message(0).body().simple("${body.getModelVersionStatus(0).version}").isEqualTo(TEST_MODEL_VERSION);
+        mock.message(0)
+                .body()
+                .simple("${body.getModelVersionStatus(0).version}")
+                .isEqualTo(TEST_MODEL_VERSION);
         mock.message(0).body().simple("${body.getModelVersionStatus(0).state}").isEqualTo("AVAILABLE");
 
         template.sendBody("direct:model-status", null);
@@ -60,7 +64,10 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
         var mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodyReceived().body(GetModelStatus.GetModelStatusResponse.class);
-        mock.message(0).body().simple("${body.getModelVersionStatus(0).version}").isEqualTo(TEST_MODEL_VERSION);
+        mock.message(0)
+                .body()
+                .simple("${body.getModelVersionStatus(0).version}")
+                .isEqualTo(TEST_MODEL_VERSION);
         mock.message(0).body().simple("${body.getModelVersionStatus(0).state}").isEqualTo("AVAILABLE");
 
         template.send("direct:model-status_headers", e -> {
@@ -79,7 +86,10 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
         mock.expectedBodyReceived().body(GetModelMetadata.GetModelMetadataResponse.class);
         mock.message(0).body().simple("${body.modelSpec.name}").isEqualTo(TEST_MODEL);
         mock.message(0).body().simple("${body.modelSpec.version.value}").isEqualTo(TEST_MODEL_VERSION);
-        mock.message(0).body().simple("${body.getMetadataOrThrow('signature_def')}").isNotNull();
+        mock.message(0)
+                .body()
+                .simple("${body.getMetadataOrThrow('signature_def')}")
+                .isNotNull();
 
         template.sendBody("direct:model-metadata", null);
 
@@ -94,7 +104,10 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
         mock.expectedBodyReceived().body(GetModelMetadata.GetModelMetadataResponse.class);
         mock.message(0).body().simple("${body.modelSpec.name}").isEqualTo(TEST_MODEL);
         mock.message(0).body().simple("${body.modelSpec.version.value}").isEqualTo(TEST_MODEL_VERSION);
-        mock.message(0).body().simple("${body.getMetadataOrThrow('signature_def')}").isNotNull();
+        mock.message(0)
+                .body()
+                .simple("${body.getMetadataOrThrow('signature_def')}")
+                .isNotNull();
 
         template.send("direct:model-metadata_headers", e -> {
             e.getIn().setHeader(TensorFlowServingConstants.MODEL_NAME, TEST_MODEL);
@@ -113,17 +126,26 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
         mock.message(0).body().simple("${body.modelSpec.name}").isEqualTo(TEST_MODEL);
         mock.message(0).body().simple("${body.modelSpec.version.value}").isEqualTo(TEST_MODEL_VERSION);
         mock.message(0).body().simple("${body.result.classificationsCount}").isEqualTo(1);
-        mock.message(0).body().simple("${body.result.getClassifications(0).classesCount}").isEqualTo(1);
-        mock.message(0).body().simple("${body.result.getClassifications(0).getClasses(0).score}").isEqualTo(2.5);
+        mock.message(0)
+                .body()
+                .simple("${body.result.getClassifications(0).classesCount}")
+                .isEqualTo(1);
+        mock.message(0)
+                .body()
+                .simple("${body.result.getClassifications(0).getClasses(0).score}")
+                .isEqualTo(2.5);
 
         Classification.ClassificationRequest request = Classification.ClassificationRequest.newBuilder()
                 .setInput(InputOuterClass.Input.newBuilder()
                         .setExampleList(InputOuterClass.ExampleList.newBuilder()
                                 .addExamples(Example.newBuilder()
                                         .setFeatures(Features.newBuilder()
-                                                .putFeature("x", Feature.newBuilder()
-                                                        .setFloatList(FloatList.newBuilder().addValue(1.0f))
-                                                        .build())))))
+                                                .putFeature(
+                                                        "x",
+                                                        Feature.newBuilder()
+                                                                .setFloatList(FloatList.newBuilder()
+                                                                        .addValue(1.0f))
+                                                                .build())))))
                 .build();
         template.sendBody("direct:classify", request);
 
@@ -139,16 +161,25 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
         mock.message(0).body().simple("${body.modelSpec.name}").isEqualTo(TEST_MODEL);
         mock.message(0).body().simple("${body.modelSpec.version.value}").isEqualTo(TEST_MODEL_VERSION);
         mock.message(0).body().simple("${body.result.classificationsCount}").isEqualTo(1);
-        mock.message(0).body().simple("${body.result.getClassifications(0).classesCount}").isEqualTo(1);
-        mock.message(0).body().simple("${body.result.getClassifications(0).getClasses(0).score}").isEqualTo(2.5);
+        mock.message(0)
+                .body()
+                .simple("${body.result.getClassifications(0).classesCount}")
+                .isEqualTo(1);
+        mock.message(0)
+                .body()
+                .simple("${body.result.getClassifications(0).getClasses(0).score}")
+                .isEqualTo(2.5);
 
         InputOuterClass.Input input = InputOuterClass.Input.newBuilder()
                 .setExampleList(InputOuterClass.ExampleList.newBuilder()
                         .addExamples(Example.newBuilder()
                                 .setFeatures(Features.newBuilder()
-                                        .putFeature("x", Feature.newBuilder()
-                                                .setFloatList(FloatList.newBuilder().addValue(1.0f))
-                                                .build()))))
+                                        .putFeature(
+                                                "x",
+                                                Feature.newBuilder()
+                                                        .setFloatList(FloatList.newBuilder()
+                                                                .addValue(1.0f))
+                                                        .build()))))
                 .build();
         template.sendBody("direct:classify", input);
 
@@ -164,17 +195,26 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
         mock.message(0).body().simple("${body.modelSpec.name}").isEqualTo(TEST_MODEL);
         mock.message(0).body().simple("${body.modelSpec.version.value}").isEqualTo(TEST_MODEL_VERSION);
         mock.message(0).body().simple("${body.result.classificationsCount}").isEqualTo(1);
-        mock.message(0).body().simple("${body.result.getClassifications(0).classesCount}").isEqualTo(1);
-        mock.message(0).body().simple("${body.result.getClassifications(0).getClasses(0).score}").isEqualTo(2.5);
+        mock.message(0)
+                .body()
+                .simple("${body.result.getClassifications(0).classesCount}")
+                .isEqualTo(1);
+        mock.message(0)
+                .body()
+                .simple("${body.result.getClassifications(0).getClasses(0).score}")
+                .isEqualTo(2.5);
 
         Classification.ClassificationRequest request = Classification.ClassificationRequest.newBuilder()
                 .setInput(InputOuterClass.Input.newBuilder()
                         .setExampleList(InputOuterClass.ExampleList.newBuilder()
                                 .addExamples(Example.newBuilder()
                                         .setFeatures(Features.newBuilder()
-                                                .putFeature("x", Feature.newBuilder()
-                                                        .setFloatList(FloatList.newBuilder().addValue(1.0f))
-                                                        .build())))))
+                                                .putFeature(
+                                                        "x",
+                                                        Feature.newBuilder()
+                                                                .setFloatList(FloatList.newBuilder()
+                                                                        .addValue(1.0f))
+                                                                .build())))))
                 .build();
         template.send("direct:classify_headers", e -> {
             e.getIn().setHeader(TensorFlowServingConstants.MODEL_NAME, TEST_MODEL);
@@ -202,9 +242,12 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
                         .setExampleList(InputOuterClass.ExampleList.newBuilder()
                                 .addExamples(Example.newBuilder()
                                         .setFeatures(Features.newBuilder()
-                                                .putFeature("x", Feature.newBuilder()
-                                                        .setFloatList(FloatList.newBuilder().addValue(1.0f))
-                                                        .build())))))
+                                                .putFeature(
+                                                        "x",
+                                                        Feature.newBuilder()
+                                                                .setFloatList(FloatList.newBuilder()
+                                                                        .addValue(1.0f))
+                                                                .build())))))
                 .build();
         template.sendBody("direct:regress", request);
 
@@ -226,9 +269,12 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
                 .setExampleList(InputOuterClass.ExampleList.newBuilder()
                         .addExamples(Example.newBuilder()
                                 .setFeatures(Features.newBuilder()
-                                        .putFeature("x", Feature.newBuilder()
-                                                .setFloatList(FloatList.newBuilder().addValue(1.0f))
-                                                .build()))))
+                                        .putFeature(
+                                                "x",
+                                                Feature.newBuilder()
+                                                        .setFloatList(FloatList.newBuilder()
+                                                                .addValue(1.0f))
+                                                        .build()))))
                 .build();
         template.sendBody("direct:regress", input);
 
@@ -251,9 +297,12 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
                         .setExampleList(InputOuterClass.ExampleList.newBuilder()
                                 .addExamples(Example.newBuilder()
                                         .setFeatures(Features.newBuilder()
-                                                .putFeature("x", Feature.newBuilder()
-                                                        .setFloatList(FloatList.newBuilder().addValue(1.0f))
-                                                        .build())))))
+                                                .putFeature(
+                                                        "x",
+                                                        Feature.newBuilder()
+                                                                .setFloatList(FloatList.newBuilder()
+                                                                        .addValue(1.0f))
+                                                                .build())))))
                 .build();
         template.send("direct:regress_headers", e -> {
             e.getIn().setHeader(TensorFlowServingConstants.MODEL_NAME, TEST_MODEL);
@@ -275,19 +324,31 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
         mock.message(0).body().simple("${body.modelSpec.version.value}").isEqualTo(TEST_MODEL_VERSION);
         mock.message(0).body().simple("${body.outputsCount}").isEqualTo(1);
         mock.message(0).body().simple("${body.getOutputsOrThrow('y')}").isNotNull();
-        mock.message(0).body().simple("${body.getOutputsOrThrow('y').getFloatVal(0)}").isEqualTo(2.5);
-        mock.message(0).body().simple("${body.getOutputsOrThrow('y').getFloatVal(1)}").isEqualTo(3.0);
-        mock.message(0).body().simple("${body.getOutputsOrThrow('y').getFloatVal(2)}").isEqualTo(4.5);
+        mock.message(0)
+                .body()
+                .simple("${body.getOutputsOrThrow('y').getFloatVal(0)}")
+                .isEqualTo(2.5);
+        mock.message(0)
+                .body()
+                .simple("${body.getOutputsOrThrow('y').getFloatVal(1)}")
+                .isEqualTo(3.0);
+        mock.message(0)
+                .body()
+                .simple("${body.getOutputsOrThrow('y').getFloatVal(2)}")
+                .isEqualTo(4.5);
 
         Predict.PredictRequest request = Predict.PredictRequest.newBuilder()
-                .putInputs("x", TensorProto.newBuilder()
-                        .setDtype(DataType.DT_FLOAT)
-                        .setTensorShape(TensorShapeProto.newBuilder()
-                                .addDim(TensorShapeProto.Dim.newBuilder().setSize(3)))
-                        .addFloatVal(1.0f)
-                        .addFloatVal(2.0f)
-                        .addFloatVal(5.0f)
-                        .build())
+                .putInputs(
+                        "x",
+                        TensorProto.newBuilder()
+                                .setDtype(DataType.DT_FLOAT)
+                                .setTensorShape(TensorShapeProto.newBuilder()
+                                        .addDim(TensorShapeProto.Dim.newBuilder()
+                                                .setSize(3)))
+                                .addFloatVal(1.0f)
+                                .addFloatVal(2.0f)
+                                .addFloatVal(5.0f)
+                                .build())
                 .build();
         template.sendBody("direct:predict", request);
 
@@ -304,19 +365,31 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
         mock.message(0).body().simple("${body.modelSpec.version.value}").isEqualTo(TEST_MODEL_VERSION);
         mock.message(0).body().simple("${body.outputsCount}").isEqualTo(1);
         mock.message(0).body().simple("${body.getOutputsOrThrow('y')}").isNotNull();
-        mock.message(0).body().simple("${body.getOutputsOrThrow('y').getFloatVal(0)}").isEqualTo(2.5);
-        mock.message(0).body().simple("${body.getOutputsOrThrow('y').getFloatVal(1)}").isEqualTo(3.0);
-        mock.message(0).body().simple("${body.getOutputsOrThrow('y').getFloatVal(2)}").isEqualTo(4.5);
+        mock.message(0)
+                .body()
+                .simple("${body.getOutputsOrThrow('y').getFloatVal(0)}")
+                .isEqualTo(2.5);
+        mock.message(0)
+                .body()
+                .simple("${body.getOutputsOrThrow('y').getFloatVal(1)}")
+                .isEqualTo(3.0);
+        mock.message(0)
+                .body()
+                .simple("${body.getOutputsOrThrow('y').getFloatVal(2)}")
+                .isEqualTo(4.5);
 
         Predict.PredictRequest request = Predict.PredictRequest.newBuilder()
-                .putInputs("x", TensorProto.newBuilder()
-                        .setDtype(DataType.DT_FLOAT)
-                        .setTensorShape(TensorShapeProto.newBuilder()
-                                .addDim(TensorShapeProto.Dim.newBuilder().setSize(3)))
-                        .addFloatVal(1.0f)
-                        .addFloatVal(2.0f)
-                        .addFloatVal(5.0f)
-                        .build())
+                .putInputs(
+                        "x",
+                        TensorProto.newBuilder()
+                                .setDtype(DataType.DT_FLOAT)
+                                .setTensorShape(TensorShapeProto.newBuilder()
+                                        .addDim(TensorShapeProto.Dim.newBuilder()
+                                                .setSize(3)))
+                                .addFloatVal(1.0f)
+                                .addFloatVal(2.0f)
+                                .addFloatVal(5.0f)
+                                .build())
                 .build();
         template.send("direct:predict_headers", e -> {
             e.getIn().setHeader(TensorFlowServingConstants.MODEL_NAME, TEST_MODEL);
@@ -334,40 +407,39 @@ class TensorFlowServingEndpointIT extends TensorFlowServingITSupport {
             @Override
             public void configure() {
                 from("direct:model-status")
-                        .toF("tensorflow-serving:model-status?modelName=%s&modelVersion=%s",
+                        .toF(
+                                "tensorflow-serving:model-status?modelName=%s&modelVersion=%s",
                                 TEST_MODEL, TEST_MODEL_VERSION)
                         .to("mock:result");
                 from("direct:model-status_headers")
                         .to("tensorflow-serving:model-status")
                         .to("mock:result");
                 from("direct:model-metadata")
-                        .toF("tensorflow-serving:model-metadata?modelName=%s&modelVersion=%s",
+                        .toF(
+                                "tensorflow-serving:model-metadata?modelName=%s&modelVersion=%s",
                                 TEST_MODEL, TEST_MODEL_VERSION)
                         .to("mock:result");
                 from("direct:model-metadata_headers")
                         .to("tensorflow-serving:model-metadata")
                         .to("mock:result");
                 from("direct:classify")
-                        .toF("tensorflow-serving:classify?modelName=%s&modelVersion=%s&signatureName=%s",
+                        .toF(
+                                "tensorflow-serving:classify?modelName=%s&modelVersion=%s&signatureName=%s",
                                 TEST_MODEL, TEST_MODEL_VERSION, "classify_x_to_y")
                         .to("mock:result");
                 from("direct:classify_headers")
                         .to("tensorflow-serving:classify")
                         .to("mock:result");
                 from("direct:regress")
-                        .toF("tensorflow-serving:regress?modelName=%s&modelVersion=%s&signatureName=%s",
+                        .toF(
+                                "tensorflow-serving:regress?modelName=%s&modelVersion=%s&signatureName=%s",
                                 TEST_MODEL, TEST_MODEL_VERSION, "regress_x_to_y")
                         .to("mock:result");
-                from("direct:regress_headers")
-                        .to("tensorflow-serving:regress")
-                        .to("mock:result");
+                from("direct:regress_headers").to("tensorflow-serving:regress").to("mock:result");
                 from("direct:predict")
-                        .toF("tensorflow-serving:predict?modelName=%s&modelVersion=%s",
-                                TEST_MODEL, TEST_MODEL_VERSION)
+                        .toF("tensorflow-serving:predict?modelName=%s&modelVersion=%s", TEST_MODEL, TEST_MODEL_VERSION)
                         .to("mock:result");
-                from("direct:predict_headers")
-                        .to("tensorflow-serving:predict")
-                        .to("mock:result");
+                from("direct:predict_headers").to("tensorflow-serving:predict").to("mock:result");
             }
         };
     }

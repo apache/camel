@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -43,8 +44,8 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
         String fileUrl = fileUri(FILE_QUERY);
         template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "bye.txt");
         template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME,
-                TEST_FILE_NAME_PREFIX + "sub/sub2/goodday.txt");
+        template.sendBodyAndHeader(
+                fileUrl, "Goodday World", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "sub/sub2/goodday.txt");
 
         context.getRouteController().startRoute("foo");
 
@@ -55,9 +56,12 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri(FILE_QUERY)).routeId("foo").autoStartup(false).convertBodyTo(String.class).to("mock:result");
+                from(fileUri(FILE_QUERY))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
-
 }

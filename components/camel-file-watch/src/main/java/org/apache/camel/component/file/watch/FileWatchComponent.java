@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.watch;
 
 import java.util.Map;
@@ -31,33 +32,40 @@ import org.apache.camel.support.DefaultComponent;
 @Component("file-watch")
 public class FileWatchComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced",
-              description = "The number of concurrent consumers. Increase this value, if your route is slow to prevent buffering in queue.",
-              defaultValue = "1")
+    @Metadata(
+            label = "advanced",
+            description =
+                    "The number of concurrent consumers. Increase this value, if your route is slow to prevent buffering in queue.",
+            defaultValue = "1")
     private int concurrentConsumers = 1;
 
-    @Metadata(label = "advanced",
-              description = "Maximum size of queue between WatchService and consumer. Unbounded by default.",
-              defaultValue = "" + Integer.MAX_VALUE)
+    @Metadata(
+            label = "advanced",
+            description = "Maximum size of queue between WatchService and consumer. Unbounded by default.",
+            defaultValue = "" + Integer.MAX_VALUE)
     private int queueSize = Integer.MAX_VALUE;
 
-    @Metadata(label = "advanced",
-              description = "The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in log.",
-              defaultValue = "1")
+    @Metadata(
+            label = "advanced",
+            description =
+                    "The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in log.",
+            defaultValue = "1")
     private int pollThreads = 1;
 
-    @Metadata(label = "advanced",
-              description = "Reference to io.methvin.watcher.hashing.FileHasher. "
-                            + "This prevents emitting duplicate events on some platforms. "
-                            + "For working with large files and if you dont need detect multiple modifications per second per file, "
-                            + "use #lastModifiedTimeFileHasher. You can also provide custom implementation in registry.",
-              defaultValue = "#murmur3FFileHasher")
+    @Metadata(
+            label = "advanced",
+            description = "Reference to io.methvin.watcher.hashing.FileHasher. "
+                    + "This prevents emitting duplicate events on some platforms. "
+                    + "For working with large files and if you dont need detect multiple modifications per second per file, "
+                    + "use #lastModifiedTimeFileHasher. You can also provide custom implementation in registry.",
+            defaultValue = "#murmur3FFileHasher")
     private FileHasher fileHasher = FileHasher.DEFAULT_FILE_HASHER;
 
-    @Metadata(description = "Enables or disables file hashing to detect duplicate events. "
-                            + "If you disable this, you can get some events multiple times on some platforms and JDKs. "
-                            + "Check java.nio.file.WatchService limitations for your target platform.",
-              defaultValue = "true")
+    @Metadata(
+            description = "Enables or disables file hashing to detect duplicate events. "
+                    + "If you disable this, you can get some events multiple times on some platforms and JDKs. "
+                    + "Check java.nio.file.WatchService limitations for your target platform.",
+            defaultValue = "true")
     private boolean useFileHashing = true;
 
     public int getConcurrentConsumers() {

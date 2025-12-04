@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -32,11 +38,6 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class XmlLoadAppTest {
 
     @Test
@@ -46,13 +47,10 @@ public class XmlLoadAppTest {
 
             // load route from XML and add them both to the existing camel context
             // only first XML declares component scanning (to put beans into the registry)
-            String[] contexts = new String[] {
-                    "camel-app1.xml",
-                    "camel-app2.xml"
-            };
+            String[] contexts = new String[] {"camel-app1.xml", "camel-app2.xml"};
             for (String r : contexts) {
-                Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                        "/org/apache/camel/dsl/xml/io/" + r);
+                Resource resource =
+                        PluginHelper.getResourceLoader(context).resolveResource("/org/apache/camel/dsl/xml/io/" + r);
 
                 RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
                 routesLoader.preParseRoute(resource, false);
@@ -87,8 +85,8 @@ public class XmlLoadAppTest {
 
             // camel-app3 registers two beans and 2nd one uses @BeanInject on first one
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app3.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app3.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -113,8 +111,8 @@ public class XmlLoadAppTest {
             // camel-app4 registers one bean, where its dependency is created from the flattened properties
             // and using org.apache.camel.spi.Injector.newInstance()
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app4.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app4.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -136,8 +134,8 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app5.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app5.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -159,8 +157,8 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app6.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app6.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -182,8 +180,8 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app7.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app7.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -208,8 +206,8 @@ public class XmlLoadAppTest {
             assertFalse(MyDestroyBean.initCalled.get());
             assertFalse(MyDestroyBean.destroyCalled.get());
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app8.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app8.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -239,8 +237,8 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app9.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app9.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -264,8 +262,8 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app10.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app10.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -289,8 +287,8 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app11.camel.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app11.camel.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -317,8 +315,8 @@ public class XmlLoadAppTest {
 
             context.start();
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app12.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app12.xml");
 
             RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
             routesLoader.preParseRoute(resource, false);
@@ -345,8 +343,8 @@ public class XmlLoadAppTest {
             context.start();
 
             // camel-app13 has a route configuration and a route using the configuration
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app13.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app13.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
@@ -368,15 +366,15 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app14.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app14.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             // test that loaded route works
             MockEndpoint bar = context.getEndpoint("mock:result", MockEndpoint.class);
 
-            Base64 codec = new Base64(40, new byte[] { '\r', '\n' }, true);
+            Base64 codec = new Base64(40, new byte[] {'\r', '\n'}, true);
             byte[] encoded = codec.encode("Hi World".getBytes());
             bar.expectedBodiesReceived(encoded);
             context.createProducerTemplate().sendBody("direct:start", "Hi World");
@@ -389,20 +387,19 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/camel-app15.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/camel-app15.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             // test that loaded route works
             MockEndpoint bar = context.getEndpoint("mock:result", MockEndpoint.class);
 
-            Base64 codec = new Base64(60, new byte[] { '\r', '\n' }, true);
+            Base64 codec = new Base64(60, new byte[] {'\r', '\n'}, true);
             byte[] encoded = codec.encode("Hi World".getBytes());
             bar.expectedBodiesReceived(encoded);
             context.createProducerTemplate().sendBody("direct:start", "Hi World");
             bar.assertIsSatisfied();
         }
     }
-
 }

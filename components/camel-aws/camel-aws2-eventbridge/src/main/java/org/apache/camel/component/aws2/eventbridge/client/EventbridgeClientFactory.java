@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge.client;
 
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClient
  */
 public final class EventbridgeClientFactory {
 
-    private EventbridgeClientFactory() {
-    }
+    private EventbridgeClientFactory() {}
 
     /**
      * Return the correct AWS Eventbridge client (based on remote vs local).

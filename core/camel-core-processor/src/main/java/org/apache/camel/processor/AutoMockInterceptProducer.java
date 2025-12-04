@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
@@ -63,8 +64,8 @@ public class AutoMockInterceptProducer extends DelegateAsyncProcessor implements
         boolean mock = false;
         boolean skip = false;
         try {
-            for (AutoMockInterceptStrategy strategy : camelContext.getCamelContextExtension()
-                    .getAutoMockInterceptStrategies()) {
+            for (AutoMockInterceptStrategy strategy :
+                    camelContext.getCamelContextExtension().getAutoMockInterceptStrategies()) {
                 if (matchPattern(getEndpoint(), strategy.getPattern())) {
                     noMatched = false;
                     mock = true;
@@ -147,5 +148,4 @@ public class AutoMockInterceptProducer extends DelegateAsyncProcessor implements
         Endpoint mock = endpoint.getCamelContext().getEndpoint(key, Endpoint.class);
         return mock.createProducer();
     }
-
 }

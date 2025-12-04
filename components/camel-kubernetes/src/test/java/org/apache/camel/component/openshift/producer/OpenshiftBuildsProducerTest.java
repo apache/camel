@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openshift.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +35,6 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @EnableKubernetesMockClient
 public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
 
@@ -42,15 +43,42 @@ public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
 
     @BindToRegistry("client")
     public NamespacedKubernetesClient loadClient() throws Exception {
-        server.expect().withPath("/apis/build.openshift.io/v1/builds")
-                .andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
-        server.expect().withPath("/apis/build.openshift.io/v1/builds?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-                .andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
-        server.expect().withPath("/apis")
-                .andReturn(200,
-                        new APIGroupListBuilder().addNewGroup().withApiVersion("v1").withName("autoscaling.k8s.io").endGroup()
+        server.expect()
+                .withPath("/apis/build.openshift.io/v1/builds")
+                .andReturn(
+                        200,
+                        new BuildListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
+                .once();
+        server.expect()
+                .withPath("/apis/build.openshift.io/v1/builds?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+                .andReturn(
+                        200,
+                        new BuildListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
+                .once();
+        server.expect()
+                .withPath("/apis")
+                .andReturn(
+                        200,
+                        new APIGroupListBuilder()
                                 .addNewGroup()
-                                .withApiVersion("v1").withName("security.openshift.io").endGroup().build())
+                                .withApiVersion("v1")
+                                .withName("autoscaling.k8s.io")
+                                .endGroup()
+                                .addNewGroup()
+                                .withApiVersion("v1")
+                                .withName("security.openshift.io")
+                                .endGroup()
+                                .build())
                 .always();
         return client;
     }
@@ -82,7 +110,8 @@ public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() {
                 from("direct:list").to("openshift-builds:///?operation=listBuilds&kubernetesClient=#client");
-                from("direct:listByLabels").to("openshift-builds:///?operation=listBuildsByLabels&kubernetesClient=#client");
+                from("direct:listByLabels")
+                        .to("openshift-builds:///?operation=listBuildsByLabels&kubernetesClient=#client");
             }
         };
     }

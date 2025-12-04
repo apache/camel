@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.extensions;
 
 import net.sf.saxon.expr.XPathContext;
@@ -53,7 +54,7 @@ public class MyExtensionFunction2 extends ExtensionFunctionDefinition {
 
     @Override
     public SequenceType[] getArgumentTypes() {
-        return new SequenceType[] { SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_STRING };
+        return new SequenceType[] {SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_STRING};
     }
 
     @Override
@@ -88,5 +89,4 @@ public class MyExtensionFunction2 extends ExtensionFunctionDefinition {
             }
         };
     }
-
 }

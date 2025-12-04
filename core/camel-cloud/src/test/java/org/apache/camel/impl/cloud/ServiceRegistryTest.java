@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
 @SuppressWarnings("deprecation")
@@ -53,17 +54,16 @@ public class ServiceRegistryTest extends ContextTestSupport {
         final String serviceId = UUID.randomUUID().toString();
         final int port = 9090;
 
-        context.addRouteDefinition(
-                new RouteDefinition()
-                        .from("direct:start")
-                        .routeGroup(serviceName)
-                        .routeId(serviceId)
-                        .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
-                        .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
-                        .routeProperty("service.meta1", "meta1")
-                        .routeProperty("meta2", "meta2")
-                        .routePolicy(new ServiceRegistrationRoutePolicy())
-                        .to("mock:end"));
+        context.addRouteDefinition(new RouteDefinition()
+                .from("direct:start")
+                .routeGroup(serviceName)
+                .routeId(serviceId)
+                .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
+                .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
+                .routeProperty("service.meta1", "meta1")
+                .routeProperty("meta2", "meta2")
+                .routePolicy(new ServiceRegistrationRoutePolicy())
+                .to("mock:end"));
 
         InMemoryServiceRegistry sr = new InMemoryServiceRegistry();
 
@@ -95,19 +95,18 @@ public class ServiceRegistryTest extends ContextTestSupport {
         final String serviceId = UUID.randomUUID().toString();
         final int port = 9090;
 
-        context.addRouteDefinition(
-                new RouteDefinition()
-                        .from("direct:start")
-                        .routeGroup("service-name")
-                        .routeId("service-id")
-                        .routeProperty(ServiceDefinition.SERVICE_META_NAME, serviceName)
-                        .routeProperty(ServiceDefinition.SERVICE_META_ID, serviceId)
-                        .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
-                        .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
-                        .routeProperty("service.meta1", "meta1")
-                        .routeProperty("meta2", "meta2")
-                        .routePolicy(new ServiceRegistrationRoutePolicy())
-                        .to("mock:end"));
+        context.addRouteDefinition(new RouteDefinition()
+                .from("direct:start")
+                .routeGroup("service-name")
+                .routeId("service-id")
+                .routeProperty(ServiceDefinition.SERVICE_META_NAME, serviceName)
+                .routeProperty(ServiceDefinition.SERVICE_META_ID, serviceId)
+                .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
+                .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
+                .routeProperty("service.meta1", "meta1")
+                .routeProperty("meta2", "meta2")
+                .routePolicy(new ServiceRegistrationRoutePolicy())
+                .to("mock:end"));
 
         InMemoryServiceRegistry sr = new InMemoryServiceRegistry();
 
@@ -143,17 +142,16 @@ public class ServiceRegistryTest extends ContextTestSupport {
         final String serviceId = UUID.randomUUID().toString();
         final int port = 9090;
 
-        context.addRouteDefinition(
-                new RouteDefinition()
-                        .from("direct:start")
-                        .routeProperty(ServiceDefinition.SERVICE_META_NAME, serviceName)
-                        .routeProperty(ServiceDefinition.SERVICE_META_ID, serviceId)
-                        .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
-                        .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
-                        .routeProperty("service.meta1", "meta1")
-                        .routeProperty("meta2", "meta2")
-                        .routePolicy(new ServiceRegistrationRoutePolicy())
-                        .to("mock:end"));
+        context.addRouteDefinition(new RouteDefinition()
+                .from("direct:start")
+                .routeProperty(ServiceDefinition.SERVICE_META_NAME, serviceName)
+                .routeProperty(ServiceDefinition.SERVICE_META_ID, serviceId)
+                .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
+                .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
+                .routeProperty("service.meta1", "meta1")
+                .routeProperty("meta2", "meta2")
+                .routePolicy(new ServiceRegistrationRoutePolicy())
+                .to("mock:end"));
 
         InMemoryServiceRegistry sr = new InMemoryServiceRegistry();
 

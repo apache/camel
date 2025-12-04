@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.edit;
 
 import java.nio.file.Path;
@@ -34,9 +35,13 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "edit", description = "Edit Camel with suggestions and diagnostics")
 public class EditCommand extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of file", arity = "1",
-                            paramLabel = "<file>", parameterConsumer = FileConsumer.class)
+    @CommandLine.Parameters(
+            description = "Name of file",
+            arity = "1",
+            paramLabel = "<file>",
+            parameterConsumer = FileConsumer.class)
     private Path filePath; // Defined only for file path completion; the field never used
+
     private String file;
 
     public EditCommand(CamelJBangMain main) {
@@ -47,16 +52,16 @@ public class EditCommand extends CamelCommand {
     public Integer doCall() throws Exception {
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         try (Terminal terminal = TerminalBuilder.builder().build()) {
-            String[] argv = new String[] { file };
+            String[] argv = new String[] {file};
             Options opt = Options.compile(Nano.usage()).parse(argv);
             if (opt.isSet("help")) {
                 throw new Options.HelpException(opt.usage());
             } else {
                 Path currentDir = workDir.get();
-                Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass()).getParent();
+                Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass())
+                        .getParent();
                 ConfigurationPath configPath = new ConfigurationPath(appConfig, null);
-                CamelNanoLspEditor edit
-                        = new CamelNanoLspEditor(terminal, currentDir, opt, configPath);
+                CamelNanoLspEditor edit = new CamelNanoLspEditor(terminal, currentDir, opt, configPath);
                 edit.open(opt.args());
                 edit.run();
             }

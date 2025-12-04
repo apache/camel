@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
     @EndpointInject("mock:result")
@@ -70,5 +71,4 @@ public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/dataformat/csv/CsvUnmarshalTabDelimiterSpringTest-context.xml");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -53,7 +54,7 @@ public interface ComponentAware {
             return type.cast(component);
         }
 
-        throw new IllegalArgumentException(
-                "Unable to unwrap the Component type (" + component.getClass() + ") to the required type (" + type + ")");
+        throw new IllegalArgumentException("Unable to unwrap the Component type (" + component.getClass()
+                + ") to the required type (" + type + ")");
     }
 }

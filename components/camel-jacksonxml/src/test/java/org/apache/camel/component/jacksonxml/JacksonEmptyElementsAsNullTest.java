@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -38,11 +39,31 @@ public class JacksonEmptyElementsAsNullTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Assertions.assertEquals("Jack", mock.getReceivedExchanges().get(0).getMessage().getBody(TestPojo.class).getName());
+        Assertions.assertEquals(
+                "Jack",
+                mock.getReceivedExchanges()
+                        .get(0)
+                        .getMessage()
+                        .getBody(TestPojo.class)
+                        .getName());
         // <name></name> and <name/> are NOT the same as empty string vs null
-        Assertions.assertEquals("", mock.getReceivedExchanges().get(1).getMessage().getBody(TestPojo.class).getName());
-        Assertions.assertNull(mock.getReceivedExchanges().get(2).getMessage().getBody(TestPojo.class).getName());
-        Assertions.assertNull(mock.getReceivedExchanges().get(3).getMessage().getBody(TestPojo.class).getName());
+        Assertions.assertEquals(
+                "",
+                mock.getReceivedExchanges()
+                        .get(1)
+                        .getMessage()
+                        .getBody(TestPojo.class)
+                        .getName());
+        Assertions.assertNull(mock.getReceivedExchanges()
+                .get(2)
+                .getMessage()
+                .getBody(TestPojo.class)
+                .getName());
+        Assertions.assertNull(mock.getReceivedExchanges()
+                .get(3)
+                .getMessage()
+                .getBody(TestPojo.class)
+                .getName());
     }
 
     @Test
@@ -57,11 +78,33 @@ public class JacksonEmptyElementsAsNullTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Assertions.assertEquals("Jack", mock.getReceivedExchanges().get(0).getMessage().getBody(TestPojo.class).getName());
+        Assertions.assertEquals(
+                "Jack",
+                mock.getReceivedExchanges()
+                        .get(0)
+                        .getMessage()
+                        .getBody(TestPojo.class)
+                        .getName());
         // <name></name> and <name/> are both the same as an empty string
-        Assertions.assertEquals("", mock.getReceivedExchanges().get(1).getMessage().getBody(TestPojo.class).getName());
-        Assertions.assertEquals("", mock.getReceivedExchanges().get(2).getMessage().getBody(TestPojo.class).getName());
-        Assertions.assertNull(mock.getReceivedExchanges().get(3).getMessage().getBody(TestPojo.class).getName());
+        Assertions.assertEquals(
+                "",
+                mock.getReceivedExchanges()
+                        .get(1)
+                        .getMessage()
+                        .getBody(TestPojo.class)
+                        .getName());
+        Assertions.assertEquals(
+                "",
+                mock.getReceivedExchanges()
+                        .get(2)
+                        .getMessage()
+                        .getBody(TestPojo.class)
+                        .getName());
+        Assertions.assertNull(mock.getReceivedExchanges()
+                .get(3)
+                .getMessage()
+                .getBody(TestPojo.class)
+                .getName());
     }
 
     @Override
@@ -83,5 +126,4 @@ public class JacksonEmptyElementsAsNullTest extends CamelTestSupport {
             }
         };
     }
-
 }

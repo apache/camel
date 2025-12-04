@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.support;
 
 import java.util.Collection;
@@ -46,5 +47,4 @@ public abstract class ExtendedRouteBuilderLoaderSupport extends RouteBuilderLoad
     }
 
     protected abstract Collection<RoutesBuilder> doLoadRoutesBuilders(Collection<Resource> resources) throws Exception;
-
 }

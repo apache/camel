@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client.internal;
+
+import static java.lang.String.format;
+import static java.util.concurrent.CompletableFuture.completedFuture;
+import static org.apache.camel.component.milo.NodeIds.toNodeId;
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -83,11 +89,6 @@ import org.eclipse.milo.shaded.com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.String.format;
-import static java.util.concurrent.CompletableFuture.completedFuture;
-import static org.apache.camel.component.milo.NodeIds.toNodeId;
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
-
 public class SubscriptionManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionManager.class);
@@ -108,7 +109,6 @@ public class SubscriptionManager {
             // we simply tear it down and build it up again
             handleConnectionFailure(new RuntimeCamelException("Subscription failed to reconnect"));
         }
-
     }
 
     public interface Worker<T> {
@@ -122,8 +122,11 @@ public class SubscriptionManager {
         private final Consumer<DataValue> valueConsumer;
         private MonitorFilterConfiguration monitorFilterConfiguration;
 
-        Subscription(ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer,
-                     final MonitorFilterConfiguration monitorFilterConfiguration) {
+        Subscription(
+                ExpandedNodeId nodeId,
+                final Double samplingInterval,
+                final Consumer<DataValue> valueConsumer,
+                final MonitorFilterConfiguration monitorFilterConfiguration) {
             this.nodeId = nodeId;
             this.samplingInterval = samplingInterval;
             this.valueConsumer = valueConsumer;
@@ -187,7 +190,8 @@ public class SubscriptionManager {
                 if (node == null) {
                     handleSubscriptionError(new StatusCode(StatusCodes.Bad_InvalidArgument), entry.getKey(), s);
                 } else {
-                    final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
+                    final ReadValueId itemId =
+                            new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     final OpcUaMonitoredItem item = new OpcUaMonitoredItem(itemId, MonitoringMode.Reporting);
                     items.add(item);
                     // Keep track of which subscription this item belongs to
@@ -209,18 +213,20 @@ public class SubscriptionManager {
                     UInteger originalClientHandle = itemToClientHandle.get(item);
                     final Subscription s = subscriptions.get(originalClientHandle);
                     if (s != null) {
-                        item.setDataValueListener((monitoredItem, dataValue) -> s.getValueConsumer().accept(dataValue));
+                        item.setDataValueListener((monitoredItem, dataValue) ->
+                                s.getValueConsumer().accept(dataValue));
                     }
                 }
             }
 
             if (!this.badSubscriptions.isEmpty()) {
-                SubscriptionManager.this.executor.schedule(this::resubscribe, SubscriptionManager.this.reconnectTimeout,
-                        TimeUnit.MILLISECONDS);
+                SubscriptionManager.this.executor.schedule(
+                        this::resubscribe, SubscriptionManager.this.reconnectTimeout, TimeUnit.MILLISECONDS);
             }
         }
 
-        private void handleSubscriptionError(final StatusCode statusCode, final UInteger clientHandle, final Subscription s) {
+        private void handleSubscriptionError(
+                final StatusCode statusCode, final UInteger clientHandle, final Subscription s) {
             this.badSubscriptions.put(clientHandle, s);
             s.getValueConsumer().accept(new DataValue(statusCode));
         }
@@ -274,10 +280,11 @@ public class SubscriptionManager {
             LOG.debug("Looking up namespace on server: {}", namespaceUri);
             //
             //            final CompletableFuture<DataValue> future
-            //                    = this.client.readValue(0, TimestampsToReturn.Neither, Identifiers.Server_NamespaceArray);
+            //                    = this.client.readValue(0, TimestampsToReturn.Neither,
+            // Identifiers.Server_NamespaceArray);
             CompletableFuture<DataValue> future = this.client
-                    .readValuesAsync(0, TimestampsToReturn.Neither,
-                            Collections.singletonList(Identifiers.Server_NamespaceArray))
+                    .readValuesAsync(
+                            0, TimestampsToReturn.Neither, Collections.singletonList(Identifiers.Server_NamespaceArray))
                     .thenApply(r -> r.get(0));
 
             return future.thenApply(value -> {
@@ -305,7 +312,6 @@ public class SubscriptionManager {
                 } catch (final UaException e) {
                     LOG.warn("Failed to disconnect client", e);
                 }
-
             }
         }
 
@@ -322,7 +328,6 @@ public class SubscriptionManager {
                 LOG.trace("Using provided index: {}", index);
                 return completedFuture(toNodeId(index, nodeId));
             }
-
         }
 
         public CompletableFuture<StatusCode> write(final ExpandedNodeId nodeId, final DataValue value) {
@@ -340,10 +345,10 @@ public class SubscriptionManager {
             */
 
             return lookupNamespace(nodeId).thenCompose(node -> {
-
                 LOG.debug("Node - expanded: {}, full: {}", nodeId, node);
 
-                return this.client.writeValuesAsync(List.of(node), List.of(value))
+                return this.client
+                        .writeValuesAsync(List.of(node), List.of(value))
                         .thenApply(r -> r.get(0))
                         .whenComplete((status, error) -> {
                             if (status != null) {
@@ -359,11 +364,9 @@ public class SubscriptionManager {
                 final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Variant[] inputArguments) {
 
             return lookupNamespace(nodeId).thenCompose(node -> {
-
                 LOG.debug("Node   - expanded: {}, full: {}", nodeId, node);
 
                 return lookupNamespace(methodId).thenCompose(method -> {
-
                     LOG.debug("Method - expanded: {}, full: {}", methodId, method);
 
                     final CallMethodRequest cmr = new CallMethodRequest(node, method, inputArguments);
@@ -377,28 +380,33 @@ public class SubscriptionManager {
                         }
                     });
                     */
-                    return this.client.callAsync(List.of(cmr))
+                    return this.client
+                            .callAsync(List.of(cmr))
                             .thenApply(r -> r.getResults()[0])
                             .whenComplete((status, error) -> {
                                 if (status != null) {
-                                    LOG.debug("Call to node={}, method={} = {}-> {}", nodeId, methodId, inputArguments, status);
+                                    LOG.debug(
+                                            "Call to node={}, method={} = {}-> {}",
+                                            nodeId,
+                                            methodId,
+                                            inputArguments,
+                                            status);
                                 } else {
                                     LOG.debug("Failed to call", error);
                                 }
                             });
-
                 });
-
             });
         }
 
         public CompletableFuture<List<DataValue>> readValues(List<ExpandedNodeId> expandedNodeIds) {
 
-            final CompletableFuture<NodeId>[] nodeIdFutures
-                    = expandedNodeIds.stream().map(this::lookupNamespace).toArray(CompletableFuture[]::new);
+            final CompletableFuture<NodeId>[] nodeIdFutures =
+                    expandedNodeIds.stream().map(this::lookupNamespace).toArray(CompletableFuture[]::new);
 
             return CompletableFuture.allOf(nodeIdFutures).thenCompose(param -> {
-                List<NodeId> nodeIds = Stream.of(nodeIdFutures).map(CompletableFuture::join).collect(Collectors.toList());
+                List<NodeId> nodeIds =
+                        Stream.of(nodeIdFutures).map(CompletableFuture::join).collect(Collectors.toList());
                 return this.client.readValuesAsync(0, TimestampsToReturn.Server, nodeIds);
             });
         }
@@ -422,15 +430,15 @@ public class SubscriptionManager {
             }
 
             return new BrowseResult(
-                    browseResult.getStatusCode(), browseResult.getContinuationPoint(),
+                    browseResult.getStatusCode(),
+                    browseResult.getContinuationPoint(),
                     filteredReferences.toArray(new ReferenceDescription[0]));
         }
 
         private CompletableFuture<Map<ExpandedNodeId, BrowseResult>> flatten(
                 List<CompletableFuture<Map<ExpandedNodeId, BrowseResult>>> browseResults) {
             return CompletableFuture.allOf(browseResults.toArray(new CompletableFuture[0]))
-                    .thenApply(__ -> browseResults
-                            .stream()
+                    .thenApply(__ -> browseResults.stream()
                             .map(CompletableFuture::join)
                             .map(Map::entrySet)
                             .flatMap(Set::stream)
@@ -445,11 +453,10 @@ public class SubscriptionManager {
             if (previousBrowseResult.getStatusCode().isGood() && continuationPoint.isNotNull()) {
 
                 //                return this.client.browseNext(false, continuationPoint)
-                return this.client.browseNextAsync(false, List.of(continuationPoint))
+                return this.client
+                        .browseNextAsync(false, List.of(continuationPoint))
                         .thenApply(r -> r.getResults()[0])
-
                         .thenCompose(browseResult -> {
-
                             final ReferenceDescription[] previousReferences = previousBrowseResult.getReferences();
                             final ReferenceDescription[] references = browseResult.getReferences();
 
@@ -463,12 +470,15 @@ public class SubscriptionManager {
                                 return completedFuture(browseResult);
                             }
 
-                            final ReferenceDescription[] combined
-                                    = Arrays.copyOf(previousReferences, previousReferences.length + references.length);
+                            final ReferenceDescription[] combined =
+                                    Arrays.copyOf(previousReferences, previousReferences.length + references.length);
                             System.arraycopy(references, 0, combined, previousReferences.length, references.length);
 
-                            LOG.debug("Browse continuation point -> {}: {} reference(s); total: {} reference(s)",
-                                    browseResult.getStatusCode(), references.length, combined.length);
+                            LOG.debug(
+                                    "Browse continuation point -> {}: {} reference(s); total: {} reference(s)",
+                                    browseResult.getStatusCode(),
+                                    references.length,
+                                    combined.length);
 
                             return browse(new BrowseResult(
                                     browseResult.getStatusCode(), browseResult.getContinuationPoint(), combined));
@@ -482,17 +492,20 @@ public class SubscriptionManager {
 
         // Browse a single node, retrieve additional results, filter node ids and eventually browse deeper into the tree
         public CompletableFuture<Map<ExpandedNodeId, BrowseResult>> browse(
-                BrowseDescription browseDescription, BrowseResult browseResult, int depth, int maxDepth, Pattern pattern,
+                BrowseDescription browseDescription,
+                BrowseResult browseResult,
+                int depth,
+                int maxDepth,
+                Pattern pattern,
                 int maxNodesPerRequest) {
 
             return browse(browseResult)
-
                     .thenCompose(preliminary -> completedFuture(filter(preliminary, pattern)))
-
                     .thenCompose(filtered -> {
-
-                        final ExpandedNodeId expandedNodeId = browseDescription.getNodeId().expanded();
-                        final Map<ExpandedNodeId, BrowseResult> root = Collections.singletonMap(expandedNodeId, filtered);
+                        final ExpandedNodeId expandedNodeId =
+                                browseDescription.getNodeId().expanded();
+                        final Map<ExpandedNodeId, BrowseResult> root =
+                                Collections.singletonMap(expandedNodeId, filtered);
                         final CompletableFuture<Map<ExpandedNodeId, BrowseResult>> finalFuture = completedFuture(root);
                         final ReferenceDescription[] references = filtered.getReferences();
 
@@ -506,13 +519,20 @@ public class SubscriptionManager {
                         futures.add(finalFuture);
 
                         final List<ExpandedNodeId> nodeIds = Stream.of(references)
-                                .map(ReferenceDescription::getNodeId).collect(Collectors.toList());
+                                .map(ReferenceDescription::getNodeId)
+                                .collect(Collectors.toList());
 
                         final List<List<ExpandedNodeId>> lists = Lists.partition(nodeIds, maxNodesPerRequest);
                         for (final List<ExpandedNodeId> list : lists) {
-                            futures.add(browse(list, browseDescription.getBrowseDirection(),
-                                    browseDescription.getNodeClassMask().intValue(), depth + 1, maxDepth, pattern,
-                                    browseDescription.getIncludeSubtypes(), maxNodesPerRequest));
+                            futures.add(browse(
+                                    list,
+                                    browseDescription.getBrowseDirection(),
+                                    browseDescription.getNodeClassMask().intValue(),
+                                    depth + 1,
+                                    maxDepth,
+                                    pattern,
+                                    browseDescription.getIncludeSubtypes(),
+                                    maxNodesPerRequest));
                         }
 
                         return flatten(futures);
@@ -522,60 +542,71 @@ public class SubscriptionManager {
         // Browse according to a list of browse descriptions
         public CompletableFuture<Map<ExpandedNodeId, BrowseResult>> browse(
                 List<BrowseDescription> browseDescriptions,
-                int depth, int maxDepth, Pattern pattern, int maxNodesPerRequest) {
+                int depth,
+                int maxDepth,
+                Pattern pattern,
+                int maxNodesPerRequest) {
 
-            return this.client.browseAsync(browseDescriptions)
+            return this.client.browseAsync(browseDescriptions).thenCompose(partials -> {
 
-                    .thenCompose(partials -> {
+                // Fail a bit more gracefully in case of missing results
+                if (partials.size() != browseDescriptions.size()) {
 
-                        // Fail a bit more gracefully in case of missing results
-                        if (partials.size() != browseDescriptions.size()) {
+                    final CompletableFuture<Map<ExpandedNodeId, BrowseResult>> failedFuture = new CompletableFuture<>();
+                    failedFuture.completeExceptionally(new IllegalArgumentException(format(
+                            "Invalid number of browse results: %s, expected %s",
+                            partials.size(), browseDescriptions.size())));
+                    return failedFuture;
 
-                            final CompletableFuture<Map<ExpandedNodeId, BrowseResult>> failedFuture = new CompletableFuture<>();
-                            failedFuture.completeExceptionally(new IllegalArgumentException(
-                                    format("Invalid number of browse results: %s, expected %s",
-                                            partials.size(), browseDescriptions.size())));
-                            return failedFuture;
+                    /* @TODO: Replace with Java 9 functionality like follows
+                    return CompletableFuture.failedFuture(new IllegalArgumentException(
+                            format("Invalid number of browse results: %s, expected %s", partials.size(),
+                                    browseDescriptions.size()))); */
+                }
 
-                            /* @TODO: Replace with Java 9 functionality like follows
-                            return CompletableFuture.failedFuture(new IllegalArgumentException(
-                                    format("Invalid number of browse results: %s, expected %s", partials.size(),
-                                            browseDescriptions.size()))); */
-                        }
+                final List<CompletableFuture<Map<ExpandedNodeId, BrowseResult>>> futures = new ArrayList<>();
 
-                        final List<CompletableFuture<Map<ExpandedNodeId, BrowseResult>>> futures = new ArrayList<>();
+                for (int i = 0; i < partials.size(); i++) {
 
-                        for (int i = 0; i < partials.size(); i++) {
+                    futures.add(browse(
+                            browseDescriptions.get(i), partials.get(i), depth, maxDepth, pattern, maxNodesPerRequest));
+                }
 
-                            futures.add(browse(browseDescriptions.get(i), partials.get(i), depth, maxDepth, pattern,
-                                    maxNodesPerRequest));
-                        }
-
-                        return flatten(futures);
-                    });
+                return flatten(futures);
+            });
         }
 
-        // Wrapper for looking up nodes and instantiating initial browse descriptions according to the configuration provided
+        // Wrapper for looking up nodes and instantiating initial browse descriptions according to the configuration
+        // provided
         @SuppressWarnings("unchecked")
         public CompletableFuture<Map<ExpandedNodeId, BrowseResult>> browse(
-                List<ExpandedNodeId> expandedNodeIds, BrowseDirection direction, int nodeClasses, int depth, int maxDepth,
-                Pattern pattern, boolean includeSubTypes, int maxNodesPerRequest) {
+                List<ExpandedNodeId> expandedNodeIds,
+                BrowseDirection direction,
+                int nodeClasses,
+                int depth,
+                int maxDepth,
+                Pattern pattern,
+                boolean includeSubTypes,
+                int maxNodesPerRequest) {
 
-            final CompletableFuture<NodeId>[] futures = expandedNodeIds.stream().map(this::lookupNamespace)
-                    .toArray(CompletableFuture[]::new);
+            final CompletableFuture<NodeId>[] futures =
+                    expandedNodeIds.stream().map(this::lookupNamespace).toArray(CompletableFuture[]::new);
 
             return CompletableFuture.allOf(futures)
-
                     .thenCompose(__ -> {
+                        final List<NodeId> nodeIds =
+                                Stream.of(futures).map(CompletableFuture::join).collect(Collectors.toList());
 
-                        final List<NodeId> nodeIds = Stream.of(futures).map(CompletableFuture::join)
-                                .collect(Collectors.toList());
-
-                        return completedFuture(nodeIds.stream().map(nodeId -> new BrowseDescription(
-                                nodeId, direction, Identifiers.References, includeSubTypes, uint(nodeClasses),
-                                uint(BrowseResultMask.All.getValue()))).collect(Collectors.toList()));
+                        return completedFuture(nodeIds.stream()
+                                .map(nodeId -> new BrowseDescription(
+                                        nodeId,
+                                        direction,
+                                        Identifiers.References,
+                                        includeSubTypes,
+                                        uint(nodeClasses),
+                                        uint(BrowseResultMask.All.getValue())))
+                                .collect(Collectors.toList()));
                     })
-
                     .thenCompose(descriptions -> browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest));
         }
     }
@@ -589,8 +620,10 @@ public class SubscriptionManager {
     private Future<?> reconnectJob;
     private final Map<UInteger, Subscription> subscriptions = new HashMap<>();
 
-    public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService executor,
-                               final long reconnectTimeout) {
+    public SubscriptionManager(
+            final MiloClientConfiguration configuration,
+            final ScheduledExecutorService executor,
+            final long reconnectTimeout) {
 
         this.configuration = configuration;
         this.executor = executor;
@@ -681,20 +714,22 @@ public class SubscriptionManager {
         }
         LOG.debug("Discovering endpoints from: {}", discoveryUri);
 
-        final EndpointDescription endpoint = DiscoveryClient.getEndpoints(discoveryUri).thenApply(endpoints -> {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Found endpoints:");
-                for (final EndpointDescription ep : endpoints) {
-                    LOG.debug("\t{}", ep);
-                }
-            }
+        final EndpointDescription endpoint = DiscoveryClient.getEndpoints(discoveryUri)
+                .thenApply(endpoints -> {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Found endpoints:");
+                        for (final EndpointDescription ep : endpoints) {
+                            LOG.debug("\t{}", ep);
+                        }
+                    }
 
-            try {
-                return findEndpoint(endpoints);
-            } catch (final URISyntaxException e) {
-                throw new RuntimeException("Failed to find endpoints", e);
-            }
-        }).get();
+                    try {
+                        return findEndpoint(endpoints);
+                    } catch (final URISyntaxException e) {
+                        throw new RuntimeException("Failed to find endpoints", e);
+                    }
+                })
+                .get();
 
         LOG.debug("Selected endpoint: {}", endpoint);
 
@@ -844,9 +879,14 @@ public class SubscriptionManager {
         }
 
         return new EndpointDescription(
-                overrideHost(desc.getEndpointUrl()), desc.getServer(), desc.getServerCertificate(), desc.getSecurityMode(),
+                overrideHost(desc.getEndpointUrl()),
+                desc.getServer(),
+                desc.getServerCertificate(),
+                desc.getSecurityMode(),
                 desc.getSecurityPolicyUri(),
-                desc.getUserIdentityTokens(), desc.getTransportProfileUri(), desc.getSecurityLevel());
+                desc.getUserIdentityTokens(),
+                desc.getTransportProfileUri(),
+                desc.getSecurityLevel());
     }
 
     /**
@@ -867,8 +907,14 @@ public class SubscriptionManager {
         final URI originalUri = URI.create(configuration.getEndpointUri());
 
         return new URI(
-                uri.getScheme(), uri.getUserInfo(), originalUri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(),
-                uri.getFragment()).toString();
+                        uri.getScheme(),
+                        uri.getUserInfo(),
+                        originalUri.getHost(),
+                        uri.getPort(),
+                        uri.getPath(),
+                        uri.getQuery(),
+                        uri.getFragment())
+                .toString();
     }
 
     protected synchronized void whenConnected(final Worker<Connected> worker) {
@@ -888,11 +934,14 @@ public class SubscriptionManager {
     }
 
     public UInteger registerItem(
-            final ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer,
+            final ExpandedNodeId nodeId,
+            final Double samplingInterval,
+            final Consumer<DataValue> valueConsumer,
             final MonitorFilterConfiguration monitorFilterConfiguration) {
 
         final UInteger clientHandle = Unsigned.uint(this.clientHandleCounter.incrementAndGet());
-        final Subscription subscription = new Subscription(nodeId, samplingInterval, valueConsumer, monitorFilterConfiguration);
+        final Subscription subscription =
+                new Subscription(nodeId, samplingInterval, valueConsumer, monitorFilterConfiguration);
 
         synchronized (this) {
             this.subscriptions.put(clientHandle, subscription);
@@ -920,14 +969,18 @@ public class SubscriptionManager {
                 return newNotConnectedResult();
             }
 
-            return this.connected.call(nodeId, methodId, inputArguments).handleAsync((status, e) -> {
-                // handle outside the lock, running using
-                // handleAsync
-                if (e != null) {
-                    handleConnectionFailure(e);
-                }
-                return null;
-            }, this.executor);
+            return this.connected
+                    .call(nodeId, methodId, inputArguments)
+                    .handleAsync(
+                            (status, e) -> {
+                                // handle outside the lock, running using
+                                // handleAsync
+                                if (e != null) {
+                                    handleConnectionFailure(e);
+                                }
+                                return null;
+                            },
+                            this.executor);
         }
     }
 
@@ -937,14 +990,18 @@ public class SubscriptionManager {
                 return newNotConnectedResult();
             }
 
-            return this.connected.write(nodeId, value).handleAsync((status, e) -> {
-                // handle outside the lock, running using
-                // handleAsync
-                if (e != null) {
-                    handleConnectionFailure(e);
-                }
-                return status;
-            }, this.executor);
+            return this.connected
+                    .write(nodeId, value)
+                    .handleAsync(
+                            (status, e) -> {
+                                // handle outside the lock, running using
+                                // handleAsync
+                                if (e != null) {
+                                    handleConnectionFailure(e);
+                                }
+                                return status;
+                            },
+                            this.executor);
         }
     }
 
@@ -954,35 +1011,54 @@ public class SubscriptionManager {
                 return newNotConnectedResult();
             }
 
-            return this.connected.readValues(nodeIds).handleAsync((nodes, e) -> {
-                // handle outside the lock, running using
-                // handleAsync
-                if (e != null) {
-                    handleConnectionFailure(e);
-                }
-                return nodes;
-            }, this.executor);
+            return this.connected
+                    .readValues(nodeIds)
+                    .handleAsync(
+                            (nodes, e) -> {
+                                // handle outside the lock, running using
+                                // handleAsync
+                                if (e != null) {
+                                    handleConnectionFailure(e);
+                                }
+                                return nodes;
+                            },
+                            this.executor);
         }
     }
 
     public CompletableFuture<Map<ExpandedNodeId, BrowseResult>> browse(
-            List<ExpandedNodeId> expandedNodeIds, BrowseDirection direction, int nodeClasses, int maxDepth, String filter,
-            boolean includeSubTypes, int maxNodesPerRequest) {
+            List<ExpandedNodeId> expandedNodeIds,
+            BrowseDirection direction,
+            int nodeClasses,
+            int maxDepth,
+            String filter,
+            boolean includeSubTypes,
+            int maxNodesPerRequest) {
         synchronized (this) {
             if (this.connected == null) {
                 return newNotConnectedResult();
             }
 
-            return this.connected.browse(expandedNodeIds, direction, nodeClasses, 1, maxDepth,
-                    null != filter ? Pattern.compile(filter) : null, includeSubTypes, maxNodesPerRequest)
-                    .handleAsync((browseResult, e) -> {
-                        // handle outside the lock, running using
-                        // handleAsync
-                        if (e != null) {
-                            handleConnectionFailure(e);
-                        }
-                        return browseResult;
-                    }, this.executor);
+            return this.connected
+                    .browse(
+                            expandedNodeIds,
+                            direction,
+                            nodeClasses,
+                            1,
+                            maxDepth,
+                            null != filter ? Pattern.compile(filter) : null,
+                            includeSubTypes,
+                            maxNodesPerRequest)
+                    .handleAsync(
+                            (browseResult, e) -> {
+                                // handle outside the lock, running using
+                                // handleAsync
+                                if (e != null) {
+                                    handleConnectionFailure(e);
+                                }
+                                return browseResult;
+                            },
+                            this.executor);
         }
     }
 }

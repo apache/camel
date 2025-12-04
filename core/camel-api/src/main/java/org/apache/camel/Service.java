@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.io.IOException;
@@ -29,16 +30,14 @@ public interface Service extends AutoCloseable {
      *
      * @throws RuntimeCamelException is thrown if build failed
      */
-    default void build() {
-    }
+    default void build() {}
 
     /**
      * Initialize the service
      *
      * @throws RuntimeCamelException is thrown if initialization failed
      */
-    default void init() {
-    }
+    default void init() {}
 
     /**
      * Starts the service

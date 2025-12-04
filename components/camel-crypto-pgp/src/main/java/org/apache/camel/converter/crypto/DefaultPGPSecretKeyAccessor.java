@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 import java.io.ByteArrayInputStream;
@@ -38,8 +39,7 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
  */
 public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
 
-    private final Map<String, List<PGPSecretKeyAndPrivateKeyAndUserId>> userIdPart2SecretKeyList = new HashMap<>(
-            3);
+    private final Map<String, List<PGPSecretKeyAndPrivateKeyAndUserId>> userIdPart2SecretKeyList = new HashMap<>(3);
 
     private final Map<Long, PGPPrivateKey> keyId2PrivateKey = new HashMap<>(3);
 
@@ -57,14 +57,13 @@ public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
      * @throws PGPException
      * @throws IOException
      */
-    public DefaultPGPSecretKeyAccessor(byte[] secretKeyRing, String password, String provider) throws PGPException,
-                                                                                               IOException {
+    public DefaultPGPSecretKeyAccessor(byte[] secretKeyRing, String password, String provider)
+            throws PGPException, IOException {
         ObjectHelper.notNull(secretKeyRing, "secretKeyRing");
         StringHelper.notEmpty(password, "password");
         StringHelper.notEmpty(provider, "provider");
         pgpSecretKeyring = new PGPSecretKeyRingCollection(
-                PGPUtil.getDecoderStream(new ByteArrayInputStream(secretKeyRing)),
-                new BcKeyFingerprintCalculator());
+                PGPUtil.getDecoderStream(new ByteArrayInputStream(secretKeyRing)), new BcKeyFingerprintCalculator());
         this.password = password;
         this.provider = provider;
     }
@@ -77,8 +76,7 @@ public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
             List<PGPSecretKeyAndPrivateKeyAndUserId> partResult = userIdPart2SecretKeyList.get(useridPart);
             if (partResult == null) {
                 partResult = PGPDataFormatUtil.findSecretKeysWithPrivateKeyAndUserId(
-                        Collections.singletonMap(useridPart, password),
-                        provider, pgpSecretKeyring);
+                        Collections.singletonMap(useridPart, password), provider, pgpSecretKeyring);
                 userIdPart2SecretKeyList.put(useridPart, partResult);
             }
             result.addAll(partResult);
@@ -98,5 +96,4 @@ public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
         }
         return result;
     }
-
 }

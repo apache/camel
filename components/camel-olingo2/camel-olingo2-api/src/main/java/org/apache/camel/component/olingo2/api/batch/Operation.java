@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2.api.batch;
 
 /**
  * OData operation used by {@link org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest}.
  */
 public enum Operation {
-
     CREATE("POST"),
     UPDATE("PUT"),
     PATCH("PATCH"),

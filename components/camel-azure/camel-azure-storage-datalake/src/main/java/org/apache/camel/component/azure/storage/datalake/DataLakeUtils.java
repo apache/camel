@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.io.IOException;
@@ -25,8 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
 
 public final class DataLakeUtils {
-    private DataLakeUtils() {
-    }
+    private DataLakeUtils() {}
 
     public static Message getInMessage(final Exchange exchange) {
         if (ObjectHelper.isEmpty(exchange)) {

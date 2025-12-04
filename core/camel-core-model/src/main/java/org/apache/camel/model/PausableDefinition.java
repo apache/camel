@@ -38,18 +38,19 @@ public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {
 
     @XmlTransient
     private ConsumerListener<?, ?> consumerListenerBean;
+
     @XmlTransient
     private Predicate<?> untilCheckBean;
 
     @XmlAttribute(required = true)
     @Metadata(required = true, javaType = "org.apache.camel.resume.ConsumerListener")
     private String consumerListener;
+
     @XmlAttribute(required = true)
     @Metadata(required = true, javaType = "java.util.function.Predicate")
     private String untilCheck;
 
-    public PausableDefinition() {
-    }
+    public PausableDefinition() {}
 
     protected PausableDefinition(PausableDefinition source) {
         super(source);
@@ -150,5 +151,4 @@ public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {
         setUntilCheck(untilCheck);
         return this;
     }
-
 }

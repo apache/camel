@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AdviceWithMockEndpointsTest extends ContextTestSupport {
 
@@ -41,9 +42,12 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
     public void testAdvisedMockEndpoints() throws Exception {
         // advice the start route using the inlined AdviceWith lambda style route builder
         // which has extended capabilities than the regular route builder
-        AdviceWith.adviceWith(context, "start", a ->
-        // mock all endpoints
-        a.mockEndpoints());
+        AdviceWith.adviceWith(
+                context,
+                "start",
+                a ->
+                        // mock all endpoints
+                        a.mockEndpoints());
 
         getMockEndpoint("mock:direct:start").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:direct:foo").expectedBodiesReceived("Hello World");
@@ -73,9 +77,12 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
     public void testAdvisedMockEndpointsWithPattern() throws Exception {
         // advice the start route using the inlined AdviceWith lambda style route builder
         // which has extended capabilities than the regular route builder
-        AdviceWith.adviceWith(context, "start", a ->
-        // mock only log endpoints
-        a.mockEndpoints("log*"));
+        AdviceWith.adviceWith(
+                context,
+                "start",
+                a ->
+                        // mock only log endpoints
+                        a.mockEndpoints("log*"));
 
         // now we can refer to log:foo as a mock and set our expectations
         getMockEndpoint("mock:log:foo").expectedBodiesReceived("Bye World");
@@ -106,11 +113,13 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("start")
-                        .to("direct:foo").to("log:foo").to("mock:result");
+                from("direct:start")
+                        .routeId("start")
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .to("mock:result");
 
-                from("direct:foo").routeId("foo")
-                        .transform(constant("Bye World"));
+                from("direct:foo").routeId("foo").transform(constant("Bye World"));
             }
         };
     }

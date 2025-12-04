@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.yaml.out;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
@@ -28,15 +31,15 @@ import org.apache.camel.xml.in.ModelParser;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class XPathNamespacesTest {
 
     @Test
     void testNamespace() throws Exception {
         try (ByteArrayInputStream is = new ByteArrayInputStream(XML.getBytes(Charset.defaultCharset()))) {
-            Optional<RoutesDefinition> routesDefinition = new ModelParser(is, XmlToYamlTest.NAMESPACE).parseRoutesDefinition();
-            assertThat(routesDefinition).isPresent()
+            Optional<RoutesDefinition> routesDefinition =
+                    new ModelParser(is, XmlToYamlTest.NAMESPACE).parseRoutesDefinition();
+            assertThat(routesDefinition)
+                    .isPresent()
                     .get(InstanceOfAssertFactories.type(RoutesDefinition.class))
                     .extracting(RoutesDefinition::getRoutes, InstanceOfAssertFactories.list(RouteDefinition.class))
                     .singleElement()
@@ -50,9 +53,9 @@ class XPathNamespacesTest {
         }
     }
 
-    //language=XML
-    private static final String XML
-            = """
+    // language=XML
+    private static final String XML =
+            """
                     <routes xmlns="http://camel.apache.org/schema/spring"
                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:routes-ns-def="http://www.example.com/schema"
@@ -79,8 +82,9 @@ class XPathNamespacesTest {
                     </routes>
                     """;
 
-    //language=yaml
-    private static final String EXPECTED_YAML = """
+    // language=yaml
+    private static final String EXPECTED_YAML =
+            """
             - route:
                 id: direct:route-with-xpath-expression-custom-namespace
                 from:

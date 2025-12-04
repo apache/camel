@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.releases.helsinki;
+
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CREATE;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_RETRIEVE;
 
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -30,9 +34,6 @@ import org.apache.camel.component.servicenow.ServiceNowParams;
 import org.apache.camel.component.servicenow.model.ImportSetResponse;
 import org.apache.camel.component.servicenow.model.ImportSetResult;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CREATE;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_RETRIEVE;
 
 class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
 
@@ -76,8 +77,8 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
         final String tableName = getTableName(in);
         final String apiVersion = getApiVersion(in);
         final Class<?> requestModel = getRequestModel(in, tableName);
-        final boolean retrieve = in.getHeader(ServiceNowConstants.RETRIEVE_TARGET_RECORD,
-                config::getRetrieveTargetRecordOnImport, Boolean.class);
+        final boolean retrieve = in.getHeader(
+                ServiceNowConstants.RETRIEVE_TARGET_RECORD, config::getRetrieveTargetRecordOnImport, Boolean.class);
 
         Class<?> responseModel = getResponseModel(in, tableName);
         Response response;
@@ -97,7 +98,8 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
                     .invoke(HttpMethod.POST, in.getMandatoryBody());
 
             if (ObjectHelper.isNotEmpty(response.getHeaderString(HttpHeaders.CONTENT_TYPE))) {
-                for (ImportSetResult result : response.readEntity(ImportSetResponse.class).getResults()) {
+                for (ImportSetResult result :
+                        response.readEntity(ImportSetResponse.class).getResults()) {
                     final String status = result.getStatus();
                     final String table = result.getTable();
                     final String sysId = result.getSysId();

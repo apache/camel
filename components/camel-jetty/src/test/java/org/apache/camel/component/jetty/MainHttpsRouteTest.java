@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -34,9 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
-
-import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ResourceLock(SSL_SYSPROPS)
 @DisabledOnOs(value = OS.WINDOWS, disabledReason = "does not run well on Windows")
@@ -62,8 +63,12 @@ public class MainHttpsRouteTest extends BaseJettyTest {
     public void testHelloEndpoint() throws Exception {
         Main main = new Main();
         main.configure().sslConfig().setEnabled(true);
-        main.configure().sslConfig().setKeyStore(
-                this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
+        main.configure()
+                .sslConfig()
+                .setKeyStore(this.getClass()
+                        .getClassLoader()
+                        .getResource("jsse/localhost.p12")
+                        .toString());
         main.configure().sslConfig().setKeystorePassword("changeit");
         main.configure().sslConfig().setClientAuthentication(ClientAuthentication.WANT.name());
         main.addProperty("camel.component.jetty.useglobalsslcontextparameters", "true");

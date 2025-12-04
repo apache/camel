@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.json;
 
 /**
@@ -55,27 +56,37 @@ public class DeserializationException extends Exception {
         final StringBuilder sb = new StringBuilder();
         switch (this.problemType) {
             case DISALLOWED_TOKEN:
-                sb.append("The disallowed token (").append(this.unexpectedObject).append(") was found at position ")
+                sb.append("The disallowed token (")
+                        .append(this.unexpectedObject)
+                        .append(") was found at position ")
                         .append(this.position)
-                        .append(". If this is in error, try again with a parse that allows the token instead. Otherwise, fix the parsable string and try again.");
+                        .append(
+                                ". If this is in error, try again with a parse that allows the token instead. Otherwise, fix the parsable string and try again.");
                 break;
             case UNEXPECTED_CHARACTER:
-                sb.append("The unexpected character (").append(this.unexpectedObject).append(") was found at position ")
+                sb.append("The unexpected character (")
+                        .append(this.unexpectedObject)
+                        .append(") was found at position ")
                         .append(this.position)
                         .append(". Fix the parsable string and try again.");
                 break;
             case UNEXPECTED_TOKEN:
-                sb.append("The unexpected token ").append(this.unexpectedObject).append(" was found at position ")
+                sb.append("The unexpected token ")
+                        .append(this.unexpectedObject)
+                        .append(" was found at position ")
                         .append(this.position)
                         .append(". Fix the parsable string and try again.");
                 break;
             case UNEXPECTED_EXCEPTION:
                 sb.append(
-                        "Please report this to the library's maintainer. The unexpected exception that should be addressed before trying again occurred at position ")
-                        .append(this.position).append(": ").append(this.unexpectedObject);
+                                "Please report this to the library's maintainer. The unexpected exception that should be addressed before trying again occurred at position ")
+                        .append(this.position)
+                        .append(": ")
+                        .append(this.unexpectedObject);
                 break;
             default:
-                sb.append("Please report this to the library's maintainer. An error at position ").append(this.position)
+                sb.append("Please report this to the library's maintainer. An error at position ")
+                        .append(this.position)
                         .append(" occurred. There are no recovery recommendations available.");
                 break;
         }

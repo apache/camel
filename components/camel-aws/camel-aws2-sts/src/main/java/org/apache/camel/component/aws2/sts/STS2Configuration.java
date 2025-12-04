@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts;
 
 import org.apache.camel.RuntimeCamelException;
@@ -31,37 +32,54 @@ public class STS2Configuration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
+
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private StsClient stsClient;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
+
     @UriParam(label = "security", secret = true)
     private String secretKey;
+
     @UriParam
     @Metadata(required = true, defaultValue = "assumeRole")
     private STS2Operations operation = STS2Operations.assumeRole;
+
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
+
     @UriParam(label = "proxy")
     private String proxyHost;
+
     @UriParam(label = "proxy")
     private Integer proxyPort;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
-              defaultValue = "aws-global")
+
+    @UriParam(
+            enums =
+                    "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
+            defaultValue = "aws-global")
     private String region = Region.AWS_GLOBAL.id();
+
     @UriParam
     private boolean pojoRequest;
+
     @UriParam(label = "security")
     private boolean trustAllCertificates;
+
     @UriParam
     private boolean overrideEndpoint;
+
     @UriParam
     private String uriEndpointOverride;
+
     @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
+
     @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
+
     @UriParam(label = "security")
     private String profileCredentialsName;
 

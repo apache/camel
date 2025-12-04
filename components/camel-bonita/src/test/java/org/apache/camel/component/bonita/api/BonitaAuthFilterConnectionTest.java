@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 
@@ -33,12 +40,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class BonitaAuthFilterConnectionTest {
 
     @Mock
@@ -48,7 +49,7 @@ public class BonitaAuthFilterConnectionTest {
 
     @BeforeEach
     public void setup() {
-        wireMockServer = new WireMockServer(WireMockConfiguration.options()/*.port(etc)*/);
+        wireMockServer = new WireMockServer(WireMockConfiguration.options() /*.port(etc)*/);
         wireMockServer.start();
 
         MockitoAnnotations.initMocks(this);
@@ -78,12 +79,12 @@ public class BonitaAuthFilterConnectionTest {
     public void testConnectionSupportCSRF() throws Exception {
         String port = wireMockServer.port() + "";
         stubFor(post(urlEqualTo("/bonita/loginservice"))
-                .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=something", "X-Bonita-API-Token=something")));
+                .willReturn(
+                        aResponse().withHeader("Set-Cookie", "JSESSIONID=something", "X-Bonita-API-Token=something")));
 
         BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", port, "username", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         bonitaAuthFilter.filter(requestContext);
         assertEquals(2, requestContext.getHeaders().size());
     }
-
 }

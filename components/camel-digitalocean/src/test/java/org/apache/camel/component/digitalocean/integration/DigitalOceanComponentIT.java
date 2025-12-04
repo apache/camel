@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,14 +45,9 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIf(value = "org.apache.camel.component.digitalocean.integration.DigitalOceanTestSupport#hasCredentials",
-           disabledReason = "Must be manually tested. Provide your own oAuthToken on test-options.properties")
+@EnabledIf(
+        value = "org.apache.camel.component.digitalocean.integration.DigitalOceanTestSupport#hasCredentials",
+        disabledReason = "Must be manually tested. Provide your own oAuthToken on test-options.properties")
 public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DigitalOceanComponentIT.class);
@@ -63,7 +65,8 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
                         .to("mock:result");
 
                 from("direct:getAccountInfo2")
-                        .to("digitalocean:account?operation=" + DigitalOceanOperations.get + "&oAuthToken={{oAuthToken}}")
+                        .to("digitalocean:account?operation=" + DigitalOceanOperations.get
+                                + "&oAuthToken={{oAuthToken}}")
                         .to("mock:result");
 
                 from("direct:getActions")
@@ -103,7 +106,6 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
                             tags.add("tag1");
                             tags.add("tag2");
                             e.getIn().setHeader(DigitalOceanHeaders.DROPLET_TAGS, tags);
-
                         })
                         .to("digitalocean:droplets?oAuthToken={{oAuthToken}}")
                         .to("mock:result");
@@ -115,7 +117,6 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
                             names.add("droplet1");
                             names.add("droplet2");
                             e.getIn().setHeader(DigitalOceanHeaders.NAMES, names);
-
                         })
                         .setHeader(DigitalOceanHeaders.REGION, constant("fra1"))
                         .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
@@ -125,7 +126,6 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
                             tags.add("tag1");
                             tags.add("tag2");
                             e.getIn().setHeader(DigitalOceanHeaders.DROPLET_TAGS, tags);
-
                         })
                         .to("digitalocean://droplets?oAuthToken={{oAuthToken}}")
                         .to("mock:result");
@@ -193,7 +193,6 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
         assertTrue(((Account) exchange.getMessage().getBody()).isEmailVerified());
 
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Test
@@ -228,7 +227,6 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), Integer.valueOf(5428878));
-
     }
 
     @Test
@@ -243,7 +241,6 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
         assertNotNull(droplet.getId());
         assertEquals("fra1", droplet.getRegion().getSlug());
         assertCollectionSize(droplet.getTags(), 2);
-
     }
 
     @Test
@@ -295,7 +292,8 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
         Exchange exchange = template.request("direct:getTags", null);
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals("tag1", ((List<Tag>) exchange.getMessage().getBody()).get(0).getName());
+        assertEquals(
+                "tag1", ((List<Tag>) exchange.getMessage().getBody()).get(0).getName());
     }
 
     @Test
@@ -317,7 +315,6 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals("ubuntu-14-04-x64", (exchange.getMessage().getBody(Image.class)).getSlug());
-
     }
 
     @Test
@@ -343,5 +340,4 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
         LOG.debug("Regions: {}", regions);
         assertNotEquals(1, regions.size());
     }
-
 }

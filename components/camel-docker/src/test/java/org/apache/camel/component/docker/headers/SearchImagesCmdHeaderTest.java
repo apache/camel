@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Search Image Request headers are applied properly
@@ -47,7 +48,6 @@ public class SearchImagesCmdHeaderTest extends BaseDockerHeaderTest<SearchImages
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).searchImagesCmd(eq(term));
-
     }
 
     @Override
@@ -59,5 +59,4 @@ public class SearchImagesCmdHeaderTest extends BaseDockerHeaderTest<SearchImages
     protected DockerOperation getOperation() {
         return DockerOperation.SEARCH_IMAGES;
     }
-
 }

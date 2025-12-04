@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import java.util.stream.Stream;
@@ -33,7 +34,8 @@ public class JoorStreamPredicateTest extends CamelTestSupport {
                 from("direct:start")
                         .choice()
                         .when()
-                        .joor("Stream<Integer> s = (Stream<Integer>) body; return s.filter((n) -> n > 10).findAny().isPresent()")
+                        .joor(
+                                "Stream<Integer> s = (Stream<Integer>) body; return s.filter((n) -> n > 10).findAny().isPresent()")
                         .to("mock:high")
                         .otherwise()
                         .to("mock:low");
@@ -53,5 +55,4 @@ public class JoorStreamPredicateTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

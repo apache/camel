@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,47 +27,47 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
 @SuppressWarnings("deprecation")
 public class SpringLogMaskTest {
 
     @Test
     public void testLogMask() throws Exception {
-        final AbstractXmlApplicationContext applicationContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
+        final AbstractXmlApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
         MockEndpoint mock = context.getEndpoint("mock:mask", MockEndpoint.class);
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBodyAndHeader("direct:mask", "password=passw0rd@", "headerPassword", "#header-password$");
-        template.sendBodyAndProperty("direct:mask", "password=passw0rd@", "propertyPassphrase", "#property-passphrase$");
+        template.sendBodyAndProperty(
+                "direct:mask", "password=passw0rd@", "propertyPassphrase", "#property-passphrase$");
         context.stop();
         mock.expectedMessageCount(2);
     }
 
     @Test
     public void testLogMaskDisabled() throws Exception {
-        final AbstractXmlApplicationContext applicationContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
+        final AbstractXmlApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
         MockEndpoint mock = context.getEndpoint("mock:no-mask", MockEndpoint.class);
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBodyAndHeader("direct:no-mask", "password=passw0rd@", "headerPassword", "#header-password$");
-        template.sendBodyAndProperty("direct:no-mask", "password=passw0rd@", "propertyPassphrase", "#property-passphrase$");
+        template.sendBodyAndProperty(
+                "direct:no-mask", "password=passw0rd@", "propertyPassphrase", "#property-passphrase$");
         context.stop();
         mock.expectedMessageCount(2);
     }
 
     @Test
     public void testCustomLogMask() throws Exception {
-        final AbstractXmlApplicationContext applicationContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringCustomLogMaskTest-context.xml");
+        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/log/SpringCustomLogMaskTest-context.xml");
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
-        MockMaskingFormatter customFormatter
-                = applicationContext.getBean(MaskingFormatter.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
+        MockMaskingFormatter customFormatter =
+                applicationContext.getBean(MaskingFormatter.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBodyAndHeader("direct:mock", "password=passw0rd@", "headerPassword", "#header-password$");
@@ -81,5 +84,4 @@ public class SpringLogMaskTest {
             return source;
         }
     }
-
 }

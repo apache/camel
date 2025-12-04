@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite.operation.common;
 
 import org.apache.camel.Exchange;
@@ -25,8 +26,7 @@ import org.apache.camel.component.nitrite.operation.CommonOperation;
  * List indexes in collection and stores {@code Collection<org.dizitart.no2.Index>} in message body
  */
 public class ListIndicesOperation extends AbstractNitriteOperation implements CommonOperation {
-    public ListIndicesOperation() {
-    }
+    public ListIndicesOperation() {}
 
     @Override
     protected void execute(Exchange exchange, NitriteEndpoint endpoint) throws Exception {

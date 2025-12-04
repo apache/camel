@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.types;
 
 /**
  * Types of binary operators supported
  */
 public enum BinaryOperatorType {
-
     EQ,
     EQ_IGNORE,
     GT,
@@ -223,21 +223,21 @@ public enum BinaryOperatorType {
         } else if (operator == NOT_CONTAINS_IGNORECASE) {
             return null;
         } else if (operator == REGEX) {
-            return new ParameterType[] { ParameterType.Literal, ParameterType.Function };
+            return new ParameterType[] {ParameterType.Literal, ParameterType.Function};
         } else if (operator == NOT_REGEX) {
-            return new ParameterType[] { ParameterType.Literal, ParameterType.Function };
+            return new ParameterType[] {ParameterType.Literal, ParameterType.Function};
         } else if (operator == IN) {
             return null;
         } else if (operator == NOT_IN) {
             return null;
         } else if (operator == IS) {
-            return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
+            return new ParameterType[] {ParameterType.LiteralWithFunction, ParameterType.Function};
         } else if (operator == NOT_IS) {
-            return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
+            return new ParameterType[] {ParameterType.LiteralWithFunction, ParameterType.Function};
         } else if (operator == RANGE) {
-            return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
+            return new ParameterType[] {ParameterType.LiteralWithFunction, ParameterType.Function};
         } else if (operator == NOT_RANGE) {
-            return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
+            return new ParameterType[] {ParameterType.LiteralWithFunction, ParameterType.Function};
         } else if (operator == STARTS_WITH) {
             return null;
         } else if (operator == ENDS_WITH) {
@@ -250,5 +250,4 @@ public enum BinaryOperatorType {
     public String toString() {
         return getOperatorText(this);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,7 +49,8 @@ public class ScriptExternalTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         // should not affect the body
-                        .script(simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")).to("mock:result");
+                        .script(simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt"))
+                        .to("mock:result");
             }
         };
     }

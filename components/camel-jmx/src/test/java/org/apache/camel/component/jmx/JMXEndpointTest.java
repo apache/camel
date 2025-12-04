@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Hashtable;
 
@@ -23,13 +31,6 @@ import javax.management.ObjectName;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for the endpoint. Most of the params in the endpoint are set via the endpoint helper so there's no much beyond
@@ -59,21 +60,23 @@ public class JMXEndpointTest {
 
     @Test
     public void defaultsToXml() {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName", JMXEndpoint.class);
+        JMXEndpoint ep =
+                context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName", JMXEndpoint.class);
         assertTrue(ep.isXML());
     }
 
     @Test
     public void formatRaw() {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&format=raw",
-                JMXEndpoint.class);
+        JMXEndpoint ep = context.getEndpoint(
+                "jmx:platform?objectDomain=FooDomain&objectName=theObjectName&format=raw", JMXEndpoint.class);
         assertFalse(ep.isXML());
         assertEquals("raw", ep.getFormat());
     }
 
     @Test
     public void getJMXObjectName() throws Exception {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName", JMXEndpoint.class);
+        JMXEndpoint ep =
+                context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName", JMXEndpoint.class);
         ObjectName on = ep.getJMXObjectName();
         assertNotNull(on);
         assertEquals("FooDomain:name=theObjectName", on.toString());
@@ -81,7 +84,8 @@ public class JMXEndpointTest {
 
     @Test
     public void getJMXObjectNameWithProps() throws Exception {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName", JMXEndpoint.class);
+        JMXEndpoint ep =
+                context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName", JMXEndpoint.class);
         ObjectName on = ep.getJMXObjectName();
         assertNotNull(on);
         assertEquals("FooDomain:name=theObjectName", on.toString());
@@ -89,7 +93,8 @@ public class JMXEndpointTest {
 
     @Test
     public void getJMXObjectNameCached() throws Exception {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName", JMXEndpoint.class);
+        JMXEndpoint ep =
+                context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName", JMXEndpoint.class);
         ObjectName on = ep.getJMXObjectName();
         assertNotNull(on);
         assertSame(on, ep.getJMXObjectName());
@@ -97,7 +102,8 @@ public class JMXEndpointTest {
 
     @Test
     public void platformServer() {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName", JMXEndpoint.class);
+        JMXEndpoint ep =
+                context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName", JMXEndpoint.class);
         assertTrue(ep.isPlatformServer());
         assertEquals("platform", ep.getServerURL());
     }
@@ -119,7 +125,8 @@ public class JMXEndpointTest {
 
     @Test
     public void noProducer() throws Exception {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName", JMXEndpoint.class);
+        JMXEndpoint ep =
+                context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName", JMXEndpoint.class);
         try {
             ep.createProducer();
             fail("producer pattern is not supported");
@@ -130,15 +137,16 @@ public class JMXEndpointTest {
     @Test
     public void credentials() {
         JMXEndpoint ep = context.getEndpoint(
-                "jmx:platform?objectDomain=FooDomain&key.name=theObjectName&user=user1&password=1234", JMXEndpoint.class);
+                "jmx:platform?objectDomain=FooDomain&key.name=theObjectName&user=user1&password=1234",
+                JMXEndpoint.class);
         assertEquals("user1", ep.getUser());
         assertEquals("1234", ep.getPassword());
     }
 
     @Test
     public void noObservedAttribute() throws Exception {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&monitorType=string",
-                JMXEndpoint.class);
+        JMXEndpoint ep = context.getEndpoint(
+                "jmx:platform?objectDomain=FooDomain&objectName=theObjectName&monitorType=string", JMXEndpoint.class);
         try {
             ep.createConsumer(null);
             fail("expected exception");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -30,8 +31,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StopDefinition extends NoOutputDefinition<StopDefinition> {
 
-    public StopDefinition() {
-    }
+    public StopDefinition() {}
 
     protected StopDefinition(StopDefinition source) {
         super(source);
@@ -56,5 +56,4 @@ public class StopDefinition extends NoOutputDefinition<StopDefinition> {
     public String toString() {
         return "Stop";
     }
-
 }

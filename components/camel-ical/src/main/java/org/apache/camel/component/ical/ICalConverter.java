@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ical;
 
 import java.io.ByteArrayInputStream;
@@ -57,8 +58,8 @@ public final class ICalConverter {
     }
 
     @Converter
-    public static ByteArrayInputStream toStream(Calendar calendar, Exchange exchange) throws UnsupportedEncodingException {
+    public static ByteArrayInputStream toStream(Calendar calendar, Exchange exchange)
+            throws UnsupportedEncodingException {
         return new ByteArrayInputStream(calendar.toString().getBytes(ExchangeHelper.getCharsetName(exchange)));
     }
-
 }

@@ -84,7 +84,8 @@ final class NoopTypeConverterStatistics implements ConverterStatistics {
     }
 
     @Override
-    public void logMappingStatisticsMessage(Map<TypeConvertible<?, ?>, TypeConverter> converters, TypeConverter missConverter) {
+    public void logMappingStatisticsMessage(
+            Map<TypeConvertible<?, ?>, TypeConverter> converters, TypeConverter missConverter) {
         // NO-OP
     }
 }

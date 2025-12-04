@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,8 +28,6 @@ import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import static org.awaitility.Awaitility.await;
 
 public class WebhookRoutePolicyTest {
     @ParameterizedTest
@@ -49,7 +50,8 @@ public class WebhookRoutePolicyTest {
             context.getCamelContextExtension().getRegistry().bind("webhook", webhookComponent);
             context.addRoutePolicyFactory(new WebhookRoutePolicyFactory(action));
 
-            await().atMost(10, TimeUnit.SECONDS).until(() -> counters.get(action).get() == 0);
+            await().atMost(10, TimeUnit.SECONDS)
+                    .until(() -> counters.get(action).get() == 0);
         }
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AggregationStrategy;
@@ -39,7 +40,12 @@ public class SplitterShareUnitOfWorkCompletionAwareTest extends ContextTestSuppo
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").split(body(), new MyStrategy()).shareUnitOfWork().to("mock:line").end().to("mock:result");
+                from("direct:start")
+                        .split(body(), new MyStrategy())
+                        .shareUnitOfWork()
+                        .to("mock:line")
+                        .end()
+                        .to("mock:result");
             }
         };
     }
@@ -51,7 +57,8 @@ public class SplitterShareUnitOfWorkCompletionAwareTest extends ContextTestSuppo
             if (oldExchange == null) {
                 return newExchange;
             }
-            String body = oldExchange.getIn().getBody() + "+" + newExchange.getIn().getBody();
+            String body =
+                    oldExchange.getIn().getBody() + "+" + newExchange.getIn().getBody();
             oldExchange.getIn().setBody(body);
             return oldExchange;
         }
@@ -61,5 +68,4 @@ public class SplitterShareUnitOfWorkCompletionAwareTest extends ContextTestSuppo
             exchange.getIn().setHeader("foo", "bar");
         }
     }
-
 }

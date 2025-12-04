@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
 
 import java.util.Date;
@@ -32,8 +33,7 @@ public final class DateTimeConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private DateTimeConverter() {
-    }
+    private DateTimeConverter() {}
 
     @Converter(order = 1)
     public static TimeZone toTimeZone(String s) {

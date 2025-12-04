@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -27,7 +28,9 @@ public interface ManagedIdempotentConsumerMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Expression used to calculate the correlation key to use for duplicate check")
     String getExpression();
 
-    @ManagedAttribute(description = "Whether to eagerly add the key to the idempotent repository or wait until the exchange is complete")
+    @ManagedAttribute(
+            description =
+                    "Whether to eagerly add the key to the idempotent repository or wait until the exchange is complete")
     Boolean isEager();
 
     @ManagedAttribute(description = "Whether to complete the idempotent consumer eager or when the exchange is done")
@@ -47,5 +50,4 @@ public interface ManagedIdempotentConsumerMBean extends ManagedProcessorMBean {
 
     @ManagedOperation(description = "Clear the repository containing Messages")
     void clear();
-
 }

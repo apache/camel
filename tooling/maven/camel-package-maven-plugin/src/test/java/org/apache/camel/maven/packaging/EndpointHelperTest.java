@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,40 +34,43 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class EndpointHelperTest {
 
     @Test
     public void testSort1() throws IOException {
-        final String json = PackageHelper.loadText(new File(
-                Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component3.json")).getFile()));
+        final String json = PackageHelper.loadText(
+                new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component3.json"))
+                        .getFile()));
         final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
 
         componentModel.getComponentOptions().sort(EndpointHelper.createGroupAndLabelComparator());
 
-        assertEquals("schemaRegistryURL,sslTrustmanagerAlgorithm,sslTruststoreLocation,sslTruststorePassword,"
-                     + "sslTruststoreType,useGlobalSslContextParameters",
+        assertEquals(
+                "schemaRegistryURL,sslTrustmanagerAlgorithm,sslTruststoreLocation,sslTruststorePassword,"
+                        + "sslTruststoreType,useGlobalSslContextParameters",
                 componentModel.getComponentOptions().stream()
-                        .map(ComponentOptionModel::getName).collect(Collectors.joining(",")));
+                        .map(ComponentOptionModel::getName)
+                        .collect(Collectors.joining(",")));
     }
 
     @Test
     public void testSort2() throws IOException {
-        final String json = PackageHelper.loadText(new File(
-                Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component4.json")).getFile()));
+        final String json = PackageHelper.loadText(
+                new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component4.json"))
+                        .getFile()));
         final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
 
         componentModel.getComponentOptions().sort(EndpointHelper.createGroupAndLabelComparator());
 
-        assertEquals("baseUri,clearHeaders,cryptoContextProperties,disallowDoctypeDecl,"
-                     + "keySelector,omitXmlDeclaration,lazyStartProducer,outputNodeSearch,outputNodeSearchType,"
-                     + "outputXmlEncoding,removeSignatureElements,schemaResourceUri,secureValidation,"
-                     + "validationFailedHandler,xmlSignature2Message,xmlSignatureChecker,basicPropertyBinding,"
-                     + "uriDereferencer,verifierConfiguration",
+        assertEquals(
+                "baseUri,clearHeaders,cryptoContextProperties,disallowDoctypeDecl,"
+                        + "keySelector,omitXmlDeclaration,lazyStartProducer,outputNodeSearch,outputNodeSearchType,"
+                        + "outputXmlEncoding,removeSignatureElements,schemaResourceUri,secureValidation,"
+                        + "validationFailedHandler,xmlSignature2Message,xmlSignatureChecker,basicPropertyBinding,"
+                        + "uriDereferencer,verifierConfiguration",
                 componentModel.getComponentOptions().stream()
-                        .map(ComponentOptionModel::getName).collect(Collectors.joining(",")));
+                        .map(ComponentOptionModel::getName)
+                        .collect(Collectors.joining(",")));
     }
 
     @Test
@@ -71,22 +78,18 @@ public class EndpointHelperTest {
         Pattern copyRE = Pattern.compile("(\\[\\[.*)|(= .*)|(//.*)");
         Pattern attrRE = Pattern.compile(":[a-zA-Z0-9_-]*:( .*)?");
 
-        String[] lines = {
-                "[[any23-dataformat]]",
-                "//= Any23 DataFormat",
-                "= Any23 DataFormat"
-        };
+        String[] lines = {"[[any23-dataformat]]", "//= Any23 DataFormat", "= Any23 DataFormat"};
         Stream.of(lines).forEach(line -> {
             Matcher copy = copyRE.matcher(line);
             assertTrue(copy.matches(), line);
         });
         String[] attrlines = {
-                ":attribute:",
-                ":attribute: value",
-                ":attri-bute: value",
-                ":attri_bute: value",
-                ":attribute: value",
-                ":attribute: value \\"
+            ":attribute:",
+            ":attribute: value",
+            ":attri-bute: value",
+            ":attri_bute: value",
+            ":attribute: value",
+            ":attribute: value \\"
         };
         Stream.of(attrlines).forEach(line -> {
             Matcher copy = attrRE.matcher(line);

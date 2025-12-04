@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.concurrent.TimeUnit;
@@ -68,15 +69,13 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
             LOG.info(">>> starting Camel route while Netty server is not ready");
             context.getRouteController().startRoute("client");
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .until(receive::isStarted);
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).until(receive::isStarted);
             LOG.info(">>> starting Netty server");
             startNettyServer();
 
             LOG.info(">>> routing done");
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         } finally {
             LOG.info(">>> shutting down Netty server");
@@ -97,7 +96,10 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
                                 String body = exchange.getIn().getBody(String.class);
                                 exchange.getMessage().setBody("Bye " + body);
                             }
-                        }).to("log:receive").to("mock:receive").noAutoStartup();
+                        })
+                        .to("log:receive")
+                        .to("mock:receive")
+                        .noAutoStartup();
             }
         };
     }
@@ -118,7 +120,9 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
             workerGroup = new NioEventLoopGroup();
 
             bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+            bootstrap
+                    .group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
                     .childHandler(new ServerInitializer());
 
             ChannelFuture cf = bootstrap.bind(port).sync();
@@ -167,8 +171,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
             ChannelPipeline pipeline = ch.pipeline();
 
             // Add the text line codec combination first,
-            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-                    8192, Delimiters.lineDelimiter()));
+            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
             // the encoder and decoder are static as these are sharable
             pipeline.addLast("decoder", DECODER);
             pipeline.addLast("encoder", ENCODER);
@@ -177,5 +180,4 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
             pipeline.addLast("handler", SERVERHANDLER);
         }
     }
-
 }

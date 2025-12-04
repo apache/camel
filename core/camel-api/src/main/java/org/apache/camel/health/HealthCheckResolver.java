@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.health;
 
 import org.apache.camel.CamelContextAware;
@@ -38,5 +39,4 @@ public interface HealthCheckResolver extends CamelContextAware {
      * @return    the resolved {@link HealthCheckRepository}, or <tt>null</tt> if not found
      */
     HealthCheckRepository resolveHealthCheckRepository(String id);
-
 }

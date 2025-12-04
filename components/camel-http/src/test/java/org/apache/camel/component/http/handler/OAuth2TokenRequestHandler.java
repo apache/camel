@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
@@ -52,12 +53,15 @@ public class OAuth2TokenRequestHandler implements HttpRequestHandler {
             throws HttpException, IOException {
         String requestBody = EntityUtils.toString(request.getEntity());
         WWWFormCodec.parse(requestBody, StandardCharsets.UTF_8).stream()
-                .filter(pair -> pair.getName().equals("grant_type") && pair.getValue().equals("client_credentials"))
-                .findAny().orElseThrow(() -> new HttpException("Invalid or missing grant_type"));
+                .filter(pair ->
+                        pair.getName().equals("grant_type") && pair.getValue().equals("client_credentials"))
+                .findAny()
+                .orElseThrow(() -> new HttpException("Invalid or missing grant_type"));
 
         Map<String, String> bodyCredentials = new HashMap<>();
         WWWFormCodec.parse(requestBody, StandardCharsets.UTF_8).stream()
-                .filter(pair -> pair.getName().equals("client_id") || pair.getName().equals("client_secret"))
+                .filter(pair ->
+                        pair.getName().equals("client_id") || pair.getName().equals("client_secret"))
                 .forEach(pair -> bodyCredentials.put(pair.getName(), pair.getValue()));
 
         if (!hasValidHeaderAuthentication(request) && !hasValidBodyAuthentication(bodyCredentials))
@@ -70,14 +74,14 @@ public class OAuth2TokenRequestHandler implements HttpRequestHandler {
     }
 
     private boolean hasValidHeaderAuthentication(ClassicHttpRequest request) throws ProtocolException {
-        return request.containsHeader(HttpHeaders.AUTHORIZATION) && request.getHeader(HttpHeaders.AUTHORIZATION).getValue()
-                .equals(HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
+        return request.containsHeader(HttpHeaders.AUTHORIZATION)
+                && request.getHeader(HttpHeaders.AUTHORIZATION)
+                        .getValue()
+                        .equals(HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
     }
 
     private boolean hasValidBodyAuthentication(Map<String, String> credentials) {
-        if (null == credentials || credentials.isEmpty())
-            return false;
+        if (null == credentials || credentials.isEmpty()) return false;
         return clientId.equals(credentials.get("client_id")) && clientSecret.equals(credentials.get("client_secret"));
     }
-
 }

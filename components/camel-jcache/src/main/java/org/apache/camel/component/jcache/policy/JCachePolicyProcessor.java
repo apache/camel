@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache.policy;
 
 import javax.cache.Cache;
@@ -35,8 +36,12 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
     private Expression keyExpression;
     private Expression bypassExpression;
 
-    public JCachePolicyProcessor(CamelContext camelContext, Cache cache, Expression keyExpression, Expression bypassExpression,
-                                 Processor processor) {
+    public JCachePolicyProcessor(
+            CamelContext camelContext,
+            Cache cache,
+            Expression keyExpression,
+            Expression bypassExpression,
+            Processor processor) {
         super(processor);
         this.camelContext = camelContext;
         this.cache = cache;
@@ -48,27 +53,31 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         LOG.debug("JCachePolicy process started - cache:{}, exchange:{}", cache.getName(), exchange.getExchangeId());
 
-        //If cache is closed, just continue
+        // If cache is closed, just continue
         if (cache.isClosed()) {
             return super.process(exchange, callback);
         }
 
         try {
-            //Get key by the expression or use message body
-            Object key
-                    = keyExpression != null ? keyExpression.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+            // Get key by the expression or use message body
+            Object key = keyExpression != null
+                    ? keyExpression.evaluate(exchange, Object.class)
+                    : exchange.getMessage().getBody();
 
             if (key == null) {
                 return super.process(exchange, callback);
             }
 
-            Boolean bypass = bypassExpression != null ? bypassExpression.evaluate(exchange, Boolean.class) : Boolean.FALSE;
+            Boolean bypass =
+                    bypassExpression != null ? bypassExpression.evaluate(exchange, Boolean.class) : Boolean.FALSE;
             if (!Boolean.TRUE.equals(bypass)) {
-                //Check if cache contains the key
+                // Check if cache contains the key
                 Object value = cache.get(key);
                 if (value != null) {
                     // use the cached object in the Exchange without calling the rest of the route
-                    LOG.debug("Cached object is found, skipping the route - key:{}, exchange:{}", key,
+                    LOG.debug(
+                            "Cached object is found, skipping the route - key:{}, exchange:{}",
+                            key,
                             exchange.getExchangeId());
 
                     exchange.getMessage().setBody(value);
@@ -76,8 +85,11 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
                     callback.done(true);
                     return true;
                 }
-                //Not found in cache. Continue route.
-                LOG.debug("No cached object is found, continue route - key:{}, exchange:{}", key, exchange.getExchangeId());
+                // Not found in cache. Continue route.
+                LOG.debug(
+                        "No cached object is found, continue route - key:{}, exchange:{}",
+                        key,
+                        exchange.getExchangeId());
             } else {
                 LOG.debug("Bypassing cache - key:{}, exchange:{}", key, exchange.getExchangeId());
             }
@@ -87,17 +99,20 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
                 public void done(boolean doneSync) {
                     try {
                         if (!exchange.isFailed()) {
-                            //Save body in cache after successfully executing the route
+                            // Save body in cache after successfully executing the route
                             Object value = exchange.getMessage().getBody();
 
                             if (value != null) {
-                                LOG.debug("Saving in cache - key:{}, value:{}, exchange:{}", key, value,
+                                LOG.debug(
+                                        "Saving in cache - key:{}, value:{}, exchange:{}",
+                                        key,
+                                        value,
                                         exchange.getExchangeId());
                                 cache.put(key, value);
                             }
                         }
                     } catch (Exception ex) {
-                        //Log exception, but a problem with caching should not fail the exchange
+                        // Log exception, but a problem with caching should not fail the exchange
                         LOG.error("Error storing in cache. - key:{}, exchange:{}", key, exchange.getExchangeId(), ex);
                     } finally {
                         callback.done(doneSync);
@@ -125,7 +140,7 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
 
     @Override
     protected void doStop() throws Exception {
-        //Clear cache if stopping.
+        // Clear cache if stopping.
         if (!cache.isClosed()) {
             cache.clear();
         }

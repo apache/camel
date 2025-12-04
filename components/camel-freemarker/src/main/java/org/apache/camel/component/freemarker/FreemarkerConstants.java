@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.freemarker;
 
 import org.apache.camel.spi.Metadata;
@@ -23,12 +24,14 @@ import org.apache.camel.spi.Metadata;
  */
 public final class FreemarkerConstants {
 
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint\n" +
-                            "configured.",
-              javaType = "String")
+    @Metadata(
+            description = "A URI for the template resource to use instead of the endpoint\n" + "configured.",
+            javaType = "String")
     public static final String FREEMARKER_RESOURCE_URI = "CamelFreemarkerResourceUri";
+
     @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
     public static final String FREEMARKER_TEMPLATE = "CamelFreemarkerTemplate";
+
     @Metadata(description = "The data model", javaType = "Object")
     public static final String FREEMARKER_DATA_MODEL = "CamelFreemarkerDataModel";
 

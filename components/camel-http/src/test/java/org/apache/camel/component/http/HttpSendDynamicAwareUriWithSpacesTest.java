@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -26,9 +30,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -36,10 +37,13 @@ public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/users/*", new BasicValidationHandler("GET", null, null, "a user")).create();
+                .register("/users/*", new BasicValidationHandler("GET", null, null, "a user"))
+                .create();
         localServer.start();
     }
 
@@ -57,8 +61,7 @@ public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
             @Override
             public void configure() {
                 from("direct:usersDrink")
-                        .toD("http:localhost:" + localServer.getLocalPort()
-                             + "/users/${exchangeProperty.user}");
+                        .toD("http:localhost:" + localServer.getLocalPort() + "/users/${exchangeProperty.user}");
             }
         };
     }
@@ -67,12 +70,20 @@ public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
     @SuppressWarnings("unlikely-arg-type")
     // NOTE: registry can check correctly the String type.
     public void testDynamicAware() {
-        Exchange out = fluentTemplate.to("direct:usersDrink")
-                .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes moes").build()).send();
+        Exchange out = fluentTemplate
+                .to("direct:usersDrink")
+                .withExchange(ExchangeBuilder.anExchange(context)
+                        .withProperty("user", "joes moes")
+                        .build())
+                .send();
         assertEquals("a user", out.getMessage().getBody(String.class));
 
-        out = fluentTemplate.to("direct:usersDrink")
-                .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "moes joes").build()).send();
+        out = fluentTemplate
+                .to("direct:usersDrink")
+                .withExchange(ExchangeBuilder.anExchange(context)
+                        .withProperty("user", "moes joes")
+                        .build())
+                .send();
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         // and there should only be one http endpoint as they are both on same host
@@ -81,5 +92,4 @@ public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
         assertTrue(endpointMap.containsKey("http://localhost:" + localServer.getLocalPort()), "Should find static uri");
         assertTrue(endpointMap.containsKey("direct://usersDrink"), "Should find direct");
     }
-
 }

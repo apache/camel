@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.customresources;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CUSTOM_RESOURCES;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,18 +28,20 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CUSTOM_RESOURCES;
-
 /**
  * Perform operations on Kubernetes Custom Resources and get notified on Deployment changes.
  */
-@UriEndpoint(firstVersion = "3.7.0", scheme = SCHEME_CUSTOM_RESOURCES, title = "Kubernetes Custom Resources",
-             syntax = "kubernetes-custom-resources:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
-             headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "3.7.0",
+        scheme = SCHEME_CUSTOM_RESOURCES,
+        title = "Kubernetes Custom Resources",
+        syntax = "kubernetes-custom-resources:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesCustomResourcesEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesCustomResourcesEndpoint(String uri, KubernetesCustomResourcesComponent component,
-                                             KubernetesConfiguration config) {
+    public KubernetesCustomResourcesEndpoint(
+            String uri, KubernetesCustomResourcesComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -51,5 +56,4 @@ public class KubernetesCustomResourcesEndpoint extends AbstractKubernetesEndpoin
         configureConsumer(consumer);
         return consumer;
     }
-
 }

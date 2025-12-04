@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests that the configuration is loaded properly.
@@ -31,7 +32,9 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
     @Test
     public void testChatBotResult() {
         TelegramEndpoint endpoint = (TelegramEndpoint) context().getEndpoints().stream()
-                .filter(e -> e instanceof TelegramEndpoint).findAny().get();
+                .filter(e -> e instanceof TelegramEndpoint)
+                .findAny()
+                .get();
         TelegramConfiguration config = endpoint.getConfiguration();
 
         assertEquals("bots", config.getType());
@@ -52,9 +55,9 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
             public void configure() {
 
                 from("direct:telegram")
-                        .to("telegram:bots/?authorizationToken=mock-token&chatId=12345&delay=2000&timeout=10&limit=60&proxyHost=127.0.0.1&proxyPort=1234&proxyType=SOCKS5");
+                        .to(
+                                "telegram:bots/?authorizationToken=mock-token&chatId=12345&delay=2000&timeout=10&limit=60&proxyHost=127.0.0.1&proxyPort=1234&proxyType=SOCKS5");
             }
         };
     }
-
 }

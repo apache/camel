@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
+
+import static org.apache.camel.builder.Builder.constant;
 
 import java.util.Map;
 
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.kiwiproject.consul.model.health.ImmutableService;
 import org.kiwiproject.consul.model.health.Service;
 
-import static org.apache.camel.builder.Builder.constant;
-
 public class MockAgentTest extends CamelTestSupport {
 
     @Test
@@ -41,12 +42,14 @@ public class MockAgentTest extends CamelTestSupport {
         AdviceWith.adviceWith(context, "servicesRoute", a -> {
             a.mockEndpointsAndSkip("consul:agent*");
         });
-        mockConsulAgent.returnReplyBody(constant(ImmutableMap.of("foo-1", ImmutableService.builder()
-                .id("foo-1")
-                .service("foo")
-                .address("localhost")
-                .port(80)
-                .build())));
+        mockConsulAgent.returnReplyBody(constant(ImmutableMap.of(
+                "foo-1",
+                ImmutableService.builder()
+                        .id("foo-1")
+                        .service("foo")
+                        .address("localhost")
+                        .port(80)
+                        .build())));
 
         @SuppressWarnings("unchecked")
         Map<String, Service> result = fluentTemplate.to("direct:start").request(Map.class);

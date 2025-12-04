@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -109,11 +110,14 @@ public class AggregateDiscardOnFailureTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(3)
+                from("direct:start")
+                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .completionSize(3)
                         .completionTimeout(2000)
                         // and if an exception happens in aggregate then discard the
                         // message
-                        .discardOnAggregationFailure().to("mock:aggregated");
+                        .discardOnAggregationFailure()
+                        .to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };
@@ -131,7 +135,8 @@ public class AggregateDiscardOnFailureTest extends ContextTestSupport {
                 return newExchange;
             }
 
-            Object body = oldExchange.getMessage().getBody(String.class) + newExchange.getMessage().getBody(String.class);
+            Object body = oldExchange.getMessage().getBody(String.class)
+                    + newExchange.getMessage().getBody(String.class);
             oldExchange.getMessage().setBody(body);
             return oldExchange;
         }

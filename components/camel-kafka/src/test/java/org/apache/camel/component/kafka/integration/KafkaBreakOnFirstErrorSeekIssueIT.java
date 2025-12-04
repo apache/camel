@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,28 +49,28 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-19894 regarding failure to
  * correctly commit the offset in a batch using the Synch Commit Manager
  *
  * mimics the reproduction of the problem in https://github.com/Krivda/camel-bug-reproduction
  */
-@Tags({ @Tag("breakOnFirstError") })
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64", "ppc64le" },
-             disabledReason = "This test does not run reliably on some platforms")
-
+@Tags({@Tag("breakOnFirstError")})
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS},
+        architectures = {"amd64", "aarch64", "ppc64le"},
+        disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
 
-    public static final String ROUTE_ID = "breakOnFirstError-19894" + Uuid.randomUuid().toString();
-    public static final String TOPIC = "breakOnFirstError-19894" + Uuid.randomUuid().toString();
+    public static final String ROUTE_ID =
+            "breakOnFirstError-19894" + Uuid.randomUuid().toString();
+    public static final String TOPIC =
+            "breakOnFirstError-19894" + Uuid.randomUuid().toString();
     public static final int PARTITION_COUNT = 2;
-    public static final int CONSUMERS_COUNT = 4;  // Set to more than partition count. In case first one is stuck on breakOnFirstError,
-                                                // others can process the second partition
-                                                // IDEALLY, 2 consumers should be sufficient, but flakiness was observed with 2
+    public static final int CONSUMERS_COUNT =
+            4; // Set to more than partition count. In case first one is stuck on breakOnFirstError,
+    // others can process the second partition
+    // IDEALLY, 2 consumers should be sufficient, but flakiness was observed with 2
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorSeekIssueIT.class);
 
@@ -100,7 +104,6 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
                 .timeout(180, TimeUnit.SECONDS)
                 .pollDelay(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(r.numPartitions(TOPIC).isDone()));
-
     }
 
     @AfterEach
@@ -128,7 +131,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
         contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
 
         assertEquals(PARTITION_COUNT, producer.partitionsFor(TOPIC).size());
-        //Test relies on multiple partitions but expects the poller to stop reading after the errored message
+        // Test relies on multiple partitions but expects the poller to stop reading after the errored message
         // Increase the delay in setupTopic if this assert fails too frequently
 
         this.publishMessagesToKafka();
@@ -153,21 +156,21 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
             @Override
             public void configure() {
                 from("kafka:" + TOPIC
-                     + "?groupId=" + ROUTE_ID
-                     + "&autoOffsetReset=earliest"
-                     + "&autoCommitEnable=false"
-                     + "&allowManualCommit=true"
-                     + "&breakOnFirstError=true"
-                     + "&maxPollRecords=8"
-                     + "&consumersCount=" + CONSUMERS_COUNT
-                     + "&heartbeatIntervalMs=1000"  //added for CAMEL-20722, after consumersCount
-                     + "&metadataMaxAgeMs=1000"
-                     + "&pollTimeoutMs=1000"
-                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                // Synch Commit Manager
-                     + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
-                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                                + "?groupId=" + ROUTE_ID
+                                + "&autoOffsetReset=earliest"
+                                + "&autoCommitEnable=false"
+                                + "&allowManualCommit=true"
+                                + "&breakOnFirstError=true"
+                                + "&maxPollRecords=8"
+                                + "&consumersCount=" + CONSUMERS_COUNT
+                                + "&heartbeatIntervalMs=1000" // added for CAMEL-20722, after consumersCount
+                                + "&metadataMaxAgeMs=1000"
+                                + "&pollTimeoutMs=1000"
+                                + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                // Synch Commit Manager
+                                + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
+                                + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
                         .autoStartup(false)
                         .process(exchange -> {
@@ -184,7 +187,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
 
     private void ifIsFifthRecordThrowException(Exchange e) {
         if (e.getMessage().getBody().equals("8") || e.getMessage().getBody().equals("3")) {
-            //Message 3 from partition 0, and 8 from partition 1 will be retried indefinitely
+            // Message 3 from partition 0, and 8 from partition 1 will be retried indefinitely
             errorPayloads.add(e.getMessage().getBody(String.class));
             throw new RuntimeException("ERROR_TRIGGERED_BY_TEST");
         }
@@ -195,17 +198,17 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
         final List<String> producedRecordsPartition0 = List.of("1", "2", "3", "4");
 
         producedRecordsPartition0.forEach(v -> {
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, 0, "k0", v); //CAMEL-20680: kept explicit partition 0, added key.
+            ProducerRecord<String, String> data =
+                    new ProducerRecord<>(TOPIC, 0, "k0", v); // CAMEL-20680: kept explicit partition 0, added key.
             producer.send(data);
         });
 
         producedRecordsPartition1.forEach(v -> {
             ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, 1, "k1", v);
             producer.send(data);
-        });  //CAMEL-20680: restored loop that publishes to partition1, but with reduced execution time
+        }); // CAMEL-20680: restored loop that publishes to partition1, but with reduced execution time
         // See changes in setupTopic() and testCamel19894TestFix just before publishMessagesToKafka().
         // This loop is required by the original fix for CAMEL-19894
 
     }
-
 }

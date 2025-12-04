@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AvroSettingsTest extends AvroTestSupport {
 
@@ -37,7 +38,8 @@ public class AvroSettingsTest extends AvroTestSupport {
             @Override
             public void configure() {
                 from("avro:http:localhost:" + avroPort
-                     + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol").to("log:test");
+                                + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                        .to("log:test");
             }
         };
 
@@ -49,13 +51,13 @@ public class AvroSettingsTest extends AvroTestSupport {
         RouteBuilder rb = new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test").to("avro:http:localhost:" + avroPort
-                                       + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");
+                from("direct:test")
+                        .to("avro:http:localhost:" + avroPort
+                                + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");
             }
         };
 
         runTest(rb);
-
     }
 
     @Test
@@ -64,8 +66,9 @@ public class AvroSettingsTest extends AvroTestSupport {
             @Override
             public void configure() {
                 from("direct:test")
-                        .to("avro:http:localhost:" + avroPort
-                            + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&singleParameter=true");
+                        .to(
+                                "avro:http:localhost:" + avroPort
+                                        + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&singleParameter=true");
             }
         };
 

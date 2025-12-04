@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.controlbus;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -32,7 +33,8 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
 
     @Test
     public void testControlBusStartStop() throws Exception {
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         // store a pending message
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
@@ -46,12 +48,14 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
         // now stop the route, using a header
         template.sendBody("controlbus:route?routeId=foo&action=stop", null);
 
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("foo").name());
     }
 
     @Test
     public void testControlBusSuspendResume() throws Exception {
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         // store a pending message
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
@@ -65,17 +69,20 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
         // now suspend the route, using a header
         template.sendBody("controlbus:route?routeId=foo&action=suspend", null);
 
-        assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Suspended", context.getRouteController().getRouteStatus("foo").name());
 
         // now resume the route, using a header
         template.sendBody("controlbus:route?routeId=foo&action=resume", null);
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
     }
 
     @Test
     public void testControlBusStatus() throws Exception {
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         String status = template.requestBody("controlbus:route?routeId=foo&action=status", null, String.class);
         assertEquals("Stopped", status);
@@ -101,15 +108,17 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
 
     @Test
     public void testControlBusStatusLevelWarn() throws Exception {
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("foo").name());
 
-        String status
-                = template.requestBody("controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
+        String status = template.requestBody(
+                "controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
         assertEquals("Stopped", status);
 
         context.getRouteController().startRoute("foo");
 
-        status = template.requestBody("controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
+        status = template.requestBody(
+                "controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
         assertEquals("Started", status);
     }
 
@@ -119,7 +128,9 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("seda:foo").routeId("foo").autoStartup(false).to("mock:foo");
-                from("seda:current").routeId("current").to("controlbus:route?routeId=current&action=status&loggingLevel=WARN")
+                from("seda:current")
+                        .routeId("current")
+                        .to("controlbus:route?routeId=current&action=status&loggingLevel=WARN")
                         .to("mock:current");
             }
         };

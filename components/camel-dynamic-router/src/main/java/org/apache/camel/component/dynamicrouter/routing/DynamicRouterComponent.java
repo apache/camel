@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.routing;
+
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.ENDPOINT_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FILTER_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FILTER_SERVICE_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PROCESSOR_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PRODUCER_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint.DynamicRouterEndpointFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,15 +47,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.ENDPOINT_FACTORY_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FILTER_FACTORY_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.FILTER_SERVICE_FACTORY_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PROCESSOR_FACTORY_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.PRODUCER_FACTORY_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterEndpoint.DynamicRouterEndpointFactory;
 
 /**
  * The Dynamic Router {@link org.apache.camel.Component}. Manages:
@@ -113,12 +114,12 @@ public class DynamicRouterComponent extends DefaultComponent {
      * @param filterServiceFactorySupplier creates the {@link DynamicRouterFilterService}
      */
     public DynamicRouterComponent(
-                                  final Supplier<DynamicRouterEndpointFactory> endpointFactorySupplier,
-                                  final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
-                                  final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
-                                  final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier,
-                                  final Supplier<PrioritizedFilterFactory> filterFactorySupplier,
-                                  final Supplier<DynamicRouterFilterServiceFactory> filterServiceFactorySupplier) {
+            final Supplier<DynamicRouterEndpointFactory> endpointFactorySupplier,
+            final Supplier<DynamicRouterProcessorFactory> processorFactorySupplier,
+            final Supplier<DynamicRouterProducerFactory> producerFactorySupplier,
+            final BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier,
+            final Supplier<PrioritizedFilterFactory> filterFactorySupplier,
+            final Supplier<DynamicRouterFilterServiceFactory> filterServiceFactorySupplier) {
         this.endpointFactorySupplier = endpointFactorySupplier;
         this.processorFactorySupplier = processorFactorySupplier;
         this.producerFactorySupplier = producerFactorySupplier;
@@ -144,8 +145,15 @@ public class DynamicRouterComponent extends DefaultComponent {
         DynamicRouterConfiguration configuration = new DynamicRouterConfiguration();
         configuration.setChannel(remaining);
         filterService.initializeChannelFilters(configuration.getChannel());
-        DynamicRouterEndpoint endpoint = endpointFactorySupplier.get()
-                .getInstance(uri, this, configuration, processorFactorySupplier, producerFactorySupplier, recipientListSupplier,
+        DynamicRouterEndpoint endpoint = endpointFactorySupplier
+                .get()
+                .getInstance(
+                        uri,
+                        this,
+                        configuration,
+                        processorFactorySupplier,
+                        producerFactorySupplier,
+                        recipientListSupplier,
                         filterService);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -171,9 +179,8 @@ public class DynamicRouterComponent extends DefaultComponent {
      */
     void addRoutingProcessor(final String channel, final DynamicRouterProcessor processor) {
         if (processors.putIfAbsent(channel, processor) != null) {
-            throw new IllegalArgumentException(
-                    "Dynamic Router can have only one processor per channel; channel '"
-                                               + channel + "' already has a processor");
+            throw new IllegalArgumentException("Dynamic Router can have only one processor per channel; channel '"
+                    + channel + "' already has a processor");
         }
     }
 

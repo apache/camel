@@ -14,21 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ZooKeeperEndpointTest extends CamelTestSupport {
 
     @Test
     public void multipleZooKeeperServers() {
-        ZooKeeperEndpoint endpoint = context.getEndpoint("zookeeper:someserver1,someserver2:1234/zoo", ZooKeeperEndpoint.class);
+        ZooKeeperEndpoint endpoint =
+                context.getEndpoint("zookeeper:someserver1,someserver2:1234/zoo", ZooKeeperEndpoint.class);
         assertEquals(2, endpoint.getConfiguration().getServers().size(), "Get wrong number of servers");
-        assertEquals("someserver1", endpoint.getConfiguration().getServers().get(0), "The first server address is wrong");
-        assertEquals("someserver2:1234", endpoint.getConfiguration().getServers().get(1), "The second server address is wrong");
+        assertEquals(
+                "someserver1", endpoint.getConfiguration().getServers().get(0), "The first server address is wrong");
+        assertEquals(
+                "someserver2:1234",
+                endpoint.getConfiguration().getServers().get(1),
+                "The second server address is wrong");
     }
-
 }

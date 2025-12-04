@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.xml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -25,9 +29,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XmlLineNumberParserTest {
 
@@ -100,5 +101,4 @@ public class XmlLineNumberParserTest {
         assertEquals("39", lineNumber2);
         assertEquals("45", lineNumberEnd2);
     }
-
 }

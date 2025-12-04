@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetGroupUsersFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GetGroupUsersFunctionalTest.class.getName());
@@ -46,13 +47,12 @@ public class GetGroupUsersFunctionalTest extends CamelTestSupport {
             public void configure() {
                 from("direct:get_group_users")
                         .setProperty("CamelHwCloudIamOperation", constant("getGroupUsers"))
-                        .to("hwcloud-iam:dummy?" +
-                            "accessKey=dummy" +
-                            "&secretKey=dummy" +
-                            "&groupId=" + GROUP_ID +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true" +
-                            "&serviceKeys=#serviceKeys")
+                        .to("hwcloud-iam:dummy?" + "accessKey=dummy"
+                                + "&secretKey=dummy"
+                                + "&groupId="
+                                + GROUP_ID + "&region="
+                                + REGION + "&ignoreSslVerification=true"
+                                + "&serviceKeys=#serviceKeys")
                         .log("Get group users successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:get_group_users_result");

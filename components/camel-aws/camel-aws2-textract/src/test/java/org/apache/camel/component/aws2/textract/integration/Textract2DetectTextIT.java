@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.textract.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,9 +31,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import software.amazon.awssdk.services.textract.model.DetectDocumentTextResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Must be manually tested.")
 public class Textract2DetectTextIT extends CamelTestSupport {
@@ -46,7 +47,8 @@ public class Textract2DetectTextIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("aws2-textract://pippo?useDefaultCredentialsProvider=true&region=eu-west-1&s3Bucket=kamelets-demo&s3Object=SinglePage.pdf&operation=detectDocumentText")
+                        .to(
+                                "aws2-textract://pippo?useDefaultCredentialsProvider=true&region=eu-west-1&s3Bucket=kamelets-demo&s3Object=SinglePage.pdf&operation=detectDocumentText")
                         .to("mock:result");
             }
         };
@@ -58,7 +60,8 @@ public class Textract2DetectTextIT extends CamelTestSupport {
 
         DetectDocumentTextResponse s = (DetectDocumentTextResponse) template.requestBody("direct:start", "peppe");
 
-        Awaitility.await().atMost(20, TimeUnit.SECONDS)
+        Awaitility.await()
+                .atMost(20, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(1, result.getExchanges().size()));
 
         assertTrue(s.hasBlocks());

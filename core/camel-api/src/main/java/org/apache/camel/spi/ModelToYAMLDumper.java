@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.List;
@@ -55,8 +56,11 @@ public interface ModelToYAMLDumper {
      * @throws Exception           is throw if error marshalling to YAML
      */
     String dumpModelAsYaml(
-            CamelContext context, NamedNode definition,
-            boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds,
+            CamelContext context,
+            NamedNode definition,
+            boolean resolvePlaceholders,
+            boolean uriAsParameters,
+            boolean generatedIds,
             boolean sourceLocation)
             throws Exception;
 
@@ -79,5 +83,4 @@ public interface ModelToYAMLDumper {
      * @throws Exception   is throw if error marshalling to YAML
      */
     String dumpDataFormatsAsYaml(CamelContext context, Map<String, Object> dataFormats) throws Exception;
-
 }

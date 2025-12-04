@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.Map;
@@ -26,5 +27,4 @@ import org.apache.camel.CamelContext;
 public interface GenericFileProcessStrategyFactory<T> {
 
     GenericFileProcessStrategy<T> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params);
-
 }

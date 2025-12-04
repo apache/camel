@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
@@ -25,9 +29,6 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport {
 
@@ -71,7 +72,8 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         ile.expectedMessageCount(0);
         exception.expectedMessageCount(1);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "A,B,Kaboom,C"),
                 "Should thrown an exception");
 
@@ -93,7 +95,8 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         ile.expectedMessageCount(1);
         exception.expectedMessageCount(1);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "A,Forced,B,Kaboom,C"),
                 "Should thrown an exception");
 
@@ -110,9 +113,18 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(body().tokenize(",")).stopOnException().doTry().process(new MyProcessor())
-                        .to("mock:split").doCatch(IllegalArgumentException.class)
-                        .to("mock:ile").doCatch(Exception.class).to("mock:exception").rollback().end();
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .stopOnException()
+                        .doTry()
+                        .process(new MyProcessor())
+                        .to("mock:split")
+                        .doCatch(IllegalArgumentException.class)
+                        .to("mock:ile")
+                        .doCatch(Exception.class)
+                        .to("mock:exception")
+                        .rollback()
+                        .end();
             }
         };
     }

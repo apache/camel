@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.math.BigDecimal;
@@ -50,7 +51,8 @@ public class BindyDoubleQuotesCsvUnmarshallTest {
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
 
-        expected = "\"10\",\"A9\",\"Pauline\",\"M\",\"ISIN\",\"XD12345678\",\"BUY\",\"Share\",\"2500.45\",\"USD\",\"08-01-2009\"";
+        expected =
+                "\"10\",\"A9\",\"Pauline\",\"M\",\"ISIN\",\"XD12345678\",\"BUY\",\"Share\",\"2500.45\",\"USD\",\"08-01-2009\"";
 
         template.sendBody(expected);
 
@@ -65,7 +67,6 @@ public class BindyDoubleQuotesCsvUnmarshallTest {
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
-
     }
 
     @CsvRecord(separator = ",")
@@ -195,11 +196,11 @@ public class BindyDoubleQuotesCsvUnmarshallTest {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

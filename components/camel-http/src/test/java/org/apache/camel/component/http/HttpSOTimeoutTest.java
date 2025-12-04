@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.DelayValidationHandler;
@@ -23,9 +27,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class HttpSOTimeoutTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -33,10 +34,13 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 2000)).create();
+                .register("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 2000))
+                .create();
         localServer.start();
     }
 
@@ -49,32 +53,25 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpGet() {
-        Exchange exchange = template.request("http://localhost:"
-                                             + localServer.getLocalPort() + "?httpClient.responseTimeout=5000",
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                "http://localhost:" + localServer.getLocalPort() + "?httpClient.responseTimeout=5000", exchange1 -> {});
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpGetShouldThrowASocketTimeoutException() {
-        Exchange reply = template.request("http://localhost:"
-                                          + localServer.getLocalPort() + "?httpClient.responseTimeout=1000",
-                exchange -> {
-                });
+        Exchange reply = template.request(
+                "http://localhost:" + localServer.getLocalPort() + "?httpClient.responseTimeout=1000", exchange -> {});
         Exception e = reply.getException();
         assertNotNull(e, "Should have thrown an exception");
     }
 
     @Test
     public void httpGetUriOption() {
-        HttpEndpoint endpoint = context.getEndpoint("http://localhost:"
-                                                    + localServer.getLocalPort() + "?responseTimeout=5000",
-                HttpEndpoint.class);
-        Exchange exchange = template.request(endpoint,
-                exchange1 -> {
-                });
+        HttpEndpoint endpoint = context.getEndpoint(
+                "http://localhost:" + localServer.getLocalPort() + "?responseTimeout=5000", HttpEndpoint.class);
+        Exchange exchange = template.request(endpoint, exchange1 -> {});
 
         assertExchange(exchange);
 
@@ -83,12 +80,9 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpGetUriOptionShouldThrowASocketTimeoutException() {
-        Exchange reply = template.request("http://localhost:"
-                                          + localServer.getLocalPort() + "?responseTimeout=1000",
-                exchange -> {
-                });
+        Exchange reply = template.request(
+                "http://localhost:" + localServer.getLocalPort() + "?responseTimeout=1000", exchange -> {});
         Exception e = reply.getException();
         assertNotNull(e, "Should have thrown an exception");
     }
-
 }

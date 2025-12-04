@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
 
 import org.apache.camel.PropertyInject;
@@ -26,8 +27,6 @@ public class TestPropertyInjectRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("direct:start-override-route")
-                .transform(constant(propertyToOverride));
+        from("direct:start-override-route").transform(constant(propertyToOverride));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.net.URI;
@@ -38,84 +39,124 @@ public class SmppConfiguration implements Cloneable {
 
     @UriPath(defaultValue = "localhost")
     private String host = "localhost";
+
     @UriPath(defaultValue = "2775")
     private Integer port = 2775;
+
     @UriParam(label = "security", defaultValue = "smppclient", secret = true)
     private String systemId = "smppclient";
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "common", defaultValue = "")
     private String systemType = "";
+
     @UriParam(label = "codec")
     private byte dataCoding = (byte) 0;
+
     @UriParam(label = "codec", enums = "0,4,8")
     private byte alphabet = Alphabet.ALPHA_DEFAULT.value();
+
     @UriParam(label = "codec", defaultValue = "ISO-8859-1")
     private String encoding = "ISO-8859-1";
+
     @UriParam(label = "advanced", defaultValue = "60000")
     private Integer enquireLinkTimer = 60000;
+
     @UriParam(label = "advanced", defaultValue = "10000")
     private Integer transactionTimer = 10000;
+
     @UriParam(label = "producer", enums = "0,1,2")
     private byte registeredDelivery = SMSCDeliveryReceipt.SUCCESS_FAILURE.value();
+
     @UriParam(label = "producer", defaultValue = "", enums = "CMT,CPT,VMN,VMA,WAP,USSD")
     private String serviceType = "";
+
     @UriParam(label = "producer", defaultValue = "1616")
     private String sourceAddr = "1616";
+
     @UriParam(label = "producer", defaultValue = "1717")
     private String destAddr = "1717";
+
     @UriParam(label = "producer", enums = "0,1,2,3,4,5,6")
     private byte sourceAddrTon = TypeOfNumber.UNKNOWN.value();
+
     @UriParam(label = "producer", enums = "0,1,2,3,4,5,6")
     private byte destAddrTon = TypeOfNumber.UNKNOWN.value();
+
     @UriParam(label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
     private byte sourceAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
+
     @UriParam(label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
     private byte destAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
+
     @UriParam(label = "consumer")
     private String addressRange = "";
+
     @UriParam(label = "producer")
     private byte protocolId = (byte) 0;
+
     @UriParam(label = "producer", enums = "0,1,2,3")
     private byte priorityFlag = (byte) 1;
+
     @UriParam(label = "producer", enums = "0,1")
     private byte replaceIfPresentFlag = ReplaceIfPresentFlag.DEFAULT.value();
+
     @UriParam(label = "producer", enums = "0,1,2,3,4,5,6")
     private byte typeOfNumber = TypeOfNumber.UNKNOWN.value();
+
     @UriParam(label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
     private byte numberingPlanIndicator = NumberingPlanIndicator.UNKNOWN.value();
+
     @UriParam(label = "security")
     private boolean usingSSL;
+
     @UriParam(label = "common", defaultValue = "5000")
     private long initialReconnectDelay = 5000;
+
     @UriParam(label = "common", defaultValue = "5000")
     private long reconnectDelay = 5000;
+
     @UriParam(label = "common", defaultValue = "2147483647")
     private int maxReconnect = Integer.MAX_VALUE;
+
     @UriParam(label = "producer")
     private boolean lazySessionCreation;
+
     @UriParam(label = "producer")
     private String messageReceiverRouteId;
+
     @UriParam(label = "proxy")
     private String httpProxyHost;
+
     @UriParam(label = "proxy", defaultValue = "3128")
     private Integer httpProxyPort = 3128;
+
     @UriParam(label = "proxy")
     private String httpProxyUsername;
+
     @UriParam(label = "proxy")
     private String httpProxyPassword;
+
     @UriParam(label = "proxy")
     private Map<String, String> proxyHeaders;
+
     @UriParam(label = "advanced")
     private SessionStateListener sessionStateListener;
+
     @UriParam(defaultValue = "ALLOW")
     private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
+
     @UriParam(label = "advanced", defaultValue = "3")
     private Integer pduProcessorDegree = 3;
+
     @UriParam(label = "advanced", defaultValue = "100")
     private Integer pduProcessorQueueCapacity = 100;
+
     @UriParam(label = "advanced", defaultValue = "false")
     private boolean singleDLR;
+
     @UriParam(label = "advanced", enums = "legacy,3.3,3.4,5.0", defaultValue = "3.4")
     private String interfaceVersion = "3.4";
 
@@ -757,45 +798,45 @@ public class SmppConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL
-               + ", enquireLinkTimer=" + enquireLinkTimer
-               + ", host=" + host
-               + ", password=" + password
-               + ", port=" + port
-               + ", systemId=" + systemId
-               + ", systemType=" + systemType
-               + ", dataCoding=" + dataCoding
-               + ", alphabet=" + alphabet
-               + ", encoding=" + encoding
-               + ", transactionTimer=" + transactionTimer
-               + ", pduProcessorQueueCapacity=" + pduProcessorQueueCapacity
-               + ", pduProcessorDegree=" + pduProcessorDegree
-               + ", registeredDelivery=" + registeredDelivery
-               + ", singleDLR=" + singleDLR
-               + ", serviceType=" + serviceType
-               + ", sourceAddrTon=" + sourceAddrTon
-               + ", destAddrTon=" + destAddrTon
-               + ", sourceAddrNpi=" + sourceAddrNpi
-               + ", destAddrNpi=" + destAddrNpi
-               + ", addressRange=" + addressRange
-               + ", protocolId=" + protocolId
-               + ", priorityFlag=" + priorityFlag
-               + ", replaceIfPresentFlag=" + replaceIfPresentFlag
-               + ", sourceAddr=" + sourceAddr
-               + ", destAddr=" + destAddr
-               + ", typeOfNumber=" + typeOfNumber
-               + ", numberingPlanIndicator=" + numberingPlanIndicator
-               + ", initialReconnectDelay=" + initialReconnectDelay
-               + ", reconnectDelay=" + reconnectDelay
-               + ", maxReconnect=" + maxReconnect
-               + ", lazySessionCreation=" + lazySessionCreation
-               + ", messageReceiverRouteId=" + messageReceiverRouteId
-               + ", httpProxyHost=" + httpProxyHost
-               + ", httpProxyPort=" + httpProxyPort
-               + ", httpProxyUsername=" + httpProxyUsername
-               + ", httpProxyPassword=" + httpProxyPassword
-               + ", splittingPolicy=" + splittingPolicy
-               + ", proxyHeaders=" + proxyHeaders
-               + ", interfaceVersion=" + interfaceVersion
-               + "]";
+                + ", enquireLinkTimer=" + enquireLinkTimer
+                + ", host=" + host
+                + ", password=" + password
+                + ", port=" + port
+                + ", systemId=" + systemId
+                + ", systemType=" + systemType
+                + ", dataCoding=" + dataCoding
+                + ", alphabet=" + alphabet
+                + ", encoding=" + encoding
+                + ", transactionTimer=" + transactionTimer
+                + ", pduProcessorQueueCapacity=" + pduProcessorQueueCapacity
+                + ", pduProcessorDegree=" + pduProcessorDegree
+                + ", registeredDelivery=" + registeredDelivery
+                + ", singleDLR=" + singleDLR
+                + ", serviceType=" + serviceType
+                + ", sourceAddrTon=" + sourceAddrTon
+                + ", destAddrTon=" + destAddrTon
+                + ", sourceAddrNpi=" + sourceAddrNpi
+                + ", destAddrNpi=" + destAddrNpi
+                + ", addressRange=" + addressRange
+                + ", protocolId=" + protocolId
+                + ", priorityFlag=" + priorityFlag
+                + ", replaceIfPresentFlag=" + replaceIfPresentFlag
+                + ", sourceAddr=" + sourceAddr
+                + ", destAddr=" + destAddr
+                + ", typeOfNumber=" + typeOfNumber
+                + ", numberingPlanIndicator=" + numberingPlanIndicator
+                + ", initialReconnectDelay=" + initialReconnectDelay
+                + ", reconnectDelay=" + reconnectDelay
+                + ", maxReconnect=" + maxReconnect
+                + ", lazySessionCreation=" + lazySessionCreation
+                + ", messageReceiverRouteId=" + messageReceiverRouteId
+                + ", httpProxyHost=" + httpProxyHost
+                + ", httpProxyPort=" + httpProxyPort
+                + ", httpProxyUsername=" + httpProxyUsername
+                + ", httpProxyPassword=" + httpProxyPassword
+                + ", splittingPolicy=" + splittingPolicy
+                + ", proxyHeaders=" + proxyHeaders
+                + ", interfaceVersion=" + interfaceVersion
+                + "]";
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks.converter;
 
 import java.util.List;
@@ -40,8 +41,7 @@ public class SinkConverter {
 
     public static final String SMOOKS_RESULT_KEY = "SmooksResultKeys";
 
-    private SinkConverter() {
-    }
+    private SinkConverter() {}
 
     @Converter
     public static Node toDocument(DOMSink domSink) {

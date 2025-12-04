@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ecs.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -27,12 +30,17 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and
+// -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+    @EnabledIfSystemProperty(
+            named = "aws.manual.access.key",
+            matches = ".*",
+            disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(
+            named = "aws.manual.secret.key",
+            matches = ".*",
+            disabledReason = "Secret key not provided")
 })
 public class ECS2ProducerManualIT extends CamelTestSupport {
 
@@ -60,7 +68,8 @@ public class ECS2ProducerManualIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:listClusters")
-                        .to("aws2-ecs://test?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=eu-west-1&operation=listClusters")
+                        .to(
+                                "aws2-ecs://test?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=eu-west-1&operation=listClusters")
                         .to("mock:result");
             }
         };

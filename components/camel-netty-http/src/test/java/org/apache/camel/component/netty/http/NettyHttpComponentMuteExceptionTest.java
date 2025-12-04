@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -24,9 +28,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class NettyHttpComponentMuteExceptionTest extends BaseNettyTest {
 
     @Test
@@ -34,12 +35,11 @@ public class NettyHttpComponentMuteExceptionTest extends BaseNettyTest {
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/foo");
         get.addHeader("Accept", "application/text");
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(get)) {
+                CloseableHttpResponse response = client.execute(get)) {
             String body = EntityUtils.toString(response.getEntity(), "UTF-8");
             assertNotNull(body);
             assertEquals("", body);
             assertEquals(500, response.getCode());
-
         }
     }
 
@@ -57,5 +57,4 @@ public class NettyHttpComponentMuteExceptionTest extends BaseNettyTest {
             }
         };
     }
-
 }

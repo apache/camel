@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ses;
 
 import org.apache.camel.Category;
@@ -32,8 +33,14 @@ import software.amazon.awssdk.services.ses.SesClient;
 /**
  * Send e-mails through AWS SES service.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ses", title = "AWS Simple Email Service (SES)", syntax = "aws2-ses:from",
-             producerOnly = true, category = { Category.CLOUD, Category.MAIL }, headersClass = Ses2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-ses",
+        title = "AWS Simple Email Service (SES)",
+        syntax = "aws2-ses:from",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MAIL},
+        headersClass = Ses2Constants.class)
 public class Ses2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SesClient sesClient;

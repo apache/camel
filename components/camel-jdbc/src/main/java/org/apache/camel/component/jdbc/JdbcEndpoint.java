@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import java.util.Map;
@@ -34,8 +35,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Access databases through SQL and JDBC.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true,
-             category = { Category.DATABASE }, headersClass = JdbcConstants.class)
+@UriEndpoint(
+        firstVersion = "1.2.0",
+        scheme = "jdbc",
+        title = "JDBC",
+        syntax = "jdbc:dataSourceName",
+        producerOnly = true,
+        category = {Category.DATABASE},
+        headersClass = JdbcConstants.class)
 public class JdbcEndpoint extends DefaultEndpoint {
 
     private DataSource dataSource;
@@ -43,35 +50,47 @@ public class JdbcEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String dataSourceName;
+
     @UriParam
     private int readSize;
+
     @UriParam
     private boolean transacted;
+
     @UriParam(defaultValue = "true")
     private boolean resetAutoCommit = true;
+
     @UriParam(prefix = "statement.", multiValue = true)
     private Map<String, Object> parameters;
+
     @UriParam(defaultValue = "true")
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
+
     @UriParam
     private boolean useGetBytesForBlob;
+
     @UriParam(label = "advanced")
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
+
     @UriParam(defaultValue = "true")
     private boolean allowNamedParameters = true;
+
     @UriParam
     private boolean useHeadersAsParameters;
+
     @UriParam(defaultValue = "SelectList")
     private JdbcOutputType outputType = JdbcOutputType.SelectList;
+
     @UriParam
     private String outputClass;
+
     @UriParam(label = "advanced")
     private BeanRowMapper beanRowMapper = new DefaultBeanRowMapper();
+
     @UriParam(label = "advanced")
     private ConnectionStrategy connectionStrategy = new DefaultConnectionStrategy();
 
-    public JdbcEndpoint() {
-    }
+    public JdbcEndpoint() {}
 
     public JdbcEndpoint(String endpointUri, Component component, DataSource dataSource) {
         super(endpointUri, component);

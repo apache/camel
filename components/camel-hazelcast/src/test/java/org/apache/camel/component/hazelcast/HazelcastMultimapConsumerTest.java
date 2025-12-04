@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.UUID;
@@ -31,13 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
 
@@ -66,7 +67,8 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(map).addEntryListener(argument.capture(), eq(true));
-        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event =
+                new EntryEvent<>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
         argument.getValue().entryAdded(event);
 
         MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
@@ -83,7 +85,8 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(map).addEntryListener(argument.capture(), eq(true));
-        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event =
+                new EntryEvent<>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
         argument.getValue().entryEvicted(event);
 
         MockEndpoint.assertIsSatisfied(context, 30000, TimeUnit.MILLISECONDS);
@@ -95,7 +98,8 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
         out.expectedMessageCount(1);
 
         verify(map).addEntryListener(argument.capture(), eq(true));
-        EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event =
+                new EntryEvent<>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
         argument.getValue().entryRemoved(event);
 
         MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
@@ -107,13 +111,20 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%smm", HazelcastConstants.MULTIMAP_PREFIX)).log("object...").choice()
-                        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED)).log("...added")
+                from(String.format("hazelcast-%smm", HazelcastConstants.MULTIMAP_PREFIX))
+                        .log("object...")
+                        .choice()
+                        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
+                        .log("...added")
                         .to("mock:added")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.EVICTED))
-                        .log("...evicted").to("mock:evicted")
+                        .log("...evicted")
+                        .to("mock:evicted")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED))
-                        .log("...removed").to("mock:removed").otherwise().log("fail!");
+                        .log("...removed")
+                        .to("mock:removed")
+                        .otherwise()
+                        .log("fail!");
             }
         };
     }

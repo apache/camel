@@ -17,6 +17,13 @@
 
 package org.apache.camel.component.jira.consumer;
 
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
+import static org.apache.camel.component.jira.JiraTestConstants.*;
+import static org.apache.camel.component.jira.Utils.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,13 +50,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.jira.JiraConstants.JIRA;
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
-import static org.apache.camel.component.jira.JiraTestConstants.*;
-import static org.apache.camel.component.jira.Utils.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class WatchUpdatesConsumerTest extends CamelTestSupport {
@@ -85,7 +85,8 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
         Promise<SearchResult> promiseSearchResult = Promises.promise(result);
 
         when(jiraClient.getSearchClient()).thenReturn(searchRestClient);
-        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any()))
+                .thenReturn(jiraClient);
         when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(promiseSearchResult);
     }
 
@@ -104,8 +105,8 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jira://watchUpdates?jiraUrl=" + JIRA_CREDENTIALS
-                     + "&jql=project=" + PROJECT + "&delay=500&watchedFields=" + WATCHED_COMPONENTS)
+                from("jira://watchUpdates?jiraUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT
+                                + "&delay=500&watchedFields=" + WATCHED_COMPONENTS)
                         .to(mockResult);
             }
         };
@@ -119,8 +120,7 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
 
     @Test
     public void singleChangeTest() throws Exception {
-        Issue issue = setPriority(issues.get(0), new Priority(
-                null, 4L, "High", null, null, null));
+        Issue issue = setPriority(issues.get(0), new Priority(null, 4L, "High", null, null, null));
         reset(searchRestClient);
         AtomicInteger searchCount = new AtomicInteger();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
@@ -142,8 +142,7 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
     @Test
     public void multipleChangesWithAddedNewIssueTest() throws Exception {
         final Issue issue = transitionIssueDone(issues.get(1));
-        final Issue issue2 = setPriority(issues.get(2), new Priority(
-                null, 2L, "High", null, null, null));
+        final Issue issue2 = setPriority(issues.get(2), new Priority(null, 2L, "High", null, null, null));
 
         reset(searchRestClient);
         AtomicInteger searchCount = new AtomicInteger();
@@ -168,8 +167,7 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
     @Test
     public void multipleChangesWithAddedAndUpdatedNewIssueTest() throws Exception {
         final Issue issue = transitionIssueDone(issues.get(1));
-        final Issue issue2 = setPriority(issues.get(2), new Priority(
-                null, 2L, "High", null, null, null));
+        final Issue issue2 = setPriority(issues.get(2), new Priority(null, 2L, "High", null, null, null));
         final Issue newIssue = createIssue(4L);
 
         reset(searchRestClient);

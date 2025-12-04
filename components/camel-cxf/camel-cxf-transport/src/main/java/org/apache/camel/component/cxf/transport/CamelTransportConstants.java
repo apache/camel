@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
 
 public final class CamelTransportConstants {
@@ -28,8 +29,10 @@ public final class CamelTransportConstants {
     public static final String CAMEL_CLIENT_REQUEST_HEADERS = "org.apache.cxf.camel.template.request.headers";
     public static final String CAMEL_CLIENT_RESPONSE_HEADERS = "org.apache.cxf.camel.template.response.headers";
     public static final String CAMEL_CLIENT_RECEIVE_TIMEOUT = "org.apache.cxf.camel.template.timeout";
-    public static final String CAMEL_SERVER_CONFIGURATION_URI = "http://cxf.apache.org/configuration/transport/camel-server";
-    public static final String CAMEL_CLIENT_CONFIGURATION_URI = "http://cxf.apache.org/configuration/transport/camel-template";
+    public static final String CAMEL_SERVER_CONFIGURATION_URI =
+            "http://cxf.apache.org/configuration/transport/camel-server";
+    public static final String CAMEL_CLIENT_CONFIGURATION_URI =
+            "http://cxf.apache.org/configuration/transport/camel-template";
     public static final String ENDPOINT_CONFIGURATION_URI = "http://cxf.apache.org/jaxws/endpoint-config";
     public static final String SERVICE_CONFIGURATION_URI = "http://cxf.apache.org/jaxws/service-config";
     public static final String PORT_CONFIGURATION_URI = "http://cxf.apache.org/jaxws/port-config";

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh.handler;
 
 import java.net.URI;
@@ -40,8 +41,15 @@ public class Harvester {
 
     private boolean empty;
 
-    public Harvester(ResponseHandler oaipmhResponseHandler, URI baseURI, String verb, String metadata, String until,
-                     String from, String set, String identifier) {
+    public Harvester(
+            ResponseHandler oaipmhResponseHandler,
+            URI baseURI,
+            String verb,
+            String metadata,
+            String until,
+            String from,
+            String set,
+            String identifier) {
         this.baseURI = baseURI;
         this.verb = verb;
         this.metadata = metadata;
@@ -52,7 +60,8 @@ public class Harvester {
         this.httpClient = new OAIPMHHttpClient();
         this.oaipmhResponseHandler = oaipmhResponseHandler;
 
-        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
+        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats
+                || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
                 || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
             this.metadata = null;
             this.until = null;
@@ -60,14 +69,20 @@ public class Harvester {
             this.set = null;
             this.identifier = null;
         }
-
     }
 
     private boolean harvest() throws Exception {
         boolean hasNext = false;
         if (!this.empty) {
-            String responseXML = httpClient.doRequest(this.baseURI, this.verb, this.set, this.from, this.until, this.metadata,
-                    this.resumptionToken, this.identifier);
+            String responseXML = httpClient.doRequest(
+                    this.baseURI,
+                    this.verb,
+                    this.set,
+                    this.from,
+                    this.until,
+                    this.metadata,
+                    this.resumptionToken,
+                    this.identifier);
             OAIPMHResponse oaipmhResponse = new OAIPMHResponse(responseXML);
             this.oaipmhResponseHandler.process(oaipmhResponse);
             Optional<String> resumptionToken = oaipmhResponse.getResumptionToken();
@@ -174,5 +189,4 @@ public class Harvester {
     public void setHttpClient(OAIPMHHttpClient httpClient) {
         this.httpClient = httpClient;
     }
-
 }

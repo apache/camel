@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonapi;
 
 import com.github.jasminb.jsonapi.annotations.Id;
@@ -38,5 +39,4 @@ public class MyFooBar {
     public void setFoo(String foo) {
         this.foo = foo;
     }
-
 }

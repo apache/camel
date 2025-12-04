@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,11 +31,6 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SmbProducerFileExistFailIT extends SmbServerTestSupport {
 
@@ -50,15 +51,16 @@ public class SmbProducerFileExistFailIT extends SmbServerTestSupport {
         mock.expectedBodiesReceived("Hello World");
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/existfail/hello.txt"))));
+                .untilAsserted(() -> assertEquals(
+                        "Hello World", new String(copyFileContentFromContainer("/data/rw/existfail/hello.txt"))));
 
         String uri = getSmbUrl();
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));
 
-        GenericFileOperationFailedException cause
-                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        GenericFileOperationFailedException cause =
+                assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertEquals("File already exist: existfail/hello.txt. Cannot write new file.", cause.getMessage());
 
         MockEndpoint.assertIsSatisfied(context);

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.job;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_JOB;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,13 +28,17 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_JOB;
-
 /**
  * Perform operations on Kubernetes Jobs.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = SCHEME_JOB, title = "Kubernetes Job", syntax = "kubernetes-job:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD }, producerOnly = true, headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.23.0",
+        scheme = SCHEME_JOB,
+        title = "Kubernetes Job",
+        syntax = "kubernetes-job:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        producerOnly = true,
+        headersClass = KubernetesConstants.class)
 public class KubernetesJobEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesJobEndpoint(String uri, KubernetesJobComponent component, KubernetesConfiguration config) {
@@ -47,5 +54,4 @@ public class KubernetesJobEndpoint extends AbstractKubernetesEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new IllegalArgumentException("The kubernetes-job doesn't support consumer");
     }
-
 }

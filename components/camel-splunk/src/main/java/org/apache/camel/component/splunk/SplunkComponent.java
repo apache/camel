@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
 
 import java.util.Map;
@@ -32,8 +33,7 @@ public class SplunkComponent extends HealthCheckComponent {
     @Metadata(label = "advanced")
     private SplunkConfigurationFactory splunkConfigurationFactory = new DefaultSplunkConfigurationFactory();
 
-    public SplunkComponent() {
-    }
+    public SplunkComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -54,5 +54,4 @@ public class SplunkComponent extends HealthCheckComponent {
     public void setSplunkConfigurationFactory(SplunkConfigurationFactory splunkConfigurationFactory) {
         this.splunkConfigurationFactory = splunkConfigurationFactory;
     }
-
 }

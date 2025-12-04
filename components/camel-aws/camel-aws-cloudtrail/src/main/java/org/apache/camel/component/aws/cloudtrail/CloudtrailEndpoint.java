@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.cloudtrail;
 
 import java.util.Map;
@@ -33,9 +34,14 @@ import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 /**
  * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.19.0", scheme = "aws-cloudtrail", title = "AWS Cloudtrail", syntax = "aws-cloudtrail:label",
-             consumerOnly = true,
-             category = { Category.CLOUD, Category.MANAGEMENT, Category.MONITORING }, headersClass = CloudtrailConstants.class)
+@UriEndpoint(
+        firstVersion = "3.19.0",
+        scheme = "aws-cloudtrail",
+        title = "AWS Cloudtrail",
+        syntax = "aws-cloudtrail:label",
+        consumerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT, Category.MONITORING},
+        headersClass = CloudtrailConstants.class)
 public class CloudtrailEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam

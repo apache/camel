@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,10 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * WiretappedRouteTest tests the execution of a new spin off component which would create a new exchange,
@@ -59,7 +60,6 @@ public class AsyncWiretapTest extends MicrometerObservabilityTracerPropagationTe
         for (OtelTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(OtelTrace trace, String expectedBody) {
@@ -91,17 +91,23 @@ public class AsyncWiretapTest extends MicrometerObservabilityTracerPropagationTe
         assertEquals(testProducer.getTraceId(), wiretapMock.getTraceId());
 
         // Validate different Exchange ID
-        assertNotEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertNotEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 direct.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 log.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 wiretapDirectFrom.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 wiretapLog.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                wiretapDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 wiretapMock.getAttributes().get(AttributeKey.stringKey("exchangeId")));
 
         // Validate hierarchy
@@ -115,7 +121,8 @@ public class AsyncWiretapTest extends MicrometerObservabilityTracerPropagationTe
 
         // Validate message logging
         assertEquals("message=A direct message", direct.getEvents().get(0).getName());
-        assertEquals("message=A tapped message", wiretapDirectFrom.getEvents().get(0).getName());
+        assertEquals(
+                "message=A tapped message", wiretapDirectFrom.getEvents().get(0).getName());
 
         if (expectedBody == null) {
             assertEquals(
@@ -132,7 +139,6 @@ public class AsyncWiretapTest extends MicrometerObservabilityTracerPropagationTe
                     "message=Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
                     wiretapLog.getEvents().get(0).getName());
         }
-
     }
 
     @Override

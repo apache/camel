@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
 
 import java.security.KeyManagementException;
@@ -44,21 +45,17 @@ import org.slf4j.LoggerFactory;
 public class SslAwareMongoClient implements MongoClient {
     private static final Logger LOG = LoggerFactory.getLogger(SslAwareMongoClient.class);
     private static final TrustManager[] trustAllCerts = new TrustManager[] {
-            new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                @Override
-                public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-                }
-
-                @Override
-                public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-                }
+        new X509TrustManager() {
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
             }
+
+            @Override
+            public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+        }
     };
     private final Supplier<MongoClient> wrappedMongoClient = Suppliers.memorize(new Supplier<MongoClient>() {
         @Override
@@ -192,13 +189,13 @@ public class SslAwareMongoClient implements MongoClient {
 
     @Override
     public <TResult> ChangeStreamIterable<TResult> watch(
-            ClientSession clientSession, List<? extends Bson> list,
-            Class<TResult> aClass) {
+            ClientSession clientSession, List<? extends Bson> list, Class<TResult> aClass) {
         return getWrappedMongoClient().watch(clientSession, list, aClass);
     }
 
     @Override
-    public ClientBulkWriteResult bulkWrite(List<? extends ClientNamespacedWriteModel> list) throws ClientBulkWriteException {
+    public ClientBulkWriteResult bulkWrite(List<? extends ClientNamespacedWriteModel> list)
+            throws ClientBulkWriteException {
         return getWrappedMongoClient().bulkWrite(list);
     }
 
@@ -217,7 +214,8 @@ public class SslAwareMongoClient implements MongoClient {
 
     @Override
     public ClientBulkWriteResult bulkWrite(
-            ClientSession clientSession, List<? extends ClientNamespacedWriteModel> list,
+            ClientSession clientSession,
+            List<? extends ClientNamespacedWriteModel> list,
             ClientBulkWriteOptions clientBulkWriteOptions)
             throws ClientBulkWriteException {
         return getWrappedMongoClient().bulkWrite(clientSession, list, clientBulkWriteOptions);
@@ -319,7 +317,5 @@ public class SslAwareMongoClient implements MongoClient {
     }
 
     @Override
-    public void appendMetadata(MongoDriverInformation mongoDriverInformation) {
-
-    }
+    public void appendMetadata(MongoDriverInformation mongoDriverInformation) {}
 }

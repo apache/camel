@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
 
 import java.io.IOException;
@@ -67,8 +68,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
     final Map<Integer, CoapServer> servers = new ConcurrentHashMap<>();
 
-    public CoAPComponent() {
-    }
+    public CoAPComponent() {}
 
     public CoapServer getServer(int port, CoAPEndpoint endpoint) throws IOException, GeneralSecurityException {
         lock.lock();
@@ -141,8 +141,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
         } else {
             config.set(TcpConfig.TLS_CLIENT_AUTHENTICATION_MODE, CertificateAuthenticationMode.NONE);
         }
-        tcpConnector = new TlsServerConnector(
-                sslContext, address, config);
+        tcpConnector = new TlsServerConnector(sslContext, address, config);
         return tcpConnector;
     }
 
@@ -162,9 +161,15 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
     @Override
     public Consumer createConsumer(
-            CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate, String consumes,
+            CamelContext camelContext,
+            Processor processor,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String consumes,
             String produces,
-            RestConfiguration configuration, Map<String, Object> parameters)
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
 
         String path = basePath;
@@ -191,7 +196,8 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
         Map<String, Object> map = new HashMap<>();
         // setup endpoint options
-        if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+        if (config.getEndpointProperties() != null
+                && !config.getEndpointProperties().isEmpty()) {
             map.putAll(config.getEndpointProperties());
         }
 
@@ -225,7 +231,8 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null
+                && !config.getConsumerProperties().isEmpty()) {
             setProperties(camelContext, consumer, config.getConsumerProperties());
         }
         return consumer;

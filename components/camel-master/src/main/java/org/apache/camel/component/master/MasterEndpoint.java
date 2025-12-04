@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.master;
 
 import org.apache.camel.Category;
@@ -34,8 +35,14 @@ import org.apache.camel.support.DefaultEndpoint;
  * Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
  */
 @ManagedResource(description = "Managed Master Endpoint")
-@UriEndpoint(firstVersion = "2.20.0", scheme = "master", syntax = "master:namespace:delegateUri", title = "Master",
-             consumerOnly = true, lenientProperties = true, category = { Category.CLUSTERING })
+@UriEndpoint(
+        firstVersion = "2.20.0",
+        scheme = "master",
+        syntax = "master:namespace:delegateUri",
+        title = "Master",
+        consumerOnly = true,
+        lenientProperties = true,
+        category = {Category.CLUSTERING})
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private final Endpoint delegateEndpoint;
@@ -49,8 +56,12 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
     @Metadata(required = true)
     private final String delegateUri;
 
-    public MasterEndpoint(String uri, MasterComponent component, CamelClusterService clusterService, String namespace,
-                          String delegateUri) {
+    public MasterEndpoint(
+            String uri,
+            MasterComponent component,
+            CamelClusterService clusterService,
+            String namespace,
+            String delegateUri) {
         super(uri, component);
         this.clusterService = clusterService;
         this.namespace = namespace;

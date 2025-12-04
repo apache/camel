@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -30,9 +34,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -70,7 +71,8 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
                 onException(RuntimeException.class).process(new ShutDown());
 
                 from(fileUri("inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10"))
-                        .to("log:begin").to(ExchangePattern.InOut, "seda:process");
+                        .to("log:begin")
+                        .to(ExchangePattern.InOut, "seda:process");
 
                 from("seda:process").throwException(new RuntimeException("Testing with exception"));
             }
@@ -109,5 +111,4 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
             thread.start();
         }
     }
-
 }

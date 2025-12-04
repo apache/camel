@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AdviceWithTest extends ContextTestSupport {
 
@@ -47,7 +48,10 @@ public class AdviceWithTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // intercept sending to mock:foo and do something else
-                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+                interceptSendToEndpoint("mock:foo")
+                        .skipSendToOriginalEndpoint()
+                        .to("log:foo")
+                        .to("mock:advised");
             }
         });
 
@@ -69,7 +73,10 @@ public class AdviceWithTest extends ContextTestSupport {
                 public void configure() throws Exception {
                     from("direct:bar").to("mock:bar");
 
-                    interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+                    interceptSendToEndpoint("mock:foo")
+                            .skipSendToOriginalEndpoint()
+                            .to("log:foo")
+                            .to("mock:advised");
                 }
             });
             fail("Should have thrown exception");
@@ -83,7 +90,9 @@ public class AdviceWithTest extends ContextTestSupport {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock:foo").to("mock:advised").throwException(new IllegalArgumentException("Damn"));
+                interceptSendToEndpoint("mock:foo")
+                        .to("mock:advised")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         });
 
@@ -108,7 +117,10 @@ public class AdviceWithTest extends ContextTestSupport {
             AdviceWith.adviceWith(new RouteDefinition(), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+                    interceptSendToEndpoint("mock:foo")
+                            .skipSendToOriginalEndpoint()
+                            .to("log:foo")
+                            .to("mock:advised");
                 }
             });
             fail("Should have thrown exception");

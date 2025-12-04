@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.server;
 
 import java.util.Map;
@@ -33,8 +34,11 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
     protected StreamObserver<Object> responseObserver;
     protected Map<String, Object> headers;
 
-    protected GrpcRequestAbstractStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
-                                                StreamObserver<Object> responseObserver, Map<String, Object> headers) {
+    protected GrpcRequestAbstractStreamObserver(
+            GrpcEndpoint endpoint,
+            GrpcConsumer consumer,
+            StreamObserver<Object> responseObserver,
+            Map<String, Object> headers) {
         this.endpoint = endpoint;
         this.consumer = consumer;
         this.responseObserver = responseObserver;

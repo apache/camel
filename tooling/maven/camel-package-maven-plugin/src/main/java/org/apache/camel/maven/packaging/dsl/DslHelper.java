@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.dsl;
 
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.commons.text.CaseUtils;
 
 public final class DslHelper {
-    private DslHelper() {
-    }
+    private DslHelper() {}
 
     public static String toCamelCaseLower(final String schema) {
         String convertedText = CaseUtils.toCamelCase(schema, false, '-', '+');
@@ -58,5 +58,4 @@ public final class DslHelper {
 
         return desc;
     }
-
 }

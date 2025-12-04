@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import java.util.List;
@@ -31,8 +32,10 @@ public class ConsulCoordinatesIT extends ConsulTestSupport {
     @Test
     public void testDatacenters() {
         List<Datacenter> ref = getConsul().coordinateClient().getDatacenters();
-        List<Datacenter> res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.DATACENTERS)
-                .to("direct:consul").request(List.class);
+        List<Datacenter> res = fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.DATACENTERS)
+                .to("direct:consul")
+                .request(List.class);
 
         Assertions.assertFalse(ref.isEmpty());
         Assertions.assertFalse(res.isEmpty());
@@ -43,8 +46,10 @@ public class ConsulCoordinatesIT extends ConsulTestSupport {
     @Test
     public void testNodes() {
         List<Coordinate> ref = getConsul().coordinateClient().getNodes();
-        List<Coordinate> res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.NODES)
-                .to("direct:consul").request(List.class);
+        List<Coordinate> res = fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.NODES)
+                .to("direct:consul")
+                .request(List.class);
 
         Assertions.assertFalse(ref.isEmpty());
         Assertions.assertFalse(res.isEmpty());

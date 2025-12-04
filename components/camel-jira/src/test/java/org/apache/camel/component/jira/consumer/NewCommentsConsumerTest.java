@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.consumer;
+
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
+import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
+import static org.apache.camel.component.jira.JiraTestConstants.PROJECT;
+import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.apache.camel.component.jira.Utils.createIssueWithComments;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,16 +52,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.jira.JiraConstants.JIRA;
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
-import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
-import static org.apache.camel.component.jira.JiraTestConstants.PROJECT;
-import static org.apache.camel.component.jira.Utils.createIssue;
-import static org.apache.camel.component.jira.Utils.createIssueWithComments;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class NewCommentsConsumerTest extends CamelTestSupport {
@@ -90,10 +91,11 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
 
         when(jiraClient.getSearchClient()).thenReturn(searchRestClient);
         when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
-        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any()))
+                .thenReturn(jiraClient);
         when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(searchResultPromise);
-        ISSUES.forEach(issue -> when(issueRestClient.getIssue(eq(issue.getKey())))
-                .then(inv -> Promises.promise(issue)));
+        ISSUES.forEach(
+                issue -> when(issueRestClient.getIssue(eq(issue.getKey()))).then(inv -> Promises.promise(issue)));
     }
 
     @Override
@@ -132,10 +134,10 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
 
         SearchResult result = new SearchResult(0, 50, 2, newIssues);
         when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(Promises.promise(result));
-        newIssues.forEach(issue -> when(issueRestClient.getIssue(eq(issue.getKey())))
-                .then(inv -> Promises.promise(issue)));
+        newIssues.forEach(
+                issue -> when(issueRestClient.getIssue(eq(issue.getKey()))).then(inv -> Promises.promise(issue)));
 
-        //clearInvocations(issueRestClient);
+        // clearInvocations(issueRestClient);
         List<Comment> comments = new ArrayList<>();
         newIssues.forEach(issue -> issue.getComments().forEach(comments::add));
         // reverse the order, from oldest comment to recent
@@ -154,8 +156,8 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
 
         SearchResult searchResult = new SearchResult(0, 50, 3, newIssues);
         when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(Promises.promise(searchResult));
-        newIssues.forEach(issue -> when(issueRestClient.getIssue(eq(issue.getKey())))
-                .then(inv -> Promises.promise(issue)));
+        newIssues.forEach(
+                issue -> when(issueRestClient.getIssue(eq(issue.getKey()))).then(inv -> Promises.promise(issue)));
 
         List<Comment> comments = new ArrayList<>();
         newIssues.forEach(issue -> issue.getComments().forEach(comments::add));
@@ -165,5 +167,4 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         mockResult.expectedBodiesReceived(comments);
         mockResult.assertIsSatisfied();
     }
-
 }

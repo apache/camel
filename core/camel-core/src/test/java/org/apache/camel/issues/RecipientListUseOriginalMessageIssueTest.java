@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import java.util.concurrent.TimeUnit;
@@ -34,8 +35,7 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
     public void testRecipientListUseOriginalMessageIssue() throws Exception {
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri("inbox"), "A", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader(fileUri("inbox"), "A", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -49,7 +49,9 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).useOriginalMessage()
+                onException(Exception.class)
+                        .handled(true)
+                        .useOriginalMessage()
                         .to(fileUri("outbox"))
                         .to("mock:error");
 
@@ -59,13 +61,15 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
                             public void process(Exchange exchange) {
                                 exchange.getIn().setBody("B");
                             }
-                        }).process(new Processor() {
+                        })
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
                                 // try to put some invalid destination
                                 exchange.getIn().setHeader("path", "xxx");
                             }
-                        }).recipientList(header("path"));
+                        })
+                        .recipientList(header("path"));
             }
         };
     }

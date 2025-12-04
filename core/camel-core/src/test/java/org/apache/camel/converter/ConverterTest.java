@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.InputStream;
@@ -45,20 +54,12 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ConverterTest extends TestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
-    protected final TypeConverter converter = new DefaultTypeConverter(
-            new DefaultPackageScanClassResolver(), new ReflectionInjector(), true, false);
+    protected final TypeConverter converter =
+            new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(), true, false);
 
     @BeforeEach
     public void setUp() {
@@ -108,7 +109,7 @@ public class ConverterTest extends TestSupport {
 
     @Test
     public void testArrayToListAndSetConversion() {
-        String[] array = new String[] { "one", "two" };
+        String[] array = new String[] {"one", "two"};
 
         List<?> list = converter.convertTo(List.class, array);
         assertEquals(2, list.size(), "List size: " + list);
@@ -169,7 +170,8 @@ public class ConverterTest extends TestSupport {
 
     @Test
     public void testPrimitiveBooleanConversion() {
-        boolean value = assertDoesNotThrow(() -> converter.convertTo(boolean.class, null),
+        boolean value = assertDoesNotThrow(
+                () -> converter.convertTo(boolean.class, null),
                 "A conversion from primitive boolean must not throw when receiving a null value");
         assertFalse(value, "A conversion from primitive boolean must default to false when converting from null");
     }
@@ -188,7 +190,8 @@ public class ConverterTest extends TestSupport {
         context.start();
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
 
-        assertDoesNotThrow(() -> bi.setProperty(context, converter, bean, "foo", "4", null, true, true, true),
+        assertDoesNotThrow(
+                () -> bi.setProperty(context, converter, bean, "foo", "4", null, true, true, true),
                 "Setting an int property in a bean, should have succeeded without throwing exceptions");
         assertEquals(4, bean.getFoo(), "The property bean.foo does not match the value that was previously set");
 
@@ -219,7 +222,7 @@ public class ConverterTest extends TestSupport {
 
     @Test
     public void testInstanceMethodConversionWithExchange() {
-        String[] values = new String[] { "5", "bar" };
+        String[] values = new String[] {"5", "bar"};
 
         CamelContext camel = new DefaultCamelContext();
         Exchange e = new DefaultExchange(camel);
@@ -234,26 +237,31 @@ public class ConverterTest extends TestSupport {
         CamelContext camel = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(camel);
 
-        assertThrows(NoTypeConversionAvailableException.class,
+        assertThrows(
+                NoTypeConversionAvailableException.class,
                 () -> converter.mandatoryConvertTo(InputStream.class, exchange),
                 "Expected to get a NoTypeConversionAvailableException here");
     }
 
     @Test
     public void testStringToChar() {
-        char ch = assertDoesNotThrow(() -> converter.convertTo(char.class, "A"),
+        char ch = assertDoesNotThrow(
+                () -> converter.convertTo(char.class, "A"),
                 "A conversion from String to char should have succeeded without throwing exceptions");
         assertEquals('A', (int) ch, "The converted value does not match what was set");
 
-        ch = assertDoesNotThrow(() -> converter.convertTo(char.class, " "),
+        ch = assertDoesNotThrow(
+                () -> converter.convertTo(char.class, " "),
                 "A conversion from String with spaces to char should have succeeded without throwing exceptions");
-        assertEquals(' ', (int) ch,
-                "The converted value does not match what was set");
+        assertEquals(' ', (int) ch, "The converted value does not match what was set");
 
-        Exception ex = assertThrows(TypeConversionException.class,
-                () -> converter.mandatoryConvertTo(char.class, "ABC"), "Should have thrown an exception");
+        Exception ex = assertThrows(
+                TypeConversionException.class,
+                () -> converter.mandatoryConvertTo(char.class, "ABC"),
+                "Should have thrown an exception");
 
-        assertEquals("String must have exactly a length of 1: ABC", ex.getCause().getMessage());
+        assertEquals(
+                "String must have exactly a length of 1: ABC", ex.getCause().getMessage());
     }
 
     @Test

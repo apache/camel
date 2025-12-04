@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data from a remote
@@ -52,7 +53,8 @@ public class MinaInOutRouteTest extends BaseMinaTest {
                     exchange.getMessage().setBody("Bye " + body);
                 });
 
-                from("direct:in").toF("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort())
+                from("direct:in")
+                        .toF("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort())
                         .to("mock:result");
             }
         };

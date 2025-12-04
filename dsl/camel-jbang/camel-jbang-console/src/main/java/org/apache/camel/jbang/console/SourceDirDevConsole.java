@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jbang.console;
 
 import java.io.LineNumberReader;
@@ -38,8 +39,11 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "source-dir", group = "camel-jbang", displayName = "Source Directory",
-            description = "Information about Camel JBang source files")
+@DevConsole(
+        name = "source-dir",
+        group = "camel-jbang",
+        displayName = "Source Directory",
+        description = "Information about Camel JBang source files")
 public class SourceDirDevConsole extends AbstractDevConsole {
 
     /**
@@ -70,14 +74,18 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                     if (!files.isEmpty()) {
                         sb.append("Files:\n");
                         // sort files by name (ignore case)
-                        files.sort((o1, o2) -> o1.getFileName().toString().compareToIgnoreCase(o2.getFileName().toString()));
+                        files.sort((o1, o2) -> o1.getFileName()
+                                .toString()
+                                .compareToIgnoreCase(o2.getFileName().toString()));
                         for (Path f : files) {
                             String fileName = f.getFileName().toString();
                             boolean skip = fileName.startsWith(".") || Files.isHidden(f);
                             if (skip) {
                                 continue;
                             }
-                            boolean match = subPath == null || fileName.startsWith(subPath) || fileName.endsWith(subPath)
+                            boolean match = subPath == null
+                                    || fileName.startsWith(subPath)
+                                    || fileName.endsWith(subPath)
                                     || PatternHelper.matchPattern(fileName, subPath);
                             if (match) {
                                 long size = Files.size(f);
@@ -87,7 +95,7 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                                 if ("true".equals(source)) {
                                     StringBuilder code = new StringBuilder();
                                     try (Reader fileReader = Files.newBufferedReader(f, StandardCharsets.UTF_8);
-                                         LineNumberReader reader = new LineNumberReader(fileReader)) {
+                                            LineNumberReader reader = new LineNumberReader(fileReader)) {
                                         int i = 0;
                                         String t;
                                         do {
@@ -136,7 +144,9 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                     List<Path> files = streams.collect(Collectors.toList());
                     if (!files.isEmpty()) {
                         // sort files by name (ignore case)
-                        files.sort((o1, o2) -> o1.getFileName().toString().compareToIgnoreCase(o2.getFileName().toString()));
+                        files.sort((o1, o2) -> o1.getFileName()
+                                .toString()
+                                .compareToIgnoreCase(o2.getFileName().toString()));
                         JsonArray arr = new JsonArray();
                         root.put("files", arr);
                         for (Path f : files) {
@@ -145,13 +155,17 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                             if (skip) {
                                 continue;
                             }
-                            boolean match = subPath == null || fileName.startsWith(subPath) || fileName.endsWith(subPath)
+                            boolean match = subPath == null
+                                    || fileName.startsWith(subPath)
+                                    || fileName.endsWith(subPath)
                                     || PatternHelper.matchPattern(fileName, subPath);
                             if (match) {
                                 JsonObject jo = new JsonObject();
                                 jo.put("name", fileName);
                                 jo.put("size", Files.size(f));
-                                jo.put("lastModified", Files.getLastModifiedTime(f).toMillis());
+                                jo.put(
+                                        "lastModified",
+                                        Files.getLastModifiedTime(f).toMillis());
                                 if ("true".equals(source)) {
                                     try (Reader fileReader = Files.newBufferedReader(f, StandardCharsets.UTF_8)) {
                                         List<JsonObject> code = ConsoleHelper.loadSourceAsJson(fileReader, null);

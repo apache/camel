@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq6;
 
 import java.util.HashMap;
@@ -31,24 +32,35 @@ import org.apache.camel.spi.UriParam;
 /**
  * Send messages to (or consume from) Apache ActiveMQ 6.x. This component extends the Camel JMS component.
  */
-@UriEndpoint(firstVersion = "4.7.0", extendsScheme = "jms", scheme = "activemq6", title = "ActiveMQ 6.x",
-             syntax = "activemq6:destinationType:destinationName",
-             category = { Category.MESSAGING })
+@UriEndpoint(
+        firstVersion = "4.7.0",
+        extendsScheme = "jms",
+        scheme = "activemq6",
+        title = "ActiveMQ 6.x",
+        syntax = "activemq6:destinationType:destinationName",
+        category = {Category.MESSAGING})
 public class ActiveMQEndpoint extends JmsEndpoint implements EndpointServiceLocation {
 
     @UriParam(multiValue = true, prefix = "destination.", label = "consumer,advanced")
     private Map<String, String> destinationOptions;
 
-    public ActiveMQEndpoint() {
-    }
+    public ActiveMQEndpoint() {}
 
-    public ActiveMQEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain,
-                            JmsConfiguration configuration) {
+    public ActiveMQEndpoint(
+            String uri,
+            JmsComponent component,
+            String destinationName,
+            boolean pubSubDomain,
+            JmsConfiguration configuration) {
         super(uri, component, destinationName, pubSubDomain, configuration);
     }
 
-    public ActiveMQEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destinationName,
-                            boolean pubSubDomain) {
+    public ActiveMQEndpoint(
+            String endpointUri,
+            JmsBinding binding,
+            JmsConfiguration configuration,
+            String destinationName,
+            boolean pubSubDomain) {
         super(endpointUri, binding, configuration, destinationName, pubSubDomain);
     }
 

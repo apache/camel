@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.apache.camel.support.DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,9 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.support.DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
 
@@ -231,5 +232,4 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertTrue(comp.applyFilterToExternalHeaders("CamelVersion", "3.7", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("CamelJettySession", "true", exchange));
     }
-
 }

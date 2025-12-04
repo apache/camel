@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.microprofile.health;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
@@ -24,8 +27,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelMicroProfileHealthRegistryBindingTest extends CamelMicroProfileHealthTestSupport {
 

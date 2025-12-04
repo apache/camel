@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -39,9 +43,6 @@ import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SnsTopicProducerWithSubscriptionIT extends Aws2SNSBase {
     @RegisterExtension
@@ -68,7 +69,8 @@ public class SnsTopicProducerWithSubscriptionIT extends Aws2SNSBase {
             ReceiveMessageResponse response = client.receiveMessage(request);
 
             if (!response.sdkHttpResponse().isSuccessful()) {
-                LOG.warn("Did not receive a success response from SQS: status code {}",
+                LOG.warn(
+                        "Did not receive a success response from SQS: status code {}",
                         response.sdkHttpResponse().statusCode());
             }
 
@@ -87,24 +89,23 @@ public class SnsTopicProducerWithSubscriptionIT extends Aws2SNSBase {
         client = AWSSDKClientUtils.newSQSClient();
         String queue = sharedNameGenerator.getName() + "sqs";
 
-        GetQueueUrlRequest getQueueUrlRequest = GetQueueUrlRequest.builder()
-                .queueName(queue)
-                .build();
+        GetQueueUrlRequest getQueueUrlRequest =
+                GetQueueUrlRequest.builder().queueName(queue).build();
 
         try {
             GetQueueUrlResponse getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest);
 
             sqsQueueUrl = getQueueUrlResult.queueUrl();
         } catch (QueueDoesNotExistException e) {
-            CreateQueueRequest createQueueRequest = CreateQueueRequest.builder()
-                    .queueName(queue)
-                    .build();
+            CreateQueueRequest createQueueRequest =
+                    CreateQueueRequest.builder().queueName(queue).build();
 
             sqsQueueUrl = client.createQueue(createQueueRequest).queueUrl();
         }
-        sqsQueueArn = client.getQueueAttributes(b -> b.queueUrl(sqsQueueUrl)
-                .attributeNames(QueueAttributeName.QUEUE_ARN))
-                .attributes().get(QueueAttributeName.QUEUE_ARN);
+        sqsQueueArn = client.getQueueAttributes(
+                        b -> b.queueUrl(sqsQueueUrl).attributeNames(QueueAttributeName.QUEUE_ARN))
+                .attributes()
+                .get(QueueAttributeName.QUEUE_ARN);
     }
 
     @Test
@@ -131,7 +132,8 @@ public class SnsTopicProducerWithSubscriptionIT extends Aws2SNSBase {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toF("aws2-sns://%s?subject=The+subject+message&autoCreateTopic=true&subscribeSNStoSQS=true&queueArn=%s",
+                        .toF(
+                                "aws2-sns://%s?subject=The+subject+message&autoCreateTopic=true&subscribeSNStoSQS=true&queueArn=%s",
                                 sharedNameGenerator.getName(), sqsQueueArn);
             }
         };

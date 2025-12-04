@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ecs;
 
 import java.util.ArrayList;
@@ -34,8 +35,7 @@ import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
 public class AmazonECSClientMock implements EcsClient {
 
-    public AmazonECSClientMock() {
-    }
+    public AmazonECSClientMock() {}
 
     @Override
     public CreateClusterResponse createCluster(CreateClusterRequest request) {
@@ -48,7 +48,8 @@ public class AmazonECSClientMock implements EcsClient {
     @Override
     public DeleteClusterResponse deleteCluster(DeleteClusterRequest request) {
         DeleteClusterResponse.Builder res = DeleteClusterResponse.builder();
-        Cluster cluster = Cluster.builder().clusterName("Test").status("INACTIVE").build();
+        Cluster cluster =
+                Cluster.builder().clusterName("Test").status("INACTIVE").build();
         res.cluster(cluster);
         return res.build();
     }
@@ -56,7 +57,8 @@ public class AmazonECSClientMock implements EcsClient {
     @Override
     public DescribeClustersResponse describeClusters(DescribeClustersRequest request) {
         DescribeClustersResponse.Builder res = DescribeClustersResponse.builder();
-        Cluster cluster = Cluster.builder().clusterName("Test").status("INACTIVE").build();
+        Cluster cluster =
+                Cluster.builder().clusterName("Test").status("INACTIVE").build();
         res.clusters(Collections.singleton(cluster));
         return res.build();
     }

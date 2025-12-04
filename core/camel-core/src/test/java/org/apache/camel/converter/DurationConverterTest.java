@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Duration;
 
@@ -22,10 +27,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TypeConversionException;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DurationConverterTest extends ContextTestSupport {
 
@@ -42,7 +43,8 @@ public class DurationConverterTest extends ContextTestSupport {
     public void testToMillisOverflow() {
         Duration duration = Duration.parse("P60000000000000D");
 
-        TypeConversionException e = assertThrows(TypeConversionException.class,
+        TypeConversionException e = assertThrows(
+                TypeConversionException.class,
                 () -> context.getTypeConverter().convertTo(long.class, duration),
                 "Should throw exception");
 
@@ -66,5 +68,4 @@ public class DurationConverterTest extends ContextTestSupport {
         assertNotNull(durationAsString);
         MatcherAssert.assertThat(durationAsString, is("PT2H6M20.31S"));
     }
-
 }

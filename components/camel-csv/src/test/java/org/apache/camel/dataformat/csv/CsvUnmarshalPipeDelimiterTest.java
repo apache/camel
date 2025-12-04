@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
@@ -76,8 +77,7 @@ public class CsvUnmarshalPipeDelimiterTest extends CamelTestSupport {
             public void configure() {
                 CsvDataFormat csv = new CsvDataFormat().setDelimiter('|');
 
-                from("direct:start").unmarshal(csv)
-                        .to("mock:result");
+                from("direct:start").unmarshal(csv).to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -39,7 +40,8 @@ public class QuartzRouteTest extends BaseQuartzTest {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1")
+                        .routeId("myRoute")
                         .to("mock:result");
                 // END SNIPPET: example
             }

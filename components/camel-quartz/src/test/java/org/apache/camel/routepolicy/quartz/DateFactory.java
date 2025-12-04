@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
 
 import java.util.Date;
 
 public final class DateFactory {
 
-    private DateFactory() {
-    }
+    private DateFactory() {}
 
     public static Date createDate(int future) {
         return new Date(System.currentTimeMillis() + future);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
 
 public final class JacksonXMLConstants {
@@ -24,6 +25,5 @@ public final class JacksonXMLConstants {
 
     public static final String UNMARSHAL_TYPE = "CamelJacksonXmlUnmarshalType";
 
-    private JacksonXMLConstants() {
-    }
+    private JacksonXMLConstants() {}
 }

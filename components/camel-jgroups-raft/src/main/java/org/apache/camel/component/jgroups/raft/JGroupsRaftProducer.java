@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft;
 
 import java.util.concurrent.TimeUnit;
@@ -56,25 +57,36 @@ public class JGroupsRaftProducer extends DefaultProducer {
     // Processing logic
     @Override
     public void process(Exchange exchange) throws Exception {
-        //TODO: implement possibility to call CompletableFuture<byte[]> setAsync(byte[] buf, int offset, int length);
+        // TODO: implement possibility to call CompletableFuture<byte[]> setAsync(byte[] buf, int offset, int length);
         byte[] body = exchange.getIn().getBody(byte[].class);
 
-        Integer setOffset = exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_OFFSET, Integer.class);
-        Integer setLength = exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_LENGTH, Integer.class);
+        Integer setOffset =
+                exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_OFFSET, Integer.class);
+        Integer setLength =
+                exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_LENGTH, Integer.class);
         Long setTimeout = exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_TIMEOUT, Long.class);
-        TimeUnit setTimeUnit = exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_TIMEUNIT, TimeUnit.class);
+        TimeUnit setTimeUnit =
+                exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_TIMEUNIT, TimeUnit.class);
 
         if (body != null) {
             byte[] result;
             if (setOffset != null && setLength != null && setTimeout != null && setTimeUnit != null) {
-                LOG.debug("Calling set(byte[] {}, int {}, int {}, long {}, TimeUnit {}) method on raftHandle.", body, setOffset,
-                        setLength, setTimeout, setTimeUnit);
+                LOG.debug(
+                        "Calling set(byte[] {}, int {}, int {}, long {}, TimeUnit {}) method on raftHandle.",
+                        body,
+                        setOffset,
+                        setLength,
+                        setTimeout,
+                        setTimeUnit);
                 result = endpoint.getResolvedRaftHandle().set(body, setOffset, setLength, setTimeout, setTimeUnit);
             } else if (setOffset != null && setLength != null) {
                 LOG.debug("Calling set(byte[] {}, int {}, int {}) method on raftHandle.", body, setOffset, setLength);
                 result = endpoint.getResolvedRaftHandle().set(body, setOffset, setLength);
             } else {
-                LOG.debug("Calling set(byte[] {}, int {}, int {} (i.e. body.length)) method on raftHandle.", body, 0,
+                LOG.debug(
+                        "Calling set(byte[] {}, int {}, int {} (i.e. body.length)) method on raftHandle.",
+                        body,
+                        0,
                         body.length);
                 result = endpoint.getResolvedRaftHandle().set(body, 0, body.length);
             }
@@ -84,5 +96,4 @@ public class JGroupsRaftProducer extends DefaultProducer {
             LOG.debug("Body is null, cannot call set method on raftHandle.");
         }
     }
-
 }

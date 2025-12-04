@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.PredicateValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ValidateRegExpTest extends ContextTestSupport {
 
@@ -63,7 +64,8 @@ public class ValidateRegExpTest extends ContextTestSupport {
 
             // as the Expression could be different between the DSL and simple
             // language, here we just check part of the message
-            assertTrue(cause.getMessage().startsWith("Validation failed for Predicate"), "Get a wrong exception message");
+            assertTrue(
+                    cause.getMessage().startsWith("Validation failed for Predicate"), "Get a wrong exception message");
             assertTrue(cause.getMessage().contains("^\\d{2}\\.\\d{2}\\.\\d{4}$"));
 
             String body = cause.getExchange().getIn().getBody(String.class);
@@ -77,7 +79,9 @@ public class ValidateRegExpTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").validate(bodyAs(String.class).regex("^\\d{2}\\.\\d{2}\\.\\d{4}$")).to("mock:result");
+                from("direct:start")
+                        .validate(bodyAs(String.class).regex("^\\d{2}\\.\\d{2}\\.\\d{4}$"))
+                        .to("mock:result");
             }
         };
     }

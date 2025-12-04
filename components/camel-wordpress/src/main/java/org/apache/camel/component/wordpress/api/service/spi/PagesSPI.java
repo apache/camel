@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.spi;
 
 import java.util.Date;
@@ -49,23 +50,35 @@ public interface PagesSPI {
     @Path("/v{apiVersion}/pages")
     @Produces(MediaType.APPLICATION_JSON)
     List<Page> list(
-            @PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context,
-            @QueryParam("page") Integer page, @QueryParam("per_page") Integer perPage,
-            @QueryParam("search") String search, @QueryParam("after") Date after, @QueryParam("author") List<Integer> author,
+            @PathParam("apiVersion") String apiVersion,
+            @QueryParam("context") Context context,
+            @QueryParam("page") Integer page,
+            @QueryParam("per_page") Integer perPage,
+            @QueryParam("search") String search,
+            @QueryParam("after") Date after,
+            @QueryParam("author") List<Integer> author,
             @QueryParam("author_exclude") List<Integer> authorExclude,
-            @QueryParam("before") Date before, @QueryParam("exclude") List<Integer> exclude,
-            @QueryParam("include") List<Integer> include, @QueryParam("menu_order") Integer menuOrder,
-            @QueryParam("offset") List<Integer> offset, @QueryParam("order") Order order,
-            @QueryParam("orderby") PageOrderBy orderBy, @QueryParam("parent") Integer parent,
-            @QueryParam("parent_exclude") Integer parentExclude, @QueryParam("slug") List<String> slug,
-            @QueryParam("status") PublishableStatus status, @QueryParam("filter") String filter);
+            @QueryParam("before") Date before,
+            @QueryParam("exclude") List<Integer> exclude,
+            @QueryParam("include") List<Integer> include,
+            @QueryParam("menu_order") Integer menuOrder,
+            @QueryParam("offset") List<Integer> offset,
+            @QueryParam("order") Order order,
+            @QueryParam("orderby") PageOrderBy orderBy,
+            @QueryParam("parent") Integer parent,
+            @QueryParam("parent_exclude") Integer parentExclude,
+            @QueryParam("slug") List<String> slug,
+            @QueryParam("status") PublishableStatus status,
+            @QueryParam("filter") String filter);
 
     // @formatter:off
     @GET
     @Path("/v{apiVersion}/pages/{pageId}")
     @Produces(MediaType.APPLICATION_JSON)
     Page retrieve(
-            @PathParam("apiVersion") String apiVersion, @PathParam("pageId") int pageId, @QueryParam("context") Context context,
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("pageId") int pageId,
+            @QueryParam("context") Context context,
             @QueryParam("password") String password);
 
     // @formatter:on
@@ -85,6 +98,7 @@ public interface PagesSPI {
     @DELETE
     @Path("/v{apiVersion}/pages/{pageId}")
     Page delete(
-            @PathParam("apiVersion") String apiVersion, @PathParam("pageId") int pageId, @QueryParam("force") boolean force);
-
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("pageId") int pageId,
+            @QueryParam("force") boolean force);
 }

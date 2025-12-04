@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
 
 import java.time.LocalDate;
@@ -75,7 +76,8 @@ public class OpenApiUtils {
     }
 
     public boolean isRequiredBody(Operation operation) {
-        return operation.getRequestBody() != null && Boolean.TRUE == operation.getRequestBody().getRequired();
+        return operation.getRequestBody() != null
+                && Boolean.TRUE == operation.getRequestBody().getRequired();
     }
 
     public String getConsumes(Operation operation) {
@@ -122,7 +124,8 @@ public class OpenApiUtils {
                     .filter(p -> "query".equals(p.getIn()))
                     .filter(p -> p.getSchema() != null)
                     .filter(p -> p.getSchema().getDefault() != null)
-                    .collect(Collectors.toMap(Parameter::getName, p -> p.getSchema().getDefault().toString()));
+                    .collect(Collectors.toMap(
+                            Parameter::getName, p -> p.getSchema().getDefault().toString()));
         }
         return defaultValues;
     }
@@ -210,13 +213,13 @@ public class OpenApiUtils {
             return null;
         }
         Matcher classNameMatcher = CLASS_NAME_PATTERN.matcher(schemaName);
-        String classToFind = classNameMatcher.find()
-                ? classNameMatcher.group(1)
-                : schemaName;
+        String classToFind = classNameMatcher.find() ? classNameMatcher.group(1) : schemaName;
 
         String schemaTitle = schema.getTitle();
         return scannedClasses.stream()
-                .filter(aClass -> aClass.getSimpleName().equals(classToFind) || aClass.getSimpleName().equals(schemaTitle)) //use either the name or title of schema to find the class
+                .filter(aClass -> aClass.getSimpleName().equals(classToFind)
+                        || aClass.getSimpleName()
+                                .equals(schemaTitle)) // use either the name or title of schema to find the class
                 .findFirst()
                 .orElse(null);
     }
@@ -235,7 +238,9 @@ public class OpenApiUtils {
         if (schema.getSpecVersion() == SpecVersion.V30) {
             return schema.getType();
         }
-        return schema.getTypes() == null ? null : schema.getTypes().stream().findFirst().orElse(null);
+        return schema.getTypes() == null
+                ? null
+                : schema.getTypes().stream().findFirst().orElse(null);
     }
 
     private String resolveClassName(Schema<?> schema, Class<?> clazz) {
@@ -264,15 +269,20 @@ public class OpenApiUtils {
     private void scan() {
         if (packageScanInit.compareAndSet(false, true)) {
             if (bindingPackage != null) {
-                StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
-                StartupStep step = recorder.beginStep(RestOpenApiProcessor.class, "openapi-binding",
-                        "OpenAPI binding classes package scan");
+                StartupStepRecorder recorder =
+                        camelContext.getCamelContextExtension().getStartupStepRecorder();
+                StartupStep step = recorder.beginStep(
+                        RestOpenApiProcessor.class, "openapi-binding", "OpenAPI binding classes package scan");
                 String[] pcks = bindingPackage.split(",");
                 PackageScanClassResolver resolver = PluginHelper.getPackageScanClassResolver(camelContext);
-                // just add all classes as the POJOs can be generated with all kind of tools and with and without annotations
+                // just add all classes as the POJOs can be generated with all kind of tools and with and without
+                // annotations
                 scannedClasses.addAll(resolver.findImplementations(Object.class, pcks));
                 if (!scannedClasses.isEmpty()) {
-                    LOG.info("Binding package scan found {} classes in packages: {}", scannedClasses.size(), bindingPackage);
+                    LOG.info(
+                            "Binding package scan found {} classes in packages: {}",
+                            scannedClasses.size(),
+                            bindingPackage);
                 }
                 recorder.endStep(step);
             }

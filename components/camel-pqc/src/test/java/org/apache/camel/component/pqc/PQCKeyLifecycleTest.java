@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.file.Path;
 import java.security.KeyPair;
@@ -32,8 +35,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class PQCKeyLifecycleTest {
 
@@ -67,7 +68,8 @@ public class PQCKeyLifecycleTest {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
         // Generate a Dilithium key pair
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "test-dilithium-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair =
+                keyManager.generateKeyPair("DILITHIUM", "test-dilithium-key", DilithiumParameterSpec.dilithium2);
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -96,7 +98,8 @@ public class PQCKeyLifecycleTest {
         // Verify key can be retrieved
         KeyPair retrieved = keyManager.getKey("test-falcon-key");
         assertNotNull(retrieved);
-        assertArrayEquals(keyPair.getPublic().getEncoded(), retrieved.getPublic().getEncoded());
+        assertArrayEquals(
+                keyPair.getPublic().getEncoded(), retrieved.getPublic().getEncoded());
     }
 
     @Test
@@ -143,8 +146,8 @@ public class PQCKeyLifecycleTest {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
         // Generate and export a key
-        KeyPair originalKeyPair = keyManager.generateKeyPair("DILITHIUM", "import-test-key",
-                DilithiumParameterSpec.dilithium2);
+        KeyPair originalKeyPair =
+                keyManager.generateKeyPair("DILITHIUM", "import-test-key", DilithiumParameterSpec.dilithium2);
         byte[] exportedKey = keyManager.exportPublicKey(originalKeyPair, KeyLifecycleManager.KeyFormat.PEM);
 
         // Import the key
@@ -154,7 +157,9 @@ public class PQCKeyLifecycleTest {
         assertNotNull(importedKeyPair.getPublic());
 
         // Compare public keys
-        assertArrayEquals(originalKeyPair.getPublic().getEncoded(), importedKeyPair.getPublic().getEncoded());
+        assertArrayEquals(
+                originalKeyPair.getPublic().getEncoded(),
+                importedKeyPair.getPublic().getEncoded());
     }
 
     @Test
@@ -178,14 +183,16 @@ public class PQCKeyLifecycleTest {
         assertEquals(KeyMetadata.KeyStatus.ACTIVE, newMetadata.getStatus());
 
         // Keys should be different
-        assertFalse(java.util.Arrays.equals(oldKeyPair.getPublic().getEncoded(), newKeyPair.getPublic().getEncoded()));
+        assertFalse(java.util.Arrays.equals(
+                oldKeyPair.getPublic().getEncoded(), newKeyPair.getPublic().getEncoded()));
     }
 
     @Test
     void testKeyMetadataTracking() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "metadata-test-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair =
+                keyManager.generateKeyPair("DILITHIUM", "metadata-test-key", DilithiumParameterSpec.dilithium2);
         KeyMetadata metadata = keyManager.getKeyMetadata("metadata-test-key");
 
         // Initial state
@@ -312,8 +319,8 @@ public class PQCKeyLifecycleTest {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
         // Generate and store a key
-        KeyPair originalKeyPair = keyManager.generateKeyPair("DILITHIUM", "persistence-test-key",
-                DilithiumParameterSpec.dilithium2);
+        KeyPair originalKeyPair =
+                keyManager.generateKeyPair("DILITHIUM", "persistence-test-key", DilithiumParameterSpec.dilithium2);
 
         // Create a new manager instance (simulating restart)
         KeyLifecycleManager newManager = new FileBasedKeyLifecycleManager(tempDir.toString());
@@ -323,8 +330,12 @@ public class PQCKeyLifecycleTest {
         assertNotNull(retrievedKeyPair);
 
         // Verify keys match
-        assertArrayEquals(originalKeyPair.getPublic().getEncoded(), retrievedKeyPair.getPublic().getEncoded());
-        assertArrayEquals(originalKeyPair.getPrivate().getEncoded(), retrievedKeyPair.getPrivate().getEncoded());
+        assertArrayEquals(
+                originalKeyPair.getPublic().getEncoded(),
+                retrievedKeyPair.getPublic().getEncoded());
+        assertArrayEquals(
+                originalKeyPair.getPrivate().getEncoded(),
+                retrievedKeyPair.getPrivate().getEncoded());
 
         // Verify metadata persisted
         KeyMetadata metadata = newManager.getKeyMetadata("persistence-test-key");

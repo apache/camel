@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.activation.DataHandler;
 
@@ -27,13 +30,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class MulticastAggregationStrategyTest extends CamelTestSupport {
 
     @Test
     void testAggregationStrategyWithAttachment() {
-        Exchange exchange = ExchangeBuilder.anExchange(new DefaultCamelContext()).build();
+        Exchange exchange =
+                ExchangeBuilder.anExchange(new DefaultCamelContext()).build();
 
         template.send("direct:start", exchange);
 
@@ -48,15 +50,14 @@ class MulticastAggregationStrategyTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .multicast(new AttachmentMessageAggregationStrategy()).stopOnException()
+                        .multicast(new AttachmentMessageAggregationStrategy())
+                        .stopOnException()
                         .to("direct:setBody", "direct:setAttachment")
-                    .end();
+                        .end();
 
-                from("direct:setBody")
-                        .setBody(Builder.constant("body"));
+                from("direct:setBody").setBody(Builder.constant("body"));
 
-                from("direct:setAttachment")
-                        .setBody(Builder.constant("attachment".getBytes()));
+                from("direct:setAttachment").setBody(Builder.constant("attachment".getBytes()));
             }
         };
     }
@@ -73,8 +74,9 @@ class MulticastAggregationStrategyTest extends CamelTestSupport {
                 oldExchange.getMessage().setBody(newExchange.getIn().getBody());
             } else {
                 byte[] data = newExchange.getIn().getBody(byte[].class);
-                oldExchange.getMessage(AttachmentMessage.class).addAttachment("attachment",
-                        new DataHandler(data, "text/plain"));
+                oldExchange
+                        .getMessage(AttachmentMessage.class)
+                        .addAttachment("attachment", new DataHandler(data, "text/plain"));
             }
 
             return oldExchange;

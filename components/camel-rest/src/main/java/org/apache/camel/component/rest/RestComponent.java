@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
 
 import java.util.LinkedHashMap;
@@ -39,15 +40,17 @@ public class RestComponent extends HeaderFilterStrategyComponent {
 
     @Metadata(label = "consumer")
     private String consumerComponentName;
+
     @Metadata(label = "producer")
     private String producerComponentName;
+
     @Metadata(label = "producer")
     private String apiDoc;
+
     @Metadata(label = "producer")
     private String host;
 
-    public RestComponent() {
-    }
+    public RestComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -208,8 +211,8 @@ public class RestComponent extends HeaderFilterStrategyComponent {
 
     private EndpointUriFactory getEndpointUriFactory(String name) {
         if (name != null) {
-            UriFactoryResolver resolver
-                    = getCamelContext().getCamelContextExtension().getContextPlugin(UriFactoryResolver.class);
+            UriFactoryResolver resolver =
+                    getCamelContext().getCamelContextExtension().getContextPlugin(UriFactoryResolver.class);
             if (resolver != null) {
                 return resolver.resolveFactory(name, getCamelContext());
             }

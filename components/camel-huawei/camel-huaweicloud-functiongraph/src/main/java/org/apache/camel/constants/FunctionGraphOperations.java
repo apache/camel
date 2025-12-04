@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.constants;
 
 public final class FunctionGraphOperations {
     public static final String INVOKE_FUNCTION = "invokeFunction";
 
-    private FunctionGraphOperations() {
-    }
+    private FunctionGraphOperations() {}
 }

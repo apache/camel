@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -224,7 +225,9 @@ public class GenericFile<T> implements WrappedFile<T> {
         // Make sure the names is normalized.
         String newFileName = FileUtil.normalizePath(newName);
         String newEndpointPath = FileUtil.normalizePath(
-                endpointPath.endsWith(String.valueOf(File.separatorChar)) ? endpointPath : endpointPath + File.separatorChar);
+                endpointPath.endsWith(String.valueOf(File.separatorChar))
+                        ? endpointPath
+                        : endpointPath + File.separatorChar);
 
         LOG.trace("Normalized endpointPath: {}", newEndpointPath);
         LOG.trace("Normalized newFileName: {}", newFileName);

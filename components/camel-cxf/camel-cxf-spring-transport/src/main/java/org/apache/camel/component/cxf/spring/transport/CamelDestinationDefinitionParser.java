@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring.transport;
 
 import org.apache.camel.component.cxf.transport.CamelDestination;
@@ -23,5 +24,4 @@ public class CamelDestinationDefinitionParser extends AbstractCamelContextBeanDe
     public CamelDestinationDefinitionParser() {
         setBeanClass(CamelDestination.class);
     }
-
 }

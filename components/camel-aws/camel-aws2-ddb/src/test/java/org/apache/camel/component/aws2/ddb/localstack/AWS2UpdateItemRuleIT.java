@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb.localstack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +39,6 @@ import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class AWS2UpdateItemRuleIT extends Aws2DDBBase {
 
     @EndpointInject("direct:start")
@@ -51,7 +52,8 @@ public class AWS2UpdateItemRuleIT extends Aws2DDBBase {
         final Map<String, AttributeValue> attributeMap = new HashMap<>();
         AttributeValue attributeValue = AttributeValue.builder().s("hello").build();
         attributeMap.put(attributeName, attributeValue);
-        attributeMap.put("secondary_attribute", AttributeValue.builder().s("value").build());
+        attributeMap.put(
+                "secondary_attribute", AttributeValue.builder().s("value").build());
 
         Exchange exchange = template.send("direct:start", new Processor() {
             public void process(Exchange exchange) {
@@ -70,15 +72,20 @@ public class AWS2UpdateItemRuleIT extends Aws2DDBBase {
         itemKey.put(attributeName, AttributeValue.builder().s("hello").build());
 
         Map<String, ExpectedAttributeValue> expectedAttributeValueMap = new HashMap<>();
-        expectedAttributeValueMap.put(attributeName,
-                ExpectedAttributeValue.builder().comparisonOperator(ComparisonOperator.EQ)
-                        .attributeValueList(AttributeValue.builder().s("hello").build()).build());
+        expectedAttributeValueMap.put(
+                attributeName,
+                ExpectedAttributeValue.builder()
+                        .comparisonOperator(ComparisonOperator.EQ)
+                        .attributeValueList(AttributeValue.builder().s("hello").build())
+                        .build());
         HashMap<String, AttributeValueUpdate> attributeMapUpdated = new HashMap<String, AttributeValueUpdate>();
 
-        attributeMapUpdated.put("secondary_attribute", AttributeValueUpdate.builder()
-                .value(AttributeValue.builder().s("new").build())
-                .action(AttributeAction.PUT)
-                .build());
+        attributeMapUpdated.put(
+                "secondary_attribute",
+                AttributeValueUpdate.builder()
+                        .value(AttributeValue.builder().s("new").build())
+                        .action(AttributeAction.PUT)
+                        .build());
 
         exchange = template.send("direct:start", new Processor() {
             public void process(Exchange exchange) {
@@ -100,10 +107,11 @@ public class AWS2UpdateItemRuleIT extends Aws2DDBBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(
-                        "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
-                                        + "&keyScalarType=" + ScalarAttributeType.S
-                                        + "&readCapacity=1&writeCapacity=1");
+                from("direct:start")
+                        .to("aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType="
+                                + KeyType.HASH
+                                + "&keyScalarType=" + ScalarAttributeType.S
+                                + "&readCapacity=1&writeCapacity=1");
             }
         };
     }

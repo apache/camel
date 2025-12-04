@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.operations.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Properties;
@@ -34,11 +38,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIfSystemProperty(named = "accountName", matches = ".*",
-                         disabledReason = "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey")
+@EnabledIfSystemProperty(
+        named = "accountName",
+        matches = ".*",
+        disabledReason =
+                "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueueServiceOperationsIT {
 
@@ -83,9 +87,7 @@ class QueueServiceOperationsIT {
 
         @SuppressWarnings("unchecked")
         final List<String> queues = ((List<QueueItem>) queuesResponse.getBody())
-                .stream()
-                .map(QueueItem::getName)
-                .toList();
+                .stream().map(QueueItem::getName).toList();
 
         assertTrue(queues.contains(queueName1));
         assertTrue(queues.contains(queueName2));

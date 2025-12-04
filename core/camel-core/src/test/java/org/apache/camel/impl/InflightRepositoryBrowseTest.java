@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 
@@ -25,9 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InflightRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InflightRepositoryBrowseTest extends ContextTestSupport {
 
@@ -52,23 +53,29 @@ public class InflightRepositoryBrowseTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo").to("mock:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        Collection<InflightRepository.InflightExchange> list = context.getInflightRepository().browse();
-                        assertEquals(1, list.size());
+                from("direct:start")
+                        .routeId("foo")
+                        .to("mock:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                Collection<InflightRepository.InflightExchange> list =
+                                        context.getInflightRepository().browse();
+                                assertEquals(1, list.size());
 
-                        InflightRepository.InflightExchange inflight = list.iterator().next();
-                        assertNotNull(inflight);
+                                InflightRepository.InflightExchange inflight =
+                                        list.iterator().next();
+                                assertNotNull(inflight);
 
-                        assertEquals(exchange, inflight.getExchange());
-                        assertEquals("foo", inflight.getFromRouteId());
-                        assertEquals("foo", inflight.getAtRouteId());
-                        assertEquals("myProcessor", inflight.getNodeId());
-                    }
-                }).id("myProcessor").to("mock:result");
+                                assertEquals(exchange, inflight.getExchange());
+                                assertEquals("foo", inflight.getFromRouteId());
+                                assertEquals("foo", inflight.getAtRouteId());
+                                assertEquals("myProcessor", inflight.getNodeId());
+                            }
+                        })
+                        .id("myProcessor")
+                        .to("mock:result");
             }
         };
     }
-
 }

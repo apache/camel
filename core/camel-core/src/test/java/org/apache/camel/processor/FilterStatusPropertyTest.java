@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,12 +51,12 @@ public class FilterStatusPropertyTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .filter(header("foo").isEqualTo("bar")).statusPropertyName("myBar")
+                        .filter(header("foo").isEqualTo("bar"))
+                        .statusPropertyName("myBar")
                         .to("mock:bar")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

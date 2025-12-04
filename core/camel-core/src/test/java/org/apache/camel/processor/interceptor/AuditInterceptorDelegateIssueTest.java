@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -26,8 +29,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuditInterceptorDelegateIssueTest extends ContextTestSupport {
 
@@ -104,5 +105,4 @@ public class AuditInterceptorDelegateIssueTest extends ContextTestSupport {
             return invoked;
         }
     }
-
 }

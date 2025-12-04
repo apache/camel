@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -73,7 +74,9 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 // we can also attach a predicate to the endpoint interceptor.
                 // So in this example the exchange is
                 // only intercepted if the body is Hello World
-                interceptSendToEndpoint("mock:foo").onWhen(body().isEqualTo("Hello World")).to("mock:detour")
+                interceptSendToEndpoint("mock:foo")
+                        .onWhen(body().isEqualTo("Hello World"))
+                        .to("mock:detour")
                         .transform(constant("Bye World"));
 
                 from("direct:second").to("mock:bar").to("mock:foo").to("mock:result");
@@ -113,7 +116,9 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 // is skipped and continued in the original route, so
                 // mock:result will receive
                 // the message.
-                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().transform(constant("Bye World"))
+                interceptSendToEndpoint("mock:foo")
+                        .skipSendToOriginalEndpoint()
+                        .transform(constant("Bye World"))
                         .to("mock:detour");
 
                 from("direct:third").to("mock:bar").to("mock:foo").to("mock:result");
@@ -201,5 +206,4 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

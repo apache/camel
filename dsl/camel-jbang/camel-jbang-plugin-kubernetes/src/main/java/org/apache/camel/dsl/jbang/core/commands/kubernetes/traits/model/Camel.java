@@ -27,21 +27,19 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "enabled", "properties", "runtimeVersion" })
+@JsonPropertyOrder({"enabled", "properties", "runtimeVersion"})
 public class Camel {
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
+
     @JsonProperty("properties")
     @JsonPropertyDescription("A list of properties to be provided to the camel route runtime")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> properties;
 
-    public Camel() {
-    }
+    public Camel() {}
 
     public Boolean getEnabled() {
         return this.enabled;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -24,35 +27,26 @@ import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class BonitaAPITest {
     @Test
     public void testGetProcessDefinitionEmptyInput() {
-        BonitaAPI bonitaApi = BonitaAPIBuilder
-                .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
-        assertThrows(IllegalArgumentException.class,
-                () -> bonitaApi.getProcessDefinition(""));
+        BonitaAPI bonitaApi = BonitaAPIBuilder.build(new BonitaAPIConfig("hostname", "port", "username", "password"));
+        assertThrows(IllegalArgumentException.class, () -> bonitaApi.getProcessDefinition(""));
     }
 
     @Test
     public void testStartCaseEmptyProcessDefinitionId() {
-        BonitaAPI bonitaApi = BonitaAPIBuilder
-                .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
+        BonitaAPI bonitaApi = BonitaAPIBuilder.build(new BonitaAPIConfig("hostname", "port", "username", "password"));
 
         Map<String, Serializable> map = new HashMap<>();
 
-        assertThrows(IllegalArgumentException.class,
-                () -> bonitaApi.startCase(null, map));
+        assertThrows(IllegalArgumentException.class, () -> bonitaApi.startCase(null, map));
     }
 
     @Test
     public void testStartCaseNUllContractInput() {
-        BonitaAPI bonitaApi = BonitaAPIBuilder
-                .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
+        BonitaAPI bonitaApi = BonitaAPIBuilder.build(new BonitaAPIConfig("hostname", "port", "username", "password"));
         ProcessDefinitionResponse processDefinition = new ProcessDefinitionResponse();
-        assertThrows(IllegalArgumentException.class,
-                () -> bonitaApi.startCase(processDefinition, null));
+        assertThrows(IllegalArgumentException.class, () -> bonitaApi.startCase(processDefinition, null));
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Create Network Request headers are applied properly
@@ -50,7 +51,6 @@ public class CreateNetworkCmdHeaderTest extends BaseDockerHeaderTest<CreateNetwo
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient.createNetworkCmd(), Mockito.times(1)).withName(networkName);
-
     }
 
     @Override
@@ -63,5 +63,4 @@ public class CreateNetworkCmdHeaderTest extends BaseDockerHeaderTest<CreateNetwo
     protected DockerOperation getOperation() {
         return DockerOperation.CREATE_NETWORK;
     }
-
 }

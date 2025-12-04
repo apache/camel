@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
@@ -38,8 +39,8 @@ public class PQCDefaultPicnicMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.PICNIC.getAlgorithm(),
-                    PQCSignatureAlgorithms.PICNIC.getBcProvider());
+            signer = Signature.getInstance(
+                    PQCSignatureAlgorithms.PICNIC.getAlgorithm(), PQCSignatureAlgorithms.PICNIC.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +48,8 @@ public class PQCDefaultPicnicMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.PICNIC.getAlgorithm(),
-                PQCSignatureAlgorithms.PICNIC.getBcProvider());
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.PICNIC.getAlgorithm(), PQCSignatureAlgorithms.PICNIC.getBcProvider());
         kpGen.initialize(PicnicParameterSpec.picnic3l5);
         return kpGen;
     }

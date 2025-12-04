@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
@@ -23,8 +24,7 @@ import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefiniti
  */
 public class SpringTransactionErrorHandlerBuilder extends SpringTransactionErrorHandlerDefinition {
 
-    public SpringTransactionErrorHandlerBuilder() {
-    }
+    public SpringTransactionErrorHandlerBuilder() {}
 
     public SpringTransactionErrorHandlerBuilder(Object transactedPolicy) {
         if (transactedPolicy instanceof String string) {
@@ -33,5 +33,4 @@ public class SpringTransactionErrorHandlerBuilder extends SpringTransactionError
             setTransactedPolicy(transactedPolicy);
         }
     }
-
 }

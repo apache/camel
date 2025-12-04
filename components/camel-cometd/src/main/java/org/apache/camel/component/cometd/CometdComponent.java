@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
 
 import java.net.URL;
@@ -65,16 +66,22 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
 
     @Metadata(label = "security", secret = true)
     private String sslKeyPassword;
+
     @Metadata(label = "security", secret = true)
     private String sslPassword;
+
     @Metadata(label = "security")
     private String sslKeystore;
+
     @Metadata(label = "security")
     private SecurityPolicy securityPolicy;
+
     @Metadata(label = "advanced")
     private List<BayeuxServer.Extension> extensions;
+
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
@@ -100,8 +107,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         }
     }
 
-    public CometdComponent() {
-    }
+    public CometdComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -134,7 +140,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
                 connector.setHost(endpoint.getUri().getHost());
                 if ("localhost".equalsIgnoreCase(endpoint.getUri().getHost())) {
                     LOG.warn("You use localhost interface! It means that no external connections will be available."
-                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)?");
+                            + " Don't you want to use 0.0.0.0 instead (all network interfaces)?");
                 }
 
                 server.addConnector(connector);
@@ -191,12 +197,10 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         }
     }
 
-    protected CometDServlet createServletForConnector(Server server, CometdEndpoint endpoint)
-            throws Exception {
+    protected CometDServlet createServletForConnector(Server server, CometdEndpoint endpoint) throws Exception {
         CometDServlet servlet = new CometDServlet();
 
-        ServletContextHandler context
-                = new ServletContextHandler("/", false, false);
+        ServletContextHandler context = new ServletContextHandler("/", false, false);
 
         server.setHandler(context);
 
@@ -381,5 +385,4 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
             context.addFilter(filterHolder, endpoint.getFilterPath(), EnumSet.allOf(DispatcherType.class));
         }
     }
-
 }

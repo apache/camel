@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -22,10 +27,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
 
@@ -46,7 +47,8 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
         // except for the response code and response text
         Map<String, Object> headers = out.getMessage().getHeaders();
         for (String key : headers.keySet()) {
-            if (!key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE) && !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT)) {
+            if (!key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE)
+                    && !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT)) {
                 assertFalse(key.toLowerCase().startsWith("camel"), "Should not contain any Camel internal headers");
             }
         }
@@ -69,5 +71,4 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
             return "Hi " + name;
         }
     }
-
 }

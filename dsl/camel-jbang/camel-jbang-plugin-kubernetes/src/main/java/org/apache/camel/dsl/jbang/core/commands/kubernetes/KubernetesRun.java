@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
+
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getPodPhase;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -61,227 +64,320 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getPodPhase;
-
 @CommandLine.Command(name = "run", description = "Run Camel application on Kubernetes", sortOptions = false)
 public class KubernetesRun extends KubernetesBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
-                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
+    @CommandLine.Parameters(
+            description =
+                    "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
+            arity = "0..9",
+            paramLabel = "<files>",
+            parameterConsumer = FilesConsumer.class)
     Path[] filePaths; // Defined only for file path completion; the field never used
 
     public List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
+    @CommandLine.Option(
+            names = {"--service-account"},
+            description = "The service account used to run the application.")
     String serviceAccount;
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Add a runtime property or properties from a file (syntax: [my-key=my-value|file:/path/to/my-conf.properties|/path/to/my-conf.properties].")
+    @CommandLine.Option(
+            names = {"--prop", "--property"},
+            description =
+                    "Add a runtime property or properties from a file (syntax: [my-key=my-value|file:/path/to/my-conf.properties|/path/to/my-conf.properties].")
     String[] properties;
 
-    @CommandLine.Option(names = { "--config" },
-                        description = "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
+    @CommandLine.Option(
+            names = {"--config"},
+            description =
+                    "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
     String[] configs;
 
-    @CommandLine.Option(names = { "--resource" },
-                        description = "Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).")
+    @CommandLine.Option(
+            names = {"--resource"},
+            description =
+                    "Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).")
     String[] resources;
 
-    @CommandLine.Option(names = { "--open-api" }, description = "Add an OpenAPI spec (syntax: [configmap|file]:name).")
+    @CommandLine.Option(
+            names = {"--open-api"},
+            description = "Add an OpenAPI spec (syntax: [configmap|file]:name).")
     String openApi;
 
-    @CommandLine.Option(names = { "--env" },
-                        description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
+    @CommandLine.Option(
+            names = {"--env"},
+            description =
+                    "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
     String[] envVars;
 
-    @CommandLine.Option(names = { "--volume" },
-                        description = "Mount a volume into the integration container, for instance \"-v pvcname:/container/path\".")
+    @CommandLine.Option(
+            names = {"--volume"},
+            description = "Mount a volume into the integration container, for instance \"-v pvcname:/container/path\".")
     String[] volumes;
 
-    @CommandLine.Option(names = { "--connect" },
-                        description = "A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.")
+    @CommandLine.Option(
+            names = {"--connect"},
+            description =
+                    "A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.")
     String[] connects;
 
-    @CommandLine.Option(names = { "--annotation" },
-                        description = "Add an annotation to the integration. Use name values pairs like \"--annotation my.company=hello\".")
+    @CommandLine.Option(
+            names = {"--annotation"},
+            description =
+                    "Add an annotation to the integration. Use name values pairs like \"--annotation my.company=hello\".")
     String[] annotations;
 
-    @CommandLine.Option(names = { "--label" },
-                        description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
+    @CommandLine.Option(
+            names = {"--label"},
+            description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
     String[] labels;
 
-    @CommandLine.Option(names = { "--trait" },
-                        description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
+    @CommandLine.Option(
+            names = {"--trait"},
+            description =
+                    "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
     String[] traits;
 
-    @CommandLine.Option(names = { "--wait" }, description = "Wait for the deployment to become ready.")
+    @CommandLine.Option(
+            names = {"--wait"},
+            description = "Wait for the deployment to become ready.")
     boolean wait;
 
-    @CommandLine.Option(names = { "--logs" }, description = "Print logs after Camel application has been started.")
+    @CommandLine.Option(
+            names = {"--logs"},
+            description = "Print logs after Camel application has been started.")
     boolean logs;
 
-    @CommandLine.Option(names = { "--reload", "--dev" },
-                        description = "Enables dev mode (live reload when source files are updated and saved)")
+    @CommandLine.Option(
+            names = {"--reload", "--dev"},
+            description = "Enables dev mode (live reload when source files are updated and saved)")
     boolean dev;
 
-    @CommandLine.Option(names = { "--quiet" }, description = "Quiet output - only show errors for build/deploy.")
+    @CommandLine.Option(
+            names = {"--quiet"},
+            description = "Quiet output - only show errors for build/deploy.")
     boolean quiet;
 
-    @CommandLine.Option(names = { "--verbose" }, description = "Verbose output of build/deploy progress")
+    @CommandLine.Option(
+            names = {"--verbose"},
+            description = "Verbose output of build/deploy progress")
     boolean verbose;
 
-    @CommandLine.Option(names = { "--cleanup" },
-                        defaultValue = "true",
-                        description = "Automatically removes deployment when process is stopped. Only in combination with --dev, --reload option.")
+    @CommandLine.Option(
+            names = {"--cleanup"},
+            defaultValue = "true",
+            description =
+                    "Automatically removes deployment when process is stopped. Only in combination with --dev, --reload option.")
     boolean cleanup = true;
 
-    @CommandLine.Option(names = { "--output" },
-                        description = "Just output the generated integration custom resource (supports: yaml or json).")
+    @CommandLine.Option(
+            names = {"--output"},
+            description = "Just output the generated integration custom resource (supports: yaml or json).")
     String output;
 
     // Export options
 
-    @CommandLine.Option(names = { "--image" },
-                        description = "The image name to be built.")
+    @CommandLine.Option(
+            names = {"--image"},
+            description = "The image name to be built.")
     String image;
 
-    @CommandLine.Option(names = { "--image-registry" },
-                        description = "The image registry to hold the app container image.")
+    @CommandLine.Option(
+            names = {"--image-registry"},
+            description = "The image registry to hold the app container image.")
     String imageRegistry;
 
-    @CommandLine.Option(names = { "--image-group" },
-                        description = "The image registry group used to push images to.")
+    @CommandLine.Option(
+            names = {"--image-group"},
+            description = "The image registry group used to push images to.")
     String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
-                        description = "The image builder used to build the container image (e.g. docker, jib, podman).")
+    @CommandLine.Option(
+            names = {"--image-builder"},
+            defaultValue = "jib",
+            description = "The image builder used to build the container image (e.g. docker, jib, podman).")
     String imageBuilder = "jib";
 
-    @CommandLine.Option(names = { "--cluster-type" },
-                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
+    @CommandLine.Option(
+            names = {"--cluster-type"},
+            description =
+                    "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
     String clusterType = "Kubernetes";
 
-    @CommandLine.Option(names = { "--image-build" }, defaultValue = "true",
-                        description = "Whether to build container image as part of the run.")
+    @CommandLine.Option(
+            names = {"--image-build"},
+            defaultValue = "true",
+            description = "Whether to build container image as part of the run.")
     boolean imageBuild = true;
 
-    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
-                        description = "Whether to push image to given image registry as part of the run.")
+    @CommandLine.Option(
+            names = {"--image-push"},
+            defaultValue = "true",
+            description = "Whether to push image to given image registry as part of the run.")
     boolean imagePush = true;
 
-    @CommandLine.Option(names = { "--image-platform" },
-                        description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
+    @CommandLine.Option(
+            names = {"--image-platform"},
+            description =
+                    "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
     String[] imagePlatforms;
 
-    @CommandLine.Option(names = { "--base-image" },
-                        description = "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:<java-version>).")
+    @CommandLine.Option(
+            names = {"--base-image"},
+            description =
+                    "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:<java-version>).")
     String baseImage;
 
-    @CommandLine.Option(names = { "--registry-mirror" },
-                        description = "Optional Docker registry mirror where to pull images from when building the container image.")
+    @CommandLine.Option(
+            names = {"--registry-mirror"},
+            description =
+                    "Optional Docker registry mirror where to pull images from when building the container image.")
     String registryMirror;
 
     // Export base options
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 
-    @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
-                        split = ",")
+    @CommandLine.Option(
+            names = {"--dep", "--dependency"},
+            description = "Add additional dependencies",
+            split = ",")
     List<String> dependencies = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        defaultValue = "quarkus",
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @CommandLine.Option(
+            names = {"--runtime"},
+            completionCandidates = RuntimeCompletionCandidates.class,
+            defaultValue = "quarkus",
+            converter = RuntimeTypeConverter.class,
+            description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime = RuntimeType.quarkus;
 
-    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
+    @CommandLine.Option(
+            names = {"--gav"},
+            description = "The Maven group:artifact:version")
     String gav;
 
-    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    @CommandLine.Option(
+            names = {"--exclude"},
+            description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    @CommandLine.Option(
+            names = {"--download"},
+            defaultValue = "true",
+            description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    @CommandLine.Option(
+            names = {"--package-scan-jars"},
+            defaultValue = "false",
+            description =
+                    "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
     boolean packageScanJars;
 
-    @CommandLine.Option(names = { "--maven-settings" },
-                        description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
-                                      + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+    @CommandLine.Option(
+            names = {"--maven-settings"},
+            description =
+                    "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
+                            + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
-    @CommandLine.Option(names = { "--maven-settings-security" },
-                        description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
+    @CommandLine.Option(
+            names = {"--maven-settings-security"},
+            description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
-    @CommandLine.Option(names = { "--maven-central-enabled" },
-                        description = "Whether downloading JARs from Maven Central repository is enabled")
+    @CommandLine.Option(
+            names = {"--maven-central-enabled"},
+            description = "Whether downloading JARs from Maven Central repository is enabled")
     boolean mavenCentralEnabled = true;
 
-    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" },
-                        description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    @CommandLine.Option(
+            names = {"--maven-apache-snapshot-enabled"},
+            description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     boolean mavenApacheSnapshotEnabled = true;
 
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version", defaultValue = "21")
+    @CommandLine.Option(
+            names = {"--java-version"},
+            description = "Java version",
+            defaultValue = "21")
     String javaVersion = "21";
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To export using a different Camel version than the default version.")
+    @CommandLine.Option(
+            names = {"--camel-version"},
+            description = "To export using a different Camel version than the default version.")
     String camelVersion;
 
-    @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version")
+    @CommandLine.Option(
+            names = {"--kamelets-version"},
+            description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
-    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
-                        description = "Profile to export (dev, test, or prod).")
+    @CommandLine.Option(
+            names = {"--profile"},
+            scope = CommandLine.ScopeType.INHERIT,
+            description = "Profile to export (dev, test, or prod).")
     String profile;
 
-    @CommandLine.Option(names = { "--local-kamelet-dir" },
-                        description = "Local directory for loading Kamelets (takes precedence)")
+    @CommandLine.Option(
+            names = {"--local-kamelet-dir"},
+            description = "Local directory for loading Kamelets (takes precedence)")
     String localKameletDir;
 
-    @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = RuntimeType.SPRING_BOOT_VERSION)
+    @CommandLine.Option(
+            names = {"--spring-boot-version"},
+            description = "Spring Boot version",
+            defaultValue = RuntimeType.SPRING_BOOT_VERSION)
     String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
 
-    @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
+    @CommandLine.Option(
+            names = {"--camel-spring-boot-version"},
+            description = "Camel version to use with Spring Boot")
     String camelSpringBootVersion;
 
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
+    @CommandLine.Option(
+            names = {"--quarkus-group-id"},
+            description = "Quarkus Platform Maven groupId",
+            defaultValue = "io.quarkus.platform")
     String quarkusGroupId = "io.quarkus.platform";
 
-    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
-                        defaultValue = "quarkus-bom")
+    @CommandLine.Option(
+            names = {"--quarkus-artifact-id"},
+            description = "Quarkus Platform Maven artifactId",
+            defaultValue = "quarkus-bom")
     String quarkusArtifactId = "quarkus-bom";
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
+    @CommandLine.Option(
+            names = {"--quarkus-version"},
+            description = "Quarkus Platform version",
+            defaultValue = RuntimeType.QUARKUS_VERSION)
     String quarkusVersion = RuntimeType.QUARKUS_VERSION;
 
-    @CommandLine.Option(names = { "--package-name" },
-                        description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
-                                      + "Use false to turn off and not include package name in the Java source files.")
+    @CommandLine.Option(
+            names = {"--package-name"},
+            description =
+                    "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
+                            + "Use false to turn off and not include package name in the Java source files.")
     String packageName;
 
-    @CommandLine.Option(names = { "--build-property" },
-                        description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
+    @CommandLine.Option(
+            names = {"--build-property"},
+            description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     List<String> buildProperties = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--disable-auto" },
-                        description = "Disable automatic cluster type detection and automatic settings for cluster.")
+    @CommandLine.Option(
+            names = {"--disable-auto"},
+            description = "Disable automatic cluster type detection and automatic settings for cluster.")
     boolean disableAuto = false;
 
-    @CommandLine.Option(names = { "--skip-plugins" }, defaultValue = "false",
-                        description = "Skip plugins during export")
+    @CommandLine.Option(
+            names = {"--skip-plugins"},
+            defaultValue = "false",
+            description = "Skip plugins during export")
     boolean skipPlugins = false;
 
     // DevMode/Reload state
@@ -350,7 +446,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         String workingDir = getIndexedWorkingDir(projectName);
         KubernetesExport export = configureExport(workingDir, baseDir);
-        boolean cronEnabled = computedTraits.getCronjob() != null && computedTraits.getCronjob().getEnabled();
+        boolean cronEnabled = computedTraits.getCronjob() != null
+                && computedTraits.getCronjob().getEnabled();
         if (cronEnabled) {
             // disable observability-services as CronJob doesn't use the container probes
             export.setObserve(false);
@@ -362,7 +459,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (output != null) {
-            boolean ksvcEnabled = computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled();
+            boolean ksvcEnabled = computedTraits.getKnativeService() != null
+                    && computedTraits.getKnativeService().getEnabled();
 
             exit = buildProjectOutput(workingDir);
             if (exit != 0) {
@@ -375,17 +473,15 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 case "yaml" -> {
                     if (ksvcEnabled) {
                         // trick the clusterType to be able to read from the jkube source directory
-                        manifestPath = KubernetesHelper.resolveKubernetesManifestPath("service",
-                                Paths.get(workingDir, "src/main/jkube"));
+                        manifestPath = KubernetesHelper.resolveKubernetesManifestPath(
+                                "service", Paths.get(workingDir, "src/main/jkube"));
                     } else {
-                        manifestPath = KubernetesHelper.resolveKubernetesManifestPath(clusterType,
-                                Paths.get(workingDir, "target/kubernetes"));
+                        manifestPath = KubernetesHelper.resolveKubernetesManifestPath(
+                                clusterType, Paths.get(workingDir, "target/kubernetes"));
                     }
                 }
-                case "json" ->
-                    manifestPath = KubernetesHelper.resolveKubernetesManifestPath(clusterType,
-                            Paths.get(workingDir, "target/kubernetes"),
-                            "json");
+                case "json" -> manifestPath = KubernetesHelper.resolveKubernetesManifestPath(
+                        clusterType, Paths.get(workingDir, "target/kubernetes"), "json");
                 default -> {
                     printer().printErr("Unsupported output format '%s' (supported: yaml, json)".formatted(output));
                     return 1;
@@ -507,15 +603,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 watchDir = filePath;
             }
 
-            filter = pathname -> files.stream()
-                    .map(FileUtil::stripPath)
-                    .anyMatch(name -> name.equals(pathname.getName()));
+            filter = pathname ->
+                    files.stream().map(FileUtil::stripPath).anyMatch(name -> name.equals(pathname.getName()));
         }
 
         FileWatcherResourceReloadStrategy reloadStrategy = new FileWatcherResourceReloadStrategy(watchDir);
         reloadStrategy.setResourceReload((name, resource) -> {
             synchronized (this) {
-
                 printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
 
                 devModeReloadCount += 1;
@@ -599,9 +693,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
             }
             printer().println("Run: " + kubectlCmd);
         }
-        var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_LABEL_NAME, projectName)
+        var pod = client(Pod.class)
+                .withLabel(BaseTrait.KUBERNETES_LABEL_NAME, projectName)
                 .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
-        printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
+        printer()
+                .println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
     }
 
     private void installShutdownHook(String projectName, String workingDir) {
@@ -625,9 +721,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private KubernetesClient createKubernetesClientForShutdownHook() {
         System.setProperty("vertx.disableDnsResolver", "true");
         var vertx = Vertx.vertx((new VertxOptions())
-                .setFileSystemOptions((new FileSystemOptions())
-                        .setFileCachingEnabled(false)
-                        .setClassPathResolvingEnabled(false))
+                .setFileSystemOptions(
+                        (new FileSystemOptions()).setFileCachingEnabled(false).setClassPathResolvingEnabled(false))
                 .setUseDaemonThread(true));
         var client = new KubernetesClientBuilder()
                 .withHttpClientFactory(new VertxHttpClientFactory(vertx))
@@ -664,11 +759,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
         // suppress maven transfer progress
         args.add("-ntp");
 
-        if (computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled()) {
+        if (computedTraits.getKnativeService() != null
+                && computedTraits.getKnativeService().getEnabled()) {
             // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
             // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
             // and there is no need for the regular Deployment as the knative Service manifest, once deployed
-            // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not generate the deployment.yml
+            // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not
+            // generate the deployment.yml
             args.add("-Djkube.skip.resource=true");
         }
 
@@ -732,11 +829,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
         var prefix = isOpenshift ? "oc" : "k8s";
-        if (computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled()) {
+        if (computedTraits.getKnativeService() != null
+                && computedTraits.getKnativeService().getEnabled()) {
             // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
             // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
             // and there is no need for the regular Deployment as the knative Service manifest, once deployed
-            // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not generate the deployment.yml
+            // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not
+            // generate the deployment.yml
             // apply the knative service manifest and specify the knative service.yml
             args.add("-Djkube.skip.resource=true");
             args.add(prefix + ":build");
@@ -816,8 +915,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         // we have to inspect the configmap and retrieve the key names, as they are
                         // mapped to the mounted file names.
                         Set<String> configmapKeys = retrieveConfigmapKeys(name);
-                        configmapKeys.forEach(key -> propertiesLocation
-                                .add("file:" + MountTrait.CONF_DIR + MountTrait.CONFIGMAPS + "/" + name + "/" + key));
+                        configmapKeys.forEach(key -> propertiesLocation.add(
+                                "file:" + MountTrait.CONF_DIR + MountTrait.CONFIGMAPS + "/" + name + "/" + key));
                     }
                 } else if (c.startsWith("secret:")) {
                     String name = c.substring("secret:".length());
@@ -825,8 +924,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         propertiesLocation.add("file:" + MountTrait.CONF_DIR + MountTrait.SECRETS + "/" + name);
                     } else {
                         Set<String> secretKeys = retrieveSecretKeys(name);
-                        secretKeys.forEach(key -> propertiesLocation
-                                .add("file:" + MountTrait.CONF_DIR + MountTrait.SECRETS + "/" + name + "/" + key));
+                        secretKeys.forEach(key -> propertiesLocation.add(
+                                "file:" + MountTrait.CONF_DIR + MountTrait.SECRETS + "/" + name + "/" + key));
                     }
                 }
             }
@@ -850,7 +949,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         if (namespace != null || client.getNamespace() != null) {
             ns = namespace != null ? namespace : client.getNamespace();
         }
-        Map<String, String> data = client.configMaps().inNamespace(ns).withName(name).get().getData();
+        Map<String, String> data =
+                client.configMaps().inNamespace(ns).withName(name).get().getData();
         return data.keySet();
     }
 
@@ -860,7 +960,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         if (namespace != null || client.getNamespace() != null) {
             ns = namespace != null ? namespace : client.getNamespace();
         }
-        Map<String, String> data = client.secrets().inNamespace(ns).withName(name).get().getData();
+        Map<String, String> data =
+                client.secrets().inNamespace(ns).withName(name).get().getData();
         return data.keySet();
     }
 
@@ -884,5 +985,4 @@ public class KubernetesRun extends KubernetesBaseCommand {
             cmd.files.add(arg);
         }
     }
-
 }

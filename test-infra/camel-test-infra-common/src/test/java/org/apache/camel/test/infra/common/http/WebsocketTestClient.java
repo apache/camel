@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.common.http;
 
 import java.net.URI;
@@ -85,7 +86,6 @@ public class WebsocketTestClient {
      * @param count   the number of expected messages
      * @param context the SSL context for the client
      */
-
     public WebsocketTestClient(String url, int count, SSLContext context) {
         this.received = new ArrayList<>();
         this.latch = new CountDownLatch(count);
@@ -97,7 +97,10 @@ public class WebsocketTestClient {
      * Connects to the host using a builtin listener
      */
     public void connect() {
-        websocket = modernClient.newWebSocketBuilder().buildAsync(URI.create(url), new TestWebSocketListener()).join();
+        websocket = modernClient
+                .newWebSocketBuilder()
+                .buildAsync(URI.create(url), new TestWebSocketListener())
+                .join();
     }
 
     /**

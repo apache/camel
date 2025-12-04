@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,10 +36,6 @@ import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class DataFormatProviderTest {
 
     @Test
@@ -49,10 +50,8 @@ public class DataFormatProviderTest {
     public void testIsReadableWriteableComplexSubMatch() {
         DataFormatProvider<Book> p = new DataFormatProvider<>();
         p.setFormat("text/plain", new TestDataFormat());
-        assertTrue(p.isReadable(Book.class, Book.class, new Annotation[] {},
-                MediaType.valueOf("text/plain+v2")));
-        assertTrue(p.isWriteable(Book.class, Book.class, new Annotation[] {},
-                MediaType.valueOf("text/plain+v2")));
+        assertTrue(p.isReadable(Book.class, Book.class, new Annotation[] {}, MediaType.valueOf("text/plain+v2")));
+        assertTrue(p.isWriteable(Book.class, Book.class, new Annotation[] {}, MediaType.valueOf("text/plain+v2")));
     }
 
     @Test
@@ -77,8 +76,13 @@ public class DataFormatProviderTest {
         p.setFormat("text/plain", new TestDataFormat());
 
         ByteArrayInputStream bis = new ByteArrayInputStream("dataformat".getBytes());
-        Book b = p.readFrom(Book.class, Book.class, new Annotation[] {}, MediaType.TEXT_PLAIN_TYPE,
-                new MetadataMap<String, String>(), bis);
+        Book b = p.readFrom(
+                Book.class,
+                Book.class,
+                new Annotation[] {},
+                MediaType.TEXT_PLAIN_TYPE,
+                new MetadataMap<String, String>(),
+                bis);
         assertEquals("dataformat", b.getName());
     }
 
@@ -88,8 +92,14 @@ public class DataFormatProviderTest {
         p.setFormat("text/plain", new TestDataFormat());
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        p.writeTo(new Book("dataformat"), Book.class, Book.class, new Annotation[] {},
-                MediaType.TEXT_PLAIN_TYPE, new MetadataMap<String, Object>(), bos);
+        p.writeTo(
+                new Book("dataformat"),
+                Book.class,
+                Book.class,
+                new Annotation[] {},
+                MediaType.TEXT_PLAIN_TYPE,
+                new MetadataMap<String, Object>(),
+                bos);
         assertEquals("dataformat", bos.toString());
     }
 
@@ -97,8 +107,7 @@ public class DataFormatProviderTest {
         private String name;
 
         @SuppressWarnings("unused")
-        Book() {
-        }
+        Book() {}
 
         Book(String name) {
             this.name = name;
@@ -137,5 +146,4 @@ public class DataFormatProviderTest {
             // noop
         }
     }
-
 }

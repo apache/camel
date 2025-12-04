@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.Charset;
 import java.util.Set;
@@ -25,12 +32,6 @@ import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppMessage</code>
@@ -106,17 +107,9 @@ public class SmppMessageTest {
     public void createBodyShouldNotMangle8bitDataCodingShortMessage() {
         final Set<String> encodings = Charset.availableCharsets().keySet();
 
-        final byte[] dataCodings = {
-                (byte) 0x02,
-                (byte) 0x04,
-                (byte) 0xF6,
-                (byte) 0xF4
-        };
+        final byte[] dataCodings = {(byte) 0x02, (byte) 0x04, (byte) 0xF6, (byte) 0xF4};
 
-        byte[] body = {
-                (byte) 0xFF, 'A', 'B', (byte) 0x00,
-                (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF
-        };
+        byte[] body = {(byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF};
 
         DeliverSm command = new DeliverSm();
         SmppConfiguration config = new SmppConfiguration();
@@ -129,10 +122,9 @@ public class SmppMessageTest {
                 message = new SmppMessage(camelContext, command, config);
 
                 assertArrayEquals(
-                        body, (byte[]) message.createBody(),
-                        String.format("data coding=0x%02X; encoding=%s",
-                                dataCoding,
-                                encoding));
+                        body,
+                        (byte[]) message.createBody(),
+                        String.format("data coding=0x%02X; encoding=%s", dataCoding, encoding));
             }
         }
     }

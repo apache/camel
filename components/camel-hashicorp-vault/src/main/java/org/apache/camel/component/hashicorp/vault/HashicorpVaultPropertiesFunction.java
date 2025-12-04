@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hashicorp.vault;
 
 import java.util.HashSet;
@@ -68,20 +69,15 @@ import org.springframework.vault.support.VaultResponse;
  * following notation <tt>hashicorp:engine:database/username:admin</tt>. The admin value will be returned as default
  * value, if the conditions above were all met.
  */
-
 @org.apache.camel.spi.annotations.PropertiesFunction("hashicorp")
 public class HashicorpVaultPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
     private static final String CAMEL_HASHICORP_VAULT_TOKEN_ENV = "CAMEL_HASHICORP_VAULT_TOKEN";
     private static final String CAMEL_HASHICORP_VAULT_HOST_ENV = "CAMEL_HASHICORP_VAULT_HOST";
-    private static final String CAMEL_HASHICORP_VAULT_PORT_ENV
-            = "CAMEL_HASHICORP_VAULT_PORT";
-    private static final String CAMEL_HASHICORP_VAULT_SCHEME_ENV
-            = "CAMEL_HASHICORP_VAULT_SCHEME";
-    private static final String CAMEL_HASHICORP_VAULT_CLOUD_ENV
-            = "CAMEL_HASHICORP_VAULT_CLOUD";
-    private static final String CAMEL_HASHICORP_VAULT_NAMESPACE_ENV
-            = "CAMEL_HASHICORP_VAULT_NAMESPACE";
+    private static final String CAMEL_HASHICORP_VAULT_PORT_ENV = "CAMEL_HASHICORP_VAULT_PORT";
+    private static final String CAMEL_HASHICORP_VAULT_SCHEME_ENV = "CAMEL_HASHICORP_VAULT_SCHEME";
+    private static final String CAMEL_HASHICORP_VAULT_CLOUD_ENV = "CAMEL_HASHICORP_VAULT_CLOUD";
+    private static final String CAMEL_HASHICORP_VAULT_NAMESPACE_ENV = "CAMEL_HASHICORP_VAULT_NAMESPACE";
     private CamelContext camelContext;
     private VaultTemplate client;
     private final Set<String> secrets = new HashSet<>();
@@ -110,9 +106,13 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
             cloud = Boolean.parseBoolean(System.getenv(CAMEL_HASHICORP_VAULT_CLOUD_ENV));
         }
         namespace = System.getenv(CAMEL_HASHICORP_VAULT_NAMESPACE_ENV);
-        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(host)
-                && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme) && ObjectHelper.isEmpty(namespace)) {
-            HashicorpVaultConfiguration hashicorpVaultConfiguration = getCamelContext().getVaultConfiguration().hashicorp();
+        if (ObjectHelper.isEmpty(token)
+                && ObjectHelper.isEmpty(host)
+                && ObjectHelper.isEmpty(port)
+                && ObjectHelper.isEmpty(scheme)
+                && ObjectHelper.isEmpty(namespace)) {
+            HashicorpVaultConfiguration hashicorpVaultConfiguration =
+                    getCamelContext().getVaultConfiguration().hashicorp();
             if (ObjectHelper.isNotEmpty(hashicorpVaultConfiguration)) {
                 token = hashicorpVaultConfiguration.getToken();
                 host = hashicorpVaultConfiguration.getHost();
@@ -124,16 +124,16 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
                 }
             }
         }
-        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(host)
-                && ObjectHelper.isNotEmpty(port) && ObjectHelper.isNotEmpty(scheme)) {
+        if (ObjectHelper.isNotEmpty(token)
+                && ObjectHelper.isNotEmpty(host)
+                && ObjectHelper.isNotEmpty(port)
+                && ObjectHelper.isNotEmpty(scheme)) {
             VaultEndpoint vaultEndpoint = new VaultEndpoint();
             vaultEndpoint.setHost(host);
             vaultEndpoint.setPort(Integer.parseInt(port));
             vaultEndpoint.setScheme(scheme);
 
-            client = new VaultTemplate(
-                    vaultEndpoint,
-                    new TokenAuthentication(token));
+            client = new VaultTemplate(vaultEndpoint, new TokenAuthentication(token));
         } else {
             throw new RuntimeCamelException(
                     "Using the Hashicorp Properties Function requires setting Token, Host, port and scheme properties");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ibmmq.common;
 
 import jakarta.jms.ConnectionFactory;
@@ -24,11 +25,10 @@ import com.ibm.msg.client.jakarta.wmq.WMQConstants;
 
 public class ConnectionFactoryHelper {
 
-    private ConnectionFactoryHelper() {
+    private ConnectionFactoryHelper() {}
 
-    }
-
-    public static ConnectionFactory createConnectionFactory(String queueManager, String channel, int port) throws JMSException {
+    public static ConnectionFactory createConnectionFactory(String queueManager, String channel, int port)
+            throws JMSException {
         MQConnectionFactory factory = new MQConnectionFactory();
         factory.setHostName("localhost");
         factory.setQueueManager(queueManager);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.batch;
 
 import org.apache.camel.Category;
@@ -34,25 +35,34 @@ import org.springframework.batch.core.launch.JobLauncher;
 /**
  * Send messages to Spring Batch for further processing.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName",
-             remote = false, producerOnly = true, headersClass = SpringBatchConstants.class, category = { Category.WORKFLOW })
+@UriEndpoint(
+        firstVersion = "2.10.0",
+        scheme = "spring-batch",
+        title = "Spring Batch",
+        syntax = "spring-batch:jobName",
+        remote = false,
+        producerOnly = true,
+        headersClass = SpringBatchConstants.class,
+        category = {Category.WORKFLOW})
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private String jobName;
+
     @UriParam
     private boolean jobFromHeader;
+
     @UriParam
     private JobLauncher jobLauncher;
+
     @UriParam
     private JobRegistry jobRegistry;
 
     private Job job;
 
-    public SpringBatchEndpoint(String endpointUri, Component component,
-                               JobLauncher jobLauncher,
-                               String jobName, JobRegistry jobRegistry) {
+    public SpringBatchEndpoint(
+            String endpointUri, Component component, JobLauncher jobLauncher, String jobName, JobRegistry jobRegistry) {
         super(endpointUri, component);
         this.jobLauncher = jobLauncher;
         this.jobName = jobName;
@@ -134,5 +144,4 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     public void setJobRegistry(JobRegistry jobRegistry) {
         this.jobRegistry = jobRegistry;
     }
-
 }

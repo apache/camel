@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettySimulateInOnlyTest extends BaseJettyTest {
 
@@ -48,11 +49,14 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
                         // and then construct a canned empty response
                         .transform(constant("OK"));
 
-                from("direct:continue").delay(1500).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        route += "B";
-                    }
-                }).to("mock:result");
+                from("direct:continue")
+                        .delay(1500)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                route += "B";
+                            }
+                        })
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         });
@@ -84,15 +88,19 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
                         // we can do this by changing the MEP and sending to a seda
                         // endpoint to spin off
                         // a new thread continue doing the routing
-                        .setExchangePattern(ExchangePattern.InOnly).to("seda:continue")
+                        .setExchangePattern(ExchangePattern.InOnly)
+                        .to("seda:continue")
                         // and then construct a canned empty response
                         .transform(constant("OK"));
 
-                from("seda:continue").delay(1000).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        route += "B";
-                    }
-                }).to("mock:result");
+                from("seda:continue")
+                        .delay(1000)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                route += "B";
+                            }
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -111,5 +119,4 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
 
         assertEquals("AB", route);
     }
-
 }

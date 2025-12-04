@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,9 +33,6 @@ import org.apache.camel.component.reactive.streams.support.TestSubscriber;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BackpressurePublisherRoutePolicyTest extends BaseReactiveTest {
 
@@ -71,8 +72,7 @@ public class BackpressurePublisherRoutePolicyTest extends BaseReactiveTest {
         pub.subscribe(subscriber);
 
         // Add another (fast) subscription that should not affect the backpressure on the route
-        Observable.fromPublisher(pub)
-                .subscribe();
+        Observable.fromPublisher(pub).subscribe();
 
         context.start();
 
@@ -84,7 +84,8 @@ public class BackpressurePublisherRoutePolicyTest extends BaseReactiveTest {
         subscriber.request(1);
         Thread.sleep(250);
 
-        StatefulService service = (StatefulService) context().getRoute("policy-route").getConsumer();
+        StatefulService service =
+                (StatefulService) context().getRoute("policy-route").getConsumer();
         // ensure the route is stopped or suspended
         assertTrue(service.isStopped() || service.isSuspended());
 
@@ -130,8 +131,7 @@ public class BackpressurePublisherRoutePolicyTest extends BaseReactiveTest {
         pub.subscribe(subscriber);
 
         // Add another (fast) subscription that should not affect the backpressure on the route
-        Observable.fromPublisher(pub)
-                .subscribe();
+        Observable.fromPublisher(pub).subscribe();
 
         context.start();
 
@@ -143,17 +143,17 @@ public class BackpressurePublisherRoutePolicyTest extends BaseReactiveTest {
         subscriber.request(1);
         Thread.sleep(250);
 
-        StatefulService service = (StatefulService) context().getRoute("policy-route").getConsumer();
+        StatefulService service =
+                (StatefulService) context().getRoute("policy-route").getConsumer();
         // ensure the route is stopped or suspended
         assertTrue(service.isStopped() || service.isSuspended());
         subscriber.cancel();
 
         // request other exchanges to ensure that the route works
         CountDownLatch latch = new CountDownLatch(20);
-        Observable.fromPublisher(pub)
-                .subscribe(n -> {
-                    latch.countDown();
-                });
+        Observable.fromPublisher(pub).subscribe(n -> {
+            latch.countDown();
+        });
 
         assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
@@ -162,5 +162,4 @@ public class BackpressurePublisherRoutePolicyTest extends BaseReactiveTest {
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

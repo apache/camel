@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.producer;
 
 import org.apache.camel.Exchange;
@@ -66,5 +67,4 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
     protected abstract T processUpdate(Exchange exchange);
 
     protected abstract T processDelete(Exchange exchange);
-
 }

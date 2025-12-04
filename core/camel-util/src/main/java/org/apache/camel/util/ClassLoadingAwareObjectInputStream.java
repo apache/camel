@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.io.IOException;
@@ -68,22 +69,14 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
         if (returnType == void.class) {
             return null;
         } else if (returnType.isPrimitive()) {
-            if (returnType == boolean.class)
-                return Boolean.FALSE;
-            if (returnType == byte.class)
-                return (byte) 0;
-            if (returnType == short.class)
-                return (short) 0;
-            if (returnType == int.class)
-                return 0;
-            if (returnType == long.class)
-                return 0L;
-            if (returnType == float.class)
-                return 0.0f;
-            if (returnType == double.class)
-                return 0.0d;
-            if (returnType == char.class)
-                return '\0';
+            if (returnType == boolean.class) return Boolean.FALSE;
+            if (returnType == byte.class) return (byte) 0;
+            if (returnType == short.class) return (short) 0;
+            if (returnType == int.class) return 0;
+            if (returnType == long.class) return 0L;
+            if (returnType == float.class) return 0.0f;
+            if (returnType == double.class) return 0.0d;
+            if (returnType == char.class) return '\0';
         }
         return null;
     };
@@ -100,7 +93,8 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
             return Proxy.newProxyInstance(cl, cinterfaces, NOOP_HANDLER).getClass();
         } catch (IllegalArgumentException e) {
             try {
-                return Proxy.newProxyInstance(inLoader, cinterfaces, NOOP_HANDLER).getClass();
+                return Proxy.newProxyInstance(inLoader, cinterfaces, NOOP_HANDLER)
+                        .getClass();
             } catch (IllegalArgumentException e1) {
                 // ignore
             }

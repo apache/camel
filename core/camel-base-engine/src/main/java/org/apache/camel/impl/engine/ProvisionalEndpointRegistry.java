@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
@@ -33,8 +34,7 @@ import org.apache.camel.support.LRUCacheFactory;
  * A provisional (temporary) {@link EndpointRegistry} that is only used during startup of Apache Camel to make starting
  * Camel faster while {@link LRUCacheFactory} is warming up etc.
  */
-class ProvisionalEndpointRegistry extends HashMap<NormalizedEndpointUri, Endpoint>
-        implements EndpointRegistry {
+class ProvisionalEndpointRegistry extends HashMap<NormalizedEndpointUri, Endpoint> implements EndpointRegistry {
 
     @Override
     public void start() {

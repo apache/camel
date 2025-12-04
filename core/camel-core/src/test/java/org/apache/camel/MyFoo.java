@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 public class MyFoo {
 
     private String name;
 
-    public MyFoo() {
-    }
+    public MyFoo() {}
 
     public MyFoo(String name) {
         this.name = name;

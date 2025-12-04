@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atmosphere.websocket;
 
 import org.apache.camel.test.AvailablePortFinder;
@@ -32,19 +33,22 @@ public abstract class WebsocketCamelRouterWithInitParamTestSupport extends Camel
 
     @BeforeEach
     void setupJetty() {
-        final JettyConfiguration.WebSocketContextHandlerConfiguration.ServletConfiguration<CamelWebSocketServlet> servletConfiguration
-                = new JettyConfiguration.WebSocketContextHandlerConfiguration.ServletConfiguration<>(
-                        new CamelWebSocketServlet(),
-                        JettyConfiguration.WebSocketContextHandlerConfiguration.ServletConfiguration.ROOT_PATH_SPEC,
-                        "CamelWsServlet");
+        final JettyConfiguration.WebSocketContextHandlerConfiguration.ServletConfiguration<CamelWebSocketServlet>
+                servletConfiguration =
+                        new JettyConfiguration.WebSocketContextHandlerConfiguration.ServletConfiguration<>(
+                                new CamelWebSocketServlet(),
+                                JettyConfiguration.WebSocketContextHandlerConfiguration.ServletConfiguration
+                                        .ROOT_PATH_SPEC,
+                                "CamelWsServlet");
 
         servletConfiguration.addInitParameter("events", "true");
 
-        final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder
-                .emptyTemplate()
+        final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder.emptyTemplate()
                 .withPort(PORT)
                 .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH)
-                .withWebSocketConfiguration().addServletConfiguration(servletConfiguration).build()
+                .withWebSocketConfiguration()
+                .addServletConfiguration(servletConfiguration)
+                .build()
                 .build();
 
         service = new JettyEmbeddedService(jettyConfiguration);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.model;
 
 import java.util.Map;
@@ -27,8 +28,7 @@ public class InfraBaseDTO {
     private String description;
     private Object serviceData;
 
-    public InfraBaseDTO() {
-    }
+    public InfraBaseDTO() {}
 
     public InfraBaseDTO(String alias, String aliasImplementation, String description, Object serviceData) {
         this.alias = alias;

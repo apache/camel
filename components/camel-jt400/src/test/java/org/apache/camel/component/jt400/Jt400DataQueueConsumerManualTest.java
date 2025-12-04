@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
+
+import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.Duration;
 import java.util.Properties;
@@ -26,9 +30,6 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTimeout;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test case for {@link Jt400DataQueueConsumer}.
@@ -78,7 +79,8 @@ public class Jt400DataQueueConsumerManualTest {
         Jt400Component component = new Jt400Component();
 
         component.setCamelContext(camel);
-        consumer = (Jt400DataQueueConsumer) component.createEndpoint(endpointURI).createPollingConsumer();
+        consumer =
+                (Jt400DataQueueConsumer) component.createEndpoint(endpointURI).createPollingConsumer();
         camel.start();
     }
 
@@ -87,8 +89,7 @@ public class Jt400DataQueueConsumerManualTest {
      */
     @Test
     public void testReceiveLong() {
-        assertTimeout(Duration.ofMillis(TIMEOUT_VALUE + TIMEOUT_TOLERANCE),
-                () -> consumer.receive(TIMEOUT_VALUE));
+        assertTimeout(Duration.ofMillis(TIMEOUT_VALUE + TIMEOUT_TOLERANCE), () -> consumer.receive(TIMEOUT_VALUE));
     }
 
     /**
@@ -97,11 +98,12 @@ public class Jt400DataQueueConsumerManualTest {
     @Test
     public void testReceive() throws InterruptedException {
         new Thread(new Runnable() {
-            public void run() {
-                consumer.receive();
-                receiveFlag = true;
-            }
-        }).start();
+                    public void run() {
+                        consumer.receive();
+                        receiveFlag = true;
+                    }
+                })
+                .start();
 
         StopWatch watch = new StopWatch();
         while (!receiveFlag) {
@@ -113,5 +115,4 @@ public class Jt400DataQueueConsumerManualTest {
         }
         fail("Method receive() has returned from call.");
     }
-
 }

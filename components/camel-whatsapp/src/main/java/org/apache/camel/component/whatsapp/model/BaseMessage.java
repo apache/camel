@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -45,8 +46,7 @@ public class BaseMessage {
      */
     private String type = "text";
 
-    public BaseMessage() {
-    }
+    public BaseMessage() {}
 
     public String getMessagingProduct() {
         return messagingProduct;

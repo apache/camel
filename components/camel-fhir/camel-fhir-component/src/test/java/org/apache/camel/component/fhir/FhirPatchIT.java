@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,9 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirPatch} APIs. The class source won't be generated again
  * if the generator MOJO finds it under src/test/java.
@@ -44,7 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FhirPatchIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirPatchIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirPatchApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirPatchApiMethod.class)
+            .getName();
     private static final String PATCH = "[ { \"op\":\"replace\", \"path\":\"/active\", \"value\":true } ]";
 
     @Test
@@ -117,17 +120,13 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for patchById
-                from("direct://PATCH_BY_ID")
-                        .to("fhir://" + PATH_PREFIX + "/patchById");
+                from("direct://PATCH_BY_ID").to("fhir://" + PATH_PREFIX + "/patchById");
 
                 // test route for patchBySId
-                from("direct://PATCH_BY_SID")
-                        .to("fhir://" + PATH_PREFIX + "/patchById");
+                from("direct://PATCH_BY_SID").to("fhir://" + PATH_PREFIX + "/patchById");
 
                 // test route for patchByUrl
-                from("direct://PATCH_BY_URL")
-                        .to("fhir://" + PATH_PREFIX + "/patchByUrl");
-
+                from("direct://PATCH_BY_URL").to("fhir://" + PATH_PREFIX + "/patchByUrl");
             }
         };
     }
@@ -136,7 +135,12 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
         LOG.debug("result: {}", result);
         IIdType id = result.getId();
 
-        Patient patient = fhirClient.read().resource(Patient.class).withId(id).preferResponseType(Patient.class).execute();
+        Patient patient = fhirClient
+                .read()
+                .resource(Patient.class)
+                .withId(id)
+                .preferResponseType(Patient.class)
+                .execute();
         assertTrue(patient.getActive());
     }
 }

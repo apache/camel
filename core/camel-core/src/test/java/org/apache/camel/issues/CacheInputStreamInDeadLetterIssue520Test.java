@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -28,8 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport {
     private int count;
@@ -75,7 +76,9 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
                 context.setStreamCaching(true);
 
                 // 0 delay for faster unit test
-                errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("direct:errorHandler")
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0));
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -88,15 +91,15 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
                 });
 
                 // Need to set the streamCaching for the deadLetterChannel
-                from("direct:errorHandler").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String result = exchange.getIn().getBody(String.class);
-                        assertEquals("<hello>Willem</hello>", result, "Should read the inputstream out again");
-                    }
-                }).to("mock:error");
-
+                from("direct:errorHandler")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String result = exchange.getIn().getBody(String.class);
+                                assertEquals("<hello>Willem</hello>", result, "Should read the inputstream out again");
+                            }
+                        })
+                        .to("mock:error");
             }
         };
     }
-
 }

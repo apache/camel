@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb2.data;
 
 /**
@@ -44,14 +45,12 @@ public final class Measurement {
         if (!measurement.getClass().isAnnotationPresent(com.influxdb.annotations.Measurement.class)) {
             throw new IllegalArgumentException(
                     "There is no " + com.influxdb.annotations.Measurement.class.getCanonicalName() + " annotation for "
-                                               + measurement + "[" + measurement.getClass() + "]");
+                            + measurement + "[" + measurement.getClass() + "]");
         }
     }
 
     @Override
     public String toString() {
-        return "Measurement{" +
-               "measurement=" + measurement +
-               '}';
+        return "Measurement{" + "measurement=" + measurement + '}';
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,8 +26,6 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyComplexRegexSeparatorTest extends CamelTestSupport {
     @CsvRecord(separator = "[,;]", skipFirstLine = true)
@@ -53,7 +54,10 @@ public class BindyComplexRegexSeparatorTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:unmarshal").unmarshal().bindy(BindyType.Csv, Example.class).to("mock:result");
+                from("direct:unmarshal")
+                        .unmarshal()
+                        .bindy(BindyType.Csv, Example.class)
+                        .to("mock:result");
             }
         };
     }

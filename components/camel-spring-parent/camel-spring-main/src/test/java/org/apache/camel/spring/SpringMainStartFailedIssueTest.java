@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SpringMainStartFailedIssueTest extends CamelTestSupport {
 
@@ -29,7 +30,7 @@ public class SpringMainStartFailedIssueTest extends CamelTestSupport {
     public void testStartupFailed() throws Exception {
         Main main = new Main();
 
-        String[] args = new String[] { "-ac", "org/apache/camel/spring/SpringMainStartFailedIssueTest.xml" };
+        String[] args = new String[] {"-ac", "org/apache/camel/spring/SpringMainStartFailedIssueTest.xml"};
 
         Exception e = assertThrows(Exception.class, () -> main.run(args), "Should have thrown an exception");
         assertIsInstanceOf(FailedToCreateRouteException.class, e);

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the idempotentRepository # option.
@@ -36,7 +37,7 @@ public class FtpConsumerIdempotentRefIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myIdempotentRepo&delete=true";
+                + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myIdempotentRepo&delete=true";
     }
 
     @Test
@@ -102,15 +103,12 @@ public class FtpConsumerIdempotentRefIT extends FtpServerTestSupport {
         }
 
         @Override
-        public void clear() {
-        }
+        public void clear() {}
 
         @Override
-        public void start() {
-        }
+        public void start() {}
 
         @Override
-        public void stop() {
-        }
+        public void stop() {}
     }
 }

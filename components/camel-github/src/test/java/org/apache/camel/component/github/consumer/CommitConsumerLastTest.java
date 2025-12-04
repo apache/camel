@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.BindToRegistry;
@@ -44,7 +45,8 @@ public class CommitConsumerLastTest extends GitHubComponentTestBase {
             @Override
             public void configure() {
                 from("github://commit/master?startingSha=last&repoOwner=anotherguy&repoName=somerepo&scheduler=#myScheduler")
-                        .routeId("foo").noAutoStartup()
+                        .routeId("foo")
+                        .noAutoStartup()
                         .process(new GitHubCommitProcessor())
                         .to(mockResultEndpoint);
             }
@@ -87,10 +89,10 @@ public class CommitConsumerLastTest extends GitHubComponentTestBase {
             super.startScheduler();
             try {
                 /*
-                    adding a delay to the CommitConsumer.doStart() method to force the CommitConsumer.poll()
-                    method to be called before the CommitConsumer.doStart() finishes which could leave the
-                    lastSha variable null
-                 */
+                   adding a delay to the CommitConsumer.doStart() method to force the CommitConsumer.poll()
+                   method to be called before the CommitConsumer.doStart() finishes which could leave the
+                   lastSha variable null
+                */
                 Thread.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

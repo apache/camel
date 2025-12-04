@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.cassandra;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -23,9 +27,6 @@ import org.apache.camel.component.cassandra.integration.BaseCassandra;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for {@link CassandraIdempotentRepository}
@@ -48,7 +49,10 @@ public class CassandraIdempotentRepositoryIT extends BaseCassandra {
     }
 
     private boolean exists(String key) {
-        return getSession().execute("select KEY from CAMEL_IDEMPOTENT where KEY=?", key).one() != null;
+        return getSession()
+                        .execute("select KEY from CAMEL_IDEMPOTENT where KEY=?", key)
+                        .one()
+                != null;
     }
 
     @Test

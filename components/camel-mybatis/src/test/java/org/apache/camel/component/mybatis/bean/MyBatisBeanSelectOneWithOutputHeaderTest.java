@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,8 +25,6 @@ import org.apache.camel.component.mybatis.Account;
 import org.apache.camel.component.mybatis.MyBatisConstants;
 import org.apache.camel.component.mybatis.MyBatisTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisBeanSelectOneWithOutputHeaderTest extends MyBatisTestSupport {
 
@@ -57,5 +58,4 @@ public class MyBatisBeanSelectOneWithOutputHeaderTest extends MyBatisTestSupport
             }
         };
     }
-
 }

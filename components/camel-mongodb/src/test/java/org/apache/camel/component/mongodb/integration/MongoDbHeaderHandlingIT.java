@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.mongodb.client.result.UpdateResult;
 import org.apache.camel.CamelContext;
@@ -28,13 +36,6 @@ import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbHeaderHandlingIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
@@ -79,8 +80,11 @@ public class MongoDbHeaderHandlingIT extends AbstractMongoDbITSupport implements
     public void testWriteResultAsHeaderWithWriteOp() {
         // Prepare test
         Object[] req = new Object[] {
-                new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").toJson(),
-                new Document(MONGO_ID, "testSave2").append("scientist", "Copernicus").toJson() };
+            new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").toJson(),
+            new Document(MONGO_ID, "testSave2")
+                    .append("scientist", "Copernicus")
+                    .toJson()
+        };
         // Object result =
         template.requestBody("direct:insert", req);
         // assertTrue(result instanceof WriteResult);
@@ -104,9 +108,10 @@ public class MongoDbHeaderHandlingIT extends AbstractMongoDbITSupport implements
         assertTrue(resultExch.getMessage().getHeader(MongoDbConstants.WRITERESULT) instanceof UpdateResult);
 
         Document record2 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
-        assertEquals("Darwin", record2.get("scientist"),
+        assertEquals(
+                "Darwin",
+                record2.get("scientist"),
                 "Scientist field of 'testSave1' must equal 'Darwin' after save operation");
-
     }
 
     @Test
@@ -128,17 +133,20 @@ public class MongoDbHeaderHandlingIT extends AbstractMongoDbITSupport implements
             public void configure() {
 
                 // tested routes
-                from("direct:count").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
-                from("direct:save").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeResultAsHeader=true");
-                from("direct:getDbStats").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getDbStats&writeResultAsHeader=true");
+                from("direct:count")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
+                from("direct:save")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeResultAsHeader=true");
+                from("direct:getDbStats")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getDbStats&writeResultAsHeader=true");
 
                 // supporting routes
                 from("direct:insert")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
-
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
             }
         };
     }

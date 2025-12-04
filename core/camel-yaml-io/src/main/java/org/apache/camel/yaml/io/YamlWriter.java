@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.yaml.io;
 
 import java.io.IOException;
@@ -158,7 +159,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
             }
             EipModel parent = models.isEmpty() ? null : models.peek();
             if (parent != null) {
-                Map<String, String> map = (Map<String, String>) parent.getMetadata().get("namespace");
+                Map<String, String> map =
+                        (Map<String, String>) parent.getMetadata().get("namespace");
                 if (map == null) {
                     map = new LinkedHashMap<>();
                     parent.getMetadata().put("namespace", map);
@@ -475,7 +477,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
         return model.getOptions().stream()
                 .filter(o -> "value".equals(o.getKind()))
                 .map(BaseOptionModel::getName)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
     private static String expressionName(EipModel model, String name) {
@@ -483,18 +486,19 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                 .filter(o -> "expression".equals(o.getKind()))
                 .map(BaseOptionModel::getName)
                 .filter(oName -> name == null || oName.equalsIgnoreCase(name))
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
     private static boolean isArray(EipModel model, String name) {
         return model.getOptions().stream()
                 .filter(o -> o.getName().equalsIgnoreCase(name))
                 .map(o -> "array".equals(o.getType()))
-                .findFirst().orElse(false);
+                .findFirst()
+                .orElse(false);
     }
 
     private static boolean isLanguage(EipModel model) {
         return model.getJavaType().startsWith("org.apache.camel.model.language");
     }
-
 }

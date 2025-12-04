@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
 
 import java.util.HashMap;
@@ -43,16 +44,15 @@ public class MicrometerComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private MeterRegistry metricsRegistry;
 
-    public MicrometerComponent() {
-    }
+    public MicrometerComponent() {}
 
     @Override
     protected void doInit() throws Exception {
         super.doInit();
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            metricsRegistry
-                    = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
+            metricsRegistry =
+                    MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
         }
     }
 
@@ -99,9 +99,7 @@ public class MicrometerComponent extends DefaultComponent {
 
     Meter.Type getMetricsType(String remaining) {
         String type = StringHelper.before(remaining, ":");
-        return type == null
-                ? DEFAULT_METER_TYPE
-                : MicrometerUtils.getByName(type);
+        return type == null ? DEFAULT_METER_TYPE : MicrometerUtils.getByName(type);
     }
 
     public MeterRegistry getMetricsRegistry() {

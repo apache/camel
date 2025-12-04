@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.protostream;
 
 import org.infinispan.protostream.SerializationContextInitializer;
 import org.infinispan.protostream.annotations.ProtoSchema;
 
-@ProtoSchema(includeClasses = { DefaultExchangeHolderProtoAdapter.class },
-             className = "DefaultExchangeHolderContextInitializer",
-             schemaPackageName = "org.apache.camel.support")
-interface DefaultExchangeHolderInitializer extends SerializationContextInitializer {
-}
+@ProtoSchema(
+        includeClasses = {DefaultExchangeHolderProtoAdapter.class},
+        className = "DefaultExchangeHolderContextInitializer",
+        schemaPackageName = "org.apache.camel.support")
+interface DefaultExchangeHolderInitializer extends SerializationContextInitializer {}

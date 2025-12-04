@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.Collection;
@@ -53,10 +54,13 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
 
     private Expression pickExpression = ExpressionBuilder.bodyExpression();
     private Predicate conditionPredicate;
+
     @SuppressWarnings("rawtypes")
     private Class<? extends Collection> collectionType;
+
     @SuppressWarnings("unchecked")
     private Class<E> castAs = (Class<E>) Object.class;
+
     private boolean storeNulls;
     private boolean ignoreInvalidCasts;
     private FlexibleAggregationStrategyInjector injector = new BodyInjector(castAs);
@@ -66,8 +70,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Initializes a new instance with {@link Object} as the {@link FlexibleAggregationStrategy#castAs} type.
      */
-    public FlexibleAggregationStrategy() {
-    }
+    public FlexibleAggregationStrategy() {}
 
     /**
      * Initializes a new instance with the specified type as the {@link FlexibleAggregationStrategy#castAs} type.
@@ -230,7 +233,10 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
 
         // 1. Apply the condition and reject the aggregation if unmatched
         if (conditionPredicate != null && !conditionPredicate.matches(newExchange)) {
-            LOG.trace("Dropped exchange {} from aggregation as predicate {} was not matched", newExchange, conditionPredicate);
+            LOG.trace(
+                    "Dropped exchange {} from aggregation as predicate {} was not matched",
+                    newExchange,
+                    conditionPredicate);
             return exchange;
         }
 
@@ -247,7 +253,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
         }
 
         if (picked == null && !storeNulls) {
-            LOG.trace("Dropped exchange {} from aggregation as pick expression returned null and storing nulls is not enabled",
+            LOG.trace(
+                    "Dropped exchange {} from aggregation as pick expression returned null and storing nulls is not enabled",
                     newExchange);
             return exchange;
         }
@@ -291,7 +298,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     private Collection<E> safeInsertIntoCollection(Exchange oldExchange, Collection<E> oldValue, E toInsert) {
         Collection<E> collection = null;
         try {
-            if (oldValue == null || oldExchange.getProperty(Exchange.AGGREGATED_COLLECTION_GUARD, Boolean.class) == null) {
+            if (oldValue == null
+                    || oldExchange.getProperty(Exchange.AGGREGATED_COLLECTION_GUARD, Boolean.class) == null) {
                 try {
                     collection = collectionType.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
@@ -503,5 +511,4 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
             exchange.getIn().setBody(obj);
         }
     }
-
 }

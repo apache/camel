@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.client;
 
 import java.util.concurrent.locks.Lock;
@@ -119,7 +120,6 @@ class GrpcStreamingExchangeForwarder implements GrpcExchangeForwarder {
             @Override
             public void onNext(Object o) {
                 streamObserver.onNext(o);
-
             }
 
             @Override
@@ -133,8 +133,6 @@ class GrpcStreamingExchangeForwarder implements GrpcExchangeForwarder {
                 doCloseStream();
                 streamObserver.onCompleted();
             }
-
         });
     }
-
 }

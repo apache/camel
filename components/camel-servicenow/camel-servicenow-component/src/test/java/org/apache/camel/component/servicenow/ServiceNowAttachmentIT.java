@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
+
+import static org.apache.camel.support.ResourceHelper.resolveResourceAsInputStream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.util.List;
@@ -29,14 +36,10 @@ import org.apache.camel.component.servicenow.model.AttachmentMeta;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-import static org.apache.camel.support.ResourceHelper.resolveResourceAsInputStream;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
-                              disabledReason = "Service now instance was not provided")
+@EnabledIfEnvironmentVariable(
+        named = "SERVICENOW_INSTANCE",
+        matches = ".*",
+        disabledReason = "Service now instance was not provided")
 public class ServiceNowAttachmentIT extends ServiceNowITSupport {
     @Produce("direct:servicenow")
     ProducerTemplate template;
@@ -57,60 +60,66 @@ public class ServiceNowAttachmentIT extends ServiceNowITSupport {
 
         assertFalse(attachmentMetaList.isEmpty());
 
-        Exchange getExistingResult = template.send(
-                "direct:servicenow",
-                e -> {
-                    e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
-                    e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CONTENT);
-                    e.getIn().setHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), attachmentMetaList.get(0).getId());
-                });
+        Exchange getExistingResult = template.send("direct:servicenow", e -> {
+            e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
+            e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CONTENT);
+            e.getIn()
+                    .setHeader(
+                            ServiceNowParams.PARAM_SYS_ID.getHeader(),
+                            attachmentMetaList.get(0).getId());
+        });
 
         assertNotNull(getExistingResult.getIn().getHeader(ServiceNowConstants.CONTENT_META));
         assertNotNull(getExistingResult.getIn().getBody());
         assertTrue(getExistingResult.getIn().getBody() instanceof InputStream);
 
-        Map<String, String> contentMeta = getExistingResult.getIn().getHeader(ServiceNowConstants.CONTENT_META, Map.class);
+        Map<String, String> contentMeta =
+                getExistingResult.getIn().getHeader(ServiceNowConstants.CONTENT_META, Map.class);
         assertEquals(contentMeta.get("file_name"), attachmentMetaList.get(0).getFileName());
         assertEquals(contentMeta.get("table_name"), attachmentMetaList.get(0).getTableName());
         assertEquals(contentMeta.get("sys_id"), attachmentMetaList.get(0).getId());
 
-        Exchange putResult = template.send(
-                "direct:servicenow",
-                e -> {
-                    e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
-                    e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_UPLOAD);
-                    e.getIn().setHeader(ServiceNowConstants.MODEL, AttachmentMeta.class);
-                    e.getIn().setHeader(ServiceNowConstants.CONTENT_TYPE, "application/octet-stream");
-                    e.getIn().setHeader(ServiceNowParams.PARAM_FILE_NAME.getHeader(), UUID.randomUUID().toString());
-                    e.getIn().setHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(),
+        Exchange putResult = template.send("direct:servicenow", e -> {
+            e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
+            e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_UPLOAD);
+            e.getIn().setHeader(ServiceNowConstants.MODEL, AttachmentMeta.class);
+            e.getIn().setHeader(ServiceNowConstants.CONTENT_TYPE, "application/octet-stream");
+            e.getIn()
+                    .setHeader(
+                            ServiceNowParams.PARAM_FILE_NAME.getHeader(),
+                            UUID.randomUUID().toString());
+            e.getIn()
+                    .setHeader(
+                            ServiceNowParams.PARAM_TABLE_NAME.getHeader(),
                             attachmentMetaList.get(0).getTableName());
-                    e.getIn().setHeader(ServiceNowParams.PARAM_TABLE_SYS_ID.getHeader(),
+            e.getIn()
+                    .setHeader(
+                            ServiceNowParams.PARAM_TABLE_SYS_ID.getHeader(),
                             attachmentMetaList.get(0).getTableSysId());
-                    e.getIn().setBody(
-                            resolveResourceAsInputStream(e.getContext(), "classpath:my-content.txt"));
-                });
+            e.getIn().setBody(resolveResourceAsInputStream(e.getContext(), "classpath:my-content.txt"));
+        });
 
-        Exchange getCreatedResult = template.send(
-                "direct:servicenow",
-                e -> {
-                    e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
-                    e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CONTENT);
-                    e.getIn().setHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(),
+        Exchange getCreatedResult = template.send("direct:servicenow", e -> {
+            e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
+            e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CONTENT);
+            e.getIn()
+                    .setHeader(
+                            ServiceNowParams.PARAM_SYS_ID.getHeader(),
                             putResult.getIn().getBody(AttachmentMeta.class).getId());
-                });
+        });
 
         assertNotNull(getCreatedResult.getIn().getHeader(ServiceNowConstants.CONTENT_META));
         assertNotNull(getCreatedResult.getIn().getBody());
         assertTrue(getCreatedResult.getIn().getBody() instanceof InputStream);
 
-        Exchange deleteResult = template.send(
-                "direct:servicenow",
-                e -> {
-                    e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
-                    e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_DELETE);
-                    e.getIn().setHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(),
+        Exchange deleteResult = template.send("direct:servicenow", e -> {
+            e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
+            e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_DELETE);
+            e.getIn()
+                    .setHeader(
+                            ServiceNowParams.PARAM_SYS_ID.getHeader(),
                             putResult.getIn().getBody(AttachmentMeta.class).getId());
-                });
+        });
 
         if (deleteResult.getException() != null) {
             throw deleteResult.getException();

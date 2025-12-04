@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -54,9 +55,7 @@ public class InlineKeyboardButton implements Serializable {
     @JsonProperty("request_location")
     private Boolean requestLocation;
 
-    public InlineKeyboardButton() {
-
-    }
+    public InlineKeyboardButton() {}
 
     /**
      * Builds {@link InlineKeyboardButton} instance.
@@ -70,9 +69,14 @@ public class InlineKeyboardButton implements Serializable {
      * @param requestContact  Optional. By clicking on the button, the user's phone will be sent.
      * @param requestLocation Optional. By clicking on the button, the user's location will be sent
      */
-    public InlineKeyboardButton(String text, String url, LoginUrl loginUrl,
-                                String callbackData, CallbackGame callbackGame,
-                                Boolean requestContact, Boolean requestLocation) {
+    public InlineKeyboardButton(
+            String text,
+            String url,
+            LoginUrl loginUrl,
+            String callbackData,
+            CallbackGame callbackGame,
+            Boolean requestContact,
+            Boolean requestLocation) {
         this.text = text;
         this.url = url;
         this.loginUrl = loginUrl;
@@ -188,7 +192,8 @@ public class InlineKeyboardButton implements Serializable {
         }
 
         public InlineKeyboardButton build() {
-            return new InlineKeyboardButton(text, url, loginUrl, callbackData, callbackGame, requestContact, requestLocation);
+            return new InlineKeyboardButton(
+                    text, url, loginUrl, callbackData, callbackGame, requestContact, requestLocation);
         }
     }
 

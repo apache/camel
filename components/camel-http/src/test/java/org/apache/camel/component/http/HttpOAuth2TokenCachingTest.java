@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,63 +33,57 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
     private static final String FAKE_TOKEN = "xxx.yyy.zzz";
     private static final String clientId = "test-client";
     private static final String clientSecret = "test-secret";
-    private static final OAuth2TokenRequestHandler handler = new OAuth2TokenRequestHandler(FAKE_TOKEN, clientId, clientSecret);
+    private static final OAuth2TokenRequestHandler handler =
+            new OAuth2TokenRequestHandler(FAKE_TOKEN, clientId, clientSecret);
 
     @Override
-    public void setupResources() throws Exception {
-    }
+    public void setupResources() throws Exception {}
 
     @Test
     public void tokenIsCached() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer();
+                var localOAuth2Server = createLocalOAuth2Server()) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
-            String requestUrl = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
-                                + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint +
-                                "&oauth2CacheTokens=" + true;
+            String requestUrl =
+                    "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
+                            + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
+                            + "&oauth2CacheTokens="
+                            + true;
 
-            template.request(requestUrl,
-                    exchange1 -> {
-                    });
+            template.request(requestUrl, exchange1 -> {});
             localOAuth2Server.close();
-            Exchange exchange
-                    = template.request(requestUrl,
-                            exchange1 -> {
-                            });
+            Exchange exchange = template.request(requestUrl, exchange1 -> {});
             assertExchange(exchange);
         }
     }
 
     @Test
     public void tokenIsNotCachedWhenCacheTokensIsFalse() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer();
+                var localOAuth2Server = createLocalOAuth2Server()) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
-            String requestUrl = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
-                                + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint +
-                                "&oauth2CacheTokens=" + false;
+            String requestUrl =
+                    "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
+                            + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
+                            + "&oauth2CacheTokens="
+                            + false;
 
-            template.request(requestUrl,
-                    exchange1 -> {
-                    });
+            template.request(requestUrl, exchange1 -> {});
             localOAuth2Server.close();
-            Exchange exchange
-                    = template.request(requestUrl,
-                            exchange1 -> {
-                            });
+            Exchange exchange = template.request(requestUrl, exchange1 -> {});
             assertExceptionExchange(exchange);
         }
     }
 
     @Test
     public void toDTokenIsCached() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer();
+                var localOAuth2Server = createLocalOAuth2Server()) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
 
             context.addRoutes(new RouteBuilder() {
@@ -95,17 +93,15 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
                             .setVariable("cid", constant(clientId))
                             .setVariable("cs", constant(clientSecret))
                             .toD("http://localhost:" + localServer.getLocalPort()
-                                 + "/post?httpMethod=POST&oauth2ClientId=${variable.cid}"
-                                 + "&oauth2ClientSecret=${variable:cs}&oauth2TokenEndpoint=" + tokenEndpoint
-                                 + "&oauth2CacheTokens=" + true);
+                                    + "/post?httpMethod=POST&oauth2ClientId=${variable.cid}"
+                                    + "&oauth2ClientSecret=${variable:cs}&oauth2TokenEndpoint=" + tokenEndpoint
+                                    + "&oauth2CacheTokens=" + true);
                 }
             });
 
-            template.send("direct:start", e -> {
-            });
+            template.send("direct:start", e -> {});
             localOAuth2Server.close();
-            Exchange exchange = template.send("direct:start", e -> {
-            });
+            Exchange exchange = template.send("direct:start", e -> {});
 
             assertExchange(exchange);
         }
@@ -113,7 +109,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
     @Test
     public void toDTokenIsNotCachedWhenCacheTokensIsFalse() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer();
+                var localOAuth2Server = createLocalOAuth2Server()) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
 
             context.addRoutes(new RouteBuilder() {
@@ -123,17 +120,15 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
                             .setVariable("cid", constant(clientId))
                             .setVariable("cs", constant(clientSecret))
                             .toD("http://localhost:" + localServer.getLocalPort()
-                                 + "/post?httpMethod=POST&oauth2ClientId=${variable.cid}"
-                                 + "&oauth2ClientSecret=${variable:cs}&oauth2TokenEndpoint=" + tokenEndpoint
-                                 + "&oauth2CacheTokens=" + false);
+                                    + "/post?httpMethod=POST&oauth2ClientId=${variable.cid}"
+                                    + "&oauth2ClientSecret=${variable:cs}&oauth2TokenEndpoint=" + tokenEndpoint
+                                    + "&oauth2CacheTokens=" + false);
                 }
             });
 
-            template.send("direct:start", e -> {
-            });
+            template.send("direct:start", e -> {});
             localOAuth2Server.close();
-            Exchange exchange = template.send("direct:start", e -> {
-            });
+            Exchange exchange = template.send("direct:start", e -> {});
 
             assertExceptionExchange(exchange);
         }
@@ -159,16 +154,12 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
         expectedHeaders.put("Authorization", "Bearer " + FAKE_TOKEN);
 
         var localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/post",
-                        new HeaderValidationHandler(
-                                "POST",
-                                null,
-                                null,
-                                null,
-                                expectedHeaders))
+                .register("/post", new HeaderValidationHandler("POST", null, null, null, expectedHeaders))
                 .create();
 
         localServer.start();
@@ -177,8 +168,10 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
     private HttpServer createLocalOAuth2Server() throws Exception {
         var localOAuth2Server = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/token", handler)
                 .create();

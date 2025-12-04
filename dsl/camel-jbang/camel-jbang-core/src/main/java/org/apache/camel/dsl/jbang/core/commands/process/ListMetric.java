@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -34,32 +35,44 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "metric",
-         description = "Get metrics (micrometer) of running Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "metric",
+        description = "Get metrics (micrometer) of running Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListMetric extends ProcessWatchCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration",
-                            arity = "0..1")
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter metric by type, name or tags")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter metric by type, name or tags")
     String filter;
 
-    @CommandLine.Option(names = { "--tags" },
-                        description = "Show metric tags", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--tags"},
+            description = "Show metric tags",
+            defaultValue = "false")
     boolean tags;
 
-    @CommandLine.Option(names = { "--custom" },
-                        description = "Only show custom metrics", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--custom"},
+            description = "Only show custom metrics",
+            defaultValue = "false")
     boolean custom;
 
-    @CommandLine.Option(names = { "--all" },
-                        description = "Whether to show all metrics (also unused with counter being 0)", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--all"},
+            description = "Whether to show all metrics (also unused with counter being 0)",
+            defaultValue = "false")
     boolean all;
 
     public ListMetric(CamelJBangMain main) {
@@ -71,158 +84,192 @@ public class ListMetric extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
-                        Row baseRow = row.copy();
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row row = new Row();
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
+                row.uptime = extractSince(ph);
+                row.age = TimeUtils.printSince(row.uptime);
+                Row baseRow = row.copy();
 
-                        JsonObject mo = (JsonObject) root.get("micrometer");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("counters");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.type = "counter";
-                                    row.metricName = jo.getString("name");
-                                    row.metricDescription = jo.getString("description");
-                                    row.metricId = extractId(jo);
-                                    row.tags = extractTags(jo);
-                                    row.count = jo.getDouble("count");
+                JsonObject mo = (JsonObject) root.get("micrometer");
+                if (mo != null) {
+                    JsonArray arr = (JsonArray) mo.get("counters");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = baseRow.copy();
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            row.type = "counter";
+                            row.metricName = jo.getString("name");
+                            row.metricDescription = jo.getString("description");
+                            row.metricId = extractId(jo);
+                            row.tags = extractTags(jo);
+                            row.count = jo.getDouble("count");
 
-                                    if (custom && row.metricName.startsWith("Camel")) {
-                                        continue; // skip internal camel metrics
-                                    }
-                                    if (!all && getNumber(row.count).isEmpty()) {
-                                        continue;
-                                    }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
-                                        rows.add(row);
-                                    }
-                                }
+                            if (custom && row.metricName.startsWith("Camel")) {
+                                continue; // skip internal camel metrics
                             }
-                            arr = (JsonArray) mo.get("timers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.type = "timer";
-                                    row.metricName = jo.getString("name");
-                                    row.metricDescription = jo.getString("description");
-                                    row.metricId = extractId(jo);
-                                    row.tags = extractTags(jo);
-                                    row.count = jo.getDouble("count");
-                                    row.mean = jo.getDouble("mean");
-                                    row.max = jo.getDouble("max");
-                                    row.total = jo.getDouble("total");
-
-                                    if (custom && row.metricName.startsWith("Camel")) {
-                                        continue; // skip internal camel metrics
-                                    }
-                                    if (!all && getNumber(row.count).isEmpty()) {
-                                        continue;
-                                    }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
-                                            || row.tags.contains(filter)) {
-                                        rows.add(row);
-                                    }
-                                }
+                            if (!all && getNumber(row.count).isEmpty()) {
+                                continue;
                             }
-                            arr = (JsonArray) mo.get("gauges");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.type = "gauge";
-                                    row.metricName = jo.getString("name");
-                                    if ("app.info".equals(row.metricName)) {
-                                        continue; // special camel info that hides in the metrics
-                                    }
-                                    row.metricDescription = jo.getString("description");
-                                    row.metricId = extractId(jo);
-                                    row.tags = extractTags(jo);
-                                    row.count = jo.getDouble("value");
-
-                                    if (custom && row.metricName.startsWith("Camel")) {
-                                        continue; // skip internal camel metrics
-                                    }
-                                    if (!all && getNumber(row.count).isEmpty()) {
-                                        continue;
-                                    }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
-                                        rows.add(row);
-                                    }
-                                }
-                            }
-                            arr = (JsonArray) mo.get("distribution");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.type = "distribution";
-                                    row.metricName = jo.getString("name");
-                                    row.metricDescription = jo.getString("description");
-                                    row.metricId = extractId(jo);
-                                    row.tags = extractTags(jo);
-                                    row.count = jo.getDouble("value");
-                                    row.mean = jo.getDouble("mean");
-                                    row.max = jo.getDouble("max");
-                                    row.total = jo.getDouble("totalAmount");
-
-                                    if (custom && row.metricName.startsWith("Camel")) {
-                                        continue; // skip internal camel metrics
-                                    }
-                                    if (!all && getNumber(row.count).isEmpty()) {
-                                        continue;
-                                    }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
-                                        rows.add(row);
-                                    }
-                                }
+                            if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                rows.add(row);
                             }
                         }
                     }
-                });
+                    arr = (JsonArray) mo.get("timers");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = baseRow.copy();
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            row.type = "timer";
+                            row.metricName = jo.getString("name");
+                            row.metricDescription = jo.getString("description");
+                            row.metricId = extractId(jo);
+                            row.tags = extractTags(jo);
+                            row.count = jo.getDouble("count");
+                            row.mean = jo.getDouble("mean");
+                            row.max = jo.getDouble("max");
+                            row.total = jo.getDouble("total");
+
+                            if (custom && row.metricName.startsWith("Camel")) {
+                                continue; // skip internal camel metrics
+                            }
+                            if (!all && getNumber(row.count).isEmpty()) {
+                                continue;
+                            }
+                            if (filter == null
+                                    || row.type.equals(filter)
+                                    || row.metricName.contains(filter)
+                                    || row.tags.contains(filter)) {
+                                rows.add(row);
+                            }
+                        }
+                    }
+                    arr = (JsonArray) mo.get("gauges");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = baseRow.copy();
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            row.type = "gauge";
+                            row.metricName = jo.getString("name");
+                            if ("app.info".equals(row.metricName)) {
+                                continue; // special camel info that hides in the metrics
+                            }
+                            row.metricDescription = jo.getString("description");
+                            row.metricId = extractId(jo);
+                            row.tags = extractTags(jo);
+                            row.count = jo.getDouble("value");
+
+                            if (custom && row.metricName.startsWith("Camel")) {
+                                continue; // skip internal camel metrics
+                            }
+                            if (!all && getNumber(row.count).isEmpty()) {
+                                continue;
+                            }
+                            if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                rows.add(row);
+                            }
+                        }
+                    }
+                    arr = (JsonArray) mo.get("distribution");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = baseRow.copy();
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            row.type = "distribution";
+                            row.metricName = jo.getString("name");
+                            row.metricDescription = jo.getString("description");
+                            row.metricId = extractId(jo);
+                            row.tags = extractTags(jo);
+                            row.count = jo.getDouble("value");
+                            row.mean = jo.getDouble("mean");
+                            row.max = jo.getDouble("max");
+                            row.total = jo.getDouble("totalAmount");
+
+                            if (custom && row.metricName.startsWith("Camel")) {
+                                continue; // skip internal camel metrics
+                            }
+                            if (!all && getNumber(row.count).isEmpty()) {
+                                continue;
+                            }
+                            if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                rows.add(row);
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("METRIC").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.metricName),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.metricId),
-                    new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> getNumber(r.count)),
-                    new Column().header("MEAN").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> getNumber(r.mean)),
-                    new Column().header("MAX").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> getNumber(r.max)),
-                    new Column().header("TOTAL").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> getNumber(r.total)),
-                    new Column().header("TAGS").visible(tags).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(60, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.tags))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("TYPE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.type),
+                                    new Column()
+                                            .header("METRIC")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.metricName),
+                                    new Column()
+                                            .header("ID")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.metricId),
+                                    new Column()
+                                            .header("VALUE")
+                                            .headerAlign(HorizontalAlign.RIGHT)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> getNumber(r.count)),
+                                    new Column()
+                                            .header("MEAN")
+                                            .headerAlign(HorizontalAlign.RIGHT)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> getNumber(r.mean)),
+                                    new Column()
+                                            .header("MAX")
+                                            .headerAlign(HorizontalAlign.RIGHT)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> getNumber(r.max)),
+                                    new Column()
+                                            .header("TOTAL")
+                                            .headerAlign(HorizontalAlign.RIGHT)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> getNumber(r.total)),
+                                    new Column()
+                                            .header("TAGS")
+                                            .visible(tags)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(60, OverflowBehaviour.NEWLINE)
+                                            .with(r -> r.tags))));
         }
 
         return 0;
@@ -330,5 +377,4 @@ public class ListMetric extends ProcessWatchCommand {
             }
         }
     }
-
 }

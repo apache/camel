@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mapstruct;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
@@ -26,13 +30,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class CarToVehicleTest extends CamelTestSupport {
 
     @ParameterizedTest()
-    @ValueSource(strings = { "component", "converter" })
+    @ValueSource(strings = {"component", "converter"})
     void testCarToVehicleMapping(String endpoint) throws Exception {
         getMockEndpoint("mock:result-" + endpoint).expectedMessageCount(1);
 
@@ -72,9 +73,7 @@ public class CarToVehicleTest extends CamelTestSupport {
                         .toF("mapstruct:%s", VehicleDto.class.getName())
                         .to("mock:result-component");
 
-                from("direct:converter")
-                        .convertBodyTo(VehicleDto.class)
-                        .to("mock:result-converter");
+                from("direct:converter").convertBodyTo(VehicleDto.class).to("mock:result-converter");
             }
         };
     }

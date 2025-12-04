@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
 
 /**
@@ -27,5 +28,4 @@ public interface AssertionTask extends Runnable {
      * @param index the n'th received message
      */
     void assertOnIndex(int index);
-
 }

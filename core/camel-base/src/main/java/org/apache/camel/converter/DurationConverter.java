@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
 
 import java.time.Duration;
@@ -30,8 +31,7 @@ public final class DurationConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private DurationConverter() {
-    }
+    private DurationConverter() {}
 
     @Converter(order = 1)
     public static Long toMilliSeconds(Duration source) {

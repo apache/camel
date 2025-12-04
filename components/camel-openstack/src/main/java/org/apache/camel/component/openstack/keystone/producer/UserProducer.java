@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.keystone.producer;
 
 import java.util.List;
@@ -69,8 +70,8 @@ public class UserProducer extends AbstractKeystoneProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.USER_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(KeystoneConstants.USER_ID, String.class), String.class);
         StringHelper.notEmpty(id, "User ID");
         final User result = osV3Client.identity().users().get(id);
         msg.setBody(result);
@@ -90,8 +91,8 @@ public class UserProducer extends AbstractKeystoneProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.USER_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(KeystoneConstants.USER_ID, String.class), String.class);
         StringHelper.notEmpty(id, "User ID");
         final ActionResponse response = osV3Client.identity().users().delete(id);
         checkFailure(response, exchange, "Delete user with ID " + id);

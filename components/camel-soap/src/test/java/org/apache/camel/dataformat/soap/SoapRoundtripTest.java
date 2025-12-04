@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -29,9 +33,6 @@ import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SoapRoundtripTest extends CamelTestSupport {
     @EndpointInject("mock:result")
@@ -48,8 +49,7 @@ public class SoapRoundtripTest extends CamelTestSupport {
         producer.sendBody(request);
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getExchanges().get(0);
-        GetCustomersByName received = exchange.getIn().getBody(
-                GetCustomersByName.class);
+        GetCustomersByName received = exchange.getIn().getBody(GetCustomersByName.class);
         assertNotNull(received);
         assertEquals("Mueller", received.getName());
     }
@@ -57,18 +57,18 @@ public class SoapRoundtripTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            String jaxbPackage = GetCustomersByName.class.getPackage()
-                    .getName();
+            String jaxbPackage = GetCustomersByName.class.getPackage().getName();
 
             @Override
             public void configure() throws Exception {
                 ElementNameStrategy elNameStrat = new TypeNameStrategy();
                 from("direct:start")
-                        .marshal().soap(jaxbPackage, elNameStrat)
-                        .unmarshal().soap(jaxbPackage, elNameStrat)
+                        .marshal()
+                        .soap(jaxbPackage, elNameStrat)
+                        .unmarshal()
+                        .soap(jaxbPackage, elNameStrat)
                         .to("mock:result");
             }
         };
     }
-
 }

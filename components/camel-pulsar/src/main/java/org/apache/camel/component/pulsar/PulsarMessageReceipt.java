@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar;
 
 import java.util.concurrent.CompletableFuture;
@@ -65,5 +66,4 @@ public interface PulsarMessageReceipt {
      *      Implementations with earlier versions should return an {@link java.lang.UnsupportedOperationException}.
      */
     void negativeAcknowledge();
-
 }

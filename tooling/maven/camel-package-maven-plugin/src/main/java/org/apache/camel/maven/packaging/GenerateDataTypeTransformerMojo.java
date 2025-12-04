@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,14 +44,15 @@ import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 
-import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
-
 /**
  * Factory for generating code for @DataTypeTransformer.
  */
-@Mojo(name = "generate-data-type-transformer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
-      requiresDependencyCollection = ResolutionScope.COMPILE,
-      requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "generate-data-type-transformer",
+        threadSafe = true,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        requiresDependencyCollection = ResolutionScope.COMPILE,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
 
     public static final DotName DATA_TYPE_ANNOTATION = DotName.createSimple("org.apache.camel.spi.DataTypeTransformer");
@@ -147,8 +151,8 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
             DataTypeTransformerModel model = new DataTypeTransformerModel();
 
             String currentClass = a.target().asClass().name().toString();
-            boolean deprecated
-                    = a.target().asClass().hasAnnotation(Deprecated.class) || project.getName().contains("(deprecated)");
+            boolean deprecated = a.target().asClass().hasAnnotation(Deprecated.class)
+                    || project.getName().contains("(deprecated)");
             model.setClassName(currentClass);
             model.setDeprecated(deprecated);
             model.setName(annotationValue(a, "name"));
@@ -169,7 +173,8 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                     String json = jo.toJson();
                     json = Jsoner.prettyPrint(json, 2);
                     String fn = sanitizeFileName(model.getName()) + PackageHelper.JSON_SUFIX;
-                    boolean updated = updateResource(resourcesOutputDir.toPath(),
+                    boolean updated = updateResource(
+                            resourcesOutputDir.toPath(),
                             "META-INF/services/org/apache/camel/transformer/" + fn,
                             json + NL);
                     if (updated) {
@@ -183,7 +188,7 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                 String properties = createProperties(project, "transformers", names.toString());
                 updateResource(camelMetaDir.toPath(), "transformer.properties", properties);
                 getLog().info("Generated transformer.properties containing " + count + " Camel "
-                              + (count > 1 ? "transformers: " : "transformer: ") + names);
+                        + (count > 1 ? "transformers: " : "transformer: ") + names);
             } catch (Exception e) {
                 throw new MojoExecutionException(e);
             }
@@ -228,5 +233,4 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         }
         return name;
     }
-
 }

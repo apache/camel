@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InOutSynchronousConsumerTest extends JmsTestSupport {
 
@@ -44,9 +45,11 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:before")
-                        .process(exchange -> beforeThreadName = Thread.currentThread().getName())
+                        .process(exchange ->
+                                beforeThreadName = Thread.currentThread().getName())
                         .to(ExchangePattern.InOut, url)
-                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
+                        .process(exchange ->
+                                afterThreadName = Thread.currentThread().getName())
                         .to("log:after")
                         .to("mock:result");
 
@@ -55,5 +58,4 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
             }
         };
     }
-
 }

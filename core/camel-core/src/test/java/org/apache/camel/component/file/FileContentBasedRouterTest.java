@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -78,9 +79,14 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true&initialDelay=0&delay=10")).choice()
-                        .when(header("CamelFileName").isEqualTo("london.txt")).to("mock:london")
-                        .when(header("CamelFileName").isEqualTo("paris.txt")).to("mock:paris").otherwise().to("mock:other");
+                from(fileUri("?noop=true&initialDelay=0&delay=10"))
+                        .choice()
+                        .when(header("CamelFileName").isEqualTo("london.txt"))
+                        .to("mock:london")
+                        .when(header("CamelFileName").isEqualTo("paris.txt"))
+                        .to("mock:paris")
+                        .otherwise()
+                        .to("mock:other");
             }
         };
     }

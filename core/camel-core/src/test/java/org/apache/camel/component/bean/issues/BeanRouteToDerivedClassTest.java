@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
@@ -51,8 +52,8 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
     @Test
     public void testDerivedClassCalledWithNoCustomProcessor() throws Exception {
-        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class,
-                new MyMessageToProcessorConverter());
+        context.getTypeConverterRegistry()
+                .addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -79,8 +80,8 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
     @Test
     public void testDerivedClassCalledWithCustomProcessor() throws Exception {
-        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class,
-                new MyMessageToProcessorConverter());
+        context.getTypeConverterRegistry()
+                .addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -113,5 +114,4 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         jndi.bind("derived", derived);
         return jndi;
     }
-
 }

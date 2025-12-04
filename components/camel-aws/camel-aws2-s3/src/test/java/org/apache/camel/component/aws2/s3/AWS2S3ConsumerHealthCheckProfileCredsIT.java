@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -33,8 +36,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.awaitility.Awaitility.await;
 
 public class AWS2S3ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
 
@@ -75,7 +76,9 @@ public class AWS2S3ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("aws2-s3://bucket1?moveAfterRead=true&region=l&useDefaultCredentialsProvider=true&destinationBucket=bucket1&autoCreateBucket=false")
-                        .startupOrder(2).log("${body}").routeId("test-health-it");
+                        .startupOrder(2)
+                        .log("${body}")
+                        .routeId("test-health-it");
             }
         };
     }
@@ -90,12 +93,11 @@ public class AWS2S3ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2S3HealthCheck = res2.stream()
-                    .anyMatch(result -> result.getCheck().getId().startsWith("consumer:test-health-it"));
+            boolean containsAws2S3HealthCheck =
+                    res2.stream().anyMatch(result -> result.getCheck().getId().startsWith("consumer:test-health-it"));
 
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2S3HealthCheck, "aws2-s3 check");
         });
-
     }
 }

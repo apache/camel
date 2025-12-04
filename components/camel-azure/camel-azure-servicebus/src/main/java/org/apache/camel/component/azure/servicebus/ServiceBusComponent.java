@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
 
 import java.util.Map;
@@ -34,8 +35,7 @@ public class ServiceBusComponent extends DefaultComponent {
     @Metadata
     private ServiceBusConfiguration configuration = new ServiceBusConfiguration();
 
-    public ServiceBusComponent() {
-    }
+    public ServiceBusComponent() {}
 
     public ServiceBusComponent(final CamelContext context) {
         super(context);
@@ -47,8 +47,8 @@ public class ServiceBusComponent extends DefaultComponent {
             throw new IllegalArgumentException("A queue or topic name must be specified.");
         }
 
-        final ServiceBusConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new ServiceBusConfiguration();
+        final ServiceBusConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new ServiceBusConfiguration();
 
         // set account or topic name
         configuration.setTopicOrQueueName(remaining);

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.builder.PredicateBuilder.or;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +25,6 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.PredicateBuilder.or;
 
 public class ChoiceCompoundPredicateSimpleTest extends ContextTestSupport {
 
@@ -111,22 +112,21 @@ public class ChoiceCompoundPredicateSimpleTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:or")
-                    .choice()
+                        .choice()
                         .when(or(body().isNull(), simple("${body.size()} == 0")))
                         .to("mock:empty")
-                    .otherwise()
+                        .otherwise()
                         .to("mock:data")
-                    .end();
+                        .end();
 
                 from("direct:simple")
-                    .choice()
+                        .choice()
                         .when(simple("${body} == null || ${body.size()} == 0"))
                         .to("mock:empty")
-                    .otherwise()
+                        .otherwise()
                         .to("mock:data")
-                    .end();
+                        .end();
             }
         };
     }
-
 }

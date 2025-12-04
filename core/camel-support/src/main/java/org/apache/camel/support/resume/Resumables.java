@@ -72,7 +72,8 @@ public final class Resumables {
 
                 @Override
                 public void setValue(K key) {
-                    throw new UnsupportedOperationException("Setting offset keys for anonymous resumables is unsupported");
+                    throw new UnsupportedOperationException(
+                            "Setting offset keys for anonymous resumables is unsupported");
                 }
 
                 @Override
@@ -83,9 +84,7 @@ public final class Resumables {
         }
     }
 
-    private Resumables() {
-
-    }
+    private Resumables() {}
 
     /**
      * Creates a new resumable for an addressable
@@ -128,5 +127,4 @@ public final class Resumables {
 
         return input;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,16 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class BeanParameterInvalidSyntaxTest extends ContextTestSupport {
 
     @Test
     public void testBeanParameterInvalidSyntax() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:a", "World"),
                 "Should have thrown exception");
 
@@ -55,7 +57,8 @@ public class BeanParameterInvalidSyntaxTest extends ContextTestSupport {
             public void configure() {
                 from("direct:a")
                         // invalid due extra parenthesis at the end
-                        .to("bean:foo?method=echo(${body}, 5))").to("mock:result");
+                        .to("bean:foo?method=echo(${body}, 5))")
+                        .to("mock:result");
             }
         };
     }
@@ -78,6 +81,5 @@ public class BeanParameterInvalidSyntaxTest extends ContextTestSupport {
 
             return body;
         }
-
     }
 }

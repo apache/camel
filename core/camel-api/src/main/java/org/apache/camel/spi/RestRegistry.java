@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.List;
@@ -100,7 +101,6 @@ public interface RestRegistry extends StaticService {
          * Optional description about this rest service.
          */
         String getDescription();
-
     }
 
     /**
@@ -121,9 +121,19 @@ public interface RestRegistry extends StaticService {
      * @param description   optional description about the service
      */
     void addRestService(
-            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate,
+            Consumer consumer,
+            boolean contractFirst,
+            String url,
+            String baseUrl,
+            String basePath,
+            String uriTemplate,
             String method,
-            String consumes, String produces, String inType, String outType, String routeId, String description);
+            String consumes,
+            String produces,
+            String inType,
+            String outType,
+            String routeId,
+            String description);
 
     /**
      * Removes the REST service from the registry
@@ -152,5 +162,4 @@ public interface RestRegistry extends StaticService {
      * @return the API docs in JSon, or <tt>null</tt> if camel-openapi-java is not on classpath
      */
     String apiDocAsJson();
-
 }

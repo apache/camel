@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.time.ZonedDateTime;
@@ -33,9 +34,7 @@ public class ZonedDateTimeFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new ZonedDateTimePatternFormat(
-                formattingOptions.getPattern(),
-                formattingOptions.getLocale());
+        return new ZonedDateTimePatternFormat(formattingOptions.getPattern(), formattingOptions.getLocale());
     }
 
     private static class ZonedDateTimePatternFormat implements PatternFormat<ZonedDateTime> {
@@ -88,5 +87,4 @@ public class ZonedDateTimeFormatFactory extends AbstractFormatFactory {
             this.pattern = pattern;
         }
     }
-
 }

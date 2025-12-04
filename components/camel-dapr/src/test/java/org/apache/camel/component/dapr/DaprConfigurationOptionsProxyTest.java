@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DaprConfigurationOptionsProxyTest extends CamelTestSupport {
 
@@ -32,7 +33,8 @@ public class DaprConfigurationOptionsProxyTest extends CamelTestSupport {
 
         // first case: when exchange is set
         final Exchange exchange = new DefaultExchange(context);
-        final DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
+        final DaprConfigurationOptionsProxy configurationOptionsProxy =
+                new DaprConfigurationOptionsProxy(configuration);
 
         exchange.getIn().setHeader(DaprConstants.METHOD_TO_INVOKE, "exchangeMethod");
         configuration.setMethodToInvoke("configMethod");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 import java.util.List;
@@ -46,5 +47,4 @@ public interface MyBatisProcessingStrategy {
      * @throws Exception         can be thrown in case of error
      */
     void commit(MyBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception;
-
 }

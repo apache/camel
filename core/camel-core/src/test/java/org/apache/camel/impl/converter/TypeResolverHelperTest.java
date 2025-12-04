@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +28,6 @@ import org.apache.camel.spi.TypeConvertible;
 import org.apache.camel.support.SimpleTypeConverter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TypeResolverHelperTest {
     private static final Map<TypeConvertible<?, ?>, TypeConverter> registeredConverters = new HashMap<>();
@@ -46,7 +47,8 @@ class TypeResolverHelperTest {
         assertEquals("sourceC", result.childField);
     }
 
-    // This general behaviour works in Camel 3 but stopped working in Camel 4 due to what looks like an accidental regression.
+    // This general behaviour works in Camel 3 but stopped working in Camel 4 due to what looks like an accidental
+    // regression.
     // See https://issues.apache.org/jira/browse/CAMEL-19828
     @Test
     public void testTryAssignableToParent() {

@@ -142,15 +142,21 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
      */
     public Future<?> schedule(CamelContext camelContext, BooleanSupplier supplier) {
         running.set(true);
-        return service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier), budget.initialDelay(),
-                budget.interval(), TimeUnit.MILLISECONDS);
+        return service.scheduleWithFixedDelay(
+                () -> runTaskWrapper(camelContext, supplier),
+                budget.initialDelay(),
+                budget.interval(),
+                TimeUnit.MILLISECONDS);
     }
 
     @Override
     public boolean run(CamelContext camelContext, BooleanSupplier supplier) {
         running.set(true);
-        Future<?> task = service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier), budget.initialDelay(),
-                budget.interval(), TimeUnit.MILLISECONDS);
+        Future<?> task = service.scheduleWithFixedDelay(
+                () -> runTaskWrapper(camelContext, supplier),
+                budget.initialDelay(),
+                budget.interval(),
+                TimeUnit.MILLISECONDS);
         waitForTaskCompletion(camelContext, task);
         return completed.get();
     }
@@ -160,8 +166,11 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             cause = null;
             return supplier.getAsBoolean();
         } catch (TaskRunFailureException e) {
-            LOG.debug("Task {} failed at {} iterations and will attempt again on next interval: {}",
-                    getName(), budget.iteration(), e.getMessage());
+            LOG.debug(
+                    "Task {} failed at {} iterations and will attempt again on next interval: {}",
+                    getName(),
+                    budget.iteration(),
+                    e.getMessage());
             cause = e;
             return false;
         }
@@ -169,7 +178,8 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
 
     private void waitForTaskCompletion(CamelContext camelContext, Future<?> task) {
         try {
-            // We need it to be cancellable/non-runnable after reaching a certain point, and it needs to be deterministic.
+            // We need it to be cancellable/non-runnable after reaching a certain point, and it needs to be
+            // deterministic.
             // This is why we ignore the ScheduledFuture returned and implement the go/no-go using a latch.
             if (budget.maxDuration() == TimeBoundedBudget.UNLIMITED_DURATION) {
                 latch.await();
@@ -218,5 +228,4 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
     public long getCurrentDelay() {
         return budget.interval();
     }
-
 }

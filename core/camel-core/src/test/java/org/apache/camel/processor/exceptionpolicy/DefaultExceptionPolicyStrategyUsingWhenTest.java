@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.exceptionpolicy;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for the when expression on the exception type.
@@ -80,31 +81,37 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
 
                 // here we define our onException to catch MyUserException when
                 // there is a header[user] on the exchange that is not null
-                onException(MyUserException.class).onWhen(header("user").isNotNull()).maximumRedeliveries(1)
+                onException(MyUserException.class)
+                        .onWhen(header("user").isNotNull())
+                        .maximumRedeliveries(1)
                         // setting delay to zero is just to make unit testing faster
-                        .redeliveryDelay(0).to(ERROR_USER_QUEUE);
+                        .redeliveryDelay(0)
+                        .to(ERROR_USER_QUEUE);
 
                 // here we define onException to catch MyUserException as a kind
                 // of fallback when the above did not match.
                 // Notice: The order how we have defined these onException is
                 // important as Camel will resolve in the same order as they
                 // have been defined
-                onException(MyUserException.class).maximumRedeliveries(2)
+                onException(MyUserException.class)
+                        .maximumRedeliveries(2)
                         // setting delay to zero is just to make unit testing faster
-                        .redeliveryDelay(0).to(ERROR_QUEUE);
+                        .redeliveryDelay(0)
+                        .to(ERROR_QUEUE);
                 // END SNIPPET e1
 
-                from("direct:a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String s = exchange.getIn().getBody(String.class);
-                        if ("Hello Camel".equals(s)) {
-                            throw new MyUserException("Forced for testing");
-                        }
-                        exchange.getMessage().setBody("Hello World");
-                    }
-                }).to("mock:result");
+                from("direct:a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String s = exchange.getIn().getBody(String.class);
+                                if ("Hello Camel".equals(s)) {
+                                    throw new MyUserException("Forced for testing");
+                                }
+                                exchange.getMessage().setBody("Hello World");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

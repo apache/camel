@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.Map;
@@ -147,7 +148,8 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
             return expression(ce);
         } else {
             ConstantExpression ce = new ConstantExpression();
-            ce.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(value)));
+            ce.setExpressionType(
+                    ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(value)));
             ce.setExpression(String.valueOf(value));
             ce.setTrim(trim ? "true" : "false");
             return expression(ce);

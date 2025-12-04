@@ -17,11 +17,11 @@
 
 package org.apache.camel.component.wal;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 public class TransactionLogTest {
     @DisplayName("Tests that can update records on the same layer")

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddingstore;
 
 import java.util.Map;
@@ -85,15 +86,12 @@ public class LangChain4jEmbeddingStoreComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(
-            String uri,
-            String remaining,
-            Map<String, Object> parameters)
-            throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         LangChain4jEmbeddingStoreConfiguration configuration = this.configuration.copy();
 
-        LangChain4jEmbeddingStoreEndpoint endpoint = new LangChain4jEmbeddingStoreEndpoint(uri, this, remaining, configuration);
+        LangChain4jEmbeddingStoreEndpoint endpoint =
+                new LangChain4jEmbeddingStoreEndpoint(uri, this, remaining, configuration);
         setProperties(endpoint, parameters);
 
         return endpoint;

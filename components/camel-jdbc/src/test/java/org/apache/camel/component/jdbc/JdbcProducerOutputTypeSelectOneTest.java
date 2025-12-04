@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -22,9 +26,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcProducerOutputTypeSelectOneTest extends AbstractJdbcTestSupport {
 
@@ -39,7 +40,8 @@ public class JdbcProducerOutputTypeSelectOneTest extends AbstractJdbcTestSupport
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Map row = assertIsInstanceOf(Map.class, mock.getReceivedExchanges().get(0).getIn().getBody(Map.class));
+        Map row = assertIsInstanceOf(
+                Map.class, mock.getReceivedExchanges().get(0).getIn().getBody(Map.class));
         assertEquals("cust1", row.get("ID"));
         assertEquals("jstrachan", row.get("NAME"));
     }

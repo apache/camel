@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
 
 import java.util.HashMap;
@@ -29,8 +30,7 @@ public class QuickfixjConfiguration {
     private Map<Object, Object> defaultSettings;
     private Map<SessionID, Map<Object, Object>> sessionSettings;
 
-    public QuickfixjConfiguration() {
-    }
+    public QuickfixjConfiguration() {}
 
     public Map<Object, Object> getDefaultSettings() {
         return defaultSettings;

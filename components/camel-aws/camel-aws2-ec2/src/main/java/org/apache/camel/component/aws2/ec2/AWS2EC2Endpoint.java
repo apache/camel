@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ec2;
 
 import org.apache.camel.Category;
@@ -32,9 +33,14 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 /**
  * Manage AWS EC2 instances.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ec2", title = "AWS Elastic Compute Cloud (EC2)",
-             syntax = "aws2-ec2:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
-             headersClass = AWS2EC2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-ec2",
+        title = "AWS Elastic Compute Cloud (EC2)",
+        syntax = "aws2-ec2:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = AWS2EC2Constants.class)
 public class AWS2EC2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private Ec2Client ec2Client;
@@ -62,7 +68,8 @@ public class AWS2EC2Endpoint extends DefaultEndpoint implements EndpointServiceL
         super.doStart();
 
         ec2Client = configuration.getAmazonEc2Client() != null
-                ? configuration.getAmazonEc2Client() : AWS2EC2ClientFactory.getEc2Client(configuration).getEc2Client();
+                ? configuration.getAmazonEc2Client()
+                : AWS2EC2ClientFactory.getEc2Client(configuration).getEc2Client();
     }
 
     @Override

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling.integration;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,14 +39,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Integration test for metadata extraction operations using test-infra for container management.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Too much resources on GitHub Actions")
 public class MetadataExtractionIT extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataExtractionIT.class);
@@ -67,8 +71,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
     public void testBasicMetadataExtraction() throws Exception {
         Path testFile = createTestMarkdownFile();
 
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata =
+                template.requestBody("direct:extract-metadata", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
         assertNotNull(metadata.getFileName(), "File name should be extracted");
@@ -85,8 +89,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
         Path testFile = createTestMarkdownFile();
 
         // Extract metadata with headers enabled (default behavior)
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata-with-headers",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata = template.requestBody(
+                "direct:extract-metadata-with-headers", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
         assertNotNull(metadata.getFileName(), "File name should be extracted");
@@ -98,8 +102,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
     public void testMetadataExtractionWithoutHeaders() throws Exception {
         Path testFile = createTestMarkdownFile();
 
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata-no-headers",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata =
+                template.requestBody("direct:extract-metadata-no-headers", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
         assertNotNull(metadata.getFileName(), "File name should be extracted");
@@ -111,8 +115,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
     public void testMetadataExtractionWithAllFields() throws Exception {
         Path testFile = createTestMarkdownFile();
 
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata-all-fields",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata =
+                template.requestBody("direct:extract-metadata-all-fields", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
         assertNotNull(metadata.getFileName(), "File name should be extracted");
@@ -129,8 +133,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
     public void testMetadataExtractionWithRawMetadata() throws Exception {
         Path testFile = createTestMarkdownFile();
 
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata-with-raw",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata =
+                template.requestBody("direct:extract-metadata-with-raw", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
         assertNotNull(metadata.getFileName(), "File name should be extracted");
@@ -149,8 +153,7 @@ public class MetadataExtractionIT extends CamelTestSupport {
         // Test extracting metadata from a URL (if docling-serve supports it)
         String url = "https://arxiv.org/pdf/2501.17887";
 
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata-url",
-                url, DocumentMetadata.class);
+        DocumentMetadata metadata = template.requestBody("direct:extract-metadata-url", url, DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
         assertNotNull(metadata.getFilePath(), "File path should be set to URL");
@@ -162,8 +165,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
     public void testMetadataHelperMethods() throws Exception {
         Path testFile = createTestMarkdownFile();
 
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata =
+                template.requestBody("direct:extract-metadata", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
 
@@ -177,8 +180,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
     public void testMetadataToString() throws Exception {
         Path testFile = createTestMarkdownFile();
 
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata =
+                template.requestBody("direct:extract-metadata", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
 
@@ -195,8 +198,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
 
         // Extract metadata and verify headers are populated in the exchange
         // We use a mock endpoint to capture the exchange with headers
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata-verify-headers",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata = template.requestBody(
+                "direct:extract-metadata-verify-headers", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
         assertNotNull(metadata.getFileName(), "File name should be extracted");
@@ -209,8 +212,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
         Path testFile = createTestMarkdownFile();
 
         // Extract metadata without extractAllMetadata flag
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata =
+                template.requestBody("direct:extract-metadata", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
 
@@ -227,8 +230,8 @@ public class MetadataExtractionIT extends CamelTestSupport {
         Path testFile = createTestMarkdownFile();
 
         // Extract metadata without includeRawMetadata flag
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
-                testFile.toString(), DocumentMetadata.class);
+        DocumentMetadata metadata =
+                template.requestBody("direct:extract-metadata", testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
 
@@ -242,15 +245,15 @@ public class MetadataExtractionIT extends CamelTestSupport {
 
     private Path createTestMarkdownFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-metadata-test", ".md");
-        Files.write(tempFile,
-                ("# Test Document for Metadata Extraction\n\n" +
-                 "This is a test document for metadata extraction.\n\n" +
-                 "## Section 1\n\n" +
-                 "Some content here.\n\n" +
-                 "- List item 1\n" +
-                 "- List item 2\n\n" +
-                 "## Section 2\n\n" +
-                 "More content with some **bold** text and *italic* text.\n")
+        Files.write(
+                tempFile,
+                ("# Test Document for Metadata Extraction\n\n" + "This is a test document for metadata extraction.\n\n"
+                                + "## Section 1\n\n"
+                                + "Some content here.\n\n"
+                                + "- List item 1\n"
+                                + "- List item 2\n\n"
+                                + "## Section 2\n\n"
+                                + "More content with some **bold** text and *italic* text.\n")
                         .getBytes());
         return tempFile;
     }
@@ -261,8 +264,7 @@ public class MetadataExtractionIT extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // Basic metadata extraction
-                from("direct:extract-metadata")
-                        .to("docling:extract?operation=EXTRACT_METADATA");
+                from("direct:extract-metadata").to("docling:extract?operation=EXTRACT_METADATA");
 
                 // Metadata extraction with headers enabled (default)
                 from("direct:extract-metadata-with-headers")
@@ -281,8 +283,7 @@ public class MetadataExtractionIT extends CamelTestSupport {
                         .to("docling:extract?operation=EXTRACT_METADATA&includeRawMetadata=true");
 
                 // Metadata extraction from URL
-                from("direct:extract-metadata-url")
-                        .to("docling:extract?operation=EXTRACT_METADATA");
+                from("direct:extract-metadata-url").to("docling:extract?operation=EXTRACT_METADATA");
 
                 // Metadata extraction to verify headers are populated
                 from("direct:extract-metadata-verify-headers")
@@ -291,5 +292,4 @@ public class MetadataExtractionIT extends CamelTestSupport {
             }
         };
     }
-
 }

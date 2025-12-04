@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
@@ -22,17 +27,14 @@ import org.apache.camel.component.salesforce.dto.generated.MSPTest;
 import org.apache.camel.component.salesforce.dto.generated.StringMSPTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class MultiSelectPicklistJsonTest {
 
-    private static final String TEST_JSON
-            = "{\"attributes\":{\"referenceId\":null,\"type\":\"MSPTest\",\"url\":null},\"MspField\":\"Value1;Value2;Value3\"}";
-    private static final String TEST_NO_NULL_JSON = "{\"attributes\":{\"referenceId\":null,\"type\":\"MSPTest\",\"url\":null}}";
-    private static final String TEST_NULL_JSON
-            = "{\"attributes\":{\"referenceId\":null,\"type\":\"MSPTest\",\"url\":null},\"MspField\":null}";
+    private static final String TEST_JSON =
+            "{\"attributes\":{\"referenceId\":null,\"type\":\"MSPTest\",\"url\":null},\"MspField\":\"Value1;Value2;Value3\"}";
+    private static final String TEST_NO_NULL_JSON =
+            "{\"attributes\":{\"referenceId\":null,\"type\":\"MSPTest\",\"url\":null}}";
+    private static final String TEST_NULL_JSON =
+            "{\"attributes\":{\"referenceId\":null,\"type\":\"MSPTest\",\"url\":null},\"MspField\":null}";
 
     private static ObjectMapper objectMapper = JsonUtils.createObjectMapper();
 
@@ -76,7 +78,7 @@ public class MultiSelectPicklistJsonTest {
     @Test
     public void testMarshalString() throws Exception {
         final StringMSPTest mspTest = new StringMSPTest();
-        String[] stringList = new String[] { "Value1", "Value2", "Value3" };
+        String[] stringList = new String[] {"Value1", "Value2", "Value3"};
         mspTest.setMspField(stringList);
 
         String json = objectMapper.writeValueAsString(mspTest);
@@ -93,7 +95,7 @@ public class MultiSelectPicklistJsonTest {
     @Test
     public void testUnmarshalString() throws Exception {
         StringMSPTest mspTest = objectMapper.readValue(TEST_JSON, StringMSPTest.class);
-        String[] stringList = new String[] { "Value1", "Value2", "Value3" };
+        String[] stringList = new String[] {"Value1", "Value2", "Value3"};
         assertArrayEquals(stringList, mspTest.getMspField());
 
         // test null

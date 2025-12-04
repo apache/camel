@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteRemove2Test extends ContextTestSupport {
 
@@ -32,7 +33,9 @@ public class RouteRemove2Test extends ContextTestSupport {
         DefaultCamelContext defaultContext = (DefaultCamelContext) context;
         assertEquals(2, context.getRoutes().size());
         assertEquals(2, context.getRouteDefinitions().size());
-        assertEquals(2, defaultContext.getCamelContextExtension().getRouteStartupOrder().size());
+        assertEquals(
+                2,
+                defaultContext.getCamelContextExtension().getRouteStartupOrder().size());
         assertEquals(2, defaultContext.getRouteServices().size());
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
@@ -40,13 +43,17 @@ public class RouteRemove2Test extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("bar").name());
 
         // stop foo route
         context.getRouteController().stopRoute("foo");
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("bar").name());
 
         resetMocks();
 
@@ -59,7 +66,8 @@ public class RouteRemove2Test extends ContextTestSupport {
         boolean removed = context.removeRoute("foo");
         assertTrue(removed, "Route should be removed");
         assertNull(context.getRouteController().getRouteStatus("foo"), "There should be no foo route anymore");
-        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("bar").name());
 
         resetMocks();
 
@@ -71,7 +79,9 @@ public class RouteRemove2Test extends ContextTestSupport {
 
         assertEquals(1, context.getRoutes().size());
         assertEquals(1, context.getRouteDefinitions().size());
-        assertEquals(1, defaultContext.getCamelContextExtension().getRouteStartupOrder().size());
+        assertEquals(
+                1,
+                defaultContext.getCamelContextExtension().getRouteStartupOrder().size());
         assertEquals(1, defaultContext.getRouteServices().size());
     }
 

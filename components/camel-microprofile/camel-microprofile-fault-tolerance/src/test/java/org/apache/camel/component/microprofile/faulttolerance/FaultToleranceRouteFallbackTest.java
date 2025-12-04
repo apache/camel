@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,7 +29,8 @@ public class FaultToleranceRouteFallbackTest extends CamelTestSupport {
     @Test
     public void testFaultTolerance() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_STATE, "CLOSED");
 
@@ -42,15 +44,20 @@ public class FaultToleranceRouteFallbackTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("log:start").circuitBreaker().throwException(new IllegalArgumentException("Forced"))
+                from("direct:start")
+                        .to("log:start")
+                        .circuitBreaker()
+                        .throwException(new IllegalArgumentException("Forced"))
                         .onFallback()
                         .process(e -> {
                             Assertions.assertEquals("CLOSED", e.getProperty(CircuitBreakerConstants.RESPONSE_STATE));
                         })
-                        .transform().constant("Fallback message")
-                        .end().to("log:result").to("mock:result");
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }
-
 }

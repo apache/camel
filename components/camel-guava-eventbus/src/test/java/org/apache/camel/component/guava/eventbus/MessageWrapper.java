@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
 
 public class MessageWrapper {
@@ -27,5 +28,4 @@ public class MessageWrapper {
     public String getMessage() {
         return message;
     }
-
 }

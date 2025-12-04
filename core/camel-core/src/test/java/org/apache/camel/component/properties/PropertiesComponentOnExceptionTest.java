@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Properties;
 
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
 
     @Test
@@ -37,9 +38,7 @@ public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
         mock.message(0).header(Exchange.REDELIVERED).isEqualTo(true);
         mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
 
-        assertThrows(Exception.class,
-                () -> template.sendBody("direct:start", "Hello World"),
-                "Should throw exception");
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"), "Should throw exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -49,7 +48,10 @@ public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).redeliveryDelay("{{delay}}").maximumRedeliveries("{{max}}").to("mock:dead");
+                onException(Exception.class)
+                        .redeliveryDelay("{{delay}}")
+                        .maximumRedeliveries("{{max}}")
+                        .to("mock:dead");
 
                 from("direct:start").throwException(new IllegalAccessException("Damn"));
             }
@@ -74,5 +76,4 @@ public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
         context.getPropertiesComponent().setLocation("ref:myprop");
         return context;
     }
-
 }

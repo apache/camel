@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
 
 import java.util.Objects;
@@ -40,10 +41,9 @@ public class Manufacturer {
 
     @Override
     public String toString() {
-        return "Manufacturer{" +
-               "manufacturerName='" + manufacturerName + '\'' +
-               ", manufacturerCode='" + manufacturerCode + '\'' +
-               '}';
+        return "Manufacturer{" + "manufacturerName='"
+                + manufacturerName + '\'' + ", manufacturerCode='"
+                + manufacturerCode + '\'' + '}';
     }
 
     @Override
@@ -57,8 +57,8 @@ public class Manufacturer {
         }
 
         Manufacturer that = (Manufacturer) o;
-        return Objects.equals(getManufacturerName(), that.getManufacturerName()) &&
-                Objects.equals(getManufacturerCode(), that.getManufacturerCode());
+        return Objects.equals(getManufacturerName(), that.getManufacturerName())
+                && Objects.equals(getManufacturerCode(), that.getManufacturerCode());
     }
 
     @Override

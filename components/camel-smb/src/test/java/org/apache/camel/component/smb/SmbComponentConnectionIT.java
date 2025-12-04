@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import java.io.IOException;
@@ -74,8 +75,14 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         template.sendBodyAndHeader("seda:send", "Hello World", Exchange.FILE_NAME, "file_ignore.doc");
-        template.sendBodyAndHeaders("seda:send", "Good Bye", Map.of(Exchange.FILE_NAME, "file_ignore.doc",
-                SmbConstants.SMB_FILE_EXISTS, GenericFileExist.Ignore.name()));
+        template.sendBodyAndHeaders(
+                "seda:send",
+                "Good Bye",
+                Map.of(
+                        Exchange.FILE_NAME,
+                        "file_ignore.doc",
+                        SmbConstants.SMB_FILE_EXISTS,
+                        GenericFileExist.Ignore.name()));
 
         mock.assertIsSatisfied();
         SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
@@ -88,8 +95,14 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:received_override");
         mock.expectedMessageCount(1);
         template.sendBodyAndHeader("seda:send", "Hello World22", Exchange.FILE_NAME, "file_override.doc");
-        template.sendBodyAndHeaders("seda:send", "Good Bye", Map.of(Exchange.FILE_NAME, "file_override.doc",
-                SmbConstants.SMB_FILE_EXISTS, GenericFileExist.Override.name()));
+        template.sendBodyAndHeaders(
+                "seda:send",
+                "Good Bye",
+                Map.of(
+                        Exchange.FILE_NAME,
+                        "file_override.doc",
+                        SmbConstants.SMB_FILE_EXISTS,
+                        GenericFileExist.Override.name()));
 
         mock.assertIsSatisfied();
         SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
@@ -103,19 +116,26 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
                 final SmbFile data = exchange.getMessage().getBody(SmbFile.class);
                 final String name = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
                 new String((byte[]) data.getBody(), StandardCharsets.UTF_8);
-                LOG.debug("Read exchange name {} at {} with contents: {} (bytes {})", name, data.getAbsoluteFilePath(),
-                        new String((byte[]) data.getBody(), StandardCharsets.UTF_8), data.getFileLength());
+                LOG.debug(
+                        "Read exchange name {} at {} with contents: {} (bytes {})",
+                        name,
+                        data.getAbsoluteFilePath(),
+                        new String((byte[]) data.getBody(), StandardCharsets.UTF_8),
+                        data.getFileLength());
             }
 
             public void configure() {
                 SmbConfig config = SmbConfig.builder()
-                        .withTimeout(120, TimeUnit.SECONDS) // Timeout sets Read, Write, and Transact timeouts (default is 60 seconds)
+                        .withTimeout(
+                                120, TimeUnit.SECONDS) // Timeout sets Read, Write, and Transact timeouts (default is 60
+                        // seconds)
                         .withSoTimeout(180, TimeUnit.SECONDS) // Socket Timeout (default is 0 seconds, blocks forever)
                         .build();
                 context.getRegistry().bind("smbConfig", config);
 
-                fromF("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig", service.address(), service.shareName(),
-                        service.userName(), service.password())
+                fromF(
+                                "smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig",
+                                service.address(), service.shareName(), service.userName(), service.password())
                         .to("seda:intermediate");
 
                 from("seda:intermediate?concurrentConsumers=4")
@@ -123,20 +143,21 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
                         .to("mock:result");
 
                 from("seda:send")
-                        .toF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(),
-                                service.userName(), service.password());
+                        .toF(
+                                "smb:%s/%s?username=%s&password=%s",
+                                service.address(), service.shareName(), service.userName(), service.password());
 
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_override.doc", service.address(),
-                        service.shareName(),
-                        service.userName(), service.password())
+                fromF(
+                                "smb:%s/%s?username=%s&password=%s&searchPattern=*_override.doc",
+                                service.address(), service.shareName(), service.userName(), service.password())
                         .to("mock:received_override");
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_ignore.doc", service.address(),
-                        service.shareName(),
-                        service.userName(), service.password())
+                fromF(
+                                "smb:%s/%s?username=%s&password=%s&searchPattern=*_ignore.doc",
+                                service.address(), service.shareName(), service.userName(), service.password())
                         .to("mock:received_ignore");
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_send.doc", service.address(),
-                        service.shareName(),
-                        service.userName(), service.password())
+                fromF(
+                                "smb:%s/%s?username=%s&password=%s&searchPattern=*_send.doc",
+                                service.address(), service.shareName(), service.userName(), service.password())
                         .to("mock:received_send");
             }
         };

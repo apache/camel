@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -33,15 +34,21 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "blocked",
-         description = "Get blocked messages of Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "blocked",
+        description = "Get blocked messages of Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListBlocked extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
     public ListBlocked(CamelJBangMain main) {
@@ -53,57 +60,77 @@ public class ListBlocked extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row row = new Row();
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
+                row.uptime = extractSince(ph);
+                row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("blocked");
-                        if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("exchanges");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
-                                    row.exchangeId = jo.getString("exchangeId");
-                                    row.routeId = jo.getString("routeId");
-                                    row.nodeId = jo.getString("nodeId");
-                                    row.duration = jo.getLong("duration");
-                                    rows.add(row);
-                                }
-                            }
+                JsonObject jo = (JsonObject) root.get("blocked");
+                if (jo != null) {
+                    JsonArray arr = (JsonArray) jo.get("exchanges");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = row.copy();
+                            jo = (JsonObject) arr.get(i);
+                            row.exchangeId = jo.getString("exchangeId");
+                            row.routeId = jo.getString("routeId");
+                            row.nodeId = jo.getString("nodeId");
+                            row.duration = jo.getLong("duration");
+                            rows.add(row);
                         }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("EXCHANGE-ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.exchangeId),
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.routeId),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.nodeId),
-                    new Column().header("DURATION").dataAlign(HorizontalAlign.RIGHT).with(this::getDuration))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("EXCHANGE-ID")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.exchangeId),
+                                    new Column()
+                                            .header("ROUTE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.routeId),
+                                    new Column()
+                                            .header("ID")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.nodeId),
+                                    new Column()
+                                            .header("DURATION")
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getDuration))));
         }
 
         return 0;
@@ -150,5 +177,4 @@ public class ListBlocked extends ProcessWatchCommand {
             }
         }
     }
-
 }

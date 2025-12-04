@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 
@@ -23,15 +26,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class MongoDbTypeConvertersTest {
     @Test
     public void convertFromString() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            Document doc = context.getTypeConverter().convertTo(
-                    Document.class,
-                    "{ \"id\": \"foo\", \"value\": \"the value\"}");
+            Document doc = context.getTypeConverter()
+                    .convertTo(Document.class, "{ \"id\": \"foo\", \"value\": \"the value\"}");
 
             assertEquals("foo", doc.get("id", String.class));
             assertEquals("the value", doc.get("value", String.class));
@@ -41,9 +41,10 @@ public class MongoDbTypeConvertersTest {
     @Test
     public void convertFromBytes() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            Document doc = context.getTypeConverter().convertTo(
-                    Document.class,
-                    "{ \"id\": \"foo\", \"value\": \"the value\"}".getBytes(StandardCharsets.UTF_8));
+            Document doc = context.getTypeConverter()
+                    .convertTo(
+                            Document.class,
+                            "{ \"id\": \"foo\", \"value\": \"the value\"}".getBytes(StandardCharsets.UTF_8));
 
             assertEquals("foo", doc.get("id", String.class));
             assertEquals("the value", doc.get("value", String.class));

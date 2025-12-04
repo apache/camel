@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,22 +31,18 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class CosmosDbEndpointTest extends CamelTestSupport {
 
     @Test
     void testCreateEndpointWithNoClientOrEndpoint() {
-        assertThrows(ResolveEndpointFailedException.class,
-                () -> context.getEndpoint("azure-cosmosdb://"));
+        assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("azure-cosmosdb://"));
 
-        assertThrows(ResolveEndpointFailedException.class,
+        assertThrows(
+                ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("azure-cosmosdb://test?databaseEndpoint=https://test.com"));
 
-        assertThrows(ResolveEndpointFailedException.class,
+        assertThrows(
+                ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("azure-cosmosdb://test?accountKey=myKey"));
     }
 
@@ -53,14 +55,15 @@ class CosmosDbEndpointTest extends CamelTestSupport {
         params.put("createDatabaseIfNotExists", "true");
         params.put("accountKey", "myKey");
 
-        final CosmosDbEndpoint endpoint = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
-                .createEndpoint(uri, remaining, params);
+        final CosmosDbEndpoint endpoint = (CosmosDbEndpoint)
+                context.getComponent("azure-cosmosdb", CosmosDbComponent.class).createEndpoint(uri, remaining, params);
 
         assertEquals("mydb", endpoint.getConfiguration().getDatabaseName());
         assertEquals("myContainer", endpoint.getConfiguration().getContainerName());
         assertEquals("https://test.com:443", endpoint.getConfiguration().getDatabaseEndpoint());
         assertEquals("myKey", endpoint.getConfiguration().getAccountKey());
-        assertEquals(CredentialType.SHARED_ACCOUNT_KEY, endpoint.getConfiguration().getCredentialType());
+        assertEquals(
+                CredentialType.SHARED_ACCOUNT_KEY, endpoint.getConfiguration().getCredentialType());
         assertTrue(endpoint.getConfiguration().isCreateDatabaseIfNotExists());
     }
 
@@ -74,8 +77,8 @@ class CosmosDbEndpointTest extends CamelTestSupport {
         params.put("accountKey", "myKey");
         params.put("credentialType", CredentialType.AZURE_IDENTITY);
 
-        final CosmosDbEndpoint endpoint = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
-                .createEndpoint(uri, remaining, params);
+        final CosmosDbEndpoint endpoint = (CosmosDbEndpoint)
+                context.getComponent("azure-cosmosdb", CosmosDbComponent.class).createEndpoint(uri, remaining, params);
 
         assertEquals("mydb", endpoint.getConfiguration().getDatabaseName());
         assertEquals("myContainer", endpoint.getConfiguration().getContainerName());
@@ -95,17 +98,22 @@ class CosmosDbEndpointTest extends CamelTestSupport {
         params.put("accountKey", "myKey");
         params.put("indexingPolicy", new IndexingPolicy().setIndexingMode(IndexingMode.LAZY));
 
-        final CosmosDbEndpoint endpoint = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
-                .createEndpoint(uri, remaining, params);
+        final CosmosDbEndpoint endpoint = (CosmosDbEndpoint)
+                context.getComponent("azure-cosmosdb", CosmosDbComponent.class).createEndpoint(uri, remaining, params);
 
         assertEquals("mydb", endpoint.getConfiguration().getDatabaseName());
         assertEquals("myContainer", endpoint.getConfiguration().getContainerName());
         assertEquals("https://test.com:443", endpoint.getConfiguration().getDatabaseEndpoint());
         assertEquals("myKey", endpoint.getConfiguration().getAccountKey());
-        assertEquals("Lazy", endpoint.getConfiguration().getIndexingPolicy().getIndexingMode().toString());
-        assertEquals(CredentialType.SHARED_ACCOUNT_KEY, endpoint.getConfiguration().getCredentialType());
+        assertEquals(
+                "Lazy",
+                endpoint.getConfiguration()
+                        .getIndexingPolicy()
+                        .getIndexingMode()
+                        .toString());
+        assertEquals(
+                CredentialType.SHARED_ACCOUNT_KEY, endpoint.getConfiguration().getCredentialType());
         assertTrue(endpoint.getConfiguration().isCreateDatabaseIfNotExists());
-
     }
 
     @Test
@@ -117,46 +125,40 @@ class CosmosDbEndpointTest extends CamelTestSupport {
         params.put("createDatabaseIfNotExists", "true");
         params.put("accountKey", "myKey");
 
-        final CosmosDbEndpoint endpoint = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
-                .createEndpoint(uri, remaining, params);
-        assertThrows(IllegalArgumentException.class, () -> endpoint.createConsumer(exchange -> {
-        }));
+        final CosmosDbEndpoint endpoint = (CosmosDbEndpoint)
+                context.getComponent("azure-cosmosdb", CosmosDbComponent.class).createEndpoint(uri, remaining, params);
+        assertThrows(IllegalArgumentException.class, () -> endpoint.createConsumer(exchange -> {}));
 
         params.put("databaseEndpoint", "https://test.com:443");
         params.put("createDatabaseIfNotExists", "true");
         params.put("accountKey", "myKey");
         remaining = "/mydb";
-        final CosmosDbEndpoint endpoint2 = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
-                .createEndpoint(uri, remaining, params);
-        assertThrows(IllegalArgumentException.class, () -> endpoint2.createConsumer(exchange -> {
-        }));
+        final CosmosDbEndpoint endpoint2 = (CosmosDbEndpoint)
+                context.getComponent("azure-cosmosdb", CosmosDbComponent.class).createEndpoint(uri, remaining, params);
+        assertThrows(IllegalArgumentException.class, () -> endpoint2.createConsumer(exchange -> {}));
 
         params.put("databaseEndpoint", "https://test.com:443");
         params.put("createDatabaseIfNotExists", "true");
         params.put("accountKey", "myKey");
         remaining = "mydb/";
-        final CosmosDbEndpoint endpoint3 = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
-                .createEndpoint(uri, remaining, params);
-        assertThrows(IllegalArgumentException.class, () -> endpoint3.createConsumer(exchange -> {
-        }));
+        final CosmosDbEndpoint endpoint3 = (CosmosDbEndpoint)
+                context.getComponent("azure-cosmosdb", CosmosDbComponent.class).createEndpoint(uri, remaining, params);
+        assertThrows(IllegalArgumentException.class, () -> endpoint3.createConsumer(exchange -> {}));
 
         params.put("databaseEndpoint", "https://test.com:443");
         params.put("createDatabaseIfNotExists", "true");
         params.put("accountKey", "myKey");
         remaining = "";
-        final CosmosDbEndpoint endpoint4 = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
-                .createEndpoint(uri, remaining, params);
-        assertThrows(IllegalArgumentException.class, () -> endpoint4.createConsumer(exchange -> {
-        }));
+        final CosmosDbEndpoint endpoint4 = (CosmosDbEndpoint)
+                context.getComponent("azure-cosmosdb", CosmosDbComponent.class).createEndpoint(uri, remaining, params);
+        assertThrows(IllegalArgumentException.class, () -> endpoint4.createConsumer(exchange -> {}));
 
         params.put("databaseEndpoint", "https://test.com:443");
         params.put("createDatabaseIfNotExists", "true");
         params.put("accountKey", "myKey");
         remaining = "mydb/mycn";
-        final CosmosDbEndpoint endpoint5 = (CosmosDbEndpoint) context.getComponent("azure-cosmosdb", CosmosDbComponent.class)
-                .createEndpoint(uri, remaining, params);
-        assertNotNull(endpoint5.createConsumer(exchange -> {
-        }));
+        final CosmosDbEndpoint endpoint5 = (CosmosDbEndpoint)
+                context.getComponent("azure-cosmosdb", CosmosDbComponent.class).createEndpoint(uri, remaining, params);
+        assertNotNull(endpoint5.createConsumer(exchange -> {}));
     }
-
 }

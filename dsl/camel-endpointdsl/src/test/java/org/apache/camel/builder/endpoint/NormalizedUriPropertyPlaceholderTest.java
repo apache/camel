@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Properties;
 
@@ -23,8 +26,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class NormalizedUriPropertyPlaceholderTest extends BaseEndpointDslTest {
 

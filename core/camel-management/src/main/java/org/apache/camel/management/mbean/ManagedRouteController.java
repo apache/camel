@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
@@ -52,9 +53,7 @@ public class ManagedRouteController extends ManagedService implements ManagedRou
     @Override
     public Collection<String> getControlledRoutes() {
         if (controller != null) {
-            return controller.getControlledRoutes().stream()
-                    .map(Route::getId)
-                    .toList();
+            return controller.getControlledRoutes().stream().map(Route::getId).toList();
         }
 
         return Collections.emptyList();

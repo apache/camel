@@ -23,9 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
-@InfraService(service = AWSInfraService.class,
-              description = "Local AWS Services with LocalStack",
-              serviceAlias = "aws", serviceImplementationAlias = "kinesis")
+@InfraService(
+        service = AWSInfraService.class,
+        description = "Local AWS Services with LocalStack",
+        serviceAlias = "aws",
+        serviceImplementationAlias = "kinesis")
 public class AWSKinesisLocalContainerInfraService extends AWSLocalContainerInfraService {
     private static final Logger LOG = LoggerFactory.getLogger(AWSKinesisLocalContainerInfraService.class);
 

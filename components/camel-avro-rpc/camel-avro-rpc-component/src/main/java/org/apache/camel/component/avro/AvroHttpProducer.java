@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 import java.net.URI;
@@ -31,6 +32,8 @@ public class AvroHttpProducer extends AvroProducer {
 
     @Override
     public Transceiver createTransceiver() throws Exception {
-        return new HttpTransceiver(URI.create(URISupport.normalizeUri(getEndpoint().getEndpointUri())).toURL());
+        return new HttpTransceiver(
+                URI.create(URISupport.normalizeUri(getEndpoint().getEndpointUri()))
+                        .toURL());
     }
 }

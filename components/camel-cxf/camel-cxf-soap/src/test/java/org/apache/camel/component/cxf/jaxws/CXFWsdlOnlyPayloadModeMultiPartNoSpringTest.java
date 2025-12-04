@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URL;
 
@@ -34,8 +37,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test that verifies multi part SOAP message functionality
  */
@@ -46,8 +47,8 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
     protected static final String SERVICE_NAME_PROP = "serviceName=";
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}PersonMultiPartPort";
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
-    protected static final String SERVICE_ADDRESS = "http://localhost:" + port1
-                                                    + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart";
+    protected static final String SERVICE_ADDRESS =
+            "http://localhost:" + port1 + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart";
     protected Endpoint endpoint;
 
     @BeforeEach
@@ -67,13 +68,13 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 from("cxf://http://localhost:" + port2
-                     + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
-                     + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
-                     + getDataFormat() + "&loggingFeatureEnabled=true")
+                                + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
+                                + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
+                                + getDataFormat() + "&loggingFeatureEnabled=true")
                         .to("cxf://http://localhost:" + port1
-                            + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
-                            + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
-                            + getDataFormat() + "&loggingFeatureEnabled=true");
+                                + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
+                                + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
+                                + getDataFormat() + "&loggingFeatureEnabled=true");
             }
         };
     }
@@ -88,10 +89,11 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
         PersonMultiPartService ss = new PersonMultiPartService(wsdlURL, QName.valueOf(getServiceName()));
 
         PersonMultiPartPortType client = ss.getPersonMultiPartPort();
-        ((BindingProvider) client).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + port2
-                                                                + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart");
+        ((BindingProvider) client)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + port2 + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart");
         Holder<Integer> ssn = new Holder<>();
         ssn.value = 0;
 
@@ -101,7 +103,6 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
         client.getPersonMultiPartOperation("foo", 0, name, ssn);
         assertEquals("New Person Name", name.value);
         assertEquals(123456789, (int) ssn.value);
-
     }
 
     protected String getServiceName() {

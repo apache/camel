@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.reload;
 
 import java.io.File;
@@ -74,11 +75,14 @@ public class OpenApiGeneratorReloadStrategy extends FileWatcherResourceReloadStr
 
         DependencyDownloader downloader = getCamelContext().hasService(DependencyDownloader.class);
         // these are extra dependencies used in special use-case so download as hidden
-        downloader.downloadHiddenDependency("org.apache.camel", "camel-openapi-rest-dsl-generator",
+        downloader.downloadHiddenDependency(
+                "org.apache.camel",
+                "camel-openapi-rest-dsl-generator",
                 getCamelContext().getVersion());
 
         // the generator is invoked via reflection
-        Class<?> clazz = getCamelContext().getClassResolver()
+        Class<?> clazz = getCamelContext()
+                .getClassResolver()
                 .resolveMandatoryClass("org.apache.camel.generator.openapi.RestDslGenerator");
         method = clazz.getDeclaredMethod("generateToYaml", CamelContext.class, File.class);
     }

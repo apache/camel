@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -30,10 +35,6 @@ import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class MainSupervisingRouteControllerTest {
 
     @Test
@@ -41,7 +42,8 @@ public class MainSupervisingRouteControllerTest {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().routeControllerConfig()
+        main.configure()
+                .routeControllerConfig()
                 .withEnabled(true)
                 .withBackOffDelay(25)
                 .withBackOffMaxAttempts(3)
@@ -64,11 +66,17 @@ public class MainSupervisingRouteControllerTest {
 
         MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
-        assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("foo").toString());
+        assertEquals(
+                "Started",
+                main.camelContext.getRouteController().getRouteStatus("foo").toString());
         // cheese was not able to start
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cheese").toString());
+        assertEquals(
+                "Stopped",
+                main.camelContext.getRouteController().getRouteStatus("cheese").toString());
         // cake was not able to start
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cake").toString());
+        assertEquals(
+                "Stopped",
+                main.camelContext.getRouteController().getRouteStatus("cake").toString());
 
         SupervisingRouteController src = (SupervisingRouteController) main.camelContext.getRouteController();
         Throwable e = src.getRestartException("cake");
@@ -77,7 +85,9 @@ public class MainSupervisingRouteControllerTest {
         assertInstanceOf(IllegalArgumentException.class, e);
 
         // bar is no auto startup
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());
+        assertEquals(
+                "Stopped",
+                main.camelContext.getRouteController().getRouteStatus("bar").toString());
 
         main.stop();
     }
@@ -110,11 +120,19 @@ public class MainSupervisingRouteControllerTest {
         MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
         // these should all start
-        assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("foo").toString());
-        assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("cheese").toString());
-        assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("cake").toString());
+        assertEquals(
+                "Started",
+                main.camelContext.getRouteController().getRouteStatus("foo").toString());
+        assertEquals(
+                "Started",
+                main.camelContext.getRouteController().getRouteStatus("cheese").toString());
+        assertEquals(
+                "Started",
+                main.camelContext.getRouteController().getRouteStatus("cake").toString());
         // bar is no auto startup
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());
+        assertEquals(
+                "Stopped",
+                main.camelContext.getRouteController().getRouteStatus("bar").toString());
 
         main.stop();
     }
@@ -141,11 +159,17 @@ public class MainSupervisingRouteControllerTest {
 
         MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
-        assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("foo").toString());
+        assertEquals(
+                "Started",
+                main.camelContext.getRouteController().getRouteStatus("foo").toString());
         // cheese was not able to start
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cheese").toString());
+        assertEquals(
+                "Stopped",
+                main.camelContext.getRouteController().getRouteStatus("cheese").toString());
         // cake was not able to start
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cake").toString());
+        assertEquals(
+                "Stopped",
+                main.camelContext.getRouteController().getRouteStatus("cake").toString());
 
         SupervisingRouteController src = (SupervisingRouteController) main.camelContext.getRouteController();
         Throwable e = src.getRestartException("cake");
@@ -154,7 +178,9 @@ public class MainSupervisingRouteControllerTest {
         assertInstanceOf(IllegalArgumentException.class, e);
 
         // bar is no auto startup
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());
+        assertEquals(
+                "Stopped",
+                main.camelContext.getRouteController().getRouteStatus("bar").toString());
 
         main.stop();
     }
@@ -216,5 +242,4 @@ public class MainSupervisingRouteControllerTest {
             }
         }
     }
-
 }

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.drill;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EndpointTest extends CamelTestSupport {
 
@@ -33,8 +34,8 @@ public class EndpointTest extends CamelTestSupport {
 
     @Test
     void testZKJdbcURL() {
-        Endpoint endpoint = context.getEndpoint(
-                "drill://" + HOST + "?port=" + PORT + "&directory=" + DIRECTORY + "&clusterId=" + CLUSTERID + "&mode=" + MODE);
+        Endpoint endpoint = context.getEndpoint("drill://" + HOST + "?port=" + PORT + "&directory=" + DIRECTORY
+                + "&clusterId=" + CLUSTERID + "&mode=" + MODE);
 
         final String uri = "jdbc:drill:zk=" + HOST + ":" + PORT + "/" + DIRECTORY + "/" + CLUSTERID;
 
@@ -48,5 +49,4 @@ public class EndpointTest extends CamelTestSupport {
 
         assertEquals(uri, ((DrillEndpoint) endpoint).toJDBCUri());
     }
-
 }

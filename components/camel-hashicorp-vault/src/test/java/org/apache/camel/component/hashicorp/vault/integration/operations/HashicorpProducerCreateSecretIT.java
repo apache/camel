@@ -17,6 +17,10 @@
 
 package org.apache.camel.component.hashicorp.vault.integration.operations;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,10 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hashicorp.vault.HashicorpVaultConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
 
@@ -87,17 +87,20 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
             @Override
             public void configure() {
                 from("direct:createSecret")
-                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                        .toF(
+                                "hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
                                 service.token(), service.host(), service.port())
                         .to("mock:result-write");
 
                 from("direct:readSecret")
-                        .toF("hashicorp-vault://secret?operation=getSecret&token=RAW(%s)&host=%s&port=%s&scheme=http",
+                        .toF(
+                                "hashicorp-vault://secret?operation=getSecret&token=RAW(%s)&host=%s&port=%s&scheme=http",
                                 service.token(), service.host(), service.port())
                         .to("mock:result-read");
 
                 from("direct:readSecretWithPathParam")
-                        .toF("hashicorp-vault://secret?operation=getSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                        .toF(
+                                "hashicorp-vault://secret?operation=getSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
                                 service.token(), service.host(), service.port())
                         .to("mock:result-read-with-param");
             }

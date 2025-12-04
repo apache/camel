@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.model;
 
 import java.util.List;
@@ -24,9 +25,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "sampleRequestWithSchema")
-public class SampleComplexRequestTypeWithSchemaAnnotation extends GenericComplexRequestType<CustomDataWithSchemaAnnotation> {
+public class SampleComplexRequestTypeWithSchemaAnnotation
+        extends GenericComplexRequestType<CustomDataWithSchemaAnnotation> {
     @JsonProperty(required = true)
     private String requestField1;
+
     private String requestField2;
     private List<String> listOfStrings;
     private String[] arrayOfString;

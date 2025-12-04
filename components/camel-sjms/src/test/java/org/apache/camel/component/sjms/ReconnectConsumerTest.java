@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,8 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Isolated("Seems to have problem running along with other tests")
-@DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
-                          disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
+@DisabledIfSystemProperty(
+        named = "activemq.instance.type",
+        matches = "remote",
+        disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class ReconnectConsumerTest extends JmsExclusiveTestSupport {
     private static final String SJMS_QUEUE_NAME = "sjms:in.only.consumer.ReconnectConsumerTest";
     private static final String MOCK_RESULT = "mock:result";
@@ -70,5 +73,4 @@ public class ReconnectConsumerTest extends JmsExclusiveTestSupport {
             }
         };
     }
-
 }

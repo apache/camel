@@ -28,9 +28,21 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "camel", "container", "cronjob", "environment", "ingress", "knative", "knative-service", "mount", "openapi", "pod",
-        "route",
-        "service", "service-binding", "jolokia" })
+    "camel",
+    "container",
+    "cronjob",
+    "environment",
+    "ingress",
+    "knative",
+    "knative-service",
+    "mount",
+    "openapi",
+    "pod",
+    "route",
+    "service",
+    "service-binding",
+    "jolokia"
+})
 public class Traits {
 
     @JsonProperty("addons")

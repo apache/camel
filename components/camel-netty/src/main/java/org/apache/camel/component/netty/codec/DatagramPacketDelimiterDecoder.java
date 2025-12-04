@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.codec;
 
 import java.net.InetSocketAddress;
@@ -27,7 +28,8 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatagramPacketDelimiterDecoder extends MessageToMessageDecoder<AddressedEnvelope<Object, InetSocketAddress>> {
+public class DatagramPacketDelimiterDecoder
+        extends MessageToMessageDecoder<AddressedEnvelope<Object, InetSocketAddress>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketDelimiterDecoder.class);
 
@@ -42,19 +44,16 @@ public class DatagramPacketDelimiterDecoder extends MessageToMessageDecoder<Addr
     }
 
     @Override
-    protected void decode(
-            ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg,
-            List<Object> out)
+    protected void decode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out)
             throws Exception {
         if (msg.content() instanceof ByteBuf) {
             ByteBuf payload = (ByteBuf) msg.content();
             Object result = delegateDecoder.decode(ctx, payload);
-            AddressedEnvelope<Object, InetSocketAddress> addressEvelop
-                    = new DefaultAddressedEnvelope<>(result, msg.recipient(), msg.sender());
+            AddressedEnvelope<Object, InetSocketAddress> addressEvelop =
+                    new DefaultAddressedEnvelope<>(result, msg.recipient(), msg.sender());
             out.add(addressEvelop);
         } else {
             LOG.debug("Ignoring message content as it is not an io.netty.buffer.ByteBuf instance.");
         }
     }
-
 }

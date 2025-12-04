@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack.io;
 
 import java.util.concurrent.ThreadFactory;
@@ -50,8 +51,12 @@ public final class LumberjackServer {
     private EventLoopGroup workerGroup;
     private Channel channel;
 
-    public LumberjackServer(String host, int port, SSLContext sslContext, ThreadFactory threadFactory,
-                            LumberjackMessageProcessor messageProcessor) {
+    public LumberjackServer(
+            String host,
+            int port,
+            SSLContext sslContext,
+            ThreadFactory threadFactory,
+            LumberjackMessageProcessor messageProcessor) {
         this.host = host;
         this.port = port;
         this.sslContext = sslContext;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -47,64 +48,82 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @XmlAttribute
     @Metadata(required = true)
     private String name;
+
     @XmlAttribute
     private String uri;
+
     @XmlAttribute
     @Metadata(defaultValue = ServiceCallDefinitionConstants.DEFAULT_COMPONENT)
     private String component;
+
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
     private String pattern;
+
     @XmlAttribute
     private String configurationRef;
+
     @XmlAttribute
     private String serviceDiscoveryRef;
+
     @XmlTransient
     private ServiceDiscovery serviceDiscovery;
+
     @XmlAttribute
     private String serviceFilterRef;
+
     @XmlTransient
     private ServiceFilter serviceFilter;
+
     @XmlAttribute
     private String serviceChooserRef;
+
     @XmlTransient
     private ServiceChooser serviceChooser;
+
     @XmlAttribute
     private String loadBalancerRef;
+
     @XmlTransient
     private ServiceLoadBalancer loadBalancer;
+
     @XmlAttribute
     private String expressionRef;
+
     @XmlTransient
     private Expression expression;
 
     @XmlElements({
-            @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class) })
+        @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(
+                name = "kubernetesServiceDiscovery",
+                type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class)
+    })
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
     @XmlElements({
-            @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
-            @XmlElement(name = "combinedServiceFilter", type = CombinedServiceCallServiceFilterConfiguration.class),
-            @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
-            @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
-            @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class) })
+        @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "combinedServiceFilter", type = CombinedServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)
+    })
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
     @XmlElements({
-            @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) })
+        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class)
+    })
     private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
     @XmlElement(name = "expression")
     private ServiceCallExpressionConfiguration expressionConfiguration;
 
-    public ServiceCallDefinition() {
-    }
+    public ServiceCallDefinition() {}
 
     public ServiceCallDefinition(String name) {
         this.name = name;
@@ -312,7 +331,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     /**
      * Configures the ServiceDiscovery using the given configuration.
      */
-    public void setServiceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
+    public void setServiceDiscoveryConfiguration(
+            ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         this.serviceDiscoveryConfiguration = serviceDiscoveryConfiguration;
     }
 
@@ -504,7 +524,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     /**
      * Configures the ServiceFilter using the given configuration.
      */
-    public ServiceCallDefinition serviceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
+    public ServiceCallDefinition serviceFilterConfiguration(
+            ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
         setServiceFilterConfiguration(serviceFilterConfiguration);
         return this;
     }
@@ -531,7 +552,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     // *****************************
 
     public CachingServiceCallServiceDiscoveryConfiguration cachingServiceDiscovery() {
-        CachingServiceCallServiceDiscoveryConfiguration conf = new CachingServiceCallServiceDiscoveryConfiguration(this);
+        CachingServiceCallServiceDiscoveryConfiguration conf =
+                new CachingServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
@@ -580,14 +602,16 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesServiceDiscovery() {
-        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration(this);
+        KubernetesServiceCallServiceDiscoveryConfiguration conf =
+                new KubernetesServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
     }
 
     public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesClientServiceDiscovery() {
-        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration(this);
+        KubernetesServiceCallServiceDiscoveryConfiguration conf =
+                new KubernetesServiceCallServiceDiscoveryConfiguration(this);
         conf.setLookup("client");
 
         setServiceDiscoveryConfiguration(conf);
@@ -596,7 +620,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     public ServiceCallDefinition kubernetesEnvServiceDiscovery() {
-        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration(this);
+        KubernetesServiceCallServiceDiscoveryConfiguration conf =
+                new KubernetesServiceCallServiceDiscoveryConfiguration(this);
         conf.setLookup("environment");
 
         setServiceDiscoveryConfiguration(conf);
@@ -605,7 +630,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     public ServiceCallDefinition kubernetesDnsServiceDiscovery(String namespace, String domain) {
-        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration(this);
+        KubernetesServiceCallServiceDiscoveryConfiguration conf =
+                new KubernetesServiceCallServiceDiscoveryConfiguration(this);
         conf.setLookup("dns");
         conf.setNamespace(namespace);
         conf.setDnsDomain(domain);
@@ -616,7 +642,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     public CombinedServiceCallServiceDiscoveryConfiguration combinedServiceDiscovery() {
-        CombinedServiceCallServiceDiscoveryConfiguration conf = new CombinedServiceCallServiceDiscoveryConfiguration(this);
+        CombinedServiceCallServiceDiscoveryConfiguration conf =
+                new CombinedServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
@@ -630,14 +657,16 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     public ZooKeeperServiceCallServiceDiscoveryConfiguration zookeeperServiceDiscovery() {
-        ZooKeeperServiceCallServiceDiscoveryConfiguration conf = new ZooKeeperServiceCallServiceDiscoveryConfiguration(this);
+        ZooKeeperServiceCallServiceDiscoveryConfiguration conf =
+                new ZooKeeperServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
     }
 
     public ServiceCallDefinition zookeeperServiceDiscovery(String nodes, String basePath) {
-        ZooKeeperServiceCallServiceDiscoveryConfiguration conf = new ZooKeeperServiceCallServiceDiscoveryConfiguration(this);
+        ZooKeeperServiceCallServiceDiscoveryConfiguration conf =
+                new ZooKeeperServiceCallServiceDiscoveryConfiguration(this);
         conf.setNodes(nodes);
         conf.setBasePath(basePath);
 
@@ -658,7 +687,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     public ServiceCallDefinition passThroughFilter() {
-        PassThroughServiceCallServiceFilterConfiguration conf = new PassThroughServiceCallServiceFilterConfiguration(this);
+        PassThroughServiceCallServiceFilterConfiguration conf =
+                new PassThroughServiceCallServiceFilterConfiguration(this);
         setServiceFilterConfiguration(conf);
 
         return this;
@@ -701,7 +731,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     // *****************************
 
     public ServiceCallDefinition defaultLoadBalancer() {
-        DefaultServiceCallServiceLoadBalancerConfiguration conf = new DefaultServiceCallServiceLoadBalancerConfiguration();
+        DefaultServiceCallServiceLoadBalancerConfiguration conf =
+                new DefaultServiceCallServiceLoadBalancerConfiguration();
         setLoadBalancerConfiguration(conf);
 
         return this;

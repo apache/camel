@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
 
 import java.nio.charset.StandardCharsets;
@@ -64,8 +65,10 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             }
 
         } catch (Exception e) {
-            exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID,
-                    policy.getClass().getSimpleName());
+            exchange.getIn()
+                    .setHeader(
+                            Exchange.AUTHENTICATION_FAILURE_POLICY_ID,
+                            policy.getClass().getSimpleName());
             if (e instanceof CamelAuthorizationException) {
                 throw e;
             }
@@ -103,8 +106,9 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             } else if (headerToken != null) {
                 token = headerToken;
                 isHeaderSource = true;
-                LOG.warn("Using token from HTTP header - this may be a security risk. "
-                         + "Consider setting tokens via exchange properties instead to prevent token injection attacks.");
+                LOG.warn(
+                        "Using token from HTTP header - this may be a security risk. "
+                                + "Consider setting tokens via exchange properties instead to prevent token injection attacks.");
             } else {
                 token = null;
             }
@@ -114,7 +118,7 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 token = headerToken;
                 isHeaderSource = true;
                 LOG.warn("Token from header takes precedence over property - this may allow token override attacks. "
-                         + "Consider setting preferPropertyOverHeader=true for better security.");
+                        + "Consider setting preferPropertyOverHeader=true for better security.");
             } else if (propertyToken != null) {
                 token = propertyToken;
                 LOG.debug("Using token from exchange property");
@@ -142,12 +146,12 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
      * @param  propertyToken               token stored in exchange properties (session-bound)
      * @throws CamelAuthorizationException if token binding validation fails
      */
-    private void validateTokenBinding(Exchange exchange, String headerToken, String propertyToken)
-            throws Exception {
+    private void validateTokenBinding(Exchange exchange, String headerToken, String propertyToken) throws Exception {
 
         // Level 1: Exact token match validation
         if (propertyToken != null && !propertyToken.equals(headerToken)) {
-            LOG.error("SECURITY: Token binding validation failed - header token does not match session-bound property token");
+            LOG.error(
+                    "SECURITY: Token binding validation failed - header token does not match session-bound property token");
             throw new CamelAuthorizationException(
                     "Token mismatch detected - possible session fixation or token injection attack", exchange);
         }
@@ -161,8 +165,10 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 String currentSubject = accessToken.getSubject();
 
                 if (!storedSubject.equals(currentSubject)) {
-                    LOG.error("SECURITY: Token subject mismatch - expected user '{}' but token is for user '{}'",
-                            storedSubject, currentSubject);
+                    LOG.error(
+                            "SECURITY: Token subject mismatch - expected user '{}' but token is for user '{}'",
+                            storedSubject,
+                            currentSubject);
                     throw new CamelAuthorizationException(
                             "Token subject mismatch - token does not belong to current session user", exchange);
                 }
@@ -174,14 +180,13 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 }
                 LOG.error("SECURITY: Failed to validate token subject binding", e);
                 throw new CamelAuthorizationException(
-                        "Token binding validation failed - unable to parse token", exchange,
-                        e);
+                        "Token binding validation failed - unable to parse token", exchange, e);
             }
         }
 
         // Level 3: Token thumbprint (integrity) validation
-        String storedThumbprint
-                = exchange.getProperty(KeycloakSecurityConstants.TOKEN_THUMBPRINT_PROPERTY, String.class);
+        String storedThumbprint =
+                exchange.getProperty(KeycloakSecurityConstants.TOKEN_THUMBPRINT_PROPERTY, String.class);
         if (storedThumbprint != null) {
             String currentThumbprint = calculateTokenThumbprint(headerToken);
             if (!storedThumbprint.equals(currentThumbprint)) {
@@ -218,8 +223,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
 
             // Use token introspection if enabled
             if (policy.isUseTokenIntrospection() && policy.getTokenIntrospector() != null) {
-                KeycloakTokenIntrospector.IntrospectionResult introspectionResult
-                        = KeycloakSecurityHelper.introspectToken(accessToken, policy.getTokenIntrospector());
+                KeycloakTokenIntrospector.IntrospectionResult introspectionResult =
+                        KeycloakSecurityHelper.introspectToken(accessToken, policy.getTokenIntrospector());
 
                 // Check if token is active
                 if (!introspectionResult.isActive()) {
@@ -244,7 +249,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                     : policy.getRequiredRolesAsList().stream().anyMatch(userRoles::contains);
 
             if (!hasRequiredRoles) {
-                String message = String.format("User does not have required roles. Required: %s, User has: %s",
+                String message = String.format(
+                        "User does not have required roles. Required: %s, User has: %s",
                         policy.getRequiredRoles(), userRoles);
                 LOG.debug(message);
                 throw new CamelAuthorizationException(message, exchange);
@@ -266,8 +272,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
 
             // Use token introspection if enabled
             if (policy.isUseTokenIntrospection() && policy.getTokenIntrospector() != null) {
-                KeycloakTokenIntrospector.IntrospectionResult introspectionResult
-                        = KeycloakSecurityHelper.introspectToken(accessToken, policy.getTokenIntrospector());
+                KeycloakTokenIntrospector.IntrospectionResult introspectionResult =
+                        KeycloakSecurityHelper.introspectToken(accessToken, policy.getTokenIntrospector());
 
                 // Check if token is active
                 if (!introspectionResult.isActive()) {
@@ -291,7 +297,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                     : policy.getRequiredPermissionsAsList().stream().anyMatch(userPermissions::contains);
 
             if (!hasRequiredPermissions) {
-                String message = String.format("User does not have required permissions. Required: %s, User has: %s",
+                String message = String.format(
+                        "User does not have required permissions. Required: %s, User has: %s",
                         policy.getRequiredPermissions(), userPermissions);
                 LOG.debug(message);
                 throw new CamelAuthorizationException(message, exchange);
@@ -306,5 +313,4 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             throw new CamelAuthorizationException("Failed to validate permissions", exchange, e);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -42,8 +43,7 @@ public class OnWhenDefinition extends OptionalIdentifiedDefinition<OnWhenDefinit
     @XmlElementRef
     private ExpressionDefinition expression;
 
-    public OnWhenDefinition() {
-    }
+    public OnWhenDefinition() {}
 
     protected OnWhenDefinition(OnWhenDefinition source) {
         super(source);
@@ -146,9 +146,9 @@ public class OnWhenDefinition extends OptionalIdentifiedDefinition<OnWhenDefinit
             if (getExpression().getPredicate() != null) {
                 getExpression().setExpression(getExpression().getPredicate().toString());
             } else if (getExpression().getExpressionValue() != null) {
-                getExpression().setExpression(getExpression().getExpressionValue().toString());
+                getExpression()
+                        .setExpression(getExpression().getExpressionValue().toString());
             }
         }
     }
-
 }

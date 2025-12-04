@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.huaweicloud.image;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.*;
 
 import com.huaweicloud.sdk.image.v2.model.CelebrityRecognitionResultBody;
@@ -28,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CelebrityRecognitionWithImageUrlAndMockClientTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -41,16 +41,18 @@ public class CelebrityRecognitionWithImageUrlAndMockClientTest extends CamelTest
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(ImageRecognitionProperties.IMAGE_URL,
+                        .setProperty(
+                                ImageRecognitionProperties.IMAGE_URL,
                                 constant(testConfiguration.getProperty("imageUrl")))
-                        .setProperty(ImageRecognitionProperties.THRESHOLD,
+                        .setProperty(
+                                ImageRecognitionProperties.THRESHOLD,
                                 constant(testConfiguration.getProperty("celebrityThreshold")))
                         .to("hwcloud-imagerecognition:celebrityRecognition?accessKey="
-                            + testConfiguration.getProperty("accessKey")
-                            + "&secretKey=" + testConfiguration.getProperty("secretKey") + "&projectId="
-                            + testConfiguration.getProperty("projectId") + "&region="
-                            + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
-                            + "&imageClient=#imageClient")
+                                + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey") + "&projectId="
+                                + testConfiguration.getProperty("projectId") + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&imageClient=#imageClient")
                         .log("perform celebrity recognition successful")
                         .to("mock:perform_celebrity_recognition_result");
             }
@@ -67,8 +69,8 @@ public class CelebrityRecognitionWithImageUrlAndMockClientTest extends CamelTest
 
         mock.assertIsSatisfied();
 
-        CelebrityRecognitionResultBody result
-                = (CelebrityRecognitionResultBody) ((List) responseExchange.getIn().getBody()).get(0);
+        CelebrityRecognitionResultBody result = (CelebrityRecognitionResultBody)
+                ((List) responseExchange.getIn().getBody()).get(0);
         assertTrue(result instanceof CelebrityRecognitionResultBody);
 
         assertEquals(1, (responseExchange.getIn().getBody(List.class)).size());
@@ -82,5 +84,4 @@ public class CelebrityRecognitionWithImageUrlAndMockClientTest extends CamelTest
         assertEquals(200, faceDetailMap.get("x"));
         assertEquals(100, faceDetailMap.get("y"));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,8 +25,10 @@ import org.junit.jupiter.api.Test;
 
 public class SplitTimeoutCancelTaskTest extends ContextTestSupport {
 
-    final String payload1 = "<items><item><id>1</id><name>one</name></item><item><id>2</id><name>two</name></item></items>";
-    final String payload2 = "<items><item><id>3</id><name>three</name></item><item><id>4</id><name>four</name></item></items>";
+    final String payload1 =
+            "<items><item><id>1</id><name>one</name></item><item><id>2</id><name>two</name></item></items>";
+    final String payload2 =
+            "<items><item><id>3</id><name>three</name></item><item><id>4</id><name>four</name></item></items>";
 
     @Test
     public void testSplitterTimeoutShouldNotExhaustThreadPool() throws Exception {

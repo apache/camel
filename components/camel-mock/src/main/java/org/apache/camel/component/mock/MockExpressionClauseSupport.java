@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
 
 import org.apache.camel.CamelContext;
@@ -328,5 +329,4 @@ public class MockExpressionClauseSupport<T> {
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         // noop
     }
-
 }

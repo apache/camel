@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 import java.util.ArrayList;
@@ -75,9 +76,15 @@ public class KafkaDevConsole extends AbstractDevConsole {
                         sb.append(String.format("\n        Generation Id: %d", meta.generationId()));
                     }
                     if (metricsCollector.getLastRecord() != null) {
-                        sb.append(String.format("\n        Last Topic: %s", metricsCollector.getLastRecord().topic()));
-                        sb.append(String.format("\n        Last Partition: %d", metricsCollector.getLastRecord().partition()));
-                        sb.append(String.format("\n        Last Offset: %d", metricsCollector.getLastRecord().offset()));
+                        sb.append(String.format(
+                                "\n        Last Topic: %s",
+                                metricsCollector.getLastRecord().topic()));
+                        sb.append(String.format(
+                                "\n        Last Partition: %d",
+                                metricsCollector.getLastRecord().partition()));
+                        sb.append(String.format(
+                                "\n        Last Offset: %d",
+                                metricsCollector.getLastRecord().offset()));
                     }
                     if (committed) {
                         List<DefaultMetricsCollector.KafkaTopicPosition> l = fetchCommitOffsets(kc, metricsCollector);
@@ -88,8 +95,8 @@ public class KafkaDevConsole extends AbstractDevConsole {
                                 sb.append(String.format("\n        Commit Offset: %s", r.offset()));
                                 if (r.epoch() > 0) {
                                     long delta = System.currentTimeMillis() - r.epoch();
-                                    sb.append(String.format("\n        Commit Offset Since: %s",
-                                            TimeUtils.printDuration(delta, true)));
+                                    sb.append(String.format(
+                                            "\n        Commit Offset Since: %s", TimeUtils.printDuration(delta, true)));
                                 }
                             }
                         }
@@ -183,5 +190,4 @@ public class KafkaDevConsole extends AbstractDevConsole {
         }
         return root;
     }
-
 }

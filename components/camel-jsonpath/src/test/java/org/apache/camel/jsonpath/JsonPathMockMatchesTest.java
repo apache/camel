@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -30,8 +31,7 @@ public class JsonPathMockMatchesTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result");
+                from("direct:start").to("mock:result");
             }
         };
     }
@@ -71,5 +71,4 @@ public class JsonPathMockMatchesTest extends CamelTestSupport {
 
         mock.assertIsNotSatisfied();
     }
-
 }

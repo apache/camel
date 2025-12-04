@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test to test consumer.moveNamePrefix option.
  */
@@ -34,7 +35,7 @@ public class FromFtpMoveFilePrefixIT extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/movefile?password=admin&binary=false&delay=5000"
-               + "&move=done/${file:name}";
+                + "&move=done/${file:name}";
     }
 
     @Override

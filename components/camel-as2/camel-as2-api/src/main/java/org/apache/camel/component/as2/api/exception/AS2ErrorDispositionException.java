@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.exception;
 
 import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.hc.core5.http.HttpException;
 
-abstract public class AS2ErrorDispositionException extends HttpException {
+public abstract class AS2ErrorDispositionException extends HttpException {
 
     public AS2ErrorDispositionException(String message) {
         super(message);
@@ -29,5 +30,5 @@ abstract public class AS2ErrorDispositionException extends HttpException {
         super(message, exception);
     }
 
-    abstract public AS2DispositionModifier getDispositionModifier();
+    public abstract AS2DispositionModifier getDispositionModifier();
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -25,10 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test download objects with specific filename given
@@ -47,14 +48,13 @@ public class DownloadSingleFunctionalTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("hwcloud-obs:?" +
-                     "serviceKeys=#serviceKeys" +
-                     "&region=" + REGION +
-                     "&bucketName=" + BUCKET_NAME +
-                     "&fileName=" + FILENAME +
-                     "&ignoreSslVerification=true" +
-                     "&deleteAfterRead=false" +
-                     "&moveAfterRead=false")
+                from("hwcloud-obs:?" + "serviceKeys=#serviceKeys"
+                                + "&region="
+                                + REGION + "&bucketName="
+                                + BUCKET_NAME + "&fileName="
+                                + FILENAME + "&ignoreSslVerification=true"
+                                + "&deleteAfterRead=false"
+                                + "&moveAfterRead=false")
                         .log("Download objects successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:download_objects_result");

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 
@@ -30,8 +33,6 @@ import org.apache.camel.spi.Registry;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for poll strategy
@@ -54,7 +55,8 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
@@ -108,5 +110,4 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
             return false;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv2;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -32,7 +33,7 @@ public class BindyMarshalWithQuoteTest extends CamelTestSupport {
     public void testBindyMarshalWithQuote() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("\"123\",\"Wednesday, November 9, 2011\",\"Central California\""
-                                    + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+                + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         WeatherModel model = new WeatherModel();
         model.setId(123);
@@ -50,7 +51,8 @@ public class BindyMarshalWithQuoteTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .marshal()
+                        .bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
                         .to("mock:result");
             }
         };

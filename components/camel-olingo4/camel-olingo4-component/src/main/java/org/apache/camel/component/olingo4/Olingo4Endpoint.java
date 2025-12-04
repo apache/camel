@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
 
 import java.util.HashMap;
@@ -45,9 +46,14 @@ import org.apache.camel.util.CaseInsensitiveMap;
 /**
  * Communicate with OData 4.0 services using Apache Olingo OData API.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "olingo4", title = "Olingo4", syntax = "olingo4:apiName/methodName",
-             apiSyntax = "apiName/methodName",
-             category = { Category.CLOUD }, headersClass = Olingo4Constants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "olingo4",
+        title = "Olingo4",
+        syntax = "olingo4:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        category = {Category.CLOUD},
+        headersClass = Olingo4Constants.class)
 public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4Configuration>
         implements EndpointServiceLocation {
 
@@ -75,10 +81,19 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
 
     private Olingo4AppWrapper apiProxy;
 
-    public Olingo4Endpoint(String uri, Olingo4Component component, Olingo4ApiName apiName, String methodName,
-                           Olingo4Configuration endpointConfiguration) {
-        super(uri, component, apiName, methodName, Olingo4ApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public Olingo4Endpoint(
+            String uri,
+            Olingo4Component component,
+            Olingo4ApiName apiName,
+            String methodName,
+            Olingo4Configuration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                Olingo4ApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -179,8 +194,8 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
 
     @Override
     protected void afterConfigureProperties() {
-        olingo4endpointPropertyNames
-                = new HashSet<>(getPropertiesHelper().getValidEndpointProperties(getCamelContext(), configuration));
+        olingo4endpointPropertyNames =
+                new HashSet<>(getPropertiesHelper().getValidEndpointProperties(getCamelContext(), configuration));
         olingo4endpointPropertyNames.add(EDM_PROPERTY);
         olingo4endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
         olingo4endpointPropertyNames.add(SERVICE_URI_PROPERTY);
@@ -254,9 +269,10 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
             properties.compute(RESOURCE_PATH_PROPERTY, (key, resourcePath) -> {
                 if (resourcePath == null) {
                     throw new IllegalArgumentException(
-                            "Resource path must be provided in endpoint URI, or URI parameter '" + RESOURCE_PATH_PROPERTY
-                                                       + "', or exchange header '"
-                                                       + Olingo4Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
+                            "Resource path must be provided in endpoint URI, or URI parameter '"
+                                    + RESOURCE_PATH_PROPERTY
+                                    + "', or exchange header '"
+                                    + Olingo4Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
                 }
 
                 // append keyPredicate to dynamically create resource path
@@ -275,7 +291,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
     private void parseQueryParams(Map<String, Object> options) {
         // extract non-endpoint properties as query params
         final Map<String, String> queryParams = new HashMap<>();
-        for (Iterator<Map.Entry<String, Object>> it = options.entrySet().iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<String, Object>> it = options.entrySet().iterator(); it.hasNext(); ) {
 
             final Map.Entry<String, Object> entry = it.next();
             final String paramName = entry.getKey();
@@ -309,7 +325,6 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
                 // overwrite old params in supplied map
                 oldParams.putAll(queryParams);
             }
-
         }
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.postgres;
 
 import org.apache.camel.CamelContext;
@@ -27,10 +28,10 @@ import org.apache.camel.spi.annotations.Component;
 public final class DebeziumPostgresComponent extends DebeziumComponent<PostgresConnectorEmbeddedDebeziumConfiguration> {
 
     @Metadata
-    private PostgresConnectorEmbeddedDebeziumConfiguration configuration = new PostgresConnectorEmbeddedDebeziumConfiguration();
+    private PostgresConnectorEmbeddedDebeziumConfiguration configuration =
+            new PostgresConnectorEmbeddedDebeziumConfiguration();
 
-    public DebeziumPostgresComponent() {
-    }
+    public DebeziumPostgresComponent() {}
 
     public DebeziumPostgresComponent(final CamelContext context) {
         super(context);

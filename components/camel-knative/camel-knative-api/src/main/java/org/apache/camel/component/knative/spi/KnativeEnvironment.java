@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.spi;
 
 import java.io.IOException;
@@ -143,9 +144,8 @@ public class KnativeEnvironment {
                 .withTarget(environment)
                 .withProperties(properties)
                 .withRemoveParameters(true)
-                .withConfigurer(
-                        PluginHelper.getConfigurerResolver(econtext)
-                                .resolvePropertyConfigurer(KnativeEnvironment.class.getName(), context))
+                .withConfigurer(PluginHelper.getConfigurerResolver(econtext)
+                        .resolvePropertyConfigurer(KnativeEnvironment.class.getName(), context))
                 .withMandatory(true)
                 .bind();
 
@@ -280,5 +280,4 @@ public class KnativeEnvironment {
             return answer;
         }
     }
-
 }

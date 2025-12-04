@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.apache.camel.builder.ExpressionBuilder.*;
+import static org.apache.camel.builder.PredicateBuilder.contains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,10 +38,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.builder.ExpressionBuilder.*;
-import static org.apache.camel.builder.PredicateBuilder.contains;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ExpressionBuilderTest extends TestSupport {
     protected final CamelContext camelContext = new DefaultCamelContext();
     protected final Exchange exchange = new DefaultExchange(camelContext);
@@ -47,11 +48,12 @@ public class ExpressionBuilderTest extends TestSupport {
         List<String> expected = new ArrayList<>(Arrays.asList("Islington", "London", "UK"));
         assertExpression(expression, exchange, expected);
 
-        Predicate predicate
-                = contains(regexTokenizeExpression(headerExpression("location"), ","), constantExpression("London"));
+        Predicate predicate =
+                contains(regexTokenizeExpression(headerExpression("location"), ","), constantExpression("London"));
         assertPredicate(predicate, exchange, true);
 
-        predicate = contains(regexTokenizeExpression(headerExpression("location"), ","), constantExpression("Manchester"));
+        predicate =
+                contains(regexTokenizeExpression(headerExpression("location"), ","), constantExpression("Manchester"));
         assertPredicate(predicate, exchange, false);
     }
 
@@ -71,7 +73,8 @@ public class ExpressionBuilderTest extends TestSupport {
         List<String> expected = new ArrayList<>(Arrays.asList("Islington", "London", "UK"));
         assertExpression(expression, exchange, expected);
 
-        Predicate predicate = contains(tokenizeExpression(headerExpression("location"), ","), constantExpression("London"));
+        Predicate predicate =
+                contains(tokenizeExpression(headerExpression("location"), ","), constantExpression("London"));
         assertPredicate(predicate, exchange, true);
 
         predicate = contains(tokenizeExpression(headerExpression("location"), ","), constantExpression("Manchester"));
@@ -158,5 +161,4 @@ public class ExpressionBuilderTest extends TestSupport {
             return o1.compareToIgnoreCase(o2);
         }
     }
-
 }

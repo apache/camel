@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -63,7 +64,8 @@ public interface TypeConverter {
      * @throws TypeConversionException            is thrown if error during type conversion
      * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
      */
-    <T> T mandatoryConvertTo(Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException;
+    <T> T mandatoryConvertTo(Class<T> type, Object value)
+            throws TypeConversionException, NoTypeConversionAvailableException;
 
     /**
      * Converts the value to the specified type in the context of an exchange

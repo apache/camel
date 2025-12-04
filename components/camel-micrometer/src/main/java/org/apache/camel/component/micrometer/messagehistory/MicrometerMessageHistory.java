@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.messagehistory;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -36,8 +37,12 @@ public class MicrometerMessageHistory extends DefaultMessageHistory {
     private final MeterRegistry meterRegistry;
     private final MicrometerMessageHistoryNamingStrategy namingStrategy;
 
-    public MicrometerMessageHistory(MeterRegistry meterRegistry, Route route, NamedNode namedNode,
-                                    MicrometerMessageHistoryNamingStrategy namingStrategy, Message message) {
+    public MicrometerMessageHistory(
+            MeterRegistry meterRegistry,
+            Route route,
+            NamedNode namedNode,
+            MicrometerMessageHistoryNamingStrategy namingStrategy,
+            Message message) {
         super(route.getId(), namedNode, message);
         this.meterRegistry = meterRegistry;
         this.route = route;
@@ -57,7 +62,7 @@ public class MicrometerMessageHistory extends DefaultMessageHistory {
 
     @Override
     public String toString() {
-        return "MicrometerMessageHistory[routeId=" + getRouteId() + ", node=" + getNode().getId() + ']';
+        return "MicrometerMessageHistory[routeId=" + getRouteId() + ", node="
+                + getNode().getId() + ']';
     }
-
 }

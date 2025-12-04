@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk.support;
 
 import java.io.InputStream;
@@ -151,7 +152,6 @@ public class SplunkDataReader {
         }
 
         queryArgs.setTimeFormat(SPLUNK_TIME_FORMAT);
-
     }
 
     private String getLatestTime(Calendar startTime, boolean realtime) {
@@ -233,15 +233,16 @@ public class SplunkDataReader {
         List<SplunkEvent> data = extractData(job, false, callback);
         this.lastSuccessfulReadTime = startTime;
         return data;
-
     }
 
     private void waitForJob(long interval, BooleanSupplier supplier) {
-        Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
-                .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
-                .withInterval(Duration.ofMillis(interval))
-                .build())
-                .build().run(endpoint.getCamelContext(), supplier);
+        Tasks.foregroundTask()
+                .withBudget(Budgets.iterationBudget()
+                        .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                        .withInterval(Duration.ofMillis(interval))
+                        .build())
+                .build()
+                .run(endpoint.getCamelContext(), supplier);
     }
 
     private List<SplunkEvent> nonBlockingSearch(SplunkResultProcessor callback) throws Exception {
@@ -271,7 +272,8 @@ public class SplunkDataReader {
         return data;
     }
 
-    private List<SplunkEvent> runQuery(JobArgs queryArgs, boolean realtime, SplunkResultProcessor callback) throws Exception {
+    private List<SplunkEvent> runQuery(JobArgs queryArgs, boolean realtime, SplunkResultProcessor callback)
+            throws Exception {
         Service service = endpoint.getService();
         Job job = service.getJobs().create(getSearch(), queryArgs);
         LOG.debug("Running search : {} with queryArgs : {}", getSearch(), queryArgs);
@@ -284,7 +286,6 @@ public class SplunkDataReader {
             Thread.sleep(4000);
         } else {
             waitForJob(500, job::isDone);
-
         }
         return extractData(job, realtime, callback);
     }
@@ -355,5 +356,4 @@ public class SplunkDataReader {
         job.cancel();
         return result;
     }
-
 }

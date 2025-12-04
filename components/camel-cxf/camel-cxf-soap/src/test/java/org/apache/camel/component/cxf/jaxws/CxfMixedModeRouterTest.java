@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -44,8 +47,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfMixedModeRouterTest extends CamelTestSupport {
     protected static int port1 = CXFTestSupport.getPort1();
     protected static int port2 = CXFTestSupport.getPort2();
@@ -55,13 +56,13 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
     protected static final String SERVICE_ADDRESS = "http://localhost:" + port2 + "/CxfMixedModeRouterTest/helloworld";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
-    private String routerEndpointURI
-            = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD&allowStreaming=false";
+    private String routerEndpointURI =
+            "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD&allowStreaming=false";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
 
     @BeforeAll
     public static void startService() {
-        //start a service
+        // start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 
         svrBean.setAddress(SERVICE_ADDRESS);
@@ -84,57 +85,59 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
-                from(routerEndpointURI).process(new Processor() {
+                from(routerEndpointURI)
+                        .process(new Processor() {
 
-                    // convert request message
-                    public void process(Exchange exchange) throws Exception {
-                        CxfPayload<?> message = exchange.getIn().getBody(CxfPayload.class);
+                            // convert request message
+                            public void process(Exchange exchange) throws Exception {
+                                CxfPayload<?> message = exchange.getIn().getBody(CxfPayload.class);
 
-                        List<String> params = new ArrayList<>();
+                                List<String> params = new ArrayList<>();
 
-                        if (message != null) {
-                            // convert CxfPayload to list of objects any way you like
-                            Element element = new XmlConverter().toDOMElement(message.getBody().get(0));
-                            params.add(element.getFirstChild().getTextContent());
-                        }
+                                if (message != null) {
+                                    // convert CxfPayload to list of objects any way you like
+                                    Element element = new XmlConverter()
+                                            .toDOMElement(message.getBody().get(0));
+                                    params.add(element.getFirstChild().getTextContent());
+                                }
 
-                        // replace the body
-                        exchange.getIn().setBody(params);
+                                // replace the body
+                                exchange.getIn().setBody(params);
 
-                        // if you need to change the operation name
-                        //exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
+                                // if you need to change the operation name
+                                // exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
 
-                    }
+                            }
+                        })
+                        .to(serviceEndpointURI)
+                        .process(new Processor() {
 
-                }).to(serviceEndpointURI).process(new Processor() {
+                            // convert response to CxfPayload
+                            public void process(Exchange exchange) throws Exception {
 
-                    // convert response to CxfPayload
-                    public void process(Exchange exchange) throws Exception {
+                                List<?> list = exchange.getIn().getBody(List.class);
+                                CxfPayload<SoapHeader> message = null;
+                                if (list != null) {
+                                    // convert the list of objects to CxfPayload any way you like
 
-                        List<?> list = exchange.getIn().getBody(List.class);
-                        CxfPayload<SoapHeader> message = null;
-                        if (list != null) {
-                            // convert the list of objects to CxfPayload any way you like
+                                    String s = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                            + "<ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                                            + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                                            + list.get(0)
+                                            + "</return></ns1:echoResponse>";
+                                    List<Element> body = new ArrayList<>();
+                                    body.add(StaxUtils.read(new StringReader(s)).getDocumentElement());
 
-                            String s = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                                       + "<ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                       + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                       + list.get(0)
-                                       + "</return></ns1:echoResponse>";
-                            List<Element> body = new ArrayList<>();
-                            body.add(StaxUtils.read(new StringReader(s)).getDocumentElement());
+                                    message = new CxfPayload<>(new ArrayList<SoapHeader>(), body);
+                                }
 
-                            message = new CxfPayload<>(new ArrayList<SoapHeader>(), body);
-                        }
+                                exchange.getIn().setBody(message);
 
-                        exchange.getIn().setBody(message);
-
-                        // we probably should be smarter in detecting data format based on message body
-                        // but for now we need to explicitly reset the mode (see CAMEL-3420)
-                        exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
-
-                    }
-                });
+                                // we probably should be smarter in detecting data format based on message body
+                                // but for now we need to explicitly reset the mode (see CAMEL-3420)
+                                exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
+                            }
+                        });
             }
         };
     }
@@ -160,7 +163,5 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
         assertEquals("echo hello world", result, "we should get the right answer from router");
-
     }
-
 }

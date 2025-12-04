@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.model;
 
 import java.util.Objects;
@@ -124,12 +125,12 @@ public class CamelRouteDetails {
     @Override
     public String toString() {
         return "CamelRouteDetails["
-               + "fileName='" + fileName + '\''
-               + ", lineNumber='" + lineNumber + '\''
-               + ", lineNumberEnd='" + lineNumberEnd + '\''
-               + ", className='" + className + '\''
-               + ", methodName='" + methodName + '\''
-               + ", routeId='" + routeId + '\''
-               + ']';
+                + "fileName='" + fileName + '\''
+                + ", lineNumber='" + lineNumber + '\''
+                + ", lineNumberEnd='" + lineNumberEnd + '\''
+                + ", className='" + className + '\''
+                + ", methodName='" + methodName + '\''
+                + ", routeId='" + routeId + '\''
+                + ']';
     }
 }

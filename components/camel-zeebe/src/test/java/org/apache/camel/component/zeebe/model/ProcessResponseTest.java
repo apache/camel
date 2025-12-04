@@ -17,18 +17,18 @@
 
 package org.apache.camel.component.zeebe.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+
 public class ProcessResponseTest {
 
-    private static final String MARSHAL_TEST_RESULT_1
-            = "{\"success\":true,\"process_id\":\"testProcess\",\"process_instance_key\":111,\"process_version\":2,\"process_key\":111}";
-    private static final String MARSHAL_TEST_RESULT_2
-            = "{\"success\":false,\"error_message\":\"Test Error\",\"error_code\":\"TestCode\",\"process_id\":\"testProcess\",\"process_instance_key\":111,\"process_version\":2,\"process_key\":111}";
+    private static final String MARSHAL_TEST_RESULT_1 =
+            "{\"success\":true,\"process_id\":\"testProcess\",\"process_instance_key\":111,\"process_version\":2,\"process_key\":111}";
+    private static final String MARSHAL_TEST_RESULT_2 =
+            "{\"success\":false,\"error_message\":\"Test Error\",\"error_code\":\"TestCode\",\"process_id\":\"testProcess\",\"process_instance_key\":111,\"process_version\":2,\"process_key\":111}";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -54,8 +54,8 @@ public class ProcessResponseTest {
 
     @Test
     public void unmarshalTest() {
-        ProcessResponse unmarshalledMessage1
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessResponse.class));
+        ProcessResponse unmarshalledMessage1 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessResponse.class));
 
         ProcessResponse message = new ProcessResponse();
         message.setProcessId("testProcess");
@@ -66,8 +66,8 @@ public class ProcessResponseTest {
 
         assertEquals(message, unmarshalledMessage1);
 
-        ProcessResponse unmarshalledMessage2
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessResponse.class));
+        ProcessResponse unmarshalledMessage2 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessResponse.class));
 
         message.setSuccess(false);
         message.setErrorMessage("Test Error");

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamResponseHandler;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ConverseStreamHandlerTest {
 
@@ -44,8 +45,7 @@ class ConverseStreamHandlerTest {
         ConverseStreamHandler.StreamMetadata metadata = new ConverseStreamHandler.StreamMetadata();
         List<String> chunks = new ArrayList<>();
 
-        ConverseStreamResponseHandler handler
-                = ConverseStreamHandler.createChunksHandler(metadata, chunks, null);
+        ConverseStreamResponseHandler handler = ConverseStreamHandler.createChunksHandler(metadata, chunks, null);
 
         assertNotNull(handler, "Handler should not be null");
         assertNotNull(metadata, "Metadata should not be null");

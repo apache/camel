@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,20 +44,22 @@ import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 
-import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
-
 /**
  * Factory for generating metadata for @DevConsole.
  *
  * This mojo will only generate json metadata with details of the dev consoles. The general spi-generator will generate
  * the marker files
  */
-@Mojo(name = "generate-dev-console", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
-      requiresDependencyCollection = ResolutionScope.COMPILE,
-      requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "generate-dev-console",
+        threadSafe = true,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        requiresDependencyCollection = ResolutionScope.COMPILE,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
 
-    public static final DotName DEV_CONSOLE_ANNOTATION = DotName.createSimple("org.apache.camel.spi.annotations.DevConsole");
+    public static final DotName DEV_CONSOLE_ANNOTATION =
+            DotName.createSimple("org.apache.camel.spi.annotations.DevConsole");
 
     /**
      * The project build directory
@@ -150,8 +155,8 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
             DevConsoleModel model = new DevConsoleModel();
 
             String currentClass = a.target().asClass().name().toString();
-            boolean deprecated
-                    = a.target().asClass().hasAnnotation(Deprecated.class) || project.getName().contains("(deprecated)");
+            boolean deprecated = a.target().asClass().hasAnnotation(Deprecated.class)
+                    || project.getName().contains("(deprecated)");
             model.setClassName(currentClass);
             model.setDeprecated(deprecated);
             model.setGroup(annotationValue(a, "group"));
@@ -178,9 +183,8 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
                     String json = jo.toJson();
                     json = Jsoner.prettyPrint(json, 2);
                     String fn = sanitizeFileName(model.getName()) + PackageHelper.JSON_SUFIX;
-                    boolean updated = updateResource(resourcesOutputDir.toPath(),
-                            "META-INF/org/apache/camel/dev-console/" + fn,
-                            json + NL);
+                    boolean updated = updateResource(
+                            resourcesOutputDir.toPath(), "META-INF/org/apache/camel/dev-console/" + fn, json + NL);
                     if (updated) {
                         getLog().info("Updated dev-console json: " + model.getName());
                     }
@@ -192,7 +196,7 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
                 String properties = createProperties(project, "dev-consoles", ids.toString());
                 updateResource(camelMetaDir.toPath(), "dev-consoles.properties", properties);
                 getLog().info("Generated dev-consoles.properties containing " + count + " Camel "
-                              + (count > 1 ? "consoles: " : "console: ") + ids);
+                        + (count > 1 ? "consoles: " : "console: ") + ids);
             } catch (Exception e) {
                 throw new MojoExecutionException(e);
             }
@@ -238,5 +242,4 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
         }
         return name;
     }
-
 }

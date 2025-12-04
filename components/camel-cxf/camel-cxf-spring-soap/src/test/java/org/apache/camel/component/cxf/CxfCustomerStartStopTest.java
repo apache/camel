@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,9 +32,6 @@ import org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngineFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Disabled
 public class CxfCustomerStartStopTest {
@@ -58,8 +59,7 @@ public class CxfCustomerStartStopTest {
         // Need to call the bus shutdown ourselves.
         String orig = System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", "false");
         bus.shutdown(true);
-        System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort",
-                orig == null ? "true" : "false");
+        System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", orig == null ? "true" : "false");
         engine = factory.retrieveUndertowHTTPServerEngine(PORT1);
         assertNull(engine, "Undertow engine should be removed");
     }
@@ -68,18 +68,16 @@ public class CxfCustomerStartStopTest {
     public void startAndStopServiceFromSpring() throws Exception {
         System.setProperty("CamelCxfConsumerContext.port2", Integer.toString(PORT2));
 
-        ClassPathXmlApplicationContext applicationContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CamelCxfConsumerContext.xml");
+        ClassPathXmlApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CamelCxfConsumerContext.xml");
         Bus bus = applicationContext.getBean("cxf", Bus.class);
         // Bus shutdown will be called when the application context is closed.
         String orig = System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", "false");
         IOHelper.close(applicationContext);
-        System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort",
-                orig == null ? "true" : "false");
+        System.setProperty("org.apache.cxf.transports.http_undertow.DontClosePort", orig == null ? "true" : "false");
         UndertowHTTPServerEngineFactory factory = bus.getExtension(UndertowHTTPServerEngineFactory.class);
         // test if the port is still used
         UndertowHTTPServerEngine engine = factory.retrieveUndertowHTTPServerEngine(PORT2);
         assertNull(engine, "Undertow engine should be removed");
     }
-
 }

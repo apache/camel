@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.cloud;
 
 import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
@@ -21,8 +22,7 @@ import org.apache.camel.util.ObjectHelper;
 
 @Deprecated
 public final class UndertowServiceExpression extends DefaultServiceCallExpression {
-    public UndertowServiceExpression() {
-    }
+    public UndertowServiceExpression() {}
 
     public UndertowServiceExpression(String hostHeader, String portHeader) {
         super(hostHeader, portHeader);

@@ -17,13 +17,13 @@
 
 package org.apache.camel.dsl.jbang.core.commands.bind;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class BindObjectReferenceTest extends CamelCommandBaseTest {
 
@@ -36,7 +36,8 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -56,7 +57,9 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
                       name: bar
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -68,7 +71,8 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -89,7 +93,9 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
                       namespace: my-namespace
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -98,15 +104,14 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
 
         command.sink = "sandbox.camel.apache.org/v1:Foo:bar";
         command.properties = new String[] {
-                "source.message=Hello",
-                "sink.foo=bar",
-                "sink.bar=baz",
+            "source.message=Hello", "sink.foo=bar", "sink.bar=baz",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -127,7 +132,9 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
                     properties:
                       bar: baz
                       foo: bar
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -136,13 +143,14 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
 
         command.sink = "sandbox.camel.apache.org/v1:Foo:bar?bar=baz&foo=bar";
         command.properties = new String[] {
-                "source.message=Hello",
+            "source.message=Hello",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -163,7 +171,9 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
                     properties:
                       bar: baz
                       foo: bar
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -175,12 +185,13 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        assertThat(output).isEqualToIgnoringNewLines(
-                """
+        assertThat(output)
+                .isEqualToIgnoringNewLines(
+                        """
                         ERROR: Failed to resolve endpoint URI expression sandbox.camel.apache.org:Foo:bar - no matching binding provider found
                         ERROR: Failed to construct Pipe resource
                         """
-                        .trim());
+                                .trim());
     }
 
     private Bind createCommand(String source, String sink) {

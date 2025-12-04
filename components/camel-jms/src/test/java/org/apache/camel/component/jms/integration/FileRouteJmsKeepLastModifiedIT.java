@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -38,14 +42,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FileRouteJmsKeepLastModifiedIT extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -58,8 +60,8 @@ public class FileRouteJmsKeepLastModifiedIT extends AbstractJMSTest {
         deleteDirectory("target/FileRouteJmsKeepLastModifiedIT/outbox");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBodyAndHeader("file://target/FileRouteJmsKeepLastModifiedIT/inbox", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/FileRouteJmsKeepLastModifiedIT/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
     @Test

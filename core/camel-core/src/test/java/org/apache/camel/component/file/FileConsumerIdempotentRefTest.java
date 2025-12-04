@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
@@ -27,9 +31,6 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Registry;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the idempotentRepositoryRef option.
@@ -49,7 +50,8 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10"))
+                from(fileUri(
+                                "?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }
@@ -111,16 +113,12 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         }
 
         @Override
-        public void clear() {
-        }
+        public void clear() {}
 
         @Override
-        public void start() {
-        }
+        public void start() {}
 
         @Override
-        public void stop() {
-        }
+        public void stop() {}
     }
-
 }

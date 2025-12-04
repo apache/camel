@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.sqlserver;
 
 import org.apache.camel.CamelContext;
@@ -24,14 +25,14 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 
 @Component("debezium-sqlserver")
-public final class DebeziumSqlserverComponent extends DebeziumComponent<SqlServerConnectorEmbeddedDebeziumConfiguration> {
+public final class DebeziumSqlserverComponent
+        extends DebeziumComponent<SqlServerConnectorEmbeddedDebeziumConfiguration> {
 
     @Metadata
-    private SqlServerConnectorEmbeddedDebeziumConfiguration configuration
-            = new SqlServerConnectorEmbeddedDebeziumConfiguration();
+    private SqlServerConnectorEmbeddedDebeziumConfiguration configuration =
+            new SqlServerConnectorEmbeddedDebeziumConfiguration();
 
-    public DebeziumSqlserverComponent() {
-    }
+    public DebeziumSqlserverComponent() {}
 
     public DebeziumSqlserverComponent(final CamelContext context) {
         super(context);

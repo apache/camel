@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,13 +32,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 class ResequencerEngineTest extends TestSupport {
 
-    private static final boolean IGNORE_LOAD_TESTS = Boolean.parseBoolean(System.getProperty("ignore.load.tests", "true"));
+    private static final boolean IGNORE_LOAD_TESTS =
+            Boolean.parseBoolean(System.getProperty("ignore.load.tests", "true"));
 
     private ResequencerEngineSync<Integer> resequencer;
     private ResequencerRunner<Integer> runner;
@@ -89,8 +91,9 @@ class ResequencerEngineTest extends TestSupport {
         assertEquals(4, resequencer.getLastDelivered());
     }
 
-    @DisabledIf(value = "isIgnoreLoadTests",
-                disabledReason = "Enabled only when the System property 'ignore.load.tests' is not set to 'true'")
+    @DisabledIf(
+            value = "isIgnoreLoadTests",
+            disabledReason = "Enabled only when the System property 'ignore.load.tests' is not set to 'true'")
     @Test
     void testRandom() throws Exception {
         int input = 1000;
@@ -122,8 +125,9 @@ class ResequencerEngineTest extends TestSupport {
         log.info("Duration = {} ms", watch.taken());
     }
 
-    @DisabledIf(value = "isIgnoreLoadTests",
-                disabledReason = "Enabled only when the System property 'ignore.load.tests' is not set to 'true'")
+    @DisabledIf(
+            value = "isIgnoreLoadTests",
+            disabledReason = "Enabled only when the System property 'ignore.load.tests' is not set to 'true'")
     @Test
     void testReverse() throws Exception {
         initResequencer(1);

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Set;
 
@@ -26,10 +31,6 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRemoveRouteAggregateThreadPoolTest extends ManagementTestSupport {
@@ -65,11 +66,12 @@ public class ManagedRemoveRouteAggregateThreadPoolTest extends ManagementTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .aggregate(constant(true), new UseLatestAggregationStrategy()).completionTimeout(1000)
+                from("direct:foo")
+                        .routeId("foo")
+                        .aggregate(constant(true), new UseLatestAggregationStrategy())
+                        .completionTimeout(1000)
                         .to("mock:result");
             }
         };
     }
-
 }

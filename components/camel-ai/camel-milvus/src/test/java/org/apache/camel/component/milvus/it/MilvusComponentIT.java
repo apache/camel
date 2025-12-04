@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milvus.it;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +43,6 @@ import org.apache.camel.component.milvus.MilvusHeaders;
 import org.apache.camel.component.milvus.MilvusTestSupport;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MilvusComponentIT extends MilvusTestSupport {
@@ -79,10 +80,10 @@ public class MilvusComponentIT extends MilvusTestSupport {
                 .addFieldType(fieldType3)
                 .build();
 
-        Exchange result = fluentTemplate.to("milvus:test")
+        Exchange result = fluentTemplate
+                .to("milvus:test")
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.CREATE_COLLECTION)
-                .withBody(
-                        createCollectionReq)
+                .withBody(createCollectionReq)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -99,10 +100,10 @@ public class MilvusComponentIT extends MilvusTestSupport {
                 .withSyncMode(Boolean.TRUE)
                 .build();
 
-        Exchange result = fluentTemplate.to("milvus:test")
+        Exchange result = fluentTemplate
+                .to("milvus:test")
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.CREATE_INDEX)
-                .withBody(
-                        createAgeIndexParam)
+                .withBody(createAgeIndexParam)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -118,10 +119,10 @@ public class MilvusComponentIT extends MilvusTestSupport {
                 .withSyncMode(Boolean.TRUE)
                 .build();
 
-        result = fluentTemplate.to("milvus:test")
+        result = fluentTemplate
+                .to("milvus:test")
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.CREATE_INDEX)
-                .withBody(
-                        createVectorIndexParam)
+                .withBody(createVectorIndexParam)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -145,10 +146,10 @@ public class MilvusComponentIT extends MilvusTestSupport {
                 .withFields(fields)
                 .build();
 
-        Exchange result = fluentTemplate.to("milvus:test")
+        Exchange result = fluentTemplate
+                .to("milvus:test")
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.INSERT)
-                .withBody(
-                        insertParam)
+                .withBody(insertParam)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -172,10 +173,10 @@ public class MilvusComponentIT extends MilvusTestSupport {
                 .withFields(fields)
                 .build();
 
-        Exchange result = fluentTemplate.to("milvus:test")
+        Exchange result = fluentTemplate
+                .to("milvus:test")
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.UPSERT)
-                .withBody(
-                        upsertParam)
+                .withBody(upsertParam)
                 .request(Exchange.class);
 
         // we cannot upsert as we lack userID field
@@ -196,15 +197,19 @@ public class MilvusComponentIT extends MilvusTestSupport {
                 .withConsistencyLevel(ConsistencyLevelEnum.STRONG)
                 .build();
 
-        Exchange result = fluentTemplate.to("milvus:test")
+        Exchange result = fluentTemplate
+                .to("milvus:test")
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.SEARCH)
-                .withBody(
-                        searchSimpleParam)
+                .withBody(searchSimpleParam)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(result.getMessage().getBody(SearchResponse.class).getRowRecords().size() == 2);
+        assertThat(result.getMessage()
+                        .getBody(SearchResponse.class)
+                        .getRowRecords()
+                        .size()
+                == 2);
     }
 
     @Test
@@ -217,10 +222,10 @@ public class MilvusComponentIT extends MilvusTestSupport {
                 .withConsistencyLevel(ConsistencyLevelEnum.STRONG)
                 .build();
 
-        Exchange result = fluentTemplate.to("milvus:test")
+        Exchange result = fluentTemplate
+                .to("milvus:test")
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.QUERY)
-                .withBody(
-                        searchSimpleParam)
+                .withBody(searchSimpleParam)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -236,10 +241,10 @@ public class MilvusComponentIT extends MilvusTestSupport {
                 .withExpr("userAge>0")
                 .build();
 
-        Exchange result = fluentTemplate.to("milvus:test")
+        Exchange result = fluentTemplate
+                .to("milvus:test")
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.DELETE)
-                .withBody(
-                        delete)
+                .withBody(delete)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -255,15 +260,19 @@ public class MilvusComponentIT extends MilvusTestSupport {
                 .withConsistencyLevel(ConsistencyLevelEnum.STRONG)
                 .build();
 
-        result = fluentTemplate.to("milvus:test")
+        result = fluentTemplate
+                .to("milvus:test")
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.SEARCH)
-                .withBody(
-                        searchSimpleParam)
+                .withBody(searchSimpleParam)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(result.getMessage().getBody(SearchResponse.class).getRowRecords().size() == 0);
+        assertThat(result.getMessage()
+                        .getBody(SearchResponse.class)
+                        .getRowRecords()
+                        .size()
+                == 0);
     }
 
     private List<List<Float>> generateFloatVectors(int count) {
@@ -288,5 +297,4 @@ public class MilvusComponentIT extends MilvusTestSupport {
         }
         return vector;
     }
-
 }

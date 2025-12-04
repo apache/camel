@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.net.URI;
@@ -35,16 +36,15 @@ import org.apache.commons.net.ftp.FTPFile;
 @Component("ftp")
 public class FtpComponent extends RemoteFileComponent<FTPFile> {
 
-    public FtpComponent() {
-    }
+    public FtpComponent() {}
 
     public FtpComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(
+            String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String baseUri = getBaseUri(uri);
 
         // lets make sure we create a new configuration as each endpoint can

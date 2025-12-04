@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,9 +28,6 @@ import org.apache.camel.component.debezium.mongodb.DebeziumMongodbComponent;
 import org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DebeziumMongodbComponentTest {
 
@@ -42,8 +43,8 @@ public class DebeziumMongodbComponentTest {
 
         final String remaining = "test_name";
         final String uri = "debezium?name=test_name&offsetStorageFileName=/test&"
-                           + "databaseHostname=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                           + "databaseServerName=test&schemaHistoryInternalFileFilename=/test";
+                + "databaseHostname=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
+                + "databaseServerName=test&schemaHistoryInternalFileFilename=/test";
 
         try (final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext())) {
             debeziumComponent.start();
@@ -52,8 +53,8 @@ public class DebeziumMongodbComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // test for config
-            final MongoDbConnectorEmbeddedDebeziumConfiguration configuration
-                    = (MongoDbConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
+            final MongoDbConnectorEmbeddedDebeziumConfiguration configuration =
+                    (MongoDbConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
             assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
             assertEquals("mongodb://localhost:27017/?replicaSet=rs0", configuration.getMongodbConnectionString());
@@ -66,7 +67,8 @@ public class DebeziumMongodbComponentTest {
 
     @Test
     void testIfCreatesComponentWithExternalConfiguration() throws Exception {
-        final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = new MongoDbConnectorEmbeddedDebeziumConfiguration();
+        final MongoDbConnectorEmbeddedDebeziumConfiguration configuration =
+                new MongoDbConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setMongodbUser("test_db");
         configuration.setMongodbPassword("pwd");
@@ -80,18 +82,18 @@ public class DebeziumMongodbComponentTest {
             // set configurations
             debeziumComponent.setConfiguration(configuration);
 
-            final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, null, Collections.emptyMap());
+            final DebeziumEndpoint debeziumEndpoint =
+                    debeziumComponent.createEndpoint(uri, null, Collections.emptyMap());
 
             assertNotNull(debeziumEndpoint);
 
             // assert configurations
-            final MongoDbConnectorEmbeddedDebeziumConfiguration actualConfigurations
-                    = (MongoDbConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
+            final MongoDbConnectorEmbeddedDebeziumConfiguration actualConfigurations =
+                    (MongoDbConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertNotNull(actualConfigurations);
             assertEquals(configuration.getName(), actualConfigurations.getName());
             assertEquals(configuration.getMongodbUser(), actualConfigurations.getMongodbUser());
             assertEquals(configuration.getConnectorClass(), actualConfigurations.getConnectorClass());
         }
     }
-
 }

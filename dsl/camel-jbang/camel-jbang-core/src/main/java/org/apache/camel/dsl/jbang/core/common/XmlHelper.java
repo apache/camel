@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import javax.xml.XMLConstants;
@@ -26,8 +27,7 @@ import org.fusesource.jansi.Ansi;
 
 public final class XmlHelper {
 
-    private XmlHelper() {
-    }
+    private XmlHelper() {}
 
     /**
      * Prints the XML in pretty mode (no color).
@@ -45,7 +45,12 @@ public final class XmlHelper {
             public String color(int type, String value) {
                 String s = value != null ? value : "null";
                 if (type == XmlPrettyPrinter.ColorPrintElement.DECLARATION) {
-                    s = Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(s).reset().toString();
+                    s = Ansi.ansi()
+                            .fgBrightDefault()
+                            .a(Ansi.Attribute.INTENSITY_FAINT)
+                            .a(s)
+                            .reset()
+                            .toString();
                 } else if (type == XmlPrettyPrinter.ColorPrintElement.ELEMENT) {
                     s = Ansi.ansi().fgBright(Ansi.Color.BLUE).a(s).reset().toString();
                 } else if (type == XmlPrettyPrinter.ColorPrintElement.VALUE) {
@@ -93,5 +98,4 @@ public final class XmlHelper {
         }
         return factory;
     }
-
 }

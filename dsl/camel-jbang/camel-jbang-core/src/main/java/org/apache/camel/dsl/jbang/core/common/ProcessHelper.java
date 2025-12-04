@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.Arrays;
@@ -27,11 +28,10 @@ import org.apache.camel.util.json.JsonObject;
 
 public final class ProcessHelper {
 
-    private static final String[] DSL_EXT = new String[] { "java", "xml", "yaml" };
+    private static final String[] DSL_EXT = new String[] {"java", "xml", "yaml"};
     private static final Pattern PATTERN = Pattern.compile("([\\w|\\-.])+");
 
-    private ProcessHelper() {
-    }
+    private ProcessHelper() {}
 
     public static String extractName(JsonObject root, ProcessHandle ph) {
         String name = doExtractName(root, ph);
@@ -147,5 +147,4 @@ public final class ProcessHelper {
 
         return null;
     }
-
 }

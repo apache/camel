@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -27,8 +30,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
@@ -53,7 +54,8 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
     @Test
     public void testDoneFromCurrentRoute() {
         // notify when exchange is done
-        NotifyBuilder builder = new NotifyBuilder(context).fromCurrentRoute("bar").whenDone(1);
+        NotifyBuilder builder =
+                new NotifyBuilder(context).fromCurrentRoute("bar").whenDone(1);
         builder.create();
 
         template.sendBody("seda:foo", "Hello world!");
@@ -64,7 +66,8 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
     @Test
     public void testDoneFromCurrentRouteStartRoute() {
         // notify when exchange is done
-        NotifyBuilder builder = new NotifyBuilder(context).fromCurrentRoute("foo").whenDone(1);
+        NotifyBuilder builder =
+                new NotifyBuilder(context).fromCurrentRoute("foo").whenDone(1);
         builder.create();
 
         template.sendBody("seda:foo", "Hello world!");
@@ -90,7 +93,6 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new ProxyEndpoint(this, uri, remaining);
         }
-
     }
 
     private static final class ProxyEndpoint extends DefaultEndpoint {

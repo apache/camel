@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.language;
 
 import java.util.ArrayList;
@@ -64,9 +65,11 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
         template.sendBody("direct:start", "World");
 
         // now clear the cache via the mbean server
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> objNameSet = mbeanServer.queryNames(
-                new ObjectName("org.apache.camel:type=endpoints,name=\"language://simple:*contentCache=true*\",*"), null);
+                new ObjectName("org.apache.camel:type=endpoints,name=\"language://simple:*contentCache=true*\",*"),
+                null);
         ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);
         mbeanServer.invoke(managedObjName, "clearContentCache", null, null);
 
@@ -82,7 +85,8 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
-                        // use content cache to load the script once and cache it (content cache and script cache both enabled)
+                        // use content cache to load the script once and cache it (content cache and script cache both
+                        // enabled)
                         .to("language:simple:resource:" + fileUri("myscript.txt?contentCache=true&cacheScript=true"))
                         .to("mock:result");
                 // END SNIPPET: e1

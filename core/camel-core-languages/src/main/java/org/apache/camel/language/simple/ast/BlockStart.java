@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.ast;
 
 /**
  * Marks a start of a block.
  */
-public interface BlockStart extends Block {
-}
+public interface BlockStart extends Block {}

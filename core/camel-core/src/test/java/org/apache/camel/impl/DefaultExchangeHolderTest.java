@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,11 +34,6 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultExchangeHolderTest extends ContextTestSupport {
 
@@ -149,7 +150,9 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/log4j2.properties"));
 
-        assertThrows(RuntimeExchangeException.class, () -> DefaultExchangeHolder.marshal(exchange),
+        assertThrows(
+                RuntimeExchangeException.class,
+                () -> DefaultExchangeHolder.marshal(exchange),
                 "Should have thrown exception");
     }
 
@@ -177,7 +180,9 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertEquals(123, exchange.getIn().getHeader("Bar"));
         assertNull(exchange.getIn().getHeader("Foo"));
         assertNotNull(exchange.getProperty(Exchange.EXCEPTION_CAUGHT));
-        assertEquals("Forced", exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
+        assertEquals(
+                "Forced",
+                exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
     }
 
     private DefaultExchangeHolder createHolder(boolean includeProperties) {
@@ -205,7 +210,5 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         public String getFoo() {
             return foo;
         }
-
     }
-
 }

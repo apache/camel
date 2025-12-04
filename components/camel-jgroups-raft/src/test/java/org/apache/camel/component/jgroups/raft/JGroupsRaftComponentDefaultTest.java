@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jgroups.raft;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.jgroups.raft;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class JGroupsRaftComponentDefaultTest extends CamelTestSupport {
 
@@ -51,7 +52,8 @@ public class JGroupsRaftComponentDefaultTest extends CamelTestSupport {
 
         assertNotNull(component);
         assertNotNull(endpoint.getResolvedRaftHandle());
-        assertNotNull(endpoint.getResolvedRaftHandle().channel().getProtocolStack().findProtocol("RAFT"));
+        assertNotNull(
+                endpoint.getResolvedRaftHandle().channel().getProtocolStack().findProtocol("RAFT"));
         assertTrue(component.getStateMachine() instanceof NopStateMachine);
         assertTrue(endpoint.getStateMachine() instanceof NopStateMachine);
         assertNull(component.getChannelProperties());
@@ -59,5 +61,4 @@ public class JGroupsRaftComponentDefaultTest extends CamelTestSupport {
         assertEquals("A", endpoint.getRaftId());
         assertEquals("A", endpoint.getRaftId());
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.core;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import dev.langchain4j.data.document.Document;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class LangChain4jConverterTest extends CamelTestSupport {
 
@@ -37,10 +38,7 @@ public class LangChain4jConverterTest extends CamelTestSupport {
         exchange.getMessage().setHeader(LangChain4j.METADATA_PREFIX + "meta2", "baz");
         exchange.getMessage().setHeader("meta3", "ignored");
 
-        Document docWithMetadata = context.getTypeConverter().mandatoryConvertTo(
-                Document.class,
-                exchange,
-                "bar");
+        Document docWithMetadata = context.getTypeConverter().mandatoryConvertTo(Document.class, exchange, "bar");
 
         assertThat(docWithMetadata.text()).isEqualTo("bar");
         assertThat(docWithMetadata.metadata().toMap())

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
+
+import static org.apache.camel.util.LocationHelper.locationSummary;
 
 import java.util.Map;
 import java.util.Properties;
@@ -26,8 +29,6 @@ import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-
-import static org.apache.camel.util.LocationHelper.locationSummary;
 
 @DevConsole(name = "properties", description = "Displays the properties loaded by Camel")
 public class PropertiesDevConsole extends AbstractDevConsole {
@@ -123,5 +124,4 @@ public class PropertiesDevConsole extends AbstractDevConsole {
         }
         return "initial".equals(loc) || "override".equals(loc);
     }
-
 }

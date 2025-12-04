@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.util.regex.Pattern;
@@ -77,5 +78,4 @@ public final class MvelHelper {
         }
         return "Both";
     }
-
 }

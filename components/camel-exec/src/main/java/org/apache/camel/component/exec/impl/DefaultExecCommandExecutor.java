@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec.impl;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,8 +43,6 @@ import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Executes the command utilizing the <a href="http://commons.apache.org/exec/">Apache Commons exec library</a>. Adds a
@@ -115,7 +116,8 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
         executor.setExitValues(null);
         Set<Integer> exitValues = execCommand.getExitValues();
         if (!exitValues.isEmpty()) {
-            executor.setExitValues(exitValues.stream().mapToInt(Integer::intValue).toArray());
+            executor.setExitValues(
+                    exitValues.stream().mapToInt(Integer::intValue).toArray());
         }
 
         if (execCommand.getWorkingDir() != null) {

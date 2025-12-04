@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.oauth;
+
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_SECRET;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_LOGOUT_REDIRECT_URI;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,12 +32,6 @@ import org.apache.camel.oauth.OAuthCodeFlowCallback;
 import org.apache.camel.oauth.OAuthCodeFlowProcessor;
 import org.apache.camel.oauth.OAuthLogoutProcessor;
 import org.apache.camel.spi.PropertiesComponent;
-
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_SECRET;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_LOGOUT_REDIRECT_URI;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
 
 /**
  * Test OIDC CodeFlow for a simple WebApp deployed on platform-http
@@ -61,12 +62,9 @@ class OAuthCodeFlowVertxTest extends AbstractOAuthCodeFlowTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/")
-                        .setBody(simple("resource:classpath:index.html"));
-                from("platform-http:/static/styles.css")
-                        .setBody(simple("resource:classpath:styles.css"));
-                from("platform-http:/auth")
-                        .process(new OAuthCodeFlowCallback());
+                from("platform-http:/").setBody(simple("resource:classpath:index.html"));
+                from("platform-http:/static/styles.css").setBody(simple("resource:classpath:styles.css"));
+                from("platform-http:/auth").process(new OAuthCodeFlowCallback());
                 from("platform-http:/protected")
                         .process(new OAuthCodeFlowProcessor())
                         .setBody(simple("resource:classpath:protected.html"));

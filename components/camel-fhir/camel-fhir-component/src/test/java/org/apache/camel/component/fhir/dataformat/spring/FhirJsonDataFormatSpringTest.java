@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.dataformat.spring;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,13 +35,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FhirJsonDataFormatSpringTest extends CamelSpringTestSupport {
 
     private static final String PATIENT = "{\"resourceType\":\"Patient\","
-                                          + "\"name\":[{\"family\":\"Holmes\",\"given\":[\"Sherlock\"]}],"
-                                          + "\"address\":[{\"line\":[\"221b Baker St, Marylebone, London NW1 6XE, UK\"]}]}";
+            + "\"name\":[{\"family\":\"Holmes\",\"given\":[\"Sherlock\"]}],"
+            + "\"address\":[{\"line\":[\"221b Baker St, Marylebone, London NW1 6XE, UK\"]}]}";
 
     private MockEndpoint mockEndpoint;
 
@@ -71,7 +72,8 @@ public class FhirJsonDataFormatSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-        IBaseResource iBaseResource = FhirContext.forR4().newJsonParser().parseResource(new InputStreamReader(inputStream));
+        IBaseResource iBaseResource =
+                FhirContext.forR4().newJsonParser().parseResource(new InputStreamReader(inputStream));
         assertTrue(patient.equalsDeep((Base) iBaseResource), "Patients should be equal!");
     }
 
@@ -84,6 +86,7 @@ public class FhirJsonDataFormatSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/fhir/json/FhirJsonDataFormatSpringTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/fhir/json/FhirJsonDataFormatSpringTest.xml");
     }
 }

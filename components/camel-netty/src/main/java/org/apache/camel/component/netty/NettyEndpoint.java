@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.math.BigInteger;
@@ -42,13 +43,21 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Socket level networking using TCP or UDP with Netty 4.x.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "netty", title = "Netty", syntax = "netty:protocol://host:port",
-             category = { Category.NETWORKING }, headersClass = NettyConstants.class)
+@UriEndpoint(
+        firstVersion = "2.14.0",
+        scheme = "netty",
+        title = "Netty",
+        syntax = "netty:protocol://host:port",
+        category = {Category.NETWORKING},
+        headersClass = NettyConstants.class)
 public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
     @UriParam
     private NettyConfiguration configuration;
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+
+    @UriParam(
+            defaultValue = "false",
+            label = "advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
     public NettyEndpoint(String endpointUri, NettyComponent component, NettyConfiguration configuration) {
@@ -110,8 +119,8 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, End
     @Override
     protected String createEndpointUri() {
         ObjectHelper.notNull(configuration, "configuration");
-        return "netty:" + getConfiguration().getProtocol() + "://" + getConfiguration().getHost() + ":"
-               + getConfiguration().getPort();
+        return "netty:" + getConfiguration().getProtocol() + "://"
+                + getConfiguration().getHost() + ":" + getConfiguration().getPort();
     }
 
     protected SSLSession getSSLSession(ChannelHandlerContext ctx) {
@@ -177,5 +186,4 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, End
             // ignore
         }
     }
-
 }

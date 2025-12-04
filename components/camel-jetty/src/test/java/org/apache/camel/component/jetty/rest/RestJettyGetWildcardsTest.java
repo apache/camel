@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.jetty.JettyRestHttpBinding;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestJettyGetWildcardsTest extends BaseJettyTest {
 
@@ -49,13 +50,18 @@ public class RestJettyGetWildcardsTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBinding",
-                        "#mybinding");
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .endpointProperty("httpBinding", "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic").to("direct:basic")
-                        .get("{id}/{query}").to("direct:query");
+                        .get("{id}/basic")
+                        .to("direct:basic")
+                        .get("{id}/{query}")
+                        .to("direct:query");
 
                 from("direct:basic").to("mock:input").process(new Processor() {
                     public void process(Exchange exchange) {
@@ -72,5 +78,4 @@ public class RestJettyGetWildcardsTest extends BaseJettyTest {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reactive;
 
 import io.vertx.core.Vertx;
@@ -32,7 +33,8 @@ public class SimpleMockTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        VertXReactiveExecutor re = (VertXReactiveExecutor) context.getCamelContextExtension().getReactiveExecutor();
+        VertXReactiveExecutor re =
+                (VertXReactiveExecutor) context.getCamelContextExtension().getReactiveExecutor();
         re.setVertx(vertx);
 
         return context;

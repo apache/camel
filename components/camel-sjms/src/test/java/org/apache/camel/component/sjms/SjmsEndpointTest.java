@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
@@ -23,13 +31,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SjmsEndpointTest extends CamelTestSupport {
 
@@ -108,7 +109,8 @@ public class SjmsEndpointTest extends CamelTestSupport {
     @Test
     public void testInOnlyExchangePattern() {
         try {
-            Endpoint sjms = context.getEndpoint("sjms:queue:test.SjmsEndpointTest?exchangePattern=" + ExchangePattern.InOnly);
+            Endpoint sjms =
+                    context.getEndpoint("sjms:queue:test.SjmsEndpointTest?exchangePattern=" + ExchangePattern.InOnly);
             assertNotNull(sjms);
             assertEquals(ExchangePattern.InOnly, sjms.createExchange().getPattern());
         } catch (Exception e) {
@@ -119,7 +121,8 @@ public class SjmsEndpointTest extends CamelTestSupport {
     @Test
     public void testInOutExchangePattern() {
         try {
-            Endpoint sjms = context.getEndpoint("sjms:queue:test.SjmsEndpointTest?exchangePattern=" + ExchangePattern.InOut);
+            Endpoint sjms =
+                    context.getEndpoint("sjms:queue:test.SjmsEndpointTest?exchangePattern=" + ExchangePattern.InOut);
             assertNotNull(sjms);
             assertEquals(ExchangePattern.InOut, sjms.createExchange().getPattern());
         } catch (Exception e) {
@@ -129,16 +132,16 @@ public class SjmsEndpointTest extends CamelTestSupport {
 
     @Test
     public void testUnsupportedMessageExchangePattern() {
-        assertThrows(ResolveEndpointFailedException.class,
+        assertThrows(
+                ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("sjms:queue:test2.SjmsEndpointTest?messageExchangePattern=OutOnly"));
     }
 
     @Test
     public void testReplyToAndMEPMatch() {
         String replyTo = "reply.to.queue";
-        Endpoint endpoint = context
-                .getEndpoint(
-                        "sjms:queue:test.SjmsEndpointTest?replyTo=" + replyTo + "&exchangePattern=" + ExchangePattern.InOut);
+        Endpoint endpoint = context.getEndpoint(
+                "sjms:queue:test.SjmsEndpointTest?replyTo=" + replyTo + "&exchangePattern=" + ExchangePattern.InOut);
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint qe = (SjmsEndpoint) endpoint;
@@ -159,8 +162,8 @@ public class SjmsEndpointTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+        ActiveMQConnectionFactory connectionFactory =
+                new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.Callable;
@@ -44,5 +45,4 @@ public class RejectableFutureTask<V> extends FutureTask<V> implements Rejectable
             rejectable.reject();
         }
     }
-
 }

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.*;
 
 import java.io.OutputStream;
 
@@ -30,19 +37,11 @@ import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.*;
-
 public class RestProducerBindingProcessorTest {
 
-    public static class RequestPojo {
-    }
+    public static class RequestPojo {}
 
-    public static class ResponsePojo {
-    }
+    public static class ResponsePojo {}
 
     final AsyncCallback callback = mock(AsyncCallback.class);
 
@@ -58,8 +57,15 @@ public class RestProducerBindingProcessorTest {
         final String outType = ResponsePojo.class.getName();
 
         final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(
-                processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
-                outXmlDataFormat, "json", true, outType);
+                processor,
+                context,
+                jsonDataFormat,
+                xmlDataFormat,
+                outJsonDataFormat,
+                outXmlDataFormat,
+                "json",
+                true,
+                outType);
 
         final Exchange exchange = new DefaultExchange(context);
         final Message input = new DefaultMessage(context);
@@ -93,8 +99,15 @@ public class RestProducerBindingProcessorTest {
         final String outType = ResponsePojo.class.getName();
 
         final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(
-                processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
-                outXmlDataFormat, "xml", true, outType);
+                processor,
+                context,
+                jsonDataFormat,
+                xmlDataFormat,
+                outJsonDataFormat,
+                outXmlDataFormat,
+                "xml",
+                true,
+                outType);
 
         final Exchange exchange = new DefaultExchange(context);
         final Message input = new DefaultMessage(context);
@@ -128,8 +141,15 @@ public class RestProducerBindingProcessorTest {
         final String outType = ResponsePojo.class.getName();
 
         final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(
-                processor, context, jsonDataFormat, xmlDataFormat, outJsonDataFormat,
-                outXmlDataFormat, "off", true, outType);
+                processor,
+                context,
+                jsonDataFormat,
+                xmlDataFormat,
+                outJsonDataFormat,
+                outXmlDataFormat,
+                "off",
+                true,
+                outType);
 
         final Exchange exchange = new DefaultExchange(context);
         final Message input = new DefaultMessage(context);

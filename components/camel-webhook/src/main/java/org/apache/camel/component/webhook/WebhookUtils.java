@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
 
 import java.util.Set;
@@ -28,16 +29,16 @@ import org.apache.camel.spi.RestConsumerFactory;
  */
 public final class WebhookUtils {
 
-    private static final String[] DEFAULT_REST_CONSUMER_COMPONENTS
-            = new String[] { "coap", "netty-http", "jetty", "servlet", "undertow" };
+    private static final String[] DEFAULT_REST_CONSUMER_COMPONENTS =
+            new String[] {"coap", "netty-http", "jetty", "servlet", "undertow"};
 
-    private WebhookUtils() {
-    }
+    private WebhookUtils() {}
 
     /**
      * Used to locate the most suitable {@code RestConsumerFactory}.
      */
-    public static RestConsumerFactory locateRestConsumerFactory(CamelContext context, WebhookConfiguration configuration) {
+    public static RestConsumerFactory locateRestConsumerFactory(
+            CamelContext context, WebhookConfiguration configuration) {
         RestConsumerFactory factory = null;
         if (configuration.getWebhookComponentName() != null) {
             Object comp = context.getRegistry().lookupByName(configuration.getWebhookComponentName());
@@ -55,7 +56,8 @@ public final class WebhookUtils {
                     throw new IllegalArgumentException(
                             "Component " + configuration.getWebhookComponentName() + " is not a RestConsumerFactory");
                 } else {
-                    throw new NoSuchBeanException(configuration.getWebhookComponentName(), RestConsumerFactory.class.getName());
+                    throw new NoSuchBeanException(
+                            configuration.getWebhookComponentName(), RestConsumerFactory.class.getName());
                 }
             }
         }
@@ -104,5 +106,4 @@ public final class WebhookUtils {
         }
         return factory;
     }
-
 }

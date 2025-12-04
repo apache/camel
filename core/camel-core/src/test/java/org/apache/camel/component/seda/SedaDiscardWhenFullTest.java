@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import java.time.Duration;
@@ -53,8 +54,7 @@ public class SedaDiscardWhenFullTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?size=2").routeId("foo").autoStartup(false)
-                        .to("mock:result");
+                from("seda:foo?size=2").routeId("foo").autoStartup(false).to("mock:result");
             }
         };
     }

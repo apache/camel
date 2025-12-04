@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.protobuf;
 
 import java.util.Map;
@@ -24,8 +25,7 @@ import org.apache.camel.Converter;
 @Converter(generateLoader = true)
 public final class ProtobufTypeConverter {
 
-    private ProtobufTypeConverter() {
-    }
+    private ProtobufTypeConverter() {}
 
     @Converter
     public static Map<String, Object> toMap(final Message message) {

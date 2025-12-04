@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.gridfs;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_CONTENT_TYPE;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_FILENAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,10 +33,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_CONTENT_TYPE;
-import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_FILENAME;
 
 public class GridFsProducer extends DefaultProducer {
     private final GridFsEndpoint endpoint;
@@ -77,7 +78,7 @@ public class GridFsProducer extends DefaultProducer {
             InputStream ins = exchange.getIn().getMandatoryBody(InputStream.class);
             ObjectId objectId = endpoint.getGridFsBucket().uploadFromStream(filename, ins, options);
 
-            //add headers with the id and file name produced by the driver.
+            // add headers with the id and file name produced by the driver.
             exchange.getIn().setHeader(GridFsConstants.FILE_NAME_PRODUCED, filename);
             exchange.getIn().setHeader(GridFsConstants.GRIDFS_FILE_ID_PRODUCED, objectId);
             exchange.getIn().setHeader(GridFsConstants.GRIDFS_OBJECT_ID, objectId);
@@ -87,7 +88,9 @@ public class GridFsProducer extends DefaultProducer {
                 endpoint.getGridFsBucket().delete(objectId);
             } else {
                 final String filename = exchange.getIn().getHeader(GridFsConstants.FILE_NAME, String.class);
-                GridFSFile file = endpoint.getGridFsBucket().find(eq(GRIDFS_FILE_KEY_FILENAME, filename)).first();
+                GridFSFile file = endpoint.getGridFsBucket()
+                        .find(eq(GRIDFS_FILE_KEY_FILENAME, filename))
+                        .first();
                 if (file != null) {
                     endpoint.getGridFsBucket().delete(file.getId());
                 }
@@ -114,7 +117,9 @@ public class GridFsProducer extends DefaultProducer {
             if (filename == null) {
                 cursor = endpoint.getGridFsBucket().find().cursor();
             } else {
-                cursor = endpoint.getGridFsBucket().find(eq(GRIDFS_FILE_KEY_FILENAME, filename)).cursor();
+                cursor = endpoint.getGridFsBucket()
+                        .find(eq(GRIDFS_FILE_KEY_FILENAME, filename))
+                        .cursor();
             }
             exchange.getIn().setBody(new DBCursorFilenameReader(cursor), Reader.class);
         } else if ("count".equals(operation)) {
@@ -148,7 +153,10 @@ public class GridFsProducer extends DefaultProducer {
             }
             while (cursor.hasNext() && current.length() < 4000) {
                 GridFSFile file = cursor.next();
-                current.append(file.getFilename()).append("\t").append(file.getId()).append("\n");
+                current.append(file.getFilename())
+                        .append("\t")
+                        .append(file.getId())
+                        .append("\n");
             }
         }
 

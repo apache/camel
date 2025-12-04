@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
 import org.apache.camel.Endpoint;
@@ -54,8 +55,8 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
     }
 
     private BedrockAgentRuntimeOperations determineOperation(Exchange exchange) {
-        BedrockAgentRuntimeOperations operation
-                = exchange.getIn().getHeader(BedrockAgentRuntimeConstants.OPERATION, BedrockAgentRuntimeOperations.class);
+        BedrockAgentRuntimeOperations operation =
+                exchange.getIn().getHeader(BedrockAgentRuntimeConstants.OPERATION, BedrockAgentRuntimeOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -69,8 +70,8 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (bedrockAgentRuntimeProducerToString == null) {
-            bedrockAgentRuntimeProducerToString
-                    = "BedrockAgentRuntimeProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            bedrockAgentRuntimeProducerToString = "BedrockAgentRuntimeProducer["
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return bedrockAgentRuntimeProducerToString;
     }
@@ -89,7 +90,9 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
                 try {
                     result = bedrockAgentRuntimeClient.retrieveAndGenerate((RetrieveAndGenerateRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Retrieve and Generate command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Retrieve and Generate command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -97,36 +100,40 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
             }
         } else {
             String inputText = exchange.getMessage().getMandatoryBody(String.class);
-            KnowledgeBaseVectorSearchConfiguration knowledgeBaseVectorSearchConfiguration
-                    = KnowledgeBaseVectorSearchConfiguration.builder()
-                            .build();
-            KnowledgeBaseRetrievalConfiguration knowledgeBaseRetrievalConfiguration
-                    = KnowledgeBaseRetrievalConfiguration.builder()
+            KnowledgeBaseVectorSearchConfiguration knowledgeBaseVectorSearchConfiguration =
+                    KnowledgeBaseVectorSearchConfiguration.builder().build();
+            KnowledgeBaseRetrievalConfiguration knowledgeBaseRetrievalConfiguration =
+                    KnowledgeBaseRetrievalConfiguration.builder()
                             .vectorSearchConfiguration(knowledgeBaseVectorSearchConfiguration)
                             .build();
-            KnowledgeBaseRetrieveAndGenerateConfiguration configuration = KnowledgeBaseRetrieveAndGenerateConfiguration
-                    .builder().knowledgeBaseId(getConfiguration().getKnowledgeBaseId())
-                    .modelArn(getConfiguration().getModelId())
-                    .retrievalConfiguration(knowledgeBaseRetrievalConfiguration).build();
+            KnowledgeBaseRetrieveAndGenerateConfiguration configuration =
+                    KnowledgeBaseRetrieveAndGenerateConfiguration.builder()
+                            .knowledgeBaseId(getConfiguration().getKnowledgeBaseId())
+                            .modelArn(getConfiguration().getModelId())
+                            .retrievalConfiguration(knowledgeBaseRetrievalConfiguration)
+                            .build();
 
             RetrieveAndGenerateType type = RetrieveAndGenerateType.KNOWLEDGE_BASE;
 
-            RetrieveAndGenerateConfiguration build
-                    = RetrieveAndGenerateConfiguration.builder().knowledgeBaseConfiguration(configuration).type(type).build();
+            RetrieveAndGenerateConfiguration build = RetrieveAndGenerateConfiguration.builder()
+                    .knowledgeBaseConfiguration(configuration)
+                    .type(type)
+                    .build();
 
-            RetrieveAndGenerateInput input = RetrieveAndGenerateInput.builder()
-                    .text(inputText).build();
+            RetrieveAndGenerateInput input =
+                    RetrieveAndGenerateInput.builder().text(inputText).build();
 
             RetrieveAndGenerateRequest.Builder request = RetrieveAndGenerateRequest.builder();
 
             request.retrieveAndGenerateConfiguration(build).input(input);
 
             if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.SESSION_ID))) {
-                request.sessionId(exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.SESSION_ID, String.class));
+                request.sessionId(
+                        exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.SESSION_ID, String.class));
             }
 
-            RetrieveAndGenerateResponse retrieveAndGenerateResponse
-                    = bedrockAgentRuntimeClient.retrieveAndGenerate(request.build());
+            RetrieveAndGenerateResponse retrieveAndGenerateResponse =
+                    bedrockAgentRuntimeClient.retrieveAndGenerate(request.build());
 
             Message message = getMessageForResponse(exchange);
             prepareResponse(retrieveAndGenerateResponse, message);
@@ -146,5 +153,4 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
-
 }

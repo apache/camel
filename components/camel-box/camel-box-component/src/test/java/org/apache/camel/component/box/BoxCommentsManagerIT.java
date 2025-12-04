@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -35,20 +40,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link BoxCommentsManager} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxCommentsManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxCommentsManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxCommentsManagerApiMethod.class).getName();
+            .getApiName(BoxCommentsManagerApiMethod.class)
+            .getName();
     private static final String CAMEL_TEST_FILE = "/CamelTestFile.txt";
     private static final String CAMEL_TEST_FILE_NAME = "CamelTestFile.txt";
     private static final String CAMEL_TEST_FILE_COMMENT = "CamelTestFile comment.";
@@ -68,7 +71,10 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
         assertNotNull(result, "addFileComment result");
         assertNotNull(result.getComments(), "addFileComment comments");
         assertTrue(result.getComments().size() > 0, "changeCommentMessage comments size");
-        assertEquals(CAMEL_TEST_FILE_COMMENT, result.getComments().get(0).getMessage(), "changeCommentMessage comment message");
+        assertEquals(
+                CAMEL_TEST_FILE_COMMENT,
+                result.getComments().get(0).getMessage(),
+                "changeCommentMessage comment message");
         LOG.debug("addFileComment: {}", result);
     }
 
@@ -168,7 +174,6 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
 
                 // test route for replyToComment
                 from("direct://REPLYTOCOMMENT").to("box://" + PATH_PREFIX + "/replyToComment");
-
             }
         };
     }
@@ -193,5 +198,4 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
         InputStream stream = getClass().getResourceAsStream(CAMEL_TEST_FILE);
         testFile = rootFolder.uploadFile(stream, CAMEL_TEST_FILE_NAME).getResource();
     }
-
 }

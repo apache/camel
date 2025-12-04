@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
 
 import java.io.Serial;
@@ -51,7 +52,7 @@ public class RouteRestartingFailureEvent extends AbstractRouteEvent implements C
     @Override
     public String toString() {
         return "Route " + (attempt == 0 ? "starting " : "restarting ") + (exhausted ? "exhausted: " : "failed: ")
-               + getRoute().getId() + " (attempt: " + attempt
-               + ") due to " + cause.getMessage();
+                + getRoute().getId() + " (attempt: " + attempt
+                + ") due to " + cause.getMessage();
     }
 }

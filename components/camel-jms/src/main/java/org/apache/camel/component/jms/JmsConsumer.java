@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.ExecutorService;
@@ -158,8 +159,10 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                     try {
                         prepareAndStartListenerContainer();
                     } catch (Exception e) {
-                        LOG.warn("Error starting listener container on destination: {}. This exception will be ignored.",
-                                getDestinationName(), e);
+                        LOG.warn(
+                                "Error starting listener container on destination: {}. This exception will be ignored.",
+                                getDestinationName(),
+                                e);
                     }
                 }
 
@@ -222,8 +225,10 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                         try {
                             stopAndDestroyListenerContainer();
                         } catch (Exception e) {
-                            LOG.warn("Error stopping listener container on destination: {}. This exception will be ignored.",
-                                    getDestinationName(), e);
+                            LOG.warn(
+                                    "Error stopping listener container on destination: {}. This exception will be ignored.",
+                                    getDestinationName(),
+                                    e);
                         }
                     }
 
@@ -249,7 +254,8 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
 
     @Override
     protected void doResume() throws Exception {
-        // we may not have been started before, and now the end user calls resume, so lets handle that and start it first
+        // we may not have been started before, and now the end user calls resume, so lets handle that and start it
+        // first
         if (!initialized) {
             doStart();
         } else {
@@ -294,5 +300,4 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
             listenerContainer.setMessageSelector(messageSelector);
         }
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -32,10 +37,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test that we can consume JMS message and store it as file (to avoid regression bug)
  */
@@ -44,6 +45,7 @@ public class JmsRouteToFileIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -81,7 +83,9 @@ public class JmsRouteToFileIT extends AbstractJMSTest {
             public void configure() {
                 // using mock endpoint here purely for testing. You would normally write this route as
                 // from("activemq:queue:hello").to("file://target/routetofile");
-                from("activemq:queue:JmsRouteToFileTest").to("file://target/routetofile").to("mock:result");
+                from("activemq:queue:JmsRouteToFileTest")
+                        .to("file://target/routetofile")
+                        .to("mock:result");
             }
         };
     }

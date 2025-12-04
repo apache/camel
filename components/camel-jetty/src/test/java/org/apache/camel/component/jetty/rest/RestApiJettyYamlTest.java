@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.rest;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.jetty.rest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 @Disabled("Does not run well on CI due test uses JMX mbeans")
 public class RestApiJettyYamlTest extends RestApiJettyTest {
@@ -37,5 +38,4 @@ public class RestApiJettyYamlTest extends RestApiJettyTest {
         assertTrue(out.contains("/hello/bye/{name}:"));
         assertTrue(out.contains("- name: \"name\""));
     }
-
 }

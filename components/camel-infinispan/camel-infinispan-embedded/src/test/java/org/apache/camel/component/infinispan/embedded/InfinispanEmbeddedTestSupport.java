@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
 
 import org.apache.camel.BindToRegistry;
@@ -39,11 +40,10 @@ public class InfinispanEmbeddedTestSupport extends InfinispanTestSupport {
     @Override
     protected void setupResources() throws Exception {
         cacheContainer = new DefaultCacheManager();
-        cacheContainer.administration()
+        cacheContainer
+                .administration()
                 .withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
-                .getOrCreateCache(
-                        getCacheName(),
-                        getConfiguration().build());
+                .getOrCreateCache(getCacheName(), getConfiguration().build());
 
         super.setupResources();
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for preserveMessageQos with delivery mode
@@ -38,7 +39,8 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
         MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true", "Hello World");
+        template.sendBody(
+                "activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -53,8 +55,10 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
         MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
-                "Hello World", "JMSDeliveryMode",
+        template.sendBodyAndHeader(
+                "activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
+                "Hello World",
+                "JMSDeliveryMode",
                 DeliveryMode.NON_PERSISTENT);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -70,8 +74,10 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
         MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
-                "Hello World", "JMSDeliveryMode",
+        template.sendBodyAndHeader(
+                "activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
+                "Hello World",
+                "JMSDeliveryMode",
                 "NON_PERSISTENT");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -87,8 +93,10 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
         MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
-                "Hello World", "JMSDeliveryMode",
+        template.sendBodyAndHeader(
+                "activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
+                "Hello World",
+                "JMSDeliveryMode",
                 DeliveryMode.PERSISTENT);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -104,8 +112,10 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
         MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
-                "Hello World", "JMSDeliveryMode",
+        template.sendBodyAndHeader(
+                "activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
+                "Hello World",
+                "JMSDeliveryMode",
                 "PERSISTENT");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -164,8 +174,8 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
         // on the message
         mock.message(0).header("JMSDeliveryMode").isEqualTo(1);
 
-        template.sendBodyAndHeader("direct:preserveQosNonJmsDeliveryMode", "Beer is good...", JmsConstants.JMS_DELIVERY_MODE,
-                3);
+        template.sendBodyAndHeader(
+                "direct:preserveQosNonJmsDeliveryMode", "Beer is good...", JmsConstants.JMS_DELIVERY_MODE, 3);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -181,9 +191,11 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
                 from("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar")
                         .to("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
 
-                from("direct:nonJmsDeliveryMode").to("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar?deliveryMode=3");
+                from("direct:nonJmsDeliveryMode")
+                        .to("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar?deliveryMode=3");
                 from("direct:noExplicitNonJmsDeliveryMode")
-                        .to("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar?deliveryMode=3&explicitQosEnabled=false");
+                        .to(
+                                "activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar?deliveryMode=3&explicitQosEnabled=false");
                 from("direct:preserveQosNonJmsDeliveryMode")
                         .to("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar?preserveMessageQos=true");
             }

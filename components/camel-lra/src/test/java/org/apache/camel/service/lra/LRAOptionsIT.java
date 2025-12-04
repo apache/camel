@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LRAOptionsIT extends AbstractLRATestSupport {
 
@@ -49,16 +50,15 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
         compensate.expectedHeaderReceived("name", "Nicola");
         compensate.expectedMessagesMatches(ex -> ex.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION) != null);
 
-        assertThrows(Exception.class,
-                () -> template.sendBodyAndHeader("direct:workflow", "compensate", "myname", "Nicola"));
+        assertThrows(
+                Exception.class, () -> template.sendBodyAndHeader("direct:workflow", "compensate", "myname", "Nicola"));
 
         compensate.assertIsSatisfied();
     }
 
     @Test
     public void testRouteDoesNotHangOnOptionError() {
-        assertThrows(RuntimeCamelException.class,
-                () -> template.sendBody("direct:wrong-expression", "Hello"));
+        assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:wrong-expression", "Hello"));
     }
 
     @Override
@@ -88,9 +88,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
                         .saga()
                         .option("id", simple("${body.pippo.pluto}"))
                         .to("log:info");
-
             }
         };
     }
-
 }

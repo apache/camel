@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,10 +35,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the behavior of the timed notifier.
@@ -75,7 +76,8 @@ public class TimedLeaderNotifierTest {
         notifier.refreshLeadership(Optional.of("one"), System.currentTimeMillis(), 50L, members);
         notifier.refreshLeadership(Optional.of("two"), System.currentTimeMillis(), 50L, members);
         notifier.refreshLeadership(Optional.of("three"), System.currentTimeMillis(), 5000L, members);
-        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.of("three"), currentLeader));
+        await().atMost(101, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(Optional.of("three"), currentLeader));
         assertEquals(members, currentMembers);
     }
 
@@ -87,7 +89,8 @@ public class TimedLeaderNotifierTest {
         await().atMost(160, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.empty(), currentLeader));
         assertEquals(members, currentMembers);
         notifier.refreshLeadership(Optional.of("three"), System.currentTimeMillis(), 5000L, members);
-        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.of("three"), currentLeader));
+        await().atMost(101, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(Optional.of("three"), currentLeader));
         assertEquals(members, currentMembers);
     }
 
@@ -105,8 +108,9 @@ public class TimedLeaderNotifierTest {
     public void testOldData() {
         Set<String> members = new TreeSet<>(Arrays.asList("one", "two", "three"));
         notifier.refreshLeadership(Optional.of("one"), System.currentTimeMillis(), 1000L, members);
-        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> assertDoesNotThrow(() -> doRefreshLeadership("two", System.currentTimeMillis() - 1000, 900L, members)));
+        await().atMost(101, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertDoesNotThrow(
+                        () -> doRefreshLeadership("two", System.currentTimeMillis() - 1000, 900L, members)));
         await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.empty(), currentLeader));
     }
 
@@ -118,12 +122,12 @@ public class TimedLeaderNotifierTest {
     public void testNewLeaderEmpty() {
         Set<String> members = new TreeSet<>(Arrays.asList("one", "two", "three"));
         notifier.refreshLeadership(Optional.of("one"), System.currentTimeMillis(), 1000L, members);
-        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertDoesNotThrow(() -> doRefreshLeadership(members)));
+        await().atMost(101, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertDoesNotThrow(() -> doRefreshLeadership(members)));
         await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.empty(), currentLeader));
     }
 
     private void doRefreshLeadership(Set<String> members) {
         notifier.refreshLeadership(Optional.empty(), null, null, members);
     }
-
 }

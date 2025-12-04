@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -26,11 +32,6 @@ import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.SessionStateListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppProducer</code>
@@ -61,8 +62,7 @@ public class SmppProducerLazySessionCreationTest {
 
     @Test
     public void processShouldCreateTheSmppSession() throws Exception {
-        when(endpoint.getConnectionString())
-                .thenReturn("smpp://smppclient@localhost:2775");
+        when(endpoint.getConnectionString()).thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
                 BindType.BIND_TX,
                 "smppclient",
@@ -96,8 +96,7 @@ public class SmppProducerLazySessionCreationTest {
 
     @Test
     public void processShouldCreateTheSmppSessionWithTheSystemIdAndPasswordFromTheExchange() throws Exception {
-        when(endpoint.getConnectionString())
-                .thenReturn("smpp://localhost:2775");
+        when(endpoint.getConnectionString()).thenReturn("smpp://localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
                 BindType.BIND_TX,
                 "smppclient2",

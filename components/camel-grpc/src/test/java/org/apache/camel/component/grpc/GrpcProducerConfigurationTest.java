@@ -14,29 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 class GrpcProducerConfigurationTest extends CamelTestSupport {
     @Test
     void emptyHostPort() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> template.requestBody("grpc:/org.apache.camel.component.grpc.PingPong"));
     }
 
     @Test
     void emptyPort() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> template.requestBody("grpc:localhost/org.apache.camel.component.grpc.PingPong"));
     }
 
     @Test
     void invalidPort() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> template.requestBody("grpc:localhost:0/org.apache.camel.component.grpc.PingPong"));
     }
 }

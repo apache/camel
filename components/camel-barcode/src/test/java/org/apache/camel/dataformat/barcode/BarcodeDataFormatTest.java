@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.barcode;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,11 +29,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This class tests all Camel independent test cases for {@link BarcodeDataFormat}.
@@ -41,8 +42,12 @@ public class BarcodeDataFormatTest {
     final void testDefaultConstructor() throws IOException {
         try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat()) {
             barcodeDataFormat.start();
-            this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT,
-                    BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+            this.checkParams(
+                    BarcodeParameters.IMAGE_TYPE,
+                    BarcodeParameters.WIDTH,
+                    BarcodeParameters.HEIGHT,
+                    BarcodeParameters.FORMAT,
+                    barcodeDataFormat.getParams());
         }
     }
 
@@ -53,8 +58,12 @@ public class BarcodeDataFormatTest {
     final void testConstructorWithBarcodeFormat() throws IOException {
         try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(BarcodeFormat.AZTEC)) {
             barcodeDataFormat.start();
-            this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT,
-                    BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
+            this.checkParams(
+                    BarcodeParameters.IMAGE_TYPE,
+                    BarcodeParameters.WIDTH,
+                    BarcodeParameters.HEIGHT,
+                    BarcodeFormat.AZTEC,
+                    barcodeDataFormat.getParams());
         }
     }
 
@@ -65,7 +74,8 @@ public class BarcodeDataFormatTest {
     final void testConstructorWithSize() throws IOException {
         try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(200, 250)) {
             barcodeDataFormat.start();
-            this.checkParams(BarcodeParameters.IMAGE_TYPE, 200, 250, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+            this.checkParams(
+                    BarcodeParameters.IMAGE_TYPE, 200, 250, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
         }
     }
 
@@ -76,7 +86,11 @@ public class BarcodeDataFormatTest {
     final void testConstructorWithImageType() throws IOException {
         try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(BarcodeImageType.JPG)) {
             barcodeDataFormat.start();
-            this.checkParams(BarcodeImageType.JPG, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.FORMAT,
+            this.checkParams(
+                    BarcodeImageType.JPG,
+                    BarcodeParameters.WIDTH,
+                    BarcodeParameters.HEIGHT,
+                    BarcodeParameters.FORMAT,
                     barcodeDataFormat.getParams());
         }
     }
@@ -86,7 +100,8 @@ public class BarcodeDataFormatTest {
      */
     @Test
     final void testConstructorWithAll() throws IOException {
-        try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(200, 250, BarcodeImageType.JPG, BarcodeFormat.AZTEC)) {
+        try (BarcodeDataFormat barcodeDataFormat =
+                new BarcodeDataFormat(200, 250, BarcodeImageType.JPG, BarcodeFormat.AZTEC)) {
             barcodeDataFormat.start();
             this.checkParams(BarcodeImageType.JPG, 200, 250, BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
         }
@@ -111,9 +126,11 @@ public class BarcodeDataFormatTest {
     final void testOptimizieHintsForDataMatrix() throws IOException {
         try (BarcodeDataFormat instance = new BarcodeDataFormat(BarcodeFormat.DATA_MATRIX)) {
             instance.start();
-            assertTrue(instance.getWriterHintMap().containsKey(EncodeHintType.DATA_MATRIX_SHAPE),
+            assertTrue(
+                    instance.getWriterHintMap().containsKey(EncodeHintType.DATA_MATRIX_SHAPE),
                     "data matrix shape hint incorrect.");
-            assertTrue(instance.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER), "try harder hint incorrect.");
+            assertTrue(
+                    instance.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER), "try harder hint incorrect.");
         }
     }
 

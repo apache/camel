@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.component;
 
 import org.apache.camel.CamelContext;
@@ -54,5 +55,4 @@ public interface ComponentBuilder<C extends Component> {
      * @param value the value
      */
     void doSetProperty(String name, Object value);
-
 }

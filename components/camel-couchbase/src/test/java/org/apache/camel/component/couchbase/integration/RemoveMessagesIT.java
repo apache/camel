@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase.integration;
+
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,12 +28,11 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
-
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Too resource intensive for most systems to run reliably")
-@Tags({ @Tag("couchbase-7") })
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Too resource intensive for most systems to run reliably")
+@Tags({@Tag("couchbase-7")})
 public class RemoveMessagesIT extends CouchbaseIntegrationTestBase {
 
     @BeforeEach
@@ -47,7 +50,6 @@ public class RemoveMessagesIT extends CouchbaseIntegrationTestBase {
         template.sendBodyAndHeader("direct:start", "delete the document", HEADER_ID, "DocumentID_2");
 
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Override

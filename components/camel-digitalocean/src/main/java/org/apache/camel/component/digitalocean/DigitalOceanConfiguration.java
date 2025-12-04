@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean;
 
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
@@ -27,10 +28,12 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DigitalOceanConfiguration {
 
-    @UriPath(enums = "create,update,delete,list,ownList,get,listBackups,listActions,listNeighbors,listSnapshots,listKernels,listAllNeighbors,"
-                     + "enableBackups,disableBackups,reboot,powerCycle,shutdown,powerOn,powerOff,restore,resetPassword,"
-                     + "resize,rebuild,rename,changeKernel,enableIpv6,enablePrivateNetworking,takeSnapshot,transfer,convert,"
-                     + "attach,detach,assign,unassign,tag,untag")
+    @UriPath(
+            enums =
+                    "create,update,delete,list,ownList,get,listBackups,listActions,listNeighbors,listSnapshots,listKernels,listAllNeighbors,"
+                            + "enableBackups,disableBackups,reboot,powerCycle,shutdown,powerOn,powerOff,restore,resetPassword,"
+                            + "resize,rebuild,rename,changeKernel,enableIpv6,enablePrivateNetworking,takeSnapshot,transfer,convert,"
+                            + "attach,detach,assign,unassign,tag,untag")
     private DigitalOceanOperations operation;
 
     @UriParam(enums = "account,actions,blockStorages,droplets,mages,snapshots,keys,regions,sizes,floatingIPs,tags")
@@ -51,10 +54,13 @@ public class DigitalOceanConfiguration {
 
     @UriParam(label = "proxy")
     private String httpProxyHost;
+
     @UriParam(label = "proxy", secret = true)
     private String httpProxyUser;
+
     @UriParam(label = "proxy", secret = true)
     private String httpProxyPassword;
+
     @UriParam(label = "proxy")
     private Integer httpProxyPort;
 

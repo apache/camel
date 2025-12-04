@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grok;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -32,9 +36,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class GrokPatternsTest extends CamelTestSupport {
 
@@ -43,23 +44,32 @@ public class GrokPatternsTest extends CamelTestSupport {
         return Arrays.asList(
                 Arguments.of("%{QS:qs}", "this is some \"quoted string\".", test("qs", "quoted string")),
                 Arguments.of("%{UUID:uuid}", "some " + randomUuid, test("uuid", randomUuid)),
-                Arguments.of("%{MAC:mac}", "some:invalid:prefix:of:eth0:02:00:4c:4f:4f:50", test("mac", "02:00:4c:4f:4f:50")),
+                Arguments.of(
+                        "%{MAC:mac}",
+                        "some:invalid:prefix:of:eth0:02:00:4c:4f:4f:50", test("mac", "02:00:4c:4f:4f:50")),
                 Arguments.of("%{PATH:path}", "C:\\path\\file", test("path", "C:\\path\\file")),
                 Arguments.of("%{PATH:path}", "C:\\path\\file.txt", test("path", "C:\\path\\file.txt")),
-                Arguments.of("%{PATH:path}", "\\\\server\\share\\path\\file", test("path", "\\\\server\\share\\path\\file")),
+                Arguments.of(
+                        "%{PATH:path}", "\\\\server\\share\\path\\file", test("path", "\\\\server\\share\\path\\file")),
                 Arguments.of("%{PATH:path}", "/root/.hidden_file", test("path", "/root/.hidden_file")),
                 Arguments.of("%{PATH:path}", "/home/user/../../mnt", test("path", "/home/user/../../mnt")),
                 Arguments.of("%{PATH:path}", "/root", test("path", "/root")),
-                Arguments.of("%{URI:camelSite}", "the site is at http://camel.apache.org/",
-                        test("camelSite", "http://camel.apache.org/")),
-                Arguments.of("%{URI:camelSite}", "the dataformat docs is at http://camel.apache.org/data-format.html",
+                Arguments.of(
+                        "%{URI:camelSite}",
+                        "the site is at http://camel.apache.org/", test("camelSite", "http://camel.apache.org/")),
+                Arguments.of(
+                        "%{URI:camelSite}",
+                        "the dataformat docs is at http://camel.apache.org/data-format.html",
                         test("camelSite", "http://camel.apache.org/data-format.html")),
                 Arguments.of("%{NUMBER:num}", "number is 123.", test("num", "123")),
                 Arguments.of("%{NUMBER:num:integer}", "number is 123.", test("num", 123)),
                 Arguments.of("%{IP:ip}", "my ip is 192.168.0.1", test("ip", "192.168.0.1")),
-                Arguments.of("%{TIMESTAMP_ISO8601:timestamp}", "This test was created at 2019-05-26T10:54:15Z test plain",
+                Arguments.of(
+                        "%{TIMESTAMP_ISO8601:timestamp}",
+                        "This test was created at 2019-05-26T10:54:15Z test plain",
                         test("timestamp", "2019-05-26T10:54:15Z")),
-                Arguments.of("%{TIMESTAMP_ISO8601:timestamp:date}",
+                Arguments.of(
+                        "%{TIMESTAMP_ISO8601:timestamp:date}",
                         "This test was created at 2019-05-26T10:54:15Z test convert",
                         test("timestamp", Instant.ofEpochSecond(1558868055))));
     }
@@ -68,8 +78,7 @@ public class GrokPatternsTest extends CamelTestSupport {
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() {
-            }
+            public void configure() {}
         };
     }
 
@@ -79,13 +88,11 @@ public class GrokPatternsTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:input")
-                        .unmarshal().grok(pattern);
+                from("direct:input").unmarshal().grok(pattern);
             }
         });
 
-        assertDoesNotThrow(() -> expectedOutputTest.accept(
-                template.requestBody("direct:input", input, Map.class)));
+        assertDoesNotThrow(() -> expectedOutputTest.accept(template.requestBody("direct:input", input, Map.class)));
     }
 
     private static Consumer<Map> test(String key, Object value) {
@@ -102,5 +109,4 @@ public class GrokPatternsTest extends CamelTestSupport {
             }
         };
     }
-
 }

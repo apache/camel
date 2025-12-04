@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.List;
@@ -87,5 +88,4 @@ public class WrapProcessor extends DelegateAsyncProcessor implements WrapAwarePr
         super.doStop();
         ServiceHelper.stopService(wrapped);
     }
-
 }

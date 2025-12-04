@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp.artemis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -37,8 +40,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * AMQP tests with SASL Authentication.
  */
@@ -54,8 +55,8 @@ public class AMQPAuthRouteTest implements ConfigurableContext, ConfigurableRoute
 
     @Order(1)
     @RegisterExtension
-    protected static ArtemisService service
-            = new ArtemisServiceFactory.SingletonArtemisService(new ArtemisAMQPService(), "artemis-amqp-auth");
+    protected static ArtemisService service =
+            new ArtemisServiceFactory.SingletonArtemisService(new ArtemisAMQPService(), "artemis-amqp-auth");
 
     @Order(2)
     @RegisterExtension
@@ -114,16 +115,11 @@ public class AMQPAuthRouteTest implements ConfigurableContext, ConfigurableRoute
     private static RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("amqp-auth:queue:ping-auth")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqp-auth:queue:ping-auth").to("log:routing").to("mock:result");
 
-                from("amqp-auth:queue:inOut-auth")
-                        .setBody().constant("response");
+                from("amqp-auth:queue:inOut-auth").setBody().constant("response");
 
-                from("amqp-auth:topic:ping-auth")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqp-auth:topic:ping-auth").to("log:routing").to("mock:result");
             }
         };
     }

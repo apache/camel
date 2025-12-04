@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 import javax.cache.Cache;
@@ -79,7 +80,8 @@ public class JCacheConsumer extends DefaultConsumer {
                 for (CacheEntryEvent<?, ?> event : events) {
                     Exchange exchange = createExchange(true);
                     Message message = exchange.getIn();
-                    message.setHeader(JCacheConstants.EVENT_TYPE, event.getEventType().name());
+                    message.setHeader(
+                            JCacheConstants.EVENT_TYPE, event.getEventType().name());
                     message.setHeader(JCacheConstants.KEY, event.getKey());
                     message.setBody(event.getValue());
 
@@ -96,10 +98,12 @@ public class JCacheConsumer extends DefaultConsumer {
             }
         };
 
-        Factory<CacheEntryEventFilter<Object, Object>> filterFactory = () -> getJCacheEndpoint().getManager().getEventFilter();
+        Factory<CacheEntryEventFilter<Object, Object>> filterFactory =
+                () -> getJCacheEndpoint().getManager().getEventFilter();
 
         return new MutableCacheEntryListenerConfiguration<>(
-                listenerFactory, filterFactory,
+                listenerFactory,
+                filterFactory,
                 getJCacheEndpoint().getManager().getConfiguration().isOldValueRequired(),
                 getJCacheEndpoint().getManager().getConfiguration().isSynchronous());
     }

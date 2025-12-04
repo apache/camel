@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snakeyaml;
 
 import java.io.InputStream;
@@ -111,7 +112,8 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
             return getYaml().loadAs(r, unmarshalObjectType);
         } else {
             // fallback to InputStream
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            InputStream is =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
             Reader r = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
             return getYaml().loadAs(r, unmarshalObjectType);
         }
@@ -340,8 +342,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         };
     }
 
-    private Constructor typeFilterConstructor(
-            final ClassLoader classLoader, LoaderOptions options) {
+    private Constructor typeFilterConstructor(final ClassLoader classLoader, LoaderOptions options) {
         return new CustomClassLoaderConstructor(classLoader, options) {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {

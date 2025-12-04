@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
 
 import java.io.BufferedReader;
@@ -98,8 +99,9 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             initializeStreamLineMode();
         }
 
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
-                endpoint.getEndpointUri());
+        executor = endpoint.getCamelContext()
+                .getExecutorServiceManager()
+                .newSingleThreadExecutor(this, endpoint.getEndpointUri());
         executor.execute(this);
 
         if (endpoint.getGroupLines() < 0) {
@@ -450,8 +452,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
      * @return            A Stream of Map.Entry items which can then be added as headers to a URLConnection
      */
     Stream<Map.Entry<String, String>> parseHeaders(String headerList) {
-        return Arrays.asList(headerList.split(","))
-                .stream()
+        return Arrays.asList(headerList.split(",")).stream()
                 .map(s -> s.split("[=:]"))
                 .filter(h -> h.length == 2)
                 .map(h -> Map.entry(h[0].trim(), h[1].trim()));
@@ -465,8 +466,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         urlConnectionToClose.setUseCaches(false);
         String headers = endpoint.getHttpHeaders();
         if (headers != null) {
-            parseHeaders(headers)
-                    .forEach(e -> urlConnectionToClose.setRequestProperty(e.getKey(), e.getValue()));
+            parseHeaders(headers).forEach(e -> urlConnectionToClose.setRequestProperty(e.getKey(), e.getValue()));
         }
 
         InputStream is;
@@ -523,5 +523,4 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             }
         }
     }
-
 }

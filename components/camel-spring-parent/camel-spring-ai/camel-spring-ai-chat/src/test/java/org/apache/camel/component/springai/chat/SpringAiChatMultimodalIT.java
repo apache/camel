@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.content.Media;
 import org.springframework.util.MimeTypeUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for multimodal capabilities (image and audio input).
@@ -193,14 +194,15 @@ public class SpringAiChatMultimodalIT extends OllamaTestSupport {
             public void configure() throws Exception {
                 bindChatModel(this.getCamelContext());
 
-                from("direct:multimodal")
-                        .to("spring-ai-chat:multimodal?chatModel=#chatModel");
+                from("direct:multimodal").to("spring-ai-chat:multimodal?chatModel=#chatModel");
 
                 from("direct:multimodal-configured")
-                        .to("spring-ai-chat:multimodal-config?chatModel=#chatModel&userMessage=Describe what you see in this image.");
+                        .to(
+                                "spring-ai-chat:multimodal-config?chatModel=#chatModel&userMessage=Describe what you see in this image.");
 
                 from("direct:multimodal-system")
-                        .to("spring-ai-chat:multimodal-sys?chatModel=#chatModel&systemMessage=You are an expert image analyst. Provide detailed descriptions.");
+                        .to(
+                                "spring-ai-chat:multimodal-sys?chatModel=#chatModel&systemMessage=You are an expert image analyst. Provide detailed descriptions.");
             }
         };
     }

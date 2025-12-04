@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -48,14 +49,23 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
     @Test
     public void testExistingFileExists() throws Exception {
         template.sendBodyAndHeader(
-                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
-                "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+                fileUri(
+                        "?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
+                "Hello World",
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
         template.sendBodyAndHeader(
-                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
-                "Bye Existing World 1", Exchange.FILE_NAME, TEST_FILE_NAME);
+                fileUri(
+                        "?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
+                "Bye Existing World 1",
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
         template.sendBodyAndHeader(
-                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
-                "Bye Existing World 2", Exchange.FILE_NAME, TEST_FILE_NAME);
+                fileUri(
+                        "?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
+                "Bye Existing World 2",
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
 
         assertFileExists(testFile(TEST_FILE_NAME), "Bye Existing World 2");
 
@@ -70,7 +80,8 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
         private int counter;
 
         @Override
-        public boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
+        public boolean moveExistingFile(
+                GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
                 throws GenericFileOperationFailedException {
 
             // need to evaluate using a dummy and simulate the file first, to
@@ -118,9 +129,8 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
                         throw new GenericFileOperationFailedException("Cannot delete file: " + to);
                     }
                 } else {
-                    throw new GenericFileOperationFailedException(
-                            "Cannot moved existing file from: " + fileName + " to: " + to + " as there already exists a file: "
-                                                                  + to);
+                    throw new GenericFileOperationFailedException("Cannot moved existing file from: " + fileName
+                            + " to: " + to + " as there already exists a file: " + to);
                 }
             }
 
@@ -130,7 +140,5 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
             }
             return true;
         }
-
     }
-
 }

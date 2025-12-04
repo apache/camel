@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs.testbean;
 
 import jakarta.ws.rs.Consumes;
@@ -38,14 +39,8 @@ public interface CustomerServiceResource {
 
     @Path("/{id}")
     @PUT()
-    @Consumes({
-            "application/xml", "text/plain",
-            "application/json" })
-    @Produces({
-            "application/xml", "text/plain",
-            "application/json" })
-    Object invoke(
-            @PathParam("id") String id,
-            String payload);
+    @Consumes({"application/xml", "text/plain", "application/json"})
+    @Produces({"application/xml", "text/plain", "application/json"})
+    Object invoke(@PathParam("id") String id, String payload);
 }
 // END SNIPPET: example

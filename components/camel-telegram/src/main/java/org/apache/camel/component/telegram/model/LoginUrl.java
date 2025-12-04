@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -31,10 +32,13 @@ public class LoginUrl implements Serializable {
     private static final long serialVersionUID = 4046971763350434361L;
 
     private String url;
+
     @JsonProperty("forward_text")
     private String forwardText;
+
     @JsonProperty("bot_username")
     private String botUsername;
+
     @JsonProperty("request_write_access")
     private Boolean requestWriteAccess;
 
@@ -55,8 +59,7 @@ public class LoginUrl implements Serializable {
         this.requestWriteAccess = requestWriteAccess;
     }
 
-    public LoginUrl() {
-    }
+    public LoginUrl() {}
 
     public String getUrl() {
         return url;
@@ -93,11 +96,11 @@ public class LoginUrl implements Serializable {
     @Override
     public String toString() {
         return "LoginUrl{"
-               + "url='" + url + '\''
-               + ", forwardText='" + forwardText + '\''
-               + ", botUsername='" + botUsername + '\''
-               + ", requestWriteAccess=" + requestWriteAccess
-               + '}';
+                + "url='" + url + '\''
+                + ", forwardText='" + forwardText + '\''
+                + ", botUsername='" + botUsername + '\''
+                + ", requestWriteAccess=" + requestWriteAccess
+                + '}';
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.utils.consumers;
 
 import java.util.concurrent.TimeUnit;
@@ -30,8 +31,7 @@ import org.apache.pulsar.client.api.KeySharedPolicy;
 
 public final class CommonCreationStrategyImpl {
 
-    private CommonCreationStrategyImpl() {
-    }
+    private CommonCreationStrategyImpl() {}
 
     protected static ConsumerBuilder<byte[]> getBuilder(
             final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
@@ -57,12 +57,14 @@ public final class CommonCreationStrategyImpl {
             builder.topic(pulsarEndpoint.getUri());
         }
         builder.subscriptionName(endpointConfiguration.getSubscriptionName())
-                .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name)
+                .receiverQueueSize(endpointConfiguration.getConsumerQueueSize())
+                .consumerName(name)
                 .ackTimeout(endpointConfiguration.getAckTimeoutMillis(), TimeUnit.MILLISECONDS)
                 .subscriptionInitialPosition(
                         endpointConfiguration.getSubscriptionInitialPosition().toPulsarSubscriptionInitialPosition())
                 .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
-                .negativeAckRedeliveryDelay(endpointConfiguration.getNegativeAckRedeliveryDelayMicros(), TimeUnit.MICROSECONDS)
+                .negativeAckRedeliveryDelay(
+                        endpointConfiguration.getNegativeAckRedeliveryDelayMicros(), TimeUnit.MICROSECONDS)
                 .readCompacted(endpointConfiguration.isReadCompacted());
 
         if (endpointConfiguration.isMessageListener()) {
@@ -72,16 +74,16 @@ public final class CommonCreationStrategyImpl {
         if (endpointConfiguration.isEnableRetry()) {
             // retry mode
             builder.enableRetry(true);
-            DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
-                    .maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
+            DeadLetterPolicyBuilder policy =
+                    DeadLetterPolicy.builder().maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
             if (endpointConfiguration.getRetryLetterTopic() != null) {
                 policy.retryLetterTopic(endpointConfiguration.getRetryLetterTopic());
             }
             builder.deadLetterPolicy(policy.build());
         } else if (endpointConfiguration.getMaxRedeliverCount() != null) {
             // or potentially dead-letter-topic mode
-            DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
-                    .maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
+            DeadLetterPolicyBuilder policy =
+                    DeadLetterPolicy.builder().maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
             if (endpointConfiguration.getDeadLetterTopic() != null) {
                 policy.deadLetterTopic(endpointConfiguration.getDeadLetterTopic());
             }

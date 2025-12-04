@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
 
 import org.apache.camel.spi.Metadata;
@@ -27,14 +28,23 @@ public final class JcrConstants {
      * Property key for specifying the name of a node in the repository
      */
     public static final String JCR_INSERT = "CamelJcrInsert";
+
     public static final String JCR_GET_BY_ID = "CamelJcrGetById";
-    @Metadata(label = "producer", description = "The name of the target node", javaType = "String",
-              defaultValue = "The exchange id")
+
+    @Metadata(
+            label = "producer",
+            description = "The name of the target node",
+            javaType = "String",
+            defaultValue = "The exchange id")
     public static final String JCR_NODE_NAME = "CamelJcrNodeName";
-    @Metadata(label = "producer",
-              description = "The operation to perform. Possible values: " + JCR_INSERT + " or " + JCR_GET_BY_ID,
-              javaType = "String", defaultValue = JCR_INSERT)
+
+    @Metadata(
+            label = "producer",
+            description = "The operation to perform. Possible values: " + JCR_INSERT + " or " + JCR_GET_BY_ID,
+            javaType = "String",
+            defaultValue = JCR_INSERT)
     public static final String JCR_OPERATION = "CamelJcrOperation";
+
     @Metadata(label = "producer", description = "The node type of the target node", javaType = "String")
     public static final String JCR_NODE_TYPE = "CamelJcrNodeType";
 

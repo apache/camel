@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +37,6 @@ import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-
 public class HttpProxyAndBasicAuthTest extends BaseHttpTest {
 
     private HttpServer proxy;
@@ -48,15 +49,18 @@ public class HttpProxyAndBasicAuthTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         proxy = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("authtest.org", "*", new ProxyAndBasicAuthenticationValidationHandler(
-                        GET.name(),
-                        null, null, getExpectedContent(), user, password, proxyUser, proxyPassword))
+                .register(
+                        "authtest.org",
+                        "*",
+                        new ProxyAndBasicAuthenticationValidationHandler(
+                                GET.name(), null, null, getExpectedContent(), user, password, proxyUser, proxyPassword))
                 .create();
         proxy.start();
-
     }
 
     @Override
@@ -81,12 +85,12 @@ public class HttpProxyAndBasicAuthTest extends BaseHttpTest {
 
     @Test
     public void httpGetWithProxyAndUser() {
-        Exchange exchange = template.request("http://authtest.org" + "?proxyHost=localhost"
-                                             + "&proxyPort=" + proxy.getLocalPort()
-                                             + "&proxyAuthUsername=" + proxyUser + "&proxyAuthPassword=" + proxyPassword
-                                             + "&authUsername=" + user + "&authPassword=" + password,
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                "http://authtest.org" + "?proxyHost=localhost"
+                        + "&proxyPort=" + proxy.getLocalPort()
+                        + "&proxyAuthUsername=" + proxyUser + "&proxyAuthPassword=" + proxyPassword
+                        + "&authUsername=" + user + "&authPassword=" + password,
+                exchange1 -> {});
 
         assertExchange(exchange);
     }

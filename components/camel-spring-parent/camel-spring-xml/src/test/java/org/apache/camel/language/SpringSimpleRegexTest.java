@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringSimpleRegexTest extends SpringTestSupport {
 
@@ -38,5 +39,4 @@ public class SpringSimpleRegexTest extends SpringTestSupport {
         result = template.requestBody("direct:start", "12.34.5678", String.class);
         assertEquals("Found the result.", result);
     }
-
 }

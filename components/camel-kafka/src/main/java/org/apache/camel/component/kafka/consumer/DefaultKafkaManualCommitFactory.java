@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer;
 
 public class DefaultKafkaManualCommitFactory implements KafkaManualCommitFactory {
 
     @Override
     public KafkaManualCommit newInstance(
-            CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload, CommitManager commitManager) {
+            CamelExchangePayload camelExchangePayload,
+            KafkaRecordPayload kafkaRecordPayload,
+            CommitManager commitManager) {
         return new DefaultKafkaManualSyncCommit(camelExchangePayload, kafkaRecordPayload, commitManager);
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.Properties;
@@ -40,16 +43,15 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * this will test basic breakOnFirstError functionality when it is turned off and consumer uses allowManualCommit and
  * KafkaManualCommit and NOOP Commit Manager
  */
-@Tags({ @Tag("breakOnFirstError") })
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64" },
-             disabledReason = "This test does not run reliably on some platforms")
+@Tags({@Tag("breakOnFirstError")})
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS},
+        architectures = {"amd64", "aarch64"},
+        disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT extends BaseKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorOff";
     public static final String TOPIC = "breakOnFirstErrorOff";
@@ -113,18 +115,20 @@ class KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT extends BaseKafkaTestSup
             @Override
             public void configure() {
 
-                fromF("kafka:%s"
-                      + "?groupId=breakOnFirstErrorOff"
-                      + "&autoOffsetReset=earliest"
-                      + "&autoCommitEnable=false"
-                      + "&allowManualCommit=true"
-                // set BOFE to false
-                      + "&breakOnFirstError=false"
-                      + "&maxPollRecords=1"
-                      + "&pollTimeoutMs=1000"
-                      + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                      + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                      + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor", TOPIC)
+                fromF(
+                                "kafka:%s"
+                                        + "?groupId=breakOnFirstErrorOff"
+                                        + "&autoOffsetReset=earliest"
+                                        + "&autoCommitEnable=false"
+                                        + "&allowManualCommit=true"
+                                        // set BOFE to false
+                                        + "&breakOnFirstError=false"
+                                        + "&maxPollRecords=1"
+                                        + "&pollTimeoutMs=1000"
+                                        + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                        + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                        + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor",
+                                TOPIC)
                         .routeId(ROUTE_ID)
                         .process(exchange -> {
                             LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Consuming", exchange, true));
@@ -150,8 +154,8 @@ class KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT extends BaseKafkaTestSup
 
     private void doCommitOffset(Exchange exchange) {
         LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Committing", exchange, true));
-        KafkaManualCommit manual = exchange.getMessage()
-                .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+        KafkaManualCommit manual =
+                exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
         assertNotNull(manual);
         manual.commit();
     }
@@ -162,5 +166,4 @@ class KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT extends BaseKafkaTestSup
             throw new RuntimeException("ERROR TRIGGERED BY TEST");
         }
     }
-
 }

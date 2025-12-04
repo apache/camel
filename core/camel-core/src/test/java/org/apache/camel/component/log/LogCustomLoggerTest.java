@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.StringWriter;
 
@@ -27,9 +31,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Custom Logger test.
@@ -48,15 +49,21 @@ public class LogCustomLoggerTest extends ContextTestSupport {
         sw1 = new StringWriter();
         sw2 = new StringWriter();
 
-        ConsumingAppender.newAppender(LogCustomLoggerTest.class.getCanonicalName(), "LogCustomLoggerTest", Level.TRACE,
+        ConsumingAppender.newAppender(
+                LogCustomLoggerTest.class.getCanonicalName(),
+                "LogCustomLoggerTest",
+                Level.TRACE,
                 event -> sw1.append(event.getLoggerName()));
-        ConsumingAppender.newAppender("provided.logger1.name", "logger1", Level.TRACE,
-                event -> sw1.append(event.getLoggerName()));
-        ConsumingAppender.newAppender("provided.logger2.name", "logger2", Level.TRACE,
-                event -> sw1.append(event.getLoggerName()));
-        ConsumingAppender.newAppender("irrelevant.logger.name", "irrelevant", Level.TRACE,
-                event -> sw1.append(event.getLoggerName()));
-        ConsumingAppender.newAppender(LogComponent.class.getCanonicalName(), "LogComponent", Level.INFO,
+        ConsumingAppender.newAppender(
+                "provided.logger1.name", "logger1", Level.TRACE, event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender(
+                "provided.logger2.name", "logger2", Level.TRACE, event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender(
+                "irrelevant.logger.name", "irrelevant", Level.TRACE, event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender(
+                LogComponent.class.getCanonicalName(),
+                "LogComponent",
+                Level.INFO,
                 event -> sw2.append(event.getLoggerName()));
     }
 
@@ -79,7 +86,8 @@ public class LogCustomLoggerTest extends ContextTestSupport {
     @Test
     public void testEndpointURIParametrizedNotResolvableLogger() {
         context.getRegistry().bind("logger1", LoggerFactory.getLogger("provided.logger1.name"));
-        Assertions.assertThrows(ResolveEndpointFailedException.class,
+        Assertions.assertThrows(
+                ResolveEndpointFailedException.class,
                 () -> template.requestBody("log:irrelevant.logger.name?logger=#logger2", "hello"),
                 "Endpoint cannot be resolved via URI");
     }
@@ -104,5 +112,4 @@ public class LogCustomLoggerTest extends ContextTestSupport {
     protected CamelContext createCamelContext() {
         return new DefaultCamelContext();
     }
-
 }

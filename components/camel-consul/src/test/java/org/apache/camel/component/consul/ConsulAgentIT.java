@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import java.util.Map;
@@ -31,11 +32,11 @@ public class ConsulAgentIT extends ConsulTestSupport {
 
     @Test
     public void testRegisterDeregister() {
-        Map<String, Service> beforeRegistration = getConsul().agentClient()
-                .getServices();
+        Map<String, Service> beforeRegistration = getConsul().agentClient().getServices();
         Assertions.assertTrue(beforeRegistration.isEmpty());
 
-        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulAgentActions.REGISTER)
+        fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulAgentActions.REGISTER)
                 .withBody(ImmutableRegistration.builder()
                         .id(serviceId)
                         .name("foo")
@@ -45,18 +46,17 @@ public class ConsulAgentIT extends ConsulTestSupport {
                 .to("direct:consul")
                 .request();
 
-        Map<String, Service> afterRegistration = getConsul().agentClient()
-                .getServices();
+        Map<String, Service> afterRegistration = getConsul().agentClient().getServices();
         Assertions.assertEquals(1, afterRegistration.size());
         Assertions.assertNotNull(afterRegistration.get(serviceId));
 
-        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulAgentActions.DEREGISTER)
+        fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulAgentActions.DEREGISTER)
                 .withHeader(ConsulConstants.CONSUL_SERVICE_ID, serviceId)
                 .to("direct:consul")
                 .request();
 
-        Map<String, Service> afterDeregistration = getConsul().agentClient()
-                .getServices();
+        Map<String, Service> afterDeregistration = getConsul().agentClient().getServices();
         Assertions.assertTrue(afterDeregistration.isEmpty());
     }
 
@@ -67,7 +67,8 @@ public class ConsulAgentIT extends ConsulTestSupport {
                 from("direct:consul").to("consul:agent");
 
                 from("direct:register")
-                        .setBody().constant(ImmutableRegistration.builder()
+                        .setBody()
+                        .constant(ImmutableRegistration.builder()
                                 .id(serviceId)
                                 .name("foo")
                                 .address("localhost")

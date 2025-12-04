@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870.client;
 
 import org.apache.camel.component.iec60870.AbstractConnectionMultiplexor;
@@ -39,5 +40,4 @@ public class ClientConnectionMultiplexor extends AbstractConnectionMultiplexor {
     public ClientConnection getConnection() {
         return this.connection;
     }
-
 }

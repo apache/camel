@@ -42,15 +42,13 @@ public class GreeterServiceExtension implements BeforeAllCallback, AfterAllCallb
     }
 
     public GreeterServiceExtension(String portProperty) {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty(portProperty, Integer.toString(PORT));
     }
 
     @Override
-    public void afterAll(ExtensionContext extensionContext) throws Exception {
-
-    }
+    public void afterAll(ExtensionContext extensionContext) throws Exception {}
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {

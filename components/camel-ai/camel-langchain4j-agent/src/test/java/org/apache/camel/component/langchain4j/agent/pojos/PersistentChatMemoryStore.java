@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.pojos;
+
+import static dev.langchain4j.data.message.ChatMessageDeserializer.messagesFromJson;
+import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
 import java.util.List;
 import java.util.Map;
@@ -22,9 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
-
-import static dev.langchain4j.data.message.ChatMessageDeserializer.messagesFromJson;
-import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
 public class PersistentChatMemoryStore implements ChatMemoryStore {
     private final Map<Object, String> memoryMap = new ConcurrentHashMap<>();

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.netty.handler.codec.http.HttpRequest;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyHttpAccessHttpRequestTest extends BaseNettyTest {
 
@@ -49,13 +50,14 @@ public class NettyHttpAccessHttpRequestTest extends BaseNettyTest {
                             @Override
                             public void process(Exchange exchange) {
                                 // we can get the original http request
-                                HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
+                                HttpRequest request =
+                                        exchange.getIn(NettyHttpMessage.class).getHttpRequest();
                                 assertNotNull(request);
                             }
                         })
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

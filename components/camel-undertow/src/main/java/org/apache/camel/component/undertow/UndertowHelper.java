@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
@@ -34,8 +35,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  */
 public final class UndertowHelper {
 
-    private UndertowHelper() {
-    }
+    private UndertowHelper() {}
 
     /**
      * Creates the URL to invoke.
@@ -91,7 +91,8 @@ public final class UndertowHelper {
      */
     public static URI createURI(Exchange exchange, String url, UndertowEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
-        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        // rest producer may provide an override query string to be used which we should discard if using (hence the
+        // remove)
         String queryString = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
         if (queryString == null) {
@@ -130,7 +131,8 @@ public final class UndertowHelper {
         try {
             uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
         } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
+            throw new RuntimeExchangeException(
+                    "Cannot resolve property placeholders with uri: " + uriString, exchange, e);
         }
         if (uriString != null) {
             URI uri = new URI(uriString);
@@ -160,8 +162,7 @@ public final class UndertowHelper {
     }
 
     public static URI makeHttpURI(String httpURI) {
-        return makeHttpURI(
-                URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpURI)));
+        return makeHttpURI(URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpURI)));
     }
 
     public static URI makeHttpURI(URI httpURI) {
@@ -182,5 +183,4 @@ public final class UndertowHelper {
             return httpURI;
         }
     }
-
 }

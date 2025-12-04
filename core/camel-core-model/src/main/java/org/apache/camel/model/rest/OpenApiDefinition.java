@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -38,16 +39,21 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
 
     @XmlAttribute(required = true)
     private String specification;
+
     @XmlAttribute
     private String apiContextPath;
+
     @XmlAttribute
     private String routeId;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
+
     @XmlAttribute
     @Metadata(enums = "fail,ignore,mock", defaultValue = "fail")
     private String missingOperation;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern;
@@ -208,5 +214,4 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     public RestDefinition end() {
         return rest;
     }
-
 }

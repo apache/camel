@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,24 +38,31 @@ public class FlatpackDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     private String definition;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String fixed;
+
     @XmlAttribute
     @Metadata(defaultValue = ",")
     private String delimiter;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String ignoreFirstRecord;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowShortLines;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreExtraColumns;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String textQualifier;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "net.sf.flatpack.ParserFactory")
     private String parserFactory;

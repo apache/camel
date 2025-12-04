@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.embeddingstore;
 
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
@@ -21,7 +22,8 @@ import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.query.Query;
 
 public class InfinispanVectorQueryBuilder implements InfinispanQueryBuilder {
-    private static final String QUERY_TEMPLATE = "select i, score(i) from %s i where i.embedding <-> [:vector]~:distance";
+    private static final String QUERY_TEMPLATE =
+            "select i, score(i) from %s i where i.embedding <-> [:vector]~:distance";
     private final float[] vector;
     private int distance;
     private String typeName;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
@@ -34,7 +35,10 @@ public class FtpConsumerFileSplitIT extends FtpServerTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("line1", "line2", "line3");
 
-        template.sendBodyAndHeader(getFtpUrl(), new File("src/test/data/ftptextfile/textexample.txt"), Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                getFtpUrl(),
+                new File("src/test/data/ftptextfile/textexample.txt"),
+                Exchange.FILE_NAME,
                 "textexample.txt");
 
         resultEndpoint.assertIsSatisfied();
@@ -44,7 +48,11 @@ public class FtpConsumerFileSplitIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).to("log:file").split(body().tokenize(LS)).to("log:line").to("mock:result");
+                from(getFtpUrl())
+                        .to("log:file")
+                        .split(body().tokenize(LS))
+                        .to("log:line")
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,7 +26,9 @@ public class TransformExternalScriptTest extends TransformViaDSLTest {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").transform().simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")
+                from("direct:start")
+                        .transform()
+                        .simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")
                         .to("mock:result");
                 // END SNIPPET: example
             }

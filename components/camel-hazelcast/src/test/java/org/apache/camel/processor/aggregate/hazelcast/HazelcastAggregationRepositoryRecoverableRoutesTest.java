@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.hazelcast;
 
 import org.apache.camel.EndpointInject;
@@ -23,7 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class HazelcastAggregationRepositoryRecoverableRoutesTest extends HazelcastAggregationRepositoryCamelTestSupport {
+public class HazelcastAggregationRepositoryRecoverableRoutesTest
+        extends HazelcastAggregationRepositoryCamelTestSupport {
 
     private static final String REPO_NAME = "routeTestRepo";
     private static final String MOCK_GOTCHA = "mock:gotcha";
@@ -45,10 +47,11 @@ public class HazelcastAggregationRepositoryRecoverableRoutesTest extends Hazelca
 
     @Test
     public void checkAggregationFromTwoRoutesWithRecovery() throws Exception {
-        final HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(REPO_NAME, false, getFirstInstance());
+        final HazelcastAggregationRepository repoOne =
+                new HazelcastAggregationRepository(REPO_NAME, false, getFirstInstance());
 
-        final HazelcastAggregationRepository repoTwo
-                = new HazelcastAggregationRepository(REPO_NAME, false, getSecondInstance());
+        final HazelcastAggregationRepository repoTwo =
+                new HazelcastAggregationRepository(REPO_NAME, false, getSecondInstance());
 
         final int completionSize = 4;
         final String correlator = "CORRELATOR";
@@ -73,7 +76,6 @@ public class HazelcastAggregationRepositoryRecoverableRoutesTest extends Hazelca
                         .aggregationStrategy(new SumOfIntsAggregationStrategy())
                         .completionSize(completionSize)
                         .to(MOCK_FAILURE);
-
             }
         };
 
@@ -120,8 +122,7 @@ public class HazelcastAggregationRepositoryRecoverableRoutesTest extends Hazelca
     private static final class EverythingIsLostException extends Exception {
         private static final long serialVersionUID = 1L;
 
-        private EverythingIsLostException() {
-        }
+        private EverythingIsLostException() {}
 
         private EverythingIsLostException(String message) {
             super(message);
@@ -136,7 +137,8 @@ public class HazelcastAggregationRepositoryRecoverableRoutesTest extends Hazelca
         }
 
         // not in jdk6
-        //        private EverythingIsLostException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        //        private EverythingIsLostException(String message, Throwable cause, boolean enableSuppression, boolean
+        // writableStackTrace) {
         //            super(message, cause, enableSuppression, writableStackTrace);
         //        }
     }

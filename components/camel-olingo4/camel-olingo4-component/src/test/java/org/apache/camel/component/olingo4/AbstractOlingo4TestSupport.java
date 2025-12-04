@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
 
 import java.io.IOException;
@@ -84,12 +85,18 @@ public class AbstractOlingo4TestSupport extends CamelTestSupport {
     protected ClientEntity createEntity() {
         ClientEntity clientEntity = objFactory.newEntity(null);
 
-        clientEntity.getProperties().add(
-                objFactory.newPrimitiveProperty("UserName", objFactory.newPrimitiveValueBuilder().buildString("lewisblack")));
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("FirstName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("LastName", objFactory.newPrimitiveValueBuilder().buildString("Black")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "UserName", objFactory.newPrimitiveValueBuilder().buildString("lewisblack")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "FirstName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "LastName", objFactory.newPrimitiveValueBuilder().buildString("Black")));
 
         return clientEntity;
     }

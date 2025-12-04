@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -37,9 +38,10 @@ public class FailedToStartRouteException extends RuntimeCamelException {
     }
 
     public FailedToStartRouteException(String routeId, String location, String message, Throwable cause) {
-        super("Failed to start route: " + routeId + (location != null ? " (source: " + location + ")" : "") + " because: "
-              + message,
-              cause);
+        super(
+                "Failed to start route: " + routeId + (location != null ? " (source: " + location + ")" : "")
+                        + " because: " + message,
+                cause);
         this.routeId = routeId;
         this.location = location;
     }

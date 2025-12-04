@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.obs.services.model.ListObjectsRequest;
 import org.apache.camel.BindToRegistry;
@@ -25,9 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ListObjectsPojoFunctionalTest extends CamelTestSupport {
 
@@ -44,10 +45,9 @@ public class ListObjectsPojoFunctionalTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:list_objects")
-                        .to("hwcloud-obs:listObjects?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-obs:listObjects?" + "serviceKeys=#serviceKeys"
+                                + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("List objects successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:list_objects_result");
@@ -68,7 +68,8 @@ public class ListObjectsPojoFunctionalTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:list_objects_result");
         mock.expectedMinimumMessageCount(1);
 
-        // More parameters can be added to the ListObjectsRequest below. E.g. setDelimiter, setMarker, setMaxKeys, setPrefix
+        // More parameters can be added to the ListObjectsRequest below. E.g. setDelimiter, setMarker, setMaxKeys,
+        // setPrefix
         ListObjectsRequest request = new ListObjectsRequest(BUCKET_NAME);
         template.sendBody("direct:list_objects", request);
         Exchange responseExchange = mock.getExchanges().get(0);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
 
 import dev.langchain4j.data.embedding.Embedding;
@@ -46,9 +47,15 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
         }
 
         if (result.tokenUsage() != null) {
-            message.setHeader(LangChain4jEmbeddingsHeaders.INPUT_TOKEN_COUNT, result.tokenUsage().inputTokenCount());
-            message.setHeader(LangChain4jEmbeddingsHeaders.OUTPUT_TOKEN_COUNT, result.tokenUsage().outputTokenCount());
-            message.setHeader(LangChain4jEmbeddingsHeaders.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
+            message.setHeader(
+                    LangChain4jEmbeddingsHeaders.INPUT_TOKEN_COUNT,
+                    result.tokenUsage().inputTokenCount());
+            message.setHeader(
+                    LangChain4jEmbeddingsHeaders.OUTPUT_TOKEN_COUNT,
+                    result.tokenUsage().outputTokenCount());
+            message.setHeader(
+                    LangChain4jEmbeddingsHeaders.TOTAL_TOKEN_COUNT,
+                    result.tokenUsage().totalTokenCount());
         }
 
         message.setHeader(LangChain4jEmbeddingsHeaders.VECTOR, result.content().vector());

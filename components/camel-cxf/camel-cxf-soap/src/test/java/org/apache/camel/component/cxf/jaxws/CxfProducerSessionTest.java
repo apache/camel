@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collections;
 import java.util.Map;
@@ -36,17 +41,13 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class CxfProducerSessionTest extends CamelTestSupport {
     private static final int PORT = CXFTestSupport.getPort1();
     private static final String SIMPLE_SERVER_ADDRESS = "http://127.0.0.1:" + PORT + "/CxfProducerSessionTest/test";
-    private static final String REQUEST_MESSAGE_EXPRESSION
-            = "<ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\"><arg0>${in.body}</arg0></ns1:echo>";
-    private static final Map<String, String> NAMESPACES
-            = Collections.singletonMap("ns1", "http://jaxws.cxf.component.camel.apache.org/");
+    private static final String REQUEST_MESSAGE_EXPRESSION =
+            "<ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\"><arg0>${in.body}</arg0></ns1:echo>";
+    private static final Map<String, String> NAMESPACES =
+            Collections.singletonMap("ns1", "http://jaxws.cxf.component.camel.apache.org/");
     private static final String PARAMETER_XPATH = "/ns1:echoResponse/return/text()";
 
     @BindToRegistry("instanceCookieHandler")
@@ -56,7 +57,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
     private ExchangeCookieHandler ech = new ExchangeCookieHandler();
 
     private String url = "cxf://" + SIMPLE_SERVER_ADDRESS
-                         + "?serviceClass=org.apache.camel.component.cxf.jaxws.EchoService&dataFormat=PAYLOAD&synchronous=true";
+            + "?serviceClass=org.apache.camel.component.cxf.jaxws.EchoService&dataFormat=PAYLOAD&synchronous=true";
 
     @BeforeAll
     public static void startServer() throws Exception {
@@ -71,7 +72,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         Bus bus = BusFactory.newInstance().createBus();
         UndertowHTTPServerEngineFactory undertowFactory = bus.getExtension(UndertowHTTPServerEngineFactory.class);
         undertowFactory.createUndertowHTTPServerEngine(PORT, "http");
-        //.setSessionSupport(true);
+        // .setSessionSupport(true);
         svrBean.setBus(bus);
         svrBean.create();
     }
@@ -128,31 +129,42 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .setBody().simple(REQUEST_MESSAGE_EXPRESSION)
+                        .setBody()
+                        .simple(REQUEST_MESSAGE_EXPRESSION)
                         .to(url)
-                        .setBody().xpath(PARAMETER_XPATH, String.class, NAMESPACES)
-                        .setBody().simple(REQUEST_MESSAGE_EXPRESSION)
+                        .setBody()
+                        .xpath(PARAMETER_XPATH, String.class, NAMESPACES)
+                        .setBody()
+                        .simple(REQUEST_MESSAGE_EXPRESSION)
                         .to(url)
-                        .setBody().xpath(PARAMETER_XPATH, String.class, NAMESPACES)
+                        .setBody()
+                        .xpath(PARAMETER_XPATH, String.class, NAMESPACES)
                         .to("mock:result");
                 from("direct:instance")
-                        .setBody().simple(REQUEST_MESSAGE_EXPRESSION)
+                        .setBody()
+                        .simple(REQUEST_MESSAGE_EXPRESSION)
                         .to(url + "&cookieHandler=#instanceCookieHandler")
-                        .setBody().xpath(PARAMETER_XPATH, String.class, NAMESPACES)
-                        .setBody().simple(REQUEST_MESSAGE_EXPRESSION)
+                        .setBody()
+                        .xpath(PARAMETER_XPATH, String.class, NAMESPACES)
+                        .setBody()
+                        .simple(REQUEST_MESSAGE_EXPRESSION)
                         .to(url + "&cookieHandler=#instanceCookieHandler")
-                        .setBody().xpath(PARAMETER_XPATH, String.class, NAMESPACES)
+                        .setBody()
+                        .xpath(PARAMETER_XPATH, String.class, NAMESPACES)
                         .to("mock:result");
                 from("direct:exchange")
-                        .setBody().simple(REQUEST_MESSAGE_EXPRESSION)
+                        .setBody()
+                        .simple(REQUEST_MESSAGE_EXPRESSION)
                         .to(url + "&cookieHandler=#exchangeCookieHandler")
-                        .setBody().xpath(PARAMETER_XPATH, String.class, NAMESPACES)
-                        .setBody().simple(REQUEST_MESSAGE_EXPRESSION)
+                        .setBody()
+                        .xpath(PARAMETER_XPATH, String.class, NAMESPACES)
+                        .setBody()
+                        .simple(REQUEST_MESSAGE_EXPRESSION)
                         .to(url + "&cookieHandler=#exchangeCookieHandler")
-                        .setBody().xpath(PARAMETER_XPATH, String.class, NAMESPACES)
+                        .setBody()
+                        .xpath(PARAMETER_XPATH, String.class, NAMESPACES)
                         .to("mock:result");
-                from("direct:invalid")
-                        .to(url + "&cookieHandler=#exchangeCookieHandler");
+                from("direct:invalid").to(url + "&cookieHandler=#exchangeCookieHandler");
             }
         };
     }

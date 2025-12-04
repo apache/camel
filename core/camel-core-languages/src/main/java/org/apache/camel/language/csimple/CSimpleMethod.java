@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple;
 
 import org.apache.camel.CamelContext;
@@ -28,7 +29,5 @@ import org.apache.camel.Message;
  */
 public interface CSimpleMethod {
 
-    Object evaluate(CamelContext context, Exchange exchange, Message message, Object body)
-            throws Exception;
-
+    Object evaluate(CamelContext context, Exchange exchange, Message message, Object body) throws Exception;
 }

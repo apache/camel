@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.rest;
 
 import org.apache.camel.Route;
@@ -89,5 +90,4 @@ public class RestBindingReifier extends AbstractReifier {
         // use factory to create advice
         return RestBindingAdviceFactory.build(camelContext, rbc);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs.integration.operations;
 
 import java.time.Duration;
@@ -41,8 +42,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
-                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
+@EnabledIfSystemProperty(
+        named = "connectionString",
+        matches = ".*",
+        disabledReason =
+                "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventHubsProducerOperationsIT extends CamelTestSupport {
 
@@ -64,15 +68,15 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
 
     @Test
     public void testSendEventWithSpecificPartition() {
-        final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
+        final EventHubsProducerOperations operations =
+                new EventHubsProducerOperations(producerAsyncClient, configuration);
         final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
         final Exchange exchange = new DefaultExchange(context);
 
         exchange.getIn().setHeader(EventHubsConstants.PARTITION_ID, firstPartition);
         exchange.getIn().setBody("test should be in firstPartition");
 
-        operations.sendEvents(exchange, doneSync -> {
-        });
+        operations.sendEvents(exchange, doneSync -> {});
 
         Awaitility.await()
                 .atMost(30, TimeUnit.SECONDS)
@@ -81,8 +85,13 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
                 .until(() -> {
                     final Boolean eventExists = consumerAsyncClient
                             .receiveFromPartition(firstPartition, EventPosition.earliest())
-                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
-                                    && partitionEvent.getData().getBodyAsString()
+                            .any(partitionEvent -> partitionEvent
+                                            .getPartitionContext()
+                                            .getPartitionId()
+                                            .equals(firstPartition)
+                                    && partitionEvent
+                                            .getData()
+                                            .getBodyAsString()
                                             .contains("test should be in firstPartition"))
                             .block();
 
@@ -96,7 +105,8 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
 
     @Test
     public void testIterableExchangesSendEventsWithSpecificPartition() {
-        final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
+        final EventHubsProducerOperations operations =
+                new EventHubsProducerOperations(producerAsyncClient, configuration);
         final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
 
         final Exchange exchange1 = new DefaultExchange(context);
@@ -112,8 +122,7 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(exchanges);
 
-        operations.sendEvents(exchange, doneSync -> {
-        });
+        operations.sendEvents(exchange, doneSync -> {});
 
         Awaitility.await()
                 .atMost(40, TimeUnit.SECONDS)
@@ -122,15 +131,25 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
                 .until(() -> {
                     final Boolean event1Exists = consumerAsyncClient
                             .receiveFromPartition(firstPartition, EventPosition.earliest())
-                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
-                                    && partitionEvent.getData().getBodyAsString()
+                            .any(partitionEvent -> partitionEvent
+                                            .getPartitionContext()
+                                            .getPartitionId()
+                                            .equals(firstPartition)
+                                    && partitionEvent
+                                            .getData()
+                                            .getBodyAsString()
                                             .contains("Exchange Message 1"))
                             .block();
 
                     final Boolean event2Exists = consumerAsyncClient
                             .receiveFromPartition(firstPartition, EventPosition.earliest())
-                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
-                                    && partitionEvent.getData().getBodyAsString()
+                            .any(partitionEvent -> partitionEvent
+                                            .getPartitionContext()
+                                            .getPartitionId()
+                                            .equals(firstPartition)
+                                    && partitionEvent
+                                            .getData()
+                                            .getBodyAsString()
                                             .contains("Exchange Message 2"))
                             .block();
 
@@ -144,7 +163,8 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
 
     @Test
     public void testIterableStringSendEventsWithSpecificPartition() {
-        final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
+        final EventHubsProducerOperations operations =
+                new EventHubsProducerOperations(producerAsyncClient, configuration);
         final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
 
         final List<String> messages = new LinkedList<>();
@@ -154,8 +174,7 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(messages);
 
-        operations.sendEvents(exchange, doneSync -> {
-        });
+        operations.sendEvents(exchange, doneSync -> {});
 
         Awaitility.await()
                 .atMost(40, TimeUnit.SECONDS)
@@ -164,15 +183,25 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
                 .until(() -> {
                     final Boolean event1Exists = consumerAsyncClient
                             .receiveFromPartition(firstPartition, EventPosition.earliest())
-                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
-                                    && partitionEvent.getData().getBodyAsString()
+                            .any(partitionEvent -> partitionEvent
+                                            .getPartitionContext()
+                                            .getPartitionId()
+                                            .equals(firstPartition)
+                                    && partitionEvent
+                                            .getData()
+                                            .getBodyAsString()
                                             .contains("Test String Message 1"))
                             .block();
 
                     final Boolean event2Exists = consumerAsyncClient
                             .receiveFromPartition(firstPartition, EventPosition.earliest())
-                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
-                                    && partitionEvent.getData().getBodyAsString()
+                            .any(partitionEvent -> partitionEvent
+                                            .getPartitionContext()
+                                            .getPartitionId()
+                                            .equals(firstPartition)
+                                    && partitionEvent
+                                            .getData()
+                                            .getBodyAsString()
                                             .contains("Test String Message 2"))
                             .block();
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
 import org.apache.camel.spi.ErrorHandler;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ErrorHandlerSupportTest extends ContextTestSupport {
 
@@ -114,8 +115,7 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) {
-        }
+        public void process(Exchange exchange) {}
     }
 
     @Override

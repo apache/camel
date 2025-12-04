@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -35,8 +36,7 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
     public static ArtemisService service;
 
     @BindToRegistry("activemqCF")
-    private ActiveMQConnectionFactory connectionFactory
-            = new ActiveMQConnectionFactory(service.serviceAddress());
+    private ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
 
     static {
         service = ArtemisServiceFactory.createVMService();

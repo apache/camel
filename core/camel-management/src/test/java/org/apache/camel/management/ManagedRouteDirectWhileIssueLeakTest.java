@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Set;
 
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteDirectWhileIssueLeakTest extends ManagementTestSupport {
@@ -61,7 +62,8 @@ public class ManagedRouteDirectWhileIssueLeakTest extends ManagementTestSupport 
             @Override
             public void configure() {
                 from("direct:start")
-                        .choice().when(simple("${header.counter} > 0"))
+                        .choice()
+                        .when(simple("${header.counter} > 0"))
                         .process(exchange -> {
                             String body = exchange.getIn().getBody(String.class);
                             body = "A" + body;
@@ -70,7 +72,8 @@ public class ManagedRouteDirectWhileIssueLeakTest extends ManagementTestSupport 
                             int counter = exchange.getIn().getHeader("counter", int.class);
                             counter = counter - 1;
                             exchange.getIn().setHeader("counter", counter);
-                        }).to("direct:start")
+                        })
+                        .to("direct:start")
                         .otherwise()
                         .to("mock:result")
                         .end();

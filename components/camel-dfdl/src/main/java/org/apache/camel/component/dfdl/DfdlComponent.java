@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dfdl;
 
 import java.util.Map;
@@ -28,7 +29,8 @@ import org.apache.camel.support.DefaultComponent;
 public class DfdlComponent extends DefaultComponent {
 
     @Override
-    protected DfdlEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected DfdlEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         DfdlEndpoint endpoint = new DfdlEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         return endpoint;

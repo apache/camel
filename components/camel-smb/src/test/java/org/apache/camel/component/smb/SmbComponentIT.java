@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import java.io.IOException;
@@ -33,8 +34,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x")
 public class SmbComponentIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SmbComponentIT.class);
 
@@ -70,13 +72,16 @@ public class SmbComponentIT extends CamelTestSupport {
 
             public void configure() {
                 SmbConfig config = SmbConfig.builder()
-                        .withTimeout(120, TimeUnit.SECONDS) // Timeout sets Read, Write, and Transact timeouts (default is 60 seconds)
+                        .withTimeout(
+                                120, TimeUnit.SECONDS) // Timeout sets Read, Write, and Transact timeouts (default is 60
+                        // seconds)
                         .withSoTimeout(180, TimeUnit.SECONDS) // Socket Timeout (default is 0 seconds, blocks forever)
                         .build();
                 context.getRegistry().bind("smbConfig", config);
 
-                fromF("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig", service.address(), service.shareName(),
-                        service.userName(), service.password())
+                fromF(
+                                "smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig",
+                                service.address(), service.shareName(), service.userName(), service.password())
                         .process(this::process)
                         .to("mock:result");
 
@@ -84,7 +89,6 @@ public class SmbComponentIT extends CamelTestSupport {
                         .to("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig")
                         .to("smb:%s/%s?username=%s&password=%s")
                         .to("mock:result");
-
             }
         };
     }

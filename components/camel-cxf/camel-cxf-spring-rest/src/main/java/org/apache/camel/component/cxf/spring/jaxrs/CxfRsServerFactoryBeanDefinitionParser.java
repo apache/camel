@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring.jaxrs;
 
 import java.util.List;
@@ -41,9 +42,7 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
 
     @Override
     protected void mapElement(ParserContext ctx, BeanDefinitionBuilder bean, Element el, String name) {
-        if ("properties".equals(name)
-                || "extensionMappings".equals(name)
-                || "languageMappings".equals(name)) {
+        if ("properties".equals(name) || "extensionMappings".equals(name) || "languageMappings".equals(name)) {
             Map<?, ?> map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, map);
         } else if ("executor".equals(name)) {
@@ -52,12 +51,16 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
             setFirstChildAsProperty(el, ctx, bean, "serviceFactory.invoker");
         } else if ("binding".equals(name)) {
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
-        } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)
-                || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)) {
+        } else if ("inInterceptors".equals(name)
+                || "inFaultInterceptors".equals(name)
+                || "outInterceptors".equals(name)
+                || "outFaultInterceptors".equals(name)) {
             List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
-        } else if ("features".equals(name) || "schemaLocations".equals(name)
-                || "providers".equals(name) || "serviceBeans".equals(name)
+        } else if ("features".equals(name)
+                || "schemaLocations".equals(name)
+                || "providers".equals(name)
+                || "serviceBeans".equals(name)
                 || "modelBeans".equals(name)) {
             List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
@@ -68,5 +71,4 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
             setFirstChildAsProperty(el, ctx, bean, name);
         }
     }
-
 }

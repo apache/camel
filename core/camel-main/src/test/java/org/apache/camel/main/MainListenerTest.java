@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.apache.camel.util.CollectionHelper.propertiesOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -23,10 +28,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.util.CollectionHelper.propertiesOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class MainListenerTest {
 
     @Test
@@ -34,9 +35,7 @@ public class MainListenerTest {
         List<String> events = new ArrayList<>();
         Main main = new Main();
         main.addMainListener((MainListener) Proxy.newProxyInstance(
-                MainListener.class.getClassLoader(),
-                new Class[] { MainListener.class },
-                (proxy, method, args) -> {
+                MainListener.class.getClassLoader(), new Class[] {MainListener.class}, (proxy, method, args) -> {
                     events.add(method.getName());
                     return null;
                 }));
@@ -51,8 +50,16 @@ public class MainListenerTest {
         Thread.sleep(100);
         main.completed();
         thread.join();
-        assertEquals(Arrays.asList("beforeInitialize", "beforeConfigure", "afterConfigure",
-                "beforeStart", "afterStart", "beforeStop", "afterStop"), events);
+        assertEquals(
+                Arrays.asList(
+                        "beforeInitialize",
+                        "beforeConfigure",
+                        "afterConfigure",
+                        "beforeStart",
+                        "afterStart",
+                        "beforeStop",
+                        "afterStop"),
+                events);
     }
 
     @Test
@@ -60,13 +67,13 @@ public class MainListenerTest {
         Main main = new Main();
         try {
             main.setDefaultPropertyPlaceholderLocation("false");
-            main.setInitialProperties(propertiesOf(
-                    "camel.context.name", "my-ctx"));
+            main.setInitialProperties(propertiesOf("camel.context.name", "my-ctx"));
             main.addMainListener(new MainListenerSupport() {
                 @Override
                 public void beforeConfigure(BaseMainSupport main) {
-                    main.getCamelContext().getPropertiesComponent().setOverrideProperties(propertiesOf(
-                            "camel.context.name", "my-ctx-override"));
+                    main.getCamelContext()
+                            .getPropertiesComponent()
+                            .setOverrideProperties(propertiesOf("camel.context.name", "my-ctx-override"));
                 }
             });
             main.start();
@@ -83,8 +90,7 @@ public class MainListenerTest {
         try {
             main.configure().withMainListeners("org.apache.camel.main.MyMainListener");
             main.setDefaultPropertyPlaceholderLocation("false");
-            main.setInitialProperties(propertiesOf(
-                    "camel.context.name", "my-ctx"));
+            main.setInitialProperties(propertiesOf("camel.context.name", "my-ctx"));
             main.start();
 
             assertEquals("my-special-override", main.getCamelContext().getName());
@@ -92,5 +98,4 @@ public class MainListenerTest {
             main.stop();
         }
     }
-
 }

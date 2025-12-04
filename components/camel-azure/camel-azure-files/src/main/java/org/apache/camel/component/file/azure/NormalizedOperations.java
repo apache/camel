@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 import com.azure.storage.file.share.models.ShareFileItem;
@@ -55,5 +56,4 @@ abstract class NormalizedOperations implements RemoteFileOperations<ShareFileIte
 
     /** Normalized form of {@link #buildDirectory(String, boolean)}. */
     protected abstract boolean buildDirectory(String path);
-
 }

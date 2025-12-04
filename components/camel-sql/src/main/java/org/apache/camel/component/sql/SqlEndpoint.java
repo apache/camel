@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import org.apache.camel.Category;
@@ -30,19 +31,29 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 /**
  * Perform SQL queries using Spring JDBC.
  */
-@UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query",
-             category = { Category.DATABASE }, headersClass = SqlConstants.class)
+@UriEndpoint(
+        firstVersion = "1.4.0",
+        scheme = "sql",
+        title = "SQL",
+        syntax = "sql:query",
+        category = {Category.DATABASE},
+        headersClass = SqlConstants.class)
 public class SqlEndpoint extends DefaultSqlEndpoint {
 
-    @UriPath(description = "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")
+    @UriPath(
+            description =
+                    "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")
     @Metadata(required = true, supportFileReference = true, largeInput = true, inputLanguage = "sql")
     private String query;
-    @UriParam(label = "producer", defaultValue = "true",
-              description = "Whether to optimize batch by turning off auto-commit which can dramatic improve performance, and instead execute as a manual commit after the entire batch operation is complete")
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "true",
+            description =
+                    "Whether to optimize batch by turning off auto-commit which can dramatic improve performance, and instead execute as a manual commit after the entire batch operation is complete")
     private boolean batchAutoCommitDisabled = true;
 
-    public SqlEndpoint() {
-    }
+    public SqlEndpoint() {}
 
     public SqlEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -51,9 +62,11 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null
-                ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
-        SqlProcessingStrategy proStrategy
-                = getProcessingStrategy() != null ? getProcessingStrategy() : new DefaultSqlProcessingStrategy(prepareStrategy);
+                ? getPrepareStatementStrategy()
+                : new DefaultSqlPrepareStatementStrategy(getSeparator());
+        SqlProcessingStrategy proStrategy = getProcessingStrategy() != null
+                ? getProcessingStrategy()
+                : new DefaultSqlProcessingStrategy(prepareStrategy);
         SqlConsumer consumer = new SqlConsumer(this, processor, getJdbcTemplate(), query, prepareStrategy, proStrategy);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         consumer.setOnConsume(getOnConsume());
@@ -72,10 +85,16 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null
-                ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
+                ? getPrepareStatementStrategy()
+                : new DefaultSqlPrepareStatementStrategy(getSeparator());
         SqlProducer result = new SqlProducer(
-                this, query, getJdbcTemplate(), prepareStrategy, isBatch(),
-                isAlwaysPopulateStatement(), isUseMessageBodyForSql());
+                this,
+                query,
+                getJdbcTemplate(),
+                prepareStrategy,
+                isBatch(),
+                isAlwaysPopulateStatement(),
+                isUseMessageBodyForSql());
         result.setParametersCount(getParametersCount());
         return result;
     }

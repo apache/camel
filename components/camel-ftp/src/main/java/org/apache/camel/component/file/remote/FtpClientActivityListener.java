@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import org.apache.commons.net.io.CopyStreamListener;
@@ -71,5 +72,4 @@ public interface FtpClientActivityListener extends CopyStreamListener {
     void onUpload(String host, String file, long chunkSize, long totalChunkSize, long fileSize);
 
     void onUploadComplete(String host, String file);
-
 }

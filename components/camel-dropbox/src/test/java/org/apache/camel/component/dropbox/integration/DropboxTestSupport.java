@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration;
 
 import java.io.ByteArrayInputStream;
@@ -57,10 +58,10 @@ public class DropboxTestSupport extends CamelTestSupport {
         apiSecret = properties.getProperty("apiSecret");
         expireIn = Long.valueOf(properties.getProperty("expireIn"));
 
-        DbxRequestConfig config = DbxRequestConfig.newBuilder(properties.getProperty("clientIdentifier")).build();
+        DbxRequestConfig config = DbxRequestConfig.newBuilder(properties.getProperty("clientIdentifier"))
+                .build();
         DbxCredential credential = new DbxCredential(token, expireIn, refreshToken, apiKey, apiSecret);
         client = new DbxClientV2(config, credential);
-
     }
 
     private static Properties loadProperties() {
@@ -94,9 +95,10 @@ public class DropboxTestSupport extends CamelTestSupport {
 
     protected void createFile(String fileName, String content) throws IOException {
         try {
-            client.files().uploadBuilder(workdir + "/" + fileName)
+            client.files()
+                    .uploadBuilder(workdir + "/" + fileName)
                     .uploadAndFinish(new ByteArrayInputStream(content.getBytes()));
-            //wait some time for synchronization
+            // wait some time for synchronization
             Thread.sleep(1000);
         } catch (DbxException e) {
             LOG.info("folder is already created");
@@ -107,7 +109,7 @@ public class DropboxTestSupport extends CamelTestSupport {
 
     protected String getFileContent(String path) throws DbxException, IOException {
         try (ByteArrayOutputStream target = new ByteArrayOutputStream();
-             DbxDownloader<FileMetadata> downloadedFile = client.files().download(path)) {
+                DbxDownloader<FileMetadata> downloadedFile = client.files().download(path)) {
             if (downloadedFile != null) {
                 downloadedFile.download(target);
             }
@@ -119,5 +121,4 @@ public class DropboxTestSupport extends CamelTestSupport {
     protected Properties useOverridePropertiesWithPropertiesComponent() {
         return properties;
     }
-
 }

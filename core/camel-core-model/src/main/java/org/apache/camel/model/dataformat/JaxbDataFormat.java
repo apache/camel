@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,31 +37,41 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
     @XmlAttribute(required = true)
     private String contextPath;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String contextPathIsClassName;
+
     @XmlAttribute
     private String schema;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", enums = "0,1,2", defaultValue = "0")
     private String schemaSeverityLevel;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String prettyPrint;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String objectFactory;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String ignoreJAXBElement;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String mustBeJAXBElement;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String filterNonXmlChars;
+
     @XmlAttribute
     private String encoding;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String fragment;
@@ -68,28 +79,39 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute
     @Metadata(label = "advanced")
     private String partClass;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String partNamespace;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.Map")
     private String namespacePrefix;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String xmlStreamWriterWrapper;
+
     @XmlAttribute
     private String schemaLocation;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String noNamespaceSchemaLocation;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String jaxbProviderProperties;
+
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether the data format should set the Content-Type header with the type from the data format."
+    @Metadata(
+            javaType = "java.lang.Boolean",
+            defaultValue = "true",
+            description =
+                    "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
+
     @XmlAttribute
     @Metadata(label = "security")
     private String accessExternalSchemaProtocols;

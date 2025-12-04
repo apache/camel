@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
 
 import java.util.Arrays;
@@ -34,8 +35,7 @@ import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
 
 public final class KnativeHttpTestSupport {
-    private KnativeHttpTestSupport() {
-    }
+    private KnativeHttpTestSupport() {}
 
     public static KnativeComponent configureKnativeComponent(
             CamelContext context, CloudEvent ce, KnativeResource... definitions) {
@@ -44,7 +44,8 @@ public final class KnativeHttpTestSupport {
 
     public static KnativeComponent configureKnativeComponent(
             CamelContext context, CloudEvent ce, Map<String, Object> properties) {
-        return configureKnativeComponent(context, ce, KnativeEnvironment.mandatoryLoadFromProperties(context, properties));
+        return configureKnativeComponent(
+                context, ce, KnativeEnvironment.mandatoryLoadFromProperties(context, properties));
     }
 
     public static KnativeComponent configureKnativeComponent(
@@ -61,16 +62,17 @@ public final class KnativeHttpTestSupport {
             @Override
             protected void doBuild() throws Exception {
                 super.doBuild();
-                this.setRouter(VertxPlatformHttpRouter.lookup(context,
-                        VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)));
+                this.setRouter(VertxPlatformHttpRouter.lookup(
+                        context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)));
             }
         });
         component.setProducerFactory(new KnativeHttpProducerFactory(context) {
             @Override
             protected void doBuild() throws Exception {
                 super.doBuild();
-                this.setVertx(VertxPlatformHttpRouter
-                        .lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)).vertx());
+                this.setVertx(VertxPlatformHttpRouter.lookup(
+                                context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port))
+                        .vertx());
             }
         });
 

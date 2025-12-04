@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,13 +26,13 @@ import org.flowable.task.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FlowableOutboundChannelTest extends CamelFlowableTestCase {
 
     @BeforeEach
     public void deployEventRegistryModels() throws Exception {
-        eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
+        eventRegistryEngineConfiguration
+                .getEventRepositoryService()
+                .createDeployment()
                 .addClasspathResource("channel/userOutboundChannel.channel")
                 .addClasspathResource("event/userEvent.event")
                 .deploy();
@@ -39,7 +42,9 @@ public class FlowableOutboundChannelTest extends CamelFlowableTestCase {
     public void testSendBasicEvent() throws Exception {
         String deploymentId = deployProcessDefinition("process/sendEvent.bpmn20.xml");
         try {
-            ProcessInstance processInstance = runtimeService.createProcessInstanceBuilder().processDefinitionKey("camelProcess")
+            ProcessInstance processInstance = runtimeService
+                    .createProcessInstanceBuilder()
+                    .processDefinitionKey("camelProcess")
                     .variable("name", "John Doe")
                     .variable("age", 23)
                     .start();
@@ -47,7 +52,10 @@ public class FlowableOutboundChannelTest extends CamelFlowableTestCase {
             assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
             assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
 
-            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
+            Task task = taskService
+                    .createTaskQuery()
+                    .processInstanceId(processInstance.getId())
+                    .singleResult();
             taskService.complete(task.getId());
 
             MockEndpoint mockEndpoint = (MockEndpoint) context.getEndpoint("mock:testQueue");

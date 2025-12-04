@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chunk;
 
 import org.apache.camel.Exchange;
@@ -45,7 +46,7 @@ public class ChunkLetterTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Dear Ibsen, Claus\n\nThanks for the order of Camel in Action."
-                                    + "\n\nRegards Camel Riders Bookstore\nPS: Next beer is on me, James\n");
+                + "\n\nRegards Camel Riders Bookstore\nPS: Next beer is on me, James\n");
 
         template.send("direct:a", createLetter());
 
@@ -56,9 +57,7 @@ public class ChunkLetterTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                        .to("chunk:letter")
-                        .to("mock:result");
+                from("direct:a").to("chunk:letter").to("mock:result");
             }
         };
     }

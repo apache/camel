@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.smb.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -23,9 +24,7 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = SmbLocalContainerInfraService.class,
-              description = "SAMBA File Server",
-              serviceAlias = "smb")
+@InfraService(service = SmbLocalContainerInfraService.class, description = "SAMBA File Server", serviceAlias = "smb")
 public class SmbLocalContainerInfraService implements SmbInfraService, ContainerService<SmbContainer> {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SmbLocalContainerInfraService.class);
@@ -68,8 +67,7 @@ public class SmbLocalContainerInfraService implements SmbInfraService, Container
     }
 
     @Override
-    public void registerProperties() {
-    }
+    public void registerProperties() {}
 
     @Override
     public void initialize() {

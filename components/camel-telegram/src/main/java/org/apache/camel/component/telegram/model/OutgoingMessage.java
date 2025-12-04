@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -38,8 +39,7 @@ public abstract class OutgoingMessage implements Serializable {
     @JsonProperty("reply_to_message_id")
     protected Long replyToMessageId;
 
-    public OutgoingMessage() {
-    }
+    public OutgoingMessage() {}
 
     public String getChatId() {
         return chatId;

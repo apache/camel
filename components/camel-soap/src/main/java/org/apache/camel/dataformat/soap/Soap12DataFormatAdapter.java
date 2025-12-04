@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
 
 import java.io.IOException;
@@ -70,7 +71,8 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
     }
 
     @Override
-    public Object doMarshal(Exchange exchange, Object inputObject, OutputStream stream, String soapAction) throws IOException {
+    public Object doMarshal(Exchange exchange, Object inputObject, OutputStream stream, String soapAction)
+            throws IOException {
         Body body = objectFactory.createBody();
         Header header = objectFactory.createHeader();
 
@@ -86,8 +88,8 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
             bodyContent.add(createFaultFromException(exception));
         } else {
             if (!dataFormat.isIgnoreUnmarshalledHeaders()) {
-                List<Object> inboundSoapHeaders
-                        = (List<Object>) exchange.getIn().getHeader(SoapDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
+                List<Object> inboundSoapHeaders =
+                        (List<Object>) exchange.getIn().getHeader(SoapDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
                 if (null != inboundSoapHeaders) {
                     headerContent.addAll(inboundSoapHeaders);
                 }
@@ -122,7 +124,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         if (webFault == null || webFault.targetNamespace() == null) {
             throw new RuntimeException(
                     "The exception " + exception.getClass().getName()
-                                       + " needs to have an WebFault annotation with name and targetNamespace",
+                            + " needs to have an WebFault annotation with name and targetNamespace",
                     exception);
         }
         QName name = new QName(webFault.targetNamespace(), webFault.name());
@@ -180,7 +182,6 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         if (anyElement.isEmpty()) {
             // No parameter so return null
             return null;
-
         }
         Object payloadEl = anyElement.get(0);
         Object payload = JAXBIntrospector.getValue(payloadEl);
@@ -212,7 +213,8 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         Detail faultDetail = fault.getDetail();
         if (faultDetail == null || faultDetail.getAny().isEmpty()) {
             try {
-                return new SOAPFaultException(SOAPFactory.newInstance().createFault(message, fault.getCode().getValue()));
+                return new SOAPFaultException(SOAPFactory.newInstance()
+                        .createFault(message, fault.getCode().getValue()));
             } catch (SOAPException e) {
                 throw new RuntimeCamelException(e);
             }
@@ -222,16 +224,17 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
 
         if (!(detailObj instanceof JAXBElement)) {
             try {
-                return new SOAPFaultException(SOAPFactory.newInstance().createFault(message, fault.getCode().getValue()));
+                return new SOAPFaultException(SOAPFactory.newInstance()
+                        .createFault(message, fault.getCode().getValue()));
             } catch (SOAPException e) {
                 throw new RuntimeCamelException(e);
             }
         }
 
         JAXBElement<?> detailEl = (JAXBElement<?>) detailObj;
-        Class<? extends Exception> exceptionClass
-                = getDataFormat().getElementNameStrategy().findExceptionForSoapActionAndFaultName(soapAction,
-                        detailEl.getName());
+        Class<? extends Exception> exceptionClass = getDataFormat()
+                .getElementNameStrategy()
+                .findExceptionForSoapActionAndFaultName(soapAction, detailEl.getName());
         Constructor<? extends Exception> messageConstructor;
         Constructor<? extends Exception> constructor;
 
@@ -253,5 +256,4 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
     public String getSoapPackageName() {
         return SOAP_PACKAGE_NAME;
     }
-
 }

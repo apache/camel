@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,8 +55,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 /**
  * A content enricher that enriches input data by first obtaining additional data from a <i>resource</i> represented by
@@ -275,7 +276,9 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                         staticUri = dynamicAware.resolveStaticUri(exchange, entry);
                         if (staticUri != null) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Optimising poll via PollDynamicAware component: {} to use static uri: {}", scheme,
+                                LOG.debug(
+                                        "Optimising poll via PollDynamicAware component: {} to use static uri: {}",
+                                        scheme,
                                         URISupport.sanitizeUri(staticUri));
                             }
                         }
@@ -330,13 +333,15 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 resourceExchange = dynamicConsumer != null ? dynamicConsumer.receive(exchange) : consumer.receive();
             } else if (timeout == 0) {
                 LOG.debug("Consumer receiveNoWait: {}", consumer);
-                resourceExchange = dynamicConsumer != null ? dynamicConsumer.receiveNoWait(exchange) : consumer.receiveNoWait();
+                resourceExchange =
+                        dynamicConsumer != null ? dynamicConsumer.receiveNoWait(exchange) : consumer.receiveNoWait();
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
                 }
-                resourceExchange
-                        = dynamicConsumer != null ? dynamicConsumer.receive(exchange, timeout) : consumer.receive(timeout);
+                resourceExchange = dynamicConsumer != null
+                        ? dynamicConsumer.receive(exchange, timeout)
+                        : consumer.receive(timeout);
             }
 
             if (resourceExchange == null) {
@@ -399,8 +404,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 if (aggregatedExchange != null) {
                     if (ExchangeHelper.shouldSetVariableResult(aggregatedExchange, variableReceive)) {
                         // result should be stored in variable instead of message body
-                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(aggregatedExchange, variableReceive,
-                                aggregatedExchange.getMessage());
+                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(
+                                aggregatedExchange, variableReceive, aggregatedExchange.getMessage());
                         aggregatedExchange.getMessage().setBody(originalBody);
                         aggregatedExchange.getMessage().setHeaders(originalHeaders);
                     }
@@ -433,7 +438,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             }
 
             // set property with the uri of the endpoint enriched so we can use that for tracing etc
-            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
+            exchange.setProperty(
+                    ExchangePropertyKey.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
 
         } catch (Exception e) {
             exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
@@ -462,7 +468,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
         return bridgeErrorHandler;
     }
 
-    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+    protected static Object prepareRecipient(Exchange exchange, Object recipient)
+            throws NoTypeConversionAvailableException {
         return ProcessorHelper.prepareRecipient(exchange, recipient);
     }
 
@@ -575,7 +582,9 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                     }
                     if (dynamicAware != null) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Detected PollDynamicAware component: {} optimising poll: {}", scheme,
+                            LOG.debug(
+                                    "Detected PollDynamicAware component: {} optimising poll: {}",
+                                    scheme,
                                     URISupport.sanitizeUri(uri));
                         }
                     }
@@ -585,7 +594,9 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(
                             "Error creating optimised PollDynamicAwareResolver for uri: {} due to {}. This exception is ignored",
-                            URISupport.sanitizeUri(uri), e.getMessage(), e);
+                            URISupport.sanitizeUri(uri),
+                            e.getMessage(),
+                            e);
                 }
             }
         }
@@ -599,8 +610,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     protected void doStart() throws Exception {
         // ensure the component is started
         if (autoStartupComponents && scheme != null && uri != null) {
-            OptimisedComponentResolver resolver
-                    = camelContext.getCamelContextExtension().getContextPlugin(OptimisedComponentResolver.class);
+            OptimisedComponentResolver resolver =
+                    camelContext.getCamelContextExtension().getContextPlugin(OptimisedComponentResolver.class);
             resolver.resolveComponent(uri);
         }
 
@@ -623,7 +634,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (newExchange != null) {
                 // preserve original headers before copying results
-                Map<String, Object> originalHeaders = new HashMap<>(oldExchange.getMessage().getHeaders());
+                Map<String, Object> originalHeaders =
+                        new HashMap<>(oldExchange.getMessage().getHeaders());
 
                 // copy results from polled resource
                 copyResultsPreservePattern(oldExchange, newExchange);
@@ -642,7 +654,5 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             }
             return oldExchange;
         }
-
     }
-
 }

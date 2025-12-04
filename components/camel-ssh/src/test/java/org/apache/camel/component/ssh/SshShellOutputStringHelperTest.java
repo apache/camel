@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ssh;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.ssh;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 public class SshShellOutputStringHelperTest {
 
@@ -32,21 +33,26 @@ public class SshShellOutputStringHelperTest {
         assertEquals("Hello ", SshShellOutputStringHelper.beforeLast("Hello World Again", "World"));
         assertNull(SshShellOutputStringHelper.beforeLast("Hello Again", "Foo"));
 
-        assertTrue(SshShellOutputStringHelper.beforeLast("mykey:ignore:hello", ":", "mykey:ignore"::equals).orElse(false));
-        assertFalse(SshShellOutputStringHelper.beforeLast("ignore:ignore:world", ":", "mykey"::equals).orElse(false));
+        assertTrue(SshShellOutputStringHelper.beforeLast("mykey:ignore:hello", ":", "mykey:ignore"::equals)
+                .orElse(false));
+        assertFalse(SshShellOutputStringHelper.beforeLast("ignore:ignore:world", ":", "mykey"::equals)
+                .orElse(false));
     }
 
     @Test
     public void testBetweenBeforeLast() {
-        assertEquals("foo bar' how are",
+        assertEquals(
+                "foo bar' how are",
                 SshShellOutputStringHelper.betweenBeforeLast("Hello 'foo bar' how are' you", "'", "'"));
-        assertEquals("foo bar", SshShellOutputStringHelper.betweenBeforeLast("Hello ${foo bar} how are you", "${", "}"));
+        assertEquals(
+                "foo bar", SshShellOutputStringHelper.betweenBeforeLast("Hello ${foo bar} how are you", "${", "}"));
         assertNull(SshShellOutputStringHelper.betweenBeforeLast("Hello ${foo bar} how are you", "'", "'"));
 
-        assertTrue(SshShellOutputStringHelper.betweenBeforeLast("begin:mykey:end:end", "begin:", ":end", "mykey:end"::equals)
+        assertTrue(SshShellOutputStringHelper.betweenBeforeLast(
+                        "begin:mykey:end:end", "begin:", ":end", "mykey:end"::equals)
                 .orElse(false));
-        assertFalse(SshShellOutputStringHelper.betweenBeforeLast("begin:ignore:end:end", "begin:", ":end", "mykey"::equals)
-                .orElse(false));
+        assertFalse(
+                SshShellOutputStringHelper.betweenBeforeLast("begin:ignore:end:end", "begin:", ":end", "mykey"::equals)
+                        .orElse(false));
     }
-
 }

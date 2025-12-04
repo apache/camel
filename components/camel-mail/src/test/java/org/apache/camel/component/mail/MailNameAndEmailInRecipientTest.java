@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.util.HashMap;
@@ -59,11 +60,12 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(davsclaus.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:davsclaus");
+                from(davsclaus.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .to("mock:davsclaus");
 
-                from(jstrachan.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:jstrachan");
+                from(jstrachan.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .to("mock:jstrachan");
             }
         };
     }
-
 }

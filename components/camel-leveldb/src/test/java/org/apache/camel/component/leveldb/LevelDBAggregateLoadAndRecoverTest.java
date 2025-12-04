@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,11 +37,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregateLoadAndRecoverTest.class);
@@ -84,7 +85,9 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
         if (delta == 0) {
             assertEquals(expected, recovered, "There should be " + expected + " recovered");
         } else {
-            assertTrue(delta < 3, "We expected " + expected + " recovered but the delta is within accepted range " + delta);
+            assertTrue(
+                    delta < 3,
+                    "We expected " + expected + " recovered but the delta is within accepted range " + delta);
         }
     }
 
@@ -135,5 +138,4 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
             return oldExchange;
         }
     }
-
 }

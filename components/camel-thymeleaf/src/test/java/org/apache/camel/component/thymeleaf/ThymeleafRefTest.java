@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ThymeleafRefTest extends ThymeleafAbstractBaseTest {
 
-    private static final String TEMP
-            = "Hello [(${headers.name})]. You ordered item [(${exchange.properties.item})] on [(${body})].";
+    private static final String TEMP =
+            "Hello [(${headers.name})]. You ordered item [(${exchange.properties.item})] on [(${body})].";
 
     @Test
     public void testRef() {
@@ -39,7 +40,9 @@ public class ThymeleafRefTest extends ThymeleafAbstractBaseTest {
             }
         });
 
-        assertEquals("Hello Christian. You ordered item 8 on Tuesday.\n", exchange.getMessage().getBody());
+        assertEquals(
+                "Hello Christian. You ordered item 8 on Tuesday.\n",
+                exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
@@ -50,10 +53,8 @@ public class ThymeleafRefTest extends ThymeleafAbstractBaseTest {
             public void configure() {
                 context.getRegistry().bind("mytemp", TEMP);
 
-                from("direct:a").to(
-                        "thymeleaf:ref:mytemp?templateMode=TEXT&resolver=STRING&allowContextMapAll=true");
+                from("direct:a").to("thymeleaf:ref:mytemp?templateMode=TEXT&resolver=STRING&allowContextMapAll=true");
             }
         };
     }
-
 }

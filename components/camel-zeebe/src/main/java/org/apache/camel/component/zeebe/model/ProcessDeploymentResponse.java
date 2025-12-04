@@ -26,9 +26,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ProcessDeploymentResponse extends DeploymentResponse {
     @JsonProperty("bpmn_process_id")
     private String bpmnProcessId;
+
     private int version;
+
     @JsonProperty("process_definition_key")
     private long processDefinitionKey;
+
     @JsonProperty("resource_name")
     private String resourceName;
 
@@ -76,8 +79,10 @@ public class ProcessDeploymentResponse extends DeploymentResponse {
             return false;
         }
         ProcessDeploymentResponse that = (ProcessDeploymentResponse) o;
-        return version == that.version && processDefinitionKey == that.processDefinitionKey
-                && bpmnProcessId.equals(that.bpmnProcessId) && resourceName.equals(that.resourceName);
+        return version == that.version
+                && processDefinitionKey == that.processDefinitionKey
+                && bpmnProcessId.equals(that.bpmnProcessId)
+                && resourceName.equals(that.resourceName);
     }
 
     @Override

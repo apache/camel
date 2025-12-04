@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,10 +30,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThreadPoolBuilderTest extends ContextTestSupport {
 
@@ -98,7 +99,8 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     @Test
     public void testThreadPoolBuilderKeepAliveTimeUnit() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ExecutorService executor = builder.keepAliveTime(20000, TimeUnit.MILLISECONDS).build(this, "myPool");
+        ExecutorService executor =
+                builder.keepAliveTime(20000, TimeUnit.MILLISECONDS).build(this, "myPool");
         assertNotNull(executor);
 
         assertFalse(executor.isShutdown());
@@ -109,9 +111,12 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     @Test
     public void testThreadPoolBuilderAll() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ExecutorService executor
-                = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000).keepAliveTime(20000, TimeUnit.MILLISECONDS)
-                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build(this, "myPool");
+        ExecutorService executor = builder.poolSize(50)
+                .maxPoolSize(100)
+                .maxQueueSize(2000)
+                .keepAliveTime(20000, TimeUnit.MILLISECONDS)
+                .rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
+                .build(this, "myPool");
         assertNotNull(executor);
 
         assertFalse(executor.isShutdown());
@@ -138,7 +143,8 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     @Test
     public void testThreadPoolBuilderScheduled() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000).buildScheduled();
+        ScheduledExecutorService executor =
+                builder.poolSize(5).maxQueueSize(2000).buildScheduled();
         assertNotNull(executor);
 
         assertFalse(executor.isShutdown());
@@ -149,7 +155,8 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     @Test
     public void testThreadPoolBuilderScheduledName() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000).buildScheduled("myScheduledPool");
+        ScheduledExecutorService executor =
+                builder.poolSize(5).maxQueueSize(2000).buildScheduled("myScheduledPool");
         assertNotNull(executor);
 
         assertFalse(executor.isShutdown());
@@ -160,12 +167,12 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     @Test
     public void testThreadPoolBuilderScheduledSourceName() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000).buildScheduled(this, "myScheduledPool");
+        ScheduledExecutorService executor =
+                builder.poolSize(5).maxQueueSize(2000).buildScheduled(this, "myScheduledPool");
         assertNotNull(executor);
 
         assertFalse(executor.isShutdown());
         context.stop();
         assertTrue(executor.isShutdown());
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Map;
@@ -36,16 +42,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedComponentTest extends ManagementTestSupport {
-    private static final String[] VERIFY_SIGNATURE = new String[] {
-            "java.lang.String", "java.util.Map"
-    };
+    private static final String[] VERIFY_SIGNATURE = new String[] {"java.lang.String", "java.util.Map"};
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -83,17 +82,19 @@ public class ManagedComponentTest extends ManagementTestSupport {
         ComponentVerifierExtension.Result res;
 
         // check lowercase
-        res = invoke(mbeanServer, on, "verify", new Object[] { "connectivity", Collections.emptyMap() }, VERIFY_SIGNATURE);
+        res = invoke(
+                mbeanServer, on, "verify", new Object[] {"connectivity", Collections.emptyMap()}, VERIFY_SIGNATURE);
         assertEquals(Result.Status.OK, res.getStatus());
         assertEquals(Scope.CONNECTIVITY, res.getScope());
 
         // check mixed case
-        res = invoke(mbeanServer, on, "verify", new Object[] { "ConnEctivIty", Collections.emptyMap() }, VERIFY_SIGNATURE);
+        res = invoke(
+                mbeanServer, on, "verify", new Object[] {"ConnEctivIty", Collections.emptyMap()}, VERIFY_SIGNATURE);
         assertEquals(Result.Status.OK, res.getStatus());
         assertEquals(Scope.CONNECTIVITY, res.getScope());
 
         // check uppercase
-        res = invoke(mbeanServer, on, "verify", new Object[] { "PARAMETERS", Collections.emptyMap() }, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[] {"PARAMETERS", Collections.emptyMap()}, VERIFY_SIGNATURE);
         assertEquals(Result.Status.OK, res.getStatus());
         assertEquals(Scope.PARAMETERS, res.getScope());
     }
@@ -104,17 +105,20 @@ public class ManagedComponentTest extends ManagementTestSupport {
 
     private static class MyVerifiableComponent extends DefaultComponent {
         public MyVerifiableComponent() {
-            registerExtension(() -> new DefaultComponentVerifierExtension("my-verifiable-component", getCamelContext()) {
-                @Override
-                protected Result verifyConnectivity(Map<String, Object> parameters) {
-                    return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY).build();
-                }
+            registerExtension(
+                    () -> new DefaultComponentVerifierExtension("my-verifiable-component", getCamelContext()) {
+                        @Override
+                        protected Result verifyConnectivity(Map<String, Object> parameters) {
+                            return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY)
+                                    .build();
+                        }
 
-                @Override
-                protected Result verifyParameters(Map<String, Object> parameters) {
-                    return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).build();
-                }
-            });
+                        @Override
+                        protected Result verifyParameters(Map<String, Object> parameters) {
+                            return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+                                    .build();
+                        }
+                    });
         }
 
         @Override

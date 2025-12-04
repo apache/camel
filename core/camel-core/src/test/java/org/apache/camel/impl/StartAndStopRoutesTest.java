@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import java.util.List;
@@ -81,7 +82,5 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
                 from("direct:test.a").to("seda:test.b").to("mock:results");
             }
         };
-
     }
-
 }

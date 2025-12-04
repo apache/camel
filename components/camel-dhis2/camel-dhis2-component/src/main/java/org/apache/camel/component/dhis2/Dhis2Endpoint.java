@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2;
 
 import java.util.Map;
@@ -42,19 +43,34 @@ import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 /**
  * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web API.
  */
-@UriEndpoint(firstVersion = "4.0.0", scheme = "dhis2", title = "DHIS2", syntax = "dhis2:apiName/methodName",
-             apiSyntax = "apiName/methodName", category = { Category.API })
-public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Configuration> implements EndpointServiceLocation {
+@UriEndpoint(
+        firstVersion = "4.0.0",
+        scheme = "dhis2",
+        title = "DHIS2",
+        syntax = "dhis2:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        category = {Category.API})
+public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Configuration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private final Dhis2Configuration configuration;
 
     private Object apiProxy;
 
-    public Dhis2Endpoint(String uri, Dhis2Component component,
-                         Dhis2ApiName apiName, String methodName, Dhis2Configuration endpointConfiguration) {
-        super(uri, component, apiName, methodName, Dhis2ApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public Dhis2Endpoint(
+            String uri,
+            Dhis2Component component,
+            Dhis2ApiName apiName,
+            String methodName,
+            Dhis2Configuration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                Dhis2ApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 

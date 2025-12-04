@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -38,19 +43,16 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Creates multiple threads
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyExclusiveReplyToConcurrentTest.class);
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -96,7 +98,8 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTe
         LOG.info("Waiting to process {} messages...", size);
 
         // if any of the assertions above fails then the latch will not get decremented
-        assertTrue(latch.await(20, TimeUnit.SECONDS), "All assertions outside the main thread above should have passed");
+        assertTrue(
+                latch.await(20, TimeUnit.SECONDS), "All assertions outside the main thread above should have passed");
 
         long delta = watch.taken();
         LOG.info("Took {} millis", delta);
@@ -113,7 +116,8 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTe
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:fooJmsRequestReplyExclusiveReplyToConcurrentTest?replyTo=JmsRequestReplyExclusiveReplyToConcurrentTest.bar&replyToType=Exclusive&concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
+                        .to(
+                                "activemq:queue:fooJmsRequestReplyExclusiveReplyToConcurrentTest?replyTo=JmsRequestReplyExclusiveReplyToConcurrentTest.bar&replyToType=Exclusive&concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
                         .to("log:reply")
                         .to("mock:reply");
 

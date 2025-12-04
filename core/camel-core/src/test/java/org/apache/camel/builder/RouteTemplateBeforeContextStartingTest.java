@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.apache.camel.util.CollectionHelper.mapOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.CollectionHelper.mapOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateBeforeContextStartingTest extends ContextTestSupport {
 
@@ -36,7 +37,9 @@ public class RouteTemplateBeforeContextStartingTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
+                        .templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("mock:{{bar}}");
             }
@@ -67,8 +70,10 @@ public class RouteTemplateBeforeContextStartingTest extends ContextTestSupport {
 
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("first").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("second").name());
         assertEquals("true", context.getRoute("first").getProperties().get(Route.TEMPLATE_PROPERTY));
         assertEquals("true", context.getRoute("second").getProperties().get(Route.TEMPLATE_PROPERTY));
 
@@ -79,5 +84,4 @@ public class RouteTemplateBeforeContextStartingTest extends ContextTestSupport {
 
         context.stop();
     }
-
 }

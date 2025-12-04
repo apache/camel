@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import java.util.ArrayList;
@@ -100,7 +101,6 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
             if (includePatterns != null && !includePatterns.isEmpty()) {
                 return matchesAny(includePatterns, candidate);
             }
-
         }
         return true;
     }
@@ -113,5 +113,4 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
         }
         return false;
     }
-
 }

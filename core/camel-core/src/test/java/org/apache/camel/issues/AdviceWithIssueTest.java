@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class AdviceWithIssueTest extends ContextTestSupport {
 
     @Test
@@ -36,8 +37,8 @@ public class AdviceWithIssueTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "World");
 
-        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Kaboom"),
-                "Should have thrown exception");
+        assertThrows(
+                Exception.class, () -> template.sendBody("direct:start", "Kaboom"), "Should have thrown exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -45,16 +46,20 @@ public class AdviceWithIssueTest extends ContextTestSupport {
     @Test
     public void testAdviceWithErrorHandler() {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-            AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
-                @Override
-                public void configure() {
-                    errorHandler(deadLetterChannel("mock:dead"));
-                }
-            });
-        }, "Should have thrown exception");
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
+                        @Override
+                        public void configure() {
+                            errorHandler(deadLetterChannel("mock:dead"));
+                        }
+                    });
+                },
+                "Should have thrown exception");
 
-        assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.",
+        assertEquals(
+                "You can not advice with error handlers. Remove the error handlers from the route builder.",
                 e.getMessage());
     }
 
@@ -154,5 +159,4 @@ public class AdviceWithIssueTest extends ContextTestSupport {
             exchange.getIn().setBody("Hello " + body);
         }
     }
-
 }

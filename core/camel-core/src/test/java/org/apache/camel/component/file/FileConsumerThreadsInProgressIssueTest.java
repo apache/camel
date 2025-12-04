@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Writer;
 import java.nio.file.Files;
@@ -29,8 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
 
     private final Map<String, Integer> duplicate = new HashMap<>();
@@ -41,9 +42,14 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?sortBy=file:name&delay=10&synchronous=false")).routeId("myRoute")
-                        .autoStartup(false).threads(1, 10).maxQueueSize(0)
-                        .convertBodyTo(String.class).process(processor).to("log:done", "mock:done");
+                from(fileUri("?sortBy=file:name&delay=10&synchronous=false"))
+                        .routeId("myRoute")
+                        .autoStartup(false)
+                        .threads(1, 10)
+                        .maxQueueSize(0)
+                        .convertBodyTo(String.class)
+                        .process(processor)
+                        .to("log:done", "mock:done");
             }
         };
     }
@@ -111,6 +117,5 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
             log.info("Process called for-{}", exchange.getExchangeId());
             Thread.sleep(20);
         }
-
     }
 }

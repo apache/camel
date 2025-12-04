@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -59,7 +60,9 @@ public class SameRouteAndContextScopedErrorHandlerIssueTest extends ContextTestS
                     }
                 });
 
-                from("direct:start").errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0))
+                from("direct:start")
+                        .errorHandler(
+                                defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0))
                         .process(new Processor() {
                             private int counter;
 
@@ -70,7 +73,9 @@ public class SameRouteAndContextScopedErrorHandlerIssueTest extends ContextTestS
                                 }
                                 exchange.getIn().setBody("Bye World");
                             }
-                        }).to("log:result").to("mock:result");
+                        })
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }

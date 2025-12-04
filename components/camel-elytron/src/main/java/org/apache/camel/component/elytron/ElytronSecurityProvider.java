@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.elytron;
 
 import java.security.Provider;
@@ -66,7 +67,7 @@ public class ElytronSecurityProvider implements UndertowSecurityProvider {
     @Override
     public void addHeader(BiConsumer<String, Object> consumer, HttpServerExchange httpExchange) throws Exception {
         SecurityIdentity securityIdentity = this.securityDomain.getCurrentSecurityIdentity();
-        //add security principal to headers
+        // add security principal to headers
         consumer.accept(SECURITY_IDENTITY_HEADER, securityIdentity);
     }
 
@@ -78,7 +79,7 @@ public class ElytronSecurityProvider implements UndertowSecurityProvider {
         SecurityIdentity identity = this.securityDomain.getCurrentSecurityIdentity();
 
         if (identity != null) {
-            //already authenticated
+            // already authenticated
             Set<String> roles = new HashSet<>();
             Roles identityRoles = identity.getRoles();
 
@@ -128,20 +129,23 @@ public class ElytronSecurityProvider implements UndertowSecurityProvider {
                     } catch (HttpAuthenticationException e) {
                         throw new RuntimeCamelException(e);
                     }
-                }).build();
+                })
+                .build();
     }
 
     private HttpAuthenticationFactory createHttpAuthenticationFactory(final SecurityDomain securityDomain) {
-        HttpServerAuthenticationMechanismFactory providerFactory
-                = new SecurityProviderServerMechanismFactory(() -> new Provider[] { this.elytronProvider });
-        HttpServerAuthenticationMechanismFactory httpServerMechanismFactory
-                = new FilterServerMechanismFactory(providerFactory, true, this.mechanismName);
+        HttpServerAuthenticationMechanismFactory providerFactory =
+                new SecurityProviderServerMechanismFactory(() -> new Provider[] {this.elytronProvider});
+        HttpServerAuthenticationMechanismFactory httpServerMechanismFactory =
+                new FilterServerMechanismFactory(providerFactory, true, this.mechanismName);
 
         return HttpAuthenticationFactory.builder()
                 .setSecurityDomain(securityDomain)
-                .setMechanismConfigurationSelector(MechanismConfigurationSelector.constantSelector(
-                        MechanismConfiguration.builder()
-                                .addMechanismRealm(MechanismRealmConfiguration.builder().setRealmName("Elytron Realm").build())
+                .setMechanismConfigurationSelector(
+                        MechanismConfigurationSelector.constantSelector(MechanismConfiguration.builder()
+                                .addMechanismRealm(MechanismRealmConfiguration.builder()
+                                        .setRealmName("Elytron Realm")
+                                        .build())
                                 .build()))
                 .setFactory(httpServerMechanismFactory)
                 .build();

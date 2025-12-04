@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
+
+import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_CANCEL;
+import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_CLOSE;
+import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_START;
+import static org.apache.camel.service.lra.LRAConstants.HEADER_LINK;
+import static org.apache.camel.service.lra.LRAConstants.HEADER_TIME_LIMIT;
+import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
+import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,14 +42,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_CANCEL;
-import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_CLOSE;
-import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_START;
-import static org.apache.camel.service.lra.LRAConstants.HEADER_LINK;
-import static org.apache.camel.service.lra.LRAConstants.HEADER_TIME_LIMIT;
-import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
-import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
 
 public class LRAClient implements Closeable {
 
@@ -75,7 +76,8 @@ public class LRAClient implements Closeable {
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
-        CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        CompletableFuture<HttpResponse<String>> future =
+                client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(res -> {
             if (res.statusCode() >= HttpURLConnection.HTTP_BAD_REQUEST) {
@@ -90,7 +92,8 @@ public class LRAClient implements Closeable {
                 return toURL(location.get(0));
             }
 
-            // If there's no location header try the Long-Running-Action header, assuming there's only one present in the response
+            // If there's no location header try the Long-Running-Action header, assuming there's only one present in
+            // the response
             List<String> lraHeaders = res.headers().map().get(Exchange.SAGA_LONG_RUNNING_ACTION);
             if (ObjectHelper.isNotEmpty(lraHeaders) && lraHeaders.size() == 1) {
                 return toURL(lraHeaders.get(0));
@@ -107,35 +110,42 @@ public class LRAClient implements Closeable {
     }
 
     public CompletableFuture<Void> join(final URL lra, LRASagaStep step, Exchange exchange) {
-        return CompletableFuture.supplyAsync(() -> {
-            LRAUrlBuilder participantBaseUrl = new LRAUrlBuilder()
-                    .host(sagaService.getLocalParticipantUrl())
-                    .path(sagaService.getLocalParticipantContextPath())
-                    .options(step.getOptions())
-                    .compensation(step.getCompensation())
-                    .completion(step.getCompletion());
+        return CompletableFuture.supplyAsync(
+                        () -> {
+                            LRAUrlBuilder participantBaseUrl = new LRAUrlBuilder()
+                                    .host(sagaService.getLocalParticipantUrl())
+                                    .path(sagaService.getLocalParticipantContextPath())
+                                    .options(step.getOptions())
+                                    .compensation(step.getCompensation())
+                                    .completion(step.getCompletion());
 
-            String compensationURL = participantBaseUrl.path(PARTICIPANT_PATH_COMPENSATE).build();
-            String completionURL = participantBaseUrl.path(PARTICIPANT_PATH_COMPLETE).build();
+                            String compensationURL = participantBaseUrl
+                                    .path(PARTICIPANT_PATH_COMPENSATE)
+                                    .build();
+                            String completionURL = participantBaseUrl
+                                    .path(PARTICIPANT_PATH_COMPLETE)
+                                    .build();
 
-            StringBuilder link = new StringBuilder();
-            link.append('<').append(compensationURL).append('>').append("; rel=compensate");
-            link.append(',');
-            link.append('<').append(completionURL).append('>').append("; rel=complete");
+                            StringBuilder link = new StringBuilder();
+                            link.append('<').append(compensationURL).append('>').append("; rel=compensate");
+                            link.append(',');
+                            link.append('<').append(completionURL).append('>').append("; rel=complete");
 
-            String lraEndpoint = lra.toString();
-            if (step.getTimeoutInMilliseconds().isPresent()) {
-                lraEndpoint = lraEndpoint + "?" + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
-            }
-            HttpRequest request = prepareRequest(URI.create(lraEndpoint), exchange)
-                    .setHeader(HEADER_LINK, link.toString())
-                    .setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, lra.toString())
-                    .setHeader(CONTENT_TYPE, TEXT_PLAIN_CONTENT)
-                    .PUT(HttpRequest.BodyPublishers.ofString(link.toString()))
-                    .build();
+                            String lraEndpoint = lra.toString();
+                            if (step.getTimeoutInMilliseconds().isPresent()) {
+                                lraEndpoint = lraEndpoint + "?" + HEADER_TIME_LIMIT + "="
+                                        + step.getTimeoutInMilliseconds().get();
+                            }
+                            HttpRequest request = prepareRequest(URI.create(lraEndpoint), exchange)
+                                    .setHeader(HEADER_LINK, link.toString())
+                                    .setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, lra.toString())
+                                    .setHeader(CONTENT_TYPE, TEXT_PLAIN_CONTENT)
+                                    .PUT(HttpRequest.BodyPublishers.ofString(link.toString()))
+                                    .build();
 
-            return client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        }, sagaService.getExecutorService())
+                            return client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+                        },
+                        sagaService.getExecutorService())
                 .thenCompose(Function.identity())
                 .thenApply(response -> {
                     if (response.statusCode() != HttpURLConnection.HTTP_OK) {
@@ -152,7 +162,8 @@ public class LRAClient implements Closeable {
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
-        CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        CompletableFuture<HttpResponse<String>> future =
+                client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(response -> {
             if (response.statusCode() != HttpURLConnection.HTTP_OK) {
@@ -169,7 +180,8 @@ public class LRAClient implements Closeable {
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
-        CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        CompletableFuture<HttpResponse<String>> future =
+                client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(response -> {
             if (response.statusCode() != HttpURLConnection.HTTP_OK) {
@@ -200,6 +212,5 @@ public class LRAClient implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
-    }
+    public void close() throws IOException {}
 }

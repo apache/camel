@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test for Mail subject support.
@@ -48,7 +49,9 @@ public class MailSubjectTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertFalse(mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments(), "Should not have attachements");
+        assertFalse(
+                mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments(),
+                "Should not have attachements");
     }
 
     @Override
@@ -59,7 +62,8 @@ public class MailSubjectTest extends CamelTestSupport {
                 from("direct:a").setHeader("subject", constant(subject)).to(james2.uriPrefix(Protocol.smtp));
                 // END SNIPPET: e1
 
-                from(james2.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100").to("mock:result");
+                from(james2.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }

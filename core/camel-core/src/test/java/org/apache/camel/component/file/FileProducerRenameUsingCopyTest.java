@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -53,7 +54,9 @@ public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?renameUsingCopy=true&move=done")).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?renameUsingCopy=true&move=done"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

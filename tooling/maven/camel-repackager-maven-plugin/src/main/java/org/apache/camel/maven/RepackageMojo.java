@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -41,8 +42,11 @@ import org.springframework.boot.loader.tools.Repackager;
  * with the Spring Boot nested structure where dependencies are kept as separate JARs in BOOT-INF/lib/ and application
  * classes are in BOOT-INF/classes/.
  */
-@Mojo(name = "repackage", defaultPhase = LifecyclePhase.PACKAGE,
-      requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
+@Mojo(
+        name = "repackage",
+        defaultPhase = LifecyclePhase.PACKAGE,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        threadSafe = true)
 public class RepackageMojo extends AbstractMojo {
 
     /**
@@ -136,9 +140,10 @@ public class RepackageMojo extends AbstractMojo {
     private boolean includeArtifact(Artifact artifact) {
         String scope = artifact.getScope();
         // Include compile and runtime dependencies
-        return Artifact.SCOPE_COMPILE.equals(scope) ||
-                Artifact.SCOPE_RUNTIME.equals(scope) ||
-                (Artifact.SCOPE_PROVIDED.equals(scope) && artifact.getGroupId().startsWith("org.apache.camel"));
+        return Artifact.SCOPE_COMPILE.equals(scope)
+                || Artifact.SCOPE_RUNTIME.equals(scope)
+                || (Artifact.SCOPE_PROVIDED.equals(scope)
+                        && artifact.getGroupId().startsWith("org.apache.camel"));
     }
 
     private LibraryScope getLibraryScope(Artifact artifact) {

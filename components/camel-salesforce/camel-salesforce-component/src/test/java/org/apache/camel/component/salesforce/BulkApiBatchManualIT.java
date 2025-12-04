@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -30,10 +35,6 @@ import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BulkApiBatchManualIT extends AbstractBulkApiTestBase {
 
@@ -73,7 +74,8 @@ public class BulkApiBatchManualIT extends AbstractBulkApiTestBase {
         Map<String, Object> headers = new HashMap<>();
         headers.put(SalesforceEndpointConfig.JOB_ID, jobInfo.getId());
         headers.put(SalesforceEndpointConfig.CONTENT_TYPE, jobInfo.getContentType());
-        BatchInfo batchInfo = template().requestBodyAndHeaders("direct:createBatch", request.stream, headers, BatchInfo.class);
+        BatchInfo batchInfo =
+                template().requestBodyAndHeaders("direct:createBatch", request.stream, headers, BatchInfo.class);
         assertNotNull(batchInfo, "Null batch");
         assertNotNull(batchInfo.getId(), "Null batch id");
 

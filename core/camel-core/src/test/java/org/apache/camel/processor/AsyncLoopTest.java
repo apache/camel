@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.async.MyAsyncComponent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AsyncLoopTest extends ContextTestSupport {
 
@@ -78,7 +79,8 @@ public class AsyncLoopTest extends ContextTestSupport {
         lastEndpoint.assertIsSatisfied();
     }
 
-    private void performLoopTest(String endpointUri, int expectedIterations, String header) throws InterruptedException {
+    private void performLoopTest(String endpointUri, int expectedIterations, String header)
+            throws InterruptedException {
         resultEndpoint.expectedMessageCount(expectedIterations);
         List<String> results = new ArrayList<>(expectedIterations);
         for (int i = 0; i < expectedIterations; i++) {
@@ -113,13 +115,30 @@ public class AsyncLoopTest extends ContextTestSupport {
 
                 from("direct:a").loop(8).to("async:hello:camel?append=true").to("mock:result");
 
-                from("direct:b").loop(header("loop")).to("async:hello:camel?append=true").to("mock:result");
+                from("direct:b")
+                        .loop(header("loop"))
+                        .to("async:hello:camel?append=true")
+                        .to("mock:result");
 
-                from("direct:c").loop().xpath("/Hello/@n").to("async:hello:camel?append=true").to("mock:result");
+                from("direct:c")
+                        .loop()
+                        .xpath("/Hello/@n")
+                        .to("async:hello:camel?append=true")
+                        .to("mock:result");
 
-                from("direct:d").loop(2).to("async:hello:camel?append=true").to("mock:result").end().to("mock:last");
+                from("direct:d")
+                        .loop(2)
+                        .to("async:hello:camel?append=true")
+                        .to("mock:result")
+                        .end()
+                        .to("mock:last");
 
-                from("direct:e").loop(10).to("async:hello:camel?append=true").process(loopTest).to("mock:result").end()
+                from("direct:e")
+                        .loop(10)
+                        .to("async:hello:camel?append=true")
+                        .process(loopTest)
+                        .to("mock:result")
+                        .end()
                         .to("mock:last");
             }
         };

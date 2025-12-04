@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.ConnectException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,8 +34,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Based on user forum issue
  */
@@ -42,22 +43,26 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredicate
 
     @Test
     public void testIssue() throws Exception {
-        final Predicate fail = PredicateBuilder.or(header(Exchange.REDELIVERY_COUNTER).isNull(),
+        final Predicate fail = PredicateBuilder.or(
+                header(Exchange.REDELIVERY_COUNTER).isNull(),
                 header(Exchange.REDELIVERY_COUNTER).isLessThan(5));
 
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
-                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        invoked.incrementAndGet();
+                interceptSendToEndpoint("seda:*")
+                        .skipSendToOriginalEndpoint()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                invoked.incrementAndGet();
 
-                        if (fail.matches(exchange)) {
-                            throw new ConnectException("Forced");
-                        }
-                    }
-                }).to("mock:ok");
+                                if (fail.matches(exchange)) {
+                                    throw new ConnectException("Forced");
+                                }
+                            }
+                        })
+                        .to("mock:ok");
             }
         });
 
@@ -78,14 +83,20 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredicate
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:global").maximumRedeliveries(2).redeliveryDelay(5000));
+                errorHandler(
+                        deadLetterChannel("mock:global").maximumRedeliveries(2).redeliveryDelay(5000));
 
                 from("direct:start")
                         // no redelivery delay for faster unit tests
-                        .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0).logRetryAttempted(true)
+                        .onException(ConnectException.class)
+                        .maximumRedeliveries(5)
+                        .redeliveryDelay(0)
+                        .logRetryAttempted(true)
                         .retryAttemptedLogLevel(LoggingLevel.WARN)
                         // send to mock when we are exhausted
-                        .to("mock:exhausted").end().to("seda:foo");
+                        .to("mock:exhausted")
+                        .end()
+                        .to("seda:foo");
             }
         };
     }

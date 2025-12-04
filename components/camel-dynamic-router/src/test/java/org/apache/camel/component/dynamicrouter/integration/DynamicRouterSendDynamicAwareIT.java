@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.integration;
 
 import java.util.Map;
@@ -52,17 +53,14 @@ public class DynamicRouterSendDynamicAwareIT {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("directToDynamicRouter")
-                        .toD("dynamic-router://test?synchronous=true");
+                from("direct:start").routeId("directToDynamicRouter").toD("dynamic-router://test?synchronous=true");
                 from("direct://subscribe-bean-expression")
                         .routeId("subscribeRouteBeanExpression")
-                        .toD("dynamic-router-control://subscribe" +
-                             "?subscribeChannel=${header.subscribeChannel}" +
-                             "&subscriptionId=${header.subscriptionId}" +
-                             "&destinationUri=${header.destinationUri}" +
-                             "&priority=${header.priority}" +
-                             "&predicate=${header.predicate}");
+                        .toD("dynamic-router-control://subscribe" + "?subscribeChannel=${header.subscribeChannel}"
+                                + "&subscriptionId=${header.subscriptionId}"
+                                + "&destinationUri=${header.destinationUri}"
+                                + "&priority=${header.priority}"
+                                + "&predicate=${header.predicate}");
             }
         });
     }
@@ -90,19 +88,35 @@ public class DynamicRouterSendDynamicAwareIT {
         mock1.expectedMinimumMessageCount(1);
         mock2.expectedMinimumMessageCount(1);
 
-        template.sendBodyAndHeaders("direct:subscribe-bean-expression", "",
-                Map.of("subscribeChannel", "test",
-                        "subscriptionId", "testSubscription1",
-                        "destinationUri", mock1.getEndpointUri(),
-                        "priority", "1",
-                        "predicate", "${body} contains 'Message1'"));
+        template.sendBodyAndHeaders(
+                "direct:subscribe-bean-expression",
+                "",
+                Map.of(
+                        "subscribeChannel",
+                        "test",
+                        "subscriptionId",
+                        "testSubscription1",
+                        "destinationUri",
+                        mock1.getEndpointUri(),
+                        "priority",
+                        "1",
+                        "predicate",
+                        "${body} contains 'Message1'"));
 
-        template.sendBodyAndHeaders("direct:subscribe-bean-expression", "",
-                Map.of("subscribeChannel", "test",
-                        "subscriptionId", "testSubscription2",
-                        "destinationUri", mock2.getEndpointUri(),
-                        "priority", "1",
-                        "predicate", "${body} contains 'Message2'"));
+        template.sendBodyAndHeaders(
+                "direct:subscribe-bean-expression",
+                "",
+                Map.of(
+                        "subscribeChannel",
+                        "test",
+                        "subscriptionId",
+                        "testSubscription2",
+                        "destinationUri",
+                        mock2.getEndpointUri(),
+                        "priority",
+                        "1",
+                        "predicate",
+                        "${body} contains 'Message2'"));
 
         // Trigger events to subscribers
         template.sendBody("direct:start", "testMessage1");

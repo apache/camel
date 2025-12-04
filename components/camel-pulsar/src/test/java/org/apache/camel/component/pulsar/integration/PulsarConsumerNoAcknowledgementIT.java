@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -39,7 +40,7 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -73,24 +74,32 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
                 .setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
         // Given relevant millis=1000 redeliveries will occur at 1s + 0.01s, 1s + 1s, 1s + 100s, 1s + 100s, 1s + 100s...
         comp.getConfiguration().setAckTimeoutMillis(1_000L);
-        comp.getConfiguration().setAckTimeoutRedeliveryBackoff(MultiplierRedeliveryBackoff.builder()
-                .minDelayMs(10L)
-                .maxDelayMs(100_000L)
-                .multiplier(100.0)
-                .build());
+        comp.getConfiguration()
+                .setAckTimeoutRedeliveryBackoff(MultiplierRedeliveryBackoff.builder()
+                        .minDelayMs(10L)
+                        .maxDelayMs(100_000L)
+                        .multiplier(100.0)
+                        .build());
         registry.bind("pulsar", comp);
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     @Test
     public void testAMessageIsConsumedMultipleTimes() throws Exception {
         to.expectedMinimumMessageCount(2);
 
-        Producer<String> producer
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(TOPIC_URI)
+                .create();
 
         producer.send("Hello World!");
 
@@ -103,8 +112,11 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
     public void testAMessageIsConsumedMultipleTimesWithAckTimeoutBackoff() throws Exception {
         to.expectedMessageCount(3);
 
-        Producer<String> producer
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(TOPIC_URI)
+                .create();
 
         producer.send("Hello World!");
 

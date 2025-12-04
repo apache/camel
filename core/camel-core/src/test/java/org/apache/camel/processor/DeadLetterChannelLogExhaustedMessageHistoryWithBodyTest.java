@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,8 +38,11 @@ public class DeadLetterChannelLogExhaustedMessageHistoryWithBodyTest extends Con
             @Override
             public void configure() {
                 // no delay to speedup test
-                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3)
-                        .logExhaustedMessageHistory(true).logExhaustedMessageBody(true));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
+                        .logExhaustedMessageHistory(true)
+                        .logExhaustedMessageBody(true));
 
                 from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }

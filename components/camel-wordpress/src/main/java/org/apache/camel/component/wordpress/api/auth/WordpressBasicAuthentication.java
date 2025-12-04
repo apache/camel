@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.auth;
 
 import org.apache.cxf.common.util.Base64Utility;
@@ -35,8 +36,7 @@ public class WordpressBasicAuthentication extends BaseWordpressAuthentication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressBasicAuthentication.class);
 
-    public WordpressBasicAuthentication() {
-    }
+    public WordpressBasicAuthentication() {}
 
     public WordpressBasicAuthentication(String username, String password) {
         super(username, password);
@@ -51,13 +51,14 @@ public class WordpressBasicAuthentication extends BaseWordpressAuthentication {
     @Override
     public void configureAuthentication(Object api) {
         if (isCredentialsSet()) {
-            final String authorizationHeader = String.format("Basic %s",
-                    Base64Utility.encode(String.format("%s:%s", this.username, this.password).getBytes()));
+            final String authorizationHeader = String.format(
+                    "Basic %s",
+                    Base64Utility.encode(
+                            String.format("%s:%s", this.username, this.password).getBytes()));
             LOGGER.info("Credentials set for user {}", username);
             WebClient.client(api).header("Authorization", authorizationHeader);
         } else {
             LOGGER.warn("Credentials not set because username or password are empty.");
         }
     }
-
 }

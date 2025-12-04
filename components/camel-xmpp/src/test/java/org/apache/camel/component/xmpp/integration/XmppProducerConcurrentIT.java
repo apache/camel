@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,10 +27,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.body;
-
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppProducerConcurrentIT extends XmppBaseIT {
 
     @Test
@@ -60,8 +63,9 @@ public class XmppProducerConcurrentIT extends XmppBaseIT {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("xmpp://" + getUrl()
-                            + "?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_consumer&password=secret&serviceName=apache.camel")
+                        .to(
+                                "xmpp://" + getUrl()
+                                        + "?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_consumer&password=secret&serviceName=apache.camel")
                         .to("mock:result");
             }
         };

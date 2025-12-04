@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.chatscript.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class ChatScriptServiceFactory {
 
-    private ChatScriptServiceFactory() {
-
-    }
+    private ChatScriptServiceFactory() {}
 
     public static SimpleTestServiceBuilder<ChatScriptService> builder() {
         return new SimpleTestServiceBuilder<>("chatscript");
@@ -36,9 +35,7 @@ public final class ChatScriptServiceFactory {
     }
 
     public static class ChatScriptLocalContainerTestService extends ChatScriptLocalContainerInfraService
-            implements ChatScriptService {
-    }
+            implements ChatScriptService {}
 
-    public static class ChatScriptRemoteTestService extends ChatScriptRemoteInfraService implements ChatScriptService {
-    }
+    public static class ChatScriptRemoteTestService extends ChatScriptRemoteInfraService implements ChatScriptService {}
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml.out;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.AssertionFailureBuilder.assertionFailure;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +47,10 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.w3c.dom.Element;
 
+import org.xmlunit.assertj3.XmlAssert;
+import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.ElementSelectors;
+
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
@@ -51,16 +63,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.xmlunit.assertj3.XmlAssert;
-import org.xmlunit.diff.DefaultNodeMatcher;
-import org.xmlunit.diff.ElementSelectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.AssertionFailureBuilder.assertionFailure;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ModelWriterTest {
 
@@ -73,10 +75,13 @@ public class ModelWriterTest {
     @DisplayName("Test xml roundtrip for <routes>")
     void testRoutes(String xml, String ns) throws Exception {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml)) {
-            RoutesDefinition expected = new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
+            RoutesDefinition expected =
+                    new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
             StringWriter sw = new StringWriter();
             new ModelWriter(sw, ns).writeRoutesDefinition(expected);
-            RoutesDefinition actual = new ModelParser(new StringReader(sw.toString()), ns).parseRoutesDefinition().get();
+            RoutesDefinition actual = new ModelParser(new StringReader(sw.toString()), ns)
+                    .parseRoutesDefinition()
+                    .get();
             assertDeepEquals(expected, actual, sw.toString());
         }
     }
@@ -87,15 +92,16 @@ public class ModelWriterTest {
     void testRoutesWithDiff(String xml, String ns) throws Exception {
         String original;
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             assertNotNull(is);
             IOUtils.copy(is, baos);
             original = baos.toString();
         }
 
         assertThat(original).isNotBlank();
-        RoutesDefinition expected
-                = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE).parseRoutesDefinition().get();
+        RoutesDefinition expected = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE)
+                .parseRoutesDefinition()
+                .get();
         StringWriter sw = new StringWriter();
         new ModelWriter(sw, ns).writeRoutesDefinition(expected);
         String generatedXml = sw.toString();
@@ -105,7 +111,8 @@ public class ModelWriterTest {
                 .and(original)
                 .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
                 .withNodeFilter(node -> {
-                    // skip comparing namespace as original have namespaces scattered in other places than inside <xpath>
+                    // skip comparing namespace as original have namespaces scattered in other places than inside
+                    // <xpath>
                     if ("namespace".equals(node.getLocalName())) {
                         return false;
                     }
@@ -122,10 +129,13 @@ public class ModelWriterTest {
     @DisplayName("Test xml roundtrip for <rests>")
     void testRests(String xml, String ns) throws Exception {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml)) {
-            RestsDefinition expected = new ModelParser(is, NAMESPACE).parseRestsDefinition().get();
+            RestsDefinition expected =
+                    new ModelParser(is, NAMESPACE).parseRestsDefinition().get();
             StringWriter sw = new StringWriter();
             new ModelWriter(sw, ns).writeRestsDefinition(expected);
-            RestsDefinition actual = new ModelParser(new StringReader(sw.toString()), ns).parseRestsDefinition().get();
+            RestsDefinition actual = new ModelParser(new StringReader(sw.toString()), ns)
+                    .parseRestsDefinition()
+                    .get();
             assertDeepEquals(expected, actual, sw.toString());
         }
     }
@@ -136,14 +146,15 @@ public class ModelWriterTest {
     void testRestsWithDiff(String xml, String ns) throws Exception {
         String original;
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             assertNotNull(is);
             IOUtils.copy(is, baos);
             original = baos.toString();
         }
 
-        RestsDefinition expected
-                = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE).parseRestsDefinition().get();
+        RestsDefinition expected = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE)
+                .parseRestsDefinition()
+                .get();
         StringWriter sw = new StringWriter();
         new ModelWriter(sw, ns).writeRestsDefinition(expected);
         String generatedXml = sw.toString();
@@ -157,7 +168,8 @@ public class ModelWriterTest {
                     if ("header".equals(attr.getOwnerElement().getTagName()) && "arrayType".equals(attr.getName())) {
                         return false;
                     }
-                    if ("header".equals(attr.getOwnerElement().getTagName()) && "collectionFormat".equals(attr.getName())) {
+                    if ("header".equals(attr.getOwnerElement().getTagName())
+                            && "collectionFormat".equals(attr.getName())) {
                         return false;
                     }
                     return true;
@@ -173,11 +185,14 @@ public class ModelWriterTest {
     @DisplayName("Test xml roundtrip for <routeTemplates>")
     void testRouteTemplates(String xml, String ns) throws Exception {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml)) {
-            RouteTemplatesDefinition expected = new ModelParser(is, NAMESPACE).parseRouteTemplatesDefinition().get();
+            RouteTemplatesDefinition expected = new ModelParser(is, NAMESPACE)
+                    .parseRouteTemplatesDefinition()
+                    .get();
             StringWriter sw = new StringWriter();
             new ModelWriter(sw, ns).writeRouteTemplatesDefinition(expected);
-            RouteTemplatesDefinition actual
-                    = new ModelParser(new StringReader(sw.toString()), ns).parseRouteTemplatesDefinition().get();
+            RouteTemplatesDefinition actual = new ModelParser(new StringReader(sw.toString()), ns)
+                    .parseRouteTemplatesDefinition()
+                    .get();
             assertDeepEquals(expected, actual, sw.toString());
         }
     }
@@ -188,14 +203,15 @@ public class ModelWriterTest {
     void testRouteTemplatesWithDiff(String xml, String ns) throws Exception {
         String original;
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             assertNotNull(is);
             IOUtils.copy(is, baos);
             original = baos.toString();
         }
 
         RouteTemplatesDefinition expected = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE)
-                .parseRouteTemplatesDefinition().get();
+                .parseRouteTemplatesDefinition()
+                .get();
         StringWriter sw = new StringWriter();
         new ModelWriter(sw, ns).writeRouteTemplatesDefinition(expected);
         String generatedXml = sw.toString();
@@ -215,11 +231,14 @@ public class ModelWriterTest {
     @DisplayName("Test xml roundtrip for <templatedRoutes>")
     void testTemplatedRoutes(String xml, String ns) throws Exception {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml)) {
-            TemplatedRoutesDefinition expected = new ModelParser(is, NAMESPACE).parseTemplatedRoutesDefinition().get();
+            TemplatedRoutesDefinition expected = new ModelParser(is, NAMESPACE)
+                    .parseTemplatedRoutesDefinition()
+                    .get();
             StringWriter sw = new StringWriter();
             new ModelWriter(sw, ns).writeTemplatedRoutesDefinition(expected);
-            TemplatedRoutesDefinition actual
-                    = new ModelParser(new StringReader(sw.toString()), ns).parseTemplatedRoutesDefinition().get();
+            TemplatedRoutesDefinition actual = new ModelParser(new StringReader(sw.toString()), ns)
+                    .parseTemplatedRoutesDefinition()
+                    .get();
             assertDeepEquals(expected, actual, sw.toString());
         }
     }
@@ -230,13 +249,14 @@ public class ModelWriterTest {
     void testTemplatedRoutesWithDiff(String xml, String ns) throws Exception {
         String original;
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             assertNotNull(is);
             IOUtils.copy(is, baos);
             original = baos.toString();
         }
         TemplatedRoutesDefinition expected = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE)
-                .parseTemplatedRoutesDefinition().get();
+                .parseTemplatedRoutesDefinition()
+                .get();
         StringWriter sw = new StringWriter();
         new ModelWriter(sw, ns).writeTemplatedRoutesDefinition(expected);
         String generatedXml = sw.toString();
@@ -256,11 +276,13 @@ public class ModelWriterTest {
     @DisplayName("Test xml roundtrip for <beans>")
     void testBeans(String xml, String ns) throws Exception {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml)) {
-            BeansDefinition expected = new ModelParser(is, NAMESPACE).parseBeansDefinition().get();
+            BeansDefinition expected =
+                    new ModelParser(is, NAMESPACE).parseBeansDefinition().get();
             StringWriter sw = new StringWriter();
             new ModelWriter(sw, ns).writeBeansDefinition(expected);
-            BeansDefinition actual
-                    = new ModelParser(new StringReader(sw.toString()), ns).parseBeansDefinition().get();
+            BeansDefinition actual = new ModelParser(new StringReader(sw.toString()), ns)
+                    .parseBeansDefinition()
+                    .get();
             assertDeepEquals(expected, actual, sw.toString());
         }
     }
@@ -271,13 +293,14 @@ public class ModelWriterTest {
     void testBeansWithDiff(String xml, String ns) throws Exception {
         String original;
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             assertNotNull(is);
             IOUtils.copy(is, baos);
             original = baos.toString();
         }
-        BeansDefinition expected
-                = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE).parseBeansDefinition().get();
+        BeansDefinition expected = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE)
+                .parseBeansDefinition()
+                .get();
         StringWriter sw = new StringWriter();
         new ModelWriter(sw, ns).writeBeansDefinition(expected);
         String generatedXml = sw.toString();
@@ -406,8 +429,7 @@ public class ModelWriterTest {
         }
         String name = field.getName();
         try {
-            Method method = field.getDeclaringClass().getDeclaredMethod(
-                    "get" + StringHelper.capitalize(name));
+            Method method = field.getDeclaringClass().getDeclaredMethod("get" + StringHelper.capitalize(name));
             if (method.getAnnotation(XmlTransient.class) != null) {
                 return true;
             }
@@ -415,9 +437,8 @@ public class ModelWriterTest {
             // ignore
         }
         try {
-            Method method = field.getDeclaringClass().getDeclaredMethod(
-                    "set" + StringHelper.capitalize(name),
-                    field.getType());
+            Method method =
+                    field.getDeclaringClass().getDeclaredMethod("set" + StringHelper.capitalize(name), field.getType());
             if (method.getAnnotation(XmlTransient.class) != null) {
                 return true;
             }

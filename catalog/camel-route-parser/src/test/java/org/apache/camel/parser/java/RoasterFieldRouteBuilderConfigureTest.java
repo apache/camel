@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.List;
@@ -28,16 +31,14 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RoasterFieldRouteBuilderConfigureTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoasterFieldRouteBuilderConfigureTest.class);
 
     @Test
     void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster
-                .parse(new File("src/test/java/org/apache/camel/parser/java/MyFieldRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource)
+                Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyFieldRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
@@ -53,5 +54,4 @@ public class RoasterFieldRouteBuilderConfigureTest {
         assertEquals("file:output?fileExist=Override", list.get(0).getElement());
         assertEquals("log:b", list.get(1).getElement());
     }
-
 }

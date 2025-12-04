@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.nats.services;
 
 import org.apache.camel.test.infra.nats.common.NatsProperties;
@@ -26,9 +27,7 @@ public class NatsLocalContainerAuthTokenService extends NatsLocalContainerServic
     protected GenericContainer initContainer(String imageName, String containerName) {
         GenericContainer container = super.initContainer(imageName, containerName);
 
-        container
-                .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
-                .withCommand("-DV", "-auth", TOKEN);
+        container.waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1)).withCommand("-DV", "-auth", TOKEN);
 
         return container;
     }

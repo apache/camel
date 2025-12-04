@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.Duration;
 
@@ -25,8 +28,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
@@ -52,10 +53,9 @@ public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&delay=50&initialDelay=0"
-                     + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
+                                + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
                         .to("mock:result");
             }
         };
     }
-
 }

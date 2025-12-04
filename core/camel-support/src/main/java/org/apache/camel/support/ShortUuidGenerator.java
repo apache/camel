@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,8 +29,8 @@ public class ShortUuidGenerator implements UuidGenerator {
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
-    private final char[] seed
-            = (seedToHex(ThreadLocalRandom.current().nextLong()).substring(1) + "-").toCharArray();
+    private final char[] seed =
+            (seedToHex(ThreadLocalRandom.current().nextLong()).substring(1) + "-").toCharArray();
     private final AtomicLong index = new AtomicLong();
 
     @Override
@@ -56,5 +57,4 @@ public class ShortUuidGenerator implements UuidGenerator {
         }
         return new String(hexChars);
     }
-
 }

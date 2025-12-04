@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray.component;
 
 import java.util.Map;
@@ -24,8 +25,7 @@ import org.apache.camel.support.DefaultComponent;
 
 public class TestXRayComponent extends DefaultComponent {
 
-    public TestXRayComponent() {
-    }
+    public TestXRayComponent() {}
 
     public TestXRayComponent(final CamelContext context) {
         super(context);

@@ -39,8 +39,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Requires too much network resources")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 @EnableKubernetesMockClient
 class KubernetesDeleteTest {
 
@@ -81,8 +80,7 @@ class KubernetesDeleteTest {
                 .withLabels(Collections.singletonMap("minikube.k8s.io/name", "minikube"))
                 .endMetadata()
                 .build();
-        NodeList nodeList = new NodeListBuilder().addToItems(nodeCR)
-                .build();
+        NodeList nodeList = new NodeListBuilder().addToItems(nodeCR).build();
 
         serverExpect("/api/v1/nodes?labelSelector=minikube.k8s.io%2Fname", nodeList);
 
@@ -102,7 +100,9 @@ class KubernetesDeleteTest {
     @Test
     public void shouldDeleteNonExistentAppInOpenshift() throws Exception {
         ClusterVersion versionCR = new ClusterVersionBuilder()
-                .withNewMetadata().withName("version").endMetadata()
+                .withNewMetadata()
+                .withName("version")
+                .endMetadata()
                 .withNewStatus()
                 .withNewDesired()
                 .withVersion("4.14.5")
@@ -132,14 +132,11 @@ class KubernetesDeleteTest {
         // Mock the delete request expectation
         serverDeleteExpect(
                 "/apis/apps/v1/namespaces/test/deployments?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
-        serverDeleteExpect(
-                "/api/v1/namespaces/test/services?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
+        serverDeleteExpect("/api/v1/namespaces/test/services?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         serverDeleteExpect(
                 "/apis/serving.knative.dev/v1/namespaces/test/services?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
-        serverDeleteExpect(
-                "/api/v1/namespaces/test/configmaps?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
-        serverDeleteExpect(
-                "/api/v1/namespaces/test/secrets?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
+        serverDeleteExpect("/api/v1/namespaces/test/configmaps?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
+        serverDeleteExpect("/api/v1/namespaces/test/secrets?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
 
         // Execute delete command
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
@@ -159,7 +156,9 @@ class KubernetesDeleteTest {
     @Test
     public void shouldDeleteOnOpenShift() throws Exception {
         ClusterVersion versionCR = new ClusterVersionBuilder()
-                .withNewMetadata().withName("version").endMetadata()
+                .withNewMetadata()
+                .withName("version")
+                .endMetadata()
                 .withNewStatus()
                 .withNewDesired()
                 .withVersion("4.14.5")
@@ -174,8 +173,7 @@ class KubernetesDeleteTest {
         // Mock the delete request expectations for openshift resources
         serverDeleteExpect(
                 "/apis/apps/v1/namespaces/test/deployments?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
-        serverDeleteExpect(
-                "/api/v1/namespaces/test/services?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
+        serverDeleteExpect("/api/v1/namespaces/test/services?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         serverDeleteExpect(
                 "/apis/build.openshift.io/v1/namespaces/test/buildconfigs?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         serverDeleteExpect(
@@ -184,10 +182,8 @@ class KubernetesDeleteTest {
                 "/apis/route.openshift.io/v1/namespaces/test/routes?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         serverDeleteExpect(
                 "/apis/serving.knative.dev/v1/namespaces/test/services?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
-        serverDeleteExpect(
-                "/api/v1/namespaces/test/configmaps?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
-        serverDeleteExpect(
-                "/api/v1/namespaces/test/secrets?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
+        serverDeleteExpect("/api/v1/namespaces/test/configmaps?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
+        serverDeleteExpect("/api/v1/namespaces/test/secrets?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
 
         // Execute delete command
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
@@ -210,17 +206,18 @@ class KubernetesDeleteTest {
     }
 
     private void serverDeleteExpect(String path) {
-        server.expect().delete()
+        server.expect()
+                .delete()
                 .withPath(path)
                 .andReturn(HttpURLConnection.HTTP_OK, null)
                 .once();
     }
 
     private void serverExpect(String path, Object response) {
-        server.expect().get()
+        server.expect()
+                .get()
                 .withPath(path)
                 .andReturn(HttpURLConnection.HTTP_OK, response)
                 .once();
     }
-
 }

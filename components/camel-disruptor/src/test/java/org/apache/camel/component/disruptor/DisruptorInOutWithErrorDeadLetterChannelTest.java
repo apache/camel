@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -37,11 +38,13 @@ public class DisruptorInOutWithErrorDeadLetterChannelTest extends CamelTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0));
+                errorHandler(
+                        deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0));
 
                 from("direct:start").to("disruptor:foo");
 
-                from("disruptor:foo").transform(constant("Bye World"))
+                from("disruptor:foo")
+                        .transform(constant("Bye World"))
                         .throwException(new IllegalArgumentException("Damn I cannot do this"))
                         .to("mock:result");
             }

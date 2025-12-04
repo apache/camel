@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -35,5 +36,4 @@ public class TarFileDataFormatReifier extends DataFormatReifier<TarFileDataForma
         properties.put("preservePathElements", definition.getPreservePathElements());
         properties.put("maxDecompressedSize", definition.getMaxDecompressedSize());
     }
-
 }

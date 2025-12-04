@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.io.IOException;
@@ -139,10 +140,12 @@ public final class HttpHelper {
      * @return             the request body, can be <tt>null</tt> if no body
      * @throws IOException is thrown if error reading request body
      */
-    public static Object readRequestBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
+    public static Object readRequestBodyFromServletRequest(HttpServletRequest request, Exchange exchange)
+            throws IOException {
         InputStream is = HttpConverter.toInputStream(request, exchange);
         // when using servlet (camel-servlet and camel-jetty) then they should always use stream caching
-        // as the message body is parsed for url-form and other things, so we need to be able to re-read the message body
+        // as the message body is parsed for url-form and other things, so we need to be able to re-read the message
+        // body
         // however there is an option to turn this off, which is set as exchange property
         boolean streamCaching = !exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, false, boolean.class);
         if (streamCaching) {
@@ -243,7 +246,8 @@ public final class HttpHelper {
      */
     public static URI createURI(Exchange exchange, String url, HttpCommonEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
-        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        // rest producer may provide an override query string to be used which we should discard if using (hence the
+        // remove)
         String queryString = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
         // is a query string provided in the endpoint URI or in a header
         // (header overrules endpoint, raw query header overrules query header)
@@ -314,7 +318,8 @@ public final class HttpHelper {
         try {
             uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
         } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
+            throw new RuntimeExchangeException(
+                    "Cannot resolve property placeholders with uri: " + uriString, exchange, e);
         }
         if (uriString != null) {
             // in case the URI string contains unsafe characters
@@ -388,5 +393,4 @@ public final class HttpHelper {
         }
         return input.replaceAll("[\n\r]", "_");
     }
-
 }

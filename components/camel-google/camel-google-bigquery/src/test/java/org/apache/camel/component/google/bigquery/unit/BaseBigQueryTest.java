@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.unit;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.cloud.bigquery.BigQuery;
@@ -24,10 +29,6 @@ import org.apache.camel.component.google.bigquery.GoogleBigQueryEndpoint;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryProducer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
-
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public abstract class BaseBigQueryTest extends CamelTestSupport {
     protected GoogleBigQueryEndpoint endpoint = mock(GoogleBigQueryEndpoint.class);
@@ -43,7 +44,6 @@ public abstract class BaseBigQueryTest extends CamelTestSupport {
     public void init() throws Exception {
         setupBigqueryMock();
         producer = createProducer();
-
     }
 
     protected GoogleBigQueryProducer createProducer() {

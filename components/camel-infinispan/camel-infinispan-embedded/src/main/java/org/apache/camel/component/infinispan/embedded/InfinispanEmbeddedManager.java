@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
+
+import static org.apache.camel.component.infinispan.InfinispanConstants.CACHE_MANAGER_CURRENT;
 
 import java.util.Set;
 
@@ -33,8 +36,6 @@ import org.infinispan.configuration.parsing.ConfigurationBuilderHolder;
 import org.infinispan.context.Flag;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
-
-import static org.apache.camel.component.infinispan.InfinispanConstants.CACHE_MANAGER_CURRENT;
 
 public class InfinispanEmbeddedManager extends ServiceSupport implements InfinispanManager<EmbeddedCacheManager> {
     private final InfinispanEmbeddedConfiguration configuration;
@@ -113,9 +114,7 @@ public class InfinispanEmbeddedManager extends ServiceSupport implements Infinis
     public <K, V> BasicCache<K, V> getCache() {
         Cache<K, V> cache = cacheContainer.getCache();
 
-        return configuration.hasFlags()
-                ? cache.getAdvancedCache().withFlags(configuration.getFlags())
-                : cache;
+        return configuration.hasFlags() ? cache.getAdvancedCache().withFlags(configuration.getFlags()) : cache;
     }
 
     @Override
@@ -127,9 +126,7 @@ public class InfinispanEmbeddedManager extends ServiceSupport implements Infinis
             cache = cacheContainer.getCache(cacheName);
         }
 
-        return configuration.hasFlags()
-                ? cache.getAdvancedCache().withFlags(configuration.getFlags())
-                : cache;
+        return configuration.hasFlags() ? cache.getAdvancedCache().withFlags(configuration.getFlags()) : cache;
     }
 
     @Override

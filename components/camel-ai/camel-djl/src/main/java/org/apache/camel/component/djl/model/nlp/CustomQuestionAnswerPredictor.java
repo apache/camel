@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl.model.nlp;
 
 import ai.djl.Model;
@@ -61,8 +62,8 @@ public class CustomQuestionAnswerPredictor extends AbstractPredictor {
     protected String predict(Exchange exchange, QAInput input) {
         Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
         @SuppressWarnings("unchecked")
-        Translator<QAInput, String> translator
-                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
+        Translator<QAInput, String> translator =
+                exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
 
         exchange.getIn().setHeader(DJLConstants.INPUT, input);
         try (Predictor<QAInput, String> predictor = model.newPredictor(translator)) {

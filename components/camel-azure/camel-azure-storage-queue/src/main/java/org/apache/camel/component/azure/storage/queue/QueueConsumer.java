@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
 
 import java.io.InputStream;
@@ -58,7 +59,8 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        clientWrapper = new QueueClientWrapper(getServiceClient().getQueueClient(getConfiguration().getQueueName()));
+        clientWrapper = new QueueClientWrapper(
+                getServiceClient().getQueueClient(getConfiguration().getQueueName()));
         queueOperations = new QueueOperations(getConfiguration(), clientWrapper);
     }
 
@@ -69,7 +71,8 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
 
         try {
-            final List<QueueMessageItem> messageItems = clientWrapper.receiveMessages(getConfiguration().getMaxMessages(),
+            final List<QueueMessageItem> messageItems = clientWrapper.receiveMessages(
+                    getConfiguration().getMaxMessages(),
                     getConfiguration().getVisibilityTimeout(),
                     getConfiguration().getTimeout());
 
@@ -91,10 +94,7 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private Queue<Exchange> createExchanges(final List<QueueMessageItem> messageItems) {
-        return messageItems
-                .stream()
-                .map(this::createExchange)
-                .collect(Collectors.toCollection(LinkedList::new));
+        return messageItems.stream().map(this::createExchange).collect(Collectors.toCollection(LinkedList::new));
     }
 
     private QueueServiceClient getServiceClient() {
@@ -165,7 +165,8 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
         BinaryData data = messageItem.getBody();
         InputStream is = data == null ? null : data.toStream();
         message.setBody(is);
-        message.setHeaders(QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem).toMap());
+        message.setHeaders(QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem)
+                .toMap());
 
         exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
             @Override
@@ -185,13 +186,15 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     private void processCommit(final Exchange exchange) {
         try {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Deleting message with pop receipt handle {}...",
+                LOG.trace(
+                        "Deleting message with pop receipt handle {}...",
                         QueueExchangeHeaders.getPopReceiptFromHeaders(exchange));
             }
             queueOperations.deleteMessage(exchange);
         } catch (QueueStorageException ex) {
-            getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.",
-                    exchange, ex);
+            getExceptionHandler()
+                    .handleException(
+                            "Error occurred during deleting message. This exception is ignored.", exchange, ex);
         }
     }
 
@@ -203,8 +206,11 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     private void processRollback(Exchange exchange) {
         final Exception cause = exchange.getException();
         if (cause != null) {
-            getExceptionHandler().handleException(
-                    "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
+            getExceptionHandler()
+                    .handleException(
+                            "Error during processing exchange. Will attempt to process the message on next poll.",
+                            exchange,
+                            cause);
         }
     }
 }

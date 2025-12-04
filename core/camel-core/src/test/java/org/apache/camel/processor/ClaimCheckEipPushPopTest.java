@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,8 +40,13 @@ public class ClaimCheckEipPushPopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World")
-                        .to("mock:b").claimCheck(ClaimCheckOperation.Pop)
+                from("direct:start")
+                        .to("mock:a")
+                        .claimCheck(ClaimCheckOperation.Push)
+                        .transform()
+                        .constant("Bye World")
+                        .to("mock:b")
+                        .claimCheck(ClaimCheckOperation.Pop)
                         .to("mock:c");
             }
         };

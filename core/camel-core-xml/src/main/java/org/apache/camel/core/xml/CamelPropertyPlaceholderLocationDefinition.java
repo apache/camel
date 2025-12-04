@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -33,8 +34,10 @@ public class CamelPropertyPlaceholderLocationDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(defaultValue = "classpath")
     public String resolver;
+
     @XmlAttribute(required = true)
     public String path;
+
     @XmlAttribute
     @Metadata(defaultValue = "false")
     public Boolean optional;
@@ -87,8 +90,6 @@ public class CamelPropertyPlaceholderLocationDefinition extends IdentifiedType {
 
     public PropertiesLocation toLocation() {
         return new PropertiesLocation(
-                resolver != null ? resolver : "classpath",
-                path,
-                optional != null ? optional : false);
+                resolver != null ? resolver : "classpath", path, optional != null ? optional : false);
     }
 }

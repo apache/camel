@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
 
 import javax.jcr.Node;
@@ -44,7 +45,7 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
         node.setProperty("my.contents.property", CONTENT);
 
         ValueFactory valFact = session.getValueFactory();
-        Value[] vals = new Value[] { valFact.createValue("value-1"), valFact.createValue("value-2") };
+        Value[] vals = new Value[] {valFact.createValue("value-1"), valFact.createValue("value-2")};
         node.setProperty("my.multi.valued", vals);
 
         identifier = node.getIdentifier();
@@ -78,5 +79,4 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
             }
         };
     }
-
 }

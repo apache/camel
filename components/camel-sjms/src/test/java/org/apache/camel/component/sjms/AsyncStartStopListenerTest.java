@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -72,8 +73,10 @@ public class AsyncStartStopListenerTest extends JmsTestSupport {
             public void configure() {
                 from("sjms:queue:foo.startstop.AsyncStartStopListenerTest?asyncStartListener=true&asyncStopListener=true")
                         .to("mock:result");
-                from("sjms:queue:foo.start.AsyncStartStopListenerTest?asyncStartListener=true").to("mock:result");
-                from("sjms:queue:foo.stop.AsyncStartStopListenerTest?asyncStopListener=true").to("mock:result");
+                from("sjms:queue:foo.start.AsyncStartStopListenerTest?asyncStartListener=true")
+                        .to("mock:result");
+                from("sjms:queue:foo.stop.AsyncStartStopListenerTest?asyncStopListener=true")
+                        .to("mock:result");
                 from("sjms:queue:foo.AsyncStartStopListenerTest").to("mock:result");
             }
         };

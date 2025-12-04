@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 // START SNIPPET: example
@@ -29,16 +30,17 @@ import org.apache.camel.support.language.LanguageAnnotation;
 import org.apache.camel.support.language.NamespacePrefix;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "xpath", factory = XPathAnnotationExpressionFactory.class)
 public @interface MyXPath {
     String value();
 
     // You can add the namespaces as the default value of the annotation
     NamespacePrefix[] namespaces() default {
-            @NamespacePrefix(prefix = "n1", uri = "http://example.org/ns1"),
-            @NamespacePrefix(prefix = "n2", uri = "http://example.org/ns2") };
+        @NamespacePrefix(prefix = "n1", uri = "http://example.org/ns1"),
+        @NamespacePrefix(prefix = "n2", uri = "http://example.org/ns2")
+    };
 
     Class<?> resultType() default NodeList.class;
 }
-//END SNIPPET: example
+// END SNIPPET: example

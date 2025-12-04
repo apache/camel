@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es.integration;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
@@ -49,27 +61,16 @@ import org.apache.camel.component.es.ElasticsearchOperation;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSupport {
 
     @Test
     void testIndexWithMap() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
@@ -81,66 +82,79 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testIndexWithString() {
-        //first, Index a value
-        String indexId = template.requestBody("direct:index", "{\"testIndexWithString\": \"some-value\"}", String.class);
+        // first, Index a value
+        String indexId =
+                template.requestBody("direct:index", "{\"testIndexWithString\": \"some-value\"}", String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
         assertTrue(((ObjectNode) response.source()).has("testIndexWithString"));
-        assertEquals("some-value", ((ObjectNode) response.source()).get("testIndexWithString").asText());
+        assertEquals(
+                "some-value",
+                ((ObjectNode) response.source()).get("testIndexWithString").asText());
     }
 
     @Test
     void testIndexWithReader() {
-        //first, Index a value
-        String indexId = template.requestBody("direct:index", new StringReader("{\"testIndexWithReader\": \"some-value\"}"),
-                String.class);
+        // first, Index a value
+        String indexId = template.requestBody(
+                "direct:index", new StringReader("{\"testIndexWithReader\": \"some-value\"}"), String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
         assertTrue(((ObjectNode) response.source()).has("testIndexWithReader"));
-        assertEquals("some-value", ((ObjectNode) response.source()).get("testIndexWithReader").asText());
+        assertEquals(
+                "some-value",
+                ((ObjectNode) response.source()).get("testIndexWithReader").asText());
     }
 
     @Test
     void testIndexWithBytes() {
-        //first, Index a value
-        String indexId = template.requestBody("direct:index",
-                "{\"testIndexWithBytes\": \"some-value\"}".getBytes(StandardCharsets.UTF_8), String.class);
+        // first, Index a value
+        String indexId = template.requestBody(
+                "direct:index",
+                "{\"testIndexWithBytes\": \"some-value\"}".getBytes(StandardCharsets.UTF_8),
+                String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
         assertTrue(((ObjectNode) response.source()).has("testIndexWithBytes"));
-        assertEquals("some-value", ((ObjectNode) response.source()).get("testIndexWithBytes").asText());
+        assertEquals(
+                "some-value",
+                ((ObjectNode) response.source()).get("testIndexWithBytes").asText());
     }
 
     @Test
     void testIndexWithInputStream() {
-        //first, Index a value
-        String indexId = template.requestBody("direct:index",
-                new ByteArrayInputStream("{\"testIndexWithInputStream\": \"some-value\"}".getBytes(StandardCharsets.UTF_8)),
+        // first, Index a value
+        String indexId = template.requestBody(
+                "direct:index",
+                new ByteArrayInputStream(
+                        "{\"testIndexWithInputStream\": \"some-value\"}".getBytes(StandardCharsets.UTF_8)),
                 String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
         assertTrue(((ObjectNode) response.source()).has("testIndexWithInputStream"));
-        assertEquals("some-value", ((ObjectNode) response.source()).get("testIndexWithInputStream").asText());
+        assertEquals(
+                "some-value",
+                ((ObjectNode) response.source()).get("testIndexWithInputStream").asText());
     }
 
     @Test
@@ -152,13 +166,13 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         product.setDescription("The book of the year!");
         product.setName("Guinness book of records 2021");
 
-        //first, Index a value
+        // first, Index a value
         String indexId = template.requestBody("direct:index-product", product, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
-        GetResponse<?> response = template.requestBodyAndHeader("direct:get", indexId,
-                ElasticsearchConstants.PARAM_DOCUMENT_CLASS, Product.class, GetResponse.class);
+        // now, verify GET succeeded
+        GetResponse<?> response = template.requestBodyAndHeader(
+                "direct:get", indexId, ElasticsearchConstants.PARAM_DOCUMENT_CLASS, Product.class, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(Product.class, response.source(), "response source should be a Product");
@@ -169,12 +183,12 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testGetWithString() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
@@ -183,7 +197,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testGetWithDocumentType() {
-        //first, Index a value
+        // first, Index a value
         Product product = new Product();
         product.setId("book-world-records-1890");
         product.setStockAvailable(0);
@@ -194,7 +208,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         String indexId = template.requestBody("direct:index", product, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBodyAndHeader(
                 "direct:get", indexId, ElasticsearchConstants.PARAM_DOCUMENT_CLASS, Product.class, GetResponse.class);
         assertNotNull(response, "response should not be null");
@@ -206,12 +220,12 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testMGetWithString() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         @SuppressWarnings("unchecked")
         List<MultiGetResponseItem<?>> response = template.requestBody("direct:multiget", List.of(indexId), List.class);
         assertNotNull(response, "response should not be null");
@@ -223,7 +237,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testMGetWithDocumentType() {
-        //first, Index a value
+        // first, Index a value
         Product product = new Product();
         product.setId("book-world-records-1890");
         product.setStockAvailable(0);
@@ -234,10 +248,14 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         String indexId = template.requestBody("direct:index", product, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         @SuppressWarnings("unchecked")
         List<MultiGetResponseItem<?>> response = template.requestBodyAndHeader(
-                "direct:multiget", List.of(indexId), ElasticsearchConstants.PARAM_DOCUMENT_CLASS, Product.class, List.class);
+                "direct:multiget",
+                List.of(indexId),
+                ElasticsearchConstants.PARAM_DOCUMENT_CLASS,
+                Product.class,
+                List.class);
         assertNotNull(response, "response should not be null");
         assertEquals(1, response.size(), "response should contain one result");
         assertTrue(response.get(0).isResult());
@@ -249,21 +267,21 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testDeleteWithString() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
 
-        //now, perform Delete
+        // now, perform Delete
         Result deleteResponse = template.requestBody("direct:delete", indexId, Result.class);
         assertNotNull(deleteResponse, "response should not be null");
 
-        //now, verify GET fails to find the indexed value
+        // now, verify GET fails to find the indexed value
         response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNull(response.source(), "response source should be null");
@@ -271,7 +289,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testSearchWithMapQuery() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map1 = Map.of("testSearchWithMapQuery1", "foo");
         Map<String, String> map2 = Map.of("testSearchWithMapQuery2", "bar");
         Map<String, Object> headers = new HashMap<>();
@@ -310,7 +328,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testSearchWithStringQuery() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map1 = Map.of("testSearchWithStringQuery1", "foo");
         Map<String, String> map2 = Map.of("testSearchWithStringQuery2", "bar");
         Map<String, Object> headers = new HashMap<>();
@@ -319,9 +337,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         template.requestBodyAndHeaders("direct:start", List.of(map1, map2), headers, String.class);
 
         // No match
-        String query = "{\n"
-                       + "    \"query\" : { \"match\" : { \"testSearchWithStringQuery1\" : \"bar\" }}\n"
-                       + "}\n";
+        String query = "{\n" + "    \"query\" : { \"match\" : { \"testSearchWithStringQuery1\" : \"bar\" }}\n" + "}\n";
 
         HitsMetadata<?> response = template.requestBody("direct:search", query, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
@@ -329,9 +345,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         assertEquals(0, response.total().value(), "response hits should be == 0");
 
         // Match
-        String q = "{\n"
-                   + "    \"query\" : { \"match\" : { \"testSearchWithStringQuery1\" : \"foo\" }}\n"
-                   + "}\n";
+        String q = "{\n" + "    \"query\" : { \"match\" : { \"testSearchWithStringQuery1\" : \"foo\" }}\n" + "}\n";
         // the result may see stale data so use Awaitility
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             HitsMetadata<?> resp = template.requestBody("direct:search", q, HitsMetadata.class);
@@ -349,19 +363,22 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testSearchWithBuilder() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map1 = Map.of("testSearchWithBuilder1", "foo");
         Map<String, String> map2 = Map.of("testSearchWithBuilder2", "bar");
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Bulk);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        template.requestBodyAndHeaders("direct:start", List.of(map1, map2), headers,
-                String.class);
+        template.requestBodyAndHeaders("direct:start", List.of(map1, map2), headers, String.class);
 
         // No match
         SearchRequest.Builder builder = new SearchRequest.Builder()
                 .query(new Query.Builder()
-                        .match(new MatchQuery.Builder().field("testSearchWithBuilder1").query("bar").build()).build());
+                        .match(new MatchQuery.Builder()
+                                .field("testSearchWithBuilder1")
+                                .query("bar")
+                                .build())
+                        .build());
         HitsMetadata<?> response = template.requestBody("direct:search", builder, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
@@ -372,7 +389,11 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             SearchRequest.Builder b = new SearchRequest.Builder()
                     .query(new Query.Builder()
-                            .match(new MatchQuery.Builder().field("testSearchWithBuilder1").query("foo").build()).build());
+                            .match(new MatchQuery.Builder()
+                                    .field("testSearchWithBuilder1")
+                                    .query("foo")
+                                    .build())
+                            .build());
 
             HitsMetadata<?> resp = template.requestBody("direct:search", b, HitsMetadata.class);
             assertNotNull(resp, "response should not be null");
@@ -389,7 +410,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testSearchWithDocumentType() {
-        //first, Index a value
+        // first, Index a value
         Product product1 = new Product();
         product1.setId("book-world-records-2020");
         product1.setStockAvailable(1);
@@ -410,9 +431,15 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
         // No match
         SearchRequest.Builder builder = new SearchRequest.Builder()
-                .query(new Query.Builder().match(new MatchQuery.Builder().field("id").query("bar").build()).build());
+                .query(new Query.Builder()
+                        .match(new MatchQuery.Builder().field("id").query("bar").build())
+                        .build());
         HitsMetadata<?> response = template.requestBodyAndHeader(
-                "direct:search", builder, ElasticsearchConstants.PARAM_DOCUMENT_CLASS, Product.class, HitsMetadata.class);
+                "direct:search",
+                builder,
+                ElasticsearchConstants.PARAM_DOCUMENT_CLASS,
+                Product.class,
+                HitsMetadata.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
         assertEquals(0, response.total().value(), "response hits should be == 0");
@@ -421,7 +448,12 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         // the result may see stale data so use Awaitility
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             SearchRequest.Builder b = new SearchRequest.Builder()
-                    .query(new Query.Builder().match(new MatchQuery.Builder().field("id").query("2020").build()).build());
+                    .query(new Query.Builder()
+                            .match(new MatchQuery.Builder()
+                                    .field("id")
+                                    .query("2020")
+                                    .build())
+                            .build());
 
             HitsMetadata<?> resp = template.requestBodyAndHeader(
                     "direct:search", b, ElasticsearchConstants.PARAM_DOCUMENT_CLASS, Product.class, HitsMetadata.class);
@@ -438,19 +470,29 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testMultiSearch() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         // the result may see stale data so use Awaitility
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            //now, verify GET succeeded
-            MsearchRequest.Builder builder = new MsearchRequest.Builder().index("twitter").searches(
-                    new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new SearchRequestBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
-                    new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new SearchRequestBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
+            // now, verify GET succeeded
+            MsearchRequest.Builder builder = new MsearchRequest.Builder()
+                    .index("twitter")
+                    .searches(
+                            new RequestItem.Builder()
+                                    .header(new MultisearchHeader.Builder().build())
+                                    .body(new SearchRequestBody.Builder()
+                                            .query(b -> b.matchAll(x -> x))
+                                            .build())
+                                    .build(),
+                            new RequestItem.Builder()
+                                    .header(new MultisearchHeader.Builder().build())
+                                    .body(new SearchRequestBody.Builder()
+                                            .query(b -> b.matchAll(x -> x))
+                                            .build())
+                                    .build());
             @SuppressWarnings("unchecked")
             List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSearch", builder, List.class);
             assertNotNull(response, "response should not be null");
@@ -468,31 +510,44 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testMultiSearchWithDocumentType() {
-        //first, Index a value
+        // first, Index a value
         Product product = new Product();
         product.setId("book-world-records-2022");
         product.setStockAvailable(1);
         product.setPrice(100);
         product.setDescription("The book of the year!");
         product.setName("Guinness book of records 2022");
-        String indexId = template.requestBodyAndHeader("direct:index", product, ElasticsearchConstants.PARAM_INDEX_NAME,
-                "multi-search", String.class);
+        String indexId = template.requestBodyAndHeader(
+                "direct:index", product, ElasticsearchConstants.PARAM_INDEX_NAME, "multi-search", String.class);
         assertNotNull(indexId, "indexId should be set");
 
         // the result may see stale data so use Awaitility
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            //now, verify GET succeeded
-            MsearchRequest.Builder builder = new MsearchRequest.Builder().index("multi-search").searches(
-                    new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new SearchRequestBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
-                    new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new SearchRequestBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
+            // now, verify GET succeeded
+            MsearchRequest.Builder builder = new MsearchRequest.Builder()
+                    .index("multi-search")
+                    .searches(
+                            new RequestItem.Builder()
+                                    .header(new MultisearchHeader.Builder().build())
+                                    .body(new SearchRequestBody.Builder()
+                                            .query(b -> b.matchAll(x -> x))
+                                            .build())
+                                    .build(),
+                            new RequestItem.Builder()
+                                    .header(new MultisearchHeader.Builder().build())
+                                    .body(new SearchRequestBody.Builder()
+                                            .query(b -> b.matchAll(x -> x))
+                                            .build())
+                                    .build());
             @SuppressWarnings("unchecked")
             List<MultiSearchResponseItem<?>> response = template.requestBodyAndHeaders(
-                    "direct:multiSearch", builder,
+                    "direct:multiSearch",
+                    builder,
                     Map.of(
-                            ElasticsearchConstants.PARAM_INDEX_NAME, "multi-search",
-                            ElasticsearchConstants.PARAM_DOCUMENT_CLASS, Product.class),
+                            ElasticsearchConstants.PARAM_INDEX_NAME,
+                            "multi-search",
+                            ElasticsearchConstants.PARAM_DOCUMENT_CLASS,
+                            Product.class),
                     List.class);
             assertNotNull(response, "response should not be null");
             assertEquals(2, response.size(), "response should be == 2");
@@ -520,13 +575,15 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         indexId = template.requestBodyAndHeaders("direct:update", Map.of("doc", newMap), headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
         assertTrue(((ObjectNode) response.source()).has(createPrefix() + "key2"));
-        assertEquals(createPrefix() + "value2", ((ObjectNode) response.source()).get(createPrefix() + "key2").asText());
+        assertEquals(
+                createPrefix() + "value2",
+                ((ObjectNode) response.source()).get(createPrefix() + "key2").asText());
     }
 
     @Test
@@ -543,18 +600,20 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         indexId = template.requestBodyAndHeaders("direct:update", newMap, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        //now, verify GET succeeded
+        // now, verify GET succeeded
         GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
         assertTrue(((ObjectNode) response.source()).has(createPrefix() + "key2"));
-        assertEquals(createPrefix() + "value2", ((ObjectNode) response.source()).get(createPrefix() + "key2").asText());
+        assertEquals(
+                createPrefix() + "value2",
+                ((ObjectNode) response.source()).get(createPrefix() + "key2").asText());
     }
 
     @Test
     void testGetWithHeaders() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
@@ -562,7 +621,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
-        //now, verify GET
+        // now, verify GET
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.GetById);
         GetResponse<?> response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull(response, "response should not be null");
@@ -571,7 +630,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testExistsWithHeaders() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
@@ -579,7 +638,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
         template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
-        //now, verify GET
+        // now, verify GET
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Exists);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         Boolean exists = template.requestBodyAndHeaders("direct:exists", "", headers, Boolean.class);
@@ -599,7 +658,7 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
     @Test
     void testDeleteWithHeaders() {
-        //first, Index a value
+        // first, Index a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
@@ -607,19 +666,18 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
-        //now, verify GET
+        // now, verify GET
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.GetById);
         GetResponse<?> response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
 
-        //now, perform Delete
+        // now, perform Delete
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Delete);
-        Result deleteResponse
-                = template.requestBodyAndHeaders("direct:start", indexId, headers, Result.class);
+        Result deleteResponse = template.requestBodyAndHeaders("direct:start", indexId, headers, Result.class);
         assertEquals(Result.Deleted, deleteResponse, "response should not be null");
 
-        //now, verify GET fails to find the indexed value
+        // now, verify GET fails to find the indexed value
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.GetById);
         response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull(response, "response should not be null");
@@ -673,14 +731,14 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         GetRequest.Builder builder = new GetRequest.Builder().index(prefix + "foo");
 
         // when
-        String documentId = template.requestBody("direct:index",
+        String documentId = template.requestBody(
+                "direct:index",
                 new IndexRequest.Builder<>()
                         .index(prefix + "foo")
                         .id(prefix + "testId")
                         .document(Map.of(prefix + "content", prefix + "hello")),
                 String.class);
-        GetResponse<?> response = template.requestBody("direct:get",
-                builder.id(documentId), GetResponse.class);
+        GetResponse<?> response = template.requestBody("direct:get", builder.id(documentId), GetResponse.class);
 
         // then
         assertThat(response, notNullValue());
@@ -696,7 +754,8 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         String prefix = createPrefix();
 
         // given
-        String documentId = template.requestBody("direct:index",
+        String documentId = template.requestBody(
+                "direct:index",
                 new IndexRequest.Builder<>()
                         .index(prefix + "foo")
                         .id(prefix + "testId")
@@ -709,9 +768,10 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         assertNotNull(getResponse.source(), "response source should not be null");
 
         // when
-        Result response
-                = template.requestBody("direct:delete", new DeleteRequest.Builder().index(prefix + "foo").id(documentId),
-                        Result.class);
+        Result response = template.requestBody(
+                "direct:delete",
+                new DeleteRequest.Builder().index(prefix + "foo").id(documentId),
+                Result.class);
 
         // then
         assertThat(response, equalTo(Result.Deleted));
@@ -809,8 +869,8 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
         String key = map.keySet().iterator().next();
-        Object body
-                = String.format("{ \"doc\": {\"%s\" : \"testUpdateWithBytes-updated\"}}", key).getBytes(StandardCharsets.UTF_8);
+        Object body = String.format("{ \"doc\": {\"%s\" : \"testUpdateWithBytes-updated\"}}", key)
+                .getBytes(StandardCharsets.UTF_8);
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
@@ -830,8 +890,8 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
         String key = map.keySet().iterator().next();
-        Object body
-                = String.format("{\"%s\" : \"testUpdateWithBytes-updated\"}", key).getBytes(StandardCharsets.UTF_8);
+        Object body =
+                String.format("{\"%s\" : \"testUpdateWithBytes-updated\"}", key).getBytes(StandardCharsets.UTF_8);
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
@@ -874,9 +934,8 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
         String key = map.keySet().iterator().next();
-        Object body = new ByteArrayInputStream(
-                String.format("{\"%s\" : \"testUpdateWithInputStream-updated\"}", key)
-                        .getBytes(StandardCharsets.UTF_8));
+        Object body = new ByteArrayInputStream(String.format("{\"%s\" : \"testUpdateWithInputStream-updated\"}", key)
+                .getBytes(StandardCharsets.UTF_8));
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
@@ -930,29 +989,20 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("elasticsearch://elasticsearch?operation=Index");
-                from("direct:index")
-                        .to("elasticsearch://elasticsearch?operation=Index&indexName=twitter");
+                from("direct:start").to("elasticsearch://elasticsearch?operation=Index");
+                from("direct:index").to("elasticsearch://elasticsearch?operation=Index&indexName=twitter");
                 from("direct:index-product")
-                        .toF("elasticsearch://elasticsearch?operation=Index&indexName=twitter&documentClass=%s",
+                        .toF(
+                                "elasticsearch://elasticsearch?operation=Index&indexName=twitter&documentClass=%s",
                                 Product.class.getName());
-                from("direct:get")
-                        .to("elasticsearch://elasticsearch?operation=GetById&indexName=twitter");
-                from("direct:multiget")
-                        .to("elasticsearch://elasticsearch?operation=MultiGet&indexName=twitter");
-                from("direct:delete")
-                        .to("elasticsearch://elasticsearch?operation=Delete&indexName=twitter");
-                from("direct:search")
-                        .to("elasticsearch://elasticsearch?operation=Search&indexName=twitter");
-                from("direct:search-1")
-                        .to("elasticsearch://elasticsearch?operation=Search");
-                from("direct:multiSearch")
-                        .to("elasticsearch://elasticsearch?operation=MultiSearch");
-                from("direct:update")
-                        .to("elasticsearch://elasticsearch?operation=Update&indexName=twitter");
-                from("direct:exists")
-                        .to("elasticsearch://elasticsearch?operation=Exists");
+                from("direct:get").to("elasticsearch://elasticsearch?operation=GetById&indexName=twitter");
+                from("direct:multiget").to("elasticsearch://elasticsearch?operation=MultiGet&indexName=twitter");
+                from("direct:delete").to("elasticsearch://elasticsearch?operation=Delete&indexName=twitter");
+                from("direct:search").to("elasticsearch://elasticsearch?operation=Search&indexName=twitter");
+                from("direct:search-1").to("elasticsearch://elasticsearch?operation=Search");
+                from("direct:multiSearch").to("elasticsearch://elasticsearch?operation=MultiSearch");
+                from("direct:update").to("elasticsearch://elasticsearch?operation=Update&indexName=twitter");
+                from("direct:exists").to("elasticsearch://elasticsearch?operation=Exists");
             }
         };
     }
@@ -1015,8 +1065,10 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
                 return false;
             }
             Product product = (Product) o;
-            return Double.compare(product.price, price) == 0 && stockAvailable == product.stockAvailable
-                    && Objects.equals(id, product.id) && Objects.equals(name, product.name)
+            return Double.compare(product.price, price) == 0
+                    && stockAvailable == product.stockAvailable
+                    && Objects.equals(id, product.id)
+                    && Objects.equals(name, product.name)
                     && Objects.equals(description, product.description);
         }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts;
 
 import org.apache.camel.Category;
@@ -32,11 +33,14 @@ import software.amazon.awssdk.services.sts.StsClient;
 /**
  * Manage AWS STS cluster instances.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "aws2-sts", title = "AWS Security Token Service (STS)",
-             syntax = "aws2-sts:label", producerOnly = true, category = {
-                     Category.CLOUD,
-                     Category.MANAGEMENT },
-             headersClass = STS2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.5.0",
+        scheme = "aws2-sts",
+        title = "AWS Security Token Service (STS)",
+        syntax = "aws2-sts:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = STS2Constants.class)
 public class STS2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private StsClient stsClient;

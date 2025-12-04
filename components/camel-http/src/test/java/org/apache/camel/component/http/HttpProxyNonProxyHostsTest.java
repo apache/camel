@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -44,9 +48,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test that verifies HTTP requests can use a proxy and honor the http.nonProxyHosts system property.
  */
@@ -58,8 +59,7 @@ public class HttpProxyNonProxyHostsTest extends BaseHttpTest {
     private final AtomicInteger targetRequestCount = new AtomicInteger(0);
     private String originalNonProxyHosts;
 
-    public HttpProxyNonProxyHostsTest() throws UnknownHostException {
-    }
+    public HttpProxyNonProxyHostsTest() throws UnknownHostException {}
 
     @BeforeEach
     @Override
@@ -95,12 +95,12 @@ public class HttpProxyNonProxyHostsTest extends BaseHttpTest {
     @Override
     protected HttpProcessor getBasicHttpProcessor() {
         List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();
-        requestInterceptors.add(new RequestContent());       // Handles Content-Length/Transfer-Encoding
-        requestInterceptors.add(new RequestConnControl());   // Handles Connection: Keep-Alive
+        requestInterceptors.add(new RequestContent()); // Handles Content-Length/Transfer-Encoding
+        requestInterceptors.add(new RequestConnControl()); // Handles Connection: Keep-Alive
         requestInterceptors.add(new RequestExpectContinue()); // Handles Expect: 100-continue
 
         List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
-        responseInterceptors.add(new ResponseContent());     // Handles outgoing entity headers
+        responseInterceptors.add(new ResponseContent()); // Handles outgoing entity headers
         responseInterceptors.add(new ResponseConnControl()); // Handles outgoing connection headers
 
         return new DefaultHttpProcessor(requestInterceptors, responseInterceptors);
@@ -114,10 +114,9 @@ public class HttpProxyNonProxyHostsTest extends BaseHttpTest {
         // Make a request through the proxy to localhost
         Exchange exchange = template.request(
                 "http://localhost:" + targetServer.getLocalPort() + "/test"
-                                             + "?proxyHost=127.0.0.1"
-                                             + "&proxyPort=" + proxy.getLocalPort(),
-                exchange1 -> {
-                });
+                        + "?proxyHost=127.0.0.1"
+                        + "&proxyPort=" + proxy.getLocalPort(),
+                exchange1 -> {});
 
         assertExchange(exchange);
 
@@ -134,11 +133,10 @@ public class HttpProxyNonProxyHostsTest extends BaseHttpTest {
         // Make a request with proxy configured but target is localhost (should bypass proxy)
         Exchange exchange = template.request(
                 "http://localhost:" + targetServer.getLocalPort() + "/test"
-                                             + "?proxyHost=127.0.0.1"
-                                             + "&proxyPort=" + proxy.getLocalPort()
-                                             + "&nonProxyHosts=localhost",
-                exchange1 -> {
-                });
+                        + "?proxyHost=127.0.0.1"
+                        + "&proxyPort=" + proxy.getLocalPort()
+                        + "&nonProxyHosts=localhost",
+                exchange1 -> {});
 
         assertExchange(exchange);
 
@@ -155,10 +153,9 @@ public class HttpProxyNonProxyHostsTest extends BaseHttpTest {
         // Make a request to localhost with proxy configured (should bypass proxy)
         Exchange exchange = template.request(
                 "http://localhost:" + targetServer.getLocalPort() + "/test"
-                                             + "?proxyHost=127.0.0.1&proxyPort=" + proxy.getLocalPort()
-                                             + "&nonProxyHosts=xample.com,localhost,*.internal",
-                exchange1 -> {
-                });
+                        + "?proxyHost=127.0.0.1&proxyPort=" + proxy.getLocalPort()
+                        + "&nonProxyHosts=xample.com,localhost,*.internal",
+                exchange1 -> {});
 
         assertExchange(exchange);
 
@@ -172,8 +169,7 @@ public class HttpProxyNonProxyHostsTest extends BaseHttpTest {
      */
     private class ProxyServerHandler implements HttpRequestHandler {
         @Override
-        public void handle(
-                ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
+        public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                 throws HttpException, IOException {
             proxyRequestCount.incrementAndGet();
 
@@ -188,8 +184,7 @@ public class HttpProxyNonProxyHostsTest extends BaseHttpTest {
      */
     private class TargetServerHandler implements HttpRequestHandler {
         @Override
-        public void handle(
-                ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
+        public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                 throws HttpException, IOException {
             targetRequestCount.incrementAndGet();
 

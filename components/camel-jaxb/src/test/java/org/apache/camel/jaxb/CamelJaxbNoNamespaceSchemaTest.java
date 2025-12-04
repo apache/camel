@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,8 +25,6 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
 
@@ -39,7 +40,8 @@ public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertTrue(body.contains("noNamespaceSchemaLocation=\"person-no-namespace.xsd\""),
+        assertTrue(
+                body.contains("noNamespaceSchemaLocation=\"person-no-namespace.xsd\""),
                 "We should get the noNamespaceSchemaLocation here");
     }
 
@@ -52,12 +54,8 @@ public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
                 dataFormat.setNoNamespaceSchemaLocation("person-no-namespace.xsd");
                 dataFormat.setIgnoreJAXBElement(false);
 
-                from("direct:marshal")
-                        .marshal(dataFormat)
-                        .to("mock:result");
-
+                from("direct:marshal").marshal(dataFormat).to("mock:result");
             }
         };
     }
-
 }

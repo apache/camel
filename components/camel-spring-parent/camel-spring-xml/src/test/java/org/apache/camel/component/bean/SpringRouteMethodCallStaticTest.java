@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
-import org.apache.camel.CamelContext;
-
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
+import org.apache.camel.CamelContext;
 
 /**
  *

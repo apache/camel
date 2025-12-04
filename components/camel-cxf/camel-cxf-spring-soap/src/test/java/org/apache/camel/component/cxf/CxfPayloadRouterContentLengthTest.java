@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -41,10 +46,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfPayloadRouterContentLengthTest.class);
@@ -60,13 +61,15 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
      * will be defined within the payload (and everything works fine).
      */
     private static final String RESPONSE_STRING = "This is the response string";
-    private static final String RESPONSE_MESSAGE = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body>"
-                                                   + "<ns0:payload xmlns:ns0=\"http://schema.apache.org/test\"><ns0:response>"
-                                                   + RESPONSE_STRING + "</ns0:response></ns0:payload>"
-                                                   + "</s:Body></s:Envelope>";
-    private static final String REQUEST_MESSAGE = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body>"
-                                                  + "<ns0:payload xmlns:ns0=\"http://schema.apache.org/test\"><ns0:request>foo</ns0:request></ns0:payload>"
-                                                  + "</s:Body></s:Envelope>";
+    private static final String RESPONSE_MESSAGE =
+            "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body>"
+                    + "<ns0:payload xmlns:ns0=\"http://schema.apache.org/test\"><ns0:response>"
+                    + RESPONSE_STRING + "</ns0:response></ns0:payload>"
+                    + "</s:Body></s:Envelope>";
+    private static final String REQUEST_MESSAGE =
+            "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body>"
+                    + "<ns0:payload xmlns:ns0=\"http://schema.apache.org/test\"><ns0:request>foo</ns0:request></ns0:payload>"
+                    + "</s:Body></s:Envelope>";
 
     // The Camel-Test with CXF will re-use undertow instances, so the ports1 to 6 are already blocked
     private static final int UNDERTOW_PORT = AvailablePortFinder.getNextAvailable();
@@ -92,8 +95,9 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
                     public void handleRequest(HttpServerExchange httpServerExchange) throws Exception {
                         httpServerExchange.getResponseHeaders().put(new HttpString("Content-Type"), "text/html");
                         // the Content-Length is correct for this response message
-                        httpServerExchange.getResponseHeaders().put(new HttpString("Content-Length"),
-                                RESPONSE_MESSAGE.length());
+                        httpServerExchange
+                                .getResponseHeaders()
+                                .put(new HttpString("Content-Length"), RESPONSE_MESSAGE.length());
                         httpServerExchange.setResponseContentLength(RESPONSE_MESSAGE.length());
                         httpServerExchange.setStatusCode(HttpServletResponse.SC_OK);
 
@@ -138,7 +142,8 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
         HttpPost httppost = new HttpPost("http://localhost:" + CXFTestSupport.getPort1() + "/TEST/PROXY");
         StringEntity reqEntity = new StringEntity(REQUEST_MESSAGE, ContentType.TEXT_XML, false);
         httppost.setEntity(reqEntity);
-        try (httpclient; CloseableHttpResponse response = httpclient.execute(httppost)) {
+        try (httpclient;
+                CloseableHttpResponse response = httpclient.execute(httppost)) {
             HttpEntity respEntity = response.getEntity();
             contentLength = respEntity.getContentLength();
             isChunked = respEntity.isChunked();
@@ -150,16 +155,19 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
         if (!isChunked) {
             assertEquals(receivedContent.length(), contentLength);
         }
-        assertTrue(receivedContent.contains(RESPONSE_STRING),
+        assertTrue(
+                receivedContent.contains(RESPONSE_STRING),
                 "[" + receivedContent + "] does not contain [" + RESPONSE_STRING + "]");
         // check whether the response was cut off by the client because the
         // Content-Length was wrong
-        assertTrue(receivedContent.matches(".*</.*:Envelope>"),
+        assertTrue(
+                receivedContent.matches(".*</.*:Envelope>"),
                 "[" + receivedContent + "] does not contain the closing Envelope tag.");
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfPayloadRouterContentLengthBeans.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/CxfPayloadRouterContentLengthBeans.xml");
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,8 +25,6 @@ import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JpaProducerFindEntityTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -65,7 +66,9 @@ public class JpaProducerFindEntityTest extends AbstractJpaTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("jpa://" + SendEmail.class.getName() + "?findEntity=true").to("mock:result");
+                from("direct:start")
+                        .to("jpa://" + SendEmail.class.getName() + "?findEntity=true")
+                        .to("mock:result");
             }
         };
     }
@@ -79,5 +82,4 @@ public class JpaProducerFindEntityTest extends AbstractJpaTest {
     protected String selectAllString() {
         return SELECT_ALL_STRING;
     }
-
 }

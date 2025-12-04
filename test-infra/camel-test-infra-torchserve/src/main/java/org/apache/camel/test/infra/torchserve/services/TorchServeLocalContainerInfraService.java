@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.torchserve.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -28,25 +29,26 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-@InfraService(service = TorchServeInfraService.class,
-              description = "TorchServe is a flexible tool for serving PyTorch",
-              serviceAlias = { "torch-serve" })
-public class TorchServeLocalContainerInfraService implements TorchServeInfraService, ContainerService<GenericContainer<?>> {
+@InfraService(
+        service = TorchServeInfraService.class,
+        description = "TorchServe is a flexible tool for serving PyTorch",
+        serviceAlias = {"torch-serve"})
+public class TorchServeLocalContainerInfraService
+        implements TorchServeInfraService, ContainerService<GenericContainer<?>> {
     private static final Logger LOG = LoggerFactory.getLogger(TorchServeLocalContainerInfraService.class);
 
     public static final int INFERENCE_PORT = 8080;
     public static final int MANAGEMENT_PORT = 8081;
     public static final int METRICS_PORT = 8082;
 
-    private static final String CONTAINER_COMMAND
-            = "torchserve --ncs --disable-token-auth --enable-model-api --model-store /home/model-server/model-store --models squeezenet1_1.mar";
+    private static final String CONTAINER_COMMAND =
+            "torchserve --ncs --disable-token-auth --enable-model-api --model-store /home/model-server/model-store --models squeezenet1_1.mar";
 
     private final GenericContainer<?> container;
 
     public TorchServeLocalContainerInfraService() {
         String imageName = LocalPropertyResolver.getProperty(
-                TorchServeLocalContainerInfraService.class,
-                TorchServeProperties.TORCHSERVE_CONTAINER);
+                TorchServeLocalContainerInfraService.class, TorchServeProperties.TORCHSERVE_CONTAINER);
 
         container = initContainer(imageName);
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
@@ -62,8 +64,8 @@ public class TorchServeLocalContainerInfraService implements TorchServeInfraServ
                 super(DockerImageName.parse(imageName));
 
                 withCopyFileToContainer(
-                        MountableFile.forClasspathResource("config.properties"),
-                        "/home/model-server/config.properties")
+                                MountableFile.forClasspathResource("config.properties"),
+                                "/home/model-server/config.properties")
                         .withCopyFileToContainer(
                                 MountableFile.forClasspathResource("models/squeezenet1_1.mar"),
                                 "/home/model-server/model-store/squeezenet1_1.mar")

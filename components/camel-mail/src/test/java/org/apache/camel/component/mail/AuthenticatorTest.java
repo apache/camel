@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -33,8 +36,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AuthenticatorTest extends CamelTestSupport {
     private static final MailboxUser james3 = Mailbox.getOrCreateUser("james3", "secret");
@@ -57,7 +58,7 @@ public class AuthenticatorTest extends CamelTestSupport {
     private String callAndCheck(String endpoint) throws MessagingException, InterruptedException {
         MockEndpoint resultEndpoint = getMockEndpoint(endpoint);
         resultEndpoint.expectedMinimumMessageCount(1);
-        //resultEndpoint.setResultWaitTime(60000);
+        // resultEndpoint.setResultWaitTime(60000);
         String body = "hello world!";
         execute(james3.getEmail(), body);
 
@@ -78,7 +79,6 @@ public class AuthenticatorTest extends CamelTestSupport {
         message.setRecipients(Message.RecipientType.TO, mailAddress);
 
         Transport.send(message, james3.getLogin(), james3.getPassword());
-
     }
 
     protected void populateMimeMessageBody(MimeMessage message, String body) throws MessagingException {
@@ -118,11 +118,13 @@ public class AuthenticatorTest extends CamelTestSupport {
                 onException(MessagingException.class).handled(true).to("mock:exception");
 
                 from("pop3://localhost:" + Mailbox.getPort(Protocol.pop3)
-                     + "?initialDelay=100&delay=100&authenticator=#authPop3").removeHeader("to")
+                                + "?initialDelay=100&delay=100&authenticator=#authPop3")
+                        .removeHeader("to")
                         .to("smtp://localhost:" + Mailbox.getPort(Protocol.smtp)
-                            + "?authenticator=#authSmtp&to=james4@localhost");
+                                + "?authenticator=#authSmtp&to=james4@localhost");
                 from("imap://localhost:" + Mailbox.getPort(Protocol.imap)
-                     + "?initialDelay=200&delay=100&authenticator=#authImap").convertBodyTo(String.class)
+                                + "?initialDelay=200&delay=100&authenticator=#authImap")
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
@@ -146,7 +148,8 @@ public class AuthenticatorTest extends CamelTestSupport {
                     counter++;
                     return auth(james4);
                 } else if (counter < 4) {
-                    // return in the second call the wrongPassword which will throw an MessagingException, see MyMockTransport
+                    // return in the second call the wrongPassword which will throw an MessagingException, see
+                    // MyMockTransport
                     counter++;
                     return new PasswordAuthentication("james4", "wrongPassword");
                 } else {
@@ -157,7 +160,6 @@ public class AuthenticatorTest extends CamelTestSupport {
             } else {
                 throw new IllegalStateException("not supported protocol " + protocol);
             }
-
         }
 
         private static PasswordAuthentication auth(MailboxUser user) {

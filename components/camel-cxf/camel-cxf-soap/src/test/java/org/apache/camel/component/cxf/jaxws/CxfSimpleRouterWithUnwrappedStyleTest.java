@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.cxf.frontend.ClientFactoryBean;
@@ -23,11 +26,9 @@ import org.apache.cxf.frontend.ServerFactoryBean;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Disabled("As the refelection can't tell the paramenter name from SEI without annonation, "
-          + "CXF cannot send a meaningful request for unwrapped message."
-          + " We need to use the annontated SEI for testing")
+        + "CXF cannot send a meaningful request for unwrapped message."
+        + " We need to use the annontated SEI for testing")
 public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
 
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&wrappedStyle=false";
@@ -60,7 +61,8 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
     }
 
     @Override
-    @Disabled("Ignore the invocation without parameter, as the document-literal doesn't support the invocation without parameter")
+    @Disabled(
+            "Ignore the invocation without parameter, as the document-literal doesn't support the invocation without parameter")
     public void testOnwayInvocation() {
         // NO-OP
     }
@@ -74,7 +76,5 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
         // The below invocation is failed with CXF 2.6.1 as the request are all start with <arg0>
         String str = client.echo("hello world");
         assertEquals("echo hello world", str, "we should get the right answer from router");
-
     }
-
 }

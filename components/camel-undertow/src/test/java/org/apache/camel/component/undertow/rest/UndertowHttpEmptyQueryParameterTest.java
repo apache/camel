@@ -14,21 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class UndertowHttpEmptyQueryParameterTest extends BaseUndertowTest {
 
     @Test
     public void testEmpty() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived("id", 123);
-        String out = fluentTemplate.to("undertow:http://localhost:{{port}}/foo?id=123").request(String.class);
+        String out = fluentTemplate
+                .to("undertow:http://localhost:{{port}}/foo?id=123")
+                .request(String.class);
         assertEquals("Header: 123", out);
         MockEndpoint.assertIsSatisfied(context);
 
@@ -47,9 +50,9 @@ public class UndertowHttpEmptyQueryParameterTest extends BaseUndertowTest {
             public void configure() {
                 from("undertow:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
-                        .transform().simple("Header: ${header.id}");
+                        .transform()
+                        .simple("Header: ${header.id}");
             }
         };
     }
-
 }

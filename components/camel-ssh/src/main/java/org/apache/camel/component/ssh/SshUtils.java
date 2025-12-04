@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
+
+import static java.util.stream.Collectors.joining;
+import static org.apache.sshd.common.util.GenericUtils.isBlank;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,18 +50,16 @@ import org.apache.sshd.common.signature.SignatureFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.stream.Collectors.joining;
-import static org.apache.sshd.common.util.GenericUtils.isBlank;
-
 public class SshUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SshUtils.class);
 
     public static <S> List<NamedFactory<S>> filter(
-            Class<S> type,
-            Collection<NamedFactory<S>> factories, String[] names) {
+            Class<S> type, Collection<NamedFactory<S>> factories, String[] names) {
         List<NamedFactory<S>> list = new ArrayList<>();
-        LOGGER.trace("List of available {} algorithms : {}", type.getSimpleName().toLowerCase(),
+        LOGGER.trace(
+                "List of available {} algorithms : {}",
+                type.getSimpleName().toLowerCase(),
                 factories.stream().map(NamedResource::getName).collect(joining(",")));
         for (String name : names) {
             name = name.trim();
@@ -70,7 +72,8 @@ public class SshUtils {
                 }
             }
             if (!found) {
-                LOGGER.warn("Configured {} '{}' not available", type.getSimpleName().toLowerCase(), name);
+                LOGGER.warn(
+                        "Configured {} '{}' not available", type.getSimpleName().toLowerCase(), name);
             }
         }
         return list;
@@ -78,7 +81,8 @@ public class SshUtils {
 
     public static List<KeyExchangeFactory> filter(List<KeyExchangeFactory> factories, String[] names) {
         List<KeyExchangeFactory> list = new ArrayList<>();
-        LOGGER.info("List of available kex algorithms : {}",
+        LOGGER.info(
+                "List of available kex algorithms : {}",
                 factories.stream().map(NamedResource::getName).collect(joining(",")));
 
         for (String name : names) {
@@ -156,7 +160,8 @@ public class SshUtils {
         Set<CompressionFactory> allCompressionFactories = new HashSet<>();
         allCompressionFactories.addAll(builtIn);
         allCompressionFactories.addAll(registered);
-        List<NamedFactory<Compression>> avail = (List) NamedFactory.setUpBuiltinFactories(false, allCompressionFactories);
+        List<NamedFactory<Compression>> avail =
+                (List) NamedFactory.setUpBuiltinFactories(false, allCompressionFactories);
         factoryManager.setCompressionFactories(filter(Compression.class, avail, names.split(",")));
     }
 
@@ -167,5 +172,4 @@ public class SshUtils {
         configureMacs(configuration.getMacs(), client);
         configureCompressions(configuration.getCompressions(), client);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,11 +34,11 @@ public class RestPropertyDefinition {
 
     @XmlAttribute(required = true)
     private String key;
+
     @XmlAttribute(required = true)
     private String value;
 
-    public RestPropertyDefinition() {
-    }
+    public RestPropertyDefinition() {}
 
     public RestPropertyDefinition(String key, String value) {
         this.key = key;

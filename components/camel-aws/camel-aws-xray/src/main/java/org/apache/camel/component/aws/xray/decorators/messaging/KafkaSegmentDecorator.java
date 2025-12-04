@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray.decorators.messaging;
 
 import java.util.Map;
@@ -33,6 +34,7 @@ public class KafkaSegmentDecorator extends AbstractMessagingSegmentDecorator {
      * Constants copied from {@link org.apache.camel.component.kafka.KafkaConstants}
      */
     protected static final String PARTITION_KEY = "kafka.PARTITION_KEY";
+
     protected static final String PARTITION = "kafka.PARTITION";
     protected static final String KEY = "kafka.KEY";
     protected static final String TOPIC = "kafka.TOPIC";

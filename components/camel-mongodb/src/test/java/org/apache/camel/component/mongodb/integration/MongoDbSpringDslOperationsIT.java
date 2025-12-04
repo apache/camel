@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
 
 import org.apache.camel.CamelContext;
@@ -31,7 +32,8 @@ public class MongoDbSpringDslOperationsIT extends MongoDbOperationsIT {
         applicationContext.getBeanFactory().registerSingleton("myDb", mongo);
 
         XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
-        xmlReader.loadBeanDefinitions(new ClassPathResource("org/apache/camel/component/mongodb/mongoBasicOperationsTest.xml"));
+        xmlReader.loadBeanDefinitions(
+                new ClassPathResource("org/apache/camel/component/mongodb/mongoBasicOperationsTest.xml"));
 
         applicationContext.refresh();
 

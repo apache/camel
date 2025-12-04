@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Formatter;
 import java.util.LinkedHashMap;
@@ -43,9 +47,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractMongoDbITSupport implements ConfigurableContext {
 
@@ -143,7 +144,7 @@ public abstract class AbstractMongoDbITSupport implements ConfigurableContext {
             Map<String, Object> commandArguments = new LinkedHashMap<>();
             commandArguments.put("createUser", user);
             commandArguments.put("pwd", password);
-            String[] roles = { "readWrite" };
+            String[] roles = {"readWrite"};
             commandArguments.put("roles", roles);
             BasicDBObject command = new BasicDBObject(commandArguments);
             db.runCommand(command);
@@ -152,14 +153,16 @@ public abstract class AbstractMongoDbITSupport implements ConfigurableContext {
 
     protected void pumpDataIntoTestCollection() {
         // there should be 100 of each
-        String[] scientists
-                = { "Einstein", "Darwin", "Copernicus", "Pasteur", "Curie", "Faraday", "Newton", "Bohr", "Galilei", "Maxwell" };
+        String[] scientists = {
+            "Einstein", "Darwin", "Copernicus", "Pasteur", "Curie", "Faraday", "Newton", "Bohr", "Galilei", "Maxwell"
+        };
         for (int i = 1; i <= 1000; i++) {
             int index = i % scientists.length;
             Formatter f = new Formatter();
-            String doc
-                    = f.format("{\"_id\":\"%d\", \"scientist\":\"%s\", \"fixedField\": \"fixedValue\"}", i, scientists[index])
-                            .toString();
+            String doc = f.format(
+                            "{\"_id\":\"%d\", \"scientist\":\"%s\", \"fixedField\": \"fixedValue\"}",
+                            i, scientists[index])
+                    .toString();
             IOHelper.close(f);
             testCollection.insertOne(Document.parse(doc));
         }
@@ -171,9 +174,10 @@ public abstract class AbstractMongoDbITSupport implements ConfigurableContext {
         assertTrue(exc instanceof CamelMongoDbException, "Result is not an CamelMongoDbException");
         CamelMongoDbException camelExc = ObjectHelper.cast(CamelMongoDbException.class, exc);
         if (message != null) {
-            assertTrue(camelExc.getMessage().contains(message), "CamelMongoDbException doesn't contain desired message string");
+            assertTrue(
+                    camelExc.getMessage().contains(message),
+                    "CamelMongoDbException doesn't contain desired message string");
         }
         return camelExc;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.io.IOException;
@@ -44,18 +45,21 @@ public abstract class AbstractApprovalManualIT extends AbstractSalesforceTestBas
 
     @BeforeEach
     public void createAccounts() {
-        final List<Account> accountsToCreate = IntStream.range(0, accountCount + 1).mapToObj(idx -> {
-            final String name = "test-account-" + idx;
-            final Account account = new Account();
-            account.setName(name);
+        final List<Account> accountsToCreate = IntStream.range(0, accountCount + 1)
+                .mapToObj(idx -> {
+                    final String name = "test-account-" + idx;
+                    final Account account = new Account();
+                    account.setName(name);
 
-            return account;
-        }).collect(Collectors.toList());
+                    return account;
+                })
+                .collect(Collectors.toList());
 
         accountIds = accountsToCreate.stream()
-                .map(account -> template.requestBody("salesforce:createSObject?sObjectName=Account", account,
-                        CreateSObjectResult.class))
-                .map(CreateSObjectResult::getId).collect(Collectors.toList());
+                .map(account -> template.requestBody(
+                        "salesforce:createSObject?sObjectName=Account", account, CreateSObjectResult.class))
+                .map(CreateSObjectResult::getId)
+                .collect(Collectors.toList());
     }
 
     @AfterEach
@@ -76,11 +80,11 @@ public abstract class AbstractApprovalManualIT extends AbstractSalesforceTestBas
         // case where '+' is not used as a part of the username.
         final String wildcardUsername = userName.replace('+', '%');
 
-        final QueryRecordsReport results = template
-                .requestBody("salesforce:query?sObjectClass=" + QueryRecordsReport.class.getName()//
-                             + "&sObjectQuery=SELECT Id FROM User WHERE Username LIKE '" + wildcardUsername + "'",
-                        NOT_USED,
-                        QueryRecordsReport.class);
+        final QueryRecordsReport results = template.requestBody(
+                "salesforce:query?sObjectClass=" + QueryRecordsReport.class.getName() //
+                        + "&sObjectQuery=SELECT Id FROM User WHERE Username LIKE '" + wildcardUsername + "'",
+                NOT_USED,
+                QueryRecordsReport.class);
 
         userId = results.getRecords().get(0).getId();
     }

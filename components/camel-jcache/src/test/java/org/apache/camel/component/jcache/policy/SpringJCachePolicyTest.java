@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache.policy;
+
+import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.generateValue;
+import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.lookupCache;
+import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.randomString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.cache.Cache;
 
@@ -24,11 +30,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
-
-import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.generateValue;
-import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.lookupCache;
-import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.randomString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @HazelcastTest
 public class SpringJCachePolicyTest extends CamelSpringTestSupport {
@@ -40,112 +41,111 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
 
     @BeforeEach
     public void before() {
-        //reset mock
+        // reset mock
         MockEndpoint mock = getMockEndpoint("mock:spring");
         mock.reset();
-        mock.whenAnyExchangeReceived(e -> e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
+        mock.whenAnyExchangeReceived(
+                e -> e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
     }
 
-    //Verify value gets cached and route is not executed for the second time
+    // Verify value gets cached and route is not executed for the second time
     @Test
     public void testXmlDslValueGetsCached() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:spring");
 
-        //Send first, key is not in cache
+        // Send first, key is not in cache
         Object responseBody = this.template().requestBody("direct:spring", key);
 
-        //We got back the value, mock was called once, value got cached.
+        // We got back the value, mock was called once, value got cached.
         Cache cache = lookupCache("spring");
         assertEquals(generateValue(key), cache.get(key));
         assertEquals(generateValue(key), responseBody);
         assertEquals(1, mock.getExchanges().size());
 
-        //Send again, key is already in cache
+        // Send again, key is already in cache
         responseBody = this.template().requestBody("direct:spring", key);
 
-        //We got back the stored value, but the mock was not called again
+        // We got back the stored value, but the mock was not called again
         assertEquals(generateValue(key), cache.get(key));
         assertEquals(generateValue(key), responseBody);
         assertEquals(1, mock.getExchanges().size());
     }
 
-    //Verify if we call the route with different keys, both gets cached
+    // Verify if we call the route with different keys, both gets cached
     @Test
     public void testXmlDslDifferent() {
         final String key1 = randomString();
         MockEndpoint mock = getMockEndpoint("mock:spring");
 
-        //Send first, key is not in cache
+        // Send first, key is not in cache
         Object responseBody = this.template().requestBody("direct:spring", key1);
 
-        //We got back the value, mock was called once, value got cached.
+        // We got back the value, mock was called once, value got cached.
         Cache cache = lookupCache("spring");
         assertEquals(generateValue(key1), cache.get(key1));
         assertEquals(generateValue(key1), responseBody);
         assertEquals(1, mock.getExchanges().size());
 
-        //Send again, different key
+        // Send again, different key
         final String key2 = randomString();
         responseBody = this.template().requestBody("direct:spring", key2);
 
-        //We got back the stored value, mock was called again, value got cached.
+        // We got back the stored value, mock was called again, value got cached.
         assertEquals(generateValue(key2), cache.get(key2));
         assertEquals(generateValue(key2), responseBody);
         assertEquals(2, mock.getExchanges().size());
     }
 
-    //Verify policy applies only on the section of the route wrapped
+    // Verify policy applies only on the section of the route wrapped
     @Test
     public void testXmlDslPartial() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:spring");
         MockEndpoint mockUnwrapped = getMockEndpoint("mock:unwrapped");
 
-        //Send first, key is not in cache
+        // Send first, key is not in cache
         Object responseBody = this.template().requestBody("direct:spring-partial", key);
 
-        //We got back the value, mock was called once, value got cached.
+        // We got back the value, mock was called once, value got cached.
         Cache cache = lookupCache("spring");
         assertEquals(generateValue(key), cache.get(key));
         assertEquals(generateValue(key), responseBody);
         assertEquals(1, mock.getExchanges().size());
         assertEquals(1, mockUnwrapped.getExchanges().size());
 
-        //Send again, key is already in cache
+        // Send again, key is already in cache
         responseBody = this.template().requestBody("direct:spring-partial", key);
 
-        //We got back the stored value, but the mock was not called again
+        // We got back the stored value, but the mock was not called again
         assertEquals(generateValue(key), cache.get(key));
         assertEquals(generateValue(key), responseBody);
         assertEquals(1, mock.getExchanges().size());
         assertEquals(2, mockUnwrapped.getExchanges().size());
     }
 
-    //Use a key expression ${header.mykey}
+    // Use a key expression ${header.mykey}
     @Test
     public void testXmlDslKeyExpression() {
         final String key = randomString();
         final String body = randomString();
         MockEndpoint mock = getMockEndpoint("mock:spring");
 
-        //Send first, key is not in cache
+        // Send first, key is not in cache
         Object responseBody = this.template().requestBodyAndHeader("direct:spring-byheader", body, "mykey", key);
 
-        //We got back the value, mock was called once, value got cached.
+        // We got back the value, mock was called once, value got cached.
         Cache cache = lookupCache("spring");
         assertEquals(generateValue(body), cache.get(key));
         assertEquals(generateValue(body), responseBody);
         assertEquals(1, mock.getExchanges().size());
 
-        //Send again, use another body, but the same key
+        // Send again, use another body, but the same key
         responseBody = this.template().requestBodyAndHeader("direct:spring-byheader", randomString(), "mykey", key);
 
-        //We got back the stored value, and the mock was not called again
+        // We got back the stored value, and the mock was not called again
         assertEquals(generateValue(body), cache.get(key));
         assertEquals(generateValue(body), responseBody);
         assertEquals(1, mock.getExchanges().size());
-
     }
-
 }

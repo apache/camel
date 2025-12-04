@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.lang.reflect.Method;
@@ -195,8 +196,15 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
     boolean setProperty(
-            CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
-            boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase)
+            CamelContext context,
+            TypeConverter typeConverter,
+            Object target,
+            String name,
+            Object value,
+            String refName,
+            boolean allowBuilderPattern,
+            boolean allowPrivateSetter,
+            boolean ignoreCase)
             throws Exception;
 
     /**
@@ -204,5 +212,4 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
      */
     Set<Method> findSetterMethods(
             Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase);
-
 }

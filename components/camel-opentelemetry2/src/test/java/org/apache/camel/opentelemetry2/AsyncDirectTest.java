@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,10 +35,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncDirectTest extends OpenTelemetryTracerTestSupport {
 
@@ -67,7 +68,6 @@ public class AsyncDirectTest extends OpenTelemetryTracerTestSupport {
         for (OtelTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(OtelTrace trace, String expectedBody) {
@@ -91,61 +91,86 @@ public class AsyncDirectTest extends OpenTelemetryTracerTestSupport {
         assertTrue(newMock.hasEnded());
 
         // Validate same trace
-        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), newDirectTo.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), newDirectFrom.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), newLog.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), newMock.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                direct.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                newDirectTo.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                newDirectFrom.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                newLog.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                newMock.getSpanContext().getTraceId());
 
         // Validate same Exchange ID
         // As it's a "direct" component, we expect the logic to happen within the same
         // Exchange boundary
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 direct.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 newDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 newDirectFrom.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 log.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 newLog.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 newMock.getAttributes().get(AttributeKey.stringKey("exchangeId")));
 
         // Validate hierarchy
         assertFalse(testProducer.getParentSpanContext().isValid());
-        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), newDirectTo.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
-        assertEquals(newDirectTo.getSpanContext().getSpanId(), newDirectFrom.getParentSpanContext().getSpanId());
-        assertEquals(newDirectFrom.getSpanContext().getSpanId(), newLog.getParentSpanContext().getSpanId());
-        assertEquals(newDirectFrom.getSpanContext().getSpanId(), newMock.getParentSpanContext().getSpanId());
+        assertEquals(
+                testProducer.getSpanContext().getSpanId(),
+                direct.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(),
+                newDirectTo.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
+        assertEquals(
+                newDirectTo.getSpanContext().getSpanId(),
+                newDirectFrom.getParentSpanContext().getSpanId());
+        assertEquals(
+                newDirectFrom.getSpanContext().getSpanId(),
+                newLog.getParentSpanContext().getSpanId());
+        assertEquals(
+                newDirectFrom.getSpanContext().getSpanId(),
+                newMock.getParentSpanContext().getSpanId());
 
         // Validate message logging
-        assertEquals("A direct message", direct.getEvents().get(0).getAttributes().get(
-                AttributeKey.stringKey("message")));
-        assertEquals("A new message", newDirectFrom.getEvents().get(0).getAttributes().get(
-                AttributeKey.stringKey("message")));
+        assertEquals(
+                "A direct message", direct.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
+        assertEquals(
+                "A new message",
+                newDirectFrom.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         if (expectedBody == null) {
             assertEquals(
                     "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    log.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    log.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
             assertEquals(
                     "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    newLog.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    newLog.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         } else {
             assertEquals(
                     "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    log.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    log.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
             assertEquals(
                     "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    newLog.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    newLog.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         }
     }
 
@@ -169,5 +194,4 @@ public class AsyncDirectTest extends OpenTelemetryTracerTestSupport {
             }
         };
     }
-
 }

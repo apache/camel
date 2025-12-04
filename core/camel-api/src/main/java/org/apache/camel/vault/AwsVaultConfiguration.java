@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
@@ -25,28 +26,40 @@ public class AwsVaultConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
     private String accessKey;
+
     @Metadata(secret = true)
     private String secretKey;
+
     @Metadata
     private String region;
+
     @Metadata
     private boolean defaultCredentialsProvider;
+
     @Metadata
     private boolean profileCredentialsProvider;
+
     @Metadata
     private String profileName;
+
     @Metadata
     private boolean refreshEnabled;
+
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
+
     @Metadata
     private String secrets;
+
     @Metadata
     private boolean useSqsNotification;
+
     @Metadata
     private String sqsQueueUrl;
+
     @Metadata
     private boolean overrideEndpoint;
+
     @Metadata
     private String uriEndpointOverride;
 

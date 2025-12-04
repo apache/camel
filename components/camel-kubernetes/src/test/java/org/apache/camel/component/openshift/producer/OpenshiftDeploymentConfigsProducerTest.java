@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openshift.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,9 +39,6 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnableKubernetesMockClient
 public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSupport {
 
@@ -51,8 +52,12 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
 
     @Test
     void listTest() {
-        server.expect().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs")
-                .andReturn(200, new DeploymentConfigListBuilder().addNewItem().and().build()).once();
+        server.expect()
+                .withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs")
+                .andReturn(
+                        200,
+                        new DeploymentConfigListBuilder().addNewItem().and().build())
+                .once();
         List<?> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(1, result.size());
@@ -62,9 +67,17 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
     void listByLabelsTest() throws Exception {
         server.expect()
                 .withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs?labelSelector="
-                          + toUrlEncoded("key1=value1,key2=value2"))
-                .andReturn(200,
-                        new DeploymentConfigListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                        + toUrlEncoded("key1=value1,key2=value2"))
+                .andReturn(
+                        200,
+                        new DeploymentConfigListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
@@ -81,11 +94,20 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
     @Test
     void createDeploymentConfig() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
-        DeploymentConfigSpec spec = new DeploymentConfigSpecBuilder().withReplicas(13).build();
-        DeploymentConfig de1
-                = new DeploymentConfigBuilder().withNewMetadata().withName("de1").withNamespace("test").withLabels(labels).and()
-                        .withSpec(spec).build();
-        server.expect().post().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs").andReturn(200, de1)
+        DeploymentConfigSpec spec =
+                new DeploymentConfigSpecBuilder().withReplicas(13).build();
+        DeploymentConfig de1 = new DeploymentConfigBuilder()
+                .withNewMetadata()
+                .withName("de1")
+                .withNamespace("test")
+                .withLabels(labels)
+                .and()
+                .withSpec(spec)
+                .build();
+        server.expect()
+                .post()
+                .withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs")
+                .andReturn(200, de1)
                 .once();
 
         Exchange ex = template.request("direct:create", exchange -> {
@@ -106,14 +128,32 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
     @Test
     void updateDeploymentConfig() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
-        DeploymentConfigSpec spec = new DeploymentConfigSpecBuilder().withReplicas(13).build();
-        DeploymentConfig de1
-                = new DeploymentConfigBuilder().withNewMetadata().withName("de1").withNamespace("test").withLabels(labels).and()
-                        .withSpec(spec).build();
-        server.expect().get().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/de1").andReturn(200,
-                new DeploymentConfigBuilder().withNewMetadata().withName("de1").withNamespace("test").endMetadata().build())
+        DeploymentConfigSpec spec =
+                new DeploymentConfigSpecBuilder().withReplicas(13).build();
+        DeploymentConfig de1 = new DeploymentConfigBuilder()
+                .withNewMetadata()
+                .withName("de1")
+                .withNamespace("test")
+                .withLabels(labels)
+                .and()
+                .withSpec(spec)
+                .build();
+        server.expect()
+                .get()
+                .withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/de1")
+                .andReturn(
+                        200,
+                        new DeploymentConfigBuilder()
+                                .withNewMetadata()
+                                .withName("de1")
+                                .withNamespace("test")
+                                .endMetadata()
+                                .build())
                 .once();
-        server.expect().put().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/de1").andReturn(200, de1)
+        server.expect()
+                .put()
+                .withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/de1")
+                .andReturn(200, de1)
                 .once();
 
         Exchange ex = template.request("direct:update", exchange -> {
@@ -133,15 +173,35 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
 
     @Test
     void deleteDeploymentConfig() {
-        DeploymentConfig de1 = new DeploymentConfigBuilder().withNewMetadata().withNamespace("test").withName("dc1")
-                .withResourceVersion("1").withGeneration(2L).endMetadata().withNewSpec()
-                .withReplicas(0).endSpec().withNewStatus().withReplicas(1).withObservedGeneration(1L).endStatus().build();
+        DeploymentConfig de1 = new DeploymentConfigBuilder()
+                .withNewMetadata()
+                .withNamespace("test")
+                .withName("dc1")
+                .withResourceVersion("1")
+                .withGeneration(2L)
+                .endMetadata()
+                .withNewSpec()
+                .withReplicas(0)
+                .endSpec()
+                .withNewStatus()
+                .withReplicas(1)
+                .withObservedGeneration(1L)
+                .endStatus()
+                .build();
 
-        server.expect().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1")
-                .andReturn(200, de1).once();
-        server.expect().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1")
-                .andReturn(200,
-                        new DeploymentConfigBuilder(de1).editStatus().withReplicas(0).withObservedGeneration(2L).endStatus()
+        server.expect()
+                .withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1")
+                .andReturn(200, de1)
+                .once();
+        server.expect()
+                .withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1")
+                .andReturn(
+                        200,
+                        new DeploymentConfigBuilder(de1)
+                                .editStatus()
+                                .withReplicas(0)
+                                .withObservedGeneration(2L)
+                                .endStatus()
                                 .build())
                 .times(5);
 
@@ -157,16 +217,40 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
 
     @Test
     void scaleDeploymentConfig() {
-        server.expect().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1")
-                .andReturn(200, new DeploymentConfigBuilder().withNewMetadata().withName("dc1")
-                        .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
-                        .withReplicas(5).endStatus().build())
+        server.expect()
+                .withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1")
+                .andReturn(
+                        200,
+                        new DeploymentConfigBuilder()
+                                .withNewMetadata()
+                                .withName("dc1")
+                                .withResourceVersion("1")
+                                .endMetadata()
+                                .withNewSpec()
+                                .withReplicas(5)
+                                .endSpec()
+                                .withNewStatus()
+                                .withReplicas(5)
+                                .endStatus()
+                                .build())
                 .once();
 
-        server.expect().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1/scale")
-                .andReturn(200, new DeploymentConfigBuilder().withNewMetadata().withName("dc1")
-                        .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
-                        .withReplicas(5).endStatus().build())
+        server.expect()
+                .withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1/scale")
+                .andReturn(
+                        200,
+                        new DeploymentConfigBuilder()
+                                .withNewMetadata()
+                                .withName("dc1")
+                                .withResourceVersion("1")
+                                .endMetadata()
+                                .withNewSpec()
+                                .withReplicas(5)
+                                .endSpec()
+                                .withNewStatus()
+                                .withReplicas(5)
+                                .endStatus()
+                                .build())
                 .always();
 
         Exchange ex = template.request("direct:scale", exchange -> {
@@ -186,17 +270,23 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
             @Override
             public void configure() {
                 from("direct:list")
-                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigs");
+                        .toF(
+                                "openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigs");
                 from("direct:listByLabels")
-                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigsByLabels");
+                        .toF(
+                                "openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigsByLabels");
                 from("direct:create")
-                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=createDeploymentConfig");
+                        .toF(
+                                "openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=createDeploymentConfig");
                 from("direct:update")
-                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=updateDeploymentConfig");
+                        .toF(
+                                "openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=updateDeploymentConfig");
                 from("direct:delete")
-                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=deleteDeploymentConfig");
+                        .toF(
+                                "openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=deleteDeploymentConfig");
                 from("direct:scale")
-                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=scaleDeploymentConfig");
+                        .toF(
+                                "openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=scaleDeploymentConfig");
             }
         };
     }

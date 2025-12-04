@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.reply;
 
 import java.time.Duration;
@@ -103,10 +104,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         long interval = endpoint.getConfiguration().getWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime();
         int max = endpoint.getConfiguration().getWaitForTemporaryReplyToToBeUpdatedCounter();
         log.trace("Waiting for replyTo destination to be ready (timeout: {} millis)", interval * max);
-        ForegroundTask task = Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
-                .withMaxIterations(max)
-                .withInterval(Duration.ofMillis(interval))
-                .build())
+        ForegroundTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationBudget()
+                        .withMaxIterations(max)
+                        .withInterval(Duration.ofMillis(interval))
+                        .build())
                 .build();
         boolean done = task.run(camelContext, () -> {
             log.trace("Waiting for replyTo to be ready: {}", replyTo != null);
@@ -120,12 +122,15 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     @Override
     public String registerReply(
-            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-            String originalCorrelationId, String correlationId, long requestTimeout) {
+            ReplyManager replyManager,
+            Exchange exchange,
+            AsyncCallback callback,
+            String originalCorrelationId,
+            String correlationId,
+            long requestTimeout) {
         // add to correlation map
         QueueReplyHandler handler = new QueueReplyHandler(
-                replyManager, exchange, callback,
-                originalCorrelationId, correlationId, requestTimeout);
+                replyManager, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
         // Just make sure we don't override the old value of the correlationId
         ReplyHandler result = correlation.putIfAbsent(correlationId, handler, requestTimeout);
         if (result != null) {
@@ -136,8 +141,12 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     protected abstract ReplyHandler createReplyHandler(
-            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-            String originalCorrelationId, String correlationId, long requestTimeout);
+            ReplyManager replyManager,
+            Exchange exchange,
+            AsyncCallback callback,
+            String originalCorrelationId,
+            String correlationId,
+            long requestTimeout);
 
     @Override
     public void onMessage(Message message, Session session) throws JMSException {
@@ -177,22 +186,26 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     if (log.isWarnEnabled()) {
                         log.warn(
                                 "Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
-                                 + " Setting ExchangeTimedOutException on {} and continue routing.",
-                                holder.getRequestTimeout(), holder.getCorrelationId(), replyTo,
+                                        + " Setting ExchangeTimedOutException on {} and continue routing.",
+                                holder.getRequestTimeout(),
+                                holder.getCorrelationId(),
+                                replyTo,
                                 ExchangeHelper.logIds(exchange));
                     }
 
                     // no response, so lets set a timed out exception
                     String msg = "reply message with correlationID: " + holder.getCorrelationId()
-                                 + " not received on destination: " + replyTo;
+                            + " not received on destination: " + replyTo;
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
                     Message message = holder.getMessage();
                     Session session = holder.getSession();
                     JmsMessage response = new JmsMessage(exchange, message, session, endpoint.getBinding());
                     // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
-                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access
-                    // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).
+                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full
+                    // access
+                    // to everything it may need, and can populate headers, properties, etc. accordingly (solves
+                    // CAMEL-6218).
                     exchange.setOut(response);
                     Object body = response.getBody();
                     // store where the request message was sent to, so we know that also
@@ -212,7 +225,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {
                         JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
-                        exchange.getOut().setHeader(JmsConstants.JMS_HEADER_CORRELATION_ID, holder.getOriginalCorrelationId());
+                        exchange.getOut()
+                                .setHeader(JmsConstants.JMS_HEADER_CORRELATION_ID, holder.getOriginalCorrelationId());
                     }
                 }
             } finally {
@@ -243,13 +257,16 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
         // wait up until configured values
         long interval = endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
-        ForegroundTask task = Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
-                .withMaxIterations(endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter())
-                .withInterval(Duration.ofMillis(interval))
-                .build())
+        ForegroundTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationBudget()
+                        .withMaxIterations(
+                                endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter())
+                        .withInterval(Duration.ofMillis(interval))
+                        .build())
                 .build();
 
-        return task.run(camelContext, () -> getReplyHandler(correlationID), Objects::nonNull).orElse(null);
+        return task.run(camelContext, () -> getReplyHandler(correlationID), Objects::nonNull)
+                .orElse(null);
     }
 
     private ReplyHandler getReplyHandler(String correlationID) {

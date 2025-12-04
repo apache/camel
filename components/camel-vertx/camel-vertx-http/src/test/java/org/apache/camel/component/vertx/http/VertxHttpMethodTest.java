@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.vertx.core.http.HttpMethod;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxHttpMethodTest extends VertxHttpTestSupport {
 
@@ -40,8 +41,8 @@ public class VertxHttpMethodTest extends VertxHttpTestSupport {
 
     @Test
     public void testMethodSetFromHeader() {
-        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_METHOD, HttpMethod.PUT.name(),
-                String.class);
+        String result = template.requestBodyAndHeader(
+                getProducerUri(), null, Exchange.HTTP_METHOD, HttpMethod.PUT.name(), String.class);
         assertEquals(HttpMethod.PUT.name(), result);
     }
 
@@ -53,8 +54,8 @@ public class VertxHttpMethodTest extends VertxHttpTestSupport {
 
     @Test
     public void testDefaultMethodGetWhenQueryStringProvidedFromHeader() {
-        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_QUERY, "foo=bar&cheese=wine",
-                String.class);
+        String result = template.requestBodyAndHeader(
+                getProducerUri(), null, Exchange.HTTP_QUERY, "foo=bar&cheese=wine", String.class);
         assertEquals(HttpMethod.GET.name(), result);
     }
 
@@ -72,8 +73,8 @@ public class VertxHttpMethodTest extends VertxHttpTestSupport {
 
     @Test
     public void testHeaderConfigurationPrecedence() {
-        String result = template.requestBodyAndHeader(getProducerUri() + "?foo=bar", null, Exchange.HTTP_METHOD,
-                HttpMethod.PUT.name(), String.class);
+        String result = template.requestBodyAndHeader(
+                getProducerUri() + "?foo=bar", null, Exchange.HTTP_METHOD, HttpMethod.PUT.name(), String.class);
         assertEquals(HttpMethod.PUT.name(), result);
     }
 
@@ -88,8 +89,7 @@ public class VertxHttpMethodTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri())
-                        .setBody(header(Exchange.HTTP_METHOD));
+                from(getTestServerUri()).setBody(header(Exchange.HTTP_METHOD));
             }
         };
     }

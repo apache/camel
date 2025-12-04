@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Proxy;
@@ -41,8 +42,8 @@ public class CamelResourceProvider implements ResourceProvider {
             result = provider.getInstance(m);
         } else {
             // create the instance with the invoker
-            result = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] { clazz },
-                    new SubResourceClassInvocationHandler());
+            result = Proxy.newProxyInstance(
+                    clazz.getClassLoader(), new Class[] {clazz}, new SubResourceClassInvocationHandler());
         }
         return result;
     }
@@ -67,5 +68,4 @@ public class CamelResourceProvider implements ResourceProvider {
     public boolean isSingleton() {
         return false;
     }
-
 }

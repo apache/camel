@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.function;
 
 import java.util.Optional;
@@ -25,8 +26,7 @@ import java.util.function.Supplier;
 import org.apache.camel.util.ObjectHelper;
 
 public final class ThrowingHelper {
-    private ThrowingHelper() {
-    }
+    private ThrowingHelper() {}
 
     /**
      * Wrap a {@link ThrowingSupplier} to a standard {@link Suppliers} by throwing a {@link RuntimeException} in case of
@@ -66,7 +66,8 @@ public final class ThrowingHelper {
      * Wrap a {@link ThrowingBiConsumer} to a standard {@link BiConsumer} by throwing a {@link RuntimeException} in case
      * of an exception is thrown by the delegated consumer.
      */
-    public static <I1, I2, T extends Throwable> BiConsumer<I1, I2> wrapAsBiConsumer(ThrowingBiConsumer<I1, I2, T> consumer) {
+    public static <I1, I2, T extends Throwable> BiConsumer<I1, I2> wrapAsBiConsumer(
+            ThrowingBiConsumer<I1, I2, T> consumer) {
         return new BiConsumer<>() {
             @Override
             public void accept(I1 i1, I2 i2) {
@@ -121,8 +122,8 @@ public final class ThrowingHelper {
      * @param consumer the function to be executed against value if not empty
      * @param orElse   the supplier to use to retrieve a result if the given value is empty
      */
-    public static <I, R, T extends Throwable> R applyIfNotEmpty(I value, ThrowingFunction<I, R, T> consumer, Supplier<R> orElse)
-            throws T {
+    public static <I, R, T extends Throwable> R applyIfNotEmpty(
+            I value, ThrowingFunction<I, R, T> consumer, Supplier<R> orElse) throws T {
         if (ObjectHelper.isNotEmpty(value)) {
             return consumer.apply(value);
         }

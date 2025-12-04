@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.CamelExchangeException;
@@ -39,12 +40,9 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
         mock.expectedFileExists(testFile("enrichdata/.done/AAA.dat"));
         mock.expectedFileExists(testFile("enrichdata/BBB.dat"));
 
-        template.sendBodyAndHeader(fileUri("enrichdata"), "Big file",
-                Exchange.FILE_NAME, "AAA.dat");
-        template.sendBodyAndHeader(fileUri("enrichdata"),
-                "Other Big file", Exchange.FILE_NAME, "BBB.dat");
-        template.sendBodyAndHeader(fileUri("enrich"), "Start",
-                Exchange.FILE_NAME, "AAA.fin");
+        template.sendBodyAndHeader(fileUri("enrichdata"), "Big file", Exchange.FILE_NAME, "AAA.dat");
+        template.sendBodyAndHeader(fileUri("enrichdata"), "Other Big file", Exchange.FILE_NAME, "BBB.dat");
+        template.sendBodyAndHeader(fileUri("enrich"), "Start", Exchange.FILE_NAME, "AAA.fin");
 
         assertMockEndpointsSatisfied();
     }
@@ -64,8 +62,7 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
 
                                 // try to get the data file
                                 Exchange data = con.receive(
-                                        fileUri("enrichdata?initialDelay=0&delay=10&move=.done&fileName="
-                                                + name),
+                                        fileUri("enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name),
                                         5000);
 
                                 // if we found the data file then process it by sending
@@ -77,7 +74,8 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
                                     throw new CamelExchangeException("Cannot find the data file " + name, exchange);
                                 }
                             }
-                        }).to("mock:start");
+                        })
+                        .to("mock:start");
 
                 from("direct:data").to("mock:result");
             }

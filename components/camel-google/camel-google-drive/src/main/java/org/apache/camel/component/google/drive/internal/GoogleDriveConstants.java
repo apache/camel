@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive.internal;
 
 /**
@@ -30,6 +31,5 @@ public final class GoogleDriveConstants {
     /**
      * Prevent instantiation.
      */
-    private GoogleDriveConstants() {
-    }
+    private GoogleDriveConstants() {}
 }

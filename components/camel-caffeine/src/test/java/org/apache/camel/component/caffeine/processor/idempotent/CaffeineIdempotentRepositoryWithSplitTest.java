@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.processor.idempotent;
 
 import java.util.UUID;
@@ -56,10 +57,9 @@ public class CaffeineIdempotentRepositoryWithSplitTest extends CamelTestSupport 
             @Override
             public void configure() {
                 from("direct:idempotentRoute")
-                    .idempotentConsumer(body(),
-                            repo)
+                        .idempotentConsumer(body(), repo)
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

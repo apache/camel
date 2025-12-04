@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.elasticsearch.rest.client;
 
 import org.apache.camel.Category;
@@ -31,15 +32,20 @@ import org.elasticsearch.client.RestClient;
 /**
  * Perform queries and other operations on Elasticsearch or OpenSearch (uses low-level client).
  */
-@UriEndpoint(firstVersion = "4.3.0", scheme = "elasticsearch-rest-client",
-             title = "Elasticsearch Low level Rest Client",
-             syntax = "elasticsearch-rest-client:clusterName", producerOnly = true,
-             category = { Category.SEARCH }, headersClass = ElasticSearchRestClientConstant.class)
+@UriEndpoint(
+        firstVersion = "4.3.0",
+        scheme = "elasticsearch-rest-client",
+        title = "Elasticsearch Low level Rest Client",
+        syntax = "elasticsearch-rest-client:clusterName",
+        producerOnly = true,
+        category = {Category.SEARCH},
+        headersClass = ElasticSearchRestClientConstant.class)
 public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
     private String clusterName;
+
     @UriParam
     ElasticsearchRestClientOperation operation;
 
@@ -49,27 +55,37 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements 
 
     @UriParam
     String indexName;
+
     @UriParam
     String hostAddressesList;
 
     @UriParam(defaultValue = "" + ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT)
     private int connectionTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
+
     @UriParam(defaultValue = "" + ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT)
     private int socketTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
 
     @UriParam(label = "security", secret = true)
     private String user;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "security")
     @Metadata(supportFileReference = true)
     private String certificatePath;
 
     @UriParam(label = "advanced")
     private boolean enableSniffer;
-    @UriParam(label = "advanced", defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
+
+    @UriParam(
+            label = "advanced",
+            defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
     private int snifferInterval = ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY;
-    @UriParam(label = "advanced", defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
+
+    @UriParam(
+            label = "advanced",
+            defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
     private int sniffAfterFailureDelay = ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY;
 
     public ElasticsearchRestClientEndpoint(String uri, ElasticsearchRestClientComponent component) {

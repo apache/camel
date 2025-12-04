@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr;
 
 import java.io.File;
@@ -90,7 +91,14 @@ public class SolrProducer extends DefaultAsyncProducer {
 
         // set action context and add to message to be accessible for converter methods
         ActionContext ctx = new ActionContext(
-                configuration, exchange, callback, solrClient, operation, collection, requestHandler, modifiableSolrParams);
+                configuration,
+                exchange,
+                callback,
+                solrClient,
+                operation,
+                collection,
+                requestHandler,
+                modifiableSolrParams);
         exchange.setProperty(SolrConstants.PROPERTY_ACTION_CONTEXT, ctx);
 
         // perform solr operation
@@ -156,18 +164,16 @@ public class SolrProducer extends DefaultAsyncProducer {
      */
     private <T> void onComplete(CompletableFuture<T> future, ActionContext ctx) {
         final Exchange exchange = ctx.exchange();
-        future.thenAccept(r -> exchange.getMessage().setBody(r))
-                .whenComplete(
-                        (r, e) -> {
-                            try {
-                                if (e != null) {
-                                    exchange.setException(new CamelExchangeException(
-                                            "An error occurred while executing the action", exchange, e));
-                                }
-                            } finally {
-                                ctx.callback().done(false);
-                            }
-                        });
+        future.thenAccept(r -> exchange.getMessage().setBody(r)).whenComplete((r, e) -> {
+            try {
+                if (e != null) {
+                    exchange.setException(
+                            new CamelExchangeException("An error occurred while executing the action", exchange, e));
+                }
+            } finally {
+                ctx.callback().done(false);
+            }
+        });
     }
 
     public SolrClient getSolrClient() {
@@ -207,9 +213,7 @@ public class SolrProducer extends DefaultAsyncProducer {
         }
         // collection: if strings then delete else insert
         if (body instanceof Collection<?> collection) {
-            return SolrUtils.isCollectionOfType(collection, String.class)
-                    ? SolrOperation.DELETE
-                    : SolrOperation.INSERT;
+            return SolrUtils.isCollectionOfType(collection, String.class) ? SolrOperation.DELETE : SolrOperation.INSERT;
         }
 
         SolrOperation operation;
@@ -217,8 +221,8 @@ public class SolrProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isNotEmpty(actionString)) {
             operation = SolrOperation.getSolrOperationFrom(actionString);
             if (operation != null && !operation.name().equalsIgnoreCase(actionString)) {
-                LOG.warn(operation.createFutureDeprecationMessage(actionString,
-                        operation.getActionParameter(actionString)));
+                LOG.warn(operation.createFutureDeprecationMessage(
+                        actionString, operation.getActionParameter(actionString)));
             }
             LOG.debug("Operation obtained from header '{}': {}", SolrConstants.PARAM_OPERATION, actionString);
             return operation;
@@ -233,14 +237,14 @@ public class SolrProducer extends DefaultAsyncProducer {
         if (hasSolrParams) {
             return SolrOperation.INSERT;
         }
-        throw new IllegalArgumentException(
-                SolrConstants.PARAM_OPERATION + " value is mandatory");
+        throw new IllegalArgumentException(SolrConstants.PARAM_OPERATION + " value is mandatory");
     }
 
     /**
      * An inner class providing all the information that an asynchronous action could need.
      */
-    public record ActionContext(SolrConfiguration configuration,
+    public record ActionContext(
+            SolrConfiguration configuration,
             Exchange exchange,
             AsyncCallback callback,
             SolrClient solrClient,
@@ -267,7 +271,5 @@ public class SolrProducer extends DefaultAsyncProducer {
                     "Async processing requires a solr client instance of HttpSolrClientBase. This solr client is of type %s.",
                     solrClient.getClass().getCanonicalName());
         }
-
     }
-
 }

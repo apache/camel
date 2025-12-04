@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
 
 import java.io.Serial;
@@ -34,8 +35,7 @@ public class ExchangeCompletedEvent extends AbstractExchangeEvent implements Cam
 
     @Override
     public final String toString() {
-        return getExchange().getExchangeId() + " exchange completed"
-               + " took: " + TimeUtils.printDuration(timeTaken, true);
-
+        return getExchange().getExchangeId() + " exchange completed" + " took: "
+                + TimeUtils.printDuration(timeTaken, true);
     }
 }

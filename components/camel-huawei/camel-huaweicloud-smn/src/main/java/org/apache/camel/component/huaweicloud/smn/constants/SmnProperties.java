@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn.constants;
 
 public final class SmnProperties {
@@ -26,11 +27,9 @@ public final class SmnProperties {
     public static final String NOTIFICATION_SUBJECT = "CamelHwCloudSmnSubject";
     public static final String NOTIFICATION_TTL = "CamelHwCloudSmnMessageTtl";
 
-    //response properties
+    // response properties
     public static final String SERVICE_MESSAGE_ID = "CamelHwCloudSmnMesssageId";
     public static final String SERVICE_REQUEST_ID = "CamelHwCloudSmnRequestId";
 
-    private SmnProperties() {
-    }
-
+    private SmnProperties() {}
 }

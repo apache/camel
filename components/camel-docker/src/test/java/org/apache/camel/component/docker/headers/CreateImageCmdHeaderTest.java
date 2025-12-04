@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -25,10 +30,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Create Image Request headers are parsed properly
@@ -52,17 +53,16 @@ public class CreateImageCmdHeaderTest extends BaseDockerHeaderTest<CreateImageCm
         template.sendBodyAndHeaders("direct:in", inputStream, headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).createImageCmd(eq(repository), any(InputStream.class));
-
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.createImageCmd(anyString(), any(InputStream.class))).thenReturn(mockObject);
+        Mockito.when(dockerClient.createImageCmd(anyString(), any(InputStream.class)))
+                .thenReturn(mockObject);
     }
 
     @Override
     protected DockerOperation getOperation() {
         return DockerOperation.CREATE_IMAGE;
     }
-
 }

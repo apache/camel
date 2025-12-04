@@ -14,16 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
-
-import java.util.List;
-
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.test.junit5.TestSupport;
-import org.eclipse.tahu.model.MqttServerDefinition;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -35,6 +27,15 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 
+import java.util.List;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
+import org.eclipse.tahu.model.MqttServerDefinition;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SuppressWarnings("unused")
 public class TahuConfigurationTest extends CamelTestSupport {
 
@@ -42,15 +43,17 @@ public class TahuConfigurationTest extends CamelTestSupport {
 
     @Test
     public void checkBasicEdgeNodeOptions() throws Exception {
-        String uri
-                = TahuConstants.EDGE_NODE_SCHEME
-                  + "://Basic/EdgeNode?clientId=client1&primaryHostId=app1&deviceIds=D2&username=amq&password=amq&useAliases=true&rebirthDebounceDelay=2000&keepAliveTimeout=20&bdSeqNumPath=/myTmpDir/tahu";
+        String uri = TahuConstants.EDGE_NODE_SCHEME
+                + "://Basic/EdgeNode?clientId=client1&primaryHostId=app1&deviceIds=D2&username=amq&password=amq&useAliases=true&rebirthDebounceDelay=2000&keepAliveTimeout=20&bdSeqNumPath=/myTmpDir/tahu";
 
-        try (TahuDefaultEndpoint endpoint = TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class)) {
+        try (TahuDefaultEndpoint endpoint =
+                TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class)) {
 
             assertThat(endpoint, is(notNullValue()));
-            assertThat(endpoint,
-                    allOf(hasProperty("groupId", is("Basic")),
+            assertThat(
+                    endpoint,
+                    allOf(
+                            hasProperty("groupId", is("Basic")),
                             hasProperty("edgeNode", is("EdgeNode")),
                             hasProperty("deviceIds", is("D2")),
                             hasProperty("deviceIdList", hasItems("D2")),
@@ -61,8 +64,10 @@ public class TahuConfigurationTest extends CamelTestSupport {
             TahuConfiguration configuration = endpoint.getConfiguration();
 
             assertThat(configuration, is(notNullValue()));
-            assertThat(configuration,
-                    allOf(hasProperty("clientId", is("client1")),
+            assertThat(
+                    configuration,
+                    allOf(
+                            hasProperty("clientId", is("client1")),
                             hasProperty("checkClientIdLength", is(false)),
                             hasProperty("username", is("amq")),
                             hasProperty("password", is("amq")),
@@ -73,14 +78,17 @@ public class TahuConfigurationTest extends CamelTestSupport {
 
     @Test
     public void checkBasicEdgeNodeOptionsMultipleDevices() throws Exception {
-        String uri
-                = TahuConstants.EDGE_NODE_SCHEME + "://Basic/EdgeNode?clientId=client1&primaryHostId=app1&deviceIds=D2,D3,D4";
+        String uri = TahuConstants.EDGE_NODE_SCHEME
+                + "://Basic/EdgeNode?clientId=client1&primaryHostId=app1&deviceIds=D2,D3,D4";
 
-        try (TahuDefaultEndpoint endpoint = TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class)) {
+        try (TahuDefaultEndpoint endpoint =
+                TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class)) {
 
             assertThat(endpoint, is(notNullValue()));
-            assertThat(endpoint,
-                    allOf(hasProperty("groupId", is("Basic")),
+            assertThat(
+                    endpoint,
+                    allOf(
+                            hasProperty("groupId", is("Basic")),
                             hasProperty("edgeNode", is("EdgeNode")),
                             hasProperty("deviceIds", is("D2,D3,D4")),
                             hasProperty("deviceIdList", hasItems("D2", "D3", "D4")),
@@ -93,11 +101,14 @@ public class TahuConfigurationTest extends CamelTestSupport {
     public void checkBasicDeviceOptions() throws Exception {
         String uri = TahuConstants.EDGE_NODE_SCHEME + "://Basic/EdgeNodeDevice/Device";
 
-        try (TahuDefaultEndpoint endpoint = TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class)) {
+        try (TahuDefaultEndpoint endpoint =
+                TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class)) {
 
             assertThat(endpoint, is(notNullValue()));
-            assertThat(endpoint,
-                    allOf(hasProperty("groupId", is("Basic")),
+            assertThat(
+                    endpoint,
+                    allOf(
+                            hasProperty("groupId", is("Basic")),
                             hasProperty("edgeNode", is("EdgeNodeDevice")),
                             hasProperty("deviceId", is("Device"))));
 
@@ -110,9 +121,10 @@ public class TahuConfigurationTest extends CamelTestSupport {
     @Test
     public void checkBasicHostAppOptions() throws Exception {
         String uri = TahuConstants.HOST_APP_SCHEME
-                     + ":BasicHostApp?clientId=client1&username=amq&password=amq&rebirthDebounceDelay=2000&keepAliveTimeout=20";
+                + ":BasicHostApp?clientId=client1&username=amq&password=amq&rebirthDebounceDelay=2000&keepAliveTimeout=20";
 
-        try (TahuDefaultEndpoint endpoint = TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class)) {
+        try (TahuDefaultEndpoint endpoint =
+                TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class)) {
 
             assertThat(endpoint, is(notNullValue()));
             assertThat(endpoint, hasProperty("hostId", is("BasicHostApp")));
@@ -120,8 +132,10 @@ public class TahuConfigurationTest extends CamelTestSupport {
             TahuConfiguration configuration = endpoint.getConfiguration();
 
             assertThat(configuration, is(notNullValue()));
-            assertThat(configuration,
-                    allOf(hasProperty("clientId", is("client1")),
+            assertThat(
+                    configuration,
+                    allOf(
+                            hasProperty("clientId", is("client1")),
                             hasProperty("checkClientIdLength", is(false)),
                             hasProperty("username", is("amq")),
                             hasProperty("password", is("amq")),
@@ -132,15 +146,14 @@ public class TahuConfigurationTest extends CamelTestSupport {
 
     @Test
     public void checkEndpointUriServerDefs() {
-        String uri
-                = TahuConstants.EDGE_NODE_SCHEME
-                  + "://EndpointUri/ServerDefs?servers=serverName1:clientId1:tcp://localhost:1883,serverName2:clientId1:tcp://localhost:1884";
+        String uri = TahuConstants.EDGE_NODE_SCHEME
+                + "://EndpointUri/ServerDefs?servers=serverName1:clientId1:tcp://localhost:1883,serverName2:clientId1:tcp://localhost:1884";
 
         TahuDefaultEndpoint endpoint = TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class);
 
         assertThat(endpoint, is(notNullValue()));
-        assertThat(endpoint, allOf(hasProperty("groupId", is("EndpointUri")),
-                hasProperty("edgeNode", is("ServerDefs"))));
+        assertThat(
+                endpoint, allOf(hasProperty("groupId", is("EndpointUri")), hasProperty("edgeNode", is("ServerDefs"))));
 
         TahuConfiguration configuration = endpoint.getConfiguration();
 
@@ -157,34 +170,38 @@ public class TahuConfigurationTest extends CamelTestSupport {
         assertThat(serverDef.getMqttServerName(), hasProperty("mqttServerName", is("serverName2")));
         assertThat(serverDef.getMqttServerUrl(), hasProperty("mqttServerUrl", is("tcp://localhost:1884")));
 
-        assertThat(serverDefs,
-                hasItems(allOf(hasProperty("mqttClientId",
-                        hasProperty("mqttClientId", is("clientId1"))),
+        assertThat(
+                serverDefs,
+                hasItems(allOf(
+                        hasProperty("mqttClientId", hasProperty("mqttClientId", is("clientId1"))),
                         hasProperty("username", is(nullValue())),
                         hasProperty("password", is(nullValue())),
-                        hasProperty("keepAliveTimeout",
-                                is(configuration.getKeepAliveTimeout())),
+                        hasProperty("keepAliveTimeout", is(configuration.getKeepAliveTimeout())),
                         hasProperty("ndeathTopic", is(nullValue())))));
     }
 
     @Test
     public void checkEndpointUriServerDefsSharedClientId() {
-        String uri
-                = TahuConstants.EDGE_NODE_SCHEME
-                  + "://EndpointUri/ServerDefsSharedClientId?clientId=clientId2&username=user1&password=mysecretpassw0rd&keepAliveTimeout=45&servers=serverName1:tcp://localhost:1883,serverName2:tcp://localhost:1884";
+        String uri = TahuConstants.EDGE_NODE_SCHEME
+                + "://EndpointUri/ServerDefsSharedClientId?clientId=clientId2&username=user1&password=mysecretpassw0rd&keepAliveTimeout=45&servers=serverName1:tcp://localhost:1883,serverName2:tcp://localhost:1884";
 
         TahuDefaultEndpoint endpoint = TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class);
 
         assertThat(endpoint, is(notNullValue()));
-        assertThat(endpoint,
-                allOf(hasProperty("groupId", is("EndpointUri")),
+        assertThat(
+                endpoint,
+                allOf(
+                        hasProperty("groupId", is("EndpointUri")),
                         hasProperty("edgeNode", is("ServerDefsSharedClientId"))));
 
         TahuConfiguration configuration = endpoint.getConfiguration();
 
         assertThat(configuration, is(notNullValue()));
-        assertThat(configuration,
-                allOf(hasProperty("clientId", is("clientId2")), hasProperty("checkClientIdLength", is(false)),
+        assertThat(
+                configuration,
+                allOf(
+                        hasProperty("clientId", is("clientId2")),
+                        hasProperty("checkClientIdLength", is(false)),
                         hasProperty("username", is("user1")),
                         hasProperty("password", is("mysecretpassw0rd")),
                         hasProperty("keepAliveTimeout", is(45))));
@@ -200,9 +217,10 @@ public class TahuConfigurationTest extends CamelTestSupport {
         assertThat(serverDef.getMqttServerName(), hasProperty("mqttServerName", is("serverName2")));
         assertThat(serverDef.getMqttServerUrl(), hasProperty("mqttServerUrl", is("tcp://localhost:1884")));
 
-        assertThat(serverDefs,
-                hasItems(allOf(hasProperty("mqttClientId",
-                        hasProperty("mqttClientId", is("clientId2"))),
+        assertThat(
+                serverDefs,
+                hasItems(allOf(
+                        hasProperty("mqttClientId", hasProperty("mqttClientId", is("clientId2"))),
                         hasProperty("username", is("user1")),
                         hasProperty("password", is("mysecretpassw0rd")),
                         hasProperty("keepAliveTimeout", is(45)),
@@ -211,16 +229,15 @@ public class TahuConfigurationTest extends CamelTestSupport {
 
     @Test
     public void checkEndpointUriServerDefsNoClientId() {
-        String uri
-                = TahuConstants.EDGE_NODE_SCHEME
-                  + "://EndpointUri/ServerDefsNoClientId?servers=serverName1:tcp://localhost:1883,serverName2:tcp://localhost:1884";
+        String uri = TahuConstants.EDGE_NODE_SCHEME
+                + "://EndpointUri/ServerDefsNoClientId?servers=serverName1:tcp://localhost:1883,serverName2:tcp://localhost:1884";
 
         TahuDefaultEndpoint endpoint = TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class);
 
         assertThat(endpoint, is(notNullValue()));
-        assertThat(endpoint,
-                allOf(hasProperty("groupId", is("EndpointUri")),
-                        hasProperty("edgeNode", is("ServerDefsNoClientId"))));
+        assertThat(
+                endpoint,
+                allOf(hasProperty("groupId", is("EndpointUri")), hasProperty("edgeNode", is("ServerDefsNoClientId"))));
 
         TahuConfiguration configuration = endpoint.getConfiguration();
 
@@ -237,13 +254,13 @@ public class TahuConfigurationTest extends CamelTestSupport {
         assertThat(serverDef.getMqttServerName(), hasProperty("mqttServerName", is("serverName2")));
         assertThat(serverDef.getMqttServerUrl(), hasProperty("mqttServerUrl", is("tcp://localhost:1884")));
 
-        assertThat(serverDefs,
-                hasItems(allOf(hasProperty("mqttClientId",
-                        hasProperty("mqttClientId", startsWith("Camel"))),
+        assertThat(
+                serverDefs,
+                hasItems(allOf(
+                        hasProperty("mqttClientId", hasProperty("mqttClientId", startsWith("Camel"))),
                         hasProperty("username", is(nullValue())),
                         hasProperty("password", is(nullValue())),
-                        hasProperty("keepAliveTimeout",
-                                is(configuration.getKeepAliveTimeout())),
+                        hasProperty("keepAliveTimeout", is(configuration.getKeepAliveTimeout())),
                         hasProperty("ndeathTopic", is(nullValue())))));
     }
 }

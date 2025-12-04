@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -46,8 +47,7 @@ public class FileExclusiveReadLockCopyTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri(FILE_QUERY), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // The file may have been created, but not yet flushed.
-        Awaitility.await()
-                .atMost(10, TimeUnit.SECONDS).until(this::isFlushed);
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).until(this::isFlushed);
 
         mock.assertIsSatisfied();
     }
@@ -62,11 +62,8 @@ public class FileExclusiveReadLockCopyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri(FILE_QUERY))
-                        .to(fileUri(DEST))
-                        .to("mock:result");
+                from(fileUri(FILE_QUERY)).to(fileUri(DEST)).to("mock:result");
             }
         };
     }
-
 }

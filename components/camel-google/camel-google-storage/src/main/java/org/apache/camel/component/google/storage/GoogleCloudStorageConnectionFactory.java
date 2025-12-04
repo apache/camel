@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage;
 
 import java.io.InputStream;
@@ -30,20 +31,18 @@ public final class GoogleCloudStorageConnectionFactory {
     /**
      * Prevent instantiation.
      */
-    private GoogleCloudStorageConnectionFactory() {
-    }
+    private GoogleCloudStorageConnectionFactory() {}
 
     public static Storage create(CamelContext context, GoogleCloudStorageConfiguration configuration) throws Exception {
         if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
-            InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configuration.getServiceAccountKey());
+            InputStream resolveMandatoryResourceAsInputStream =
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(context, configuration.getServiceAccountKey());
             return StorageOptions.newBuilder()
-                    .setCredentials(
-                            ServiceAccountCredentials.fromStream(resolveMandatoryResourceAsInputStream))
-                    .build().getService();
+                    .setCredentials(ServiceAccountCredentials.fromStream(resolveMandatoryResourceAsInputStream))
+                    .build()
+                    .getService();
         } else {
             return StorageOptions.getDefaultInstance().getService();
         }
     }
-
 }

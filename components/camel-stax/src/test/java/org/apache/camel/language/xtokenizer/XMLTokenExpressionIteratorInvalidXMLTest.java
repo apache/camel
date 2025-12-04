@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -28,18 +32,15 @@ import javax.xml.stream.XMLStreamException;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  *
  */
 public class XMLTokenExpressionIteratorInvalidXMLTest {
     private static final String DATA_TEMPLATE = "<?xml version=\"1.0\" encoding=\"utf-u\"?>"
-                                                + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
-                                                + "    <statement>Hello World</statement>"
-                                                + "    <statement>{0}</statement>"
-                                                + "</Statements>";
+            + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
+            + "    <statement>Hello World</statement>"
+            + "    <statement>{0}</statement>"
+            + "</Statements>";
 
     private static final Map<String, String> NSMAP = Collections.singletonMap("", "http://www.apache.org/xml/test");
 
@@ -73,5 +74,4 @@ public class XMLTokenExpressionIteratorInvalidXMLTest {
             assertNull(exp, "no error expected");
         }
     }
-
 }

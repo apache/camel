@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ContextTestSupport;
@@ -23,8 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for useOriginalBody option on DeadLetterChannel
@@ -57,9 +58,15 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // will not use original exchange
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .disableRedelivery()
+                        .logStackTrace(false)
+                        .redeliveryDelay(0));
 
-                onException(IllegalArgumentException.class).maximumRedeliveries(2).useOriginalMessage().handled(true)
+                onException(IllegalArgumentException.class)
+                        .maximumRedeliveries(2)
+                        .useOriginalMessage()
+                        .handled(true)
                         .to("mock:a");
 
                 from("direct:a").setBody(body().append(" World")).process(new MyThrowProcessor(false));
@@ -73,8 +80,7 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
 
         private boolean camelException;
 
-        public MyThrowProcessor() {
-        }
+        public MyThrowProcessor() {}
 
         public MyThrowProcessor(boolean camelException) {
             this.camelException = camelException;
@@ -98,5 +104,4 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
             this.camelException = camelException;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.function;
 
 import java.util.Objects;
@@ -24,8 +25,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public final class Suppliers {
-    private Suppliers() {
-    }
+    private Suppliers() {}
 
     /**
      * Returns a supplier which caches the result of the first call to {@link Supplier#get()}and returns that value on
@@ -64,7 +64,8 @@ public final class Suppliers {
      * @param  <T>      the type of results supplied by this supplier.
      * @return          the result fo the first call to the delegate's {@link Supplier#get()} method.
      */
-    public static <T> Supplier<T> memorize(ThrowingSupplier<T, ? extends Exception> supplier, Consumer<Exception> consumer) {
+    public static <T> Supplier<T> memorize(
+            ThrowingSupplier<T, ? extends Exception> supplier, Consumer<Exception> consumer) {
         final AtomicReference<T> valueHolder = new AtomicReference<>();
         return new Supplier<>() {
             @Override

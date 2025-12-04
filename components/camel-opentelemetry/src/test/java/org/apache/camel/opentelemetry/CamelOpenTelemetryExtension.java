@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import java.util.ArrayList;
@@ -70,7 +71,8 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
                 .build();
 
         InMemoryMetricReader metricReader = InMemoryMetricReader.create();
-        SdkMeterProvider meterProvider = SdkMeterProvider.builder().registerMetricReader(metricReader).build();
+        SdkMeterProvider meterProvider =
+                SdkMeterProvider.builder().registerMetricReader(metricReader).build();
 
         InMemoryLogRecordExporter logRecordExporter = InMemoryLogRecordExporter.create();
         SdkLoggerProvider loggerProvider = SdkLoggerProvider.builder()
@@ -92,8 +94,11 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
     private final InMemoryMetricReader metricReader;
     private final InMemoryLogRecordExporter logRecordExporter;
 
-    private CamelOpenTelemetryExtension(OpenTelemetrySdk openTelemetry, InMemorySpanExporter spanExporter,
-                                        InMemoryMetricReader metricReader, InMemoryLogRecordExporter logRecordExporter) {
+    private CamelOpenTelemetryExtension(
+            OpenTelemetrySdk openTelemetry,
+            InMemorySpanExporter spanExporter,
+            InMemoryMetricReader metricReader,
+            InMemoryLogRecordExporter logRecordExporter) {
         this.openTelemetry = openTelemetry;
         this.spanExporter = spanExporter;
         this.metricReader = metricReader;
@@ -170,9 +175,13 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
 
         @Override
         public void onStart(Context context, ReadWriteSpan readWriteSpan) {
-            LOG.info(OTEL_MARKER, "Span started: name - '{}', kind - '{}', id - '{}-{}", readWriteSpan.getName(),
+            LOG.info(
+                    OTEL_MARKER,
+                    "Span started: name - '{}', kind - '{}', id - '{}-{}",
+                    readWriteSpan.getName(),
                     readWriteSpan.getKind(),
-                    readWriteSpan.getSpanContext().getTraceId(), readWriteSpan.getSpanContext().getSpanId());
+                    readWriteSpan.getSpanContext().getTraceId(),
+                    readWriteSpan.getSpanContext().getSpanId());
         }
 
         @Override
@@ -182,9 +191,13 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
 
         @Override
         public void onEnd(ReadableSpan readableSpan) {
-            LOG.info(OTEL_MARKER, "Span ended: name - '{}', kind - '{}', id - '{}-{}", readableSpan.getName(),
+            LOG.info(
+                    OTEL_MARKER,
+                    "Span ended: name - '{}', kind - '{}', id - '{}-{}",
+                    readableSpan.getName(),
                     readableSpan.getKind(),
-                    readableSpan.getSpanContext().getTraceId(), readableSpan.getSpanContext().getSpanId());
+                    readableSpan.getSpanContext().getTraceId(),
+                    readableSpan.getSpanContext().getSpanId());
         }
 
         @Override

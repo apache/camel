@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail;
 
 import com.google.api.services.gmail.Gmail;
@@ -31,8 +32,10 @@ public class GoogleMailComponent
 
     @Metadata
     GoogleMailConfiguration configuration;
+
     @Metadata(label = "advanced")
     private Gmail client;
+
     @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
 
@@ -51,14 +54,27 @@ public class GoogleMailComponent
 
     public Gmail getClient(GoogleMailConfiguration config) {
         if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
+            if (config.getClientId() != null
+                    && !config.getClientId().isBlank()
+                    && config.getClientSecret() != null
+                    && !config.getClientSecret().isBlank()) {
+                client = getClientFactory()
+                        .makeClient(
+                                config.getClientId(),
+                                config.getClientSecret(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getRefreshToken(),
+                                config.getAccessToken());
+            } else if (config.getServiceAccountKey() != null
+                    && !config.getServiceAccountKey().isBlank()) {
+                client = getClientFactory()
+                        .makeClient(
+                                getCamelContext(),
+                                config.getServiceAccountKey(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
                         "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");

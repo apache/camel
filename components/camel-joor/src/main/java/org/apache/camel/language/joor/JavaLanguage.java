@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import java.util.HashMap;
@@ -192,7 +193,10 @@ public class JavaLanguage extends TypedLanguageSupport implements ScriptingLangu
             }
         }
         if (counter1 > 0 || counter2 > 0) {
-            LOG.info("Loaded jOOR language imports: {} and aliases: {} from configuration: {}", counter1, counter2,
+            LOG.info(
+                    "Loaded jOOR language imports: {} and aliases: {} from configuration: {}",
+                    counter1,
+                    counter2,
                     configResource);
         }
         if (compiler.getAliases() == null) {

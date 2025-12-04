@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 /**
@@ -27,8 +28,7 @@ public class Substitution {
     private String replacement;
     private boolean replaceWithType;
 
-    public Substitution() {
-    }
+    public Substitution() {}
 
     public Substitution(String method, String argName, String argType, String replacement, boolean replaceWithType) {
         this.method = method;

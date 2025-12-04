@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -27,21 +31,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlProducerReuseParameterTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -57,9 +57,14 @@ public class SqlProducerReuseParameterTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        fluentTemplate.to("direct:start").withHeader("id", "2").withHeader("lic", "ASF").send();
+        fluentTemplate
+                .to("direct:start")
+                .withHeader("id", "2")
+                .withHeader("lic", "ASF")
+                .send();
 
-        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(2, received.size());
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("AMQ", row.get("PROJECT"));
@@ -75,7 +80,8 @@ public class SqlProducerReuseParameterTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                        .to("sql:select * from projects where (id = :#id and license = :#lic) or (id > :#id) order by project")
+                        .to(
+                                "sql:select * from projects where (id = :#id and license = :#lic) or (id > :#id) order by project")
                         .to("mock:result");
             }
         };

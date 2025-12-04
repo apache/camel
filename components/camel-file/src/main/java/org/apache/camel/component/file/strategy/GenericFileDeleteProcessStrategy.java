@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.Exchange;
@@ -34,7 +35,10 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public boolean begin(
-            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception {
 
         // must invoke super
@@ -57,7 +61,10 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public void commit(
-            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception {
 
         // special for file lock strategy as we must release that lock first
@@ -109,7 +116,10 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public void rollback(
-            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception {
         try {
             deleteLocalWorkFile(exchange);

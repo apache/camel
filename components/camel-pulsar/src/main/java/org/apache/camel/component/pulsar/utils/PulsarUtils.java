@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.utils;
 
 import java.util.Queue;
@@ -30,8 +31,7 @@ public final class PulsarUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(PulsarUtils.class);
 
-    private PulsarUtils() {
-    }
+    private PulsarUtils() {}
 
     public static Queue<ExecutorService> stopExecutors(
             final ExecutorServiceManager executorServiceManager, final Queue<ExecutorService> executors) {
@@ -41,7 +41,8 @@ public final class PulsarUtils {
         return new ConcurrentLinkedQueue<>();
     }
 
-    public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers) throws PulsarClientException {
+    public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers)
+            throws PulsarClientException {
         while (!consumers.isEmpty()) {
             Consumer<byte[]> consumer = consumers.poll();
             if (consumer != null) {
@@ -50,8 +51,11 @@ public final class PulsarUtils {
                 } catch (PulsarClientException.AlreadyClosedException e) {
                     // ignore during stopping
                 } catch (Exception e) {
-                    LOG.debug("Error stopping consumer: {} due to {}. This exception is ignored", consumer,
-                            e.getMessage(), e);
+                    LOG.debug(
+                            "Error stopping consumer: {} due to {}. This exception is ignored",
+                            consumer,
+                            e.getMessage(),
+                            e);
                 }
             }
         }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import org.apache.camel.EndpointInject;
@@ -44,7 +45,9 @@ public class JdbcRouteSplitTest extends AbstractJdbcTestSupport {
                 from("direct:hello")
                         // here we split the data from the testdb into new messages one by one
                         // so the mock endpoint will receive a message per row in the table
-                        .to("jdbc:testdb").split(body()).to("mock:result");
+                        .to("jdbc:testdb")
+                        .split(body())
+                        .to("mock:result");
 
                 // END SNIPPET: e1
             }

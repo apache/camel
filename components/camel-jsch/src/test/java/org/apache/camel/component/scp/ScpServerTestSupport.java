@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scp;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -48,9 +52,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public abstract class ScpServerTestSupport extends CamelTestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(ScpServerTestSupport.class);
@@ -140,7 +141,8 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
                 return true;
             }
         });
-        List<NamedFactory<Signature>> signatures = new LinkedList<NamedFactory<Signature>>(sshd.getSignatureFactories());
+        List<NamedFactory<Signature>> signatures =
+                new LinkedList<NamedFactory<Signature>>(sshd.getSignatureFactories());
         signatures.remove(BuiltinSignatures.rsa);
         sshd.setSignatureFactories(signatures);
         List<KeyExchangeFactory> kexFactories = new LinkedList<KeyExchangeFactory>(sshd.getKeyExchangeFactories());
@@ -214,8 +216,7 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
                 }
 
                 @Override
-                public void showMessage(String message) {
-                }
+                public void showMessage(String message) {}
             });
             // in the process of connecting, "[localhost]:<port>" is added to the knownHostsFile
             s.connect();

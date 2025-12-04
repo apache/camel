@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grape;
+
+import static org.apache.camel.ServiceStatus.Started;
+import static org.apache.camel.component.grape.GrapeComponent.grapeCamelContext;
+import static org.apache.camel.component.grape.GrapeEndpoint.loadPatches;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,12 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.ServiceStatus.Started;
-import static org.apache.camel.component.grape.GrapeComponent.grapeCamelContext;
-import static org.apache.camel.component.grape.GrapeEndpoint.loadPatches;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GrapeComponentTest {
 
@@ -46,21 +47,20 @@ public class GrapeComponentTest {
 
     @Test
     public void shouldLoadStreamComponent() {
-        assertDoesNotThrow(
-                () -> runShouldLoadStreamTest("grape:org.apache.camel/camel-stream/" + camelContext.getVersion(), "msg"));
+        assertDoesNotThrow(() ->
+                runShouldLoadStreamTest("grape:org.apache.camel/camel-stream/" + camelContext.getVersion(), "msg"));
     }
 
     @Test
     public void shouldLoadStreamComponentViaBodyRequest() {
-        assertDoesNotThrow(
-                () -> runShouldLoadStreamTest("grape:grape", "org.apache.camel/camel-stream/" + camelContext.getVersion()));
+        assertDoesNotThrow(() ->
+                runShouldLoadStreamTest("grape:grape", "org.apache.camel/camel-stream/" + camelContext.getVersion()));
     }
 
     private void runShouldLoadStreamTest(String s, String s2) {
         pathesRepository.clear();
         camelContext.start();
-        camelContext.createProducerTemplate().sendBody(s,
-                s2);
+        camelContext.createProducerTemplate().sendBody(s, s2);
         camelContext.createProducerTemplate().sendBody("stream:out", "msg");
     }
 
@@ -68,10 +68,15 @@ public class GrapeComponentTest {
     public void shouldLoadBeanAtRuntime() {
         pathesRepository.clear();
         camelContext.start();
-        camelContext.createProducerTemplate().sendBody("grape:grape",
-                "org.apache.camel/camel-stream/" + camelContext.getVersion());
-        ServiceStatus status = camelContext.createProducerTemplate().requestBody(
-                "bean:org.apache.camel.component.stream.StreamComponent?method=getStatus", null, ServiceStatus.class);
+        camelContext
+                .createProducerTemplate()
+                .sendBody("grape:grape", "org.apache.camel/camel-stream/" + camelContext.getVersion());
+        ServiceStatus status = camelContext
+                .createProducerTemplate()
+                .requestBody(
+                        "bean:org.apache.camel.component.stream.StreamComponent?method=getStatus",
+                        null,
+                        ServiceStatus.class);
         assertEquals(Started, status);
     }
 
@@ -80,8 +85,9 @@ public class GrapeComponentTest {
         // Given
         pathesRepository.clear();
         camelContext.start();
-        camelContext.createProducerTemplate().sendBody("grape:grape",
-                "org.apache.camel/camel-stream/" + camelContext.getVersion());
+        camelContext
+                .createProducerTemplate()
+                .sendBody("grape:grape", "org.apache.camel/camel-stream/" + camelContext.getVersion());
         camelContext.stop();
 
         camelContext = new DefaultCamelContext();
@@ -95,8 +101,12 @@ public class GrapeComponentTest {
 
         // When
         camelContext.start();
-        ServiceStatus status = camelContext.createProducerTemplate().requestBody(
-                "bean:org.apache.camel.component.stream.StreamComponent?method=getStatus", null, ServiceStatus.class);
+        ServiceStatus status = camelContext
+                .createProducerTemplate()
+                .requestBody(
+                        "bean:org.apache.camel.component.stream.StreamComponent?method=getStatus",
+                        null,
+                        ServiceStatus.class);
 
         // Then
         assertEquals(Started, status);
@@ -106,10 +116,10 @@ public class GrapeComponentTest {
     public void shouldListPatches() {
         pathesRepository.clear();
         camelContext.start();
-        camelContext.createProducerTemplate().sendBody("grape:grape",
-                "org.apache.camel/camel-stream/" + camelContext.getVersion());
+        camelContext
+                .createProducerTemplate()
+                .sendBody("grape:grape", "org.apache.camel/camel-stream/" + camelContext.getVersion());
         List<String> patches = pathesRepository.listPatches();
         assertEquals(Arrays.asList("org.apache.camel/camel-stream/" + camelContext.getVersion()), patches);
     }
-
 }

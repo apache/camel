@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
 
 interface CodeEmitter<T> {
@@ -21,5 +22,4 @@ interface CodeEmitter<T> {
     CodeEmitter<T> emit(String method, Object... args);
 
     T result();
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
@@ -32,10 +37,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
@@ -104,7 +105,6 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
         // ADD key and check again
         assertTrue(repo.add(key01));
         assertTrue(repo.contains(key01));
-
     }
 
     @Test
@@ -161,5 +161,4 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
             }
         };
     }
-
 }

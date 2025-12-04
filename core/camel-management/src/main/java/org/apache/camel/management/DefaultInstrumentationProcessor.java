@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import org.apache.camel.AsyncCallback;
@@ -96,7 +97,11 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
 
     protected void recordTime(Exchange exchange, long duration) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("{}Recording duration: {} millis for exchange: {}", type != null ? type + ": " : "", duration, exchange);
+            LOG.trace(
+                    "{}Recording duration: {} millis for exchange: {}",
+                    type != null ? type + ": " : "",
+                    duration,
+                    exchange);
         }
 
         if (!exchange.isFailed() && exchange.getException() == null) {

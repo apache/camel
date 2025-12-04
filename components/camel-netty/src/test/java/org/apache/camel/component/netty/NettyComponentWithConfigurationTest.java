@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class NettyComponentWithConfigurationTest extends CamelTestSupport {
 
@@ -35,7 +36,8 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
         assertSame(cfg, comp.getConfiguration());
 
         NettyEndpoint e1 = (NettyEndpoint) comp.createEndpoint("netty://tcp://localhost:4455");
-        NettyEndpoint e2 = (NettyEndpoint) comp.createEndpoint("netty://tcp://localhost:5566?sync=false&needClientAuth=true");
+        NettyEndpoint e2 =
+                (NettyEndpoint) comp.createEndpoint("netty://tcp://localhost:5566?sync=false&needClientAuth=true");
 
         // should not be same
         assertNotSame(e1, e2);
@@ -65,8 +67,8 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
         assertSame(cfg, comp.getConfiguration());
 
         NettyEndpoint e1 = (NettyEndpoint) comp.createEndpoint("netty://udp://localhost:8601?sync=false");
-        NettyEndpoint e2
-                = (NettyEndpoint) comp.createEndpoint("netty://udp://localhost:8602?sync=false&udpConnectionlessSending=true");
+        NettyEndpoint e2 = (NettyEndpoint)
+                comp.createEndpoint("netty://udp://localhost:8602?sync=false&udpConnectionlessSending=true");
 
         // should not be same
         assertNotSame(e1, e2);
@@ -82,5 +84,4 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
         assertEquals(8601, e1.getConfiguration().getPort());
         assertEquals(8602, e2.getConfiguration().getPort());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn;
 
 import java.util.HashMap;
@@ -46,7 +47,6 @@ public class TestConfiguration {
             } catch (Exception e) {
                 LOGGER.error("Cannot load property file {}, reason {}", propertyFileName, e.getMessage());
             }
-
         }
     }
 

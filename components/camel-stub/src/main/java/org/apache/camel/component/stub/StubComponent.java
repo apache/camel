@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stub;
 
 import java.util.Map;
@@ -41,11 +42,11 @@ public class StubComponent extends SedaComponent {
 
     @Metadata(label = "advanced")
     private boolean shadow;
+
     @Metadata(label = "advanced")
     private String shadowPattern;
 
-    public StubComponent() {
-    }
+    public StubComponent() {}
 
     @Override
     protected void validateURI(String uri, String path, Map<String, Object> parameters) {
@@ -63,7 +64,10 @@ public class StubComponent extends SedaComponent {
 
     @Override
     protected StubEndpoint createEndpoint(
-            String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+            String endpointUri,
+            Component component,
+            BlockingQueueFactory<Exchange> queueFactory,
+            int concurrentConsumers) {
         return new StubEndpoint(endpointUri, component, queueFactory, concurrentConsumers);
     }
 
@@ -118,7 +122,8 @@ public class StubComponent extends SedaComponent {
         if (shadow) {
             final EndpointRegistry registry = getCamelContext().getEndpointRegistry();
             getCamelContext().getCamelContextExtension().registerEndpointCallback((uri, endpoint) -> {
-                boolean match = shadowPattern == null || EndpointHelper.matchEndpoint(getCamelContext(), uri, shadowPattern);
+                boolean match =
+                        shadowPattern == null || EndpointHelper.matchEndpoint(getCamelContext(), uri, shadowPattern);
                 if (match) {
                     String shadowUri = resolveShadowUri(uri);
                     if (!uri.equals(shadowUri)) {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -25,8 +28,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.component.AbstractApiComponent;
 import org.hisp.dhis.integration.sdk.Dhis2ClientBuilder;
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
-
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @org.apache.camel.spi.annotations.Component("dhis2")
 public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Configuration, Dhis2ApiCollection> {
@@ -44,15 +45,13 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
     }
 
     @Override
-    protected Dhis2ApiName getApiName(String apiNameStr)
-            throws IllegalArgumentException {
+    protected Dhis2ApiName getApiName(String apiNameStr) throws IllegalArgumentException {
         return getCamelContext().getTypeConverter().convertTo(Dhis2ApiName.class, apiNameStr);
     }
 
     @Override
     protected Endpoint createEndpoint(
-            String uri, String methodName, Dhis2ApiName apiName,
-            Dhis2Configuration endpointConfiguration) {
+            String uri, String methodName, Dhis2ApiName apiName, Dhis2Configuration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new Dhis2Endpoint(uri, this, apiName, methodName, endpointConfiguration);
@@ -71,8 +70,11 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
             lock.lock();
             try {
                 if (this.dhis2Client == null) {
-                    this.dhis2Client = Dhis2ClientBuilder.newClient(endpointConfiguration.getBaseApiUrl(),
-                            endpointConfiguration.getUsername(), endpointConfiguration.getPassword()).build();
+                    this.dhis2Client = Dhis2ClientBuilder.newClient(
+                                    endpointConfiguration.getBaseApiUrl(),
+                                    endpointConfiguration.getUsername(),
+                                    endpointConfiguration.getPassword())
+                            .build();
                 }
             } finally {
                 lock.unlock();
@@ -81,8 +83,10 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
             return this.dhis2Client;
         } else {
             if (endpointConfiguration.getClient() != null) {
-                if (endpointConfiguration.getBaseApiUrl() != null || endpointConfiguration.getPersonalAccessToken() != null
-                        || endpointConfiguration.getUsername() != null || endpointConfiguration.getPassword() != null) {
+                if (endpointConfiguration.getBaseApiUrl() != null
+                        || endpointConfiguration.getPersonalAccessToken() != null
+                        || endpointConfiguration.getUsername() != null
+                        || endpointConfiguration.getPassword() != null) {
                     throw new RuntimeCamelException(
                             "Bad DHIS2 endpoint configuration: client option is mutually exclusive to baseApiUrl, username, password, and personalAccessToken. Either set (1) `client`, or (2) `baseApiUrl` and `username` and `password`, or (3) `baseApiUrl` and `personalAccessToken`");
                 }
@@ -97,11 +101,16 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
                 }
 
                 if (isNotEmpty(endpointConfiguration.getPersonalAccessToken())) {
-                    return Dhis2ClientBuilder.newClient(endpointConfiguration.getBaseApiUrl(),
-                            endpointConfiguration.getPersonalAccessToken()).build();
+                    return Dhis2ClientBuilder.newClient(
+                                    endpointConfiguration.getBaseApiUrl(),
+                                    endpointConfiguration.getPersonalAccessToken())
+                            .build();
                 } else {
-                    return Dhis2ClientBuilder.newClient(endpointConfiguration.getBaseApiUrl(),
-                            endpointConfiguration.getUsername(), endpointConfiguration.getPassword()).build();
+                    return Dhis2ClientBuilder.newClient(
+                                    endpointConfiguration.getBaseApiUrl(),
+                                    endpointConfiguration.getUsername(),
+                                    endpointConfiguration.getPassword())
+                            .build();
                 }
             }
         }

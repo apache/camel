@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,8 +38,7 @@ public class CustomDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private String ref;
 
-    public CustomDataFormat() {
-    }
+    public CustomDataFormat() {}
 
     protected CustomDataFormat(CustomDataFormat source) {
         super(source);

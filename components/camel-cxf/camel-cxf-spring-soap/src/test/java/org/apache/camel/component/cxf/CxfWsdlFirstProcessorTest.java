@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.xml.ws.Endpoint;
 
@@ -22,8 +25,6 @@ import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfWsdlFirstProcessorTest extends AbstractCxfWsdlFirstTest {
 
@@ -35,8 +36,7 @@ public class CxfWsdlFirstProcessorTest extends AbstractCxfWsdlFirstTest {
     @BeforeAll
     public static void startService() {
         Object implementor = new PersonImpl();
-        String address = "http://localhost:" + getPort1()
-                         + "/CxfWsdlFirstProcessorTest/PersonService/";
+        String address = "http://localhost:" + getPort1() + "/CxfWsdlFirstProcessorTest/PersonService/";
         Endpoint.publish(address, implementor);
     }
 

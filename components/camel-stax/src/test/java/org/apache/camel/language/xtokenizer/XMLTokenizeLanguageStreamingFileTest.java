@@ -14,9 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
 
 import java.nio.file.Path;
+
+import org.xmlunit.assertj3.XmlAssert;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +29,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.xmlunit.assertj3.XmlAssert;
 
 public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
     @TempDir
@@ -35,16 +37,17 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
     @Test
     public void testFromFile() throws Exception {
         String[] expected = new String[] {
-                "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\"></c:child>",
-                "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child>",
-                "<c:child some_attr='c' anotherAttr='c' xmlns:c=\"urn:c\"></c:child>",
-                "<c:child some_attr='d' anotherAttr='d' xmlns:c=\"urn:c\"></c:child>" };
+            "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\"></c:child>",
+            "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child>",
+            "<c:child some_attr='c' anotherAttr='c' xmlns:c=\"urn:c\"></c:child>",
+            "<c:child some_attr='d' anotherAttr='d' xmlns:c=\"urn:c\"></c:child>"
+        };
 
-        String body
-                = "<?xml version='1.0' encoding='UTF-8'?>" + "<c:parent xmlns:c='urn:c'>"
-                  + "<c:child some_attr='a' anotherAttr='a'></c:child>"
-                  + "<c:child some_attr='b' anotherAttr='b'></c:child>" + "<c:child some_attr='c' anotherAttr='c'></c:child>"
-                  + "<c:child some_attr='d' anotherAttr='d'></c:child>" + "</c:parent>";
+        String body = "<?xml version='1.0' encoding='UTF-8'?>" + "<c:parent xmlns:c='urn:c'>"
+                + "<c:child some_attr='a' anotherAttr='a'></c:child>"
+                + "<c:child some_attr='b' anotherAttr='b'></c:child>"
+                + "<c:child some_attr='c' anotherAttr='c'></c:child>"
+                + "<c:child some_attr='d' anotherAttr='d'></c:child>" + "</c:parent>";
 
         template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), body, Exchange.FILE_NAME, "myxml.xml");
 
@@ -58,7 +61,11 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
 
         int i = 0;
         for (String target : expected) {
-            String body = getMockEndpoint("mock:result").getReceivedExchanges().get(i).getMessage().getBody(String.class);
+            String body = getMockEndpoint("mock:result")
+                    .getReceivedExchanges()
+                    .get(i)
+                    .getMessage()
+                    .getBody(String.class);
             XmlAssert.assertThat(body).and(target).areIdentical();
             i++;
         }
@@ -70,8 +77,12 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
             Namespaces ns = new Namespaces("C", "urn:c");
 
             public void configure() {
-                from(TestSupport.fileUri(testDirectory, "?initialDelay=0&delay=10")).split().xtokenize("//C:child", ns).streaming()
-                        .to("mock:result").end();
+                from(TestSupport.fileUri(testDirectory, "?initialDelay=0&delay=10"))
+                        .split()
+                        .xtokenize("//C:child", ns)
+                        .streaming()
+                        .to("mock:result")
+                        .end();
             }
         };
     }

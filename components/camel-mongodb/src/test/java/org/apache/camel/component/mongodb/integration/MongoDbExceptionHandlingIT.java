@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.mongodb.DBObject;
 import org.apache.camel.CamelContext;
@@ -28,10 +33,6 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     @BeforeEach
@@ -44,7 +45,8 @@ public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport impleme
         pumpDataIntoTestCollection();
 
         // notice missing quote at the end of Einstein
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein}"),
                 "Should have thrown an exception");
         extractAndAssertCamelMongoDbException(ex, null);
@@ -55,7 +57,8 @@ public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport impleme
         pumpDataIntoTestCollection();
 
         // notice missing quote at the end of Einstein
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein}"),
                 "Should have thrown an exception");
         extractAndAssertCamelMongoDbException(ex, null);
@@ -70,9 +73,13 @@ public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport impleme
     public void testErroneousDynamicOperation() {
         pumpDataIntoTestCollection();
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.requestBodyAndHeader("direct:findOneByQuery", new Document("scientist", "Einstein").toJson(),
-                        MongoDbConstants.OPERATION_HEADER, "dummyOp"),
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
+                () -> template.requestBodyAndHeader(
+                        "direct:findOneByQuery",
+                        new Document("scientist", "Einstein").toJson(),
+                        MongoDbConstants.OPERATION_HEADER,
+                        "dummyOp"),
                 "Should have thrown an exception");
 
         extractAndAssertCamelMongoDbException(ex, "Operation specified on header is not supported. Value: dummyOp");
@@ -82,18 +89,20 @@ public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport impleme
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:findAll").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true")
+                from("direct:findAll")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true")
                         .to("mock:resultFindAll");
 
-                from("direct:findOneByQuery").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneByQuery&dynamicity=true")
+                from("direct:findOneByQuery")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneByQuery&dynamicity=true")
                         .to("mock:resultFindOneByQuery");
 
-                from("direct:findById").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
+                from("direct:findById")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
                         .to("mock:resultFindById");
-
             }
         };
     }

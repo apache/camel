@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
+import static org.apache.camel.util.CollectionHelper.appendEntry;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -47,9 +51,6 @@ import org.apache.camel.support.http.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
-import static org.apache.camel.util.CollectionHelper.appendEntry;
-
 /*
  * Supporting class for the platform-http-vertx component.
  *
@@ -60,12 +61,10 @@ public final class VertxPlatformHttpSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpSupport.class);
     public static final String DEFAULT_CONTENT_TYPE_ON_EXCEPTION = "text/plain; charset=utf-8";
 
-    private VertxPlatformHttpSupport() {
-    }
+    private VertxPlatformHttpSupport() {}
 
     static Object toHttpResponse(
-            RoutingContext ctx, Message message, HeaderFilterStrategy headerFilterStrategy,
-            boolean muteExceptions) {
+            RoutingContext ctx, Message message, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions) {
         final Exchange exchange = message.getExchange();
 
         HttpServerResponse response = ctx.response();
@@ -105,7 +104,8 @@ public final class VertxPlatformHttpSupport {
         return message.getBody();
     }
 
-    private static Object handleExceptions(Message message, boolean muteExceptions, Exception exception, Exchange exchange) {
+    private static Object handleExceptions(
+            Message message, boolean muteExceptions, Exception exception, Exchange exchange) {
         Object body;
         if (muteExceptions) {
             body = ""; // do not include stacktrace in body
@@ -125,8 +125,11 @@ public final class VertxPlatformHttpSupport {
     }
 
     private static void copyMessageHeadersToResponse(
-            HttpServerResponse response, Map<String, String> pathParams,
-            Message message, HeaderFilterStrategy headerFilterStrategy, Exchange exchange) {
+            HttpServerResponse response,
+            Map<String, String> pathParams,
+            Message message,
+            HeaderFilterStrategy headerFilterStrategy,
+            Exchange exchange) {
         final TypeConverter tc = exchange.getContext().getTypeConverter();
 
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
@@ -146,10 +149,19 @@ public final class VertxPlatformHttpSupport {
     }
 
     private static void putHeader(
-            HttpServerResponse response, HeaderFilterStrategy headerFilterStrategy, Exchange exchange, Iterator<?> it,
-            TypeConverter tc, String key) {
+            HttpServerResponse response,
+            HeaderFilterStrategy headerFilterStrategy,
+            Exchange exchange,
+            Iterator<?> it,
+            TypeConverter tc,
+            String key) {
 
-        HttpUtil.applyHeader(headerFilterStrategy, exchange, it, tc, key,
+        HttpUtil.applyHeader(
+                headerFilterStrategy,
+                exchange,
+                it,
+                tc,
+                key,
                 (values, firstValue) -> applyHeader(response, key, values, firstValue));
     }
 
@@ -171,7 +183,10 @@ public final class VertxPlatformHttpSupport {
     }
 
     static Future<Void> writeResponse(
-            RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions) {
+            RoutingContext ctx,
+            Exchange camelExchange,
+            HeaderFilterStrategy headerFilterStrategy,
+            boolean muteExceptions) {
         final Promise<Void> promise = Promise.promise();
 
         // Nothing to do if the response is already ended due to request timeout etc
@@ -206,7 +221,8 @@ public final class VertxPlatformHttpSupport {
         return promise.future();
     }
 
-    private static void writeResponseAsFallback(Promise<Void> promise, Exchange camelExchange, Object body, RoutingContext ctx)
+    private static void writeResponseAsFallback(
+            Promise<Void> promise, Exchange camelExchange, Object body, RoutingContext ctx)
             throws NoTypeConversionAvailableException {
         final TypeConverter tc = camelExchange.getContext().getTypeConverter();
 
@@ -247,7 +263,8 @@ public final class VertxPlatformHttpSupport {
         context.runOnContext(event -> pump.start());
     }
 
-    private static void endHandler(Promise<Void> promise, HttpServerResponse response, AsyncInputStream asyncInputStream) {
+    private static void endHandler(
+            Promise<Void> promise, HttpServerResponse response, AsyncInputStream asyncInputStream) {
         response.end().onComplete(result -> onComplete(promise, asyncInputStream));
     }
 
@@ -295,7 +312,10 @@ public final class VertxPlatformHttpSupport {
 
     // Note: this is in the hot path of the platform http, so be mindful with performance here
     private static void applyHeaderFilterStrategy(
-            RoutingContext ctx, Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy,
+            RoutingContext ctx,
+            Map<String, Object> headersMap,
+            Exchange exchange,
+            HeaderFilterStrategy headerFilterStrategy,
             HttpServerRequest request) {
         final MultiMap requestHeaders = request.headers();
         applyAuthHeaders(headersMap, exchange, headerFilterStrategy, requestHeaders);
@@ -310,7 +330,9 @@ public final class VertxPlatformHttpSupport {
     }
 
     private static void applyHeaders(
-            Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy,
+            Map<String, Object> headersMap,
+            Exchange exchange,
+            HeaderFilterStrategy headerFilterStrategy,
             MultiMap requestHeaders) {
 
         final List<Map.Entry<String, String>> entries = requestHeaders.entries();
@@ -326,7 +348,9 @@ public final class VertxPlatformHttpSupport {
     }
 
     private static void applyAuthHeaders(
-            Map<String, Object> headersMap, Exchange exchange, HeaderFilterStrategy headerFilterStrategy,
+            Map<String, Object> headersMap,
+            Exchange exchange,
+            HeaderFilterStrategy headerFilterStrategy,
             MultiMap requestHeaders) {
         final String authorization = requestHeaders.get("authorization");
         // store a special header that this request was authenticated using HTTP Basic

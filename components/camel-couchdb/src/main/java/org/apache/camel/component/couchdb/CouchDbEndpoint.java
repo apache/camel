@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb;
 
 import java.net.URI;
@@ -34,47 +35,62 @@ import org.apache.camel.support.DefaultEndpoint;
  * Consume changesets for inserts, updates and deletes in a CouchDB database, as well as get, save, update and delete
  * documents from a CouchDB database.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database",
-             category = { Category.DATABASE }, headersClass = CouchDbConstants.class)
+@UriEndpoint(
+        firstVersion = "2.11.0",
+        scheme = "couchdb",
+        title = "CouchDB",
+        syntax = "couchdb:protocol:hostname:port/database",
+        category = {Category.DATABASE},
+        headersClass = CouchDbConstants.class)
 public class CouchDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     public static final String DEFAULT_STYLE = "main_only";
     public static final long DEFAULT_HEARTBEAT = 30000;
     public static final int DEFAULT_PORT = 5984;
 
-    private static final String URI_ERROR
-            = "Invalid URI. Format must be of the form couchdb:http[s]://hostname[:port]/database?[options...]";
+    private static final String URI_ERROR =
+            "Invalid URI. Format must be of the form couchdb:http[s]://hostname[:port]/database?[options...]";
 
     @UriPath(enums = "http,https")
     @Metadata(required = true)
     private String protocol;
+
     @UriPath
     @Metadata(required = true)
     private String hostname;
+
     @UriPath(defaultValue = "" + DEFAULT_PORT)
     private int port;
+
     @UriPath
     @Metadata(required = true)
     private String database;
+
     @UriParam(label = "consumer", enums = "all_docs,main_only", defaultValue = DEFAULT_STYLE)
     private String style = DEFAULT_STYLE;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "consumer", defaultValue = "" + DEFAULT_HEARTBEAT, javaType = "java.time.Duration")
     private long heartbeat = DEFAULT_HEARTBEAT;
+
     @UriParam
     private boolean createDatabase;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deletes = true;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean updates = true;
+
     @UriParam(label = "consumer", defaultValue = "10")
     private int maxMessagesPerPoll = 10;
 
-    public CouchDbEndpoint() {
-    }
+    public CouchDbEndpoint() {}
 
     public CouchDbEndpoint(String endpointUri, String remaining, CouchDbComponent component) throws Exception {
         super(endpointUri, component);

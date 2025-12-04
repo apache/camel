@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.PredicateValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ValidateSimpleTest extends ContextTestSupport {
 
@@ -71,7 +72,10 @@ public class ValidateSimpleTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").validate().simple("${body} contains 'Camel'").to("mock:result");
+                from("direct:start")
+                        .validate()
+                        .simple("${body} contains 'Camel'")
+                        .to("mock:result");
             }
         };
     }

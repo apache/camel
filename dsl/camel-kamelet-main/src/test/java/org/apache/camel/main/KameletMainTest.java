@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.function.BiConsumer;
 
@@ -24,11 +30,6 @@ import org.apache.camel.main.app.Bean1;
 import org.apache.camel.main.app.Bean2;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class KameletMainTest {
 
@@ -84,5 +85,4 @@ public class KameletMainTest {
 
         main.stop();
     }
-
 }

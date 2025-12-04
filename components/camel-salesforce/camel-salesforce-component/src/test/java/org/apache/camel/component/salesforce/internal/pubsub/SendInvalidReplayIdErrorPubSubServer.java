@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.pubsub;
+
+import static org.apache.camel.component.salesforce.internal.client.PubSubApiClient.PUBSUB_ERROR_CORRUPTED_REPLAY_ID;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,8 +30,6 @@ import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-
-import static org.apache.camel.component.salesforce.internal.client.PubSubApiClient.PUBSUB_ERROR_CORRUPTED_REPLAY_ID;
 
 public class SendInvalidReplayIdErrorPubSubServer extends PubSubGrpc.PubSubImplBase {
 
@@ -46,12 +47,16 @@ public class SendInvalidReplayIdErrorPubSubServer extends PubSubGrpc.PubSubImplB
             @Override
             public void onNext(FetchRequest request) {
                 count++;
-                if (count <= numberOfInvalidIdReplies && ByteString.copyFromUtf8("123").equals(request.getReplayId())) {
+                if (count <= numberOfInvalidIdReplies
+                        && ByteString.copyFromUtf8("123").equals(request.getReplayId())) {
                     TimerTask task = new TimerTask() {
                         public void run() {
-                            StatusRuntimeException e = new StatusRuntimeException(Status.UNAUTHENTICATED, new Metadata());
-                            e.getTrailers().put(Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER),
-                                    PUBSUB_ERROR_CORRUPTED_REPLAY_ID);
+                            StatusRuntimeException e =
+                                    new StatusRuntimeException(Status.UNAUTHENTICATED, new Metadata());
+                            e.getTrailers()
+                                    .put(
+                                            Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER),
+                                            PUBSUB_ERROR_CORRUPTED_REPLAY_ID);
                             client.onError(e);
                         }
                     };
@@ -76,14 +81,10 @@ public class SendInvalidReplayIdErrorPubSubServer extends PubSubGrpc.PubSubImplB
             }
 
             @Override
-            public void onError(Throwable t) {
-
-            }
+            public void onError(Throwable t) {}
 
             @Override
-            public void onCompleted() {
-
-            }
+            public void onCompleted() {}
         };
     }
 }

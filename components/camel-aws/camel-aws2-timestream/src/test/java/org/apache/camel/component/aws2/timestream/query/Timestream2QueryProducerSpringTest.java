@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.query;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.timestreamquery.model.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
 
@@ -48,9 +49,12 @@ public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeEndpointsResponse resultGet = (DescribeEndpointsResponse) exchange.getIn().getBody();
+        DescribeEndpointsResponse resultGet =
+                (DescribeEndpointsResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.endpoints().size());
-        assertEquals("query.timestream.region.amazonaws.com", resultGet.endpoints().get(0).address());
+        assertEquals(
+                "query.timestream.region.amazonaws.com",
+                resultGet.endpoints().get(0).address());
     }
 
     @Test
@@ -67,9 +71,12 @@ public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeEndpointsResponse resultGet = (DescribeEndpointsResponse) exchange.getIn().getBody();
+        DescribeEndpointsResponse resultGet =
+                (DescribeEndpointsResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.endpoints().size());
-        assertEquals("query.timestream.region.amazonaws.com", resultGet.endpoints().get(0).address());
+        assertEquals(
+                "query.timestream.region.amazonaws.com",
+                resultGet.endpoints().get(0).address());
     }
 
     @Test
@@ -85,7 +92,8 @@ public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateScheduledQueryResponse resultGet = (CreateScheduledQueryResponse) exchange.getIn().getBody();
+        CreateScheduledQueryResponse resultGet =
+                (CreateScheduledQueryResponse) exchange.getIn().getBody();
         assertEquals("aws-timestream:test:scheduled-query:arn", resultGet.arn());
     }
 
@@ -102,7 +110,8 @@ public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DeleteScheduledQueryResponse resultGet = (DeleteScheduledQueryResponse) exchange.getIn().getBody();
+        DeleteScheduledQueryResponse resultGet =
+                (DeleteScheduledQueryResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -119,7 +128,8 @@ public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ExecuteScheduledQueryResponse resultGet = (ExecuteScheduledQueryResponse) exchange.getIn().getBody();
+        ExecuteScheduledQueryResponse resultGet =
+                (ExecuteScheduledQueryResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -136,7 +146,8 @@ public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        UpdateScheduledQueryResponse resultGet = (UpdateScheduledQueryResponse) exchange.getIn().getBody();
+        UpdateScheduledQueryResponse resultGet =
+                (UpdateScheduledQueryResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -147,14 +158,18 @@ public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:describeScheduledQuery", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.describeScheduledQuery);
+                exchange.getIn()
+                        .setHeader(Timestream2Constants.OPERATION, Timestream2Operations.describeScheduledQuery);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeScheduledQueryResponse resultGet = (DescribeScheduledQueryResponse) exchange.getIn().getBody();
-        assertEquals("aws-timestream:test:scheduled-query:arn", resultGet.scheduledQuery().arn());
+        DescribeScheduledQueryResponse resultGet =
+                (DescribeScheduledQueryResponse) exchange.getIn().getBody();
+        assertEquals(
+                "aws-timestream:test:scheduled-query:arn",
+                resultGet.scheduledQuery().arn());
     }
 
     @Test
@@ -170,9 +185,12 @@ public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListScheduledQueriesResponse resultGet = (ListScheduledQueriesResponse) exchange.getIn().getBody();
+        ListScheduledQueriesResponse resultGet =
+                (ListScheduledQueriesResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.scheduledQueries().size());
-        assertEquals("aws-timestream:test:scheduled-query:arn", resultGet.scheduledQueries().get(0).arn());
+        assertEquals(
+                "aws-timestream:test:scheduled-query:arn",
+                resultGet.scheduledQueries().get(0).arn());
     }
 
     @Test

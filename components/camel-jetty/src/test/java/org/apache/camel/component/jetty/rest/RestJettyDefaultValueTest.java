@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -26,8 +29,6 @@ import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RestJettyDefaultValueTest extends BaseJettyTest {
 
     @BindToRegistry("mybinding")
@@ -38,8 +39,8 @@ public class RestJettyDefaultValueTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
 
-        String out2
-                = template.requestBody("http://localhost:" + getPort() + "/users/123/basic?verbose=true", null, String.class);
+        String out2 = template.requestBody(
+                "http://localhost:" + getPort() + "/users/123/basic?verbose=true", null, String.class);
         assertEquals("123;Donald Duck;1113 Quack Street Duckburg", out2);
     }
 
@@ -49,30 +50,37 @@ public class RestJettyDefaultValueTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBinding",
-                        "#mybinding");
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .endpointProperty("httpBinding", "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").param().name("verbose").type(RestParamType.query).defaultValue("false")
-                        .endParam().to("direct:basic");
-                from("direct:basic")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                String id = exchange.getIn().getHeader("id", String.class);
+                rest("/users/")
+                        .get("{id}/basic")
+                        .param()
+                        .name("verbose")
+                        .type(RestParamType.query)
+                        .defaultValue("false")
+                        .endParam()
+                        .to("direct:basic");
+                from("direct:basic").process(new Processor() {
+                    public void process(Exchange exchange) {
+                        String id = exchange.getIn().getHeader("id", String.class);
 
-                                Object verbose = exchange.getIn().getHeader("verbose");
-                                ObjectHelper.notNull(verbose, "verbose");
+                        Object verbose = exchange.getIn().getHeader("verbose");
+                        ObjectHelper.notNull(verbose, "verbose");
 
-                                if ("true".equals(verbose)) {
-                                    exchange.getMessage().setBody(id + ";Donald Duck;1113 Quack Street Duckburg");
-                                }
-                                if ("false".equals(verbose)) {
-                                    exchange.getMessage().setBody(id + ";Donald Duck");
-                                }
-                            }
-                        });
+                        if ("true".equals(verbose)) {
+                            exchange.getMessage().setBody(id + ";Donald Duck;1113 Quack Street Duckburg");
+                        }
+                        if ("false".equals(verbose)) {
+                            exchange.getMessage().setBody(id + ";Donald Duck");
+                        }
+                    }
+                });
             }
         };
     }
-
 }

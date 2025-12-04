@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,8 +25,6 @@ public class MyFieldRouteBuilder extends RouteBuilder {
     public void configure() {
         String exists = "Override";
 
-        from("timer:foo")
-                .toD("file:output?fileExist=" + exists)
-                .to("log:b");
+        from("timer:foo").toD("file:output?fileExist=" + exists).to("log:b");
     }
 }

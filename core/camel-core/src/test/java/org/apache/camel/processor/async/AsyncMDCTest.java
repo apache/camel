@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.apache.camel.spi.UnitOfWork.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.apache.camel.spi.UnitOfWork.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AsyncMDCTest extends ContextTestSupport {
 
@@ -69,24 +70,34 @@ public class AsyncMDCTest extends ContextTestSupport {
 
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:a").routeId("route-a").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-a", MDC.get(MDC_ROUTE_ID));
-                        assertEquals(exchange.getExchangeId(), MDC.get(MDC_EXCHANGE_ID));
-                        assertEquals(exchange.getContext().getName(), MDC.get(MDC_CAMEL_CONTEXT_ID));
-                        assertEquals(exchange.getIn().getHeader(Exchange.BREADCRUMB_ID), MDC.get(MDC_BREADCRUMB_ID));
-                        assertNotNull(MDC.get(MDC_BREADCRUMB_ID));
-                    }
-                }).to("log:before").to("async:bye:camel").to("log:after").to("direct:b");
+                from("direct:a")
+                        .routeId("route-a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-a", MDC.get(MDC_ROUTE_ID));
+                                assertEquals(exchange.getExchangeId(), MDC.get(MDC_EXCHANGE_ID));
+                                assertEquals(exchange.getContext().getName(), MDC.get(MDC_CAMEL_CONTEXT_ID));
+                                assertEquals(
+                                        exchange.getIn().getHeader(Exchange.BREADCRUMB_ID), MDC.get(MDC_BREADCRUMB_ID));
+                                assertNotNull(MDC.get(MDC_BREADCRUMB_ID));
+                            }
+                        })
+                        .to("log:before")
+                        .to("async:bye:camel")
+                        .to("log:after")
+                        .to("direct:b");
 
-                from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-b", MDC.get(MDC_ROUTE_ID));
-                        assertEquals(exchange.getExchangeId(), MDC.get(MDC_EXCHANGE_ID));
-                    }
-                }).to("log:bar").to("mock:result");
+                from("direct:b")
+                        .routeId("route-b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-b", MDC.get(MDC_ROUTE_ID));
+                                assertEquals(exchange.getExchangeId(), MDC.get(MDC_EXCHANGE_ID));
+                            }
+                        })
+                        .to("log:bar")
+                        .to("mock:result");
             }
         };
     }
-
 }

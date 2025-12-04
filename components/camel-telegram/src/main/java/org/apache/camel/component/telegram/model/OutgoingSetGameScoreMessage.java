@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -54,8 +55,14 @@ public class OutgoingSetGameScoreMessage extends OutgoingMessage {
      * @param messageId          Required if inline_message_id is not specified. Identifier of the sent message
      * @param inlineMessageId    Required if chat_id and message_id are not specified. Identifier of the inline message
      */
-    public OutgoingSetGameScoreMessage(String chatId, Long userId, Long score, Boolean force, Boolean disableEditMessage,
-                                       Long messageId, String inlineMessageId) {
+    public OutgoingSetGameScoreMessage(
+            String chatId,
+            Long userId,
+            Long score,
+            Boolean force,
+            Boolean disableEditMessage,
+            Long messageId,
+            String inlineMessageId) {
         this.userId = userId;
         this.score = score;
         this.force = force;
@@ -64,8 +71,7 @@ public class OutgoingSetGameScoreMessage extends OutgoingMessage {
         this.inlineMessageId = inlineMessageId;
     }
 
-    public OutgoingSetGameScoreMessage() {
-    }
+    public OutgoingSetGameScoreMessage() {}
 
     public Long getUserId() {
         return userId;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test for useOriginalBody unit test
  */
@@ -40,6 +41,7 @@ public class JmsUseOriginalBodyTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -106,8 +108,7 @@ public class JmsUseOriginalBodyTest extends AbstractJMSTest {
 
     public static class MyThrowProcessor implements Processor {
 
-        public MyThrowProcessor() {
-        }
+        public MyThrowProcessor() {}
 
         @Override
         public void process(Exchange exchange) {

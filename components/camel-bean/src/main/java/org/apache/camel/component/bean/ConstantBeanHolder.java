@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.Map;
@@ -42,8 +43,11 @@ public class ConstantBeanHolder implements BeanHolder {
         this.beanInfo = beanInfo;
     }
 
-    public ConstantBeanHolder(Object bean, CamelContext context, ParameterMappingStrategy parameterMappingStrategy,
-                              BeanComponent beanComponent) {
+    public ConstantBeanHolder(
+            Object bean,
+            CamelContext context,
+            ParameterMappingStrategy parameterMappingStrategy,
+            BeanComponent beanComponent) {
         ObjectHelper.notNull(bean, "bean");
 
         this.bean = bean;

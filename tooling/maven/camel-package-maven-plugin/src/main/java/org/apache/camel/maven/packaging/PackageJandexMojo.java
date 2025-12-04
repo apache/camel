@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -80,8 +81,10 @@ public class PackageJandexMojo extends AbstractGeneratorMojo {
             return;
         }
         try (Stream<Path> pathStream = Files.walk(classesDirectory.toPath())) {
-            final List<Path> inputs = pathStream.filter(f -> f.getFileName().toString().endsWith(".class"))
-                    .sorted().toList();
+            final List<Path> inputs = pathStream
+                    .filter(f -> f.getFileName().toString().endsWith(".class"))
+                    .sorted()
+                    .toList();
             if (index.exists()) {
                 if (isUpToDate(inputs)) {
                     return;
@@ -113,7 +116,9 @@ public class PackageJandexMojo extends AbstractGeneratorMojo {
         if (staledFiles > 0) {
             getLog().info("Stale files detected, re-generating index.");
 
-            String stale = inputs.stream().filter(p -> lastmod(p) > lastMod).map(Path::toString)
+            String stale = inputs.stream()
+                    .filter(p -> lastmod(p) > lastMod)
+                    .map(Path::toString)
                     .collect(Collectors.joining(","));
 
             if (showStaleFiles) {
@@ -138,5 +143,4 @@ public class PackageJandexMojo extends AbstractGeneratorMojo {
             return 0;
         }
     }
-
 }

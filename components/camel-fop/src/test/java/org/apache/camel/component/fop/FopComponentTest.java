@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fop;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,10 +34,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FopComponentTest extends CamelTestSupport {
 
@@ -57,8 +58,8 @@ public class FopComponentTest extends CamelTestSupport {
 
         PDDocument document = Loader.loadPDF(new File("target/data/result.pdf"));
         String pdfText = FopHelper.extractTextFrom(document);
-        assertTrue(pdfText.contains("Project"));    //from xsl template
-        assertTrue(pdfText.contains("John Doe"));   //from data xml
+        assertTrue(pdfText.contains("Project")); // from xsl template
+        assertTrue(pdfText.contains("John Doe")); // from data xml
 
         // assert on the header "foo" being populated
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);

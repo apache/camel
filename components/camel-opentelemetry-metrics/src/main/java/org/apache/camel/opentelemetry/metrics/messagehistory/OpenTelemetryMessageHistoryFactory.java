@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.messagehistory;
 
 import java.util.concurrent.TimeUnit;
@@ -158,8 +159,7 @@ public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.timer = meter
-                .histogramBuilder(getNamingStrategy().getName())
+        this.timer = meter.histogramBuilder(getNamingStrategy().getName())
                 .ofLongs()
                 .setDescription("Node performance metrics")
                 .setUnit(timeUnit.name().toLowerCase())

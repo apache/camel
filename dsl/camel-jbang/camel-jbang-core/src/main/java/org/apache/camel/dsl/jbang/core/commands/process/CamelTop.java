@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "top",
-                     description = "Top status of Camel integrations (use top --help to see sub commands)",
-                     sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "top",
+        description = "Top status of Camel integrations (use top --help to see sub commands)",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelTop extends CamelCommand {
 
-    @CommandLine.Option(names = { "--watch" },
-                        description = "Execute periodically and showing output fullscreen")
+    @CommandLine.Option(
+            names = {"--watch"},
+            description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
     public CamelTop(CamelJBangMain main) {

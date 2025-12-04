@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scheduler;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,16 +44,17 @@ public class SchedulerNoPolledMessagesTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("scheduler://foo?delay=100&backoffMultiplier=10&backoffIdleThreshold=2&poolSize=2")
-                        .log("Fired scheduler").process(new Processor() {
+                        .log("Fired scheduler")
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
                                 // force no messages to be polled which should affect
                                 // the scheduler to think its idle
                                 exchange.setProperty(Exchange.SCHEDULER_POLLED_MESSAGES, false);
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

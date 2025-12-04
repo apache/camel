@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring;
 
 import org.apache.camel.CamelContext;
@@ -26,7 +27,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class JmsHeaderFilteringWithSpringIT extends JmsHeaderFilteringTest {
 
     private ClassPathXmlApplicationContext applicationContext;
@@ -46,5 +47,4 @@ public class JmsHeaderFilteringWithSpringIT extends JmsHeaderFilteringTest {
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);
     }
-
 }

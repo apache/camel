@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.protobuf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchema;
@@ -26,9 +30,6 @@ import org.apache.camel.model.dataformat.ProtobufLibrary;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JacksonProtobufMarshalUnmarshalJsonNodeTest extends CamelTestSupport {
 
@@ -60,9 +61,7 @@ public class JacksonProtobufMarshalUnmarshalJsonNodeTest extends CamelTestSuppor
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        String protobufStr = "message Pojo {\n"
-                             + " required string text = 1;\n"
-                             + "}\n";
+        String protobufStr = "message Pojo {\n" + " required string text = 1;\n" + "}\n";
         ProtobufSchema schema = ProtobufSchemaLoader.std.parse(protobufStr);
         SchemaResolver resolver = ex -> schema;
         registry.bind("schema-resolver", SchemaResolver.class, resolver);
@@ -73,7 +72,10 @@ public class JacksonProtobufMarshalUnmarshalJsonNodeTest extends CamelTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:serialized").unmarshal().protobuf(ProtobufLibrary.Jackson, JsonNode.class).to("mock:pojo");
+                from("direct:serialized")
+                        .unmarshal()
+                        .protobuf(ProtobufLibrary.Jackson, JsonNode.class)
+                        .to("mock:pojo");
                 from("direct:pojo").marshal().protobuf(ProtobufLibrary.Jackson).to("mock:serialized");
             }
         };
@@ -83,8 +85,7 @@ public class JacksonProtobufMarshalUnmarshalJsonNodeTest extends CamelTestSuppor
 
         private String text;
 
-        public Pojo() {
-        }
+        public Pojo() {}
 
         public Pojo(String text) {
             this.text = text;
@@ -98,5 +99,4 @@ public class JacksonProtobufMarshalUnmarshalJsonNodeTest extends CamelTestSuppor
             this.text = text;
         }
     }
-
 }

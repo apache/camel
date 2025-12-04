@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz.cron;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -37,8 +38,7 @@ public class QuartzCronRouteTest extends BaseQuartzTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cron://myName?schedule=0/1 * * * * ?")
-                        .to("mock:result");
+                from("cron://myName?schedule=0/1 * * * * ?").to("mock:result");
             }
         };
     }

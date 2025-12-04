@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.integration.messagehistory;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -37,14 +46,6 @@ import org.apache.camel.opentelemetry.metrics.messagehistory.OpenTelemetryMessag
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedMessageHistoryAutoConfigIT extends CamelTestSupport {
 
@@ -139,14 +140,14 @@ public class ManagedMessageHistoryAutoConfigIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo")
-                        .routeId("route1")
-                        .to("mock:foo").id("foo");
+                from("seda:foo").routeId("route1").to("mock:foo").id("foo");
 
                 from("seda:bar")
                         .routeId("route2")
-                        .to("mock:bar").id("bar")
-                        .to("mock:baz").id("baz");
+                        .to("mock:bar")
+                        .id("bar")
+                        .to("mock:baz")
+                        .id("baz");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
@@ -24,9 +28,6 @@ import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MainIoCNewRouteBuilderTest {
 
@@ -47,8 +48,9 @@ public class MainIoCNewRouteBuilderTest {
 
         endpoint.assertIsSatisfied();
 
-        MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean mcb
-                = (MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
+        MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean mcb =
+                (MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean)
+                        camelContext.getRegistry().lookupByName("MyCoolBean");
         assertNotNull(mcb);
         assertEquals("Tiger", mcb.getName());
 

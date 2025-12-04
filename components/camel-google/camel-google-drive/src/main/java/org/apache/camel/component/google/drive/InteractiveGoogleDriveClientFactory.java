@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
 
 import java.util.Collection;
@@ -44,12 +45,18 @@ public class InteractiveGoogleDriveClientFactory implements GoogleDriveClientFac
 
     @Override
     public Drive makeClient(
-            String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
+            String clientId,
+            String clientSecret,
+            Collection<String> scopes,
+            String applicationName,
+            String refreshToken,
             String accessToken) {
         Credential credential;
         try {
             credential = authorize(clientId, clientSecret, scopes);
-            return new Drive.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
+            return new Drive.Builder(transport, jsonFactory, credential)
+                    .setApplicationName(applicationName)
+                    .build();
         } catch (Exception e) {
             LOG.error("Could not create Google Drive client.", e);
         }
@@ -63,18 +70,21 @@ public class InteractiveGoogleDriveClientFactory implements GoogleDriveClientFac
     private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) throws Exception {
         dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
         // set up authorization code flow
-        GoogleAuthorizationCodeFlow flow
-                = new GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, clientId, clientSecret, scopes)
-                        .setDataStoreFactory(dataStoreFactory)
-                        .setAccessType("offline")
-                        .build();
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                        transport, jsonFactory, clientId, clientSecret, scopes)
+                .setDataStoreFactory(dataStoreFactory)
+                .setAccessType("offline")
+                .build();
         // authorize
         return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     }
 
     @Override
     public Drive makeClient(
-            CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
+            CamelContext camelContext,
+            String serviceAccountKey,
+            Collection<String> scopes,
+            String applicationName,
             String delegate) {
         throw new IllegalArgumentException("Not implemented");
     }

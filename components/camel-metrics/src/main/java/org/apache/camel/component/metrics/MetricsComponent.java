@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
 
 import java.util.Map;
@@ -48,8 +49,7 @@ public class MetricsComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private MetricRegistry metricRegistry;
 
-    public MetricsComponent() {
-    }
+    public MetricsComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

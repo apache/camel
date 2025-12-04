@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -28,42 +29,52 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     @XmlAttribute
     @Metadata(label = "advanced")
     private String typedGuard;
+
     @XmlAttribute
     @Metadata(defaultValue = "5000", javaType = "java.time.Duration")
     private String delay;
+
     @XmlAttribute
     @Metadata(defaultValue = "1", javaType = "java.lang.Integer")
     private String successThreshold;
+
     @XmlAttribute
     @Metadata(defaultValue = "20", javaType = "java.lang.Integer")
     private String requestVolumeThreshold;
+
     @XmlAttribute
     @Metadata(defaultValue = "50", javaType = "java.lang.Integer")
     private String failureRatio;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String timeoutEnabled;
+
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timeoutDuration;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String timeoutPoolSize;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String bulkheadEnabled;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String bulkheadMaxConcurrentCalls;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String bulkheadWaitingTaskQueue;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String threadOffloadExecutorService;
 
-    public FaultToleranceConfigurationCommon() {
-    }
+    public FaultToleranceConfigurationCommon() {}
 
     protected FaultToleranceConfigurationCommon(FaultToleranceConfigurationCommon source) {
         this.typedGuard = source.typedGuard;

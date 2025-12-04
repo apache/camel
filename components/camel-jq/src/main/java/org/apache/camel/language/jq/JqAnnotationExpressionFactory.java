@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import java.lang.annotation.Annotation;
@@ -28,8 +29,10 @@ public class JqAnnotationExpressionFactory extends DefaultAnnotationExpressionFa
 
     @Override
     public Expression createExpression(
-            CamelContext camelContext, Annotation annotation,
-            LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+            CamelContext camelContext,
+            Annotation annotation,
+            LanguageAnnotation languageAnnotation,
+            Class<?> expressionReturnType) {
 
         String expression = getExpressionFromAnnotation(annotation);
         JqExpression answer = new JqExpression(expression);
@@ -66,5 +69,4 @@ public class JqAnnotationExpressionFactory extends DefaultAnnotationExpressionFa
         }
         return answer;
     }
-
 }

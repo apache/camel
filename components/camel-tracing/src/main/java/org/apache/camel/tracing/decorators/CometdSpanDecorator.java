@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import java.net.URI;
@@ -38,5 +39,4 @@ public class CometdSpanDecorator extends AbstractMessagingSpanDecorator {
         // Extract path, and remove leading '/'
         return URI.create(endpoint.getEndpointUri()).getPath().substring(1);
     }
-
 }

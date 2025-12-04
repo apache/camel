@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -47,8 +48,11 @@ public class JmsSelectorTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:test.a.JmsSelectorTest").to("log:test-before?showAll=true").to("sjms:test.b.JmsSelectorTest");
-                from("sjms:test.b.JmsSelectorTest?messageSelector=cheese='y'").to("log:test-after?showAll=true")
+                from("sjms:test.a.JmsSelectorTest")
+                        .to("log:test-before?showAll=true")
+                        .to("sjms:test.b.JmsSelectorTest");
+                from("sjms:test.b.JmsSelectorTest?messageSelector=cheese='y'")
+                        .to("log:test-after?showAll=true")
                         .to("mock:result");
             }
         };

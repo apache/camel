@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.UUID;
 
@@ -25,10 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FileBeanParameterBindingTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
@@ -54,12 +55,15 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri()).to("bean:foo?method=before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        exchange.getIn().setHeader("bar", 123);
-                    }
-                }).to("bean:foo?method=after").to("mock:result");
-
+                from(fileUri())
+                        .to("bean:foo?method=before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setHeader("bar", 123);
+                            }
+                        })
+                        .to("bean:foo?method=after")
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 public class HttpsSpanDecorator extends HttpSpanDecorator {
@@ -22,5 +23,4 @@ public class HttpsSpanDecorator extends HttpSpanDecorator {
     public String getComponent() {
         return "https";
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.protocol;
 
 import java.io.IOException;
@@ -40,7 +41,8 @@ public class RequestAsynchronousMDN implements HttpRequestInterceptor {
     }
 
     @Override
-    public void process(HttpRequest request, EntityDetails entity, HttpContext context) throws HttpException, IOException {
+    public void process(HttpRequest request, EntityDetails entity, HttpContext context)
+            throws HttpException, IOException {
 
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
 
@@ -58,5 +60,4 @@ public class RequestAsynchronousMDN implements HttpRequestInterceptor {
         String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS, String.class);
         request.addHeader(AS2Header.RECIPIENT_ADDRESS, recipientAddress);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite;
 
 import java.util.UUID;
@@ -60,7 +61,8 @@ public abstract class AbstractIgniteTest extends CamelTestSupport {
 
     protected Ignite ignite() {
         if (ignite == null) {
-            ignite = context.getComponent(getScheme(), AbstractIgniteComponent.class).getIgnite();
+            ignite = context.getComponent(getScheme(), AbstractIgniteComponent.class)
+                    .getIgnite();
         }
         return ignite;
     }

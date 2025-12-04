@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -46,9 +47,12 @@ import org.jboss.jandex.Type;
 /**
  * Factory for generating code for @InvokeOnHeader.
  */
-@Mojo(name = "generate-invoke-on-header", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
-      requiresDependencyCollection = ResolutionScope.COMPILE,
-      requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "generate-invoke-on-header",
+        threadSafe = true,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        requiresDependencyCollection = ResolutionScope.COMPILE,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
 
     public static final DotName HEADER_ANNOTATION = DotName.createSimple("org.apache.camel.spi.InvokeOnHeader");
@@ -61,6 +65,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File sourcesOutputDir;
+
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
@@ -149,8 +154,8 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
                 String arg = type.name().toString();
                 model.addArgs(arg);
             }
-            Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(currentClass,
-                    k -> new TreeSet<>(Comparator.comparing(InvokeOnHeaderModel::getKey)));
+            Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(
+                    currentClass, k -> new TreeSet<>(Comparator.comparing(InvokeOnHeaderModel::getKey)));
             set.add(model);
         });
 
@@ -183,7 +188,8 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             getLog().info("Updated " + fileName);
         }
         String tfqn = pn + "." + cn;
-        updateResource(resourcesOutputDir.toPath(),
+        updateResource(
+                resourcesOutputDir.toPath(),
                 "META-INF/services/org/apache/camel/invoke-on-header/" + fqn,
                 "# " + GENERATED_MSG + NL + "class=" + tfqn + NL);
     }
@@ -198,5 +204,4 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             default -> "exchange.getMessage().getBody(" + type + ".class)";
         };
     }
-
 }

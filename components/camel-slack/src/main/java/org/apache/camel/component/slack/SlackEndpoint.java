@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.slack;
 
 import com.slack.api.model.ConversationType;
@@ -32,40 +33,61 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send and receive messages to/from Slack.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel",
-             category = { Category.SOCIAL })
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = "slack",
+        title = "Slack",
+        syntax = "slack:channel",
+        category = {Category.SOCIAL})
 public class SlackEndpoint extends ScheduledPollEndpoint {
 
-    @UriParam(defaultValue = "" + SlackConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration",
-              label = "consumer,scheduler",
-              description = "Milliseconds before the next poll.")
+    @UriParam(
+            defaultValue = "" + SlackConsumer.DEFAULT_CONSUMER_DELAY,
+            javaType = "java.time.Duration",
+            label = "consumer,scheduler",
+            description = "Milliseconds before the next poll.")
     private long delay = SlackConsumer.DEFAULT_CONSUMER_DELAY;
 
     @UriPath
     @Metadata(required = true)
     private String channel;
+
     @UriParam(label = "producer")
     private String webhookUrl;
+
     @UriParam(label = "producer", secret = true)
     @Deprecated
     private String username;
+
     @UriParam(label = "producer")
     @Deprecated
     private String iconUrl;
+
     @UriParam(label = "producer")
     @Deprecated
     private String iconEmoji;
+
     @UriParam(secret = true)
     private String token;
+
     @UriParam(label = "consumer", defaultValue = "10")
     private String maxResults = "10";
+
     @UriParam(label = "consumer", defaultValue = "https://slack.com")
     private String serverUrl = "https://slack.com";
-    @UriParam(label = "consumer", defaultValue = "false", javaType = "boolean",
-              description = "Create exchanges in natural order (oldest to newest) or not")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "false",
+            javaType = "boolean",
+            description = "Create exchanges in natural order (oldest to newest) or not")
     private boolean naturalOrder;
-    @UriParam(label = "consumer", enums = "PUBLIC_CHANNEL,PRIVATE_CHANNEL,MPIM,IM", defaultValue = "PUBLIC_CHANNEL",
-              description = "Type of conversation")
+
+    @UriParam(
+            label = "consumer",
+            enums = "PUBLIC_CHANNEL,PRIVATE_CHANNEL,MPIM,IM",
+            defaultValue = "PUBLIC_CHANNEL",
+            description = "Type of conversation")
     private ConversationType conversationType = ConversationType.PUBLIC_CHANNEL;
 
     /**
@@ -229,5 +251,4 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         super.setDelay(delay);
         this.delay = delay;
     }
-
 }

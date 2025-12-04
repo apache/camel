@@ -37,24 +37,23 @@ import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = ElasticSearchInfraService.class,
-              description = "NoSQL Database Elasticsearch",
-              serviceAlias = "elasticsearch")
+@InfraService(
+        service = ElasticSearchInfraService.class,
+        description = "NoSQL Database Elasticsearch",
+        serviceAlias = "elasticsearch")
 public class ElasticSearchLocalContainerInfraService
         implements ElasticSearchInfraService, ContainerService<ElasticsearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerInfraService.class);
     private static final int ELASTIC_SEARCH_PORT = 9200;
     private static final String USER_NAME = "elastic";
-    // NOTE: default value used for testing purposes only.
-    private static final String PASSWORD = "s3cret"; // NOSONAR
+    private static final String PASSWORD = "s3cret";
     private Path certPath;
     private SSLContext sslContext;
     private final ElasticsearchContainer container;
 
     public ElasticSearchLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
-                ElasticSearchLocalContainerInfraService.class,
-                ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER));
+                ElasticSearchLocalContainerInfraService.class, ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER));
     }
 
     public ElasticSearchLocalContainerInfraService(String imageName) {
@@ -83,10 +82,9 @@ public class ElasticSearchLocalContainerInfraService
                     withExposedPorts(ELASTIC_SEARCH_PORT);
                 }
 
-                setWaitStrategy(
-                        new LogMessageWaitStrategy()
-                                .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
-                                .withStartupTimeout(Duration.ofSeconds(90)));
+                setWaitStrategy(new LogMessageWaitStrategy()
+                        .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
+                        .withStartupTimeout(Duration.ofSeconds(90)));
             }
         }
 
@@ -126,8 +124,8 @@ public class ElasticSearchLocalContainerInfraService
     @Override
     public void initialize() {
         LOG.info("Trying to start the ElasticSearch container");
-        ContainerEnvironmentUtil.configureContainerStartup(container, ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER_STARTUP,
-                2);
+        ContainerEnvironmentUtil.configureContainerStartup(
+                container, ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER_STARTUP, 2);
 
         container.start();
 

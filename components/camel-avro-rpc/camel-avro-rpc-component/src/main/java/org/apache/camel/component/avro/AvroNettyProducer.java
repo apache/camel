@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 import java.net.InetSocketAddress;
@@ -31,7 +32,7 @@ public class AvroNettyProducer extends AvroProducer {
     @Override
     public Transceiver createTransceiver() throws Exception {
         AvroConfiguration configuration = getEndpoint().getConfiguration();
-        return transceiver = new NettyTransceiver(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        return transceiver =
+                new NettyTransceiver(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
     }
-
 }

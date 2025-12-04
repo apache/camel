@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.util.UUID;
 
@@ -33,11 +39,6 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CouchDbProducerTest {
@@ -78,10 +79,7 @@ public class CouchDbProducerTest {
         String id = UUID.randomUUID().toString();
         String rev = UUID.randomUUID().toString();
 
-        Document doc = new Document.Builder()
-                .add("_rev", rev)
-                .id(id)
-                .build();
+        Document doc = new Document.Builder().add("_rev", rev).id(id).build();
 
         DocumentResult documentResult = mock(DocumentResult.class, Answers.RETURNS_DEEP_STUBS);
         when(msg.getMandatoryBody()).thenReturn(doc);
@@ -108,10 +106,7 @@ public class CouchDbProducerTest {
         String id = UUID.randomUUID().toString();
         String rev = UUID.randomUUID().toString();
 
-        Document doc = new Document.Builder()
-                .id(id)
-                .add("_rev", rev)
-                .build();
+        Document doc = new Document.Builder().id(id).add("_rev", rev).build();
 
         DocumentResult documentResult = mock(DocumentResult.class, Answers.RETURNS_DEEP_STUBS);
         when(msg.getHeader(CouchDbConstants.HEADER_METHOD, String.class)).thenReturn("DELETE");
@@ -149,7 +144,8 @@ public class CouchDbProducerTest {
 
             @Override
             public Response answer(InvocationOnMock invocation) {
-                assertTrue(invocation.getArguments()[0] instanceof Document,
+                assertTrue(
+                        invocation.getArguments()[0] instanceof Document,
                         invocation.getArguments()[0].getClass() + " but wanted " + Document.class);
 
                 DocumentResult documentResult = mock(DocumentResult.class);

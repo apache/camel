@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.CamelContext;
@@ -64,10 +65,12 @@ public class InterceptReifier extends ProcessorReifier<InterceptDefinition> {
                 this.interceptedTarget = target;
 
                 Processor p = exchange -> {
-                    exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID,
+                    exchange.setProperty(
+                            ExchangePropertyKey.INTERCEPTED_ROUTE_ID,
                             ProcessorDefinitionHelper.getRouteId(definition.getParent()));
                     exchange.setProperty(ExchangePropertyKey.INTERCEPTED_NODE_ID, definition.getId());
-                    exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI,
+                    exchange.setProperty(
+                            ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI,
                             route.getEndpoint().getEndpointUri());
                 };
 
@@ -90,5 +93,4 @@ public class InterceptReifier extends ProcessorReifier<InterceptDefinition> {
         // and return no processor to invoke next from me
         return null;
     }
-
 }

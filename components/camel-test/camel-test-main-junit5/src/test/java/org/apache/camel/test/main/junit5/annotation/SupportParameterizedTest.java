@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5.annotation;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The test class ensuring that a parameterized test is supported.
@@ -46,7 +47,7 @@ class SupportParameterizedTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "hello", "parameterized", "test" })
+    @ValueSource(strings = {"hello", "parameterized", "test"})
     void shouldSupportMultipleCalls(String value) throws Exception {
         mock.expectedBodiesReceived(value);
         String result = template.requestBody((Object) value, String.class);
@@ -58,7 +59,7 @@ class SupportParameterizedTest {
     class NestedTest {
 
         @ParameterizedTest
-        @ValueSource(strings = { "hello", "nested", "test" })
+        @ValueSource(strings = {"hello", "nested", "test"})
         void shouldSupportNestedTest(String value) throws Exception {
             shouldSupportMultipleCalls(value);
         }

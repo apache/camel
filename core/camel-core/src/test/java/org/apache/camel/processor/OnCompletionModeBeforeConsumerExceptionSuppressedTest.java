@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class OnCompletionModeBeforeConsumerExceptionSuppressedTest extends ContextTestSupport {
 
     @Test
     public void testOnCompletionModeBeforeConsumerExceptionSuppressed() {
-        Exchange out = template.request("direct:foo", exchange -> exchange.getIn().setBody("Camel"));
+        Exchange out =
+                template.request("direct:foo", exchange -> exchange.getIn().setBody("Camel"));
         Exception fooException = out.getException();
         assertIsInstanceOf(FooException.class, fooException);
         Throwable[] suppressed = fooException.getSuppressed();
@@ -54,9 +56,7 @@ public class OnCompletionModeBeforeConsumerExceptionSuppressedTest extends Conte
         };
     }
 
-    public static class FooException extends RuntimeException {
-    }
+    public static class FooException extends RuntimeException {}
 
-    public static class SuppressedException extends RuntimeException {
-    }
+    public static class SuppressedException extends RuntimeException {}
 }

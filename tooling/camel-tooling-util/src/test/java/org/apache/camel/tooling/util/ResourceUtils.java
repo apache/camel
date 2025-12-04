@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util;
 
 import java.io.File;
@@ -25,7 +26,7 @@ public final class ResourceUtils {
     }
 
     public static File getResourceAsFile(String pathToFile) throws Exception {
-        return new File(ResourceUtils.class.getClassLoader().getResource(pathToFile).getFile());
+        return new File(
+                ResourceUtils.class.getClassLoader().getResource(pathToFile).getFile());
     }
-
 }

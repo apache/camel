@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.solr.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -23,17 +24,18 @@ import org.apache.camel.test.infra.solr.common.SolrProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = SolrInfraService.class,
-              description = "Apache Solr is a Search Platform",
-              serviceAlias = { "solr" })
+@InfraService(
+        service = SolrInfraService.class,
+        description = "Apache Solr is a Search Platform",
+        serviceAlias = {"solr"})
 public class SolrLocalContainerInfraService implements SolrInfraService, ContainerService<SolrContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrLocalContainerInfraService.class);
     private final SolrContainer container;
 
     public SolrLocalContainerInfraService() {
-        container = SolrContainer.initContainer(SolrContainer.CONTAINER_NAME,
-                ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        container = SolrContainer.initContainer(
+                SolrContainer.CONTAINER_NAME, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
         if (name != null) {
             container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
@@ -78,5 +80,4 @@ public class SolrLocalContainerInfraService implements SolrInfraService, Contain
     public int getPort() {
         return container.getMappedPort(SolrProperties.DEFAULT_PORT);
     }
-
 }

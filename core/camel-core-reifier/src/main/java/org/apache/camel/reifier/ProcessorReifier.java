@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.ArrayList;
@@ -153,8 +154,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorReifier.class);
 
     // for custom reifiers
-    private static final Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS
-            = new HashMap<>(0);
+    private static final Map<
+                    Class<?>,
+                    BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>>
+            PROCESSORS = new HashMap<>(0);
 
     protected final T definition;
 
@@ -181,13 +184,14 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         PROCESSORS.clear();
     }
 
-    public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(Route route, ProcessorDefinition<?> definition) {
+    public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(
+            Route route, ProcessorDefinition<?> definition) {
         ProcessorReifier<? extends ProcessorDefinition<?>> answer = null;
 
         if (!PROCESSORS.isEmpty()) {
             // custom take precedence
-            BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier
-                    = PROCESSORS.get(definition.getClass());
+            BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier =
+                    PROCESSORS.get(definition.getClass());
             if (reifier != null) {
                 answer = reifier.apply(route, definition);
             }
@@ -413,9 +417,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // lookup in registry first and use existing thread pool if exists
             ExecutorService answer = lookupExecutorServiceRef(name, definition, ref);
             if (answer == null) {
-                throw new IllegalArgumentException(
-                        "ExecutorServiceRef " + definition.getExecutorServiceRef()
-                                                   + " not found in registry (as an ExecutorService instance) or as a thread pool profile.");
+                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef()
+                        + " not found in registry (as an ExecutorService instance) or as a thread pool profile.");
             }
             return answer;
         } else if (useDefault) {
@@ -449,8 +452,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      *                                  found
      */
     public ScheduledExecutorService getConfiguredScheduledExecutorService(
-            String name, ExecutorServiceAwareDefinition<?> definition,
-            boolean useDefault)
+            String name, ExecutorServiceAwareDefinition<?> definition, boolean useDefault)
             throws IllegalArgumentException {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
@@ -461,16 +463,15 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             if (executorService instanceof ScheduledExecutorService scheduledExecutorService) {
                 return scheduledExecutorService;
             }
-            throw new IllegalArgumentException(
-                    "ExecutorServiceRef " + definition.getExecutorServiceRef()
-                                               + " is not an ScheduledExecutorService instance");
+            throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef()
+                    + " is not an ScheduledExecutorService instance");
         } else if (definition.getExecutorServiceRef() != null) {
-            ScheduledExecutorService answer
-                    = lookupScheduledExecutorServiceRef(name, definition, definition.getExecutorServiceRef());
+            ScheduledExecutorService answer =
+                    lookupScheduledExecutorServiceRef(name, definition, definition.getExecutorServiceRef());
             if (answer == null) {
                 throw new IllegalArgumentException(
                         "ExecutorServiceRef " + definition.getExecutorServiceRef()
-                                                   + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
+                                + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
             }
             return answer;
         } else if (useDefault) {
@@ -497,7 +498,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @param  executorServiceRef reference name of the thread pool
      * @return                    the executor service, or <tt>null</tt> if none was found.
      */
-    public ScheduledExecutorService lookupScheduledExecutorServiceRef(String name, Object source, String executorServiceRef) {
+    public ScheduledExecutorService lookupScheduledExecutorServiceRef(
+            String name, Object source, String executorServiceRef) {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
         ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
@@ -553,7 +555,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @param  excludeAbstract whether or not to exclude abstract outputs (e.g. skip onException etc.)
      * @return                 <tt>true</tt> if has outputs, otherwise <tt>false</tt> is returned
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public boolean hasOutputs(List<ProcessorDefinition<?>> outputs, boolean excludeAbstract) {
         if (outputs == null || outputs.isEmpty()) {
             return false;
@@ -600,8 +602,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // at first use custom factory
         final ProcessorFactory processorFactory = PluginHelper.getProcessorFactory(camelContext);
         if (processorFactory != null) {
-            children = processorFactory.createChildProcessor(route,
-                    definition, mandatory);
+            children = processorFactory.createChildProcessor(route, definition, mandatory);
         }
         // fallback to default implementation if factory did not create the
         // child
@@ -654,8 +655,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler)
             throws Exception {
         // put a channel in between this and each output to control the route flow logic
-        Channel channel = PluginHelper.getInternalProcessorFactory(camelContext)
-                .createChannel(camelContext);
+        Channel channel = PluginHelper.getInternalProcessorFactory(camelContext).createChannel(camelContext);
 
         // add interceptor strategies to the channel must be in this order:
         // camel context, route context, local
@@ -699,7 +699,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         // set the error handler, must be done after init as we can set the
         // error handler as first in the chain
-        boolean wrap = ProcessorDefinitionHelper.shouldWrapInErrorHandler(camelContext, definition, child, inheritErrorHandler);
+        boolean wrap = ProcessorDefinitionHelper.shouldWrapInErrorHandler(
+                camelContext, definition, child, inheritErrorHandler);
         if (wrap) {
             wrapChannelInErrorHandler(channel, inheritErrorHandler);
         }
@@ -741,8 +742,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         ErrorHandlerFactory builder = route.getErrorHandlerFactory();
 
         // create error handler
-        Processor errorHandler = ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route,
-                builder, output);
+        Processor errorHandler =
+                ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route, builder, output);
 
         if (output instanceof ErrorHandlerAware errorHandlerAware) {
             errorHandlerAware.setErrorHandler(errorHandler);
@@ -763,7 +764,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         return createOutputsProcessor(outputs, true);
     }
 
-    protected Processor createOutputsProcessor(Collection<ProcessorDefinition<?>> outputs, boolean optimize) throws Exception {
+    protected Processor createOutputsProcessor(Collection<ProcessorDefinition<?>> outputs, boolean optimize)
+            throws Exception {
         List<Processor> list = new ArrayList<>();
         for (ProcessorDefinition<?> output : outputs) {
 
@@ -805,9 +807,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     protected Processor createProcessor(ProcessorDefinition<?> output) throws Exception {
         // ensure node has id assigned
-        String outputId = output.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
-        StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(ProcessorReifier.class,
-                outputId, "Create processor");
+        String outputId =
+                output.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+        StartupStep step = camelContext
+                .getCamelContextExtension()
+                .getStartupStepRecorder()
+                .beginStep(ProcessorReifier.class, outputId, "Create processor");
 
         camelContext.getCamelContextExtension().createProcessor(outputId);
         Processor processor = null;
@@ -832,7 +837,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Creates the processor and wraps it in any necessary interceptors and error handlers
      */
     protected Channel makeProcessor() throws Exception {
-        String outputId = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+        String outputId =
+                definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         camelContext.getCamelContextExtension().createProcessor(outputId);
         try {
             Processor processor = null;
@@ -915,26 +921,29 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
                 strategy = aggregationStrategy;
             } else if (aggStrategy instanceof BiFunction biFunction) {
-                AggregationStrategyBiFunctionAdapter adapter
-                        = new AggregationStrategyBiFunctionAdapter(biFunction);
+                AggregationStrategyBiFunctionAdapter adapter = new AggregationStrategyBiFunctionAdapter(biFunction);
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullNewExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else if (aggStrategy != null) {
                 @SuppressWarnings("resource")
                 // NOTE: the adapter holds no leaking resources, so we can safely ignore its closure.
-                AggregationStrategyBeanAdapter adapter
-                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter =
+                        new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullNewExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
-                throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategyRef());
+                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: "
+                        + definition.getAggregationStrategyRef());
             }
         }
 
@@ -953,8 +962,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         if (disabled == null) {
             String sn = definition.getShortName();
             if ("process".equals(sn) || "bean".equals(sn)) {
-                disabled = "true"
-                        .equalsIgnoreCase(camelContext.getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
+                disabled = "true".equalsIgnoreCase(camelContext.getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
             }
         }
         if (disabled == null) {
@@ -962,5 +970,4 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         }
         return disabled;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.cassandra;
 
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -42,5 +43,4 @@ public class NamedCassandraIdempotentRepository extends CassandraIdempotentRepos
     public final void setName(String name) {
         setPrefixPKValues(name);
     }
-
 }

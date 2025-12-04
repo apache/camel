@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.integration;
+
+import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_CREATE_MODE;
+import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_NODE;
+import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_OPERATION;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
@@ -29,13 +37,6 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_CREATE_MODE;
-import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_NODE;
-import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_OPERATION;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class ZooKeeperProducerIT extends ZooKeeperITSupport {
 
     private String zookeeperUri;
@@ -44,45 +45,41 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
     @Override
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {
-                new RouteBuilder() {
-                    public void configure() {
-                        zookeeperUri
-                                = "zookeeper://{{zookeeper.connection.string}}/node?create=true";
-                        from("direct:roundtrip")
-                                .to(zookeeperUri)
-                                .to("mock:producer-out");
-                        from(zookeeperUri)
-                                .to("mock:consumed-from-node");
-                    }
-                },
-                new RouteBuilder() {
-                    public void configure() {
-                        from("direct:no-create-fails-set")
-                                .to("zookeeper://{{zookeeper.connection.string}}/doesnotexist");
-                    }
-                },
-                new RouteBuilder() {
-                    public void configure() {
-                        from("direct:node-from-header")
-                                .to("zookeeper://{{zookeeper.connection.string}}/notset?create=true");
-                        from("zookeeper://{{zookeeper.connection.string}}/set?create=true")
-                                .to("mock:consumed-from-set-node");
-                    }
-                },
-                new RouteBuilder() {
-                    public void configure() {
-                        from("direct:create-mode")
-                                .to("zookeeper://{{zookeeper.connection.string}}/persistent?create=true&createMode=PERSISTENT")
-                                .to("mock:create-mode");
-                    }
-                },
-                new RouteBuilder() {
-                    public void configure() {
-                        from("direct:delete")
-                                .to("zookeeper://{{zookeeper.connection.string}}/to-be-deleted")
-                                .to("mock:delete");
-                    }
+            new RouteBuilder() {
+                public void configure() {
+                    zookeeperUri = "zookeeper://{{zookeeper.connection.string}}/node?create=true";
+                    from("direct:roundtrip").to(zookeeperUri).to("mock:producer-out");
+                    from(zookeeperUri).to("mock:consumed-from-node");
                 }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    from("direct:no-create-fails-set").to("zookeeper://{{zookeeper.connection.string}}/doesnotexist");
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    from("direct:node-from-header")
+                            .to("zookeeper://{{zookeeper.connection.string}}/notset?create=true");
+                    from("zookeeper://{{zookeeper.connection.string}}/set?create=true")
+                            .to("mock:consumed-from-set-node");
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    from("direct:create-mode")
+                            .to(
+                                    "zookeeper://{{zookeeper.connection.string}}/persistent?create=true&createMode=PERSISTENT")
+                            .to("mock:create-mode");
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    from("direct:delete")
+                            .to("zookeeper://{{zookeeper.connection.string}}/to-be-deleted")
+                            .to("mock:delete");
+                }
+            }
         };
     }
 
@@ -137,7 +134,8 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Stat s = mock.getReceivedExchanges().get(0).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS, Stat.class);
+        Stat s =
+                mock.getReceivedExchanges().get(0).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS, Stat.class);
         assertEquals(0, s.getEphemeralOwner());
     }
 
@@ -165,8 +163,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         exchange.getIn().setHeader(ZOOKEEPER_NODE, "/set-listing/firstborn");
         exchange.setPattern(ExchangePattern.InOut);
         template.send(
-                "zookeeper://{{zookeeper.connection.string}}/set-listing?create=true&listChildren=true",
-                exchange);
+                "zookeeper://{{zookeeper.connection.string}}/set-listing?create=true&listChildren=true", exchange);
         List<?> children = exchange.getMessage().getMandatoryBody(List.class);
         assertEquals(1, children.size());
         assertEquals("firstborn", children.get(0));

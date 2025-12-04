@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
+
+import static org.apache.camel.language.xpath.XPathBuilder.xpath;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.FileNotFoundException;
 
@@ -30,18 +34,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
-import static org.apache.camel.language.xpath.XPathBuilder.xpath;
-import static org.junit.jupiter.api.Assertions.*;
-
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class XPathFeatureTest extends ContextTestSupport {
     public static final String DOM_BUILDER_FACTORY_FEATURE = XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE;
 
-    public static final String XML_DATA
-            = " <!DOCTYPE foo [ " + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
-    public static final String XML_DATA_INVALID
-            = " <!DOCTYPE foo [ "
-              + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
+    public static final String XML_DATA = " <!DOCTYPE foo [ "
+            + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
+    public static final String XML_DATA_INVALID = " <!DOCTYPE foo [ "
+            + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -61,18 +61,24 @@ public class XPathFeatureTest extends ContextTestSupport {
     @Test
     public void testXPath() {
         // Set these features will enable the external general entities
-        System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities", "true");
-        System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://apache.org/xml/features/disallow-doctype-decl", "false");
+        System.setProperty(
+                DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities", "true");
+        System.setProperty(
+                DOM_BUILDER_FACTORY_FEATURE + ":" + "http://apache.org/xml/features/disallow-doctype-decl", "false");
         try {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA));
             fail("Expect an Exception here");
         } catch (TypeConversionException ex) {
             boolean b = ex.getCause() instanceof FileNotFoundException;
-            assertTrue(b,
-                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + FileNotFoundException.class);
+            assertTrue(
+                    b,
+                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of "
+                            + FileNotFoundException.class);
         } finally {
-            System.clearProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities");
-            System.clearProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://apache.org/xml/features/disallow-doctype-decl");
+            System.clearProperty(
+                    DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities");
+            System.clearProperty(
+                    DOM_BUILDER_FACTORY_FEATURE + ":" + "http://apache.org/xml/features/disallow-doctype-decl");
         }
     }
 
@@ -84,8 +90,10 @@ public class XPathFeatureTest extends ContextTestSupport {
             fail("Expect an Exception here");
         } catch (RuntimeCamelException ex) {
             boolean b = ex.getCause() instanceof NoTypeConversionAvailableException;
-            assertTrue(b, "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of "
-                          + NoTypeConversionAvailableException.class);
+            assertTrue(
+                    b,
+                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of "
+                            + NoTypeConversionAvailableException.class);
         }
     }
 
@@ -96,8 +104,10 @@ public class XPathFeatureTest extends ContextTestSupport {
             fail("Expect an Exception here");
         } catch (TypeConversionException ex) {
             boolean b = ex.getCause() instanceof SAXParseException;
-            assertTrue(b,
-                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + SAXParseException.class);
+            assertTrue(
+                    b,
+                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of "
+                            + SAXParseException.class);
         }
     }
 
@@ -105,5 +115,4 @@ public class XPathFeatureTest extends ContextTestSupport {
         Exchange exchange = createExchangeWithBody(context, xml);
         return exchange;
     }
-
 }

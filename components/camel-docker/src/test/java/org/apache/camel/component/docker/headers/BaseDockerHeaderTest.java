@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
 
 import java.util.HashMap;
@@ -51,10 +52,8 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:in").to("docker://" + getOperation().toString());
-
             }
         };
-
     }
 
     @BeforeEach
@@ -149,11 +148,9 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setCmdExecFactory(getCmdExecFactory());
 
         return clientProfile;
-
     }
 
     protected abstract void setupMocks();
 
     protected abstract DockerOperation getOperation();
-
 }

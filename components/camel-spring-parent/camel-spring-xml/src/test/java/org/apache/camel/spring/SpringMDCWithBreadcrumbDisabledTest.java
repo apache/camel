@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.slf4j.MDC;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SpringMDCWithBreadcrumbDisabledTest extends SpringMDCTest {
 
@@ -49,5 +50,4 @@ public class SpringMDCWithBreadcrumbDisabledTest extends SpringMDCTest {
             assertNull(exchange.getIn().getHeader("camel.breadcrumbId"), "Should not have breadcrumb");
         }
     }
-
 }

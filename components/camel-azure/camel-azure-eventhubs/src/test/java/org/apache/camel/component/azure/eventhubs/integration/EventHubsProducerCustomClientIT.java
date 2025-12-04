@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
@@ -41,10 +44,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
-                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
+@EnabledIfSystemProperty(
+        named = "connectionString",
+        matches = ".*",
+        disabledReason =
+                "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventHubsProducerCustomClientIT extends CamelTestSupport {
     @EndpointInject
@@ -89,10 +93,13 @@ class EventHubsProducerCustomClientIT extends CamelTestSupport {
         });
 
         resultAsync.whenComplete((exchange, throwable) -> {
-            final Boolean eventFlag = consumerAsyncClient.receiveFromPartition(firstPartition, EventPosition.earliest())
-                    .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
-                            && partitionEvent.getData().getBodyAsString()
-                                    .contains(messageBody))
+            final Boolean eventFlag = consumerAsyncClient
+                    .receiveFromPartition(firstPartition, EventPosition.earliest())
+                    .any(partitionEvent -> partitionEvent
+                                    .getPartitionContext()
+                                    .getPartitionId()
+                                    .equals(firstPartition)
+                            && partitionEvent.getData().getBodyAsString().contains(messageBody))
                     .block();
 
             if (eventFlag != null) {

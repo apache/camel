@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,8 +27,6 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.api.parallel.ResourceLock;
-
-import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 
 @Isolated
 @ResourceLock(SSL_SYSPROPS)
@@ -38,7 +39,10 @@ public class HttpsRouteAliasTest extends HttpsRouteTest {
                 JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
 
                 KeyStoreParameters ksp = new KeyStoreParameters();
-                ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost-alias.p12").toString());
+                ksp.setResource(this.getClass()
+                        .getClassLoader()
+                        .getResource("jsse/localhost-alias.p12")
+                        .toString());
                 ksp.setPassword(pwd);
 
                 KeyManagersParameters kmp = new KeyManagersParameters();

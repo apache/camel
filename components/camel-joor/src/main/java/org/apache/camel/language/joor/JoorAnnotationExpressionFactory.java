@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import java.lang.annotation.Annotation;
@@ -27,8 +28,10 @@ public class JoorAnnotationExpressionFactory extends DefaultAnnotationExpression
 
     @Override
     public Expression createExpression(
-            CamelContext camelContext, Annotation annotation,
-            LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+            CamelContext camelContext,
+            Annotation annotation,
+            LanguageAnnotation languageAnnotation,
+            Class<?> expressionReturnType) {
 
         Object[] params = new Object[3];
         Class<?> resultType = getResultType(annotation);

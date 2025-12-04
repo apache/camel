@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
 
 import java.io.IOException;
@@ -52,7 +53,9 @@ public class DropboxProducerGetSingleIT extends DropboxTestSupport {
         template.sendBody(endpoint, null);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.message(0).header(DropboxResultHeader.DOWNLOADED_FILE.name()).contains(String.format("%s/%s", workdir, FILE_NAME));
+        mock.message(0)
+                .header(DropboxResultHeader.DOWNLOADED_FILE.name())
+                .contains(String.format("%s/%s", workdir, FILE_NAME));
         mock.message(0).body(String.class).isEqualTo(CONTENT);
         mock.assertIsSatisfied();
     }
@@ -62,19 +65,18 @@ public class DropboxProducerGetSingleIT extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://get?accessToken={{accessToken}}" +
-                            "&expireIn={{expireIn}}" +
-                            "&refreshToken={{refreshToken}}" +
-                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
-                            "&remotePath=" + workdir + "/" + FILE_NAME)
+                        .to("dropbox://get?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                + "&refreshToken={{refreshToken}}"
+                                + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}"
+                                + "&remotePath="
+                                + workdir + "/" + FILE_NAME)
                         .to("mock:result");
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE_NAME))
-                        .to("dropbox://get?accessToken={{accessToken}}" +
-                            "&expireIn={{expireIn}}" +
-                            "&refreshToken={{refreshToken}}" +
-                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}")
+                        .to("dropbox://get?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                + "&refreshToken={{refreshToken}}"
+                                + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}")
                         .to("mock:result");
             }
         };

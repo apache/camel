@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -39,7 +40,7 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
         getMockEndpoint("mock:test1").expectedBodiesReceived(person);
         getMockEndpoint("mock:test1").expectedBodiesReceived(person);
 
-        //act
+        // act
         template.requestBodyAndHeader("direct:input1", person, "testHeading", "value");
         template.requestBodyAndHeader("direct:input2", person, "testHeading", "value");
 
@@ -51,10 +52,10 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
         port1 = AvailablePortFinder.getNextAvailable();
         port2 = AvailablePortFinder.getNextAvailable();
         uri1 = "cometd://127.0.0.1:" + port1 + "/service/test?baseResource=file:./target/test-classes/webapp&"
-               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
         uri2 = "cometd://127.0.0.1:" + port2 + "/service/test?baseResource=file:./target/test-classes/webapp&"
-               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
     }
 
     @Override

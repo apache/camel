@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
 
 import java.util.Set;
@@ -34,7 +35,7 @@ public abstract class ZooKeeperOperation<ResultType> {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ZooKeeperOperation.class);
 
-    protected static final Class<?>[] CONSTRUCTOR_ARGS = { ZooKeeper.class, String.class };
+    protected static final Class<?>[] CONSTRUCTOR_ARGS = {ZooKeeper.class, String.class};
 
     protected String node;
 

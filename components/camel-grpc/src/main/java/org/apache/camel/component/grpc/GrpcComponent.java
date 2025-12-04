@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
 
 import java.net.URI;
@@ -57,14 +58,16 @@ public class GrpcComponent extends DefaultComponent {
     }
 
     private void checkAndSetRegistryClientInterceptors(GrpcConfiguration configuration) {
-        Set<ClientInterceptor> clientInterceptors = getCamelContext().getRegistry().findByType(ClientInterceptor.class);
+        Set<ClientInterceptor> clientInterceptors =
+                getCamelContext().getRegistry().findByType(ClientInterceptor.class);
         if (!clientInterceptors.isEmpty()) {
             configuration.setClientInterceptors(new ArrayList<>(clientInterceptors));
         }
     }
 
     private void checkAndSetRegistryServerInterceptors(GrpcConfiguration configuration) {
-        Set<ServerInterceptor> serverInterceptors = getCamelContext().getRegistry().findByType(ServerInterceptor.class);
+        Set<ServerInterceptor> serverInterceptors =
+                getCamelContext().getRegistry().findByType(ServerInterceptor.class);
         if (!serverInterceptors.isEmpty()) {
             configuration.setServerInterceptors(new ArrayList<>(serverInterceptors));
         }

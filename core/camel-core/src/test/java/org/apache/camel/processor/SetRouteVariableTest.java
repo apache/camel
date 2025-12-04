@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SetRouteVariableTest extends ContextTestSupport {
     private MockEndpoint end;
@@ -75,11 +76,17 @@ public class SetRouteVariableTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // stored as route variable
-                from("direct:start").routeId("myRoute")
-                        .setVariable("route:" + variableName).constant(expectedVariableValue).to("mock:end");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .setVariable("route:" + variableName)
+                        .constant(expectedVariableValue)
+                        .to("mock:end");
 
-                from("direct:start2").routeId("myRoute2")
-                        .setVariable("route:" + variableName).constant(expectedVariableValue2).to("mock:end");
+                from("direct:start2")
+                        .routeId("myRoute2")
+                        .setVariable("route:" + variableName)
+                        .constant(expectedVariableValue2)
+                        .to("mock:end");
             }
         };
     }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hazelcast;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.hazelcast;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
 
@@ -36,7 +37,8 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue(e.getCause().getMessage()
+            assertTrue(e.getCause()
+                    .getMessage()
                     .contains("You cannot send messages to this endpoint: hazelcast-atomicvalue://foo"));
         }
     }
@@ -54,8 +56,9 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue(
-                    e.getCause().getMessage().contains("You cannot send messages to this endpoint: hazelcast-instance://foo"));
+            assertTrue(e.getCause()
+                    .getMessage()
+                    .contains("You cannot send messages to this endpoint: hazelcast-instance://foo"));
         }
     }
 
@@ -63,5 +66,4 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

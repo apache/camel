@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
 
 import java.util.ArrayList;
@@ -71,9 +72,12 @@ public class TemplateStoredProcedure extends StoredProcedure {
                             inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType(), inOutParameter.getScale());
                 } else if (inOutParameter.getTypeName() != null) {
                     sqlInOutParameter = new SqlInOutParameter(
-                            inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType(), inOutParameter.getTypeName());
+                            inOutParameter.getOutValueMapKey(),
+                            inOutParameter.getSqlType(),
+                            inOutParameter.getTypeName());
                 } else {
-                    sqlInOutParameter = new SqlInOutParameter(inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType());
+                    sqlInOutParameter =
+                            new SqlInOutParameter(inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType());
                 }
 
                 declareParameter(sqlInOutParameter);
@@ -105,7 +109,9 @@ public class TemplateStoredProcedure extends StoredProcedure {
             params.put(inParameter.getName(), inParameter.getValueExtractor().eval(exchange, rowData));
         }
         for (InOutParameter inOutParameter : inOutParameterList) {
-            params.put(inOutParameter.getOutValueMapKey(), inOutParameter.getValueExtractor().eval(exchange, rowData));
+            params.put(
+                    inOutParameter.getOutValueMapKey(),
+                    inOutParameter.getValueExtractor().eval(exchange, rowData));
         }
 
         LOG.debug("Invoking stored procedure: {}", template.getProcedureName());

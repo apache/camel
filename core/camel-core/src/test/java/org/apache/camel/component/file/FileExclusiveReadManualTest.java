@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,10 +46,8 @@ public class FileExclusiveReadManualTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?readLock=fileLock&initialDelay=0&delay=10"))
-                        .to("mock:result");
+                from(fileUri("?readLock=fileLock&initialDelay=0&delay=10")).to("mock:result");
             }
         };
     }
-
 }

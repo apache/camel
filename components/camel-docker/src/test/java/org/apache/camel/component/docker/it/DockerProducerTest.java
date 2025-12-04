@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.it;
 
 import java.util.concurrent.TimeUnit;
@@ -27,7 +28,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
  * Integration test listing images on Docker Platform. For this test to run you need to inform the docker host name via
  * -Ddocker.hostname=my.host.com and the port via -Ddocker.port=2375
  */
-@EnabledIfSystemProperty(named = "docker.hostname", matches = ".*", disabledReason = "Requires a running docker environment")
+@EnabledIfSystemProperty(
+        named = "docker.hostname",
+        matches = ".*",
+        disabledReason = "Requires a running docker environment")
 public class DockerProducerTest extends DockerITTestSupport {
 
     @Test

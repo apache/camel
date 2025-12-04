@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,10 +43,11 @@ public class SplitterParallelIssueTest extends ContextTestSupport {
         for (int i = 0; i < size; i++) {
             final int num = i;
             new Thread(new Runnable() {
-                public void run() {
-                    template.sendBody("direct:start", Integer.toString(num));
-                }
-            }).start();
+                        public void run() {
+                            template.sendBody("direct:start", Integer.toString(num));
+                        }
+                    })
+                    .start();
         }
 
         assertMockEndpointsSatisfied();
@@ -56,8 +58,12 @@ public class SplitterParallelIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").log("Start ${body}").split(body().tokenize("@"), new UseLatestAggregationStrategy())
-                        .parallelProcessing().streaming().process(new Processor() {
+                from("direct:start")
+                        .log("Start ${body}")
+                        .split(body().tokenize("@"), new UseLatestAggregationStrategy())
+                        .parallelProcessing()
+                        .streaming()
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 int num = exchange.getIn().getBody(int.class);
@@ -65,9 +71,11 @@ public class SplitterParallelIssueTest extends ContextTestSupport {
                                 log.info("Sleep for {} ms", sleep);
                                 Thread.sleep(sleep);
                             }
-                        }).end().log("End ${body}").to("mock:end");
+                        })
+                        .end()
+                        .log("End ${body}")
+                        .to("mock:end");
             }
         };
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
+import static org.apache.camel.component.sjms.SjmsHelper.closeConsumer;
+import static org.apache.camel.component.sjms.SjmsHelper.closeProducer;
+import static org.apache.camel.component.sjms.SjmsHelper.closeSession;
+import static org.apache.camel.component.sjms.SjmsHelper.commitIfNeeded;
+import static org.apache.camel.component.sjms.SjmsHelper.isTransactionOrClientAcknowledgeMode;
 
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
@@ -31,13 +39,6 @@ import org.apache.camel.component.sjms.jms.JmsConstants;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.MessageCreator;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
-import static org.apache.camel.component.sjms.SjmsHelper.closeConsumer;
-import static org.apache.camel.component.sjms.SjmsHelper.closeProducer;
-import static org.apache.camel.component.sjms.SjmsHelper.closeSession;
-import static org.apache.camel.component.sjms.SjmsHelper.commitIfNeeded;
-import static org.apache.camel.component.sjms.SjmsHelper.isTransactionOrClientAcknowledgeMode;
 
 public class SjmsTemplate {
 
@@ -213,33 +214,36 @@ public class SjmsTemplate {
         return resolvedDeliveryMode;
     }
 
-    public Message receive(String destinationName, String messageSelector, boolean isTopic, long timeout) throws Exception {
-        Object obj = execute(sc -> {
-            Destination dest = destinationCreationStrategy.createDestination(sc, destinationName, isTopic);
-            MessageConsumer consumer;
+    public Message receive(String destinationName, String messageSelector, boolean isTopic, long timeout)
+            throws Exception {
+        Object obj = execute(
+                sc -> {
+                    Destination dest = destinationCreationStrategy.createDestination(sc, destinationName, isTopic);
+                    MessageConsumer consumer;
 
-            if (ObjectHelper.isNotEmpty(messageSelector)) {
-                consumer = sc.createConsumer(dest, messageSelector);
-            } else {
-                consumer = sc.createConsumer(dest);
-            }
+                    if (ObjectHelper.isNotEmpty(messageSelector)) {
+                        consumer = sc.createConsumer(dest, messageSelector);
+                    } else {
+                        consumer = sc.createConsumer(dest);
+                    }
 
-            Message message = null;
-            try {
-                if (timeout < 0) {
-                    message = consumer.receiveNoWait();
-                } else if (timeout == 0) {
-                    message = consumer.receive();
-                } else {
-                    message = consumer.receive(timeout);
-                }
-            } finally {
-                // success then commit if we need to
-                commitIfNeeded(sc, message);
-                closeConsumer(consumer);
-            }
-            return message;
-        }, true);
+                    Message message = null;
+                    try {
+                        if (timeout < 0) {
+                            message = consumer.receiveNoWait();
+                        } else if (timeout == 0) {
+                            message = consumer.receive();
+                        } else {
+                            message = consumer.receive(timeout);
+                        }
+                    } finally {
+                        // success then commit if we need to
+                        commitIfNeeded(sc, message);
+                        closeConsumer(consumer);
+                    }
+                    return message;
+                },
+                true);
         return (Message) obj;
     }
 
@@ -250,5 +254,4 @@ public class SjmsTemplate {
     public Session createSession(Connection connection) throws Exception {
         return connection.createSession(transacted, acknowledgeMode);
     }
-
 }

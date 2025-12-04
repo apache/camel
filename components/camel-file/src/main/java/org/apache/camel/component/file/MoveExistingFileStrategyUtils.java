@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -23,8 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class MoveExistingFileStrategyUtils {
 
-    private MoveExistingFileStrategyUtils() {
-    }
+    private MoveExistingFileStrategyUtils() {}
 
     /**
      * This method manipulates the destinationPath in case of moveExisting parameter is expressed as file language
@@ -43,18 +43,19 @@ public final class MoveExistingFileStrategyUtils {
      * @param  directoryName   the path of the file to be moved/renamed
      * @return                 the full destination path
      */
-    public static String completePartialRelativePath(String destinationPath, String fileOnlyName, String directoryName) {
+    public static String completePartialRelativePath(
+            String destinationPath, String fileOnlyName, String directoryName) {
 
         if (destinationPath.length() > 1 && destinationPath.endsWith("/")) {
             destinationPath = destinationPath + fileOnlyName;
         }
 
-        if (ObjectHelper.isNotEmpty(directoryName) && !destinationPath.startsWith(directoryName)
+        if (ObjectHelper.isNotEmpty(directoryName)
+                && !destinationPath.startsWith(directoryName)
                 && !FileUtil.isAbsolute(new File(destinationPath))) {
             destinationPath = directoryName + "/" + destinationPath;
         }
 
         return destinationPath;
     }
-
 }

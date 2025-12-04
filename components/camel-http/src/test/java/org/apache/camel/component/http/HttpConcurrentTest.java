@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,8 +34,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpConcurrentTest extends BaseHttpTest {
 
     private final AtomicInteger counter = new AtomicInteger();
@@ -42,8 +43,10 @@ public class HttpConcurrentTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/", (request, response, context) -> {
                     try {
@@ -53,7 +56,8 @@ public class HttpConcurrentTest extends BaseHttpTest {
                     }
                     response.setCode(HttpStatus.SC_OK);
                     response.setEntity(new StringEntity(Integer.toString(counter.incrementAndGet())));
-                }).create();
+                })
+                .create();
         localServer.start();
     }
 
@@ -81,9 +85,8 @@ public class HttpConcurrentTest extends BaseHttpTest {
         // so no need for a thread-safe Map implementation
         Map<Integer, Future<String>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
-            Future<String> out = executor.submit(() -> template.requestBody(
-                    "http://localhost:" + localServer.getLocalPort(), null,
-                    String.class));
+            Future<String> out = executor.submit(
+                    () -> template.requestBody("http://localhost:" + localServer.getLocalPort(), null, String.class));
             responses.put(i, out);
         }
 
@@ -99,5 +102,4 @@ public class HttpConcurrentTest extends BaseHttpTest {
         assertEquals(files, unique.size(), "Should be " + files + " unique responses");
         executor.shutdownNow();
     }
-
 }

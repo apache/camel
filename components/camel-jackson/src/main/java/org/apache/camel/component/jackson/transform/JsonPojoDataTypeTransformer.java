@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.transform;
 
 import java.io.ByteArrayInputStream;
@@ -41,8 +42,9 @@ import org.apache.camel.util.ObjectHelper;
  * mapper implementation for the unmarshal operation. Requires proper setting of content schema, class and schema type
  * in Exchange properties (usually resolved via Json schema resolver).
  */
-@DataTypeTransformer(name = "application-x-java-object",
-                     description = "Transforms from JSon to Java object using Jackson (supports content schema)")
+@DataTypeTransformer(
+        name = "application-x-java-object",
+        description = "Transforms from JSon to Java object using Jackson (supports content schema)")
 public class JsonPojoDataTypeTransformer extends Transformer implements CamelContextAware {
 
     private CamelContext camelContext;
@@ -55,12 +57,16 @@ public class JsonPojoDataTypeTransformer extends Transformer implements CamelCon
         String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), null);
         if (contentClass == null) {
             throw new CamelExecutionException(
-                    "Missing content class information for Java object data type processing",
-                    message.getExchange());
+                    "Missing content class information for Java object data type processing", message.getExchange());
         }
 
-        SchemaType schemaType = SchemaType.of(message.getExchange().getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE,
-                Optional.ofNullable(schema).map(FormatSchema::getSchemaType).orElse(SchemaType.JSON.name()), String.class));
+        SchemaType schemaType = SchemaType.of(message.getExchange()
+                .getProperty(
+                        SchemaHelper.CONTENT_SCHEMA_TYPE,
+                        Optional.ofNullable(schema)
+                                .map(FormatSchema::getSchemaType)
+                                .orElse(SchemaType.JSON.name()),
+                        String.class));
 
         try {
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.JAVA_OBJECT.type());
@@ -72,7 +78,8 @@ public class JsonPojoDataTypeTransformer extends Transformer implements CamelCon
 
             message.setBody(getJavaObject(message, schemaType, schema, contentType));
         } catch (InvalidPayloadException | IOException | ClassNotFoundException e) {
-            throw new CamelExecutionException("Failed to apply Java object data type on exchange", message.getExchange(), e);
+            throw new CamelExecutionException(
+                    "Failed to apply Java object data type on exchange", message.getExchange(), e);
         }
     }
 
@@ -81,7 +88,8 @@ public class JsonPojoDataTypeTransformer extends Transformer implements CamelCon
         if (schemaType == SchemaType.JSON) {
             return Json.mapper().reader().forType(contentType).readValue(getBodyAsStream(message));
         } else {
-            throw new CamelExecutionException(String.format("Unsupported schema type '%s'", schemaType), message.getExchange());
+            throw new CamelExecutionException(
+                    String.format("Unsupported schema type '%s'", schemaType), message.getExchange());
         }
     }
 

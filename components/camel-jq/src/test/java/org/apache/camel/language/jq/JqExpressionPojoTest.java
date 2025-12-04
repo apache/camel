@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import java.util.Objects;
@@ -41,9 +42,7 @@ public class JqExpressionPojoTest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .transform().jq(".book", Book.class)
-                        .to("mock:result");
+                from("direct:start").transform().jq(".book", Book.class).to("mock:result");
             }
         };
     }
@@ -64,8 +63,7 @@ public class JqExpressionPojoTest extends JqTestSupport {
         String author;
         String title;
 
-        public Book() {
-        }
+        public Book() {}
 
         public Book(String author, String title) {
             this.author = author;

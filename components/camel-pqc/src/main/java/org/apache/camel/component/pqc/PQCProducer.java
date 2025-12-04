@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
 
 import java.security.*;
@@ -94,7 +95,8 @@ public class PQCProducer extends DefaultProducer {
             signer = getEndpoint().getConfiguration().getSigner();
 
             if (ObjectHelper.isEmpty(signer)) {
-                PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm());
+                PQCSignatureAlgorithms sigAlg =
+                        PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm());
                 signer = Signature.getInstance(sigAlg.getAlgorithm(), sigAlg.getBcProvider());
             }
         }
@@ -104,8 +106,8 @@ public class PQCProducer extends DefaultProducer {
             keyGenerator = getEndpoint().getConfiguration().getKeyGenerator();
 
             if (ObjectHelper.isEmpty(keyGenerator)) {
-                PQCKeyEncapsulationAlgorithms kemAlg
-                        = PQCKeyEncapsulationAlgorithms.valueOf(getConfiguration().getKeyEncapsulationAlgorithm());
+                PQCKeyEncapsulationAlgorithms kemAlg =
+                        PQCKeyEncapsulationAlgorithms.valueOf(getConfiguration().getKeyEncapsulationAlgorithm());
                 keyGenerator = KeyGenerator.getInstance(kemAlg.getAlgorithm(), kemAlg.getBcProvider());
             }
         }
@@ -114,7 +116,8 @@ public class PQCProducer extends DefaultProducer {
                 && ObjectHelper.isNotEmpty(getConfiguration().getKeyPairAlias())
                 && ObjectHelper.isNotEmpty(getConfiguration().getKeyStorePassword())) {
             KeyStore keyStore = getConfiguration().getKeyStore();
-            PrivateKey privateKey = (PrivateKey) keyStore.getKey(getConfiguration().getKeyPairAlias(),
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(
+                    getConfiguration().getKeyPairAlias(),
                     getConfiguration().getKeyStorePassword().toCharArray());
             Certificate cert = keyStore.getCertificate(getConfiguration().getKeyPairAlias());
             PublicKey publicKey = cert.getPublicKey();
@@ -124,8 +127,7 @@ public class PQCProducer extends DefaultProducer {
         }
     }
 
-    private void signature(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException {
+    private void signature(Exchange exchange) throws InvalidPayloadException, InvalidKeyException, SignatureException {
         String payload = exchange.getMessage().getMandatoryBody(String.class);
 
         signer.initSign(keyPair.getPrivate());
@@ -148,8 +150,7 @@ public class PQCProducer extends DefaultProducer {
         }
     }
 
-    private void generateEncapsulation(Exchange exchange)
-            throws InvalidAlgorithmParameterException {
+    private void generateEncapsulation(Exchange exchange) throws InvalidAlgorithmParameterException {
         // initialise for creating an encapsulation and shared secret.
         keyGenerator.init(
                 new KEMGenerateSpec(
@@ -165,8 +166,7 @@ public class PQCProducer extends DefaultProducer {
     }
 
     private void extractEncapsulation(Exchange exchange)
-            throws InvalidAlgorithmParameterException,
-            InvalidPayloadException {
+            throws InvalidAlgorithmParameterException, InvalidPayloadException {
         // initialise for creating an encapsulation and shared secret.
         SecretKeyWithEncapsulation payload = exchange.getMessage().getMandatoryBody(SecretKeyWithEncapsulation.class);
 
@@ -176,8 +176,10 @@ public class PQCProducer extends DefaultProducer {
 
         keyGenerator.init(
                 new KEMExtractSpec(
-                        keyPair.getPrivate(), payload.getEncapsulation(),
-                        PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
+                        keyPair.getPrivate(),
+                        payload.getEncapsulation(),
+                        PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm())
+                                .getAlgorithm(),
                         getEndpoint().getConfiguration().getSymmetricKeyLength()),
                 new SecureRandom());
 
@@ -187,8 +189,7 @@ public class PQCProducer extends DefaultProducer {
         exchange.getMessage().setBody(secEnc2, SecretKeyWithEncapsulation.class);
     }
 
-    private void extractSecretKeyFromEncapsulation(Exchange exchange)
-            throws InvalidPayloadException {
+    private void extractSecretKeyFromEncapsulation(Exchange exchange) throws InvalidPayloadException {
         // initialise for creating an encapsulation and shared secret.
         SecretKeyWithEncapsulation payload = exchange.getMessage().getMandatoryBody(SecretKeyWithEncapsulation.class);
 
@@ -196,7 +197,8 @@ public class PQCProducer extends DefaultProducer {
             throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
         }
 
-        SecretKey restoredKey = new SecretKeySpec(payload.getEncoded(), getConfiguration().getSymmetricKeyAlgorithm());
+        SecretKey restoredKey =
+                new SecretKeySpec(payload.getEncoded(), getConfiguration().getSymmetricKeyAlgorithm());
 
         if (!getConfiguration().isStoreExtractedSecretKeyAsHeader()) {
             exchange.getMessage().setBody(restoredKey, SecretKey.class);
@@ -204,5 +206,4 @@ public class PQCProducer extends DefaultProducer {
             exchange.getMessage().setHeader(PQCConstants.SECRET_KEY, restoredKey);
         }
     }
-
 }

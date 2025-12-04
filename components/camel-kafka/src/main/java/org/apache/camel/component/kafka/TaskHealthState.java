@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 import java.util.Properties;
@@ -37,8 +38,14 @@ public class TaskHealthState {
     private final long currentBackoffInterval;
     private final Properties clientProperties;
 
-    public TaskHealthState(boolean ready, boolean isTerminated, boolean isRecoverable, Exception lastError, String clientId,
-                           long currentBackoffInterval, Properties clientProperties) {
+    public TaskHealthState(
+            boolean ready,
+            boolean isTerminated,
+            boolean isRecoverable,
+            Exception lastError,
+            String clientId,
+            long currentBackoffInterval,
+            Properties clientProperties) {
         this.ready = ready;
         this.isTerminated = isTerminated;
         this.isRecoverable = isRecoverable;
@@ -104,5 +111,4 @@ public class TaskHealthState {
         }
         return rootCause;
     }
-
 }

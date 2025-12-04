@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.core.CamelContextExtension;
@@ -23,9 +27,6 @@ import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ArangoDbComponentTest implements CamelTestSupportHelper {
 
@@ -42,8 +43,8 @@ class ArangoDbComponentTest implements CamelTestSupportHelper {
     @Test
     void createEndpointWithMinimalConfiguration() throws Exception {
         ArangoDbComponent component = context.getComponent("arangodb", ArangoDbComponent.class);
-        ArangoDbEndpoint endpoint = (ArangoDbEndpoint) component
-                .createEndpoint("arangodb:testDb?documentCollection=myCollection");
+        ArangoDbEndpoint endpoint =
+                (ArangoDbEndpoint) component.createEndpoint("arangodb:testDb?documentCollection=myCollection");
         assertEquals("testDb", endpoint.getConfiguration().getDatabase());
         assertEquals("myCollection", endpoint.getConfiguration().getDocumentCollection());
     }
@@ -51,8 +52,9 @@ class ArangoDbComponentTest implements CamelTestSupportHelper {
     @Test
     public void testRouteWithNoDatabaseName() {
         ArangoDbComponent component = context.getComponent("arangodb", ArangoDbComponent.class);
-        assertThrows(IllegalArgumentException.class, () -> component
-                .createEndpoint("arangodb?documentCollection=myCollection"));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> component.createEndpoint("arangodb?documentCollection=myCollection"));
     }
 
     @Override

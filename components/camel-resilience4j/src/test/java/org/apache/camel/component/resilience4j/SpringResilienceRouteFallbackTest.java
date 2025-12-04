@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -45,12 +46,12 @@ public class SpringResilienceRouteFallbackTest extends CamelSpringTestSupport {
 
     private void test(String endPointUri) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
 
         template.sendBody(endPointUri, "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

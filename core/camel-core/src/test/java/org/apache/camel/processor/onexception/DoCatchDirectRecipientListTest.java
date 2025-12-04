@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,7 +39,12 @@ public class DoCatchDirectRecipientListTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry().to("direct:a").doCatch(Exception.class).to("direct:c").end();
+                from("direct:start")
+                        .doTry()
+                        .to("direct:a")
+                        .doCatch(Exception.class)
+                        .to("direct:c")
+                        .end();
 
                 from("direct:a").to("mock:a").recipientList(constant("direct:b"));
 

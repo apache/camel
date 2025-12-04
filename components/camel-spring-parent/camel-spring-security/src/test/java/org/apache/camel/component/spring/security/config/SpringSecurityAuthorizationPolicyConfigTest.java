@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.component.spring.security.SpringSecurityAuthorizationPolicy;
 import org.apache.camel.util.IOHelper;
@@ -24,9 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SpringSecurityAuthorizationPolicyConfigTest {
 
     private AbstractXmlApplicationContext context;
@@ -34,7 +35,8 @@ public class SpringSecurityAuthorizationPolicyConfigTest {
     @BeforeEach
     public void setUp() {
         context = new ClassPathXmlApplicationContext(
-                new String[] { "/org/apache/camel/component/spring/security/config/SpringSecurityAuthorizationPolicy.xml" });
+                new String[] {"/org/apache/camel/component/spring/security/config/SpringSecurityAuthorizationPolicy.xml"
+                });
     }
 
     @AfterEach
@@ -45,7 +47,8 @@ public class SpringSecurityAuthorizationPolicyConfigTest {
     @Test
     public void testAuthorizationPolicy() {
 
-        SpringSecurityAuthorizationPolicy adminPolicy = context.getBean("admin", SpringSecurityAuthorizationPolicy.class);
+        SpringSecurityAuthorizationPolicy adminPolicy =
+                context.getBean("admin", SpringSecurityAuthorizationPolicy.class);
         assertNotNull(adminPolicy, "We should get admin policy");
         assertNotNull(adminPolicy.getAuthorizationManager(), "The authorizationManager should not be null");
         assertNotNull(adminPolicy.getAuthenticationManager(), "The authenticationManager should not be null");
@@ -55,10 +58,13 @@ public class SpringSecurityAuthorizationPolicyConfigTest {
         assertNotNull(adminPolicy.getAuthorizationManager(), "The authorizationManager should not be null");
         assertNotNull(userPolicy.getAuthenticationManager(), "The authenticationManager should not be null");
 
-        assertEquals(adminPolicy.getAuthorizationManager(), userPolicy.getAuthorizationManager(),
+        assertEquals(
+                adminPolicy.getAuthorizationManager(),
+                userPolicy.getAuthorizationManager(),
                 "user policy and admin policy should have same authorizationManager");
-        assertEquals(adminPolicy.getAuthenticationManager(), userPolicy.getAuthenticationManager(),
+        assertEquals(
+                adminPolicy.getAuthenticationManager(),
+                userPolicy.getAuthenticationManager(),
                 "user policy and admin policy should have same authenticationManager");
     }
-
 }

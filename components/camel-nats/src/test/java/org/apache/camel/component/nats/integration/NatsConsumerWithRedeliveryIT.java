@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats.integration;
 
 import org.apache.camel.EndpointInject;
@@ -53,19 +54,28 @@ public class NatsConsumerWithRedeliveryIT extends NatsITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).maximumRedeliveries(REDELIVERY_COUNT).retryAttemptedLogLevel(LoggingLevel.INFO)
+                onException(Exception.class)
+                        .maximumRedeliveries(REDELIVERY_COUNT)
+                        .retryAttemptedLogLevel(LoggingLevel.INFO)
                         .retriesExhaustedLogLevel(LoggingLevel.ERROR)
-                        .redeliveryDelay(10).to("mock:exception").handled(true);
+                        .redeliveryDelay(10)
+                        .to("mock:exception")
+                        .handled(true);
 
                 from("direct:send").to("nats:test?flushConnection=true");
 
-                from("nats:test?flushConnection=true").choice().when(exchange -> {
-                    String s = exchange.getMessage().getBody(String.class);
-                    if (s.contains("test")) {
-                        return true;
-                    }
-                    return false;
-                }).throwException(RuntimeCamelException.class, "Test for this").end().to(mockResultEndpoint);
+                from("nats:test?flushConnection=true")
+                        .choice()
+                        .when(exchange -> {
+                            String s = exchange.getMessage().getBody(String.class);
+                            if (s.contains("test")) {
+                                return true;
+                            }
+                            return false;
+                        })
+                        .throwException(RuntimeCamelException.class, "Test for this")
+                        .end()
+                        .to(mockResultEndpoint);
             }
         };
     }

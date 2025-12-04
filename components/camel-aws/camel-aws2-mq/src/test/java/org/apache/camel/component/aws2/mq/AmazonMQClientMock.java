@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.mq;
 
 import java.util.ArrayList;
@@ -39,8 +40,7 @@ import software.amazon.awssdk.services.mq.model.UpdateBrokerResponse;
 
 public class AmazonMQClientMock implements MqClient {
 
-    public AmazonMQClientMock() {
-    }
+    public AmazonMQClientMock() {}
 
     @Override
     public CreateBrokerResponse createBroker(CreateBrokerRequest createBrokerRequest) {
@@ -109,5 +109,4 @@ public class AmazonMQClientMock implements MqClient {
         // TODO Auto-generated method stub
 
     }
-
 }

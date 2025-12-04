@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mllp;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mllp;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the class.
@@ -138,10 +139,9 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
             super(message, hl7Message, cause, logPhi);
         }
 
-        MllpAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause,
-                                         boolean logPhi) {
+        MllpAcknowledgementExceptionStub(
+                String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause, boolean logPhi) {
             super(message, hl7Message, hl7Acknowledgement, cause, logPhi);
         }
     }
-
 }

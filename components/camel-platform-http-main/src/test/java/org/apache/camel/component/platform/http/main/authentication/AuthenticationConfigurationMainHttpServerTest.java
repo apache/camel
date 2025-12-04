@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main.authentication;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AuthenticationConfigurationMainHttpServerTest {
 

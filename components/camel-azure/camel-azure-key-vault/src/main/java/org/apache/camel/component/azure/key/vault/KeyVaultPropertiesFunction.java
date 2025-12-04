@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.key.vault;
 
 import java.util.HashSet;
@@ -74,7 +75,6 @@ import org.apache.camel.vault.AzureVaultConfiguration;
  * notation <tt>azure:database/username:admin</tt>. The admin value will be returned as default value, if the conditions
  * above were all met.
  */
-
 @org.apache.camel.spi.annotations.PropertiesFunction("azure")
 public class KeyVaultPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
@@ -105,9 +105,12 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
         String clientSecret = System.getenv(CAMEL_VAULT_AZURE_CLIENT_SECRET);
         String tenantId = System.getenv(CAMEL_VAULT_AZURE_TENANT_ID);
         boolean azureIdentityEnabled = Boolean.parseBoolean(System.getenv(CAMEL_VAULT_AZURE_IDENTITY_ENABLED));
-        if (ObjectHelper.isEmpty(vaultName) && ObjectHelper.isEmpty(clientId) && ObjectHelper.isEmpty(clientSecret)
+        if (ObjectHelper.isEmpty(vaultName)
+                && ObjectHelper.isEmpty(clientId)
+                && ObjectHelper.isEmpty(clientSecret)
                 && ObjectHelper.isEmpty(tenantId)) {
-            AzureVaultConfiguration azureVaultConfiguration = getCamelContext().getVaultConfiguration().azure();
+            AzureVaultConfiguration azureVaultConfiguration =
+                    getCamelContext().getVaultConfiguration().azure();
             if (ObjectHelper.isNotEmpty(azureVaultConfiguration)) {
                 vaultName = azureVaultConfiguration.getVaultName();
                 clientId = azureVaultConfiguration.getClientId();
@@ -116,8 +119,11 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
                 azureIdentityEnabled = azureVaultConfiguration.isAzureIdentityEnabled();
             }
         }
-        if (ObjectHelper.isNotEmpty(vaultName) && ObjectHelper.isNotEmpty(clientId) && ObjectHelper.isNotEmpty(clientSecret)
-                && ObjectHelper.isNotEmpty(tenantId) && !azureIdentityEnabled) {
+        if (ObjectHelper.isNotEmpty(vaultName)
+                && ObjectHelper.isNotEmpty(clientId)
+                && ObjectHelper.isNotEmpty(clientSecret)
+                && ObjectHelper.isNotEmpty(tenantId)
+                && !azureIdentityEnabled) {
             String keyVaultUri = "https://" + vaultName + ".vault.azure.net";
 
             // Credential
@@ -210,8 +216,7 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
         return returnValue;
     }
 
-    private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version)
+    private String getSecretFromSource(String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
         String returnValue;
 

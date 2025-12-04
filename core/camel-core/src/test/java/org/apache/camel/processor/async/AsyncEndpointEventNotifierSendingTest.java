@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
 
@@ -79,9 +80,11 @@ public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").to("mock:before").to("async:bye:camel?delay=250").to("mock:result");
+                from("direct:start")
+                        .to("mock:before")
+                        .to("async:bye:camel?delay=250")
+                        .to("mock:result");
             }
         };
     }
-
 }

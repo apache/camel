@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
 
@@ -104,5 +105,4 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
         assertTrue(filter.applyFilterToCamelHeaders("host", "dummy.host.com", exchange));
         assertTrue(filter.applyFilterToCamelHeaders("Host", "dummy.host.com", exchange));
     }
-
 }

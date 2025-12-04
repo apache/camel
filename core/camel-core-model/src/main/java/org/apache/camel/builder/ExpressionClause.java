@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.Map;
@@ -159,7 +160,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getIn().getBody(), exchange.getIn().getHeaders());
+                return function.apply(
+                        exchange.getIn().getBody(), exchange.getIn().getHeaders());
             }
         });
     }
@@ -190,7 +192,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getIn().getBody(expectedType), exchange.getIn().getHeaders());
+                return function.apply(
+                        exchange.getIn().getBody(expectedType), exchange.getIn().getHeaders());
             }
         });
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
@@ -193,5 +194,4 @@ public class ContractAdvice implements CamelInternalProcessorAdvice<Object> {
             throw new ValidationException(message.getExchange(), String.format("No Validator found for '%s'", type));
         }
     }
-
 }

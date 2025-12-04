@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle.concurrent;
 
 import java.util.concurrent.ExecutorService;
@@ -87,7 +88,9 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:expressionMethod").throttle(method("myBean", "getConcurrentMessages")).concurrentRequestsMode()
+                from("direct:expressionMethod")
+                        .throttle(method("myBean", "getConcurrentMessages"))
+                        .concurrentRequestsMode()
                         .delay(INTERVAL)
                         .to("log:result", "mock:result");
             }

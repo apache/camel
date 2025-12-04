@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.impl.engine.DefaultInjector;
 import org.apache.camel.spi.Injector;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class InjectorDefaultsTest extends ContextTestSupport {
 
@@ -43,5 +44,4 @@ public class InjectorDefaultsTest extends ContextTestSupport {
         assertEquals("Claus", foo.getName());
         assertNull(foo2.getName());
     }
-
 }

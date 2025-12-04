@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.geocoder;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -40,11 +41,13 @@ public class GeoCoderNominatimTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to(
-                        "geocoder:latlng:37.38619,-5.99255?type=NOMINATIM&serverUrl=RAW(https://nominatim.openstreetmap.org)")
+                from("direct:start")
+                        .to(
+                                "geocoder:latlng:37.38619,-5.99255?type=NOMINATIM&serverUrl=RAW(https://nominatim.openstreetmap.org)")
                         .to("log:result")
-                        .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng}"
-                             + " and in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
+                        .log(
+                                "Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng}"
+                                        + " and in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
                         .to("mock:result");
             }
         };

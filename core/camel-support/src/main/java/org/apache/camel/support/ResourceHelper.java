@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.ByteArrayInputStream;
@@ -70,8 +71,13 @@ public final class ResourceHelper {
             return false;
         }
 
-        return uri.startsWith(RESOURCE) || uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("ref:") ||
-                uri.startsWith("bean:") || uri.startsWith("http:") || uri.startsWith("https:");
+        return uri.startsWith(RESOURCE)
+                || uri.startsWith("file:")
+                || uri.startsWith("classpath:")
+                || uri.startsWith("ref:")
+                || uri.startsWith("bean:")
+                || uri.startsWith("http:")
+                || uri.startsWith("https:");
     }
 
     /**
@@ -109,7 +115,8 @@ public final class ResourceHelper {
      * @return                     the resource as an {@link InputStream}. Remember to close this stream after usage.
      * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
      */
-    public static InputStream resolveMandatoryResourceAsInputStream(CamelContext camelContext, String uri) throws IOException {
+    public static InputStream resolveMandatoryResourceAsInputStream(CamelContext camelContext, String uri)
+            throws IOException {
         InputStream is = resolveResourceAsInputStream(camelContext, uri);
         if (is == null) {
             String resolvedName = resolveUriPath(uri);
@@ -176,7 +183,8 @@ public final class ResourceHelper {
      * @return                       the {@link Resource}
      * @throws FileNotFoundException if the resource could not be found
      */
-    public static Resource resolveMandatoryResource(CamelContext camelContext, String uri) throws FileNotFoundException {
+    public static Resource resolveMandatoryResource(CamelContext camelContext, String uri)
+            throws FileNotFoundException {
         final Resource resource = resolveResource(camelContext, uri);
         if (resource == null) {
             String resolvedName = resolveUriPath(uri);
@@ -271,14 +279,14 @@ public final class ResourceHelper {
      */
     public static Set<Path> findInFileSystem(Path root, String pattern) throws Exception {
         try (Stream<Path> path = Files.walk(root)) {
-            return path
-                    .filter(Files::isRegularFile)
+            return path.filter(Files::isRegularFile)
                     .filter(entry -> {
                         Path relative = root.relativize(entry);
-                        String str = relative.toString().replaceAll(Pattern.quote(File.separator),
-                                AntPathMatcher.DEFAULT_PATH_SEPARATOR);
+                        String str = relative.toString()
+                                .replaceAll(Pattern.quote(File.separator), AntPathMatcher.DEFAULT_PATH_SEPARATOR);
                         // skip files in hidden folders
-                        boolean hidden = str.startsWith(".") || str.contains(AntPathMatcher.DEFAULT_PATH_SEPARATOR + ".");
+                        boolean hidden =
+                                str.startsWith(".") || str.contains(AntPathMatcher.DEFAULT_PATH_SEPARATOR + ".");
                         if (!hidden) {
                             boolean match = AntPathMatcher.INSTANCE.match(pattern, str);
                             LOG.debug("Found resource: {} matching pattern: {} -> {}", entry, pattern, match);

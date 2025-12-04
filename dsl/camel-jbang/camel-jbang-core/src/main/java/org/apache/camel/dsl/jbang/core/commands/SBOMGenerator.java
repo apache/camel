@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,11 +33,11 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
-
-@CommandLine.Command(name = "sbom",
-                     description = "Generate a CycloneDX or SPDX SBOM for a specific project", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "sbom",
+        description = "Generate a CycloneDX or SPDX SBOM for a specific project",
+        sortOptions = false,
+        showDefaultValues = true)
 public class SBOMGenerator extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
@@ -44,29 +47,40 @@ public class SBOMGenerator extends Export {
     protected static final String SBOM_JSON_FORMAT = "json";
     protected static final String SBOM_XML_FORMAT = "xml";
 
-    @CommandLine.Option(names = { "--output-directory" }, description = "Directory where the SBOM will be saved",
-                        defaultValue = ".")
+    @CommandLine.Option(
+            names = {"--output-directory"},
+            description = "Directory where the SBOM will be saved",
+            defaultValue = ".")
     protected String outputDirectory = ".";
 
-    @CommandLine.Option(names = { "--output-name" }, description = "Output name of the SBOM file",
-                        defaultValue = "sbom")
+    @CommandLine.Option(
+            names = {"--output-name"},
+            description = "Output name of the SBOM file",
+            defaultValue = "sbom")
     protected String outputName = "sbom";
 
-    @CommandLine.Option(names = { "--cyclonedx-plugin-version" }, description = "The CycloneDX Maven Plugin version",
-                        defaultValue = "2.9.1")
+    @CommandLine.Option(
+            names = {"--cyclonedx-plugin-version"},
+            description = "The CycloneDX Maven Plugin version",
+            defaultValue = "2.9.1")
     protected String cyclonedxPluginVersion = "2.9.1";
 
-    @CommandLine.Option(names = { "--spdx-plugin-version" }, description = "The SPDX Maven Plugin version",
-                        defaultValue = "0.7.4")
+    @CommandLine.Option(
+            names = {"--spdx-plugin-version"},
+            description = "The SPDX Maven Plugin version",
+            defaultValue = "0.7.4")
     protected String spdxPluginVersion = "0.7.4";
 
-    @CommandLine.Option(names = { "--sbom-format" }, description = "The SBOM format, possible values are cyclonedx or spdx",
-                        defaultValue = CYCLONEDX_FORMAT)
+    @CommandLine.Option(
+            names = {"--sbom-format"},
+            description = "The SBOM format, possible values are cyclonedx or spdx",
+            defaultValue = CYCLONEDX_FORMAT)
     protected String sbomFormat = CYCLONEDX_FORMAT;
 
-    @CommandLine.Option(names = { "--sbom-output-format" },
-                        description = "The SBOM output format, possible values are json or xml",
-                        defaultValue = SBOM_JSON_FORMAT)
+    @CommandLine.Option(
+            names = {"--sbom-output-format"},
+            description = "The SBOM output format, possible values are json or xml",
+            defaultValue = SBOM_JSON_FORMAT)
     protected String sbomOutputFormat = SBOM_JSON_FORMAT;
 
     public SBOMGenerator(CamelJBangMain main) {

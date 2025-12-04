@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
 
 import java.text.SimpleDateFormat;
@@ -43,8 +44,7 @@ public class TimerComponent extends DefaultComponent {
     @Metadata
     private boolean includeMetadata;
 
-    public TimerComponent() {
-    }
+    public TimerComponent() {}
 
     @ManagedAttribute(description = "Include metadata")
     public boolean isIncludeMetadata() {
@@ -66,15 +66,20 @@ public class TimerComponent extends DefaultComponent {
         }
 
         return timers.compute(key, (k, v) -> {
-            if (v == null) {
-                // the timer name is also the thread name, so lets resolve a name to be used
-                String name = consumer.getEndpoint().getCamelContext().getExecutorServiceManager()
-                        .resolveThreadName("timer://" + consumer.getEndpoint().getTimerName());
-                return new TimerHolder(new Timer(name, consumer.getEndpoint().isDaemon()));
-            }
-            v.refCount.incrementAndGet();
-            return v;
-        }).timer;
+                    if (v == null) {
+                        // the timer name is also the thread name, so lets resolve a name to be used
+                        String name = consumer.getEndpoint()
+                                .getCamelContext()
+                                .getExecutorServiceManager()
+                                .resolveThreadName(
+                                        "timer://" + consumer.getEndpoint().getTimerName());
+                        return new TimerHolder(
+                                new Timer(name, consumer.getEndpoint().isDaemon()));
+                    }
+                    v.refCount.incrementAndGet();
+                    return v;
+                })
+                .timer;
     }
 
     public void removeTimer(TimerConsumer consumer) {

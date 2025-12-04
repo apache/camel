@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb.localstack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +36,6 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class AWS2DeleteItemRuleIT extends Aws2DDBBase {
 
     @EndpointInject("direct:start")
@@ -48,7 +49,8 @@ public class AWS2DeleteItemRuleIT extends Aws2DDBBase {
         final Map<String, AttributeValue> attributeMap = new HashMap<>();
         AttributeValue attributeValue = AttributeValue.builder().s("hello").build();
         attributeMap.put(attributeName, attributeValue);
-        attributeMap.put("secondary_attribute", AttributeValue.builder().s("value").build());
+        attributeMap.put(
+                "secondary_attribute", AttributeValue.builder().s("value").build());
 
         Exchange exchange = template.send("direct:start", new Processor() {
             public void process(Exchange exchange) {
@@ -86,10 +88,11 @@ public class AWS2DeleteItemRuleIT extends Aws2DDBBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(
-                        "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
-                                        + "&keyScalarType=" + ScalarAttributeType.S
-                                        + "&readCapacity=1&writeCapacity=1");
+                from("direct:start")
+                        .to("aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType="
+                                + KeyType.HASH
+                                + "&keyScalarType=" + ScalarAttributeType.S
+                                + "&readCapacity=1&writeCapacity=1");
             }
         };
     }

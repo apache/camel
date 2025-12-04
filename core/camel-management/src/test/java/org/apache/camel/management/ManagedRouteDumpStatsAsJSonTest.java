@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,10 +30,6 @@ import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteDumpStatsAsJSonTest extends ManagementTestSupport {
@@ -45,8 +46,8 @@ public class ManagedRouteDumpStatsAsJSonTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String json = (String) mbeanServer.invoke(on, "dumpRouteStatsAsJSon", new Object[] { false, true },
-                new String[] { "boolean", "boolean" });
+        String json = (String) mbeanServer.invoke(
+                on, "dumpRouteStatsAsJSon", new Object[] {false, true}, new String[] {"boolean", "boolean"});
         log.info(json);
 
         // should be valid json
@@ -60,12 +61,14 @@ public class ManagedRouteDumpStatsAsJSonTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo")
-                        .to("log:foo").id("to-log")
+                from("direct:start")
+                        .routeId("foo")
+                        .to("log:foo")
+                        .id("to-log")
                         .delay(100)
-                        .to("mock:result").id("to-mock");
+                        .to("mock:result")
+                        .id("to-mock");
             }
         };
     }
-
 }

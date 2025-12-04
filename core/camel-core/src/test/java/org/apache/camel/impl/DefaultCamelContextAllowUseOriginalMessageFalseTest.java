@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
@@ -45,10 +46,12 @@ public class DefaultCamelContextAllowUseOriginalMessageFalseTest extends Context
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").transform().simple("Bye ${body}").process(new OriginalMessageProcessor())
+                from("direct:start")
+                        .transform()
+                        .simple("Bye ${body}")
+                        .process(new OriginalMessageProcessor())
                         .to("mock:result");
             }
         };
     }
-
 }

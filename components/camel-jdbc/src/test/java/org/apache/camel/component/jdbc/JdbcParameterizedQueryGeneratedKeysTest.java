@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import java.util.HashMap;
@@ -38,14 +39,14 @@ public class JdbcParameterizedQueryGeneratedKeysTest extends AbstractJdbcGenerat
 
     @Test
     public void testRetrieveGeneratedKeysWithStringGeneratedColumns() {
-        super.testRetrieveGeneratedKeysWithStringGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)",
-                VALUE_MAP);
+        super.testRetrieveGeneratedKeysWithStringGeneratedColumns(
+                "insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
     }
 
     @Test
     public void testRetrieveGeneratedKeysWithIntGeneratedColumns() {
-        super.testRetrieveGeneratedKeysWithIntGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)",
-                VALUE_MAP);
+        super.testRetrieveGeneratedKeysWithIntGeneratedColumns(
+                "insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
     }
 
     @Test
@@ -62,5 +63,4 @@ public class JdbcParameterizedQueryGeneratedKeysTest extends AbstractJdbcGenerat
             }
         };
     }
-
 }

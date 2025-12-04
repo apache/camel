@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.wsdl_first;
 
 import java.util.Set;
@@ -41,9 +42,7 @@ public class JaxwsTestHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     @Override
-    public void close(MessageContext messagecontext) {
-
-    }
+    public void close(MessageContext messagecontext) {}
 
     @Override
     public boolean handleFault(SOAPMessageContext messagecontext) {
@@ -73,8 +72,6 @@ public class JaxwsTestHandler implements SOAPHandler<SOAPMessageContext> {
 
     @Override
     public String toString() {
-        return "faultCount=" + faultCount + ", messageCount="
-               + messageCount + ", getHeadersCount=" + getHeadersCount;
+        return "faultCount=" + faultCount + ", messageCount=" + messageCount + ", getHeadersCount=" + getHeadersCount;
     }
-
 }

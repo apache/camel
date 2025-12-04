@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.set;
 
 import java.util.Collection;
@@ -35,7 +36,8 @@ public class HazelcastSetProducer extends HazelcastDefaultProducer {
 
     private final ISet<Object> set;
 
-    public HazelcastSetProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String setName) {
+    public HazelcastSetProducer(
+            HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String setName) {
         super(endpoint);
         this.set = hazelcastInstance.getSet(setName);
     }
@@ -46,7 +48,6 @@ public class HazelcastSetProducer extends HazelcastDefaultProducer {
         final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-
             case ADD:
                 this.add(exchange);
                 break;
@@ -76,9 +77,9 @@ public class HazelcastSetProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(
-                        String.format("The value '%s' is not allowed for parameter '%s' on the SET cache.", operation,
-                                HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(String.format(
+                        "The value '%s' is not allowed for parameter '%s' on the SET cache.",
+                        operation, HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

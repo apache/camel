@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
 
 import java.util.Arrays;
@@ -44,7 +45,10 @@ public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor-vm:server").split().method("splitterBean", "splitWords").to("mock:result");
+                from("disruptor-vm:server")
+                        .split()
+                        .method("splitterBean", "splitWords")
+                        .to("mock:result");
             }
         };
     }
@@ -70,7 +74,5 @@ public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
             // as we like. As this is based on a unit test we just do it easy
             return Arrays.asList(body.split("@"));
         }
-
     }
-
 }

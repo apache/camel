@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -30,8 +31,9 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 /**
  * Unit tests for {@link AntPathMatcherGenericFileFilter}.
  */
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     private static final String TEST_DIR_NAME = "test" + UUID.randomUUID();
 
@@ -58,8 +60,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        TEST_DIR_NAME
-                             + "/ant-path-1?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=true"))
+                                TEST_DIR_NAME
+                                        + "/ant-path-1?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=true"))
                         .convertBodyTo(String.class)
                         .to("mock:result1");
             }
@@ -85,7 +87,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(TEST_DIR_NAME + "/ant-path-2?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak"))
-                        .convertBodyTo(String.class).to("mock:result2");
+                        .convertBodyTo(String.class)
+                        .to("mock:result2");
             }
         });
         context.start();
@@ -111,8 +114,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        TEST_DIR_NAME
-                             + "/ant-path-3?initialDelay=0&delay=10&recursive=true&antInclude=**/*.pdf,**/*.txt&antExclude=**/a*,**/b*"))
+                                TEST_DIR_NAME
+                                        + "/ant-path-3?initialDelay=0&delay=10&recursive=true&antInclude=**/*.pdf,**/*.txt&antExclude=**/a*,**/b*"))
                         .convertBodyTo(String.class)
                         .to("mock:result3");
             }
@@ -148,8 +151,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        TEST_DIR_NAME
-                             + "/ant-path-4?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#filter"))
+                                TEST_DIR_NAME
+                                        + "/ant-path-4?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#filter"))
                         .convertBodyTo(String.class)
                         .to("mock:result4");
             }
@@ -177,8 +180,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        TEST_DIR_NAME
-                             + "/ant-path-5?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=false"))
+                                TEST_DIR_NAME
+                                        + "/ant-path-5?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=false"))
                         .convertBodyTo(String.class)
                         .to("mock:result5");
             }
@@ -189,8 +192,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Hello World");
 
         String endpointUri = fileUri(TEST_DIR_NAME + "/ant-path-5/x/y/z");
-        template.sendBodyAndHeader(endpointUri, "Hello World", Exchange.FILE_NAME,
-                "report.TXT");
+        template.sendBodyAndHeader(endpointUri, "Hello World", Exchange.FILE_NAME, "report.TXT");
 
         context.getRouteController().startAllRoutes();
 
@@ -204,11 +206,10 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        TEST_DIR_NAME
-                             + "/ant-path-6?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak&antFilterCaseSensitive=false"))
+                                TEST_DIR_NAME
+                                        + "/ant-path-6?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak&antFilterCaseSensitive=false"))
                         .convertBodyTo(String.class)
                         .to("mock:result6");
-
             }
         });
         context.start();
@@ -234,10 +235,10 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        TEST_DIR_NAME
-                             + "/ant-path-7?initialDelay=0&delay=10&recursive=true&antInclude=**/*.Pdf,**/*.txt&antExclude=**/a*,**/b*&antFilterCaseSensitive=false"))
-                        .convertBodyTo(String.class).to("mock:result7");
-
+                                TEST_DIR_NAME
+                                        + "/ant-path-7?initialDelay=0&delay=10&recursive=true&antInclude=**/*.Pdf,**/*.txt&antExclude=**/a*,**/b*&antFilterCaseSensitive=false"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result7");
             }
         });
         context.start();
@@ -271,9 +272,10 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        TEST_DIR_NAME
-                             + "/ant-path-8?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#caseInsensitiveFilter"))
-                        .convertBodyTo(String.class).to("mock:result8");
+                                TEST_DIR_NAME
+                                        + "/ant-path-8?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#caseInsensitiveFilter"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result8");
             }
         });
         context.start();
@@ -291,5 +293,4 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

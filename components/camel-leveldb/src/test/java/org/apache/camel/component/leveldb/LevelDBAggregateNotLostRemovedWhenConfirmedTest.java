@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.component.leveldb.LevelDBAggregationRepository.keyBuilder;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -29,11 +34,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.component.leveldb.LevelDBAggregationRepository.keyBuilder;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends LevelDBTestSupport {
 
     private LevelDBAggregationRepository repo;
@@ -56,7 +57,8 @@ public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends LevelDBTest
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
-        final List<Exchange> receivedExchanges = Awaitility.await().atMost(1, TimeUnit.SECONDS)
+        final List<Exchange> receivedExchanges = Awaitility.await()
+                .atMost(1, TimeUnit.SECONDS)
                 .until(() -> getMockEndpoint("mock:result").getReceivedExchanges(), Matchers.notNullValue());
 
         String exchangeId = receivedExchanges.get(0).getExchangeId();
@@ -76,9 +78,10 @@ public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends LevelDBTest
             public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                            .completionSize(5).aggregationRepository(repo)
-                            .log("aggregated exchange id ${exchangeId} with ${body}")
-                            .to("mock:result")
+                        .completionSize(5)
+                        .aggregationRepository(repo)
+                        .log("aggregated exchange id ${exchangeId} with ${body}")
+                        .to("mock:result")
                         .end();
             }
         };

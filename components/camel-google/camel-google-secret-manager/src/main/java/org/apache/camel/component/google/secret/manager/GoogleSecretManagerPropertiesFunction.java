@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.secret.manager;
 
 import java.io.InputStream;
@@ -71,9 +72,9 @@ import org.apache.camel.vault.GcpVaultConfiguration;
  * <tt>gcp:database/username:admin</tt>. The admin value will be returned as default value, if the conditions above were
  * all met.
  */
-
 @org.apache.camel.spi.annotations.PropertiesFunction("gcp")
-public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
+public class GoogleSecretManagerPropertiesFunction extends ServiceSupport
+        implements PropertiesFunction, CamelContextAware {
 
     private static final String CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY";
     private static final String CAMEL_VAULT_GCP_PROJECT_ID = "CAMEL_VAULT_GCP_PROJECT_ID";
@@ -103,7 +104,8 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
         useDefaultInstance = Boolean.parseBoolean(System.getenv(CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE));
         projectId = System.getenv(CAMEL_VAULT_GCP_PROJECT_ID);
         if (ObjectHelper.isEmpty(serviceAccountKey) && ObjectHelper.isEmpty(projectId)) {
-            GcpVaultConfiguration gcpVaultConfiguration = getCamelContext().getVaultConfiguration().gcp();
+            GcpVaultConfiguration gcpVaultConfiguration =
+                    getCamelContext().getVaultConfiguration().gcp();
             if (ObjectHelper.isNotEmpty(gcpVaultConfiguration)) {
                 serviceAccountKey = gcpVaultConfiguration.getServiceAccountKey();
                 projectId = gcpVaultConfiguration.getProjectId();
@@ -111,15 +113,16 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
             }
         }
         if (ObjectHelper.isNotEmpty(serviceAccountKey) && ObjectHelper.isNotEmpty(projectId)) {
-            InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), serviceAccountKey);
-            Credentials myCredentials = ServiceAccountCredentials
-                    .fromStream(resolveMandatoryResourceAsInputStream);
+            InputStream resolveMandatoryResourceAsInputStream =
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), serviceAccountKey);
+            Credentials myCredentials = ServiceAccountCredentials.fromStream(resolveMandatoryResourceAsInputStream);
             SecretManagerServiceSettings settings = SecretManagerServiceSettings.newBuilder()
-                    .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials)).build();
+                    .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
+                    .build();
             client = SecretManagerServiceClient.create(settings);
         } else if (useDefaultInstance && ObjectHelper.isNotEmpty(projectId)) {
-            SecretManagerServiceSettings settings = SecretManagerServiceSettings.newBuilder().build();
+            SecretManagerServiceSettings settings =
+                    SecretManagerServiceSettings.newBuilder().build();
             client = SecretManagerServiceClient.create(settings);
         } else {
             throw new RuntimeCamelException(
@@ -191,8 +194,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
         return returnValue;
     }
 
-    private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version)
+    private String getSecretFromSource(String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
 
         // capture name of secret
@@ -200,8 +202,8 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
 
         String returnValue = null;
         try {
-            SecretVersionName secretVersionName
-                    = SecretVersionName.of(projectId, key, ObjectHelper.isNotEmpty(version) ? version : "latest");
+            SecretVersionName secretVersionName =
+                    SecretVersionName.of(projectId, key, ObjectHelper.isNotEmpty(version) ? version : "latest");
             AccessSecretVersionResponse response = client.accessSecretVersion(secretVersionName);
             if (ObjectHelper.isNotEmpty(response)) {
                 returnValue = response.getPayload().getData().toStringUtf8();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util.srcgen;
 
 import java.lang.reflect.Type;
@@ -194,7 +195,10 @@ public class Method {
     }
 
     public Annotation getAnnotation(Class<? extends java.lang.annotation.Annotation> clazz) {
-        return annotations.stream().filter(a -> Objects.equals(a.getType(), clazz)).findAny().orElse(null);
+        return annotations.stream()
+                .filter(a -> Objects.equals(a.getType(), clazz))
+                .findAny()
+                .orElse(null);
     }
 
     public Javadoc getJavaDoc() {

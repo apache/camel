@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.watch.utils;
 
 import java.nio.file.Path;
 
 public final class PathUtils {
 
-    private PathUtils() {
-    }
+    private PathUtils() {}
 
     public static Path normalize(Path path) {
         return path.normalize();

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 
@@ -34,10 +39,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
 
@@ -85,14 +86,13 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
     @Test
     public void testRoutesWithFault() throws Exception {
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
-        PersonService ss = new PersonService(
-                wsdlURL, new QName(
-                        "http://camel.apache.org/wsdl-first",
-                        "PersonService"));
+        PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
         Person client = ss.getSoap();
 
-        ((BindingProvider) client).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+        ((BindingProvider) client)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                         "http://localhost:" + port3 + "/CXFWsdlOnlyTest/PersonService/");
         Holder<String> personId = new Holder<>();
         personId.value = "hello";
@@ -114,8 +114,10 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         assertTrue(t instanceof UnknownPersonFault);
 
         Person client2 = ss.getSoap2();
-        ((BindingProvider) client2).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+        ((BindingProvider) client2)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                         "http://localhost:" + port4 + "/CXFWsdlOnlyTest/PersonService/");
         Holder<String> personId2 = new Holder<>();
         personId2.value = "hello";
@@ -135,5 +137,4 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         }
         assertTrue(t instanceof UnknownPersonFault);
     }
-
 }

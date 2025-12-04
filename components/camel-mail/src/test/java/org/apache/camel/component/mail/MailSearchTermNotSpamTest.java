@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.component.mail.SearchTermBuilder.Op;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.search.SearchTerm;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.mail.SearchTermBuilder.Op;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailSearchTermNotSpamTest extends MailSearchTermTest {
 
@@ -42,10 +43,12 @@ public class MailSearchTermNotSpamTest extends MailSearchTermTest {
         assertEquals(6, mailbox.getMessageCount());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("I like riding the Camel", "Ordering Camel in Action",
-                "Ordering ActiveMQ in Action", "We meet at 7pm the usual place");
+        mock.expectedBodiesReceivedInAnyOrder(
+                "I like riding the Camel",
+                "Ordering Camel in Action",
+                "Ordering ActiveMQ in Action",
+                "We meet at 7pm the usual place");
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

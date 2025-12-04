@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -42,8 +43,8 @@ public class EditMessageReplyMarkupMessage extends OutgoingMessage {
      * @param inlineMessageId Required if chat_id and message_id are not specified. Identifier of the inline message.
      * @param replyMarkup     An inline keyboard that appears right next to the message it belongs to.
      */
-    public EditMessageReplyMarkupMessage(String chatId, Integer messageId, String inlineMessageId,
-                                         InlineKeyboardMarkup replyMarkup) {
+    public EditMessageReplyMarkupMessage(
+            String chatId, Integer messageId, String inlineMessageId, InlineKeyboardMarkup replyMarkup) {
         this.chatId = chatId;
         this.messageId = messageId;
         this.inlineMessageId = inlineMessageId;
@@ -72,8 +73,7 @@ public class EditMessageReplyMarkupMessage extends OutgoingMessage {
         private String inlineMessageId;
         private InlineKeyboardMarkup replyMarkup;
 
-        public Builder() {
-        }
+        public Builder() {}
 
         public Builder messageId(Integer messageId) {
             this.messageId = messageId;
@@ -103,10 +103,10 @@ public class EditMessageReplyMarkupMessage extends OutgoingMessage {
     @Override
     public String toString() {
         return "EditMessageReplyMarkupMessage{"
-               + "messageId=" + messageId
-               + ", inlineMessageId='" + inlineMessageId + '\''
-               + ", replyMarkup=" + replyMarkup
-               + ", chatId='" + chatId + '\''
-               + '}';
+                + "messageId=" + messageId
+                + ", inlineMessageId='" + inlineMessageId + '\''
+                + ", replyMarkup=" + replyMarkup
+                + ", chatId='" + chatId + '\''
+                + '}';
     }
 }

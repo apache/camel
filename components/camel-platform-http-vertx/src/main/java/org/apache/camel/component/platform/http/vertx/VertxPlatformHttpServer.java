@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerSupport.configureSSL;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerSupport.createBodyHandler;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerSupport.createCorsHandler;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -41,10 +46,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerSupport.configureSSL;
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerSupport.createBodyHandler;
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerSupport.createCorsHandler;
 
 /**
  * This class implement a basic Vert.x Web based server that can be used by the {@link VertxPlatformHttpEngine} on
@@ -192,8 +193,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         }
 
         if (configuration.getSessionConfig().isEnabled()) {
-            subRouter.route().handler(
-                    configuration.getSessionConfig().createSessionHandler(vertx));
+            subRouter.route().handler(configuration.getSessionConfig().createSessionHandler(vertx));
         }
 
         AuthenticationConfig authenticationConfig = configuration.getAuthenticationConfig();
@@ -205,14 +205,12 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         router.route(configuration.getPath() + "*").subRouter(subRouter);
 
         String routerName = VertxPlatformHttpRouter.getRouterNameFromPort(configuration.getPort());
-        context.getRegistry().bind(
-                routerName,
-                new VertxPlatformHttpRouter(this, vertx, subRouter, routerName) {
-                    @Override
-                    public Handler<RoutingContext> bodyHandler() {
-                        return createBodyHandler(getCamelContext(), configuration);
-                    }
-                });
+        context.getRegistry().bind(routerName, new VertxPlatformHttpRouter(this, vertx, subRouter, routerName) {
+            @Override
+            public Handler<RoutingContext> bodyHandler() {
+                return createBodyHandler(getCamelContext(), configuration);
+            }
+        });
     }
 
     protected void startServer() throws Exception {
@@ -224,34 +222,40 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         server = vertx.createHttpServer(options);
 
         CompletableFuture.runAsync(
-                () -> {
-                    CountDownLatch latch = new CountDownLatch(1);
-                    server.requestHandler(router).listen(configuration.getBindPort(), configuration.getBindHost(), result -> {
-                        try {
-                            if (result.failed()) {
-                                LOGGER.warn("Failed to start Vert.x HttpServer on {}:{}, reason: {}",
-                                        configuration.getBindHost(),
-                                        configuration.getBindPort(),
-                                        result.cause().getMessage());
+                        () -> {
+                            CountDownLatch latch = new CountDownLatch(1);
+                            server.requestHandler(router)
+                                    .listen(configuration.getBindPort(), configuration.getBindHost(), result -> {
+                                        try {
+                                            if (result.failed()) {
+                                                LOGGER.warn(
+                                                        "Failed to start Vert.x HttpServer on {}:{}, reason: {}",
+                                                        configuration.getBindHost(),
+                                                        configuration.getBindPort(),
+                                                        result.cause().getMessage());
 
-                                throw new RuntimeException(result.cause());
+                                                throw new RuntimeException(result.cause());
+                                            }
+
+                                            LOGGER.info(
+                                                    "Vert.x HttpServer started on {}:{}",
+                                                    configuration.getBindHost(),
+                                                    server.actualPort());
+                                        } finally {
+                                            latch.countDown();
+                                        }
+                                    });
+
+                            try {
+                                latch.await();
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                throw new RuntimeException(e);
                             }
-
-                            LOGGER.info("Vert.x HttpServer started on {}:{}", configuration.getBindHost(),
-                                    server.actualPort());
-                        } finally {
-                            latch.countDown();
-                        }
-                    });
-
-                    try {
-                        latch.await();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        throw new RuntimeException(e);
-                    }
-                },
-                executor).toCompletableFuture().join();
+                        },
+                        executor)
+                .toCompletableFuture()
+                .join();
     }
 
     protected void stopServer() {
@@ -261,35 +265,38 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
 
         try {
             CompletableFuture.runAsync(
-                    () -> {
-                        CountDownLatch latch = new CountDownLatch(1);
+                            () -> {
+                                CountDownLatch latch = new CountDownLatch(1);
 
-                        // remove the platform-http component
-                        context.removeComponent(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
+                                // remove the platform-http component
+                                context.removeComponent(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
 
-                        server.close(result -> {
-                            try {
-                                if (result.failed()) {
-                                    LOGGER.warn("Failed to close Vert.x HttpServer reason: {}",
-                                            result.cause().getMessage());
+                                server.close(result -> {
+                                    try {
+                                        if (result.failed()) {
+                                            LOGGER.warn(
+                                                    "Failed to close Vert.x HttpServer reason: {}",
+                                                    result.cause().getMessage());
 
-                                    throw new RuntimeException(result.cause());
+                                            throw new RuntimeException(result.cause());
+                                        }
+
+                                        LOGGER.info("Vert.x HttpServer stopped");
+                                    } finally {
+                                        latch.countDown();
+                                    }
+                                });
+
+                                try {
+                                    latch.await();
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                    throw new RuntimeException(e);
                                 }
-
-                                LOGGER.info("Vert.x HttpServer stopped");
-                            } finally {
-                                latch.countDown();
-                            }
-                        });
-
-                        try {
-                            latch.await();
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            throw new RuntimeException(e);
-                        }
-                    },
-                    executor).toCompletableFuture().join();
+                            },
+                            executor)
+                    .toCompletableFuture()
+                    .join();
         } finally {
             this.server = null;
         }
@@ -302,32 +309,35 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
 
         try {
             CompletableFuture.runAsync(
-                    () -> {
-                        CountDownLatch latch = new CountDownLatch(1);
+                            () -> {
+                                CountDownLatch latch = new CountDownLatch(1);
 
-                        vertx.close(result -> {
-                            try {
-                                if (result.failed()) {
-                                    LOGGER.warn("Failed to close Vert.x reason: {}",
-                                            result.cause().getMessage());
+                                vertx.close(result -> {
+                                    try {
+                                        if (result.failed()) {
+                                            LOGGER.warn(
+                                                    "Failed to close Vert.x reason: {}",
+                                                    result.cause().getMessage());
 
-                                    throw new RuntimeException(result.cause());
+                                            throw new RuntimeException(result.cause());
+                                        }
+
+                                        LOGGER.debug("Vert.x stopped");
+                                    } finally {
+                                        latch.countDown();
+                                    }
+                                });
+
+                                try {
+                                    latch.await();
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                    throw new RuntimeException(e);
                                 }
-
-                                LOGGER.debug("Vert.x stopped");
-                            } finally {
-                                latch.countDown();
-                            }
-                        });
-
-                        try {
-                            latch.await();
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            throw new RuntimeException(e);
-                        }
-                    },
-                    executor).toCompletableFuture().join();
+                            },
+                            executor)
+                    .toCompletableFuture()
+                    .join();
         } finally {
             this.vertx = null;
             this.localVertx = false;
@@ -335,8 +345,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
     }
 
     private void addAuthenticationHandlersStartingFromMoreSpecificPaths(AuthenticationConfig authenticationConfig) {
-        authenticationConfig.getEntries()
-                .stream()
+        authenticationConfig.getEntries().stream()
                 .sorted(this::compareUrlPathsSpecificity)
                 .forEach(entry -> subRouter.route(entry.getPath()).handler(entry.createAuthenticationHandler(vertx)));
     }

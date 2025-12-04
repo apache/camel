@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.controlbus;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -130,7 +131,8 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                 }
 
                 if (task != null) {
-                    logger.log("ControlBus task done [" + task + "] with result -> " + (result != null ? result : "void"));
+                    logger.log(
+                            "ControlBus task done [" + task + "] with result -> " + (result != null ? result : "void"));
                 }
             } catch (Exception e) {
                 logger.log("Error executing ControlBus task [" + task + "]. This exception will be ignored.", e);
@@ -205,20 +207,29 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                 String operation;
                 if (id == null) {
                     CamelContext camelContext = getEndpoint().getCamelContext();
-                    on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                    on = getEndpoint()
+                            .getCamelContext()
+                            .getManagementStrategy()
+                            .getManagementObjectNameStrategy()
                             .getObjectNameForCamelContext(camelContext);
                     operation = "dumpRoutesStatsAsXml";
                 } else {
                     Route route = getEndpoint().getCamelContext().getRoute(id);
-                    on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                    on = getEndpoint()
+                            .getCamelContext()
+                            .getManagementStrategy()
+                            .getManagementObjectNameStrategy()
                             .getObjectNameForRoute(route);
                     operation = "dumpRouteStatsAsXml";
                 }
                 if (on != null) {
-                    MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent()
+                    MBeanServer server = getEndpoint()
+                            .getCamelContext()
+                            .getManagementStrategy()
+                            .getManagementAgent()
                             .getMBeanServer();
-                    result = server.invoke(on, operation, new Object[] { true, true },
-                            new String[] { "boolean", "boolean" });
+                    result = server.invoke(
+                            on, operation, new Object[] {true, true}, new String[] {"boolean", "boolean"});
                 } else {
                     result = "Cannot lookup route with id " + id;
                 }
@@ -228,7 +239,8 @@ public class ControlBusProducer extends DefaultAsyncProducer {
 
         private Object statusAction(String id, Object result) {
             LOG.debug("Route status: {}", id);
-            ServiceStatus status = getEndpoint().getCamelContext().getRouteController().getRouteStatus(id);
+            ServiceStatus status =
+                    getEndpoint().getCamelContext().getRouteController().getRouteStatus(id);
             if (status != null) {
                 result = status.name();
             }
@@ -283,7 +295,5 @@ public class ControlBusProducer extends DefaultAsyncProducer {
             LOG.debug("Starting route: {}", id);
             getEndpoint().getCamelContext().getRouteController().startRoute(id);
         }
-
     }
-
 }

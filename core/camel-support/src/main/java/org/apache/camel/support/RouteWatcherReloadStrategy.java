@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.File;
@@ -68,8 +69,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     private boolean removeAllRoutes = true;
     private final List<Resource> previousSources = new ArrayList<>();
 
-    public RouteWatcherReloadStrategy() {
-    }
+    public RouteWatcherReloadStrategy() {}
 
     public RouteWatcherReloadStrategy(String directory) {
         this(directory, false);
@@ -191,7 +191,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
         boolean reloaded = false;
         if (changed != null && !changed.isEmpty()) {
-            LOG.info("Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
+            LOG.info(
+                    "Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
                     resource.getLocation());
             reloaded = pc.reloadProperties(resource.getLocation());
             if (reloaded) {
@@ -232,8 +233,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     }
 
     protected boolean onGroovyReload(Resource resource, boolean reloadRoutes) throws Exception {
-        GroovyScriptCompiler compiler
-                = getCamelContext().getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
+        GroovyScriptCompiler compiler =
+                getCamelContext().getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
         if (compiler != null) {
             compiler.recompile(resource);
             // trigger all routes to be reloaded (which will also trigger reloading this resource)
@@ -286,8 +287,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 }
             }
 
-            Collection<Resource> extras
-                    = getCamelContext().getRegistry().lookupByNameAndType(RELOAD_RESOURCES, Collection.class);
+            Collection<Resource> extras =
+                    getCamelContext().getRegistry().lookupByNameAndType(RELOAD_RESOURCES, Collection.class);
             if (extras != null) {
                 for (Resource extra : extras) {
                     if (!sources.contains(extra)) {
@@ -307,8 +308,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             }
 
             // reload those other routes that was stopped and removed as we want to keep running those
-            Set<String> ids
-                    = PluginHelper.getRoutesLoader(getCamelContext()).updateRoutes(sources);
+            Set<String> ids = PluginHelper.getRoutesLoader(getCamelContext()).updateRoutes(sources);
 
             // update okay, so clear as we do not need to remember those anymore
             previousSources.clear();
@@ -321,7 +321,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     total++;
                     Route route = getCamelContext().getRoute(id);
                     if (route != null) {
-                        ServiceStatus status = getCamelContext().getRouteController().getRouteStatus(id);
+                        ServiceStatus status =
+                                getCamelContext().getRouteController().getRouteStatus(id);
                         if (status == null) {
                             // undefined status of route (should not really happen)
                             LOG.warn("Cannot get route status for route: {}. This route is skipped.", id);
@@ -410,13 +411,16 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         boolean answer = u1.equals(u2);
         if (!answer) {
             // file and classpath may refer to the same when they have src/main/resources && target/classes
-            String s1 = u1.toString().replace("src/main/resources/", "").replace("src/test/resources/", "")
+            String s1 = u1.toString()
+                    .replace("src/main/resources/", "")
+                    .replace("src/test/resources/", "")
                     .replace("target/classes/", "");
-            String s2 = u2.toString().replace("src/main/resources/", "").replace("src/test/resources/", "")
+            String s2 = u2.toString()
+                    .replace("src/main/resources/", "")
+                    .replace("src/test/resources/", "")
                     .replace("target/classes/", "");
             answer = s1.equals(s2);
         }
         return answer;
     }
-
 }

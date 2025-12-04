@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 import java.sql.Connection;
@@ -60,9 +61,10 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
     @BeforeEach
     public void doPostSetup() throws Exception {
         try (Connection connection = createConnection();
-             ResultSet checkTableExistResultSet = connection.getMetaData().getTables(null, null, getTableName(), null);
-             Statement deletePreExistingTableStatement = connection.createStatement();
-             Statement createTableStatement = connection.createStatement()) {
+                ResultSet checkTableExistResultSet =
+                        connection.getMetaData().getTables(null, null, getTableName(), null);
+                Statement deletePreExistingTableStatement = connection.createStatement();
+                Statement createTableStatement = connection.createStatement()) {
 
             // delete any pre-existing ACCOUNT table
             if (checkTableExistResultSet.next()) {
@@ -87,13 +89,17 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
             account2.setLastName("Ibsen");
             account2.setEmailAddress("Noname@gmail.com");
 
-            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[] { account1, account2 });
+            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[] {account1, account2});
         }
     }
 
     protected Connection createConnection() throws Exception {
         MyBatisComponent component = context.getComponent("mybatis", MyBatisComponent.class);
-        return component.createSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
+        return component
+                .createSqlSessionFactory()
+                .getConfiguration()
+                .getEnvironment()
+                .getDataSource()
+                .getConnection();
     }
-
 }

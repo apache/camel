@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -26,9 +30,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class UndertowTransferExceptionTest extends BaseUndertowTest {
 
     @Test
@@ -37,7 +38,7 @@ public class UndertowTransferExceptionTest extends BaseUndertowTest {
         get.addHeader("Accept", "application/x-java-serialized-object");
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(get)) {
+                CloseableHttpResponse response = httpClient.execute(get)) {
 
             ObjectInputStream in = new ObjectInputStream(response.getEntity().getContent());
             IllegalArgumentException e = (IllegalArgumentException) in.readObject();
@@ -52,10 +53,10 @@ public class UndertowTransferExceptionTest extends BaseUndertowTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from("undertow:http://localhost:" + getPort() + "/test/transfer?transferException=true").to("mock:input")
+                from("undertow:http://localhost:" + getPort() + "/test/transfer?transferException=true")
+                        .to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }
-
 }

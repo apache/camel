@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
 
 import java.util.Map;
@@ -33,8 +34,7 @@ public class SpringAiChatComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private ChatModel chatModel;
 
-    public SpringAiChatComponent() {
-    }
+    public SpringAiChatComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

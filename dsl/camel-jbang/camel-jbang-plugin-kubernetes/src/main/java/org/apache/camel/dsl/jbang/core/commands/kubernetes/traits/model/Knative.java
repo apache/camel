@@ -28,72 +28,89 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "auto", "channelSinks", "channelSources", "configuration", "enabled", "endpointSinks", "endpointSources",
-        "eventSinks", "eventSources", "filterEventType", "filters", "sinkBinding" })
+    "auto",
+    "channelSinks",
+    "channelSources",
+    "configuration",
+    "enabled",
+    "endpointSinks",
+    "endpointSources",
+    "eventSinks",
+    "eventSources",
+    "filterEventType",
+    "filters",
+    "sinkBinding"
+})
 public class Knative {
     @JsonProperty("auto")
     @JsonPropertyDescription("Enable automatic discovery of all trait properties.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean auto;
+
     @JsonProperty("channelSinks")
-    @JsonPropertyDescription("List of channels used as destination of camel routes. Can contain simple channel names or full Camel URIs.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "List of channels used as destination of camel routes. Can contain simple channel names or full Camel URIs.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> channelSinks;
+
     @JsonProperty("channelSources")
-    @JsonPropertyDescription("List of channels used as source of camel routes. Can contain simple channel names or full Camel URIs.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "List of channels used as source of camel routes. Can contain simple channel names or full Camel URIs.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> channelSources;
+
     @JsonProperty("config")
     @JsonPropertyDescription("Can be used to inject a Knative complete configuration in JSON format.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String configuration;
+
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait. All traits share this common property.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
+
     @JsonProperty("endpointSinks")
-    @JsonPropertyDescription("List of endpoints used as destination of camel routes. Can contain simple endpoint names or full Camel URIs.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "List of endpoints used as destination of camel routes. Can contain simple endpoint names or full Camel URIs.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> endpointSinks;
+
     @JsonProperty("endpointSources")
     @JsonPropertyDescription("List of channels used as source of camel routes.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> endpointSources;
+
     @JsonProperty("eventSinks")
-    @JsonPropertyDescription("List of event types that the camel route will produce. Can contain simple event types or full Camel URIs (to use a specific broker).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "List of event types that the camel route will produce. Can contain simple event types or full Camel URIs (to use a specific broker).")
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> eventSinks;
+
     @JsonProperty("eventSources")
-    @JsonPropertyDescription("List of event types that the camel route will be subscribed to. Can contain simple event types or full Camel URIs (to use a specific broker different from \"default\").")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "List of event types that the camel route will be subscribed to. Can contain simple event types or full Camel URIs (to use a specific broker different from \"default\").")
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> eventSources;
+
     @JsonProperty("filterEventType")
-    @JsonPropertyDescription("Enables the default filtering for the Knative trigger using the event type If this is true, the created Knative trigger uses the event type as a filter on the event stream when no other filter criteria is given. (default: true)")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Enables the default filtering for the Knative trigger using the event type If this is true, the created Knative trigger uses the event type as a filter on the event stream when no other filter criteria is given. (default: true)")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean filterEventType;
+
     @JsonProperty("filters")
-    @JsonPropertyDescription("Sets filter attributes on the event stream (such as event type, source, subject and so on). A list of key-value pairs that represent filter attributes and its values. The syntax is KEY=VALUE, e.g., `source=\"my.source\"`. Filter attributes get set on the Knative trigger that is being created as part of this integration.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Sets filter attributes on the event stream (such as event type, source, subject and so on). A list of key-value pairs that represent filter attributes and its values. The syntax is KEY=VALUE, e.g., `source=\"my.source\"`. Filter attributes get set on the Knative trigger that is being created as part of this integration.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> filters;
+
     @JsonProperty("sinkBinding")
-    @JsonPropertyDescription("Allows binding the camel route to a sink via a Knative SinkBinding resource. This can be used when the camel route targets a single sink. It's enabled by default when the integration targets a single sink (except when the integration is owned by a Knative source).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Allows binding the camel route to a sink via a Knative SinkBinding resource. This can be used when the camel route targets a single sink. It's enabled by default when the integration targets a single sink (except when the integration is owned by a Knative source).")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean sinkBinding;
 
-    public Knative() {
-    }
+    public Knative() {}
 
     public Boolean getAuto() {
         return this.auto;

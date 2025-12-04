@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -40,5 +41,4 @@ public class ConsumerTemplateFtpShutdownIT extends FtpServerTestSupport {
         consumer.doneUoW(exchange);
         consumer.stop();
     }
-
 }

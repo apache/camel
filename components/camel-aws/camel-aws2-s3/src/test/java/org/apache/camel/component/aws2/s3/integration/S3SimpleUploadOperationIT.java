@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -33,8 +36,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class S3SimpleUploadOperationIT extends Aws2S3Base {
 
@@ -88,8 +89,10 @@ public class S3SimpleUploadOperationIT extends Aws2S3Base {
         });
 
         S3Client s = AWSSDKClientUtils.newS3Client();
-        ResponseInputStream<GetObjectResponse> response
-                = s.getObject(GetObjectRequest.builder().bucket(name.get()).key("camel-content-type.txt").build());
+        ResponseInputStream<GetObjectResponse> response = s.getObject(GetObjectRequest.builder()
+                .bucket(name.get())
+                .key("camel-content-type.txt")
+                .build());
         assertEquals("application/text", response.response().contentType());
     }
 
@@ -103,7 +106,6 @@ public class S3SimpleUploadOperationIT extends Aws2S3Base {
                 from("direct:putObject").to(awsEndpoint);
 
                 from("direct:listObjects").to(awsEndpoint).to("mock:result");
-
             }
         };
     }

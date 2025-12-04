@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -41,17 +42,26 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).log("Error due ${exception.message}").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
-                        assertEquals("bar", routeId);
-                    }
-                });
+                onException(Exception.class)
+                        .log("Error due ${exception.message}")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String routeId =
+                                        exchange.getUnitOfWork().getRoute().getRouteId();
+                                assertEquals("bar", routeId);
+                            }
+                        });
 
-                from("direct:start").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
+                from("direct:start")
+                        .routeId("foo")
+                        .to("mock:foo")
+                        .to("direct:bar")
+                        .to("mock:result");
 
-                from("direct:bar").routeId("bar").to("mock:bar")
+                from("direct:bar")
+                        .routeId("bar")
+                        .to("mock:bar")
                         .throwException(new IllegalArgumentException("Forced bar error"));
             }
         });
@@ -77,16 +87,23 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).log("Error due ${exception.message}").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
-                        assertEquals("foo", routeId);
-                    }
-                });
+                onException(Exception.class)
+                        .log("Error due ${exception.message}")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String routeId =
+                                        exchange.getUnitOfWork().getRoute().getRouteId();
+                                assertEquals("foo", routeId);
+                            }
+                        });
 
-                from("direct:start").routeId("foo").to("mock:foo")
-                        .throwException(new IllegalArgumentException("Forced foo error")).to("direct:bar").to("mock:result");
+                from("direct:start")
+                        .routeId("foo")
+                        .to("mock:foo")
+                        .throwException(new IllegalArgumentException("Forced foo error"))
+                        .to("direct:bar")
+                        .to("mock:result");
 
                 from("direct:bar").routeId("bar").to("mock:bar");
 
@@ -109,5 +126,4 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
 
         assertMockEndpointsSatisfied();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -32,5 +33,4 @@ public interface ManagedConsumerCacheMBean extends ManagedServiceMBean {
 
     @ManagedOperation(description = "Purges the cache")
     void purge();
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncProducerTest extends ContextTestSupport {
 
@@ -51,17 +52,24 @@ public class AsyncProducerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
-                Producer myAsyncProducer = context.getEndpoint("async:bye:camel").createProducer();
+                Producer myAsyncProducer =
+                        context.getEndpoint("async:bye:camel").createProducer();
 
-                from("direct:start").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).process(myAsyncProducer).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("mock:after").to("mock:result");
+                from("direct:start")
+                        .to("mock:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .process(myAsyncProducer)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("mock:after")
+                        .to("mock:result");
             }
         };
     }

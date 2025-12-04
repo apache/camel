@@ -17,6 +17,14 @@
 
 package org.apache.camel.component.aws2.kinesis.integration;
 
+import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
+import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.putRecords;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -42,14 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 
-import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
-import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.putRecords;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class KinesisConsumerIT extends CamelTestSupport {
     private static class KinesisData {
         private String partition;
@@ -58,10 +58,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
 
         @Override
         public String toString() {
-            return "KinesisData{" +
-                   "partition='" + partition + '\'' +
-                   ", body='" + body + '\'' +
-                   '}';
+            return "KinesisData{" + "partition='" + partition + '\'' + ", body='" + body + '\'' + '}';
         }
     }
 
@@ -121,8 +118,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
     void testProduceMessages() {
         result.expectedMessageCount(messageCount);
 
-        await().atMost(1, TimeUnit.MINUTES)
-                .untilAsserted(() -> result.assertIsSatisfied());
+        await().atMost(1, TimeUnit.MINUTES).untilAsserted(() -> result.assertIsSatisfied());
 
         assertEquals(messageCount, receivedMessages.size());
         String partitionKey = null;
@@ -131,9 +127,9 @@ public class KinesisConsumerIT extends CamelTestSupport {
             assertNotNull(data.body, "The body should not be null");
             assertNotNull(data.partition, "The partition should not be null");
             /*
-             In this test scenario message "1" is sent to partition-1, message "2" is sent to partition-2,
-             and so on. This is just testing that the code is not mixing things up.
-             */
+            In this test scenario message "1" is sent to partition-1, message "2" is sent to partition-2,
+            and so on. This is just testing that the code is not mixing things up.
+            */
             assertTrue(data.partition.endsWith(data.body), "The data/partition mismatch for record: " + data);
             assertNotEquals(partitionKey, data.partition);
             partitionKey = data.partition;

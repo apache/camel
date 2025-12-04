@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.List;
@@ -51,7 +52,9 @@ public class ManagedEndpointServiceRegistry extends ManagedService implements Ma
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
+        sanitize = strategy.getManagementAgent().getMask() != null
+                ? strategy.getManagementAgent().getMask()
+                : true;
     }
 
     public EndpointServiceRegistry getRegistry() {
@@ -92,9 +95,9 @@ public class ManagedEndpointServiceRegistry extends ManagedService implements Ma
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "component", "dir", "protocol", "serviceUrl", "metadata", "endpointUri", "routeId", "hits" },
-                        new Object[] {
-                                component, dir, protocol, serviceUrl, metadata, endpointUri, routeId, hits });
+                            "component", "dir", "protocol", "serviceUrl", "metadata", "endpointUri", "routeId", "hits"
+                        },
+                        new Object[] {component, dir, protocol, serviceUrl, metadata, endpointUri, routeId, hits});
                 answer.put(data);
             }
             return answer;
@@ -102,5 +105,4 @@ public class ManagedEndpointServiceRegistry extends ManagedService implements Ma
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

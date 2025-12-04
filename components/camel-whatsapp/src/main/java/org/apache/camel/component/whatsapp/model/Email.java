@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 public class Email {
@@ -24,8 +25,7 @@ public class Email {
      */
     private String type;
 
-    public Email() {
-    }
+    public Email() {}
 
     public String getEmail() {
         return email;

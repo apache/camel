@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.issues;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 
@@ -40,10 +45,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Integration test based on user forum issue.
  */
@@ -52,6 +53,7 @@ public class JmsTypeConverterIssueIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -93,17 +95,14 @@ public class JmsTypeConverterIssueIT extends AbstractJMSTest {
                         .setHeader(Exchange.FILE_NAME, simple("target/files/${in.header.agentId}/agent.xml"))
                         .process(new ReadLocalFile())
                         .to("direct:filterxml")
-                        .multicast().to("direct:portalxml", "direct:historyxml");
+                        .multicast()
+                        .to("direct:portalxml", "direct:historyxml");
 
-                from("direct:filterxml")
-                        .process(new FilterProcessor())
-                        .to("mock:filterxml");
+                from("direct:filterxml").process(new FilterProcessor()).to("mock:filterxml");
 
-                from("direct:portalxml")
-                        .to("mock:portalxml");
+                from("direct:portalxml").to("mock:portalxml");
 
-                from("direct:historyxml")
-                        .to("mock:historyxml");
+                from("direct:historyxml").to("mock:historyxml");
             }
         };
     }
@@ -162,5 +161,4 @@ public class JmsTypeConverterIssueIT extends AbstractJMSTest {
             exchange.getIn().setBody(document);
         }
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -23,9 +27,6 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentRepositoryConfigurerTest {
 
@@ -47,7 +48,8 @@ public class FileIdempotentRepositoryConfigurerTest {
                 .withIgnoreCase(true)
                 .withProperty("dropOldestFileStore", "123")
                 .withProperty("maxFileStoreSize", "2000")
-                .withRemoveParameters(true).bind();
+                .withRemoveParameters(true)
+                .bind();
 
         assertTrue(hit);
 
@@ -59,5 +61,4 @@ public class FileIdempotentRepositoryConfigurerTest {
 
         context.stop();
     }
-
 }

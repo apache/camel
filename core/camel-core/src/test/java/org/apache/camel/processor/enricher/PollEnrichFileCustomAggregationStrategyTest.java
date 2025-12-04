@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
 
 import org.apache.camel.AggregationStrategy;
@@ -34,15 +35,13 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         mock.expectedFileExists(testFile("enrich/.done/AAA.fin"));
         mock.expectedFileExists(testFile("enrichdata/.done/AAA.dat"));
 
-        template.sendBodyAndHeader(fileUri("enrich"), "Start",
-                Exchange.FILE_NAME, "AAA.fin");
+        template.sendBodyAndHeader(fileUri("enrich"), "Start", Exchange.FILE_NAME, "AAA.fin");
 
         context.getRouteController().startAllRoutes();
 
         log.info("Sleeping for 0.5 sec before writing enrichdata file");
         Thread.sleep(500);
-        template.sendBodyAndHeader(fileUri("enrichdata"), "Big file",
-                Exchange.FILE_NAME, "AAA.dat");
+        template.sendBodyAndHeader(fileUri("enrichdata"), "Big file", Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
 
         assertMockEndpointsSatisfied();
@@ -55,11 +54,13 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("enrich?initialDelay=0&delay=10&move=.done")).autoStartup(false)
+                from(fileUri("enrich?initialDelay=0&delay=10&move=.done"))
+                        .autoStartup(false)
                         .to("mock:start")
                         .pollEnrich(
                                 fileUri("enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done"),
-                                10000, new ReplaceAggregationStrategy())
+                                10000,
+                                new ReplaceAggregationStrategy())
                         .to("mock:result");
             }
         };

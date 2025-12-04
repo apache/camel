@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ExecutorService;
 
@@ -22,9 +26,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
@@ -99,11 +100,18 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
             public void configure() {
                 myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
 
-                from("direct:foo").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3)
+                from("direct:foo")
+                        .routeId("foo")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(3)
                         .to("mock:aggregated");
 
-                from("direct:bar").routeId("bar").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .executorService(myPool).completionSize(3).to("mock:aggregated");
+                from("direct:bar")
+                        .routeId("bar")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .executorService(myPool)
+                        .completionSize(3)
+                        .to("mock:aggregated");
             }
         };
     }

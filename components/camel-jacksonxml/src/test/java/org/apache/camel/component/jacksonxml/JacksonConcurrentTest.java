@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
 
 public class JacksonConcurrentTest extends CamelTestSupport {
 
@@ -71,5 +72,4 @@ public class JacksonConcurrentTest extends CamelTestSupport {
             }
         };
     }
-
 }

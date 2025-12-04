@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,11 +39,12 @@ public class LoopThousandTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").loop(1000)
+                from("direct:start")
+                        .loop(1000)
                         .process(loopTest)
                         .to("log:loop")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
         };
     }

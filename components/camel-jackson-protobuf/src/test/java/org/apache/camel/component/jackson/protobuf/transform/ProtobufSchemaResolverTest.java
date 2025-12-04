@@ -59,7 +59,8 @@ class ProtobufSchemaResolverTest {
 
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
 
-        String schemaString = new String(this.getClass().getResourceAsStream("Person.proto").readAllBytes());
+        String schemaString =
+                new String(this.getClass().getResourceAsStream("Person.proto").readAllBytes());
         exchange.setProperty(SchemaHelper.SCHEMA, schemaString);
         exchange.getMessage().setBody(person);
 
@@ -67,7 +68,9 @@ class ProtobufSchemaResolverTest {
         schemaResolver.process(exchange);
 
         Assertions.assertNotNull(exchange.getProperty(SchemaHelper.CONTENT_SCHEMA));
-        Assertions.assertEquals(ProtobufSchema.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
+        Assertions.assertEquals(
+                ProtobufSchema.class,
+                exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
         Assertions.assertEquals(SchemaType.PROTOBUF.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
         Assertions.assertEquals(Person.class.getName(), exchange.getProperty(SchemaHelper.CONTENT_CLASS));
     }
@@ -83,7 +86,9 @@ class ProtobufSchemaResolverTest {
         schemaResolver.process(exchange);
 
         Assertions.assertNotNull(exchange.getProperty(SchemaHelper.CONTENT_SCHEMA));
-        Assertions.assertEquals(ProtobufSchema.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
+        Assertions.assertEquals(
+                ProtobufSchema.class,
+                exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
         Assertions.assertEquals(SchemaType.PROTOBUF.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
         Assertions.assertEquals(Person.class.getName(), exchange.getProperty(SchemaHelper.CONTENT_CLASS));
     }

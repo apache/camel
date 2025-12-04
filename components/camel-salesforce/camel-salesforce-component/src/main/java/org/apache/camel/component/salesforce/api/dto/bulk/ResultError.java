@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import java.util.ArrayList;
@@ -47,13 +48,17 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ResultError", propOrder = { "fields", "message", "statusCode" })
+@XmlType(
+        name = "ResultError",
+        propOrder = {"fields", "message", "statusCode"})
 public class ResultError {
 
     @XmlElement(nillable = true)
     protected List<String> fields;
+
     @XmlElement(required = true)
     protected String message;
+
     @XmlElement(required = true)
     protected StatusCode statusCode;
 
@@ -118,5 +123,4 @@ public class ResultError {
     public void setStatusCode(StatusCode value) {
         this.statusCode = value;
     }
-
 }

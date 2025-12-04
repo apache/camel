@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Path;
@@ -33,47 +34,61 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "bean", description = "List beans in a running Camel integration", sortOptions = false,
-         showDefaultValues = true)
+@Command(
+        name = "bean",
+        description = "List beans in a running Camel integration",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelBeanDump extends ActionBaseCommand {
 
     public static class NameTypeCompletionCandidates implements Iterable<String> {
 
-        public NameTypeCompletionCandidates() {
-        }
+        public NameTypeCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("name", "type").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = NameTypeCompletionCandidates.class,
-                        description = "Sort by name or type", defaultValue = "name")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = NameTypeCompletionCandidates.class,
+            description = "Sort by name or type",
+            defaultValue = "name")
     String sort;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter beans names (use all to include all beans)", defaultValue = "all")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter beans names (use all to include all beans)",
+            defaultValue = "all")
     String filter;
 
-    @CommandLine.Option(names = { "--properties" },
-                        description = "Show bean properties", defaultValue = "true")
+    @CommandLine.Option(
+            names = {"--properties"},
+            description = "Show bean properties",
+            defaultValue = "true")
     boolean properties;
 
-    @CommandLine.Option(names = { "--nulls" },
-                        description = "Include null values", defaultValue = "true")
+    @CommandLine.Option(
+            names = {"--nulls"},
+            description = "Include null values",
+            defaultValue = "true")
     boolean nulls;
 
-    @CommandLine.Option(names = { "--internal" },
-                        description = "Include internal Camel beans", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--internal"},
+            description = "Include internal Camel beans",
+            defaultValue = "false")
     boolean internal;
 
-    @CommandLine.Option(names = { "--dsl" },
-                        description = "Include only beans from YAML or XML DSL", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--dsl"},
+            description = "Include only beans from YAML or XML DSL",
+            defaultValue = "false")
     boolean dsl;
 
     private volatile long pid;
@@ -90,8 +105,9 @@ public class CamelBeanDump extends ActionBaseCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -175,24 +191,50 @@ public class CamelBeanDump extends ActionBaseCommand {
     }
 
     protected void singleTable(List<Row> rows) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(100, OverflowBehaviour.CLIP_LEFT)
-                        .with(r -> r.type))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column()
+                                        .header("TYPE")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(100, OverflowBehaviour.CLIP_LEFT)
+                                        .with(r -> r.type))));
     }
 
     protected void propertiesTable(List<PropertyRow> rows) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("PROPERTY").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.type),
-                new Column().header("CONFIGURATION").visible(dsl).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(80, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.configValue),
-                new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                        .with(this::getValue))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("PROPERTY")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column()
+                                        .header("TYPE")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.type),
+                                new Column()
+                                        .header("CONFIGURATION")
+                                        .visible(dsl)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                        .with(r -> r.configValue),
+                                new Column()
+                                        .header("VALUE")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                        .with(this::getValue))));
     }
 
     private String getValue(PropertyRow r) {
@@ -233,5 +275,4 @@ public class CamelBeanDump extends ActionBaseCommand {
         Object value;
         String configValue;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.component.zookeeper.integration.ZooKeeperITSupport;
 import org.apache.camel.component.zookeeper.operations.OperationResult;
@@ -22,9 +26,6 @@ import org.apache.camel.component.zookeeper.operations.SetDataOperation;
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SetDataOperationIT extends ZooKeeperITSupport {
 

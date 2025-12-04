@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class AtomHttpNoCamelParametersTest extends CamelTestSupport {
@@ -31,7 +32,8 @@ public class AtomHttpNoCamelParametersTest extends CamelTestSupport {
     @Test
     void testAtomHttpNoCamelParameters() {
         AtomEndpoint atom = context.getEndpoint(
-                "atom://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true", AtomEndpoint.class);
+                "atom://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true",
+                AtomEndpoint.class);
         assertNotNull(atom);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml", atom.getFeedUri());
@@ -50,5 +52,4 @@ public class AtomHttpNoCamelParametersTest extends CamelTestSupport {
         assertTrue(atom.isFeedHeader());
         assertTrue(atom.isSortEntries());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.Subscribe;
@@ -22,5 +23,4 @@ public interface CustomListener {
 
     @Subscribe
     void eventReceived(MessageWrapper messageWrapper);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,11 +37,9 @@ public class NoErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return false;
     }
 
-    public NoErrorHandlerDefinition() {
-    }
+    public NoErrorHandlerDefinition() {}
 
-    public NoErrorHandlerDefinition(NoErrorHandlerDefinition source) {
-    }
+    public NoErrorHandlerDefinition(NoErrorHandlerDefinition source) {}
 
     @Override
     public NoErrorHandlerDefinition copyDefinition() {

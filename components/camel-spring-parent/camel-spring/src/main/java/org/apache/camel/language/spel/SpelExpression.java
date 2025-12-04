@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.spel;
 
 import org.apache.camel.CamelContext;
@@ -86,10 +87,12 @@ public class SpelExpression extends ExpressionSupport {
             evaluationContext.setBeanResolver(beanResolver);
         } else if (exchange.getContext() instanceof SpringCamelContext) {
             // Support references (like @foo) in expressions to beans defined in the Registry/ApplicationContext
-            ApplicationContext applicationContext = ((SpringCamelContext) exchange.getContext()).getApplicationContext();
+            ApplicationContext applicationContext =
+                    ((SpringCamelContext) exchange.getContext()).getApplicationContext();
             evaluationContext.setBeanResolver(new BeanFactoryResolver(applicationContext));
         } else {
-            evaluationContext.setBeanResolver(new RegistryBeanResolver(exchange.getContext().getRegistry()));
+            evaluationContext.setBeanResolver(
+                    new RegistryBeanResolver(exchange.getContext().getRegistry()));
         }
         return evaluationContext;
     }

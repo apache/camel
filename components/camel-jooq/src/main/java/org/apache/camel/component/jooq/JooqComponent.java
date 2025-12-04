@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jooq;
 
 import java.util.Map;
@@ -48,7 +49,8 @@ public class JooqComponent extends HealthCheckComponent {
         this.configuration = jooqConfiguration;
     }
 
-    private static void initConfiguration(CamelContext camelContext, JooqConfiguration configuration, String remaining) {
+    private static void initConfiguration(
+            CamelContext camelContext, JooqConfiguration configuration, String remaining) {
         if (remaining == null) {
             return;
         }
@@ -74,5 +76,4 @@ public class JooqComponent extends HealthCheckComponent {
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import java.util.Map;
@@ -32,9 +33,13 @@ public class UpdateItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        UpdateItemResponse result = ddbClient.updateItem(UpdateItemRequest.builder().tableName(determineTableName())
-                .key(determineKey()).attributeUpdates(determineUpdateValues())
-                .expected(determineUpdateCondition()).returnValues(determineReturnValues()).build());
+        UpdateItemResponse result = ddbClient.updateItem(UpdateItemRequest.builder()
+                .tableName(determineTableName())
+                .key(determineKey())
+                .attributeUpdates(determineUpdateValues())
+                .expected(determineUpdateCondition())
+                .returnValues(determineReturnValues())
+                .build());
 
         addAttributesToResult(result.attributes());
     }
@@ -43,5 +48,4 @@ public class UpdateItemCommand extends AbstractDdbCommand {
     private Map<String, AttributeValueUpdate> determineUpdateValues() {
         return exchange.getIn().getHeader(Ddb2Constants.UPDATE_VALUES, Map.class);
     }
-
 }

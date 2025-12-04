@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io.beans;
 
 import org.apache.camel.BeanInject;
@@ -37,5 +38,4 @@ public class Greeter implements Processor {
         String msg = exchange.getIn().getBody(String.class);
         exchange.getIn().setBody(message.getMsg() + " " + StringHelper.after(msg, "I'm "));
     }
-
 }

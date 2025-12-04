@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -27,12 +30,9 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.function.Executable;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public final class CosmosDbTestUtils {
 
-    private CosmosDbTestUtils() {
-    }
+    private CosmosDbTestUtils() {}
 
     public static Properties loadAzurePropertiesFile() throws IOException {
         return TestSupport.loadExternalProperties(CosmosDbTestUtils.class, "azure_key.properties");
@@ -72,10 +72,7 @@ public final class CosmosDbTestUtils {
         }
 
         public void await(long timeout) {
-            Awaitility
-                    .await()
-                    .atMost(timeout, TimeUnit.MILLISECONDS)
-                    .untilTrue(doneFlag);
+            Awaitility.await().atMost(timeout, TimeUnit.MILLISECONDS).untilTrue(doneFlag);
         }
     }
 }

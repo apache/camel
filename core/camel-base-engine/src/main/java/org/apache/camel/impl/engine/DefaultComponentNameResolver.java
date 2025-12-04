@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Set;
@@ -33,12 +34,11 @@ public class DefaultComponentNameResolver implements ComponentNameResolver {
     @Override
     public Set<String> resolveNames(CamelContext camelContext) {
         try {
-            return PluginHelper.getPackageScanResourceResolver(camelContext)
-                    .findResources(RESOURCE_PATH)
-                    .stream()
+            return PluginHelper.getPackageScanResourceResolver(camelContext).findResources(RESOURCE_PATH).stream()
                     .map(Resource::getLocation)
                     // remove leading path to only keep name
-                    // searching for last separator: Jar path separator (/), Unix path (/) and Windows path separator (\)
+                    // searching for last separator: Jar path separator (/), Unix path (/) and Windows path separator
+                    // (\)
                     .map(l -> l.substring(Math.max(l.lastIndexOf('/'), l.lastIndexOf('\\')) + 1))
                     .collect(Collectors.toCollection(TreeSet::new));
         } catch (Exception e) {

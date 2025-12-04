@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.IOException;
@@ -40,9 +41,11 @@ public class QueryResultIterator<T extends AbstractSObjectBase> implements Itera
     private Iterator<T> iterator;
 
     public QueryResultIterator(
-                               ObjectMapper objectMapper, Class<? extends AbstractQueryRecordsBase<T>> responseClass,
-                               RestClient restClient, Map<String, List<String>> headers,
-                               AbstractQueryRecordsBase<T> queryRecords) {
+            ObjectMapper objectMapper,
+            Class<? extends AbstractQueryRecordsBase<T>> responseClass,
+            RestClient restClient,
+            Map<String, List<String>> headers,
+            AbstractQueryRecordsBase<T> queryRecords) {
         this.objectMapper = objectMapper;
         this.responseClass = responseClass;
         this.restClient = restClient;

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * FaultTolerance using timeout and fallback with Java DSL
@@ -51,14 +52,18 @@ public class FaultToleranceTimeoutWithFallbackTest extends CamelTestSupport {
                 from("direct:start")
                         .circuitBreaker()
                         // enable and use 2 second timeout
-                        .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+                        .faultToleranceConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .end()
                         .log("FaultTolerance processing start: ${threadName}")
                         .toD("direct:${body}")
                         .log("FaultTolerance processing end: ${threadName}")
                         .onFallback()
                         // use fallback if there was an exception or timeout
                         .log("FaultTolerance fallback start: ${threadName}")
-                        .transform().constant("Fallback response")
+                        .transform()
+                        .constant("Fallback response")
                         .log("FaultTolerance fallback end: ${threadName}")
                         .end()
                         .log("After FaultTolerance ${body}")
@@ -68,15 +73,20 @@ public class FaultToleranceTimeoutWithFallbackTest extends CamelTestSupport {
 
                 from("direct:fast")
                         // this is a fast route and takes 1 second to respond
-                        .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response")
+                        .log("Fast processing start: ${threadName}")
+                        .delay(1000)
+                        .transform()
+                        .constant("Fast response")
                         .log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
                         // this is a slow route and takes 3 second to respond
-                        .log("Slow processing start: ${threadName}").delay(8000).transform().constant("Slow response")
+                        .log("Slow processing start: ${threadName}")
+                        .delay(8000)
+                        .transform()
+                        .constant("Slow response")
                         .log("Slow processing end: ${threadName}");
             }
         };
     }
-
 }

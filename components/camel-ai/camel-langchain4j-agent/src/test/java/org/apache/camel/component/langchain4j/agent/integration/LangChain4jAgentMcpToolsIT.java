@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,10 +46,6 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Integration test for LangChain4j Agent component with MCP (Model Context Protocol) tools.
  *
@@ -65,9 +66,8 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA =
+            ModelHelper.hasEnvironmentConfiguration() ? null : OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -92,16 +92,18 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:chat",
-                "What tools do you have available? List them.", String.class);
+        String response =
+                template.requestBody("direct:chat", "What tools do you have available? List them.", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains("read"),
+        assertTrue(
+                response.toLowerCase().contains("read"),
                 "Response should indicate the possibility of reading a file but was: " + response);
-        assertFalse(response.toLowerCase().contains("edit"),
+        assertFalse(
+                response.toLowerCase().contains("edit"),
                 "Response should indicate the possibility of editing a file because edit_file is not part of the filtered MCP tools but was: "
-                                                             + response);
+                        + response);
     }
 
     @Test
@@ -109,13 +111,16 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:chat",
-                "Use your available tools to tell me What are the files and directories in " + tempDirPath + " directory ?",
+        String response = template.requestBody(
+                "direct:chat",
+                "Use your available tools to tell me What are the files and directories in " + tempDirPath
+                        + " directory ?",
                 String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains("camel-mcp-test.txt"),
+        assertTrue(
+                response.toLowerCase().contains("camel-mcp-test.txt"),
                 "Response should contain our file but was: " + response);
     }
 
@@ -124,12 +129,15 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:chat",
-                "Use your available tools to tell me what is the content of camel-mcp-test.txt file?", String.class);
+        String response = template.requestBody(
+                "direct:chat",
+                "Use your available tools to tell me what is the content of camel-mcp-test.txt file?",
+                String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains(TEST_FILE_CONTENT.toLowerCase()),
+        assertTrue(
+                response.toLowerCase().contains(TEST_FILE_CONTENT.toLowerCase()),
                 "Response should contain the content of our file but was: " + response);
     }
 
@@ -141,9 +149,7 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
                 .build();
 
         // Create MCP client for filesystem
-        return new DefaultMcpClient.Builder()
-                .transport(filesystemTransport)
-                .build();
+        return new DefaultMcpClient.Builder().transport(filesystemTransport).build();
     }
 
     @Override
@@ -179,6 +185,5 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
                         .to("mock:agent-response");
             }
         };
-
     }
 }

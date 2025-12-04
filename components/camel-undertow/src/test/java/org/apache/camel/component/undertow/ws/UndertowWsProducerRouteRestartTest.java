@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.ws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -23,9 +27,6 @@ import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.UndertowConstants;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
     private static final String ROUTE_ID = UndertowWsProducerRouteRestartTest.class.getSimpleName();
@@ -69,7 +70,6 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
         assertEquals("Beer on stock at Apache Mall", r);
 
         testClient.close();
-
     }
 
     @Override

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,22 +43,20 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
-           disabledReason = "Google Mail credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
+        disabledReason = "Google Mail credentials were not provided")
 public class GmailUsersMessagesIT extends AbstractGoogleMailTestSupport {
 
     // userid of the currently authenticated user
     public static final String CURRENT_USERID = "me";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersMessagesIT.class);
-    private static final String PATH_PREFIX
-            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection()
+            .getApiName(GmailUsersMessagesApiMethod.class)
+            .getName();
 
     @Test
     public void testMessages() throws Exception {
@@ -136,8 +139,8 @@ public class GmailUsersMessagesIT extends AbstractGoogleMailTestSupport {
     }
 
     private Message createTestEmail() throws MessagingException, IOException {
-        com.google.api.services.gmail.model.Profile profile
-                = requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);
+        com.google.api.services.gmail.model.Profile profile =
+                requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage mm = new MimeMessage(session);
@@ -209,7 +212,6 @@ public class GmailUsersMessagesIT extends AbstractGoogleMailTestSupport {
 
                 // test route for untrash
                 from("direct://UNTRASH").to("google-mail://" + PATH_PREFIX + "/untrash");
-
             }
         };
     }

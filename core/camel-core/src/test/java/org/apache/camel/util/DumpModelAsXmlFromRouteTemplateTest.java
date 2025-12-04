@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +33,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  *
  */
@@ -45,7 +46,8 @@ public class DumpModelAsXmlFromRouteTemplateTest extends ContextTestSupport {
         map.put("whereto", "Moes");
         context.addRouteFromTemplate("foo", "myTemplate", map);
 
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("foo"));
+        String xml =
+                PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("foo"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -81,8 +83,8 @@ public class DumpModelAsXmlFromRouteTemplateTest extends ContextTestSupport {
         map.put("whereto", "Jacks");
         context.addRouteFromTemplate("bar2", "myTemplate", map);
 
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("bar"), true,
-                true, false);
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("bar"), true, true, false);
         assertNotNull(xml);
         log.info(xml);
 
@@ -104,8 +106,8 @@ public class DumpModelAsXmlFromRouteTemplateTest extends ContextTestSupport {
         node = (Element) nodes.item(0);
         assertEquals("bar", node.getAttribute("id"));
 
-        xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("bar2"), true, true,
-                false);
+        xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("bar2"), true, true, false);
         assertNotNull(xml);
         log.info(xml);
 
@@ -133,8 +135,13 @@ public class DumpModelAsXmlFromRouteTemplateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("bar").templateParameter("greeting").templateParameter("whereto")
-                        .from("direct:{{bar}}").transform(simple("{{greeting}}")).to("mock:{{whereto}}");
+                routeTemplate("myTemplate")
+                        .templateParameter("bar")
+                        .templateParameter("greeting")
+                        .templateParameter("whereto")
+                        .from("direct:{{bar}}")
+                        .transform(simple("{{greeting}}"))
+                        .to("mock:{{whereto}}");
             }
         };
     }

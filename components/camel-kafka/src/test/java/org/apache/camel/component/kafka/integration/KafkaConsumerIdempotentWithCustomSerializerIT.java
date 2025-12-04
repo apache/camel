@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
 
 import java.util.Collections;
@@ -49,8 +50,8 @@ public class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumer
     }
 
     @BindToRegistry("kafkaIdempotentRepository")
-    private final KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository(REPOSITORY_TOPIC, getBootstrapServers());
+    private final KafkaIdempotentRepository kafkaIdempotentRepository =
+            new KafkaIdempotentRepository(REPOSITORY_TOPIC, getBootstrapServers());
 
     @BeforeEach
     public void before() {
@@ -68,12 +69,13 @@ public class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumer
             @Override
             public void configure() {
                 from("kafka:" + TOPIC
-                     + "?groupId=KafkaConsumerIdempotentWithCustomSerializerIT&autoOffsetReset=earliest"
-                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&headerDeserializer=#class:org.apache.camel.component.kafka.integration.CustomHeaderDeserializer"
-                     + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
-                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor").routeId("foo")
+                                + "?groupId=KafkaConsumerIdempotentWithCustomSerializerIT&autoOffsetReset=earliest"
+                                + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&headerDeserializer=#class:org.apache.camel.component.kafka.integration.CustomHeaderDeserializer"
+                                + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
+                                + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                        .routeId("foo")
                         .idempotentConsumer(header("id"))
                         .idempotentRepository("kafkaIdempotentRepository")
                         .to(KafkaTestUtil.MOCK_RESULT);

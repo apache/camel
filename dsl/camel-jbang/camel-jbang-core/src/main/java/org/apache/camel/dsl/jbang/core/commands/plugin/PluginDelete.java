@@ -14,18 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "delete",
-                     description = "Removes a plugin.", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(name = "delete", description = "Removes a plugin.", sortOptions = false, showDefaultValues = true)
 public class PluginDelete extends PluginBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel plugin to remove.",
-                            paramLabel = "<plugin>")
+    @CommandLine.Parameters(description = "The Camel plugin to remove.", paramLabel = "<plugin>")
     String name;
 
     public PluginDelete(CamelJBangMain main) {
@@ -47,5 +46,4 @@ public class PluginDelete extends PluginBaseCommand {
 
         return 0;
     }
-
 }

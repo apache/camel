@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @DisabledOnOs(OS.AIX)
 public class BacklogTracerPatternTest extends ManagementTestSupport {
 
@@ -39,8 +40,8 @@ public class BacklogTracerPatternTest extends ManagementTestSupport {
     @Test
     public void testBacklogTracerPattern() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on
-                = new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -66,38 +67,40 @@ public class BacklogTracerPatternTest extends ManagementTestSupport {
 
         List<Exchange> exchanges = getMockEndpoint("mock:foo").getReceivedExchanges();
 
-        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[] { "foo" }, new String[] { "java.lang.String" });
+        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>)
+                mbeanServer.invoke(on, "dumpTracedMessages", new Object[] {"foo"}, new String[] {"java.lang.String"});
 
         assertNotNull(events);
         assertEquals(2, events.size());
 
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
-                     + "      <exchangeProperties>\n"
-                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
-                     + "      </exchangeProperties>\n"
-                     + "      <body type=\"java.lang.String\">Hello World</body>\n"
-                     + "    </message>",
+        assertEquals(
+                "    <message exchangeId=\"" + exchanges.get(0).getExchangeId()
+                        + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                        + "      <exchangeProperties>\n"
+                        + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                        + "      </exchangeProperties>\n"
+                        + "      <body type=\"java.lang.String\">Hello World</body>\n"
+                        + "    </message>",
                 event1.getMessageAsXml());
 
         BacklogTracerEventMessage event2 = events.get(1);
         assertEquals("foo", event2.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
-                     + "      <exchangeProperties>\n"
-                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
-                     + "      </exchangeProperties>\n"
-                     + "      <body type=\"java.lang.String\">Bye World</body>\n"
-                     + "    </message>",
+        assertEquals(
+                "    <message exchangeId=\"" + exchanges.get(1).getExchangeId()
+                        + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                        + "      <exchangeProperties>\n"
+                        + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                        + "      </exchangeProperties>\n"
+                        + "      <body type=\"java.lang.String\">Bye World</body>\n"
+                        + "    </message>",
                 event2.getMessageAsXml());
 
         // there should be no messages on bar
 
-        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[] { "bar" }, new String[] { "java.lang.String" });
+        events = (List<BacklogTracerEventMessage>)
+                mbeanServer.invoke(on, "dumpTracedMessages", new Object[] {"bar"}, new String[] {"java.lang.String"});
         assertNotNull(events);
         assertEquals(0, events.size());
     }
@@ -110,12 +113,8 @@ public class BacklogTracerPatternTest extends ManagementTestSupport {
                 context.setUseBreadcrumb(false);
                 context.setBacklogTracingStandby(true);
 
-                from("direct:start")
-                        .to("mock:foo").id("foo")
-                        .to("mock:bar").id("bar");
-
+                from("direct:start").to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };
     }
-
 }

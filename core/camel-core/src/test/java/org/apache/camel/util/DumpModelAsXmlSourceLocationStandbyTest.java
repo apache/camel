@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DumpModelAsXmlSourceLocationStandbyTest extends ContextTestSupport {
 
@@ -41,7 +42,8 @@ public class DumpModelAsXmlSourceLocationStandbyTest extends ContextTestSupport 
         // turn on debugging before dump to include source
         context.setDebugging(true);
 
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -54,28 +56,29 @@ public class DumpModelAsXmlSourceLocationStandbyTest extends ContextTestSupport 
         // turn on debugging before dump to include source
         context.setDebugging(true);
 
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("cool"));
+        String xml =
+                PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("cool"));
         assertNotNull(xml);
         log.info(xml);
 
-        Assertions.assertTrue(xml.contains(
-                "sourceLineNumber=\"25\" sourceLocation=\"MyCoolRoute.java\" uri=\"direct:cool\"/>"));
+        Assertions.assertTrue(
+                xml.contains("sourceLineNumber=\"25\" sourceLocation=\"MyCoolRoute.java\" uri=\"direct:cool\"/>"));
         Assertions.assertTrue(xml.contains("sourceLineNumber=\"26\" sourceLocation=\"MyCoolRoute.java\""));
     }
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("direct:start").routeId("myRoute")
-                                .filter(simple("${body} > 10"))
-                                .to("mock:result");
-                    }
-                },
-                new MyCoolRoute()
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start")
+                            .routeId("myRoute")
+                            .filter(simple("${body} > 10"))
+                            .to("mock:result");
+                }
+            },
+            new MyCoolRoute()
         };
     }
-
 }

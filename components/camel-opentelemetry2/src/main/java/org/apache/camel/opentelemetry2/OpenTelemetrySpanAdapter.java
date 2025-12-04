@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
 
 import java.util.Map;
@@ -100,10 +101,7 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
             if (value == null) {
                 continue;
             }
-            if (value instanceof Byte
-                    || value instanceof Short
-                    || value instanceof Integer
-                    || value instanceof Long) {
+            if (value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long) {
                 attributesBuilder.put(key, ((Number) value).longValue());
             } else if (value instanceof Float || value instanceof Double) {
                 attributesBuilder.put(key, ((Number) value).doubleValue());
@@ -120,5 +118,4 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     public String toString() {
         return "OpenTelemetrySpanAdapter [span=" + otelSpan + ", baggage=" + baggage + "]";
     }
-
 }

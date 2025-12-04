@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
 
 import java.util.Map;
@@ -129,7 +130,9 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     @Override
     public String traceId() {
         TracingContext tracingContext = getTracingContext();
-        return tracingContext.getSpan() != null ? tracingContext.getSpan().context().traceId() : null;
+        return tracingContext.getSpan() != null
+                ? tracingContext.getSpan().context().traceId()
+                : null;
     }
 
     private TracingContext getTracingContext() {
@@ -139,7 +142,9 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     @Override
     public String spanId() {
         TracingContext tracingContext = getTracingContext();
-        return tracingContext.getSpan() != null ? tracingContext.getSpan().context().spanId() : null;
+        return tracingContext.getSpan() != null
+                ? tracingContext.getSpan().context().spanId()
+                : null;
     }
 
     @Override
@@ -167,5 +172,4 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
         }
         return null;
     }
-
 }

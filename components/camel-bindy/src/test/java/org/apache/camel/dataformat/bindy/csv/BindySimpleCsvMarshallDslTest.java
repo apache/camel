@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.math.BigDecimal;
@@ -41,7 +42,8 @@ import org.springframework.test.context.ContextConfiguration;
 public class BindySimpleCsvMarshallDslTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
-    private String result = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,450.45,EUR,14-01-2009,17-05-2010 23:21:59\r\n";
+    private String result =
+            "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,450.45,EUR,14-01-2009,17-05-2010 23:21:59\r\n";
 
     @Produce("direct:start")
     private ProducerTemplate template;
@@ -99,10 +101,7 @@ public class BindySimpleCsvMarshallDslTest {
                     .locale("en")
                     .csv();
 
-            from("direct:start").marshal(bindy)
-                    .to("mock:result");
+            from("direct:start").marshal(bindy).to("mock:result");
         }
-
     }
-
 }
